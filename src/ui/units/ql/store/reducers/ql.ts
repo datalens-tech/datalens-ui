@@ -8,6 +8,8 @@ import {
     selectColors,
     selectColorsConfig,
     selectLabels,
+    selectShapes,
+    selectShapesConfig,
     selectTooltips,
 } from 'units/wizard/selectors/visualization';
 import {selectExtraSettings as getExtraSettingsWizard} from 'units/wizard/selectors/widget';
@@ -296,12 +298,16 @@ const getPlaceholdersContent = createSelector(
     selectColorsConfig,
     selectLabels,
     selectTooltips,
-    (colors, colorsConfig, labels, tooltips) => {
+    selectShapes,
+    selectShapesConfig,
+    (colors, colorsConfig, labels, tooltips, shapes, shapesConfig) => {
         return {
             colors,
             colorsConfig,
             labels,
             tooltips,
+            shapes,
+            shapesConfig,
         };
     },
 );
@@ -338,6 +344,8 @@ export const getEntryNotChanged = createSelector(
                 colorsConfig: placeholdersContent.colorsConfig || {},
                 labels: placeholdersContent.labels || [],
                 tooltips: placeholdersContent.tooltips || [],
+                shapes: placeholdersContent.shapes || [],
+                shapesConfig: placeholdersContent.shapesConfig || [],
                 extraSettings: extraSettings || {},
                 params: params.map((param) => {
                     return {
@@ -378,10 +386,7 @@ export const getPreviewData = createSelector(
     getConnection,
     getVisualization,
     getParams,
-    selectColors,
-    selectColorsConfig,
-    selectLabels,
-    selectTooltips,
+    getPlaceholdersContent,
     getOrder,
     (
         chartType,
@@ -391,10 +396,7 @@ export const getPreviewData = createSelector(
         connection,
         visualization,
         params,
-        colors,
-        colorsConfig,
-        labels,
-        tooltips,
+        placeholdersContent,
         order,
     ): any | null => {
         if (chartType && connection && visualization) {
@@ -405,10 +407,12 @@ export const getPreviewData = createSelector(
                     entryId: connection.entryId,
                     type: connection.type,
                 },
-                colors: colors || [],
-                colorsConfig: colorsConfig || {},
-                labels: labels || [],
-                tooltips: tooltips || [],
+                colors: placeholdersContent.colors || [],
+                colorsConfig: placeholdersContent.colorsConfig || {},
+                labels: placeholdersContent.labels || [],
+                tooltips: placeholdersContent.tooltips || [],
+                shapes: placeholdersContent.shapes || [],
+                shapesConfig: placeholdersContent.shapesConfig || [],
                 extraSettings,
                 queryValue,
                 queries,

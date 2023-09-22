@@ -108,14 +108,14 @@ class ValuesList extends React.Component<Props, State> {
         }
     }
 
-    componentWillUnmount() {
-        this.isUnmounted = true;
-    }
-
     componentDidUpdate(prevProps: Readonly<Props>) {
         if (prevProps.item.guid !== this.props.item.guid) {
             this.fetchInitialData();
         }
+    }
+
+    componentWillUnmount() {
+        this.isUnmounted = true;
     }
 
     render() {
@@ -211,27 +211,30 @@ class ValuesList extends React.Component<Props, State> {
 
         try {
             let distincts;
-            let values;
+            let values: string[] = [];
+
             if (externalDistincts) {
                 values = externalDistincts[item.guid];
             } else {
                 distincts = await this.getDistincts();
                 values = this.getValuesFromDistincts(distincts);
             }
+
             const useSuggest = values.length === VALUES_LOAD_LIMIT;
+
+            const oldItemGuid = this.state.itemGuid;
+            const newItemGuid = item.guid;
 
             this.setState({
                 values,
                 useSuggest,
-                itemGuid: item.guid,
                 error: null,
-            });
-            this.setState({
                 fetching: false,
+                itemGuid: newItemGuid,
             });
 
             const shouldClearPalette =
-                this.state.itemGuid !== null && this.state.itemGuid !== item.guid;
+                oldItemGuid !== undefined && newItemGuid !== null && newItemGuid !== oldItemGuid;
 
             this.props.onChangeSelectedValue(values[0] || null, shouldClearPalette);
         } catch (error) {

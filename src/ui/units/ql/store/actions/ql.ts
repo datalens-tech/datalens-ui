@@ -45,6 +45,8 @@ import {
     setColorsConfig,
     setDistincts,
     setLabels,
+    setShapes,
+    setShapesConfig,
     updatePlaceholderSettings,
 } from 'units/wizard/actions/visualization';
 import {setExtraSettings as setWizardExtraSettings} from 'units/wizard/actions/widget';
@@ -706,6 +708,8 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                     colors,
                     colorsConfig,
                     labels,
+                    shapes,
+                    shapesConfig,
                     order,
                 } = entry.data.shared;
 
@@ -811,6 +815,18 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                 if (labels) {
                     dispatch(setLabels({labels}));
+                }
+
+                if (shapes) {
+                    dispatch(setShapes({shapes}));
+                }
+
+                if (shapesConfig) {
+                    dispatch(
+                        setShapesConfig({
+                            shapesConfig,
+                        }),
+                    );
                 }
 
                 datalensGlobalState = getState();
