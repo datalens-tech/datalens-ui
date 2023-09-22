@@ -1,0 +1,14 @@
+.dl-workbook-create-entry {
+    &__icon-connection {
+        color: var(--g-color-text-utility);
+    }
+
+    &__dropdown-item {
+        display: flex;
+        align-items: center;
+    }
+
+    &__dropdown-text {
+        margin-left: 8px;
+    }
+}

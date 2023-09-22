@@ -1,0 +1,8 @@
+{
+  "button_publish": "Publish",
+  "button_published": "Published",
+  "button_save": "Save",
+  "button_save-as": "Save as",
+  "button_saved": "Saved",
+  "toast_warning-not-latest-version": "You are not using the latest chart version. Apply changes?"
+}

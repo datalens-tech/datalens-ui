@@ -1,0 +1,119 @@
+@import '../../../../styles/mixins';
+@import '../../styles/variables';
+
+.wizard {
+    &__error-content {
+        top: calc(50% - 150px);
+        position: relative;
+
+        &_is-mobile {
+            top: auto;
+        }
+    }
+
+    .action-panel {
+        box-sizing: border-box;
+
+        .dl-entry-panel {
+            .wizard__action-left {
+                color: var(--g-color-text-secondary);
+            }
+        }
+
+        .yc-breadcrumbs:first-child .yc-breadcrumbs__item:first-child {
+            padding-left: 0;
+        }
+
+        .entry-panel__entry-actions {
+            button {
+                width: 30px;
+            }
+        }
+    }
+
+    &__loader {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .columns {
+        position: relative;
+        height: calc(100vh - 70px - #{$actionPanelHeight});
+
+        &_aside-true {
+            height: calc(100vh - #{$actionPanelHeight});
+        }
+
+        .column {
+            height: 100%;
+
+            background-color: var(--dl-color-contrast-4);
+
+            font-size: 13px;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: normal;
+            letter-spacing: normal;
+
+            overflow-x: hidden;
+
+            .container {
+                .actions-container {
+                    border-bottom: 1px solid var(--g-color-line-generic);
+
+                    font-weight: normal;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 1.13;
+                    letter-spacing: normal;
+
+                    background: var(--g-color-base-background);
+
+                    .dropdown-menu {
+                        width: calc(100% - 39px);
+                        position: relative;
+                        display: inline-block;
+                        vertical-align: bottom;
+
+                        &__list {
+                            margin-left: -40px;
+                            width: 272px;
+                            margin-top: 9px;
+                        }
+                    }
+                }
+            }
+        }
+
+        .data-column {
+            width: 100%;
+        }
+
+        .visual-column {
+            width: 100%;
+        }
+
+        .preview-column {
+            width: 100%;
+            border-right: none;
+        }
+    }
+
+    @include revision-panel-fix;
+}
+
+.fullscreen-mode {
+    .columns {
+        .preview-column {
+            width: 100%;
+        }
+    }
+
+    .top-pane {
+        .Pane1 {
+            display: none;
+        }
+    }
+}

@@ -1,0 +1,40 @@
+.dl-dataset-field-list {
+    display: flex;
+    height: 100%;
+
+    &__field {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        padding-left: var(--dl-dataset-field-list-item-padding-left);
+        padding-right: var(--dl-dataset-field-list-item-padding-right);
+        cursor: pointer;
+    }
+
+    &__field-title {
+        flex-grow: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    &__field-icon,
+    &__formula-icon {
+        flex-shrink: 0;
+    }
+
+    &__field-icon {
+        margin-right: 10px;
+    }
+
+    &__formula-icon {
+        color: var(--g-color-text-secondary);
+        margin-right: 5px;
+    }
+}
+
+:root {
+    --dl-dataset-field-list-item-padding-left: 10px;
+    --dl-dataset-field-list-item-padding-right: 10px;
+}

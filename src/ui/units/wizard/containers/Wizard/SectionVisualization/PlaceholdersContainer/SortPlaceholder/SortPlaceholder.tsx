@@ -1,0 +1,158 @@
+import React from 'react';
+
+import {BarsDescendingAlignLeft} from '@gravity-ui/icons';
+import {i18n} from 'i18n';
+import {connect} from 'react-redux';
+import {Dispatch, bindActionCreators} from 'redux';
+import {
+    DatasetFieldType,
+    Field,
+    PlaceholderId,
+    WizardVisualizationId,
+    isFieldHierarchy,
+    isMeasureField,
+    isMeasureName,
+    isMeasureValue,
+} from 'shared';
+import {DatalensGlobalState} from 'ui';
+import {
+    selectColors,
+    selectSegments,
+    selectSort,
+    selectVisualization,
+} from 'units/wizard/selectors/visualization';
+
+import {updateSort} from '../../../../../actions/placeholder';
+import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
+import PlaceholderComponent from '../Placeholder/Placeholder';
+import {CommonPlaceholderProps} from '../PlaceholdersContainer';
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = ReturnType<typeof mapDispatchToProps>;
+
+type Props = CommonPlaceholderProps & StateProps & DispatchProps;
+
+const SORT_CAPACITY = 10;
+
+class SortPlaceholder extends React.Component<Props> {
+    render() {
+        const {sort, visualization, wrapTo, datasetError, onBeforeRemoveItem} = this.props;
+        const sortTitle = visualization.id === 'polyline' ? 'section_order' : 'section_sort';
+        const sortCapacityError =
+            visualization.id === 'polyline' ? 'label_order-overflow' : 'label_order-overflow';
+        const items = sort.map((field) => {
+            const shouldShowTooltip =
+                visualization.id === 'pivotTable' &&
+                (field.type === DatasetFieldType.Measure || isMeasureValue(field));
+
+            if (shouldShowTooltip) {
+                return {
+                    ...field,
+                    disabled: i18n('wizard', 'label_pivot-measure-sort'),
+                };
+            }
+
+            return field;
+        });
+
+        return (
+            <PlaceholderComponent
+                key="sort"
+                id="sort"
+                qa="placeholder-sort"
+                hasSettings={false}
+                title={sortTitle}
+                iconProps={{
+                    data: BarsDescendingAlignLeft,
+                }}
+                items={items}
+                capacity={SORT_CAPACITY}
+                capacityError={sortCapacityError}
+                checkAllowed={this.checkAllowedSort}
+                onUpdate={this.onSortUpdate}
+                additionalItemsClassName="sort-item"
+                wrapTo={wrapTo}
+                disabled={Boolean(datasetError)}
+                onBeforeRemoveItem={onBeforeRemoveItem}
+                qlMode={this.props.qlMode}
+                onAfterUpdate={this.props.onUpdate}
+            />
+        );
+    }
+
+    private checkAllowedSort = (item: Field) => {
+        const {colors, visualization, segments, globalVisualization} = this.props;
+
+        if (isMeasureName(item)) {
+            return false;
+        }
+
+        if (isFieldHierarchy(item)) {
+            return false;
+        }
+
+        if (globalVisualization.id === WizardVisualizationId.CombinedChart) {
+            if (isMeasureField(item)) {
+                return true;
+            }
+
+            const availableDimensionsMap: Record<string, boolean> = {};
+
+            globalVisualization.layers.forEach((layer) => {
+                const xPlaceholder = layer.placeholders.find(
+                    (placeholder) => placeholder.id === PlaceholderId.X,
+                );
+
+                xPlaceholder?.items?.forEach((item) => {
+                    availableDimensionsMap[item.guid] = true;
+                });
+
+                const dimensionsAffectGroupping = [
+                    ...(layer.commonPlaceholders?.colors || []),
+                    ...(layer.commonPlaceholders?.shapes || []),
+                ];
+
+                dimensionsAffectGroupping.forEach((item) => {
+                    availableDimensionsMap[item.guid] = true;
+                });
+            });
+
+            return availableDimensionsMap[item.guid];
+        }
+
+        return (
+            visualization &&
+            (visualization as any).checkAllowedSort(item, visualization, colors, segments)
+        );
+    };
+
+    private onSortUpdate = (items: Field[]) => {
+        this.props.updateSort({items});
+        this.props.updatePreviewAndClientChartsConfig({});
+
+        if (this.props.onUpdate) {
+            this.props.onUpdate();
+        }
+    };
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+    return bindActionCreators(
+        {
+            updateSort,
+            updatePreviewAndClientChartsConfig,
+        },
+        dispatch,
+    );
+};
+
+const mapStateToProps = (state: DatalensGlobalState) => {
+    return {
+        sort: selectSort(state),
+        colors: selectColors(state),
+        segments: selectSegments(state),
+        globalVisualization: selectVisualization(state),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SortPlaceholder);

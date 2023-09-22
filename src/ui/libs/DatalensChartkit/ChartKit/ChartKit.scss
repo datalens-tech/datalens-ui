@@ -1,0 +1,27 @@
+@import './theme';
+
+.chartkit-theme_common {
+    @include yc-chartkit-theme-common;
+}
+
+.chartkit-scrollable-node {
+    overflow: auto;
+    max-height: 100%;
+
+    .chartkit-metric & {
+        max-height: none;
+    }
+}
+
+.chartkit {
+    height: 100%;
+    width: 100%;
+
+    &_mobile {
+        // here transfer the remaining styles with redefinition while refactor and transfer of spreadsheet and yfm styles
+
+        .chartkit-scrollable-node {
+            max-height: 3000px;
+        }
+    }
+}

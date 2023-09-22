@@ -1,0 +1,10 @@
+{
+  "button_add": "Add",
+  "button_cancel": "Cancel",
+  "button_save": "Save",
+  "context_fill-title": "Enter title",
+  "field_show-in-toc": "Display in contents",
+  "label_title": "Title",
+  "toast_required-field": "The field cannot be empty",
+  "value_default": "Title"
+}

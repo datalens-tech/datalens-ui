@@ -1,0 +1,136 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "403": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "404": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.CHARTS.CONFIG_LOADING_ERROR": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.CHARTS.REQUEST_SIZE_LIMIT_EXCEEDED": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.CLIQUE_STOPPED": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DATABASE_UNAVAILABLE": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB.CHYT": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB.CHYT.INVALID_SORTED_JOIN": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB.COLUMN_DOES_NOT_EXIST": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB.INVALID_QUERY": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB.MATERIALIZATION_NOT_FINISHED": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB.MEMORY_LIMIT_EXCEEDED": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB.METRICA": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB.SOURCE_DOES_NOT_EXIST": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB.SOURCE_ERROR.CLOSED_PREMATURELY": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB.SOURCE_ERROR.INVALID_RESPONSE": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB.SOURCE_ERROR.TIMEOUT": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.DB.STATFACE": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.FIELD.NOT_FOUND": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.FILTER.INVALID_VALUE": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.FORMULA": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.NO_AVAILABLE_SUBPRODUCTS": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.REFERENCED_ENTRY_ACCESS_DENIED_CONNECTION": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.ROW_COUNT_LIMIT": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.SOURCE_CONFIG.TABLE_NOT_CONFIGURED": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.US.ACCESS_DENIED_DATASET": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.US.BAD_REQUEST": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.DS_API.US.OBJ_NOT_FOUND": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "ERR.UNKNOWN": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

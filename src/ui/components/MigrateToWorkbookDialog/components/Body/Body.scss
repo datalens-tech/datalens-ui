@@ -1,0 +1,33 @@
+.dl-migrate-to-workbook-dialog-body {
+    &__target-entry {
+        margin-top: 12px;
+    }
+
+    &__related-entry {
+        margin-bottom: 6px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__alert {
+        margin-top: 12px;
+    }
+
+    &__relations {
+        margin-top: 24px;
+    }
+
+    &__relations-groups {
+        margin-top: 12px;
+    }
+
+    &__relations-group {
+        margin-top: 12px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+}

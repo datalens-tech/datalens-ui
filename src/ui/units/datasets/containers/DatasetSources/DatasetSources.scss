@@ -1,0 +1,19 @@
+.dataset-sources {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+
+    &__sources-panel {
+        display: flex;
+        overflow-y: auto;
+    }
+
+    &__relations-map-panel {
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+}

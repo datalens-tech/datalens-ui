@@ -1,0 +1,104 @@
+{
+  "label_absolute-date": "Точная дата",
+  "label_end-control-title": "Конец",
+  "label_include-current-day": "Включая текущий день",
+  "label_invalid-date": "Недопустимая дата",
+  "label_invalid-range": "Дата окончания предшествует дате начала",
+  "label_preset": "Пресет",
+  "label_preset-last_-0_days": "Сегодня",
+  "label_preset-last_-0_days-range": "Сегодня",
+  "label_preset-last_-13_days": "14 дней назад",
+  "label_preset-last_-13_days-range": "Последние 14 дней",
+  "label_preset-last_-179_days": "180 дней назад",
+  "label_preset-last_-179_days-range": "Последние 180 дней",
+  "label_preset-last_-1_days": "Вчера",
+  "label_preset-last_-1_days-range": "Вчера",
+  "label_preset-last_-27_days": "28 дней назад",
+  "label_preset-last_-27_days-range": "Последние 28 дней",
+  "label_preset-last_-2_days": "3 дня назад",
+  "label_preset-last_-2_days-range": "Последние 3 дня",
+  "label_preset-last_-364_days": "365 дней назад",
+  "label_preset-last_-364_days-range": "Последние 365 дней",
+  "label_preset-last_-6_days": "7 дней назад",
+  "label_preset-last_-6_days-range": "Последниe 7 дней",
+  "label_preset-last_-89_days": "90 дней назад",
+  "label_preset-last_-89_days-range": "Последние 90 дней",
+  "label_relative-date": "Смещение от текущей даты",
+  "label_scale-M": [
+    "Месяц",
+    "Месяца",
+    "Месяцев",
+    "Месяцев",
+    "",
+    ""
+  ],
+  "label_scale-Q": [
+    "Квартал",
+    "Квартала",
+    "Кварталов",
+    "Кварталов",
+    "",
+    ""
+  ],
+  "label_scale-d": [
+    "День",
+    "Дня",
+    "Дней",
+    "Дней",
+    "",
+    ""
+  ],
+  "label_scale-h": [
+    "Час",
+    "Часа",
+    "Часов",
+    "Часов",
+    "",
+    ""
+  ],
+  "label_scale-m": [
+    "Минута",
+    "Минуты",
+    "Минут",
+    "Минут",
+    "",
+    ""
+  ],
+  "label_scale-ms": [
+    "Миллисекунда",
+    "Миллисекунды",
+    "Миллисекунд",
+    "Миллисекунд",
+    "",
+    ""
+  ],
+  "label_scale-s": [
+    "Секунда",
+    "Секунды",
+    "Секунд",
+    "Секунд",
+    "",
+    ""
+  ],
+  "label_scale-w": [
+    "Неделя",
+    "Недели",
+    "Недель",
+    "Недель",
+    "",
+    ""
+  ],
+  "label_scale-y": [
+    "Год",
+    "Года",
+    "Лет",
+    "Лет",
+    "",
+    ""
+  ],
+  "label_sign+": "Плюс",
+  "label_sign-": "Минус",
+  "label_single-control-title": "Значение",
+  "label_start-control-title": "Начало",
+  "label_tooltip-utc": "Дата указана в UTC"
+}

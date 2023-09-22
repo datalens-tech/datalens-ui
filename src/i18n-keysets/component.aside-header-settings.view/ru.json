@@ -1,0 +1,17 @@
+{
+  "field_interface-theme": "Тема интерфейса",
+  "field_interface-theme-contrast": "Контрастность",
+  "field_language": "Язык",
+  "label_language-en": "English",
+  "label_language-ru": "Русский",
+  "label_not-found": "Ничего не найдено",
+  "label_placeholder-search": "Найти настройки",
+  "label_title": "Настройки",
+  "section_appearance": "Оформление",
+  "section_language": "Язык",
+  "value_theme-contrast-enhanced": "Высокая",
+  "value_theme-contrast-normal": "Стандартная",
+  "value_theme-dark": "Темная",
+  "value_theme-light": "Светлая",
+  "value_theme-system": "Системная"
+}

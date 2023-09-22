@@ -1,0 +1,6 @@
+<svg width="42" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="12" r="12" fill="var(--ds-color-avatar)"/>
+<circle cx="30" cy="12" r="12" fill="#6B8499"/>
+<circle cx="12" cy="12" r="11.5" stroke="var(--ds-join-stroke-color)" stroke-dasharray="var(--ds-join-stroke-dasharray)"/>
+<circle cx="30" cy="12" r="11.5" stroke="var(--ds-join-stroke-color)" stroke-dasharray="var(--ds-join-stroke-dasharray)"/>
+</svg>

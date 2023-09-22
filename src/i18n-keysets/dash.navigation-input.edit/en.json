@@ -1,0 +1,14 @@
+{
+  "button_cancel": "Close",
+  "button_choose": "Select",
+  "button_ok": "OK",
+  "button_open": "Open",
+  "button_use-link": "Specify link",
+  "context_fill-link": "Link",
+  "toast_error": "Error",
+  "toast_incorrect-source": "Invalid source type",
+  "toast_incorrect-url": "Invalid URL",
+  "toast_not-found": "Source not found",
+  "toast_not-selector": "Source is not a selector",
+  "toast_wrong-workbook-id": "Select a source from the current workflow"
+}

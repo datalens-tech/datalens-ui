@@ -1,0 +1,74 @@
+import React from 'react';
+
+import {CopyToClipboard, DropdownMenu, DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import {i18n} from 'i18n';
+import {DatasetField} from 'shared';
+
+import {FieldAction, GROUPED_ITEMS} from '../constants';
+import {MenuItem} from '../types';
+
+export type FieldActionsPopupProps = {
+    field: DatasetField;
+    index: number;
+    className?: string;
+    setActiveRow: (index?: number) => void;
+    onItemClick: (data: {action: FieldAction; field: DatasetField}) => void;
+};
+
+const MenuItemText = ({
+    action,
+    label,
+    field,
+}: {
+    action: FieldAction;
+    label: string;
+    field: DatasetField;
+}) => {
+    const content = <span>{i18n('dataset.dataset-editor.modify', label)}</span>;
+
+    if (action === FieldAction.CopyGuid) {
+        return (
+            <CopyToClipboard text={field.guid} timeout={0}>
+                {() => content}
+            </CopyToClipboard>
+        );
+    }
+
+    return content;
+};
+
+const getMenuItems = (
+    field: DatasetField,
+    onClick: FieldActionsPopupProps['onItemClick'],
+): DropdownMenuItemMixed<MenuItem>[] => {
+    return GROUPED_ITEMS.map((group) => {
+        return group.map(({action, label, theme, hidden = false}) => ({
+            theme,
+            hidden,
+            text: <MenuItemText action={action} label={label} field={field} />,
+            action: () => onClick({action, field}),
+        }));
+    });
+};
+
+export function FieldActionsPopup(props: FieldActionsPopupProps) {
+    const {className, field, index, setActiveRow, onItemClick} = props;
+    const [open, setOpen] = React.useState(false);
+
+    const handleMenuToggle = () => {
+        setActiveRow(open ? undefined : index);
+        setOpen(!open);
+    };
+
+    return (
+        <DropdownMenu
+            size="s"
+            switcherWrapperClassName={className}
+            items={getMenuItems(field, onItemClick)}
+            popupProps={{
+                placement: ['bottom-end', 'top-end'],
+            }}
+            onOpenToggle={handleMenuToggle}
+        />
+    );
+}

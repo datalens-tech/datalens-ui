@@ -1,0 +1,115 @@
+import React from 'react';
+
+import {Button, Select, SelectOption} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
+import {connect} from 'react-redux';
+import {DATASET_FIELD_TYPES, DatasetField} from 'shared';
+import {DataTypeIcon, DatalensGlobalState} from 'ui';
+
+import {getSelectedValueForSelect} from '../../../../../../utils/helpers';
+import {datasetValidationSelector} from '../../../../store/selectors/dataset';
+import {getLabelValue} from '../../utils';
+
+import './TypeSelect.scss';
+
+const b = block('type-select');
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+
+interface Props extends StateProps {
+    selectedType: string;
+    types: DATASET_FIELD_TYPES[];
+    field: DatasetField;
+    onSelect: (row: DatasetField, value: DATASET_FIELD_TYPES) => void;
+}
+
+class TypeSelectComponent extends React.Component<Props> {
+    render() {
+        const {selectedType} = this.props;
+
+        const selectedOption: string[] = [selectedType];
+
+        return (
+            <Select
+                value={selectedOption}
+                onUpdate={(values) => this.onSelect(values as [DATASET_FIELD_TYPES])}
+                options={this.typeList}
+                renderControl={this.renderSelectControl}
+                renderOption={(options) => {
+                    return this.renderSelectOption(options, true);
+                }}
+            />
+        );
+    }
+
+    get typeList(): SelectOption[] {
+        const {types, validation} = this.props;
+
+        return types
+            .map((type): SelectOption => {
+                return {
+                    value: type,
+                    content: getLabelValue(type),
+                    disabled: validation.isLoading,
+                };
+            })
+            .sort((current, next) => {
+                const content = current.content as string;
+                const contentNext = next.content as string;
+
+                return content.localeCompare(contentNext, undefined, {numeric: true});
+            });
+    }
+
+    private onSelect = (values: [DATASET_FIELD_TYPES]) => {
+        const value = values[0];
+        this.props.onSelect(this.props.field, value);
+    };
+
+    private renderSelectOption = (options: SelectOption, isOption?: boolean) => {
+        const type = options.value as DATASET_FIELD_TYPES;
+        const typeName = options.content;
+        return (
+            <span className={b('select-item', {option: isOption})}>
+                <DataTypeIcon className={b('type')} dataType={type} />
+                {typeName}
+            </span>
+        );
+    };
+
+    private renderSelectControl = ({
+        onClick,
+        ref,
+        onKeyDown,
+    }: {
+        onClick: (e: React.MouseEvent<HTMLElement>) => void;
+        onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
+        ref: React.Ref<HTMLElement>;
+        open: boolean;
+    }) => {
+        const {selectedType} = this.props;
+        const selectedValue = getSelectedValueForSelect([selectedType], this.props.types);
+
+        const value = selectedValue[0];
+
+        return (
+            <Button
+                onClick={onClick}
+                ref={ref}
+                extraProps={{onKeyDown}}
+                view="flat"
+                className={b('select-control')}
+            >
+                {this.renderSelectOption({value, content: getLabelValue(value)})}
+            </Button>
+        );
+    };
+}
+
+const mapStateToProps = (state: DatalensGlobalState) => {
+    return {
+        validation: datasetValidationSelector(state),
+    };
+};
+
+export const TypeSelect = connect(mapStateToProps)(TypeSelectComponent);

@@ -1,0 +1,24 @@
+@import '../../../../styles/mixins.scss';
+
+.dl-select-option-with-icon {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    &_disabled {
+        color: var(--g-color-text-hint);
+    }
+
+    &__content {
+        @include overflow-ellipsis;
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        margin-right: 6px;
+        &_disabled {
+            opacity: 0.5;
+        }
+    }
+}

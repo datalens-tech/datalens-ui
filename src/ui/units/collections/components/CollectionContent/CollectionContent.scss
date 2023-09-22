@@ -1,0 +1,12 @@
+.dl-collection-content {
+    &__empty-state {
+        align-items: center;
+        display: flex;
+        flex: 1;
+        justify-content: center;
+    }
+
+    &__controls {
+        margin-top: 16px;
+    }
+}

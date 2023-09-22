@@ -1,0 +1,18 @@
+@use '~@gravity-ui/uikit/styles/mixins';
+
+.conn-form-title {
+    display: flex;
+    align-items: center;
+
+    &__title {
+        @include mixins.text-subheader-3();
+    }
+
+    &__arrow {
+        margin-right: 4px;
+    }
+
+    &__icon {
+        margin-right: 10px;
+    }
+}

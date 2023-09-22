@@ -1,0 +1,7 @@
+.dashkit-plugin-title-container {
+    height: 100%;
+
+    .dashkit-grid-item__item_editMode & {
+        background-color: var(--g-color-base-float);
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "testing": {"tag": true},
+    "prestable": {"tag": true},
+    "preprod": {"tag": true},
+    "staging": {"tag": true},
+    "area51": {"tag": true}
+}

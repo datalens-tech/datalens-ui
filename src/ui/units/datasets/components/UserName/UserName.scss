@@ -1,0 +1,24 @@
+.user-name-block {
+    width: 100%;
+    display: flex;
+
+    &__name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &:first-letter {
+            color: var(--ds-color-error);
+        }
+    }
+}
+
+.user-name-inline {
+    display: inline-block;
+    margin-left: -20px;
+
+    &:first-letter {
+        color: var(--ds-color-error);
+    }
+}

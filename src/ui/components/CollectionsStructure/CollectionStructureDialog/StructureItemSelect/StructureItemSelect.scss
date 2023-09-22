@@ -1,0 +1,59 @@
+.dl-collections-structure-structure-item-select {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    overflow-y: auto;
+    transition: opacity 0.2s;
+
+    &_disabled {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    &__breadcrumbs {
+        margin-bottom: 12px;
+    }
+
+    &__move-denied-wrapper {
+        margin-bottom: 8px;
+    }
+
+    &__move-denied {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+    }
+
+    &__move-denied-icon {
+        height: 15px;
+        margin-right: 10px;
+    }
+
+    &__move-denied-text {
+        font-size: 13px;
+        line-height: 18px;
+    }
+
+    &__main-loader {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+    }
+
+    &__page-loader {
+        display: flex;
+        align-self: center;
+        padding: 20px;
+    }
+
+    &__empty-placeholder {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        line-height: 24px;
+        color: var(--g-color-text-secondary);
+    }
+}

@@ -1,0 +1,12 @@
+{
+  "close": "Закрыть",
+  "copy": "Копировать",
+  "draw-anyway": "Отобразить",
+  "error": "Ошибка",
+  "error-data-provider": "Ошибка загрузки данных",
+  "error-no-data": "Нет данных",
+  "error-too-many-lines": "Превышено рекомендуемое число рядов",
+  "error-unknown-extension": "Неизвестный тип чарта",
+  "more": "Подробнее",
+  "retry": "Повторить"
+}

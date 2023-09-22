@@ -1,0 +1,6 @@
+{
+  "button_cancel": "Cancel",
+  "button_save": "Save",
+  "field_placeholder-row-level-security": "Entry format: 'Field value': login1, login2, etc.",
+  "label_row-level-security": "Field permission settings"
+}

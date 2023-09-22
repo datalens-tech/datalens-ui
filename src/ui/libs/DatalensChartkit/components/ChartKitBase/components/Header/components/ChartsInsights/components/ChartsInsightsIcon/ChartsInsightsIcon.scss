@@ -1,0 +1,15 @@
+.chartkit-charts-insights {
+    &__icon {
+        &_critical {
+            color: var(--g-color-text-danger);
+        }
+
+        &_warning {
+            color: var(--g-color-text-warning-heavy);
+        }
+
+        &_info {
+            color: var(--g-color-text-info);
+        }
+    }
+}

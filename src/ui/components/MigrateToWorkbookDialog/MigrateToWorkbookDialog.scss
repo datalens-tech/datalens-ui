@@ -1,0 +1,29 @@
+.dl-migrate-to-workbook-dialog {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 32px);
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        // TODO: this is an private api and may silently changed. We should use local styles
+        padding-bottom: var(--yc-dialog-side-padding);
+        overflow-y: auto;
+    }
+
+    &__error-block {
+        max-width: 100%;
+
+        .error-content__debug-info {
+            width: 100%;
+        }
+    }
+
+    &__error {
+        flex: 1;
+        align-self: center;
+        justify-self: center;
+        margin: 20px;
+    }
+}

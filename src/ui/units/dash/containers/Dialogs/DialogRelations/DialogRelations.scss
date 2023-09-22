@@ -1,0 +1,37 @@
+.dialog-relations {
+    width: 600px;
+
+    &__caption {
+        word-break: break-word;
+        max-width: 546px;
+        position: relative;
+    }
+
+    &__beta {
+        margin-left: 4px;
+        position: absolute;
+        right: 4px;
+        top: 20px;
+    }
+
+    &__icon-title {
+        margin-right: 8px;
+        min-width: 24px;
+        align-self: flex-start;
+        color: var(--g-color-text-hint);
+    }
+
+    &__container {
+        height: 283px;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 0;
+    }
+
+    &__loader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+}

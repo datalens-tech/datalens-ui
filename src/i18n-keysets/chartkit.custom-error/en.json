@@ -1,0 +1,12 @@
+{
+  "close": "Close",
+  "copy": "Copy",
+  "draw-anyway": "Draw anyway",
+  "error": "Error",
+  "error-data-provider": "Data fetching error",
+  "error-no-data": "No data",
+  "error-too-many-lines": "Too many series on the chart",
+  "error-unknown-extension": "Unknown chart type",
+  "more": "More",
+  "retry": "Retry"
+}

@@ -1,0 +1,7 @@
+{
+  "label_filter-list-field-th": "Field",
+  "label_filter-list-value-th": "Value",
+  "label_obligatory-filter-add": "Add",
+  "label_obligatory-filter-description": "The values will be applied to all new charts created using the dataset. This will reduce the chart rendering time when working with large amounts of data.<br></br>The default filters for new charts do not affect the display in the dataset preview.",
+  "label_obligatory-filter-title": "Default filters for new charts"
+}

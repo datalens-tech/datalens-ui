@@ -1,0 +1,14 @@
+@import '../../../../../styles/mixins.scss';
+
+.dl-dialog-add-control {
+    width: 560px;
+
+    &__section {
+        margin-top: 15px;
+    }
+
+    &__body {
+        min-height: 580px;
+        @include dialog-max-height-scroll();
+    }
+}

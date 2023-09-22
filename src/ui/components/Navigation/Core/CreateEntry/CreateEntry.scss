@@ -1,0 +1,24 @@
+.dl-navigation-create-entry {
+    &__switcher-wrapper {
+        margin-left: auto;
+    }
+
+    &__button-create {
+        min-width: 150px;
+    }
+
+    &__item-title {
+        height: 32px;
+        display: flex;
+        align-items: center;
+        padding: 0 6px;
+    }
+
+    &__popup &__icon-connection {
+        color: var(--g-color-text-utility);
+    }
+
+    &__popup-menu {
+        min-width: 144px;
+    }
+}

@@ -1,0 +1,9 @@
+{
+  "button_apply": "Save",
+  "button_cancel": "Cancel",
+  "label_entry-name-already-exists": "That name is already in use, try another one",
+  "label_placeholder": "Name",
+  "label_widget-name-default": "New chart",
+  "section_caption": "Save chart",
+  "toast_save-widget-failed": "Failed to save chart"
+}

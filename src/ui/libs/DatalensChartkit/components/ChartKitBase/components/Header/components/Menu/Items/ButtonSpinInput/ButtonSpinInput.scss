@@ -1,0 +1,13 @@
+.button-spin-input {
+    &_text-input {
+        display: inline-flex;
+        width: 100%;
+        align-items: center;
+    }
+
+    &__item {
+        &:not(:first-child) {
+            margin-left: 10px;
+        }
+    }
+}

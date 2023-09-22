@@ -1,0 +1,13 @@
+import type {WorkbooksAction} from '../actions';
+import {RESET_WORKBOOK_STATE} from '../constants';
+
+import {WorkbooksState, workbooksReducer} from './workbook-page';
+
+export type {WorkbooksState};
+
+export const reducer = (state: WorkbooksState, action: WorkbooksAction) => {
+    if (action.type === RESET_WORKBOOK_STATE) {
+        return workbooksReducer(undefined, action);
+    }
+    return workbooksReducer(state, action);
+};

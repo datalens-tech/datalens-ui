@@ -1,0 +1,10 @@
+{
+  "label_color": "Цвет: {{value}}",
+  "label_line": "Линия: {{value}}",
+  "label_order": "Порядок: {{value}}",
+  "label_point": "Точка: {{value}}",
+  "label_segment": "Отрезок: {{value}}",
+  "label_total": "Итого",
+  "label_total-value": "Итого: {{value}}",
+  "label_new-layer": "Слой 1"
+}

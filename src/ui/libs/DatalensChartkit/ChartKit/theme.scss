@@ -1,0 +1,89 @@
+@mixin yc-chartkit-theme-common {
+    // loader
+    --ck-loader-active: var(--g-color-base-brand);
+
+    // loader vail
+    --ck-veil-background: var(--g-color-sfx-fade);
+
+    // navigator
+    --highcarts-navigator-border: var(--g-color-line-generic);
+    --highcarts-navigator-track: var(--g-color-base-generic);
+    --highcarts-navigator-body: var(--g-color-scroll-handle);
+
+    // chart
+    --highcharts-series-border: var(--g-color-base-background);
+
+    --highcharts-grid-line: var(--g-color-line-generic);
+    --highcharts-axis-line: var(--g-color-line-generic);
+    --highcharts-tick: var(--g-color-line-generic);
+
+    --highcharts-title: var(--g-color-text-primary);
+    --highcharts-axis-labels: var(--g-color-text-secondary);
+    --highcharts-data-labels: var(--g-color-text-complementary);
+    --highcharts-plot-line-label: var(--g-color-text-complementary);
+
+    --highcharts-legend-item: var(--g-color-text-secondary);
+    --highcharts-legend-item-hover: var(--g-color-text-primary);
+    --highcharts-legend-item-hidden: var(--g-color-text-hint);
+
+    // for "floating" elements, for example, legends and tooltip
+    --highcharts-floating-bg: var(--g-color-infographics-tooltip-bg);
+
+    // tooltip
+    --highcharts-tooltip-text: var(--g-color-text-primary);
+    --highcharts-tooltip-bg: var(--highcharts-floating-bg);
+    --highcharts-tooltip-alternate-bg: var(--g-color-base-generic);
+    --highcharts-tooltip-text-complementary: var(--g-color-text-complementary);
+
+    // party stripe
+    --highcharts-holiday-band: var(--g-color-base-generic);
+
+    // table
+    --data-table-color-base: var(--g-color-base-background);
+    --data-table-color-stripe: var(--g-color-base-generic);
+    --data-table-border-color: var(--g-color-line-generic-solid);
+    --data-table-color-hover-area: var(--g-color-base-simple-hover);
+    --data-table-color-footer-area: var(--data-table-color-base);
+}
+
+.g-root_theme_dark .chartkit .chartkit-ymap,
+.g-root_theme_dark-hc .chartkit .chartkit-ymap {
+    & .chartkit-map-ground-pane {
+        filter: invert(0.9) saturate(0.4) hue-rotate(-30deg);
+    }
+
+    & [class*='map-bg'] {
+        background: transparent;
+    }
+
+    & [class*='zoom__plus'],
+    & [class*='zoom__minus'],
+    & [class*='zoom__runner'] {
+        background-color: var(--g-color-base-background);
+    }
+
+    & [class*='zoom__icon'] {
+        filter: invert(1);
+    }
+}
+
+.g-root_theme_dark-hc .chartkit .chartkit-ymap {
+    & .chartkit-map-ground-pane {
+        filter: invert(0.95) saturate(0.4) hue-rotate(-30deg);
+    }
+}
+
+// hitmap color change together with map color styles
+// therefor hitmap legend should also be inverted
+
+.g-root_theme_dark .chartkit .chartkit-ymap-legend {
+    & .chartkit-ymap-legend-layer__color-preview_default-heatmap {
+        filter: invert(0.9) saturate(0.4) hue-rotate(-30deg);
+    }
+}
+
+.g-root_theme_dark-hc .chartkit .chartkit-ymap-legend {
+    & .chartkit-ymap-legend-layer__color-preview_default-heatmap {
+        filter: invert(0.95) saturate(0.4) hue-rotate(-30deg);
+    }
+}

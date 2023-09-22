@@ -1,0 +1,29 @@
+.chartkit-inspector-timings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+
+    &__metric {
+        color: var(--g-color-text-primary);
+
+        &_warning {
+            color: var(--g-color-text-warning);
+        }
+
+        &#{&}_danger {
+            color: var(--g-color-text-danger);
+        }
+    }
+
+    &__metric-value {
+        font-size: var(--g-text-header-1-font-size);
+        line-height: var(--g-text-header-1-line-height);
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+
+    &__metric-title {
+        color: var(--g-color-text-secondary);
+        display: flex;
+        gap: 5px;
+    }
+}

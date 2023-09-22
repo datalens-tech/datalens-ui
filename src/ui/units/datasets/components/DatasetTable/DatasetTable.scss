@@ -1,0 +1,222 @@
+@import '../../styles/mixins';
+
+%expand-by-parent-with-align {
+    height: inherit;
+    vertical-align: middle;
+    padding: 0;
+}
+
+.dataset-table {
+    $class: &;
+    $rowClass: #{&}__row;
+    $inputControlClass: '.yc-text-input__content';
+    width: 100%;
+    flex: 1;
+    position: relative;
+    margin-top: -24px;
+
+    .data-table {
+        &__table {
+            width: 100%;
+        }
+
+        &__no-data {
+            padding-left: 20px;
+        }
+
+        &_theme_dataset {
+            --data-table-color-base: var(--ds-color-base);
+            --data-table-color-hover-area: var(--ds-color-hover-area);
+            --data-table-cell-border-padding: 0;
+        }
+
+        tr.data-table__head-row {
+            padding: 0;
+            border-bottom: 1px solid var(--ds-color-divider);
+        }
+
+        &__sort-icon {
+            right: 2px;
+        }
+    }
+
+    &__sort-icon {
+        position: relative;
+        left: 5px;
+    }
+
+    &__header {
+        height: 36px;
+        display: flex;
+        align-items: center;
+    }
+
+    &__header-cast {
+        margin-left: 10px;
+    }
+
+    &__header-icon-table-count {
+        margin-top: 2px;
+    }
+
+    &__header-column-source {
+        padding-left: 13px;
+    }
+
+    & &__column {
+        @extend %expand-by-parent-with-align;
+
+        .yc-select-control {
+            border: 1px solid transparent;
+            padding-right: 8px;
+
+            &:before {
+                background-color: initial;
+            }
+        }
+
+        &_with-padding-right {
+            padding-right: 10px;
+        }
+
+        &-aggregation {
+            @extend %expand-by-parent-with-align;
+        }
+
+        &-more {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    &__source-title {
+        @include overflow-ellipsis;
+    }
+
+    & &__row {
+        width: 100%;
+        height: 36px;
+
+        &_active {
+            background: var(--ds-color-hover-area);
+
+            #{$class}__btn-hidden {
+                #{$class}__hidden {
+                    visibility: visible;
+                }
+            }
+
+            #{$class}__more-dropdown {
+                visibility: visible;
+            }
+        }
+
+        &:hover {
+            #{$class}__more-dropdown {
+                visibility: visible;
+            }
+
+            #{$class}__hidden {
+                visibility: visible;
+            }
+        }
+    }
+
+    &__btn {
+        &-hidden,
+        &-formula,
+        &-more {
+            &:hover #{$class} {
+                &-hidden {
+                    visibility: visible;
+                }
+            }
+
+            #{$class} {
+                &__hidden {
+                    opacity: 0.5;
+                    visibility: hidden;
+
+                    &_unsupported {
+                        visibility: visible;
+                    }
+
+                    &:hover {
+                        color: var(--ds-color-text-primary);
+                        opacity: 1;
+                    }
+
+                    &_hidden {
+                        visibility: visible;
+                        color: var(--ds-color-text-primary);
+                        opacity: 1;
+
+                        &:hover {
+                            opacity: 0.5;
+                        }
+                    }
+                }
+
+                &__formula {
+                    position: relative;
+                }
+            }
+        }
+
+        &-hidden {
+            right: 7px;
+        }
+    }
+
+    &__select-cog {
+        position: sticky;
+        top: 6px;
+        left: 100%;
+        width: fit-content;
+        margin-right: 10px;
+        z-index: 2;
+    }
+
+    &__more-dropdown {
+        visibility: hidden;
+    }
+
+    &__table-input {
+        #{$rowClass} & #{$inputControlClass}:not(:hover):not(:focus-within) {
+            border-color: transparent;
+        }
+
+        #{$rowClass}:not(#{$rowClass}_active) & #{$inputControlClass}:hover {
+            border-color: var(--g-color-line-generic);
+        }
+
+        #{$rowClass}:not(#{$rowClass}_active) &_error #{$inputControlClass}:hover {
+            border-color: var(--g-color-line-danger);
+        }
+
+        #{$rowClass} &_error #{$inputControlClass} .yc-text-input__control:not(:focus) {
+            color: var(--g-color-line-danger);
+            font-style: italic;
+        }
+    }
+
+    &__popup-more-row {
+        height: 25px;
+        line-height: 25px;
+        padding: 0 10px;
+
+        &:hover {
+            background: var(--ds-color-hover-area);
+            cursor: pointer;
+        }
+    }
+
+    .textinput_focused_yes {
+        .textinput__box {
+            // stylelint-disable-next-line declaration-no-important
+            border-color: var(--ds-color-border) !important;
+            background: var(--ds-color-error);
+        }
+    }
+}

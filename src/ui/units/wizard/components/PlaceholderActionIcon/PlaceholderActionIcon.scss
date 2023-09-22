@@ -1,0 +1,19 @@
+.placeholder-action-icon {
+    display: flex;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    border-radius: 2px;
+    color: var(--g-color-text-primary);
+    opacity: 0.5;
+
+    &_first {
+        margin-left: auto;
+    }
+
+    &:hover {
+        background-color: var(--g-color-base-simple-hover);
+        opacity: 1;
+    }
+}

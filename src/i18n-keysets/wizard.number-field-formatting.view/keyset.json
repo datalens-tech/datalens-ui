@@ -1,0 +1,76 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "field_format": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_postfix": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_precision": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_prefix": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_rank-delimiter": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_units": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_format-number": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_format-percent": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_rank-delimiter-hide": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_rank-delimiter-show": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_unit-auto": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_unit-b": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_unit-k": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_unit-m": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_unit-null": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_unit-t": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "label_filter-by-ownership-all": "All",
+  "label_filter-by-ownership-only-my": "Only my",
+  "label_filter-by-type-all": "All types",
+  "label_filter-by-type-only-collections": "Only collections",
+  "label_filter-by-type-only-workbooks": "Only workbooks",
+  "label_filter-string-placeholder": "Search by name",
+  "label_sort-first-alphabet-asc": "Sort A to Z",
+  "label_sort-first-alphabet-desc": "Sort Z to A",
+  "label_sort-first-new": "Newest first",
+  "label_sort-first-old": "Oldest first"
+}

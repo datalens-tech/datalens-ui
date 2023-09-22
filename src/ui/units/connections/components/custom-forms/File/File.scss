@@ -1,0 +1,252 @@
+@import '../../../../../styles/variables.scss';
+
+.conn-form-file {
+    --container-height-offset: #{$headerHeight} - #{$actionPanelHeight};
+    --settings-height: 69px;
+    --column-filter-height: 43px;
+
+    display: flex;
+    height: calc(100vh - var(--container-height-offset));
+
+    &_with-aside-header {
+        --container-height-offset: #{$actionPanelHeight};
+    }
+
+    &__add-file-button-wrap {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px 0;
+    }
+
+    &__add-file-button {
+        display: inline-flex;
+        margin-right: 5px;
+    }
+
+    &__add-file-button-content {
+        display: flex;
+        align-items: center;
+    }
+
+    &__add-file-button-icon {
+        margin-right: 8px;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        flex: 0 0 256px;
+        height: calc(100vh - var(--container-height-offset));
+        overflow-y: auto;
+        border-right: 1px solid var(--g-color-line-generic);
+        background-color: var(--g-color-base-generic-ultralight);
+    }
+
+    &__list-container {
+        padding-top: 12px;
+        max-height: calc(100% - 100px);
+        overflow: auto;
+
+        &_with-group-titles {
+            padding-top: 0;
+        }
+    }
+
+    &__list-title {
+        padding: 16px 16px 0;
+    }
+
+    &__list-group-title {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        padding: 12px 18px 8px;
+        font-weight: 500;
+
+        &_with-border {
+            border-top: 1px solid var(--g-color-line-generic);
+        }
+    }
+
+    &__list-item-wrap {
+        width: 100%;
+        cursor: pointer;
+    }
+
+    &__list-item {
+        display: flex;
+        width: 100%;
+        padding: 6px 16px;
+    }
+
+    &__list-item-icon {
+        position: relative;
+        top: 3px;
+        flex: 0 0 16px;
+        margin-right: 7px;
+    }
+
+    &__list-item-container {
+        width: calc(100% - 24px);
+    }
+
+    &__list-item-title {
+        display: flex;
+        line-height: 24px;
+    }
+
+    &__list-item-title-value {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    &__list-item-title-actions {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+    }
+
+    &__list-item-alert span {
+        display: flex;
+    }
+
+    &__list-item-alert-tooltip {
+        // TODO: this is an private api and may silently changed. We should use local styles
+        --yc-popover-max-width: none;
+    }
+
+    &__list-item-alert-tooltip-content div {
+        display: grid;
+        grid-template-columns: 1 100%;
+        row-gap: 20px;
+    }
+
+    &__list-item-alert-icon {
+        color: var(--g-color-text-danger);
+    }
+
+    &__list-item-description {
+        color: var(--g-color-text-secondary);
+    }
+
+    &__action-replace {
+        position: absolute;
+    }
+
+    &__workspace {
+        position: relative;
+        overflow-x: auto;
+        flex-grow: 1;
+    }
+
+    &__workspace-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: var(--g-color-text-hint);
+    }
+
+    &__workspace-file-loader {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translateX(-50%) translateY(-50%);
+    }
+
+    &__settings {
+        display: flex;
+        align-items: center;
+        column-gap: 8px;
+        height: var(--settings-height);
+        padding: 0 20px;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &__settings-label {
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    &__settings-select {
+        margin-right: 7px;
+    }
+
+    &__settings-error {
+        min-height: calc(100% - 112px);
+    }
+
+    &__column-filter {
+        display: flex;
+        align-items: center;
+        height: var(--column-filter-height);
+        padding-right: 20px;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &__column-filter-input {
+        width: 250px;
+        margin-left: auto;
+    }
+
+    &__type-select {
+        margin-right: 6px;
+    }
+
+    &__type-select-icon {
+        opacity: 0.5;
+
+        &_with-mr {
+            margin-right: 6px;
+        }
+    }
+
+    // the normal api for working with data-table styles has not yet been delivered
+    & .data-table {
+        height: calc(
+            100vh - var(--container-height-offset) - var(--settings-height) -
+                var(--column-filter-height)
+        );
+
+        &__table {
+            min-width: 100%;
+        }
+
+        &__head-cell {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        &__th {
+            border-top: none;
+        }
+
+        &__th,
+        &__td {
+            height: 38px;
+            vertical-align: middle;
+            border-left: none;
+            border-right: none;
+            border-color: var(--g-color-line-generic);
+
+            &:first-child {
+                padding-left: 20px;
+            }
+        }
+
+        &__td {
+            border-bottom: none;
+        }
+    }
+
+    &__workspace_standalone .data-table {
+        height: calc(100vh - var(--container-height-offset) - var(--column-filter-height));
+    }
+
+    & .yc-file-input__attach-label {
+        display: none;
+    }
+}

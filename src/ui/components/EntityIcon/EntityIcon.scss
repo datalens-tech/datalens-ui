@@ -1,0 +1,72 @@
+$entityIconClassName: '.entity-icon';
+
+#{$entityIconClassName} {
+    &__container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &_size_s {
+            height: 24px;
+            width: 24px;
+
+            #{$entityIconClassName}__color-box {
+                height: 18px;
+                width: 18px;
+            }
+        }
+
+        &_size_l {
+            width: 32px;
+            height: 32px;
+
+            #{$entityIconClassName}__color-box {
+                height: 22px;
+                width: 22px;
+            }
+        }
+
+        &_size_xl {
+            width: 36px;
+            height: 36px;
+
+            #{$entityIconClassName}__color-box {
+                height: 28px;
+                width: 28px;
+                border-radius: 6px;
+            }
+        }
+    }
+
+    &__color-box {
+        display: flex;
+        align-items: center;
+        border-radius: 4px;
+        justify-content: center;
+        color: var(--g-color-text-light-primary);
+
+        &_type_dataset {
+            background-color: var(--dl-color-entity-dataset);
+        }
+
+        &_type_chart-wizard {
+            background-color: var(--dl-color-entity-chart-wizard);
+        }
+
+        &_type_chart-ql {
+            background-color: var(--dl-color-entity-chart-ql);
+        }
+
+        &_type_editor {
+            background-color: var(--dl-color-entity-chart-editor);
+        }
+
+        &_type_dashboard {
+            background-color: var(--dl-color-entity-dashboard);
+        }
+
+        &_type_connection {
+            background-color: var(--dl-color-entity-connection);
+        }
+    }
+}

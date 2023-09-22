@@ -1,0 +1,9 @@
+{
+  "button_apply": "Сохранить",
+  "button_cancel": "Отменить",
+  "label_entry-name-already-exists": "Название уже используется, придумайте другое",
+  "label_placeholder": "Введите название",
+  "label_widget-name-default": "Новый чарт",
+  "section_caption": "Сохранить чарт",
+  "toast_save-widget-failed": "Не удалось сохранить чарт"
+}

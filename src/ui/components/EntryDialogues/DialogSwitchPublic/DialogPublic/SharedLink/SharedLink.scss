@@ -1,0 +1,23 @@
+.dl-dialog-public-shared-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &__input-place {
+        min-width: 280px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    &__input-link_active > input {
+        color: var(--g-color-text-complementary);
+    }
+
+    &__clipboard-button {
+        display: flex;
+        align-items: center;
+        margin-left: 16px;
+    }
+}

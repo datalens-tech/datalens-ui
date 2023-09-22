@@ -1,0 +1,111 @@
+@mixin with-text-overflow() {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.geolayers-select {
+    display: flex;
+    align-items: center;
+    height: 28px;
+    max-width: calc(100% - 40px); // 40px is the width of the plusButton of its margin
+    padding-left: 8px;
+    border: 1px solid var(--g-color-line-generic);
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.1s linear, background-color 0.1s linear;
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &:hover {
+        border-color: var(--g-color-line-generic);
+        background-color: var(--g-color-base-simple-hover);
+    }
+
+    &_active {
+        border-color: var(--g-color-line-generic-active);
+    }
+
+    &__label {
+        @include with-text-overflow();
+
+        display: inline-block;
+        flex: 1 1 auto;
+    }
+
+    &__arrow-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 30px;
+        height: 100%;
+    }
+
+    &__popup {
+        display: flex;
+        flex-direction: column;
+        padding: 4px 0;
+        max-height: 50vh;
+        max-width: 500px;
+        border-radius: 4px;
+        background-color: var(--g-color-base-background);
+        border-color: var(--g-color-line-generic);
+        box-shadow: 0 2px 4px 0 var(--g-color-sfx-shadow);
+        overflow: hidden;
+    }
+
+    &__popup-title {
+        display: flex;
+        align-items: center;
+        line-height: 28px;
+        padding-left: 16px;
+        color: var(--g-color-text-secondary);
+    }
+
+    &__popup-button-plus {
+        margin-left: 6px;
+    }
+
+    &__popup-item {
+        position: relative;
+        padding-left: 32px;
+        padding-right: 36px;
+        cursor: pointer;
+    }
+
+    &__popup-item-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin-right: 5px;
+    }
+
+    &__popup-item-label {
+        @include with-text-overflow();
+
+        flex: 1 1 auto;
+    }
+
+    &__button-dots-wrap {
+        display: none;
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    &__popup-item-content &__button-dots {
+        color: var(--g-color-text-secondary);
+    }
+
+    &__popup-item.yc-list__item_active &__button-dots-wrap {
+        display: block;
+    }
+
+    &__popup-item .yc-list__item-sort-icon {
+        margin-right: 10px;
+    }
+}

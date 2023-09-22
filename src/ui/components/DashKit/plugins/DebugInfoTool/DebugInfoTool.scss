@@ -1,0 +1,37 @@
+.debug-info-tool {
+    &__label {
+        background: var(--g-color-base-background);
+        border: 1px dotted var(--g-color-line-misc);
+        padding: 0 3px;
+        z-index: 1000;
+        display: inline-block;
+        width: fit-content;
+        position: absolute;
+        opacity: 0.4;
+        font-size: 10px;
+        border-radius: 3px;
+        line-height: 1;
+
+        &_outer {
+            margin-top: -11px;
+        }
+
+        &_corner {
+            top: 0;
+            left: 0;
+        }
+
+        &_right {
+            right: 0;
+        }
+    }
+
+    &__text + &__text {
+        margin-left: 10px;
+    }
+
+    // hover on the parent highlights the block with the debug
+    div:hover > &__label {
+        opacity: 1;
+    }
+}

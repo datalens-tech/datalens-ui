@@ -1,0 +1,7 @@
+{
+  "button_apply": "Применить",
+  "button_cancel": "Отменить",
+  "label_entry-name-already-exists": "Название уже используется, придумайте другое",
+  "section_caption": "Куда переместить?",
+  "toast_move-failed": "Не удалось переместить"
+}

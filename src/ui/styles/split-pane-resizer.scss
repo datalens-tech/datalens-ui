@@ -1,0 +1,41 @@
+.g-root {
+    .dl-resizer {
+        background: var(--g-color-line-generic);
+        z-index: 4;
+        box-sizing: border-box;
+        background-clip: padding-box;
+        flex-shrink: 0;
+        transition: border 0.15s linear;
+    }
+
+    .dl-resizer.horizontal {
+        height: 9px;
+        margin: -4px 0;
+        border-top: 4px solid transparent;
+        border-bottom: 4px solid transparent;
+        cursor: row-resize;
+        width: 100%;
+    }
+
+    .dl-resizer.horizontal:hover {
+        border-top: 4px solid var(--g-color-base-simple-hover);
+        border-bottom: 4px solid var(--g-color-base-simple-hover);
+    }
+
+    .dl-resizer.vertical {
+        width: 9px;
+        margin: 0 -4px;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        cursor: col-resize;
+    }
+
+    .dl-resizer.vertical:hover {
+        border-left: 4px solid var(--g-color-base-simple-hover);
+        border-right: 4px solid var(--g-color-base-simple-hover);
+    }
+
+    .dl-resizer.disabled {
+        display: none;
+    }
+}

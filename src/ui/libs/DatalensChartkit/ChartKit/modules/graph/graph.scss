@@ -1,0 +1,94 @@
+.chartkit-graph {
+    & .highcharts-plot-line-label,
+    .highcharts-plot-band-label {
+        fill: var(--highcharts-plot-line-label);
+    }
+
+    & .highcharts-plot-band_comment {
+        opacity: 0.5;
+    }
+}
+
+.chartkit-tooltip {
+    $class: &;
+
+    border: 1px solid var(--highcharts-grid-line);
+    border-radius: 3px;
+    background: var(--highcharts-tooltip-bg);
+    padding: 10px 14px;
+    color: var(--highcharts-tooltip-text);
+    font-size: 12px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+
+    &_split-tooltip {
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &_yandex-map {
+        position: absolute;
+    }
+
+    &__header {
+        white-space: nowrap;
+        font-size: 13px;
+        font-weight: 600;
+
+        & + #{$class}__row #{$class}__cell {
+            padding-top: 10px;
+        }
+    }
+
+    &__footer {
+        color: #aaaaaa;
+        font-size: 10px;
+
+        &:not(:only-child) {
+            margin-top: 8px;
+        }
+    }
+
+    &__row {
+        display: table-row;
+    }
+
+    &__cell {
+        display: table-cell;
+        padding: 2px 7px 2px 0;
+        max-width: 370px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        &_yandex-map {
+            white-space: nowrap;
+        }
+    }
+
+    &__color {
+        position: relative;
+        top: -1px;
+        width: 12px;
+        height: 6px;
+        margin-right: 3px;
+        border-radius: 1px;
+        display: inline-block;
+    }
+
+    &__series-name {
+        padding-right: 45px;
+    }
+
+    h3 {
+        // Tag h3 without any class occurs in the default toolbar layout for bubble-chart
+        margin: 0;
+    }
+
+    &__point-container_type_timeline {
+        max-width: 350px;
+        white-space: normal;
+        padding-top: 5px;
+    }
+}

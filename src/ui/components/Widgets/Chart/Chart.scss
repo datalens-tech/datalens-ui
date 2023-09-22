@@ -1,0 +1,319 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+@import '../../../libs/DatalensChartkit/ChartKit/theme';
+@import './../../../styles/mixins.scss';
+
+// z-index value that doesn't overlap the chartkit menu's popup
+$fullscreenZIndex: 999;
+
+.dl-widget {
+    --dl-dk-charts-padding: 0px;
+    --dl-dk-table-padding: 16px;
+    --dl-dk-metric-padding: 0px;
+    --dl-dk-map-padding: 0px;
+    --dl-dk-header-offset: 16px;
+    --dl-dk-charts-tabs-height: 44px;
+    --dl-dk-charts-desc-padding: 8px;
+    --dl-dk-metric-desc-padding: 8px;
+    --dl-dk-map-desc-padding: 8px;
+    --dl-dk-table-desc-padding: 16px;
+    @include yc-chartkit-theme-common;
+
+    $class: &;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    border-radius: 3px;
+    border: none;
+
+    &_fullscreen {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        z-index: $fullscreenZIndex;
+
+        #{$class}__tabs {
+            padding-left: 45px;
+            padding-right: 50px;
+        }
+    }
+
+    &_with-shares {
+        #{$class}__tabs {
+            padding-right: 80px;
+        }
+    }
+
+    &__back-icon {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+    }
+
+    &__share-widget {
+        position: absolute;
+        top: 13px;
+        right: 50px;
+    }
+
+    .gc-adaptive-tabs {
+        --gc-tabs-space-between: 14px;
+        --gc-tabs-height: 44px;
+        --gc-tabs-color-text-inactive: var(--g-color-text-primary);
+
+        @include dl-adaptive-tabs;
+    }
+
+    &__tabs {
+        display: flex;
+        padding: 0 65px 0 16px;
+        font-size: 15px;
+
+        &_edit-mode.dl-draggable-handle-element {
+            cursor: move;
+
+            .gc-adaptive-tabs__tab {
+                cursor: move;
+            }
+        }
+
+        // TODO: remove after https://github.com/gravity-ui/components/issues/26 will be resolved
+        .gc-adaptive-tabs__tabs-as-select-control {
+            #{$class}__tab {
+                opacity: 1;
+            }
+        }
+    }
+
+    &__tab {
+        display: inline-flex;
+        width: 100%;
+        margin: 0 15px 0 0;
+        color: inherit;
+        cursor: pointer;
+        opacity: 0.5;
+        position: relative;
+
+        &:hover,
+        &_active {
+            opacity: 1;
+        }
+    }
+
+    &__title {
+        color: var(--g-color-text-primary);
+        font-size: 15px;
+        height: 44px;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100%;
+        white-space: nowrap;
+        padding-left: 45px;
+        padding-right: 50px;
+        display: flex;
+        align-items: center;
+    }
+
+    &__description {
+        display: flex;
+        overflow: auto;
+        padding: 0 var(--dl-dk-charts-desc-padding) var(--dl-dk-charts-desc-padding);
+    }
+
+    &__author {
+        @include text-body-2();
+        color: var(--g-color-text-secondary);
+        padding: 0 var(--dl-dk-charts-desc-padding) var(--dl-dk-charts-desc-padding);
+        margin-left: auto;
+
+        .yc-link:not(:hover) {
+            color: var(--g-color-text-secondary);
+        }
+    }
+
+    .chartkit {
+        overflow: visible;
+        min-height: 40px;
+    }
+
+    &__container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1 1;
+        height: 100%;
+        width: 100%;
+    }
+
+    &__chart-header {
+        z-index: 2;
+        position: absolute;
+        top: -4px;
+        right: 3px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: absolute;
+        width: 100%;
+        top: 0;
+
+        &_hidden {
+            opacity: 0;
+            z-index: -1;
+        }
+    }
+
+    &__description {
+        display: flex;
+        align-items: center;
+        overflow: auto;
+        padding: 0 var(--dl-dk-charts-desc-padding) var(--dl-dk-charts-desc-padding);
+    }
+
+    &__body_metric2 + &__description {
+        padding: 0 var(--dl-dk-metric-desc-padding) var(--dl-dk-metric-desc-padding);
+    }
+
+    &__body_ymap + &__description {
+        padding: 0 var(--dl-dk-map-desc-padding) var(--dl-dk-map-desc-padding);
+    }
+
+    &__body_table + &__description {
+        padding: 0 var(--dl-dk-table-desc-padding) var(--dl-dk-table-desc-padding);
+    }
+
+    // block below up to no_tabs: with tabs, maps and metrics
+    & .chartkit-loader__loader_compact {
+        right: 0;
+        top: 0;
+    }
+
+    // for widgets-metrics indentation should be different
+    #{$class}__body {
+        padding: 0 var(--dl-dk-charts-padding) var(--dl-dk-charts-padding);
+
+        // with tabs, not maps and not metrics
+
+        & .chartkit-base__header {
+            right: calc(-1 * var(--dl-dk-charts-padding) + var(--dl-dk-header-offset));
+            top: calc(-1 * var(--dl-dk-charts-tabs-height) + var(--dl-dk-header-offset));
+        }
+
+        & .chartkit-loader__loader_compact {
+            right: calc(-1 * var(--dl-dk-charts-padding));
+            top: -44px;
+        }
+    }
+
+    #{$class}__body_table {
+        .chartkit-base__header {
+            right: calc(-1 * var(--dl-dk-table-padding) + var(--dl-dk-header-offset));
+        }
+    }
+
+    #{$class}__body_metric2 {
+        padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
+
+        .chartkit-base__header {
+            right: calc(-1 * var(--dl-dk-metric-padding) + var(--dl-dk-header-offset));
+        }
+    }
+
+    #{$class}__body_ymap {
+        padding: 0;
+
+        .chartkit-base__header {
+            right: calc(-1 * var(--dl-dk-map-padding) + var(--dl-dk-header-offset));
+        }
+    }
+
+    & .chartkit-error {
+        padding: 16px;
+    }
+
+    & .chartkit {
+        --highcharts-series-border: var(--g-color-base-float);
+    }
+
+    &_no-tabs {
+        // block below: without tabs, maps and metrics
+
+        .chartkit-loader__loader_compact {
+            top: -2px;
+        }
+
+        // no tabs, no maps, no metrics
+
+        #{$class}__container {
+            padding-top: var(--dl-dk-charts-padding);
+
+            .chartkit-loader__loader_compact {
+                top: calc(-1 * var(--dl-dk-charts-padding));
+            }
+
+            #{$class}__chart-header {
+                top: calc(-1 * var(--dl-dk-charts-padding) + var(--dl-dk-header-offset));
+            }
+        }
+
+        #{$class}__container_table {
+            padding-top: var(--dl-dk-table-padding);
+
+            #{$class}__chart-header {
+                top: calc(-1 * var(--dl-dk-table-padding) + var(--dl-dk-header-offset));
+            }
+        }
+
+        #{$class}__container_metric2 {
+            padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
+
+            #{$class}__chart-header {
+                top: calc(-1 * var(--dl-dk-metric-padding) + var(--dl-dk-header-offset));
+            }
+        }
+
+        #{$class}__container_ymap {
+            padding: 0;
+
+            #{$class}__chart-header {
+                top: calc(-1 * var(--dl-dk-map-padding) + var(--dl-dk-header-offset));
+            }
+        }
+    }
+
+    &__header_mobile {
+        #{$class}__title,
+        #{$class}__tabs {
+            @include text-subheader-3();
+        }
+    }
+
+    // Temporarily redefine styles and use similar with production (until designers process the ellipsis in CHARTS-5432)
+    &__container &__chart-header {
+        top: -4px;
+        right: 3px;
+    }
+    & .chartkit-loader__loader_compact {
+        top: -35px;
+        right: 35px;
+    }
+    &__container_table .chartkit-loader__loader_compact {
+        top: -46px;
+        right: 12px;
+    }
+}

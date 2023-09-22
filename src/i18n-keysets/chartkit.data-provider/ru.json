@@ -1,0 +1,21 @@
+{
+  "categories": "Категории",
+  "date": "Дата",
+  "error-authorization": "Ошибка авторизации",
+  "error-chyt-table-access": "Нет доступа к таблице в YT",
+  "error-data-fetching": "Ошибка загрузки данных",
+  "error-execution": "Ошибка выполнения чарта",
+  "error-network": "Ошибка сети",
+  "error-no-view-rights": "Нет прав на просмотр",
+  "error-not-found": "Чарт не найден",
+  "error-not-loaded": "Не удалось загрузить чарт",
+  "error-oversize-segments": "Максимально доступное количество сплитов — {{maxNumber}}",
+  "error-oversize-table": "Превышено максимальное количество {{type}}",
+  "error-oversize_cells": "ячеек",
+  "error-oversize_columns": "столбцов",
+  "error-processing": "Ошибка обработки чарта",
+  "error-runtime-timeout": "Превышено время обработки ответа",
+  "error-secrets-access": "Чарт с секретом недоступен для записи",
+  "error-too-many-rows": "Превышено рекомендуемое число рядов",
+  "error-unsupported-type": "Неподдерживаемый тип чарта"
+}

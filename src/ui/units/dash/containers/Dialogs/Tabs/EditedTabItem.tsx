@@ -1,0 +1,37 @@
+import React from 'react';
+
+import {TextInput} from '@gravity-ui/uikit';
+
+type EditTabItemProps = {
+    onCommit: (test: string) => void;
+    id: string;
+    title: string;
+    className?: string;
+};
+
+function EditedTabItem({onCommit, id, title, className}: EditTabItemProps) {
+    const [text, setText] = React.useState(title);
+
+    return (
+        <div className={className} key={id}>
+            <TextInput
+                size="l"
+                autoFocus
+                value={text}
+                onUpdate={(newText) => {
+                    setText(newText);
+                }}
+                onKeyDown={(event) => {
+                    if (event.keyCode === 36 || event.keyCode === 35) {
+                        // Home || End
+                        event.stopPropagation();
+                    }
+                }}
+                onBlur={() => onCommit(text)}
+                onKeyPress={(event) => event.charCode === 13 && onCommit(text)}
+            />
+        </div>
+    );
+}
+
+export default EditedTabItem;

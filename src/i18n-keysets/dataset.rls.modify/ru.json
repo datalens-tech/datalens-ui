@@ -1,0 +1,6 @@
+{
+  "button_cancel": "Отменить",
+  "button_save": "Сохранить",
+  "field_placeholder-row-level-security": "Формат записи: 'Значение поля': логин1, логин2, etc.",
+  "label_row-level-security": "Настройка прав доступа для поля"
+}

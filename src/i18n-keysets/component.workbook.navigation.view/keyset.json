@@ -1,0 +1,20 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_no-data": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_placeholder-filter-by-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

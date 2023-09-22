@@ -1,0 +1,48 @@
+@import '../../../../styles/mixins';
+@import '../../../../styles/variables';
+
+.dash-action-panel {
+    $padding: 8px 24px;
+    $paddingMailing: 8px 16px;
+    $height: 56px;
+
+    width: 100%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+
+    border-top: var(--dl-dash-action-panel-border-top-width) solid
+        var(--dl-dash-action-panel-border-color);
+    border-right: var(--dl-dash-action-panel-border-right-width) solid
+        var(--dl-dash-action-panel-border-color);
+    border-left: var(--dl-dash-action-panel-border-left-width) solid
+        var(--dl-dash-action-panel-border-color);
+    border-bottom: var(--dl-dash-action-panel-border-bottom-width) solid
+        var(--dl-dash-action-panel-border-color);
+
+    &__menu-item-icon {
+        margin-right: $menuIconMarginRight;
+    }
+
+    &__button-cancel {
+        margin-right: 8px;
+    }
+
+    &__controls {
+        flex-shrink: 0;
+        display: grid;
+        grid-auto-flow: column;
+        grid-column-gap: 8px;
+        align-items: center;
+    }
+
+    &__buttons-save-wrapper {
+        display: flex;
+    }
+
+    &__button-save {
+        margin-right: 4px;
+    }
+
+    @include revision-panel-fix;
+}

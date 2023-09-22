@@ -1,0 +1,16 @@
+{
+  "button_add": "Add",
+  "button_apply": "Apply filter",
+  "button_cancel": "Cancel",
+  "button_left-column-action": "Select all",
+  "button_right-column-action": "Clear",
+  "label_filter-placeholder": "Search",
+  "label_header-title": "Select a field",
+  "label_load-limit-reached-warn": "The first 1000 values are shown. Refine your search using the Search field.",
+  "label_operation": "Operation",
+  "label_select-column-left-item-desc": "Select",
+  "label_select-column-left-title": "Available",
+  "label_select-column-right-item-desc": "Delete",
+  "label_select-column-right-title": "Selected",
+  "label_value": "Value"
+}

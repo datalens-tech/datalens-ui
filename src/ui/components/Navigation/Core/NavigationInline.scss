@@ -1,0 +1,37 @@
+.dl-core-navigation {
+    $_: &;
+
+    &_inline {
+        flex: 1 1 100%;
+        overflow: hidden;
+        display: flex;
+
+        #{$_}__entries {
+            padding-top: 16px;
+        }
+
+        #{$_}__search {
+            max-width: 400px;
+        }
+
+        #{$_}__header {
+            box-shadow: inset 0 -1px 0 0 var(--g-color-line-generic);
+            flex-basis: 56px;
+
+            &_with-cloud-tree-select {
+                flex-basis: 40px;
+            }
+        }
+    }
+
+    &__header {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        padding: 0 20px 0 12px;
+    }
+
+    .dl-core-navigation-create-dropdown {
+        margin-left: auto;
+    }
+}

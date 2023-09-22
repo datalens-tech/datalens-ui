@@ -1,0 +1,51 @@
+// for mobile, and overscroll
+
+body.g-root.dl-dash {
+    background-color: var(--g-color-base-generic-ultralight);
+}
+
+// to prevent YCSelect elements overflows boundaries on mobile
+
+//.yc-select-popup,
+//.yc-select-search {
+//    max-width: 90vw;
+//}
+
+// temporary workaround for contrast themes
+// DATAUI-1287
+
+body.g-root.g-root_theme_dark-hc {
+    .dash-body__entry-name {
+        background-color: var(--g-color-base-background);
+    }
+    .dash-action-panel__entry-name {
+        background-color: var(--g-color-base-background);
+    }
+    .dash-body__content,
+    .dash-body__content-container {
+        background-color: var(--g-color-base-background);
+    }
+    .expandable-panel__header,
+    .expandable-panel__content,
+    .expandable-panel__shadow-putty::before,
+    .revisions-list__label {
+        background-color: var(--g-color-base-float);
+    }
+    .expandable-panel__header,
+    .expandable-panel__content {
+        box-shadow: 0 1px 5px rgb(0 0 0 / 50%);
+    }
+}
+
+body.g-root.yc-root_theme_dark-hc:not(.yc-root_mobile):not(.g-root_native-scrollbar),
+body.g-root.yc-root_theme_dark-hc:not(.yc-root_mobile):not(.yc-root_native-scrollbar),
+body.g-root.yc-root_theme_dark-hc:not(.g-root_mobile):not(.g-root_native-scrollbar),
+body.g-root.yc-root_theme_dark-hc:not(.g-root_mobile):not(.yc-root_native-scrollbar),
+body.g-root.yc-root_theme_dark-hc:not(.yc-root_mobile):not(.yc-root_native-scrollbar) {
+    .expandable-panel__content {
+        &::-webkit-scrollbar-track,
+        *::-webkit-scrollbar-track {
+            background: var(--g-color-base-float);
+        }
+    }
+}

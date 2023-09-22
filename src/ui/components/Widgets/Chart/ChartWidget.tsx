@@ -1,0 +1,442 @@
+import {DL} from 'constants/common';
+
+import React from 'react';
+
+import {pickActionParamsFromParams, pickExceptActionParamsFromParams} from '@gravity-ui/dashkit';
+import block from 'bem-cn-lite';
+import {usePrevious} from 'hooks';
+import isEqual from 'lodash/isEqual';
+import omit from 'lodash/omit';
+import pick from 'lodash/pick';
+import {useSelector} from 'react-redux';
+import {StringParams} from 'shared';
+
+import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
+import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
+import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
+import {selectSkipReload} from '../../../units/dash/store/selectors/dashTypedSelectors';
+import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
+import {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
+
+import {Content} from './components/Content';
+import {WidgetFooter} from './components/WidgetFooter';
+import {WidgetHeader} from './components/WidgetHeader';
+import {COMPONENT_CLASSNAME, getTabIndex, removeEmptyProperties} from './helpers/helpers';
+import {useLoadingChartWidget} from './hooks/useLoadingChartWidget';
+import {
+    ChartWidgetData,
+    ChartWidgetProps,
+    ChartWidgetPropsWithContext,
+    CurrentRequestState,
+    DataProps,
+} from './types';
+
+import './ChartWidget.scss';
+
+const b = block(COMPONENT_CLASSNAME);
+
+/**
+ * changing any fields in list triggers loading widget chart data (by api/run)
+ */
+const influencingProps: Array<keyof ChartWidgetPropsWithContext> = [
+    'dataProvider',
+    'id',
+    'source',
+    'params',
+    'config',
+];
+
+/**
+ * Component used only on dashboard for charts rendering with extra dash widget logic
+ * @param props
+ * @constructor
+ */
+export const ChartWidget = (props: ChartWidgetProps) => {
+    const {
+        data,
+        state,
+        dataProvider,
+        forwardedRef,
+        noControls,
+        nonBodyScroll,
+        transformLoadedData,
+        splitTooltip,
+        compactLoader,
+        loaderDelay,
+        id: widgetId,
+        editMode,
+        context,
+        config,
+        usageType,
+    } = props;
+
+    const skipReload = useSelector(selectSkipReload);
+
+    const tabs = data.tabs as WidgetPluginDataWithTabs['tabs'];
+    const tabIndex = React.useMemo(() => getTabIndex(tabs, state.tabId), [tabs, state.tabId]);
+    const currentTab = React.useMemo(() => tabs[tabIndex], [tabs, tabIndex]);
+    const initName = React.useMemo(() => currentTab.title, [currentTab]);
+    const {chartId, enableActionParams} = currentTab;
+
+    const chartkitParams = React.useMemo(() => {
+        let res = removeEmptyProperties(props.params);
+        if (!enableActionParams) {
+            res = pickExceptActionParamsFromParams(res);
+        }
+        return res;
+    }, [props.params]);
+
+    const prevTabIndex = usePrevious(tabIndex);
+    const hasChartTabChanged = prevTabIndex !== undefined && prevTabIndex !== tabIndex;
+
+    const prevCurrentTabDefaults = usePrevious(currentTab.params);
+    const hasCurrentTabDefaultsChanged =
+        prevCurrentTabDefaults && !isEqual(currentTab.params, prevCurrentTabDefaults);
+
+    const prevHideTitle = usePrevious(data.hideTitle);
+    const hasHideTitleChanged =
+        prevHideTitle !== undefined && !isEqual(data.hideTitle, prevHideTitle);
+
+    const initialData: DataProps = React.useMemo(
+        () =>
+            getDataProviderData({
+                id: chartId,
+                config,
+                params: chartkitParams,
+            }),
+        [chartId, chartkitParams, config, hasChartTabChanged],
+    );
+
+    const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);
+    const prevSavedProps = usePrevious(savedForFetchProps);
+
+    const prevSavedChartId = usePrevious(chartId);
+
+    const usedParamsRef = React.useRef<DataProps['params'] | null>(null);
+    const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
+    const prevInnerParams = usePrevious(innerParamsRef?.current);
+
+    const hasChangedOuterProps =
+        !prevSavedProps ||
+        !isEqual(omit(prevSavedProps, 'params'), omit(pick(props, influencingProps), 'params')) ||
+        Boolean(prevSavedChartId && prevSavedChartId !== chartId);
+
+    let hasChangedActionParams = false;
+
+    const hasChangedOuterParams = React.useMemo(() => {
+        let changedParams = !prevSavedProps || !isEqual(prevSavedProps.params, props.params);
+
+        /* to do after usedParams has fixed CHARTS-6619
+        const prevActionedParams = getParamsNamesFromActionParams(prevSavedProps?.params || {});
+        const currentActionedParams = getParamsNamesFromActionParams(props.params || {});
+        const prevParamsFilteredByUsed = null;
+        const currentParamsFilteredByUsed = null;
+        const prevActionedParamsFilteredByUsed = null;
+        const currentActionedParamsFilteredByUsed = null;
+
+        if (usedParamsRef?.current) {
+            const keys = Object.keys(usedParamsRef.current || {});
+            changedParams =
+                !prevSavedProps ||
+                !isEqual(pick(prevSavedProps.params, keys), pick(props.params, keys));
+
+            ///    start new with usedParams
+            const usedParamsKeys = Object.keys(usedParamsRef.current || {});
+            prevParamsFilteredByUsed = pick(prevSavedProps?.params || {}, usedParamsKeys);
+            currentParamsFilteredByUsed = pick(props.params, usedParamsKeys);
+
+            prevActionedParamsFilteredByUsed = pick(prevActionedParams, usedParamsKeys);
+            currentActionedParamsFilteredByUsed = pick(currentActionedParams, usedParamsKeys);
+
+            const isParamsEqual = isEqual(prevParamsFilteredByUsed, currentParamsFilteredByUsed);
+            const isActionParamsEqual = isEqual(
+                prevActionedParamsFilteredByUsed,
+                currentActionedParamsFilteredByUsed,
+            );
+
+            changedParams = !prevSavedProps || !isParamsEqual || !isActionParamsEqual;
+            /// end new with usedParams
+        }
+        */
+        let isOuterAndInnerParamsEqual = false;
+        let isOuterAndInnerActionParamsEqual = true;
+        if (changedParams && innerParamsRef?.current) {
+            const innerFullParams = innerParamsRef?.current;
+            const outerFullParams = props.params;
+
+            isOuterAndInnerParamsEqual = isEqual(innerFullParams, outerFullParams);
+
+            const innerActionParams = pickActionParamsFromParams(innerFullParams, true);
+            const outerActionParams = pickActionParamsFromParams(outerFullParams, true);
+
+            isOuterAndInnerActionParamsEqual = isEqual(innerActionParams, outerActionParams);
+            if (!isOuterAndInnerActionParamsEqual) {
+                hasChangedActionParams = true;
+            }
+
+            // to do after usedParams has fixed CHARTS-6619
+            /*if (currentParamsFilteredByUsed !== null) {
+                const filteredInnerParamsByUsed = pick(
+                    innerParamsRef.current,
+                    Object.keys(currentParamsFilteredByUsed),
+                );
+
+                isOuterAndInnerParamsEqual = isEqual(
+                    filteredInnerParamsByUsed,
+                    currentParamsFilteredByUsed,
+                );
+
+                if (currentActionedParamsFilteredByUsed !== null && isOuterAndInnerParamsEqual) {
+                    const filteredInnerActionParams = getParamsNamesFromActionParams(
+                        innerParamsRef.current || {},
+                    );
+                    const filteredInnerActionParamsByUsed = pick(
+                        filteredInnerActionParams,
+                        Object.keys(currentParamsFilteredByUsed),
+                    );
+
+                    isOuterAndInnerParamsEqual = isEqual(
+                        filteredInnerActionParamsByUsed,
+                        currentActionedParamsFilteredByUsed,
+                    );
+                }
+            }*/
+        }
+
+        if (isOuterAndInnerParamsEqual && isOuterAndInnerActionParamsEqual) {
+            changedParams = false;
+        }
+
+        return changedParams;
+    }, [prevSavedProps?.params, props.params, usedParamsRef, innerParamsRef]);
+
+    const hasChangedInnerParamsFromInside = React.useMemo(() => {
+        return prevInnerParams && !isEqual(innerParamsRef?.current, prevInnerParams);
+    }, [prevInnerParams, innerParamsRef?.current]);
+
+    /**
+     * for correct cancellation on rerender & changed request params & data props
+     */
+    const requestId = React.useMemo(
+        () => settings.requestIdGenerator(DL.REQUEST_ID_PREFIX),
+        [
+            hasChangedOuterParams,
+            hasChangedOuterProps,
+            hasChangedActionParams,
+            hasChartTabChanged,
+            hasChangedInnerParamsFromInside,
+        ],
+    );
+
+    /**
+     * for correct cancellation on rerender & changed request params & data props
+     */
+    const requestCancellationRef = React.useRef<CurrentRequestState>({
+        [requestId]: {
+            requestCancellation: dataProvider.getRequestCancellation(),
+            status: 'unset',
+        },
+    });
+
+    /**
+     * for correct cancellation on rerender & changed request params & data props
+     */
+    React.useEffect(() => {
+        requestCancellationRef.current[requestId] = {
+            requestCancellation: dataProvider.getRequestCancellation(),
+            status: 'unset',
+        };
+    }, [requestCancellationRef, dataProvider, requestId]);
+
+    const rootNodeRef = React.useRef<HTMLDivElement>(null);
+    const chartKitRef = React.createRef<ChartKit>(); // ref is forwarded to ChartKit
+    const widgetDataRef = React.useRef<ChartWidgetData>(null);
+    const widgetRenderTimeRef = React.useRef<number | null>(null);
+
+    const [initialParams, setInitialParams] = React.useState<StringParams>({});
+
+    const {
+        loadedData,
+        error,
+        handleRenderChart,
+        mods,
+        widgetBodyClassName,
+        hasHiddenClassMod,
+        veil,
+        showLoader,
+        isFullscreen,
+        description,
+        hideTabs,
+        withShareWidget,
+        handleToggleFullscreenMode,
+        handleSelectTab,
+        handleGetWidgetMeta,
+        handleChartkitReflow,
+        handleChange,
+        handleError,
+        handleRetry,
+        loadChartData,
+        setLoadingProps,
+        loadControls,
+        drillDownFilters,
+        drillDownLevel,
+        widgetType,
+        yandexMapAPIWaiting,
+        isLoading,
+        showOverlayWithControlsOnEdit,
+        isWidgetMenuDataChanged,
+        dataProps,
+        noControls: urlNoControls,
+    } = useLoadingChartWidget({
+        ...props,
+        chartKitRef,
+        rootNodeRef,
+        initialData,
+        requestId,
+        requestCancellationRef,
+        hasChangedOuterProps,
+        hasChangedOuterParams,
+        hasChartTabChanged,
+        hasChangedActionParams,
+        hasHideTitleChanged,
+        tabIndex,
+        tabs,
+        widgetId,
+        currentTab,
+        usedParamsRef,
+        innerParamsRef,
+        widgetDataRef,
+        widgetRenderTimeRef,
+        usageType,
+        enableActionParams,
+    });
+
+    /**
+     * Set initialParams on load chart defaults or when chart tab default params changed
+     */
+    React.useEffect(() => {
+        if (!hasCurrentTabDefaultsChanged && !loadedData) {
+            return;
+        }
+        setInitialParams({...loadedData?.defaultParams, ...currentTab.params});
+    }, [hasCurrentTabDefaultsChanged, currentTab.params, loadedData?.defaultParams]);
+
+    const adaptiveTabsItems = React.useMemo(
+        () =>
+            tabs.map((item: CurrentTab) => ({
+                id: item.id,
+                title: item.title.trim() || '\u2014',
+                disabled: Boolean(isLoading),
+            })),
+        [tabs, isLoading],
+    );
+
+    React.useImperativeHandle<unknown, unknown>(
+        forwardedRef,
+        () => ({
+            props,
+            reflow: handleChartkitReflow,
+            reload: (arg: {silentLoading?: boolean; noVeil?: boolean}) => {
+                if (skipReload) {
+                    return;
+                }
+                setLoadingProps(arg);
+                loadChartData();
+            },
+            getMeta: () => new Promise((resolve) => handleGetWidgetMeta(resolve)),
+            getCurrentTabChartId: () => chartId || '',
+        }),
+        [
+            forwardedRef,
+            handleChartkitReflow,
+            handleGetWidgetMeta,
+            skipReload,
+            loadChartData,
+            setLoadingProps,
+            chartId,
+            loadedData, // loadedData in deps for meta actual data
+        ],
+    );
+
+    const menuChartkitConfig = React.useMemo(
+        () => ({
+            config: {
+                canEdit: context.canEdit,
+            },
+            chartsDataProvider: dataProvider,
+        }),
+        [context.canEdit, editMode, context.entryDialoguesRef, initName],
+    );
+
+    return (
+        <div
+            ref={rootNodeRef}
+            className={`${b(mods)}`}
+            data-qa="chart-widget"
+            data-qa-mod={isFullscreen ? 'fullscreen' : ''}
+        >
+            <DebugInfoTool
+                data={[
+                    {label: 'widgetId', value: widgetId},
+                    {label: 'tabId', value: currentTab.id},
+                    {label: 'chartId', value: chartId},
+                ]}
+            />
+            <WidgetHeader
+                isFullscreen={isFullscreen}
+                onFullscreenClick={handleToggleFullscreenMode}
+                editMode={editMode}
+                hideTabs={hideTabs}
+                withShareWidget={withShareWidget}
+                tabsItems={adaptiveTabsItems}
+                currentTab={currentTab}
+                onSelectTab={handleSelectTab}
+                widgetId={widgetId}
+                hideDebugTool={true}
+            />
+            <Content
+                initialParams={initialParams}
+                dataProps={dataProps}
+                dataProvider={dataProvider}
+                showLoader={showLoader}
+                onFullscreenClick={handleToggleFullscreenMode}
+                showOverlayWithControlsOnEdit={showOverlayWithControlsOnEdit}
+                compactLoader={compactLoader}
+                veil={veil}
+                loaderDelay={loaderDelay}
+                widgetBodyClassName={widgetBodyClassName}
+                hasHiddenClassMod={hasHiddenClassMod}
+                chartId={chartId}
+                noControls={noControls || urlNoControls}
+                transformLoadedData={transformLoadedData}
+                splitTooltip={splitTooltip || isFullscreen}
+                nonBodyScroll={nonBodyScroll}
+                requestId={requestId}
+                error={error}
+                onRender={handleRenderChart}
+                onChange={handleChange}
+                onRetry={handleRetry}
+                onError={handleError}
+                loadedData={loadedData}
+                forwardedRef={chartKitRef}
+                getControls={loadControls}
+                drillDownFilters={drillDownFilters}
+                drillDownLevel={drillDownLevel}
+                widgetType={widgetType}
+                menuType="dash"
+                menuChartkitConfig={menuChartkitConfig}
+                widgetDataRef={widgetDataRef}
+                widgetRenderTimeRef={widgetRenderTimeRef}
+                yandexMapAPIWaiting={yandexMapAPIWaiting}
+                isWidgetMenuDataChanged={isWidgetMenuDataChanged}
+            />
+            {Boolean(description || loadedData?.publicAuthor) && (
+                <WidgetFooter
+                    isFullscreen={Boolean(isFullscreen)}
+                    description={description || ''}
+                    author={loadedData?.publicAuthor}
+                />
+            )}
+        </div>
+    );
+};

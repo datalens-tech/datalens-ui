@@ -1,0 +1,168 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_absolute-date": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_end-control-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_include-current-day": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_invalid-date": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_invalid-range": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-0_days": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-0_days-range": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-13_days": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-13_days-range": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-179_days": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-179_days-range": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-1_days": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-1_days-range": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-27_days": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-27_days-range": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-2_days": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-2_days-range": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-364_days": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-364_days-range": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-6_days": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-6_days-range": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-89_days": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_preset-last_-89_days-range": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_relative-date": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scale-M": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scale-Q": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scale-d": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scale-h": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scale-m": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scale-ms": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scale-s": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scale-w": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_scale-y": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_sign+": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_sign-": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_single-control-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_start-control-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_tooltip-utc": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

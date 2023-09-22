@@ -1,0 +1,12 @@
+{
+  "label_filter-string-placeholder": "Search by name",
+  "label_sort-first-alphabet-asc": "Sort A to Z",
+  "label_sort-first-alphabet-desc": "Sort Z to A",
+  "label_sort-first-new": "Newest first",
+  "label_sort-first-old": "Oldest first",
+  "switch_filter-by-scope-all": "All objects",
+  "switch_filter-by-scope-connection": "Connections",
+  "switch_filter-by-scope-dash": "Dashboards",
+  "switch_filter-by-scope-dataset": "Datasets",
+  "switch_filter-by-scope-widget": "Charts"
+}

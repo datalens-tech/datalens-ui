@@ -1,0 +1,45 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.preview-container {
+    height: 100%;
+
+    .dropdown-menu__list {
+        width: 150px;
+        margin-left: -30px;
+    }
+
+    .preview-chartkit {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        height: 100%;
+        padding: 20px;
+        background: var(--g-color-base-background);
+
+        .chartkit {
+            height: calc(100%);
+        }
+    }
+}
+
+.fullscreen-mode {
+    .preview-actions-container {
+        display: none;
+    }
+}
+
+.dataset-error-container {
+    position: relative;
+
+    span {
+        display: block;
+        font-size: 15px;
+        margin-top: 20px;
+    }
+}
+
+.dataset-stub-container {
+    @include text-body-1;
+    color: var(--g-color-text-secondary);
+}

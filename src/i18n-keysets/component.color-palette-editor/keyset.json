@@ -1,0 +1,108 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_apply": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_close": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_delete-cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_delete-confirm": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_delete-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_add-color": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_add-color-disabled": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_add-palette": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_bars-custom-color-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_default-palette": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-message": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-palette": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_edit-palette": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_gradient-palette-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_gradient-palette-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_header-caption": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_palette-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_palette-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_palette-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_create-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_delete-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_update-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

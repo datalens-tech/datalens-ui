@@ -1,0 +1,21 @@
+.column-width-setting {
+    &__container {
+        display: flex;
+        align-items: center;
+    }
+
+    &__input {
+        width: 80px;
+        margin-left: 8px;
+
+        .yc-text-input {
+            position: static;
+
+            &__error {
+                margin-left: -15px;
+                width: 120px;
+                position: absolute;
+            }
+        }
+    }
+}

@@ -1,0 +1,42 @@
+.palette-color-control {
+    position: relative;
+    margin-bottom: 5px;
+
+    &__color-control-wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+    & &__color-control-button {
+        width: 24px;
+        height: 24px;
+        margin-right: 5px;
+
+        &.palette-item:hover::before {
+            content: none;
+        }
+    }
+
+    &__color-control-input {
+        width: 108px;
+    }
+
+    .yc-text-input {
+        position: static;
+
+        &__error {
+            position: absolute;
+        }
+    }
+
+    &__palette {
+        z-index: 2;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px 0 var(--g-color-sfx-shadow);
+        position: absolute;
+        top: 0;
+        left: 28px;
+        background-color: var(--g-color-base-background);
+        padding: 16px;
+    }
+}

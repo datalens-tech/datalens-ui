@@ -1,0 +1,84 @@
+import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
+
+import {ServerPlaceholder} from '../../../../../../../../../shared';
+import {applyPlaceholderSettingsToAxis} from '../../../../utils/axis-helpers';
+import {getAxisFormattingByField} from '../axis/getAxisFormattingByField';
+
+import {SegmentsMap} from './types';
+
+const DEFAULT_SPACE_BETWEEN_SEGMENTS = 4;
+
+export const getSegmentsYAxis = (
+    segmentsMap: SegmentsMap,
+    placeholders: {y: ServerPlaceholder; y2: ServerPlaceholder},
+    visualizationId: string,
+): {yAxisSettings: Highcharts.AxisOptions[]; yAxisFormattings: any[]} => {
+    const segments = Object.keys(segmentsMap);
+
+    const segmentsNumber = segments.filter(
+        (segmentKey) => !segmentsMap[segmentKey].isOpposite,
+    ).length;
+    const takenSpaceBetweenSegments = DEFAULT_SPACE_BETWEEN_SEGMENTS * (segmentsNumber - 1);
+    const freeSpaceForSegments = 100 - takenSpaceBetweenSegments;
+    const segmentsSpace = Math.floor(freeSpaceForSegments / segmentsNumber);
+
+    let leftAxisSegment = -1;
+    let rightAxisSegment = -1;
+
+    const yAxis = new Array(segments.length);
+    const yAxisFormattings = new Array(segments.length);
+
+    segments.forEach((segmentKey: string) => {
+        const segment = segmentsMap[segmentKey];
+
+        const isY2Axis = segment.isOpposite;
+
+        const yAxisIndex = segment.index;
+
+        let segmentIndex;
+
+        if (isY2Axis) {
+            rightAxisSegment += 1;
+            segmentIndex = rightAxisSegment;
+        } else {
+            leftAxisSegment += 1;
+            segmentIndex = leftAxisSegment;
+        }
+
+        const axis: Highcharts.AxisOptions = {
+            top: `${DEFAULT_SPACE_BETWEEN_SEGMENTS * segmentIndex + segmentsSpace * segmentIndex}%`,
+            height: `${segmentsSpace}%`,
+            offset: 0,
+            lineWidth: 1,
+            gridLineWidth: 1,
+            opposite: isY2Axis,
+            title: isY2Axis
+                ? undefined
+                : {
+                      text: segment.title,
+                      align: 'middle',
+                      textAlign: 'center',
+                      offset: 120,
+                      rotation: 0,
+                      style: {
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis',
+                          fontSize: '14px',
+                          fontWeight: 'bold',
+                          width: 120,
+                      },
+                  },
+        };
+
+        const placeholder = isY2Axis ? placeholders.y2 : placeholders.y;
+
+        applyPlaceholderSettingsToAxis(placeholder, axis, {title: true});
+
+        yAxis[yAxisIndex] = axis;
+        if (placeholder && placeholder.settings?.axisFormatMode === 'by-field') {
+            yAxisFormattings[yAxisIndex] = getAxisFormattingByField(placeholder, visualizationId);
+        }
+    });
+
+    return {yAxisSettings: yAxis, yAxisFormattings};
+};

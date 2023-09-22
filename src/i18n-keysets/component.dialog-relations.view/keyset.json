@@ -1,0 +1,112 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_apply": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_disconnect": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_incoming": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_not-linked": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_outcoming": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_both": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_by-field": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_by-fields": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_ignore": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_input": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-connections": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-widget-info": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_output": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_placeholder-search": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_relation-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unknown": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_widget": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_links": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_link-affect": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_link-both": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_link-ignore": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_link-unknown": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_quote-left": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_quote-right": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

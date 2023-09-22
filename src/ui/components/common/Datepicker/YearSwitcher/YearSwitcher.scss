@@ -1,0 +1,45 @@
+@import '../../styles/mixins';
+
+.yc-datepicker-year-switcher {
+    @include text-subheader-2;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 32px;
+    border-radius: 20px;
+    color: var(--g-color-text-secondary);
+    background-color: var(--g-color-base-background);
+    box-shadow: 0 2px 4px 0 var(--g-color-sfx-shadow-heavy);
+    opacity: 0.9;
+    z-index: 1;
+
+    &__arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        opacity: 0.85;
+        cursor: pointer;
+
+        &_left {
+            left: 5px;
+        }
+
+        &_right {
+            right: 5px;
+        }
+
+        &_left .yc-icon {
+            transform: rotate(180deg) translateY(1px);
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}

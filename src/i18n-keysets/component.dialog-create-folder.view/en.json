@@ -1,0 +1,9 @@
+{
+  "button_apply": "Done",
+  "button_cancel": "Cancel",
+  "label_default-name": "New folder",
+  "label_folder-already-exists": "A folder with this name already exists, try another one",
+  "label_placeholder": "Folder name",
+  "section_caption": "Create folder",
+  "toast_create-folder-failed": "Failed to create folder"
+}

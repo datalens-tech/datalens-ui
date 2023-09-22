@@ -1,0 +1,56 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "field_interface-theme": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_interface-theme-contrast": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_not-found": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_placeholder-search": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_appearance": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_theme-contrast-enhanced": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_theme-contrast-normal": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_theme-dark": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_theme-light": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_theme-system": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

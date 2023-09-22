@@ -1,0 +1,18 @@
+{
+  "field_format": "Формат",
+  "field_postfix": "Постфикс",
+  "field_precision": "Знаков после запятой",
+  "field_prefix": "Префикс",
+  "field_rank-delimiter": "Отображать группы разрядов",
+  "field_units": "Размерность",
+  "value_format-number": "Число",
+  "value_format-percent": "Процент",
+  "value_rank-delimiter-hide": "Слитно",
+  "value_rank-delimiter-show": "С разделителем",
+  "value_unit-auto": "Авто",
+  "value_unit-b": "Миллиарды, B",
+  "value_unit-k": "Тысячи, K",
+  "value_unit-m": "Миллионы, M",
+  "value_unit-null": "Нет",
+  "value_unit-t": "Триллионы, T"
+}

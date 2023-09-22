@@ -1,0 +1,33 @@
+.yc-datepicker {
+    &__control {
+        position: relative;
+        width: 314px;
+        min-width: 100px;
+    }
+
+    &__control-veil {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        opacity: 0;
+        z-index: 10;
+    }
+
+    &__popup-content {
+        width: 314px;
+        height: 50vh;
+        max-height: 600px;
+        overflow: hidden;
+        user-select: none;
+    }
+
+    &__sheet {
+        position: relative;
+        height: calc(90vh - 40px);
+        max-height: 600px;
+        padding: 0;
+        overflow: hidden;
+    }
+}

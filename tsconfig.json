@@ -1,0 +1,10 @@
+{
+  "extends": "@gravity-ui/tsconfig/tsconfig",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "outDir": "dist",
+    "target": "es2019"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules/googleapis"]
+}

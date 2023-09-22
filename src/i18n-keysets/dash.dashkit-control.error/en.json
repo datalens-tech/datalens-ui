@@ -1,0 +1,6 @@
+{
+  "button_retry": "Repeat",
+  "label_error": "Error",
+  "label_field-error-text": "The specified field type for the selector is not supported.  Please change the field type.",
+  "label_field-error-title": "Field type error"
+}

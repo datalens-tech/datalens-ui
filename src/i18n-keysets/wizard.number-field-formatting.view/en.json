@@ -1,0 +1,18 @@
+{
+  "field_format": "Format",
+  "field_postfix": "Postfix",
+  "field_precision": "Precision",
+  "field_prefix": "Prefix",
+  "field_rank-delimiter": "Show thousands separator",
+  "field_units": "Units",
+  "value_format-number": "Number",
+  "value_format-percent": "Percent",
+  "value_rank-delimiter-hide": "Hide",
+  "value_rank-delimiter-show": "Show",
+  "value_unit-auto": "Auto",
+  "value_unit-b": "Billions, B",
+  "value_unit-k": "Thousands, K",
+  "value_unit-m": "Millions, M",
+  "value_unit-null": "Null",
+  "value_unit-t": "Trillions, T"
+}

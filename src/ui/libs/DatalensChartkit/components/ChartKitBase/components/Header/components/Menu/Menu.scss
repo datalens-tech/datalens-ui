@@ -1,0 +1,36 @@
+@import '../../../../../../../../styles/variables';
+
+.chartkit-menu {
+    &__item {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    &__icon {
+        display: flex;
+        width: $menuIconSize;
+        margin-right: $menuIconMarginRight;
+    }
+
+    &__switcher {
+        opacity: 1;
+        transition: opacity 0.2s;
+
+        .dashkit-grid-item:hover & {
+            opacity: 1;
+        }
+
+        &:hover:before {
+            background: none;
+        }
+    }
+
+    &__popup-item {
+        color: var(--g-color-text-complementary);
+
+        &:hover {
+            color: var(--g-color-text-primary);
+        }
+    }
+}

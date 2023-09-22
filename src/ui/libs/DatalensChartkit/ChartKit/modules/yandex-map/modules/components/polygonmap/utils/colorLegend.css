@@ -1,0 +1,27 @@
+.legend {
+    background: #fff;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.legend__row {
+    /* stylelint-disable-next-line declaration-no-important */
+    text-align: right !important;
+}
+
+.legend__color,
+.legend__value {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.legend__color {
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+}
+
+.legend__value {
+    font-size: 12px;
+    white-space: nowrap;
+}

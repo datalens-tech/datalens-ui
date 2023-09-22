@@ -1,0 +1,19 @@
+.mobile-header {
+    &__logo {
+        height: 32px;
+        width: 143px;
+    }
+
+    &__link {
+        text-decoration: none;
+        outline: none;
+        color: inherit;
+        display: block;
+        height: 100%;
+        flex: 1 1 auto;
+    }
+
+    &__logo-icon {
+        color: var(--g-color-base-brand);
+    }
+}

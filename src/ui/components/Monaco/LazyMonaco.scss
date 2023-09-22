@@ -1,0 +1,12 @@
+.dl-lazy-monaco {
+    &__fallback {
+        display: flex;
+        align-items: center;
+    }
+
+    &__loader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

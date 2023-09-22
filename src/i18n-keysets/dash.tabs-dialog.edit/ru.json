@@ -1,0 +1,13 @@
+{
+  "button_add-tab": "Добавить",
+  "button_cancel": "Отменить",
+  "button_save": "Сохранить",
+  "label_tabs": "Вкладки",
+  "menu_delete": "Удалить",
+  "menu_delete_other": "Удалить все, кроме этой",
+  "menu_duplicate": "Дублировать",
+  "menu_order": "Порядок виджетов",
+  "menu_rename": "Переименовать",
+  "value_default": "Вкладка {{index}}",
+  "value_default-duplicated": "{{title}} (копия)"
+}

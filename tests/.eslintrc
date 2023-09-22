@@ -1,0 +1,15 @@
+{
+    "extends": ["@gravity-ui/eslint-config", "@gravity-ui/eslint-config/prettier"],
+    "root": true,
+    "env": {
+        "node": true,
+        "jest": true
+    },
+    "rules": {
+        "security/detect-child-process": 0,
+        "security/detect-non-literal-fs-filename": 0,
+        "camelcase": 0,
+        "import/order": 0,
+        "sort-imports": 0
+    }
+}

@@ -1,0 +1,82 @@
+.table-of-content {
+    display: flex;
+    background-color: var(--g-color-base-background);
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+
+    &__wrapper {
+        position: relative;
+    }
+
+    &__sidebar {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -250px;
+        overflow: hidden;
+        padding: 24px 8px;
+        width: 250px;
+        height: 100%;
+        border-top: 1px solid var(--g-color-line-generic);
+        border-right: 1px solid var(--g-color-line-generic);
+
+        &_opened {
+            display: block;
+            left: 0;
+        }
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0 10px 15px;
+    }
+
+    &__header-title {
+        flex: 1;
+        cursor: default;
+    }
+
+    &__header-close {
+        cursor: pointer;
+    }
+
+    &__tabs {
+        max-height: 97%;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    &__title {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        font-size: 15px;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 3px;
+        hyphens: auto;
+        word-break: break-word;
+
+        &_item {
+            opacity: 0.5;
+            padding-left: 20px;
+        }
+
+        &:hover {
+            background-color: var(--g-color-base-simple-hover);
+        }
+
+        &_selected {
+            background-color: var(--g-color-base-selection);
+        }
+    }
+}

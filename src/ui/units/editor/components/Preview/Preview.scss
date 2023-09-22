@@ -1,0 +1,11 @@
+.chart-preview {
+    flex: 1 1 0;
+    padding-right: 1px; // fix for chartkit menu popup
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+
+    .chartkit-ymap {
+        height: 99%; // CHARTS-2438
+    }
+}

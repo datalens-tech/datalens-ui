@@ -1,0 +1,10 @@
+.conn-form-plain-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    &__hint .yfm p {
+        color: var(--g-color-text-hint);
+        line-height: 16px;
+    }
+}

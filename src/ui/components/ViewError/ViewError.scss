@@ -1,0 +1,11 @@
+.dl-view-error {
+    &__actions {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    &__btn-retry {
+        margin-right: 20px;
+    }
+}

@@ -1,0 +1,162 @@
+.chartkit-table {
+    --chartkit-bg-bar-offset-width: 10px;
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+
+    &__body {
+        overflow: auto;
+        flex-grow: 0;
+        flex-shrink: 1;
+    }
+
+    &__title {
+        font-weight: bold;
+        padding: 5px 40px 5px 0;
+        text-align: right;
+    }
+
+    &__head-cell {
+        white-space: pre-line;
+
+        &_with-markup {
+            font-weight: normal;
+        }
+    }
+
+    &__cell {
+        height: 100%;
+        font-size: 10pt;
+        box-sizing: border-box;
+
+        &_type_bar {
+            // https://stackoverflow.com/a/34781198
+            height: inherit;
+            vertical-align: middle;
+        }
+
+        &_with-fixed-width {
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        &_sortable:hover {
+            cursor: pointer;
+        }
+    }
+
+    &__cell_type_grid:not(th) {
+        padding: 0;
+    }
+
+    &__link {
+        // link occupies the entire cell
+        display: block;
+        height: 100%;
+    }
+
+    &__content {
+        // to prevent background-color affect border-color
+        background-clip: padding-box;
+        min-width: 100%;
+        height: 100%;
+
+        &_number {
+            text-align: right;
+        }
+
+        &_null {
+            font-style: italic;
+            opacity: 0.5;
+        }
+
+        &_with-fixed-height {
+            height: unset;
+        }
+    }
+
+    &__diff {
+        font-size: 8pt;
+
+        &_pos {
+            color: #008000;
+        }
+
+        &_neg {
+            color: #ff0000;
+        }
+    }
+
+    &__grid-wrapper {
+        display: grid;
+        grid-auto-rows: auto;
+        grid-auto-columns: auto;
+
+        &_flow_column {
+            grid-auto-flow: column;
+        }
+
+        &_flow_row {
+            grid-auto-flow: row;
+        }
+    }
+
+    &__grid-wrapper &__content {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        padding: 5px;
+        box-sizing: border-box;
+    }
+
+    &__grid-wrapper:not(&__grid-wrapper_flow_row):not(&__grid-wrapper_flow_column)
+        > &__content:not(:last-child) {
+        border-bottom: 1px solid var(--data-table-border-color);
+    }
+
+    &__grid-wrapper_flow_column > &__grid-wrapper_flow_row:not(:last-child) &__content {
+        border-right: 1px solid var(--data-table-border-color);
+    }
+
+    &__grid-wrapper_flow_row > &__grid-wrapper_flow_column:not(:last-child) &__content {
+        border-bottom: 1px solid var(--data-table-border-color);
+    }
+
+    &__cell .table-action-btn:has(.yc-button__icon:only-child) {
+        height: 16px;
+        width: 16px;
+        line-height: 16px;
+
+        .yc-button__icon {
+            height: 16px;
+            width: 12px;
+        }
+    }
+
+    &__sort-icon {
+        margin-left: 10px;
+        transform: rotate(-90deg);
+
+        &_desc {
+            transform: rotate(90deg);
+        }
+    }
+}
+
+.chartkit-table .data-table {
+    &__table {
+        //  small table stretches over the entire available width
+        // -1px to prevent horizontal scroll when "No data"
+        min-width: calc(100% - 1px);
+    }
+
+    &__sort-icon {
+        margin-right: 2%;
+
+        &_shadow {
+            display: none;
+        }
+    }
+}

@@ -1,0 +1,35 @@
+.dataset-tab-section-wrapper {
+    &__content {
+        width: 780px;
+        margin: 0 auto;
+    }
+
+    &__section {
+        margin: 20px 0 10px;
+    }
+
+    &__title {
+        margin-bottom: 5px;
+        font-size: var(--g-text-subheader-3-font-size);
+        line-height: var(--g-text-subheader-3-line-height);
+    }
+
+    &__description {
+        line-height: var(--g-text-code-1-line-height);
+    }
+
+    &__add-button {
+        margin-top: 10px;
+    }
+
+    &__loader {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__list {
+        margin-top: 10px;
+    }
+}

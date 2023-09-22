@@ -1,0 +1,26 @@
+@import '../../../../styles/mixins';
+@import '../../styles/ql';
+
+.ql-app {
+    display: flex;
+    min-height: 100%;
+    flex: 1;
+    min-width: 1100px;
+    flex-direction: column;
+
+    &_mobile {
+        min-width: 320px;
+
+        .cc-cloud-folder-select__current_compact {
+            margin-left: 15px;
+        }
+    }
+
+    &__content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    @include revision-panel-fix;
+}

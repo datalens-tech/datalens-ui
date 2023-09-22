@@ -1,0 +1,36 @@
+@import '../../../../../../../../../styles/mixins.scss';
+
+.dialog-aliases-add {
+    margin-top: 40px;
+
+    &__button-wrap {
+        margin-top: 20px;
+    }
+
+    &__select {
+        width: 220px;
+        max-width: 220px;
+    }
+
+    &__select-wrap {
+        position: relative;
+    }
+
+    &__sub-title {
+        position: absolute;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        top: -24px;
+        max-width: 100%;
+    }
+
+    &__dialog-popup {
+        @include dl-select-popup;
+    }
+
+    &__error {
+        color: var(--g-color-text-danger);
+        margin-top: 16px;
+    }
+}

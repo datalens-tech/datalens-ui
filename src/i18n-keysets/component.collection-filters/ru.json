@@ -1,0 +1,12 @@
+{
+  "label_filter-by-ownership-all": "Все",
+  "label_filter-by-ownership-only-my": "Только мои",
+  "label_filter-by-type-all": "Все типы",
+  "label_filter-by-type-only-collections": "Только коллекции",
+  "label_filter-by-type-only-workbooks": "Только воркбуки",
+  "label_filter-string-placeholder": "Искать по названию",
+  "label_sort-first-alphabet-asc": "Сортировка от А до Я",
+  "label_sort-first-alphabet-desc": "Сортировка от Я до А",
+  "label_sort-first-new": "Сначала новые",
+  "label_sort-first-old": "Сначала старые"
+}

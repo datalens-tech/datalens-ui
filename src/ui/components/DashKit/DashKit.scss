@@ -1,0 +1,74 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+// TODO: think about how to make it more clear (moved these from the dashkit)
+
+.dashkit_theme_datalens {
+    // overrides dashkit using cascade from theme selector
+
+    .dashkit-plugin-title {
+        align-items: flex-end;
+    }
+
+    .dashkit-grid-item {
+        overflow: hidden;
+
+        div.yfm {
+            @include text-body-2();
+        }
+    }
+}
+
+.dashkit-plugin-menu__item {
+    &_danger {
+        color: var(--g-color-text-danger);
+    }
+}
+
+.dashkit-mobile-layout {
+    &__item {
+        // since there is no grid in the mobile layout, widgets gets their "native" height
+        // but for the case of the map embed, you must specify the height of the container, otherwise the map will collapse
+
+        .dashkit-plugin-widget__body_fullscreen .chartkit-ymap {
+            height: 100%;
+        }
+
+        .chartkit-ymap,
+        .chartkit-table__body,
+        .yagr {
+            height: 400px;
+        }
+
+        &_autoheight {
+            .chartkit-table__body {
+                height: auto;
+            }
+        }
+    }
+
+    .dl-chartkit-body-mix {
+        // in the chartkit, the position: absolute rule is applied on this node (made to solve
+        // the problem - CHARTS-1427), which assumes that the width and height of the parent are set
+        // obviously (at the expense of the grid) because there id no such problem with a mobile layout,
+        // and the height is not explicitly set here it is necessary to redefine position
+
+        position: static;
+    }
+
+    .dashkit-plugin-widget {
+        &__body {
+            min-height: 40px;
+            flex: none;
+        }
+
+        &_fullscreen {
+            .dashkit-plugin-widget__body {
+                height: 100%;
+                flex: auto;
+            }
+
+            .chartkit-highcharts text {
+                user-select: none;
+            }
+        }
+    }
+}

@@ -1,0 +1,130 @@
+.dl-relative-dates-picker {
+    display: flex;
+    flex-direction: column;
+
+    &__presets {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    &__presets-label {
+        margin-right: 12px;
+    }
+
+    &__presets-select {
+        margin-right: 12px;
+    }
+
+    &__controls {
+        display: flex;
+        width: 100%;
+    }
+
+    &__control {
+        position: relative;
+        flex-basis: 100%;
+        min-width: 270px;
+
+        & .yc-radio {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+    }
+
+    &__control-title {
+        margin-bottom: 10px;
+        font-size: var(--g-text-body-2-font-size);
+    }
+
+    &__radiobox-item {
+        position: relative;
+        display: flex;
+        /* .radiobox_size_n sets line-height: 36px for everything,
+        that breaks the vertical centering of the calendar */
+        line-height: 28px;
+
+        // &:first-child {
+        //     height: 48px;
+        // }
+    }
+
+    &__radiobox-item-label {
+        flex: 0 0 auto;
+        margin-right: 12px;
+    }
+
+    &__absolute-calendar {
+        display: flex;
+        // fix for Safari CHARTS-2155
+        position: absolute;
+        top: 26px;
+        left: 110px;
+        width: 150px;
+    }
+
+    &__relative-calendar {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__relative-calendar-row {
+        display: flex;
+        width: 100%;
+
+        &:not(:first-child) {
+            margin-top: 4px;
+        }
+    }
+
+    &__relative-calendar-date {
+        margin-left: 28px;
+        color: var(--g-color-text-secondary);
+
+        &_error {
+            color: var(--g-color-text-danger);
+        }
+    }
+
+    &__sign-select {
+        width: 88px;
+        margin: 0 12px 0 28px;
+    }
+
+    &__scale-select {
+        display: flex;
+        flex: 1 1 auto;
+    }
+
+    &__amount-input {
+        width: 40px;
+    }
+
+    &__amount-input-control {
+        border-width: 1px;
+    }
+
+    &__error-label {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+    }
+
+    &__error-label-icon {
+        margin-right: 4px;
+        fill: var(--g-color-text-danger);
+    }
+
+    &__help-icon {
+        margin-left: 5px;
+    }
+
+    & .textinput__box {
+        border-width: 1px;
+    }
+
+    & .radiobox__radio {
+        display: block;
+    }
+}

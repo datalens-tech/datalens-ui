@@ -1,0 +1,156 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_apply": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_change-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_change-source": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_create-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_select-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_dataset-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_db-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_table-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_yt-table-path": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_yt-table-path-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_yt-table-path-error-cluster": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_database-list-connection-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_database-list-forbidden-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_database-list-general-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_entry-name-already-exists": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-400-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-400-no-connection-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-400-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-403-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-404-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-500-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-500-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-empty-field": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_name-default": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_name-placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_table-list-connection-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_table-list-forbidden-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_table-list-general-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_change-source": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_select-db-and-table": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_create-dataset-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_default-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_error-action-label": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

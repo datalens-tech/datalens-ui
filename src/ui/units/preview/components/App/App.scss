@@ -1,0 +1,10 @@
+html {
+    // just in case, redefine the effect min-width: 1100px
+    min-width: initial !important; // stylelint-disable-line declaration-no-important
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

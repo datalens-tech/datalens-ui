@@ -1,0 +1,15 @@
+.dl-data-type-icon {
+    $class: &;
+
+    &_dimension#{$class} {
+        color: var(--g-color-text-positive);
+    }
+
+    &_measure#{$class} {
+        color: var(--g-color-text-info);
+    }
+
+    &_parameter#{$class} {
+        color: var(--g-color-text-utility);
+    }
+}

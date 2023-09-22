@@ -1,0 +1,28 @@
+.chartkit-table-bar {
+    position: relative;
+    left: calc(-1 * var(--chartkit-bg-bar-offset-width) / 2);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: calc(100% + var(--chartkit-bg-bar-offset-width));
+    padding-right: 5px;
+
+    &__separator {
+        position: absolute;
+        transform: translateX(-50%);
+        top: -15%;
+        left: 0;
+        height: 130%;
+        width: 1px;
+        border-left: 1px solid var(--g-color-text-complementary);
+    }
+}
+
+:root {
+    // Bar width offset
+    // ┌────────┐     ┌────────┐     ┌────────┐
+    // │▒▒▒▒▒▒▒▒│    ▒▒▒▒▒▒▒▒▒▒▒▒    │ ▒▒▒▒▒▒ │
+    // └────────┘     └────────┘     └────────┘
+    //     0             > 0            < 0
+    --chartkit-bg-bar-offset-width: 0;
+}

@@ -1,0 +1,20 @@
+{
+  "label_description-auth-denied": "Please contact technical support",
+  "label_description-auth-failed": "Please contact technical support",
+  "label_description-fail": "Please contact technical support",
+  "label_page-title-auth-denied": "Auth denied",
+  "label_page-title-auth-failed": "Auth error",
+  "label_page-title-cloud-folder-access-denied": "Access error",
+  "label_page-title-fail": "Error",
+  "label_page-title-forbidden-entry": "Forbidden",
+  "label_page-title-inaccessible-entry-folder": "Access error",
+  "label_page-title-missing-entry": "Not found",
+  "label_title-auth-denied": "You don't have access",
+  "label_title-auth-failed": "Something went wrong",
+  "label_title-cloud-folder-access-denied": "You don't have access to DataLens objects in this folder",
+  "label_title-fail": "Something went wrong",
+  "label_title-forbidden-entry": "Access restricted",
+  "label_title-inaccessible-entry-folder": "You don't have access to DataLens in this folder",
+  "label_title-missing-current-cloud-folder": "Select a folder to work with DataLens",
+  "label_title-missing-entry": "Not found"
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "@gravity-ui/tsconfig/tsconfig",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "module": "CommonJS",
+    "target": "ES2019",
+    "baseUrl": ".",
+    "lib": ["esnext", "dom", "DOM.Iterable"],
+    "moduleResolution": "Node"
+  },
+  "include": ["suites", "utils", "server", ".", "../src/@types"]
+}

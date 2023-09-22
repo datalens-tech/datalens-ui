@@ -1,0 +1,112 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_operation-all-values": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-contains": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-contains-case": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-date-in": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-endswith": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-endswith-case": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-equals": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-gt": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-gte": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-in": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-is-not-null": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-is-null": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-leneq": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-lengt": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-lengte": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-lenlt": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-lenlte": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-lt": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-lte": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-nequals": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-nin": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-notcontains": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-notcontains-case": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-startswith": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_operation-startswith-case": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

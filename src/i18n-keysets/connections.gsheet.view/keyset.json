@@ -1,0 +1,172 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_add": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_add-table": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_apply": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_google-login": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_google-logout": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_update": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_403-not-authotized-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_403-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_add-table-placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_auth-failure": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_auth-success": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_auto-update": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_auto-update-help": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_columns-header": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_empty-file": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_file-limit-exceeded": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_file-not-found": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_google-auth-help": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_google-oauth-page-failure": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_gsheet-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_gsheet-ready": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_gsheet-sources-dialog-title-batch": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_gsheet-sources-dialog-title-single": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_gsheet-uploading-failure": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_invalid-link": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_lists": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_logout-dialog-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_logout-dialog-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_replace-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_replace-source": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_source-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_source-info-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_too-many-columns": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unsupported-document": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_update-failure": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_uploading": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_workspace-placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_yes": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

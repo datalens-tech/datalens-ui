@@ -1,0 +1,19 @@
+.dl-workbook-filters {
+    display: flex;
+    flex-direction: column;
+
+    &__controls {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    &__filter-string {
+        flex: 1;
+    }
+
+    &__sort {
+        margin-left: 8px;
+        min-width: 220px;
+    }
+}

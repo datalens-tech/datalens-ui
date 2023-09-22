@@ -1,0 +1,54 @@
+@import '../../styles/mixins.scss';
+@import '../../styles/variables';
+
+.revisions-panel {
+    position: relative;
+    height: $revisionPanelHeight;
+    min-height: $revisionPanelHeight;
+    box-sizing: border-box;
+
+    &__text-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        overflow: hidden;
+        background-color: var(--g-color-base-brand);
+        padding: 16px 20px;
+        box-sizing: border-box;
+        position: fixed;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        height: $revisionPanelHeight;
+        top: $actionPanelHeight;
+
+        .dl-header + div & {
+            top: calc(#{$headerHeight} + #{$actionPanelHeight});
+        }
+    }
+
+    &__text {
+        color: var(--g-color-text-light-primary);
+        font-size: var(--g-text-body-2-font-size);
+        line-height: var(--g-text-body-2-line-height);
+        display: flex;
+        @include overflow-ellipsis();
+    }
+
+    &__text-info {
+        @include overflow-ellipsis();
+        margin-right: 3px;
+    }
+
+    &__controls {
+        display: flex;
+    }
+
+    &__button {
+        margin-left: 12px;
+    }
+
+    &__locked-login {
+        display: inline;
+    }
+}

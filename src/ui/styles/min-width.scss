@@ -1,0 +1,9 @@
+// separate file, because there are places like preview, for example, where base.scss is needed,
+// but min-width is not needed, on the entries/landing level (LandingPage imports base.scss)
+
+// import this only in scss files!
+// if you try to import this in js file, then its style reach the common.css add break min-width for dash and public
+
+html {
+    min-width: 1100px;
+}

@@ -1,0 +1,9 @@
+.dl-breadcrumbs-collections-structure-breadcrumbs {
+    &__item {
+        color: var(--g-color-text-primary);
+
+        &:hover {
+            color: var(--g-color-text-secondary);
+        }
+    }
+}

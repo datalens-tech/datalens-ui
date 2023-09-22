@@ -1,0 +1,11 @@
+{
+  "button_add": "Add",
+  "button_cancel": "Cancel",
+  "button_save": "Save",
+  "context_fill-text": "Enter text",
+  "label_domain": "Domain",
+  "label_domain_il": "Domain",
+  "label_image-hint": "The link to the image must be located in the {{domain}} domain, <link>read more</link>",
+  "label_syntax": "Markdown supported",
+  "label_text": "Text"
+}

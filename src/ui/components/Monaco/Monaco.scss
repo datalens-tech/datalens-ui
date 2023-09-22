@@ -1,0 +1,25 @@
+.dl-monaco-editor {
+    height: 100%;
+    width: 100%;
+    border-radius: 6px;
+    transition: border-color 0.1s linear;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & .monaco-editor,
+    .monaco-editor-background,
+    .monaco-editor .inputarea.ime-input {
+        background-color: var(--g-color-base-background);
+    }
+
+    & .monaco-editor .margin {
+        background-color: var(--g-color-base-background);
+    }
+
+    // monaco set the hardcoded cursor in block styles with line numbers, by default
+    // which differs from default cursor
+    & .monaco-editor .margin-view-overlays .line-numbers {
+        cursor: inherit;
+    }
+}

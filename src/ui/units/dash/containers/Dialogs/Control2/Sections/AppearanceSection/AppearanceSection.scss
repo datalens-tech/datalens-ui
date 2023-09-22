@@ -1,0 +1,10 @@
+.control2-appearance-section {
+    &__operation-container {
+        display: flex;
+        align-items: center;
+    }
+
+    &__operation-checkbox {
+        margin-right: 8px;
+    }
+}

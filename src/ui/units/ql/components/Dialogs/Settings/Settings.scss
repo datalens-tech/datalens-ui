@@ -1,0 +1,45 @@
+.dl-dialog-settings {
+    width: 680px;
+
+    &__loader {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    &__row {
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+    }
+
+    &__label {
+        display: inline-block;
+        width: 125px;
+        margin-right: 16px;
+    }
+
+    &__navigator-series-select {
+        width: 180px;
+        margin-left: 12px;
+    }
+
+    &__title-input {
+        width: 180px;
+        margin-left: 12px;
+    }
+
+    &__width-select {
+        width: 95px;
+        margin-left: 12px;
+    }
+
+    .yc-field-wrapper {
+        width: auto;
+        height: 26px;
+    }
+
+    .textinput {
+        width: 270px;
+    }
+}

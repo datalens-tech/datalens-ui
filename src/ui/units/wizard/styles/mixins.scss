@@ -1,0 +1,31 @@
+@import './variables';
+
+@mixin overflow-ellipsis() {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@mixin button-reset() {
+    margin: 0;
+    padding: 0;
+
+    font-size: inherit;
+    font-weight: 400;
+
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+@mixin palette-item-border($borderColor, $top, $left, $width, $height) {
+    content: '';
+    position: absolute;
+    top: $top;
+    left: $left;
+    width: $width;
+    height: $height;
+    border: 2px solid $borderColor;
+    border-radius: 6px;
+}

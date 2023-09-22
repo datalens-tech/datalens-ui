@@ -1,0 +1,66 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+@import '../../../../../styles/mixins.scss';
+
+.dialog-settings {
+    width: 520px;
+    overflow-y: auto;
+    @include dialog-max-height-scroll(94vh);
+
+    &__row {
+        display: grid;
+        grid-template-columns: 50% auto;
+        align-items: center;
+
+        &_align-top {
+            align-items: flex-start;
+        }
+
+        &:not(:last-child) {
+            margin-bottom: 10px;
+        }
+    }
+
+    &__sub-row {
+        display: grid;
+        grid-auto-flow: column;
+        align-items: center;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 0.5fr));
+    }
+
+    &__section-title {
+        @include text-subheader-2();
+        font-weight: 500; // temporary redefinition until the style unification reaches uikit
+    }
+
+    &__title {
+        padding-right: 15px;
+        display: flex;
+        gap: 5px;
+        align-items: center;
+
+        &_strong {
+            @include text-subheader-2();
+            font-weight: 500; // temporary redefinition until the style unification reaches uikit
+        }
+    }
+
+    &__requests-warning {
+        margin-top: 4px;
+    }
+
+    &__configure-btn {
+        width: 92px;
+    }
+
+    &__params-tag {
+        max-width: 120px;
+    }
+
+    &__params-header {
+        display: block;
+    }
+
+    &__box {
+        width: fit-content;
+    }
+}

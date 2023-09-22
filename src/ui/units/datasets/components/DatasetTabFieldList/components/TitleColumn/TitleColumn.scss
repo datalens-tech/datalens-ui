@@ -1,0 +1,7 @@
+.field-list-title-column {
+    white-space: nowrap;
+    &__icon {
+        margin-right: 10px;
+        color: var(--g-color-text-misc);
+    }
+}

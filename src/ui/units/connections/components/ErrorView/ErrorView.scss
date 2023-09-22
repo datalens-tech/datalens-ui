@@ -1,0 +1,12 @@
+@import '../../../../styles/variables.scss';
+
+.conn-page-error {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: calc(100vh - #{$headerHeight});
+
+    &_with-aside-header {
+        min-height: calc(100vh - #{$actionPanelHeight});
+    }
+}

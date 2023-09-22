@@ -1,0 +1,18 @@
+.wizard-number-input {
+    display: flex;
+    max-width: 120px;
+
+    // This beautiful crutch is already here
+    // https://github.com/gravity-ui/chartkit/blob/master/src/components/Widget/Table/Paginator/Paginator.scss#L25
+    // It is probably worth thinking about its centralization at the common level (or wait for a new input)
+    /* stylelint-disable */
+    & input::-webkit-outer-spin-button,
+    & input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    & input[type='number'] {
+        -moz-appearance: textfield;
+    }
+    /* stylelint-enable */
+}

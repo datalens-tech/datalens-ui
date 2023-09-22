@@ -1,0 +1,64 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_download": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_attention": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_decimal-delimiter": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_encoding": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_hint": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_values-delimiter": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_comma": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_dot": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_semicolon": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_space": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_tab": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

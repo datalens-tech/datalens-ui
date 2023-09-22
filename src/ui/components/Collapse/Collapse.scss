@@ -1,0 +1,75 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.yc-collapse {
+    &__header {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &__panel {
+        display: inline-flex;
+        align-items: center;
+
+        cursor: pointer;
+
+        &_no-data {
+            cursor: default;
+        }
+    }
+
+    &__title {
+        margin: 0;
+    }
+
+    &__title_secondary {
+        color: var(--g-color-text-secondary);
+    }
+
+    &__title_size {
+        &_s {
+            @include text-body-1;
+        }
+
+        &_m {
+            @include text-body-2;
+        }
+
+        &_l {
+            @include text-body-3;
+        }
+    }
+
+    &__arrow-wrapper {
+        &_position_left {
+            margin-right: 8px;
+        }
+
+        &_position_right {
+            margin-left: 8px;
+        }
+    }
+
+    &__arrow-wrapper_secondary {
+        color: var(--g-color-text-secondary);
+        .yc-button__text {
+            color: var(--g-color-text-secondary);
+        }
+    }
+
+    &__arrow-button {
+        .yc-button__text {
+            margin: 0 4px;
+        }
+    }
+
+    &__empty-state-title {
+        @include text-body-1;
+        font-weight: normal;
+
+        opacity: 0.5;
+    }
+
+    &_collapsed &__content {
+        display: none;
+    }
+}

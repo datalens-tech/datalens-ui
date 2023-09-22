@@ -1,0 +1,95 @@
+.chartkit-alert {
+    $block: &;
+
+    height: 100%;
+    width: 100%;
+
+    &__container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    &__alert {
+        display: flex;
+        flex: 0 0 auto;
+        flex-direction: column;
+        justify-content: center;
+        text-decoration: none;
+        box-sizing: border-box;
+
+        border-radius: 4px;
+        margin: 2px;
+
+        &_status_OK {
+            background-color: var(--g-color-base-positive-medium);
+
+            &:hover {
+                background-color: var(--g-color-base-positive-medium-hover);
+            }
+        }
+        &_status_WARN {
+            background-color: var(--g-color-base-warning-heavy);
+
+            &:hover {
+                background-color: var(--g-color-base-warning-heavy-hover);
+            }
+        }
+        &_status_ALARM {
+            background-color: var(--g-color-base-danger-heavy);
+
+            &:hover {
+                background-color: var(--g-color-base-danger-heavy-hover);
+            }
+
+            #{$block}__alert-label,
+            #{$block}__alert-annotation {
+                color: var(--g-color-text-light-primary);
+            }
+        }
+        &_status_NO_DATA {
+            background-color: var(--g-color-base-generic-medium);
+
+            &:hover {
+                background-color: var(--g-color-base-generic-medium-hover);
+            }
+
+            #{$block}__alert-label,
+            #{$block}__alert-annotation {
+                color: var(--g-color-text-primary);
+            }
+        }
+        &_status_ERROR {
+            border: 1px solid var(--g-color-line-generic);
+            background-image: repeating-linear-gradient(
+                -45deg,
+                var(--g-color-base-generic),
+                var(--g-color-base-generic) 8px,
+                transparent 8px,
+                transparent 16px
+            );
+
+            &:hover {
+                background-color: var(--g-color-base-simple-hover);
+            }
+
+            #{$block}__alert-label,
+            #{$block}__alert-annotation {
+                color: var(--g-color-text-primary);
+            }
+        }
+    }
+
+    &__alert-label,
+    &__alert-annotation {
+        width: 100%;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        line-height: 1.2;
+        text-align: center;
+        color: var(--g-color-text-dark-primary);
+    }
+}

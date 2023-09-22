@@ -1,0 +1,182 @@
+import React from 'react';
+
+import {Xmark} from '@gravity-ui/icons';
+import {Button as CommonButton, Icon, TextInput} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
+import {i18n} from 'i18n';
+import {ResolveThunks, connect} from 'react-redux';
+import {ControlQA} from 'shared';
+import {DashboardDialogControl} from 'shared/constants/qa/dash';
+import {DatalensGlobalState} from 'ui/index';
+import {AcceptableValue, setSelectorDialogItem} from 'ui/units/dash/store/actions/dashTyped';
+import {selectSelectorDialog} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+
+import Dialog from '../../../../../Control/Dialog/Dialog';
+
+import './Acceptable.scss';
+
+const b = block('select-acceptable');
+
+type AcceptableProps = ReturnType<typeof mapStateToProps> &
+    ResolveThunks<typeof mapDispatchToProps>;
+
+type AcceptableState = {
+    showDialog: boolean;
+    newValue: string;
+    acceptableValues: string[];
+};
+
+const convertFromDefaultValue = (values: AcceptableValue[]) => {
+    return values ? values.map(({value}) => value) : values;
+};
+
+class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
+    state: AcceptableState = {
+        showDialog: false,
+        newValue: '',
+        acceptableValues: convertFromDefaultValue(this.props.acceptableValues),
+    };
+
+    addItem = () => {
+        const {newValue, acceptableValues} = this.state;
+        if (newValue.trim() !== '' && !acceptableValues.includes(newValue)) {
+            this.setState({newValue: '', acceptableValues: [newValue, ...acceptableValues]});
+        }
+    };
+
+    onApply() {
+        const {acceptableValues} = this.state;
+        this.props.setSelectorDialogItem({
+            acceptableValues: acceptableValues.map(
+                (value: string): AcceptableValue => ({value, title: value}),
+            ),
+        });
+    }
+
+    handleRemoveItemClick(index: number, acceptableValues: string[]) {
+        this.setState({
+            acceptableValues: [
+                ...acceptableValues.slice(0, index),
+                ...acceptableValues.slice(index + 1),
+            ],
+        });
+    }
+
+    renderBody() {
+        const {newValue, acceptableValues} = this.state;
+        const isEmpty = !acceptableValues.length;
+        return (
+            <React.Fragment>
+                <div className={b('header')} data-qa={ControlQA.selectAcceptable}>
+                    <TextInput
+                        size="m"
+                        qa={ControlQA.selectAcceptableInput}
+                        placeholder={i18n('dash.control-dialog.edit', 'context_add-value')}
+                        onUpdate={(newValue) => this.setState({newValue})}
+                        value={newValue}
+                        controlProps={{
+                            onBlur: this.addItem,
+                            onKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) =>
+                                event.charCode === 13 && this.addItem(),
+                        }}
+                    />
+                    <CommonButton
+                        view="normal"
+                        size="m"
+                        qa={ControlQA.selectAcceptableButton}
+                        onClick={this.addItem}
+                    >
+                        {i18n('dash.control-dialog.edit', 'button_add')}
+                    </CommonButton>
+                </div>
+                <div className={b('items', {empty: isEmpty})}>
+                    {isEmpty
+                        ? i18n('dash.control-dialog.edit', 'label_empty-list')
+                        : acceptableValues.map((item, index) => (
+                              <div
+                                  className={b('item')}
+                                  key={item}
+                                  data-qa={ControlQA.selectAcceptableItem}
+                              >
+                                  <span title={item}>{item}</span>
+                                  <span
+                                      onClick={() =>
+                                          this.handleRemoveItemClick(index, acceptableValues)
+                                      }
+                                      className={b('remove')}
+                                      data-qa={ControlQA.selectAcceptableRemoveButton}
+                                  >
+                                      <Icon data={Xmark} width="16" />
+                                  </span>
+                              </div>
+                          ))}
+                </div>
+            </React.Fragment>
+        );
+    }
+
+    renderDialog() {
+        const {showDialog} = this.state;
+        return (
+            <Dialog
+                visible={showDialog}
+                caption={i18n('dash.control-dialog.edit', 'label_acceptable-values')}
+                onApply={() => {
+                    this.onApply();
+                    this.setState({
+                        showDialog: false,
+                        newValue: '',
+                    });
+                }}
+                onClose={() =>
+                    this.setState({
+                        showDialog: false,
+                        newValue: '',
+                        acceptableValues: convertFromDefaultValue(this.props.acceptableValues),
+                    })
+                }
+            >
+                {this.renderBody()}
+            </Dialog>
+        );
+    }
+
+    render() {
+        const {acceptableValues} = this.props;
+        return (
+            <React.Fragment>
+                <CommonButton
+                    onClick={() => this.setState({showDialog: !this.state.showDialog})}
+                    qa={ControlQA.acceptableDialogButton}
+                    size="m"
+                >
+                    {acceptableValues.length ? (
+                        <span
+                            data-qa={`${DashboardDialogControl.AcceptableValues}${acceptableValues.length}`}
+                        >
+                            {i18n('dash.control-dialog.edit', 'value_select-values', {
+                                count: acceptableValues.length,
+                            })}
+                        </span>
+                    ) : (
+                        <span>{i18n('dash.control-dialog.edit', 'button_add')}</span>
+                    )}
+                </CommonButton>
+
+                {this.renderDialog()}
+            </React.Fragment>
+        );
+    }
+}
+
+const mapDispatchToProps = {setSelectorDialogItem};
+
+const mapStateToProps = (state: DatalensGlobalState) => {
+    const {sourceType, acceptableValues = []} = selectSelectorDialog(state);
+    return {
+        sourceType,
+        acceptableValues,
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Acceptable);

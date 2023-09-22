@@ -1,0 +1,59 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+// Resizing only for dashboard tabs.
+// Widget tabs is used as is (approved by designers)
+// Custom Tabs module is used for dashboard tabs only (but gc-adaptive-tabs class - is a part of common module classes)
+
+.dl-tabs {
+    &_size_l .gc-adaptive-tabs {
+        --gc-tabs-space-between: 20px;
+        --gc-tabs-border-width: 2px;
+        --gc-tabs-height: 40px;
+        font-size: 15px;
+    }
+
+    &_size_xl {
+        @include text-subheader-3();
+    }
+
+    .gc-adaptive-tabs {
+        overflow: hidden;
+        font-weight: 400;
+
+        &__tab {
+            padding: 0;
+        }
+
+        &__tab:not(.gc-adaptive-tabs__tab_active) {
+            opacity: 0.7;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        &__tab-container {
+            margin: 0;
+            line-height: 0;
+
+            &_switcher-tab {
+                height: var(--gc-tabs-height);
+                padding: var(--gc-tabs-border-width) 1px 0;
+            }
+        }
+    }
+
+    &__tab {
+        width: 100%;
+        display: inline-block;
+        border-bottom: var(--gc-tabs-border-width) solid transparent;
+        height: calc(#{var(--gc-tabs-height)} - 2px);
+        padding: var(--gc-tabs-border-width) 1px 0;
+        box-sizing: content-box;
+        overflow: hidden;
+
+        &_active {
+            border-bottom-color: var(--gc-tabs-color-border-active);
+            color: var(--gc-tabs-color-text-active);
+        }
+    }
+}

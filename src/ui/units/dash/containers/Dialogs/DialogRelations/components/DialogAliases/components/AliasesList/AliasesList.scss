@@ -1,0 +1,50 @@
+.dialog-aliases-list {
+    &__row {
+        border-bottom: 1px solid var(--g-color-line-generic);
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__right {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    &__alias-icon-button {
+        opacity: 0;
+        margin: 7px 0 8px 8px;
+    }
+
+    &__row &__alias-icon-button_active,
+    &__row:hover &__alias-icon-button {
+        opacity: 1;
+    }
+
+    &__alias-icon-button_remove {
+        color: var(--g-color-base-generic);
+    }
+
+    &__info {
+        color: var(--g-color-text-hint);
+        margin-left: 4px;
+    }
+
+    &__alias-button {
+        margin: 7px 0 8px;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        background: none;
+    }
+
+    &__separator {
+        padding: 0 12px;
+    }
+
+    &__remove-item {
+        display: inline-block;
+        vertical-align: text-bottom;
+        height: 16px;
+        margin-left: 4px;
+    }
+}

@@ -1,0 +1,30 @@
+.conn-form-control {
+    &_width-auto {
+        width: auto;
+    }
+
+    &_width-s {
+        width: 90px;
+    }
+
+    &_width-m {
+        width: 240px;
+    }
+
+    &_width-l {
+        flex-grow: 1;
+    }
+
+    &__hint .yfm {
+        margin-top: 2px;
+
+        & p {
+            color: var(--g-color-text-hint);
+        }
+    }
+
+    // FieldWrapper does not give api to manage its styles
+    & .yc-field-wrapper__error-text {
+        white-space: nowrap;
+    }
+}

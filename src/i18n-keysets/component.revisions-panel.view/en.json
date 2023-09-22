@@ -1,0 +1,22 @@
+{
+  "button_cancel": "Cancel",
+  "button_edit-anyway": "Edit anyway",
+  "button_make-actual": "Make actual",
+  "button_open-actual": "Open actual",
+  "button_open-draft": "Open draft",
+  "button_open-revisions": "Show in history",
+  "label_already-editing-entry": "This {{scope}} is already being edited",
+  "label_by": "by",
+  "label_chart": "chart",
+  "label_dash": "dashboard",
+  "label_draft-version": "This is a draft version",
+  "label_editor": "editor",
+  "label_entry-is-editing": "{{scope}} is being edited",
+  "label_entry-is-editing-by": "is already editing this {{scope}}",
+  "label_later-warning-text": "The change history contains a draft version of the {{scope}}",
+  "label_not-actual": "This is not actual version",
+  "label_of-chart": "of chart",
+  "label_of-dash": "of dashboard",
+  "label_of-editor": "of editor",
+  "label_unexpected-error": "Error"
+}

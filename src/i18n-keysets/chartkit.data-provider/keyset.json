@@ -1,0 +1,88 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "categories": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "date": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-authorization": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-chyt-table-access": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-data-fetching": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-execution": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-network": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-no-view-rights": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-not-found": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-not-loaded": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-oversize-segments": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-oversize-table": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-oversize_cells": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-oversize_columns": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-processing": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-runtime-timeout": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-secrets-access": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-too-many-rows": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-unsupported-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

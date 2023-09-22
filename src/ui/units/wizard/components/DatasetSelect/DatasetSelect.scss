@@ -1,0 +1,53 @@
+.dataset-select {
+    min-height: 40px;
+
+    &__container {
+        display: flex;
+        align-items: center;
+    }
+
+    &__icon-container {
+        display: flex;
+        align-items: center;
+        color: var(--g-color-base-positive-heavy);
+        height: 24px;
+        width: 24px;
+        margin-left: 20px;
+        margin-right: 10px;
+    }
+
+    &__icon {
+        margin: 0 10px 0 20px;
+        flex-shrink: 0;
+
+        &_rotated {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.dataset-select__preselect-button {
+    height: 40px;
+    line-height: 1;
+    text-align: left;
+    width: 100%;
+    border: none;
+    outline: none;
+
+    &:active {
+        transform: scale(1);
+    }
+
+    &:active::after {
+        transform: scale(1);
+    }
+
+    &:hover {
+        background-color: var(--g-color-base-simple-hover);
+    }
+
+    .yc-button__text {
+        color: var(--g-color-text-primary);
+        margin: 0;
+    }
+}

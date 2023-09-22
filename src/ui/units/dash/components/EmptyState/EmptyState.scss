@@ -1,0 +1,10 @@
+.dash-empty-state {
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+
+    &__action {
+        margin-top: 20px;
+    }
+}

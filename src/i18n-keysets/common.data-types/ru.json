@@ -1,0 +1,15 @@
+{
+  "label_array_float": "Массив дробных чисел",
+  "label_array_int": "Массив целых чисел",
+  "label_array_str": "Массив строк",
+  "label_date": "Дата",
+  "label_datetime": "Дата и время (устаревший)",
+  "label_float": "Дробное число",
+  "label_genericdatetime": "Дата и время",
+  "label_geopoint": "Геоточка",
+  "label_geopolygon": "Геополигон",
+  "label_integer": "Целое число",
+  "label_markup": "Разметка",
+  "label_string": "Строка",
+  "label_unsupported": "Неподдерживаемый тип"
+}

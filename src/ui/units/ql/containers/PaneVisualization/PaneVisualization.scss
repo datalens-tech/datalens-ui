@@ -1,0 +1,26 @@
+.ql-app .visualization-container {
+    .placeholders {
+        .item {
+            background-color: var(--g-color-base-misc-light);
+
+            &:hover {
+                cursor: pointer;
+                background-color: var(--g-color-base-misc-light-hover);
+            }
+
+            .item-icon {
+                color: var(--g-color-text-misc);
+            }
+
+            &.is-dragging,
+            &:active,
+            &:focus {
+                border: solid 1px transparent;
+            }
+
+            &.drag-hovered-swap {
+                border: solid 1px transparent;
+            }
+        }
+    }
+}

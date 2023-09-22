@@ -1,0 +1,89 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/mixins';
+
+.dialog-shapes-palette {
+    $class: &;
+
+    &__palette {
+        width: 340px;
+        padding: 25px;
+
+        &_type_lines {
+            grid-template-columns: repeat(2, 118px);
+            grid-gap: 20px;
+        }
+
+        &_type_points {
+            grid-gap: 12px;
+        }
+    }
+
+    &__palette-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        border: 1px solid var(--g-color-line-generic);
+        padding: 5px;
+
+        &_type_lines.palette-item {
+            &:not(.palette-item_selected):hover::before {
+                @include palette-item-border(var(--g-color-line-generic), -4px, -4px, 124px, 42px);
+            }
+
+            &.palette-item_selected::before {
+                @include palette-item-border(
+                    var(--g-color-base-generic-medium),
+                    -4px,
+                    -4px,
+                    124px,
+                    42px
+                );
+            }
+        }
+
+        &_type_points.palette-item {
+            &:not(.palette-item_selected):hover::before {
+                @include palette-item-border(var(--g-color-line-generic), -4px, -4px, 42px, 42px);
+            }
+
+            &.palette-item_selected::before {
+                @include palette-item-border(
+                    var(--g-color-base-generic-medium),
+                    -4px,
+                    -4px,
+                    42px,
+                    42px
+                );
+            }
+        }
+    }
+
+    &__value-shape {
+        margin-right: 12px;
+        border-radius: 2px;
+        display: flex;
+
+        &_type_points {
+            width: 24px;
+            flex-shrink: 0;
+            justify-content: center;
+
+            &#{$class}__value-shape_default {
+                width: 24px;
+            }
+        }
+
+        &_default {
+            width: 40px;
+            background-color: var(--g-color-base-generic);
+            border: 1px solid var(--g-color-line-generic);
+            color: var(--g-color-text-hint);
+            font-size: 10px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}

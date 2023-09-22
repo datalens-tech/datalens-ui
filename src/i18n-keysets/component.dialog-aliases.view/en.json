@@ -1,0 +1,11 @@
+{
+    "title_add-alias": "Alias setup",
+    "button_cancel": "Cancel",
+    "button_apply": "Apply",
+    "label_info_1": "Aliases help to link widgets built on different datasets through matching fields, as well as to link a manual selector.",
+    "label_info_2": "It is important to observe the same types of fields for aliases.",
+    "label_card": "Restrictions: you cannot create aliases on fields of the same dataset (field reassignment is not supported).",
+    "label_collapse-label": "List of all aliases added",
+    "label_empty": "No aliases configured",
+    "button_add-alias": "Add alias"
+}

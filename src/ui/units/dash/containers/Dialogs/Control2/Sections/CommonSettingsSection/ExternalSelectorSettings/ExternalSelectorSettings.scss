@@ -1,0 +1,35 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.external-selector-settings {
+    &__navigation-container {
+        display: grid;
+        grid-auto-rows: 40px;
+        align-items: center;
+        --dl-dropdown-navigation-width: 260px;
+    }
+
+    &__checkbox-option {
+        padding-top: 6px;
+    }
+
+    .cc-form-layout__row-right {
+        margin-left: -60px;
+    }
+
+    .external-selector-settings__navigation-container {
+        --dl-dropdown-navigation-width: 165px;
+    }
+
+    &__params-title {
+        @include text-subheader-2();
+        font-weight: 500;
+    }
+
+    &__params {
+        margin-top: 12px;
+    }
+
+    &__params-tag {
+        max-width: 160px;
+    }
+}

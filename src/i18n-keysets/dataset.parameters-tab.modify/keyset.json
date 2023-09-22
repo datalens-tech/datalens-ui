@@ -1,0 +1,44 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_parameter-name-column": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_parameter-name-column-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_parameter-type-column": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_parameter-value-column": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_parameter-value-column-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tab-parameters_add-button": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tab-parameters_description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tab-parameters_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

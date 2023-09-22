@@ -1,0 +1,40 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_color": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_line": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_order": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_point": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_segment": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_total": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_total-value": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

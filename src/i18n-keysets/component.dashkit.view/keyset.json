@@ -1,0 +1,40 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_retry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_copy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_edit": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_render-markdown-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_settings": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

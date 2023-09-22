@@ -1,0 +1,51 @@
+.dataset {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    &__loader {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__autocreation-img {
+        padding: 0;
+        margin-left: 20px;
+    }
+
+    &__create-widget-btn {
+        margin-left: auto;
+        margin-right: 10px;
+    }
+
+    &__tabs {
+        width: 300px;
+    }
+
+    &__panels {
+        position: relative;
+        height: 100%;
+    }
+
+    &__content-panel {
+        justify-content: center;
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        &_right {
+            height: 100%;
+        }
+    }
+
+    &__preview-panel {
+        max-height: 100%;
+        z-index: 3;
+
+        &_right {
+            overflow-x: auto;
+        }
+    }
+}

@@ -1,0 +1,22 @@
+.color-item {
+    display: flex;
+    align-items: center;
+    padding-bottom: 8px;
+
+    &__code {
+        display: inline-block;
+        vertical-align: middle;
+        padding-left: 8px;
+    }
+
+    &__input {
+        display: none;
+    }
+
+    &__preview {
+        width: 18px;
+        height: 18px;
+        display: inline-block;
+        border-radius: 4px;
+    }
+}

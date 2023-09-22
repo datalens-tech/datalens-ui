@@ -1,0 +1,73 @@
+@import '../../styles/mixins';
+
+$avatarHeight: 32px;
+
+.source {
+    height: $avatarHeight;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 5px 0 20px;
+    border: 1px solid transparent;
+    z-index: 2;
+
+    &:hover {
+        cursor: grab;
+        background: var(--ds-color-avatar);
+    }
+
+    &_drag {
+        opacity: 0.5;
+
+        &:hover {
+            cursor: grabbing;
+        }
+    }
+
+    &_over {
+        border: 1px solid var(--g-color-line-generic);
+    }
+
+    &_active {
+        position: relative;
+        flex: 0 0 240px;
+        width: 240px;
+        height: 32px;
+        border-radius: 4px;
+        background: var(--ds-color-avatar);
+        margin-bottom: 12px;
+
+        &:hover {
+            background: var(--ds-color-avatar);
+            border: 1px solid var(--ds-color-border);
+        }
+    }
+
+    &_source {
+        background: var(--ds-color-avatar);
+
+        &:hover {
+            background: var(--ds-color-avatar);
+        }
+    }
+
+    &__btn-menu-control {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &_drag_disabled {
+        cursor: auto;
+    }
+
+    &__icon-avatar {
+        margin-right: 8px;
+        flex-shrink: 0;
+    }
+
+    &__avatar-title {
+        flex-grow: 1;
+        @include overflow-ellipsis;
+    }
+}

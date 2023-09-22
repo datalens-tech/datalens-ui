@@ -1,0 +1,61 @@
+@import 'Chart';
+
+$dashContainerClassName: '.dash-body';
+$dashPublicContainerClassName: '.dash';
+
+.dl-widget {
+    #{$dashContainerClassName} &,
+    #{$dashPublicContainerClassName} & {
+        background-color: var(--g-color-base-float);
+    }
+
+    &__overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        z-index: 1;
+
+        &_move {
+            cursor: move;
+        }
+    }
+
+    // styles for widgets with tabs below
+
+    #{$dashPublicContainerClassName} &__container &__chart-header,
+    #{$dashContainerClassName} &__container &__chart-header {
+        top: -40px;
+        right: 8px;
+    }
+
+    #{$dashPublicContainerClassName} &__container_table &__chart-header,
+    #{$dashContainerClassName} &__container_table &__chart-header {
+        top: -46px;
+        right: 8px;
+    }
+
+    #{$dashPublicContainerClassName} &__container &__body_table,
+    #{$dashContainerClassName} &__container &__body_table {
+        padding: var(--dl-dk-table-padding);
+    }
+
+    #{$dashPublicContainerClassName} &:not(&_no-tabs) &__container &__body_table,
+    #{$dashContainerClassName} &:not(&_no-tabs) &__container &__body_table {
+        padding-top: 0;
+    }
+
+    #{$dashPublicContainerClassName} &__container_table .chartkit-loader__loader_compact,
+    #{$dashContainerClassName} &__container_table .chartkit-loader__loader_compact {
+        top: -42px;
+        right: 35px;
+    }
+
+    // styles for widgets without tabs below
+
+    #{$dashPublicContainerClassName} &_no-tabs &__container &__chart-header,
+    #{$dashContainerClassName} &_no-tabs &__container &__chart-header {
+        top: -4px;
+    }
+}

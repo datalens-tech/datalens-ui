@@ -1,0 +1,9 @@
+{
+  "button_apply": "Сохранить",
+  "button_cancel": "Отменить",
+  "label_default-name": "Новый чарт",
+  "label_entry-name-already-exists": "Название уже используется, придумайте другое",
+  "label_placeholder": "Новый чарт",
+  "section_caption": "Сохранить чарт",
+  "toast_create-editor-chart-failed": "Не удалось сохранить чарт"
+}

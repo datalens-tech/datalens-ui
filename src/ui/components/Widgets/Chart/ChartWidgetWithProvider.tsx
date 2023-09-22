@@ -1,0 +1,64 @@
+import React from 'react';
+
+import {chartsDataProvider} from '../../../libs/DatalensChartkit';
+import {ChartKitDataProvider} from '../../../libs/DatalensChartkit/components/ChartKitBase/types';
+
+import {Chart as ChartComponent} from './Chart';
+import {ChartSelector as ChartSelectorComponent} from './ChartSelector';
+import {ChartWidget as ChartWidgetComponent} from './ChartWidget';
+import {
+    ChartSelectorWidgetProps,
+    ChartWidgetProviderPropsWithRefProps,
+    ChartWithProviderWithRefProps,
+    ChartWrapperWithProviderProps,
+} from './types';
+
+/**
+ * is needed for proper component props typing
+ * @param props
+ */
+function isChartType(props: ChartWrapperWithProviderProps): props is ChartWithProviderWithRefProps {
+    return props.usageType === 'chart';
+}
+
+function isSelectorType(
+    props: ChartWrapperWithProviderProps | ChartSelectorWidgetProps,
+): props is ChartSelectorWidgetProps {
+    return props.usageType === 'control';
+}
+
+export class ChartWrapper extends React.Component<ChartWrapperWithProviderProps> {
+    dataProvider: ChartKitDataProvider;
+
+    constructor(props: ChartWrapperWithProviderProps) {
+        super(props);
+        // using singletone instance of class ChartsDataProvider because of manipulations with
+        // axios instance for limiting concurent requests
+        this.dataProvider = chartsDataProvider as ChartKitDataProvider;
+    }
+
+    render() {
+        if (isChartType(this.props)) {
+            return (
+                <ChartComponent
+                    {...this.props}
+                    dataProvider={this.dataProvider}
+                    ignoreUsedParams={true}
+                />
+            );
+        }
+
+        if (isSelectorType(this.props)) {
+            return <ChartSelectorComponent {...this.props} dataProvider={this.dataProvider} />;
+        }
+
+        const props = this.props as ChartWidgetProviderPropsWithRefProps;
+        return (
+            <ChartWidgetComponent
+                {...props}
+                dataProvider={this.dataProvider}
+                compactLoader={true}
+            />
+        );
+    }
+}

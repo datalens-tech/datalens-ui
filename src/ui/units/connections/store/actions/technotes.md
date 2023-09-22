@@ -1,0 +1,3 @@
+1. We put the value of `db_type` because a set of fields for editing the connection or checking its parameters may depend on it. It is not stored in the `form`, since it is not a necessary field of the form content when editing, so the second step is to remove it from the resulting dictionary;
+2. This action is called before the butch to reset the state of the forms before the redirect and processing of the `beforeunload` event;
+3. The `name` field is required on the tank to check the parameters of the connection being created, so we substitute this value for the lock, since the name is set separately in the entity creation dialog;

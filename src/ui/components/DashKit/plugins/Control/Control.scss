@@ -1,0 +1,95 @@
+.dashkit-plugin-control {
+    $class: &;
+    display: flex;
+    align-items: center;
+    justify-content: center; // in particular for the loader
+    height: 100%;
+    width: 100%;
+    min-height: 44px;
+    //flex-wrap: wrap;
+    //overflow: auto;
+
+    background-color: var(--g-color-base-float);
+    border-radius: 3px;
+
+    &__error {
+        border-radius: 3px;
+        padding: 0 6px;
+
+        &_inside {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: space-around;
+            height: 70px;
+            width: 180px;
+        }
+
+        &:hover:not(#{&}_inside) {
+            background-color: var(--g-color-base-simple-hover);
+        }
+    }
+
+    &__error-text {
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__buttons {
+        width: 100%;
+        display: flex;
+        align-items: center;
+
+        & > :first-child {
+            margin-right: 7px;
+        }
+    }
+
+    &_external {
+        align-items: normal;
+        display: block;
+    }
+
+    &__item {
+        flex: 1;
+        padding: 0 15px;
+        overflow: hidden;
+    }
+
+    &__loader {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3; // to overlay Datepicker
+
+        &_silent {
+            background-color: var(--g-color-sfx-fade);
+        }
+    }
+
+    &__select-loader {
+        height: 90px;
+    }
+
+    &_mobile {
+        min-height: 64px;
+
+        #{$class}__item {
+            padding: 10px 15px;
+        }
+    }
+}
+
+.dashkit_theme_datalens .dashkit-plugin-control {
+    & .chartkit-base__header {
+        right: 8px;
+    }
+
+    & .chartkit-control {
+        padding: 0 15px 4px;
+    }
+}

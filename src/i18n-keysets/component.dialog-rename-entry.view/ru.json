@@ -1,0 +1,8 @@
+{
+  "button_apply": "Готово",
+  "button_cancel": "Отменить",
+  "label_entry-name-already-exists": "Название уже используется, придумайте другое",
+  "label_placeholder": "Введите новое имя",
+  "section_caption": "Переименовать",
+  "toast_rename-failed": "Не удалось переименовать"
+}

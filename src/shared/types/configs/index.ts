@@ -1,0 +1,18 @@
+export type IconId =
+    | 'visCombined'
+    | 'visDonut'
+    | 'visFlatTable'
+    | 'visGeolayers'
+    | 'visArea100p'
+    | 'visArea'
+    | 'visBar100p'
+    | 'visBar'
+    | 'visColumn100p'
+    | 'visColumn'
+    | 'visLines'
+    | 'visScatter'
+    | 'visMetric'
+    | 'visPie'
+    | 'visPivot'
+    | 'visTreemap'
+    | 'collectionColored';

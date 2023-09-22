@@ -1,0 +1,6 @@
+{
+  "label_draft": "Draft",
+  "label_latest": "Latest",
+  "label_locked": "Locked by {{user}}",
+  "label_version": "v{{version}}"
+}

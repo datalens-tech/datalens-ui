@@ -1,0 +1,126 @@
+.chartkit-ymap-legend-layer {
+    color: var(--g-color-text-primary);
+
+    &:not(:last-child) {
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &:first-child {
+        border-top: 3px solid var(--g-color-base-background);
+    }
+
+    &:last-child {
+        border-bottom: 3px solid var(--g-color-base-background);
+    }
+
+    padding: 6px 8px 5px;
+
+    overflow-y: hidden;
+    overflow-x: hidden;
+
+    &_hidden {
+        max-height: 43px;
+    }
+
+    &__header {
+        display: flex;
+        font-weight: 500;
+        margin-bottom: 0;
+        line-height: 28px;
+        height: 28px;
+    }
+
+    &__layer-title {
+        width: 120px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__visibility-button {
+        opacity: 0;
+        height: 28px;
+        width: 28px;
+        margin-left: auto;
+
+        path {
+            color: var(--g-color-text-hint);
+        }
+
+        &:hover path {
+            color: var(--g-color-text-primary);
+        }
+    }
+
+    &:hover &__visibility-button,
+    &_hidden &__visibility-button {
+        opacity: 1;
+    }
+
+    &__color-title {
+        margin-top: 5px;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        color: var(--g-color-text-secondary);
+    }
+
+    &__color-preview {
+        width: 164px;
+        height: 8px;
+        background: #000000;
+        border-radius: 2px;
+        vertical-align: middle;
+        margin-bottom: 8px;
+        margin-top: 8px;
+    }
+
+    &__preview-legend {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__list {
+        margin-top: 4px;
+    }
+
+    &__row {
+        text-align: left;
+        margin-bottom: 6px;
+        color: var(--g-color-text-primary);
+
+        &_action {
+            color: var(--g-color-text-info);
+            cursor: pointer;
+        }
+    }
+
+    &__color,
+    &__value {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    &__color {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 4px;
+    }
+
+    &__value {
+        width: 120px;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__size-title {
+        margin-top: 5px;
+        color: var(--g-color-text-secondary);
+    }
+}

@@ -1,0 +1,3 @@
+{
+    "extends": "@gravity-ui/eslint-config/server"
+}

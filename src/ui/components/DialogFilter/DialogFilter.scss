@@ -1,0 +1,82 @@
+.dl-dialog-filter {
+    // TODO: this is an private api and may silently changed. We should use local styles
+    --yc-dialog-divider-margin: 0;
+
+    display: flex;
+    flex-direction: column;
+    width: 680px;
+    height: 560px;
+    max-height: 80vh;
+    min-height: 300px;
+
+    &__body {
+        &_without-paddings {
+            padding: 0;
+        }
+
+        &_without-horizontal-paddings {
+            padding: 10px 0;
+        }
+    }
+
+    &__row {
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    &__label {
+        width: 100px;
+        line-height: 28px;
+    }
+
+    &__header-title-icon {
+        flex-shrink: 0;
+        margin-right: 5px;
+    }
+
+    &__operation {
+        display: flex;
+        align-items: center;
+        margin: 0 0 10px 32px;
+    }
+
+    &__operation-label {
+        margin-right: 40px;
+    }
+
+    &__arrow-back-button {
+        margin-right: 5px;
+    }
+
+    &__load-limit-reached-warn {
+        position: absolute;
+        top: -20px;
+        color: var(--g-color-text-hint);
+        white-space: nowrap;
+    }
+
+    &__loader {
+        display: flex;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    // TODO: remove styles, when the Dialog.Header will contain them [DATAUI-359]
+    & .yc-dialog-header__caption {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    & .yc-dialog-body {
+        overflow-y: auto;
+    }
+
+    & .yc-dialog-footer__children {
+        position: relative;
+    }
+
+    --dl-dataset-field-list-item-padding-left: 32px;
+    --dl-dataset-field-list-item-padding-right: 5px;
+}

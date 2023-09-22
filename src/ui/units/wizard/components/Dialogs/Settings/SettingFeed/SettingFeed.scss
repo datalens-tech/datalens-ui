@@ -1,0 +1,15 @@
+.setting-feed {
+    &__container {
+        align-items: center;
+    }
+
+    &__label {
+        display: inline-block;
+        width: 125px;
+        margin-right: 16px;
+    }
+
+    &__feed-input.yc-text-input {
+        width: 250px;
+    }
+}

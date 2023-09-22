@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="56px" height="56px" viewBox="0 0 56 56" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-4" fill-rule="nonzero">
+            <rect id="Rectangle-5" fill="#FFFFFF" opacity="0" x="0" y="0" width="56" height="56"></rect>
+            <g id="Group" transform="translate(12.000000, 11.000000)">
+                <rect id="Rectangle" fill="#FFCC00" x="0" y="0" width="4" height="34"></rect>
+                <rect id="Rectangle" fill="#FF0400" x="0" y="30" width="4" height="4"></rect>
+                <rect id="Rectangle" fill="#FFCC00" x="8" y="0" width="4" height="34"></rect>
+                <rect id="Rectangle" fill="#FFCC00" x="16" y="0" width="4" height="34"></rect>
+                <rect id="Rectangle" fill="#FFCC00" x="24" y="0" width="4" height="34"></rect>
+                <rect id="Rectangle" fill="#FFCC00" x="32" y="13" width="4" height="8"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

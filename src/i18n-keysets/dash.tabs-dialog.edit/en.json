@@ -1,0 +1,13 @@
+{
+  "button_add-tab": "Add",
+  "button_cancel": "Cancel",
+  "button_save": "Save",
+  "label_tabs": "Tabs",
+  "menu_delete": "Delete",
+  "menu_delete_other": "Delete all but this",
+  "menu_duplicate": "Duplicate",
+  "menu_order": "Widget order",
+  "menu_rename": "Rename",
+  "value_default": "Tab {{index}}",
+  "value_default-duplicated": "{{title}} (copy)"
+}

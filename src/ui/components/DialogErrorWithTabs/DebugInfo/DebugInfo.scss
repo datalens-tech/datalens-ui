@@ -1,0 +1,19 @@
+.debug-info {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    justify-content: space-between;
+
+    &__value {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        margin: 0 auto 0 6px;
+    }
+
+    &__caption {
+        flex: 0 0 80px;
+        font-weight: bold;
+    }
+}

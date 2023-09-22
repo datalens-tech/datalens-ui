@@ -1,0 +1,333 @@
+import {Page} from '@playwright/test';
+
+import {ChartkitMenuDialogsQA, MenuItemsQA} from '../../../src/shared/constants';
+import {slct, waitForCondition} from '../../utils';
+import {readDownload} from '../../utils/playwright/utils';
+
+export enum DOMNamedAttributes {
+    StrokeDashArray = 'stroke-dasharray',
+    Stroke = 'stroke',
+}
+
+export const CHARTKIT_MENU_ITEMS_SELECTORS = {
+    menuCommentsQA: 'comments',
+    menuShowCommentsQA: 'showComments',
+    menuHideCommentsQA: 'hideComments',
+    inspectorQA: 'inspector',
+    shareQA: 'getLink',
+    exportQA: 'export',
+    alertsQA: 'alerts',
+};
+
+export default class ChartKit {
+    geopointSelector = '.chartkit-yandex-map-chips';
+    tooltipSelector = '.chartkit-tooltip';
+    yMapSelector = '.chartkit-ymap';
+    legendMapSelector = '.chartkit-ymap-legend';
+    legendSelector = '.highcharts-legend-box';
+    legendItemSelector = '.highcharts-legend-item';
+    chartMenuSwitcher = slct('chart-dropdown-switcher');
+    chartMenuList = slct('chart-dropdown-menu');
+    commentsSelector = '.highcharts-comment';
+    alertLimitSelector = '.highcharts-plot-band';
+    xAxisLabel = '.highcharts-xaxis-labels text';
+    chartTitle = '.highcharts-title';
+    navigator = '.highcharts-navigator';
+    indicatorItemSelector = '.chartkit-indicator__item';
+    indicatorItemValueSelector = '.chartkit-indicator__item-value';
+
+    private drillArrowsSelector = '.chartkit-drill__drill-action';
+    private breadcrumbsSelector = '.chartkit-drill .yc-breadcrumbs__item';
+    private paginatorSelector = '.chartkit-table-paginator';
+    private tableRowSelector = '.chartkit .data-table__row';
+    private tableHeadRowSelector = '.chartkit .data-table__sticky_head .data-table__head-row';
+    private tableColgroupSelector = '.chartkit-table colgroup';
+    private layerLegendSelector = '.chartkit .chartkit-ymap-legend-layer';
+    private chartkitTableCellSelector = '.chartkit-table__cell';
+    private labelsSelector = '.highcharts-data-labels .highcharts-data-label';
+    private chartkitSeriesRect = '.chartkit-highcharts rect.highcharts-point';
+
+    private page: Page;
+
+    constructor(page: Page) {
+        this.page = page;
+    }
+
+    async openChartMenu() {
+        await this.page.click(this.chartMenuSwitcher);
+    }
+
+    async waitForItemInMenu(qaName: string) {
+        await this.page.waitForSelector(`${this.chartMenuList} [data-qa="${qaName}"]`);
+    }
+
+    async openChartMenuAndClickItem(menuItemSelector: string) {
+        await waitForCondition(async () => {
+            await this.openChartMenu();
+
+            try {
+                await this.page.click(menuItemSelector, {timeout: 2000});
+                return true;
+            } catch {
+                return false;
+            }
+        });
+    }
+
+    async clickMenuItem(qaSelector: string) {
+        await this.page.waitForSelector(this.chartMenuSwitcher);
+        await this.openChartMenu();
+        await this.waitForItemInMenu(qaSelector);
+        await this.page.click(`[data-qa="${qaSelector}"]`);
+    }
+
+    async getComments() {
+        // while in the tests we take into account only comments-lines, for areas and so on, the logic may be different
+        return await this.page.$$(`path${this.commentsSelector}`);
+    }
+
+    async getCommentByText(commentText: string) {
+        return await this.page.$$(`text${this.commentsSelector} >> ${commentText}`);
+    }
+
+    async openScreenshotDialog() {
+        await this.openExportMenuAndClickSubItem(slct(MenuItemsQA.EXPORT_SCREENSHOT));
+    }
+
+    async drillDown() {
+        await this.page.waitForSelector(this.drillArrowsSelector);
+        const [_leftArrow, rightArrow] = await this.page.$$(this.drillArrowsSelector);
+        await rightArrow.click();
+    }
+
+    async drillUp() {
+        await this.page.waitForSelector(this.drillArrowsSelector);
+        const [leftArrow] = await this.page.$$(this.drillArrowsSelector);
+        await leftArrow.click();
+    }
+
+    async waitForErrorTitle(errorQa: string) {
+        await this.page.waitForSelector(slct(errorQa));
+    }
+
+    async waitForDefaultMetric() {
+        await this.page.waitForSelector(
+            `.chartkit-metric-2__metric, ${this.indicatorItemSelector}`,
+        );
+
+        await this.page.waitForSelector(
+            `.chartkit-metric-2__value, ${this.indicatorItemValueSelector}`,
+        );
+    }
+
+    async waitForSuccessfulRender() {
+        await this.page.waitForSelector('.chartkit-graph,.chartkit-table');
+    }
+
+    async openExportMenuAndClickSubItem(subItemSelector: string) {
+        await this.openChartMenu();
+        await this.page.hover(slct(MenuItemsQA.EXPORT));
+
+        const subItem = await this.page.waitForSelector(subItemSelector);
+        await subItem.click();
+    }
+
+    async openCsvExportDialog() {
+        await this.openExportMenuAndClickSubItem(slct(MenuItemsQA.EXPORT_CSV));
+        return this.page.waitForSelector(slct(ChartkitMenuDialogsQA.chartMenuExportCsvDialog));
+    }
+
+    async exportCsv(options?: {fractionDelimiter?: string}) {
+        const downloadPromise = this.page.waitForEvent('download');
+
+        const dialog = await this.openCsvExportDialog();
+
+        if (options?.fractionDelimiter) {
+            const selectFloatSelector = await dialog.waitForSelector(
+                slct(ChartkitMenuDialogsQA.chartMenuExportCsvSelectFloat),
+            );
+            await selectFloatSelector.click();
+            await this.page.locator(slct(options.fractionDelimiter)).click();
+        }
+
+        await this.page.click(slct(ChartkitMenuDialogsQA.chartMenuExportModalApplyBtn));
+
+        const download = await downloadPromise;
+        const content = await readDownload(download);
+        await download.delete();
+
+        return content;
+    }
+
+    async exportMarkdown() {
+        await this.openExportMenuAndClickSubItem(slct(MenuItemsQA.EXPORT_MARKDOWN));
+
+        return await this.page.evaluate(async () => {
+            return await navigator.clipboard.readText();
+        });
+    }
+
+    async openInNewTab() {
+        const newTabPagePromise: Promise<Page> = new Promise((resolve) =>
+            this.page.context().on('page', resolve),
+        );
+        const selector = slct(MenuItemsQA.NEW_WINDOW);
+        await this.openChartMenuAndClickItem(selector);
+
+        return newTabPagePromise;
+    }
+
+    async saveAsPicture() {
+        const newTabPagePromise: Promise<Page> = new Promise((resolve) =>
+            this.page.context().on('page', resolve),
+        );
+        await this.openScreenshotDialog();
+
+        await this.page.click(slct('download-screenshot-modal-download-btn'));
+
+        return newTabPagePromise;
+    }
+
+    async waitForPaginationExist() {
+        await this.page.waitForSelector(this.paginatorSelector);
+    }
+
+    async waitForPaginationNotExist() {
+        await this.page.waitForSelector(this.paginatorSelector, {state: 'detached'});
+    }
+
+    async getBreadcrumbs(): Promise<string[]> {
+        const breadcrumbs = await this.page.$$(this.breadcrumbsSelector);
+
+        return Promise.all(breadcrumbs.map((el) => el.innerText()));
+    }
+
+    async getTableRowsCount() {
+        return (await this.page.$$(this.tableRowSelector)).length;
+    }
+
+    async getColumnsWidth() {
+        const colGroup = await this.page.locator(this.tableColgroupSelector).first();
+        return await colGroup
+            .locator('col')
+            .evaluateAll((cols) => cols.map((col) => col.style?.width));
+    }
+
+    getLayerLegend() {
+        return this.page.$(this.layerLegendSelector);
+    }
+
+    getHeadRowsHtml() {
+        return this.getRowContent(this.tableHeadRowSelector, '.data-table__head-cell', 'html');
+    }
+
+    getRowsHtml() {
+        return this.getRowContent(this.tableRowSelector, '.chartkit-table__cell', 'html');
+    }
+
+    getHeadRowsTexts() {
+        return this.getRowContent(this.tableHeadRowSelector, '.data-table__head-cell', 'text');
+    }
+
+    async getRowsTexts() {
+        const rows = await this.getRowContent(
+            this.tableRowSelector,
+            '.chartkit-table__cell',
+            'text',
+        );
+
+        return rows.map((row) => {
+            return row.map((rowValue) => rowValue.replace(/\u00a0/g, ' '));
+        });
+    }
+
+    async waitUntilLoaderExists() {
+        await waitForCondition(async () => {
+            return !(await this.page.$('.chartkit-loader.chartkit-loader_veil'));
+        }).catch(() => {
+            throw new Error("Loader didn't disappear");
+        });
+    }
+
+    async getAttributeFromLines(attributeName: DOMNamedAttributes) {
+        let lines: string[] = [];
+        await waitForCondition(async () => {
+            lines = await this.page.evaluate(
+                ({attribute}: {attribute: DOMNamedAttributes}) => {
+                    const lineNodes = document.querySelectorAll(
+                        '.highcharts-series .highcharts-graph',
+                    );
+                    return Array.from(lineNodes)
+                        .map((lineEl) => lineEl.attributes.getNamedItem(attribute)?.value)
+                        .filter(Boolean) as string[];
+                },
+                {attribute: attributeName} as {attribute: DOMNamedAttributes},
+            );
+            return lines.length;
+        });
+        return lines;
+    }
+
+    async clickToCellWithText(text: string) {
+        await this.page.click(`${this.chartkitTableCellSelector} >> text=${text}`);
+    }
+
+    async navigateToNextTablePage(times: number) {
+        for (let i = 0; i < times; i++) {
+            await this.page.click(slct('chartkit-table-paginator-next-btn'));
+        }
+    }
+
+    async getSeriesClientRect() {
+        const locator = this.page.locator(this.chartkitSeriesRect);
+        return await locator.evaluateAll((elements) =>
+            elements.map((el) => el.getBoundingClientRect()),
+        );
+    }
+
+    async getLabelsClientRect() {
+        const locator = this.page.locator(this.labelsSelector);
+        return await locator.evaluateAll((elements) =>
+            elements.map((el) => el.getBoundingClientRect()),
+        );
+    }
+
+    async getLabelsTexts() {
+        await this.page.waitForSelector(this.labelsSelector);
+
+        const locator = this.page.locator(this.labelsSelector);
+
+        await locator.first().waitFor();
+        const labels = await locator.allTextContents();
+
+        return labels.map((rowValue) => rowValue.replace(/\u00a0/g, ' '));
+    }
+
+    private async getRowContent(
+        rowSelector: string,
+        cellSelector: '.data-table__head-cell' | '.chartkit-table__cell',
+        contentType: 'text' | 'html',
+    ) {
+        await this.page.waitForSelector(rowSelector);
+
+        const rowElements = await this.page.$$(rowSelector);
+
+        return Promise.all(
+            rowElements.map(async (row) => {
+                const cells = await row.$$(cellSelector)!;
+
+                const cellsTexts = await Promise.all(
+                    cells.map((cell) => {
+                        if (contentType === 'text') {
+                            return cell.innerText();
+                        }
+
+                        return cell.innerHTML();
+                    }),
+                );
+
+                return cellsTexts.map((cellText: string) => cellText.trim());
+            }),
+        );
+    }
+}

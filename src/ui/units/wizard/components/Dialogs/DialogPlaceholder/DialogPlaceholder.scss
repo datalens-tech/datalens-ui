@@ -1,0 +1,41 @@
+.dialog-placeholder {
+    width: 720px;
+
+    &__title-popover {
+        vertical-align: middle;
+        margin-left: 5px;
+    }
+
+    &__min-input,
+    &__max-input {
+        width: 75px;
+    }
+
+    &__title-setting-container {
+        display: flex;
+        align-items: center;
+    }
+
+    &__title-radio-buttons {
+        width: 235px;
+    }
+
+    &__title-input {
+        width: 235px;
+        margin-left: 15px;
+    }
+
+    &__grid-step-input {
+        width: 155px;
+    }
+
+    &__title-icon {
+        margin-right: 4px;
+        margin-bottom: 2px;
+        height: 24px;
+        width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

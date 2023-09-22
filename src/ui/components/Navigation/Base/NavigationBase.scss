@@ -1,0 +1,23 @@
+.dl-navigation-base {
+    &__sidebar-icon-favorites {
+        color: var(--g-color-base-misc-heavy-hover);
+    }
+
+    &__sidebar-icon-widgets {
+        color: var(--g-color-base-brand);
+    }
+
+    &__sidebar-icon-datasets {
+        color: var(--g-color-base-positive-heavy);
+    }
+
+    &__sidebar-icon-dashboards,
+    &__sidebar-icon-root,
+    &__sidebar-icon-personal-folder {
+        color: var(--g-color-text-warning-heavy);
+    }
+
+    &__sidebar-icon-connections {
+        color: var(--g-color-text-link-visited);
+    }
+}

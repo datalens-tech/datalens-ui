@@ -1,0 +1,64 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_add-selector": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_selectors-placement": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_apply-button": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_reset-button": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_apply-button-checkbox": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_autoheight-checkbox": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_default-tab": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_reset-button-checkbox": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_selector-settings": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_selectors-list": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_source": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

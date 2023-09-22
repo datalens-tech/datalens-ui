@@ -1,0 +1,32 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "field_admin": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_execute": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_none": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_read": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_write": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

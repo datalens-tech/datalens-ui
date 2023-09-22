@@ -1,0 +1,7 @@
+{
+  "button_cancel": "Cancel",
+  "button_confirm": "Yes, make actual",
+  "label_text": "A copy of the version you are currently viewing will be created. But you can always return to previous versions.",
+  "label_text-unsaved-lost": "All unsaved changed will be lost.",
+  "label_title": "Make actual?"
+}

@@ -1,0 +1,15 @@
+{
+  "button_add-selector": "Добавить селектор",
+  "button_cancel": "Отменить",
+  "button_save": "Сохранить",
+  "button_selectors-placement": "Размещение селекторов",
+  "context_apply-button": "Опция включает кнопку для применения селекторов",
+  "context_reset-button": "Опция включает кнопку для сброса селекторов",
+  "label_apply-button-checkbox": "Кнопка «‎Применить»‎",
+  "label_autoheight-checkbox": "Автовысота",
+  "label_default-tab": "Селектор {{index}}",
+  "label_reset-button-checkbox": "Кнопка «‎Сбросить»",
+  "label_selector-settings": "Настройки селектора",
+  "label_selectors-list": "Селекторы",
+  "label_source": "Источник"
+}

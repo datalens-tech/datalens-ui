@@ -1,0 +1,16 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "toast_editing-warning": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

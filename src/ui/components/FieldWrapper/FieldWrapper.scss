@@ -1,0 +1,25 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.yc-field-wrapper {
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
+
+    & > * {
+        vertical-align: top;
+    }
+
+    &__error-text {
+        @include text-body-1;
+        color: var(--g-color-text-danger);
+        margin-top: 2px;
+    }
+
+    &_state_error {
+        .yc-select,
+        .yc-select-control,
+        .yc-text-input__control {
+            border-color: var(--g-color-text-danger);
+        }
+    }
+}

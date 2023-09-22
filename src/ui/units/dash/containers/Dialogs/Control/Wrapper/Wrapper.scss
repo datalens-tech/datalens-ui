@@ -1,0 +1,17 @@
+.control-wrapper {
+    display: grid;
+    grid-row-gap: 5px;
+
+    &__title {
+        color: #808080;
+    }
+
+    &__children {
+        display: flex;
+        align-items: center;
+
+        &_overflow {
+            overflow: hidden;
+        }
+    }
+}

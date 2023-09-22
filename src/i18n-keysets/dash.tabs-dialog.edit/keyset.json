@@ -1,0 +1,56 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_add-tab": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_tabs": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "menu_delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "menu_delete_other": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "menu_duplicate": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "menu_order": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "menu_rename": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_default": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_default-duplicated": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

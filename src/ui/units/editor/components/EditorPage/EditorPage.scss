@@ -1,0 +1,30 @@
+@import '../../../../styles/variables';
+
+.editor-page {
+    height: calc(100% - #{$headerHeight});
+    min-width: 1100px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--g-color-base-background);
+
+    &_aside {
+        height: 100%;
+    }
+
+    &__main {
+        height: 100%;
+        display: flex;
+        position: relative;
+        flex-direction: column;
+    }
+
+    &__content {
+        height: calc(100% - #{$actionPanelHeight});
+        display: flex;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: $actionPanelHeight;
+        bottom: 0;
+    }
+}

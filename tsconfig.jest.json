@@ -1,0 +1,30 @@
+{
+  "extends": "@gravity-ui/tsconfig/tsconfig",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "baseUrl": "./tests",
+    "jsx": "react",
+    "allowJs": true,
+    "paths": {
+      "shared": ["src/shared"],
+      "shared/*": ["src/shared/*"],
+      "ui": ["src/ui"],
+      "index": ["src/ui"],
+      "sever": ["src/server"],
+      "i18n": ["src/i18n"],
+      "ui/*": ["src/ui/*"],
+      "libs/*": ["src/ui/libs/*"],
+      "utils": ["src/ui/utils"],
+      "utils/*": ["src/ui/utils/*"],
+      "store/*": ["src/ui/store/*"],
+      "units/*": ["src/ui/units/*"],
+      "components/*": ["src/ui/components/*"],
+      "constants/*": ["src/ui/constants/*"],
+      "assets/*": ["src/ui/assets/*"],
+      "hooks": ["src/ui/hooks"],
+      "hooks/*": ["src/ui/hooks/*"],
+      "hoc": ["src/ui/hoc"],
+      "hoc/*": ["src/ui/hoc/*"]
+    }
+  }
+}

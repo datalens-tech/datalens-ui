@@ -1,0 +1,16 @@
+{
+  "name": "datalens-tests",
+  "version": "0.0.1",
+  "dependencies": {},
+  "devDependencies": {},
+  "overrides": {},
+  "scripts": {
+    "test:install:chromium": "npx playwright install --with-deps chromium",
+    "test:e2e": "npx playwright test --config=./playwright.config.ts",
+    "deps": "bash ../scripts/cached-npm-install.sh",
+    "typecheck": "tsc --noEmit",
+    "lint:prettier": "prettier --check './**/*.{js,jsx,ts,tsx,json,css,scss}'"
+  },
+  "private": true,
+  "browserslist": []
+}

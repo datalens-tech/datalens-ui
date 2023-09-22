@@ -1,0 +1,135 @@
+@import '../../styles/variables';
+
+.revisions {
+    $class: &;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+
+    &__spin-wrap {
+        display: flex;
+        justify-content: center;
+        height: 20px;
+        margin: 20px 0;
+    }
+
+    &__spin {
+        margin-right: 4px;
+    }
+
+    &__empty {
+        padding: 0 20px 16px;
+    }
+
+    &__content {
+        width: 100%;
+    }
+
+    & &__btn-diff {
+        // TODO: this is an private api and may silently changed. We should use local styles
+        margin-left: var(--yc-dialog-side-padding);
+        margin-bottom: 20px;
+        width: max-content;
+        flex-shrink: 0;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        vertical-align: top;
+        height: 40px;
+        flex-shrink: 0;
+        padding-left: 12px;
+
+        &:hover:not(#{$class}__item_current) {
+            background-color: var(--g-color-base-simple-hover);
+            cursor: pointer;
+        }
+
+        &_current {
+            background-color: var(--g-color-base-selection);
+        }
+    }
+
+    &__release-status {
+        flex-shrink: 0;
+        width: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    &__release-mark {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--g-color-text-info);
+    }
+
+    &__time-version {
+        flex: 1 0 124px;
+        display: flex;
+        overflow: hidden;
+        padding-left: 4px;
+    }
+
+    &__user {
+        flex: 2 1 25%;
+        display: flex;
+        overflow: hidden;
+        margin: 0 5px 0 15px;
+        white-space: nowrap;
+    }
+
+    &__user-wrap {
+        overflow: hidden;
+    }
+
+    &__user-card::first-letter {
+        color: var(--g-color-text-danger);
+        overflow: hidden;
+        text-overflow: hidden;
+    }
+
+    &__user-link {
+        display: block;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    &__publish-status {
+        flex: 1 0 120px;
+        display: flex;
+        overflow: hidden;
+        justify-content: center;
+    }
+
+    &__actions {
+        flex: 0 0 120px;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        min-width: 120px;
+    }
+
+    &__dropdown {
+        margin-left: auto;
+        // TODO: this is an private api and may silently changed. We should use local styles
+        margin-right: var(--yc-dialog-side-padding);
+    }
+
+    &__progress-status {
+        display: flex;
+        align-items: center;
+    }
+
+    &__progress-text {
+        color: var(--g-color-text-secondary);
+    }
+
+    &__loader-wrap {
+        display: flex;
+        justify-content: center;
+    }
+}

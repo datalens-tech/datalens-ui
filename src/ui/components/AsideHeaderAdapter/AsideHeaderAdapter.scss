@@ -1,0 +1,33 @@
+@import '../../styles/mixins.scss';
+
+.dl-aside-header {
+    &__item-link {
+        @include link-reset;
+        display: flex;
+        height: 40px;
+        width: 100%;
+        align-items: center;
+    }
+
+    &__item-wrap {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+    }
+
+    &__logo-link {
+        @include link-reset;
+    }
+
+    &__docs-link {
+        align-items: center;
+        box-sizing: border-box;
+        display: flex;
+        flex-grow: 1;
+        height: 100%;
+        padding: 8px 16px;
+        text-decoration: none;
+        color: var(--g-color-text-primary);
+    }
+}

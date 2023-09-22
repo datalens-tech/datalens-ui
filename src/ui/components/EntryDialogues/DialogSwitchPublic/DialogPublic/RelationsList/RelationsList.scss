@@ -1,0 +1,73 @@
+.dl-dialog-public-relations-list {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+
+    &__main-title-text {
+        margin-top: 24px;
+        font-weight: 500;
+        font-size: var(--g-text-body-2-font-size);
+    }
+
+    &__group {
+        margin-top: 8px;
+    }
+
+    &__group-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+
+    &__group-title-text {
+        margin-right: 16px;
+    }
+
+    &__group-item {
+        width: 100%;
+        height: 40px;
+        align-items: center;
+        display: flex;
+        transition: background ease-in-out 0.2s;
+
+        &:hover {
+            background: var(--g-color-base-simple-hover);
+        }
+    }
+
+    &__entry-name {
+        margin-left: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__group-entry {
+        margin-right: 10px;
+        margin-left: 4px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
+
+    &__entry-icon_disabled {
+        opacity: 0.5;
+    }
+
+    &__entry-icon {
+        flex-shrink: 0;
+    }
+
+    &__right-section {
+        flex-shrink: 0;
+        margin-left: auto;
+        margin-right: 4px;
+        display: flex;
+        align-items: center;
+    }
+
+    &__alert {
+        margin-right: 12px;
+    }
+}

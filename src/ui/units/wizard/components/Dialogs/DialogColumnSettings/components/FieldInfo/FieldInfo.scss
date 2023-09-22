@@ -1,0 +1,35 @@
+@import '../../../../../styles/variables';
+
+.field-info {
+    display: flex;
+    align-items: center;
+    margin-right: 16px;
+
+    &__container {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    &__title {
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    &__icon {
+        margin-right: 5px;
+        flex-shrink: 0;
+
+        &_parameter {
+            color: var(--g-color-text-utility);
+        }
+
+        &_measure {
+            color: var(--color-formula-measure);
+        }
+
+        &_dimension {
+            color: var(--color-formula-dimension);
+        }
+    }
+}

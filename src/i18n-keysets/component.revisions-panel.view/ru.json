@@ -1,0 +1,22 @@
+{
+  "button_cancel": "Отмена",
+  "button_edit-anyway": "Все равно редактировать",
+  "button_make-actual": "Сделать актуальной",
+  "button_open-actual": "Открыть актуальную",
+  "button_open-draft": "Открыть черновик",
+  "button_open-revisions": "Показать в истории",
+  "label_already-editing-entry": "Этот {{scope}} уже редактируется",
+  "label_by": "от",
+  "label_chart": "чарт",
+  "label_dash": "дашборд",
+  "label_draft-version": "Это черновая версия",
+  "label_editor": "редактор",
+  "label_entry-is-editing": "{{scope}} уже редактируется",
+  "label_entry-is-editing-by": "уже редактирует этот {{scope}}",
+  "label_later-warning-text": "История изменений содержит черновую версию {{scope}}",
+  "label_not-actual": "Это неактуальная версия",
+  "label_of-chart": "чарта",
+  "label_of-dash": "дашборда",
+  "label_of-editor": "редактора",
+  "label_unexpected-error": "Ошибка"
+}

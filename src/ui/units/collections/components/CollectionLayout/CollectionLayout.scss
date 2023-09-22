@@ -1,0 +1,34 @@
+.dl-collection-layout {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+
+    &__container {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        max-width: 1040px;
+        padding: 0 20px;
+    }
+
+    &__title {
+        margin: 28px 0 0;
+        font-size: 24px;
+        line-height: 28px;
+    }
+
+    &__controls {
+        margin-top: 28px;
+    }
+
+    &__description {
+        margin-top: 20px;
+    }
+
+    &__content {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        margin: 28px 0;
+    }
+}

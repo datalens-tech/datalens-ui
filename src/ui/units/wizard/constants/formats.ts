@@ -1,0 +1,56 @@
+const AVAILABLE_DATE_FORMATS = ['YYYY', 'MM.YYYY', 'DD.MM.YYYY', 'YYYY-MM', 'YYYY-MM-DD'];
+
+const AVAILABLE_DATE_FORMATS_NON_TABLE = ['DD.MM.YYYY', 'YYYY-MM-DD'];
+
+const AVAILABLE_DATETIME_FORMATS = [
+    'YYYY',
+    'MM.YYYY',
+    'DD.MM.YYYY',
+    'DD.MM.YYYY HH',
+    'DD.MM.YYYY HH:mm',
+    'DD.MM.YYYY HH:mm:ss',
+    'YYYY-MM',
+    'YYYY-MM-DD',
+    'YYYY-MM-DD HH',
+    'YYYY-MM-DD HH:mm',
+    'YYYY-MM-DD HH:mm:ss',
+];
+
+const AVAILABLE_DATETIME_FORMATS_NON_TABLE = ['DD.MM.YYYY HH:mm:ss', 'YYYY-MM-DD HH:mm:ss'];
+
+const AVAILABLE_DATETIMETZ_FORMATS = [
+    'YYYY',
+    'MM.YYYY',
+    'DD.MM.YYYY',
+    'DD.MM.YYYY HH',
+    'DD.MM.YYYY HH Z',
+    'DD.MM.YYYY HH:mm',
+    'DD.MM.YYYY HH:mm Z',
+    'DD.MM.YYYY HH:mm:ss',
+    'DD.MM.YYYY HH:mm:ss Z',
+    'YYYY-MM',
+    'YYYY-MM-DD',
+    'YYYY-MM-DD HH',
+    'YYYY-MM-DD HH Z',
+    'YYYY-MM-DD HH:mm',
+    'YYYY-MM-DD HH:mm Z',
+    'YYYY-MM-DD HH:mm:ss',
+    'YYYY-MM-DD HH:mm:ss Z',
+];
+
+const AVAILABLE_DATETIMETZ_FORMATS_NON_TABLE = ['DD.MM.YYYY HH:mm:ss Z', 'YYYY-MM-DD HH:mm:ss Z'];
+
+const LUXON_DATE_FORMATS = {
+    'dd.MM.yyyy': 'dd.MM.yyyy',
+    'dd.MM.yyyy HH:mm:ss': 'dd.MM.yyyy HH:mm:ss',
+};
+
+export {
+    AVAILABLE_DATE_FORMATS,
+    AVAILABLE_DATETIME_FORMATS,
+    AVAILABLE_DATE_FORMATS_NON_TABLE,
+    AVAILABLE_DATETIME_FORMATS_NON_TABLE,
+    AVAILABLE_DATETIMETZ_FORMATS,
+    AVAILABLE_DATETIMETZ_FORMATS_NON_TABLE,
+    LUXON_DATE_FORMATS,
+};

@@ -1,0 +1,20 @@
+@import '../../../styles/variables';
+
+.error-text {
+    &__content {
+        margin-top: 30px;
+        padding: 15px;
+        font-size: 13px;
+        border-radius: 4px;
+        background-color: var(--g-color-base-generic-ultralight);
+        overflow: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: $monospaceFontFamily;
+        max-height: 365px;
+    }
+
+    &__extra-content {
+        margin-top: 16px;
+    }
+}

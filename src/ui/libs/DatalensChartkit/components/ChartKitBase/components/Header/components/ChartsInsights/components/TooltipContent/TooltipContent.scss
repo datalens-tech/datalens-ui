@@ -1,0 +1,28 @@
+.chartkit-charts-insights {
+    max-height: 80vh;
+    overflow: auto;
+
+    &__tooltip:not(:first-child) {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--g-color-line-generic);
+    }
+
+    &__tooltip-title {
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+    }
+
+    &__tooltip-icon {
+        margin-right: 8px;
+    }
+
+    &__tooltip-message {
+        margin-top: 4px;
+    }
+
+    &__tooltip-button {
+        margin-top: 8px;
+    }
+}

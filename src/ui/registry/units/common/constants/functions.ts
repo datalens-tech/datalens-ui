@@ -1,0 +1,1 @@
+export const EXAMPLE_FUNCTION = 'temp/EXAMPLE_FUNCTION';

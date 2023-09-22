@@ -1,0 +1,173 @@
+@import '../../styles/mixins';
+
+.select-sources-prototypes {
+    $class: &;
+
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+    min-height: 200px;
+    background: var(--ds-color-base-area);
+
+    &__top-section {
+        padding: 16px 20px 8px;
+        font-weight: bold;
+        position: sticky;
+        top: 0;
+        background: var(--ds-color-base-area);
+        z-index: 1;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__connections {
+        border-bottom: 1px solid var(--ds-color-divider);
+        max-height: 50%;
+        min-height: 120px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex-shrink: 0;
+    }
+
+    &__connection-wrap {
+        position: relative;
+    }
+
+    &__connection {
+        height: 32px;
+        flex: 0 0 32px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 0 25px 0 16px;
+
+        &_active {
+            background: var(--ds-color-selection);
+        }
+
+        &:hover {
+            background: var(--ds-color-hover-area);
+        }
+
+        &_active:hover {
+            background: var(--ds-color-selection-solid);
+        }
+
+        &:hover {
+            #{$class}__btn-delete-connection {
+                display: inline-block;
+            }
+        }
+    }
+
+    &__icon-connection {
+        flex-shrink: 0;
+    }
+
+    &__connection-title {
+        flex-grow: 1;
+        @include overflow-ellipsis;
+
+        &_deleted {
+            color: var(--g-color-text-danger);
+            font-style: italic;
+        }
+    }
+
+    &__icon-connection {
+        margin-right: 8px;
+    }
+
+    &__icon-pencil {
+        margin-left: auto;
+    }
+
+    &__bottom-section {
+        position: sticky;
+        bottom: 0;
+        padding: 4px 8px;
+        background: var(--ds-color-base-area);
+    }
+
+    &__btn-add-connection,
+    &__btn-add-source {
+        display: flex;
+    }
+
+    &__btn-add-source {
+        bottom: 0;
+    }
+
+    &__btn-delete-connection {
+        left: 20px;
+        display: none;
+    }
+
+    // selector
+    & &__btn-menu-control {
+        position: absolute;
+        top: 16px;
+        right: 5px;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__sources {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        flex-grow: 1;
+        position: relative;
+        min-height: 120px;
+        // In Yandex.Browser and Firefox in some cases, an endless redrawing of the height begins
+        // in the react-window container (which is used in the List component)
+        // This is due to the appearance/disappearance of the horizontal scroll
+        padding-bottom: 1px;
+
+        // TODO: tear off styles when the opportunity arises
+        // customizing input styles in List [DATAUI-360]
+        & .yc-list__filter {
+            margin: 0px 20px 8px;
+        }
+    }
+
+    &__sources-error {
+        padding: 0 20px;
+    }
+
+    &__sources-error-row {
+        margin-bottom: 10px;
+    }
+
+    &__sources-error-btn {
+        margin-right: 10px;
+    }
+
+    &__source-item {
+        &:hover {
+            background-color: transparent;
+        }
+    }
+
+    &__loader-sources {
+        flex: 0 1 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__active-sources {
+        border-bottom: 1px solid var(--ds-color-divider);
+    }
+
+    &__inp-search-table {
+        margin-top: 8px;
+    }
+}

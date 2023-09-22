@@ -1,0 +1,127 @@
+import React from 'react';
+
+import {Button, Dialog} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
+import {i18n} from 'i18n';
+import isEmpty from 'lodash/isEmpty';
+import {DialogColumnSettingsQa, Field, WizardVisualizationId} from 'shared';
+
+import DialogManager from '../../../../../components/DialogManager/DialogManager';
+
+import {ColumnWidthSettingsSection} from './components/ColumnWidthSettingsSection/ColumnWidthSettingsSection';
+import {
+    ColumnSettingsState,
+    useDialogColumnSettingsState,
+} from './hooks/useDialogColumnSettingsState';
+
+import './DialogColumnSettings.scss';
+
+export type DialogColumnSettingsFields = {
+    columns: Field[];
+    rows: Field[];
+};
+
+type DialogColumnSettingsProps = {
+    fields: DialogColumnSettingsFields;
+    onClose: () => void;
+    onApply: (fields: {columns: ColumnSettingsState; rows: ColumnSettingsState}) => void;
+    visualizationId: WizardVisualizationId;
+};
+
+export type OpenDialogColumnSettingsArgs = {
+    id: typeof DIALOG_COLUMN_SETTINGS;
+    props: DialogColumnSettingsProps;
+};
+
+export const DIALOG_COLUMN_SETTINGS = Symbol('DIALOG_COLUMN_SETTINGS');
+
+const b = block('dialog-column-settings');
+
+export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
+    props: DialogColumnSettingsProps,
+) => {
+    const {onClose, onApply, visualizationId} = props;
+
+    const {handleOnResetClick, fields, handleWidthUpdate, errors, handleErrorOccurred} =
+        useDialogColumnSettingsState({
+            initialFields: props.fields,
+        });
+
+    const isPivotTableDialog = visualizationId === WizardVisualizationId.PivotTable;
+    const dialogTitle = isPivotTableDialog
+        ? i18n('wizard', 'label_pivot-table-title-dialog-column-settings')
+        : i18n('wizard', 'label_title-dialog-column-settings');
+
+    return (
+        <Dialog
+            onClose={() => onClose()}
+            qa={DialogColumnSettingsQa.Dialog}
+            open={true}
+            className={b()}
+        >
+            <Dialog.Header
+                className={b('header')}
+                caption={
+                    <div className={b('title')}>
+                        <span className={b('dialog-title')}>{dialogTitle}</span>
+                        <span className={b('subtitle')}>
+                            {i18n('wizard', 'label_dialog-column-info-text')}
+                        </span>
+                    </div>
+                }
+            />
+            <Dialog.Body className={b('content')}>
+                {!isEmpty(fields.columns) && (
+                    <ColumnWidthSettingsSection
+                        fields={fields.columns}
+                        onError={(fieldId, error) => {
+                            handleErrorOccurred(fieldId, error);
+                        }}
+                        onUpdate={handleWidthUpdate}
+                        withCollapse={isPivotTableDialog}
+                        fieldPlaceholder="columns"
+                        title={i18n('wizard', 'section_columns')}
+                    />
+                )}
+                {!isEmpty(fields.rows) && (
+                    <ColumnWidthSettingsSection
+                        fields={fields.rows}
+                        onError={(fieldId, error) => {
+                            handleErrorOccurred(fieldId, error);
+                        }}
+                        onUpdate={handleWidthUpdate}
+                        withCollapse={isPivotTableDialog}
+                        fieldPlaceholder="rows"
+                        title={i18n('wizard', 'section_rows')}
+                    />
+                )}
+            </Dialog.Body>
+            <Dialog.Footer
+                preset="default"
+                showError={false}
+                listenKeyEnter={true}
+                onClickButtonApply={() => onApply(fields)}
+                onClickButtonCancel={() => onClose()}
+                propsButtonApply={{
+                    qa: DialogColumnSettingsQa.ApplyButton,
+                    disabled: Object.keys(errors).some((fieldId) => errors[fieldId]),
+                }}
+                propsButtonCancel={{qa: DialogColumnSettingsQa.CancelButton}}
+                textButtonApply={i18n('wizard', 'button_apply')}
+                textButtonCancel={i18n('wizard', 'button_cancel')}
+            >
+                <Button
+                    type="button"
+                    size="l"
+                    view="outlined"
+                    onClick={handleOnResetClick}
+                    qa={DialogColumnSettingsQa.ResetButton}
+                >
+                    {i18n('wizard', 'button_reset')}
+                </Button>
+            </Dialog.Footer>
+        </Dialog>
+    );
+};
+
+DialogManager.registerDialog(DIALOG_COLUMN_SETTINGS, DialogColumnSettings);

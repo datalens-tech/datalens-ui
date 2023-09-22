@@ -1,0 +1,6 @@
+{
+  "button_open-revision-in-new-window": "Open in a new window",
+  "toast_fetch-initial-diff-failed": "Failed to load diff changes",
+  "toast_get-revisions-failed": "Failed to load change history",
+  "toast_get-script-failed": "Failed to load script"
+}

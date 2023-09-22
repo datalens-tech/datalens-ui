@@ -1,0 +1,9 @@
+{
+  "button_apply": "Save",
+  "button_cancel": "Cancel",
+  "label_default-name": "New chart",
+  "label_entry-name-already-exists": "That name is already in use, try another one",
+  "label_placeholder": "New chart",
+  "section_caption": "Save chart",
+  "toast_create-editor-chart-failed": "Failed to save chart"
+}

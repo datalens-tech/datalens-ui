@@ -1,0 +1,64 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_array_float": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_array_int": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_array_str": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_date": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_datetime": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_float": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_genericdatetime": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_geopoint": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_geopolygon": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_integer": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_markup": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_string": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unsupported": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

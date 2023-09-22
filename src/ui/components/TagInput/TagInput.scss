@@ -1,0 +1,15 @@
+$block: '.tag-input';
+
+#{$block} {
+    display: inline-flex;
+    position: relative;
+
+    &__label {
+        text-align: left;
+        max-width: 340px;
+    }
+
+    &__input {
+        min-width: 100px;
+    }
+}

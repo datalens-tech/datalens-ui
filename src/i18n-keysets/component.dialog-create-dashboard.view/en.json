@@ -1,0 +1,9 @@
+{
+  "button_apply": "Create",
+  "button_cancel": "Cancel",
+  "label_default-name": "New dashboard",
+  "label_entry-name-already-exists": "That name is already in use, try another one",
+  "label_placeholder": "Name",
+  "section_caption": "Create dashboard",
+  "toast_create-dashboard-failed": "Failed to create dashboard"
+}

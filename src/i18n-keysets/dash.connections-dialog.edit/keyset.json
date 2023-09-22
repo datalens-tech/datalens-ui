@@ -1,0 +1,84 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_add": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_add-alias": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_collapse-params": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_remove-alias": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_choose-element": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alias": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alias-influence": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_connections": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_manage-alias": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-connections": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-information": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_connected": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_ignore": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_input": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_none": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_output": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+.type-select {
+    &__type {
+        display: flex;
+        opacity: 0.5;
+        margin-right: 5px;
+    }
+
+    &__select-item {
+        width: 180px;
+        display: flex;
+        align-items: center;
+
+        &_option {
+            padding-left: 8px;
+            width: unset;
+        }
+    }
+
+    &__select-control {
+        width: 180px;
+    }
+}

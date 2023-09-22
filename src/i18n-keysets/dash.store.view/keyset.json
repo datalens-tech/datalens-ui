@@ -1,0 +1,48 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_edit-anyway": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_reload-page": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_copied-widget-postfix": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_dash-is-editing": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-404-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_obsolete-dash": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_obsolete-version": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_unexpected-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

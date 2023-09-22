@@ -1,0 +1,39 @@
+.wizard-action-panel {
+    &__fullscreen-btn {
+        margin-right: 10px;
+    }
+
+    &__fullscreen-btn-text {
+        padding-left: 5px;
+    }
+
+    &__save-btn {
+        .button2__text {
+            margin: 0;
+        }
+
+        & > svg {
+            margin-right: 10px;
+        }
+    }
+
+    &__pseudosave-btn {
+        width: 128px;
+        height: 36px;
+        position: absolute;
+        right: 56px;
+        display: none;
+
+        &_active {
+            display: block;
+        }
+    }
+
+    &__save-more-dropdown {
+        margin-left: 4px;
+    }
+
+    &__save-controls {
+        flex: none;
+    }
+}

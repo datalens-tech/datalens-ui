@@ -1,0 +1,74 @@
+$rowPadding: 14px;
+
+.map-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.chart-tooltip {
+    border: 1px solid var(--highcharts-grid-line);
+    border-radius: 5px;
+    background: var(--highcharts-tooltip-bg);
+    padding: 10px $rowPadding;
+    color: var(--highcharts-tooltip-text);
+    font-size: 12px;
+    box-sizing: border-box;
+    box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.15);
+
+    &_split-tooltip {
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding-bottom: 12px;
+    }
+
+    // iPhone-specific indent with rounded corners
+    // if the max css function is not supported - the style block will not be executed and the padding specified above will be applied
+    // https://webkit.org/blog/7929/designing-websites-for-iphone-x/
+    @supports (padding: max(0px)) {
+        &_split-tooltip {
+            padding-bottom: Max(12px, env(safe-area-inset-bottom));
+        }
+    }
+
+    &__header {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        padding-right: 10px;
+        white-space: nowrap;
+        padding-bottom: 8px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    &__point-series {
+        width: 100%;
+    }
+
+    &__region {
+        margin: 4px 0;
+    }
+
+    &__bubble-cell {
+        display: inline-block;
+        width: 12px;
+        height: 6px;
+        margin-left: 1px;
+        margin-bottom: 1px;
+        border-radius: 1px;
+    }
+
+    &__value-cell {
+        white-space: nowrap;
+        padding-left: 5px;
+    }
+
+    &__series-cell {
+        white-space: nowrap;
+        padding-left: 10px;
+        width: 100%;
+    }
+}

@@ -1,0 +1,4 @@
+{
+  "label_failed-loading-logs": "Не удалось загрузить логи",
+  "label_max-length-array": "Объект обрезан. Максимальная длина массива {{length}}."
+}

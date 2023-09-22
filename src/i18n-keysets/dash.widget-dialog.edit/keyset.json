@@ -1,0 +1,120 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_add": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_add-param": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_params-setup": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_autoheight-availability-hint": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_fill-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_fill-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_filtering-other-charts": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_autoheight": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_enable-filtering-other-charts": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_param-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_param-value": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_params": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_show-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_widget": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_autoheight-enable": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_empty-list": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_filtering-other-charts": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_new-param": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_settings": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_tab-settings": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_widget": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_required-field": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_title-default": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

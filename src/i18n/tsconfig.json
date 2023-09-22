@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig",
+  "include": ["**/*"],
+  "compilerOptions": {
+    "checkJs": false,
+    "sourceMap": false,
+    "outDir": "../../dist/i18n",
+    "resolveJsonModule": true
+  }
+}

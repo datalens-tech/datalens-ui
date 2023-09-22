@@ -1,0 +1,13 @@
+.dl-collection-dialog {
+    &__field {
+        margin-bottom: 12px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__title {
+        margin-bottom: 8px;
+    }
+}

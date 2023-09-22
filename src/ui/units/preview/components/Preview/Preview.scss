@@ -1,0 +1,9 @@
+.preview {
+    display: flex;
+    flex: 1;
+    height: 100%;
+
+    .datalens-chartkit-error {
+        padding: 20px;
+    }
+}

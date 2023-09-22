@@ -1,0 +1,18 @@
+{
+  "action_cancel": "Cancel",
+  "action_copy": "Copy",
+  "action_create": "Create",
+  "action_create-collection": "Create collection",
+  "action_create-workbook": "Create workbook",
+  "action_edit-collection": "Edit collection",
+  "action_save": "Save",
+  "action_edit-workbook": "Edit workbook",
+  "action_move": "Move",
+  "label_copy": "Copy to",
+  "label_copy-denied-title": "Insufficient permissions to copy",
+  "label_description": "Description",
+  "label_empty-collection": "Empty collection",
+  "label_move": "Move to",
+  "label_move-denied-title": "Insufficient permissions to move object",
+  "label_title": "Name"
+}

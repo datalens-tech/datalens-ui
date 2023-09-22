@@ -1,0 +1,34 @@
+.wizard-chart-settings {
+    &__content {
+        width: 680px;
+    }
+
+    &__settings > * {
+        margin-bottom: 30px;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    &__settings > div:last-child {
+        margin-bottom: 0;
+    }
+
+    &__settings .setting-navigator {
+        height: auto;
+    }
+
+    &__loader {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .yc-field-wrapper {
+        width: auto;
+        height: 26px;
+    }
+
+    &__tooltip {
+        display: inline-block;
+    }
+}

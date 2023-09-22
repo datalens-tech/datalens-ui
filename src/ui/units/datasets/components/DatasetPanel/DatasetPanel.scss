@@ -1,0 +1,65 @@
+.dataset-panel {
+    height: 56px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--ds-color-divider);
+    background: var(--ds-color-base);
+
+    &__item {
+        margin-left: 10px;
+    }
+
+    & &__find-field {
+        width: 220px;
+    }
+
+    &__preview-btn {
+        position: relative;
+
+        &_tab_filters,
+        &_tab_sources {
+            margin-left: auto;
+        }
+    }
+
+    &__preview-btn-tooltip {
+        position: absolute;
+        top: 50%;
+        right: 13px;
+        transform: translateY(-50%);
+    }
+
+    &__preview-btn-tooltip-margin {
+        display: inline-flex;
+        width: 14px;
+    }
+
+    &__preview-btn-tooltip-content {
+        width: 200px;
+    }
+
+    &__add-field-btn {
+        display: flex;
+
+        &-ic {
+            height: inherit;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+    }
+
+    &__btn-update-fields {
+        margin-left: auto;
+        display: flex;
+    }
+
+    &__ic-sync {
+        height: inherit;
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+}

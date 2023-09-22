@@ -1,0 +1,12 @@
+@import '../../../../styles/variables.scss';
+
+.wrapped-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - #{$headerHeight});
+
+    &_with-aside-header {
+        min-height: calc(100vh - #{$actionPanelHeight});
+    }
+}

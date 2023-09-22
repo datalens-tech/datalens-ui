@@ -1,0 +1,9 @@
+.visualization-item-aggregation-title {
+    &__wrapper {
+        color: var(--g-color-text-info);
+
+        &_disabled {
+            color: var(--g-color-text-secondary);
+        }
+    }
+}

@@ -1,0 +1,11 @@
+{
+  "button_add": "Добавить",
+  "button_cancel": "Отменить",
+  "button_save": "Сохранить",
+  "context_fill-text": "Введите текст",
+  "label_domain": "Domain",
+  "label_domain_il": "Domain",
+  "label_image-hint": "Ссылка на изображение должна находиться в домене {{domain}}, <link>подробнее</link>",
+  "label_syntax": "Поддерживается Markdown",
+  "label_text": "Текст"
+}

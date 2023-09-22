@@ -1,0 +1,11 @@
+{
+  "value_access": "Права доступа",
+  "value_copy": "Копировать",
+  "value_copy-link": "Копировать ссылку",
+  "value_delete": "Удалить",
+  "value_duplicate": "Дублировать",
+  "value_migrate-to-workbook": "Перенос в воркбук",
+  "value_move": "Переместить",
+  "value_rename": "Переименовать",
+  "value_revisions": "История изменений"
+}

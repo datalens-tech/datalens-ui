@@ -1,0 +1,4 @@
+{
+  "label_failed-loading-logs": "Failed to load logs.",
+  "label_max-length-array": "The object is cropped. The maximum length of the array is {{length}}."
+}

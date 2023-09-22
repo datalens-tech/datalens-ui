@@ -1,0 +1,17 @@
+{
+    "extends": "@gravity-ui/eslint-config/client",
+    "rules": {
+        "camelcase": 0,
+        "react/display-name": [1],
+        "no-console": ["error", { "allow": ["warn", "error"] }]
+    },
+    "overrides": [
+        {
+          "files": ["src/ui/datalens/**/*", "src/ui/entries/**/*", "src/ui/store/**/*"], 
+          "rules": {
+            "sort-imports": [0],
+            "import/order": [0]
+          }
+        }
+    ]
+}

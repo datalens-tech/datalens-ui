@@ -1,0 +1,35 @@
+.aggregation-select {
+    &__select-control {
+        width: 100%;
+        text-align: left;
+
+        &_measure::before {
+            background: var(--ds-color-aggregation-measure);
+        }
+
+        &_measure:hover::before {
+            background: var(--ds-color-field-measure-hover);
+        }
+
+        &_dimension::before {
+            background: var(--ds-color-aggregation-dimension);
+        }
+
+        &_dimension:hover::before {
+            background: var(--ds-color-aggregation-dimension-hover);
+        }
+    }
+
+    &__selected-value {
+        display: block;
+        width: 130px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 20px;
+        white-space: nowrap;
+    }
+
+    &__select-option {
+        padding-left: 8px;
+    }
+}

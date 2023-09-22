@@ -1,0 +1,41 @@
+import {getEntryNameByKey} from '../../../modules';
+import {createAction} from '../../gateway-utils';
+import {defaultParamsSerializer, filterUrlFragment} from '../../utils';
+import {
+    AddFavoriteArgs,
+    AddFavoriteResponse,
+    DeleteFavoriteArgs,
+    DeleteFavoriteResponse,
+    GetFavoritesArgs,
+    GetFavoritesOutput,
+    GetFavoritesResponse,
+} from '../types';
+
+const PATH_PREFIX = '/v1';
+
+export const favoritesActions = {
+    addFavorite: createAction<AddFavoriteResponse, AddFavoriteArgs>({
+        method: 'POST',
+        path: ({entryId}) => `${PATH_PREFIX}/favorites/${filterUrlFragment(entryId)}`,
+        params: (_, headers) => ({headers}),
+    }),
+    deleteFavorite: createAction<DeleteFavoriteResponse, DeleteFavoriteArgs>({
+        method: 'DELETE',
+        path: ({entryId}) => `${PATH_PREFIX}/favorites/${filterUrlFragment(entryId)}`,
+        params: (_, headers) => ({headers}),
+    }),
+    getFavorites: createAction<GetFavoritesOutput, GetFavoritesArgs, GetFavoritesResponse>({
+        method: 'GET',
+        path: () => `${PATH_PREFIX}/favorites`,
+        params: (query, headers) => ({query, headers}),
+        transformResponseData: (data) => ({
+            hasNextPage: Boolean(data.nextPageToken),
+            entries: data.entries.map((entry) => ({
+                ...entry,
+                isFavorite: true,
+                name: getEntryNameByKey({key: entry.key, index: -1}),
+            })),
+        }),
+        paramsSerializer: defaultParamsSerializer,
+    }),
+};

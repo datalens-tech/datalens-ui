@@ -1,0 +1,62 @@
+.chartkit-control {
+    $class: &;
+    $yc-control-bottom-padding: 5px;
+
+    padding: 0 5px $yc-control-bottom-padding;
+    width: 100%;
+    position: relative;
+    box-sizing: border-box;
+    min-height: 40px;
+    z-index: 0;
+    overflow: auto;
+
+    &_line-breaks_wrap {
+        white-space: normal;
+    }
+
+    &_line-breaks_nowrap {
+        white-space: nowrap;
+    }
+
+    &__controls {
+        &_hidden {
+            visibility: hidden;
+
+            // style below needed to hide datepicker svg clear icon
+            .textinput__clear {
+                display: none;
+            }
+        }
+    }
+
+    &_standalone {
+        white-space: normal;
+    }
+
+    &:not(&_standalone) {
+        //border-bottom: 1px solid #e6e6e6;
+        background-color: var(--ck-controls-backgound);
+        max-height: 50%;
+        flex: none;
+    }
+
+    &__loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    &__item {
+        margin-top: 5px;
+        max-width: 100%;
+
+        &:not(:last-child) {
+            margin-right: 10px;
+        }
+    }
+
+    &_mobile {
+        min-height: 64px;
+    }
+}

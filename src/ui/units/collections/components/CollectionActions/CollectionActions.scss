@@ -1,0 +1,16 @@
+.dl-collection-actions {
+    &__access,
+    &__move,
+    &__edit {
+        margin-right: 8px;
+    }
+
+    &__dropdown-item {
+        display: flex;
+        align-items: center;
+    }
+
+    &__dropdown-text {
+        margin-left: 8px;
+    }
+}

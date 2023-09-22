@@ -1,0 +1,1 @@
+export const ACTION_PANEL_BUTTON = 'editor/ACTION_PANEL_BUTTON';

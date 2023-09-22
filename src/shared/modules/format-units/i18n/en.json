@@ -1,0 +1,17 @@
+{
+  "chartkit-units": {
+    "value_short-bytes": "B",
+    "value_short-kilobytes": "KB",
+    "value_short-megabytes": "MB",
+    "value_short-milliseconds": "ms",
+    "value_short-seconds": "s",
+    "value_short-minutes": "m",
+    "value_short-empty": "",
+    "value_short-k": "K",
+    "value_short-m": "M",
+    "value_short-b": "B",
+    "value_short-t": "T",
+    "value_space-delimiter": " ",
+    "value_number-delimiter": ""
+  }
+}

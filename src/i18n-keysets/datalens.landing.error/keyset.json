@@ -1,0 +1,84 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "label_description-auth-denied": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_description-auth-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_description-fail": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_page-title-auth-denied": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_page-title-auth-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_page-title-cloud-folder-access-denied": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_page-title-fail": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_page-title-forbidden-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_page-title-inaccessible-entry-folder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_page-title-missing-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title-auth-denied": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title-auth-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title-cloud-folder-access-denied": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title-fail": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title-forbidden-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title-inaccessible-entry-folder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title-missing-current-cloud-folder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title-missing-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

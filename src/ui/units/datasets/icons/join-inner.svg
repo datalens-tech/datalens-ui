@@ -1,0 +1,7 @@
+<svg width="42" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="12" r="12" fill="var(--ds-color-avatar)"/>
+<circle cx="30" cy="12" r="12" fill="var(--ds-color-avatar)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M20.9999 19.9374C22.8671 17.822 24 15.0433 24 11.9999C24 8.95658 22.8671 6.17789 21.0001 4.0625C19.1329 6.17791 18 8.95668 18 12.0001C18 15.0434 19.1329 17.8221 20.9999 19.9374Z" fill="#6B8499"/>
+<circle cx="12" cy="12" r="11.5" stroke="var(--ds-join-stroke-color)" stroke-dasharray="var(--ds-join-stroke-dasharray)"/>
+<circle cx="30" cy="12" r="11.5" stroke="var(--ds-join-stroke-color)" stroke-dasharray="var(--ds-join-stroke-dasharray)"/>
+</svg>

@@ -1,0 +1,68 @@
+@import '../../../../../../styles/mixins.scss';
+
+.dialog-color-gradient {
+    &__row {
+        margin-bottom: 20px;
+        vertical-align: middle;
+        line-height: 20px;
+        display: flex;
+        align-items: center;
+    }
+
+    &__label {
+        display: inline-block;
+        margin-right: 20px;
+    }
+
+    &__palette-select {
+        width: 204px;
+        display: inline-block;
+    }
+
+    &__reverse-button {
+        margin-left: 6px;
+        line-height: 24px;
+        vertical-align: middle;
+    }
+
+    &__thresholds-checkbox {
+        margin-right: 10px;
+    }
+
+    &__threshold-inputs-wrapper {
+        display: flex;
+        width: 395px;
+        padding-right: 36px;
+        height: 28px;
+        justify-content: space-between;
+    }
+
+    &__threshold-input {
+        display: inline-block;
+        width: 80px;
+    }
+
+    &__error-label {
+        margin: 20px 32px;
+    }
+
+    &__preview {
+        width: 358px;
+        height: 28px;
+        background: #000000;
+        vertical-align: middle;
+        margin-left: 12px;
+    }
+
+    &__select {
+        width: 100%;
+    }
+
+    &__select-popup {
+        @include dl-select-popup;
+    }
+
+    &__hint-icon {
+        margin-left: 5px;
+    }
+}

@@ -1,0 +1,90 @@
+import {getColorsConfigKey, isMeasureNameOrValue} from '../../../../../../../../../shared';
+import {getLineKey} from '../utils';
+
+import {getColorShapeMappingValue} from './helpers';
+import {MapDataToLinesArgs} from './types';
+
+export const mapDataToLines = ({
+    x2,
+    x2Value,
+    xValue,
+    yValue,
+    lines,
+    seriesOptions,
+    shownTitle,
+    isPseudoShapeExist,
+    isPseudoColorExist,
+    shapesConfig,
+    x,
+    segmentName,
+    yField,
+    yFields,
+    idToTitle,
+    isColorMeasureNames,
+}: MapDataToLinesArgs) => {
+    const key = getLineKey({
+        shownTitle,
+        isX2Axis: Boolean(x2),
+        value: undefined,
+        isMultiAxis: false,
+        x2AxisValue: x2Value,
+        segmentName,
+    });
+
+    if (!lines[key]) {
+        lines[key] = {
+            data: {},
+            ...seriesOptions,
+        };
+
+        const line = lines[key];
+
+        line.colorKey = yField.fakeTitle || idToTitle[yField.guid] || yField.title;
+
+        if (x2) {
+            line.stack = x2Value;
+
+            // Exactly ==
+            // eslint-disable-next-line eqeqeq
+            if (shownTitle == x2Value) {
+                line.title = `${shownTitle}`;
+                line.legendTitle = `${shownTitle}`;
+            } else if (x && isMeasureNameOrValue(x)) {
+                line.title = `${x2Value}`;
+                line.legendTitle = `${shownTitle}: ${x2Value}`;
+            } else {
+                line.title = `${shownTitle}: ${x2Value}`;
+                line.legendTitle = `${shownTitle}: ${x2Value}`;
+            }
+        } else {
+            line.title = shownTitle;
+        }
+
+        if (isPseudoColorExist) {
+            const colorKey = getColorsConfigKey(yField, yFields || [], {
+                isMeasureNames: isColorMeasureNames,
+            });
+
+            if (colorKey) {
+                line.colorKey = colorKey;
+                line.colorValue = colorKey;
+            } else {
+                line.colorValue = shownTitle;
+            }
+        }
+
+        if (isPseudoShapeExist) {
+            const mountedValues = shapesConfig?.mountedShapes || {};
+            line.shapeValue = getColorShapeMappingValue({
+                mountedValues,
+                shownTitle,
+                colorAndShapeKey: yField.fakeTitle || idToTitle[yField.guid] || yField.title,
+            });
+        }
+    }
+
+    const lastKey = typeof xValue === 'undefined' ? shownTitle : xValue;
+
+    lines[key].data[lastKey as string | number] = {value: yValue};
+    return {key, lastKey};
+};

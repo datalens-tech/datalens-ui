@@ -1,0 +1,72 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.controls-placement-dialog {
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 0;
+    }
+
+    &__selectors {
+        overflow-y: auto;
+        height: 280px;
+    }
+
+    &__header div {
+        padding-left: 30px;
+    }
+
+    &__back-button {
+        position: absolute;
+        // TODO: this is an private api and may silently changed. We should use local styles
+        top: calc(var(--yc-dialog-header-padding-top) - 6px);
+        left: calc(var(--yc-dialog-side-padding) - 12px);
+        z-index: 1;
+    }
+
+    &__note {
+        @include text-body-1();
+        color: var(--g-color-text-secondary);
+        margin-bottom: 20px;
+    }
+
+    &__list-item-container {
+        padding: 0 7px;
+    }
+
+    &__list-item {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        border-radius: 4px;
+        height: 40px;
+        width: 100%;
+        cursor: pointer;
+        gap: 8px;
+    }
+
+    &__item-title {
+        flex: 1;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    &__radio-button {
+        width: 180px;
+    }
+
+    &__text-input {
+        width: 74px;
+    }
+
+    &__error {
+        width: 100%;
+        margin-top: 8px;
+        color: var(--g-color-text-danger);
+    }
+}

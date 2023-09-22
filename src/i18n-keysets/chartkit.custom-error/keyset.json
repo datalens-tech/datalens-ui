@@ -1,0 +1,52 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "close": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "copy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "draw-anyway": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-data-provider": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-no-data": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-too-many-lines": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "error-unknown-extension": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "more": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "retry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

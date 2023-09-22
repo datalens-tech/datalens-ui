@@ -1,0 +1,6 @@
+{
+  "button_edit": "Edit current version",
+  "button_show-in-history": "Show in history",
+  "label_dash-warning-text": "The change history contains not actual versions of the dashboard <b>{{name}}</b> saved later than the current version.",
+  "label_dash-warning-title": "Later versions are available for the dashboard"
+}

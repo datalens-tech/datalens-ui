@@ -1,0 +1,10 @@
+{
+  "button_add": "Добавить",
+  "button_cancel": "Отменить",
+  "button_save": "Сохранить",
+  "context_fill-title": "Введите заголовок",
+  "field_show-in-toc": "Отображать в оглавлении",
+  "label_title": "Заголовок",
+  "toast_required-field": "Поле должно быть заполнено",
+  "value_default": "Заголовок"
+}

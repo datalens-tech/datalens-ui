@@ -1,0 +1,28 @@
+.ds-container-loader {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    &__inner {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 15px;
+    }
+
+    &__icon {
+        margin-left: 30px;
+    }
+
+    &__text {
+        font-size: var(--g-text-body-3-font-size);
+        line-height: var(--g-text-body-3-line-height);
+
+        &_size-m {
+            font-size: var(--g-text-header-1-font-size);
+            line-height: var(--g-text-header-1-line-height);
+        }
+    }
+}

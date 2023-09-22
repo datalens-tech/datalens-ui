@@ -1,0 +1,70 @@
+.hierarchy-editor {
+    &__item {
+        display: flex;
+        align-items: center;
+        width: 100%;
+
+        &_error {
+            .yc-button__text {
+                font-style: italic;
+                // stylelint-disable-next-line declaration-no-important
+                color: var(--g-color-base-danger-heavy) !important;
+            }
+        }
+
+        &:hover:before {
+            background: initial !important; // stylelint-disable-line declaration-no-important
+        }
+    }
+
+    &__item-icon {
+        color: var(--g-color-text-positive);
+        margin-right: 8px;
+
+        &_error {
+            color: var(--g-color-base-danger-heavy);
+        }
+    }
+
+    &__help-icon {
+        top: 5px;
+        left: 5px;
+    }
+
+    &__dialog-divider {
+        margin: 0;
+    }
+
+    &__hierarchy-name-input-wrapper {
+        width: 295px;
+        margin-left: 32px;
+        margin-bottom: 12px;
+    }
+
+    &__body {
+        padding: 10px 0;
+    }
+
+    & .gc-item-selector__item-text {
+        width: 100%;
+    }
+
+    & .gc-item-selector__item-select:hover::before,
+    & .gc-item-selector__value-item-remove:hover::before {
+        background-color: transparent;
+    }
+
+    & .gc-item-selector__list:first-child {
+        & .gc-item-selector__list-header {
+            padding-left: 32px;
+        }
+
+        & .yc-list__filter {
+            padding-left: 32px;
+        }
+
+        .hierarchy-editor__item {
+            margin-left: 18px;
+        }
+    }
+}

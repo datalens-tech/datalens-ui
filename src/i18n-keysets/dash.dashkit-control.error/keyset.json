@@ -1,0 +1,28 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_retry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_field-error-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_field-error-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

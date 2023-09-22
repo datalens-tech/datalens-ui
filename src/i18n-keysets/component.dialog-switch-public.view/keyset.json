@@ -1,0 +1,176 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_apply": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_continue": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_copy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_disable-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_enable-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_refresh": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_repeat": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_access-by-link": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alert-publish-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alert-publish-text-many": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alert-unpublish-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_alert-unpublish-text-many": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_author-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_author-link": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_author-subject-dash": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_author-subject-widget": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_author-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_dataset-deny-publish": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_loading-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_main-attention": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_main-subject-dash": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_main-subject-widget": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-permission-alert": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_placeholder-publishing-not-enabled": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_some-entries-not-ready": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_alert-publish-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_alert-publish-title-many": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_alert-unpublish-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_alert-unpublish-title-many": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_author": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_connection-relations": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_current-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_dataset-relations": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_main-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_object-relations": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_widget-relations": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_get-publication-preview-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_link-copied": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_switch-publication-status-failed": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "toast_switch-publication-status-success": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

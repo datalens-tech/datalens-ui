@@ -1,0 +1,5 @@
+{
+  "label_duplicated_paths_error": "There are the same paths in list",
+  "label_duplicated_titles_error": "There is already a source with this name on the list. To avoid repetition, change the name of the added source.",
+  "label_required-field-error": "This is a required field"
+}

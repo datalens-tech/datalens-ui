@@ -1,0 +1,35 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.section-wrapper {
+    border: 1px solid var(--g-color-line-generic);
+    border-radius: 8px;
+    padding: 20px;
+
+    & + & {
+        margin-top: 20px;
+    }
+
+    &_hidden {
+        border: none;
+        padding: 0;
+    }
+
+    &__title {
+        @include text-subheader-2();
+        font-weight: 500; // Temporary redefinition until the style unification is not implemented in the uikit
+        margin-bottom: 20px;
+
+        &_with-subtitle {
+            margin-bottom: 4px;
+        }
+    }
+
+    &__subtitle {
+        color: var(--g-color-text-secondary);
+        margin-bottom: 17px;
+    }
+
+    &__content + &__content {
+        margin-top: 20px;
+    }
+}

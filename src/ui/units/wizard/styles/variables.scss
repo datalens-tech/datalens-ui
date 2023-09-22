@@ -1,0 +1,12 @@
+$dragHoverRemoveRed: rgba(255, 4, 0, 0.2);
+$dragHoverRemoveLightRed: rgba(255, 4, 0, 0.02);
+
+@mixin dataset-variables {
+    --color-formula-dimension: var(--g-color-text-positive);
+    --color-formula-measure: var(--g-color-text-info);
+    --color-field-error: var(--g-color-base-danger-heavy);
+}
+
+.g-root {
+    @include dataset-variables;
+}

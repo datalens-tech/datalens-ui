@@ -1,0 +1,10 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.chartkit-markdown {
+    overflow: auto;
+    padding: 10px;
+
+    &.yfm {
+        @include text-body-2();
+    }
+}

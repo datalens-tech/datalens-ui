@@ -1,0 +1,65 @@
+@use '~@gravity-ui/uikit/styles/mixins';
+@use '../../mixins' as connMixins;
+
+.conn-form-chyt {
+    @include connMixins.form-layout();
+
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+
+    &__card-wrap {
+        border-radius: 8px;
+        text-decoration: none;
+    }
+
+    &__card {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 16px 16px 24px;
+        border: 1px solid var(--g-color-line-generic);
+        border-radius: 8px;
+        cursor: pointer;
+
+        &:hover {
+            border-color: var(--g-color-line-generic-hover);
+            background-color: var(--g-color-base-simple-hover);
+        }
+    }
+
+    &__card-title {
+        flex-grow: 1;
+    }
+
+    &__card-title-content {
+        @include mixins.text-subheader-2();
+        color: var(--g-color-text-primary);
+    }
+
+    &__card-title-additional {
+        display: flex;
+        flex-grow: 1;
+        justify-content: flex-end;
+        color: var(--g-color-text-secondary);
+    }
+
+    &__card-description {
+        color: var(--g-color-text-secondary);
+    }
+
+    &__notification {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 16px;
+        border-radius: 8px;
+        background-color: var(--g-color-base-info-light);
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+}

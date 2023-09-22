@@ -1,0 +1,11 @@
+.dl-workbook-actions {
+    display: flex;
+
+    &__item {
+        margin-right: 8px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}

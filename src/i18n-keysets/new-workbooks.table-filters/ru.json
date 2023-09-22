@@ -1,0 +1,12 @@
+{
+  "label_filter-string-placeholder": "Искать по названию",
+  "label_sort-first-alphabet-asc": "Сортировка от А до Я",
+  "label_sort-first-alphabet-desc": "Сортировка от Я до А",
+  "label_sort-first-new": "Сначала новые",
+  "label_sort-first-old": "Сначала старые",
+  "switch_filter-by-scope-all": "Все объекты",
+  "switch_filter-by-scope-connection": "Подключения",
+  "switch_filter-by-scope-dash": "Дашборды",
+  "switch_filter-by-scope-dataset": "Датасеты",
+  "switch_filter-by-scope-widget": "Чарты"
+}

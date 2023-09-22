@@ -1,0 +1,143 @@
+import {AppMiddleware} from '@gravity-ui/expresskit';
+import {AppConfig, AppContext} from '@gravity-ui/nodekit';
+
+import CacheClient from '../cache-client';
+
+import {CommentsFetcher} from './components/processor/comments-fetcher';
+import {Console} from './components/processor/console';
+import {DataFetcher} from './components/processor/data-fetcher';
+import {Request} from './components/request';
+import {initPreloading, initStorage} from './components/storage';
+import {chartsController} from './controllers/charts';
+import {configController} from './controllers/config';
+import {embedsController} from './controllers/embeds';
+import {exportController} from './controllers/export';
+import {markdownController} from './controllers/markdown';
+import {runController} from './controllers/run';
+const defaultControllers = {
+    export: exportController,
+    markdown: markdownController,
+    run: runController,
+    config: configController,
+    charts: chartsController,
+    embeds: embedsController,
+};
+import defaultRunners, {Runner} from './runners';
+import {MiddlewareStage, Plugin, SourceConfig, TelemetryCallbacks} from './types';
+
+type Controllers = {
+    export: ReturnType<typeof exportController>;
+    markdown: typeof markdownController;
+    run: ReturnType<typeof runController>;
+    config: ReturnType<typeof configController>;
+    charts: ReturnType<typeof chartsController>;
+    embeds: ReturnType<typeof embedsController>;
+};
+
+class ChartsEngine {
+    config: AppConfig;
+    runners: Runner[];
+    sources: Record<string, SourceConfig>;
+    telemetryCallbacks: TelemetryCallbacks;
+    processorHooks: Record<string, any>[];
+    flags: Record<string, boolean>;
+    nativeModules: Record<string, unknown>;
+    cacheClient: CacheClient;
+    controllers: Controllers;
+    plugins: Plugin[];
+    beforeAuth: AppMiddleware[];
+    afterAuth: AppMiddleware[];
+
+    constructor({
+        config,
+        secrets,
+        plugins,
+        telemetryCallbacks = {},
+        flags = {},
+        nativeModules,
+        cacheClient,
+        beforeAuth,
+        afterAuth,
+    }: {
+        config: AppConfig;
+        secrets: Record<string, string>;
+        plugins: Plugin[];
+        telemetryCallbacks?: TelemetryCallbacks;
+        flags?: Record<string, boolean>;
+        nativeModules: Record<string, unknown>;
+        cacheClient: CacheClient;
+        beforeAuth: AppMiddleware[];
+        afterAuth: AppMiddleware[];
+    }) {
+        this.config = config;
+        this.runners = defaultRunners;
+        this.sources = config.sources;
+        this.telemetryCallbacks = telemetryCallbacks;
+        this.processorHooks = [];
+        this.flags = flags;
+        this.nativeModules = nativeModules;
+        this.plugins = plugins;
+        this.beforeAuth = beforeAuth;
+        this.afterAuth = afterAuth;
+
+        initStorage({
+            initialOauthToken: secrets.ROBOT_OAUTH_TOKEN,
+            config,
+            telemetryCallbacks,
+            flags,
+        });
+
+        this.cacheClient = cacheClient;
+
+        Request.init({cacheClientInstance: this.cacheClient});
+
+        this.controllers = {
+            export: defaultControllers.export(),
+            markdown: defaultControllers.markdown,
+            run: defaultControllers.run(this),
+            config: defaultControllers.config(this),
+            charts: defaultControllers.charts(this),
+            embeds: defaultControllers.embeds(this),
+        };
+
+        if (plugins) {
+            // Init plugins
+            plugins.forEach((plugin) => {
+                if (plugin.sources) {
+                    this.sources = {
+                        ...this.sources,
+                        ...plugin.sources,
+                    };
+                }
+
+                // Apply plugin middlewares
+                if (plugin.middlewares) {
+                    plugin.middlewares.forEach((middleware) => {
+                        if (middleware.stage === MiddlewareStage.BeforeAuth) {
+                            this.beforeAuth.push(middleware.fn);
+                        }
+                        if (middleware.stage === MiddlewareStage.AfterAuth) {
+                            this.afterAuth.push(middleware.fn);
+                        }
+                    });
+                }
+
+                // Apply plugin runners
+                if (plugin.runners) {
+                    this.runners = [...this.runners, ...plugin.runners];
+                }
+
+                // Apply sandbox hooks
+                if (Array.isArray(plugin.processorHooks)) {
+                    this.processorHooks = [...this.processorHooks, ...plugin.processorHooks];
+                }
+            });
+        }
+    }
+
+    initPreloading(ctx: AppContext) {
+        initPreloading(ctx);
+    }
+}
+
+export {ChartsEngine, DataFetcher, CommentsFetcher, Console};

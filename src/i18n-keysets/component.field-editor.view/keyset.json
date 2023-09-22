@@ -1,0 +1,212 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_add-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_create": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_manual": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_no": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_yes": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_aggregation": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_data-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_field-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_field-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_not-display-in-wizard": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_source": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_source-data": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_source-field": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_confirm-question-on-error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_data-will-be-lost": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_field-already-exist": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_information-about-syntax-on-wiki": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_placeholder-field": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_source-is-empty": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title-is-empty": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_array_float": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_array_int": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_array_str": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_auto": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_avg": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_boolean": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_count": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_countunique": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_date": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_datetime": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_float": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_formula": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_function": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_genericdatetime": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_geopoint": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_geopolygon": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_integer": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_max": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_min": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_none": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_source-from-field": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_string": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_sum": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_tree_float": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_tree_int": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_tree_str": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

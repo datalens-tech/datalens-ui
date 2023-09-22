@@ -1,0 +1,108 @@
+$MAX_HEIGHT: 40vh;
+$SEARCH_HEIGHT: 37px;
+$SELECTED_TITLE_HEIGHT: 32px;
+$APPLY_BUTTON_HEIGHT: 38px;
+
+.yc-select-items {
+    max-height: #{$MAX_HEIGHT};
+
+    &_with-search {
+        max-height: calc(#{$MAX_HEIGHT} - #{$SEARCH_HEIGHT});
+    }
+
+    &_with-selected-title {
+        max-height: calc(#{$MAX_HEIGHT} - #{$SELECTED_TITLE_HEIGHT});
+    }
+
+    &_with-apply-button {
+        max-height: calc(#{$MAX_HEIGHT} - #{$APPLY_BUTTON_HEIGHT});
+    }
+
+    &_with-search#{&}_with-apply-button {
+        max-height: calc(#{$MAX_HEIGHT} - #{$SEARCH_HEIGHT} - #{$APPLY_BUTTON_HEIGHT});
+    }
+
+    &_with-selected-title#{&}_with-apply-button {
+        max-height: calc(#{$MAX_HEIGHT} - #{$SELECTED_TITLE_HEIGHT} - #{$APPLY_BUTTON_HEIGHT});
+    }
+
+    &_without-virtualized {
+        overflow-y: auto;
+
+        & .yc-select-item-wrap {
+            margin-top: 0;
+        }
+
+        & .yc-select-item-wrap:first-child {
+            margin-top: 4px;
+        }
+    }
+
+    &:not(&_without-virtualized) .yc-select-item-wrap {
+        overflow: initial;
+    }
+
+    &_grouped .yc-select-item-wrap {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    &_grouped .yc-select-item {
+        padding-left: 32px;
+    }
+
+    .yc-select_mobile &_mobile {
+        max-height: 55vh;
+    }
+
+    &__group-title {
+        padding: 5px 0 0 16px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        color: var(--g-color-text-hint);
+        box-sizing: border-box;
+
+        &:first-child {
+            padding-top: 5px;
+        }
+
+        &:not(:first-child) {
+            border-top: 1px solid var(--g-color-line-generic);
+        }
+    }
+
+    &__group-title ~ .yc-select-item-wrap {
+        margin-top: 0;
+    }
+
+    &__prompt {
+        padding: 10px 16px;
+        color: var(--g-color-text-secondary);
+    }
+
+    &__prompt-button {
+        display: flex;
+        margin: 8px 0 2px;
+        &_retry {
+            margin-right: 10px;
+        }
+    }
+
+    &__show-more-link {
+        display: flex;
+        align-items: center;
+        padding-left: 12px;
+    }
+
+    &__loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 8px 0;
+    }
+
+    &__buttons {
+        display: flex;
+    }
+}

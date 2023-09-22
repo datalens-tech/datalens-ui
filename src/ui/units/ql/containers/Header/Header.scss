@@ -1,0 +1,10 @@
+.ql-header {
+    .yc-breadcrumbs__item:first-child {
+        padding-left: 0;
+    }
+
+    &__toggle-preview-icon {
+        color: var(--g-color-text-complementary);
+        transform: rotate(180deg);
+    }
+}

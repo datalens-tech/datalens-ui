@@ -1,0 +1,17 @@
+{
+  "field_interface-theme": "Interface theme",
+  "field_interface-theme-contrast": "Contrast",
+  "field_language": "Language",
+  "label_language-en": "English",
+  "label_language-ru": "Русский",
+  "label_not-found": "No results",
+  "label_placeholder-search": "Search settings",
+  "label_title": "Settings",
+  "section_appearance": "Appearance",
+  "section_language": "Language",
+  "value_theme-contrast-enhanced": "High",
+  "value_theme-contrast-normal": "Normal",
+  "value_theme-dark": "Dark",
+  "value_theme-light": "Light",
+  "value_theme-system": "System"
+}

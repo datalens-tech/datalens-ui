@@ -1,0 +1,16 @@
+{
+  "button_add": "Добавить",
+  "button_apply": "Применить фильтр",
+  "button_cancel": "Отменить",
+  "button_left-column-action": "Выбрать все",
+  "button_right-column-action": "Очистить",
+  "label_filter-placeholder": "Найти",
+  "label_header-title": "Выберите поле",
+  "label_load-limit-reached-warn": "Показана первая 1000 значений. Уточните поиск с помощью поля Найти.",
+  "label_operation": "Операция",
+  "label_select-column-left-item-desc": "Выбрать",
+  "label_select-column-left-title": "Доступны",
+  "label_select-column-right-item-desc": "Удалить",
+  "label_select-column-right-title": "Выбраны",
+  "label_value": "Значение"
+}

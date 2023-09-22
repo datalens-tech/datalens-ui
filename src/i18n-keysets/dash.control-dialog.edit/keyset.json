@@ -1,0 +1,300 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_add": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_apply": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_deselect-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_select-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_setup": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_add-value": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_choose": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_date-days-ago": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_date-from-days-ago": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_date-to-days-ago": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_acceptable-values": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_autoheight": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_control": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_date-from": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_date-range": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_date-to": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_date-with-time": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_default-value": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_element-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_end-time": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_field": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_field-name": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_inner-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_inner-title-note": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_multiselectable": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_operation": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_operation-note": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_params": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_preset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_selector-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_show-title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_source": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_start-time": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "field_type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_acceptable-values": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_autoheight-disable": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_autoheight-enable": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_common-settings": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_control": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_default-value": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_empty-list": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-operations": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_section-appearance": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "placeholder_search": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "radio-button_all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "radio-button_selected": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "text_empty-items": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "validation_required": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_absolute-date": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_date-accepted-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_date-accepted-end": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_date-accepted-start": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_date-ago": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_date-days-ago-from-to": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_date-forward": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_date-manual": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_date-no-limits": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_element-date": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_element-input": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_element-select": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_not-chosen": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_relative-date": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_select-values": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_source-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_source-external": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_source-manual": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_undefined": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

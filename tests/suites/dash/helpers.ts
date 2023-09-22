@@ -1,0 +1,103 @@
+import {Page} from '@playwright/test';
+
+import {waitForCondition, slct} from '../../utils';
+import {COMMON_SELECTORS} from '../../utils/constants';
+import {DialogTabsQA} from '../../../src/shared/constants';
+
+const SELECTORS = {
+    TABLE_CELL_CONTENT: '.chartkit-table__content_text',
+    LIST_ITEM: '.yc-list__item',
+    TAB_ROW: '.dialog-tab-item__row',
+};
+
+export async function waitForTableRowsToEqual(page: Page, expectedValues: string[]) {
+    let actualValues: string[] = [];
+
+    await waitForCondition(async () => {
+        const cellSelectors = await page.$$(SELECTORS.TABLE_CELL_CONTENT);
+
+        actualValues = await Promise.all(cellSelectors.map((selector) => selector.innerText()));
+
+        return expectedValues.join() === actualValues.join();
+    }).catch(() => {
+        expect(actualValues).toEqual(expectedValues);
+    });
+}
+
+// default page.dragAndDrop does not work on list
+export async function dragAndDropListItem(
+    page: Page,
+    {
+        listSelector,
+        itemSelector,
+        sourceIndex,
+        targetIndex,
+    }: {listSelector: string; itemSelector?: string; sourceIndex: number; targetIndex: number},
+) {
+    const list = await page.$(listSelector);
+
+    if (!list) {
+        throw new Error(`drag and drop list not found: ${listSelector}`);
+    }
+
+    const listItems = await list.$$(itemSelector || SELECTORS.LIST_ITEM);
+
+    expect(listItems.length).toBeGreaterThan(Math.max(sourceIndex, targetIndex));
+
+    const sourceItem = listItems[sourceIndex];
+    const targetItem = listItems[targetIndex];
+
+    const sourceItemBox = await sourceItem.boundingBox();
+    if (!sourceItemBox) {
+        throw new Error('drag and drop source item box is null');
+    }
+
+    const targetItemBox = await targetItem.boundingBox();
+    if (!targetItemBox) {
+        throw new Error('drag and drop target item box is null');
+    }
+
+    await page.mouse.move(
+        sourceItemBox.x + sourceItemBox.width / 2,
+        sourceItemBox.y + sourceItemBox.height / 2,
+    );
+    await page.mouse.down();
+
+    // item shake emulation for drag event trigger
+    await page.mouse.move(
+        sourceItemBox.x + sourceItemBox.width / 2,
+        sourceItemBox.y - sourceItemBox.height,
+    );
+    await page.mouse.move(
+        sourceItemBox.x + sourceItemBox.width / 2,
+        sourceItemBox.y + sourceItemBox.height,
+    );
+
+    // move source item to the end of target item
+    await page.mouse.move(
+        targetItemBox.x + targetItemBox.width / 2,
+        targetItemBox.y + targetItemBox.height,
+    );
+
+    await page.mouse.up();
+}
+
+export async function openTabPopupWidgetOrder(page: Page, tabIndex?: number) {
+    await page.click(slct(COMMON_SELECTORS.ACTION_BTN_TABS));
+    const tabsDialog = await page.waitForSelector(slct(DialogTabsQA.Dialog));
+
+    const tabsRows = await tabsDialog.$$(SELECTORS.TAB_ROW);
+    expect(tabsRows.length).toBeGreaterThan(tabIndex || 0);
+    const tabRow = tabsRows[tabIndex || 0];
+
+    const tabRowDropdown = await tabRow.$(slct(DialogTabsQA.TabItemMenu));
+    await tabRowDropdown?.click({force: true});
+
+    await page.click(`[data-qa="${DialogTabsQA.TabItemMenuOrder}"]`);
+    await page.waitForSelector(slct(DialogTabsQA.PopupWidgetOrder));
+    const popupWidgetOrderList = await page.waitForSelector(
+        slct(DialogTabsQA.PopupWidgetOrderList),
+    );
+
+    return popupWidgetOrderList;
+}

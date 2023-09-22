@@ -1,0 +1,9 @@
+.SplitPane {
+    .grid-loader {
+        width: 100%;
+        height: 100%;
+        background: var(--g-color-sfx-fade);
+        z-index: 10;
+        position: absolute;
+    }
+}

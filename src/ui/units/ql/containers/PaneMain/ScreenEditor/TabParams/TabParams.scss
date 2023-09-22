@@ -1,0 +1,188 @@
+@import '../../../../../../styles/mixins.scss';
+
+.ql-tab-params {
+    padding: 0 0 8px;
+    height: calc(100% - 40px);
+    overflow-y: scroll;
+
+    &__param-row-wrapper {
+        display: flex;
+
+        padding: 10px 0 48px 20px;
+
+        border-bottom: 1px solid var(--g-color-line-generic);
+
+        flex-direction: column;
+    }
+
+    &__param-row {
+        display: flex;
+
+        line-height: 28px;
+        align-items: center;
+    }
+
+    &__param-row-applied {
+        margin-top: 24px;
+    }
+
+    &__remove-param-btn {
+        display: inline-flex;
+        height: 28px;
+        width: 28px;
+        margin-left: 10px;
+        margin-right: 5px;
+
+        .icon.button2__icon {
+            display: inline-block;
+
+            svg {
+                vertical-align: middle;
+            }
+        }
+    }
+
+    &__add-param-btn {
+        margin: 10px 0 60px 20px;
+    }
+
+    &__default-value-add {
+        text-align: center;
+
+        height: 0;
+    }
+
+    &__default-value-add-btn {
+        width: 100%;
+        display: inline;
+        height: 28px;
+        line-height: 28px;
+        text-align: center;
+
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+        .icon.button2__icon {
+            display: inline-block;
+
+            svg {
+                vertical-align: middle;
+            }
+        }
+    }
+
+    &__overriden-param-note {
+        height: 20px;
+        line-height: 20px;
+        vertical-align: middle;
+        margin-top: 4px;
+
+        &_label {
+            display: inline-block;
+            height: 20px;
+            line-height: 20px;
+            vertical-align: middle;
+
+            color: var(--g-color-text-secondary);
+            margin-right: 5px;
+        }
+
+        &_value-wrapper {
+            display: inline-block;
+
+            color: var(--g-color-text-complementary);
+            background: var(--g-color-base-generic);
+            padding: 1px 6px 1px 8px;
+            margin-right: 10px;
+
+            height: 20px;
+            line-height: 18px;
+            vertical-align: middle;
+        }
+
+        &_value {
+            display: inline-block;
+            height: 20px;
+            line-height: 20px;
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        svg {
+            margin-left: 4px;
+            height: 20px;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+    }
+
+    &__param-name {
+        display: inline-flex;
+    }
+
+    &__default-value-interval {
+        display: inline-flex;
+
+        & > div {
+            width: 100%;
+        }
+    }
+
+    &__default-value-date {
+        display: inline-flex;
+
+        .yc-simple-datepicker__control-input_date {
+            width: 82px;
+        }
+
+        .yc-simple-datepicker__control-input_time {
+            width: 46px;
+        }
+    }
+
+    &__default-value-array {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    &__default-value-text {
+        margin-right: 5px;
+    }
+
+    &__default-value-entry {
+        display: flex;
+        flex-direction: row;
+
+        &_not-first {
+            margin-top: 5px;
+        }
+    }
+
+    &__remove-param-value-btn {
+        display: inline-flex;
+        height: 28px;
+        width: 28px;
+        float: right;
+    }
+
+    &__delimeter {
+        margin-left: 8px;
+        margin-right: 8px;
+        display: inline-flex;
+        vertical-align: top;
+    }
+
+    &__select-popup {
+        @include dl-select-popup;
+    }
+
+    &__select {
+        flex: 0 0 82px;
+        vertical-align: top;
+        margin-right: 12px;
+        display: inline-flex;
+    }
+}

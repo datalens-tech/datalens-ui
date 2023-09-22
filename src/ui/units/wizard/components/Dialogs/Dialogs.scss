@@ -1,0 +1,60 @@
+@import '../../styles/variables';
+
+.modal__content {
+    border-radius: 9px;
+}
+
+.dialog-no-rights {
+    width: 480px;
+
+    .button2 {
+        margin-right: 12px;
+    }
+}
+
+.dialog-field,
+.dialog-label {
+    width: 480px;
+
+    .yc-dialog-header__caption {
+        margin-left: 7px;
+    }
+
+    &__row {
+        margin-bottom: 16px;
+        vertical-align: middle;
+        line-height: 28px;
+    }
+
+    &__label {
+        display: inline-block;
+        width: 125px;
+        margin-right: 16px;
+    }
+
+    .select2 {
+        width: 180px;
+    }
+
+    .textinput {
+        width: 270px;
+    }
+
+    &.dialog-field-dimension,
+    &.dialog-label-dimension {
+        .yc-dialog-header {
+            svg {
+                color: var(--g-color-text-positive);
+            }
+        }
+    }
+
+    &.dialog-field-measure,
+    &.dialog-label-measure {
+        .yc-dialog-header {
+            svg {
+                color: var(--g-color-text-info);
+            }
+        }
+    }
+}

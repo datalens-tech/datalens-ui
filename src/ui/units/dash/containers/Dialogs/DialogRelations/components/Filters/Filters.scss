@@ -1,0 +1,14 @@
+.dialog-relations-filters {
+    &__top {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__search {
+        margin-right: 8px;
+    }
+
+    &__button {
+        margin-left: 4px;
+    }
+}

@@ -1,0 +1,8 @@
+.dialog-row {
+    display: grid;
+    align-items: center;
+
+    &__setting > * {
+        max-width: 100%;
+    }
+}

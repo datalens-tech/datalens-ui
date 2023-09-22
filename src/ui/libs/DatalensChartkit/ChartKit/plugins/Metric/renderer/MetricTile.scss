@@ -1,0 +1,147 @@
+.metric-tile {
+    &:not(:first-child) {
+        border-top: 1px solid #b5b5b5;
+    }
+
+    &__content {
+        // without width content shifts to the left because of the long header
+        width: 100%;
+        max-width: 230px;
+        display: inline-block;
+        white-space: nowrap;
+        position: relative;
+        margin: 0 0 17px;
+        padding: 8px 10px 0;
+        min-height: 167px;
+        text-decoration: none;
+        box-sizing: border-box;
+        text-align: left;
+    }
+
+    &__metric {
+        margin-top: 3px;
+        font-size: 65px;
+        line-height: 1;
+        color: #333333;
+    }
+
+    &_thin &__metric {
+        font-size: 55px;
+    }
+
+    &_thin &__content {
+        height: 130px;
+    }
+
+    &__current {
+        color: #808080;
+        font-size: 14px;
+        padding: 5px 0;
+    }
+
+    &__diff-container {
+        position: absolute;
+        top: -43px;
+        font-size: 18px;
+    }
+
+    &_thin &__diff-container {
+        top: -43px;
+        font-size: 15px;
+    }
+
+    &__diff-abs {
+        padding-top: 5px;
+    }
+
+    &_thin &__diff-abs {
+        padding-top: 3px;
+    }
+
+    &__title {
+        max-width: 100%;
+        color: #000000;
+        font-size: 18px;
+        padding: 5px 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+    }
+
+    &__last {
+        color: #808080;
+        font-size: 14px;
+        padding-top: 12px;
+        padding-bottom: 7px;
+    }
+
+    &__last-value {
+        color: #000000;
+        font-size: 24px;
+        display: inline-block;
+        position: relative;
+    }
+
+    &__value {
+        vertical-align: top;
+        font-weight: bold;
+        margin-right: 0.25em;
+    }
+
+    &__unit {
+        display: inline-block;
+    }
+
+    &__chart {
+        display: inline-block;
+        position: absolute;
+        bottom: -17px;
+        right: 9px;
+        width: 130px;
+        height: 60px;
+        opacity: 0.7;
+    }
+
+    &__chart-lite {
+        display: inline-block;
+        opacity: 0.7;
+        padding-top: 17px;
+        padding-left: 5px;
+    }
+
+    &__aside {
+        display: inline-block;
+        font-size: 0.5em;
+        text-align: left;
+        position: relative;
+    }
+
+    &__date {
+        display: block;
+        font-size: 11px;
+        color: #555;
+        text-align: right;
+    }
+
+    &__diff {
+        display: block;
+        font-size: 0.5em;
+        position: relative;
+        top: -0.5em;
+    }
+
+    &__diff_positive,
+    .widget_colorize_green &__diff {
+        color: #080;
+    }
+
+    &__diff_negative,
+    .widget_colorize_red &__diff {
+        color: #800;
+    }
+
+    &__diff_unit,
+    &__last_unit {
+        font-size: 0.7em;
+    }
+}

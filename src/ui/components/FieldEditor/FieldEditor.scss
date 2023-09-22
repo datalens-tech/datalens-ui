@@ -1,0 +1,231 @@
+.dl-field-editor {
+    $docPaddingSide: 24px;
+
+    width: 80vw;
+    min-width: 800px;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+
+    &__settings {
+        display: flex;
+        align-items: center;
+        padding: 5px 32px 20px;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &__settings-field-name {
+        width: 300px;
+        height: 28px;
+    }
+
+    &__settings-switcher {
+        height: 28px;
+        margin-left: 15px;
+    }
+
+    &__settings-checkbox {
+        display: flex;
+        align-items: center;
+        flex: 0 0 180px;
+        height: 28px;
+        margin-left: 15px;
+    }
+
+    &__settings-doc-btn {
+        margin-left: auto;
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: calc(80vh - 100px);
+    }
+
+    &__content-panels {
+        position: relative;
+        height: 100%;
+    }
+
+    &__source-section {
+        padding-left: 32px;
+        padding-top: 20px;
+        overflow-y: auto;
+    }
+
+    &__source-section-control {
+        width: 300px;
+
+        &_short {
+            width: 200px;
+        }
+    }
+
+    &__source-section-hint {
+        top: 5px;
+        left: 5px;
+        height: 16px;
+    }
+
+    &__row {
+        display: flex;
+        margin-bottom: 20px;
+        line-height: 28px;
+    }
+
+    &__label {
+        flex: 0 0 150px;
+    }
+
+    &__hide-in-wizard-checkbox {
+        margin-left: 20px;
+        flex: 0 0 180px;
+    }
+
+    &__icon-add-btn {
+        position: relative;
+        left: 8px;
+        height: 100%;
+    }
+
+    &__hide-description-btn {
+        margin-left: 68px;
+    }
+
+    &__formula-fields {
+        height: 100%;
+    }
+
+    &__formula-editor-wrap {
+        height: 100%;
+    }
+
+    &__formula-editor {
+        height: calc(100% - 92px);
+        min-height: 100px;
+        border: none;
+    }
+
+    &__formula-editor-glyph {
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-image: url('../../assets/icons/alert.svg');
+        // https://stackoverflow.com/a/43960991/604861
+        filter: invert(19%) sepia(98%) saturate(5910%) hue-rotate(359deg) brightness(94%)
+            contrast(118%);
+        cursor: pointer;
+    }
+
+    &__cast-option {
+        display: flex;
+        align-items: center;
+    }
+
+    &__field-type-select-icon {
+        opacity: 0.5;
+        margin-right: 8px;
+    }
+
+    &__doc {
+        display: flex;
+        width: 100%;
+        height: 100%;
+    }
+
+    &__doc-list {
+        display: flex;
+        height: 100%;
+    }
+
+    &__doc-list-item {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        height: 100%;
+        padding-left: 32px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+
+        &_group {
+            font-weight: 500;
+        }
+
+        &_function {
+            padding-left: 50px;
+        }
+
+        &_selected {
+            background-color: var(--g-color-base-selection);
+        }
+    }
+
+    &__doc-item-wrap {
+        height: 100%;
+    }
+
+    &__doc-item-title {
+        margin: 16px $docPaddingSide 0;
+        font-size: var(--g-text-header-1-font-size);
+        line-height: var(--g-text-header-1-line-height);
+    }
+
+    &__doc-item {
+        display: flex;
+        flex-direction: column;
+        padding: 5px 16px 16px;
+
+        & > * {
+            margin: 6px 0;
+        }
+
+        & > h2 ~ p em {
+            color: var(--g-color-text-info);
+        }
+
+        & a {
+            text-decoration: none;
+            color: var(--g-color-text-link);
+        }
+
+        & ul > li {
+            margin: 4px 0;
+        }
+
+        & code {
+            font-size: 14px;
+            line-height: 16px;
+            padding: 1px 4px;
+            color: var(--g-color-text-misc);
+            background-color: var(--g-color-base-misc-light);
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        &.yfm {
+            padding: 5px $docPaddingSide 16px;
+
+            .yfm-anchor {
+                display: none;
+            }
+        }
+    }
+
+    &__doc-loader {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* TODO: remove styles, when it is possible to customize styles on List.Input [DATAUI-360] */
+    & .yc-list__filter {
+        margin: 16px 16px 10px 32px;
+        z-index: 0;
+    }
+
+    --dl-dataset-field-list-item-padding-left: 32px;
+}

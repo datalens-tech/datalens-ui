@@ -1,0 +1,110 @@
+.error-content {
+    $class: &;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+
+    &_is-mobile {
+        flex-direction: column;
+
+        #{$class}__content {
+            padding: 12px 10px 0;
+            text-align: center;
+        }
+
+        #{$class}__title {
+            width: 100%;
+            text-align: center;
+        }
+
+        #{$class}__description {
+            font-size: 15px;
+        }
+
+        #{$class}__debug-info {
+            width: auto;
+        }
+
+        #{$class}__action-btn {
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    &_no-controls {
+        display: block;
+        padding: 20px 0;
+    }
+
+    &__title {
+        font-weight: 500;
+        font-size: var(--g-text-header-1-font-size);
+        line-height: var(--g-text-header-1-line-height);
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        flex-shrink: 0;
+
+        width: 350px;
+    }
+
+    &__action-btn {
+        margin-top: 20px;
+    }
+
+    &__description {
+        margin-top: 10px;
+    }
+
+    &__debug-info {
+        width: 500px;
+        margin-top: 20px;
+        color: var(--g-color-text-hint);
+    }
+
+    &__copy-btn {
+        margin-left: 10px;
+    }
+
+    &__action {
+        margin-top: 20px;
+    }
+
+    &_layout {
+        &_row {
+            min-height: 320px;
+
+            #{$class}__content {
+                margin-left: 40px;
+            }
+        }
+
+        &_column {
+            flex-direction: column;
+
+            #{$class}__content {
+                width: 400px;
+                align-items: center;
+                text-align: center;
+            }
+        }
+    }
+
+    &__yfm {
+        margin-top: 10px;
+        font-size: var(--g-text-body-1-font-size);
+    }
+
+    .dc-page-nav-content_noBottomActions .dc-centered & {
+        height: 100%;
+    }
+
+    .dc-page-nav-content_noBottomActions .dc-centered &__content {
+        padding-left: 42px;
+    }
+}

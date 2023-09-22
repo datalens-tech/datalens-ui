@@ -1,0 +1,14 @@
+.dl-collection-breadcrumbs {
+    &__item {
+        color: var(--g-color-text-primary);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--g-color-text-secondary);
+        }
+
+        &:visited {
+            color: var(--g-color-text-primary);
+        }
+    }
+}

@@ -1,0 +1,11 @@
+.dialog-settings-limit-input {
+    &__text-input {
+        width: 80px;
+    }
+
+    &__label {
+        display: inline-block;
+        width: 125px;
+        margin-right: 16px;
+    }
+}

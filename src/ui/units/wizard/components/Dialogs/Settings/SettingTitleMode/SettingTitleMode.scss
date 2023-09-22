@@ -1,0 +1,12 @@
+.setting-title-mode {
+    &__container {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    &__title-input.yc-text-input {
+        width: 270px;
+        margin-left: 12px;
+    }
+}

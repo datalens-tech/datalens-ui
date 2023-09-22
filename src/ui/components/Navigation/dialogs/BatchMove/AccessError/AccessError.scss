@@ -1,0 +1,16 @@
+.dl-nav-move-access-error {
+    width: 560px;
+
+    &__header-icon {
+        margin-right: 4px;
+        fill: var(--g-color-text-danger);
+    }
+
+    &__description {
+        margin-bottom: 20px;
+    }
+
+    &__list {
+        max-height: 420px;
+    }
+}

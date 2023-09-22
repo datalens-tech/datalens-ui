@@ -1,0 +1,10 @@
+{
+  "button_apply": "Apply",
+  "button_cancel": "Cancel",
+  "label_copy": "copy",
+  "label_default-name": "New",
+  "label_entry-name-already-exists": "That name is already in use, try another one",
+  "label_placeholder": "Name",
+  "section_caption": "Save as new",
+  "toast_save-as-new-failed": "Failed to save as new"
+}

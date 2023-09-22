@@ -1,0 +1,39 @@
+@import '../../../../../../../../../../styles/variables';
+
+.chartkit-inspector {
+    &__body {
+        max-height: 65vh;
+        overflow: auto;
+        color: var(--g-color-text-primary);
+        font-size: var(--g-text-body-1-font-size);
+        line-height: var(--g-text-body-1-line-height);
+    }
+
+    &__divider {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    &__request-id {
+        color: var(--g-color-text-secondary);
+        margin-bottom: 26px;
+    }
+
+    &__request-id-value {
+        display: inline-grid;
+        grid-auto-flow: column;
+        grid-column-gap: 5px;
+        color: var(--g-color-text-primary);
+        background-color: var(--g-color-base-generic);
+        border-radius: 5px;
+        padding: 5px;
+        margin-left: 3px;
+        font-family: var(--g-text-code-font-family);
+        font-size: var(--g-text-code-inline-1-font-size);
+        line-height: var(--g-text-code-inline-1-line-height);
+    }
+
+    &__request-id-copy {
+        color: var(--g-color-text-secondary);
+    }
+}

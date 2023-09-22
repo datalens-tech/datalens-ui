@@ -1,0 +1,13 @@
+.dialog-dash-edit-warning {
+    width: 520px;
+
+    &__button + &__button {
+        margin-left: 12px;
+    }
+
+    &__text-selected {
+        font-weight: bold;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+}

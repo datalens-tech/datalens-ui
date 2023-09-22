@@ -1,0 +1,30 @@
+.sub-navigator-settings {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 40px;
+    max-width: 399px;
+    flex: 1;
+    & > * {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    &__period-label {
+        width: 130px;
+    }
+
+    &__period-input.yc-text-input {
+        width: 80px;
+    }
+
+    &__period-selector {
+        width: 160px;
+    }
+
+    &__navigator-line-selector {
+        width: 100%;
+    }
+}

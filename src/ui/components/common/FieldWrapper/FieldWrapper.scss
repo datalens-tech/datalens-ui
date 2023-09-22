@@ -1,0 +1,26 @@
+@import '../styles/mixins';
+
+.yc-field-wrapper {
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
+
+    & > * {
+        vertical-align: top;
+    }
+
+    &__error-text {
+        @include text-body-1;
+        color: var(--g-color-text-danger);
+        margin-top: 2px;
+        white-space: normal;
+    }
+
+    &_state_error {
+        .yc-select-control,
+        .yc-text-input__content, // since refactoring of TextInput (uikit v4.11.0) - Border is on content element (preserve old rule for older versions of uikit)
+        .yc-text-input__control {
+            border-color: var(--g-color-text-danger);
+        }
+    }
+}

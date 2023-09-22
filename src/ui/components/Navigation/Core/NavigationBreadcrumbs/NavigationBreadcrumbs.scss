@@ -1,0 +1,31 @@
+.dl-core-navigation-breadcrumbs {
+    flex: 1 1 0;
+    position: relative;
+    height: 28px;
+
+    &__wrapper {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
+
+    &__line {
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    &__component {
+        max-width: 100%;
+
+        &_showMenu {
+            max-width: calc(100% - 40px);
+        }
+    }
+
+    &__item_last {
+        font-weight: 500;
+    }
+}

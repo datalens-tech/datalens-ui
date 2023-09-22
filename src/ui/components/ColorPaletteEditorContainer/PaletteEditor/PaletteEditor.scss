@@ -1,0 +1,68 @@
+.palette-editor {
+    --palette-list-width: 172px;
+
+    &__palettes-card {
+        margin: 15px 0;
+    }
+
+    &__color-remove-button {
+        margin-left: 10px;
+    }
+
+    &__add-color-controls {
+        margin: 16px 0 20px;
+    }
+
+    &__add-color-button {
+        color: var(--g-color-text-secondary);
+    }
+
+    &__add-color-disabled-label {
+        margin-top: 5px;
+        display: block;
+        color: var(--g-color-text-secondary);
+    }
+
+    &__list-item-wrapper {
+        padding: 4px 0 4px 4px;
+    }
+
+    &__palette-editor {
+        display: flex;
+        justify-content: space-between;
+        height: 35vh;
+        min-height: 180px;
+        max-height: 400px;
+        column-gap: 10px;
+    }
+
+    &__palette-charkit-preview {
+        display: flex;
+        column-gap: 10px;
+        width: calc(100% - var(--palette-list-width));
+    }
+
+    &__palette-charkit-node {
+        width: 50%;
+        background: var(--g-color-base-background);
+    }
+
+    &__palette-colors-list {
+        width: var(--palette-list-width);
+        overflow-y: auto;
+    }
+
+    &__name-setting {
+        display: flex;
+        align-items: center;
+    }
+
+    &__palette-icon {
+        height: 16px;
+        width: 20px;
+    }
+
+    &__name-input {
+        margin-left: 10px;
+    }
+}

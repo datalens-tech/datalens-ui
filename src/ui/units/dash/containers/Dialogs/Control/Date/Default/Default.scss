@@ -1,0 +1,23 @@
+.date-manual-default-value {
+    margin-bottom: 60px;
+
+    &__radiobox-content {
+        padding-left: 22px;
+    }
+
+    &__datepicker-place {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    &__inputs-range-place {
+        padding-top: 15px;
+        display: grid;
+        grid-auto-flow: column;
+        grid-column-gap: 10px;
+    }
+
+    &__input-single-place {
+        padding-top: 15px;
+    }
+}

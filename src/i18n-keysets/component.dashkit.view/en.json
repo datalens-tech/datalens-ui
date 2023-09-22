@@ -1,0 +1,9 @@
+{
+  "button_retry": "Repeat",
+  "label_copy": "Copy",
+  "label_delete": "Delete",
+  "label_edit": "Edit",
+  "label_error": "Error",
+  "label_render-markdown-error": "Failed to render markdown",
+  "label_settings": "Settings"
+}

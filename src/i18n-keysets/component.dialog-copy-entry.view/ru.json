@@ -1,0 +1,14 @@
+{
+  "button_apply": "Применить",
+  "button_cancel": "Отменить",
+  "label_copy": "копия",
+  "label_default-name": "Новый датасет",
+  "label_entry-name-already-exists": "Название уже используется, придумайте другое",
+  "label_error-on-template-apply": "При разворачивании темплейта произошла ошибка",
+  "label_placeholder": "Введите имя",
+  "section_caption": "Куда скопировать?",
+  "section_caption-dashboard": "Дублировать дашборд",
+  "section_caption-dataset": "Дублировать датасет",
+  "section_caption-widget": "Дублировать чарт",
+  "toast_copy-failed": "Не удалось скопировать"
+}

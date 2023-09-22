@@ -1,0 +1,74 @@
+import React from 'react';
+
+import block from 'bem-cn-lite';
+import {Collapse} from 'components/Collapse/Collapse';
+
+import './SectionWrapper.scss';
+
+const b = block('section-wrapper');
+
+export type SectionWrapperProps = {
+    className?: string;
+    title?: string;
+    titleMods?: string;
+    subTitle?: string;
+    withCollapse?: boolean;
+    isStylesHidden?: boolean;
+};
+
+type SectionBodyProps = {
+    title?: string;
+    subTitle?: string;
+    className?: string;
+    titleModsVal: Record<string, boolean> | null;
+    isStylesHidden?: boolean;
+};
+
+const SectionBody: React.FC<SectionBodyProps> = (
+    props: React.PropsWithChildren<SectionBodyProps>,
+) => {
+    return (
+        <div className={b({hidden: props.isStylesHidden}, props.className)}>
+            {props.title && <div className={b('title', props.titleModsVal)}>{props.title}</div>}
+            {props.subTitle && <div className={b('subtitle')}>{props.subTitle}</div>}
+            <div className={b('content')}>{props.children}</div>
+        </div>
+    );
+};
+
+const SectionWrapper: React.FC<SectionWrapperProps> = (props) => {
+    let titleModsVal = props.titleMods ? {[props.titleMods]: true} : null;
+    if (props.subTitle) {
+        const subTitleMod = {'with-subtitle': true};
+        titleModsVal = titleModsVal ? {...titleModsVal, ...subTitleMod} : subTitleMod;
+    }
+
+    if (props.withCollapse) {
+        return (
+            <SectionBody
+                titleModsVal={titleModsVal}
+                subTitle={props.subTitle}
+                className={props.className}
+                isStylesHidden={props.isStylesHidden}
+            >
+                <Collapse defaultIsExpand={true} title={props.title || ''} titleSize="m">
+                    {props.children}
+                </Collapse>
+            </SectionBody>
+        );
+    }
+
+    return (
+        <SectionBody
+            titleModsVal={titleModsVal}
+            subTitle={props.subTitle}
+            title={props.title}
+            className={props.className}
+            isStylesHidden={props.isStylesHidden}
+        >
+            {props.children}
+        </SectionBody>
+    );
+};
+
+export {SectionWrapper};

@@ -1,0 +1,18 @@
+{
+  "action_cancel": "Отменить",
+  "action_copy": "Копировать",
+  "action_create": "Создать",
+  "action_create-collection": "Создать коллекцию",
+  "action_create-workbook": "Создать воркбук",
+  "action_edit-collection": "Редактирование коллекции",
+  "action_save": "Сохранить",
+  "action_edit-workbook": "Редактирование воркбука",
+  "action_move": "Переместить",
+  "label_copy": "Куда копировать",
+  "label_copy-denied-title": "Недостаточно прав для копирования",
+  "label_description": "Описание",
+  "label_empty-collection": "Пустая коллекция",
+  "label_move": "Куда переместить",
+  "label_move-denied-title": "Недостаточно прав для перемещения",
+  "label_title": "Название"
+}

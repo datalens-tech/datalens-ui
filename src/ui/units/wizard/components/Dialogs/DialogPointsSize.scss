@@ -1,0 +1,37 @@
+.dialog-points-size {
+    width: 480px;
+
+    &__title-icon {
+        margin: 0 4px 2px 0;
+        height: 24px;
+        width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__row {
+        display: flex;
+        height: 28px;
+        margin-bottom: 40px;
+
+        &:last-child {
+            margin-bottom: 20px;
+        }
+    }
+
+    &__row-label {
+        display: flex;
+        align-items: center;
+        width: 85px;
+        margin-right: 20px;
+    }
+
+    &__range-input {
+        flex: 1 1 auto;
+    }
+
+    & .yc-range-input-picker__range-info-items-list {
+        top: 36px;
+    }
+}

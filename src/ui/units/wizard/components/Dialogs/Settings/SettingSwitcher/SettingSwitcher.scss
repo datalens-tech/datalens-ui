@@ -1,0 +1,12 @@
+.setting-switcher {
+    &__container {
+        display: flex;
+        align-items: center;
+    }
+
+    &__label {
+        display: inline-block;
+        width: 125px;
+        margin-right: 16px;
+    }
+}

@@ -1,0 +1,11 @@
+{
+  "button_clear-filters": "Reset filters",
+  "label_empty-scope-all-description": "Start by creating a connection to a data source, then describe the dataset, create a chart, and assemble a dashboard!",
+  "label_not-found-description": "Try adding other conditions to filters",
+  "section_empty-scope-all": "There are no objects in this workbook yet",
+  "section_empty-scope-connection": "There are no connections in this workbook yet",
+  "section_empty-scope-dashboard": "There are no dashboards in this workbook yet",
+  "section_empty-scope-dataset": "There are no datasets in this workbook yet",
+  "section_empty-scope-widget": "There are no charts in this workbook yet",
+  "section_not-found": "Nothing found"
+}

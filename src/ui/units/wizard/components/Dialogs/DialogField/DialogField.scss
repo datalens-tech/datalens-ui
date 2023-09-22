@@ -1,0 +1,41 @@
+.wizard-dialog-field {
+    width: 520px;
+    max-height: 580px;
+
+    &__body {
+        overflow: auto;
+    }
+
+    &__divider {
+        margin: 0 auto 16px;
+    }
+
+    .yc-dialog-header__caption {
+        margin-left: 7px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    &__dimension {
+        display: flex;
+        flex-direction: column;
+        max-height: 580px;
+        .yc-dialog-header {
+            svg {
+                color: var(--g-color-text-positive);
+            }
+        }
+    }
+
+    &__measure {
+        display: flex;
+        flex-direction: column;
+        max-height: 580px;
+        .yc-dialog-header {
+            svg {
+                color: var(--g-color-text-info);
+            }
+        }
+    }
+}

@@ -1,0 +1,15 @@
+{
+  "button_add-selector": "Add selector",
+  "button_cancel": "Cancel",
+  "button_save": "Save",
+  "button_selectors-placement": "Selector placement",
+  "context_apply-button": "This option enables a button for applying selectors",
+  "context_reset-button": "This option enables a button for resetting selectors",
+  "label_apply-button-checkbox": "Apply button",
+  "label_autoheight-checkbox": "Autoheight",
+  "label_default-tab": "Selector {{index}}",
+  "label_reset-button-checkbox": "Reset button",
+  "label_selector-settings": "Selector settings",
+  "label_selectors-list": "Selectors",
+  "label_source": "Source"
+}

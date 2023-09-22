@@ -1,0 +1,221 @@
+@use '~@gravity-ui/uikit/styles/mixins';
+@import '../../../../../styles/variables.scss';
+
+$titleHeight: 57px;
+
+.conn-form-gsheets {
+    --container-height-offset: #{$titleHeight} - #{$actionPanelHeight};
+    --settings-height: 60px;
+
+    display: flex;
+    flex-direction: column;
+
+    &__title {
+        width: 100%;
+        height: #{$titleHeight};
+        padding: 12px 20px;
+        background-color: var(--g-color-base-generic-ultralight);
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &__title-add {
+        display: flex;
+        justify-content: space-between;
+        flex-grow: 1;
+        margin-left: 14px;
+    }
+
+    &__title-add-content {
+        display: flex;
+        align-items: center;
+    }
+
+    &__title-add-logout-label > .yc-label__text {
+        margin-right: 0;
+    }
+
+    &__title-add-logout-btn {
+        // TODO: this is an private api and may silently changed. We should use local styles
+        --yc-button-background-color: transparent;
+        --yc-button-background-color-hover: var(--g-color-base-misc-heavy-hover);
+        --yc-button-border-radius: 4px;
+
+        margin-left: 6px;
+        color: var(--g-color-text-misc);
+
+        &:active,
+        &:focus {
+            color: var(--g-color-text-misc);
+        }
+
+        &:hover {
+            color: var(--g-color-text-inverted-primary);
+        }
+    }
+
+    &__help-btn {
+        top: 1px;
+        left: 5px;
+
+        &_with-margin-right {
+            margin-right: 20px;
+        }
+    }
+
+    &__gauth-popover {
+        // TODO: this is an private api and may silently changed. We should use local styles
+        --yc-popover-max-width: 330px;
+        --yc-popup-border-color: var(--g-color-base-brand);
+
+        padding-top: 15px;
+        // So that the popover does not block navigation, it has 98
+        z-index: 97;
+
+        & .yc-popover__tooltip-close {
+            top: 12px;
+        }
+    }
+
+    &__content {
+        display: flex;
+        height: calc(100vh - var(--container-height-offset));
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        flex: 0 0 256px;
+        overflow-y: auto;
+        border-right: 1px solid var(--g-color-line-generic);
+        background-color: var(--g-color-base-generic-ultralight);
+    }
+
+    &__add-section {
+        padding: 12px 16px 0;
+    }
+
+    &__add-section-controls {
+        display: grid;
+        grid-template:
+            'a a' 1fr
+            'b c' 1fr;
+        row-gap: 8px;
+        column-gap: 6px;
+    }
+
+    &__add-section-controls-input {
+        grid-area: a;
+    }
+
+    &__list-container {
+        flex-grow: 0;
+    }
+
+    &__list-item-wrap {
+        cursor: pointer;
+    }
+
+    &__workspace {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-x: auto;
+
+        &_empty {
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--g-color-text-hint);
+        }
+    }
+
+    &__workspace-loader {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translateX(-50%) translateY(-50%);
+    }
+
+    &__workspace-error {
+        height: calc(100vh - var(--container-height-offset));
+        min-height: unset;
+    }
+
+    &__settings {
+        display: flex;
+        align-items: center;
+        height: var(--settings-height);
+        padding: 0 20px;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &__type-icon {
+        margin-right: 8px;
+        opacity: 0.5;
+    }
+
+    &__gauth-btn {
+        @include mixins.button-reset();
+        transform: scale(1);
+        transition: transform 0.1s ease-out;
+
+        &:active {
+            transform: scale(0.96);
+        }
+
+        &:hover {
+            filter: brightness(0.9);
+        }
+    }
+
+    // the normal api for working with data-table styles has not yet been delivered
+    & .data-table {
+        height: calc(
+            100vh - var(--container-height-offset) - var(--settings-height) -
+                var(--conn-column-filter-height)
+        );
+
+        &__table {
+            min-width: 100%;
+        }
+
+        &__head-cell {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        &__th {
+            border-top: none;
+        }
+
+        &__th,
+        &__td {
+            height: 38px;
+            vertical-align: middle;
+            border-left: none;
+            border-right: none;
+            border-color: var(--g-color-line-generic);
+
+            &:first-child {
+                padding-left: 20px;
+            }
+        }
+
+        &__td {
+            border-bottom: none;
+        }
+    }
+
+    &__workspace_readonly .data-table {
+        height: calc(100vh - var(--container-height-offset) - var(--conn-column-filter-height));
+    }
+
+    &__dialog-logout {
+        width: 540px;
+
+        & .yc-dialog-footer__button {
+            min-width: unset;
+        }
+    }
+}

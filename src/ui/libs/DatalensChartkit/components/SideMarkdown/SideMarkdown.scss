@@ -1,0 +1,24 @@
+.side-markdown {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 25%;
+    z-index: 6;
+    border-right: 1px solid var(--g-color-line-generic);
+    background: var(--g-color-base-background);
+    opacity: 0.9;
+
+    &__close-button {
+        position: absolute;
+        top: 5px;
+        right: 15px;
+    }
+
+    &__body {
+        height: 98%;
+        width: 100%;
+        padding: 10px;
+        border: none;
+        overflow-y: scroll;
+    }
+}

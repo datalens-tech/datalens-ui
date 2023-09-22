@@ -1,0 +1,24 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_done": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_caption": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

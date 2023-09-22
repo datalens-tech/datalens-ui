@@ -1,0 +1,16 @@
+.git
+
+.eslintrc
+README.md
+
+.idea
+.DS_Store
+.vscode
+
+node_modules
+
+.env
+
+dist
+
+artifacts

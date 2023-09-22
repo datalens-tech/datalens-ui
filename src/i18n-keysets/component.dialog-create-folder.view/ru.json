@@ -1,0 +1,9 @@
+{
+  "button_apply": "Готово",
+  "button_cancel": "Отменить",
+  "label_default-name": "Новая папка",
+  "label_folder-already-exists": "Папка с таким названием уже есть, придумайте другое",
+  "label_placeholder": "Введите имя папки",
+  "section_caption": "Создать папку",
+  "toast_create-folder-failed": "Не удалось создать папку"
+}

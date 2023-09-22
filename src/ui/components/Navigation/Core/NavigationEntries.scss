@@ -1,0 +1,124 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.dl-core-navigation {
+    &__sidebar {
+        flex: 0 0 256px;
+        background-color: var(--g-color-base-generic-ultralight);
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        background-color: var(--g-color-base-background);
+    }
+
+    &__entries {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 100%;
+        overflow: hidden;
+    }
+
+    &__entries-header {
+        flex: 0 0 auto;
+        padding: 0 20px 8px;
+        display: flex;
+    }
+
+    &__search {
+        flex: 0 1 400px;
+        margin-right: 8px;
+    }
+
+    &__custom {
+        margin-left: auto;
+        padding-left: 8px;
+
+        &:empty {
+            display: none;
+        }
+        &:not(:empty) {
+            display: flex;
+        }
+    }
+
+    &__view {
+        flex: 1 1 100%;
+    }
+
+    &__table-view {
+        height: 100%;
+    }
+
+    &__spinner {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__empty-entries {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--g-color-text-secondary);
+    }
+
+    &__filters {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    &__filters-item {
+        margin-right: 8px;
+
+        &:last-of-type {
+            margin-right: 0;
+        }
+    }
+
+    &__mobile-filters {
+        padding: 21px 23px;
+        display: flex;
+
+        &_mobile {
+            padding: 8px 16px 23px;
+            display: block;
+        }
+    }
+
+    &__folders-select {
+        margin: 5px 22px 18px;
+    }
+
+    &__mobile-filter-item {
+        font-size: 15px;
+        padding-right: 26px;
+        color: var(--g-color-text-secondary);
+
+        @media screen and (max-width: 336px) {
+            & {
+                padding-right: 15px;
+            }
+
+            &:last-child {
+                padding-right: 0;
+            }
+        }
+
+        &:last-child {
+            padding-right: 0;
+        }
+
+        &_active {
+            color: var(--g-color-text-info);
+        }
+    }
+
+    &__mobile-filter-item-icon {
+        padding-right: 8px;
+    }
+}

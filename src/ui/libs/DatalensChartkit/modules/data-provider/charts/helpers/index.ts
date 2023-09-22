@@ -1,0 +1,1 @@
+export {getChartsInsightsData} from './getChartsInsightsData';

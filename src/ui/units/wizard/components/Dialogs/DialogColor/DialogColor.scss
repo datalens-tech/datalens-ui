@@ -1,0 +1,44 @@
+.dialog-color {
+    display: flex;
+    flex-direction: column;
+    width: 680px;
+    height: 560px;
+    max-height: 80vh;
+    min-height: 300px;
+
+    &_dimension {
+        height: 560px;
+    }
+
+    &_measure {
+        height: 370px;
+    }
+
+    & .yc-dialog-header {
+        padding-bottom: 15px;
+    }
+
+    &_dimension .yc-dialog-header {
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &_dimension .yc-dialog-body {
+        height: calc(80vh - 153px);
+        padding: 0;
+        overflow-y: auto;
+    }
+
+    &_dimension .yc-dialog-footer {
+        border-top: 1px solid var(--g-color-line-generic);
+    }
+
+    &__title-icon {
+        margin-bottom: 2px;
+        margin-right: 4px;
+        height: 24px;
+        width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

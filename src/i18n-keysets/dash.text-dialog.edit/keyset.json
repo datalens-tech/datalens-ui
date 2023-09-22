@@ -1,0 +1,48 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_add": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_save": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "context_fill-text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_domain": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_domain_il": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_image-hint": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_syntax": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_text": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

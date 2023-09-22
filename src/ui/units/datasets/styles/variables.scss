@@ -1,0 +1,49 @@
+@mixin ds-variables {
+    --ds-text-title-font-size: var(--g-text-header-2-font-size);
+    --ds-text-title-line-height: var(--g-text-header-2-line-height);
+
+    --ds-color-text-primary: var(--g-color-text-primary);
+    --ds-color-text-secondary: var(--g-color-text-secondary);
+    --ds-color-text-complementary: var(--g-color-text-complementary);
+    --ds-color-text-inactive: var(--g-color-text-secondary);
+    --ds-color-text-hint: var(--g-color-text-hint);
+    --ds-color-text-danger: var(--g-color-text-danger);
+    --ds-color-text-link: var(--g-color-text-link);
+    --ds-color-text-info: var(--g-color-text-info);
+    --ds-color-text-positive: var(--g-color-text-positive);
+    --ds-color-text-utility: var(--g-color-text-utility);
+
+    --ds-color-error: var(--g-color-base-danger-heavy);
+
+    --ds-color-base: var(--g-color-base-background);
+    --ds-color-base-area: var(--g-color-base-generic-ultralight);
+    --ds-color-hover-area: var(--g-color-base-simple-hover);
+    --ds-color-gray: var(--g-color-base-simple-hover);
+    --ds-color-divider: var(--g-color-line-generic);
+    --ds-color-selection: var(--g-color-base-selection);
+    --ds-color-selection-solid: var(--g-color-base-selection);
+
+    --ds-color-progress-bar: var(--dl-color-progress-bar);
+    --ds-color-border: var(--dl-color-border);
+    --ds-color-border-solid: var(--dl-color-border-solid);
+
+    --ds-color-aggregation-dimension: var(--dl-color-field-dimenson);
+    --ds-color-aggregation-dimension-hover: var(--dl-color-field-dimenson-hover);
+    --ds-color-aggregation-measure: var(--dl-color-field-measure);
+    --ds-color-field-measure-hover: var(--dl-color-field-measure-hover);
+    --ds-color-formula-dimension: var(--dl-color-field-dimenson-solid);
+    --ds-color-formula-measure: var(--dl-color-field-measure-solid);
+
+    --color-formula-dimension: var(--ds-color-formula-dimension);
+    --color-formula-measure: var(--ds-color-formula-measure);
+
+    --ds-color-join: var(--g-color-text-misc);
+}
+
+.g-root {
+    @include ds-variables;
+}
+
+.disable-hover * {
+    pointer-events: none !important; // stylelint-disable-line declaration-no-important
+}

@@ -1,0 +1,14 @@
+.conn-form-label {
+    display: inline-flex;
+    align-items: center;
+    width: 152px;
+    line-height: 16px;
+
+    &__inner-content {
+        width: inherit;
+    }
+
+    &__help-text {
+        margin-left: 5px;
+    }
+}

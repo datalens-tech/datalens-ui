@@ -1,0 +1,28 @@
+.dl-path-select {
+    display: flex;
+
+    &__button-content {
+        display: flex;
+        align-items: center;
+    }
+
+    &__path-text {
+        flex: 1 1 auto;
+        margin: 0 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__button-place {
+        max-width: 50%;
+
+        &_withInput {
+            margin-right: 8px;
+        }
+    }
+
+    &__icon-folder,
+    &__icon-chevron {
+        flex-shrink: 0;
+    }
+}

@@ -1,0 +1,10 @@
+{
+  "button_cancel": "Cancel",
+  "button_save": "Save",
+  "caption": "Hierarchy settings",
+  "field_already_exists": "A field with the specified name already exists.",
+  "help_tooltip": "Editing the hierarchy. The order of the fields determines fields drill down.",
+  "name-placeholder": "Name",
+  "new_hierarchy": "New hierarchy",
+  "selector_title": "Available"
+}

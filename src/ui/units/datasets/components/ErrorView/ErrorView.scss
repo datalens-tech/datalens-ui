@@ -1,0 +1,14 @@
+.error-view {
+    height: 100%;
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__error-message {
+        color: var(--ds-color-text-danger);
+        margin-bottom: 10px;
+    }
+}

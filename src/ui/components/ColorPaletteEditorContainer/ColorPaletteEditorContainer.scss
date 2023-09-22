@@ -1,0 +1,10 @@
+.color-palette-editor-container {
+    &__color-palettes-card {
+        width: 460px;
+        margin-bottom: 12px;
+    }
+
+    &__color-palettes-card:last-child {
+        margin-bottom: 0;
+    }
+}

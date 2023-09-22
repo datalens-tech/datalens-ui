@@ -1,0 +1,104 @@
+{
+  "label_absolute-date": "Exact date",
+  "label_end-control-title": "End",
+  "label_include-current-day": "Including the current day",
+  "label_invalid-date": "Invalid date",
+  "label_invalid-range": "The end date precedes the start date",
+  "label_preset": "Preset",
+  "label_preset-last_-0_days": "Today",
+  "label_preset-last_-0_days-range": "Today",
+  "label_preset-last_-13_days": "14 days ago",
+  "label_preset-last_-13_days-range": "Last 14 days",
+  "label_preset-last_-179_days": "180 days ago",
+  "label_preset-last_-179_days-range": "Last 180 days",
+  "label_preset-last_-1_days": "Yesterday",
+  "label_preset-last_-1_days-range": "Yesterday",
+  "label_preset-last_-27_days": "28 days ago",
+  "label_preset-last_-27_days-range": "Last 28 days",
+  "label_preset-last_-2_days": "3 days ago",
+  "label_preset-last_-2_days-range": "Last 3 days",
+  "label_preset-last_-364_days": "365 days ago",
+  "label_preset-last_-364_days-range": "Last 365 days",
+  "label_preset-last_-6_days": "7 days ago",
+  "label_preset-last_-6_days-range": "Last 7 days",
+  "label_preset-last_-89_days": "90 days ago",
+  "label_preset-last_-89_days-range": "Last 90 days",
+  "label_relative-date": "Offset from the current date",
+  "label_scale-M": [
+    "Month",
+    "Months",
+    "Months",
+    "Months",
+    "",
+    ""
+  ],
+  "label_scale-Q": [
+    "Quarter",
+    "Quarters",
+    "Quarters",
+    "Quarters",
+    "",
+    ""
+  ],
+  "label_scale-d": [
+    "Day",
+    "Days",
+    "Days",
+    "Days",
+    "",
+    ""
+  ],
+  "label_scale-h": [
+    "Hour",
+    "Hours",
+    "Hours",
+    "Hours",
+    "",
+    ""
+  ],
+  "label_scale-m": [
+    "Minute",
+    "Minutes",
+    "Minutes",
+    "Minutes",
+    "",
+    ""
+  ],
+  "label_scale-ms": [
+    "Millisecond",
+    "Milliseconds",
+    "Milliseconds",
+    "Milliseconds",
+    "",
+    ""
+  ],
+  "label_scale-s": [
+    "Second",
+    "Seconds",
+    "Seconds",
+    "Seconds",
+    "",
+    ""
+  ],
+  "label_scale-w": [
+    "Week",
+    "Weeks",
+    "Weeks",
+    "Weeks",
+    "",
+    ""
+  ],
+  "label_scale-y": [
+    "Year",
+    "Years",
+    "Years",
+    "Years",
+    "",
+    ""
+  ],
+  "label_sign+": " Plus",
+  "label_sign-": "Minus",
+  "label_single-control-title": "Value",
+  "label_start-control-title": "Start",
+  "label_tooltip-utc": "The date is specified in UTC"
+}

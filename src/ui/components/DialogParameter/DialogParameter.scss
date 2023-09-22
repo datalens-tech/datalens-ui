@@ -1,0 +1,53 @@
+@import '../../styles/mixins.scss';
+
+.dialog-parameter {
+    width: 512px;
+    height: 276px;
+
+    &__container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 130px;
+        align-items: center;
+    }
+
+    &__line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    &__line-title {
+        width: 152px;
+        line-height: 18px;
+    }
+
+    &__title-tooltip {
+        margin-left: 5px;
+        .yfm {
+            font-size: 13px;
+        }
+    }
+
+    &__loader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    & &__line-item {
+        width: 276px;
+
+        & .dl-data-type-icon {
+            color: var(--g-color-text-secondary);
+        }
+    }
+
+    &__dialog-popup {
+        @include dl-select-popup;
+        width: 276px;
+    }
+}

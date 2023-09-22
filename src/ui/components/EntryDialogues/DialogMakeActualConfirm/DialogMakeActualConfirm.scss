@@ -1,0 +1,33 @@
+.dialog-make-actual-confirm {
+    width: 490px;
+
+    &__controls {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__button + &__button {
+        margin-left: 12px;
+    }
+
+    &__text-selected {
+        font-weight: bold;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    &__body {
+        display: flex;
+        align-items: center;
+    }
+
+    &__icon {
+        margin-right: 5px;
+        color: var(--g-color-text-warning);
+    }
+
+    &__message {
+        padding: 0 12px;
+    }
+}

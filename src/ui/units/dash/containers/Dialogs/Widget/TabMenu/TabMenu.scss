@@ -1,0 +1,69 @@
+$class: 'tab-menu';
+$addTabButtonHeight: 40px;
+
+.#{$class} {
+    // TODO: this is an private api and may silently changed. We should use local styles
+    --yc-list-margin: 24px;
+
+    width: 100%;
+    max-height: 100%;
+    font-size: 13px;
+
+    &__add-tab {
+        color: var(--g-color-text-secondary);
+        display: flex;
+        padding: 0 8px;
+        align-items: center;
+        cursor: pointer;
+        height: 40px;
+
+        &:hover {
+            background-color: var(--g-color-base-simple-hover);
+        }
+    }
+
+    &__add-tab-icon {
+        margin: 0 8px 0 20px;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        border-radius: 4px;
+        height: 40px;
+        width: 100%;
+        cursor: pointer;
+        justify-content: space-between;
+    }
+
+    &__item-star {
+        margin-right: 8px;
+        line-height: 0;
+    }
+
+    &__item-star-inactive {
+        color: var(--g-color-text-secondary);
+    }
+
+    &__item-star-active {
+        color: var(--g-color-base-misc-heavy-hover);
+    }
+
+    &__item-text {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 160px;
+    }
+
+    &__item-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    &__list {
+        height: calc(100% - $addTabButtonHeight);
+        overflow-y: auto;
+    }
+}

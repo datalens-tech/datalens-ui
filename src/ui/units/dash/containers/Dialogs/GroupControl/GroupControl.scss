@@ -1,0 +1,82 @@
+.group-control-dialog {
+    height: 640px;
+    width: 860px;
+    display: flex;
+    flex-direction: column;
+
+    &__section {
+        margin-bottom: 15px;
+    }
+
+    &__sidebar {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 255px;
+        max-height: 100%;
+    }
+
+    &__selectors-list {
+        overflow-y: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__settings {
+        border-top: 1px solid var(--g-color-line-generic);
+        padding: 25px 32px 32px;
+    }
+
+    &__settings-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+
+        &:not(:last-of-type) {
+            margin-bottom: 22px;
+        }
+    }
+
+    &__order-selectors-button {
+        margin-top: 12px;
+    }
+
+    &__help-icon {
+        top: 1px;
+        left: 5px;
+    }
+
+    &__row {
+        display: flex;
+        align-items: center;
+        border-radius: 3px;
+        font-size: 13px;
+        width: 100%;
+        height: 40px;
+
+        svg {
+            margin-right: 10px;
+        }
+
+        &:not(:last-child) {
+            margin-bottom: 10px;
+        }
+
+        &_add {
+            opacity: 0.5;
+            cursor: pointer;
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__sidebar-content {
+        display: flex;
+        flex-direction: column;
+    }
+}

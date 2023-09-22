@@ -1,0 +1,48 @@
+$block: '.dl-collection-filters';
+
+#{$block} {
+    display: flex;
+    align-items: center;
+
+    &_compact-mode {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+
+        #{$block}__filters-block {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        #{$block}__filter-by-type {
+            margin-left: 0;
+        }
+
+        #{$block}__sort {
+            flex: 1;
+        }
+    }
+
+    &__filters-block {
+        display: flex;
+        align-items: center;
+    }
+
+    &__filter-string {
+        flex: 1;
+    }
+
+    &__filter-by-type {
+        margin-left: 8px;
+        min-width: 150px;
+    }
+
+    &__sort {
+        margin-left: 8px;
+        min-width: 220px;
+    }
+
+    &__filter-by-ownership {
+        margin-left: 8px;
+    }
+}

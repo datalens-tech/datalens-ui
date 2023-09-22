@@ -1,0 +1,7 @@
+{
+  "button_cancel": "Cancel",
+  "button_delete": "Delete",
+  "label_delete": "Delete",
+  "section_caption": "Are you sure?",
+  "toast_delete-failed": "Failed to delete"
+}

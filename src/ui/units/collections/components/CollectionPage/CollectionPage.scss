@@ -1,0 +1,15 @@
+.dl-collection-page {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 100%;
+
+    &__action-panel-left-block {
+        display: flex;
+        align-items: center;
+    }
+
+    &__breadcrumbs {
+        max-width: var(--dl-breadcrumbs-max-width);
+    }
+}

@@ -1,0 +1,13 @@
+.dl-workbook-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffe7e7;
+    border-radius: 6px;
+    text-transform: uppercase;
+
+    &__letters {
+        text-align: center;
+        color: #000;
+    }
+}

@@ -1,0 +1,83 @@
+.dash-body {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    overflow: hidden;
+    text-size-adjust: none;
+
+    // redefining the style of the internal header at the dashboard level by design so that it looks the same with the headers
+    & .yc-select-control__label {
+        font-weight: 500;
+    }
+
+    &__content {
+        width: 100%;
+        transition: width 0.1s;
+        padding: 20px 24px 48px;
+
+        &_with-table-of-content {
+            width: calc(100% - 250px);
+        }
+
+        &_mobile {
+            padding: 8px 16px 18px;
+        }
+
+        &_aside {
+            padding: 0 24px 48px;
+        }
+
+        &_with-edit-panel {
+            padding-bottom: 124px;
+        }
+    }
+
+    &__content-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+        text-size-adjust: none;
+
+        border-right: var(--dl-dash-select-container-border-right-width) solid
+            var(--dl-dash-select-container-border-color);
+        border-left: var(--dl-dash-select-container-border-left-width) solid
+            var(--dl-dash-select-container-border-color);
+        border-bottom: var(--dl-dash-select-container-border-bottom-width) solid
+            var(--dl-dash-select-container-border-color);
+        border-top: var(--dl-dash-select-container-border-top-width) solid
+            var(--dl-dash-select-container-border-color);
+    }
+
+    &__content-container {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+        overflow: hidden;
+        text-size-adjust: none;
+        background-color: var(--g-color-base-generic-ultralight);
+
+        &_no-title {
+            padding-top: 24px;
+        }
+
+        &_no-title-with-tabs {
+            padding-top: 6px;
+        }
+    }
+
+    &__entry-name {
+        font-size: var(--g-text-header-2-font-size);
+        line-height: var(--g-text-header-2-line-height);
+        font-weight: 500;
+        background-color: var(--g-color-base-generic-ultralight);
+        padding: 16px 24px 4px;
+    }
+
+    &__edit-panel-item {
+        width: 100px;
+    }
+}

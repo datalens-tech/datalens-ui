@@ -1,0 +1,29 @@
+<svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0)">
+        <path fill="#8AD554" d="M4 0h4v4H4z"/>
+        <path fill="#FF90A1" d="M8 0h4v4H8z"/>
+        <path fill="#BF2543" d="M8 4h4v4H8z"/>
+        <path fill="#1E69A9" d="M0 4h4v4H0z"/>
+        <path fill="#4DA2F1" d="M0 0h4v4H0z"/>
+        <path fill="#6B6B6B" d="M16 4h4v4h-4z"/>
+        <path fill="#B9B0AC" d="M16 0h4v4h-4z"/>
+        <path fill="#FFB46C" d="M12 0h4v4h-4z"/>
+        <path fill="#DB9101" d="M12 4h4v4h-4z"/>
+        <path fill="#FFC636" d="M16 8h-4v4h4z"/>
+        <path fill="#DBA2D7" d="M12 8H8v4h4z"/>
+        <path fill="#EEB184" d="M20 8h-4v4h4z"/>
+        <path fill="#84D1EE" d="M4 8H0v4h4z"/>
+        <path fill="#70C1AF" d="M8 8H4v4h4z"/>
+        <path fill="#54A520" d="M4 4h4v4H4z"/>
+        <path fill="#0CA18C" d="M8 12H4v4h4z"/>
+        <path fill="#BA74B3" d="M12 12H8v4h4z"/>
+        <path fill="#FF7E00" d="M16 12h-4v4h4z"/>
+        <path fill="#58A9C8" d="M4 12H0v4h4z"/>
+        <path fill="#FF3D64" d="M20 12h-4v4h4z"/>
+    </g>
+    <defs>
+        <clipPath id="clip0">
+            <rect width="20" height="16" rx="2" fill="white"/>
+        </clipPath>
+    </defs>
+</svg>

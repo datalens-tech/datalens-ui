@@ -1,0 +1,109 @@
+.visualization-selector {
+    position: relative;
+    border-bottom: 1px solid var(--g-color-line-generic);
+
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.13;
+    letter-spacing: normal;
+
+    background: var(--g-color-base-background);
+    height: 41px;
+
+    .icon {
+        float: left;
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    &__dropdown {
+        width: 100%;
+        height: 100%;
+    }
+
+    &__dropdown-btn {
+        width: 100%;
+        height: 100%;
+
+        &:active {
+            transform: scale(1);
+        }
+    }
+
+    &__dropdown-btn-text {
+        display: block;
+        position: relative;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__dropdown-btn-content {
+        text-align: left;
+        margin: 0 8px;
+        display: flex;
+        align-items: center;
+        max-width: 189px;
+        line-height: 1;
+        color: var(--g-color-text-complementary);
+
+        .icon {
+            margin-right: 5px;
+        }
+    }
+
+    &__popup {
+        display: block !important; // stylelint-disable-line declaration-no-important
+        background: var(--g-color-base-float);
+        border-radius: 5px;
+        overflow-y: auto;
+
+        box-shadow: 0 2px 4px 0 var(--g-color-sfx-shadow-heavy);
+
+        &:before {
+            box-shadow: none !important; // stylelint-disable-line declaration-no-important
+            border-radius: 5px;
+        }
+    }
+
+    &__popup-content {
+        margin: 4px 0;
+
+        .visualization-item {
+            align-items: center;
+            display: flex;
+            cursor: pointer;
+            height: 28px;
+            width: 100%;
+
+            svg {
+                width: 20px;
+                height: 20px;
+                margin-right: 8px;
+            }
+
+            &.active {
+                cursor: default;
+            }
+        }
+    }
+
+    &__wrapper-settings-btn {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        position: absolute;
+        right: 0;
+        height: 100%;
+        top: 0;
+        width: 46px;
+    }
+
+    &__settings-btn {
+        color: var(--g-color-text-complementary);
+    }
+}

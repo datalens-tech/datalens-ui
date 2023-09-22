@@ -1,0 +1,7 @@
+// Temporary crutch while showing the old static connections
+
+#root.with-hidden-entry-panel {
+    .conn-app > .action-panel {
+        display: none;
+    }
+}

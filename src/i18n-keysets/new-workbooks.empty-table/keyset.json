@@ -1,0 +1,48 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_clear-filters": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_empty-scope-all-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_not-found-description": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_empty-scope-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_empty-scope-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_empty-scope-dashboard": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_empty-scope-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_empty-scope-widget": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_not-found": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

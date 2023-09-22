@@ -1,0 +1,36 @@
+.dialog-title {
+    width: 700px;
+
+    &__input {
+        &.yc-text-input .yc-text-input__control {
+            transition: font-size 0.2s ease;
+            font-weight: 500;
+        }
+
+        &_size {
+            &_l.yc-text-input .yc-text-input__control {
+                font-size: var(--g-text-header-2-font-size);
+                line-height: var(--g-text-header-2-line-height);
+            }
+
+            &_m.yc-text-input .yc-text-input__control {
+                font-size: var(--g-text-header-1-font-size);
+                line-height: var(--g-text-header-1-line-height);
+            }
+
+            &_s.yc-text-input .yc-text-input__control {
+                font-size: var(--g-text-body-3-font-size);
+                line-height: var(--g-text-body-3-line-height);
+            }
+
+            &_xs.yc-text-input .yc-text-input__control {
+                font-size: var(--g-text-body-2-font-size);
+                line-height: var(--g-text-body-2-line-height);
+            }
+        }
+    }
+
+    &__checkbox {
+        margin-top: 30px;
+    }
+}

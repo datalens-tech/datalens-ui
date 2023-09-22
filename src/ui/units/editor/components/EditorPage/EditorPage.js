@@ -1,0 +1,170 @@
+import React from 'react';
+
+import block from 'bem-cn-lite';
+import {usePrevious} from 'hooks';
+import PropTypes from 'prop-types';
+import {DndProvider} from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
+import {extractEntryId} from 'shared';
+import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
+
+import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
+import {getSdk} from '../../../../libs/schematic-sdk';
+import {EditorUrlParams, EditorUrls, Status} from '../../constants/common';
+import ActionPanel from '../../containers/ActionPanel/ActionPanel';
+import Grid from '../../containers/Grid/Grid';
+import UnloadConfirmation from '../../containers/UnloadConfirmation/UnloadConfirmation';
+import EditorPageError from '../EditorPageError/EditorPageError';
+import NewChart from '../NewChart/NewChart';
+import {config} from '../NodeTemplates/config';
+import {ViewLoader} from '../ViewLoader/ViewLoader';
+
+import './EditorPage.scss';
+
+const b = block('editor-page');
+
+const EditorPage = ({
+    editorStatus,
+    initialLoad,
+    match,
+    error,
+    history,
+    location,
+    entry,
+    asideHeaderData,
+    setCurrentPageEntry,
+    setLoading,
+}) => {
+    const [template, setTemplate] = React.useState(null);
+
+    const editorPath = React.useMemo(() => {
+        const entryId = extractEntryId(match.params.path);
+        return entryId ? entryId : match.params.path;
+    }, [match.params.path]);
+    const prevEditorPath = usePrevious(editorPath);
+
+    const templatePath = React.useMemo(() => match.params.template, [match.params.template]);
+    const loadAndSetTemplate = React.useCallback(
+        (item) => {
+            setTemplate(item);
+            initialLoad({template: item, location});
+        },
+        [initialLoad, location],
+    );
+
+    const isEntryInited = Boolean(entry) && !entry.fake;
+    const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
+
+    React.useEffect(() => {
+        async function getEntryItem() {
+            const res = await getSdk().us.listDirectory({path: 'TemplatesV2/'});
+            const templates = config.templates;
+            const entries = res.entries;
+            return entries.find(({name}) => templates[name].path === templatePath);
+        }
+
+        if (editorPath === EditorUrlParams.New) {
+            setTemplate(null);
+            return;
+        }
+
+        if (editorPath === EditorUrlParams.Draft) {
+            setLoading({status: Status.Loading});
+
+            if (templatePath) {
+                getEntryItem().then((item) => loadAndSetTemplate(item));
+            } else {
+                const item = {empty: true};
+                loadAndSetTemplate(item);
+            }
+
+            return;
+        }
+
+        if (editorPath !== prevEditorPath || !isEntryInited) {
+            setLoading({status: Status.Loading});
+            initialLoad({id: editorPath, location});
+        }
+    }, [loadAndSetTemplate, editorPath, templatePath, location, initialLoad, setLoading]);
+
+    React.useEffect(() => {
+        if (isEntryInited && isAsideHeaderEnabled) {
+            setCurrentPageEntry(entry);
+        }
+    }, [isEntryInited, isAsideHeaderEnabled, entry]);
+
+    React.useEffect(() => {
+        return () => {
+            if (isAsideHeaderEnabled) {
+                setCurrentPageEntry(null);
+            }
+        };
+    }, []);
+
+    function onClickNodeTemplate(item, entryPath) {
+        const urlPath = item.empty ? '' : `/${entryPath}`;
+        history.push(`${EditorUrls.EntryDraft}${urlPath}${location.search}`);
+    }
+
+    const renderEditor = (size) => {
+        switch (editorStatus) {
+            case Status.Loading:
+                return <ViewLoader size="l" />;
+            case Status.Failed:
+                return (
+                    <EditorPageError
+                        retry={() => initialLoad({id: editorPath, template, location})}
+                        error={error}
+                        entryId={editorPath}
+                    />
+                );
+        }
+        return (
+            <React.Fragment>
+                <UnloadConfirmation />
+                <ActionPanel history={history} />
+                <div className={b('content')}>
+                    <Grid size={size} />
+                </div>
+            </React.Fragment>
+        );
+    };
+
+    const renderPageContent = () => {
+        if (editorPath === EditorUrlParams.New) {
+            return <NewChart onClickNodeTemplate={onClickNodeTemplate} />;
+        } else {
+            return renderEditor(asideHeaderData.size);
+        }
+    };
+
+    return (
+        <React.Fragment>
+            {!isAsideHeaderEnabled && <MobileHeader />}
+            <div className={b({aside: isAsideHeaderEnabled})}>
+                <DndProvider backend={HTML5Backend}>
+                    <main className={b('main')}>{renderPageContent()}</main>
+                </DndProvider>
+            </div>
+        </React.Fragment>
+    );
+};
+
+EditorPage.propTypes = {
+    initialLoad: PropTypes.func.isRequired,
+    setCurrentPageEntry: PropTypes.func.isRequired,
+    setLoading: PropTypes.func.isRequired,
+    editorStatus: PropTypes.string.isRequired,
+    match: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    asideHeaderData: PropTypes.object.isRequired,
+    error: PropTypes.object,
+    entry: PropTypes.shape({
+        key: PropTypes.string,
+        entryId: PropTypes.string,
+        fake: PropTypes.bool,
+    }),
+};
+
+export default EditorPage;

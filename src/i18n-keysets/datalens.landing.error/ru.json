@@ -1,0 +1,20 @@
+{
+  "label_description-auth-denied": "Пожалуйста, обратитесь в тех. поддержку",
+  "label_description-auth-failed": "Пожалуйста, обратитесь в тех. поддержку",
+  "label_description-fail": "Пожалуйста, обратитесь в тех. поддержку",
+  "label_page-title-auth-denied": "Ошибка доступа",
+  "label_page-title-auth-failed": "Ошибка авторизации",
+  "label_page-title-cloud-folder-access-denied": "Ошибка доступа",
+  "label_page-title-fail": "Ошибка",
+  "label_page-title-forbidden-entry": "Нет прав",
+  "label_page-title-inaccessible-entry-folder": "Ошибка доступа",
+  "label_page-title-missing-entry": "Не найдено",
+  "label_title-auth-denied": "У вас нет доступа",
+  "label_title-auth-failed": "Что-то пошло не так",
+  "label_title-cloud-folder-access-denied": "У вас нет доступа к объектам DataLens в этом каталоге",
+  "label_title-fail": "Что-то пошло не так",
+  "label_title-forbidden-entry": "Доступ ограничен",
+  "label_title-inaccessible-entry-folder": "У вас нет доступа к DataLens в этом каталоге",
+  "label_title-missing-current-cloud-folder": "Выберите каталог для работы с DataLens",
+  "label_title-missing-entry": "Не найдено"
+}

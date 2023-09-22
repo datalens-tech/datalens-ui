@@ -1,0 +1,52 @@
+.styled-split-pane {
+    &__pane-resizer {
+        background: var(--g-color-base-generic);
+        z-index: 1;
+        box-sizing: border-box;
+        position: relative;
+
+        &_hovered {
+            opacity: 0.5;
+        }
+
+        &.horizontal {
+            height: 24px;
+            min-height: 24px;
+            width: 100%;
+
+            &:before {
+                content: '';
+                width: 28px;
+                margin-left: -14px;
+                height: 1px;
+                background-color: var(--highcarts-navigator-body);
+                left: 50%;
+                top: 10px;
+                position: absolute;
+            }
+
+            &:after {
+                content: '';
+                width: 28px;
+                margin-left: -14px;
+                height: 1px;
+                background-color: var(--highcarts-navigator-body);
+                left: 50%;
+                top: 13px;
+                position: absolute;
+            }
+        }
+
+        &.vertical {
+            height: 100%;
+            width: 1px;
+            min-width: 1px;
+            background: var(--data-table-border-color);
+        }
+    }
+
+    .Pane {
+        overflow: auto;
+        height: 100%;
+    }
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M7.35714286,7.35714286 L16.6428571,16.6428571" stroke="currentColor" stroke-width="2" strokeLinecap="round"></path>
+        <path d="M7.35714286,7.35714286 L16.6428571,16.6428571" stroke="currentColor" stroke-width="2" strokeLinecap="round" transform="translate(12.000000, 12.000000) scale(-1, 1) translate(-12.000000, -12.000000) "></path>
+    </g>
+</svg>

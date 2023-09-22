@@ -1,0 +1,12 @@
+.button-color-dialog {
+    &__content-container {
+        display: flex;
+        align-items: center;
+    }
+
+    &__icon {
+        height: 16px;
+        width: 20px;
+        margin-right: 6px;
+    }
+}

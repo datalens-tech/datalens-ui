@@ -1,0 +1,16 @@
+{
+  "button_close": "Close",
+  "button_copy": "Copy",
+  "button_report": "Report a problem",
+  "button_retry": "Retry",
+  "label_db-request": "Sent query:",
+  "label_db-response": "Database response:",
+  "label_error": "Error",
+  "label_full-backend-response": "Debug info:",
+  "label_request-id": "Request ID:",
+  "label_trace-id": "Trace ID:",
+  "tab_db-request": "Sent query",
+  "tab_db-response": "Database response",
+  "tab_debug": "Debug info",
+  "tab_doc": "Documentation"
+}

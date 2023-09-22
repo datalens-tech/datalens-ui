@@ -1,0 +1,26 @@
+.dropdown-navigation {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 28px;
+    overflow: hidden; // ellipsis for long dataset names in the Selector dialog
+
+    &__button {
+        width: 100%;
+        overflow: hidden;
+
+        // hack for common, otherwise the text with the icon (EntryTitle) is shifted up (without the norm icon)
+        & .yc-button__text {
+            display: flex;
+            margin: 0 8px;
+        }
+
+        & .dl-entry-title__icon {
+            margin-right: 4px;
+        }
+
+        & .dl-entry-title__text {
+            font-size: 13px;
+        }
+    }
+}

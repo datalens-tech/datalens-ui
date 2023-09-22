@@ -1,0 +1,68 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "button_close": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_copy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_report": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_retry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_db-request": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_db-response": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_full-backend-response": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_request-id": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_trace-id": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tab_db-request": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tab_db-response": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tab_debug": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "tab_doc": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

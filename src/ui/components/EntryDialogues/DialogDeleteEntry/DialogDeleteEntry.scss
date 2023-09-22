@@ -1,0 +1,11 @@
+.dl-dialog-delete-entry {
+    &__entry {
+        display: flex;
+        align-items: center;
+        font-size: 15px;
+    }
+
+    &__entry-text {
+        margin-right: 8px;
+    }
+}

@@ -1,0 +1,13 @@
+{
+  "button_apply": "Apply",
+  "button_cancel": "Cancel",
+  "label_copy": "copy",
+  "label_default-name": "New dataset",
+  "label_entry-name-already-exists": "That name is already in use, try another one",
+  "label_placeholder": "Name",
+  "section_caption": "Where to copy?",
+  "section_caption-dashboard": "Duplicate dashboard",
+  "section_caption-dataset": "Duplicate dataset",
+  "section_caption-widget": "Duplicate chart",
+  "toast_copy-failed": "Failed to copy"
+}

@@ -1,0 +1,7 @@
+@import '../../../../../../../styles/mixins.scss';
+
+.dialog-field-select {
+    &__popup {
+        @include dl-select-popup;
+    }
+}

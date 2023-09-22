@@ -1,0 +1,16 @@
+{
+  "button_close": "Закрыть",
+  "button_copy": "Скопировать",
+  "button_report": "Сообщить о проблеме",
+  "button_retry": "Повторить",
+  "label_db-request": "Отправленный запрос:",
+  "label_db-response": "Ответ БД:",
+  "label_error": "Ошибка",
+  "label_full-backend-response": "Отладочная информация:",
+  "label_request-id": "Request-ID:",
+  "label_trace-id": "Trace-ID:",
+  "tab_db-request": "Отправленный запрос",
+  "tab_db-response": "Ответ БД",
+  "tab_debug": "Отладочная информация",
+  "tab_doc": "Документация"
+}

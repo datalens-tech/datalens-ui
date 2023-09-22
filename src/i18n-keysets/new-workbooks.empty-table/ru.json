@@ -1,0 +1,11 @@
+{
+  "button_clear-filters": "Очистить фильтры",
+  "label_empty-scope-all-description": "Начните с создания подключения к источнику данных, затем опишите датасет, создайте чарт и соберите дашборд!",
+  "label_not-found-description": "Попробуйте задать другие условия в фильтрах",
+  "section_empty-scope-all": "В этом воркбуке пока нет объектов",
+  "section_empty-scope-connection": "В этом воркбуке пока нет подключений",
+  "section_empty-scope-dashboard": "В этом воркбуке пока нет дашбордов",
+  "section_empty-scope-dataset": "В этом воркбуке пока нет датасетов",
+  "section_empty-scope-widget": "В этом воркбуке пока нет чартов",
+  "section_not-found": "Ничего не найдено"
+}

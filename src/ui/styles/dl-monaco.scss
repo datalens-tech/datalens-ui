@@ -1,0 +1,22 @@
+:root {
+    --dl-color-monaco-string-escape: #d7ba7d;
+    --dl-color-monaco-date: #42a807;
+    --dl-color-monaco-field: #964218;
+}
+
+.monaco-editor.vs-dark .view-overlays .current-line {
+    border-color: var(--g-color-line-generic);
+}
+
+.g-root {
+    // In Monaco version 0.22.3 there is a bug that this container adds scroll to the page
+    // In the next version 0.23.0 bug fixed - you can delete these styles.
+    // But in this version there are problems in safari 13 - CHARTS-3826
+    .monaco-aria-container {
+        // stylelint-disable-next-line declaration-no-important
+        left: -999em !important;
+        margin: -1px;
+        padding: 0;
+        clip-path: inset(50%);
+    }
+}

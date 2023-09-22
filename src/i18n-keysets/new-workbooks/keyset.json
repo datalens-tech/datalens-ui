@@ -1,0 +1,140 @@
+{
+  "context": "",
+  "allowedStatuses": [
+    "APPROVED",
+    "EXPIRED",
+    "GENERATED",
+    "REQUIRES_TRANSLATION",
+    "TRANSLATED"
+  ],
+  "status": {
+    "action_access": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_copy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create-chart": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create-connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create-dashboard": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_create-dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_delete": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_edit": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_move": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_rename": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_duplicate": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_apply": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_cancel": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_workbook-table-load-more": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "button_workbook-table-retry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_copy": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_delete-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_entry-name-already-exists": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_last-modified": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_no-data": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_rename-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "menu_connection": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "menu_dashboard": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "menu_dataset": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "menu_editor-chart": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "menu_ql-chart": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "menu_wizard-chart": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "section_delete-entry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    }
+  }
+}

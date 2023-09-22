@@ -1,0 +1,60 @@
+.ql-pane-preview {
+    flex: 1 1 0;
+    padding-right: 1px; // fix for chartkit menu popup
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+
+    &__empty-chart {
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        text-align: center;
+        color: var(--g-color-text-secondary);
+    }
+
+    &__empty-illustration {
+        padding: 15px;
+        max-width: 390px;
+    }
+
+    .chartkit-ymap {
+        height: 99%; // CHARTS-2438
+    }
+
+    .chartkit-table {
+        thead {
+            th {
+                border-top: none;
+            }
+
+            th:first-child {
+                border-left: none;
+            }
+
+            th:last-child {
+                border-right: none;
+            }
+        }
+
+        tbody {
+            tr {
+                td:first-child {
+                    border-left: none;
+                }
+
+                td:last-child {
+                    border-left: none;
+                }
+            }
+        }
+    }
+}

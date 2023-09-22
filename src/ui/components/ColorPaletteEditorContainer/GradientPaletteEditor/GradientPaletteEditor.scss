@@ -1,0 +1,40 @@
+.gradient-palette-editor {
+    &__palette-preview {
+        height: 28px;
+        border-radius: 4px;
+        margin: 8px 0;
+    }
+
+    &__color-inputs {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__palette-charkit-preview {
+        display: flex;
+        justify-content: space-between;
+        height: 35vh;
+        min-height: 180px;
+        max-height: 400px;
+        column-gap: 10px;
+    }
+
+    &__palette-charkit-node {
+        width: 50%;
+        background: var(--g-color-base-background);
+    }
+
+    &__name-setting {
+        display: flex;
+        align-items: center;
+    }
+
+    &__palette-icon {
+        height: 16px;
+        width: 20px;
+    }
+
+    &__name-input {
+        margin-left: 10px;
+    }
+}

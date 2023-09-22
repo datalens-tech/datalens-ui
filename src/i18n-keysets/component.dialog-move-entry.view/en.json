@@ -1,0 +1,7 @@
+{
+  "button_apply": "Apply",
+  "button_cancel": "Cancel",
+  "label_entry-name-already-exists": "That name is already in use, try another one",
+  "section_caption": "Where to move?",
+  "toast_move-failed": "Failed to move"
+}

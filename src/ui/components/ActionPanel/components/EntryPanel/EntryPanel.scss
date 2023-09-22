@@ -1,0 +1,66 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.dl-entry-panel {
+    $class: &;
+    height: inherit;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-right: auto;
+
+    &__entry {
+        &-title {
+            max-width: 50%;
+            height: inherit;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            flex-shrink: 1;
+
+            &-text {
+                @include overflow-ellipsis();
+
+                font-weight: bold;
+            }
+        }
+
+        &-actions {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2px;
+            padding-right: 10px;
+
+            #{$class}__action-btn {
+                color: var(--g-color-text-secondary);
+                &:not(:last-child) {
+                    margin-right: 5px;
+                }
+
+                &_active {
+                    svg {
+                        color: var(--g-color-base-misc-heavy-hover);
+                    }
+                }
+            }
+        }
+    }
+
+    &__project-title {
+        position: relative;
+        padding: 0 16px 0 8px;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: 3px;
+            width: 1px;
+            height: 20px;
+            background-color: var(--g-color-line-generic);
+        }
+    }
+
+    &__cloud-select-container {
+        margin-right: 8px;
+    }
+}

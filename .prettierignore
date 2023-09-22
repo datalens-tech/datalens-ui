@@ -1,0 +1,6 @@
+src/i18n/keysets
+src/i18n-keysets
+tests/dist
+tests/artifacts
+*.yaml
+build/

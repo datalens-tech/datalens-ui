@@ -1,0 +1,14 @@
+.dl-dialog-counter-progress {
+    &__content {
+        padding-top: 12px;
+    }
+
+    &__text-progress {
+        color: var(--g-color-text-complementary);
+        margin-top: 12px;
+    }
+
+    &__progress {
+        margin-top: 12px;
+    }
+}

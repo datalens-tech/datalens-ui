@@ -1,0 +1,45 @@
+import {DEFAULT_PROXY_HEADERS} from '@gravity-ui/gateway/build/constants';
+
+import {
+    AuthHeader,
+    CSRF_TOKEN_HEADER,
+    DL_COMPONENT_HEADER,
+    DL_EMBED_TOKEN_HEADER,
+    PROJECT_ID_HEADER,
+    SuperuserHeader,
+    TENANT_ID_HEADER,
+} from '../../shared';
+import {SERVICE_NAME_DATALENS, errorBooster} from '../components';
+
+export default {
+    appName: `datalens-${process.env.APP_MODE}`,
+    appSocket: 'dist/run/server.sock',
+    expressBodyParserJSONConfig: {
+        limit: '50mb',
+    },
+    expressBodyParserURLEncodedConfig: {
+        limit: '50mb',
+        extended: false,
+    },
+    errorBooster,
+    workers: (process.env.WORKERS && parseInt(process.env.WORKERS)) || 1,
+    fetchingTimeout: 95 * 1000,
+    singleFetchingTimeout: 95 * 1000,
+    chartsMonitoringEnabled: false,
+    faviconUrl: '/favicon.ico',
+    appMode: process.env.APP_MODE,
+    serviceName: SERVICE_NAME_DATALENS,
+    gatewayProxyHeaders: [
+        ...DEFAULT_PROXY_HEADERS,
+        PROJECT_ID_HEADER,
+        TENANT_ID_HEADER,
+        SuperuserHeader.XDlAllowSuperuser,
+        SuperuserHeader.XDlSudo,
+        AuthHeader.Authorization,
+        CSRF_TOKEN_HEADER,
+        DL_COMPONENT_HEADER,
+        DL_EMBED_TOKEN_HEADER,
+    ],
+    headersMap: {},
+    requestIdHeaderName: 'x-request-id',
+};
