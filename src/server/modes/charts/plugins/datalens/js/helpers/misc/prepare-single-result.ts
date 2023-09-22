@@ -4,7 +4,6 @@ import {
     IChartEditor,
     QLChartType,
     ServerChartsConfig,
-    ServerShape,
     ServerVisualization,
     ServerVisualizationLayer,
     WizardVisualizationId,
@@ -104,8 +103,7 @@ export default ({
     let cellsLimit: number | undefined;
     let columnsLimit: number | undefined;
 
-    let shapes: ServerShape[] = [];
-    let shapesConfig;
+    let {shapes = [], shapesConfig} = shared;
 
     const segments = shared.segments || [];
 
@@ -121,11 +119,6 @@ export default ({
                 prepare = prepareLineTime;
                 rowsLimit = 75000;
             } else {
-                if (visualization.id === 'line') {
-                    shapes = shared.shapes || [];
-                    shapesConfig = shared.shapesConfig;
-                }
-
                 prepare = prepareLineData;
                 rowsLimit = 75000;
             }
@@ -247,6 +240,7 @@ export default ({
         return {};
     }
 
+    // shapes and shapesConfig are set above
     let {colors, colorsConfig, labels, tooltips, geopointsConfig, sort} = shared;
 
     if ((visualization as ServerVisualizationLayer).layerSettings) {
