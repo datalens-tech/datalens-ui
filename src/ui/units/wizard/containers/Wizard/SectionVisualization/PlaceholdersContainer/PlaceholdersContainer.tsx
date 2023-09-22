@@ -3,19 +3,21 @@ import React from 'react';
 import {ConnectableElement} from 'react-dnd';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
+
 import {
     Field,
     Placeholder,
+    QLChartType,
     Shared,
     VisualizationLayerShared,
     VisualizationWithLayersShared,
     WizardVisualizationId,
-} from 'shared';
-import {DataLensApiError, DatalensGlobalState, sdk} from 'ui';
-import {selectDatasetError, selectDatasets} from 'units/wizard/selectors/dataset';
-import {selectDashboardParameters, selectFilters} from 'units/wizard/selectors/visualization';
-
+} from '../../../../../../../shared';
+import {DataLensApiError, DatalensGlobalState, sdk} from '../../../../../../index';
+import {getChartType} from '../../../../../ql/store/reducers/ql';
 import {removeQuickFormula} from '../../../../actions';
+import {selectDatasetError, selectDatasets} from '../../../../selectors/dataset';
+import {selectDashboardParameters, selectFilters} from '../../../../selectors/visualization';
 import {AddableField} from '../AddField/AddField';
 import VisualizationItem from '../VisualizationItem/VisualizationItem';
 import VisualizationLayersControl from '../VisualizationLayersControl/VisualizationLayersControl';
@@ -65,7 +67,9 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
         );
 
         const placeholders = visualization.placeholders;
-        const allowShapes = currentVisualization?.allowShapes;
+        const allowShapes =
+            currentVisualization?.allowShapes &&
+            (!qlMode || this.props.qlChartType === QLChartType.Sql);
         const allowSegments = currentVisualization?.allowSegments;
 
         return (
@@ -258,6 +262,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         datasets: selectDatasets(state),
         filters: selectFilters(state),
         dashboardParameters: selectDashboardParameters(state),
+        qlChartType: getChartType(state),
     };
 };
 
