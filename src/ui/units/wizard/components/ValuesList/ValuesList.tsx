@@ -234,7 +234,7 @@ class ValuesList extends React.Component<Props, State> {
             });
 
             const shouldClearPalette =
-                oldItemGuid !== undefined && newItemGuid !== null && newItemGuid !== oldItemGuid;
+                Boolean(oldItemGuid) && Boolean(newItemGuid) && newItemGuid !== oldItemGuid;
 
             this.props.onChangeSelectedValue(values[0] || null, shouldClearPalette);
         } catch (error) {

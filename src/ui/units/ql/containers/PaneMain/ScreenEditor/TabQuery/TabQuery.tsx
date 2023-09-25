@@ -6,7 +6,7 @@ import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {DatalensGlobalState, EntryDialogues, MonacoTypes} from 'ui';
 
-import {QLChartType} from '../../../../../../../shared';
+import {QLChartType, isYAGRVisualization} from '../../../../../../../shared';
 import {getChartType} from '../../../../store/reducers/ql';
 
 import ScreenPromQL from './ScreenPromQL/ScreenPromQL';
@@ -50,8 +50,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                         entryDialoguesRef={entryDialoguesRef}
                     ></ScreenSQL>
                 )}
-                {(this.props.chartType === QLChartType.Promql ||
-                    this.props.chartType === QLChartType.Monitoringql) && (
+                {this.props.chartType && isYAGRVisualization(this.props.chartType) && (
                     <ScreenPromQL
                         paneSize={paneSize}
                         entryDialoguesRef={entryDialoguesRef}

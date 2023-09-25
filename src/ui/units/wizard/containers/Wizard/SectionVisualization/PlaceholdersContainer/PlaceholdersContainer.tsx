@@ -7,13 +7,12 @@ import {Dispatch, bindActionCreators} from 'redux';
 import {
     Field,
     Placeholder,
-    QLChartType,
     Shared,
     VisualizationLayerShared,
     VisualizationWithLayersShared,
     WizardVisualizationId,
+    isYAGRVisualization,
 } from '../../../../../../../shared';
-import {SCATTER_VISUALIZATION} from '../../../../../../constants/visualizations';
 import {DataLensApiError, DatalensGlobalState, sdk} from '../../../../../../index';
 import {getChartType} from '../../../../../ql/store/reducers/ql';
 import {removeQuickFormula} from '../../../../actions';
@@ -61,7 +60,8 @@ export type CommonPlaceholderProps = {
 
 class PlaceholdersContainer extends React.PureComponent<Props> {
     render() {
-        const {qlMode, visualization, datasetError, globalVisualization, onUpdate} = this.props;
+        const {qlMode, qlChartType, visualization, datasetError, globalVisualization, onUpdate} =
+            this.props;
         const currentVisualization = getVisualizationById(
             visualization.id as WizardVisualizationId,
             qlMode,
@@ -70,9 +70,7 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
         const placeholders = visualization.placeholders;
         const allowShapes =
             currentVisualization?.allowShapes &&
-            (!qlMode ||
-                this.props.qlChartType === QLChartType.Sql ||
-                currentVisualization.id === SCATTER_VISUALIZATION.id);
+            !(qlMode && qlChartType && isYAGRVisualization(qlChartType, currentVisualization.id));
         const allowSegments = currentVisualization?.allowSegments;
 
         return (

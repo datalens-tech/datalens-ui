@@ -3,11 +3,11 @@ import {
     DatasetFieldType,
     Field,
     IChartEditor,
-    QLChartType,
     QLEntryDataShared,
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
+    isYAGRVisualization,
 } from '../../../../../shared';
 import prepareSingleResult from '../datalens/js/helpers/misc/prepare-single-result';
 import {getFieldList} from '../helpers/misc';
@@ -231,10 +231,7 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
         log('RESULT:', result);
 
         return result;
-    } else if (
-        shared.chartType === QLChartType.Promql ||
-        shared.chartType === QLChartType.Monitoringql
-    ) {
+    } else if (isYAGRVisualization(shared.chartType)) {
         // Branch for older ql charts of promql type
         // Deprecated
         // Works only for old-saved charts from dashboards

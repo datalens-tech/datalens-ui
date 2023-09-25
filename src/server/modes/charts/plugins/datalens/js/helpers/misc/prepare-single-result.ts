@@ -2,11 +2,11 @@ import {
     ColorPalette,
     DATASET_FIELD_TYPES,
     IChartEditor,
-    QLChartType,
     ServerChartsConfig,
     ServerVisualization,
     ServerVisualizationLayer,
     WizardVisualizationId,
+    isYAGRVisualization,
 } from '../../../../../../../../shared';
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
 import {PivotData} from '../../../preparers/backend-pivot-table/types';
@@ -103,8 +103,6 @@ export default ({
     let cellsLimit: number | undefined;
     let columnsLimit: number | undefined;
 
-    let {shapes = [], shapesConfig} = shared;
-
     const segments = shared.segments || [];
 
     switch (visualization.id) {
@@ -115,7 +113,7 @@ export default ({
         case 'column100p':
         case 'bar':
         case 'bar100p': {
-            if (chartType === QLChartType.Promql || chartType === QLChartType.Monitoringql) {
+            if (chartType && isYAGRVisualization(chartType)) {
                 prepare = prepareLineTime;
                 rowsLimit = 75000;
             } else {
@@ -240,8 +238,8 @@ export default ({
         return {};
     }
 
-    // shapes and shapesConfig are set above
-    let {colors, colorsConfig, labels, tooltips, geopointsConfig, sort} = shared;
+    let {shapes, shapesConfig, colors, colorsConfig, labels, tooltips, geopointsConfig, sort} =
+        shared;
 
     if ((visualization as ServerVisualizationLayer).layerSettings) {
         ({

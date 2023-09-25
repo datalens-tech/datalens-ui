@@ -18,6 +18,7 @@ import {
     StringParams,
     biToDatalensQL,
     getDatalensQLTypeName,
+    isYAGRVisualization,
 } from '../../../../../../shared';
 
 import {LOG_INFO, LOG_TIMING} from './constants';
@@ -611,7 +612,7 @@ export function getColumnsAndRows({
 
     let rows: string[][] = [];
 
-    if (chartType === QLChartType.Promql || chartType === QLChartType.Monitoringql) {
+    if (isYAGRVisualization(chartType)) {
         queries.forEach((_query, i) => {
             let localColumns: QLResultEntryMetadataDataColumn[] = [];
 
