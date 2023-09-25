@@ -122,7 +122,7 @@ const initialState: QLState = {
 
 /* --- SELECTORS --- */
 
-export const getChartType = (state: DatalensGlobalState) => state.ql.chartType;
+export const getChartType = (state: DatalensGlobalState) => state.ql?.chartType;
 
 export const getConnection = (state: DatalensGlobalState) => state.ql.connection;
 

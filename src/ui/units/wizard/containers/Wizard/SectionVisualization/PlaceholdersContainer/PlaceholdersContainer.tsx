@@ -13,6 +13,7 @@ import {
     VisualizationWithLayersShared,
     WizardVisualizationId,
 } from '../../../../../../../shared';
+import {SCATTER_VISUALIZATION} from '../../../../../../constants/visualizations';
 import {DataLensApiError, DatalensGlobalState, sdk} from '../../../../../../index';
 import {getChartType} from '../../../../../ql/store/reducers/ql';
 import {removeQuickFormula} from '../../../../actions';
@@ -69,7 +70,9 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
         const placeholders = visualization.placeholders;
         const allowShapes =
             currentVisualization?.allowShapes &&
-            (!qlMode || this.props.qlChartType === QLChartType.Sql);
+            (!qlMode ||
+                this.props.qlChartType === QLChartType.Sql ||
+                currentVisualization.id === SCATTER_VISUALIZATION.id);
         const allowSegments = currentVisualization?.allowSegments;
 
         return (

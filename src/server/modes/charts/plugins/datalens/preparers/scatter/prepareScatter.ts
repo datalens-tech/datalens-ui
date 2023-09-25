@@ -86,6 +86,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     const size = placeholders[3]?.items[0];
     const color = colors && colors[0];
     const shape = shapes?.[0];
+    const shapesConfigured = Object.keys(shapesConfig?.mountedShapes || {}).length > 0;
 
     const xDataType = idToDataType[x.guid];
     const xIsNumber = isNumericalDataType(xDataType);
@@ -313,6 +314,11 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
             point.shapeValue = shapeValue;
             point.sLabel = shapeValue;
+        } else if (shapesConfigured) {
+            const shapeValue = yTitle;
+
+            point.shapeValue = shapeValue;
+            point.sLabel = shapeValue;
         }
 
         points.push(point);
@@ -336,7 +342,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         });
     }
 
-    if (shape) {
+    if (shape || shapesConfigured) {
         graphs = mapPointsByShape(graphs, shapesConfig);
     } else {
         graphs.forEach((graph) => {
