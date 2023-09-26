@@ -8,7 +8,7 @@
 
 ### Start project in dev mode
 
-Install NodeJS >= v18.17.0 manually or via [node version manager](https://github.com/nvm-sh/nvm).
+Install Node.js >= v18.17.0 manually or via [node version manager](https://github.com/nvm-sh/nvm).
 
 Start project in dev mode:
 
