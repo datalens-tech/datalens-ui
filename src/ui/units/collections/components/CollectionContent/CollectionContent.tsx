@@ -15,7 +15,7 @@ import type {
 } from '../../../../../shared/schema';
 import {CollectionContentFilters} from '../../../../components/CollectionFilters/CollectionFilters';
 import {GetCollectionContentArgs} from '../../types';
-import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
+import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
 
 import './CollectionContent.scss';
 
@@ -36,7 +36,7 @@ type Props = {
         collectionsNextPageToken?: string | null;
         workbooksNextPageToken?: string | null;
     };
-    refreshContent: () => void;
+    refreshContent?: () => void;
     getCollectionContentRecursively: (
         args: GetCollectionContentArgs,
     ) => CancellablePromise<GetCollectionContentResponse | null>;
@@ -56,7 +56,6 @@ export const CollectionContent = React.memo<Props>(
         contentLoadingError,
         contentItems,
         nextPageTokens,
-        refreshContent,
         getCollectionContentRecursively,
         onCreateWorkbookClick,
         onClearFiltersClick,
@@ -154,11 +153,10 @@ export const CollectionContent = React.memo<Props>(
 
         return (
             <React.Fragment>
-                <CollectionContentTable
+                <CollectionContentGrid
                     contentItems={contentItems}
                     filters={filters}
                     setFilters={setFilters}
-                    refreshContent={refreshContent}
                 />
                 {isContentLoading && <SmartLoader size="m" showAfter={0} />}
                 {!isContentLoading && !waypointDisabled && <Waypoint onEnter={onWaypointEnter} />}

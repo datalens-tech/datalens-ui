@@ -1,5 +1,6 @@
 import {PALETTES} from '../../../shared';
 
+import collectionColoredNew from 'assets/icons/collections/collection-colored-new.svg';
 import collectionColored from 'assets/icons/collections/collection-colored.svg';
 import paletteDatalens20Icon from 'assets/icons/palettes/datalens-20.svg';
 import paletteDatalensNeo20Icon from 'assets/icons/palettes/datalens-neo20.svg';
@@ -43,6 +44,7 @@ export default {
     visPivot,
     visTreemap,
     collectionColored,
+    collectionColoredNew,
     [PALETTES.defaultScheme.id]: paletteDatalens20Icon,
     [PALETTES.emerald.id]: paletteEmerald20Icon,
     [PALETTES.golden.id]: paletteGolden20Icon,
