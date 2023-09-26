@@ -42,6 +42,7 @@ import {getChangedPlaceholderSettings} from '../reducers/utils/getPlaceholdersWi
 import {selectParameters} from '../selectors/dataset';
 import {
     selectDashboardParameters,
+    selectDistincts,
     selectDrillDownLevel,
     selectSegments,
     selectSort,
@@ -281,11 +282,13 @@ export function openDialogColors({item, onApply}: OpenDialogColorsArguments) {
 type OpenDialogShapesArguments = {
     item?: Field | Field[];
     paletteType: PaletteTypes;
+    onApply?: () => void;
 };
 
 export function openDialogShapes({
     item,
     paletteType = PaletteTypes.Lines,
+    onApply,
 }: OpenDialogShapesArguments) {
     return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const globalState = getState();
@@ -296,6 +299,7 @@ export function openDialogShapes({
         const dataset = datasetState.dataset;
         const updates = previewState.updates;
         const parameters = selectParameters(globalState);
+        const distincts = selectDistincts(globalState);
 
         if (dataset && visualization) {
             const placeholders = visualization.placeholders;
@@ -308,6 +312,7 @@ export function openDialogShapes({
                         dashboardParameters,
                         item: isArray ? shapes[0] || placeholders[1].items[0] : (item as Field),
                         items: isArray ? (item as Field[]) : undefined,
+                        distincts,
                         datasetId: dataset.id,
                         shapesConfig,
                         updates,
@@ -320,6 +325,10 @@ export function openDialogShapes({
                             dispatch(closeDialog());
 
                             dispatch(updatePreviewAndClientChartsConfig({}));
+
+                            if (onApply) {
+                                onApply();
+                            }
                         },
                         onCancel: () => dispatch(closeDialog()),
                     },

@@ -106,7 +106,6 @@ export function getAvailableQlVisualizations(options?: ChartkitGlobalSettings) {
                 ...visualization,
                 allowFilters: false,
                 allowSegments: false,
-                allowShapes: false,
                 allowSort: false,
                 allowAvailable: true,
             };

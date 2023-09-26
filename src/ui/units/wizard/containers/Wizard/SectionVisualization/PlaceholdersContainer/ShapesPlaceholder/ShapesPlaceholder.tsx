@@ -109,7 +109,15 @@ class ShapesPlaceholder extends React.Component<Props> {
             visualization.id === WizardVisualizationId.Scatter
                 ? PaletteTypes.Points
                 : PaletteTypes.Lines;
-        this.props.openDialogShapes({item, paletteType});
+        this.props.openDialogShapes({
+            item,
+            paletteType,
+            onApply: () => {
+                if (this.props.onUpdate) {
+                    this.props.onUpdate();
+                }
+            },
+        });
     };
 }
 
