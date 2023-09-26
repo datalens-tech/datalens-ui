@@ -7,7 +7,7 @@ import {
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
-    isYAGRVisualization,
+    isMonitoringOrPrometheusChart,
 } from '../../../../../shared';
 import prepareSingleResult from '../datalens/js/helpers/misc/prepare-single-result';
 import {getFieldList} from '../helpers/misc';
@@ -231,7 +231,7 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
         log('RESULT:', result);
 
         return result;
-    } else if (isYAGRVisualization(shared.chartType)) {
+    } else if (isMonitoringOrPrometheusChart(shared.chartType)) {
         // Branch for older ql charts of promql type
         // Deprecated
         // Works only for old-saved charts from dashboards

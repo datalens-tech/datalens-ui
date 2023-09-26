@@ -5,7 +5,7 @@ import {
     QLEntryDataShared,
     QLParamType,
     StringParams,
-    isYAGRVisualization,
+    isMonitoringOrPrometheusChart,
     resolveIntervalDate,
     resolveOperation,
 } from '../../../../../shared';
@@ -140,7 +140,7 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
 
     let sources: Dictionary<any> = {};
     try {
-        if (isYAGRVisualization(shared.chartType)) {
+        if (isMonitoringOrPrometheusChart(shared.chartType)) {
             if (params.interval) {
                 const operation = ChartEditor.resolveOperation(params.interval[0]);
 

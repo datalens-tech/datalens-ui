@@ -1,5 +1,5 @@
 import type {QLParam, StringParams} from '../../../shared';
-import {QLChartType, QL_TYPE, isYAGRVisualization} from '../../../shared';
+import {QLChartType, QL_TYPE, isMonitoringOrPrometheusChart} from '../../../shared';
 
 export default {
     module: 'libs/qlchart/v1',
@@ -48,7 +48,7 @@ export default {
             case 'area100p':
             case 'column':
             case 'column100p':
-                if (isYAGRVisualization(chartType)) {
+                if (isMonitoringOrPrometheusChart(chartType)) {
                     return QL_TYPE.TIMESERIES_QL_NODE;
                 } else {
                     return QL_TYPE.GRAPH_QL_NODE;

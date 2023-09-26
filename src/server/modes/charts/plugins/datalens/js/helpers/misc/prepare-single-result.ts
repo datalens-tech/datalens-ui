@@ -6,7 +6,7 @@ import {
     ServerVisualization,
     ServerVisualizationLayer,
     WizardVisualizationId,
-    isYAGRVisualization,
+    isMonitoringOrPrometheusChart,
 } from '../../../../../../../../shared';
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
 import {PivotData} from '../../../preparers/backend-pivot-table/types';
@@ -113,7 +113,7 @@ export default ({
         case 'column100p':
         case 'bar':
         case 'bar100p': {
-            if (chartType && isYAGRVisualization(chartType)) {
+            if (chartType && isMonitoringOrPrometheusChart(chartType)) {
                 prepare = prepareLineTime;
                 rowsLimit = 75000;
             } else {
