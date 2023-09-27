@@ -8,7 +8,7 @@ import {
 } from '@gravity-ui/dashkit';
 import {
     ChartColumn,
-    CopyCheck,
+    CopyPlus,
     Gear,
     Heading,
     Layers3Diagonal,
@@ -252,7 +252,7 @@ class Body extends React.PureComponent<BodyProps> {
         if (copiedData) {
             items.push({
                 id: 'paste',
-                icon: <Icon data={CopyCheck} />,
+                icon: <Icon data={CopyPlus} />,
                 title: i18n('dash.main.view', 'button_edit-panel-paste'),
                 className: b('edit-panel-item'),
                 onClick: () => {
