@@ -23,7 +23,7 @@ class ErrorContent extends React.PureComponent {
     static propTypes = {
         className: PropTypes.string,
         title: PropTypes.string,
-        description: PropTypes.string,
+        description: PropTypes.node,
         type: PropTypes.oneOf(Object.values(ErrorContentTypes)),
         action: PropTypes.shape({
             text: PropTypes.string,
@@ -43,12 +43,16 @@ class ErrorContent extends React.PureComponent {
         noControls: PropTypes.bool,
         showDebugInfo: PropTypes.bool,
         noActions: PropTypes.bool,
+        size: PropTypes.oneOf('s', 'm', 'l', 'promo'),
+        direction: PropTypes.oneOf('row', 'column'),
     };
 
     static defaultProps = {
         type: ErrorContentTypes.ERROR,
         showDebugInfo: true,
         noActions: false,
+        size: 'l',
+        direction: 'row',
     };
 
     state = {
@@ -240,7 +244,7 @@ class ErrorContent extends React.PureComponent {
     }
 
     render() {
-        const {noControls, className} = this.props;
+        const {noControls, className, size, direction} = this.props;
 
         const {type} = this.props;
         let imageName = '';
@@ -272,12 +276,19 @@ class ErrorContent extends React.PureComponent {
         }
 
         return (
-            <div className={b({'no-controls': noControls, 'is-mobile': DL.IS_MOBILE}, className)}>
+            <div
+                className={b(
+                    {'no-controls': noControls, 'is-mobile': DL.IS_MOBILE, size},
+                    className,
+                )}
+            >
                 <PlaceholderIllustration
                     name={imageName}
                     title={this.renderTitle()}
                     description={this.renderDescription()}
                     renderAction={() => this.renderActions()}
+                    size={size}
+                    direction={direction}
                 />
             </div>
         );
