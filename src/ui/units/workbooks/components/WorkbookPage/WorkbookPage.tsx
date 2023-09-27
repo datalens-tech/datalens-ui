@@ -3,6 +3,7 @@ import {DL} from 'constants/common';
 import React from 'react';
 
 import {ActionBar} from '@gravity-ui/navigation';
+import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {CollectionBreadcrumbs} from 'components/Breadcrumbs/CollectionBreadcrumbs/CollectionBreadcrumbs';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
@@ -37,6 +38,8 @@ import {WorkbookFilters} from '../WorkbookFilters/WorkbookFilters';
 import {WorkbookTabs} from '../WorkbookTabs/WorkbookTabs';
 import {TAB_ALL} from '../WorkbookTabs/constants';
 import {TabId} from '../WorkbookTabs/types';
+
+import PencilToLineIcon from '@gravity-ui/icons/svgs/pencil-to-line.svg';
 
 import './WorkbookPage.scss';
 
@@ -173,7 +176,12 @@ export const WorkbookPage = () => {
             ) : (
                 <div className={b('layout')}>
                     <div className={b('container')}>
-                        <h1 className={b('title')}>{workbook?.title}</h1>
+                        <div className={b('title-content')}>
+                            <h1 className={b('title')}>{workbook?.title}</h1>
+                            <Button>
+                                <Icon data={PencilToLineIcon} />
+                            </Button>
+                        </div>
                         {workbook?.description && (
                             <div className={b('description')}>{workbook.description}</div>
                         )}

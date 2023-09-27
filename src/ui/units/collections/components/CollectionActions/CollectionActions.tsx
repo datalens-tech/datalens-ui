@@ -22,6 +22,7 @@ import Utils from '../../../../utils';
 import collectionIcon from '../../../../assets/icons/collections/collection.svg';
 import workbookDemoIcon from '../../../../assets/icons/collections/workbook-demo.svg';
 import workbookIcon from '../../../../assets/icons/collections/workbook.svg';
+import LockOpenIcon from '@gravity-ui/icons/svgs/lock-open.svg';
 
 import './CollectionActions.scss';
 
@@ -43,6 +44,7 @@ export type Props = {
 };
 
 export const CollectionActions = React.memo<Props>(
+    // eslint-disable-next-line complexity
     ({
         className,
         rootPermissions,
@@ -131,6 +133,22 @@ export const CollectionActions = React.memo<Props>(
             }
         }
 
+        const dropDownItem: DropdownMenuItem<unknown>[] = [];
+
+        if (collectionData?.permissions.update) {
+            dropDownItem.push({
+                action: onEditClick,
+                text: i18n('action_edit'),
+            });
+        }
+
+        if (collectionData?.permissions.move) {
+            dropDownItem.push({
+                action: onMoveClick,
+                text: i18n('action_move'),
+            });
+        }
+
         const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
         return (
@@ -139,12 +157,7 @@ export const CollectionActions = React.memo<Props>(
                     <React.Fragment>
                         {collectionsAccessEnabled && collectionData.permissions.listAccessBindings && (
                             <Button className={b('access')} onClick={onEditAccessClick}>
-                                {i18n('action_access')}
-                            </Button>
-                        )}
-                        {collectionData.permissions.move && (
-                            <Button className={b('move')} onClick={onMoveClick}>
-                                {i18n('action_move')}
+                                <Icon data={LockOpenIcon} />
                             </Button>
                         )}
                         {collectionData.permissions.update && (
@@ -153,6 +166,13 @@ export const CollectionActions = React.memo<Props>(
                             </Button>
                         )}
                     </React.Fragment>
+                )}
+                {Boolean(dropDownItem.length) && (
+                    <DropdownMenu
+                        defaultSwitcherProps={{view: 'normal'}}
+                        switcherWrapperClassName={b('ellipsis')}
+                        items={dropDownItem}
+                    />
                 )}
                 {(showCreateCollection || showCreateWorkbook) && (
                     <DropdownMenu

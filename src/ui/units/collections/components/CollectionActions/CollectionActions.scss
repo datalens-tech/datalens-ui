@@ -1,6 +1,6 @@
 .dl-collection-actions {
     &__access,
-    &__move,
+    &__ellipsis,
     &__edit {
         margin-right: 8px;
     }
@@ -8,6 +8,10 @@
     &__dropdown-item {
         display: flex;
         align-items: center;
+    }
+
+    &__ellipsis {
+        background-color: var(--yc-button-background-color-hover);
     }
 
     &__dropdown-text {

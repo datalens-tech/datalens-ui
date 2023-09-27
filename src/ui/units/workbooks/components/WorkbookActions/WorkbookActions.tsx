@@ -1,12 +1,8 @@
 import React from 'react';
 
-import {Button} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {
-    DIALOG_COPY_WORKBOOK,
-    DIALOG_EDIT_WORKBOOK,
-    DIALOG_MOVE_WORKBOOK,
-} from 'components/CollectionsStructure';
+import {DIALOG_EDIT_WORKBOOK} from 'components/CollectionsStructure';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
@@ -20,6 +16,8 @@ import {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
 import {CreateEntry} from '../CreateEntry/CreateEntry';
+
+import LockOpenIcon from '@gravity-ui/icons/svgs/lock-open.svg';
 
 import './WorkbookActions.scss';
 
@@ -62,86 +60,21 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
 
     const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
+    const onApplyCopy = (workbookId: string | undefined) => {
+        if (workbookId) {
+            history.push(`/workbooks/${workbookId}`);
+        }
+    };
+
     const {useAdditionalWorkbookActions} = registry.workbooks.functions.getAll();
-    const additionalActions = useAdditionalWorkbookActions(workbook);
+    const additionalActions = useAdditionalWorkbookActions(
+        workbook,
+        refreshWorkbookInfo,
+        onApplyCopy,
+    );
 
     return (
         <div className={b()}>
-            {collectionsAccessEnabled && workbook.permissions.listAccessBindings && (
-                <div className={b('item')}>
-                    <Button
-                        onClick={() => {
-                            setIamAccessDialogIsOpen(true);
-                        }}
-                    >
-                        {i18n('action_access')}
-                    </Button>
-                </div>
-            )}
-            {additionalActions.map((action) => {
-                return (
-                    <div key={action.id} className={b('item')}>
-                        <Button onClick={action.action}>{action.text}</Button>
-                    </div>
-                );
-            })}
-
-            {workbook.permissions.move && (
-                <div className={b('item')}>
-                    <Button
-                        onClick={() => {
-                            dispatch(
-                                openDialog({
-                                    id: DIALOG_MOVE_WORKBOOK,
-                                    props: {
-                                        open: true,
-                                        workbookId: workbook.workbookId,
-                                        workbookTitle: workbook.title,
-                                        initialCollectionId: workbook.collectionId,
-                                        onApply: refreshWorkbookInfo,
-                                        onClose: () => {
-                                            dispatch(closeDialog());
-                                        },
-                                    },
-                                }),
-                            );
-                        }}
-                    >
-                        {i18n('action_move')}
-                    </Button>
-                </div>
-            )}
-
-            {workbook.permissions.copy && (
-                <div className={b('item')}>
-                    <Button
-                        onClick={() => {
-                            dispatch(
-                                openDialog({
-                                    id: DIALOG_COPY_WORKBOOK,
-                                    props: {
-                                        open: true,
-                                        workbookId: workbook.workbookId,
-                                        workbookTitle: workbook.title,
-                                        initialCollectionId: workbook.collectionId,
-                                        onApply: (workbookId) => {
-                                            if (workbookId) {
-                                                history.push(`/workbooks/${workbookId}`);
-                                            }
-                                        },
-                                        onClose: () => {
-                                            dispatch(closeDialog());
-                                        },
-                                    },
-                                }),
-                            );
-                        }}
-                    >
-                        {i18n('action_copy')}
-                    </Button>
-                </div>
-            )}
-
             {workbook.permissions.update && (
                 <Button
                     className={b('item')}
@@ -170,6 +103,24 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
             {workbook.permissions.update && (
                 <div className={b('item')}>
                     <CreateEntry view="action" />
+                </div>
+            )}
+
+            <DropdownMenu
+                defaultSwitcherProps={{view: 'normal'}}
+                switcherWrapperClassName={b('item')}
+                items={additionalActions}
+            />
+
+            {collectionsAccessEnabled && workbook.permissions.listAccessBindings && (
+                <div className={b('item')}>
+                    <Button
+                        onClick={() => {
+                            setIamAccessDialogIsOpen(true);
+                        }}
+                    >
+                        <Icon data={LockOpenIcon} />
+                    </Button>
                 </div>
             )}
 
