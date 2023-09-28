@@ -81,3 +81,10 @@ export const hoverTooltip = async (page: Page, chartId: string) => {
     await page.mouse.move(plotBox.x + plotBox.width / 4, plotBox.y + plotBox.height / 4);
     await page.hover(chartkitBody);
 };
+
+export async function isEnabledFeature(page: Page, featureName: string) {
+    // problems with fair DL imports, that's why using evaluate window
+    const isDynamicFeature = await page.evaluate(`window.DL.dynamicFeatures.${featureName}`);
+    const isFeature = await page.evaluate(`window.DL.features.${featureName}`);
+    return Boolean(typeof isDynamicFeature === 'undefined' ? isFeature : isDynamicFeature);
+}

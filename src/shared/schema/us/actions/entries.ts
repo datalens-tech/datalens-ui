@@ -7,7 +7,8 @@ import {
     US_MASTER_TOKEN_HEADER,
 } from '../../../constants';
 import {getEntryNameByKey, normalizeDestination} from '../../../modules';
-import {Feature, isEnabledServerFeature} from '../../../types';
+import {Feature} from '../../../types/feature';
+import {isEnabledServerFeature} from '../../../utils/feature';
 import {createAction} from '../../gateway-utils';
 import {defaultParamsSerializer, filterUrlFragment} from '../../utils';
 import {
