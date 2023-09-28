@@ -15,5 +15,4 @@ export type IconId =
     | 'visPie'
     | 'visPivot'
     | 'visTreemap'
-    | 'collectionColored'
-    | 'collectionColoredNew';
+    | 'collectionColored';
