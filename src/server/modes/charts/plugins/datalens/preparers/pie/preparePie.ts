@@ -4,6 +4,7 @@ import {
     ExtendedSeriesLineOptions,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
+    isNumberField,
 } from '../../../../../../../shared';
 import {
     mapAndColorizeGraphsByDimension,
@@ -219,7 +220,7 @@ export function preparePie({
         });
     }
 
-    if (color.type === 'MEASURE') {
+    if (color.type === 'MEASURE' && isNumberField(color)) {
         pie.data = mapAndColorizePieByMeasure(pie.data, colorsConfig);
     } else {
         pie.data = mapAndColorizeGraphsByDimension({
