@@ -28,7 +28,6 @@
     "test:jest": "npm run i18n:prepare && jest",
     "test:jestWatch": "npm run i18n:prepare && jest --watchAll",
     "platform-tools": "platform-tools",
-    "deps": "bash ../scripts/ci/cached-npm-install.sh",
     "prepare": "husky install",
     "test:e2e": "cd tests && npm run test:e2e"
   },
