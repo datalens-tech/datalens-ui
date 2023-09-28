@@ -8,7 +8,7 @@ import {
 } from '@gravity-ui/dashkit';
 import {
     ChartColumn,
-    CopyCheck,
+    CopyPlus,
     Gear,
     Heading,
     Layers3Diagonal,
@@ -195,7 +195,7 @@ class Body extends React.PureComponent<BodyProps> {
             {
                 id: 'chart',
                 icon: <Icon data={ChartColumn} />,
-                title: 'Chart',
+                title: i18n('dash.main.view', 'button_edit-panel-chart'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.WIDGET);
@@ -204,7 +204,7 @@ class Body extends React.PureComponent<BodyProps> {
             {
                 id: 'selector',
                 icon: <Icon data={Sliders} />,
-                title: 'Selector',
+                title: i18n('dash.main.view', 'button_edit-panel-selector'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.CONTROL);
@@ -213,7 +213,7 @@ class Body extends React.PureComponent<BodyProps> {
             {
                 id: 'text',
                 icon: <Icon data={TextAlignLeft} />,
-                title: 'Text',
+                title: i18n('dash.main.view', 'button_edit-panel-text'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.TEXT);
@@ -222,7 +222,7 @@ class Body extends React.PureComponent<BodyProps> {
             {
                 id: 'header',
                 icon: <Icon data={Heading} />,
-                title: 'Header',
+                title: i18n('dash.main.view', 'button_edit-panel-title'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.TITLE);
@@ -231,7 +231,7 @@ class Body extends React.PureComponent<BodyProps> {
             {
                 id: 'links',
                 icon: <Icon data={PlugConnection} />,
-                title: 'Links',
+                title: i18n('dash.main.view', 'button_edit-panel-links'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
@@ -240,7 +240,7 @@ class Body extends React.PureComponent<BodyProps> {
             {
                 id: 'tabs',
                 icon: <Icon data={Layers3Diagonal} />,
-                title: 'Tabs',
+                title: i18n('dash.main.view', 'button_edit-panel-tabs'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.TABS);
@@ -252,8 +252,8 @@ class Body extends React.PureComponent<BodyProps> {
         if (copiedData) {
             items.push({
                 id: 'paste',
-                icon: <Icon data={CopyCheck} />,
-                title: 'Paste widget',
+                icon: <Icon data={CopyPlus} />,
+                title: i18n('dash.main.view', 'button_edit-panel-paste'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.onPasteItem(copiedData);

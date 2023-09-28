@@ -1,4 +1,11 @@
 {
+  "button_edit-panel-chart": "Чарт",
+  "button_edit-panel-selector": "Селектор",
+  "button_edit-panel-text": "Тескт",
+  "button_edit-panel-title": "Заголовок",
+  "button_edit-panel-links": "Связи",
+  "button_edit-panel-tabs": "Табы",
+  "button_edit-panel-paste": "Вставка",
   "button_links": "Связи",
   "label_loading": "Загрузка",
   "label_updating": "Обновление",
