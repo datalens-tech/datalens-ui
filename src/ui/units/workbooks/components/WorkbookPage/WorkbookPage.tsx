@@ -6,6 +6,7 @@ import {ActionBar} from '@gravity-ui/navigation';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {CollectionBreadcrumbs} from 'components/Breadcrumbs/CollectionBreadcrumbs/CollectionBreadcrumbs';
+import {DIALOG_EDIT_WORKBOOK} from 'components/CollectionsStructure';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {ViewError} from 'components/ViewError/ViewError';
 import {useDispatch, useSelector} from 'react-redux';
@@ -13,6 +14,7 @@ import {useLocation, useParams} from 'react-router-dom';
 import {Utils} from 'ui';
 
 import {registry} from '../../../../registry';
+import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import {
     changeFilters,
     getWorkbook,
@@ -178,9 +180,29 @@ export const WorkbookPage = () => {
                     <div className={b('container')}>
                         <div className={b('title-content')}>
                             <h1 className={b('title')}>{workbook?.title}</h1>
-                            <Button>
-                                <Icon data={PencilToLineIcon} />
-                            </Button>
+                            {workbook?.permissions.update && (
+                                <Button
+                                    onClick={() => {
+                                        dispatch(
+                                            openDialog({
+                                                id: DIALOG_EDIT_WORKBOOK,
+                                                props: {
+                                                    open: true,
+                                                    workbookId: workbook.workbookId,
+                                                    title: workbook.title,
+                                                    description: workbook?.description ?? '',
+                                                    onApply: refreshWorkbookInfo,
+                                                    onClose: () => {
+                                                        dispatch(closeDialog());
+                                                    },
+                                                },
+                                            }),
+                                        );
+                                    }}
+                                >
+                                    <Icon data={PencilToLineIcon} />
+                                </Button>
+                            )}
                         </div>
                         {workbook?.description && (
                             <div className={b('description')}>{workbook.description}</div>

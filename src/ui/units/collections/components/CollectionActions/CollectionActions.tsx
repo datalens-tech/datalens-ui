@@ -153,20 +153,6 @@ export const CollectionActions = React.memo<Props>(
 
         return (
             <div className={b(null, className)}>
-                {collectionData && (
-                    <React.Fragment>
-                        {collectionsAccessEnabled && collectionData.permissions.listAccessBindings && (
-                            <Button className={b('access')} onClick={onEditAccessClick}>
-                                <Icon data={LockOpenIcon} />
-                            </Button>
-                        )}
-                        {collectionData.permissions.update && (
-                            <Button className={b('edit')} onClick={onEditClick}>
-                                {i18n('action_edit')}
-                            </Button>
-                        )}
-                    </React.Fragment>
-                )}
                 {Boolean(dropDownItem.length) && (
                     <DropdownMenu
                         defaultSwitcherProps={{view: 'normal'}}
@@ -185,6 +171,15 @@ export const CollectionActions = React.memo<Props>(
                             </Button>
                         }
                     />
+                )}
+                {collectionData && (
+                    <React.Fragment>
+                        {collectionsAccessEnabled && collectionData.permissions.listAccessBindings && (
+                            <Button className={b('access')} onClick={onEditAccessClick}>
+                                <Icon data={LockOpenIcon} />
+                            </Button>
+                        )}
+                    </React.Fragment>
                 )}
             </div>
         );

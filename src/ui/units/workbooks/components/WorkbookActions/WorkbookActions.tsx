@@ -2,9 +2,6 @@ import React from 'react';
 
 import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DIALOG_EDIT_WORKBOOK} from 'components/CollectionsStructure';
-import {I18n} from 'i18n';
-import {useDispatch} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
 
 import {Feature} from '../../../../../shared';
@@ -12,8 +9,6 @@ import {WorkbookWithPermissions} from '../../../../../shared/schema';
 import {IamAccessDialog} from '../../../../components/IamAccessDialog/IamAccessDialog';
 import {registry} from '../../../../registry';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
-import {AppDispatch} from '../../../../store';
-import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
 import {CreateEntry} from '../CreateEntry/CreateEntry';
 
@@ -22,7 +17,6 @@ import LockOpenIcon from '@gravity-ui/icons/svgs/lock-open.svg';
 import './WorkbookActions.scss';
 
 const b = block('dl-workbook-actions');
-const i18n = I18n.keyset('new-workbooks');
 
 const DIALOG_QUERY_PARAM_NAME = 'dialog';
 
@@ -36,8 +30,6 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
     const {search} = useLocation();
     const preopenedAccessDialog =
         new URLSearchParams(search).get(DIALOG_QUERY_PARAM_NAME) === 'access';
-
-    const dispatch: AppDispatch = useDispatch();
 
     const [iamAccessDialogIsOpen, setIamAccessDialogIsOpen] = React.useState(preopenedAccessDialog);
 
@@ -76,41 +68,18 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
     return (
         <div className={b()}>
             {workbook.permissions.update && (
-                <Button
-                    className={b('item')}
-                    onClick={() => {
-                        dispatch(
-                            openDialog({
-                                id: DIALOG_EDIT_WORKBOOK,
-                                props: {
-                                    open: true,
-                                    workbookId: workbook.workbookId,
-                                    title: workbook.title,
-                                    description: workbook?.description ?? '',
-                                    onApply: refreshWorkbookInfo,
-                                    onClose: () => {
-                                        dispatch(closeDialog());
-                                    },
-                                },
-                            }),
-                        );
-                    }}
-                >
-                    {i18n('action_edit')}
-                </Button>
-            )}
-
-            {workbook.permissions.update && (
                 <div className={b('item')}>
                     <CreateEntry view="action" />
                 </div>
             )}
 
-            <DropdownMenu
-                defaultSwitcherProps={{view: 'normal'}}
-                switcherWrapperClassName={b('item')}
-                items={additionalActions}
-            />
+            {Boolean(additionalActions.length) && (
+                <DropdownMenu
+                    defaultSwitcherProps={{view: 'normal'}}
+                    switcherWrapperClassName={b('item')}
+                    items={additionalActions}
+                />
+            )}
 
             {collectionsAccessEnabled && workbook.permissions.listAccessBindings && (
                 <div className={b('item')}>
