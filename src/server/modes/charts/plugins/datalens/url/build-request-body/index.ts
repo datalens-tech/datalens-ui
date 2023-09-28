@@ -23,6 +23,7 @@ import {
     V4Layer,
     WizardVisualizationId,
     filterUpdatesByDatasetId,
+    getItemLinkWithDataset,
     isDateField,
     isEnabledServerFeature,
     isMeasureField,
@@ -358,14 +359,7 @@ function formatFilters({
 
                 let {guid} = filter;
                 if (filter.datasetId !== datasetId) {
-                    const targetLink = links.find((link) => {
-                        return (
-                            filter.datasetId &&
-                            link.fields[filter.datasetId] &&
-                            link.fields[filter.datasetId].field.guid === filter.guid &&
-                            link.fields[datasetId]
-                        );
-                    });
+                    const targetLink = getItemLinkWithDataset(filter, datasetId, links);
 
                     if (targetLink) {
                         guid = targetLink.fields[datasetId].field.guid;
@@ -562,10 +556,26 @@ export function prepareSingleRequest({
 
     // Forming and passing order_by
     if (sort && sort.length) {
-        payload.order_by = sort
-            .filter((item) => {
-                return item.datasetId === datasetId;
+        const sortItems = sort
+            .map((item) => {
+                if (item.datasetId === datasetId) {
+                    return item;
+                } else {
+                    const targetLink = getItemLinkWithDataset(item, datasetId, links);
+
+                    if (targetLink) {
+                        const targetFieldInfo = targetLink.fields[datasetId].field;
+                        return {
+                            ...item,
+                            guid: targetFieldInfo.guid,
+                            datasetId,
+                        };
+                    } else {
+                        return item;
+                    }
+                }
             })
+            .filter((item) => item.datasetId === datasetId)
             .map((item) => {
                 const itemGuid = item.guid;
                 if (isParameter(item) && !parametersMap[itemGuid]) {
@@ -580,6 +590,8 @@ export function prepareSingleRequest({
                     column: item.guid,
                 };
             });
+
+        payload.order_by = [...sortItems];
     }
 
     // We form and transmit updates
