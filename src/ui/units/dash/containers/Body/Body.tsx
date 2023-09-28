@@ -4,6 +4,7 @@ import {
     DashKit as DashKitComponent,
     DashKitProps,
     ActionPanel as DashkitActionPanel,
+    ActionPanelItem as DashkitActionPanelItem,
     MenuItems,
 } from '@gravity-ui/dashkit';
 import {
@@ -28,7 +29,7 @@ import debounce from 'lodash/debounce';
 import {ResolveThunks, connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {ControlQA, DashData, DashTab, DashTabItem, Feature} from 'shared';
+import {ControlQA, DashData, DashTab, DashTabItem, DashboardAddWidgetQa, Feature} from 'shared';
 import {DatalensGlobalState} from 'ui';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
@@ -191,7 +192,7 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     getActionPanelItems() {
-        const items = [
+        const items: DashkitActionPanelItem[] = [
             {
                 id: 'chart',
                 icon: <Icon data={ChartColumn} />,
@@ -200,6 +201,7 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.WIDGET);
                 },
+                qa: DashboardAddWidgetQa.AddWidget,
             },
             {
                 id: 'selector',
@@ -209,6 +211,7 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.CONTROL);
                 },
+                qa: DashboardAddWidgetQa.AddControl,
             },
             {
                 id: 'text',
@@ -218,6 +221,7 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.TEXT);
                 },
+                qa: DashboardAddWidgetQa.AddText,
             },
             {
                 id: 'header',
@@ -227,6 +231,7 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.TITLE);
                 },
+                qa: DashboardAddWidgetQa.AddTitle,
             },
             {
                 id: 'links',
@@ -236,6 +241,7 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
                 },
+                qa: DashboardAddWidgetQa.Links,
             },
             {
                 id: 'tabs',
@@ -245,6 +251,7 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.TABS);
                 },
+                qa: DashboardAddWidgetQa.Tabs,
             },
         ];
 
