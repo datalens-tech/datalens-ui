@@ -39,7 +39,6 @@ export type Props = {
     onAddLearningMaterialsWorkbookClick: () => void;
     onCreateWorkbookClick: () => void;
     onEditAccessClick: () => void;
-    onEditClick: () => void;
     onMoveClick: () => void;
 };
 
@@ -54,7 +53,6 @@ export const CollectionActions = React.memo<Props>(
         onAddLearningMaterialsWorkbookClick,
         onCreateWorkbookClick,
         onEditAccessClick,
-        onEditClick,
         onMoveClick,
     }) => {
         const showCreateCollection = collectionData
@@ -133,37 +131,20 @@ export const CollectionActions = React.memo<Props>(
             }
         }
 
-        const dropDownItem: DropdownMenuItem<unknown>[] = [];
-
-        if (collectionData?.permissions.update) {
-            dropDownItem.push({
-                action: onEditClick,
-                text: i18n('action_edit'),
-            });
-        }
-
-        if (collectionData?.permissions.move) {
-            dropDownItem.push({
-                action: onMoveClick,
-                text: i18n('action_move'),
-            });
-        }
-
         const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
         return (
             <div className={b(null, className)}>
-                {Boolean(dropDownItem.length) && (
-                    <DropdownMenu
-                        defaultSwitcherProps={{view: 'normal'}}
-                        switcherWrapperClassName={b('ellipsis')}
-                        items={dropDownItem}
-                    />
+                {collectionData && collectionData.permissions.move && (
+                    <Button className={b('move')} onClick={onMoveClick}>
+                        {i18n('action_move')}
+                    </Button>
                 )}
                 {(showCreateCollection || showCreateWorkbook) && (
                     <DropdownMenu
                         size="s"
                         items={createActionItems}
+                        switcherWrapperClassName={b('create-wrapper')}
                         switcher={
                             <Button view="action" className={b('create')}>
                                 {i18n('action_create')}

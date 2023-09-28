@@ -390,7 +390,6 @@ export const CollectionPage = React.memo<Props>(
                                     setDialogState(DialogState.AddLearningMaterialWorkbook);
                                 }}
                                 onCreateWorkbookClick={handleCreateWorkbook}
-                                onEditClick={onEditClick}
                                 onMoveClick={() => {
                                     if (curCollectionId && collection) {
                                         dispatch(
