@@ -22,6 +22,7 @@ export type ChartKitAdapterProps = {
     ) => void;
     requestId?: string;
     noControls?: boolean;
+    onRetry?: () => void;
 } & Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'>;
 
 declare module '@gravity-ui/chartkit' {
