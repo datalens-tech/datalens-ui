@@ -19,8 +19,6 @@ type Props = {
     setFilters: (filters: CollectionContentFilters) => void;
 };
 
-const DATETIME_FORMAT = 'DD.MM.YYYY HH:mm:ss';
-
 export const CollectionContentGrid = React.memo<Props>(({contentItems, filters, setFilters}) => {
     return (
         <div className={b()}>
@@ -47,7 +45,7 @@ export const CollectionContentGrid = React.memo<Props>(({contentItems, filters, 
                                 <div className={b('content-date')}>
                                     {dateTime({
                                         input: item.updatedAt,
-                                    }).format(DATETIME_FORMAT)}
+                                    }).fromNow()}
                                 </div>
                             </Link>
                         );
@@ -72,7 +70,7 @@ export const CollectionContentGrid = React.memo<Props>(({contentItems, filters, 
                                 <div className={b('content-date')}>
                                     {dateTime({
                                         input: item.updatedAt,
-                                    }).format(DATETIME_FORMAT)}
+                                    }).fromNow()}
                                 </div>
                             </Link>
                         );
