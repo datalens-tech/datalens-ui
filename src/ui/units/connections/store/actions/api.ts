@@ -598,7 +598,6 @@ const getGoogleAuthorizationUrl = async (): Promise<
 > => {
     const scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
     try {
-        // @ts-ignore OPENSOURCE MIGRATION
         return await getSdk().googleapis.getAuthorizationUrl({scopes});
     } catch (error) {
         return {authorizationUrl: '', error};
@@ -609,11 +608,21 @@ const getGoogleCredentials = async (
     code: string,
 ): Promise<GetGCredentialsResponse & {error?: DataLensApiError}> => {
     try {
-        // @ts-ignore OPENSOURCE MIGRATION
         const response = await getSdk().googleapis.getCredentials({code});
         return response;
     } catch (error) {
         return {accessToken: '', error};
+    }
+};
+
+const revokeGoogleRefreshToken = async (
+    refreshToken: string,
+): Promise<{error?: DataLensApiError}> => {
+    try {
+        await getSdk().googleapis.revokeToken({refreshToken});
+        return {};
+    } catch (error) {
+        return {error};
     }
 };
 
@@ -647,4 +656,5 @@ export const api = {
     updateS3BasedConnectionData,
     getGoogleAuthorizationUrl,
     getGoogleCredentials,
+    revokeGoogleRefreshToken,
 };
