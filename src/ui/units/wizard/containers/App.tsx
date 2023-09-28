@@ -15,7 +15,7 @@ import Wizard from './Wizard/Wizard';
 
 import './App.scss';
 
-const b = block('app');
+const b = block('wizard-app');
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
