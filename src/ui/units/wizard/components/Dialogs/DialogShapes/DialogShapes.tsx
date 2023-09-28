@@ -20,6 +20,7 @@ const b = block('dialog-shapes');
 type Props = {
     item: Field;
     items?: Field[];
+    distincts?: Record<string, string[]>;
     options: DatasetOptions;
     parameters: Field[];
     dashboardParameters: Field[];
@@ -45,6 +46,7 @@ export type ShapesState = {
 const DialogShapes: React.FC<Props> = ({
     item,
     items,
+    distincts,
     options,
     datasetId,
     updates,
@@ -122,6 +124,7 @@ const DialogShapes: React.FC<Props> = ({
                             setShapesState((prevState) => ({...prevState, ...state}))
                         }
                         onPaletteItemClick={onPaletteItemClick}
+                        distincts={distincts}
                         items={items}
                         item={item}
                         datasetId={datasetId}

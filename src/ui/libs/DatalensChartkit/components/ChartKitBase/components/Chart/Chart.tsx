@@ -55,6 +55,7 @@ export const Chart = (props: ChartProps) => {
                 renderPluginLoader={props.renderPluginLoader}
                 requestId={props.requestId}
                 noControls={props.noControls}
+                onRetry={props.onRetry}
             />
         );
     }

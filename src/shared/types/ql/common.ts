@@ -1,4 +1,4 @@
-import {CommonSharedExtraSettings, Shared} from '../wizard/';
+import {CommonSharedExtraSettings, ShapesConfig, Shared} from '../wizard/';
 import {Field} from '../wizard/field';
 
 export interface QLResultEntryMetadataDataGroup {
@@ -88,6 +88,9 @@ export interface QLEntryDataShared {
     colorsConfig?: any;
     labels?: Field[];
     tooltips?: Field[];
+    shapes?: Field[];
+    shapesConfig?: ShapesConfig;
+
     available?: Field[];
 }
 

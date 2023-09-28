@@ -2,10 +2,10 @@ import {
     ConnectorType,
     Dictionary,
     IChartEditor,
-    QLChartType,
     QLEntryDataShared,
     QLParamType,
     StringParams,
+    isMonitoringOrPrometheusChart,
     resolveIntervalDate,
     resolveOperation,
 } from '../../../../../shared';
@@ -140,10 +140,7 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
 
     let sources: Dictionary<any> = {};
     try {
-        if (
-            shared.chartType === QLChartType.Promql ||
-            shared.chartType === QLChartType.Monitoringql
-        ) {
+        if (isMonitoringOrPrometheusChart(shared.chartType)) {
             if (params.interval) {
                 const operation = ChartEditor.resolveOperation(params.interval[0]);
 

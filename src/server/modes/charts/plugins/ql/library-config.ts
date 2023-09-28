@@ -1,24 +1,19 @@
 import {
     ChartsConfigVersion,
-    QLChartType,
     QLEntryDataShared,
     ServerVisualization,
+    isYAGRVisualization,
 } from '../../../../../shared';
 import buildHighchartsConfigWizard from '../datalens/highcharts';
 
 import buildHighchartsConfig from './highcharts';
-import {LINEAR_VISUALIZATIONS} from './utils/constants';
 import {log} from './utils/misc-helpers';
 import buildYagrConfig from './yagr';
 
 export default ({shared}: {shared: QLEntryDataShared}) => {
     const visualization = shared.visualization as ServerVisualization;
 
-    if (
-        (shared.chartType === QLChartType.Monitoringql ||
-            shared.chartType === QLChartType.Promql) &&
-        LINEAR_VISUALIZATIONS.has(visualization.id)
-    ) {
+    if (isYAGRVisualization(shared.chartType, visualization.id)) {
         const result = buildYagrConfig({shared});
 
         log('LIBRARY CONFIG (YAGR):');

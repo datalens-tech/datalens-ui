@@ -2,12 +2,11 @@ import {
     ColorPalette,
     DATASET_FIELD_TYPES,
     IChartEditor,
-    QLChartType,
     ServerChartsConfig,
-    ServerShape,
     ServerVisualization,
     ServerVisualizationLayer,
     WizardVisualizationId,
+    isMonitoringOrPrometheusChart,
 } from '../../../../../../../../shared';
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
 import {PivotData} from '../../../preparers/backend-pivot-table/types';
@@ -104,9 +103,6 @@ export default ({
     let cellsLimit: number | undefined;
     let columnsLimit: number | undefined;
 
-    let shapes: ServerShape[] = [];
-    let shapesConfig;
-
     const segments = shared.segments || [];
 
     switch (visualization.id) {
@@ -117,15 +113,10 @@ export default ({
         case 'column100p':
         case 'bar':
         case 'bar100p': {
-            if (chartType === QLChartType.Promql || chartType === QLChartType.Monitoringql) {
+            if (chartType && isMonitoringOrPrometheusChart(chartType)) {
                 prepare = prepareLineTime;
                 rowsLimit = 75000;
             } else {
-                if (visualization.id === 'line') {
-                    shapes = shared.shapes || [];
-                    shapesConfig = shared.shapesConfig;
-                }
-
                 prepare = prepareLineData;
                 rowsLimit = 75000;
             }
@@ -247,7 +238,8 @@ export default ({
         return {};
     }
 
-    let {colors, colorsConfig, labels, tooltips, geopointsConfig, sort} = shared;
+    let {shapes, shapesConfig, colors, colorsConfig, labels, tooltips, geopointsConfig, sort} =
+        shared;
 
     if ((visualization as ServerVisualizationLayer).layerSettings) {
         ({

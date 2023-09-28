@@ -27,6 +27,7 @@ type Props = {
     parameters: Field[];
     dashboardParameters: Field[];
     setShapesState: (state: Partial<ShapesState>) => void;
+    distincts?: Record<string, string[]>;
     items?: Field[];
     item: Field;
     datasetId: string;
@@ -45,6 +46,7 @@ const DialogShapesPalette: React.FC<Props> = ({
     setShapesState,
     item,
     items,
+    distincts,
     datasetId,
     options,
     updates,
@@ -123,6 +125,7 @@ const DialogShapesPalette: React.FC<Props> = ({
             <ValuesList
                 item={item}
                 items={items}
+                distincts={distincts}
                 filters={filters}
                 parameters={parameters}
                 dashboardParameters={dashboardParameters}
