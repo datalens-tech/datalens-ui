@@ -12,6 +12,7 @@ import {
     transformHexToRgb,
 } from '../../../../../../shared';
 import {ChartColorsConfig} from '../js/helpers/colors';
+import {PiePoint} from '../preparers/types';
 
 import {getColor, getMountedColor} from './constants';
 
@@ -271,6 +272,32 @@ function mapAndColorizeGraphsByMeasure(
     }
 }
 
+function mapAndColorizePieByMeasure(
+    points: (PiePoint & ExtendedSeriesLineOptions)[],
+    colorsConfig: ChartColorsConfig,
+) {
+    const colorValues = points.map((point) => Number(point.colorValue) as ColorValue);
+
+    const gradientThresholdValues = getThresholdValues(colorsConfig, colorValues);
+    const gradientColors = getColorsByMeasureField({
+        values: colorValues,
+        colorsConfig,
+        gradientThresholdValues,
+    });
+
+    if (gradientThresholdValues.range !== 0) {
+        points.forEach((point) => {
+            const pointColorValue = point.colorValue;
+
+            if (typeof pointColorValue === 'number' && gradientColors[pointColorValue]) {
+                point.color = gradientColors[pointColorValue];
+            }
+        });
+    }
+
+    return points;
+}
+
 function mapAndColorizeCoordinatesByDimension(
     points: Record<string, string>,
     colorsConfig: ChartColorsConfig,
@@ -377,6 +404,7 @@ function mapAndColorizeGraphsByDimension({
     isSegmentsExists,
     usedColors = [],
 }: MapAndColorizeGraphsByDimension) {
+    // eslint-disable-next-line complexity
     graphs.forEach((graph, i) => {
         let colorKey;
         const colorValue = graph.colorValue;
@@ -523,18 +551,19 @@ function getColorValuesAmongSeries(graphs: ExtendedSeriesLineOptions[]) {
 export {
     hexToRgb,
     mapAndColorizeTableCells,
-    mapAndColorizeHashTableByMeasure,
     mapAndColorizeHashTableByDimension,
+    mapAndColorizeHashTableByMeasure,
     mapAndColorizeChartByMeasure,
     mapAndColorizeCoordinatesByDimension,
     mapAndColorizePointsByDimension,
     mapAndColorizeGraphsByDimension,
+    mapAndColorizeGraphsByMeasure,
+    mapAndColorizePieByMeasure,
     getCurrentGradient,
     getRgbColors,
     getGradientStops,
     colorizePivotTableCell,
     getRangeDelta,
     getRgbColorValue,
-    mapAndColorizeGraphsByMeasure,
     getThresholdValues,
 };
