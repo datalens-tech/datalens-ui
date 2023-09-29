@@ -5,11 +5,7 @@ import DashboardSettings from '../../../page-objects/dashboard/DashboardSettings
 import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../../utils';
 import {dragAndDropListItem} from '../helpers';
 
-import {
-    RobotChartsDashboardUrls,
-    RobotChartsEditorUrls,
-    COMMON_SELECTORS,
-} from '../../../utils/constants';
+import {RobotChartsDashboardUrls, RobotChartsEditorUrls} from '../../../utils/constants';
 import {
     ControlQA,
     DialogDashWidgetQA,
@@ -19,7 +15,6 @@ import {
 } from '../../../../src/shared/constants';
 import {RESTRICTED_PARAM_NAMES} from '../../../../src/shared/constants/dash';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {DashboardAddWidgetQa} from '../../../../src/shared/constants/qa/dash';
 import {CommonSelectors} from '../../../page-objects/constants/common-selectors';
 
 const DASH_PARAMS: Array<[string, string]> = [
@@ -447,8 +442,7 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
         await page.click(slct(DialogDashWidgetQA.Cancel));
 
         // adding parameters to a new chart
-        await page.click(slct(COMMON_SELECTORS.ACTION_BTN_ADD));
-        await page.click(slct(DashboardAddWidgetQa.AddWidget));
+        await dashboardPage.clickAddChart();
 
         // adding two parameters
         await addParam(page, {title: newParamForDelete[0], value: newParamForDelete[1]});
@@ -484,8 +478,7 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
             await dashboardPage.enterEditMode();
 
             // adding a selector
-            await page.click(slct(COMMON_SELECTORS.ACTION_BTN_ADD));
-            await page.click(slct(DashboardAddWidgetQa.AddControl));
+            await dashboardPage.clickAddSelector();
 
             // waiting for the selector settings dialog to appear
             await page.waitForSelector(slct(ControlQA.dialogControl));
@@ -562,8 +555,7 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
             await dashboardPage.enterEditMode();
 
             // adding a selector
-            await page.click(slct(COMMON_SELECTORS.ACTION_BTN_ADD));
-            await page.click(slct(DashboardAddWidgetQa.AddControl));
+            await dashboardPage.clickAddSelector();
 
             // waiting for the selector settings dialog to appear
             await page.waitForSelector(slct(ControlQA.dialogControl));

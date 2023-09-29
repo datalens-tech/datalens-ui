@@ -3,6 +3,8 @@ export const enum DashboardAddWidgetQa {
     AddControl = 'add-control-button',
     AddText = 'add-text-button',
     AddTitle = 'add-title-button',
+    Links = 'action-button-connections',
+    Tabs = 'action-button-tabs',
 }
 
 export const enum DashKitOverlayMenuQa {
