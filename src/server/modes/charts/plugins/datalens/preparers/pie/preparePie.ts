@@ -3,7 +3,6 @@ import {
     DATASET_FIELD_TYPES,
     ExtendedSeriesLineOptions,
     MINIMUM_FRACTION_DIGITS,
-    getFakeTitleOrTitle,
     isDateField,
     isNumberField,
 } from '../../../../../../../shared';
@@ -11,7 +10,6 @@ import {ChartColorsConfig} from '../../js/helpers/colors';
 import {
     ColorValue,
     getColorsByMeasureField,
-    getGradientStops,
     getThresholdValues,
     mapAndColorizeGraphsByDimension,
 } from '../../utils/color-helpers';
@@ -57,10 +55,8 @@ function mapAndColorizePieByMeasure(
 
 // eslint-disable-next-line complexity
 export function preparePie({
-    ChartEditor,
     placeholders,
     resultData,
-    shared,
     sort,
     labels,
     colorsConfig,
@@ -262,46 +258,6 @@ export function preparePie({
             colorsConfig,
             isColorsItemExists: Boolean(color),
         }) as (PiePoint & ExtendedSeriesLineOptions)[];
-    }
-
-    const customConfig: Record<string, any> = {};
-    const isLegendEnabled = shared.extraSettings?.legendMode !== 'hide';
-
-    if (isColoringByMeasure) {
-        pie.showInLegend = false;
-
-        const colorValues = pie.data.map((point) => Number(point.colorValue));
-        const points = pie.data as unknown as Highcharts.PointOptionsObject[];
-
-        const minColorValue = Math.min(...colorValues);
-        const maxColorValue = Math.max(...colorValues);
-
-        customConfig.colorAxis = {
-            startOnTick: false,
-            endOnTick: false,
-            min: minColorValue,
-            max: maxColorValue,
-            stops: getGradientStops(colorsConfig, points, minColorValue, maxColorValue),
-        };
-
-        customConfig.legend = {
-            title: {
-                text: getFakeTitleOrTitle(color),
-            },
-            enabled: isLegendEnabled,
-            symbolWidth: null,
-        };
-
-        customConfig.plotOptions = {
-            bar: {
-                borderWidth: 1,
-            },
-            column: {
-                borderWidth: 1,
-            },
-        };
-
-        ChartEditor.updateHighchartsConfig(customConfig);
     }
 
     const graphs = [pie];
