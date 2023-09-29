@@ -285,15 +285,13 @@ function mapAndColorizePieByMeasure(
         gradientThresholdValues,
     });
 
-    if (gradientThresholdValues.range !== 0) {
-        points.forEach((point) => {
-            const pointColorValue = point.colorValue;
+    points.forEach((point) => {
+        const pointColorValue = point.colorValue;
 
-            if (typeof pointColorValue === 'number' && gradientColors[pointColorValue]) {
-                point.color = gradientColors[pointColorValue];
-            }
-        });
-    }
+        if (typeof pointColorValue === 'number' && gradientColors[pointColorValue]) {
+            point.color = gradientColors[pointColorValue];
+        }
+    });
 
     return points;
 }
