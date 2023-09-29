@@ -43,16 +43,14 @@ class ErrorContent extends React.PureComponent {
         noControls: PropTypes.bool,
         showDebugInfo: PropTypes.bool,
         noActions: PropTypes.bool,
-        size: PropTypes.oneOf('s', 'm', 'l', 'promo'),
-        direction: PropTypes.oneOf('row', 'column'),
+        size: PropTypes.oneOf(['s', 'm', 'l', 'promo']),
+        direction: PropTypes.oneOf(['row', 'column']),
     };
 
     static defaultProps = {
         type: ErrorContentTypes.ERROR,
         showDebugInfo: true,
         noActions: false,
-        size: 'l',
-        direction: 'row',
     };
 
     state = {
@@ -275,8 +273,6 @@ class ErrorContent extends React.PureComponent {
                 imageName = 'error';
         }
 
-        const actualDirection = DL.IS_MOBILE ? 'column' : direction;
-
         return (
             <div
                 className={b(
@@ -290,7 +286,7 @@ class ErrorContent extends React.PureComponent {
                     description={this.renderDescription()}
                     renderAction={() => this.renderActions()}
                     size={size}
-                    direction={actualDirection}
+                    direction={direction}
                 />
             </div>
         );
