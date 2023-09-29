@@ -275,6 +275,8 @@ class ErrorContent extends React.PureComponent {
                 imageName = 'error';
         }
 
+        const actualDirection = DL.IS_MOBILE ? 'column' : direction;
+
         return (
             <div
                 className={b(
@@ -288,7 +290,7 @@ class ErrorContent extends React.PureComponent {
                     description={this.renderDescription()}
                     renderAction={() => this.renderActions()}
                     size={size}
-                    direction={direction}
+                    direction={actualDirection}
                 />
             </div>
         );
