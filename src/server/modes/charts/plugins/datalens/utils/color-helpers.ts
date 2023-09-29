@@ -12,13 +12,12 @@ import {
     transformHexToRgb,
 } from '../../../../../../shared';
 import {ChartColorsConfig} from '../js/helpers/colors';
-import {PiePoint} from '../preparers/types';
 
 import {getColor, getMountedColor} from './constants';
 
 type HashTable = Record<string, number> & {colorGuid?: string};
 
-type ColorValue = number | null;
+export type ColorValue = number | null;
 
 export type ExtendedPointOptionsObject = Omit<Highcharts.PointOptionsObject, 'colorValue'> & {
     colorValue?: string | null;
@@ -270,30 +269,6 @@ function mapAndColorizeGraphsByMeasure(
             });
         });
     }
-}
-
-function mapAndColorizePieByMeasure(
-    points: (PiePoint & ExtendedSeriesLineOptions)[],
-    colorsConfig: ChartColorsConfig,
-) {
-    const colorValues = points.map((point) => Number(point.colorValue) as ColorValue);
-
-    const gradientThresholdValues = getThresholdValues(colorsConfig, colorValues);
-    const gradientColors = getColorsByMeasureField({
-        values: colorValues,
-        colorsConfig,
-        gradientThresholdValues,
-    });
-
-    points.forEach((point) => {
-        const pointColorValue = point.colorValue;
-
-        if (typeof pointColorValue === 'number' && gradientColors[pointColorValue]) {
-            point.color = gradientColors[pointColorValue];
-        }
-    });
-
-    return points;
 }
 
 function mapAndColorizeCoordinatesByDimension(
@@ -556,7 +531,6 @@ export {
     mapAndColorizePointsByDimension,
     mapAndColorizeGraphsByDimension,
     mapAndColorizeGraphsByMeasure,
-    mapAndColorizePieByMeasure,
     getCurrentGradient,
     getRgbColors,
     getGradientStops,
