@@ -123,7 +123,7 @@ describe('colorizePivotTableByColorField', () => {
                     },
                     {
                         css: {
-                            backgroundColor: 'rgb(\n        5,\n        73,\n        166\n    )',
+                            backgroundColor: 'rgb(5, 73, 166)',
                             color: '#FFF',
                             value: 90402,
                         },
@@ -133,7 +133,7 @@ describe('colorizePivotTableByColorField', () => {
                     },
                     {
                         css: {
-                            backgroundColor: 'rgb(\n        140,\n        203,\n        255\n    )',
+                            backgroundColor: 'rgb(140, 203, 255)',
                             color: '#FFF',
                             value: 2120777,
                         },
@@ -152,7 +152,7 @@ describe('colorizePivotTableByColorField', () => {
                     },
                     {
                         css: {
-                            backgroundColor: 'rgb(\n        0,\n        68,\n        163\n    )',
+                            backgroundColor: 'rgb(0, 68, 163)',
                             color: '#FFF',
                             value: 5555,
                         },
@@ -162,7 +162,7 @@ describe('colorizePivotTableByColorField', () => {
                     },
                     {
                         css: {
-                            backgroundColor: 'rgb(\n        9,\n        77,\n        169\n    )',
+                            backgroundColor: 'rgb(9, 77, 169)',
                             color: '#FFF',
                             value: 142023,
                         },
