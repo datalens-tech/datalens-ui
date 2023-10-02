@@ -238,8 +238,16 @@ export default ({
         return {};
     }
 
-    let {shapes, shapesConfig, colors, colorsConfig, labels, tooltips, geopointsConfig, sort} =
-        shared;
+    let {
+        shapes = [],
+        shapesConfig = {},
+        colors,
+        colorsConfig,
+        labels,
+        tooltips,
+        geopointsConfig,
+        sort,
+    } = shared;
 
     if ((visualization as ServerVisualizationLayer).layerSettings) {
         ({
