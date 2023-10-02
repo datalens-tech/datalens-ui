@@ -23,7 +23,7 @@ import {
     V4Layer,
     WizardVisualizationId,
     filterUpdatesByDatasetId,
-    getItemLinkWithDataset,
+    getItemLinkWithDatasets,
     isDateField,
     isEnabledServerFeature,
     isMeasureField,
@@ -359,7 +359,7 @@ function formatFilters({
 
                 let {guid} = filter;
                 if (filter.datasetId !== datasetId) {
-                    const targetLink = getItemLinkWithDataset(filter, datasetId, links);
+                    const targetLink = getItemLinkWithDatasets(filter, datasetId, links);
 
                     if (targetLink) {
                         guid = targetLink.fields[datasetId].field.guid;
@@ -561,7 +561,7 @@ export function prepareSingleRequest({
                 if (item.datasetId === datasetId) {
                     return item;
                 } else {
-                    const targetLink = getItemLinkWithDataset(item, datasetId, links);
+                    const targetLink = getItemLinkWithDatasets(item, datasetId, links);
 
                     if (targetLink) {
                         const targetFieldInfo = targetLink.fields[datasetId].field;
@@ -591,7 +591,7 @@ export function prepareSingleRequest({
                 };
             });
 
-        payload.order_by = [...sortItems];
+        payload.order_by = sortItems;
     }
 
     // We form and transmit updates

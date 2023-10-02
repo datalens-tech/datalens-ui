@@ -16,19 +16,16 @@ export function isYAGRVisualization(chartType: string, visualizationId: string) 
     );
 }
 
-export function getItemLinkWithDataset(
+export function getItemLinkWithDatasets(
     item: {guid: string; datasetId: string},
     datasetId: string,
     links: Link[],
 ) {
-    const targetLink = links.find((link) => {
-        return (
-            item.datasetId &&
-            link.fields[item.datasetId] &&
-            link.fields[item.datasetId].field.guid === item.guid &&
-            link.fields[datasetId]
-        );
-    });
+    const targetLink =
+        item.datasetId &&
+        links.find((link) => {
+            return link.fields[item.datasetId]?.field.guid === item.guid && link.fields[datasetId];
+        });
 
     return targetLink;
 }
