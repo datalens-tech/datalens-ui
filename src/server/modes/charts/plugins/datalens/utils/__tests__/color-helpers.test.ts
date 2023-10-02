@@ -20,10 +20,10 @@ describe('mapAndColorizeHashTableByMeasure', () => {
 
         expect(result).toEqual({
             colorData: {
-                polygon_0_0: {backgroundColor: 'rgb(244,244,244)', color: '#FFF', value: 10},
-                polygon_1_0: {backgroundColor: 'rgb(255,255,255)', color: '#FFF', value: 0},
-                polygon_2_0: {backgroundColor: 'rgb(80,80,80)', color: '#FFF', value: 100},
-                polygon_3_0: {backgroundColor: 'rgb(0,0,0)', color: '#FFF', value: 110},
+                polygon_0_0: {backgroundColor: 'rgb(244, 244, 244)', color: '#FFF', value: 10},
+                polygon_1_0: {backgroundColor: 'rgb(255, 255, 255)', color: '#FFF', value: 0},
+                polygon_2_0: {backgroundColor: 'rgb(80, 80, 80)', color: '#FFF', value: 100},
+                polygon_3_0: {backgroundColor: 'rgb(0, 0, 0)', color: '#FFF', value: 110},
             },
             min: 0,
             mid: 55,
@@ -46,10 +46,10 @@ describe('mapAndColorizeHashTableByMeasure', () => {
 
         expect(result).toEqual({
             colorData: {
-                polygon_0_0: {backgroundColor: 'rgb(244,244,244)', color: '#FFF', value: 10},
-                polygon_1_0: {backgroundColor: 'rgb(255,255,255)', color: '#FFF', value: 0},
-                polygon_2_0: {backgroundColor: 'rgb(80,80,80)', color: '#FFF', value: 100},
-                polygon_3_0: {backgroundColor: 'rgb(0,0,0)', color: '#FFF', value: 110},
+                polygon_0_0: {backgroundColor: 'rgb(244, 244, 244)', color: '#FFF', value: 10},
+                polygon_1_0: {backgroundColor: 'rgb(255, 255, 255)', color: '#FFF', value: 0},
+                polygon_2_0: {backgroundColor: 'rgb(80, 80, 80)', color: '#FFF', value: 100},
+                polygon_3_0: {backgroundColor: 'rgb(0, 0, 0)', color: '#FFF', value: 110},
             },
             min: 0,
             mid: 55,
