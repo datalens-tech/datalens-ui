@@ -2,7 +2,11 @@ import React from 'react';
 
 import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {DIALOG_COPY_WORKBOOK, DIALOG_MOVE_WORKBOOK} from 'components/CollectionsStructure';
+import {I18N} from 'i18n';
+import {useDispatch} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
+import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 
 import {Feature} from '../../../../../shared';
 import {WorkbookWithPermissions} from '../../../../../shared/schema';
@@ -18,6 +22,8 @@ import './WorkbookActions.scss';
 
 const b = block('dl-workbook-actions');
 
+const i18n = I18N.keyset('new-workbooks');
+
 const DIALOG_QUERY_PARAM_NAME = 'dialog';
 
 type Props = {
@@ -28,6 +34,7 @@ type Props = {
 export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}) => {
     const history = useHistory();
     const {search} = useLocation();
+    const dispatch = useDispatch();
     const preopenedAccessDialog =
         new URLSearchParams(search).get(DIALOG_QUERY_PARAM_NAME) === 'access';
 
@@ -59,11 +66,55 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
     };
 
     const {useAdditionalWorkbookActions} = registry.workbooks.functions.getAll();
-    const additionalActions = useAdditionalWorkbookActions(
-        workbook,
-        refreshWorkbookInfo,
-        onApplyCopy,
-    );
+    const additionalActions = useAdditionalWorkbookActions(workbook);
+
+    const dropdownActions = [...additionalActions];
+
+    if (workbook.permissions.move) {
+        dropdownActions.push({
+            action: () => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_MOVE_WORKBOOK,
+                        props: {
+                            open: true,
+                            workbookId: workbook.workbookId,
+                            workbookTitle: workbook.title,
+                            initialCollectionId: workbook.collectionId,
+                            onApply: refreshWorkbookInfo,
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
+                        },
+                    }),
+                );
+            },
+            text: i18n('action_move'),
+        });
+
+        if (workbook.permissions.copy) {
+            dropdownActions.push({
+                action: () => {
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_COPY_WORKBOOK,
+                            props: {
+                                open: true,
+                                workbookId: workbook.workbookId,
+                                workbookTitle: workbook.title,
+                                initialCollectionId: workbook.collectionId,
+                                onApply: onApplyCopy,
+                                onClose: () => {
+                                    dispatch(closeDialog());
+                                },
+                            },
+                        }),
+                    );
+                },
+                text: i18n('action_copy'),
+            });
+        }
+    }
 
     return (
         <div className={b()}>
@@ -73,11 +124,11 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                 </div>
             )}
 
-            {Boolean(additionalActions.length) && (
+            {Boolean(dropdownActions.length) && (
                 <DropdownMenu
                     defaultSwitcherProps={{view: 'normal'}}
                     switcherWrapperClassName={b('item')}
-                    items={additionalActions}
+                    items={dropdownActions}
                 />
             )}
 
