@@ -4,32 +4,54 @@ import {
     ExtendedSeriesLineOptions,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
+    isNumberField,
 } from '../../../../../../../shared';
-import {mapAndColorizeGraphsByDimension} from '../../utils/color-helpers';
+import {ChartColorsConfig} from '../../js/helpers/colors';
+import {
+    ColorValue,
+    getColorsByMeasureField,
+    getThresholdValues,
+    mapAndColorizeGraphsByDimension,
+} from '../../utils/color-helpers';
 import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
     formatDate,
     isNumericalDataType,
 } from '../../utils/misc-helpers';
-import {PrepareFunctionArgs} from '../types';
-
-type PiePoint = {
-    name: string;
-    formattedName: string;
-    drillDownFilterValue: string;
-    y: number;
-    colorGuid: string;
-    colorValue: string;
-    label?: string | number | null;
-};
+import {PiePoint, PrepareFunctionArgs} from '../types';
 
 export type PieConfig = {
     name: string;
     dataLabels: any;
     tooltip: any;
     data?: (PiePoint & ExtendedSeriesLineOptions)[];
+    showInLegend?: boolean;
 };
+
+function mapAndColorizePieByMeasure(
+    points: (PiePoint & ExtendedSeriesLineOptions)[],
+    colorsConfig: ChartColorsConfig,
+) {
+    const colorValues = points.map((point) => Number(point.colorValue) as ColorValue);
+
+    const gradientThresholdValues = getThresholdValues(colorsConfig, colorValues);
+    const gradientColors = getColorsByMeasureField({
+        values: colorValues,
+        colorsConfig,
+        gradientThresholdValues,
+    });
+
+    points.forEach((point) => {
+        const pointColorValue = point.colorValue;
+
+        if (typeof pointColorValue === 'number' && gradientColors[pointColorValue]) {
+            point.color = gradientColors[pointColorValue];
+        }
+    });
+
+    return points;
+}
 
 // eslint-disable-next-line complexity
 export function preparePie({
@@ -161,16 +183,21 @@ export function preparePie({
         .map((key) => {
             let name = 'Null';
             let formattedName = '';
+            let colorKey: number | string = key;
 
             if (key !== 'null') {
                 if (isDateField(color)) {
                     name = formatDate({valueType: colorDataType, value: key, format: color.format});
-                } else if (isNumericalDataType(colorDataType) && color.formatting) {
-                    formattedName = chartKitFormatNumberWrapper(Number(key), {
-                        lang: 'ru',
-                        ...color.formatting,
-                    });
+                } else if (isNumericalDataType(colorDataType)) {
                     name = key;
+                    colorKey = Number(key);
+
+                    if (color.formatting) {
+                        formattedName = chartKitFormatNumberWrapper(Number(key), {
+                            lang: 'ru',
+                            ...color.formatting,
+                        });
+                    }
                 } else {
                     name = key;
                 }
@@ -182,7 +209,7 @@ export function preparePie({
                 drillDownFilterValue: key,
                 y: groupedData[key],
                 colorGuid: color.guid,
-                colorValue: formattedName || name || color.title,
+                colorValue: colorKey || name || color.title,
             };
 
             if (labelsLength) {
@@ -221,11 +248,17 @@ export function preparePie({
         });
     }
 
-    pie.data = mapAndColorizeGraphsByDimension({
-        graphs: pie.data,
-        colorsConfig,
-        isColorsItemExists: Boolean(color),
-    }) as (PiePoint & ExtendedSeriesLineOptions)[];
+    const isColoringByMeasure = color.type === 'MEASURE' && isNumberField(color);
+
+    if (isColoringByMeasure) {
+        pie.data = mapAndColorizePieByMeasure(pie.data, colorsConfig);
+    } else {
+        pie.data = mapAndColorizeGraphsByDimension({
+            graphs: pie.data,
+            colorsConfig,
+            isColorsItemExists: Boolean(color),
+        }) as (PiePoint & ExtendedSeriesLineOptions)[];
+    }
 
     const graphs = [pie];
     const totalsValue = totals.find((value) => value);

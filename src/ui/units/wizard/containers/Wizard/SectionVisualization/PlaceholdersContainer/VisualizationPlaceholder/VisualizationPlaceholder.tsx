@@ -122,6 +122,7 @@ class VisualizationPlaceholder extends React.Component<Props> {
         const {visualization, placeholder} = this.props;
 
         switch (visualization.id) {
+            case WizardVisualizationId.PieD3:
             case 'pie':
             case 'donut': {
                 const hasSettings = placeholder.items.length > 0 && placeholder.id === 'dimensions';

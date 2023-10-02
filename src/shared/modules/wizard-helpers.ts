@@ -153,11 +153,11 @@ export function getRgbColorValue(
         shadeB = colors[1];
     }
 
-    return `rgb(
-        ${Math.floor((shadeB.red - shadeA.red) * resultDelta + shadeA.red)},
-        ${Math.floor((shadeB.green - shadeA.green) * resultDelta + shadeA.green)},
-        ${Math.floor((shadeB.blue - shadeA.blue) * resultDelta + shadeA.blue)}
-    )`;
+    const red = Math.floor((shadeB.red - shadeA.red) * resultDelta + shadeA.red);
+    const green = Math.floor((shadeB.green - shadeA.green) * resultDelta + shadeA.green);
+    const blue = Math.floor((shadeB.blue - shadeA.blue) * resultDelta + shadeA.blue);
+
+    return `rgb(${red}, ${green}, ${blue})`;
 }
 
 export function getRangeDelta(

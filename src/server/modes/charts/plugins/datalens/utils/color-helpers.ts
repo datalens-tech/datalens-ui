@@ -17,7 +17,7 @@ import {getColor, getMountedColor} from './constants';
 
 type HashTable = Record<string, number> & {colorGuid?: string};
 
-type ColorValue = number | null;
+export type ColorValue = number | null;
 
 export type ExtendedPointOptionsObject = Omit<Highcharts.PointOptionsObject, 'colorValue'> & {
     colorValue?: string | null;
@@ -377,6 +377,7 @@ function mapAndColorizeGraphsByDimension({
     isSegmentsExists,
     usedColors = [],
 }: MapAndColorizeGraphsByDimension) {
+    // eslint-disable-next-line complexity
     graphs.forEach((graph, i) => {
         let colorKey;
         const colorValue = graph.colorValue;
@@ -523,18 +524,18 @@ function getColorValuesAmongSeries(graphs: ExtendedSeriesLineOptions[]) {
 export {
     hexToRgb,
     mapAndColorizeTableCells,
-    mapAndColorizeHashTableByMeasure,
     mapAndColorizeHashTableByDimension,
+    mapAndColorizeHashTableByMeasure,
     mapAndColorizeChartByMeasure,
     mapAndColorizeCoordinatesByDimension,
     mapAndColorizePointsByDimension,
     mapAndColorizeGraphsByDimension,
+    mapAndColorizeGraphsByMeasure,
     getCurrentGradient,
     getRgbColors,
     getGradientStops,
     colorizePivotTableCell,
     getRangeDelta,
     getRgbColorValue,
-    mapAndColorizeGraphsByMeasure,
     getThresholdValues,
 };

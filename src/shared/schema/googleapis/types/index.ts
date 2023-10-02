@@ -16,3 +16,7 @@ export type GetGCredentialsResponse = {
 export type GetGCredentialsArgs = {
     code: string;
 };
+
+export type RevokeGRefreshTokenArgs = {
+    refreshToken: string;
+};

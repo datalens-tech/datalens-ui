@@ -10,6 +10,7 @@ import {ErrorBoundary} from 'ui/components/ErrorBoundary/ErrorBoundary';
 
 import {registry} from '../../../registry';
 import {ChartkitError} from '../components/ChartKitBase/components/ChartkitError/ChartkitError';
+import DatalensChartkitCustomError from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
 import {ChartKit} from './ChartKit';
 import {getAdditionalProps, getOpensourceChartKitData} from './helpers/chartkitAdapter';
@@ -117,6 +118,11 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, 
 export const ChartKitAdapter = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, ref) => {
     return (
         <ErrorBoundary
+            onError={(error) => {
+                if (props.onError) {
+                    props.onError?.({error: DatalensChartkitCustomError.wrap(error)});
+                }
+            }}
             renderError={(error) => (
                 <ChartkitError
                     requestId={props.requestId || ''}
