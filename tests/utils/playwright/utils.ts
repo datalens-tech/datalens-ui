@@ -23,7 +23,7 @@ export const goToWithRetry = async (page: Page, url: string, retryCount = RETRIE
 
     try {
         console.log(`Try to get access to ${url}. Attempt ${retryCount}`);
-        await page.waitForSelector('.app .preview-error__error_generating', {
+        await page.waitForSelector('.app .container-loader', {
             state: 'detached',
             timeout: 60 * 1000,
         });
@@ -39,7 +39,7 @@ export const goToWithRetry = async (page: Page, url: string, retryCount = RETRIE
         ]);
     } catch (err) {
         console.log('GOTO RETRY! Error: ', err);
-
+        await page.reload();
         await goToWithRetry(page, url, retryCount - 1);
     }
 };

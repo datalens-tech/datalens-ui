@@ -32,6 +32,17 @@
         }
     }
 
+    &_size_s {
+        #{$class}__title {
+            font-size: var(--g-text-body-1-font-size);
+            line-height: var(--g-text-body-1-line-height);
+        }
+
+        #{$class}__content {
+            width: auto;
+        }
+    }
+
     &_no-controls {
         display: block;
         padding: 20px 0;
@@ -98,13 +109,5 @@
     &__yfm {
         margin-top: 10px;
         font-size: var(--g-text-body-1-font-size);
-    }
-
-    .dc-page-nav-content_noBottomActions .dc-centered & {
-        height: 100%;
-    }
-
-    .dc-page-nav-content_noBottomActions .dc-centered &__content {
-        padding-left: 42px;
     }
 }
