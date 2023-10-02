@@ -1,6 +1,7 @@
-@import '../styles/base';
+@import '../styles/variables';
+@import '../styles/mixins';
 
-.app {
+.wizard-app {
     height: 100%;
     min-width: 1100px;
 
@@ -11,35 +12,14 @@
     &__main_aside {
         height: 100%;
     }
-}
 
-.g-root .popup2.popup2_view_default.popup2_target_anchor {
-    box-shadow: 0 2px 4px 0 var(--g-color-sfx-shadow-heavy);
-}
+    .dnd-container {
+        min-height: 53px;
+        padding-top: 8px;
 
-h2 {
-    font-weight: 200;
-}
-
-hr {
-    border: none;
-    border-bottom: 1px solid var(--g-color-line-generic);
-}
-
-.hidden {
-    display: none !important; // stylelint-disable-line declaration-no-important
-}
-
-.invisible {
-    visibility: hidden !important; // stylelint-disable-line declaration-no-important
-}
-
-.dnd-container {
-    min-height: 53px;
-    padding-top: 8px;
-
-    .item-icon {
-        display: inline-block;
-        margin-right: 8px;
+        .item-icon {
+            display: inline-block;
+            margin-right: 8px;
+        }
     }
 }

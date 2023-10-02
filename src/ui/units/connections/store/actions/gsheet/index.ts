@@ -1,4 +1,4 @@
-import {I18n} from 'i18n';
+import {I18n, i18n as commonI18n} from 'i18n';
 import {get} from 'lodash';
 import {batch} from 'react-redux';
 import {ConnectorType} from 'shared';
@@ -301,6 +301,23 @@ export const googleLogout = () => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const connectionData = connectionDataSelector(getState());
         const initialAuthorized = connectionData[InnerFieldKey.Authorized];
+        const refreshToken = googleRefreshTokenSelector(getState());
+
+        if (typeof refreshToken === 'string') {
+            const {error} = await api.revokeGoogleRefreshToken(refreshToken);
+
+            if (error) {
+                dispatch(
+                    showToast({
+                        error,
+                        title: commonI18n('component.error-content.view', 'label_error-general'),
+                    }),
+                );
+
+                return;
+            }
+        }
+
         // When logging out in an already created connection, we send null,
         // on this basis, the back will delete the previously saved token
         const nextRefreshToken = initialAuthorized ? null : undefined;

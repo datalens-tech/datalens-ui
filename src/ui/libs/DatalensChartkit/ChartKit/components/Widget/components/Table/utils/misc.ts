@@ -330,18 +330,12 @@ export function getTreeSetColumnSortAscending(
                     const c1 = r1.row[columnName] as TableCommonCell;
                     const c2 = r2.row[columnName] as TableCommonCell;
 
-                    sortComparisonValue = String(c1?.value || '').localeCompare(
-                        String(c2?.value || ''),
-                        undefined,
-                        {numeric: true},
-                    );
+                    if (c1 !== c2) {
+                        sortComparisonValue = (c1?.value || '') > (c2?.value || '') ? 1 : -1;
+                    }
                 }
-            } else {
-                sortComparisonValue = String(column1.value || '').localeCompare(
-                    String(column2.value || ''),
-                    undefined,
-                    {numeric: true},
-                );
+            } else if (column1 !== column2) {
+                sortComparisonValue = (column1?.value || '') > (column2?.value || '') ? 1 : -1;
             }
         }
 
