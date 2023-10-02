@@ -209,7 +209,7 @@ export function openDialogColors({item, onApply}: OpenDialogColorsArguments) {
         const datalensGlobalState = getState();
         const {visualization: visualizationState, dataset: datasetState} =
             datalensGlobalState.wizard;
-        const {colors, colorsConfig, visualization} = visualizationState;
+        const {colors, colorsConfig} = visualizationState;
         const dataset = datasetState.dataset;
         const isArray = Array.isArray(item);
         const extra: any = {};
@@ -240,16 +240,11 @@ export function openDialogColors({item, onApply}: OpenDialogColorsArguments) {
                 : (item as Field);
             const dialogColorItems =
                 isArray && !isMeasureValue(dialogColorItem) ? (item as Field[]) : undefined;
-            const isGradient =
-                // ToDO: Delete after gradient support for pie chart (CHARTS-8368)
-                ![WizardVisualizationId.Pie, WizardVisualizationId.Donut].includes(
-                    visualization?.id as WizardVisualizationId,
-                ) &&
-                isGradientDialog({
-                    item: dialogColorItem,
-                    items: dialogColorItems,
-                    extra,
-                });
+            const isGradient = isGradientDialog({
+                item: dialogColorItem,
+                items: dialogColorItems,
+                extra,
+            });
 
             dispatch(
                 openDialogColor({

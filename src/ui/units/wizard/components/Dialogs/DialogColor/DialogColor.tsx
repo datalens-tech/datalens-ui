@@ -55,66 +55,6 @@ export type OpenDialogColorArgs = {
 };
 
 class DialogColorComponent extends React.Component<Props> {
-    getColorsConfig = () => {
-        const {item, items, isGradient} = this.props;
-
-        let config: ColorsConfig;
-
-        if (isGradient) {
-            const {
-                gradientMode,
-                gradientPalette,
-                polygonBorders,
-                reversed,
-                thresholdsMode,
-                leftThreshold,
-                middleThreshold,
-                rightThreshold,
-            } = this.props.gradientState;
-
-            config = {
-                gradientMode,
-                gradientPalette,
-                polygonBorders,
-                reversed,
-                thresholdsMode,
-                leftThreshold,
-                middleThreshold,
-                rightThreshold,
-            };
-
-            return config;
-        } else {
-            const {mountedColors, polygonBorders, palette} = this.props.paletteState;
-
-            config = {
-                polygonBorders,
-                palette,
-                mountedColors,
-                fieldGuid: item.guid,
-                coloredByMeasure: Boolean((items || []).length),
-            };
-        }
-
-        return config;
-    };
-
-    onResetButtonClick = () => {
-        this.props.actions.setDialogColorPaletteState({
-            ...this.props.paletteState,
-            mountedColors: {},
-        });
-    };
-
-    onCancelButtonClick = () => {
-        this.onClose();
-    };
-
-    onApplyButtonClick = () => {
-        this.props.onApply(this.getColorsConfig());
-        this.onClose();
-    };
-
     render() {
         const {item, items, dataset, isGradient} = this.props;
         const {mountedColors = {}} = this.props.paletteState;
@@ -172,6 +112,66 @@ class DialogColorComponent extends React.Component<Props> {
             </Dialog>
         );
     }
+
+    onResetButtonClick = () => {
+        this.props.actions.setDialogColorPaletteState({
+            ...this.props.paletteState,
+            mountedColors: {},
+        });
+    };
+
+    onCancelButtonClick = () => {
+        this.onClose();
+    };
+
+    onApplyButtonClick = () => {
+        this.props.onApply(this.getColorsConfig());
+        this.onClose();
+    };
+
+    getColorsConfig = () => {
+        const {item, items, isGradient} = this.props;
+
+        let config: ColorsConfig;
+
+        if (isGradient) {
+            const {
+                gradientMode,
+                gradientPalette,
+                polygonBorders,
+                reversed,
+                thresholdsMode,
+                leftThreshold,
+                middleThreshold,
+                rightThreshold,
+            } = this.props.gradientState;
+
+            config = {
+                gradientMode,
+                gradientPalette,
+                polygonBorders,
+                reversed,
+                thresholdsMode,
+                leftThreshold,
+                middleThreshold,
+                rightThreshold,
+            };
+
+            return config;
+        } else {
+            const {mountedColors, polygonBorders, palette} = this.props.paletteState;
+
+            config = {
+                polygonBorders,
+                palette,
+                mountedColors,
+                fieldGuid: item.guid,
+                coloredByMeasure: Boolean((items || []).length),
+            };
+        }
+
+        return config;
+    };
 
     onClose = () => {
         this.props.onCancel();
