@@ -31,6 +31,7 @@ import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {ControlQA, DashData, DashTab, DashTabItem, DashboardAddWidgetQa, Feature} from 'shared';
 import {DatalensGlobalState} from 'ui';
+import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
@@ -284,6 +285,7 @@ class Body extends React.PureComponent<BodyProps> {
             tabData,
             handlerEditClick,
             isEditModeLoading,
+            isSidebarOpened,
         } = this.props;
 
         switch (mode) {
@@ -415,7 +417,12 @@ class Body extends React.PureComponent<BodyProps> {
                             />
                         )}
                         {showEditActionPanel && (
-                            <DashkitActionPanel items={this.getActionPanelItems()} />
+                            <DashkitActionPanel
+                                items={this.getActionPanelItems()}
+                                className={b('edit-panel', {
+                                    'aside-opened': isSidebarOpened,
+                                })}
+                            />
                         )}
                     </div>
                 </div>
@@ -451,6 +458,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     canEdit: canEdit(state),
     tabs: selectTabs(state),
     tabId: getCurrentTabId(state),
+    isSidebarOpened: !selectAsideHeaderIsCompact(state),
 });
 
 const mapDispatchToProps = {
