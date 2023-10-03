@@ -409,6 +409,9 @@ class Body extends React.PureComponent<BodyProps> {
                                     ) as DashKitProps['globalParams']
                                 }
                                 overlayControls={overlayControls}
+                                _experimentDisableItemAnimation={Utils.isEnabledFeature(
+                                    Feature.DashKitItemAnimationDisabled,
+                                )}
                             />
                         )}
                         {showEditActionPanel && (
