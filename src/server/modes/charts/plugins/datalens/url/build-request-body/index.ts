@@ -566,9 +566,9 @@ export function prepareSingleRequest({
                     if (targetLink) {
                         const targetFieldInfo = targetLink.fields[datasetId].field;
                         return {
-                            ...item,
                             guid: targetFieldInfo.guid,
                             datasetId,
+                            direction: item.direction,
                         };
                     } else {
                         return item;
