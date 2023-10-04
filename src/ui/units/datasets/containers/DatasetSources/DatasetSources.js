@@ -90,13 +90,10 @@ class DatasetSources extends React.Component {
     }
 
     get isDisabledAddSource() {
-        const {selectedConnection: {type} = {}, sourcePrototypes} = this.props;
+        const {sourcePrototypes} = this.props;
         const {isUpdating} = this.state;
-        const isStatface = [ConnectorType.StatfaceReport, ConnectorType.StatfaceReportSql].includes(
-            type,
-        );
 
-        if (isStatface && sourcePrototypes.length >= 1) {
+        if (sourcePrototypes.length >= 1) {
             return true;
         }
 
