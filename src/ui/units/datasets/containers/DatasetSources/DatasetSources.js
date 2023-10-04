@@ -7,7 +7,6 @@ import {connect} from 'react-redux';
 import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
-import {ConnectorType} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import {SPLIT_PANE_RESIZER_CLASSNAME} from 'ui';
 import {
@@ -87,17 +86,6 @@ class DatasetSources extends React.Component {
             this.props.componentErrors,
             ComponentErrorType.AvatarRelation,
         );
-    }
-
-    get isDisabledAddSource() {
-        const {sourcePrototypes} = this.props;
-        const {isUpdating} = this.state;
-
-        if (sourcePrototypes.length >= 1) {
-            return true;
-        }
-
-        return isUpdating;
     }
 
     get isDisabledDropSource() {
@@ -674,7 +662,7 @@ class DatasetSources extends React.Component {
                         <SelectSourcePrototypes
                             sdk={sdk}
                             isSourcesLoading={ui.isSourcesLoading}
-                            isDisabledAddSource={this.isDisabledAddSource}
+                            isDisabledAddSource={isUpdating}
                             isDisabledDropSource={this.isDisabledDropSource}
                             connections={connections}
                             selectedConnection={selectedConnection}
