@@ -18,7 +18,6 @@
   "ERR.DS_API.DB.SOURCE_ERROR.CLOSED_PREMATURELY": "The data source has terminated the connection",
   "ERR.DS_API.DB.SOURCE_ERROR.INVALID_RESPONSE": "The data source is not responding",
   "ERR.DS_API.DB.SOURCE_ERROR.TIMEOUT": "Query execution time exceeded in the data source",
-  "ERR.DS_API.DB.STATFACE": "Stat error",
   "ERR.DS_API.FIELD.NOT_FOUND": "Using non-existent field",
   "ERR.DS_API.FILTER.INVALID_VALUE": "Incorrect filter value",
   "ERR.DS_API.FORMULA": "Error in formula",

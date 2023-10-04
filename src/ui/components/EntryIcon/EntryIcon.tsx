@@ -32,7 +32,6 @@ import iconMSSQL from '../../assets/icons/files-con-mssql.svg';
 import iconMySQL from '../../assets/icons/files-con-mysql.svg';
 import iconOracle from '../../assets/icons/files-con-oracle.svg';
 import iconPostgreSQL from '../../assets/icons/files-con-postgresql.svg';
-import iconStatfaceReport from '../../assets/icons/files-con-statface-report.svg';
 import iconUsageTrackingYT from '../../assets/icons/files-con-utyt.svg';
 import iconYaMusicPodcast from '../../assets/icons/files-con-ya-music-podcast.svg';
 import iconYDB from '../../assets/icons/files-con-ydb.svg';
@@ -72,8 +71,6 @@ const typeToIcon: Record<string, IconData> = {
     [ConnectorType.ChOverYt]: iconCHYT,
     [ConnectorType.ChOverYtUserAuth]: iconCHYTUser,
     [ConnectorType.Chyt]: iconChytYC,
-    [ConnectorType.StatfaceReport]: iconStatfaceReport,
-    [ConnectorType.StatfaceReportSql]: iconStatfaceReport,
     [ConnectorType.Chydb]: iconCHYDB,
     [ConnectorType.Ydb]: iconYDB,
     [ConnectorType.Yq]: iconYQ,
