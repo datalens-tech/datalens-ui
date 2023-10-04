@@ -10,6 +10,7 @@ $contentMobilePadding: 16px;
     flex: 1;
     overflow: hidden;
     text-size-adjust: none;
+    $bodyClass: &;
 
     // redefining the style of the internal header at the dashboard level by design so that it looks the same with the headers
     & .yc-select-control__label {
@@ -35,6 +36,15 @@ $contentMobilePadding: 16px;
 
         &_with-edit-panel {
             padding-bottom: 124px;
+        }
+
+        & #{$bodyClass}__edit-panel {
+            z-index: 100;
+            left: calc(50vw + #{$sideMenuCompactWidth} / 2);
+        }
+
+        & #{$bodyClass}__edit-panel_aside-opened {
+            left: calc(50vw + #{$sideMenuFullWidth} / 2);
         }
     }
 
@@ -80,14 +90,5 @@ $contentMobilePadding: 16px;
         font-weight: 500;
         background-color: var(--g-color-base-generic-ultralight);
         padding: 16px 24px 4px;
-    }
-
-    &__edit-panel {
-        z-index: 100;
-        left: calc(50vw + #{$sideMenuCompactWidth} / 2);
-
-        &_aside-opened {
-            left: calc(50vw + #{$sideMenuFullWidth} / 2);
-        }
     }
 }
