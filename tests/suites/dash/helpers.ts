@@ -1,8 +1,8 @@
 import {Page} from '@playwright/test';
 
 import {waitForCondition, slct} from '../../utils';
-import {COMMON_SELECTORS} from '../../utils/constants';
 import {DialogTabsQA} from '../../../src/shared/constants';
+import type DashboardPage from '../../page-objects/dashboard/DashboardPage';
 
 const SELECTORS = {
     TABLE_CELL_CONTENT: '.chartkit-table__content_text',
@@ -82,9 +82,9 @@ export async function dragAndDropListItem(
     await page.mouse.up();
 }
 
-export async function openTabPopupWidgetOrder(page: Page, tabIndex?: number) {
-    await page.click(slct(COMMON_SELECTORS.ACTION_BTN_TABS));
-    const tabsDialog = await page.waitForSelector(slct(DialogTabsQA.Dialog));
+export async function openTabPopupWidgetOrder(dashboardPage: DashboardPage, tabIndex?: number) {
+    await dashboardPage.clickTabs();
+    const tabsDialog = await dashboardPage.waitForSelector(slct(DialogTabsQA.Dialog));
 
     const tabsRows = await tabsDialog.$$(SELECTORS.TAB_ROW);
     expect(tabsRows.length).toBeGreaterThan(tabIndex || 0);
@@ -93,9 +93,9 @@ export async function openTabPopupWidgetOrder(page: Page, tabIndex?: number) {
     const tabRowDropdown = await tabRow.$(slct(DialogTabsQA.TabItemMenu));
     await tabRowDropdown?.click({force: true});
 
-    await page.click(`[data-qa="${DialogTabsQA.TabItemMenuOrder}"]`);
-    await page.waitForSelector(slct(DialogTabsQA.PopupWidgetOrder));
-    const popupWidgetOrderList = await page.waitForSelector(
+    await dashboardPage.page.click(`[data-qa="${DialogTabsQA.TabItemMenuOrder}"]`);
+    await dashboardPage.waitForSelector(slct(DialogTabsQA.PopupWidgetOrder));
+    const popupWidgetOrderList = await dashboardPage.waitForSelector(
         slct(DialogTabsQA.PopupWidgetOrderList),
     );
 

@@ -78,3 +78,13 @@ export type Categories = (string | number)[];
 export type LayerChartMeta = {
     isCategoriesSortAvailable?: boolean;
 };
+
+export type PiePoint = {
+    name: string;
+    formattedName: string;
+    drillDownFilterValue: string;
+    y: number;
+    colorGuid: string;
+    colorValue: string | number;
+    label?: string | number | null;
+};

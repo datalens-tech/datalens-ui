@@ -1,5 +1,3 @@
-import {AppContext} from '@gravity-ui/nodekit';
-
 export enum Feature {
     ToggleTheme = 'toggleTheme',
     SuggestEnabled = 'suggestEnabled',
@@ -92,16 +90,7 @@ export enum Feature {
     UseChartsEngineResponseConfig = 'UseChartsEngineResponseConfig',
     UseChartsEngineLogin = 'UseChartsEngineLogin',
     AddDemoWorkbook = 'AddDemoWorkbook',
+    DashKitItemAnimationDisabled = 'DashKitItemAnimationDisabled',
 }
 
 export type FeatureConfig = Record<string, boolean>;
-
-export const isEnabledServerFeature = (ctx: AppContext, feature: string) => {
-    const featureDynamicStatus = ctx.dynamicConfig?.features?.[feature];
-
-    if (typeof featureDynamicStatus !== 'undefined') {
-        return featureDynamicStatus;
-    }
-
-    return ctx.config.features[feature];
-};

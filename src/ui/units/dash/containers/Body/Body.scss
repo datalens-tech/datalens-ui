@@ -1,3 +1,8 @@
+@import '../../../../styles/variables';
+
+$contentPadding: 24px;
+$contentMobilePadding: 16px;
+
 .dash-body {
     position: relative;
     display: flex;
@@ -14,18 +19,18 @@
     &__content {
         width: 100%;
         transition: width 0.1s;
-        padding: 20px 24px 48px;
+        padding: 20px #{$contentPadding} 48px;
 
         &_with-table-of-content {
             width: calc(100% - 250px);
         }
 
         &_mobile {
-            padding: 8px 16px 18px;
+            padding: 8px #{$contentMobilePadding} 18px;
         }
 
         &_aside {
-            padding: 0 24px 48px;
+            padding: 0 #{$contentPadding} 48px;
         }
 
         &_with-edit-panel {
@@ -77,7 +82,12 @@
         padding: 16px 24px 4px;
     }
 
-    &__edit-panel-item {
-        width: 100px;
+    &__edit-panel {
+        z-index: 100;
+        left: calc(50vw + #{$sideMenuCompactWidth} / 2);
+
+        &_aside-opened {
+            left: calc(50vw + #{$sideMenuFullWidth} / 2);
+        }
     }
 }

@@ -4,11 +4,12 @@ import {
     DashKit as DashKitComponent,
     DashKitProps,
     ActionPanel as DashkitActionPanel,
+    ActionPanelItem as DashkitActionPanelItem,
     MenuItems,
 } from '@gravity-ui/dashkit';
 import {
     ChartColumn,
-    CopyCheck,
+    CopyPlus,
     Gear,
     Heading,
     Layers3Diagonal,
@@ -28,8 +29,9 @@ import debounce from 'lodash/debounce';
 import {ResolveThunks, connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {ControlQA, DashData, DashTab, DashTabItem, Feature} from 'shared';
+import {ControlQA, DashData, DashTab, DashTabItem, DashboardAddWidgetQa, Feature} from 'shared';
 import {DatalensGlobalState} from 'ui';
+import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
@@ -191,60 +193,66 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     getActionPanelItems() {
-        const items = [
+        const items: DashkitActionPanelItem[] = [
             {
                 id: 'chart',
                 icon: <Icon data={ChartColumn} />,
-                title: 'Chart',
+                title: i18n('dash.main.view', 'button_edit-panel-chart'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.WIDGET);
                 },
+                qa: DashboardAddWidgetQa.AddWidget,
             },
             {
                 id: 'selector',
                 icon: <Icon data={Sliders} />,
-                title: 'Selector',
+                title: i18n('dash.main.view', 'button_edit-panel-selector'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.CONTROL);
                 },
+                qa: DashboardAddWidgetQa.AddControl,
             },
             {
                 id: 'text',
                 icon: <Icon data={TextAlignLeft} />,
-                title: 'Text',
+                title: i18n('dash.main.view', 'button_edit-panel-text'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.TEXT);
                 },
+                qa: DashboardAddWidgetQa.AddText,
             },
             {
                 id: 'header',
                 icon: <Icon data={Heading} />,
-                title: 'Header',
+                title: i18n('dash.main.view', 'button_edit-panel-title'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.TITLE);
                 },
+                qa: DashboardAddWidgetQa.AddTitle,
             },
             {
                 id: 'links',
                 icon: <Icon data={PlugConnection} />,
-                title: 'Links',
+                title: i18n('dash.main.view', 'button_edit-panel-links'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
                 },
+                qa: DashboardAddWidgetQa.Links,
             },
             {
                 id: 'tabs',
                 icon: <Icon data={Layers3Diagonal} />,
-                title: 'Tabs',
+                title: i18n('dash.main.view', 'button_edit-panel-tabs'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.TABS);
                 },
+                qa: DashboardAddWidgetQa.Tabs,
             },
         ];
 
@@ -252,8 +260,8 @@ class Body extends React.PureComponent<BodyProps> {
         if (copiedData) {
             items.push({
                 id: 'paste',
-                icon: <Icon data={CopyCheck} />,
-                title: 'Paste widget',
+                icon: <Icon data={CopyPlus} />,
+                title: i18n('dash.main.view', 'button_edit-panel-paste'),
                 className: b('edit-panel-item'),
                 onClick: () => {
                     this.props.onPasteItem(copiedData);
@@ -277,6 +285,7 @@ class Body extends React.PureComponent<BodyProps> {
             tabData,
             handlerEditClick,
             isEditModeLoading,
+            isSidebarOpened,
         } = this.props;
 
         switch (mode) {
@@ -402,10 +411,18 @@ class Body extends React.PureComponent<BodyProps> {
                                     ) as DashKitProps['globalParams']
                                 }
                                 overlayControls={overlayControls}
+                                _experimentDisableItemAnimation={Utils.isEnabledFeature(
+                                    Feature.DashKitItemAnimationDisabled,
+                                )}
                             />
                         )}
                         {showEditActionPanel && (
-                            <DashkitActionPanel items={this.getActionPanelItems()} />
+                            <DashkitActionPanel
+                                items={this.getActionPanelItems()}
+                                className={b('edit-panel', {
+                                    'aside-opened': isSidebarOpened,
+                                })}
+                            />
                         )}
                     </div>
                 </div>
@@ -441,6 +458,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     canEdit: canEdit(state),
     tabs: selectTabs(state),
     tabId: getCurrentTabId(state),
+    isSidebarOpened: !selectAsideHeaderIsCompact(state),
 });
 
 const mapDispatchToProps = {

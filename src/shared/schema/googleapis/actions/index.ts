@@ -4,6 +4,7 @@ import type {
     GetAuthorizationUrlResponse,
     GetGCredentialsArgs,
     GetGCredentialsResponse,
+    RevokeGRefreshTokenArgs,
 } from '../types';
 
 export const actions = {
@@ -35,15 +36,21 @@ export const actions = {
                 throw new Error('Oauth2Client isn`t initialized');
             }
 
-            try {
-                const {
-                    tokens: {refresh_token, access_token},
-                } = await googleOAuthClient.getToken(code);
+            const {
+                tokens: {refresh_token, access_token},
+            } = await googleOAuthClient.getToken(code);
 
-                return {refreshToken: refresh_token, accessToken: access_token};
-            } catch {
-                throw new Error('Failed to get credentials');
-            }
+            return {refreshToken: refresh_token, accessToken: access_token};
         },
     ),
+    revokeToken: createAction<void, RevokeGRefreshTokenArgs>(async (_api, args, {ctx}) => {
+        const {refreshToken} = args;
+        const {googleOAuthClient} = ctx.get('gateway');
+
+        if (!googleOAuthClient) {
+            throw new Error('Oauth2Client isn`t initialized');
+        }
+
+        return googleOAuthClient.revokeToken(refreshToken);
+    }),
 };
