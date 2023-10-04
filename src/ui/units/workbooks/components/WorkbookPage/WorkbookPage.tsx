@@ -2,13 +2,15 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
+import {PencilToLine} from '@gravity-ui/icons';
 import {ActionBar} from '@gravity-ui/navigation';
-import {Button, Icon} from '@gravity-ui/uikit';
+import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {CollectionBreadcrumbs} from 'components/Breadcrumbs/CollectionBreadcrumbs/CollectionBreadcrumbs';
 import {DIALOG_EDIT_WORKBOOK} from 'components/CollectionsStructure';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {ViewError} from 'components/ViewError/ViewError';
+import {I18N} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
 import {Utils} from 'ui';
@@ -41,11 +43,11 @@ import {WorkbookTabs} from '../WorkbookTabs/WorkbookTabs';
 import {TAB_ALL} from '../WorkbookTabs/constants';
 import {TabId} from '../WorkbookTabs/types';
 
-import PencilToLineIcon from '@gravity-ui/icons/svgs/pencil-to-line.svg';
-
 import './WorkbookPage.scss';
 
 const b = block('dl-workbook-page');
+
+const i18n = I18N.keyset('new-workbooks');
 
 export const WorkbookPage = () => {
     const {search} = useLocation();
@@ -181,27 +183,29 @@ export const WorkbookPage = () => {
                         <div className={b('title-content')}>
                             <h1 className={b('title')}>{workbook?.title}</h1>
                             {workbook?.permissions.update && (
-                                <Button
-                                    onClick={() => {
-                                        dispatch(
-                                            openDialog({
-                                                id: DIALOG_EDIT_WORKBOOK,
-                                                props: {
-                                                    open: true,
-                                                    workbookId: workbook.workbookId,
-                                                    title: workbook.title,
-                                                    description: workbook?.description ?? '',
-                                                    onApply: refreshWorkbookInfo,
-                                                    onClose: () => {
-                                                        dispatch(closeDialog());
+                                <Tooltip content={i18n('action_edit')}>
+                                    <Button
+                                        onClick={() => {
+                                            dispatch(
+                                                openDialog({
+                                                    id: DIALOG_EDIT_WORKBOOK,
+                                                    props: {
+                                                        open: true,
+                                                        workbookId: workbook.workbookId,
+                                                        title: workbook.title,
+                                                        description: workbook?.description ?? '',
+                                                        onApply: refreshWorkbookInfo,
+                                                        onClose: () => {
+                                                            dispatch(closeDialog());
+                                                        },
                                                     },
-                                                },
-                                            }),
-                                        );
-                                    }}
-                                >
-                                    <Icon data={PencilToLineIcon} />
-                                </Button>
+                                                }),
+                                            );
+                                        }}
+                                    >
+                                        <Icon data={PencilToLine} />
+                                    </Button>
+                                </Tooltip>
                             )}
                         </div>
                         {workbook?.description && (

@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {ChevronDown} from '@gravity-ui/icons';
+import {ArrowRight, ChevronDown, LockOpen} from '@gravity-ui/icons';
 import {
     Button,
     DropdownMenu,
     DropdownMenuItem,
     DropdownMenuItemMixed,
     Icon,
+    Tooltip,
 } from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -22,7 +23,6 @@ import Utils from '../../../../utils';
 import collectionIcon from '../../../../assets/icons/collections/collection.svg';
 import workbookDemoIcon from '../../../../assets/icons/collections/workbook-demo.svg';
 import workbookIcon from '../../../../assets/icons/collections/workbook.svg';
-import LockOpenIcon from '@gravity-ui/icons/svgs/lock-open.svg';
 
 import './CollectionActions.scss';
 
@@ -136,10 +136,23 @@ export const CollectionActions = React.memo<Props>(
         return (
             <div className={b(null, className)}>
                 {collectionData && collectionData.permissions.move && (
-                    <Button className={b('move')} onClick={onMoveClick}>
-                        {i18n('action_move')}
-                    </Button>
+                    <Tooltip content={i18n('action_move')}>
+                        <Button className={b('move')} onClick={onMoveClick}>
+                            <Icon data={ArrowRight} />
+                        </Button>
+                    </Tooltip>
                 )}
+
+                {collectionData &&
+                    collectionsAccessEnabled &&
+                    collectionData.permissions.listAccessBindings && (
+                        <Tooltip content={i18n('action_access')}>
+                            <Button className={b('access')} onClick={onEditAccessClick}>
+                                <Icon data={LockOpen} />
+                            </Button>
+                        </Tooltip>
+                    )}
+
                 {(showCreateCollection || showCreateWorkbook) && (
                     <DropdownMenu
                         size="s"
@@ -152,15 +165,6 @@ export const CollectionActions = React.memo<Props>(
                             </Button>
                         }
                     />
-                )}
-                {collectionData && (
-                    <React.Fragment>
-                        {collectionsAccessEnabled && collectionData.permissions.listAccessBindings && (
-                            <Button className={b('access')} onClick={onEditAccessClick}>
-                                <Icon data={LockOpenIcon} />
-                            </Button>
-                        )}
-                    </React.Fragment>
                 )}
             </div>
         );

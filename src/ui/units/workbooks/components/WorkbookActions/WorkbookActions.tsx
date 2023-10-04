@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
+import {ArrowRight, Copy, LockOpen} from '@gravity-ui/icons';
+import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DIALOG_COPY_WORKBOOK, DIALOG_MOVE_WORKBOOK} from 'components/CollectionsStructure';
 import {I18N} from 'i18n';
@@ -15,8 +16,6 @@ import {registry} from '../../../../registry';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
 import Utils from '../../../../utils';
 import {CreateEntry} from '../CreateEntry/CreateEntry';
-
-import LockOpenIcon from '@gravity-ui/icons/svgs/lock-open.svg';
 
 import './WorkbookActions.scss';
 
@@ -66,7 +65,9 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
     };
 
     const {useAdditionalWorkbookActions} = registry.workbooks.functions.getAll();
-    const additionalActions = useAdditionalWorkbookActions(workbook);
+    const classNameIconAction = b('icon-action');
+
+    const additionalActions = useAdditionalWorkbookActions(workbook, classNameIconAction);
 
     const dropdownActions = [...additionalActions];
 
@@ -89,7 +90,12 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                     }),
                 );
             },
-            text: i18n('action_move'),
+            text: (
+                <>
+                    <Icon data={ArrowRight} className={classNameIconAction} />
+                    {i18n('action_move')}
+                </>
+            ),
         });
 
         if (workbook.permissions.copy) {
@@ -111,7 +117,12 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                         }),
                     );
                 },
-                text: i18n('action_copy'),
+                text: (
+                    <>
+                        <Icon data={Copy} className={classNameIconAction} />
+                        {i18n('action_copy')}
+                    </>
+                ),
             });
         }
     }
@@ -124,24 +135,26 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                 </div>
             )}
 
+            {collectionsAccessEnabled && workbook.permissions.listAccessBindings && (
+                <Tooltip content={i18n('action_access')}>
+                    <div className={b('item')}>
+                        <Button
+                            onClick={() => {
+                                setIamAccessDialogIsOpen(true);
+                            }}
+                        >
+                            <Icon data={LockOpen} />
+                        </Button>
+                    </div>
+                </Tooltip>
+            )}
+
             {Boolean(dropdownActions.length) && (
                 <DropdownMenu
                     defaultSwitcherProps={{view: 'normal'}}
                     switcherWrapperClassName={b('item')}
                     items={dropdownActions}
                 />
-            )}
-
-            {collectionsAccessEnabled && workbook.permissions.listAccessBindings && (
-                <div className={b('item')}>
-                    <Button
-                        onClick={() => {
-                            setIamAccessDialogIsOpen(true);
-                        }}
-                    >
-                        <Icon data={LockOpenIcon} />
-                    </Button>
-                </div>
             )}
 
             {collectionsAccessEnabled && workbook.permissions.listAccessBindings && (

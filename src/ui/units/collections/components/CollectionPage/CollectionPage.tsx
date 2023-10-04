@@ -1,7 +1,8 @@
 import React from 'react';
 
+import {PencilToLine} from '@gravity-ui/icons';
 import {CancellablePromise} from '@gravity-ui/sdk';
-import {Button, Icon} from '@gravity-ui/uikit';
+import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {CollectionBreadcrumbs} from 'components/Breadcrumbs/CollectionBreadcrumbs/CollectionBreadcrumbs';
 import {
@@ -45,8 +46,6 @@ import {GetCollectionContentArgs} from '../../types';
 import {CollectionActionPanel} from '../CollectionActionPanel/CollectionActionPanel';
 import {CollectionActions} from '../CollectionActions/CollectionActions';
 import {CollectionLayout} from '../CollectionLayout/CollectionLayout';
-
-import PencilToLineIcon from '@gravity-ui/icons/svgs/pencil-to-line.svg';
 
 import './CollectionPage.scss';
 
@@ -428,9 +427,11 @@ export const CollectionPage = React.memo<Props>(
                                 Boolean(
                                     curCollectionId && collection && collection.permissions.update,
                                 ) && (
-                                    <Button onClick={onEditClick}>
-                                        <Icon data={PencilToLineIcon} />
-                                    </Button>
+                                    <Tooltip content={i18n('action_edit')}>
+                                        <Button onClick={onEditClick}>
+                                            <Icon data={PencilToLine} />
+                                        </Button>
+                                    </Tooltip>
                                 )
                             }
                             description={

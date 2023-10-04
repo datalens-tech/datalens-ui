@@ -23,6 +23,9 @@ export const workbooksFunctionsMap = {
         >(),
     useAdditionalWorkbookActions:
         makeFunctionTemplate<
-            (workbook: WorkbookWithPermissions) => DropdownMenuItemMixed<unknown>[]
+            (
+                workbook: WorkbookWithPermissions,
+                classNameIconAction: string,
+            ) => DropdownMenuItemMixed<unknown>[]
         >(),
 } as const;
