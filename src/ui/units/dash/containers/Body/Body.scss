@@ -83,20 +83,11 @@ $contentMobilePadding: 16px;
     }
 
     &__edit-panel {
-        left: calc(50% + #{$sideMenuCompactWidth} / 2 + #{$contentPadding});
+        z-index: 100;
+        left: calc(50vw + #{$sideMenuCompactWidth} / 2);
 
         &_aside-opened {
-            left: calc(50% + #{$sideMenuFullWidth} / 2 + #{$contentPadding});
-        }
-    }
-
-    @media screen and (max-width: 1100px) {
-        &__edit-panel {
-            left: calc(50% + #{$contentPadding});
-
-            &_aside-opened {
-                left: calc(50% + #{$contentPadding});
-            }
+            left: calc(50vw + #{$sideMenuFullWidth} / 2);
         }
     }
 }
