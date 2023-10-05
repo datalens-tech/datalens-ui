@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {DashTabConnectionKind} from 'shared';
 
 import {
@@ -55,6 +57,8 @@ export type ConnectionsData = Array<{
 export type AliasClickHandlerData = {
     showDebugInfo: boolean;
     currentRow: DashkitMetaDataItem;
+    relationText: React.ReactNode | string;
+    relationType: RelationType;
 };
 
 export type AliasClickHandlerArgs = AliasClickHandlerData & {
