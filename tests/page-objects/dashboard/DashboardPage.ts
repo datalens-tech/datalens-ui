@@ -334,12 +334,6 @@ class DashboardPage extends BasePage {
 
     async clickOnLinksBtn() {
         // click on the "connections" button
-        const isNewPanelEnabled = await isEnabledFeature(this.page, Feature.DashEditPanelEnabled);
-        if (isNewPanelEnabled) {
-            await this.page.click(slct(DashboardAddWidgetQa.Links));
-            return;
-        }
-
         await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_CONNECTIONS));
     }
 
@@ -507,12 +501,6 @@ class DashboardPage extends BasePage {
 
     async clickTabs() {
         // click on the "tabs" button
-        const isNewPanelEnabled = await isEnabledFeature(this.page, Feature.DashEditPanelEnabled);
-        if (isNewPanelEnabled) {
-            await this.page.click(slct(DashboardAddWidgetQa.Tabs));
-            return;
-        }
-
         await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_TABS));
     }
 
