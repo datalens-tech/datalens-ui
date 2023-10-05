@@ -3,6 +3,7 @@
   "404": "Data source not found",
   "ERR.CHARTS.CONFIG_LOADING_ERROR": "No view rights for <link>chart</link>",
   "ERR.CHARTS.REQUEST_SIZE_LIMIT_EXCEEDED": "Data size limit exceeded",
+  "ERR.CHARTS.UNSUPPORTED_DATA_TYPE": "Unsupported data type",
   "ERR.DS_API": "Datasets internal error",
   "ERR.DS_API.CLIQUE_STOPPED": "CHYT clique is not running",
   "ERR.DS_API.DATABASE_UNAVAILABLE": "Database unavailable",
