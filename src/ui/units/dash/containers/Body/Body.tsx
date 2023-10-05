@@ -7,16 +7,7 @@ import {
     ActionPanelItem as DashkitActionPanelItem,
     MenuItems,
 } from '@gravity-ui/dashkit';
-import {
-    ChartColumn,
-    CopyPlus,
-    Gear,
-    Heading,
-    Layers3Diagonal,
-    PlugConnection,
-    Sliders,
-    TextAlignLeft,
-} from '@gravity-ui/icons';
+import {ChartColumn, CopyPlus, Gear, Heading, Sliders, TextAlignLeft} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
@@ -233,26 +224,6 @@ class Body extends React.PureComponent<BodyProps> {
                     this.props.openDialog(DIALOG_TYPE.TITLE);
                 },
                 qa: DashboardAddWidgetQa.AddTitle,
-            },
-            {
-                id: 'links',
-                icon: <Icon data={PlugConnection} />,
-                title: i18n('dash.main.view', 'button_edit-panel-links'),
-                className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
-                },
-                qa: DashboardAddWidgetQa.Links,
-            },
-            {
-                id: 'tabs',
-                icon: <Icon data={Layers3Diagonal} />,
-                title: i18n('dash.main.view', 'button_edit-panel-tabs'),
-                className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.TABS);
-                },
-                qa: DashboardAddWidgetQa.Tabs,
             },
         ];
 
