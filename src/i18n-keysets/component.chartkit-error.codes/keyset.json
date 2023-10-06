@@ -25,6 +25,8 @@
       "ru": "APPROVED"
     },
     "ERR.CHARTS.UNSUPPORTED_DATA_TYPE": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
     },
     "ERR.DS_API": {
       "en": "APPROVED",
