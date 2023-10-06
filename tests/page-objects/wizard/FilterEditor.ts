@@ -27,6 +27,11 @@ export default class FilterEditor {
         const startDate = dateValue[0];
         const endDate = dateValue[1];
 
+        const closeDatepickerPopup = () => {
+            // position is needed just for click on the left corner of container
+            return this.page.click('.dl-dialog-filter__body', {position: {x: 0, y: 0}});
+        };
+
         if (startDate) {
             await this.page.fill(
                 `.dl-dialog-filter__body ${slct('datepicker-start')} .yc-text-input__control`,
@@ -34,14 +39,14 @@ export default class FilterEditor {
             );
         }
 
-        await this.page.keyboard.press('Enter');
+        await closeDatepickerPopup();
 
         await this.page.fill(
             `.dl-dialog-filter__body ${slct('datepicker-end')} .yc-text-input__control`,
             endDate,
         );
 
-        await this.page.keyboard.press('Enter');
+        await closeDatepickerPopup();
     }
 
     async selectValues(fields: string[]) {
