@@ -63,14 +63,13 @@ export type CommentsFetcherFetchResult = {
 
 export class CommentsFetcher {
     static async fetch(
-        {feeds, statFeed, meta: {matchType = 'full', dateFrom, dateTo}}: CommentsFetcherFetchParams,
+        {feeds, meta: {matchType = 'full', dateFrom, dateTo}}: CommentsFetcherFetchParams,
         headers: AxiosRequestConfig['headers'],
         ctx: AppContext,
     ): Promise<CommentsFetcherFetchResult> {
         const comments: UsComment[] = [];
         const logs: {path?: string; feed?: string; error: Error['message']}[] = [];
 
-        const statfaceBackendEndpoint = ctx.config.endpoints.api.statApi;
         const usEndpoint = ctx.config.endpoints.api.us;
 
         // Filtering feeds to cancel loading same feeds
@@ -116,28 +115,6 @@ export class CommentsFetcher {
                 },
             );
         });
-
-        if (statFeed) {
-            requests.push(
-                axios({
-                    method: 'get',
-                    url: `${statfaceBackendEndpoint}/_v3/comments`,
-                    headers,
-                    params: {
-                        ...statFeed,
-                        date_min_ms: moment(dateFrom).valueOf(),
-                        date_max_ms: moment(dateTo).valueOf(),
-                    },
-                    timeout: TEN_SECONDS,
-                }).then(
-                    ({data}) => comments.push(...data.comments),
-                    (error) => {
-                        logs.push({path: statFeed.path, error: error.message});
-                        ctx.logError('FETCH_COMMENTS_STAT_ERROR', error);
-                    },
-                ),
-            );
-        }
 
         await Promise.all(requests);
 

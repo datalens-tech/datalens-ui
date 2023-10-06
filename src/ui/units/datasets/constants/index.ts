@@ -248,8 +248,6 @@ export const SUBSELECT_SOURCE_TYPES = [
     'CHYDB_SUBSELECT',
     'YDB_SUBSELECT',
     'YQ_SUBSELECT',
-    'STATFACE_REPORT',
-    'STATFACE_REPORT_SQL',
 ];
 
 export * from './datasets';

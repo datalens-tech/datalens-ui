@@ -36,8 +36,6 @@ export enum ConnectorType {
     Oracle = 'oracle',
     Postgres = 'postgres',
     Snowflake = 'snowflake',
-    StatfaceReport = 'statface_report',
-    StatfaceReportSql = 'statface_report_sql',
     UsageTrackingYT = 'usage_tracking_ya_team',
     Ydb = 'ydb',
     Yt = 'yt',

@@ -105,27 +105,18 @@ export const EditControls = (props: EditControlsProps) => {
                 <Icon data={Gear} height={18} width={18} />
             </Button>
             <Description canEdit={true} entryDialoguesRef={entryDialoguesRef} />
-            {showButtons && (
-                <React.Fragment>
-                    <Button
-                        view="normal"
-                        size="m"
-                        onClick={onOpenDialogConnectionsClick}
-                        qa="action-button-connections"
-                    >
-                        {i18n('button_connections')}
-                    </Button>
-                    <Button
-                        view="normal"
-                        size="m"
-                        onClick={onOpenDialogTabsClick}
-                        qa="action-button-tabs"
-                    >
-                        {i18n('button_tabs')}
-                    </Button>
-                    <AddWidget openDialog={openDialog} onPasteWidget={onPasteWidget} />
-                </React.Fragment>
-            )}
+            <Button
+                view="normal"
+                size="m"
+                onClick={onOpenDialogConnectionsClick}
+                qa="action-button-connections"
+            >
+                {i18n('button_connections')}
+            </Button>
+            <Button view="normal" size="m" onClick={onOpenDialogTabsClick} qa="action-button-tabs">
+                {i18n('button_tabs')}
+            </Button>
+            {showButtons && <AddWidget openDialog={openDialog} onPasteWidget={onPasteWidget} />}
             {savingControls}
             <NavigationPrompt key="navigation-prompt" when={isDraft && !isRenameWithoutReload} />
             <EntryDialogues ref={entryDialoguesRef} />

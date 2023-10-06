@@ -7,5 +7,6 @@
     "label_card": "Restrictions: you cannot create aliases on fields of the same dataset (field reassignment is not supported).",
     "label_collapse-label": "List of all aliases added",
     "label_empty": "No aliases configured",
+    "label_link-type": "Current link type",
     "button_add-alias": "Add alias"
 }

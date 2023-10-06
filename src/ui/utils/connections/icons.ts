@@ -33,7 +33,6 @@ import iconPromql from '../../assets/icons/connections/prometheus.svg';
 import iconSchoolbookJournal from '../../assets/icons/connections/schoolbook-journal.svg';
 import iconSmbHeatmaps from '../../assets/icons/connections/smb-heatmaps.svg';
 import iconSnowflake from '../../assets/icons/connections/snowflake.svg';
-import iconStatfaceReport from '../../assets/icons/connections/statface-report.svg';
 import iconUndefined from '../../assets/icons/connections/undefined.svg';
 import iconUsageTrackingYT from '../../assets/icons/connections/utyt.svg';
 import iconYaMusicPodcast from '../../assets/icons/connections/ya-music-podcast.svg';
@@ -85,9 +84,6 @@ export const getConnectorIconDataWithoutDefault = (type?: string): IconData | un
             return iconMetrica;
         case ConnectorType.AppMetrica:
             return iconAppMetrica;
-        case ConnectorType.StatfaceReport:
-        case ConnectorType.StatfaceReportSql:
-            return iconStatfaceReport;
         case ConnectorType.Chydb:
             return iconCHYDB;
         case ConnectorType.Ydb:
