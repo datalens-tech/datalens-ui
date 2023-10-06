@@ -29,7 +29,7 @@ export type OpenDialogAliasesArgs = {
 
 export type DialogAliasesProps = AliasClickHandlerArgs & {
     onClose: () => void;
-    relationText: React.ReactNode | string;
+    relationText: React.ReactNode;
     relationType: RelationType;
 };
 

@@ -57,7 +57,7 @@ export type ConnectionsData = Array<{
 export type AliasClickHandlerData = {
     showDebugInfo: boolean;
     currentRow: DashkitMetaDataItem;
-    relationText: React.ReactNode | string;
+    relationText: React.ReactNode;
     relationType: RelationType;
 };
 
