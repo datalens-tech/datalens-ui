@@ -118,10 +118,10 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                     );
                 },
                 text: (
-                    <>
+                    <React.Fragment>
                         <Icon data={Copy} className={classNameIconAction} />
                         {i18n('action_copy')}
-                    </>
+                    </React.Fragment>
                 ),
             });
         }
@@ -129,10 +129,12 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
 
     return (
         <div className={b()}>
-            {workbook.permissions.update && (
-                <div className={b('item')}>
-                    <CreateEntry view="action" />
-                </div>
+            {Boolean(dropdownActions.length) && (
+                <DropdownMenu
+                    defaultSwitcherProps={{view: 'normal'}}
+                    switcherWrapperClassName={b('item')}
+                    items={dropdownActions}
+                />
             )}
 
             {collectionsAccessEnabled && workbook.permissions.listAccessBindings && (
@@ -149,12 +151,10 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                 </Tooltip>
             )}
 
-            {Boolean(dropdownActions.length) && (
-                <DropdownMenu
-                    defaultSwitcherProps={{view: 'normal'}}
-                    switcherWrapperClassName={b('item')}
-                    items={dropdownActions}
-                />
+            {workbook.permissions.update && (
+                <div className={b('item')}>
+                    <CreateEntry view="action" />
+                </div>
             )}
 
             {collectionsAccessEnabled && workbook.permissions.listAccessBindings && (
