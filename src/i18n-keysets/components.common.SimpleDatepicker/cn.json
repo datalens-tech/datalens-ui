@@ -1,5 +1,5 @@
 {
-  "default_date_placeholder": "YYYY - MM - DD",
+  "default_date_placeholder": "YYYY-MM-DD",
   "default_ru_date_placeholder": "DD. MM. YYYY",
   "time_placeholder": "HH: MM",
   "time_with_sec_placeholder": "HH: MM: SS",

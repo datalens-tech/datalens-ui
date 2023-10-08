@@ -1,9 +1,9 @@
 {
   "button_cancel": "取消",
   "button_download": "保存",
-  "label_attention": "如果启用了分页 ， 则仅导出显示的表行",
+  "label_attention": "如果启用了分页，则仅导出显示的表行",
   "label_decimal-delimiter": "分数分隔符",
-  "label_encoding": "Encoding",
+  "label_encoding": "编码",
   "label_hint": "按住 CMD /CTRL 键的同时单击菜单元素可以跳过此对话框",
   "label_title": "另存为 CSV",
   "label_values-delimiter": "分隔符",

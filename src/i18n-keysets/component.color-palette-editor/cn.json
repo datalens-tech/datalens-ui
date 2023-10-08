@@ -17,7 +17,7 @@
   "label_gradient-palette-description": "它们与数字指标一起使用。",
   "label_gradient-palette-title": "渐变调色板",
   "label_header-caption": "配置调色板",
-  "label_palette-description": "它们用于离散值 ： 指标名称 ， 测量值。",
+  "label_palette-description": "它们用于离散值 ： 指标名称，测量值。",
   "label_palette-name": "调色板名称",
   "label_palette-title": "调色板",
   "toast_create-failed": "无法创建调色板",

@@ -28,8 +28,8 @@
   "label_delete-param": "删除参数",
   "label_delete-param-value": "删除参数值",
   "label_duplicate": "重复",
-  "label_empty-chart": "当您编写 SQL 查询并按下左下角的运行时 ， 可视化将显示在此处",
-  "label_empty-chart_il": "只要您选择一个连接 ， 编写一个 SQL 查询 ， 然后单击左下角的运行 ， 可视化就会出现在此处。",
+  "label_empty-chart": "当您编写 SQL 查询并按下左下角的运行时，可视化将显示在此处",
+  "label_empty-chart_il": "只要您选择一个连接，编写一个 SQL 查询，然后单击左下角的运行，可视化就会出现在此处。",
   "label_new-chart-type-text": "选择要开始的图表类型:",
   "label_new-connection-text": "选择要启动的连接:",
   "label_params": "Params",
@@ -52,5 +52,5 @@
   "label_visualization-pie": "饼图",
   "label_visualization-scatter": "散点图",
   "label_visualization-treemap": "树状图",
-  "text_default-name": "新 QL - Å hart"
+  "text_default-name": "新 QL-chart"
 }

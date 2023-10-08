@@ -23,7 +23,7 @@
   "value_link-affect": "影响",
   "value_link-both": "小部件相互影响",
   "value_link-ignore": "小部件不会相互影响",
-  "value_link-unknown": "由于小部件加载错误 ， 未定义链接",
+  "value_link-unknown": "由于小部件加载错误，未定义链接",
   "value_quote-left": "”",
   "value_quote-right": "”",
   "button_delete-alias": "删除别名",

@@ -1,6 +1,6 @@
 {
   "categories": "类别",
-  "date": "Date",
+  "date": "日期",
   "error-authorization": "授权错误",
   "error-chyt-table-access": "无法访问 YT 表",
   "error-data-fetching": "数据提取错误",
@@ -11,7 +11,7 @@
   "error-not-loaded": "图表加载错误",
   "error-oversize-segments": "最大拆分数为 {{maxNumber}}",
   "error-oversize-table": "已超过 {{type}} 的最大数量",
-  "error-oversize_cells": "细胞",
+  "error-oversize_cells": "单元格",
   "error-oversize_columns": "列",
   "error-processing": "图表处理错误",
   "error-runtime-timeout": "响应处理超时",

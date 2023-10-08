@@ -9,7 +9,7 @@
   "label_doc-list-placeholder": "功能",
   "label_field-already-exist": "具有指定名称的字段已存在。",
   "label_field-id": "字段 ID",
-  "label_field-id-hint": "字段 ID 用于在仪表板或图表 URL 上传递此字段的筛选参数。允许使用小写的拉丁字母以及字符 “_ ” 和“ - ”。",
+  "label_field-id-hint": "字段 ID 用于在仪表板或图表 URL 上传递此字段的筛选参数。允许使用小写的拉丁字母以及字符 “_ ” 和“-”。",
   "label_field-name": "Name",
   "label_field-name-placeholder": "字段名称",
   "label_field-source": "源字段",

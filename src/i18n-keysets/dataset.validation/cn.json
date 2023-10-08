@@ -1,5 +1,5 @@
 {
   "label_duplicated_paths_error": "列表中有相同的路径",
-  "label_duplicated_titles_error": "列表中已有一个具有此名称的源。为避免重复 ， 请更改添加的源的名称。",
+  "label_duplicated_titles_error": "列表中已有一个具有此名称的源。为避免重复，请更改添加的源的名称。",
   "label_required-field-error": "这是必填字段"
 }

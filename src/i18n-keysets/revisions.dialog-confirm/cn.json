@@ -1,6 +1,6 @@
 {
   "button_cancel": "取消",
-  "button_confirm": "是的 ， 使实际",
+  "button_confirm": "是的，使实际",
   "label_text": "将创建您当前查看的版本的副本。但您始终可以返回到以前的版本。",
   "label_text-unsaved-lost": "所有未保存的更改都将丢失。",
   "label_title": "使实际?"

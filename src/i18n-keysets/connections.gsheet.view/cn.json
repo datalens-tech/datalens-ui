@@ -6,7 +6,7 @@
   "button_google-login": "登录您的 Google 帐号",
   "button_google-logout": "注销",
   "button_update": "更新数据",
-  "label_403-not-authotized-description": "登录您的 Google 帐号或更改您的文件访问设置 ， 然后再次尝试添加",
+  "label_403-not-authotized-description": "登录您的 Google 帐号或更改您的文件访问设置，然后再次尝试添加",
   "label_403-title": "您无权访问该文件",
   "label_add-table-placeholder": "链接到文件",
   "label_auth-failure": "无法进行身份验证",
@@ -17,7 +17,7 @@
   "label_empty-file": "空文档",
   "label_file-limit-exceeded": "超过最大数据大小",
   "label_file-not-found": "未找到文档",
-  "label_google-auth-help": "要添加访问受限的文件 ， 请登录您的 Google 帐号",
+  "label_google-auth-help": "要添加访问受限的文件，请登录您的 Google 帐号",
   "label_google-oauth-page-failure": "无法打开身份验证页面",
   "label_gsheet-failed": "无法从工作表加载数据",
   "label_gsheet-ready": "选择工作表",
@@ -37,6 +37,6 @@
   "label_unsupported-document": "不支持的文档",
   "label_update-failure": "无法更新数据",
   "label_uploading": "正在加载...",
-  "label_workspace-placeholder": "要创建连接 ， 请添加指向 Google 表格文件的链接",
+  "label_workspace-placeholder": "要创建连接，请添加指向 Google 表格文件的链接",
   "label_yes": "Yes"
 }

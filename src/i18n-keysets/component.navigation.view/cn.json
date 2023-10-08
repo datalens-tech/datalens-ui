@@ -17,7 +17,7 @@
   "label_access-denied-folder": "拒绝访问",
   "label_batch-move-access-error-description": "移动文件的权限不足。请与文件管理员联系。",
   "label_batch-move-success-description": "已成功移动文件",
-  "label_batch-selected-entries-count": "选定对象 - {{value}}",
+  "label_batch-selected-entries-count": "选定对象-{{value}}",
   "label_empty-folder": "空文件夹",
   "label_failed-load-navigation": "加载导航失败",
   "label_mobile-navigation-filters-all": "All",
@@ -59,8 +59,8 @@
   "value_create-wizard": "向导中的图表",
   "value_date-ascending": "第一个老",
   "value_date-descending": "第一个新",
-  "value_name-ascending": "A - Z",
-  "value_name-descending": "Z - A",
+  "value_name-ascending": "A-Z",
+  "value_name-descending": "Z-A",
   "value_ownership-all": "All",
   "value_ownership-only-mine": "只有我的"
 }

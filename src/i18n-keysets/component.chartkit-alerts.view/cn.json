@@ -6,7 +6,7 @@
   "button_get": "Get",
   "button_retry": "重复",
   "button_save": "保存",
-  "context_timezone": "DataLens<linkTimezone>尚无法</linkTimezone>使用时区 ： 图表上的所有日期均以 UTC + 0 显示。<br></br><br></br>如果使用数据集中的公式或 ChartEditor 中的代码移动时间序列 ， 则必须在此处选择适当的时区。",
+  "context_timezone": "DataLens<linkTimezone>尚无法</linkTimezone>使用时区 ： 图表上的所有日期均以 UTC + 0 显示。<br></br><br></br>如果使用数据集中的公式或 ChartEditor 中的代码移动时间序列，则必须在此处选择适当的时区。",
   "field_aggregation-function": "聚合函数",
   "field_description": "Description",
   "field_name": "Name",
@@ -24,12 +24,12 @@
   "label_params-absolute-date": "图表参数使用固定日期。<br></br>请确保对警报使用<link>相对日期</link>。",
   "label_series": "系列",
   "label_unsupported-chart": "您无法在此图表上创建警报",
-  "label_unsupported-datetime": "在 X 轴上应该有一个连续的时间序列",
+  "label_unsupported-datetime": "在X轴上应该有一个连续的时间序列",
   "label_unsupported-series-type": "不支持该系列类型",
   "label_unsupported-widget-type": "不支持图表类型",
-  "label_unsupported-y-axis-type": "Y 轴类型应为线性",
+  "label_unsupported-y-axis-type": "Y轴类型应为线性",
   "label_validation-error": "验证错误",
-  "label_y-axis": "Y 轴",
+  "label_y-axis": "Y轴",
   "section_additional-settings": "其他设置",
   "section_alert-settings": "警报参数",
   "section_general": "General",
@@ -64,5 +64,5 @@
   "value_condition-LTE": "小于或等于",
   "value_condition-NE": "不等于",
   "value_select-series": "选择",
-  "value_y-axis-number": "△ xis {{num}}"
+  "value_y-axis-number": "Y轴 {{num}}"
 }

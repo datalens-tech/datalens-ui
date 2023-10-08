@@ -26,22 +26,22 @@
   "label_relative-date": "从当前日期偏移",
   "label_scale-M": [
     "月",
-    "Months",
-    "Months",
-    "Months",
+    "月",
+    "月",
+    "月",
     "",
     ""
   ],
   "label_scale-Q": [
     "季度",
-    "Quarters",
-    "Quarters",
-    "Quarters",
+    "季度",
+    "季度",
+    "季度",
     "",
     ""
   ],
   "label_scale-d": [
-    "Day",
+    "天数",
     "天数",
     "天数",
     "天数",
@@ -73,7 +73,7 @@
     ""
   ],
   "label_scale-s": [
-    "Second",
+    "秒",
     "秒",
     "秒",
     "秒",
@@ -82,23 +82,23 @@
   ],
   "label_scale-w": [
     "周",
-    "Weeks",
-    "Weeks",
-    "Weeks",
+    "周",
+    "周",
+    "周",
     "",
     ""
   ],
   "label_scale-y": [
-    "Year",
-    "Years",
-    "Years",
-    "Years",
+    "年",
+    "年",
+    "年",
+    "年",
     "",
     ""
   ],
-  "label_sign+": "Plus",
+  "label_sign+": "加号",
   "label_sign-": "减号",
-  "label_single-control-title": "Value",
+  "label_single-control-title": "值",
   "label_start-control-title": "开始",
   "label_tooltip-utc": "日期以 UTC 指定"
 }
