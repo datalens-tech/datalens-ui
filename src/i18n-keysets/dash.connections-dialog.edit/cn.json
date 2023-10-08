@@ -1,0 +1,20 @@
+{
+  "button_add": "添加",
+  "button_add-alias": "添加别名",
+  "button_cancel": "取消",
+  "button_collapse-params": "没有别名的字段",
+  "button_remove-alias": "删除",
+  "button_save": "保存",
+  "context_choose-element": "选择一个元素",
+  "label_alias": "别名",
+  "label_alias-influence": "链接的小部件",
+  "label_connections": "链接",
+  "label_manage-alias": "别名设置",
+  "label_no-connections": "没有链接的元素",
+  "label_no-information": "无信息",
+  "value_connected": "链接",
+  "value_ignore": "忽略",
+  "value_input": "传入链接",
+  "value_none": "无链接",
+  "value_output": "传出链接"
+}

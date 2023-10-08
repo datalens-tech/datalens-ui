@@ -1,0 +1,12 @@
+{
+  "close": "关闭",
+  "copy": "复制",
+  "draw-anyway": "无论如何都要画",
+  "error": "错误",
+  "error-data-provider": "数据提取错误",
+  "error-no-data": "无数据",
+  "error-too-many-lines": "图表上的系列太多",
+  "error-unknown-extension": "未知的图表类型",
+  "more": "更多",
+  "retry": "重试"
+}

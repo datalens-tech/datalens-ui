@@ -1,0 +1,18 @@
+{
+  "action_cancel": "取消",
+  "action_copy": "复制",
+  "action_create": "创建",
+  "action_create-collection": "创建集合",
+  "action_create-workbook": "创建工作簿",
+  "action_edit-collection": "编辑收藏",
+  "action_save": "保存",
+  "action_edit-workbook": "编辑工作簿",
+  "action_move": "移动",
+  "label_copy": "复制到",
+  "label_copy-denied-title": "复制的权限不足",
+  "label_description": "Description",
+  "label_empty-collection": "空集合",
+  "label_move": "移动到",
+  "label_move-denied-title": "权限不足 ， 无法移动对象",
+  "label_title": "Name"
+}

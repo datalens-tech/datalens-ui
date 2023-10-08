@@ -1,0 +1,7 @@
+{
+  "button_cancel": "取消",
+  "button_delete": "删除",
+  "label_delete": "删除",
+  "section_caption": "你确定?",
+  "toast_delete-failed": "删除失败"
+}

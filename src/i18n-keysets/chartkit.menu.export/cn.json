@@ -1,0 +1,12 @@
+{
+  "export_failed": "数据导出错误",
+  "export_limit_error": "您最多可以导出 {{limit}} 的数据 ； 您的数据大小为 {{length}}。",
+  "export_success": "复制到剪贴板",
+  "format_csv": "CSV",
+  "format_image": "Image",
+  "format_markdown": "Markdown",
+  "format_wiki": "Wiki",
+  "format_xlsx": "XLSX",
+  "menu-export": "另存为",
+  "menu-screenshot": "另存为图像"
+}

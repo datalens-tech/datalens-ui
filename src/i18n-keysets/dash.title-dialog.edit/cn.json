@@ -1,0 +1,10 @@
+{
+  "button_add": "添加",
+  "button_cancel": "取消",
+  "button_save": "保存",
+  "context_fill-title": "输入标题",
+  "field_show-in-toc": "在内容中显示",
+  "label_title": "标题",
+  "toast_required-field": "字段不能为空",
+  "value_default": "标题"
+}

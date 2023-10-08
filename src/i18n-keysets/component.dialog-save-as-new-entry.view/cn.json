@@ -1,0 +1,10 @@
+{
+  "button_apply": "应用",
+  "button_cancel": "取消",
+  "label_copy": "复制",
+  "label_default-name": "New",
+  "label_entry-name-already-exists": "该名称已在使用中 ， 请尝试另一个",
+  "label_placeholder": "Name",
+  "section_caption": "另存为新",
+  "toast_save-as-new-failed": "无法另存为新"
+}

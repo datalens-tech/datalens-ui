@@ -1,0 +1,8 @@
+{
+  "button_publish": "发布",
+  "button_published": "已发布",
+  "button_save": "保存",
+  "button_save-as": "另存为",
+  "button_saved": "已保存",
+  "toast_warning-not-latest-version": "您使用的不是最新的图表版本。是否应用更改?"
+}

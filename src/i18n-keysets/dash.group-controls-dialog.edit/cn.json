@@ -1,0 +1,15 @@
+{
+  "button_add-selector": "添加选择器",
+  "button_cancel": "取消",
+  "button_save": "保存",
+  "button_selectors-placement": "选择器放置",
+  "context_apply-button": "此选项启用用于应用选择器的按钮",
+  "context_reset-button": "此选项启用用于重置选择器的按钮",
+  "label_apply-button-checkbox": "“应用 ” 按钮",
+  "label_autoheight-checkbox": "自动高度",
+  "label_default-tab": "选择器 {{index}}",
+  "label_reset-button-checkbox": "复位按钮",
+  "label_selector-settings": "选择器设置",
+  "label_selectors-list": "选择器",
+  "label_source": "Source"
+}

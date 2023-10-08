@@ -1,0 +1,6 @@
+{
+  "button_edit": "编辑当前版本",
+  "button_show-in-history": "在历史记录中显示",
+  "label_dash-warning-text": "更改历史记录不包含在当前版本之后保存的仪表板<b>{{name}}</b>的实际版本。",
+  "label_dash-warning-title": "仪表板提供了更高版本"
+}

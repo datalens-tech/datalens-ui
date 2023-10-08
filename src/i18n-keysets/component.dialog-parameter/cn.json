@@ -1,0 +1,12 @@
+{
+  "button_cancel": "取消",
+  "button_create": "添加",
+  "button_edit": "保存",
+  "button_reset": "初始值",
+  "parameter_default-value": "默认值",
+  "parameter_name": "Name",
+  "parameter_name-note": "参数名称限制: * 接受小写拉丁字母、数字、连字符和下划线。第一个字符不能是下划线: '_ name'。 * 参数名称长度不应超过 36 个字符。 * 不能使用的保留参数名称: 'tab' 、 'state' 、 'mode' 、 'focus' 、 'grid' 、 'tz' 、 'from' 、 'to'。",
+  "parameter_type": "类型",
+  "title_create-parameter": "添加参数",
+  "title_edit-parameter": "编辑参数"
+}

@@ -1,0 +1,11 @@
+{
+  "button_back": "Back",
+  "button_cancel": "取消",
+  "button_save": "保存",
+  "label_field-validation": "宽度值无效",
+  "label_note": "宽度不完全适合组合一组选择器的小部件的选择器将移动到下一行",
+  "label_title": "组中选择器位置的设置",
+  "value_auto": "自动",
+  "value_percent": "%",
+  "value_pixels": "px"
+}

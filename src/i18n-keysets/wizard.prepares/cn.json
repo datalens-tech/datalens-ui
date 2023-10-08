@@ -1,0 +1,10 @@
+{
+  "label_color": "颜色: {{value}}",
+  "label_line": "行: {{value}}",
+  "label_order": "顺序: {{value}}",
+  "label_point": "点 ： {{value}}",
+  "label_segment": "段: {{value}}",
+  "label_total": "Total",
+  "label_total-value": "合计: {{value}}",
+  "label_new-layer": "第 1 层"
+}

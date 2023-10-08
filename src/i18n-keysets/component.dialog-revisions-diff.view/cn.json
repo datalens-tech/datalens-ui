@@ -1,0 +1,6 @@
+{
+  "button_open-revision-in-new-window": "在新窗口中打开",
+  "toast_fetch-initial-diff-failed": "未能加载差异更改",
+  "toast_get-revisions-failed": "未能加载更改历史记录",
+  "toast_get-script-failed": "加载脚本失败"
+}

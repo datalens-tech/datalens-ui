@@ -1,0 +1,8 @@
+{
+  "button_apply": "应用",
+  "button_cancel": "取消",
+  "label_color-error": "使用 HEX 格式表示颜色",
+  "label_font-color": "颜色",
+  "label_font-size": "尺寸",
+  "label_settings": "度量设置"
+}

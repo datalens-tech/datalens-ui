@@ -1,0 +1,22 @@
+{
+  "categories": "类别",
+  "date": "Date",
+  "error-authorization": "授权错误",
+  "error-chyt-table-access": "无法访问 YT 表",
+  "error-data-fetching": "数据提取错误",
+  "error-execution": "图表执行错误",
+  "error-network": "网络错误",
+  "error-no-view-rights": "无查看权限",
+  "error-not-found": "未找到",
+  "error-not-loaded": "图表加载错误",
+  "error-oversize-segments": "最大拆分数为 {{maxNumber}}",
+  "error-oversize-table": "已超过 {{type}} 的最大数量",
+  "error-oversize_cells": "细胞",
+  "error-oversize_columns": "列",
+  "error-processing": "图表处理错误",
+  "error-runtime-timeout": "响应处理超时",
+  "error-secrets-access": "在具有机密的图表上没有写访问权限",
+  "error-too-many-rows": "图表上的系列太多",
+  "error-unsupported-type": "不支持的图表类型",
+  "error-unsupported-data-type": "不支持的数据类型"
+}

@@ -1,0 +1,22 @@
+{
+  "action_cancel": "取消",
+  "action_move": "迁移",
+  "action_show-all": "显示全部",
+  "label_charts": "图表",
+  "label_connections": "连接",
+  "md_label_copy-warning": "对象和所有相关对象将从文件夹移动到工作簿。无法将它们从工作簿返回到文件夹。传输后 ， 您将成为工作簿的管理员 ， 并能够将访问权限分配给其他用户和用户组",
+  "label_current-entry": "所选对象",
+  "label_dashboards": "仪表板",
+  "label_datasets": "数据集",
+  "label_entry-already-in-workbook": "与其他对象一起迁移",
+  "label_linked-objects": "链接的对象",
+  "label_no-linked-objects": "空",
+  "label_objects": [
+    "{{count}} 对象",
+    "{{count}} 个对象",
+    "{{count}} 个对象",
+    "0 个对象"
+  ],
+  "label_unknown-error": "迁移过程中出错。请稍后再试。",
+  "title": "将对象迁移到工作簿"
+}

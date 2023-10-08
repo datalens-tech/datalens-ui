@@ -1,0 +1,6 @@
+{
+  "button_access-rights": "请求权限",
+  "button_save-as": "另存为",
+  "label_no-rights-text": "此图表是只读的。请求写入权限或将更改另存为新图表",
+  "section_no-rights-title": "无写入权限"
+}

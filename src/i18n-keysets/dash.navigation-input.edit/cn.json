@@ -1,0 +1,14 @@
+{
+  "button_cancel": "关闭",
+  "button_choose": "选择",
+  "button_ok": "OK",
+  "button_open": "打开",
+  "button_use-link": "指定链接",
+  "context_fill-link": "链接",
+  "toast_error": "错误",
+  "toast_incorrect-source": "无效的源类型",
+  "toast_incorrect-url": "URL 无效",
+  "toast_not-found": "未找到源",
+  "toast_not-selector": "源不是选择器",
+  "toast_wrong-workbook-id": "从当前工作流中选择源"
+}

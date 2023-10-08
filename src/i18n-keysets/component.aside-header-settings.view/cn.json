@@ -1,0 +1,17 @@
+{
+  "field_interface-theme": "界面主题",
+  "field_interface-theme-contrast": "对比度",
+  "field_language": "Language",
+  "label_language-en": "English",
+  "label_language-ru": "藤本植物",
+  "label_not-found": "无结果",
+  "label_placeholder-search": "搜索设置",
+  "label_title": "设置",
+  "section_appearance": "外观",
+  "section_language": "Language",
+  "value_theme-contrast-enhanced": "高",
+  "value_theme-contrast-normal": "正常",
+  "value_theme-dark": "黑暗",
+  "value_theme-light": "灯光",
+  "value_theme-system": "System"
+}

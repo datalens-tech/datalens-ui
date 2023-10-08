@@ -1,0 +1,10 @@
+{
+  "label_parameter-name-column": "Name",
+  "label_parameter-name-column-description": "参数名称限制: * 接受小写拉丁字母、数字、连字符和下划线。第一个字符不能是下划线: '_ name'。 * 参数名称区分大小写: 'Test' 和 'test' 是不同的参数。 * 参数名称长度不应超过 36 个字符。",
+  "label_parameter-type-column": "类型",
+  "label_parameter-value-column": "默认值",
+  "label_parameter-value-column-description": "默认值是必需的。如果在仪表板、图表 URL 或图表设置中未定义参数值 ， 则使用此默认值。",
+  "tab-parameters_add-button": "添加",
+  "tab-parameters_description": "参数是可以替换计算字段中的常量值的数据集或图表变量。参数可以是数字、字符串、日期或布尔值。数据集参数在基于此数据集的所有图表中都可用。可以在图表级别覆盖默认参数值。",
+  "tab-parameters_title": "参数"
+}

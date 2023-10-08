@@ -1,0 +1,18 @@
+{
+  "apply_button_text": "应用",
+  "refresh_button_text": "重试",
+  "error_details_button_text": "详细信息",
+  "item_except": "除了",
+  "item_only": "仅",
+  "items_show_more": "显示更多",
+  "items_prompt": "输入搜索字符串...",
+  "items_not_found": "搜索字符串 '' {{inputValue}} '' 没有匹配项",
+  "items_fetch_error": "出了点问题",
+  "items_add_new": "添加新条目",
+  "search_clear": "清除",
+  "search_select_all": "全选",
+  "search_placeholder": "搜索",
+  "empty_string": "空字符串",
+  "null": "null",
+  "selected_popup_title": "已选择"
+}

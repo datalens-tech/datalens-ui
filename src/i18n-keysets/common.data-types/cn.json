@@ -1,0 +1,15 @@
+{
+  "label_array_float": "分数数组",
+  "label_array_int": "整数数组",
+  "label_array_str": "字符串数组",
+  "label_date": "Date",
+  "label_datetime": "日期和时间 （ 已弃用 ）",
+  "label_float": "分数",
+  "label_genericdatetime": "日期和时间",
+  "label_geopoint": "Geopoint",
+  "label_geopolygon": "地理多边形",
+  "label_integer": "整数",
+  "label_markup": "标记",
+  "label_string": "字符串",
+  "label_unsupported": "不支持的类型"
+}

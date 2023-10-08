@@ -1,0 +1,7 @@
+{
+  "button_apply": "应用",
+  "button_cancel": "取消",
+  "label_entry-name-already-exists": "该名称已在使用中 ， 请尝试另一个",
+  "section_caption": "搬到哪里 ？",
+  "toast_move-failed": "移动失败"
+}
