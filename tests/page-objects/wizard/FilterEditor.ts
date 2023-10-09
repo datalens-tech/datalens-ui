@@ -20,17 +20,12 @@ export default class FilterEditor {
     async selectDate(dateValue: string) {
         await this.page.fill('.dl-dialog-filter__body .yc-text-input__control', dateValue);
 
-        await this.page.keyboard.press('Enter');
+        await this.closeDatepickerPopup();
     }
 
     async selectRangeDate(dateValue: [string | null, string]) {
         const startDate = dateValue[0];
         const endDate = dateValue[1];
-
-        const closeDatepickerPopup = () => {
-            // position is needed just for click on the left corner of container
-            return this.page.click('.dl-dialog-filter__body', {position: {x: 0, y: 0}});
-        };
 
         if (startDate) {
             await this.page.fill(
@@ -39,14 +34,14 @@ export default class FilterEditor {
             );
         }
 
-        await closeDatepickerPopup();
+        await this.closeDatepickerPopup();
 
         await this.page.fill(
             `.dl-dialog-filter__body ${slct('datepicker-end')} .yc-text-input__control`,
             endDate,
         );
 
-        await closeDatepickerPopup();
+        await this.closeDatepickerPopup();
     }
 
     async selectValues(fields: string[]) {
@@ -111,5 +106,10 @@ export default class FilterEditor {
         const buttons = await this.page.$$(dialogFooterButtonSelector);
 
         return buttons.length === 1;
+    }
+
+    private async closeDatepickerPopup() {
+        // position is needed just for click on the left corner of container
+        return this.page.click('.dl-dialog-filter__body', {position: {x: 0, y: 0}});
     }
 }
