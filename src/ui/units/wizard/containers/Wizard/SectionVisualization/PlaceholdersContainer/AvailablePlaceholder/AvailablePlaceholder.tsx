@@ -40,7 +40,7 @@ class AvailablePlaceholder extends React.Component<Props> {
                 noRemove={true}
                 noSwap={true}
                 disabled={Boolean(datasetError)}
-                qlMode={this.props.qlMode}
+                disableAddField={true}
                 onAfterUpdate={this.props.onUpdate}
             />
         );

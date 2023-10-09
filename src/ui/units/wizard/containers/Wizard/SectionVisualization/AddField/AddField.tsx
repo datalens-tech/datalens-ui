@@ -26,22 +26,27 @@ interface Props extends StateProps {
     capacity?: number;
     capacityError?: string;
     capacityErrorQa?: string;
+    items: AddableField[];
+    addableFields?: AddableField[];
+
     onUpdate: (items: AddableField[]) => void;
     checkAllowed: (item: AddableField) => boolean;
-    items: AddableField[];
     transform?: (item: AddableField) => Promise<AddableField>;
 }
 
 class AddFieldContainer extends React.Component<Props> {
     render() {
         const {items, className, capacity, capacityError, capacityErrorQa} = this.props;
-        const fields = this.getFields();
+        const addableFields = this.getAddableFields();
         const disabled =
-            fields.length === 0 || (Number.isInteger(capacity) ? capacity! <= items.length : false);
+            addableFields.length === 0 ||
+            (Number.isInteger(capacity) ? capacity! <= items.length : false);
         const disabledText =
-            fields.length === 0 ? i18n('wizard', 'tooltip_no-available-fields') : capacityError;
+            addableFields.length === 0
+                ? i18n('wizard', 'tooltip_no-available-fields')
+                : capacityError;
         const disabledTextQa =
-            fields.length === 0
+            addableFields.length === 0
                 ? SectionVisualizationAddItemQa.NoFieldsErrorTooltip
                 : capacityErrorQa;
 
@@ -49,7 +54,7 @@ class AddFieldContainer extends React.Component<Props> {
             <AddField
                 className={className}
                 onAdd={this.onAdd}
-                items={fields}
+                items={addableFields}
                 disabled={disabled}
                 disabledTextQa={disabledTextQa}
                 disabledText={disabledText}
@@ -57,8 +62,10 @@ class AddFieldContainer extends React.Component<Props> {
         );
     }
 
-    private getFields() {
-        return this.props.fields.filter(this.isItemAllowed).map((el) => {
+    private getAddableFields() {
+        const fields = this.props.addableFields || this.props.fields;
+
+        return fields.filter(this.isItemAllowed).map((el) => {
             let iconType = el.type;
 
             if (isMeasureValue(el)) {
@@ -83,7 +90,9 @@ class AddFieldContainer extends React.Component<Props> {
     };
 
     private onAdd = ([value]: string[]) => {
-        const {items, fields, onUpdate, transform} = this.props;
+        const {items, onUpdate, transform} = this.props;
+
+        const fields = this.props.addableFields || this.props.fields;
 
         const item = {...fields.find((el) => el.title === value)!};
 

@@ -34,7 +34,8 @@ type Props = {
 
 class ColorsPlaceholder extends React.Component<Props> {
     render() {
-        const {colors, visualization, wrapTo, datasetError, onBeforeRemoveItem} = this.props;
+        const {addFieldItems, colors, visualization, wrapTo, datasetError, onBeforeRemoveItem} =
+            this.props;
 
         const colorsContainsHierarchies = colors.some(isFieldHierarchy);
 
@@ -62,7 +63,7 @@ class ColorsPlaceholder extends React.Component<Props> {
                 onBeforeRemoveItem={onBeforeRemoveItem}
                 capacityError="label_colors-overflow"
                 disabledText={disabledText}
-                qlMode={this.props.qlMode}
+                addFieldItems={addFieldItems}
                 onAfterUpdate={this.props.onUpdate}
             />
         );
