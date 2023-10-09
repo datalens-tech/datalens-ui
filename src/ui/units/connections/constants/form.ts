@@ -36,5 +36,3 @@ export enum InnerFieldKey {
     CacheTtlMode = 'cache_ttl_mode',
     isAutoCreateDashboard = 'is_auto_create_dashboard',
 }
-
-export const FAKE_PASSWORD_VALUE = '**********';

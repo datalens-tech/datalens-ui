@@ -4,10 +4,6 @@ import {DatalensGlobalState} from 'ui';
 
 import {ConnectionsReduxState} from '../../../store';
 
-export * from './mdb';
-export * from './select-items';
-export * from './ydb';
-
 const checkDependencies = (
     form: ConnectionsReduxState['form'] | ConnectionsReduxState['innerForm'],
     displayConditions: NonNullable<BaseItem['displayConditions']>,
