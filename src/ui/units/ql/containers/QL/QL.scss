@@ -22,3 +22,13 @@
         height: calc(100% - 56px);
     }
 }
+
+.dl-ql {
+    .add-field__dimension-icon {
+        color: var(--g-color-text-misc);
+    }
+
+    .add-field__measure-icon {
+        color: var(--g-color-text-misc);
+    }
+}
