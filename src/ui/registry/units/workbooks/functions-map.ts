@@ -16,6 +16,7 @@ export const workbooksFunctionsMap = {
         >(),
     getWorkbookDashboardEntryUrl:
         makeFunctionTemplate<(response: EntryDialogOnCloseArg) => string>(),
+    getNewDashUrl: makeFunctionTemplate<() => string>(),
     useAdditionalWorkbookEntryActions:
         makeFunctionTemplate<
             (
