@@ -2,16 +2,21 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
+import {PencilToLine} from '@gravity-ui/icons';
 import {ActionBar} from '@gravity-ui/navigation';
+import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {CollectionBreadcrumbs} from 'components/Breadcrumbs/CollectionBreadcrumbs/CollectionBreadcrumbs';
+import {DIALOG_EDIT_WORKBOOK} from 'components/CollectionsStructure';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {ViewError} from 'components/ViewError/ViewError';
+import {I18N} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
 import {Utils} from 'ui';
 
 import {registry} from '../../../../registry';
+import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import {
     changeFilters,
     getWorkbook,
@@ -41,6 +46,8 @@ import {TabId} from '../WorkbookTabs/types';
 import './WorkbookPage.scss';
 
 const b = block('dl-workbook-page');
+
+const i18n = I18N.keyset('new-workbooks');
 
 export const WorkbookPage = () => {
     const {search} = useLocation();
@@ -173,7 +180,34 @@ export const WorkbookPage = () => {
             ) : (
                 <div className={b('layout')}>
                     <div className={b('container')}>
-                        <h1 className={b('title')}>{workbook?.title}</h1>
+                        <div className={b('title-content')}>
+                            <h1 className={b('title')}>{workbook?.title}</h1>
+                            {workbook?.permissions.update && (
+                                <Tooltip content={i18n('action_edit')}>
+                                    <Button
+                                        onClick={() => {
+                                            dispatch(
+                                                openDialog({
+                                                    id: DIALOG_EDIT_WORKBOOK,
+                                                    props: {
+                                                        open: true,
+                                                        workbookId: workbook.workbookId,
+                                                        title: workbook.title,
+                                                        description: workbook?.description ?? '',
+                                                        onApply: refreshWorkbookInfo,
+                                                        onClose: () => {
+                                                            dispatch(closeDialog());
+                                                        },
+                                                    },
+                                                }),
+                                            );
+                                        }}
+                                    >
+                                        <Icon data={PencilToLine} />
+                                    </Button>
+                                </Tooltip>
+                            )}
+                        </div>
                         {workbook?.description && (
                             <div className={b('description')}>{workbook.description}</div>
                         )}

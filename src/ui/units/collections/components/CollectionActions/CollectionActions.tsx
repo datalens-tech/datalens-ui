@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {ChevronDown} from '@gravity-ui/icons';
+import {ArrowRight, ChevronDown, LockOpen} from '@gravity-ui/icons';
 import {
     Button,
     DropdownMenu,
     DropdownMenuItem,
     DropdownMenuItemMixed,
     Icon,
+    Tooltip,
 } from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -38,11 +39,11 @@ export type Props = {
     onAddLearningMaterialsWorkbookClick: () => void;
     onCreateWorkbookClick: () => void;
     onEditAccessClick: () => void;
-    onEditClick: () => void;
     onMoveClick: () => void;
 };
 
 export const CollectionActions = React.memo<Props>(
+    // eslint-disable-next-line complexity
     ({
         className,
         rootPermissions,
@@ -52,7 +53,6 @@ export const CollectionActions = React.memo<Props>(
         onAddLearningMaterialsWorkbookClick,
         onCreateWorkbookClick,
         onEditAccessClick,
-        onEditClick,
         onMoveClick,
     }) => {
         const showCreateCollection = collectionData
@@ -135,29 +135,33 @@ export const CollectionActions = React.memo<Props>(
 
         return (
             <div className={b(null, className)}>
-                {collectionData && (
-                    <React.Fragment>
-                        {collectionsAccessEnabled && collectionData.permissions.listAccessBindings && (
-                            <Button className={b('access')} onClick={onEditAccessClick}>
-                                {i18n('action_access')}
+                {collectionData && collectionData.permissions.move && (
+                    <Tooltip content={i18n('action_move')}>
+                        <div className={b('move')}>
+                            <Button onClick={onMoveClick}>
+                                <Icon data={ArrowRight} />
                             </Button>
-                        )}
-                        {collectionData.permissions.move && (
-                            <Button className={b('move')} onClick={onMoveClick}>
-                                {i18n('action_move')}
-                            </Button>
-                        )}
-                        {collectionData.permissions.update && (
-                            <Button className={b('edit')} onClick={onEditClick}>
-                                {i18n('action_edit')}
-                            </Button>
-                        )}
-                    </React.Fragment>
+                        </div>
+                    </Tooltip>
                 )}
+
+                {collectionData &&
+                    collectionsAccessEnabled &&
+                    collectionData.permissions.listAccessBindings && (
+                        <Tooltip content={i18n('action_access')}>
+                            <div className={b('access')}>
+                                <Button onClick={onEditAccessClick}>
+                                    <Icon data={LockOpen} />
+                                </Button>
+                            </div>
+                        </Tooltip>
+                    )}
+
                 {(showCreateCollection || showCreateWorkbook) && (
                     <DropdownMenu
                         size="s"
                         items={createActionItems}
+                        switcherWrapperClassName={b('create-wrapper')}
                         switcher={
                             <Button view="action" className={b('create')}>
                                 {i18n('action_create')}

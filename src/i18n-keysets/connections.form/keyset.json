@@ -64,10 +64,6 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "button_new-refresh-token": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "button_refresh-token": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -152,19 +148,11 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "field_auto-create-dashboard": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "field_cache-ttl-sec": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
     "field_click-house-port": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "field_clika": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -208,10 +196,6 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "field_google-sheets-link": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "field_host-name": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -221,18 +205,6 @@
       "ru": "APPROVED"
     },
     "field_moysklad-token": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "field_password": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "field_port": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "field_raw-sql-level": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -260,31 +232,11 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_account-name": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "label_accuracy-auto": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
     "label_advanced-settings": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_alias-info": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_allow-subselect-hint-1": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_allow-subselect-hint-2": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_allow-subselect-hint-3": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -297,10 +249,6 @@
       "ru": "APPROVED"
     },
     "label_authentication-method-choice": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_billing-conn-description": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -321,14 +269,6 @@
       "ru": "APPROVED"
     },
     "label_chyt-user-auth-description": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_client-id": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_client-secret": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -353,14 +293,6 @@
       "ru": "APPROVED"
     },
     "label_connections-not-exist": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_database": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_database-schema": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -448,10 +380,6 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_gsheets-url-hint": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "label_kp-interest-index-description": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -481,10 +409,6 @@
       "ru": "APPROVED"
     },
     "label_mdb-users-fetch-failed": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_monitoring-conn-description": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -524,14 +448,6 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_raw-sql-level-dashsql-note": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_raw-sql-level-subselect-note": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "label_refresh-token-label": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -560,14 +476,6 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_showflake-auth-tile": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_showflake-db-details-title": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "label_showflake-oauth-integration-label": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -584,23 +492,11 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_user-name": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_user-role": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "label_utyt-conn-description": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
     "label_verify-connection-500": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_warehouse": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -685,14 +581,6 @@
       "ru": "APPROVED"
     },
     "value_cluster-hahn": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "value_cluster-seneca-sas": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "value_cluster-seneca-vla": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -829,18 +717,6 @@
       "ru": "APPROVED"
     },
     "value_permission-owner-only": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "value_raw-sql-level-dashsql": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "value_raw-sql-level-off": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "value_raw-sql-level-subselect": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
