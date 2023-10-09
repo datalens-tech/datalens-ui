@@ -39,7 +39,6 @@ $contentMobilePadding: 16px;
         }
 
         & #{$bodyClass}__edit-panel {
-            z-index: 100;
             left: calc(50vw + #{$sideMenuCompactWidth} / 2);
         }
 
