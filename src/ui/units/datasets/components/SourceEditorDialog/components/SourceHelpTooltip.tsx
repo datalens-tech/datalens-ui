@@ -9,7 +9,6 @@ import {FormOptions} from '../../../store/types';
 
 const b = block('source-editor-dialog');
 const i18n = I18n.keyset('dataset.sources-tab.modify');
-// type Ololo = Parameters<typeof I18n>[0];
 
 type SourceHelpTooltipProps = {
     fieldDocKey: FormOptions['field_doc_key'];
