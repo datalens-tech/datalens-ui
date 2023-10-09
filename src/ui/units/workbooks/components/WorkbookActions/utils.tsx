@@ -1,5 +1,5 @@
-import {UseAdditionalWorkbookActions} from '../../../../registry/units/workbooks/types/functions/UseAdditionalWorkbookActions';
+import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
 
-export const useAdditionalWorkbookActions = (): UseAdditionalWorkbookActions => {
+export const useAdditionalWorkbookActions = (): DropdownMenuItemMixed<unknown>[] => {
     return [];
 };
