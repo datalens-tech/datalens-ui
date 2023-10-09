@@ -49,7 +49,6 @@ class FiltersPlaceholder extends React.Component<Props> {
                 onUpdate={this.onUpdate}
                 onItemClick={this.onItemClick}
                 customPlaceholderActions={this.customDashboardFiltersActions}
-                qlMode={this.props.qlMode}
                 onAfterUpdate={this.props.onUpdate}
             />
         );

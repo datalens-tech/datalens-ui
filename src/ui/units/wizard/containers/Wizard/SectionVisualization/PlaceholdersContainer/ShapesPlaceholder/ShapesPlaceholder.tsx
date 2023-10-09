@@ -35,7 +35,8 @@ type Props = CommonPlaceholderProps & StateProps & DispatchProps;
 
 class ShapesPlaceholder extends React.Component<Props> {
     render() {
-        const {visualization, shapes, wrapTo, datasetError, onBeforeRemoveItem} = this.props;
+        const {addFieldItems, visualization, shapes, wrapTo, datasetError, onBeforeRemoveItem} =
+            this.props;
         const placeholders = visualization.placeholders;
 
         const hasSettings = Boolean(
@@ -76,7 +77,7 @@ class ShapesPlaceholder extends React.Component<Props> {
                 disabled={Boolean(datasetError)}
                 onBeforeRemoveItem={onBeforeRemoveItem}
                 disabledText={disabledText}
-                qlMode={this.props.qlMode}
+                addFieldItems={addFieldItems}
                 onAfterUpdate={this.props.onUpdate}
             />
         );

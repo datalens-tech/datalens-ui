@@ -51,7 +51,8 @@ type Props = StateProps &
         showHideLabel?: boolean;
         isDashboardPlaceholder?: boolean;
         customPlaceholderActions?: CustomPlaceholderAction[];
-        qlMode?: boolean;
+        disableAddField?: boolean;
+        addFieldItems?: Field[];
         onAfterUpdate?: () => void;
     };
 
@@ -119,6 +120,7 @@ class PlaceholderComponent extends React.PureComponent<Props> {
 
     private renderPlaceholderTitle() {
         const {
+            addFieldItems,
             id,
             iconProps,
             hasSettings,
@@ -132,7 +134,7 @@ class PlaceholderComponent extends React.PureComponent<Props> {
             placeholderTooltipText,
             transform,
             customPlaceholderActions,
-            qlMode,
+            disableAddField,
             capacityErrorQa,
         } = this.props;
 
@@ -154,10 +156,11 @@ class PlaceholderComponent extends React.PureComponent<Props> {
                             disabledText={disabledText}
                         />
                     )}
-                    {allowedTypes !== ITEM_TYPES.NIL && !qlMode && (
+                    {allowedTypes !== ITEM_TYPES.NIL && !disableAddField && (
                         <AddFieldContainer
                             className="visualization-container__placeholder-action"
                             items={items}
+                            addableFields={addFieldItems}
                             capacity={capacity}
                             capacityError={capacityError && i18n('wizard', capacityError)}
                             capacityErrorQa={capacityErrorQa}
