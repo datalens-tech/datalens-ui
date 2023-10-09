@@ -91,10 +91,10 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                 );
             },
             text: (
-                <>
+                <React.Fragment>
                     <Icon data={ArrowRight} className={classNameIconAction} />
                     {i18n('action_move')}
-                </>
+                </React.Fragment>
             ),
         });
 

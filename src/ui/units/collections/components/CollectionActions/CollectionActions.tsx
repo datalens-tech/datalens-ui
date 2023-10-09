@@ -137,9 +137,11 @@ export const CollectionActions = React.memo<Props>(
             <div className={b(null, className)}>
                 {collectionData && collectionData.permissions.move && (
                     <Tooltip content={i18n('action_move')}>
-                        <Button className={b('move')} onClick={onMoveClick}>
-                            <Icon data={ArrowRight} />
-                        </Button>
+                        <div className={b('move')}>
+                            <Button onClick={onMoveClick}>
+                                <Icon data={ArrowRight} />
+                            </Button>
+                        </div>
                     </Tooltip>
                 )}
 
@@ -147,9 +149,11 @@ export const CollectionActions = React.memo<Props>(
                     collectionsAccessEnabled &&
                     collectionData.permissions.listAccessBindings && (
                         <Tooltip content={i18n('action_access')}>
-                            <Button className={b('access')} onClick={onEditAccessClick}>
-                                <Icon data={LockOpen} />
-                            </Button>
+                            <div className={b('access')}>
+                                <Button onClick={onEditAccessClick}>
+                                    <Icon data={LockOpen} />
+                                </Button>
+                            </div>
                         </Tooltip>
                     )}
 
