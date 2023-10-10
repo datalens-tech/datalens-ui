@@ -11,8 +11,13 @@
         padding: 0 20px;
     }
 
-    &__title {
+    &__title-content {
+        display: flex;
         margin: 28px 0 0;
+    }
+
+    &__title {
+        margin: 0 8px 0 0;
         font-size: 24px;
         line-height: 28px;
     }

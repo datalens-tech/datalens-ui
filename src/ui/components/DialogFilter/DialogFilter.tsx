@@ -198,7 +198,16 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
         const {visible} = this.props;
 
         return (
-            <Dialog open={visible} onClose={this.onClose}>
+            <Dialog
+                open={visible}
+                onClose={this.onClose}
+                onEnterKeyDown={() => {
+                    if (this.isApplyButtonDisabled()) {
+                        return;
+                    }
+                    this.onApply();
+                }}
+            >
                 <div className={b()}>
                     {this.renderHeader()}
                     {this.renderBody()}

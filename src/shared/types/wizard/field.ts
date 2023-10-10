@@ -88,6 +88,10 @@ export interface MarkupField extends WizardDatasetField {
     data_type: DATASET_FIELD_TYPES.MARKUP;
 }
 
+export interface UnsupportedField extends WizardDatasetField {
+    data_type: DATASET_FIELD_TYPES.UNSUPPORTED;
+}
+
 export type Field =
     | HierarchyField
     | IntegerField
@@ -114,14 +118,20 @@ export function isNumberField(field?: {data_type: string}): field is NumberField
     return Boolean(field && (isIntegerField(field) || isFloatField(field)));
 }
 
-export function isMarkupField(field?: {data_type: string}): field is MarkupField {
-    return Boolean(field && field.data_type === DATASET_FIELD_TYPES.MARKUP);
+export function isMarkupDataType(dataType: string) {
+    return dataType === DATASET_FIELD_TYPES.MARKUP;
 }
 
-export function isDateField(field?: {
-    data_type: string;
-}): field is DateField | DatetimeField | GenericDatetimeField {
-    return Boolean(field && isDateType(field?.data_type));
+export function isMarkupField(field?: {data_type: string}): field is MarkupField {
+    return Boolean(field && isMarkupDataType(field.data_type));
+}
+
+export function isUnsupportedDataType(dataType: string) {
+    return dataType === DATASET_FIELD_TYPES.UNSUPPORTED;
+}
+
+export function isUnsupportedField(field?: {data_type: string}): field is UnsupportedField {
+    return Boolean(field && isUnsupportedDataType(field.data_type));
 }
 
 export function isDateType(dataType: string) {
@@ -131,6 +141,12 @@ export function isDateType(dataType: string) {
             dataType === DATASET_FIELD_TYPES.GENERICDATETIME ||
             dataType === DATASET_FIELD_TYPES.DATETIMETZ,
     );
+}
+
+export function isDateField(field?: {
+    data_type: string;
+}): field is DateField | DatetimeField | GenericDatetimeField {
+    return Boolean(field && isDateType(field?.data_type));
 }
 
 export const isFieldHierarchy = (field: Field | ServerField | undefined): field is HierarchyField =>

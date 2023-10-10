@@ -77,7 +77,14 @@ const b = block('visualization-container');
 
 class VisualizationPlaceholder extends React.Component<Props> {
     render() {
-        const {placeholder, wrapTo, datasetError, onBeforeRemoveItem, visualization} = this.props;
+        const {
+            addFieldItems,
+            placeholder,
+            wrapTo,
+            datasetError,
+            onBeforeRemoveItem,
+            visualization,
+        } = this.props;
 
         const {hasSettings, onActionIconClick, actionIconQa, disabledText} =
             this.placeholderSettings;
@@ -106,7 +113,7 @@ class VisualizationPlaceholder extends React.Component<Props> {
                 allowedTypes={placeholder.allowedTypes}
                 allowedDataTypes={placeholder.allowedDataTypes}
                 showHideLabel={visualization.allowLabels}
-                qlMode={this.props.qlMode}
+                addFieldItems={addFieldItems}
                 onAfterUpdate={this.props.onUpdate}
                 disabledText={disabledText}
             />

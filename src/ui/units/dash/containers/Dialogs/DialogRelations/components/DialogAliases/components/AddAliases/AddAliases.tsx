@@ -67,7 +67,7 @@ const getDatasetName = (data: DashkitMetaDataItem, datasets: DatasetsListData | 
 const prepareData = (data: DashkitMetaDataItem, datasets: DatasetsListData | null) => {
     const options = getList(data);
     const name = getDatasetName(data, datasets);
-    const subTitle = name ? `${data.title} (${name})` : data.title;
+    const subTitle = name ? `${data.title || data.label} (${name})` : data.title || data.label;
 
     return {options, subTitle};
 };

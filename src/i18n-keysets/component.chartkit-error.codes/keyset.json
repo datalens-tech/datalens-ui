@@ -24,6 +24,10 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
+    "ERR.CHARTS.UNSUPPORTED_DATA_TYPE": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "ERR.DS_API": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -81,10 +85,6 @@
       "ru": "APPROVED"
     },
     "ERR.DS_API.DB.SOURCE_ERROR.TIMEOUT": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "ERR.DS_API.DB.STATFACE": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },

@@ -1,4 +1,3 @@
-import {SelectOption} from '@gravity-ui/uikit';
 import type {
     ConnectorItem,
     FormSchema,
@@ -18,8 +17,6 @@ import {
     SET_CACHED_HTML_ITEM,
     SET_CHECK_DATA,
     SET_CHECK_LOADING,
-    SET_CLOUD_TREE,
-    SET_CLOUD_TREE_LOADING,
     SET_CONNECTOR_DATA,
     SET_ENTRY,
     SET_FILE_COLUMN_FILTER,
@@ -41,25 +38,18 @@ import {
     SET_REPLACE_SOURCE_ACTION_DATA,
     SET_SCHEMA,
     SET_SCHEMA_LOADING,
-    SET_SELECT_ITEMS,
-    SET_SELECT_ITEMS_LOADING,
     SET_SUBMIT_LOADING,
     SET_UPLOADED_FILES,
     SET_VALIDATION_ERRORS,
 } from '../actions';
-import {SelectItemsKey} from '../constants';
 
-import type {CloudTree} from './api';
 import type {FileSource, ReplaceSourceActionData, UploadedFile} from './file';
 import type {GSheetActiveDialog, GSheetAddSectionState, GSheetItem} from './gsheet';
 import type {ReplaceSource} from './s3-based';
 
 export * from './file';
 export * from './gsheet';
-export * from './mdb';
-export * from './ydb';
 export * from './s3-based';
-export * from './api';
 
 export type GetState = () => DatalensGlobalState;
 
@@ -82,24 +72,19 @@ export type ConnectionsReduxState = {
     connectionData: FormDict;
     cachedHtml: Record<string, string>;
     checkData: CheckData;
-    cloudTree: CloudTree[];
     validationErrors: ValidationError[];
-    selectItems: Record<SelectItemsKey, SelectOption[]>;
     ui: {
         checkLoading: boolean;
-        cloudTreeLoading: boolean;
         pageLoading: boolean;
         schemaLoading: boolean;
         submitLoading: boolean;
-        itemsLoading: Record<SelectItemsKey, boolean>;
     };
     apiErrors: {
         connectors?: DataLensApiError;
         connection?: DataLensApiError;
-        cloudTree?: DataLensApiError;
         entry?: DataLensApiError;
         schema?: DataLensApiError;
-    } & Partial<Record<SelectItemsKey, DataLensApiError | undefined>>;
+    };
     file: {
         uploadedFiles: UploadedFile[];
         sources: FileSource[];
@@ -183,14 +168,6 @@ export type SetPageLoading = {
     };
 };
 
-export type SetSelectItemsLoading = {
-    type: typeof SET_SELECT_ITEMS_LOADING;
-    payload: {
-        key: SelectItemsKey;
-        loading: boolean;
-    };
-};
-
 export type SetCachedHtmlItem = {
     type: typeof SET_CACHED_HTML_ITEM;
     payload: {
@@ -214,15 +191,6 @@ export type SetValidationErrors = {
     };
 };
 
-export type SetSelectItems = {
-    type: typeof SET_SELECT_ITEMS;
-    payload: {
-        key: SelectItemsKey;
-        items: SelectOption[];
-        error?: DataLensApiError;
-    };
-};
-
 export type SetInitialState = {
     type: typeof SET_INITIAL_STATE;
 };
@@ -241,21 +209,6 @@ export type SetCheckData = {
 
 export type SetSubmitLoading = {
     type: typeof SET_SUBMIT_LOADING;
-    payload: {
-        loading: boolean;
-    };
-};
-
-export type SetCloudTree = {
-    type: typeof SET_CLOUD_TREE;
-    payload: {
-        cloudTree: CloudTree[];
-        error?: DataLensApiError;
-    };
-};
-
-export type SetCloudTreeLoading = {
-    type: typeof SET_CLOUD_TREE_LOADING;
     payload: {
         loading: boolean;
     };
@@ -367,17 +320,13 @@ export type ConnectionsReduxAction =
     | SetInitialForm
     | SetInnerForm
     | SetPageLoading
-    | SetSelectItemsLoading
     | SetCachedHtmlItem
     | SetFormSchema
     | SetValidationErrors
-    | SetSelectItems
     | SetInitialState
     | SetCheckLoading
     | SetCheckData
     | SetSubmitLoading
-    | SetCloudTree
-    | SetCloudTreeLoading
     | SetSchemaLoading
     | ResetFormsData
     | SetUploadedFiles

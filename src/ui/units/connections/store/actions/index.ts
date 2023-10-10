@@ -31,8 +31,6 @@ import {
     resetFormsData,
     setCheckData,
     setCheckLoading,
-    setCloudTree,
-    setCloudTreeLoading,
     setConectorData,
     setEntry,
     setFlattenConnectors,
@@ -52,7 +50,6 @@ export * from './base';
 export * from './file';
 export * from './gsheet';
 export * from './s3-based';
-export * from './select-items';
 
 const i18n = I18n.keyset('connections.form');
 
@@ -201,17 +198,6 @@ export function getConnectorSchema(type: ConnectorType) {
             if (useBackendSchema) {
                 dispatch(setSchemaLoading({schemaLoading: false}));
             }
-        });
-    };
-}
-
-export function getCloudtree() {
-    return async (dispatch: ConnectionsReduxDispatch) => {
-        dispatch(setCloudTreeLoading({loading: true}));
-        const {cloudTree, error} = await api.fetchCloudtree();
-        batch(() => {
-            dispatch(setCloudTree({cloudTree, error}));
-            dispatch(setCloudTreeLoading({loading: false}));
         });
     };
 }
