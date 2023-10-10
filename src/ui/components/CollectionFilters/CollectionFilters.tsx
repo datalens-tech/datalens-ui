@@ -9,6 +9,8 @@ import {GetCollectionContentMode} from 'shared/schema/us/types/collections';
 import {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
 import Utils from 'ui/utils';
 
+import {IconById} from '../IconById/IconById';
+
 import './CollectionFilters.scss';
 
 const i18n = I18n.keyset('component.collection-filters');
@@ -20,6 +22,11 @@ export enum SortType {
     FirstOld = 'firstOld',
     AlphabetAsc = 'alphabetAsc',
     AlphabetDesc = 'alphabetDesc',
+}
+
+export enum ViewMode {
+    Grid = 'grid',
+    Table = 'table',
 }
 
 export const SORT_TYPE_VALUES: Record<
@@ -50,6 +57,7 @@ export type CollectionContentFilters = {
     orderDirection: OrderDirection;
     mode: GetCollectionContentMode;
     onlyMy: boolean;
+    viewMode?: ViewMode;
 };
 
 type Props = {
@@ -62,7 +70,7 @@ type Props = {
 
 export const CollectionFilters = React.memo<Props>(
     ({className, filters, onChange, compactMode = false, controlSize = 'm'}) => {
-        const {filterString, onlyMy, mode, orderField, orderDirection} = filters;
+        const {filterString, onlyMy, mode, orderField, orderDirection, viewMode} = filters;
 
         const [innerFilterString, setInnerFilterString] = React.useState<string>(
             filterString || '',
@@ -104,6 +112,15 @@ export const CollectionFilters = React.memo<Props>(
             (value) => {
                 handleChangeFilters({
                     onlyMy: value === 'true',
+                });
+            },
+            [handleChangeFilters],
+        );
+
+        const handleChangeView = React.useCallback(
+            (value) => {
+                handleChangeFilters({
+                    viewMode: value,
                 });
             },
             [handleChangeFilters],
@@ -203,6 +220,22 @@ export const CollectionFilters = React.memo<Props>(
                             </Select.Option>
                             <Select.Option value="true">
                                 {i18n('label_filter-by-ownership-only-my')}
+                            </Select.Option>
+                        </RadioButton>
+                    )}
+
+                    {!compactMode && (
+                        <RadioButton
+                            className={b('filter-by-ownership')}
+                            value={viewMode}
+                            size={controlSize}
+                            onUpdate={handleChangeView}
+                        >
+                            <Select.Option value="grid">
+                                <IconById id="grid" />
+                            </Select.Option>
+                            <Select.Option value="table">
+                                <IconById id="table" />
                             </Select.Option>
                         </RadioButton>
                     )}

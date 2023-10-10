@@ -26,7 +26,10 @@ import type {
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
 import {Feature} from '../../../../../shared';
-import {CollectionContentFilters} from '../../../../components/CollectionFilters/CollectionFilters';
+import {
+    CollectionContentFilters,
+    ViewMode,
+} from '../../../../components/CollectionFilters/CollectionFilters';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
 import {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
@@ -36,7 +39,7 @@ import {DeleteWorkbookDialogContainer} from '../../containers/DeleteWorkbookDial
 import {updateCollectionInItems, updateWorkbookInItems} from '../../store/actions';
 import {GetCollectionContentArgs} from '../../types';
 import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
-// import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
+import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
 
 export enum DialogState {
     None = 'none',
@@ -392,14 +395,26 @@ export const CollectionContent = React.memo<Props>(
 
         return (
             <React.Fragment>
-                <CollectionContentGrid
-                    contentItems={contentItems}
-                    filters={filters}
-                    setFilters={setFilters}
-                    getWorkbookActions={getWorkbookActions}
-                    getCollectionActions={getCollectionActions}
-                    onClickStopPropagation={onClickStopPropagation}
-                />
+                {filters.viewMode === ViewMode.Grid ? (
+                    <CollectionContentGrid
+                        contentItems={contentItems}
+                        filters={filters}
+                        setFilters={setFilters}
+                        getWorkbookActions={getWorkbookActions}
+                        getCollectionActions={getCollectionActions}
+                        onClickStopPropagation={onClickStopPropagation}
+                    />
+                ) : (
+                    <CollectionContentTable
+                        contentItems={contentItems}
+                        filters={filters}
+                        setFilters={setFilters}
+                        getWorkbookActions={getWorkbookActions}
+                        getCollectionActions={getCollectionActions}
+                        onClickStopPropagation={onClickStopPropagation}
+                    />
+                )}
+
                 {isContentLoading && <SmartLoader size="m" showAfter={0} />}
                 {!isContentLoading && !waypointDisabled && <Waypoint onEnter={onWaypointEnter} />}
                 {dialogEntity && (

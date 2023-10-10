@@ -37,6 +37,7 @@ import Utils from 'utils';
 import {
     CollectionContentFilters,
     CollectionFilters,
+    ViewMode,
 } from '../../../../components/CollectionFilters';
 import {registry} from '../../../../registry';
 import {AddDemoWorkbookDialogContainer} from '../../containers/AddDemoWorkbookDialogContainer/AddDemoWorkbookDialogContainer';
@@ -59,6 +60,7 @@ const DEFAULT_FILTERS = {
     orderDirection: OrderDirection.Desc,
     mode: GetCollectionContentMode.All,
     onlyMy: false,
+    viewMode: ViewMode.Table,
 };
 
 const b = block('dl-collection-page');
