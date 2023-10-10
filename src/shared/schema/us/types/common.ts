@@ -14,4 +14,5 @@ export interface EntriesCommonArgs {
     page?: number;
     pageSize?: number;
     includePermissionsInfo?: boolean;
+    ignoreWorkbookEntries?: boolean;
 }
