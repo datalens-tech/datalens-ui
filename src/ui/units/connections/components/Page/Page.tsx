@@ -32,7 +32,7 @@ type PageProps = DispatchProps &
     DispatchState &
     RouteChildrenProps<{id?: string; workbookId?: string; type?: ConnectorType}>;
 
-type PageContentProps = Omit<DispatchState, 'entry'> & {
+type PageContentProps = Omit<DispatchState, 'entry' | 'loading'> & {
     type: ConnectorType;
     getConnectors: () => void;
     getConnectorSchema: (type: ConnectorType) => void;
@@ -45,15 +45,10 @@ const PageContent = (props: PageContentProps) => {
         flattenConnectors,
         groupedConnectors,
         connectionData,
-        loading,
         getConnectors: getConnectorsHandler,
         getConnectorSchema: getConnectorSchemaHandler,
     } = props;
     const {error, scope} = useApiErrors({apiErrors});
-
-    if (loading) {
-        return <WrappedLoader />;
-    }
 
     if (error) {
         let handler: NonNullable<ErrorViewProps['action']>['handler'];
@@ -129,8 +124,8 @@ const PageComponent = (props: PageProps) => {
                 history={history}
             />
             <AccessRightsUrlOpen history={history} />
-            {entry && (
-                <React.Fragment>
+            <div className={b()}>
+                {entry && (
                     <ActionPanel
                         entry={entry}
                         rightItems={
@@ -144,20 +139,21 @@ const PageComponent = (props: PageProps) => {
                             )
                         }
                     />
-                    <div className={b()}>
-                        <PageContent
-                            type={type}
-                            apiErrors={apiErrors}
-                            flattenConnectors={flattenConnectors}
-                            groupedConnectors={groupedConnectors}
-                            connectionData={connectionData}
-                            loading={loading}
-                            getConnectors={actions.getConnectors}
-                            getConnectorSchema={actions.getConnectorSchema}
-                        />
-                    </div>
-                </React.Fragment>
-            )}
+                )}
+                {loading || !entry ? (
+                    <WrappedLoader withHeightOffset={Boolean(entry)} />
+                ) : (
+                    <PageContent
+                        type={type}
+                        apiErrors={apiErrors}
+                        flattenConnectors={flattenConnectors}
+                        groupedConnectors={groupedConnectors}
+                        connectionData={connectionData}
+                        getConnectors={actions.getConnectors}
+                        getConnectorSchema={actions.getConnectorSchema}
+                    />
+                )}
+            </div>
             <UnloadConfirmation />
         </React.Fragment>
     );
