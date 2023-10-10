@@ -34,6 +34,7 @@ import {
     load as loadDash,
     setCopiedItemData,
     setEditMode,
+    setLock,
 } from '../../store/actions/dash';
 import {setErrorMode, setPageTab} from '../../store/actions/dashTyped';
 import {canEdit, getDashEntry, isDraft, isEditMode} from '../../store/selectors/dash';
@@ -73,6 +74,12 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
 
         if (Utils.isEnabledFeature(Feature.AuthUpdateWithTimeout)) {
             this.setAuthUpdateTimeout();
+        }
+
+        // Fix case when open dash in edit mode then open dataset via navigation then click browser's back button.
+        // We set lockToken again
+        if (this.props.isEditMode && this.props.lockToken === null) {
+            this.props.setLock(entryId, false, false);
         }
 
         window.addEventListener('beforeunload', this.unloadConfirmation);
@@ -312,6 +319,7 @@ const mapDispatchToProps = {
     setErrorMode,
     cleanLock,
     deleteLock,
+    setLock,
     cleanRevisions,
     setPageTab,
     setEditMode,
