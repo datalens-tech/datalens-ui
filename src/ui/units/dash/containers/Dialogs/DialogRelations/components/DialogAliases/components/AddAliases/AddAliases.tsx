@@ -19,6 +19,8 @@ type AddAliasesProps = {
     currentAliases: string[][];
     onCancel: () => void;
     onAdd: (aliases: string[]) => void;
+    widgetIcon: React.ReactNode;
+    rowIcon: React.ReactNode;
 };
 
 const b = block('dialog-aliases-add');
@@ -78,6 +80,8 @@ export const AddAliases = ({
     currentAliases,
     onCancel,
     onAdd,
+    widgetIcon,
+    rowIcon,
 }: AddAliasesProps) => {
     const {datasets} = React.useContext(AliasesContext);
     const [errorMsg, setErrorMgs] = React.useState<string>('');
@@ -144,6 +148,7 @@ export const AddAliases = ({
             >
                 <div className={b('select-wrap')}>
                     <div className={b('sub-title')} title={leftAliasSubTitle}>
+                        {widgetIcon}
                         {leftAliasSubTitle}
                     </div>
                     <Select
@@ -162,6 +167,7 @@ export const AddAliases = ({
                 <span className={b('eq')}>=</span>
                 <div className={b('select-wrap')}>
                     <div className={b('sub-title')} title={rightAliasSubTitle}>
+                        {rowIcon}
                         {rightAliasSubTitle}
                     </div>
                     <Select

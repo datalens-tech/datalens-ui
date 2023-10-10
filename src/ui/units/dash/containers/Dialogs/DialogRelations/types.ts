@@ -59,6 +59,8 @@ export type AliasClickHandlerData = {
     currentRow: DashkitMetaDataItem;
     relationText: React.ReactNode;
     relationType: RelationType;
+    widgetIcon: React.ReactNode;
+    rowIcon: React.ReactNode;
 };
 
 export type AliasClickHandlerArgs = AliasClickHandlerData & {

@@ -21,6 +21,7 @@ import {Content} from './components/Content/Content';
 import {DEFAULT_FILTERS, Filters, FiltersTypes} from './components/Filters/Filters';
 import {
     DEFAULT_ALIAS_NAMESPACE,
+    DEFAULT_ICON_SIZE,
     RELATION_TYPES,
     getDialogCaptionIcon,
     getRelationsForSave,
@@ -211,7 +212,17 @@ const DialogRelations = (props: DialogRelationsProps) => {
     );
 
     const titleIcon =
-        isLoading || !currentWidgetMeta ? null : getDialogCaptionIcon(widget, currentWidgetMeta);
+        isLoading || !currentWidgetMeta ? null : getDialogCaptionIcon({widget, currentWidgetMeta});
+
+    const widgetIcon =
+        isLoading || !currentWidgetMeta
+            ? null
+            : getDialogCaptionIcon({
+                  widget,
+                  currentWidgetMeta,
+                  iconSize: DEFAULT_ICON_SIZE,
+                  className: b('alias-add-icon-type'),
+              });
 
     React.useEffect(() => {
         if (!preparedRelations?.length) {
@@ -234,6 +245,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     onChange={handleRelationTypeChange}
                     onAliasClick={handleAliasesClick}
                     showDebugInfo={showDebugInfo}
+                    widgetIcon={widgetIcon}
                 />
             </Dialog.Body>
             <Dialog.Footer

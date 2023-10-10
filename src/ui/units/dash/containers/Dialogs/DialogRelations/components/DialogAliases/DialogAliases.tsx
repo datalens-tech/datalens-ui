@@ -47,6 +47,8 @@ const DialogAliases = (props: DialogAliasesProps) => {
         updateRelations,
         relationText,
         relationType,
+        widgetIcon,
+        rowIcon,
     } = props;
 
     const [showDetailedData, setShowDetailedData] = React.useState<boolean>(false);
@@ -279,6 +281,8 @@ const DialogAliases = (props: DialogAliasesProps) => {
                                     onCancel={handleHideAlias}
                                     currentAliases={aliases}
                                     onAdd={handleAddNewAliases}
+                                    widgetIcon={widgetIcon}
+                                    rowIcon={rowIcon}
                                 />
                             )}
                         </React.Fragment>
