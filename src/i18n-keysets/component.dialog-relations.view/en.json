@@ -33,5 +33,6 @@
   "label_alias-detail-2": "with parameter",
   "label_choose-fields-from-list": "Choose fields from list",
   "label_alias-already-exists": "This alias already exists",
+  "label_alias-same-dataset": "This alias cause connection of fields on the same dataset which is not allowed",
   "label_choose-field-for-alias": "Choose field for alias"
 }

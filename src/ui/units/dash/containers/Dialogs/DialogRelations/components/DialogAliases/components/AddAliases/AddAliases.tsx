@@ -1,13 +1,15 @@
 import React from 'react';
 
 import {Check, Xmark} from '@gravity-ui/icons';
-import {Button, Flex, Icon, Select, SelectOption} from '@gravity-ui/uikit';
+import {Button, Icon, Select, SelectOption} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import isEqual from 'lodash/isEqual';
+import {addAlias} from 'ui/units/dash/containers/Dialogs/DialogRelations/helpers';
 
 import {AliasesContext} from '../../../../hooks/useRelations';
 import {DashkitMetaDataItem, DatasetsListData} from '../../../../types';
+
+import {isAddingAliasExists, isAddingAliasSameDataset} from './helpers';
 
 import './AddAliases.scss';
 
@@ -128,24 +130,25 @@ export const AddAliases = ({
         newAlias.sort();
 
         for (let i = 0; i < currentAliases.length; i++) {
-            if (isEqual(currentAliases[i], newAlias)) {
+            if (isAddingAliasExists(currentAliases[i], newAlias)) {
                 setErrorMgs(i18n('label_alias-already-exists'));
                 return;
             }
         }
 
+        const addedAliases = addAlias(newAlias[0], newAlias[1], [...currentAliases]);
+
+        if (isAddingAliasSameDataset(addedAliases, datasets)) {
+            setErrorMgs(i18n('label_alias-same-dataset'));
+            return;
+        }
+
         onAdd(newAlias);
-    }, [currentAliases, leftAliasSelected, rightAliasSelected, onAdd]);
+    }, [currentAliases, leftAliasSelected, rightAliasSelected, onAdd, datasets]);
 
     return (
         <div className={b()}>
-            <Flex
-                space={2}
-                justifyContent="flex-start"
-                alignItems="center"
-                inline={true}
-                wrap="wrap"
-            >
+            <div className={b('row')}>
                 <div className={b('select-wrap')}>
                     <div className={b('sub-title')} title={leftAliasSubTitle}>
                         {widgetIcon}
@@ -190,7 +193,7 @@ export const AddAliases = ({
                 <Button className={b('button')} view="normal" onClick={onCancel}>
                     <Icon data={Xmark} />
                 </Button>
-            </Flex>
+            </div>
             {errorMsg && <div className={b('error')}>{errorMsg}</div>}
         </div>
     );

@@ -11,7 +11,7 @@ import isEqual from 'lodash/isEqual';
 import {useSelector} from 'react-redux';
 import {getCurrentTabAliases} from 'ui/units/dash/store/selectors/relations/selectors';
 
-import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../..//helpers';
+import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../../helpers';
 import {AliasesContext} from '../../hooks/useRelations';
 import {AliasClickHandlerArgs, RelationType} from '../../types';
 

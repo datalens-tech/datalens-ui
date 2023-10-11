@@ -21,24 +21,26 @@ type AliasesDetailProps = {
 export const AliasesDetail = ({fieldName, items}: AliasesDetailProps) => {
     const {showDebugInfo} = React.useContext(AliasesContext);
 
-    const content = items.map((item: any, index: number) => {
-        const icon = getDialogRowIcon(item, b('icon-widget'));
-        const label = item?.label && item?.label !== item.title ? item?.label : '';
-        const debugInfo = showDebugInfo ? (
-            <span className={b('info')}> ({item.widgetId})</span>
-        ) : null;
-        const title = (showDebugInfo ? `(${item.widgetId}) ` : '') + label + item.title;
-        const rowTitle = [label, item.title].filter(Boolean).join(` — `);
-        return (
-            <div className={b('row')} key={`linked-widgets-row-${item.widgetId}-${index}`}>
-                {icon}
-                <span className={b('text')} title={title}>
-                    {debugInfo}
-                    {rowTitle}
-                </span>
-            </div>
-        );
-    });
+    const content = items.map(
+        (item: DashkitMetaDataItem & {intersectionParams: string[]}, index: number) => {
+            const icon = getDialogRowIcon(item, b('icon-widget'));
+            const label = item?.label && item?.label !== item.title ? item?.label : '';
+            const debugInfo = showDebugInfo ? (
+                <span className={b('info')}> ({item.widgetId})</span>
+            ) : null;
+            const title = (showDebugInfo ? `(${item.widgetId}) ` : '') + label + item.title;
+            const rowTitle = [label, item.title].filter(Boolean).join(` — `);
+            return (
+                <div className={b('row')} key={`linked-widgets-row-${item.widgetId}-${index}`}>
+                    {icon}
+                    <span className={b('text')} title={title}>
+                        {debugInfo}
+                        {rowTitle}
+                    </span>
+                </div>
+            );
+        },
+    );
 
     return (
         <div className={b()}>
