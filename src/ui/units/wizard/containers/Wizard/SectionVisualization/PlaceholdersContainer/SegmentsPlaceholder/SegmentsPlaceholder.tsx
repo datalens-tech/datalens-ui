@@ -21,7 +21,7 @@ type Props = CommonPlaceholderProps & StateProps & DispatchProps;
 
 class SegmentsPlaceholder extends React.Component<Props> {
     render() {
-        const {wrapTo, datasetError, onBeforeRemoveItem, segments} = this.props;
+        const {addFieldItems, wrapTo, datasetError, onBeforeRemoveItem, segments} = this.props;
         return (
             <PlaceholderComponent
                 key="segments"
@@ -47,7 +47,7 @@ class SegmentsPlaceholder extends React.Component<Props> {
                 wrapTo={wrapTo}
                 onBeforeRemoveItem={onBeforeRemoveItem}
                 disabled={Boolean(datasetError)}
-                qlMode={this.props.qlMode}
+                addFieldItems={addFieldItems}
                 onAfterUpdate={this.props.onUpdate}
             />
         );

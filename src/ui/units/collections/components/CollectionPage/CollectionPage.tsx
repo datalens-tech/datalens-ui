@@ -1,6 +1,8 @@
 import React from 'react';
 
+import {PencilToLine} from '@gravity-ui/icons';
 import {CancellablePromise} from '@gravity-ui/sdk';
+import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {CollectionBreadcrumbs} from 'components/Breadcrumbs/CollectionBreadcrumbs/CollectionBreadcrumbs';
 import {
@@ -295,6 +297,35 @@ export const CollectionPage = React.memo<Props>(
             ? breadcrumbs.filter((item) => item.collectionId !== collection?.collectionId)
             : [];
 
+        const onEditClick = () => {
+            if (curCollectionId && collection) {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_EDIT_COLLECTION,
+                        props: {
+                            open: true,
+                            collectionId: collection.collectionId,
+                            title: collection.title,
+                            description: collection?.description ?? '',
+                            onApply: () => {
+                                return Promise.all([
+                                    getCollection({
+                                        collectionId: curCollectionId,
+                                    }),
+                                    getCollectionBreadcrumbs({
+                                        collectionId: curCollectionId,
+                                    }),
+                                ]);
+                            },
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
+                        },
+                    }),
+                );
+            }
+        };
+
         return (
             <div className={b()}>
                 <CollectionActionPanel
@@ -358,34 +389,6 @@ export const CollectionPage = React.memo<Props>(
                                     setDialogState(DialogState.AddLearningMaterialWorkbook);
                                 }}
                                 onCreateWorkbookClick={handleCreateWorkbook}
-                                onEditClick={() => {
-                                    if (curCollectionId && collection) {
-                                        dispatch(
-                                            openDialog({
-                                                id: DIALOG_EDIT_COLLECTION,
-                                                props: {
-                                                    open: true,
-                                                    collectionId: collection.collectionId,
-                                                    title: collection.title,
-                                                    description: collection?.description ?? '',
-                                                    onApply: () => {
-                                                        return Promise.all([
-                                                            getCollection({
-                                                                collectionId: curCollectionId,
-                                                            }),
-                                                            getCollectionBreadcrumbs({
-                                                                collectionId: curCollectionId,
-                                                            }),
-                                                        ]);
-                                                    },
-                                                    onClose: () => {
-                                                        dispatch(closeDialog());
-                                                    },
-                                                },
-                                            }),
-                                        );
-                                    }
-                                }}
                                 onMoveClick={() => {
                                     if (curCollectionId && collection) {
                                         dispatch(
@@ -419,6 +422,17 @@ export const CollectionPage = React.memo<Props>(
                                 curCollectionId && collection
                                     ? collection.title
                                     : i18n('label_root-title')
+                            }
+                            editBtn={
+                                Boolean(
+                                    curCollectionId && collection && collection.permissions.update,
+                                ) && (
+                                    <Tooltip content={i18n('action_edit')}>
+                                        <Button onClick={onEditClick}>
+                                            <Icon data={PencilToLine} />
+                                        </Button>
+                                    </Tooltip>
+                                )
                             }
                             description={
                                 curCollectionId && collection ? collection.description : null

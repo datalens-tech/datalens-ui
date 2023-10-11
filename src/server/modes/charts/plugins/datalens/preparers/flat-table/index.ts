@@ -8,9 +8,11 @@ import {
     TableCommonCell,
     TableHead,
     isDateField,
-    isMarkupField,
+    isDateType,
+    isMarkupDataType,
     isNumberField,
     isTreeDataType,
+    isUnsupportedDataType,
 } from '../../../../../../../shared';
 import {Config} from '../../config';
 import {getTreeState} from '../../url/helpers';
@@ -169,6 +171,7 @@ function prepareFlatTable({
     }
 
     const rows: TableCellsRow[] = data.map((values, rowIndex) => {
+        // eslint-disable-next-line complexity
         const cells = columns.map((item) => {
             const actualTitle = idToTitle[item.guid] || item.title;
 
@@ -183,7 +186,7 @@ function prepareFlatTable({
                 cell.value = null;
             } else if (Array.isArray(value)) {
                 cell.value = JSON.stringify(value);
-            } else if (isMarkupField({data_type: itemDataType})) {
+            } else if (isMarkupDataType(itemDataType)) {
                 cell.value = value;
                 cell.type = 'markup';
             } else if (isNumericalDataType(itemDataType)) {
@@ -206,7 +209,7 @@ function prepareFlatTable({
                 } else {
                     cell.value = Number(value);
                 }
-            } else if (isDateField({data_type: itemDataType})) {
+            } else if (isDateType(itemDataType)) {
                 const date = new Date(value);
 
                 cell.value = getTimezoneOffsettedTime(date);
@@ -226,11 +229,18 @@ function prepareFlatTable({
                         cell.value = parsedTreeNode[parsedTreeNode.length - 1];
                     }
                 }
+            } else if (isUnsupportedDataType(itemDataType)) {
+                ChartEditor._setError({
+                    code: 'ERR.CHARTS.UNSUPPORTED_DATA_TYPE',
+                    details: {
+                        field: actualTitle,
+                    },
+                });
             }
 
             if (
                 drillDownData &&
-                !isMarkupField({data_type: itemDataType}) &&
+                !isMarkupDataType(itemDataType) &&
                 currentActiveDrillDownFieldIndex >= 0
             ) {
                 if (values[currentActiveDrillDownFieldIndex] === null) {

@@ -9,13 +9,18 @@ import './WrappedLoader.scss';
 
 const b = block('wrapped-loader');
 
-export const WrappedLoader: React.FC<LoaderProps> = (props) => {
-    const {size = 'l'} = props;
-    const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
+type Props = LoaderProps & {withHeightOffset?: boolean};
+
+export const WrappedLoader = (props: Props) => {
+    const {size = 'l', withHeightOffset = true} = props;
+    const mods = {
+        'with-aside-header': getIsAsideHeaderEnabled(),
+        'with-height-offset': withHeightOffset,
+    };
 
     return (
-        <div className={b({'with-aside-header': isAsideHeaderEnabled})}>
-            <Loader className={b()} size={size} />
+        <div className={b(mods)}>
+            <Loader size={size} />
         </div>
     );
 };
