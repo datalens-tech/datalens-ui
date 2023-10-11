@@ -3,6 +3,7 @@ import {
     ExtendedSeriesLineOptions,
     isDateField,
 } from '../../../../../../../shared';
+import {getColorsForNames} from '../../../ql/utils/colors';
 import {
     QLRenderResultYagr,
     QLRenderResultYagrGraph,
@@ -19,7 +20,7 @@ const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base
 
 // eslint-disable-next-line complexity
 function prepareLineTime(options: PrepareFunctionArgs) {
-    const {placeholders, resultData, colors, idToTitle, colorsConfig} = options;
+    const {placeholders, resultData, colors, idToTitle, colorsConfig, shared} = options;
 
     const {data, order} = resultData;
 
@@ -107,6 +108,8 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                 return {
                     id: renderValue(colorValue),
                     name: renderValue(colorValue),
+                    colorValue: renderValue(colorValue),
+                    colorGuid: colors[0].guid || null,
                     color: 'rgb(0,127,0)',
                     data: [],
                 };
@@ -161,11 +164,33 @@ function prepareLineTime(options: PrepareFunctionArgs) {
         }
     });
 
-    mapAndColorizeGraphsByDimension({
-        graphs: result.graphs as unknown as ExtendedSeriesLineOptions[],
-        colorsConfig,
-        isColorsItemExists: Boolean(colors),
-    });
+    const useColorizingWithPalettes =
+        colorsConfig.mountedColors && Object.keys(colorsConfig.mountedColors).length > 0;
+
+    if (useColorizingWithPalettes) {
+        // Use usual colorizing with datalens palettes
+        mapAndColorizeGraphsByDimension({
+            graphs: result.graphs as unknown as ExtendedSeriesLineOptions[],
+            colorsConfig,
+            isColorsItemExists: Boolean(colors),
+        });
+    } else {
+        // Else apply colorizing from YAGR for compatibility with Monitoring
+        let colorData: string[];
+        if (shared.visualization.id === 'area' && result.graphs.length > 1) {
+            colorData = getColorsForNames(
+                result.graphs.map(({name}) => String(name)),
+                {type: 'gradient'},
+            );
+        } else {
+            colorData = getColorsForNames(result.graphs.map(({name}) => String(name)));
+        }
+
+        result.graphs.forEach((graph, i) => {
+            graph.color = colorData[i];
+            graph.spanGaps = true;
+        });
+    }
 
     result.axes = [
         {
