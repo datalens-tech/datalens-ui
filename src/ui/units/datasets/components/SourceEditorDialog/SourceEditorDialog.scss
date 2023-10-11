@@ -45,8 +45,11 @@
     }
 
     &__tooltip-body {
-        margin-bottom: 10px;
         display: inline-block;
+
+        &:not(:last-child) {
+            margin-bottom: 10px;
+        }
     }
 
     &__example {

@@ -17,7 +17,11 @@ import {DataLensApiError, DatalensGlobalState, sdk} from '../../../../../../inde
 import {getChartType} from '../../../../../ql/store/reducers/ql';
 import {removeQuickFormula} from '../../../../actions';
 import {selectDatasetError, selectDatasets} from '../../../../selectors/dataset';
-import {selectDashboardParameters, selectFilters} from '../../../../selectors/visualization';
+import {
+    selectAvailable,
+    selectDashboardParameters,
+    selectFilters,
+} from '../../../../selectors/visualization';
 import {AddableField} from '../AddField/AddField';
 import VisualizationItem from '../VisualizationItem/VisualizationItem';
 import VisualizationLayersControl from '../VisualizationLayersControl/VisualizationLayersControl';
@@ -55,7 +59,7 @@ export type CommonPlaceholderProps = {
     onUpdate?: () => void;
     datasetError: DataLensApiError | undefined;
     visualization: Shared['visualization'];
-    qlMode?: boolean;
+    addFieldItems?: Field[];
 };
 
 class PlaceholdersContainer extends React.PureComponent<Props> {
@@ -82,7 +86,6 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         visualization={visualization}
                         globalVisualization={globalVisualization}
                         onUpdate={onUpdate}
-                        qlMode={this.props.qlMode}
                     />
                 )}
                 {placeholders.map((placeholder: Placeholder) => {
@@ -95,7 +98,7 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                             placeholder={placeholder}
                             key={`${placeholder.id}-placeholder-component`}
                             onUpdate={onUpdate}
-                            qlMode={this.props.qlMode}
+                            addFieldItems={this.addFieldItems}
                         />
                     );
 
@@ -118,7 +121,7 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         visualization={visualization}
                         globalVisualization={globalVisualization}
                         onUpdate={onUpdate}
-                        qlMode={this.props.qlMode}
+                        addFieldItems={this.addFieldItems}
                     />
                 )}
                 {allowShapes && (
@@ -128,7 +131,7 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         datasetError={datasetError}
                         visualization={visualization}
                         onUpdate={onUpdate}
-                        qlMode={this.props.qlMode}
+                        addFieldItems={this.addFieldItems}
                     />
                 )}
                 {visualization.allowSort && (
@@ -138,7 +141,6 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         datasetError={datasetError}
                         visualization={visualization}
                         onUpdate={onUpdate}
-                        qlMode={this.props.qlMode}
                     />
                 )}
                 {visualization.allowLabels && (
@@ -148,7 +150,8 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         datasetError={datasetError}
                         visualization={visualization}
                         onUpdate={onUpdate}
-                        qlMode={this.props.qlMode}
+                        addFieldItems={this.addFieldItems}
+                        qlMode={qlMode}
                     />
                 )}
                 {(visualization as unknown as VisualizationLayerShared['visualization'])
@@ -159,7 +162,7 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         datasetError={datasetError}
                         visualization={visualization}
                         onUpdate={onUpdate}
-                        qlMode={this.props.qlMode}
+                        addFieldItems={this.addFieldItems}
                     />
                 )}
                 {allowSegments && globalVisualization?.id !== 'combined-chart' && (
@@ -169,7 +172,7 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         datasetError={datasetError}
                         visualization={visualization}
                         onUpdate={onUpdate}
-                        qlMode={this.props.qlMode}
+                        addFieldItems={this.addFieldItems}
                     />
                 )}
                 {(visualization as unknown as VisualizationLayerShared['visualization'])
@@ -180,7 +183,6 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         datasetError={datasetError}
                         visualization={visualization}
                         onUpdate={onUpdate}
-                        qlMode={this.props.qlMode}
                     />
                 )}
                 {(visualization as unknown as VisualizationLayerShared['visualization'])
@@ -191,7 +193,6 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         datasetError={datasetError}
                         visualization={visualization}
                         onUpdate={onUpdate}
-                        qlMode={this.props.qlMode}
                     />
                 )}
                 {(visualization as unknown as VisualizationLayerShared['visualization'])
@@ -203,7 +204,6 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                             datasetError={datasetError}
                             visualization={visualization}
                             onUpdate={onUpdate}
-                            qlMode={this.props.qlMode}
                         />
                     )}
                 {this.props.dashboardParameters.length > 0 && (
@@ -213,7 +213,7 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         datasetError={datasetError}
                         visualization={visualization}
                         onUpdate={onUpdate}
-                        qlMode={this.props.qlMode}
+                        addFieldItems={this.addFieldItems}
                     />
                 )}
             </>
@@ -222,6 +222,16 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
 
     get filtersFromDashboard() {
         return this.props.filters.filter((filter) => filter.unsaved);
+    }
+
+    get addFieldItems() {
+        const {qlMode} = this.props;
+
+        if (qlMode) {
+            return this.props.availableItems;
+        } else {
+            return undefined;
+        }
     }
 
     private renderDatasetItem = (props: any) => {
@@ -264,6 +274,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         filters: selectFilters(state),
         dashboardParameters: selectDashboardParameters(state),
         qlChartType: getChartType(state),
+        availableItems: selectAvailable(state),
     };
 };
 
