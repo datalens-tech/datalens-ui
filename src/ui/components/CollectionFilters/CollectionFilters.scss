@@ -45,4 +45,8 @@ $block: '.dl-collection-filters';
     &__filter-by-ownership {
         margin-left: 8px;
     }
+
+    &__icon-view {
+        margin-top: calc(50% + 2px);
+    }
 }

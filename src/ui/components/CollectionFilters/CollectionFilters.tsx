@@ -122,6 +122,8 @@ export const CollectionFilters = React.memo<Props>(
                 handleChangeFilters({
                     viewMode: value,
                 });
+
+                Utils.store('viewMode', value);
             },
             [handleChangeFilters],
         );
@@ -231,11 +233,11 @@ export const CollectionFilters = React.memo<Props>(
                             size={controlSize}
                             onUpdate={handleChangeView}
                         >
-                            <Select.Option value="grid">
-                                <IconById id="grid" />
+                            <Select.Option value={ViewMode.Grid}>
+                                <IconById className={b('icon-view')} id="grid" />
                             </Select.Option>
-                            <Select.Option value="table">
-                                <IconById id="table" />
+                            <Select.Option value={ViewMode.Table}>
+                                <IconById className={b('icon-view')} id="table" />
                             </Select.Option>
                         </RadioButton>
                     )}

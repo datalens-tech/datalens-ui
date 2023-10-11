@@ -60,7 +60,7 @@ const DEFAULT_FILTERS = {
     orderDirection: OrderDirection.Desc,
     mode: GetCollectionContentMode.All,
     onlyMy: false,
-    viewMode: ViewMode.Table,
+    viewMode: Utils.restore('viewMode') || ViewMode.Table,
 };
 
 const b = block('dl-collection-page');
