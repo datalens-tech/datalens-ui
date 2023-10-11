@@ -110,9 +110,7 @@ export default ({
         case 'area':
         case 'area100p':
         case 'column':
-        case 'column100p':
-        case 'bar':
-        case 'bar100p': {
+        case 'column100p': {
             if (chartType && isMonitoringOrPrometheusChart(chartType)) {
                 prepare = prepareLineTime;
                 rowsLimit = 75000;
@@ -120,6 +118,13 @@ export default ({
                 prepare = prepareLineData;
                 rowsLimit = 75000;
             }
+            break;
+        }
+
+        case 'bar':
+        case 'bar100p': {
+            prepare = prepareLineData;
+            rowsLimit = 75000;
             break;
         }
 

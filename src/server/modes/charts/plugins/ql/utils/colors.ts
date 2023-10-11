@@ -19,7 +19,6 @@ function isNumber(c: unknown) {
     return !Number.isNaN(Number(c));
 }
 
-/* COMPARE TEXT WITH NUMBERS (solomon/libs/sorting) */
 function isDigit(c: string) {
     return c >= '0' && c <= '9';
 }
@@ -69,9 +68,6 @@ export function compareTextWithNumber(s1: string, s2: string) {
 
     return compareImpl(s1, 0, s2, 0);
 }
-/* END COMPARE TEXT WITH NUMBERS */
-
-/* USEFUL COLOR SETTINGS */
 
 const STARTING_HUE_POINTS = [80, 200, 50, 0, 160, 250];
 const REGION_HUE_POINTS = [90, 200, 50, 10, 160, 330];
@@ -178,15 +174,15 @@ export function getColorAlexPetrov(n: number) {
 
         hue = (REGION_HUE_POINTS[region] + hueShift) % 360;
 
-        // Неразличимый зеленый
+        // Indistinguishable green
         if (hue > 120 && hue < 150) {
             hue = (hue + 50) % 360;
         }
-        // Фиолетово-розовый
+        // Purple-pink
         if (hue > 270 && hue < 330) {
             hue = (hue + 70) % 360;
         }
-        // Неразличимый синий
+        // Indistinguishable blue
         if (hue > 220 && hue < 250) {
             hue = (hue + 40) % 360;
         }
