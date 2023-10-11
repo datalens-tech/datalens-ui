@@ -161,11 +161,13 @@ class DropdownNavigation extends React.PureComponent {
             );
         }
 
+        const width = this.state.entry ? 'max' : undefined;
+
         return (
             <div className={b()} ref={this.buttonRef}>
                 <Button
                     view="outlined"
-                    width="max"
+                    width={width}
                     size={this.props.size}
                     disabled={this.props.disabled}
                     onClick={() => this.setState({showNavigation: !this.state.showNavigation})}
@@ -177,10 +179,6 @@ class DropdownNavigation extends React.PureComponent {
                     ) : (
                         i18n('dash.navigation-input.edit', 'button_choose')
                     )}
-                    {/* <Icon
-                        glyph="type-arrow"
-                        direction={this.state.showNavigation ? 'top' : 'bottom'}
-                    /> */}
                 </Button>
                 {this.renderNavigation()}
             </div>

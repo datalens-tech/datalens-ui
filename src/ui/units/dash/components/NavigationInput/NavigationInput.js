@@ -55,7 +55,6 @@ class NavigationInput extends React.PureComponent {
                         <DropdownNavigation
                             size="m"
                             entryId={entryId}
-                            disabled={showInput}
                             scope={ENTRY_SCOPE.WIDGET}
                             onClick={this.onChange}
                             onUpdate={onUpdate}
@@ -65,6 +64,7 @@ class NavigationInput extends React.PureComponent {
                     </div>
                     {entryId && (
                         <Button
+                            className={b('button')}
                             qa={NavigationInputQA.Open}
                             target="_blank"
                             href={getChartEditLink(entryId)}
