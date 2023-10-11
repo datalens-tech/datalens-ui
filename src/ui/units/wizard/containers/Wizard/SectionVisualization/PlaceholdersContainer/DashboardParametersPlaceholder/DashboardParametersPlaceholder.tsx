@@ -44,7 +44,6 @@ class DashboardParametersPlaceholder extends React.Component<Props> {
                 checkAllowed={() => false}
                 isDashboardPlaceholder={true}
                 onItemClick={this.handleOnItemClick}
-                qlMode={this.props.qlMode}
             />
         );
     }
