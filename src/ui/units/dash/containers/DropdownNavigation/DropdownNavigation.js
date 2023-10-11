@@ -100,40 +100,6 @@ class DropdownNavigation extends React.PureComponent {
         this.setState(state);
     }
 
-    render() {
-        if (this.loading) {
-            return (
-                <div className={b()}>
-                    <Loader size="s" />
-                </div>
-            );
-        }
-
-        return (
-            <div className={b()} ref={this.buttonRef}>
-                <Button
-                    view="outlined"
-                    size={this.props.size}
-                    disabled={this.props.disabled}
-                    onClick={() => this.setState({showNavigation: !this.state.showNavigation})}
-                    ref={this.setButtonRef}
-                    className={b('button')}
-                >
-                    {this.state.entry ? (
-                        <EntryTitle entry={this.state.entry} theme="inline" />
-                    ) : (
-                        i18n('dash.navigation-input.edit', 'button_choose')
-                    )}
-                    {/* <Icon
-                        glyph="type-arrow"
-                        direction={this.state.showNavigation ? 'top' : 'bottom'}
-                    /> */}
-                </Button>
-                {this.renderNavigation()}
-            </div>
-        );
-    }
-
     renderNavigation() {
         if (this.props.workbookId) {
             return (
@@ -183,6 +149,41 @@ class DropdownNavigation extends React.PureComponent {
                     this.setState({entry, showNavigation: false});
                 }}
             />
+        );
+    }
+
+    render() {
+        if (this.loading) {
+            return (
+                <div className={b()}>
+                    <Loader size="s" />
+                </div>
+            );
+        }
+
+        return (
+            <div className={b()} ref={this.buttonRef}>
+                <Button
+                    view="outlined"
+                    width="max"
+                    size={this.props.size}
+                    disabled={this.props.disabled}
+                    onClick={() => this.setState({showNavigation: !this.state.showNavigation})}
+                    ref={this.setButtonRef}
+                    className={b('button')}
+                >
+                    {this.state.entry ? (
+                        <EntryTitle entry={this.state.entry} theme="inline" />
+                    ) : (
+                        i18n('dash.navigation-input.edit', 'button_choose')
+                    )}
+                    {/* <Icon
+                        glyph="type-arrow"
+                        direction={this.state.showNavigation ? 'top' : 'bottom'}
+                    /> */}
+                </Button>
+                {this.renderNavigation()}
+            </div>
         );
     }
 }

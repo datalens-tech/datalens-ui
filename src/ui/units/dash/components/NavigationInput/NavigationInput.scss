@@ -1,12 +1,12 @@
 .navigation-input {
     &__row {
         display: grid;
-        grid-template-columns: var(--dl-dropdown-navigation-width) 75px 75px;
+        grid-template-columns: var(--dl-dropdown-navigation-width) auto auto;
         grid-column-gap: 10px;
         align-items: center;
     }
 
     &__button {
-        width: 135px;
+        width: fit-content;
     }
 }
