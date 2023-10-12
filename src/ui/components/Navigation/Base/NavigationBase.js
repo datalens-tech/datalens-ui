@@ -6,7 +6,7 @@ import {Link, withRouter} from 'react-router-dom';
 import {ENTRY_TYPES, EntryScope, Feature} from 'shared';
 import {closeNavigation} from 'store/actions/asideHeader/navigation';
 
-import {DL, URL_QUERY} from '../../../constants/common';
+import {URL_QUERY} from '../../../constants/common';
 import navigateHelper from '../../../libs/navigateHelper';
 import {registry} from '../../../registry';
 import Utils from '../../../utils';
@@ -203,6 +203,11 @@ class NavigationBase extends React.Component {
         this.update(response, EntryDialogName.Delete, entry);
     }
     async createDashboard() {
+        if (Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry)) {
+            this.props.history.push('/dashboards/new');
+            this.closeNavigation();
+            return;
+        }
         const response = await this.refDialogues.current.open({
             dialog: EntryDialogName.CreateDashboard,
             dialogProps: {
@@ -275,42 +280,42 @@ class NavigationBase extends React.Component {
                 break;
             }
             case CreateMenuValue.Connection: {
-                history.push(`${DL.ENDPOINTS.connections}/new${query}`);
+                history.push(`/connections/new${query}`);
                 this.closeNavigation();
                 break;
             }
             case CreateMenuValue.Dataset: {
-                history.push(`${DL.ENDPOINTS.dataset}/new${query}`);
+                history.push(`/datasets/new${query}`);
                 this.closeNavigation();
                 break;
             }
             case CreateMenuValue.Widget: {
-                history.push(`${DL.ENDPOINTS.wizard}${query}`);
+                history.push(`/wizard${query}`);
                 this.closeNavigation();
                 break;
             }
             case CreateMenuValue.QL: {
-                history.push(`${DL.ENDPOINTS.ql}${query}`);
+                history.push(`/ql${query}`);
                 this.closeNavigation();
                 break;
             }
             case CreateMenuValue.SQL: {
-                history.push(`${DL.ENDPOINTS.ql}/new/sql${query}`);
+                history.push(`/ql/new/sql${query}`);
                 this.closeNavigation();
                 break;
             }
             case CreateMenuValue.PromQL: {
-                history.push(`${DL.ENDPOINTS.ql}/new/promql${query}`);
+                history.push(`/ql/new/promql${query}`);
                 this.closeNavigation();
                 break;
             }
             case CreateMenuValue.MonitoringQL: {
-                history.push(`${DL.ENDPOINTS.ql}/new/monitoringql${query}`);
+                history.push(`/ql/new/monitoringql${query}`);
                 this.closeNavigation();
                 break;
             }
             case CreateMenuValue.Script: {
-                history.push(`${DL.ENDPOINTS.editor}/new${query}`);
+                history.push(`/editor/new${query}`);
                 this.closeNavigation();
                 break;
             }

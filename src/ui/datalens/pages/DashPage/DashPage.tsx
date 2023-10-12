@@ -16,7 +16,7 @@ reducerRegistry.register({
 
 const Dash = () => (
     <Switch>
-        <Route path="/:id" component={DashApp} />
+        <Route path={['/dashboards/new', '/:id']} component={DashApp} />
     </Switch>
 );
 

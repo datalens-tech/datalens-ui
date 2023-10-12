@@ -187,9 +187,6 @@ export const DL = {
     get YAMAP_API_KEY() {
         return window.DL.ymapApiKey;
     },
-    get SENTRY_OPTIONS() {
-        return window.DL.sentryClientOptions;
-    },
     get ALLOW_LANGUAGES() {
         return window.DL.allowLanguages ?? FALLBACK_LANGUAGES;
     },
