@@ -25,6 +25,8 @@ class NavigationInput extends React.PureComponent {
         onChange: PropTypes.func.isRequired,
         includeClickableType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
         excludeClickableType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
+        linkMixin: PropTypes.string,
+        navigationMixin: PropTypes.string,
     };
 
     static getDerivedStateFromProps({entryId}, {prevEntryId}) {
@@ -44,13 +46,20 @@ class NavigationInput extends React.PureComponent {
     };
 
     render() {
-        const {entryId, onUpdate, includeClickableType, excludeClickableType, workbookId} =
-            this.props;
+        const {
+            entryId,
+            onUpdate,
+            includeClickableType,
+            excludeClickableType,
+            workbookId,
+            navigationMixin,
+            linkMixin,
+        } = this.props;
         const {showInput} = this.state;
 
         return (
             <React.Fragment>
-                <div className={b('row')}>
+                <div className={b('row', navigationMixin)}>
                     <div className={b('navigation')}>
                         <DropdownNavigation
                             size="m"
@@ -73,7 +82,7 @@ class NavigationInput extends React.PureComponent {
                         </Button>
                     )}
                 </div>
-                <div className={b('row')}>
+                <div className={b('row', linkMixin)}>
                     {showInput ? (
                         <InputLink
                             onApply={({entry, params}) => {

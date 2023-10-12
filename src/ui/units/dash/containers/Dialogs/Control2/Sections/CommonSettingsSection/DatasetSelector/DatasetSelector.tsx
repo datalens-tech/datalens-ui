@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
+import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
@@ -17,13 +18,15 @@ import {
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
 import DropdownNavigation from '../../../../../DropdownNavigation/DropdownNavigation';
-import DatasetField from '../../../../Control/Switchers/DatasetField/DatasetField';
+import {DatasetField} from '../../../../Control/Switchers/DatasetField/DatasetField';
 import {ELEMENT_TYPE} from '../../../../Control/constants';
 
 import './DatasetSelector.scss';
 
 const b = block('external-selector-wrapper');
 const i18n = I18n.keyset('dash.control-dialog.edit');
+
+const getDatasetLink = (entryId: string) => `/datasets/${entryId}`;
 
 function DatasetSelector() {
     const dispatch = useDispatch();
@@ -131,6 +134,15 @@ function DatasetSelector() {
                         //@ts-ignore
                         onClick={handleDatasetChange}
                     />
+                    {datasetId && (
+                        <Button
+                            className={b('button')}
+                            target="_blank"
+                            href={getDatasetLink(datasetId)}
+                        >
+                            {i18n('button_open')}
+                        </Button>
+                    )}
                 </div>
             </FormRow>
             <FormRow label={i18n('field_field')}>
