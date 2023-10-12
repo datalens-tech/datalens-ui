@@ -1,6 +1,5 @@
 import type {RenderParams} from '@gravity-ui/app-layout';
 import type {TableSettingsData, Theme, ThemeSettings} from '@gravity-ui/uikit';
-import * as Sentry from '@sentry/react';
 
 import {AppEnvironment, AppInstallation, DeviceType, Language} from '../constants';
 import {Palette} from '../constants/colors';
@@ -163,7 +162,6 @@ export type DLGlobalData = {
     publicScope?: 'dash' | 'widget';
     ymapApiKey?: string;
     oauthEndpoint?: string;
-    sentryClientOptions?: Sentry.BrowserOptions;
     tenantMode?: {
         foldersEnabled: boolean;
         workbooksEnabled: boolean;
