@@ -23,13 +23,7 @@ order by built_year, iznos
 
 datalensTest.describe('QL - saving the chart', () => {
     datalensTest.beforeEach(async ({page}) => {
-        const qlPage = new QLPage({page});
-
         await openTestPage(page, RobotChartsSQLEditorUrls.NewQLChartForPostgresDemo);
-
-        await qlPage.setScript(sqlScript);
-
-        await qlPage.runScript();
     });
 
     datalensTest.afterEach(async ({page}) => {
@@ -40,6 +34,10 @@ datalensTest.describe('QL - saving the chart', () => {
 
     datalensTest('Saving a new ql chart', async ({page}) => {
         const qlPage = new QLPage({page});
+
+        await qlPage.setScript(sqlScript);
+
+        await qlPage.runScript();
 
         await qlPage.waitForSuccessfulResponse('/api/run');
 
@@ -52,6 +50,10 @@ datalensTest.describe('QL - saving the chart', () => {
 
     datalensTest('Saving an already created ql chart', async ({page}) => {
         const qlPage = new QLPage({page});
+
+        await qlPage.setScript(sqlScript);
+
+        await qlPage.runScript();
 
         await qlPage.waitForSuccessfulResponse('/api/run');
 
@@ -83,6 +85,10 @@ datalensTest.describe('QL - saving the chart', () => {
     datalensTest('Saving ql Chart settings - Header', async ({page}) => {
         const qlPage = new QLPage({page});
 
+        await qlPage.setScript(sqlScript);
+
+        await qlPage.runScript();
+
         const entryName = qlPage.getUniqueEntryName('ql-e2e-save-test');
         const title = `${entryName} title`;
 
@@ -110,5 +116,26 @@ datalensTest.describe('QL - saving the chart', () => {
         await expect(qlPage.page.locator(qlPage.chartkit.chartTitle)).toHaveText(title);
 
         await expect(qlPage.getSaveButtonLocator()).toBeDisabled();
+    });
+
+    datalensTest('Creating QL chart with error', async ({page}) => {
+        const qlPage = new QLPage({page});
+
+        const saveBtnLocator = page.locator(slct('action-panel-save-btn'));
+
+        await expect(saveBtnLocator).toBeDisabled();
+
+        await qlPage.setScript('wrong query');
+
+        const responsePromise = page.waitForResponse(async (response) => {
+            const responseUrl = new URL(response.url());
+            return responseUrl.pathname === '/api/run';
+        });
+
+        await qlPage.runScript();
+
+        await responsePromise;
+
+        await expect(saveBtnLocator).not.toBeDisabled();
     });
 });
