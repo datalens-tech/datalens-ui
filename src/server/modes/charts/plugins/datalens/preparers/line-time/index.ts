@@ -25,6 +25,11 @@ function prepareLineTime(options: PrepareFunctionArgs) {
     const {data, order} = resultData;
 
     const xField = placeholders[0].items[0];
+
+    if (!xField) {
+        return {timeline: []};
+    }
+
     const xFieldDataType = xField.data_type;
     const xFieldIndex = findIndexInOrder(order, xField, idToTitle[xField.guid] || xField.title);
     const xFieldIsDate = isDateField(xField);
@@ -38,7 +43,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
         findIndexInOrder(order, color, idToTitle[color.guid] || color.title),
     );
 
-    const result: QLRenderResultYagr = {};
+    const result: QLRenderResultYagr = {timeline: []};
 
     if (yFields.length > 0 && xField) {
         let xValues: QLValue[] = [];
@@ -145,6 +150,25 @@ function prepareLineTime(options: PrepareFunctionArgs) {
             });
         }
     } else if (xField) {
+        let xValues: QLValue[] = [];
+
+        data.forEach((row) => {
+            let xValue: QLValue = row[xFieldIndex];
+
+            if (typeof xValue !== 'undefined' && xValue !== null && xFieldIsDate) {
+                // CHARTS-6632 - revision/study of yagr is necessary, after that moment.utc(xValue) is possible.valueOf();
+                xValue = Number(new Date(xValue)) / 1000;
+            } else if (xFieldDataType === DATALENS_QL_TYPES.UNKNOWN) {
+                xValue = formatUnknownTypeValue(xValue);
+            }
+
+            xValues.push(xValue);
+        });
+
+        xValues = Array.from(new Set(xValues)).sort();
+
+        result.timeline = xValues.map((value) => Number(value));
+
         result.graphs = [
             {
                 data: data.map(() => {
@@ -152,8 +176,12 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                 }),
             },
         ];
+
+        return result;
     } else {
         result.graphs = [];
+
+        return result;
     }
 
     result.graphs.sort((graph1, graph2) => {
