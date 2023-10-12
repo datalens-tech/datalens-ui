@@ -4,6 +4,7 @@ import QLPage from '../../../page-objects/ql/QLPage';
 import {openTestPage, slct} from '../../../utils';
 import {RobotChartsSQLEditorUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {ActionPanelQA} from '../../../../src/shared';
 
 const sqlScript = `
 select built_year, AVG(iznos::float)
@@ -27,6 +28,11 @@ datalensTest.describe('QL - saving the chart', () => {
     });
 
     datalensTest.afterEach(async ({page}) => {
+        const isRemoveMenuExists = await page.locator(slct(ActionPanelQA.MoreBtn)).isVisible();
+        console.log('this is calle');
+        if (!isRemoveMenuExists) {
+            return;
+        }
         const qlPage = new QLPage({page});
 
         await qlPage.deleteEntry();
@@ -115,7 +121,7 @@ datalensTest.describe('QL - saving the chart', () => {
         // and in the chart
         await expect(qlPage.page.locator(qlPage.chartkit.chartTitle)).toHaveText(title);
 
-        await expect(qlPage.getSaveButtonLocator()).toBeDisabled();
+        await expect(qlPage.getSaveButtonLocator()).toBeDisabled({timeout: 5000});
     });
 
     datalensTest('Creating QL chart with error', async ({page}) => {
@@ -136,7 +142,7 @@ datalensTest.describe('QL - saving the chart', () => {
 
         await responsePromise;
 
-        await expect(saveBtnLocator).not.toBeDisabled();
+        await expect(saveBtnLocator).not.toBeDisabled({timeout: 5000});
 
         await qlPage.saveQlEntry(qlPage.getUniqueEntryName('ql-e2e-create-chart-with-error-test'));
     });
