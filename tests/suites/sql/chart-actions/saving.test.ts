@@ -29,7 +29,6 @@ datalensTest.describe('QL - saving the chart', () => {
 
     datalensTest.afterEach(async ({page}) => {
         const isRemoveMenuExists = await page.locator(slct(ActionPanelQA.MoreBtn)).isVisible();
-        console.log('this is calle');
         if (!isRemoveMenuExists) {
             return;
         }
