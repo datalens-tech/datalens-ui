@@ -132,7 +132,7 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
                 }
 
                 if (!distincts[j].has(value)) {
-                    distincts[j].add(value);
+                    distincts[j].add(String(value));
                 }
             });
         });
