@@ -144,6 +144,8 @@ export const AddAliases = ({
         }
 
         onAdd(newAlias);
+        setLeftAliasSelected(undefined);
+        setRightAliasSelected(undefined);
     }, [currentAliases, leftAliasSelected, rightAliasSelected, onAdd, datasets]);
 
     return (
