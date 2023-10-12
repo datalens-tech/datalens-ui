@@ -11,7 +11,7 @@ import isEqual from 'lodash/isEqual';
 import {useSelector} from 'react-redux';
 import {getCurrentTabAliases} from 'ui/units/dash/store/selectors/relations/selectors';
 
-import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../..//helpers';
+import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES, getNormalizedAliases} from '../../helpers';
 import {AliasesContext} from '../../hooks/useRelations';
 import {AliasClickHandlerArgs, RelationType} from '../../types';
 
@@ -45,6 +45,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
         showDebugInfo,
         datasets,
         updateRelations,
+        updateAliases,
         relationText,
         relationType,
     } = props;
@@ -92,7 +93,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
     }, []);
 
     /**
-     * click on param button for toggling widgets with its param details
+     * Click on param button for toggling widgets with its param details
      */
     const handleDetailedAlias = React.useCallback(
         (data: SelectParamArgs) => {
@@ -112,7 +113,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
     );
 
     /**
-     * click on magnify icon for toggling full details
+     * Click on magnify icon for toggling full details
      */
     const handleDetailClick = React.useCallback(
         ({indexRow, aliasRow}) => {
@@ -126,7 +127,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
     );
 
     /**
-     * excluding form aliases list row that will be removed
+     * Excluding form aliases list row that will be removed
      */
     const handleRemoveAlias = React.useCallback(
         ({
@@ -155,22 +156,27 @@ const DialogAliases = (props: DialogAliasesProps) => {
 
             resetSelectedAliasRow();
         },
-        [aliases, dashTabAliasesByNamespace, resetSelectedAliasRow],
+        [dashTabAliasesByNamespace, resetSelectedAliasRow],
     );
 
     /**
-     * add new alias row to list before save apply
+     * Add new alias row to list before save apply
      */
-    const handleAddNewAliases = React.useCallback((_alias: string[]) => {
-        //console.log('dashTabAliasesByNamespace', dashTabAliasesByNamespace);
-        //console.log('alias', _alias);
-        // TODO add logic
-    }, []);
+    const handleAddNewAliases = React.useCallback(
+        (alias: string[]) => {
+            const res = [...dashTabAliasesByNamespace, alias];
+            setShowAddAlias(false);
+            setAliases(res);
+            setAliasesByNamespace(res);
+        },
+        [dashTabAliasesByNamespace],
+    );
 
     const handleApplyChanges = React.useCallback(() => {
-        updateRelations(aliases);
+        updateAliases(getNormalizedAliases(aliases));
+        updateRelations(getNormalizedAliases(aliases));
         onClose();
-    }, [updateRelations, aliases, onClose]);
+    }, [updateRelations, updateAliases, aliases, onClose]);
 
     const handleAddAlias = React.useCallback(() => {
         setShowAddAlias(true);

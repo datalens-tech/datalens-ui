@@ -66,6 +66,7 @@ export type AliasClickHandlerArgs = AliasClickHandlerData & {
     currentWidget: DashkitMetaDataItem;
     datasets: DatasetsListData | null;
     updateRelations: (args: string[][]) => void;
+    updateAliases: (args: string[][]) => void;
 };
 
 export type AliasContextProps = {

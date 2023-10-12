@@ -131,7 +131,9 @@ export const AddAliases = ({
         }
 
         onAdd(newAlias);
-    }, [currentAliases, leftAliasSelected, rightAliasSelected, onAdd]);
+        setLeftAliasSelected(undefined);
+        setRightAliasSelected(undefined);
+    }, [currentAliases, leftAliasSelected, rightAliasSelected, onAdd, datasets]);
 
     return (
         <div className={b()}>

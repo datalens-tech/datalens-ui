@@ -78,6 +78,16 @@ const DialogRelations = (props: DialogRelationsProps) => {
         changedWidgets,
     });
 
+    const handleUpdateAliases = React.useCallback(
+        (newNamespacedAliases) => {
+            setAliases({
+                ...aliases,
+                [DEFAULT_ALIAS_NAMESPACE]: newNamespacedAliases,
+            });
+        },
+        [aliases],
+    );
+
     /**
      * update relations object with connection info when aliases changed
      */
@@ -88,15 +98,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
             }
 
             const relationsWithChangedAliases = preparedRelations.map((widgetItem) => {
-                let byAliases: Array<Array<string>> = [];
-                if (changedAliases.length) {
-                    byAliases = changedAliases.filter((aliasArr) => {
-                        if (!widgetItem.usedParams?.length) {
-                            return false;
-                        }
-                        return intersection(widgetItem.usedParams, aliasArr);
-                    });
-                }
+                const byAliases: Array<Array<string>> = changedAliases.filter((aliasArr) => {
+                    if (!widgetItem.usedParams?.length) {
+                        return false;
+                    }
+                    return intersection(widgetItem.usedParams, aliasArr);
+                });
 
                 return {
                     ...widgetItem,
@@ -108,14 +115,16 @@ const DialogRelations = (props: DialogRelationsProps) => {
             });
 
             if (DEFAULT_ALIAS_NAMESPACE in aliases) {
-                setAliases({
-                    ...aliases,
-                    [DEFAULT_ALIAS_NAMESPACE]: changedAliases,
-                });
+                setAliases(
+                    Object.assign({
+                        ...aliases,
+                        [DEFAULT_ALIAS_NAMESPACE]: changedAliases,
+                    }),
+                );
             }
             setPreparedRelations(relationsWithChangedAliases);
         },
-        [preparedRelations],
+        [aliases, preparedRelations],
     );
 
     const handleFilterInputChange = React.useCallback((data: string) => {
@@ -161,11 +170,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     currentWidget: currentWidgetMeta,
                     datasets,
                     updateRelations: handleUpdateRelations,
+                    updateAliases: handleUpdateAliases,
                     ...data,
                 }),
             );
         },
-        [dispatch, filteredRelations, currentWidgetMeta],
+        [dispatch, handleUpdateRelations, datasets, filteredRelations, currentWidgetMeta],
     );
 
     const handleSaveRelations = React.useCallback(() => {
@@ -192,7 +202,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             dispatch(updateCurrentTabData(newData));
             onClose();
         }
-    }, [dashKitRef, aliases, changedWidgets, currentWidgetMeta, dispatch, onClose]);
+    }, [dashKitRef, aliases, dashTabAliases, changedWidgets, currentWidgetMeta, dispatch, onClose]);
 
     const label =
         currentWidgetMeta?.label && currentWidgetMeta?.title !== currentWidgetMeta?.label
