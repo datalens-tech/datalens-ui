@@ -66,7 +66,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>();
     const [preparedRelations, setPreparedRelations] = React.useState<DashMetaData>([]);
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
-
+    //test comment
     const {isLoading, currentWidgetMeta, relations, datasets} = useRelations({
         dashKitRef,
         widget,
