@@ -158,6 +158,7 @@ export const AddAliases = ({
                     </div>
                     <Select
                         hasClear={true}
+                        filterable={true}
                         size="m"
                         options={currentItemOptions}
                         className={b('select')}
@@ -177,6 +178,7 @@ export const AddAliases = ({
                     </div>
                     <Select
                         hasClear={true}
+                        filterable={true}
                         size="m"
                         options={rowItemOptions}
                         className={b('select')}
