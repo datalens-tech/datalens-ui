@@ -280,15 +280,6 @@ export const getValid = createSelector(
 
 export const getVisualization = getWizardVisualization;
 
-export const getVisualizationIsEmpty = createSelector(
-    [getVisualization],
-    (visualization): boolean => {
-        return visualization?.placeholders.every((placeholder) => {
-            return placeholder.items.length === 0;
-        });
-    },
-);
-
 export const getEntryIsLocked = createSelector([getEntry], (entry): boolean => {
     return Boolean(entry && entry.permissions && entry.permissions.edit === false);
 });
@@ -372,9 +363,9 @@ export const getEntryNotChanged = createSelector(
 );
 
 export const getEntryCanBeSaved = createSelector(
-    [getValid, getVisualizationIsEmpty, getEntryIsLocked, getEntryNotChanged],
-    (valid, visualizationIsEmpty, entryIsLocked, entryNotChanged): boolean => {
-        return valid && !visualizationIsEmpty && !entryIsLocked && !entryNotChanged;
+    [getValid, getEntryIsLocked, getEntryNotChanged, getQueryValue],
+    (valid, entryIsLocked, entryNotChanged, queryValue): boolean => {
+        return valid && Boolean(queryValue) && !entryIsLocked && !entryNotChanged;
     },
 );
 
