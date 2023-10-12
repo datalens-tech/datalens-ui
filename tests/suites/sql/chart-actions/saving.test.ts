@@ -127,7 +127,7 @@ datalensTest.describe('QL - saving the chart', () => {
 
         await qlPage.setScript('wrong query');
 
-        const responsePromise = page.waitForResponse(async (response) => {
+        const responsePromise = page.waitForResponse((response) => {
             const responseUrl = new URL(response.url());
             return responseUrl.pathname === '/api/run';
         });
@@ -137,5 +137,7 @@ datalensTest.describe('QL - saving the chart', () => {
         await responsePromise;
 
         await expect(saveBtnLocator).not.toBeDisabled();
+
+        await qlPage.saveQlEntry(qlPage.getUniqueEntryName('ql-e2e-create-chart-with-error-test'));
     });
 });
