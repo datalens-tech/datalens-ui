@@ -356,7 +356,7 @@ function prepareLine({
                     tooltip: line.tooltip,
                     dataLabels: line.dataLabels,
                     data: categories
-                        .map((category) => {
+                        .map((category, i) => {
                             const lineData = line.data[category];
                             const colorValue = lineData?.colorValue;
                             let value = lineData?.value;
@@ -377,6 +377,7 @@ function prepareLine({
                             };
 
                             const point: any = {
+                                x: i,
                                 y,
                                 colorValue,
                                 dataLabels,
