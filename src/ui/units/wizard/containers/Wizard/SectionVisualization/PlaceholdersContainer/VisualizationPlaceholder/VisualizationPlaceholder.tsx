@@ -204,7 +204,14 @@ class VisualizationPlaceholder extends React.Component<Props> {
         const {placeholder} = this.props;
         const item = placeholder.items[0];
 
-        this.props.openDialogColors({item});
+        this.props.openDialogColors({
+            item,
+            onApply: () => {
+                if (this.props.onUpdate) {
+                    this.props.onUpdate();
+                }
+            },
+        });
     };
 
     private openDialogMetric = () => {
