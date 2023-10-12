@@ -14,6 +14,7 @@ export interface NavigationMinimalProps {
     startFrom?: string;
     onEntryClick?: (entry: NavigationEntry) => void;
     scope?: string;
+    ignoreWorkbookEntries?: boolean;
     clickableScope?: string;
     hasTail?: boolean;
     anchor?: React.RefObject<HTMLElement>;
