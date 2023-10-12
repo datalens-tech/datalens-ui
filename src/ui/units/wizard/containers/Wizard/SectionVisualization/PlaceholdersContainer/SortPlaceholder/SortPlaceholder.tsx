@@ -74,7 +74,6 @@ class SortPlaceholder extends React.Component<Props> {
                 wrapTo={wrapTo}
                 disabled={Boolean(datasetError)}
                 onBeforeRemoveItem={onBeforeRemoveItem}
-                qlMode={this.props.qlMode}
                 onAfterUpdate={this.props.onUpdate}
             />
         );

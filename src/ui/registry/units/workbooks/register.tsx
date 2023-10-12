@@ -1,4 +1,7 @@
-import {getWorkbookDashboardEntryUrl} from '../../../units/workbooks/components/CreateEntryDialog/utils';
+import {
+    getNewDashUrl,
+    getWorkbookDashboardEntryUrl,
+} from '../../../units/workbooks/components/CreateEntryDialog/utils';
 import {useAdditionalWorkbookEntryActions} from '../../../units/workbooks/components/EntryActions/utils';
 import {getWorkbookEntryUrl} from '../../../units/workbooks/components/Table/WorkbookEntriesTable/utils';
 import {useAdditionalWorkbookActions} from '../../../units/workbooks/components/WorkbookActions/utils';
@@ -10,6 +13,7 @@ export const registerWorkbooksPlugins = () => {
         getWorkbookTabs,
         getWorkbookEntryUrl,
         getWorkbookDashboardEntryUrl,
+        getNewDashUrl,
         useAdditionalWorkbookEntryActions,
         useAdditionalWorkbookActions,
     });

@@ -1012,6 +1012,7 @@ class SectionDataset extends React.Component<Props, State> {
                                     clickableScope="dataset"
                                     scope="dataset"
                                     startFrom={defaultPath}
+                                    ignoreWorkbookEntries={true}
                                     placeSelectParameters={getPlaceSelectParameters([
                                         PLACE.ROOT,
                                         PLACE.FAVORITES,

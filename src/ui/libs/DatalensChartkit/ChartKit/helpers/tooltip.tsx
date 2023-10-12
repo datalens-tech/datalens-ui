@@ -1,18 +1,24 @@
 import React from 'react';
 
 import type {
+    ChartKitWidgetTooltip,
     ScatterSeries,
     ScatterSeriesData,
-    TooltipHoveredData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
 import {PointCustomData, ScatterSeriesCustomData} from '../../../../../shared/types/chartkit';
 
 type CustomScatterSeries = ScatterSeries<PointCustomData> & {custom: ScatterSeriesCustomData};
+type TooltipRenderer = NonNullable<ChartKitWidgetTooltip['renderer']>;
 
-export function scatterTooltipRenderer(data: {hovered: TooltipHoveredData}) {
-    const series = data.hovered.series as CustomScatterSeries;
-    const point = data.hovered.data as ScatterSeriesData<PointCustomData>;
+export const scatterTooltipRenderer: TooltipRenderer = (data) => {
+    const series = data.hovered[0].series as CustomScatterSeries | undefined;
+    const point = data.hovered[0].data as ScatterSeriesData<PointCustomData> | undefined;
+
+    if (!series || !point) {
+        return null;
+    }
+
     const {pointTitle, xTitle, yTitle, colorTitle, shapeTitle, sizeTitle} = series.custom || {};
     const shouldShowShape = shapeTitle && shapeTitle !== colorTitle;
 
@@ -46,10 +52,10 @@ export function scatterTooltipRenderer(data: {hovered: TooltipHoveredData}) {
             )}
         </React.Fragment>
     );
-}
+};
 
-export function tooltipRenderer(data: {hovered: TooltipHoveredData}) {
-    switch (data.hovered.series.type) {
+export const tooltipRenderer = (data: Parameters<TooltipRenderer>[0]) => {
+    switch (data.hovered[0].series.type) {
         case 'scatter': {
             return scatterTooltipRenderer(data);
         }
@@ -57,4 +63,4 @@ export function tooltipRenderer(data: {hovered: TooltipHoveredData}) {
             return undefined;
         }
     }
-}
+};

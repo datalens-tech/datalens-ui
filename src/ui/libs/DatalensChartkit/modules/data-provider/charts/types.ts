@@ -541,6 +541,15 @@ interface ResponseErrorSegmentsOversize extends ResponseErrorNodeBase {
     };
 }
 
+interface ResponseErrorUnsupportedDataType extends ResponseErrorNodeBase {
+    error: {
+        code: 'ERR.CHARTS.UNSUPPORTED_DATA_TYPE';
+        details: {
+            field: string;
+        };
+    };
+}
+
 type ResponseErrorNode =
     | ResponseErrorNodeRuntime
     | ResponseErrorNodeRuntimeTimeout
@@ -551,7 +560,8 @@ type ResponseErrorNode =
     | ResponseErrorRowsOversize
     | ResponseErrorTableOverszie
     | ResponseErrorSegmentsOversize
-    | ResponseErrorNodeSecretsAccess;
+    | ResponseErrorNodeSecretsAccess
+    | ResponseErrorUnsupportedDataType;
 
 // TODO@types wizard
 

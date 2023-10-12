@@ -1,14 +1,29 @@
-const _ = require('lodash');
+import _ from 'lodash';
 
-function isNumber(c) {
+interface RGB {
+    r: number;
+    g: number;
+    b: number;
+}
+
+interface ColorScheme {
+    type: string;
+
+    green?: string;
+    yellow?: string;
+    red?: string;
+    violet?: string;
+}
+
+function isNumber(c: unknown) {
     return !Number.isNaN(Number(c));
 }
 
-function isDigit(c) {
+function isDigit(c: string) {
     return c >= '0' && c <= '9';
 }
 
-function digitsPrefixLength(s, pos) {
+function digitsPrefixLength(s: string, pos: number) {
     let r = 0;
     while (pos + r < s.length && isDigit(s.charAt(pos + r))) {
         ++r;
@@ -16,7 +31,7 @@ function digitsPrefixLength(s, pos) {
     return r;
 }
 
-function compareImpl(s1, p1, s2, p2) {
+function compareImpl(s1: string, p1: number, s2: string, p2: number) {
     while (p1 !== s1.length && p2 !== s2.length) {
         const d1Len = Math.min(digitsPrefixLength(s1, p1), 17);
         const d2Len = Math.min(digitsPrefixLength(s2, p2), 17);
@@ -43,24 +58,21 @@ function compareImpl(s1, p1, s2, p2) {
         ++p2;
     }
 
-    return (p1 !== s1.length) - (p2 !== s2.length);
+    return Number(p1 !== s1.length) - Number(p2 !== s2.length);
 }
 
-function compareTextWithNumber(s1, s2) {
+export function compareTextWithNumber(s1: string, s2: string) {
     if (isNumber(s1) && isNumber(s2)) {
         return Number(s1) - Number(s2);
     }
 
     return compareImpl(s1, 0, s2, 0);
 }
-/* END COMPARE TEXT WITH NUMBERS */
-
-/* USEFUL COLOR SETTINGS */
 
 const STARTING_HUE_POINTS = [80, 200, 50, 0, 160, 250];
 const REGION_HUE_POINTS = [90, 200, 50, 10, 160, 330];
 
-function hue2rgb(p, q, t) {
+function hue2rgb(p: number, q: number, t: number) {
     if (t < 0) {
         t += 1;
     }
@@ -79,7 +91,7 @@ function hue2rgb(p, q, t) {
     return p;
 }
 
-function fixAttr(value) {
+function fixAttr(value: number) {
     let absValue = value;
     if (absValue > 255) {
         absValue = 255;
@@ -91,11 +103,11 @@ function fixAttr(value) {
     return absValue.toFixed();
 }
 
-function formatRgb(r, g, b) {
+function formatRgb(r: number, g: number, b: number) {
     return `rgb(${fixAttr(r)},${fixAttr(g)},${fixAttr(b)})`;
 }
 
-function convertHslToRgb(h, s, l) {
+function convertHslToRgb(h: number, s: number, l: number) {
     let r;
     let g;
     let b;
@@ -113,7 +125,7 @@ function convertHslToRgb(h, s, l) {
     return formatRgb(r * 255, g * 255, b * 255);
 }
 
-function lin(pos, rfrom, rto) {
+function lin(pos: number, rfrom: number, rto: number) {
     const r = Math.floor(pos * (rto - rfrom) + rfrom);
 
     const rmin = Math.min(rfrom, rto);
@@ -130,7 +142,7 @@ function lin(pos, rfrom, rto) {
     return r;
 }
 
-function lina(pos, rfrom, rto) {
+function lina(pos: number, rfrom: RGB, rto: RGB): RGB {
     const r = lin(pos, rfrom.r, rto.r);
     const g = lin(pos, rfrom.g, rto.g);
     const b = lin(pos, rfrom.b, rto.b);
@@ -138,14 +150,14 @@ function lina(pos, rfrom, rto) {
     return {r, g, b};
 }
 
-function getGradientColor(pos, begin, end) {
+export function getGradientColor(pos: number, begin: RGB, end: RGB) {
     const rgb = lina(pos, begin, end);
     return formatRgb(rgb.r, rgb.g, rgb.b);
 }
 
 /* ALEX PETROV COLOR */
 
-function getColorAlexPetrov(n) {
+export function getColorAlexPetrov(n: number) {
     const regionSize = 40;
     let hue;
     let saturation = 100;
@@ -190,11 +202,11 @@ function getColorAlexPetrov(n) {
 }
 
 /* SOLOMON SPECIFIED COLOR FUNCTIONS */
-const ColorSchemeType = {
-    GRADIENT: 'gradient',
-    DEFAULT: 'default',
-    AUTO: 'auto',
-};
+enum ColorSchemeType {
+    Gradient = 'gradient',
+    Default = 'default',
+    Auto = 'auto',
+}
 
 const GREEN = {r: 0, g: 127, b: 0};
 const YELLOW = {r: 255, g: 255, b: 0};
@@ -212,22 +224,14 @@ const RED_VIOLET_VALUE = {begin: RED, end: VIOLET};
 const GradientZoneValues = [GREEN_YELLOW_VALUE, YELLOW_RED_VALUE, RED_VIOLET_VALUE];
 
 class GradientColor {
-    constructor(gradientZone, gradientPosition, ordinal) {
+    gradientZone: number;
+    gradientPosition: number;
+    ordinal: number;
+
+    constructor(gradientZone: number, gradientPosition: number, ordinal: number) {
         this.gradientZone = gradientZone;
         this.gradientPosition = gradientPosition;
         this.ordinal = ordinal;
-    }
-
-    getGradientZone() {
-        return this.gradientZone;
-    }
-
-    getGradientPosition() {
-        return this.gradientPosition;
-    }
-
-    getOrdinal() {
-        return this.ordinal;
     }
 }
 
@@ -245,40 +249,44 @@ const GradientColorValues = [
     new GradientColor(RED_VIOLET_ZONE_ID, 1, 3),
 ];
 
-const LineColorType = {
-    AUTO: 'auto',
-    GRADIENT: 'gradient',
-    FIXED: 'fixed',
-};
+enum LineColorType {
+    Auto = 'auto',
+    Gradient = 'gradient',
+    Fixes = 'fixed',
+}
 
 class LineColor {
-    constructor(type, zone, position) {
+    type: LineColorType;
+    zone: number | null;
+    position: number | null;
+
+    constructor(type: LineColorType, zone: number | null, position: number | null) {
         this.type = type;
         this.zone = zone;
         this.position = position;
     }
 }
 
-const AUTO_COLOR = new LineColor(LineColorType.AUTO, null, null);
+const AUTO_COLOR = new LineColor(LineColorType.Auto, null, null);
 
-function gradientColor(zone, position) {
-    return new LineColor(LineColorType.GRADIENT, zone, position);
+function gradientColor(zone: number | null, position: number | null) {
+    return new LineColor(LineColorType.Gradient, zone, position);
 }
 
 const UNIQUE_GRADIENTED_LABELS_PATTERN = /^(|.*\D)(\d+)(\D*)$/;
 
-function putIfAbsent(map, key, value) {
+function putIfAbsent(map: Record<string, unknown>, key: string | number, value: unknown) {
     if (!_.has(map, key)) {
         map[key] = value;
     }
 }
 
-function tryParseDecimalLong(s) {
+function tryParseDecimalLong(s: string) {
     const num = Number(s);
     return !isNaN(num);
 }
 
-function labelPrefixAndSuffixOrNull(label) {
+function labelPrefixAndSuffixOrNull(label: string) {
     const matcher = UNIQUE_GRADIENTED_LABELS_PATTERN.exec(label);
 
     if (matcher !== null && matcher.length === 4 && tryParseDecimalLong(matcher[2])) {
@@ -288,7 +296,7 @@ function labelPrefixAndSuffixOrNull(label) {
     return null;
 }
 
-function isUniqueGradientedLabels(labels) {
+function isUniqueGradientedLabels(labels: string[]) {
     labels = labels.filter((label) => label !== 'inf');
 
     if (labels.length === 0) {
@@ -312,8 +320,8 @@ function isUniqueGradientedLabels(labels) {
     return true;
 }
 
-function constructColorMap(colorIndexes, labels) {
-    const colorMap = {};
+function constructColorMap(colorIndexes: Record<string, number>, labels: string[]) {
+    const colorMap: Record<string, LineColor> = {};
 
     if (_.size(colorIndexes) > 0) {
         const entryList = _.entries(colorIndexes);
@@ -329,40 +337,45 @@ function constructColorMap(colorIndexes, labels) {
             let zone;
 
             if (currentColorIndex < entryList.length && currentColorIndex > 0) {
-                const currentColor = GradientColorValues[entryList[currentColorIndex][0]];
+                const cidx = Number(entryList[currentColorIndex][0]);
+                const currentColor = GradientColorValues[cidx];
                 const currentColorNumber = entryList[currentColorIndex][1];
 
-                const previousColor = GradientColorValues[entryList[currentColorIndex - 1][0]];
+                const pidx = Number(entryList[currentColorIndex - 1][0]);
+                const previousColor = GradientColorValues[pidx];
                 const previousColorNumber = entryList[currentColorIndex - 1][1];
 
                 gradientPosition =
                     (i - previousColorNumber) / (currentColorNumber - previousColorNumber);
 
                 if (previousColor.ordinal < currentColor.ordinal) {
-                    zone = previousColor.getGradientZone();
+                    zone = previousColor.gradientZone;
                 } else {
-                    zone = currentColor.getGradientZone();
+                    zone = currentColor.gradientZone;
                     gradientPosition = 1 - gradientPosition;
                 }
             } else if (currentColorIndex >= entryList.length) {
-                const currentColor = GradientColorValues[entryList[entryList.length - 1][0]];
-                zone = currentColor.getGradientZone();
-                gradientPosition = currentColor.getGradientPosition();
+                const cidx = Number(entryList[entryList.length - 1][0]);
+                const currentColor = GradientColorValues[cidx];
+                zone = currentColor.gradientZone;
+                gradientPosition = currentColor.gradientPosition;
             } else {
-                const currentColor = GradientColorValues[entryList[0][0]];
-                zone = currentColor.getGradientZone();
-                gradientPosition = currentColor.getGradientPosition();
+                const cidx = Number(entryList[0][0]);
+                const currentColor = GradientColorValues[cidx];
+                zone = currentColor.gradientZone;
+                gradientPosition = currentColor.gradientPosition;
             }
 
-            colorMap[labels[i]] = gradientColor(zone, gradientPosition);
+            const colorN = labels[i];
+            colorMap[colorN] = gradientColor(zone, gradientPosition);
         }
     }
 
     return colorMap;
 }
 
-function getInputSetGradientColorMap(colorLabels, uniqueValues) {
-    const colorNumbers = {};
+function getInputSetGradientColorMap(colorLabels: Record<string, string>, uniqueValues: string[]) {
+    const colorNumbers: Record<string, number> = {};
 
     for (let i = 0; i < uniqueValues.length; ++i) {
         const value = uniqueValues[i];
@@ -377,13 +390,17 @@ function getInputSetGradientColorMap(colorLabels, uniqueValues) {
     return colorNumbers;
 }
 
-function putColorLabelIfPresent(colorLabels, color, label) {
+function putColorLabelIfPresent(
+    colorLabels: Record<string, string>,
+    color: number,
+    label?: string,
+) {
     if (label) {
         colorLabels[color] = label;
     }
 }
 
-function getGradientColorLabels(colorSchemeParams) {
+function getGradientColorLabels(colorSchemeParams: ColorScheme) {
     const colorLabels = {};
     putColorLabelIfPresent(colorLabels, GradientColorIndexes.GREEN, colorSchemeParams.green);
     putColorLabelIfPresent(colorLabels, GradientColorIndexes.YELLOW, colorSchemeParams.yellow);
@@ -392,25 +409,25 @@ function getGradientColorLabels(colorSchemeParams) {
     return colorLabels;
 }
 
-function getMapOrder(colorNumbers) {
+function getMapOrder(colorNumbers: Record<string, number>) {
     if (_.size(colorNumbers) > 1) {
         const initialKeys = GradientColorValues.filter((color) =>
-            _.has(colorNumbers, color.getOrdinal()),
+            _.has(colorNumbers, color.ordinal),
         );
 
-        const firstColor = colorNumbers[initialKeys[0].getOrdinal()];
-        const lastColor = colorNumbers[initialKeys[initialKeys.length - 1].getOrdinal()];
+        const firstColor = colorNumbers[initialKeys[0].ordinal];
+        const lastColor = colorNumbers[initialKeys[initialKeys.length - 1].ordinal];
         return firstColor - lastColor;
     }
 
     return 0;
 }
 
-function addMissingPointsToGradientMap(colorNumbers, setSize) {
+function addMissingPointsToGradientMap(colorNumbers: Record<string, number>, setSize: number) {
     const mapOrder = getMapOrder(colorNumbers);
     const allKeys = GradientColorValues;
-    const firstKeyOrdinal = allKeys[0].getOrdinal();
-    const lastKeyOrdinal = allKeys[allKeys.length - 1].getOrdinal();
+    const firstKeyOrdinal = allKeys[0].ordinal;
+    const lastKeyOrdinal = allKeys[allKeys.length - 1].ordinal;
     if (mapOrder > 0) {
         putIfAbsent(colorNumbers, firstKeyOrdinal, setSize);
         putIfAbsent(colorNumbers, lastKeyOrdinal, 0);
@@ -419,22 +436,22 @@ function addMissingPointsToGradientMap(colorNumbers, setSize) {
         putIfAbsent(colorNumbers, lastKeyOrdinal, setSize);
     }
 
-    const keys = GradientColorValues.filter((color) => _.has(colorNumbers, color.getOrdinal()));
+    const keys = GradientColorValues.filter((color) => _.has(colorNumbers, color.ordinal));
 
-    const newColorNumber = {};
+    const newColorNumber: Record<string, number> = {};
     let i = 0;
     let j = 0;
     while (i < allKeys.length && j < keys.length) {
         const presentKey = keys[j];
         const key = allKeys[i];
 
-        const order = presentKey.getOrdinal() - key.getOrdinal();
+        const order = presentKey.ordinal - key.ordinal;
         if (order > 0) {
             if (j > 0) {
                 const previousPresentKey = keys[j - 1];
-                const pKeyOrdinal = previousPresentKey.getOrdinal();
-                const keyOrdinal = presentKey.getOrdinal();
-                const absentKeyOrdinal = key.getOrdinal();
+                const pKeyOrdinal = previousPresentKey.ordinal;
+                const keyOrdinal = presentKey.ordinal;
+                const absentKeyOrdinal = key.ordinal;
                 const pKeyNumber = colorNumbers[pKeyOrdinal];
                 const keyNumber = colorNumbers[keyOrdinal];
                 const absentKeyNumber = Math.trunc(
@@ -442,11 +459,11 @@ function addMissingPointsToGradientMap(colorNumbers, setSize) {
                         (keyOrdinal - pKeyOrdinal) +
                         pKeyNumber,
                 );
-                newColorNumber[key.getOrdinal()] = absentKeyNumber;
+                newColorNumber[key.ordinal] = absentKeyNumber;
             }
             i++;
         } else if (order === 0) {
-            newColorNumber[presentKey.getOrdinal()] = colorNumbers[presentKey.getOrdinal()];
+            newColorNumber[presentKey.ordinal] = colorNumbers[presentKey.ordinal];
             i++;
             j++;
         } else {
@@ -456,12 +473,12 @@ function addMissingPointsToGradientMap(colorNumbers, setSize) {
     return newColorNumber;
 }
 
-function getGradientColorsPositions(colorLabels, uniqueValues) {
+function getGradientColorsPositions(colorLabels: Record<string, string>, uniqueValues: string[]) {
     const colorIndexes = getInputSetGradientColorMap(colorLabels, uniqueValues);
     return addMissingPointsToGradientMap(colorIndexes, uniqueValues.length);
 }
 
-function getUniqueGradientedLabels(labels, colorLabels) {
+function getUniqueGradientedLabels(labels: string[], colorLabels: Record<string, string>) {
     const strings = [];
     strings.push(...labels);
     strings.push(..._.values(colorLabels).filter((s) => s));
@@ -470,35 +487,35 @@ function getUniqueGradientedLabels(labels, colorLabels) {
     return _.uniqWith(strings, (a, b) => a === b);
 }
 
-function gradientScheme(colorSchemeParams, labelValues) {
+function gradientScheme(colorSchemeParams: ColorScheme, labelValues: string[]) {
     const colorLabels = getGradientColorLabels(colorSchemeParams);
     const uniqueValues = getUniqueGradientedLabels(labelValues, colorLabels);
     const colorsIndexes = getGradientColorsPositions(colorLabels, uniqueValues);
     return constructColorMap(colorsIndexes, uniqueValues);
 }
 
-function autoScheme(colorSchemeParams, labelValues) {
+function autoScheme(colorSchemeParams: ColorScheme, labelValues: string[]) {
     if (isUniqueGradientedLabels(labelValues)) {
         return gradientScheme(colorSchemeParams, labelValues);
     }
     return {};
 }
 
-function constructColorScheme(colorSchemeParams, labelValues) {
-    const type = colorSchemeParams.type || ColorSchemeType.AUTO;
+function constructColorScheme(colorSchemeParams: ColorScheme, labelValues: string[]) {
+    const type = colorSchemeParams.type || ColorSchemeType.Auto;
 
     switch (type) {
-        case ColorSchemeType.GRADIENT:
+        case 'gradient':
             return gradientScheme(colorSchemeParams, labelValues);
-        case ColorSchemeType.DEFAULT:
+        case 'default':
             return {};
-        case ColorSchemeType.AUTO:
+        case 'automatic':
         default:
             return autoScheme(colorSchemeParams, labelValues);
     }
 }
 
-function getColorOrAutoColor(colorScheme, label) {
+function getColorOrAutoColor(colorScheme: Record<string, LineColor>, label: string): LineColor {
     if (_.has(colorScheme, label)) {
         return colorScheme[label];
     }
@@ -506,7 +523,7 @@ function getColorOrAutoColor(colorScheme, label) {
     return AUTO_COLOR;
 }
 
-function getAlexPetrovColorsForN(n) {
+function getAlexPetrovColorsForN(n: number) {
     const result = [];
     for (let i = 0; i < n; ++i) {
         result[i] = getColorAlexPetrov(i);
@@ -514,13 +531,17 @@ function getAlexPetrovColorsForN(n) {
     return result;
 }
 
-function getColorsForNamesImpl(names, colorSchemeParams) {
+function getColorsForNamesImpl(names: string[], colorSchemeParams: ColorScheme) {
     const colorScheme = constructColorScheme(colorSchemeParams, names);
 
     return names.map((name, index) => {
         const lineColor = getColorOrAutoColor(colorScheme, name);
 
-        if (lineColor.type === LineColorType.GRADIENT) {
+        if (
+            lineColor.type === 'gradient' &&
+            lineColor.zone !== null &&
+            lineColor.position !== null
+        ) {
             const zone = GradientZoneValues[lineColor.zone];
             return getGradientColor(lineColor.position, zone.begin, zone.end);
         }
@@ -529,10 +550,10 @@ function getColorsForNamesImpl(names, colorSchemeParams) {
     });
 }
 
-function getColorsForNames(names, colorSchemeParams) {
+export function getColorsForNames(names: string[], colorSchemeParams?: ColorScheme) {
     const uniqNames = new Set(names);
     const namesForColors =
-        uniqNames.size <= 1 ? names.map((item, index) => `uniqName${index}`) : names;
+        uniqNames.size <= 1 ? names.map((_, index) => `uniqName${index}`) : names;
 
     if (!colorSchemeParams) {
         return getAlexPetrovColorsForN(namesForColors.length);
@@ -541,14 +562,6 @@ function getColorsForNames(names, colorSchemeParams) {
     try {
         return getColorsForNamesImpl(namesForColors, colorSchemeParams);
     } catch (e) {
-        console.log('failed to get colors for lines', e);
         return getAlexPetrovColorsForN(namesForColors.length);
     }
 }
-
-module.exports = {
-    getColorAlexPetrov,
-    getGradientColor,
-    getColorsForNames,
-    compareTextWithNumber,
-};

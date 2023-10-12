@@ -49,7 +49,6 @@ class DashboardFiltersPlaceholder extends React.Component<Props> {
                 checkAllowed={() => false}
                 isDashboardPlaceholder={true}
                 customPlaceholderActions={this.customDashboardFiltersActions}
-                qlMode={this.props.qlMode}
             />
         );
     }

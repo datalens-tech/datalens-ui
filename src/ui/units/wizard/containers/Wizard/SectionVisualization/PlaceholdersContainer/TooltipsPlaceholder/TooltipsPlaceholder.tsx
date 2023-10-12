@@ -19,7 +19,7 @@ type Props = CommonPlaceholderProps & StateProps & DispatchProps;
 
 class TooltipsPlaceholder extends React.Component<Props> {
     render() {
-        const {tooltips, wrapTo, onBeforeRemoveItem, datasetError} = this.props;
+        const {addFieldItems, tooltips, wrapTo, onBeforeRemoveItem, datasetError} = this.props;
         return (
             <PlaceholderComponent
                 key="tooltips"
@@ -34,7 +34,7 @@ class TooltipsPlaceholder extends React.Component<Props> {
                 wrapTo={wrapTo}
                 onBeforeRemoveItem={onBeforeRemoveItem}
                 disabled={Boolean(datasetError)}
-                qlMode={this.props.qlMode}
+                addFieldItems={addFieldItems}
                 onAfterUpdate={this.props.onUpdate}
             />
         );

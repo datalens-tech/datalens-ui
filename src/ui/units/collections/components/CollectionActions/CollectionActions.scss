@@ -1,7 +1,8 @@
 .dl-collection-actions {
-    &__access,
+    display: flex;
+
     &__move,
-    &__edit {
+    &__access {
         margin-right: 8px;
     }
 
