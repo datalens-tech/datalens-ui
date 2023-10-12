@@ -1,7 +1,0 @@
-{
-  "label_filter-list-field-th": "字段",
-  "label_filter-list-value-th": "Value",
-  "label_obligatory-filter-add": "添加",
-  "label_obligatory-filter-description": "这些值将应用于使用数据集创建的所有新图表。这将减少处理大量数据时的图表呈现时间。<br></br>新图表的默认筛选器不会影响数据集预览中的显示。",
-  "label_obligatory-filter-title": "新图表的默认筛选器"
-}

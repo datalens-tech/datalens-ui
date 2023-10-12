@@ -30,7 +30,7 @@ export default {
 
     regionalEnvConfig: {
         defaultLang: Language.En,
-        allowLanguages: [Language.En, Language.Ru],
+        allowLanguages: [Language.En, Language.Cn, Language.Ru],
     },
 
     csp: 'disabled',

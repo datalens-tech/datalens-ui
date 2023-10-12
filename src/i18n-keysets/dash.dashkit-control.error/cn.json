@@ -1,6 +1,0 @@
-{
-  "button_retry": "重复",
-  "label_error": "错误",
-  "label_field-error-text": "不支持为选择器指定的字段类型。请更改字段类型。",
-  "label_field-error-title": "字段类型错误"
-}

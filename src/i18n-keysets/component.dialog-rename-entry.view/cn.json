@@ -1,8 +1,0 @@
-{
-  "button_apply": "完成",
-  "button_cancel": "取消",
-  "label_entry-name-already-exists": "该名称已在使用中，请尝试另一个",
-  "label_placeholder": "新名称",
-  "section_caption": "重命名",
-  "toast_rename-failed": "重命名失败"
-}

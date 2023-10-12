@@ -1,9 +1,0 @@
-{
-  "button_apply": "保存",
-  "button_cancel": "取消",
-  "label_default-name": "新图表",
-  "label_entry-name-already-exists": "该名称已在使用中，请尝试另一个",
-  "label_placeholder": "新图表",
-  "section_caption": "保存图表",
-  "toast_create-editor-chart-failed": "保存图表失败"
-}

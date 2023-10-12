@@ -1,6 +1,0 @@
-{
-  "label_draft": "草稿",
-  "label_latest": "最新",
-  "label_locked": "已被 {{user}} 锁定",
-  "label_version": "v {{版本}}"
-}

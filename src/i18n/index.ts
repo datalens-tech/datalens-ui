@@ -14,7 +14,7 @@ if (isBrowserEnv && !isJestEnv) {
     i18nPrepared = initI18n({lang, content: window[GLOBAL_I18N_VAR] || {}});
 } else {
     // empty keysets for jest (mock i18n as needed)
-    i18nPrepared = initI18n([{lang: 'ru'}, {lang: 'en'}]);
+    i18nPrepared = initI18n([{lang: 'ru'}, {lang: 'zh-cn'}, {lang: 'en'}]);
 }
 
 export const I18N = i18nPrepared.I18N;

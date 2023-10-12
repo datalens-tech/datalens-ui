@@ -1,9 +1,0 @@
-{
-  "button_apply": "完成",
-  "button_cancel": "取消",
-  "label_default-name": "新建文件夹",
-  "label_folder-already-exists": "具有此名称的文件夹已存在，请尝试另一个",
-  "label_placeholder": "文件夹名称",
-  "section_caption": "创建文件夹",
-  "toast_create-folder-failed": "创建文件夹失败"
-}

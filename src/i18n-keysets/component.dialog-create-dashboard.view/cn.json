@@ -1,9 +1,0 @@
-{
-  "button_apply": "创建",
-  "button_cancel": "取消",
-  "label_default-name": "新仪表板",
-  "label_entry-name-already-exists": "该名称已在使用中，请尝试另一个",
-  "label_placeholder": "Name",
-  "section_caption": "创建仪表板",
-  "toast_create-dashboard-failed": "无法创建仪表板"
-}
