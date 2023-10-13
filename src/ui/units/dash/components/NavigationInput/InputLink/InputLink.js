@@ -138,24 +138,26 @@ class InputLink extends React.PureComponent {
                     onKeyUp={this.onKeyUp}
                     onUpdate={(value) => this.setState({value})}
                 />
-                <Button
-                    className={b('button')}
-                    qa={NavigationInputQA.Apply}
-                    disabled={this.state.progress}
-                    loading={this.state.progress}
-                    onClick={this.onApply}
-                    ref={this.applyButtonRef}
-                >
-                    {i18n('dash.navigation-input.edit', 'button_ok')}
-                </Button>
-                <Button
-                    view="flat"
-                    disabled={this.state.progress}
-                    onClick={this.props.onCancel}
-                    className={b('button')}
-                >
-                    {i18n('dash.navigation-input.edit', 'button_cancel')}
-                </Button>
+                <div>
+                    <Button
+                        className={b('button')}
+                        qa={NavigationInputQA.Apply}
+                        disabled={this.state.progress}
+                        loading={this.state.progress}
+                        onClick={this.onApply}
+                        ref={this.applyButtonRef}
+                    >
+                        {i18n('dash.navigation-input.edit', 'button_ok')}
+                    </Button>
+                    <Button
+                        view="flat"
+                        disabled={this.state.progress}
+                        onClick={this.props.onCancel}
+                        className={b('button')}
+                    >
+                        {i18n('dash.navigation-input.edit', 'button_cancel')}
+                    </Button>
+                </div>
                 <Popup
                     hasArrow={true}
                     anchorRef={this.applyButtonRef}

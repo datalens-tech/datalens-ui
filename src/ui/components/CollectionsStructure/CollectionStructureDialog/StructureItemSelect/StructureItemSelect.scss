@@ -45,15 +45,4 @@
         align-self: center;
         padding: 20px;
     }
-
-    &__empty-placeholder {
-        display: flex;
-        flex: 1;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        line-height: 24px;
-        color: var(--g-color-text-secondary);
-    }
 }
