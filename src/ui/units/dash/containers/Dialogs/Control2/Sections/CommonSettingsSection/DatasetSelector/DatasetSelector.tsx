@@ -47,6 +47,10 @@ function DatasetSelector() {
                     }),
                 );
                 setIsValidDataset(true);
+            })
+            .catch((error) => {
+                setIsValidDataset(false);
+                throw error;
             });
     }, []);
 
