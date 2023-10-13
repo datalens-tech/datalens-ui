@@ -123,9 +123,6 @@ const AliasesListItem = ({
                                         aliasRow: row,
                                         fieldName: `${fieldName}${datasetText}`,
                                         field,
-                                        /*datasetId,
-                                        datasetName,
-                                        datasets,*/
                                     })
                                 }
                             >

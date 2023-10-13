@@ -1,7 +1,11 @@
 @import '../../../../../../../../../styles/mixins.scss';
 
 .dialog-aliases-add {
-    margin-top: 40px;
+    &__row {
+        display: grid;
+        grid-template-columns: 1fr 16px 1fr 32px 28px;
+        align-items: flex-end;
+    }
 
     &__button-wrap {
         margin-top: 20px;
@@ -17,12 +21,25 @@
     }
 
     &__sub-title {
-        position: absolute;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        word-break: break-word;
+        line-clamp: 2;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
         overflow: hidden;
-        top: -24px;
-        max-width: 100%;
+        height: 36px;
+        margin-bottom: 4px;
+        // stylelint-disable-next-line
+        display: -webkit-box;
+    }
+
+    &__eq {
+        height: 22px;
+    }
+
+    // icons above add selects are forming from other places, that's why classnames are different and need cascade
+    & .dialog-relations-content__icon-row,
+    & .dialog-relations__alias-add-icon-type {
+        float: left;
     }
 
     &__dialog-popup {
@@ -31,6 +48,6 @@
 
     &__error {
         color: var(--g-color-text-danger);
-        margin-top: 16px;
+        margin-top: 8px;
     }
 }

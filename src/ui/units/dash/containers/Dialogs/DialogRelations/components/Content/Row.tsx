@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
 import {
+    DEFAULT_ICON_SIZE,
     RELATION_TYPES,
     TEXT_LIMIT,
     getClampedText,
@@ -32,6 +33,7 @@ type RowParams = {
     onChange: (props: {type: RelationType; widgetId: DashkitMetaDataItem['widgetId']}) => void;
     onAliasClick?: (props: AliasClickHandlerData) => void;
     showDebugInfo: boolean;
+    widgetIcon: React.ReactNode;
 };
 
 const getRelationDetailsText = ({
@@ -250,7 +252,14 @@ const getDropdownItems = ({
         className: b('list-row'),
     }));
 
-export const Row = ({data, widgetMeta, onChange, onAliasClick, showDebugInfo}: RowParams) => {
+export const Row = ({
+    data,
+    widgetMeta,
+    onChange,
+    onAliasClick,
+    showDebugInfo,
+    widgetIcon,
+}: RowParams) => {
     const relations = data?.relations;
     const {type: relationType, available: availableRelations, byFields, byAliases} = relations;
 
@@ -262,20 +271,31 @@ export const Row = ({data, widgetMeta, onChange, onAliasClick, showDebugInfo}: R
         byAliases,
     });
 
+    const icon = getDialogRowIcon(data, b('icon-row'), DEFAULT_ICON_SIZE);
+
     const handleAliasCLick = React.useCallback(() => {
         onAliasClick?.({
             currentRow: data,
             showDebugInfo,
             relationText: aliasDetailTitle || '',
             relationType,
+            widgetIcon,
+            rowIcon: icon,
         });
-    }, [data, widgetMeta, showDebugInfo, onAliasClick, relationType, aliasDetailTitle]);
+    }, [
+        data,
+        widgetMeta,
+        showDebugInfo,
+        onAliasClick,
+        relationType,
+        aliasDetailTitle,
+        widgetIcon,
+        icon,
+    ]);
 
     if (!data || !widgetMeta) {
         return null;
     }
-
-    const icon = getDialogRowIcon(data, b('icon-row'));
 
     const relationTypeText = i18n(getRelationsText(relationType));
 

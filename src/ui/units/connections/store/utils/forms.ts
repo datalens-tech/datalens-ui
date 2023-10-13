@@ -102,10 +102,15 @@ export const getFetchedFormData = (schema: FormSchema, fetchedData: FormDict) =>
 };
 
 // TODO: add unit test [CHARTS-5033]
-export const getDataForParamsChecking = (schema: FormSchema, form: FormDict): FormDict => {
+export const getDataForParamsChecking = (args: {
+    form: FormDict;
+    innerForm: FormDict;
+    schema: FormSchema;
+}): FormDict => {
+    const {form, innerForm, schema} = args;
     const apiSchemaItem = schema.apiSchema?.check;
     const params = apiSchemaItem
-        ? getResultSchemaKeys({apiSchemaItem, form})
+        ? getResultSchemaKeys({apiSchemaItem, form, innerForm})
         : schema.apiSchema?.check?.items.map(({name}) => name) || [];
 
     return params.reduce((acc, param) => {

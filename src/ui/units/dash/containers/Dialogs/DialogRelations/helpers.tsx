@@ -95,6 +95,9 @@ const b = block('dialog-relations');
 
 export const DEFAULT_ALIAS_NAMESPACE = 'default';
 
+const DEFAULT_TITLE_ICON_SIZE = 24;
+export const DEFAULT_ICON_SIZE = 16;
+
 export const getCurrentWidgetTabShortInfo = (data: DashKit | null, widget: DashTabItem) => {
     if (widget.type === DashTabItemType.Control) {
         return widget;
@@ -118,10 +121,17 @@ export const getCurrentWidgetTabShortInfo = (data: DashKit | null, widget: DashT
     return res;
 };
 
-export const getDialogCaptionIcon = (
-    widget: DashTabItem,
-    currentWidgetMeta: DashkitMetaDataItem,
-) => {
+export const getDialogCaptionIcon = ({
+    widget,
+    currentWidgetMeta,
+    iconSize,
+    className,
+}: {
+    widget: DashTabItem;
+    currentWidgetMeta: DashkitMetaDataItem;
+    iconSize?: number;
+    className?: string;
+}) => {
     let iconData = null;
     if (
         widget.type === DashTabItemType.Control ||
@@ -135,10 +145,24 @@ export const getDialogCaptionIcon = (
             RELATIONS_CHARTS_ICONS_DICT[currentWidgetMeta.type as RelationChartType] ||
             RELATIONS_CHARTS_ICONS_DICT.widget;
     }
-    return iconData ? <Icon data={iconData} size={24} className={b('icon-title')} /> : null;
+    return iconData ? (
+        <Icon
+            data={iconData}
+            size={iconSize || DEFAULT_TITLE_ICON_SIZE}
+            className={className || b('icon-title')}
+        />
+    ) : null;
 };
 
-export const getDialogRowIcon = (widgetMeta: DashkitMetaDataItem, className: string) => {
+export const getDialogRowIcon = (
+    widgetMeta: DashkitMetaDataItem,
+    className: string,
+    iconSize?: number,
+) => {
+    if (!widgetMeta) {
+        return null;
+    }
+
     const iconData =
         widgetMeta.type === DashTabItemType.Control
             ? RELATIONS_CHARTS_ICONS_DICT.control
@@ -146,7 +170,7 @@ export const getDialogRowIcon = (widgetMeta: DashkitMetaDataItem, className: str
               RELATIONS_CHARTS_ICONS_DICT[widgetMeta.type as RelationChartType] ||
               RELATIONS_CHARTS_ICONS_DICT.widget;
 
-    return <Icon data={iconData} size={20} className={className} />;
+    return <Icon data={iconData} size={iconSize || DEFAULT_ICON_SIZE} className={className} />;
 };
 
 export const getLinkIcon = (type: string) => {
