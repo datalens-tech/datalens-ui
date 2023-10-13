@@ -82,14 +82,24 @@ class DropdownNavigation extends React.PureComponent {
     async update() {
         const entryId = this.props.entryId;
         const state = {prevEntryId: entryId};
+        let isValidEntry = false;
 
         if (this.loading) {
             try {
-                const entryMeta = await getSdk().us.getEntryMeta({entryId});
+                const entryMeta = await getSdk()
+                    .us.getEntryMeta({entryId})
+                    .then((metaData) => {
+                        isValidEntry = true;
+                        return metaData;
+                    });
                 state.entry = entryMeta;
 
                 if (this.props.onUpdate) {
-                    this.props.onUpdate(entryMeta.type.match(/^[^_]*/)[0], entryMeta);
+                    this.props.onUpdate({
+                        selectedWidgetType: entryMeta.type.match(/^[^_]*/)[0],
+                        entryMeta,
+                        isValidEntry,
+                    });
                 }
             } catch (error) {
                 logger.logError('DropdownNavigation: getEntryMeta failed', error);
