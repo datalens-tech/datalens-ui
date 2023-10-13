@@ -152,6 +152,8 @@ const ExternalSelectorSettings = () => {
                             entryId={chartId}
                             onChange={handleChartIdChange}
                             includeClickableType={ENTRY_TYPE.CONTROL_NODE}
+                            linkMixin={b('link')}
+                            navigationMixin={b('navigation')}
                         />
                     </div>
                 </FormRow>

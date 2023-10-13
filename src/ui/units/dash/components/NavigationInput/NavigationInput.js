@@ -25,6 +25,8 @@ class NavigationInput extends React.PureComponent {
         onChange: PropTypes.func.isRequired,
         includeClickableType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
         excludeClickableType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
+        linkMixin: PropTypes.string,
+        navigationMixin: PropTypes.string,
     };
 
     static getDerivedStateFromProps({entryId}, {prevEntryId}) {
@@ -36,33 +38,47 @@ class NavigationInput extends React.PureComponent {
               };
     }
 
-    state = {};
+    state = {isValidEntry: false};
 
     onChange = ({entry, params}) => {
         const {entryId, key} = entry;
         this.props.onChange({entryId, name: Utils.getEntryNameFromKey(key), params});
     };
 
+    onEntryUpdate = (entryData) => {
+        this.setState({isValidEntry: entryData.isValidEntry});
+        if (this.props.onUpdate) {
+            this.props.onUpdate(entryData);
+        }
+    };
+
     render() {
-        const {entryId, onUpdate, includeClickableType, excludeClickableType, workbookId} =
-            this.props;
-        const {showInput} = this.state;
+        const {
+            entryId,
+            includeClickableType,
+            excludeClickableType,
+            workbookId,
+            navigationMixin,
+            linkMixin,
+        } = this.props;
+        const {showInput, isValidEntry} = this.state;
+        const showOpenButton = isValidEntry && entryId;
 
         return (
             <React.Fragment>
-                <div className={b('row')}>
+                <div className={b('row', navigationMixin)}>
                     <div className={b('navigation')}>
                         <DropdownNavigation
                             size="m"
                             entryId={entryId}
                             scope={ENTRY_SCOPE.WIDGET}
                             onClick={this.onChange}
-                            onUpdate={onUpdate}
+                            onUpdate={this.onEntryUpdate}
                             includeClickableType={includeClickableType}
                             excludeClickableType={excludeClickableType}
                         />
                     </div>
-                    {entryId && (
+                    {showOpenButton && (
                         <Button
                             className={b('button')}
                             qa={NavigationInputQA.Open}
@@ -73,7 +89,7 @@ class NavigationInput extends React.PureComponent {
                         </Button>
                     )}
                 </div>
-                <div className={b('row')}>
+                <div className={b('row', linkMixin)}>
                     {showInput ? (
                         <InputLink
                             onApply={({entry, params}) => {
