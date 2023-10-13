@@ -4,19 +4,17 @@ import {Button, DropdownMenu, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
+import {DEFAULT_ICON_SIZE, RELATION_TYPES, TEXT_LIMIT} from '../../constants';
+import {getDialogRowIcon} from '../../helpers';
+import {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
+
 import {
-    DEFAULT_ICON_SIZE,
-    RELATION_TYPES,
-    TEXT_LIMIT,
     getClampedText,
-    getDialogRowIcon,
     getLinkIcon,
     getRelationDetailsKey,
     getRelationsText,
-} from '../../helpers';
-import {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
-
-import {getTextSeparator} from './helpers';
+    getTextSeparator,
+} from './helpers';
 
 import iconInfo from 'assets/icons/info.svg';
 import iconAlias from 'assets/icons/relations-alias.svg';
