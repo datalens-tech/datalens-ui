@@ -15,6 +15,7 @@ import {
 import {selectExtraSettings as getExtraSettingsWizard} from 'units/wizard/selectors/widget';
 
 import {AppStatus, DEFAULT_SALT, PANE_VIEWS, VisualizationStatus} from '../../constants';
+import {isPromQlQueriesEmpty, isQLQueryEmpty} from '../../utils/query';
 import {
     ADD_PARAM,
     ADD_PARAM_IN_QUERY,
@@ -362,10 +363,25 @@ export const getEntryNotChanged = createSelector(
     },
 );
 
+export const getIsQLQueryEmpty = createSelector(
+    [getQueryValue, getQueries, getChartType],
+    (queryValue, queries, chartType): boolean => {
+        switch (chartType) {
+            case QLChartType.Promql:
+            case QLChartType.Monitoringql: {
+                return isPromQlQueriesEmpty(queries);
+            }
+            case QLChartType.Sql:
+            default:
+                return isQLQueryEmpty(queryValue);
+        }
+    },
+);
+
 export const getEntryCanBeSaved = createSelector(
-    [getValid, getEntryIsLocked, getEntryNotChanged, getQueryValue],
-    (valid, entryIsLocked, entryNotChanged, queryValue): boolean => {
-        return valid && Boolean(queryValue) && !entryIsLocked && !entryNotChanged;
+    [getValid, getEntryIsLocked, getEntryNotChanged, getIsQLQueryEmpty],
+    (valid, entryIsLocked, entryNotChanged, isQueryEmpty): boolean => {
+        return valid && !isQueryEmpty && !entryIsLocked && !entryNotChanged;
     },
 );
 
