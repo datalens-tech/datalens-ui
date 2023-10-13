@@ -4,6 +4,7 @@ import QLPage from '../../../page-objects/ql/QLPage';
 import {openTestPage, slct} from '../../../utils';
 import {RobotChartsSQLEditorUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {ActionPanelQA} from '../../../../src/shared';
 
 const sqlScript = `
 select built_year, AVG(iznos::float)
@@ -23,16 +24,14 @@ order by built_year, iznos
 
 datalensTest.describe('QL - saving the chart', () => {
     datalensTest.beforeEach(async ({page}) => {
-        const qlPage = new QLPage({page});
-
         await openTestPage(page, RobotChartsSQLEditorUrls.NewQLChartForPostgresDemo);
-
-        await qlPage.setScript(sqlScript);
-
-        await qlPage.runScript();
     });
 
     datalensTest.afterEach(async ({page}) => {
+        const isRemoveMenuExists = await page.locator(slct(ActionPanelQA.MoreBtn)).isVisible();
+        if (!isRemoveMenuExists) {
+            return;
+        }
         const qlPage = new QLPage({page});
 
         await qlPage.deleteEntry();
@@ -40,6 +39,10 @@ datalensTest.describe('QL - saving the chart', () => {
 
     datalensTest('Saving a new ql chart', async ({page}) => {
         const qlPage = new QLPage({page});
+
+        await qlPage.setScript(sqlScript);
+
+        await qlPage.runScript();
 
         await qlPage.waitForSuccessfulResponse('/api/run');
 
@@ -52,6 +55,10 @@ datalensTest.describe('QL - saving the chart', () => {
 
     datalensTest('Saving an already created ql chart', async ({page}) => {
         const qlPage = new QLPage({page});
+
+        await qlPage.setScript(sqlScript);
+
+        await qlPage.runScript();
 
         await qlPage.waitForSuccessfulResponse('/api/run');
 
@@ -83,6 +90,10 @@ datalensTest.describe('QL - saving the chart', () => {
     datalensTest('Saving ql Chart settings - Header', async ({page}) => {
         const qlPage = new QLPage({page});
 
+        await qlPage.setScript(sqlScript);
+
+        await qlPage.runScript();
+
         const entryName = qlPage.getUniqueEntryName('ql-e2e-save-test');
         const title = `${entryName} title`;
 
@@ -109,6 +120,29 @@ datalensTest.describe('QL - saving the chart', () => {
         // and in the chart
         await expect(qlPage.page.locator(qlPage.chartkit.chartTitle)).toHaveText(title);
 
-        await expect(qlPage.getSaveButtonLocator()).toBeDisabled();
+        await expect(qlPage.getSaveButtonLocator()).toBeDisabled({timeout: 5000});
+    });
+
+    datalensTest('Creating QL chart with error', async ({page}) => {
+        const qlPage = new QLPage({page});
+
+        const saveBtnLocator = page.locator(slct('action-panel-save-btn'));
+
+        await expect(saveBtnLocator).toBeDisabled();
+
+        await qlPage.setScript('wrong query');
+
+        const responsePromise = page.waitForResponse((response) => {
+            const responseUrl = new URL(response.url());
+            return responseUrl.pathname === '/api/run';
+        });
+
+        await qlPage.runScript();
+
+        await responsePromise;
+
+        await expect(saveBtnLocator).not.toBeDisabled({timeout: 5000});
+
+        await qlPage.saveQlEntry(qlPage.getUniqueEntryName('ql-e2e-create-chart-with-error-test'));
     });
 });

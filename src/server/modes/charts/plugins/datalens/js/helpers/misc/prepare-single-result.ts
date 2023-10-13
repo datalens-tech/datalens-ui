@@ -246,12 +246,12 @@ export default ({
     let {
         shapes = [],
         shapesConfig = {},
-        colors,
+        colors = [],
         colorsConfig,
-        labels,
-        tooltips,
+        labels = [],
+        tooltips = [],
         geopointsConfig,
-        sort,
+        sort = [],
     } = shared;
 
     if ((visualization as ServerVisualizationLayer).layerSettings) {
