@@ -11,7 +11,7 @@
   "label_copy": "Copy to",
   "label_copy-denied-title": "Insufficient permissions to copy",
   "label_description": "Description",
-  "label_empty-collection": "Empty collection",
+  "label_empty-collection": "The collection is empty or nothing matching the filter conditions was found",
   "label_move": "Move to",
   "label_move-denied-title": "Insufficient permissions to move object",
   "label_title": "Name"
