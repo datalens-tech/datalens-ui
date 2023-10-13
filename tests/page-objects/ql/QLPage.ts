@@ -8,6 +8,7 @@ import VisualizationItemDialog from '../wizard/VisualizationItemDialog';
 
 import PreviewTable from './PreviewTable';
 import {NavigationMinimalPlaceSelectQa} from '../../../src/shared/constants/qa/components';
+import SectionVisualization from '../wizard/SectionVisualization';
 
 interface QLPageProps extends BasePageProps {}
 
@@ -16,6 +17,7 @@ class QLPage extends ChartPage {
     chartkit: ChartKit;
     chartSettings: ChartSettings;
     visualizationItemDialog: VisualizationItemDialog;
+    sectionVisualization: SectionVisualization;
     private selectConnectionButtonSelector = slct('select-connection');
     private navigationMinimal: NavigationMinimal;
 
@@ -26,6 +28,7 @@ class QLPage extends ChartPage {
         this.chartSettings = new ChartSettings(page);
         this.previewTable = new PreviewTable(page);
         this.visualizationItemDialog = new VisualizationItemDialog(page);
+        this.sectionVisualization = new SectionVisualization(page);
     }
 
     async clickCreate() {
