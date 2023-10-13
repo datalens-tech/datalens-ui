@@ -38,24 +38,31 @@ class NavigationInput extends React.PureComponent {
               };
     }
 
-    state = {};
+    state = {isValidEntry: false};
 
     onChange = ({entry, params}) => {
         const {entryId, key} = entry;
         this.props.onChange({entryId, name: Utils.getEntryNameFromKey(key), params});
     };
 
+    onEntryUpdate = (entryData) => {
+        this.setState({isValidEntry: entryData.isValidEntry});
+        if (this.props.onUpdate) {
+            this.props.onUpdate(entryData);
+        }
+    };
+
     render() {
         const {
             entryId,
-            onUpdate,
             includeClickableType,
             excludeClickableType,
             workbookId,
             navigationMixin,
             linkMixin,
         } = this.props;
-        const {showInput} = this.state;
+        const {showInput, isValidEntry} = this.state;
+        const showOpenButton = isValidEntry && entryId;
 
         return (
             <React.Fragment>
@@ -66,12 +73,12 @@ class NavigationInput extends React.PureComponent {
                             entryId={entryId}
                             scope={ENTRY_SCOPE.WIDGET}
                             onClick={this.onChange}
-                            onUpdate={onUpdate}
+                            onUpdate={this.onEntryUpdate}
                             includeClickableType={includeClickableType}
                             excludeClickableType={excludeClickableType}
                         />
                     </div>
-                    {entryId && (
+                    {showOpenButton && (
                         <Button
                             className={b('button')}
                             qa={NavigationInputQA.Open}

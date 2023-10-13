@@ -32,6 +32,7 @@ function DatasetSelector() {
     const dispatch = useDispatch();
     const {datasetId, datasetFieldId, validation, isManualTitle, title, fieldType} =
         useSelector(selectSelectorDialog);
+    const [isValidDataset, setIsValidDataset] = React.useState(false);
 
     const fetchDataset = React.useCallback((entryId: string) => {
         getSdk()
@@ -45,6 +46,7 @@ function DatasetSelector() {
                         dataset,
                     }),
                 );
+                setIsValidDataset(true);
             });
     }, []);
 
@@ -120,6 +122,8 @@ function DatasetSelector() {
         [datasetFieldId, isManualTitle, title],
     );
 
+    const showOpenButton = isValidDataset && datasetId;
+
     return (
         <React.Fragment>
             <FormRow label={i18n('field_dataset')}>
@@ -134,7 +138,7 @@ function DatasetSelector() {
                         //@ts-ignore
                         onClick={handleDatasetChange}
                     />
-                    {datasetId && (
+                    {showOpenButton && (
                         <Button
                             className={b('button')}
                             target="_blank"
