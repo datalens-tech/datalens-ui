@@ -7,7 +7,7 @@ import {
     DatasetsFieldsListData,
 } from '../../../../../components/DashKit/plugins/types';
 
-import {RELATION_TYPES} from './helpers';
+import {RELATIONS_CHARTS_ICONS_DICT, RELATION_TYPES} from './constants';
 
 export type DashkitMetaDataItem = DashkitMetaDataItemBase & {
     relations: RelationsData;
@@ -78,3 +78,5 @@ export type AliasContextProps = {
     selectedAliasRowIndex: number | null;
     selectedParam: string | null;
 };
+
+export type RelationChartType = keyof typeof RELATIONS_CHARTS_ICONS_DICT;

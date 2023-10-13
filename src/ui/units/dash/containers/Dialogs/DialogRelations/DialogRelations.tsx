@@ -19,13 +19,8 @@ import {openDialogAliases} from '../../../store/actions/relations/actions';
 
 import {Content} from './components/Content/Content';
 import {DEFAULT_FILTERS, Filters, FiltersTypes} from './components/Filters/Filters';
-import {
-    DEFAULT_ALIAS_NAMESPACE,
-    DEFAULT_ICON_SIZE,
-    RELATION_TYPES,
-    getDialogCaptionIcon,
-    getRelationsForSave,
-} from './helpers';
+import {DEFAULT_ALIAS_NAMESPACE, DEFAULT_ICON_SIZE, RELATION_TYPES} from './constants';
+import {getDialogCaptionIcon, getRelationsForSave} from './helpers';
 import {useFilteredRelations} from './hooks/useFilteredRelations';
 import {useRelations} from './hooks/useRelations';
 import {DashMetaData, DashkitMetaDataItem, RelationType} from './types';
