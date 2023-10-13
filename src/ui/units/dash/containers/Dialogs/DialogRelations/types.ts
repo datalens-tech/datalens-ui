@@ -59,6 +59,8 @@ export type AliasClickHandlerData = {
     currentRow: DashkitMetaDataItem;
     relationText: React.ReactNode;
     relationType: RelationType;
+    widgetIcon: React.ReactNode;
+    rowIcon: React.ReactNode;
 };
 
 export type AliasClickHandlerArgs = AliasClickHandlerData & {
@@ -66,6 +68,7 @@ export type AliasClickHandlerArgs = AliasClickHandlerData & {
     currentWidget: DashkitMetaDataItem;
     datasets: DatasetsListData | null;
     updateRelations: (args: string[][]) => void;
+    updateAliases: (args: string[][]) => void;
 };
 
 export type AliasContextProps = {
