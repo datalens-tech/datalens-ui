@@ -227,8 +227,7 @@
     "npm": ">=8"
   },
   "browserslist": [
-    "extends @gravity-ui/browserslist-config",
-    "Chrome >= 72"
+    "extends @gravity-ui/browserslist-config"
   ],
   "optionalDependencies": {
     "fsevents": "^2.3.2"
