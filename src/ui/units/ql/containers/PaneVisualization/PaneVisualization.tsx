@@ -40,9 +40,11 @@ class PaneVisualization extends React.PureComponent<
                     switch (this.props.chartType) {
                         case QLChartType.Monitoringql:
                         case QLChartType.Promql: {
-                            canRerender = this.props.queries.every((q) =>
+                            const queriesExists = this.props.queries.length !== 0;
+                            const someQueryHasValue = this.props.queries.some((q) =>
                                 this.isQueryNotEmpty(q.value),
                             );
+                            canRerender = queriesExists && someQueryHasValue;
                             break;
                         }
 
