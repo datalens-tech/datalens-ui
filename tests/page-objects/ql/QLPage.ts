@@ -172,6 +172,10 @@ class QLPage extends ChartPage {
 
         return s1WithoutFormatting === s2WithoutFormatting;
     }
+
+    async addEmptyPromQlQuery() {
+        await this.page.click(slct('add-promql-query-btn'));
+    }
 }
 
 export default QLPage;

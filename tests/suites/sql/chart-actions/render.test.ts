@@ -39,7 +39,7 @@ datalensTest.describe('QL - rendering the chart', () => {
     });
 
     datalensTest(
-        'Chart should not render when monitoring/prometheus query is empty',
+        'Chart should not render when monitoring/prometheus queries are not added',
         async ({page}) => {
             const qlPage = new QLPage({page});
 
@@ -48,6 +48,27 @@ datalensTest.describe('QL - rendering the chart', () => {
             const subscribeToRequest = getIsRequestTriggered(page);
 
             await qlPage.checkSelectedVisualization(VisualizationsQa.Column);
+
+            const isRequestTriggered = subscribeToRequest('/api/run');
+
+            await qlPage.setVisualization(QlVisualizationId.Line);
+
+            expect(await isRequestTriggered()).toEqual(false);
+        },
+    );
+
+    datalensTest(
+        'Chart should not render when monitoring/prometheus has all queries empty',
+        async ({page}) => {
+            const qlPage = new QLPage({page});
+
+            await openTestPage(page, RobotChartsSQLEditorUrls.NewQLChartForMonitoring);
+
+            const subscribeToRequest = getIsRequestTriggered(page);
+
+            await qlPage.checkSelectedVisualization(VisualizationsQa.Column);
+
+            await qlPage.addEmptyPromQlQuery();
 
             const isRequestTriggered = subscribeToRequest('/api/run');
 
