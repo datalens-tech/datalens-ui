@@ -8,6 +8,7 @@ import {I18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import {useDispatch, useSelector} from 'react-redux';
 import {DATASET_FIELD_TYPES, DATASET_IGNORED_DATA_TYPES, Dataset, DatasetFieldType} from 'shared';
+import logger from 'ui/libs/logger';
 import {ENTRY_SCOPE} from 'units/dash/modules/constants';
 import {
     SelectorElementType,
@@ -50,7 +51,7 @@ function DatasetSelector() {
             })
             .catch((error) => {
                 setIsValidDataset(false);
-                throw error;
+                logger.logError('DatasetSelector: load dataset failed', error);
             });
     }, []);
 
