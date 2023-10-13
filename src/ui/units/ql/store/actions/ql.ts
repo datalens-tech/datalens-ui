@@ -11,6 +11,7 @@ import {
     ENTRY_TYPES,
     EntryUpdateMode,
     Feature,
+    MonitoringPreset,
     QLChartType,
     QLEntryDataShared,
     QLParam,
@@ -601,6 +602,103 @@ export const fetchConnectionSourceSchema = ({tableName}: FetchConnectionSourceSc
     };
 };
 
+const prepareMonitoringPreset = (preset: MonitoringPreset) => {
+    // Link to the chart from which the current chart was created (for Monitoring)
+    let redirectUrl: string | undefined;
+
+    const initialQueries: QLQuery[] = [];
+    const initialParams: QLParam[] = [];
+    let visualization = getDefaultQlVisualization();
+
+    if (preset?.data?.chart) {
+        preset.data.chart.targets.forEach((target) => {
+            initialQueries.push({
+                value: target.query,
+                params: [
+                    {
+                        name: 'project_id',
+                        type: 'string',
+                        defaultValue: target.scopeId,
+                    },
+                ],
+            });
+        });
+    }
+
+    if (preset?.data?.redirectUrl) {
+        redirectUrl = preset.data.redirectUrl;
+    }
+
+    if (preset?.data?.chart?.settings) {
+        const mVisualizationId = preset.data.chart.settings['chart.type'];
+
+        let visualizationId = 'line';
+
+        // eslint-disable-next-line max-depth
+        switch (mVisualizationId) {
+            case 'auto':
+                visualizationId = 'area';
+                break;
+
+            case 'area':
+                visualizationId = 'area';
+                break;
+
+            case 'line':
+                visualizationId = 'line';
+                break;
+
+            case 'column':
+                visualizationId = 'column';
+                break;
+
+            default:
+                visualizationId = 'area';
+        }
+
+        const availableVisualizations = getAvailableQlVisualizations();
+        visualization =
+            availableVisualizations.find((someVisualization) => {
+                return someVisualization.id === visualizationId;
+            }) || getDefaultQlVisualization();
+
+        // eslint-disable-next-line max-depth
+        if (preset?.data?.params) {
+            // eslint-disable-next-line max-depth
+            if (typeof preset.data.params.from === 'number') {
+                initialParams.push({
+                    name: 'from',
+                    type: 'datetime',
+                    defaultValue: moment(preset.data.params.from).toISOString(),
+                });
+            } else if (typeof preset.data.params.from === 'string') {
+                initialParams.push({
+                    name: 'from',
+                    type: 'datetime',
+                    defaultValue: preset.data.params.from,
+                });
+            }
+
+            // eslint-disable-next-line max-depth
+            if (typeof preset.data.params.to === 'number') {
+                initialParams.push({
+                    name: 'to',
+                    type: 'datetime',
+                    defaultValue: moment(preset.data.params.to).toISOString(),
+                });
+            } else if (typeof preset.data.params.to === 'string') {
+                initialParams.push({
+                    name: 'to',
+                    type: 'datetime',
+                    defaultValue: preset.data.params.to,
+                });
+            }
+        }
+    }
+
+    return {initialParams, initialQueries, redirectUrl, visualization};
+};
+
 export const initializeApplication = (args: InitializeApplicationArgs) => {
     // eslint-disable-next-line consistent-return, complexity
     return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
@@ -881,14 +979,6 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 gridSchemes: getGridSchemes(datalensGlobalState),
             });
 
-            // Link to the chart from which the current chart was created (for Monitoring)
-            let redirectUrl: string | undefined;
-
-            // Queries by default
-            const initialQueries: QLQuery[] = [];
-
-            const initialParams: QLParam[] = [];
-
             // Did the user come from a link with a presetId?
             const presetId = urlSearch.get('presetId');
             if (presetId) {
@@ -927,97 +1017,14 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                         const preset = await getSdk().us.getPreset({presetId});
 
-                        if (preset?.data?.chart) {
-                            preset.data.chart.targets.forEach((target) => {
-                                initialQueries.push({
-                                    value: target.query,
-                                    params: [
-                                        {
-                                            name: 'project_id',
-                                            type: 'string',
-                                            defaultValue: target.scopeId,
-                                        },
-                                    ],
-                                });
-                            });
-                        }
+                        const {initialQueries, initialParams, redirectUrl, visualization} =
+                            prepareMonitoringPreset(preset);
 
-                        if (preset?.data?.redirectUrl) {
-                            redirectUrl = preset.data.redirectUrl;
-                        }
-
-                        if (preset?.data?.chart?.settings) {
-                            const mVisualizationId = preset.data.chart.settings['chart.type'];
-
-                            let visualizationId = 'line';
-
-                            // eslint-disable-next-line max-depth
-                            switch (mVisualizationId) {
-                                case 'auto':
-                                    visualizationId = 'area';
-                                    break;
-
-                                case 'area':
-                                    visualizationId = 'area';
-                                    break;
-
-                                case 'line':
-                                    visualizationId = 'line';
-                                    break;
-
-                                case 'column':
-                                    visualizationId = 'column';
-                                    break;
-
-                                default:
-                                    visualizationId = 'area';
-                            }
-
-                            const availableVisualizations = getAvailableQlVisualizations();
-                            const visualization =
-                                availableVisualizations.find((someVisualization) => {
-                                    return someVisualization.id === visualizationId;
-                                }) || getDefaultQlVisualization();
-
-                            dispatch(
-                                setVisualizationWizard({
-                                    visualization: visualization as Shared['visualization'],
-                                }),
-                            );
-
-                            // eslint-disable-next-line max-depth
-                            if (preset?.data?.params) {
-                                // eslint-disable-next-line max-depth
-                                if (typeof preset.data.params.from === 'number') {
-                                    initialParams.push({
-                                        name: 'from',
-                                        type: 'datetime',
-                                        defaultValue: moment(preset.data.params.from).toISOString(),
-                                    });
-                                } else if (typeof preset.data.params.from === 'string') {
-                                    initialParams.push({
-                                        name: 'from',
-                                        type: 'datetime',
-                                        defaultValue: preset.data.params.from,
-                                    });
-                                }
-
-                                // eslint-disable-next-line max-depth
-                                if (typeof preset.data.params.to === 'number') {
-                                    initialParams.push({
-                                        name: 'to',
-                                        type: 'datetime',
-                                        defaultValue: moment(preset.data.params.to).toISOString(),
-                                    });
-                                } else if (typeof preset.data.params.to === 'string') {
-                                    initialParams.push({
-                                        name: 'to',
-                                        type: 'datetime',
-                                        defaultValue: preset.data.params.to,
-                                    });
-                                }
-                            }
-                        }
+                        dispatch(
+                            setVisualizationWizard({
+                                visualization,
+                            }),
+                        );
 
                         dispatch(
                             setSettings({
@@ -1072,7 +1079,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                         chartType,
                         tabs,
                         queryValue: '',
-                        queries: initialQueries,
+                        queries: [],
                         settings: newSettings,
                         panes,
                         grid,

@@ -116,3 +116,24 @@ export enum QLParamType {
     DateInterval = 'date-interval',
     DatetimeInterval = 'datetime-interval',
 }
+
+export interface MonitoringPreset {
+    data: {
+        chart: {
+            targets: {
+                query: string;
+                scopeId: string;
+            }[];
+            settings: {
+                ['chart.type']: string;
+                ['other.normalize']: string;
+            };
+        };
+        redirectUrl?: string;
+        params: {
+            from: number;
+            to: number;
+        };
+    };
+    presetId: string;
+}
