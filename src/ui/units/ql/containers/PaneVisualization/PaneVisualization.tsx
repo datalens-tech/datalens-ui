@@ -3,11 +3,12 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
+import {QLChartType} from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {drawPreview} from 'units/ql/store/actions/ql';
 import SectionVisualization from 'units/wizard/containers/Wizard/SectionVisualization/SectionVisualization';
 
-import {getQueryValue} from '../../store/reducers/ql';
+import {getChartType, getQueries, getQueryValue} from '../../store/reducers/ql';
 import {getAvailableQlVisualizations} from '../../utils/visualization';
 
 import './PaneVisualization.scss';
@@ -35,7 +36,23 @@ class PaneVisualization extends React.PureComponent<
             <SectionVisualization
                 availableVisualizations={getAvailableQlVisualizations()}
                 onUpdate={() => {
-                    if (this.props.queryValue === '') {
+                    let canRerender;
+                    switch (this.props.chartType) {
+                        case QLChartType.Monitoringql:
+                        case QLChartType.Promql: {
+                            canRerender = this.props.queries.every((q) =>
+                                this.isQueryNotEmpty(q.value),
+                            );
+                            break;
+                        }
+
+                        case QLChartType.Sql:
+                        default: {
+                            canRerender = this.isQueryNotEmpty(this.props.queryValue);
+                        }
+                    }
+
+                    if (!canRerender) {
                         return;
                     }
 
@@ -47,6 +64,10 @@ class PaneVisualization extends React.PureComponent<
             />
         );
     }
+
+    private isQueryNotEmpty(query: string): boolean {
+        return query.trim().length > 0;
+    }
 }
 
 const mapDispatchToProps = {
@@ -56,6 +77,8 @@ const mapDispatchToProps = {
 const makeMapStateToProps = (state: DatalensGlobalState) => {
     return {
         queryValue: getQueryValue(state),
+        queries: getQueries(state),
+        chartType: getChartType(state),
     };
 };
 
