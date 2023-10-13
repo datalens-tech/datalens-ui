@@ -21,6 +21,7 @@ import prepareTable from './preparers/table';
 import {LINEAR_VISUALIZATIONS, PIE_VISUALIZATIONS} from './utils/constants';
 import {getColumnsAndRows, log} from './utils/misc-helpers';
 import {
+    mapColors,
     mapVisualizationPlaceholdersItems,
     migrateOrAutofillVisualization,
 } from './utils/visualization-utils';
@@ -185,6 +186,11 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
             newVisualization = mapVisualizationPlaceholdersItems({
                 visualization: sharedVisualization,
                 fields,
+            });
+
+            newColors = mapColors({
+                fields,
+                colors: sharedColors as Field[],
             });
         }
 
