@@ -489,20 +489,17 @@ const getConnectedField = ({
     row: DashkitMetaDataItemNoRelations;
     datasets: Datasets;
 }) => {
-    let res = getMappedConnectedField({item: row, datasets});
-    if (!res) {
-        res = getMappedConnectedField({item: widget, datasets});
-    }
+    let res =
+        getMappedConnectedField({item: row, datasets}) ||
+        getMappedConnectedField({item: widget, datasets});
 
     if (
         !res?.length &&
         (row.type === DASH_WIDGET_TYPES.CONTROL || widget.type === DASH_WIDGET_TYPES.CONTROL)
     ) {
-        res = getConnectedFieldExternalSelectors(row, widget);
-
-        if (!res) {
-            res = getConnectedFieldExternalSelectors(widget, row);
-        }
+        res =
+            getConnectedFieldExternalSelectors(row, widget) ||
+            getConnectedFieldExternalSelectors(widget, row);
     }
     return res;
 };
