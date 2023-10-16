@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {DashTabConnectionKind} from 'shared';
 
 import {
@@ -5,7 +7,7 @@ import {
     DatasetsFieldsListData,
 } from '../../../../../components/DashKit/plugins/types';
 
-import {RELATION_TYPES} from './helpers';
+import {RELATIONS_CHARTS_ICONS_DICT, RELATION_TYPES} from './constants';
 
 export type DashkitMetaDataItem = DashkitMetaDataItemBase & {
     relations: RelationsData;
@@ -55,6 +57,10 @@ export type ConnectionsData = Array<{
 export type AliasClickHandlerData = {
     showDebugInfo: boolean;
     currentRow: DashkitMetaDataItem;
+    relationText: React.ReactNode;
+    relationType: RelationType;
+    widgetIcon: React.ReactNode;
+    rowIcon: React.ReactNode;
 };
 
 export type AliasClickHandlerArgs = AliasClickHandlerData & {
@@ -62,6 +68,7 @@ export type AliasClickHandlerArgs = AliasClickHandlerData & {
     currentWidget: DashkitMetaDataItem;
     datasets: DatasetsListData | null;
     updateRelations: (args: string[][]) => void;
+    updateAliases: (args: string[][]) => void;
 };
 
 export type AliasContextProps = {
@@ -71,3 +78,5 @@ export type AliasContextProps = {
     selectedAliasRowIndex: number | null;
     selectedParam: string | null;
 };
+
+export type RelationChartType = keyof typeof RELATIONS_CHARTS_ICONS_DICT;

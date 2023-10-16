@@ -11,9 +11,7 @@ import type {
 
 import type {CollapseProps} from '../../../../ui/components/Collapse/types';
 import type {SimpleDatepickerProps} from '../../../../ui/components/common/SimpleDatepicker/types';
-import type {MdbAvailableDatabase} from '../../../constants';
 import type {ConnectionData} from '../../../types';
-import type {OAuthApplication} from '../../types';
 
 type MarkdownString = string;
 
@@ -141,33 +139,9 @@ export type CustomizableRow = {
     items: ConnectorFormItem[];
 };
 
-export type OAuthTokenRowItem = Pick<BaseItem, 'displayConditions'> &
-    Pick<BaseControlItem, 'fakeValue'> & {
-        type: 'oauth';
-        application: OAuthApplication;
-        name?: string; // default 'token'
-        labelText?: string;
-        buttonText?: string;
-        disabled?: boolean;
-    };
-
-export type OAuthTokenChytRowItem = Pick<BaseItem, 'displayConditions'> &
-    Pick<BaseControlItem, 'fakeValue'> & {
-        type: 'oauth_chyt';
-        name?: string; // default 'token'
-        disabled?: boolean;
-    };
-
 export type CacheTtlRowItem = Omit<BaseItem, 'inner'> & {
     type: 'cache_ttl_sec';
     labelText?: string;
-    disabled?: boolean;
-};
-
-export type CountersRowItem = Omit<BaseItem, 'inner'> & {
-    type: 'metrica_counter' | 'appmetrica_counter';
-    labelText?: string;
-    allowManualInput?: boolean;
     disabled?: boolean;
 };
 
@@ -178,71 +152,7 @@ export type CollapseRowItem = BaseItem & {
     componentProps?: Partial<CollapseProps>;
 };
 
-export type AccuracyRowItem = Omit<BaseItem, 'inner'> & {
-    type: 'metrica_accuracy';
-    name: string;
-    disabled?: boolean;
-};
-
-export type MdbFormFillRowItem = Pick<BaseItem, 'displayConditions'> & {
-    type: 'mdb_form_fill';
-    disabled?: boolean;
-};
-
-export type MdbClusterRowItem = Pick<BaseItem, 'displayConditions'> & {
-    type: 'mdb_cluster';
-    name: string;
-    dbType: MdbAvailableDatabase;
-    disabled?: boolean;
-};
-
-export type MdbFieldRowItem = Pick<BaseItem, 'displayConditions'> & {
-    type: 'mdb_host' | 'mdb_username' | 'mdb_database';
-    dbType: MdbAvailableDatabase;
-    disabled?: boolean;
-};
-
-export type CloudTreeSelectRowItem = BaseItem & {
-    type: 'cloud_tree_select';
-    disabled?: boolean;
-};
-
-export type ServiceAccountRowItem = BaseItem & {
-    type: 'service_account';
-    disabled?: boolean;
-};
-
-export type YdbDatabaseRowItem = Omit<BaseItem, 'inner'> & {
-    type: 'ydb_database';
-    disabled?: boolean;
-};
-
-export type SnowflakeOAuthIntegrationRowItem = Pick<BaseItem, 'displayConditions'> & {
-    type: 'snowflake_oauth_integration';
-};
-
-export type OAuthSnowflakeRowItem = Pick<BaseItem, 'displayConditions'> &
-    Pick<BaseControlItem, 'fakeValue'> & {
-        type: 'oauth_snowflake';
-        name?: string; // default 'refresh_token'
-        buttonText?: string; // default 'Get token'
-    };
-
-export type PreparedRow =
-    | OAuthTokenRowItem
-    | OAuthTokenChytRowItem
-    | CacheTtlRowItem
-    | CountersRowItem
-    | CollapseRowItem
-    | AccuracyRowItem
-    | MdbFormFillRowItem
-    | MdbClusterRowItem
-    | MdbFieldRowItem
-    | CloudTreeSelectRowItem
-    | ServiceAccountRowItem
-    | YdbDatabaseRowItem
-    | SnowflakeOAuthIntegrationRowItem
-    | OAuthSnowflakeRowItem;
+export type PreparedRow = CacheTtlRowItem | CollapseRowItem;
 
 export type Row = CustomizableRow | PreparedRow;
 

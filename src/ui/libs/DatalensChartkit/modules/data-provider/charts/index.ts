@@ -79,6 +79,7 @@ export const CHARTS_ERROR_CODE = {
     SEGMENTS_OVERSIZE: 'ERR.CHARTS.SEGMENTS_OVERSIZE',
     PROCESSING_ERROR: 'ERR.CK.PROCESSING_ERROR',
     UNSUPPORTED_TYPE: 'ERR.CHARTS.UNSUPPORTED_TYPE',
+    UNSUPPORTED_DATA_TYPE: 'ERR.CHARTS.UNSUPPORTED_DATA_TYPE',
     SECRETS_ACCESS: 'ERR.CHARTS.SECRETS_ACCESS',
 } as const;
 
@@ -284,6 +285,10 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             case CHARTS_ERROR_CODE.SECRETS_ACCESS:
                 message = i18n('chartkit.data-provider', 'error-secrets-access');
                 details = {};
+                break;
+            case CHARTS_ERROR_CODE.UNSUPPORTED_DATA_TYPE:
+                message = i18n('chartkit.data-provider', 'error-unsupported-data-type');
+                extra.hideRetry = true;
                 break;
         }
 

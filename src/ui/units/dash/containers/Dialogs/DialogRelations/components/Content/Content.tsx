@@ -4,7 +4,7 @@ import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import {DashkitMetaDataItem, RelationType} from '../../types';
+import {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
 
 import {Row} from './Row';
 
@@ -18,8 +18,9 @@ type ContentProps = {
     widgetMeta: DashkitMetaDataItem | null;
     isLoading: boolean;
     onChange: (props: {type: RelationType; widgetId: DashkitMetaDataItem['widgetId']}) => void;
-    onAliasClick: (props: any) => void; // TODO next PR
+    onAliasClick: (props: AliasClickHandlerData) => void;
     showDebugInfo: boolean;
+    widgetIcon: React.ReactNode;
 };
 
 export const Content = ({
@@ -29,6 +30,7 @@ export const Content = ({
     onChange,
     onAliasClick,
     showDebugInfo,
+    widgetIcon,
 }: ContentProps) => {
     if (isLoading) {
         return (
@@ -56,6 +58,7 @@ export const Content = ({
             onChange={onChange}
             onAliasClick={onAliasClick}
             showDebugInfo={showDebugInfo}
+            widgetIcon={widgetIcon}
         />
     ));
 

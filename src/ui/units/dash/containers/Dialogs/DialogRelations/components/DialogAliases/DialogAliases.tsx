@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Plus} from '@gravity-ui/icons';
-import {Button, Card, Dialog, Icon} from '@gravity-ui/uikit';
+import {Alert, Button, Card, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Collapse} from 'components/Collapse/Collapse';
 import DialogManager from 'components/DialogManager/DialogManager';
@@ -9,10 +9,12 @@ import {I18n} from 'i18n';
 import intersection from 'lodash/intersection';
 import isEqual from 'lodash/isEqual';
 import {useSelector} from 'react-redux';
-import {DEFAULT_ALIAS_NAMESPACE} from 'ui/units/dash/containers/Dialogs/DialogRelations/helpers';
-import {AliasesContext} from 'ui/units/dash/containers/Dialogs/DialogRelations/hooks/useRelations';
-import {AliasClickHandlerArgs} from 'ui/units/dash/containers/Dialogs/DialogRelations/types';
 import {getCurrentTabAliases} from 'ui/units/dash/store/selectors/relations/selectors';
+
+import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../../constants';
+import {getNormalizedAliases} from '../../helpers';
+import {AliasesContext} from '../../hooks/useRelations';
+import {AliasClickHandlerArgs, RelationType} from '../../types';
 
 import {AddAliases} from './components/AddAliases/AddAliases';
 import {AliasesDetail} from './components/AliasesDetail/AliasesDetail';
@@ -28,6 +30,8 @@ export type OpenDialogAliasesArgs = {
 
 export type DialogAliasesProps = AliasClickHandlerArgs & {
     onClose: () => void;
+    relationText: React.ReactNode;
+    relationType: RelationType;
 };
 
 const b = block('dialog-aliases');
@@ -42,6 +46,11 @@ const DialogAliases = (props: DialogAliasesProps) => {
         showDebugInfo,
         datasets,
         updateRelations,
+        updateAliases,
+        relationText,
+        relationType,
+        widgetIcon,
+        rowIcon,
     } = props;
 
     const [showDetailedData, setShowDetailedData] = React.useState<boolean>(false);
@@ -64,6 +73,9 @@ const DialogAliases = (props: DialogAliasesProps) => {
 
     const caption = i18n('title_add-alias');
 
+    const isIgnored = relationType === RELATION_TYPES.ignore;
+    const isBoth = relationType === RELATION_TYPES.both;
+
     const affectedItems = [currentWidget, ...relations]
         .map((item) => ({
             ...item,
@@ -84,7 +96,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
     }, []);
 
     /**
-     * click on param button for toggling widgets with its param details
+     * Click on param button for toggling widgets with its param details
      */
     const handleDetailedAlias = React.useCallback(
         (data: SelectParamArgs) => {
@@ -104,7 +116,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
     );
 
     /**
-     * click on magnify icon for toggling full details
+     * Click on magnify icon for toggling full details
      */
     const handleDetailClick = React.useCallback(
         ({indexRow, aliasRow}) => {
@@ -118,7 +130,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
     );
 
     /**
-     * excluding form aliases list row that will be removed
+     * Excluding form aliases list row that will be removed
      */
     const handleRemoveAlias = React.useCallback(
         ({
@@ -147,22 +159,27 @@ const DialogAliases = (props: DialogAliasesProps) => {
 
             resetSelectedAliasRow();
         },
-        [aliases, dashTabAliasesByNamespace, resetSelectedAliasRow],
+        [dashTabAliasesByNamespace, resetSelectedAliasRow],
     );
 
     /**
-     * add new alias row to list before save apply
+     * Add new alias row to list before save apply
      */
-    const handleAddNewAliases = React.useCallback((_alias: string[]) => {
-        //console.log('dashTabAliasesByNamespace', dashTabAliasesByNamespace);
-        //console.log('alias', alias);
-        // TODO add logic
-    }, []);
+    const handleAddNewAliases = React.useCallback(
+        (alias: string[]) => {
+            const res = [...dashTabAliasesByNamespace, alias];
+            setShowAddAlias(false);
+            setAliases(res);
+            setAliasesByNamespace(res);
+        },
+        [dashTabAliasesByNamespace],
+    );
 
     const handleApplyChanges = React.useCallback(() => {
-        updateRelations(aliases);
+        updateAliases(getNormalizedAliases(aliases));
+        updateRelations(getNormalizedAliases(aliases));
         onClose();
-    }, [updateRelations, aliases, onClose]);
+    }, [updateRelations, updateAliases, aliases, onClose]);
 
     const handleAddAlias = React.useCallback(() => {
         setShowAddAlias(true);
@@ -198,15 +215,30 @@ const DialogAliases = (props: DialogAliasesProps) => {
                         selectedParam,
                     }}
                 >
-                    <div className={b('info')}>
-                        <p>{i18n('label_info_1')}</p>
-                        <p>{i18n('label_info_2')}</p>
-                        {!enableAddAlias && (
-                            <Card theme="normal" className={b('card')}>
-                                {i18n('label_card')}
-                            </Card>
-                        )}
-                    </div>
+                    {relationText && (
+                        <div className={b('sub-header')}>
+                            <span className={b('label')}>{i18n('label_link-type')}:</span>
+                            <span className={b('type-text', {'lower-case': isBoth || isIgnored})}>
+                                {relationText}
+                            </span>
+                        </div>
+                    )}
+                    <Alert
+                        theme="normal"
+                        view="filled"
+                        className={b('info')}
+                        message={
+                            <React.Fragment>
+                                <p className={b('info-text')}>{i18n('label_info_1')}</p>
+                                <p className={b('info-text')}>{i18n('label_info_2')}</p>
+                            </React.Fragment>
+                        }
+                    />
+                    {!enableAddAlias && (
+                        <Card theme="warning" className={b('card')}>
+                            {i18n('label_card')}
+                        </Card>
+                    )}
                     <div className={b('controls')}>
                         {hasAlias ? (
                             <React.Fragment>
@@ -241,7 +273,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
                             currentRow={currentRow}
                         />
                     )}
-                    {enableAddAlias && (
+                    {enableAddAlias && !isIgnored && (
                         <React.Fragment>
                             {!showAddAlias && (
                                 <Button onClick={handleAddAlias}>
@@ -256,6 +288,8 @@ const DialogAliases = (props: DialogAliasesProps) => {
                                     onCancel={handleHideAlias}
                                     currentAliases={aliases}
                                     onAdd={handleAddNewAliases}
+                                    widgetIcon={widgetIcon}
+                                    rowIcon={rowIcon}
                                 />
                             )}
                         </React.Fragment>

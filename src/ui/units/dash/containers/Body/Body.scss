@@ -1,3 +1,8 @@
+@import '../../../../styles/variables';
+
+$contentPadding: 24px;
+$contentMobilePadding: 16px;
+
 .dash-body {
     position: relative;
     display: flex;
@@ -5,6 +10,7 @@
     flex: 1;
     overflow: hidden;
     text-size-adjust: none;
+    $bodyClass: &;
 
     // redefining the style of the internal header at the dashboard level by design so that it looks the same with the headers
     & .yc-select-control__label {
@@ -14,22 +20,30 @@
     &__content {
         width: 100%;
         transition: width 0.1s;
-        padding: 20px 24px 48px;
+        padding: 20px #{$contentPadding} 48px;
 
         &_with-table-of-content {
             width: calc(100% - 250px);
         }
 
         &_mobile {
-            padding: 8px 16px 18px;
+            padding: 8px #{$contentMobilePadding} 18px;
         }
 
         &_aside {
-            padding: 0 24px 48px;
+            padding: 0 #{$contentPadding} 48px;
         }
 
         &_with-edit-panel {
             padding-bottom: 124px;
+        }
+
+        & #{$bodyClass}__edit-panel {
+            left: calc(50vw + #{$sideMenuCompactWidth} / 2);
+        }
+
+        & #{$bodyClass}__edit-panel_aside-opened {
+            left: calc(50vw + #{$sideMenuFullWidth} / 2);
         }
     }
 

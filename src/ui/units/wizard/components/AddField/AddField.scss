@@ -16,6 +16,7 @@
 
     &__popup {
         @include dl-select-popup;
+        min-width: 170px;
     }
 }
 

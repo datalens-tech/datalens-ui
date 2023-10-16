@@ -11,7 +11,7 @@
   "label_copy": "Куда копировать",
   "label_copy-denied-title": "Недостаточно прав для копирования",
   "label_description": "Описание",
-  "label_empty-collection": "Пустая коллекция",
+  "label_empty-collection": "В коллекции пусто или не удалось ничего найти по условиям в фильтрах",
   "label_move": "Куда переместить",
   "label_move-denied-title": "Недостаточно прав для перемещения",
   "label_title": "Название"

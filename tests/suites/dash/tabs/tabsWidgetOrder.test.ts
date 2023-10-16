@@ -31,7 +31,7 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
-            const popupWidgetOrderList = await openTabPopupWidgetOrder(page, 0);
+            const popupWidgetOrderList = await openTabPopupWidgetOrder(dashboardPage, 0);
 
             const widgetOrderListItems = await popupWidgetOrderList.$$(
                 SELECTORS.SELECTOR_LIST_ITEMS,
@@ -68,7 +68,7 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
-            let popupWidgetOrderList = await openTabPopupWidgetOrder(page, 0);
+            let popupWidgetOrderList = await openTabPopupWidgetOrder(dashboardPage, 0);
 
             const widgetOrderListItems = await popupWidgetOrderList.$$(
                 SELECTORS.SELECTOR_LIST_ITEMS,
@@ -99,7 +99,7 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
             await dashboardPage.enterEditMode();
 
             // open popup widget order again
-            popupWidgetOrderList = await openTabPopupWidgetOrder(page, 0);
+            popupWidgetOrderList = await openTabPopupWidgetOrder(dashboardPage, 0);
 
             const actualWidgetOrderListItems = await popupWidgetOrderList.$$(
                 SELECTORS.SELECTOR_LIST_ITEMS,

@@ -327,6 +327,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                         onClick={() => this.onClickButtonAddQuery()}
                         key="button-run"
                         className={b('add-query-btn')}
+                        qa={'add-promql-query-btn'}
                     >
                         {i18n('sql', 'label_add-query')}
                     </Button>

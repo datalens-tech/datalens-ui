@@ -20,9 +20,14 @@
         padding: 0 20px;
     }
 
+    &__title-content {
+        display: flex;
+        margin: 28px 0 0;
+    }
+
     &__title {
         @include text-header-2();
-        margin: 28px 0 0;
+        margin: 0 8px 0 0;
     }
 
     &__controls {

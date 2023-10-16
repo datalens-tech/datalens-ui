@@ -1,30 +1,27 @@
 import React from 'react';
 
-import {Button} from '@gravity-ui/uikit';
+import {ArrowRight, Copy, LockOpen} from '@gravity-ui/icons';
+import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {
-    DIALOG_COPY_WORKBOOK,
-    DIALOG_EDIT_WORKBOOK,
-    DIALOG_MOVE_WORKBOOK,
-} from 'components/CollectionsStructure';
-import {I18n} from 'i18n';
+import {DIALOG_COPY_WORKBOOK, DIALOG_MOVE_WORKBOOK} from 'components/CollectionsStructure';
+import {I18N} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
+import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 
 import {Feature} from '../../../../../shared';
 import {WorkbookWithPermissions} from '../../../../../shared/schema';
 import {IamAccessDialog} from '../../../../components/IamAccessDialog/IamAccessDialog';
 import {registry} from '../../../../registry';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
-import {AppDispatch} from '../../../../store';
-import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
 import {CreateEntry} from '../CreateEntry/CreateEntry';
 
 import './WorkbookActions.scss';
 
 const b = block('dl-workbook-actions');
-const i18n = I18n.keyset('new-workbooks');
+
+const i18n = I18N.keyset('new-workbooks');
 
 const DIALOG_QUERY_PARAM_NAME = 'dialog';
 
@@ -36,10 +33,9 @@ type Props = {
 export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}) => {
     const history = useHistory();
     const {search} = useLocation();
+    const dispatch = useDispatch();
     const preopenedAccessDialog =
         new URLSearchParams(search).get(DIALOG_QUERY_PARAM_NAME) === 'access';
-
-    const dispatch: AppDispatch = useDispatch();
 
     const [iamAccessDialogIsOpen, setIamAccessDialogIsOpen] = React.useState(preopenedAccessDialog);
 
@@ -62,109 +58,97 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
 
     const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
+    const onApplyCopy = (workbookId: string | undefined) => {
+        if (workbookId) {
+            history.push(`/workbooks/${workbookId}`);
+        }
+    };
+
     const {useAdditionalWorkbookActions} = registry.workbooks.functions.getAll();
-    const additionalActions = useAdditionalWorkbookActions(workbook);
+    const classNameIconAction = b('icon-action');
+
+    const additionalActions = useAdditionalWorkbookActions(workbook, classNameIconAction);
+
+    const dropdownActions = [...additionalActions];
+
+    if (workbook.permissions.move) {
+        dropdownActions.push({
+            action: () => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_MOVE_WORKBOOK,
+                        props: {
+                            open: true,
+                            workbookId: workbook.workbookId,
+                            workbookTitle: workbook.title,
+                            initialCollectionId: workbook.collectionId,
+                            onApply: refreshWorkbookInfo,
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
+                        },
+                    }),
+                );
+            },
+            text: (
+                <React.Fragment>
+                    <Icon data={ArrowRight} className={classNameIconAction} />
+                    {i18n('action_move')}
+                </React.Fragment>
+            ),
+        });
+
+        if (workbook.permissions.copy) {
+            dropdownActions.push({
+                action: () => {
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_COPY_WORKBOOK,
+                            props: {
+                                open: true,
+                                workbookId: workbook.workbookId,
+                                workbookTitle: workbook.title,
+                                initialCollectionId: workbook.collectionId,
+                                onApply: onApplyCopy,
+                                onClose: () => {
+                                    dispatch(closeDialog());
+                                },
+                            },
+                        }),
+                    );
+                },
+                text: (
+                    <React.Fragment>
+                        <Icon data={Copy} className={classNameIconAction} />
+                        {i18n('action_copy')}
+                    </React.Fragment>
+                ),
+            });
+        }
+    }
 
     return (
         <div className={b()}>
+            {Boolean(dropdownActions.length) && (
+                <DropdownMenu
+                    defaultSwitcherProps={{view: 'normal'}}
+                    switcherWrapperClassName={b('item')}
+                    items={dropdownActions}
+                />
+            )}
+
             {collectionsAccessEnabled && workbook.permissions.listAccessBindings && (
-                <div className={b('item')}>
-                    <Button
-                        onClick={() => {
-                            setIamAccessDialogIsOpen(true);
-                        }}
-                    >
-                        {i18n('action_access')}
-                    </Button>
-                </div>
-            )}
-            {additionalActions.map((action) => {
-                return (
-                    <div key={action.id} className={b('item')}>
-                        <Button onClick={action.action}>{action.text}</Button>
+                <Tooltip content={i18n('action_access')}>
+                    <div className={b('item')}>
+                        <Button
+                            onClick={() => {
+                                setIamAccessDialogIsOpen(true);
+                            }}
+                        >
+                            <Icon data={LockOpen} />
+                        </Button>
                     </div>
-                );
-            })}
-
-            {workbook.permissions.move && (
-                <div className={b('item')}>
-                    <Button
-                        onClick={() => {
-                            dispatch(
-                                openDialog({
-                                    id: DIALOG_MOVE_WORKBOOK,
-                                    props: {
-                                        open: true,
-                                        workbookId: workbook.workbookId,
-                                        workbookTitle: workbook.title,
-                                        initialCollectionId: workbook.collectionId,
-                                        onApply: refreshWorkbookInfo,
-                                        onClose: () => {
-                                            dispatch(closeDialog());
-                                        },
-                                    },
-                                }),
-                            );
-                        }}
-                    >
-                        {i18n('action_move')}
-                    </Button>
-                </div>
-            )}
-
-            {workbook.permissions.copy && (
-                <div className={b('item')}>
-                    <Button
-                        onClick={() => {
-                            dispatch(
-                                openDialog({
-                                    id: DIALOG_COPY_WORKBOOK,
-                                    props: {
-                                        open: true,
-                                        workbookId: workbook.workbookId,
-                                        workbookTitle: workbook.title,
-                                        initialCollectionId: workbook.collectionId,
-                                        onApply: (workbookId) => {
-                                            if (workbookId) {
-                                                history.push(`/workbooks/${workbookId}`);
-                                            }
-                                        },
-                                        onClose: () => {
-                                            dispatch(closeDialog());
-                                        },
-                                    },
-                                }),
-                            );
-                        }}
-                    >
-                        {i18n('action_copy')}
-                    </Button>
-                </div>
-            )}
-
-            {workbook.permissions.update && (
-                <Button
-                    className={b('item')}
-                    onClick={() => {
-                        dispatch(
-                            openDialog({
-                                id: DIALOG_EDIT_WORKBOOK,
-                                props: {
-                                    open: true,
-                                    workbookId: workbook.workbookId,
-                                    title: workbook.title,
-                                    description: workbook?.description ?? '',
-                                    onApply: refreshWorkbookInfo,
-                                    onClose: () => {
-                                        dispatch(closeDialog());
-                                    },
-                                },
-                            }),
-                        );
-                    }}
-                >
-                    {i18n('action_edit')}
-                </Button>
+                </Tooltip>
             )}
 
             {workbook.permissions.update && (

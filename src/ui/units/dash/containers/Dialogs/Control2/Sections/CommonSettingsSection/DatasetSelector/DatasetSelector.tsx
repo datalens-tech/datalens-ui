@@ -1,12 +1,14 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
+import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import {useDispatch, useSelector} from 'react-redux';
 import {DATASET_FIELD_TYPES, DATASET_IGNORED_DATA_TYPES, Dataset, DatasetFieldType} from 'shared';
+import logger from 'ui/libs/logger';
 import {ENTRY_SCOPE} from 'units/dash/modules/constants';
 import {
     SelectorElementType,
@@ -17,7 +19,7 @@ import {
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
 import DropdownNavigation from '../../../../../DropdownNavigation/DropdownNavigation';
-import DatasetField from '../../../../Control/Switchers/DatasetField/DatasetField';
+import {DatasetField} from '../../../../Control/Switchers/DatasetField/DatasetField';
 import {ELEMENT_TYPE} from '../../../../Control/constants';
 
 import './DatasetSelector.scss';
@@ -25,10 +27,13 @@ import './DatasetSelector.scss';
 const b = block('external-selector-wrapper');
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
+const getDatasetLink = (entryId: string) => `/datasets/${entryId}`;
+
 function DatasetSelector() {
     const dispatch = useDispatch();
     const {datasetId, datasetFieldId, validation, isManualTitle, title, fieldType} =
         useSelector(selectSelectorDialog);
+    const [isValidDataset, setIsValidDataset] = React.useState(false);
 
     const fetchDataset = React.useCallback((entryId: string) => {
         getSdk()
@@ -42,6 +47,11 @@ function DatasetSelector() {
                         dataset,
                     }),
                 );
+                setIsValidDataset(true);
+            })
+            .catch((error) => {
+                setIsValidDataset(false);
+                logger.logError('DatasetSelector: load dataset failed', error);
             });
     }, []);
 
@@ -117,6 +127,8 @@ function DatasetSelector() {
         [datasetFieldId, isManualTitle, title],
     );
 
+    const showOpenButton = isValidDataset && datasetId;
+
     return (
         <React.Fragment>
             <FormRow label={i18n('field_dataset')}>
@@ -131,6 +143,15 @@ function DatasetSelector() {
                         //@ts-ignore
                         onClick={handleDatasetChange}
                     />
+                    {showOpenButton && (
+                        <Button
+                            className={b('button')}
+                            target="_blank"
+                            href={getDatasetLink(datasetId)}
+                        >
+                            {i18n('button_open')}
+                        </Button>
+                    )}
                 </div>
             </FormRow>
             <FormRow label={i18n('field_field')}>

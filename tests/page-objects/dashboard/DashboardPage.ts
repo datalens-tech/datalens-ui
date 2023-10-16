@@ -19,6 +19,7 @@ import {
     slct,
     waitForCondition,
 } from '../../utils';
+import {isEnabledFeature} from '../../../tests/utils/helpers';
 import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
@@ -35,6 +36,7 @@ import {
     DashKitOverlayMenuQa,
 } from '../../../src/shared/constants/qa/dash';
 import {CommonSelectors} from '../constants/common-selectors';
+import {Feature} from '../../../src/shared/types/feature';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -159,6 +161,17 @@ class DashboardPage extends BasePage {
         ]);
     }
 
+    async clickAddSelector() {
+        const isNewPanelEnabled = await isEnabledFeature(this.page, Feature.DashEditPanelEnabled);
+        if (isNewPanelEnabled) {
+            await this.page.click(slct(DashboardAddWidgetQa.AddControl));
+            return;
+        }
+
+        await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_ADD));
+        await this.page.click(slct(DashboardAddWidgetQa.AddControl));
+    }
+
     async addSelector({
         controlTitle,
         controlFieldName,
@@ -171,8 +184,7 @@ class DashboardPage extends BasePage {
         defaultValue?: string;
     }) {
         // adding a selector
-        await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_ADD));
-        await this.page.click(slct(DashboardAddWidgetQa.AddControl));
+        await this.clickAddSelector();
 
         // waiting for the selector settings dialog to appear
         await this.page.waitForSelector(slct(ControlQA.dialogControl));
@@ -238,10 +250,20 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(ControlQA.dialogControlApplyBtn));
     }
 
-    async addChart({chartUrl, chartName}: {chartUrl: string; chartName: string}) {
-        // adding a chart
+    async clickAddChart() {
+        const isNewPanelEnabled = await isEnabledFeature(this.page, Feature.DashEditPanelEnabled);
+        if (isNewPanelEnabled) {
+            await this.page.click(slct(DashboardAddWidgetQa.AddWidget));
+            return;
+        }
+
         await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_ADD));
         await this.page.click(slct(DashboardAddWidgetQa.AddWidget));
+    }
+
+    async addChart({chartUrl, chartName}: {chartUrl: string; chartName: string}) {
+        // adding a chart
+        await this.clickAddChart();
 
         // click on "specify link
         await this.page.click(slct('navigation-input-use-link-button'));
@@ -310,6 +332,11 @@ class DashboardPage extends BasePage {
         await this.saveChangesAsDraft();
     }
 
+    async clickOnLinksBtn() {
+        // click on the "connections" button
+        await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_CONNECTIONS));
+    }
+
     async openDashConnections() {
         // switch to edit mode from view
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
@@ -328,7 +355,7 @@ class DashboardPage extends BasePage {
         }
 
         // click on the "connections" button
-        await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_CONNECTIONS));
+        await this.clickOnLinksBtn();
     }
 
     async setupLinks({
@@ -345,7 +372,7 @@ class DashboardPage extends BasePage {
         chartField: string;
     }) {
         // click on the "connections" button
-        await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_CONNECTIONS));
+        await this.clickOnLinksBtn();
 
         // select the selector
         await clickGSelectOption({
@@ -472,9 +499,14 @@ class DashboardPage extends BasePage {
         });
     }
 
+    async clickTabs() {
+        // click on the "tabs" button
+        await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_TABS));
+    }
+
     async addTab() {
         // adding tab (by default: Tab 2)
-        await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_TABS));
+        await this.clickTabs();
         await this.page.click(slct(DialogTabsQA.RowAdd));
         await this.page.click(slct(DialogTabsQA.Save));
     }

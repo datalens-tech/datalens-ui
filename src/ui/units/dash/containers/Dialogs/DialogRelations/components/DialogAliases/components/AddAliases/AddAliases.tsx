@@ -1,13 +1,15 @@
 import React from 'react';
 
 import {Check, Xmark} from '@gravity-ui/icons';
-import {Button, Flex, Icon, Select, SelectOption} from '@gravity-ui/uikit';
+import {Button, Icon, Select, SelectOption} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import isEqual from 'lodash/isEqual';
+import {addAlias} from 'ui/units/dash/containers/Dialogs/DialogRelations/helpers';
 
 import {AliasesContext} from '../../../../hooks/useRelations';
 import {DashkitMetaDataItem, DatasetsListData} from '../../../../types';
+
+import {isAddingAliasExists, isAddingAliasSameDataset} from './helpers';
 
 import './AddAliases.scss';
 
@@ -19,6 +21,8 @@ type AddAliasesProps = {
     currentAliases: string[][];
     onCancel: () => void;
     onAdd: (aliases: string[]) => void;
+    widgetIcon: React.ReactNode;
+    rowIcon: React.ReactNode;
 };
 
 const b = block('dialog-aliases-add');
@@ -67,7 +71,7 @@ const getDatasetName = (data: DashkitMetaDataItem, datasets: DatasetsListData | 
 const prepareData = (data: DashkitMetaDataItem, datasets: DatasetsListData | null) => {
     const options = getList(data);
     const name = getDatasetName(data, datasets);
-    const subTitle = name ? `${data.title} (${name})` : data.title;
+    const subTitle = name ? `${data.title || data.label} (${name})` : data.title || data.label;
 
     return {options, subTitle};
 };
@@ -78,6 +82,8 @@ export const AddAliases = ({
     currentAliases,
     onCancel,
     onAdd,
+    widgetIcon,
+    rowIcon,
 }: AddAliasesProps) => {
     const {datasets} = React.useContext(AliasesContext);
     const [errorMsg, setErrorMgs] = React.useState<string>('');
@@ -124,30 +130,35 @@ export const AddAliases = ({
         newAlias.sort();
 
         for (let i = 0; i < currentAliases.length; i++) {
-            if (isEqual(currentAliases[i], newAlias)) {
+            if (isAddingAliasExists(currentAliases[i], newAlias)) {
                 setErrorMgs(i18n('label_alias-already-exists'));
                 return;
             }
         }
 
+        const addedAliases = addAlias(newAlias[0], newAlias[1], [...currentAliases]);
+
+        if (isAddingAliasSameDataset(addedAliases, datasets)) {
+            setErrorMgs(i18n('label_alias-same-dataset'));
+            return;
+        }
+
         onAdd(newAlias);
-    }, [currentAliases, leftAliasSelected, rightAliasSelected, onAdd]);
+        setLeftAliasSelected(undefined);
+        setRightAliasSelected(undefined);
+    }, [currentAliases, leftAliasSelected, rightAliasSelected, onAdd, datasets]);
 
     return (
         <div className={b()}>
-            <Flex
-                space={2}
-                justifyContent="flex-start"
-                alignItems="center"
-                inline={true}
-                wrap="wrap"
-            >
+            <div className={b('row')}>
                 <div className={b('select-wrap')}>
                     <div className={b('sub-title')} title={leftAliasSubTitle}>
+                        {widgetIcon}
                         {leftAliasSubTitle}
                     </div>
                     <Select
                         hasClear={true}
+                        filterable={true}
                         size="m"
                         options={currentItemOptions}
                         className={b('select')}
@@ -162,10 +173,12 @@ export const AddAliases = ({
                 <span className={b('eq')}>=</span>
                 <div className={b('select-wrap')}>
                     <div className={b('sub-title')} title={rightAliasSubTitle}>
+                        {rowIcon}
                         {rightAliasSubTitle}
                     </div>
                     <Select
                         hasClear={true}
+                        filterable={true}
                         size="m"
                         options={rowItemOptions}
                         className={b('select')}
@@ -184,7 +197,7 @@ export const AddAliases = ({
                 <Button className={b('button')} view="normal" onClick={onCancel}>
                     <Icon data={Xmark} />
                 </Button>
-            </Flex>
+            </div>
             {errorMsg && <div className={b('error')}>{errorMsg}</div>}
         </div>
     );

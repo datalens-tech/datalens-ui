@@ -4,18 +4,10 @@ import {
     DashKit as DashKitComponent,
     DashKitProps,
     ActionPanel as DashkitActionPanel,
+    ActionPanelItem as DashkitActionPanelItem,
     MenuItems,
 } from '@gravity-ui/dashkit';
-import {
-    ChartColumn,
-    CopyPlus,
-    Gear,
-    Heading,
-    Layers3Diagonal,
-    PlugConnection,
-    Sliders,
-    TextAlignLeft,
-} from '@gravity-ui/icons';
+import {ChartColumn, CopyPlus, Gear, Heading, Sliders, TextAlignLeft} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
@@ -28,8 +20,9 @@ import debounce from 'lodash/debounce';
 import {ResolveThunks, connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {ControlQA, DashData, DashTab, DashTabItem, Feature} from 'shared';
+import {ControlQA, DashData, DashTab, DashTabItem, DashboardAddWidgetQa, Feature} from 'shared';
 import {DatalensGlobalState} from 'ui';
+import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
@@ -191,7 +184,7 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     getActionPanelItems() {
-        const items = [
+        const items: DashkitActionPanelItem[] = [
             {
                 id: 'chart',
                 icon: <Icon data={ChartColumn} />,
@@ -200,6 +193,7 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.WIDGET);
                 },
+                qa: DashboardAddWidgetQa.AddWidget,
             },
             {
                 id: 'selector',
@@ -209,6 +203,7 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.CONTROL);
                 },
+                qa: DashboardAddWidgetQa.AddControl,
             },
             {
                 id: 'text',
@@ -218,6 +213,7 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.TEXT);
                 },
+                qa: DashboardAddWidgetQa.AddText,
             },
             {
                 id: 'header',
@@ -227,24 +223,7 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.openDialog(DIALOG_TYPE.TITLE);
                 },
-            },
-            {
-                id: 'links',
-                icon: <Icon data={PlugConnection} />,
-                title: i18n('dash.main.view', 'button_edit-panel-links'),
-                className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
-                },
-            },
-            {
-                id: 'tabs',
-                icon: <Icon data={Layers3Diagonal} />,
-                title: i18n('dash.main.view', 'button_edit-panel-tabs'),
-                className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.TABS);
-                },
+                qa: DashboardAddWidgetQa.AddTitle,
             },
         ];
 
@@ -277,6 +256,7 @@ class Body extends React.PureComponent<BodyProps> {
             tabData,
             handlerEditClick,
             isEditModeLoading,
+            isSidebarOpened,
         } = this.props;
 
         switch (mode) {
@@ -405,7 +385,12 @@ class Body extends React.PureComponent<BodyProps> {
                             />
                         )}
                         {showEditActionPanel && (
-                            <DashkitActionPanel items={this.getActionPanelItems()} />
+                            <DashkitActionPanel
+                                items={this.getActionPanelItems()}
+                                className={b('edit-panel', {
+                                    'aside-opened': isSidebarOpened,
+                                })}
+                            />
                         )}
                     </div>
                 </div>
@@ -441,6 +426,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     canEdit: canEdit(state),
     tabs: selectTabs(state),
     tabId: getCurrentTabId(state),
+    isSidebarOpened: !selectAsideHeaderIsCompact(state),
 });
 
 const mapDispatchToProps = {
