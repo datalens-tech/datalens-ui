@@ -4,8 +4,8 @@ import {dateTime} from '@gravity-ui/date-utils';
 import {DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Link} from 'react-router-dom';
+import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 
-import {IconById} from '../../../../components/IconById/IconById';
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
 import {CollectionContentProps} from '../types';
 
@@ -79,7 +79,7 @@ export const CollectionContentGrid = React.memo<CollectionContentProps>(
                                     <div className={b('content-cell', {title: true})}>
                                         <div className={b('title-col')}>
                                             <div className={b('title-col-icon')}>
-                                                <IconById id="collectionColoredBig" size={125} />
+                                                <CollectionIcon isIconBig size={125} />
                                             </div>
                                             <div className={b('title-col-text')}>{item.title}</div>
                                         </div>
