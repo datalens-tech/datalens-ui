@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {RadioButton} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {Language} from 'shared';
@@ -8,9 +7,11 @@ import {DL} from 'ui/constants';
 import {updateUserSettings} from 'ui/store/actions/user';
 import {getCurrentUserSettings} from 'ui/store/utils/user';
 
+import {ItemField} from './ItemField/ItemField';
+
 const i18n = I18n.keyset('component.aside-header-settings.view');
 
-export function LanguageSettings() {
+export function LanguageSettings({isMobile}: {isMobile: boolean}) {
     const dispatch = useDispatch();
     const allowedLanguages = DL.ALLOW_LANGUAGES;
     const currentUserSettings = getCurrentUserSettings() || '{}';
@@ -28,13 +29,21 @@ export function LanguageSettings() {
         window.location.reload();
     }
 
+    const getLanguageOptions = React.useCallback(
+        () =>
+            allowedLanguages.map((item) => ({
+                value: String(item),
+                content: i18n(`label_language-${item}`),
+            })),
+        [allowedLanguages],
+    );
+
     return (
-        <RadioButton value={lang} onUpdate={handleLanguageChange}>
-            {allowedLanguages.map((item) => (
-                <RadioButton.Option value={String(item)} key={`settings-lang-${item}`}>
-                    {i18n(`label_language-${item}`)}
-                </RadioButton.Option>
-            ))}
-        </RadioButton>
+        <ItemField
+            value={lang}
+            onUpdate={handleLanguageChange}
+            isMobile={isMobile}
+            options={getLanguageOptions()}
+        />
     );
 }

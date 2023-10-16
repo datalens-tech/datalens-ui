@@ -5,6 +5,8 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {PRODUCT_NAME} from 'ui/constants';
 
+import {BurgerMenuFooter} from './BurgerMenuFooter/BurgerMenuFooter';
+
 import logoIcon from 'ui/assets/icons/logo.svg';
 import iconCollection from 'ui/assets/icons/mono-collection.svg';
 
@@ -32,7 +34,7 @@ export const MobileHeaderComponent = () => {
                 text: PRODUCT_NAME,
                 iconClassName: b('logo-icon'),
             }}
-            burgerMenu={{items: menuItems}}
+            burgerMenu={{items: menuItems, renderFooter: () => <BurgerMenuFooter />}}
         />
     );
 };
