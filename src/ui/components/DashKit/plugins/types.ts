@@ -10,7 +10,7 @@ export type DashkitMetaDataItemBase = {
     title: string;
     label?: string;
     params: Array<StringParams> | StringParams;
-    defaultParams: Array<StringParams>;
+    defaultParams: Array<StringParams> | StringParams;
     loaded: boolean;
     usedParams: Array<string> | null;
     type: DashTabItemType | typeof DASH_WIDGET_TYPES;

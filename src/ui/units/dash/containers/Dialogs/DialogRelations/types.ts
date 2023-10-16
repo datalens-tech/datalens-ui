@@ -54,22 +54,36 @@ export type ConnectionsData = Array<{
     kind: DashTabConnectionKind;
 }>;
 
-export type AliasClickHandlerData = {
-    showDebugInfo: boolean;
-    currentRow: DashkitMetaDataItem;
+export type ClickCallbackArgs = {
+    reset?: boolean;
+    onApplyDataArg?: WidgetsTypes;
+};
+
+export type WidgetsTypes = Record<string, RelationType>;
+
+export type AliasBase = {
+    onCloseCallback?: (args?: ClickCallbackArgs) => void;
+    forceAddAlias?: boolean;
     relationText: React.ReactNode;
     relationType: RelationType;
+    onApplyDataArg?: WidgetsTypes;
+};
+
+export type AliasClickHandlerData = AliasBase & {
+    showDebugInfo: boolean;
+    currentRow: DashkitMetaDataItem;
     widgetIcon: React.ReactNode;
     rowIcon: React.ReactNode;
 };
 
-export type AliasClickHandlerArgs = AliasClickHandlerData & {
-    relations: DashMetaData;
-    currentWidget: DashkitMetaDataItem;
-    datasets: DatasetsListData | null;
-    updateRelations: (args: string[][]) => void;
-    updateAliases: (args: string[][]) => void;
-};
+export type AliasClickHandlerArgs = AliasClickHandlerData &
+    AliasBase & {
+        relations: DashMetaData;
+        currentWidget: DashkitMetaDataItem;
+        datasets: DatasetsListData | null;
+        updateRelations: (args: string[][]) => void;
+        updateAliases: (args: string[][]) => void;
+    };
 
 export type AliasContextProps = {
     showDebugInfo: boolean;
@@ -80,3 +94,8 @@ export type AliasContextProps = {
 };
 
 export type RelationChartType = keyof typeof RELATIONS_CHARTS_ICONS_DICT;
+
+export type RelationTypeChangeProps = {
+    type: RelationType;
+    widgetId: DashkitMetaDataItem['widgetId'];
+} & AliasClickHandlerData;

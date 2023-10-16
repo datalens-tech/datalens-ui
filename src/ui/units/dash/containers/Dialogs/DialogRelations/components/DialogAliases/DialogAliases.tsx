@@ -14,7 +14,7 @@ import {getCurrentTabAliases} from 'ui/units/dash/store/selectors/relations/sele
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../../constants';
 import {getNormalizedAliases} from '../../helpers';
 import {AliasesContext} from '../../hooks/useRelations';
-import {AliasClickHandlerArgs, RelationType} from '../../types';
+import {AliasBase, AliasClickHandlerArgs} from '../../types';
 
 import {AddAliases} from './components/AddAliases/AddAliases';
 import {AliasesDetail} from './components/AliasesDetail/AliasesDetail';
@@ -22,16 +22,15 @@ import {AliasesList, SelectParamArgs} from './components/AliasesList/AliasesList
 
 import './DialogAliases.scss';
 
-export const DIALOG_ALIASES = Symbol('DIALOG_ALIASES');
+export type DialogAliasesProps = AliasClickHandlerArgs & {
+    onClose: NonNullable<AliasBase['onCloseCallback']>;
+    onApplyDataArg?: AliasBase['onApplyDataArg'];
+};
+
+export const DIALOG_ALIASES = Symbol('dash/DIALOG_ALIASES');
 export type OpenDialogAliasesArgs = {
     id: typeof DIALOG_ALIASES;
     props: DialogAliasesProps;
-};
-
-export type DialogAliasesProps = AliasClickHandlerArgs & {
-    onClose: () => void;
-    relationText: React.ReactNode;
-    relationType: RelationType;
 };
 
 const b = block('dialog-aliases');
@@ -51,13 +50,19 @@ const DialogAliases = (props: DialogAliasesProps) => {
         relationType,
         widgetIcon,
         rowIcon,
+        forceAddAlias,
+        onApplyDataArg,
     } = props;
 
     const [showDetailedData, setShowDetailedData] = React.useState<boolean>(false);
     const [selectedAliasRowIndex, setSelectedAliasRowIndex] = React.useState<number | null>(null);
 
-    const [showAddAlias, setShowAddAlias] = React.useState<boolean>(false);
+    const [showAddAlias, setShowAddAlias] = React.useState<boolean>(
+        Boolean(forceAddAlias) || false,
+    );
     const [enableAddAlias, setEnableAddAlias] = React.useState<boolean>(true);
+    const [aliasAdded, setAliasAdded] = React.useState<string[]>([]);
+    const [aliasRequired, setAliasRequired] = React.useState<boolean>(false);
 
     const [selectedFieldName, setSelectedFieldName] = React.useState<string | null>(null);
     const [selectedParam, setSelectedParam] = React.useState<string | null>(null);
@@ -70,6 +75,8 @@ const DialogAliases = (props: DialogAliasesProps) => {
     const [aliases, setAliases] = React.useState<string[][]>(currentRow.relations.byAliases.sort());
 
     const hasAlias = Boolean(aliases.length);
+
+    const aliasRequiredErrorText = aliasRequired ? i18n('label_required-add-alias') : undefined;
 
     const caption = i18n('title_add-alias');
 
@@ -154,12 +161,24 @@ const DialogAliases = (props: DialogAliasesProps) => {
                 },
                 [],
             );
+
+            let count = 0;
+
+            aliasAdded.forEach((item) => {
+                if (aliasesForRemove.includes(item)) {
+                    count++;
+                }
+            });
+            if (count === aliasAdded.length) {
+                setAliasAdded([]);
+            }
+
             setAliases(filteredAliases.sort());
             setAliasesByNamespace(filteredAliases);
 
             resetSelectedAliasRow();
         },
-        [dashTabAliasesByNamespace, resetSelectedAliasRow],
+        [dashTabAliasesByNamespace, resetSelectedAliasRow, aliasAdded],
     );
 
     /**
@@ -171,15 +190,23 @@ const DialogAliases = (props: DialogAliasesProps) => {
             setShowAddAlias(false);
             setAliases(res);
             setAliasesByNamespace(res);
+            setAliasAdded(alias);
         },
         [dashTabAliasesByNamespace],
     );
 
     const handleApplyChanges = React.useCallback(() => {
+        if (forceAddAlias && !aliasAdded.length) {
+            setAliasRequired(true);
+            setShowAddAlias(true);
+            return;
+        }
         updateAliases(getNormalizedAliases(aliases));
         updateRelations(getNormalizedAliases(aliases));
-        onClose();
-    }, [updateRelations, updateAliases, aliases, onClose]);
+        onClose({
+            ...(onApplyDataArg ? {onApplyDataArg} : {}),
+        });
+    }, [updateRelations, updateAliases, aliases, onClose, onApplyDataArg]);
 
     const handleAddAlias = React.useCallback(() => {
         setShowAddAlias(true);
@@ -189,6 +216,12 @@ const DialogAliases = (props: DialogAliasesProps) => {
         setShowAddAlias(false);
     }, []);
 
+    const handleCancel = React.useCallback(() => {
+        onClose({
+            reset: true,
+        });
+    }, [onClose]);
+
     React.useEffect(() => {
         const widgetDatasetId =
             currentWidget.datasetId ||
@@ -197,13 +230,25 @@ const DialogAliases = (props: DialogAliasesProps) => {
             currentRow.datasetId ||
             (currentRow.datasets?.length ? currentRow.datasets[0].id || '' : '');
 
-        if (widgetDatasetId === currentRowDatasetId) {
+        if (widgetDatasetId && currentRowDatasetId && widgetDatasetId === currentRowDatasetId) {
             setEnableAddAlias(false);
         }
     }, [currentWidget, currentRow]);
 
+    React.useEffect(() => {
+        setAliasRequired(false);
+        if (!forceAddAlias) {
+            return;
+        }
+
+        if (!aliasAdded.length) {
+            setShowAddAlias(true);
+            setAliasRequired(true);
+        }
+    }, [forceAddAlias, aliasAdded]);
+
     return (
-        <Dialog onClose={onClose} open={true} className={b()}>
+        <Dialog onClose={handleCancel} open={true} className={b()}>
             <Dialog.Header caption={caption} />
             <Dialog.Body className={b('container')}>
                 <AliasesContext.Provider
@@ -273,7 +318,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
                             currentRow={currentRow}
                         />
                     )}
-                    {enableAddAlias && !isIgnored && (
+                    {enableAddAlias && (!isIgnored || (isIgnored && forceAddAlias)) && (
                         <React.Fragment>
                             {!showAddAlias && (
                                 <Button onClick={handleAddAlias}>
@@ -290,6 +335,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
                                     onAdd={handleAddNewAliases}
                                     widgetIcon={widgetIcon}
                                     rowIcon={rowIcon}
+                                    error={aliasRequiredErrorText}
                                 />
                             )}
                         </React.Fragment>
@@ -303,7 +349,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
                 textButtonApply={i18n('button_apply')}
                 propsButtonCancel={{view: 'outlined'}}
                 onClickButtonApply={handleApplyChanges}
-                onClickButtonCancel={onClose}
+                onClickButtonCancel={handleCancel}
             />
         </Dialog>
     );
