@@ -87,7 +87,7 @@ export const runEditor = (
                             delete resultCopy._confStorageConfig;
                         }
 
-                        cx.log('PROCESSED_WITH_ERRORS', {params, result: resultCopy});
+                        cx.log('PROCESSED_WITH_ERRORS', {error: result.error});
 
                         let statusCode = 500;
 
@@ -126,7 +126,7 @@ export const runEditor = (
 
                         res.status(statusCode).send(result);
                     } else {
-                        cx.log('PROCESSED_SUCCESSFULLY', {params});
+                        cx.log('PROCESSED_SUCCESSFULLY');
 
                         res.status(200).send(result);
                     }
