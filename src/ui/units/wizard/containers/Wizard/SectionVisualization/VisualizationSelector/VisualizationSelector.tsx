@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Gear} from '@gravity-ui/icons';
-import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, DropdownMenuItem, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {IconById} from 'components/IconById/IconById';
 import {i18n} from 'i18n';
@@ -83,7 +83,12 @@ class VisualizationSelector extends React.Component<Props> {
                                     data-qa={'visualization-select-btn'}
                                 >
                                     <div className="icon">{visualizationIcon}</div>
-                                    <div className={b('dropdown-btn-text')}>{buttonText}</div>
+                                    <div
+                                        className={b('dropdown-btn-text')}
+                                        data-qa={`visualization-item-${visualization.id}`}
+                                    >
+                                        {buttonText}
+                                    </div>
                                 </div>
                             </Button>
                             <div
@@ -114,7 +119,7 @@ class VisualizationSelector extends React.Component<Props> {
         );
     }
 
-    private getItems() {
+    private getItems(): DropdownMenuItem[] {
         const {visualization, visibleVisualizations} = this.props;
 
         return visibleVisualizations.map((item, index) => {

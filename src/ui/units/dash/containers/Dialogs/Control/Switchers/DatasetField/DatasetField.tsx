@@ -15,7 +15,6 @@ import {
 } from '../../../../../../../../shared';
 import logger from '../../../../../../../libs/logger';
 import {getSdk} from '../../../../../../../libs/schematic-sdk';
-import withWrap from '../../withWrap/withWrap';
 
 import './DatasetField.scss';
 
@@ -46,7 +45,7 @@ type State = {
     }[];
 };
 
-class DatasetField extends React.PureComponent<Props, State> {
+export class DatasetField extends React.PureComponent<Props, State> {
     static getDerivedStateFromProps(nextProps: Props, prevState: State): State | null {
         if (nextProps.datasetId === prevState.datasetId) {
             return null;
@@ -176,5 +175,3 @@ class DatasetField extends React.PureComponent<Props, State> {
         );
     }
 }
-
-export default withWrap<Props>(DatasetField);

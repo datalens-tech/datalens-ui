@@ -7,18 +7,20 @@ import {DashTabItem} from 'shared';
 import {GetEntriesDatasetsFieldsResponse} from '../../../../../../../shared/schema';
 import {getSdk} from '../../../../../../libs/schematic-sdk';
 import {
-    getCurrentWidgetMeta,
-    getMetaDataWithDatasetInfo,
-    getPreparedMetaData,
-    getRelationsData,
-} from '../helpers';
-import {
     AliasContextProps,
     ConnectionsData,
     DashkitMetaData,
     DashkitMetaDataItem,
     DatasetsListData,
 } from '../types';
+
+import {
+    getCurrentWidgetMeta,
+    getMetaDataWithDatasetInfo,
+    getPreparedMetaData,
+    getRelationsData,
+} from './helpers';
+
 export const AliasesContext = React.createContext<AliasContextProps>({} as AliasContextProps);
 
 export const useRelations = ({

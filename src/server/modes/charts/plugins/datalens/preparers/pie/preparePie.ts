@@ -7,12 +7,8 @@ import {
     isNumberField,
 } from '../../../../../../../shared';
 import {ChartColorsConfig} from '../../js/helpers/colors';
-import {
-    ColorValue,
-    getColorsByMeasureField,
-    getThresholdValues,
-    mapAndColorizeGraphsByDimension,
-} from '../../utils/color-helpers';
+import {ColorValue, getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
+import {getColor, getMountedColor} from '../../utils/constants';
 import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
@@ -51,6 +47,53 @@ function mapAndColorizePieByMeasure(
     });
 
     return points;
+}
+
+function mapAndColorizePieByDimension({
+    graphs,
+    colorsConfig,
+    isColorsItemExists,
+    usedColors = [],
+}: {
+    graphs: (PiePoint & ExtendedSeriesLineOptions)[];
+    colorsConfig: ChartColorsConfig;
+    isColorsItemExists?: boolean;
+    usedColors?: (string | undefined)[];
+}) {
+    // eslint-disable-next-line complexity
+    graphs.forEach((graph, i) => {
+        const colorValue = graph.colorValue;
+
+        const colorKey = colorValue;
+
+        if (
+            colorsConfig &&
+            colorsConfig.mountedColors &&
+            (graph.colorGuid === colorsConfig.fieldGuid || colorsConfig.coloredByMeasure) &&
+            colorKey &&
+            colorsConfig.mountedColors[colorKey]
+        ) {
+            graph.color = getMountedColor(colorsConfig, colorKey);
+        } else {
+            let value = graph.colorValue;
+
+            if (isColorsItemExists && graph.legendTitle) {
+                value = graph.legendTitle;
+            }
+
+            // We use the index from forEach in the case of coloring the second y axis
+            let colorIndex = graph.yAxis === 0 ? usedColors.indexOf(value) : i;
+
+            if (colorIndex === -1) {
+                usedColors.push(value);
+                colorIndex = usedColors.length - 1;
+            }
+
+            graph.color = getColor(colorIndex, colorsConfig.colors);
+        }
+    });
+
+    return graphs;
 }
 
 // eslint-disable-next-line complexity
@@ -188,6 +231,7 @@ export function preparePie({
             if (key !== 'null') {
                 if (isDateField(color)) {
                     name = formatDate({valueType: colorDataType, value: key, format: color.format});
+                    colorKey = key;
                 } else if (isNumericalDataType(colorDataType)) {
                     name = key;
                     colorKey = Number(key);
@@ -240,7 +284,8 @@ export function preparePie({
 
             return point;
         })
-        .filter((point) => point.y > 0) as (PiePoint & ExtendedSeriesLineOptions)[]; // We remove negative values, since pie does not know how to display them
+        // We remove negative values, since pie does not know how to display them
+        .filter((point) => point.y > 0) as (PiePoint & ExtendedSeriesLineOptions)[];
 
     if (!sort || !sort.length) {
         pie.data!.sort((a, b) => {
@@ -253,11 +298,11 @@ export function preparePie({
     if (isColoringByMeasure) {
         pie.data = mapAndColorizePieByMeasure(pie.data, colorsConfig);
     } else {
-        pie.data = mapAndColorizeGraphsByDimension({
+        pie.data = mapAndColorizePieByDimension({
             graphs: pie.data,
             colorsConfig,
             isColorsItemExists: Boolean(color),
-        }) as (PiePoint & ExtendedSeriesLineOptions)[];
+        });
     }
 
     const graphs = [pie];

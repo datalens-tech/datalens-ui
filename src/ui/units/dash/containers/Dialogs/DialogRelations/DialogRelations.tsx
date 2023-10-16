@@ -19,12 +19,8 @@ import {openDialogAliases} from '../../../store/actions/relations/actions';
 
 import {Content} from './components/Content/Content';
 import {DEFAULT_FILTERS, Filters, FiltersTypes} from './components/Filters/Filters';
-import {
-    DEFAULT_ALIAS_NAMESPACE,
-    RELATION_TYPES,
-    getDialogCaptionIcon,
-    getRelationsForSave,
-} from './helpers';
+import {DEFAULT_ALIAS_NAMESPACE, DEFAULT_ICON_SIZE, RELATION_TYPES} from './constants';
+import {getDialogCaptionIcon, getRelationsForSave} from './helpers';
 import {useFilteredRelations} from './hooks/useFilteredRelations';
 import {useRelations} from './hooks/useRelations';
 import {DashMetaData, DashkitMetaDataItem, RelationType} from './types';
@@ -78,6 +74,16 @@ const DialogRelations = (props: DialogRelationsProps) => {
         changedWidgets,
     });
 
+    const handleUpdateAliases = React.useCallback(
+        (newNamespacedAliases) => {
+            setAliases({
+                ...aliases,
+                [DEFAULT_ALIAS_NAMESPACE]: newNamespacedAliases,
+            });
+        },
+        [aliases],
+    );
+
     /**
      * update relations object with connection info when aliases changed
      */
@@ -88,15 +94,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
             }
 
             const relationsWithChangedAliases = preparedRelations.map((widgetItem) => {
-                let byAliases: Array<Array<string>> = [];
-                if (changedAliases.length) {
-                    byAliases = changedAliases.filter((aliasArr) => {
-                        if (!widgetItem.usedParams?.length) {
-                            return false;
-                        }
-                        return intersection(widgetItem.usedParams, aliasArr);
-                    });
-                }
+                const byAliases: Array<Array<string>> = changedAliases.filter((aliasArr) => {
+                    if (!widgetItem.usedParams?.length) {
+                        return false;
+                    }
+                    return intersection(widgetItem.usedParams, aliasArr);
+                });
 
                 return {
                     ...widgetItem,
@@ -108,14 +111,16 @@ const DialogRelations = (props: DialogRelationsProps) => {
             });
 
             if (DEFAULT_ALIAS_NAMESPACE in aliases) {
-                setAliases({
-                    ...aliases,
-                    [DEFAULT_ALIAS_NAMESPACE]: changedAliases,
-                });
+                setAliases(
+                    Object.assign({
+                        ...aliases,
+                        [DEFAULT_ALIAS_NAMESPACE]: changedAliases,
+                    }),
+                );
             }
             setPreparedRelations(relationsWithChangedAliases);
         },
-        [preparedRelations],
+        [aliases, preparedRelations],
     );
 
     const handleFilterInputChange = React.useCallback((data: string) => {
@@ -161,11 +166,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     currentWidget: currentWidgetMeta,
                     datasets,
                     updateRelations: handleUpdateRelations,
+                    updateAliases: handleUpdateAliases,
                     ...data,
                 }),
             );
         },
-        [dispatch, filteredRelations, currentWidgetMeta],
+        [dispatch, handleUpdateRelations, datasets, filteredRelations, currentWidgetMeta],
     );
 
     const handleSaveRelations = React.useCallback(() => {
@@ -192,7 +198,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             dispatch(updateCurrentTabData(newData));
             onClose();
         }
-    }, [dashKitRef, aliases, changedWidgets, currentWidgetMeta, dispatch, onClose]);
+    }, [dashKitRef, aliases, dashTabAliases, changedWidgets, currentWidgetMeta, dispatch, onClose]);
 
     const label =
         currentWidgetMeta?.label && currentWidgetMeta?.title !== currentWidgetMeta?.label
@@ -211,7 +217,17 @@ const DialogRelations = (props: DialogRelationsProps) => {
     );
 
     const titleIcon =
-        isLoading || !currentWidgetMeta ? null : getDialogCaptionIcon(widget, currentWidgetMeta);
+        isLoading || !currentWidgetMeta ? null : getDialogCaptionIcon({widget, currentWidgetMeta});
+
+    const widgetIcon =
+        isLoading || !currentWidgetMeta
+            ? null
+            : getDialogCaptionIcon({
+                  widget,
+                  currentWidgetMeta,
+                  iconSize: DEFAULT_ICON_SIZE,
+                  className: b('alias-add-icon-type'),
+              });
 
     React.useEffect(() => {
         if (!preparedRelations?.length) {
@@ -234,6 +250,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     onChange={handleRelationTypeChange}
                     onAliasClick={handleAliasesClick}
                     showDebugInfo={showDebugInfo}
+                    widgetIcon={widgetIcon}
                 />
             </Dialog.Body>
             <Dialog.Footer

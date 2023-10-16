@@ -33,5 +33,6 @@
   "label_alias-detail-2": "c параметром",
   "label_choose-fields-from-list": "Выберите поля из списка",
   "label_alias-already-exists": "Такой алиас уже есть в списке",
+  "label_alias-same-dataset": "Такой алиас приводит к связи между полями одного датасета, что не разрешено",
   "label_choose-field-for-alias": "Выберите поле для алиаса"
 }

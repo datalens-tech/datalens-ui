@@ -164,6 +164,38 @@ export const migrateOrAutofillVisualization = ({
     };
 };
 
+const mapItems = ({items, fields}: {items: Field[]; fields: Field[]}) => {
+    return items.map((item, i) => {
+        const exactField = fields.find(
+            (field) => field.guid === item.guid && field.data_type === item.data_type,
+        );
+
+        // Field does not need to be mapped
+        if (exactField) {
+            return item;
+        }
+
+        const matchingField = fields.find((field) => field.title === item.title);
+
+        // We need to use new field in placeholder
+        if (matchingField) {
+            if (item.data_type === matchingField.data_type) {
+                // eslint-disable-next-line no-param-reassign
+                return {
+                    ...items[i],
+                    ...matchingField,
+                };
+            } else {
+                // eslint-disable-next-line no-param-reassign
+                return matchingField;
+            }
+        }
+
+        // TODO: else we need to make this field invalid
+        return item;
+    });
+};
+
 export const mapVisualizationPlaceholdersItems = ({
     visualization,
     fields,
@@ -175,35 +207,12 @@ export const mapVisualizationPlaceholdersItems = ({
 
     // Visualization is not empty, we may need to map some new fields to existing fields in placeholders
     newVisualization.placeholders.forEach((placeholder) => {
-        placeholder.items.forEach((item, i) => {
-            const exactField = fields.find(
-                (field) => field.guid === item.guid && field.data_type === item.data_type,
-            );
-
-            // Field does not need to be mapped
-            if (exactField) {
-                return;
-            }
-
-            const matchingField = fields.find((field) => field.title === item.title);
-
-            // We need to use new field in placeholder
-            if (matchingField) {
-                if (item.data_type === matchingField.data_type) {
-                    // eslint-disable-next-line no-param-reassign
-                    placeholder.items[i] = {
-                        ...placeholder.items[i],
-                        ...matchingField,
-                    };
-                } else {
-                    // eslint-disable-next-line no-param-reassign
-                    placeholder.items[i] = matchingField;
-                }
-            }
-
-            // TODO: else we need to make this field invalid
-        });
+        placeholder.items = mapItems({items: placeholder.items as Field[], fields});
     });
 
     return newVisualization;
+};
+
+export const mapColors = ({colors, fields}: {colors: Field[]; fields: Field[]}) => {
+    return mapItems({items: colors as Field[], fields});
 };

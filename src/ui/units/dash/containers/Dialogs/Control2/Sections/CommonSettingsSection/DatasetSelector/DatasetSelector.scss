@@ -1,5 +1,10 @@
 .external-selector-wrapper {
     &__droplist {
         display: grid;
+        grid-template-columns: 1fr auto;
+    }
+
+    &__button {
+        margin-left: 10px;
     }
 }

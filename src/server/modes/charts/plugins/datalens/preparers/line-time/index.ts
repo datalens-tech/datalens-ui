@@ -1,4 +1,8 @@
-import {DATALENS_QL_TYPES, isDateField} from '../../../../../../../shared';
+import {
+    DATALENS_QL_TYPES,
+    ExtendedSeriesLineOptions,
+    isDateField,
+} from '../../../../../../../shared';
 import {getColorsForNames} from '../../../ql/utils/colors';
 import {
     QLRenderResultYagr,
@@ -8,6 +12,7 @@ import {
     parseNumberValue,
     renderValue,
 } from '../../../ql/utils/misc-helpers';
+import {mapAndColorizeGraphsByDimension} from '../../utils/color-helpers';
 import {findIndexInOrder} from '../../utils/misc-helpers';
 import {PrepareFunctionArgs} from '../types';
 
@@ -15,11 +20,16 @@ const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base
 
 // eslint-disable-next-line complexity
 function prepareLineTime(options: PrepareFunctionArgs) {
-    const {placeholders, resultData, colors, idToTitle, shared} = options;
+    const {placeholders, resultData, colors, idToTitle, colorsConfig, shared} = options;
 
     const {data, order} = resultData;
 
     const xField = placeholders[0].items[0];
+
+    if (!xField) {
+        return {timeline: []};
+    }
+
     const xFieldDataType = xField.data_type;
     const xFieldIndex = findIndexInOrder(order, xField, idToTitle[xField.guid] || xField.title);
     const xFieldIsDate = isDateField(xField);
@@ -33,7 +43,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
         findIndexInOrder(order, color, idToTitle[color.guid] || color.title),
     );
 
-    const result: QLRenderResultYagr = {};
+    const result: QLRenderResultYagr = {timeline: []};
 
     if (yFields.length > 0 && xField) {
         let xValues: QLValue[] = [];
@@ -103,6 +113,8 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                 return {
                     id: renderValue(colorValue),
                     name: renderValue(colorValue),
+                    colorValue: renderValue(colorValue),
+                    colorGuid: colors[0].guid || null,
                     color: 'rgb(0,127,0)',
                     data: [],
                 };
@@ -138,6 +150,25 @@ function prepareLineTime(options: PrepareFunctionArgs) {
             });
         }
     } else if (xField) {
+        let xValues: QLValue[] = [];
+
+        data.forEach((row) => {
+            let xValue: QLValue = row[xFieldIndex];
+
+            if (typeof xValue !== 'undefined' && xValue !== null && xFieldIsDate) {
+                // CHARTS-6632 - revision/study of yagr is necessary, after that moment.utc(xValue) is possible.valueOf();
+                xValue = Number(new Date(xValue)) / 1000;
+            } else if (xFieldDataType === DATALENS_QL_TYPES.UNKNOWN) {
+                xValue = formatUnknownTypeValue(xValue);
+            }
+
+            xValues.push(xValue);
+        });
+
+        xValues = Array.from(new Set(xValues)).sort();
+
+        result.timeline = xValues.map((value) => Number(value));
+
         result.graphs = [
             {
                 data: data.map(() => {
@@ -145,8 +176,12 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                 }),
             },
         ];
+
+        return result;
     } else {
         result.graphs = [];
+
+        return result;
     }
 
     result.graphs.sort((graph1, graph2) => {
@@ -157,21 +192,33 @@ function prepareLineTime(options: PrepareFunctionArgs) {
         }
     });
 
-    let colorData: string[];
+    const useColorizingWithPalettes =
+        colorsConfig.mountedColors && Object.keys(colorsConfig.mountedColors).length > 0;
 
-    if (shared.visualization.id === 'area' && result.graphs.length > 1) {
-        colorData = getColorsForNames(
-            result.graphs.map(({name}) => name),
-            {type: 'gradient'},
-        );
+    if (useColorizingWithPalettes) {
+        // Use usual colorizing with datalens palettes
+        mapAndColorizeGraphsByDimension({
+            graphs: result.graphs as unknown as ExtendedSeriesLineOptions[],
+            colorsConfig,
+            isColorsItemExists: Boolean(colors),
+        });
     } else {
-        colorData = getColorsForNames(result.graphs.map(({name}) => name));
-    }
+        // Else apply colorizing from YAGR for compatibility with Monitoring
+        let colorData: string[];
+        if (shared.visualization.id === 'area' && result.graphs.length > 1) {
+            colorData = getColorsForNames(
+                result.graphs.map(({name}) => String(name)),
+                {type: 'gradient'},
+            );
+        } else {
+            colorData = getColorsForNames(result.graphs.map(({name}) => String(name)));
+        }
 
-    result.graphs.forEach((graph, i) => {
-        graph.color = colorData[i];
-        graph.spanGaps = true;
-    });
+        result.graphs.forEach((graph, i) => {
+            graph.color = colorData[i];
+            graph.spanGaps = true;
+        });
+    }
 
     result.axes = [
         {

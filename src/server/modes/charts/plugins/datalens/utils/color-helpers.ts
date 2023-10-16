@@ -150,6 +150,9 @@ function colorizePivotTableCell(
 
 function mapAndColorizeHashTableByMeasure(hashTable: HashTable, colorsConfig: ChartColorsConfig) {
     const colorValues = Object.values(hashTable).map((colorValue) => {
+        if (colorValue === null) {
+            return null;
+        }
         const value = Number(colorValue);
         return isNaN(value) ? null : value;
     });

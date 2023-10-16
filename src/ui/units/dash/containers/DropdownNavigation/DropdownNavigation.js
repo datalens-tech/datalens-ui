@@ -82,14 +82,24 @@ class DropdownNavigation extends React.PureComponent {
     async update() {
         const entryId = this.props.entryId;
         const state = {prevEntryId: entryId};
+        let isValidEntry = false;
 
         if (this.loading) {
             try {
-                const entryMeta = await getSdk().us.getEntryMeta({entryId});
+                const entryMeta = await getSdk()
+                    .us.getEntryMeta({entryId})
+                    .then((metaData) => {
+                        isValidEntry = true;
+                        return metaData;
+                    });
                 state.entry = entryMeta;
 
                 if (this.props.onUpdate) {
-                    this.props.onUpdate(entryMeta.type.match(/^[^_]*/)[0], entryMeta);
+                    this.props.onUpdate({
+                        selectedWidgetType: entryMeta.type.match(/^[^_]*/)[0],
+                        entryMeta,
+                        isValidEntry,
+                    });
                 }
             } catch (error) {
                 logger.logError('DropdownNavigation: getEntryMeta failed', error);
@@ -98,40 +108,6 @@ class DropdownNavigation extends React.PureComponent {
         }
 
         this.setState(state);
-    }
-
-    render() {
-        if (this.loading) {
-            return (
-                <div className={b()}>
-                    <Loader size="s" />
-                </div>
-            );
-        }
-
-        return (
-            <div className={b()} ref={this.buttonRef}>
-                <Button
-                    view="outlined"
-                    size={this.props.size}
-                    disabled={this.props.disabled}
-                    onClick={() => this.setState({showNavigation: !this.state.showNavigation})}
-                    ref={this.setButtonRef}
-                    className={b('button')}
-                >
-                    {this.state.entry ? (
-                        <EntryTitle entry={this.state.entry} theme="inline" />
-                    ) : (
-                        i18n('dash.navigation-input.edit', 'button_choose')
-                    )}
-                    {/* <Icon
-                        glyph="type-arrow"
-                        direction={this.state.showNavigation ? 'top' : 'bottom'}
-                    /> */}
-                </Button>
-                {this.renderNavigation()}
-            </div>
-        );
     }
 
     renderNavigation() {
@@ -175,6 +151,7 @@ class DropdownNavigation extends React.PureComponent {
                     items: [PLACE.ROOT, PLACE.FAVORITES, SCOPE_TO_PLACE[this.props.scope]],
                     quickItems: [QUICK_ITEMS.USER_FOLDER],
                 }}
+                ignoreWorkbookEntries={true}
                 includeClickableType={this.props.includeClickableType}
                 excludeClickableType={this.props.excludeClickableType}
                 onEntryClick={(entry) => {
@@ -183,6 +160,39 @@ class DropdownNavigation extends React.PureComponent {
                     this.setState({entry, showNavigation: false});
                 }}
             />
+        );
+    }
+
+    render() {
+        if (this.loading) {
+            return (
+                <div className={b()}>
+                    <Loader size="s" />
+                </div>
+            );
+        }
+
+        const width = this.state.entry ? 'max' : undefined;
+
+        return (
+            <div className={b()} ref={this.buttonRef}>
+                <Button
+                    view="outlined"
+                    width={width}
+                    size={this.props.size}
+                    disabled={this.props.disabled}
+                    onClick={() => this.setState({showNavigation: !this.state.showNavigation})}
+                    ref={this.setButtonRef}
+                    className={b('button')}
+                >
+                    {this.state.entry ? (
+                        <EntryTitle entry={this.state.entry} theme="inline" />
+                    ) : (
+                        i18n('dash.navigation-input.edit', 'button_choose')
+                    )}
+                </Button>
+                {this.renderNavigation()}
+            </div>
         );
     }
 }
