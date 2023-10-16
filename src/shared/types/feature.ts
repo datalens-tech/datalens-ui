@@ -90,7 +90,6 @@ export enum Feature {
     UseChartsEngineResponseConfig = 'UseChartsEngineResponseConfig',
     UseChartsEngineLogin = 'UseChartsEngineLogin',
     AddDemoWorkbook = 'AddDemoWorkbook',
-    DashKitItemAnimationDisabled = 'DashKitItemAnimationDisabled',
     SaveDashWithFakeEntry = 'SaveDashWithFakeEntry',
 }
 
