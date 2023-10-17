@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - publish-datalens-platform-action
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -69,6 +69,6 @@ jobs:
           release_name: ${{ env.TAG_NEW_VERSION }}
           commitish: ${{ env.NEW_BRANCH }}
           body: ${{ env.COMMIT_NAME }}
-          draft: true
+          draft: false
           prerelease: false
       - run: echo "Version bumped to '$TAG_NEW_VERSION' and pushed to remote repository"
