@@ -78,7 +78,7 @@ import {
     QLTabData,
     QLTabsById,
 } from '../typings/ql';
-import {Helper} from '../utils/helper';
+import {Helper} from '../utils/grid';
 
 const initialState: QLState = {
     chartType: null,
