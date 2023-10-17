@@ -25,7 +25,8 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-      - run: |
+      - name: 'Get last release branch'
+        run: |
           MAIN_COMMIT=$(git rev-parse origin/main)
           LAST_RELEASE_BRANCH=$(git branch -r --sort=-v:refname --format='%(refname:short)' | grep 'origin/release' | awk -F'/' '{print $2}' | head -n 1)
           echo "Last release branch: ${LAST_RELEASE_BRANCH}"
@@ -33,7 +34,8 @@ jobs:
           if [ "$MAIN_COMMIT" = "$LAST_RELEASE_COMMIT" ]; then echo "Hash commit in main branch matches the last release branch commit" && exit 0; fi
           LAST_VERSION=$(echo "$LAST_RELEASE_BRANCH" | grep -oE 'release-[0-9]+\.[0-9]+\.[0-9]+' | awk -F'-' '{print $2}')
           echo "LAST_VERSION=$LAST_VERSION" >> "$GITHUB_ENV"
-      - run: |
+      - name: 'Make new release version number'
+        run: |
           MAJOR_VERSION=$(echo "$LAST_VERSION" | cut -d'.' -f1) 
           MINOR_VERSION=$(echo "$LAST_VERSION" | cut -d'.' -f2) 
           PATCH_VERSION=$(echo "$LAST_VERSION" | cut -d'.' -f3)
@@ -43,14 +45,17 @@ jobs:
           NEW_BRANCH="release-$NEW_VERSION"
           echo "NEW_BRANCH=$NEW_BRANCH" >> "$GITHUB_ENV"
           echo "New branch: ${NEW_BRANCH}"
-      - run: |
+      - name: 'Create new release branch'
+        run: |
           git checkout -b "$NEW_BRANCH"
           echo "Created new release branch: $NEW_BRANCH"
-      - run: |
+      - name: 'Up package version'
+        # git push --set-upstream origin "$NEW_BRANCH"
+        run: |
           git config user.email "" && git config user.name "GitHub Release"
           npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version
           git add package.json && git add package-lock.json && git commit -am "Bump version to $NEW_VERSION"
-          git push --set-upstream origin "$NEW_BRANCH"
+
       - run: |
           COMMIT_NAME=$(git log -n 1 --pretty=format:%s $MAIN_COMMIT) 
           echo "COMMIT_NAME=$COMMIT_NAME" >> "$GITHUB_ENV"
