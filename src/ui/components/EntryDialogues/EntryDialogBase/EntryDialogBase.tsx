@@ -170,6 +170,20 @@ export class EntryDialogBase<T> extends React.Component<
         if (this.props.withInput) {
             key = path === '/' ? name : path + name;
         }
+
+        if (name.includes('/')) {
+            const errorMsg = 'There should be no slash in the name';
+
+            logger.logError('EntryDialogBase: onApply failed', {
+                name: 'Validation error',
+                message: errorMsg,
+            });
+
+            this.setState({progress: false, inputError: errorMsg});
+
+            return;
+        }
+
         try {
             const data = await this.props.onApply(
                 key,
