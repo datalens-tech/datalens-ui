@@ -71,4 +71,5 @@ jobs:
           body: ${{ env.COMMIT_NAME }}
           draft: false
           prerelease: false
-      - run: echo "Version bumped to '$TAG_NEW_VERSION' and pushed to remote repository"
+      - name: 'Success notify'
+        run: echo "Version bumped to '$TAG_NEW_VERSION' and pushed to remote repository"
