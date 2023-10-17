@@ -34,18 +34,26 @@ jobs:
           LAST_VERSION=$(echo "$LAST_RELEASE_BRANCH" | grep -oE 'release-[0-9]+\.[0-9]+\.[0-9]+' | awk -F'-' '{print $2}')
           echo "LAST_VERSION=$LAST_VERSION" >> "$GITHUB_ENV"
       - run: |
-          MAJOR_VERSION=$(echo "${{ vars.LAST_VERSION }}" | cut -d'.' -f1) 
-          MINOR_VERSION=$(echo "${{ vars.LAST_VERSION }}" | cut -d'.' -f2) 
-          PATCH_VERSION=$(echo "${{ vars.LAST_VERSION }}" | cut -d'.' -f3)
-      - run: NEW_MINOR_VERSION=$((MINOR_VERSION + 1))
-      - run: NEW_VERSION="$MAJOR_VERSION.$NEW_MINOR_VERSION.$PATCH_VERSION"
-      - run: NEW_BRANCH="release-$NEW_VERSION" && echo "NEW_BRANCH=$NEW_BRANCH" >> "$GITHUB_ENV"
-      - run: git checkout -b "$NEW_BRANCH" && echo "Created new release branch '$NEW_BRANCH'"
-      - run: npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version
-      - run: git add package.json && git add package-lock.json && git commit -am "Bump version to $NEW_VERSION"
-      # - run: git push --set-upstream origin "$NEW_BRANCH"
-      - run: COMMIT_NAME=$(git log -n 1 --pretty=format:%s $MAIN_COMMIT) && echo "COMMIT_NAME=$COMMIT_NAME" >> "$GITHUB_ENV"
-      - run: echo "TAG_NEW_VERSION=v$NEW_VERSION" >> "$GITHUB_ENV"
+          MAJOR_VERSION=$(echo "$LAST_VERSION" | cut -d'.' -f1) 
+          MINOR_VERSION=$(echo "$LAST_VERSION" | cut -d'.' -f2) 
+          PATCH_VERSION=$(echo "$LAST_VERSION" | cut -d'.' -f3)
+          NEW_MINOR_VERSION=$((MINOR_VERSION + 1))
+          NEW_VERSION="$MAJOR_VERSION.$NEW_MINOR_VERSION.$PATCH_VERSION"
+          echo "NEW_VERSION=$NEW_VERSION" >> "$GITHUB_ENV"
+          NEW_BRANCH="release-$NEW_VERSION"
+          echo "NEW_BRANCH=$NEW_BRANCH" >> "$GITHUB_ENV"
+          echo "new branch: ${NEW_BRANCH}"
+      - run: |
+          git checkout -b "$NEW_BRANCH"
+          echo "created new release branch: $NEW_BRANCH"
+      - run: |
+          npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version
+          git add package.json && git add package-lock.json && git commit -am "Bump version to $NEW_VERSION"
+          git push --set-upstream origin "$NEW_BRANCH"
+      - run: |
+          COMMIT_NAME=$(git log -n 1 --pretty=format:%s $MAIN_COMMIT) 
+          echo "COMMIT_NAME=$COMMIT_NAME" >> "$GITHUB_ENV"
+          echo "TAG_NEW_VERSION=v$NEW_VERSION" >> "$GITHUB_ENV"
       - uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
