@@ -189,7 +189,8 @@ export interface MonitoringPresetV2 {
                 };
             };
         };
-        redirectUrl?: string;
+        redirectUrl: string;
+        scopeId: string;
         params: {
             from: number;
             to: number;

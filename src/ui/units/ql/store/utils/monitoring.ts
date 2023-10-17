@@ -17,6 +17,14 @@ export const prepareMonitoringPresetV2 = (preset: MonitoringPresetV2) => {
     const initialParams: QLParam[] = [];
     let visualization = getDefaultQlVisualization();
 
+    if (preset.data.scopeId) {
+        initialParams.push({
+            name: 'project_id',
+            type: 'string',
+            defaultValue: preset.data.scopeId,
+        });
+    }
+
     if (Array.isArray(preset?.data?.widget?.queries?.targets)) {
         preset.data.widget.queries.targets.forEach((target) => {
             initialQueries.push({
@@ -37,20 +45,28 @@ export const prepareMonitoringPresetV2 = (preset: MonitoringPresetV2) => {
 
         // eslint-disable-next-line max-depth
         switch (mVisualizationId) {
-            case 'auto':
+            case 'VISUALIZATION_TYPE_UNSPECIFIED':
                 visualizationId = 'area';
                 break;
 
-            case 'area':
-                visualizationId = 'area';
-                break;
-
-            case 'line':
+            case 'VISUALIZATION_TYPE_LINE':
                 visualizationId = 'line';
                 break;
 
-            case 'column':
+            case 'VISUALIZATION_TYPE_STACK':
+                visualizationId = 'area';
+                break;
+
+            case 'VISUALIZATION_TYPE_COLUMN':
                 visualizationId = 'column';
+                break;
+
+            case 'VISUALIZATION_TYPE_BARS':
+                visualizationId = 'bar';
+                break;
+
+            case 'VISUALIZATION_TYPE_PIE':
+                visualizationId = 'pie';
                 break;
 
             default:
