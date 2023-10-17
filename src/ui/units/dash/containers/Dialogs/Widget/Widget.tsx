@@ -65,7 +65,7 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
 };
 
 const isEntryTypeWithFiltering = (entryType?: WidgetType) => {
-    return entryType === EditorType.TableNode;
+    return entryType === EditorType.TableNode || entryType === EditorType.GraphNode;
 };
 
 type LineProps = {
