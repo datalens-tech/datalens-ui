@@ -1,0 +1,57 @@
+on:
+  push:
+    branches:
+      - publish-datalens-platform-action
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+name: Publish Platform
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: datalens-ui
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: MAIN_COMMIT=$(git rev-parse main)
+      - run: LAST_RELEASE_BRANCH=$(git ls-remote --sort=-v:refname --heads origin "refs/heads/release-*" | awk -F'/' '{print $3}' | head -n 1)
+      - run: echo "${LAST_RELEASE_BRANCH}"
+      - run: LAST_RELEASE_COMMIT=$(git rev-parse "origin/$LAST_RELEASE_BRANCH")
+      - run: if [ "$MAIN_COMMIT" = "$LAST_RELEASE_COMMIT" ]; then; echo "Hash commit in main branch matches the last release branch commit" && exit 0; fi
+      - run: LAST_VERSION=$(echo "$LAST_RELEASE_BRANCH" | grep -oE 'release-[0-9]+\.[0-9]+\.[0-9]+' | awk -F'-' '{print $2}')
+      - run: |
+          MAJOR_VERSION=$(echo "$LAST_VERSION" | cut -d'.' -f1) 
+          MINOR_VERSION=$(echo "$LAST_VERSION" | cut -d'.' -f2) 
+          PATCH_VERSION=$(echo "$LAST_VERSION" | cut -d'.' -f3)
+      - run: NEW_MINOR_VERSION=$((MINOR_VERSION + 1))
+      - run: NEW_VERSION="$MAJOR_VERSION.$NEW_MINOR_VERSION.$PATCH_VERSION"
+      - run: NEW_BRANCH="release-$NEW_VERSION" && echo "NEW_BRANCH=$NEW_BRANCH" >> "$GITHUB_ENV"
+      - run: git checkout -b "$NEW_BRANCH" && echo "Created new release branch '$NEW_BRANCH'"
+      - run: npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version
+      - run: git add package.json && git add package-lock.json && git commit -am "Bump version to $NEW_VERSION"
+      # - run: git push --set-upstream origin "$NEW_BRANCH"
+      - run: COMMIT_NAME=$(git log -n 1 --pretty=format:%s $MAIN_COMMIT) && echo "COMMIT_NAME=$COMMIT_NAME" >> "$GITHUB_ENV"
+      - run: echo "TAG_NEW_VERSION=v$NEW_VERSION" >> "$GITHUB_ENV"
+      - uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ vars.TAG_NEW_VERSION }}
+          release_name: ${{ vars.TAG_NEW_VERSION }}
+          commitish: ${{ vars.NEW_BRANCH }}
+          body: ${{ vars.COMMIT_NAME }}
+          draft: true
+          prerelease: false
+      - run: echo "Version bumped to '$TAG_NEW_VERSION' and pushed to remote repository"
