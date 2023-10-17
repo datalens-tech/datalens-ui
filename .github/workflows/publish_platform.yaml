@@ -28,6 +28,7 @@ jobs:
       - name: 'Get last release branch'
         run: |
           MAIN_COMMIT=$(git rev-parse origin/main)
+          echo "MAIN_COMMIT=$MAIN_COMMIT" >> "$GITHUB_ENV"
           LAST_RELEASE_BRANCH=$(git branch -r --sort=-v:refname --format='%(refname:short)' | grep 'origin/release' | awk -F'/' '{print $2}' | head -n 1)
           echo "Last release branch: ${LAST_RELEASE_BRANCH}"
           LAST_RELEASE_COMMIT=$(git rev-parse "origin/$LAST_RELEASE_BRANCH")
