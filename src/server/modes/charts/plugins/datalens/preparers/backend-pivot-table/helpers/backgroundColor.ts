@@ -1,3 +1,4 @@
+import {color} from 'd3';
 import {
     ApiV2Annotations,
     ColorPalette,
@@ -196,7 +197,14 @@ export const prepareBackgroundColorSettings = (args: PrepareBackgroundColorSetti
         }
 
         const guid = backgroundSettings.colorFieldGuid;
-        const fieldColorValues = Array.from(colorValuesByField[guid]);
+
+        const colorValues = colorValuesByField[guid];
+
+        if (!colorValues) {
+            return;
+        }
+
+        const fieldColorValues = Array.from(colorValues);
 
         continuousColorsByField[guid] = {};
 
