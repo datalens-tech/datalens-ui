@@ -20,18 +20,23 @@ import {openDialogAliases} from '../../../store/actions/relations/actions';
 import {Content} from './components/Content/Content';
 import {DEFAULT_FILTERS, Filters, FiltersTypes} from './components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, DEFAULT_ICON_SIZE, RELATION_TYPES} from './constants';
-import {getDialogCaptionIcon, getRelationsForSave} from './helpers';
+import {getDialogCaptionIcon, getRelationsForSave, hasConnectionsBy} from './helpers';
 import {useFilteredRelations} from './hooks/useFilteredRelations';
 import {useRelations} from './hooks/useRelations';
-import {DashMetaData, DashkitMetaDataItem, RelationType} from './types';
+import {
+    ClickCallbackArgs,
+    DashMetaData,
+    RelationType,
+    RelationTypeChangeProps,
+    WidgetsTypes,
+} from './types';
 
 import './DialogRelations.scss';
 
-export const DIALOG_RELATIONS = Symbol('DIALOG_RELATIONS');
-export type OpenDialogRelationsArgs = {
-    id: typeof DIALOG_RELATIONS;
-    props: DialogRelationsProps;
-};
+const b = block('dialog-relations');
+const i18n = I18n.keyset('component.dialog-relations.view');
+
+export const DIALOG_RELATIONS = Symbol('dash/DIALOG_RELATIONS');
 
 export type DialogRelationsProps = {
     onClose: () => void;
@@ -40,15 +45,10 @@ export type DialogRelationsProps = {
     dashKitRef: React.RefObject<DashKit>;
 };
 
-const b = block('dialog-relations');
-const i18n = I18n.keyset('component.dialog-relations.view');
-
-type RelationTypeChangeProps = {
-    type: RelationType;
-    widgetId: DashkitMetaDataItem['widgetId'];
+export type OpenDialogRelationsArgs = {
+    id: typeof DIALOG_RELATIONS;
+    props: DialogRelationsProps;
 };
-
-type WidgetsTypes = Record<string, RelationType>;
 
 const DialogRelations = (props: DialogRelationsProps) => {
     const {widget, dashKitRef, onClose} = props;
@@ -131,32 +131,17 @@ const DialogRelations = (props: DialogRelationsProps) => {
         setTypeValues(data);
     }, []);
 
-    const handleRelationTypeChange = React.useCallback(
-        ({type, widgetId}: RelationTypeChangeProps) => {
-            const newChanged = {...changedWidgets};
-            const currentRelation = preparedRelations.find((item) => item.widgetId === widgetId)
-                ?.relations.type;
-            if (currentRelation === type) {
-                if (newChanged[widgetId]) {
-                    delete newChanged[widgetId];
+    const handleAliasesClosed = React.useCallback(
+        (args: ClickCallbackArgs) => {
+            if (!args?.reset) {
+                if (args?.onApplyDataArg) {
+                    setChangedWidgets(args.onApplyDataArg);
                 }
-            } else {
-                newChanged[widgetId] = type;
+                return;
             }
-
-            setChangedWidgets(newChanged);
         },
         [changedWidgets, preparedRelations],
     );
-
-    const handleDisconnectAll = React.useCallback(() => {
-        const newChangedWidgets: WidgetsTypes = {};
-        preparedRelations.forEach((item) => {
-            newChangedWidgets[item.widgetId] = RELATION_TYPES.ignore as RelationType;
-        });
-
-        setChangedWidgets(newChangedWidgets);
-    }, [preparedRelations]);
 
     const handleAliasesClick = React.useCallback(
         (data) => {
@@ -167,12 +152,62 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     datasets,
                     updateRelations: handleUpdateRelations,
                     updateAliases: handleUpdateAliases,
+                    onCloseCallback: handleAliasesClosed,
+                    forceAddAlias: false,
                     ...data,
                 }),
             );
         },
         [dispatch, handleUpdateRelations, datasets, filteredRelations, currentWidgetMeta],
     );
+
+    const handleRelationTypeChange = React.useCallback(
+        (changedData: RelationTypeChangeProps) => {
+            const {type, widgetId, ...rest} = changedData;
+
+            const newChanged = {...changedWidgets};
+            const currentRelations = preparedRelations.find(
+                (item) => item.widgetId === widgetId,
+            )?.relations;
+            const currentRelationType = currentRelations?.type;
+            if (currentRelationType === type) {
+                if (newChanged[widgetId]) {
+                    delete newChanged[widgetId];
+                }
+            } else {
+                newChanged[widgetId] = type;
+            }
+
+            if (currentRelationType === RELATION_TYPES.ignore) {
+                if (!isEmpty(newChanged[widgetId])) {
+                    const hasRelationBy = hasConnectionsBy(currentRelations);
+
+                    if (hasRelationBy) {
+                        setChangedWidgets(newChanged);
+                    } else {
+                        // if there is no native relation then open aliases popup
+                        handleAliasesClick({
+                            ...rest,
+                            forceAddAlias: true,
+                            onApplyDataArg: newChanged,
+                        });
+                    }
+                }
+            } else {
+                setChangedWidgets(newChanged);
+            }
+        },
+        [changedWidgets, preparedRelations, handleAliasesClick],
+    );
+
+    const handleDisconnectAll = React.useCallback(() => {
+        const newChangedWidgets: WidgetsTypes = {};
+        preparedRelations.forEach((item) => {
+            newChangedWidgets[item.widgetId] = RELATION_TYPES.ignore as RelationType;
+        });
+
+        setChangedWidgets(newChangedWidgets);
+    }, [preparedRelations]);
 
     const handleSaveRelations = React.useCallback(() => {
         if (!dashKitRef.current) {
