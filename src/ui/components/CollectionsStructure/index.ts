@@ -9,3 +9,4 @@ export {
     MigrateEntryToWorkbookDialog,
     DIALOG_MIGRATE_ENTRY_TO_WORKBOOK,
 } from './MigrateEntryToWorkbookDialog';
+export {CopyEntriesDialog, DIALOG_COPY_ENTRIES} from './CopyEntriesDialog';

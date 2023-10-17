@@ -16,6 +16,7 @@ type EntryActionsProps = {
     onRenameClick: () => void;
     onDeleteClick: () => void;
     onDuplicateEntry: () => void;
+    onCopyEntry: () => void;
 };
 
 export const EntryActions = ({
@@ -24,6 +25,7 @@ export const EntryActions = ({
     onRenameClick,
     onDeleteClick,
     onDuplicateEntry,
+    onCopyEntry,
 }: EntryActionsProps) => {
     const {useAdditionalWorkbookEntryActions} = registry.workbooks.functions.getAll();
 
@@ -37,6 +39,14 @@ export const EntryActions = ({
                   {
                       action: onDuplicateEntry,
                       text: i18n('action_duplicate'),
+                  },
+              ]
+            : []),
+        ...((entry.scope === EntryScope.Connection && entry.type === 'file') === false
+            ? [
+                  {
+                      action: onCopyEntry,
+                      text: i18n('action_copy'),
                   },
               ]
             : []),

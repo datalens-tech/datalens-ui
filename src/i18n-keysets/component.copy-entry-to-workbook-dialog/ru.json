@@ -1,0 +1,23 @@
+{
+  "action_cancel": "Отменить",
+  "action_copy": "Копировать",
+  "action_show-all": "Показать все",
+  "label_charts": "Чарты",
+  "label_connections": "Подключения",
+  "md_label_copy-warning": "Объект и все связанные объекты будут скопированы в воркбук.",
+  "label_current-entry": "Выбранный объект",
+  "label_dashboards": "Дашборды",
+  "label_datasets": "Датасеты",
+  "label_entry-already-in-workbook": "Скопирован с другими объектами",
+  "label_linked-objects": "Связанные объекты",
+  "label_no-linked-objects": "Пусто",
+  "label_objects": [
+    "{{count}} объект",
+    "{{count}} объекта",
+    "{{count}} объектов",
+    "0 объектов"
+  ],
+  "label_unknown-error": "При копировании возникла ошибка. Пожалуйста, повторите попытку позже.",
+  "label_file-connection-warning": "Копирование файловых соединений не поддерживается.",
+  "title": "Копирование в воркбук"
+}

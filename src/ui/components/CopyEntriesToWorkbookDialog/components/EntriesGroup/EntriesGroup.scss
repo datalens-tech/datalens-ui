@@ -1,0 +1,49 @@
+.dl-copy-entry-workbook-dialog-entries-group {
+    &__header {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    &__chevron-icon {
+        transition: transform 0.3s linear;
+
+        &_open {
+            transform: rotate(90deg);
+        }
+    }
+
+    &__title {
+        margin-left: 12px;
+    }
+
+    &__count {
+        margin-left: 12px;
+        color: var(--g-color-text-secondary);
+    }
+
+    &__list {
+        margin-top: 6px;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: all 0.3s ease-in-out;
+
+        &_open {
+            max-height: 5000px;
+            opacity: 1;
+        }
+    }
+
+    &__item {
+        margin-top: 6px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    &__show-more {
+        margin-top: 6px;
+    }
+}

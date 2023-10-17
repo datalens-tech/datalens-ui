@@ -9,6 +9,7 @@ import {I18n} from 'i18n';
 import {useInView} from 'react-intersection-observer';
 import {useDispatch} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {DIALOG_COPY_ENTRIES_TO_WORKBOOK} from 'ui/components/CopyEntriesToWorkbookDialog';
 
 import {GetEntryResponse} from '../../../../../../shared/schema';
 import {WorkbookWithPermissions} from '../../../../../../shared/schema/us/types';
@@ -106,6 +107,22 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             [dispatch, onApplyDuplicate],
         );
 
+        const onCopyEntry = React.useCallback(
+            (entity: WorkbookEntry) => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_COPY_ENTRIES_TO_WORKBOOK,
+                        props: {
+                            open: true,
+                            onClose: () => dispatch(closeDialog()),
+                            entryId: entity.entryId,
+                        },
+                    }),
+                );
+            },
+            [dispatch],
+        );
+
         const chunks = useChunkedEntries(entries);
 
         return (
@@ -129,6 +146,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                 onRenameEntry={onRenameEntry}
                                 onDeleteEntry={onDeleteEntry}
                                 onDuplicateEntry={onDuplicateEntry}
+                                onCopyEntry={onCopyEntry}
                             />
                         );
                     })}
@@ -145,6 +163,7 @@ type ChunkGroupProps = {
     onRenameEntry: (data: WorkbookEntry) => void;
     onDeleteEntry: (data: WorkbookEntry) => void;
     onDuplicateEntry: (data: WorkbookEntry) => void;
+    onCopyEntry: (data: WorkbookEntry) => void;
 };
 
 function ChunkGroup({
@@ -153,6 +172,7 @@ function ChunkGroup({
     onRenameEntry,
     onDeleteEntry,
     onDuplicateEntry,
+    onCopyEntry,
 }: ChunkGroupProps) {
     const {ref, inView} = useInView(options);
 
@@ -170,6 +190,7 @@ function ChunkGroup({
                             onRenameEntry={onRenameEntry}
                             onDeleteEntry={onDeleteEntry}
                             onDuplicateEntry={onDuplicateEntry}
+                            onCopyEntry={onCopyEntry}
                         />
                     );
                 case 'empty':
@@ -192,9 +213,17 @@ type RowProps = {
     onRenameEntry: (data: WorkbookEntry) => void;
     onDeleteEntry: (data: WorkbookEntry) => void;
     onDuplicateEntry: (data: WorkbookEntry) => void;
+    onCopyEntry: (data: WorkbookEntry) => void;
 };
 
-function Row({item, workbook, onRenameEntry, onDeleteEntry, onDuplicateEntry}: RowProps) {
+function Row({
+    item,
+    workbook,
+    onRenameEntry,
+    onDeleteEntry,
+    onDuplicateEntry,
+    onCopyEntry,
+}: RowProps) {
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
     const url = getWorkbookEntryUrl(item, workbook);
 
@@ -228,6 +257,9 @@ function Row({item, workbook, onRenameEntry, onDeleteEntry, onDuplicateEntry}: R
                                 }}
                                 onDuplicateEntry={() => {
                                     onDuplicateEntry(item);
+                                }}
+                                onCopyEntry={() => {
+                                    onCopyEntry(item);
                                 }}
                             />
                         </div>
