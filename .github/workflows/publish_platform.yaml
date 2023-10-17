@@ -50,13 +50,13 @@ jobs:
           git checkout -b "$NEW_BRANCH"
           echo "Created new release branch: $NEW_BRANCH"
       - name: 'Up package version'
-        # git push --set-upstream origin "$NEW_BRANCH"
         run: |
           git config user.email "" && git config user.name "GitHub Release"
           npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version
           git add package.json && git add package-lock.json && git commit -am "Bump version to $NEW_VERSION"
-
-      - run: |
+          git push --set-upstream origin "$NEW_BRANCH"
+      - name: 'Save commit name and tag'
+        run: |
           COMMIT_NAME=$(git log -n 1 --pretty=format:%s $MAIN_COMMIT) 
           echo "COMMIT_NAME=$COMMIT_NAME" >> "$GITHUB_ENV"
           echo "TAG_NEW_VERSION=v$NEW_VERSION" >> "$GITHUB_ENV"
