@@ -5,8 +5,8 @@ import {DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Link} from 'react-router-dom';
+import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 
-import {IconById} from '../../../../components/IconById/IconById';
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
 import {CollectionContentProps} from '../types';
 
@@ -88,7 +88,7 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
                                         <div className={b('content-cell', {title: true})}>
                                             <div className={b('title-col')}>
                                                 <div className={b('title-col-icon')}>
-                                                    <IconById id="collectionColored" size={32} />
+                                                    <CollectionIcon />
                                                 </div>
                                                 <div className={b('title-col-text')}>
                                                     {item.title}
