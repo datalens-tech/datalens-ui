@@ -43,7 +43,6 @@ export const prepareMonitoringPresetV2 = (preset: MonitoringPresetV2) => {
 
         let visualizationId = 'line';
 
-        // eslint-disable-next-line max-depth
         switch (mVisualizationId) {
             case 'VISUALIZATION_TYPE_UNSPECIFIED':
                 visualizationId = 'area';
@@ -79,9 +78,7 @@ export const prepareMonitoringPresetV2 = (preset: MonitoringPresetV2) => {
                 return someVisualization.id === visualizationId;
             }) || getDefaultQlVisualization();
 
-        // eslint-disable-next-line max-depth
         if (preset?.data?.params) {
-            // eslint-disable-next-line max-depth
             if (typeof preset.data.params.from === 'number') {
                 initialParams.push({
                     name: 'from',
@@ -96,7 +93,6 @@ export const prepareMonitoringPresetV2 = (preset: MonitoringPresetV2) => {
                 });
             }
 
-            // eslint-disable-next-line max-depth
             if (typeof preset.data.params.to === 'number') {
                 initialParams.push({
                     name: 'to',
@@ -148,7 +144,6 @@ export const prepareMonitoringPresetV1 = (preset: MonitoringPresetV1) => {
 
         let visualizationId = 'line';
 
-        // eslint-disable-next-line max-depth
         switch (mVisualizationId) {
             case 'auto':
                 visualizationId = 'area';
@@ -176,9 +171,7 @@ export const prepareMonitoringPresetV1 = (preset: MonitoringPresetV1) => {
                 return someVisualization.id === visualizationId;
             }) || getDefaultQlVisualization();
 
-        // eslint-disable-next-line max-depth
         if (preset?.data?.params) {
-            // eslint-disable-next-line max-depth
             if (typeof preset.data.params.from === 'number') {
                 initialParams.push({
                     name: 'from',
@@ -193,7 +186,6 @@ export const prepareMonitoringPresetV1 = (preset: MonitoringPresetV1) => {
                 });
             }
 
-            // eslint-disable-next-line max-depth
             if (typeof preset.data.params.to === 'number') {
                 initialParams.push({
                     name: 'to',

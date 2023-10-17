@@ -514,7 +514,6 @@ type FetchConnectionSourcesArgs = {
 };
 
 export const fetchConnectionSources = ({entryId}: FetchConnectionSourcesArgs) => {
-    // eslint-disable-next-line consistent-return
     return async function (dispatch: AppDispatch<QLAction>) {
         try {
             // Requesting information about connection sources
@@ -544,7 +543,6 @@ type FetchConnectionSourceSchemaArgs = {
 };
 
 export const fetchConnectionSourceSchema = ({tableName}: FetchConnectionSourceSchemaArgs) => {
-    // eslint-disable-next-line consistent-return
     return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
         const splittedTableName = tableName.split('.');
 
@@ -597,7 +595,7 @@ export const fetchConnectionSourceSchema = ({tableName}: FetchConnectionSourceSc
 };
 
 export const initializeApplication = (args: InitializeApplicationArgs) => {
-    // eslint-disable-next-line consistent-return, complexity
+    // eslint-disable-next-line complexity
     return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
         dispatch(setStatus(AppStatus.Loading));
 
