@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-      - run: MAIN_COMMIT=$(git rev-parse main)
+      - run: MAIN_COMMIT=$(git rev-parse origin/main)
       - run: LAST_RELEASE_BRANCH=$(git ls-remote --sort=-v:refname --heads origin "refs/heads/release-*" | awk -F'/' '{print $3}' | head -n 1)
       - run: echo "${LAST_RELEASE_BRANCH}"
       - run: LAST_RELEASE_COMMIT=$(git rev-parse "origin/$LAST_RELEASE_BRANCH")
