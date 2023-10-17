@@ -25,10 +25,15 @@ const b = block('dialog-relations-content');
 const i18n = I18n.keyset('component.dialog-relations.view');
 const ICON_SIZE = 16;
 
+type ChangedRelationType = {
+    type: RelationType;
+    widgetId: DashkitMetaDataItem['widgetId'];
+};
+
 type RowParams = {
     data: DashkitMetaDataItem;
     widgetMeta: DashkitMetaDataItem;
-    onChange: (props: {type: RelationType; widgetId: DashkitMetaDataItem['widgetId']}) => void;
+    onChange: (props: ChangedRelationType & AliasClickHandlerData) => void;
     onAliasClick?: (props: AliasClickHandlerData) => void;
     showDebugInfo: boolean;
     widgetIcon: React.ReactNode;
@@ -227,7 +232,7 @@ const getDropdownItems = ({
     items: Array<RelationType>;
     currentWidget: string;
     currentRow: DashkitMetaDataItem;
-    onChange: RowParams['onChange'];
+    onChange: (props: ChangedRelationType) => void;
 }) =>
     items.map((item) => ({
         action: () => {
@@ -242,7 +247,7 @@ const getDropdownItems = ({
                         text: i18n(getRelationDetailsKey(item)),
                         linkType: item as RelationType,
                         widget: getClampedText(currentWidget),
-                        row: getClampedText(currentRow.title),
+                        row: getClampedText(currentRow.title || currentRow.label || ''),
                     })}
                 </div>
             </div>
@@ -291,6 +296,21 @@ export const Row = ({
         icon,
     ]);
 
+    const handleChange = React.useCallback(
+        (changedData) => {
+            onChange({
+                ...changedData,
+                currentRow: data,
+                showDebugInfo,
+                relationText: aliasDetailTitle || '',
+                relationType,
+                widgetIcon,
+                rowIcon: icon,
+            });
+        },
+        [onChange],
+    );
+
     if (!data || !widgetMeta) {
         return null;
     }
@@ -299,9 +319,9 @@ export const Row = ({
 
     const items = getDropdownItems({
         items: availableRelations,
-        currentWidget: widgetMeta.title,
+        currentWidget: widgetMeta.title || widgetMeta.label || '',
         currentRow: data,
-        onChange,
+        onChange: handleChange,
     });
 
     const showAliasIcon = Boolean(data.loaded);

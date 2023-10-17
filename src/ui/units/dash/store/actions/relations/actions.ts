@@ -45,7 +45,10 @@ export const openDialogAliases = (props: AliasClickHandlerArgs) => {
     return function (dispatch: Dispatch) {
         const openDialogAliasesParams: DialogAliasesProps = {
             ...props,
-            onClose: () => {
+            onClose: (args) => {
+                if (typeof props.onCloseCallback === 'function') {
+                    props.onCloseCallback(args);
+                }
                 dispatch(closeDialog());
             },
         };

@@ -17,7 +17,12 @@ type ContentProps = {
     relations: Array<DashkitMetaDataItem>;
     widgetMeta: DashkitMetaDataItem | null;
     isLoading: boolean;
-    onChange: (props: {type: RelationType; widgetId: DashkitMetaDataItem['widgetId']}) => void;
+    onChange: (
+        props: {
+            type: RelationType;
+            widgetId: DashkitMetaDataItem['widgetId'];
+        } & AliasClickHandlerData,
+    ) => void;
     onAliasClick: (props: AliasClickHandlerData) => void;
     showDebugInfo: boolean;
     widgetIcon: React.ReactNode;

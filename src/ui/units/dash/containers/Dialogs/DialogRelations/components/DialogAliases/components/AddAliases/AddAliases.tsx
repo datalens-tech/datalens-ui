@@ -23,6 +23,7 @@ type AddAliasesProps = {
     onAdd: (aliases: string[]) => void;
     widgetIcon: React.ReactNode;
     rowIcon: React.ReactNode;
+    error?: string;
 };
 
 const b = block('dialog-aliases-add');
@@ -84,6 +85,7 @@ export const AddAliases = ({
     onAdd,
     widgetIcon,
     rowIcon,
+    error,
 }: AddAliasesProps) => {
     const {datasets} = React.useContext(AliasesContext);
     const [errorMsg, setErrorMgs] = React.useState<string>('');
@@ -147,6 +149,13 @@ export const AddAliases = ({
         setLeftAliasSelected(undefined);
         setRightAliasSelected(undefined);
     }, [currentAliases, leftAliasSelected, rightAliasSelected, onAdd, datasets]);
+
+    React.useEffect(() => {
+        if (!error?.trim()) {
+            return;
+        }
+        setErrorMgs(error);
+    }, [error]);
 
     return (
         <div className={b()}>
