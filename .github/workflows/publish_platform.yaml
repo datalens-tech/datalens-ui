@@ -28,7 +28,7 @@ jobs:
       - run: |
           MAIN_COMMIT=$(git rev-parse origin/main)
           LAST_RELEASE_BRANCH=$(git branch -r --sort=-v:refname --format='%(refname:short)' | grep 'origin/release' | awk -F'/' '{print $2}' | head -n 1)
-          echo "last release branch: ${LAST_RELEASE_BRANCH}"
+          echo "Last release branch: ${LAST_RELEASE_BRANCH}"
           LAST_RELEASE_COMMIT=$(git rev-parse "origin/$LAST_RELEASE_BRANCH")
           if [ "$MAIN_COMMIT" = "$LAST_RELEASE_COMMIT" ]; then echo "Hash commit in main branch matches the last release branch commit" && exit 0; fi
           LAST_VERSION=$(echo "$LAST_RELEASE_BRANCH" | grep -oE 'release-[0-9]+\.[0-9]+\.[0-9]+' | awk -F'-' '{print $2}')
@@ -42,11 +42,12 @@ jobs:
           echo "NEW_VERSION=$NEW_VERSION" >> "$GITHUB_ENV"
           NEW_BRANCH="release-$NEW_VERSION"
           echo "NEW_BRANCH=$NEW_BRANCH" >> "$GITHUB_ENV"
-          echo "new branch: ${NEW_BRANCH}"
+          echo "New branch: ${NEW_BRANCH}"
       - run: |
           git checkout -b "$NEW_BRANCH"
-          echo "created new release branch: $NEW_BRANCH"
+          echo "Created new release branch: $NEW_BRANCH"
       - run: |
+          git config user.email "" && git config user.name "GitHub Release"
           npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version
           git add package.json && git add package-lock.json && git commit -am "Bump version to $NEW_VERSION"
           git push --set-upstream origin "$NEW_BRANCH"
