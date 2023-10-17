@@ -64,10 +64,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ vars.TAG_NEW_VERSION }}
-          release_name: ${{ vars.TAG_NEW_VERSION }}
-          commitish: ${{ vars.NEW_BRANCH }}
-          body: ${{ vars.COMMIT_NAME }}
+          tag_name: ${{ env.TAG_NEW_VERSION }}
+          release_name: ${{ env.TAG_NEW_VERSION }}
+          commitish: ${{ env.NEW_BRANCH }}
+          body: ${{ env.COMMIT_NAME }}
           draft: true
           prerelease: false
       - run: echo "Version bumped to '$TAG_NEW_VERSION' and pushed to remote repository"
