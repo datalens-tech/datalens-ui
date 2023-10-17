@@ -5,9 +5,9 @@ export async function getFunctionsDocumentation() {
     return getFunctionsDocumentation();
 }
 
-export async function fetchFunctionsDocumentation(path: string) {
+export async function fetchFunctionsDocumentation(docsEndpoint: string, path: string) {
     const fetchFunctionsDocumentation = registry.common.functions.get(
         'fetchFunctionsDocumentation',
     );
-    return fetchFunctionsDocumentation(path);
+    return fetchFunctionsDocumentation(docsEndpoint, path);
 }
