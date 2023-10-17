@@ -1,4 +1,3 @@
-import {color} from 'd3';
 import {
     ApiV2Annotations,
     ColorPalette,
