@@ -19,7 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: .
           fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
