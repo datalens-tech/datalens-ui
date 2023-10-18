@@ -504,6 +504,79 @@ const getConnectedField = ({
     return res;
 };
 
+export const getRelationsInfo = (args: {
+    aliases: AliasesData;
+    connections: ConnectionsData;
+    datasets: Datasets;
+    widget: DashkitMetaDataItem;
+    row: DashkitMetaDataItemNoRelations;
+}) => {
+    const {aliases, connections, datasets, widget, row} = args;
+    const byUsedParams = intersection(row.usedParams || [], widget.usedParams || []);
+    let byAliases: Array<Array<string>> = [];
+    if (aliases[DEFAULT_ALIAS_NAMESPACE]?.length) {
+        byAliases = aliases[DEFAULT_ALIAS_NAMESPACE].filter((aliasArr) => {
+            if (!row.usedParams?.length) {
+                return false;
+            }
+            return intersection(row.usedParams, aliasArr);
+        });
+    }
+
+    const isIgnored = connections
+        .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
+        .some(({from, to}) => from === widget.widgetId && to === row.widgetId);
+
+    const isIgnoring = connections
+        .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
+        .some(({from, to}) => from === row.widgetId && to === widget.widgetId);
+
+    const linkedInfo = {
+        byUsedParams,
+        byAliases,
+        isIgnoring,
+        isIgnored,
+    };
+
+    const {relationType, availableRelations} = getItemsRelations({
+        relations: linkedInfo,
+        widgetMeta: widget,
+        type: row.type,
+        row,
+    });
+
+    const relations = {
+        byUsedParams,
+        byAliases,
+        isIgnoring,
+        isIgnored,
+        type: relationType,
+        available: availableRelations,
+    };
+
+    const noAvailLinks =
+        relationType !== RELATION_TYPES.output &&
+        relationType !== RELATION_TYPES.input &&
+        !relations.byUsedParams.length;
+
+    const byFields = noAvailLinks
+        ? []
+        : getConnectedField({
+              widget,
+              row,
+              datasets,
+          });
+
+    if (!isIgnoring && !isIgnored && isEmpty(byAliases.filter(Boolean)) && isEmpty(byFields)) {
+        relations.type = RELATION_TYPES.ignore as RelationType;
+    }
+
+    return {
+        ...relations,
+        byFields: byFields || [],
+    };
+};
+
 export const getRelationsData = ({
     metaData,
     widgetMeta,
@@ -534,75 +607,17 @@ export const getRelationsData = ({
             return item.widgetId !== widgetMeta.widgetId && showInRelation(widgetMeta, item);
         })
         .forEach((item) => {
-            const byUsedParams = intersection(item.usedParams || [], widgetMeta.usedParams || []);
-            let byAliases: Array<Array<string>> = [];
-            if (aliases[DEFAULT_ALIAS_NAMESPACE]?.length) {
-                byAliases = aliases[DEFAULT_ALIAS_NAMESPACE].filter((aliasArr) => {
-                    if (!item.usedParams?.length) {
-                        return false;
-                    }
-                    return intersection(item.usedParams, aliasArr);
-                });
-            }
-
-            const isIgnoring = connections
-                .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
-                .some(({from, to}) => from === widgetMeta.widgetId && to === item.widgetId);
-
-            const isIgnored = connections
-                .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
-                .some(({from, to}) => from === item.widgetId && to === widgetMeta.widgetId);
-
-            const linkedInfo = {
-                byUsedParams,
-                byAliases,
-                isIgnoring,
-                isIgnored,
-            };
-
-            const {relationType, availableRelations} = getItemsRelations({
-                relations: linkedInfo,
-                widgetMeta,
-                type: item.type,
+            const relations = getRelationsInfo({
+                aliases,
+                connections,
+                datasets,
+                widget: widgetMeta,
                 row: item,
             });
 
-            const relations = {
-                byUsedParams,
-                byAliases,
-                isIgnoring,
-                isIgnored,
-                type: relationType,
-                available: availableRelations,
-            };
-
-            const noAvailLinks =
-                relationType !== RELATION_TYPES.output &&
-                relationType !== RELATION_TYPES.input &&
-                !relations.byUsedParams.length;
-
-            const byFields = noAvailLinks
-                ? []
-                : getConnectedField({
-                      widget: widgetMeta,
-                      row: item,
-                      datasets,
-                  });
-
-            if (
-                !isIgnoring &&
-                !isIgnored &&
-                isEmpty(byAliases.filter(Boolean)) &&
-                isEmpty(byFields)
-            ) {
-                relations.type = RELATION_TYPES.ignore as RelationType;
-            }
             relationsItems.push({
                 ...item,
-                relations: {
-                    ...relations,
-                    byFields: byFields || [],
-                },
+                relations,
             });
         });
 

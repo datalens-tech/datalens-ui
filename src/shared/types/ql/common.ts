@@ -116,3 +116,87 @@ export enum QLParamType {
     DateInterval = 'date-interval',
     DatetimeInterval = 'datetime-interval',
 }
+
+export interface MonitoringPresetV1 {
+    data: {
+        v?: string;
+        chart: {
+            targets: {
+                query: string;
+                scopeId: string;
+            }[];
+            settings: {
+                ['chart.type']: string;
+                ['other.normalize']: string;
+            };
+        };
+        redirectUrl?: string;
+        params: {
+            from: number;
+            to: number;
+        };
+    };
+    presetId: string;
+}
+
+export interface MonitoringPresetV2 {
+    data: {
+        v: string;
+        widget: {
+            id: string;
+            title: string;
+            queries: {
+                targets: {
+                    name: string;
+                    query: string;
+                    hidden: boolean;
+                    textMode: boolean;
+                }[];
+            };
+            visualizationSettings: {
+                type: string;
+                title: string;
+                normalize: boolean;
+                showLabels: boolean;
+                aggregation: string;
+                interpolate: string;
+                tilesSettings: {
+                    showTitle: boolean;
+                    showValue: boolean;
+                    sortField: string;
+                    sortOrder: string;
+                };
+                yaxisSettings: {
+                    left: {
+                        max: string;
+                        min: string;
+                        type: string;
+                        title: string;
+                        precision: number | null;
+                        unitFormat: string;
+                    };
+                    right: {
+                        max: string;
+                        min: string;
+                        type: string;
+                        title: string;
+                        precision: number | null;
+                        unitFormat: string;
+                    };
+                };
+                colorSchemeSettings: {
+                    scheme: string;
+                };
+            };
+        };
+        redirectUrl: string;
+        scopeId: string;
+        params: {
+            from: number;
+            to: number;
+        };
+    };
+    presetId: string;
+}
+
+export type MonitoringPreset = MonitoringPresetV1 | MonitoringPresetV2;
