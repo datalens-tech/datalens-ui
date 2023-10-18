@@ -62,7 +62,7 @@ jobs:
       - name: 'Commit package version'
         run: |
           git config user.email "" && git config user.name "GitHub Release"
-          git add package.json && git add package-lock.json && git commit -am "Bump version to $NEW_VERSION"
+          git add package.json && git add package-lock.json && git commit -am "Bump version to $NEW_VERSION [release]"
           git push --set-upstream origin "$NEW_BRANCH"
       - uses: actions/create-release@v1
         env:
