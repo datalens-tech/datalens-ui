@@ -25,16 +25,12 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-      - name: Install jq
-        uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: jq
       - name: 'Get last release'
         run: |
           COMMIT_NAME=$(git log -n 1 --pretty=format:%s) 
           echo "COMMIT_NAME=$COMMIT_NAME" >> "$GITHUB_ENV"
 
-          LAST_RELEASE_VERSION=$(curl -L "https://$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest" | jq -r '.name' | sed 's|v||')
+          LAST_RELEASE_VERSION=$(curl -L https://api.github.com/repos/$GITHUB_REPOSITORY/releases/latest | jq -r '.name' | sed 's|v||')
           echo "Last release version: ${LAST_RELEASE_VERSION}"
 
           MAIN_COMMIT=$(git rev-parse origin/main)
