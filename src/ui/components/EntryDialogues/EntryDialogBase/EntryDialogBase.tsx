@@ -2,6 +2,7 @@ import React from 'react';
 
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {DataLensApiError} from 'typings';
 
 import {EntryDialogQA, normalizeDestination} from '../../../../shared';
@@ -50,6 +51,8 @@ interface EntryDialogBaseState {
     visible: boolean;
     inputError: PathSelectProps['inputError'];
 }
+
+const i18n = I18n.keyset('validation');
 
 export class EntryDialogBase<T> extends React.Component<
     EntryDialogBaseInnerProps<T>,
@@ -172,7 +175,7 @@ export class EntryDialogBase<T> extends React.Component<
         }
 
         if (name.includes('/')) {
-            const errorMsg = 'There should be no slash in the name';
+            const errorMsg = i18n('label_validation-slash_error');
 
             logger.logError('EntryDialogBase: onApply failed', {
                 name: 'Validation error',

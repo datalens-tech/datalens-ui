@@ -1,3 +1,4 @@
 {
-  "label_unknown-error": "Unknown error"
+  "label_unknown-error": "Unknown error",
+  "label_validation-slash_error": "There should be no slash in the name"
 }
