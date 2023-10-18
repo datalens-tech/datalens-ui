@@ -127,7 +127,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     );
 
     /**
-     * Update aliases after apply button click in aliases poopup
+     * Update aliases and local relations after apply button click in aliases poopup
      */
     const handleUpdateAliases = React.useCallback(
         (newNamespacedAliases) => {
@@ -152,6 +152,18 @@ const DialogRelations = (props: DialogRelationsProps) => {
             if (!newPreparedRelations) {
                 return;
             }
+
+            const newChangedWidgets = {...changedWidgets};
+            newPreparedRelations.forEach((item) => {
+                if (
+                    changedWidgets &&
+                    item.widgetId in changedWidgets &&
+                    item.relations.type !== changedWidgets[item.widgetId]
+                ) {
+                    delete newChangedWidgets[item.widgetId];
+                }
+            });
+            setChangedWidgets(newChangedWidgets);
             setPreparedRelations(newPreparedRelations);
         },
         [
@@ -163,36 +175,8 @@ const DialogRelations = (props: DialogRelationsProps) => {
             dashWidgetsMeta,
             preparedRelations,
             datasets,
+            changedWidgets,
         ],
-    );
-
-    /**
-     * Update local relations after changing relation type, plus adding alias
-     * (when change relation could be only via alias)
-     */
-    const updatePreparedRelations = React.useCallback(
-        (args: ClickCallbackArgs) => {
-            if (!currentWidgetMeta || !dashWidgetsMeta) {
-                return;
-            }
-            const aliasesDict = args.aliases || aliases;
-
-            const newPreparedRelations = getUpdatedPreparedRelations({
-                aliases: aliasesDict,
-                currentWidgetMeta,
-                changedWidgetsData: args.changedWidgetsData,
-                dashkitData: dashKitRef.current || null,
-                dashWidgetsMeta,
-                changedWidgetId: args.changedWidgetId || '',
-                preparedRelations,
-                datasets,
-            });
-            if (!newPreparedRelations) {
-                return;
-            }
-            setPreparedRelations(newPreparedRelations);
-        },
-        [currentWidgetMeta, preparedRelations, dashWidgetsMeta, dashKitRef, aliases, datasets],
     );
 
     /**
@@ -207,9 +191,8 @@ const DialogRelations = (props: DialogRelationsProps) => {
             }
 
             setChangedWidgets(args.changedWidgetsData);
-            updatePreparedRelations(args);
         },
-        [preparedRelations, updatePreparedRelations],
+        [preparedRelations],
     );
 
     /**

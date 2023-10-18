@@ -277,7 +277,7 @@ export const hasConnectionsBy = (relation?: RelationsData) => {
 };
 
 export const getUpdatedPreparedRelations = (props: {
-    aliases: string[][];
+    aliases: string[][] | Record<string, string[][]>;
     currentWidgetMeta: DashkitMetaDataItem | null;
     changedWidgetsData?: WidgetsTypes;
     dashkitData: DashKit | null;
@@ -316,6 +316,9 @@ export const getUpdatedPreparedRelations = (props: {
     const changedRelationsItem = newPreparedRelations.find(
         (item) => item.widgetId === changedWidgetId,
     );
+    const newAliases = Array.isArray(aliases)
+        ? ({[DEFAULT_ALIAS_NAMESPACE]: aliases} as Record<string, string[][]>)
+        : (aliases as Record<string, string[][]>);
     if (type === 'aliases') {
         const relationsItems: Array<DashkitMetaDataItem> = [];
 
@@ -329,7 +332,7 @@ export const getUpdatedPreparedRelations = (props: {
             })
             .forEach((item) => {
                 const relations = getRelationsInfo({
-                    aliases: {[DEFAULT_ALIAS_NAMESPACE]: aliases},
+                    aliases: newAliases,
                     connections: (dashkitData?.props.config.connections || []) as ConnectionsData,
                     datasets,
                     widget: currentWidgetMeta,
@@ -348,7 +351,7 @@ export const getUpdatedPreparedRelations = (props: {
         return null;
     }
     changedRelationsItem.relations = getRelationsInfo({
-        aliases: {[DEFAULT_ALIAS_NAMESPACE]: aliases},
+        aliases: newAliases,
         connections,
         datasets,
         widget: currentWidgetMeta,
