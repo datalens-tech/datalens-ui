@@ -24,7 +24,8 @@ import './DialogAliases.scss';
 
 export type DialogAliasesProps = AliasClickHandlerArgs & {
     onClose: NonNullable<AliasBase['onCloseCallback']>;
-    onApplyDataArg?: AliasBase['onApplyDataArg'];
+    changedWidgetsData?: AliasBase['changedWidgetsData'];
+    changedWidgetId?: AliasBase['changedWidgetId'];
 };
 
 export const DIALOG_ALIASES = Symbol('dash/DIALOG_ALIASES');
@@ -44,14 +45,14 @@ const DialogAliases = (props: DialogAliasesProps) => {
         currentWidget,
         showDebugInfo,
         datasets,
-        updateRelations,
         updateAliases,
         relationText,
         relationType,
         widgetIcon,
         rowIcon,
         forceAddAlias,
-        onApplyDataArg,
+        changedWidgetsData,
+        changedWidgetId,
     } = props;
 
     const [showDetailedData, setShowDetailedData] = React.useState<boolean>(false);
@@ -202,11 +203,20 @@ const DialogAliases = (props: DialogAliasesProps) => {
             return;
         }
         updateAliases(getNormalizedAliases(aliases));
-        updateRelations(getNormalizedAliases(aliases));
         onClose({
-            ...(onApplyDataArg ? {onApplyDataArg} : {}),
+            ...(changedWidgetsData ? {changedWidgetsData} : {}),
+            ...(changedWidgetId ? {changedWidgetId} : {}),
+            ...(aliases ? {aliases} : {}),
         });
-    }, [updateRelations, updateAliases, aliases, onClose, onApplyDataArg]);
+    }, [
+        forceAddAlias,
+        aliasAdded,
+        updateAliases,
+        aliases,
+        onClose,
+        changedWidgetsData,
+        changedWidgetId,
+    ]);
 
     const handleAddAlias = React.useCallback(() => {
         setShowAddAlias(true);

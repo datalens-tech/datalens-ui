@@ -1,5 +1,5 @@
 import {RGBColor, VisualizationLayerShared} from '../../../../../../shared';
-import {getCurrentGradient, getRgbColors} from '../utils/color-helpers';
+import {getCurrentGradient, getRgbColors, getThresholdValues} from '../utils/color-helpers';
 import {
     Coordinate,
     getExtremeValues,
@@ -24,8 +24,10 @@ type HeatmapPointConfig = {
 
 type HeatmapMapOptions = {
     radius: number;
+    /** disperse points on higher zoom levels according to radius */
     dissipating: boolean;
     opacity: number;
+    /** Intensity of median point (from 0 to 1) */
     intensityOfMidpoint: number;
     gradient: Record<string, string>;
     isCustomPalette: boolean;
@@ -96,6 +98,7 @@ function prepareHeatmap(options: PrepareFunctionArgs) {
 
         point.properties.weight = weight ? weight : 1;
     };
+    const colorValues: number[] = [];
 
     data.forEach((values, valuesIndex) => {
         allPoints[`points-${valuesIndex}`] = [];
@@ -115,6 +118,8 @@ function prepareHeatmap(options: PrepareFunctionArgs) {
 
             if (colors.length && colors[0].title === dataTitle) {
                 const weight = getPointWeight({current: Number(columnData), min, step});
+
+                colorValues.push(weight);
                 allPoints[`points-${valuesIndex}`].forEach((point) =>
                     setPointWeight(point, weight),
                 );
@@ -122,13 +127,8 @@ function prepareHeatmap(options: PrepareFunctionArgs) {
         });
     });
 
-    const currentGradient = getCurrentGradient(colorsConfig);
-
-    const rgbColors: RGBColor[] = getRgbColors(
-        currentGradient.colors,
-        Boolean(colorsConfig.reversed),
-    );
-
+    const isCustomPalette = Boolean(colors.length && colorsConfig.gradientColors?.length);
+    let middleThreshold = 0.2;
     let gradient: Record<string, string> = {
         0.1: 'rgba(128, 255, 0, 0.7)',
         0.2: 'rgba(255, 255, 0, 0.8)',
@@ -136,10 +136,26 @@ function prepareHeatmap(options: PrepareFunctionArgs) {
         1.0: 'rgba(162, 36, 25, 1)',
     };
 
-    if (rgbColors.length && colors.length) {
+    if (isCustomPalette) {
+        const currentGradient = getCurrentGradient(colorsConfig);
+        const rgbColors: RGBColor[] = getRgbColors(
+            currentGradient.colors,
+            Boolean(colorsConfig.reversed),
+        );
+
         const [first, second, third] = rgbColors;
 
         if (first && second && third) {
+            const hasMiddleThreValue = Boolean(
+                colorsConfig.thresholdsMode === 'manual' &&
+                    colorsConfig.middleThreshold !== 'undefined',
+            );
+
+            if (hasMiddleThreValue) {
+                const {range, rangeMiddle} = getThresholdValues(colorsConfig, colorValues);
+                middleThreshold = rangeMiddle / range;
+            }
+
             gradient = {
                 '0': `rgba(${first.red}, ${first.green}, ${first.blue}, 0.7)`,
                 '0.5': `rgba(${second.red}, ${second.green}, ${second.blue}, 0.9)`,
@@ -153,20 +169,13 @@ function prepareHeatmap(options: PrepareFunctionArgs) {
         }
     }
 
-    const opacity = getLayerAlpha(layerSettings);
-
     const mapOptions: HeatmapMapOptions = {
-        // Radius of influence
         radius: 15,
-        // Is it necessary to reduce the pixel size of the dots when the zoom is reduced. False - not necessary
         dissipating: false,
-        // Transparency of the heat map
-        opacity,
-        // Transparency at the median point by weight
-        intensityOfMidpoint: 0.2,
-        // JSON description of the gradient
+        opacity: getLayerAlpha(layerSettings),
+        intensityOfMidpoint: middleThreshold,
         gradient,
-        isCustomPalette: Boolean(rgbColors.length),
+        isCustomPalette: isCustomPalette,
         showCustomLegend: true,
         colorTitle:
             coordinates[0].fakeTitle || idToTitle[coordinates[0].guid] || coordinates[0].title,
