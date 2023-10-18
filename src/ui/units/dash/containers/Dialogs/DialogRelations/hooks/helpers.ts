@@ -186,7 +186,7 @@ export const getMetaDataWithDatasetInfo = ({
     return res;
 };
 
-const showInRelation = (
+export const showInRelation = (
     currentItem: DashkitMetaDataItem,
     rowItem: DashkitMetaDataItemNoRelations,
 ) => {
