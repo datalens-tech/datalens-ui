@@ -53,7 +53,7 @@ jobs:
       - name: 'Create new release branch'
         run: |
           NEW_BRANCH="release-$NEW_VERSION"
-          echo "New branch: ${NEW_BRANCH}"
+          echo "NEW_BRANCH=$NEW_BRANCH" >> "$GITHUB_ENV"
 
           git checkout -b "$NEW_BRANCH"
           echo "Created new release branch: $NEW_BRANCH"
