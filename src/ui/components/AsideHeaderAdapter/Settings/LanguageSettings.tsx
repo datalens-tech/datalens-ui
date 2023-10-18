@@ -11,9 +11,15 @@ import {ItemField} from './ItemField/ItemField';
 
 const i18n = I18n.keyset('component.aside-header-settings.view');
 
+const allowedLanguages = DL.ALLOW_LANGUAGES;
+const languageOptions = allowedLanguages.map((item) => ({
+    value: String(item),
+    content: i18n(`label_language-${item}`),
+}));
+
 export function LanguageSettings({isMobile}: {isMobile: boolean}) {
     const dispatch = useDispatch();
-    const allowedLanguages = DL.ALLOW_LANGUAGES;
+
     const currentUserSettings = getCurrentUserSettings() || '{}';
     let language = DL.USER_LANG as Language;
     try {
@@ -29,21 +35,12 @@ export function LanguageSettings({isMobile}: {isMobile: boolean}) {
         window.location.reload();
     }
 
-    const getLanguageOptions = React.useCallback(
-        () =>
-            allowedLanguages.map((item) => ({
-                value: String(item),
-                content: i18n(`label_language-${item}`),
-            })),
-        [allowedLanguages],
-    );
-
     return (
         <ItemField
             value={lang}
             onUpdate={handleLanguageChange}
             isMobile={isMobile}
-            options={getLanguageOptions()}
+            options={languageOptions}
         />
     );
 }

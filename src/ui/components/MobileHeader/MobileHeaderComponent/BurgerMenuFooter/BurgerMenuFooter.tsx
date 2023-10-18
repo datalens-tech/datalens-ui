@@ -2,18 +2,25 @@ import React from 'react';
 
 import {CircleQuestion, Gear} from '@gravity-ui/icons';
 import {MobileHeaderFooterItem} from '@gravity-ui/navigation';
+import {I18n} from 'i18n';
 import {DOCUMENTATION_LINK} from 'ui/components/AsideHeaderAdapter';
 import {Settings} from 'ui/components/AsideHeaderAdapter/Settings/Settings';
+
+const i18n = I18n.keyset('component.aside-header-settings.view');
+
+const handleClickSupport = () => {
+    window.open(DOCUMENTATION_LINK);
+};
 
 export const BurgerMenuFooter = () => {
     const [showSettings, setShowSettings] = React.useState(false);
 
-    const onClickSettings = () => {
+    const handleClickSettings = () => {
         setShowSettings(true);
     };
 
-    const onClickSupport = () => {
-        window.open(DOCUMENTATION_LINK);
+    const handleCloseSettings = () => {
+        setShowSettings(false);
     };
 
     return (
@@ -22,18 +29,18 @@ export const BurgerMenuFooter = () => {
                 icon={Gear}
                 modalItem={{
                     visible: showSettings,
-                    title: 'Settings',
-                    onClose: () => setShowSettings(false),
+                    title: i18n('label_title'),
+                    onClose: handleCloseSettings,
                     renderContent: () => {
                         return <Settings />;
                     },
                 }}
-                onClick={onClickSettings}
+                onClick={handleClickSettings}
             />
             <MobileHeaderFooterItem
                 modalItem={{visible: false}}
                 icon={CircleQuestion}
-                onClick={onClickSupport}
+                onClick={handleClickSupport}
             />
         </React.Fragment>
     );

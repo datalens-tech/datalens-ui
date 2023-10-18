@@ -1,4 +1,8 @@
 .mobile-header {
+    &__container {
+        z-index: 100;
+    }
+
     &__logo {
         height: 32px;
         width: 143px;

@@ -5,7 +5,7 @@ import {Settings as SettingsComponent} from '@gravity-ui/navigation';
 import {getThemeType} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DL, SYSTEM_THEME} from 'ui/constants';
+import {DL, SYSTEM_THEME} from 'ui/constants/common';
 import {setTheme, updateUserSettings} from 'ui/store/actions/user';
 import {selectTheme, selectThemeSettings} from 'ui/store/selectors/user';
 
@@ -27,7 +27,7 @@ export const Settings = () => {
     const currentHcValue = currentHcEnabled ? HighcontrastValue.hc : HighcontrastValue.normal;
     const currentThemeValue = currentTheme === SYSTEM_THEME ? currentTheme : currentThemeType;
 
-    const onThemeTypeChange = React.useCallback(
+    const handleThemeTypeChange = React.useCallback(
         (updatedTheme: string) => {
             const updates = getThemeUpdates(updatedTheme, updatedTheme, currentHcEnabled);
             dispatch(setTheme(updates));
@@ -36,7 +36,7 @@ export const Settings = () => {
         [currentHcEnabled, dispatch],
     );
 
-    const onHcStatusChange = React.useCallback(
+    const handleHcStatusChange = React.useCallback(
         (updatedHc: string) => {
             const hcEnabled = updatedHc === HighcontrastValue.hc;
             const updates = getThemeUpdates(currentTheme, currentThemeType, hcEnabled);
@@ -64,7 +64,7 @@ export const Settings = () => {
                     <SettingsComponent.Item title={i18n('field_interface-theme')} align="top">
                         <ItemField
                             value={currentThemeValue}
-                            onUpdate={onThemeTypeChange}
+                            onUpdate={handleThemeTypeChange}
                             isMobile={DL.IS_MOBILE}
                             options={getThemeOptions()}
                         />
@@ -75,7 +75,7 @@ export const Settings = () => {
                     >
                         <ItemField
                             value={currentHcValue}
-                            onUpdate={onHcStatusChange}
+                            onUpdate={handleHcStatusChange}
                             isMobile={DL.IS_MOBILE}
                             options={getHighcontrastOptions()}
                         />

@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 
 import {ControlGroupOption, RadioButton, Select} from '@gravity-ui/uikit';
 
@@ -15,7 +15,7 @@ export const ItemField = ({isMobile, value, onUpdate, options}: ItemFieldProps) 
     };
 
     return (
-        <Fragment>
+        <React.Fragment>
             {isMobile ? (
                 <Select
                     width="max"
@@ -27,6 +27,6 @@ export const ItemField = ({isMobile, value, onUpdate, options}: ItemFieldProps) 
             ) : (
                 <RadioButton options={options} value={value} onUpdate={onUpdate} />
             )}
-        </Fragment>
+        </React.Fragment>
     );
 };

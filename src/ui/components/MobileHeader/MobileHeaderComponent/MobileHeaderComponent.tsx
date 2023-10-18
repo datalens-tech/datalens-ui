@@ -35,6 +35,7 @@ export const MobileHeaderComponent = () => {
                 iconClassName: b('logo-icon'),
             }}
             burgerMenu={{items: menuItems, renderFooter: () => <BurgerMenuFooter />}}
+            className={b('container')}
         />
     );
 };
