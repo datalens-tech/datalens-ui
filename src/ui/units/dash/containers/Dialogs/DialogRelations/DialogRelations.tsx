@@ -21,10 +21,12 @@ import {Content} from './components/Content/Content';
 import {DEFAULT_FILTERS, Filters, FiltersTypes} from './components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, DEFAULT_ICON_SIZE, RELATION_TYPES} from './constants';
 import {getDialogCaptionIcon, getRelationsForSave, hasConnectionsBy} from './helpers';
+import {getRelationsInfo} from './hooks/helpers';
 import {useFilteredRelations} from './hooks/useFilteredRelations';
 import {useRelations} from './hooks/useRelations';
 import {
     ClickCallbackArgs,
+    ConnectionsData,
     DashMetaData,
     RelationType,
     RelationTypeChangeProps,
@@ -62,7 +64,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const [preparedRelations, setPreparedRelations] = React.useState<DashMetaData>([]);
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
 
-    const {isLoading, currentWidgetMeta, relations, datasets} = useRelations({
+    const {isLoading, currentWidgetMeta, relations, datasets, dashWidgetsMeta} = useRelations({
         dashKitRef,
         widget,
     });
@@ -74,18 +76,16 @@ const DialogRelations = (props: DialogRelationsProps) => {
         changedWidgets,
     });
 
-    const handleUpdateAliases = React.useCallback(
-        (newNamespacedAliases) => {
-            setAliases({
-                ...aliases,
-                [DEFAULT_ALIAS_NAMESPACE]: newNamespacedAliases,
-            });
-        },
-        [aliases],
-    );
+    const handleFilterInputChange = React.useCallback((data: string) => {
+        setSearchValue(data);
+    }, []);
+
+    const handleFilterTypesChange = React.useCallback((data: Array<FiltersTypes>) => {
+        setTypeValues(data);
+    }, []);
 
     /**
-     * update relations object with connection info when aliases changed
+     * Update local relations when aliases was added or removed
      */
     const handleUpdateRelations = React.useCallback(
         (changedAliases: string[][]) => {
@@ -123,26 +123,81 @@ const DialogRelations = (props: DialogRelationsProps) => {
         [aliases, preparedRelations],
     );
 
-    const handleFilterInputChange = React.useCallback((data: string) => {
-        setSearchValue(data);
-    }, []);
-
-    const handleFilterTypesChange = React.useCallback((data: Array<FiltersTypes>) => {
-        setTypeValues(data);
-    }, []);
-
-    const handleAliasesClosed = React.useCallback(
-        (args: ClickCallbackArgs) => {
-            if (!args?.reset) {
-                if (args?.onApplyDataArg) {
-                    setChangedWidgets(args.onApplyDataArg);
-                }
-                return;
-            }
+    /**
+     * Update aliases after apply button click in aliases poopup
+     */
+    const handleUpdateAliases = React.useCallback(
+        (newNamespacedAliases) => {
+            setAliases({
+                ...aliases,
+                [DEFAULT_ALIAS_NAMESPACE]: newNamespacedAliases,
+            });
+            handleUpdateRelations(newNamespacedAliases);
         },
-        [changedWidgets, preparedRelations],
+        [aliases, handleUpdateRelations],
     );
 
+    /**
+     * Update local relations after changing relation type, plus adding alias
+     * (when change relation could be only via alias)
+     */
+    const updatePreparedRelations = React.useCallback(
+        (args: ClickCallbackArgs) => {
+            if (!currentWidgetMeta || !dashWidgetsMeta) {
+                return;
+            }
+
+            const aliasesDict = args.aliases || aliases;
+            const connections = (getRelationsForSave({
+                currentWidgetId: currentWidgetMeta?.widgetId || '',
+                changed: args.changedWidgetsData,
+                dashkitData: dashKitRef.current || null,
+            }) || []) as ConnectionsData;
+
+            const row = dashWidgetsMeta.find((item) => item.widgetId === args.changedWidgetId);
+            if (!row) {
+                return;
+            }
+
+            const newPreparedRelations = [...preparedRelations];
+            const changedRelationsItem = newPreparedRelations.find(
+                (item) => item.widgetId === args.changedWidgetId,
+            );
+            if (!changedRelationsItem) {
+                return;
+            }
+            changedRelationsItem.relations = getRelationsInfo({
+                aliases: {[DEFAULT_ALIAS_NAMESPACE]: aliasesDict},
+                connections,
+                datasets,
+                widget: currentWidgetMeta,
+                row,
+            });
+            setPreparedRelations(newPreparedRelations);
+        },
+        [currentWidgetMeta, preparedRelations, dashWidgetsMeta, dashKitRef, aliases, datasets],
+    );
+
+    /**
+     * Callback on close alias popup (triggers on Apply button or Cancel button).
+     * If Cancel button was clicked (reset arg), then do nothing.
+     * If Apply was clicked (changedWidgetsData, changedWidgetId, aliases, etc), then need to recalculate relations info
+     */
+    const handleAliasesClosed = React.useCallback(
+        (args: ClickCallbackArgs) => {
+            if (args?.reset || !args?.changedWidgetsData) {
+                return;
+            }
+
+            setChangedWidgets(args.changedWidgetsData);
+            updatePreparedRelations(args);
+        },
+        [preparedRelations, updatePreparedRelations],
+    );
+
+    /**
+     * Open aliases dialog (showes list of aliases, detailed info, add alias form)
+     */
     const handleAliasesClick = React.useCallback(
         (data) => {
             dispatch(
@@ -158,9 +213,21 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 }),
             );
         },
-        [dispatch, handleUpdateRelations, datasets, filteredRelations, currentWidgetMeta],
+        [
+            dispatch,
+            handleUpdateAliases,
+            handleUpdateRelations,
+            datasets,
+            filteredRelations,
+            currentWidgetMeta,
+            handleAliasesClosed,
+        ],
     );
 
+    /**
+     * Triggers when changed relation type on relations list row.
+     * Check if we need force opening aliases dialog, open if needed.
+     */
     const handleRelationTypeChange = React.useCallback(
         (changedData: RelationTypeChangeProps) => {
             const {type, widgetId, ...rest} = changedData;
@@ -189,7 +256,8 @@ const DialogRelations = (props: DialogRelationsProps) => {
                         handleAliasesClick({
                             ...rest,
                             forceAddAlias: true,
-                            onApplyDataArg: newChanged,
+                            changedWidgetsData: newChanged,
+                            changedWidgetId: widgetId,
                         });
                     }
                 }
@@ -209,6 +277,9 @@ const DialogRelations = (props: DialogRelationsProps) => {
         setChangedWidgets(newChangedWidgets);
     }, [preparedRelations]);
 
+    /**
+     * Triggers when click Apply button in relations dialog (saves in store and closes popup)
+     */
     const handleSaveRelations = React.useCallback(() => {
         if (!dashKitRef.current) {
             return;

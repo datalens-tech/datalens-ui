@@ -56,7 +56,9 @@ export type ConnectionsData = Array<{
 
 export type ClickCallbackArgs = {
     reset?: boolean;
-    onApplyDataArg?: WidgetsTypes;
+    changedWidgetsData?: WidgetsTypes;
+    changedWidgetId?: string;
+    aliases?: string[][];
 };
 
 export type WidgetsTypes = Record<string, RelationType>;
@@ -66,7 +68,8 @@ export type AliasBase = {
     forceAddAlias?: boolean;
     relationText: React.ReactNode;
     relationType: RelationType;
-    onApplyDataArg?: WidgetsTypes;
+    changedWidgetsData?: WidgetsTypes;
+    changedWidgetId?: string;
 };
 
 export type AliasClickHandlerData = AliasBase & {
@@ -81,7 +84,6 @@ export type AliasClickHandlerArgs = AliasClickHandlerData &
         relations: DashMetaData;
         currentWidget: DashkitMetaDataItem;
         datasets: DatasetsListData | null;
-        updateRelations: (args: string[][]) => void;
         updateAliases: (args: string[][]) => void;
     };
 

@@ -108,11 +108,11 @@ const getChangedConnections = ({
             ]);
             break;
         }
-        case RELATION_TYPES.output: {
+        case RELATION_TYPES.input: {
             result = connectionsWithoutCurrentLink.concat([relationFromRowToWidget]);
             break;
         }
-        case RELATION_TYPES.input: {
+        case RELATION_TYPES.output: {
             result = connectionsWithoutCurrentLink.concat([relationFromWidgetToRow]);
             break;
         }
