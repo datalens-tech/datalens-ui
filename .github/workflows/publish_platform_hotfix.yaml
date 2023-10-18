@@ -1,13 +1,14 @@
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  # push:
+  #     branches:
+  #       - 'release-**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-name: Publish Platform
+name: Publish Platform Hotfix
 
 permissions:
   contents: write
@@ -25,28 +26,21 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-      - name: 'Get last release'
+      - name: 'Get current release'
         run: |
           COMMIT_NAME=$(git log -n 1 --pretty=format:%s) 
 
-          LAST_RELEASE_VERSION=$(curl -L https://api.github.com/repos/$GITHUB_REPOSITORY/releases | jq -r '.|=sort_by(.name)|.[-1].name' | sed 's|v||')
-          echo "Last release version: ${LAST_RELEASE_VERSION}"
-
-          MAIN_COMMIT=$(git rev-parse origin/main)
-          echo "Main commit: ${MAIN_COMMIT}"
-          LAST_RELEASE_BRANCH="release-${LAST_RELEASE_VERSION}"
-          LAST_RELEASE_COMMIT=$(git rev-parse "origin/$LAST_RELEASE_BRANCH")
-          echo "Last release commit: ${LAST_RELEASE_COMMIT}"
-
-          if [ "$MAIN_COMMIT" = "$LAST_RELEASE_COMMIT" ]; then echo "Hash commit in main branch matches the last release branch commit" && exit 1; fi
+          RELEASE_BRANCH="$GITHUB_REF_NAME"
+          RELEASE_VERSION=$(echo $RELEASE_BRANCH | sed 's|release-||')
+          echo "Release version: ${RELEASE_VERSION}"
 
           echo "COMMIT_NAME=$COMMIT_NAME" >> "$GITHUB_ENV"
-          echo "LAST_RELEASE_VERSION=$LAST_RELEASE_VERSION" >> "$GITHUB_ENV"
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> "$GITHUB_ENV"
       - name: 'Make new release version number'
         run: |
-          npm version "$LAST_RELEASE_VERSION" --no-git-tag-version --allow-same-version
+          npm version "$RELEASE_VERSION" --no-git-tag-version --allow-same-version
 
-          TAG_NEW_VERSION=$(npm version minor --no-git-tag-version --allow-same-version)
+          TAG_NEW_VERSION=$(npm version patch --no-git-tag-version --allow-same-version)
           NEW_VERSION=$(echo $TAG_NEW_VERSION | sed 's|v||')
 
           echo "NEW_VERSION=$NEW_VERSION" >> "$GITHUB_ENV"
