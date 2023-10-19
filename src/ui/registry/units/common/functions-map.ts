@@ -83,5 +83,7 @@ export const commonFunctionsMap = {
     getFunctionsDocumentation:
         makeFunctionTemplate<() => Promise<GetFunctionsDocumentationResponse>>(),
     fetchFunctionsDocumentation:
-        makeFunctionTemplate<(path: string) => Promise<FetchFunctionsDocumentationResponse>>(),
+        makeFunctionTemplate<
+            (docsEndpoint: string, path?: string) => Promise<FetchFunctionsDocumentationResponse>
+        >(),
 } as const;
