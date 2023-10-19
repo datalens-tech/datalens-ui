@@ -25,7 +25,7 @@ export const dashActions = {
     getEntriesDatasetsFields: createAction<
         GetEntriesDatasetsFieldsResponse,
         GetEntriesDatasetsFieldsArgs
-    >(async (api, {entriesIds}, {ctx}) => {
+    >(async (api, {entriesIds, datasetsIds}, {ctx}) => {
         const typedApi = getTypedApi(api);
         const {entries} = await typedApi.us.getEntries({
             scope: 'widget',
@@ -41,49 +41,76 @@ export const dashActions = {
         //   {entryId: "0epkfeanqv", type: "graph_wizard_node"}
         // * node script
         //   {entryId: "ilslg0le88", type: "graph_node"}
-        const result = await Promise.all(
-            entries.map(async (entry) => {
-                const {entryId, type, meta, links} = entry;
-                const {dataset} = links || {};
-                // deprecated
-                const {datasetId: metaDatasetId} = meta || {};
-                const datasetId = (dataset || metaDatasetId) as string | undefined;
-                const widgetType = type.match(/^[^_]*/)?.[0] || null;
-                // datasetsIds is now ignored because you need to find out the name for all datasets
-                // if (datasetsIds.includes(datasetId)) {
-                //     return {entryId, type: widgetType, datasetId};
-                // }
-                if (datasetId) {
-                    try {
-                        const {
-                            key,
-                            dataset: {result_schema},
-                        } = await typedApi.bi.getDatasetByVersion({
-                            datasetId,
-                            version: 'draft',
-                        });
+        const fetchEntries = entries.map(async (entry) => {
+            const {entryId, type, meta, links} = entry;
+            const {dataset} = links || {};
+            // deprecated
+            const {datasetId: metaDatasetId} = meta || {};
+            const datasetId = (dataset || metaDatasetId) as string | undefined;
+            const widgetType = type.match(/^[^_]*/)?.[0] || null;
+            // datasetsIds is now ignored because you need to find out the name for all datasets
+            // if (datasetsIds.includes(datasetId)) {
+            //     return {entryId, type: widgetType, datasetId};
+            // }
+            if (datasetId) {
+                try {
+                    const {
+                        key,
+                        dataset: {result_schema},
+                    } = await typedApi.bi.getDatasetByVersion({
+                        datasetId,
+                        version: 'draft',
+                    });
 
-                        return {
-                            entryId,
-                            type: widgetType,
-                            datasetId,
-                            datasetName: key.match(/[^/]*$/)?.[0] || '',
-                            datasetFields: result_schema.map(({title, guid, type: fieldType}) => ({
-                                title,
-                                guid,
-                                type: fieldType,
-                            })),
-                        };
-                    } catch (error) {
-                        ctx.logError(
-                            'DASH_GET_ENTRIES_DATASETS_FIELDS_GET_DATASET_BY_VERSION_FAILED',
-                            error,
-                        );
-                    }
+                    return {
+                        entryId,
+                        type: widgetType,
+                        datasetId,
+                        datasetName: key.match(/[^/]*$/)?.[0] || '',
+                        datasetFields: result_schema.map(({title, guid, type: fieldType}) => ({
+                            title,
+                            guid,
+                            type: fieldType,
+                        })),
+                    };
+                } catch (error) {
+                    ctx.logError(
+                        'DASH_GET_ENTRIES_DATASETS_FIELDS_GET_DATASET_BY_VERSION_FAILED',
+                        error,
+                    );
                 }
-                return {entryId, type: widgetType};
-            }),
-        );
-        return result;
+            }
+            return {entryId, type: widgetType};
+        });
+        const fetchDatasets = datasetsIds.map(async (datasetId) => {
+            try {
+                const {
+                    key,
+                    dataset: {result_schema},
+                } = await typedApi.bi.getDatasetByVersion({
+                    datasetId,
+                    version: 'draft',
+                });
+
+                return {
+                    entryId: datasetId,
+                    type: 'dataset',
+                    datasetId,
+                    datasetName: key.match(/[^/]*$/)?.[0] || '',
+                    datasetFields: result_schema.map(({title, guid, type: fieldType}) => ({
+                        title,
+                        guid,
+                        type: fieldType,
+                    })),
+                };
+            } catch (error) {
+                ctx.logError(
+                    'DASH_GET_DATASETS_BY_IDS_FIELDS_GET_DATASET_BY_VERSION_FAILED',
+                    error,
+                );
+            }
+            return {entryId: datasetId, type: null};
+        });
+        return await Promise.all([...fetchEntries, ...fetchDatasets]);
     }),
 };

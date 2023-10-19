@@ -1,8 +1,11 @@
 import type {ThemeSettings} from '@gravity-ui/uikit';
+import {I18n} from 'i18n';
 import type {DLUserSettings} from 'shared/types/common';
-import {SYSTEM_THEME} from 'ui/constants';
+import {DARK_THEME, LIGHT_THEME, SYSTEM_THEME} from 'ui/constants';
 
-import {ThemeSettingsUpdates} from './types';
+import {HighcontrastValue, ThemeSettingsUpdates} from './types';
+
+const i18n = I18n.keyset('component.aside-header-settings.view');
 
 const DEFAULT_THEME_SETTINGS = {
     theme: 'system',
@@ -45,3 +48,13 @@ export const getThemeUpdates = (
         },
     };
 };
+
+export const getThemeOptions = () => [
+    {value: LIGHT_THEME, content: i18n('value_theme-light')},
+    {value: DARK_THEME, content: i18n('value_theme-dark')},
+    {value: SYSTEM_THEME, content: i18n('value_theme-system')},
+];
+export const getHighcontrastOptions = () => [
+    {value: HighcontrastValue.normal, content: i18n('value_theme-contrast-normal')},
+    {value: HighcontrastValue.hc, content: i18n('value_theme-contrast-enhanced')},
+];

@@ -2,8 +2,8 @@ import {AxiosError} from 'axios';
 import {History, Location} from 'history';
 import {i18n} from 'i18n';
 import _ from 'lodash';
-import moment from 'moment';
 import type {match as Match} from 'react-router-dom';
+
 import {
     CommonSharedExtraSettings,
     ConnectorType,
@@ -21,24 +21,26 @@ import {
     extractEntryId,
     resolveIntervalDate,
     resolveOperation,
-} from 'shared';
-import {AppDispatch} from 'store';
-import {saveWidget, setActualChart} from 'store/actions/chartWidget';
-import {DL, DatalensGlobalState, Entry, URL_QUERY, Utils} from 'ui';
-import {navigateHelper} from 'ui/libs';
-import {prepareChartDataBeforeSave} from 'units/ql/modules/helpers';
+} from '../../../../../shared';
+import type {GetEntryArgs} from '../../../../../shared/schema';
+import {DL, DatalensGlobalState, Entry, URL_QUERY, Utils} from '../../../../index';
+import {navigateHelper} from '../../../../libs';
+import logger from '../../../../libs/logger';
+import {getSdk} from '../../../../libs/schematic-sdk';
+import {registry} from '../../../../registry';
+import {AppDispatch} from '../../../../store';
+import {saveWidget, setActualChart} from '../../../../store/actions/chartWidget';
+import {UrlSearch, getUrlParamFromStr} from '../../../../utils';
 import {
-    getEntry,
-    getGridSchemes,
-    getPreviewData,
-    selectInitalQlChartConfig,
-} from 'units/ql/store/reducers/ql';
+    load as loadParentDashConfig,
+    setEditMode as setEditModeForParentDash,
+} from '../../../dash/store/actions/dash';
 import {
     resetWizardStore,
     setVisualizationPlaceholderItems,
     setVisualization as setVisualizationWizard,
-} from 'units/wizard/actions';
-import {setDataset} from 'units/wizard/actions/dataset';
+} from '../../../wizard/actions';
+import {setDataset} from '../../../wizard/actions/dataset';
 import {
     setAvailable,
     setColors,
@@ -48,18 +50,8 @@ import {
     setShapes,
     setShapesConfig,
     updatePlaceholderSettings,
-} from 'units/wizard/actions/visualization';
-import {setExtraSettings as setWizardExtraSettings} from 'units/wizard/actions/widget';
-
-import type {GetEntryArgs} from '../../../../../shared/schema';
-import logger from '../../../../libs/logger';
-import {getSdk} from '../../../../libs/schematic-sdk';
-import {registry} from '../../../../registry';
-import {UrlSearch, getUrlParamFromStr} from '../../../../utils';
-import {
-    load as loadParentDashConfig,
-    setEditMode as setEditModeForParentDash,
-} from '../../../dash/store/actions/dash';
+} from '../../../wizard/actions/visualization';
+import {setExtraSettings as setWizardExtraSettings} from '../../../wizard/actions/widget';
 import {
     AVAILABLE_CHART_TYPES,
     AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE,
@@ -67,7 +59,9 @@ import {
     QL_MOCKED_DATASET_ID,
     VisualizationStatus,
 } from '../../constants';
+import {prepareChartDataBeforeSave} from '../../modules/helpers';
 import {getAvailableQlVisualizations, getDefaultQlVisualization} from '../../utils/visualization';
+import {getEntry, getGridSchemes, getPreviewData, selectInitalQlChartConfig} from '../reducers/ql';
 import {
     QLAction,
     QLChart,
@@ -78,7 +72,8 @@ import {
     QLSettings,
     QLTabs,
 } from '../typings/ql';
-import {Helper} from '../utils/helper';
+import {Helper} from '../utils/grid';
+import {prepareMonitoringPreset} from '../utils/monitoring';
 
 export const SET_CHART_TYPE = Symbol('ql/SET_CHART_TYPE');
 export const SET_STATUS = Symbol('ql/SET_STATUS');
@@ -519,7 +514,6 @@ type FetchConnectionSourcesArgs = {
 };
 
 export const fetchConnectionSources = ({entryId}: FetchConnectionSourcesArgs) => {
-    // eslint-disable-next-line consistent-return
     return async function (dispatch: AppDispatch<QLAction>) {
         try {
             // Requesting information about connection sources
@@ -549,7 +543,6 @@ type FetchConnectionSourceSchemaArgs = {
 };
 
 export const fetchConnectionSourceSchema = ({tableName}: FetchConnectionSourceSchemaArgs) => {
-    // eslint-disable-next-line consistent-return
     return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
         const splittedTableName = tableName.split('.');
 
@@ -602,7 +595,7 @@ export const fetchConnectionSourceSchema = ({tableName}: FetchConnectionSourceSc
 };
 
 export const initializeApplication = (args: InitializeApplicationArgs) => {
-    // eslint-disable-next-line consistent-return, complexity
+    // eslint-disable-next-line complexity
     return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
         dispatch(setStatus(AppStatus.Loading));
 
@@ -881,14 +874,6 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 gridSchemes: getGridSchemes(datalensGlobalState),
             });
 
-            // Link to the chart from which the current chart was created (for Monitoring)
-            let redirectUrl: string | undefined;
-
-            // Queries by default
-            const initialQueries: QLQuery[] = [];
-
-            const initialParams: QLParam[] = [];
-
             // Did the user come from a link with a presetId?
             const presetId = urlSearch.get('presetId');
             if (presetId) {
@@ -927,97 +912,14 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                         const preset = await getSdk().us.getPreset({presetId});
 
-                        if (preset?.data?.chart) {
-                            preset.data.chart.targets.forEach((target) => {
-                                initialQueries.push({
-                                    value: target.query,
-                                    params: [
-                                        {
-                                            name: 'project_id',
-                                            type: 'string',
-                                            defaultValue: target.scopeId,
-                                        },
-                                    ],
-                                });
-                            });
-                        }
+                        const {initialQueries, initialParams, redirectUrl, visualization} =
+                            prepareMonitoringPreset(preset);
 
-                        if (preset?.data?.redirectUrl) {
-                            redirectUrl = preset.data.redirectUrl;
-                        }
-
-                        if (preset?.data?.chart?.settings) {
-                            const mVisualizationId = preset.data.chart.settings['chart.type'];
-
-                            let visualizationId = 'line';
-
-                            // eslint-disable-next-line max-depth
-                            switch (mVisualizationId) {
-                                case 'auto':
-                                    visualizationId = 'area';
-                                    break;
-
-                                case 'area':
-                                    visualizationId = 'area';
-                                    break;
-
-                                case 'line':
-                                    visualizationId = 'line';
-                                    break;
-
-                                case 'column':
-                                    visualizationId = 'column';
-                                    break;
-
-                                default:
-                                    visualizationId = 'area';
-                            }
-
-                            const availableVisualizations = getAvailableQlVisualizations();
-                            const visualization =
-                                availableVisualizations.find((someVisualization) => {
-                                    return someVisualization.id === visualizationId;
-                                }) || getDefaultQlVisualization();
-
-                            dispatch(
-                                setVisualizationWizard({
-                                    visualization: visualization as Shared['visualization'],
-                                }),
-                            );
-
-                            // eslint-disable-next-line max-depth
-                            if (preset?.data?.params) {
-                                // eslint-disable-next-line max-depth
-                                if (typeof preset.data.params.from === 'number') {
-                                    initialParams.push({
-                                        name: 'from',
-                                        type: 'datetime',
-                                        defaultValue: moment(preset.data.params.from).toISOString(),
-                                    });
-                                } else if (typeof preset.data.params.from === 'string') {
-                                    initialParams.push({
-                                        name: 'from',
-                                        type: 'datetime',
-                                        defaultValue: preset.data.params.from,
-                                    });
-                                }
-
-                                // eslint-disable-next-line max-depth
-                                if (typeof preset.data.params.to === 'number') {
-                                    initialParams.push({
-                                        name: 'to',
-                                        type: 'datetime',
-                                        defaultValue: moment(preset.data.params.to).toISOString(),
-                                    });
-                                } else if (typeof preset.data.params.to === 'string') {
-                                    initialParams.push({
-                                        name: 'to',
-                                        type: 'datetime',
-                                        defaultValue: preset.data.params.to,
-                                    });
-                                }
-                            }
-                        }
+                        dispatch(
+                            setVisualizationWizard({
+                                visualization,
+                            }),
+                        );
 
                         dispatch(
                             setSettings({
@@ -1072,7 +974,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                         chartType,
                         tabs,
                         queryValue: '',
-                        queries: initialQueries,
+                        queries: [],
                         settings: newSettings,
                         panes,
                         grid,

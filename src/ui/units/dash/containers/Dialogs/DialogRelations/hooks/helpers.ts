@@ -1,5 +1,6 @@
 import {DashKit} from '@gravity-ui/dashkit';
 import intersection from 'lodash/intersection';
+import isEmpty from 'lodash/isEmpty';
 import {
     DashTabItem,
     DashTabItemControlSourceType,
@@ -7,7 +8,11 @@ import {
     DashTabItemWidgetTab,
 } from 'shared';
 import {GetEntriesDatasetsFieldsResponse} from 'shared/schema';
-import {DashkitMetaDataItemBase, DatasetsData} from 'ui/components/DashKit/plugins/types';
+import {
+    DashkitMetaDataItemBase,
+    DatasetsData,
+    DatasetsFieldsListData,
+} from 'ui/components/DashKit/plugins/types';
 import {
     AcceptFiltersWidgetType,
     CONNECTION_KIND,
@@ -365,17 +370,27 @@ const getDatasetsListWithFlatFields = (datasets: Datasets) => {
     return flatDatasetFields;
 };
 
-const getDatasetItemFlatFields = (data: DatasetsData): Record<string, string> => {
-    if (!data) {
-        return {};
-    }
-
-    const result = data.fields || {};
-    data.fieldsList?.forEach((listItem) => {
+const mapFieldsListGuid = (list: Array<DatasetsFieldsListData>, result: Record<string, string>) => {
+    list.forEach((listItem) => {
         if (!result[listItem.guid]) {
             result[listItem.guid] = listItem.title || '';
         }
     });
+};
+
+const getDatasetItemFlatFields = (data: DatasetsData): Record<string, string> => {
+    if (!data) {
+        return {};
+    }
+    let result = {};
+    if (Array.isArray(data.fields)) {
+        mapFieldsListGuid(data.fields, result);
+    } else {
+        result = {...data.fields};
+    }
+    if (data.fieldsList) {
+        mapFieldsListGuid(data.fieldsList, result);
+    }
     return result;
 };
 
@@ -400,53 +415,166 @@ const getMappedConnectedField = ({
     item: DashkitMetaDataItemNoRelations;
     datasets: Datasets;
 }) => {
-    if (item?.type === DASH_WIDGET_TYPES.CONTROL) {
-        // map fields with the name of the field from the dataset
-        if (item?.datasets?.length) {
-            return Object.keys(item.defaultParams).map((paramItem) => {
+    if (item?.type !== DASH_WIDGET_TYPES.CONTROL) {
+        return null;
+    }
+
+    // map fields with the name of the field from the dataset
+    if (item?.datasets?.length) {
+        // if it is dataset selector
+        return Object.keys(item.defaultParams)
+            .map((paramItem) => {
                 const allFields = getDatasetsFlatItems(item.datasets);
                 return allFields[paramItem] || '';
-            });
-        } else {
-            const datasetFlatFields = getDatasetsListWithFlatFields(datasets);
-            if (datasetFlatFields && item?.datasetId && datasetFlatFields[item?.datasetId]) {
-                return Object.keys(item.defaultParams).map(
+            })
+            .filter(Boolean);
+    } else {
+        // if it is dataset selector (other format)
+        const datasetFlatFields = getDatasetsListWithFlatFields(datasets);
+        if (datasetFlatFields && item?.datasetId && datasetFlatFields[item?.datasetId]) {
+            return Object.keys(item.defaultParams)
+                .map(
                     (paramItem) =>
                         datasetFlatFields[item.datasetId!] &&
                         datasetFlatFields[item.datasetId!][paramItem],
-                );
-            }
+                )
+                .filter(Boolean);
         }
     }
+
+    return null;
+};
+
+const getConnectedFieldExternalSelectors = (
+    left: DashkitMetaDataItemNoRelations,
+    right: DashkitMetaDataItemNoRelations,
+) => {
+    if (!('widgetParams' in left) || isEmpty(left.widgetParams)) {
+        return null;
+    }
+
+    const filteredWidgetParams = Object.keys(left.widgetParams || {}).filter((item) =>
+        left?.usedParams?.includes(item),
+    );
+
+    if (!filteredWidgetParams.length) {
+        return null;
+    }
+
+    if (right?.datasets?.length) {
+        const allFields = getDatasetsFlatItems(right.datasets);
+        const allFieldsValues: Record<string, string> = {};
+        Object.values(allFields).forEach((item) => {
+            allFieldsValues[item] = item;
+        });
+        const res = filteredWidgetParams
+            .map((paramItem) => {
+                return allFields[paramItem] || allFieldsValues[paramItem] || '';
+            })
+            .filter(Boolean);
+        if (res.length) {
+            return res;
+        }
+    }
+
     return null;
 };
 
 const getConnectedField = ({
     widget,
     row,
-    relations,
-    relationType,
     datasets,
 }: {
     widget: DashkitMetaDataItemNoRelations;
     row: DashkitMetaDataItemNoRelations;
-    relations: Omit<RelationsData, 'byFields'>;
-    relationType: RelationType;
     datasets: Datasets;
 }) => {
-    if (
-        relationType !== RELATION_TYPES.output &&
-        relationType !== RELATION_TYPES.input &&
-        !relations.byUsedParams.length
-    ) {
-        return '';
-    }
+    let res =
+        getMappedConnectedField({item: row, datasets}) ||
+        getMappedConnectedField({item: widget, datasets});
 
-    let res = getMappedConnectedField({item: row, datasets});
-    if (!res) {
-        res = getMappedConnectedField({item: widget, datasets});
+    if (
+        !res?.length &&
+        (row.type === DASH_WIDGET_TYPES.CONTROL || widget.type === DASH_WIDGET_TYPES.CONTROL)
+    ) {
+        res =
+            getConnectedFieldExternalSelectors(row, widget) ||
+            getConnectedFieldExternalSelectors(widget, row);
     }
     return res;
+};
+
+export const getRelationsInfo = (args: {
+    aliases: AliasesData;
+    connections: ConnectionsData;
+    datasets: Datasets;
+    widget: DashkitMetaDataItem;
+    row: DashkitMetaDataItemNoRelations;
+}) => {
+    const {aliases, connections, datasets, widget, row} = args;
+    const byUsedParams = intersection(row.usedParams || [], widget.usedParams || []);
+    let byAliases: Array<Array<string>> = [];
+    if (aliases[DEFAULT_ALIAS_NAMESPACE]?.length) {
+        byAliases = aliases[DEFAULT_ALIAS_NAMESPACE].filter((aliasArr) => {
+            if (!row.usedParams?.length) {
+                return false;
+            }
+            return intersection(row.usedParams, aliasArr);
+        });
+    }
+
+    const isIgnored = connections
+        .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
+        .some(({from, to}) => from === widget.widgetId && to === row.widgetId);
+
+    const isIgnoring = connections
+        .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
+        .some(({from, to}) => from === row.widgetId && to === widget.widgetId);
+
+    const linkedInfo = {
+        byUsedParams,
+        byAliases,
+        isIgnoring,
+        isIgnored,
+    };
+
+    const {relationType, availableRelations} = getItemsRelations({
+        relations: linkedInfo,
+        widgetMeta: widget,
+        type: row.type,
+        row,
+    });
+
+    const relations = {
+        byUsedParams,
+        byAliases,
+        isIgnoring,
+        isIgnored,
+        type: relationType,
+        available: availableRelations,
+    };
+
+    const noAvailLinks =
+        relationType !== RELATION_TYPES.output &&
+        relationType !== RELATION_TYPES.input &&
+        !relations.byUsedParams.length;
+
+    const byFields = noAvailLinks
+        ? []
+        : getConnectedField({
+              widget,
+              row,
+              datasets,
+          });
+
+    if (!isIgnoring && !isIgnored && isEmpty(byAliases.filter(Boolean)) && isEmpty(byFields)) {
+        relations.type = RELATION_TYPES.ignore as RelationType;
+    }
+
+    return {
+        ...relations,
+        byFields: byFields || [],
+    };
 };
 
 export const getRelationsData = ({
@@ -479,62 +607,17 @@ export const getRelationsData = ({
             return item.widgetId !== widgetMeta.widgetId && showInRelation(widgetMeta, item);
         })
         .forEach((item) => {
-            const byUsedParams = intersection(item.usedParams || [], widgetMeta.usedParams || []);
-            let byAliases: Array<Array<string>> = [];
-            if (aliases[DEFAULT_ALIAS_NAMESPACE]?.length) {
-                byAliases = aliases[DEFAULT_ALIAS_NAMESPACE].filter((aliasArr) => {
-                    if (!item.usedParams?.length) {
-                        return false;
-                    }
-                    return intersection(item.usedParams, aliasArr);
-                });
-            }
-
-            const isIgnoring = connections
-                .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
-                .some(({from, to}) => from === widgetMeta.widgetId && to === item.widgetId);
-
-            const isIgnored = connections
-                .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
-                .some(({from, to}) => from === item.widgetId && to === widgetMeta.widgetId);
-
-            const linkedInfo = {
-                byUsedParams,
-                byAliases,
-                isIgnoring,
-                isIgnored,
-            };
-
-            const {relationType, availableRelations} = getItemsRelations({
-                relations: linkedInfo,
-                widgetMeta,
-                type: item.type,
-                row: item,
-            });
-
-            const relations = {
-                byUsedParams,
-                byAliases,
-                isIgnoring,
-                isIgnored,
-                type: relationType,
-                available: availableRelations,
-            };
-
-            const byFields = getConnectedField({
+            const relations = getRelationsInfo({
+                aliases,
+                connections,
+                datasets,
                 widget: widgetMeta,
                 row: item,
-                relations,
-                relationType,
-                datasets,
             });
 
             relationsItems.push({
                 ...item,
-                relations: {
-                    ...relations,
-                    byFields: byFields || [],
-                },
+                relations,
             });
         });
 

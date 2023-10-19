@@ -5,12 +5,13 @@
     align-items: center;
     flex-grow: 1;
 
-    &_is-mobile {
+    &_mobile {
         flex-direction: column;
 
         #{$class}__content {
             padding: 12px 10px 0;
             text-align: center;
+            align-items: center;
         }
 
         #{$class}__title {

@@ -187,23 +187,27 @@ export const getWidgetSelectorMeta = ({
     chartId,
     loadedData,
     error,
+    widgetParamsDefaults,
 }: {
     id: string;
     chartId: string;
     loadedData: ResolveWidgetControlDataRefArgs | null;
     error: CombinedError | null;
+    widgetParamsDefaults: StringParams;
 }) => {
     const loadedWithError = Boolean(
         (loadedData as unknown as AxiosResponse<ResponseError>)?.data?.error || error,
     );
+
     const metaInfo: Omit<DashkitMetaDataItemBase, 'defaultParams'> &
-        Omit<DashkitOldMetaDataItemBase, 'chartId'> = {
+        Omit<DashkitOldMetaDataItemBase, 'chartId'> & {widgetParams: StringParams} = {
         layoutId: id,
         chartId,
         widgetId: id,
         title: '',
         label: (loadedData?.key && Utils.getEntryNameFromKey(loadedData?.key || '')) || '',
         params: loadedData?.params || {},
+        widgetParams: widgetParamsDefaults || {},
         enableFiltering: false,
         loaded: Boolean(loadedData),
         entryId: chartId,

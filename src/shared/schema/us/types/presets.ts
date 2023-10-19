@@ -1,9 +1,6 @@
-import {PresetFieldData} from './fields';
+import {MonitoringPreset} from '../../../index';
 
-export interface GetPresetResponse {
-    presetId: string;
-    data: PresetFieldData;
-}
+export type GetPresetResponse = MonitoringPreset;
 export interface GetPresetArgs {
     presetId: string;
 }

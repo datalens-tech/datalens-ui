@@ -13,7 +13,7 @@ import {
     RELATIONS_CHARTS_ICONS_DICT,
     RELATION_TYPES,
 } from './constants';
-import {DashkitMetaDataItem, RelationChartType, RelationType} from './types';
+import {DashkitMetaDataItem, RelationChartType, RelationType, RelationsData} from './types';
 
 import './DialogRelations.scss';
 
@@ -108,11 +108,11 @@ const getChangedConnections = ({
             ]);
             break;
         }
-        case RELATION_TYPES.output: {
+        case RELATION_TYPES.input: {
             result = connectionsWithoutCurrentLink.concat([relationFromRowToWidget]);
             break;
         }
-        case RELATION_TYPES.input: {
+        case RELATION_TYPES.output: {
             result = connectionsWithoutCurrentLink.concat([relationFromWidgetToRow]);
             break;
         }
@@ -251,4 +251,16 @@ export const addAlias = (first: string, second: string, aliases: Array<Array<str
     }
 
     return result;
+};
+
+export const hasConnectionsBy = (relation?: RelationsData) => {
+    return (
+        relation &&
+        'byUsedParams' in relation &&
+        relation.byUsedParams.length &&
+        'byFields' in relation &&
+        relation.byFields.length &&
+        'byAliases' in relation &&
+        relation.byAliases.length
+    );
 };
