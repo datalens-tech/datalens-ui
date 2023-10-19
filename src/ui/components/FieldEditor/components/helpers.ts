@@ -30,5 +30,5 @@ export async function fetchFunctionsDocumentation(docsEndpoint: string, path: st
         return functionDoc;
     }
 
-    return fetchFunctionsDocumentation(docsEndpoint, path);
+    return await fetchFunctionsDocumentation(docsEndpoint, path);
 }
