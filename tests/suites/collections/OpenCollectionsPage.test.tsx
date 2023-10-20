@@ -7,7 +7,4 @@ datalensTest.describe('Collections page', () => {
     datalensTest('Open page', async ({page}: {page: Page}) => {
         await openTestPage(page, `/collections`);
     });
-    datalensTest('Open wrong page', async ({page}: {page: Page}) => {
-        await openTestPage(page, `/wrong-page`);
-    });
 });

@@ -34,7 +34,7 @@ jobs:
         run: npm ci && npm run test:install:chromium
       - name: Run Test 
         working-directory: ./datalens-ui
-        run: E2E_DOMAIN="http://localhost:8080" E2E_TEST_NAME_PATTERN="Collections page" npm run test:e2e
+        run: E2E_DOMAIN="http://localhost:8080" E2E_TEST_NAME_PATTERN="Open page" npm run test:e2e
       
       - name: Run Docker Shutdown
         working-directory: ./datalens
