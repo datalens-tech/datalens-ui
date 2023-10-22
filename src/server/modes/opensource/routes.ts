@@ -93,10 +93,6 @@ function getDataLensRoutes({
         getNavigate: getConfiguredRoute('navigate', {...ui, route: 'GET /navigate/:entryId'}),
 
         getEntry: getConfiguredRoute('dl-main', {...ui, route: 'GET  /:entryId'}),
-        copyEntryWithDependencies: getConfiguredRoute('dl-main', {
-            ...ui,
-            route: 'POST /:entryId/copyWithDeps',
-        }),
         getNewWizard: getConfiguredRoute('dl-main', {...ui, route: 'GET  /:entryId/new/wizard'}),
         getWidget: getConfiguredRoute('dl-main', {...ui, route: 'GET  /:entryId/:widgetId'}),
 

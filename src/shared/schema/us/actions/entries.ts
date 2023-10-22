@@ -207,7 +207,7 @@ export const entriesActions = {
     }),
     copyEntriesToWorkbook: createAction<CopyEntriesToWorkbookResponse, CopyEntriesToWorkbookArgs>({
         method: 'POST',
-        path: () => `${PATH_PREFIX_V2}/entries/copy`,
+        path: () => `${PATH_PREFIX_V2}/copy-entries`,
         params: (args, headers) => ({
             body: {workbookId: args.workbookId, ids: args.entryIds},
             headers,
