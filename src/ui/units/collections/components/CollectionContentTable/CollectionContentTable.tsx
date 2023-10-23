@@ -1,7 +1,8 @@
 import React, {MouseEventHandler} from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {DropdownMenu, DropdownMenuItem} from '@gravity-ui/uikit';
+import {ArrowRight, Copy, LockOpen, PencilToLine, TrashBin} from '@gravity-ui/icons';
+import {DropdownMenu, DropdownMenuItem, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {
     DIALOG_COPY_WORKBOOK,
@@ -94,7 +95,12 @@ export const CollectionContentTable = React.memo<Props>(
 
             if (item.permissions.update) {
                 actions.push({
-                    text: i18n('action_edit'),
+                    text: (
+                        <div className={b('dropdown-item')}>
+                            <Icon data={PencilToLine} />
+                            <div className={b('dropdown-text')}>{i18n('action_edit')}</div>
+                        </div>
+                    ),
                     action: () => {
                         setDialogEntity(item);
 
@@ -123,7 +129,12 @@ export const CollectionContentTable = React.memo<Props>(
 
             if (item.permissions.move) {
                 actions.push({
-                    text: i18n('action_move'),
+                    text: (
+                        <div className={b('dropdown-item')}>
+                            <Icon data={ArrowRight} />
+                            <div className={b('dropdown-text')}>{i18n('action_move')}</div>
+                        </div>
+                    ),
                     action: () => {
                         dispatch(
                             openDialog({
@@ -144,7 +155,12 @@ export const CollectionContentTable = React.memo<Props>(
 
             if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
                 actions.push({
-                    text: i18n('action_access'),
+                    text: (
+                        <div className={b('dropdown-item')}>
+                            <Icon data={LockOpen} />
+                            <div className={b('dropdown-text')}>{i18n('action_access')}</div>
+                        </div>
+                    ),
                     action: () => {
                         setDialogState(DialogState.EditCollectionAccess);
                         setDialogEntity(item);
@@ -154,7 +170,12 @@ export const CollectionContentTable = React.memo<Props>(
 
             if (item.permissions.delete) {
                 actions.push({
-                    text: i18n('action_delete'),
+                    text: (
+                        <div className={b('dropdown-item')}>
+                            <Icon data={TrashBin} />
+                            <div className={b('dropdown-text')}>{i18n('action_delete')}</div>
+                        </div>
+                    ),
                     action: () => {
                         setDialogState(DialogState.DeleteCollection);
                         setDialogEntity(item);
@@ -171,7 +192,12 @@ export const CollectionContentTable = React.memo<Props>(
 
             if (item.permissions.update) {
                 actions.push({
-                    text: i18n('action_edit'),
+                    text: (
+                        <div className={b('dropdown-item')}>
+                            <Icon data={PencilToLine} />
+                            <div className={b('dropdown-text')}>{i18n('action_edit')}</div>
+                        </div>
+                    ),
                     action: () => {
                         if (item?.workbookId) {
                             dispatch(
@@ -202,7 +228,12 @@ export const CollectionContentTable = React.memo<Props>(
 
             if (item.permissions.move) {
                 actions.push({
-                    text: i18n('action_move'),
+                    text: (
+                        <div className={b('dropdown-item')}>
+                            <Icon data={ArrowRight} />
+                            <div className={b('dropdown-text')}>{i18n('action_move')}</div>
+                        </div>
+                    ),
                     action: () => {
                         dispatch(
                             openDialog({
@@ -223,7 +254,12 @@ export const CollectionContentTable = React.memo<Props>(
 
             if (item.permissions.copy) {
                 actions.push({
-                    text: i18n('action_copy'),
+                    text: (
+                        <div className={b('dropdown-item')}>
+                            <Icon data={Copy} />
+                            <div className={b('dropdown-text')}>{i18n('action_copy')}</div>
+                        </div>
+                    ),
                     action: () => {
                         dispatch(
                             openDialog({
@@ -248,7 +284,12 @@ export const CollectionContentTable = React.memo<Props>(
 
             if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
                 actions.push({
-                    text: i18n('action_access'),
+                    text: (
+                        <div className={b('dropdown-item')}>
+                            <Icon data={LockOpen} />
+                            <div className={b('dropdown-text')}>{i18n('action_access')}</div>
+                        </div>
+                    ),
                     action: () => {
                         setDialogState(DialogState.EditWorkbookAccess);
                         setDialogEntity(item);
@@ -258,7 +299,12 @@ export const CollectionContentTable = React.memo<Props>(
 
             if (item.permissions.delete) {
                 actions.push({
-                    text: i18n('action_delete'),
+                    text: (
+                        <div className={b('dropdown-item')}>
+                            <Icon data={TrashBin} />
+                            <div className={b('dropdown-text')}>{i18n('action_delete')}</div>
+                        </div>
+                    ),
                     action: () => {
                         setDialogState(DialogState.DeleteWorkbook);
                         setDialogEntity(item);
