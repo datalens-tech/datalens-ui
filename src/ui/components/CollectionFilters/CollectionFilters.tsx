@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {RadioButton, RadioButtonSize, Select, TextInput} from '@gravity-ui/uikit';
+import {LayoutRows} from '@gravity-ui/icons';
+import {Icon, RadioButton, RadioButtonSize, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
@@ -9,7 +10,7 @@ import {GetCollectionContentMode} from 'shared/schema/us/types/collections';
 import {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
 import Utils from 'ui/utils';
 
-import {IconById} from '../IconById/IconById';
+import GridIcon from 'assets/icons/collections/grid.svg';
 
 import './CollectionFilters.scss';
 
@@ -24,7 +25,9 @@ export enum SortType {
     AlphabetDesc = 'alphabetDesc',
 }
 
-export enum ViewMode {
+export const collectionPageViewModeStore = 'collectionPageViewMode';
+
+export enum CollectionPageViewMode {
     Grid = 'grid',
     Table = 'table',
 }
@@ -57,20 +60,29 @@ export type CollectionContentFilters = {
     orderDirection: OrderDirection;
     mode: GetCollectionContentMode;
     onlyMy: boolean;
-    viewMode?: ViewMode;
 };
 
 type Props = {
     className?: string;
     filters: CollectionContentFilters;
     onChange: (value: CollectionContentFilters) => void;
+    onChangeCollectionPageViewMode?: (value: CollectionPageViewMode) => void;
+    collectionPageViewMode?: CollectionPageViewMode;
     compactMode?: boolean;
     controlSize?: RadioButtonSize;
 };
 
 export const CollectionFilters = React.memo<Props>(
-    ({className, filters, onChange, compactMode = false, controlSize = 'm'}) => {
-        const {filterString, onlyMy, mode, orderField, orderDirection, viewMode} = filters;
+    ({
+        className,
+        filters,
+        onChange,
+        compactMode = false,
+        controlSize = 'm',
+        collectionPageViewMode,
+        onChangeCollectionPageViewMode,
+    }) => {
+        const {filterString, onlyMy, mode, orderField, orderDirection} = filters;
 
         const [innerFilterString, setInnerFilterString] = React.useState<string>(
             filterString || '',
@@ -119,13 +131,11 @@ export const CollectionFilters = React.memo<Props>(
 
         const handleChangeView = React.useCallback(
             (value) => {
-                handleChangeFilters({
-                    viewMode: value,
-                });
+                onChangeCollectionPageViewMode?.(value);
 
-                Utils.store('viewMode', value);
+                Utils.store(collectionPageViewModeStore, value);
             },
-            [handleChangeFilters],
+            [onChangeCollectionPageViewMode],
         );
 
         const handleChangeSort = React.useCallback(
@@ -229,15 +239,15 @@ export const CollectionFilters = React.memo<Props>(
                     {!compactMode && (
                         <RadioButton
                             className={b('filter-by-ownership')}
-                            value={viewMode}
+                            value={collectionPageViewMode}
                             size={controlSize}
                             onUpdate={handleChangeView}
                         >
-                            <Select.Option value={ViewMode.Grid}>
-                                <IconById className={b('icon-view')} id="grid" />
+                            <Select.Option value={CollectionPageViewMode.Grid}>
+                                <Icon data={GridIcon} />
                             </Select.Option>
-                            <Select.Option value={ViewMode.Table}>
-                                <IconById className={b('icon-view')} id="table" />
+                            <Select.Option value={CollectionPageViewMode.Table}>
+                                <Icon data={LayoutRows} />
                             </Select.Option>
                         </RadioButton>
                     )}

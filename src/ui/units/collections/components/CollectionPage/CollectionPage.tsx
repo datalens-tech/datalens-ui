@@ -37,7 +37,8 @@ import Utils from 'utils';
 import {
     CollectionContentFilters,
     CollectionFilters,
-    ViewMode,
+    CollectionPageViewMode,
+    collectionPageViewModeStore,
 } from '../../../../components/CollectionFilters';
 import {registry} from '../../../../registry';
 import {AddDemoWorkbookDialogContainer} from '../../containers/AddDemoWorkbookDialogContainer/AddDemoWorkbookDialogContainer';
@@ -60,8 +61,10 @@ const DEFAULT_FILTERS = {
     orderDirection: OrderDirection.Desc,
     mode: GetCollectionContentMode.All,
     onlyMy: false,
-    viewMode: Utils.restore('viewMode') || ViewMode.Table,
 };
+
+const defaultCollectionPageViewMode =
+    Utils.restore(collectionPageViewModeStore) || CollectionPageViewMode.Table;
 
 const b = block('dl-collection-page');
 
@@ -155,6 +158,8 @@ export const CollectionPage = React.memo<Props>(
         );
 
         const [filters, setFilters] = React.useState<CollectionContentFilters>(DEFAULT_FILTERS);
+        const [collectionPageViewMode, setCollectionPageViewMode] =
+            React.useState<CollectionPageViewMode>(defaultCollectionPageViewMode);
 
         const [dialogState, setDialogState] = React.useState(DialogState.None);
 
@@ -328,6 +333,10 @@ export const CollectionPage = React.memo<Props>(
             }
         };
 
+        const onChangeCollectionPageViewMode = (value: CollectionPageViewMode) => {
+            setCollectionPageViewMode(value);
+        };
+
         return (
             <div className={b()}>
                 <CollectionActionPanel
@@ -444,6 +453,8 @@ export const CollectionPage = React.memo<Props>(
                                     filters={filters}
                                     controlSize="l"
                                     onChange={setFilters}
+                                    collectionPageViewMode={collectionPageViewMode}
+                                    onChangeCollectionPageViewMode={onChangeCollectionPageViewMode}
                                 />
                             }
                             content={
@@ -452,6 +463,7 @@ export const CollectionPage = React.memo<Props>(
                                     getCollectionContentRecursively={
                                         getCollectionContentRecursively
                                     }
+                                    collectionPageViewMode={collectionPageViewMode}
                                     filters={filters}
                                     setFilters={setFilters}
                                     isDefaultFilters={isDefaultFilters}

@@ -8,20 +8,14 @@ import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
 import {CollectionContentProps} from '../types';
+import {onClickStopPropagation} from '../utils';
 
 import './CollectionContentGrid.scss';
 
 const b = block('dl-collection-content-grid');
 
 export const CollectionContentGrid = React.memo<CollectionContentProps>(
-    ({
-        contentItems,
-        filters,
-        setFilters,
-        getWorkbookActions,
-        getCollectionActions,
-        onClickStopPropagation,
-    }) => {
+    ({contentItems, filters, setFilters, getWorkbookActions, getCollectionActions}) => {
         return (
             <div className={b()}>
                 <div className={b('grid')}>
@@ -33,7 +27,7 @@ export const CollectionContentGrid = React.memo<CollectionContentProps>(
                                 <Link
                                     key={item.workbookId}
                                     to={`/workbooks/${item.workbookId}`}
-                                    className={b('content-row')}
+                                    className={b('content-item')}
                                     onClick={() => {
                                         setFilters({...filters, filterString: undefined});
                                     }}
@@ -71,7 +65,7 @@ export const CollectionContentGrid = React.memo<CollectionContentProps>(
                                 <Link
                                     key={item.collectionId}
                                     to={`/collections/${item.collectionId}`}
-                                    className={b('content-row')}
+                                    className={b('content-item')}
                                     onClick={() => {
                                         setFilters({...filters, filterString: undefined});
                                     }}

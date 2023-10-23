@@ -16,6 +16,6 @@ export type IconId =
     | 'visPivot'
     | 'visTreemap'
     | 'collectionColored'
+    | 'collectionColoredDark'
     | 'collectionColoredBig'
-    | 'grid'
-    | 'table';
+    | 'collectionColoredBigDark';

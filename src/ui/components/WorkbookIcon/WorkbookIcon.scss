@@ -2,12 +2,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--g-color-base-workbook-icon);
+    background-color: var(--dl-color-base-workbook-icon);
     border-radius: 12px;
     text-transform: uppercase;
 
     &__letters {
         text-align: center;
-        color: currentColor;
     }
 }

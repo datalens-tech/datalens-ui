@@ -9,6 +9,7 @@ import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
 import {CollectionContentProps} from '../types';
+import {onClickStopPropagation} from '../utils';
 
 import './CollectionContentTable.scss';
 
@@ -16,17 +17,8 @@ const i18n = I18n.keyset('collections');
 
 const b = block('dl-collection-content-table');
 
-const DATETIME_FORMAT = 'DD.MM.YYYY HH:mm:ss';
-
 export const CollectionContentTable = React.memo<CollectionContentProps>(
-    ({
-        contentItems,
-        filters,
-        setFilters,
-        getWorkbookActions,
-        getCollectionActions,
-        onClickStopPropagation,
-    }) => {
+    ({contentItems, filters, setFilters, getWorkbookActions, getCollectionActions}) => {
         return (
             <div className={b()}>
                 <div className={b('table')}>
@@ -63,7 +55,7 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
                                         <div className={b('content-cell')}>
                                             {dateTime({
                                                 input: item.updatedAt,
-                                            }).format(DATETIME_FORMAT)}
+                                            }).fromNow()}
                                         </div>
                                         <div className={b('content-cell', {control: true})}>
                                             {actions.length > 0 && (
@@ -98,7 +90,7 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
                                         <div className={b('content-cell')}>
                                             {dateTime({
                                                 input: item.updatedAt,
-                                            }).format(DATETIME_FORMAT)}
+                                            }).fromNow()}
                                         </div>
                                         <div
                                             className={b('content-cell', {control: true})}

@@ -1,4 +1,4 @@
-import React, {MouseEventHandler} from 'react';
+import React from 'react';
 
 import {CancellablePromise} from '@gravity-ui/sdk';
 import {Button, DropdownMenuItem} from '@gravity-ui/uikit';
@@ -28,7 +28,7 @@ import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/Pla
 import {Feature} from '../../../../../shared';
 import {
     CollectionContentFilters,
-    ViewMode,
+    CollectionPageViewMode,
 } from '../../../../components/CollectionFilters/CollectionFilters';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
 import {AppDispatch} from '../../../../store';
@@ -56,6 +56,7 @@ type Props = {
     collectionId: string | null;
     pageSize: number;
     filters: CollectionContentFilters;
+    collectionPageViewMode: CollectionPageViewMode;
     setFilters: (filters: CollectionContentFilters) => void;
     isDefaultFilters: boolean;
     isContentLoading: boolean;
@@ -74,16 +75,12 @@ type Props = {
     onClearFiltersClick: () => void;
 };
 
-const onClickStopPropagation: MouseEventHandler = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-};
-
 export const CollectionContent = React.memo<Props>(
     ({
         collectionId,
         pageSize,
         filters,
+        collectionPageViewMode,
         setFilters,
         isDefaultFilters,
         canCreateWorkbook,
@@ -395,14 +392,13 @@ export const CollectionContent = React.memo<Props>(
 
         return (
             <React.Fragment>
-                {filters.viewMode === ViewMode.Grid ? (
+                {collectionPageViewMode === CollectionPageViewMode.Grid ? (
                     <CollectionContentGrid
                         contentItems={contentItems}
                         filters={filters}
                         setFilters={setFilters}
                         getWorkbookActions={getWorkbookActions}
                         getCollectionActions={getCollectionActions}
-                        onClickStopPropagation={onClickStopPropagation}
                     />
                 ) : (
                     <CollectionContentTable
@@ -411,7 +407,6 @@ export const CollectionContent = React.memo<Props>(
                         setFilters={setFilters}
                         getWorkbookActions={getWorkbookActions}
                         getCollectionActions={getCollectionActions}
-                        onClickStopPropagation={onClickStopPropagation}
                     />
                 )}
 
