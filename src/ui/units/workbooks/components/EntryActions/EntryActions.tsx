@@ -2,13 +2,17 @@ import React from 'react';
 
 import {DropdownMenu, DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import {Feature} from 'shared';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types';
 import {EntryScope} from 'shared/types/common';
+import Utils from 'ui/utils';
 
 import {registry} from '../../../../registry';
 import {WorkbookEntry} from '../../types';
 
 const i18n = I18n.keyset('new-workbooks');
+
+const copyEntriesToWorkbookEnabled = Utils.isEnabledFeature(Feature.CopyEntriesToWorkbook);
 
 type EntryActionsProps = {
     workbook: WorkbookWithPermissions;
@@ -42,7 +46,8 @@ export const EntryActions = ({
                   },
               ]
             : []),
-        ...((entry.scope === EntryScope.Connection && entry.type === 'file') === false
+        ...(!(entry.scope === EntryScope.Connection && entry.type === 'file') &&
+        copyEntriesToWorkbookEnabled
             ? [
                   {
                       action: onCopyEntry,
