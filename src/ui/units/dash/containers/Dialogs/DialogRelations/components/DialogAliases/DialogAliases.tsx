@@ -120,7 +120,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
             setSelectedAliasRowIndex(indexRow);
             setCurrentAlias(aliasRow);
         },
-        [selectedAliasRowIndex, resetSelectedAliasRow],
+        [resetSelectedAliasRow],
     );
 
     /**
