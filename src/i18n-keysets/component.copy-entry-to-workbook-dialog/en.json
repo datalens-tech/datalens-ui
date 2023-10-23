@@ -4,7 +4,7 @@
   "action_show-all": "Show all",
   "label_charts": "Charts",
   "label_connections": "Connections",
-  "md_label_copy-warning": "The object and all related objects will be copied to the workbook.",
+  "label_copy-warning": "The object and all related objects will be copied to the workbook.",
   "label_current-entry": "Selected object",
   "label_dashboards": "Dashboards",
   "label_datasets": "Datasets",

@@ -4,7 +4,7 @@
   "action_show-all": "Показать все",
   "label_charts": "Чарты",
   "label_connections": "Подключения",
-  "md_label_copy-warning": "Объект и все связанные объекты будут скопированы в воркбук.",
+  "label_copy-warning": "Объект и все связанные объекты будут скопированы в воркбук.",
   "label_current-entry": "Выбранный объект",
   "label_dashboards": "Дашборды",
   "label_datasets": "Датасеты",

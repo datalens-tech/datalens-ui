@@ -46,7 +46,7 @@ export const Body: React.FC<BodyProps> = ({targetEntry, relations}) => {
             <div className={b('alert')}>
                 <Alert
                     theme="info"
-                    message={<YfmWrapper content={i18n('md_label_copy-warning')} setByInnerHtml />}
+                    message={<YfmWrapper content={i18n('label_copy-warning')} setByInnerHtml />}
                 />
             </div>
             <div className={b('relations')}>
