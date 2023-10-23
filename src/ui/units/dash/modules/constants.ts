@@ -29,7 +29,7 @@ export const DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES = {
     timeseries: 'timeseries',
     map: 'map',
     metric: 'metric',
-    metric_2: 'metric2',
+    metric2: 'metric2',
     ymap: 'ymap',
     markdown: 'markdown',
 };
@@ -44,7 +44,7 @@ export const DASH_WIDGET_TYPES = {
     MAP: 'map',
     TEXT: 'text',
     METRIC: 'metric',
-    METRIC_2: 'metric2',
+    METRIC2: 'metric2',
     YMAP: 'ymap',
     CONTROL: 'control',
     MARKDOWN: 'markdown',
