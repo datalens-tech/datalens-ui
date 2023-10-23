@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, Checkbox, Dialog, TextInput} from '@gravity-ui/uikit';
+import {Button, Checkbox, Dialog, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import moment from 'moment';
@@ -206,8 +206,7 @@ function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
                 <Dialog open={showModal} onClose={onClose}>
                     <Dialog.Header caption={label} />
                     <Dialog.Body>
-                        <TextInput
-                            multiline={true}
+                        <TextArea
                             value={text}
                             placeholder={placeholder}
                             className={b('textarea')}
