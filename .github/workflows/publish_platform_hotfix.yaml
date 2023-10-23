@@ -45,7 +45,7 @@ jobs:
         run: |
           git config user.email "" && git config user.name "GitHub Release"
           git add package.json && git add package-lock.json && git commit -am "Bump version to $NEW_VERSION [hotfix]"
-          git push --set-upstream origin "$NEW_BRANCH"
+          git push
       - uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,5 +58,4 @@ jobs:
           prerelease: false
       - name: 'Success notify'
         run: echo "Version bumped to '$TAG_NEW_VERSION' and pushed to remote repository"
-
 # test hotfix pr
