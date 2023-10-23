@@ -58,3 +58,5 @@ jobs:
           prerelease: false
       - name: 'Success notify'
         run: echo "Version bumped to '$TAG_NEW_VERSION' and pushed to remote repository"
+
+# test hotfix pr
