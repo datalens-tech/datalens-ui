@@ -2,18 +2,14 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - build-application-docker-task
       # - 'release-**'
+      - build-application-docker-task
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 name: Build Application Docker
-
-permissions:
-  contents: read
-  packages: write
 
 env:
   REGISTRY: ghcr.io
@@ -23,6 +19,9 @@ jobs:
   build:
     name: datalens-ui
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
       - name: 'Get release build version'
@@ -40,8 +39,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5.0.0
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           # type=raw,value=latest
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=${{ env.BUILD_VERSION }}
       - name: Build and push Docker image
@@ -51,3 +50,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            app_version=${{ env.BUILD_VERSION }}
