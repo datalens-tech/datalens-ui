@@ -2,8 +2,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      # - 'release-**'
-      - build-application-docker-task
+      - 'release-**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -40,9 +39,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5.0.0
         with:
-          # type=raw,value=latest
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            type=raw,value=latest
             type=raw,value=${{ env.BUILD_VERSION }}
       - name: Build and push Docker image
         uses: docker/build-push-action@v5.0.0
