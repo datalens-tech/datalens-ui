@@ -5,15 +5,14 @@ import {Settings as SettingsComponent} from '@gravity-ui/navigation';
 import {getThemeType} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {SYSTEM_THEME} from 'ui/constants';
+import {DL, SYSTEM_THEME} from 'ui/constants/common';
 import {setTheme, updateUserSettings} from 'ui/store/actions/user';
 import {selectTheme, selectThemeSettings} from 'ui/store/selectors/user';
 
-import {HighcontrastSettings} from './Appearance/HighcontrastSettings';
-import {ThemeSettings} from './Appearance/ThemeSettings';
+import {ItemField} from './ItemField/ItemField';
 import {LanguageSettings} from './LanguageSettings';
 import {HighcontrastValue} from './types';
-import {getThemeUpdates, isHcEnabled} from './utils';
+import {getHighcontrastOptions, getThemeOptions, getThemeUpdates, isHcEnabled} from './utils';
 
 const i18n = I18n.keyset('component.aside-header-settings.view');
 
@@ -28,7 +27,7 @@ export const Settings = () => {
     const currentHcValue = currentHcEnabled ? HighcontrastValue.hc : HighcontrastValue.normal;
     const currentThemeValue = currentTheme === SYSTEM_THEME ? currentTheme : currentThemeType;
 
-    const onThemeTypeChange = React.useCallback(
+    const handleThemeTypeChange = React.useCallback(
         (updatedTheme: string) => {
             const updates = getThemeUpdates(updatedTheme, updatedTheme, currentHcEnabled);
             dispatch(setTheme(updates));
@@ -37,7 +36,7 @@ export const Settings = () => {
         [currentHcEnabled, dispatch],
     );
 
-    const onHcStatusChange = React.useCallback(
+    const handleHcStatusChange = React.useCallback(
         (updatedHc: string) => {
             const hcEnabled = updatedHc === HighcontrastValue.hc;
             const updates = getThemeUpdates(currentTheme, currentThemeType, hcEnabled);
@@ -47,11 +46,14 @@ export const Settings = () => {
         [currentThemeType, currentTheme, dispatch],
     );
 
+    const settingView = DL.IS_MOBILE ? 'mobile' : 'normal';
+
     return (
         <SettingsComponent
             title={i18n('label_title')}
             filterPlaceholder={i18n('label_placeholder-search')}
             emptyPlaceholder={i18n('label_not-found')}
+            view={settingView}
         >
             <SettingsComponent.Page
                 id="appearance-page"
@@ -60,13 +62,23 @@ export const Settings = () => {
             >
                 <SettingsComponent.Section title={i18n('section_appearance')}>
                     <SettingsComponent.Item title={i18n('field_interface-theme')} align="top">
-                        <ThemeSettings value={currentThemeValue} onUpdate={onThemeTypeChange} />
+                        <ItemField
+                            value={currentThemeValue}
+                            onUpdate={handleThemeTypeChange}
+                            isMobile={DL.IS_MOBILE}
+                            options={getThemeOptions()}
+                        />
                     </SettingsComponent.Item>
                     <SettingsComponent.Item
                         title={i18n('field_interface-theme-contrast')}
                         align="top"
                     >
-                        <HighcontrastSettings value={currentHcValue} onUpdate={onHcStatusChange} />
+                        <ItemField
+                            value={currentHcValue}
+                            onUpdate={handleHcStatusChange}
+                            isMobile={DL.IS_MOBILE}
+                            options={getHighcontrastOptions()}
+                        />
                     </SettingsComponent.Item>
                 </SettingsComponent.Section>
             </SettingsComponent.Page>
@@ -77,7 +89,7 @@ export const Settings = () => {
             >
                 <SettingsComponent.Section title={i18n('section_language')}>
                     <SettingsComponent.Item title={i18n('field_language')} align="top">
-                        <LanguageSettings />
+                        <LanguageSettings isMobile={DL.IS_MOBILE} />
                     </SettingsComponent.Item>
                 </SettingsComponent.Section>
             </SettingsComponent.Page>

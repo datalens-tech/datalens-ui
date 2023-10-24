@@ -36,6 +36,10 @@ export const useRelations = ({
     const [currentWidgetMeta, setCurrentWidgetMeta] = React.useState<DashkitMetaDataItem | null>(
         null,
     );
+
+    const [dashWidgetsMeta, setDashWidgetsMeta] = React.useState<
+        Omit<DashkitMetaDataItem, 'relations'>[] | null
+    >(null);
     const [datasets, setDatasets] = React.useState<DatasetsListData | null>(null);
 
     React.useEffect(() => {
@@ -74,6 +78,23 @@ export const useRelations = ({
                 widget,
             });
 
+            const fetchedDatasets =
+                entriesDatasetsFields?.filter((item) => item.type === 'dataset') || [];
+
+            if (fetchedDatasets?.length) {
+                fetchedDatasets.forEach((datasetItem) => {
+                    if (datasetItem.datasetId && datasetItem.datasetId in datasetsList) {
+                        const datasetListItem = datasetsList[datasetItem.datasetId];
+                        if (!datasetListItem.name && datasetItem.datasetName) {
+                            datasetListItem.name = datasetItem.datasetName;
+                        }
+                        if (!datasetListItem.fields && datasetItem.datasetFields) {
+                            datasetListItem.fields = datasetItem.datasetFields;
+                        }
+                    }
+                });
+            }
+
             const currentRelations = getRelationsData({
                 metaData: dashWidgetsMetaData,
                 widgetMeta: currentMeta,
@@ -87,6 +108,7 @@ export const useRelations = ({
             setRelations(currentRelations);
             setIsLoading(false);
             setDatasets(datasetsList);
+            setDashWidgetsMeta(dashWidgetsMetaData);
         };
 
         if (!isInited) {
@@ -97,5 +119,5 @@ export const useRelations = ({
         }
     }, [isInited]);
 
-    return {isLoading, relations, currentWidgetMeta, datasets};
+    return {isLoading, relations, currentWidgetMeta, datasets, dashWidgetsMeta};
 };

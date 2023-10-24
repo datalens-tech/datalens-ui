@@ -8,12 +8,23 @@ import isEmpty from 'lodash/isEmpty';
 import {DashTabItem, DashTabItemType} from 'shared';
 
 import {
+    DEFAULT_ALIAS_NAMESPACE,
     DEFAULT_ICON_SIZE,
     DEFAULT_TITLE_ICON_SIZE,
     RELATIONS_CHARTS_ICONS_DICT,
     RELATION_TYPES,
 } from './constants';
-import {DashkitMetaDataItem, RelationChartType, RelationType, RelationsData} from './types';
+import {getRelationsInfo, showInRelation} from './hooks/helpers';
+import {
+    ConnectionsData,
+    DashMetaData,
+    DashkitMetaDataItem,
+    DatasetsListData,
+    RelationChartType,
+    RelationType,
+    RelationsData,
+    WidgetsTypes,
+} from './types';
 
 import './DialogRelations.scss';
 
@@ -108,11 +119,11 @@ const getChangedConnections = ({
             ]);
             break;
         }
-        case RELATION_TYPES.output: {
+        case RELATION_TYPES.input: {
             result = connectionsWithoutCurrentLink.concat([relationFromRowToWidget]);
             break;
         }
-        case RELATION_TYPES.input: {
+        case RELATION_TYPES.output: {
             result = connectionsWithoutCurrentLink.concat([relationFromWidgetToRow]);
             break;
         }
@@ -263,4 +274,89 @@ export const hasConnectionsBy = (relation?: RelationsData) => {
         'byAliases' in relation &&
         relation.byAliases.length
     );
+};
+
+export const getUpdatedPreparedRelations = (props: {
+    aliases: string[][] | Record<string, string[][]>;
+    currentWidgetMeta: DashkitMetaDataItem | null;
+    changedWidgetsData?: WidgetsTypes;
+    dashkitData: DashKit | null;
+    dashWidgetsMeta: Omit<DashkitMetaDataItem, 'relations'>[] | null;
+    changedWidgetId: string;
+    preparedRelations: DashMetaData;
+    datasets: DatasetsListData | null;
+    type?: 'aliases' | 'connections';
+}) => {
+    const {
+        aliases,
+        currentWidgetMeta,
+        changedWidgetsData,
+        dashkitData,
+        dashWidgetsMeta,
+        changedWidgetId,
+        preparedRelations,
+        datasets,
+        type = 'connections',
+    } = props;
+    if (!dashWidgetsMeta || !currentWidgetMeta) {
+        return null;
+    }
+    const connections = (getRelationsForSave({
+        currentWidgetId: currentWidgetMeta.widgetId || '',
+        changed: changedWidgetsData,
+        dashkitData,
+    }) || []) as ConnectionsData;
+
+    const row = dashWidgetsMeta.find((item) => item.widgetId === changedWidgetId);
+    if (!row) {
+        return null;
+    }
+
+    const newPreparedRelations = [...preparedRelations];
+    const changedRelationsItem = newPreparedRelations.find(
+        (item) => item.widgetId === changedWidgetId,
+    );
+    const newAliases = Array.isArray(aliases)
+        ? ({[DEFAULT_ALIAS_NAMESPACE]: aliases} as Record<string, string[][]>)
+        : (aliases as Record<string, string[][]>);
+    if (type === 'aliases') {
+        const relationsItems: Array<DashkitMetaDataItem> = [];
+
+        // filtering logic is reproduced from old links
+        dashWidgetsMeta
+            .filter((item) => {
+                return (
+                    item.widgetId !== currentWidgetMeta.widgetId &&
+                    showInRelation(currentWidgetMeta, item)
+                );
+            })
+            .forEach((item) => {
+                const relations = getRelationsInfo({
+                    aliases: newAliases,
+                    connections: (dashkitData?.props.config.connections || []) as ConnectionsData,
+                    datasets,
+                    widget: currentWidgetMeta,
+                    row: item,
+                });
+
+                relationsItems.push({
+                    ...item,
+                    relations,
+                });
+            });
+
+        return relationsItems;
+    }
+    if (!changedRelationsItem) {
+        return null;
+    }
+    changedRelationsItem.relations = getRelationsInfo({
+        aliases: newAliases,
+        connections,
+        datasets,
+        widget: currentWidgetMeta,
+        row,
+    });
+
+    return newPreparedRelations;
 };

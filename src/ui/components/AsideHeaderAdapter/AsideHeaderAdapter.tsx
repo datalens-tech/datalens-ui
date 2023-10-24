@@ -33,6 +33,8 @@ const PROMO_SITE_DOMAIN = 'https://datalens.tech';
 const PROMO_DOC_PATH = '/docs';
 const GITHUB_URL = 'https://github.com/datalens-tech/datalens';
 
+export const DOCUMENTATION_LINK = `${PROMO_SITE_DOMAIN}${PROMO_DOC_PATH}/${DL.USER_LANG}/`;
+
 export const ITEMS_NAVIGATION_DEFAULT_SIZE = 18;
 
 type AsideHeaderAdapterProps = {
@@ -153,8 +155,6 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
     );
 
     const renderFooter = () => {
-        const currentLang = DL.USER_LANG;
-
         return (
             <React.Fragment>
                 <FooterItem
@@ -205,7 +205,7 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                                     },
                                     {
                                         text: i18n('label_docs'),
-                                        url: `${PROMO_SITE_DOMAIN}${PROMO_DOC_PATH}/${currentLang}/`,
+                                        url: DOCUMENTATION_LINK,
                                     },
                                 ]}
                                 filterable={false}
