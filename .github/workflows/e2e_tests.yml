@@ -27,7 +27,7 @@ jobs:
 
       - name: Run Docker Compose
         working-directory: ./datalens
-        run: docker compose -f ./docker-compose.yml -f ../datalens-ui/docker-compose.yml up -d & cd ../datalens-ui && npm ci && npm run test:install:chromium
+        run: docker compose -f ./docker-compose.yml -f ../datalens-ui/docker-compose.yml up -d & cd ../datalens-ui && npm ci && npm run test:install:chromium & wait
 
 
       # - name: Install dependencies Datalens-UI 
