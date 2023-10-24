@@ -117,7 +117,7 @@ export const useRelations = ({
             }
             getMetaData();
         }
-    }, [isInited]);
+    }, [isInited, dashKitRef, widget]);
 
     return {isLoading, relations, currentWidgetMeta, datasets, dashWidgetsMeta};
 };

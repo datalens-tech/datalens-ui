@@ -14,8 +14,8 @@
     }
 
     &__info {
-        color: var(--g-color-text-complementary);
-        margin-bottom: 16px;
+        line-height: 16px;
+        margin-left: 4px;
     }
 
     &__info-text {
@@ -29,10 +29,6 @@
     &__card {
         padding: 12px 16px;
         margin-bottom: 16px;
-    }
-
-    &__empty {
-        text-align: center;
     }
 
     &__sub-header {
