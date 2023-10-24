@@ -5,9 +5,11 @@ import {FullConfig, Page, chromium} from '@playwright/test';
 
 import {AuthRobotSettings} from '../types';
 
+import {authenticate} from './utils';
 import {DEFAULT_SCREENSHOT_PATH} from '../constants';
 
 const ARTIFACTS_PATH = path.resolve(__dirname, '../../../artifacts');
+const AUTH_RETRY = 1;
 
 type DatalensTestSetupArgs = {
     config: FullConfig;
@@ -15,7 +17,7 @@ type DatalensTestSetupArgs = {
     afterAuth?: (args: {page: Page}) => Promise<void>;
 };
 
-export async function datalensTestSetup({config, afterAuth}: DatalensTestSetupArgs) {
+export async function datalensTestSetup({config, afterAuth, authSettings}: DatalensTestSetupArgs) {
     if (fs.existsSync(ARTIFACTS_PATH)) {
         await fs.rmSync(ARTIFACTS_PATH, {recursive: true});
     }
@@ -42,7 +44,15 @@ export async function datalensTestSetup({config, afterAuth}: DatalensTestSetupAr
     }
 
     try {
-        await afterAuth?.({page});
+        await authenticate({
+            page,
+            baseUrl,
+            passportUrl: authSettings.url,
+            login: authSettings.login,
+            password: authSettings.password,
+            afterAuth,
+            retryCount: AUTH_RETRY,
+        });
     } finally {
         await page.close();
         await context.close();
