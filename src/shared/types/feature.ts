@@ -42,7 +42,6 @@ export enum Feature {
     MailWelcomeNewUser = 'MailWelcomeNewUser',
     CollectionsEnabled = 'CollectionsEnabled',
     CollectionsAccessEnabled = 'CollectionsAccessEnabled',
-    DashEditPanelEnabled = 'DashEditPanelEnabled',
     DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
     DashAutorefresh = 'DashAutorefresh',
