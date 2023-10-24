@@ -77,6 +77,10 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
         actionTimeout: testTimeout,
         testIdAttribute: 'data-qa',
     },
+    projects: [
+        {name: 'basic', testDir: './suites'},
+        {name: 'opensource', testDir: './opensource-suites'},
+    ],
 };
 
 module.exports = playwrightConfig;
