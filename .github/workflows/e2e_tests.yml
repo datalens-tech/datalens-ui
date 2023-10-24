@@ -25,14 +25,10 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./datalens-ui/package-lock.json
 
-      - name: Run Docker Compose
+      - name: Run Docker Compose and Install dependencies for Datalens-UI
         working-directory: ./datalens
         run: docker compose -f ./docker-compose.yml -f ../datalens-ui/docker-compose.yml up -d & cd ../datalens-ui && npm ci && npm run test:install:chromium & wait
 
-
-      # - name: Install dependencies Datalens-UI 
-      #   working-directory: ./datalens-ui
-      #   run: npm ci && npm run test:install:chromium
       - name: Run Test 
         working-directory: ./datalens-ui
         run: E2E_DOMAIN="http://localhost:8080" E2E_TEST_NAME_PATTERN="Open page" npm run test:e2e
