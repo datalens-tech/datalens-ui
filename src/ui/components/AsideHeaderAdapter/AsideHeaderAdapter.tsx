@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
+import {DlNavigationQA} from 'shared';
 import {DL} from 'ui/constants';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
@@ -44,7 +45,7 @@ enum Panel {
 
 const getLinkWrapper = (node: React.ReactNode, path: string) => {
     return (
-        <Link to={path} className={b('item-link')}>
+        <Link to={path} className={b('item-link')} data-qa={DlNavigationQA.AsideMenuItem}>
             <div className={b('item-wrap')}>{node}</div>
         </Link>
     );
