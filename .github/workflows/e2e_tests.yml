@@ -26,11 +26,12 @@ jobs:
 
       - name: Run Docker Compose
         working-directory: ./datalens
-        run: docker compose -f ./docker-compose.yml -f ../datalens-ui/docker-compose.yml up -d
+        run: docker compose -f ./docker-compose.yml -f ../datalens-ui/docker-compose.yml up -d & cd ../datalens-ui && npm ci && npm run test:install:chromium
 
-      - name: Install dependencies Datalens-UI 
-        working-directory: ./datalens-ui
-        run: npm ci && npm run test:install:chromium
+
+      # - name: Install dependencies Datalens-UI 
+      #   working-directory: ./datalens-ui
+      #   run: npm ci && npm run test:install:chromium
       - name: Run Test 
         working-directory: ./datalens-ui
         run: E2E_DOMAIN="http://localhost:8080" E2E_TEST_NAME_PATTERN="Open page" npm run test:e2e
