@@ -27,7 +27,7 @@ jobs:
 
       - name: Run Docker Compose
         working-directory: ./datalens
-        run: docker compose -f ./docker-compose.yml -f ../datalens-ui/docker-compose.yml up
+        run: docker compose -f ./docker-compose.yml -f ../datalens-ui/docker-compose.yml up -d
 
       - name: Install dependencies Datalens-UI 
         working-directory: ./datalens-ui
