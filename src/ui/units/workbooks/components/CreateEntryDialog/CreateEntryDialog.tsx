@@ -25,7 +25,7 @@ export const CreateEntryDialog = React.memo(() => {
     const createDashboard = React.useCallback(
         async (workbookId: string) => {
             if (Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry)) {
-                const url = getNewDashUrl();
+                const url = getNewDashUrl(workbookId);
                 history.push(url);
                 return;
             }

@@ -37,7 +37,9 @@ export enum DashLoadPriority {
     Selectors = 'selectors',
 }
 
-export interface DashEntryCreateParams extends DashEntry, DashData {}
+export interface DashEntryCreateParams extends Partial<DashEntry>, DashData {
+    key: string;
+}
 
 export interface DashEntry extends Entry {
     scope: EntryScope.Dash;

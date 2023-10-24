@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ChevronsExpandUpRight, ListUl} from '@gravity-ui/icons';
+import {ListUl} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {History, Location} from 'history';
@@ -20,7 +20,6 @@ import {registry} from 'ui/registry';
 import Utils from 'utils';
 
 import {GetEntryResponse} from '../../../../../shared/schema';
-import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {
     EntryContextMenuItem,
     EntryContextMenuItems,
@@ -31,7 +30,6 @@ import {ICONS_MENU_DEFAULT_SIZE} from '../../../../libs/DatalensChartkit/menu/Me
 import navigateHelper from '../../../../libs/navigateHelper';
 import {isEmbeddedMode} from '../../../../utils/embedded';
 import {DIALOG_TYPE} from '../../containers/Dialogs/constants';
-import {dispatchResize} from '../../modules/helpers';
 import {purgeData} from '../../store/actions/dash';
 import {
     saveDashAsDraft,
@@ -84,6 +82,9 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     render() {
         const {entry, isEditMode} = this.props;
         const showHeader = !isEmbeddedMode();
+        const isFakeEntry = Boolean(
+            Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && entry?.fake,
+        );
 
         const DashSelectState = registry.dash.components.get('DashSelectState');
 
@@ -93,13 +94,15 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                     <React.Fragment>
                         <ActionPanel
                             entry={entry as GetEntryResponse}
-                            additionalEntryItems={this.getAdditionalEntryItems()}
+                            additionalEntryItems={this.getAdditionalEntryItems(isFakeEntry)}
                             rightItems={[
                                 <div className={b('controls')} key="controls">
-                                    {this.renderControls()}
+                                    {this.renderControls(isFakeEntry)}
                                 </div>,
                             ]}
-                            enablePublish={Utils.isEnabledFeature(Feature.EnablePublishEntry)}
+                            enablePublish={
+                                Utils.isEnabledFeature(Feature.EnablePublishEntry) && !isFakeEntry
+                            }
                             setActualVersion={this.handlerSetActualVersion}
                             isEditing={isEditMode}
                         />
@@ -110,18 +113,23 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         );
     }
 
-    renderControls() {
+    renderControls(isFakeEntry: boolean) {
         const {entry} = this.props;
 
         if (this.props.isSelectStateMode) {
             return null;
         }
 
+        const saveDashHandler =
+            Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && isFakeEntry
+                ? this.handleSaveDash
+                : this.handlerSaveAndPublishDashClick;
+
         return this.props.isEditMode ? (
             <EditControls
                 revId={this.props.dashEntry.entry?.revId}
                 publishedId={this.props.dashEntry.entry?.publishedId}
-                onSaveAndPublishDashClick={this.handlerSaveAndPublishDashClick}
+                onSaveAndPublishDashClick={saveDashHandler}
                 onSaveAsDraftDashClick={this.handlerSaveAsDraftDashClick}
                 onSaveAsNewClick={this.handlerSaveAsNewClick}
                 onCancelClick={this.handlerCancelEditClick}
@@ -132,6 +140,8 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 isDraft={this.props.isDraft}
                 isRenameWithoutReload={this.props.isRenameWithoutReload}
                 loading={this.props.progress || this.props.isLoadingEditMode}
+                showCancel={!isFakeEntry}
+                showSaveDropdown={!isFakeEntry}
             />
         ) : (
             <ViewControls
@@ -214,7 +224,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         this.props.setActualDash();
     };
 
-    private getAdditionalEntryItems() {
+    private getAdditionalEntryItems(isFakeEntry: boolean) {
         const {canEdit, hasTableOfContent, dashEntry} = this.props;
         const {revId, publishedId} = dashEntry.entry;
         const isCurrentRevisionActual = revId === publishedId;
@@ -223,7 +233,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
 
         const selectStateMenuItem = getSelectStateMenuItemFn({
             action: this.onSelectStateClick,
-            hidden: !canEdit || !isCurrentRevisionActual || DL.IS_MOBILE,
+            hidden: !canEdit || !isCurrentRevisionActual || DL.IS_MOBILE || isFakeEntry,
         });
 
         const items: EntryContextMenuItem[] = [
@@ -234,13 +244,6 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 qa: ActionPanelEntryContextMenuQa.TableOfContent,
                 id: 'tableOfContent',
                 hidden: !hasTableOfContent,
-            },
-            {
-                action: this.onFullScreenClick,
-                icon: <Icon data={ChevronsExpandUpRight} size={ICONS_MENU_DEFAULT_SIZE} />,
-                id: 'fullscreen',
-                text: i18n('value_fullscreen'),
-                hidden: getIsAsideHeaderEnabled(),
             },
         ];
         if (selectStateMenuItem) {
@@ -257,11 +260,24 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         this.props.toggleTableOfContent();
     };
 
-    private onFullScreenClick = () => {
-        const {history, location} = this.props;
-        this.props.toggleFullscreenMode({history, location});
-        // triggers ReactGridLayout recalculating
-        dispatchResize();
+    private handleSaveDash = async () => {
+        const {entry, data} = this.props.dashEntry;
+        const {getWorkbookDashboardEntryUrl} = registry.workbooks.functions.getAll();
+
+        const response = await this.props.entryDialoguesRef.current?.open?.({
+            dialog: EntryDialogName.CreateDashboard,
+            dialogProps: {
+                workbookId: entry?.workbookId,
+                initDestination: DL.USER_FOLDER,
+                data,
+            },
+        });
+
+        if (response?.status === EntryDialogResolveStatus.Success) {
+            this.props.setDashViewMode();
+            const dashUrl = getWorkbookDashboardEntryUrl(response);
+            this.props.history.push(dashUrl);
+        }
     };
 }
 
