@@ -1,8 +1,7 @@
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'release-**'
+  release:
+    types: [published]
 
 concurrency:
   group: ${{ github.workflow }}
@@ -28,8 +27,10 @@ jobs:
       - name: 'Get release build version'
         run: |
           BUILD_VERSION=$(jq -r '.version' package.json)
+          COMMIT_NAME=$(git log -n 1 --pretty=format:%s)
           echo "Release build version: ${BUILD_VERSION}"
           echo "BUILD_VERSION=$BUILD_VERSION" >> "$GITHUB_ENV"
+          echo "COMMIT_NAME=$COMMIT_NAME" >> "$GITHUB_ENV"
       - name: Log in to the Container registry
         uses: docker/login-action@v3.0.0
         with:
@@ -43,7 +44,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=${{ env.BUILD_VERSION }}
-            ${{ contains(github.event.commits[0].message, '[release]') && 'type=raw,value=latest' || '' }}
+            ${{ contains(env.COMMIT_NAME, '[release]') && 'type=raw,value=latest' || '' }}
       - name: Build and push Docker image
         uses: docker/build-push-action@v5.0.0
         with:
