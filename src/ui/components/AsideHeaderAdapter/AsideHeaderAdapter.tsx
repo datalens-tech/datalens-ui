@@ -219,6 +219,9 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
         );
     };
 
+    // eslint-disable-next-line no-console
+    console.log('🚀 ~ file: AsideHeader.tsx ~ menuItems:', menuItems);
+
     return (
         <AsideHeader
             compact={isCompact}
