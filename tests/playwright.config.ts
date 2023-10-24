@@ -71,7 +71,6 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
         },
         headless: !headful,
         baseURL,
-        // storageState: 'artifacts/storageState.json',
         ignoreHTTPSErrors: true,
         viewport: {width: 1920, height: 1080},
         trace: {mode: 'on-first-retry', screenshots: false, sources: false},
