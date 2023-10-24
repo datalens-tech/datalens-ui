@@ -15,7 +15,6 @@ env:
 
 jobs:
   build:
-    if: "contains(github.event.commits[0].message, '[hotfix]') || contains(github.event.commits[0].message, '[release]')"
     name: datalens-ui
     runs-on: ubuntu-latest
     permissions:
