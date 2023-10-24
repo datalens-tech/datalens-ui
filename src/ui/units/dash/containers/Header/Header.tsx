@@ -6,7 +6,6 @@ import {History, Location} from 'history';
 import {ResolveThunks, connect} from 'react-redux';
 import {DatalensGlobalState} from 'ui';
 import EntryDialogues from 'ui/components/EntryDialogues/EntryDialogues';
-import {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {DashEntry} from 'ui/units/dash/typings/entry';
 import {DashActionPanelMobile} from 'units/dash/components/DashActionPanel/DashActionPanelMobile';
 
@@ -23,7 +22,6 @@ type OwnProps = {
     history: History;
     location: Location;
     handlerEditClick: () => void;
-    onPasteItem: (data: CopiedConfigData) => void;
     entryDialoguesRef: React.RefObject<EntryDialogues>;
     isEditModeLoading?: boolean;
 };
@@ -70,7 +68,6 @@ class Header extends React.PureComponent<Props, State> {
                 openDialog={this.props.openDialog}
                 toggleTableOfContent={this.props.toggleTableOfContent}
                 toggleFullscreenMode={this.props.toggleFullscreenMode}
-                onPasteWidget={this.props.onPasteItem}
                 handlerEditClick={this.props.handlerEditClick}
                 entryDialoguesRef={this.props.entryDialoguesRef}
             />

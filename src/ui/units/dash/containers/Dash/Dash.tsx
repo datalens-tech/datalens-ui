@@ -226,7 +226,6 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     history={history}
                     location={location}
                     isEditModeLoading={this.state.isEditModeLoading}
-                    onPasteItem={this.onPasteItem}
                 />
                 <Body
                     handlerEditClick={this.handlerEditClick}
