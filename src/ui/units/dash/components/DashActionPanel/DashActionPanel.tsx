@@ -78,10 +78,6 @@ export type ActionPanelProps = OwnProps & StateProps & DispatchProps;
 type ActionPanelState = {};
 
 class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelState> {
-    isFakeEntry = Boolean(
-        Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && this.props.entry?.fake,
-    );
-
     render() {
         const {entry, isEditMode} = this.props;
         const showHeader = !isEmbeddedMode();
@@ -222,6 +218,12 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     handlerSaveAndPublishDashClick = () => {
         this.props.setActualDash();
     };
+
+    private get isFakeEntry() {
+        return Boolean(
+            Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && this.props.entry?.fake,
+        );
+    }
 
     private getAdditionalEntryItems() {
         const {canEdit, hasTableOfContent, dashEntry} = this.props;
