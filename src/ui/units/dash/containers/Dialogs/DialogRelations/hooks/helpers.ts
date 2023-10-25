@@ -133,13 +133,6 @@ export const getMetaDataWithDatasetInfo = ({
             (entryItem) => entryItem.entryId === itemWithDataset.entryId,
         );
 
-        // TODO next PR
-        /*if (entryWithDataset && !itemWithDataset.datasets?.length) {
-            const controlWithDataset = itemWithDataset.datasets?.find(
-                (entryItem) => entryItem.id === item.datasetId,
-            );
-        }*/
-
         if (!entryWithDataset) {
             return itemWithDataset;
         }
@@ -176,7 +169,7 @@ export const getMetaDataWithDatasetInfo = ({
                               name: datasetsList[key].name,
                           },
                       ]
-            ) as Array<DatasetsData>; // TODO for multi-datasets, this did not work, you need to order the pen to return a different format
+            ) as Array<DatasetsData>; // TODO for multi-datasets, this did not work, you need to support in API to return a different format
             itemWithDataset.type = item.type || type; // TODO order from US type for graph
             itemWithDataset.enableFiltering = item.enableFiltering || false;
         }

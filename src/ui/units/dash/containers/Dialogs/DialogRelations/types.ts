@@ -85,6 +85,7 @@ export type AliasClickHandlerArgs = AliasClickHandlerData &
         currentWidget: DashkitMetaDataItem;
         datasets: DatasetsListData | null;
         updateAliases: (args: string[][]) => void;
+        invalidAliases: string[];
     };
 
 export type AliasContextProps = {
@@ -93,6 +94,7 @@ export type AliasContextProps = {
     relations: DashMetaData;
     selectedAliasRowIndex: number | null;
     selectedParam: string | null;
+    invalidAliases: string[];
 };
 
 export type RelationChartType = keyof typeof RELATIONS_CHARTS_ICONS_DICT;

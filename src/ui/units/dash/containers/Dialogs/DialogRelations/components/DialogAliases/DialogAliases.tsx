@@ -54,6 +54,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
         forceAddAlias,
         changedWidgetsData,
         changedWidgetId,
+        invalidAliases,
     } = props;
 
     const [showDetailedData, setShowDetailedData] = React.useState<boolean>(false);
@@ -201,7 +202,8 @@ const DialogAliases = (props: DialogAliasesProps) => {
      */
     const handleAddNewAliases = React.useCallback(
         (alias: string[]) => {
-            const res = [...dashTabAliasesByNamespace, alias];
+            const res = getNormalizedAliases([...dashTabAliasesByNamespace, alias]);
+
             setShowAddAlias(false);
             setAliases(res);
             setAliasesByNamespace(res);
@@ -282,6 +284,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
                         relations,
                         selectedAliasRowIndex,
                         selectedParam,
+                        invalidAliases,
                     }}
                 >
                     {relationText && (
