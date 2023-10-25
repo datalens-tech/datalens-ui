@@ -19,7 +19,6 @@ import {
     slct,
     waitForCondition,
 } from '../../utils';
-import {isEnabledFeature} from '../../../tests/utils/helpers';
 import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
@@ -36,7 +35,6 @@ import {
     DashKitOverlayMenuQa,
 } from '../../../src/shared/constants/qa/dash';
 import {CommonSelectors} from '../constants/common-selectors';
-import {Feature} from '../../../src/shared/types/feature';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -162,13 +160,6 @@ class DashboardPage extends BasePage {
     }
 
     async clickAddSelector() {
-        const isNewPanelEnabled = await isEnabledFeature(this.page, Feature.DashEditPanelEnabled);
-        if (isNewPanelEnabled) {
-            await this.page.click(slct(DashboardAddWidgetQa.AddControl));
-            return;
-        }
-
-        await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_ADD));
         await this.page.click(slct(DashboardAddWidgetQa.AddControl));
     }
 
@@ -251,13 +242,6 @@ class DashboardPage extends BasePage {
     }
 
     async clickAddChart() {
-        const isNewPanelEnabled = await isEnabledFeature(this.page, Feature.DashEditPanelEnabled);
-        if (isNewPanelEnabled) {
-            await this.page.click(slct(DashboardAddWidgetQa.AddWidget));
-            return;
-        }
-
-        await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_ADD));
         await this.page.click(slct(DashboardAddWidgetQa.AddWidget));
     }
 

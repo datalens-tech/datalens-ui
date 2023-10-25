@@ -31,6 +31,7 @@ export const RELATIONS_CHARTS_ICONS_DICT = {
     pie: iconPie,
     donut: iconDonut,
     metric: iconMetric,
+    metric2: iconMetric,
     treemap: iconTreemap,
     flatTable: iconFlatTable,
     pivotTable: iconPivotTable,

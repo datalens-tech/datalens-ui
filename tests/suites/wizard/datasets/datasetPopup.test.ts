@@ -1,9 +1,10 @@
 import {ElementHandle, Page} from '@playwright/test';
 
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage, waitForCondition, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
+import {DlNavigationQA} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - Pop-up for adding dataset', () => {
     datalensTest(
@@ -26,7 +27,7 @@ datalensTest.describe('Wizard - Pop-up for adding dataset', () => {
 
             popupWindow = null;
 
-            await wizardPage.page.click('.nv-composite-bar__menu-icon');
+            await wizardPage.page.click(slct(DlNavigationQA.AsideMenuItem));
 
             let viewNavigation: ElementHandle<SVGElement | HTMLElement> | null;
 

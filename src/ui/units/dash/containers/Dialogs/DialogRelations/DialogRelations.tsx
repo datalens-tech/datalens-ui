@@ -20,13 +20,16 @@ import {openDialogAliases} from '../../../store/actions/relations/actions';
 import {Content} from './components/Content/Content';
 import {DEFAULT_FILTERS, Filters, FiltersTypes} from './components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, DEFAULT_ICON_SIZE, RELATION_TYPES} from './constants';
-import {getDialogCaptionIcon, getRelationsForSave, hasConnectionsBy} from './helpers';
-import {getRelationsInfo} from './hooks/helpers';
+import {
+    getDialogCaptionIcon,
+    getRelationsForSave,
+    getUpdatedPreparedRelations,
+    hasConnectionsBy,
+} from './helpers';
 import {useFilteredRelations} from './hooks/useFilteredRelations';
 import {useRelations} from './hooks/useRelations';
 import {
     ClickCallbackArgs,
-    ConnectionsData,
     DashMetaData,
     RelationType,
     RelationTypeChangeProps,
@@ -124,58 +127,56 @@ const DialogRelations = (props: DialogRelationsProps) => {
     );
 
     /**
-     * Update aliases after apply button click in aliases poopup
+     * Update aliases and local relations after apply button click in aliases poopup
      */
     const handleUpdateAliases = React.useCallback(
         (newNamespacedAliases) => {
-            setAliases({
+            const newAliases = {
                 ...aliases,
                 [DEFAULT_ALIAS_NAMESPACE]: newNamespacedAliases,
-            });
+            };
+            setAliases(newAliases);
             handleUpdateRelations(newNamespacedAliases);
-        },
-        [aliases, handleUpdateRelations],
-    );
 
-    /**
-     * Update local relations after changing relation type, plus adding alias
-     * (when change relation could be only via alias)
-     */
-    const updatePreparedRelations = React.useCallback(
-        (args: ClickCallbackArgs) => {
-            if (!currentWidgetMeta || !dashWidgetsMeta) {
-                return;
-            }
-
-            const aliasesDict = args.aliases || aliases;
-            const connections = (getRelationsForSave({
-                currentWidgetId: currentWidgetMeta?.widgetId || '',
-                changed: args.changedWidgetsData,
+            const newPreparedRelations = getUpdatedPreparedRelations({
+                aliases: newAliases,
+                currentWidgetMeta,
+                changedWidgetsData: changedWidgets,
                 dashkitData: dashKitRef.current || null,
-            }) || []) as ConnectionsData;
-
-            const row = dashWidgetsMeta.find((item) => item.widgetId === args.changedWidgetId);
-            if (!row) {
-                return;
-            }
-
-            const newPreparedRelations = [...preparedRelations];
-            const changedRelationsItem = newPreparedRelations.find(
-                (item) => item.widgetId === args.changedWidgetId,
-            );
-            if (!changedRelationsItem) {
-                return;
-            }
-            changedRelationsItem.relations = getRelationsInfo({
-                aliases: {[DEFAULT_ALIAS_NAMESPACE]: aliasesDict},
-                connections,
+                dashWidgetsMeta,
+                changedWidgetId: currentWidgetMeta?.widgetId || '',
+                preparedRelations,
                 datasets,
-                widget: currentWidgetMeta,
-                row,
+                type: 'aliases',
             });
+            if (!newPreparedRelations) {
+                return;
+            }
+
+            const newChangedWidgets = {...changedWidgets};
+            newPreparedRelations.forEach((item) => {
+                if (
+                    changedWidgets &&
+                    item.widgetId in changedWidgets &&
+                    item.relations.type !== changedWidgets[item.widgetId]
+                ) {
+                    delete newChangedWidgets[item.widgetId];
+                }
+            });
+            setChangedWidgets(newChangedWidgets);
             setPreparedRelations(newPreparedRelations);
         },
-        [currentWidgetMeta, preparedRelations, dashWidgetsMeta, dashKitRef, aliases, datasets],
+        [
+            aliases,
+            handleUpdateRelations,
+            currentWidgetMeta,
+            changedWidgets,
+            dashKitRef,
+            dashWidgetsMeta,
+            preparedRelations,
+            datasets,
+            changedWidgets,
+        ],
     );
 
     /**
@@ -190,9 +191,8 @@ const DialogRelations = (props: DialogRelationsProps) => {
             }
 
             setChangedWidgets(args.changedWidgetsData);
-            updatePreparedRelations(args);
         },
-        [preparedRelations, updatePreparedRelations],
+        [preparedRelations],
     );
 
     /**
