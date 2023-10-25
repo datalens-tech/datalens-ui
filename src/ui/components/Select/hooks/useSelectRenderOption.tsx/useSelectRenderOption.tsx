@@ -30,6 +30,7 @@ const Option = (props: OptionProps) => {
             {option.content}
             <Button
                 className={b('action-button')}
+                size="s"
                 onFocus={(e: React.FocusEvent<HTMLButtonElement, HTMLElement>) =>
                     e?.relatedTarget?.focus()
                 }
