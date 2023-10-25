@@ -86,6 +86,7 @@ export type AliasClickHandlerArgs = AliasClickHandlerData &
         datasets: DatasetsListData | null;
         updateAliases: (args: string[][]) => void;
         invalidAliases: string[];
+        dialogAliases: Record<string, string[][]>;
     };
 
 export type AliasContextProps = {

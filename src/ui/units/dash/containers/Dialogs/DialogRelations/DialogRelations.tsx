@@ -123,12 +123,11 @@ const DialogRelations = (props: DialogRelationsProps) => {
             });
 
             if (DEFAULT_ALIAS_NAMESPACE in aliases) {
-                setAliases(
-                    Object.assign({
-                        ...aliases,
-                        [DEFAULT_ALIAS_NAMESPACE]: changedAliases,
-                    }),
-                );
+                const newAliases = Object.assign({
+                    ...aliases,
+                    [DEFAULT_ALIAS_NAMESPACE]: changedAliases,
+                });
+                setAliases(newAliases);
             }
             setPreparedRelations(relationsWithChangedAliases);
         },
@@ -136,7 +135,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     );
 
     /**
-     * Update aliases and local relations after apply button click in aliases poopup
+     * Update aliases and local relations after apply button click in aliases popup
      */
     const handleUpdateAliases = React.useCallback(
         (newNamespacedAliases) => {
@@ -216,6 +215,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     forceAddAlias: false,
                     invalidAliases: showInvalidAliases,
                     ...data,
+                    dialogAliases: aliases,
                 }),
             );
         },
@@ -228,6 +228,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             currentWidgetMeta,
             handleAliasesClosed,
             showInvalidAliases,
+            aliases,
         ],
     );
 

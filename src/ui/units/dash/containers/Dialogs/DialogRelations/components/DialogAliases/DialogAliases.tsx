@@ -9,8 +9,6 @@ import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
 import intersection from 'lodash/intersection';
 import isEqual from 'lodash/isEqual';
-import {useSelector} from 'react-redux';
-import {getCurrentTabAliases} from 'ui/units/dash/store/selectors/relations/selectors';
 
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../../constants';
 import {getNormalizedAliases} from '../../helpers';
@@ -55,6 +53,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
         changedWidgetsData,
         changedWidgetId,
         invalidAliases,
+        dialogAliases,
     } = props;
 
     const [showDetailedData, setShowDetailedData] = React.useState<boolean>(false);
@@ -71,10 +70,10 @@ const DialogAliases = (props: DialogAliasesProps) => {
     const [selectedParam, setSelectedParam] = React.useState<string | null>(null);
     const [currentAlias, setCurrentAlias] = React.useState<string[] | null>(null);
 
-    const currentTabAliases = useSelector(getCurrentTabAliases) || {};
     const [dashTabAliasesByNamespace, setAliasesByNamespace] = React.useState(
-        currentTabAliases?.[DEFAULT_ALIAS_NAMESPACE] || [],
+        dialogAliases?.[DEFAULT_ALIAS_NAMESPACE] || [],
     );
+
     const [aliases, setAliases] = React.useState<string[][]>(currentRow.relations.byAliases.sort());
 
     const hasAlias = Boolean(aliases.length);
@@ -149,7 +148,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
             setSelectedAliasRowIndex(showDetailedData ? null : indexRow);
             setCurrentAlias(showDetailedData ? null : aliasRow);
         },
-        [showDetailedData, selectedAliasRowIndex],
+        [showDetailedData],
     );
 
     /**
@@ -272,6 +271,10 @@ const DialogAliases = (props: DialogAliasesProps) => {
             setAliasRequired(true);
         }
     }, [forceAddAlias, aliasAdded]);
+
+    React.useEffect(() => {
+        setAliases(currentRow.relations.byAliases.sort());
+    }, [currentRow]);
 
     return (
         <Dialog onClose={handleCancel} open={true} className={b()}>
