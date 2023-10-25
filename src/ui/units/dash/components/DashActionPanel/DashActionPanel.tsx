@@ -70,7 +70,6 @@ type OwnProps = {
     handlerEditClick: () => void;
     openDialog: (dialogType: string) => void;
     toggleTableOfContent: () => void;
-    toggleFullscreenMode: (args: {history: History; location: Location}) => void;
     entryDialoguesRef: React.RefObject<EntryDialogues>;
 };
 
@@ -85,6 +84,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         const isFakeEntry = Boolean(
             Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && entry?.fake,
         );
+        const enablePublish = Utils.isEnabledFeature(Feature.EnablePublishEntry) && !isFakeEntry;
 
         const DashSelectState = registry.dash.components.get('DashSelectState');
 
@@ -100,9 +100,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                                     {this.renderControls(isFakeEntry)}
                                 </div>,
                             ]}
-                            enablePublish={
-                                Utils.isEnabledFeature(Feature.EnablePublishEntry) && !isFakeEntry
-                            }
+                            enablePublish={enablePublish}
                             setActualVersion={this.handlerSetActualVersion}
                             isEditing={isEditMode}
                         />
@@ -262,7 +260,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
 
     private handleSaveDash = async () => {
         const {entry, data} = this.props.dashEntry;
-        const {getWorkbookDashboardEntryUrl} = registry.workbooks.functions.getAll();
+        const {getDashEntryUrl} = registry.dash.functions.getAll();
 
         const response = await this.props.entryDialoguesRef.current?.open?.({
             dialog: EntryDialogName.CreateDashboard,
@@ -275,7 +273,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
 
         if (response?.status === EntryDialogResolveStatus.Success) {
             this.props.setDashViewMode();
-            const dashUrl = getWorkbookDashboardEntryUrl(response);
+            const dashUrl = getDashEntryUrl(response);
             this.props.history.push(dashUrl);
         }
     };

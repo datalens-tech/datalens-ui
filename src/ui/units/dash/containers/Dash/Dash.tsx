@@ -100,9 +100,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const entryId = extractEntryId(currentLocation.pathname);
 
         const isFakeEntry =
-            Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) &&
-            entryId &&
-            !this.props.entry?.fake;
+            Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && this.props.entry?.fake;
 
         const currentSearchParams = new URLSearchParams(currentLocation.search);
         const revId = currentSearchParams.get(URL_QUERY.REV_ID);
@@ -117,7 +115,8 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const hasEntryChanged = entryId !== prevEntryId;
         const hasRevisionChanged = revId !== prevRevId;
         // In case of switching between workbooks and folders while creating a dash
-        const hasPathnameChanged = prevLocation.pathname !== currentLocation.pathname && !entryId;
+        const hasPathnameChanged =
+            isFakeEntry && prevLocation.pathname !== currentLocation.pathname;
 
         const workbookId = this.props.entry?.workbookId;
         const prevWorkbookId = prevProps.entry?.workbookId;
@@ -135,11 +134,11 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             });
         }
 
-        this.updateMobileWorkbooksData(workbookId, prevWorkbookId);
-
         if (tabId && prevTabId !== tabId && this.props.tabId !== tabId) {
             this.props.setPageTab(tabId);
         }
+
+        this.updateMobileWorkbooksData(workbookId, prevWorkbookId);
 
         if (isFakeEntry) {
             return;
