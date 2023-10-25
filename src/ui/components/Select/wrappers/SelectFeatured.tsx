@@ -13,6 +13,7 @@ import {
     UseSelectRenderFilter,
     useSelectRenderFilter,
 } from '../hooks/useSelectRenderFilter/useSelectRenderFilter';
+import {useSelectRenderOption} from '../hooks/useSelectRenderOption.tsx/useSelectRenderOption';
 
 import '../styles/SelectUtil.scss';
 
@@ -41,6 +42,8 @@ export const SelectFeatured = <T,>({filterable = true, ...props}: SelectFeatured
         renderEmptyOptions: renderEmptyOptionsError,
     });
 
+    const {renderOption} = useSelectRenderOption(props);
+
     return (
         <Select
             {...props}
@@ -51,6 +54,7 @@ export const SelectFeatured = <T,>({filterable = true, ...props}: SelectFeatured
             onFilterChange={undefined}
             options={options}
             renderFilter={props.error ? undefined : renderFilter}
+            renderOption={renderOption}
         />
     );
 };
