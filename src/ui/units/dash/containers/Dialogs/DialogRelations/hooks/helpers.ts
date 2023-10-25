@@ -565,7 +565,13 @@ export const getRelationsInfo = (args: {
               datasets,
           });
 
-    if (!isIgnoring && !isIgnored && isEmpty(byAliases.filter(Boolean)) && isEmpty(byFields)) {
+    if (
+        !isIgnoring &&
+        !isIgnored &&
+        isEmpty(byAliases.filter(Boolean)) &&
+        isEmpty(byFields) &&
+        isEmpty(byUsedParams)
+    ) {
         relations.type = RELATION_TYPES.ignore as RelationType;
     }
 
