@@ -76,6 +76,7 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
         trace: {mode: 'on-first-retry', screenshots: false, sources: false},
         actionTimeout: testTimeout,
         testIdAttribute: 'data-qa',
+        storageState: process.env.NO_AUTH === 'true' ? undefined : 'artifacts/storageState.json',
     },
     projects: [
         {name: 'basic', testDir: './suites'},
