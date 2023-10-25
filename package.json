@@ -52,7 +52,7 @@
     "@gravity-ui/gateway": "^1.2.1",
     "@gravity-ui/i18n": "^1.0.0",
     "@gravity-ui/nodekit": "^1.2.1",
-    "@gravity-ui/page-constructor": "^4.13.1",
+    "@gravity-ui/page-constructor": "^4.29.2",
     "@types/react-inspector": "^4.0.2",
     "acorn": "^8.0.4",
     "ajv": "^8.12.0",
