@@ -1,3 +1,5 @@
+@import '../../../../../../styles/mixins';
+
 .type-select {
     &__type {
         display: flex;
@@ -13,6 +15,10 @@
         &_option {
             padding-left: 8px;
             width: unset;
+        }
+
+        &_disabled {
+            @include dl-select-disabled-option;
         }
     }
 
