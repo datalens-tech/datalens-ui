@@ -360,7 +360,7 @@ export const isWidgetTypeWithAutoHeight = (widgetType: string) => {
         widgetType === DASH_WIDGET_TYPES.TABLE ||
         widgetType === DASH_WIDGET_TYPES.MARKDOWN ||
         widgetType === DASH_WIDGET_TYPES.METRIC ||
-        widgetType === DASH_WIDGET_TYPES.METRIC_2
+        widgetType === DASH_WIDGET_TYPES.METRIC2
     );
 };
 

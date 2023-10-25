@@ -131,6 +131,11 @@ export const AddAliases = ({
         }
         newAlias.sort();
 
+        if (newAlias[0] === newAlias[1]) {
+            setErrorMgs(i18n('label_alias-same-dataset-field'));
+            return;
+        }
+
         for (let i = 0; i < currentAliases.length; i++) {
             if (isAddingAliasExists(currentAliases[i], newAlias)) {
                 setErrorMgs(i18n('label_alias-already-exists'));

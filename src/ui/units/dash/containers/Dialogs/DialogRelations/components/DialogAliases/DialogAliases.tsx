@@ -1,7 +1,8 @@
 import React from 'react';
 
+import {HelpPopover} from '@gravity-ui/components';
 import {Plus} from '@gravity-ui/icons';
-import {Alert, Button, Card, Dialog, Icon} from '@gravity-ui/uikit';
+import {Button, Card, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Collapse} from 'components/Collapse/Collapse';
 import DialogManager from 'components/DialogManager/DialogManager';
@@ -79,7 +80,20 @@ const DialogAliases = (props: DialogAliasesProps) => {
 
     const aliasRequiredErrorText = aliasRequired ? i18n('label_required-add-alias') : undefined;
 
-    const caption = i18n('title_add-alias');
+    const caption = (
+        <React.Fragment>
+            {i18n('title_add-alias')}
+            <HelpPopover
+                className={b('info')}
+                content={
+                    <React.Fragment>
+                        <p className={b('info-text')}>{i18n('label_info_1')}</p>
+                        <p className={b('info-text')}>{i18n('label_info_2')}</p>
+                    </React.Fragment>
+                }
+            />
+        </React.Fragment>
+    );
 
     const isIgnored = relationType === RELATION_TYPES.ignore;
     const isBoth = relationType === RELATION_TYPES.both;
@@ -120,7 +134,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
             setSelectedAliasRowIndex(indexRow);
             setCurrentAlias(aliasRow);
         },
-        [selectedAliasRowIndex, resetSelectedAliasRow],
+        [resetSelectedAliasRow],
     );
 
     /**
@@ -278,17 +292,6 @@ const DialogAliases = (props: DialogAliasesProps) => {
                             </span>
                         </div>
                     )}
-                    <Alert
-                        theme="normal"
-                        view="filled"
-                        className={b('info')}
-                        message={
-                            <React.Fragment>
-                                <p className={b('info-text')}>{i18n('label_info_1')}</p>
-                                <p className={b('info-text')}>{i18n('label_info_2')}</p>
-                            </React.Fragment>
-                        }
-                    />
                     {!enableAddAlias && (
                         <Card theme="warning" className={b('card')}>
                             {i18n('label_card')}

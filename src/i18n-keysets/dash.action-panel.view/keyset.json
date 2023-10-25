@@ -8,10 +8,6 @@
     "TRANSLATED"
   ],
   "status": {
-    "button_add": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "button_add-favorite": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -96,10 +92,6 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "value_control": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "value_copy": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -112,10 +104,7 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "value_group-selector": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
+
     "value_mailings": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -124,27 +113,11 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "value_paste_item": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "value_rename": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
     "value_table-of-content": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "value_text": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "value_title": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "value_widget": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },

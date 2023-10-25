@@ -48,7 +48,6 @@ import {
 } from '../../store/selectors/dashTypedSelectors';
 import {DashEntry} from '../../typings/entry';
 
-import {AddWidgetProps} from './AddWidget/AddWidget';
 import {EditControls} from './EditControls/EditControls';
 import {ViewControls} from './ViewControls/ViewControls';
 
@@ -74,7 +73,6 @@ type OwnProps = {
     openDialog: (dialogType: string) => void;
     toggleTableOfContent: () => void;
     toggleFullscreenMode: (args: {history: History; location: Location}) => void;
-    onPasteWidget: AddWidgetProps['onPasteWidget'];
     entryDialoguesRef: React.RefObject<EntryDialogues>;
 };
 
@@ -130,8 +128,6 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 onOpenDialogSettingsClick={this.openDialogSettings}
                 onOpenDialogConnectionsClick={this.openDialogConnections}
                 onOpenDialogTabsClick={this.openDialogTabs}
-                openDialog={this.props.openDialog}
-                onPasteWidget={this.props.onPasteWidget}
                 entryDialoguesRef={this.props.entryDialoguesRef}
                 isDraft={this.props.isDraft}
                 isRenameWithoutReload={this.props.isRenameWithoutReload}

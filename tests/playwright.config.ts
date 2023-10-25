@@ -1,11 +1,14 @@
 import dotenv from 'dotenv';
 import os from 'os';
+import path from 'path';
 
 import {PlaywrightTestConfig, ReporterDescription, expect} from '@playwright/test';
 
 import {DatalensTestFixtures} from './utils/playwright/globalTestDefinition';
 
-dotenv.config();
+const ROOT_ENV_PATH = path.resolve(__dirname, '..', '.env');
+
+dotenv.config({path: ROOT_ENV_PATH});
 
 const maxWorkers = process.env.DLCI ? 6 : Number(process.env.E2E_MAX_WORKERS || os.cpus().length);
 
@@ -68,13 +71,17 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
         },
         headless: !headful,
         baseURL,
-        storageState: 'artifacts/storageState.json',
         ignoreHTTPSErrors: true,
         viewport: {width: 1920, height: 1080},
         trace: {mode: 'on-first-retry', screenshots: false, sources: false},
         actionTimeout: testTimeout,
         testIdAttribute: 'data-qa',
+        storageState: process.env.NO_AUTH === 'true' ? undefined : 'artifacts/storageState.json',
     },
+    projects: [
+        {name: 'basic', testDir: './suites'},
+        {name: 'opensource', testDir: './opensource-suites'},
+    ],
 };
 
 module.exports = playwrightConfig;

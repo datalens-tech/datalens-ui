@@ -4,13 +4,10 @@ import {Gear} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {Feature} from 'shared';
 import {DashboardActionPanelControlsQa} from 'shared/constants/qa/dash';
-import Utils from 'ui/utils';
 
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import NavigationPrompt from '../../../../../components/NavigationPrompt/NavigationPrompt';
-import {AddWidget, AddWidgetProps} from '../AddWidget/AddWidget';
 import {Description} from '../Description/Description';
 import {SaveDropDown} from '../SaveDropDown/SaveDropDown';
 
@@ -19,7 +16,7 @@ import '../DashActionPanel.scss';
 const b = block('dash-action-panel');
 const i18n = I18n.keyset('dash.action-panel.view');
 
-type EditControlsProps = AddWidgetProps & {
+type EditControlsProps = {
     revId?: string;
     publishedId?: string;
     onSaveAndPublishDashClick: () => void;
@@ -45,8 +42,6 @@ export const EditControls = (props: EditControlsProps) => {
         onOpenDialogSettingsClick,
         onOpenDialogConnectionsClick,
         onOpenDialogTabsClick,
-        openDialog,
-        onPasteWidget,
         entryDialoguesRef,
         isDraft,
         isRenameWithoutReload,
@@ -91,8 +86,6 @@ export const EditControls = (props: EditControlsProps) => {
         </React.Fragment>
     );
 
-    const showButtons = !Utils.isEnabledFeature(Feature.DashEditPanelEnabled);
-
     return (
         <React.Fragment>
             <Button
@@ -116,7 +109,6 @@ export const EditControls = (props: EditControlsProps) => {
             <Button view="normal" size="m" onClick={onOpenDialogTabsClick} qa="action-button-tabs">
                 {i18n('button_tabs')}
             </Button>
-            {showButtons && <AddWidget openDialog={openDialog} onPasteWidget={onPasteWidget} />}
             {savingControls}
             <NavigationPrompt key="navigation-prompt" when={isDraft && !isRenameWithoutReload} />
             <EntryDialogues ref={entryDialoguesRef} />

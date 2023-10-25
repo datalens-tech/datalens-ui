@@ -29,7 +29,7 @@ jobs:
         run: |
           COMMIT_NAME=$(git log -n 1 --pretty=format:%s) 
 
-          LAST_RELEASE_VERSION=$(curl -L https://api.github.com/repos/$GITHUB_REPOSITORY/releases | jq -r '.|=sort_by(.name)|.[-1].name' | sed 's|v||')
+          LAST_RELEASE_VERSION=$(curl -L https://api.github.com/repos/$GITHUB_REPOSITORY/releases | jq -r '.|=sort_by(.name|ltrimstr("v")|split(".")|map(tonumber))|.[-1].name' | sed 's|v||')
           echo "Last release version: ${LAST_RELEASE_VERSION}"
 
           MAIN_COMMIT=$(git rev-parse origin/main)
