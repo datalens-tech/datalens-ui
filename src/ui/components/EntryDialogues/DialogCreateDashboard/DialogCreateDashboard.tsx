@@ -84,11 +84,11 @@ class DialogCreateDashboard extends React.Component<Props> {
 
     private onApply = async (key: string) => {
         const {data} = this.props;
-        const responce = await this.props.sdk.charts.createDash({
+        const response = await this.props.sdk.charts.createDash({
             data: {key, data},
         });
 
-        return responce;
+        return response;
     };
 
     private onError = (error: DataLensApiError) => {
