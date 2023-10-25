@@ -1,6 +1,7 @@
 import React, {useCallback} from 'react';
 
 import {Button, Flex, SelectOption, SelectProps} from '@gravity-ui/uikit';
+import {I18n} from 'i18n';
 
 import './SelectOption.scss';
 
@@ -9,14 +10,16 @@ export type UseSelectRenderOptionProps<T = any> = {options: SelectOption<T>[]} &
     'options' | 'multiple' | 'onUpdate' | 'value'
 >;
 
-type OptionSelectionMode = 'only' | 'exclude';
+const i18n = I18n.keyset('components.common.YCSelect');
+
+type OptionSelectionMode = 'only' | 'except';
 type OptionProps<T = any> = {
     option: SelectOption<T>;
     onClick: (value: string, mode: OptionSelectionMode) => void;
 };
 
 const Option = (props: OptionProps) => {
-    const [mode, setMode] = React.useState<'only' | 'exclude'>('only');
+    const [mode, setMode] = React.useState<'only' | 'except'>('only');
 
     const {option, onClick} = props;
 
@@ -31,10 +34,10 @@ const Option = (props: OptionProps) => {
                 onClick={(e) => {
                     e.stopPropagation();
                     onClick(option.value, mode);
-                    setMode(mode === 'only' ? 'exclude' : 'only');
+                    setMode(mode === 'only' ? 'except' : 'only');
                 }}
             >
-                {mode}
+                {i18n(`item_${mode}`)}
             </Button>
         </Flex>
     );
