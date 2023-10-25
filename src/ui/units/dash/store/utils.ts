@@ -1,6 +1,6 @@
 import {generateUniqId} from '@gravity-ui/dashkit';
 import {I18n} from 'i18n';
-import {DL} from 'ui/constants';
+import {DL, URL_QUERY} from 'ui/constants';
 import Utils from 'ui/utils';
 
 import {Mode} from '../modules/constants';
@@ -11,7 +11,14 @@ const dashCreateI18n = I18n.keyset('component.dialog-create-dashboard.view');
 export const getFakeDashEntry = (workbookId?: string) => {
     const salt = Math.random().toString();
     const {counter, id: newTabId} = generateUniqId({salt, counter: 0, ids: []});
-    const initialKey = `${DL.USER_FOLDER}${dashCreateI18n('label_default-name')}`;
+
+    // For saving the full path when creating from a folder in navigation
+    const searchParams = new URLSearchParams(location.search);
+    const searchCurrentPath = searchParams.get(URL_QUERY.CURRENT_PATH);
+
+    const path = searchCurrentPath || DL.USER_FOLDER;
+
+    const initialKey = `${path}${dashCreateI18n('label_default-name')}`;
 
     const data = {
         tabs: [

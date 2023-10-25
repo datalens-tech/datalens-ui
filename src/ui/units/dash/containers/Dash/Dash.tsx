@@ -114,9 +114,11 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
 
         const hasEntryChanged = entryId !== prevEntryId;
         const hasRevisionChanged = revId !== prevRevId;
-        // In case of switching between workbooks and folders while creating a dash
-        const hasPathnameChanged =
-            isFakeEntry && prevLocation.pathname !== currentLocation.pathname;
+        // In case of switching between workbooks and folders while creating a dash and for updating along with the currentPath in query
+        const hasLocationChanged =
+            isFakeEntry &&
+            (prevLocation.pathname !== currentLocation.pathname ||
+                prevLocation.search !== currentLocation.search);
 
         const workbookId = this.props.entry?.workbookId;
         const prevWorkbookId = prevProps.entry?.workbookId;
@@ -126,7 +128,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             this.props.setRevisionsMode(RevisionsMode.Closed);
         }
 
-        if (hasEntryChanged || hasRevisionChanged || hasPathnameChanged) {
+        if (hasEntryChanged || hasRevisionChanged || hasLocationChanged) {
             this.props.loadDash({
                 history: this.props.history,
                 location: this.props.location,

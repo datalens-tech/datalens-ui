@@ -78,13 +78,15 @@ export type ActionPanelProps = OwnProps & StateProps & DispatchProps;
 type ActionPanelState = {};
 
 class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelState> {
+    isFakeEntry = Boolean(
+        Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && this.props.entry?.fake,
+    );
+
     render() {
         const {entry, isEditMode} = this.props;
         const showHeader = !isEmbeddedMode();
-        const isFakeEntry = Boolean(
-            Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && entry?.fake,
-        );
-        const enablePublish = Utils.isEnabledFeature(Feature.EnablePublishEntry) && !isFakeEntry;
+        const enablePublish =
+            Utils.isEnabledFeature(Feature.EnablePublishEntry) && !this.isFakeEntry;
 
         const DashSelectState = registry.dash.components.get('DashSelectState');
 
@@ -94,10 +96,10 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                     <React.Fragment>
                         <ActionPanel
                             entry={entry as GetEntryResponse}
-                            additionalEntryItems={this.getAdditionalEntryItems(isFakeEntry)}
+                            additionalEntryItems={this.getAdditionalEntryItems()}
                             rightItems={[
                                 <div className={b('controls')} key="controls">
-                                    {this.renderControls(isFakeEntry)}
+                                    {this.renderControls()}
                                 </div>,
                             ]}
                             enablePublish={enablePublish}
@@ -111,17 +113,16 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         );
     }
 
-    renderControls(isFakeEntry: boolean) {
+    renderControls() {
         const {entry} = this.props;
 
         if (this.props.isSelectStateMode) {
             return null;
         }
 
-        const saveDashHandler =
-            Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && isFakeEntry
-                ? this.handleSaveDash
-                : this.handlerSaveAndPublishDashClick;
+        const saveDashHandler = this.isFakeEntry
+            ? this.handleSaveDash
+            : this.handlerSaveAndPublishDashClick;
 
         return this.props.isEditMode ? (
             <EditControls
@@ -138,8 +139,8 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 isDraft={this.props.isDraft}
                 isRenameWithoutReload={this.props.isRenameWithoutReload}
                 loading={this.props.progress || this.props.isLoadingEditMode}
-                showCancel={!isFakeEntry}
-                showSaveDropdown={!isFakeEntry}
+                showCancel={!this.isFakeEntry}
+                showSaveDropdown={!this.isFakeEntry}
             />
         ) : (
             <ViewControls
@@ -222,7 +223,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         this.props.setActualDash();
     };
 
-    private getAdditionalEntryItems(isFakeEntry: boolean) {
+    private getAdditionalEntryItems() {
         const {canEdit, hasTableOfContent, dashEntry} = this.props;
         const {revId, publishedId} = dashEntry.entry;
         const isCurrentRevisionActual = revId === publishedId;
@@ -231,7 +232,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
 
         const selectStateMenuItem = getSelectStateMenuItemFn({
             action: this.onSelectStateClick,
-            hidden: !canEdit || !isCurrentRevisionActual || DL.IS_MOBILE || isFakeEntry,
+            hidden: !canEdit || !isCurrentRevisionActual || DL.IS_MOBILE || this.isFakeEntry,
         });
 
         const items: EntryContextMenuItem[] = [
@@ -266,7 +267,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
             dialog: EntryDialogName.CreateDashboard,
             dialogProps: {
                 workbookId: entry?.workbookId,
-                initDestination: DL.USER_FOLDER,
+                initDestination: Utils.getPathBefore({path: entry.key}),
                 data,
             },
         });
