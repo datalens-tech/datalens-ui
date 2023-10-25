@@ -12,6 +12,8 @@ jobs:
   delete_reports:
     name: Delete Reports
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       # Contains all reports for deleted branch
       BRANCH_REPORTS_DIR: reports/${{ github.event.ref }}
