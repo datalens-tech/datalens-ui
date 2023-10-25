@@ -1,6 +1,7 @@
 import React, {useCallback} from 'react';
 
 import {Button, Flex, SelectOption, SelectProps} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
 import './SelectOption.scss';
@@ -11,6 +12,7 @@ export type UseSelectRenderOptionProps<T = any> = {options: SelectOption<T>[]} &
 >;
 
 const i18n = I18n.keyset('components.common.YCSelect');
+const b = block('select-option');
 
 type OptionSelectionMode = 'only' | 'except';
 type OptionProps<T = any> = {
@@ -24,10 +26,10 @@ const Option = (props: OptionProps) => {
     const {option, onClick} = props;
 
     return (
-        <Flex className="select-option" alignItems={'center'} justifyContent={'space-between'}>
+        <Flex className={b()} alignItems={'center'} justifyContent={'space-between'}>
             {option.content}
             <Button
-                className="select-option__action-button"
+                className={b('action-button')}
                 onFocus={(e: React.FocusEvent<HTMLButtonElement, HTMLElement>) =>
                     e?.relatedTarget?.focus()
                 }
