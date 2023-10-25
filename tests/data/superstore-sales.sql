@@ -49,7 +49,7 @@ COPY sales (
     product_name,
     sales
 )
-FROM '/opt/app/tests/data/superstore_sales.csv' DELIMITER ',' CSV HEADER;
+FROM './superstore_sales.csv' DELIMITER ',' CSV HEADER;
 
 ALTER TABLE ONLY sales ADD CONSTRAINT sales_pkey PRIMARY KEY (id);
 
