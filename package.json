@@ -29,7 +29,9 @@
     "test:jestWatch": "npm run i18n:prepare && jest --watchAll",
     "platform-tools": "platform-tools",
     "prepare": "husky install",
-    "test:e2e": "cd tests && npm run test:e2e"
+    "test:e2e": "cd tests && npm run test:e2e",
+    "test:e2e:opensource": "cd tests && npm run test:e2e:opensource",
+    "test:install:chromium": "cd tests && npm run test:install:chromium"
   },
   "repository": {
     "type": "git",
