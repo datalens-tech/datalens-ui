@@ -265,7 +265,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
                 resolveMetaDataRef.current(meta);
             }
         },
-        [resolveMetaDataRef.current, loadedData, widgetId, chartId, error],
+        [resolveMetaDataRef.current, loadedData, widgetId, chartId, error, widgetParamsDefaults],
     );
 
     /**

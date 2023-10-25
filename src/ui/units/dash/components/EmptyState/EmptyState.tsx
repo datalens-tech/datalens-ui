@@ -6,8 +6,6 @@ import {I18n} from 'i18n';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {DL} from 'ui/constants';
 
-import {AddWidget, AddWidgetProps} from '../DashActionPanel/AddWidget/AddWidget';
-
 import './EmptyState.scss';
 
 const b = block('dash-empty-state');
@@ -19,9 +17,7 @@ type EmptyStateProps = {
     isTabView: boolean;
     onEditClick?: () => void;
     openDialog?: () => void;
-    onPasteItem?: AddWidgetProps['onPasteWidget'];
     isEditModeLoading?: boolean;
-    hideEditButtons?: boolean;
 };
 
 export const EmptyState = ({
@@ -29,12 +25,10 @@ export const EmptyState = ({
     canEdit,
     isTabView,
     onEditClick,
-    onPasteItem,
     openDialog,
     isEditModeLoading,
-    hideEditButtons,
 }: EmptyStateProps) => {
-    const showActions = !DL.IS_MOBILE && canEdit && openDialog && onPasteItem;
+    const showActions = !DL.IS_MOBILE && canEdit && openDialog;
 
     const title = isTabView ? i18n('label_empty-tab') : i18n('label_empty-dash');
 
@@ -53,21 +47,10 @@ export const EmptyState = ({
         )) ||
         null;
 
-    const editControls =
-        (isEditMode && !hideEditButtons && openDialog && onPasteItem && (
-            <AddWidget buttonSize="l" openDialog={openDialog} onPasteWidget={onPasteItem} />
-        )) ||
-        null;
-
     const renderAction = () => {
         return (
             <React.Fragment>
-                {showActions && (
-                    <div className={b('action')}>
-                        {viewControl}
-                        {editControls}
-                    </div>
-                )}
+                {showActions && <div className={b('action')}>{viewControl}</div>}
             </React.Fragment>
         );
     };

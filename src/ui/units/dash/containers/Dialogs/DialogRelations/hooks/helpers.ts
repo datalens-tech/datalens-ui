@@ -519,7 +519,12 @@ export const getRelationsInfo = (args: {
             if (!row.usedParams?.length) {
                 return false;
             }
-            return intersection(row.usedParams, aliasArr);
+            const rowInAlias = intersection(row.usedParams, aliasArr);
+            const widgetInAlias = intersection(widget.usedParams, aliasArr);
+            if (!rowInAlias.length || !widgetInAlias.length) {
+                return false;
+            }
+            return rowInAlias;
         });
     }
 
