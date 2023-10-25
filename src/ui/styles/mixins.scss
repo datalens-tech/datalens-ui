@@ -104,6 +104,11 @@
     max-width: 400px;
 }
 
+@mixin dl-select-disabled-option() {
+    color: var(--g-color-text-secondary);
+    pointer-events: none;
+}
+
 @mixin scrollbar-on-hover($width) {
     scrollbar-width: none;
 
