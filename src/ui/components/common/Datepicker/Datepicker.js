@@ -41,30 +41,6 @@ export const datepickerDefaultProps = {
 };
 
 export class Datepicker extends React.PureComponent {
-    static propTypes = {
-        onUpdate: PropTypes.func.isRequired,
-        onError: PropTypes.func,
-        from: dateType,
-        to: dateType,
-        min: dateType,
-        max: dateType,
-        format: PropTypes.string,
-        emptyValueText: PropTypes.string,
-        placeholder: PropTypes.string,
-        timezoneOffset: PropTypes.number,
-        outputFormat: PropTypes.oneOf([OUTPUT_FORMAT.DATE, OUTPUT_FORMAT.DATETIME]),
-        scale: PropTypes.oneOf([TABS.DAY, TABS.WEEK, TABS.MONTH, TABS.QUARTER, TABS.YEAR]),
-        controlWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-        range: PropTypes.bool,
-        allowNullableValues: PropTypes.bool,
-        showApply: PropTypes.bool,
-        hasClear: PropTypes.bool,
-        disabled: PropTypes.bool,
-        controlSize: PropTypes.oneOf(['s', 'm', 'l', 'xl']),
-        className: PropTypes.string,
-        popupClassName: PropTypes.string,
-    };
-
     static defaultProps = datepickerDefaultProps;
 
     static getDerivedStateFromProps(props, state) {
@@ -571,3 +547,27 @@ export class Datepicker extends React.PureComponent {
         );
     }
 }
+
+Datepicker.propTypes = {
+    onUpdate: PropTypes.func.isRequired,
+    onError: PropTypes.func,
+    from: dateType,
+    to: dateType,
+    min: dateType,
+    max: dateType,
+    format: PropTypes.string,
+    emptyValueText: PropTypes.string,
+    placeholder: PropTypes.string,
+    timezoneOffset: PropTypes.number,
+    outputFormat: PropTypes.oneOf([OUTPUT_FORMAT.DATE, OUTPUT_FORMAT.DATETIME]),
+    scale: PropTypes.oneOf([TABS.DAY, TABS.WEEK, TABS.MONTH, TABS.QUARTER, TABS.YEAR]),
+    controlWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    range: PropTypes.bool,
+    allowNullableValues: PropTypes.bool,
+    showApply: PropTypes.bool,
+    hasClear: PropTypes.bool,
+    disabled: PropTypes.bool,
+    controlSize: PropTypes.oneOf(['s', 'm', 'l', 'xl']),
+    className: PropTypes.string,
+    popupClassName: PropTypes.string,
+};
