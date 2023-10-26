@@ -285,16 +285,7 @@ export const Row = ({
             widgetIcon,
             rowIcon: icon,
         });
-    }, [
-        data,
-        widgetMeta,
-        showDebugInfo,
-        onAliasClick,
-        relationType,
-        aliasDetailTitle,
-        widgetIcon,
-        icon,
-    ]);
+    }, [data, showDebugInfo, onAliasClick, relationType, aliasDetailTitle, widgetIcon, icon]);
 
     const handleChange = React.useCallback(
         (changedData) => {
@@ -308,7 +299,7 @@ export const Row = ({
                 rowIcon: icon,
             });
         },
-        [onChange],
+        [aliasDetailTitle, data, icon, onChange, relationType, showDebugInfo, widgetIcon],
     );
 
     if (!data || !widgetMeta) {

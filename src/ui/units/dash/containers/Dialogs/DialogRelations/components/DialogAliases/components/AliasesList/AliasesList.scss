@@ -5,6 +5,14 @@
         justify-content: space-between;
     }
 
+    &__invalid-list &__row {
+        border-bottom: none;
+    }
+
+    &__invalid-list &__row + &__row {
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
     &__right {
         display: flex;
         flex-wrap: nowrap;
@@ -46,5 +54,14 @@
         vertical-align: text-bottom;
         height: 16px;
         margin-left: 4px;
+    }
+
+    &__controls {
+        margin-top: 10px;
+        text-align: right;
+    }
+
+    &__alias-clear-button + &__alias-clear-button {
+        margin-left: 8px;
     }
 }
