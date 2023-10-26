@@ -3,6 +3,10 @@ import React from 'react';
 import {Select, SelectOption, SelectProps} from '@gravity-ui/uikit';
 
 import {SelectStyles} from '../constants/SelectStyles';
+import {
+    UseSelectAsyncFetch,
+    useSelectAsyncFetch,
+} from '../hooks/useSelectAsyncFetch/useSelectAsyncFetch';
 import {useSelectOptionsEnhancer} from '../hooks/useSelectOptionsEnhancer';
 import {
     UseSelectRenderEmptyOptionsProps,
@@ -22,14 +26,26 @@ export type SelectFeaturedProps<T = any> = {
 } & Omit<SelectProps, 'options' | 'onFilterChange' | 'error'> &
     UseSelectRenderFilter &
     UseSelectRenderEmptyOptionsProps &
-    Pick<UseSelectRenderErrorProps, 'error'>;
+    Pick<UseSelectRenderErrorProps, 'error'> &
+    UseSelectAsyncFetch;
 
 export const SelectFeatured = <T,>({filterable = true, ...props}: SelectFeaturedProps<T>) => {
     const enhancedOptions = useSelectOptionsEnhancer(props.options);
 
-    const {renderFilter, options, resetFilterState} = useSelectRenderFilter({
+    const {renderOption} = useSelectRenderOption({
         ...props,
         options: enhancedOptions,
+    });
+
+    const selectLoadingProps = useSelectAsyncFetch<SelectOption>({
+        ...props,
+        options: enhancedOptions,
+        renderOption,
+    });
+
+    const {renderFilter, options, resetFilterState} = useSelectRenderFilter({
+        ...props,
+        options: selectLoadingProps.options,
     });
 
     const {renderEmptyOptions: renderEmptyOptionsError} = useSelectRenderError({
@@ -42,11 +58,10 @@ export const SelectFeatured = <T,>({filterable = true, ...props}: SelectFeatured
         renderEmptyOptions: renderEmptyOptionsError,
     });
 
-    const {renderOption} = useSelectRenderOption(props);
-
     return (
         <Select
             {...props}
+            {...selectLoadingProps}
             popupClassName={SelectStyles.Popup}
             error={Boolean(props.error)}
             filterable={props.error ? false : filterable}
@@ -54,7 +69,6 @@ export const SelectFeatured = <T,>({filterable = true, ...props}: SelectFeatured
             onFilterChange={undefined}
             options={options}
             renderFilter={props.error ? undefined : renderFilter}
-            renderOption={renderOption}
         />
     );
 };

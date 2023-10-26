@@ -2,11 +2,8 @@ import React from 'react';
 
 import {SelectOption} from '@gravity-ui/uikit';
 import compact from 'lodash/compact';
-import {useSelectAsyncFetch} from 'ui/components/Select/hooks/useSelectAsyncFetch/useSelectAsyncFetch';
 import {Fetcher} from 'ui/components/Select/hooks/useSelectInfinityFetch/types';
 import {useInfinityFetch} from 'ui/components/Select/hooks/useSelectInfinityFetch/useSelectInfinityFetch';
-
-import {useSelectOptionsEnhancer} from '../hooks/useSelectOptionsEnhancer';
 
 import {SelectFeatured, SelectFeaturedProps} from './SelectFeatured';
 
@@ -29,21 +26,14 @@ export const SelectFeaturedAsync = <Option extends SelectOption = any, Paginatio
         [responses],
     );
 
-    const handledOptions = useSelectOptionsEnhancer(respsFlat);
-
-    const selectLoadingProps = useSelectAsyncFetch<SelectOption>({
-        ...props,
-        options: handledOptions,
-        loading: isLoadingInitial,
-        onFetch: onFetchInfinity,
-    });
-
     return (
         <SelectFeatured
             {...props}
-            {...selectLoadingProps}
+            options={respsFlat}
             disableUIKitFilterAlgorithm
             error={error}
+            loading={isLoadingInitial}
+            onFetch={onFetchInfinity}
         />
     );
 };
