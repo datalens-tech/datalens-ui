@@ -277,62 +277,6 @@ export class YCSelect extends React.PureComponent {
         return Object.prototype.hasOwnProperty.call(items[0], 'groupTitle');
     }
 
-    static propTypes = {
-        onUpdate: PropTypes.func.isRequired,
-        getItems: PropTypes.func,
-        addItem: PropTypes.func,
-        renderSwitcher: PropTypes.func,
-        onOpenChange: PropTypes.func,
-        size: PropTypes.oneOf(['xs', 's', 'm', 'n', 'promo']),
-        type: PropTypes.oneOf([YCSelect.SINGLE, YCSelect.MULTIPLE]),
-        className: PropTypes.string,
-        popupClassName: PropTypes.string,
-        controlTestAnchor: PropTypes.string,
-        itemsListTestAnchor: PropTypes.string,
-        switcherClassName: PropTypes.string,
-        label: PropTypes.string,
-        itemsLoaderClassName: PropTypes.string,
-        controlWidth: PropTypes.number,
-        popupWidth: PropTypes.number,
-        itemsPageSize: PropTypes.number,
-        virtualizeThreshold: PropTypes.number,
-        showSearch: PropTypes.bool,
-        showArrow: PropTypes.bool,
-        showApply: PropTypes.bool,
-        showItemIcon: PropTypes.bool,
-        showItemMeta: PropTypes.bool,
-        showMissingItems: PropTypes.bool,
-        showSelectAll: PropTypes.bool,
-        allowEmptyValue: PropTypes.bool,
-        allowNullableValues: PropTypes.bool,
-        hiding: PropTypes.bool,
-        disabled: PropTypes.bool,
-        stretched: PropTypes.bool,
-        loading: PropTypes.bool,
-        loadingItems: PropTypes.bool,
-        applyOnOutsideClick: PropTypes.bool,
-        items: ItemsShape,
-        initialItems: ItemsShape,
-        value: (props, propName, componentName) => {
-            const propTypeSpec =
-                props['type'] === YCSelect.SINGLE
-                    ? {[propName]: PropTypes.string}
-                    : {[propName]: PropTypes.arrayOf(PropTypes.string)};
-            PropTypes.checkPropTypes(propTypeSpec, props, propName, componentName);
-        },
-        placeholder: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.shape({
-                text: PropTypes.string.isRequired,
-                icon: PropTypes.node.isRequired,
-            }),
-        ]),
-
-        errorContent: PropTypes.node,
-        onFetchErrorDetails: PropTypes.func,
-        fetchErrorDetailsTitle: PropTypes.string,
-    };
-
     constructor(props) {
         super(props);
 
@@ -1671,6 +1615,62 @@ export class YCSelect extends React.PureComponent {
         );
     }
 }
+
+YCSelect.propTypes = {
+    onUpdate: PropTypes.func.isRequired,
+    getItems: PropTypes.func,
+    addItem: PropTypes.func,
+    renderSwitcher: PropTypes.func,
+    onOpenChange: PropTypes.func,
+    size: PropTypes.oneOf(['xs', 's', 'm', 'n', 'promo']),
+    type: PropTypes.oneOf([YCSelect.SINGLE, YCSelect.MULTIPLE]),
+    className: PropTypes.string,
+    popupClassName: PropTypes.string,
+    controlTestAnchor: PropTypes.string,
+    itemsListTestAnchor: PropTypes.string,
+    switcherClassName: PropTypes.string,
+    label: PropTypes.string,
+    itemsLoaderClassName: PropTypes.string,
+    controlWidth: PropTypes.number,
+    popupWidth: PropTypes.number,
+    itemsPageSize: PropTypes.number,
+    virtualizeThreshold: PropTypes.number,
+    showSearch: PropTypes.bool,
+    showArrow: PropTypes.bool,
+    showApply: PropTypes.bool,
+    showItemIcon: PropTypes.bool,
+    showItemMeta: PropTypes.bool,
+    showMissingItems: PropTypes.bool,
+    showSelectAll: PropTypes.bool,
+    allowEmptyValue: PropTypes.bool,
+    allowNullableValues: PropTypes.bool,
+    hiding: PropTypes.bool,
+    disabled: PropTypes.bool,
+    stretched: PropTypes.bool,
+    loading: PropTypes.bool,
+    loadingItems: PropTypes.bool,
+    applyOnOutsideClick: PropTypes.bool,
+    items: ItemsShape,
+    initialItems: ItemsShape,
+    value: (props, propName, componentName) => {
+        const propTypeSpec =
+            props['type'] === YCSelect.SINGLE
+                ? {[propName]: PropTypes.string}
+                : {[propName]: PropTypes.arrayOf(PropTypes.string)};
+        PropTypes.checkPropTypes(propTypeSpec, props, propName, componentName);
+    },
+    placeholder: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.shape({
+            text: PropTypes.string.isRequired,
+            icon: PropTypes.node.isRequired,
+        }),
+    ]),
+
+    errorContent: PropTypes.node,
+    onFetchErrorDetails: PropTypes.func,
+    fetchErrorDetailsTitle: PropTypes.string,
+};
 
 export const YCSelectDefaultProps = {
     size: 's',
