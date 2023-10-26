@@ -67,7 +67,6 @@ class Header extends React.PureComponent<Props, State> {
                 progress={Boolean(this.props.isEditModeLoading)}
                 openDialog={this.props.openDialog}
                 toggleTableOfContent={this.props.toggleTableOfContent}
-                toggleFullscreenMode={this.props.toggleFullscreenMode}
                 handlerEditClick={this.props.handlerEditClick}
                 entryDialoguesRef={this.props.entryDialoguesRef}
             />

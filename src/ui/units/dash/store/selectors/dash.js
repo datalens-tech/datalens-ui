@@ -43,6 +43,7 @@ export const isDraft = createSelector(
 export const getCurrentTab = (state) => {
     const {data} = state.dash;
     const tabIndex = data ? data.tabs.findIndex(({id}) => id === state.dash.tabId) : -1;
+
     return tabIndex === -1
         ? null
         : {

@@ -16,9 +16,15 @@ import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, Mode} from '../../modules/constants';
 import {collectDashStats} from '../../modules/pushStats';
 import * as actionTypes from '../constants/dashActionTypes';
+import {getFakeDashEntry} from '../utils';
 
 import {SET_ERROR_MODE, SET_STATE, toggleTableOfContent} from './dashTyped';
-import {DOES_NOT_EXIST_ERROR_TEXT, NOT_FOUND_ERROR_TEXT, prepareLoadedData} from './helpers';
+import {
+    DOES_NOT_EXIST_ERROR_TEXT,
+    NOT_FOUND_ERROR_TEXT,
+    prepareLoadedData,
+    removeTabParam,
+} from './helpers';
 
 const i18n = I18n.keyset('dash.store.view');
 
@@ -194,9 +200,13 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
     return async function (dispatch, getState) {
         const {
             dash: {
-                entry: {entryId, savedId: stateSavedId},
+                entry: {entryId, savedId: stateSavedId, fake},
             },
         } = getState();
+
+        if (Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && fake) {
+            return;
+        }
 
         try {
             const {savedId} = await getSdk().us.getEntryMeta({entryId});
@@ -281,7 +291,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
 
 export const cleanLock = () => ({type: SET_STATE, payload: {lockToken: null}});
 
-export const load = ({location, history}) => {
+export const load = ({location, history, params}) => {
     // eslint-disable-next-line complexity
     return async function (dispatch) {
         try {
@@ -292,28 +302,47 @@ export const load = ({location, history}) => {
 
             const {pathname, search} = location;
 
+            const searchParams = new URLSearchParams(search);
+
             const entryId = extractEntryId(pathname);
+            const isFakeEntry =
+                Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) &&
+                !entryId &&
+                (pathname === '/dashboards/new' || pathname.startsWith('/workbooks/'));
+
+            if (isFakeEntry) {
+                if (searchParams.has('tab')) {
+                    removeTabParam(history, searchParams);
+                }
+
+                dispatch({
+                    type: SET_STATE,
+                    payload: getFakeDashEntry(params?.workbookId),
+                });
+                await dispatch(setEditMode());
+                return;
+            }
+
             if (!entryId) {
                 throw new Error(NOT_FOUND_ERROR_TEXT);
             }
-            const searchParams = new URLSearchParams(search);
 
             const hash = searchParams.get('state');
             const revId = searchParams.get(URL_QUERY.REV_ID);
-            const params = {
+            const readDashParams = {
                 includePermissionsInfo: true,
                 includeLinks: true,
                 branch: 'published',
             };
 
             if (revId) {
-                params.revId = revId;
+                readDashParams.revId = revId;
             }
 
             const [entry, hashData] = await Promise.all([
                 sdk.charts.readDash({
                     id: entryId,
-                    params,
+                    params: readDashParams,
                 }),
                 hash
                     ? getSdk()
@@ -356,12 +385,7 @@ export const load = ({location, history}) => {
             let tabId = searchParams.has('tab') ? searchParams.get('tab') : data.tabs[0].id;
             if (data.tabs.findIndex(({id}) => id === tabId) === -1) {
                 tabId = data.tabs[0].id;
-                searchParams.delete('tab');
-                history.replace({
-                    ...location,
-                    search: `?${searchParams.toString()}`,
-                    hash: '',
-                });
+                removeTabParam(history, searchParams);
             }
 
             let hashStates = {};

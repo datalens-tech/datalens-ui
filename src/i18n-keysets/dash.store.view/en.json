@@ -5,6 +5,7 @@
   "label_copied-widget-postfix": "copy",
   "label_dash-is-editing": "Dashboard is being edited",
   "label_error-404-title": "Error: object not found",
+  "label_tab-default-name": "Tab 1",
   "label_obsolete-dash": "Dashboard is obsolete",
   "label_obsolete-version": "Dashboard's current version is obsolete. Reload the page to get a new version.",
   "label_unexpected-error": "Error",
