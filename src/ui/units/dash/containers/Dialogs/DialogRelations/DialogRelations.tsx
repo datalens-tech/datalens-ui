@@ -79,7 +79,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             dialogAliases: aliases,
         });
 
-    const [showInvalidAliases, setShowInvalidAliases] = React.useState<string[] | null>(null);
+    const [shownInvalidAliases, setShownInvalidAliases] = React.useState<string[] | null>(null);
 
     const {filteredRelations} = useFilteredRelations({
         relations: preparedRelations,
@@ -213,7 +213,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     updateAliases: handleUpdateAliases,
                     onCloseCallback: handleAliasesClosed,
                     forceAddAlias: false,
-                    invalidAliases: showInvalidAliases,
+                    invalidAliases: shownInvalidAliases,
                     ...data,
                     dialogAliases: aliases,
                 }),
@@ -227,7 +227,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             filteredRelations,
             currentWidgetMeta,
             handleAliasesClosed,
-            showInvalidAliases,
+            shownInvalidAliases,
             aliases,
         ],
     );
@@ -281,12 +281,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
      */
     const handleInvalidAliasesClear = React.useCallback(() => {
         const filteredAliases = aliases[DEFAULT_ALIAS_NAMESPACE].map((aliasRow: string[]) => {
-            return aliasRow.filter((item) => !showInvalidAliases?.includes(item));
+            return aliasRow.filter((item) => !shownInvalidAliases?.includes(item));
         }).filter((item: string[]) => item.length > 1);
 
         handleUpdateAliases(filteredAliases);
-        setShowInvalidAliases([]);
-    }, [aliases, handleUpdateAliases, showInvalidAliases]);
+        setShownInvalidAliases([]);
+    }, [aliases, handleUpdateAliases, shownInvalidAliases]);
 
     const handleDisconnectAll = React.useCallback(() => {
         const newChangedWidgets: WidgetsTypes = {};
@@ -364,10 +364,10 @@ const DialogRelations = (props: DialogRelationsProps) => {
     }, [relations, preparedRelations]);
 
     React.useEffect(() => {
-        if (!showInvalidAliases && invalidAliases?.length) {
-            setShowInvalidAliases(invalidAliases);
+        if (!shownInvalidAliases && invalidAliases?.length) {
+            setShownInvalidAliases(invalidAliases);
         }
-    }, [showInvalidAliases, invalidAliases]);
+    }, [shownInvalidAliases, invalidAliases]);
 
     return (
         <Dialog onClose={onClose} open={true} className={b()} onEnterKeyDown={handleSaveRelations}>
@@ -408,7 +408,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 >
                     {i18n('button_disconnect')}
                 </Button>
-                {Boolean(showInvalidAliases?.length) && (
+                {Boolean(shownInvalidAliases?.length) && (
                     <React.Fragment>
                         <Button
                             ref={aliasWarnButtonRef}
@@ -433,7 +433,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                 </div>
                                 <AliasesInvalidList
                                     aliases={aliases?.[DEFAULT_ALIAS_NAMESPACE]}
-                                    invalidAliases={showInvalidAliases}
+                                    invalidAliases={shownInvalidAliases}
                                     datasets={datasets}
                                     onClose={handleAliasesWarnClick}
                                     onClear={handleInvalidAliasesClear}
