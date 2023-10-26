@@ -23,7 +23,7 @@ import {
     DOES_NOT_EXIST_ERROR_TEXT,
     NOT_FOUND_ERROR_TEXT,
     prepareLoadedData,
-    removeTabParam,
+    removeParamAndUpdate,
 } from './helpers';
 
 const i18n = I18n.keyset('dash.store.view');
@@ -311,10 +311,7 @@ export const load = ({location, history, params}) => {
                 (pathname === '/dashboards/new' || pathname.startsWith('/workbooks/'));
 
             if (isFakeEntry) {
-                if (searchParams.has('tab')) {
-                    removeTabParam(history, searchParams);
-                }
-
+                removeParamAndUpdate(history, searchParams, URL_QUERY.TAB_ID);
                 dispatch({
                     type: SET_STATE,
                     payload: getFakeDashEntry(params?.workbookId),
@@ -382,10 +379,12 @@ export const load = ({location, history, params}) => {
             // without await, they will start following each markdown separately
             await MarkdownProvider.init(data);
 
-            let tabId = searchParams.has('tab') ? searchParams.get('tab') : data.tabs[0].id;
+            let tabId = searchParams.has(URL_QUERY.TAB_ID)
+                ? searchParams.get(URL_QUERY.TAB_ID)
+                : data.tabs[0].id;
             if (data.tabs.findIndex(({id}) => id === tabId) === -1) {
                 tabId = data.tabs[0].id;
-                removeTabParam(history, searchParams);
+                removeParamAndUpdate(history, searchParams, URL_QUERY.TAB_ID);
             }
 
             let hashStates = {};

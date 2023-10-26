@@ -19,8 +19,12 @@ export const prepareLoadedData = (data: DashEntry['data']) => {
     return data;
 };
 
-export const removeTabParam = (history: History, searchParams: URLSearchParams) => {
-    searchParams.delete('tab');
+export const removeParamAndUpdate = (
+    history: History,
+    searchParams: URLSearchParams,
+    param: string,
+) => {
+    searchParams.delete(param);
     history.replace({
         ...location,
         search: `?${searchParams.toString()}`,
