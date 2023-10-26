@@ -4,8 +4,9 @@ import {usePrevious} from 'hooks/usePrevious';
 import isEqual from 'lodash/isEqual';
 
 import {FiltersTypes} from '../components/Filters/Filters';
-import {getChangedRelations, getMappedFilters} from '../helpers';
 import {DashMetaData, RelationType} from '../types';
+
+import {getChangedRelations, getMappedFilters} from './helpers';
 
 export const useFilteredRelations = ({
     relations,

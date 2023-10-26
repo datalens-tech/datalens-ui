@@ -6,8 +6,6 @@ import {
     SET_CACHED_HTML_ITEM,
     SET_CHECK_DATA,
     SET_CHECK_LOADING,
-    SET_CLOUD_TREE,
-    SET_CLOUD_TREE_LOADING,
     SET_CONNECTOR_DATA,
     SET_ENTRY,
     SET_FILE_COLUMN_FILTER,
@@ -29,8 +27,6 @@ import {
     SET_REPLACE_SOURCE_ACTION_DATA,
     SET_SCHEMA,
     SET_SCHEMA_LOADING,
-    SET_SELECT_ITEMS,
-    SET_SELECT_ITEMS_LOADING,
     SET_SUBMIT_LOADING,
     SET_UPLOADED_FILES,
     SET_VALIDATION_ERRORS,
@@ -137,33 +133,6 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                 validationErrors: errors,
             };
         }
-        case SET_SELECT_ITEMS_LOADING: {
-            const {key, loading} = action.payload;
-            return {
-                ...state,
-                ui: {
-                    ...state.ui,
-                    itemsLoading: {
-                        ...state.ui.itemsLoading,
-                        [key]: loading,
-                    },
-                },
-            };
-        }
-        case SET_SELECT_ITEMS: {
-            const {key, items, error} = action.payload;
-            return {
-                ...state,
-                selectItems: {
-                    ...state.selectItems,
-                    [key]: items,
-                },
-                apiErrors: {
-                    ...state.apiErrors,
-                    [key]: error,
-                },
-            };
-        }
         case SET_INITIAL_STATE: {
             return {
                 ...state,
@@ -173,15 +142,6 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                 connectionData: {},
                 checkData: {
                     status: 'unknown',
-                },
-                selectItems: {
-                    counters: [],
-                    mdbClusters: [],
-                    mdbHosts: [],
-                    mdbUsers: [],
-                    mdbDatabases: [],
-                    serviceAccounts: [],
-                    ydbDatabases: [],
                 },
                 apiErrors: {},
                 validationErrors: [],
@@ -224,27 +184,6 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                 ui: {
                     ...state.ui,
                     submitLoading: loading,
-                },
-            };
-        }
-        case SET_CLOUD_TREE: {
-            const {cloudTree, error} = action.payload;
-            return {
-                ...state,
-                cloudTree,
-                apiErrors: {
-                    ...state.apiErrors,
-                    cloudTree: error,
-                },
-            };
-        }
-        case SET_CLOUD_TREE_LOADING: {
-            const {loading} = action.payload;
-            return {
-                ...state,
-                ui: {
-                    ...state.ui,
-                    cloudTreeLoading: loading,
                 },
             };
         }

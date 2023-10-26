@@ -42,7 +42,7 @@ export const Filters = ({
             onChangeInput(value);
             setSearchValue(value);
         },
-        [searchValue],
+        [onChangeInput],
     );
 
     const handleButtonClick = React.useCallback(
@@ -57,7 +57,7 @@ export const Filters = ({
             setActiveFilters(newFilters);
             onChangeButtons(newFilters);
         },
-        [activeFilters],
+        [activeFilters, onChangeButtons],
     );
 
     const inputButtonProps = getFilterProps({currentType: 'input', filters: activeFilters});

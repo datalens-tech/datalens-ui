@@ -15,6 +15,7 @@ import {
 import {selectExtraSettings as getExtraSettingsWizard} from 'units/wizard/selectors/widget';
 
 import {AppStatus, DEFAULT_SALT, PANE_VIEWS, VisualizationStatus} from '../../constants';
+import {isPromQlQueriesEmpty, isQLQueryEmpty} from '../../utils/query';
 import {
     ADD_PARAM,
     ADD_PARAM_IN_QUERY,
@@ -77,7 +78,7 @@ import {
     QLTabData,
     QLTabsById,
 } from '../typings/ql';
-import {Helper} from '../utils/helper';
+import {Helper} from '../utils/grid';
 
 const initialState: QLState = {
     chartType: null,
@@ -280,15 +281,6 @@ export const getValid = createSelector(
 
 export const getVisualization = getWizardVisualization;
 
-export const getVisualizationIsEmpty = createSelector(
-    [getVisualization],
-    (visualization): boolean => {
-        return visualization?.placeholders.every((placeholder) => {
-            return placeholder.items.length === 0;
-        });
-    },
-);
-
 export const getEntryIsLocked = createSelector([getEntry], (entry): boolean => {
     return Boolean(entry && entry.permissions && entry.permissions.edit === false);
 });
@@ -371,10 +363,25 @@ export const getEntryNotChanged = createSelector(
     },
 );
 
+export const getIsQLQueryEmpty = createSelector(
+    [getQueryValue, getQueries, getChartType],
+    (queryValue, queries, chartType): boolean => {
+        switch (chartType) {
+            case QLChartType.Promql:
+            case QLChartType.Monitoringql: {
+                return isPromQlQueriesEmpty(queries);
+            }
+            case QLChartType.Sql:
+            default:
+                return isQLQueryEmpty(queryValue);
+        }
+    },
+);
+
 export const getEntryCanBeSaved = createSelector(
-    [getValid, getVisualizationIsEmpty, getEntryIsLocked, getEntryNotChanged],
-    (valid, visualizationIsEmpty, entryIsLocked, entryNotChanged): boolean => {
-        return valid && !visualizationIsEmpty && !entryIsLocked && !entryNotChanged;
+    [getValid, getEntryIsLocked, getEntryNotChanged, getIsQLQueryEmpty],
+    (valid, entryIsLocked, entryNotChanged, isQueryEmpty): boolean => {
+        return valid && !isQueryEmpty && !entryIsLocked && !entryNotChanged;
     },
 );
 

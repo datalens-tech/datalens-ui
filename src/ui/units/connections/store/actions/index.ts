@@ -31,8 +31,6 @@ import {
     resetFormsData,
     setCheckData,
     setCheckLoading,
-    setCloudTree,
-    setCloudTreeLoading,
     setConectorData,
     setEntry,
     setFlattenConnectors,
@@ -52,7 +50,6 @@ export * from './base';
 export * from './file';
 export * from './gsheet';
 export * from './s3-based';
-export * from './select-items';
 
 const i18n = I18n.keyset('connections.form');
 
@@ -205,17 +202,6 @@ export function getConnectorSchema(type: ConnectorType) {
     };
 }
 
-export function getCloudtree() {
-    return async (dispatch: ConnectionsReduxDispatch) => {
-        dispatch(setCloudTreeLoading({loading: true}));
-        const {cloudTree, error} = await api.fetchCloudtree();
-        batch(() => {
-            dispatch(setCloudTree({cloudTree, error}));
-            dispatch(setCloudTreeLoading({loading: false}));
-        });
-    };
-}
-
 export function changeForm(formUpdates: ConnectionsReduxState['form']) {
     return (dispatch: ConnectionsReduxDispatch) => {
         pipe([setForm, dispatch])({updates: formUpdates});
@@ -345,7 +331,7 @@ export function updateConnection() {
 
 export function checkConnection() {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {entry, schema, form, connectionData} = getState().connections;
+        const {entry, schema, form, innerForm, connectionData} = getState().connections;
         const newConnection = !entry?.entryId;
 
         if (!schema) {
@@ -355,10 +341,14 @@ export function checkConnection() {
             return;
         }
 
-        const params = getDataForParamsChecking(schema, {
-            ...form,
-            // technotes [3]
-            ...(newConnection && {[FieldKey.Name]: 'mocked_name'}),
+        const params = getDataForParamsChecking({
+            form: {
+                ...form,
+                // technotes [3]
+                ...(newConnection && {[FieldKey.Name]: 'mocked_name'}),
+            },
+            innerForm,
+            schema,
         });
 
         // technotes [1]

@@ -65,7 +65,7 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
 };
 
 const isEntryTypeWithFiltering = (entryType?: WidgetType) => {
-    return entryType === EditorType.TableNode;
+    return entryType === EditorType.TableNode || entryType === EditorType.GraphNode;
 };
 
 type LineProps = {
@@ -358,7 +358,13 @@ class Widget extends React.PureComponent<Props, State> {
         });
     };
 
-    setSelectedWidgetType = (selectedWidgetType: WidgetKind, entryMeta: {type: WidgetType}) => {
+    setSelectedWidgetType = ({
+        selectedWidgetType,
+        entryMeta,
+    }: {
+        selectedWidgetType: WidgetKind;
+        entryMeta: {type: WidgetType};
+    }) => {
         this.setState({selectedWidgetType, selectedEntryType: entryMeta.type});
 
         if (this.afterSettingSelectedWidgetTypeCallback) {

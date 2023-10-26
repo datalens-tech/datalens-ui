@@ -4,16 +4,17 @@ import {Button, DropdownMenu, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
+import {DEFAULT_ICON_SIZE, RELATION_TYPES, TEXT_LIMIT} from '../../constants';
+import {getDialogRowIcon} from '../../helpers';
+import {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
+
 import {
-    RELATION_TYPES,
-    TEXT_LIMIT,
     getClampedText,
-    getDialogRowIcon,
     getLinkIcon,
     getRelationDetailsKey,
     getRelationsText,
-} from '../../helpers';
-import {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
+    getTextSeparator,
+} from './helpers';
 
 import iconInfo from 'assets/icons/info.svg';
 import iconAlias from 'assets/icons/relations-alias.svg';
@@ -24,12 +25,18 @@ const b = block('dialog-relations-content');
 const i18n = I18n.keyset('component.dialog-relations.view');
 const ICON_SIZE = 16;
 
+type ChangedRelationType = {
+    type: RelationType;
+    widgetId: DashkitMetaDataItem['widgetId'];
+};
+
 type RowParams = {
     data: DashkitMetaDataItem;
     widgetMeta: DashkitMetaDataItem;
-    onChange: (props: {type: RelationType; widgetId: DashkitMetaDataItem['widgetId']}) => void;
+    onChange: (props: ChangedRelationType & AliasClickHandlerData) => void;
     onAliasClick?: (props: AliasClickHandlerData) => void;
     showDebugInfo: boolean;
+    widgetIcon: React.ReactNode;
 };
 
 const getRelationDetailsText = ({
@@ -158,34 +165,62 @@ export const getTooltipInfo = ({
         relationType,
     });
 
-    const widgetLabel =
-        widget?.label && widget?.title !== widget?.label ? `${widget?.label} — ` : '';
-    const rowLabel = row?.label && row?.title !== row?.label ? `${row?.label} — ` : '';
+    const widgetLabel = widget?.label && widget?.title !== widget?.label ? `${widget?.label}` : '';
+    const rowLabel = row?.label && row?.title !== row?.label ? `${row?.label}` : '';
+
+    const tooltipWidgetTitle = getClampedText(widget.title);
+    const tooltipRowTitle = getClampedText(row.title);
+
+    const tooltipWidgetSeparator = getTextSeparator(widgetLabel, tooltipWidgetTitle);
+    const tooltipRowSeparator = getTextSeparator(rowLabel, tooltipRowTitle);
 
     const tooltipContent = (
         <React.Fragment>
             {getRelationDetailsText({
                 text: i18n(getRelationDetailsKey(relationType)),
                 linkType: relationType as RelationType,
-                widget: `${widgetLabel} ${getClampedText(widget.title)}`,
-                row: `${rowLabel} ${getClampedText(row.title)}`,
+                widget: `${widgetLabel}${tooltipWidgetSeparator}${tooltipWidgetTitle}`,
+                row: `${rowLabel}${tooltipRowSeparator}${tooltipRowTitle}`,
                 withStrong: true,
             })}
             {showByField && fieldTextWithStrong}
         </React.Fragment>
     );
 
+    const widgetTitle = widget.title;
+    const rowTitle = row.title;
+
+    const widgetSeparator = getTextSeparator(widgetLabel, widgetTitle);
+    const rowSeparator = getTextSeparator(rowLabel, rowTitle);
+
     const tooltipTitle =
-        widget.title?.length > TEXT_LIMIT || row.title?.length > TEXT_LIMIT
+        widget.title?.length > TEXT_LIMIT || rowTitle?.length > TEXT_LIMIT
             ? getRelationDetailsText({
                   text: i18n(getRelationDetailsKey(relationType)),
                   linkType: relationType as RelationType,
-                  widget: `${widgetLabel} ${widget.title}`,
-                  row: `${rowLabel} ${row.title}`,
+                  widget: `${widgetLabel}${widgetSeparator}${widgetTitle}`,
+                  row: `${rowLabel}${rowSeparator}${rowTitle}`,
               }) + (showByField ? fieldText : '')
             : undefined;
 
-    return {tooltipContent, tooltipTitle};
+    const aliasDetailTitle = (
+        <React.Fragment>
+            {getRelationDetailsText({
+                text: i18n(getRelationDetailsKey(relationType)),
+                linkType: relationType as RelationType,
+                widget: `${widgetLabel}${widgetSeparator}${widgetTitle}`,
+                row: `${rowLabel}${rowSeparator}${rowTitle}`,
+                withStrong: true,
+            })}
+            {showByField ? fieldText : ''}
+        </React.Fragment>
+    );
+
+    return {
+        tooltipContent,
+        tooltipTitle,
+        aliasDetailTitle,
+    };
 };
 
 const getDropdownItems = ({
@@ -197,7 +232,7 @@ const getDropdownItems = ({
     items: Array<RelationType>;
     currentWidget: string;
     currentRow: DashkitMetaDataItem;
-    onChange: RowParams['onChange'];
+    onChange: (props: ChangedRelationType) => void;
 }) =>
     items.map((item) => ({
         action: () => {
@@ -212,7 +247,7 @@ const getDropdownItems = ({
                         text: i18n(getRelationDetailsKey(item)),
                         linkType: item as RelationType,
                         widget: getClampedText(currentWidget),
-                        row: getClampedText(currentRow.title),
+                        row: getClampedText(currentRow.title || currentRow.label || ''),
                     })}
                 </div>
             </div>
@@ -220,32 +255,18 @@ const getDropdownItems = ({
         className: b('list-row'),
     }));
 
-export const Row = ({data, widgetMeta, onChange, onAliasClick, showDebugInfo}: RowParams) => {
-    const handleAliasCLick = React.useCallback(() => {
-        onAliasClick?.({
-            currentRow: data,
-            showDebugInfo,
-        });
-    }, [data, widgetMeta, showDebugInfo, onAliasClick]);
-
-    if (!data || !widgetMeta) {
-        return null;
-    }
-
-    const icon = getDialogRowIcon(data, b('icon-row'));
-    const relations = data.relations;
+export const Row = ({
+    data,
+    widgetMeta,
+    onChange,
+    onAliasClick,
+    showDebugInfo,
+    widgetIcon,
+}: RowParams) => {
+    const relations = data?.relations;
     const {type: relationType, available: availableRelations, byFields, byAliases} = relations;
 
-    const relationTypeText = i18n(getRelationsText(relationType));
-
-    const items = getDropdownItems({
-        items: availableRelations,
-        currentWidget: widgetMeta.title,
-        currentRow: data,
-        onChange,
-    });
-
-    const {tooltipContent, tooltipTitle} = getTooltipInfo({
+    const {tooltipContent, tooltipTitle, aliasDetailTitle} = getTooltipInfo({
         widget: widgetMeta,
         row: data,
         relationType,
@@ -253,12 +274,54 @@ export const Row = ({data, widgetMeta, onChange, onAliasClick, showDebugInfo}: R
         byAliases,
     });
 
+    const icon = getDialogRowIcon(data, b('icon-row'), DEFAULT_ICON_SIZE);
+
+    const handleAliasCLick = React.useCallback(() => {
+        onAliasClick?.({
+            currentRow: data,
+            showDebugInfo,
+            relationText: aliasDetailTitle || '',
+            relationType,
+            widgetIcon,
+            rowIcon: icon,
+        });
+    }, [data, showDebugInfo, onAliasClick, relationType, aliasDetailTitle, widgetIcon, icon]);
+
+    const handleChange = React.useCallback(
+        (changedData) => {
+            onChange({
+                ...changedData,
+                currentRow: data,
+                showDebugInfo,
+                relationText: aliasDetailTitle || '',
+                relationType,
+                widgetIcon,
+                rowIcon: icon,
+            });
+        },
+        [aliasDetailTitle, data, icon, onChange, relationType, showDebugInfo, widgetIcon],
+    );
+
+    if (!data || !widgetMeta) {
+        return null;
+    }
+
+    const relationTypeText = i18n(getRelationsText(relationType));
+
+    const items = getDropdownItems({
+        items: availableRelations,
+        currentWidget: widgetMeta.title || widgetMeta.label || '',
+        currentRow: data,
+        onChange: handleChange,
+    });
+
     const showAliasIcon = Boolean(data.loaded);
 
-    const label = data?.label && data?.label !== data.title ? `${data?.label} — ` : '';
+    const label = data?.label && data?.label !== data.title ? data?.label : '';
     const debugInfo = showDebugInfo ? <span className={b('info')}> ({data.widgetId})</span> : null;
-    const title = (showDebugInfo ? `(${data.widgetId}) ` : '') + label + data.title;
-    const rowTitle = label + data.title;
+    const separator = getTextSeparator(label, data.title);
+    const rowTitle = `${label}${separator}${data.title}`;
+    const title = (showDebugInfo ? `(${data.widgetId}) ` : '') + rowTitle;
 
     return (
         <div className={b('row')}>

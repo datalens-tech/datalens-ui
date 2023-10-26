@@ -24,13 +24,14 @@ import {CommonPlaceholderProps} from '../PlaceholdersContainer';
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
-type Props = CommonPlaceholderProps & StateProps & DispatchProps;
+type Props = CommonPlaceholderProps & StateProps & DispatchProps & {qlMode?: boolean};
 
 const LABELS_CAPACITY = 1;
 
 class LabelsPlaceholder extends React.Component<Props> {
     render() {
-        const {labels, wrapTo, datasetError, onBeforeRemoveItem, visualization} = this.props;
+        const {addFieldItems, labels, wrapTo, datasetError, onBeforeRemoveItem, visualization} =
+            this.props;
         const hasSettings = VISUALIZATIONS_WITH_LABELS.has(visualization.id);
 
         return (
@@ -52,7 +53,7 @@ class LabelsPlaceholder extends React.Component<Props> {
                 wrapTo={wrapTo}
                 disabled={Boolean(datasetError)}
                 onBeforeRemoveItem={onBeforeRemoveItem}
-                qlMode={this.props.qlMode}
+                addFieldItems={addFieldItems}
                 onAfterUpdate={this.props.onUpdate}
                 {...(this.props.qlMode ? {} : {transform: this.transformLabelItems})}
             />

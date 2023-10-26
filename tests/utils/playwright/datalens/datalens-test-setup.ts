@@ -44,15 +44,19 @@ export async function datalensTestSetup({config, afterAuth, authSettings}: Datal
     }
 
     try {
-        await authenticate({
-            page,
-            baseUrl,
-            passportUrl: authSettings.url,
-            login: authSettings.login,
-            password: authSettings.password,
-            afterAuth,
-            retryCount: AUTH_RETRY,
-        });
+        if (process.env.NO_AUTH === 'true') {
+            await afterAuth?.({page});
+        } else {
+            await authenticate({
+                page,
+                baseUrl,
+                passportUrl: authSettings.url,
+                login: authSettings.login,
+                password: authSettings.password,
+                afterAuth,
+                retryCount: AUTH_RETRY,
+            });
+        }
     } finally {
         await page.close();
         await context.close();

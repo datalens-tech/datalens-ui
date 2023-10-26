@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
+import {DlNavigationQA} from 'shared';
 import {DL} from 'ui/constants';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
@@ -32,6 +33,8 @@ const PROMO_SITE_DOMAIN = 'https://datalens.tech';
 const PROMO_DOC_PATH = '/docs';
 const GITHUB_URL = 'https://github.com/datalens-tech/datalens';
 
+export const DOCUMENTATION_LINK = `${PROMO_SITE_DOMAIN}${PROMO_DOC_PATH}/${DL.USER_LANG}/`;
+
 export const ITEMS_NAVIGATION_DEFAULT_SIZE = 18;
 
 type AsideHeaderAdapterProps = {
@@ -44,7 +47,7 @@ enum Panel {
 
 const getLinkWrapper = (node: React.ReactNode, path: string) => {
     return (
-        <Link to={path} className={b('item-link')}>
+        <Link to={path} className={b('item-link')} data-qa={DlNavigationQA.AsideMenuItem}>
             <div className={b('item-wrap')}>{node}</div>
         </Link>
     );
@@ -152,8 +155,6 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
     );
 
     const renderFooter = () => {
-        const currentLang = DL.USER_LANG;
-
         return (
             <React.Fragment>
                 <FooterItem
@@ -204,7 +205,7 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                                     },
                                     {
                                         text: i18n('label_docs'),
-                                        url: `${PROMO_SITE_DOMAIN}${PROMO_DOC_PATH}/${currentLang}/`,
+                                        url: DOCUMENTATION_LINK,
                                     },
                                 ]}
                                 filterable={false}

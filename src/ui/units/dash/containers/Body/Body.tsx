@@ -7,16 +7,7 @@ import {
     ActionPanelItem as DashkitActionPanelItem,
     MenuItems,
 } from '@gravity-ui/dashkit';
-import {
-    ChartColumn,
-    CopyPlus,
-    Gear,
-    Heading,
-    Layers3Diagonal,
-    PlugConnection,
-    Sliders,
-    TextAlignLeft,
-} from '@gravity-ui/icons';
+import {ChartColumn, CopyPlus, Gear, Heading, Sliders, TextAlignLeft} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
@@ -38,7 +29,6 @@ import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
 import {DL} from '../../../../constants';
 import SDK from '../../../../libs/sdk';
 import Utils from '../../../../utils';
-import {AddWidgetProps} from '../../components/DashActionPanel/AddWidget/AddWidget';
 import {EmptyState} from '../../components/EmptyState/EmptyState';
 import Loader from '../../components/Loader/Loader';
 import {Mode} from '../../modules/constants';
@@ -90,7 +80,7 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 type OwnProps = {
     handlerEditClick: () => void;
-    onPasteItem: AddWidgetProps['onPasteWidget'];
+    onPasteItem: (data: CopiedConfigData) => void;
     isEditModeLoading: boolean;
 };
 
@@ -234,26 +224,6 @@ class Body extends React.PureComponent<BodyProps> {
                 },
                 qa: DashboardAddWidgetQa.AddTitle,
             },
-            {
-                id: 'links',
-                icon: <Icon data={PlugConnection} />,
-                title: i18n('dash.main.view', 'button_edit-panel-links'),
-                className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
-                },
-                qa: DashboardAddWidgetQa.Links,
-            },
-            {
-                id: 'tabs',
-                icon: <Icon data={Layers3Diagonal} />,
-                title: i18n('dash.main.view', 'button_edit-panel-tabs'),
-                className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.TABS);
-                },
-                qa: DashboardAddWidgetQa.Tabs,
-            },
         ];
 
         const copiedData = this.state.hasCopyInBuffer;
@@ -353,8 +323,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         const DashKit = getConfiguredDashKit();
 
-        const showEditActionPanel =
-            Utils.isEnabledFeature(Feature.DashEditPanelEnabled) && mode === Mode.Edit;
+        const showEditActionPanel = mode === Mode.Edit;
 
         return (
             <div className={b('content-wrapper')}>
@@ -383,14 +352,12 @@ class Body extends React.PureComponent<BodyProps> {
                         {!settings.hideTabs && <Tabs />}
                         {isEmptyTab ? (
                             <EmptyState
-                                onPasteItem={this.props.onPasteItem}
                                 openDialog={this.props.openDialog}
                                 canEdit={this.props.canEdit}
                                 isEditMode={mode === Mode.Edit}
                                 isTabView={!settings.hideTabs && tabs.length > 1}
                                 onEditClick={handlerEditClick}
                                 isEditModeLoading={isEditModeLoading}
-                                hideEditButtons={showEditActionPanel}
                             />
                         ) : (
                             <DashKit
@@ -411,9 +378,6 @@ class Body extends React.PureComponent<BodyProps> {
                                     ) as DashKitProps['globalParams']
                                 }
                                 overlayControls={overlayControls}
-                                _experimentDisableItemAnimation={Utils.isEnabledFeature(
-                                    Feature.DashKitItemAnimationDisabled,
-                                )}
                             />
                         )}
                         {showEditActionPanel && (

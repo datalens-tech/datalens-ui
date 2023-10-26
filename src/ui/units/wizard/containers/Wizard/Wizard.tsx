@@ -64,7 +64,7 @@ import {RevisionsMode} from '../../../../store/typings/entryContent';
 import {getUrlParamFromStr} from '../../../../utils';
 import history from '../../../../utils/history';
 import {isDraft, isEditMode} from '../../../dash/store/selectors/dash';
-import {SetDefaultsArgs, loadParentDash, resetWizardStore, setDefaults} from '../../actions';
+import {SetDefaultsArgs, resetWizardStore, setDefaults} from '../../actions';
 import {updateClientChartsConfig} from '../../actions/preview';
 import {toggleViewOnlyMode} from '../../actions/settings';
 import {receiveWidgetAndPrepareMetadata, updateWizardWidget} from '../../actions/widget';
@@ -544,7 +544,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
             setDefaults,
             receiveWidgetAndPrepareMetadata,
             toggleViewOnlyMode,
-            loadParentDash,
             updateClientChartsConfig,
             setRevisionsMode,
             cleanRevisions,

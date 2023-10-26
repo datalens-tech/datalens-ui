@@ -84,21 +84,3 @@ export interface EntryRelationFields {
     public: boolean;
     workbookId: string | null;
 }
-
-export interface PresetFieldData {
-    chart: {
-        targets: {
-            query: string;
-            scopeId: string;
-        }[];
-        settings: {
-            ['chart.type']: string;
-            ['other.normalize']: string;
-        };
-    };
-    redirectUrl?: string;
-    params: {
-        from: number;
-        to: number;
-    };
-}

@@ -6,8 +6,6 @@ import type {WorkbookEntry} from 'units/workbooks/types';
 
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
 
-import type {UseAdditionalWorkbookActions} from './types/functions/UseAdditionalWorkbookActions';
-
 export const workbooksFunctionsMap = {
     getWorkbookTabs: makeFunctionTemplate<(workbook: WorkbookWithPermissions) => Item[]>(),
     getWorkbookEntryUrl:
@@ -16,6 +14,7 @@ export const workbooksFunctionsMap = {
         >(),
     getWorkbookDashboardEntryUrl:
         makeFunctionTemplate<(response: EntryDialogOnCloseArg) => string>(),
+    getNewDashUrl: makeFunctionTemplate<(workbookId?: string) => string>(),
     useAdditionalWorkbookEntryActions:
         makeFunctionTemplate<
             (
@@ -24,5 +23,10 @@ export const workbooksFunctionsMap = {
             ) => DropdownMenuItemMixed<unknown>[]
         >(),
     useAdditionalWorkbookActions:
-        makeFunctionTemplate<(workbook: WorkbookWithPermissions) => UseAdditionalWorkbookActions>(),
+        makeFunctionTemplate<
+            (
+                workbook: WorkbookWithPermissions,
+                classNameIconAction: string,
+            ) => DropdownMenuItemMixed<unknown>[]
+        >(),
 } as const;

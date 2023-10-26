@@ -1,6 +1,11 @@
 import {ElementHandle} from '@playwright/test';
 
-import {ControlQA, DlNavigationQA, EntryDialogQA} from '../../src/shared/constants';
+import {
+    ControlQA,
+    DlNavigationQA,
+    EntryDialogQA,
+    VisualizationsQa,
+} from '../../src/shared/constants';
 import {copyEntity, deleteEntity, entryDialogFillAndSave, slct, waitForCondition} from '../utils';
 
 import {BasePage, BasePageProps} from './BasePage';
@@ -81,6 +86,14 @@ export class ChartPage extends BasePage {
         await this.page.click(slct('visualization-select-btn'));
 
         return visualizations.filter((s): s is string => s !== null);
+    }
+
+    async checkSelectedVisualization(id: VisualizationsQa): Promise<boolean> {
+        const switcher = this.page.locator(slct('visualization-select-btn'));
+
+        const visualization = switcher.getByTestId(slct(id));
+
+        return visualization.isVisible();
     }
 
     async openSaveDialogAndGetPath() {

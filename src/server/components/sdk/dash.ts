@@ -158,13 +158,13 @@ function validateData(data: DashData) {
 
 class Dash {
     static async create(
-        data: CreateEntryRequest<DashEntry> | DashEntryCreateParams,
+        data: CreateEntryRequest<DashEntry | DashEntryCreateParams>,
         headers: IncomingHttpHeaders,
         ctx: AppContext,
         I18n: ServerI18n,
     ): Promise<DashEntry> {
         try {
-            let usData: CreateEntryRequest<DashEntry> | DashEntryCreateParams = {
+            let usData: CreateEntryRequest<DashEntry | DashEntryCreateParams> = {
                 ...data,
                 scope: EntryScope.Dash,
                 type: '',
@@ -185,7 +185,16 @@ class Dash {
 
             validateData(usData.data);
 
-            const createdEntry = (await US.createEntry(usData, headers, ctx)) as DashEntry & {
+            const headersWithMetadata = {
+                ...headers,
+                ...ctx.getMetadata(),
+            };
+
+            const createdEntry = (await US.createEntry(
+                usData,
+                headersWithMetadata,
+                ctx,
+            )) as DashEntry & {
                 revId: string;
             };
             let updatedEntry = null;
@@ -221,7 +230,16 @@ class Dash {
         ctx: AppContext,
     ): Promise<DashEntry> {
         try {
-            const result = (await US.readEntry(entryId, params, headers, ctx)) as DashEntry;
+            const headersWithMetadata = {
+                ...headers,
+                ...ctx.getMetadata(),
+            };
+            const result = (await US.readEntry(
+                entryId,
+                params,
+                headersWithMetadata,
+                ctx,
+            )) as DashEntry;
 
             ctx.log('SDK_DASH_READ_SUCCESS', US.getLoggedEntry(result));
 
@@ -255,7 +273,18 @@ class Dash {
                 usData.skipSyncLinks = true;
             }
 
-            const result = (await US.updateEntry(entryId, mode, usData, headers, ctx)) as DashEntry;
+            const headersWithMetadata = {
+                ...headers,
+                ...ctx.getMetadata(),
+            };
+
+            const result = (await US.updateEntry(
+                entryId,
+                mode,
+                usData,
+                headersWithMetadata,
+                ctx,
+            )) as DashEntry;
 
             ctx.log('SDK_DASH_UPDATE_SUCCESS', US.getLoggedEntry(result));
 
@@ -272,7 +301,12 @@ class Dash {
 
     static async delete(entryId: string, headers: IncomingHttpHeaders, ctx: AppContext) {
         try {
-            const result = (await US.deleteEntry(entryId, headers, ctx)) as DashEntry;
+            const headersWithMetadata = {
+                ...headers,
+                ...ctx.getMetadata(),
+            };
+
+            const result = (await US.deleteEntry(entryId, headersWithMetadata, ctx)) as DashEntry;
 
             ctx.log('SDK_DASH_DELETE_SUCCESS', US.getLoggedEntry(result));
 

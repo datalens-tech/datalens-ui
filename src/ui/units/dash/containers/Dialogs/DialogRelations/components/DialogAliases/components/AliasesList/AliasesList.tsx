@@ -1,18 +1,13 @@
 import React from 'react';
 
-import {Xmark} from '@gravity-ui/icons';
-import {Button, Icon} from '@gravity-ui/uikit';
+import {Magnifier, TrashBin, Xmark} from '@gravity-ui/icons';
+import {Button, ButtonView, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DatasetsFieldsListData} from 'ui/components/DashKit/plugins/types';
-import {AliasesContext} from 'ui/units/dash/containers/Dialogs/DialogRelations/hooks/useRelations';
-import {
-    DatasetsListData,
-    RelationsData,
-} from 'ui/units/dash/containers/Dialogs/DialogRelations/types';
 
-import MagnifierIcon from '@gravity-ui/icons/svgs/magnifier.svg';
-import TrashBinIcon from '@gravity-ui/icons/svgs/trash-bin.svg';
+import {AliasesContext} from '../../../../hooks/useRelations';
+import {DatasetsListData, RelationsData} from '../../../../types';
 
 import './AliasesList.scss';
 
@@ -34,7 +29,7 @@ type AliasesListItemProps = AliasesListProps & {
     indexRow: number;
 };
 
-const getFieldNameByGuid = (datasets: DatasetsListData | null, aliasItem: string) => {
+export const getFieldNameByGuid = (datasets: DatasetsListData | null, aliasItem: string) => {
     let dataset: {
         datasetId: string;
         datasetName: string;
@@ -68,7 +63,8 @@ const AliasesListItem = ({
     onSelectParam,
     indexRow,
 }: AliasesListItemProps) => {
-    const {datasets, selectedAliasRowIndex, selectedParam} = React.useContext(AliasesContext);
+    const {datasets, selectedAliasRowIndex, selectedParam, invalidAliases} =
+        React.useContext(AliasesContext);
 
     const handleRemoveAliasRow = React.useCallback(() => {
         onRemoveClick({
@@ -93,7 +89,7 @@ const AliasesListItem = ({
                 rowWithPartlyRemoved,
             });
         },
-        [onRemoveClick],
+        [onRemoveClick, row],
     );
 
     return (
@@ -106,7 +102,15 @@ const AliasesListItem = ({
                         : '';
                     const fieldName = field?.title || aliasItem;
                     const isAliasItemSelected = selectedParam === aliasItem && isRowActive;
-                    const buttonView = isAliasItemSelected ? 'outlined-info' : 'outlined';
+
+                    const isInvalidItem = invalidAliases?.includes(aliasItem);
+                    let buttonView: ButtonView = 'outlined';
+                    if (isInvalidItem) {
+                        buttonView = 'outlined-danger';
+                    } else if (isAliasItemSelected) {
+                        buttonView = 'outlined-info';
+                    }
+
                     // partly remove item from alias for more than 2 items in row
                     const showRemoveItemIcon = isAliasItemSelected && array.length > 2;
 
@@ -123,9 +127,6 @@ const AliasesListItem = ({
                                         aliasRow: row,
                                         fieldName: `${fieldName}${datasetText}`,
                                         field,
-                                        /*datasetId,
-                                        datasetName,
-                                        datasets,*/
                                     })
                                 }
                             >
@@ -159,7 +160,7 @@ const AliasesListItem = ({
                     }
                     title={i18n('button_show-related-widgets')}
                 >
-                    <Icon data={MagnifierIcon} />
+                    <Icon data={Magnifier} />
                 </Button>
                 <Button
                     className={b('alias-icon-button', {active: isRowActive}, 'remove')}
@@ -167,7 +168,7 @@ const AliasesListItem = ({
                     onClick={handleRemoveAliasRow}
                     title={i18n('button_delete-alias')}
                 >
-                    <Icon data={TrashBinIcon} />
+                    <Icon data={TrashBin} />
                 </Button>
             </div>
         </div>
@@ -203,7 +204,7 @@ export const AliasesList = (props: AliasesListProps) => {
             setSelectedAliasParamIndex(paramIndex);
             onAliasRowClick({...args, isClickedOnSelected});
         },
-        [onAliasRowClick, selectedAliasRowIndex, selectedAliasParamIndex],
+        [showDetailedData, selectedAliasParamIndex, selectedAliasRowIndex, onAliasRowClick],
     );
 
     React.useEffect(() => {

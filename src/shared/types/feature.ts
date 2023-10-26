@@ -42,7 +42,6 @@ export enum Feature {
     MailWelcomeNewUser = 'MailWelcomeNewUser',
     CollectionsEnabled = 'CollectionsEnabled',
     CollectionsAccessEnabled = 'CollectionsAccessEnabled',
-    DashEditPanelEnabled = 'DashEditPanelEnabled',
     DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
     DashAutorefresh = 'DashAutorefresh',
@@ -90,7 +89,7 @@ export enum Feature {
     UseChartsEngineResponseConfig = 'UseChartsEngineResponseConfig',
     UseChartsEngineLogin = 'UseChartsEngineLogin',
     AddDemoWorkbook = 'AddDemoWorkbook',
-    DashKitItemAnimationDisabled = 'DashKitItemAnimationDisabled',
+    SaveDashWithFakeEntry = 'SaveDashWithFakeEntry',
 }
 
 export type FeatureConfig = Record<string, boolean>;

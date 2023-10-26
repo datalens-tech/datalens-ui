@@ -82,11 +82,13 @@ export enum RobotChartsSQLEditorTitles {
 
 export enum RobotChartsSQLEditorUrls {
     NewQLChartForPostgresDemo = '/ql/?connectionId=vinixts1o8dip',
+    NewQLChartForMonitoring = '/ql/?connectionId=sko8xq9yb2yck',
     NewQLChartForCHYTDemo = '/ql/?connectionId=4ztka7stosdow',
     NewQLChart = '/ql',
     QLChartWithIntervalParameter = '/ql/estm3g44u4g84?interval=__between___interval_2023-04-18T00:00:00.000Z_2023-04-21T23:59:59.999Z',
     QLChartWithStringParameter = '/ql/l7j6d6kw8iwyb',
     QLChartWithStringParameterSet = '/ql/l7j6d6kw8iwyb?year=2000',
+    QLMonitoringChart = '/ql/juti3rn4g6s88',
     QLWithWizardId = '/ql/ikblc7qjn4reb',
     QLWithEditorId = '/ql/j2ac4oofeuzm9',
 }
@@ -183,7 +185,6 @@ export const COMMON_SELECTORS = {
     ACTION_PANEL_SAVE_AS_MENU: 'action-save-menu',
     ACTION_BTN_CONNECTIONS: 'action-button-connections',
     ACTION_BTN_TABS: 'action-button-tabs',
-    ACTION_BTN_ADD: 'action-button-add',
     DASH_ENTRY_NAME: 'dash-entry-name',
     ENTRY_CONTEXT_MENU_KEY: 'entry-context-menu',
     REVISIONS_LIST: 'revisions-list',

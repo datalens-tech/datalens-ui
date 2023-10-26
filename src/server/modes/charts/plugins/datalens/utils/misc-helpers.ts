@@ -309,14 +309,22 @@ function getFormatOptionsFromFieldFormatting(
     formatting: CommonNumberFormattingOptions | undefined,
     dataType: string,
 ): ChartKitFormatSettings {
+    let chartKitPrecision = 0;
+    if (dataType === 'float') {
+        chartKitPrecision =
+            typeof formatting?.precision === 'number'
+                ? formatting.precision
+                : MINIMUM_FRACTION_DIGITS;
+    }
+
     return typeof formatting === 'undefined' || isEmpty(formatting)
         ? {
               chartKitFormatting: true,
-              chartKitPrecision: dataType === 'float' ? MINIMUM_FRACTION_DIGITS : 0,
+              chartKitPrecision,
           }
         : {
               chartKitFormatting: true,
-              chartKitPrecision: formatting.precision,
+              chartKitPrecision,
               chartKitPrefix: formatting.prefix,
               chartKitPostfix: formatting.postfix,
               chartKitUnit: formatting.unit,

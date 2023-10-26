@@ -43,7 +43,6 @@ class LayerFiltersPlaceholder extends React.Component<Props> {
                 onUpdate={this.onUpdate}
                 noSwap={true}
                 onItemClick={this.onItemClick}
-                qlMode={this.props.qlMode}
             />
         );
     }

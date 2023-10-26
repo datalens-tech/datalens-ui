@@ -6,6 +6,7 @@ import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {DashTabItemControlSourceType, Feature} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
+import {getCurrentTab} from 'ui/units/dash/store/selectors/dash';
 
 import {
     ChartKitWrapperLoadStatusUnknown,
@@ -229,6 +230,16 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         ],
     );
 
+    const currentDashTab = useSelector(getCurrentTab);
+
+    /**
+     * get defaults widget params: need to detect relations for external selectors
+     */
+    const widgetParamsDefaults = React.useMemo(() => {
+        const item = currentDashTab.items.find(({id}: {id: String}) => id === widgetId);
+        return item.defaults;
+    }, [currentDashTab, widgetId]);
+
     /**
      * debounced call of chartkit reflow
      */
@@ -247,13 +258,14 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
                 id: widgetId,
                 chartId,
                 error,
+                widgetParamsDefaults,
             });
 
             if (resolveMetaDataRef.current) {
                 resolveMetaDataRef.current(meta);
             }
         },
-        [resolveMetaDataRef.current, loadedData, widgetId, chartId, error],
+        [resolveMetaDataRef.current, loadedData, widgetId, chartId, error, widgetParamsDefaults],
     );
 
     /**

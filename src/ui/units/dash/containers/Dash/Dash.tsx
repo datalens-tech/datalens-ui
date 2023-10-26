@@ -34,6 +34,7 @@ import {
     load as loadDash,
     setCopiedItemData,
     setEditMode,
+    setLock,
 } from '../../store/actions/dash';
 import {setErrorMode, setPageTab} from '../../store/actions/dashTyped';
 import {canEdit, getDashEntry, isDraft, isEditMode} from '../../store/selectors/dash';
@@ -68,11 +69,24 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const entryId = extractEntryId(this.props.location.pathname);
 
         if (this.props.entry?.entryId !== entryId) {
-            this.props.loadDash({history: this.props.history, location: this.props.location});
+            this.props.loadDash({
+                history: this.props.history,
+                location: this.props.location,
+                params: this.props.match.params,
+            });
         }
 
         if (Utils.isEnabledFeature(Feature.AuthUpdateWithTimeout)) {
             this.setAuthUpdateTimeout();
+        }
+
+        const isFakeEntry =
+            Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && this.props.entry?.fake;
+
+        // Fix case when open dash in edit mode then open dataset via navigation then click browser's back button.
+        // We set lockToken again
+        if (!isFakeEntry && this.props.isEditMode && this.props.lockToken === null) {
+            this.props.setLock(entryId, false, false);
         }
 
         window.addEventListener('beforeunload', this.unloadConfirmation);
@@ -84,6 +98,9 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
 
         const prevEntryId = extractEntryId(prevLocation.pathname);
         const entryId = extractEntryId(currentLocation.pathname);
+
+        const isFakeEntry =
+            Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && this.props.entry?.fake;
 
         const currentSearchParams = new URLSearchParams(currentLocation.search);
         const revId = currentSearchParams.get(URL_QUERY.REV_ID);
@@ -97,6 +114,11 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
 
         const hasEntryChanged = entryId !== prevEntryId;
         const hasRevisionChanged = revId !== prevRevId;
+        // In case of switching between workbooks and folders while creating a dash and for updating along with the currentPath in query
+        const hasLocationChanged =
+            isFakeEntry &&
+            (prevLocation.pathname !== currentLocation.pathname ||
+                prevLocation.search !== currentLocation.search);
 
         const workbookId = this.props.entry?.workbookId;
         const prevWorkbookId = prevProps.entry?.workbookId;
@@ -105,8 +127,23 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             this.props.cleanRevisions();
             this.props.setRevisionsMode(RevisionsMode.Closed);
         }
-        if (hasEntryChanged || hasRevisionChanged) {
-            this.props.loadDash({history: this.props.history, location: this.props.location});
+
+        if (hasEntryChanged || hasRevisionChanged || hasLocationChanged) {
+            this.props.loadDash({
+                history: this.props.history,
+                location: this.props.location,
+                params: this.props.match.params,
+            });
+        }
+
+        if (tabId && prevTabId !== tabId && this.props.tabId !== tabId) {
+            this.props.setPageTab(tabId);
+        }
+
+        this.updateMobileWorkbooksData(workbookId, prevWorkbookId);
+
+        if (isFakeEntry) {
+            return;
         }
 
         if (prevProps.isEditMode && !this.props.isEditMode) {
@@ -116,18 +153,6 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         } else if (!prevProps.isEditMode && this.props.isEditMode) {
             // entered editing mode
             this.setLockExtendTimeout();
-        }
-
-        if (tabId && prevTabId !== tabId && this.props.tabId !== tabId) {
-            this.props.setPageTab(tabId);
-        }
-
-        if (DL.IS_MOBILE && prevWorkbookId !== workbookId && workbookId) {
-            this.props.addWorkbookInfo(workbookId);
-        }
-
-        if (DL.IS_MOBILE && prevWorkbookId && !workbookId) {
-            this.props.resetWorkbookPermissions();
         }
     }
 
@@ -219,7 +244,6 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     history={history}
                     location={location}
                     isEditModeLoading={this.state.isEditModeLoading}
-                    onPasteItem={this.onPasteItem}
                 />
                 <Body
                     handlerEditClick={this.handlerEditClick}
@@ -292,6 +316,20 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             layout: itemData?.layout,
         });
     };
+
+    private updateMobileWorkbooksData = (prevWorkbookId?: string, workbookId?: string) => {
+        if (!DL.IS_MOBILE) {
+            return;
+        }
+
+        if (prevWorkbookId !== workbookId && workbookId) {
+            this.props.addWorkbookInfo(workbookId);
+        }
+
+        if (prevWorkbookId && !workbookId) {
+            this.props.resetWorkbookPermissions();
+        }
+    };
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
@@ -312,6 +350,7 @@ const mapDispatchToProps = {
     setErrorMode,
     cleanLock,
     deleteLock,
+    setLock,
     cleanRevisions,
     setPageTab,
     setEditMode,

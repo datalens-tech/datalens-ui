@@ -21,6 +21,7 @@ import prepareTable from './preparers/table';
 import {LINEAR_VISUALIZATIONS, PIE_VISUALIZATIONS} from './utils/constants';
 import {getColumnsAndRows, log} from './utils/misc-helpers';
 import {
+    mapColors,
     mapVisualizationPlaceholdersItems,
     migrateOrAutofillVisualization,
 } from './utils/visualization-utils';
@@ -74,13 +75,21 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
 
         const datasetId = 'ql-mocked-dataset';
 
+        const orderedColumns = [...columns].sort((columnA, columnB) => {
+            return columnA.name > columnB.name ? 1 : -1;
+        });
+
         // Converting dashsql columns to wizard fields
-        const fields = columns.map((column, i) => {
+        const fields = columns.map((column) => {
             const guessedType = (column.biType ||
                 DATASET_FIELD_TYPES.STRING) as DATASET_FIELD_TYPES;
 
+            const orderedIndex = orderedColumns.findIndex(
+                (orderedColumn) => orderedColumn.name === column.name,
+            );
+
             return {
-                guid: `${column.name}-${i}`,
+                guid: `${column.name}-${orderedIndex}`,
                 title: column.name,
                 datasetId,
                 data_type: guessedType,
@@ -124,7 +133,7 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
                 }
 
                 if (!distincts[j].has(value)) {
-                    distincts[j].add(value);
+                    distincts[j].add(String(value));
                 }
             });
         });
@@ -177,6 +186,11 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
             newVisualization = mapVisualizationPlaceholdersItems({
                 visualization: sharedVisualization,
                 fields,
+            });
+
+            newColors = mapColors({
+                fields,
+                colors: sharedColors as Field[],
             });
         }
 

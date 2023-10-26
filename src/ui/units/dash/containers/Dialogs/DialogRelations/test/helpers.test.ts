@@ -1,7 +1,8 @@
 import {Config} from '@gravity-ui/dashkit/build/esm/shared/types/config';
-import {RelationType} from 'ui/units/dash/containers/Dialogs/DialogRelations/types';
 
-import {RELATION_TYPES, addAlias, getNormalizedAliases, getUpdatedRelations} from '../helpers';
+import {RELATION_TYPES} from '../constants';
+import {addAlias, getNormalizedAliases, getUpdatedRelations} from '../helpers';
+import {RelationType} from '../types';
 
 jest.mock('ui', () => {
     return {
@@ -20,11 +21,11 @@ const connections = {
 
 const changed = {
     input: {
-        a: RELATION_TYPES.output as RelationType,
+        a: RELATION_TYPES.input as RelationType,
     },
     multi: {
-        a: RELATION_TYPES.output as RelationType,
-        b: RELATION_TYPES.input as RelationType,
+        a: RELATION_TYPES.input as RelationType,
+        b: RELATION_TYPES.output as RelationType,
     },
     ignores: {
         b: RELATION_TYPES.ignore as RelationType,
@@ -67,7 +68,6 @@ describe('Dash/DialogRelations', () => {
             resultObj.otherInput,
         );
     });
-
     test(`Check the update of relations after changing: connections=${JSON.stringify(
         connections.onlyInput,
     )}; changed: ${JSON.stringify(changed.input)}`, () => {

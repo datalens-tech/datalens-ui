@@ -293,6 +293,7 @@ function SelectConnections(props) {
                     startFrom="connections"
                     popupPlacement="auto"
                     includeClickableType={clickableTypes}
+                    ignoreWorkbookEntries={true}
                     inactiveEntryIds={getInactiveEntryIds(connections)}
                     placeSelectParameters={getPlaceSelectParameters([
                         PLACE.ROOT,

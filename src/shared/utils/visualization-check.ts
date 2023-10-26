@@ -10,9 +10,7 @@ export function isYAGRVisualization(chartType: string, visualizationId: string) 
 
     return (
         isMonitoringOrPrometheus &&
-        ['line', 'area', 'area100p', 'column', 'column100p', 'bar', 'bar100p'].includes(
-            visualizationId,
-        )
+        ['line', 'area', 'area100p', 'column', 'column100p'].includes(visualizationId)
     );
 }
 

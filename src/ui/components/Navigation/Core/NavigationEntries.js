@@ -72,6 +72,7 @@ class NavigationEntries extends React.Component {
         getPlaceParameters: PropTypes.func.isRequired,
         inactiveEntryIds: PropTypes.arrayOf(PropTypes.string),
         isMobileNavigation: PropTypes.bool,
+        ignoreWorkbookEntries: PropTypes.bool,
         onChangeLocation: PropTypes.func,
 
         resolveUsersByIds: PropTypes.func,
@@ -179,7 +180,14 @@ class NavigationEntries extends React.Component {
         }
     }
     requestList({isSearch}) {
-        const {scope, isMobileNavigation, path = '', place, getPlaceParameters} = this.props;
+        const {
+            scope,
+            isMobileNavigation,
+            path = '',
+            place,
+            getPlaceParameters,
+            ignoreWorkbookEntries,
+        } = this.props;
         const {page: currentPage, searchValue, orderBy} = this.state;
         const placeParameters = getPlaceParameters(place);
 
@@ -188,6 +196,7 @@ class NavigationEntries extends React.Component {
             page = 0;
         }
         this.setState({page});
+
         return getSdk().mix.getNavigationList(
             {
                 place,
@@ -203,6 +212,7 @@ class NavigationEntries extends React.Component {
                 filters: {
                     name: searchValue,
                 },
+                ignoreWorkbookEntries,
             },
             {concurrentId: 'getNavigationList'},
         );
@@ -668,7 +678,7 @@ class NavigationEntries extends React.Component {
 
 const mapDispatchToProps = {
     // need to be wrapped in additional function because the registry function does not have time to register
-    resolveUsersByIds: () => getResolveUsersByIdsAction(),
+    resolveUsersByIds: (ids) => getResolveUsersByIdsAction()(ids),
     showToast,
 };
 

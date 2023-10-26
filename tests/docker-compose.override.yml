@@ -1,0 +1,8 @@
+version: "3.7"
+
+services:
+  datalens:
+    build:
+      context: ../datalens-ui
+      dockerfile: ../datalens-ui/Dockerfile
+    image: result/latest

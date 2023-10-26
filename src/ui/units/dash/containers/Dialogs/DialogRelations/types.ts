@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {DashTabConnectionKind} from 'shared';
 
 import {
@@ -5,7 +7,7 @@ import {
     DatasetsFieldsListData,
 } from '../../../../../components/DashKit/plugins/types';
 
-import {RELATION_TYPES} from './helpers';
+import {RELATIONS_CHARTS_ICONS_DICT, RELATION_TYPES} from './constants';
 
 export type DashkitMetaDataItem = DashkitMetaDataItemBase & {
     relations: RelationsData;
@@ -52,17 +54,40 @@ export type ConnectionsData = Array<{
     kind: DashTabConnectionKind;
 }>;
 
-export type AliasClickHandlerData = {
-    showDebugInfo: boolean;
-    currentRow: DashkitMetaDataItem;
+export type ClickCallbackArgs = {
+    reset?: boolean;
+    changedWidgetsData?: WidgetsTypes;
+    changedWidgetId?: string;
+    aliases?: string[][];
 };
 
-export type AliasClickHandlerArgs = AliasClickHandlerData & {
-    relations: DashMetaData;
-    currentWidget: DashkitMetaDataItem;
-    datasets: DatasetsListData | null;
-    updateRelations: (args: string[][]) => void;
+export type WidgetsTypes = Record<string, RelationType>;
+
+export type AliasBase = {
+    onCloseCallback?: (args?: ClickCallbackArgs) => void;
+    forceAddAlias?: boolean;
+    relationText: React.ReactNode;
+    relationType: RelationType;
+    changedWidgetsData?: WidgetsTypes;
+    changedWidgetId?: string;
 };
+
+export type AliasClickHandlerData = AliasBase & {
+    showDebugInfo: boolean;
+    currentRow: DashkitMetaDataItem;
+    widgetIcon: React.ReactNode;
+    rowIcon: React.ReactNode;
+};
+
+export type AliasClickHandlerArgs = AliasClickHandlerData &
+    AliasBase & {
+        relations: DashMetaData;
+        currentWidget: DashkitMetaDataItem;
+        datasets: DatasetsListData | null;
+        updateAliases: (args: string[][]) => void;
+        invalidAliases: string[];
+        dialogAliases: Record<string, string[][]>;
+    };
 
 export type AliasContextProps = {
     showDebugInfo: boolean;
@@ -70,4 +95,12 @@ export type AliasContextProps = {
     relations: DashMetaData;
     selectedAliasRowIndex: number | null;
     selectedParam: string | null;
+    invalidAliases: string[];
 };
+
+export type RelationChartType = keyof typeof RELATIONS_CHARTS_ICONS_DICT;
+
+export type RelationTypeChangeProps = {
+    type: RelationType;
+    widgetId: DashkitMetaDataItem['widgetId'];
+} & AliasClickHandlerData;

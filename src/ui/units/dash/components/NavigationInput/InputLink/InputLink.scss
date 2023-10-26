@@ -5,7 +5,6 @@
 
     &__input {
         width: var(--dl-dropdown-navigation-width, 100%);
-        margin-right: 10px;
         display: flex;
     }
 
@@ -13,7 +12,7 @@
         width: 75px;
 
         &:not(:last-child) {
-            margin-right: 5px;
+            margin-right: 10px;
         }
     }
 

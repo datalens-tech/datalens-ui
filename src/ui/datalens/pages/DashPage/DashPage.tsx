@@ -8,15 +8,27 @@ import {reducerRegistry} from '../../../store';
 
 import 'ui/styles/dash.scss';
 import 'ui/styles/dl-monaco.scss';
+import Utils from 'ui/utils';
+import {Feature} from 'shared';
 
 reducerRegistry.register({
     dash,
     wizard,
 });
 
+const routePaths = ['/:id'];
+
+if (Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry)) {
+    routePaths.unshift(
+        '/dashboards/new',
+        '/workbooks/:workbookId/dashboards',
+        '/workbooks/:workbookId/dash',
+    );
+}
+
 const Dash = () => (
     <Switch>
-        <Route path="/:id" component={DashApp} />
+        <Route path={routePaths} component={DashApp} />
     </Switch>
 );
 

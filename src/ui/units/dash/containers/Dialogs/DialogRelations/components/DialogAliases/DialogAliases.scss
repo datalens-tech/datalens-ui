@@ -14,15 +14,40 @@
     }
 
     &__info {
-        color: var(--g-color-text-complementary);
-        margin-bottom: 18px;
+        line-height: 16px;
+        margin-left: 4px;
+    }
+
+    &__info-text {
+        margin: 0 0 13px;
+    }
+
+    &__info-text + &__info-text {
+        margin-bottom: 0;
     }
 
     &__card {
         padding: 12px 16px;
+        margin-bottom: 16px;
     }
 
-    &__empty {
-        text-align: center;
+    &__sub-header {
+        margin-bottom: 16px;
+        word-wrap: break-word;
+    }
+
+    &__label {
+        margin-right: 4px;
+        white-space: nowrap;
+    }
+
+    &__type-text {
+        &_lower-case {
+            display: inline-block;
+
+            &::first-letter {
+                text-transform: lowercase;
+            }
+        }
     }
 }

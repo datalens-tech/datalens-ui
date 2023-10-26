@@ -5,8 +5,6 @@ import {
     SetCachedHtmlItem,
     SetCheckData,
     SetCheckLoading,
-    SetCloudTree,
-    SetCloudTreeLoading,
     SetConectorData,
     SetEntry,
     SetFileColumnFilter,
@@ -28,8 +26,6 @@ import {
     SetPageLoading,
     SetReplaceSourceActionData,
     SetSchemaLoading,
-    SetSelectItems,
-    SetSelectItemsLoading,
     SetSubmitLoading,
     SetUploadedFiles,
     SetValidationErrors,
@@ -40,8 +36,6 @@ export const SET_FLATTEN_CONNECTORS = Symbol('connections/SET_FLATTEN_CONNECTORS
 export const SET_ENTRY = Symbol('connections/SET_ENTRY');
 export const SET_CONNECTOR_DATA = Symbol('connections/SET_CONNECTOR_DATA');
 export const SET_PAGE_LOADING = Symbol('connections/SET_PAGE_LOADING');
-export const SET_SELECT_ITEMS_LOADING = Symbol('connections/SET_SELECT_ITEMS_LOADING');
-export const SET_SELECT_ITEMS = Symbol('connections/SET_SELECT_ITEMS');
 export const SET_FORM = Symbol('connections/SET_FORM');
 export const SET_INITIAL_FORM = Symbol('connections/SET_INITIAL_FORM');
 export const SET_INNER_FORM = Symbol('connections/SET_INNER_FORM');
@@ -52,8 +46,6 @@ export const SET_INITIAL_STATE = Symbol('connections/SET_INITIAL_STATE');
 export const SET_CHECK_LOADING = Symbol('connections/SET_CHECK_LOADING');
 export const SET_CHECK_DATA = Symbol('connections/SET_CHECK_DATA');
 export const SET_SUBMIT_LOADING = Symbol('connections/SET_SUBMIT_LOADING');
-export const SET_CLOUD_TREE = Symbol('connections/SET_CLOUD_TREE');
-export const SET_CLOUD_TREE_LOADING = Symbol('connections/SET_CLOUD_TREE_LOADING');
 export const SET_SCHEMA_LOADING = Symbol('connections/SET_SCHEMA_LOADING');
 export const RESET_FORMS_DATA = Symbol('connections/RESET_FORMS_DATA');
 export const SET_UPLOADED_FILES = Symbol('connections/SET_UPLOADED_FILES');
@@ -127,15 +119,6 @@ export function setPageLoading(payload: SetPageLoading['payload']): SetPageLoadi
     };
 }
 
-export function setSelectItemsLoading(
-    payload: SetSelectItemsLoading['payload'],
-): SetSelectItemsLoading {
-    return {
-        type: SET_SELECT_ITEMS_LOADING,
-        payload,
-    };
-}
-
 export function setCachedHtmlItem(payload: SetCachedHtmlItem['payload']): SetCachedHtmlItem {
     return {
         type: SET_CACHED_HTML_ITEM,
@@ -153,13 +136,6 @@ export function setSchema(payload: SetFormSchema['payload']): SetFormSchema {
 export function setValidationErrors(payload: SetValidationErrors['payload']): SetValidationErrors {
     return {
         type: SET_VALIDATION_ERRORS,
-        payload,
-    };
-}
-
-export function setSelectItems(payload: SetSelectItems['payload']): SetSelectItems {
-    return {
-        type: SET_SELECT_ITEMS,
         payload,
     };
 }
@@ -187,20 +163,6 @@ export function setCheckData(payload: SetCheckData['payload']): SetCheckData {
 export function setSubmitLoading(payload: SetSubmitLoading['payload']): SetSubmitLoading {
     return {
         type: SET_SUBMIT_LOADING,
-        payload,
-    };
-}
-
-export function setCloudTree(payload: SetCloudTree['payload']): SetCloudTree {
-    return {
-        type: SET_CLOUD_TREE,
-        payload,
-    };
-}
-
-export function setCloudTreeLoading(payload: SetCloudTreeLoading['payload']): SetCloudTreeLoading {
-    return {
-        type: SET_CLOUD_TREE_LOADING,
         payload,
     };
 }

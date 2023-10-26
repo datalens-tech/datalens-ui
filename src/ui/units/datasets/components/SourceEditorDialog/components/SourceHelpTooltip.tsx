@@ -15,7 +15,7 @@ type SourceHelpTooltipProps = {
 };
 
 interface RegularTooltipProps {
-    body?: string;
+    body?: React.ReactNode;
     example?: string | string[];
     headerExampleEnabled?: boolean;
 }
@@ -46,6 +46,19 @@ const RegularTooltip: React.FC<RegularTooltipProps> = (props) => {
     );
 
     return <HelpPopover content={renderContent()} />;
+};
+
+const getStyledTextWithCode = (key: string) => {
+    return (
+        <Interpolate
+            text={i18n(key)}
+            matches={{
+                code(match) {
+                    return <span className={b('code', {inline: true})}>{match}</span>;
+                },
+            }}
+        />
+    );
 };
 
 const getCommonSubselectContent = () => (
@@ -116,25 +129,7 @@ export const SourceHelpTooltip: React.FC<SourceHelpTooltipProps> = ({fieldDocKey
                         <React.Fragment>
                             {getCommonSubselectContent()}
                             <div className={b('tooltip-item')}>
-                                <Interpolate
-                                    text={i18n('label_subselect-form-tooltip-chyt')}
-                                    matches={{
-                                        code1(match) {
-                                            return (
-                                                <span className={b('code', {inline: true})}>
-                                                    {match}
-                                                </span>
-                                            );
-                                        },
-                                        code2(match) {
-                                            return (
-                                                <span className={b('code', {inline: true})}>
-                                                    {match}
-                                                </span>
-                                            );
-                                        },
-                                    }}
-                                />
+                                {getStyledTextWithCode('label_subselect-form-tooltip-chyt')}
                             </div>
                         </React.Fragment>
                     }
@@ -162,25 +157,7 @@ export const SourceHelpTooltip: React.FC<SourceHelpTooltipProps> = ({fieldDocKey
                         <React.Fragment>
                             {getCommonSubselectContent()}
                             <div className={b('tooltip-item')}>
-                                <Interpolate
-                                    text={i18n('label_subselect-form-tooltip-pg')}
-                                    matches={{
-                                        code1(match) {
-                                            return (
-                                                <span className={b('code', {inline: true})}>
-                                                    {match}
-                                                </span>
-                                            );
-                                        },
-                                        code2(match) {
-                                            return (
-                                                <span className={b('code', {inline: true})}>
-                                                    {match}
-                                                </span>
-                                            );
-                                        },
-                                    }}
-                                />
+                                {getStyledTextWithCode('label_subselect-form-tooltip-pg')}
                             </div>
                         </React.Fragment>
                     }
@@ -220,7 +197,9 @@ export const SourceHelpTooltip: React.FC<SourceHelpTooltipProps> = ({fieldDocKey
             return <RegularTooltip example="//home/chyt/demo_folder" />;
         }
         case 'YTsaurus/CHYT_SUBSELECT/subsql': {
-            return <RegularTooltip body={i18n('label_yc-chyt-subselect-subsql')} />;
+            return (
+                <RegularTooltip body={getStyledTextWithCode('label_yc-chyt-subselect-subsql')} />
+            );
         }
         default: {
             return null;

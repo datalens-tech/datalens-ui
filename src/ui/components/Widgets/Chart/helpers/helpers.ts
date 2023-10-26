@@ -187,23 +187,27 @@ export const getWidgetSelectorMeta = ({
     chartId,
     loadedData,
     error,
+    widgetParamsDefaults,
 }: {
     id: string;
     chartId: string;
     loadedData: ResolveWidgetControlDataRefArgs | null;
     error: CombinedError | null;
+    widgetParamsDefaults: StringParams;
 }) => {
     const loadedWithError = Boolean(
         (loadedData as unknown as AxiosResponse<ResponseError>)?.data?.error || error,
     );
+
     const metaInfo: Omit<DashkitMetaDataItemBase, 'defaultParams'> &
-        Omit<DashkitOldMetaDataItemBase, 'chartId'> = {
+        Omit<DashkitOldMetaDataItemBase, 'chartId'> & {widgetParams: StringParams} = {
         layoutId: id,
         chartId,
         widgetId: id,
         title: '',
         label: (loadedData?.key && Utils.getEntryNameFromKey(loadedData?.key || '')) || '',
         params: loadedData?.params || {},
+        widgetParams: widgetParamsDefaults || {},
         enableFiltering: false,
         loaded: Boolean(loadedData),
         entryId: chartId,
@@ -356,7 +360,7 @@ export const isWidgetTypeWithAutoHeight = (widgetType: string) => {
         widgetType === DASH_WIDGET_TYPES.TABLE ||
         widgetType === DASH_WIDGET_TYPES.MARKDOWN ||
         widgetType === DASH_WIDGET_TYPES.METRIC ||
-        widgetType === DASH_WIDGET_TYPES.METRIC_2
+        widgetType === DASH_WIDGET_TYPES.METRIC2
     );
 };
 

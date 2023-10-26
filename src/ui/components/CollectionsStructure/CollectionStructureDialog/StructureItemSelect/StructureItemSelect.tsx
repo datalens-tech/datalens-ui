@@ -5,6 +5,7 @@ import {Card, Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Waypoint} from 'react-waypoint';
+import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
 import {
     Collection,
@@ -170,9 +171,11 @@ export const StructureItemSelect = React.memo<Props>(
                                 )}
                             </React.Fragment>
                         ) : (
-                            <div className={b('empty-placeholder')}>
-                                {i18n('label_empty-collection')}
-                            </div>
+                            <PlaceholderIllustration
+                                title={i18n('label_empty-collection')}
+                                name="emptyDirectory"
+                                direction="column"
+                            />
                         )}
                     </React.Fragment>
                 )}
