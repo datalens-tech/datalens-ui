@@ -8,7 +8,7 @@ import './SelectOption.scss';
 
 export type UseSelectRenderOptionProps<T = any> = {options: SelectOption<T>[]} & Pick<
     SelectProps,
-    'options' | 'multiple' | 'onUpdate' | 'value' | 'renderOption'
+    'options' | 'multiple' | 'onUpdate' | 'value'
 >;
 
 const i18n = I18n.keyset('components.common.YCSelect');
@@ -50,7 +50,6 @@ export const useSelectRenderOption = ({
     options,
     multiple,
     onUpdate,
-    renderOption,
 }: UseSelectRenderOptionProps) => {
     const handleClick = React.useCallback(
         (val: string, mode: OptionSelectionMode) => {
@@ -63,15 +62,12 @@ export const useSelectRenderOption = ({
         [onUpdate, options],
     );
 
-    const handleRenderOption = useCallback(
-        (opt, opts) => {
-            if (renderOption && opt.value === 'LOADER' && opt.value === 'LOADER_PERSISTENT') {
-                return renderOption(opt, opts);
-            }
+    const renderOption = useCallback(
+        (opt) => {
             return <Option option={opt} onClick={handleClick} />;
         },
-        [handleClick, renderOption],
+        [handleClick],
     );
 
-    return {renderOption: multiple ? handleRenderOption : undefined};
+    return {renderOption: multiple ? renderOption : undefined};
 };
