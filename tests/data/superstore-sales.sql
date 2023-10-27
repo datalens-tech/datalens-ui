@@ -29,27 +29,7 @@ CREATE TABLE sales (
     sales TEXT NOT NULL 
 );
 
-COPY sales (
-    id,
-    order_id,
-    order_date,
-    ship_date,
-    ship_mode,
-    customer_id,
-    customer_name,
-    segment,
-    country,
-    city,
-    state,
-    postal_code,
-    region,
-    product_id,
-    category,
-    sub_category,
-    product_name,
-    sales
-)
-FROM './superstore_sales.csv' DELIMITER ',' CSV HEADER;
+\COPY sales FROM '/opt/e2e-data/superstore-sales.csv' DELIMITER ',' CSV HEADER;
 
 ALTER TABLE ONLY sales ADD CONSTRAINT sales_pkey PRIMARY KEY (id);
 
