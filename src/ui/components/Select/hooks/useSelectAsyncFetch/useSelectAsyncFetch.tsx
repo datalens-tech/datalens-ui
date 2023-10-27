@@ -7,6 +7,8 @@ import {
 } from '@gravity-ui/uikit/build/esm/components/Select/types';
 import {useMountedState} from 'ui/hooks/useMountedState';
 
+import {DefaultOption} from '../../components/DefaultOption';
+
 import {useIntersection} from './useIntersection';
 
 import './CustomLoader.scss';
@@ -84,14 +86,7 @@ export const useSelectAsyncFetch = <T,>({
                 case LOADER_PERSISTENT:
                     return <CustomLoader />;
                 default:
-                    return (
-                        renderOption?.(option, viewParams) ||
-                        ((
-                            <div className="custom-option" title={String(option.content)}>
-                                {option.content}
-                            </div>
-                        ) as React.ReactElement)
-                    );
+                    return renderOption?.(option, viewParams) || <DefaultOption option={option} />;
             }
         },
         [handleFetch, renderOption],
