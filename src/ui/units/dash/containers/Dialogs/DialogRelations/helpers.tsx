@@ -345,7 +345,6 @@ export const getUpdatedPreparedRelations = (props: {
                 });
             });
 
-        relationsItems.sort((prevItem, item) => prevItem.title.localeCompare(item.title));
         return relationsItems;
     }
     if (!changedRelationsItem) {

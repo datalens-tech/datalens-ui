@@ -58,3 +58,11 @@ export const getRelationDetailsKey = (item: RelationType) => {
             return 'value_link-unknown';
     }
 };
+
+export const getRowTitle = (title: string, label?: string) => {
+    const itemLabel = label && label !== title ? label : '';
+    const separator = getTextSeparator(itemLabel, title);
+    const rowTitle = `${itemLabel}${separator}${title}`.trim();
+
+    return rowTitle;
+};

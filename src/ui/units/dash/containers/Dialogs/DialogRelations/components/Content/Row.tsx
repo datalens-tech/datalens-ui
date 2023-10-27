@@ -13,6 +13,7 @@ import {
     getLinkIcon,
     getRelationDetailsKey,
     getRelationsText,
+    getRowTitle,
     getTextSeparator,
 } from './helpers';
 
@@ -317,10 +318,8 @@ export const Row = ({
 
     const showAliasIcon = Boolean(data.loaded);
 
-    const label = data?.label && data?.label !== data.title ? data?.label : '';
     const debugInfo = showDebugInfo ? <span className={b('info')}> ({data.widgetId})</span> : null;
-    const separator = getTextSeparator(label, data.title);
-    const rowTitle = `${label}${separator}${data.title}`;
+    const rowTitle = getRowTitle(data.title, data.label);
     const title = (showDebugInfo ? `(${data.widgetId}) ` : '') + rowTitle;
 
     return (
