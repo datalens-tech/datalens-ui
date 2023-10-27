@@ -10,13 +10,11 @@
 
     &__action-button {
         display: none;
-        // visibility: hidden;
         pointer-events: none;
     }
 
     &:hover &__action-button {
         display: block;
-        // visibility: visible;
         pointer-events: all;
     }
 }
