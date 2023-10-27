@@ -358,7 +358,8 @@ const DialogRelations = (props: DialogRelationsProps) => {
               });
 
     React.useEffect(() => {
-        if (!preparedRelations?.length) {
+        if (!preparedRelations?.length && relations.length) {
+            relations.sort((prevItem, item) => prevItem.title.localeCompare(item.title));
             setPreparedRelations(relations);
         }
     }, [relations, preparedRelations]);
