@@ -303,12 +303,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
 
             let widgetConfig;
             if (enableActionParams) {
-                /**
-                 * sending additional config for enabled filtering charts in section actionParams
-                 * @enable boolean - value of filtering chart widget settings
-                 * @fields string[] - list of dataset fields (or chartEditor params) which is used for actionParams
-                 * (will be set in dash relation dialog later), if undefined - means that using full fileds list
-                 */
+                // sending additional config for enabled filtering charts in section actionParams
+                // (will be set in dash relation dialog later), if undefined - means that using full fields list
                 widgetConfig = {
                     actionParams: {
                         enable: true,

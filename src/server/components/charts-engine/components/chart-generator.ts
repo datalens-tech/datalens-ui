@@ -12,6 +12,7 @@ const result = buildFn({
     shared: ChartEditor.getSharedData(),
     params: ChartEditor.getParams(),
     actionParams: ChartEditor.getActionParams(),
+    widgetConfig: ChartEditor.getWidgetConfig(),
     ChartEditor
 });
 
@@ -27,6 +28,7 @@ const result = buildD3Config({
     shared: ChartEditor.getSharedData(),
     params: ChartEditor.getParams(),
     actionParams: ChartEditor.getActionParams(),
+    widgetConfig: ChartEditor.getWidgetConfig(),
     ChartEditor
 });
 
@@ -45,6 +47,7 @@ const result = buildGraph({
     shared: ChartEditor.getSharedData(),
     params: ChartEditor.getParams(),
     actionParams: ChartEditor.getActionParams(),
+    widgetConfig: ChartEditor.getWidgetConfig(),
     ChartEditor,
 });
 
@@ -78,6 +81,7 @@ const result = buildChartsConfig({
     shared: ChartEditor.getSharedData(),
     params: ChartEditor.getParams(),
     actionParams: ChartEditor.getActionParams(),
+    widgetConfig: ChartEditor.getWidgetConfig(),
     ChartEditor
 });
 
@@ -93,6 +97,7 @@ if (buildUI) {
         shared: ChartEditor.getSharedData(),
         params: ChartEditor.getParams(),
         actionParams: ChartEditor.getActionParams(),
+        widgetConfig: ChartEditor.getWidgetConfig(),
         ChartEditor
     });
 
