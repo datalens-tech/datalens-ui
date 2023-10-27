@@ -69,6 +69,7 @@ export const SelectFeatured = <T,>({filterable = true, ...props}: SelectFeatured
             onFilterChange={undefined}
             options={options}
             renderFilter={props.error ? undefined : renderFilter}
+            loading={false}
         />
     );
 };
