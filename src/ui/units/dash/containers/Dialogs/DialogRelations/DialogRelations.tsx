@@ -253,7 +253,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 newChanged[widgetId] = type;
             }
 
-            if (currentRelationType === RELATION_TYPES.ignore) {
+            if (currentRelationType === RELATION_TYPES.ignore && type !== RELATION_TYPES.unknown) {
                 if (!isEmpty(newChanged[widgetId])) {
                     const hasRelationBy = hasConnectionsBy(currentRelations);
 
@@ -261,6 +261,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                         setChangedWidgets(newChanged);
                     } else {
                         // if there is no native relation then open aliases popup
+                        // except widgets with errors
                         handleAliasesClick({
                             ...rest,
                             forceAddAlias: true,
