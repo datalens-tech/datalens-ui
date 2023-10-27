@@ -4,7 +4,7 @@ import {Button, Flex, SelectOption as Option, SelectProps} from '@gravity-ui/uik
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import {DefaultOption, DefaultOptionProps} from '../../components/DefaultOption';
+import {DefaultOption, DefaultOptionProps} from '../../components/DefaultOption/DefaultOption';
 
 import './SelectOption.scss';
 

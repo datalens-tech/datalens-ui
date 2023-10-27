@@ -7,7 +7,7 @@ import {
 } from '@gravity-ui/uikit/build/esm/components/Select/types';
 import {useMountedState} from 'ui/hooks/useMountedState';
 
-import {DefaultOption} from '../../components/DefaultOption';
+import {DefaultOption} from '../../components/DefaultOption/DefaultOption';
 
 import {useIntersection} from './useIntersection';
 
