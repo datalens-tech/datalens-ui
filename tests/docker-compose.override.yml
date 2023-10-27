@@ -3,8 +3,8 @@ version: "3.7"
 services:
   us:
     build:
-      context: ../datalens-ui
-      dockerfile: ../datalens-ui/Dockerfile
+      context: ../datalens-us
+      dockerfile: ../datalens-us/Dockerfile
     depends_on:
       - postgres-connection
     environment:
