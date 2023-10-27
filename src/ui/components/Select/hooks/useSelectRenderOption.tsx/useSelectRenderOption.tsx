@@ -4,6 +4,8 @@ import {Button, Flex, SelectOption as Option, SelectProps} from '@gravity-ui/uik
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
+import {DefaultOption, DefaultOptionProps} from '../../components/DefaultOption';
+
 import './SelectOption.scss';
 
 export type UseSelectRenderOptionProps<T = any> = {options: Option<T>[]} & Pick<
@@ -12,26 +14,12 @@ export type UseSelectRenderOptionProps<T = any> = {options: Option<T>[]} & Pick<
 >;
 
 const i18n = I18n.keyset('components.common.YCSelect');
-const bDefault = block('select-default-option');
-const bMulti = block('select-multi-option');
+const b = block('select-multi-option');
 
 type OptionSelectionMode = 'only' | 'except';
-type DefaultOptionProps<T = any> = {
-    option: Option<T>;
-};
 type MultiOptionProps<T = any> = {
     onClick: (value: string, mode: OptionSelectionMode) => void;
 } & DefaultOptionProps<T>;
-
-const DefaultOption = (props: DefaultOptionProps) => {
-    const {option} = props;
-
-    return (
-        <div className={bDefault()} title={String(option.content)}>
-            {option.content}
-        </div>
-    );
-};
 
 const MultiSelectOption = (props: MultiOptionProps) => {
     const [mode, setMode] = React.useState<'only' | 'except'>('only');
@@ -39,10 +27,10 @@ const MultiSelectOption = (props: MultiOptionProps) => {
     const {option, onClick} = props;
 
     return (
-        <Flex className={bMulti()} alignItems={'center'} justifyContent={'space-between'}>
+        <Flex className={b()} alignItems={'center'} justifyContent={'space-between'}>
             <DefaultOption option={option} />
             <Button
-                className={bMulti('action-button')}
+                className={b('action-button')}
                 size="s"
                 onFocus={(e: React.FocusEvent<HTMLButtonElement, HTMLElement>) =>
                     e?.relatedTarget?.focus()
