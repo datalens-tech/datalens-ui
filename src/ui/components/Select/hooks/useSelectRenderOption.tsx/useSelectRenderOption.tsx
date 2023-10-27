@@ -1,37 +1,48 @@
 import React, {useCallback} from 'react';
 
-import {Button, Flex, SelectOption, SelectProps} from '@gravity-ui/uikit';
+import {Button, Flex, SelectOption as Option, SelectProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
 import './SelectOption.scss';
 
-export type UseSelectRenderOptionProps<T = any> = {options: SelectOption<T>[]} & Pick<
+export type UseSelectRenderOptionProps<T = any> = {options: Option<T>[]} & Pick<
     SelectProps,
     'options' | 'multiple' | 'onUpdate' | 'value'
 >;
 
 const i18n = I18n.keyset('components.common.YCSelect');
-const b = block('select-option');
+const bDefault = block('select-default-option');
+const bMulti = block('select-multi-option');
 
 type OptionSelectionMode = 'only' | 'except';
-type OptionProps<T = any> = {
-    option: SelectOption<T>;
+type DefaultOptionProps<T = any> = {
+    option: Option<T>;
+};
+type MultiOptionProps<T = any> = {
     onClick: (value: string, mode: OptionSelectionMode) => void;
+} & DefaultOptionProps<T>;
+
+const DefaultOption = (props: DefaultOptionProps) => {
+    const {option} = props;
+
+    return (
+        <div className={bDefault()} title={String(option.content)}>
+            {option.content}
+        </div>
+    );
 };
 
-const Option = (props: OptionProps) => {
+const MultiSelectOption = (props: MultiOptionProps) => {
     const [mode, setMode] = React.useState<'only' | 'except'>('only');
 
     const {option, onClick} = props;
 
     return (
-        <Flex className={b()} alignItems={'center'} justifyContent={'space-between'}>
-            <div className={b('text')} title={String(option.content)}>
-                {option.content}
-            </div>
+        <Flex className={bMulti()} alignItems={'center'} justifyContent={'space-between'}>
+            <DefaultOption option={option} />
             <Button
-                className={b('action-button')}
+                className={bMulti('action-button')}
                 size="s"
                 onFocus={(e: React.FocusEvent<HTMLButtonElement, HTMLElement>) =>
                     e?.relatedTarget?.focus()
@@ -66,10 +77,14 @@ export const useSelectRenderOption = ({
 
     const renderOption = useCallback(
         (opt) => {
-            return <Option option={opt} onClick={handleClick} />;
+            return multiple ? (
+                <MultiSelectOption option={opt} onClick={handleClick} />
+            ) : (
+                <DefaultOption option={opt} />
+            );
         },
-        [handleClick],
+        [handleClick, multiple],
     );
 
-    return {renderOption: multiple ? renderOption : undefined};
+    return {renderOption};
 };
