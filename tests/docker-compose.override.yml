@@ -10,7 +10,6 @@ services:
     environment:
       USE_E2E_MOCK_DATA: 1
     volumes:
-      - ./certs:/certs
       - e2e-data-volume:/opt/e2e-data
 
   datalens:
