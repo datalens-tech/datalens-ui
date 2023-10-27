@@ -27,7 +27,9 @@ const Option = (props: OptionProps) => {
 
     return (
         <Flex className={b()} alignItems={'center'} justifyContent={'space-between'}>
-            {option.content}
+            <div className={b('text')} title={String(option.content)}>
+                {option.content}
+            </div>
             <Button
                 className={b('action-button')}
                 size="s"

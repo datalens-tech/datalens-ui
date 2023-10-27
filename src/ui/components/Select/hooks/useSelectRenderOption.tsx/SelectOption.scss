@@ -1,13 +1,22 @@
 .select-option {
     width: 100%;
+    overflow: hidden;
+
+    &__text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
     &__action-button {
-        visibility: hidden;
+        display: none;
+        // visibility: hidden;
         pointer-events: none;
     }
 
     &:hover &__action-button {
-        visibility: visible;
+        display: block;
+        // visibility: visible;
         pointer-events: all;
     }
 }
