@@ -63,6 +63,10 @@ export default ({shared}: {shared: QLEntryDataShared}) => {
         placeholderIndex: 2,
     });
 
+    const isLegendEnabled = Boolean(
+        shared.colors?.length && shared.extraSettings?.legendMode !== 'hide',
+    );
+
     const widgetData: YagrWidgetData['libraryConfig'] = {
         title,
         axes: {
@@ -101,7 +105,7 @@ export default ({shared}: {shared: QLEntryDataShared}) => {
             },
         },
         legend: {
-            show: shared.extraSettings?.legendMode === 'show',
+            show: isLegendEnabled,
         },
         processing: {
             nullValues: {
