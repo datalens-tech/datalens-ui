@@ -87,7 +87,6 @@
     "moment-timezone": "^0.5.34",
     "object-sizeof": "^1.6.1",
     "p-queue": "^6.6.2",
-    "path-browserify": "^1.0.1",
     "path-to-regexp": "^6.2.0",
     "qs": "^6.10.1",
     "querystring": "^0.2.0",
@@ -98,10 +97,7 @@
     "react-window": "^1.8.9",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
-    "stream-browserify": "^3.0.0",
-    "tarjan-graph": "^2.0.0",
-    "timers-browserify": "^2.0.12",
-    "util": "^0.12.4"
+    "tarjan-graph": "^2.0.0"
   },
   "devDependencies": {
     "@gravity-ui/app-builder": "^0.6.11",
