@@ -30,6 +30,8 @@ type EditControlsProps = {
     isDraft: boolean;
     isRenameWithoutReload?: boolean;
     loading: boolean;
+    showCancel: boolean;
+    showSaveDropdown: boolean;
 };
 
 export const EditControls = (props: EditControlsProps) => {
@@ -47,6 +49,8 @@ export const EditControls = (props: EditControlsProps) => {
         isRenameWithoutReload,
         onCancelClick,
         loading,
+        showCancel = true,
+        showSaveDropdown = true,
     } = props;
 
     const isCurrentRevisionActual = revId === publishedId;
@@ -61,9 +65,11 @@ export const EditControls = (props: EditControlsProps) => {
 
     const savingControls = (
         <React.Fragment>
-            <Button view="outlined" size="m" onClick={onCancelClick} qa="action-button-cancel">
-                {i18n('button_cancel')}
-            </Button>
+            {showCancel && (
+                <Button view="outlined" size="m" onClick={onCancelClick} qa="action-button-cancel">
+                    {i18n('button_cancel')}
+                </Button>
+            )}
             <div className={b('buttons-save-wrapper')}>
                 <Button
                     className={b('button-save')}
@@ -76,12 +82,14 @@ export const EditControls = (props: EditControlsProps) => {
                 >
                     {i18n(defaultButtonSaveText)}
                 </Button>
-                <SaveDropDown
-                    isActualRevision={isCurrentRevisionActual}
-                    onSavePublishClick={onSaveAndPublishDashClick}
-                    onSaveDraftClick={onSaveAsDraftDashClick}
-                    onSaveAsNewClick={onSaveAsNewClick}
-                />
+                {showSaveDropdown && (
+                    <SaveDropDown
+                        isActualRevision={isCurrentRevisionActual}
+                        onSavePublishClick={onSaveAndPublishDashClick}
+                        onSaveDraftClick={onSaveAsDraftDashClick}
+                        onSaveAsNewClick={onSaveAsNewClick}
+                    />
+                )}
             </div>
         </React.Fragment>
     );

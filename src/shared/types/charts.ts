@@ -40,6 +40,11 @@ export interface IChartEditor {
     getSharedData(): {[key: string]: object};
 
     /**
+     * Return dash widget config
+     */
+    getWidgetConfig(): DashWidgetConfig['widgetConfig'];
+
+    /**
      * Return data from tab 'Params'
      */
     getParams(): StringParams;
@@ -191,3 +196,18 @@ export interface ExtendedExportingCsvOptions
 
     columnHeaderFormatter?: string;
 }
+
+/**
+ * Config of dash widget item, used for settings of actionParams (enabled filtering charts in section)
+ * @enable boolean - value of filtering chart widget settings
+ * @fields string[] - list of dataset fields (or chartEditor params) which is used for actionParams
+ * (will be set in dash relation dialog later), if undefined - means that using full fileds list
+ */
+export type DashWidgetConfig = {
+    widgetConfig?: {
+        actionParams?: {
+            enable?: boolean;
+            fields?: string[];
+        };
+    };
+};

@@ -1,4 +1,4 @@
-import {ChartsInsight, EntryPublicAuthor} from '../../../../../shared';
+import {ChartsInsight, DashWidgetConfig, EntryPublicAuthor} from '../../../../../shared';
 
 import {CommentsFetcherFetchResult, CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
 import {Console} from './console';
@@ -46,6 +46,7 @@ export type ProcessorSuccessResponse = {
      */
     defaultParams: Record<string, string | string[]>;
     usedParams: Record<string, string | string[]>;
+    widgetConfig?: DashWidgetConfig['widgetConfig'];
     extra: {
         chartsInsights?: ChartsInsight[];
         sideMarkdown?: string;

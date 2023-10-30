@@ -6,6 +6,8 @@ import {DashTabItem} from 'shared';
 
 import {GetEntriesDatasetsFieldsResponse} from '../../../../../../../shared/schema';
 import {getSdk} from '../../../../../../libs/schematic-sdk';
+import {getRowTitle} from '../components/Content/helpers';
+import {DEFAULT_ALIAS_NAMESPACE} from '../constants';
 import {
     AliasContextProps,
     ConnectionsData,
@@ -26,9 +28,11 @@ export const AliasesContext = React.createContext<AliasContextProps>({} as Alias
 export const useRelations = ({
     dashKitRef,
     widget,
+    dialogAliases,
 }: {
     dashKitRef: React.RefObject<DashKit>;
     widget: DashTabItem;
+    dialogAliases: Record<string, string[][]>;
 }) => {
     const [isInited, setIsInited] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -36,6 +40,7 @@ export const useRelations = ({
     const [currentWidgetMeta, setCurrentWidgetMeta] = React.useState<DashkitMetaDataItem | null>(
         null,
     );
+    const [invalidAliases, setInvalidAliases] = React.useState<string[]>([]);
 
     const [dashWidgetsMeta, setDashWidgetsMeta] = React.useState<
         Omit<DashkitMetaDataItem, 'relations'>[] | null
@@ -54,7 +59,7 @@ export const useRelations = ({
                 data,
                 dashKitRef.current,
             );
-            const {aliases, connections} = dashKitRef.current.props.config;
+            const {connections} = dashKitRef.current.props.config;
 
             let entriesDatasetsFields: GetEntriesDatasetsFieldsResponse = [];
             if (!isEmpty(entriesList) && (!isEmpty(datasetsList) || !isEmpty(controlsList))) {
@@ -71,6 +76,12 @@ export const useRelations = ({
                       datasetsList,
                   })
                 : metaData;
+
+            dashWidgetsMetaData.sort((prevItem, item) => {
+                const prevItemTitle = getRowTitle(prevItem.title, prevItem.label);
+                const itemTitle = getRowTitle(item.title, item.label);
+                return prevItemTitle.localeCompare(itemTitle);
+            });
 
             const currentMeta = getCurrentWidgetMeta({
                 metaData: dashWidgetsMetaData,
@@ -98,10 +109,26 @@ export const useRelations = ({
             const currentRelations = getRelationsData({
                 metaData: dashWidgetsMetaData,
                 widgetMeta: currentMeta,
-                aliases,
+                aliases: dialogAliases,
                 connections: connections as ConnectionsData,
                 datasets: datasetsList,
             });
+
+            const allUsedParams = dashWidgetsMetaData.reduce((result: string[], item) => {
+                const usedParams = item.usedParams || [];
+                return [...result, ...usedParams];
+            }, []);
+
+            const invalidAliasesData: string[] = [];
+            if (DEFAULT_ALIAS_NAMESPACE in dialogAliases) {
+                dialogAliases[DEFAULT_ALIAS_NAMESPACE].forEach((aliasRow) => {
+                    aliasRow.forEach((item) => {
+                        if (!allUsedParams.includes(item)) {
+                            invalidAliasesData.push(item);
+                        }
+                    });
+                });
+            }
 
             setIsInited(true);
             setCurrentWidgetMeta(currentMeta);
@@ -109,6 +136,7 @@ export const useRelations = ({
             setIsLoading(false);
             setDatasets(datasetsList);
             setDashWidgetsMeta(dashWidgetsMetaData);
+            setInvalidAliases(invalidAliasesData);
         };
 
         if (!isInited) {
@@ -117,7 +145,7 @@ export const useRelations = ({
             }
             getMetaData();
         }
-    }, [isInited, dashKitRef, widget]);
+    }, [dashKitRef, isInited, widget, dialogAliases]);
 
-    return {isLoading, relations, currentWidgetMeta, datasets, dashWidgetsMeta};
+    return {isLoading, relations, currentWidgetMeta, datasets, dashWidgetsMeta, invalidAliases};
 };

@@ -1,6 +1,5 @@
 import {GEOLAYER_VISUALIZATION} from 'constants/visualizations';
 
-import {History} from 'history';
 import {I18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
@@ -59,10 +58,6 @@ import {getSdk} from '../../../libs/schematic-sdk';
 import {sdk as oldSdk} from '../../../libs/sdk';
 import {showToast} from '../../../store/actions/toaster';
 import {getFilteredObject} from '../../../utils';
-import {
-    load as loadParentDashConfig,
-    setEditMode as setEditModeForParentDash,
-} from '../../dash/store/actions/dash';
 import {DEFAULT_VISUALIZATION_ID_WIZARD} from '../constants';
 import {WizardDispatch} from '../reducers';
 import {selectVisualization} from '../selectors/visualization';
@@ -1767,18 +1762,6 @@ export function resetWizardStore() {
 
 export interface ResetWizardStoreAction {
     type: typeof RESET_WIZARD_STORE;
-}
-
-export function loadParentDash(history: History) {
-    return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
-        const state = getState();
-
-        if (!state.dash?.data?.tabs) {
-            // @ts-ignore
-            await dispatch(loadParentDashConfig({location: history.location, history}));
-            await dispatch(setEditModeForParentDash());
-        }
-    };
 }
 
 type ProcessWidgetArgs = {

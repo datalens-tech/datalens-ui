@@ -155,6 +155,12 @@ export interface ChartsProps {
     initialParams?: ChartInitialParams;
     config?: ConfigNode;
     widgetType?: DashTabItemControlSourceType | WidgetType;
+    widgetConfig?: {
+        actionParams?: {
+            enable?: boolean;
+            fields?: string[];
+        };
+    };
     ignoreUsedParams?: boolean;
 }
 

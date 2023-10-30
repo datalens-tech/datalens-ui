@@ -112,7 +112,7 @@
   "label_section-caption-counter-settings": "Настройки счетчика",
   "label_select-folder": "Выберите каталог",
   "label_service-acc-key-file": "Публичный ключ сервисного аккаунта",
-  "label_service-account-ydb-hint": "Требуется роль \"monitoring.viewer\" (или роль \"viewer\") на сервисном аккаунте",
+  "label_service-account-ydb-hint": "Выберите существующий сервисный аккаунт или создайте новый",
   "label_service-accounts-empty-list": "Нет доступных аккаунтов",
   "label_service-accounts-fetching-failed": "Не удалось загрузить список сервисных аккаунтов",
   "label_showflake-oauth-integration-label": "Интеграция OAuth",

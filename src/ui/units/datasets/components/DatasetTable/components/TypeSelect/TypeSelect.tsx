@@ -66,11 +66,17 @@ class TypeSelectComponent extends React.Component<Props> {
         this.props.onSelect(this.props.field, value);
     };
 
-    private renderSelectOption = (options: SelectOption, isOption?: boolean) => {
-        const type = options.value as DATASET_FIELD_TYPES;
-        const typeName = options.content;
+    private renderSelectOption = (option: SelectOption, isOption?: boolean) => {
+        const type = option.value as DATASET_FIELD_TYPES;
+        const typeName = option.content;
+
+        const modifiers = {
+            option: isOption,
+            disabled: option.disabled,
+        };
+
         return (
-            <span className={b('select-item', {option: isOption})}>
+            <span className={b('select-item', modifiers)}>
                 <DataTypeIcon className={b('type')} dataType={type} />
                 {typeName}
             </span>

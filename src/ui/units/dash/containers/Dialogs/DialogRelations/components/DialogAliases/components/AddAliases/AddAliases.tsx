@@ -4,8 +4,8 @@ import {Check, Xmark} from '@gravity-ui/icons';
 import {Button, Icon, Select, SelectOption} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {addAlias} from 'ui/units/dash/containers/Dialogs/DialogRelations/helpers';
 
+import {addAlias} from '../../../../helpers';
 import {AliasesContext} from '../../../../hooks/useRelations';
 import {DashkitMetaDataItem, DatasetsListData} from '../../../../types';
 
@@ -71,6 +71,9 @@ const getDatasetName = (data: DashkitMetaDataItem, datasets: DatasetsListData | 
 
 const prepareData = (data: DashkitMetaDataItem, datasets: DatasetsListData | null) => {
     const options = getList(data);
+
+    options.sort((prevItem, item) => prevItem.content.localeCompare(item.content));
+
     const name = getDatasetName(data, datasets);
     const subTitle = name ? `${data.title || data.label} (${name})` : data.title || data.label;
 

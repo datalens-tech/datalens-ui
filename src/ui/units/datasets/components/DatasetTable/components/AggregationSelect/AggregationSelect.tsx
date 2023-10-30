@@ -153,7 +153,10 @@ class AggregationSelectComponent extends React.Component<Props> {
     };
 
     private renderSelectOption = (option: SelectOption) => {
-        return <span className={b('select-option')}>{option.content}</span>;
+        const modifiers = {
+            disabled: option.disabled,
+        };
+        return <span className={b('select-option', modifiers)}>{option.content}</span>;
     };
 }
 

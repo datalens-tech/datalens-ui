@@ -2,7 +2,7 @@ import vm from 'vm';
 
 import {Keysets, ServerI18n} from '../../../../../i18n/types';
 import {initI18n} from '../../../../../i18n/utils';
-import {ChartsInsight} from '../../../../../shared';
+import {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
 import {IChartEditor} from '../../../../../shared/types';
 import {keysetsByLang} from '../../../../utils/language';
 import {config} from '../../constants';
@@ -78,6 +78,7 @@ type ProcessTabParams = {
     code: string;
     params: Record<string, string | string[]>;
     actionParams: Record<string, string | string[]>;
+    widgetConfig?: DashWidgetConfig['widgetConfig'];
     data?: Record<string, any>;
     dataStats?: any;
     timeout: number;
@@ -256,6 +257,7 @@ const processTab = ({
     code,
     params,
     actionParams,
+    widgetConfig,
     data,
     dataStats,
     timeout = DEFAULT_PROCESSING_TIMEOUT,
@@ -307,6 +309,8 @@ const processTab = ({
 
     /** We need for backward compatibility with ≤0.19.2 */
     api._setError = api.setError;
+
+    api.getWidgetConfig = () => widgetConfig || {};
 
     api.getActionParams = () => actionParams || {};
 
