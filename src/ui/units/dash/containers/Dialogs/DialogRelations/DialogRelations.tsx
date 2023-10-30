@@ -359,7 +359,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
               });
 
     React.useEffect(() => {
-        if (!preparedRelations?.length) {
+        if (!preparedRelations?.length && relations.length) {
             setPreparedRelations(relations);
         }
     }, [relations, preparedRelations]);

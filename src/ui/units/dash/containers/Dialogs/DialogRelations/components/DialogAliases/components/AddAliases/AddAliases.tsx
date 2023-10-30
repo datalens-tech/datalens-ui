@@ -71,6 +71,9 @@ const getDatasetName = (data: DashkitMetaDataItem, datasets: DatasetsListData | 
 
 const prepareData = (data: DashkitMetaDataItem, datasets: DatasetsListData | null) => {
     const options = getList(data);
+
+    options.sort((prevItem, item) => prevItem.content.localeCompare(item.content));
+
     const name = getDatasetName(data, datasets);
     const subTitle = name ? `${data.title || data.label} (${name})` : data.title || data.label;
 

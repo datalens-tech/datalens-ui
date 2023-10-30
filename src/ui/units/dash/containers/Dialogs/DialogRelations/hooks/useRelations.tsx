@@ -6,6 +6,7 @@ import {DashTabItem} from 'shared';
 
 import {GetEntriesDatasetsFieldsResponse} from '../../../../../../../shared/schema';
 import {getSdk} from '../../../../../../libs/schematic-sdk';
+import {getRowTitle} from '../components/Content/helpers';
 import {DEFAULT_ALIAS_NAMESPACE} from '../constants';
 import {
     AliasContextProps,
@@ -75,6 +76,12 @@ export const useRelations = ({
                       datasetsList,
                   })
                 : metaData;
+
+            dashWidgetsMetaData.sort((prevItem, item) => {
+                const prevItemTitle = getRowTitle(prevItem.title, prevItem.label);
+                const itemTitle = getRowTitle(item.title, item.label);
+                return prevItemTitle.localeCompare(itemTitle);
+            });
 
             const currentMeta = getCurrentWidgetMeta({
                 metaData: dashWidgetsMetaData,
