@@ -613,7 +613,7 @@ export function getColumnsAndRows({
     let rows: string[][] = [];
 
     if (isMonitoringOrPrometheusChart(chartType)) {
-        iterateThroughQueries(queries, (_query, i) => {
+        iterateThroughVisibleQueries(queries, (_query, i) => {
             let localColumns: QLResultEntryMetadataDataColumn[] = [];
 
             try {
@@ -656,7 +656,7 @@ export function getColumnsAndRows({
                 columnsByQuery[i] = localColumns;
             }
         });
-        iterateThroughQueries(queries, (_query, i) => {
+        iterateThroughVisibleQueries(queries, (_query, i) => {
             let localRows;
 
             try {
@@ -747,7 +747,7 @@ export function isGroup(
     return Boolean((item as QLResultEntryMetadataDataGroup).group);
 }
 
-export function iterateThroughQueries(
+export function iterateThroughVisibleQueries(
     queries: QLQuery[],
     cb: (query: QLQuery, index: number, array: QLQuery[]) => void,
 ) {

@@ -10,7 +10,7 @@ import {
     resolveOperation,
 } from '../../../../../shared';
 
-import {buildSource, iterateThroughQueries, log} from './utils/misc-helpers';
+import {buildSource, iterateThroughVisibleQueries, log} from './utils/misc-helpers';
 
 const prepareQuery = (query: string) => {
     return query
@@ -154,7 +154,7 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
                 }
             }
 
-            iterateThroughQueries(
+            iterateThroughVisibleQueries(
                 shared.queries,
                 ({value: queryValue, params: queryParams = []}, i) => {
                     const localParams = {...params};
