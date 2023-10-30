@@ -18,6 +18,7 @@ export const enum DashboardDialogSettingsQa {
     DialogRoot = 'dashboard-dialog-settings-root',
     ApplyButton = 'dashboard-dialog-settings-apply-button',
     CancelButton = 'dashboard-dialog-settings-cancel-button',
+    TOCSwitch = 'settings-dialog-switch-toc',
 }
 
 export const enum DashboardDialogControl {

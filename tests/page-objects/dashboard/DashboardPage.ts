@@ -36,7 +36,8 @@ import {
     DashKitOverlayMenuQa,
 } from '../../../src/shared/constants/qa/dash';
 import {CommonSelectors} from '../constants/common-selectors';
-import {Feature} from '../../../src/shared';
+import {DashboardDialogSettingsQa, Feature} from '../../../src/shared';
+import DashboardSettings from './DashboardSettings';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -140,8 +141,8 @@ class DashboardPage extends BasePage {
         );
         // TODO: CHARTS-8652, refine tests for new behavior
         if (isSaveWithFakeEntryEnabled) {
-            // temp creating an element, because it is impossible to save an absolutely empty dash
-            await this.addSelector({controlTitle: 'stub', controlFieldName: 'stub'});
+            // temp step of changing the settings, because it is impossible to save the untouched dash
+            await this.enableDashboardTOC();
             await this.saveChanges();
         }
 
@@ -157,8 +158,6 @@ class DashboardPage extends BasePage {
             await this.page.waitForSelector(
                 `${slct(COMMON_SELECTORS.DASH_ENTRY_NAME)} >> text=${dashName}`,
             );
-            // enter the edit mode after redirect to the created dash
-            await this.enterEditMode();
         }
     }
 
@@ -587,6 +586,14 @@ class DashboardPage extends BasePage {
         }
 
         throw new Error('Tabs selector not found');
+    }
+
+    async enableDashboardTOC() {
+        const dashboardSettings = new DashboardSettings(this.page);
+
+        await dashboardSettings.open();
+        await this.page.click(slct(DashboardDialogSettingsQa.TOCSwitch));
+        await dashboardSettings.save();
     }
 
     async waitForLoaderDisappear() {
