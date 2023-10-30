@@ -20,12 +20,13 @@ export const CreateEntryDialog = React.memo(() => {
     const type = useSelector(selectCreateWorkbookEntryType);
     const workbookId = useSelector(selectWorkbookId);
 
-    const {getWorkbookDashboardEntryUrl, getNewDashUrl} = registry.workbooks.functions.getAll();
+    const {getWorkbookDashboardEntryUrl} = registry.workbooks.functions.getAll();
+    const {getNewDashUrl} = registry.dash.functions.getAll();
 
     const createDashboard = React.useCallback(
         async (workbookId: string) => {
             if (Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry)) {
-                const url = getNewDashUrl();
+                const url = getNewDashUrl(workbookId);
                 history.push(url);
                 return;
             }

@@ -20,6 +20,7 @@ import {
     DASH_FILTERING_CHARTS_WIDGET_TYPES,
     DASH_WIDGET_TYPES,
     FilteringWidgetType,
+    WidgetType,
 } from 'ui/units/dash/modules/constants';
 
 import {FiltersTypes} from '../components/Filters/Filters';
@@ -63,7 +64,7 @@ export const getPreparedMetaData = (
         configItems[item.id] = item.namespace;
     });
 
-    const metaDataWithNamespaces: Array<Omit<DashkitMetaDataItem, 'relations'>> = data
+    let metaDataWithNamespaces: Array<Omit<DashkitMetaDataItem, 'relations'>> = data
         .reduce(
             (list: Array<Omit<DashkitMetaDataItem, 'relations'>>, item) => list.concat(item),
             [],
@@ -102,6 +103,10 @@ export const getPreparedMetaData = (
             });
         });
 
+    metaDataWithNamespaces = metaDataWithNamespaces.filter(
+        (item) => (item.type as WidgetType) !== DASH_WIDGET_TYPES.MARKDOWN,
+    );
+
     const entriesList = [
         ...new Set(metaDataWithNamespaces.map((item) => item.entryId).filter(Boolean)),
     ] as Array<string>;
@@ -132,13 +137,6 @@ export const getMetaDataWithDatasetInfo = ({
         const entryWithDataset = entriesWithDatasetsFields.find(
             (entryItem) => entryItem.entryId === itemWithDataset.entryId,
         );
-
-        // TODO next PR
-        /*if (entryWithDataset && !itemWithDataset.datasets?.length) {
-            const controlWithDataset = itemWithDataset.datasets?.find(
-                (entryItem) => entryItem.id === item.datasetId,
-            );
-        }*/
 
         if (!entryWithDataset) {
             return itemWithDataset;
@@ -176,7 +174,7 @@ export const getMetaDataWithDatasetInfo = ({
                               name: datasetsList[key].name,
                           },
                       ]
-            ) as Array<DatasetsData>; // TODO for multi-datasets, this did not work, you need to order the pen to return a different format
+            ) as Array<DatasetsData>; // TODO for multi-datasets, this did not work, you need to support in API to return a different format
             itemWithDataset.type = item.type || type; // TODO order from US type for graph
             itemWithDataset.enableFiltering = item.enableFiltering || false;
         }
@@ -186,7 +184,7 @@ export const getMetaDataWithDatasetInfo = ({
     return res;
 };
 
-const showInRelation = (
+export const showInRelation = (
     currentItem: DashkitMetaDataItem,
     rowItem: DashkitMetaDataItemNoRelations,
 ) => {
@@ -519,7 +517,12 @@ export const getRelationsInfo = (args: {
             if (!row.usedParams?.length) {
                 return false;
             }
-            return intersection(row.usedParams, aliasArr);
+            const rowInAlias = intersection(row.usedParams, aliasArr);
+            const widgetInAlias = intersection(widget.usedParams, aliasArr);
+            if (!rowInAlias.length || !widgetInAlias.length) {
+                return false;
+            }
+            return rowInAlias;
         });
     }
 
@@ -567,7 +570,14 @@ export const getRelationsInfo = (args: {
               datasets,
           });
 
-    if (!isIgnoring && !isIgnored && isEmpty(byAliases.filter(Boolean)) && isEmpty(byFields)) {
+    if (
+        !isIgnoring &&
+        !isIgnored &&
+        isEmpty(byAliases.filter(Boolean)) &&
+        isEmpty(byFields) &&
+        isEmpty(byUsedParams) &&
+        relations.type !== RELATION_TYPES.unknown
+    ) {
         relations.type = RELATION_TYPES.ignore as RelationType;
     }
 

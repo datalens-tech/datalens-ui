@@ -2,15 +2,7 @@ import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
 import {ArrowRightArrowLeft} from '@gravity-ui/icons';
-import {
-    Button,
-    Checkbox,
-    Icon,
-    RadioButton,
-    Select,
-    SelectOption,
-    TextInput,
-} from '@gravity-ui/uikit';
+import {Button, Checkbox, Icon, RadioButton, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
@@ -83,7 +75,7 @@ class DialogColorGradientBody extends React.Component<Props> {
         const {extra = {}, item, gradients} = this.props;
 
         const currentPalette = this.getCurrentGradientPalette(gradients);
-        const options: SelectOption<{icon: JSX.Element}>[] = getGradientSelectorItems(gradients);
+        const options = getGradientSelectorItems(gradients);
 
         if (!currentPalette) {
             return null;

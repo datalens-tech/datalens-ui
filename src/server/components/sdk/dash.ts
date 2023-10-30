@@ -158,13 +158,13 @@ function validateData(data: DashData) {
 
 class Dash {
     static async create(
-        data: CreateEntryRequest<DashEntry> | DashEntryCreateParams,
+        data: CreateEntryRequest<DashEntry | DashEntryCreateParams>,
         headers: IncomingHttpHeaders,
         ctx: AppContext,
         I18n: ServerI18n,
     ): Promise<DashEntry> {
         try {
-            let usData: CreateEntryRequest<DashEntry> | DashEntryCreateParams = {
+            let usData: CreateEntryRequest<DashEntry | DashEntryCreateParams> = {
                 ...data,
                 scope: EntryScope.Dash,
                 type: '',

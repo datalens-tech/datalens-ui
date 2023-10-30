@@ -26,13 +26,15 @@ type AuthenticateRobotArgs = {
     password: string;
     retryCount: number;
     afterAuth?: (args: {page: Page}) => Promise<void>;
+    force?: boolean;
 };
 
 export async function authenticate(args: AuthenticateRobotArgs) {
-    const {page, baseUrl, passportUrl, login, password, afterAuth, retryCount} = args;
+    const {page, baseUrl, passportUrl, login, password, afterAuth, retryCount, force} = args;
+
     try {
         const authenticated = await isAuthenticated(page, baseUrl, passportUrl);
-        if (!authenticated) {
+        if (!authenticated || force) {
             const authUrl = `${passportUrl}/auth?mode=password&retpath=${encodeURIComponent(
                 baseUrl,
             )}?skipPromo=true`;
@@ -65,8 +67,9 @@ export async function authenticate(args: AuthenticateRobotArgs) {
         }
     } catch (error) {
         if (retryCount > 0) {
+            console.log(`Error: ${JSON.stringify(error)}`);
             console.log('Auth retry');
-            await authenticate({...args, retryCount: retryCount - 1});
+            await authenticate({...args, retryCount: retryCount - 1, force: true});
         } else {
             // first of all, check for holes before baseUrl, if it falls in this place
             console.error('AUTHENTICATION_FAILED', error);

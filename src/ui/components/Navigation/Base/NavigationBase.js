@@ -202,9 +202,9 @@ class NavigationBase extends React.Component {
         });
         this.update(response, EntryDialogName.Delete, entry);
     }
-    async createDashboard() {
+    async createDashboard(query) {
         if (Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry)) {
-            this.props.history.push('/dashboards/new');
+            this.props.history.push(`/dashboards/new${query}`);
             this.closeNavigation();
             return;
         }
@@ -259,7 +259,7 @@ class NavigationBase extends React.Component {
 
         return getInitDestination(path);
     }
-    onCreateMenuClick = (type, options = {}) => {
+    onCreateMenuClick = (type) => {
         const {path, history} = this.props;
         const searchParams = new URLSearchParams();
 
@@ -276,7 +276,7 @@ class NavigationBase extends React.Component {
                 break;
             }
             case CreateMenuValue.Dashboard: {
-                this.createDashboard(options);
+                this.createDashboard(query);
                 break;
             }
             case CreateMenuValue.Connection: {

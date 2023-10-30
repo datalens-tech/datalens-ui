@@ -762,7 +762,14 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         requestCancellation: CancelTokenSource;
         onlyControls?: boolean;
     }) {
-        const {id, source, params, widgetType, config: {type, data: configData, key} = {}} = data;
+        const {
+            id,
+            source,
+            params,
+            widgetType,
+            widgetConfig,
+            config: {type, data: configData, key} = {},
+        } = data;
 
         const isEditMode = Boolean(type && configData);
         const includeLogs = this.settings.includeLogs || isEditMode;
@@ -774,6 +781,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 path: source,
                 params,
                 widgetType,
+                widgetConfig,
                 config: isEditMode
                     ? {
                           data: configData,

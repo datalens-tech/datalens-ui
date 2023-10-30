@@ -25,4 +25,8 @@
         overflow-x: hidden;
         overflow-y: auto;
     }
+
+    &__error {
+        color: var(--g-color-text-danger);
+    }
 }
