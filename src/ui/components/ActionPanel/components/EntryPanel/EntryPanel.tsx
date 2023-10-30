@@ -288,8 +288,6 @@ class EntryPanel extends React.Component<Props, State> {
 
         if (isAdmin && enablePublish && !disabled) {
             items.push({
-                // TODO: restore the logic after closing YCDESIGN-2062
-                // icon: entry.public ? iconPublicFilled : iconPublic,
                 icon: (
                     <Icon
                         data={NodesRight}

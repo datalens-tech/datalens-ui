@@ -16,6 +16,7 @@ import {
     deleteEntity,
     entryDialogFillAndSave,
     getAddress,
+    isEnabledFeature,
     slct,
     waitForCondition,
 } from '../../utils';
@@ -35,6 +36,7 @@ import {
     DashKitOverlayMenuQa,
 } from '../../../src/shared/constants/qa/dash';
 import {CommonSelectors} from '../constants/common-selectors';
+import {Feature} from '../../../src/shared';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -132,12 +134,26 @@ class DashboardPage extends BasePage {
         // click the button to create a new dashboard
         await this.page.click(slct('create-entry-button'));
 
+        const isSaveWithFakeEntryEnabled = await isEnabledFeature(
+            this.page,
+            Feature.SaveDashWithFakeEntry,
+        );
+        // TODO: CHARTS-8652, refine tests for new behavior
+        if (isSaveWithFakeEntryEnabled) {
+            await this.addSelector({controlTitle: 'stub', controlFieldName: 'stub'});
+            await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+        }
+
         // waiting for the dialog to open, specify the name, save
         // waiting for the transition to the dashboard page
         await Promise.all([
             this.page.waitForNavigation(),
             entryDialogFillAndSave(this.page, dashName),
         ]);
+
+        if (isSaveWithFakeEntryEnabled) {
+            await this.enterEditMode();
+        }
     }
 
     async copyDashboard(dashName: string) {
