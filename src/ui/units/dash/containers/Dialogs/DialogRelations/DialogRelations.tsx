@@ -291,12 +291,22 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
     const handleDisconnectAll = React.useCallback(() => {
         const newChangedWidgets: WidgetsTypes = {};
+
+        const filteredIds = filteredRelations.reduce((res: Record<string, string>, item) => {
+            if (item.widgetId) {
+                res[item.widgetId] = item.widgetId;
+            }
+            return res;
+        }, {});
+
         preparedRelations.forEach((item) => {
-            newChangedWidgets[item.widgetId] = RELATION_TYPES.ignore as RelationType;
+            if (filteredIds[item.widgetId]) {
+                newChangedWidgets[item.widgetId] = RELATION_TYPES.ignore as RelationType;
+            }
         });
 
         setChangedWidgets(newChangedWidgets);
-    }, [preparedRelations]);
+    }, [preparedRelations, filteredRelations]);
 
     /**
      * Triggers when click Apply button in relations dialog (saves in store and closes popup)
@@ -358,6 +368,24 @@ const DialogRelations = (props: DialogRelationsProps) => {
                   className: b('alias-add-icon-type'),
               });
 
+    // disable disconnect button when loading
+    // when none of filters is selected (empty) - TODO this logic will be changed in next PR
+    // when selected only 'none' filter
+    // when selected filter and none of widgets is showed in list
+    const isDisconnectDisabled = Boolean(
+        isLoading ||
+            !typeValues.length ||
+            (typeValues.length === 1 && typeValues[0] === 'none') ||
+            (typeValues.length && !filteredRelations.length),
+    );
+
+    let disconnectButtonText = i18n('button_disconnect');
+    if (typeValues.length === 1 && typeValues[0] === 'input') {
+        disconnectButtonText = i18n('button_disconnect-input');
+    } else if (typeValues.length === 1 && typeValues[0] === 'output') {
+        disconnectButtonText = i18n('button_disconnect-output');
+    }
+
     React.useEffect(() => {
         if (!preparedRelations?.length && relations.length) {
             setPreparedRelations(relations);
@@ -405,9 +433,9 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     className={b('button')}
                     size="l"
                     onClick={handleDisconnectAll}
-                    disabled={isLoading}
+                    disabled={isDisconnectDisabled}
                 >
-                    {i18n('button_disconnect')}
+                    {disconnectButtonText}
                 </Button>
                 {Boolean(shownInvalidAliases?.length) && (
                     <React.Fragment>

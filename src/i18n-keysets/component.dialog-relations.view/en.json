@@ -2,6 +2,8 @@
   "button_apply": "Apply",
   "button_cancel": "Cancel",
   "button_disconnect": "Disable all",
+  "button_disconnect-input": "Disable all input",
+  "button_disconnect-output": "Disable all output",
   "button_incoming": "Ingoing",
   "button_not-linked": "Not linked",
   "button_outcoming": "Outgoing",
