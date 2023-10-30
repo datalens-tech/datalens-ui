@@ -3,6 +3,7 @@ import moment from 'moment';
 import {getXlsxNumberFormat} from 'shared/modules/format-units/formatUnit';
 
 import {getFormatOptions} from '../../../../../shared';
+import logger from '../../../../libs/logger';
 import {CHARTKIT_WIDGET_TYPE} from '../../ChartKit/components/Widget/Widget';
 import {chartsDataProvider} from '../../index';
 import axiosInstance from '../axios/axios';
@@ -144,7 +145,8 @@ function prepareValues({widget, data, widgetType, extra, options = {}}) {
         let dataRows;
         try {
             dataRows = widget.getDataRows();
-        } catch (e) {
+        } catch (error) {
+            logger.logError('ChartKit: export error. widget.getDataRows failed', error);
             return {};
         }
 
