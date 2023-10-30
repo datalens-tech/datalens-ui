@@ -146,7 +146,7 @@ function prepareValues({widget, data, widgetType, extra, options = {}}) {
         try {
             dataRows = widget.getDataRows();
         } catch (error) {
-            logger.logError('ChartKit: export error. widget.getDataRows failed', error);
+            logger.logError('ChartKit: Export error, widget.getDataRows failed', error);
             return {};
         }
 
