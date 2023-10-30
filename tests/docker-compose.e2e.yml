@@ -101,6 +101,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ../
+      network: host
     ports:
       - 8080:80
     depends_on:
