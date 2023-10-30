@@ -1005,6 +1005,8 @@ export class Processor {
 
             return result;
         } catch (error) {
+            ctx.log('this is log which i neeed');
+            console.log(error, 'this is error log is');
             ctx.logError('Run failed', error);
 
             const isError = (error: unknown): error is SandboxError => {
