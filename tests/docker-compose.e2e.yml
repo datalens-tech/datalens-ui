@@ -1,0 +1,33 @@
+version: "3.7"
+
+services:
+  datalens:
+    build:
+      context: ../datalens-ui
+      dockerfile: ../datalens-ui/Dockerfile
+    image: result/latest
+    depends_on:
+      - postgres-e2e
+    volumes:
+      - e2e-data-volume:/opt/app/tests/data
+
+  postgres-e2e:
+    container_name: postgres-e2e
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_PASSWORD: "e2e"
+      POSTGRES_DB: sales
+      POSTGRES_USER: e2e
+    volumes:
+      - e2e-data-volume:/docker-entrypoint-initdb.d
+
+  us:
+    container_name: datalens-us
+    environment:
+      USE_DEMO_DATA: 0
+      USE_E2E_MOCK_DATA: 1
+    volumes:
+      - e2e-data-volume:/opt/e2e-data
+
+volumes:
+  e2e-data-volume:
