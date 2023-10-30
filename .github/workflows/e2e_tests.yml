@@ -26,6 +26,7 @@ jobs:
         run: E2E_DOMAIN="http://localhost:8080" NO_AUTH=true npm run test:e2e:opensource
       
       - name: Run Docker Shutdown
+        working-directory: ./tests
         run: docker compose -f ./docker-compose.e2e.yml down
       
       - uses: actions/upload-artifact@v3
