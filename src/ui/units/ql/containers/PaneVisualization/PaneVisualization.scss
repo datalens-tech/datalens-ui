@@ -21,6 +21,21 @@
             &.drag-hovered-swap {
                 border: solid 1px transparent;
             }
+
+            &.conflict-item {
+                color: var(--g-color-text-secondary);
+                background: var(--dl-color-contrast-4);
+
+                .item-icon {
+                    color: var(--g-color-line-generic);
+                }
+
+                .item-title {
+                    .aggregation-title {
+                        color: var(--g-color-text-secondary);
+                    }
+                }
+            }
         }
     }
 }

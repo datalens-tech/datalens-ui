@@ -164,38 +164,40 @@ export const migrateOrAutofillVisualization = ({
     };
 };
 
-const mapItems = ({items, fields}: {items: Field[]; fields: Field[]}) => {
-    return items
-        .map((item, i) => {
-            const exactField = fields.find(
-                (field) => field.guid === item.guid && field.data_type === item.data_type,
-            );
+export const mapItems = ({items, fields}: {items: Field[]; fields: Field[]}) => {
+    return items.map((item, i) => {
+        const exactField = fields.find(
+            (field) => field.guid === item.guid && field.data_type === item.data_type,
+        );
 
-            // Field does not need to be mapped
-            if (exactField) {
-                return item;
+        // Field does not need to be mapped
+        if (exactField) {
+            delete item.conflict;
+
+            return item;
+        }
+
+        const matchingField = fields.find((field) => field.title === item.title);
+
+        // We need to use new field in placeholder
+        if (matchingField) {
+            if (item.data_type === matchingField.data_type) {
+                // eslint-disable-next-line no-param-reassign
+                return {
+                    ...items[i],
+                    ...matchingField,
+                };
+            } else {
+                // eslint-disable-next-line no-param-reassign
+                return matchingField;
             }
+        }
 
-            const matchingField = fields.find((field) => field.title === item.title);
-
-            // We need to use new field in placeholder
-            if (matchingField) {
-                if (item.data_type === matchingField.data_type) {
-                    // eslint-disable-next-line no-param-reassign
-                    return {
-                        ...items[i],
-                        ...matchingField,
-                    };
-                } else {
-                    // eslint-disable-next-line no-param-reassign
-                    return matchingField;
-                }
-            }
-
-            // Field is no longer existing
-            return null;
-        })
-        .filter((item) => item !== null) as Field[];
+        return {
+            ...item,
+            conflict: 'not-existing-ql',
+        };
+    });
 };
 
 export const mapVisualizationPlaceholdersItems = ({
@@ -213,8 +215,4 @@ export const mapVisualizationPlaceholdersItems = ({
     });
 
     return newVisualization;
-};
-
-export const mapColors = ({colors, fields}: {colors: Field[]; fields: Field[]}) => {
-    return mapItems({items: colors as Field[], fields});
 };
