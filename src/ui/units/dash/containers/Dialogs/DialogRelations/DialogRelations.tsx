@@ -379,13 +379,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
             (typeValues.length && !filteredRelations.length),
     );
 
-    let disconnectButtonText = i18n('button_disconnect');
-    if (typeValues.length === 1 && typeValues[0] === 'input') {
-        disconnectButtonText = i18n('button_disconnect-input');
-    } else if (typeValues.length === 1 && typeValues[0] === 'output') {
-        disconnectButtonText = i18n('button_disconnect-output');
-    }
-
     React.useEffect(() => {
         if (!preparedRelations?.length && relations.length) {
             setPreparedRelations(relations);
@@ -435,7 +428,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     onClick={handleDisconnectAll}
                     disabled={isDisconnectDisabled}
                 >
-                    {disconnectButtonText}
+                    {i18n('button_disconnect')}
                 </Button>
                 {Boolean(shownInvalidAliases?.length) && (
                     <React.Fragment>

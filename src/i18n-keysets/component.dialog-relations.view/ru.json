@@ -2,8 +2,6 @@
   "button_apply": "Применить",
   "button_cancel": "Отмена",
   "button_disconnect": "Отключить все",
-  "button_disconnect-input": "Отключить все входящие",
-  "button_disconnect-output": "Отключить все исходящие",
   "button_incoming": "Входящие",
   "button_not-linked": "Не связаны",
   "button_outcoming": "Исходящие",
