@@ -111,7 +111,7 @@
   "label_section-caption-counter-settings": "Tag settings",
   "label_select-folder": "Select folder",
   "label_service-acc-key-file": "Service account public key",
-  "label_service-account-ydb-hint": "The \"monitoring.viewer\" role (or the \"viewer\" role) is required on the service account",
+  "label_service-account-ydb-hint": "Select an existing service account or create a new one",
   "label_service-accounts-empty-list": "No available accounts",
   "label_service-accounts-fetching-failed": "Failed to load service accounts list",
   "label_showflake-oauth-integration-label": "OAuth integration",

@@ -27,6 +27,7 @@ export interface Entry {
     isLocked: boolean;
     unversionedData?: unknown;
     workbookId: string;
+    fake?: boolean;
 }
 
 /** @deprecated use response from schema */

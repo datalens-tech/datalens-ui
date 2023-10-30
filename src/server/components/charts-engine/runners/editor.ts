@@ -15,12 +15,13 @@ export const runEditor = (
 
     const hrStart = process.hrtime();
 
-    const {params, actionParams} = req.body;
+    const {params, actionParams, widgetConfig} = req.body;
 
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
         paramsOverride: params,
         actionParamsOverride: actionParams,
+        widgetConfig,
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
         userId: res.locals && res.locals.userId,

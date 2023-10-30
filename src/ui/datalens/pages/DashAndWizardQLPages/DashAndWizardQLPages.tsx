@@ -43,9 +43,9 @@ const DEFAULT_QL_PATHS = ['/workbooks/:workbookId/ql', '/ql/:qlEntryId', '/ql'];
 const DEFAULT_DASH_PATHS = ['/:parentDashboardId'];
 
 if (Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry)) {
-    const newDashPath = '/dashboards/new';
-    DEFAULT_DASH_PATHS.push(newDashPath);
-    dashAndWizardQLRoutes.push(newDashPath);
+    const newDashPath = ['/dashboards/new', '/workbooks/:workbookId/dashboards'];
+    DEFAULT_DASH_PATHS.push(...newDashPath);
+    dashAndWizardQLRoutes.push(...newDashPath);
 }
 
 class DashAndWizardQLAppPage extends React.PureComponent<DashAndWizardQLAppPageProps> {

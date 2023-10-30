@@ -1,3 +1,5 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .dialog-relations {
     width: 600px;
 
@@ -41,5 +43,26 @@
         align-items: center;
         justify-content: center;
         height: 100%;
+    }
+
+    &__error-button {
+        margin-left: 8px;
+    }
+
+    &__error-icon {
+        color: var(--g-color-text-danger);
+    }
+
+    &__warn-content {
+        padding: 20px 16px;
+        max-width: 500px;
+    }
+
+    &__warn-title {
+        @include text-subheader-1();
+    }
+
+    &__warn-text {
+        margin: 8px 0 4px;
     }
 }

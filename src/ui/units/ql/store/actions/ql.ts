@@ -32,10 +32,6 @@ import {AppDispatch} from '../../../../store';
 import {saveWidget, setActualChart} from '../../../../store/actions/chartWidget';
 import {UrlSearch, getUrlParamFromStr} from '../../../../utils';
 import {
-    load as loadParentDashConfig,
-    setEditMode as setEditModeForParentDash,
-} from '../../../dash/store/actions/dash';
-import {
     resetWizardStore,
     setVisualizationPlaceholderItems,
     setVisualization as setVisualizationWizard,
@@ -495,18 +491,6 @@ type InitializeApplicationArgs = {
         qlEntryId?: string;
         workbookId?: string;
     }>;
-};
-
-export const loadParentDash = (history: History) => {
-    return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
-        const state = getState();
-
-        if (!state.dash?.data?.tabs) {
-            // @ts-ignore
-            await dispatch(loadParentDashConfig({location: history.location, history}));
-            await dispatch(setEditModeForParentDash());
-        }
-    };
 };
 
 type FetchConnectionSourcesArgs = {
