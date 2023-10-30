@@ -141,7 +141,12 @@ function prepareValues({widget, data, widgetType, extra, options = {}}) {
     }
 
     if (widgetType === CHARTKIT_WIDGET_TYPE.GRAPH) {
-        const dataRows = widget.getDataRows();
+        let dataRows;
+        try {
+            dataRows = widget.getDataRows();
+        } catch (e) {
+            return {};
+        }
 
         const result = {
             graphs: dataRows.reduce((result, data, rowIndex) => {
