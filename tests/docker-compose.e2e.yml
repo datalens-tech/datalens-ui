@@ -11,6 +11,10 @@ services:
     volumes:
       - e2e-data-volume:/opt/app/tests/data
 
+  postgres-connection:
+    deploy:
+      replicas: 0
+
   postgres-e2e:
     container_name: postgres-e2e
     image: postgres:13-alpine
@@ -22,7 +26,6 @@ services:
       - e2e-data-volume:/docker-entrypoint-initdb.d
 
   us:
-    container_name: datalens-us
     environment:
       USE_DEMO_DATA: 0
       USE_E2E_MOCK_DATA: 1
