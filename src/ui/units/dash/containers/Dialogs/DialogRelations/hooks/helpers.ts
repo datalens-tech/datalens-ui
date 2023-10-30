@@ -20,6 +20,7 @@ import {
     DASH_FILTERING_CHARTS_WIDGET_TYPES,
     DASH_WIDGET_TYPES,
     FilteringWidgetType,
+    WidgetType,
 } from 'ui/units/dash/modules/constants';
 
 import {FiltersTypes} from '../components/Filters/Filters';
@@ -63,7 +64,7 @@ export const getPreparedMetaData = (
         configItems[item.id] = item.namespace;
     });
 
-    const metaDataWithNamespaces: Array<Omit<DashkitMetaDataItem, 'relations'>> = data
+    let metaDataWithNamespaces: Array<Omit<DashkitMetaDataItem, 'relations'>> = data
         .reduce(
             (list: Array<Omit<DashkitMetaDataItem, 'relations'>>, item) => list.concat(item),
             [],
@@ -101,6 +102,10 @@ export const getPreparedMetaData = (
                 };
             });
         });
+
+    metaDataWithNamespaces = metaDataWithNamespaces.filter(
+        (item) => (item.type as WidgetType) !== DASH_WIDGET_TYPES.MARKDOWN,
+    );
 
     const entriesList = [
         ...new Set(metaDataWithNamespaces.map((item) => item.entryId).filter(Boolean)),
@@ -570,7 +575,8 @@ export const getRelationsInfo = (args: {
         !isIgnored &&
         isEmpty(byAliases.filter(Boolean)) &&
         isEmpty(byFields) &&
-        isEmpty(byUsedParams)
+        isEmpty(byUsedParams) &&
+        relations.type !== RELATION_TYPES.unknown
     ) {
         relations.type = RELATION_TYPES.ignore as RelationType;
     }
