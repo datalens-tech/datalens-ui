@@ -140,8 +140,9 @@ class DashboardPage extends BasePage {
         );
         // TODO: CHARTS-8652, refine tests for new behavior
         if (isSaveWithFakeEntryEnabled) {
+            // temp creating an element, because it is impossible to save an absolutely empty dash
             await this.addSelector({controlTitle: 'stub', controlFieldName: 'stub'});
-            await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+            await this.saveChanges();
         }
 
         // waiting for the dialog to open, specify the name, save
@@ -152,6 +153,11 @@ class DashboardPage extends BasePage {
         ]);
 
         if (isSaveWithFakeEntryEnabled) {
+            // check that the dashboard has loaded by its name
+            await this.page.waitForSelector(
+                `${slct(COMMON_SELECTORS.DASH_ENTRY_NAME)} >> text=${dashName}`,
+            );
+            // enter the edit mode after redirect to the created dash
             await this.enterEditMode();
         }
     }

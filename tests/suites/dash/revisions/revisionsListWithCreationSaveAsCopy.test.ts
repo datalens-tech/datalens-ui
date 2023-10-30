@@ -2,9 +2,16 @@ import {ElementHandle, Page} from '@playwright/test';
 
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage, {RENDER_TIMEOUT} from '../../../page-objects/dashboard/DashboardPage';
-import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../../utils';
+import {
+    getUniqueTimestamp,
+    openTestPage,
+    slct,
+    waitForCondition,
+    isEnabledFeature,
+} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {Feature} from '../../../../src/shared/types/feature';
 
 const waitCheckActualizeRevisionList = async ({
     page,
@@ -99,8 +106,17 @@ datalensTest.describe('Dashboard Versioning', () => {
             await page.waitForSelector(
                 `${slct(COMMON_SELECTORS.DASH_ENTRY_NAME)} >> text="${prevName}"`,
             );
+            const isSaveWithFakeEntryEnabled = await isEnabledFeature(
+                page,
+                Feature.SaveDashWithFakeEntry,
+            );
             // wait for page load to be able to remove
             await page.waitForTimeout(RENDER_TIMEOUT);
+            if (isSaveWithFakeEntryEnabled) {
+                await dashboardPage.deleteDashFromViewMode();
+                return;
+            }
+
             await dashboardPage.deleteDashFromEditMode();
         },
     );
