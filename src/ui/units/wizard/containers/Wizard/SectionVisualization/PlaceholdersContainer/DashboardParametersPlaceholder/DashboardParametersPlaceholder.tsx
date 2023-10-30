@@ -32,7 +32,7 @@ class DashboardParametersPlaceholder extends React.Component<Props> {
                 key="dashboard-parameters"
                 qa="placeholder-dashboard-parameters"
                 title="section_parameters_from_dashboard"
-                iconProps={{data: iconFilter, width: '24'}}
+                iconProps={{data: iconFilter}}
                 items={[...dashboardParameters]}
                 onUpdate={this.handleOnUpdate}
                 noSwap={true}

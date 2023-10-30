@@ -2,9 +2,10 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {getDialogRowIcon} from 'ui/units/dash/containers/Dialogs/DialogRelations/helpers';
-import {AliasesContext} from 'ui/units/dash/containers/Dialogs/DialogRelations/hooks/useRelations';
-import {DashkitMetaDataItem} from 'ui/units/dash/containers/Dialogs/DialogRelations/types';
+
+import {getDialogRowIcon} from '../../../../helpers';
+import {AliasesContext} from '../../../../hooks/useRelations';
+import {DashkitMetaDataItem} from '../../../../types';
 
 import './AliasesDetail.scss';
 
@@ -19,9 +20,9 @@ type AliasesDetailProps = {
 };
 
 export const AliasesDetail = ({fieldName, items}: AliasesDetailProps) => {
-    const {showDebugInfo} = React.useContext(AliasesContext);
+    const {showDebugInfo, invalidAliases} = React.useContext(AliasesContext);
 
-    const content = items.map(
+    let content: React.ReactNode = items.map(
         (item: DashkitMetaDataItem & {intersectionParams: string[]}, index: number) => {
             const icon = getDialogRowIcon(item, b('icon-widget'));
             const label = item?.label && item?.label !== item.title ? item?.label : '';
@@ -41,6 +42,10 @@ export const AliasesDetail = ({fieldName, items}: AliasesDetailProps) => {
             );
         },
     );
+
+    if (invalidAliases?.includes(fieldName)) {
+        content = <div className={b('error')}>{i18n('label_invalid-alias')}</div>;
+    }
 
     return (
         <div className={b()}>

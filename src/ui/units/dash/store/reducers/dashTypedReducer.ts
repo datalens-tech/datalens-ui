@@ -308,7 +308,7 @@ export function dashTypedReducer(
                 ...state,
                 mode: action.payload?.mode || Mode.View,
                 tabId: tabIndex === -1 ? entryData.tabs[0].id : tabId,
-                showTableOfContent: entryData.settings.expandTOC && state.showTableOfContent,
+                showTableOfContent: entryData.settings?.expandTOC && state.showTableOfContent,
                 data: entryData,
             };
         }

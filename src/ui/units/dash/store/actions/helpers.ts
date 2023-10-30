@@ -1,3 +1,4 @@
+import {History} from 'history';
 import {DashEntry, DashTabItemType} from 'shared';
 
 export const NOT_FOUND_ERROR_TEXT = 'No entry found';
@@ -16,4 +17,17 @@ export const prepareLoadedData = (data: DashEntry['data']) => {
         });
     });
     return data;
+};
+
+export const removeParamAndUpdate = (
+    history: History,
+    searchParams: URLSearchParams,
+    param: string,
+) => {
+    searchParams.delete(param);
+    history.replace({
+        ...location,
+        search: `?${searchParams.toString()}`,
+        hash: '',
+    });
 };

@@ -5,7 +5,7 @@ import {DL} from 'constants/common';
 import axios, {AxiosRequestConfig, CancelTokenSource} from 'axios';
 import {
     ACCEPT_LANGUAGE_HEADER,
-    DashEntryCreateParams,
+    DashData,
     EntryUpdateMode,
     TIMEZONE_OFFSET_HEADER,
     oldSchema,
@@ -185,7 +185,7 @@ interface SDK {
                 name?: string;
                 mode?: EntryUpdateMode;
                 withParams?: boolean;
-                data?: DashEntryCreateParams;
+                data?: DashData;
             };
         }): Promise<Entry>;
         createWidget(args: CreateWidgetArgs): Promise<Entry>;

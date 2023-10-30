@@ -3,4 +3,5 @@ export enum DlNavigationQA {
     Row = 'dl-nav-row',
     NavigationMinimal = 'navigation-minimal',
     MinimalDoneBtn = 'navigation-mininal-done-btn',
+    AsideMenuItem = 'aside-nav-menu-item',
 }

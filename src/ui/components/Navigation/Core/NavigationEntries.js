@@ -678,7 +678,7 @@ class NavigationEntries extends React.Component {
 
 const mapDispatchToProps = {
     // need to be wrapped in additional function because the registry function does not have time to register
-    resolveUsersByIds: () => getResolveUsersByIdsAction(),
+    resolveUsersByIds: (ids) => getResolveUsersByIdsAction()(ids),
     showToast,
 };
 
