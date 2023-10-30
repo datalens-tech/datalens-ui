@@ -57,7 +57,7 @@ jobs:
           build-args: |
             app_version=${{ env.BUILD_VERSION }}
           context: .
-          push: true
+          # push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           # ? disabled due to a very long ARM build
