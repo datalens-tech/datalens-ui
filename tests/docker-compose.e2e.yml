@@ -99,7 +99,8 @@ services:
   datalens:
     container_name: datalens-ui
     build:
-      dockerfile: ../Dockerfile
+      dockerfile: Dockerfile
+      context: ../
     ports:
       - 8080:80
     depends_on:
