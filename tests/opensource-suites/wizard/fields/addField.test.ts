@@ -11,13 +11,14 @@ import {
 } from '../../../utils/opensource/helpers';
 import {WorkbookNavigationMinimal} from '../../../page-objects/wizard/WorkbookNavigationMinimal';
 import {SaveChartControlsQa} from '../../../../src/shared';
+import {DEFAULT_WORKBOOK_ID} from '../../../utils/opensource/constants/common';
 
 datalensTest.describe('Wizard Fields', () => {
     datalensTest.beforeEach(async ({page}) => {
         const wizardPage = new WizardPage({page});
         const workbookNavigationMinimal = new WorkbookNavigationMinimal({page});
 
-        await openOpensourceTestPage(page, E2EWizardUrls.Empty);
+        await openOpensourceTestPage(page, E2EWizardUrls.Empty, {workbookId: DEFAULT_WORKBOOK_ID});
 
         await wizardPage.datasetSelector.click();
 

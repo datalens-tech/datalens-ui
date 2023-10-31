@@ -1,5 +1,4 @@
 import {Page} from '@playwright/test';
-import {DEFAULT_WORKBOOK_ID} from './constants/common';
 import {generateQueryString, goto, slct} from '../index';
 import {ActionPanelQA, DialogCreateWorkbookEntryQa, EntryDialogQA} from '../../../src/shared';
 import {ActionPanelEntryContextMenuQa} from '../../../src/shared/constants/qa/action-panel';
@@ -7,16 +6,14 @@ import {ActionPanelEntryContextMenuQa} from '../../../src/shared/constants/qa/ac
 export const openOpensourceTestPage = async (
     page: Page,
     url: string,
-    options?: {queryMap: Record<string, string>; workbookId?: string},
+    options?: {queryMap?: Record<string, string>; workbookId?: string},
 ) => {
-    const {workbookId = DEFAULT_WORKBOOK_ID, queryMap} = options || {};
+    const {workbookId, queryMap} = options || {};
     const query = queryMap ? generateQueryString(queryMap) : '';
 
-    const workbookPath = `/workbooks/${workbookId}`;
+    const pathname = workbookId ? `workbooks/${workbookId}${url}` : url;
 
-    const entryPath = workbookPath + url;
-
-    const fullUrl = query ? `${entryPath}?${query}` : entryPath;
+    const fullUrl = query ? `${pathname}?${query}` : pathname;
 
     await goto(page, fullUrl, {isRetry: false});
 };
