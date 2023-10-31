@@ -33,6 +33,10 @@ export const EntryActions = ({
 }: EntryActionsProps) => {
     const {useAdditionalWorkbookEntryActions} = registry.workbooks.functions.getAll();
 
+    const isFileConnection =
+        entry.scope === EntryScope.Connection &&
+        (entry.type === 'file' || entry.type === 'gsheets_v2');
+
     const items: DropdownMenuItemMixed<unknown>[] = [
         {
             action: onRenameClick,
@@ -46,8 +50,7 @@ export const EntryActions = ({
                   },
               ]
             : []),
-        ...(!(entry.scope === EntryScope.Connection && entry.type === 'file') &&
-        copyEntriesToWorkbookEnabled
+        ...(!isFileConnection && copyEntriesToWorkbookEnabled
             ? [
                   {
                       action: onCopyEntry,
