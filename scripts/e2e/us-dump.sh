@@ -1,4 +1,4 @@
-US_DOCKER_CONTAINER_NAME="datalens-pg-us"
+US_CONTAINER_NAME="datalens-pg-us"
 US_DB_HOST="pg-us"
 US_DB_USER="us"
 US_DB_PASS="us"
@@ -11,10 +11,10 @@ DUMP_TMP="/tmp/us-dump-$RANDOM"
 echo "United Storage dump process"
 echo
 
-US_CONTAINER_ID=$(docker ps -aqf name="$US_DOCKER_CONTAINER_NAME")
+US_CONTAINER_ID=$(docker ps -aqf name="$US_CONTAINER_NAME")
 
 if [ -z $US_CONTAINER_ID ]; then
-    echo "Failed to locate $US_DOCKER_CONTAINER_NAME docker container id."
+    echo "Failed to locate $US_CONTAINER_NAME docker container id."
     exit 1
 fi
 
