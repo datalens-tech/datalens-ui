@@ -12,35 +12,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          repository: datalens-tech/datalens
-          path: datalens
-      - uses: actions/checkout@v4
-        with:
-          path: datalens-ui
       - uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
-          cache-dependency-path: ./datalens-ui/package-lock.json
+          cache-dependency-path: ./package-lock.json
 
       - name: Run Docker Compose and Install dependencies for Datalens-UI
-        working-directory: ./datalens
-        run: docker compose -f ./docker-compose.yml -f ../datalens-ui/tests/docker-compose.override.yml up -d & cd ../datalens-ui && npm ci && npm run test:install:chromium & wait
+        working-directory: ./tests
+        run: docker compose -f ./docker-compose.e2e.yml up -d & cd .. && npm ci && npm run test:install:chromium & wait
 
       - name: Run Test 
-        working-directory: ./datalens-ui
         run: E2E_DOMAIN="http://localhost:8080" NO_AUTH=true npm run test:e2e:opensource
       
       - name: Run Docker Shutdown
-        working-directory: ./datalens
-        run: docker compose down
+        working-directory: ./tests
+        run: docker compose -f ./docker-compose.e2e.yml down
       
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-report
-          path: ./datalens-ui/tests/artifacts/
+          path: ./tests/artifacts/
           retention-days: 30
 
   publish_report:
