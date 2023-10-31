@@ -54,8 +54,6 @@ const DatalensPageView = () => {
                 <Route path="/preview" component={PreviewPage} />
                 <Route
                     path={[
-                        '/connections/new/:type',
-                        '/connections/new',
                         '/connections/:id',
                         '/workbooks/:workbookId/connections/new/:type',
                         '/workbooks/:workbookId/connections/new',
