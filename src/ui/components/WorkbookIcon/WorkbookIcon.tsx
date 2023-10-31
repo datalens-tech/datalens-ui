@@ -11,6 +11,7 @@ type Props = {
     size?: number;
     fontSize?: number;
     lineHeight?: number;
+    borderRadius?: number;
 };
 
 export const WorkbookIcon: React.FC<Props> = ({
@@ -18,11 +19,15 @@ export const WorkbookIcon: React.FC<Props> = ({
     size = 32,
     fontSize = 32,
     lineHeight = 32,
+    borderRadius = 6,
 }) => {
     const letters = title.slice(0, 2);
 
     return (
-        <div className={b()} style={{width: `${size}px`, height: `${size}px`}}>
+        <div
+            className={b()}
+            style={{width: `${size}px`, height: `${size}px`, borderRadius: `${borderRadius}px`}}
+        >
             <div
                 className={b('letters')}
                 style={{fontSize: `${fontSize}px`, lineHeight: `${lineHeight}px`}}

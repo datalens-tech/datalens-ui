@@ -39,6 +39,7 @@ export const CollectionContentGrid = React.memo<CollectionContentProps>(
                                                     title={item.title}
                                                     size={125}
                                                     lineHeight={38}
+                                                    borderRadius={12}
                                                 />
                                             </div>
                                             <div className={b('title-col-text')}>{item.title}</div>
