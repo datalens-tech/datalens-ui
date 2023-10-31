@@ -115,3 +115,14 @@ export const enum RelativeDatepickerQa {
     ScaleSelectStart = 'scale-select-start',
     ScaleSelectEnd = 'scale-select-end',
 }
+
+export const enum WorkbookNavigationMinimalQa {
+    Popup = 'workbook-navigation-minimal-popuup',
+    Input = 'wokbook-navigation-minimal-input',
+}
+
+export const enum DialogCreateWorkbookEntryQa {
+    Root = 'dialog-create-workbook-entry-root',
+    Input = 'dialog-create-workbook-entry-input',
+    ApplyButton = 'dialog-create-workbook-entry-apply-button',
+}

@@ -2,6 +2,7 @@ import React from 'react';
 
 import {Dialog, TextInput, TextInputProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {DialogCreateWorkbookEntryQa} from 'shared';
 
 import {I18n} from '../../../../i18n';
 import logger from '../../../libs/logger';
@@ -94,7 +95,13 @@ export class DialogCreateWorkbookEntry<T> extends React.Component<
         const {name, loading, inputError} = this.state;
 
         return (
-            <Dialog size="s" open={visible} onClose={this.onClose} onEnterKeyDown={this.onApply}>
+            <Dialog
+                qa={DialogCreateWorkbookEntryQa.Root}
+                size="s"
+                open={visible}
+                onClose={this.onClose}
+                onEnterKeyDown={this.onApply}
+            >
                 <Dialog.Header caption={caption} />
                 <Dialog.Body>
                     <div className={b('content')} data-qa="dialog-create-workbook-entry">
@@ -104,6 +111,7 @@ export class DialogCreateWorkbookEntry<T> extends React.Component<
                             <div className={b('row')}>
                                 <span className={b('row-label')}>{i18n('label_name')}</span>
                                 <TextInput
+                                    qa={DialogCreateWorkbookEntryQa.Input}
                                     controlRef={this.textInputRef}
                                     value={name}
                                     placeholder={placeholder}
@@ -117,7 +125,7 @@ export class DialogCreateWorkbookEntry<T> extends React.Component<
                 <Dialog.Footer
                     onClickButtonCancel={this.onClose}
                     onClickButtonApply={this.onApply}
-                    propsButtonApply={{qa: 'dialog-create-workbook-entry-apply-button'}}
+                    propsButtonApply={{qa: DialogCreateWorkbookEntryQa.ApplyButton}}
                     textButtonApply={textButtonApply}
                     textButtonCancel={textButtonCancel}
                     loading={loading}
