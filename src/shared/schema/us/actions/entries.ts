@@ -209,7 +209,7 @@ export const entriesActions = {
         method: 'POST',
         path: () => `${PATH_PREFIX_V2}/copy-entries`,
         params: (args, headers) => ({
-            body: {workbookId: args.workbookId, ids: args.entryIds},
+            body: {workbookId: args.workbookId, entryIds: args.entryIds},
             headers,
         }),
     }),
