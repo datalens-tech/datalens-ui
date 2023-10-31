@@ -2,7 +2,6 @@ import {Page} from '@playwright/test';
 
 import {slct, waitForCondition} from '../../utils';
 
-import DashboardPage from './DashboardPage';
 import {
     DashboardActionPanelControlsQa,
     DashboardDialogSettingsQa,
@@ -17,11 +16,9 @@ export default class DashboardSettings {
     };
 
     page: Page;
-    dashPage: DashboardPage;
 
-    constructor(page: Page, dashPage: DashboardPage) {
+    constructor(page: Page) {
         this.page = page;
-        this.dashPage = dashPage;
     }
 
     async opened() {
