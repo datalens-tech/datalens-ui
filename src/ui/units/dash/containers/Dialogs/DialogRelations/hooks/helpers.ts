@@ -23,7 +23,7 @@ import {
     WidgetType,
 } from 'ui/units/dash/modules/constants';
 
-import {FiltersTypes} from '../components/Filters/Filters';
+import {DEFAULT_FILTERS, FiltersTypes} from '../components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../constants';
 import {
     AliasesData,
@@ -679,7 +679,9 @@ export const getMappedFilters = (items: Array<FiltersTypes>) => {
         unknown: false,
     };
 
-    items.forEach((item) => {
+    const preparedItems = items.length > 0 ? items : DEFAULT_FILTERS;
+
+    preparedItems.forEach((item) => {
         switch (item) {
             case 'none':
                 mapped.ignore = true;
