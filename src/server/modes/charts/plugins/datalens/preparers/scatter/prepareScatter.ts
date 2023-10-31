@@ -326,11 +326,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
     let graphs: ExtendedSeriesScatterOptions[] = [{data: points}] as ExtendedSeriesScatterOptions[];
 
-    // Handling no-data case before colorizing
-    if (graphs[0].data?.length === 0) {
-        return {graphs: []};
-    }
-
     if (color) {
         if (color.type === 'MEASURE') {
             mapAndColorizeChartByMeasure(points as Highcharts.PointOptionsObject[], colorsConfig);
@@ -338,7 +333,9 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             graphs = mapAndColorizePointsByDimension(points, colorsConfig);
         }
 
-        graphs[0].title = color.fakeTitle || idToTitle[color.guid];
+        if (graphs.length) {
+            graphs[0].title = color.fakeTitle || idToTitle[color.guid];
+        }
     } else {
         const value = idToTitle[y.guid];
         const colorFromConfig = getMountedColor(colorsConfig, value) || colorsConfig.colors[0];
