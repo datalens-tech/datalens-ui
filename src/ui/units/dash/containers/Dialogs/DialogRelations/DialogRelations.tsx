@@ -20,7 +20,7 @@ import {openDialogAliases} from '../../../store/actions/relations/actions';
 
 import {Content} from './components/Content/Content';
 import {AliasesInvalidList} from './components/DialogAliases/components/AliasesList/AliasesInvalidList';
-import {DEFAULT_FILTERS, Filters, FiltersTypes} from './components/Filters/Filters';
+import {Filters, FiltersTypes} from './components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, DEFAULT_ICON_SIZE, RELATION_TYPES} from './constants';
 import {
     getDialogCaptionIcon,
@@ -67,7 +67,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
     const [aliasWarnPopupOpen, setAliasWarnPopupOpen] = React.useState(false);
     const [searchValue, setSearchValue] = React.useState('');
-    const [typeValues, setTypeValues] = React.useState(DEFAULT_FILTERS);
+    const [typeValues, setTypeValues] = React.useState<Array<FiltersTypes>>([]);
     const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>();
     const [preparedRelations, setPreparedRelations] = React.useState<DashMetaData>([]);
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
@@ -369,14 +369,15 @@ const DialogRelations = (props: DialogRelationsProps) => {
               });
 
     // disable disconnect button when loading
-    // when none of filters is selected (empty) - TODO this logic will be changed in next PR
     // when selected only 'none' filter
     // when selected filter and none of widgets is showed in list
     const isDisconnectDisabled = Boolean(
         isLoading ||
-            !typeValues.length ||
             (typeValues.length === 1 && typeValues[0] === 'none') ||
-            (typeValues.length && !filteredRelations.length),
+            !filteredRelations.length ||
+            filteredRelations.every(
+                (filteredRealtion) => filteredRealtion?.relations.type === 'ignore',
+            ),
     );
 
     React.useEffect(() => {
