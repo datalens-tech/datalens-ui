@@ -90,7 +90,7 @@ const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
 
     if (showAsideHeaderAdapter) {
-        return <AsideHeaderAdapter renderContent={DatalensPageView} />;
+        return <AsideHeaderAdapter renderContent={() => <DatalensPageView />} />;
     }
 
     return <DatalensPageView />;
