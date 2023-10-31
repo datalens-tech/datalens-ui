@@ -18,12 +18,12 @@ if [ -z $US_ID ]; then
 fi
 
 CONNECTION_CHECK_CMD="pg_isready --dbname=$CONNECTION"
-docker exec -it $US_ID /bin/sh -c "$CONNECTION_CHECK_CMD" >> /dev/null
+CONNECTION_CHECK_RESULT=$(docker exec -it $US_ID /bin/sh -c "$CONNECTION_CHECK_CMD")
 CONNECTION_STATUS_CODE=$?
 
 if [ $CONNECTION_STATUS_CODE -ne 0 ]; then
     echo "Failed to establish database connection."
-    echo "Check that the connection $CONNECTION is working"
+    echo $CONNECTION_CHECK_RESULT
     exit 1
 fi
 
