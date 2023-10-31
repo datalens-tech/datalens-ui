@@ -3,11 +3,13 @@
         display: flex;
         flex-flow: wrap;
         row-gap: 20px;
+        margin: -11px;
     }
 
     &__content-item {
         height: auto;
-        flex-basis: 165px;
+        flex: 1;
+        margin: 11px;
 
         color: inherit;
         text-decoration: none;
