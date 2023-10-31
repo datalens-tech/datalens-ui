@@ -4,8 +4,13 @@ import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {E2EWizardUrls, WizardDatasetNames} from '../../../utils/opensource/constants/wizard';
-import {openOpensourceTestPage, saveWorkbookEntry} from '../../../utils/opensource/helpers';
+import {
+    deleteWorkbookEntry,
+    openOpensourceTestPage,
+    saveWorkbookEntry,
+} from '../../../utils/opensource/helpers';
 import {WorkbookNavigationMinimal} from '../../../page-objects/wizard/WorkbookNavigationMinimal';
+import {SaveChartControlsQa} from '../../../../src/shared';
 
 datalensTest.describe('Wizard Fields', () => {
     datalensTest.beforeEach(async ({page}) => {
@@ -32,9 +37,13 @@ datalensTest.describe('Wizard Fields', () => {
 
         await wizardPage.chartkit.waitUntilLoaderExists();
 
-        await saveWorkbookEntry(page, wizardPage.getUniqueEntryName('test-wizard-chart'));
+        await saveWorkbookEntry(
+            page,
+            SaveChartControlsQa.SaveButton,
+            wizardPage.getUniqueEntryName('test-wizard-chart'),
+        );
 
-        await wizardPage.deleteEntry();
+        await deleteWorkbookEntry(page);
     });
 
     datalensTest('Moving fields through the add and save button', async ({page}: {page: Page}) => {
@@ -48,8 +57,12 @@ datalensTest.describe('Wizard Fields', () => {
 
         await wizardPage.chartkit.waitUntilLoaderExists();
 
-        await saveWorkbookEntry(page, wizardPage.getUniqueEntryName('test-wizard-chart'));
+        await saveWorkbookEntry(
+            page,
+            SaveChartControlsQa.SaveButton,
+            wizardPage.getUniqueEntryName('test-wizard-chart'),
+        );
 
-        await wizardPage.deleteEntry();
+        await deleteWorkbookEntry(page);
     });
 });
