@@ -13,7 +13,7 @@ echo
 US_ID=$(docker ps -aqf name="$US_DOCKER_CONTAINER_NAME")
 
 if [ -z $US_ID ]; then
-    echo "Failed to locate $US_DOCKER_CONTAINER_NAME docker container id"
+    echo "Failed to locate $US_DOCKER_CONTAINER_NAME docker container id."
     exit 1
 fi
 
@@ -32,11 +32,11 @@ DUMP_RESULT=$(docker exec -it $US_ID /bin/sh -c "$DUMP_CMD")
 DUMP_STATUS_CODE=$?
 
 if [ $DUMP_STATUS_CODE -ne 0 ]; then
-    echo "Failed to dump database"
+    echo "Failed to dump database."
     echo $DUMP_RESULT
     exit 1
 fi
 
 echo $DUMP_RESULT > $US_DUMP_PATH
-echo "The dump was succesfully created in $US_DUMP_PATH"
+echo "The dump was succesfully created in $US_DUMP_PATH."
 exit 0
