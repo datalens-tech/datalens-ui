@@ -10,7 +10,7 @@ import {
     resolveOperation,
 } from '../../../../../shared';
 
-import {buildSource, log} from './utils/misc-helpers';
+import {buildSource, iterateThroughVisibleQueries, log} from './utils/misc-helpers';
 
 const prepareQuery = (query: string) => {
     return query
@@ -154,32 +154,35 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
                 }
             }
 
-            shared.queries.forEach(({value: queryValue, params: queryParams = []}, i) => {
-                const localParams = {...params};
+            iterateThroughVisibleQueries(
+                shared.queries,
+                ({value: queryValue, params: queryParams = []}, i) => {
+                    const localParams = {...params};
 
-                queryParams.forEach((queryParam) => {
-                    if (typeof queryParam.defaultValue === 'string') {
-                        localParams[queryParam.name] = queryParam.defaultValue;
-                    }
-                });
+                    queryParams.forEach((queryParam) => {
+                        if (typeof queryParam.defaultValue === 'string') {
+                            localParams[queryParam.name] = queryParam.defaultValue;
+                        }
+                    });
 
-                const localParamsDescription = [...shared.params, ...queryParams];
+                    const localParamsDescription = [...shared.params, ...queryParams];
 
-                const source = buildSource({
-                    // specify the desired connection id
-                    id: connectionEntryId,
+                    const source = buildSource({
+                        // specify the desired connection id
+                        id: connectionEntryId,
 
-                    connectionType: connectionType || ConnectorType.Clickhouse,
+                        connectionType: connectionType || ConnectorType.Clickhouse,
 
-                    // requesting a query
-                    query: prepareQuery(queryValue),
+                        // requesting a query
+                        query: prepareQuery(queryValue),
 
-                    params: localParams,
-                    paramsDescription: localParamsDescription,
-                });
+                        params: localParams,
+                        paramsDescription: localParamsDescription,
+                    });
 
-                sources[`ql_${i}`] = source;
-            });
+                    sources[`ql_${i}`] = source;
+                },
+            );
         } else {
             sources = {
                 sql: buildSource({

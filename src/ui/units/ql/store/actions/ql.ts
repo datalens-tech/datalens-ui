@@ -57,7 +57,13 @@ import {
 } from '../../constants';
 import {prepareChartDataBeforeSave} from '../../modules/helpers';
 import {getAvailableQlVisualizations, getDefaultQlVisualization} from '../../utils/visualization';
-import {getEntry, getGridSchemes, getPreviewData, selectInitalQlChartConfig} from '../reducers/ql';
+import {
+    getEntry,
+    getGridSchemes,
+    getPreviewData,
+    getValid,
+    selectInitalQlChartConfig,
+} from '../reducers/ql';
 import {
     QLAction,
     QLChart,
@@ -1145,5 +1151,17 @@ export const setQlChartActualRevision = (isDraft?: boolean) => {
                 onSetActualError: (error) => dispatch(onErrorSetActualChartRevision(error)),
             }),
         );
+    };
+};
+
+export const updateQueryAndRedraw = ({query, index}: {query: QLQuery; index: number}) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
+        dispatch(updateQuery({query, index}));
+
+        const valid = getValid(getState());
+
+        if (valid) {
+            dispatch(drawPreview());
+        }
     };
 };
