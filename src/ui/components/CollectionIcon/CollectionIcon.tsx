@@ -21,6 +21,8 @@ const CollectionIcon: React.FC<CollectionIconType> = ({size = 32, isIconBig}) =>
     const collectionIcons: {[key: string]: string} = {
         light: isIconBig ? 'collectionColoredBig' : 'collectionColored',
         dark: isIconBig ? 'collectionColoredBigDark' : 'collectionColoredDark',
+        'light-hc': isIconBig ? 'collectionColoredBig' : 'collectionColored',
+        'dark-hc': isIconBig ? 'collectionColoredBigDark' : 'collectionColoredDark',
     };
 
     return <IconById className={b()} id={collectionIcons[currentTheme] as IconId} size={size} />;
