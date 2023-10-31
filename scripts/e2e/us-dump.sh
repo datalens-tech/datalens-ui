@@ -28,13 +28,15 @@ if [ $CONNECTION_STATUS_CODE -ne 0 ]; then
 fi
 
 DUMP_CMD="pg_dump --dbname=$CONNECTION --column-inserts -a -t workbooks -t entries -t revisions -t links"
-docker exec -it $US_ID /bin/sh -c "$DUMP_CMD" > "$US_DUMP_PATH"
+DUMP_RESULT=$(docker exec -it $US_ID /bin/sh -c "$DUMP_CMD")
 DUMP_STATUS_CODE=$?
 
 if [ $DUMP_STATUS_CODE -ne 0 ]; then
     echo "Failed to dump database"
+    echo $DUMP_RESULT
     exit 1
 fi
 
+echo $DUMP_RESULT > $US_DUMP_PATH
 echo "The dump was succesfully created in $US_DUMP_PATH"
 exit 0
