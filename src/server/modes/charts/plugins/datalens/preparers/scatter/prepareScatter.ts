@@ -326,6 +326,11 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
     let graphs: ExtendedSeriesScatterOptions[] = [{data: points}] as ExtendedSeriesScatterOptions[];
 
+    // Handling no-data case before colorizing
+    if (graphs[0].data?.length === 0) {
+        return {graphs: []};
+    }
+
     if (color) {
         if (color.type === 'MEASURE') {
             mapAndColorizeChartByMeasure(points as Highcharts.PointOptionsObject[], colorsConfig);

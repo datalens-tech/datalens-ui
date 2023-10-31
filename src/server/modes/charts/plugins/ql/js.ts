@@ -209,8 +209,6 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
                 fields,
                 items: sharedShapes as Field[],
             });
-
-            console.log(newColors, newLabels, newShapes);
         }
 
         const available = [...(fields as unknown as Field[])];
