@@ -5,6 +5,10 @@ export enum ActionPanelQA {
     EntryMenuTopRevisions = 'entry-menu-top-revisions',
 }
 
+export enum SaveChartControlsQa {
+    SaveButton = 'action-panel-save-btn',
+}
+
 export enum DialogParameterQA {
     Apply = 'dialog_parameter-apply-btn',
     Cancel = 'dialog_parameter-cancel-btn',
