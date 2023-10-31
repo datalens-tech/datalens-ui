@@ -101,7 +101,7 @@
   },
   "devDependencies": {
     "@gravity-ui/app-builder": "^0.6.11",
-    "@gravity-ui/components": "^2.0.0",
+    "@gravity-ui/components": "^2.5.0",
     "@gravity-ui/dynamic-forms": "^2.4.0",
     "@gravity-ui/eslint-config": "^2.2.0",
     "@gravity-ui/icons": "^2.2.0",
