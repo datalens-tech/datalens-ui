@@ -11,6 +11,10 @@
     "label_unknown-error": {
       "en": "APPROVED",
       "ru": "APPROVED"
-    }
+    },
+    "label_validation-slash_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
   }
 }
