@@ -33,6 +33,7 @@ import {
     updateChart,
     updateParamInQuery,
     updateQuery,
+    updateQueryAndRedraw,
 } from '../../../../../store/actions/ql';
 import {
     getDefaultPath,
@@ -412,7 +413,10 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         query: QLQuery;
         queryIndex: number;
     }) => {
-        this.props.updateQuery({query: {...query, hidden: !query.hidden}, index: queryIndex});
+        this.props.updateQueryAndRedraw({
+            query: {...query, hidden: !query.hidden},
+            index: queryIndex,
+        });
     };
 
     private onClickButtonDuplicateQuery = ({queryIndex}: {queryIndex: number}) => {
@@ -517,6 +521,7 @@ const mapDispatchToProps = {
     addParamInQuery,
     updateParamInQuery,
     removeParamInQuery,
+    updateQueryAndRedraw,
 };
 
 export default connect(

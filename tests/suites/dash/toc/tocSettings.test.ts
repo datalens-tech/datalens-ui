@@ -6,10 +6,7 @@ import TableOfContent from '../../../page-objects/dashboard/TableOfContent';
 import {getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-
-const SELECTORS = {
-    TOC_SWITCH_KEY: 'settings-dialog-switch-toc',
-};
+import {DashboardDialogSettingsQa} from '../../../../src/shared';
 
 datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
@@ -27,13 +24,13 @@ datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
             const dashboardPage = new DashboardPage({page});
 
             const tableOfContent = new TableOfContent(page, dashboardPage);
-            const dashboardSettings = new DashboardSettings(page, dashboardPage);
+            const dashboardSettings = new DashboardSettings(page);
 
             await dashboardPage.enterEditMode();
             await dashboardSettings.open();
 
             // Enabling the opening of the table of contents when loading the page
-            await page.click(slct(SELECTORS.TOC_SWITCH_KEY));
+            await page.click(slct(DashboardDialogSettingsQa.TOCSwitch));
 
             // Save the dashboard settings and the dashboard itself
             await dashboardSettings.save();
@@ -48,7 +45,7 @@ datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
             await dashboardPage.enterEditMode();
             await dashboardSettings.open();
             await page.waitForTimeout(RENDER_TIMEOUT);
-            await page.click(slct(SELECTORS.TOC_SWITCH_KEY));
+            await page.click(slct(DashboardDialogSettingsQa.TOCSwitch));
 
             // Save the dashboard settings and the dashboard itself
             await dashboardSettings.save();
@@ -69,13 +66,13 @@ datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
             const dashboardPage = new DashboardPage({page});
 
             const tableOfContent = new TableOfContent(page, dashboardPage);
-            const dashboardSettings = new DashboardSettings(page, dashboardPage);
+            const dashboardSettings = new DashboardSettings(page);
 
             await dashboardPage.enterEditMode();
             await dashboardSettings.open();
 
             // Enabling the opening of the table of contents when loading the page
-            await page.click(slct(SELECTORS.TOC_SWITCH_KEY));
+            await page.click(slct(DashboardDialogSettingsQa.TOCSwitch));
 
             // Saving dashboard settings
             await dashboardSettings.save();
