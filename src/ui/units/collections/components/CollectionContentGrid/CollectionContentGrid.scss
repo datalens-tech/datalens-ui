@@ -2,13 +2,12 @@
     &__grid {
         display: flex;
         flex-flow: wrap;
-        row-gap: 20px;
-        margin: -11px;
+        margin: -14px;
     }
 
     &__content-item {
         height: auto;
-        margin: 11px;
+        margin: 12px;
 
         color: inherit;
         text-decoration: none;
