@@ -1,3 +1,4 @@
 {
-  "label_unknown-error": "Неизвестная ошибка"
+  "label_unknown-error": "Неизвестная ошибка",
+  "label_validation-slash_error": "Название не должно содержать символ «/»"
 }
