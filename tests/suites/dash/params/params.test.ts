@@ -514,7 +514,7 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
             // closing the dialog for add a selector
             await page.click(slct(ControlQA.dialogControlCancelBtn));
 
-            const dashboardSettings = new DashboardSettings(page, dashboardPage);
+            const dashboardSettings = new DashboardSettings(page);
 
             // opening the dashboard settings
             await dashboardSettings.open();
