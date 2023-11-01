@@ -4,7 +4,6 @@ import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
-import {WizardUrls} from '../../../constants/test-entities/wizard';
 
 const setupFilters = async (wizardPage: WizardPage) => {
     await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'city');
@@ -17,10 +16,10 @@ const setupFilters = async (wizardPage: WizardPage) => {
 };
 
 datalensTest.describe('Wizard filters', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
+    datalensTest.beforeEach(async ({page, config}) => {
         const wizardPage = new WizardPage({page});
 
-        await openTestPage(page, WizardUrls.WizardBasicDataset);
+        await openTestPage(page, config.wizard.urls.WizardBasicDataset);
 
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'city');
 
