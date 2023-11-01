@@ -3,7 +3,6 @@ import {Page} from '@playwright/test';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {E2EWizardUrls, WizardDatasetNames} from '../../../utils/opensource/constants/wizard';
 import {
     deleteWorkbookEntry,
     openOpensourceTestPage,
@@ -11,20 +10,21 @@ import {
 } from '../../../utils/opensource/helpers';
 import {WorkbookNavigationMinimal} from '../../../page-objects/wizard/WorkbookNavigationMinimal';
 import {SaveChartControlsQa} from '../../../../src/shared';
-import {DEFAULT_WORKBOOK_ID} from '../../../utils/opensource/constants/common';
 
 datalensTest.describe('Wizard Fields', () => {
-    datalensTest.beforeEach(async ({page}) => {
+    datalensTest.beforeEach(async ({page, config}) => {
         const wizardPage = new WizardPage({page});
         const workbookNavigationMinimal = new WorkbookNavigationMinimal({page});
 
-        await openOpensourceTestPage(page, E2EWizardUrls.Empty, {workbookId: DEFAULT_WORKBOOK_ID});
+        await openOpensourceTestPage(page, config.wizard.urls.Empty, {
+            workbookId: config.workbook.urls.Default,
+        });
 
         await wizardPage.datasetSelector.click();
 
-        await workbookNavigationMinimal.inputFilter(WizardDatasetNames.Dataset);
+        await workbookNavigationMinimal.inputFilter(config.wizard.datasetNames.Dataset);
 
-        await workbookNavigationMinimal.clickOnItem(WizardDatasetNames.Dataset);
+        await workbookNavigationMinimal.clickOnItem(config.wizard.datasetNames.Dataset);
     });
 
     datalensTest('Moving fields via drag and drop and saving', async ({page}: {page: Page}) => {

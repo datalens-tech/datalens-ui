@@ -1,11 +1,15 @@
 import {test as baseTest} from '@playwright/test';
 
 import {generateScreenshotName, makeScreen} from './utils';
+import type {TestsParametrizationConfig} from '../../types/config';
+import {config} from '../opensource/constants/config';
 
 export type DatalensTestFixtures = {
     makeScreenshot: void;
     isSmokeTest: boolean;
     screenshotName?: string;
+
+    config: TestsParametrizationConfig;
 };
 
 const datalensTest = baseTest.extend<DatalensTestFixtures>({
@@ -36,6 +40,7 @@ const datalensTest = baseTest.extend<DatalensTestFixtures>({
             auto: true,
         },
     ],
+    config: [config, {option: true}],
 });
 
 export default datalensTest;
