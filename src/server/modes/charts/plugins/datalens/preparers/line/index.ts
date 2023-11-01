@@ -142,6 +142,8 @@ function prepareLine({
     const isColorizeByMeasure = isMeasureField(colorItem);
     const isColorizeByMeasureValue = isMeasureValue(colorItem);
 
+    const isQLType = shared.type === 'ql';
+
     /*
         Specially reduced LinesRecord object. It has only one key that is equal to the colorItem header.
         Needed at the moment when the user sorts the graph according to the same indicator by which it is colored.
@@ -278,7 +280,7 @@ function prepareLine({
         let lineKeys1 = Object.keys(lines1);
         let lineKeys2 = Object.keys(lines2);
 
-        if (xIsDate) {
+        if (xIsDate && !isQLType) {
             (categories as number[]).sort(numericCollator);
         }
 
@@ -290,19 +292,21 @@ function prepareLine({
             visualizationId !== WizardVisualizationId.Area &&
             !isPercentVisualization(visualizationId);
 
-        categories = getSortedCategories({
-            lines,
-            colorItem,
-            categories,
-            ySectionItems,
-            isSortWithYSectionItem: Boolean(ySectionItems.length && isSortableXAxis),
-            sortItem: sortItems[0],
-            isSortAvailable: isSortItemExists && isSortCategoriesAvailable,
-            isXNumber: xIsNumber,
-            measureColorSortLine,
-            isSegmentsExists,
-            isSortBySegments,
-        });
+        if (!isQLType) {
+            categories = getSortedCategories({
+                lines,
+                colorItem,
+                categories,
+                ySectionItems,
+                isSortWithYSectionItem: Boolean(ySectionItems.length && isSortableXAxis),
+                sortItem: sortItems[0],
+                isSortAvailable: isSortItemExists && isSortCategoriesAvailable,
+                isXNumber: xIsNumber,
+                measureColorSortLine,
+                isSegmentsExists,
+                isSortBySegments,
+            });
+        }
 
         const sortedLineKeys = getSortedLineKeys({
             colorItem,
@@ -736,7 +740,7 @@ function prepareLine({
         });
 
         // Default sorting
-        if (!isSortItemExists || !isSortCategoriesAvailable) {
+        if ((!isSortItemExists || !isSortCategoriesAvailable) && !isQLType) {
             if (xIsNumber) {
                 (categories as number[]).sort(numericCollator);
             } else {
