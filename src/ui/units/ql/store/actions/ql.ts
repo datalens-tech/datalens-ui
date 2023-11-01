@@ -32,10 +32,6 @@ import {AppDispatch} from '../../../../store';
 import {saveWidget, setActualChart} from '../../../../store/actions/chartWidget';
 import {UrlSearch, getUrlParamFromStr} from '../../../../utils';
 import {
-    load as loadParentDashConfig,
-    setEditMode as setEditModeForParentDash,
-} from '../../../dash/store/actions/dash';
-import {
     resetWizardStore,
     setVisualizationPlaceholderItems,
     setVisualization as setVisualizationWizard,
@@ -61,7 +57,13 @@ import {
 } from '../../constants';
 import {prepareChartDataBeforeSave} from '../../modules/helpers';
 import {getAvailableQlVisualizations, getDefaultQlVisualization} from '../../utils/visualization';
-import {getEntry, getGridSchemes, getPreviewData, selectInitalQlChartConfig} from '../reducers/ql';
+import {
+    getEntry,
+    getGridSchemes,
+    getPreviewData,
+    getValid,
+    selectInitalQlChartConfig,
+} from '../reducers/ql';
 import {
     QLAction,
     QLChart,
@@ -495,18 +497,6 @@ type InitializeApplicationArgs = {
         qlEntryId?: string;
         workbookId?: string;
     }>;
-};
-
-export const loadParentDash = (history: History) => {
-    return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
-        const state = getState();
-
-        if (!state.dash?.data?.tabs) {
-            // @ts-ignore
-            await dispatch(loadParentDashConfig({location: history.location, history}));
-            await dispatch(setEditModeForParentDash());
-        }
-    };
 };
 
 type FetchConnectionSourcesArgs = {
@@ -1161,5 +1151,17 @@ export const setQlChartActualRevision = (isDraft?: boolean) => {
                 onSetActualError: (error) => dispatch(onErrorSetActualChartRevision(error)),
             }),
         );
+    };
+};
+
+export const updateQueryAndRedraw = ({query, index}: {query: QLQuery; index: number}) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
+        dispatch(updateQuery({query, index}));
+
+        const valid = getValid(getState());
+
+        if (valid) {
+            dispatch(drawPreview());
+        }
     };
 };

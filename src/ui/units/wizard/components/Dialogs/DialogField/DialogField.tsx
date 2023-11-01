@@ -120,18 +120,21 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
         const currentPlaceholder = props.visualization.placeholders.find(
             (p) => p.id === props.placeholderId,
         );
+        const isPivotFallbackTurnedOn =
+            visualizationId === WizardVisualizationId.PivotTable &&
+            props.extraSettings?.pivotFallback === 'on';
 
         const initialState: DialogFieldState = {
             formatting: props.item?.formatting || ({} as CommonNumberFormattingOptions),
-            isBarsSettingsEnabled: showBarsInDialogField(
-                visualizationId,
-                props.placeholderId,
-                props.item,
-            ),
-            isBackgroundSettingsEnabled: showBackgroundSettingsInDialogField(
-                visualizationId as WizardVisualizationId,
-                props.placeholderId,
-            ),
+            isBarsSettingsEnabled:
+                !isPivotFallbackTurnedOn &&
+                showBarsInDialogField(visualizationId, props.placeholderId, props.item),
+            isBackgroundSettingsEnabled:
+                !isPivotFallbackTurnedOn &&
+                showBackgroundSettingsInDialogField(
+                    visualizationId as WizardVisualizationId,
+                    props.placeholderId,
+                ),
             isSubTotalsAvailable: isSubTotalsAvailableInDialogField(
                 visualizationId as WizardVisualizationId | undefined,
                 props.placeholderId,

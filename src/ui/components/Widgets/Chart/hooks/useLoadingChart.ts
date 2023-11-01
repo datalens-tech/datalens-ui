@@ -301,6 +301,26 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 dispatch({type: WIDGET_CHART_RESET_CHANGED_PARAMS, payload: newChangedParams});
             }
 
+            let widgetConfig;
+            if (enableActionParams) {
+                // sending additional config for enabled filtering charts in section actionParams
+                // (will be set in dash relation dialog later), if undefined - means that using full fields list
+                widgetConfig = {
+                    actionParams: {
+                        enable: true,
+                    },
+                };
+            }
+
+            const getWidgetProps =
+                widgetType === DashTabItemControlSourceType.External
+                    ? {
+                          ...requestDataProps,
+                          widgetType: DashTabItemControlSourceType.External,
+                          widgetConfig,
+                      }
+                    : {...requestDataProps, widgetConfig};
+
             /**
              * can't use debounced getWidget on dash because of widget priority setting
              * fix in CHARTS-7043
@@ -308,10 +328,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
             const getWidget = dataProvider.getWidget.bind(dataProvider);
 
             const loadedWidgetData = await getWidget({
-                props:
-                    widgetType === DashTabItemControlSourceType.External
-                        ? {...requestDataProps, widgetType: DashTabItemControlSourceType.External}
-                        : requestDataProps,
+                props: getWidgetProps,
                 requestId,
                 requestCancellation:
                     requestCancellationRef.current[requestId]?.requestCancellation ||
@@ -395,6 +412,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         clearedOuterParams,
         widgetType,
         rootNodeRef,
+        enableActionParams,
     ]);
 
     /**

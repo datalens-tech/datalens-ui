@@ -35,14 +35,14 @@ export const Filters = ({
     onChangeButtons: (param: Array<FiltersTypes>) => void;
 }) => {
     const [searchValue, setSearchValue] = React.useState('');
-    const [activeFilters, setActiveFilters] = React.useState<Array<FiltersTypes>>(DEFAULT_FILTERS);
+    const [activeFilters, setActiveFilters] = React.useState<Array<FiltersTypes>>([]);
 
     const handleSearchValue = React.useCallback(
         (value: string) => {
             onChangeInput(value);
             setSearchValue(value);
         },
-        [searchValue],
+        [onChangeInput],
     );
 
     const handleButtonClick = React.useCallback(
@@ -57,7 +57,7 @@ export const Filters = ({
             setActiveFilters(newFilters);
             onChangeButtons(newFilters);
         },
-        [activeFilters],
+        [activeFilters, onChangeButtons],
     );
 
     const inputButtonProps = getFilterProps({currentType: 'input', filters: activeFilters});

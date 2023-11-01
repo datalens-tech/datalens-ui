@@ -16,10 +16,10 @@ import {
     deleteEntity,
     entryDialogFillAndSave,
     getAddress,
+    isEnabledFeature,
     slct,
     waitForCondition,
 } from '../../utils';
-import {isEnabledFeature} from '../../../tests/utils/helpers';
 import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
@@ -36,7 +36,8 @@ import {
     DashKitOverlayMenuQa,
 } from '../../../src/shared/constants/qa/dash';
 import {CommonSelectors} from '../constants/common-selectors';
-import {Feature} from '../../../src/shared/types/feature';
+import {DashboardDialogSettingsQa, Feature} from '../../../src/shared';
+import DashboardSettings from './DashboardSettings';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -134,12 +135,30 @@ class DashboardPage extends BasePage {
         // click the button to create a new dashboard
         await this.page.click(slct('create-entry-button'));
 
+        const isSaveWithFakeEntryEnabled = await isEnabledFeature(
+            this.page,
+            Feature.SaveDashWithFakeEntry,
+        );
+        // TODO: CHARTS-8652, refine tests for new behavior
+        if (isSaveWithFakeEntryEnabled) {
+            // temp step of changing the settings, because it is impossible to save the untouched dash
+            await this.enableDashboardTOC();
+            await this.saveChanges();
+        }
+
         // waiting for the dialog to open, specify the name, save
         // waiting for the transition to the dashboard page
         await Promise.all([
             this.page.waitForNavigation(),
             entryDialogFillAndSave(this.page, dashName),
         ]);
+
+        if (isSaveWithFakeEntryEnabled) {
+            // check that the dashboard has loaded by its name
+            await this.page.waitForSelector(
+                `${slct(COMMON_SELECTORS.DASH_ENTRY_NAME)} >> text=${dashName}`,
+            );
+        }
     }
 
     async copyDashboard(dashName: string) {
@@ -162,13 +181,6 @@ class DashboardPage extends BasePage {
     }
 
     async clickAddSelector() {
-        const isNewPanelEnabled = await isEnabledFeature(this.page, Feature.DashEditPanelEnabled);
-        if (isNewPanelEnabled) {
-            await this.page.click(slct(DashboardAddWidgetQa.AddControl));
-            return;
-        }
-
-        await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_ADD));
         await this.page.click(slct(DashboardAddWidgetQa.AddControl));
     }
 
@@ -251,13 +263,6 @@ class DashboardPage extends BasePage {
     }
 
     async clickAddChart() {
-        const isNewPanelEnabled = await isEnabledFeature(this.page, Feature.DashEditPanelEnabled);
-        if (isNewPanelEnabled) {
-            await this.page.click(slct(DashboardAddWidgetQa.AddWidget));
-            return;
-        }
-
-        await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_ADD));
         await this.page.click(slct(DashboardAddWidgetQa.AddWidget));
     }
 
@@ -581,6 +586,14 @@ class DashboardPage extends BasePage {
         }
 
         throw new Error('Tabs selector not found');
+    }
+
+    async enableDashboardTOC() {
+        const dashboardSettings = new DashboardSettings(this.page);
+
+        await dashboardSettings.open();
+        await this.page.click(slct(DashboardDialogSettingsQa.TOCSwitch));
+        await dashboardSettings.save();
     }
 
     async waitForLoaderDisappear() {

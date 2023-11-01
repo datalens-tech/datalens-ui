@@ -99,8 +99,10 @@ datalensTest.describe('Dashboard Versioning', () => {
             await page.waitForSelector(
                 `${slct(COMMON_SELECTORS.DASH_ENTRY_NAME)} >> text="${prevName}"`,
             );
+
             // wait for page load to be able to remove
             await page.waitForTimeout(RENDER_TIMEOUT);
+
             await dashboardPage.deleteDashFromEditMode();
         },
     );

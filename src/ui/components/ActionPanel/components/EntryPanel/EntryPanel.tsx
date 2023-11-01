@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Ellipsis} from '@gravity-ui/icons';
+import {Ellipsis, NodesRight} from '@gravity-ui/icons';
 import {BreadcrumbsItem, Button, Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogName, EntryDialogResolveStatus} from 'components/EntryDialogues';
@@ -27,8 +27,6 @@ import {
 import {EntryContextMenuItems} from '../../../EntryContextMenu/helpers';
 import {DialogSwitchPublicProps} from '../../../EntryDialogues/DialogSwitchPublic';
 import NavigationModal from '../../../Navigation/NavigationModal';
-
-import iconPublic from 'ui/assets/icons/public.svg';
 
 import './EntryPanel.scss';
 
@@ -290,11 +288,9 @@ class EntryPanel extends React.Component<Props, State> {
 
         if (isAdmin && enablePublish && !disabled) {
             items.push({
-                // TODO: restore the logic after closing YCDESIGN-2062
-                // icon: entry.public ? iconPublicFilled : iconPublic,
                 icon: (
                     <Icon
-                        data={iconPublic}
+                        data={NodesRight}
                         className={ICONS_ENTRY_MENU_DEFAULT_CLASSNAME}
                         width={ICONS_ENTRY_MENU_DEFAULT_SIZE}
                         height={ICONS_ENTRY_MENU_DEFAULT_SIZE}

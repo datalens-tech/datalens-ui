@@ -7,6 +7,7 @@ import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
 import {ChartsEngine} from '../..';
 import {
     DL_CONTEXT_HEADER,
+    DashWidgetConfig,
     EntryPublicAuthor,
     Feature,
     isEnabledServerFeature,
@@ -122,6 +123,7 @@ export type ProcessorParams = {
     subrequestHeaders: Record<string, string>;
     paramsOverride: Record<string, string | string[]>;
     actionParamsOverride: Record<string, string | string[]>;
+    widgetConfig?: DashWidgetConfig['widgetConfig'];
     configOverride?: {
         data: Record<string, string>;
         key: string;
@@ -150,6 +152,7 @@ export class Processor {
         chartsEngine,
         subrequestHeaders,
         paramsOverride = {},
+        widgetConfig = {},
         configOverride,
         useUnreleasedConfig,
         userLogin = null,
@@ -488,6 +491,7 @@ export class Processor {
                 nativeModules: chartsEngine.nativeModules,
                 params: normalizedParamsOverride,
                 actionParams: normalizedActionParamsOverride,
+                widgetConfig,
                 shared,
                 modules,
                 userLogin,
@@ -542,6 +546,7 @@ export class Processor {
                 modules,
                 params,
                 actionParams,
+                widgetConfig,
                 userLogin,
                 userLang,
                 isScreenshoter: Boolean(req.headers['x-charts-scr']),
@@ -702,6 +707,7 @@ export class Processor {
                     modules,
                     params,
                     actionParams,
+                    widgetConfig,
                     data,
                     userLogin,
                     userLang,
@@ -719,6 +725,7 @@ export class Processor {
                     modules,
                     params,
                     actionParams,
+                    widgetConfig,
                     data,
                     userLogin,
                     userLang,
@@ -736,6 +743,7 @@ export class Processor {
                     modules,
                     params,
                     actionParams,
+                    widgetConfig,
                     data,
                     userLogin,
                     userLang,
@@ -779,6 +787,7 @@ export class Processor {
                     modules,
                     params,
                     actionParams,
+                    widgetConfig,
                     data,
                     userLogin,
                     userLang,
@@ -805,6 +814,7 @@ export class Processor {
                     modules,
                     params,
                     actionParams,
+                    widgetConfig,
                     data,
                     dataStats: resolvedSources,
                     userLogin,
@@ -850,6 +860,7 @@ export class Processor {
                 modules,
                 params,
                 actionParams,
+                widgetConfig,
                 data,
                 userLogin,
                 userLang,
@@ -893,6 +904,7 @@ export class Processor {
                 params: {...params, ...transformParamsToActionParams(actionParams)},
                 usedParams,
                 actionParams,
+                widgetConfig,
                 defaultParams: normalizedDefaultParams.params,
                 extra: {},
                 timings,

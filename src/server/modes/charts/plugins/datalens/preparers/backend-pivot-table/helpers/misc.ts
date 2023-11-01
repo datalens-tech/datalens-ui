@@ -107,13 +107,16 @@ export const getPivotTableSettingsFromField = (
 
     if (isTableBarsSettingsEnabled(field)) {
         const columnValues = valueByField[field.guid];
-        settings.barsSettings = {
-            options: getBarSettingsViewOptions({
-                barsSettings: field.barsSettings,
+
+        if (columnValues) {
+            settings.barsSettings = {
+                options: getBarSettingsViewOptions({
+                    barsSettings: field.barsSettings,
+                    columnValues,
+                }),
                 columnValues,
-            }),
-            columnValues,
-        };
+            };
+        }
     }
 
     if (isTableFieldBackgroundSettingsEnabled(field)) {

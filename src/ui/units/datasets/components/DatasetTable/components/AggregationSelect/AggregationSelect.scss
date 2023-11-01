@@ -1,3 +1,5 @@
+@import '../../../../../../styles/mixins';
+
 .aggregation-select {
     &__select-control {
         width: 100%;
@@ -31,5 +33,9 @@
 
     &__select-option {
         padding-left: 8px;
+
+        &_disabled {
+            @include dl-select-disabled-option;
+        }
     }
 }

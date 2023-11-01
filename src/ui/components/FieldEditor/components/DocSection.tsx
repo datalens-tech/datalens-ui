@@ -192,19 +192,7 @@ class DocSection extends React.Component<DocSectionProps, DocSectionState> {
             const {getFieldEditorDocPath} = registry.docs.functions.getAll();
             const path = getFieldEditorDocPath(href);
 
-            const functionDoc = await fetchFunctionsDocumentation(path);
-
-            functionDoc.html = functionDoc.html
-                // Remove all icons from buttons to copy text
-                .replace(/<svg[^>]*>/gs, '')
-                // Make Cloud Documentation references
-                // Delete anchor and external references
-                .replace(
-                    /href=(["'])(?!http|#)(.+?)\1/gs,
-                    (_linkAttr: string, _quote: string, functionName: string) => {
-                        return `href="${docsEndpoint}/function-ref/${functionName}" target="_blank"`;
-                    },
-                );
+            const functionDoc = await fetchFunctionsDocumentation(docsEndpoint, path);
 
             this.setState({
                 functionDoc,
