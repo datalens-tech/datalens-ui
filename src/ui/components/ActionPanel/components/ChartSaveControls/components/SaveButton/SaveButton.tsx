@@ -3,7 +3,7 @@ import React from 'react';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {EntryUpdateMode} from 'shared';
+import {EntryUpdateMode, SaveChartControlsQa} from 'shared';
 
 import iconLock from 'ui/assets/icons/lock.svg';
 
@@ -44,7 +44,7 @@ export const SaveButton: React.FC<SaveButtonProps> = (props: SaveButtonProps) =>
             disabled={disabled}
             key="button-save"
             className={b('save-btn')}
-            qa="action-panel-save-btn"
+            qa={SaveChartControlsQa.SaveButton}
         >
             {isLocked ? <Icon data={iconLock} /> : null}
             {i18n('component.chart-save-controls', buttonText)}
