@@ -243,3 +243,12 @@ export type GetRelationsGraphArgs = {
 };
 
 export type GetRelationsGraphResponse = EntryRelationFields[];
+
+export interface CopyEntriesToWorkbookArgs {
+    entryIds: string[];
+    workbookId: string;
+}
+
+export interface CopyEntriesToWorkbookResponse {
+    workbookId: string;
+}

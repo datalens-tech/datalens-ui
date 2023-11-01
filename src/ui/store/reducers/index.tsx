@@ -7,6 +7,7 @@ import entryContent from 'store/reducers/entryContent';
 import colorPaletteEditor from 'store/reducers/colorPaletteEditor';
 import {collectionsStructure} from 'store/reducers/collectionsStructure';
 import {migrationToWorkbook} from 'ui/store/reducers/migrationToWorkbook';
+import {copyEntriesToWorkbook} from 'ui/store/reducers/copyEntriesToWorkbook';
 
 export default {
     user,
@@ -18,4 +19,5 @@ export default {
     colorPaletteEditor,
     collectionsStructure,
     migrationToWorkbook,
+    copyEntriesToWorkbook,
 };

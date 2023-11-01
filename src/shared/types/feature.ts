@@ -90,6 +90,7 @@ export enum Feature {
     UseChartsEngineLogin = 'UseChartsEngineLogin',
     AddDemoWorkbook = 'AddDemoWorkbook',
     SaveDashWithFakeEntry = 'SaveDashWithFakeEntry',
+    CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
 }
 
 export type FeatureConfig = Record<string, boolean>;

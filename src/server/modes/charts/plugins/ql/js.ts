@@ -21,7 +21,7 @@ import prepareTable from './preparers/table';
 import {LINEAR_VISUALIZATIONS, PIE_VISUALIZATIONS} from './utils/constants';
 import {getColumnsAndRows, log} from './utils/misc-helpers';
 import {
-    mapColors,
+    mapItems,
     mapVisualizationPlaceholdersItems,
     migrateOrAutofillVisualization,
 } from './utils/visualization-utils';
@@ -57,7 +57,12 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
     log('RECOGNIZED ROWS:', rows);
 
     const sharedVisualization = shared.visualization as ServerVisualization;
-    const {colors: sharedColors, order: sharedOrder} = shared;
+    const {
+        colors: sharedColors,
+        labels: sharedLabels,
+        shapes: sharedShapes,
+        order: sharedOrder,
+    } = shared;
 
     if (sharedVisualization?.placeholders) {
         // Branch for actual ql charts
@@ -160,6 +165,8 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
         });
 
         let newColors: Field[] = sharedColors || [];
+        let newLabels: Field[] = sharedLabels || [];
+        let newShapes: Field[] = sharedShapes || [];
         let newVisualization: ServerVisualization = sharedVisualization;
 
         const visualizationIsEmpty = sharedVisualization.placeholders.every(
@@ -188,9 +195,19 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
                 fields,
             });
 
-            newColors = mapColors({
+            newColors = mapItems({
                 fields,
-                colors: sharedColors as Field[],
+                items: sharedColors as Field[],
+            });
+
+            newLabels = mapItems({
+                fields,
+                items: sharedLabels as Field[],
+            });
+
+            newShapes = mapItems({
+                fields,
+                items: sharedShapes as Field[],
             });
         }
 
@@ -202,6 +219,8 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
                 ...shared,
                 available,
                 colors: newColors,
+                labels: newLabels,
+                shapes: newShapes,
                 sort: [],
                 sharedData: {},
             } as unknown as ServerChartsConfig,
@@ -224,6 +243,8 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
                 visualization: newVisualization,
                 available,
                 colors: newColors,
+                labels: newLabels,
+                shapes: newShapes,
                 distincts: resultDistincts,
             };
         } else {
@@ -231,6 +252,8 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
                 visualization: newVisualization,
                 available,
                 colors: newColors,
+                labels: newLabels,
+                shapes: newShapes,
                 distincts: resultDistincts,
             };
         }
