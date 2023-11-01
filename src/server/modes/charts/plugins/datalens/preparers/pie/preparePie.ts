@@ -105,6 +105,7 @@ export function preparePie({
     colorsConfig,
     idToTitle,
     idToDataType,
+    shared,
 }: PrepareFunctionArgs) {
     const {data, order, totals} = resultData;
     const groupedData: Record<string, number> = {};
@@ -137,6 +138,8 @@ export function preparePie({
     if (colorIndex === -1 || measureIndex === -1) {
         return {graphs: []};
     }
+
+    const isQLType = shared.type === 'ql';
 
     const categories: string[] = [];
 
@@ -287,7 +290,7 @@ export function preparePie({
         // We remove negative values, since pie does not know how to display them
         .filter((point) => point.y > 0) as (PiePoint & ExtendedSeriesLineOptions)[];
 
-    if (!sort || !sort.length) {
+    if (!isQLType && (!sort || !sort.length)) {
         pie.data!.sort((a, b) => {
             return a.y > b.y ? -1 : a.y < b.y ? 1 : 0;
         });
