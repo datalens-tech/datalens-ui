@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {TriangleExclamation} from '@gravity-ui/icons';
 import {Button, Icon, List, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
@@ -63,26 +64,33 @@ const ErrorView: React.FC<ErrorViewProps> = ({error, onRetry}) => {
 
     return (
         <div className={b('sources-error')}>
-            <div className={b('sources-error-row')}>{i18n('label_sources-loading-error')}</div>
-            <div className={b('sources-error-row')}>
-                <Button
-                    className={b('sources-error-btn')}
-                    view="outlined"
-                    size="s"
-                    onClick={() => {
-                        dispatch(
-                            openDialogErrorWithTabs({
-                                error,
-                                title: i18n('label_sources-loading-error'),
-                            }),
-                        );
-                    }}
-                >
-                    {i18n('button_details')}
-                </Button>
-                <Button size="s" onClick={onRetry}>
-                    {i18n('button_retry')}
-                </Button>
+            <div className={b('sources-error-container')}>
+                <Icon data={TriangleExclamation} className={b('sources-error-icon')} />
+                <div>
+                    <div className={b('sources-error-row')}>
+                        {i18n('label_sources-loading-error')}
+                    </div>
+                    <div className={b('sources-error-row')}>
+                        <Button
+                            className={b('sources-error-btn')}
+                            view="outlined"
+                            size="s"
+                            onClick={() => {
+                                dispatch(
+                                    openDialogErrorWithTabs({
+                                        error,
+                                        title: i18n('label_sources-loading-error'),
+                                    }),
+                                );
+                            }}
+                        >
+                            {i18n('button_details')}
+                        </Button>
+                        <Button size="s" onClick={onRetry}>
+                            {i18n('button_retry')}
+                        </Button>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -110,37 +118,33 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
 
     return (
         <div className={b('sources')}>
+            {error ? <ErrorView onRetry={onRetry} error={error} /> : null}
             <div className={b('top-section')}>
                 <div className={b('header')}>
                     <span>{i18n('label_tables')}</span>
                 </div>
             </div>
-            {error ? (
-                <ErrorView error={error} onRetry={onRetry} />
-            ) : (
-                <React.Fragment>
-                    <List
-                        items={sources}
-                        itemClassName={b('source-item')}
-                        itemHeight={32}
-                        selectedItemIndex={-1}
-                        filterPlaceholder={i18n('field_placeholder-title')}
-                        filterable={sources.length >= 10}
-                        virtualized={true}
-                        filterItem={filterItem}
-                        renderItem={(source) => (
-                            <SourceWithDragging
-                                dragDisabled={dragDisabled}
-                                dropDisabled={dropDisabled}
-                                avatar={source}
-                                onClickEditBtn={onEdit}
-                                onDeleteSource={onDelete}
-                            />
-                        )}
+            <List
+                className={b('list')}
+                items={sources}
+                itemClassName={b('source-item')}
+                itemHeight={32}
+                selectedItemIndex={-1}
+                filterPlaceholder={i18n('field_placeholder-title')}
+                filterable={sources.length >= 10}
+                virtualized={true}
+                filterItem={filterItem}
+                renderItem={(source) => (
+                    <SourceWithDragging
+                        dragDisabled={dragDisabled}
+                        dropDisabled={dropDisabled}
+                        avatar={source}
+                        onClickEditBtn={onEdit}
+                        onDeleteSource={onDelete}
                     />
-                    {allowAddSource && <AddSourceButton disabled={dragDisabled} onClick={onAdd} />}
-                </React.Fragment>
-            )}
+                )}
+            />
+            {allowAddSource && <AddSourceButton disabled={dragDisabled} onClick={onAdd} />}
         </div>
     );
 };
