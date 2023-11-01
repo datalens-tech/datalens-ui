@@ -133,6 +133,7 @@
   "label_field-invalid": "Поле содержит ошибки",
   "label_field-more-than-one-hierarchy": "Нельзя применить больше одной иерархии",
   "label_field-not-exist": "Поле отсутствует в датасете",
+  "label_field-not-exist-in-query": "Поле отсутствует в запросе",
   "label_fields-overflow": "Установлено максимально доступное количество полей",
   "label_fill-color-type": "Тип заливки",
   "label_filter-all-values": "Все",

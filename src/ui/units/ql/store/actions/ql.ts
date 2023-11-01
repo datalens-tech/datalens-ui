@@ -11,6 +11,7 @@ import {
     ENTRY_TYPES,
     EntryUpdateMode,
     Feature,
+    Field,
     QLChartType,
     QLEntryDataShared,
     QLParam,
@@ -292,8 +293,10 @@ export interface SetQueryMetadataProps {
     metadata: {
         order: QLResultEntryMetadataDataColumnOrGroup;
         visualization?: any;
-        available?: any[];
-        colors?: any[];
+        available?: Field[];
+        colors?: Field[];
+        labels?: Field[];
+        shapes?: Field[];
         distincts?: Record<string, string[]>;
     };
 }
@@ -320,6 +323,14 @@ export const setQueryMetadata = ({metadata}: SetQueryMetadataProps) => {
 
             if (metadata.colors) {
                 dispatch(setColors({colors: metadata.colors}));
+            }
+
+            if (metadata.labels) {
+                dispatch(setLabels({labels: metadata.labels}));
+            }
+
+            if (metadata.shapes) {
+                dispatch(setShapes({shapes: metadata.shapes}));
             }
 
             if (metadata.available) {
