@@ -5,6 +5,7 @@ import type {LandingState} from 'store/reducers/landing';
 import type {AsideHeaderState} from 'store/typings/asideHeader';
 import type {EntryGlobalState} from 'store/typings/entryContent';
 import type {UserState} from 'store/typings/user';
+import type {CopyEntriesToWorkbookState} from 'ui/store/reducers/copyEntriesToWorkbook';
 import type {MigrationToWorkbookState} from 'ui/store/reducers/migrationToWorkbook';
 import type {CollectionsState} from 'units/collections/store/reducers';
 import type {ConnectionsReduxState} from 'units/connections/store/typings';
@@ -64,4 +65,5 @@ export type DatalensGlobalState = {
     user: UserState;
     colorPaletteEditor: ColorPaletteEditorState;
     migrationToWorkbook: MigrationToWorkbookState;
+    copyEntriesToWorkbook: CopyEntriesToWorkbookState;
 };
