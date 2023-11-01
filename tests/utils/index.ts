@@ -363,7 +363,7 @@ export const waitForCondition = async <T>(callback: () => Promise<T>) => {
     throw new Error(`waitForCondition timeout, failedFunction is: ${callback.toString()}`);
 };
 
-const generateQueryString = (queryMap: Record<string, string>) => {
+export const generateQueryString = (queryMap: Record<string, string>) => {
     const searchParams = new URLSearchParams();
 
     Object.entries(queryMap).forEach(([key, value]) => {
