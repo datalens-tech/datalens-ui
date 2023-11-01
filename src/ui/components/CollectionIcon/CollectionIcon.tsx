@@ -1,9 +1,10 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import {useSelector} from 'react-redux';
 import {IconId} from 'shared';
-import {Utils} from 'ui';
 
+import {selectUserTheme} from '../../store/selectors/user';
 import {IconById} from '../IconById/IconById';
 
 type CollectionIconType = {
@@ -16,7 +17,7 @@ import './CollectionIcon.scss';
 const b = block('collection-icon');
 
 const CollectionIcon: React.FC<CollectionIconType> = ({size = 32, isIconBig}) => {
-    const currentTheme = Utils.getCurrentTheme();
+    const currentTheme: string = useSelector(selectUserTheme);
 
     const collectionIcons: {[key: string]: string} = {
         light: isIconBig ? 'collectionColoredBig' : 'collectionColored',
