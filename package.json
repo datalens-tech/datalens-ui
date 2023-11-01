@@ -100,7 +100,7 @@
     "tarjan-graph": "^2.0.0"
   },
   "devDependencies": {
-    "@gravity-ui/app-builder": "^0.7.0",
+    "@gravity-ui/app-builder": "^0.7.1",
     "@gravity-ui/components": "^2.5.0",
     "@gravity-ui/dynamic-forms": "^2.4.0",
     "@gravity-ui/eslint-config": "^2.2.0",
