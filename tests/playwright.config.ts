@@ -24,8 +24,6 @@ const workers = process.env.E2E_DEBUG ? 1 : maxWorkers;
 
 const retries = process.env.E2E_RETRY_TIMES ? Number(process.env.E2E_RETRY_TIMES) : 0;
 
-const testDir = process.env.E2E_SUITE ? `./suites/${process.env.E2E_SUITE}` : './suites';
-
 const headful = Boolean(process.env.E2E_HEADFUL);
 
 const slowMo = Number.isInteger(Number(process.env.E2E_SLOW_MO))
@@ -54,7 +52,6 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     workers,
     testMatch,
     retries,
-    testDir,
     reporter,
     grep,
     fullyParallel: true,
@@ -79,8 +76,16 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
         storageState: process.env.NO_AUTH === 'true' ? undefined : 'artifacts/storageState.json',
     },
     projects: [
-        {name: 'basic', testDir: './suites'},
-        {name: 'opensource', testDir: './opensource-suites'},
+        {
+            name: 'basic',
+            testDir: process.env.E2E_SUITE ? `./suites/${process.env.E2E_SUITE}` : './suites',
+        },
+        {
+            name: 'opensource',
+            testDir: process.env.E2E_SUITE
+                ? `./opensource-suites/${process.env.E2E_SUITE}`
+                : './opensource-suites',
+        },
     ],
 };
 

@@ -7,7 +7,7 @@ import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {i18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import moment from 'moment';
-import {EntryScope} from 'shared';
+import {EntryScope, WorkbookNavigationMinimalQa} from 'shared';
 import type {GetEntryResponse, GetWorkbookEntriesArgs} from 'shared/schema';
 import {CLUSTERS_DATE_FORMAT_DATE} from 'ui/constants/misc';
 
@@ -22,6 +22,7 @@ const ROW_HEIGHT = 40;
 type Item = {
     entry: GetEntryResponse;
     inactive: boolean;
+    qa?: string;
 };
 
 type Props = {
@@ -96,11 +97,13 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                 open={visible}
                 anchorRef={anchor}
                 contentClassName={b('popup')}
+                qa={WorkbookNavigationMinimalQa.Popup}
             >
                 {visible && (
                     <div className={b()}>
                         <div className={b('control')}>
                             <DebouncedInput
+                                qa={WorkbookNavigationMinimalQa.Input}
                                 value={this.state.filter}
                                 onUpdate={this.onUpdateFilter}
                                 hasClear={true}
@@ -140,12 +143,12 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
     }
 
     private renderItem = (item: Item) => {
-        const {entry, inactive} = item;
+        const {entry, inactive, qa} = item;
         const name = entry.key.split('/').pop();
         const date = moment(entry.createdAt).format(CLUSTERS_DATE_FORMAT_DATE);
 
         return (
-            <div className={b('row', {inactive})}>
+            <div data-qa={qa} className={b('row', {inactive})}>
                 <EntryIcon entry={entry} className={b('icon')} width="24" height="24" />
                 <div className={b('info')}>
                     <div className={b('name')}>
@@ -209,7 +212,9 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                         const inactiveByIds = inactiveEntryIds
                             ? inactiveIds.has(entry.entryId)
                             : false;
+                        const qa = entry.key.split('/').pop();
                         return {
+                            qa,
                             entry,
                             inactive:
                                 inactiveByIncludeType || inactiveByExcludeType || inactiveByIds,

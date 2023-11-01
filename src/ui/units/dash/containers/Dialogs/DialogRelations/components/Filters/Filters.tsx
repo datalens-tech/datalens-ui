@@ -35,7 +35,7 @@ export const Filters = ({
     onChangeButtons: (param: Array<FiltersTypes>) => void;
 }) => {
     const [searchValue, setSearchValue] = React.useState('');
-    const [activeFilters, setActiveFilters] = React.useState<Array<FiltersTypes>>(DEFAULT_FILTERS);
+    const [activeFilters, setActiveFilters] = React.useState<Array<FiltersTypes>>([]);
 
     const handleSearchValue = React.useCallback(
         (value: string) => {
