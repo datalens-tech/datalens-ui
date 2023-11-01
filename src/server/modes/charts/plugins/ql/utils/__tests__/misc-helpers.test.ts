@@ -1,4 +1,4 @@
-import {buildSource} from '../misc-helpers';
+import {buildSource, iterateThroughVisibleQueries} from '../misc-helpers';
 
 const MOCK_ID = 'MOCK_ID';
 
@@ -79,5 +79,29 @@ describe('buildSource', () => {
         const buildSourceResult = buildSource(mockedBuildSourceArgsPrewrapped);
 
         expect(buildSourceResult).toEqual(expectedBuildSourceResultPrewrapped);
+    });
+});
+
+describe('iterateThroughVisibleQueries', () => {
+    it('should execute callback only for queries where hidden property is falsy', () => {
+        const cb = jest.fn();
+
+        const queries = [
+            {value: 'sql-1', params: [], hidden: false},
+            {value: 'sql-2', params: [], hidden: true},
+            {value: 'sql-3', params: [], hidden: false},
+            {value: 'sql-4', params: [], hidden: false},
+            {value: 'sql-5', params: []},
+        ];
+
+        iterateThroughVisibleQueries(queries, cb);
+
+        expect(cb.mock.calls.length).toEqual(4);
+        expect(
+            cb.mock.calls.every((args) => {
+                const index = args[1];
+                return index !== 1;
+            }),
+        );
     });
 });
