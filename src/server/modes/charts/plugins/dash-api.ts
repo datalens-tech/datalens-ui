@@ -12,6 +12,7 @@ import {
     DashTabItemTitleSize,
     DashTabItemType,
     EntryReadParams,
+    EntryScope,
     ErrorCode,
 } from '../../../../shared';
 import {Utils} from '../../../components';
@@ -595,6 +596,11 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                         Utils.pickHeaders(req),
                         ctx,
                     );
+
+                    if (result.scope !== EntryScope.Dash) {
+                        res.status(404).send({message: 'Dash not found'});
+                        return;
+                    }
 
                     res.status(200).send(purgeResult(result));
                 } catch (error) {
