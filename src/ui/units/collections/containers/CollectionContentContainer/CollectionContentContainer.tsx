@@ -6,7 +6,10 @@ import {connect} from 'react-redux';
 import {compose} from 'recompose';
 
 import type {GetCollectionContentResponse} from '../../../../../shared/schema';
-import type {CollectionContentFilters} from '../../../../components/CollectionFilters/CollectionFilters';
+import type {
+    CollectionContentFilters,
+    CollectionPageViewMode,
+} from '../../../../components/CollectionFilters/CollectionFilters';
 import {CollectionContent} from '../../components/CollectionContent/CollectionContent';
 import {
     selectCollectionContentItems,
@@ -21,6 +24,7 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 type OuterProps = {
     collectionId: string | null;
     filters: CollectionContentFilters;
+    collectionPageViewMode: CollectionPageViewMode;
     setFilters: (filters: CollectionContentFilters) => void;
     isDefaultFilters: boolean;
     pageSize: number;
@@ -42,6 +46,7 @@ class CollectionContentContainer extends React.Component<Props> {
             collectionId,
             pageSize,
             filters,
+            collectionPageViewMode,
             setFilters,
             isDefaultFilters,
             isContentLoading,
@@ -60,6 +65,7 @@ class CollectionContentContainer extends React.Component<Props> {
                 collectionId={collectionId}
                 pageSize={pageSize}
                 filters={filters}
+                collectionPageViewMode={collectionPageViewMode}
                 setFilters={setFilters}
                 isDefaultFilters={isDefaultFilters}
                 isContentLoading={isContentLoading}
