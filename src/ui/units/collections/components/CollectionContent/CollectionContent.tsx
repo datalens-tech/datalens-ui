@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {ArrowRight, Copy, LockOpen, PencilToLine, TrashBin} from '@gravity-ui/icons';
 import {CancellablePromise} from '@gravity-ui/sdk';
 import {Button, DropdownMenuItem} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -40,6 +41,8 @@ import {updateCollectionInItems, updateWorkbookInItems} from '../../store/action
 import {GetCollectionContentArgs} from '../../types';
 import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
+
+import {DropdownAction} from './DropdownAction/DropdownAction';
 
 import './CollectionContent.scss';
 
@@ -211,12 +214,89 @@ export const CollectionContent = React.memo<Props>(
             );
         }
 
+        const getCollectionActions = (item: CollectionWithPermissions) => {
+            const actions: DropdownMenuItem[] = [];
+
+            if (item.permissions.update) {
+                actions.push({
+                    text: <DropdownAction icon={PencilToLine} text={i18n('action_edit')} />,
+                    action: () => {
+                        setDialogEntity(item);
+
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_EDIT_COLLECTION,
+                                props: {
+                                    open: true,
+                                    collectionId: item.collectionId,
+                                    title: item.title,
+                                    description: item?.description ?? '',
+                                    onApply: (collection: UpdateCollectionResponse | null) => {
+                                        if (collection) {
+                                            dispatch(updateCollectionInItems(collection));
+                                        }
+                                    },
+                                    onClose: () => {
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
+                });
+            }
+
+            if (item.permissions.move) {
+                actions.push({
+                    text: <DropdownAction icon={ArrowRight} text={i18n('action_move')} />,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_MOVE_COLLECTION,
+                                props: {
+                                    open: true,
+                                    collectionId: item.collectionId,
+                                    collectionTitle: item.title,
+                                    initialParentId: item.parentId,
+                                    onApply: refreshContent,
+                                    onClose: handeCloseMoveDialog,
+                                },
+                            }),
+                        );
+                    },
+                });
+            }
+
+            if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
+                actions.push({
+                    text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
+                    action: () => {
+                        setDialogState(DialogState.EditCollectionAccess);
+                        setDialogEntity(item);
+                    },
+                });
+            }
+
+            if (item.permissions.delete) {
+                actions.push({
+                    text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+                    action: () => {
+                        setDialogState(DialogState.DeleteCollection);
+                        setDialogEntity(item);
+                    },
+                    theme: 'danger',
+                });
+            }
+
+            return actions;
+        };
+
         const getWorkbookActions = (item: WorkbookWithPermissions) => {
             const actions: DropdownMenuItem[] = [];
 
             if (item.permissions.update) {
                 actions.push({
-                    text: i18n('action_edit'),
+                    text: <DropdownAction icon={PencilToLine} text={i18n('action_edit')} />,
                     action: () => {
                         if (item?.workbookId) {
                             dispatch(
@@ -247,7 +327,7 @@ export const CollectionContent = React.memo<Props>(
 
             if (item.permissions.move) {
                 actions.push({
-                    text: i18n('action_move'),
+                    text: <DropdownAction icon={ArrowRight} text={i18n('action_move')} />,
                     action: () => {
                         dispatch(
                             openDialog({
@@ -268,7 +348,7 @@ export const CollectionContent = React.memo<Props>(
 
             if (item.permissions.copy) {
                 actions.push({
-                    text: i18n('action_copy'),
+                    text: <DropdownAction icon={Copy} text={i18n('action_copy')} />,
                     action: () => {
                         dispatch(
                             openDialog({
@@ -293,7 +373,7 @@ export const CollectionContent = React.memo<Props>(
 
             if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
                 actions.push({
-                    text: i18n('action_access'),
+                    text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
                     action: () => {
                         setDialogState(DialogState.EditWorkbookAccess);
                         setDialogEntity(item);
@@ -303,86 +383,9 @@ export const CollectionContent = React.memo<Props>(
 
             if (item.permissions.delete) {
                 actions.push({
-                    text: i18n('action_delete'),
+                    text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
                     action: () => {
                         setDialogState(DialogState.DeleteWorkbook);
-                        setDialogEntity(item);
-                    },
-                    theme: 'danger',
-                });
-            }
-
-            return actions;
-        };
-
-        const getCollectionActions = (item: CollectionWithPermissions) => {
-            const actions: DropdownMenuItem[] = [];
-
-            if (item.permissions.update) {
-                actions.push({
-                    text: i18n('action_edit'),
-                    action: () => {
-                        setDialogEntity(item);
-
-                        dispatch(
-                            openDialog({
-                                id: DIALOG_EDIT_COLLECTION,
-                                props: {
-                                    open: true,
-                                    collectionId: item.collectionId,
-                                    title: item.title,
-                                    description: item?.description ?? '',
-                                    onApply: (collection: UpdateCollectionResponse | null) => {
-                                        if (collection) {
-                                            dispatch(updateCollectionInItems(collection));
-                                        }
-                                    },
-                                    onClose: () => {
-                                        dispatch(closeDialog());
-                                    },
-                                },
-                            }),
-                        );
-                    },
-                });
-            }
-
-            if (item.permissions.move) {
-                actions.push({
-                    text: i18n('action_move'),
-                    action: () => {
-                        dispatch(
-                            openDialog({
-                                id: DIALOG_MOVE_COLLECTION,
-                                props: {
-                                    open: true,
-                                    collectionId: item.collectionId,
-                                    collectionTitle: item.title,
-                                    initialParentId: item.parentId,
-                                    onApply: refreshContent,
-                                    onClose: handeCloseMoveDialog,
-                                },
-                            }),
-                        );
-                    },
-                });
-            }
-
-            if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
-                actions.push({
-                    text: i18n('action_access'),
-                    action: () => {
-                        setDialogState(DialogState.EditCollectionAccess);
-                        setDialogEntity(item);
-                    },
-                });
-            }
-
-            if (item.permissions.delete) {
-                actions.push({
-                    text: i18n('action_delete'),
-                    action: () => {
-                        setDialogState(DialogState.DeleteCollection);
                         setDialogEntity(item);
                     },
                     theme: 'danger',
