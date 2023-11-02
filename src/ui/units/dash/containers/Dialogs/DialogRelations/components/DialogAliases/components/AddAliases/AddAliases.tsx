@@ -174,7 +174,6 @@ export const AddAliases = ({
                         {leftAliasSubTitle}
                     </div>
                     <Select
-                        hasClear={true}
                         filterable={true}
                         size="m"
                         options={currentItemOptions}
@@ -194,7 +193,6 @@ export const AddAliases = ({
                         {rightAliasSubTitle}
                     </div>
                     <Select
-                        hasClear={true}
                         filterable={true}
                         size="m"
                         options={rowItemOptions}
@@ -207,12 +205,12 @@ export const AddAliases = ({
                     />
                 </div>
 
-                <Button className={b('button')} view="normal" onClick={handleAddAlias}>
-                    <Icon data={Check} />
-                </Button>
-
                 <Button className={b('button')} view="normal" onClick={onCancel}>
                     <Icon data={Xmark} />
+                </Button>
+
+                <Button className={b('button')} view="normal" onClick={handleAddAlias}>
+                    <Icon data={Check} />
                 </Button>
             </div>
             {errorMsg && <div className={b('error')}>{errorMsg}</div>}
