@@ -188,6 +188,9 @@ export const PREPARE_FUNCTION_ARGS = {
     fields: [],
     shapes: [],
     visualizationId: 'pie',
+    shared: {
+        type: 'datalens',
+    },
     idToDataType: {
         [COLOR_FIELD_DIMENSION.guid]: COLOR_FIELD_DIMENSION.data_type,
         [COLOR_FIELD_MEASURE_NUMBER.guid]: COLOR_FIELD_MEASURE_NUMBER.data_type,
