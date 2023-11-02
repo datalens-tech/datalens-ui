@@ -35,12 +35,7 @@ export const CollectionContentGrid = React.memo<CollectionContentProps>(
                                     <div className={b('content-cell', {title: true})}>
                                         <div className={b('title-col')}>
                                             <div className={b('title-col-icon')}>
-                                                <WorkbookIcon
-                                                    title={item.title}
-                                                    size={125}
-                                                    lineHeight={38}
-                                                    borderRadius={12}
-                                                />
+                                                <WorkbookIcon title={item.title} size="l" />
                                             </div>
                                             <div className={b('title-col-text')}>{item.title}</div>
                                         </div>

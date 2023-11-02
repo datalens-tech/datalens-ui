@@ -8,29 +8,57 @@ const b = block('dl-workbook-icon');
 
 type Props = {
     title: string;
-    size?: number;
-    fontSize?: number;
-    lineHeight?: number;
-    borderRadius?: number;
+    size?: string;
 };
 
-export const WorkbookIcon: React.FC<Props> = ({
-    title,
-    size = 32,
-    fontSize = 32,
-    lineHeight = 32,
-    borderRadius = 6,
-}) => {
+type Size = {
+    size: number;
+    fontSize: number;
+    lineHeight: number;
+    borderRadius: number;
+};
+
+type SizeMap = Record<string, Size>;
+
+const sizesMap: SizeMap = {
+    s: {
+        size: 20,
+        fontSize: 8,
+        lineHeight: 20,
+        borderRadius: 6,
+    },
+    m: {
+        size: 32,
+        fontSize: 13,
+        lineHeight: 32,
+        borderRadius: 6,
+    },
+    l: {
+        size: 125,
+        fontSize: 32,
+        lineHeight: 38,
+        borderRadius: 12,
+    },
+};
+
+export const WorkbookIcon: React.FC<Props> = ({title, size = 'm'}) => {
     const letters = title.slice(0, 2);
 
     return (
         <div
             className={b()}
-            style={{width: `${size}px`, height: `${size}px`, borderRadius: `${borderRadius}px`}}
+            style={{
+                width: `${sizesMap[size].size}px`,
+                height: `${sizesMap[size].size}px`,
+                borderRadius: `${sizesMap[size].borderRadius}px`,
+            }}
         >
             <div
                 className={b('letters')}
-                style={{fontSize: `${fontSize}px`, lineHeight: `${lineHeight}px`}}
+                style={{
+                    fontSize: `${sizesMap[size].fontSize}px`,
+                    lineHeight: `${sizesMap[size].lineHeight}px`,
+                }}
             >
                 {letters ? letters : 'wb'}
             </div>

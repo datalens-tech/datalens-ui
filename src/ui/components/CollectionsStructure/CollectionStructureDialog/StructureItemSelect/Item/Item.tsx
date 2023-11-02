@@ -33,7 +33,7 @@ export const Item = React.memo<Props>(({item, active, canSelectWorkbook, onSelec
         >
             <div className={b('icon')}>
                 {isWorkbook ? (
-                    <WorkbookIcon title={item.title} size={20} fontSize={8} lineHeight={20} />
+                    <WorkbookIcon title={item.title} size="s" />
                 ) : (
                     <IconById id="collectionColored" size={20} />
                 )}

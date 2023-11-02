@@ -45,10 +45,7 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
                                         <div className={b('content-cell', {title: true})}>
                                             <div className={b('title-col')}>
                                                 <div className={b('title-col-icon')}>
-                                                    <WorkbookIcon
-                                                        fontSize={13}
-                                                        title={item.title}
-                                                    />
+                                                    <WorkbookIcon title={item.title} />
                                                 </div>
                                                 <div className={b('title-col-text')}>
                                                     {item.title}

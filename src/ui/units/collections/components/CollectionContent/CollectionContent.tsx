@@ -41,6 +41,8 @@ import {GetCollectionContentArgs} from '../../types';
 import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
 
+import './CollectionContent.scss';
+
 export enum DialogState {
     None = 'none',
     EditCollectionAccess = 'editCollectionAccess',
@@ -410,7 +412,7 @@ export const CollectionContent = React.memo<Props>(
                     />
                 )}
 
-                {isContentLoading && <SmartLoader size="m" showAfter={0} />}
+                {isContentLoading && <SmartLoader className={b('loader')} size="m" showAfter={0} />}
                 {!isContentLoading && !waypointDisabled && <Waypoint onEnter={onWaypointEnter} />}
                 {dialogEntity && (
                     <React.Fragment>

@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {useThemeType} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
+import {ThemeType, useThemeType} from '@gravity-ui/uikit';
 import {IconId} from 'shared';
 
 import {IconById} from '../IconById/IconById';
@@ -11,19 +10,15 @@ type CollectionIconType = {
     isIconBig?: boolean;
 };
 
-import './CollectionIcon.scss';
-
-const b = block('collection-icon');
-
 const CollectionIcon: React.FC<CollectionIconType> = ({size = 32, isIconBig}) => {
     const theme = useThemeType();
 
-    const collectionIcons: {[key: string]: string} = {
+    const collectionIcons: Record<ThemeType, IconId> = {
         light: isIconBig ? 'collectionColoredBig' : 'collectionColored',
         dark: isIconBig ? 'collectionColoredBigDark' : 'collectionColoredDark',
     };
 
-    return <IconById className={b()} id={collectionIcons[theme] as IconId} size={size} />;
+    return <IconById id={collectionIcons[theme]} size={size} />;
 };
 
 export {CollectionIcon};

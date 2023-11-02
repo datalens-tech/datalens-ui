@@ -222,7 +222,7 @@ export const CollectionFilters = React.memo<Props>(
 
                     {Utils.isEnabledFeature(Feature.HideMultitenant) ? null : (
                         <RadioButton
-                            className={b('filter-by-ownership')}
+                            className={b('radio-button')}
                             value={onlyMy.toString()}
                             size={controlSize}
                             onUpdate={handleChangeOnlyMy}
@@ -238,7 +238,7 @@ export const CollectionFilters = React.memo<Props>(
 
                     {!compactMode && (
                         <RadioButton
-                            className={b('filter-by-ownership')}
+                            className={b('radio-button')}
                             value={collectionPageViewMode}
                             size={controlSize}
                             onUpdate={handleChangeView}

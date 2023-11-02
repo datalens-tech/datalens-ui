@@ -218,6 +218,13 @@ export const CollectionPage = React.memo<Props>(
             resetCollectionContent,
         ]);
 
+        const onChangeCollectionPageViewMode = React.useCallback(
+            (value: CollectionPageViewMode) => {
+                setCollectionPageViewMode(value);
+            },
+            [],
+        );
+
         // Information for the current collection
         React.useEffect(() => {
             return initLoadCollection();
@@ -331,10 +338,6 @@ export const CollectionPage = React.memo<Props>(
                     }),
                 );
             }
-        };
-
-        const onChangeCollectionPageViewMode = (value: CollectionPageViewMode) => {
-            setCollectionPageViewMode(value);
         };
 
         return (
