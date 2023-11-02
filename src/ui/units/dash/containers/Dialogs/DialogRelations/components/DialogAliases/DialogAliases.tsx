@@ -2,7 +2,7 @@ import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
 import {Plus} from '@gravity-ui/icons';
-import {Button, Card, Dialog, Icon} from '@gravity-ui/uikit';
+import {Alert, Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Collapse} from 'components/Collapse/Collapse';
 import DialogManager from 'components/DialogManager/DialogManager';
@@ -307,9 +307,12 @@ const DialogAliases = (props: DialogAliasesProps) => {
                         </div>
                     )}
                     {!enableAddAlias && (
-                        <Card theme="warning" className={b('card')}>
-                            {i18n('label_card')}
-                        </Card>
+                        <Alert
+                            theme="warning"
+                            message={i18n('label_card')}
+                            className={b('card')}
+                            view="outlined"
+                        />
                     )}
                     <div className={b('controls')}>
                         {hasAlias ? (
