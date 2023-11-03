@@ -58,9 +58,9 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
 
     const sharedVisualization = shared.visualization as ServerVisualization;
     const {
-        colors: sharedColors,
-        labels: sharedLabels,
-        shapes: sharedShapes,
+        colors: sharedColors = [],
+        labels: sharedLabels = [],
+        shapes: sharedShapes = [],
         order: sharedOrder,
     } = shared;
 
