@@ -34,6 +34,8 @@ function prepareLineTime(options: PrepareFunctionArgs) {
     const xFieldIndex = findIndexInOrder(order, xField, idToTitle[xField.guid] || xField.title);
     const xFieldIsDate = isDateField(xField);
 
+    const yPlaceholderSettings = placeholders[1]?.settings || {};
+
     const yFields = placeholders[1].items;
     const yFieldIndexes = yFields.map((yField) =>
         findIndexInOrder(order, yField, idToTitle[yField.guid] || yField.title),
@@ -125,7 +127,11 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                 if (typeof dataCell === 'object' && dataCell !== null) {
                     colorValues.forEach((colorValue: QLValue, i) => {
                         if (typeof dataCell[String(colorValue)] === 'undefined') {
-                            graphs[i].data.push(null);
+                            if (yPlaceholderSettings.nulls === 'as-0') {
+                                graphs[i].data.push(0);
+                            } else {
+                                graphs[i].data.push(null);
+                            }
                         } else {
                             graphs[i].data.push(dataCell[String(colorValue)]);
                         }
@@ -216,7 +222,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
 
         result.graphs.forEach((graph, i) => {
             graph.color = colorData[i];
-            graph.spanGaps = true;
+            graph.spanGaps = yPlaceholderSettings.nulls === 'connect';
         });
     }
 
