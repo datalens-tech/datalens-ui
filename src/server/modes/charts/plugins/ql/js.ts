@@ -213,6 +213,8 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
 
         const available = [...(fields as unknown as Field[])];
 
+        const applyDefaultSorting = !/order by/gi.test(shared.queryValue);
+
         const prepareSingleResultArgs = {
             resultData,
             shared: {
@@ -230,6 +232,7 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
             ChartEditor,
             datasetsIds,
             loadedColorPalettes: {},
+            applyDefaultSorting,
         };
 
         result = prepareSingleResult(prepareSingleResultArgs);
@@ -346,7 +349,13 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
     }
 
     if (prepare) {
-        result = prepare({shared, columns, rows, ChartEditor, tablePreviewData});
+        result = prepare({
+            shared,
+            columns,
+            rows,
+            ChartEditor,
+            tablePreviewData,
+        });
     }
 
     log('RESULT:', result);

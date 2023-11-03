@@ -72,6 +72,7 @@ function prepareLine({
     segments,
     layerChartMeta,
     usedColors,
+    applyDefaultSorting = true,
 }: PrepareFunctionArgs) {
     const {data, order} = resultData;
 
@@ -141,8 +142,6 @@ function prepareLine({
 
     const isColorizeByMeasure = isMeasureField(colorItem);
     const isColorizeByMeasureValue = isMeasureValue(colorItem);
-
-    const isQLType = shared.type === 'ql';
 
     /*
         Specially reduced LinesRecord object. It has only one key that is equal to the colorItem header.
@@ -280,7 +279,7 @@ function prepareLine({
         let lineKeys1 = Object.keys(lines1);
         let lineKeys2 = Object.keys(lines2);
 
-        if (xIsDate && !isQLType) {
+        if (xIsDate && applyDefaultSorting) {
             (categories as number[]).sort(numericCollator);
         }
 
@@ -292,7 +291,7 @@ function prepareLine({
             visualizationId !== WizardVisualizationId.Area &&
             !isPercentVisualization(visualizationId);
 
-        if (!isQLType) {
+        if (applyDefaultSorting) {
             categories = getSortedCategories({
                 lines,
                 colorItem,
@@ -740,7 +739,7 @@ function prepareLine({
         });
 
         // Default sorting
-        if ((!isSortItemExists || !isSortCategoriesAvailable) && !isQLType) {
+        if ((!isSortItemExists || !isSortCategoriesAvailable) && applyDefaultSorting) {
             if (xIsNumber) {
                 (categories as number[]).sort(numericCollator);
             } else {
