@@ -74,7 +74,6 @@ class AddField extends React.Component<AddFieldProps> {
 
                         return disabled ? (
                             <CommonTooltip
-                                autoclosable={false}
                                 placement={['top', 'bottom']}
                                 content={<span data-qa={disabledTextQa}>{disabledText}</span>}
                                 onClick={preventTooltipCloseOnClick}
