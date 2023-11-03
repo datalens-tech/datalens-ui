@@ -333,7 +333,11 @@ function prepareLine({
             (isSortingYAxis || isSortByMeasureColor);
 
         const isXCategoryAxis =
-            isXDiscrete || xDataType === 'string' || xIsPseudo || isSortNumberTypeXAxisByMeasure;
+            isXDiscrete ||
+            xDataType === 'string' ||
+            xIsPseudo ||
+            isSortNumberTypeXAxisByMeasure ||
+            !applyDefaultSorting;
 
         const orderedLineKeys = [lineKeys1, lineKeys2];
 
