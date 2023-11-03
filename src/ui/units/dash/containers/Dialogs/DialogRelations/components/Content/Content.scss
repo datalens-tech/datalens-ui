@@ -17,20 +17,28 @@
 
     &__row {
         display: grid;
-        grid-template-columns: auto 164px;
+        grid-template-columns: auto 176px;
         width: 100%;
         transition: background-color 0.2s ease;
+        border-bottom: 1px solid var(--g-color-line-generic);
+
+        &:last-of-type {
+            border-color: transparent;
+        }
     }
 
     &__left,
     &__right {
-        border-bottom: 1px solid var(--g-color-line-generic);
         padding: 7px 0 8px;
 
         &.top {
             @include text-subheader-1();
             padding-top: 0;
         }
+    }
+
+    &__left {
+        padding-right: 4px;
     }
 
     &__left:not(.top) {
@@ -56,10 +64,10 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 343px;
+        width: 331px;
 
         &_with-icon {
-            width: 315px;
+            width: 303px;
         }
     }
 
