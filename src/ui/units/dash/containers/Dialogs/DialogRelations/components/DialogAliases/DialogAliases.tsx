@@ -9,7 +9,6 @@ import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
 import intersection from 'lodash/intersection';
 import isEqual from 'lodash/isEqual';
-import {DASH_WIDGET_TYPES, WidgetType} from 'ui/units/dash/modules/constants';
 
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../../constants';
 import {getNormalizedAliases} from '../../helpers';
@@ -99,10 +98,6 @@ const DialogAliases = (props: DialogAliasesProps) => {
     const isIgnored = relationType === RELATION_TYPES.ignore;
     const isBoth = relationType === RELATION_TYPES.both;
 
-    const isMarkdownChart =
-        (currentWidget.type as WidgetType) === DASH_WIDGET_TYPES.MARKDOWN ||
-        (currentRow.type as WidgetType) === DASH_WIDGET_TYPES.MARKDOWN;
-
     const affectedItems = [currentWidget, ...relations]
         .map((item) => ({
             ...item,
@@ -114,8 +109,19 @@ const DialogAliases = (props: DialogAliasesProps) => {
                 (!selectedParam || intersectionParams.includes(selectedParam)),
         );
 
+    const hasUsedParams =
+        Boolean(currentWidget.usedParams?.length) && Boolean(currentRow.usedParams?.length);
+
     const showAddAliasButton =
-        !isMarkdownChart && enableAddAlias && (!isIgnored || (isIgnored && forceAddAlias));
+        hasUsedParams && enableAddAlias && (!isIgnored || (isIgnored && forceAddAlias));
+
+    const showAlert = !enableAddAlias || !hasUsedParams;
+    let alertText = null;
+    if (!hasUsedParams) {
+        alertText = i18n('label_card-used-params');
+    } else if (!enableAddAlias) {
+        alertText = i18n('label_card');
+    }
 
     const resetSelectedAliasRow = React.useCallback(() => {
         setSelectedParam(null);
@@ -306,10 +312,10 @@ const DialogAliases = (props: DialogAliasesProps) => {
                             </span>
                         </div>
                     )}
-                    {!enableAddAlias && (
+                    {showAlert && alertText && (
                         <Alert
                             theme="warning"
-                            message={i18n('label_card')}
+                            message={alertText}
                             className={b('card')}
                             view="outlined"
                         />

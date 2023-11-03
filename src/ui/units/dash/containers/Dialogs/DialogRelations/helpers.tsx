@@ -266,13 +266,9 @@ export const addAlias = (first: string, second: string, aliases: Array<Array<str
 
 export const hasConnectionsBy = (relation?: RelationsData) => {
     return (
-        relation &&
-        'byUsedParams' in relation &&
-        relation.byUsedParams.length &&
-        'byFields' in relation &&
-        relation.byFields.length &&
-        'byAliases' in relation &&
-        relation.byAliases.length
+        Boolean(relation?.byUsedParams?.length) ||
+        Boolean(relation?.byFields?.length) ||
+        Boolean(relation?.byAliases?.length)
     );
 };
 
