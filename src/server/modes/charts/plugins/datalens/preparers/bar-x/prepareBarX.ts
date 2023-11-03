@@ -54,8 +54,10 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         segments,
         layerChartMeta,
         usedColors,
+        ChartEditor,
     } = args;
     const {data, order} = resultData;
+    const widgetConfig = ChartEditor.getWidgetConfig();
 
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xPlaceholderSettings = xPlaceholder?.settings;
@@ -368,6 +370,18 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                                 point.label = '';
                             } else {
                                 point.label = pointLabel;
+                            }
+
+                            if (widgetConfig?.actionParams?.enable) {
+                                const actionParams: Record<string, any> = {};
+
+                                if (x) {
+                                    actionParams[x.guid] = category;
+                                }
+
+                                point.custom = {
+                                    actionParams: actionParams,
+                                };
                             }
 
                             return point;

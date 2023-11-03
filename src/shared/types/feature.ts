@@ -91,6 +91,8 @@ export enum Feature {
     AddDemoWorkbook = 'AddDemoWorkbook',
     SaveDashWithFakeEntry = 'SaveDashWithFakeEntry',
     CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
+    WizardChartChartFilteringEnable = 'WizardChartChartFilteringEnable',
+    WizardChartChartFilteringEnableByDefault = 'WizardChartChartFilteringEnableByDefault',
 }
 
 export type FeatureConfig = Record<string, boolean>;

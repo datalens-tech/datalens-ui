@@ -16,6 +16,7 @@ import {
     StringParams,
     WidgetKind,
     WidgetType,
+    WizardType,
 } from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
@@ -65,7 +66,12 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
 };
 
 const isEntryTypeWithFiltering = (entryType?: WidgetType) => {
-    return entryType === EditorType.TableNode || entryType === EditorType.GraphNode;
+    const widgetTypesWithFilteringAvailable: WidgetType[] = [
+        EditorType.TableNode,
+        EditorType.GraphNode,
+        WizardType.GraphWizardNode,
+    ];
+    return entryType && widgetTypesWithFilteringAvailable.includes(entryType);
 };
 
 type LineProps = {

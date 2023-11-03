@@ -1,224 +1,20 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {transformParamsToActionParams} from '@gravity-ui/dashkit';
 import {wrap} from 'highcharts';
 import get from 'lodash/get';
 import has from 'lodash/has';
 import merge from 'lodash/merge';
 import set from 'lodash/set';
-import type {StringParams} from 'shared';
+import {GraphWidgetEventScope, URL_ACTION_PARAMS_PREFIX} from 'shared';
 
-import type {GraphWidget, GraphWidgetEventScope, WidgetEventHandler} from '../../types';
+import type {GraphWidget} from '../../types';
 import type {ChartKitAdapterProps} from '../types';
 
-type ShapedAction = {
-    type: WidgetEventHandler['type'];
-    scope?: GraphWidgetEventScope;
-};
-
-const Opacity = {
-    SELECTED: '1',
-    UNSELECTED: '0.5',
-};
-
-export const extractHcTypeFromData = (data?: GraphWidget) => {
-    return data?.libraryConfig.chart?.type;
-};
-
-const extractHcTypeFromPoint = (point: Highcharts.Point) => {
-    return point.series.chart.options.chart?.type;
-};
-
-const isStringParam = (data: unknown): data is StringParams => {
-    if (typeof data !== 'object' || Array.isArray(data) || data === null) {
-        return false;
-    }
-
-    const entries = Object.entries(data);
-
-    if (entries.length !== 1) {
-        return false;
-    }
-
-    const value = entries[0][1];
-
-    return Array.isArray(value) || typeof value === 'string';
-};
-
-const applyParamToParams = (args: {
-    params: StringParams;
-    key: string;
-    value: string;
-    selected: boolean;
-}) => {
-    const {params, key, value, selected} = args;
-    const isArray = Array.isArray(params[key]);
-    const isString = typeof params[key] === 'string';
-
-    if (selected && isArray && !params[key].includes(value)) {
-        (params[key] as string[]).push(value);
-    } else if (!selected && isArray && params[key].includes(value)) {
-        params[key] = (params[key] as string[]).filter((iteratedValue) => iteratedValue !== value);
-    } else if (selected && isString && params[key] !== value) {
-        params[key] = [params[key] as string, value];
-    } else if (!selected && isString && params[key] === value) {
-        params[key] = [];
-    }
-};
-
-export const setPointActionParamToParams = (args: {
-    actionParam: unknown;
-    params: StringParams;
-    selected: boolean;
-}) => {
-    const {actionParam, params, selected} = args;
-
-    if (!isStringParam(actionParam)) {
-        return;
-    }
-
-    const [key, values] = Object.entries(actionParam)[0];
-
-    if (!params[key]) {
-        params[key] = [];
-    }
-
-    if (Array.isArray(values)) {
-        values.forEach((value) => applyParamToParams({params, key, value, selected}));
-    } else {
-        applyParamToParams({params, key, value: values, selected});
-    }
-};
-
-const pointsToParams = (points: Highcharts.Point[]) => {
-    return points.reduce<StringParams>((params, point) => {
-        const actionParam = get(point, 'options.custom.actionParam');
-        setPointActionParamToParams({
-            actionParam,
-            params,
-            selected: point.selected,
-        });
-
-        return params;
-    }, {});
-};
-
-const seriesToParams = (series: Highcharts.Series[]) => {
-    return series.reduce<StringParams>((params, seriesItem) => {
-        const points = seriesItem.getPointsCollection();
-        const actionParams = points.map((point) => get(point, 'options.custom.actionParam'));
-
-        if (!Array.isArray(actionParams)) {
-            return params;
-        }
-
-        actionParams.forEach((actionParam: unknown) => {
-            setPointActionParamToParams({
-                actionParam,
-                params,
-                selected: seriesItem.selected,
-            });
-        });
-
-        return params;
-    }, {});
-};
-
-const setPointOpacity = (point: Highcharts.Point) => {
-    const type = extractHcTypeFromPoint(point);
-    const opacity = point.selected ? Opacity.SELECTED : Opacity.UNSELECTED;
-
-    if (type === 'scatter') {
-        // @ts-expect-error
-        point.update({marker: {states: {normal: {opacity}}}});
-    } else {
-        point.update({opacity});
-    }
-};
-
-const setSeriesOpacity = (seriesItem: Highcharts.Series) => {
-    const opacity = seriesItem.selected ? Opacity.SELECTED : Opacity.UNSELECTED;
-    seriesItem.update({opacity, selected: seriesItem.selected});
-};
-
-const handleChartLoadingForActionParams = (args: {
-    clickScope: GraphWidgetEventScope;
-    series: Highcharts.Series[];
-}) => {
-    const {clickScope, series} = args;
-
-    switch (clickScope) {
-        case 'point': {
-            const allPoints = series.map((s) => s.getPointsCollection()).flatMap((s) => s);
-            const hasSelectedPoints = allPoints.some((p) => p.selected);
-
-            if (hasSelectedPoints) {
-                allPoints.forEach(setPointOpacity);
-            }
-
-            break;
-        }
-        case 'series': {
-            const hasSelectedSeries = series.some((s) => s.selected);
-
-            if (hasSelectedSeries) {
-                series.forEach(setSeriesOpacity);
-            }
-
-            break;
-        }
-    }
-};
-
-const handleSeriesClickForActionParams = (args: {
-    chart: Highcharts.Chart;
-    clickScope: GraphWidgetEventScope;
-    event: Highcharts.SeriesClickEventObject;
-    onChange?: ChartKitAdapterProps['onChange'];
-}) => {
-    const {chart, clickScope, event, onChange} = args;
-    let actionParams: StringParams = {};
-
-    switch (clickScope) {
-        case 'point': {
-            event.point.select(undefined, event.metaKey);
-            const allPoints = chart.series.map((s) => s.getPointsCollection()).flatMap((s) => s);
-            allPoints.forEach(setPointOpacity);
-            const params = pointsToParams(allPoints);
-            actionParams = transformParamsToActionParams(params);
-
-            break;
-        }
-        case 'series': {
-            event.point.series.select();
-
-            if (!event.metaKey) {
-                chart.series
-                    .filter((s) => s.name !== event.point.series.name)
-                    .forEach((s) => {
-                        if (s.selected) {
-                            s.select();
-                        }
-                    });
-            }
-
-            chart.series.forEach(setSeriesOpacity);
-            const params = seriesToParams(chart.series);
-            actionParams = transformParamsToActionParams(params);
-
-            break;
-        }
-    }
-
-    onChange?.(
-        {
-            type: 'PARAMS_CHANGED',
-            data: {params: {...actionParams}},
-        },
-        {forceUpdate: true},
-        true,
-        true,
-    );
-};
+import {
+    handleChartLoadingForActionParams,
+    handleSeriesClickForActionParams,
+} from './action-params-handlers';
+import type {ShapedAction} from './types';
+import {extractHcTypeFromData} from './utils';
 
 export const fixPieTotals = (args: {data: GraphWidget}) => {
     const {data} = args;
@@ -233,6 +29,19 @@ export const fixPieTotals = (args: {data: GraphWidget}) => {
         delete this.total;
     });
 };
+
+function getActionParams(params: Record<string, string | string[]> = {}) {
+    const actionParams: Record<string, string | string[]> = {};
+    Object.entries(params).forEach(([key, value]) => {
+        if (key.startsWith(URL_ACTION_PARAMS_PREFIX)) {
+            actionParams[key.slice(URL_ACTION_PARAMS_PREFIX.length)] = Array.isArray(value)
+                ? value
+                : [value];
+        }
+    });
+
+    return actionParams;
+}
 
 export const applySetActionParamsEvents = (args: {
     action: ShapedAction;
@@ -263,6 +72,8 @@ export const applySetActionParamsEvents = (args: {
         set(data, pathToScatterMarkerStates, {});
     }
 
+    const actionParams = getActionParams(get(data, 'unresolvedParams', {}));
+
     wrap(
         get(data, pathToChartEvents),
         'load',
@@ -271,7 +82,7 @@ export const applySetActionParamsEvents = (args: {
             proceed: Highcharts.ChartLoadCallbackFunction,
             event: Event,
         ) {
-            handleChartLoadingForActionParams({series: this.series, clickScope});
+            handleChartLoadingForActionParams({series: this.series, clickScope, actionParams});
             proceed?.apply(this, [event]);
         },
     );
@@ -284,7 +95,13 @@ export const applySetActionParamsEvents = (args: {
             proceed: Highcharts.SeriesClickCallbackFunction,
             event: Highcharts.SeriesClickEventObject,
         ) {
-            handleSeriesClickForActionParams({chart: this.chart, clickScope, event, onChange});
+            handleSeriesClickForActionParams({
+                chart: this.chart,
+                clickScope,
+                event,
+                onChange,
+                actionParams,
+            });
             proceed?.apply(this, [event]);
         },
     );
