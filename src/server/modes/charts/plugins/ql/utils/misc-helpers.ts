@@ -13,13 +13,15 @@ import {
     QLRequestParam,
     QLResultEntryMetadataDataColumn,
     QLResultEntryMetadataDataColumnOrGroup,
-    QLResultEntryMetadataDataGroup,
     StringParams,
     biToDatalensQL,
     getDatalensQLTypeName,
     isMonitoringOrPrometheusChart,
 } from '../../../../../../shared';
-import type {QLConfigQuery} from '../../../../../../shared/types/config/ql';
+import type {
+    QLConfigQuery,
+    QlConfigResultEntryMetadataDataGroup,
+} from '../../../../../../shared/types/config/ql';
 
 import {LOG_INFO, LOG_TIMING} from './constants';
 
@@ -743,8 +745,8 @@ export function renderValue(value: QLValue) {
 
 export function isGroup(
     item: QLResultEntryMetadataDataColumnOrGroup,
-): item is QLResultEntryMetadataDataGroup {
-    return Boolean((item as QLResultEntryMetadataDataGroup).group);
+): item is QlConfigResultEntryMetadataDataGroup {
+    return Boolean((item as QlConfigResultEntryMetadataDataGroup).group);
 }
 
 export function iterateThroughVisibleQueries(

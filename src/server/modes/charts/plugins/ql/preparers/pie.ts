@@ -4,9 +4,11 @@ import {
     QLPreviewTableData,
     QLResultEntryMetadataDataColumn,
     QLResultEntryMetadataDataColumnOrGroup,
-    QLResultEntryMetadataDataGroup,
 } from '../../../../../../shared';
-import type {QlConfig} from '../../../../../../shared/types/config/ql';
+import type {
+    QlConfig,
+    QlConfigResultEntryMetadataDataGroup,
+} from '../../../../../../shared/types/config/ql';
 import {
     QLRenderResultHC,
     formatUnknownTypeValue,
@@ -32,7 +34,7 @@ export default ({
 
     const columnTypes = columns.map((column) => column.typeName);
 
-    const colorGroup: QLResultEntryMetadataDataGroup = {
+    const colorGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'Color',
         group: true,
         undragable: true,
@@ -40,7 +42,7 @@ export default ({
         size: 0,
     };
 
-    const measureGroup: QLResultEntryMetadataDataGroup = {
+    const measureGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'Measure',
         group: true,
         undragable: true,
@@ -48,7 +50,7 @@ export default ({
         size: 0,
     };
 
-    const availableGroup: QLResultEntryMetadataDataGroup = {
+    const availableGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'Available',
         group: true,
         undragable: true,

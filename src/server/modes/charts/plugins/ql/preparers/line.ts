@@ -6,9 +6,11 @@ import {
     QLPreviewTableData,
     QLResultEntryMetadataDataColumn,
     QLResultEntryMetadataDataColumnOrGroup,
-    QLResultEntryMetadataDataGroup,
 } from '../../../../../../shared';
-import type {QlConfig} from '../../../../../../shared/types/config/ql';
+import type {
+    QlConfig,
+    QlConfigResultEntryMetadataDataGroup,
+} from '../../../../../../shared/types/config/ql';
 import {
     QLRenderResultHC,
     QLRenderResultHCGraph,
@@ -39,7 +41,7 @@ export default ({
 
     const columnTypes = columns.map((column) => column.typeName);
 
-    const xGroup: QLResultEntryMetadataDataGroup = {
+    const xGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'X',
         group: true,
         undragable: true,
@@ -47,7 +49,7 @@ export default ({
         size: 0,
     };
 
-    const yGroup: QLResultEntryMetadataDataGroup = {
+    const yGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'Y',
         group: true,
         undragable: true,
@@ -55,14 +57,14 @@ export default ({
         size: 0,
     };
 
-    const colorGroup: QLResultEntryMetadataDataGroup = {
+    const colorGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'Colors',
         group: true,
         undragable: true,
         size: 0,
     };
 
-    const availableGroup: QLResultEntryMetadataDataGroup = {
+    const availableGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'Available',
         group: true,
         undragable: true,
