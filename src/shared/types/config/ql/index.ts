@@ -16,6 +16,8 @@ import type {
 
 export type QlConfig = QLEntryDataShared;
 
+export type QlExtendedConfig = QlConfig;
+
 export type QLConfigQuery = QLQuery;
 
 export type QlConfigResultEntryMetadataDataGroup = QLResultEntryMetadataDataGroup;
