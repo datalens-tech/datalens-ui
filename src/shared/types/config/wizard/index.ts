@@ -1,4 +1,4 @@
-import {Shared, SharedData, V9PlaceholderSettings} from '..';
+import {Shared, SharedData, V9PlaceholderSettings} from '../../index';
 
 import {V2ChartsConfig} from './v2';
 import {V3ChartsConfig} from './v3';

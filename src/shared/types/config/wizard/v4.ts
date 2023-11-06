@@ -1,46 +1,45 @@
-import {DatasetFieldCalcMode, ParameterDefaultValue} from '../dataset';
 import {
     ChartsConfigVersion,
     ColumnSettings,
-    LabelsPositions,
+    DatasetFieldCalcMode,
     NumberFormatType,
     NumberFormatUnit,
+    ParameterDefaultValue,
     TableBarsSettings,
-    TableFieldBackgroundSettings,
-} from '../wizard';
-import {TableSubTotalsSettings} from '../wizard/sub-totals';
+} from '../../index';
+import {TableFieldBackgroundSettings} from '../../wizard/background-settings';
 
-export type V8ChartsConfig = {
+export type V4ChartsConfig = {
     title?: string;
-    colors: V8Color[];
-    colorsConfig?: V8ColorsConfig;
-    extraSettings: V8CommonSharedExtraSettings | undefined;
-    filters: V8Filter[];
-    geopointsConfig?: V8PointSizeConfig;
-    hierarchies: V8HierarchyField[];
-    labels: V8Label[];
-    links: V8Link[];
-    sort: V8Sort[];
-    tooltips: V8Tooltip[];
+    colors: V4Color[];
+    colorsConfig?: V4ColorsConfig;
+    extraSettings: V4CommonSharedExtraSettings;
+    filters: V4Filter[];
+    geopointsConfig?: V4PointSizeConfig;
+    hierarchies: V4HierarchyField[];
+    labels: V4Label[];
+    links: V4Link[];
+    sort: V4Sort[];
+    tooltips: V4Tooltip[];
     type: 'datalens';
-    updates: V8Update[];
-    visualization: V8Visualization;
-    shapes: V8Shape[];
-    shapesConfig?: V8ShapesConfig;
-    version: ChartsConfigVersion.V8;
+    updates: V4Update[];
+    visualization: V4Visualization;
+    shapes: V4Shape[];
+    shapesConfig?: V4ShapesConfig;
+    version: ChartsConfigVersion.V4;
     datasetsIds: string[];
-    datasetsPartialFields: V8ChartsConfigDatasetField[][];
-    segments: V8Field[];
+    datasetsPartialFields: V4ChartsConfigDatasetField[][];
+    segments: V4Field[];
     chartType?: string;
 };
 
-export type V8Update = {
+type V4Update = {
     action: 'add_field' | 'add' | 'update_field' | 'update' | 'delete' | 'delete_field';
     field: any;
     debug_info?: string;
 };
 
-export interface V8CommonSharedExtraSettings {
+export interface V4CommonSharedExtraSettings {
     title?: string;
     titleMode?: 'show' | 'hide';
     legendMode?: 'show' | 'hide';
@@ -55,12 +54,10 @@ export interface V8CommonSharedExtraSettings {
     pivotFallback?: 'on' | 'off';
     overlap?: 'on' | 'off';
     feed?: string;
-    navigatorSettings?: V8NavigatorSettings;
-    enableGPTInsights?: boolean;
-    labelsPosition?: LabelsPositions;
+    navigatorSettings?: V4NavigatorSettings;
 }
 
-export type V8NavigatorSettings = {
+type V4NavigatorSettings = {
     navigatorMode: string;
     isNavigatorAvailable: boolean;
     selectedLines: string[];
@@ -72,7 +69,7 @@ export type V8NavigatorSettings = {
     };
 };
 
-export type V8Filter = {
+export type V4Filter = {
     guid: string;
     datasetId: string;
     disabled?: string;
@@ -85,9 +82,9 @@ export type V8Filter = {
     type: string;
     title: string;
     calc_mode: DatasetFieldCalcMode;
-} & V8ClientOnlyFields;
+} & V4ClientOnlyFields;
 
-export type V8Sort = {
+export type V4Sort = {
     guid: string;
     title: string;
     source?: string;
@@ -97,14 +94,14 @@ export type V8Sort = {
     format?: string;
     type: string;
     default_value?: ParameterDefaultValue;
-} & V8ClientOnlyFields;
+} & V4ClientOnlyFields;
 
-export type V8Link = {
+type V4Link = {
     id: string;
-    fields: Record<string, V8LinkField>;
+    fields: Record<string, V4LinkField>;
 };
 
-export type V8LinkField = {
+type V4LinkField = {
     field: {
         title: string;
         guid: string;
@@ -115,15 +112,15 @@ export type V8LinkField = {
     };
 };
 
-export type V8Visualization = {
+export type V4Visualization = {
     id: string;
     highchartsId?: string;
     selectedLayerId?: string;
-    layers?: V8Layer[];
-    placeholders: V8Placeholder[];
+    layers?: V4Layer[];
+    placeholders: V4Placeholder[];
 };
 
-export type V8LayerSettings = {
+type V4LayerSettings = {
     id: string;
     name: string;
     type: string;
@@ -131,63 +128,60 @@ export type V8LayerSettings = {
     valid: boolean;
 };
 
-export type V8CommonPlaceholders = {
-    colors: V8Color[];
-    labels: V8Label[];
-    tooltips: V8Tooltip[];
-    filters: V8Filter[];
-    sort: V8Sort[];
-    shapes?: V8Shape[];
-    colorsConfig?: V8ColorsConfig;
-    geopointsConfig?: V8PointSizeConfig;
-    shapesConfig?: V8ShapesConfig;
+export type V4CommonPlaceholders = {
+    colors: V4Color[];
+    labels: V4Label[];
+    tooltips: V4Tooltip[];
+    filters: V4Filter[];
+    sort: V4Sort[];
+    shapes?: V4Shape[];
+    colorsConfig?: V4ColorsConfig;
+    geopointsConfig?: V4PointSizeConfig;
+    shapesConfig?: V4ShapesConfig;
 };
 
-export type V8Layer = {
+export type V4Layer = {
     id: string;
-    commonPlaceholders: V8CommonPlaceholders;
-    layerSettings: V8LayerSettings;
-    placeholders: V8Placeholder[];
+    commonPlaceholders: V4CommonPlaceholders;
+    layerSettings: V4LayerSettings;
+    placeholders: V4Placeholder[];
 };
 
-export type V8PlaceholderSettings = {
-    groupping?: 'disabled' | 'off';
-    autoscale?: boolean;
-    scale?: 'auto' | 'manual';
-    scaleValue?: '0-max' | [string, string];
-    title?: 'auto' | 'manual' | 'off';
-    titleValue?: 'string';
-    type?: 'logarithmic';
-    grid?: 'on' | 'off';
-    gridStep?: 'manual';
-    gridStepValue?: number;
-    hideLabels?: 'yes' | 'no';
-    labelsView?: 'horizontal' | 'vertical' | 'angle';
-    nulls?: 'ignore' | 'connect' | 'as-0';
-    holidays?: 'on' | 'off';
-    axisFormatMode?: 'auto' | 'by-field';
-    axisModeMap?: Record<string, 'discrete' | 'continuous'>;
-};
-
-export type V8Placeholder = {
+export type V4Placeholder = {
     id: string;
-    settings?: V8PlaceholderSettings;
+    settings?: {
+        groupping?: 'disabled' | 'off';
+        autoscale?: boolean;
+        scale?: 'auto' | 'manual';
+        scaleValue?: '0-max' | [string, string];
+        title?: 'auto' | 'manual' | 'off';
+        titleValue?: 'string';
+        type?: 'logarithmic';
+        grid?: 'on' | 'off';
+        gridStep?: 'manual';
+        gridStepValue?: number;
+        hideLabels?: 'yes' | 'no';
+        labelsView?: 'horizontal' | 'vertical' | 'angle';
+        nulls?: 'ignore' | 'connect' | 'as-0';
+        holidays?: 'on' | 'off';
+        axisFormatMode?: 'auto' | 'by-field';
+    };
     required?: boolean;
     capacity?: number;
-    items: V8Field[];
+    items: V4Field[];
 };
 
-export type V8Color = {
+export type V4Color = {
     datasetId: string;
     guid: string;
     title: string;
     type: string;
     data_type: string;
-    formatting?: V8Formatting;
+    formatting?: V4Formatting;
     calc_mode: DatasetFieldCalcMode;
-} & V8ClientOnlyFields;
+} & V4ClientOnlyFields;
 
-export type V8Shape = {
+export type V4Shape = {
     datasetId: string;
     guid: string;
     title: string;
@@ -197,16 +191,16 @@ export type V8Shape = {
     calc_mode: DatasetFieldCalcMode;
 };
 
-export type V8Tooltip = {
+export type V4Tooltip = {
     datasetId: string;
     guid: string;
     title: string;
-    formatting?: V8Formatting;
+    formatting?: V4Formatting;
     data_type: string;
     calc_mode: DatasetFieldCalcMode;
-} & V8ClientOnlyFields;
+} & V4ClientOnlyFields;
 
-export type V8Formatting = {
+export type V4Formatting = {
     format?: NumberFormatType;
     showRankDelimiter?: boolean;
     prefix?: string;
@@ -216,50 +210,50 @@ export type V8Formatting = {
     labelMode?: string;
 };
 
-export type V8Label = {
+export type V4Label = {
     datasetId: string;
     type: string;
     title: string;
     guid: string;
-    formatting?: V8Formatting;
+    formatting?: V4Formatting;
     format?: string;
     data_type: string;
     calc_mode: DatasetFieldCalcMode;
 };
 
-export type V8HierarchyField = {
+export type V4HierarchyField = {
     data_type: string;
-    fields: V8Field[];
+    fields: V4Field[];
     type: string;
 };
 
-export type V8PointSizeConfig = {
+type V4PointSizeConfig = {
     radius: number;
     minRadius: number;
     maxRadius: number;
 };
 
-export type V8Field = {
+export type V4Field = {
     data_type: string;
-    fields?: V8Field[];
+    fields?: V4Field[];
     type: string;
     title: string;
     guid: string;
-    formatting?: V8Formatting;
+    formatting?: V4Formatting;
     format?: string;
     datasetId: string;
+    dateMode?: string;
     source?: string;
     datasetName?: string;
     hideLabelMode?: string;
     calc_mode: DatasetFieldCalcMode;
     default_value?: ParameterDefaultValue;
     barsSettings?: TableBarsSettings;
-    subTotalsSettings?: TableSubTotalsSettings;
     backgroundSettings?: TableFieldBackgroundSettings;
     columnSettings?: ColumnSettings;
-} & V8ClientOnlyFields;
+} & V4ClientOnlyFields;
 
-export type V8ColorsConfig = {
+export type V4ColorsConfig = {
     thresholdsMode?: string;
     leftThreshold?: string;
     middleThreshold?: string;
@@ -274,18 +268,18 @@ export type V8ColorsConfig = {
     palette?: string;
 };
 
-export type V8ShapesConfig = {
+type V4ShapesConfig = {
     mountedShapes?: Record<string, string>;
     fieldGuid?: string;
 };
 
-export type V8ChartsConfigDatasetField = {
+export type V4ChartsConfigDatasetField = {
     guid: string;
     title: string;
     calc_mode?: DatasetFieldCalcMode;
 };
 
-export type V8ClientOnlyFields = {
+type V4ClientOnlyFields = {
     fakeTitle?: string;
     originalTitle?: string;
 };

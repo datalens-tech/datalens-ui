@@ -1,34 +1,44 @@
-import {ChartsConfigVersion, DatasetFieldCalcMode, ParameterDefaultValue} from '..';
+import {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
+import {
+    ChartsConfigVersion,
+    ColumnSettings,
+    NumberFormatType,
+    NumberFormatUnit,
+    TableBarsSettings,
+    TableFieldBackgroundSettings,
+} from '../../wizard';
 
-export type V3ChartsConfig = {
+export type V6ChartsConfig = {
     title?: string;
-    colors: V3Color[];
-    colorsConfig: V3ColorsConfig;
-    extraSettings: V3CommonSharedExtraSettings;
-    filters: V3Filter[];
-    geopointsConfig?: V3PointSizeConfig;
-    hierarchies: V3HierarchyField[];
-    labels: V3Label[];
-    links: V3Link[];
-    sort: V3Sort[];
-    tooltips: V3Tooltip[];
+    colors: V6Color[];
+    colorsConfig?: V6ColorsConfig;
+    extraSettings: V6CommonSharedExtraSettings;
+    filters: V6Filter[];
+    geopointsConfig?: V6PointSizeConfig;
+    hierarchies: V6HierarchyField[];
+    labels: V6Label[];
+    links: V6Link[];
+    sort: V6Sort[];
+    tooltips: V6Tooltip[];
     type: 'datalens';
-    updates: V3Update[];
-    visualization: V3Visualization;
-    shapes: V3Shape[];
-    shapesConfig?: V3ShapesConfig;
-    version: ChartsConfigVersion.V3;
+    updates: V6Update[];
+    visualization: V6Visualization;
+    shapes: V6Shape[];
+    shapesConfig?: V6ShapesConfig;
+    version: ChartsConfigVersion.V6;
     datasetsIds: string[];
-    datasetsPartialFields: V3ChartsConfigDatasetField[][];
+    datasetsPartialFields: V6ChartsConfigDatasetField[][];
+    segments: V6Field[];
+    chartType?: string;
 };
 
-type V3Update = {
+export type V6Update = {
     action: 'add_field' | 'add' | 'update_field' | 'update' | 'delete' | 'delete_field';
     field: any;
     debug_info?: string;
 };
 
-interface V3CommonSharedExtraSettings {
+export interface V6CommonSharedExtraSettings {
     title?: string;
     titleMode?: 'show' | 'hide';
     legendMode?: 'show' | 'hide';
@@ -43,10 +53,10 @@ interface V3CommonSharedExtraSettings {
     pivotFallback?: 'on' | 'off';
     overlap?: 'on' | 'off';
     feed?: string;
-    navigatorSettings?: V3NavigatorSettings;
+    navigatorSettings?: V6NavigatorSettings;
 }
 
-type V3NavigatorSettings = {
+export type V6NavigatorSettings = {
     navigatorMode: string;
     isNavigatorAvailable: boolean;
     selectedLines: string[];
@@ -58,7 +68,7 @@ type V3NavigatorSettings = {
     };
 };
 
-export type V3Filter = {
+export type V6Filter = {
     guid: string;
     datasetId: string;
     disabled?: string;
@@ -71,9 +81,9 @@ export type V3Filter = {
     type: string;
     title: string;
     calc_mode: DatasetFieldCalcMode;
-} & V3ClientOnlyFields;
+} & V6ClientOnlyFields;
 
-type V3Sort = {
+export type V6Sort = {
     guid: string;
     title: string;
     source?: string;
@@ -83,14 +93,14 @@ type V3Sort = {
     format?: string;
     type: string;
     default_value?: ParameterDefaultValue;
-} & V3ClientOnlyFields;
+} & V6ClientOnlyFields;
 
-type V3Link = {
+export type V6Link = {
     id: string;
-    fields: Record<string, V3LinkField>;
+    fields: Record<string, V6LinkField>;
 };
 
-type V3LinkField = {
+export type V6LinkField = {
     field: {
         title: string;
         guid: string;
@@ -101,15 +111,15 @@ type V3LinkField = {
     };
 };
 
-type V3Visualization = {
+export type V6Visualization = {
     id: string;
     highchartsId?: string;
     selectedLayerId?: string;
-    layers?: V3Layer[];
-    placeholders: V3Placeholder[];
+    layers?: V6Layer[];
+    placeholders: V6Placeholder[];
 };
 
-type V3LayerSettings = {
+export type V6LayerSettings = {
     id: string;
     name: string;
     type: string;
@@ -117,31 +127,33 @@ type V3LayerSettings = {
     valid: boolean;
 };
 
-export type V3CommonPlaceholders = {
-    colors: V3Color[];
-    labels: V3Label[];
-    tooltips: V3Tooltip[];
-    filters: V3Filter[];
-    sort: V3Sort[];
-    colorsConfig: V3ColorsConfig;
-    geopointsConfig?: V3PointSizeConfig;
+export type V6CommonPlaceholders = {
+    colors: V6Color[];
+    labels: V6Label[];
+    tooltips: V6Tooltip[];
+    filters: V6Filter[];
+    sort: V6Sort[];
+    shapes?: V6Shape[];
+    colorsConfig?: V6ColorsConfig;
+    geopointsConfig?: V6PointSizeConfig;
+    shapesConfig?: V6ShapesConfig;
 };
 
-export type V3Layer = {
+export type V6Layer = {
     id: string;
-    commonPlaceholders: V3CommonPlaceholders;
-    layerSettings: V3LayerSettings;
-    placeholders: V3Placeholder[];
+    commonPlaceholders: V6CommonPlaceholders;
+    layerSettings: V6LayerSettings;
+    placeholders: V6Placeholder[];
 };
 
-type V3Placeholder = {
+export type V6Placeholder = {
     id: string;
     settings?: {
         groupping?: 'disabled' | 'off';
         autoscale?: boolean;
         scale?: 'auto' | 'manual';
         scaleValue?: '0-max' | [string, string];
-        title?: 'auto' | 'manual';
+        title?: 'auto' | 'manual' | 'off';
         titleValue?: 'string';
         type?: 'logarithmic';
         grid?: 'on' | 'off';
@@ -150,21 +162,26 @@ type V3Placeholder = {
         hideLabels?: 'yes' | 'no';
         labelsView?: 'horizontal' | 'vertical' | 'angle';
         nulls?: 'ignore' | 'connect' | 'as-0';
+        holidays?: 'on' | 'off';
+        axisFormatMode?: 'auto' | 'by-field';
+        axisMode?: 'discrete' | 'continuous';
     };
-    items: V3Field[];
+    required?: boolean;
+    capacity?: number;
+    items: V6Field[];
 };
 
-type V3Color = {
+export type V6Color = {
     datasetId: string;
     guid: string;
     title: string;
     type: string;
     data_type: string;
-    formatting?: V3Formatting;
+    formatting?: V6Formatting;
     calc_mode: DatasetFieldCalcMode;
-} & V3ClientOnlyFields;
+} & V6ClientOnlyFields;
 
-type V3Shape = {
+export type V6Shape = {
     datasetId: string;
     guid: string;
     title: string;
@@ -174,67 +191,68 @@ type V3Shape = {
     calc_mode: DatasetFieldCalcMode;
 };
 
-type V3Tooltip = {
+export type V6Tooltip = {
     datasetId: string;
     guid: string;
     title: string;
-    formatting?: V3Formatting;
+    formatting?: V6Formatting;
     data_type: string;
     calc_mode: DatasetFieldCalcMode;
-} & V3ClientOnlyFields;
+} & V6ClientOnlyFields;
 
-export type V3Formatting = {
-    format?: 'number' | 'percent';
+export type V6Formatting = {
+    format?: NumberFormatType;
     showRankDelimiter?: boolean;
     prefix?: string;
     postfix?: string;
-    unit?: 'auto' | 'k' | 'm' | 'b' | 't';
+    unit?: NumberFormatUnit;
     precision?: number;
+    labelMode?: string;
 };
 
-export type V3Label = {
+export type V6Label = {
     datasetId: string;
     type: string;
     title: string;
     guid: string;
-    formatting?: V3Formatting;
+    formatting?: V6Formatting;
     format?: string;
-    labelMode?: string;
     data_type: string;
     calc_mode: DatasetFieldCalcMode;
 };
 
-export type V3HierarchyField = {
+export type V6HierarchyField = {
     data_type: string;
-    fields: V3Field[];
+    fields: V6Field[];
     type: string;
 };
 
-type V3PointSizeConfig = {
+export type V6PointSizeConfig = {
     radius: number;
     minRadius: number;
     maxRadius: number;
 };
 
-export type V3Field = {
+export type V6Field = {
     data_type: string;
-    fields?: V3Field[];
+    fields?: V6Field[];
     type: string;
     title: string;
     guid: string;
-    formatting?: V3Formatting;
+    formatting?: V6Formatting;
     format?: string;
-    labelMode?: string;
     datasetId: string;
-    dateMode?: string;
     source?: string;
     datasetName?: string;
     hideLabelMode?: string;
     calc_mode: DatasetFieldCalcMode;
     default_value?: ParameterDefaultValue;
-} & V3ClientOnlyFields;
+    barsSettings?: TableBarsSettings;
+    backgroundSettings?: TableFieldBackgroundSettings;
+    columnSettings?: ColumnSettings;
+} & V6ClientOnlyFields;
 
-type V3ColorsConfig = {
+export type V6ColorsConfig = {
     thresholdsMode?: string;
     leftThreshold?: string;
     middleThreshold?: string;
@@ -249,18 +267,18 @@ type V3ColorsConfig = {
     palette?: string;
 };
 
-type V3ShapesConfig = {
+export type V6ShapesConfig = {
     mountedShapes?: Record<string, string>;
     fieldGuid?: string;
 };
 
-export type V3ChartsConfigDatasetField = {
+export type V6ChartsConfigDatasetField = {
     guid: string;
     title: string;
     calc_mode?: DatasetFieldCalcMode;
 };
 
-type V3ClientOnlyFields = {
+export type V6ClientOnlyFields = {
     fakeTitle?: string;
     originalTitle?: string;
 };

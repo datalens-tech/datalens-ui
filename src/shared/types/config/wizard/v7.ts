@@ -1,34 +1,45 @@
-import {ChartsConfigVersion, DatasetFieldCalcMode} from '..';
+import {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
+import {
+    ChartsConfigVersion,
+    ColumnSettings,
+    NumberFormatType,
+    NumberFormatUnit,
+    TableBarsSettings,
+    TableFieldBackgroundSettings,
+} from '../../wizard';
+import {TableSubTotalsSettings} from '../../wizard/sub-totals';
 
-export type V2ChartsConfig = {
+export type V7ChartsConfig = {
     title?: string;
-    colors: V2Color[];
-    colorsConfig: V2ColorsConfig;
-    extraSettings: V2CommonSharedExtraSettings;
-    filters: V2Filter[];
-    geopointsConfig?: V2PointSizeConfig;
-    hierarchies: V2HierarchyField[];
-    labels: V2Label[];
-    links: V2Link[];
-    sort: V2Sort[];
-    tooltips: V2Tooltip[];
+    colors: V7Color[];
+    colorsConfig?: V7ColorsConfig;
+    extraSettings: V7CommonSharedExtraSettings;
+    filters: V7Filter[];
+    geopointsConfig?: V7PointSizeConfig;
+    hierarchies: V7HierarchyField[];
+    labels: V7Label[];
+    links: V7Link[];
+    sort: V7Sort[];
+    tooltips: V7Tooltip[];
     type: 'datalens';
-    updates: V2Update[];
-    visualization: V2Visualization;
-    shapes: V2Shape[];
-    shapesConfig?: V2ShapesConfig;
-    version: ChartsConfigVersion.V2;
+    updates: V7Update[];
+    visualization: V7Visualization;
+    shapes: V7Shape[];
+    shapesConfig?: V7ShapesConfig;
+    version: ChartsConfigVersion.V7;
     datasetsIds: string[];
-    datasetsPartialFields: V2ChartsConfigDatasetField[][];
+    datasetsPartialFields: V7ChartsConfigDatasetField[][];
+    segments: V7Field[];
+    chartType?: string;
 };
 
-type V2Update = {
+export type V7Update = {
     action: 'add_field' | 'add' | 'update_field' | 'update' | 'delete' | 'delete_field';
     field: any;
     debug_info?: string;
 };
 
-interface V2CommonSharedExtraSettings {
+export interface V7CommonSharedExtraSettings {
     title?: string;
     titleMode?: 'show' | 'hide';
     legendMode?: 'show' | 'hide';
@@ -43,10 +54,10 @@ interface V2CommonSharedExtraSettings {
     pivotFallback?: 'on' | 'off';
     overlap?: 'on' | 'off';
     feed?: string;
-    navigatorSettings?: V2NavigatorSettings;
+    navigatorSettings?: V7NavigatorSettings;
 }
 
-type V2NavigatorSettings = {
+export type V7NavigatorSettings = {
     navigatorMode: string;
     isNavigatorAvailable: boolean;
     selectedLines: string[];
@@ -58,22 +69,22 @@ type V2NavigatorSettings = {
     };
 };
 
-export type V2Filter = {
+export type V7Filter = {
     guid: string;
-    type: string;
     datasetId: string;
     disabled?: string;
-    title: string;
-    calc_mode: DatasetFieldCalcMode;
     filter: {
         operation: {
             code: string;
         };
         value?: string | string[];
     };
-} & V2ClientOnlyFields;
+    type: string;
+    title: string;
+    calc_mode: DatasetFieldCalcMode;
+} & V7ClientOnlyFields;
 
-type V2Sort = {
+export type V7Sort = {
     guid: string;
     title: string;
     source?: string;
@@ -82,15 +93,15 @@ type V2Sort = {
     data_type: string;
     format?: string;
     type: string;
-    calc_mode: DatasetFieldCalcMode;
-} & V2ClientOnlyFields;
+    default_value?: ParameterDefaultValue;
+} & V7ClientOnlyFields;
 
-type V2Link = {
+export type V7Link = {
     id: string;
-    fields: Record<string, V2LinkField>;
+    fields: Record<string, V7LinkField>;
 };
 
-type V2LinkField = {
+export type V7LinkField = {
     field: {
         title: string;
         guid: string;
@@ -101,15 +112,15 @@ type V2LinkField = {
     };
 };
 
-type V2Visualization = {
+export type V7Visualization = {
     id: string;
     highchartsId?: string;
     selectedLayerId?: string;
-    layers?: V2Layer[];
-    placeholders: V2Placeholder[];
+    layers?: V7Layer[];
+    placeholders: V7Placeholder[];
 };
 
-type V2LayerSettings = {
+export type V7LayerSettings = {
     id: string;
     name: string;
     type: string;
@@ -117,29 +128,33 @@ type V2LayerSettings = {
     valid: boolean;
 };
 
-export type V2Layer = {
-    id: string;
-    commonPlaceholders: {
-        colors: V2Color[];
-        labels: V2Label[];
-        tooltips: V2Tooltip[];
-        filters: V2Filter[];
-        colorsConfig: V2ColorsConfig;
-        geopointsConfig?: V2PointSizeConfig;
-        sort: V2Sort[];
-    };
-    layerSettings: V2LayerSettings;
-    placeholders: V2Placeholder[];
+export type V7CommonPlaceholders = {
+    colors: V7Color[];
+    labels: V7Label[];
+    tooltips: V7Tooltip[];
+    filters: V7Filter[];
+    sort: V7Sort[];
+    shapes?: V7Shape[];
+    colorsConfig?: V7ColorsConfig;
+    geopointsConfig?: V7PointSizeConfig;
+    shapesConfig?: V7ShapesConfig;
 };
 
-type V2Placeholder = {
+export type V7Layer = {
+    id: string;
+    commonPlaceholders: V7CommonPlaceholders;
+    layerSettings: V7LayerSettings;
+    placeholders: V7Placeholder[];
+};
+
+export type V7Placeholder = {
     id: string;
     settings?: {
         groupping?: 'disabled' | 'off';
         autoscale?: boolean;
         scale?: 'auto' | 'manual';
         scaleValue?: '0-max' | [string, string];
-        title?: 'auto' | 'manual';
+        title?: 'auto' | 'manual' | 'off';
         titleValue?: 'string';
         type?: 'logarithmic';
         grid?: 'on' | 'off';
@@ -148,21 +163,26 @@ type V2Placeholder = {
         hideLabels?: 'yes' | 'no';
         labelsView?: 'horizontal' | 'vertical' | 'angle';
         nulls?: 'ignore' | 'connect' | 'as-0';
+        holidays?: 'on' | 'off';
+        axisFormatMode?: 'auto' | 'by-field';
+        axisModeMap?: Record<string, 'discrete' | 'continuous'>;
     };
-    items: V2Field[];
+    required?: boolean;
+    capacity?: number;
+    items: V7Field[];
 };
 
-type V2Color = {
+export type V7Color = {
     datasetId: string;
     guid: string;
     title: string;
     type: string;
     data_type: string;
-    formatting?: V2Formatting;
+    formatting?: V7Formatting;
     calc_mode: DatasetFieldCalcMode;
-} & V2ClientOnlyFields;
+} & V7ClientOnlyFields;
 
-type V2Shape = {
+export type V7Shape = {
     datasetId: string;
     guid: string;
     title: string;
@@ -172,66 +192,69 @@ type V2Shape = {
     calc_mode: DatasetFieldCalcMode;
 };
 
-type V2Tooltip = {
+export type V7Tooltip = {
     datasetId: string;
     guid: string;
     title: string;
-    formatting?: V2Formatting;
+    formatting?: V7Formatting;
     data_type: string;
     calc_mode: DatasetFieldCalcMode;
-} & V2ClientOnlyFields;
+} & V7ClientOnlyFields;
 
-export type V2Formatting = {
-    format?: 'number' | 'percent';
+export type V7Formatting = {
+    format?: NumberFormatType;
     showRankDelimiter?: boolean;
     prefix?: string;
     postfix?: string;
-    unit?: 'auto' | 'k' | 'm' | 'b' | 't';
+    unit?: NumberFormatUnit;
     precision?: number;
+    labelMode?: string;
 };
 
-type V2Label = {
+export type V7Label = {
     datasetId: string;
     type: string;
     title: string;
     guid: string;
-    formatting?: V2Formatting;
+    formatting?: V7Formatting;
     format?: string;
-    labelMode?: string;
     data_type: string;
     calc_mode: DatasetFieldCalcMode;
 };
 
-export type V2HierarchyField = {
+export type V7HierarchyField = {
     data_type: string;
-    fields: V2Field[];
+    fields: V7Field[];
     type: string;
 };
 
-type V2PointSizeConfig = {
+export type V7PointSizeConfig = {
     radius: number;
     minRadius: number;
     maxRadius: number;
 };
 
-export type V2Field = {
+export type V7Field = {
     data_type: string;
-    fields?: V2Field[];
+    fields?: V7Field[];
     type: string;
     title: string;
     guid: string;
-    formatting?: V2Formatting;
+    formatting?: V7Formatting;
     format?: string;
-    labelMode?: string;
     datasetId: string;
-    dateMode?: string;
     source?: string;
     datasetName?: string;
     hideLabelMode?: string;
     calc_mode: DatasetFieldCalcMode;
-} & V2ClientOnlyFields;
+    default_value?: ParameterDefaultValue;
+    barsSettings?: TableBarsSettings;
+    subTotalsSettings?: TableSubTotalsSettings;
+    backgroundSettings?: TableFieldBackgroundSettings;
+    columnSettings?: ColumnSettings;
+} & V7ClientOnlyFields;
 
-type V2ColorsConfig = {
+export type V7ColorsConfig = {
     thresholdsMode?: string;
     leftThreshold?: string;
     middleThreshold?: string;
@@ -246,17 +269,18 @@ type V2ColorsConfig = {
     palette?: string;
 };
 
-type V2ShapesConfig = {
+export type V7ShapesConfig = {
     mountedShapes?: Record<string, string>;
     fieldGuid?: string;
 };
 
-export type V2ChartsConfigDatasetField = {
+export type V7ChartsConfigDatasetField = {
     guid: string;
     title: string;
+    calc_mode?: DatasetFieldCalcMode;
 };
 
-type V2ClientOnlyFields = {
+export type V7ClientOnlyFields = {
     fakeTitle?: string;
     originalTitle?: string;
 };

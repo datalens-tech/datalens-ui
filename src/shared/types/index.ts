@@ -13,7 +13,7 @@ export * from './utility-types';
 export * from './notification';
 export * from './metrica';
 export * from './feature';
-export * from './config';
+export * from './config/wizard';
 export * from './bi-api';
 export * from './googleapis';
 export * from './color-palettes';

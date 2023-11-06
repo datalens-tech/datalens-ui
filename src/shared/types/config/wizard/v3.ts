@@ -1,46 +1,34 @@
-import {TableFieldBackgroundSettings} from '../wizard';
+import {ChartsConfigVersion, DatasetFieldCalcMode, ParameterDefaultValue} from '../../index';
 
-import {
-    ChartsConfigVersion,
-    ColumnSettings,
-    DatasetFieldCalcMode,
-    NumberFormatType,
-    NumberFormatUnit,
-    ParameterDefaultValue,
-    TableBarsSettings,
-} from './../index';
-
-export type V5ChartsConfig = {
+export type V3ChartsConfig = {
     title?: string;
-    colors: V5Color[];
-    colorsConfig?: V5ColorsConfig;
-    extraSettings: V5CommonSharedExtraSettings;
-    filters: V5Filter[];
-    geopointsConfig?: V5PointSizeConfig;
-    hierarchies: V5HierarchyField[];
-    labels: V5Label[];
-    links: V5Link[];
-    sort: V5Sort[];
-    tooltips: V5Tooltip[];
+    colors: V3Color[];
+    colorsConfig: V3ColorsConfig;
+    extraSettings: V3CommonSharedExtraSettings;
+    filters: V3Filter[];
+    geopointsConfig?: V3PointSizeConfig;
+    hierarchies: V3HierarchyField[];
+    labels: V3Label[];
+    links: V3Link[];
+    sort: V3Sort[];
+    tooltips: V3Tooltip[];
     type: 'datalens';
-    updates: V5Update[];
-    visualization: V5Visualization;
-    shapes: V5Shape[];
-    shapesConfig?: V5ShapesConfig;
-    version: ChartsConfigVersion.V5;
+    updates: V3Update[];
+    visualization: V3Visualization;
+    shapes: V3Shape[];
+    shapesConfig?: V3ShapesConfig;
+    version: ChartsConfigVersion.V3;
     datasetsIds: string[];
-    datasetsPartialFields: V5ChartsConfigDatasetField[][];
-    segments: V5Field[];
-    chartType?: string;
+    datasetsPartialFields: V3ChartsConfigDatasetField[][];
 };
 
-type V5Update = {
+type V3Update = {
     action: 'add_field' | 'add' | 'update_field' | 'update' | 'delete' | 'delete_field';
     field: any;
     debug_info?: string;
 };
 
-export interface V5CommonSharedExtraSettings {
+interface V3CommonSharedExtraSettings {
     title?: string;
     titleMode?: 'show' | 'hide';
     legendMode?: 'show' | 'hide';
@@ -55,10 +43,10 @@ export interface V5CommonSharedExtraSettings {
     pivotFallback?: 'on' | 'off';
     overlap?: 'on' | 'off';
     feed?: string;
-    navigatorSettings?: V5NavigatorSettings;
+    navigatorSettings?: V3NavigatorSettings;
 }
 
-type V5NavigatorSettings = {
+type V3NavigatorSettings = {
     navigatorMode: string;
     isNavigatorAvailable: boolean;
     selectedLines: string[];
@@ -70,7 +58,7 @@ type V5NavigatorSettings = {
     };
 };
 
-export type V5Filter = {
+export type V3Filter = {
     guid: string;
     datasetId: string;
     disabled?: string;
@@ -83,9 +71,9 @@ export type V5Filter = {
     type: string;
     title: string;
     calc_mode: DatasetFieldCalcMode;
-} & V5ClientOnlyFields;
+} & V3ClientOnlyFields;
 
-export type V5Sort = {
+type V3Sort = {
     guid: string;
     title: string;
     source?: string;
@@ -95,14 +83,14 @@ export type V5Sort = {
     format?: string;
     type: string;
     default_value?: ParameterDefaultValue;
-} & V5ClientOnlyFields;
+} & V3ClientOnlyFields;
 
-type V5Link = {
+type V3Link = {
     id: string;
-    fields: Record<string, V5LinkField>;
+    fields: Record<string, V3LinkField>;
 };
 
-type V5LinkField = {
+type V3LinkField = {
     field: {
         title: string;
         guid: string;
@@ -113,15 +101,15 @@ type V5LinkField = {
     };
 };
 
-export type V5Visualization = {
+type V3Visualization = {
     id: string;
     highchartsId?: string;
     selectedLayerId?: string;
-    layers?: V5Layer[];
-    placeholders: V5Placeholder[];
+    layers?: V3Layer[];
+    placeholders: V3Placeholder[];
 };
 
-type V5LayerSettings = {
+type V3LayerSettings = {
     id: string;
     name: string;
     type: string;
@@ -129,33 +117,31 @@ type V5LayerSettings = {
     valid: boolean;
 };
 
-export type V5CommonPlaceholders = {
-    colors: V5Color[];
-    labels: V5Label[];
-    tooltips: V5Tooltip[];
-    filters: V5Filter[];
-    sort: V5Sort[];
-    shapes?: V5Shape[];
-    colorsConfig?: V5ColorsConfig;
-    geopointsConfig?: V5PointSizeConfig;
-    shapesConfig?: V5ShapesConfig;
+export type V3CommonPlaceholders = {
+    colors: V3Color[];
+    labels: V3Label[];
+    tooltips: V3Tooltip[];
+    filters: V3Filter[];
+    sort: V3Sort[];
+    colorsConfig: V3ColorsConfig;
+    geopointsConfig?: V3PointSizeConfig;
 };
 
-export type V5Layer = {
+export type V3Layer = {
     id: string;
-    commonPlaceholders: V5CommonPlaceholders;
-    layerSettings: V5LayerSettings;
-    placeholders: V5Placeholder[];
+    commonPlaceholders: V3CommonPlaceholders;
+    layerSettings: V3LayerSettings;
+    placeholders: V3Placeholder[];
 };
 
-export type V5Placeholder = {
+type V3Placeholder = {
     id: string;
     settings?: {
         groupping?: 'disabled' | 'off';
         autoscale?: boolean;
         scale?: 'auto' | 'manual';
         scaleValue?: '0-max' | [string, string];
-        title?: 'auto' | 'manual' | 'off';
+        title?: 'auto' | 'manual';
         titleValue?: 'string';
         type?: 'logarithmic';
         grid?: 'on' | 'off';
@@ -164,26 +150,21 @@ export type V5Placeholder = {
         hideLabels?: 'yes' | 'no';
         labelsView?: 'horizontal' | 'vertical' | 'angle';
         nulls?: 'ignore' | 'connect' | 'as-0';
-        holidays?: 'on' | 'off';
-        axisFormatMode?: 'auto' | 'by-field';
-        axisMode?: 'discrete' | 'continuous';
     };
-    required?: boolean;
-    capacity?: number;
-    items: V5Field[];
+    items: V3Field[];
 };
 
-export type V5Color = {
+type V3Color = {
     datasetId: string;
     guid: string;
     title: string;
     type: string;
     data_type: string;
-    formatting?: V5Formatting;
+    formatting?: V3Formatting;
     calc_mode: DatasetFieldCalcMode;
-} & V5ClientOnlyFields;
+} & V3ClientOnlyFields;
 
-export type V5Shape = {
+type V3Shape = {
     datasetId: string;
     guid: string;
     title: string;
@@ -193,68 +174,67 @@ export type V5Shape = {
     calc_mode: DatasetFieldCalcMode;
 };
 
-export type V5Tooltip = {
+type V3Tooltip = {
     datasetId: string;
     guid: string;
     title: string;
-    formatting?: V5Formatting;
+    formatting?: V3Formatting;
     data_type: string;
     calc_mode: DatasetFieldCalcMode;
-} & V5ClientOnlyFields;
+} & V3ClientOnlyFields;
 
-export type V5Formatting = {
-    format?: NumberFormatType;
+export type V3Formatting = {
+    format?: 'number' | 'percent';
     showRankDelimiter?: boolean;
     prefix?: string;
     postfix?: string;
-    unit?: NumberFormatUnit;
+    unit?: 'auto' | 'k' | 'm' | 'b' | 't';
     precision?: number;
-    labelMode?: string;
 };
 
-export type V5Label = {
+export type V3Label = {
     datasetId: string;
     type: string;
     title: string;
     guid: string;
-    formatting?: V5Formatting;
+    formatting?: V3Formatting;
     format?: string;
+    labelMode?: string;
     data_type: string;
     calc_mode: DatasetFieldCalcMode;
 };
 
-export type V5HierarchyField = {
+export type V3HierarchyField = {
     data_type: string;
-    fields: V5Field[];
+    fields: V3Field[];
     type: string;
 };
 
-type V5PointSizeConfig = {
+type V3PointSizeConfig = {
     radius: number;
     minRadius: number;
     maxRadius: number;
 };
 
-export type V5Field = {
+export type V3Field = {
     data_type: string;
-    fields?: V5Field[];
+    fields?: V3Field[];
     type: string;
     title: string;
     guid: string;
-    formatting?: V5Formatting;
+    formatting?: V3Formatting;
     format?: string;
+    labelMode?: string;
     datasetId: string;
+    dateMode?: string;
     source?: string;
     datasetName?: string;
     hideLabelMode?: string;
     calc_mode: DatasetFieldCalcMode;
     default_value?: ParameterDefaultValue;
-    barsSettings?: TableBarsSettings;
-    backgroundSettings?: TableFieldBackgroundSettings;
-    columnSettings?: ColumnSettings;
-} & V5ClientOnlyFields;
+} & V3ClientOnlyFields;
 
-export type V5ColorsConfig = {
+type V3ColorsConfig = {
     thresholdsMode?: string;
     leftThreshold?: string;
     middleThreshold?: string;
@@ -269,18 +249,18 @@ export type V5ColorsConfig = {
     palette?: string;
 };
 
-type V5ShapesConfig = {
+type V3ShapesConfig = {
     mountedShapes?: Record<string, string>;
     fieldGuid?: string;
 };
 
-export type V5ChartsConfigDatasetField = {
+export type V3ChartsConfigDatasetField = {
     guid: string;
     title: string;
     calc_mode?: DatasetFieldCalcMode;
 };
 
-type V5ClientOnlyFields = {
+type V3ClientOnlyFields = {
     fakeTitle?: string;
     originalTitle?: string;
 };
