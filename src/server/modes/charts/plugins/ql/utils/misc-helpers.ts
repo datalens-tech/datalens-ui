@@ -8,7 +8,6 @@ import {
     QLChartType,
     QLParamType,
     QLPreviewTableData,
-    QLRequestParam,
     QLResultEntryMetadataDataColumnOrGroup,
     StringParams,
     biToDatalensQL,
@@ -19,6 +18,7 @@ import type {
     QLConfigQuery,
     QlConfigParam,
     QlConfigParamInterval,
+    QlConfigRequestParam,
     QlConfigResultEntryMetadataDataColumn,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
@@ -380,7 +380,7 @@ function dumpReqParam(
     input: string | string[],
     paramDescription: QlConfigParam,
     datalensQLConnectionType?: ConnectorType,
-): QLRequestParam {
+): QlConfigRequestParam {
     const type = paramDescription.type.toLowerCase();
     let dumped: string | string[];
 
@@ -452,7 +452,7 @@ export function buildSource({
 
     const datalensQLConnectionType = convertConnectionType(connectionType);
 
-    const QLRequestParams: Record<string, QLRequestParam | QLRequestParam[]> = {};
+    const QLRequestParams: Record<string, QlConfigRequestParam | QlConfigRequestParam[]> = {};
     if (
         datalensQLConnectionType === DATALENS_QL_CONNECTION_TYPES.POSTGRESQL ||
         datalensQLConnectionType === DATALENS_QL_CONNECTION_TYPES.CLICKHOUSE
