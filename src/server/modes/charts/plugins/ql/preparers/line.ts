@@ -4,11 +4,11 @@ import {
     DATALENS_QL_TYPES,
     IChartEditor,
     QLPreviewTableData,
-    QLResultEntryMetadataDataColumn,
     QLResultEntryMetadataDataColumnOrGroup,
 } from '../../../../../../shared';
 import type {
     QlConfig,
+    QlConfigResultEntryMetadataDataColumn,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
 import {
@@ -30,7 +30,7 @@ export default ({
     tablePreviewData,
 }: {
     shared: QlConfig;
-    columns: QLResultEntryMetadataDataColumn[];
+    columns: QlConfigResultEntryMetadataDataColumn[];
     rows: string[][];
     ChartEditor: IChartEditor;
     tablePreviewData?: QLPreviewTableData;

@@ -15,12 +15,12 @@ import {
 } from 'react-dnd';
 import {getEmptyImage} from 'react-dnd-html5-backend';
 import {findDOMNode} from 'react-dom';
-import type {QlConfigResultEntryMetadataDataGroup} from 'shared/types/config/ql';
+import type {
+    QlConfigResultEntryMetadataDataColumn,
+    QlConfigResultEntryMetadataDataGroup,
+} from 'shared/types/config/ql';
 
-import {
-    QLResultEntryMetadataDataColumn,
-    QLResultEntryMetadataDataColumnOrGroup,
-} from '../../../../../shared';
+import {QLResultEntryMetadataDataColumnOrGroup} from '../../../../../shared';
 
 import {DNDContainerState} from './DNDContainer';
 
@@ -274,7 +274,7 @@ const itemTarget = {
                 let targetGroup = container.props.items[0] as QlConfigResultEntryMetadataDataGroup;
                 const targetItem = container.props.items[
                     preDropPlace
-                ] as QLResultEntryMetadataDataColumn;
+                ] as QlConfigResultEntryMetadataDataColumn;
                 container.props.items.some(
                     (listItem: QlConfigResultEntryMetadataDataGroup, index: number) => {
                         const listGroup = listItem as QlConfigResultEntryMetadataDataGroup;

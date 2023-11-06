@@ -4,10 +4,12 @@ import {
     DATALENS_QL_TYPES,
     IChartEditor,
     QLPreviewTableData,
-    QLResultEntryMetadataDataColumn,
     QLResultEntryMetadataDataColumnOrGroup,
 } from '../../../../../../shared';
-import type {QlConfig} from '../../../../../../shared/types/config/ql';
+import type {
+    QlConfig,
+    QlConfigResultEntryMetadataDataColumn,
+} from '../../../../../../shared/types/config/ql';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT} from '../utils/constants';
 import {
     QLRenderResultTable,
@@ -23,7 +25,7 @@ export default ({
     tablePreviewData,
 }: {
     shared: QlConfig;
-    columns: QLResultEntryMetadataDataColumn[];
+    columns: QlConfigResultEntryMetadataDataColumn[];
     rows: string[][];
     ChartEditor: IChartEditor;
     tablePreviewData?: QLPreviewTableData;
@@ -34,8 +36,8 @@ export default ({
 
     const columnTypes = columns.map((column) => column.typeName);
 
-    const orderColumns: QLResultEntryMetadataDataColumn[] = [];
-    const orderAvailable: QLResultEntryMetadataDataColumn[] = [];
+    const orderColumns: QlConfigResultEntryMetadataDataColumn[] = [];
+    const orderAvailable: QlConfigResultEntryMetadataDataColumn[] = [];
 
     const result: QLRenderResultTable = {
         head: [],

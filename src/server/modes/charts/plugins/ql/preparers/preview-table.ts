@@ -1,10 +1,8 @@
-import {
-    DATALENS_QL_TYPES,
-    IChartEditor,
-    QLPreviewTableDataRow,
-    QLResultEntryMetadataDataColumn,
-} from '../../../../../../shared';
-import type {QlConfig} from '../../../../../../shared/types/config/ql';
+import {DATALENS_QL_TYPES, IChartEditor, QLPreviewTableDataRow} from '../../../../../../shared';
+import type {
+    QlConfig,
+    QlConfigResultEntryMetadataDataColumn,
+} from '../../../../../../shared/types/config/ql';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT} from '../utils/constants';
 import {formatUnknownTypeValue, parseNumberValueForTable} from '../utils/misc-helpers';
 
@@ -15,7 +13,7 @@ export default ({
     ChartEditor: _ChartEditor,
 }: {
     shared: QlConfig;
-    columns: QLResultEntryMetadataDataColumn[];
+    columns: QlConfigResultEntryMetadataDataColumn[];
     rows: string[][];
     ChartEditor: IChartEditor;
 }) => {
@@ -26,7 +24,7 @@ export default ({
     const columnTypes = columns.map((column) => column.typeName);
     const knownColumnNames = new Set();
 
-    const head = columns.map((column: QLResultEntryMetadataDataColumn, index) => {
+    const head = columns.map((column: QlConfigResultEntryMetadataDataColumn, index) => {
         const columnType = columnTypes[index];
         let tableColumnType;
         let tableColumnFormat;

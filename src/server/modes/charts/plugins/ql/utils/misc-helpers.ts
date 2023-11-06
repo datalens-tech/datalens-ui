@@ -11,7 +11,6 @@ import {
     QLParamType,
     QLPreviewTableData,
     QLRequestParam,
-    QLResultEntryMetadataDataColumn,
     QLResultEntryMetadataDataColumnOrGroup,
     StringParams,
     biToDatalensQL,
@@ -20,6 +19,7 @@ import {
 } from '../../../../../../shared';
 import type {
     QLConfigQuery,
+    QlConfigResultEntryMetadataDataColumn,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
 
@@ -559,7 +559,7 @@ export function getColumns(
     data: QLResult,
     connectionType: string,
     field = 'sql',
-): QLResultEntryMetadataDataColumn[] | null {
+): QlConfigResultEntryMetadataDataColumn[] | null {
     const row = data[field].find((entry: QLResultEntry) => entry.event === 'metadata');
 
     const datalensQLConnectionType = convertConnectionType(connectionType);
@@ -607,16 +607,16 @@ export function getColumnsAndRows({
     connectionType: string;
     data: {[key: string]: any};
 }) {
-    let columns: QLResultEntryMetadataDataColumn[] | null = [];
+    let columns: QlConfigResultEntryMetadataDataColumn[] | null = [];
 
     const columnsOrder: Record<string, number[]> = {};
-    const columnsByQuery: Record<string, QLResultEntryMetadataDataColumn[]> = {};
+    const columnsByQuery: Record<string, QlConfigResultEntryMetadataDataColumn[]> = {};
 
     let rows: string[][] = [];
 
     if (isMonitoringOrPrometheusChart(chartType)) {
         iterateThroughVisibleQueries(queries, (_query, i) => {
-            let localColumns: QLResultEntryMetadataDataColumn[] = [];
+            let localColumns: QlConfigResultEntryMetadataDataColumn[] = [];
 
             try {
                 const parsedColumns = getColumns(data, connectionType, `ql_${i}`);
@@ -685,7 +685,7 @@ export function getColumnsAndRows({
 
                     columns?.forEach((column) => {
                         const targetColumnIndex = localColumns.findIndex(
-                            (localColumn: QLResultEntryMetadataDataColumn) =>
+                            (localColumn: QlConfigResultEntryMetadataDataColumn) =>
                                 localColumn.name === column.name,
                         );
 
