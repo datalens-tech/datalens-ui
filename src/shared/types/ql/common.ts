@@ -44,10 +44,6 @@ export interface QLRequestParam {
     value: string | string[];
 }
 
-export interface QLResultEntryMetadataData {
-    columns: QLResultEntryMetadataDataColumn[];
-}
-
 export type QLResultEntryMetadataDataColumnOrGroup =
     | QLResultEntryMetadataDataGroup
     | QLResultEntryMetadataDataColumn;
