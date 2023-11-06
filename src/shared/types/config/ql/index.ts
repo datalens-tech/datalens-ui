@@ -30,8 +30,6 @@ export type QlConfigRequestParam = QLRequestParam;
 
 export type QlConfigResultEntryMetadataDataColumnOrGroup = QLResultEntryMetadataDataColumnOrGroup;
 
-export type QlConfigQuery = QLQuery;
-
 export type QlConfigPreviewTableDataColumn = QLPreviewTableDataColumn;
 
 export type QlConfigPreviewTableDataRow = QLPreviewTableDataRow;

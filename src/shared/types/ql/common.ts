@@ -48,7 +48,7 @@ export type QLResultEntryMetadataDataColumnOrGroup =
     | QLResultEntryMetadataDataGroup
     | QLResultEntryMetadataDataColumn;
 
-export interface QLEntryDataSharedConnection {
+interface QLEntryDataSharedConnection {
     entryId: string;
     type: string;
 }
