@@ -3,7 +3,7 @@ import {History, Location} from 'history';
 import {i18n} from 'i18n';
 import _ from 'lodash';
 import type {match as Match} from 'react-router-dom';
-import type {QlConfig} from 'shared/types/config/ql';
+import type {QLConfigQuery, QlConfig} from 'shared/types/config/ql';
 
 import {
     CommonSharedExtraSettings,
@@ -16,7 +16,6 @@ import {
     QLChartType,
     QLParam,
     QLPreviewTableData,
-    QLQuery,
     QLResultEntryMetadataDataColumnOrGroup,
     Shared,
     extractEntryId,
@@ -141,7 +140,7 @@ interface SetSettingsProps {
     chartType: QLChartType | null;
     tabs: QLTabs;
     queryValue: string;
-    queries: QLQuery[];
+    queries: QLConfigQuery[];
     settings: QLSettings;
     panes: QLPanes;
     grid: QLGrid;
@@ -267,7 +266,7 @@ export const addQuery = () => {
     };
 };
 
-export const updateQuery = ({query, index}: {query: QLQuery; index: number}) => {
+export const updateQuery = ({query, index}: {query: QLConfigQuery; index: number}) => {
     return {
         type: UPDATE_QUERY,
         query,
@@ -1165,7 +1164,7 @@ export const setQlChartActualRevision = (isDraft?: boolean) => {
     };
 };
 
-export const updateQueryAndRedraw = ({query, index}: {query: QLQuery; index: number}) => {
+export const updateQueryAndRedraw = ({query, index}: {query: QLConfigQuery; index: number}) => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         dispatch(updateQuery({query, index}));
 

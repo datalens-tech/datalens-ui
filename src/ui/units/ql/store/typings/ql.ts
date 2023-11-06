@@ -4,12 +4,11 @@ import {
     QLChartType,
     QLParam,
     QLPreviewTableData,
-    QLQuery,
     QLResultEntryMetadataDataColumnOrGroup,
     Shared,
 } from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
-import type {QlConfig} from 'shared/types/config/ql';
+import type {QLConfigQuery, QlConfig} from 'shared/types/config/ql';
 import {DatasetAction} from 'units/wizard/actions/dataset';
 import {VisualizationAction} from 'units/wizard/actions/visualization';
 
@@ -61,7 +60,7 @@ export interface QLState {
     panes: QLPanes;
     tabs: QLTabs;
     queryValue: string;
-    queries: QLQuery[];
+    queries: QLConfigQuery[];
     paneViews: QLPaneViews;
     redirectUrl?: string;
 }
@@ -85,7 +84,7 @@ export interface QLActionSetSettings {
     chartType: QLChartType | null;
     tabs: QLTabs;
     queryValue: string;
-    queries: QLQuery[];
+    queries: QLConfigQuery[];
     settings: QLSettings;
     panes: QLPanes;
     grid: QLGrid;
@@ -111,7 +110,7 @@ export interface QLActionSetExtraSettings {
 
 export interface QLActionUpdateQuery {
     type: symbol;
-    query: QLQuery;
+    query: QLConfigQuery;
     index: number;
 }
 

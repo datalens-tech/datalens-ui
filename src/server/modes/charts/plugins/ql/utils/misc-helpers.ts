@@ -10,7 +10,6 @@ import {
     QLParamInterval,
     QLParamType,
     QLPreviewTableData,
-    QLQuery,
     QLRequestParam,
     QLResultEntryMetadataDataColumn,
     QLResultEntryMetadataDataColumnOrGroup,
@@ -20,6 +19,7 @@ import {
     getDatalensQLTypeName,
     isMonitoringOrPrometheusChart,
 } from '../../../../../../shared';
+import type {QLConfigQuery} from '../../../../../../shared/types/config/ql';
 
 import {LOG_INFO, LOG_TIMING} from './constants';
 
@@ -601,7 +601,7 @@ export function getColumnsAndRows({
 }: {
     chartType: QLChartType;
     ChartEditor: IChartEditor;
-    queries: QLQuery[];
+    queries: QLConfigQuery[];
     connectionType: string;
     data: {[key: string]: any};
 }) {
@@ -748,8 +748,8 @@ export function isGroup(
 }
 
 export function iterateThroughVisibleQueries(
-    queries: QLQuery[],
-    cb: (query: QLQuery, index: number, array: QLQuery[]) => void,
+    queries: QLConfigQuery[],
+    cb: (query: QLConfigQuery, index: number, array: QLConfigQuery[]) => void,
 ) {
     queries.forEach((query, ...args) => {
         if (query.hidden) {

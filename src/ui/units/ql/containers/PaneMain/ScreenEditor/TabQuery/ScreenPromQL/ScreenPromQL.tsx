@@ -10,7 +10,7 @@ import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import type {QlConfig} from 'shared/types/config/ql';
+import type {QLConfigQuery, QlConfig} from 'shared/types/config/ql';
 import {
     DatalensGlobalState,
     EntryDialogName,
@@ -21,7 +21,7 @@ import {
 } from 'ui';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 
-import {QLParam, QLQuery} from '../../../../../../../../shared';
+import {QLParam} from '../../../../../../../../shared';
 import {prepareChartDataBeforeSave} from '../../../../../modules/helpers';
 import {
     addParamInQuery,
@@ -369,7 +369,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         });
     };
 
-    private onEditQuery = ({query, queryIndex}: {query: QLQuery; queryIndex: number}) => {
+    private onEditQuery = ({query, queryIndex}: {query: QLConfigQuery; queryIndex: number}) => {
         this.props.updateQuery({query, index: queryIndex});
     };
 
@@ -411,7 +411,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         query,
         queryIndex,
     }: {
-        query: QLQuery;
+        query: QLConfigQuery;
         queryIndex: number;
     }) => {
         this.props.updateQueryAndRedraw({

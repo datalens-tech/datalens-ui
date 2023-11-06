@@ -1,3 +1,5 @@
-import type {QLEntryDataShared} from '../../ql/common';
+import type {QLEntryDataShared, QLQuery} from '../../ql/common';
 
 export type QlConfig = QLEntryDataShared;
+
+export type QLConfigQuery = QLQuery;
