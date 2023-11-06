@@ -1,16 +1,12 @@
-import {
-    ChartsConfigVersion,
-    QLEntryDataShared,
-    ServerVisualization,
-    isYAGRVisualization,
-} from '../../../../../shared';
+import {ChartsConfigVersion, ServerVisualization, isYAGRVisualization} from '../../../../../shared';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 import buildHighchartsConfigWizard from '../datalens/highcharts';
 
 import buildHighchartsConfig from './highcharts';
 import {log} from './utils/misc-helpers';
 import buildYagrConfig from './yagr';
 
-export default ({shared}: {shared: QLEntryDataShared}) => {
+export default ({shared}: {shared: QlConfig}) => {
     const visualization = shared.visualization as ServerVisualization;
 
     if (isYAGRVisualization(shared.chartType, visualization.id)) {

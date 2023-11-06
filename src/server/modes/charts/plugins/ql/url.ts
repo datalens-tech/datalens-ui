@@ -2,13 +2,13 @@ import {
     ConnectorType,
     Dictionary,
     IChartEditor,
-    QLEntryDataShared,
     QLParamType,
     StringParams,
     isMonitoringOrPrometheusChart,
     resolveIntervalDate,
     resolveOperation,
 } from '../../../../../shared';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 
 import {buildSource, iterateThroughVisibleQueries, log} from './utils/misc-helpers';
 
@@ -33,7 +33,7 @@ const resolveUrlParameter = (urlParamValue: string | string[]) => {
     }
 };
 
-export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: IChartEditor}) => {
+export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
     const urlParams = ChartEditor.getParams();
 
     let params: StringParams = {};

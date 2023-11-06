@@ -1,11 +1,11 @@
 import {
     DATALENS_QL_TYPES,
-    QLEntryDataShared,
     QLPreviewTableData,
     QLResultEntryMetadataDataColumn,
     QLResultEntryMetadataDataColumnOrGroup,
     QLResultEntryMetadataDataGroup,
 } from '../../../../../../shared';
+import type {QlConfig} from '../../../../../../shared/types/config/ql';
 import {
     QLRenderResultYagr,
     QLRenderResultYagrGraph,
@@ -27,7 +27,7 @@ export default ({
     rows,
     tablePreviewData,
 }: {
-    shared: QLEntryDataShared;
+    shared: QlConfig;
     columns: QLResultEntryMetadataDataColumn[];
     rows: string[][];
     tablePreviewData?: QLPreviewTableData;

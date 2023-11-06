@@ -1,16 +1,12 @@
 import type {HighchartsWidgetData} from '@gravity-ui/chartkit/highcharts';
 
-import {
-    DEFAULT_CHART_LINES_LIMIT,
-    Feature,
-    QLEntryDataShared,
-    isEnabledServerFeature,
-} from '../../../../../shared';
+import {DEFAULT_CHART_LINES_LIMIT, Feature, isEnabledServerFeature} from '../../../../../shared';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 import {registry} from '../../../../registry';
 
 import {log} from './utils/misc-helpers';
 
-export default ({shared}: {shared: QLEntryDataShared}) => {
+export default ({shared}: {shared: QlConfig}) => {
     const config: Pick<
         HighchartsWidgetData['config'],
         'title' | 'hideHolidaysBands' | 'linesLimit' | 'tooltip'

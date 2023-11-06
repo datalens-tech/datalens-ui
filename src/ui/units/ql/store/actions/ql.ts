@@ -3,6 +3,7 @@ import {History, Location} from 'history';
 import {i18n} from 'i18n';
 import _ from 'lodash';
 import type {match as Match} from 'react-router-dom';
+import type {QlConfig} from 'shared/types/config/ql';
 
 import {
     CommonSharedExtraSettings,
@@ -13,7 +14,6 @@ import {
     Feature,
     Field,
     QLChartType,
-    QLEntryDataShared,
     QLParam,
     QLPreviewTableData,
     QLQuery,
@@ -1119,7 +1119,7 @@ export const onErrorSetActualChartRevision = (error: AxiosError) => {
     };
 };
 
-export const updateChart = (data: QLEntryDataShared, mode?: EntryUpdateMode) => {
+export const updateChart = (data: QlConfig, mode?: EntryUpdateMode) => {
     return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
         const {entry} = getState().ql;
 
@@ -1128,7 +1128,7 @@ export const updateChart = (data: QLEntryDataShared, mode?: EntryUpdateMode) => 
         }
 
         await dispatch(
-            saveWidget<QLEntryDataShared, Entry>({
+            saveWidget<QlConfig, Entry>({
                 entry,
                 mode,
                 data,
@@ -1152,7 +1152,7 @@ export const setQlChartActualRevision = (isDraft?: boolean) => {
         }
 
         await dispatch(
-            setActualChart<QLEntryDataShared, Entry>({
+            setActualChart<QlConfig, Entry>({
                 entry,
                 template: 'ql',
                 data: prepareChartDataBeforeSave(initialData),

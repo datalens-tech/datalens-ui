@@ -1,4 +1,4 @@
-import {QLEntryDataShared} from '../../../../shared';
+import type {QlConfig} from 'shared/types/config/ql';
 
 function _dispatchResize() {
     const customEvent = new CustomEvent('resize');
@@ -14,7 +14,7 @@ export function getUniqueId(prefix = 'id') {
     return `${prefix}-${Date.now()}`;
 }
 
-export function prepareChartDataBeforeSave(chartData: QLEntryDataShared): QLEntryDataShared {
+export function prepareChartDataBeforeSave(chartData: QlConfig): QlConfig {
     return {
         ...chartData,
         params: chartData.params.map((param) => {

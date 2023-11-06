@@ -3,12 +3,12 @@ import {
     DatasetFieldType,
     Field,
     IChartEditor,
-    QLEntryDataShared,
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
     isMonitoringOrPrometheusChart,
 } from '../../../../../shared';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 import prepareSingleResult from '../datalens/js/helpers/misc/prepare-single-result';
 import {getFieldList} from '../helpers/misc';
 
@@ -27,7 +27,7 @@ import {
 } from './utils/visualization-utils';
 
 // eslint-disable-next-line complexity
-export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: IChartEditor}) => {
+export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
     const data = ChartEditor.getLoadedData();
 
     log('LOADED DATA:', data);

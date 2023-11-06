@@ -3,11 +3,11 @@ import moment from 'moment';
 import {
     DATALENS_QL_TYPES,
     IChartEditor,
-    QLEntryDataShared,
     QLPreviewTableData,
     QLResultEntryMetadataDataColumn,
     QLResultEntryMetadataDataColumnOrGroup,
 } from '../../../../../../shared';
+import type {QlConfig} from '../../../../../../shared/types/config/ql';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT} from '../utils/constants';
 import {
     QLRenderResultTable,
@@ -22,7 +22,7 @@ export default ({
     rows,
     tablePreviewData,
 }: {
-    shared: QLEntryDataShared;
+    shared: QlConfig;
     columns: QLResultEntryMetadataDataColumn[];
     rows: string[][];
     ChartEditor: IChartEditor;

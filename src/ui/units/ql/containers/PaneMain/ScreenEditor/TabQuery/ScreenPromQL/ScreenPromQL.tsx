@@ -10,6 +10,7 @@ import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
+import type {QlConfig} from 'shared/types/config/ql';
 import {
     DatalensGlobalState,
     EntryDialogName,
@@ -20,7 +21,7 @@ import {
 } from 'ui';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 
-import {QLEntryDataShared, QLParam, QLQuery} from '../../../../../../../../shared';
+import {QLParam, QLQuery} from '../../../../../../../../shared';
 import {prepareChartDataBeforeSave} from '../../../../../modules/helpers';
 import {
     addParamInQuery,
@@ -423,7 +424,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         this.props.duplicateQuery({index: queryIndex});
     };
 
-    private openSaveAsWidgetDialog = async (preparedChartData: QLEntryDataShared) => {
+    private openSaveAsWidgetDialog = async (preparedChartData: QlConfig) => {
         const {entry, defaultPath, location, history, entryDialoguesRef} = this.props;
 
         if (!entryDialoguesRef) {

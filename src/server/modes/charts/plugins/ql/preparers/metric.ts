@@ -1,12 +1,12 @@
 import {
     DATALENS_QL_TYPES,
     IChartEditor,
-    QLEntryDataShared,
     QLPreviewTableData,
     QLResultEntryMetadataDataColumn,
     QLResultEntryMetadataDataColumnOrGroup,
     QLResultEntryMetadataDataGroup,
 } from '../../../../../../shared';
+import type {QlConfig} from '../../../../../../shared/types/config/ql';
 import {
     QLRenderResultMetric,
     formatUnknownTypeValue,
@@ -21,7 +21,7 @@ export default ({
     ChartEditor: _ChartEditor,
     tablePreviewData,
 }: {
-    shared: QLEntryDataShared;
+    shared: QlConfig;
     columns: QLResultEntryMetadataDataColumn[];
     rows: string[][];
     ChartEditor: IChartEditor;

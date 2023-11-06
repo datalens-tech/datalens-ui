@@ -1,7 +1,7 @@
-import {QLEntryDataShared} from '../../../../../shared';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 
 // eslint-disable-next-line complexity
-export default ({shared}: {shared: QLEntryDataShared}) => {
+export default ({shared}: {shared: QlConfig}) => {
     const xAxis: Highcharts.Options['xAxis'] = {
         endOnTick: false,
     };

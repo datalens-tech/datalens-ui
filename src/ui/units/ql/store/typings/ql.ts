@@ -2,7 +2,6 @@ import {ConfigNode} from 'libs/DatalensChartkit/modules/data-provider/charts/typ
 import {
     CommonSharedExtraSettings,
     QLChartType,
-    QLEntryDataShared,
     QLParam,
     QLPreviewTableData,
     QLQuery,
@@ -10,6 +9,7 @@ import {
     Shared,
 } from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
+import type {QlConfig} from 'shared/types/config/ql';
 import {DatasetAction} from 'units/wizard/actions/dataset';
 import {VisualizationAction} from 'units/wizard/actions/visualization';
 
@@ -24,7 +24,7 @@ export interface QLEntry extends GetEntryResponse {
 
 // QLEntryData - chart data created in QL
 export interface QLEntryData {
-    [index: string]: QLEntryDataShared;
+    [index: string]: QlConfig;
 }
 
 // QLConnectionEntry - the connection used in the QL chart

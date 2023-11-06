@@ -1,6 +1,7 @@
 import type {ChartType, TooltipOptions, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 
-import {QLEntryDataShared, ServerVisualization} from '../../../../../shared';
+import {ServerVisualization} from '../../../../../shared';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 
 const applyPlaceholderSettingsToYAxis = ({
     visualization,
@@ -41,7 +42,7 @@ const applyPlaceholderSettingsToYAxis = ({
     return {scale};
 };
 
-export default ({shared}: {shared: QLEntryDataShared}) => {
+export default ({shared}: {shared: QlConfig}) => {
     const type = (shared.visualization.highchartsId || shared.visualization.id) as ChartType;
 
     const percent =

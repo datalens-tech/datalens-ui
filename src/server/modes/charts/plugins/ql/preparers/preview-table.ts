@@ -1,10 +1,10 @@
 import {
     DATALENS_QL_TYPES,
     IChartEditor,
-    QLEntryDataShared,
     QLPreviewTableDataRow,
     QLResultEntryMetadataDataColumn,
 } from '../../../../../../shared';
+import type {QlConfig} from '../../../../../../shared/types/config/ql';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT} from '../utils/constants';
 import {formatUnknownTypeValue, parseNumberValueForTable} from '../utils/misc-helpers';
 
@@ -14,7 +14,7 @@ export default ({
     rows,
     ChartEditor: _ChartEditor,
 }: {
-    shared: QLEntryDataShared;
+    shared: QlConfig;
     columns: QLResultEntryMetadataDataColumn[];
     rows: string[][];
     ChartEditor: IChartEditor;
