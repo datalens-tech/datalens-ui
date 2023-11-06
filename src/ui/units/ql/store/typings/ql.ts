@@ -1,5 +1,5 @@
 import {ConfigNode} from 'libs/DatalensChartkit/modules/data-provider/charts/types';
-import {CommonSharedExtraSettings, QLChartType, QLPreviewTableData, Shared} from 'shared';
+import {CommonSharedExtraSettings, QLChartType, QlConfigPreviewTableData, Shared} from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
 import type {
     QLConfigQuery,
@@ -43,7 +43,7 @@ export interface QLState {
     metadata: {
         order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
-    tablePreviewData: QLPreviewTableData;
+    tablePreviewData: QlConfigPreviewTableData;
     params: QlConfigParam[];
     order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     connection: QLConnectionEntry | null;
@@ -155,7 +155,7 @@ export interface QLActionSetQueryMetadata {
 
 export interface QLActionSetTablePreviewData {
     type: symbol;
-    tablePreviewData: QLPreviewTableData;
+    tablePreviewData: QlConfigPreviewTableData;
 }
 
 export interface QLActionSetVisualizationStatus {

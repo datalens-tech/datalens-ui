@@ -1,8 +1,9 @@
-import {DATALENS_QL_TYPES, IChartEditor, QLPreviewTableDataRow} from '../../../../../../shared';
+import {DATALENS_QL_TYPES, IChartEditor} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
 } from '../../../../../../shared/types/config/ql';
+import {QlConfigPreviewTableDataRow} from '../../../../../../shared/types/config/ql';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT} from '../utils/constants';
 import {formatUnknownTypeValue, parseNumberValueForTable} from '../utils/misc-helpers';
 
@@ -75,7 +76,7 @@ export default ({
     const result = {
         columns: head,
         data: rows.map((row: string[]) => {
-            const tableRow: QLPreviewTableDataRow = {};
+            const tableRow: QlConfigPreviewTableDataRow = {};
             head.forEach(({name}, index) => {
                 let cellValue;
 

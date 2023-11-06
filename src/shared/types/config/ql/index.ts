@@ -2,6 +2,9 @@ import type {
     QLEntryDataShared,
     QLParam,
     QLParamInterval,
+    QLPreviewTableData,
+    QLPreviewTableDataColumn,
+    QLPreviewTableDataRow,
     QLQuery,
     QLRequestParam,
     QLResultEntryMetadataDataColumn,
@@ -24,3 +27,11 @@ export type QlConfigParam = QLParam;
 export type QlConfigRequestParam = QLRequestParam;
 
 export type QlConfigResultEntryMetadataDataColumnOrGroup = QLResultEntryMetadataDataColumnOrGroup;
+
+export type QlConfigQuery = QLQuery;
+
+export type QlConfigPreviewTableDataColumn = QLPreviewTableDataColumn;
+
+export type QlConfigPreviewTableDataRow = QLPreviewTableDataRow;
+
+export type QlConfigPreviewTableData = QLPreviewTableData;

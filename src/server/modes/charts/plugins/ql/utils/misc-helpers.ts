@@ -7,7 +7,7 @@ import {
     IChartEditor,
     QLChartType,
     QLParamType,
-    QLPreviewTableData,
+    QlConfigPreviewTableData,
     StringParams,
     biToDatalensQL,
     getDatalensQLTypeName,
@@ -105,7 +105,7 @@ export interface QLRenderResultTable {
     metadata?: {
         order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
-    tablePreviewData?: QLPreviewTableData;
+    tablePreviewData?: QlConfigPreviewTableData;
 }
 
 export interface QLRenderResultMetric {
@@ -144,7 +144,7 @@ export interface QLRenderResultHC {
         order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
     graphs?: QLRenderResultHCGraph[];
-    tablePreviewData?: QLPreviewTableData;
+    tablePreviewData?: QlConfigPreviewTableData;
 }
 
 export interface QLRenderResultYagrGraph {
@@ -163,7 +163,7 @@ export interface QLRenderResultYagr {
     };
     graphs?: QLRenderResultYagrGraph[];
     axes?: any[];
-    tablePreviewData?: QLPreviewTableData;
+    tablePreviewData?: QlConfigPreviewTableData;
 }
 
 const clickhouseQuotemap: Record<string, string> = {

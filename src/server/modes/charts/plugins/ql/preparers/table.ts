@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import {DATALENS_QL_TYPES, IChartEditor, QLPreviewTableData} from '../../../../../../shared';
+import {DATALENS_QL_TYPES, IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
@@ -24,7 +24,7 @@ export default ({
     columns: QlConfigResultEntryMetadataDataColumn[];
     rows: string[][];
     ChartEditor: IChartEditor;
-    tablePreviewData?: QLPreviewTableData;
+    tablePreviewData?: QlConfigPreviewTableData;
 }) => {
     if (columns === null) {
         return {};

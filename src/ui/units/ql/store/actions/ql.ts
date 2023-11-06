@@ -19,7 +19,7 @@ import {
     Feature,
     Field,
     QLChartType,
-    QLPreviewTableData,
+    QlConfigPreviewTableData,
     Shared,
     extractEntryId,
     resolveIntervalDate,
@@ -353,7 +353,7 @@ export const setQueryMetadata = ({metadata}: SetQueryMetadataProps) => {
 };
 
 interface SetTablePreviewDataProps {
-    tablePreviewData: QLPreviewTableData;
+    tablePreviewData: QlConfigPreviewTableData;
 }
 
 export const setTablePreviewData = ({tablePreviewData}: SetTablePreviewDataProps) => {

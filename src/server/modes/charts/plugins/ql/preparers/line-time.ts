@@ -1,4 +1,4 @@
-import {DATALENS_QL_TYPES, QLPreviewTableData} from '../../../../../../shared';
+import {DATALENS_QL_TYPES, QlConfigPreviewTableData} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
@@ -29,7 +29,7 @@ export default ({
     shared: QlConfig;
     columns: QlConfigResultEntryMetadataDataColumn[];
     rows: string[][];
-    tablePreviewData?: QLPreviewTableData;
+    tablePreviewData?: QlConfigPreviewTableData;
 }) => {
     if (columns === null) {
         return {};
