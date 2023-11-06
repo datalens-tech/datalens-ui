@@ -1,10 +1,13 @@
-import type {StringParams} from '../../../shared';
+import type {QlExtendedConfig, StringParams} from '../../../shared';
 import {QLChartType, QL_TYPE, isMonitoringOrPrometheusChart} from '../../../shared';
-import {QlConfigParam} from '../../../shared/types/config/ql';
+import {mapQlConfigToLatestVersion} from '../../../shared/modules/config/ql';
 
 export default {
     module: 'libs/qlchart/v1',
-    identifyParams: ({params, chartType}: {params: QlConfigParam[]; chartType: QLChartType}) => {
+    identifyParams: (chart: QlExtendedConfig) => {
+        const config = mapQlConfigToLatestVersion(chart);
+        const {chartType, params} = config;
+
         const availableParams: StringParams = {};
 
         if (params) {
@@ -32,13 +35,12 @@ export default {
 
         return availableParams;
     },
-    identifyChartType: ({
-        visualization: {id},
-        chartType,
-    }: {
-        visualization: {id: string};
-        chartType: QLChartType;
-    }) => {
+    identifyChartType: (chart: QlExtendedConfig) => {
+        const config = mapQlConfigToLatestVersion(chart);
+
+        const {visualization, chartType} = config;
+        const id = visualization.id;
+
         switch (id) {
             case 'table': // Legacy
             case 'flatTable': // Available with WizardQLCommonVisualization feature
@@ -65,9 +67,10 @@ export default {
                 return QL_TYPE.GRAPH_QL_NODE;
         }
     },
-    identifyLinks: (chart: {connection: {entryId: string}}) => {
+    identifyLinks: (chart: QlExtendedConfig) => {
+        const config = mapQlConfigToLatestVersion(chart);
         return {
-            connection: chart.connection.entryId,
+            connection: config.connection.entryId,
         };
     },
 };
