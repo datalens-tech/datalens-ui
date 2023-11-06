@@ -137,7 +137,7 @@ export interface MonitoringPresetV1 {
 
 export interface MonitoringPresetV2 {
     data: {
-        v: string;
+        v: 'v2';
         widget: {
             id: string;
             title: string;
@@ -194,5 +194,3 @@ export interface MonitoringPresetV2 {
     };
     presetId: string;
 }
-
-export type MonitoringPreset = MonitoringPresetV1 | MonitoringPresetV2;

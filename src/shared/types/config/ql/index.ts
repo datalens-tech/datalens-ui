@@ -1,4 +1,6 @@
 import type {
+    MonitoringPresetV1,
+    MonitoringPresetV2,
     QLEntryDataShared,
     QLParam,
     QLParamInterval,
@@ -35,3 +37,5 @@ export type QlConfigPreviewTableDataColumn = QLPreviewTableDataColumn;
 export type QlConfigPreviewTableDataRow = QLPreviewTableDataRow;
 
 export type QlConfigPreviewTableData = QLPreviewTableData;
+
+export type MonitoringPreset = MonitoringPresetV1 | MonitoringPresetV2;
