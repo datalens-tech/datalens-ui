@@ -1,14 +1,10 @@
 import moment from 'moment';
 
-import {
-    DATALENS_QL_TYPES,
-    IChartEditor,
-    QLPreviewTableData,
-    QLResultEntryMetadataDataColumnOrGroup,
-} from '../../../../../../shared';
+import {DATALENS_QL_TYPES, IChartEditor, QLPreviewTableData} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
+    QlConfigResultEntryMetadataDataColumnOrGroup,
 } from '../../../../../../shared/types/config/ql';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT} from '../utils/constants';
 import {
@@ -51,7 +47,7 @@ export default ({
         let collectingColumns = false;
         let collectingAvailable = false;
 
-        shared.order.forEach((item: QLResultEntryMetadataDataColumnOrGroup) => {
+        shared.order.forEach((item: QlConfigResultEntryMetadataDataColumnOrGroup) => {
             const itemIsGroup = isGroup(item);
 
             if (itemIsGroup && item.name === 'Columns') {
@@ -149,7 +145,7 @@ export default ({
         };
     });
 
-    const order: QLResultEntryMetadataDataColumnOrGroup[] = [
+    const order: QlConfigResultEntryMetadataDataColumnOrGroup[] = [
         {
             name: 'Columns',
             group: true,

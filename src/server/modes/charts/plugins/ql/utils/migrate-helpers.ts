@@ -1,8 +1,5 @@
-import {
-    DATASET_FIELD_TYPES,
-    Field,
-    QLResultEntryMetadataDataColumnOrGroup,
-} from '../../../../../../shared';
+import {DATASET_FIELD_TYPES, Field} from '../../../../../../shared';
+import type {QlConfigResultEntryMetadataDataColumnOrGroup} from '../../../../../../shared/types/config/ql';
 
 import {isGroup} from './misc-helpers';
 
@@ -10,7 +7,7 @@ export const migrateLineVisualization = ({
     order,
     fields,
 }: {
-    order: QLResultEntryMetadataDataColumnOrGroup[];
+    order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     fields: Field[];
 }) => {
     let collectingX = false;
@@ -24,7 +21,7 @@ export const migrateLineVisualization = ({
     let xDeclared = false;
     let yDeclared = false;
 
-    order.forEach((item: QLResultEntryMetadataDataColumnOrGroup) => {
+    order.forEach((item: QlConfigResultEntryMetadataDataColumnOrGroup) => {
         const itemIsGroup = isGroup(item);
 
         if (itemIsGroup && item.name === 'X') {
@@ -127,7 +124,7 @@ export const migratePieVisualization = ({
     order,
     fields,
 }: {
-    order: QLResultEntryMetadataDataColumnOrGroup[];
+    order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     fields: Field[];
 }) => {
     let colorIndex = -1;
@@ -136,7 +133,7 @@ export const migratePieVisualization = ({
     let collectingColor = false;
     let collectingMeasure = false;
 
-    order.forEach((item: QLResultEntryMetadataDataColumnOrGroup) => {
+    order.forEach((item: QlConfigResultEntryMetadataDataColumnOrGroup) => {
         const itemIsGroup = isGroup(item);
 
         if (itemIsGroup && item.name === 'Color') {
@@ -183,7 +180,7 @@ export const migrateMetricVisualization = ({
     order,
     fields,
 }: {
-    order: QLResultEntryMetadataDataColumnOrGroup[];
+    order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     fields: Field[];
 }) => {
     let collectingMeasure = false;
@@ -220,14 +217,14 @@ export const migrateTableVisualization = ({
     order,
     fields,
 }: {
-    order: QLResultEntryMetadataDataColumnOrGroup[];
+    order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     fields: Field[];
 }) => {
     let collectingColumns = false;
 
     const columnFields: Field[] = [];
 
-    order.forEach((item: QLResultEntryMetadataDataColumnOrGroup) => {
+    order.forEach((item: QlConfigResultEntryMetadataDataColumnOrGroup) => {
         const itemIsGroup = isGroup(item);
 
         if (itemIsGroup && item.name === 'Columns') {

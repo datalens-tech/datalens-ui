@@ -17,30 +17,29 @@ import {getEmptyImage} from 'react-dnd-html5-backend';
 import {findDOMNode} from 'react-dom';
 import type {
     QlConfigResultEntryMetadataDataColumn,
+    QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from 'shared/types/config/ql';
-
-import {QLResultEntryMetadataDataColumnOrGroup} from '../../../../../shared';
 
 import {DNDContainerState} from './DNDContainer';
 
 interface DNDItemProps {
     key: string;
     className: string;
-    item: QLResultEntryMetadataDataColumnOrGroup;
-    draggingItem: QLResultEntryMetadataDataColumnOrGroup;
+    item: QlConfigResultEntryMetadataDataColumnOrGroup;
+    draggingItem: QlConfigResultEntryMetadataDataColumnOrGroup;
     index: number;
     list: React.Component;
     listId: string;
     disabled: boolean;
     remove: (index: number) => void;
-    replace: (index: number, item: QLResultEntryMetadataDataColumnOrGroup) => void;
+    replace: (index: number, item: QlConfigResultEntryMetadataDataColumnOrGroup) => void;
     move: () => void;
     insert: () => void;
     setDropPlace: (index: number | null) => void;
     wrapTo: (props: {
         isDragPreview?: boolean;
-        item?: QLResultEntryMetadataDataColumnOrGroup;
+        item?: QlConfigResultEntryMetadataDataColumnOrGroup;
         index?: number;
         list?: React.Component;
     }) => ConnectableElement;
@@ -312,7 +311,7 @@ interface DNDItemProps {
     connectDropTarget: ConnectDropTarget;
     wrapTo: (props: {
         isDragPreview?: boolean;
-        item?: QLResultEntryMetadataDataColumnOrGroup;
+        item?: QlConfigResultEntryMetadataDataColumnOrGroup;
         index?: number;
         list?: React.Component;
     }) => ConnectableElement;

@@ -8,7 +8,6 @@ import {
     QLChartType,
     QLParamType,
     QLPreviewTableData,
-    QLResultEntryMetadataDataColumnOrGroup,
     StringParams,
     biToDatalensQL,
     getDatalensQLTypeName,
@@ -20,6 +19,7 @@ import type {
     QlConfigParamInterval,
     QlConfigRequestParam,
     QlConfigResultEntryMetadataDataColumn,
+    QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
 
@@ -103,7 +103,7 @@ export interface QLRenderResultTable {
     head: {};
     rows: {};
     metadata?: {
-        order: QLResultEntryMetadataDataColumnOrGroup[];
+        order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
     tablePreviewData?: QLPreviewTableData;
 }
@@ -117,7 +117,7 @@ export interface QLRenderResultMetric {
     };
     title: string;
     metadata?: {
-        order: QLResultEntryMetadataDataColumnOrGroup[];
+        order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
 }
 
@@ -141,7 +141,7 @@ export interface QLRenderResultHC {
     categories?: (string | number)[];
     categories_ms?: (string | number)[];
     metadata?: {
-        order: QLResultEntryMetadataDataColumnOrGroup[];
+        order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
     graphs?: QLRenderResultHCGraph[];
     tablePreviewData?: QLPreviewTableData;
@@ -159,7 +159,7 @@ export interface QLRenderResultYagrGraph {
 export interface QLRenderResultYagr {
     timeline?: number[];
     metadata?: {
-        order: QLResultEntryMetadataDataColumnOrGroup[];
+        order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
     graphs?: QLRenderResultYagrGraph[];
     axes?: any[];
@@ -746,7 +746,7 @@ export function renderValue(value: QLValue) {
 }
 
 export function isGroup(
-    item: QLResultEntryMetadataDataColumnOrGroup,
+    item: QlConfigResultEntryMetadataDataColumnOrGroup,
 ): item is QlConfigResultEntryMetadataDataGroup {
     return Boolean((item as QlConfigResultEntryMetadataDataGroup).group);
 }

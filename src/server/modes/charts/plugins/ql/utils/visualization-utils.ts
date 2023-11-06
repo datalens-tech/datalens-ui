@@ -1,11 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 
-import {
-    Field,
-    QLResultEntryMetadataDataColumnOrGroup,
-    ServerVisualization,
-    WizardVisualizationId,
-} from '../../../../../../shared';
+import {Field, ServerVisualization, WizardVisualizationId} from '../../../../../../shared';
+import type {QlConfigResultEntryMetadataDataColumnOrGroup} from '../../../../../../shared/types/config/ql';
 
 import {
     autofillLineVisualization,
@@ -29,7 +25,7 @@ export const migrateOrAutofillVisualization = ({
     colors: originalColors,
 }: {
     visualization: ServerVisualization;
-    order?: QLResultEntryMetadataDataColumnOrGroup[];
+    order?: QlConfigResultEntryMetadataDataColumnOrGroup[];
     fields: Field[];
     colors?: Field[];
 }) => {

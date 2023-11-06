@@ -5,6 +5,7 @@ import type {
     QLQuery,
     QLRequestParam,
     QLResultEntryMetadataDataColumn,
+    QLResultEntryMetadataDataColumnOrGroup,
     QLResultEntryMetadataDataGroup,
 } from '../../ql/common';
 
@@ -21,3 +22,5 @@ export type QlConfigParamInterval = QLParamInterval;
 export type QlConfigParam = QLParam;
 
 export type QlConfigRequestParam = QLRequestParam;
+
+export type QlConfigResultEntryMetadataDataColumnOrGroup = QLResultEntryMetadataDataColumnOrGroup;

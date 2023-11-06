@@ -1,14 +1,10 @@
 import moment from 'moment';
 
-import {
-    DATALENS_QL_TYPES,
-    IChartEditor,
-    QLPreviewTableData,
-    QLResultEntryMetadataDataColumnOrGroup,
-} from '../../../../../../shared';
+import {DATALENS_QL_TYPES, IChartEditor, QLPreviewTableData} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
+    QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
 import {
@@ -71,7 +67,7 @@ export default ({
         size: 0,
     };
 
-    const order: QLResultEntryMetadataDataColumnOrGroup[] = [
+    const order: QlConfigResultEntryMetadataDataColumnOrGroup[] = [
         xGroup,
         yGroup,
         colorGroup,
@@ -92,7 +88,7 @@ export default ({
         let draggedX = false;
         let draggedY = false;
 
-        shared.order.forEach((item: QLResultEntryMetadataDataColumnOrGroup) => {
+        shared.order.forEach((item: QlConfigResultEntryMetadataDataColumnOrGroup) => {
             const itemIsGroup = isGroup(item);
 
             if (itemIsGroup && item.name === 'X') {

@@ -3,7 +3,12 @@ import {History, Location} from 'history';
 import {i18n} from 'i18n';
 import _ from 'lodash';
 import type {match as Match} from 'react-router-dom';
-import type {QLConfigQuery, QlConfig, QlConfigParam} from 'shared/types/config/ql';
+import type {
+    QLConfigQuery,
+    QlConfig,
+    QlConfigParam,
+    QlConfigResultEntryMetadataDataColumnOrGroup,
+} from 'shared/types/config/ql';
 
 import {
     CommonSharedExtraSettings,
@@ -15,7 +20,6 @@ import {
     Field,
     QLChartType,
     QLPreviewTableData,
-    QLResultEntryMetadataDataColumnOrGroup,
     Shared,
     extractEntryId,
     resolveIntervalDate,
@@ -289,7 +293,7 @@ export const removeQuery = ({index}: {index: number}) => {
 
 export interface SetQueryMetadataProps {
     metadata: {
-        order: QLResultEntryMetadataDataColumnOrGroup;
+        order: QlConfigResultEntryMetadataDataColumnOrGroup;
         visualization?: any;
         available?: Field[];
         colors?: Field[];
@@ -373,7 +377,7 @@ export const toggleTablePreview = () => {
 };
 
 interface SetColumnsOrderProps {
-    order: QLResultEntryMetadataDataColumnOrGroup[];
+    order: QlConfigResultEntryMetadataDataColumnOrGroup[];
 }
 
 export const setColumnsOrder = ({order}: SetColumnsOrderProps) => {

@@ -4,8 +4,8 @@ import update from 'immutability-helper';
 import debounce from 'lodash/debounce';
 import flow from 'lodash/flow';
 import {ConnectDropTarget, ConnectableElement, DropTarget, DropTargetMonitor} from 'react-dnd';
+import type {QlConfigResultEntryMetadataDataColumnOrGroup} from 'shared/types/config/ql';
 
-import {QLResultEntryMetadataDataColumnOrGroup} from '../../../../../shared';
 import DragAndDrop from '../../../../components/DragAndDrop/DragAndDrop';
 import {getUniqueId} from '../../modules/helpers';
 
@@ -13,21 +13,21 @@ import DNDItem from './DNDItem';
 import DNDLayer from './DNDLayer';
 
 export interface DNDContainerProps {
-    items: QLResultEntryMetadataDataColumnOrGroup[];
+    items: QlConfigResultEntryMetadataDataColumnOrGroup[];
     isOver?: boolean;
     item?: {
-        item: QLResultEntryMetadataDataColumnOrGroup;
+        item: QlConfigResultEntryMetadataDataColumnOrGroup;
     };
     id: string;
     itemsClassName: string;
     containerRef: React.Ref<HTMLElement>;
     connectDropTarget?: ConnectDropTarget;
     wrapTo: (props: {
-        item: QLResultEntryMetadataDataColumnOrGroup;
+        item: QlConfigResultEntryMetadataDataColumnOrGroup;
         index?: number;
         list?: {
             props: {
-                items: QLResultEntryMetadataDataColumnOrGroup[];
+                items: QlConfigResultEntryMetadataDataColumnOrGroup[];
             };
             state: {
                 dropPlace: number;
@@ -35,17 +35,17 @@ export interface DNDContainerProps {
         };
     }) => ConnectableElement;
     onUpdate: (
-        items: QLResultEntryMetadataDataColumnOrGroup[],
+        items: QlConfigResultEntryMetadataDataColumnOrGroup[],
         pushedItem:
-            | QLResultEntryMetadataDataColumnOrGroup
-            | QLResultEntryMetadataDataColumnOrGroup[]
+            | QlConfigResultEntryMetadataDataColumnOrGroup
+            | QlConfigResultEntryMetadataDataColumnOrGroup[]
             | null,
         event: string,
     ) => void;
 }
 
 export interface DNDContainerState {
-    items: QLResultEntryMetadataDataColumnOrGroup[];
+    items: QlConfigResultEntryMetadataDataColumnOrGroup[];
     dropPlace?: number | null;
 }
 
@@ -109,7 +109,7 @@ class DNDContainer extends React.PureComponent<DNDContainerProps, DNDContainerSt
         );
     }
 
-    push(item: QLResultEntryMetadataDataColumnOrGroup) {
+    push(item: QlConfigResultEntryMetadataDataColumnOrGroup) {
         const pushedItem = {...item};
 
         pushedItem.id = getUniqueId('inserted');
@@ -127,7 +127,7 @@ class DNDContainer extends React.PureComponent<DNDContainerProps, DNDContainerSt
         }
     }
 
-    insert = async (item: QLResultEntryMetadataDataColumnOrGroup, index: number) => {
+    insert = async (item: QlConfigResultEntryMetadataDataColumnOrGroup, index: number) => {
         const insertedItem = {...item};
 
         insertedItem.id = getUniqueId('inserted');
@@ -145,7 +145,7 @@ class DNDContainer extends React.PureComponent<DNDContainerProps, DNDContainerSt
         }
     };
 
-    replace = async (index: number, item: QLResultEntryMetadataDataColumnOrGroup) => {
+    replace = async (index: number, item: QlConfigResultEntryMetadataDataColumnOrGroup) => {
         const newItem = item;
 
         this.setState(
