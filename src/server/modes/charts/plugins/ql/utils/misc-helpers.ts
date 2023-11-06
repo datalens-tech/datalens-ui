@@ -7,7 +7,6 @@ import {
     IChartEditor,
     QLChartType,
     QLParam,
-    QLParamInterval,
     QLParamType,
     QLPreviewTableData,
     QLRequestParam,
@@ -19,6 +18,7 @@ import {
 } from '../../../../../../shared';
 import type {
     QLConfigQuery,
+    QlConfigParamInterval,
     QlConfigResultEntryMetadataDataColumn,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
@@ -509,7 +509,8 @@ export function buildSource({
                         params[`${key}_from`],
                         {
                             ...paramDescription,
-                            defaultValue: (paramDescription.defaultValue as QLParamInterval).from,
+                            defaultValue: (paramDescription.defaultValue as QlConfigParamInterval)
+                                .from,
                         },
                         datalensQLConnectionType,
                     );
@@ -518,7 +519,8 @@ export function buildSource({
                         params[`${key}_to`],
                         {
                             ...paramDescription,
-                            defaultValue: (paramDescription.defaultValue as QLParamInterval).to,
+                            defaultValue: (paramDescription.defaultValue as QlConfigParamInterval)
+                                .to,
                         },
                         datalensQLConnectionType,
                     );
