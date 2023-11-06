@@ -8,6 +8,7 @@ import {
     resolveIntervalDate,
     resolveOperation,
 } from '../../../../../shared';
+import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import type {QlConfig} from '../../../../../shared/types/config/ql';
 
 import {buildSource, iterateThroughVisibleQueries, log} from './utils/misc-helpers';
@@ -34,6 +35,8 @@ const resolveUrlParameter = (urlParamValue: string | string[]) => {
 };
 
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
+    const config = mapQlConfigToLatestVersion(shared);
+
     const urlParams = ChartEditor.getParams();
 
     let params: StringParams = {};
@@ -42,8 +45,8 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
     // 1) default
     // 2) override - which in ui ql overwritten the default ones (this is for ui)
     // 3) from the url (this is for dashboards)
-    if (shared.params) {
-        const chartParams: StringParams = shared.params.reduce(
+    if (config.params) {
+        const chartParams: StringParams = config.params.reduce(
             // eslint-disable-next-line complexity
             (accumulated: StringParams, param) => {
                 const paramIsInterval =
@@ -136,11 +139,11 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
     const {
         connection: {entryId: connectionEntryId, type: connectionType},
-    } = shared;
+    } = config;
 
     let sources: Dictionary<any> = {};
     try {
-        if (isMonitoringOrPrometheusChart(shared.chartType)) {
+        if (isMonitoringOrPrometheusChart(config.chartType)) {
             if (params.interval) {
                 const operation = ChartEditor.resolveOperation(params.interval[0]);
 
@@ -155,7 +158,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             }
 
             iterateThroughVisibleQueries(
-                shared.queries,
+                config.queries,
                 ({value: queryValue, params: queryParams = []}, i) => {
                     const localParams = {...params};
 
@@ -165,7 +168,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                         }
                     });
 
-                    const localParamsDescription = [...shared.params, ...queryParams];
+                    const localParamsDescription = [...config.params, ...queryParams];
 
                     const source = buildSource({
                         // specify the desired connection id
@@ -192,10 +195,10 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                     connectionType: connectionType || ConnectorType.Clickhouse,
 
                     // requesting a query
-                    query: prepareQuery(shared.queryValue),
+                    query: prepareQuery(config.queryValue),
 
                     params,
-                    paramsDescription: shared.params,
+                    paramsDescription: config.params,
                 }),
             };
         }
