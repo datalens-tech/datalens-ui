@@ -1,9 +1,10 @@
-import type {QLParam, StringParams} from '../../../shared';
+import type {StringParams} from '../../../shared';
 import {QLChartType, QL_TYPE, isMonitoringOrPrometheusChart} from '../../../shared';
+import {QlConfigParam} from '../../../shared/types/config/ql';
 
 export default {
     module: 'libs/qlchart/v1',
-    identifyParams: ({params, chartType}: {params: QLParam[]; chartType: QLChartType}) => {
+    identifyParams: ({params, chartType}: {params: QlConfigParam[]; chartType: QLChartType}) => {
         const availableParams: StringParams = {};
 
         if (params) {

@@ -1,5 +1,6 @@
 import type {
     QLEntryDataShared,
+    QLParam,
     QLParamInterval,
     QLQuery,
     QLResultEntryMetadataDataColumn,
@@ -15,3 +16,5 @@ export type QlConfigResultEntryMetadataDataGroup = QLResultEntryMetadataDataGrou
 export type QlConfigResultEntryMetadataDataColumn = QLResultEntryMetadataDataColumn;
 
 export type QlConfigParamInterval = QLParamInterval;
+
+export type QlConfigParam = QLParam;

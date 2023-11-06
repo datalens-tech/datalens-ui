@@ -8,10 +8,11 @@ import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
+import {QlConfigParam} from 'shared/types/config/ql';
 import {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
 
-import {QLParam, QLParamType} from '../../../../../../../shared';
+import {QLParamType} from '../../../../../../../shared';
 import {DEFAULT_TIMEZONE} from '../../../../constants';
 import {addParam, drawPreview, removeParam, updateParam} from '../../../../store/actions/ql';
 import {getChartType, getParams, getPreviewData, getValid} from '../../../../store/reducers/ql';
@@ -226,7 +227,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
         options: {
             paramIsInterval: boolean;
             paramIsDate: boolean;
-            param: QLParam;
+            param: QlConfigParam;
             paramIndex: number;
         },
     ) => {
@@ -259,7 +260,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
         this.onEditParam({param: newParam, paramIndex: options.paramIndex});
     };
 
-    private renderParamDefaultValueContent = (param: QLParam, paramIndex: number) => {
+    private renderParamDefaultValueContent = (param: QlConfigParam, paramIndex: number) => {
         const paramIsInterval =
             param.type === QLParamType.DateInterval || param.type === QLParamType.DatetimeInterval;
 
@@ -447,7 +448,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
             defaultValue = defaultValue[0];
         }
 
-        const newParam: QLParam = {
+        const newParam: QlConfigParam = {
             ...param,
             defaultValue,
         };
@@ -460,7 +461,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
 
         const param = params[paramIndex];
 
-        let newParam: QLParam;
+        let newParam: QlConfigParam;
 
         if (Array.isArray(param.defaultValue)) {
             newParam = {
@@ -482,7 +483,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
         paramIndex,
         valueIndex,
     }: {
-        param: QLParam;
+        param: QlConfigParam;
         paramIndex: number;
         valueIndex?: number;
     }) => {
@@ -517,7 +518,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
         }
     };
 
-    private onEditParam = ({param, paramIndex}: {param: QLParam; paramIndex: number}) => {
+    private onEditParam = ({param, paramIndex}: {param: QlConfigParam; paramIndex: number}) => {
         this.props.updateParam({param, index: paramIndex});
     };
 }

@@ -6,7 +6,6 @@ import {
     DATALENS_QL_TYPES,
     IChartEditor,
     QLChartType,
-    QLParam,
     QLParamType,
     QLPreviewTableData,
     QLRequestParam,
@@ -18,6 +17,7 @@ import {
 } from '../../../../../../shared';
 import type {
     QLConfigQuery,
+    QlConfigParam,
     QlConfigParamInterval,
     QlConfigResultEntryMetadataDataColumn,
     QlConfigResultEntryMetadataDataGroup,
@@ -291,7 +291,7 @@ function wrapQuotedValue(quotedValue: string, operation?: string) {
 function escape(
     input: string[] | string,
     connectionType: string,
-    paramDescription?: QLParam,
+    paramDescription?: QlConfigParam,
     operation?: string,
 ) {
     const type = paramDescription ? paramDescription.type.toLowerCase() : 'string';
@@ -378,7 +378,7 @@ function dumpReqParamValue(input: string, type: string, datalensQLConnectionType
 
 function dumpReqParam(
     input: string | string[],
-    paramDescription: QLParam,
+    paramDescription: QlConfigParam,
     datalensQLConnectionType?: ConnectorType,
 ): QLRequestParam {
     const type = paramDescription.type.toLowerCase();
@@ -446,7 +446,7 @@ export function buildSource({
     connectionType: string;
     query: string;
     params: StringParams;
-    paramsDescription: QLParam[];
+    paramsDescription: QlConfigParam[];
 }) {
     let sqlQuery = query;
 

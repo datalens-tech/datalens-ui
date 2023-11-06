@@ -3,7 +3,7 @@ import {History, Location} from 'history';
 import {i18n} from 'i18n';
 import _ from 'lodash';
 import type {match as Match} from 'react-router-dom';
-import type {QLConfigQuery, QlConfig} from 'shared/types/config/ql';
+import type {QLConfigQuery, QlConfig, QlConfigParam} from 'shared/types/config/ql';
 
 import {
     CommonSharedExtraSettings,
@@ -14,7 +14,6 @@ import {
     Feature,
     Field,
     QLChartType,
-    QLParam,
     QLPreviewTableData,
     QLResultEntryMetadataDataColumnOrGroup,
     Shared,
@@ -145,7 +144,7 @@ interface SetSettingsProps {
     panes: QLPanes;
     grid: QLGrid;
     chart: QLChart | null;
-    params: QLParam[];
+    params: QlConfigParam[];
     redirectUrl?: string;
 }
 
@@ -207,7 +206,7 @@ export const addParam = () => {
     };
 };
 
-export const updateParam = ({param, index}: {param: QLParam; index: number}) => {
+export const updateParam = ({param, index}: {param: QlConfigParam; index: number}) => {
     return {
         type: UPDATE_PARAM,
         param,
@@ -234,7 +233,7 @@ export const updateParamInQuery = ({
     queryIndex,
     paramIndex,
 }: {
-    param: QLParam;
+    param: QlConfigParam;
     queryIndex: number;
     paramIndex: number;
 }) => {
@@ -445,7 +444,7 @@ export const drawPreview = ({withoutTable}: {withoutTable?: boolean} = {}) => {
     };
 };
 
-const applyUrlParams = (params: QLParam[]) => {
+const applyUrlParams = (params: QlConfigParam[]) => {
     // If there are no parameters, then exit immediately
     if (params.length === 0) {
         return;

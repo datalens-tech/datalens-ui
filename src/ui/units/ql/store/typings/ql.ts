@@ -2,13 +2,12 @@ import {ConfigNode} from 'libs/DatalensChartkit/modules/data-provider/charts/typ
 import {
     CommonSharedExtraSettings,
     QLChartType,
-    QLParam,
     QLPreviewTableData,
     QLResultEntryMetadataDataColumnOrGroup,
     Shared,
 } from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
-import type {QLConfigQuery, QlConfig} from 'shared/types/config/ql';
+import type {QLConfigQuery, QlConfig, QlConfigParam} from 'shared/types/config/ql';
 import {DatasetAction} from 'units/wizard/actions/dataset';
 import {VisualizationAction} from 'units/wizard/actions/visualization';
 
@@ -46,7 +45,7 @@ export interface QLState {
         order: QLResultEntryMetadataDataColumnOrGroup[];
     };
     tablePreviewData: QLPreviewTableData;
-    params: QLParam[];
+    params: QlConfigParam[];
     order: QLResultEntryMetadataDataColumnOrGroup[];
     connection: QLConnectionEntry | null;
     connectionSources: {
@@ -89,7 +88,7 @@ export interface QLActionSetSettings {
     panes: QLPanes;
     grid: QLGrid;
     chart: QLChart | null;
-    params: QLParam[];
+    params: QlConfigParam[];
     redirectUrl?: string;
 }
 
@@ -121,7 +120,7 @@ export interface QLActionRemoveQuery {
 
 export interface QLActionUpdateParam {
     type: symbol;
-    param: QLParam;
+    param: QlConfigParam;
     index: number;
 }
 
@@ -137,7 +136,7 @@ export interface QLActionAddParamInQuery {
 
 export interface QLActionUpdateParamInQuery {
     type: symbol;
-    param: QLParam;
+    param: QlConfigParam;
     queryIndex: number;
     paramIndex: number;
 }

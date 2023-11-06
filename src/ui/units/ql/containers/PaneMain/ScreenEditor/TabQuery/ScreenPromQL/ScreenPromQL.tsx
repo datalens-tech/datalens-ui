@@ -10,7 +10,7 @@ import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import type {QLConfigQuery, QlConfig} from 'shared/types/config/ql';
+import type {QLConfigQuery, QlConfig, QlConfigParam} from 'shared/types/config/ql';
 import {
     DatalensGlobalState,
     EntryDialogName,
@@ -21,7 +21,6 @@ import {
 } from 'ui';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 
-import {QLParam} from '../../../../../../../../shared';
 import {prepareChartDataBeforeSave} from '../../../../../modules/helpers';
 import {
     addParamInQuery,
@@ -224,7 +223,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                     {activeTab === 'paramsTab' && (
                                         <React.Fragment>
                                             {query.params.map(
-                                                (param: QLParam, paramIndex: number) => {
+                                                (param: QlConfigParam, paramIndex: number) => {
                                                     if (typeof param.defaultValue !== 'string') {
                                                         return null;
                                                     }
@@ -382,7 +381,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         queryIndex,
         paramIndex,
     }: {
-        param: QLParam;
+        param: QlConfigParam;
         queryIndex: number;
         paramIndex: number;
     }) => {
