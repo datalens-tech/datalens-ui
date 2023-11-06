@@ -1,11 +1,11 @@
-import {WizardVisualizationId} from '../../../constants';
+import {WizardVisualizationId} from '../../../../constants';
 import {
     ChartsConfigVersion,
     DatasetFieldType,
     ServerField,
     V8ChartsConfig,
     V9ChartsConfig,
-} from '../../../types';
+} from '../../../../types';
 
 export const mapV8ConfigToV9 = (config: V8ChartsConfig): V9ChartsConfig => {
     let shapes: ServerField[] = config.shapes;

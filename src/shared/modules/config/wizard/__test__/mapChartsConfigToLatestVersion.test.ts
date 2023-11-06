@@ -1,4 +1,4 @@
-import {ExtendedChartsConfig} from '../../../types';
+import {ExtendedChartsConfig} from '../../../../types';
 import {mapChartsConfigToLatestVersion} from '../mapChartsConfigToLatestVersion';
 
 describe('mapChartsConfigToLatestVersion', () => {

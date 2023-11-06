@@ -5,7 +5,7 @@ import {
     V4HierarchyField,
     V4Sort,
     V4Visualization,
-} from '../../../types';
+} from '../../../../types';
 
 export const MOCKED_V4_FIELD = {
     guid: 'field-1',

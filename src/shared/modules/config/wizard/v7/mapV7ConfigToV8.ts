@@ -1,8 +1,8 @@
-import {WizardVisualizationId} from '../../../constants';
+import {WizardVisualizationId} from '../../../../constants';
 // import placeholderId this way because if it will be imported from constants
 // it will be failed when playwright runs tests.
 // the TypeError will occur and says that PlaceholderId is undefined
-import {PlaceholderId} from '../../../constants/placeholder';
+import {PlaceholderId} from '../../../../constants/placeholder';
 import {
     ChartsConfigVersion,
     ServerField,
@@ -11,7 +11,7 @@ import {
     V8ChartsConfig,
     V8Placeholder,
     V8Visualization,
-} from '../../../types';
+} from '../../../../types';
 
 const PLACEHOLDERS_WITH_TOTALS_SETTINGS: Record<string, boolean> = {
     [PlaceholderId.PivotTableRows]: true,

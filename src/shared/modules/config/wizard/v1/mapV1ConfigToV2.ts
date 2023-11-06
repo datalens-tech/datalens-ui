@@ -1,5 +1,11 @@
-import {ChartsConfigVersion, Dataset, GraphShared, ServerDatasetField, Shared} from '../../..';
-import {V2ChartsConfig} from '../../../types';
+import {
+    ChartsConfigVersion,
+    Dataset,
+    GraphShared,
+    ServerDatasetField,
+    Shared,
+} from '../../../../index';
+import {V2ChartsConfig} from '../../../../types';
 
 export const mapV1ConfigToV2 = (config: Shared): V2ChartsConfig => {
     let datasetsPartialFields: ServerDatasetField[][];

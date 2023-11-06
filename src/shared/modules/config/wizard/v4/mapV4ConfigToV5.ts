@@ -1,4 +1,4 @@
-import {PlaceholderId, WizardVisualizationId} from '../../../constants';
+import {PlaceholderId, WizardVisualizationId} from '../../../../constants';
 import {
     ChartsConfigVersion,
     DATASET_FIELD_TYPES,
@@ -10,9 +10,9 @@ import {
     V5Placeholder,
     V5Visualization,
     isVisualizationWithLayers,
-} from '../../../types';
-import {isMeasureField} from '../../helpers';
-import {isAllAxisModesAvailable, isPlaceholderSupportsAxisMode} from '../../wizard-helpers';
+} from '../../../../types';
+import {isMeasureField} from '../../../helpers';
+import {isAllAxisModesAvailable, isPlaceholderSupportsAxisMode} from '../../../wizard-helpers';
 
 const mapV4PlaceholderToV5Placeholder = ({
     placeholder,

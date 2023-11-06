@@ -1,4 +1,4 @@
-import {DEFAULT_FORMATTING} from '../../../constants';
+import {DEFAULT_FORMATTING} from '../../../../constants';
 import {
     ChartsConfigVersion,
     DATASET_FIELD_TYPES,
@@ -10,8 +10,8 @@ import {
     V4Formatting,
     V4Label,
     V4Visualization,
-} from '../../../types';
-import {getDefaultFormatting} from '../../wizard-helpers';
+} from '../../../../types';
+import {getDefaultFormatting} from '../../../wizard-helpers';
 
 const createV4LabelFromV3 = (v3Label: V3Label): V4Label => {
     return (Object.keys(v3Label) as Array<keyof V3Label>).reduce((v4Label, key) => {

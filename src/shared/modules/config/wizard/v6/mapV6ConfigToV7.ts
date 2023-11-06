@@ -1,6 +1,6 @@
 import {omit} from 'lodash';
 
-import {PlaceholderId, WizardVisualizationId} from '../../../constants';
+import {PlaceholderId, WizardVisualizationId} from '../../../../constants';
 import {
     ChartsConfigVersion,
     ServerChartsConfig,
@@ -12,9 +12,9 @@ import {
     V7Placeholder,
     isFieldHierarchy,
     isVisualizationWithLayers,
-} from '../../../types';
-import {isMeasureField} from '../../helpers';
-import {isAllAxisModesAvailable, isPlaceholderSupportsAxisMode} from '../../wizard-helpers';
+} from '../../../../types';
+import {isMeasureField} from '../../../helpers';
+import {isAllAxisModesAvailable, isPlaceholderSupportsAxisMode} from '../../../wizard-helpers';
 
 const mapV6PlaceholdersToV7Placeholders = (
     visualizationId: WizardVisualizationId,
