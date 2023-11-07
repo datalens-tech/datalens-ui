@@ -66,6 +66,7 @@ export interface QLQuery {
 }
 
 export interface QLEntryDataShared {
+    version: undefined;
     // The type of template used to generate a chart at the ChartsEngine level, a low-level thing
     type: string;
 
@@ -73,7 +74,7 @@ export interface QLEntryDataShared {
     chartType: QLChartType;
     queryValue: string;
     queries: QLQuery[];
-    extraSettings: CommonSharedExtraSettings;
+    extraSettings?: CommonSharedExtraSettings;
     visualization: Shared['visualization'] & {highchartsId?: string};
     params: QLParam[];
     connection: QLEntryDataSharedConnection;

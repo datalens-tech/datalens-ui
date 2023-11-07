@@ -348,6 +348,7 @@ export const getEntryNotChanged = createSelector(
                 chartType,
                 visualization,
                 order: [],
+                version: undefined,
             };
 
             // Removing possible functions from the structure to compare data
@@ -404,7 +405,7 @@ export const getPreviewData = createSelector(
         order,
     ): any | null => {
         if (chartType && connection && visualization) {
-            const result = {
+            const result: QlConfig = {
                 type: 'ql',
                 chartType,
                 connection: {
@@ -423,6 +424,7 @@ export const getPreviewData = createSelector(
                 params: params,
                 visualization,
                 order,
+                version: undefined,
             };
 
             return result;
