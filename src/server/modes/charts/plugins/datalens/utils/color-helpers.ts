@@ -380,9 +380,14 @@ function mapAndColorizeGraphsByDimension({
     isSegmentsExists,
     usedColors = [],
 }: MapAndColorizeGraphsByDimension) {
-    const graphsWithAutoColors: ExtendedSeriesLineOptions[] = [];
+    if (colorsConfig.mountedColors) {
+        const usedMountedColors = Object.keys(colorsConfig.mountedColors);
 
-    graphs.forEach((graph) => {
+        usedColors.push(...usedMountedColors);
+    }
+
+    // eslint-disable-next-line complexity
+    graphs.forEach((graph, i) => {
         let colorKey;
         const colorValue = graph.colorValue;
         const shapeValue = graph.shapeValue;
@@ -405,34 +410,28 @@ function mapAndColorizeGraphsByDimension({
             colorsConfig.mountedColors[colorKey]
         ) {
             graph.color = getMountedColor(colorsConfig, colorKey);
-
-            usedColors.push(colorKey);
         } else {
-            graphsWithAutoColors.push(graph);
+            let value = graph.colorValue;
+
+            if (isColorsItemExists && !isShapesItemExists && graph.legendTitle) {
+                value = graph.legendTitle;
+            }
+
+            let colorIndex;
+            if (isShapesItemExists && !isColorsItemExists) {
+                colorIndex = usedColors.indexOf(value);
+            } else {
+                // we use the index from forEach in the case of coloring the second y axis
+                colorIndex = graph.yAxis === 0 || isSegmentsExists ? usedColors.indexOf(value) : i;
+            }
+
+            if (colorIndex === -1) {
+                usedColors.push(value);
+                colorIndex = usedColors.length - 1;
+            }
+
+            graph.color = getColor(colorIndex, colorsConfig.colors);
         }
-    });
-
-    graphsWithAutoColors.forEach((graph, i) => {
-        let value = graph.colorValue;
-
-        if (isColorsItemExists && !isShapesItemExists && graph.legendTitle) {
-            value = graph.legendTitle;
-        }
-
-        let colorIndex;
-        if (isShapesItemExists && !isColorsItemExists) {
-            colorIndex = usedColors.indexOf(value);
-        } else {
-            // we use the index from forEach in the case of coloring the second y axis
-            colorIndex = graph.yAxis === 0 || isSegmentsExists ? usedColors.indexOf(value) : i;
-        }
-
-        if (colorIndex === -1) {
-            usedColors.push(value);
-            colorIndex = usedColors.length - 1;
-        }
-
-        graph.color = getColor(colorIndex, colorsConfig.colors);
     });
 
     return graphs;
