@@ -404,6 +404,8 @@ function mapAndColorizeGraphsByDimension({
             colorsConfig.mountedColors[colorKey]
         ) {
             graph.color = getMountedColor(colorsConfig, colorKey);
+
+            usedColors.push(colorKey);
         } else {
             let value = graph.colorValue;
 
