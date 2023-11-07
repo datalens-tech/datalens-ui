@@ -1,3 +1,4 @@
+import {QLChartType} from '../../constants';
 import {CommonSharedExtraSettings, ShapesConfig, Shared} from '../wizard/';
 import {Field} from '../wizard/field';
 
@@ -53,12 +54,6 @@ interface QLEntryDataSharedConnection {
     type: string;
 }
 
-export enum QLChartType {
-    Sql = 'sql',
-    Promql = 'promql',
-    Monitoringql = 'monitoringql',
-}
-
 export interface QLQuery {
     value: string;
     hidden?: boolean;
@@ -66,6 +61,7 @@ export interface QLQuery {
 }
 
 export interface QLEntryDataShared {
+    version: undefined;
     // The type of template used to generate a chart at the ChartsEngine level, a low-level thing
     type: string;
 
@@ -73,7 +69,7 @@ export interface QLEntryDataShared {
     chartType: QLChartType;
     queryValue: string;
     queries: QLQuery[];
-    extraSettings: CommonSharedExtraSettings;
+    extraSettings?: CommonSharedExtraSettings;
     visualization: Shared['visualization'] & {highchartsId?: string};
     params: QLParam[];
     connection: QLEntryDataSharedConnection;
@@ -101,16 +97,6 @@ export interface QLPreviewTableDataRow {
 export interface QLPreviewTableData {
     columns?: QLPreviewTableDataColumn[];
     data?: QLPreviewTableDataRow[];
-}
-
-export enum QLParamType {
-    String = 'string',
-    Number = 'number',
-    Boolean = 'boolean',
-    Date = 'date',
-    Datetime = 'datetime',
-    DateInterval = 'date-interval',
-    DatetimeInterval = 'datetime-interval',
 }
 
 export interface MonitoringPresetV1 {

@@ -3,6 +3,7 @@ import moment from 'moment';
 import {createSelector} from 'reselect';
 import {QLChartType} from 'shared';
 import type {QlConfig} from 'shared/types/config/ql';
+import {QlConfigVersions} from 'shared/types/ql/versions';
 import {DL, DatalensGlobalState} from 'ui';
 import {
     selectVisualization as getWizardVisualization,
@@ -348,6 +349,7 @@ export const getEntryNotChanged = createSelector(
                 chartType,
                 visualization,
                 order: [],
+                version: QlConfigVersions.V1,
             };
 
             // Removing possible functions from the structure to compare data
@@ -404,7 +406,7 @@ export const getPreviewData = createSelector(
         order,
     ): any | null => {
         if (chartType && connection && visualization) {
-            const result = {
+            const result: QlConfig = {
                 type: 'ql',
                 chartType,
                 connection: {
@@ -423,6 +425,7 @@ export const getPreviewData = createSelector(
                 params: params,
                 visualization,
                 order,
+                version: QlConfigVersions.V1,
             };
 
             return result;
