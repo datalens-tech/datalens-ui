@@ -380,8 +380,9 @@ function mapAndColorizeGraphsByDimension({
     isSegmentsExists,
     usedColors = [],
 }: MapAndColorizeGraphsByDimension) {
-    // eslint-disable-next-line complexity
-    graphs.forEach((graph, i) => {
+    const graphsWithAutoColors: ExtendedSeriesLineOptions[] = [];
+
+    graphs.forEach((graph) => {
         let colorKey;
         const colorValue = graph.colorValue;
         const shapeValue = graph.shapeValue;
@@ -407,27 +408,31 @@ function mapAndColorizeGraphsByDimension({
 
             usedColors.push(colorKey);
         } else {
-            let value = graph.colorValue;
-
-            if (isColorsItemExists && !isShapesItemExists && graph.legendTitle) {
-                value = graph.legendTitle;
-            }
-
-            let colorIndex;
-            if (isShapesItemExists && !isColorsItemExists) {
-                colorIndex = usedColors.indexOf(value);
-            } else {
-                // we use the index from forEach in the case of coloring the second y axis
-                colorIndex = graph.yAxis === 0 || isSegmentsExists ? usedColors.indexOf(value) : i;
-            }
-
-            if (colorIndex === -1) {
-                usedColors.push(value);
-                colorIndex = usedColors.length - 1;
-            }
-
-            graph.color = getColor(colorIndex, colorsConfig.colors);
+            graphsWithAutoColors.push(graph);
         }
+    });
+
+    graphsWithAutoColors.forEach((graph, i) => {
+        let value = graph.colorValue;
+
+        if (isColorsItemExists && !isShapesItemExists && graph.legendTitle) {
+            value = graph.legendTitle;
+        }
+
+        let colorIndex;
+        if (isShapesItemExists && !isColorsItemExists) {
+            colorIndex = usedColors.indexOf(value);
+        } else {
+            // we use the index from forEach in the case of coloring the second y axis
+            colorIndex = graph.yAxis === 0 || isSegmentsExists ? usedColors.indexOf(value) : i;
+        }
+
+        if (colorIndex === -1) {
+            usedColors.push(value);
+            colorIndex = usedColors.length - 1;
+        }
+
+        graph.color = getColor(colorIndex, colorsConfig.colors);
     });
 
     return graphs;
