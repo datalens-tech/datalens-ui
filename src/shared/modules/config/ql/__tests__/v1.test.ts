@@ -51,4 +51,13 @@ describe('mapUndefinedConfigToV1', () => {
             },
         });
     });
+
+    it.each([{version: undefined, visualization: {id: 'line'}}, {version: undefined}])(
+        'should return same config if placeholders does not exists',
+        (config) => {
+            const result = mapUndefinedConfigToV1(config as QLEntryDataShared);
+
+            expect(result).toMatchObject({...config, version: '1'});
+        },
+    );
 });

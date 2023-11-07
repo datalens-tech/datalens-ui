@@ -4,7 +4,9 @@ import {QlConfigV1} from '../../../../types/config/ql/v1';
 import {QlConfigVersions} from '../../../../types/ql/versions';
 
 export const mapUndefinedConfigToV1 = (config: QLEntryDataShared): QlConfigV1 => {
-    if (!config.visualization) {
+    const isPlaceholdersExists = config.visualization && 'placeholders' in config.visualization;
+
+    if (!isPlaceholdersExists) {
         return {
             ...config,
             version: QlConfigVersions.V1,
