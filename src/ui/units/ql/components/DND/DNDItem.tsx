@@ -15,32 +15,31 @@ import {
 } from 'react-dnd';
 import {getEmptyImage} from 'react-dnd-html5-backend';
 import {findDOMNode} from 'react-dom';
-
-import {
-    QLResultEntryMetadataDataColumn,
-    QLResultEntryMetadataDataColumnOrGroup,
-    QLResultEntryMetadataDataGroup,
-} from '../../../../../shared';
+import type {
+    QlConfigResultEntryMetadataDataColumn,
+    QlConfigResultEntryMetadataDataColumnOrGroup,
+    QlConfigResultEntryMetadataDataGroup,
+} from 'shared/types/config/ql';
 
 import {DNDContainerState} from './DNDContainer';
 
 interface DNDItemProps {
     key: string;
     className: string;
-    item: QLResultEntryMetadataDataColumnOrGroup;
-    draggingItem: QLResultEntryMetadataDataColumnOrGroup;
+    item: QlConfigResultEntryMetadataDataColumnOrGroup;
+    draggingItem: QlConfigResultEntryMetadataDataColumnOrGroup;
     index: number;
     list: React.Component;
     listId: string;
     disabled: boolean;
     remove: (index: number) => void;
-    replace: (index: number, item: QLResultEntryMetadataDataColumnOrGroup) => void;
+    replace: (index: number, item: QlConfigResultEntryMetadataDataColumnOrGroup) => void;
     move: () => void;
     insert: () => void;
     setDropPlace: (index: number | null) => void;
     wrapTo: (props: {
         isDragPreview?: boolean;
-        item?: QLResultEntryMetadataDataColumnOrGroup;
+        item?: QlConfigResultEntryMetadataDataColumnOrGroup;
         index?: number;
         list?: React.Component;
     }) => ConnectableElement;
@@ -48,7 +47,7 @@ interface DNDItemProps {
 
 const itemSource = {
     canDrag(props: DNDItemProps) {
-        const {undragable} = props.item as QLResultEntryMetadataDataGroup;
+        const {undragable} = props.item as QlConfigResultEntryMetadataDataGroup;
 
         return !(undragable || props.disabled);
     },
@@ -97,7 +96,7 @@ const itemSource = {
         // We determine where the user still wants to reset the item:
         // to some place or still wants to re-place some item
         let targetIndex = state.items.length;
-        if (replacedItem && (replacedItem as QLResultEntryMetadataDataGroup).group) {
+        if (replacedItem && (replacedItem as QlConfigResultEntryMetadataDataGroup).group) {
             targetIndex = item.hoverIndex + 1;
         } else if (typeof dropPlace === 'number') {
             targetIndex = dropPlace;
@@ -106,11 +105,11 @@ const itemSource = {
         }
 
         // We define the group into which the user wants to reset the item
-        let targetGroup = state.items[0] as QLResultEntryMetadataDataGroup;
+        let targetGroup = state.items[0] as QlConfigResultEntryMetadataDataGroup;
 
         state.items.some((listItem, index: number) => {
             // We bring the type to the group
-            const listGroup = listItem as QLResultEntryMetadataDataGroup;
+            const listGroup = listItem as QlConfigResultEntryMetadataDataGroup;
 
             // If we get to the right place, we go out
             if (index === targetIndex) {
@@ -126,12 +125,12 @@ const itemSource = {
         });
 
         // We define the group from which the user wants to take the item
-        let sourceGroup = state.items[0] as QLResultEntryMetadataDataGroup;
+        let sourceGroup = state.items[0] as QlConfigResultEntryMetadataDataGroup;
         const sourceIndex = item.index;
 
         state.items.some((listItem, index: number) => {
             // We bring the type to the group
-            const listGroup = listItem as QLResultEntryMetadataDataGroup;
+            const listGroup = listItem as QlConfigResultEntryMetadataDataGroup;
 
             // If we get to the right place, we go out
             if (index === sourceIndex) {
@@ -150,7 +149,7 @@ const itemSource = {
         // that it is overflowing or the item does not fit the type,
         // then we go out
         if (
-            !(replacedItem && !(replacedItem as QLResultEntryMetadataDataGroup).group) &&
+            !(replacedItem && !(replacedItem as QlConfigResultEntryMetadataDataGroup).group) &&
             targetGroup.capacity &&
             targetGroup.size === targetGroup.capacity
         ) {
@@ -163,7 +162,10 @@ const itemSource = {
 
         // If the user still wants to apply,
         // then we replay and go out
-        if (item.hoveredItem !== null && !(replacedItem as QLResultEntryMetadataDataGroup).group) {
+        if (
+            item.hoveredItem !== null &&
+            !(replacedItem as QlConfigResultEntryMetadataDataGroup).group
+        ) {
             item.hoveredItem = null;
             targetComponent.swap(item.hoverIndex, item.index);
 
@@ -252,7 +254,7 @@ const itemTarget = {
             } else {
                 dragItem.hoveredItem = hoverIndex;
 
-                const targetItem = props.item as QLResultEntryMetadataDataGroup;
+                const targetItem = props.item as QlConfigResultEntryMetadataDataGroup;
 
                 if (targetItem.group || targetItem.undragable) {
                     dragItem.replaceMode = false;
@@ -268,16 +270,16 @@ const itemTarget = {
 
             if (typeof dropPlace === 'number') {
                 const preDropPlace = dropPlace - 1;
-                let targetGroup = container.props.items[0] as QLResultEntryMetadataDataGroup;
+                let targetGroup = container.props.items[0] as QlConfigResultEntryMetadataDataGroup;
                 const targetItem = container.props.items[
                     preDropPlace
-                ] as QLResultEntryMetadataDataColumn;
+                ] as QlConfigResultEntryMetadataDataColumn;
                 container.props.items.some(
-                    (listItem: QLResultEntryMetadataDataGroup, index: number) => {
-                        const listGroup = listItem as QLResultEntryMetadataDataGroup;
+                    (listItem: QlConfigResultEntryMetadataDataGroup, index: number) => {
+                        const listGroup = listItem as QlConfigResultEntryMetadataDataGroup;
 
                         if (listGroup.group) {
-                            targetGroup = listGroup as QLResultEntryMetadataDataGroup;
+                            targetGroup = listGroup as QlConfigResultEntryMetadataDataGroup;
                         }
 
                         if (index === preDropPlace) {
@@ -309,7 +311,7 @@ interface DNDItemProps {
     connectDropTarget: ConnectDropTarget;
     wrapTo: (props: {
         isDragPreview?: boolean;
-        item?: QLResultEntryMetadataDataColumnOrGroup;
+        item?: QlConfigResultEntryMetadataDataColumnOrGroup;
         index?: number;
         list?: React.Component;
     }) => ConnectableElement;

@@ -1,15 +1,12 @@
 import {ConfigNode} from 'libs/DatalensChartkit/modules/data-provider/charts/types';
-import {
-    CommonSharedExtraSettings,
-    QLChartType,
-    QLEntryDataShared,
-    QLParam,
-    QLPreviewTableData,
-    QLQuery,
-    QLResultEntryMetadataDataColumnOrGroup,
-    Shared,
-} from 'shared';
+import {CommonSharedExtraSettings, QLChartType, QlConfigPreviewTableData, Shared} from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
+import type {
+    QLConfigQuery,
+    QlConfig,
+    QlConfigParam,
+    QlConfigResultEntryMetadataDataColumnOrGroup,
+} from 'shared/types/config/ql';
 import {DatasetAction} from 'units/wizard/actions/dataset';
 import {VisualizationAction} from 'units/wizard/actions/visualization';
 
@@ -24,7 +21,7 @@ export interface QLEntry extends GetEntryResponse {
 
 // QLEntryData - chart data created in QL
 export interface QLEntryData {
-    [index: string]: QLEntryDataShared;
+    [index: string]: QlConfig;
 }
 
 // QLConnectionEntry - the connection used in the QL chart
@@ -44,11 +41,11 @@ export interface QLState {
     visualization: Shared['visualization'] | null;
     entry: QLEntry | null;
     metadata: {
-        order: QLResultEntryMetadataDataColumnOrGroup[];
+        order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
-    tablePreviewData: QLPreviewTableData;
-    params: QLParam[];
-    order: QLResultEntryMetadataDataColumnOrGroup[];
+    tablePreviewData: QlConfigPreviewTableData;
+    params: QlConfigParam[];
+    order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     connection: QLConnectionEntry | null;
     connectionSources: {
         title: string;
@@ -61,7 +58,7 @@ export interface QLState {
     panes: QLPanes;
     tabs: QLTabs;
     queryValue: string;
-    queries: QLQuery[];
+    queries: QLConfigQuery[];
     paneViews: QLPaneViews;
     redirectUrl?: string;
 }
@@ -85,12 +82,12 @@ export interface QLActionSetSettings {
     chartType: QLChartType | null;
     tabs: QLTabs;
     queryValue: string;
-    queries: QLQuery[];
+    queries: QLConfigQuery[];
     settings: QLSettings;
     panes: QLPanes;
     grid: QLGrid;
     chart: QLChart | null;
-    params: QLParam[];
+    params: QlConfigParam[];
     redirectUrl?: string;
 }
 
@@ -111,7 +108,7 @@ export interface QLActionSetExtraSettings {
 
 export interface QLActionUpdateQuery {
     type: symbol;
-    query: QLQuery;
+    query: QLConfigQuery;
     index: number;
 }
 
@@ -122,7 +119,7 @@ export interface QLActionRemoveQuery {
 
 export interface QLActionUpdateParam {
     type: symbol;
-    param: QLParam;
+    param: QlConfigParam;
     index: number;
 }
 
@@ -138,7 +135,7 @@ export interface QLActionAddParamInQuery {
 
 export interface QLActionUpdateParamInQuery {
     type: symbol;
-    param: QLParam;
+    param: QlConfigParam;
     queryIndex: number;
     paramIndex: number;
 }
@@ -152,13 +149,13 @@ export interface QLActionRemoveParamInQuery {
 export interface QLActionSetQueryMetadata {
     type: symbol;
     metadata: {
-        order: QLResultEntryMetadataDataColumnOrGroup[];
+        order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
 }
 
 export interface QLActionSetTablePreviewData {
     type: symbol;
-    tablePreviewData: QLPreviewTableData;
+    tablePreviewData: QlConfigPreviewTableData;
 }
 
 export interface QLActionSetVisualizationStatus {
@@ -168,7 +165,7 @@ export interface QLActionSetVisualizationStatus {
 
 export interface QLActionSetColumnsOrder {
     type: symbol;
-    order: QLResultEntryMetadataDataColumnOrGroup[];
+    order: QlConfigResultEntryMetadataDataColumnOrGroup[];
 }
 
 export interface QLActionSetConnectionSources {

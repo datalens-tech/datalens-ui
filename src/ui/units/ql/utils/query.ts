@@ -1,10 +1,10 @@
-import type {QLQuery} from 'shared/types/ql/common';
+import type {QLConfigQuery} from 'shared/types/config/ql';
 
 export const isQLQueryEmpty = (query: string): boolean => {
     return query.trim().length === 0;
 };
 
-export const isPromQlQueriesEmpty = (queries: QLQuery[]): boolean => {
+export const isPromQlQueriesEmpty = (queries: QLConfigQuery[]): boolean => {
     const isQueriesEmpty = queries.length === 0;
 
     if (isQueriesEmpty) {

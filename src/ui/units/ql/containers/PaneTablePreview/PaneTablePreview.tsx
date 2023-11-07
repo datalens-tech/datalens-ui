@@ -7,7 +7,7 @@ import _ from 'lodash';
 import {connect} from 'react-redux';
 import {DatalensGlobalState} from 'ui';
 
-import {QLPreviewTableData} from '../../../../../shared';
+import {QlConfigPreviewTableData} from '../../../../../shared';
 import {getTablePreviewData} from '../../store/reducers/ql';
 
 import './PaneTablePreview.scss';
@@ -15,7 +15,7 @@ import './PaneTablePreview.scss';
 const b = block('ql-pane-table-preview');
 
 interface PreviewTableProps {
-    tablePreviewData: QLPreviewTableData;
+    tablePreviewData: QlConfigPreviewTableData;
 }
 
 class PreviewTable extends React.PureComponent<PreviewTableProps> {
@@ -50,7 +50,7 @@ class PreviewTable extends React.PureComponent<PreviewTableProps> {
 
 interface PanePreviewProps {
     paneSize: number;
-    tablePreviewData: QLPreviewTableData;
+    tablePreviewData: QlConfigPreviewTableData;
 }
 
 class PanePreview extends React.PureComponent<PanePreviewProps> {

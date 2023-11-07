@@ -3,6 +3,13 @@ import {History, Location} from 'history';
 import {i18n} from 'i18n';
 import _ from 'lodash';
 import type {match as Match} from 'react-router-dom';
+import {mapQlConfigToLatestVersion} from 'shared/modules/config/ql';
+import type {
+    QLConfigQuery,
+    QlConfig,
+    QlConfigParam,
+    QlConfigResultEntryMetadataDataColumnOrGroup,
+} from 'shared/types/config/ql';
 
 import {
     CommonSharedExtraSettings,
@@ -13,11 +20,7 @@ import {
     Feature,
     Field,
     QLChartType,
-    QLEntryDataShared,
-    QLParam,
-    QLPreviewTableData,
-    QLQuery,
-    QLResultEntryMetadataDataColumnOrGroup,
+    QlConfigPreviewTableData,
     Shared,
     extractEntryId,
     resolveIntervalDate,
@@ -141,12 +144,12 @@ interface SetSettingsProps {
     chartType: QLChartType | null;
     tabs: QLTabs;
     queryValue: string;
-    queries: QLQuery[];
+    queries: QLConfigQuery[];
     settings: QLSettings;
     panes: QLPanes;
     grid: QLGrid;
     chart: QLChart | null;
-    params: QLParam[];
+    params: QlConfigParam[];
     redirectUrl?: string;
 }
 
@@ -208,7 +211,7 @@ export const addParam = () => {
     };
 };
 
-export const updateParam = ({param, index}: {param: QLParam; index: number}) => {
+export const updateParam = ({param, index}: {param: QlConfigParam; index: number}) => {
     return {
         type: UPDATE_PARAM,
         param,
@@ -235,7 +238,7 @@ export const updateParamInQuery = ({
     queryIndex,
     paramIndex,
 }: {
-    param: QLParam;
+    param: QlConfigParam;
     queryIndex: number;
     paramIndex: number;
 }) => {
@@ -267,7 +270,7 @@ export const addQuery = () => {
     };
 };
 
-export const updateQuery = ({query, index}: {query: QLQuery; index: number}) => {
+export const updateQuery = ({query, index}: {query: QLConfigQuery; index: number}) => {
     return {
         type: UPDATE_QUERY,
         query,
@@ -291,7 +294,7 @@ export const removeQuery = ({index}: {index: number}) => {
 
 export interface SetQueryMetadataProps {
     metadata: {
-        order: QLResultEntryMetadataDataColumnOrGroup;
+        order: QlConfigResultEntryMetadataDataColumnOrGroup;
         visualization?: any;
         available?: Field[];
         colors?: Field[];
@@ -351,7 +354,7 @@ export const setQueryMetadata = ({metadata}: SetQueryMetadataProps) => {
 };
 
 interface SetTablePreviewDataProps {
-    tablePreviewData: QLPreviewTableData;
+    tablePreviewData: QlConfigPreviewTableData;
 }
 
 export const setTablePreviewData = ({tablePreviewData}: SetTablePreviewDataProps) => {
@@ -375,7 +378,7 @@ export const toggleTablePreview = () => {
 };
 
 interface SetColumnsOrderProps {
-    order: QLResultEntryMetadataDataColumnOrGroup[];
+    order: QlConfigResultEntryMetadataDataColumnOrGroup[];
 }
 
 export const setColumnsOrder = ({order}: SetColumnsOrderProps) => {
@@ -446,7 +449,7 @@ export const drawPreview = ({withoutTable}: {withoutTable?: boolean} = {}) => {
     };
 };
 
-const applyUrlParams = (params: QLParam[]) => {
+const applyUrlParams = (params: QlConfigParam[]) => {
     // If there are no parameters, then exit immediately
     if (params.length === 0) {
         return;
@@ -651,7 +654,9 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 entry = loadedEntry as QLEntry;
 
                 if (typeof loadedEntry.data?.shared === 'string') {
-                    entry.data.shared = JSON.parse(loadedEntry.data.shared);
+                    entry.data.shared = mapQlConfigToLatestVersion(
+                        JSON.parse(loadedEntry.data.shared),
+                    );
                 } else {
                     throw new Error(i18n('sql', 'error_failed-to-parse-loaded-chart'));
                 }
@@ -1119,7 +1124,7 @@ export const onErrorSetActualChartRevision = (error: AxiosError) => {
     };
 };
 
-export const updateChart = (data: QLEntryDataShared, mode?: EntryUpdateMode) => {
+export const updateChart = (data: QlConfig, mode?: EntryUpdateMode) => {
     return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
         const {entry} = getState().ql;
 
@@ -1128,7 +1133,7 @@ export const updateChart = (data: QLEntryDataShared, mode?: EntryUpdateMode) => 
         }
 
         await dispatch(
-            saveWidget<QLEntryDataShared, Entry>({
+            saveWidget<QlConfig, Entry>({
                 entry,
                 mode,
                 data,
@@ -1152,7 +1157,7 @@ export const setQlChartActualRevision = (isDraft?: boolean) => {
         }
 
         await dispatch(
-            setActualChart<QLEntryDataShared, Entry>({
+            setActualChart<QlConfig, Entry>({
                 entry,
                 template: 'ql',
                 data: prepareChartDataBeforeSave(initialData),
@@ -1165,7 +1170,7 @@ export const setQlChartActualRevision = (isDraft?: boolean) => {
     };
 };
 
-export const updateQueryAndRedraw = ({query, index}: {query: QLQuery; index: number}) => {
+export const updateQueryAndRedraw = ({query, index}: {query: QLConfigQuery; index: number}) => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         dispatch(updateQuery({query, index}));
 

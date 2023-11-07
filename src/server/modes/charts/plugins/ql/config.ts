@@ -1,16 +1,15 @@
 import type {HighchartsWidgetData} from '@gravity-ui/chartkit/highcharts';
 
-import {
-    DEFAULT_CHART_LINES_LIMIT,
-    Feature,
-    QLEntryDataShared,
-    isEnabledServerFeature,
-} from '../../../../../shared';
+import {DEFAULT_CHART_LINES_LIMIT, Feature, isEnabledServerFeature} from '../../../../../shared';
+import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 import {registry} from '../../../../registry';
 
 import {log} from './utils/misc-helpers';
 
-export default ({shared}: {shared: QLEntryDataShared}) => {
+export default ({shared}: {shared: QlConfig}) => {
+    const qlConfig = mapQlConfigToLatestVersion(shared);
+
     const config: Pick<
         HighchartsWidgetData['config'],
         'title' | 'hideHolidaysBands' | 'linesLimit' | 'tooltip'
@@ -20,12 +19,12 @@ export default ({shared}: {shared: QLEntryDataShared}) => {
         tooltip: {pin: {altKey: true}, sort: {enabled: true}},
     };
 
-    if (shared.extraSettings) {
-        if (shared.extraSettings.title && shared.extraSettings.titleMode === 'show') {
-            config.title = shared.extraSettings.title;
+    if (qlConfig.extraSettings) {
+        if (qlConfig.extraSettings.title && qlConfig.extraSettings.titleMode === 'show') {
+            config.title = qlConfig.extraSettings.title;
         }
 
-        config.enableGPTInsights = shared.extraSettings.enableGPTInsights;
+        config.enableGPTInsights = qlConfig.extraSettings.enableGPTInsights;
     }
 
     const app = registry.getApp();

@@ -2,7 +2,7 @@ import React from 'react';
 
 import debounce from 'lodash/debounce';
 import {ConnectableElement, DragLayer} from 'react-dnd';
-import {QLResultEntryMetadataDataColumnOrGroup} from 'shared';
+import type {QlConfigResultEntryMetadataDataColumnOrGroup} from 'shared/types/config/ql';
 
 const getItemStyles = debounce(({initialOffset, currentOffset, containerRef}) => {
     if (!initialOffset || !currentOffset) {
@@ -22,17 +22,17 @@ const getItemStyles = debounce(({initialOffset, currentOffset, containerRef}) =>
 }, 2);
 
 const DNDLayer = (props: {
-    item: {item: QLResultEntryMetadataDataColumnOrGroup};
+    item: {item: QlConfigResultEntryMetadataDataColumnOrGroup};
     isDragging: boolean;
     initialOffset: {x: number; y: number} | null;
     currentOffset: {x: number; y: number} | null;
     containerRef: React.Ref<unknown>;
     wrapTo: (props: {
-        item: QLResultEntryMetadataDataColumnOrGroup;
+        item: QlConfigResultEntryMetadataDataColumnOrGroup;
         index?: number;
         list?: {
             props: {
-                items: QLResultEntryMetadataDataColumnOrGroup[];
+                items: QlConfigResultEntryMetadataDataColumnOrGroup[];
             };
             state: {
                 dropPlace: number;

@@ -7,7 +7,7 @@ import {registerDatalensQLLanguage, setDatalensQLLanguageConfiguration} from 'li
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {QLEntryDataShared} from 'shared';
+import type {QlConfig} from 'shared/types/config/ql';
 import {
     DatalensGlobalState,
     EntryDialogName,
@@ -195,7 +195,7 @@ class ScreenSQL extends React.PureComponent<ScreenSQLInnerProps, ScreenSQLState>
         }
     };
 
-    private openSaveAsWidgetDialog = async (preparedChartData: QLEntryDataShared) => {
+    private openSaveAsWidgetDialog = async (preparedChartData: QlConfig) => {
         const {entry, defaultPath, location, history, entryDialoguesRef} = this.props;
 
         if (!entryDialoguesRef) {

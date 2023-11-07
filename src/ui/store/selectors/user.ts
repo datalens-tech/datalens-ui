@@ -1,7 +1,4 @@
 import {createSelector} from 'reselect';
-import type {OutputSelector} from 'reselect';
-import type {ThemeSettings} from '@gravity-ui/uikit';
-import type {DLUserSettings} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 
 export const selectUserSettings = (state: DatalensGlobalState) => state.user.settings.data;
@@ -25,14 +22,12 @@ export const selectdGsheetAuthHintShown = createSelector(
     (userSettings) => userSettings.dlGsheetAuthHintShown || false,
 );
 
-export const selectUserTheme: OutputSelector<
-    DatalensGlobalState,
-    string,
-    (res: DLUserSettings) => string
-> = createSelector([selectUserSettings], (userSettings) => userSettings.theme || 'system');
+export const selectUserTheme = createSelector(
+    [selectUserSettings],
+    (userSettings) => userSettings.theme || 'system',
+);
 
-export const selectUserThemeSettings: OutputSelector<
-    DatalensGlobalState,
-    ThemeSettings | undefined,
-    (res: DLUserSettings) => ThemeSettings | undefined
-> = createSelector([selectUserSettings], (userSettings) => userSettings.themeSettings);
+export const selectUserThemeSettings = createSelector(
+    [selectUserSettings],
+    (userSettings) => userSettings.themeSettings,
+);

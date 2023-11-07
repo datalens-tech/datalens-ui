@@ -1,5 +1,5 @@
 import {ExtendedChartsConfig, Feature, isEnabledServerFeature} from '../../../shared';
-import {mapChartsConfigToLatestVersion} from '../../../shared/modules/config/mapChartsConfigToLatestVersion';
+import {mapChartsConfigToLatestVersion} from '../../../shared/modules/config/wizard/mapChartsConfigToLatestVersion';
 import {registry} from '../../registry';
 
 export default {
