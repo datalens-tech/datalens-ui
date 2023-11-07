@@ -1,6 +1,7 @@
 import Hashids from 'hashids';
 import moment from 'moment';
 import {QLChartType, QlConfig, Shared} from 'shared';
+import {QlConfigVersions} from 'shared/types/ql/versions';
 
 import {qlTypes} from '../../configs/chart-types';
 import {DEFAULT_TAB_ID, DEFAULT_TYPE, PANE_VIEWS} from '../../constants';
@@ -104,7 +105,7 @@ export class Helper {
                 entryId: '',
                 type: '',
             },
-            version: undefined,
+            version: QlConfigVersions.V1,
         };
 
         return {

@@ -69,7 +69,7 @@ export interface QlConfigV1 {
     chartType: QLChartType;
     queryValue: string;
     queries: QLQueryV1[];
-    extraSettings: CommonSharedExtraSettings;
+    extraSettings?: CommonSharedExtraSettings;
     visualization: Shared['visualization'] & {highchartsId?: string};
     params: QLParamV1[];
     connection: QLEntryDataSharedConnectionV1;
