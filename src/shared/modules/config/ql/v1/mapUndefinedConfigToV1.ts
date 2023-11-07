@@ -4,7 +4,14 @@ import {QlConfigV1} from '../../../../types/config/ql/v1';
 import {QlConfigVersions} from '../../../../types/ql/versions';
 
 export const mapUndefinedConfigToV1 = (config: QLEntryDataShared): QlConfigV1 => {
-    const updatedVisualization: QlConfigV1['visualization'] = {
+    if (!config.visualization) {
+        return {
+            ...config,
+            version: QlConfigVersions.V1,
+        };
+    }
+
+    const updatedVisualization = {
         ...config.visualization,
         placeholders: config.visualization.placeholders.map((placeholder) => {
             if (placeholder.id === PlaceholderId.Y || placeholder.id === PlaceholderId.Y2) {
