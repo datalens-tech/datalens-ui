@@ -68,8 +68,7 @@ export default ({shared}: {shared: QlConfig}) => {
     });
 
     const isLegendEnabled = Boolean(
-        (config.colors?.length && config.extraSettings?.legendMode !== 'hide') ||
-            config.extraSettings?.legendMode !== 'show',
+        config.colors?.length && config.extraSettings?.legendMode !== 'hide',
     );
 
     const widgetData: YagrWidgetData['libraryConfig'] = {
