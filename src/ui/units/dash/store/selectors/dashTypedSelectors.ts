@@ -2,7 +2,7 @@ import {Operation} from 'components/DialogFilter/constants';
 import {getAvailableOperations} from 'components/DialogFilter/utils';
 import {DatalensGlobalState} from 'index';
 import {getFilterOperations} from 'libs/datasetHelper';
-import {OutputSelector, createSelector} from 'reselect';
+import {createSelector} from 'reselect';
 import {DATASET_FIELD_TYPES, Operations} from 'shared';
 
 import {Mode} from '../../modules/constants';
@@ -20,8 +20,7 @@ import type {DashState} from '../reducers/dashTypedReducer';
 
 export const selectDash = (state: DatalensGlobalState) => state.dash || null;
 
-export const selectDashMode: OutputSelector<DatalensGlobalState, Mode, (res: DashState) => Mode> =
-    createSelector([selectDash], (dash) => dash.mode);
+export const selectDashMode = createSelector([selectDash], (dash) => dash.mode);
 
 export const selectEntryData = (state: DatalensGlobalState) =>
     state.dash.convertedEntryData || state.dash.entry?.data || null;
@@ -193,5 +192,5 @@ export const selectDashGlobalDefaultParams = createSelector(
 
 export const selectStateMode = createSelector(
     [selectDashMode],
-    (dashMode: Mode) => dashMode === Mode.SelectState,
+    (dashMode) => dashMode === Mode.SelectState,
 );
