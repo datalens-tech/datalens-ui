@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import ChartKit from 'libs/DatalensChartkit';
 import {useDispatch, useSelector} from 'react-redux';
 import {DashboardDialogSettingsQa} from 'shared/constants/qa/dash';
+import {parametersGlobalSlice} from 'ui/units/dash/store/slices/experimental/dash/parameters/global';
 
 import {DatalensGlobalState, EntryDialogName} from '../../../../..';
 import {i18n} from '../../../../../../i18n';
@@ -125,6 +126,7 @@ const Settings = () => {
                     loadPriority,
                 }),
             );
+            dispatch(parametersGlobalSlice.actions.update(globalParams));
             dispatch(setDashAccessDescription(accessDescription));
             dispatch(setDashSupportDescription(supportDescription));
             dispatch(toggleTableOfContent(Boolean(expandTOC)));

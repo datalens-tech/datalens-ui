@@ -54,6 +54,7 @@
     "@gravity-ui/i18n": "^1.0.0",
     "@gravity-ui/nodekit": "^1.2.1",
     "@gravity-ui/page-constructor": "^4.29.2",
+    "@reduxjs/toolkit": "^1.9.7",
     "acorn": "^8.0.4",
     "ajv": "^8.12.0",
     "aws4": "^1.11.0",
