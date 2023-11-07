@@ -10,10 +10,17 @@ import dash from 'units/dash/store/reducers/dash';
 import wizard from 'units/wizard/reducers';
 
 import 'ui/styles/dl-monaco.scss';
+import {experimental} from 'ui/units/dash/store/slices/experimental/experimental';
 
-const qlStore: {ql: typeof ql; dash: typeof dash; wizard?: typeof wizard} = {
+const qlStore: {
+    ql: typeof ql;
+    dash: typeof dash;
+    wizard?: typeof wizard;
+    experimental: typeof experimental;
+} = {
     ql,
     dash,
+    experimental,
 };
 
 qlStore.wizard = wizard;

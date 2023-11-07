@@ -10,10 +10,12 @@ import 'ui/styles/dash.scss';
 import 'ui/styles/dl-monaco.scss';
 import Utils from 'ui/utils';
 import {Feature} from 'shared';
+import {experimental} from 'ui/units/dash/store/slices/experimental/experimental';
 
 reducerRegistry.register({
     dash,
     wizard,
+    experimental,
 });
 
 const routePaths = ['/:id'];
