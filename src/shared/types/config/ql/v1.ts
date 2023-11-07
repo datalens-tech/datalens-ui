@@ -1,3 +1,4 @@
+import {QLChartType} from '../../../constants';
 import {QlConfigVersions} from '../../ql/versions';
 import {CommonSharedExtraSettings, Field, ShapesConfig, Shared} from '../../wizard';
 
@@ -53,12 +54,6 @@ interface QLEntryDataSharedConnectionV1 {
     type: string;
 }
 
-export enum QLChartTypeV1 {
-    Sql = 'sql',
-    Promql = 'promql',
-    Monitoringql = 'monitoringql',
-}
-
 export interface QLQueryV1 {
     value: string;
     hidden?: boolean;
@@ -71,7 +66,7 @@ export interface QlConfigV1 {
     type: string;
 
     // Chart type should be selected in UI
-    chartType: QLChartTypeV1;
+    chartType: QLChartType;
     queryValue: string;
     queries: QLQueryV1[];
     extraSettings: CommonSharedExtraSettings;
@@ -102,14 +97,4 @@ export interface QLPreviewTableDataRowV1 {
 export interface QLPreviewTableDataV1 {
     columns?: QLPreviewTableDataColumnV1[];
     data?: QLPreviewTableDataRowV1[];
-}
-
-export enum QLParamTypeV1 {
-    String = 'string',
-    Number = 'number',
-    Boolean = 'boolean',
-    Date = 'date',
-    Datetime = 'datetime',
-    DateInterval = 'date-interval',
-    DatetimeInterval = 'datetime-interval',
 }
