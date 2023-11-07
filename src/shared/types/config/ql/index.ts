@@ -18,7 +18,7 @@ export type QlConfig = QlConfigV1;
 
 export type QlPreviousConfig = QLEntryDataShared;
 
-export type QlExtendedConfig = QlConfig;
+export type QlExtendedConfig = QlConfig | QlPreviousConfig;
 
 export type QLConfigQuery = QLQueryV1;
 
