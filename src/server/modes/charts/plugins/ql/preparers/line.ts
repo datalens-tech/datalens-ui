@@ -1,14 +1,12 @@
 import moment from 'moment';
 
-import {
-    DATALENS_QL_TYPES,
-    IChartEditor,
-    QLEntryDataShared,
-    QLPreviewTableData,
-    QLResultEntryMetadataDataColumn,
-    QLResultEntryMetadataDataColumnOrGroup,
-    QLResultEntryMetadataDataGroup,
-} from '../../../../../../shared';
+import {DATALENS_QL_TYPES, IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
+import type {
+    QlConfig,
+    QlConfigResultEntryMetadataDataColumn,
+    QlConfigResultEntryMetadataDataColumnOrGroup,
+    QlConfigResultEntryMetadataDataGroup,
+} from '../../../../../../shared/types/config/ql';
 import {
     QLRenderResultHC,
     QLRenderResultHCGraph,
@@ -27,11 +25,11 @@ export default ({
     ChartEditor,
     tablePreviewData,
 }: {
-    shared: QLEntryDataShared;
-    columns: QLResultEntryMetadataDataColumn[];
+    shared: QlConfig;
+    columns: QlConfigResultEntryMetadataDataColumn[];
     rows: string[][];
     ChartEditor: IChartEditor;
-    tablePreviewData?: QLPreviewTableData;
+    tablePreviewData?: QlConfigPreviewTableData;
 }) => {
     if (columns === null) {
         return {};
@@ -39,7 +37,7 @@ export default ({
 
     const columnTypes = columns.map((column) => column.typeName);
 
-    const xGroup: QLResultEntryMetadataDataGroup = {
+    const xGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'X',
         group: true,
         undragable: true,
@@ -47,7 +45,7 @@ export default ({
         size: 0,
     };
 
-    const yGroup: QLResultEntryMetadataDataGroup = {
+    const yGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'Y',
         group: true,
         undragable: true,
@@ -55,21 +53,21 @@ export default ({
         size: 0,
     };
 
-    const colorGroup: QLResultEntryMetadataDataGroup = {
+    const colorGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'Colors',
         group: true,
         undragable: true,
         size: 0,
     };
 
-    const availableGroup: QLResultEntryMetadataDataGroup = {
+    const availableGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'Available',
         group: true,
         undragable: true,
         size: 0,
     };
 
-    const order: QLResultEntryMetadataDataColumnOrGroup[] = [
+    const order: QlConfigResultEntryMetadataDataColumnOrGroup[] = [
         xGroup,
         yGroup,
         colorGroup,
@@ -90,7 +88,7 @@ export default ({
         let draggedX = false;
         let draggedY = false;
 
-        shared.order.forEach((item: QLResultEntryMetadataDataColumnOrGroup) => {
+        shared.order.forEach((item: QlConfigResultEntryMetadataDataColumnOrGroup) => {
             const itemIsGroup = isGroup(item);
 
             if (itemIsGroup && item.name === 'X') {

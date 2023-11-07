@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import moment from 'moment';
 import {createSelector} from 'reselect';
-import {QLChartType, QLEntryDataShared} from 'shared';
+import {QLChartType} from 'shared';
+import type {QlConfig} from 'shared/types/config/ql';
 import {DL, DatalensGlobalState} from 'ui';
 import {
     selectVisualization as getWizardVisualization,
@@ -326,7 +327,7 @@ export const getEntryNotChanged = createSelector(
         placeholdersContent,
     ): boolean => {
         if (chartType && entry && entry.data && connection && visualization) {
-            const actualSharedData: QLEntryDataShared = {
+            const actualSharedData: QlConfig = {
                 type: 'ql',
                 connection: {
                     entryId: connection.entryId,

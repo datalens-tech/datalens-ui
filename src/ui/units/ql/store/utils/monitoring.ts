@@ -1,20 +1,15 @@
 import moment from 'moment';
+import {QLConfigQuery, QlConfigParam} from 'shared/types/config/ql';
 
-import {
-    MonitoringPreset,
-    MonitoringPresetV1,
-    MonitoringPresetV2,
-    QLParam,
-    QLQuery,
-} from '../../../../../shared';
+import {MonitoringPreset, MonitoringPresetV1, MonitoringPresetV2} from '../../../../../shared';
 import {getAvailableQlVisualizations, getDefaultQlVisualization} from '../../utils/visualization';
 
 export const prepareMonitoringPresetV2 = (preset: MonitoringPresetV2) => {
     // Link to the chart from which the current chart was created (for Monitoring)
     let redirectUrl: string | undefined;
 
-    const initialQueries: QLQuery[] = [];
-    const initialParams: QLParam[] = [];
+    const initialQueries: QLConfigQuery[] = [];
+    const initialParams: QlConfigParam[] = [];
     let visualization = getDefaultQlVisualization();
 
     if (preset.data.scopeId) {
@@ -116,8 +111,8 @@ export const prepareMonitoringPresetV1 = (preset: MonitoringPresetV1) => {
     // Link to the chart from which the current chart was created (for Monitoring)
     let redirectUrl: string | undefined;
 
-    const initialQueries: QLQuery[] = [];
-    const initialParams: QLParam[] = [];
+    const initialQueries: QLConfigQuery[] = [];
+    const initialParams: QlConfigParam[] = [];
     let visualization = getDefaultQlVisualization();
 
     if (preset?.data?.chart) {

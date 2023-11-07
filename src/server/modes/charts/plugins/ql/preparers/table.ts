@@ -1,13 +1,11 @@
 import moment from 'moment';
 
-import {
-    DATALENS_QL_TYPES,
-    IChartEditor,
-    QLEntryDataShared,
-    QLPreviewTableData,
-    QLResultEntryMetadataDataColumn,
-    QLResultEntryMetadataDataColumnOrGroup,
-} from '../../../../../../shared';
+import {DATALENS_QL_TYPES, IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
+import type {
+    QlConfig,
+    QlConfigResultEntryMetadataDataColumn,
+    QlConfigResultEntryMetadataDataColumnOrGroup,
+} from '../../../../../../shared/types/config/ql';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT} from '../utils/constants';
 import {
     QLRenderResultTable,
@@ -22,11 +20,11 @@ export default ({
     rows,
     tablePreviewData,
 }: {
-    shared: QLEntryDataShared;
-    columns: QLResultEntryMetadataDataColumn[];
+    shared: QlConfig;
+    columns: QlConfigResultEntryMetadataDataColumn[];
     rows: string[][];
     ChartEditor: IChartEditor;
-    tablePreviewData?: QLPreviewTableData;
+    tablePreviewData?: QlConfigPreviewTableData;
 }) => {
     if (columns === null) {
         return {};
@@ -34,8 +32,8 @@ export default ({
 
     const columnTypes = columns.map((column) => column.typeName);
 
-    const orderColumns: QLResultEntryMetadataDataColumn[] = [];
-    const orderAvailable: QLResultEntryMetadataDataColumn[] = [];
+    const orderColumns: QlConfigResultEntryMetadataDataColumn[] = [];
+    const orderAvailable: QlConfigResultEntryMetadataDataColumn[] = [];
 
     const result: QLRenderResultTable = {
         head: [],
@@ -49,7 +47,7 @@ export default ({
         let collectingColumns = false;
         let collectingAvailable = false;
 
-        shared.order.forEach((item: QLResultEntryMetadataDataColumnOrGroup) => {
+        shared.order.forEach((item: QlConfigResultEntryMetadataDataColumnOrGroup) => {
             const itemIsGroup = isGroup(item);
 
             if (itemIsGroup && item.name === 'Columns') {
@@ -147,7 +145,7 @@ export default ({
         };
     });
 
-    const order: QLResultEntryMetadataDataColumnOrGroup[] = [
+    const order: QlConfigResultEntryMetadataDataColumnOrGroup[] = [
         {
             name: 'Columns',
             group: true,

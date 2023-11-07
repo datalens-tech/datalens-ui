@@ -1,5 +1,5 @@
 import {FilterBody} from '../charts';
-import {ServerField} from '../config';
+import {ServerField} from '../config/wizard';
 import {DATASET_FIELD_TYPES, DatasetField, DatasetFieldType} from '../dataset';
 
 import {TableFieldBackgroundSettings} from './background-settings';

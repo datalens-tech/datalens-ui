@@ -1,12 +1,10 @@
-import {
-    DATALENS_QL_TYPES,
-    IChartEditor,
-    QLEntryDataShared,
-    QLPreviewTableData,
-    QLResultEntryMetadataDataColumn,
-    QLResultEntryMetadataDataColumnOrGroup,
-    QLResultEntryMetadataDataGroup,
-} from '../../../../../../shared';
+import {DATALENS_QL_TYPES, IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
+import type {
+    QlConfig,
+    QlConfigResultEntryMetadataDataColumn,
+    QlConfigResultEntryMetadataDataColumnOrGroup,
+    QlConfigResultEntryMetadataDataGroup,
+} from '../../../../../../shared/types/config/ql';
 import {
     QLRenderResultMetric,
     formatUnknownTypeValue,
@@ -21,11 +19,11 @@ export default ({
     ChartEditor: _ChartEditor,
     tablePreviewData,
 }: {
-    shared: QLEntryDataShared;
-    columns: QLResultEntryMetadataDataColumn[];
+    shared: QlConfig;
+    columns: QlConfigResultEntryMetadataDataColumn[];
     rows: string[][];
     ChartEditor: IChartEditor;
-    tablePreviewData?: QLPreviewTableData;
+    tablePreviewData?: QlConfigPreviewTableData;
 }) => {
     if (columns === null) {
         return {};
@@ -33,7 +31,7 @@ export default ({
 
     const columnTypes = columns.map((column) => column.typeName);
 
-    const measureGroup: QLResultEntryMetadataDataGroup = {
+    const measureGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'Measure',
         group: true,
         undragable: true,
@@ -41,14 +39,14 @@ export default ({
         size: 0,
     };
 
-    const availableGroup: QLResultEntryMetadataDataGroup = {
+    const availableGroup: QlConfigResultEntryMetadataDataGroup = {
         name: 'Available',
         group: true,
         undragable: true,
         size: 0,
     };
 
-    const order: QLResultEntryMetadataDataColumnOrGroup[] = [measureGroup, availableGroup];
+    const order: QlConfigResultEntryMetadataDataColumnOrGroup[] = [measureGroup, availableGroup];
 
     // Default x and y columns mapping
     let measureIndex = -1;
@@ -56,7 +54,7 @@ export default ({
     if (shared.order && shared.order.length) {
         let collectingMeasure = false;
 
-        shared.order.forEach((item: QLResultEntryMetadataDataColumnOrGroup) => {
+        shared.order.forEach((item: QlConfigResultEntryMetadataDataColumnOrGroup) => {
             const itemIsGroup = isGroup(item);
 
             if (itemIsGroup && item.name === 'Measure') {
