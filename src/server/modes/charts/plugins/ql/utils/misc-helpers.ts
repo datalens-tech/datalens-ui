@@ -763,3 +763,10 @@ export function iterateThroughVisibleQueries(
         cb(query, ...args);
     });
 }
+
+export const prepareQuery = (query: string) => {
+    return query
+        .replace(/--[^\n]*\n/g, '')
+        .trim()
+        .replace(/;+$/g, '');
+};

@@ -20,7 +20,7 @@ import preparePie from './preparers/pie';
 import preparePreviewTable from './preparers/preview-table';
 import prepareTable from './preparers/table';
 import {LINEAR_VISUALIZATIONS, PIE_VISUALIZATIONS} from './utils/constants';
-import {getColumnsAndRows, log} from './utils/misc-helpers';
+import {getColumnsAndRows, log, prepareQuery} from './utils/misc-helpers';
 import {
     mapItems,
     mapVisualizationPlaceholdersItems,
@@ -216,7 +216,9 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
         const available = [...(fields as unknown as Field[])];
 
-        const applyDefaultSorting = !/order by/gi.test(shared.queryValue);
+        const preparedQuery = prepareQuery(shared.queryValue);
+
+        const applyDefaultSorting = !/order by/gi.test(preparedQuery);
 
         const prepareSingleResultArgs = {
             resultData,
@@ -247,6 +249,17 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 rows,
                 ChartEditor,
             });
+        }
+
+        if (
+            LINEAR_VISUALIZATIONS.has(newVisualization.id) &&
+            newVisualization.placeholders[0]?.items[0]
+        ) {
+            newVisualization.placeholders[0].settings = {
+                axisModeMap: {
+                    [newVisualization.placeholders[0].items[0].guid]: 'discrete',
+                },
+            };
         }
 
         if (Array.isArray(result) && result[0]) {
