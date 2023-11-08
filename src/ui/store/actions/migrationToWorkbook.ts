@@ -190,6 +190,43 @@ export const migrateEntriesToWorkbook = (params: MigrateEntriesToWorkbookArgs) =
     };
 };
 
+export const migrateCopiedEntriesToWorkbook = (params: MigrateEntriesToWorkbookArgs) => {
+    return (dispatch: MigrationToWorkbookDispatch) => {
+        dispatch({
+            type: MIGRATE_ENTRIES_TO_WORKBOOK_LOADING,
+        });
+        return getSdk()
+            .us.migrateCopiedEntriesToWorkbook(params)
+            .then((data) => {
+                dispatch({
+                    type: MIGRATE_ENTRIES_TO_WORKBOOK_SUCCESS,
+                    data: data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('migrationToWorkbook/migrateEntriesToWorkbook failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: MIGRATE_ENTRIES_TO_WORKBOOK_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
 export type MigrationToWorkbookAction =
     | ResetStateAction
     | GetEntryAction

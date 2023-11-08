@@ -124,4 +124,12 @@ export const workbooksActions = {
         path: ({workbookId}) => `${PATH_PREFIX}/${workbookId}/migrate-entries`,
         params: ({entryIds}, headers) => ({body: {entryIds}, headers}),
     }),
+    migrateCopiedEntriesToWorkbook: createAction<
+        MigrateEntriesToWorkbookResponse,
+        MigrateEntriesToWorkbookArgs
+    >({
+        method: 'POST',
+        path: ({workbookId}) => `${PATH_PREFIX}/${workbookId}/migrate-copied-entries`,
+        params: ({entryIds}, headers) => ({body: {entryIds}, headers}),
+    }),
 };

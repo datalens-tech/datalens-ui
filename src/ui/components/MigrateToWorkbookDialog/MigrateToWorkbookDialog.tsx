@@ -12,7 +12,7 @@ import {closeDialog, openDialog} from '../../store/actions/dialog';
 import {
     getEntry,
     getRelationsGraph,
-    migrateEntriesToWorkbook,
+    migrateCopiedEntriesToWorkbook,
     resetState,
 } from '../../store/actions/migrationToWorkbook';
 import {
@@ -96,7 +96,7 @@ export const MigrateToWorkbookDialog: React.FC<Props> = ({open, entryId, onClose
                     onApply: async (workbookId) => {
                         if (targetEntry && relationsGraph) {
                             await dispatch(
-                                migrateEntriesToWorkbook({
+                                migrateCopiedEntriesToWorkbook({
                                     workbookId,
                                     entryIds: [
                                         targetEntry.entryId,
