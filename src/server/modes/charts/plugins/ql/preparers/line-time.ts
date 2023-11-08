@@ -1,4 +1,4 @@
-import {DATALENS_QL_TYPES, QlConfigPreviewTableData} from '../../../../../../shared';
+import {DATALENS_QL_TYPES, IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
@@ -25,11 +25,13 @@ export default ({
     columns,
     rows,
     tablePreviewData,
+    ChartEditor,
 }: {
     shared: QlConfig;
     columns: QlConfigResultEntryMetadataDataColumn[];
     rows: string[][];
     tablePreviewData?: QlConfigPreviewTableData;
+    ChartEditor: IChartEditor;
 }) => {
     if (columns === null) {
         return {};
@@ -255,6 +257,14 @@ export default ({
             ++inserted;
             ++colorGroup.size;
         });
+
+        if (shared.extraSettings.legendMode !== 'hide') {
+            ChartEditor.updateLibraryConfig({
+                legend: {
+                    show: true,
+                },
+            });
+        }
     }
 
     columns.forEach((column, index) => {
