@@ -11,7 +11,7 @@ export const expectedResult = {
             name: 'Query #0',
             color: 'rgb(0,127,0)',
             data: [1, 1],
-            spanGaps: true,
+            spanGaps: false,
         },
         {
             id: 'Query #1',
@@ -20,7 +20,7 @@ export const expectedResult = {
             name: 'Query #1',
             color: 'rgb(255,255,0)',
             data: [2, 2],
-            spanGaps: true,
+            spanGaps: false,
         },
         {
             id: 'Query #2',
@@ -29,7 +29,7 @@ export const expectedResult = {
             name: 'Query #2',
             color: 'rgb(255,0,0)',
             data: [3, 3],
-            spanGaps: true,
+            spanGaps: false,
         },
         {
             id: 'Query #3',
@@ -38,7 +38,7 @@ export const expectedResult = {
             name: 'Query #3',
             color: 'rgb(191,0,127)',
             data: [4, 4],
-            spanGaps: true,
+            spanGaps: false,
         },
     ],
     axes: [{scale: 'x', plotLines: [{width: 3, color: '#ffa0a0'}]}],

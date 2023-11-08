@@ -380,6 +380,12 @@ function mapAndColorizeGraphsByDimension({
     isSegmentsExists,
     usedColors = [],
 }: MapAndColorizeGraphsByDimension) {
+    if (colorsConfig.mountedColors) {
+        const usedMountedColors = Object.keys(colorsConfig.mountedColors);
+
+        usedColors.push(...usedMountedColors);
+    }
+
     // eslint-disable-next-line complexity
     graphs.forEach((graph, i) => {
         let colorKey;
