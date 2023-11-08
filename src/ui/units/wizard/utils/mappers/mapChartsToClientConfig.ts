@@ -105,7 +105,7 @@ export function mapChartsConfigToClientConfig(
     const fields = extractFieldsFromDatasets(datasets);
 
     const fieldsDict: Record<string, Field> = fields.reduce((acc: Record<string, Field>, field) => {
-        acc[field.guid] = field;
+        acc[`${field.guid}_${field.datasetId}`] = field;
         return acc;
     }, {});
 
@@ -177,7 +177,9 @@ export function mapServerFieldToWizardField<T>(
     fieldsDict: Record<string, Field>,
 ): T[] {
     return (serverFields || []).map((serverField) => {
-        let sourceField = fieldsDict[serverField.guid];
+        const key = `${serverField.guid}_${serverField.datasetId}`;
+
+        let sourceField = fieldsDict[key];
 
         if (!sourceField && serverField.title === PseudoFieldTitle.MeasureNames) {
             sourceField = createMeasureNames();
