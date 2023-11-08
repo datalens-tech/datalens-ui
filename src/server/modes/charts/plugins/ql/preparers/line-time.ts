@@ -258,7 +258,7 @@ export default ({
             ++colorGroup.size;
         });
 
-        if (shared.extraSettings.legendMode !== 'hide') {
+        if (shared.extraSettings?.legendMode !== 'hide') {
             ChartEditor.updateLibraryConfig({
                 legend: {
                     show: true,
