@@ -123,6 +123,13 @@ const DialogAliases = (props: DialogAliasesProps) => {
         alertText = i18n('label_card');
     }
 
+    // for no changes and empty aliases list;
+    // for not added aliases in force case;
+    // other cases - enable apply (for ex. deleting all aliases, etc)
+    const disableApplyButton =
+        (isIgnored && !forceAddAlias && !currentRow.relations.byAliases.length) ||
+        (isIgnored && forceAddAlias && !aliases.length);
+
     const resetSelectedAliasRow = React.useCallback(() => {
         setSelectedParam(null);
         setSelectedFieldName(null);
@@ -383,6 +390,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
                 showError={false}
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={i18n('button_apply')}
+                propsButtonApply={{disabled: disableApplyButton}}
                 propsButtonCancel={{view: 'outlined'}}
                 onClickButtonApply={handleApplyChanges}
                 onClickButtonCancel={handleCancel}
