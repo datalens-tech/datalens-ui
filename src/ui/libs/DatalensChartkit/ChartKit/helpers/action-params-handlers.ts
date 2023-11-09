@@ -5,8 +5,8 @@ import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import uniq from 'lodash/uniq';
-import type {GraphWidgetEventScope, StringParams} from 'shared';
 
+import type {GraphWidgetEventScope, StringParams} from '../../../../../shared';
 import type {ChartKitAdapterProps} from '../types';
 
 import {ActionParams, ActionParamsValue, extractHcTypeFromSeries, isPointSelected} from './utils';
@@ -54,7 +54,7 @@ function setPointSelectState(point: Point, selected: boolean) {
             break;
         }
         default: {
-            point.update({opacity}, false);
+            point.update({opacity} as unknown as PointOptionsObject, false);
         }
     }
 }
@@ -80,13 +80,24 @@ function setSeriesSelectState(series: Highcharts.Series, selected: boolean) {
     }
 }
 
-function mergeParams(params: ActionParams, addition: ActionParams = {}) {
+function isEmptyParam(paramValue: ActionParamsValue) {
+    return paramValue === '';
+}
+
+function addParams(params: ActionParams, addition: ActionParams = {}) {
     const result = cloneDeep(params);
+
     return Object.entries(addition).reduce((acc, [key, value]) => {
-        if (!acc[key]) {
+        if (!(key in acc)) {
             acc[key] = [];
-        } else if (!Array.isArray(acc[key])) {
+        }
+
+        if (!Array.isArray(acc[key])) {
             acc[key] = [acc[key] as ActionParamsValue];
+        }
+
+        if ((acc[key] as ActionParamsValue[]).every(isEmptyParam)) {
+            acc[key] = [];
         }
 
         acc[key] = uniq((acc[key] as ActionParamsValue[]).concat(value as string));
@@ -259,7 +270,7 @@ export function handleSeriesClickForActionParams(args: {
                         chartPoints.forEach((p) => {
                             if (isPointSelected(p, newActionParams)) {
                                 const pointParams = get(p, 'options.custom.actionParams', {});
-                                newActionParams = mergeParams(newActionParams, pointParams);
+                                newActionParams = addParams(newActionParams, pointParams);
                             }
                         });
                     }
@@ -277,10 +288,10 @@ export function handleSeriesClickForActionParams(args: {
                     }
 
                     setPointSelectState(currentPoint, true);
-                    newActionParams = mergeParams(newActionParams, currentPointParams);
+                    newActionParams = addParams(newActionParams, currentPointParams);
                 }
             } else {
-                newActionParams = mergeParams(newActionParams, currentPointParams);
+                newActionParams = addParams(newActionParams, currentPointParams);
                 chartPoints.forEach((p) => {
                     if (!isPointSelected(p, newActionParams)) {
                         setPointSelectState(p, false);
@@ -311,10 +322,11 @@ export function handleSeriesClickForActionParams(args: {
         }
     }
 
+    const params = transformParamsToActionParams(newActionParams as StringParams);
     onChange?.(
         {
             type: 'PARAMS_CHANGED',
-            data: {params: {...transformParamsToActionParams(newActionParams as StringParams)}},
+            data: {params},
         },
         {forceUpdate: true},
         true,
