@@ -1,0 +1,27 @@
+.dl-migrate-to-workbook-dialog-body-item-content {
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    cursor: pointer;
+
+    &__header {
+        display: flex;
+    }
+
+    &__title {
+        font-size: 28px;
+        font-weight: 500;
+    }
+
+    &__label {
+        margin-left: 8px;
+    }
+
+    &__icon {
+        margin-left: auto;
+    }
+
+    &__description {
+        color: rgba(0, 0, 0, 0.7);
+    }
+}

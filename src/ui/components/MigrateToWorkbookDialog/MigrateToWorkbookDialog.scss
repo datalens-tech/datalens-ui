@@ -12,6 +12,15 @@
         overflow-y: auto;
     }
 
+    &__body-content {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__block-content-item {
+        flex: 1 1 0;
+    }
+
     &__error-block {
         max-width: 100%;
 
