@@ -54,6 +54,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         segments,
         layerChartMeta,
         usedColors,
+        applyDefaultSorting = true,
     } = args;
     const {data, order} = resultData;
 
@@ -239,7 +240,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         let lineKeys1 = Object.keys(lines1);
         let lineKeys2 = [];
 
-        if (xIsDate) {
+        if (xIsDate && applyDefaultSorting) {
             (categories as number[]).sort(numericCollator);
         }
 
@@ -249,19 +250,21 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         );
         const isSortableXAxis = !isPercentVisualization(visualizationId);
 
-        categories = getSortedCategories({
-            lines,
-            colorItem,
-            categories,
-            ySectionItems,
-            isSortWithYSectionItem: Boolean(ySectionItems.length && isSortableXAxis),
-            sortItem: sortItems[0],
-            isSortAvailable: isSortItemExists && isSortCategoriesAvailable,
-            isXNumber: xIsNumber,
-            measureColorSortLine,
-            isSegmentsExists,
-            isSortBySegments,
-        });
+        if (applyDefaultSorting) {
+            categories = getSortedCategories({
+                lines,
+                colorItem,
+                categories,
+                ySectionItems,
+                isSortWithYSectionItem: Boolean(ySectionItems.length && isSortableXAxis),
+                sortItem: sortItems[0],
+                isSortAvailable: isSortItemExists && isSortCategoriesAvailable,
+                isXNumber: xIsNumber,
+                measureColorSortLine,
+                isSegmentsExists,
+                isSortBySegments,
+            });
+        }
 
         const sortedLineKeys = getSortedLineKeys({
             colorItem,
@@ -289,7 +292,11 @@ export function prepareBarX(args: PrepareFunctionArgs) {
             (isSortingYAxis || isSortByMeasureColor);
 
         const isXCategoryAxis =
-            isXDiscrete || xDataType === 'string' || xIsPseudo || isSortNumberTypeXAxisByMeasure;
+            isXDiscrete ||
+            xDataType === 'string' ||
+            xIsPseudo ||
+            isSortNumberTypeXAxisByMeasure ||
+            !applyDefaultSorting;
 
         const orderedLineKeys = [lineKeys1, lineKeys2];
 
@@ -475,7 +482,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         });
 
         // Default sorting
-        if (!isSortItemExists || !isSortCategoriesAvailable) {
+        if ((!isSortItemExists || !isSortCategoriesAvailable) && applyDefaultSorting) {
             if (xIsNumber) {
                 (categories as number[]).sort(numericCollator);
             } else {

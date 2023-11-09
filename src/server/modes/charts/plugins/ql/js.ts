@@ -6,6 +6,7 @@ import {
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
+    WizardVisualizationId,
     isMonitoringOrPrometheusChart,
 } from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
@@ -252,7 +253,8 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
         }
 
         if (
-            LINEAR_VISUALIZATIONS.has(newVisualization.id) &&
+            (LINEAR_VISUALIZATIONS.has(newVisualization.id) ||
+                newVisualization.id === WizardVisualizationId.BarXD3) &&
             newVisualization.placeholders[0]?.items[0]
         ) {
             newVisualization.placeholders[0].settings = {
