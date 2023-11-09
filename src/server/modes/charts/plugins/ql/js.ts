@@ -252,16 +252,22 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             });
         }
 
-        if (
-            (LINEAR_VISUALIZATIONS.has(newVisualization.id) ||
-                newVisualization.id === WizardVisualizationId.BarXD3) &&
-            newVisualization.placeholders[0]?.items[0]
-        ) {
-            newVisualization.placeholders[0].settings = {
-                axisModeMap: {
-                    [newVisualization.placeholders[0].items[0].guid]: 'discrete',
-                },
-            };
+        if (newVisualization.placeholders[0]?.items[0]) {
+            if (
+                !applyDefaultSorting &&
+                (LINEAR_VISUALIZATIONS.has(newVisualization.id) ||
+                    newVisualization.id === WizardVisualizationId.BarXD3)
+            ) {
+                newVisualization.placeholders[0].settings = {
+                    axisModeMap: {
+                        [newVisualization.placeholders[0].items[0].guid]: 'discrete',
+                    },
+                };
+
+                newVisualization.placeholders[0].items[0].disableAxisMode = true;
+            } else {
+                newVisualization.placeholders[0].items[0].disableAxisMode = false;
+            }
         }
 
         if (Array.isArray(result) && result[0]) {

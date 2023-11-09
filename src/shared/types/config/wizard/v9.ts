@@ -257,6 +257,7 @@ export type V9Field = {
     subTotalsSettings?: TableSubTotalsSettings;
     backgroundSettings?: TableFieldBackgroundSettings;
     columnSettings?: ColumnSettings;
+    disableAxisMode?: boolean;
 } & V9ClientOnlyFields;
 
 export type V9ColorsConfig = {
