@@ -3,6 +3,7 @@ import {transformParamsToActionParams} from '@gravity-ui/dashkit';
 import type {Point} from 'highcharts';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import uniq from 'lodash/uniq';
 import type {GraphWidgetEventScope, StringParams} from 'shared';
 
 import type {ChartKitAdapterProps} from '../types';
@@ -14,8 +15,7 @@ const Opacity = {
     UNSELECTED: '0.5',
 };
 
-const setPointOpacity = (point: Highcharts.Point) => {
-    const opacity = point.selected === false ? Opacity.UNSELECTED : Opacity.SELECTED;
+const setPointOpacity = (point: Highcharts.Point, opacity: string) => {
     const type = extractHcTypeFromPoint(point);
 
     if (type === 'scatter') {
@@ -33,12 +33,12 @@ const setSeriesOpacity = (seriesItem: Highcharts.Series) => {
 
 function selectPoint(point: Point) {
     point.select(true);
-    setPointOpacity(point);
+    setPointOpacity(point, Opacity.SELECTED);
 }
 
 function unselectPoint(point: Point) {
     point.select(false);
-    setPointOpacity(point);
+    setPointOpacity(point, Opacity.UNSELECTED);
 }
 
 function mergeParams(params: ActionParams, addition: ActionParams = {}) {
@@ -48,7 +48,7 @@ function mergeParams(params: ActionParams, addition: ActionParams = {}) {
             acc[key] = [];
         }
 
-        acc[key] = acc[key].concat(value as string);
+        acc[key] = uniq(acc[key].concat(value as string));
         return acc;
     }, result);
 }

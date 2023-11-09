@@ -9,6 +9,7 @@ import {
     getAxisMode,
     getFakeTitleOrTitle,
     isDateField,
+    isDimensionField,
     isMeasureField,
     isMeasureValue,
     isPercentVisualization,
@@ -379,8 +380,17 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                                     actionParams[x.guid] = category;
                                 }
 
+                                if (x2) {
+                                    actionParams[x2.guid] = line.stack;
+                                }
+
+                                if (isDimensionField(colorItem)) {
+                                    actionParams[colorItem.guid] = line.colorValue;
+                                }
+
                                 point.custom = {
-                                    actionParams: actionParams,
+                                    ...point.custom,
+                                    actionParams,
                                 };
                             }
 

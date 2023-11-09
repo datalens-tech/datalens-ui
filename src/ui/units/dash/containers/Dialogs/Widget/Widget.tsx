@@ -66,11 +66,18 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
 };
 
 const isEntryTypeWithFiltering = (entryType?: WidgetType) => {
+    const wizardFilteringAvailable = Utils.isEnabledFeature(
+        Feature.WizardChartChartFilteringAvailable,
+    );
     const widgetTypesWithFilteringAvailable: WidgetType[] = [
         EditorType.TableNode,
         EditorType.GraphNode,
-        WizardType.GraphWizardNode,
     ];
+
+    if (wizardFilteringAvailable) {
+        widgetTypesWithFilteringAvailable.push(WizardType.GraphWizardNode);
+    }
+
     return entryType && widgetTypesWithFilteringAvailable.includes(entryType);
 };
 

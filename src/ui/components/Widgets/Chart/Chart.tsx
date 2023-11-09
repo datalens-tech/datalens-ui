@@ -170,7 +170,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         ignoreUsedParams,
         clearedOuterParams,
         onInnerParamsChanged,
-        enableActionParams: true,
+        enableActionParams: false,
     });
 
     /**

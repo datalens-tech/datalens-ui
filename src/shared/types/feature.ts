@@ -91,7 +91,7 @@ export enum Feature {
     AddDemoWorkbook = 'AddDemoWorkbook',
     SaveDashWithFakeEntry = 'SaveDashWithFakeEntry',
     CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
-    WizardChartChartFilteringEnable = 'WizardChartChartFilteringEnable',
+    WizardChartChartFilteringAvailable = 'WizardChartChartFilteringAvailable',
     WizardChartChartFilteringEnableByDefault = 'WizardChartChartFilteringEnableByDefault',
 }
 
