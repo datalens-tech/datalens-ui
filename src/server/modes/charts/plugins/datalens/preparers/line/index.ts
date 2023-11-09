@@ -74,6 +74,7 @@ function prepareLine({
     usedColors,
 }: PrepareFunctionArgs) {
     const {data, order} = resultData;
+    const widgetConfig = ChartEditor.getWidgetConfig();
 
     const xPlaceholder = placeholders[0];
     const xPlaceholderSettings = xPlaceholder.settings;
@@ -405,11 +406,42 @@ function prepareLine({
                             }
 
                             const pointLabel = innerLabels && innerLabels[category];
+                            point.label = pointLabel === undefined ? '' : pointLabel;
 
-                            if (pointLabel !== undefined) {
-                                point.label = pointLabel;
-                            } else {
-                                point.label = '';
+                            if (widgetConfig?.actionParams?.enable) {
+                                const actionParams: Record<string, any> = {};
+
+                                if (isDimensionField(x)) {
+                                    actionParams[x.guid] = point.x;
+                                }
+
+                                // bar-x only
+                                if (x2 && isDimensionField(x2)) {
+                                    actionParams[x2.guid] = line.stack;
+                                }
+
+                                const [yField, yField2] = ySectionItems || [];
+                                if (isDimensionField(yField)) {
+                                    actionParams[yField.guid] = point.y;
+                                }
+
+                                // bar-y only
+                                if (isDimensionField(yField2)) {
+                                    actionParams[yField2.guid] = line.stack;
+                                }
+
+                                if (isDimensionField(colorItem)) {
+                                    actionParams[colorItem.guid] = line.colorValue;
+                                }
+
+                                if (isDimensionField(shapeItem)) {
+                                    actionParams[shapeItem.guid] = line.shapeValue;
+                                }
+
+                                point.custom = {
+                                    ...point.custom,
+                                    actionParams,
+                                };
                             }
 
                             return point;

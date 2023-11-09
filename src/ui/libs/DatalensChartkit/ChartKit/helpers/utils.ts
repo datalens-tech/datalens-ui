@@ -1,8 +1,10 @@
 import type {Point} from 'highcharts';
 import get from 'lodash/get';
-import {GraphWidget} from "ui/libs/DatalensChartkit/types";
 
-export type ActionParams = Record<string, string | string[]>;
+import {GraphWidget} from '../../types';
+
+export type ActionParamsValue = string | number | boolean;
+export type ActionParams = Record<string, ActionParamsValue | ActionParamsValue[]>;
 
 export type PointActionParams = Record<string, string>;
 
@@ -19,10 +21,10 @@ export function isPointSelected(point: Point, actionParams: ActionParams = {}) {
                 const pointParamValue = String(value);
                 const actionParamsValue = actionParams[name];
                 if (Array.isArray(actionParamsValue)) {
-                    return actionParamsValue.includes(pointParamValue);
+                    return actionParamsValue.some((val) => String(val) === pointParamValue);
                 }
 
-                return actionParamsValue === pointParamValue;
+                return String(actionParamsValue) === pointParamValue;
             }
 
             return acc;
@@ -37,6 +39,6 @@ export const extractHcTypeFromData = (data?: GraphWidget) => {
     return data?.libraryConfig.chart?.type;
 };
 
-export function extractHcTypeFromPoint(point: Highcharts.Point) {
-    return point.series.chart.options.chart?.type;
+export function extractHcTypeFromSeries(series?: Highcharts.Series) {
+    return series?.chart.options.chart?.type;
 }

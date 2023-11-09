@@ -11,22 +11,27 @@ describe('isPointSelected', () => {
     });
 
     test('point data has no intersections with the actionParams -> point is not selected', () => {
-        const actionParams: ActionParams = {c: '3'};
+        const actionParams: ActionParams = {c: ['3']};
         expect(isPointSelected(point, actionParams)).toBeFalsy();
     });
 
     test('point data has partial match with the actionParams -> point is selected', () => {
-        const actionParams: ActionParams = {a: '1'};
+        const actionParams: ActionParams = {a: ['1']};
         expect(isPointSelected(point, actionParams)).toBeTruthy();
     });
 
     test('point data has full match with the actionParams -> point is selected', () => {
-        const actionParams: ActionParams = {a: '1', b: '2', c: '3'};
+        const actionParams: ActionParams = {a: [1], b: ['2']};
+        expect(isPointSelected(point, actionParams)).toBeTruthy();
+    });
+
+    test('point data has full match with the actionParams(multiselect) -> point is selected', () => {
+        const actionParams: ActionParams = {a: [1, 7], b: ['2']};
         expect(isPointSelected(point, actionParams)).toBeTruthy();
     });
 
     test('point data and actionParams have parameters with different values -> point is not selected', () => {
-        const actionParams: ActionParams = {a: '2'};
+        const actionParams: ActionParams = {a: ['2']};
         expect(isPointSelected(point, actionParams)).toBeFalsy();
     });
 });

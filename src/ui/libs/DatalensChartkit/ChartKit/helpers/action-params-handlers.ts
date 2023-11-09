@@ -1,29 +1,19 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import {transformParamsToActionParams} from '@gravity-ui/dashkit';
-import type {Point} from 'highcharts';
+import type {Point, PointOptionsObject} from 'highcharts';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import merge from 'lodash/merge';
 import uniq from 'lodash/uniq';
 import type {GraphWidgetEventScope, StringParams} from 'shared';
 
 import type {ChartKitAdapterProps} from '../types';
 
-import {ActionParams, extractHcTypeFromPoint, isPointSelected} from './utils';
+import {ActionParams, ActionParamsValue, extractHcTypeFromSeries, isPointSelected} from './utils';
 
 const Opacity = {
     SELECTED: '1',
     UNSELECTED: '0.5',
-};
-
-const setPointOpacity = (point: Highcharts.Point, opacity: string) => {
-    const type = extractHcTypeFromPoint(point);
-
-    if (type === 'scatter') {
-        // @ts-expect-error
-        point.update({marker: {states: {normal: {opacity}}}});
-    } else {
-        point.update({opacity});
-    }
 };
 
 const setSeriesOpacity = (seriesItem: Highcharts.Series) => {
@@ -31,14 +21,63 @@ const setSeriesOpacity = (seriesItem: Highcharts.Series) => {
     seriesItem.update({opacity, selected: seriesItem.selected});
 };
 
-function selectPoint(point: Point) {
-    point.select(true);
-    setPointOpacity(point, Opacity.SELECTED);
+function setPointSelectState(point: Point, selected: boolean) {
+    const type = extractHcTypeFromSeries(point.series);
+    const opacity = selected ? Opacity.SELECTED : Opacity.UNSELECTED;
+
+    switch (type) {
+        case 'scatter': {
+            const prevMarkerOptions = get(point, 'marker');
+            const markerOptions = merge({}, prevMarkerOptions, {
+                states: {normal: {opacity}},
+            });
+            point.update(
+                {
+                    marker: markerOptions,
+                } as unknown as PointOptionsObject,
+                false,
+            );
+            break;
+        }
+        case 'line':
+        case 'area': {
+            point.update(
+                {
+                    marker: {
+                        enabled: selected,
+                        fillOpacity: opacity,
+                        states: {normal: {opacity}},
+                    },
+                } as unknown as PointOptionsObject,
+                false,
+            );
+            break;
+        }
+        default: {
+            point.update({opacity}, false);
+        }
+    }
 }
 
-function unselectPoint(point: Point) {
-    point.select(false);
-    setPointOpacity(point, Opacity.UNSELECTED);
+function setSeriesSelectState(series: Highcharts.Series, selected: boolean) {
+    const type = extractHcTypeFromSeries(series);
+    const opacity = selected ? Opacity.SELECTED : Opacity.UNSELECTED;
+
+    switch (type) {
+        case 'area':
+        case 'line': {
+            series.update(
+                {
+                    opacity,
+                },
+                false,
+            );
+            break;
+        }
+        default: {
+            break;
+        }
+    }
 }
 
 function mergeParams(params: ActionParams, addition: ActionParams = {}) {
@@ -46,9 +85,11 @@ function mergeParams(params: ActionParams, addition: ActionParams = {}) {
     return Object.entries(addition).reduce((acc, [key, value]) => {
         if (!acc[key]) {
             acc[key] = [];
+        } else if (!Array.isArray(acc[key])) {
+            acc[key] = [acc[key] as ActionParamsValue];
         }
 
-        acc[key] = uniq(acc[key].concat(value as string));
+        acc[key] = uniq((acc[key] as ActionParamsValue[]).concat(value as string));
         return acc;
     }, result);
 }
@@ -143,6 +184,10 @@ export const handleChartLoadingForActionParams = (args: {
 }) => {
     const {clickScope, series, actionParams = {}} = args;
 
+    if (!Object.keys(actionParams).length) {
+        return;
+    }
+
     switch (clickScope) {
         case 'point': {
             const chartPoints = series.reduce(
@@ -152,11 +197,15 @@ export const handleChartLoadingForActionParams = (args: {
 
             const hasSomePointSelected = chartPoints.some((p) => isPointSelected(p, actionParams));
             if (hasSomePointSelected) {
-                chartPoints.forEach((p) => {
-                    if (!isPointSelected(p, actionParams)) {
-                        unselectPoint(p);
-                    }
+                series.forEach((s) => {
+                    const hasAnySelectedPoints = s.getPointsCollection().reduce((acc, p) => {
+                        const pointSelected = isPointSelected(p, actionParams);
+                        setPointSelectState(p, pointSelected);
+                        return acc || pointSelected;
+                    }, false);
+                    setSeriesSelectState(s, hasAnySelectedPoints);
                 });
+                series[0]?.chart.redraw();
             }
 
             break;
@@ -182,7 +231,7 @@ export function handleSeriesClickForActionParams(args: {
 }) {
     const {chart, clickScope, event, onChange, actionParams: prevActionParams} = args;
     const multiSelect = Boolean(event.metaKey);
-    let newActionParams: StringParams = prevActionParams;
+    let newActionParams: ActionParams = prevActionParams;
 
     switch (clickScope) {
         case 'point': {
@@ -200,7 +249,7 @@ export function handleSeriesClickForActionParams(args: {
                 if (isPointSelected(currentPoint, prevActionParams)) {
                     chartPoints.forEach((p) => {
                         if (isPointSelected(p, currentPointParams)) {
-                            unselectPoint(p);
+                            setPointSelectState(p, false);
                         }
                     });
 
@@ -222,19 +271,19 @@ export function handleSeriesClickForActionParams(args: {
                                 const pointParams = get(p, 'options.custom.actionParams', {});
                                 newActionParams = subtractParameters(newActionParams, pointParams);
 
-                                unselectPoint(p);
+                                setPointSelectState(p, false);
                             }
                         });
                     }
 
-                    selectPoint(currentPoint);
+                    setPointSelectState(currentPoint, true);
                     newActionParams = mergeParams(newActionParams, currentPointParams);
                 }
             } else {
                 newActionParams = mergeParams(newActionParams, currentPointParams);
                 chartPoints.forEach((p) => {
                     if (!isPointSelected(p, newActionParams)) {
-                        unselectPoint(p);
+                        setPointSelectState(p, false);
                     }
                 });
             }
@@ -265,7 +314,7 @@ export function handleSeriesClickForActionParams(args: {
     onChange?.(
         {
             type: 'PARAMS_CHANGED',
-            data: {params: {...transformParamsToActionParams(newActionParams)}},
+            data: {params: {...transformParamsToActionParams(newActionParams as StringParams)}},
         },
         {forceUpdate: true},
         true,
