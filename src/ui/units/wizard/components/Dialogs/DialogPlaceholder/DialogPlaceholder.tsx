@@ -381,7 +381,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     renderAxisModeSettings() {
         const {sort, visualizationId} = this.props;
         const {settings, firstField} = this.state;
-        const {axisModeMap} = settings;
+        const {axisModeMap, disableAxisMode} = settings;
 
         if (typeof axisModeMap === 'undefined' || !firstField) {
             return null;
@@ -421,7 +421,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                     };
                 }
 
-                disabled = Boolean(firstField.disableAxisMode);
+                disabled = Boolean(disableAxisMode);
 
                 if (disabled) {
                     showDisabledTooltip = true;

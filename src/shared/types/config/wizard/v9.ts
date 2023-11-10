@@ -167,6 +167,7 @@ export type V9PlaceholderSettings = {
     holidays?: 'on' | 'off';
     axisFormatMode?: 'auto' | 'by-field';
     axisModeMap?: Record<string, 'discrete' | 'continuous'>;
+    disableAxisMode?: boolean;
 };
 
 export type V9Placeholder = {
@@ -257,7 +258,6 @@ export type V9Field = {
     subTotalsSettings?: TableSubTotalsSettings;
     backgroundSettings?: TableFieldBackgroundSettings;
     columnSettings?: ColumnSettings;
-    disableAxisMode?: boolean;
 } & V9ClientOnlyFields;
 
 export type V9ColorsConfig = {

@@ -8,7 +8,9 @@ import {
     QLChartType,
     QLParamType,
     QlConfigPreviewTableData,
+    ServerVisualization,
     StringParams,
+    WizardVisualizationId,
     biToDatalensQL,
     getDatalensQLTypeName,
     isMonitoringOrPrometheusChart,
@@ -23,7 +25,7 @@ import type {
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
 
-import {LOG_INFO, LOG_TIMING} from './constants';
+import {LINEAR_VISUALIZATIONS, LOG_INFO, LOG_TIMING} from './constants';
 
 let currentConsole: {log: Function} = console;
 
@@ -769,4 +771,11 @@ export const prepareQuery = (query: string) => {
         .replace(/--[^\n]*\n/g, '')
         .trim()
         .replace(/;+$/g, '');
+};
+
+export const visualizationCanHaveContinuousAxis = (visualization: ServerVisualization) => {
+    return (
+        LINEAR_VISUALIZATIONS.has(visualization.id) ||
+        visualization.id === WizardVisualizationId.BarXD3
+    );
 };

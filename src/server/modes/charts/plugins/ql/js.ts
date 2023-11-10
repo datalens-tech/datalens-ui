@@ -6,7 +6,6 @@ import {
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
-    WizardVisualizationId,
     isMonitoringOrPrometheusChart,
 } from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
@@ -20,8 +19,17 @@ import prepareMetric from './preparers/metric';
 import preparePie from './preparers/pie';
 import preparePreviewTable from './preparers/preview-table';
 import prepareTable from './preparers/table';
-import {LINEAR_VISUALIZATIONS, PIE_VISUALIZATIONS} from './utils/constants';
-import {getColumnsAndRows, log, prepareQuery} from './utils/misc-helpers';
+import {
+    HORIZONTAL_VISUALIZATIONS,
+    LINEAR_VISUALIZATIONS,
+    PIE_VISUALIZATIONS,
+} from './utils/constants';
+import {
+    getColumnsAndRows,
+    log,
+    prepareQuery,
+    visualizationCanHaveContinuousAxis,
+} from './utils/misc-helpers';
 import {
     mapItems,
     mapVisualizationPlaceholdersItems,
@@ -252,21 +260,27 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             });
         }
 
-        if (newVisualization.placeholders[0]?.items[0]) {
-            if (
-                disableDefaultSorting &&
-                (LINEAR_VISUALIZATIONS.has(newVisualization.id) ||
-                    newVisualization.id === WizardVisualizationId.BarXD3)
-            ) {
-                newVisualization.placeholders[0].settings = {
-                    axisModeMap: {
-                        [newVisualization.placeholders[0].items[0].guid]: 'discrete',
-                    },
-                };
+        if (visualizationCanHaveContinuousAxis(newVisualization)) {
+            const targetPlaceholderId = HORIZONTAL_VISUALIZATIONS.has(newVisualization.id)
+                ? 'y'
+                : 'x';
+            const targetPlaceholder = newVisualization.placeholders.find(
+                ({id}) => id === targetPlaceholderId,
+            );
 
-                newVisualization.placeholders[0].items[0].disableAxisMode = true;
-            } else {
-                newVisualization.placeholders[0].items[0].disableAxisMode = false;
+            if (targetPlaceholder && targetPlaceholder.items[0]) {
+                if (disableDefaultSorting) {
+                    targetPlaceholder.settings = {
+                        axisModeMap: {
+                            [targetPlaceholder.items[0].guid]: 'discrete',
+                        },
+                        disableAxisMode: true,
+                    };
+                } else {
+                    targetPlaceholder.settings = {
+                        disableAxisMode: false,
+                    };
+                }
             }
         }
 
