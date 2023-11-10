@@ -72,7 +72,7 @@ function prepareLine({
     segments,
     layerChartMeta,
     usedColors,
-    applyDefaultSorting = true,
+    disableDefaultSorting = false,
 }: PrepareFunctionArgs) {
     const {data, order} = resultData;
 
@@ -279,7 +279,7 @@ function prepareLine({
         let lineKeys1 = Object.keys(lines1);
         let lineKeys2 = Object.keys(lines2);
 
-        if (xIsDate && applyDefaultSorting) {
+        if (xIsDate && !disableDefaultSorting) {
             (categories as number[]).sort(numericCollator);
         }
 
@@ -291,7 +291,7 @@ function prepareLine({
             visualizationId !== WizardVisualizationId.Area &&
             !isPercentVisualization(visualizationId);
 
-        if (applyDefaultSorting) {
+        if (!disableDefaultSorting) {
             categories = getSortedCategories({
                 lines,
                 colorItem,
@@ -337,7 +337,7 @@ function prepareLine({
             xDataType === 'string' ||
             xIsPseudo ||
             isSortNumberTypeXAxisByMeasure ||
-            !applyDefaultSorting;
+            disableDefaultSorting;
 
         const orderedLineKeys = [lineKeys1, lineKeys2];
 
@@ -743,7 +743,7 @@ function prepareLine({
         });
 
         // Default sorting
-        if ((!isSortItemExists || !isSortCategoriesAvailable) && applyDefaultSorting) {
+        if ((!isSortItemExists || !isSortCategoriesAvailable) && !disableDefaultSorting) {
             if (xIsNumber) {
                 (categories as number[]).sort(numericCollator);
             } else {

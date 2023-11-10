@@ -219,7 +219,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
         const preparedQuery = prepareQuery(shared.queryValue);
 
-        const applyDefaultSorting = !/order by/gi.test(preparedQuery);
+        const disableDefaultSorting = /order by/gi.test(preparedQuery);
 
         const prepareSingleResultArgs = {
             resultData,
@@ -238,7 +238,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             ChartEditor,
             datasetsIds,
             loadedColorPalettes: {},
-            applyDefaultSorting,
+            disableDefaultSorting,
         };
 
         result = prepareSingleResult(prepareSingleResultArgs);
@@ -254,7 +254,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
         if (newVisualization.placeholders[0]?.items[0]) {
             if (
-                !applyDefaultSorting &&
+                disableDefaultSorting &&
                 (LINEAR_VISUALIZATIONS.has(newVisualization.id) ||
                     newVisualization.id === WizardVisualizationId.BarXD3)
             ) {

@@ -41,7 +41,7 @@ export type PrepareFunctionArgs = {
     datasets: string[];
     layerChartMeta?: LayerChartMeta;
     usedColors?: (string | undefined)[];
-    applyDefaultSorting?: boolean;
+    disableDefaultSorting?: boolean;
 };
 
 export type PrepareFunctionDataRow = (string | null)[];

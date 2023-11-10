@@ -54,7 +54,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         segments,
         layerChartMeta,
         usedColors,
-        applyDefaultSorting = true,
+        disableDefaultSorting = false,
     } = args;
     const {data, order} = resultData;
 
@@ -240,7 +240,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         let lineKeys1 = Object.keys(lines1);
         let lineKeys2 = [];
 
-        if (xIsDate && applyDefaultSorting) {
+        if (xIsDate && !disableDefaultSorting) {
             (categories as number[]).sort(numericCollator);
         }
 
@@ -250,7 +250,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         );
         const isSortableXAxis = !isPercentVisualization(visualizationId);
 
-        if (applyDefaultSorting) {
+        if (!disableDefaultSorting) {
             categories = getSortedCategories({
                 lines,
                 colorItem,
@@ -296,7 +296,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
             xDataType === 'string' ||
             xIsPseudo ||
             isSortNumberTypeXAxisByMeasure ||
-            !applyDefaultSorting;
+            disableDefaultSorting;
 
         const orderedLineKeys = [lineKeys1, lineKeys2];
 
@@ -482,7 +482,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         });
 
         // Default sorting
-        if ((!isSortItemExists || !isSortCategoriesAvailable) && applyDefaultSorting) {
+        if ((!isSortItemExists || !isSortCategoriesAvailable) && !disableDefaultSorting) {
             if (xIsNumber) {
                 (categories as number[]).sort(numericCollator);
             } else {

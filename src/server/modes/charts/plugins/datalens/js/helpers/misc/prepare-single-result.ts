@@ -42,7 +42,7 @@ type PrepareSingleResultArgs = {
     ChartEditor: IChartEditor;
     datasetsIds: string[];
     loadedColorPalettes?: Record<string, ColorPalette>;
-    applyDefaultSorting?: boolean;
+    disableDefaultSorting?: boolean;
 };
 
 // eslint-disable-next-line complexity
@@ -55,7 +55,7 @@ export default ({
     ChartEditor,
     datasetsIds,
     loadedColorPalettes = {},
-    applyDefaultSorting,
+    disableDefaultSorting = false,
 }: PrepareSingleResultArgs) => {
     const {
         sharedData: {drillDownData},
@@ -296,7 +296,7 @@ export default ({
         shapesConfig,
         segments,
 
-        applyDefaultSorting,
+        disableDefaultSorting,
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);
