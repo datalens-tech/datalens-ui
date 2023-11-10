@@ -36,8 +36,8 @@ describe('preparePie', () => {
         }));
 
         expect(items).toEqual([
-            {color: '#4DA2F1', colorValue: '1'},
-            {color: '#FF3D64', colorValue: '2'},
+            {color: '#4DA2F1', colorValue: '2'},
+            {color: '#FF3D64', colorValue: '1'},
         ]);
     });
 
@@ -52,8 +52,8 @@ describe('preparePie', () => {
         }));
 
         expect(items).toEqual([
-            {color: 'rgb(107, 50, 201)', colorValue: 1},
             {color: 'rgb(208, 163, 255)', colorValue: 2},
+            {color: 'rgb(107, 50, 201)', colorValue: 1},
         ]);
     });
 
@@ -68,8 +68,8 @@ describe('preparePie', () => {
         }));
 
         expect(items).toEqual([
-            {color: '#4DA2F1', colorValue: '1'},
-            {color: '#FF3D64', colorValue: '2'},
+            {color: '#4DA2F1', colorValue: '2'},
+            {color: '#FF3D64', colorValue: '1'},
         ]);
     });
 });
