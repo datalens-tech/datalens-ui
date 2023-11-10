@@ -60,6 +60,7 @@
   "label_axis-title": "Axis title",
   "label_axis-title-manual-warning": "You are using a split, so the axis title can't be edited",
   "label_axis-mode-unavailable-type": "Continuous mode is available only for numeric and date types",
+  "label_axis-mode-unavailable-sort-measures": "Continuous mode is unavailable if sort section contains measures",
   "label_axis-mode-unavailable-forbidden": "Continuous mode is unavailable if query contains ORDER BY",
   "label_axis-type": "Axis type",
   "label_background-color-field-selector": "By field",

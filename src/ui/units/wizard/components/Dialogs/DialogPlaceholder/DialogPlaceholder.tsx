@@ -397,24 +397,41 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const radioButtons = AXIS_MODE_RADIO_BUTTONS.map((option) => {
             if (option.value === SETTINGS.AXIS_MODE.CONTINUOUS) {
                 // Axis mode always depends on first item in placeholder
-                let disabled = !isAllAxisModesAvailable(firstField) || sortHasMeasures;
+                let disabled = !isAllAxisModesAvailable(firstField);
 
                 if (disabled) {
                     showDisabledTooltip = true;
                     disabledTooltipContent = 'label_axis-mode-unavailable-type';
-                } else {
-                    disabled = Boolean(firstField.disableAxisMode);
 
-                    if (disabled) {
-                        showDisabledTooltip = true;
-                        disabledTooltipContent = 'label_axis-mode-unavailable-forbidden';
-                    }
+                    return {
+                        ...option,
+                        disabled,
+                    };
                 }
 
-                return {
-                    ...option,
-                    disabled,
-                };
+                disabled = sortHasMeasures;
+
+                if (disabled) {
+                    showDisabledTooltip = true;
+                    disabledTooltipContent = 'label_axis-mode-unavailable-sort-measures';
+
+                    return {
+                        ...option,
+                        disabled,
+                    };
+                }
+
+                disabled = Boolean(firstField.disableAxisMode);
+
+                if (disabled) {
+                    showDisabledTooltip = true;
+                    disabledTooltipContent = 'label_axis-mode-unavailable-forbidden';
+
+                    return {
+                        ...option,
+                        disabled,
+                    };
+                }
             }
 
             return option;
