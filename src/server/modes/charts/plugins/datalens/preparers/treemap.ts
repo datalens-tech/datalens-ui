@@ -4,7 +4,6 @@ import {
     Feature,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
-    isDimensionField,
     isEnabledServerFeature,
 } from '../../../../../../shared';
 import {registry} from '../../../../../registry';
@@ -38,10 +37,8 @@ function prepareTreemap({
     colors,
     colorsConfig,
     idToTitle,
-    ChartEditor,
 }: PrepareFunctionArgs) {
     const app = registry.getApp();
-    const widgetConfig = ChartEditor.getWidgetConfig();
     // Measurements
     const d = placeholders[0].items;
     const dTypes = d.map((item) => item.data_type);
@@ -145,18 +142,6 @@ function prepareTreemap({
             dPath.push(value);
 
             treemapItem.id = `id_${dPath.join('/')}`;
-
-            if (widgetConfig?.actionParams?.enable) {
-                const actionParams: Record<string, any> = {};
-
-                if (isDimensionField(item)) {
-                    actionParams[item.guid] = rawValue;
-                }
-
-                treemapItem.custom = {
-                    actionParams,
-                };
-            }
 
             if (level === d.length - 1) {
                 lastDimensionItem = treemapItem;

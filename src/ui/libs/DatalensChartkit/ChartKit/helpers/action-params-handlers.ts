@@ -3,6 +3,7 @@ import {transformParamsToActionParams} from '@gravity-ui/dashkit';
 import type {Point, PointOptionsObject} from 'highcharts';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import merge from 'lodash/merge';
 import uniq from 'lodash/uniq';
 
@@ -320,6 +321,10 @@ export function handleSeriesClickForActionParams(args: {
 
             break;
         }
+    }
+
+    if (isEqual(prevActionParams, newActionParams)) {
+        return;
     }
 
     const params = transformParamsToActionParams(newActionParams as StringParams);
