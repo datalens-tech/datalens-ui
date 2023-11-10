@@ -7,10 +7,13 @@ import merge from 'lodash/merge';
 import set from 'lodash/set';
 import type {StringParams} from 'shared';
 
-import type {GraphWidget, HighchartsSeriesAction} from '../../types';
+import type {GraphWidget, GraphWidgetEventScope, WidgetEventHandler} from '../../types';
 import type {ChartKitAdapterProps} from '../types';
 
-type ActionClickScope = NonNullable<HighchartsSeriesAction['scope']>;
+type ShapedAction = {
+    type: WidgetEventHandler['type'];
+    scope?: GraphWidgetEventScope;
+};
 
 const Opacity = {
     SELECTED: '1',
@@ -138,7 +141,7 @@ const setSeriesOpacity = (seriesItem: Highcharts.Series) => {
 };
 
 const handleChartLoadingForActionParams = (args: {
-    clickScope: ActionClickScope;
+    clickScope: GraphWidgetEventScope;
     series: Highcharts.Series[];
 }) => {
     const {clickScope, series} = args;
@@ -168,7 +171,7 @@ const handleChartLoadingForActionParams = (args: {
 
 const handleSeriesClickForActionParams = (args: {
     chart: Highcharts.Chart;
-    clickScope: ActionClickScope;
+    clickScope: GraphWidgetEventScope;
     event: Highcharts.SeriesClickEventObject;
     onChange?: ChartKitAdapterProps['onChange'];
 }) => {
@@ -232,12 +235,12 @@ export const fixPieTotals = (args: {data: GraphWidget}) => {
 };
 
 export const applySetActionParamsEvents = (args: {
-    action: HighchartsSeriesAction;
+    action: ShapedAction;
     data: GraphWidget;
     onChange?: ChartKitAdapterProps['onChange'];
 }) => {
     const {action, data, onChange} = args;
-    const clickScope: ActionClickScope = get(action, 'scope', 'point');
+    const clickScope: GraphWidgetEventScope = get(action, 'scope', 'point');
     const chartType = extractHcTypeFromData(data);
     const pathToChartEvents = 'libraryConfig.chart.events';
     const pathToSeriesEvents = 'libraryConfig.plotOptions.series.events';
