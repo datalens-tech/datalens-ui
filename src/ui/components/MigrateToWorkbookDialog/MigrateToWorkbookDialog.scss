@@ -19,6 +19,10 @@
 
     &__block-content-item {
         flex: 1 1 0;
+
+        &:last-child {
+            margin-left: 24px;
+        }
     }
 
     &__error-block {
