@@ -1,4 +1,10 @@
-import {DATASET_FIELD_TYPES, ServerColor, ServerShape} from '../../../../../../../../../shared';
+import {
+    DATASET_FIELD_TYPES,
+    IChartEditor,
+    ServerColor,
+    ServerField,
+    ServerShape,
+} from '../../../../../../../../../shared';
 
 const DATASET_ID = 'j43msj9o23ge9';
 
@@ -7,14 +13,14 @@ const X_FIELD = {
     title: 'XField',
     guid: 'cddd9cad-52a2-4232-8898-ade9a972c864',
     data_type: DATASET_FIELD_TYPES.GENERICDATETIME,
-};
+} as ServerField;
 
 const Y_FIELD = {
     datasetId: DATASET_ID,
     title: 'YField',
     guid: 'a6b94410-e219-11e9-a279-0b30c0a74ab7',
     data_type: DATASET_FIELD_TYPES.FLOAT,
-};
+} as ServerField;
 
 export const COLOR_FIELD = {
     datasetId: DATASET_ID,
@@ -31,7 +37,9 @@ export const SHAPE_FIELD = {
 } as ServerShape;
 
 export const PREPARE_FUNCTION_ARGS = {
-    ChartEditor: undefined,
+    ChartEditor: {
+        getWidgetConfig: () => {},
+    } as IChartEditor,
     colors: [],
     colorsConfig: {loadedColorPalettes: {}, colors: ['blue', 'red', 'orange'], gradientColors: []},
     datasets: [],
@@ -43,7 +51,7 @@ export const PREPARE_FUNCTION_ARGS = {
         [Y_FIELD.guid]: Y_FIELD.data_type,
         [COLOR_FIELD.guid]: COLOR_FIELD.data_type,
         [SHAPE_FIELD.guid]: SHAPE_FIELD.data_type,
-    },
+    } as Record<string, DATASET_FIELD_TYPES>,
     idToTitle: {
         [X_FIELD.guid]: X_FIELD.title,
         [Y_FIELD.guid]: Y_FIELD.title,

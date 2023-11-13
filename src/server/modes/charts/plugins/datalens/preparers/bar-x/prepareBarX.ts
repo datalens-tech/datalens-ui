@@ -9,6 +9,7 @@ import {
     getAxisMode,
     getFakeTitleOrTitle,
     isDateField,
+    isDimensionField,
     isMeasureField,
     isMeasureValue,
     isPercentVisualization,
@@ -54,9 +55,11 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         segments,
         layerChartMeta,
         usedColors,
+        ChartEditor,
     } = args;
     const {data, order} = resultData;
-
+    const widgetConfig = ChartEditor.getWidgetConfig();
+    const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xPlaceholderSettings = xPlaceholder?.settings;
     const x: ServerField | undefined = xPlaceholder?.items[0];
@@ -370,6 +373,19 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                                 point.label = pointLabel;
                             }
 
+                            if (isActionParamsEnable) {
+                                const actionParams: Record<string, any> = {};
+
+                                if (x && isDimensionField(x)) {
+                                    actionParams[x.guid] = category;
+                                }
+
+                                point.custom = {
+                                    ...point.custom,
+                                    actionParams,
+                                };
+                            }
+
                             return point;
                         })
                         .filter((point) => point !== null),
@@ -408,6 +424,23 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 graph.colorShapeValue = line.colorShapeValue;
 
                 graph.custom = customSeriesData;
+
+                if (isActionParamsEnable) {
+                    const actionParams: Record<string, any> = {};
+
+                    if (x2) {
+                        actionParams[x2.guid] = line.stack;
+                    }
+
+                    if (isDimensionField(colorItem)) {
+                        actionParams[colorItem.guid] = line.colorValue;
+                    }
+
+                    graph.custom = {
+                        ...graph.custom,
+                        actionParams,
+                    };
+                }
 
                 graphs.push(graph);
             });

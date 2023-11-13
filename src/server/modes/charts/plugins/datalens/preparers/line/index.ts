@@ -74,7 +74,8 @@ function prepareLine({
     usedColors,
 }: PrepareFunctionArgs) {
     const {data, order} = resultData;
-
+    const widgetConfig = ChartEditor.getWidgetConfig();
+    const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const xPlaceholder = placeholders[0];
     const xPlaceholderSettings = xPlaceholder.settings;
     const x: ServerField | undefined = placeholders[0].items[0];
@@ -405,11 +406,24 @@ function prepareLine({
                             }
 
                             const pointLabel = innerLabels && innerLabels[category];
+                            point.label = pointLabel === undefined ? '' : pointLabel;
 
-                            if (pointLabel !== undefined) {
-                                point.label = pointLabel;
-                            } else {
-                                point.label = '';
+                            if (isActionParamsEnable) {
+                                const actionParams: Record<string, any> = {};
+
+                                if (isDimensionField(x)) {
+                                    actionParams[x.guid] = point.x;
+                                }
+
+                                const [yField] = ySectionItems || [];
+                                if (isDimensionField(yField)) {
+                                    actionParams[yField.guid] = point.y;
+                                }
+
+                                point.custom = {
+                                    ...point.custom,
+                                    actionParams,
+                                };
                             }
 
                             return point;
@@ -451,6 +465,34 @@ function prepareLine({
                 graph.colorShapeValue = line.colorShapeValue;
 
                 graph.custom = customSeriesData;
+
+                if (isActionParamsEnable) {
+                    const actionParams: Record<string, any> = {};
+
+                    // bar-x only
+                    if (x2 && isDimensionField(x2)) {
+                        actionParams[x2.guid] = line.stack;
+                    }
+
+                    // bar-y only
+                    const [, yField2] = ySectionItems || [];
+                    if (isDimensionField(yField2)) {
+                        actionParams[yField2.guid] = line.stack;
+                    }
+
+                    if (isDimensionField(colorItem)) {
+                        actionParams[colorItem.guid] = line.colorValue;
+                    }
+
+                    if (isDimensionField(shapeItem)) {
+                        actionParams[shapeItem.guid] = line.shapeValue;
+                    }
+
+                    graph.custom = {
+                        ...graph.custom,
+                        actionParams,
+                    };
+                }
 
                 graphs.push(graph);
             });
