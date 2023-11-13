@@ -8,14 +8,22 @@ export type ActionParams = Record<string, ActionParamsValue | ActionParamsValue[
 
 export type PointActionParams = Record<string, string>;
 
+export function getPointActionParams(point: Point): PointActionParams {
+    return Object.assign(
+        {},
+        get(point, 'series.options.custom.actionParams', {}),
+        get(point, 'options.custom.actionParams', {}),
+    );
+}
+
 export function isPointSelected(point: Point, actionParams: ActionParams = {}) {
-    const pointActionParams: PointActionParams = get(point, 'options.custom.actionParams', {});
+    const pointActionParams = getPointActionParams(point);
     const matchedParamNames = Object.entries(pointActionParams).filter(
         ([name]) => name in actionParams,
     );
 
     return (
-        matchedParamNames.length &&
+        matchedParamNames.length > 0 &&
         matchedParamNames.every(([name, value]) => {
             const pointParamValue = String(value);
             const actionParamsValue = actionParams[name];

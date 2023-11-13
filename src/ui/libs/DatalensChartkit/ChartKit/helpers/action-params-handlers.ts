@@ -10,7 +10,13 @@ import uniq from 'lodash/uniq';
 import type {GraphWidgetEventScope, StringParams} from '../../../../../shared';
 import type {ChartKitAdapterProps} from '../types';
 
-import {ActionParams, ActionParamsValue, extractHcTypeFromSeries, isPointSelected} from './utils';
+import {
+    ActionParams,
+    ActionParamsValue,
+    extractHcTypeFromSeries,
+    getPointActionParams,
+    isPointSelected,
+} from './utils';
 
 const Opacity = {
     SELECTED: '1',
@@ -166,7 +172,7 @@ export const setPointActionParamToParams = (args: {
 function seriesToParams(series: Highcharts.Series[]) {
     return series.reduce<StringParams>((params, seriesItem) => {
         const points = seriesItem.getPointsCollection();
-        const actionParams = points.map((point) => get(point, 'options.custom.actionParam'));
+        const actionParams = points.map(getPointActionParams);
 
         if (!Array.isArray(actionParams)) {
             return params;
@@ -243,7 +249,7 @@ export function handleSeriesClickForActionParams(args: {
     switch (clickScope) {
         case 'point': {
             const currentPoint = event.point;
-            const currentPointParams = get(currentPoint, 'options.custom.actionParams', {});
+            const currentPointParams = getPointActionParams(currentPoint);
             const chartPoints = chart.series.reduce(
                 (acc, s) => acc.concat(s.getPointsCollection()),
                 [] as Point[],
@@ -265,7 +271,7 @@ export function handleSeriesClickForActionParams(args: {
                     if (multiSelect) {
                         chartPoints.forEach((p) => {
                             if (isPointSelected(p, newActionParams)) {
-                                const pointParams = get(p, 'options.custom.actionParams', {});
+                                const pointParams = getPointActionParams(p);
                                 newActionParams = addParams(newActionParams, pointParams);
                             }
                         });
@@ -275,7 +281,7 @@ export function handleSeriesClickForActionParams(args: {
                         // should remove the selection from the previously selected points
                         chartPoints.forEach((p) => {
                             if (isPointSelected(p, prevActionParams)) {
-                                const pointParams = get(p, 'options.custom.actionParams', {});
+                                const pointParams = getPointActionParams(p);
                                 newActionParams = subtractParameters(newActionParams, pointParams);
 
                                 setPointSelectState(p, false);

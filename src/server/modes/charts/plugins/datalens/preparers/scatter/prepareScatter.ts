@@ -72,6 +72,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         ChartEditor,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
+    const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const {data, order} = resultData;
 
     const x = placeholders[0].items[0];
@@ -328,7 +329,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             point.sLabel = shapeValue;
         }
 
-        if (widgetConfig?.actionParams?.enable) {
+        if (isActionParamsEnable) {
             const actionParams: Record<string, any> = {};
 
             if (isDimensionField(x)) {
@@ -341,14 +342,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
             if (isDimensionField(z)) {
                 actionParams[z.guid] = zValueRaw;
-            }
-
-            if (isDimensionField(color)) {
-                actionParams[color.guid] = point.colorValue;
-            }
-
-            if (isDimensionField(shape)) {
-                actionParams[shape.guid] = point.shapeValue;
             }
 
             point.custom = {
@@ -398,6 +391,23 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
     graphs.forEach((graph) => {
         graph.keys = Array.from(keys);
+
+        if (isActionParamsEnable) {
+            const actionParams: Record<string, any> = {};
+
+            if (isDimensionField(color)) {
+                actionParams[color.guid] = graph.data?.[0]?.colorValue;
+            }
+
+            if (isDimensionField(shape)) {
+                actionParams[shape.guid] = graph.data?.[0]?.shapeValue;
+            }
+
+            graph.custom = {
+                ...graph.custom,
+                actionParams,
+            };
+        }
     });
 
     return {

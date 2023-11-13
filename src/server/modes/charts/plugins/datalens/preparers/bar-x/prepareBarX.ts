@@ -59,7 +59,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     } = args;
     const {data, order} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
-
+    const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xPlaceholderSettings = xPlaceholder?.settings;
     const x: ServerField | undefined = xPlaceholder?.items[0];
@@ -373,19 +373,11 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                                 point.label = pointLabel;
                             }
 
-                            if (widgetConfig?.actionParams?.enable) {
+                            if (isActionParamsEnable) {
                                 const actionParams: Record<string, any> = {};
 
-                                if (x) {
+                                if (x && isDimensionField(x)) {
                                     actionParams[x.guid] = category;
-                                }
-
-                                if (x2) {
-                                    actionParams[x2.guid] = line.stack;
-                                }
-
-                                if (isDimensionField(colorItem)) {
-                                    actionParams[colorItem.guid] = line.colorValue;
                                 }
 
                                 point.custom = {
@@ -432,6 +424,23 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 graph.colorShapeValue = line.colorShapeValue;
 
                 graph.custom = customSeriesData;
+
+                if (isActionParamsEnable) {
+                    const actionParams: Record<string, any> = {};
+
+                    if (x2) {
+                        actionParams[x2.guid] = line.stack;
+                    }
+
+                    if (isDimensionField(colorItem)) {
+                        actionParams[colorItem.guid] = line.colorValue;
+                    }
+
+                    graph.custom = {
+                        ...graph.custom,
+                        actionParams,
+                    };
+                }
 
                 graphs.push(graph);
             });
