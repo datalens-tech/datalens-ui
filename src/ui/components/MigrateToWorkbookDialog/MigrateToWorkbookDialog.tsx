@@ -27,9 +27,10 @@ import {DIALOG_MIGRATE_ENTRY_TO_WORKBOOK} from '../CollectionsStructure';
 import DialogManager from '../DialogManager/DialogManager';
 import {SmartLoader} from '../SmartLoader/SmartLoader';
 
-// import {Body} from './components/Body';
-
 import {MigrationBody} from './MigrationBody/MigrationBody';
+import {migrateByCopy, migrateByTransfer} from './constants';
+
+// import {Body} from './components/Body';
 
 import './MigrateToWorkbookDialog.scss';
 
@@ -148,10 +149,10 @@ export const MigrateToWorkbookDialog: React.FC<Props> = ({open, entryId, onClose
                                 // <Body targetEntry={targetEntry} relationsGraph={relationsGraph} />
                                 <div className={b('body-content')}>
                                     <div className={b('block-content-item')}>
-                                        <MigrationBody />
+                                        <MigrationBody content={migrateByCopy} />
                                     </div>
                                     <div className={b('block-content-item')}>
-                                        <MigrationBody />
+                                        <MigrationBody content={migrateByTransfer} />
                                     </div>
                                 </div>
                             )}

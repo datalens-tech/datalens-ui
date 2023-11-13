@@ -1,8 +1,9 @@
 .dl-migrate-to-workbook-dialog-body-item-content {
     border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 16px;
+    border: 1px solid var(--g-color-line-generic);
+    padding: 20px 20px 28px;
     cursor: pointer;
+    color: var(--g-color-text-primary);
 
     &__header {
         display: flex;
@@ -22,6 +23,27 @@
     }
 
     &__description {
-        color: rgba(0, 0, 0, 0.7);
+        padding: 8px 0;
+        margin: 8px 0;
+        border-bottom: 1px solid var(--g-color-line-generic);
+        border-top: 1px solid var(--g-color-line-generic);
+        color: var(--g-color-text-complementary);
+    }
+
+    &__content {
+        margin-top: 16px;
+    }
+
+    &__content-item {
+        margin: 20px 0;
+        display: flex;
+    }
+
+    &__content-item-text {
+        margin-left: 12px;
+    }
+
+    &__content-item-help {
+        margin-left: auto;
     }
 }
