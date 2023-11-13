@@ -2,23 +2,43 @@ import type {ChartKitProps, ChartKitType, ChartKitWidgetData} from '@gravity-ui/
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
-import uniqBy from 'lodash/uniqBy';
 
 import {DL} from '../../../../constants/common';
 import type {GraphWidget, LoadedWidgetData} from '../../types';
+import {ChartKitCustomError} from '../modules/chartkit-custom-error/chartkit-custom-error';
 import type {ChartKitAdapterProps} from '../types';
 
 import {applySetActionParamsEvents, extractHcTypeFromData, fixPieTotals} from './apply-hc-handlers';
 import {tooltipRenderer} from './tooltip';
 
 const getNormalizedClickActions = (data: GraphWidget) => {
-    const actions = data.config?.seriesActions?.click;
+    if (data.config && 'seriesActions' in data.config) {
+        throw new ChartKitCustomError(null, {
+            details: `
+    Seems you are trying to use unsupported property "config.seriesActions". This property sets according to this type:
+    
+    {
+        config: {
+            events?: {
+                click?: {
+                    handler: {
+                        type: 'setActionParams'
+                    };
+                    scope: 'point' | 'series';
+                };
+            };
+        };
+    }`,
+        });
+    }
+
+    const actions = data.config?.events?.click;
 
     if (!actions || isEmpty(actions)) {
         return [];
     }
 
-    return uniqBy(Array.isArray(actions) ? actions : [actions], ({type}) => type);
+    return Array.isArray(actions) ? actions : [actions];
 };
 
 export const extractWidgetType = (data?: LoadedWidgetData) => {
@@ -140,15 +160,28 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
 
             if (clickActions.length) {
                 clickActions.forEach((action) => {
-                    switch (action.type) {
-                        case 'setActionParams': {
-                            applySetActionParamsEvents({action, data, onChange});
+                    const handlers = Array.isArray(action.handler)
+                        ? action.handler
+                        : [action.handler];
+                    handlers.forEach((handler) => {
+                        switch (handler.type) {
+                            case 'setActionParams': {
+                                applySetActionParamsEvents({
+                                    action: {
+                                        type: handler.type,
+                                        scope: action.scope,
+                                    },
+                                    data,
+                                    onChange,
+                                });
+                            }
                         }
-                    }
+                    });
                 });
             }
 
             const chartType = extractHcTypeFromData(data);
+
             if (chartType === 'pie') {
                 fixPieTotals({data});
             }
