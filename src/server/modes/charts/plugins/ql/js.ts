@@ -3,6 +3,7 @@ import {
     DatasetFieldType,
     Field,
     IChartEditor,
+    PlaceholderId,
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
@@ -19,11 +20,7 @@ import prepareMetric from './preparers/metric';
 import preparePie from './preparers/pie';
 import preparePreviewTable from './preparers/preview-table';
 import prepareTable from './preparers/table';
-import {
-    HORIZONTAL_VISUALIZATIONS,
-    LINEAR_VISUALIZATIONS,
-    PIE_VISUALIZATIONS,
-} from './utils/constants';
+import {LINEAR_VISUALIZATIONS, PIE_VISUALIZATIONS} from './utils/constants';
 import {
     getColumnsAndRows,
     log,
@@ -261,9 +258,12 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
         }
 
         if (visualizationCanHaveContinuousAxis(newVisualization)) {
-            const targetPlaceholderId = HORIZONTAL_VISUALIZATIONS.has(newVisualization.id)
-                ? 'y'
-                : 'x';
+            const targetPlaceholderId = [
+                VISUALIZATION_IDS.BAR,
+                VISUALIZATION_IDS.BAR_100P,
+            ].includes(newVisualization.id)
+                ? PlaceholderId.Y
+                : PlaceholderId.X;
             const targetPlaceholder = newVisualization.placeholders.find(
                 ({id}) => id === targetPlaceholderId,
             );

@@ -22,7 +22,7 @@ export type V9ChartsConfig = {
     links: V9Link[];
     sort: V9Sort[];
     tooltips: V9Tooltip[];
-    type: 'datalens' | 'ql';
+    type: 'datalens';
     updates: V9Update[];
     visualization: V9Visualization;
     shapes: V9Shape[];
