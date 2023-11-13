@@ -255,7 +255,7 @@ export const URL_OPTIONS = {
     EMBEDDED: '_embedded',
     NO_CONTROLS: '_no_controls',
     LANGUAGE: '_lang',
-    ACTION_PARAMS_ENABLED: '_action_params_enabled',
+    ACTION_PARAMS_ENABLED: '_action_params',
 };
 
 export const DLS_SUBJECT = {
