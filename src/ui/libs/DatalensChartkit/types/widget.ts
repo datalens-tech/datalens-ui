@@ -12,11 +12,13 @@ import {
     ChartkitHandlers,
     ChartsInsightsItem,
     GraphTooltipLine,
+    GraphWidgetEventScope,
     StringParams,
     TableCell,
     TableHead,
     TableRow,
     TableTitle,
+    WidgetEvent,
 } from '../../../../shared';
 import {ChartsData} from '../modules/data-provider/charts';
 
@@ -103,19 +105,6 @@ export type GraphWidgetSeriesOptions = Highcharts.SeriesOptionsType & {
     title?: string;
     sname?: string;
     fname?: string;
-};
-
-type SetActionParamsEventHandler = {
-    type: 'setActionParams';
-};
-
-export type WidgetEventHandler = SetActionParamsEventHandler;
-
-export type GraphWidgetEventScope = 'point' | 'series';
-
-type WidgetEvent<T> = {
-    handler: WidgetEventHandler | WidgetEventHandler[];
-    scope?: T;
 };
 
 export type GraphWidget = WidgetBaseWithData &

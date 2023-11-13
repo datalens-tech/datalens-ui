@@ -65,7 +65,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
         isEmbedded,
     } = props;
 
-    const {noControls} = Utils.getOptionsFromSearch(search);
+    const {noControls, actionParamsEnabled} = Utils.getOptionsFromSearch(search);
 
     const possibleEntryId = React.useMemo(() => extractEntryId(idOrSource), [idOrSource]);
 
@@ -197,6 +197,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
                     onChartLoad={onChartLoad}
                     onChartRender={onChartRender}
                     noControls={noControls}
+                    actionParamsEnabled={actionParamsEnabled}
                     forwardedRef={chartKitRef as unknown as React.RefObject<ChartKitType>}
                     splitTooltip={hasSplitTooltip}
                     menuType="preview"

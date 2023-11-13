@@ -4,6 +4,7 @@ import {
     ExtendedSeriesLineOptions,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
+    isDimensionField,
     isNumberField,
 } from '../../../../../../../shared';
 import {ChartColorsConfig} from '../../js/helpers/colors';
@@ -105,9 +106,11 @@ export function preparePie({
     colorsConfig,
     idToTitle,
     idToDataType,
+    ChartEditor,
     disableDefaultSorting = false,
 }: PrepareFunctionArgs) {
     const {data, order, totals} = resultData;
+    const widgetConfig = ChartEditor.getWidgetConfig();
     const groupedData: Record<string, number> = {};
     const labelsData: Record<string, string | null> = {};
 
@@ -256,6 +259,18 @@ export function preparePie({
                 colorGuid: color.guid,
                 colorValue: colorKey || name || color.title,
             };
+
+            if (widgetConfig?.actionParams?.enable) {
+                const actionParams: Record<string, any> = {};
+
+                if (isDimensionField(color)) {
+                    actionParams[color.guid] = key;
+                }
+
+                point.custom = {
+                    actionParams,
+                };
+            }
 
             if (labelsLength) {
                 if (isNumericalDataType(lDataType!) || label.title === 'Measure Values') {

@@ -88,4 +88,5 @@ export type PiePoint = {
     colorGuid: string;
     colorValue: string | number;
     label?: string | number | null;
+    custom?: object;
 };
