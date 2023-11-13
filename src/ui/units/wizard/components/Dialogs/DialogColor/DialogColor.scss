@@ -41,4 +41,14 @@
         align-items: center;
         justify-content: center;
     }
+
+    &__color-mode-select-wrapper {
+        width: calc(100% - 180px);
+        text-align: right;
+    }
+
+    &__label {
+        display: inline-block;
+        margin-right: 15px;
+    }
 }

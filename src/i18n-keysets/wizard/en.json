@@ -143,6 +143,7 @@
   "label_geopoint": "Geopoint",
   "label_geopolygon": "Geopolygon",
   "label_golden": "Golden",
+  "label_color-mode": "Color mode",
   "label_gradient": "Gradient",
   "label_gradient-2": "Gradient 2",
   "label_gradient-3": "Gradient 3",

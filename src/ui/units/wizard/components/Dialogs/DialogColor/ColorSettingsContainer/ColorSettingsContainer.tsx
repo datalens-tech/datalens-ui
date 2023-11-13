@@ -63,11 +63,11 @@ class ColorSettingsContainer extends React.Component<Props> {
     render() {
         const {isGradient} = this.props;
 
-        if (isGradient) {
-            return this.renderGradientBody();
-        }
-
-        return this.renderPaletteBody();
+        return (
+            <React.Fragment>
+                {isGradient ? this.renderGradientBody() : this.renderPaletteBody()}
+            </React.Fragment>
+        );
     }
 
     private renderPaletteBody = () => {

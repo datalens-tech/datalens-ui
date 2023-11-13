@@ -9,7 +9,7 @@ import {
     Link,
     ServerDatasetField,
 } from '../';
-import {GradientType, NavigatorLinesMode, NavigatorPeriod} from '../../constants';
+import {ColorMode, GradientType, NavigatorLinesMode, NavigatorPeriod} from '../../constants';
 import {IconId} from '../../types';
 import {CommonUpdate, CommonUpdateField} from '../common-update';
 import {DatasetField} from '../dataset';
@@ -65,6 +65,7 @@ export interface ColorsConfig {
     mountedColors?: Record<string, string>;
     coloredByMeasure?: boolean;
     palette?: string;
+    colorMode?: ColorMode;
 }
 
 export enum LabelsPositions {

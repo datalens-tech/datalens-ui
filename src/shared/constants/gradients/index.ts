@@ -16,6 +16,11 @@ export enum GradientType {
     THREE_POINT = '3-point',
 }
 
+export enum ColorMode {
+    PALETTE = 'palette',
+    GRADIENT = 'gradient',
+}
+
 export interface Gradient {
     id: string;
     title?: string;
