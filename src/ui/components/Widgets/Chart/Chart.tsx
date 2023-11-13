@@ -65,6 +65,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         ignoreUsedParams,
         onInnerParamsChanged,
         disableChartLoader,
+        actionParamsEnabled,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -170,7 +171,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         ignoreUsedParams,
         clearedOuterParams,
         onInnerParamsChanged,
-        enableActionParams: false,
+        enableActionParams: actionParamsEnabled,
     });
 
     /**

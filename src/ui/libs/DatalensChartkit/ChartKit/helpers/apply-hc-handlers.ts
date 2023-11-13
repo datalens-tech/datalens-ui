@@ -1,11 +1,12 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import {pickActionParamsFromParams} from '@gravity-ui/dashkit';
 import {wrap} from 'highcharts';
 import get from 'lodash/get';
 import has from 'lodash/has';
 import merge from 'lodash/merge';
 import set from 'lodash/set';
-import {GraphWidgetEventScope, URL_ACTION_PARAMS_PREFIX} from 'shared';
 
+import type {GraphWidgetEventScope} from '../../../../../shared';
 import type {GraphWidget} from '../../types';
 import type {ChartKitAdapterProps} from '../types';
 
@@ -29,19 +30,6 @@ export const fixPieTotals = (args: {data: GraphWidget}) => {
         delete this.total;
     });
 };
-
-function getActionParams(params: Record<string, string | string[]> = {}) {
-    const actionParams: Record<string, string | string[]> = {};
-    Object.entries(params).forEach(([key, value]) => {
-        if (key.startsWith(URL_ACTION_PARAMS_PREFIX)) {
-            actionParams[key.slice(URL_ACTION_PARAMS_PREFIX.length)] = Array.isArray(value)
-                ? value
-                : [value];
-        }
-    });
-
-    return actionParams;
-}
 
 export const applySetActionParamsEvents = (args: {
     action: ShapedAction;
@@ -72,7 +60,7 @@ export const applySetActionParamsEvents = (args: {
         set(data, pathToScatterMarkerStates, {});
     }
 
-    const actionParams = getActionParams(get(data, 'unresolvedParams', {}));
+    const actionParams = pickActionParamsFromParams(get(data, 'unresolvedParams', {}));
 
     wrap(
         get(data, pathToChartEvents),
