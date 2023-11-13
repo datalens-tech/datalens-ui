@@ -67,12 +67,7 @@ function setSeriesSelectState(series: Highcharts.Series, selected: boolean) {
     switch (type) {
         case 'area':
         case 'line': {
-            series.update(
-                {
-                    opacity,
-                },
-                false,
-            );
+            series.update({opacity}, false);
             break;
         }
         default: {

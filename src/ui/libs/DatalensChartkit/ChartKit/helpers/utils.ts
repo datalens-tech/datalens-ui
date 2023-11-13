@@ -10,29 +10,22 @@ export type PointActionParams = Record<string, string>;
 
 export function isPointSelected(point: Point, actionParams: ActionParams = {}) {
     const pointActionParams: PointActionParams = get(point, 'options.custom.actionParams', {});
-
-    const result = Object.entries(pointActionParams).reduce<boolean | undefined>(
-        (acc, [name, value]) => {
-            if (acc === false) {
-                return false;
-            }
-
-            if (name in actionParams) {
-                const pointParamValue = String(value);
-                const actionParamsValue = actionParams[name];
-                if (Array.isArray(actionParamsValue)) {
-                    return actionParamsValue.some((val) => String(val) === pointParamValue);
-                }
-
-                return String(actionParamsValue) === pointParamValue;
-            }
-
-            return acc;
-        },
-        undefined,
+    const matchedParamNames = Object.entries(pointActionParams).filter(
+        ([name]) => name in actionParams,
     );
 
-    return Boolean(result);
+    return (
+        matchedParamNames.length &&
+        matchedParamNames.every(([name, value]) => {
+            const pointParamValue = String(value);
+            const actionParamsValue = actionParams[name];
+            if (Array.isArray(actionParamsValue)) {
+                return actionParamsValue.some((val) => String(val) === pointParamValue);
+            }
+
+            return String(actionParamsValue) === pointParamValue;
+        })
+    );
 }
 
 export const extractHcTypeFromData = (data?: GraphWidget) => {
