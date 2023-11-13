@@ -8,6 +8,7 @@ import {
     ChangeNavigationPathAction,
     SetAccessDescriptionAction,
     SetActiveSelectorIndexAction,
+    SetDashDSAction,
     SetDashKeyAction,
     SetDashKitRefAction,
     SetDashUpdateStatusAction,
@@ -59,6 +60,7 @@ export type DashAction<T = unknown> =
     | SetLoadingEditModeAction
     | EntryContentAction
     | SetDashUpdateStatusAction
+    | SetDashDSAction
     | SetNewRelationsAction
     | SetDashKeyAction
     | SetRenameWithoutReloadAction

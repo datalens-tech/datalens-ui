@@ -6,17 +6,22 @@ import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Titl
 import {i18n} from 'i18n';
 import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
+import uniq from 'lodash/uniq';
 import {Dispatch} from 'redux';
 import {
     DATASET_FIELD_TYPES,
     DashData,
     DashTabItem,
+    DashTabItemControlDataset,
     DashTabItemControlSourceType,
+    DashTabItemType,
     Dataset,
     DatasetFieldType,
     EntryUpdateMode,
     Operations,
 } from 'shared';
+import {GetEntriesDatasetsFieldsItem} from 'shared/schema';
+import {DashState} from 'ui/units/dash/store/reducers/dashTypedReducer';
 import {validateParamTitleOnlyUnderscore} from 'units/dash/components/ParamsSettings/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import {addOperationForValue} from 'units/dash/modules/helpers';
@@ -884,3 +889,73 @@ export const setSkipReload = (skipReload: boolean): SetSkipReloadAction => ({
     type: SET_SKIP_RELOAD,
     payload: skipReload,
 });
+export const SET_DASH_DS_FIELDS = Symbol('dash/SET_DASH_DS_FIELDS');
+export type SetDashDSAction = {
+    type: typeof SET_DASH_DS_FIELDS;
+    payload: {datasetsFields: GetEntriesDatasetsFieldsItem[]};
+};
+export const setDashDatasets = (data: SetDashDSAction['payload']): SetDashDSAction => ({
+    type: SET_DASH_DS_FIELDS,
+    payload: data,
+});
+
+const LOAD_DASH_DATASETS_CONCURRENT_ID = 'dashLoadDatasets';
+
+/**
+ * Do not wait for the answer when call this function:
+ * this data will be needed later, not immediately after loading dash
+ * @param entry
+ * @param tabId
+ */
+export function loadDashDatasets(entry: Partial<DashState>, tabId: string) {
+    return async function (dispatch: DashDispatch, _getState: () => DatalensGlobalState) {
+        const tabs = entry.data?.tabs || [];
+        if (!tabs.length) {
+            return;
+        }
+
+        const tabIndex = tabs.findIndex((item) => item.id === tabId);
+
+        if (tabIndex === -1) {
+            return;
+        }
+
+        const dashTabItems = tabs[tabIndex].items || [];
+        if (!dashTabItems.length) {
+            return;
+        }
+        let datasetsIds: string[] = [];
+        let entriesIds: string[] = [];
+        dashTabItems.forEach((dashItem) => {
+            if (
+                dashItem.type === DashTabItemType.Control &&
+                dashItem.data.sourceType === DashTabItemControlSourceType.Dataset
+            ) {
+                const dataSource = dashItem.data.source as DashTabItemControlDataset['source'];
+                if (dataSource.datasetId) {
+                    datasetsIds.push(dataSource.datasetId);
+                }
+            } else if (dashItem.type === DashTabItemType.Widget) {
+                const chartData = dashItem.data;
+                const widgetChartIds = chartData.tabs.map((chartTabItem) => chartTabItem.chartId);
+                entriesIds = entriesIds.concat(widgetChartIds);
+            }
+        });
+        datasetsIds = uniq(datasetsIds);
+        entriesIds = uniq(entriesIds);
+
+        if (isEmpty(datasetsIds) && isEmpty(entriesIds)) {
+            return;
+        }
+
+        const entriesDatasetsFields = await getSdk().mix.getEntriesDatasetsFields(
+            {
+                entriesIds,
+                datasetsIds,
+            },
+            {concurrentId: LOAD_DASH_DATASETS_CONCURRENT_ID},
+        );
+
+        dispatch(setDashDatasets({datasetsFields: entriesDatasetsFields}));
+    };
+}
