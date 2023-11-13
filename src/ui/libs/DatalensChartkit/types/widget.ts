@@ -105,11 +105,18 @@ export type GraphWidgetSeriesOptions = Highcharts.SeriesOptionsType & {
     fname?: string;
 };
 
-type HighchartsSeriesClickAction = {
+type SetActionParamsEventHandler = {
     type: 'setActionParams';
-    scope?: 'point' | 'series';
 };
-export type HighchartsSeriesAction = HighchartsSeriesClickAction;
+
+export type WidgetEventHandler = SetActionParamsEventHandler;
+
+export type GraphWidgetEventScope = 'point' | 'series';
+
+type WidgetEvent<T> = {
+    handler: WidgetEventHandler | WidgetEventHandler[];
+    scope?: T;
+};
 
 export type GraphWidget = WidgetBaseWithData &
     WithControls & {
@@ -147,8 +154,8 @@ export type GraphWidget = WidgetBaseWithData &
                 | ((config: {lines: GraphTooltipLine[]}) => void);
             enableGPTInsights?: boolean;
             tooltip?: HighchartsWidgetData['config']['tooltip'];
-            seriesActions?: {
-                click?: HighchartsSeriesAction | HighchartsSeriesAction[];
+            events?: {
+                click?: WidgetEvent<GraphWidgetEventScope> | WidgetEvent<GraphWidgetEventScope>[];
             };
         };
         libraryConfig: Highcharts.Options;
