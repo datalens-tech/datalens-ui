@@ -153,13 +153,13 @@ type MigrateEntriesToWorkbookAction =
     | MigrateEntriesToWorkbookSuccessAction
     | MigrateEntriesToWorkbookFailedAction;
 
-export const migrateEntriesToWorkbook = (params: MigrateEntriesToWorkbookArgs) => {
+export const migrateEntriesToWorkbookByTransfer = (params: MigrateEntriesToWorkbookArgs) => {
     return (dispatch: MigrationToWorkbookDispatch) => {
         dispatch({
             type: MIGRATE_ENTRIES_TO_WORKBOOK_LOADING,
         });
         return getSdk()
-            .us.migrateEntriesToWorkbook(params)
+            .us.migrateEntriesToWorkbookByTransfer(params)
             .then((data) => {
                 dispatch({
                     type: MIGRATE_ENTRIES_TO_WORKBOOK_SUCCESS,
@@ -190,13 +190,13 @@ export const migrateEntriesToWorkbook = (params: MigrateEntriesToWorkbookArgs) =
     };
 };
 
-export const migrateCopiedEntriesToWorkbook = (params: MigrateEntriesToWorkbookArgs) => {
+export const migrateEntriesToWorkbookByCopy = (params: MigrateEntriesToWorkbookArgs) => {
     return (dispatch: MigrationToWorkbookDispatch) => {
         dispatch({
             type: MIGRATE_ENTRIES_TO_WORKBOOK_LOADING,
         });
         return getSdk()
-            .us.migrateCopiedEntriesToWorkbook(params)
+            .us.migrateEntriesToWorkbookByCopy(params)
             .then((data) => {
                 dispatch({
                     type: MIGRATE_ENTRIES_TO_WORKBOOK_SUCCESS,

@@ -1,9 +1,12 @@
 {
   "action_cancel": "Cancel",
-  "action_move": "Migrate",
+  "action_сhoose": "Choose",
+  "action_next": "Next",
   "action_show-all": "Show all",
   "label_charts": "Charts",
   "label_connections": "Connections",
+  "md_label_copy-extension-warning": "В списке объектов есть CSV и GoogleSheets файлы. Пока мы не умеем их копировать, поэтому сейчас можно воспользоваться переносом.",
+  "md_label_copy-extension-warning-btn-back": "Back",
   "md_label_copy-warning": "The object and all related objects will be moved from folders to the workbook. It is impossible to return them from the workbook to folders. After the transfer, you will become the administrator of the workbook and will be able to assign access rights to other users and user groups",
   "label_current-entry": "Selected object",
   "label_dashboards": "Dashboards",
@@ -18,5 +21,7 @@
     "0 objects"
   ],
   "label_unknown-error": "An error occured during migration. Please try again later.",
-  "title": "Migrating objects to workbooks"
+  "title": "Choose the migration method to the workbook",
+  "title_transfer": "Migrating objects to workbooks",
+  "title_copy": "Migrating objects to workbooks"
 }

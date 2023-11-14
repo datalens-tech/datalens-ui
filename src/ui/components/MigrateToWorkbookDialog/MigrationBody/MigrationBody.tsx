@@ -22,14 +22,19 @@ type MigrationBodyProps = {
     list: List[];
 };
 
-const MigrationBody: React.FC<{content: MigrationBodyProps}> = ({content}) => {
+const MigrationBody: React.FC<{content: MigrationBodyProps; isActive?: boolean}> = ({
+    content,
+    isActive,
+}) => {
     return (
-        <div className={b()}>
+        <div className={b({active: isActive})}>
             <div className={b('header')}>
                 <div className={b('title')}>{content.title}</div>
                 {content.label && (
                     <div className={b('label')}>
-                        <Label theme="warning">{content.label}</Label>
+                        <Label size="m" theme="warning">
+                            {content.label}
+                        </Label>
                     </div>
                 )}
 

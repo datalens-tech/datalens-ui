@@ -116,7 +116,7 @@ export const workbooksActions = {
         params: ({collectionId, title}, headers) => ({body: {collectionId, title}, headers}),
     }),
 
-    migrateEntriesToWorkbook: createAction<
+    migrateEntriesToWorkbookByTransfer: createAction<
         MigrateEntriesToWorkbookResponse,
         MigrateEntriesToWorkbookArgs
     >({
@@ -124,7 +124,7 @@ export const workbooksActions = {
         path: ({workbookId}) => `${PATH_PREFIX}/${workbookId}/migrate-entries`,
         params: ({entryIds}, headers) => ({body: {entryIds}, headers}),
     }),
-    migrateCopiedEntriesToWorkbook: createAction<
+    migrateEntriesToWorkbookByCopy: createAction<
         MigrateEntriesToWorkbookResponse,
         MigrateEntriesToWorkbookArgs
     >({

@@ -12,7 +12,11 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "action_move": {
+    "action_сhoose": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_next": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -25,6 +29,14 @@
       "ru": "APPROVED"
     },
     "label_connections": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "md_label_copy-extension-warning": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "md_label_copy-extension-warning-btn-back": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -65,6 +77,14 @@
       "ru": "APPROVED"
     },
     "title": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_transfer": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_copy": {
       "en": "APPROVED",
       "ru": "APPROVED"
     }

@@ -128,6 +128,7 @@ export type CopyWorkbookTemplateResponse = Workbook & {operation?: GetDatalensOp
 export type MigrateEntriesToWorkbookArgs = {
     workbookId: string;
     entryIds: string[];
+    isTransferToWorkbook?: boolean;
 };
 
 export type MigrateEntriesToWorkbookResponse = GetEntryResponse[];

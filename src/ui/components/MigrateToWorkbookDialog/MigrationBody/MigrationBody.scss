@@ -1,9 +1,13 @@
 .dl-migrate-to-workbook-dialog-body-item-content {
     border-radius: 8px;
-    border: 1px solid var(--g-color-line-generic);
+    box-shadow: 0px 0px 0px 1px var(--g-color-line-generic);
     padding: 20px 20px 28px;
     cursor: pointer;
     color: var(--g-color-text-primary);
+
+    &_active {
+        box-shadow: 0px 0px 0px 2px var(--g-color-base-brand);
+    }
 
     &__header {
         display: flex;
@@ -12,6 +16,7 @@
     &__title {
         font-size: 28px;
         font-weight: 500;
+        line-height: 32px;
     }
 
     &__label {
@@ -24,7 +29,7 @@
 
     &__description {
         padding: 8px 0;
-        margin: 8px 0;
+        margin: 20px 0;
         border-bottom: 1px solid var(--g-color-line-generic);
         border-top: 1px solid var(--g-color-line-generic);
         color: var(--g-color-text-complementary);
