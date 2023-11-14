@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {BucketPaint} from '@gravity-ui/icons';
-import {Button, Dialog, Icon, RadioButton} from '@gravity-ui/uikit';
+import {Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
@@ -62,55 +62,33 @@ class DialogColorComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        // isGradient is legacy fallback flag
+        // colorMode is modern value
         this.state = {
-            colorMode: props.isGradient ? ColorMode.GRADIENT : ColorMode.PALETTE,
+            colorMode:
+                props.colorsConfig?.colorMode || props.isGradient
+                    ? ColorMode.GRADIENT
+                    : ColorMode.PALETTE,
         };
     }
 
     render() {
-        const {colorMode} = this.state;
-        const {item, items, dataset, isGradient} = this.props;
+        const {item, items, dataset} = this.props;
         const {mountedColors = {}} = this.props.paletteState;
         const {validationStatus} = this.props.gradientState;
+        const {colorMode} = this.state;
 
         if (!item || !dataset) {
             return null;
         }
 
-        const type = isGradient ? 'measure' : 'dimension';
-
         return (
             <Dialog open={true} onClose={this.onClose} disableFocusTrap={true}>
-                <div className={b({[type]: true})}>
+                <div className={b({[`${colorMode}-mode`]: true})}>
                     <Dialog.Header
                         insertBefore={
                             <div className={b('title-icon')}>
                                 <Icon data={BucketPaint} size={18} />
-                            </div>
-                        }
-                        insertAfter={
-                            <div className={b('color-mode-select-wrapper')}>
-                                <span className={b('label')}>
-                                    {i18n('wizard', 'label_color-mode')}
-                                </span>
-                                <RadioButton
-                                    size="m"
-                                    value={colorMode}
-                                    onChange={(event) => {
-                                        const newColorMode = event.target.value as ColorMode;
-
-                                        this.setState({
-                                            colorMode: newColorMode,
-                                        });
-                                    }}
-                                >
-                                    <RadioButton.Option value={ColorMode.PALETTE}>
-                                        {i18n('wizard', 'label_palette')}
-                                    </RadioButton.Option>
-                                    <RadioButton.Option value={ColorMode.GRADIENT}>
-                                        {i18n('wizard', 'label_gradient')}
-                                    </RadioButton.Option>
-                                </RadioButton>
                             </div>
                         }
                         caption={i18n('wizard', 'label_colors-settings')}
@@ -121,7 +99,8 @@ class DialogColorComponent extends React.Component<Props, State> {
                             item={item}
                             items={items}
                             extra={this.props.extra}
-                            isGradient={isGradient}
+                            colorMode={this.state.colorMode}
+                            onColorModeChange={this.onColorModeChange}
                         />
                     </Dialog.Body>
                     <Dialog.Footer
@@ -151,6 +130,10 @@ class DialogColorComponent extends React.Component<Props, State> {
         );
     }
 
+    onColorModeChange = (colorMode: ColorMode) => {
+        this.setState({colorMode});
+    };
+
     onResetButtonClick = () => {
         this.props.actions.setDialogColorPaletteState({
             ...this.props.paletteState,
@@ -168,11 +151,13 @@ class DialogColorComponent extends React.Component<Props, State> {
     };
 
     getColorsConfig = () => {
-        const {item, items, isGradient} = this.props;
+        const {item, items} = this.props;
+
+        const {colorMode} = this.state;
 
         let config: ColorsConfig;
 
-        if (isGradient) {
+        if (colorMode === ColorMode.GRADIENT) {
             const {
                 gradientMode,
                 gradientPalette,
@@ -193,6 +178,7 @@ class DialogColorComponent extends React.Component<Props, State> {
                 leftThreshold,
                 middleThreshold,
                 rightThreshold,
+                colorMode,
             };
 
             return config;
@@ -205,6 +191,7 @@ class DialogColorComponent extends React.Component<Props, State> {
                 mountedColors,
                 fieldGuid: item.guid,
                 coloredByMeasure: Boolean((items || []).length),
+                colorMode,
             };
         }
 

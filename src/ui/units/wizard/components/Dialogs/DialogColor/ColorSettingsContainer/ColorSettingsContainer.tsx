@@ -1,8 +1,11 @@
 import React from 'react';
 
+import {RadioButton} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
+import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ColorsConfig, Feature, Field} from 'shared';
+import {ColorMode, ColorsConfig, Feature, Field} from 'shared';
 import {fetchColorPalettes} from 'store/actions/colorPaletteEditor';
 import {selectColorPalettes} from 'store/selectors/colorPaletteEditor';
 import {DatalensGlobalState, Utils} from 'ui';
@@ -31,12 +34,17 @@ import {ExtraSettings} from '../DialogColor';
 import DialogColorGradientBody from '../DialogColorGradient/DialogColorGradient';
 import DialogColorPalette, {DEFAULT_COLOR} from '../DialogColorPalette/DialogColorPalette';
 
+import './ColorSettingsContainer.scss';
+
+const b = block('color-settings-container');
+
 type OwnProps = {
     colorsConfig: ColorsConfig | undefined;
     item: Field;
     items?: Field[];
     extra?: ExtraSettings;
-    isGradient: boolean;
+    colorMode: ColorMode;
+    onColorModeChange: (value: ColorMode) => void;
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -61,14 +69,41 @@ class ColorSettingsContainer extends React.Component<Props> {
     }
 
     render() {
-        const {isGradient} = this.props;
+        const {colorMode} = this.props;
 
         return (
             <React.Fragment>
-                {isGradient ? this.renderGradientBody() : this.renderPaletteBody()}
+                {this.renderColorModeSelect()}
+                {colorMode === ColorMode.GRADIENT
+                    ? this.renderGradientBody()
+                    : this.renderPaletteBody()}
             </React.Fragment>
         );
     }
+
+    private renderColorModeSelect = () => {
+        return (
+            <div className={b('row')}>
+                <span className={b('label')}>{i18n('wizard', 'label_color-mode')}</span>
+                <RadioButton
+                    size="m"
+                    value={this.props.colorMode}
+                    onChange={(event) => {
+                        const newColorMode = event.target.value as ColorMode;
+
+                        this.props.onColorModeChange(newColorMode);
+                    }}
+                >
+                    <RadioButton.Option value={ColorMode.PALETTE}>
+                        {i18n('wizard', 'label_palette')}
+                    </RadioButton.Option>
+                    <RadioButton.Option value={ColorMode.GRADIENT}>
+                        {i18n('wizard', 'label_gradient')}
+                    </RadioButton.Option>
+                </RadioButton>
+            </div>
+        );
+    };
 
     private renderPaletteBody = () => {
         return (
@@ -150,7 +185,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
         paletteState: selectDialogColorPaletteState(state),
         gradientState: selectDialogColorGradientState(state),
         colorPalettes: selectColorPalettes(state).filter(
-            (item) => item.isGradient === ownProps.isGradient,
+            (item) => item.isGradient === (ownProps.colorMode === ColorMode.GRADIENT),
         ),
         colorsList: selectClientPaletteColors(state).concat([DEFAULT_COLOR]),
     };

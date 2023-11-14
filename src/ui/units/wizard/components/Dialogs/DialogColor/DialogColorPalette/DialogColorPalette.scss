@@ -3,7 +3,7 @@
 .dialog-color-palette {
     &__container {
         display: flex;
-        height: 100%;
+        height: calc(100% - 69px);
     }
 
     &__value-color {
@@ -41,7 +41,7 @@
     }
 
     &__palette {
-        height: 280px;
+        height: 230px;
         margin: 20px 24px 0;
     }
 
