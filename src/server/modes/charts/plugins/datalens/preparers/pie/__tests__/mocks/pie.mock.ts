@@ -1,4 +1,4 @@
-import {DATASET_FIELD_TYPES} from '../../../../../../../../../shared';
+import {DATASET_FIELD_TYPES, IChartEditor} from '../../../../../../../../../shared';
 
 const DATASET_ID = 'j43msj9o23ge9';
 
@@ -183,11 +183,16 @@ export const SET_WITH_MEASURE_TEXT_AND_MEASURE = {
 };
 
 export const PREPARE_FUNCTION_ARGS = {
-    ChartEditor: undefined,
+    ChartEditor: {
+        getWidgetConfig: () => {},
+    } as IChartEditor,
     datasets: [],
     fields: [],
     shapes: [],
     visualizationId: 'pie',
+    shared: {
+        type: 'datalens',
+    },
     idToDataType: {
         [COLOR_FIELD_DIMENSION.guid]: COLOR_FIELD_DIMENSION.data_type,
         [COLOR_FIELD_MEASURE_NUMBER.guid]: COLOR_FIELD_MEASURE_NUMBER.data_type,

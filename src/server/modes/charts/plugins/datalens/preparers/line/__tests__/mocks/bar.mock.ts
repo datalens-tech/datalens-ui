@@ -1,4 +1,14 @@
+const chartEditorMock = {
+    getLang: () => {
+        return 'en';
+    },
+    updateHighchartsConfig: () => {},
+    updateConfig: () => {},
+    getWidgetConfig: () => {},
+};
+
 export const calculatedTitle = {
+    ChartEditor: chartEditorMock,
     placeholders: [
         {
             items: [
@@ -51,10 +61,13 @@ export const calculatedTitle = {
     },
     visualizationId: 'column',
     datasets: [],
-    shared: {},
+    shared: {
+        visualization: {id: 'bar'},
+    },
 };
 
 export const regularTitle = {
+    ChartEditor: chartEditorMock,
     placeholders: [
         {
             items: [
@@ -98,17 +111,14 @@ export const regularTitle = {
     },
     visualizationId: 'column',
     datasets: [],
-    shared: {},
+    shared: {
+        visualization: {id: 'bar'},
+    },
 };
 
 // /wizard/foizv5h101la9-multidatasetnyy-chart-s-odinakovymi-pokazatelyami
 export const preparingDataForFieldsWithSameTitlesFromDifferentDatasets = {
-    ChartEditor: {
-        getLang: () => {
-            return 'en';
-        },
-        updateHighchartsConfig: () => {},
-    },
+    ChartEditor: chartEditorMock,
     placeholders: [
         {
             allowedTypes: {},

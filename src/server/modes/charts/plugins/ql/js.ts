@@ -3,6 +3,7 @@ import {
     DatasetFieldType,
     Field,
     IChartEditor,
+    PlaceholderId,
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
@@ -20,7 +21,12 @@ import preparePie from './preparers/pie';
 import preparePreviewTable from './preparers/preview-table';
 import prepareTable from './preparers/table';
 import {LINEAR_VISUALIZATIONS, PIE_VISUALIZATIONS} from './utils/constants';
-import {getColumnsAndRows, log} from './utils/misc-helpers';
+import {
+    getColumnsAndRows,
+    log,
+    prepareQuery,
+    visualizationCanHaveContinuousAxis,
+} from './utils/misc-helpers';
 import {
     mapItems,
     mapVisualizationPlaceholdersItems,
@@ -216,6 +222,10 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
         const available = [...(fields as unknown as Field[])];
 
+        const preparedQuery = prepareQuery(shared.queryValue);
+
+        const disableDefaultSorting = /order by/gi.test(preparedQuery);
+
         const prepareSingleResultArgs = {
             resultData,
             shared: {
@@ -233,6 +243,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             ChartEditor,
             datasetsIds,
             loadedColorPalettes: {},
+            disableDefaultSorting,
         };
 
         result = prepareSingleResult(prepareSingleResultArgs);
@@ -244,6 +255,33 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 rows,
                 ChartEditor,
             });
+        }
+
+        if (visualizationCanHaveContinuousAxis(newVisualization)) {
+            const targetPlaceholderId = [
+                VISUALIZATION_IDS.BAR,
+                VISUALIZATION_IDS.BAR_100P,
+            ].includes(newVisualization.id)
+                ? PlaceholderId.Y
+                : PlaceholderId.X;
+            const targetPlaceholder = newVisualization.placeholders.find(
+                ({id}) => id === targetPlaceholderId,
+            );
+
+            if (targetPlaceholder && targetPlaceholder.items[0]) {
+                if (disableDefaultSorting) {
+                    targetPlaceholder.settings = {
+                        axisModeMap: {
+                            [targetPlaceholder.items[0].guid]: 'discrete',
+                        },
+                        disableAxisMode: true,
+                    };
+                } else {
+                    targetPlaceholder.settings = {
+                        disableAxisMode: false,
+                    };
+                }
+            }
         }
 
         if (Array.isArray(result) && result[0]) {

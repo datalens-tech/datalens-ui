@@ -237,6 +237,7 @@ export default class Utils {
             noControls:
                 searchParams.get(URL_OPTIONS.NO_CONTROLS) === '1' ||
                 searchParams.get(URL_OPTIONS.NO_CONTROLS) === 'true', // deprecated
+            actionParamsEnabled: searchParams.get(URL_OPTIONS.ACTION_PARAMS_ENABLED) === '1',
         };
     }
 

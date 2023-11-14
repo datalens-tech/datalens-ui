@@ -8,15 +8,16 @@ import type {GraphWidget, LoadedWidgetData} from '../../types';
 import {ChartKitCustomError} from '../modules/chartkit-custom-error/chartkit-custom-error';
 import type {ChartKitAdapterProps} from '../types';
 
-import {applySetActionParamsEvents, extractHcTypeFromData, fixPieTotals} from './apply-hc-handlers';
+import {applySetActionParamsEvents, fixPieTotals} from './apply-hc-handlers';
 import {tooltipRenderer} from './tooltip';
+import {extractHcTypeFromData} from './utils';
 
 const getNormalizedClickActions = (data: GraphWidget) => {
     if (data.config && 'seriesActions' in data.config) {
         throw new ChartKitCustomError(null, {
             details: `
     Seems you are trying to use unsupported property "config.seriesActions". This property sets according to this type:
-    
+
     {
         config: {
             events?: {
