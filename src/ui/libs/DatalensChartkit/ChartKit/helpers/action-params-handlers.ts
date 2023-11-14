@@ -11,10 +11,9 @@ import type {GraphWidgetEventScope, StringParams} from '../../../../../shared';
 import type {ChartKitAdapterProps} from '../types';
 
 import {
-    ActionParams,
-    ActionParamsValue,
     extractHcTypeFromSeries,
     getPointActionParams,
+    isEmptyParam,
     isPointSelected,
 } from './utils';
 
@@ -82,37 +81,34 @@ function setSeriesSelectState(series: Highcharts.Series, selected: boolean) {
     }
 }
 
-function isEmptyParam(paramValue: ActionParamsValue) {
-    return paramValue === '';
-}
-
-function addParams(params: ActionParams, addition: ActionParams = {}) {
+function addParams(params: StringParams, addition: StringParams = {}) {
     const result = cloneDeep(params);
 
-    return Object.entries(addition).reduce((acc, [key, value]) => {
+    return Object.entries(addition).reduce((acc, [key, val]) => {
         if (!(key in acc)) {
             acc[key] = [];
         }
 
         if (!Array.isArray(acc[key])) {
-            acc[key] = [acc[key] as ActionParamsValue];
+            acc[key] = [acc[key] as string];
         }
 
-        if ((acc[key] as ActionParamsValue[]).every(isEmptyParam)) {
+        if ((acc[key] as string[]).every(isEmptyParam)) {
             acc[key] = [];
         }
 
-        acc[key] = uniq((acc[key] as ActionParamsValue[]).concat(value as string));
+        const value = Array.isArray(val) ? val.map(String) : String(val);
+        acc[key] = uniq((acc[key] as string[]).concat(value));
         return acc;
     }, result);
 }
 
-function subtractParameters(params: ActionParams, sub: ActionParams = {}) {
+function subtractParameters(params: StringParams, sub: StringParams = {}) {
     const result = cloneDeep(params);
-    return Object.entries(sub).reduce((acc, [key, value]) => {
+    return Object.entries(sub).reduce((acc, [key, val]) => {
         const paramValue = acc[key];
         if (Array.isArray(paramValue)) {
-            const exclude = Array.isArray(value) ? value : [value];
+            const exclude = Array.isArray(val) ? val.map(String) : [String(val)];
             acc[key] = paramValue.filter((item) => !exclude.includes(item));
         } else {
             delete acc[key];
@@ -193,7 +189,7 @@ function seriesToParams(series: Highcharts.Series[]) {
 export const handleChartLoadingForActionParams = (args: {
     clickScope: GraphWidgetEventScope;
     series: Highcharts.Series[];
-    actionParams?: ActionParams;
+    actionParams?: StringParams;
 }) => {
     const {clickScope, series, actionParams = {}} = args;
 
@@ -240,11 +236,11 @@ export function handleSeriesClickForActionParams(args: {
     clickScope: GraphWidgetEventScope;
     event: Highcharts.SeriesClickEventObject;
     onChange?: ChartKitAdapterProps['onChange'];
-    actionParams: ActionParams;
+    actionParams: StringParams;
 }) {
     const {chart, clickScope, event, onChange, actionParams: prevActionParams} = args;
     const multiSelect = Boolean(event.metaKey);
-    let newActionParams: ActionParams = prevActionParams;
+    let newActionParams: StringParams = prevActionParams;
 
     switch (clickScope) {
         case 'point': {
@@ -317,9 +313,7 @@ export function handleSeriesClickForActionParams(args: {
             }
 
             chart.series.forEach(setSeriesOpacity);
-            const params = seriesToParams(chart.series);
-            newActionParams = transformParamsToActionParams(params);
-
+            newActionParams = seriesToParams(chart.series);
             break;
         }
     }
