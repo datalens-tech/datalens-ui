@@ -620,7 +620,7 @@ export const applyGroupControlDialog = () => {
             autoHeight: selectorGroups.autoHeight,
             buttonApply: selectorGroups.buttonApply,
             buttonReset: selectorGroups.buttonReset,
-            // TODO: CHARTS-6728 remove any
+            // FIXME: CHARTS-6728 remove any
             items: selectorGroups.items.reduce<any>((items, selector, index) => {
                 items[selector.id] = {
                     title: selector.title,
