@@ -137,7 +137,11 @@ export const getNewWindowMenuItem = ({
         (({loadedData, propsData, chartsDataProvider: dataProvider}) => {
             const link = (dataProvider || chartsDataProvider)?.getGoAwayLink(
                 {loadedData, propsData},
-                {urlPostfix: '/preview', idPrefix: '/editor/'},
+                {
+                    urlPostfix: '/preview',
+                    idPrefix: '/editor/',
+                    extraParams: {[COMMON_URL_OPTIONS.ACTION_PARAMS_ENABLED]: '1'},
+                },
             );
 
             window.open(link);
