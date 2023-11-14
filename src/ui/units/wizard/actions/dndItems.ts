@@ -347,6 +347,13 @@ export const handleDnDItemUpdate = (args: HandleDnDItemUpdateArgs) => {
 
         let movedField = field;
 
+        const shouldClearFilters = [PlaceholderId.Filters, PlaceholderId.DashboardFilters].includes(
+            currentSectionId,
+        );
+        if (shouldClearFilters) {
+            movedField.filter = undefined;
+        }
+
         if (nextSectionTransform) {
             movedField = await nextSectionTransform(movedField);
         }
