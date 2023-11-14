@@ -11,14 +11,7 @@ import {
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import type {QlConfig} from '../../../../../shared/types/config/ql';
 
-import {buildSource, iterateThroughVisibleQueries, log} from './utils/misc-helpers';
-
-const prepareQuery = (query: string) => {
-    return query
-        .replace(/--[^\n]*\n/g, '')
-        .trim()
-        .replace(/;+$/g, '');
-};
+import {buildSource, iterateThroughVisibleQueries, log, prepareQuery} from './utils/misc-helpers';
 
 const resolveUrlParameter = (urlParamValue: string | string[]) => {
     if (Array.isArray(urlParamValue)) {

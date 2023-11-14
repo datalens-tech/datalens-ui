@@ -22,6 +22,7 @@ export interface PlaceholderSettings {
     polylinePoints?: string;
     axisFormatMode?: string;
     axisModeMap?: Record<string, string>;
+    disableAxisMode?: boolean;
 }
 
 export type Placeholder = {

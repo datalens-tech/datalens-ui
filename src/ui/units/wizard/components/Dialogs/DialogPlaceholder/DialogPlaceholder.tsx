@@ -381,7 +381,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     renderAxisModeSettings() {
         const {sort, visualizationId} = this.props;
         const {settings, firstField} = this.state;
-        const {axisModeMap} = settings;
+        const {axisModeMap, disableAxisMode} = settings;
 
         if (typeof axisModeMap === 'undefined' || !firstField) {
             return null;
@@ -391,30 +391,74 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const sortHasMeasures =
             visualizationId !== WizardVisualizationId.Area && sort.some(isMeasureField);
 
+        let showDisabledTooltip = false;
+        let disabledTooltipContent = null;
+
         const radioButtons = AXIS_MODE_RADIO_BUTTONS.map((option) => {
             if (option.value === SETTINGS.AXIS_MODE.CONTINUOUS) {
-                return {
-                    ...option,
-                    // Axis mode always depends on first item in placeholder
-                    disabled: !isAllAxisModesAvailable(firstField) || sortHasMeasures,
-                };
+                // Axis mode always depends on first item in placeholder
+                let disabled = !isAllAxisModesAvailable(firstField);
+
+                if (disabled) {
+                    showDisabledTooltip = true;
+                    disabledTooltipContent = 'label_axis-mode-unavailable-type';
+
+                    return {
+                        ...option,
+                        disabled,
+                    };
+                }
+
+                disabled = sortHasMeasures;
+
+                if (disabled) {
+                    showDisabledTooltip = true;
+                    disabledTooltipContent = 'label_axis-mode-unavailable-sort-measures';
+
+                    return {
+                        ...option,
+                        disabled,
+                    };
+                }
+
+                disabled = Boolean(disableAxisMode);
+
+                if (disabled) {
+                    showDisabledTooltip = true;
+                    disabledTooltipContent = 'label_axis-mode-unavailable-forbidden';
+
+                    return {
+                        ...option,
+                        disabled,
+                    };
+                }
             }
 
             return option;
         });
 
         return (
-            <DialogPlaceholderRow
-                title={i18n('wizard', 'label_axis-mode')}
-                setting={
-                    <DialogRadioButtons
-                        items={radioButtons}
-                        value={axisMode}
-                        onUpdate={this.handleAxisModeUpdate}
-                        qa={'axis-mode-radio-buttons'}
-                    />
-                }
-            />
+            <React.Fragment>
+                <DialogPlaceholderRow
+                    title={i18n('wizard', 'label_axis-mode')}
+                    setting={
+                        <React.Fragment>
+                            <DialogRadioButtons
+                                items={radioButtons}
+                                value={axisMode}
+                                onUpdate={this.handleAxisModeUpdate}
+                                qa={'axis-mode-radio-buttons'}
+                            />
+                            {showDisabledTooltip && disabledTooltipContent && (
+                                <HelpPopover
+                                    className={b('title-popover')}
+                                    content={i18n('wizard', disabledTooltipContent)}
+                                />
+                            )}
+                        </React.Fragment>
+                    }
+                />
+            </React.Fragment>
         );
     }
 
