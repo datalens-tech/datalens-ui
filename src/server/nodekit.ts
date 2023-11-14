@@ -27,3 +27,5 @@ nodekit.config.features = getFeaturesConfig(appEnv);
 registry.setupGateway(getGatewayConfig(nodekit), {root: schema});
 
 export {nodekit};
+
+// test
