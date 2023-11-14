@@ -1,10 +1,8 @@
 import type {Point} from 'highcharts';
 import get from 'lodash/get';
 
+import type {StringParams} from '../../../../../shared';
 import {GraphWidget} from '../../types';
-
-export type ActionParamsValue = string | number | boolean;
-export type ActionParams = Record<string, ActionParamsValue | ActionParamsValue[]>;
 
 export type PointActionParams = Record<string, string>;
 
@@ -16,11 +14,15 @@ export function getPointActionParams(point: Point): PointActionParams {
     );
 }
 
-export function isPointSelected(point: Point, actionParams: ActionParams = {}) {
+export function isEmptyParam(paramValue: string | string[]) {
+    return Array.isArray(paramValue) ? paramValue.every((p) => p === '') : paramValue === '';
+}
+
+export function isPointSelected(point: Point, actionParams: StringParams = {}) {
     const pointActionParams = getPointActionParams(point);
-    const matchedParamNames = Object.entries(pointActionParams).filter(
-        ([name]) => name in actionParams,
-    );
+    const matchedParamNames = Object.entries(pointActionParams).filter(([name]) => {
+        return name in actionParams && !isEmptyParam(actionParams[name]);
+    });
 
     return (
         matchedParamNames.length > 0 &&
