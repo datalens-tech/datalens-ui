@@ -8,6 +8,7 @@ import {
     RadioButtonsValues,
 } from '../../../page-objects/wizard/PlaceholderDialog';
 import {openTestPage} from '../../../utils';
+import {DialogFieldAggregationSelectorValuesQa} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
     datalensTest.beforeEach(async ({page}) => {
@@ -202,6 +203,28 @@ datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
 
             // First level, a field with the date ([DATE]) type. Since the discrete mode was selected, it should be preserved
             expect(selectedValue).toEqual('discrete');
+        },
+    );
+
+    datalensTest(
+        'When data aggregation is used, it is necessary to set continuous mode for the date field',
+        async ({page}) => {
+            const wizardPage = new WizardPage({page});
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'DATE');
+            await wizardPage.visualizationItemDialog.open(PlaceholderName.X, 'DATE');
+            await wizardPage.visualizationItemDialog.setAggregation(
+                DialogFieldAggregationSelectorValuesQa.Max,
+            );
+            await wizardPage.visualizationItemDialog.clickOnApplyButton();
+
+            await wizardPage.placeholderDialog.open(PlaceholderId.X);
+
+            const selectedMode = await wizardPage.placeholderDialog.getRadioButtonsSelectedValue(
+                RadioButtons.AxisMode,
+            );
+
+            expect(selectedMode).toEqual('continuous');
         },
     );
 });
