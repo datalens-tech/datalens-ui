@@ -7,6 +7,7 @@ export enum DashTabItemType {
     Text = 'text',
     Widget = 'widget',
     Control = 'control',
+    GroupControl = 'group_control',
 }
 
 export enum DashTabItemTitleSize {

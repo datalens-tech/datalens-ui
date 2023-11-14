@@ -35,6 +35,7 @@ import {
     SET_TAB_HASH_STATE,
     SET_WIDGET_CURRENT_TAB,
     SelectorDialogState,
+    SelectorsGroupDialogState,
     TOGGLE_TABLE_OF_CONTENT,
     TabsHashStates,
     UPDATE_SELECTORS_GROUP,
@@ -67,7 +68,7 @@ export type DashState = {
     lockToken: string | null;
     isFullscreenMode?: boolean;
     selectorDialog: SelectorDialogState;
-    selectorsGroup: SelectorDialogState[];
+    selectorsGroup: SelectorsGroupDialogState;
     activeSelectorIndex: number;
     isLoadingEditMode: boolean;
     isNewRelationsOpened?: boolean;
@@ -231,7 +232,7 @@ export function dashTypedReducer(
             };
 
         case SET_SELECTOR_DIALOG_ITEM: {
-            const {selectorDialog, activeSelectorIndex} = state;
+            const {selectorDialog, selectorsGroup, activeSelectorIndex} = state;
             const {payload} = action;
 
             const elementTypeChanged =
@@ -271,11 +272,13 @@ export function dashTypedReducer(
                 ...payload,
             };
 
-            let newSelectorsGroupState = [newSelectorState] as SelectorDialogState[];
+            const newSelectorsGroupState = {
+                ...selectorsGroup,
+            };
 
-            if (state.selectorsGroup.length) {
-                newSelectorsGroupState = [...state.selectorsGroup];
-                newSelectorsGroupState[activeSelectorIndex] = newSelectorState;
+            if (state.selectorsGroup.items.length) {
+                newSelectorsGroupState.items = [...selectorsGroup.items];
+                newSelectorsGroupState.items[activeSelectorIndex] = newSelectorState;
             }
 
             return {
@@ -291,25 +294,34 @@ export function dashTypedReducer(
 
             return {
                 ...state,
-                selectorsGroup: [...state.selectorsGroup, {...newSelector, title: payload.title}],
-                selectorDialog: {...newSelector, title: payload.title},
+                selectorsGroup: {
+                    ...state.selectorsGroup,
+                    items: [...state.selectorsGroup.items, {...newSelector, title: payload.title}],
+                },
             };
         }
 
         case UPDATE_SELECTORS_GROUP: {
-            const {activeSelectorIndex} = state;
-            const selectors = action.payload;
+            const {selectorsGroup} = state;
+            const {items, autoHeight, buttonApply, buttonReset} = action.payload;
+
             return {
                 ...state,
-                selectorsGroup: selectors,
-                selectorDialog: selectors[activeSelectorIndex],
+                selectorsGroup: {
+                    ...selectorsGroup,
+                    items,
+                    autoHeight,
+                    buttonApply,
+                    buttonReset,
+                },
             };
         }
 
         case SET_ACTIVE_SELECTOR_INDEX: {
             return {
                 ...state,
-                activeSelectorIndex: action.payload,
+                activeSelectorIndex: action.payload.activeSelectorIndex,
+                selectorDialog: state.selectorsGroup.items[action.payload.activeSelectorIndex],
             };
         }
 
