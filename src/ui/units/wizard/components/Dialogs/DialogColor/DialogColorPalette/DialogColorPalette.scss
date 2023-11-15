@@ -3,7 +3,8 @@
 .dialog-color-palette {
     &__container {
         display: flex;
-        height: calc(100% - 69px);
+        height: calc(100%);
+        border-top: 1px solid var(--g-color-line-generic);
     }
 
     &__value-color {

@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ColorMode, ColorsConfig, Feature, Field} from 'shared';
+import {ColorMode, ColorsConfig, DATASET_FIELD_TYPES, Feature, Field} from 'shared';
 import {fetchColorPalettes} from 'store/actions/colorPaletteEditor';
 import {selectColorPalettes} from 'store/selectors/colorPaletteEditor';
 import {DatalensGlobalState, Utils} from 'ui';
@@ -73,13 +73,19 @@ class ColorSettingsContainer extends React.Component<Props> {
 
         return (
             <React.Fragment>
-                {this.renderColorModeSelect()}
+                {this.isColorModeChangeAvailable() && this.renderColorModeSelect()}
                 {colorMode === ColorMode.GRADIENT
                     ? this.renderGradientBody()
                     : this.renderPaletteBody()}
             </React.Fragment>
         );
     }
+
+    private isColorModeChangeAvailable = () => {
+        const {item} = this.props;
+
+        return item.data_type === DATASET_FIELD_TYPES.INTEGER;
+    };
 
     private renderColorModeSelect = () => {
         return (

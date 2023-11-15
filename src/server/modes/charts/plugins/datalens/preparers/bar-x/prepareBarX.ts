@@ -1,6 +1,7 @@
 import _isEmpty from 'lodash/isEmpty';
 
 import {
+    ColorMode,
     HighchartsSeriesCustomObject,
     PlaceholderId,
     ServerField,
@@ -113,6 +114,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
 
     const isColorizeByMeasure = isMeasureField(colorItem);
+    const colorMode = colorsConfig.colorMode;
     const isColorizeByMeasureValue = isMeasureValue(colorItem);
 
     /*
@@ -233,6 +235,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 labelItem,
                 segmentIndexInOrder,
                 layers: shared.visualization?.layers,
+                colorMode,
             });
         });
 
@@ -413,7 +416,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
             });
         });
 
-        if (isColorizeByMeasure || isColorizeByMeasureValue) {
+        if (colorMode === ColorMode.GRADIENT || isColorizeByMeasure || isColorizeByMeasureValue) {
             colorizeByMeasure(visualizationId as WizardVisualizationId, {
                 graphs,
                 colorsConfig,

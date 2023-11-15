@@ -66,9 +66,8 @@ class DialogColorComponent extends React.Component<Props, State> {
         // colorMode is modern value
         this.state = {
             colorMode:
-                props.colorsConfig?.colorMode || props.isGradient
-                    ? ColorMode.GRADIENT
-                    : ColorMode.PALETTE,
+                props.colorsConfig?.colorMode ||
+                (props.isGradient ? ColorMode.GRADIENT : ColorMode.PALETTE),
         };
     }
 

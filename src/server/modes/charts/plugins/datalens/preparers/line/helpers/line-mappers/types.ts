@@ -1,4 +1,5 @@
 import {
+    ColorMode,
     CommonNumberFormattingOptions,
     DATASET_FIELD_TYPES,
     ServerColor,
@@ -38,6 +39,7 @@ export interface PrepareLinesArgs {
     ySectionItems: MergedYSectionItems[];
     segmentIndexInOrder: number;
     layers?: ServerVisualizationLayer[];
+    colorMode?: ColorMode;
 }
 
 export interface GetMappedDataToLinesArgs {

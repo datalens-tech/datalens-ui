@@ -28,12 +28,8 @@
         padding-bottom: 15px;
     }
 
-    &_palette-mode .yc-dialog-header {
-        border-bottom: 1px solid var(--g-color-line-generic);
-    }
-
     &_palette-mode .yc-dialog-body {
-        height: calc(80vh - 153px);
+        height: calc(80vh);
         padding: 0;
         overflow-y: auto;
     }

@@ -238,8 +238,10 @@ export function openDialogColors({item, onApply}: OpenDialogColorsArguments) {
                   (y2Placeholder && y2Placeholder.items[0]) ||
                   (heatmapPlaceholder && heatmapPlaceholder.items[0])
                 : (item as Field);
+
             const dialogColorItems =
                 isArray && !isMeasureValue(dialogColorItem) ? (item as Field[]) : undefined;
+
             const isGradient = isGradientDialog({
                 item: dialogColorItem,
                 items: dialogColorItems,
