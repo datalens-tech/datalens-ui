@@ -20,6 +20,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      security-events: write 
     steps:
       - uses: actions/checkout@v4
         # ? disabled due to a very long ARM build
@@ -61,3 +62,21 @@ jobs:
           # platforms: linux/amd64,linux/arm64
           # cache-from: type=gha
           # cache-to: type=gha,mode=max
+      - name: Run Snyk to check Docker image for vulnerabilities
+        continue-on-error: true
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image:  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          args: --file=Dockerfile --org=cf523e0b-3db4-4d9c-a4d0-13b9b91acec3
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
+
+
+
+
+
+          
