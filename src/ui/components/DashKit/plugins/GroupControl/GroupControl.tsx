@@ -21,10 +21,8 @@ import {ResponseSuccessControls} from '../../../../libs/DatalensChartkit/modules
 import logger from '../../../../libs/logger';
 import {selectSkipReload} from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import {adjustWidgetLayout} from '../../utils';
-// control plugin import
 import {LOAD_STATUS} from '../Control/Control';
 import {Error} from '../Control/Error/Error';
-// debug tool import
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
 import './GroupControl.scss';
@@ -87,9 +85,7 @@ interface PluginGroupControlState {
     isInit: boolean;
 }
 
-export interface PluginGroupControl extends Plugin<PluginGroupControlProps> {
-    // pass
-}
+export interface PluginGroupControl extends Plugin<PluginGroupControlProps> {}
 
 const b = block('dashkit-plugin-group-control');
 
@@ -129,10 +125,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             loadedData: null,
             errorData: null,
             silentLoading: false,
-            // loader with a vail that is not shown immediately
             showSilentLoader: false,
-            // ChartKit parameter that equals false in case selector-chart has postUpdateOnChange param.
-            // Its mean, you do not need to do this.init, because the request has already been executed on the ChartKit side
             forceUpdate: true,
             dialogVisible: false,
             loadingItems: true,
@@ -212,7 +205,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     async init() {
         try {
-            // const {data} = this.props;
+            // FIXME: need implement init section for GroupControl
 
             if (this.state.isInit === false) {
                 this.setState({isInit: true});

@@ -71,10 +71,7 @@ const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
             const dragItem = prevItemsState[oldIndex];
             const newItemsState = prevItemsState.filter((_, index) => index !== oldIndex);
             newItemsState.splice(newIndex, 0, dragItem);
-            return {
-                ...prevItemsState,
-                items: newItemsState,
-            };
+            return newItemsState;
         });
     }, []);
 
