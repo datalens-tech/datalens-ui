@@ -19,6 +19,7 @@ import './App.scss';
 import 'ui/styles/preview.scss';
 
 const b = block('app');
+const previewBlock = block('dl-preview');
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -29,12 +30,14 @@ const App: React.FunctionComponent<Props> = (props) => {
     const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
 
     React.useEffect(() => {
+        const previewClasses = previewBlock({'no-scroll': true}).split(' ');
+
         if (isNoScrollMode()) {
-            Utils.addBodyClass('dl-preview', 'dl-preview_no-scroll');
+            Utils.addBodyClass(...previewClasses);
         }
 
         return () => {
-            Utils.removeBodyClass('dl-preview', 'dl-preview_no-scroll');
+            Utils.removeBodyClass(...previewClasses);
         };
     }, []);
 

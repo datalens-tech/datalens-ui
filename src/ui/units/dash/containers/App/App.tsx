@@ -31,6 +31,7 @@ import {DashWrapper} from '../Dash/Dash';
 import './App.scss';
 
 const b = block('app');
+const dashBlock = block('dl-dash');
 
 export function App({...routeProps}: RouteComponentProps) {
     const asideHeaderData = useSelector(selectAsideHeaderData);
@@ -54,14 +55,12 @@ export function App({...routeProps}: RouteComponentProps) {
     const showAsideHeader = !isEmbedded && !isFullscreenMode && isAsideHeaderEnabled;
 
     React.useEffect(() => {
-        Utils.addBodyClass('dl-dash');
+        const dashClasses = dashBlock({'no-scroll': isNoScrollMode()}).split(' ');
 
-        if (isNoScrollMode()) {
-            Utils.addBodyClass('dl-dash_no-scroll');
-        }
+        Utils.addBodyClass(...dashClasses);
 
         return () => {
-            Utils.removeBodyClass('dl-dash', 'dl-dash_no-scroll');
+            Utils.removeBodyClass(...dashClasses);
 
             if (showAsideHeader) {
                 dispatch(setCurrentPageEntry(null));
