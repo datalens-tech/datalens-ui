@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+    ConfigItem,
     DashKit as DashKitComponent,
     DashKitProps,
     ActionPanel as DashkitActionPanel,
@@ -20,7 +21,7 @@ import debounce from 'lodash/debounce';
 import {ResolveThunks, connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {ControlQA, DashData, DashTab, DashTabItem, DashboardAddWidgetQa, Feature} from 'shared';
+import {ControlQA, DashTab, DashTabItem, DashboardAddWidgetQa, Feature} from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
@@ -59,12 +60,15 @@ import {
     getCurrentTabId,
     getEntryId,
     getTabHashState,
+    selectCurrentTabWithDashDatasets,
+    selectDashDatasetsFields,
 } from '../../store/selectors/dash';
 import {
     selectSettings,
     selectShowTableOfContent,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {getConfigWithoutDSDefaults} from '../../utils/helpers';
 import {DIALOG_TYPE} from '../Dialogs/constants';
 import Error from '../Error/Error';
 import TableOfContent from '../TableOfContent/TableOfContent';
@@ -173,10 +177,7 @@ class Body extends React.PureComponent<BodyProps> {
             itemsStateAndParams &&
             Object.keys(itemsStateAndParams).length
         ) {
-            this.onStateChange(
-                itemsStateAndParams as TabsHashStates,
-                config as unknown as DashData,
-            );
+            this.onStateChange(itemsStateAndParams as TabsHashStates, config as unknown as DashTab);
         } else if (config) {
             this.props.setCurrentTabData(config);
         }
@@ -241,8 +242,14 @@ class Body extends React.PureComponent<BodyProps> {
         return items;
     }
 
-    onStateChange = (hashStates: TabsHashStates, config: DashData) => {
-        this.props.setHashState(hashStates, config);
+    onStateChange = (hashStates: TabsHashStates, config: DashTab) => {
+        this.props.setHashState(
+            hashStates,
+            getConfigWithoutDSDefaults({
+                config,
+                dashDatasetsFields: this.props.dashDatasetsFields,
+            }),
+        );
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
@@ -253,6 +260,7 @@ class Body extends React.PureComponent<BodyProps> {
             tabs,
             showTableOfContent,
             tabData,
+            tabDataWithDashDatasets,
             handlerEditClick,
             isEditModeLoading,
             isSidebarOpened,
@@ -270,19 +278,22 @@ class Body extends React.PureComponent<BodyProps> {
 
         const hasTableOfContent = !(localTabs.length === 1 && !localTabs[0].items.length);
 
-        let tabDataConfig: DashKitProps['config'] = tabData;
+        let tabDataConfig: DashKitProps['config'] = tabDataWithDashDatasets || tabData;
 
         const isEmptyTab = !tabDataConfig.items.length;
 
         if (DL.IS_MOBILE) {
-            const [layoutMap, layoutColumns] = getLayoutMap(tabData.layout);
+            const [layoutMap, layoutColumns] = getLayoutMap(tabDataConfig.layout);
             tabDataConfig = {
-                ...tabData,
-                items: (tabData.items as DashTab['items'])
+                ...tabDataConfig,
+                items: (tabDataConfig.items as DashTab['items'])
                     .sort((prev, next) =>
                         sortByOrderIdOrLayoutComparator(prev, next, layoutMap, layoutColumns),
                     )
-                    .map((item, index) => ({...item, orderId: item.orderId || index})),
+                    .map((item, index) => ({
+                        ...item,
+                        orderId: item.orderId || index,
+                    })) as ConfigItem[],
             };
         }
 
@@ -418,6 +429,8 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     hashStates: getTabHashState(state),
     settings: selectSettings(state),
     tabData: getCurrentTab(state),
+    tabDataWithDashDatasets: selectCurrentTabWithDashDatasets(state),
+    dashDatasetsFields: selectDashDatasetsFields(state),
     dashKitRef: state.dash.dashKitRef,
     canEdit: canEdit(state),
     tabs: selectTabs(state),

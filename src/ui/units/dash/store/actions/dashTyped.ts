@@ -10,7 +10,7 @@ import uniq from 'lodash/uniq';
 import {Dispatch} from 'redux';
 import {
     DATASET_FIELD_TYPES,
-    DashData,
+    DashTab,
     DashTabItem,
     DashTabItemControlDataset,
     DashTabItemControlSourceType,
@@ -161,10 +161,10 @@ export type SetHashStateAction = {
     type: typeof SET_HASH_STATE;
     payload: {
         hashStates: TabsHashStates;
-        config: DashData;
+        config: DashTab;
     };
 };
-export const setHashState = (hashStates: TabsHashStates, config: DashData): SetHashStateAction => ({
+export const setHashState = (hashStates: TabsHashStates, config: DashTab): SetHashStateAction => ({
     type: SET_HASH_STATE,
     payload: {hashStates, config},
 });

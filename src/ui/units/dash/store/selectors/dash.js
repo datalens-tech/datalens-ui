@@ -1,5 +1,6 @@
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
+import {getConfigWithDSDefaults} from 'ui/units/dash/utils/helpers';
 
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
@@ -116,3 +117,14 @@ export const getCurrentTabConnectableItems = (state) => {
     }
     return undefined;
 };
+
+export const selectDashDatasetsFields = (state) => state.dash?.datasetsFields || null;
+
+/**
+ * Forming clone of currentTab but with merged dataset fields for wizard charts,
+ * new object in order to not mutating origin currentTab (it causes errors in work)
+ */
+export const selectCurrentTabWithDashDatasets = createSelector(
+    [getCurrentTab, selectDashDatasetsFields],
+    (currentTab, dashDatasetsFields) => getConfigWithDSDefaults(currentTab, dashDatasetsFields),
+);
