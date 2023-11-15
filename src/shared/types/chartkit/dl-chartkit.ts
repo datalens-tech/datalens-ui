@@ -6,3 +6,16 @@ export type ChartsInsightsItem = {
     message: string;
     locator: string;
 };
+
+type SetActionParamsEventHandler = {
+    type: 'setActionParams';
+};
+
+export type WidgetEventHandler = SetActionParamsEventHandler;
+
+export type GraphWidgetEventScope = 'point' | 'series';
+
+export type WidgetEvent<T> = {
+    handler: WidgetEventHandler | WidgetEventHandler[];
+    scope?: T;
+};

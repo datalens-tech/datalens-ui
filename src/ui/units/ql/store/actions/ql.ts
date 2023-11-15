@@ -322,6 +322,10 @@ export const setQueryMetadata = ({metadata}: SetQueryMetadataProps) => {
                         onDone: () => {},
                     }),
                 );
+
+                if (placeholder.settings) {
+                    dispatch(updatePlaceholderSettings(placeholder.id, placeholder.settings));
+                }
             });
 
             if (metadata.colors) {

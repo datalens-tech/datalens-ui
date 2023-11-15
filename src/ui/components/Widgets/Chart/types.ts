@@ -103,6 +103,7 @@ type ChartKitBaseWrapperProps = ChartsProps & {
     skipReload?: boolean;
 
     renderPluginLoader?: () => React.ReactNode;
+    actionParamsEnabled?: boolean;
 };
 
 export type ChartWidgetProviderPropsWithRefProps = Omit<

@@ -3,12 +3,15 @@ import type {HighchartsWidgetData} from '@gravity-ui/chartkit/highcharts';
 import {
     ChartkitHandlers,
     DEFAULT_CHART_LINES_LIMIT,
+    DashWidgetConfig,
     Feature,
     GraphTooltipLine,
+    GraphWidgetEventScope,
     PlaceholderId,
     ServerChartsConfig,
     ServerCommonSharedExtraSettings,
     StringParams,
+    WidgetEvent,
     WizardVisualizationId,
     getIsNavigatorEnabled,
     isEnabledServerFeature,
@@ -61,6 +64,9 @@ type GraphConfig = BaseConfig &
         navigatorSettings?: ServerCommonSharedExtraSettings['navigatorSettings'];
         calcClosestPointManually?: boolean;
         enableGPTInsights?: ServerCommonSharedExtraSettings['enableGPTInsights'];
+        events?: {
+            click?: WidgetEvent<GraphWidgetEventScope> | WidgetEvent<GraphWidgetEventScope>[];
+        };
     };
 
 type TableConfig = BaseConfig & {
@@ -83,16 +89,25 @@ export type Config = GraphConfig | TableConfig | MetricConfig;
 // eslint-disable-next-line complexity
 export default (
     ...options: [
-        {shared: ServerChartsConfig; params: StringParams} | ServerChartsConfig,
+        (
+            | {
+                  shared: ServerChartsConfig;
+                  params: StringParams;
+                  widgetConfig?: DashWidgetConfig['widgetConfig'];
+              }
+            | ServerChartsConfig
+        ),
         StringParams,
     ]
 ) => {
     let shared;
     let params: StringParams;
+    let widgetConfig: DashWidgetConfig['widgetConfig'];
 
     if ('shared' in options[0]) {
         shared = options[0].shared;
         params = options[0].params as StringParams;
+        widgetConfig = options[0].widgetConfig;
     } else {
         shared = options[0];
         params = options[1];
@@ -215,6 +230,12 @@ export default (
         // Because the data format without colors is {series: [{data: [...]}]}
         // And with colors {series: [{data: [...]}, {data: [...]}, {data: [...]}];
         config.calcClosestPointManually = true;
+    }
+
+    if (widgetConfig?.actionParams?.enable) {
+        config.events = {
+            click: [{handler: {type: 'setActionParams'}, scope: 'point'}],
+        };
     }
 
     log('CONFIG:');
