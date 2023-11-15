@@ -13,10 +13,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {DashTab, DashTabItem, DatasetField} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
-import {getCurrentTabAliases} from 'ui/units/dash/store/selectors/relations/selectors';
 
 import {updateCurrentTabData} from '../../../store/actions/dash';
 import {openDialogAliases} from '../../../store/actions/relations/actions';
+import {selectCurrentTabAliases} from '../../../store/selectors/dashTypedSelectors';
 
 import {Content} from './components/Content/Content';
 import {AliasesInvalidList} from './components/DialogAliases/components/AliasesList/AliasesInvalidList';
@@ -61,7 +61,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const {widget, dashKitRef, onClose} = props;
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
-    const dashTabAliases = useSelector(getCurrentTabAliases);
+    const dashTabAliases = useSelector(selectCurrentTabAliases);
 
     const aliasWarnButtonRef = React.useRef<HTMLElement | null>(null);
 

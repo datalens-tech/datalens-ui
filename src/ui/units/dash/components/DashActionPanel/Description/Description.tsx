@@ -8,8 +8,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {Mode} from '../../../modules/constants';
 import {setDashDescViewMode, setDashDescription} from '../../../store/actions/dashTyped';
-import {isEditMode} from '../../../store/selectors/dash';
 import {
+    isEditMode,
     selectDashDescMode,
     selectDashDescription,
 } from '../../../store/selectors/dashTypedSelectors';

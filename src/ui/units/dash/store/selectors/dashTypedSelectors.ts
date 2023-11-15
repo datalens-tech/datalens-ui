@@ -2,11 +2,19 @@ import {Operation} from 'components/DialogFilter/constants';
 import {getAvailableOperations} from 'components/DialogFilter/utils';
 import {DatalensGlobalState} from 'index';
 import {getFilterOperations} from 'libs/datasetHelper';
+import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
-import {DATASET_FIELD_TYPES, Operations} from 'shared';
+import {
+    DATASET_FIELD_TYPES,
+    DashTabItem,
+    DashTabItemWidget,
+    DashTabItemWidgetTab,
+    Operations,
+} from 'shared';
 
+import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
+import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {Mode} from '../../modules/constants';
-import type {TabsHashStates} from '../actions/dashTyped';
 import {
     ALL_OPERATIONS,
     DATEPICKER_OPERATIONS,
@@ -20,7 +28,20 @@ import type {DashState} from '../reducers/dashTypedReducer';
 
 export const selectDash = (state: DatalensGlobalState) => state.dash || null;
 
-export const selectDashMode = createSelector([selectDash], (dash) => dash.mode);
+export const canEdit = (state: DatalensGlobalState) =>
+    Boolean(state.dash.permissions && state.dash.permissions.edit);
+
+const selectInitialTabsSettings = (state: DatalensGlobalState) => state.dash.initialTabsSettings;
+
+export const selectDashEntry = (state: DatalensGlobalState) => state.dash.entry || null;
+
+export const selectDashData = (state: DatalensGlobalState) => state.dash.data || null;
+
+export const selectEntryId = (state: DatalensGlobalState) =>
+    state.dash.entry ? state.dash.entry.entryId : null;
+
+export const selectEntryTitle = (state: DatalensGlobalState) =>
+    state.dash.entry ? state.dash.entry.key.match(/[^/]*$/)?.toString() : null;
 
 export const selectEntryData = (state: DatalensGlobalState) =>
     state.dash.convertedEntryData || state.dash.entry?.data || null;
@@ -151,8 +172,6 @@ export const selectShowTableOfContent = (state: DatalensGlobalState) =>
     state.dash.showTableOfContent;
 
 export const selectHashStates = (state: DatalensGlobalState) => state.dash.hashStates;
-export const selectTabHashStates = (state: DatalensGlobalState) =>
-    (state.dash.hashStates || ({} as TabsHashStates))[state.dash.tabId || ''];
 
 export const selectStateHashId = (state: DatalensGlobalState) => state.dash.stateHashId;
 
@@ -185,6 +204,12 @@ export const selectIsFullscreenMode = (state: DatalensGlobalState) => state.dash
 export const selectDashWorkbookId = (state: DatalensGlobalState) =>
     state.dash?.entry?.workbookId || null;
 
+// reselectors below
+
+export const selectDashMode = createSelector([selectDash], (dash) => dash.mode);
+
+export const isEditMode = createSelector([selectDashMode], (mode) => mode === Mode.Edit);
+
 export const selectDashGlobalDefaultParams = createSelector(
     [selectSettings],
     (settings) => settings.globalParams,
@@ -193,4 +218,106 @@ export const selectDashGlobalDefaultParams = createSelector(
 export const selectStateMode = createSelector(
     [selectDashMode],
     (dashMode) => dashMode === Mode.SelectState,
+);
+
+export const selectTabsMetas = createSelector([selectTabs], (tabs) =>
+    tabs ? tabs.map(({id, title}) => ({id, title})) : null,
+);
+
+const selectTabsItemsOrderChanged = createSelector(
+    [selectInitialTabsSettings, selectTabs],
+    (initTabs, currentTabs) => (initTabs ? isOrderIdsChanged(initTabs, currentTabs || []) : false),
+);
+
+const selectDashChanged = createSelector([selectDashEntry, selectDashData], (entry, dashData) => {
+    return Boolean(entry) && !isEqual({...entry.data, counter: 0}, {...dashData, counter: 0});
+});
+
+export const isDraft = createSelector(
+    [selectTabsItemsOrderChanged, selectDashChanged],
+    (isOrderChanged, isDashChanged) => isOrderChanged || isDashChanged,
+);
+
+export const selectCurrentTab = createSelector([selectDashData, selectTabId], (data, tabId) => {
+    const tabIndex = data ? data.tabs.findIndex(({id}) => id === tabId) : -1;
+
+    return tabIndex === -1
+        ? null
+        : {
+              ...data.tabs[tabIndex],
+              salt: data.salt,
+              counter: data.counter,
+          };
+});
+
+export const selectCurrentTabId = createSelector(
+    [selectCurrentTab],
+    (currentTab) => currentTab?.id || null,
+);
+
+export const selectTabHashStates = createSelector(
+    [selectHashStates, selectCurrentTabId],
+    (hashStates, currentTabId) => (currentTabId ? hashStates?.[currentTabId] : hashStates) || {},
+);
+
+export const selectTabHashState = createSelector(
+    [selectTabHashStates],
+    (hashStates) => hashStates.state || {},
+);
+
+export const hasTableOfContent = createSelector([selectDashData], (dashData) => {
+    if (!dashData) {
+        return false;
+    }
+    const {tabs} = dashData;
+
+    return (
+        tabs.length > 1 ||
+        (tabs.length === 1 &&
+            tabs[0].items.some(
+                ({type, data}) => type === ITEM_TYPE.TITLE && 'showInTOC' in data && data.showInTOC,
+            ))
+    );
+});
+
+export const selectOpenedItemData = createSelector(
+    [selectCurrentTab, selectDash],
+    (currentTab, dash) => {
+        if (dash.openedItemId && currentTab) {
+            const item = currentTab.items.find(({id}) => id === dash.openedItemId);
+            return item?.data;
+        }
+        return undefined;
+    },
+);
+
+export const selectCurrentTabConnectableItems = createSelector([selectCurrentTab], (currentTab) => {
+    if (currentTab) {
+        return currentTab.items
+            .filter(({type}) => type === ITEM_TYPE.CONTROL || type === ITEM_TYPE.WIDGET)
+            .reduce(
+                (result, {id, data, type, namespace}: DashTabItem) =>
+                    type === ITEM_TYPE.WIDGET
+                        ? result.concat(
+                              (data as DashTabItemWidget['data']).tabs.map(
+                                  (tabItem: DashTabItemWidgetTab) => ({
+                                      id: tabItem.title,
+                                      namespace,
+                                      type,
+                                      title: tabItem.title,
+                                  }),
+                              ) as DashTabItem[],
+                          )
+                        : result.concat([
+                              {id, namespace, type, title: 'title' in data ? data.title : ''},
+                          ] as DashTabItem[]),
+                [] as DashTabItem[],
+            );
+    }
+    return undefined;
+});
+
+export const selectCurrentTabAliases = createSelector(
+    [selectCurrentTab],
+    (currentTab) => currentTab?.aliases || null,
 );

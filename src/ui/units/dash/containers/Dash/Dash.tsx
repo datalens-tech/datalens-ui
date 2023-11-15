@@ -37,8 +37,14 @@ import {
     setLock,
 } from '../../store/actions/dash';
 import {setErrorMode, setPageTab} from '../../store/actions/dashTyped';
-import {canEdit, getDashEntry, isDraft, isEditMode} from '../../store/selectors/dash';
-import {selectTabId, selectTabs} from '../../store/selectors/dashTypedSelectors';
+import {
+    canEdit,
+    isDraft,
+    isEditMode,
+    selectDashEntry,
+    selectTabId,
+    selectTabs,
+} from '../../store/selectors/dashTypedSelectors';
 import Body from '../Body/Body';
 import Dialogs from '../Dialogs/Dialogs';
 import Header from '../Header/Header';
@@ -345,7 +351,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     isDraft: isDraft(state),
     isEditMode: isEditMode(state),
     canEdit: canEdit(state),
-    entry: getDashEntry(state),
+    entry: selectDashEntry(state),
     lockToken: selectLockToken(state),
     revId: selectEntryContentRevId(state),
     tabs: selectTabs(state),
