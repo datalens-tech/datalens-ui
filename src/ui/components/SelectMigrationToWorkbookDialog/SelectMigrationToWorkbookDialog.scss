@@ -1,15 +1,9 @@
 .dl-select-migration-to-workbook-dialog {
     position: relative;
-    display: flex;
-    flex-direction: column;
     max-height: calc(100vh - 32px);
 
     &__body {
-        display: flex;
-        flex-direction: column;
-        // TODO: this is an private api and may silently changed. We should use local styles
-        padding-bottom: var(--yc-dialog-side-padding);
-        overflow-y: auto;
+        padding: 18px 32px 10px;
     }
 
     &__body-content {
