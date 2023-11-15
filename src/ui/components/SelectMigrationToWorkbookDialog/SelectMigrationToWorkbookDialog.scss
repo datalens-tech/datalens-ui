@@ -1,4 +1,4 @@
-.dl-migrate-to-workbook-dialog {
+.dl-select-migration-to-workbook-dialog {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -10,5 +10,18 @@
         // TODO: this is an private api and may silently changed. We should use local styles
         padding-bottom: var(--yc-dialog-side-padding);
         overflow-y: auto;
+    }
+
+    &__body-content {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__block-content-item {
+        flex: 1 1 0;
+
+        &:last-child {
+            margin-left: 24px;
+        }
     }
 }

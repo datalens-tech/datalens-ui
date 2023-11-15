@@ -56,7 +56,7 @@ export const Body: React.FC<BodyProps> = ({
                         }
                         actions={
                             <Button view="action" onClick={handleGoBack}>
-                                {i18n('md_label_copy-extension-warning-btn-back')}
+                                {i18n('action_back')}
                             </Button>
                         }
                     />

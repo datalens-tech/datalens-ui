@@ -1,0 +1,19 @@
+{
+  "action_cancel": "Cancel",
+  "action_сhoose": "Choose",
+  "description_copy": "Copying an object with links. The originals of objects remain in folders.",
+  "description_transfer": "Transferring all recursively related objects into one common workbook.",
+  "list_first_item_copy": "Searching for links only for the current object",
+  "list_second_item_copy": "Objects remain in folders",
+  "list_third_item_copy": "References to objects unchanged",
+  "list_fourth_item_copy": "Not yet available for CSV and Google Sheets",
+  "list_first_item_transfer": "Recursive search for all links",
+  "list_first_item_transfer_help_text": "Recursive link search for the current object and all related objects: “down“ to the connection and “up“ to the dashboard",
+  "list_second_item_transfer": "Objects do not remain in folders",
+  "list_third_item_transfer": "Links to objects lead to workbooks",
+  "list_fourth_item_transfer": "Available for CSV and Google Sheets",
+  "title": "Choose the migration method to the workbook",
+  "title_copy": "Copying",
+  "title_transfer": "Transfer",
+  "label": "NEW"
+}

@@ -1,4 +1,4 @@
-.dl-migrate-to-workbook-dialog-body-item-content {
+.dl-select-migration-to-workbook-dialog-body {
     border-radius: 8px;
     box-shadow: 0px 0px 0px 1px var(--g-color-line-generic);
     padding: 20px 20px 28px;
@@ -50,5 +50,9 @@
 
     &__content-item-help {
         margin-left: auto;
+    }
+
+    &__content-tooltip {
+        max-width: 170px;
     }
 }

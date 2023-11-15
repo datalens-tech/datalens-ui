@@ -8,67 +8,63 @@
     "TRANSLATED"
   ],
   "status": {
-    "action_back": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "action_cancel": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "action_next": {
+    "action_сhoose": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "action_show-all": {
+    "description_copy": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_charts": {
+    "description_transfer": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_connections": {
+    "list_first_item_copy": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "md_label_copy-extension-warning": {
+    "list_second_item_copy": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "md_label_copy-warning": {
+    "list_third_item_copy": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_current-entry": {
+    "list_fourth_item_copy": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_dashboards": {
+    "list_first_item_transfer": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_datasets": {
+    "list_first_item_transfer_help_text": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_entry-already-in-workbook": {
+    "list_second_item_transfer": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_linked-objects": {
+    "list_third_item_transfer": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_no-linked-objects": {
+    "list_fourth_item_transfer": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_objects": {
+    "title": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_unknown-error": {
+    "title_copy": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -76,7 +72,7 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "title_copy": {
+    "label": {
       "en": "APPROVED",
       "ru": "APPROVED"
     }

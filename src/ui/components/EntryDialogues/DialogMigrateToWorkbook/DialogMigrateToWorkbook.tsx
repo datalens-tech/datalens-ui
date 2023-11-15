@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {MigrateToWorkbookDialog} from '../../MigrateToWorkbookDialog';
+import {SelectMigrationToWorkbookDialog} from '../../SelectMigrationToWorkbookDialog';
 import {EntryDialogResolveStatus} from '../constants';
 import {EntryDialogProps} from '../types';
 
@@ -14,7 +14,7 @@ export const DialogMigrateToWorkbook: React.FC<DialogMigrateToWorkbookProps> = (
     onClose,
 }) => {
     return (
-        <MigrateToWorkbookDialog
+        <SelectMigrationToWorkbookDialog
             open={visible}
             entryId={entryId}
             onSuccess={() => {

@@ -1,12 +1,12 @@
 import React, {ReactNode} from 'react';
 
 import {CircleQuestion} from '@gravity-ui/icons';
-import {Icon, Label, Tooltip} from '@gravity-ui/uikit';
+import {Icon, Label, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
-import './MigrationBody.scss';
+import './Body.scss';
 
-const b = block('dl-migrate-to-workbook-dialog-body-item-content');
+const b = block('dl-select-migration-to-workbook-dialog-body');
 
 type List = {
     icon: ReactNode;
@@ -14,7 +14,7 @@ type List = {
     helpText?: string;
 };
 
-type MigrationBodyProps = {
+type BodyProps = {
     title: string;
     label?: string;
     description: string;
@@ -22,10 +22,7 @@ type MigrationBodyProps = {
     list: List[];
 };
 
-const MigrationBody: React.FC<{content: MigrationBodyProps; isActive?: boolean}> = ({
-    content,
-    isActive,
-}) => {
+const Body: React.FC<{content: BodyProps; isActive?: boolean}> = ({content, isActive}) => {
     return (
         <div className={b({active: isActive})}>
             <div className={b('header')}>
@@ -47,11 +44,14 @@ const MigrationBody: React.FC<{content: MigrationBodyProps; isActive?: boolean}>
                         <div className={b('content-item-icon')}>{item.icon}</div>{' '}
                         <div className={b('content-item-text')}>{item.text}</div>
                         {item.helpText && (
-                            <Tooltip content={item.helpText}>
-                                <div className={b('content-item-help')}>
-                                    <Icon data={CircleQuestion} />
-                                </div>
-                            </Tooltip>
+                            <Popover
+                                content={item.helpText}
+                                placement="bottom"
+                                contentClassName={b('content-tooltip')}
+                                className={b('content-item-help')}
+                            >
+                                <Icon data={CircleQuestion} />
+                            </Popover>
                         )}
                     </div>
                 ))}
@@ -60,4 +60,4 @@ const MigrationBody: React.FC<{content: MigrationBodyProps; isActive?: boolean}>
     );
 };
 
-export {MigrationBody};
+export {Body};
