@@ -48,6 +48,7 @@ export interface DashEntry extends Entry {
     updatedAt: string;
     publishedId: string;
     asNew?: boolean;
+    fake?: boolean;
 }
 
 export type DashSettings = {
@@ -97,6 +98,7 @@ export interface DashTabItemBase {
     type: DashTabItemType;
     orderId?: number;
     defaultOrderId?: number;
+    title?: string;
 }
 
 export interface DashTabItemText extends DashTabItemBase {

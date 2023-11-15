@@ -20,8 +20,9 @@ import {isEmbeddedMode, isIframe} from '../../../../utils/embedded';
 import {dispatchResize, sendEmbedDashHeight} from '../../modules/helpers';
 import PostMessage, {PostMessageCode} from '../../modules/postMessage';
 import {setTabHashState} from '../../store/actions/dashTyped';
-import {getDashEntry, getEntryId} from '../../store/selectors/dash';
 import {
+    selectDashEntry,
+    selectEntryId,
     selectIsFullscreenMode,
     selectStateHashId,
     selectTabs,
@@ -34,9 +35,9 @@ const b = block('app');
 
 export function App({...routeProps}: RouteComponentProps) {
     const asideHeaderData = useSelector(selectAsideHeaderData);
-    const entryId = useSelector(getEntryId);
+    const entryId = useSelector(selectEntryId);
     const tabs = useSelector(selectTabs);
-    const entry = useSelector(getDashEntry);
+    const entry = useSelector(selectDashEntry);
     const stateHashId = useSelector(selectStateHashId);
     const isFullscreenMode = useSelector(selectIsFullscreenMode);
 
