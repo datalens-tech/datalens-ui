@@ -89,7 +89,6 @@ export function App({...routeProps}: RouteComponentProps) {
                 return;
             }
 
-            sendEmbedDashHeight(wrapRef);
             dispatch(setTabHashState({tabId: newTabId, stateHashId: newStateHashId, entryId}));
         },
         [entryId, tabs, stateHashId, dispatch],
