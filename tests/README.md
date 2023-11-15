@@ -46,3 +46,9 @@ Run tests via commands:
 npm run test:install:chromium
 npm run test:e2e:opensource
 ```
+
+### How to add new test data to united storage
+
+1. Start project `docker compose -f tests/docker-compose.e2e.yml up`
+2. Create necessary test entries in interface
+3. Run `npm run test:e2e:us-dump` - this command will create new database dump with test entries which you just created 
