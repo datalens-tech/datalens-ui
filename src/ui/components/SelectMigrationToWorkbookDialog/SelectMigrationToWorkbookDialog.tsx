@@ -33,7 +33,7 @@ enum Migration {
 
 export const DIALOG_SELECT_MIGRATION_TO_WORKBOOK = Symbol('DIALOG_SELECT_MIGRATION_TO_WORKBOOK');
 
-export type OpenDialogMigrateToWorkbookArgs = {
+export type OpenDialogSelectMigrationToWorkbookArgs = {
     id: typeof DIALOG_SELECT_MIGRATION_TO_WORKBOOK;
     props: Props;
 };

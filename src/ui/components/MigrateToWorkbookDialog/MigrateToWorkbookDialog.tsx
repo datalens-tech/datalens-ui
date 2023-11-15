@@ -47,7 +47,7 @@ export type Props = {
 
 export const DIALOG_MIGRATE_TO_WORKBOOK = Symbol('DIALOG_MIGRATE_TO_WORKBOOK');
 
-export type OpenDialogTransferToWorkbookArgs = {
+export type OpenDialogMigrateToWorkbookArgs = {
     id: typeof DIALOG_MIGRATE_TO_WORKBOOK;
     props: Props;
 };

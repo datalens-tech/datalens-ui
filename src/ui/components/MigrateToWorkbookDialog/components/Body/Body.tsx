@@ -43,7 +43,7 @@ export const Body: React.FC<BodyProps> = ({
 
     return (
         <div className={b()}>
-            {!disableCopy && (
+            {disableCopy && (
                 <div className={b('alert-warning')}>
                     <Alert
                         theme="warning"
