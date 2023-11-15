@@ -4,6 +4,7 @@ import {Field, Placeholder, PlaceholderId, Shared, isVisualizationWithLayers} fr
 import {DatalensGlobalState} from 'ui';
 
 import {AppDispatch} from '../../../store';
+import {FILTER_SECTIONS} from '../constants';
 import {VisualizationState} from '../reducers/visualization';
 import {getSelectedLayer, getUniqueId} from '../utils/helpers';
 
@@ -207,13 +208,20 @@ const moveFromSectionToAnother = ({
               indexToRemove: currentIndex,
           })
         : null;
-    const updatedNextSection = nextSectionFields
-        ? insertFieldToPlaceholder({
-              fieldToInsert: field,
-              insertIndex: nextIndex,
-              fields: nextSectionFields,
-          })
-        : null;
+
+    let updatedNextSection = null;
+    if (nextSectionFields) {
+        let fieldToInsert = field;
+        if (!FILTER_SECTIONS.includes(nextSectionId as PlaceholderId)) {
+            fieldToInsert = {...fieldToInsert, filter: undefined};
+        }
+
+        updatedNextSection = insertFieldToPlaceholder({
+            fieldToInsert,
+            insertIndex: nextIndex,
+            fields: nextSectionFields,
+        });
+    }
 
     let onUndoInsert: (() => void) | undefined;
 
@@ -347,13 +355,6 @@ export const handleDnDItemUpdate = (args: HandleDnDItemUpdateArgs) => {
 
         let movedField = field;
 
-        const shouldClearFilters = [PlaceholderId.Filters, PlaceholderId.DashboardFilters].includes(
-            currentSectionId,
-        );
-        if (shouldClearFilters) {
-            movedField.filter = undefined;
-        }
-
         if (nextSectionTransform) {
             movedField = await nextSectionTransform(movedField);
         }
@@ -418,7 +419,6 @@ export const handleDnDItemUpdate = (args: HandleDnDItemUpdateArgs) => {
                 const nextSectionItem = currentSectionTransform
                     ? await currentSectionTransform(nextSectionFields[nextIndex])
                     : nextSectionFields[nextIndex];
-                const currentSectionItem = movedField;
 
                 if (currentSectionFields && !replaceOptions?.listNoRemove) {
                     const oldItem = currentSectionFields[currentIndex];
@@ -431,6 +431,11 @@ export const handleDnDItemUpdate = (args: HandleDnDItemUpdateArgs) => {
                 }
 
                 if (!replaceOptions?.noRemove) {
+                    let currentSectionItem = movedField;
+                    if (!FILTER_SECTIONS.includes(nextSectionId as PlaceholderId)) {
+                        currentSectionItem = {...currentSectionItem, filter: undefined};
+                    }
+
                     const oldItem = nextSectionFields[nextIndex];
                     updatedNextSectionFields = update(nextSectionFields, {
                         $splice: [[nextIndex, 1, currentSectionItem]],
