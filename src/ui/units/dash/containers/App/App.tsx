@@ -16,7 +16,7 @@ import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {CurrentPageEntry} from '../../../../components/Navigation/types';
 import {DL, EMBEDDED_DASH_MESSAGE_NAME} from '../../../../constants/common';
-import {isEmbeddedMode, isIframe} from '../../../../utils/embedded';
+import {isEmbeddedMode, isIframe, isNoScrollMode} from '../../../../utils/embedded';
 import {dispatchResize, sendEmbedDashHeight} from '../../modules/helpers';
 import PostMessage, {PostMessageCode} from '../../modules/postMessage';
 import {setTabHashState} from '../../store/actions/dashTyped';
@@ -56,8 +56,12 @@ export function App({...routeProps}: RouteComponentProps) {
     React.useEffect(() => {
         Utils.addBodyClass('dl-dash');
 
+        if (isNoScrollMode()) {
+            Utils.addBodyClass('dl-dash_no-scroll');
+        }
+
         return () => {
-            Utils.removeBodyClass('dl-dash');
+            Utils.removeBodyClass('dl-dash', 'dl-dash_no-scroll');
 
             if (showAsideHeader) {
                 dispatch(setCurrentPageEntry(null));
@@ -85,6 +89,7 @@ export function App({...routeProps}: RouteComponentProps) {
                 return;
             }
 
+            sendEmbedDashHeight(wrapRef);
             dispatch(setTabHashState({tabId: newTabId, stateHashId: newStateHashId, entryId}));
         },
         [entryId, tabs, stateHashId, dispatch],
@@ -136,7 +141,7 @@ export function App({...routeProps}: RouteComponentProps) {
     const showHeader = !isFullscreenMode && !isAsideHeaderEnabled && !isEmbedded && isMobileEnabled;
 
     return (
-        <div className={b({mobile: DL.IS_MOBILE})} ref={wrapRef}>
+        <div className={b({mobile: DL.IS_MOBILE, embedded: isEmbedded})} ref={wrapRef}>
             <LocationChange onLocationChanged={locationChangeHandler} />
             {showHeader && <MobileHeader />}
             <div className={b('content')}>
