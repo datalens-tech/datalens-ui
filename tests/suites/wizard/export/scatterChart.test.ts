@@ -69,7 +69,7 @@ datalensTest.describe('Wizard - export. Scatter plot', () => {
 
         const clipboardData = await wizardPage.chartkit.exportMarkdown();
         const expected = `|Region|Profit|Sales|Year|
-|:-|:-:|-:|
+|:-|:-:|:-:|-:|
 |South|26153|216520.79994261265|2017|
 |Central|26831|294532.10064288974|2017|
 |East|52634|393775.10127949715|2017|
@@ -97,10 +97,10 @@ datalensTest.describe('Wizard - export. Scatter plot', () => {
         const clipboardData = await wizardPage.chartkit.exportMarkdown();
         const expected = `|Region|Profit|Sales|Year|Profit AVG|
 |:-|:-:|:-:|:-:|-:|
-|South|26153|216520.79994261265|1877414|28.091299677765843|
-|Central|26831|294532.10064288974|2784874|19.428674873280233|
-|East|52634|393775.10127949715|3401913|31.19976289270895|
-|West|67035|437618.3998544216|3831495|35.28157894736842|`;
+|South|26153|216520.79994261265|2017|28.091299677765843|
+|Central|26831|294532.10064288974|2017|19.428674873280233|
+|East|52634|393775.10127949715|2017|31.19976289270895|
+|West|67035|437618.3998544216|2017|35.28157894736842|`;
 
         await expect(clipboardData).toEqual(expected);
     });
