@@ -7,6 +7,12 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ConnectorType} from 'shared';
 import {ErrorContent} from 'ui/index';
+import {getRelations} from 'ui/store/actions/copyEntriesToWorkbook';
+import {
+    selectIsLoadingRelations,
+    selectRelations,
+    selectRelationsError,
+} from 'ui/store/selectors/copyEntriesToWorkbook';
 
 import type {AppDispatch} from '../../store';
 import {closeDialog, openDialog} from '../../store/actions/dialog';
@@ -65,22 +71,27 @@ export const MigrateToWorkbookDialog: React.FC<Props> = ({
 
     const isLoadingTargetEntry = useSelector(selectIsLoadingTargetEntry);
     const isLoadingRelationsGraph = useSelector(selectIsLoadingRelationsGraph);
+    const isLoadingRelations = useSelector(selectIsLoadingRelations);
 
     const targetEntry = useSelector(selectTargetEntry);
 
-    const relationsGraph = useSelector(selectRelationsGraph);
+    const relationsGraphForTransfer = useSelector(selectRelationsGraph);
+    const relationsForCopy = useSelector(selectRelations);
 
-    const isLoading = isLoadingTargetEntry || isLoadingRelationsGraph;
+    const relations = isTransferToWorkbook ? relationsGraphForTransfer : relationsForCopy;
+
+    const isLoading = isLoadingTargetEntry || isLoadingRelationsGraph || isLoadingRelations;
 
     const targetEntryError = useSelector(selectTargetEntryError);
     const relationsGraphError = useSelector(selectRelationsGraphError);
-    const requestError = targetEntryError || relationsGraphError;
+    const relationsError = useSelector(selectRelationsError);
+    const requestError = targetEntryError || relationsGraphError || relationsError;
 
     const isError = !isLoading && requestError !== null;
 
     const disableCopy = Boolean(
         !isTransferToWorkbook &&
-            relationsGraph?.find(
+            relations?.find(
                 (entry) =>
                     entry.type === ConnectorType.Csv ||
                     entry.type === ConnectorType.GsheetsV2 ||
@@ -96,7 +107,12 @@ export const MigrateToWorkbookDialog: React.FC<Props> = ({
             setIsLoadingInited(true);
 
             promises.push(dispatch(getEntry({entryId})));
-            promises.push(dispatch(getRelationsGraph({entryId})));
+
+            if (isTransferToWorkbook) {
+                promises.push(dispatch(getRelationsGraph({entryId})));
+            } else {
+                promises.push(dispatch(getRelations({entryId})));
+            }
         }
 
         return () => {
@@ -104,7 +120,7 @@ export const MigrateToWorkbookDialog: React.FC<Props> = ({
                 promise.cancel();
             });
         };
-    }, [open, entryId, dispatch]);
+    }, [open, entryId, dispatch, isTransferToWorkbook]);
 
     const handleButtonApply = React.useCallback(() => {
         dispatch(
@@ -113,12 +129,12 @@ export const MigrateToWorkbookDialog: React.FC<Props> = ({
                 props: {
                     open: true,
                     onApply: async (workbookId) => {
-                        if (targetEntry && relationsGraph) {
+                        if (targetEntry && relations) {
                             const params = {
                                 workbookId,
                                 entryIds: [
                                     targetEntry.entryId,
-                                    ...relationsGraph.map((item) => item.entryId),
+                                    ...relations.map((item) => item.entryId),
                                 ],
                             };
                             const response = await dispatch(
@@ -140,7 +156,7 @@ export const MigrateToWorkbookDialog: React.FC<Props> = ({
                 },
             }),
         );
-    }, [dispatch, isTransferToWorkbook, onClose, onSuccess, relationsGraph, targetEntry]);
+    }, [dispatch, isTransferToWorkbook, onClose, onSuccess, relations, targetEntry]);
 
     const handleGoBack = () => {
         dispatch(closeDialog());
@@ -161,7 +177,7 @@ export const MigrateToWorkbookDialog: React.FC<Props> = ({
                         <SmartLoader size="m" showAfter={0} />
                     ) : (
                         <React.Fragment>
-                            {isError || targetEntry === null || relationsGraph === null ? (
+                            {isError || targetEntry === null || relations === null ? (
                                 <ErrorContent
                                     className={b('error-block')}
                                     error={requestError}
@@ -175,7 +191,7 @@ export const MigrateToWorkbookDialog: React.FC<Props> = ({
                                 <Body
                                     isTransferToWorkbook={isTransferToWorkbook}
                                     targetEntry={targetEntry}
-                                    relationsGraph={relationsGraph}
+                                    relationsGraph={relations}
                                     disableCopy={disableCopy}
                                     handleGoBack={handleGoBack}
                                 />
