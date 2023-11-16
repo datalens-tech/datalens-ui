@@ -173,8 +173,8 @@ export default class Utils {
         window.document.body.classList.add(...className);
     }
 
-    static removeBodyClass(className: string) {
-        window.document.body.classList.remove(className);
+    static removeBodyClass(...className: string[]) {
+        window.document.body.classList.remove(...className);
     }
 
     static setSdk() {
