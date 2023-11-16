@@ -1,5 +1,4 @@
 import {createSelector} from 'reselect';
-import {getConfigWithDSDefaults} from 'ui/units/dash/utils/helpers';
 
 import {selectTabs} from './dashTypedSelectors';
 
@@ -29,14 +28,3 @@ export const getOpenedItemData = (state) => {
     }
     return undefined;
 };
-
-export const selectDashDatasetsFields = (state) => state.dash?.datasetsFields || null;
-
-/**
- * Forming clone of currentTab but with merged dataset fields for wizard charts,
- * new object in order to not mutating origin currentTab (it causes errors in work)
- */
-export const selectCurrentTabWithDashDatasets = createSelector(
-    [getCurrentTab, selectDashDatasetsFields],
-    (currentTab, dashDatasetsFields) => getConfigWithDSDefaults(currentTab, dashDatasetsFields),
-);

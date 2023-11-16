@@ -68,7 +68,7 @@ export const getConfigWithoutDSDefaults = (args: {
  * @param dashDatasetsFields
  */
 export const getConfigWithDSDefaults = (
-    currentTab: DashTab,
+    currentTab: DashTab | null,
     dashDatasetsFields: DashState['datasetsFields'],
 ): DashTab | null => {
     if (!dashDatasetsFields || !currentTab) {
