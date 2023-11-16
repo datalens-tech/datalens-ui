@@ -2,6 +2,7 @@ import _isEmpty from 'lodash/isEmpty';
 
 import {
     ChartkitHandlers,
+    ColorMode,
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
     ServerPlaceholder,
@@ -183,8 +184,9 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                 });
 
             const isShouldShowMeasureLegend =
-                (isColorizeByMeasure || isColorizeByMeasureValue) &&
-                !isCombinedChartColorizedBySomeDimenstion;
+                colorsConfig.colorMode === ColorMode.GRADIENT ||
+                ((isColorizeByMeasure || isColorizeByMeasureValue) &&
+                    !isCombinedChartColorizedBySomeDimenstion);
 
             if (isShouldShowMeasureLegend) {
                 const points: Highcharts.PointOptionsObject[] = (graphs as any[]).reduce(
