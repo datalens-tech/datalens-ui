@@ -11,6 +11,7 @@ import {
     ServerChartsConfig,
     ServerCommonSharedExtraSettings,
     StringParams,
+    TableWidgetEventScope,
     WidgetEvent,
     WizardVisualizationId,
     getIsNavigatorEnabled,
@@ -77,6 +78,9 @@ type TableConfig = BaseConfig & {
     paginator?: {
         enabled: boolean;
         limit?: number;
+    };
+    events?: {
+        click?: WidgetEvent<TableWidgetEventScope> | WidgetEvent<TableWidgetEventScope>[];
     };
 };
 
@@ -190,14 +194,15 @@ export default (
         config.enableGPTInsights = shared.extraSettings.enableGPTInsights;
     }
 
+    const visualizationId = shared.visualization.id;
     if (
-        shared.visualization.id === 'line' ||
-        shared.visualization.id === 'area' ||
-        shared.visualization.id === 'area100p' ||
-        shared.visualization.id === 'column' ||
-        shared.visualization.id === 'column100p' ||
-        shared.visualization.id === 'bar' ||
-        shared.visualization.id === 'bar100p'
+        visualizationId === 'line' ||
+        visualizationId === 'area' ||
+        visualizationId === 'area100p' ||
+        visualizationId === 'column' ||
+        visualizationId === 'column100p' ||
+        visualizationId === 'bar' ||
+        visualizationId === 'bar100p'
     ) {
         config.manageTooltipConfig = ChartkitHandlers.WizardManageTooltipConfig;
 
@@ -209,18 +214,17 @@ export default (
                 config.enableSum = true;
             }
         }
-    } else if (shared.visualization.id === 'pie' || shared.visualization.id === 'donut') {
+    } else if (visualizationId === 'pie' || visualizationId === 'donut') {
         config.showPercentInTooltip = true;
-    } else if (shared.visualization.id === 'metric') {
+    } else if (visualizationId === 'metric') {
         (config as MetricConfig).metricVersion = 2;
-    } else if (shared.visualization.id === 'pivotTable') {
+    } else if (visualizationId === 'pivotTable') {
         (config as TableConfig).settings = {
             highlightRows: false,
             externalSort: true,
         };
     }
 
-    const visualizationId = shared.visualization.id;
     const placeholders = shared.visualization.placeholders;
     const colors = shared.colors;
 
@@ -233,9 +237,15 @@ export default (
     }
 
     if (widgetConfig?.actionParams?.enable) {
-        config.events = {
-            click: [{handler: {type: 'setActionParams'}, scope: 'point'}],
-        };
+        if (visualizationId === WizardVisualizationId.FlatTable) {
+            (config as TableConfig).events = {
+                click: [{handler: {type: 'setActionParams'}, scope: 'row'}],
+            };
+        } else {
+            (config as GraphConfig).events = {
+                click: [{handler: {type: 'setActionParams'}, scope: 'point'}],
+            };
+        }
     }
 
     log('CONFIG:');
