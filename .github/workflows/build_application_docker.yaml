@@ -62,21 +62,4 @@ jobs:
           # platforms: linux/amd64,linux/arm64
           # cache-from: type=gha
           # cache-to: type=gha,mode=max
-      - name: Run Snyk to check Docker image for vulnerabilities
-        continue-on-error: true
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image:  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          args: --file=Dockerfile --org=${{ vars.SNYK_ORG }}
-      - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: snyk.sarif
-
-
-
-
-
           
