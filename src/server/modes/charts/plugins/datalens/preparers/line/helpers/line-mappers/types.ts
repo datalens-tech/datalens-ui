@@ -100,6 +100,7 @@ export interface MapDataToDimensionColoredLinesArgs extends CommonMapDataToLines
     hasColors: boolean;
     hasShapes: boolean;
     isItemsAreEqual: boolean;
+    colorMode?: ColorMode;
 }
 
 export interface MapDataToMeasureColoredLinesArgs extends CommonMapDataToLinesArgs {

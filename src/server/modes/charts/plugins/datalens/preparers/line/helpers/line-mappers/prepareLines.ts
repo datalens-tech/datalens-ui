@@ -193,6 +193,7 @@ export const prepareLines = (args: PrepareLinesArgs) => {
         isSegmentsExists,
         segmentIndexInOrder,
         layers = [],
+        colorMode,
     } = args;
 
     const x2DataType = x2Field ? (idToDataType[x2Field.guid] as DATASET_FIELD_TYPES) : null;
@@ -285,6 +286,7 @@ export const prepareLines = (args: PrepareLinesArgs) => {
                     hasColors: isColorItemExist,
                     segmentName: segmentNameKey,
                     layers,
+                    colorMode,
                 },
                 options: {
                     colorItem,
