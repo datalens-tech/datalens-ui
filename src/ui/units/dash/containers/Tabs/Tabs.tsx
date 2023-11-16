@@ -9,8 +9,12 @@ import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {appendSearchQuery, getHashStateParam} from '../../modules/helpers';
 import {setPageTab} from '../../store/actions/dashTyped';
-import {getCurrentTabId} from '../../store/selectors/dash';
-import {selectHashStates, selectTabId, selectTabs} from '../../store/selectors/dashTypedSelectors';
+import {
+    selectCurrentTabId,
+    selectHashStates,
+    selectTabId,
+    selectTabs,
+} from '../../store/selectors/dashTypedSelectors';
 
 import './Tabs.scss';
 
@@ -36,7 +40,7 @@ function TabsComponent<T>(props: TabsProps<T>) {
         <div className={b()}>
             <DataLensTabs
                 size={size}
-                activeTab={props.currentTabId}
+                activeTab={props.currentTabId || undefined}
                 items={props.tabs.map(({id, title}) => ({id, title}))}
                 onSelectTab={(tabId, event) => {
                     // clicking on the tab with the meta-key pressed - opening the tab in a new window, and not switching to it
@@ -63,7 +67,7 @@ function TabsComponent<T>(props: TabsProps<T>) {
 const mapStateToProps = (state: DatalensGlobalState) => ({
     tabs: selectTabs(state),
     tabId: selectTabId(state),
-    currentTabId: getCurrentTabId(state),
+    currentTabId: selectCurrentTabId(state),
     hashStates: selectHashStates(state),
 });
 

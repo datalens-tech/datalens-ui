@@ -169,7 +169,7 @@ export type SetTabHashStateAction = {
     type: typeof SET_TAB_HASH_STATE;
     payload: {
         tabId: string;
-        entryId: string;
+        entryId: string | null;
         stateHashId?: string;
         hashStates?: TabsHashStates;
     };
@@ -180,7 +180,7 @@ export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'ha
         const {entryId, stateHashId, tabId} = data;
         const newData: SetTabHashStateAction['payload'] = {...data};
 
-        if (stateHashId) {
+        if (stateHashId && entryId) {
             const hashData = await getSdk()
                 .us.getDashState({entryId, hash: stateHashId})
                 .catch((error) => logger.logError('getDashState failed', error));

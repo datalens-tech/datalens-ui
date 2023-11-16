@@ -2,6 +2,10 @@
 
 body.g-root.dl-dash {
     background-color: var(--g-color-base-generic-ultralight);
+
+    &_no-scroll {
+        overflow-y: hidden;
+    }
 }
 
 // to prevent YCSelect elements overflows boundaries on mobile
