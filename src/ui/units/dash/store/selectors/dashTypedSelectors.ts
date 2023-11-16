@@ -292,29 +292,29 @@ export const selectOpenedItemData = createSelector(
 );
 
 export const selectCurrentTabConnectableItems = createSelector([selectCurrentTab], (currentTab) => {
-    if (currentTab) {
-        return currentTab.items
-            .filter(({type}) => type === ITEM_TYPE.CONTROL || type === ITEM_TYPE.WIDGET)
-            .reduce(
-                (result, {id, data, type, namespace}: DashTabItem) =>
-                    type === ITEM_TYPE.WIDGET
-                        ? result.concat(
-                              (data as DashTabItemWidget['data']).tabs.map(
-                                  (tabItem: DashTabItemWidgetTab) => ({
-                                      id: tabItem.title,
-                                      namespace,
-                                      type,
-                                      title: tabItem.title,
-                                  }),
-                              ) as DashTabItem[],
-                          )
-                        : result.concat([
-                              {id, namespace, type, title: 'title' in data ? data.title : ''},
-                          ] as DashTabItem[]),
-                [] as DashTabItem[],
-            );
+    if (!currentTab) {
+        return undefined;
     }
-    return undefined;
+    return currentTab.items
+        .filter(({type}) => type === ITEM_TYPE.CONTROL || type === ITEM_TYPE.WIDGET)
+        .reduce(
+            (result, {id, data, type, namespace}: DashTabItem) =>
+                type === ITEM_TYPE.WIDGET
+                    ? result.concat(
+                          (data as DashTabItemWidget['data']).tabs.map(
+                              (tabItem: DashTabItemWidgetTab) => ({
+                                  id: tabItem.id,
+                                  namespace,
+                                  type,
+                                  title: tabItem.title,
+                              }),
+                          ) as DashTabItem[],
+                      )
+                    : result.concat([
+                          {id, namespace, type, title: 'title' in data ? data.title : ''},
+                      ] as DashTabItem[]),
+            [] as DashTabItem[],
+        );
 });
 
 export const selectCurrentTabAliases = createSelector(
