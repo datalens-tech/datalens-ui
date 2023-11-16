@@ -20,8 +20,9 @@ import {isEmbeddedMode, isIframe, isNoScrollMode} from '../../../../utils/embedd
 import {dispatchResize, sendEmbedDashHeight} from '../../modules/helpers';
 import PostMessage, {PostMessageCode} from '../../modules/postMessage';
 import {setTabHashState} from '../../store/actions/dashTyped';
-import {getDashEntry, getEntryId} from '../../store/selectors/dash';
 import {
+    selectDashEntry,
+    selectEntryId,
     selectIsFullscreenMode,
     selectStateHashId,
     selectTabs,
@@ -35,9 +36,9 @@ const dashBlock = block('dl-dash');
 
 export function App({...routeProps}: RouteComponentProps) {
     const asideHeaderData = useSelector(selectAsideHeaderData);
-    const entryId = useSelector(getEntryId);
+    const entryId = useSelector(selectEntryId);
     const tabs = useSelector(selectTabs);
-    const entry = useSelector(getDashEntry);
+    const entry = useSelector(selectDashEntry);
     const stateHashId = useSelector(selectStateHashId);
     const isFullscreenMode = useSelector(selectIsFullscreenMode);
 
