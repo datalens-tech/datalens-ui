@@ -914,7 +914,7 @@ const LOAD_DASH_DATASETS_CONCURRENT_ID = 'dashLoadDatasets';
  * @param tabId
  */
 export function loadDashDatasets(entry: Partial<DashState>, tabId: string) {
-    return async function (dispatch: DashDispatch, _getState: () => DatalensGlobalState) {
+    return async function (dispatch: DashDispatch) {
         const tabs = entry.data?.tabs || [];
         if (!tabs.length) {
             return;
