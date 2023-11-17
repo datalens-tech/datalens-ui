@@ -32,13 +32,12 @@ import {
     COLUMN_100P_VISUALIZATION,
     COLUMN_VISUALIZATION,
     LINE_VISUALIZATION,
-    SCATTER_VISUALIZATION,
 } from './line';
 import {METRIC_VISUALIZATION} from './metric';
 import {PIE_D3_VISUALIZATION, PIE_VISUALIZATION} from './pie';
 import {PIVOT_TABLE_VISUALIZATION} from './pivotTable';
 import {POLYLINE_VISUALIZATION} from './polyline';
-import {SCATTER_D3_VISUALIZATION} from './scatter';
+import {SCATTER_D3_VISUALIZATION, SCATTER_VISUALIZATION} from './scatter';
 import {TREEMAP_VISUALIZATION} from './treemap';
 
 export const SETTINGS = {
