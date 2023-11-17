@@ -1,4 +1,4 @@
-import {DatasetFieldType, isDateField} from '../../../../../../shared';
+import {isDateField, isMeasureField} from '../../../../../../shared';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
 import {
     colorizeGeoByGradient,
@@ -162,7 +162,7 @@ const preparePolyline = (options: PrepareFunctionArgs) => {
             {},
         );
 
-        if (color.type === DatasetFieldType.Measure) {
+        if (isMeasureField(color)) {
             colorData = colorizeGeoByGradient(hashTable, colorsConfig).colorData;
         } else {
             colorData = colorizeGeoByPalette(hashTable, colorsConfig, color?.guid).colorData;
