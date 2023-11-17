@@ -402,7 +402,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         innerParamsRef,
         handleError,
         requestDataProps,
-        // debouncedGetWidget, // in emergency with double api/run uncomment this (3)
         requestId,
         requestCancellationRef,
         dataProvider,
@@ -731,7 +730,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
             }
             return null;
         },
-        [dataProvider, initialData, requestId, requestCancellationRef, rootNodeRef],
+        [dataProvider, initialData, requestId, requestCancellationRef, rootNodeRef, handleError],
     );
 
     const handleChange = React.useCallback(

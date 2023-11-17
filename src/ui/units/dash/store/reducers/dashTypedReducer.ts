@@ -11,6 +11,7 @@ import {DashUpdateStatus} from '../../typings/dash';
 import {
     ADD_SELECTOR_TO_GROUP,
     CHANGE_NAVIGATION_PATH,
+    RESET_DASH_DS_FIELDS,
     SET_ACTIVE_SELECTOR_INDEX,
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
@@ -73,7 +74,7 @@ export type DashState = {
     isRenameWithoutReload?: boolean;
     skipReload?: boolean;
     openedItemWidgetType?: WidgetType;
-    datasetsFields: GetEntriesDatasetsFieldsItem[];
+    datasetsFields: GetEntriesDatasetsFieldsItem[] | null;
 };
 
 // eslint-disable-next-line complexity
@@ -388,6 +389,13 @@ export function dashTypedReducer(
             return {
                 ...state,
                 isRenameWithoutReload: action.payload || false,
+            };
+        }
+
+        case RESET_DASH_DS_FIELDS: {
+            return {
+                ...state,
+                datasetsFields: null,
             };
         }
 

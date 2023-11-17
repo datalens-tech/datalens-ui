@@ -897,6 +897,13 @@ export const setDashDatasets = (data: SetDashDSAction['payload']): SetDashDSActi
     type: SET_DASH_DS_FIELDS,
     payload: data,
 });
+export const RESET_DASH_DS_FIELDS = Symbol('dash/RESET_DASH_DS_FIELDS');
+export type ResetDashDSAction = {
+    type: typeof RESET_DASH_DS_FIELDS;
+};
+export const resetDashDatasetsFields = (): ResetDashDSAction => ({
+    type: RESET_DASH_DS_FIELDS,
+});
 
 const LOAD_DASH_DATASETS_CONCURRENT_ID = 'dashLoadDatasets';
 
