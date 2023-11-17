@@ -23,7 +23,7 @@ import {
     isVisualizationWithLayers,
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
-import {getGradientStops, mapAndColorizeGraphsByDimension} from '../../utils/color-helpers';
+import {getGradientStops, mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
 import {PSEUDO} from '../../utils/constants';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {
@@ -462,7 +462,7 @@ function prepareLine({
                 colorsConfig,
             });
         } else {
-            mapAndColorizeGraphsByDimension({
+            mapAndColorizeGraphsByPalette({
                 graphs,
                 colorsConfig,
                 isShapesItemExists: isShapeItemExist,

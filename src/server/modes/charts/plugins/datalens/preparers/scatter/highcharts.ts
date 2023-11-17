@@ -2,6 +2,7 @@ import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
 import {
     ChartkitHandlers,
+    ColorMode,
     ExtendedExportingCsvOptions,
     isDateField,
 } from '../../../../../../../shared';
@@ -13,6 +14,7 @@ import {ChartKitFormatSettings, PrepareFunctionArgs} from '../types';
 
 import {prepareScatter} from './prepareScatter';
 
+// eslint-disable-next-line complexity
 export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
     const {ChartEditor, shared, placeholders, idToTitle, idToDataType} = options;
     const {graphs, categories, x, y, z, color, minColorValue, maxColorValue, colorsConfig, size} =
@@ -90,7 +92,7 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
             );
         }
 
-        if (color && color.type === 'MEASURE') {
+        if (color && (color.type === 'MEASURE' || colorsConfig?.colorMode === ColorMode.GRADIENT)) {
             if (
                 colorsConfig &&
                 typeof minColorValue === 'number' &&

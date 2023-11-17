@@ -1,6 +1,7 @@
 import escape from 'lodash/escape';
 
 import {
+    ColorMode,
     Feature,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
@@ -8,8 +9,8 @@ import {
 } from '../../../../../../shared';
 import {registry} from '../../../../../registry';
 import {
-    mapAndColorizeHashTableByDimension,
-    mapAndColorizeHashTableByMeasure,
+    mapAndColorizeHashTableByGradient,
+    mapAndColorizeHashTableByPalette,
 } from '../utils/color-helpers';
 import {
     chartKitFormatNumberWrapper,
@@ -37,14 +38,15 @@ function prepareTreemap({
     idToTitle,
 }: PrepareFunctionArgs) {
     const app = registry.getApp();
-    // Measurements
+    // Dimensions
     const d = placeholders[0].items;
     const dTypes = d.map((item) => item.data_type);
 
-    // Indicators
+    // Measures
     const m = placeholders[1].items;
 
     const c = colors[0];
+    const colorMode = colorsConfig.colorMode;
 
     const {data, order} = resultData;
 
@@ -62,7 +64,7 @@ function prepareTreemap({
     let colorData: Record<string, {backgroundColor: string}> = {};
 
     if (c) {
-        // we make the property non-enumerable so that it does not participate in the formation of the palette
+        // We make the property non-enumerable so that it does not participate in the formation of the palette
         Object.defineProperty(valuesForColorData, 'colorGuid', {
             enumerable: false,
             value: c.guid,
@@ -70,7 +72,8 @@ function prepareTreemap({
     }
 
     const measureNames = m.map((measureItem) => idToTitle[measureItem.guid]);
-    // TODO: think about why. After all, you can put only one field in the indicators (Size) (treemap.tsx)
+
+    // TODO: think about why. After all, you can put only one field in the measures (Size) (treemap.tsx)
     if (measureNames.length > 1) {
         multimeasure = true;
 
@@ -172,7 +175,7 @@ function prepareTreemap({
             }
 
             if (c) {
-                if (c.type === 'MEASURE') {
+                if (colorMode === ColorMode.GRADIENT || c.type === 'MEASURE') {
                     const colorTitle = idToTitle[c.guid];
                     const i = findIndexInOrder(order, c, colorTitle);
                     const colorValue = values[i];
@@ -194,13 +197,13 @@ function prepareTreemap({
     });
 
     if (c) {
-        if (c.type === 'MEASURE') {
-            colorData = mapAndColorizeHashTableByMeasure(
+        if (colorMode === ColorMode.GRADIENT || c.type === 'MEASURE') {
+            colorData = mapAndColorizeHashTableByGradient(
                 valuesForColorData,
                 colorsConfig,
             ).colorData;
         } else {
-            colorData = mapAndColorizeHashTableByDimension(valuesForColorData, colorsConfig);
+            colorData = mapAndColorizeHashTableByPalette(valuesForColorData, colorsConfig);
         }
 
         treemap = treemap.map((obj) => {

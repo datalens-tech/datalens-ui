@@ -2,6 +2,7 @@ import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import escape from 'lodash/escape';
 
 import {
+    ColorMode,
     Feature,
     MINIMUM_FRACTION_DIGITS,
     POINT_SHAPES_IN_ORDER,
@@ -15,8 +16,8 @@ import {registry} from '../../../../../../registry';
 import {ChartColorsConfig} from '../../js/helpers/colors';
 import {
     ExtendedSeriesScatterOptions,
-    mapAndColorizeChartByMeasure,
-    mapAndColorizePointsByDimension,
+    mapAndColorizePointsByGradient,
+    mapAndColorizePointsByPalette,
 } from '../../utils/color-helpers';
 import {getMountedColor} from '../../utils/constants';
 import {getExtremeValues} from '../../utils/geo-helpers';
@@ -71,6 +72,8 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     } = options;
 
     const {data, order} = resultData;
+
+    const colorMode = colorsConfig.colorMode;
 
     const x = placeholders[0].items[0];
     if (!x) {
@@ -279,7 +282,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             const i = findIndexInOrder(order, color, cTitle);
             const colorValue = shouldEscapeUserValue ? escape(values[i] as string) : values[i];
 
-            if (color.type === 'MEASURE') {
+            if (colorMode === ColorMode.GRADIENT || color.type === 'MEASURE') {
                 const numberColorValue = Number(colorValue);
 
                 if (numberColorValue < minColorValue) {
@@ -327,10 +330,10 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     let graphs: ExtendedSeriesScatterOptions[] = [{data: points}] as ExtendedSeriesScatterOptions[];
 
     if (color) {
-        if (color.type === 'MEASURE') {
-            mapAndColorizeChartByMeasure(points as Highcharts.PointOptionsObject[], colorsConfig);
+        if (colorMode === ColorMode.GRADIENT || color.type === 'MEASURE') {
+            mapAndColorizePointsByGradient(points as Highcharts.PointOptionsObject[], colorsConfig);
         } else {
-            graphs = mapAndColorizePointsByDimension(points, colorsConfig);
+            graphs = mapAndColorizePointsByPalette(points, colorsConfig);
         }
 
         if (graphs.length) {

@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ColorMode, ColorsConfig, DATASET_FIELD_TYPES, Feature, Field} from 'shared';
+import {ColorMode, ColorsConfig, Feature, Field} from 'shared';
 import {fetchColorPalettes} from 'store/actions/colorPaletteEditor';
 import {selectColorPalettes} from 'store/selectors/colorPaletteEditor';
 import {DatalensGlobalState, Utils} from 'ui';
@@ -45,6 +45,7 @@ type OwnProps = {
     extra?: ExtraSettings;
     colorMode: ColorMode;
     onColorModeChange: (value: ColorMode) => void;
+    isColorModeChangeAvailable: boolean;
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -69,23 +70,17 @@ class ColorSettingsContainer extends React.Component<Props> {
     }
 
     render() {
-        const {colorMode} = this.props;
+        const {colorMode, isColorModeChangeAvailable} = this.props;
 
         return (
             <React.Fragment>
-                {this.isColorModeChangeAvailable() && this.renderColorModeSelect()}
+                {isColorModeChangeAvailable && this.renderColorModeSelect()}
                 {colorMode === ColorMode.GRADIENT
                     ? this.renderGradientBody()
                     : this.renderPaletteBody()}
             </React.Fragment>
         );
     }
-
-    private isColorModeChangeAvailable = () => {
-        const {item} = this.props;
-
-        return item.data_type === DATASET_FIELD_TYPES.INTEGER;
-    };
 
     private renderColorModeSelect = () => {
         return (

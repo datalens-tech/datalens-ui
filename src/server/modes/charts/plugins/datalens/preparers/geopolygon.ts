@@ -1,4 +1,5 @@
 import {
+    ColorMode,
     DATASET_FIELD_TYPES,
     MINIMUM_FRACTION_DIGITS,
     ServerFieldFormatting,
@@ -9,8 +10,8 @@ import {hexToRgb} from '../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
 import {
     Coordinate,
-    colorizeGeoByDimension,
-    colorizeGeoByMeasure,
+    colorizeGeoByGradient,
+    colorizeGeoByPalette,
     getFlattenCoordinates,
     getGradientMapOptions,
     getLayerAlpha,
@@ -135,11 +136,12 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
     const color = colors[0];
     const coordinates = placeholders[0].items;
 
-    const gradientMode = color && color.type === 'MEASURE';
+    const gradientMode =
+        color && (color.type === 'MEASURE' || colorsConfig.colorMode === ColorMode.GRADIENT);
 
     let colorizedResult:
-        | ReturnType<typeof colorizeGeoByMeasure>
-        | ReturnType<typeof colorizeGeoByDimension>;
+        | ReturnType<typeof colorizeGeoByGradient>
+        | ReturnType<typeof colorizeGeoByPalette>;
 
     let colorData = {},
         leftBot: Coordinate | undefined,
@@ -268,11 +270,11 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         });
 
         if (gradientMode) {
-            colorizedResult = colorizeGeoByMeasure(hashTable, colorsConfig);
+            colorizedResult = colorizeGeoByGradient(hashTable, colorsConfig);
 
             colorData = colorizedResult.colorData;
         } else {
-            colorizedResult = colorizeGeoByDimension(hashTable, colorsConfig, color.guid);
+            colorizedResult = colorizeGeoByPalette(hashTable, colorsConfig, color.guid);
 
             colorData = colorizedResult.colorData;
             colorDictionary = colorizedResult.colorDictionary;
@@ -391,7 +393,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
             ...getGradientMapOptions(
                 colorsConfig,
                 colorTitle,
-                colorizedResult! as ReturnType<typeof colorizeGeoByMeasure>,
+                colorizedResult! as ReturnType<typeof colorizeGeoByGradient>,
             ),
         };
 

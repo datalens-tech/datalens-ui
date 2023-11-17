@@ -1,4 +1,5 @@
 import {
+    ColorMode,
     CommonNumberFormattingOptions,
     DATASET_FIELD_TYPES,
     ExtendedSeriesLineOptions,
@@ -25,7 +26,7 @@ export type PieConfig = {
     showInLegend?: boolean;
 };
 
-function mapAndColorizePieByMeasure(
+function mapAndColorizePieByGradient(
     points: (PiePoint & ExtendedSeriesLineOptions)[],
     colorsConfig: ChartColorsConfig,
 ) {
@@ -49,7 +50,7 @@ function mapAndColorizePieByMeasure(
     return points;
 }
 
-function mapAndColorizePieByDimension({
+function mapAndColorizePieByPalette({
     graphs,
     colorsConfig,
     isColorsItemExists,
@@ -116,6 +117,7 @@ export function preparePie({
         return {graphs: []};
     }
 
+    const colorMode = colorsConfig.colorMode;
     const colorDataType = color && color.data_type;
     const colorActualTitle = idToTitle[color.guid];
     const colorIndex = findIndexInOrder(order, color, colorActualTitle);
@@ -293,12 +295,13 @@ export function preparePie({
         });
     }
 
-    const isColoringByMeasure = color.type === 'MEASURE' && isNumberField(color);
+    const isColoringByGradient =
+        (color.type === 'MEASURE' && isNumberField(color)) || colorMode === ColorMode.GRADIENT;
 
-    if (isColoringByMeasure) {
-        pie.data = mapAndColorizePieByMeasure(pie.data, colorsConfig);
+    if (isColoringByGradient) {
+        pie.data = mapAndColorizePieByGradient(pie.data, colorsConfig);
     } else {
-        pie.data = mapAndColorizePieByDimension({
+        pie.data = mapAndColorizePieByPalette({
             graphs: pie.data,
             colorsConfig,
             isColorsItemExists: Boolean(color),

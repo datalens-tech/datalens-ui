@@ -1,8 +1,8 @@
 import {DatasetFieldType, isDateField} from '../../../../../../shared';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
 import {
-    colorizeGeoByDimension,
-    colorizeGeoByMeasure,
+    colorizeGeoByGradient,
+    colorizeGeoByPalette,
     getLayerAlpha,
     getMapBounds,
 } from '../utils/geo-helpers';
@@ -163,9 +163,9 @@ const preparePolyline = (options: PrepareFunctionArgs) => {
         );
 
         if (color.type === DatasetFieldType.Measure) {
-            colorData = colorizeGeoByMeasure(hashTable, colorsConfig).colorData;
+            colorData = colorizeGeoByGradient(hashTable, colorsConfig).colorData;
         } else {
-            colorData = colorizeGeoByDimension(hashTable, colorsConfig, color?.guid).colorData;
+            colorData = colorizeGeoByPalette(hashTable, colorsConfig, color?.guid).colorData;
         }
     }
 

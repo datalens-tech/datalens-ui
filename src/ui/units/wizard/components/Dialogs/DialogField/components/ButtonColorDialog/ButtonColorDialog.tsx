@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ColorsConfig, Feature, Field, GradientType, InternalPaletteId} from 'shared';
 import {fetchColorPalettes} from 'store/actions/colorPaletteEditor';
 import {selectColorPalettesDict} from 'store/selectors/colorPaletteEditor';
-import {isGradientDialog} from 'ui/units/wizard/selectors/dialogColor';
+import {isColorModeChangeAvailable, isGradientDialog} from 'ui/units/wizard/selectors/dialogColor';
 import Utils from 'utils';
 
 import {openDialogColor} from '../../../../../actions/dialogColor';
@@ -65,6 +65,10 @@ export const ButtonColorDialog: React.FC<ButtonColorDialogProps> = (
         paletteName = i18n('wizard', `label_${paletteId as GradientType}`);
     }
 
+    const isColorModeChangeAvailableValue = isColorModeChangeAvailable({
+        item: field,
+    });
+
     return (
         <Button
             qa={qa}
@@ -82,6 +86,7 @@ export const ButtonColorDialog: React.FC<ButtonColorDialogProps> = (
                             item: field,
                             extra: extraSettings,
                         }),
+                        isColorModeChangeAvailable: isColorModeChangeAvailableValue,
                     }),
                 )
             }

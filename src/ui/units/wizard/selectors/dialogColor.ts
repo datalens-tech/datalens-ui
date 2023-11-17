@@ -1,7 +1,16 @@
-import {Feature, isMeasureName, isMeasureType, isMeasureValue, isNumberField} from 'shared';
+import {
+    DATASET_FIELD_TYPES,
+    DatasetFieldType,
+    Feature,
+    isMeasureName,
+    isMeasureType,
+    isMeasureValue,
+    isNumberField,
+} from 'shared';
 import {DatalensGlobalState, Utils, selectPalette} from 'ui';
 
 import {OpenDialogColorArgs} from '../components/Dialogs/DialogColor/DialogColor';
+import {VISUALIZATION_IDS} from '../constants';
 
 export const selectDialogColorPaletteState = (state: DatalensGlobalState) =>
     state.wizard.dialogColor.paletteState;
@@ -54,4 +63,27 @@ export function isGradientDialog(
     }
 
     return false;
+}
+
+const VISUALIZATION_IDS_WITHOUT_COLOR_MODE_CHANGE = new Set<string>([
+    VISUALIZATION_IDS.LINE,
+    VISUALIZATION_IDS.AREA,
+    VISUALIZATION_IDS.AREA_100P,
+]);
+
+export function isColorModeChangeAvailable(
+    props: Pick<OpenDialogColorArgs['props'], 'item'> & {
+        visualizationId?: string;
+    },
+) {
+    const {item, visualizationId} = props;
+
+    const itemIsSuitable =
+        item.type === DatasetFieldType.Dimension && item.data_type === DATASET_FIELD_TYPES.INTEGER;
+
+    if (visualizationId) {
+        return itemIsSuitable && !VISUALIZATION_IDS_WITHOUT_COLOR_MODE_CHANGE.has(visualizationId);
+    } else {
+        return itemIsSuitable;
+    }
 }

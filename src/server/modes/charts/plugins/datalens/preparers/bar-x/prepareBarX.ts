@@ -14,7 +14,7 @@ import {
     isMeasureValue,
     isPercentVisualization,
 } from '../../../../../../../shared';
-import {mapAndColorizeGraphsByDimension} from '../../utils/color-helpers';
+import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
 import {PSEUDO} from '../../utils/constants';
 import {
     chartKitFormatNumberWrapper,
@@ -32,7 +32,7 @@ import {
     getXAxisValue,
     prepareLines,
 } from '../line/helpers';
-import {colorizeByMeasure} from '../line/helpers/color-helpers/colorizeByMeasure';
+import {colorizeByGradient} from '../line/helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from '../line/helpers/getSortedLineKeys';
 import {LineTemplate, LinesRecord, MergedYSectionItems} from '../line/types';
 import {PrepareFunctionArgs} from '../types';
@@ -417,12 +417,12 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         });
 
         if (colorMode === ColorMode.GRADIENT || isColorizeByMeasure || isColorizeByMeasureValue) {
-            colorizeByMeasure(visualizationId as WizardVisualizationId, {
+            colorizeByGradient(visualizationId as WizardVisualizationId, {
                 graphs,
                 colorsConfig,
             });
         } else {
-            mapAndColorizeGraphsByDimension({
+            mapAndColorizeGraphsByPalette({
                 graphs,
                 colorsConfig,
                 isShapesItemExists: isShapeItemExist,

@@ -1,5 +1,5 @@
 import _isEqual from 'lodash/isEqual';
-import {isGradientDialog} from 'ui/units/wizard/selectors/dialogColor';
+import {isColorModeChangeAvailable, isGradientDialog} from 'ui/units/wizard/selectors/dialogColor';
 
 import {
     ColorsConfig,
@@ -248,12 +248,18 @@ export function openDialogColors({item, onApply}: OpenDialogColorsArguments) {
                 extra,
             });
 
+            const isColorModeChangeAvailableValue = isColorModeChangeAvailable({
+                item: dialogColorItem,
+                visualizationId: subVisualization.id,
+            });
+
             dispatch(
                 openDialogColor({
                     item: dialogColorItem,
                     extra,
                     items: dialogColorItems,
                     isGradient,
+                    isColorModeChangeAvailable: isColorModeChangeAvailableValue,
                     onApply: (config: ColorsConfig) => {
                         dispatch(
                             setColorsConfig({
