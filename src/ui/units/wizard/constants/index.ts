@@ -56,3 +56,4 @@ export {
     CHART_SETTINGS,
 };
 export * from './paletteTypes';
+export * from './placeholders';
