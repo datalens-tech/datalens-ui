@@ -5,6 +5,7 @@ import {
     ServerFieldFormatting,
     ServerTooltip,
     VisualizationLayerShared,
+    isMeasureField,
 } from '../../../../../../shared';
 import {hexToRgb} from '../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
@@ -137,7 +138,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
     const coordinates = placeholders[0].items;
 
     const gradientMode =
-        color && (color.type === 'MEASURE' || colorsConfig.colorMode === ColorMode.GRADIENT);
+        color && (isMeasureField(color) || colorsConfig.colorMode === ColorMode.GRADIENT);
 
     let colorizedResult:
         | ReturnType<typeof colorizeGeoByGradient>

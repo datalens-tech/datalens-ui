@@ -1,13 +1,14 @@
 import escape from 'lodash/escape';
 
 import {
+    ColorMode,
     Feature,
     MINIMUM_FRACTION_DIGITS,
     PointSizeConfig,
     ServerFieldFormatting,
     VisualizationLayerShared,
-    isDimensionField,
     isEnabledServerFeature,
+    isMeasureField,
 } from '../../../../../../../shared';
 import {registry} from '../../../../../../registry';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
@@ -162,6 +163,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         {}) as VisualizationLayerShared['visualization']['layerSettings'];
 
     const ALPHA = getLayerAlpha(layerSettings);
+    const colorMode = colorsConfig.colorMode;
 
     const allPoints: Record<string, GeopointPointConfig[]> = {};
     const colorValues: number[] = [];
@@ -216,7 +218,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         });
     }
 
-    if (color && color.type === 'MEASURE') {
+    if (color && (isMeasureField(color) || colorMode === ColorMode.GRADIENT)) {
         const gradientThresholdValues = getThresholdValues(colorsConfig, colorValues);
         const {min, rangeMiddle, max} = gradientThresholdValues;
         colorData = getColorsByMeasureField({
@@ -245,6 +247,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         // that there can be more than one pair of coordinates in a row
         allPoints[`points-${valuesIndex}`] = [];
 
+        // eslint-disable-next-line complexity
         values.forEach((columnData, columnIndex) => {
             if (columnData === 'null' || columnData === null) {
                 return;
@@ -301,7 +304,15 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                 let iconColor = DEFAULT_ICON_COLOR;
 
                 if (colorValue) {
-                    if (isDimensionField(color)) {
+                    if (isMeasureField(color) || colorMode === ColorMode.GRADIENT) {
+                        const key = isNaN(Number(colorValue))
+                            ? colorValue
+                            : String(Number(colorValue));
+
+                        if (colorData[key]) {
+                            iconColor = colorData[key];
+                        }
+                    } else {
                         let mountedColor = getMountedColor(colorsConfig, colorValue);
 
                         if (!mountedColor || mountedColor === 'auto') {
@@ -318,14 +329,6 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
 
                         iconColor = mountedColor;
                         colorDictionary[colorValue] = mountedColor;
-                    } else {
-                        const key = isNaN(Number(colorValue))
-                            ? colorValue
-                            : String(Number(colorValue));
-
-                        if (colorData[key]) {
-                            iconColor = colorData[key];
-                        }
                     }
                 }
 
