@@ -22,15 +22,7 @@ export const getConfigWithoutDSDefaults = (args: {
         if ('data' in newTabItem && 'tabs' in newTabItem.data) {
             const newTabs: DashTabItemWidgetTab[] = [];
             newTabItem.data.tabs.forEach((widgetTabItem) => {
-                const newWidgetTabItem = {} as DashTabItemWidgetTab;
-                for (const [key, val] of Object.entries(widgetTabItem)) {
-                    if (key === 'params') {
-                        newWidgetTabItem[key] = {};
-                    } else {
-                        // @ts-ignore
-                        newWidgetTabItem[key] = val;
-                    }
-                }
+                const newWidgetTabItem: DashTabItemWidgetTab = {...widgetTabItem, params: {}};
                 const newParams: StringParams = {};
                 if (widgetTabItem.chartId && dashDatasetsFields?.length) {
                     const datasetFields =
@@ -75,19 +67,11 @@ export const getConfigWithDSDefaults = (
         return null;
     }
 
-    const res = {} as DashTab;
     const newItems: DashTabItem[] = [];
     currentTab.items.forEach((currentTabItem) => {
-        const newItem = {} as DashTabItem;
-        for (const [key, val] of Object.entries(currentTabItem)) {
-            if (key === 'data') {
-                newItem[key] = {} as DashTabItemWidget['data'];
-            } else {
-                // @ts-ignore
-                newItem[key] = val;
-            }
-        }
+        const newItem = {...currentTabItem, data: {}} as DashTabItem;
         for (const [key, val] of Object.entries(currentTabItem.data || {})) {
+            // is optional field
             if (key === 'tabs') {
                 (newItem as DashTabItemWidget).data[key] = [];
             } else {
@@ -106,14 +90,7 @@ export const getConfigWithDSDefaults = (
                         params[item.guid] = '';
                     });
 
-                    for (const [key, val] of Object.entries(widgetItem)) {
-                        if (key === 'params') {
-                            newTab[key] = params;
-                        } else {
-                            // @ts-ignore
-                            newTab[key] = val;
-                        }
-                    }
+                    newTab = {...widgetItem, params};
                 } else {
                     newTab = widgetItem;
                 }
@@ -123,13 +100,5 @@ export const getConfigWithDSDefaults = (
         }
         newItems.push(newItem);
     });
-    for (const [key, val] of Object.entries(currentTab)) {
-        if (key === 'items') {
-            res[key] = newItems;
-        } else {
-            // @ts-ignore
-            res[key] = val;
-        }
-    }
-    return res;
+    return {...currentTab, items: newItems} as DashTab;
 };
