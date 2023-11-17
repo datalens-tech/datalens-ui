@@ -6,7 +6,6 @@ import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Titl
 import {i18n} from 'i18n';
 import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
-import uniq from 'lodash/uniq';
 import {Dispatch} from 'redux';
 import {
     DATASET_FIELD_TYPES,
@@ -941,8 +940,8 @@ export function loadDashDatasets(entry: Partial<DashState>, tabId: string) {
                 entriesIds = entriesIds.concat(widgetChartIds);
             }
         });
-        datasetsIds = uniq(datasetsIds);
-        entriesIds = uniq(entriesIds);
+        datasetsIds = [...new Set(datasetsIds)];
+        entriesIds = [...new Set(entriesIds)];
 
         if (isEmpty(datasetsIds) && isEmpty(entriesIds)) {
             return;
