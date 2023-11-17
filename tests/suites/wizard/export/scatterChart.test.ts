@@ -1,5 +1,4 @@
 import {expect, Page} from '@playwright/test';
-import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
@@ -7,6 +6,10 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
 import {openTestPage} from '../../../utils';
+import {
+    WizardVisualizationId,
+    DialogFieldAggregationSelectorValuesQa,
+} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - export. Scatter plot', () => {
     datalensTest.beforeEach(async ({page}) => {
@@ -53,23 +56,24 @@ datalensTest.describe('Wizard - export. Scatter plot', () => {
     datalensTest('Points size. Markdown', async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
 
+        await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Size, 'Year');
+        await wizardPage.visualizationItemDialog.open(PlaceholderName.Size, 'Year');
+        await wizardPage.visualizationItemDialog.setAggregation(
+            DialogFieldAggregationSelectorValuesQa.Max,
+        );
         const apiRunRequest = wizardPage.page.waitForRequest(
             (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,
         );
-        await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Size, 'Year');
+        await wizardPage.visualizationItemDialog.clickOnApplyButton();
         await (await apiRunRequest).response();
 
         const clipboardData = await wizardPage.chartkit.exportMarkdown();
         const expected = `|Region|Profit|Sales|Year|
 |:-|:-:|:-:|-:|
-|Central|7205|147100.90003708005|2017|
-|South|8622|122908.89981234074|2017|
-|South|17531|93611.90013027191|2016|
-|Central|19626|147431.2006058097|2016|
-|East|19795|180689.10041177273|2016|
-|West|23708|187483.29958748817|2016|
-|East|32839|213086.00086772442|2017|
-|West|43327|250135.10026693344|2017|`;
+|South|26153|216520.79994261265|2017|
+|Central|26831|294532.10064288974|2017|
+|East|52634|393775.10127949715|2017|
+|West|67035|437618.3998544216|2017|`;
 
         await expect(clipboardData).toEqual(expected);
     });
@@ -78,6 +82,12 @@ datalensTest.describe('Wizard - export. Scatter plot', () => {
         const wizardPage = new WizardPage({page});
 
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Size, 'Year');
+        await wizardPage.visualizationItemDialog.open(PlaceholderName.Size, 'Year');
+        await wizardPage.visualizationItemDialog.setAggregation(
+            DialogFieldAggregationSelectorValuesQa.Max,
+        );
+        await wizardPage.visualizationItemDialog.clickOnApplyButton();
+
         const apiRunRequest = wizardPage.page.waitForRequest(
             (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,
         );
@@ -87,14 +97,10 @@ datalensTest.describe('Wizard - export. Scatter plot', () => {
         const clipboardData = await wizardPage.chartkit.exportMarkdown();
         const expected = `|Region|Profit|Sales|Year|Profit AVG|
 |:-|:-:|:-:|:-:|-:|
-|Central|7205|147100.90003708005|2017|9.260925449871465|
-|South|8622|122908.89981234074|2017|16.644787644787645|
-|South|17531|93611.90013027191|2016|42.44794188861985|
-|Central|19626|147431.2006058097|2016|32.54726368159204|
-|East|19795|180689.10041177273|2016|25.842036553524803|
-|West|23708|187483.29958748817|2016|29.450931677018634|
-|East|32839|213086.00086772442|2017|35.65580890336591|
-|West|43327|250135.10026693344|2017|39.56803652968036|`;
+|South|26153|216520.79994261265|2017|28.091299677765843|
+|Central|26831|294532.10064288974|2017|19.428674873280233|
+|East|52634|393775.10127949715|2017|31.19976289270895|
+|West|67035|437618.3998544216|2017|35.28157894736842|`;
 
         await expect(clipboardData).toEqual(expected);
     });

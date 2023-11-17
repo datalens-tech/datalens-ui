@@ -40,4 +40,4 @@ export enum WidgetKind {
     Markdown = 'markdown',
 }
 
-export type WidgetType = LegacyEditorType | EditorType;
+export type WidgetType = LegacyEditorType | EditorType | WizardType;

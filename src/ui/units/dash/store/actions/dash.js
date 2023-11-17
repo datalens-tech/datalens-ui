@@ -18,7 +18,7 @@ import {collectDashStats} from '../../modules/pushStats';
 import * as actionTypes from '../constants/dashActionTypes';
 import {getFakeDashEntry} from '../utils';
 
-import {SET_ERROR_MODE, SET_STATE, toggleTableOfContent} from './dashTyped';
+import {SET_ERROR_MODE, SET_STATE, /*loadDashDatasets, */ toggleTableOfContent} from './dashTyped';
 import {
     DOES_NOT_EXIST_ERROR_TEXT,
     NOT_FOUND_ERROR_TEXT,
@@ -291,6 +291,13 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
 
 export const cleanLock = () => ({type: SET_STATE, payload: {lockToken: null}});
 
+/**
+ * Loading dash data: dash config from us, dash state from us, and in parallel all datasets schemas, which is used in dash items
+ * @param location
+ * @param history
+ * @param params
+ * @returns {(function(*): Promise<void>)|*}
+ */
 export const load = ({location, history, params}) => {
     // eslint-disable-next-line complexity
     return async function (dispatch) {
@@ -451,6 +458,8 @@ export const load = ({location, history, params}) => {
             if (mode === Mode.Edit) {
                 await dispatch(setEditMode());
             }
+
+            // dispatch(loadDashDatasets(entry, tabId));
         } catch (error) {
             logger.logError('load dash failed', error);
 

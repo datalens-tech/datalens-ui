@@ -10,6 +10,7 @@ import {
     ServerField,
     getFormatOptions,
     isDateField,
+    isDimensionField,
     isEnabledServerFeature,
 } from '../../../../../../../shared';
 import {registry} from '../../../../../../registry';
@@ -69,8 +70,10 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         idToDataType,
         shapes,
         shapesConfig,
+        ChartEditor,
     } = options;
-
+    const widgetConfig = ChartEditor.getWidgetConfig();
+    const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const {data, order} = resultData;
 
     const colorMode = colorsConfig.colorMode;
@@ -135,6 +138,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         const xi = findIndexInOrder(order, x, xTitle);
         const xValueRaw: string | null | undefined = values[xi];
         let xValue: string | number | Date;
+        let zValueRaw: string | null | undefined;
         const point: ScatterPoint = {};
 
         if (xValueRaw === null || xValueRaw === undefined) {
@@ -237,17 +241,21 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         if (z) {
             const zTitle = idToTitle[z.guid];
             const zi = findIndexInOrder(order, z, zTitle);
-            let zValue = values[zi];
+            zValueRaw = values[zi];
+            let formattedZValue = zValueRaw;
 
             if (isNumericalDataType(z.data_type) && z.formatting) {
-                zValue = chartKitFormatNumberWrapper(Number(zValue), {
+                formattedZValue = chartKitFormatNumberWrapper(Number(formattedZValue), {
                     lang: 'ru',
                     ...z.formatting,
                 });
             }
 
-            const name = zValue && shouldEscapeUserValue ? escape(zValue as string) : zValue;
-            point.name = name || '';
+            if (formattedZValue && shouldEscapeUserValue) {
+                formattedZValue = escape(formattedZValue as string);
+            }
+
+            point.name = formattedZValue || '';
         } else {
             delete point.name;
             keys.delete('x');
@@ -324,6 +332,27 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             point.sLabel = shapeValue;
         }
 
+        if (isActionParamsEnable) {
+            const actionParams: Record<string, any> = {};
+
+            if (isDimensionField(x)) {
+                actionParams[x.guid] = xValueRaw;
+            }
+
+            if (isDimensionField(y)) {
+                actionParams[y.guid] = yValueRaw;
+            }
+
+            if (isDimensionField(z)) {
+                actionParams[z.guid] = zValueRaw;
+            }
+
+            point.custom = {
+                ...point.custom,
+                actionParams,
+            };
+        }
+
         points.push(point);
     });
 
@@ -365,6 +394,23 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
     graphs.forEach((graph) => {
         graph.keys = Array.from(keys);
+
+        if (isActionParamsEnable) {
+            const actionParams: Record<string, any> = {};
+
+            if (isDimensionField(color)) {
+                actionParams[color.guid] = graph.data?.[0]?.colorValue;
+            }
+
+            if (isDimensionField(shape)) {
+                actionParams[shape.guid] = graph.data?.[0]?.shapeValue;
+            }
+
+            graph.custom = {
+                ...graph.custom,
+                actionParams,
+            };
+        }
     });
 
     return {

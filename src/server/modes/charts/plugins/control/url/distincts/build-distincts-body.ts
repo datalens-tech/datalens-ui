@@ -152,7 +152,7 @@ export const getDistinctsRequestBody = ({
             );
             operation = valuesWithOperations.find((item) => item && item.operation)?.operation;
 
-            if (values.length === 1 && values[0].startsWith('__relative')) {
+            if (values.length === 1 && String(values[0]).startsWith('__relative')) {
                 const resolvedRelative = resolveRelativeDate(values[0]);
 
                 if (resolvedRelative) {
@@ -160,7 +160,7 @@ export const getDistinctsRequestBody = ({
                 }
             }
 
-            if (values.length === 1 && values[0].startsWith('__interval')) {
+            if (values.length === 1 && String(values[0]).startsWith('__interval')) {
                 const resolvedInterval = ChartEditor.resolveInterval(values[0]);
 
                 if (resolvedInterval) {

@@ -63,7 +63,7 @@ import {
 import {RevisionsMode} from '../../../../store/typings/entryContent';
 import {getUrlParamFromStr} from '../../../../utils';
 import history from '../../../../utils/history';
-import {isDraft, isEditMode} from '../../../dash/store/selectors/dash';
+import {isDraft, isEditMode} from '../../../dash/store/selectors/dashTypedSelectors';
 import {SetDefaultsArgs, resetWizardStore, setDefaults} from '../../actions';
 import {updateClientChartsConfig} from '../../actions/preview';
 import {toggleViewOnlyMode} from '../../actions/settings';

@@ -5,6 +5,7 @@ import {
     ExtendedSeriesLineOptions,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
+    isDimensionField,
     isNumberField,
 } from '../../../../../../../shared';
 import {ChartColorsConfig} from '../../js/helpers/colors';
@@ -106,8 +107,11 @@ export function preparePie({
     colorsConfig,
     idToTitle,
     idToDataType,
+    ChartEditor,
+    disableDefaultSorting = false,
 }: PrepareFunctionArgs) {
     const {data, order, totals} = resultData;
+    const widgetConfig = ChartEditor.getWidgetConfig();
     const groupedData: Record<string, number> = {};
     const labelsData: Record<string, string | null> = {};
 
@@ -258,6 +262,18 @@ export function preparePie({
                 colorValue: colorKey || name || color.title,
             };
 
+            if (widgetConfig?.actionParams?.enable) {
+                const actionParams: Record<string, any> = {};
+
+                if (isDimensionField(color)) {
+                    actionParams[color.guid] = key;
+                }
+
+                point.custom = {
+                    actionParams,
+                };
+            }
+
             if (labelsLength) {
                 if (isNumericalDataType(lDataType!) || label.title === 'Measure Values') {
                     // CLOUDSUPPORT-52785 - the logic below is a bypass of the problem that once manifested itself
@@ -289,7 +305,7 @@ export function preparePie({
         // We remove negative values, since pie does not know how to display them
         .filter((point) => point.y > 0) as (PiePoint & ExtendedSeriesLineOptions)[];
 
-    if (!sort || !sort.length) {
+    if (!disableDefaultSorting && (!sort || !sort.length)) {
         pie.data!.sort((a, b) => {
             return a.y > b.y ? -1 : a.y < b.y ? 1 : 0;
         });

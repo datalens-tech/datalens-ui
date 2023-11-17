@@ -16,6 +16,7 @@ import {
     StringParams,
     WidgetKind,
     WidgetType,
+    WizardType,
 } from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
@@ -36,10 +37,11 @@ import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
 import {DASH_WIDGET_TYPES, ENTRY_TYPE} from '../../../modules/constants';
 import {closeDialog} from '../../../store/actions/dash';
 import {setItemData} from '../../../store/actions/dashTyped';
-import {getCurrentTabId, getOpenedItemData} from '../../../store/selectors/dash';
 import {
+    selectCurrentTabId,
     selectDashWorkbookId,
     selectIsDialogVisible,
+    selectOpenedItemData,
 } from '../../../store/selectors/dashTypedSelectors';
 
 import {ListState, TabMenu} from './TabMenu/TabMenu';
@@ -65,7 +67,19 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
 };
 
 const isEntryTypeWithFiltering = (entryType?: WidgetType) => {
-    return entryType === EditorType.TableNode || entryType === EditorType.GraphNode;
+    const wizardFilteringAvailable = Utils.isEnabledFeature(
+        Feature.WizardChartChartFilteringAvailable,
+    );
+    const widgetTypesWithFilteringAvailable: WidgetType[] = [
+        EditorType.TableNode,
+        EditorType.GraphNode,
+    ];
+
+    if (wizardFilteringAvailable) {
+        widgetTypesWithFilteringAvailable.push(WizardType.GraphWizardNode);
+    }
+
+    return entryType && widgetTypesWithFilteringAvailable.includes(entryType);
 };
 
 type LineProps = {
@@ -645,10 +659,10 @@ class Widget extends React.PureComponent<Props, State> {
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
     id: state.dash.openedItemId,
-    data: getOpenedItemData(state),
+    data: selectOpenedItemData(state) as DashTabItemWidget['data'],
     widgetType: state.dash.openedItemWidgetType,
     visible: selectIsDialogVisible(state, DIALOG_TYPE.WIDGET),
-    currentTabId: getCurrentTabId(state),
+    currentTabId: selectCurrentTabId(state),
     workbookId: selectDashWorkbookId(state),
 });
 

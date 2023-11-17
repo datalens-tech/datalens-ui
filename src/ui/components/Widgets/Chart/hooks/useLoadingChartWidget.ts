@@ -176,7 +176,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     );
 
     /**
-     * handle callback when chart was loaded and we know it's type for autoHeight adjust call
+     * handle callback when chart was loaded, and we know it's type for autoHeight adjust call
      */
     const handleChartLoad = React.useCallback(({data}: ChartKitWrapperOnLoadProps) => {
         setLoadedWidgetType(data?.loadedData?.type as string);
@@ -266,6 +266,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             loaderDelay,
             history.location.search,
             hasHideTitleChanged,
+            widgetId,
         ],
     );
 
@@ -428,7 +429,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 resolveMetaDataRef.current(meta);
             }
         },
-        [tabs, tabIndex, resolveMetaDataRef.current, loadedData, error],
+        [tabs, tabIndex, resolveMetaDataRef.current, loadedData, error, widgetId],
     );
 
     /**

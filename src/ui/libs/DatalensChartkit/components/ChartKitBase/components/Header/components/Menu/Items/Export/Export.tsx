@@ -5,6 +5,7 @@ import {Icon, Toaster} from '@gravity-ui/uikit';
 import copy from 'copy-to-clipboard';
 import {I18n} from 'i18n';
 import {Feature, MenuItemsIds} from 'shared';
+import {URL_OPTIONS} from 'ui/constants/common';
 import {
     MenuActionComponent,
     MenuItemConfig,
@@ -163,7 +164,11 @@ const screenshotExportAction = (
                     chartsDataProvider
                         .getGoAwayLink(
                             {loadedData, propsData},
-                            {urlPostfix: '/preview', idPrefix: '/editor/'},
+                            {
+                                urlPostfix: '/preview',
+                                idPrefix: '/editor/',
+                                extraParams: {[URL_OPTIONS.ACTION_PARAMS_ENABLED]: '1'},
+                            },
                         )
                         ?.replace(chartsDataProvider?.endpoint || '', '') || '';
 

@@ -28,6 +28,8 @@ type TreemapItem = {
     label?: string;
     value?: number;
     drillDownFilterValue?: string | null;
+    color?: string;
+    custom?: object;
 };
 
 function prepareTreemap({
@@ -109,22 +111,22 @@ function prepareTreemap({
 
             const i = findIndexInOrder(order, item, actualTitle);
 
+            const rawValue = values[i];
             let value: string | null;
 
             if (isDateField({data_type: dTypes[level]})) {
                 value = formatDate({
                     valueType: dTypes[level],
-                    value: values[i],
+                    value: rawValue,
                     format: item.format,
                 });
             } else if (isNumericalDataType(dTypes[level]) && item.formatting) {
-                value = chartKitFormatNumberWrapper(values[i] as unknown as number, {
+                value = chartKitFormatNumberWrapper(rawValue as unknown as number, {
                     lang: 'ru',
                     ...item.formatting,
                 });
             } else {
-                value =
-                    values[i] && shouldEscapeUserValue ? escape(values[i] as string) : values[i];
+                value = rawValue && shouldEscapeUserValue ? escape(rawValue as string) : rawValue;
             }
 
             const treemapId =
@@ -207,14 +209,14 @@ function prepareTreemap({
         }
 
         treemap = treemap.map((obj) => {
+            const item = {...obj};
+
             const color = colorData[obj.id];
             if (color) {
-                return {
-                    ...obj,
-                    color: color.backgroundColor,
-                };
+                item.color = color.backgroundColor;
             }
-            return obj;
+
+            return item;
         });
     }
 

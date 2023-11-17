@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
+import {WizardVisualizationId} from '../../../../src/shared';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, waitForCondition} from '../../../utils';
@@ -41,8 +41,6 @@ const validatePlaceholders = async ({
     });
 };
 
-const TIMEOUT = 100;
-
 const validateTableRows = async ({
     wizardPage,
     expectedRows,
@@ -64,7 +62,7 @@ const validateTableRows = async ({
 };
 
 datalensTest.describe('Wizard Fields', () => {
-    datalensTest("You can't drag the field you've set", async ({page}: {page: Page}) => {
+    datalensTest("You can't drag disabled field", async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
 
         await openTestPage(page, RobotChartsWizardUrls.WizardCitiesDataset);
@@ -79,12 +77,20 @@ datalensTest.describe('Wizard Fields', () => {
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'City');
 
         const wizardFilterValues = ['Abakan', 'Jejsk'];
-
         await wizardPage.filterEditor.selectValues(wizardFilterValues);
-
         await wizardPage.filterEditor.apply();
 
-        await page.waitForTimeout(TIMEOUT);
+        await validateTableRows({wizardPage, expectedRows: wizardFilterValues});
+
+        await wizardPage.saveWizardEntry(wizardPage.getUniqueEntryName('test-DnD-disabled-field'));
+
+        const searchParams = new URLSearchParams();
+        const dashboardFilter = 'Barnaul';
+        searchParams.set('City', dashboardFilter);
+
+        await wizardPage.page.goto(`${wizardPage.page.url()}?${searchParams.toString()}`);
+
+        await validateTableRows({wizardPage, expectedRows: [dashboardFilter]});
 
         await wizardPage.sectionVisualization.dragAndDropFieldBetweenPlaceholders({
             from: PlaceholderName.Filters,
@@ -93,43 +99,6 @@ datalensTest.describe('Wizard Fields', () => {
         });
 
         const placeholderItemTextValue = 'City: Abakan,Jejsk';
-
-        await validatePlaceholders({
-            wizardPage,
-            expectedSortValue: placeholderItemTextValue,
-            expectedFiltersValue: '',
-        });
-
-        await page.waitForTimeout(TIMEOUT);
-
-        await wizardPage.sectionVisualization.dragAndDropFieldBetweenPlaceholders({
-            from: PlaceholderName.Sort,
-            to: PlaceholderName.Filters,
-            fieldName: 'City',
-        });
-
-        await validateTableRows({wizardPage, expectedRows: wizardFilterValues});
-
-        await wizardPage.saveWizardEntry(wizardPage.getUniqueEntryName('test-DnD-disabled-field'));
-
-        const searchParams = new URLSearchParams();
-
-        const dashboardFilter = 'Barnaul';
-
-        searchParams.set('City', dashboardFilter);
-
-        await wizardPage.page.goto(`${wizardPage.page.url()}?${searchParams.toString()}`);
-
-        await validateTableRows({wizardPage, expectedRows: [dashboardFilter]});
-
-        await page.waitForTimeout(TIMEOUT);
-
-        await wizardPage.sectionVisualization.dragAndDropFieldBetweenPlaceholders({
-            from: PlaceholderName.Filters,
-            to: PlaceholderName.Sort,
-            fieldName: 'City',
-        });
-
         await validatePlaceholders({
             wizardPage,
             expectedFiltersValue: placeholderItemTextValue,

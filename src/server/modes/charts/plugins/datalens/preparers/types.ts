@@ -41,6 +41,7 @@ export type PrepareFunctionArgs = {
     datasets: string[];
     layerChartMeta?: LayerChartMeta;
     usedColors?: (string | undefined)[];
+    disableDefaultSorting?: boolean;
 };
 
 export type PrepareFunctionDataRow = (string | null)[];
@@ -87,4 +88,5 @@ export type PiePoint = {
     colorGuid: string;
     colorValue: string | number;
     label?: string | number | null;
+    custom?: object;
 };

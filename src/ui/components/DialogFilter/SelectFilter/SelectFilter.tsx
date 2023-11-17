@@ -196,10 +196,10 @@ class SelectFilter extends React.Component<SelectFilterProps, SelectFilterState>
     }
 
     get rightItems(): ListItem[] {
-        const {values, dimensions, useSuggest} = this.props;
+        const {values} = this.props;
         const {rightFilter} = this.state;
 
-        const items = (useSuggest ? values : _.intersection(dimensions, values)).map((value) => ({
+        const items = values.map((value) => ({
             value,
             disabled: value === null || value === undefined,
         }));

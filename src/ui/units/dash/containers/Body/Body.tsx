@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+    ConfigItem,
     DashKit as DashKitComponent,
     DashKitProps,
     ActionPanel as DashkitActionPanel,
@@ -20,7 +21,7 @@ import debounce from 'lodash/debounce';
 import {ResolveThunks, connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {ControlQA, DashData, DashTab, DashTabItem, DashboardAddWidgetQa, Feature} from 'shared';
+import {ControlQA, DashTab, DashTabItem, DashboardAddWidgetQa, Feature} from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
@@ -55,16 +56,17 @@ import {
 } from '../../store/actions/relations/actions';
 import {
     canEdit,
-    getCurrentTab,
-    getCurrentTabId,
-    getEntryId,
-    getTabHashState,
-} from '../../store/selectors/dash';
-import {
+    selectCurrentTab,
+    selectCurrentTabId,
+    selectCurrentTabWithDashDatasets,
+    selectDashDatasetsFields,
+    selectEntryId,
     selectSettings,
     selectShowTableOfContent,
+    selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {getConfigWithoutDSDefaults} from '../../utils/helpers';
 import {DIALOG_TYPE} from '../Dialogs/constants';
 import Error from '../Error/Error';
 import TableOfContent from '../TableOfContent/TableOfContent';
@@ -99,6 +101,9 @@ class Body extends React.PureComponent<BodyProps> {
     entryDialoguesRef = React.createRef<EntryDialogues>();
 
     updateUrlHashState = debounce(async (data, tabId) => {
+        if (!this.props.entryId) {
+            return;
+        }
         const {hash} = await getSdk().us.createDashState({
             entryId: this.props.entryId,
             data,
@@ -173,10 +178,7 @@ class Body extends React.PureComponent<BodyProps> {
             itemsStateAndParams &&
             Object.keys(itemsStateAndParams).length
         ) {
-            this.onStateChange(
-                itemsStateAndParams as TabsHashStates,
-                config as unknown as DashData,
-            );
+            this.onStateChange(itemsStateAndParams as TabsHashStates, config as unknown as DashTab);
         } else if (config) {
             this.props.setCurrentTabData(config);
         }
@@ -241,8 +243,14 @@ class Body extends React.PureComponent<BodyProps> {
         return items;
     }
 
-    onStateChange = (hashStates: TabsHashStates, config: DashData) => {
-        this.props.setHashState(hashStates, config);
+    onStateChange = (hashStates: TabsHashStates, config: DashTab) => {
+        this.props.setHashState(
+            hashStates,
+            getConfigWithoutDSDefaults({
+                config,
+                dashDatasetsFields: this.props.dashDatasetsFields,
+            }),
+        );
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
@@ -253,6 +261,7 @@ class Body extends React.PureComponent<BodyProps> {
             tabs,
             showTableOfContent,
             tabData,
+            tabDataWithDashDatasets,
             handlerEditClick,
             isEditModeLoading,
             isSidebarOpened,
@@ -270,19 +279,22 @@ class Body extends React.PureComponent<BodyProps> {
 
         const hasTableOfContent = !(localTabs.length === 1 && !localTabs[0].items.length);
 
-        let tabDataConfig: DashKitProps['config'] = tabData;
+        let tabDataConfig = (tabDataWithDashDatasets || tabData) as DashKitProps['config'] | null;
 
-        const isEmptyTab = !tabDataConfig.items.length;
+        const isEmptyTab = !tabDataConfig?.items.length;
 
-        if (DL.IS_MOBILE) {
-            const [layoutMap, layoutColumns] = getLayoutMap(tabData.layout);
+        if (DL.IS_MOBILE && tabDataConfig) {
+            const [layoutMap, layoutColumns] = getLayoutMap(tabDataConfig.layout);
             tabDataConfig = {
-                ...tabData,
-                items: (tabData.items as DashTab['items'])
+                ...tabDataConfig,
+                items: (tabDataConfig.items as DashTab['items'])
                     .sort((prev, next) =>
                         sortByOrderIdOrLayoutComparator(prev, next, layoutMap, layoutColumns),
                     )
-                    .map((item, index) => ({...item, orderId: item.orderId || index})),
+                    .map((item, index) => ({
+                        ...item,
+                        orderId: item.orderId || index,
+                    })) as ConfigItem[],
             };
         }
 
@@ -362,7 +374,7 @@ class Body extends React.PureComponent<BodyProps> {
                         ) : (
                             <DashKit
                                 ref={this.dashKitRef}
-                                config={tabDataConfig}
+                                config={tabDataConfig as DashKitProps['config']}
                                 editMode={mode === Mode.Edit}
                                 itemsStateAndParams={
                                     this.props.hashStates as DashKitProps['itemsStateAndParams']
@@ -411,17 +423,19 @@ class Body extends React.PureComponent<BodyProps> {
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
-    entryId: getEntryId(state),
+    entryId: selectEntryId(state),
     entry: state.dash.entry,
     mode: state.dash.mode,
     showTableOfContent: selectShowTableOfContent(state),
-    hashStates: getTabHashState(state),
+    hashStates: selectTabHashState(state),
     settings: selectSettings(state),
-    tabData: getCurrentTab(state),
+    tabData: selectCurrentTab(state),
+    tabDataWithDashDatasets: selectCurrentTabWithDashDatasets(state),
+    dashDatasetsFields: selectDashDatasetsFields(state),
     dashKitRef: state.dash.dashKitRef,
     canEdit: canEdit(state),
     tabs: selectTabs(state),
-    tabId: getCurrentTabId(state),
+    tabId: selectCurrentTabId(state),
     isSidebarOpened: !selectAsideHeaderIsCompact(state),
 });
 
