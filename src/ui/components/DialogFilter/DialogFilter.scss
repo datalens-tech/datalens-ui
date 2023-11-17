@@ -17,6 +17,10 @@
         &_without-horizontal-paddings {
             padding: 10px 0;
         }
+
+        &_mode_fields {
+            --dl-dataset-field-filter-padding: 0 32px;
+        }
     }
 
     &__row {

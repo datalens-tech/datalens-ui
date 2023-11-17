@@ -27,6 +27,7 @@ const Preview = ({chartData, onLoadData, queryParams, widgetRef}) => {
                 config={chartData.editMode}
                 params={queryParams}
                 onChartLoad={onLoad}
+                actionParamsEnabled={true}
                 forwardedRef={widgetRef}
             />
         </div>

@@ -2,14 +2,13 @@ import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
 import {Plus} from '@gravity-ui/icons';
-import {Button, Card, Dialog, Icon} from '@gravity-ui/uikit';
+import {Alert, Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Collapse} from 'components/Collapse/Collapse';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
 import intersection from 'lodash/intersection';
 import isEqual from 'lodash/isEqual';
-import {DASH_WIDGET_TYPES, WidgetType} from 'ui/units/dash/modules/constants';
 
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../../constants';
 import {getNormalizedAliases} from '../../helpers';
@@ -99,10 +98,6 @@ const DialogAliases = (props: DialogAliasesProps) => {
     const isIgnored = relationType === RELATION_TYPES.ignore;
     const isBoth = relationType === RELATION_TYPES.both;
 
-    const isMarkdownChart =
-        (currentWidget.type as WidgetType) === DASH_WIDGET_TYPES.MARKDOWN ||
-        (currentRow.type as WidgetType) === DASH_WIDGET_TYPES.MARKDOWN;
-
     const affectedItems = [currentWidget, ...relations]
         .map((item) => ({
             ...item,
@@ -114,8 +109,26 @@ const DialogAliases = (props: DialogAliasesProps) => {
                 (!selectedParam || intersectionParams.includes(selectedParam)),
         );
 
+    const hasUsedParams =
+        Boolean(currentWidget.usedParams?.length) && Boolean(currentRow.usedParams?.length);
+
     const showAddAliasButton =
-        !isMarkdownChart && enableAddAlias && (!isIgnored || (isIgnored && forceAddAlias));
+        hasUsedParams && enableAddAlias && (!isIgnored || (isIgnored && forceAddAlias));
+
+    const showAlert = !enableAddAlias || !hasUsedParams;
+    let alertText = null;
+    if (!hasUsedParams) {
+        alertText = i18n('label_card-used-params');
+    } else if (!enableAddAlias) {
+        alertText = i18n('label_card');
+    }
+
+    // for no changes and empty aliases list;
+    // for not added aliases in force case;
+    // other cases - enable apply (for ex. deleting all aliases, etc)
+    const disableApplyButton =
+        (isIgnored && !forceAddAlias && !currentRow.relations.byAliases.length) ||
+        (isIgnored && forceAddAlias && !aliases.length);
 
     const resetSelectedAliasRow = React.useCallback(() => {
         setSelectedParam(null);
@@ -306,10 +319,13 @@ const DialogAliases = (props: DialogAliasesProps) => {
                             </span>
                         </div>
                     )}
-                    {!enableAddAlias && (
-                        <Card theme="warning" className={b('card')}>
-                            {i18n('label_card')}
-                        </Card>
+                    {showAlert && alertText && (
+                        <Alert
+                            theme="warning"
+                            message={alertText}
+                            className={b('card')}
+                            view="outlined"
+                        />
                     )}
                     <div className={b('controls')}>
                         {hasAlias ? (
@@ -374,6 +390,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
                 showError={false}
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={i18n('button_apply')}
+                propsButtonApply={{disabled: disableApplyButton}}
                 propsButtonCancel={{view: 'outlined'}}
                 onClickButtonApply={handleApplyChanges}
                 onClickButtonCancel={handleCancel}

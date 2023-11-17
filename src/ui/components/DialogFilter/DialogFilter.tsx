@@ -265,6 +265,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
             'without-paddings':
                 viewMode === ViewMode.Filters && operation?.selectable && !useManualInput,
             'without-horizontal-paddings': viewMode === ViewMode.Fields,
+            mode: ViewMode.Fields,
         };
 
         if (viewMode === ViewMode.Fields || !operation) {

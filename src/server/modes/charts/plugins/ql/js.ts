@@ -3,12 +3,14 @@ import {
     DatasetFieldType,
     Field,
     IChartEditor,
-    QLEntryDataShared,
+    PlaceholderId,
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
     isMonitoringOrPrometheusChart,
 } from '../../../../../shared';
+import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 import prepareSingleResult from '../datalens/js/helpers/misc/prepare-single-result';
 import {getFieldList} from '../helpers/misc';
 
@@ -19,7 +21,12 @@ import preparePie from './preparers/pie';
 import preparePreviewTable from './preparers/preview-table';
 import prepareTable from './preparers/table';
 import {LINEAR_VISUALIZATIONS, PIE_VISUALIZATIONS} from './utils/constants';
-import {getColumnsAndRows, log} from './utils/misc-helpers';
+import {
+    getColumnsAndRows,
+    log,
+    prepareQuery,
+    visualizationCanHaveContinuousAxis,
+} from './utils/misc-helpers';
 import {
     mapItems,
     mapVisualizationPlaceholdersItems,
@@ -27,7 +34,7 @@ import {
 } from './utils/visualization-utils';
 
 // eslint-disable-next-line complexity
-export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: IChartEditor}) => {
+export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
     const data = ChartEditor.getLoadedData();
 
     log('LOADED DATA:', data);
@@ -36,11 +43,13 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
     let prepare;
     let result;
 
+    const config = mapQlConfigToLatestVersion(shared);
+
     const {columns, rows} = getColumnsAndRows({
-        chartType: shared.chartType,
+        chartType: config.chartType,
         ChartEditor,
-        queries: shared.queries,
-        connectionType: shared.connection.type,
+        queries: config.queries,
+        connectionType: config.connection.type,
         data,
     });
 
@@ -56,13 +65,13 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
     log('RECOGNIZED COLUMNS:', columns);
     log('RECOGNIZED ROWS:', rows);
 
-    const sharedVisualization = shared.visualization as ServerVisualization;
+    const sharedVisualization = config.visualization as ServerVisualization;
     const {
-        colors: sharedColors,
-        labels: sharedLabels,
-        shapes: sharedShapes,
+        colors: sharedColors = [],
+        labels: sharedLabels = [],
+        shapes: sharedShapes = [],
         order: sharedOrder,
-    } = shared;
+    } = config;
 
     if (sharedVisualization?.placeholders) {
         // Branch for actual ql charts
@@ -213,10 +222,14 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
 
         const available = [...(fields as unknown as Field[])];
 
+        const preparedQuery = prepareQuery(shared.queryValue);
+
+        const disableDefaultSorting = /order by/gi.test(preparedQuery);
+
         const prepareSingleResultArgs = {
             resultData,
             shared: {
-                ...shared,
+                ...config,
                 available,
                 colors: newColors,
                 labels: newLabels,
@@ -230,12 +243,45 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
             ChartEditor,
             datasetsIds,
             loadedColorPalettes: {},
+            disableDefaultSorting,
         };
 
         result = prepareSingleResult(prepareSingleResultArgs);
 
-        if (shared.preview) {
-            result.tablePreviewData = preparePreviewTable({shared, columns, rows, ChartEditor});
+        if (config.preview) {
+            result.tablePreviewData = preparePreviewTable({
+                shared: config,
+                columns,
+                rows,
+                ChartEditor,
+            });
+        }
+
+        if (visualizationCanHaveContinuousAxis(newVisualization)) {
+            const targetPlaceholderId = [
+                VISUALIZATION_IDS.BAR,
+                VISUALIZATION_IDS.BAR_100P,
+            ].includes(newVisualization.id)
+                ? PlaceholderId.Y
+                : PlaceholderId.X;
+            const targetPlaceholder = newVisualization.placeholders.find(
+                ({id}) => id === targetPlaceholderId,
+            );
+
+            if (targetPlaceholder && targetPlaceholder.items[0]) {
+                if (disableDefaultSorting) {
+                    targetPlaceholder.settings = {
+                        axisModeMap: {
+                            [targetPlaceholder.items[0].guid]: 'discrete',
+                        },
+                        disableAxisMode: true,
+                    };
+                } else {
+                    targetPlaceholder.settings = {
+                        disableAxisMode: false,
+                    };
+                }
+            }
         }
 
         if (Array.isArray(result) && result[0]) {
@@ -268,16 +314,16 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
         log('RESULT:', result);
 
         return result;
-    } else if (isMonitoringOrPrometheusChart(shared.chartType)) {
+    } else if (isMonitoringOrPrometheusChart(config.chartType)) {
         // Branch for older ql charts of promql type
         // Deprecated
         // Works only for old-saved charts from dashboards
 
-        if (shared.preview) {
-            tablePreviewData = preparePreviewTable({shared, columns, rows, ChartEditor});
+        if (config.preview) {
+            tablePreviewData = preparePreviewTable({shared: config, columns, rows, ChartEditor});
         }
 
-        const {id} = shared.visualization;
+        const {id} = config.visualization;
         if (LINEAR_VISUALIZATIONS.has(id)) {
             prepare = prepareLineTime;
         } else if (PIE_VISUALIZATIONS.has(id)) {
@@ -292,11 +338,11 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
         // Deprecated
         // Works only for old-saved charts from dashboards
 
-        if (shared.preview) {
-            tablePreviewData = preparePreviewTable({shared, columns, rows, ChartEditor});
+        if (config.preview) {
+            tablePreviewData = preparePreviewTable({shared: config, columns, rows, ChartEditor});
         }
 
-        const {id} = shared.visualization;
+        const {id} = config.visualization;
 
         let rowsLimit;
 
@@ -346,7 +392,7 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
     }
 
     if (prepare) {
-        result = prepare({shared, columns, rows, ChartEditor, tablePreviewData});
+        result = prepare({shared: config, columns, rows, ChartEditor, tablePreviewData});
     }
 
     log('RESULT:', result);

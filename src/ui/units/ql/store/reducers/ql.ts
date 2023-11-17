@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import moment from 'moment';
 import {createSelector} from 'reselect';
-import {QLChartType, QLEntryDataShared} from 'shared';
+import {QLChartType} from 'shared';
+import type {QlConfig} from 'shared/types/config/ql';
+import {QlConfigVersions} from 'shared/types/ql/versions';
 import {DL, DatalensGlobalState} from 'ui';
 import {
     selectVisualization as getWizardVisualization,
@@ -72,11 +74,7 @@ import {
     QLActionUpdateQuery,
     QLGridScheme,
     QLGridSchemes,
-    QLPaneView,
-    QLPaneViewsById,
     QLState,
-    QLTabData,
-    QLTabsById,
 } from '../typings/ql';
 import {Helper} from '../utils/grid';
 
@@ -326,7 +324,7 @@ export const getEntryNotChanged = createSelector(
         placeholdersContent,
     ): boolean => {
         if (chartType && entry && entry.data && connection && visualization) {
-            const actualSharedData: QLEntryDataShared = {
+            const actualSharedData: QlConfig = {
                 type: 'ql',
                 connection: {
                     entryId: connection.entryId,
@@ -351,6 +349,7 @@ export const getEntryNotChanged = createSelector(
                 chartType,
                 visualization,
                 order: [],
+                version: QlConfigVersions.V1,
             };
 
             // Removing possible functions from the structure to compare data
@@ -407,7 +406,7 @@ export const getPreviewData = createSelector(
         order,
     ): any | null => {
         if (chartType && connection && visualization) {
-            const result = {
+            const result: QlConfig = {
                 type: 'ql',
                 chartType,
                 connection: {
@@ -426,6 +425,7 @@ export const getPreviewData = createSelector(
                 params: params,
                 visualization,
                 order,
+                version: QlConfigVersions.V1,
             };
 
             return result;
@@ -443,28 +443,21 @@ const getTabsAllIds = (state: DatalensGlobalState) => state.ql.tabs.allIds;
 
 const getTabsById = (state: DatalensGlobalState) => state.ql.tabs.byId;
 
-export const getTabsData = createSelector<DatalensGlobalState, string[], QLTabsById, QLTabData[]>(
-    getTabsAllIds,
-    getTabsById,
-    (tabsIds, tabsById) => {
-        return tabsIds.map((id: string) => tabsById[id]);
-    },
-);
+export const getTabsData = createSelector([getTabsAllIds, getTabsById], (tabsIds, tabsById) => {
+    return tabsIds.map((id: string) => tabsById[id]);
+});
 
 export const makeGetPaneTabs = (state: DatalensGlobalState, props: {paneId: string}) =>
-    createSelector<DatalensGlobalState, string[], QLTabsById, string | null, QLTabData[]>(
-        getTabsAllIds,
-        getTabsById,
-        (_state) => getPaneCurrentTabId(_state, props),
+    createSelector(
+        [getTabsAllIds, getTabsById, (_state) => getPaneCurrentTabId(_state, props)],
         (tabsIds, tabsById, currentTabId) => {
             return currentTabId === null ? [] : tabsIds.map((id: string) => tabsById[id]);
         },
     )(state);
 
 export const makeGetPaneTabData = (state: DatalensGlobalState, props: {paneId: string}) =>
-    createSelector<DatalensGlobalState, QLTabsById, string | null, QLTabData | null>(
-        getTabsById,
-        (_state) => getPaneCurrentTabId(_state, props),
+    createSelector(
+        [getTabsById, (_state) => getPaneCurrentTabId(_state, props)],
         (tabsById, currentTabId) => {
             return currentTabId === null ? null : tabsById[currentTabId];
         },
@@ -477,10 +470,9 @@ const getPaneCurrentViewId = (state: DatalensGlobalState, props: {paneId: string
 };
 
 export const makeGetPaneView = (state: DatalensGlobalState, props: {paneId: string}) =>
-    createSelector<DatalensGlobalState, QLPaneViewsById, string, QLPaneView>(
-        getPaneViewsById,
-        (_state) => getPaneCurrentViewId(_state, props),
-        (paneViewsById: QLPaneViewsById, currentViewId: string) => {
+    createSelector(
+        [getPaneViewsById, (_state) => getPaneCurrentViewId(_state, props)],
+        (paneViewsById, currentViewId) => {
             return paneViewsById[currentViewId];
         },
     )(state);

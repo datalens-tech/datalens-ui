@@ -12,11 +12,13 @@ import {
     ChartkitHandlers,
     ChartsInsightsItem,
     GraphTooltipLine,
+    GraphWidgetEventScope,
     StringParams,
     TableCell,
     TableHead,
     TableRow,
     TableTitle,
+    WidgetEvent,
 } from '../../../../shared';
 import {ChartsData} from '../modules/data-provider/charts';
 
@@ -105,12 +107,6 @@ export type GraphWidgetSeriesOptions = Highcharts.SeriesOptionsType & {
     fname?: string;
 };
 
-type HighchartsSeriesClickAction = {
-    type: 'setActionParams';
-    scope?: 'point' | 'series';
-};
-export type HighchartsSeriesAction = HighchartsSeriesClickAction;
-
 export type GraphWidget = WidgetBaseWithData &
     WithControls & {
         type: 'graph';
@@ -147,8 +143,8 @@ export type GraphWidget = WidgetBaseWithData &
                 | ((config: {lines: GraphTooltipLine[]}) => void);
             enableGPTInsights?: boolean;
             tooltip?: HighchartsWidgetData['config']['tooltip'];
-            seriesActions?: {
-                click?: HighchartsSeriesAction | HighchartsSeriesAction[];
+            events?: {
+                click?: WidgetEvent<GraphWidgetEventScope> | WidgetEvent<GraphWidgetEventScope>[];
             };
         };
         libraryConfig: Highcharts.Options;

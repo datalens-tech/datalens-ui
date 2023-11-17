@@ -9,6 +9,7 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import throttle from 'lodash/throttle';
 import {DashTabItemControlSourceType, StringParams} from 'shared';
+import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {START_PAGE} from '../../../../libs/DatalensChartkit/ChartKit/components/Widget/components/Table/Paginator/Paginator';
@@ -484,9 +485,22 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         window.document.removeEventListener('scroll', throttledInViewportCheck, true);
     }, [throttledInViewportCheck]);
 
+    const bindResizeHandler = React.useCallback(() => {
+        if (isEmbeddedMode()) {
+            window.addEventListener('resize', throttledInViewportCheck, true);
+        }
+    }, [throttledInViewportCheck]);
+
+    const unbindResizeHandler = React.useCallback(() => {
+        if (isEmbeddedMode()) {
+            window.removeEventListener('resize', throttledInViewportCheck, true);
+        }
+    }, [throttledInViewportCheck]);
+
     React.useEffect(() => {
         if (isInit) {
             unbindScrollHandler();
+            unbindResizeHandler();
             return;
         }
 
@@ -496,8 +510,9 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
 
         return () => {
             unbindScrollHandler();
+            unbindResizeHandler();
         };
-    }, [isInit, rootNodeRef, throttledInViewportCheck, unbindScrollHandler]);
+    }, [isInit, rootNodeRef, throttledInViewportCheck, unbindScrollHandler, unbindResizeHandler]);
 
     /**
      * unmount
@@ -505,11 +520,19 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     React.useLayoutEffect(() => {
         if (rootNodeRef.current) {
             bindScrollHandler();
+            bindResizeHandler();
         }
         return () => {
             unbindScrollHandler();
+            unbindResizeHandler();
         };
-    }, [rootNodeRef, bindScrollHandler]);
+    }, [
+        rootNodeRef,
+        bindScrollHandler,
+        unbindScrollHandler,
+        bindResizeHandler,
+        unbindResizeHandler,
+    ]);
 
     /**
      * force initializing chart loading data, when widget became visible,

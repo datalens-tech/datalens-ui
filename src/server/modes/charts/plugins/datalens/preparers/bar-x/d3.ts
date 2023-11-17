@@ -23,14 +23,17 @@ type OldBarXDataItem = {
 } | null;
 
 export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
-    const {shared, labels, placeholders} = args;
+    const {shared, labels, placeholders, disableDefaultSorting = false} = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yField: ServerField | undefined = yPlaceholder?.items?.[0];
     const labelField = labels?.[0];
     const isDataLabelsEnabled = Boolean(labelField);
-    const isCategoriesXAxis = !xField || getAxisType(xField, xPlaceholder?.settings) === 'category';
+    const isCategoriesXAxis =
+        !xField ||
+        getAxisType(xField, xPlaceholder?.settings) === 'category' ||
+        disableDefaultSorting;
 
     if (!xField && !yField) {
         return {

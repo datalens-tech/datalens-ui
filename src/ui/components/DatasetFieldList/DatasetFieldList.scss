@@ -32,9 +32,14 @@
         color: var(--g-color-text-secondary);
         margin-right: 5px;
     }
+
+    & .yc-list .yc-list__filter {
+        padding: var(--dl-dataset-field-filter-padding);
+    }
 }
 
 :root {
     --dl-dataset-field-list-item-padding-left: 10px;
     --dl-dataset-field-list-item-padding-right: 10px;
+    --dl-dataset-field-filter-padding: unset;
 }

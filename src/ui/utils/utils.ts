@@ -173,8 +173,8 @@ export default class Utils {
         window.document.body.classList.add(...className);
     }
 
-    static removeBodyClass(className: string) {
-        window.document.body.classList.remove(className);
+    static removeBodyClass(...className: string[]) {
+        window.document.body.classList.remove(...className);
     }
 
     static setSdk() {
@@ -237,6 +237,7 @@ export default class Utils {
             noControls:
                 searchParams.get(URL_OPTIONS.NO_CONTROLS) === '1' ||
                 searchParams.get(URL_OPTIONS.NO_CONTROLS) === 'true', // deprecated
+            actionParamsEnabled: searchParams.get(URL_OPTIONS.ACTION_PARAMS_ENABLED) === '1',
         };
     }
 

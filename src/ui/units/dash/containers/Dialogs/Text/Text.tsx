@@ -4,14 +4,17 @@ import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
+import {DashTabItemText} from 'shared';
 import {DatalensGlobalState} from 'ui';
 
 import {TextEditor} from '../../../../../components/TextEditor/TextEditor';
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
 import {closeDialog} from '../../../store/actions/dash';
 import {setItemData} from '../../../store/actions/dashTyped';
-import {getOpenedItemData} from '../../../store/selectors/dash';
-import {selectIsDialogVisible} from '../../../store/selectors/dashTypedSelectors';
+import {
+    selectIsDialogVisible,
+    selectOpenedItemData,
+} from '../../../store/selectors/dashTypedSelectors';
 
 import './Text.scss';
 
@@ -88,7 +91,7 @@ class Text extends React.PureComponent<TextProps, State> {
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
     id: state.dash.openedItemId,
-    data: getOpenedItemData(state),
+    data: selectOpenedItemData(state) as DashTabItemText['data'],
     visible: selectIsDialogVisible(state, DIALOG_TYPE.TEXT),
 });
 

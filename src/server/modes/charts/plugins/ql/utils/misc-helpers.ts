@@ -6,22 +6,26 @@ import {
     DATALENS_QL_TYPES,
     IChartEditor,
     QLChartType,
-    QLParam,
-    QLParamInterval,
     QLParamType,
-    QLPreviewTableData,
-    QLQuery,
-    QLRequestParam,
-    QLResultEntryMetadataDataColumn,
-    QLResultEntryMetadataDataColumnOrGroup,
-    QLResultEntryMetadataDataGroup,
+    QlConfigPreviewTableData,
+    ServerVisualization,
     StringParams,
+    WizardVisualizationId,
     biToDatalensQL,
     getDatalensQLTypeName,
     isMonitoringOrPrometheusChart,
 } from '../../../../../../shared';
+import type {
+    QLConfigQuery,
+    QlConfigParam,
+    QlConfigParamInterval,
+    QlConfigRequestParam,
+    QlConfigResultEntryMetadataDataColumn,
+    QlConfigResultEntryMetadataDataColumnOrGroup,
+    QlConfigResultEntryMetadataDataGroup,
+} from '../../../../../../shared/types/config/ql';
 
-import {LOG_INFO, LOG_TIMING} from './constants';
+import {LINEAR_VISUALIZATIONS, LOG_INFO, LOG_TIMING} from './constants';
 
 let currentConsole: {log: Function} = console;
 
@@ -101,9 +105,9 @@ export interface QLRenderResultTable {
     head: {};
     rows: {};
     metadata?: {
-        order: QLResultEntryMetadataDataColumnOrGroup[];
+        order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
-    tablePreviewData?: QLPreviewTableData;
+    tablePreviewData?: QlConfigPreviewTableData;
 }
 
 export interface QLRenderResultMetric {
@@ -115,7 +119,7 @@ export interface QLRenderResultMetric {
     };
     title: string;
     metadata?: {
-        order: QLResultEntryMetadataDataColumnOrGroup[];
+        order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
 }
 
@@ -139,10 +143,10 @@ export interface QLRenderResultHC {
     categories?: (string | number)[];
     categories_ms?: (string | number)[];
     metadata?: {
-        order: QLResultEntryMetadataDataColumnOrGroup[];
+        order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
     graphs?: QLRenderResultHCGraph[];
-    tablePreviewData?: QLPreviewTableData;
+    tablePreviewData?: QlConfigPreviewTableData;
 }
 
 export interface QLRenderResultYagrGraph {
@@ -157,11 +161,11 @@ export interface QLRenderResultYagrGraph {
 export interface QLRenderResultYagr {
     timeline?: number[];
     metadata?: {
-        order: QLResultEntryMetadataDataColumnOrGroup[];
+        order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
     graphs?: QLRenderResultYagrGraph[];
     axes?: any[];
-    tablePreviewData?: QLPreviewTableData;
+    tablePreviewData?: QlConfigPreviewTableData;
 }
 
 const clickhouseQuotemap: Record<string, string> = {
@@ -289,7 +293,7 @@ function wrapQuotedValue(quotedValue: string, operation?: string) {
 function escape(
     input: string[] | string,
     connectionType: string,
-    paramDescription?: QLParam,
+    paramDescription?: QlConfigParam,
     operation?: string,
 ) {
     const type = paramDescription ? paramDescription.type.toLowerCase() : 'string';
@@ -376,9 +380,9 @@ function dumpReqParamValue(input: string, type: string, datalensQLConnectionType
 
 function dumpReqParam(
     input: string | string[],
-    paramDescription: QLParam,
+    paramDescription: QlConfigParam,
     datalensQLConnectionType?: ConnectorType,
-): QLRequestParam {
+): QlConfigRequestParam {
     const type = paramDescription.type.toLowerCase();
     let dumped: string | string[];
 
@@ -444,13 +448,13 @@ export function buildSource({
     connectionType: string;
     query: string;
     params: StringParams;
-    paramsDescription: QLParam[];
+    paramsDescription: QlConfigParam[];
 }) {
     let sqlQuery = query;
 
     const datalensQLConnectionType = convertConnectionType(connectionType);
 
-    const QLRequestParams: Record<string, QLRequestParam | QLRequestParam[]> = {};
+    const QLRequestParams: Record<string, QlConfigRequestParam | QlConfigRequestParam[]> = {};
     if (
         datalensQLConnectionType === DATALENS_QL_CONNECTION_TYPES.POSTGRESQL ||
         datalensQLConnectionType === DATALENS_QL_CONNECTION_TYPES.CLICKHOUSE
@@ -507,7 +511,8 @@ export function buildSource({
                         params[`${key}_from`],
                         {
                             ...paramDescription,
-                            defaultValue: (paramDescription.defaultValue as QLParamInterval).from,
+                            defaultValue: (paramDescription.defaultValue as QlConfigParamInterval)
+                                .from,
                         },
                         datalensQLConnectionType,
                     );
@@ -516,7 +521,8 @@ export function buildSource({
                         params[`${key}_to`],
                         {
                             ...paramDescription,
-                            defaultValue: (paramDescription.defaultValue as QLParamInterval).to,
+                            defaultValue: (paramDescription.defaultValue as QlConfigParamInterval)
+                                .to,
                         },
                         datalensQLConnectionType,
                     );
@@ -557,7 +563,7 @@ export function getColumns(
     data: QLResult,
     connectionType: string,
     field = 'sql',
-): QLResultEntryMetadataDataColumn[] | null {
+): QlConfigResultEntryMetadataDataColumn[] | null {
     const row = data[field].find((entry: QLResultEntry) => entry.event === 'metadata');
 
     const datalensQLConnectionType = convertConnectionType(connectionType);
@@ -601,20 +607,20 @@ export function getColumnsAndRows({
 }: {
     chartType: QLChartType;
     ChartEditor: IChartEditor;
-    queries: QLQuery[];
+    queries: QLConfigQuery[];
     connectionType: string;
     data: {[key: string]: any};
 }) {
-    let columns: QLResultEntryMetadataDataColumn[] | null = [];
+    let columns: QlConfigResultEntryMetadataDataColumn[] | null = [];
 
     const columnsOrder: Record<string, number[]> = {};
-    const columnsByQuery: Record<string, QLResultEntryMetadataDataColumn[]> = {};
+    const columnsByQuery: Record<string, QlConfigResultEntryMetadataDataColumn[]> = {};
 
     let rows: string[][] = [];
 
     if (isMonitoringOrPrometheusChart(chartType)) {
         iterateThroughVisibleQueries(queries, (_query, i) => {
-            let localColumns: QLResultEntryMetadataDataColumn[] = [];
+            let localColumns: QlConfigResultEntryMetadataDataColumn[] = [];
 
             try {
                 const parsedColumns = getColumns(data, connectionType, `ql_${i}`);
@@ -683,7 +689,7 @@ export function getColumnsAndRows({
 
                     columns?.forEach((column) => {
                         const targetColumnIndex = localColumns.findIndex(
-                            (localColumn: QLResultEntryMetadataDataColumn) =>
+                            (localColumn: QlConfigResultEntryMetadataDataColumn) =>
                                 localColumn.name === column.name,
                         );
 
@@ -742,14 +748,14 @@ export function renderValue(value: QLValue) {
 }
 
 export function isGroup(
-    item: QLResultEntryMetadataDataColumnOrGroup,
-): item is QLResultEntryMetadataDataGroup {
-    return Boolean((item as QLResultEntryMetadataDataGroup).group);
+    item: QlConfigResultEntryMetadataDataColumnOrGroup,
+): item is QlConfigResultEntryMetadataDataGroup {
+    return Boolean((item as QlConfigResultEntryMetadataDataGroup).group);
 }
 
 export function iterateThroughVisibleQueries(
-    queries: QLQuery[],
-    cb: (query: QLQuery, index: number, array: QLQuery[]) => void,
+    queries: QLConfigQuery[],
+    cb: (query: QLConfigQuery, index: number, array: QLConfigQuery[]) => void,
 ) {
     queries.forEach((query, ...args) => {
         if (query.hidden) {
@@ -759,3 +765,17 @@ export function iterateThroughVisibleQueries(
         cb(query, ...args);
     });
 }
+
+export const prepareQuery = (query: string) => {
+    return query
+        .replace(/--[^\n]*\n/g, '')
+        .trim()
+        .replace(/;+$/g, '');
+};
+
+export const visualizationCanHaveContinuousAxis = (visualization: ServerVisualization) => {
+    return (
+        LINEAR_VISUALIZATIONS.has(visualization.id) ||
+        visualization.id === WizardVisualizationId.BarXD3
+    );
+};

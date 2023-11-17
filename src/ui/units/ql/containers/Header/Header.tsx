@@ -8,7 +8,8 @@ import _isEqual from 'lodash/isEqual';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {CommonSharedExtraSettings, EntryUpdateMode, Feature, QLEntryDataShared} from 'shared';
+import {CommonSharedExtraSettings, EntryUpdateMode, Feature} from 'shared';
+import type {QlConfig} from 'shared/types/config/ql';
 import {
     ActionPanel,
     DatalensGlobalState,
@@ -288,7 +289,7 @@ class Header extends React.PureComponent<HeaderProps, HeaderState> {
         return `${name} - ${i18n('sql', 'text_default-name')}`;
     }
 
-    private openSaveAsWidgetDialog = async (preparedChartData: QLEntryDataShared) => {
+    private openSaveAsWidgetDialog = async (preparedChartData: QlConfig) => {
         const {entry, defaultPath, entryDialoguesRef, connection} = this.props;
 
         if (!entryDialoguesRef || !connection) {

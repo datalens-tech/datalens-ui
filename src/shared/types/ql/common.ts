@@ -1,3 +1,4 @@
+import {QLChartType} from '../../constants';
 import {CommonSharedExtraSettings, ShapesConfig, Shared} from '../wizard/';
 import {Field} from '../wizard/field';
 
@@ -44,23 +45,13 @@ export interface QLRequestParam {
     value: string | string[];
 }
 
-export interface QLResultEntryMetadataData {
-    columns: QLResultEntryMetadataDataColumn[];
-}
-
 export type QLResultEntryMetadataDataColumnOrGroup =
     | QLResultEntryMetadataDataGroup
     | QLResultEntryMetadataDataColumn;
 
-export interface QLEntryDataSharedConnection {
+interface QLEntryDataSharedConnection {
     entryId: string;
     type: string;
-}
-
-export enum QLChartType {
-    Sql = 'sql',
-    Promql = 'promql',
-    Monitoringql = 'monitoringql',
 }
 
 export interface QLQuery {
@@ -70,6 +61,7 @@ export interface QLQuery {
 }
 
 export interface QLEntryDataShared {
+    version: undefined;
     // The type of template used to generate a chart at the ChartsEngine level, a low-level thing
     type: string;
 
@@ -77,7 +69,7 @@ export interface QLEntryDataShared {
     chartType: QLChartType;
     queryValue: string;
     queries: QLQuery[];
-    extraSettings: CommonSharedExtraSettings;
+    extraSettings?: CommonSharedExtraSettings;
     visualization: Shared['visualization'] & {highchartsId?: string};
     params: QLParam[];
     connection: QLEntryDataSharedConnection;
@@ -107,16 +99,6 @@ export interface QLPreviewTableData {
     data?: QLPreviewTableDataRow[];
 }
 
-export enum QLParamType {
-    String = 'string',
-    Number = 'number',
-    Boolean = 'boolean',
-    Date = 'date',
-    Datetime = 'datetime',
-    DateInterval = 'date-interval',
-    DatetimeInterval = 'datetime-interval',
-}
-
 export interface MonitoringPresetV1 {
     data: {
         v?: string;
@@ -141,7 +123,7 @@ export interface MonitoringPresetV1 {
 
 export interface MonitoringPresetV2 {
     data: {
-        v: string;
+        v: 'v2';
         widget: {
             id: string;
             title: string;
@@ -198,5 +180,3 @@ export interface MonitoringPresetV2 {
     };
     presetId: string;
 }
-
-export type MonitoringPreset = MonitoringPresetV1 | MonitoringPresetV2;

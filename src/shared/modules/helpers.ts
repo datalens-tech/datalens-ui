@@ -66,13 +66,6 @@ export function decodeURISafe(uri: string) {
     return decodeURI(uri.replace(/%(?![0-9a-fA-F][0-9a-fA-F]+)/g, '%25'));
 }
 
-export function encodeURISafe(uri: string) {
-    if (!uri) {
-        return uri;
-    }
-    return encodeURI(decodeURISafe(uri));
-}
-
 type PrepareFilterValuesArgs = {
     values: string[];
 };
@@ -187,8 +180,8 @@ export const isParameter = (field: Partial<Field> | Partial<ServerField>) => {
     return field.calc_mode === 'parameter';
 };
 
-export const isDimensionField = (field: Partial<Field> | Partial<ServerField>) => {
-    return field.type === DatasetFieldType.Dimension && field.calc_mode !== 'parameter';
+export const isDimensionField = (field: Partial<Field> | Partial<ServerField> | undefined) => {
+    return field?.type === DatasetFieldType.Dimension && !isParameter(field);
 };
 
 export const isMeasureField = (field: Partial<Field> | Partial<ServerField> | undefined) => {
@@ -199,16 +192,16 @@ export const isPseudoField = (field: Partial<Field> | Partial<ServerField> | und
     return field?.type === DatasetFieldType.Pseudo;
 };
 
-export const isTreeField = (field: {data_type: string}) => {
-    return isTreeDataType(field.data_type);
-};
-
 export const isTreeDataType = (data_type: string) => {
     return (
         data_type === DATASET_FIELD_TYPES.TREE_STR ||
         data_type === DATASET_FIELD_TYPES.TREE_INT ||
         data_type === DATASET_FIELD_TYPES.TREE_FLOAT
     );
+};
+
+export const isTreeField = (field: {data_type: string}) => {
+    return isTreeDataType(field.data_type);
 };
 
 export const transformParamsToUrlParams = (widgetParams: StringParams) => {

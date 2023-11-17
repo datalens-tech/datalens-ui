@@ -11,3 +11,19 @@ export const VISUALIZATION_IDS = {
     METRIC: 'metric',
     TABLE: 'table',
 };
+
+export enum QLChartType {
+    Sql = 'sql',
+    Promql = 'promql',
+    Monitoringql = 'monitoringql',
+}
+
+export enum QLParamType {
+    String = 'string',
+    Number = 'number',
+    Boolean = 'boolean',
+    Date = 'date',
+    Datetime = 'datetime',
+    DateInterval = 'date-interval',
+    DatetimeInterval = 'datetime-interval',
+}

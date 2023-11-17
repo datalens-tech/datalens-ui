@@ -86,7 +86,9 @@ export const getFileName = (key: string) => {
 };
 
 export const setErrorToast = async (exportResult: ExportResultType) => {
-    let errorStatusText = `(${exportResult?.error?.response?.statusText})`;
+    let errorStatusText = `(${
+        exportResult?.error?.response?.statusText || exportResult?.error?.message
+    })`;
     const errorStatus = exportResult?.error?.response?.status;
     if (errorStatus === 413 && exportResult?.error?.response) {
         try {

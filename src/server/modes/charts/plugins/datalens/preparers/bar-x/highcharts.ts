@@ -49,7 +49,6 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
         segments,
     } = args;
     const {data, order} = resultData;
-
     const preparedData = prepareBarX(args);
     const {graphs} = preparedData;
 
