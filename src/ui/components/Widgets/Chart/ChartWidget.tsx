@@ -74,6 +74,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
 
     const tabs = data.tabs as WidgetPluginDataWithTabs['tabs'];
     const tabIndex = React.useMemo(() => getTabIndex(tabs, state.tabId), [tabs, state.tabId]);
+    // this current tab we get from dashkit rerender with extra params for ds
     const currentTab = React.useMemo(() => tabs[tabIndex], [tabs, tabIndex]);
     const initName = React.useMemo(() => currentTab.title, [currentTab]);
     const {chartId, enableActionParams} = currentTab;
@@ -84,8 +85,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             res = pickExceptActionParamsFromParams(res);
         }
         return res;
-    }, [props.params]);
-
+    }, [props.params, enableActionParams]);
     const prevTabIndex = usePrevious(tabIndex);
     const hasChartTabChanged = prevTabIndex !== undefined && prevTabIndex !== tabIndex;
 

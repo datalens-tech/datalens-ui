@@ -6,8 +6,10 @@ import {EntryContentAction} from '../../../../store/actions/entryContent';
 import {
     AddSelectorToGroupAction,
     ChangeNavigationPathAction,
+    ResetDashDSAction,
     SetAccessDescriptionAction,
     SetActiveSelectorIndexAction,
+    SetDashDSAction,
     SetDashKeyAction,
     SetDashKitRefAction,
     SetDashUpdateStatusAction,
@@ -59,6 +61,8 @@ export type DashAction<T = unknown> =
     | SetLoadingEditModeAction
     | EntryContentAction
     | SetDashUpdateStatusAction
+    | SetDashDSAction
+    | ResetDashDSAction
     | SetNewRelationsAction
     | SetDashKeyAction
     | SetRenameWithoutReloadAction

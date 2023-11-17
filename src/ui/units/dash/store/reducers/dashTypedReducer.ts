@@ -4,17 +4,20 @@ import {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
 import {DashData, DashEntry, Permissions, WidgetType} from 'shared';
+import {GetEntriesDatasetsFieldsItem} from 'shared/schema';
 
 import {Mode} from '../../modules/constants';
 import {DashUpdateStatus} from '../../typings/dash';
 import {
     ADD_SELECTOR_TO_GROUP,
     CHANGE_NAVIGATION_PATH,
+    RESET_DASH_DS_FIELDS,
     SET_ACTIVE_SELECTOR_INDEX,
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
     SET_DASH_DESCRIPTION,
     SET_DASH_DESC_VIEW_MODE,
+    SET_DASH_DS_FIELDS,
     SET_DASH_KEY,
     SET_DASH_SUPPORT_DESCRIPTION,
     SET_DASH_UPDATE_STATUS,
@@ -71,6 +74,7 @@ export type DashState = {
     isRenameWithoutReload?: boolean;
     skipReload?: boolean;
     openedItemWidgetType?: WidgetType;
+    datasetsFields: GetEntriesDatasetsFieldsItem[] | null;
 };
 
 // eslint-disable-next-line complexity
@@ -84,6 +88,7 @@ export function dashTypedReducer(
         case SET_STATE:
         case SET_PAGE_TAB:
         case CHANGE_NAVIGATION_PATH:
+        case SET_DASH_DS_FIELDS:
         case SET_DASHKIT_REF: {
             return {...state, ...action.payload};
         }
@@ -384,6 +389,13 @@ export function dashTypedReducer(
             return {
                 ...state,
                 isRenameWithoutReload: action.payload || false,
+            };
+        }
+
+        case RESET_DASH_DS_FIELDS: {
+            return {
+                ...state,
+                datasetsFields: null,
             };
         }
 
