@@ -946,7 +946,7 @@ export function loadDashDatasets(entry: Partial<DashState>, tabId: string) {
         }
 
         const entriesDatasetsFields = await getSdk().mix.getEntriesDatasetsFields(
-            {entriesIds, datasetsIds: []},
+            {entriesIds, datasetsIds: [], format: 'light'},
             {concurrentId: LOAD_DASH_DATASETS_CONCURRENT_ID},
         );
 

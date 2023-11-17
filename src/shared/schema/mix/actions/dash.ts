@@ -9,6 +9,7 @@ import {
     CollectDashStatsArgs,
     CollectDashStatsResponse,
     GetEntriesDatasetsFieldsArgs,
+    GetEntriesDatasetsFieldsListItem,
     GetEntriesDatasetsFieldsResponse,
 } from '../types';
 
@@ -43,8 +44,9 @@ const prepareDatasetData = (args: {
     type: string | null;
     entryId: string;
     datasetId: string;
+    isLightFormat: boolean;
 }) => {
-    const {entryId, datasetId, type, items} = args;
+    const {isLightFormat, entryId, datasetId, type, items} = args;
 
     if (!items.data) {
         return {entryId, type: null};
@@ -69,11 +71,16 @@ const prepareDatasetData = (args: {
         type,
         datasetId,
         datasetName: key.match(/[^/]*$/)?.[0] || '',
-        datasetFields: result_schema.map(({title, guid, type: fieldType}) => ({
-            title,
-            guid,
-            type: fieldType,
-        })),
+        datasetFields: result_schema.map(({title, guid, type: fieldType}) => {
+            if (isLightFormat) {
+                return guid;
+            }
+            return {
+                title,
+                guid,
+                type: fieldType,
+            };
+        }) as GetEntriesDatasetsFieldsListItem[] | string[],
     };
 };
 
@@ -87,19 +94,20 @@ export const dashActions = {
             return {status: 'success'};
         },
     ),
-    // all comments were left by @smokiri
     // in the entriesIds, the id of the entities for which you need to find out the dataset,
     // and if the dataset id is not in datasetsIds, then you need to get a list of dataset fields
     getEntriesDatasetsFields: createAction<
         GetEntriesDatasetsFieldsResponse,
         GetEntriesDatasetsFieldsArgs
-    >(async (api, {entriesIds, datasetsIds}, {ctx}) => {
+    >(async (api, {entriesIds, datasetsIds, format}, {ctx}) => {
         const typedApi = getTypedApi(api);
         const {entries} = await typedApi.us.getEntries({
             scope: 'widget',
             ids: entriesIds,
             includeLinks: true,
         });
+
+        const isLightFormat = format === 'light';
 
         const allDatasetsIdsSet = new Set([...datasetsIds]);
         entries.forEach((entry) => {
@@ -141,6 +149,7 @@ export const dashActions = {
                         type: widgetType,
                         datasetId,
                         entryId,
+                        isLightFormat,
                     }),
                 );
             }
@@ -152,6 +161,7 @@ export const dashActions = {
                     type: 'dataset',
                     entryId: datasetId,
                     datasetId,
+                    isLightFormat,
                 }),
             );
         });
