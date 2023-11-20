@@ -7,7 +7,7 @@ import {
     DashTabItemType,
     DashTabItemWidgetTab,
 } from 'shared';
-import {GetEntriesDatasetsFieldsResponse} from 'shared/schema';
+import {GetEntriesDatasetsFieldsListItem, GetEntriesDatasetsFieldsResponse} from 'shared/schema';
 import {
     DashkitMetaDataItemBase,
     DatasetsData,
@@ -142,11 +142,13 @@ export const getMetaDataWithDatasetInfo = ({
         if (datasetFields) {
             datasetsList[key] = datasetsList[key] || {};
             datasetsList[key].name = datasetName || '';
-            datasetsList[key].fields = datasetFields.map((fieldItem) => ({
-                title: fieldItem.title,
-                guid: fieldItem.guid,
-                dataType: fieldItem.dataType || fieldItem.type || '',
-            }));
+            datasetsList[key].fields = (datasetFields as GetEntriesDatasetsFieldsListItem[]).map(
+                (fieldItem) => ({
+                    title: fieldItem.title,
+                    guid: fieldItem.guid,
+                    dataType: fieldItem.dataType || fieldItem.type || '',
+                }),
+            );
         }
 
         if (datasetId && datasetsList[datasetId]) {
