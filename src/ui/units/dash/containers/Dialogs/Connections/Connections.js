@@ -17,7 +17,10 @@ import {getSdk} from '../../../../../libs/schematic-sdk';
 import {ITEM_TYPE} from '../../../containers/Dialogs/constants';
 import {CONNECTION_KIND} from '../../../modules/constants';
 import {closeDialog, updateCurrentTabData} from '../../../store/actions/dash';
-import {getCurrentTab, getCurrentTabConnectableItems} from '../../../store/selectors/dash';
+import {
+    selectCurrentTab,
+    selectCurrentTabConnectableItems,
+} from '../../../store/selectors/dashTypedSelectors';
 import {addAlias, getNormalizedAliases} from '../DialogRelations/helpers';
 
 import ConnectByAlias from './ConnectByAlias/ConnectByAlias';
@@ -800,9 +803,9 @@ class Connections extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-    items: getCurrentTabConnectableItems(state),
-    connections: getCurrentTab(state).connections,
-    aliases: getCurrentTab(state).aliases,
+    items: selectCurrentTabConnectableItems(state),
+    connections: selectCurrentTab(state).connections,
+    aliases: selectCurrentTab(state).aliases,
     dashKitRef: state.dash.dashKitRef,
 });
 
