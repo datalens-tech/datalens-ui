@@ -73,6 +73,7 @@ import Utils from 'utils';
 import uuid from 'uuid/v1';
 
 import {DIALOG_FIELD_EDITOR} from '../../../../../../components/DialogFieldEditor/DialogFieldEditor';
+import {updateVisualizationPlaceholderItems} from '../../../../actions/placeholder';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,
     AVAILABLE_DATETIME_FORMATS,
@@ -754,6 +755,10 @@ class VisualizationItem extends React.Component<Props, State> {
         };
 
         const dataset = cloneDeep(this.props.datasets.find((ds) => ds.id === target.datasetId));
+        const currentPlaceholderId = this.props.props.listId;
+        const placeholder = this.props.visualization.placeholders.find(
+            (p) => p.id === currentPlaceholderId,
+        );
 
         if (!dataset && !isMeasureName(target)) {
             console.error('onDialogFieldApply failed');
@@ -825,11 +830,6 @@ class VisualizationItem extends React.Component<Props, State> {
             } else if (cast === 'datetimetz') {
                 target.format = AVAILABLE_DATETIMETZ_FORMATS[7];
             }
-
-            const currentPlaceholderId = this.props.props.listId;
-            const placeholder = this.props.visualization.placeholders.find(
-                (p) => p.id === currentPlaceholderId,
-            );
 
             if (placeholder && cast) {
                 const axisModeMap =
@@ -910,6 +910,11 @@ class VisualizationItem extends React.Component<Props, State> {
             }
         }
 
+        this.props.actions.updateVisualizationPlaceholderItems({
+            items: placeholder?.items || [],
+            options: {item: target, placeholderId: placeholder?.id as PlaceholderId},
+        });
+
         this.closeDialogField();
     };
 
@@ -980,6 +985,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
                 updateDatasetByValidation,
                 removeQuickFormula,
                 updatePlaceholderSettings,
+                updateVisualizationPlaceholderItems,
             },
             dispatch,
         ),

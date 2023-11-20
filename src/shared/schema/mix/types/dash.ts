@@ -19,7 +19,7 @@ export type GetEntriesDatasetsFieldsItem = {
     type: GetEntriesEntryResponse['type'] | null;
     datasetId?: string;
     datasetName?: string;
-    datasetFields?: GetEntriesDatasetsFieldsListItem[];
+    datasetFields?: GetEntriesDatasetsFieldsListItem[] | string[];
 };
 
 export type GetEntriesDatasetsFieldsResponse = GetEntriesDatasetsFieldsItem[];
@@ -27,4 +27,5 @@ export type GetEntriesDatasetsFieldsResponse = GetEntriesDatasetsFieldsItem[];
 export type GetEntriesDatasetsFieldsArgs = {
     entriesIds: string[];
     datasetsIds: string[];
+    format?: 'light' | 'full';
 };

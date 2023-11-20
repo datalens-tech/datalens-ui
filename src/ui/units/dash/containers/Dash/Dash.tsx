@@ -36,9 +36,15 @@ import {
     setEditMode,
     setLock,
 } from '../../store/actions/dash';
-import {setErrorMode, setPageTab} from '../../store/actions/dashTyped';
-import {canEdit, getDashEntry, isDraft, isEditMode} from '../../store/selectors/dash';
-import {selectTabId, selectTabs} from '../../store/selectors/dashTypedSelectors';
+import {resetDashDatasetsFields, setErrorMode, setPageTab} from '../../store/actions/dashTyped';
+import {
+    canEdit,
+    isDraft,
+    isEditMode,
+    selectDashEntry,
+    selectTabId,
+    selectTabs,
+} from '../../store/selectors/dashTypedSelectors';
 import Body from '../Body/Body';
 import Dialogs from '../Dialogs/Dialogs';
 import Header from '../Header/Header';
@@ -134,6 +140,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         }
 
         if (hasEntryChanged || hasRevisionChanged || hasPathChanged) {
+            this.props.resetDashDatasetsFields();
             this.props.loadDash({
                 history: this.props.history,
                 location: this.props.location,
@@ -345,7 +352,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     isDraft: isDraft(state),
     isEditMode: isEditMode(state),
     canEdit: canEdit(state),
-    entry: getDashEntry(state),
+    entry: selectDashEntry(state),
     lockToken: selectLockToken(state),
     revId: selectEntryContentRevId(state),
     tabs: selectTabs(state),
@@ -366,6 +373,7 @@ const mapDispatchToProps = {
     setCopiedItemData,
     addWorkbookInfo,
     resetWorkbookPermissions,
+    resetDashDatasetsFields,
 };
 
 export const DashWrapper = connect(mapStateToProps, mapDispatchToProps)(DashComponent);

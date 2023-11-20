@@ -4,16 +4,18 @@ import {AxiosResponse} from 'axios';
 import debounce from 'lodash/debounce';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {DashTabItemControlSourceType, Feature} from 'shared';
+import {DashTabItemControl, DashTabItemControlSourceType, Feature} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
-import {getCurrentTab} from 'ui/units/dash/store/selectors/dash';
 
 import {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
 import {ResponseError} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
-import {selectIsNewRelations} from '../../../../units/dash/store/selectors/dashTypedSelectors';
+import {
+    selectCurrentTab,
+    selectIsNewRelations,
+} from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import Utils from '../../../../utils';
 import {WidgetPluginProps} from '../../../DashKit/plugins/Widget/types';
 import {
@@ -230,13 +232,15 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         ],
     );
 
-    const currentDashTab = useSelector(getCurrentTab);
+    const currentDashTab = useSelector(selectCurrentTab);
 
     /**
      * get defaults widget params: need to detect relations for external selectors
      */
     const widgetParamsDefaults = React.useMemo(() => {
-        const item = currentDashTab.items.find(({id}: {id: String}) => id === widgetId);
+        const item = currentDashTab?.items.find(
+            ({id}: {id: String}) => id === widgetId,
+        ) as DashTabItemControl;
         return item.defaults;
     }, [currentDashTab, widgetId]);
 
