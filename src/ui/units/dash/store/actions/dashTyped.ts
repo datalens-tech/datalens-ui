@@ -11,7 +11,6 @@ import {
     DATASET_FIELD_TYPES,
     DashTab,
     DashTabItem,
-    DashTabItemControlDataset,
     DashTabItemControlSourceType,
     DashTabItemType,
     Dataset,
@@ -930,35 +929,24 @@ export function loadDashDatasets(entry: Partial<DashState>, tabId: string) {
         if (!dashTabItems.length) {
             return;
         }
-        let datasetsIds: string[] = [];
         let entriesIds: string[] = [];
         dashTabItems.forEach((dashItem) => {
-            if (
-                dashItem.type === DashTabItemType.Control &&
-                dashItem.data.sourceType === DashTabItemControlSourceType.Dataset
-            ) {
-                const dataSource = dashItem.data.source as DashTabItemControlDataset['source'];
-                if (dataSource.datasetId) {
-                    datasetsIds.push(dataSource.datasetId);
-                }
-            } else if (dashItem.type === DashTabItemType.Widget) {
+            if (dashItem.type === DashTabItemType.Widget) {
                 const chartData = dashItem.data;
-                const widgetChartIds = chartData.tabs.map((chartTabItem) => chartTabItem.chartId);
+                const widgetChartIds = chartData.tabs
+                    .filter((chartTabItem) => Boolean(chartTabItem.enableActionParams))
+                    ?.map((chartTabItem) => chartTabItem.chartId);
                 entriesIds = entriesIds.concat(widgetChartIds);
             }
         });
-        datasetsIds = [...new Set(datasetsIds)];
         entriesIds = [...new Set(entriesIds)];
 
-        if (isEmpty(datasetsIds) && isEmpty(entriesIds)) {
+        if (isEmpty(entriesIds)) {
             return;
         }
 
         const entriesDatasetsFields = await getSdk().mix.getEntriesDatasetsFields(
-            {
-                entriesIds,
-                datasetsIds,
-            },
+            {entriesIds, datasetsIds: [], format: 'light'},
             {concurrentId: LOAD_DASH_DATASETS_CONCURRENT_ID},
         );
 
