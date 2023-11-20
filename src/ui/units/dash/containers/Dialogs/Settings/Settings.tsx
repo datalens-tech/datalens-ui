@@ -33,7 +33,7 @@ import {Params} from './components/Params';
 
 import './Settings.scss';
 
-const MIN_AUTOUPDATE_INTERVAL = 30;
+const MIN_AUTOUPDATE_INTERVAL = 15;
 
 const b = block('dialog-settings');
 
