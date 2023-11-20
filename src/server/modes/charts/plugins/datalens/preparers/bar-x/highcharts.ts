@@ -50,9 +50,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
         segments,
     } = args;
     const {data, order} = resultData;
-    // console.log(JSON.stringify(args));
     const preparedData = prepareBarX(args);
-    // console.log(JSON.stringify(preparedData));
     const {graphs} = preparedData;
 
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
