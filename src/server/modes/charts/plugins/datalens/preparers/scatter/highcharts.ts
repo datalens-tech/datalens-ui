@@ -19,6 +19,10 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
     const {ChartEditor, shared, placeholders, idToTitle, idToDataType} = options;
     const {graphs, categories, x, y, z, color, minColorValue, maxColorValue, colorsConfig, size} =
         prepareScatter(options);
+
+    const colorDataType = color ? idToDataType[color.guid] : null;
+    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
+
     const points = graphs.map((graph) => graph.data).flat(2) as Highcharts.PointOptionsObject[];
 
     if (!x || !y) {
@@ -92,7 +96,11 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
             );
         }
 
-        if (color && (color.type === 'MEASURE' || colorsConfig?.colorMode === ColorMode.GRADIENT)) {
+        if (
+            color &&
+            (color.type === 'MEASURE' ||
+                (colorsConfig?.colorMode === ColorMode.GRADIENT && colorIsNumber))
+        ) {
             if (
                 colorsConfig &&
                 typeof minColorValue === 'number' &&

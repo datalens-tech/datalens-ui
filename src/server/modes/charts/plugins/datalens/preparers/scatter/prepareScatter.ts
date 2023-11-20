@@ -91,6 +91,9 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     const z = placeholders[2].items[0];
     const size = placeholders[3]?.items[0];
     const color = colors && colors[0];
+    const colorDataType = color ? idToDataType[color.guid] : null;
+    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
+
     const shape = shapes?.[0];
     const shapesConfigured = Object.keys(shapesConfig?.mountedShapes || {}).length > 0;
 
@@ -290,7 +293,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             const i = findIndexInOrder(order, color, cTitle);
             const colorValue = shouldEscapeUserValue ? escape(values[i] as string) : values[i];
 
-            if (colorMode === ColorMode.GRADIENT || color.type === 'MEASURE') {
+            if ((colorIsNumber && colorMode === ColorMode.GRADIENT) || color.type === 'MEASURE') {
                 const numberColorValue = Number(colorValue);
 
                 if (numberColorValue < minColorValue) {
@@ -359,7 +362,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     let graphs: ExtendedSeriesScatterOptions[] = [{data: points}] as ExtendedSeriesScatterOptions[];
 
     if (color) {
-        if (colorMode === ColorMode.GRADIENT || color.type === 'MEASURE') {
+        if ((colorIsNumber && colorMode === ColorMode.GRADIENT) || color.type === 'MEASURE') {
             mapAndColorizePointsByGradient(points as Highcharts.PointOptionsObject[], colorsConfig);
         } else {
             graphs = mapAndColorizePointsByPalette(points, colorsConfig);

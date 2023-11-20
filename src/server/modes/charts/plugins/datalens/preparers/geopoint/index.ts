@@ -157,6 +157,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         resultData: {data, order},
         idToTitle,
         shared,
+        idToDataType,
     } = options;
     const geopointsConfig = (options.geopointsConfig || {}) as PointSizeConfig;
     const layerSettings = (options.layerSettings ||
@@ -167,7 +168,11 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
 
     const allPoints: Record<string, GeopointPointConfig[]> = {};
     const colorValues: number[] = [];
+
     const color = colors[0];
+    const colorDataType = color ? idToDataType[color.guid] : null;
+    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
+
     const size = placeholders[1].items[0];
     const coordinates = placeholders[0].items;
     const updatedTooltips = [...tooltips];
@@ -218,7 +223,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         });
     }
 
-    if (color && (isMeasureField(color) || colorMode === ColorMode.GRADIENT)) {
+    if (color && (isMeasureField(color) || (colorIsNumber && colorMode === ColorMode.GRADIENT))) {
         const gradientThresholdValues = getThresholdValues(colorsConfig, colorValues);
         const {min, rangeMiddle, max} = gradientThresholdValues;
         colorData = getColorsByMeasureField({
@@ -304,7 +309,10 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                 let iconColor = DEFAULT_ICON_COLOR;
 
                 if (colorValue) {
-                    if (isMeasureField(color) || colorMode === ColorMode.GRADIENT) {
+                    if (
+                        isMeasureField(color) ||
+                        (colorIsNumber && colorMode === ColorMode.GRADIENT)
+                    ) {
                         const key = isNaN(Number(colorValue))
                             ? colorValue
                             : String(Number(colorValue));

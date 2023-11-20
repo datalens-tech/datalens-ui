@@ -95,6 +95,8 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         : true;
 
     const colorItem = colors[0];
+    const colorDataType = colorItem ? idToDataType[colorItem.guid] : null;
+    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
 
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
@@ -456,7 +458,11 @@ export function prepareBarX(args: PrepareFunctionArgs) {
             });
         });
 
-        if (colorMode === ColorMode.GRADIENT || isColorizeByMeasure || isColorizeByMeasureValue) {
+        if (
+            (colorIsNumber && colorMode === ColorMode.GRADIENT) ||
+            isColorizeByMeasure ||
+            isColorizeByMeasureValue
+        ) {
             colorizeByGradient(visualizationId as WizardVisualizationId, {
                 graphs,
                 colorsConfig,

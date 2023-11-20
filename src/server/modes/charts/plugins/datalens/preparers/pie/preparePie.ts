@@ -123,6 +123,7 @@ export function preparePie({
 
     const colorMode = colorsConfig.colorMode;
     const colorDataType = color && color.data_type;
+    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
     const colorActualTitle = idToTitle[color.guid];
     const colorIndex = findIndexInOrder(order, color, colorActualTitle);
 
@@ -312,7 +313,8 @@ export function preparePie({
     }
 
     const isColoringByGradient =
-        (color.type === 'MEASURE' && isNumberField(color)) || colorMode === ColorMode.GRADIENT;
+        (color.type === 'MEASURE' && isNumberField(color)) ||
+        (colorMode === ColorMode.GRADIENT && colorIsNumber);
 
     if (isColoringByGradient) {
         pie.data = mapAndColorizePieByGradient(pie.data, colorsConfig);

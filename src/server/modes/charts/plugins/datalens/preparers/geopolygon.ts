@@ -117,6 +117,7 @@ function prepareFormattedValue(args: {
     return value;
 }
 
+// eslint-disable-next-line complexity
 function prepareGeopolygon(options: PrepareFunctionArgs) {
     const DEFAULT_COLOR = 'rgb(77, 162, 241)';
 
@@ -128,17 +129,23 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         resultData: {data, order},
         idToTitle,
         shared,
+        idToDataType,
     } = options;
     const layerSettings = (options.layerSettings ||
         {}) as VisualizationLayerShared['visualization']['layerSettings'];
 
     const allPolygons: Record<string, GeopolygonConfig[]> = {};
     const hashTable: Record<string, string[] | {[x: string]: string}[]> = {};
+
     const color = colors[0];
+    const colorDataType = color ? idToDataType[color.guid] : null;
+    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
+
     const coordinates = placeholders[0].items;
 
     const gradientMode =
-        color && (isMeasureField(color) || colorsConfig.colorMode === ColorMode.GRADIENT);
+        color &&
+        (isMeasureField(color) || (colorIsNumber && colorsConfig.colorMode === ColorMode.GRADIENT));
 
     let colorizedResult:
         | ReturnType<typeof colorizeGeoByGradient>

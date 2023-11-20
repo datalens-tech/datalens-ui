@@ -38,6 +38,7 @@ function prepareTreemap({
     colors,
     colorsConfig,
     idToTitle,
+    idToDataType,
 }: PrepareFunctionArgs) {
     const app = registry.getApp();
     // Dimensions
@@ -47,7 +48,10 @@ function prepareTreemap({
     // Measures
     const m = placeholders[1].items;
 
-    const c = colors[0];
+    const color = colors[0];
+    const colorDataType = color ? idToDataType[color.guid] : null;
+    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
+
     const colorMode = colorsConfig.colorMode;
 
     const {data, order} = resultData;
@@ -65,11 +69,11 @@ function prepareTreemap({
     let measureNamesLevel: number;
     let colorData: Record<string, {backgroundColor: string}> = {};
 
-    if (c) {
+    if (color) {
         // We make the property non-enumerable so that it does not participate in the formation of the palette
         Object.defineProperty(valuesForColorData, 'colorGuid', {
             enumerable: false,
-            value: c.guid,
+            value: color.guid,
         });
     }
 
@@ -92,9 +96,9 @@ function prepareTreemap({
 
     data.forEach((values) => {
         let colorByDimension: string | null;
-        if (c && c.type === 'DIMENSION') {
-            const actualTitle = idToTitle[c.guid];
-            const i = findIndexInOrder(order, c, actualTitle);
+        if (color && color.type === 'DIMENSION') {
+            const actualTitle = idToTitle[color.guid];
+            const i = findIndexInOrder(order, color, actualTitle);
             const colorValue = values[i];
 
             colorByDimension = colorValue;
@@ -176,10 +180,13 @@ function prepareTreemap({
                 hashTable[key] = {value: value, label};
             }
 
-            if (c) {
-                if (colorMode === ColorMode.GRADIENT || c.type === 'MEASURE') {
-                    const colorTitle = idToTitle[c.guid];
-                    const i = findIndexInOrder(order, c, colorTitle);
+            if (color) {
+                if (
+                    (colorMode === ColorMode.GRADIENT && colorIsNumber) ||
+                    color.type === 'MEASURE'
+                ) {
+                    const colorTitle = idToTitle[color.guid];
+                    const i = findIndexInOrder(order, color, colorTitle);
                     const colorValue = values[i];
 
                     valuesForColorData[key] = colorValue as unknown as number;
@@ -198,8 +205,8 @@ function prepareTreemap({
         }
     });
 
-    if (c) {
-        if (colorMode === ColorMode.GRADIENT || c.type === 'MEASURE') {
+    if (color) {
+        if ((colorMode === ColorMode.GRADIENT && colorIsNumber) || color.type === 'MEASURE') {
             colorData = mapAndColorizeHashTableByGradient(
                 valuesForColorData,
                 colorsConfig,
@@ -211,9 +218,9 @@ function prepareTreemap({
         treemap = treemap.map((obj) => {
             const item = {...obj};
 
-            const color = colorData[obj.id];
-            if (color) {
-                item.color = color.backgroundColor;
+            const colorDataValue = colorData[obj.id];
+            if (colorDataValue) {
+                item.color = colorDataValue.backgroundColor;
             }
 
             return item;

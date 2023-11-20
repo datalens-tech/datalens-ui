@@ -50,7 +50,9 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
         segments,
     } = args;
     const {data, order} = resultData;
+    // console.log(JSON.stringify(args));
     const preparedData = prepareBarX(args);
+    // console.log(JSON.stringify(preparedData));
     const {graphs} = preparedData;
 
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
@@ -70,6 +72,8 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
     const yFields = yPlaceholder?.items || [];
 
     const colorItem = colors[0];
+    const colorDataType = colorItem ? idToDataType[colorItem.guid] : null;
+    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
 
     const sortItem = sort?.[0];
     const isSortItemExists = Boolean(sort && sort.length);
@@ -183,7 +187,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                 });
 
             const isShouldShowMeasureLegend =
-                colorsConfig.colorMode === ColorMode.GRADIENT ||
+                (colorIsNumber && colorsConfig.colorMode === ColorMode.GRADIENT) ||
                 ((isColorizeByMeasure || isColorizeByMeasureValue) &&
                     !isCombinedChartColorizedBySomeDimenstion);
 
