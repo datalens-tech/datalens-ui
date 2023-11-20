@@ -14,7 +14,7 @@ import {
     ChartKitWrapperOnLoadProps,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
 import {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
-import {LoadedWidgetData} from '../../../../libs/DatalensChartkit/types';
+import {LoadedWidgetData, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
 import {selectIsNewRelations} from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import Utils from '../../../../utils';
@@ -67,6 +67,7 @@ type LoadingChartWidgetHookProps = Pick<
         widgetId: WidgetPluginProps['id'];
         currentTab: CurrentTab;
         hasHideTitleChanged?: boolean;
+        widgetDatasetFields?: string[] | null;
     };
 
 const WIDGET_DEBOUNCE_TIMEOUT = 300;
@@ -105,6 +106,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         widgetRenderTimeRef,
         usageType,
         enableActionParams,
+        widgetDatasetFields,
     } = props;
 
     const tabs = props.tabs as WidgetPluginDataWithTabs['tabs'];
@@ -113,15 +115,46 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const [description, setDescription] = React.useState<string | null>(null);
     const [scrollOffset, setScrollOffset] = React.useState<number | null>(null);
     const [loadedWidgetType, setLoadedWidgetType] = React.useState<string>('');
+    const [isLoadedWidgetWizard, setIsLoadedWidgetWizard] = React.useState(false);
 
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
     const resolveWidgetDataRef = React.useRef<ResolveWidgetDataRef>();
     const mutationObserver = React.useRef<MutationObserver | null>(null);
     const resizeObserver = React.useRef<ResizeObserver | null>(null);
 
+    const [onStateAndParamsChangeData, setOnStateAndParamsChangeData] =
+        React.useState<null | OnChangeData>(null);
+    const [isTriggeredChangedDataOnce, setIsTriggeredChangedDataOnce] = React.useState(false);
+
     const isNewRelations = useSelector(selectIsNewRelations);
 
+    /**
+     * waiting for dataset fields only for wizard charts with enableActionParams setting
+     */
+    const needWaitForDSFields = React.useMemo(() => {
+        return enableActionParams && isLoadedWidgetWizard && !widgetDatasetFields;
+    }, [isLoadedWidgetWizard, widgetDatasetFields, enableActionParams]);
+
     const history = useHistory();
+
+    /**
+     * waiting for dataset fields loaded on dash (for chart-by-chart filtering)
+     * we need to trigger dashkit changes with merging params & etc only after loaded waiting ds loaded manually
+     * that's why we need to remember changed fields to forward it to changed callback function for dashkit re-render later
+     */
+    const resolveWidgetDSFields = React.useCallback(
+        (args) => {
+            return new Promise<void>((resolve) => {
+                // remembering args for trigger function after ds fields loaded
+                setOnStateAndParamsChangeData(args);
+                if (needWaitForDSFields) {
+                    return;
+                }
+                return resolve();
+            });
+        },
+        [needWaitForDSFields],
+    );
 
     /**
      * debounced call of recalculate widget layout after rerender
@@ -159,20 +192,25 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 adjustLayout(!newAutoHeight);
             }
         },
-        [tabs, tabIndex, adjustLayout, loadedWidgetType],
+        [dataProvider, tabs, tabIndex, adjustLayout, loadedWidgetType],
     );
 
     /**
      * handle callback when chart inner params changed and affected to other widgets,
      * for ex. to external set param (param on selector) by table cell click
+     * if there is action after triggering chart-by-chart filtering then we need to wait for dataset fields loaded on dash
      */
     const handleChangeCallback = React.useCallback(
-        (changedProps) => {
+        async (changedProps: OnChangeData) => {
+            if (needWaitForDSFields && typeof resolveWidgetDSFields === 'function') {
+                await resolveWidgetDSFields(changedProps);
+            }
+
             if (changedProps.type === 'PARAMS_CHANGED') {
                 onStateAndParamsChange({params: changedProps.data.params || {}});
             }
         },
-        [onStateAndParamsChange],
+        [onStateAndParamsChange, needWaitForDSFields, resolveWidgetDSFields],
     );
 
     /**
@@ -254,6 +292,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 widgetId,
                 hideTitle: Boolean(data.hideTitle),
                 tabsLength: tabs.length,
+                needWaitForDSFields,
             }),
         [
             isLoading,
@@ -568,6 +607,33 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             mutationObserver.current?.disconnect();
         };
     }, [debouncedMutationsCheck, mutationObserver, isInit, rootNodeRef]);
+
+    React.useEffect(() => {
+        if (loadedData?.isNewWizard && !isLoadedWidgetWizard) {
+            setIsLoadedWidgetWizard(true);
+        }
+    }, [loadedData?.isNewWizard, isLoadedWidgetWizard]);
+
+    React.useEffect(() => {
+        const needFireChange =
+            !needWaitForDSFields &&
+            widgetDatasetFields &&
+            onStateAndParamsChangeData &&
+            !isTriggeredChangedDataOnce;
+        if (!needFireChange) {
+            return;
+        }
+
+        setIsTriggeredChangedDataOnce(true);
+        if (onStateAndParamsChangeData.type === 'PARAMS_CHANGED') {
+            onStateAndParamsChange({params: onStateAndParamsChangeData.data.params || {}});
+        }
+    }, [
+        needWaitForDSFields,
+        widgetDatasetFields,
+        onStateAndParamsChangeData,
+        isTriggeredChangedDataOnce,
+    ]);
 
     return {
         loadedData,
