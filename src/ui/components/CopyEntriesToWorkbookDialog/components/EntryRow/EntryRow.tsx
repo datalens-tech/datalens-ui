@@ -33,7 +33,9 @@ export type EntryRowProps = {
 
 export const EntryRow: React.FC<EntryRowProps> = ({className, entry, isTargetEntry}) => {
     const link = navigateHelper.redirectUrlSwitcher(entry);
-    const isFileConnection = entry.scope === EntryScope.Connection && entry.type === 'file';
+    const isFileConnection =
+        entry.scope === EntryScope.Connection &&
+        (entry.type === 'file' || entry.type === 'gsheets_v2');
 
     return (
         <div className={b(null, className)}>
@@ -49,16 +51,12 @@ export const EntryRow: React.FC<EntryRowProps> = ({className, entry, isTargetEnt
             >
                 {entry.name}
             </Link>
-            {!isTargetEntry && (
+            {!isTargetEntry && isFileConnection && (
                 <div className={b('warning')}>
                     <div className={b('warning-icon')}>
                         <Icon data={WarningColoredIcon} size={16} />
                     </div>
-                    <div className={b('warning-text')}>
-                        {isFileConnection
-                            ? i18n('label_file-connection-warning')
-                            : i18n('label_entry-already-in-workbook')}
-                    </div>
+                    <div className={b('warning-text')}>{i18n('label_file-connection-warning')}</div>
                 </div>
             )}
         </div>
