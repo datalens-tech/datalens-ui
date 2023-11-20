@@ -8,4 +8,5 @@ export const dashFunctionsMap = {
     getCaptionText: makeFunctionTemplate<() => string>(),
     getDashEntryUrl: makeFunctionTemplate<(response: EntryDialogOnCloseArg) => string>(),
     getNewDashUrl: makeFunctionTemplate<(workbookId?: string) => string>(),
+    getMinAutoupdateInterval: makeFunctionTemplate<() => number>(),
 } as const;
