@@ -1,4 +1,4 @@
-import {isDateField, isMeasureField} from '../../../../../../shared';
+import {ColorMode, isDateField, isMeasureField} from '../../../../../../shared';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
 import {
     colorizeGeoByGradient,
@@ -6,7 +6,7 @@ import {
     getLayerAlpha,
     getMapBounds,
 } from '../utils/geo-helpers';
-import {findIndexInOrder, formatDate} from '../utils/misc-helpers';
+import {findIndexInOrder, formatDate, isNumericalDataType} from '../utils/misc-helpers';
 
 import {PrepareFunctionArgs, PrepareFunctionDataRow, ResultDataOrder} from './types';
 
@@ -86,9 +86,15 @@ const preparePolyline = (options: PrepareFunctionArgs) => {
     const i18n = (key: string, params?: Record<string, string | string[]>) =>
         options.ChartEditor.getTranslation('wizard.prepares', key, params);
 
+    const {idToDataType} = options;
+
     const {data, order} = options.resultData;
     const [color] = options.colors;
     const colorsConfig = options.colorsConfig;
+    const colorMode = colorsConfig?.colorMode;
+    const colorDataType = color ? idToDataType[color.guid] : null;
+    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
+
     const ALPHA = getLayerAlpha(options.layerSettings || {});
     let leftBot: undefined | [number, number];
     let rightTop: undefined | [number, number];
@@ -162,7 +168,7 @@ const preparePolyline = (options: PrepareFunctionArgs) => {
             {},
         );
 
-        if (isMeasureField(color)) {
+        if ((colorIsNumber && colorMode === ColorMode.GRADIENT) || isMeasureField(color)) {
             colorData = colorizeGeoByGradient(hashTable, colorsConfig).colorData;
         } else {
             colorData = colorizeGeoByPalette(hashTable, colorsConfig, color?.guid).colorData;

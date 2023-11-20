@@ -1,5 +1,4 @@
 import {
-    DATASET_FIELD_TYPES,
     DatasetFieldType,
     Feature,
     isMeasureName,
@@ -78,8 +77,7 @@ export function isColorModeChangeAvailable(
 ) {
     const {item, visualizationId} = props;
 
-    const itemIsSuitable =
-        item.type === DatasetFieldType.Dimension && item.data_type === DATASET_FIELD_TYPES.INTEGER;
+    const itemIsSuitable = item.type === DatasetFieldType.Dimension && isNumberField(item);
 
     if (visualizationId) {
         return itemIsSuitable && !VISUALIZATION_IDS_WITHOUT_COLOR_MODE_CHANGE.has(visualizationId);
