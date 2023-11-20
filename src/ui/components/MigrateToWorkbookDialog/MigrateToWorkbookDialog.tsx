@@ -95,7 +95,8 @@ export const MigrateToWorkbookDialog: React.FC<Props> = ({
                 (entry) =>
                     entry.type === ConnectorType.Csv ||
                     entry.type === ConnectorType.GsheetsV2 ||
-                    entry.type === ConnectorType.Gsheets,
+                    entry.type === ConnectorType.Gsheets ||
+                    entry.type === ConnectorType.File,
             ),
     );
 
