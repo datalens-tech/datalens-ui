@@ -138,25 +138,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const history = useHistory();
 
     /**
-     * waiting for dataset fields loaded on dash (for chart-by-chart filtering)
-     * we need to trigger dashkit changes with merging params & etc only after loaded waiting ds loaded manually
-     * that's why we need to remember changed fields to forward it to changed callback function for dashkit re-render later
-     */
-    const resolveWidgetDSFields = React.useCallback(
-        (args) => {
-            return new Promise<void>((resolve) => {
-                // remembering args for trigger function after ds fields loaded
-                setOnStateAndParamsChangeData(args);
-                if (needWaitForDSFields) {
-                    return;
-                }
-                return resolve();
-            });
-        },
-        [needWaitForDSFields],
-    );
-
-    /**
      * debounced call of recalculate widget layout after rerender
      */
     const adjustLayout = React.useCallback(
@@ -199,18 +180,21 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      * handle callback when chart inner params changed and affected to other widgets,
      * for ex. to external set param (param on selector) by table cell click
      * if there is action after triggering chart-by-chart filtering then we need to wait for dataset fields loaded on dash
+     * and we need to trigger dashkit changes with merging params & etc only after loaded waiting ds loaded manually
+     * that's why we need to remember changed fields to forward it to changed callback function for dashkit re-render later
      */
     const handleChangeCallback = React.useCallback(
         async (changedProps: OnChangeData) => {
-            if (needWaitForDSFields && typeof resolveWidgetDSFields === 'function') {
-                await resolveWidgetDSFields(changedProps);
+            if (needWaitForDSFields) {
+                setOnStateAndParamsChangeData(changedProps);
+                return;
             }
 
             if (changedProps.type === 'PARAMS_CHANGED') {
                 onStateAndParamsChange({params: changedProps.data.params || {}});
             }
         },
-        [onStateAndParamsChange, needWaitForDSFields, resolveWidgetDSFields],
+        [onStateAndParamsChange, needWaitForDSFields],
     );
 
     /**

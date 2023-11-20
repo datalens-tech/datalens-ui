@@ -15,7 +15,7 @@ import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import {
-    selectDashDatasetsFields,
+    selectDashWidgetsDatasetsFields,
     selectSkipReload,
 } from '../../../units/dash/store/selectors/dashTypedSelectors';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
@@ -78,7 +78,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     } = props;
 
     const skipReload = useSelector(selectSkipReload);
-    const dashDatasetFields = useSelector(selectDashDatasetsFields);
+    const dashDatasetFields = useSelector(selectDashWidgetsDatasetsFields);
 
     const tabs = data.tabs as WidgetPluginDataWithTabs['tabs'];
     const tabIndex = React.useMemo(() => getTabIndex(tabs, state.tabId), [tabs, state.tabId]);
