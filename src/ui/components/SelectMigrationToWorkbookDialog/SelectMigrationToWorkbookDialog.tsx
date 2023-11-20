@@ -44,7 +44,9 @@ export const SelectMigrationToWorkbookDialog: React.FC<Props> = ({
     onClose,
     onSuccess,
 }) => {
-    const [selectedMigration, setSelectedMigration] = React.useState<Migration | null>(null);
+    const [selectedMigration, setSelectedMigration] = React.useState<Migration | null>(
+        Migration.Copy,
+    );
 
     const isTransferToWorkbook = selectedMigration === Migration.Transfer;
     const isCopyToWorkbook = selectedMigration === Migration.Copy;
