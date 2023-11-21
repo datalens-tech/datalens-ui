@@ -3,8 +3,9 @@ import vm from 'vm';
 import {Keysets, ServerI18n} from '../../../../../i18n/types';
 import {initI18n} from '../../../../../i18n/utils';
 import {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
+import {getTranslationFn} from '../../../../../shared/modules/language';
 import {IChartEditor} from '../../../../../shared/types';
-import {getTranslationFn, keysetsByLang} from '../../../../utils/language';
+import {keysetsByLang} from '../../../../utils/language';
 import {config} from '../../constants';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
@@ -127,7 +128,7 @@ const generateInstance = ({
     ChartEditor.getUserLang = () => userLang;
 
     const i18n = getI18n(userLang || DEFAULT_USER_LANG);
-    ChartEditor.getTranslation = getTranslationFn(i18n);
+    ChartEditor.getTranslation = getTranslationFn(i18n.getI18nServer());
 
     const instance = {
         module: moduleObject,
