@@ -1,6 +1,6 @@
 import type {ChartType, TooltipOptions, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 
-import {ServerVisualization} from '../../../../../shared';
+import {IChartEditor, ServerVisualization} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import type {QlConfig} from '../../../../../shared/types/config/ql';
 
@@ -43,8 +43,8 @@ const applyPlaceholderSettingsToYAxis = ({
     return {scale};
 };
 
-export default ({shared}: {shared: QlConfig}) => {
-    const config = mapQlConfigToLatestVersion(shared);
+export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
+    const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
 
     const type = (config.visualization.highchartsId || config.visualization.id) as ChartType;
 
