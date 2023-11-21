@@ -1,4 +1,4 @@
-import type {ChartType, TooltipOptions, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
+import type {ChartType, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 
 import {IChartEditor, ServerVisualization} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
@@ -51,8 +51,9 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
     const percent =
         config.visualization.id === 'area100p' || config.visualization.id === 'column100p';
 
-    const tracking = (config.visualization.highchartsId ||
-        config.visualization.id) as TooltipOptions['tracking'];
+    const visualizationId = config.visualization.highchartsId || config.visualization.id;
+
+    const tracking = visualizationId === 'area' ? 'area' : 'sticky';
 
     const title =
         config.extraSettings?.titleMode === 'show' && config.extraSettings.title
