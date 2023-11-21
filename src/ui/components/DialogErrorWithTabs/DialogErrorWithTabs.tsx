@@ -2,7 +2,7 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {Button, Dialog, Loader, Tabs, TabsItemProps} from '@gravity-ui/uikit';
+import {Button, Dialog, Loader, Sheet, Tabs, TabsItemProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
@@ -10,6 +10,7 @@ import {DataLensApiError} from 'ui';
 import {registry} from 'ui/registry';
 import {FetchDocumentationArgs} from 'ui/registry/units/common/types/functions/fetchDocumentation';
 import Utils from 'ui/utils';
+import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import logger from '../../libs/logger';
 import {parseError} from '../../utils/errors/parse';
@@ -126,12 +127,22 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
     }
 
     render() {
-        const {title = i18n('label_error'), error, withReport = true, onRetry} = this.props;
-        const {requestId, loading, errorWithoutDocumentation} = this.state;
+        const {title = i18n('label_error')} = this.props;
+        const {loading} = this.state;
 
-        const {ReportButton} = registry.common.components.getAll();
-
-        return (
+        return isMobileView ? (
+            <Sheet
+                visible={true}
+                onClose={this.onClose}
+                allowHideOnContentScroll={false}
+                contentClassName={b({mobile: true})}
+            >
+                <React.Fragment>
+                    {loading ? this.renderLoader() : this.renderDialogBody()}
+                    <div className={b('footer-buttons')}>{this.renderFooterButtons()}</div>
+                </React.Fragment>
+            </Sheet>
+        ) : (
             <Dialog
                 onClose={this.onClose}
                 open={true}
@@ -151,20 +162,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                     textButtonCancel={i18n('button_close')}
                     loading={false}
                 >
-                    {withReport && (
-                        <ReportButton
-                            error={error}
-                            message={title}
-                            requestId={requestId}
-                            errorWithoutDocumentation={errorWithoutDocumentation}
-                            className={b('button')}
-                        />
-                    )}
-                    {typeof onRetry === 'function' && (
-                        <Button size="l" view="outlined" onClick={onRetry} className={b('button')}>
-                            {i18n('button_retry')}
-                        </Button>
-                    )}
+                    {this.renderFooterButtons()}
                 </Dialog.Footer>
             </Dialog>
         );
@@ -269,6 +267,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                     className={b('tab-navigation')}
                     onSelectTab={this.onTabClick}
                     activeTab={this.state.activeTabId}
+                    size={isMobileView ? MOBILE_SIZE.TABS : 'm'}
                 />
                 {this.renderTabContent(this.state.activeTabId)}
             </React.Fragment>
@@ -277,6 +276,41 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
 
     private renderLoader() {
         return <Loader size="m" className={b('loader')} />;
+    }
+
+    private renderFooterButtons() {
+        const {title = i18n('label_error'), error, withReport = true, onRetry} = this.props;
+        const {requestId, errorWithoutDocumentation} = this.state;
+
+        const {ReportButton} = registry.common.components.getAll();
+
+        const buttonsSize = isMobileView ? MOBILE_SIZE.BUTTON : 'l';
+
+        return (
+            <React.Fragment>
+                {withReport && (
+                    <ReportButton
+                        error={error}
+                        message={title}
+                        requestId={requestId}
+                        errorWithoutDocumentation={errorWithoutDocumentation}
+                        className={b('button')}
+                        size={buttonsSize}
+                        view={isMobileView ? 'outlined' : 'flat'}
+                    />
+                )}
+                {typeof onRetry === 'function' && (
+                    <Button
+                        size={buttonsSize}
+                        view={isMobileView ? 'action' : 'outlined'}
+                        onClick={onRetry}
+                        className={b('button')}
+                    >
+                        {i18n('button_retry')}
+                    </Button>
+                )}
+            </React.Fragment>
+        );
     }
 
     private onClose = () => {

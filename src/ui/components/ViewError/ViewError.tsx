@@ -7,6 +7,7 @@ import {useDispatch} from 'react-redux';
 import {ErrorContentTypes} from 'shared';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
 import {ErrorContent, Utils} from 'ui';
+import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {DataLensApiError} from '../../typings';
 
@@ -79,6 +80,9 @@ export const ViewError = ({
     const errorClassname = className || 'actions';
     const buttonDetailsText = buttonText || i18n('button_details');
 
+    const buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : 'm';
+    const buttonWidth = isMobileView ? 'max' : 'auto';
+
     const handleClickDetails = () => {
         dispatch(
             openDialogErrorWithTabs({
@@ -90,13 +94,25 @@ export const ViewError = ({
     };
 
     const content = (
-        <div className={b(errorClassname)}>
+        <div className={b(errorClassname, {mobile: isMobileView})}>
             {typeof retry === 'function' && (
-                <Button className={b('btn-retry')} view="action" onClick={() => retry()}>
+                <Button
+                    className={b('btn-retry')}
+                    size={buttonSize}
+                    width={buttonWidth}
+                    view="action"
+                    onClick={() => retry()}
+                >
                     {i18n('button_retry')}
                 </Button>
             )}
-            <Button className={b('btn-details')} view="outlined" onClick={handleClickDetails}>
+            <Button
+                className={b('btn-details')}
+                size={buttonSize}
+                width={buttonWidth}
+                view="outlined"
+                onClick={handleClickDetails}
+            >
                 {buttonDetailsText}
             </Button>
             {actionContent}

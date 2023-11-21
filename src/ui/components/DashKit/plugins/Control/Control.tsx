@@ -33,12 +33,13 @@ import {
     transformUrlParamsToParams,
 } from 'shared';
 import type {schema} from 'shared';
+import {DIALOG_ERROR_WITH_TABS} from 'ui/components/DialogErrorWithTabs/DialogErrorWithTabs';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
 import {ResolveWidgetControlDataRefArgs} from 'ui/components/Widgets/Chart/types';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
-import {isMobileView} from 'ui/utils/mobile';
+import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
 import {ChartKitCustomError} from '../../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
@@ -57,7 +58,11 @@ import {
 import {ControlBase, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
 import {DatalensSdk} from '../../../../libs/schematic-sdk';
-import {closeDialog, openDialogErrorWithTabs} from '../../../../store/actions/dialog';
+import {
+    closeDialog,
+    delicateCloseDialog,
+    openDialogErrorWithTabs,
+} from '../../../../store/actions/dialog';
 import {
     addOperationForValue,
     unwrapFromArrayAndSkipOperation,
@@ -875,23 +880,28 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const data = errorData?.data;
         const errorText = this.getErrorText(data || {});
         const errorTitle = data?.title;
+
+        const buttonsSize = isMobileView ? MOBILE_SIZE.BUTTON : 's';
+        const buttonsWidth = isMobileView ? 'max' : 'auto';
+
         return (
-            <div className={b('error', {inside: true})}>
+            <div className={b('error', {inside: true, mobile: isMobileView})}>
                 <span className={b('error-text')} title={errorText}>
                     {errorTitle || errorText}
                 </span>
                 <div className={b('buttons')}>
                     <Button
-                        size="s"
+                        size={buttonsSize}
                         onClick={() => {
                             this.showItemsLoader();
                             this.init();
                         }}
+                        width={buttonsWidth}
                     >
                         {i18n('button_retry')}
                     </Button>
                     <Button
-                        size="s"
+                        size={buttonsSize}
                         view="flat"
                         onClick={() =>
                             this.props.openDialogErrorWithTabs({
@@ -899,6 +909,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                                 title: errorTitle,
                             })
                         }
+                        width={buttonsWidth}
                     >
                         {i18n('button_details')}
                     </Button>
@@ -933,8 +944,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                             ) as ChartKitCustomError,
                             title: errorTitle,
                             onRetry: () => {
+                                this.props.delicateCloseDialog({id: DIALOG_ERROR_WITH_TABS});
                                 this.reload();
-                                this.props.closeDialog();
                             },
                         })
                     }
@@ -1196,6 +1207,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
 const mapDispatchToProps = {
     openDialogErrorWithTabs,
     closeDialog,
+    delicateCloseDialog,
 };
 
 const ControlWithStore = connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true})(
