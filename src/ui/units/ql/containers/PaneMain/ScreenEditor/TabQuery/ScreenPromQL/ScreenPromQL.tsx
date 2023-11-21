@@ -121,10 +121,9 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                     className={b('query-row-collapse')}
                                     title={
                                         <div className={b('query-row-header')}>
-                                            <span className={b('query-row-title')}>{`${i18n(
-                                                'sql',
-                                                'label_query',
-                                            )} ${queryIndex + 1}`}</span>
+                                            <span className={b('query-row-title')}>
+                                                {query.queryName}
+                                            </span>
                                         </div>
                                     }
                                     toolbar={
