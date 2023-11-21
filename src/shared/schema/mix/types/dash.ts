@@ -19,7 +19,7 @@ export type GetEntriesDatasetsFieldsItem = {
     type: GetEntriesEntryResponse['type'] | null;
     datasetId?: string;
     datasetName?: string;
-    datasetFields?: GetEntriesDatasetsFieldsListItem[] | string[];
+    datasetFields?: GetEntriesDatasetsFieldsListItem[];
 };
 
 export type GetEntriesDatasetsFieldsResponse = GetEntriesDatasetsFieldsItem[];
@@ -27,5 +27,16 @@ export type GetEntriesDatasetsFieldsResponse = GetEntriesDatasetsFieldsItem[];
 export type GetEntriesDatasetsFieldsArgs = {
     entriesIds: string[];
     datasetsIds: string[];
-    format?: 'light' | 'full';
+};
+
+export type GetWidgetsDatasetsFieldsItem = {
+    entryId: string;
+    datasetId?: string;
+    datasetFields?: string[];
+};
+
+export type GetWidgetsDatasetsFieldsResponse = GetWidgetsDatasetsFieldsItem[];
+
+export type GetWidgetsDatasetsFieldsArgs = {
+    entriesIds: string[];
 };

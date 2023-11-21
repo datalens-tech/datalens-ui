@@ -1,3 +1,4 @@
+@import '~@gravity-ui/uikit/styles/mixins';
 @import '../../../styles/variables';
 
 .error-text {
@@ -12,6 +13,12 @@
         word-wrap: break-word;
         font-family: $monospaceFontFamily;
         max-height: 365px;
+
+        &_mobile {
+            @include text-code-2;
+            margin: 0 0 12px;
+            border-radius: 12px;
+        }
     }
 
     &__extra-content {

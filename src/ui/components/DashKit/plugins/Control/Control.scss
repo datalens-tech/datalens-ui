@@ -1,18 +1,19 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .dashkit-plugin-control {
-    $class: &;
+    $controlClass: &;
     display: flex;
     align-items: center;
     justify-content: center; // in particular for the loader
     height: 100%;
     width: 100%;
     min-height: 44px;
-    //flex-wrap: wrap;
-    //overflow: auto;
 
     background-color: var(--g-color-base-float);
     border-radius: 3px;
 
     &__error {
+        $errorClass: &;
         border-radius: 3px;
         padding: 0 6px;
 
@@ -23,6 +24,25 @@
             justify-content: space-around;
             height: 70px;
             width: 180px;
+        }
+
+        &_mobile {
+            #{$controlClass}__error-text {
+                @include text-body-2;
+            }
+
+            #{$controlClass}__buttons {
+                margin-top: 12px;
+
+                & > :first-child {
+                    margin-right: 12px;
+                }
+            }
+
+            &#{$errorClass}_inside {
+                width: 100%;
+                height: auto;
+            }
         }
 
         &:hover:not(#{&}_inside) {
@@ -78,7 +98,7 @@
     &_mobile {
         min-height: 64px;
 
-        #{$class}__item {
+        #{$controlClass}__item {
             padding: 10px 15px;
         }
     }
