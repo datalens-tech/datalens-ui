@@ -14,6 +14,7 @@ import {
     DiffTableColumn,
     NumberTableColumn,
     NumberViewOptions,
+    StringParams,
     TableCell,
     TableColumn,
     TableHead,
@@ -437,10 +438,13 @@ export const getColumnsAndNames = ({
 
                         const defaultStyles: React.CSSProperties = {};
                         const cellClickArgs = getCellClickArgs(row, columnName);
-                        const rowActionParams = getRowActionParams(row);
-                        const additionalStyles = actionParamsData
-                            ? getAdditionalStyles({actionParamsData, row})
-                            : undefined;
+                        let rowActionParams: StringParams | undefined;
+                        let additionalStyles: React.CSSProperties | undefined;
+
+                        if (actionParamsData) {
+                            rowActionParams = getRowActionParams(row);
+                            additionalStyles = getAdditionalStyles({actionParamsData, row});
+                        }
 
                         if (cellClickArgs || rowActionParams) {
                             defaultStyles.cursor = 'pointer';

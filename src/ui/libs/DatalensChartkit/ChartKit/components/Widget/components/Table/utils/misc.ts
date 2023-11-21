@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {sanitizeUrl} from '@braintree/sanitize-url';
+import {transformParamsToActionParams} from '@gravity-ui/dashkit';
 import {Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
@@ -20,7 +21,6 @@ import {
     TablehWidgetEventScope,
     WidgetEvent,
 } from 'shared';
-import {URL_ACTION_PARAMS_PREFIX} from 'shared/constants/common';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
 import {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 
@@ -447,13 +447,7 @@ function getActionParamsByRow(args: {
         });
     }
 
-    const resultParams = {} as Record<string, string | string[]>;
-
-    for (const [key, val] of Object.entries(rowActionParams)) {
-        resultParams[`${URL_ACTION_PARAMS_PREFIX}${key}`] = val;
-    }
-
-    return resultParams;
+    return transformParamsToActionParams(rowActionParams);
 }
 
 export function getActionParams(args: {
