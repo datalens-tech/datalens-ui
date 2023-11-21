@@ -1,4 +1,4 @@
-import {ColorMode, isDateField, isMeasureField} from '../../../../../../shared';
+import {isDateField} from '../../../../../../shared';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
 import {
     colorizeGeoByGradient,
@@ -6,7 +6,7 @@ import {
     getLayerAlpha,
     getMapBounds,
 } from '../utils/geo-helpers';
-import {findIndexInOrder, formatDate, isNumericalDataType} from '../utils/misc-helpers';
+import {findIndexInOrder, formatDate, isGradientMode} from '../utils/misc-helpers';
 
 import {PrepareFunctionArgs, PrepareFunctionDataRow, ResultDataOrder} from './types';
 
@@ -91,22 +91,28 @@ const preparePolyline = (options: PrepareFunctionArgs) => {
     const {data, order} = options.resultData;
     const [color] = options.colors;
     const colorsConfig = options.colorsConfig;
-    const colorMode = colorsConfig?.colorMode;
-    const colorDataType = color ? idToDataType[color.guid] : null;
-    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
+
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
 
     const ALPHA = getLayerAlpha(options.layerSettings || {});
     let leftBot: undefined | [number, number];
     let rightTop: undefined | [number, number];
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const groupingFields = options.placeholders.find(
         (placeholder) => placeholder.id === 'grouping',
     )!.items;
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const measures = options.placeholders.find(
         (placeholder) => placeholder.id === 'measures',
     )!.items;
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const polylinePlaceholder = options.placeholders.find(
         (placeholder) => placeholder.id === 'polyline',
     )!;
@@ -168,7 +174,7 @@ const preparePolyline = (options: PrepareFunctionArgs) => {
             {},
         );
 
-        if ((colorIsNumber && colorMode === ColorMode.GRADIENT) || isMeasureField(color)) {
+        if (gradientMode) {
             colorData = colorizeGeoByGradient(hashTable, colorsConfig).colorData;
         } else {
             colorData = colorizeGeoByPalette(hashTable, colorsConfig, color?.guid).colorData;

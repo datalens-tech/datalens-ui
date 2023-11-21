@@ -1,11 +1,9 @@
 import {
-    ColorMode,
     DATASET_FIELD_TYPES,
     MINIMUM_FRACTION_DIGITS,
     ServerFieldFormatting,
     ServerTooltip,
     VisualizationLayerShared,
-    isMeasureField,
 } from '../../../../../../shared';
 import {hexToRgb} from '../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
@@ -21,6 +19,7 @@ import {
 import {
     chartKitFormatNumberWrapper,
     getTitleInOrder,
+    isGradientMode,
     isNumericalDataType,
 } from '../utils/misc-helpers';
 
@@ -138,14 +137,13 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
     const hashTable: Record<string, string[] | {[x: string]: string}[]> = {};
 
     const color = colors[0];
-    const colorDataType = color ? idToDataType[color.guid] : null;
-    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
-
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
     const coordinates = placeholders[0].items;
 
     const gradientMode =
         color &&
-        (isMeasureField(color) || (colorIsNumber && colorsConfig.colorMode === ColorMode.GRADIENT));
+        colorFieldDataType &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
 
     let colorizedResult:
         | ReturnType<typeof colorizeGeoByGradient>

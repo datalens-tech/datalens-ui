@@ -2,7 +2,6 @@ import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import escape from 'lodash/escape';
 
 import {
-    ColorMode,
     Feature,
     MINIMUM_FRACTION_DIGITS,
     POINT_SHAPES_IN_ORDER,
@@ -28,6 +27,7 @@ import {
     formatDate,
     getPointRadius,
     getTimezoneOffsettedTime,
+    isGradientMode,
     isNumericalDataType,
 } from '../../utils/misc-helpers';
 import {PrepareFunctionArgs} from '../types';
@@ -76,8 +76,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const {data, order} = resultData;
 
-    const colorMode = colorsConfig.colorMode;
-
     const x = placeholders[0].items[0];
     if (!x) {
         return {graphs: []};
@@ -90,9 +88,14 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
     const z = placeholders[2].items[0];
     const size = placeholders[3]?.items[0];
+
     const color = colors && colors[0];
-    const colorDataType = color ? idToDataType[color.guid] : null;
-    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
+
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
 
     const shape = shapes?.[0];
     const shapesConfigured = Object.keys(shapesConfig?.mountedShapes || {}).length > 0;
@@ -293,7 +296,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             const i = findIndexInOrder(order, color, cTitle);
             const colorValue = shouldEscapeUserValue ? escape(values[i] as string) : values[i];
 
-            if ((colorIsNumber && colorMode === ColorMode.GRADIENT) || color.type === 'MEASURE') {
+            if (gradientMode) {
                 const numberColorValue = Number(colorValue);
 
                 if (numberColorValue < minColorValue) {
@@ -362,7 +365,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     let graphs: ExtendedSeriesScatterOptions[] = [{data: points}] as ExtendedSeriesScatterOptions[];
 
     if (color) {
-        if ((colorIsNumber && colorMode === ColorMode.GRADIENT) || color.type === 'MEASURE') {
+        if (gradientMode) {
             mapAndColorizePointsByGradient(points as Highcharts.PointOptionsObject[], colorsConfig);
         } else {
             graphs = mapAndColorizePointsByPalette(points, colorsConfig);

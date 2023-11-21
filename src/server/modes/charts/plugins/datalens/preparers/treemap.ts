@@ -1,7 +1,6 @@
 import escape from 'lodash/escape';
 
 import {
-    ColorMode,
     Feature,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
@@ -16,6 +15,7 @@ import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
     formatDate,
+    isGradientMode,
     isNumericalDataType,
 } from '../utils/misc-helpers';
 
@@ -49,10 +49,12 @@ function prepareTreemap({
     const m = placeholders[1].items;
 
     const color = colors[0];
-    const colorDataType = color ? idToDataType[color.guid] : null;
-    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
 
-    const colorMode = colorsConfig.colorMode;
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
 
     const {data, order} = resultData;
 
@@ -181,10 +183,7 @@ function prepareTreemap({
             }
 
             if (color) {
-                if (
-                    (colorMode === ColorMode.GRADIENT && colorIsNumber) ||
-                    color.type === 'MEASURE'
-                ) {
+                if (gradientMode) {
                     const colorTitle = idToTitle[color.guid];
                     const i = findIndexInOrder(order, color, colorTitle);
                     const colorValue = values[i];
@@ -206,7 +205,7 @@ function prepareTreemap({
     });
 
     if (color) {
-        if ((colorMode === ColorMode.GRADIENT && colorIsNumber) || color.type === 'MEASURE') {
+        if (gradientMode) {
             colorData = mapAndColorizeHashTableByGradient(
                 valuesForColorData,
                 colorsConfig,

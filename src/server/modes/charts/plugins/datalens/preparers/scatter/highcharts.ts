@@ -2,13 +2,12 @@ import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
 import {
     ChartkitHandlers,
-    ColorMode,
     ExtendedExportingCsvOptions,
     isDateField,
 } from '../../../../../../../shared';
 import {getGradientStops} from '../../utils/color-helpers';
 import {getFieldExportingOptions, getFieldsExportingOptions} from '../../utils/export-helpers';
-import {isNumericalDataType} from '../../utils/misc-helpers';
+import {isGradientMode, isNumericalDataType} from '../../utils/misc-helpers';
 import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
 import {ChartKitFormatSettings, PrepareFunctionArgs} from '../types';
 
@@ -20,8 +19,13 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
     const {graphs, categories, x, y, z, color, minColorValue, maxColorValue, colorsConfig, size} =
         prepareScatter(options);
 
-    const colorDataType = color ? idToDataType[color.guid] : null;
-    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
+
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        colorsConfig &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
 
     const points = graphs.map((graph) => graph.data).flat(2) as Highcharts.PointOptionsObject[];
 
@@ -96,11 +100,7 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
             );
         }
 
-        if (
-            color &&
-            (color.type === 'MEASURE' ||
-                (colorsConfig?.colorMode === ColorMode.GRADIENT && colorIsNumber))
-        ) {
+        if (gradientMode) {
             if (
                 colorsConfig &&
                 typeof minColorValue === 'number' &&

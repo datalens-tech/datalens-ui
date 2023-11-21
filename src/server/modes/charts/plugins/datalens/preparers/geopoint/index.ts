@@ -1,14 +1,12 @@
 import escape from 'lodash/escape';
 
 import {
-    ColorMode,
     Feature,
     MINIMUM_FRACTION_DIGITS,
     PointSizeConfig,
     ServerFieldFormatting,
     VisualizationLayerShared,
     isEnabledServerFeature,
-    isMeasureField,
 } from '../../../../../../../shared';
 import {registry} from '../../../../../../registry';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
@@ -27,6 +25,7 @@ import {
     findIndexInOrder,
     getPointRadius,
     getTitleInOrder,
+    isGradientMode,
     isNumericalDataType,
 } from '../../utils/misc-helpers';
 import {PrepareFunctionArgs} from '../types';
@@ -164,14 +163,17 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         {}) as VisualizationLayerShared['visualization']['layerSettings'];
 
     const ALPHA = getLayerAlpha(layerSettings);
-    const colorMode = colorsConfig.colorMode;
 
     const allPoints: Record<string, GeopointPointConfig[]> = {};
     const colorValues: number[] = [];
 
     const color = colors[0];
-    const colorDataType = color ? idToDataType[color.guid] : null;
-    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
+
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
 
     const size = placeholders[1].items[0];
     const coordinates = placeholders[0].items;
@@ -223,7 +225,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         });
     }
 
-    if (color && (isMeasureField(color) || (colorIsNumber && colorMode === ColorMode.GRADIENT))) {
+    if (gradientMode) {
         const gradientThresholdValues = getThresholdValues(colorsConfig, colorValues);
         const {min, rangeMiddle, max} = gradientThresholdValues;
         colorData = getColorsByMeasureField({
@@ -309,10 +311,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                 let iconColor = DEFAULT_ICON_COLOR;
 
                 if (colorValue) {
-                    if (
-                        isMeasureField(color) ||
-                        (colorIsNumber && colorMode === ColorMode.GRADIENT)
-                    ) {
+                    if (gradientMode) {
                         const key = isNaN(Number(colorValue))
                             ? colorValue
                             : String(Number(colorValue));

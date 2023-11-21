@@ -4,6 +4,8 @@ const {
     barXColoringBaseArgs,
     barXColoringDimensionByGradientArgs,
     barXColoringDimensionByGradientResult,
+    barXColoringDimensionByPaletteArgs,
+    barXColoringDimensionByPaletteResult,
 } = require('./mocks/bar-x.mock');
 
 describe('bar-x preparer', () => {
@@ -14,6 +16,14 @@ describe('bar-x preparer', () => {
                 ...barXColoringDimensionByGradientArgs,
             });
             expect(result).toEqual(barXColoringDimensionByGradientResult);
+        });
+
+        test('should prepare bar-x with coloring by palette with dimension', () => {
+            const result = prepareHighchartsBarX({
+                ...barXColoringBaseArgs,
+                ...barXColoringDimensionByPaletteArgs,
+            });
+            expect(result).toEqual(barXColoringDimensionByPaletteResult);
         });
     });
 });

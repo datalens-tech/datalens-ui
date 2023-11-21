@@ -1,7 +1,6 @@
 import _isEmpty from 'lodash/isEmpty';
 
 import {
-    ColorMode,
     HighchartsSeriesCustomObject,
     PlaceholderId,
     ServerField,
@@ -22,6 +21,7 @@ import {
     collator,
     formatDate,
     getTimezoneOffsettedTime,
+    isGradientMode,
     isNumericalDataType,
     numericCollator,
 } from '../../utils/misc-helpers';
@@ -95,8 +95,12 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         : true;
 
     const colorItem = colors[0];
-    const colorDataType = colorItem ? idToDataType[colorItem.guid] : null;
-    const colorIsNumber = Boolean(colorDataType && isNumericalDataType(colorDataType));
+    const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;
+
+    const gradientMode =
+        colorItem &&
+        colorFieldDataType &&
+        isGradientMode({colorField: colorItem, colorFieldDataType, colorsConfig});
 
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
@@ -458,11 +462,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
             });
         });
 
-        if (
-            (colorIsNumber && colorMode === ColorMode.GRADIENT) ||
-            isColorizeByMeasure ||
-            isColorizeByMeasureValue
-        ) {
+        if (gradientMode) {
             colorizeByGradient(visualizationId as WizardVisualizationId, {
                 graphs,
                 colorsConfig,
