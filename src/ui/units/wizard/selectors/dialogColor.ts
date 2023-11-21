@@ -72,16 +72,14 @@ const VISUALIZATION_IDS_WITHOUT_COLOR_MODE_CHANGE = new Set<string>([
 
 export function isColorModeChangeAvailable(
     props: Pick<OpenDialogColorArgs['props'], 'item'> & {
-        visualizationId?: string;
+        visualizationId: string;
     },
 ) {
     const {item, visualizationId} = props;
 
-    const itemIsSuitable = item.type === DatasetFieldType.Dimension && isNumberField(item);
-
-    if (visualizationId) {
-        return itemIsSuitable && !VISUALIZATION_IDS_WITHOUT_COLOR_MODE_CHANGE.has(visualizationId);
-    } else {
-        return itemIsSuitable;
-    }
+    return (
+        item.type === DatasetFieldType.Dimension &&
+        isNumberField(item) &&
+        !VISUALIZATION_IDS_WITHOUT_COLOR_MODE_CHANGE.has(visualizationId)
+    );
 }
