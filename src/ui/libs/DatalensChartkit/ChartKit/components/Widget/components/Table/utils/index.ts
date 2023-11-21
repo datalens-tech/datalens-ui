@@ -1,2 +1,9 @@
 export {getColumnsAndNames} from './render';
-export {camelCaseCss, concatStrings, hasGroups, getIdFromGeneratedName} from './misc';
+export {
+    camelCaseCss,
+    concatStrings,
+    hasGroups,
+    getActionParamsEventScope,
+    getIdFromGeneratedName,
+} from './misc';
+export type {ActionParamsData} from './types';

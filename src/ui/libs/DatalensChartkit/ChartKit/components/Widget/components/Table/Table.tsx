@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {pickActionParamsFromParams} from '@gravity-ui/dashkit';
 import DataTable, {DataTableProps, Settings} from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
 import {TableCommonCell, TableHead, TableRow} from 'shared';
@@ -17,10 +18,12 @@ import {TableProps} from './types';
 import {
     camelCaseCss,
     concatStrings,
+    getActionParamsEventScope,
     getColumnsAndNames,
     getIdFromGeneratedName,
     hasGroups,
 } from './utils';
+import type {ActionParamsData} from './utils';
 
 import './Table.scss';
 
@@ -195,20 +198,24 @@ export class Table extends React.PureComponent<TableProps, TableState> {
         const {
             data: {
                 data: {head = [], rows = [], footer = []},
-                config: {sort, order, settings, drillDown} = {},
+                config: {sort, order, settings, drillDown, events} = {},
+                unresolvedParams,
             },
             onChange,
         } = this.props;
-
-        // for type=table, screenshot engine looks for SNAPTER_HTML_CLASSNAME on the page
-        // therefor tables use table view NO_DATA
-        // if (!head || !rows) {
-        //     throw ErrorDispatcher.wrap(null, {code: ERROR_TYPE.NO_DATA});
-        // }
-
         // dynamicRender, highlightRows, sorting does not work properly if there is a group
         const isHasGroups = hasGroups(head);
         const context = {isHasGroups};
+        let actionParamsData: ActionParamsData | undefined;
+        const scope = getActionParamsEventScope(events);
+
+        if (scope) {
+            actionParamsData = {
+                params: pickActionParamsFromParams(unresolvedParams),
+                scope,
+            };
+        }
+
         const {columns, names, sortSettings} = getColumnsAndNames({
             head,
             rows,
@@ -216,6 +223,7 @@ export class Table extends React.PureComponent<TableProps, TableState> {
             tableWidth: this.tableWidth,
             onChange,
             tableRef: this.dataTableRef,
+            actionParamsData,
         });
 
         let initialSortOrder: DataTableProps<DataTableData>['initialSortOrder'];

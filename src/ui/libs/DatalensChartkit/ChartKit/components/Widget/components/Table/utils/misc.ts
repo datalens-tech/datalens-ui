@@ -2,6 +2,8 @@ import React from 'react';
 
 import {sanitizeUrl} from '@braintree/sanitize-url';
 import {Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import isPlainObject from 'lodash/isPlainObject';
 import {
@@ -9,21 +11,27 @@ import {
     BarViewOptions,
     ChartKitCss,
     NumberViewOptions,
-    OnClickSetActionParams,
+    StringParams,
     TableCell,
     TableCellsRow,
     TableCommonCell,
     TableHead,
     TableRow,
+    TablehWidgetEventScope,
+    WidgetEvent,
 } from 'shared';
 import {URL_ACTION_PARAMS_PREFIX} from 'shared/constants/common';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
+import {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 
 import {MarkupItem, MarkupItemType} from '../../../../../../../../components/Markup';
-import {DataTableData} from '../../../../../../types';
+import {DataTableData, TableWidget} from '../../../../../../types';
 import {CLICK_ACTION_TYPE} from '../../constants';
 
+import type {ActionParamsData} from './types';
+
 const MARKUP_ITEM_TYPES: MarkupItemType[] = ['bold', 'concat', 'italics', 'text', 'url'];
+const AVAILABLE_TABLE_CLICK_SCOPES: TablehWidgetEventScope[] = ['row'];
 
 const decodeURISafe = (uri: string) => {
     return decodeURI(uri.replace(/%(?![0-9a-fA-F][0-9a-fA-F]+)/g, '%25'));
@@ -135,20 +143,6 @@ export const getCellClickArgs = (row: DataTableData | undefined, columnName: str
     const onClick = getCellOnClick(row, columnName);
     if (onClick && onClick.action === CLICK_ACTION_TYPE.SET_PARAMS && onClick.args) {
         return onClick.args;
-    }
-
-    return undefined;
-};
-
-export const getCellClickActionParams = (row: DataTableData | undefined, columnName: string) => {
-    const onClick = getCellOnClick(row, columnName) as OnClickSetActionParams;
-
-    if (onClick && onClick.action === CLICK_ACTION_TYPE.SET_ACTION_PARAMS && onClick.args) {
-        const res = {} as Record<string, string | string[]>;
-        for (const [key, val] of Object.entries(onClick.args)) {
-            res[`${URL_ACTION_PARAMS_PREFIX}${key}`] = val;
-        }
-        return res;
     }
 
     return undefined;
@@ -341,4 +335,183 @@ export function getTreeSetColumnSortAscending(
 
         return sortComparisonValue;
     };
+}
+
+function validateActionParamsEvents(events: WidgetEvent<TablehWidgetEventScope>[]) {
+    const handlersCount = events.reduce((result, event) => {
+        const normalizedHandlers = Array.isArray(event.handler) ? event.handler : [event.handler];
+
+        if (event.scope && !AVAILABLE_TABLE_CLICK_SCOPES.includes(event.scope)) {
+            throw new ChartKitCustomError(null, {
+                details: `Unknown clickable scope "${event.scope}"`,
+            });
+        }
+
+        return (
+            result +
+            normalizedHandlers.reduce((acc, h) => {
+                return acc + (h.type === 'setActionParams' ? 1 : 0);
+            }, 0)
+        );
+    }, 0);
+
+    if (handlersCount > 1) {
+        throw new ChartKitCustomError(null, {
+            details: `Seems you are trying to define more than one "setActionParams" handler.`,
+        });
+    }
+}
+
+export function getActionParamsEventScope(
+    events?: NonNullable<TableWidget['config']>['events'],
+): TablehWidgetEventScope | undefined {
+    if (!events?.click) {
+        return undefined;
+    }
+
+    const normalizedEvents = Array.isArray(events.click) ? events.click : [events.click];
+
+    validateActionParamsEvents(normalizedEvents);
+
+    return normalizedEvents.reduce<TablehWidgetEventScope | undefined>((_, e) => {
+        return e.scope;
+    }, undefined);
+}
+
+function extractCellActionParams(args: {columnId: string; row?: DataTableData}) {
+    const {columnId, row} = args;
+    const cell = row ? row[columnId] : undefined;
+    const cellValue = get(cell, 'value') as string | undefined;
+    const cellActionParams = get(cell, 'custom.actionParams') as StringParams | undefined;
+
+    if (!cellActionParams) {
+        return cellValue ? {[columnId]: [cellValue]} : undefined;
+    }
+
+    if (isEmpty(cellActionParams)) {
+        return undefined;
+    }
+
+    return cellActionParams;
+}
+
+export function getRowActionParams(row?: DataTableData): StringParams {
+    if (!row) {
+        return {};
+    }
+
+    return Object.keys(row).reduce<Record<string, string | string[]>>((acc, columnId) => {
+        const cellActionParams = extractCellActionParams({columnId, row});
+
+        if (cellActionParams) {
+            Object.assign(acc, cellActionParams);
+        }
+
+        return acc;
+    }, {});
+}
+
+function isRowSelected(args: {actionParams: StringParams; rowActionParams: StringParams}) {
+    const {actionParams, rowActionParams} = args;
+
+    return Object.entries(rowActionParams).every(([key, value]) => {
+        const normalizedValue = Array.isArray(value) ? value : [value];
+        const param = actionParams[key];
+
+        if (!param) {
+            return false;
+        }
+
+        const normalizedParam = Array.isArray(param) ? param : [param];
+
+        return normalizedValue.every((val) => normalizedParam.includes(val));
+    });
+}
+
+function getActionParamsByRow(args: {
+    actionParams: StringParams;
+    row?: DataTableData;
+}): StringParams {
+    const {actionParams, row} = args;
+
+    if (!row) {
+        return {};
+    }
+
+    const rowActionParams = getRowActionParams(row);
+    const isRowAlreadySelected = isRowSelected({actionParams, rowActionParams});
+
+    if (isRowAlreadySelected) {
+        Object.keys(rowActionParams).forEach((key) => {
+            rowActionParams[key] = [''];
+        });
+    }
+
+    const resultParams = {} as Record<string, string | string[]>;
+
+    for (const [key, val] of Object.entries(rowActionParams)) {
+        resultParams[`${URL_ACTION_PARAMS_PREFIX}${key}`] = val;
+    }
+
+    return resultParams;
+}
+
+export function getActionParams(args: {
+    actionParamsData: ActionParamsData;
+    row?: DataTableData;
+}): StringParams {
+    const {actionParamsData, row} = args;
+
+    switch (actionParamsData.scope) {
+        case 'row': {
+            return getActionParamsByRow({actionParams: actionParamsData.params, row});
+        }
+        // There is no way to reach this code. Just satisfies ts
+        default: {
+            return actionParamsData.params;
+        }
+    }
+}
+
+function getAdditionalStylesByRow(args: {
+    actionParams: StringParams;
+    row?: DataTableData;
+}): React.CSSProperties | undefined {
+    const {actionParams, row} = args;
+    const rowActionParams = getRowActionParams(row);
+    const rowSelected = isRowSelected({actionParams, rowActionParams});
+    const actionParamsKeys = Object.keys(actionParams);
+    const hasAtLeastOneActionParam =
+        actionParamsKeys.length &&
+        actionParamsKeys.some((key) => {
+            const param = actionParams[key];
+            const normalizedParamValue = Array.isArray(param) ? param : [param];
+            return Boolean(normalizedParamValue.filter(Boolean).length);
+        });
+
+    if (hasAtLeastOneActionParam && !rowSelected) {
+        return {
+            backgroundColor: 'var(--g-color-base-generic-accent-disabled)',
+            color: 'var(--g-color-text-hint)',
+        };
+    }
+
+    return undefined;
+}
+
+export function getAdditionalStyles(args: {
+    actionParamsData: ActionParamsData;
+    row?: DataTableData;
+}): React.CSSProperties | undefined {
+    const {actionParamsData, row} = args;
+
+    switch (actionParamsData.scope) {
+        case 'row': {
+            return getAdditionalStylesByRow({actionParams: actionParamsData.params, row});
+        }
+        // There is no way to reach this code. Just satisfies ts
+        default: {
+            return undefined;
+        }
+    }
 }
