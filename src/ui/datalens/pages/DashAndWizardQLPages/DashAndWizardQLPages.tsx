@@ -4,8 +4,6 @@ import {bindActionCreators, Dispatch} from 'redux';
 import {connect} from 'react-redux';
 
 import {deleteLock} from '../../../units/dash/store/actions/dash';
-import {Feature} from '../../../../shared/types/feature';
-import Utils from 'ui/utils';
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
@@ -32,6 +30,8 @@ export const dashAndWizardQLRoutes = [
     '/ql/new/promql',
     '/ql/new/sql',
     '/:parentDashboardId',
+    '/dashboards/new',
+    '/workbooks/:workbookId/dashboards',
 ];
 
 const WizardPage = lazy(() => import('../WizardPage/WizardPage'));
@@ -40,13 +40,11 @@ const DashPage = lazy(() => import('../DashPage/DashPage'));
 
 const DEFAULT_WIZARD_PATHS = ['/workbooks/:workbookId/wizard', '/wizard/:widgetId', '/wizard'];
 const DEFAULT_QL_PATHS = ['/workbooks/:workbookId/ql', '/ql/:qlEntryId', '/ql'];
-const DEFAULT_DASH_PATHS = ['/:parentDashboardId'];
-
-if (Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry)) {
-    const newDashPath = ['/dashboards/new', '/workbooks/:workbookId/dashboards'];
-    DEFAULT_DASH_PATHS.push(...newDashPath);
-    dashAndWizardQLRoutes.push(...newDashPath);
-}
+const DEFAULT_DASH_PATHS = [
+    '/:parentDashboardId',
+    '/dashboards/new',
+    '/workbooks/:workbookId/dashboards',
+];
 
 class DashAndWizardQLAppPage extends React.PureComponent<DashAndWizardQLAppPageProps> {
     componentDidMount() {
