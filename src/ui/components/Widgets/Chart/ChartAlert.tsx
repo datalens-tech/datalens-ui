@@ -13,7 +13,11 @@ import Loader from 'ui/libs/DatalensChartkit/components/ChartKitBase/components/
 import {getDataProviderData} from 'ui/libs/DatalensChartkit/components/ChartKitBase/helpers';
 import settings from 'ui/libs/DatalensChartkit/modules/settings/settings';
 
-import {COMPONENT_CLASSNAME, getPreparedConstants, removeEmptyProperties} from './helpers/helpers';
+import {
+    COMPONENT_CLASSNAME,
+    getPreparedConstants,
+    removeEmptyNDatasetFieldsProperties,
+} from './helpers/helpers';
 import {
     ChartAlertProps,
     ChartWidgetData,
@@ -54,7 +58,7 @@ export const ChartAlert = (props: ChartAlertProps) => {
     } = props;
 
     const chartkitParams = React.useMemo(
-        () => removeEmptyProperties({...props.params}),
+        () => removeEmptyNDatasetFieldsProperties({...props.params}),
         [props.params],
     );
 
