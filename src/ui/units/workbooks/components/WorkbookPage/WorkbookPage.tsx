@@ -184,27 +184,30 @@ export const WorkbookPage = () => {
                             <h1 className={b('title')}>{workbook?.title}</h1>
                             {workbook?.permissions.update && (
                                 <Tooltip content={i18n('action_edit')}>
-                                    <Button
-                                        onClick={() => {
-                                            dispatch(
-                                                openDialog({
-                                                    id: DIALOG_EDIT_WORKBOOK,
-                                                    props: {
-                                                        open: true,
-                                                        workbookId: workbook.workbookId,
-                                                        title: workbook.title,
-                                                        description: workbook?.description ?? '',
-                                                        onApply: refreshWorkbookInfo,
-                                                        onClose: () => {
-                                                            dispatch(closeDialog());
+                                    <div>
+                                        <Button
+                                            onClick={() => {
+                                                dispatch(
+                                                    openDialog({
+                                                        id: DIALOG_EDIT_WORKBOOK,
+                                                        props: {
+                                                            open: true,
+                                                            workbookId: workbook.workbookId,
+                                                            title: workbook.title,
+                                                            description:
+                                                                workbook?.description ?? '',
+                                                            onApply: refreshWorkbookInfo,
+                                                            onClose: () => {
+                                                                dispatch(closeDialog());
+                                                            },
                                                         },
-                                                    },
-                                                }),
-                                            );
-                                        }}
-                                    >
-                                        <Icon data={PencilToLine} />
-                                    </Button>
+                                                    }),
+                                                );
+                                            }}
+                                        >
+                                            <Icon data={PencilToLine} />
+                                        </Button>
+                                    </div>
                                 </Tooltip>
                             )}
                         </div>
