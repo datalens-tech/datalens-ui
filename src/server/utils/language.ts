@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import {I18N_DEST_PATH} from '../../i18n/constants';
 import {readKeysets} from '../../i18n/read-keysets';
-import type {Keysets} from '../../i18n/types';
+import type {Keysets, ServerI18n} from '../../i18n/types';
 import {Language} from '../../shared/constants';
 
 export type KeysetData = {content: Keysets; filename: string};
@@ -73,3 +73,9 @@ export function getLang({
 
     return lang;
 }
+
+export const getTranslationFn =
+    (i18n: ServerI18n) =>
+    (keyset: string, key: string, params?: Record<string, string | number>) => {
+        return i18n.keyset(keyset as keyof Keysets)(key, params);
+    };

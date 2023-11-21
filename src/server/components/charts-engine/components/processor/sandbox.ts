@@ -4,7 +4,7 @@ import {Keysets, ServerI18n} from '../../../../../i18n/types';
 import {initI18n} from '../../../../../i18n/utils';
 import {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
 import {IChartEditor} from '../../../../../shared/types';
-import {keysetsByLang} from '../../../../utils/language';
+import {getTranslationFn, keysetsByLang} from '../../../../utils/language';
 import {config} from '../../constants';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
@@ -127,13 +127,7 @@ const generateInstance = ({
     ChartEditor.getUserLang = () => userLang;
 
     const i18n = getI18n(userLang || DEFAULT_USER_LANG);
-    ChartEditor.getTranslation = (
-        keyset: string,
-        key: string,
-        params?: Record<string, string | number>,
-    ) => {
-        return i18n.keyset(keyset as keyof Keysets)(key, params);
-    };
+    ChartEditor.getTranslation = getTranslationFn(i18n);
 
     const instance = {
         module: moduleObject,
