@@ -18,7 +18,7 @@ import {collectDashStats} from '../../modules/pushStats';
 import * as actionTypes from '../constants/dashActionTypes';
 import {getFakeDashEntry} from '../utils';
 
-import {SET_ERROR_MODE, SET_STATE, /*loadDashDatasets, */ toggleTableOfContent} from './dashTyped';
+import {SET_ERROR_MODE, SET_STATE, loadDashDatasets, toggleTableOfContent} from './dashTyped';
 import {
     DOES_NOT_EXIST_ERROR_TEXT,
     NOT_FOUND_ERROR_TEXT,
@@ -459,7 +459,7 @@ export const load = ({location, history, params}) => {
                 await dispatch(setEditMode());
             }
 
-            // dispatch(loadDashDatasets(entry, tabId));
+            dispatch(loadDashDatasets(entry, tabId));
         } catch (error) {
             logger.logError('load dash failed', error);
 

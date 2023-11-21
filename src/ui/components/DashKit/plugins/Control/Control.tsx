@@ -33,7 +33,6 @@ import {
     transformUrlParamsToParams,
 } from 'shared';
 import type {schema} from 'shared';
-import {DIALOG_ERROR_WITH_TABS} from 'ui/components/DialogErrorWithTabs/DialogErrorWithTabs';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
 import {ResolveWidgetControlDataRefArgs} from 'ui/components/Widgets/Chart/types';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -58,11 +57,7 @@ import {
 import {ControlBase, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
 import {DatalensSdk} from '../../../../libs/schematic-sdk';
-import {
-    closeDialog,
-    delicateCloseDialog,
-    openDialogErrorWithTabs,
-} from '../../../../store/actions/dialog';
+import {closeDialog, openDialogErrorWithTabs} from '../../../../store/actions/dialog';
 import {
     addOperationForValue,
     unwrapFromArrayAndSkipOperation,
@@ -944,8 +939,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                             ) as ChartKitCustomError,
                             title: errorTitle,
                             onRetry: () => {
-                                this.props.delicateCloseDialog({id: DIALOG_ERROR_WITH_TABS});
                                 this.reload();
+                                this.props.closeDialog();
                             },
                         })
                     }
@@ -1207,7 +1202,6 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
 const mapDispatchToProps = {
     openDialogErrorWithTabs,
     closeDialog,
-    delicateCloseDialog,
 };
 
 const ControlWithStore = connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true})(

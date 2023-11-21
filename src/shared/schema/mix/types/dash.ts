@@ -28,3 +28,15 @@ export type GetEntriesDatasetsFieldsArgs = {
     entriesIds: string[];
     datasetsIds: string[];
 };
+
+export type GetWidgetsDatasetsFieldsItem = {
+    entryId: string;
+    datasetId?: string;
+    datasetFields?: string[];
+};
+
+export type GetWidgetsDatasetsFieldsResponse = GetWidgetsDatasetsFieldsItem[];
+
+export type GetWidgetsDatasetsFieldsArgs = {
+    entriesIds: string[];
+};

@@ -14,14 +14,21 @@ import {StringParams} from 'shared';
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
-import {selectSkipReload} from '../../../units/dash/store/selectors/dashTypedSelectors';
+import {
+    selectDashWidgetsDatasetsFields,
+    selectSkipReload,
+} from '../../../units/dash/store/selectors/dashTypedSelectors';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
 
 import {Content} from './components/Content';
 import {WidgetFooter} from './components/WidgetFooter';
 import {WidgetHeader} from './components/WidgetHeader';
-import {COMPONENT_CLASSNAME, getTabIndex, removeEmptyProperties} from './helpers/helpers';
+import {
+    COMPONENT_CLASSNAME,
+    getTabIndex,
+    removeEmptyNDatasetFieldsProperties,
+} from './helpers/helpers';
 import {useLoadingChartWidget} from './hooks/useLoadingChartWidget';
 import {
     ChartWidgetData,
@@ -71,6 +78,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     } = props;
 
     const skipReload = useSelector(selectSkipReload);
+    const dashDatasetFields = useSelector(selectDashWidgetsDatasetsFields);
 
     const tabs = data.tabs as WidgetPluginDataWithTabs['tabs'];
     const tabIndex = React.useMemo(() => getTabIndex(tabs, state.tabId), [tabs, state.tabId]);
@@ -79,13 +87,28 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     const initName = React.useMemo(() => currentTab.title, [currentTab]);
     const {chartId, enableActionParams} = currentTab;
 
+    const widgetDatasetFields = React.useMemo(
+        () =>
+            (dashDatasetFields?.find((item) => item.entryId === chartId)?.datasetFields || null) as
+                | string[]
+                | null,
+        [chartId, dashDatasetFields],
+    );
+    const prevWidgetDatasetFields = usePrevious(widgetDatasetFields);
+
+    const loadedDSFields = widgetDatasetFields && widgetDatasetFields !== prevWidgetDatasetFields;
+
     const chartkitParams = React.useMemo(() => {
-        let res = removeEmptyProperties(props.params);
+        let res = removeEmptyNDatasetFieldsProperties(
+            props.params,
+            loadedDSFields ? widgetDatasetFields : undefined,
+        );
         if (!enableActionParams) {
             res = pickExceptActionParamsFromParams(res);
         }
         return res;
-    }, [props.params, enableActionParams]);
+    }, [props.params, enableActionParams, loadedDSFields, widgetDatasetFields]);
+
     const prevTabIndex = usePrevious(tabIndex);
     const hasChartTabChanged = prevTabIndex !== undefined && prevTabIndex !== tabIndex;
 
@@ -124,7 +147,16 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     let hasChangedActionParams = false;
 
     const hasChangedOuterParams = React.useMemo(() => {
-        let changedParams = !prevSavedProps || !isEqual(prevSavedProps.params, props.params);
+        const propsParams = loadedDSFields
+            ? removeEmptyNDatasetFieldsProperties(props.params, widgetDatasetFields)
+            : props.params;
+        const prevSavedPropsParams =
+            prevSavedProps && loadedDSFields
+                ? removeEmptyNDatasetFieldsProperties(prevSavedProps.params, widgetDatasetFields)
+                : prevSavedProps?.params;
+        const isEqualParamsWithPrev = prevSavedProps && isEqual(prevSavedPropsParams, propsParams);
+
+        let changedParams = !prevSavedProps || !isEqualParamsWithPrev;
 
         /* to do after usedParams has fixed CHARTS-6619
         const prevActionedParams = getParamsNamesFromActionParams(prevSavedProps?.params || {});
@@ -162,7 +194,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         let isOuterAndInnerActionParamsEqual = true;
         if (changedParams && innerParamsRef?.current) {
             const innerFullParams = innerParamsRef?.current;
-            const outerFullParams = props.params;
+            const outerFullParams = propsParams;
 
             isOuterAndInnerParamsEqual = isEqual(innerFullParams, outerFullParams);
 
@@ -208,7 +240,14 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         }
 
         return changedParams;
-    }, [prevSavedProps?.params, props.params, usedParamsRef, innerParamsRef]);
+    }, [
+        prevSavedProps?.params,
+        props.params,
+        usedParamsRef,
+        innerParamsRef,
+        widgetDatasetFields,
+        loadedDSFields,
+    ]);
 
     const hasChangedInnerParamsFromInside = React.useMemo(() => {
         return prevInnerParams && !isEqual(innerParamsRef?.current, prevInnerParams);
@@ -309,6 +348,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetRenderTimeRef,
         usageType,
         enableActionParams,
+        widgetDatasetFields,
     });
 
     /**
@@ -319,7 +359,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             return;
         }
         setInitialParams({...loadedData?.defaultParams, ...currentTab.params});
-    }, [hasCurrentTabDefaultsChanged, currentTab.params, loadedData?.defaultParams]);
+    }, [hasCurrentTabDefaultsChanged, currentTab.params, loadedData, loadedData?.defaultParams]);
 
     const adaptiveTabsItems = React.useMemo(
         () =>

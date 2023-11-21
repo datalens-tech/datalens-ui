@@ -11,7 +11,6 @@ import {
     DATASET_FIELD_TYPES,
     DashTab,
     DashTabItem,
-    DashTabItemControlDataset,
     DashTabItemControlSourceType,
     DashTabItemType,
     Dataset,
@@ -19,7 +18,7 @@ import {
     EntryUpdateMode,
     Operations,
 } from 'shared';
-import {GetEntriesDatasetsFieldsItem} from 'shared/schema';
+import {GetWidgetsDatasetsFieldsItem} from 'shared/schema';
 import {DashState} from 'ui/units/dash/store/reducers/dashTypedReducer';
 import {validateParamTitleOnlyUnderscore} from 'units/dash/components/ParamsSettings/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
@@ -891,7 +890,7 @@ export const setSkipReload = (skipReload: boolean): SetSkipReloadAction => ({
 export const SET_DASH_DS_FIELDS = Symbol('dash/SET_DASH_DS_FIELDS');
 export type SetDashDSAction = {
     type: typeof SET_DASH_DS_FIELDS;
-    payload: {datasetsFields: GetEntriesDatasetsFieldsItem[]};
+    payload: {widgetsDatasetsFields: GetWidgetsDatasetsFieldsItem[]};
 };
 export const setDashDatasets = (data: SetDashDSAction['payload']): SetDashDSAction => ({
     type: SET_DASH_DS_FIELDS,
@@ -930,38 +929,27 @@ export function loadDashDatasets(entry: Partial<DashState>, tabId: string) {
         if (!dashTabItems.length) {
             return;
         }
-        let datasetsIds: string[] = [];
         let entriesIds: string[] = [];
         dashTabItems.forEach((dashItem) => {
-            if (
-                dashItem.type === DashTabItemType.Control &&
-                dashItem.data.sourceType === DashTabItemControlSourceType.Dataset
-            ) {
-                const dataSource = dashItem.data.source as DashTabItemControlDataset['source'];
-                if (dataSource.datasetId) {
-                    datasetsIds.push(dataSource.datasetId);
-                }
-            } else if (dashItem.type === DashTabItemType.Widget) {
+            if (dashItem.type === DashTabItemType.Widget) {
                 const chartData = dashItem.data;
-                const widgetChartIds = chartData.tabs.map((chartTabItem) => chartTabItem.chartId);
+                const widgetChartIds = chartData.tabs
+                    .filter((chartTabItem) => Boolean(chartTabItem.enableActionParams))
+                    ?.map((chartTabItem) => chartTabItem.chartId);
                 entriesIds = entriesIds.concat(widgetChartIds);
             }
         });
-        datasetsIds = [...new Set(datasetsIds)];
         entriesIds = [...new Set(entriesIds)];
 
-        if (isEmpty(datasetsIds) && isEmpty(entriesIds)) {
+        if (isEmpty(entriesIds)) {
             return;
         }
 
-        const entriesDatasetsFields = await getSdk().mix.getEntriesDatasetsFields(
-            {
-                entriesIds,
-                datasetsIds,
-            },
+        const entriesDatasetsFields = await getSdk().mix.getWidgetsDatasetsFields(
+            {entriesIds},
             {concurrentId: LOAD_DASH_DATASETS_CONCURRENT_ID},
         );
 
-        dispatch(setDashDatasets({datasetsFields: entriesDatasetsFields}));
+        dispatch(setDashDatasets({widgetsDatasetsFields: entriesDatasetsFields}));
     };
 }
