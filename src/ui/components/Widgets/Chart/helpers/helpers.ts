@@ -254,6 +254,7 @@ export const getPreparedConstants = (props: {
     hideTitle?: boolean | undefined;
     tabsLength?: number;
     disableChartLoader?: boolean;
+    needWaitForDSFields?: boolean;
 }) => {
     const {
         loadedData,
@@ -268,6 +269,7 @@ export const getPreparedConstants = (props: {
         noLoader,
         isSilentReload,
         disableChartLoader,
+        needWaitForDSFields,
     } = props;
     const widgetType = loadedData?.type;
     let isFullscreen = false;
@@ -284,7 +286,7 @@ export const getPreparedConstants = (props: {
     const isFirstLoadOrAfterError = loadedData === null;
 
     const showLoader =
-        isLoading &&
+        Boolean(isLoading || needWaitForDSFields) &&
         !disableChartLoader &&
         ((!isSilentReload && !noLoader) || isFirstLoadOrAfterError);
 
@@ -315,14 +317,20 @@ export const getPreparedConstants = (props: {
     };
 };
 
-/**
- * method copied from DL Chartkit
- * @param obj
- */
-export const removeEmptyProperties = (obj: StringParams) => {
+export const removeEmptyNDatasetFieldsProperties = (
+    obj: StringParams,
+    removeFieldsList?: string[] | null,
+) => {
+    const checkRemoveList = Boolean(removeFieldsList?.length);
     return Object.entries(obj).reduce((result, [key, value]) => {
         if (value !== null && value !== undefined) {
-            result[key] = value;
+            if (checkRemoveList) {
+                if (!removeFieldsList?.includes(key)) {
+                    result[key] = value;
+                }
+            } else {
+                result[key] = value;
+            }
         }
         return result;
     }, {} as StringParams);

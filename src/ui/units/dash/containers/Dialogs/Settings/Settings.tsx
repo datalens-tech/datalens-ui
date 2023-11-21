@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import ChartKit from 'libs/DatalensChartkit';
 import {useDispatch, useSelector} from 'react-redux';
 import {DashboardDialogSettingsQa} from 'shared/constants/qa/dash';
+import {registry} from 'ui/registry';
 
 import {DatalensGlobalState, EntryDialogName} from '../../../../..';
 import {i18n} from '../../../../../../i18n';
@@ -32,8 +33,6 @@ import {OtherSettings} from './components/OtherSettings';
 import {Params} from './components/Params';
 
 import './Settings.scss';
-
-const MIN_AUTOUPDATE_INTERVAL = 30;
 
 const b = block('dialog-settings');
 
@@ -74,10 +73,12 @@ const Settings = () => {
 
     const entryDialoguesRef = React.useRef<EntryDialogues>(null);
 
+    const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
+
     const isValidAutoupdateInterval = () => {
         let result = true;
-        if (autoupdate && Number(autoupdateInterval) < MIN_AUTOUPDATE_INTERVAL) {
-            setAutoupdateInterval(MIN_AUTOUPDATE_INTERVAL);
+        if (autoupdate && Number(autoupdateInterval) < getMinAutoupdateInterval()) {
+            setAutoupdateInterval(getMinAutoupdateInterval());
             result = false;
         }
         if (!autoupdate && silentLoading) {
@@ -189,7 +190,7 @@ const Settings = () => {
                             const newValue = !autoupdate;
                             setAutoupdate(newValue);
                             setSilentLoading(false);
-                            setAutoupdateInterval(newValue ? MIN_AUTOUPDATE_INTERVAL : '');
+                            setAutoupdateInterval(newValue ? getMinAutoupdateInterval() : '');
                         }}
                         intervalDisabled={!autoupdate}
                         intervalValue={String(autoupdateInterval)}

@@ -12,7 +12,7 @@ import {DashState} from '../store/reducers/dashTypedReducer';
  */
 export const getConfigWithoutDSDefaults = (args: {
     config: DashTab;
-    dashDatasetsFields: DashState['datasetsFields'];
+    dashDatasetsFields: DashState['widgetsDatasetsFields'];
 }): DashTab => {
     const {config, dashDatasetsFields} = args;
     const clearedConfig: DashTab = {...config};
@@ -25,17 +25,12 @@ export const getConfigWithoutDSDefaults = (args: {
                 const newWidgetTabItem: DashTabItemWidgetTab = {...widgetTabItem, params: {}};
                 const newParams: StringParams = {};
                 if (widgetTabItem.chartId && dashDatasetsFields?.length) {
-                    const datasetFields =
-                        dashDatasetsFields.find(
-                            (widgetWithDS) => widgetWithDS.entryId === widgetTabItem.chartId,
-                        )?.datasetFields || [];
-
-                    const datasetsGuids = datasetFields.map(
-                        (datasetFieldItem) => datasetFieldItem.guid,
-                    );
-
                     for (const [key, val] of Object.entries(widgetTabItem.params)) {
-                        if (!datasetsGuids.includes(key)) {
+                        const datasetFields: string[] =
+                            dashDatasetsFields.find(
+                                (widgetWithDS) => widgetWithDS.entryId === widgetTabItem.chartId,
+                            )?.datasetFields || [];
+                        if (!datasetFields.includes(key)) {
                             newParams[key] = val;
                         }
                     }
@@ -61,7 +56,7 @@ export const getConfigWithoutDSDefaults = (args: {
  */
 export const getConfigWithDSDefaults = (
     currentTab: DashTab | null,
-    dashDatasetsFields: DashState['datasetsFields'],
+    dashDatasetsFields: DashState['widgetsDatasetsFields'],
 ): DashTab | null => {
     if (!dashDatasetsFields || !currentTab) {
         return null;
@@ -87,7 +82,7 @@ export const getConfigWithDSDefaults = (
                 if (widgetItem.enableActionParams && chartDataset && isEmpty(widgetItem.params)) {
                     const params: StringParams = {};
                     chartDataset.datasetFields?.forEach((item) => {
-                        params[item.guid] = '';
+                        params[item] = '';
                     });
 
                     newTab = {...widgetItem, params};
