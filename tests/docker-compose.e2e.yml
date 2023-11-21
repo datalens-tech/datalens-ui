@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   pg-compeng:
-    container_name: datalens-pg-compeng
+    container_name: e2e-datalens-pg-compeng
     image: postgres:13-alpine
     environment:
       POSTGRES_PASSWORD: "postgres"
@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: postgres
 
   control-api:
-    container_name: datalens-control-api
+    container_name: e2e-datalens-control-api
     image: ghcr.io/datalens-tech/datalens-control-api:0.2037.0
     environment:
       BI_API_UWSGI_WORKERS_COUNT: 4
@@ -30,7 +30,7 @@ services:
       - ./backend-configs:/etc/backend-configs
 
   data-api:
-    container_name: datalens-data-api
+    container_name: e2e-datalens-data-api
     image: ghcr.io/datalens-tech/datalens-data-api:0.2037.0
     environment:
       GUNICORN_WORKERS_COUNT: 5
@@ -54,7 +54,7 @@ services:
       - ./backend-configs:/etc/backend-configs
 
   pg-us:
-    container_name: datalens-pg-us
+    container_name: e2e-datalens-pg-us
     image: postgres:13-alpine
     environment:
       POSTGRES_DB: us-db-ci_purgeable
@@ -64,7 +64,7 @@ services:
       - ./metadata:/var/lib/postgresql/data
 
   postgres-e2e:
-    container_name: postgres-e2e
+    container_name: e2e-postgres
     image: postgres:13-alpine
     environment:
       POSTGRES_PASSWORD: "e2e"
@@ -74,7 +74,7 @@ services:
       - e2e-data-volume:/docker-entrypoint-initdb.d
 
   us:
-    container_name: datalens-us
+    container_name: e2e-datalens-us
     image: ghcr.io/datalens-tech/datalens-us:0.107.0
     depends_on:
       - pg-us
@@ -97,7 +97,7 @@ services:
       - e2e-data-volume:/opt/e2e-data
 
   datalens:
-    container_name: datalens-ui
+    container_name: e2e-datalens-ui
     build:
       dockerfile: Dockerfile
       context: ../
