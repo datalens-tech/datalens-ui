@@ -3,6 +3,9 @@ import {DL, URL_OPTIONS} from 'constants/common';
 import {AxiosResponse} from 'axios';
 import {History} from 'history';
 import {DashTabItemType, FOCUSED_WIDGET_PARAM_NAME, Feature, StringParams, isTrueArg} from 'shared';
+import DatalensChartkitCustomError, {
+    ERROR_CODE,
+} from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
 
 import {ChartKitLoadSuccess} from '../../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -46,6 +49,11 @@ export const CHARTKIT_WIDGET_TYPE = {
     MARKDOWN: 'markdown',
     ALERT: 'alert',
 };
+
+/**
+ * informing errors that should not interfere with the display of relations
+ */
+const ALLOWED_ERRORS = [ERROR_CODE.NO_DATA, ERROR_CODE.TOO_MANY_LINES];
 
 /**
  * For current (old relations) for charts only
@@ -131,9 +139,14 @@ export const getWidgetMeta = ({
             loadedData = savedData;
         }
 
+        const loadDataError = (loadData as unknown as AxiosResponse<ResponseError>)?.data?.error;
+        const errorCode = (error as DatalensChartkitCustomError)?.code;
+
         const loadedWithError = Boolean(
-            (loadData as unknown as AxiosResponse<ResponseError>)?.data?.error || error,
+            (loadDataError || error) &&
+                (typeof errorCode !== 'string' || !ALLOWED_ERRORS.includes(errorCode)),
         );
+
         const metaInfo: Omit<DashkitMetaDataItemBase, 'defaultParams'> &
             Omit<DashkitOldMetaDataItemBase, 'chartId'> = {
             layoutId: id,
