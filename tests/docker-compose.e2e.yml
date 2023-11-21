@@ -64,7 +64,7 @@ services:
       - ./metadata:/var/lib/postgresql/data
 
   postgres-e2e:
-    container_name: e2e-postgres-e2e
+    container_name: e2e-postgres
     image: postgres:13-alpine
     environment:
       POSTGRES_PASSWORD: "e2e"
