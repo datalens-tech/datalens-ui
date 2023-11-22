@@ -20,6 +20,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
     & &__icon {
         color: var(--g-color-text-danger);
         margin-right: 8px;
+        flex-shrink: 0;
 
         &_no-data {
             color: var(--g-color-base-neutral-heavy);
