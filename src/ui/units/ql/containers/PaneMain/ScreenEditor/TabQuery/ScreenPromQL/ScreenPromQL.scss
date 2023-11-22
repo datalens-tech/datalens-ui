@@ -59,6 +59,10 @@
 
     &__query-row-title {
         height: 100%;
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     &__editor-wrapper {
