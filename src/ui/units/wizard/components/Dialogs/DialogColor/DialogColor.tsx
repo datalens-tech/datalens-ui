@@ -15,6 +15,7 @@ import {selectUpdates} from 'units/wizard/selectors/preview';
 import {selectDashboardParameters, selectFilters} from 'units/wizard/selectors/visualization';
 
 import {
+    isGradientDialog,
     selectDialogColorGradientState,
     selectDialogColorPaletteState,
 } from '../../../selectors/dialogColor';
@@ -40,7 +41,6 @@ interface OwnProps {
     onCancel: () => void;
     colorsConfig: ColorsConfig;
     extra?: ExtraSettings;
-    isGradient: boolean;
     isColorModeChangeAvailable: boolean;
 }
 
@@ -65,15 +65,27 @@ class DialogColorComponent extends React.Component<Props, State> {
 
         let colorMode = props.colorsConfig?.colorMode;
 
-        if (colorMode === ColorMode.GRADIENT && !isNumberField(props.item)) {
-            colorMode = ColorMode.PALETTE;
-        }
+        if (colorMode) {
+            // colorMode is modern value
+            if (colorMode === ColorMode.GRADIENT && !isNumberField(props.item)) {
+                colorMode = ColorMode.PALETTE;
+            }
 
-        // isGradient is legacy fallback flag
-        // colorMode is modern value
-        this.state = {
-            colorMode: colorMode || (props.isGradient ? ColorMode.GRADIENT : ColorMode.PALETTE),
-        };
+            this.state = {
+                colorMode: colorMode,
+            };
+        } else {
+            // isGradient is legacy fallback flag
+            const isGradient = isGradientDialog({
+                item: props.item,
+                items: props.items,
+                extra: props.extra,
+            });
+
+            this.state = {
+                colorMode: isGradient ? ColorMode.GRADIENT : ColorMode.PALETTE,
+            };
+        }
     }
 
     render() {
