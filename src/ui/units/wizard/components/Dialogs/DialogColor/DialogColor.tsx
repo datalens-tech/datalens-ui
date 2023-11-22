@@ -66,7 +66,6 @@ class DialogColorComponent extends React.Component<Props, State> {
         let colorMode = props.colorsConfig?.colorMode;
 
         if (colorMode) {
-            // colorMode is modern value
             if (colorMode === ColorMode.GRADIENT && !isNumberField(props.item)) {
                 colorMode = ColorMode.PALETTE;
             }
@@ -75,7 +74,6 @@ class DialogColorComponent extends React.Component<Props, State> {
                 colorMode: colorMode,
             };
         } else {
-            // isGradient is legacy fallback flag
             const isGradient = isGradientDialog({
                 item: props.item,
                 items: props.items,
