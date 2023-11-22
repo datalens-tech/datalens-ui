@@ -1,3 +1,5 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .dashkit-control-error {
     display: grid;
     align-items: center;
@@ -13,5 +15,9 @@
 
     &__icon {
         color: var(--g-color-text-danger);
+    }
+
+    &_mobile {
+        @include text-body-2;
     }
 }

@@ -4,10 +4,7 @@ import type {DashKit} from '@gravity-ui/dashkit';
 import isEmpty from 'lodash/isEmpty';
 import {DashTabItem} from 'shared';
 
-import {
-    GetEntriesDatasetsFieldsListItem,
-    GetEntriesDatasetsFieldsResponse,
-} from '../../../../../../../shared/schema';
+import {GetEntriesDatasetsFieldsResponse} from '../../../../../../../shared/schema';
 import {getSdk} from '../../../../../../libs/schematic-sdk';
 import {getRowTitle} from '../components/Content/helpers';
 import {DEFAULT_ALIAS_NAMESPACE} from '../constants';
@@ -103,8 +100,7 @@ export const useRelations = ({
                             datasetListItem.name = datasetItem.datasetName;
                         }
                         if (!datasetListItem.fields && datasetItem.datasetFields) {
-                            datasetListItem.fields =
-                                datasetItem.datasetFields as GetEntriesDatasetsFieldsListItem[];
+                            datasetListItem.fields = datasetItem.datasetFields;
                         }
                     }
                 });

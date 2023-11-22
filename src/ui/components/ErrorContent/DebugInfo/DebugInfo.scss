@@ -1,0 +1,30 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.error-debug-info {
+    $class: &;
+    width: 500px;
+    margin-top: 20px;
+    color: var(--g-color-text-hint);
+
+    &__copy-btn {
+        margin-left: 10px;
+    }
+
+    &_mobile {
+        display: flex;
+        width: auto;
+        flex-direction: column-reverse;
+        align-items: center;
+        margin-bottom: 12px;
+
+        #{$class}__copy-btn {
+            color: var(--g-color-text-primary);
+            margin-left: 0;
+            margin-bottom: 12px;
+        }
+
+        #{$class}__copy-id {
+            @include text-body-2;
+        }
+    }
+}

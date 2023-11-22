@@ -24,7 +24,7 @@ import {ControlsOnlyWidget} from '../../../libs/DatalensChartkit/types';
 import {selectSkipReload} from '../../../units/dash/store/selectors/dashTypedSelectors';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 
-import {COMPONENT_CLASSNAME, removeEmptyProperties} from './helpers/helpers';
+import {COMPONENT_CLASSNAME, removeEmptyNDatasetFieldsProperties} from './helpers/helpers';
 import {useLoadingChartSelector} from './hooks/useLoadingChartSelector';
 import {
     ChartControlsType,
@@ -73,7 +73,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
     const skipReload = useSelector(selectSkipReload);
 
     const chartkitParams = React.useMemo(() => {
-        let res = removeEmptyProperties(props.params);
+        let res = removeEmptyNDatasetFieldsProperties(props.params);
         res = pickExceptActionParamsFromParams(res);
         return res;
     }, [props.params]);

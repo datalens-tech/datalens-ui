@@ -2,11 +2,9 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
-import {Feature} from 'shared';
 import {DashData} from 'shared/types/dash';
 import {showToast} from 'store/actions/toaster';
 import {DataLensApiError} from 'typings';
-import Utils from 'ui/utils';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import {Entry} from '../../../typings/common';
@@ -48,10 +46,6 @@ class DialogCreateDashboard extends React.Component<Props> {
             );
         }
 
-        const foldersInitName = Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry)
-            ? i18n('label_default-name')
-            : '';
-
         return (
             <EntryDialogBase
                 withInput
@@ -61,7 +55,7 @@ class DialogCreateDashboard extends React.Component<Props> {
                 onError={this.onError}
                 visible={this.props.visible}
                 path={this.props.initDestination}
-                name={foldersInitName}
+                name={i18n('label_default-name')}
                 defaultName={i18n('label_default-name')}
                 caption={i18n('section_caption')}
                 textButtonCancel={i18n('button_cancel')}

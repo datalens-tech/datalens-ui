@@ -442,9 +442,11 @@ export const CollectionPage = React.memo<Props>(
                                     curCollectionId && collection && collection.permissions.update,
                                 ) && (
                                     <Tooltip content={i18n('action_edit')}>
-                                        <Button onClick={onEditClick}>
-                                            <Icon data={PencilToLine} />
-                                        </Button>
+                                        <div>
+                                            <Button onClick={onEditClick}>
+                                                <Icon data={PencilToLine} />
+                                            </Button>
+                                        </div>
                                     </Tooltip>
                                 )
                             }

@@ -18,7 +18,7 @@ import {
     EntryUpdateMode,
     Operations,
 } from 'shared';
-import {GetEntriesDatasetsFieldsItem} from 'shared/schema';
+import {GetWidgetsDatasetsFieldsItem} from 'shared/schema';
 import {DashState} from 'ui/units/dash/store/reducers/dashTypedReducer';
 import {validateParamTitleOnlyUnderscore} from 'units/dash/components/ParamsSettings/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
@@ -890,7 +890,7 @@ export const setSkipReload = (skipReload: boolean): SetSkipReloadAction => ({
 export const SET_DASH_DS_FIELDS = Symbol('dash/SET_DASH_DS_FIELDS');
 export type SetDashDSAction = {
     type: typeof SET_DASH_DS_FIELDS;
-    payload: {datasetsFields: GetEntriesDatasetsFieldsItem[]};
+    payload: {widgetsDatasetsFields: GetWidgetsDatasetsFieldsItem[]};
 };
 export const setDashDatasets = (data: SetDashDSAction['payload']): SetDashDSAction => ({
     type: SET_DASH_DS_FIELDS,
@@ -945,11 +945,11 @@ export function loadDashDatasets(entry: Partial<DashState>, tabId: string) {
             return;
         }
 
-        const entriesDatasetsFields = await getSdk().mix.getEntriesDatasetsFields(
-            {entriesIds, datasetsIds: [], format: 'light'},
+        const entriesDatasetsFields = await getSdk().mix.getWidgetsDatasetsFields(
+            {entriesIds},
             {concurrentId: LOAD_DASH_DATASETS_CONCURRENT_ID},
         );
 
-        dispatch(setDashDatasets({datasetsFields: entriesDatasetsFields}));
+        dispatch(setDashDatasets({widgetsDatasetsFields: entriesDatasetsFields}));
     };
 }

@@ -1,11 +1,12 @@
 import React from 'react';
 
-import {Button, CopyToClipboard} from '@gravity-ui/uikit';
+import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {ErrorContentTypes, Feature} from 'shared';
 import {DL, Utils} from 'ui';
+import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import logger from '../../libs/logger';
 import {sdk} from '../../libs/sdk';
@@ -13,6 +14,8 @@ import MarkdownProvider from '../../modules/markdownProvider';
 import {EntryDialogName, EntryDialogues} from '../EntryDialogues';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 import {YfmWrapper} from '../YfmWrapper/YfmWrapper';
+
+import {DebugInfo} from './DebugInfo/DebugInfo';
 
 import './ErrorContent.scss';
 
@@ -63,6 +66,8 @@ class ErrorContent extends React.PureComponent {
     }
 
     entryDialoguesRef = React.createRef();
+    buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : 'm';
+    buttonWidth = isMobileView ? 'max' : 'auto';
 
     async getAccessDescriptionMD() {
         const customText = this.getAccessDescription();
@@ -121,46 +126,20 @@ class ErrorContent extends React.PureComponent {
 
         return (
             <React.Fragment>
-                {reqId && (
-                    <div className={b('debug-info')}>
-                        <span className={b('debug-info-label')}>Request ID: </span>
-                        <span>{reqId}</span>
-                        {!noControls && (
-                            <CopyToClipboard text={reqId} timeout={1000}>
-                                {() => (
-                                    <Button className={b('copy-btn')} view="flat-secondary">
-                                        {i18n('button_copy')}
-                                    </Button>
-                                )}
-                            </CopyToClipboard>
-                        )}
-                    </div>
-                )}
-                {traceId && (
-                    <div className={b('debug-info')}>
-                        <span className={b('debug-info-label')}>Trace ID: </span>
-                        <span>{traceId}</span>
-                        {!noControls && (
-                            <CopyToClipboard text={traceId} timeout={1000}>
-                                {() => (
-                                    <Button className={b('copy-btn')} view="flat-secondary">
-                                        {i18n('button_copy')}
-                                    </Button>
-                                )}
-                            </CopyToClipboard>
-                        )}
-                    </div>
-                )}
+                {reqId && <DebugInfo name="Request ID" id={reqId} noControls={noControls} />}
+                {traceId && <DebugInfo name="Trace ID" id={traceId} noControls={noControls} />}
             </React.Fragment>
         );
     }
 
-    renderAction() {
+    renderConsoleAction() {
         if (this.state.showButtonConsole) {
             return (
                 <Button
                     className={b('action-btn')}
                     view="action"
+                    size={this.buttonSize}
+                    width={this.buttonWidth}
                     onClick={() => window.location.assign(window.DL.endpoints.console)}
                 >
                     {i18n('button_console')}
@@ -185,6 +164,8 @@ class ErrorContent extends React.PureComponent {
                     className={b('action-btn')}
                     view="action"
                     onClick={handler}
+                    size={this.buttonSize}
+                    width={this.buttonWidth}
                     {...buttonProps}
                 >
                     {text}
@@ -202,7 +183,8 @@ class ErrorContent extends React.PureComponent {
                     <Button
                         className={b('action-btn')}
                         view="action"
-                        size="l"
+                        size={isMobileView ? MOBILE_SIZE.BUTTON : 'l'}
+                        width={this.buttonWidth}
                         onClick={() => {
                             if (this.entryDialoguesRef.current) {
                                 this.entryDialoguesRef.current.open({
@@ -226,23 +208,33 @@ class ErrorContent extends React.PureComponent {
         const {noControls, showDebugInfo, noActions} = this.props;
         const hasAccessDescription = this.hasAccessDescription();
         const showActions = !hasAccessDescription;
+        const showDebugActions = showDebugInfo && !isMobileView;
 
         return (
             <div className={b('content')}>
                 {!noActions && showActions && (
                     <React.Fragment>
                         {this.renderUnlock()}
-                        {!noControls && this.renderAction()}
+                        {!noControls && this.renderConsoleAction()}
                         {!noControls && this.renderPropsAction()}
                     </React.Fragment>
                 )}
-                {showDebugInfo && this.renderDebugInfo()}
+                {showDebugActions && this.renderDebugInfo()}
             </div>
         );
     }
 
+    renderAction = () => {
+        if (isMobileView) {
+            return null;
+        }
+        return this.renderActions();
+    };
+
     render() {
-        const {noControls, className, size, direction} = this.props;
+        const {noControls, className, size, direction, showDebugInfo} = this.props;
+
+        const showDebugActions = showDebugInfo && isMobileView;
 
         const {type} = this.props;
         let imageName = '';
@@ -279,10 +271,12 @@ class ErrorContent extends React.PureComponent {
                     name={imageName}
                     title={this.renderTitle()}
                     description={this.renderDescription()}
-                    renderAction={() => this.renderActions()}
+                    renderAction={this.renderAction}
                     size={size}
                     direction={direction}
                 />
+                {isMobileView && this.renderActions()}
+                {showDebugActions && this.renderDebugInfo()}
             </div>
         );
     }
