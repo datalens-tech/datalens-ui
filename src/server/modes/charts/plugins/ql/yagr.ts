@@ -1,6 +1,6 @@
 import type {ChartType, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 
-import {IChartEditor, ServerVisualization} from '../../../../../shared';
+import {IChartEditor, QlVisualizationId, ServerVisualization} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import type {QlConfig} from '../../../../../shared/types/config/ql';
 
@@ -53,7 +53,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
     const visualizationId = config.visualization.highchartsId || config.visualization.id;
 
-    const tracking = visualizationId === 'area' ? 'area' : 'sticky';
+    const tracking = visualizationId === QlVisualizationId.Area ? 'area' : 'sticky';
 
     const title =
         config.extraSettings?.titleMode === 'show' && config.extraSettings.title
