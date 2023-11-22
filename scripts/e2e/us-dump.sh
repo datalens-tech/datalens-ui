@@ -1,4 +1,4 @@
-US_CONTAINER_NAME="datalens-pg-us"
+US_CONTAINER_NAME="e2e-datalens-pg-us"
 US_DB_HOST="pg-us"
 US_DB_USER="us"
 US_DB_PASS="us"
