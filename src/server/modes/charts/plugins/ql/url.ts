@@ -28,7 +28,7 @@ const resolveUrlParameter = (urlParamValue: string | string[]) => {
 };
 
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
-    const config = mapQlConfigToLatestVersion(shared);
+    const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
 
     const urlParams = ChartEditor.getParams();
 
