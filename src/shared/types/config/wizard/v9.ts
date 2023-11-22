@@ -1,3 +1,4 @@
+import {ColorMode} from '../../../constants/gradients';
 import {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
 import {
     ChartsConfigVersion,
@@ -273,6 +274,7 @@ export type V9ColorsConfig = {
     mountedColors?: Record<string, string>;
     coloredByMeasure?: boolean;
     palette?: string;
+    colorMode?: ColorMode;
 };
 
 export type V9ShapesConfig = {

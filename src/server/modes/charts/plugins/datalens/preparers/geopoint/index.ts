@@ -6,7 +6,6 @@ import {
     PointSizeConfig,
     ServerFieldFormatting,
     VisualizationLayerShared,
-    isDimensionField,
     isEnabledServerFeature,
 } from '../../../../../../../shared';
 import {registry} from '../../../../../../registry';
@@ -26,6 +25,7 @@ import {
     findIndexInOrder,
     getPointRadius,
     getTitleInOrder,
+    isGradientMode,
     isNumericalDataType,
 } from '../../utils/misc-helpers';
 import {PrepareFunctionArgs} from '../types';
@@ -156,6 +156,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         resultData: {data, order},
         idToTitle,
         shared,
+        idToDataType,
     } = options;
     const geopointsConfig = (options.geopointsConfig || {}) as PointSizeConfig;
     const layerSettings = (options.layerSettings ||
@@ -165,7 +166,15 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
 
     const allPoints: Record<string, GeopointPointConfig[]> = {};
     const colorValues: number[] = [];
+
     const color = colors[0];
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
+
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
+
     const size = placeholders[1].items[0];
     const coordinates = placeholders[0].items;
     const updatedTooltips = [...tooltips];
@@ -216,7 +225,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         });
     }
 
-    if (color && color.type === 'MEASURE') {
+    if (gradientMode) {
         const gradientThresholdValues = getThresholdValues(colorsConfig, colorValues);
         const {min, rangeMiddle, max} = gradientThresholdValues;
         colorData = getColorsByMeasureField({
@@ -245,6 +254,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         // that there can be more than one pair of coordinates in a row
         allPoints[`points-${valuesIndex}`] = [];
 
+        // eslint-disable-next-line complexity
         values.forEach((columnData, columnIndex) => {
             if (columnData === 'null' || columnData === null) {
                 return;
@@ -301,7 +311,15 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                 let iconColor = DEFAULT_ICON_COLOR;
 
                 if (colorValue) {
-                    if (isDimensionField(color)) {
+                    if (gradientMode) {
+                        const key = isNaN(Number(colorValue))
+                            ? colorValue
+                            : String(Number(colorValue));
+
+                        if (colorData[key]) {
+                            iconColor = colorData[key];
+                        }
+                    } else {
                         let mountedColor = getMountedColor(colorsConfig, colorValue);
 
                         if (!mountedColor || mountedColor === 'auto') {
@@ -318,14 +336,6 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
 
                         iconColor = mountedColor;
                         colorDictionary[colorValue] = mountedColor;
-                    } else {
-                        const key = isNaN(Number(colorValue))
-                            ? colorValue
-                            : String(Number(colorValue));
-
-                        if (colorData[key]) {
-                            iconColor = colorData[key];
-                        }
                     }
                 }
 

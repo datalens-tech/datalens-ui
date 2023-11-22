@@ -23,7 +23,7 @@ import {
     isVisualizationWithLayers,
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
-import {getGradientStops, mapAndColorizeGraphsByDimension} from '../../utils/color-helpers';
+import {getGradientStops, mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
 import {PSEUDO} from '../../utils/constants';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {
@@ -48,7 +48,7 @@ import {
 } from './helpers';
 import {getAxisFormattingByField} from './helpers/axis/getAxisFormattingByField';
 import {getLayerPlaceholderWithItems} from './helpers/axis/getLayerPlaceholderWithItems';
-import {colorizeByMeasure} from './helpers/color-helpers/colorizeByMeasure';
+import {colorizeByGradient} from './helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from './helpers/getSortedLineKeys';
 import {LineTemplate, LinesRecord, MergedYSectionItems} from './types';
 
@@ -506,12 +506,12 @@ function prepareLine({
         });
 
         if (isColorizeByMeasure || isColorizeByMeasureValue) {
-            colorizeByMeasure(visualizationId as WizardVisualizationId, {
+            colorizeByGradient(visualizationId as WizardVisualizationId, {
                 graphs,
                 colorsConfig,
             });
         } else {
-            mapAndColorizeGraphsByDimension({
+            mapAndColorizeGraphsByPalette({
                 graphs,
                 colorsConfig,
                 isShapesItemExists: isShapeItemExist,

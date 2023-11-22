@@ -1,19 +1,19 @@
 import {ExtendedSeriesLineOptions, WizardVisualizationId} from '../../../../../../../../../shared';
 import {ChartColorsConfig} from '../../../../js/helpers/colors';
-import {mapAndColorizeGraphsByMeasure} from '../../../../utils/color-helpers';
+import {mapAndColorizeGraphsByGradient} from '../../../../utils/color-helpers';
 
-import {ColorizeByMeasureOptions} from './types';
+import {ColorizeByGradientOptions} from './types';
 
 const colorizeColumnAndBarGraphs = (
     graphs: ExtendedSeriesLineOptions[],
     colorsConfig: ChartColorsConfig,
 ) => {
-    mapAndColorizeGraphsByMeasure(graphs, colorsConfig);
+    mapAndColorizeGraphsByGradient(graphs, colorsConfig);
 };
 
-export const colorizeByMeasure = (
+export const colorizeByGradient = (
     visualizationId: WizardVisualizationId,
-    options: ColorizeByMeasureOptions,
+    options: ColorizeByGradientOptions,
 ) => {
     switch (visualizationId) {
         case WizardVisualizationId.Column:

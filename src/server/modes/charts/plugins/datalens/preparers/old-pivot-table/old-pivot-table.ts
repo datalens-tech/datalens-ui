@@ -6,7 +6,7 @@ import {
     isMarkupField,
     markupToRawString,
 } from '../../../../../../../shared';
-import {mapAndColorizeHashTableByMeasure} from '../../utils/color-helpers';
+import {mapAndColorizeHashTableByGradient} from '../../utils/color-helpers';
 import {
     chartKitFormatNumberWrapper,
     collator,
@@ -998,7 +998,7 @@ function preparePivotTable({
 
     let colorData: any;
     if (colors.length) {
-        colorData = mapAndColorizeHashTableByMeasure(colorHashTable, colorsConfig).colorData;
+        colorData = mapAndColorizeHashTableByGradient(colorHashTable, colorsConfig).colorData;
 
         logTiming(
             'Map and colorize',
