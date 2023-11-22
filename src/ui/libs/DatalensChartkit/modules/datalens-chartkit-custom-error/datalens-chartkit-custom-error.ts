@@ -182,7 +182,11 @@ function formatError({
                 });
                 break;
             case ERROR_CODE.UNKNOWN_ERROR:
-                message = i18n('chartkit.custom-error', 'error');
+                message =
+                    debug.status === 504
+                        ? i18n('chartkit.custom-error', 'error-timeout')
+                        : i18n('chartkit.custom-error', 'error');
+
                 Object.assign(details, {message: originalError.message});
                 break;
         }
