@@ -641,6 +641,14 @@ class DashboardPage extends BasePage {
     async isDescriptionEditMode() {
         await this.description.isEditMode();
     }
+
+    async clickSelectWithTitle(title: string) {
+        await this.page
+            .locator(slct('chartkit-control'))
+            .filter({hasText: title})
+            .filter({has: this.page.locator(slct('chartkit-control-select'))})
+            .click();
+    }
 }
 
 export default DashboardPage;
