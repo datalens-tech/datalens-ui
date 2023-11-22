@@ -224,12 +224,12 @@ class ErrorContent extends React.PureComponent {
         );
     }
 
-    renderAction() {
+    renderAction = () => {
         if (isMobileView) {
             return null;
         }
         return this.renderActions();
-    }
+    };
 
     render() {
         const {noControls, className, size, direction, showDebugInfo} = this.props;
