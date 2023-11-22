@@ -1,2 +1,2 @@
 export {getLandingLayout} from './landing-layout';
-export {getPlatform} from './utils';
+export {getChartkitLayoutSettings, getPlatform} from './utils';

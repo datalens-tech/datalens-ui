@@ -5,6 +5,6 @@
     "outDir": "dist",
     "target": "es2019"
   },
-  "include": ["src"],
+  "include": ["src", "api"],
   "exclude": ["node_modules/googleapis"]
 }
