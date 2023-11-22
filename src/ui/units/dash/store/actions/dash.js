@@ -204,7 +204,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
             },
         } = getState();
 
-        if (Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && fake) {
+        if (fake) {
             return;
         }
 
@@ -313,9 +313,7 @@ export const load = ({location, history, params}) => {
 
             const entryId = extractEntryId(pathname);
             const isFakeEntry =
-                Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) &&
-                !entryId &&
-                (pathname === '/dashboards/new' || pathname.startsWith('/workbooks/'));
+                !entryId && (pathname === '/dashboards/new' || pathname.startsWith('/workbooks/'));
 
             if (isFakeEntry) {
                 removeParamAndUpdate(history, searchParams, URL_QUERY.TAB_ID);
