@@ -1,43 +1,44 @@
 import type {MonitoringPresetV1, MonitoringPresetV2, QLEntryDataShared} from '../../ql/common';
 
+import {QlConfigV1} from './v1';
 import {
-    QLParamIntervalV1,
-    QLParamV1,
-    QLPreviewTableDataColumnV1,
-    QLPreviewTableDataRowV1,
-    QLPreviewTableDataV1,
-    QLQueryV1,
-    QLRequestParamV1,
-    QLResultEntryMetadataDataColumnOrGroupV1,
-    QLResultEntryMetadataDataColumnV1,
-    QLResultEntryMetadataDataGroupV1,
-    QlConfigV1,
-} from './v1';
+    QLParamIntervalV2,
+    QLParamV2,
+    QLPreviewTableDataColumnV2,
+    QLPreviewTableDataRowV2,
+    QLPreviewTableDataV2,
+    QLQueryV2,
+    QLRequestParamV2,
+    QLResultEntryMetadataDataColumnOrGroupV2,
+    QLResultEntryMetadataDataColumnV2,
+    QLResultEntryMetadataDataGroupV2,
+    QlConfigV2,
+} from './v2';
 
-export type QlConfig = QlConfigV1;
+export type QlConfig = QlConfigV2;
 
-export type QlPreviousConfig = QLEntryDataShared;
+export type QlPreviousConfig = QLEntryDataShared | QlConfigV1;
 
 export type QlExtendedConfig = QlConfig | QlPreviousConfig;
 
-export type QLConfigQuery = QLQueryV1;
+export type QLConfigQuery = QLQueryV2;
 
-export type QlConfigResultEntryMetadataDataGroup = QLResultEntryMetadataDataGroupV1;
+export type QlConfigResultEntryMetadataDataGroup = QLResultEntryMetadataDataGroupV2;
 
-export type QlConfigResultEntryMetadataDataColumn = QLResultEntryMetadataDataColumnV1;
+export type QlConfigResultEntryMetadataDataColumn = QLResultEntryMetadataDataColumnV2;
 
-export type QlConfigParamInterval = QLParamIntervalV1;
+export type QlConfigParamInterval = QLParamIntervalV2;
 
-export type QlConfigParam = QLParamV1;
+export type QlConfigParam = QLParamV2;
 
-export type QlConfigRequestParam = QLRequestParamV1;
+export type QlConfigRequestParam = QLRequestParamV2;
 
-export type QlConfigResultEntryMetadataDataColumnOrGroup = QLResultEntryMetadataDataColumnOrGroupV1;
+export type QlConfigResultEntryMetadataDataColumnOrGroup = QLResultEntryMetadataDataColumnOrGroupV2;
 
-export type QlConfigPreviewTableDataColumn = QLPreviewTableDataColumnV1;
+export type QlConfigPreviewTableDataColumn = QLPreviewTableDataColumnV2;
 
-export type QlConfigPreviewTableDataRow = QLPreviewTableDataRowV1;
+export type QlConfigPreviewTableDataRow = QLPreviewTableDataRowV2;
 
-export type QlConfigPreviewTableData = QLPreviewTableDataV1;
+export type QlConfigPreviewTableData = QLPreviewTableDataV2;
 
 export type MonitoringPreset = MonitoringPresetV1 | MonitoringPresetV2;

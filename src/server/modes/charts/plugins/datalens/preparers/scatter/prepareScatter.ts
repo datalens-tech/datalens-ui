@@ -16,8 +16,8 @@ import {registry} from '../../../../../../registry';
 import {ChartColorsConfig} from '../../js/helpers/colors';
 import {
     ExtendedSeriesScatterOptions,
-    mapAndColorizeChartByMeasure,
-    mapAndColorizePointsByDimension,
+    mapAndColorizePointsByGradient,
+    mapAndColorizePointsByPalette,
 } from '../../utils/color-helpers';
 import {getMountedColor} from '../../utils/constants';
 import {getExtremeValues} from '../../utils/geo-helpers';
@@ -27,6 +27,7 @@ import {
     formatDate,
     getPointRadius,
     getTimezoneOffsettedTime,
+    isGradientMode,
     isNumericalDataType,
 } from '../../utils/misc-helpers';
 import {PrepareFunctionArgs} from '../types';
@@ -87,7 +88,15 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
     const z = placeholders[2].items[0];
     const size = placeholders[3]?.items[0];
+
     const color = colors && colors[0];
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
+
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
+
     const shape = shapes?.[0];
     const shapesConfigured = Object.keys(shapesConfig?.mountedShapes || {}).length > 0;
 
@@ -287,7 +296,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             const i = findIndexInOrder(order, color, cTitle);
             const colorValue = shouldEscapeUserValue ? escape(values[i] as string) : values[i];
 
-            if (color.type === 'MEASURE') {
+            if (gradientMode) {
                 const numberColorValue = Number(colorValue);
 
                 if (numberColorValue < minColorValue) {
@@ -356,10 +365,10 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     let graphs: ExtendedSeriesScatterOptions[] = [{data: points}] as ExtendedSeriesScatterOptions[];
 
     if (color) {
-        if (color.type === 'MEASURE') {
-            mapAndColorizeChartByMeasure(points as Highcharts.PointOptionsObject[], colorsConfig);
+        if (gradientMode) {
+            mapAndColorizePointsByGradient(points as Highcharts.PointOptionsObject[], colorsConfig);
         } else {
-            graphs = mapAndColorizePointsByDimension(points, colorsConfig);
+            graphs = mapAndColorizePointsByPalette(points, colorsConfig);
         }
 
         if (graphs.length) {

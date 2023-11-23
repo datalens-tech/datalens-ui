@@ -6,29 +6,35 @@
     max-height: 80vh;
     min-height: 300px;
 
-    &_dimension {
+    &_palette-mode {
         height: 560px;
     }
 
-    &_measure {
+    &_gradient-mode {
         height: 370px;
+
+        .color-settings-container {
+            &__row {
+                border-bottom: none;
+            }
+
+            &__label {
+                margin: 0 20px 0 0;
+            }
+        }
     }
 
     & .yc-dialog-header {
         padding-bottom: 15px;
     }
 
-    &_dimension .yc-dialog-header {
-        border-bottom: 1px solid var(--g-color-line-generic);
-    }
-
-    &_dimension .yc-dialog-body {
-        height: calc(80vh - 153px);
+    &_palette-mode .yc-dialog-body {
+        height: calc(80vh);
         padding: 0;
         overflow-y: auto;
     }
 
-    &_dimension .yc-dialog-footer {
+    &_palette-mode .yc-dialog-footer {
         border-top: 1px solid var(--g-color-line-generic);
     }
 

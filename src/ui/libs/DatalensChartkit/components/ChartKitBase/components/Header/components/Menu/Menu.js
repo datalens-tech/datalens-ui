@@ -188,6 +188,7 @@ export class Menu extends React.PureComponent {
                   widgetRenderTimeRef,
                   callbackOnCommentsChanged,
                   updatedCommentsLength: commentsLength,
+                  error,
               })
             : items;
 

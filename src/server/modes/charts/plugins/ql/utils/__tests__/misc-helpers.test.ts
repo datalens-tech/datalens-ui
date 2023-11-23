@@ -1,3 +1,4 @@
+import type {QLConfigQuery} from '../../../../../../../shared';
 import {buildSource, iterateThroughVisibleQueries} from '../misc-helpers';
 
 const MOCK_ID = 'MOCK_ID';
@@ -86,12 +87,12 @@ describe('iterateThroughVisibleQueries', () => {
     it('should execute callback only for queries where hidden property is falsy', () => {
         const cb = jest.fn();
 
-        const queries = [
-            {value: 'sql-1', params: [], hidden: false},
-            {value: 'sql-2', params: [], hidden: true},
-            {value: 'sql-3', params: [], hidden: false},
-            {value: 'sql-4', params: [], hidden: false},
-            {value: 'sql-5', params: []},
+        const queries: QLConfigQuery[] = [
+            {queryName: 'Query #1', value: 'sql-1', params: [], hidden: false},
+            {queryName: 'Query #2', value: 'sql-2', params: [], hidden: true},
+            {queryName: 'Query #3', value: 'sql-3', params: [], hidden: false},
+            {queryName: 'Query #4', value: 'sql-4', params: [], hidden: false},
+            {queryName: 'Query #5', value: 'sql-5', params: []},
         ];
 
         iterateThroughVisibleQueries(queries, cb);

@@ -50,6 +50,11 @@ export const PREPARE_FUNCTION_ARGS = {
         [DIMENSION_COLOR_FIELD.guid]: DIMENSION_COLOR_FIELD.title,
         [MEASURE_COLOR_FIELD.guid]: MEASURE_COLOR_FIELD.title,
     },
+    idToDataType: {
+        [COORDINATES_FIELD.guid]: DATASET_FIELD_TYPES.GEOPOINT,
+        [DIMENSION_COLOR_FIELD.guid]: DATASET_FIELD_TYPES.STRING,
+        [MEASURE_COLOR_FIELD.guid]: DATASET_FIELD_TYPES.STRING,
+    },
     resultData: {
         data: [],
         order: [],
