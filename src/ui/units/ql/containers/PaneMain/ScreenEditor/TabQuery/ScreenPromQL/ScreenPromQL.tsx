@@ -7,6 +7,8 @@ import block from 'bem-cn-lite';
 import copyToClipboard from 'clipboard-copy';
 import {Collapse} from 'components/Collapse/Collapse';
 import {i18n} from 'i18n';
+import type {DebouncedFunc} from 'lodash';
+import debounce from 'lodash/debounce';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
@@ -40,11 +42,13 @@ import {
     getDefaultPath,
     getEntry,
     getEntryNotChanged,
+    getExtraSettings,
     getPreviewData,
     getQueries,
     getValid,
 } from '../../../../../store/reducers/ql';
 import {QLEntry} from '../../../../../store/typings/ql';
+import {getQlAutoExecuteChartValue} from '../../../../../utils/chart-settings';
 
 import './ScreenPromQL.scss';
 
@@ -86,9 +90,12 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
     ];
 
     breakpointsConfig = Object.assign({'139': 40}, DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG);
+    debouncedUpdateQueryAndRedraw: DebouncedFunc<typeof updateQueryAndRedraw>;
 
     constructor(props: TabQueryInnerProps) {
         super(props);
+
+        this.debouncedUpdateQueryAndRedraw = debounce(this.props.updateQueryAndRedraw, 400);
 
         this.state = {
             editors: {},
@@ -379,6 +386,10 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
     };
 
     private onEditQuery = ({query, queryIndex}: {query: QLConfigQuery; queryIndex: number}) => {
+        if (getQlAutoExecuteChartValue(this.props.extraSettings?.qlAutoExecuteChart) === 'on') {
+            this.debouncedUpdateQueryAndRedraw({query, index: queryIndex});
+            return;
+        }
         this.props.updateQuery({query, index: queryIndex});
     };
 
@@ -516,6 +527,7 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
         entry: getEntry(state),
         previewData: getPreviewData(state),
         entryNotChanged: getEntryNotChanged(state),
+        extraSettings: getExtraSettings(state),
         valid: getValid(state),
     };
 };
