@@ -52,5 +52,6 @@
   "label_visualization-pie": "Pie chart",
   "label_visualization-scatter": "Scatter chart",
   "label_visualization-treemap": "Tree chart",
-  "text_default-name": "New QL-сhart"
+  "text_default-name": "New QL-сhart",
+  "label_ql-auto-execution-chart": "Automatic chart execution on change"
 }
