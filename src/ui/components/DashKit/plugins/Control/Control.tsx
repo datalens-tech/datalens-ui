@@ -89,6 +89,7 @@ type ErrorData = {
         error?: SelectorError;
         title?: string;
         message?: string;
+        status?: number;
     };
     requestId?: string;
 };
@@ -626,7 +627,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             if (error.response && error.response.data) {
                 errorData = {
-                    data: {error: error.response.data?.error},
+                    data: {error: error.response.data?.error, status: error.response.data?.status},
                     requestId: error.response.headers['x-request-id'],
                 };
             } else {
@@ -836,6 +837,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         if (typeof data?.message === 'string') {
             return data.message;
         }
+        if (data?.status && data.status === 504) {
+            return i18nError('label_error-timeout');
+        }
+
         return i18nError('label_error');
     };
 
