@@ -20,7 +20,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
 
         await openTestPage(page, WorkbooksUrls.E2EWorkbook);
 
-        await workbookPO.createEntryButton.performCreateDashboard();
+        await workbookPO.createEntryButton.createDashboard();
 
         const saveButton = dashboardPage.page.locator(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
 
@@ -42,7 +42,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
 
             await openTestPage(page, WorkbooksUrls.E2EWorkbook);
 
-            await workbookPO.createEntryButton.performCreateDashboard();
+            await workbookPO.createEntryButton.createDashboard();
 
             const saveButton = dashboardPage.page.locator(
                 slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN),

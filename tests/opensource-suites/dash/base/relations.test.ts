@@ -37,7 +37,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
 
             await openTestPage(page, WorkbooksUrls.E2EWorkbook);
 
-            await workbookPO.createEntryButton.performCreateDashboard();
+            await workbookPO.createEntryButton.createDashboard();
 
             await dashboardPage.addSelector({
                 controlTitle: PARAMS.CONTROL_TITLE,
