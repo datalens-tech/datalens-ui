@@ -81,6 +81,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     const skipReload = useSelector(selectSkipReload);
     const dashDatasetFields = useSelector(selectDashWidgetsDatasetsFields);
 
+    const [isWizardChart, setIsWizardChart] = React.useState(false);
+
     const tabs = data.tabs as WidgetPluginDataWithTabs['tabs'];
     const tabIndex = React.useMemo(() => getTabIndex(tabs, state.tabId), [tabs, state.tabId]);
     // this current tab we get from dashkit rerender with extra params for ds
@@ -102,13 +104,13 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     const chartkitParams = React.useMemo(() => {
         let res = removeEmptyNDatasetFieldsProperties(
             props.params,
-            loadedDSFields ? widgetDatasetFields : undefined,
+            loadedDSFields && isWizardChart ? widgetDatasetFields : undefined,
         );
         if (!enableActionParams) {
             res = pickExceptActionParamsFromParams(res);
         }
         return res;
-    }, [props.params, enableActionParams, loadedDSFields, widgetDatasetFields]);
+    }, [props.params, enableActionParams, loadedDSFields, isWizardChart, widgetDatasetFields]);
 
     const prevTabIndex = usePrevious(tabIndex);
     const hasChartTabChanged = prevTabIndex !== undefined && prevTabIndex !== tabIndex;
@@ -148,11 +150,12 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     let hasChangedActionParams = false;
 
     const hasChangedOuterParams = React.useMemo(() => {
-        const propsParams = loadedDSFields
-            ? removeEmptyNDatasetFieldsProperties(props.params, widgetDatasetFields)
-            : props.params;
+        const propsParams =
+            isWizardChart && loadedDSFields
+                ? removeEmptyNDatasetFieldsProperties(props.params, widgetDatasetFields)
+                : props.params;
         const prevSavedPropsParams =
-            prevSavedProps && loadedDSFields
+            prevSavedProps && isWizardChart && loadedDSFields
                 ? removeEmptyNDatasetFieldsProperties(prevSavedProps.params, widgetDatasetFields)
                 : prevSavedProps?.params;
         const isEqualParamsWithPrev = prevSavedProps && isEqual(prevSavedPropsParams, propsParams);
@@ -248,6 +251,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         innerParamsRef,
         widgetDatasetFields,
         loadedDSFields,
+        isWizardChart,
     ]);
 
     const hasChangedInnerParamsFromInside = React.useMemo(() => {
@@ -383,6 +387,12 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             true,
         );
     }, [handleChange, chartkitParams]);
+
+    React.useEffect(() => {
+        if (loadedData?.isNewWizard && !isWizardChart) {
+            setIsWizardChart(true);
+        }
+    }, [loadedData?.isNewWizard, isWizardChart]);
 
     /**
      * Set initialParams on load chart defaults or when chart tab default params changed
