@@ -71,7 +71,7 @@ services:
       POSTGRES_DB: sales
       POSTGRES_USER: e2e
     volumes:
-      - e2e-data-volume:/docker-entrypoint-initdb.d
+      - ./data:/docker-entrypoint-initdb.d
 
   us:
     container_name: e2e-datalens-us
@@ -94,7 +94,7 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - ./certs:/certs
-      - e2e-data-volume:/opt/e2e-data
+      - ./data:/opt/e2e-data
 
   datalens:
     container_name: e2e-datalens-ui
@@ -116,8 +116,3 @@ services:
       AUTH_POLICY: "disabled"
       NODE_EXTRA_CA_CERTS: "/usr/local/share/ca-certificates/cert.pem"
       HC: ${HC:-0}
-    volumes:
-      - e2e-data-volume:/opt/app/tests/data
-
-volumes:
-  e2e-data-volume:
