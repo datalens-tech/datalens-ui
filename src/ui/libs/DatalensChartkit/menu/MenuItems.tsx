@@ -23,7 +23,6 @@ import {getExportItem} from '../components/ChartKitBase/components/Header/compon
 import Inspector from '../components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Inspector';
 import {ChartKitDataProvider} from '../components/ChartKitBase/types';
 import ChartKitIcon from '../components/ChartKitIcon/ChartKitIcon';
-import {URL_OPTIONS as CHARTKIT_URL_OPTIONS} from '../modules/constants/constants';
 import type DatalensChartkitCustomError from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {LoadedWidget, Widget as TWidget, WidgetData} from '../types';
 
@@ -234,7 +233,6 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
                         showMarkupLink={true}
                         hasDefaultSize={true}
                         initialParams={{
-                            [CHARTKIT_URL_OPTIONS.HIDE_COMMENTS]: 1,
                             [COMMON_URL_OPTIONS.EMBEDDED]: 1,
                             [COMMON_URL_OPTIONS.NO_CONTROLS]: 1,
                         }}
