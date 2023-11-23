@@ -49,6 +49,6 @@ npm run test:e2e:opensource
 
 ### How to add new connection/dataset/chart/dashboard for E2E tests:
 
-1. Start project `docker compose -f tests/docker-compose.e2e.yml up`
+1. Start project `sudo rm -rf tests/metadata && docker compose -f tests/docker-compose.e2e.yml up`
 2. Create necessary test entries in interface
 3. Run `npm run test:e2e:us-dump` - this command will create new database dump with test entries which you just created 
