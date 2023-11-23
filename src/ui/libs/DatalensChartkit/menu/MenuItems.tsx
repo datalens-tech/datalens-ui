@@ -13,7 +13,7 @@ import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
 import {Feature, MenuItemsIds} from 'shared';
 import {DialogShare} from 'ui/components/DialogShare/DialogShare';
-import {URL_OPTIONS as COMMON_URL_OPTIONS} from 'ui/constants';
+import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
 import {registry} from 'ui/registry';
 
 import {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
@@ -77,19 +77,17 @@ export const getAlertsMenuItem = ({
         },
         icon: <ChartKitIcon data={Megaphone} className={ICONS_MENU_DEFAULT_CLASSNAME} />,
         isVisible: (params: MenuItemArgs) => {
-            if (!params) {
+            if (!params || DL.IS_MOBILE) {
                 return false;
             }
             const {loadedData, widget, error} = params;
 
             const isCriticalError = error && !error?.extra?.rowsExceededLimit;
 
-            if (widget === null || !loadedData || error) {
+            if (widget === null || !loadedData || error || !loadedData.entryId) {
                 return false;
             }
-            if (!loadedData.entryId) {
-                return false;
-            }
+
             return (
                 !isCriticalError &&
                 (loadedData.isNewWizard || loadedData.type === CHARTKIT_WIDGET_TYPE.GRAPH)
@@ -162,7 +160,7 @@ export const getEditMenuItem = ({
     icon: customConfig?.icon || (
         <ChartKitIcon data={Pencil} className={ICONS_MENU_DEFAULT_CLASSNAME} />
     ),
-    isVisible: () => (customConfig?.isVisible ? customConfig.isVisible() : true),
+    isVisible: () => !DL.IS_MOBILE && (customConfig?.isVisible ? customConfig.isVisible() : true),
     action:
         customConfig?.action ||
         (({loadedData = {}, propsData, chartsDataProvider: dataProvider}) => {
@@ -220,7 +218,7 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
     icon: customConfig?.icon || (
         <ChartKitIcon data={ArrowShapeTurnUpRight} className={ICONS_MENU_DEFAULT_CLASSNAME} />
     ),
-    isVisible: ({loadedData}: MenuItemArgs) => Boolean(loadedData?.type),
+    isVisible: ({loadedData}: MenuItemArgs) => !DL.IS_MOBILE && Boolean(loadedData?.type),
     action:
         customConfig?.action ||
         function action({loadedData, propsData}) {
@@ -254,7 +252,7 @@ export const getEmbeddedMenuItem = (customConfig?: Partial<MenuItemConfig>): Men
     icon: customConfig?.icon || (
         <ChartKitIcon data={Code} className={ICONS_MENU_DEFAULT_CLASSNAME} />
     ),
-    isVisible: () => true,
+    isVisible: () => !DL.IS_MOBILE,
     action:
         customConfig?.action ||
         function action({propsData, loadedData}) {
