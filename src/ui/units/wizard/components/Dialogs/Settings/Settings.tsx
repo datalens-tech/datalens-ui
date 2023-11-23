@@ -18,10 +18,12 @@ import {
     Period,
     PlaceholderId,
     PlaceholderSettings,
+    QLChartType,
     Shared,
     WizardVisualizationId,
     getIsNavigatorAvailable,
     isDateField,
+    isMonitoringOrPrometheusChart,
     isTreeField,
 } from 'shared';
 import {DatalensGlobalState, Utils} from 'ui';
@@ -31,6 +33,7 @@ import {selectHighchartsWidget, selectIsLoading} from 'units/wizard/selectors/pr
 
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
 import {DEFAULT_PAGE_ROWS_LIMIT} from '../../../../../constants/misc';
+import {getQlAutoExecuteChartValue} from '../../../../ql/utils/chart-settings';
 import {CHART_SETTINGS, SETTINGS, VISUALIZATION_IDS} from '../../../constants';
 import {getDefaultChartName} from '../../../utils/helpers';
 
@@ -121,6 +124,7 @@ interface GeneralProps {
     widget: WidgetData;
     datasetsCount: number;
     qlMode?: boolean;
+    chartType: QLChartType | null | undefined;
 }
 
 type InnerProps = GeneralProps & StateProps;
@@ -140,6 +144,7 @@ interface State {
     navigatorSettings: NavigatorSettings;
     navigatorSeries: string[];
     d3Fallback: string;
+    qlAutoExecuteChart: string | undefined;
 }
 
 export const DIALOG_CHART_SETTINGS = Symbol('DIALOG_CHART_SETTINGS');
@@ -182,6 +187,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             limit = DEFAULT_PAGE_ROWS_LIMIT,
             feed = '',
             pivotFallback = 'off',
+            qlAutoExecuteChart,
         } = extraSettings;
 
         const navigatorSettings = this.prepareNavigatorSettings(visualization, extraSettings);
@@ -225,6 +231,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             valid: true,
 
             titleMode,
+            qlAutoExecuteChart,
             title,
             legendMode,
             tooltipSum,
@@ -449,6 +456,12 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     handleNavigatorPeriodUpdate = (periodValues: NavigatorPeriod) => {
         this.setState({
             navigatorSettings: {...this.state.navigatorSettings, periodSettings: {...periodValues}},
+        });
+    };
+
+    handleQlAutoExecuteChartUpdate = (value: string) => {
+        this.setState({
+            qlAutoExecuteChart: value,
         });
     };
 
@@ -814,6 +827,28 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         );
     }
 
+    renderQlAutoExecutionChart() {
+        const {qlMode, chartType} = this.props;
+
+        if (!qlMode || !isMonitoringOrPrometheusChart(chartType)) {
+            return null;
+        }
+
+        const currentValue = getQlAutoExecuteChartValue(
+            this.state.qlAutoExecuteChart as CommonSharedExtraSettings['qlAutoExecuteChart'],
+        );
+
+        return (
+            <SettingSwitcher
+                currentValue={currentValue}
+                checkedValue={CHART_SETTINGS.QL_AUTO_EXECUTION_CHART.ON}
+                uncheckedValue={CHART_SETTINGS.QL_AUTO_EXECUTION_CHART.OFF}
+                onChange={this.handleQlAutoExecuteChartUpdate}
+                title={i18n('sql', 'label_ql-auto-execution-chart')}
+            />
+        );
+    }
+
     renderModalBody() {
         const {navigatorSettings} = this.state;
         const {isPreviewLoading} = this.props;
@@ -837,6 +872,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 {this.renderPivotFallback()}
                 {this.renderNavigator()}
                 {this.renderD3Switch()}
+                {this.renderQlAutoExecutionChart()}
             </div>
         );
     }
