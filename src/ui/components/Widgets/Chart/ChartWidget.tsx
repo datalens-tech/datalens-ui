@@ -5,6 +5,7 @@ import React from 'react';
 import {pickActionParamsFromParams, pickExceptActionParamsFromParams} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';
+import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
@@ -267,6 +268,21 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         ],
     );
 
+    const currentActionParams =
+        (enableActionParams &&
+            chartkitParams &&
+            pickActionParamsFromParams(chartkitParams, true)) ||
+        {};
+
+    const showActionParamsFilter = !isEmpty(
+        Object.values(currentActionParams).filter((item) => {
+            if (typeof item === 'string') {
+                return !isEmpty(item);
+            }
+            return !isEmpty(item.filter((paramItem) => !isEmpty(paramItem.trim())));
+        }),
+    );
+
     /**
      * for correct cancellation on rerender & changed request params & data props
      */
@@ -351,6 +367,23 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetDatasetFields,
     });
 
+    const handleFiltersClear = React.useCallback(() => {
+        const newActionParams: StringParams = {};
+        Object.keys(chartkitParams || {}).forEach(function (key) {
+            newActionParams[key] = '';
+        });
+
+        handleChange(
+            {
+                type: 'PARAMS_CHANGED',
+                data: {params: pickActionParamsFromParams(newActionParams, true)},
+            },
+            {forceUpdate: false},
+            true,
+            true,
+        );
+    }, [handleChange, chartkitParams]);
+
     /**
      * Set initialParams on load chart defaults or when chart tab default params changed
      */
@@ -433,6 +466,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 onSelectTab={handleSelectTab}
                 widgetId={widgetId}
                 hideDebugTool={true}
+                showActionParamsFilter={showActionParamsFilter}
+                onFiltersClear={handleFiltersClear}
             />
             <Content
                 initialParams={initialParams}
