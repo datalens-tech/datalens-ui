@@ -1,0 +1,45 @@
+import {Page} from '@playwright/test';
+
+import ConnectionsPage from '../../../page-objects/connections/ConnectionsPage';
+import QLPage from '../../../page-objects/ql/QLPage';
+import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {openTestPage} from '../../../utils';
+import {TestParametrizationConfig} from 'types/config';
+import {Workbook} from 'page-objects/workbook/Workbook';
+import {ConnectionsNames, QlUrls} from 'constants/constants';
+
+datalensTest.describe('SQL connection selection', () => {
+    datalensTest(
+        'The connection is made automatically if the SQL chart was created from the connection page',
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            const connectionsPage = new ConnectionsPage({page});
+
+            await openTestPage(page, config.connections.urls.Connection);
+
+            const newTabPage: Promise<Page> = new Promise((resolve) =>
+                page.context().on('page', resolve),
+            );
+
+            await connectionsPage.createQlChart();
+
+            const qlPage = new QLPage({page: await newTabPage});
+
+            await qlPage.waitForConnectionName(config.connections.names.Connection);
+        },
+    );
+
+    datalensTest('Connection can be set manually on the SQL page', async ({page}: {page: Page}) => {
+        const qlPage = new QLPage({page});
+        const workbookPO = new Workbook(page);
+
+        await openTestPage(page, QlUrls.NewQLChart);
+
+        await qlPage.clickConnectionButton();
+
+        await workbookPO.navigationMinimalPopup.selectListItem(ConnectionsNames.Connection);
+
+        await qlPage.clickCreate();
+
+        await qlPage.waitForConnectionName(ConnectionsNames.Connection);
+    });
+});
