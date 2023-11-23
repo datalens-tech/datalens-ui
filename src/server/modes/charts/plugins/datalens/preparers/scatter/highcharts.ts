@@ -7,16 +7,26 @@ import {
 } from '../../../../../../../shared';
 import {getGradientStops} from '../../utils/color-helpers';
 import {getFieldExportingOptions, getFieldsExportingOptions} from '../../utils/export-helpers';
-import {isNumericalDataType} from '../../utils/misc-helpers';
+import {isGradientMode, isNumericalDataType} from '../../utils/misc-helpers';
 import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
 import {ChartKitFormatSettings, PrepareFunctionArgs} from '../types';
 
 import {prepareScatter} from './prepareScatter';
 
+// eslint-disable-next-line complexity
 export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
     const {ChartEditor, shared, placeholders, idToTitle, idToDataType} = options;
     const {graphs, categories, x, y, z, color, minColorValue, maxColorValue, colorsConfig, size} =
         prepareScatter(options);
+
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
+
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        colorsConfig &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
+
     const points = graphs.map((graph) => graph.data).flat(2) as Highcharts.PointOptionsObject[];
 
     if (!x || !y) {
@@ -90,7 +100,7 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
             );
         }
 
-        if (color && color.type === 'MEASURE') {
+        if (gradientMode) {
             if (
                 colorsConfig &&
                 typeof minColorValue === 'number' &&

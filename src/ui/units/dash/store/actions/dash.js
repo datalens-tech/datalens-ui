@@ -18,7 +18,13 @@ import {collectDashStats} from '../../modules/pushStats';
 import * as actionTypes from '../constants/dashActionTypes';
 import {getFakeDashEntry} from '../utils';
 
-import {SET_ERROR_MODE, SET_STATE, loadDashDatasets, toggleTableOfContent} from './dashTyped';
+import {
+    SET_ERROR_MODE,
+    SET_STATE,
+    loadDashDatasets,
+    setDashViewMode,
+    toggleTableOfContent,
+} from './dashTyped';
 import {
     DOES_NOT_EXIST_ERROR_TEXT,
     NOT_FOUND_ERROR_TEXT,
@@ -201,10 +207,11 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
         const {
             dash: {
                 entry: {entryId, savedId: stateSavedId, fake},
+                mode,
             },
         } = getState();
 
-        if (Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && fake) {
+        if (fake) {
             return;
         }
 
@@ -266,6 +273,9 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
                         hideIcon: true,
                         onCancel: () => {
                             failCallback();
+                            if (mode === Mode.Edit) {
+                                dispatch(setDashViewMode());
+                            }
                             dispatch(closeDialogConfirm());
                         },
                         widthType: 'medium',
@@ -313,9 +323,7 @@ export const load = ({location, history, params}) => {
 
             const entryId = extractEntryId(pathname);
             const isFakeEntry =
-                Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) &&
-                !entryId &&
-                (pathname === '/dashboards/new' || pathname.startsWith('/workbooks/'));
+                !entryId && (pathname === '/dashboards/new' || pathname.startsWith('/workbooks/'));
 
             if (isFakeEntry) {
                 removeParamAndUpdate(history, searchParams, URL_QUERY.TAB_ID);

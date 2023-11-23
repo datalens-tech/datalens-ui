@@ -2,6 +2,8 @@
     // TODO: this is an private api and may silently changed. We should use local styles
     --yc-tabs-space-between: 20px;
 
+    $class: &;
+
     &__content {
         width: 630px;
         @media (min-width: 320px) and (max-width: 480px) {
@@ -19,5 +21,25 @@
 
     &__button + &__button {
         margin-left: 16px;
+    }
+
+    &_mobile {
+        padding: 0 16px;
+
+        #{$class}__tab-navigation {
+            margin-top: 8px;
+            margin-bottom: 22px;
+        }
+
+        #{$class}__button + #{$class}__button {
+            margin-left: 0;
+        }
+
+        #{$class}__footer-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-bottom: 16px;
+        }
     }
 }

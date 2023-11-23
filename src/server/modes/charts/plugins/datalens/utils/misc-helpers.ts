@@ -2,6 +2,7 @@ import isEmpty from 'lodash/isEmpty';
 import moment from 'moment';
 
 import {
+    ColorMode,
     CommonNumberFormattingOptions,
     DATASET_FIELD_TYPES,
     MINIMUM_FRACTION_DIGITS,
@@ -11,9 +12,12 @@ import {
     ServerPointSizeConfig,
     SortParams,
     StringParams,
+    V9Color,
     formatNumber as chartKitFormatNumber,
     isDateField,
+    isMeasureField,
 } from '../../../../../../shared';
+import type {ChartColorsConfig} from '../js/helpers/colors';
 import {ChartKitFormatSettings, ResultDataOrder} from '../preparers/types';
 import {
     ServerFieldWithBackgroundSettings,
@@ -334,12 +338,28 @@ function getFormatOptionsFromFieldFormatting(
           };
 }
 
+function isGradientMode({
+    colorField,
+    colorsConfig,
+    colorFieldDataType,
+}: {
+    colorField: V9Color;
+    colorsConfig: ChartColorsConfig;
+    colorFieldDataType: string;
+}) {
+    return (
+        isMeasureField(colorField) ||
+        (isNumericalDataType(colorFieldDataType) && colorsConfig.colorMode === ColorMode.GRADIENT)
+    );
+}
+
 export {
     setConsole,
     log,
     logTiming,
     collator,
     numericCollator,
+    isGradientMode,
     isNumericalDataType,
     isFloatDataType,
     getTimezoneOffsettedTime,

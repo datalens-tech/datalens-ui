@@ -4,7 +4,7 @@ import {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
 import {DashData, DashEntry, Permissions, WidgetType} from 'shared';
-import {GetEntriesDatasetsFieldsItem} from 'shared/schema';
+import {GetWidgetsDatasetsFieldsItem} from 'shared/schema';
 
 import {Mode} from '../../modules/constants';
 import {DashUpdateStatus} from '../../typings/dash';
@@ -74,7 +74,7 @@ export type DashState = {
     isRenameWithoutReload?: boolean;
     skipReload?: boolean;
     openedItemWidgetType?: WidgetType;
-    datasetsFields: GetEntriesDatasetsFieldsItem[] | null;
+    widgetsDatasetsFields: GetWidgetsDatasetsFieldsItem[] | null;
 };
 
 // eslint-disable-next-line complexity
@@ -395,7 +395,7 @@ export function dashTypedReducer(
         case RESET_DASH_DS_FIELDS: {
             return {
                 ...state,
-                datasetsFields: null,
+                widgetsDatasetsFields: null,
             };
         }
 

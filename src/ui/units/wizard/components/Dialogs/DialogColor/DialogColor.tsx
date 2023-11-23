@@ -7,7 +7,7 @@ import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ColorsConfig, Field, isMeasureValue} from 'shared';
+import {ColorMode, ColorsConfig, Field, isMeasureValue, isNumberField} from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {setDialogColorPaletteState} from 'units/wizard/actions/dialogColor';
 import {selectDataset, selectParameters} from 'units/wizard/selectors/dataset';
@@ -15,6 +15,7 @@ import {selectUpdates} from 'units/wizard/selectors/preview';
 import {selectDashboardParameters, selectFilters} from 'units/wizard/selectors/visualization';
 
 import {
+    isGradientDialog,
     selectDialogColorGradientState,
     selectDialogColorPaletteState,
 } from '../../../selectors/dialogColor';
@@ -40,7 +41,7 @@ interface OwnProps {
     onCancel: () => void;
     colorsConfig: ColorsConfig;
     extra?: ExtraSettings;
-    isGradient: boolean;
+    isColorModeChangeAvailable: boolean;
 }
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -54,21 +55,50 @@ export type OpenDialogColorArgs = {
     props: OwnProps;
 };
 
-class DialogColorComponent extends React.Component<Props> {
+interface State {
+    colorMode: ColorMode;
+}
+
+class DialogColorComponent extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+
+        let colorMode = props.colorsConfig?.colorMode;
+
+        if (colorMode) {
+            if (colorMode === ColorMode.GRADIENT && !isNumberField(props.item)) {
+                colorMode = ColorMode.PALETTE;
+            }
+
+            this.state = {
+                colorMode: colorMode,
+            };
+        } else {
+            const isGradient = isGradientDialog({
+                item: props.item,
+                items: props.items,
+                extra: props.extra,
+            });
+
+            this.state = {
+                colorMode: isGradient ? ColorMode.GRADIENT : ColorMode.PALETTE,
+            };
+        }
+    }
+
     render() {
-        const {item, items, dataset, isGradient} = this.props;
+        const {item, items, dataset, isColorModeChangeAvailable} = this.props;
         const {mountedColors = {}} = this.props.paletteState;
         const {validationStatus} = this.props.gradientState;
+        const {colorMode} = this.state;
 
         if (!item || !dataset) {
             return null;
         }
 
-        const type = isGradient ? 'measure' : 'dimension';
-
         return (
             <Dialog open={true} onClose={this.onClose} disableFocusTrap={true}>
-                <div className={b({[type]: true})}>
+                <div className={b({[`${colorMode}-mode`]: true})}>
                     <Dialog.Header
                         insertBefore={
                             <div className={b('title-icon')}>
@@ -83,7 +113,9 @@ class DialogColorComponent extends React.Component<Props> {
                             item={item}
                             items={items}
                             extra={this.props.extra}
-                            isGradient={isGradient}
+                            colorMode={this.state.colorMode}
+                            isColorModeChangeAvailable={isColorModeChangeAvailable}
+                            onColorModeChange={this.onColorModeChange}
                         />
                     </Dialog.Body>
                     <Dialog.Footer
@@ -113,6 +145,10 @@ class DialogColorComponent extends React.Component<Props> {
         );
     }
 
+    onColorModeChange = (colorMode: ColorMode) => {
+        this.setState({colorMode});
+    };
+
     onResetButtonClick = () => {
         this.props.actions.setDialogColorPaletteState({
             ...this.props.paletteState,
@@ -130,11 +166,13 @@ class DialogColorComponent extends React.Component<Props> {
     };
 
     getColorsConfig = () => {
-        const {item, items, isGradient} = this.props;
+        const {item, items} = this.props;
+
+        const {colorMode} = this.state;
 
         let config: ColorsConfig;
 
-        if (isGradient) {
+        if (colorMode === ColorMode.GRADIENT) {
             const {
                 gradientMode,
                 gradientPalette,
@@ -155,6 +193,7 @@ class DialogColorComponent extends React.Component<Props> {
                 leftThreshold,
                 middleThreshold,
                 rightThreshold,
+                colorMode,
             };
 
             return config;
@@ -167,6 +206,7 @@ class DialogColorComponent extends React.Component<Props> {
                 mountedColors,
                 fieldGuid: item.guid,
                 coloredByMeasure: Boolean((items || []).length),
+                colorMode,
             };
         }
 

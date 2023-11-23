@@ -16,7 +16,7 @@ export type MergedYSectionItems = {
 export type LineTemplate = {
     data: Record<string | number, LineData>;
     // colorValue for the entire series.
-    colorValue: string | undefined;
+    colorValue: string | number | undefined;
     title: string;
     legendTitle: string;
     stack: string | number | Date | undefined;

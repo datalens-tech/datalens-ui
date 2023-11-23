@@ -12,7 +12,7 @@ import {
     parseNumberValue,
     renderValue,
 } from '../../../ql/utils/misc-helpers';
-import {mapAndColorizeGraphsByDimension} from '../../utils/color-helpers';
+import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
 import {findIndexInOrder} from '../../utils/misc-helpers';
 import {PrepareFunctionArgs} from '../types';
 
@@ -203,7 +203,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
 
     if (useColorizingWithPalettes) {
         // Use usual colorizing with datalens palettes
-        mapAndColorizeGraphsByDimension({
+        mapAndColorizeGraphsByPalette({
             graphs: result.graphs as unknown as ExtendedSeriesLineOptions[],
             colorsConfig,
             isColorsItemExists: Boolean(colors),

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import {isMobileView} from 'ui/utils/mobile';
 
 import './ErrorText.scss';
 
@@ -13,7 +14,7 @@ type Props = {
 
 const ErrorText: React.FC<Props> = ({errorMessage, errorExtraDetails}: Props) => {
     return (
-        <div className={b('content')}>
+        <div className={b('content', {mobile: isMobileView})}>
             {errorMessage}
             {Boolean(errorExtraDetails) && (
                 <div className={b('extra-content')}>{errorExtraDetails}</div>

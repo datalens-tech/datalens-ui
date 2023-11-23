@@ -14,13 +14,14 @@ import {
     isMeasureValue,
     isPercentVisualization,
 } from '../../../../../../../shared';
-import {mapAndColorizeGraphsByDimension} from '../../utils/color-helpers';
+import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
 import {PSEUDO} from '../../utils/constants';
 import {
     chartKitFormatNumberWrapper,
     collator,
     formatDate,
     getTimezoneOffsettedTime,
+    isGradientMode,
     isNumericalDataType,
     numericCollator,
 } from '../../utils/misc-helpers';
@@ -32,7 +33,7 @@ import {
     getXAxisValue,
     prepareLines,
 } from '../line/helpers';
-import {colorizeByMeasure} from '../line/helpers/color-helpers/colorizeByMeasure';
+import {colorizeByGradient} from '../line/helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from '../line/helpers/getSortedLineKeys';
 import {LineTemplate, LinesRecord, MergedYSectionItems} from '../line/types';
 import {PrepareFunctionArgs} from '../types';
@@ -94,6 +95,12 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         : true;
 
     const colorItem = colors[0];
+    const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;
+
+    const gradientMode =
+        colorItem &&
+        colorFieldDataType &&
+        isGradientMode({colorField: colorItem, colorFieldDataType, colorsConfig});
 
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
@@ -117,6 +124,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
 
     const isColorizeByMeasure = isMeasureField(colorItem);
+    const colorMode = colorsConfig.colorMode;
     const isColorizeByMeasureValue = isMeasureValue(colorItem);
 
     /*
@@ -237,6 +245,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 labelItem,
                 segmentIndexInOrder,
                 layers: shared.visualization?.layers,
+                colorMode,
             });
         });
 
@@ -453,13 +462,13 @@ export function prepareBarX(args: PrepareFunctionArgs) {
             });
         });
 
-        if (isColorizeByMeasure || isColorizeByMeasureValue) {
-            colorizeByMeasure(visualizationId as WizardVisualizationId, {
+        if (gradientMode) {
+            colorizeByGradient(visualizationId as WizardVisualizationId, {
                 graphs,
                 colorsConfig,
             });
         } else {
-            mapAndColorizeGraphsByDimension({
+            mapAndColorizeGraphsByPalette({
                 graphs,
                 colorsConfig,
                 isShapesItemExists: isShapeItemExist,

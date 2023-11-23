@@ -1,6 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
 import {DashTab, DashTabItem, DashTabItemWidget, DashTabItemWidgetTab, StringParams} from 'shared';
-import {GetEntriesDatasetsFieldsListItem} from 'shared/schema';
 
 import {DashState} from '../store/reducers/dashTypedReducer';
 
@@ -13,7 +12,7 @@ import {DashState} from '../store/reducers/dashTypedReducer';
  */
 export const getConfigWithoutDSDefaults = (args: {
     config: DashTab;
-    dashDatasetsFields: DashState['datasetsFields'];
+    dashDatasetsFields: DashState['widgetsDatasetsFields'];
 }): DashTab => {
     const {config, dashDatasetsFields} = args;
     const clearedConfig: DashTab = {...config};
@@ -24,28 +23,19 @@ export const getConfigWithoutDSDefaults = (args: {
             const newTabs: DashTabItemWidgetTab[] = [];
             newTabItem.data.tabs.forEach((widgetTabItem) => {
                 const newWidgetTabItem: DashTabItemWidgetTab = {...widgetTabItem, params: {}};
-                const newParams: StringParams = {};
+                let newParams: StringParams = {};
                 if (widgetTabItem.chartId && dashDatasetsFields?.length) {
-                    const datasetFields: GetEntriesDatasetsFieldsListItem[] | string[] =
-                        dashDatasetsFields.find(
-                            (widgetWithDS) => widgetWithDS.entryId === widgetTabItem.chartId,
-                        )?.datasetFields || [];
-
-                    let datasetsGuids: string[] = [];
-                    if (datasetFields.length && typeof datasetFields[0] === 'string') {
-                        datasetsGuids = datasetFields as string[];
-                    } else {
-                        datasetsGuids = datasetFields.map(
-                            (datasetFieldItem) =>
-                                (datasetFieldItem as GetEntriesDatasetsFieldsListItem).guid,
-                        );
-                    }
-
                     for (const [key, val] of Object.entries(widgetTabItem.params)) {
-                        if (!datasetsGuids.includes(key)) {
+                        const datasetFields: string[] =
+                            dashDatasetsFields.find(
+                                (widgetWithDS) => widgetWithDS.entryId === widgetTabItem.chartId,
+                            )?.datasetFields || [];
+                        if (!datasetFields.includes(key)) {
                             newParams[key] = val;
                         }
                     }
+                } else {
+                    newParams = widgetTabItem.params;
                 }
                 newWidgetTabItem.params = newParams;
                 newTabs.push(newWidgetTabItem);
@@ -68,7 +58,7 @@ export const getConfigWithoutDSDefaults = (args: {
  */
 export const getConfigWithDSDefaults = (
     currentTab: DashTab | null,
-    dashDatasetsFields: DashState['datasetsFields'],
+    dashDatasetsFields: DashState['widgetsDatasetsFields'],
 ): DashTab | null => {
     if (!dashDatasetsFields || !currentTab) {
         return null;
@@ -94,11 +84,7 @@ export const getConfigWithDSDefaults = (
                 if (widgetItem.enableActionParams && chartDataset && isEmpty(widgetItem.params)) {
                     const params: StringParams = {};
                     chartDataset.datasetFields?.forEach((item) => {
-                        const guid =
-                            typeof item === 'string'
-                                ? item
-                                : (item as GetEntriesDatasetsFieldsListItem).guid;
-                        params[guid] = '';
+                        params[item] = '';
                     });
 
                     newTab = {...widgetItem, params};

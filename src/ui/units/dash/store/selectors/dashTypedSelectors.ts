@@ -205,8 +205,8 @@ export const selectIsFullscreenMode = (state: DatalensGlobalState) => state.dash
 export const selectDashWorkbookId = (state: DatalensGlobalState) =>
     state.dash?.entry?.workbookId || null;
 
-export const selectDashDatasetsFields = (state: DatalensGlobalState) =>
-    state.dash?.datasetsFields || null;
+export const selectDashWidgetsDatasetsFields = (state: DatalensGlobalState) =>
+    state.dash?.widgetsDatasetsFields || null;
 
 // reselectors below
 
@@ -331,6 +331,6 @@ export const selectCurrentTabAliases = createSelector(
  * new object in order to not mutating origin currentTab (it causes errors in work)
  */
 export const selectCurrentTabWithDashDatasets = createSelector(
-    [selectCurrentTab, selectDashDatasetsFields],
+    [selectCurrentTab, selectDashWidgetsDatasetsFields],
     (currentTab, dashDatasetsFields) => getConfigWithDSDefaults(currentTab, dashDatasetsFields),
 );

@@ -1,4 +1,4 @@
-import {DATASET_FIELD_TYPES} from '../../../../../../../../../shared';
+import {ColorMode, DATASET_FIELD_TYPES} from '../../../../../../../../../shared';
 import {COLOR_SHAPE_SEPARATOR} from '../../../../utils/constants';
 import {formatDate, getFieldTitle} from '../../../../utils/misc-helpers';
 import {ItemValues} from '../types';
@@ -69,10 +69,13 @@ export const mapDataToDimensionColoredLines = ({
     isItemsAreEqual,
     segmentName,
     layers,
+    colorMode,
 }: MapDataToDimensionColoredLinesArgs) => {
     const mappedItemsToValues = items.map((item) => {
         return getItemsValues(item, {idToTitle, values, order});
     });
+
+    const colorModeIsGradient = colorMode === ColorMode.GRADIENT;
 
     let itemValues: ItemValues;
     if (isItemsAreEqual) {
@@ -164,13 +167,22 @@ export const mapDataToDimensionColoredLines = ({
             combinedValue: itemValues.extraValue,
         });
 
-        line.colorValue = colorValue;
+        line.colorValue = colorModeIsGradient ? Number(colorValue) : colorValue;
         line.shapeValue = shapeValue;
     }
 
     const lastKey = typeof xValue === 'undefined' ? shownTitle : xValue;
 
-    lines[key].data[lastKey as string | number] = {value: yValue};
+    const pointData: {
+        value: typeof yValue;
+        colorValue?: number;
+    } = {value: yValue};
+
+    if (colorModeIsGradient) {
+        pointData.colorValue = Number(lines[key].colorValue);
+    }
+
+    lines[key].data[lastKey as string | number] = pointData;
 
     return {key, lastKey};
 };

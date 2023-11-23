@@ -148,7 +148,7 @@ function colorizePivotTableCell(
     };
 }
 
-function mapAndColorizeHashTableByMeasure(hashTable: HashTable, colorsConfig: ChartColorsConfig) {
+function mapAndColorizeHashTableByGradient(hashTable: HashTable, colorsConfig: ChartColorsConfig) {
     const colorValues = Object.values(hashTable).map((colorValue) => {
         if (colorValue === null) {
             return null;
@@ -184,7 +184,7 @@ function mapAndColorizeHashTableByMeasure(hashTable: HashTable, colorsConfig: Ch
     return {colorData, min, mid: min + rangeMiddle, max};
 }
 
-function mapAndColorizeHashTableByDimension(hashTable: HashTable, colorsConfig: ChartColorsConfig) {
+function mapAndColorizeHashTableByPalette(hashTable: HashTable, colorsConfig: ChartColorsConfig) {
     const {colorGuid} = hashTable;
     const knownValues: number[] = [];
     const result: Record<string, {backgroundColor: string}> = {};
@@ -215,7 +215,7 @@ function mapAndColorizeHashTableByDimension(hashTable: HashTable, colorsConfig: 
     return result;
 }
 
-function mapAndColorizeChartByMeasure(
+function mapAndColorizePointsByGradient(
     points: Highcharts.PointOptionsObject[],
     colorsConfig: ChartColorsConfig,
 ) {
@@ -246,7 +246,7 @@ function mapAndColorizeChartByMeasure(
     }
 }
 
-function mapAndColorizeGraphsByMeasure(
+function mapAndColorizeGraphsByGradient(
     graphs: ExtendedSeriesLineOptions[],
     colorsConfig: ChartColorsConfig,
 ) {
@@ -320,7 +320,7 @@ function mapAndColorizeCoordinatesByDimension(
     return {colorData, colorDictionary: getSortedData(colorDictionary)};
 }
 
-function mapAndColorizePointsByDimension(
+function mapAndColorizePointsByPalette(
     points: ExtendedPointOptionsObject[],
     chartColorConfig: ChartColorsConfig,
 ): ExtendedSeriesScatterOptions[] {
@@ -363,7 +363,7 @@ function mapAndColorizePointsByDimension(
     return series;
 }
 
-type MapAndColorizeGraphsByDimension = {
+type MapAndColorizeGraphsByPalette = {
     graphs: ExtendedSeriesLineOptions[];
     colorsConfig: ChartColorsConfig;
     isShapesItemExists?: boolean;
@@ -372,14 +372,14 @@ type MapAndColorizeGraphsByDimension = {
     usedColors?: (string | undefined)[];
 };
 
-function mapAndColorizeGraphsByDimension({
+function mapAndColorizeGraphsByPalette({
     graphs,
     colorsConfig,
     isColorsItemExists,
     isShapesItemExists,
     isSegmentsExists,
     usedColors = [],
-}: MapAndColorizeGraphsByDimension) {
+}: MapAndColorizeGraphsByPalette) {
     // eslint-disable-next-line complexity
     graphs.forEach((graph, i) => {
         let colorKey;
@@ -527,13 +527,13 @@ function getColorValuesAmongSeries(graphs: ExtendedSeriesLineOptions[]) {
 export {
     hexToRgb,
     mapAndColorizeTableCells,
-    mapAndColorizeHashTableByDimension,
-    mapAndColorizeHashTableByMeasure,
-    mapAndColorizeChartByMeasure,
+    mapAndColorizeHashTableByPalette,
+    mapAndColorizeHashTableByGradient,
     mapAndColorizeCoordinatesByDimension,
-    mapAndColorizePointsByDimension,
-    mapAndColorizeGraphsByDimension,
-    mapAndColorizeGraphsByMeasure,
+    mapAndColorizePointsByPalette,
+    mapAndColorizePointsByGradient,
+    mapAndColorizeGraphsByPalette,
+    mapAndColorizeGraphsByGradient,
     getCurrentGradient,
     getRgbColors,
     getGradientStops,

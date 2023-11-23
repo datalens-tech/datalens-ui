@@ -1,5 +1,6 @@
 import {exampleFunction} from 'ui/registry/functions/example-function';
 import {EXAMPLE_FUNCTION} from 'ui/registry/units/common/constants/functions';
+import {getMinAutoupdateInterval} from 'ui/units/dash/containers/Dialogs/Settings/utils';
 
 import {DialogDashMeta} from '../../../components/EntryDialogues/DialogDashMeta/DialogDashMeta';
 import {getCaptionText} from '../../../units/dash/containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
@@ -18,5 +19,6 @@ export const registerDashPlugins = () => {
         getCaptionText,
         getNewDashUrl,
         getDashEntryUrl,
+        getMinAutoupdateInterval,
     });
 };

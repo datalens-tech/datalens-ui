@@ -81,8 +81,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     render() {
         const {entry, isEditMode} = this.props;
         const showHeader = !isEmbeddedMode();
-        const enablePublish =
-            Utils.isEnabledFeature(Feature.EnablePublishEntry) && !this.isFakeEntry;
+        const enablePublish = Utils.isEnabledFeature(Feature.EnablePublishEntry) && !entry?.fake;
 
         const DashSelectState = registry.dash.components.get('DashSelectState');
 
@@ -116,7 +115,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
             return null;
         }
 
-        const saveDashHandler = this.isFakeEntry
+        const saveDashHandler = entry?.fake
             ? this.handleSaveDash
             : this.handlerSaveAndPublishDashClick;
 
@@ -135,8 +134,8 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 isDraft={this.props.isDraft}
                 isRenameWithoutReload={this.props.isRenameWithoutReload}
                 loading={this.props.progress || this.props.isLoadingEditMode}
-                showCancel={!this.isFakeEntry}
-                showSaveDropdown={!this.isFakeEntry}
+                showCancel={!entry?.fake}
+                showSaveDropdown={!entry?.fake}
             />
         ) : (
             <ViewControls
@@ -219,14 +218,8 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         this.props.setActualDash();
     };
 
-    private get isFakeEntry() {
-        return Boolean(
-            Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && this.props.entry?.fake,
-        );
-    }
-
     private getAdditionalEntryItems() {
-        const {canEdit, hasTableOfContent, dashEntry} = this.props;
+        const {canEdit, hasTableOfContent, dashEntry, entry} = this.props;
         const {revId, publishedId} = dashEntry.entry;
         const isCurrentRevisionActual = revId === publishedId;
 
@@ -234,7 +227,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
 
         const selectStateMenuItem = getSelectStateMenuItemFn({
             action: this.onSelectStateClick,
-            hidden: !canEdit || !isCurrentRevisionActual || DL.IS_MOBILE || this.isFakeEntry,
+            hidden: !canEdit || !isCurrentRevisionActual || DL.IS_MOBILE || Boolean(entry?.fake),
         });
 
         const items: EntryContextMenuItem[] = [
