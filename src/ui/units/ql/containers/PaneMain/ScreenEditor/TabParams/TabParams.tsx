@@ -14,12 +14,13 @@ import {registry} from 'ui/registry';
 
 import {QLParamType} from '../../../../../../../shared';
 import {DEFAULT_TIMEZONE} from '../../../../constants';
+import {openDialogQLParameter} from '../../../../store/actions/dialog';
 import {addParam, drawPreview, removeParam, updateParam} from '../../../../store/actions/ql';
 import {getChartType, getParams, getPreviewData, getValid} from '../../../../store/reducers/ql';
 
 import './TabParams.scss';
 
-const {SimpleDatepicker, RangeDatepicker} = registry.common.components.getAll();
+const {RangeDatepicker} = registry.common.components.getAll();
 
 const b = block('ql-tab-params');
 
@@ -314,24 +315,53 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                 />
             );
         } else if (paramIsDate && typeof param.defaultValue === 'string') {
+            console.log(1, formatDate(param.defaultValue));
+            console.log(2, param.defaultValue);
+
             return (
-                <SimpleDatepicker
-                    wrapClassName={b('default-value-date')}
-                    date={param.defaultValue}
-                    withTime={param.type === QLParamType.Datetime}
-                    allowRelative={true}
-                    hasClear={false}
-                    onUpdate={({date}: {date: string | null}) => {
-                        const newParam = {...param};
+                <Button
+                    view="outlined"
+                    size="m"
+                    onClick={() => {
+                        this.onClickButtonEditParamValue({
+                            value: param.defaultValue as string,
+                            onApply: ({value}) => {
+                                const newParam = {...param};
 
-                        if (date !== null) {
-                            newParam.defaultValue = date;
-                        }
+                                if (value !== null) {
+                                    newParam.defaultValue = value;
+                                }
 
-                        this.onEditParam({param: newParam, paramIndex});
+                                this.onEditParam({param: newParam, paramIndex});
+                            },
+                        });
                     }}
-                />
+                    key="button-add-param-value"
+                    className={b('default-value-text')}
+                >
+                    {param.defaultValue
+                        ? formatDate(param.defaultValue)
+                        : i18n('sql', 'label_placeholder-default-value')}
+                </Button>
             );
+            // return (
+            //     <SimpleDatepicker
+            //         wrapClassName={b('default-value-date')}
+            //         date={param.defaultValue}
+            //         withTime={param.type === QLParamType.Datetime}
+            //         allowRelative={true}
+            //         hasClear={false}
+            //         onUpdate={({date}: {date: string | null}) => {
+            //             const newParam = {...param};
+
+            //             if (date !== null) {
+            //                 newParam.defaultValue = date;
+            //             }
+
+            //             this.onEditParam({param: newParam, paramIndex});
+            //         }}
+            //     />
+            // );
         } else if (typeof param.defaultValue === 'string') {
             return (
                 <div className={b('default-value-array')}>
@@ -419,6 +449,19 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
         } else {
             return null;
         }
+    };
+
+    private onClickButtonEditParamValue = ({
+        value,
+        onApply,
+    }: {
+        value: string;
+        onApply: ({value}: {value: string}) => void;
+    }) => {
+        this.props.openDialogQLParameter({
+            value,
+            onApply,
+        });
     };
 
     private onClickButtonAddParam = () => {
@@ -537,6 +580,7 @@ const mapDispatchToProps = {
     addParam,
     updateParam,
     removeParam,
+    openDialogQLParameter,
 };
 
 export default connect(
