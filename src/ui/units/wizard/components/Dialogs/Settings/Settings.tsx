@@ -50,7 +50,7 @@ import './Settings.scss';
 const b = block('wizard-chart-settings');
 type SettingsKeys = keyof State;
 
-const SETTINGS_KEYS = [
+const BASE_SETTINGS_KEYS: SettingsKeys[] = [
     'titleMode',
     'title',
     'legendMode',
@@ -61,7 +61,9 @@ const SETTINGS_KEYS = [
     'feed',
     'pivotFallback',
     'navigatorSettings',
-] as unknown as SettingsKeys;
+];
+
+const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteChart'];
 
 const TOOLTIP_SUM_SUPPORTED_VISUALIZATION = new Set([
     'line',
@@ -144,7 +146,7 @@ interface State {
     navigatorSettings: NavigatorSettings;
     navigatorSeries: string[];
     d3Fallback: string;
-    qlAutoExecuteChart: string | undefined;
+    qlAutoExecuteChart: string;
 }
 
 export const DIALOG_CHART_SETTINGS = Symbol('DIALOG_CHART_SETTINGS');
@@ -231,7 +233,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             valid: true,
 
             titleMode,
-            qlAutoExecuteChart,
+            qlAutoExecuteChart: getQlAutoExecuteChartValue(qlAutoExecuteChart),
             title,
             legendMode,
             tooltipSum,
@@ -357,7 +359,10 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     setValid = (valid: boolean) => this.setState({valid});
 
     onApply = () => {
-        const settings = _pick(this.state, SETTINGS_KEYS);
+        const settings = _pick(
+            this.state,
+            this.props.qlMode ? QL_SETTINGS_KEYS : BASE_SETTINGS_KEYS,
+        );
 
         let isSettingsEqual = _isEqual(settings, this.props.extraSettings);
 
@@ -834,13 +839,9 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             return null;
         }
 
-        const currentValue = getQlAutoExecuteChartValue(
-            this.state.qlAutoExecuteChart as CommonSharedExtraSettings['qlAutoExecuteChart'],
-        );
-
         return (
             <SettingSwitcher
-                currentValue={currentValue}
+                currentValue={this.state.qlAutoExecuteChart}
                 checkedValue={CHART_SETTINGS.QL_AUTO_EXECUTION_CHART.ON}
                 uncheckedValue={CHART_SETTINGS.QL_AUTO_EXECUTION_CHART.OFF}
                 onChange={this.handleQlAutoExecuteChartUpdate}
