@@ -121,8 +121,9 @@ export const enum RelativeDatepickerQa {
 }
 
 export const enum WorkbookNavigationMinimalQa {
-    Popup = 'workbook-navigation-minimal-popuup',
-    Input = 'wokbook-navigation-minimal-input',
+    Popup = 'workbook-navigation-minimal-popup',
+    Input = 'workbook-navigation-minimal-input',
+    List = 'workbook-navigation-minimal-list',
 }
 
 export const enum DialogCreateWorkbookEntryQa {
