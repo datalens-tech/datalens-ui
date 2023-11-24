@@ -5,5 +5,4 @@ export {
 export {plugin as ql} from '../../src/server/modes/charts/plugins/ql';
 export {configurableRequestWithDatasetPlugin} from '../../src/server/modes/charts/plugins/request-with-dataset';
 export {plugin as loginsBlacklist} from '../../src/server/modes/charts/plugins/logins-blacklist';
-export {configurableRequestWithDatasetPlugin} from '../../src/server/modes/charts/plugins/request-with-dataset';
 export {plugin as runnerKeyAdapter} from '../../src/server/modes/charts/plugins/runner-key-adapter';
