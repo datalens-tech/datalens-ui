@@ -123,7 +123,7 @@ export const WidgetHeader = (props: HeaderProps) => {
                         <Button onClick={onFiltersClear}>
                             <Icon
                                 data={iconClearActionParams}
-                                size={28}
+                                size={16}
                                 className={b('icon-filter-clear')}
                             />
                         </Button>
