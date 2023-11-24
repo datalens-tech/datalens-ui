@@ -315,9 +315,6 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                 />
             );
         } else if (paramIsDate && typeof param.defaultValue === 'string') {
-            console.log(1, formatDate(param.defaultValue));
-            console.log(2, param.defaultValue);
-
             return (
                 <Button
                     view="outlined"
@@ -344,24 +341,6 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                         : i18n('sql', 'label_placeholder-default-value')}
                 </Button>
             );
-            // return (
-            //     <SimpleDatepicker
-            //         wrapClassName={b('default-value-date')}
-            //         date={param.defaultValue}
-            //         withTime={param.type === QLParamType.Datetime}
-            //         allowRelative={true}
-            //         hasClear={false}
-            //         onUpdate={({date}: {date: string | null}) => {
-            //             const newParam = {...param};
-
-            //             if (date !== null) {
-            //                 newParam.defaultValue = date;
-            //             }
-
-            //             this.onEditParam({param: newParam, paramIndex});
-            //         }}
-            //     />
-            // );
         } else if (typeof param.defaultValue === 'string') {
             return (
                 <div className={b('default-value-array')}>
