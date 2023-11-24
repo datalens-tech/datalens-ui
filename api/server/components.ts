@@ -7,8 +7,8 @@ export {
     getPlatform,
 } from '../../src/server/components';
 export {getAppLayoutSettings} from '../../src/server/components/app-layout/app-layout-settings';
-export * as resolveEntryByLink from '../../src/server/components/resolve-entry-by-link';
-export * as metrikaDataFormatter from '../../src/server/components/metrika-data-formatter';
+export {default as resolveEntryByLink} from '../../src/server/components/resolve-entry-by-link';
+export {default as metrikaDataFormatter} from '../../src/server/components/metrika-data-formatter';
 
 export {
     ChartsEngine,
