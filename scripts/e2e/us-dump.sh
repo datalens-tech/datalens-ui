@@ -6,7 +6,7 @@ US_DB_NAME="us-db-ci_purgeable"
 US_DB_PORT=5432
 US_DUMP_PATH="./tests/data/us-e2e-data"
 US_CONNECTION="postgres://$US_DB_USER:$US_DB_PASS@$US_DB_HOST:$US_DB_PORT/$US_DB_NAME"
-DUMP_TMP="/tmp/us-dump-$RANDOM"
+DUMP_TMP="/tmp/us-dump-"$(date +%Y-%m-%d_%H-%M-%S)""
 
 echo "United Storage dump process"
 echo
