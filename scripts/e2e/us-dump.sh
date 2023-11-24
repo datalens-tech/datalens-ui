@@ -12,9 +12,19 @@ echo "United Storage dump process"
 echo
 
 US_CONTAINER_ID=$(docker ps -aqf name="$US_CONTAINER_NAME")
+US_CONTAINERS_NUMBER=$(echo $US_CONTAINER_ID | tr " " "\n" | wc -l | xargs)
+
+if [ $US_CONTAINERS_NUMBER -gt 1 ]; then
+    echo "Failed to match the \""$US_CONTAINER_NAME"\" container id."
+    echo "It was expected to find 1 running container with the \""$US_CONTAINER_NAME"\" pattern however "$US_CONTAINERS_NUMBER" were found."
+    echo
+    echo "Please keep only 1 of those container running."
+    echo $US_CONTAINER_ID | tr " " "\n"
+    exit 1
+fi
 
 if [ -z $US_CONTAINER_ID ]; then
-    echo "Failed to locate $US_CONTAINER_NAME docker container id."
+    echo "Failed to locate \"$US_CONTAINER_NAME\" docker container id."
     exit 1
 fi
 
@@ -29,7 +39,7 @@ if [ $CONNECTION_CHECK_RESULT_STATUS_CODE -ne 0 ]; then
 fi
 
 DUMP_CMD="pg_dump --dbname=$US_CONNECTION --column-inserts -a -t workbooks -t entries -t revisions -t links"
-docker exec -it $US_CONTAINER_ID /bin/sh -c "$DUMP_CMD" > $DUMP_TMP
+docker exec -it $US_CONTAINER_ID /bin/sh -c "$DUMP_CMD" | grep -Ev "^(--|SET|SELECT pg_catalog.set_config)" > $DUMP_TMP
 DUMP_RESULT_STATUS_CODE=$?
 
 if [ $DUMP_RESULT_STATUS_CODE -ne 0 ]; then
