@@ -644,9 +644,9 @@ class DashboardPage extends BasePage {
 
     async clickSelectWithTitle(title: string) {
         await this.page
-            .locator(slct('chartkit-control'))
+            .locator(slct(ControlQA.chartkitControl))
             .filter({hasText: title})
-            .filter({has: this.page.locator(slct('chartkit-control-select'))})
+            .filter({has: this.page.locator(slct(ControlQA.controlSelect))})
             .click();
     }
 }
