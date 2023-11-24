@@ -19,10 +19,8 @@ import {
     TableHead,
     TableRow,
     TablehWidgetEventScope,
-    WidgetEvent,
 } from 'shared';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
-import {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 
 import {MarkupItem, MarkupItemType} from '../../../../../../../../components/Markup';
 import {DataTableData, TableWidget} from '../../../../../../types';
@@ -31,7 +29,6 @@ import {CLICK_ACTION_TYPE} from '../../constants';
 import type {ActionParamsData} from './types';
 
 const MARKUP_ITEM_TYPES: MarkupItemType[] = ['bold', 'concat', 'italics', 'text', 'url'];
-const AVAILABLE_TABLE_CLICK_SCOPES: TablehWidgetEventScope[] = ['row'];
 
 const decodeURISafe = (uri: string) => {
     return decodeURI(uri.replace(/%(?![0-9a-fA-F][0-9a-fA-F]+)/g, '%25'));
@@ -337,31 +334,6 @@ export function getTreeSetColumnSortAscending(
     };
 }
 
-function validateActionParamsEvents(events: WidgetEvent<TablehWidgetEventScope>[]) {
-    const handlersCount = events.reduce((result, event) => {
-        const normalizedHandlers = Array.isArray(event.handler) ? event.handler : [event.handler];
-
-        if (event.scope && !AVAILABLE_TABLE_CLICK_SCOPES.includes(event.scope)) {
-            throw new ChartKitCustomError(null, {
-                details: `Unknown clickable scope "${event.scope}"`,
-            });
-        }
-
-        return (
-            result +
-            normalizedHandlers.reduce((acc, h) => {
-                return acc + (h.type === 'setActionParams' ? 1 : 0);
-            }, 0)
-        );
-    }, 0);
-
-    if (handlersCount > 1) {
-        throw new ChartKitCustomError(null, {
-            details: `Seems you are trying to define more than one "setActionParams" handler.`,
-        });
-    }
-}
-
 export function getActionParamsEventScope(
     events?: NonNullable<TableWidget['config']>['events'],
 ): TablehWidgetEventScope | undefined {
@@ -370,8 +342,6 @@ export function getActionParamsEventScope(
     }
 
     const normalizedEvents = Array.isArray(events.click) ? events.click : [events.click];
-
-    validateActionParamsEvents(normalizedEvents);
 
     return normalizedEvents.reduce<TablehWidgetEventScope | undefined>((_, e) => {
         return e.scope;

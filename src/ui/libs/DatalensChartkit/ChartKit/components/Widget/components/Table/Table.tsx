@@ -22,6 +22,7 @@ import {
     getColumnsAndNames,
     getIdFromGeneratedName,
     hasGroups,
+    validateConfigAndData,
 } from './utils';
 import type {ActionParamsData} from './utils';
 
@@ -119,6 +120,7 @@ export class Table extends React.PureComponent<TableProps, TableState> {
     private id?: string;
 
     componentDidMount() {
+        validateConfigAndData({data: this.props.data.data, config: this.props.data.config});
         // @ts-ignore | ts doesn't know about FontFaceSet API
         document.fonts.load('700 10pt "YS Text"').then((fonts) => {
             if (!fonts.length) {
@@ -143,10 +145,14 @@ export class Table extends React.PureComponent<TableProps, TableState> {
         }, 2000);
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps: TableProps) {
         this.onLoad();
 
         this.props.onRender?.({renderTime: Number(Performance.getDuration(this.getId()))});
+
+        if (prevProps.data !== this.props.data) {
+            validateConfigAndData({data: this.props.data.data, config: this.props.data.config});
+        }
     }
 
     componentWillUnmount() {

@@ -7,3 +7,4 @@ export {
     getIdFromGeneratedName,
 } from './misc';
 export type {ActionParamsData} from './types';
+export {validateConfigAndData} from './validation';
