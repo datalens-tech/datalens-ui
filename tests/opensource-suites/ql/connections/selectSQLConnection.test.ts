@@ -15,7 +15,7 @@ datalensTest.describe('SQL connection selection', () => {
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const connectionsPage = new ConnectionsPage({page});
 
-            await openTestPage(page, config.connections.urls.Connection);
+            await openTestPage(page, config.connections.urls.ConnectionPostgreSQL);
 
             const newTabPage: Promise<Page> = new Promise((resolve) =>
                 page.context().on('page', resolve),
@@ -25,7 +25,7 @@ datalensTest.describe('SQL connection selection', () => {
 
             const qlPage = new QLPage({page: await newTabPage});
 
-            await qlPage.waitForConnectionName(config.connections.names.Connection);
+            await qlPage.waitForConnectionName(config.connections.names.ConnectionPostgreSQL);
         },
     );
 
@@ -37,10 +37,12 @@ datalensTest.describe('SQL connection selection', () => {
 
         await qlPage.clickConnectionButton();
 
-        await workbookPO.navigationMinimalPopup.selectListItem(ConnectionsNames.Connection);
+        await workbookPO.navigationMinimalPopup.selectListItem(
+            ConnectionsNames.ConnectionPostgreSQL,
+        );
 
         await qlPage.clickCreate();
 
-        await qlPage.waitForConnectionName(ConnectionsNames.Connection);
+        await qlPage.waitForConnectionName(ConnectionsNames.ConnectionPostgreSQL);
     });
 });

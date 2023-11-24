@@ -3,9 +3,9 @@ import {ConnectionsParametrizationConfig} from 'types/config/connections';
 
 export const connections: ConnectionsParametrizationConfig = {
     urls: {
-        Connection: ConnectionsUrls.Connection,
+        ConnectionPostgreSQL: ConnectionsUrls.ConnectionPostgreSQL,
     },
     names: {
-        Connection: ConnectionsNames.Connection,
+        ConnectionPostgreSQL: ConnectionsNames.ConnectionPostgreSQL,
     },
 };

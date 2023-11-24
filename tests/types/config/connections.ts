@@ -1,8 +1,8 @@
 export type ConnectionsParametrizationConfig = {
     urls: {
-        Connection: string;
+        ConnectionPostgreSQL: string;
     };
     names: {
-        Connection: string;
+        ConnectionPostgreSQL: string;
     };
 };
