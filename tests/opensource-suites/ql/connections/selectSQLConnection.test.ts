@@ -6,7 +6,8 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
 import {TestParametrizationConfig} from 'types/config';
 import {Workbook} from 'page-objects/workbook/Workbook';
-import {ConnectionsNames, QlUrls} from 'constants/constants';
+import {QlUrls} from 'constants/test-entities/ql';
+import {ConnectionsNames} from 'constants/test-entities/connections';
 
 datalensTest.describe('SQL connection selection', () => {
     datalensTest(
