@@ -233,7 +233,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             valid: true,
 
             titleMode,
-            qlAutoExecuteChart: getQlAutoExecuteChartValue(qlAutoExecuteChart),
+            qlAutoExecuteChart: getQlAutoExecuteChartValue(qlAutoExecuteChart, props.chartType),
             title,
             legendMode,
             tooltipSum,

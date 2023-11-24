@@ -7,8 +7,6 @@ import block from 'bem-cn-lite';
 import copyToClipboard from 'clipboard-copy';
 import {Collapse} from 'components/Collapse/Collapse';
 import {i18n} from 'i18n';
-import type {DebouncedFunc} from 'lodash';
-import debounce from 'lodash/debounce';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
@@ -39,6 +37,7 @@ import {
     updateQueryAndRedraw,
 } from '../../../../../store/actions/ql';
 import {
+    getChartType,
     getDefaultPath,
     getEntry,
     getEntryNotChanged,
@@ -75,6 +74,7 @@ interface TabQueryProps {
 interface TabQueryState {
     editors: Record<string, MonacoTypes.editor.IStandaloneCodeEditor>;
     activeTabs: Record<number, string>;
+    oldQueries: QLConfigQuery[];
 }
 
 class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
@@ -90,16 +90,14 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
     ];
 
     breakpointsConfig = Object.assign({'139': 40}, DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG);
-    debouncedUpdateQueryAndRedraw: DebouncedFunc<typeof updateQueryAndRedraw>;
 
     constructor(props: TabQueryInnerProps) {
         super(props);
 
-        this.debouncedUpdateQueryAndRedraw = debounce(this.props.updateQueryAndRedraw, 400);
-
         this.state = {
             editors: {},
             activeTabs: {},
+            oldQueries: props.queries,
         };
     }
 
@@ -379,6 +377,23 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
             }
         });
 
+        editor.onDidBlurEditorWidget(() => {
+            const qlAutoExecuteChart = getQlAutoExecuteChartValue(
+                this.props.extraSettings?.qlAutoExecuteChart,
+                this.props.chartType,
+            );
+            const isEnabled = qlAutoExecuteChart === 'on';
+
+            const isSomeQueryChanged = this.state.oldQueries.some((query, index) => {
+                const updatedQuery = this.props.queries[index];
+                return query.value !== updatedQuery.value;
+            });
+            if (isEnabled && isSomeQueryChanged) {
+                this.onRunCommand();
+                this.setState({oldQueries: this.props.queries});
+            }
+        });
+
         // eslint-disable-next-line no-bitwise
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
             this.onRunCommand();
@@ -386,10 +401,6 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
     };
 
     private onEditQuery = ({query, queryIndex}: {query: QLConfigQuery; queryIndex: number}) => {
-        if (getQlAutoExecuteChartValue(this.props.extraSettings?.qlAutoExecuteChart) === 'on') {
-            this.debouncedUpdateQueryAndRedraw({query, index: queryIndex});
-            return;
-        }
         this.props.updateQuery({query, index: queryIndex});
     };
 
@@ -529,6 +540,7 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
         entryNotChanged: getEntryNotChanged(state),
         extraSettings: getExtraSettings(state),
         valid: getValid(state),
+        chartType: getChartType(state),
     };
 };
 
