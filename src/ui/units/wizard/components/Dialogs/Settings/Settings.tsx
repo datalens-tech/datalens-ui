@@ -23,7 +23,6 @@ import {
     WizardVisualizationId,
     getIsNavigatorAvailable,
     isDateField,
-    isMonitoringOrPrometheusChart,
     isTreeField,
 } from 'shared';
 import {DatalensGlobalState, Utils} from 'ui';
@@ -146,7 +145,7 @@ interface State {
     navigatorSettings: NavigatorSettings;
     navigatorSeries: string[];
     d3Fallback: string;
-    qlAutoExecuteChart: string;
+    qlAutoExecuteChart?: string;
 }
 
 export const DIALOG_CHART_SETTINGS = Symbol('DIALOG_CHART_SETTINGS');
@@ -833,9 +832,9 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     }
 
     renderQlAutoExecutionChart() {
-        const {qlMode, chartType} = this.props;
+        const {qlMode} = this.props;
 
-        if (!qlMode || !isMonitoringOrPrometheusChart(chartType)) {
+        if (!qlMode || !this.state.qlAutoExecuteChart) {
             return null;
         }
 
