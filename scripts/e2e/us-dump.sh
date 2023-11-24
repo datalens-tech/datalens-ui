@@ -18,7 +18,7 @@ if [ $US_CONTAINERS_NUMBER -gt 1 ]; then
     echo "Failed to match the \""$US_CONTAINER_NAME"\" container id."
     echo "It was expected to find 1 running container with the \""$US_CONTAINER_NAME"\" pattern however "$US_CONTAINERS_NUMBER" were found."
     echo
-    echo "Please keep only 1 of those container running."
+    echo "Please keep only 1 of those containers running."
     echo $US_CONTAINER_ID | tr " " "\n"
     exit 1
 fi
