@@ -176,6 +176,10 @@ class QLPage extends ChartPage {
     async addEmptyPromQlQuery() {
         await this.page.click(slct('add-promql-query-btn'));
     }
+
+    async clickConnectionButton() {
+        await this.page.click(this.selectConnectionButtonSelector);
+    }
 }
 
 export default QLPage;
