@@ -129,6 +129,7 @@ export enum RobotChartsDashboardUrls {
     DashboardWithEditorSelectorsWithoutParams = '/saj2by7fkc64i',
     DashboardWithEditorSelectorsWithParams = '/4mwiptdrf4n8u',
     DashboardWithEditorSelectorAndChart = '/7skevi65rzjyx',
+    DashboardWithEditorChartWithParams = '/h0w5teta52p86',
 }
 
 export enum RobotChartsPreviewUrls {
