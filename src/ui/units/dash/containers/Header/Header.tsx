@@ -17,7 +17,6 @@ import {
     hasTableOfContent,
     isDraft,
     isEditMode,
-    selectSettings,
 } from '../../store/selectors/dashTypedSelectors';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -81,7 +80,6 @@ class Header extends React.PureComponent<Props, State> {
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
     entry: state.dash.entry,
-    settings: selectSettings(state),
     hasTableOfContent: hasTableOfContent(state),
     canEdit: canEdit(state),
     isEditMode: isEditMode(state),
