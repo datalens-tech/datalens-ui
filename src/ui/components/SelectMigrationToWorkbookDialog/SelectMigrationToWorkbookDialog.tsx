@@ -95,7 +95,7 @@ export const SelectMigrationToWorkbookDialog: React.FC<Props> = ({
                     </div>
                 </Dialog.Body>
                 <Dialog.Footer
-                    textButtonApply={i18n('action_сhoose')}
+                    textButtonApply={i18n('action_select')}
                     textButtonCancel={i18n('action_cancel')}
                     onClickButtonApply={handleButtonApply}
                     onClickButtonCancel={onClose}

@@ -1,6 +1,6 @@
 {
   "action_cancel": "Cancel",
-  "action_сhoose": "Select",
+  "action_select": "Select",
   "description_copy": "Copy object with links. The original objects will remain in the folders.",
   "description_transfer": "Transfer all linked objects, including nested ones, to one general workbook.",
   "list_first_item_copy": "Search for links only for the current object",
