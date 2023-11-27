@@ -129,6 +129,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                         ) : null}
                         {items && items.length ? (
                             <List
+                                qa={WorkbookNavigationMinimalQa.List}
                                 items={items}
                                 filterable={false}
                                 renderItem={this.renderItem}

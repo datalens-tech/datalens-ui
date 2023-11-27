@@ -1,15 +1,22 @@
 import React from 'react';
 
 import {CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
-import {AsideHeader, AsideHeaderProps, FooterItem, MenuItem} from '@gravity-ui/navigation';
+import {
+    AsideHeader,
+    AsideHeaderProps,
+    AsideHeaderTopAlertProps,
+    FooterItem,
+    MenuItem,
+} from '@gravity-ui/navigation';
 import {List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
+import {I18n, i18n as baseI18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
-import {DlNavigationQA} from 'shared';
+import {DlNavigationQA, Feature} from 'shared';
 import {DL} from 'ui/constants';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
+import Utils from 'ui/utils';
 
 import {setAsideHeaderData, updateAsideHeaderIsCompact} from '../../store/actions/asideHeader';
 import {AsideHeaderData} from '../../store/typings/asideHeader';
@@ -116,6 +123,13 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
     const handleClosePanel = React.useCallback(() => {
         setVisiblePanel(undefined);
     }, []);
+
+    const isReadOnly = Utils.isEnabledFeature(Feature.ReadOnlyMode);
+    const topAlert: AsideHeaderTopAlertProps | undefined = isReadOnly
+        ? {
+              message: baseI18n('common.read-only', 'toast_editing-warning'),
+          }
+        : undefined;
 
     const menuItems: MenuItem[] = React.useMemo(
         () => [
@@ -229,6 +243,7 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                 iconClassName: b('logo-icon'),
                 wrapper: getLogoWrapper,
             }}
+            topAlert={topAlert}
             menuItems={menuItems}
             panelItems={panelItems}
             headerDecoration={false}
