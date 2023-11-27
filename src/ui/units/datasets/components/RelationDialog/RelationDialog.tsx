@@ -90,9 +90,11 @@ const validateAddingCondition = (leftSource: DatasetSource, rightSource: Dataset
 };
 
 const renderOptionWithIcon = (option: SelectOption) => {
+    const iconNode = option.data?.iconNode;
+
     return (
         <div className={b('option')}>
-            <span className={b('option-icon')}>{option.data.iconNode}</span>
+            {iconNode && <span className={b('option-icon')}>{iconNode}</span>}
             <span>{option.content}</span>
         </div>
     );

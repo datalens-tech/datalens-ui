@@ -3,11 +3,3 @@ version: "3.7"
 services:
   datalens:
     profiles: ["ui-container"]
-
-volumes:
-  e2e-data-volume:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: ./data

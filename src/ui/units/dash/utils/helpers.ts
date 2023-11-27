@@ -23,7 +23,7 @@ export const getConfigWithoutDSDefaults = (args: {
             const newTabs: DashTabItemWidgetTab[] = [];
             newTabItem.data.tabs.forEach((widgetTabItem) => {
                 const newWidgetTabItem: DashTabItemWidgetTab = {...widgetTabItem, params: {}};
-                const newParams: StringParams = {};
+                let newParams: StringParams = {};
                 if (widgetTabItem.chartId && dashDatasetsFields?.length) {
                     for (const [key, val] of Object.entries(widgetTabItem.params)) {
                         const datasetFields: string[] =
@@ -34,6 +34,8 @@ export const getConfigWithoutDSDefaults = (args: {
                             newParams[key] = val;
                         }
                     }
+                } else {
+                    newParams = widgetTabItem.params;
                 }
                 newWidgetTabItem.params = newParams;
                 newTabs.push(newWidgetTabItem);
