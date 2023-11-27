@@ -455,7 +455,6 @@ function getAdditionalStylesByRow(args: {
 
     if (hasAtLeastOneActionParam && !rowSelected) {
         return {
-            backgroundColor: 'var(--g-color-base-generic-accent-disabled)',
             color: 'var(--g-color-text-hint)',
         };
     }
