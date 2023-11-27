@@ -5,14 +5,16 @@ import {Xmark} from '@gravity-ui/icons';
 import {Button, Icon, Select, SelectOption, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import {DateTime} from 'luxon';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {QlConfigParam} from 'shared/types/config/ql';
 import {DatalensGlobalState} from 'ui';
-import {registry} from 'ui/registry';
 
-import {QLParamType} from '../../../../../../../shared';
+import {QLParamType, resolveRelativeDate} from '../../../../../../../shared';
+import {LUXON_FORMATS} from '../../../../../../components/RelativeDatesPicker/constants';
+import {getDatesFromValue} from '../../../../../../components/RelativeDatesPicker/utils';
 import {DEFAULT_TIMEZONE} from '../../../../constants';
 import {openDialogQLParameter} from '../../../../store/actions/dialog';
 import {addParam, drawPreview, removeParam, updateParam} from '../../../../store/actions/ql';
@@ -20,14 +22,20 @@ import {getChartType, getParams, getPreviewData, getValid} from '../../../../sto
 
 import './TabParams.scss';
 
-const {RangeDatepicker} = registry.common.components.getAll();
-
 const b = block('ql-tab-params');
 
 function formatDate(date: string) {
     return dateTimeParse(date, {
         timeZone: DEFAULT_TIMEZONE,
     })?.toISOString();
+}
+
+function resolveAndFormatDate(date: string, type: QLParamType) {
+    const resolvedDate = resolveRelativeDate(date);
+
+    return DateTime.fromISO(resolvedDate || date, {
+        zone: 'utc',
+    }).toFormat(type === QLParamType.Datetime ? LUXON_FORMATS.DATE_TIME : LUXON_FORMATS.DATE);
 }
 
 type TabParamsMakeMapStateToPropsResult = ReturnType<typeof makeMapStateToProps>;
@@ -109,12 +117,15 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                             >
                                 <Select
                                     onUpdate={([selectedType]) => {
-                                        this.handleParameterTypeUpdate(selectedType, {
-                                            param,
-                                            paramIndex,
-                                            paramIsDate,
-                                            paramIsInterval,
-                                        });
+                                        this.handleParameterTypeUpdate(
+                                            selectedType as QLParamType,
+                                            {
+                                                param,
+                                                paramIndex,
+                                                paramIsDate,
+                                                paramIsInterval,
+                                            },
+                                        );
                                     }}
                                     options={this.paramTypes}
                                     className={b('select')}
@@ -224,7 +235,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
     }
 
     private handleParameterTypeUpdate = (
-        type: string,
+        type: QLParamType,
         options: {
             paramIsInterval: boolean;
             paramIsDate: boolean;
@@ -274,47 +285,55 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
             param.defaultValue.from &&
             param.defaultValue.to
         ) {
+            const formattedFrom = resolveAndFormatDate(
+                param.defaultValue.from,
+                param.type as QLParamType,
+            );
+            const formattedTo = resolveAndFormatDate(
+                param.defaultValue.to,
+                param.type as QLParamType,
+            );
+
+            const preparedValue = `__interval_${param.defaultValue.from}_${param.defaultValue.to}`;
+
             return (
-                <RangeDatepicker
-                    wrapClassName={b('default-value-interval')}
-                    from={formatDate(param.defaultValue.from)}
-                    to={formatDate(param.defaultValue.to)}
-                    dateFormat="YYYY-MM-DD"
-                    timeFormat="HH:mm:ss"
-                    onUpdate={(newValue) => {
-                        let parsedValueFrom;
-                        if (newValue.from?.date) {
-                            parsedValueFrom = dateTimeParse(newValue.from.date, {
-                                timeZone: DEFAULT_TIMEZONE,
-                            });
-                        }
+                <Button
+                    view="outlined"
+                    size="m"
+                    onClick={() => {
+                        this.onClickButtonEditParamValue({
+                            value: preparedValue,
+                            type: param.type as QLParamType,
+                            onApply: ({value}) => {
+                                const [fromDate, toDate] = getDatesFromValue(value);
 
-                        let parsedValueTo;
-                        if (newValue.to?.date) {
-                            parsedValueTo = dateTimeParse(newValue.to.date || '', {
-                                timeZone: DEFAULT_TIMEZONE,
-                            });
-                        }
+                                if (fromDate && toDate) {
+                                    const updatedParam = {...param};
 
-                        const newParam = {...param};
+                                    updatedParam.defaultValue = {
+                                        from: fromDate,
+                                        to: toDate,
+                                    };
 
-                        if (parsedValueFrom && parsedValueTo) {
-                            newParam.defaultValue = {
-                                from: parsedValueFrom.toISOString(),
-                                to: parsedValueTo.toISOString(),
-                            };
-                        }
-
-                        this.onEditParam({param: newParam, paramIndex});
+                                    this.onEditParam({param: updatedParam, paramIndex});
+                                }
+                            },
+                        });
                     }}
-                    hasCalendarIcon={false}
-                    allowNullableValues={false}
-                    hasClear={false}
-                    withTime={param.type === QLParamType.DatetimeInterval}
-                    timeZone={DEFAULT_TIMEZONE}
-                />
+                    key="button-add-param-value"
+                    className={b('default-value-text')}
+                >
+                    {param.defaultValue
+                        ? `${formattedFrom} — ${formattedTo}`
+                        : i18n('sql', 'label_placeholder-default-value')}
+                </Button>
             );
         } else if (paramIsDate && typeof param.defaultValue === 'string') {
+            const formattedDate = resolveAndFormatDate(
+                param.defaultValue,
+                param.type as QLParamType,
+            );
+
             return (
                 <Button
                     view="outlined"
@@ -322,6 +341,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                     onClick={() => {
                         this.onClickButtonEditParamValue({
                             value: param.defaultValue as string,
+                            type: param.type as QLParamType,
                             onApply: ({value}) => {
                                 const newParam = {...param};
 
@@ -337,7 +357,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                     className={b('default-value-text')}
                 >
                     {param.defaultValue
-                        ? formatDate(param.defaultValue)
+                        ? formattedDate
                         : i18n('sql', 'label_placeholder-default-value')}
                 </Button>
             );
@@ -432,13 +452,16 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
 
     private onClickButtonEditParamValue = ({
         value,
+        type,
         onApply,
     }: {
         value: string;
+        type: QLParamType;
         onApply: ({value}: {value: string}) => void;
     }) => {
         this.props.openDialogQLParameter({
             value,
+            type,
             onApply,
         });
     };
