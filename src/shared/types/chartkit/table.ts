@@ -13,11 +13,6 @@ export type OnClickSetParams = {
     action: 'setParams';
     args: StringParams;
 };
-export type OnClickSetActionParams = {
-    action: 'setActionParams';
-    args: StringParams;
-    actionParams: Array<string>;
-};
 type TableCommonCellType = 'text' | 'date' | 'number' | 'diff' | 'diff_only' | 'markup' | 'bar';
 
 // interface used because it is expanded in chartkit.d.ts
@@ -35,10 +30,12 @@ export interface TableCommonCell {
         href: string;
         newWindow: boolean;
     };
-    onClick?: OnClickSetParams | OnClickSetActionParams;
+    onClick?: OnClickSetParams;
     sortDirection?: 'asc' | 'desc' | null;
     type?: TableCommonCellType;
     fieldId?: string;
+    /** Reserved subspace to store options and values for customized functionality */
+    custom?: Record<string, any>;
 }
 
 export type BarTableCell = TableCommonCell & {
@@ -54,7 +51,7 @@ export type TableRow = TableValuesRow | TableCellsRow;
 export type CommonTableColumn = {
     id?: string;
     name: string;
-    // formatted number from Wizard
+    /** Formatted number from Wizard */
     formattedName?: string;
     type: TableCommonCellType;
     group?: boolean;
@@ -66,8 +63,7 @@ export type CommonTableColumn = {
     contentCss?: ChartKitCss;
     sortable?: boolean;
     allowGroupSort?: boolean;
-
-    // A reserved subspace to store options and values for customized functionality.
+    /** Reserved subspace to store options and values for customized functionality */
     custom?: Record<string, any>;
 };
 export type TableColumnFormatter = {

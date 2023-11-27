@@ -18,6 +18,7 @@ import {
     TableHead,
     TableRow,
     TableTitle,
+    TablehWidgetEventScope,
     WidgetEvent,
 } from '../../../../shared';
 import {ChartsData} from '../modules/data-provider/charts';
@@ -238,7 +239,11 @@ export type TableWidget = WidgetBaseWithData &
                 limit?: number;
             };
             drillDown?: DrillDownConfig;
+            events?: {
+                click?: WidgetEvent<TablehWidgetEventScope> | WidgetEvent<TablehWidgetEventScope>[];
+            };
         };
+        unresolvedParams?: StringParams;
     };
 
 export interface ControlWidget extends WidgetBaseWithData, WithControls {
