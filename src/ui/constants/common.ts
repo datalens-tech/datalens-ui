@@ -257,6 +257,7 @@ export const URL_OPTIONS = {
     LANGUAGE: '_lang',
     ACTION_PARAMS_ENABLED: '_action_params',
     NO_SCROLL: '_no_scroll',
+    AUTOUPDATE: '_autoupdate',
 };
 
 export const DLS_SUBJECT = {
