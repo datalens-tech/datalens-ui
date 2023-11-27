@@ -11,6 +11,7 @@ import {
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
     isDateField,
+    isDimensionField,
     isMeasureNameOrValue,
     isVisualizationWithLayers,
 } from '../../../../../../../shared';
@@ -175,7 +176,14 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
 
             const isLegendEnabled = shared.extraSettings?.legendMode !== 'hide';
 
-            const isShouldShowMeasureLegend = gradientMode;
+            const isCombinedChartColorizedBySomeDimension =
+                shared.visualization.id === 'combined-chart' &&
+                shared.visualization.layers?.some((layer) => {
+                    return layer.commonPlaceholders.colors.some((field) => isDimensionField(field));
+                });
+
+            const isShouldShowMeasureLegend =
+                gradientMode && !isCombinedChartColorizedBySomeDimension;
 
             if (isShouldShowMeasureLegend) {
                 const points: Highcharts.PointOptionsObject[] = (graphs as any[]).reduce(
