@@ -7,6 +7,7 @@ import {
     ActionPanel as DashkitActionPanel,
     ActionPanelItem as DashkitActionPanelItem,
     MenuItems,
+    type PreparedCopyItemOptionsArg,
 } from '@gravity-ui/dashkit';
 import {ChartColumn, CopyPlus, Gear, Heading, Sliders, TextAlignLeft} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
@@ -21,7 +22,15 @@ import debounce from 'lodash/debounce';
 import {ResolveThunks, connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {ControlQA, DashTab, DashTabItem, DashboardAddWidgetQa, Feature} from 'shared';
+import {
+    ControlQA,
+    DashTab,
+    DashTabItem,
+    DashTabItemWidgetTab,
+    DashboardAddWidgetQa,
+    Feature,
+    StringParams,
+} from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
@@ -255,6 +264,35 @@ class Body extends React.PureComponent<BodyProps> {
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
+    getPreparedCopyItemOptions = (
+        itemToCopy: PreparedCopyItemOptionsArg,
+        tabData: DashTab | null,
+    ) => {
+        if (!tabData?.items || !itemToCopy || !itemToCopy.data.tabs?.length) {
+            return itemToCopy;
+        }
+        const copyItemTabsWidgetParams: Record<string, StringParams> = {};
+        itemToCopy.data.tabs.forEach((copiedTabItem: DashTabItemWidgetTab) => {
+            copyItemTabsWidgetParams[copiedTabItem.id] = copiedTabItem.params;
+        });
+
+        tabData.items.forEach((dashTabItem) => {
+            if ('tabs' in dashTabItem.data) {
+                dashTabItem.data.tabs.forEach((item) => {
+                    if (item.id in copyItemTabsWidgetParams) {
+                        copyItemTabsWidgetParams[item.id] = item.params;
+                    }
+                });
+            }
+        });
+        itemToCopy.data.tabs.forEach((copiedTabItem: DashTabItemWidgetTab) => {
+            if (copiedTabItem.id in copyItemTabsWidgetParams) {
+                copiedTabItem.params = copyItemTabsWidgetParams[copiedTabItem.id];
+            }
+        });
+        return itemToCopy;
+    };
+
     render() {
         const content = this.renderBody();
         return (
@@ -329,6 +367,11 @@ class Body extends React.PureComponent<BodyProps> {
                 config={tabDataConfig as DashKitProps['config']}
                 editMode={mode === Mode.Edit}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
+                context={{
+                    getPreparedCopyItemOptions: (itemToCopy: PreparedCopyItemOptionsArg) => {
+                        return this.getPreparedCopyItemOptions(itemToCopy, tabData);
+                    },
+                }}
                 onItemEdit={this.props.openItemDialog}
                 onChange={this.onChange}
                 settings={dashkitSettings}
