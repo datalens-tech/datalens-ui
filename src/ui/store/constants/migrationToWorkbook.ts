@@ -12,6 +12,10 @@ export const GET_RELATIONS_GRAPH_SUCCESS = Symbol(
 );
 export const GET_RELATIONS_GRAPH_FAILED = Symbol('migrationToWorkbook/GET_RELATIONS_GRAPH_FAILED');
 
+export const GET_RELATIONS_LOADING = Symbol('migrationToWorkbook/GET_RELATIONS_LOADING');
+export const GET_RELATIONS_SUCCESS = Symbol('migrationToWorkbook/GET_RELATIONS_SUCCESS');
+export const GET_RELATIONS_FAILED = Symbol('migrationToWorkbook/COPY_ENTRY_GRAPH_FAILED');
+
 export const MIGRATE_ENTRIES_TO_WORKBOOK_LOADING = Symbol(
     'migrationToWorkbook/MIGRATE_ENTRIES_TO_WORKBOOK_LOADING',
 );

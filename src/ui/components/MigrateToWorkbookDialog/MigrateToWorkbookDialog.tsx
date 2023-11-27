@@ -7,25 +7,23 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ConnectorType} from 'shared';
 import {ErrorContent} from 'ui/index';
-import {getRelations} from 'ui/store/actions/copyEntriesToWorkbook';
-import {
-    selectIsLoadingRelations,
-    selectRelations,
-    selectRelationsError,
-} from 'ui/store/selectors/copyEntriesToWorkbook';
 
 import type {AppDispatch} from '../../store';
 import {closeDialog, openDialog} from '../../store/actions/dialog';
 import {
     getEntry,
+    getRelations,
     getRelationsGraph,
     migrateEntriesToWorkbookByCopy,
     migrateEntriesToWorkbookByTransfer,
     resetState,
 } from '../../store/actions/migrationToWorkbook';
 import {
+    selectIsLoadingRelations,
     selectIsLoadingRelationsGraph,
     selectIsLoadingTargetEntry,
+    selectRelations,
+    selectRelationsError,
     selectRelationsGraph,
     selectRelationsGraphError,
     selectTargetEntry,

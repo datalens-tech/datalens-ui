@@ -15,7 +15,7 @@ import {migrateByCopy, migrateByTransfer} from './constants';
 
 import './SelectMigrationToWorkbookDialog.scss';
 
-const b = block('dl-select-migration-to-workbook-dialog ');
+const b = block('dl-select-migration-to-workbook-dialog');
 
 const i18n = I18n.keyset('component.select-migration-to-workbook-dialog');
 

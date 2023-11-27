@@ -11,6 +11,9 @@ import {
     GET_RELATIONS_GRAPH_LOADING,
     GET_RELATIONS_GRAPH_SUCCESS,
     GET_RELATIONS_GRAPH_FAILED,
+    GET_RELATIONS_LOADING,
+    GET_RELATIONS_SUCCESS,
+    GET_RELATIONS_FAILED,
     MIGRATE_ENTRIES_TO_WORKBOOK_LOADING,
     MIGRATE_ENTRIES_TO_WORKBOOK_SUCCESS,
     MIGRATE_ENTRIES_TO_WORKBOOK_FAILED,
@@ -20,6 +23,8 @@ import type {
     GetEntryResponse,
     GetRelationsGraphArgs,
     GetRelationsGraphResponse,
+    GetRelationsArgs,
+    GetRelationsResponse,
     MigrateEntriesToWorkbookArgs,
     MigrateEntriesToWorkbookResponse,
 } from '../../../shared/schema';
@@ -137,6 +142,59 @@ export const getRelationsGraph = (params: GetRelationsGraphArgs) => {
     };
 };
 
+type GetRelationsLoadingAction = {
+    type: typeof GET_RELATIONS_LOADING;
+};
+type GetRelationsSuccessAction = {
+    type: typeof GET_RELATIONS_SUCCESS;
+    data: GetRelationsResponse;
+};
+type GetRelationsFailedAction = {
+    type: typeof GET_RELATIONS_FAILED;
+    error: Error | null;
+};
+type GetRelationsAction =
+    | GetRelationsLoadingAction
+    | GetRelationsSuccessAction
+    | GetRelationsFailedAction;
+
+export const getRelations = (params: GetRelationsArgs) => {
+    return (dispatch: MigrationToWorkbookDispatch) => {
+        dispatch({
+            type: GET_RELATIONS_LOADING,
+        });
+        return getSdk()
+            .us.getRelations(params)
+            .then((data) => {
+                dispatch({
+                    type: GET_RELATIONS_SUCCESS,
+                    data: data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('migrationToWorkbook/getRelations failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: GET_RELATIONS_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
 type MigrateEntriesToWorkbookLoadingAction = {
     type: typeof MIGRATE_ENTRIES_TO_WORKBOOK_LOADING;
 };
@@ -231,6 +289,7 @@ export type MigrationToWorkbookAction =
     | ResetStateAction
     | GetEntryAction
     | GetRelationsGraphAction
+    | GetRelationsAction
     | MigrateEntriesToWorkbookAction;
 
 export type MigrationToWorkbookDispatch = ThunkDispatch<
