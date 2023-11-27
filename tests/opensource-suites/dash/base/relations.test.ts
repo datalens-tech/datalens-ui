@@ -15,7 +15,6 @@ import {Workbook} from 'page-objects/workbook/Workbook';
 
 const SELECTORS = {
     CHART_LEGEND_ITEM: '.chartkit-d3-legend__item',
-    CONTROL_SELECT_KEY: 'chartkit-control-select',
     CONTROL_SELECT_ITEMS_KEY: 'chartkit-control-select-items',
 };
 const PARAMS = {

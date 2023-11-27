@@ -8,12 +8,11 @@ import {WorkbooksUrls} from 'constants/constants';
 import {Workbook} from 'page-objects/workbook/Workbook';
 
 const PARAMS = {
-    DASH_NAME_PREFIX: 'e2e-test-dash',
     CONTROL_TITLE: 'test-control',
     CONTROL_FIELD_NAME: 'test-control-field',
 };
 
-datalensTest.describe('Dashboards are Basic functionality', () => {
+datalensTest.describe('Dashboards - Basic functionality', () => {
     datalensTest('Adding a selector, the save button is active', async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
         const workbookPO = new Workbook(page);
