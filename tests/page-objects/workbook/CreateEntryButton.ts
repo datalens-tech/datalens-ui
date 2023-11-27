@@ -21,7 +21,7 @@ export class CreateEntryButton {
         await this.page.waitForSelector(slct(CreateEntityButton.Popup));
     }
 
-    async performCreateDashboard() {
+    async createDashboard() {
         await this.click();
         await this.waitForPopupOpen();
         await this.page
