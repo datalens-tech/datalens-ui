@@ -12,7 +12,7 @@ import {compose} from 'recompose';
 import {QlConfigParam} from 'shared/types/config/ql';
 import {DatalensGlobalState} from 'ui';
 
-import {QLParamType, resolveRelativeDate} from '../../../../../../../shared';
+import {QLParamInterval, QLParamType, resolveRelativeDate} from '../../../../../../../shared';
 import {LUXON_FORMATS} from '../../../../../../components/RelativeDatesPicker/constants';
 import {getDatesFromValue} from '../../../../../../components/RelativeDatesPicker/utils';
 import {DEFAULT_TIMEZONE} from '../../../../constants';
@@ -201,7 +201,12 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                                                 className={b('overriden-param-note_value-wrapper')}
                                             >
                                                 <span className={b('overriden-param-note_value')}>
-                                                    {JSON.stringify(param.overridenValue)}
+                                                    {this.renderOverridenValue(
+                                                        param.overridenValue,
+                                                        param.type as QLParamType,
+                                                        paramIsInterval,
+                                                        paramIsDate,
+                                                    )}
                                                 </span>
                                                 <span
                                                     onClick={() =>
@@ -233,6 +238,37 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
             </div>
         );
     }
+
+    private renderOverridenValue = (
+        overridenValue: string | string[] | QLParamInterval,
+        type: QLParamType,
+        paramIsInterval: boolean,
+        paramIsDate: boolean,
+    ) => {
+        if (
+            paramIsInterval &&
+            typeof overridenValue === 'object' &&
+            !Array.isArray(overridenValue) &&
+            overridenValue.from &&
+            overridenValue.to
+        ) {
+            return (
+                <React.Fragment>
+                    {resolveAndFormatDate(overridenValue.from, type as QLParamType)}
+                    <span> — </span>
+                    {resolveAndFormatDate(overridenValue.to, type as QLParamType)}
+                </React.Fragment>
+            );
+        } else if (paramIsDate && typeof overridenValue === 'string') {
+            return (
+                <React.Fragment>
+                    {resolveAndFormatDate(overridenValue, type as QLParamType)}
+                </React.Fragment>
+            );
+        } else {
+            return <React.Fragment>{JSON.stringify(overridenValue)}</React.Fragment>;
+        }
+    };
 
     private handleParameterTypeUpdate = (
         type: QLParamType,
