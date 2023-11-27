@@ -30,6 +30,7 @@ import {
     duplicateQuery,
     removeParamInQuery,
     removeQuery,
+    removeQueryAndRedraw,
     setEntry,
     updateChart,
     updateParamInQuery,
@@ -47,7 +48,7 @@ import {
     getValid,
 } from '../../../../../store/reducers/ql';
 import {QLEntry} from '../../../../../store/typings/ql';
-import {getQlAutoExecuteChartValue} from '../../../../../utils/chart-settings';
+import {isQlAutoExecuteChartEnabled} from '../../../../../utils/chart-settings';
 
 import './ScreenPromQL.scss';
 
@@ -378,17 +379,17 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         });
 
         editor.onDidBlurEditorWidget(() => {
-            const qlAutoExecuteChart = getQlAutoExecuteChartValue(
-                this.props.extraSettings?.qlAutoExecuteChart,
-                this.props.chartType,
-            );
-            const isEnabled = qlAutoExecuteChart === 'on';
-
             const isSomeQueryChanged = this.state.oldQueries.some((query, index) => {
                 const updatedQuery = this.props.queries[index];
                 return query.value !== updatedQuery.value;
             });
-            if (isEnabled && isSomeQueryChanged) {
+            if (
+                isQlAutoExecuteChartEnabled(
+                    this.props.extraSettings?.qlAutoExecuteChart,
+                    this.props.chartType,
+                ) &&
+                isSomeQueryChanged
+            ) {
                 this.onRunCommand();
                 this.setState({oldQueries: this.props.queries});
             }
@@ -435,7 +436,16 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
     };
 
     private onClickButtonRemoveQuery = ({queryIndex}: {queryIndex: number}) => {
-        this.props.removeQuery({index: queryIndex});
+        if (
+            isQlAutoExecuteChartEnabled(
+                this.props.extraSettings?.qlAutoExecuteChart,
+                this.props.chartType,
+            )
+        ) {
+            this.props.removeQueryAndRedraw({index: queryIndex});
+        } else {
+            this.props.removeQuery({index: queryIndex});
+        }
     };
 
     private onClickButtonHideQuery = ({
@@ -556,6 +566,7 @@ const mapDispatchToProps = {
     updateParamInQuery,
     removeParamInQuery,
     updateQueryAndRedraw,
+    removeQueryAndRedraw,
 };
 
 export default connect(

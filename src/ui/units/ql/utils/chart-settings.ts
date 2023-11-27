@@ -16,3 +16,10 @@ export const getQlAutoExecuteChartValue = (
     }
     return setting ?? getDefaultQlAutoExecuteChartValue();
 };
+
+export const isQlAutoExecuteChartEnabled = (
+    setting: CommonSharedExtraSettings['qlAutoExecuteChart'],
+    chartType: QLChartType | null | undefined,
+) => {
+    return getQlAutoExecuteChartValue(setting, chartType) === 'on';
+};
