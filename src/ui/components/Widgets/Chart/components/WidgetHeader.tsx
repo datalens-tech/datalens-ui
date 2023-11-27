@@ -2,7 +2,7 @@ import React from 'react';
 
 import {AdaptiveTabs, ShareOptions, SharePopover} from '@gravity-ui/components';
 import {ArrowLeft} from '@gravity-ui/icons';
-import {Icon} from '@gravity-ui/uikit';
+import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import {CurrentTab} from 'components/DashKit/plugins/Widget/types';
@@ -11,6 +11,8 @@ import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {COMPONENT_CLASSNAME, DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
+
+import iconClearActionParams from '../../../../assets/icons/funnel-clear.svg';
 
 import '../ChartWidget.scss';
 
@@ -31,6 +33,8 @@ type HeaderProps = {
     currentTab: CurrentTab;
     onSelectTab: (param: string) => void;
     hideDebugTool?: boolean;
+    showActionParamsFilter?: boolean;
+    onFiltersClear: () => void;
 };
 
 const socialNets = [ShareOptions.Telegram, ShareOptions.Twitter, ShareOptions.VK];
@@ -48,6 +52,8 @@ export const WidgetHeader = (props: HeaderProps) => {
         currentTab,
         onSelectTab,
         hideDebugTool,
+        showActionParamsFilter,
+        onFiltersClear,
     } = props;
 
     const size = isMobileView ? MOBILE_SIZE.TABS : 'm';
@@ -110,6 +116,17 @@ export const WidgetHeader = (props: HeaderProps) => {
                             text={currentTab.title}
                             shareOptions={socialNets}
                         />
+                    </div>
+                )}
+                {showActionParamsFilter && (
+                    <div className={b('filters-controls')}>
+                        <Button onClick={onFiltersClear}>
+                            <Icon
+                                data={iconClearActionParams}
+                                size={16}
+                                className={b('icon-filter-clear')}
+                            />
+                        </Button>
                     </div>
                 )}
             </div>

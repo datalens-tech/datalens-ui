@@ -2,22 +2,16 @@ import {
     ConnectorType,
     Dictionary,
     IChartEditor,
-    QLEntryDataShared,
     QLParamType,
     StringParams,
     isMonitoringOrPrometheusChart,
     resolveIntervalDate,
     resolveOperation,
 } from '../../../../../shared';
+import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 
-import {buildSource, log} from './utils/misc-helpers';
-
-const prepareQuery = (query: string) => {
-    return query
-        .replace(/--[^\n]*\n/g, '')
-        .trim()
-        .replace(/;+$/g, '');
-};
+import {buildSource, iterateThroughVisibleQueries, log, prepareQuery} from './utils/misc-helpers';
 
 const resolveUrlParameter = (urlParamValue: string | string[]) => {
     if (Array.isArray(urlParamValue)) {
@@ -33,7 +27,9 @@ const resolveUrlParameter = (urlParamValue: string | string[]) => {
     }
 };
 
-export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: IChartEditor}) => {
+export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
+    const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
+
     const urlParams = ChartEditor.getParams();
 
     let params: StringParams = {};
@@ -42,8 +38,8 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
     // 1) default
     // 2) override - which in ui ql overwritten the default ones (this is for ui)
     // 3) from the url (this is for dashboards)
-    if (shared.params) {
-        const chartParams: StringParams = shared.params.reduce(
+    if (config.params) {
+        const chartParams: StringParams = config.params.reduce(
             // eslint-disable-next-line complexity
             (accumulated: StringParams, param) => {
                 const paramIsInterval =
@@ -136,11 +132,11 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
 
     const {
         connection: {entryId: connectionEntryId, type: connectionType},
-    } = shared;
+    } = config;
 
     let sources: Dictionary<any> = {};
     try {
-        if (isMonitoringOrPrometheusChart(shared.chartType)) {
+        if (isMonitoringOrPrometheusChart(config.chartType)) {
             if (params.interval) {
                 const operation = ChartEditor.resolveOperation(params.interval[0]);
 
@@ -154,32 +150,35 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
                 }
             }
 
-            shared.queries.forEach(({value: queryValue, params: queryParams = []}, i) => {
-                const localParams = {...params};
+            iterateThroughVisibleQueries(
+                config.queries,
+                ({value: queryValue, params: queryParams = []}, i) => {
+                    const localParams = {...params};
 
-                queryParams.forEach((queryParam) => {
-                    if (typeof queryParam.defaultValue === 'string') {
-                        localParams[queryParam.name] = queryParam.defaultValue;
-                    }
-                });
+                    queryParams.forEach((queryParam) => {
+                        if (typeof queryParam.defaultValue === 'string') {
+                            localParams[queryParam.name] = queryParam.defaultValue;
+                        }
+                    });
 
-                const localParamsDescription = [...shared.params, ...queryParams];
+                    const localParamsDescription = [...config.params, ...queryParams];
 
-                const source = buildSource({
-                    // specify the desired connection id
-                    id: connectionEntryId,
+                    const source = buildSource({
+                        // specify the desired connection id
+                        id: connectionEntryId,
 
-                    connectionType: connectionType || ConnectorType.Clickhouse,
+                        connectionType: connectionType || ConnectorType.Clickhouse,
 
-                    // requesting a query
-                    query: prepareQuery(queryValue),
+                        // requesting a query
+                        query: prepareQuery(queryValue),
 
-                    params: localParams,
-                    paramsDescription: localParamsDescription,
-                });
+                        params: localParams,
+                        paramsDescription: localParamsDescription,
+                    });
 
-                sources[`ql_${i}`] = source;
-            });
+                    sources[`ql_${i}`] = source;
+                },
+            );
         } else {
             sources = {
                 sql: buildSource({
@@ -189,10 +188,10 @@ export default ({shared, ChartEditor}: {shared: QLEntryDataShared; ChartEditor: 
                     connectionType: connectionType || ConnectorType.Clickhouse,
 
                     // requesting a query
-                    query: prepareQuery(shared.queryValue),
+                    query: prepareQuery(config.queryValue),
 
                     params,
-                    paramsDescription: shared.params,
+                    paramsDescription: config.params,
                 }),
             };
         }

@@ -139,7 +139,8 @@
     }
 
     &__sources-error {
-        padding: 0 20px;
+        border-bottom: 1px solid var(--ds-color-divider);
+        padding: 16px 20px 6px;
     }
 
     &__sources-error-row {
@@ -148,6 +149,16 @@
 
     &__sources-error-btn {
         margin-right: 10px;
+    }
+
+    &__sources-error-container {
+        display: flex;
+        align-content: flex-start;
+    }
+
+    &__sources-error-icon {
+        color: var(--g-color-text-danger);
+        margin-right: 8px;
     }
 
     &__source-item {

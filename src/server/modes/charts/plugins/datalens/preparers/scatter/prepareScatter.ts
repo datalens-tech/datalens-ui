@@ -9,14 +9,15 @@ import {
     ServerField,
     getFormatOptions,
     isDateField,
+    isDimensionField,
     isEnabledServerFeature,
 } from '../../../../../../../shared';
 import {registry} from '../../../../../../registry';
 import {ChartColorsConfig} from '../../js/helpers/colors';
 import {
     ExtendedSeriesScatterOptions,
-    mapAndColorizeChartByMeasure,
-    mapAndColorizePointsByDimension,
+    mapAndColorizePointsByGradient,
+    mapAndColorizePointsByPalette,
 } from '../../utils/color-helpers';
 import {getMountedColor} from '../../utils/constants';
 import {getExtremeValues} from '../../utils/geo-helpers';
@@ -26,6 +27,7 @@ import {
     formatDate,
     getPointRadius,
     getTimezoneOffsettedTime,
+    isGradientMode,
     isNumericalDataType,
 } from '../../utils/misc-helpers';
 import {PrepareFunctionArgs} from '../types';
@@ -68,8 +70,10 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         idToDataType,
         shapes,
         shapesConfig,
+        ChartEditor,
     } = options;
-
+    const widgetConfig = ChartEditor.getWidgetConfig();
+    const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const {data, order} = resultData;
 
     const x = placeholders[0].items[0];
@@ -84,7 +88,15 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
     const z = placeholders[2].items[0];
     const size = placeholders[3]?.items[0];
+
     const color = colors && colors[0];
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
+
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
+
     const shape = shapes?.[0];
     const shapesConfigured = Object.keys(shapesConfig?.mountedShapes || {}).length > 0;
 
@@ -132,6 +144,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         const xi = findIndexInOrder(order, x, xTitle);
         const xValueRaw: string | null | undefined = values[xi];
         let xValue: string | number | Date;
+        let zValueRaw: string | null | undefined;
         const point: ScatterPoint = {};
 
         if (xValueRaw === null || xValueRaw === undefined) {
@@ -234,17 +247,21 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         if (z) {
             const zTitle = idToTitle[z.guid];
             const zi = findIndexInOrder(order, z, zTitle);
-            let zValue = values[zi];
+            zValueRaw = values[zi];
+            let formattedZValue = zValueRaw;
 
             if (isNumericalDataType(z.data_type) && z.formatting) {
-                zValue = chartKitFormatNumberWrapper(Number(zValue), {
+                formattedZValue = chartKitFormatNumberWrapper(Number(formattedZValue), {
                     lang: 'ru',
                     ...z.formatting,
                 });
             }
 
-            const name = zValue && shouldEscapeUserValue ? escape(zValue as string) : zValue;
-            point.name = name || '';
+            if (formattedZValue && shouldEscapeUserValue) {
+                formattedZValue = escape(formattedZValue as string);
+            }
+
+            point.name = formattedZValue || '';
         } else {
             delete point.name;
             keys.delete('x');
@@ -279,7 +296,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             const i = findIndexInOrder(order, color, cTitle);
             const colorValue = shouldEscapeUserValue ? escape(values[i] as string) : values[i];
 
-            if (color.type === 'MEASURE') {
+            if (gradientMode) {
                 const numberColorValue = Number(colorValue);
 
                 if (numberColorValue < minColorValue) {
@@ -321,19 +338,42 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             point.sLabel = shapeValue;
         }
 
+        if (isActionParamsEnable) {
+            const actionParams: Record<string, any> = {};
+
+            if (isDimensionField(x)) {
+                actionParams[x.guid] = xValueRaw;
+            }
+
+            if (isDimensionField(y)) {
+                actionParams[y.guid] = yValueRaw;
+            }
+
+            if (isDimensionField(z)) {
+                actionParams[z.guid] = zValueRaw;
+            }
+
+            point.custom = {
+                ...point.custom,
+                actionParams,
+            };
+        }
+
         points.push(point);
     });
 
     let graphs: ExtendedSeriesScatterOptions[] = [{data: points}] as ExtendedSeriesScatterOptions[];
 
     if (color) {
-        if (color.type === 'MEASURE') {
-            mapAndColorizeChartByMeasure(points as Highcharts.PointOptionsObject[], colorsConfig);
+        if (gradientMode) {
+            mapAndColorizePointsByGradient(points as Highcharts.PointOptionsObject[], colorsConfig);
         } else {
-            graphs = mapAndColorizePointsByDimension(points, colorsConfig);
+            graphs = mapAndColorizePointsByPalette(points, colorsConfig);
         }
 
-        graphs[0].title = color.fakeTitle || idToTitle[color.guid];
+        if (graphs.length) {
+            graphs[0].title = color.fakeTitle || idToTitle[color.guid];
+        }
     } else {
         const value = idToTitle[y.guid];
         const colorFromConfig = getMountedColor(colorsConfig, value) || colorsConfig.colors[0];
@@ -360,6 +400,23 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
     graphs.forEach((graph) => {
         graph.keys = Array.from(keys);
+
+        if (isActionParamsEnable) {
+            const actionParams: Record<string, any> = {};
+
+            if (isDimensionField(color)) {
+                actionParams[color.guid] = graph.data?.[0]?.colorValue;
+            }
+
+            if (isDimensionField(shape)) {
+                actionParams[shape.guid] = graph.data?.[0]?.shapeValue;
+            }
+
+            graph.custom = {
+                ...graph.custom,
+                actionParams,
+            };
+        }
     });
 
     return {

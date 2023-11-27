@@ -38,7 +38,7 @@ import {ResolveWidgetControlDataRefArgs} from 'ui/components/Widgets/Chart/types
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
-import {isMobileView} from 'ui/utils/mobile';
+import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
 import {ChartKitCustomError} from '../../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
@@ -89,6 +89,7 @@ type ErrorData = {
         error?: SelectorError;
         title?: string;
         message?: string;
+        status?: number;
     };
     requestId?: string;
 };
@@ -626,7 +627,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             if (error.response && error.response.data) {
                 errorData = {
-                    data: {error: error.response.data?.error},
+                    data: {error: error.response.data?.error, status: error.response.data?.status},
                     requestId: error.response.headers['x-request-id'],
                 };
             } else {
@@ -836,6 +837,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         if (typeof data?.message === 'string') {
             return data.message;
         }
+        if (data?.status && data.status === 504) {
+            return i18nError('label_error-timeout');
+        }
+
         return i18nError('label_error');
     };
 
@@ -875,23 +880,28 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const data = errorData?.data;
         const errorText = this.getErrorText(data || {});
         const errorTitle = data?.title;
+
+        const buttonsSize = isMobileView ? MOBILE_SIZE.BUTTON : 's';
+        const buttonsWidth = isMobileView ? 'max' : 'auto';
+
         return (
-            <div className={b('error', {inside: true})}>
+            <div className={b('error', {inside: true, mobile: isMobileView})}>
                 <span className={b('error-text')} title={errorText}>
                     {errorTitle || errorText}
                 </span>
                 <div className={b('buttons')}>
                     <Button
-                        size="s"
+                        size={buttonsSize}
                         onClick={() => {
                             this.showItemsLoader();
                             this.init();
                         }}
+                        width={buttonsWidth}
                     >
                         {i18n('button_retry')}
                     </Button>
                     <Button
-                        size="s"
+                        size={buttonsSize}
                         view="flat"
                         onClick={() =>
                             this.props.openDialogErrorWithTabs({
@@ -899,6 +909,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                                 title: errorTitle,
                             })
                         }
+                        width={buttonsWidth}
                     >
                         {i18n('button_details')}
                     </Button>

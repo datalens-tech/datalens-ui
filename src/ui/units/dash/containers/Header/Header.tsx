@@ -12,8 +12,13 @@ import {DashActionPanelMobile} from 'units/dash/components/DashActionPanel/DashA
 import DashActionPanel from '../../components/DashActionPanel/DashActionPanel';
 import {openDialog, toggleFullscreenMode} from '../../store/actions/dash';
 import {toggleTableOfContent} from '../../store/actions/dashTyped';
-import {canEdit, hasTableOfContent, isDraft, isEditMode} from '../../store/selectors/dash';
-import {selectSettings} from '../../store/selectors/dashTypedSelectors';
+import {
+    canEdit,
+    hasTableOfContent,
+    isDraft,
+    isEditMode,
+    selectSettings,
+} from '../../store/selectors/dashTypedSelectors';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;

@@ -334,6 +334,7 @@ export const Row = ({
                     <Button
                         view="outlined"
                         size="s"
+                        title={i18n('label_add-alias')}
                         className={b('button-alias')}
                         onClick={handleAliasCLick}
                     >

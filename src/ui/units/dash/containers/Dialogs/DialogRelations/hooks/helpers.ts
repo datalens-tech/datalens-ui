@@ -20,10 +20,9 @@ import {
     DASH_FILTERING_CHARTS_WIDGET_TYPES,
     DASH_WIDGET_TYPES,
     FilteringWidgetType,
-    WidgetType,
 } from 'ui/units/dash/modules/constants';
 
-import {FiltersTypes} from '../components/Filters/Filters';
+import {DEFAULT_FILTERS, FiltersTypes} from '../components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../constants';
 import {
     AliasesData,
@@ -64,7 +63,7 @@ export const getPreparedMetaData = (
         configItems[item.id] = item.namespace;
     });
 
-    let metaDataWithNamespaces: Array<Omit<DashkitMetaDataItem, 'relations'>> = data
+    const metaDataWithNamespaces: Array<Omit<DashkitMetaDataItem, 'relations'>> = data
         .reduce(
             (list: Array<Omit<DashkitMetaDataItem, 'relations'>>, item) => list.concat(item),
             [],
@@ -102,10 +101,6 @@ export const getPreparedMetaData = (
                 };
             });
         });
-
-    metaDataWithNamespaces = metaDataWithNamespaces.filter(
-        (item) => (item.type as WidgetType) !== DASH_WIDGET_TYPES.MARKDOWN,
-    );
 
     const entriesList = [
         ...new Set(metaDataWithNamespaces.map((item) => item.entryId).filter(Boolean)),
@@ -679,7 +674,9 @@ export const getMappedFilters = (items: Array<FiltersTypes>) => {
         unknown: false,
     };
 
-    items.forEach((item) => {
+    const preparedItems = items.length > 0 ? items : DEFAULT_FILTERS;
+
+    preparedItems.forEach((item) => {
         switch (item) {
             case 'none':
                 mapped.ignore = true;

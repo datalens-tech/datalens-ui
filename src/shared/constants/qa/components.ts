@@ -5,6 +5,10 @@ export enum ActionPanelQA {
     EntryMenuTopRevisions = 'entry-menu-top-revisions',
 }
 
+export enum SaveChartControlsQa {
+    SaveButton = 'action-panel-save-btn',
+}
+
 export enum DialogParameterQA {
     Apply = 'dialog_parameter-apply-btn',
     Cancel = 'dialog_parameter-cancel-btn',
@@ -114,4 +118,21 @@ export const enum NavigationMinimalPlaceSelectQa {
 export const enum RelativeDatepickerQa {
     ScaleSelectStart = 'scale-select-start',
     ScaleSelectEnd = 'scale-select-end',
+}
+
+export const enum WorkbookNavigationMinimalQa {
+    Popup = 'workbook-navigation-minimal-popup',
+    Input = 'workbook-navigation-minimal-input',
+    List = 'workbook-navigation-minimal-list',
+}
+
+export const enum DialogCreateWorkbookEntryQa {
+    Root = 'dialog-create-workbook-entry-root',
+    Input = 'dialog-create-workbook-entry-input',
+    ApplyButton = 'dialog-create-workbook-entry-apply-button',
+}
+
+export const enum CreateEntityButton {
+    Button = 'create-entry-button',
+    Popup = 'create-entry-button-popup',
 }

@@ -1,6 +1,7 @@
 import Hashids from 'hashids';
 import moment from 'moment';
-import {QLChartType, Shared} from 'shared';
+import {QLChartType, QlConfig, Shared} from 'shared';
+import {QlConfigVersions} from 'shared/types/ql/versions';
 
 import {qlTypes} from '../../configs/chart-types';
 import {DEFAULT_TAB_ID, DEFAULT_TYPE, PANE_VIEWS} from '../../constants';
@@ -92,6 +93,21 @@ export class Helper {
     }
 
     static getEmptyTemplate() {
+        const emptyQlTemplate: QlConfig = {
+            params: [],
+            extraSettings: {},
+            type: 'ql',
+            chartType: '' as QLChartType,
+            visualization: getDefaultQlVisualization() as Shared['visualization'],
+            queryValue: '',
+            queries: [],
+            connection: {
+                entryId: '',
+                type: '',
+            },
+            version: QlConfigVersions.V2,
+        };
+
         return {
             type: DEFAULT_TYPE,
             scope: 'widget',
@@ -112,19 +128,7 @@ export class Helper {
             updatedBy: '',
             unversionedData: null,
             data: {
-                shared: {
-                    params: [],
-                    extraSettings: {},
-                    type: 'ql',
-                    chartType: '' as QLChartType,
-                    visualization: getDefaultQlVisualization() as Shared['visualization'],
-                    queryValue: '',
-                    queries: [],
-                    connection: {
-                        entryId: '',
-                        type: '',
-                    },
-                },
+                shared: emptyQlTemplate,
             },
             permissions: {
                 read: true,

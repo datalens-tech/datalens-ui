@@ -1,4 +1,7 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .debug-info {
+    $class: &;
     margin-bottom: 15px;
     display: flex;
     align-items: center;
@@ -15,5 +18,27 @@
     &__caption {
         flex: 0 0 80px;
         font-weight: bold;
+    }
+
+    &_mobile {
+        height: unset;
+
+        #{$class}__info-values {
+            @include overflow-ellipsis;
+            margin-right: 12px;
+            flex: 1;
+        }
+
+        #{$class}__info-line {
+            display: flex;
+
+            &:not(:last-child) {
+                margin-bottom: 4px;
+            }
+        }
+
+        #{$class}__caption {
+            flex-shrink: 1;
+        }
     }
 }

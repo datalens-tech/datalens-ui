@@ -202,25 +202,6 @@ class NavigationBase extends React.Component {
         });
         this.update(response, EntryDialogName.Delete, entry);
     }
-    async createDashboard(query) {
-        if (Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry)) {
-            this.props.history.push(`/dashboards/new${query}`);
-            this.closeNavigation();
-            return;
-        }
-        const response = await this.refDialogues.current.open({
-            dialog: EntryDialogName.CreateDashboard,
-            dialogProps: {
-                initDestination: this.getOnCreateDestination(),
-            },
-        });
-        if (response.status === EntryDialogResolveStatus.Success) {
-            this.props.history.push(`/${response.data.entryId}`);
-            this.closeNavigation();
-            return;
-        }
-        this.update(response, EntryDialogName.CreateDashboard);
-    }
     async accessEntry(entry) {
         await this.refDialogues.current.open({
             dialog: EntryDialogName.Access,
@@ -276,7 +257,8 @@ class NavigationBase extends React.Component {
                 break;
             }
             case CreateMenuValue.Dashboard: {
-                this.createDashboard(query);
+                history.push(`/dashboards/new${query}`);
+                this.closeNavigation();
                 break;
             }
             case CreateMenuValue.Connection: {

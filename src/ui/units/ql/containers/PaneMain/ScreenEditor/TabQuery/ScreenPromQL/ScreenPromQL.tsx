@@ -10,6 +10,7 @@ import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
+import type {QLConfigQuery, QlConfig, QlConfigParam} from 'shared/types/config/ql';
 import {
     DatalensGlobalState,
     EntryDialogName,
@@ -20,7 +21,7 @@ import {
 } from 'ui';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 
-import {QLEntryDataShared, QLParam, QLQuery} from '../../../../../../../../shared';
+import {EditableText} from '../../../../../../../components/EditableText/EditableText';
 import {prepareChartDataBeforeSave} from '../../../../../modules/helpers';
 import {
     addParamInQuery,
@@ -33,6 +34,7 @@ import {
     updateChart,
     updateParamInQuery,
     updateQuery,
+    updateQueryAndRedraw,
 } from '../../../../../store/actions/ql';
 import {
     getDefaultPath,
@@ -120,10 +122,19 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                     className={b('query-row-collapse')}
                                     title={
                                         <div className={b('query-row-header')}>
-                                            <span className={b('query-row-title')}>{`${i18n(
-                                                'sql',
-                                                'label_query',
-                                            )} ${queryIndex + 1}`}</span>
+                                            <EditableText
+                                                text={query.queryName}
+                                                textClassName={b('query-row-title')}
+                                                onInputApply={(queryName) => {
+                                                    if (queryName === query.queryName) {
+                                                        return;
+                                                    }
+                                                    this.props.updateQueryAndRedraw({
+                                                        query: {...query, queryName},
+                                                        index: queryIndex,
+                                                    });
+                                                }}
+                                            />
                                         </div>
                                     }
                                     toolbar={
@@ -222,7 +233,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                     {activeTab === 'paramsTab' && (
                                         <React.Fragment>
                                             {query.params.map(
-                                                (param: QLParam, paramIndex: number) => {
+                                                (param: QlConfigParam, paramIndex: number) => {
                                                     if (typeof param.defaultValue !== 'string') {
                                                         return null;
                                                     }
@@ -367,7 +378,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         });
     };
 
-    private onEditQuery = ({query, queryIndex}: {query: QLQuery; queryIndex: number}) => {
+    private onEditQuery = ({query, queryIndex}: {query: QLConfigQuery; queryIndex: number}) => {
         this.props.updateQuery({query, index: queryIndex});
     };
 
@@ -380,7 +391,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         queryIndex,
         paramIndex,
     }: {
-        param: QLParam;
+        param: QlConfigParam;
         queryIndex: number;
         paramIndex: number;
     }) => {
@@ -409,17 +420,20 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         query,
         queryIndex,
     }: {
-        query: QLQuery;
+        query: QLConfigQuery;
         queryIndex: number;
     }) => {
-        this.props.updateQuery({query: {...query, hidden: !query.hidden}, index: queryIndex});
+        this.props.updateQueryAndRedraw({
+            query: {...query, hidden: !query.hidden},
+            index: queryIndex,
+        });
     };
 
     private onClickButtonDuplicateQuery = ({queryIndex}: {queryIndex: number}) => {
         this.props.duplicateQuery({index: queryIndex});
     };
 
-    private openSaveAsWidgetDialog = async (preparedChartData: QLEntryDataShared) => {
+    private openSaveAsWidgetDialog = async (preparedChartData: QlConfig) => {
         const {entry, defaultPath, location, history, entryDialoguesRef} = this.props;
 
         if (!entryDialoguesRef) {
@@ -517,6 +531,7 @@ const mapDispatchToProps = {
     addParamInQuery,
     updateParamInQuery,
     removeParamInQuery,
+    updateQueryAndRedraw,
 };
 
 export default connect(

@@ -89,7 +89,8 @@ export enum Feature {
     UseChartsEngineResponseConfig = 'UseChartsEngineResponseConfig',
     UseChartsEngineLogin = 'UseChartsEngineLogin',
     AddDemoWorkbook = 'AddDemoWorkbook',
-    SaveDashWithFakeEntry = 'SaveDashWithFakeEntry',
+    CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
+    WizardChartChartFilteringAvailable = 'WizardChartChartFilteringAvailable',
 }
 
 export type FeatureConfig = Record<string, boolean>;

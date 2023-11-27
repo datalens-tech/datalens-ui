@@ -22,8 +22,8 @@ type AliasesDetailProps = {
 export const AliasesDetail = ({fieldName, items}: AliasesDetailProps) => {
     const {showDebugInfo, invalidAliases} = React.useContext(AliasesContext);
 
-    let content: React.ReactNode = items.map(
-        (item: DashkitMetaDataItem & {intersectionParams: string[]}, index: number) => {
+    let content: React.ReactNode = items
+        .map((item: DashkitMetaDataItem & {intersectionParams: string[]}, index: number) => {
             const icon = getDialogRowIcon(item, b('icon-widget'));
             const label = item?.label && item?.label !== item.title ? item?.label : '';
             const debugInfo = showDebugInfo ? (
@@ -31,17 +31,21 @@ export const AliasesDetail = ({fieldName, items}: AliasesDetailProps) => {
             ) : null;
             const title = (showDebugInfo ? `(${item.widgetId}) ` : '') + label + item.title;
             const rowTitle = [label, item.title].filter(Boolean).join(` — `);
-            return (
-                <div className={b('row')} key={`linked-widgets-row-${item.widgetId}-${index}`}>
-                    {icon}
-                    <span className={b('text')} title={title}>
-                        {debugInfo}
-                        {rowTitle}
-                    </span>
-                </div>
-            );
-        },
-    );
+            return {
+                node: (
+                    <div className={b('row')} key={`linked-widgets-row-${item.widgetId}-${index}`}>
+                        {icon}
+                        <span className={b('text')} title={title}>
+                            {debugInfo}
+                            {rowTitle}
+                        </span>
+                    </div>
+                ),
+                text: rowTitle,
+            } as {node: React.ReactNode; text: string};
+        })
+        .sort((prevItem, item) => prevItem.text.localeCompare(item.text))
+        .map((item) => item.node);
 
     if (invalidAliases?.includes(fieldName)) {
         content = <div className={b('error')}>{i18n('label_invalid-alias')}</div>;

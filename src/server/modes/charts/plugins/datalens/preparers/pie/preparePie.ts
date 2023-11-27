@@ -4,7 +4,7 @@ import {
     ExtendedSeriesLineOptions,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
-    isNumberField,
+    isDimensionField,
 } from '../../../../../../../shared';
 import {ChartColorsConfig} from '../../js/helpers/colors';
 import {ColorValue, getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
@@ -13,6 +13,7 @@ import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
     formatDate,
+    isGradientMode,
     isNumericalDataType,
 } from '../../utils/misc-helpers';
 import {PiePoint, PrepareFunctionArgs} from '../types';
@@ -25,7 +26,7 @@ export type PieConfig = {
     showInLegend?: boolean;
 };
 
-function mapAndColorizePieByMeasure(
+function mapAndColorizePieByGradient(
     points: (PiePoint & ExtendedSeriesLineOptions)[],
     colorsConfig: ChartColorsConfig,
 ) {
@@ -49,7 +50,7 @@ function mapAndColorizePieByMeasure(
     return points;
 }
 
-function mapAndColorizePieByDimension({
+function mapAndColorizePieByPalette({
     graphs,
     colorsConfig,
     isColorsItemExists,
@@ -105,20 +106,30 @@ export function preparePie({
     colorsConfig,
     idToTitle,
     idToDataType,
+    ChartEditor,
+    disableDefaultSorting = false,
 }: PrepareFunctionArgs) {
     const {data, order, totals} = resultData;
+    const widgetConfig = ChartEditor.getWidgetConfig();
     const groupedData: Record<string, number> = {};
     const labelsData: Record<string, string | null> = {};
 
-    const color = placeholders[0].items[0];
+    const colorField = placeholders[0].items[0];
 
-    if (!color) {
+    if (!colorField) {
         return {graphs: []};
     }
 
-    const colorDataType = color && color.data_type;
-    const colorActualTitle = idToTitle[color.guid];
-    const colorIndex = findIndexInOrder(order, color, colorActualTitle);
+    const colorFieldDataType = colorField && colorField.data_type;
+    const colorIsNumber = Boolean(colorFieldDataType && isNumericalDataType(colorFieldDataType));
+
+    const colorActualTitle = idToTitle[colorField.guid];
+    const colorIndex = findIndexInOrder(order, colorField, colorActualTitle);
+
+    const gradientMode =
+        colorField &&
+        colorFieldDataType &&
+        isGradientMode({colorField, colorFieldDataType, colorsConfig});
 
     const labelsLength = labels && labels.length;
     const label = labels && labels[0];
@@ -229,17 +240,21 @@ export function preparePie({
             let colorKey: number | string = key;
 
             if (key !== 'null') {
-                if (isDateField(color)) {
-                    name = formatDate({valueType: colorDataType, value: key, format: color.format});
+                if (isDateField(colorField)) {
+                    name = formatDate({
+                        valueType: colorFieldDataType,
+                        value: key,
+                        format: colorField.format,
+                    });
                     colorKey = key;
-                } else if (isNumericalDataType(colorDataType)) {
+                } else if (isNumericalDataType(colorFieldDataType)) {
                     name = key;
                     colorKey = Number(key);
 
-                    if (color.formatting) {
+                    if (colorField.formatting) {
                         formattedName = chartKitFormatNumberWrapper(Number(key), {
                             lang: 'ru',
-                            ...color.formatting,
+                            ...colorField.formatting,
                         });
                     }
                 } else {
@@ -252,9 +267,21 @@ export function preparePie({
                 formattedName,
                 drillDownFilterValue: key,
                 y: groupedData[key],
-                colorGuid: color.guid,
-                colorValue: colorKey || name || color.title,
+                colorGuid: colorField.guid,
+                colorValue: colorKey || name || colorField.title,
             };
+
+            if (widgetConfig?.actionParams?.enable) {
+                const actionParams: Record<string, any> = {};
+
+                if (isDimensionField(colorField)) {
+                    actionParams[colorField.guid] = key;
+                }
+
+                point.custom = {
+                    actionParams,
+                };
+            }
 
             if (labelsLength) {
                 if (isNumericalDataType(lDataType!) || label.title === 'Measure Values') {
@@ -287,21 +314,21 @@ export function preparePie({
         // We remove negative values, since pie does not know how to display them
         .filter((point) => point.y > 0) as (PiePoint & ExtendedSeriesLineOptions)[];
 
-    if (!sort || !sort.length) {
+    if (!disableDefaultSorting && (!sort || !sort.length)) {
         pie.data!.sort((a, b) => {
             return a.y > b.y ? -1 : a.y < b.y ? 1 : 0;
         });
     }
 
-    const isColoringByMeasure = color.type === 'MEASURE' && isNumberField(color);
+    const isColoringByGradient = gradientMode && colorIsNumber;
 
-    if (isColoringByMeasure) {
-        pie.data = mapAndColorizePieByMeasure(pie.data, colorsConfig);
+    if (isColoringByGradient) {
+        pie.data = mapAndColorizePieByGradient(pie.data, colorsConfig);
     } else {
-        pie.data = mapAndColorizePieByDimension({
+        pie.data = mapAndColorizePieByPalette({
             graphs: pie.data,
             colorsConfig,
-            isColorsItemExists: Boolean(color),
+            isColorsItemExists: Boolean(colorField),
         });
     }
 

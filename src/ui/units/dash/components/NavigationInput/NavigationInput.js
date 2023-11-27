@@ -67,17 +67,15 @@ class NavigationInput extends React.PureComponent {
         return (
             <React.Fragment>
                 <div className={b('row', navigationMixin)}>
-                    <div className={b('navigation')}>
-                        <DropdownNavigation
-                            size="m"
-                            entryId={entryId}
-                            scope={ENTRY_SCOPE.WIDGET}
-                            onClick={this.onChange}
-                            onUpdate={this.onEntryUpdate}
-                            includeClickableType={includeClickableType}
-                            excludeClickableType={excludeClickableType}
-                        />
-                    </div>
+                    <DropdownNavigation
+                        size="m"
+                        entryId={entryId}
+                        scope={ENTRY_SCOPE.WIDGET}
+                        onClick={this.onChange}
+                        onUpdate={this.onEntryUpdate}
+                        includeClickableType={includeClickableType}
+                        excludeClickableType={excludeClickableType}
+                    />
                     {showOpenButton && (
                         <Button
                             className={b('button')}

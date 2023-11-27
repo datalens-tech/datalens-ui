@@ -35,6 +35,8 @@ import {
     DashKitOverlayMenuQa,
 } from '../../../src/shared/constants/qa/dash';
 import {CommonSelectors} from '../constants/common-selectors';
+import {DashboardDialogSettingsQa} from '../../../src/shared';
+import DashboardSettings from './DashboardSettings';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -132,12 +134,22 @@ class DashboardPage extends BasePage {
         // click the button to create a new dashboard
         await this.page.click(slct('create-entry-button'));
 
+        // TODO: CHARTS-8652, refine tests for new behavior
+        // temp step of changing the settings, because it is impossible to save the untouched dash
+        await this.enableDashboardTOC();
+        await this.saveChanges();
+
         // waiting for the dialog to open, specify the name, save
         // waiting for the transition to the dashboard page
         await Promise.all([
             this.page.waitForNavigation(),
             entryDialogFillAndSave(this.page, dashName),
         ]);
+
+        // check that the dashboard has loaded by its name
+        await this.page.waitForSelector(
+            `${slct(COMMON_SELECTORS.DASH_ENTRY_NAME)} >> text=${dashName}`,
+        );
     }
 
     async copyDashboard(dashName: string) {
@@ -592,6 +604,14 @@ class DashboardPage extends BasePage {
         throw new Error('Tabs selector not found');
     }
 
+    async enableDashboardTOC() {
+        const dashboardSettings = new DashboardSettings(this.page);
+
+        await dashboardSettings.open();
+        await this.page.click(slct(DashboardDialogSettingsQa.TOCSwitch));
+        await dashboardSettings.save();
+    }
+
     async waitForLoaderDisappear() {
         try {
             const dashLoader = await this.page.waitForSelector(
@@ -645,6 +665,14 @@ class DashboardPage extends BasePage {
 
     async isDescriptionEditMode() {
         await this.description.isEditMode();
+    }
+
+    async clickSelectWithTitle(title: string) {
+        await this.page
+            .locator(slct(ControlQA.chartkitControl))
+            .filter({hasText: title})
+            .filter({has: this.page.locator(slct(ControlQA.controlSelect))})
+            .click();
     }
 }
 

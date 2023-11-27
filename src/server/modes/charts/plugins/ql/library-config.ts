@@ -1,20 +1,24 @@
 import {
     ChartsConfigVersion,
-    QLEntryDataShared,
+    IChartEditor,
     ServerVisualization,
     isYAGRVisualization,
 } from '../../../../../shared';
+import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 import buildHighchartsConfigWizard from '../datalens/highcharts';
 
 import buildHighchartsConfig from './highcharts';
 import {log} from './utils/misc-helpers';
 import buildYagrConfig from './yagr';
 
-export default ({shared}: {shared: QLEntryDataShared}) => {
-    const visualization = shared.visualization as ServerVisualization;
+export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
+    const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
 
-    if (isYAGRVisualization(shared.chartType, visualization.id)) {
-        const result = buildYagrConfig({shared});
+    const visualization = config.visualization as ServerVisualization;
+
+    if (isYAGRVisualization(config.chartType, visualization.id)) {
+        const result = buildYagrConfig({shared, ChartEditor});
 
         log('LIBRARY CONFIG (YAGR):');
         log(result);
@@ -24,7 +28,7 @@ export default ({shared}: {shared: QLEntryDataShared}) => {
         const result = buildHighchartsConfigWizard({
             // @ts-ignore we are passing empty arrays just as a stub
             shared: {
-                ...shared,
+                ...config,
                 filters: [],
                 hierarchies: [],
                 links: [],
@@ -40,7 +44,7 @@ export default ({shared}: {shared: QLEntryDataShared}) => {
 
         return result;
     } else {
-        const result = buildHighchartsConfig({shared});
+        const result = buildHighchartsConfig({shared: config, ChartEditor});
 
         log('LIBRARY CONFIG (HC):');
         log(result);

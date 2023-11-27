@@ -12,7 +12,7 @@ import {
     parseNumberValue,
     renderValue,
 } from '../../../ql/utils/misc-helpers';
-import {mapAndColorizeGraphsByDimension} from '../../utils/color-helpers';
+import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
 import {findIndexInOrder} from '../../utils/misc-helpers';
 import {PrepareFunctionArgs} from '../types';
 
@@ -33,6 +33,8 @@ function prepareLineTime(options: PrepareFunctionArgs) {
     const xFieldDataType = xField.data_type;
     const xFieldIndex = findIndexInOrder(order, xField, idToTitle[xField.guid] || xField.title);
     const xFieldIsDate = isDateField(xField);
+
+    const yPlaceholderSettings = placeholders[1]?.settings || {};
 
     const yFields = placeholders[1].items;
     const yFieldIndexes = yFields.map((yField) =>
@@ -125,7 +127,11 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                 if (typeof dataCell === 'object' && dataCell !== null) {
                     colorValues.forEach((colorValue: QLValue, i) => {
                         if (typeof dataCell[String(colorValue)] === 'undefined') {
-                            graphs[i].data.push(null);
+                            if (yPlaceholderSettings.nulls === 'as-0') {
+                                graphs[i].data.push(0);
+                            } else {
+                                graphs[i].data.push(null);
+                            }
                         } else {
                             graphs[i].data.push(dataCell[String(colorValue)]);
                         }
@@ -197,7 +203,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
 
     if (useColorizingWithPalettes) {
         // Use usual colorizing with datalens palettes
-        mapAndColorizeGraphsByDimension({
+        mapAndColorizeGraphsByPalette({
             graphs: result.graphs as unknown as ExtendedSeriesLineOptions[],
             colorsConfig,
             isColorsItemExists: Boolean(colors),
@@ -216,7 +222,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
 
         result.graphs.forEach((graph, i) => {
             graph.color = colorData[i];
-            graph.spanGaps = true;
+            graph.spanGaps = yPlaceholderSettings.nulls === 'connect';
         });
     }
 

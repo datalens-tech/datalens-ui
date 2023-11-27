@@ -1,20 +1,24 @@
-import {QLEntryDataShared} from '../../../../../shared';
+import type {IChartEditor} from '../../../../../shared';
+import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 
 // eslint-disable-next-line complexity
-export default ({shared}: {shared: QLEntryDataShared}) => {
+export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
+    const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
+
     const xAxis: Highcharts.Options['xAxis'] = {
         endOnTick: false,
     };
     const yAxis: Highcharts.Options['yAxis'] = {};
 
     const chart: Highcharts.ChartOptions = {
-        type: shared.visualization.highchartsId || shared.visualization.id,
+        type: config.visualization.highchartsId || config.visualization.id,
         zoomType: 'x',
     };
 
     const plotOptions: Highcharts.PlotOptions = {};
 
-    const visualizationId = shared.visualization.id;
+    const visualizationId = config.visualization.id;
 
     // We apply settings that are unique for each type of visualization
     switch (visualizationId) {

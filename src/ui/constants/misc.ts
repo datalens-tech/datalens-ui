@@ -14,6 +14,7 @@ const ITEM_TYPES = {
 
 const CONFLICT_TOOLTIPS = {
     'not-existing': 'label_field-not-exist',
+    'not-existing-ql': 'label_field-not-exist-in-query',
     'wrong-type': 'label_field-has-wrong-type',
     invalid: 'label_field-invalid',
     'link-failed': 'label_link-failed',

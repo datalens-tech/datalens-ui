@@ -1,3 +1,4 @@
+import LogoMarkdownIcon from '@gravity-ui/icons/svgs/logo-markdown.svg';
 import iconArea100p from 'ui/assets/icons/charts-visualisations/vis-area-100p.svg';
 import iconArea from 'ui/assets/icons/charts-visualisations/vis-area.svg';
 import iconBar100p from 'ui/assets/icons/charts-visualisations/vis-bar-100p.svg';
@@ -37,6 +38,7 @@ export const RELATIONS_CHARTS_ICONS_DICT = {
     pivotTable: iconPivotTable,
     geolayer: iconGeolayers,
     ymap: iconGeolayers,
+    markdown: LogoMarkdownIcon,
 };
 
 export const DEFAULT_ALIAS_NAMESPACE = 'default';

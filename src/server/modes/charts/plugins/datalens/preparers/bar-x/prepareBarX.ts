@@ -9,17 +9,19 @@ import {
     getAxisMode,
     getFakeTitleOrTitle,
     isDateField,
+    isDimensionField,
     isMeasureField,
     isMeasureValue,
     isPercentVisualization,
 } from '../../../../../../../shared';
-import {mapAndColorizeGraphsByDimension} from '../../utils/color-helpers';
+import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
 import {PSEUDO} from '../../utils/constants';
 import {
     chartKitFormatNumberWrapper,
     collator,
     formatDate,
     getTimezoneOffsettedTime,
+    isGradientMode,
     isNumericalDataType,
     numericCollator,
 } from '../../utils/misc-helpers';
@@ -31,7 +33,7 @@ import {
     getXAxisValue,
     prepareLines,
 } from '../line/helpers';
-import {colorizeByMeasure} from '../line/helpers/color-helpers/colorizeByMeasure';
+import {colorizeByGradient} from '../line/helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from '../line/helpers/getSortedLineKeys';
 import {LineTemplate, LinesRecord, MergedYSectionItems} from '../line/types';
 import {PrepareFunctionArgs} from '../types';
@@ -54,9 +56,12 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         segments,
         layerChartMeta,
         usedColors,
+        ChartEditor,
+        disableDefaultSorting = false,
     } = args;
     const {data, order} = resultData;
-
+    const widgetConfig = ChartEditor.getWidgetConfig();
+    const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xPlaceholderSettings = xPlaceholder?.settings;
     const x: ServerField | undefined = xPlaceholder?.items[0];
@@ -90,6 +95,12 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         : true;
 
     const colorItem = colors[0];
+    const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;
+
+    const gradientMode =
+        colorItem &&
+        colorFieldDataType &&
+        isGradientMode({colorField: colorItem, colorFieldDataType, colorsConfig});
 
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
@@ -113,6 +124,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
 
     const isColorizeByMeasure = isMeasureField(colorItem);
+    const colorMode = colorsConfig.colorMode;
     const isColorizeByMeasureValue = isMeasureValue(colorItem);
 
     /*
@@ -233,13 +245,14 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 labelItem,
                 segmentIndexInOrder,
                 layers: shared.visualization?.layers,
+                colorMode,
             });
         });
 
         let lineKeys1 = Object.keys(lines1);
         let lineKeys2 = [];
 
-        if (xIsDate) {
+        if (xIsDate && !disableDefaultSorting) {
             (categories as number[]).sort(numericCollator);
         }
 
@@ -249,19 +262,21 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         );
         const isSortableXAxis = !isPercentVisualization(visualizationId);
 
-        categories = getSortedCategories({
-            lines,
-            colorItem,
-            categories,
-            ySectionItems,
-            isSortWithYSectionItem: Boolean(ySectionItems.length && isSortableXAxis),
-            sortItem: sortItems[0],
-            isSortAvailable: isSortItemExists && isSortCategoriesAvailable,
-            isXNumber: xIsNumber,
-            measureColorSortLine,
-            isSegmentsExists,
-            isSortBySegments,
-        });
+        if (!disableDefaultSorting) {
+            categories = getSortedCategories({
+                lines,
+                colorItem,
+                categories,
+                ySectionItems,
+                isSortWithYSectionItem: Boolean(ySectionItems.length && isSortableXAxis),
+                sortItem: sortItems[0],
+                isSortAvailable: isSortItemExists && isSortCategoriesAvailable,
+                isXNumber: xIsNumber,
+                measureColorSortLine,
+                isSegmentsExists,
+                isSortBySegments,
+            });
+        }
 
         const sortedLineKeys = getSortedLineKeys({
             colorItem,
@@ -289,7 +304,11 @@ export function prepareBarX(args: PrepareFunctionArgs) {
             (isSortingYAxis || isSortByMeasureColor);
 
         const isXCategoryAxis =
-            isXDiscrete || xDataType === 'string' || xIsPseudo || isSortNumberTypeXAxisByMeasure;
+            isXDiscrete ||
+            xDataType === 'string' ||
+            xIsPseudo ||
+            isSortNumberTypeXAxisByMeasure ||
+            disableDefaultSorting;
 
         const orderedLineKeys = [lineKeys1, lineKeys2];
 
@@ -370,6 +389,19 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                                 point.label = pointLabel;
                             }
 
+                            if (isActionParamsEnable) {
+                                const actionParams: Record<string, any> = {};
+
+                                if (x && isDimensionField(x)) {
+                                    actionParams[x.guid] = category;
+                                }
+
+                                point.custom = {
+                                    ...point.custom,
+                                    actionParams,
+                                };
+                            }
+
                             return point;
                         })
                         .filter((point) => point !== null),
@@ -409,17 +441,34 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
                 graph.custom = customSeriesData;
 
+                if (isActionParamsEnable) {
+                    const actionParams: Record<string, any> = {};
+
+                    if (x2) {
+                        actionParams[x2.guid] = line.stack;
+                    }
+
+                    if (isDimensionField(colorItem)) {
+                        actionParams[colorItem.guid] = line.colorValue;
+                    }
+
+                    graph.custom = {
+                        ...graph.custom,
+                        actionParams,
+                    };
+                }
+
                 graphs.push(graph);
             });
         });
 
-        if (isColorizeByMeasure || isColorizeByMeasureValue) {
-            colorizeByMeasure(visualizationId as WizardVisualizationId, {
+        if (gradientMode) {
+            colorizeByGradient(visualizationId as WizardVisualizationId, {
                 graphs,
                 colorsConfig,
             });
         } else {
-            mapAndColorizeGraphsByDimension({
+            mapAndColorizeGraphsByPalette({
                 graphs,
                 colorsConfig,
                 isShapesItemExists: isShapeItemExist,
@@ -475,7 +524,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         });
 
         // Default sorting
-        if (!isSortItemExists || !isSortCategoriesAvailable) {
+        if ((!isSortItemExists || !isSortCategoriesAvailable) && !disableDefaultSorting) {
             if (xIsNumber) {
                 (categories as number[]).sort(numericCollator);
             } else {

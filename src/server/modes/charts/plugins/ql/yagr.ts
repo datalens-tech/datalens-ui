@@ -1,6 +1,8 @@
-import type {ChartType, TooltipOptions, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
+import type {ChartType, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 
-import {QLEntryDataShared, ServerVisualization} from '../../../../../shared';
+import {IChartEditor, QlVisualizationId, ServerVisualization} from '../../../../../shared';
+import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 
 const applyPlaceholderSettingsToYAxis = ({
     visualization,
@@ -41,21 +43,24 @@ const applyPlaceholderSettingsToYAxis = ({
     return {scale};
 };
 
-export default ({shared}: {shared: QLEntryDataShared}) => {
-    const type = (shared.visualization.highchartsId || shared.visualization.id) as ChartType;
+export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
+    const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
+
+    const type = (config.visualization.highchartsId || config.visualization.id) as ChartType;
 
     const percent =
-        shared.visualization.id === 'area100p' || shared.visualization.id === 'column100p';
+        config.visualization.id === 'area100p' || config.visualization.id === 'column100p';
 
-    const tracking = (shared.visualization.highchartsId ||
-        shared.visualization.id) as TooltipOptions['tracking'];
+    const visualizationId = config.visualization.highchartsId || config.visualization.id;
+
+    const tracking = visualizationId === QlVisualizationId.Area ? 'area' : 'sticky';
 
     const title =
-        shared.extraSettings?.titleMode === 'show' && shared.extraSettings.title
-            ? {text: shared.extraSettings.title}
+        config.extraSettings?.titleMode === 'show' && config.extraSettings.title
+            ? {text: config.extraSettings.title}
             : undefined;
 
-    const visualization = shared.visualization as ServerVisualization;
+    const visualization = config.visualization as ServerVisualization;
 
     const {scale: yScale} = applyPlaceholderSettingsToYAxis({visualization, placeholderIndex: 1});
     const {scale: yRightScale} = applyPlaceholderSettingsToYAxis({
@@ -64,7 +69,7 @@ export default ({shared}: {shared: QLEntryDataShared}) => {
     });
 
     const isLegendEnabled = Boolean(
-        shared.colors?.length && shared.extraSettings?.legendMode !== 'hide',
+        config.colors?.length && config.extraSettings?.legendMode !== 'hide',
     );
 
     const widgetData: YagrWidgetData['libraryConfig'] = {

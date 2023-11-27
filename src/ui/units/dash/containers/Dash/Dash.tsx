@@ -36,9 +36,15 @@ import {
     setEditMode,
     setLock,
 } from '../../store/actions/dash';
-import {setErrorMode, setPageTab} from '../../store/actions/dashTyped';
-import {canEdit, getDashEntry, isDraft, isEditMode} from '../../store/selectors/dash';
-import {selectTabId, selectTabs} from '../../store/selectors/dashTypedSelectors';
+import {resetDashDatasetsFields, setErrorMode, setPageTab} from '../../store/actions/dashTyped';
+import {
+    canEdit,
+    isDraft,
+    isEditMode,
+    selectDashEntry,
+    selectTabId,
+    selectTabs,
+} from '../../store/selectors/dashTypedSelectors';
 import Body from '../Body/Body';
 import Dialogs from '../Dialogs/Dialogs';
 import Header from '../Header/Header';
@@ -67,12 +73,13 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
 
     componentDidMount() {
         const entryId = extractEntryId(this.props.location.pathname);
+        const {entry, lockToken, history, location, match} = this.props;
 
-        if (this.props.entry?.entryId !== entryId) {
+        if (entry?.entryId !== entryId) {
             this.props.loadDash({
-                history: this.props.history,
-                location: this.props.location,
-                params: this.props.match.params,
+                history: history,
+                location: location,
+                params: match.params,
             });
         }
 
@@ -80,12 +87,9 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             this.setAuthUpdateTimeout();
         }
 
-        const isFakeEntry =
-            Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) && this.props.entry?.fake;
-
         // Fix case when open dash in edit mode then open dataset via navigation then click browser's back button.
         // We set lockToken again
-        if (!isFakeEntry && this.props.isEditMode && this.props.lockToken === null) {
+        if (!entry?.fake && this.props.isEditMode && lockToken === null) {
             this.props.setLock(entryId, false, false);
         }
 
@@ -99,9 +103,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const entryId = extractEntryId(currentLocation.pathname);
         const prevEntryId = extractEntryId(prevLocation.pathname);
 
-        const isFakeEntry =
-            Utils.isEnabledFeature(Feature.SaveDashWithFakeEntry) &&
-            (this.props.entry?.fake || !entryId);
+        const isFakeEntry = this.props.entry?.fake || !entryId;
 
         const currentSearchParams = new URLSearchParams(currentLocation.search);
         const prevSearchParams = new URLSearchParams(prevLocation.search);
@@ -134,6 +136,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         }
 
         if (hasEntryChanged || hasRevisionChanged || hasPathChanged) {
+            this.props.resetDashDatasetsFields();
             this.props.loadDash({
                 history: this.props.history,
                 location: this.props.location,
@@ -345,7 +348,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     isDraft: isDraft(state),
     isEditMode: isEditMode(state),
     canEdit: canEdit(state),
-    entry: getDashEntry(state),
+    entry: selectDashEntry(state),
     lockToken: selectLockToken(state),
     revId: selectEntryContentRevId(state),
     tabs: selectTabs(state),
@@ -366,6 +369,7 @@ const mapDispatchToProps = {
     setCopiedItemData,
     addWorkbookInfo,
     resetWorkbookPermissions,
+    resetDashDatasetsFields,
 };
 
 export const DashWrapper = connect(mapStateToProps, mapDispatchToProps)(DashComponent);

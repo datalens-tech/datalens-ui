@@ -37,6 +37,8 @@ import Utils from 'utils';
 import {
     CollectionContentFilters,
     CollectionFilters,
+    CollectionPageViewMode,
+    collectionPageViewModeStore,
 } from '../../../../components/CollectionFilters';
 import {registry} from '../../../../registry';
 import {AddDemoWorkbookDialogContainer} from '../../containers/AddDemoWorkbookDialogContainer/AddDemoWorkbookDialogContainer';
@@ -60,6 +62,9 @@ const DEFAULT_FILTERS = {
     mode: GetCollectionContentMode.All,
     onlyMy: false,
 };
+
+const defaultCollectionPageViewMode =
+    Utils.restore(collectionPageViewModeStore) || CollectionPageViewMode.Table;
 
 const b = block('dl-collection-page');
 
@@ -153,6 +158,8 @@ export const CollectionPage = React.memo<Props>(
         );
 
         const [filters, setFilters] = React.useState<CollectionContentFilters>(DEFAULT_FILTERS);
+        const [collectionPageViewMode, setCollectionPageViewMode] =
+            React.useState<CollectionPageViewMode>(defaultCollectionPageViewMode);
 
         const [dialogState, setDialogState] = React.useState(DialogState.None);
 
@@ -210,6 +217,13 @@ export const CollectionPage = React.memo<Props>(
             initLoadCollection,
             resetCollectionContent,
         ]);
+
+        const onChangeCollectionPageViewMode = React.useCallback(
+            (value: CollectionPageViewMode) => {
+                setCollectionPageViewMode(value);
+            },
+            [],
+        );
 
         // Information for the current collection
         React.useEffect(() => {
@@ -428,9 +442,11 @@ export const CollectionPage = React.memo<Props>(
                                     curCollectionId && collection && collection.permissions.update,
                                 ) && (
                                     <Tooltip content={i18n('action_edit')}>
-                                        <Button onClick={onEditClick}>
-                                            <Icon data={PencilToLine} />
-                                        </Button>
+                                        <div>
+                                            <Button onClick={onEditClick}>
+                                                <Icon data={PencilToLine} />
+                                            </Button>
+                                        </div>
                                     </Tooltip>
                                 )
                             }
@@ -442,6 +458,8 @@ export const CollectionPage = React.memo<Props>(
                                     filters={filters}
                                     controlSize="l"
                                     onChange={setFilters}
+                                    collectionPageViewMode={collectionPageViewMode}
+                                    onChangeCollectionPageViewMode={onChangeCollectionPageViewMode}
                                 />
                             }
                             content={
@@ -450,6 +468,7 @@ export const CollectionPage = React.memo<Props>(
                                     getCollectionContentRecursively={
                                         getCollectionContentRecursively
                                     }
+                                    collectionPageViewMode={collectionPageViewMode}
                                     filters={filters}
                                     setFilters={setFilters}
                                     isDefaultFilters={isDefaultFilters}

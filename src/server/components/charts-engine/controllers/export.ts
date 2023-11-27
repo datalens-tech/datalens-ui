@@ -48,7 +48,13 @@ export const exportController = () => {
             chartData.categories_ms ||
             chartData.categories_ms ||
             chartData.categories ||
-            Array(chartData.graphs[0].data.length).fill(undefined);
+            (chartData.graphs && Array(chartData.graphs[0].data.length).fill(undefined));
+
+        if (!Array.isArray(dataArray)) {
+            ctx.log(`Unsupported format`);
+            res.sendStatus(400);
+            return;
+        }
 
         const dataArrayLength = dataArray && dataArray.length;
 

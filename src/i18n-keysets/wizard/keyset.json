@@ -248,6 +248,18 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
+    "label_axis-mode-unavailable-type": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_axis-mode-unavailable-sort-measures": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_axis-mode-unavailable-forbidden": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "label_axis-type": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -540,6 +552,10 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
+    "label_field-not-exist-in-query": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "label_fields-overflow": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -573,6 +589,10 @@
       "ru": "APPROVED"
     },
     "label_golden": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_color-mode": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },

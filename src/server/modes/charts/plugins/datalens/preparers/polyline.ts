@@ -1,12 +1,12 @@
-import {DatasetFieldType, isDateField} from '../../../../../../shared';
+import {isDateField} from '../../../../../../shared';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
 import {
-    colorizeGeoByDimension,
-    colorizeGeoByMeasure,
+    colorizeGeoByGradient,
+    colorizeGeoByPalette,
     getLayerAlpha,
     getMapBounds,
 } from '../utils/geo-helpers';
-import {findIndexInOrder, formatDate} from '../utils/misc-helpers';
+import {findIndexInOrder, formatDate, isGradientMode} from '../utils/misc-helpers';
 
 import {PrepareFunctionArgs, PrepareFunctionDataRow, ResultDataOrder} from './types';
 
@@ -86,21 +86,33 @@ const preparePolyline = (options: PrepareFunctionArgs) => {
     const i18n = (key: string, params?: Record<string, string | string[]>) =>
         options.ChartEditor.getTranslation('wizard.prepares', key, params);
 
+    const {idToDataType} = options;
+
     const {data, order} = options.resultData;
     const [color] = options.colors;
     const colorsConfig = options.colorsConfig;
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
+
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
+
     const ALPHA = getLayerAlpha(options.layerSettings || {});
     let leftBot: undefined | [number, number];
     let rightTop: undefined | [number, number];
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const groupingFields = options.placeholders.find(
         (placeholder) => placeholder.id === 'grouping',
     )!.items;
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const measures = options.placeholders.find(
         (placeholder) => placeholder.id === 'measures',
     )!.items;
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const polylinePlaceholder = options.placeholders.find(
         (placeholder) => placeholder.id === 'polyline',
     )!;
@@ -162,10 +174,10 @@ const preparePolyline = (options: PrepareFunctionArgs) => {
             {},
         );
 
-        if (color.type === DatasetFieldType.Measure) {
-            colorData = colorizeGeoByMeasure(hashTable, colorsConfig).colorData;
+        if (gradientMode) {
+            colorData = colorizeGeoByGradient(hashTable, colorsConfig).colorData;
         } else {
-            colorData = colorizeGeoByDimension(hashTable, colorsConfig, color?.guid).colorData;
+            colorData = colorizeGeoByPalette(hashTable, colorsConfig, color?.guid).colorData;
         }
     }
 

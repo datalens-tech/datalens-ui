@@ -2,13 +2,15 @@ import {ElementHandle, Page} from '@playwright/test';
 import dotenv from 'dotenv';
 import moment from 'moment';
 
-import {ROOT_ENV_PATH} from '../constants';
 import {ActionPanelQA, EntryDialogQA} from '../../src/shared/constants';
 
 import {SelectQa} from '@gravity-ui/uikit';
 import {ActionPanelEntryContextMenuQa} from '../../src/shared/constants/qa/action-panel';
+import path from 'path';
 
 export * from './helpers';
+
+export const ROOT_ENV_PATH = path.resolve(__dirname, '..', '..', '.env');
 
 dotenv.config({path: ROOT_ENV_PATH});
 
@@ -363,7 +365,7 @@ export const waitForCondition = async <T>(callback: () => Promise<T>) => {
     throw new Error(`waitForCondition timeout, failedFunction is: ${callback.toString()}`);
 };
 
-const generateQueryString = (queryMap: Record<string, string>) => {
+export const generateQueryString = (queryMap: Record<string, string>) => {
     const searchParams = new URLSearchParams();
 
     Object.entries(queryMap).forEach(([key, value]) => {

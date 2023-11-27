@@ -12,6 +12,8 @@ import {isEnabledServerFeature} from '../../../utils/feature';
 import {createAction} from '../../gateway-utils';
 import {defaultParamsSerializer, filterUrlFragment} from '../../utils';
 import {
+    CopyEntriesToWorkbookArgs,
+    CopyEntriesToWorkbookResponse,
     CopyEntryArgs,
     CopyEntryResponse,
     CopyWorkbookEntryArgs,
@@ -202,6 +204,14 @@ export const entriesActions = {
 
             return {body, headers};
         },
+    }),
+    copyEntriesToWorkbook: createAction<CopyEntriesToWorkbookResponse, CopyEntriesToWorkbookArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX_V2}/copy-entries`,
+        params: (args, headers) => ({
+            body: {workbookId: args.workbookId, entryIds: args.entryIds},
+            headers,
+        }),
     }),
     renameEntry: createAction<RenameEntryResponse, RenameEntryArgs>({
         method: 'POST',

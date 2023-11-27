@@ -54,8 +54,6 @@ const DatalensPageView = () => {
                 <Route path="/preview" component={PreviewPage} />
                 <Route
                     path={[
-                        '/connections/new/:type',
-                        '/connections/new',
                         '/connections/:id',
                         '/workbooks/:workbookId/connections/new/:type',
                         '/workbooks/:workbookId/connections/new',
@@ -90,7 +88,7 @@ const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
 
     if (showAsideHeaderAdapter) {
-        return <AsideHeaderAdapter renderContent={DatalensPageView} />;
+        return <AsideHeaderAdapter renderContent={() => <DatalensPageView />} />;
     }
 
     return <DatalensPageView />;

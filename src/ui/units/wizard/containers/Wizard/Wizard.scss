@@ -43,7 +43,7 @@
         height: calc(100vh - 70px - #{$actionPanelHeight});
 
         &_aside-true {
-            height: calc(100vh - #{$actionPanelHeight});
+            height: calc(100vh - #{$actionPanelHeight} - var(--gn-aside-top-panel-height));
         }
 
         .column {

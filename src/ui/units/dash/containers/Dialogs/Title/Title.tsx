@@ -5,13 +5,16 @@ import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
+import {DashTabItemTitle} from 'shared';
 import {DatalensGlobalState} from 'ui';
 
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
 import {closeDialog} from '../../../store/actions/dash';
 import {setItemData} from '../../../store/actions/dashTyped';
-import {getOpenedItemData} from '../../../store/selectors/dash';
-import {selectIsDialogVisible} from '../../../store/selectors/dashTypedSelectors';
+import {
+    selectIsDialogVisible,
+    selectOpenedItemData,
+} from '../../../store/selectors/dashTypedSelectors';
 
 import HoverRadioButton from './HoverRadioButton/HoverRadioButton';
 
@@ -43,7 +46,7 @@ class Title extends React.PureComponent<Props, State> {
             text: i18n('dash.title-dialog.edit', 'value_default'),
             size: SIZES[0],
             showInTOC: true,
-        },
+        } as DashTabItemTitle['data'],
     };
 
     static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -141,7 +144,7 @@ class Title extends React.PureComponent<Props, State> {
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
     id: state.dash.openedItemId,
-    data: getOpenedItemData(state),
+    data: selectOpenedItemData(state) as DashTabItemTitle['data'],
     visible: selectIsDialogVisible(state, DIALOG_TYPE.TITLE),
 });
 

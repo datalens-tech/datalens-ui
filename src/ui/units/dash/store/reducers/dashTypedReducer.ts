@@ -3,18 +3,21 @@ import React from 'react';
 import {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
-import {DashData, DashEntry, WidgetType} from 'shared';
+import {DashData, DashEntry, Permissions, WidgetType} from 'shared';
+import {GetWidgetsDatasetsFieldsItem} from 'shared/schema';
 
 import {Mode} from '../../modules/constants';
 import {DashUpdateStatus} from '../../typings/dash';
 import {
     ADD_SELECTOR_TO_GROUP,
     CHANGE_NAVIGATION_PATH,
+    RESET_DASH_DS_FIELDS,
     SET_ACTIVE_SELECTOR_INDEX,
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
     SET_DASH_DESCRIPTION,
     SET_DASH_DESC_VIEW_MODE,
+    SET_DASH_DS_FIELDS,
     SET_DASH_KEY,
     SET_DASH_SUPPORT_DESCRIPTION,
     SET_DASH_UPDATE_STATUS,
@@ -42,7 +45,6 @@ import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
 
 import {TAB_PROPERTIES, getSelectorDialogInitialState} from './dash';
 
-// TODO: types for rest state
 export type DashState = {
     tabId: null | string;
     hashStates?: null | TabsHashStates;
@@ -61,7 +63,7 @@ export type DashState = {
     data: DashData;
     updateStatus: DashUpdateStatus;
     convertedEntryData: DashData | null;
-    // permissions: null;
+    permissions?: Permissions;
     lockToken: string | null;
     isFullscreenMode?: boolean;
     selectorDialog: SelectorDialogState;
@@ -72,6 +74,7 @@ export type DashState = {
     isRenameWithoutReload?: boolean;
     skipReload?: boolean;
     openedItemWidgetType?: WidgetType;
+    widgetsDatasetsFields: GetWidgetsDatasetsFieldsItem[] | null;
 };
 
 // eslint-disable-next-line complexity
@@ -85,6 +88,7 @@ export function dashTypedReducer(
         case SET_STATE:
         case SET_PAGE_TAB:
         case CHANGE_NAVIGATION_PATH:
+        case SET_DASH_DS_FIELDS:
         case SET_DASHKIT_REF: {
             return {...state, ...action.payload};
         }
@@ -385,6 +389,13 @@ export function dashTypedReducer(
             return {
                 ...state,
                 isRenameWithoutReload: action.payload || false,
+            };
+        }
+
+        case RESET_DASH_DS_FIELDS: {
+            return {
+                ...state,
+                widgetsDatasetsFields: null,
             };
         }
 

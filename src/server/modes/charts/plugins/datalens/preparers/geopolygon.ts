@@ -9,8 +9,8 @@ import {hexToRgb} from '../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
 import {
     Coordinate,
-    colorizeGeoByDimension,
-    colorizeGeoByMeasure,
+    colorizeGeoByGradient,
+    colorizeGeoByPalette,
     getFlattenCoordinates,
     getGradientMapOptions,
     getLayerAlpha,
@@ -19,6 +19,7 @@ import {
 import {
     chartKitFormatNumberWrapper,
     getTitleInOrder,
+    isGradientMode,
     isNumericalDataType,
 } from '../utils/misc-helpers';
 
@@ -115,6 +116,7 @@ function prepareFormattedValue(args: {
     return value;
 }
 
+// eslint-disable-next-line complexity
 function prepareGeopolygon(options: PrepareFunctionArgs) {
     const DEFAULT_COLOR = 'rgb(77, 162, 241)';
 
@@ -126,20 +128,26 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         resultData: {data, order},
         idToTitle,
         shared,
+        idToDataType,
     } = options;
     const layerSettings = (options.layerSettings ||
         {}) as VisualizationLayerShared['visualization']['layerSettings'];
 
     const allPolygons: Record<string, GeopolygonConfig[]> = {};
     const hashTable: Record<string, string[] | {[x: string]: string}[]> = {};
+
     const color = colors[0];
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
     const coordinates = placeholders[0].items;
 
-    const gradientMode = color && color.type === 'MEASURE';
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
 
     let colorizedResult:
-        | ReturnType<typeof colorizeGeoByMeasure>
-        | ReturnType<typeof colorizeGeoByDimension>;
+        | ReturnType<typeof colorizeGeoByGradient>
+        | ReturnType<typeof colorizeGeoByPalette>;
 
     let colorData = {},
         leftBot: Coordinate | undefined,
@@ -268,11 +276,11 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         });
 
         if (gradientMode) {
-            colorizedResult = colorizeGeoByMeasure(hashTable, colorsConfig);
+            colorizedResult = colorizeGeoByGradient(hashTable, colorsConfig);
 
             colorData = colorizedResult.colorData;
         } else {
-            colorizedResult = colorizeGeoByDimension(hashTable, colorsConfig, color.guid);
+            colorizedResult = colorizeGeoByPalette(hashTable, colorsConfig, color.guid);
 
             colorData = colorizedResult.colorData;
             colorDictionary = colorizedResult.colorDictionary;
@@ -391,7 +399,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
             ...getGradientMapOptions(
                 colorsConfig,
                 colorTitle,
-                colorizedResult! as ReturnType<typeof colorizeGeoByMeasure>,
+                colorizedResult! as ReturnType<typeof colorizeGeoByGradient>,
             ),
         };
 

@@ -1,9 +1,6 @@
 import {Page, expect} from '@playwright/test';
 
-import {
-    DialogFieldAggregationSelectorValuesQa,
-    VISUALIZATIONS_WITH_NAVIGATOR,
-} from '../../../../src/shared/constants';
+import {VISUALIZATIONS_WITH_NAVIGATOR} from '../../../../src/shared/constants';
 import {ChartSettingsItems} from '../../../page-objects/wizard/ChartSettings';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
@@ -286,27 +283,6 @@ datalensTest.describe('Wizard - chartkit', () => {
             await wizardPage.chartSettings.open();
 
             await wizardPage.chartSettings.checkSettingMode(ChartSettingsItems.Navigator, 'on');
-        },
-    );
-
-    datalensTest(
-        'The navigator should not be displayed when the date aggregation setting is enabled',
-        async ({page}: {page: Page}) => {
-            const wizardPage = new WizardPage({page});
-
-            await wizardPage.chartSettings.open();
-            await wizardPage.chartSettings.toggleSettingItem(ChartSettingsItems.Navigator, 'on');
-            await wizardPage.chartSettings.apply();
-
-            await expect(wizardPage.page.locator(wizardPage.chartkit.navigator)).toBeVisible();
-
-            await wizardPage.visualizationItemDialog.open(PlaceholderName.X, 'DATE');
-            await wizardPage.visualizationItemDialog.setAggregation(
-                DialogFieldAggregationSelectorValuesQa.Max,
-            );
-            await wizardPage.visualizationItemDialog.clickOnApplyButton();
-
-            await expect(wizardPage.page.locator(wizardPage.chartkit.navigator)).not.toBeVisible();
         },
     );
 });

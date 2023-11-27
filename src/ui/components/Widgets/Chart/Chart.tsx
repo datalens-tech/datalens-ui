@@ -14,7 +14,11 @@ import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 
 import {Content} from './components/Content';
-import {COMPONENT_CLASSNAME, getPreparedConstants, removeEmptyProperties} from './helpers/helpers';
+import {
+    COMPONENT_CLASSNAME,
+    getPreparedConstants,
+    removeEmptyNDatasetFieldsProperties,
+} from './helpers/helpers';
 import {useLoadingChart} from './hooks/useLoadingChart';
 import {
     ChartNoWidgetProps,
@@ -65,13 +69,14 @@ export const Chart = (props: ChartNoWidgetProps) => {
         ignoreUsedParams,
         onInnerParamsChanged,
         disableChartLoader,
+        actionParamsEnabled,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
     const prevInnerParams = usePrevious(innerParamsRef?.current);
 
     const chartkitParams = React.useMemo(
-        () => removeEmptyProperties({...props.params}),
+        () => removeEmptyNDatasetFieldsProperties({...props.params}),
         [props.params],
     );
 
@@ -170,7 +175,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         ignoreUsedParams,
         clearedOuterParams,
         onInnerParamsChanged,
-        enableActionParams: true,
+        enableActionParams: actionParamsEnabled,
     });
 
     /**

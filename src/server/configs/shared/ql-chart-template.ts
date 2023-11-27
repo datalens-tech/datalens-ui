@@ -1,9 +1,21 @@
-import type {QLParam, StringParams} from '../../../shared';
+import type {Request} from '@gravity-ui/expresskit';
+
+import type {ServerI18n} from '../../../i18n/types';
+import type {QlExtendedConfig, StringParams} from '../../../shared';
 import {QLChartType, QL_TYPE, isMonitoringOrPrometheusChart} from '../../../shared';
+import {mapQlConfigToLatestVersion} from '../../../shared/modules/config/ql';
+import {getTranslationFn} from '../../../shared/modules/language';
 
 export default {
     module: 'libs/qlchart/v1',
-    identifyParams: ({params, chartType}: {params: QLParam[]; chartType: QLChartType}) => {
+    identifyParams: (chart: QlExtendedConfig, req: Request) => {
+        const i18nServer: ServerI18n = req.ctx.get('i18n');
+
+        const config = mapQlConfigToLatestVersion(chart, {
+            i18n: getTranslationFn(i18nServer.getI18nServer()),
+        });
+        const {chartType, params} = config;
+
         const availableParams: StringParams = {};
 
         if (params) {
@@ -31,13 +43,16 @@ export default {
 
         return availableParams;
     },
-    identifyChartType: ({
-        visualization: {id},
-        chartType,
-    }: {
-        visualization: {id: string};
-        chartType: QLChartType;
-    }) => {
+    identifyChartType: (chart: QlExtendedConfig, req: Request) => {
+        const i18nServer: ServerI18n = req.ctx.get('i18n');
+
+        const config = mapQlConfigToLatestVersion(chart, {
+            i18n: getTranslationFn(i18nServer.getI18nServer()),
+        });
+
+        const {visualization, chartType} = config;
+        const id = visualization.id;
+
         switch (id) {
             case 'table': // Legacy
             case 'flatTable': // Available with WizardQLCommonVisualization feature
@@ -64,9 +79,14 @@ export default {
                 return QL_TYPE.GRAPH_QL_NODE;
         }
     },
-    identifyLinks: (chart: {connection: {entryId: string}}) => {
+    identifyLinks: (chart: QlExtendedConfig, req: Request) => {
+        const i18nServer: ServerI18n = req.ctx.get('i18n');
+
+        const config = mapQlConfigToLatestVersion(chart, {
+            i18n: getTranslationFn(i18nServer.getI18nServer()),
+        });
         return {
-            connection: chart.connection.entryId,
+            connection: config.connection.entryId,
         };
     },
 };

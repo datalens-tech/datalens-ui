@@ -114,6 +114,7 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, 
         />
     );
 });
+ChartkitWidget.displayName = 'ChartkitWidget';
 
 export const ChartKitAdapter = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, ref) => {
     return (

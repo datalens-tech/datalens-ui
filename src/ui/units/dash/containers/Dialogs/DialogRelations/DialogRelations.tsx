@@ -13,14 +13,14 @@ import {useDispatch, useSelector} from 'react-redux';
 import {DashTab, DashTabItem, DatasetField} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
-import {getCurrentTabAliases} from 'ui/units/dash/store/selectors/relations/selectors';
 
 import {updateCurrentTabData} from '../../../store/actions/dash';
 import {openDialogAliases} from '../../../store/actions/relations/actions';
+import {selectCurrentTabAliases} from '../../../store/selectors/dashTypedSelectors';
 
 import {Content} from './components/Content/Content';
 import {AliasesInvalidList} from './components/DialogAliases/components/AliasesList/AliasesInvalidList';
-import {DEFAULT_FILTERS, Filters, FiltersTypes} from './components/Filters/Filters';
+import {Filters, FiltersTypes} from './components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, DEFAULT_ICON_SIZE, RELATION_TYPES} from './constants';
 import {
     getDialogCaptionIcon,
@@ -61,13 +61,13 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const {widget, dashKitRef, onClose} = props;
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
-    const dashTabAliases = useSelector(getCurrentTabAliases);
+    const dashTabAliases = useSelector(selectCurrentTabAliases);
 
     const aliasWarnButtonRef = React.useRef<HTMLElement | null>(null);
 
     const [aliasWarnPopupOpen, setAliasWarnPopupOpen] = React.useState(false);
     const [searchValue, setSearchValue] = React.useState('');
-    const [typeValues, setTypeValues] = React.useState(DEFAULT_FILTERS);
+    const [typeValues, setTypeValues] = React.useState<Array<FiltersTypes>>([]);
     const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>();
     const [preparedRelations, setPreparedRelations] = React.useState<DashMetaData>([]);
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
@@ -291,12 +291,22 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
     const handleDisconnectAll = React.useCallback(() => {
         const newChangedWidgets: WidgetsTypes = {};
+
+        const filteredIds = filteredRelations.reduce((res: Record<string, string>, item) => {
+            if (item.widgetId) {
+                res[item.widgetId] = item.widgetId;
+            }
+            return res;
+        }, {});
+
         preparedRelations.forEach((item) => {
-            newChangedWidgets[item.widgetId] = RELATION_TYPES.ignore as RelationType;
+            if (filteredIds[item.widgetId]) {
+                newChangedWidgets[item.widgetId] = RELATION_TYPES.ignore as RelationType;
+            }
         });
 
         setChangedWidgets(newChangedWidgets);
-    }, [preparedRelations]);
+    }, [preparedRelations, filteredRelations]);
 
     /**
      * Triggers when click Apply button in relations dialog (saves in store and closes popup)
@@ -358,6 +368,18 @@ const DialogRelations = (props: DialogRelationsProps) => {
                   className: b('alias-add-icon-type'),
               });
 
+    // disable disconnect button when loading
+    // when selected only 'none' filter
+    // when selected filter and none of widgets is showed in list
+    const isDisconnectDisabled = Boolean(
+        isLoading ||
+            (typeValues.length === 1 && typeValues[0] === 'none') ||
+            !filteredRelations.length ||
+            filteredRelations.every(
+                (filteredRealtion) => filteredRealtion?.relations.type === 'ignore',
+            ),
+    );
+
     React.useEffect(() => {
         if (!preparedRelations?.length && relations.length) {
             setPreparedRelations(relations);
@@ -405,7 +427,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     className={b('button')}
                     size="l"
                     onClick={handleDisconnectAll}
-                    disabled={isLoading}
+                    disabled={isDisconnectDisabled}
                 >
                     {i18n('button_disconnect')}
                 </Button>

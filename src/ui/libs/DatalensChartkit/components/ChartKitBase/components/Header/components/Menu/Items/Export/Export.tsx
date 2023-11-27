@@ -5,6 +5,7 @@ import {Icon, Toaster} from '@gravity-ui/uikit';
 import copy from 'copy-to-clipboard';
 import {I18n} from 'i18n';
 import {Feature, MenuItemsIds} from 'shared';
+import {DL, URL_OPTIONS} from 'ui/constants/common';
 import {
     MenuActionComponent,
     MenuItemConfig,
@@ -163,7 +164,11 @@ const screenshotExportAction = (
                     chartsDataProvider
                         .getGoAwayLink(
                             {loadedData, propsData},
-                            {urlPostfix: '/preview', idPrefix: '/editor/'},
+                            {
+                                urlPostfix: '/preview',
+                                idPrefix: '/editor/',
+                                extraParams: {[URL_OPTIONS.ACTION_PARAMS_ENABLED]: '1'},
+                            },
                         )
                         ?.replace(chartsDataProvider?.endpoint || '', '') || '';
 
@@ -211,7 +216,8 @@ const getSubItems = ({
         {
             id: MenuItemsIds.EXPORT_CSV,
             title: i18n('format_csv'),
-            isVisible: isExportVisible,
+            isVisible: ({loadedData, error}: MenuItemArgs) =>
+                !DL.IS_MOBILE && isExportVisible({loadedData, error}),
             action: csvExportAction(chartsDataProvider, onExportLoading),
         },
         {
@@ -231,7 +237,7 @@ const getSubItems = ({
             id: MenuItemsIds.EXPORT_SCREENSHOT,
             title: i18n('format_image'),
             isVisible: ({loadedData, error}: MenuItemArgs) =>
-                Boolean(showScreenshot) && isExportVisible({loadedData, error}),
+                !DL.IS_MOBILE && Boolean(showScreenshot) && isExportVisible({loadedData, error}),
             action: screenshotExportAction(chartsDataProvider, customConfig),
         },
     ];
@@ -269,7 +275,8 @@ export const getExportItem = ({
         const isScreenshotVisible = loadedData?.data && showScreenshot;
 
         return Boolean(
-            isExportAllowed && (isExportVisible({loadedData, error}) || isScreenshotVisible),
+            isExportAllowed &&
+                (isExportVisible({loadedData, error}) || (isScreenshotVisible && !DL.IS_MOBILE)),
         );
     },
     action: (data: ExportActionArgs) => {

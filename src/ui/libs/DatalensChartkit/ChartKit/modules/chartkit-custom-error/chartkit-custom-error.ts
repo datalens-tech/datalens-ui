@@ -19,7 +19,7 @@ export type CustomErrorDebugFullArgs = {
 interface CustomErrorArgs {
     message?: string;
     code?: number | string;
-    details?: object;
+    details?: object | string;
     debug?: string | CustomErrorDebugFullArgs;
 }
 

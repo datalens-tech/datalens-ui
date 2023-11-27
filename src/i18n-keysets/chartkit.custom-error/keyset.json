@@ -32,6 +32,10 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
+    "error-timeout": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "error-too-many-lines": {
       "en": "APPROVED",
       "ru": "APPROVED"

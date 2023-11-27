@@ -8,7 +8,7 @@ export * from './tenant';
 export * from './wizard-helpers';
 export * from './charts-shared';
 export * from './url';
-export * from './config/index';
+export * from './config/wizard';
 export * from './user';
 export * from './bi-api';
 export * from './fields';

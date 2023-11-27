@@ -1,11 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 
-import {
-    Field,
-    QLResultEntryMetadataDataColumnOrGroup,
-    ServerVisualization,
-    WizardVisualizationId,
-} from '../../../../../../shared';
+import {Field, ServerVisualization, WizardVisualizationId} from '../../../../../../shared';
+import type {QlConfigResultEntryMetadataDataColumnOrGroup} from '../../../../../../shared/types/config/ql';
 
 import {
     autofillLineVisualization,
@@ -29,7 +25,7 @@ export const migrateOrAutofillVisualization = ({
     colors: originalColors,
 }: {
     visualization: ServerVisualization;
-    order?: QLResultEntryMetadataDataColumnOrGroup[];
+    order?: QlConfigResultEntryMetadataDataColumnOrGroup[];
     fields: Field[];
     colors?: Field[];
 }) => {
@@ -164,7 +160,7 @@ export const migrateOrAutofillVisualization = ({
     };
 };
 
-const mapItems = ({items, fields}: {items: Field[]; fields: Field[]}) => {
+export const mapItems = ({items, fields}: {items: Field[]; fields: Field[]}) => {
     return items.map((item, i) => {
         const exactField = fields.find(
             (field) => field.guid === item.guid && field.data_type === item.data_type,
@@ -172,6 +168,8 @@ const mapItems = ({items, fields}: {items: Field[]; fields: Field[]}) => {
 
         // Field does not need to be mapped
         if (exactField) {
+            delete item.conflict;
+
             return item;
         }
 
@@ -191,8 +189,10 @@ const mapItems = ({items, fields}: {items: Field[]; fields: Field[]}) => {
             }
         }
 
-        // TODO: else we need to make this field invalid
-        return item;
+        return {
+            ...item,
+            conflict: 'not-existing-ql',
+        };
     });
 };
 
@@ -211,8 +211,4 @@ export const mapVisualizationPlaceholdersItems = ({
     });
 
     return newVisualization;
-};
-
-export const mapColors = ({colors, fields}: {colors: Field[]; fields: Field[]}) => {
-    return mapItems({items: colors as Field[], fields});
 };

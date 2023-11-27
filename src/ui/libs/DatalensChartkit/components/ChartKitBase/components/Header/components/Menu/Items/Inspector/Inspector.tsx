@@ -6,6 +6,7 @@ import {ClipboardButton, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {MenuItemsIds} from 'shared';
+import {DL} from 'ui/constants/common';
 import ChartKitIcon from 'ui/libs/DatalensChartkit/components/ChartKitIcon/ChartKitIcon';
 import {registry} from 'ui/registry';
 
@@ -111,7 +112,7 @@ const getInspectorMenuitem = () => ({
     title: () => i18n('chartkit.menu.inspector', 'label_caption'),
     icon: <ChartKitIcon data={Magnifier} className={ICONS_MENU_DEFAULT_CLASSNAME} />,
     isVisible: (params: MenuItemArgs) => {
-        if (!params) {
+        if (!params || DL.IS_MOBILE) {
             return false;
         }
         const {loadedData, error} = params;

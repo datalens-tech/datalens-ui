@@ -1,0 +1,22 @@
+{
+  "action_cancel": "Cancel",
+  "action_copy": "Copy",
+  "action_show-all": "Show all",
+  "label_charts": "Charts",
+  "label_connections": "Connections",
+  "label_copy-warning": "The object and all related objects will be copied to the workbook.",
+  "label_current-entry": "Selected object",
+  "label_dashboards": "Dashboards",
+  "label_datasets": "Datasets",
+  "label_linked-objects": "Linked objects",
+  "label_no-linked-objects": "Empty",
+  "label_objects": [
+    "{{count}} object",
+    "{{count}} objects",
+    "{{count}} objects",
+    "0 objects"
+  ],
+  "label_unknown-error": "An error occured during copying. Please try again later.",
+  "label_file-connection-warning": "Copying file connections is not currently supported.",
+  "title": "Copy objects to workbooks"
+}

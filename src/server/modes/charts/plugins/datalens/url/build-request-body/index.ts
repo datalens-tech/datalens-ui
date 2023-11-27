@@ -5,7 +5,6 @@ import {dateTimeParse} from '@gravity-ui/date-utils';
 import {
     ApiV2RequestBody,
     DatasetFieldCalcMode,
-    DatasetFieldType,
     DrillDownData,
     Feature,
     IChartEditor,
@@ -469,7 +468,7 @@ export function prepareSingleRequest({
         (acc, item) => {
             acc.allItemsIds[item.guid] = true;
 
-            if ('type' in item && item.type === DatasetFieldType.Measure) {
+            if (isMeasureField(item)) {
                 acc.allMeasuresMap[item.guid] = true;
                 acc.allMeasuresMap[item.title] = true;
             }

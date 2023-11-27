@@ -23,7 +23,7 @@ import {
     isVisualizationWithLayers,
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
-import {getGradientStops, mapAndColorizeGraphsByDimension} from '../../utils/color-helpers';
+import {getGradientStops, mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
 import {PSEUDO} from '../../utils/constants';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {
@@ -48,7 +48,7 @@ import {
 } from './helpers';
 import {getAxisFormattingByField} from './helpers/axis/getAxisFormattingByField';
 import {getLayerPlaceholderWithItems} from './helpers/axis/getLayerPlaceholderWithItems';
-import {colorizeByMeasure} from './helpers/color-helpers/colorizeByMeasure';
+import {colorizeByGradient} from './helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from './helpers/getSortedLineKeys';
 import {LineTemplate, LinesRecord, MergedYSectionItems} from './types';
 
@@ -72,9 +72,11 @@ function prepareLine({
     segments,
     layerChartMeta,
     usedColors,
+    disableDefaultSorting = false,
 }: PrepareFunctionArgs) {
     const {data, order} = resultData;
-
+    const widgetConfig = ChartEditor.getWidgetConfig();
+    const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const xPlaceholder = placeholders[0];
     const xPlaceholderSettings = xPlaceholder.settings;
     const x: ServerField | undefined = placeholders[0].items[0];
@@ -278,7 +280,7 @@ function prepareLine({
         let lineKeys1 = Object.keys(lines1);
         let lineKeys2 = Object.keys(lines2);
 
-        if (xIsDate) {
+        if (xIsDate && !disableDefaultSorting) {
             (categories as number[]).sort(numericCollator);
         }
 
@@ -290,19 +292,21 @@ function prepareLine({
             visualizationId !== WizardVisualizationId.Area &&
             !isPercentVisualization(visualizationId);
 
-        categories = getSortedCategories({
-            lines,
-            colorItem,
-            categories,
-            ySectionItems,
-            isSortWithYSectionItem: Boolean(ySectionItems.length && isSortableXAxis),
-            sortItem: sortItems[0],
-            isSortAvailable: isSortItemExists && isSortCategoriesAvailable,
-            isXNumber: xIsNumber,
-            measureColorSortLine,
-            isSegmentsExists,
-            isSortBySegments,
-        });
+        if (!disableDefaultSorting) {
+            categories = getSortedCategories({
+                lines,
+                colorItem,
+                categories,
+                ySectionItems,
+                isSortWithYSectionItem: Boolean(ySectionItems.length && isSortableXAxis),
+                sortItem: sortItems[0],
+                isSortAvailable: isSortItemExists && isSortCategoriesAvailable,
+                isXNumber: xIsNumber,
+                measureColorSortLine,
+                isSegmentsExists,
+                isSortBySegments,
+            });
+        }
 
         const sortedLineKeys = getSortedLineKeys({
             colorItem,
@@ -330,7 +334,11 @@ function prepareLine({
             (isSortingYAxis || isSortByMeasureColor);
 
         const isXCategoryAxis =
-            isXDiscrete || xDataType === 'string' || xIsPseudo || isSortNumberTypeXAxisByMeasure;
+            isXDiscrete ||
+            xDataType === 'string' ||
+            xIsPseudo ||
+            isSortNumberTypeXAxisByMeasure ||
+            disableDefaultSorting;
 
         const orderedLineKeys = [lineKeys1, lineKeys2];
 
@@ -405,11 +413,24 @@ function prepareLine({
                             }
 
                             const pointLabel = innerLabels && innerLabels[category];
+                            point.label = pointLabel === undefined ? '' : pointLabel;
 
-                            if (pointLabel !== undefined) {
-                                point.label = pointLabel;
-                            } else {
-                                point.label = '';
+                            if (isActionParamsEnable) {
+                                const actionParams: Record<string, any> = {};
+
+                                if (isDimensionField(x)) {
+                                    actionParams[x.guid] = point.x;
+                                }
+
+                                const [yField] = ySectionItems || [];
+                                if (isDimensionField(yField)) {
+                                    actionParams[yField.guid] = point.y;
+                                }
+
+                                point.custom = {
+                                    ...point.custom,
+                                    actionParams,
+                                };
                             }
 
                             return point;
@@ -452,17 +473,45 @@ function prepareLine({
 
                 graph.custom = customSeriesData;
 
+                if (isActionParamsEnable) {
+                    const actionParams: Record<string, any> = {};
+
+                    // bar-x only
+                    if (x2 && isDimensionField(x2)) {
+                        actionParams[x2.guid] = line.stack;
+                    }
+
+                    // bar-y only
+                    const [, yField2] = ySectionItems || [];
+                    if (isDimensionField(yField2)) {
+                        actionParams[yField2.guid] = line.stack;
+                    }
+
+                    if (isDimensionField(colorItem)) {
+                        actionParams[colorItem.guid] = line.colorValue;
+                    }
+
+                    if (isDimensionField(shapeItem)) {
+                        actionParams[shapeItem.guid] = line.shapeValue;
+                    }
+
+                    graph.custom = {
+                        ...graph.custom,
+                        actionParams,
+                    };
+                }
+
                 graphs.push(graph);
             });
         });
 
         if (isColorizeByMeasure || isColorizeByMeasureValue) {
-            colorizeByMeasure(visualizationId as WizardVisualizationId, {
+            colorizeByGradient(visualizationId as WizardVisualizationId, {
                 graphs,
                 colorsConfig,
             });
         } else {
-            mapAndColorizeGraphsByDimension({
+            mapAndColorizeGraphsByPalette({
                 graphs,
                 colorsConfig,
                 isShapesItemExists: isShapeItemExist,
@@ -736,7 +785,7 @@ function prepareLine({
         });
 
         // Default sorting
-        if (!isSortItemExists || !isSortCategoriesAvailable) {
+        if ((!isSortItemExists || !isSortCategoriesAvailable) && !disableDefaultSorting) {
             if (xIsNumber) {
                 (categories as number[]).sort(numericCollator);
             } else {
