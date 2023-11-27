@@ -1,7 +1,6 @@
 import {DEFAULT_PROXY_HEADERS} from '@gravity-ui/gateway/build/constants';
 
 import {
-    AuthHeader,
     CSRF_TOKEN_HEADER,
     DL_COMPONENT_HEADER,
     DL_EMBED_TOKEN_HEADER,
@@ -35,7 +34,6 @@ export default {
         TENANT_ID_HEADER,
         SuperuserHeader.XDlAllowSuperuser,
         SuperuserHeader.XDlSudo,
-        AuthHeader.Authorization,
         CSRF_TOKEN_HEADER,
         DL_COMPONENT_HEADER,
         DL_EMBED_TOKEN_HEADER,
