@@ -21,6 +21,7 @@ import {fetchColorPalettes} from '../../../store/actions/colorPaletteEditor';
 import {closeDialog, openDialog, openDialogFilter} from '../../../store/actions/dialog';
 import {selectColorPalettes} from '../../../store/selectors/colorPaletteEditor';
 import Utils from '../../../utils';
+import {getChartType} from '../../ql/store/reducers/ql';
 import {
     DIALOG_COLUMN_SETTINGS,
     DialogColumnSettingsFields,
@@ -348,10 +349,12 @@ export function openDialogChartSettings({
         const datasets = wizardState.dataset.datasets;
         const visualization = wizardState.visualization.visualization as Shared['visualization'];
         const extraSettings = wizardState.widget.extraSettings!;
+        const chartType = getChartType(getState());
         dispatch(
             openDialog({
                 id: DIALOG_CHART_SETTINGS,
                 props: {
+                    chartType,
                     widget,
                     dataset,
                     datasetsCount: datasets.length,
