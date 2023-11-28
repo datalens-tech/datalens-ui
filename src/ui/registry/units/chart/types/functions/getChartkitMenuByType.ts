@@ -5,6 +5,7 @@ import {MenuItemConfig, MenuType} from 'ui/libs/DatalensChartkit/menu/Menu';
 export type GetChartkitMenuByType = GetChartkitMenuItems & {
     onExportLoading?: (isLoading: boolean) => void;
     isEditAvaible?: boolean;
+    extraOptions?: Record<string, unknown>;
 };
 
 export type GetChartkitMenuItems = {
@@ -14,4 +15,5 @@ export type GetChartkitMenuItems = {
     };
     customOptions?: Record<MenuItemsIds, Partial<MenuItemConfig>>;
     chartsDataProvider: ChartKitDataProvider;
+    extraOptions?: Record<string, unknown>;
 };
