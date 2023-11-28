@@ -79,11 +79,18 @@ export type LoadingChartHookProps = {
     hasChangedActionParams?: boolean;
     enableActionParams?: boolean;
     widgetType?: ChartSelectorWithRefProps['widgetType'];
+    isPageHidden?: boolean;
+    autoupdateInterval?: number;
 };
 
 const WIDGET_LOADING_VISIBLE_OFFSET = 300; // '300px'; // offset before div for start loading TODO - return here CHARTS-7043
 const CHART_DEBOUNCE_TIMEOUT = 100;
 const EXCLUDE_CHART_WITH_AXIS_FOR_MENU_RERENDER = ['map'];
+
+// need to track the current values in setTimeout in reloadChart
+let isPageHiddenCurrent: boolean | undefined = false;
+let reloadTimeout: undefined | NodeJS.Timeout;
+let lastReloadAt: undefined | number;
 
 export const useLoadingChart = (props: LoadingChartHookProps) => {
     const {
@@ -111,7 +118,11 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         onInnerParamsChanged,
         enableActionParams,
         widgetType,
+        autoupdateInterval,
+        isPageHidden,
     } = props;
+
+    isPageHiddenCurrent = isPageHidden;
 
     const [canBeLoaded, setCanBeLoaded] = React.useState<boolean>(false);
     const [isInit, setIsInit] = React.useState<boolean>(false);
@@ -276,6 +287,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         if (!requestDataProps) {
             return;
         }
+
         // need to prevent double request before get response
         if (changedInnerFlag) {
             setChangedInnerFlag(false);
@@ -496,6 +508,37 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         }
     }, [throttledInViewportCheck]);
 
+    /*
+     * reload chart by timer when the _autouodate param is passed
+     **/
+    const reloadChart = React.useCallback(() => {
+        const autoupdateIntervalMs = Number(autoupdateInterval) * 1000;
+        if (autoupdateIntervalMs) {
+            const timeSinceLastReload = new Date().getTime() - (lastReloadAt || 0);
+            const reloadIntervalRemains = autoupdateIntervalMs - timeSinceLastReload;
+
+            if (
+                (!isPageHiddenCurrent || isEmbeddedMode()) &&
+                reloadIntervalRemains <= 0 &&
+                reloadTimeout
+            ) {
+                lastReloadAt = new Date().getTime();
+                loadChartData();
+            }
+
+            reloadTimeout = setTimeout(
+                () => reloadChart(),
+                reloadIntervalRemains <= 0 ? autoupdateIntervalMs : reloadIntervalRemains,
+            );
+        }
+    }, [loadChartData, autoupdateInterval]);
+
+    // need update timeout if it's first render with autoupdateInterval = 0, or if vissibility of page is changed
+    React.useEffect(() => {
+        clearTimeout(reloadTimeout);
+        reloadChart();
+    }, [isPageHidden, autoupdateInterval]);
+
     React.useEffect(() => {
         if (isInit) {
             unbindScrollHandler();
@@ -524,6 +567,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         return () => {
             unbindScrollHandler();
             unbindResizeHandler();
+            clearTimeout(reloadTimeout);
         };
     }, [
         rootNodeRef,
@@ -541,6 +585,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         if (!canBeLoaded || isInit) {
             return;
         }
+
         setIsInit(true);
         loadChartData();
     }, [canBeLoaded, isInit, loadChartData]);
@@ -696,6 +741,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         if (!canBeLoaded || !isInit) {
             return;
         }
+
         loadChartData();
     }, [canBeLoaded, isInit, loadChartData]);
 

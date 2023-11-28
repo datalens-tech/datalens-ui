@@ -73,10 +73,34 @@ const Preview: React.FC<PreviewProps> = (props) => {
 
     const [name, setName] = React.useState<string | null>(null);
 
+    const [isPageHidden, setIsPageHidden] = React.useState(false);
+    const [autoupdateInterval, setAutoupdateInterval] = React.useState<undefined | number>();
+
     const params = React.useMemo(() => Utils.getParamsFromSearch(search), [search]);
 
     const previewRef = React.useRef<HTMLDivElement>(null);
     const chartKitRef = React.useRef<ChartsChartKit>(null);
+
+    const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
+
+    const onVisibilityChange = () => {
+        setIsPageHidden(document.hidden);
+    };
+
+    React.useEffect(() => {
+        const {autoupdateInterval: updateInterval} = Utils.getOptionsFromSearch(
+            window.location.search,
+        );
+        if (updateInterval && updateInterval >= getMinAutoupdateInterval()) {
+            setAutoupdateInterval(updateInterval);
+        }
+
+        document.addEventListener('visibilitychange', onVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+        };
+    }, [getMinAutoupdateInterval]);
 
     React.useEffect(() => {
         let concurrentId = '';
@@ -201,6 +225,8 @@ const Preview: React.FC<PreviewProps> = (props) => {
                     forwardedRef={chartKitRef as unknown as React.RefObject<ChartKitType>}
                     splitTooltip={hasSplitTooltip}
                     menuType="preview"
+                    isPageHidden={isPageHidden}
+                    autoupdateInterval={autoupdateInterval}
                 />
                 <PreviewExtension />
             </div>

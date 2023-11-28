@@ -256,10 +256,9 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     render() {
-        const content = this.renderBody();
         return (
             <div className={b()}>
-                {content}
+                {this.renderBody()}
                 <PaletteEditor />
                 <EntryDialogues sdk={getSdk() as unknown as SDK} ref={this.entryDialoguesRef} />
             </div>
