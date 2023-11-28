@@ -533,7 +533,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         }
     }, [loadChartData, autoupdateInterval]);
 
-    // need update timeout if it's first render with autoupdateInterval = 0, or if vissibility of page is changed
+    // need update timeout if it's first render with autoupdateInterval = 0, or if visibility of page is changed
     React.useEffect(() => {
         clearTimeout(reloadTimeout);
         reloadChart();
