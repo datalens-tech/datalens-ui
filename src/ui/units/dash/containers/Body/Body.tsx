@@ -303,8 +303,13 @@ class Body extends React.PureComponent<BodyProps> {
 
         const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
         const {autoupdateInterval} = Utils.getOptionsFromSearch(window.location.search);
-        if (autoupdateInterval && autoupdateInterval >= getMinAutoupdateInterval()) {
-            dashkitSettings.autoupdateInterval = autoupdateInterval;
+        if (autoupdateInterval) {
+            const minAutoupdateInterval = getMinAutoupdateInterval();
+
+            dashkitSettings.autoupdateInterval =
+                autoupdateInterval >= getMinAutoupdateInterval()
+                    ? autoupdateInterval
+                    : minAutoupdateInterval;
         }
 
         const overlayControls = this.getOverlayControls();

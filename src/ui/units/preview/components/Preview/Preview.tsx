@@ -1,4 +1,4 @@
-import {EMBEDDED_CHART_MESSAGE_NAME} from 'constants/common';
+import {EMBEDDED_CHART_MESSAGE_NAME, MIN_AUTOUPDATE_CHART_INTERVAL} from 'constants/common';
 
 import React from 'react';
 
@@ -81,8 +81,6 @@ const Preview: React.FC<PreviewProps> = (props) => {
     const previewRef = React.useRef<HTMLDivElement>(null);
     const chartKitRef = React.useRef<ChartsChartKit>(null);
 
-    const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
-
     const onVisibilityChange = () => {
         setIsPageHidden(document.hidden);
     };
@@ -91,8 +89,13 @@ const Preview: React.FC<PreviewProps> = (props) => {
         const {autoupdateInterval: updateInterval} = Utils.getOptionsFromSearch(
             window.location.search,
         );
-        if (updateInterval && updateInterval >= getMinAutoupdateInterval()) {
-            setAutoupdateInterval(updateInterval);
+
+        if (updateInterval) {
+            setAutoupdateInterval(
+                updateInterval >= MIN_AUTOUPDATE_CHART_INTERVAL
+                    ? updateInterval
+                    : MIN_AUTOUPDATE_CHART_INTERVAL,
+            );
         }
 
         document.addEventListener('visibilitychange', onVisibilityChange);
@@ -100,7 +103,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
         return () => {
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
-    }, [getMinAutoupdateInterval]);
+    }, []);
 
     React.useEffect(() => {
         let concurrentId = '';
