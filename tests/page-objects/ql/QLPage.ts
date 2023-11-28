@@ -5,6 +5,7 @@ import ChartKit from '../wizard/ChartKit';
 import ChartSettings from '../wizard/ChartSettings';
 import NavigationMinimal, {Ownership} from '../wizard/NavigationMinimal';
 import VisualizationItemDialog from '../wizard/VisualizationItemDialog';
+import {CommonSelectors} from '../constants/common-selectors';
 
 import PreviewTable from './PreviewTable';
 import {NavigationMinimalPlaceSelectQa} from '../../../src/shared/constants/qa/components';
@@ -141,6 +142,68 @@ class QLPage extends ChartPage {
 
     async saveQlChartAsNew(entryName: string) {
         await this.saveAsNewChart(entryName);
+    }
+
+    async openParamsTab() {
+        await this.page.click(
+            `.ql-screen-editor .gc-adaptive-tabs__tab-container_last-tab .gc-adaptive-tabs__tab`,
+        );
+    }
+
+    async addParam() {
+        await this.page.click(slct('add-param'));
+    }
+
+    async selectParamType(type: string) {
+        await this.page.click(slct('param-type'));
+
+        await this.page.click(`${CommonSelectors.SelectItem} >> text=${type}`);
+    }
+
+    async setParamName(name: string) {
+        const textInput = await this.page.waitForSelector('[data-qa=param-name] input');
+
+        await textInput.fill(name);
+    }
+
+    async openParamDialog() {
+        await this.page.click(slct('open-param-dialog'));
+    }
+
+    async applyParamDialog() {
+        await this.page.click('.yc-dialog-footer__button_action_apply');
+    }
+
+    async selectDate(dateValue: string) {
+        await this.page.fill('.dl-dialog-ql-parameter__body .yc-text-input__control', dateValue);
+
+        await this.closeDatepickerPopup();
+    }
+
+    async selectRangeDate(dateValue: [string | null, string]) {
+        const startDate = dateValue[0];
+        const endDate = dateValue[1];
+
+        if (startDate) {
+            await this.page.fill(
+                `.dl-dialog-ql-parameter__body ${slct('datepicker-start')} .yc-text-input__control`,
+                startDate,
+            );
+        }
+
+        await this.closeDatepickerPopup();
+
+        await this.page.fill(
+            `.dl-dialog-ql-parameter__body ${slct('datepicker-end')} .yc-text-input__control`,
+            endDate,
+        );
+
+        await this.closeDatepickerPopup();
+    }
+
+    async closeDatepickerPopup() {
+        // position is needed just for click on the left corner of container
+        return this.page.click('.dl-dialog-ql-parameter__body', {position: {x: 0, y: 0}});
     }
 
     waitForSomeSuccessfulRender() {

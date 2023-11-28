@@ -131,7 +131,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                                     className={b('select')}
                                     popupClassName={b('select-popup')}
                                     value={param.type ? [param.type] : []}
-                                    qa="parameter-type"
+                                    qa="param-type"
                                 />
                                 <TextInput
                                     view="normal"
@@ -147,6 +147,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                                         this.onEditParam({param: newParam, paramIndex});
                                     }}
                                     autoFocus={true}
+                                    qa="param-name"
                                 />
                                 <span className={b('delimeter')}>:</span>
                                 {this.renderParamDefaultValueContent(param, paramIndex)}
@@ -358,8 +359,9 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                             },
                         });
                     }}
-                    key="button-add-param-value"
+                    key="button-open-param-dialog"
                     className={b('default-value-text')}
+                    qa="open-param-dialog"
                 >
                     {param.defaultValue
                         ? `${formattedFrom} — ${formattedTo}`
@@ -393,6 +395,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                     }}
                     key="button-add-param-value"
                     className={b('default-value-text')}
+                    qa="open-param-dialog"
                 >
                     {param.defaultValue
                         ? formattedDate
