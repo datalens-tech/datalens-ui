@@ -131,6 +131,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                                     className={b('select')}
                                     popupClassName={b('select-popup')}
                                     value={param.type ? [param.type] : []}
+                                    qa="parameter-type"
                                 />
                                 <TextInput
                                     view="normal"
@@ -232,6 +233,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                     onClick={() => this.onClickButtonAddParam()}
                     key="button-add-param"
                     className={b('add-param-btn')}
+                    qa="add-param"
                 >
                     {i18n('sql', 'button_add-param')}
                 </Button>
