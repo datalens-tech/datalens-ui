@@ -38,6 +38,7 @@ export type HeaderProps = Pick<
     | 'yandexMapAPIWaiting'
     | 'onChange'
     | 'dataProvider'
+    | 'enableActionParams'
 > & {
     chartsInsightsData?: ChartsInsightsData;
     isMenuAvailable: boolean;
@@ -65,6 +66,7 @@ export const Header = (props: HeaderProps) => {
         onChange,
         isWidgetMenuDataChanged,
         onExportLoading,
+        enableActionParams,
     } = props;
 
     /**
@@ -97,6 +99,7 @@ export const Header = (props: HeaderProps) => {
                   dataProvider) as ChartKitDataProvider,
               onExportLoading,
               isEditAvaible,
+              extraOptions: {enableActionParams},
           })
         : settings.menu;
 

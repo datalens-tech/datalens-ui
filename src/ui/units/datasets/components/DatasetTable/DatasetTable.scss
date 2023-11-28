@@ -1,9 +1,8 @@
-@import '../../styles/mixins';
-
 %expand-by-parent-with-align {
     height: inherit;
     vertical-align: middle;
     padding: 0;
+    overflow: initial;
 }
 
 .dataset-table {
@@ -88,10 +87,6 @@
             justify-content: center;
             align-items: center;
         }
-    }
-
-    &__source-title {
-        @include overflow-ellipsis;
     }
 
     & &__row {
