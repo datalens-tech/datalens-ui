@@ -85,6 +85,8 @@ class DashboardPage extends BasePage {
         acceptableSelectBtn: 'select-acceptable-button',
         dialogApplyBtn: 'dialog-apply-button',
         dialogCancelBtn: 'dialog-cancel-button',
+        chartGridItemContainer: `${slct(COMMON_DASH_SELECTORS.DASH_GRID_ITEM)} .chartkit`,
+        dashPluginWidgetBody: slct('chart-widget'),
     };
 
     static qa = {
@@ -673,6 +675,17 @@ class DashboardPage extends BasePage {
             .filter({hasText: title})
             .filter({has: this.page.locator(slct(ControlQA.controlSelect))})
             .click();
+    }
+
+    async waitForSomeChartItemVisible() {
+        await this.page.waitForSelector(DashboardPage.selectors.chartGridItemContainer);
+    }
+
+    async shouldNotContainsChartItems() {
+        await waitForCondition(async () => {
+            const elems = await this.page.$$(DashboardPage.selectors.chartGridItemContainer);
+            return elems.length === 0;
+        });
     }
 }
 

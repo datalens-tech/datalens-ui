@@ -19,15 +19,18 @@ import {
  * @param chartsDataProvider
  * @param customOptions
  * @param canEdit
+ * @param extraOptions
  */
 export const getWidgetChartMenu = ({
     chartsDataProvider,
     customOptions,
     canEdit,
+    extraOptions,
 }: {
     chartsDataProvider: ChartKitDataProvider;
     customOptions: Record<MenuItemsIds, Partial<MenuItemConfig>>;
     canEdit: boolean;
+    extraOptions?: Record<string, unknown>;
 }) => {
     return [
         getExportMenuItem({
@@ -37,6 +40,7 @@ export const getWidgetChartMenu = ({
         getNewWindowMenuItem({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.NEW_WINDOW],
+            extraOptions,
         }),
         getInspectorMenuItem(),
         canEdit
@@ -93,6 +97,7 @@ export const getPanePreviewChartMenu = ({chartsDataProvider}: GetPanePreviewChar
 export const getDefaultChartMenu = ({
     chartsDataProvider,
     customOptions,
+    extraOptions,
 }: GetDefaultChartMenuArgs) => {
     const menuItemsGroups: (MenuItemConfig | null)[] = [
         getExportMenuItem({
@@ -102,6 +107,7 @@ export const getDefaultChartMenu = ({
         getNewWindowMenuItem({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.NEW_WINDOW],
+            extraOptions,
         }),
         getInspectorMenuItem(),
         getEditMenuItem({
