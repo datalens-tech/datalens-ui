@@ -1,5 +1,5 @@
 import _isEqual from 'lodash/isEqual';
-import {isGradientDialog} from 'ui/units/wizard/selectors/dialogColor';
+import {isColorModeChangeAvailable} from 'ui/units/wizard/selectors/dialogColor';
 
 import {
     ColorsConfig,
@@ -238,12 +238,13 @@ export function openDialogColors({item, onApply}: OpenDialogColorsArguments) {
                   (y2Placeholder && y2Placeholder.items[0]) ||
                   (heatmapPlaceholder && heatmapPlaceholder.items[0])
                 : (item as Field);
+
             const dialogColorItems =
                 isArray && !isMeasureValue(dialogColorItem) ? (item as Field[]) : undefined;
-            const isGradient = isGradientDialog({
+
+            const isColorModeChangeAvailableValue = isColorModeChangeAvailable({
                 item: dialogColorItem,
-                items: dialogColorItems,
-                extra,
+                visualizationId: subVisualization.id,
             });
 
             dispatch(
@@ -251,7 +252,7 @@ export function openDialogColors({item, onApply}: OpenDialogColorsArguments) {
                     item: dialogColorItem,
                     extra,
                     items: dialogColorItems,
-                    isGradient,
+                    isColorModeChangeAvailable: isColorModeChangeAvailableValue,
                     onApply: (config: ColorsConfig) => {
                         dispatch(
                             setColorsConfig({

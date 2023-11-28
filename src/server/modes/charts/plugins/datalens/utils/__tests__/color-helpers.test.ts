@@ -1,7 +1,7 @@
 import {ChartColorsConfig} from '../../js/helpers/colors';
-import {mapAndColorizeHashTableByMeasure} from '../color-helpers';
+import {mapAndColorizeHashTableByGradient} from '../color-helpers';
 
-describe('mapAndColorizeHashTableByMeasure', () => {
+describe('mapAndColorizeHashTableByGradient', () => {
     const colorConfig = {
         gradientColors: ['#ffffff', '#888888', '#000000'],
         gradientMode: '3-point',
@@ -15,7 +15,7 @@ describe('mapAndColorizeHashTableByMeasure', () => {
             polygon_3_0: 110,
         };
 
-        let result = mapAndColorizeHashTableByMeasure(hashTable, colorConfig);
+        let result = mapAndColorizeHashTableByGradient(hashTable, colorConfig);
         result = JSON.parse(JSON.stringify(result).replace(/(\\n +)/g, ''));
 
         expect(result).toEqual({
@@ -41,7 +41,7 @@ describe('mapAndColorizeHashTableByMeasure', () => {
             polygon_3_0: '110.0',
         });
 
-        let result = mapAndColorizeHashTableByMeasure(hashTable, colorConfig);
+        let result = mapAndColorizeHashTableByGradient(hashTable, colorConfig);
         result = JSON.parse(JSON.stringify(result).replace(/(\\n +)/g, ''));
 
         expect(result).toEqual({

@@ -8,7 +8,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ColorsConfig, Feature, Field, GradientType, InternalPaletteId} from 'shared';
 import {fetchColorPalettes} from 'store/actions/colorPaletteEditor';
 import {selectColorPalettesDict} from 'store/selectors/colorPaletteEditor';
-import {isGradientDialog} from 'ui/units/wizard/selectors/dialogColor';
 import Utils from 'utils';
 
 import {openDialogColor} from '../../../../../actions/dialogColor';
@@ -78,10 +77,7 @@ export const ButtonColorDialog: React.FC<ButtonColorDialogProps> = (
                         colorsConfig,
                         extra: extraSettings,
                         onApply: onApplyDialogColor,
-                        isGradient: isGradientDialog({
-                            item: field,
-                            extra: extraSettings,
-                        }),
+                        isColorModeChangeAvailable: false,
                     }),
                 )
             }

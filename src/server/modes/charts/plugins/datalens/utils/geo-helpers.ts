@@ -5,7 +5,7 @@ import {
     getCurrentGradient,
     getRgbColors,
     mapAndColorizeCoordinatesByDimension,
-    mapAndColorizeHashTableByMeasure,
+    mapAndColorizeHashTableByGradient,
 } from './color-helpers';
 import {LAT, LONG} from './constants';
 
@@ -120,7 +120,7 @@ export type ColorizedResult = GradientOptions & {
     >;
 };
 
-function colorizeGeoByMeasure(data: GeoData, colorsConfig: ChartColorsConfig): ColorizedResult {
+function colorizeGeoByGradient(data: GeoData, colorsConfig: ChartColorsConfig): ColorizedResult {
     const preparedData = Object.entries(data).reduce((acc, [, points]) => {
         points.forEach((point) => {
             Object.assign(acc, point);
@@ -129,10 +129,10 @@ function colorizeGeoByMeasure(data: GeoData, colorsConfig: ChartColorsConfig): C
         return acc;
     }, {});
 
-    return mapAndColorizeHashTableByMeasure(preparedData, colorsConfig);
+    return mapAndColorizeHashTableByGradient(preparedData, colorsConfig);
 }
 
-function colorizeGeoByDimension(data: GeoData, colorsConfig: ChartColorsConfig, colorGuid: string) {
+function colorizeGeoByPalette(data: GeoData, colorsConfig: ChartColorsConfig, colorGuid: string) {
     const preparedData = Object.entries(data).reduce((acc, [, points]) => {
         points.forEach((point) => {
             if (typeof point === 'object' && point !== null) {
@@ -181,8 +181,8 @@ export {
     getMapBounds,
     getExtremeValues,
     getFlattenCoordinates,
-    colorizeGeoByMeasure,
-    colorizeGeoByDimension,
+    colorizeGeoByGradient,
+    colorizeGeoByPalette,
     getLayerAlpha,
     getGradientMapOptions,
 };

@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {EntryScope} from 'shared';
 import {ErrorContent} from 'ui/index';
 
 import type {AppDispatch} from '../../store';
@@ -70,6 +71,11 @@ export const CopyEntriesToWorkbookDialog: React.FC<Props> = ({open, entryId, onC
     const requestError = targetEntryError || relationsError;
 
     const isError = !isLoading && requestError !== null;
+    const hasFileConnection = relations?.some(
+        (entry) =>
+            entry.scope === EntryScope.Connection &&
+            (entry.type === 'file' || entry.type === 'gsheets_v2'),
+    );
 
     React.useEffect(() => {
         const promises: CancellablePromise<unknown>[] = [];
@@ -156,7 +162,7 @@ export const CopyEntriesToWorkbookDialog: React.FC<Props> = ({open, entryId, onC
                 <Dialog.Footer
                     textButtonApply={i18n('action_copy')}
                     propsButtonApply={{
-                        disabled: isLoading || isError,
+                        disabled: hasFileConnection || isLoading || isError,
                     }}
                     textButtonCancel={i18n('action_cancel')}
                     onClickButtonApply={handleButtonApply}

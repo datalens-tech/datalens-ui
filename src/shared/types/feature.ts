@@ -89,7 +89,6 @@ export enum Feature {
     UseChartsEngineResponseConfig = 'UseChartsEngineResponseConfig',
     UseChartsEngineLogin = 'UseChartsEngineLogin',
     AddDemoWorkbook = 'AddDemoWorkbook',
-    SaveDashWithFakeEntry = 'SaveDashWithFakeEntry',
     CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
     WizardChartChartFilteringAvailable = 'WizardChartChartFilteringAvailable',
 }

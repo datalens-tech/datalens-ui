@@ -8,13 +8,14 @@ import {
 } from '../../../../../../shared';
 import {registry} from '../../../../../registry';
 import {
-    mapAndColorizeHashTableByDimension,
-    mapAndColorizeHashTableByMeasure,
+    mapAndColorizeHashTableByGradient,
+    mapAndColorizeHashTableByPalette,
 } from '../utils/color-helpers';
 import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
     formatDate,
+    isGradientMode,
     isNumericalDataType,
 } from '../utils/misc-helpers';
 
@@ -37,16 +38,23 @@ function prepareTreemap({
     colors,
     colorsConfig,
     idToTitle,
+    idToDataType,
 }: PrepareFunctionArgs) {
     const app = registry.getApp();
-    // Measurements
+    // Dimensions
     const d = placeholders[0].items;
     const dTypes = d.map((item) => item.data_type);
 
-    // Indicators
+    // Measures
     const m = placeholders[1].items;
 
-    const c = colors[0];
+    const color = colors[0];
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
+
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
 
     const {data, order} = resultData;
 
@@ -63,16 +71,17 @@ function prepareTreemap({
     let measureNamesLevel: number;
     let colorData: Record<string, {backgroundColor: string}> = {};
 
-    if (c) {
-        // we make the property non-enumerable so that it does not participate in the formation of the palette
+    if (color) {
+        // We make the property non-enumerable so that it does not participate in the formation of the palette
         Object.defineProperty(valuesForColorData, 'colorGuid', {
             enumerable: false,
-            value: c.guid,
+            value: color.guid,
         });
     }
 
     const measureNames = m.map((measureItem) => idToTitle[measureItem.guid]);
-    // TODO: think about why. After all, you can put only one field in the indicators (Size) (treemap.tsx)
+
+    // TODO: think about why. After all, you can put only one field in the measures (Size) (treemap.tsx)
     if (measureNames.length > 1) {
         multimeasure = true;
 
@@ -89,9 +98,9 @@ function prepareTreemap({
 
     data.forEach((values) => {
         let colorByDimension: string | null;
-        if (c && c.type === 'DIMENSION') {
-            const actualTitle = idToTitle[c.guid];
-            const i = findIndexInOrder(order, c, actualTitle);
+        if (color && color.type === 'DIMENSION') {
+            const actualTitle = idToTitle[color.guid];
+            const i = findIndexInOrder(order, color, actualTitle);
             const colorValue = values[i];
 
             colorByDimension = colorValue;
@@ -173,10 +182,10 @@ function prepareTreemap({
                 hashTable[key] = {value: value, label};
             }
 
-            if (c) {
-                if (c.type === 'MEASURE') {
-                    const colorTitle = idToTitle[c.guid];
-                    const i = findIndexInOrder(order, c, colorTitle);
+            if (color) {
+                if (gradientMode) {
+                    const colorTitle = idToTitle[color.guid];
+                    const i = findIndexInOrder(order, color, colorTitle);
                     const colorValue = values[i];
 
                     valuesForColorData[key] = colorValue as unknown as number;
@@ -195,22 +204,22 @@ function prepareTreemap({
         }
     });
 
-    if (c) {
-        if (c.type === 'MEASURE') {
-            colorData = mapAndColorizeHashTableByMeasure(
+    if (color) {
+        if (gradientMode) {
+            colorData = mapAndColorizeHashTableByGradient(
                 valuesForColorData,
                 colorsConfig,
             ).colorData;
         } else {
-            colorData = mapAndColorizeHashTableByDimension(valuesForColorData, colorsConfig);
+            colorData = mapAndColorizeHashTableByPalette(valuesForColorData, colorsConfig);
         }
 
         treemap = treemap.map((obj) => {
             const item = {...obj};
 
-            const color = colorData[obj.id];
-            if (color) {
-                item.color = color.backgroundColor;
+            const colorDataValue = colorData[obj.id];
+            if (colorDataValue) {
+                item.color = colorDataValue.backgroundColor;
             }
 
             return item;

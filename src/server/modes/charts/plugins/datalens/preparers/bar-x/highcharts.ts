@@ -12,14 +12,12 @@ import {
     getIsNavigatorEnabled,
     isDateField,
     isDimensionField,
-    isMeasureField,
     isMeasureNameOrValue,
-    isMeasureValue,
     isVisualizationWithLayers,
 } from '../../../../../../../shared';
 import {getGradientStops} from '../../utils/color-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
-import {isNumericalDataType} from '../../utils/misc-helpers';
+import {isGradientMode, isNumericalDataType} from '../../utils/misc-helpers';
 import {
     getSegmentsIndexInOrder,
     getSegmentsMap,
@@ -69,13 +67,16 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
     const yFields = yPlaceholder?.items || [];
 
     const colorItem = colors[0];
+    const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;
+
+    const gradientMode =
+        colorItem &&
+        colorFieldDataType &&
+        isGradientMode({colorField: colorItem, colorFieldDataType, colorsConfig});
 
     const sortItem = sort?.[0];
     const isSortItemExists = Boolean(sort && sort.length);
     const sortXItem = sort.find((s) => x && s.guid === x.guid);
-
-    const isColorizeByMeasure = isMeasureField(colorItem);
-    const isColorizeByMeasureValue = isMeasureValue(colorItem);
 
     const segmentField = segments[0];
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
@@ -175,15 +176,14 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
 
             const isLegendEnabled = shared.extraSettings?.legendMode !== 'hide';
 
-            const isCombinedChartColorizedBySomeDimenstion =
+            const isCombinedChartColorizedBySomeDimension =
                 shared.visualization.id === 'combined-chart' &&
                 shared.visualization.layers?.some((layer) => {
                     return layer.commonPlaceholders.colors.some((field) => isDimensionField(field));
                 });
 
             const isShouldShowMeasureLegend =
-                (isColorizeByMeasure || isColorizeByMeasureValue) &&
-                !isCombinedChartColorizedBySomeDimenstion;
+                gradientMode && !isCombinedChartColorizedBySomeDimension;
 
             if (isShouldShowMeasureLegend) {
                 const points: Highcharts.PointOptionsObject[] = (graphs as any[]).reduce(
