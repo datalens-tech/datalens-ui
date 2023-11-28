@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {pickActionParamsFromParams} from '@gravity-ui/dashkit';
 import DataTable, {DataTableProps, Settings} from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
 import {TableCommonCell, TableHead, TableRow} from 'shared';
@@ -17,10 +18,13 @@ import {TableProps} from './types';
 import {
     camelCaseCss,
     concatStrings,
+    getActionParamsEventScope,
     getColumnsAndNames,
     getIdFromGeneratedName,
     hasGroups,
+    validateConfigAndData,
 } from './utils';
+import type {ActionParamsData} from './utils';
 
 import './Table.scss';
 
@@ -116,6 +120,7 @@ export class Table extends React.PureComponent<TableProps, TableState> {
     private id?: string;
 
     componentDidMount() {
+        validateConfigAndData({data: this.props.data.data, config: this.props.data.config});
         // @ts-ignore | ts doesn't know about FontFaceSet API
         document.fonts.load('700 10pt "YS Text"').then((fonts) => {
             if (!fonts.length) {
@@ -140,10 +145,14 @@ export class Table extends React.PureComponent<TableProps, TableState> {
         }, 2000);
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps: TableProps) {
         this.onLoad();
 
         this.props.onRender?.({renderTime: Number(Performance.getDuration(this.getId()))});
+
+        if (prevProps.data !== this.props.data) {
+            validateConfigAndData({data: this.props.data.data, config: this.props.data.config});
+        }
     }
 
     componentWillUnmount() {
@@ -195,20 +204,24 @@ export class Table extends React.PureComponent<TableProps, TableState> {
         const {
             data: {
                 data: {head = [], rows = [], footer = []},
-                config: {sort, order, settings, drillDown} = {},
+                config: {sort, order, settings, drillDown, events} = {},
+                unresolvedParams,
             },
             onChange,
         } = this.props;
-
-        // for type=table, screenshot engine looks for SNAPTER_HTML_CLASSNAME on the page
-        // therefor tables use table view NO_DATA
-        // if (!head || !rows) {
-        //     throw ErrorDispatcher.wrap(null, {code: ERROR_TYPE.NO_DATA});
-        // }
-
         // dynamicRender, highlightRows, sorting does not work properly if there is a group
         const isHasGroups = hasGroups(head);
         const context = {isHasGroups};
+        let actionParamsData: ActionParamsData | undefined;
+        const scope = getActionParamsEventScope(events);
+
+        if (scope) {
+            actionParamsData = {
+                params: pickActionParamsFromParams(unresolvedParams),
+                scope,
+            };
+        }
+
         const {columns, names, sortSettings} = getColumnsAndNames({
             head,
             rows,
@@ -216,6 +229,7 @@ export class Table extends React.PureComponent<TableProps, TableState> {
             tableWidth: this.tableWidth,
             onChange,
             tableRef: this.dataTableRef,
+            actionParamsData,
         });
 
         let initialSortOrder: DataTableProps<DataTableData>['initialSortOrder'];
