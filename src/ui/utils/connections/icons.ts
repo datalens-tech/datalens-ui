@@ -16,6 +16,7 @@ import iconChytYC from '../../assets/icons/connections/chyt-yc.svg';
 import iconClickHouse from '../../assets/icons/connections/clickhouse.svg';
 import iconCsv from '../../assets/icons/connections/csv.svg';
 import iconEqueo from '../../assets/icons/connections/equeo.svg';
+import iconExtractor1C from '../../assets/icons/connections/extractor1c.svg';
 import iconFile from '../../assets/icons/connections/file.svg';
 import iconGoogleSheets from '../../assets/icons/connections/google-sheets.svg';
 import iconGreenplum from '../../assets/icons/connections/greenplum.svg';
@@ -126,6 +127,8 @@ export const getConnectorIconDataWithoutDefault = (type?: string): IconData | un
             return iconEqueo;
         case ConnectorType.KonturMarket:
             return iconKonturMarket;
+        case ConnectorType.Extractor1c:
+            return iconExtractor1C;
         default:
             return undefined;
     }
