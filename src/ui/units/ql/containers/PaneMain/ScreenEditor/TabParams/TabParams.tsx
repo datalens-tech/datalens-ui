@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {dateTimeParse} from '@gravity-ui/date-utils';
 import {Xmark} from '@gravity-ui/icons';
 import {Button, Icon, Select, SelectOption, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -15,7 +14,6 @@ import {DatalensGlobalState} from 'ui';
 import {QLParamInterval, QLParamType, resolveRelativeDate} from '../../../../../../../shared';
 import {LUXON_FORMATS} from '../../../../../../components/RelativeDatesPicker/constants';
 import {getDatesFromValue} from '../../../../../../components/RelativeDatesPicker/utils';
-import {DEFAULT_TIMEZONE} from '../../../../constants';
 import {openDialogQLParameter} from '../../../../store/actions/dialog';
 import {addParam, drawPreview, removeParam, updateParam} from '../../../../store/actions/ql';
 import {getChartType, getParams, getPreviewData, getValid} from '../../../../store/reducers/ql';
@@ -23,12 +21,6 @@ import {getChartType, getParams, getPreviewData, getValid} from '../../../../sto
 import './TabParams.scss';
 
 const b = block('ql-tab-params');
-
-function formatDate(date: string) {
-    return dateTimeParse(date, {
-        timeZone: DEFAULT_TIMEZONE,
-    })?.toISOString();
-}
 
 function resolveAndFormatDate(date: string, type: QLParamType) {
     const resolvedDate = resolveRelativeDate(date);
@@ -299,11 +291,11 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
 
         if (paramIsInterval) {
             newParam.defaultValue = {
-                from: formatDate('now-3d'),
-                to: formatDate('now-0d'),
+                from: resolveRelativeDate('__relative_-3d') as string,
+                to: resolveRelativeDate('__relative_+0d') as string,
             };
         } else if (paramIsDate) {
-            newParam.defaultValue = formatDate('now-0d');
+            newParam.defaultValue = resolveRelativeDate('__relative_+0d') as string;
         } else if (oldParamIsInterval || oldParamIsDate) {
             newParam.defaultValue = '';
         }
