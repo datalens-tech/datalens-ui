@@ -53,5 +53,5 @@
   "label_visualization-scatter": "Точечная диаграмма",
   "label_visualization-treemap": "Древовидная диаграмма",
   "text_default-name": "Новый QL-чарт",
-  "label_ql-auto-execution-chart": "Автоматическое выполнение при изменении"
+  "label_ql-auto-execution-chart": "Автоматически применять изменения"
 }
