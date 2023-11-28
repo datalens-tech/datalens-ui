@@ -234,7 +234,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                     onClick={() => this.onClickButtonAddParam()}
                     key="button-add-param"
                     className={b('add-param-btn')}
-                    qa="add-param"
+                    qa="add-param-btn"
                 >
                     {i18n('sql', 'button_add-param')}
                 </Button>
@@ -361,7 +361,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                     }}
                     key="button-open-param-dialog"
                     className={b('default-value-text')}
-                    qa="open-param-dialog"
+                    qa="open-param-dialog-btn"
                 >
                     {param.defaultValue
                         ? `${formattedFrom} — ${formattedTo}`
