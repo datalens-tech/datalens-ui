@@ -267,6 +267,7 @@ export type ChartContentProps = Pick<
         showOverlayWithControlsOnEdit?: boolean;
         isWidgetMenuDataChanged?: boolean;
         initialParams: StringParams;
+        enableActionParams?: boolean;
     };
 
 export type WidgetDataRef = React.MutableRefObject<
