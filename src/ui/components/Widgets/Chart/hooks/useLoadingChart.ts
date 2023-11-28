@@ -87,10 +87,10 @@ const WIDGET_LOADING_VISIBLE_OFFSET = 300; // '300px'; // offset before div for 
 const CHART_DEBOUNCE_TIMEOUT = 100;
 const EXCLUDE_CHART_WITH_AXIS_FOR_MENU_RERENDER = ['map'];
 
-// need to track the current values in setTimeout in reloadChart
-let isPageHiddenCurrent: boolean | undefined = false;
-let reloadTimeout: undefined | NodeJS.Timeout;
-let lastReloadAt: undefined | number;
+// need to track the current values in setTimeout callback of reloadChart
+let isPageHiddenCurrent: undefined | boolean = false;
+let reloadTimeout: NodeJS.Timeout;
+let lastReloadAt: number;
 
 export const useLoadingChart = (props: LoadingChartHookProps) => {
     const {
@@ -508,9 +508,9 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         }
     }, [throttledInViewportCheck]);
 
-    /*
-     * reload chart by timer when the _autouodate param is passed
-     **/
+    /**
+     * reload chart by timer when the _autoupdate param is passed
+     */
     const reloadChart = React.useCallback(() => {
         const autoupdateIntervalMs = Number(autoupdateInterval) * 1000;
         if (autoupdateIntervalMs) {
@@ -526,10 +526,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 loadChartData();
             }
 
-            reloadTimeout = setTimeout(
-                () => reloadChart(),
-                reloadIntervalRemains <= 0 ? autoupdateIntervalMs : reloadIntervalRemains,
-            );
+            reloadTimeout = setTimeout(() => reloadChart(), autoupdateIntervalMs);
         }
     }, [loadChartData, autoupdateInterval]);
 
