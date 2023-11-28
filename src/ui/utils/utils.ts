@@ -231,6 +231,7 @@ export default class Utils {
 
     static getOptionsFromSearch(search: string) {
         const searchParams = new URLSearchParams(search);
+
         return {
             theme: searchParams.get(URL_OPTIONS.THEME),
             embedded: searchParams.get(URL_OPTIONS.EMBEDDED) === '1',
@@ -238,6 +239,7 @@ export default class Utils {
                 searchParams.get(URL_OPTIONS.NO_CONTROLS) === '1' ||
                 searchParams.get(URL_OPTIONS.NO_CONTROLS) === 'true', // deprecated
             actionParamsEnabled: searchParams.get(URL_OPTIONS.ACTION_PARAMS_ENABLED) === '1',
+            autoupdateInterval: Number(searchParams.get(URL_OPTIONS.AUTOUPDATE)),
         };
     }
 

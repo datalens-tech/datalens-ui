@@ -7,4 +7,5 @@ export type GetDefaultChartMenuArgs = {
     type?: string;
     chartsDataProvider: ChartKitDataProvider;
     customOptions: Record<MenuItemsIds, Partial<MenuItemConfig>>;
+    extraOptions?: Record<string, unknown>;
 };
