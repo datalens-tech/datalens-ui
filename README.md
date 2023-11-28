@@ -31,7 +31,7 @@ Now you can open datalens in dev mode at [http://localhost:3030](http://localhos
 
 Hostname:
 ```
-postgres-connection
+pg-demo-connection
 ```
 
 Port:
@@ -41,15 +41,15 @@ Port:
 
 Path to database:
 ```
-world-db
+demo
 ```
 
 Username:
 ```
-world
+demo
 ```
 
 Password:
 ```
-world123
+demo
 ```

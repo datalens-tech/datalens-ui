@@ -30,10 +30,11 @@ $dashPublicContainerClassName: '.dash';
         background-color: var(--g-color-base-background);
         padding: 2px;
         border-radius: var(--yc-border-radius-l);
+        box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.05);
     }
 
     &__icon-filter-clear {
-        color: var(--g-color-line-generic-active);
+        color: var(--g-color-text-primary);
     }
 
     // styles for widgets with tabs below

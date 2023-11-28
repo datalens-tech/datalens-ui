@@ -145,6 +145,16 @@ class QLPage extends ChartPage {
 
     waitForSomeSuccessfulRender() {
         return new Promise((resolve, reject) => {
+            this.page
+                .waitForSelector('.chartkit .chartkit-d3-bar-x')
+                .then(resolve, () => undefined);
+
+            this.page
+                .waitForSelector('.chartkit .chartkit-d3-scatter')
+                .then(resolve, () => undefined);
+
+            this.page.waitForSelector('.chartkit .chartkit-d3-pie').then(resolve, () => undefined);
+
             this.page.waitForSelector('.chartkit .chartkit-graph').then(resolve, () => undefined);
 
             this.page
@@ -175,6 +185,10 @@ class QLPage extends ChartPage {
 
     async addEmptyPromQlQuery() {
         await this.page.click(slct('add-promql-query-btn'));
+    }
+
+    async clickConnectionButton() {
+        await this.page.click(this.selectConnectionButtonSelector);
     }
 }
 

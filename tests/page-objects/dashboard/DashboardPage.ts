@@ -301,6 +301,31 @@ class DashboardPage extends BasePage {
         await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
     }
 
+    async forceEnterEditMode() {
+        // switch to edit mode from view
+        const createLockPromise = this.page.waitForRequest(URLS.createLock);
+        await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
+
+        // waiting for the opening of the warning dialog or the Cancel edit button
+        const elem = await this.page.waitForSelector(
+            `${slct(DashboardPage.selectors.dialogConfirm)}, ${slct(
+                COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN,
+            )}`,
+        );
+
+        const qaAttr = await elem.getAttribute('data-qa');
+
+        if (qaAttr !== DashboardPage.selectors.dialogConfirm) {
+            await createLockPromise;
+            return;
+        }
+
+        // click "Edit anyway"
+        await this.page.click(slct(DashboardPage.selectors.dialogConfirmApplyBtn));
+        await createLockPromise;
+        await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
+    }
+
     async exitEditMode() {
         // exiting the default editing mode of an empty dashboard
         try {
@@ -336,7 +361,7 @@ class DashboardPage extends BasePage {
     async openDashConnections() {
         // switch to edit mode from view
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
-        // waiting for the opening of the warning dialog or the Undo edit button
+        // waiting for the opening of the warning dialog or the Cancel edit button
         const elem = await this.page.waitForSelector(
             `${slct(DashboardPage.selectors.dialogConfirm)}, ${slct(
                 COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN,
@@ -640,6 +665,14 @@ class DashboardPage extends BasePage {
 
     async isDescriptionEditMode() {
         await this.description.isEditMode();
+    }
+
+    async clickSelectWithTitle(title: string) {
+        await this.page
+            .locator(slct(ControlQA.chartkitControl))
+            .filter({hasText: title})
+            .filter({has: this.page.locator(slct(ControlQA.controlSelect))})
+            .click();
     }
 }
 

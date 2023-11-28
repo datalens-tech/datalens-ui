@@ -12,7 +12,7 @@ import {
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
-import {EntryScope, Feature} from 'shared';
+import {CreateEntityButton, EntryScope, Feature} from 'shared';
 import {EntityIcon} from 'ui/components/EntityIcon/EntityIcon';
 import Utils from 'ui/utils';
 
@@ -171,8 +171,9 @@ export const CreateEntry = React.memo<Props>(({className, scope, size = 'm', vie
                 <DropdownMenu
                     size="s"
                     items={items}
+                    popupProps={{qa: CreateEntityButton.Popup}}
                     switcher={
-                        <Button view={view} size={size}>
+                        <Button view={view} size={size} qa={CreateEntityButton.Button}>
                             {buttonText}
                             <Icon data={ChevronDown} size="16" />
                         </Button>
