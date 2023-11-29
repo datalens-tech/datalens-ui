@@ -8,7 +8,7 @@ import {openTestPage} from '../../../utils';
 
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 
-const sqlScriptWithIntervalParam = `select {{target_date_from}}, {{target_date_to}}`;
+const sqlScriptWithIntervalParam = `select {{target_date_from}} as date_from, {{target_date_to}} as date_to`;
 
 datalensTest.describe('QL interval parameter recognition check with operation', () => {
     datalensTest(

@@ -390,7 +390,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                     }}
                     key="button-add-param-value"
                     className={b('default-value-text')}
-                    qa="open-param-dialog"
+                    qa="open-param-dialog-btn"
                 >
                     {param.defaultValue
                         ? formattedDate
