@@ -19,6 +19,7 @@ import {
     Operations,
 } from 'shared';
 import {GetWidgetsDatasetsFieldsItem} from 'shared/schema';
+import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'ui/store/actions/dialog';
 import {DashState} from 'ui/units/dash/store/reducers/dashTypedReducer';
 import {validateParamTitleOnlyUnderscore} from 'units/dash/components/ParamsSettings/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
@@ -855,6 +856,42 @@ export function saveDashAsNewDash({key, workbookId, name}: SaveAsNewDashArgs) {
         return null;
     };
 }
+
+const setDefaultViewState = () => {
+    return (dispatch: AppDispatch) => {
+        dispatch(setDashViewMode());
+        dispatch(setPageDefaultTabItems());
+    };
+};
+
+export const cancelDashEditMode = ({isDraft}: {isDraft: boolean}) => {
+    return (dispatch: AppDispatch) => {
+        if (isDraft) {
+            dispatch(
+                openDialogConfirm({
+                    message: 'На странице есть несохраненные изменения, вы уверены?',
+                    isWarningConfirm: true,
+                    cancelButtonView: 'flat',
+                    confirmButtonView: 'normal',
+                    onApply: () => {
+                        dispatch(setDefaultViewState());
+                        dispatch(closeDialogConfirm());
+                    },
+                    onCancel: () => {
+                        dispatch(closeDialogConfirm());
+                    },
+                    widthType: 'medium',
+                    confirmHeaderText: 'Изменения будут потеряны',
+                    cancelButtonText: 'Назад',
+                    confirmButtonText: 'Продолжить',
+                    showAlert: true,
+                }),
+            );
+            return;
+        }
+        dispatch(setDefaultViewState());
+    };
+};
 
 export const SET_DASH_KEY = Symbol('dash/SET_DASH_KEY');
 export type SetDashKeyAction = {

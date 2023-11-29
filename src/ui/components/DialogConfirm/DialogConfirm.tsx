@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {TriangleExclamationFill} from '@gravity-ui/icons';
-import {Button, ButtonView, Dialog, Icon} from '@gravity-ui/uikit';
+import {Alert, Button, ButtonView, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
@@ -28,6 +28,7 @@ export interface DialogConfirmProps {
     applyBtnLoadingStatus?: DialogConfirmApplyStatus;
     cancelButtonView?: ButtonView;
     confirmButtonView?: ButtonView;
+    showAlert?: boolean;
 }
 
 export enum DialogConfirmApplyStatus {
@@ -58,6 +59,7 @@ const DialogConfirm: React.FC<DialogConfirmProps> = (props) => {
         hideIcon,
         cancelButtonView = 'normal',
         confirmButtonView = 'action',
+        showAlert,
     } = props;
 
     const enterPressHandler = React.useCallback(
@@ -98,18 +100,25 @@ const DialogConfirm: React.FC<DialogConfirmProps> = (props) => {
                 />
             )}
             <Dialog.Body className={b('body-container', {warning: isWarningConfirm})}>
-                <div className={b('body', {warning: isWarningConfirm})}>
-                    {hideIcon ? null : (
-                        <div className={b('icon', {warning: isWarningConfirm})}>
-                            <Icon data={TriangleExclamationFill} size={32} />
+                {showAlert ? (
+                    <Alert theme="warning" message={message} view="outlined" />
+                ) : (
+                    <div className={b('body', {warning: isWarningConfirm})}>
+                        {hideIcon ? null : (
+                            <div className={b('icon', {warning: isWarningConfirm})}>
+                                <Icon data={TriangleExclamationFill} size={32} />
+                            </div>
+                        )}
+                        <div
+                            className={b('message', {
+                                warning: isWarningConfirm,
+                                'hide-icon': hideIcon,
+                            })}
+                        >
+                            {message}
                         </div>
-                    )}
-                    <div
-                        className={b('message', {warning: isWarningConfirm, 'hide-icon': hideIcon})}
-                    >
-                        {message}
                     </div>
-                </div>
+                )}
             </Dialog.Body>
             <div className={b('footer', {warning: isWarningConfirm})}>
                 <div className={b('button', {action: 'cancel', warning: isWarningConfirm})}>

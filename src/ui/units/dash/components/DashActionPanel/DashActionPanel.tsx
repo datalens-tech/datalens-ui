@@ -32,6 +32,7 @@ import {isEmbeddedMode} from '../../../../utils/embedded';
 import {DIALOG_TYPE} from '../../containers/Dialogs/constants';
 import {purgeData} from '../../store/actions/dash';
 import {
+    cancelDashEditMode,
     saveDashAsDraft,
     saveDashAsNewDash,
     setActualDash,
@@ -164,8 +165,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     };
 
     handlerCancelEditClick = () => {
-        this.props.setDashViewMode();
-        this.props.setPageDefaultTabItems();
+        this.props.cancelDashEditMode({isDraft: this.props.isDraft});
     };
 
     handlerSaveAsNewClick = async () => {
@@ -285,12 +285,13 @@ const mapStateToProps = (state: DatalensGlobalState) => {
 };
 
 const mapDispatchToProps = {
+    setDashViewMode,
     setActualDash,
     setPublishDraft,
     saveDashAsDraft,
     saveDashAsNewDash,
-    setDashViewMode,
     setPageDefaultTabItems,
+    cancelDashEditMode,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashActionPanel);
