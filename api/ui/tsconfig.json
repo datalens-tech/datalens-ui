@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig",
+  "compilerOptions": {
+    "outDir": "../../dist",
+    "resolveJsonModule": true,
+    "jsx": "react",
+    "module": "ESNext",
+  },
+  "include": [
+    "**/*"
+  ]
+}
