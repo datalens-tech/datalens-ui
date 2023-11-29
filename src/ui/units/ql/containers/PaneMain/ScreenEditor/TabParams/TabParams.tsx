@@ -30,6 +30,9 @@ function resolveAndFormatDate(date: string, type: QLParamType) {
     }).toFormat(type === QLParamType.Datetime ? LUXON_FORMATS.DATE_TIME : LUXON_FORMATS.DATE);
 }
 
+const TODAY = '__relative_+0d';
+const THREE_DAYS_BEFORE = '__relative_-3d';
+
 type TabParamsMakeMapStateToPropsResult = ReturnType<typeof makeMapStateToProps>;
 type TabParamsMapDispatchToPropsResult = typeof mapDispatchToProps;
 
@@ -291,11 +294,11 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
 
         if (paramIsInterval) {
             newParam.defaultValue = {
-                from: resolveRelativeDate('__relative_-3d') as string,
-                to: resolveRelativeDate('__relative_+0d') as string,
+                from: resolveRelativeDate(THREE_DAYS_BEFORE) as string,
+                to: resolveRelativeDate(TODAY) as string,
             };
         } else if (paramIsDate) {
-            newParam.defaultValue = resolveRelativeDate('__relative_+0d') as string;
+            newParam.defaultValue = resolveRelativeDate(TODAY) as string;
         } else if (oldParamIsInterval || oldParamIsDate) {
             newParam.defaultValue = '';
         }
