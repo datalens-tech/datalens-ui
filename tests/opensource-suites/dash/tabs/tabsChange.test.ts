@@ -46,6 +46,9 @@ datalensTest.describe(`Dashboards - switch tabs`, () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
+            // Important: reload the page because dash state may be different for POST(create) and GET requests.
+            page.reload();
+
             await firstTabIsVisible(dashboardPage);
 
             await dashboardPage.dashTabs.switchTabByIdx(1);
