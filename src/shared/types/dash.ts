@@ -61,6 +61,7 @@ export type DashSettings = {
     expandTOC: boolean;
     globalParams?: DashSettingsGlobalParams;
     loadPriority?: DashLoadPriority;
+    loadOnlyVisibleCharts?: boolean;
 };
 
 export interface DashData {

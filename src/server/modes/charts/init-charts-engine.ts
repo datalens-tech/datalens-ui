@@ -144,6 +144,10 @@ export function applyPluginRoutes({
                 appRoute.authPolicy = pluginRoute.authPolicy;
             }
 
+            if (typeof pluginRoute.disableCsrf !== 'undefined') {
+                appRoute.disableCsrf = pluginRoute.disableCsrf;
+            }
+
             routes[`${pluginRoute.method} ${pluginRoute.path}`] = {
                 ...appRoute,
                 route: `${pluginRoute.method} ${pluginRoute.path}`,

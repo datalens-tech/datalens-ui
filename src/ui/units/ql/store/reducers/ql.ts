@@ -1,4 +1,3 @@
-import {i18n} from 'i18n';
 import _ from 'lodash';
 import moment from 'moment';
 import {createSelector} from 'reselect';
@@ -350,7 +349,7 @@ export const getEntryNotChanged = createSelector(
                 chartType,
                 visualization,
                 order: [],
-                version: QlConfigVersions.V2,
+                version: QlConfigVersions.V1,
             };
 
             // Removing possible functions from the structure to compare data
@@ -426,7 +425,7 @@ export const getPreviewData = createSelector(
                 params: params,
                 visualization,
                 order,
-                version: QlConfigVersions.V2,
+                version: QlConfigVersions.V1,
             };
 
             return result;
@@ -565,7 +564,6 @@ export default function ql(state: QLState = initialState, action: QLAction) {
                 {
                     value: '',
                     params: [],
-                    queryName: `${i18n('sql', 'label_query')} ${queries.length + 1}`,
                 },
             ];
 

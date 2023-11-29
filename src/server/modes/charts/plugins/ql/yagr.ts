@@ -1,6 +1,6 @@
-import type {ChartType, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
+import type {ChartType, TooltipOptions, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 
-import {IChartEditor, QlVisualizationId, ServerVisualization} from '../../../../../shared';
+import {ServerVisualization} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import type {QlConfig} from '../../../../../shared/types/config/ql';
 
@@ -43,17 +43,16 @@ const applyPlaceholderSettingsToYAxis = ({
     return {scale};
 };
 
-export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
-    const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
+export default ({shared}: {shared: QlConfig}) => {
+    const config = mapQlConfigToLatestVersion(shared);
 
     const type = (config.visualization.highchartsId || config.visualization.id) as ChartType;
 
     const percent =
         config.visualization.id === 'area100p' || config.visualization.id === 'column100p';
 
-    const visualizationId = config.visualization.highchartsId || config.visualization.id;
-
-    const tracking = visualizationId === QlVisualizationId.Area ? 'area' : 'sticky';
+    const tracking = (config.visualization.highchartsId ||
+        config.visualization.id) as TooltipOptions['tracking'];
 
     const title =
         config.extraSettings?.titleMode === 'show' && config.extraSettings.title

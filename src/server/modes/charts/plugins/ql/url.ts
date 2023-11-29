@@ -35,7 +35,7 @@ const prepareDefaultDate = (date: string) => {
 };
 
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
-    const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
+    const config = mapQlConfigToLatestVersion(shared);
 
     const urlParams = ChartEditor.getParams();
 

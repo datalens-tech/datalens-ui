@@ -21,7 +21,6 @@ import {
 } from 'ui';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 
-import {EditableText} from '../../../../../../../components/EditableText/EditableText';
 import {prepareChartDataBeforeSave} from '../../../../../modules/helpers';
 import {
     addParamInQuery,
@@ -30,6 +29,7 @@ import {
     duplicateQuery,
     removeParamInQuery,
     removeQuery,
+    removeQueryAndRedraw,
     setEntry,
     updateChart,
     updateParamInQuery,
@@ -37,14 +37,17 @@ import {
     updateQueryAndRedraw,
 } from '../../../../../store/actions/ql';
 import {
+    getChartType,
     getDefaultPath,
     getEntry,
     getEntryNotChanged,
+    getExtraSettings,
     getPreviewData,
     getQueries,
     getValid,
 } from '../../../../../store/reducers/ql';
 import {QLEntry} from '../../../../../store/typings/ql';
+import {isQlAutoExecuteChartEnabled} from '../../../../../utils/chart-settings';
 
 import './ScreenPromQL.scss';
 
@@ -71,6 +74,7 @@ interface TabQueryProps {
 interface TabQueryState {
     editors: Record<string, MonacoTypes.editor.IStandaloneCodeEditor>;
     activeTabs: Record<number, string>;
+    oldQueries: QLConfigQuery[];
 }
 
 class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
@@ -93,6 +97,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         this.state = {
             editors: {},
             activeTabs: {},
+            oldQueries: props.queries,
         };
     }
 
@@ -122,19 +127,10 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                     className={b('query-row-collapse')}
                                     title={
                                         <div className={b('query-row-header')}>
-                                            <EditableText
-                                                text={query.queryName}
-                                                textClassName={b('query-row-title')}
-                                                onInputApply={(queryName) => {
-                                                    if (queryName === query.queryName) {
-                                                        return;
-                                                    }
-                                                    this.props.updateQueryAndRedraw({
-                                                        query: {...query, queryName},
-                                                        index: queryIndex,
-                                                    });
-                                                }}
-                                            />
+                                            <span className={b('query-row-title')}>{`${i18n(
+                                                'sql',
+                                                'label_query',
+                                            )} ${queryIndex + 1}`}</span>
                                         </div>
                                     }
                                     toolbar={
@@ -372,6 +368,23 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
             }
         });
 
+        editor.onDidBlurEditorWidget(() => {
+            const isSomeQueryChanged = this.state.oldQueries.some((query, index) => {
+                const updatedQuery = this.props.queries[index];
+                return query.value !== updatedQuery.value;
+            });
+            if (
+                isQlAutoExecuteChartEnabled(
+                    this.props.extraSettings?.qlAutoExecuteChart,
+                    this.props.chartType,
+                ) &&
+                isSomeQueryChanged
+            ) {
+                this.onRunCommand();
+                this.setState({oldQueries: this.props.queries});
+            }
+        });
+
         // eslint-disable-next-line no-bitwise
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
             this.onRunCommand();
@@ -413,7 +426,16 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
     };
 
     private onClickButtonRemoveQuery = ({queryIndex}: {queryIndex: number}) => {
-        this.props.removeQuery({index: queryIndex});
+        if (
+            isQlAutoExecuteChartEnabled(
+                this.props.extraSettings?.qlAutoExecuteChart,
+                this.props.chartType,
+            )
+        ) {
+            this.props.removeQueryAndRedraw({index: queryIndex});
+        } else {
+            this.props.removeQuery({index: queryIndex});
+        }
     };
 
     private onClickButtonHideQuery = ({
@@ -516,7 +538,9 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
         entry: getEntry(state),
         previewData: getPreviewData(state),
         entryNotChanged: getEntryNotChanged(state),
+        extraSettings: getExtraSettings(state),
         valid: getValid(state),
+        chartType: getChartType(state),
     };
 };
 
@@ -532,6 +556,7 @@ const mapDispatchToProps = {
     updateParamInQuery,
     removeParamInQuery,
     updateQueryAndRedraw,
+    removeQueryAndRedraw,
 };
 
 export default connect(
