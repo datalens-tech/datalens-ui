@@ -7,8 +7,12 @@ type CollectionContentProps = {
     contentItems: (CollectionWithPermissions | WorkbookWithPermissions)[];
     filters: CollectionContentFilters;
     setFilters: (filters: CollectionContentFilters) => void;
-    getWorkbookActions: (item: WorkbookWithPermissions) => DropdownMenuItem[];
-    getCollectionActions: (item: CollectionWithPermissions) => DropdownMenuItem[];
+    getWorkbookActions: (
+        item: WorkbookWithPermissions,
+    ) => (DropdownMenuItem[] | DropdownMenuItem)[];
+    getCollectionActions: (
+        item: CollectionWithPermissions,
+    ) => (DropdownMenuItem[] | DropdownMenuItem)[];
 };
 
 export {CollectionContentProps};
