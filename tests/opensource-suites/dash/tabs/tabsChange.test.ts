@@ -29,7 +29,7 @@ datalensTest.describe(`Dashboards - switch tabs`, () => {
 
         await dashboardPage.addText(firstTabText);
         await dashboardPage.addTab();
-        await dashboardPage.switchTabByIdx(1);
+        await dashboardPage.dashTabs.switchTabByIdx(1);
         await dashboardPage.addText(secondTabText);
 
         await dashboardPage.saveChanges();
@@ -48,7 +48,7 @@ datalensTest.describe(`Dashboards - switch tabs`, () => {
 
             await firstTabIsVisible(dashboardPage);
 
-            await dashboardPage.switchTabByIdx(1);
+            await dashboardPage.dashTabs.switchTabByIdx(1);
             await secondTabIsVisible(dashboardPage);
 
             await page.goBack();

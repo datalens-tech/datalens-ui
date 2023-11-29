@@ -48,7 +48,7 @@ datalensTest.describe(`Dashboards - tabs`, () => {
             await dashboardPage.exitEditMode();
 
             // Check that the added tab is not left on the dashboard
-            await expect(dashboardPage.getTabByIdx(1)).not.toBeDisabled();
+            await expect(dashboardPage.dashTabs.getTabByIdx(1)).not.toBeVisible();
         },
     );
 });

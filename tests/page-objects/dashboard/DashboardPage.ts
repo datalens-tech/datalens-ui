@@ -3,9 +3,9 @@ import {Response, expect} from '@playwright/test';
 import {
     ConnectionsDialogQA,
     ControlQA,
+    DialogDashWidgetQA,
     DialogTabsQA,
     EntryDialogQA,
-    DialogDashWidgetQA,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -23,20 +23,21 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
-import Description from './Description';
-import TableOfContent from './TableOfContent';
+import {DashboardDialogSettingsQa, DialogDashWidgetItemQA} from '../../../src/shared';
 import {
     ActionPanelDashSaveControls,
     ActionPanelEntryContextMenuQa,
 } from '../../../src/shared/constants/qa/action-panel';
 import {
+    DashKitOverlayMenuQa,
     DashboardAddWidgetQa,
     DashboardDialogControl,
-    DashKitOverlayMenuQa,
 } from '../../../src/shared/constants/qa/dash';
 import {CommonSelectors} from '../constants/common-selectors';
-import {DashboardDialogSettingsQa, DialogDashWidgetItemQA} from '../../../src/shared';
+import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
+import Description from './Description';
+import TableOfContent from './TableOfContent';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -99,6 +100,7 @@ class DashboardPage extends BasePage {
     tableOfContent: TableOfContent;
     description: Description;
     dialogControl: DialogControl;
+    dashTabs: DashTabs;
 
     constructor({page}: DashboardPageProps) {
         super({page});
@@ -106,6 +108,7 @@ class DashboardPage extends BasePage {
         this.description = new Description(page);
         this.tableOfContent = new TableOfContent(page, this);
         this.dialogControl = new DialogControl(page);
+        this.dashTabs = new DashTabs(page);
     }
 
     async waitForResponses(url: string, timeout = API_TIMEOUT): Promise<Array<Response>> {
@@ -588,16 +591,6 @@ class DashboardPage extends BasePage {
         }
 
         throw new Error('Tabs selector not found');
-    }
-
-    getTabByIdx(idx: number) {
-        return this.page.locator(DashboardPage.selectors.tabContainer).nth(idx);
-    }
-
-    async switchTabByIdx(idx: number) {
-        const tab = this.getTabByIdx(idx);
-        await expect(tab).toBeVisible();
-        await tab.click();
     }
 
     async changeWidgetTab(tabName: string) {
