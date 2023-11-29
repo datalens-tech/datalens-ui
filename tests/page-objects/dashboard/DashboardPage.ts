@@ -35,7 +35,7 @@ import {
     DashKitOverlayMenuQa,
 } from '../../../src/shared/constants/qa/dash';
 import {CommonSelectors} from '../constants/common-selectors';
-import {DashboardDialogSettingsQa} from '../../../src/shared';
+import {DashboardDialogSettingsQa, DialogDashWidgetItemQA} from '../../../src/shared';
 import DashboardSettings from './DashboardSettings';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
@@ -88,6 +88,7 @@ class DashboardPage extends BasePage {
         dialogCancelBtn: 'dialog-cancel-button',
         chartGridItemContainer: `${slct(COMMON_DASH_SELECTORS.DASH_GRID_ITEM)} .chartkit`,
         dashPluginWidgetBody: slct('chart-widget'),
+        dashkitGridItem: slct('dashkit-grid-item'),
     };
 
     static qa = {
@@ -277,6 +278,23 @@ class DashboardPage extends BasePage {
 
         // adding to the dashboard
         await this.page.click(slct(DialogDashWidgetQA.Apply));
+    }
+
+    async clickAddText() {
+        await this.page.click(slct(DashboardAddWidgetQa.AddText));
+    }
+
+    async addText(text: string) {
+        await this.clickAddText();
+        await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
+        await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+        await this.page.click(slct(DialogDashWidgetQA.Apply));
+    }
+
+    getDashKitTextItem(text: string) {
+        return this.page
+            .locator(DashboardPage.selectors.dashkitGridItem)
+            .getByText(text, {exact: true});
     }
 
     async deleteSelector(controlTitle: string) {
@@ -574,6 +592,12 @@ class DashboardPage extends BasePage {
 
     getTabByIdx(idx: number) {
         return this.page.locator(DashboardPage.selectors.tabContainer).nth(idx);
+    }
+
+    async switchTabByIdx(idx: number) {
+        const tab = this.getTabByIdx(idx);
+        await expect(tab).toBeVisible();
+        await tab.click();
     }
 
     async changeWidgetTab(tabName: string) {
