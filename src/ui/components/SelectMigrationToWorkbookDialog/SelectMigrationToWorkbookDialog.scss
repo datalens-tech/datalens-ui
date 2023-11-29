@@ -1,0 +1,21 @@
+.dl-select-migration-to-workbook-dialog {
+    position: relative;
+    max-height: calc(100vh - 32px);
+
+    &__body {
+        padding: 18px 32px 10px;
+    }
+
+    &__body-content {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__block-content-item {
+        flex: 1 1 0;
+
+        &:last-child {
+            margin-left: 24px;
+        }
+    }
+}
