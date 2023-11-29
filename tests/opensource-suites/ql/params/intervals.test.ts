@@ -1,7 +1,8 @@
 import {Page} from '@playwright/test';
 
+import {TestParametrizationConfig} from 'types/config';
+
 import QLPage from '../../../page-objects/ql/QLPage';
-import {RobotChartsSQLEditorUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
 
@@ -12,9 +13,10 @@ const sqlScriptWithIntervalParam = `select {{target_date_from}}, {{target_date_t
 datalensTest.describe('QL interval parameter recognition check with operation', () => {
     datalensTest(
         'Checking that the user can set date-interval parameter default value and it applies correctly',
-        async ({page}: {page: Page}) => {
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const qlPage = new QLPage({page});
-            await openTestPage(page, RobotChartsSQLEditorUrls.NewQLChartForCHYTDemo);
+
+            await openTestPage(page, config.ql.urls.NewQLChartWithConnection);
 
             await qlPage.setVisualization(WizardVisualizationId.FlatTable);
 

@@ -1,10 +1,10 @@
 import {Page} from '@playwright/test';
 
+import {TestParametrizationConfig} from 'types/config';
+
 import QLPage from '../../../page-objects/ql/QLPage';
-import {RobotChartsSQLEditorUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
-
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 
 const sqlScriptWithDateParam = `select {{target_date}}`;
@@ -12,9 +12,10 @@ const sqlScriptWithDateParam = `select {{target_date}}`;
 datalensTest.describe('QL date parameter setting default value', () => {
     datalensTest(
         'Checking that the user can set date parameter default value and it applies correctly',
-        async ({page}: {page: Page}) => {
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const qlPage = new QLPage({page});
-            await openTestPage(page, RobotChartsSQLEditorUrls.NewQLChartForCHYTDemo);
+
+            await openTestPage(page, config.ql.urls.NewQLChartWithConnection);
 
             await qlPage.setVisualization(WizardVisualizationId.FlatTable);
 
