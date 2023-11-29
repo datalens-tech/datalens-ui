@@ -74,11 +74,11 @@ $contentMobilePadding: 16px;
         text-size-adjust: none;
         background-color: var(--g-color-base-generic-ultralight);
 
-        &_no-title {
-            padding-top: 24px;
+        &_no-title #{$bodyClass}__content_aside {
+            padding-top: #{$contentPadding};
         }
 
-        &_no-title-with-tabs {
+        &_no-title-with-tabs #{$bodyClass}__content_aside {
             padding-top: 6px;
         }
     }
