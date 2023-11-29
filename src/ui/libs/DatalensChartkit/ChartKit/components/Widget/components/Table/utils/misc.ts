@@ -18,7 +18,7 @@ import {
     TableCommonCell,
     TableHead,
     TableRow,
-    TablehWidgetEventScope,
+    TableWidgetEventScope,
 } from 'shared';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
 
@@ -336,14 +336,14 @@ export function getTreeSetColumnSortAscending(
 
 export function getActionParamsEventScope(
     events?: NonNullable<TableWidget['config']>['events'],
-): TablehWidgetEventScope | undefined {
+): TableWidgetEventScope | undefined {
     if (!events?.click) {
         return undefined;
     }
 
     const normalizedEvents = Array.isArray(events.click) ? events.click : [events.click];
 
-    return normalizedEvents.reduce<TablehWidgetEventScope | undefined>((_, e) => {
+    return normalizedEvents.reduce<TableWidgetEventScope | undefined>((_, e) => {
         return e.scope;
     }, undefined);
 }
