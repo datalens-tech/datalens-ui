@@ -66,6 +66,7 @@ class DashboardPage extends BasePage {
         tabsList: '.gc-adaptive-tabs__tabs-list',
         tabItem: '.gc-adaptive-tabs__tab',
         tabItemActive: '.gc-adaptive-tabs__tab_active',
+        tabContainer: '.gc-adaptive-tabs__tab-container',
         selectControl: '.yc-select-control',
         /** @deprecated instead use selectItems */
         ycSelectItems: '.yc-select-items',
@@ -676,6 +677,10 @@ class DashboardPage extends BasePage {
             .click();
     }
 
+    async waitForSomeItemVisible() {
+        await this.page.waitForSelector(slct('dashkit-grid-item'));
+    }
+
     async waitForSomeChartItemVisible() {
         await this.page.waitForSelector(DashboardPage.selectors.chartGridItemContainer);
     }
@@ -685,6 +690,12 @@ class DashboardPage extends BasePage {
             const elems = await this.page.$$(DashboardPage.selectors.chartGridItemContainer);
             return elems.length === 0;
         });
+    }
+
+    async getTabByIdx(idx: number) {
+        return this.page.$(
+            `${DashboardPage.selectors.tabContainer}:nth-child(${idx}) .dl-tabs__tab`,
+        );
     }
 }
 
