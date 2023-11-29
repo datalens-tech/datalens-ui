@@ -173,11 +173,11 @@ class QLPage extends ChartPage {
     }
 
     async setParamName(name: string) {
-        const textInput = await this.page.waitForSelector(
-            `[data-qa=${QLPageElementsQA.ParamName}] input`,
+        const inputLocator = this.page.locator(
+            `${slct(QLPageElementsQA.ParamName)} ${CommonSelectors.TextInput}`,
         );
 
-        await textInput.fill(name);
+        await inputLocator.fill(name);
     }
 
     async openParamDialog() {
