@@ -11,8 +11,8 @@ import {
 } from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 
-import CheckFolder from 'platform/src/ui/assets/icons/check-folder.svg';
-import CopyXmark from 'platform/src/ui/assets/icons/copy-xmark.svg';
+import CheckFolder from 'ui/assets/icons/check-folder.svg';
+import CopyXmark from 'ui/assets/icons/copy-xmark.svg';
 
 const migrateByCopy = {
     title: 'title_copy',
