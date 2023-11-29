@@ -32,7 +32,6 @@ describe('line preparer', () => {
     describe('line', () => {
         test('should apply colors and shapes to fields with prefixes/postfixes', () => {
             const result = linePrepare(linesColoredByFieldWithPostfixArgs);
-            console.log(result);
             expect(result).toEqual(linesColoredByFieldWithPostfixResult);
         });
     });
