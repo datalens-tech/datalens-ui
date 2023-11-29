@@ -572,6 +572,10 @@ class DashboardPage extends BasePage {
         throw new Error('Tabs selector not found');
     }
 
+    getTabByIdx(idx: number) {
+        return this.page.locator(DashboardPage.selectors.tabContainer).nth(idx);
+    }
+
     async changeWidgetTab(tabName: string) {
         const tabsContainer = await this.page.waitForSelector(
             `${slct(COMMON_DASH_SELECTORS.DASH_GRID_ITEM)} ${
@@ -691,12 +695,6 @@ class DashboardPage extends BasePage {
             const elems = await this.page.$$(DashboardPage.selectors.chartGridItemContainer);
             return elems.length === 0;
         });
-    }
-
-    async getTabByIdx(idx: number) {
-        return this.page.$(
-            `${DashboardPage.selectors.tabContainer}:nth-child(${idx}) .dl-tabs__tab`,
-        );
     }
 }
 
