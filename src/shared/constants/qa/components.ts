@@ -140,3 +140,7 @@ export const enum CreateEntityButton {
     Button = 'create-entry-button',
     Popup = 'create-entry-button-popup',
 }
+
+export enum DashTabsQA {
+    Root = 'dash-tabs',
+}
