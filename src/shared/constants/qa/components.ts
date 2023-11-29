@@ -101,6 +101,10 @@ export enum TabMenuQA {
     Add = 'tab-menu-add',
 }
 
+export enum DialogDashWidgetItemQA {
+    Text = 'dialog_widget-text',
+}
+
 export enum DialogDashWidgetQA {
     Apply = 'dialog_widget-apply-btn',
     Cancel = 'dialog_widget-cancel-btn',
