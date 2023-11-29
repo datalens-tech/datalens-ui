@@ -1,4 +1,3 @@
-import {i18n} from 'i18n';
 import moment from 'moment';
 import {QLConfigQuery, QlConfigParam} from 'shared/types/config/ql';
 
@@ -22,9 +21,8 @@ export const prepareMonitoringPresetV2 = (preset: MonitoringPresetV2) => {
     }
 
     if (Array.isArray(preset?.data?.widget?.queries?.targets)) {
-        preset.data.widget.queries.targets.forEach((target, index) => {
+        preset.data.widget.queries.targets.forEach((target) => {
             initialQueries.push({
-                queryName: `${i18n('sql', 'label_query')} ${index + 1}`,
                 value: target.query,
                 params: [],
             });
@@ -118,9 +116,8 @@ export const prepareMonitoringPresetV1 = (preset: MonitoringPresetV1) => {
     let visualization = getDefaultQlVisualization();
 
     if (preset?.data?.chart) {
-        preset.data.chart.targets.forEach((target, index) => {
+        preset.data.chart.targets.forEach((target) => {
             initialQueries.push({
-                queryName: `${i18n('sql', 'label_query')} ${index + 1}`,
                 value: target.query,
                 params: [
                     {
