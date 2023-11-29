@@ -277,7 +277,7 @@ function prepareFlatTable({
                     // Need to add an empty object to exclude the measure field value from the filtering data
                     // (otherwise cell.value will be used by default)
                     cell.custom = {
-                        actionsParams: {},
+                        actionParams: {},
                     };
                 }
             }
