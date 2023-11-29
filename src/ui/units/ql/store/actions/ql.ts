@@ -1,10 +1,9 @@
 import {AxiosError} from 'axios';
 import {History, Location} from 'history';
-import {I18n, i18n} from 'i18n';
+import {i18n} from 'i18n';
 import _ from 'lodash';
 import type {match as Match} from 'react-router-dom';
 import {mapQlConfigToLatestVersion} from 'shared/modules/config/ql';
-import {getTranslationFn} from 'shared/modules/language';
 import type {
     QLConfigQuery,
     QlConfig,
@@ -661,7 +660,6 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 if (typeof loadedEntry.data?.shared === 'string') {
                     entry.data.shared = mapQlConfigToLatestVersion(
                         JSON.parse(loadedEntry.data.shared),
-                        {i18n: getTranslationFn(I18n)},
                     );
                 } else {
                     throw new Error(i18n('sql', 'error_failed-to-parse-loaded-chart'));
