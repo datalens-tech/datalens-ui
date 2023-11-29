@@ -70,6 +70,8 @@ export const Chart = (props: ChartNoWidgetProps) => {
         onInnerParamsChanged,
         disableChartLoader,
         actionParamsEnabled,
+        isPageHidden,
+        autoupdateInterval,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -176,6 +178,8 @@ export const Chart = (props: ChartNoWidgetProps) => {
         clearedOuterParams,
         onInnerParamsChanged,
         enableActionParams: actionParamsEnabled,
+        isPageHidden,
+        autoupdateInterval,
     });
 
     /**

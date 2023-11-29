@@ -1,4 +1,4 @@
-import {EMBEDDED_CHART_MESSAGE_NAME} from 'constants/common';
+import {EMBEDDED_CHART_MESSAGE_NAME, MIN_AUTOUPDATE_CHART_INTERVAL} from 'constants/common';
 
 import React from 'react';
 
@@ -73,10 +73,37 @@ const Preview: React.FC<PreviewProps> = (props) => {
 
     const [name, setName] = React.useState<string | null>(null);
 
+    const [isPageHidden, setIsPageHidden] = React.useState(false);
+    const [autoupdateInterval, setAutoupdateInterval] = React.useState<undefined | number>();
+
     const params = React.useMemo(() => Utils.getParamsFromSearch(search), [search]);
 
     const previewRef = React.useRef<HTMLDivElement>(null);
     const chartKitRef = React.useRef<ChartsChartKit>(null);
+
+    const onVisibilityChange = () => {
+        setIsPageHidden(document.hidden);
+    };
+
+    React.useEffect(() => {
+        const {autoupdateInterval: updateInterval} = Utils.getOptionsFromSearch(
+            window.location.search,
+        );
+
+        if (updateInterval) {
+            setAutoupdateInterval(
+                updateInterval >= MIN_AUTOUPDATE_CHART_INTERVAL
+                    ? updateInterval
+                    : MIN_AUTOUPDATE_CHART_INTERVAL,
+            );
+        }
+
+        document.addEventListener('visibilitychange', onVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+        };
+    }, []);
 
     React.useEffect(() => {
         let concurrentId = '';
@@ -201,6 +228,8 @@ const Preview: React.FC<PreviewProps> = (props) => {
                     forwardedRef={chartKitRef as unknown as React.RefObject<ChartKitType>}
                     splitTooltip={hasSplitTooltip}
                     menuType="preview"
+                    isPageHidden={isPageHidden}
+                    autoupdateInterval={autoupdateInterval}
                 />
                 <PreviewExtension />
             </div>

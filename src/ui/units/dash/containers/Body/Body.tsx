@@ -7,6 +7,7 @@ import {
     ActionPanel as DashkitActionPanel,
     ActionPanelItem as DashkitActionPanelItem,
     MenuItems,
+    type PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
 import {ChartColumn, CopyPlus, Gear, Heading, Sliders, TextAlignLeft} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
@@ -21,7 +22,7 @@ import debounce from 'lodash/debounce';
 import {ResolveThunks, connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {ControlQA, DashTab, DashTabItem, DashboardAddWidgetQa, Feature} from 'shared';
+import {ControlQA, DashTab, DashTabItem, DashboardAddWidgetQa, Feature, StringParams} from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
@@ -255,11 +256,38 @@ class Body extends React.PureComponent<BodyProps> {
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
+    getPreparedCopyItemOptions = (itemToCopy: PreparedCopyItemOptions, tabData: DashTab | null) => {
+        if (!tabData?.items || !itemToCopy || !itemToCopy.data.tabs?.length) {
+            return itemToCopy;
+        }
+        const copyItemTabsWidgetParams: Record<string, StringParams> = {};
+        itemToCopy.data.tabs.forEach((copiedTabItem) => {
+            const {id, params} = copiedTabItem;
+            copyItemTabsWidgetParams[id] = params || {};
+        });
+
+        tabData.items.forEach((dashTabItem) => {
+            if ('tabs' in dashTabItem.data) {
+                dashTabItem.data.tabs.forEach((item) => {
+                    if (item.id in copyItemTabsWidgetParams) {
+                        copyItemTabsWidgetParams[item.id] = item.params;
+                    }
+                });
+            }
+        });
+        itemToCopy.data.tabs.forEach((copiedTabItem) => {
+            if (copiedTabItem.id in copyItemTabsWidgetParams) {
+                const {id} = copiedTabItem;
+                copiedTabItem.params = copyItemTabsWidgetParams[id];
+            }
+        });
+        return itemToCopy;
+    };
+
     render() {
-        const content = this.renderBody();
         return (
             <div className={b()}>
-                {content}
+                {this.renderBody()}
                 <PaletteEditor />
                 <EntryDialogues sdk={getSdk() as unknown as SDK} ref={this.entryDialoguesRef} />
             </div>
@@ -304,8 +332,13 @@ class Body extends React.PureComponent<BodyProps> {
 
         const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
         const {autoupdateInterval} = Utils.getOptionsFromSearch(window.location.search);
-        if (autoupdateInterval && autoupdateInterval >= getMinAutoupdateInterval()) {
-            dashkitSettings.autoupdateInterval = autoupdateInterval;
+        if (autoupdateInterval) {
+            const minAutoupdateInterval = getMinAutoupdateInterval();
+
+            dashkitSettings.autoupdateInterval =
+                autoupdateInterval >= getMinAutoupdateInterval()
+                    ? autoupdateInterval
+                    : minAutoupdateInterval;
         }
 
         const overlayControls = this.getOverlayControls();
@@ -329,6 +362,11 @@ class Body extends React.PureComponent<BodyProps> {
                 config={tabDataConfig as DashKitProps['config']}
                 editMode={mode === Mode.Edit}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
+                context={{
+                    getPreparedCopyItemOptions: (itemToCopy: PreparedCopyItemOptions) => {
+                        return this.getPreparedCopyItemOptions(itemToCopy, tabData);
+                    },
+                }}
                 onItemEdit={this.props.openItemDialog}
                 onChange={this.onChange}
                 settings={dashkitSettings}
