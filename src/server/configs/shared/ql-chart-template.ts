@@ -1,19 +1,11 @@
-import type {Request} from '@gravity-ui/expresskit';
-
-import type {ServerI18n} from '../../../i18n/types';
 import type {QlExtendedConfig, StringParams} from '../../../shared';
 import {QLChartType, QL_TYPE, isMonitoringOrPrometheusChart} from '../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../shared/modules/config/ql';
-import {getTranslationFn} from '../../../shared/modules/language';
 
 export default {
     module: 'libs/qlchart/v1',
-    identifyParams: (chart: QlExtendedConfig, req: Request) => {
-        const i18nServer: ServerI18n = req.ctx.get('i18n');
-
-        const config = mapQlConfigToLatestVersion(chart, {
-            i18n: getTranslationFn(i18nServer.getI18nServer()),
-        });
+    identifyParams: (chart: QlExtendedConfig) => {
+        const config = mapQlConfigToLatestVersion(chart);
         const {chartType, params} = config;
 
         const availableParams: StringParams = {};
@@ -43,12 +35,8 @@ export default {
 
         return availableParams;
     },
-    identifyChartType: (chart: QlExtendedConfig, req: Request) => {
-        const i18nServer: ServerI18n = req.ctx.get('i18n');
-
-        const config = mapQlConfigToLatestVersion(chart, {
-            i18n: getTranslationFn(i18nServer.getI18nServer()),
-        });
+    identifyChartType: (chart: QlExtendedConfig) => {
+        const config = mapQlConfigToLatestVersion(chart);
 
         const {visualization, chartType} = config;
         const id = visualization.id;
@@ -79,12 +67,8 @@ export default {
                 return QL_TYPE.GRAPH_QL_NODE;
         }
     },
-    identifyLinks: (chart: QlExtendedConfig, req: Request) => {
-        const i18nServer: ServerI18n = req.ctx.get('i18n');
-
-        const config = mapQlConfigToLatestVersion(chart, {
-            i18n: getTranslationFn(i18nServer.getI18nServer()),
-        });
+    identifyLinks: (chart: QlExtendedConfig) => {
+        const config = mapQlConfigToLatestVersion(chart);
         return {
             connection: config.connection.entryId,
         };
