@@ -144,7 +144,7 @@ export function applyPluginRoutes({
                 appRoute.authPolicy = pluginRoute.authPolicy;
             }
 
-            if (pluginRoute.disableCsrf) {
+            if (typeof pluginRoute.disableCsrf !== 'undefined') {
                 appRoute.disableCsrf = pluginRoute.disableCsrf;
             }
 
