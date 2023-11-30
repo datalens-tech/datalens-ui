@@ -3,7 +3,7 @@ import React from 'react';
 import {DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
 import {PluginTextProps} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
 import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Title';
-import {i18n} from 'i18n';
+import {I18n, i18n} from 'i18n';
 import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
 import {Dispatch} from 'redux';
@@ -19,6 +19,7 @@ import {
     Operations,
 } from 'shared';
 import {GetWidgetsDatasetsFieldsItem} from 'shared/schema';
+import {AppDispatch} from 'ui/store';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'ui/store/actions/dialog';
 import {DashState} from 'ui/units/dash/store/reducers/dashTypedReducer';
 import {validateParamTitleOnlyUnderscore} from 'units/dash/components/ParamsSettings/helpers';
@@ -41,6 +42,8 @@ import * as actionTypes from '../constants/dashActionTypes';
 import {closeDialog as closeDashDialog, deleteLock, purgeData, save, setLock} from './dash';
 
 import {DashDispatch} from './index';
+
+const dashStoreI18n = I18n.keyset('dash.store.view');
 
 type GetState = () => DatalensGlobalState;
 
@@ -869,7 +872,7 @@ export const cancelDashEditMode = ({isDraft}: {isDraft: boolean}) => {
         if (isDraft) {
             dispatch(
                 openDialogConfirm({
-                    message: 'На странице есть несохраненные изменения, вы уверены?',
+                    message: dashStoreI18n('label_unsaved-changes-warning'),
                     isWarningConfirm: true,
                     cancelButtonView: 'flat',
                     confirmButtonView: 'normal',
@@ -881,9 +884,9 @@ export const cancelDashEditMode = ({isDraft}: {isDraft: boolean}) => {
                         dispatch(closeDialogConfirm());
                     },
                     widthType: 'medium',
-                    confirmHeaderText: 'Изменения будут потеряны',
-                    cancelButtonText: 'Назад',
-                    confirmButtonText: 'Продолжить',
+                    confirmHeaderText: dashStoreI18n('label_unsaved-changes-title'),
+                    cancelButtonText: dashStoreI18n('button_back'),
+                    confirmButtonText: dashStoreI18n('button_continue'),
                     showAlert: true,
                 }),
             );
