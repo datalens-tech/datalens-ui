@@ -63,6 +63,9 @@ const Settings = () => {
     const [dependentSelectors, setDependentSelectors] = React.useState(
         settings.dependentSelectors || false,
     );
+    const [loadOnlyVisibleCharts, setLoadOnlyVisibleCharts] = React.useState(
+        settings.loadOnlyVisibleCharts === undefined ? true : settings.loadOnlyVisibleCharts,
+    );
     const [globalParams, setGlobalParams] = React.useState(settings.globalParams || {});
     const [isGlobalParamsError, setIsGlobalParamsError] = React.useState(false);
     const [hideTabs, setHideTabs] = React.useState(settings.hideTabs);
@@ -102,6 +105,9 @@ const Settings = () => {
         setAutoupdateInterval(value);
     };
 
+    const handleUpdateLoadOnlyVisibleCharts = () =>
+        setLoadOnlyVisibleCharts(!loadOnlyVisibleCharts);
+
     const handleButtonApplyClick = () => {
         if (!isValidAutoupdateInterval()) {
             return;
@@ -117,6 +123,7 @@ const Settings = () => {
                     ...settings,
                     autoupdateInterval: autoupdateInterval || null,
                     maxConcurrentRequests: maxConcurrentRequests > 0 ? maxConcurrentRequests : null,
+                    loadOnlyVisibleCharts,
                     silentLoading,
                     dependentSelectors,
                     globalParams,
@@ -219,6 +226,8 @@ const Settings = () => {
                     onUpdateLoadPriorityValue={handleLoadPrioritySelectChange}
                     onAccessDescriptionClick={handleButtonSetupAccessDescription}
                     onSupportDescriptionClick={handleButtonSetupSupportDescription}
+                    loadOnlyVisibleCharts={loadOnlyVisibleCharts}
+                    onUpdateLoadOnlyVisibleCharts={handleUpdateLoadOnlyVisibleCharts}
                 />
                 {Utils.isEnabledFeature(Feature.DashBoardGlobalParams) && (
                     <Params

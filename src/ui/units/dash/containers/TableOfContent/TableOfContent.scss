@@ -15,10 +15,9 @@
         bottom: 0;
         left: -250px;
         overflow: hidden;
-        padding: 24px 8px;
+        padding: 24px 0 24px 8px;
         width: 250px;
         height: 100%;
-        border-top: 1px solid var(--g-color-line-generic);
         border-right: 1px solid var(--g-color-line-generic);
 
         &_opened {
@@ -48,11 +47,10 @@
         max-height: 97%;
         overflow-y: scroll;
         overflow-x: hidden;
-        scrollbar-width: none;
+    }
 
-        &::-webkit-scrollbar {
-            display: none;
-        }
+    &__tab-item {
+        padding-right: 8px;
     }
 
     &__title {
