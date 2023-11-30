@@ -43,7 +43,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
     let prepare;
     let result;
 
-    const config = mapQlConfigToLatestVersion(shared);
+    const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
 
     const {columns, rows} = getColumnsAndRows({
         chartType: config.chartType,

@@ -138,8 +138,8 @@ export type ChartTemplates = {
 type ChartTemplate = {
     module: string;
     identifyParams: (data: unknown, req: Request) => StringParams;
-    identifyChartType: (data: unknown) => string;
-    identifyLinks: (data: unknown) => Record<string, string>;
+    identifyChartType: (data: unknown, req: Request) => string;
+    identifyLinks: (data: unknown, req: Request) => Record<string, string>;
 };
 
 type Chart = {
@@ -191,11 +191,11 @@ export const chartGenerator = {
 
         const params = chartTemplate.identifyParams(data, req);
 
-        const type = chartTemplate.identifyChartType(data);
+        const type = chartTemplate.identifyChartType(data, req);
 
         let links;
         if (chartTemplate.identifyLinks) {
-            links = chartTemplate.identifyLinks(data);
+            links = chartTemplate.identifyLinks(data, req);
         }
 
         chart.params = chart.params.replace('#params', JSON.stringify(params));
