@@ -5,18 +5,16 @@ import {Workbook} from 'page-objects/workbook/Workbook';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {deleteEntity} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-
-const firstTabText = 'First tab text';
-const secondTabText = 'Second tab text';
+import {arbitraryText} from '../constants';
 
 const firstTabIsVisible = async (dashboardPage: DashboardPage) => {
-    await expect(dashboardPage.getDashKitTextItem(firstTabText)).toBeVisible();
-    await expect(dashboardPage.getDashKitTextItem(secondTabText)).not.toBeVisible();
+    await expect(dashboardPage.getDashKitTextItem(arbitraryText.first)).toBeVisible();
+    await expect(dashboardPage.getDashKitTextItem(arbitraryText.second)).not.toBeVisible();
 };
 
 const secondTabIsVisible = async (dashboardPage: DashboardPage) => {
-    await expect(dashboardPage.getDashKitTextItem(firstTabText)).not.toBeVisible();
-    await expect(dashboardPage.getDashKitTextItem(secondTabText)).toBeVisible();
+    await expect(dashboardPage.getDashKitTextItem(arbitraryText.first)).not.toBeVisible();
+    await expect(dashboardPage.getDashKitTextItem(arbitraryText.second)).toBeVisible();
 };
 
 datalensTest.describe(`Dashboards - switch tabs`, () => {
@@ -25,16 +23,15 @@ datalensTest.describe(`Dashboards - switch tabs`, () => {
         const workbookPO = new Workbook(page);
 
         await workbookPO.openE2EWorkbookPage();
-        await workbookPO.createEntryButton.createDashboard();
 
-        await dashboardPage.addText(firstTabText);
-        await dashboardPage.addTab();
-        await dashboardPage.dashTabs.switchTabByIdx(1);
-        await dashboardPage.addText(secondTabText);
-
-        await dashboardPage.saveChanges();
-        await workbookPO.dialogCreateEntry.createEntryWithName();
-        await workbookPO.editEntityButton.waitForVisible();
+        await workbookPO.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addText(arbitraryText.first);
+                await dashboardPage.addTab();
+                await dashboardPage.dashTabs.switchTabByIdx(1);
+                await dashboardPage.addText(arbitraryText.second);
+            },
+        });
     });
 
     datalensTest.afterEach(async ({page}: {page: Page}) => {
@@ -45,9 +42,6 @@ datalensTest.describe(`Dashboards - switch tabs`, () => {
         'Dashboard tabs are successfully switched by clicking on the tab and using the browser\'s "Back"/"Forward" buttons',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
-
-            // Important: reload the page because dash state may be different for POST(create) and GET requests.
-            page.reload();
 
             await firstTabIsVisible(dashboardPage);
 

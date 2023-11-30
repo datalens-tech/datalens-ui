@@ -3,6 +3,7 @@ import {Response, expect} from '@playwright/test';
 import {
     ConnectionsDialogQA,
     ControlQA,
+    DashEntryQa,
     DialogDashWidgetQA,
     DialogTabsQA,
     EntryDialogQA,
@@ -154,9 +155,7 @@ class DashboardPage extends BasePage {
         ]);
 
         // check that the dashboard has loaded by its name
-        await this.page.waitForSelector(
-            `${slct(COMMON_SELECTORS.DASH_ENTRY_NAME)} >> text=${dashName}`,
-        );
+        await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
     }
 
     async copyDashboard(dashName: string) {

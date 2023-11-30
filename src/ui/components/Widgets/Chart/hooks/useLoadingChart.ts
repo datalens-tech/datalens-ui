@@ -910,6 +910,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         loadControls,
         drillDownFilters,
         drillDownLevel: currentDrillDownLevel,
+        setCurrentDrillDownLevel,
         yandexMapAPIWaiting,
         setCanBeLoaded,
         isInit,

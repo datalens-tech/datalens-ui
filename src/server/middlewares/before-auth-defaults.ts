@@ -1,9 +1,7 @@
 import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
-import {Keysets, ServerI18n} from '../../i18n/types';
-import {initI18n} from '../../i18n/utils';
 import {FALLBACK_LANGUAGES} from '../../shared';
-import {getLang, keysetsByLang} from '../utils/language';
+import {createI18nInstance, getLang} from '../utils/language';
 
 export default async function (req: Request, res: Response, next: NextFunction) {
     const regionalEnvConfig = req.ctx.config.regionalEnvConfig;
@@ -24,29 +22,9 @@ export default async function (req: Request, res: Response, next: NextFunction) 
     res.locals.userSettings.language = langResult;
     res.locals.lang = langResult;
 
-    const i18n: ServerI18n = {
-        i18nServer: null,
-
-        // use `lang` from closure `res` object
-        // maybe changed after user auth middleware and fill `userSettings`
-        get lang(): string {
-            return res.locals.lang;
-        },
-
-        getI18nServer() {
-            if (!this.i18nServer || this.i18nServer.lang !== this.lang) {
-                const data = keysetsByLang()[this.lang] || {content: {}};
-
-                const {I18n: i18nServer} = initI18n({lang: this.lang, content: data.content});
-                this.i18nServer = i18nServer;
-            }
-            return this.i18nServer;
-        },
-
-        keyset(keysetName: keyof Keysets) {
-            return this.getI18nServer().keyset(keysetName);
-        },
-    };
+    // use `lang` from closure `res` object
+    // maybe changed after user auth middleware and fill `userSettings`
+    const i18n = createI18nInstance(res.locals as {lang: string});
 
     req.originalContext.set('i18n', i18n);
 

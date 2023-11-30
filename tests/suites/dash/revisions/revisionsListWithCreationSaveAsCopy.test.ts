@@ -1,5 +1,6 @@
 import {ElementHandle, Page} from '@playwright/test';
 
+import {DashEntryQa} from '../../../../src/shared/constants';
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage, {RENDER_TIMEOUT} from '../../../page-objects/dashboard/DashboardPage';
 import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../../utils';
@@ -52,9 +53,7 @@ datalensTest.describe('Dashboard Versioning', () => {
             const dashboardPage = new DashboardPage({page});
 
             // memorize the name of the original dashboard
-            const prevDashNameElement = await page.waitForSelector(
-                slct(COMMON_SELECTORS.DASH_ENTRY_NAME),
-            );
+            const prevDashNameElement = await page.waitForSelector(slct(DashEntryQa.EntryName));
             const prevName = await prevDashNameElement.innerText();
             const prevPageUrl = new URL(page.url());
             const prevPagePathname = prevPageUrl.pathname;
@@ -96,9 +95,7 @@ datalensTest.describe('Dashboard Versioning', () => {
             await openTestPage(page, prevPagePathname);
 
             // check that the dashboard has loaded by its name
-            await page.waitForSelector(
-                `${slct(COMMON_SELECTORS.DASH_ENTRY_NAME)} >> text="${prevName}"`,
-            );
+            await page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text="${prevName}"`);
 
             // wait for page load to be able to remove
             await page.waitForTimeout(RENDER_TIMEOUT);
