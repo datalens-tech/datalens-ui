@@ -3,6 +3,11 @@ export const enum ViewSetupQA {
     SelectConnection = 'select-connection',
 }
 
+export const enum ScreenEditorQA {
+    QueryTab = 'query-tab',
+    ParamsTab = 'params-tab',
+}
+
 export const enum TabQueryQA {
     AddPromQLQueryBtn = 'add-promql-query-btn',
     SelectConnection = 'select-connection',

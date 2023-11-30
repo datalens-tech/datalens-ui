@@ -14,6 +14,7 @@ import {
     TabQueryQA,
     TabParamsQA,
     DialogQLParameterQA,
+    ScreenEditorQA,
 } from '../../../src/shared/constants/qa/ql';
 import SectionVisualization from '../wizard/SectionVisualization';
 
@@ -151,9 +152,7 @@ class QLPage extends ChartPage {
     }
 
     async openParamsTab() {
-        await this.page.click(
-            `.ql-screen-editor .gc-adaptive-tabs__tab-container_last-tab .gc-adaptive-tabs__tab`,
-        );
+        await this.page.click(slct(ScreenEditorQA.ParamsTab));
     }
 
     async addParam() {

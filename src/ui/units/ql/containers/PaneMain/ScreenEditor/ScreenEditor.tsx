@@ -13,7 +13,7 @@ import {DL, DatalensGlobalState, EntryDialogues, MonacoTypes, NavigationMinimal,
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 
-import {TabQueryQA} from '../../../../../../shared';
+import {ScreenEditorQA, TabQueryQA} from '../../../../../../shared';
 import {registry} from '../../../../../registry';
 import {AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE} from '../../../constants';
 import {drawPreview, performManualConfiguration} from '../../../store/actions/ql';
@@ -62,11 +62,11 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
     tabs = [
         {
             id: 'queryTab',
-            title: i18n('sql', 'label_query'),
+            title: <span data-qa={ScreenEditorQA.QueryTab}>{i18n('sql', 'label_query')}</span>,
         },
         {
             id: 'paramsTab',
-            title: i18n('sql', 'label_params'),
+            title: <span data-qa={ScreenEditorQA.ParamsTab}>{i18n('sql', 'label_params')}</span>,
         },
     ];
 
