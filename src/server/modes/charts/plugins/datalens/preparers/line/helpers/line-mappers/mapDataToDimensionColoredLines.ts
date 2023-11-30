@@ -79,14 +79,21 @@ export const mapDataToDimensionColoredLines = ({
 
     let itemValues: ItemValues;
     if (isItemsAreEqual) {
+        const {value, formattedValue} = mappedItemsToValues[0];
+
         itemValues = {
-            ...mappedItemsToValues[0],
+            value,
+            formattedValue,
         };
+
+        if (typeof value === 'string') {
+            itemValues.extraValue = `${value}${COLOR_SHAPE_SEPARATOR}${value}`;
+        }
     } else {
         itemValues = mappedItemsToValues.reduce(
             (acc: ItemValues, curr, index) => {
                 let {value, formattedValue} = curr;
-                let extraValue = formattedValue;
+                let extraValue = value;
                 if (index !== items.length - 1) {
                     value = `${value}-`;
                     formattedValue = `${formattedValue}-`;
