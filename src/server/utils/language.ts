@@ -5,7 +5,9 @@ import _ from 'lodash';
 
 import {I18N_DEST_PATH} from '../../i18n/constants';
 import {readKeysets} from '../../i18n/read-keysets';
-import type {Keysets} from '../../i18n/types';
+import type {Keysets, TypedI18n} from '../../i18n/types';
+import {ServerI18n} from '../../i18n/types';
+import {initI18n} from '../../i18n/utils';
 import {Language} from '../../shared/constants';
 
 export type KeysetData = {content: Keysets; filename: string};
@@ -73,3 +75,31 @@ export function getLang({
 
     return lang;
 }
+
+const i18nInstanceByLang: Record<string, TypedI18n> = {};
+
+export const createI18nInstance = (
+    // in some cases we need mutate lang value for i18n.
+    // for example, we first set i18n in before-auth-default middleware
+    // but later the lang can be changed in other middlewares
+    langSettings: {lang: string},
+): ServerI18n => {
+    return {
+        get lang(): string {
+            return langSettings.lang;
+        },
+        getI18nServer() {
+            if (this.lang && !i18nInstanceByLang[this.lang]) {
+                const data = keysetsByLang()[this.lang] || {content: {}};
+
+                const {I18n: i18nServer} = initI18n({lang: this.lang, content: data.content});
+                i18nInstanceByLang[this.lang] = i18nServer;
+            }
+            return i18nInstanceByLang[this.lang];
+        },
+
+        keyset(keysetName: keyof Keysets) {
+            return this.getI18nServer().keyset(keysetName);
+        },
+    };
+};
