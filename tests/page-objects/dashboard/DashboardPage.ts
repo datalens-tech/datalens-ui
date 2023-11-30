@@ -3,11 +3,10 @@ import {Response, expect} from '@playwright/test';
 import {
     ConnectionsDialogQA,
     ControlQA,
+    DashEntryQa,
     DialogDashWidgetQA,
     DialogTabsQA,
     EntryDialogQA,
-    DashEntryQa,
-    DialogDashWidgetQA,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
