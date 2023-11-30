@@ -5,7 +5,7 @@ import {Workbook} from 'page-objects/workbook/Workbook';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {deleteEntity} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {arbitraryText} from './constants';
+import {arbitraryText} from '../constants';
 
 const firstTabIsVisible = async (dashboardPage: DashboardPage) => {
     await expect(dashboardPage.getDashKitTextItem(arbitraryText.first)).toBeVisible();

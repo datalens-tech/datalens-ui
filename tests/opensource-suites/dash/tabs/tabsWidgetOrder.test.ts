@@ -10,7 +10,7 @@ import {Workbook} from 'page-objects/workbook/Workbook';
 import {COMMON_DASH_SELECTORS} from 'suites/dash/constants';
 import {DialogTabsQA, EntryDialogQA} from '../../../../src/shared/constants';
 import {dragAndDropListItem, openTabPopupWidgetOrder} from '../../../suites/dash/helpers';
-import {arbitraryText} from './constants';
+import {arbitraryText} from '../constants';
 
 const SELECTORS = {
     SELECTOR_LIST_ITEMS: '.yc-list__item',
