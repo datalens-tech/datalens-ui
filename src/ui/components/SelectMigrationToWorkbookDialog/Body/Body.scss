@@ -1,0 +1,60 @@
+.dl-select-migration-to-workbook-dialog-body {
+    border-radius: 8px;
+    box-shadow: 0px 0px 0px 1px var(--g-color-line-generic);
+    padding: 20px 20px 28px;
+    cursor: pointer;
+    color: var(--g-color-text-primary);
+
+    &_active {
+        box-shadow: 0px 0px 0px 2px var(--g-color-base-brand);
+    }
+
+    &__header {
+        display: flex;
+    }
+
+    &__title {
+        font-size: 28px;
+        font-weight: 500;
+        line-height: 32px;
+    }
+
+    &__label {
+        margin-left: 8px;
+    }
+
+    &__icon {
+        margin-left: auto;
+    }
+
+    &__description {
+        padding: 8px 0;
+        margin: 20px 0;
+        border-bottom: 1px solid var(--g-color-line-generic);
+        border-top: 1px solid var(--g-color-line-generic);
+        color: var(--g-color-text-complementary);
+    }
+
+    &__content {
+        margin-top: 16px;
+
+        min-height: 151px;
+    }
+
+    &__content-item {
+        margin: 20px 0;
+        display: flex;
+    }
+
+    &__content-item-text {
+        margin-left: 12px;
+    }
+
+    &__content-item-help {
+        margin-left: auto;
+    }
+
+    &__content-tooltip {
+        max-width: 170px;
+    }
+}

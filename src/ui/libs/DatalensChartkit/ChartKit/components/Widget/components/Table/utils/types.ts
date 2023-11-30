@@ -1,6 +1,6 @@
-import {StringParams, TablehWidgetEventScope} from 'shared';
+import {StringParams, TableWidgetEventScope} from 'shared';
 
 export type ActionParamsData = {
     params: StringParams;
-    scope: TablehWidgetEventScope;
+    scope: TableWidgetEventScope;
 };

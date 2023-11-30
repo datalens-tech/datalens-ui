@@ -5,6 +5,10 @@ const {
     calculatedTitle,
     preparingDataForFieldsWithSameTitlesFromDifferentDatasets,
 } = require('./mocks/bar.mock');
+const {
+    linesColoredByFieldWithPostfixArgs,
+    linesColoredByFieldWithPostfixResult,
+} = require('./mocks/line.mock');
 
 describe('line preparer', () => {
     describe('bar', () => {
@@ -22,6 +26,13 @@ describe('line preparer', () => {
             const result = linePrepare(preparingDataForFieldsWithSameTitlesFromDifferentDatasets);
             expect(result.graphs[0].data[0].y * 2).toEqual(result.graphs[1].data[0].y);
             expect(result.graphs[0].data[5].y * 2).toEqual(result.graphs[1].data[5].y);
+        });
+    });
+
+    describe('line', () => {
+        test('should apply colors and shapes to fields with prefixes/postfixes', () => {
+            const result = linePrepare(linesColoredByFieldWithPostfixArgs);
+            expect(result).toEqual(linesColoredByFieldWithPostfixResult);
         });
     });
 });

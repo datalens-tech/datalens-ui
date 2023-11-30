@@ -4,6 +4,7 @@ import {TabItem} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
 import {ResolveThunks, connect} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
+import {DashTabsQA} from 'shared';
 import {Tabs as DataLensTabs, DatalensGlobalState} from 'ui';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
@@ -37,7 +38,7 @@ function TabsComponent<T>(props: TabsProps<T>) {
     const size = isMobileView ? MOBILE_SIZE.TABS : 'l';
 
     return props.tabs.length > 1 ? (
-        <div className={b()}>
+        <div className={b()} data-qa={DashTabsQA.Root}>
             <DataLensTabs
                 size={size}
                 activeTab={props.currentTabId || undefined}

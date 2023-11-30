@@ -5,7 +5,7 @@ import React from 'react';
 import debounce from 'lodash/debounce';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {FOCUSED_WIDGET_PARAM_NAME, Feature} from 'shared';
+import {DashSettings, FOCUSED_WIDGET_PARAM_NAME, Feature} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
 
@@ -107,7 +107,10 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         usageType,
         enableActionParams,
         widgetDatasetFields,
+        settings,
     } = props;
+
+    const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts;
 
     const tabs = props.tabs as WidgetPluginDataWithTabs['tabs'];
 
@@ -220,6 +223,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         loadControls,
         drillDownFilters,
         drillDownLevel,
+        setCurrentDrillDownLevel,
         yandexMapAPIWaiting,
         setCanBeLoaded,
         isInit,
@@ -425,13 +429,21 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                     >,
                 );
             }
+            setCurrentDrillDownLevel(0);
             onStateAndParamsChange({
                 state: {
                     tabId: newTabId,
                 },
             });
         },
-        [onStateAndParamsChange, isLoading, requestId, requestCancellationRef, dataProvider],
+        [
+            onStateAndParamsChange,
+            isLoading,
+            requestId,
+            requestCancellationRef,
+            dataProvider,
+            setCurrentDrillDownLevel,
+        ],
     );
 
     /**
@@ -618,6 +630,15 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         onStateAndParamsChangeData,
         isTriggeredChangedDataOnce,
     ]);
+
+    /**
+     * set force load all charts (no matter if they are in viewport or not) if there is loadOnlyVisibleCharts setting disabled
+     */
+    React.useEffect(() => {
+        if (loadOnlyVisibleCharts === false) {
+            setCanBeLoaded(true);
+        }
+    }, [setCanBeLoaded, loadOnlyVisibleCharts]);
 
     return {
         loadedData,

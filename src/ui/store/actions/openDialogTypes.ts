@@ -37,6 +37,7 @@ import type {OpenDialogEditCollectionArgs} from '../../components/CollectionsStr
 import type {OpenDialogCreateCollectionArgs} from '../../components/CollectionsStructure/CreateCollectionDialog';
 import type {OpenDialogCopyEntriesArgs} from '../../components/CollectionsStructure/CopyEntriesDialog';
 
+import type {OpenDialogSelectMigrationToWorkbookArgs} from '../../components/SelectMigrationToWorkbookDialog/SelectMigrationToWorkbookDialog';
 import type {OpenDialogMigrateToWorkbookArgs} from '../../components/MigrateToWorkbookDialog/MigrateToWorkbookDialog';
 import type {OpenDialogLabelSettingsArgs} from '../../units/wizard/components/Dialogs/DialogLabelSettings/DialogLabelSettings';
 import type {OpenDialogControlsPlacementArgs} from 'ui/units/dash/containers/Dialogs/GroupControl/ControlsPlacementDialog/ControlsPlacementDialog';
@@ -80,6 +81,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogCreateCollectionArgs
     | OpenDialogCreateWorkbookArgs
     | OpenDialogMigrateToWorkbookArgs
+    | OpenDialogSelectMigrationToWorkbookArgs
     | OpenDialogMigrateEntryToWorkbookArgs
     | OpenDialogCopyEntriesToWorkbookArgs
     | OpenDialogCopyEntriesArgs;

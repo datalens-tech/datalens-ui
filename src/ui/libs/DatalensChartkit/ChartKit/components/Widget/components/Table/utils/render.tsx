@@ -443,8 +443,8 @@ export const getColumnsAndNames = ({
                         let additionalStyles: React.CSSProperties | undefined;
 
                         if (actionParamsData) {
-                            rowActionParams = getRowActionParams(row);
-                            additionalStyles = getAdditionalStyles({actionParamsData, row});
+                            rowActionParams = getRowActionParams({row, head});
+                            additionalStyles = getAdditionalStyles({actionParamsData, row, head});
                         }
 
                         if (cellClickArgs || rowActionParams) {
@@ -475,12 +475,14 @@ export const getColumnsAndNames = ({
                     sortAscending: hasTreeSetColumn(rows[0])
                         ? getTreeSetColumnSortAscending(columnName, rows)
                         : undefined,
-                    onClick: ({row}, {name: columnName}) => {
-                        const cellClickArgs = getCellClickArgs(row, columnName);
+                    onClick: ({row}, col) => {
+                        const cellClickArgs = getCellClickArgs(row, col.name);
                         const cellActionParams = actionParamsData
                             ? getActionParams({
                                   actionParamsData,
                                   row,
+                                  column: col,
+                                  head,
                               })
                             : undefined;
 
