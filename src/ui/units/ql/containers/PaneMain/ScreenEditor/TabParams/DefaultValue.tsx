@@ -5,7 +5,7 @@ import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 
-import {QLParamType, QlConfigParam} from '../../../../../../../shared';
+import {QLParamType, QlConfigParam, TabParamsQA} from '../../../../../../../shared';
 import {getDatesFromValue} from '../../../../../../components/RelativeDatesPicker/utils';
 
 import {resolveAndFormatDate} from './utils';
@@ -89,7 +89,7 @@ export const DefaultValue = ({
                 }}
                 key="button-open-param-dialog"
                 className={b('default-value-text')}
-                qa="open-param-dialog-btn"
+                qa={TabParamsQA.OpenParamDialogBtn}
             >
                 {param.defaultValue
                     ? `${formattedFrom} — ${formattedTo}`
@@ -120,7 +120,7 @@ export const DefaultValue = ({
                 }}
                 key="button-add-param-value"
                 className={b('default-value-text')}
-                qa="open-param-dialog-btn"
+                qa={TabParamsQA.OpenParamDialogBtn}
             >
                 {param.defaultValue
                     ? formattedDate

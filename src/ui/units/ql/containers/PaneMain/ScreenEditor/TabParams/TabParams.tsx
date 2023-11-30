@@ -10,7 +10,7 @@ import {compose} from 'recompose';
 import {QlConfigParam} from 'shared/types/config/ql';
 import {DatalensGlobalState} from 'ui';
 
-import {QLParamType, resolveRelativeDate} from '../../../../../../../shared';
+import {QLParamType, TabParamsQA, resolveRelativeDate} from '../../../../../../../shared';
 import {openDialogQLParameter} from '../../../../store/actions/dialog';
 import {addParam, drawPreview, removeParam, updateParam} from '../../../../store/actions/ql';
 import {getChartType, getParams, getPreviewData, getValid} from '../../../../store/reducers/ql';
@@ -118,7 +118,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                                     className={b('select')}
                                     popupClassName={b('select-popup')}
                                     value={param.type ? [param.type] : []}
-                                    qa="param-type"
+                                    qa={TabParamsQA.ParamType}
                                 />
                                 <TextInput
                                     view="normal"
@@ -134,7 +134,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                                         this.onEditParam({param: newParam, paramIndex});
                                     }}
                                     autoFocus={true}
-                                    qa="param-name"
+                                    qa={TabParamsQA.ParamName}
                                 />
                                 <span className={b('delimeter')}>:</span>
                                 <DefaultValue
@@ -230,7 +230,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                     onClick={() => this.onClickButtonAddParam()}
                     key="button-add-param"
                     className={b('add-param-btn')}
-                    qa="add-param-btn"
+                    qa={TabParamsQA.AddParamBtn}
                 >
                     {i18n('sql', 'button_add-param')}
                 </Button>

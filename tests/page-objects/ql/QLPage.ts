@@ -9,19 +9,13 @@ import {CommonSelectors} from '../constants/common-selectors';
 
 import PreviewTable from './PreviewTable';
 import {NavigationMinimalPlaceSelectQa} from '../../../src/shared/constants/qa/components';
+import {
+    ViewSetupQA,
+    TabQueryQA,
+    TabParamsQA,
+    QLParameterDialogQA,
+} from '../../../src/shared/constants/qa/ql';
 import SectionVisualization from '../wizard/SectionVisualization';
-
-enum QLPageElementsQA {
-    ParamName = 'param-name',
-    AddParamBtn = 'add-param-btn',
-    ParamType = 'param-type',
-    OpenParamDialogBtn = 'open-param-dialog-btn',
-    DatepickerStart = 'datepicker-start',
-    DatepickerEnd = 'datepicker-end',
-    AddPromQLQueryBtn = 'add-promql-query-btn',
-    SelectConnection = 'select-connection',
-    ViewSetupCreate = 'view-setup-create',
-}
 
 interface QLPageProps extends BasePageProps {}
 
@@ -31,7 +25,7 @@ class QLPage extends ChartPage {
     chartSettings: ChartSettings;
     visualizationItemDialog: VisualizationItemDialog;
     sectionVisualization: SectionVisualization;
-    private selectConnectionButtonSelector = slct(QLPageElementsQA.SelectConnection);
+    private selectConnectionButtonSelector = slct(TabQueryQA.SelectConnection);
     private navigationMinimal: NavigationMinimal;
 
     constructor({page}: QLPageProps) {
@@ -45,7 +39,7 @@ class QLPage extends ChartPage {
     }
 
     async clickCreate() {
-        await this.page.click(slct(QLPageElementsQA.ViewSetupCreate));
+        await this.page.click(slct(ViewSetupQA.ViewSetupCreate));
     }
 
     async selectConnection(connectionName: string) {
@@ -163,25 +157,25 @@ class QLPage extends ChartPage {
     }
 
     async addParam() {
-        await this.page.click(slct(QLPageElementsQA.AddParamBtn));
+        await this.page.click(slct(TabParamsQA.AddParamBtn));
     }
 
     async selectParamType(type: string) {
-        await this.page.click(slct(QLPageElementsQA.ParamType));
+        await this.page.click(slct(TabParamsQA.ParamType));
 
         await this.page.click(`${CommonSelectors.SelectItem} >> text=${type}`);
     }
 
     async setParamName(name: string) {
         const inputLocator = this.page.locator(
-            `${slct(QLPageElementsQA.ParamName)} ${CommonSelectors.TextInput}`,
+            `${slct(TabParamsQA.ParamName)} ${CommonSelectors.TextInput}`,
         );
 
         await inputLocator.fill(name);
     }
 
     async openParamDialog() {
-        await this.page.click(slct(QLPageElementsQA.OpenParamDialogBtn));
+        await this.page.click(slct(TabParamsQA.OpenParamDialogBtn));
     }
 
     async applyParamDialog() {
@@ -201,7 +195,7 @@ class QLPage extends ChartPage {
         if (startDate) {
             await this.page.fill(
                 `.dl-dialog-ql-parameter__body ${slct(
-                    QLPageElementsQA.DatepickerStart,
+                    QLParameterDialogQA.DatepickerStart,
                 )} .yc-text-input__control`,
                 startDate,
             );
@@ -211,7 +205,7 @@ class QLPage extends ChartPage {
 
         await this.page.fill(
             `.dl-dialog-ql-parameter__body ${slct(
-                QLPageElementsQA.DatepickerEnd,
+                QLParameterDialogQA.DatepickerEnd,
             )} .yc-text-input__control`,
             endDate,
         );
@@ -265,7 +259,7 @@ class QLPage extends ChartPage {
     }
 
     async addEmptyPromQlQuery() {
-        await this.page.click(slct(QLPageElementsQA.AddPromQLQueryBtn));
+        await this.page.click(slct(TabQueryQA.AddPromQLQueryBtn));
     }
 
     async clickConnectionButton() {
