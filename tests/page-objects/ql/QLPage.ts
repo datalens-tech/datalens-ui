@@ -13,7 +13,7 @@ import {
     ViewSetupQA,
     TabQueryQA,
     TabParamsQA,
-    QLParameterDialogQA,
+    DialogQLParameterQA,
 } from '../../../src/shared/constants/qa/ql';
 import SectionVisualization from '../wizard/SectionVisualization';
 
@@ -183,7 +183,10 @@ class QLPage extends ChartPage {
     }
 
     async selectDate(dateValue: string) {
-        await this.page.fill('.dl-dialog-ql-parameter__body .yc-text-input__control', dateValue);
+        await this.page.fill(
+            `${slct(DialogQLParameterQA.Dialog)} .yc-text-input__control`,
+            dateValue,
+        );
 
         await this.closeDatepickerPopup();
     }
@@ -194,8 +197,8 @@ class QLPage extends ChartPage {
 
         if (startDate) {
             await this.page.fill(
-                `.dl-dialog-ql-parameter__body ${slct(
-                    QLParameterDialogQA.DatepickerStart,
+                `${slct(DialogQLParameterQA.Dialog)} ${slct(
+                    DialogQLParameterQA.DatepickerStart,
                 )} .yc-text-input__control`,
                 startDate,
             );
@@ -204,8 +207,8 @@ class QLPage extends ChartPage {
         await this.closeDatepickerPopup();
 
         await this.page.fill(
-            `.dl-dialog-ql-parameter__body ${slct(
-                QLParameterDialogQA.DatepickerEnd,
+            `${slct(DialogQLParameterQA.Dialog)} ${slct(
+                DialogQLParameterQA.DatepickerEnd,
             )} .yc-text-input__control`,
             endDate,
         );
@@ -215,7 +218,7 @@ class QLPage extends ChartPage {
 
     async closeDatepickerPopup() {
         // position is needed just for click on the left corner of container
-        return this.page.click('.dl-dialog-ql-parameter__body', {position: {x: 0, y: 0}});
+        return this.page.click(slct(DialogQLParameterQA.Dialog), {position: {x: 0, y: 0}});
     }
 
     waitForSomeSuccessfulRender() {

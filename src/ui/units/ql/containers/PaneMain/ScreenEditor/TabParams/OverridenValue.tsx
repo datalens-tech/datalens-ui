@@ -2,7 +2,7 @@ import React from 'react';
 
 import {QLParamInterval, QLParamType} from '../../../../../../../shared';
 
-import {resolveAndFormatDate} from './utils';
+import {resolveAndFormatDate, valueIsValidIntervalValue} from './utils';
 
 export const OverridenValue = ({
     overridenValue,
@@ -15,13 +15,7 @@ export const OverridenValue = ({
     paramIsInterval: boolean;
     paramIsDate: boolean;
 }) => {
-    if (
-        paramIsInterval &&
-        typeof overridenValue === 'object' &&
-        !Array.isArray(overridenValue) &&
-        overridenValue.from &&
-        overridenValue.to
-    ) {
+    if (paramIsInterval && valueIsValidIntervalValue(overridenValue)) {
         return (
             <React.Fragment>
                 {resolveAndFormatDate(overridenValue.from, type as QLParamType)}

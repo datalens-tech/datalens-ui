@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import _ from 'lodash';
 
-import {QLParamType} from '../../../shared';
+import {DialogQLParameterQA, QLParamType} from '../../../shared';
 import DialogManager from '../DialogManager/DialogManager';
 import RelativeDatesPicker from '../RelativeDatesPicker/RelativeDatesPicker';
 
@@ -58,11 +58,16 @@ class DialogQLParameter extends React.Component<DialogQLParameterProps, DialogQL
         const valueHasTime = type === QLParamType.Datetime || type === QLParamType.DatetimeInterval;
 
         return (
-            <Dialog open={visible} onClose={this.onClose} onEnterKeyDown={this.onApply}>
+            <Dialog
+                open={visible}
+                onClose={this.onClose}
+                onEnterKeyDown={this.onApply}
+                qa={DialogQLParameterQA.Dialog}
+            >
                 <div className={b()}>
                     <Dialog.Header caption={i18n('label_header-title')} />
                     <Dialog.Body className={b('body')}>
-                        <div className={b('filter-date')}>
+                        <div className={b('filter-date')} data-qa={DialogQLParameterQA.DialogBody}>
                             <RelativeDatesPicker
                                 range={valueIsInterval}
                                 value={value}

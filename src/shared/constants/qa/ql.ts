@@ -15,7 +15,9 @@ export const enum TabParamsQA {
     OpenParamDialogBtn = 'open-param-dialog-btn',
 }
 
-export const enum QLParameterDialogQA {
+export const enum DialogQLParameterQA {
+    Dialog = 'dialog-ql-param',
+    DialogBody = 'dialog-ql-param-body',
     DatepickerStart = 'datepicker-start',
     DatepickerEnd = 'datepicker-end',
 }

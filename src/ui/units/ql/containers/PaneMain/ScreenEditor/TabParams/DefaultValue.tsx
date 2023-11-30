@@ -8,7 +8,7 @@ import {i18n} from 'i18n';
 import {QLParamType, QlConfigParam, TabParamsQA} from '../../../../../../../shared';
 import {getDatesFromValue} from '../../../../../../components/RelativeDatesPicker/utils';
 
-import {resolveAndFormatDate} from './utils';
+import {resolveAndFormatDate, valueIsValidIntervalValue} from './utils';
 
 const b = block('ql-tab-params');
 
@@ -48,17 +48,12 @@ export const DefaultValue = ({
 
     const paramIsDate = param.type === QLParamType.Date || param.type === QLParamType.Datetime;
 
-    if (
-        paramIsInterval &&
-        typeof param.defaultValue === 'object' &&
-        !Array.isArray(param.defaultValue) &&
-        param.defaultValue.from &&
-        param.defaultValue.to
-    ) {
+    if (paramIsInterval && valueIsValidIntervalValue(param.defaultValue)) {
         const formattedFrom = resolveAndFormatDate(
             param.defaultValue.from,
             param.type as QLParamType,
         );
+
         const formattedTo = resolveAndFormatDate(param.defaultValue.to, param.type as QLParamType);
 
         const preparedValue = `__interval_${param.defaultValue.from}_${param.defaultValue.to}`;
