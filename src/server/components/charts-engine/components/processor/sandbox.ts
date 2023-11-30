@@ -1,10 +1,9 @@
 import vm from 'vm';
 
-import {Keysets, ServerI18n} from '../../../../../i18n/types';
-import {initI18n} from '../../../../../i18n/utils';
+import {Keysets} from '../../../../../i18n/types';
 import {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
 import {IChartEditor} from '../../../../../shared/types';
-import {keysetsByLang} from '../../../../utils/language';
+import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
@@ -27,30 +26,6 @@ const DEFAULT_PROCESSING_TIMEOUT = 500;
 function getOrphanedObject() {
     return Object.create(null);
 }
-
-const getI18n = (lang: string): ServerI18n => {
-    return {
-        get lang(): string {
-            return lang;
-        },
-
-        i18nServer: null,
-
-        getI18nServer() {
-            if (!this.i18nServer || this.i18nServer.lang !== this.lang) {
-                const data = keysetsByLang()[this.lang] || {content: {}};
-
-                const {I18n: i18nServer} = initI18n({lang: this.lang, content: data.content});
-                this.i18nServer = i18nServer;
-            }
-            return this.i18nServer;
-        },
-
-        keyset(keysetName: keyof Keysets) {
-            return this.getI18nServer().keyset(keysetName);
-        },
-    };
-};
 
 type GenerateInstanceParams = {
     context?: {
@@ -126,7 +101,7 @@ const generateInstance = ({
     ChartEditor.getUserLogin = () => userLogin;
     ChartEditor.getUserLang = () => userLang;
 
-    const i18n = getI18n(userLang || DEFAULT_USER_LANG);
+    const i18n = createI18nInstance({lang: userLang || DEFAULT_USER_LANG});
     ChartEditor.getTranslation = (
         keyset: string,
         key: string,
