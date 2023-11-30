@@ -65,7 +65,7 @@ class DialogColorComponent extends React.Component<Props, State> {
 
         let colorMode = props.colorsConfig?.colorMode;
 
-        if (colorMode) {
+        if (colorMode && props.isColorModeChangeAvailable) {
             if (colorMode === ColorMode.GRADIENT && !isNumberField(props.item)) {
                 colorMode = ColorMode.PALETTE;
             }

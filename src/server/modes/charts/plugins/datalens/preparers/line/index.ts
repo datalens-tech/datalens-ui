@@ -31,6 +31,7 @@ import {
     collator,
     formatDate,
     getTimezoneOffsettedTime,
+    isGradientMode,
     isNumericalDataType,
     numericCollator,
 } from '../../utils/misc-helpers';
@@ -118,7 +119,14 @@ function prepareLine({
         : true;
 
     const colorItem = colors[0];
+    const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;
+
     const shapeItem = shapes[0];
+
+    const gradientMode =
+        colorItem &&
+        colorFieldDataType &&
+        isGradientMode({colorField: colorItem, colorFieldDataType, colorsConfig});
 
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
@@ -142,6 +150,7 @@ function prepareLine({
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
 
     const isColorizeByMeasure = isMeasureField(colorItem);
+    const colorMode = colorsConfig.colorMode;
     const isColorizeByMeasureValue = isMeasureValue(colorItem);
 
     /*
@@ -274,6 +283,7 @@ function prepareLine({
                 labelItem,
                 segmentIndexInOrder,
                 layers: shared.visualization?.layers,
+                colorMode,
             });
         });
 
@@ -505,7 +515,7 @@ function prepareLine({
             });
         });
 
-        if (isColorizeByMeasure || isColorizeByMeasureValue) {
+        if (gradientMode) {
             colorizeByGradient(visualizationId as WizardVisualizationId, {
                 graphs,
                 colorsConfig,
@@ -520,6 +530,7 @@ function prepareLine({
                 usedColors,
             });
         }
+
         if (visualizationId === 'line') {
             mapAndShapeGraph({
                 graphs,
