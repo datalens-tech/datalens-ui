@@ -1,10 +1,9 @@
-import type {IChartEditor} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import type {QlConfig} from '../../../../../shared/types/config/ql';
 
 // eslint-disable-next-line complexity
-export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
-    const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
+export default ({shared}: {shared: QlConfig}) => {
+    const config = mapQlConfigToLatestVersion(shared);
 
     const xAxis: Highcharts.Options['xAxis'] = {
         endOnTick: false,

@@ -105,7 +105,7 @@ export class Helper {
                 entryId: '',
                 type: '',
             },
-            version: QlConfigVersions.V2,
+            version: QlConfigVersions.V1,
         };
 
         return {
