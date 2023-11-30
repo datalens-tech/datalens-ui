@@ -26,6 +26,10 @@ export enum SortType {
 }
 
 export const collectionPageViewModeStore = 'collectionPageViewMode';
+export const collectionPageFilterOnlyMyStore = 'collectionPageFilterOnlyMyStore';
+export const collectionPageFilterContentModeStore = 'collectionPageFilterContentModeStore';
+export const collectionPageFilterOrderDirectionStore = 'collectionPageFilterOrderDirectionStore';
+export const collectionPageFilterOrderFieldStore = 'collectionPageFilterOrderFieldStore';
 
 export enum CollectionPageViewMode {
     Grid = 'grid',
@@ -113,9 +117,12 @@ export const CollectionFilters = React.memo<Props>(
 
         const handleChangeMode = React.useCallback(
             (value) => {
+                const val = value[0];
                 handleChangeFilters({
-                    mode: value[0],
+                    mode: val,
                 });
+
+                Utils.store(collectionPageFilterContentModeStore, val);
             },
             [handleChangeFilters],
         );
@@ -125,6 +132,8 @@ export const CollectionFilters = React.memo<Props>(
                 handleChangeFilters({
                     onlyMy: value === 'true',
                 });
+
+                Utils.store(collectionPageFilterOnlyMyStore, value);
             },
             [handleChangeFilters],
         );
@@ -147,6 +156,9 @@ export const CollectionFilters = React.memo<Props>(
                     orderField: sortTypeValues.orderField,
                     orderDirection: sortTypeValues.orderDirection,
                 });
+
+                Utils.store(collectionPageFilterOrderFieldStore, sortTypeValues.orderField);
+                Utils.store(collectionPageFilterOrderDirectionStore, sortTypeValues.orderDirection);
             },
             [handleChangeFilters],
         );

@@ -37,7 +37,6 @@ import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
 import {DeleteCollectionDialogContainer} from '../../containers/DeleteCollectionDialogContainer/DeleteCollectionDialogContainer';
 import {DeleteWorkbookDialogContainer} from '../../containers/DeleteWorkbookDialogContainer/DeleteWorkbookDialogContainer';
-import {updateCollectionInItems, updateWorkbookInItems} from '../../store/actions';
 import {GetCollectionContentArgs} from '../../types';
 import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
@@ -233,7 +232,7 @@ export const CollectionContent = React.memo<Props>(
                                     description: item?.description ?? '',
                                     onApply: (collection: UpdateCollectionResponse | null) => {
                                         if (collection) {
-                                            dispatch(updateCollectionInItems(collection));
+                                            refreshContent();
                                         }
                                     },
                                     onClose: () => {
@@ -309,7 +308,7 @@ export const CollectionContent = React.memo<Props>(
                                         description: item?.description ?? '',
                                         onApply: (workbook: UpdateWorkbookResponse | null) => {
                                             if (workbook) {
-                                                dispatch(updateWorkbookInItems(workbook));
+                                                refreshContent();
                                             }
                                         },
                                         onClose: () => {

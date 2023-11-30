@@ -38,6 +38,10 @@ import {
     CollectionContentFilters,
     CollectionFilters,
     CollectionPageViewMode,
+    collectionPageFilterContentModeStore,
+    collectionPageFilterOnlyMyStore,
+    collectionPageFilterOrderDirectionStore,
+    collectionPageFilterOrderFieldStore,
     collectionPageViewModeStore,
 } from '../../../../components/CollectionFilters';
 import {registry} from '../../../../registry';
@@ -57,10 +61,10 @@ const PAGE_SIZE = 50;
 
 const DEFAULT_FILTERS = {
     filterString: undefined,
-    orderField: OrderBasicField.CreatedAt,
-    orderDirection: OrderDirection.Desc,
-    mode: GetCollectionContentMode.All,
-    onlyMy: false,
+    orderField: Utils.restore(collectionPageFilterOrderFieldStore) || OrderBasicField.CreatedAt,
+    orderDirection: Utils.restore(collectionPageFilterOrderDirectionStore) || OrderDirection.Desc,
+    mode: Utils.restore(collectionPageFilterContentModeStore) || GetCollectionContentMode.All,
+    onlyMy: Utils.restore(collectionPageFilterOnlyMyStore) || false,
 };
 
 const defaultCollectionPageViewMode =
