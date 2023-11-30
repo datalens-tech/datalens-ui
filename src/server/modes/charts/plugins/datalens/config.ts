@@ -90,6 +90,35 @@ type MetricConfig = BaseConfig & {
 
 export type Config = GraphConfig | TableConfig | MetricConfig;
 
+type ConfigWithActionParams = TableConfig | GraphConfig;
+
+function getActionParamsEvents(
+    visualizationId?: WizardVisualizationId,
+): ConfigWithActionParams['events'] {
+    switch (visualizationId) {
+        case WizardVisualizationId.FlatTable: {
+            return {
+                click: [{handler: {type: 'setActionParams'}, scope: 'row'}],
+            };
+        }
+        case WizardVisualizationId.Line:
+        case WizardVisualizationId.Area:
+        case WizardVisualizationId.Column:
+        case WizardVisualizationId.Column100p:
+        case WizardVisualizationId.Bar:
+        case WizardVisualizationId.Bar100p:
+        case WizardVisualizationId.Scatter:
+        case WizardVisualizationId.Pie:
+        case WizardVisualizationId.Donut: {
+            return {
+                click: [{handler: {type: 'setActionParams'}, scope: 'point'}],
+            };
+        }
+    }
+
+    return undefined;
+}
+
 // eslint-disable-next-line complexity
 export default (
     ...options: [
@@ -237,15 +266,9 @@ export default (
     }
 
     if (widgetConfig?.actionParams?.enable) {
-        if (visualizationId === WizardVisualizationId.FlatTable) {
-            (config as TableConfig).events = {
-                click: [{handler: {type: 'setActionParams'}, scope: 'row'}],
-            };
-        } else {
-            (config as GraphConfig).events = {
-                click: [{handler: {type: 'setActionParams'}, scope: 'point'}],
-            };
-        }
+        (config as ConfigWithActionParams).events = getActionParamsEvents(
+            visualizationId as WizardVisualizationId,
+        );
     }
 
     log('CONFIG:');
