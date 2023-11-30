@@ -1,4 +1,9 @@
-import {ChartsConfigVersion, ServerVisualization, isYAGRVisualization} from '../../../../../shared';
+import {
+    ChartsConfigVersion,
+    IChartEditor,
+    ServerVisualization,
+    isYAGRVisualization,
+} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import type {QlConfig} from '../../../../../shared/types/config/ql';
 import buildHighchartsConfigWizard from '../datalens/highcharts';
@@ -7,13 +12,13 @@ import buildHighchartsConfig from './highcharts';
 import {log} from './utils/misc-helpers';
 import buildYagrConfig from './yagr';
 
-export default ({shared}: {shared: QlConfig}) => {
-    const config = mapQlConfigToLatestVersion(shared);
+export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
+    const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
 
     const visualization = config.visualization as ServerVisualization;
 
     if (isYAGRVisualization(config.chartType, visualization.id)) {
-        const result = buildYagrConfig({shared});
+        const result = buildYagrConfig({shared, ChartEditor});
 
         log('LIBRARY CONFIG (YAGR):');
         log(result);
@@ -39,7 +44,7 @@ export default ({shared}: {shared: QlConfig}) => {
 
         return result;
     } else {
-        const result = buildHighchartsConfig({shared: config});
+        const result = buildHighchartsConfig({shared: config, ChartEditor});
 
         log('LIBRARY CONFIG (HC):');
         log(result);

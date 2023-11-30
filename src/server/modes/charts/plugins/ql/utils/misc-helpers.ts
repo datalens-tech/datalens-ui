@@ -662,7 +662,7 @@ export function getColumnsAndRows({
                 columnsByQuery[i] = localColumns;
             }
         });
-        iterateThroughVisibleQueries(queries, (_query, i) => {
+        iterateThroughVisibleQueries(queries, (query, i) => {
             let localRows;
 
             try {
@@ -678,7 +678,7 @@ export function getColumnsAndRows({
             }
 
             localRows.forEach((row) => {
-                row.push(`Query #${i}`);
+                row.push(query.queryName);
             });
 
             if (rows.length > 0) {

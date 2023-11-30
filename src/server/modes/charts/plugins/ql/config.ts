@@ -1,14 +1,21 @@
 import type {HighchartsWidgetData} from '@gravity-ui/chartkit/highcharts';
 
-import {DEFAULT_CHART_LINES_LIMIT, Feature, isEnabledServerFeature} from '../../../../../shared';
+import {
+    DEFAULT_CHART_LINES_LIMIT,
+    Feature,
+    IChartEditor,
+    isEnabledServerFeature,
+} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import type {QlConfig} from '../../../../../shared/types/config/ql';
 import {registry} from '../../../../registry';
 
 import {log} from './utils/misc-helpers';
 
-export default ({shared}: {shared: QlConfig}) => {
-    const qlConfig = mapQlConfigToLatestVersion(shared);
+export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
+    const qlConfig = mapQlConfigToLatestVersion(shared, {
+        i18n: ChartEditor.getTranslation,
+    });
 
     const config: Pick<
         HighchartsWidgetData['config'],
