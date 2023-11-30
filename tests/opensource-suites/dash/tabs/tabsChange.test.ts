@@ -25,16 +25,15 @@ datalensTest.describe(`Dashboards - switch tabs`, () => {
         const workbookPO = new Workbook(page);
 
         await workbookPO.openE2EWorkbookPage();
-        await workbookPO.createEntryButton.createDashboard();
 
-        await dashboardPage.addText(firstTabText);
-        await dashboardPage.addTab();
-        await dashboardPage.dashTabs.switchTabByIdx(1);
-        await dashboardPage.addText(secondTabText);
-
-        await dashboardPage.saveChanges();
-        await workbookPO.dialogCreateEntry.createEntryWithName();
-        await workbookPO.editEntityButton.waitForVisible();
+        await workbookPO.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addText(firstTabText);
+                await dashboardPage.addTab();
+                await dashboardPage.dashTabs.switchTabByIdx(1);
+                await dashboardPage.addText(secondTabText);
+            },
+        });
     });
 
     datalensTest.afterEach(async ({page}: {page: Page}) => {
@@ -45,9 +44,6 @@ datalensTest.describe(`Dashboards - switch tabs`, () => {
         'Dashboard tabs are successfully switched by clicking on the tab and using the browser\'s "Back"/"Forward" buttons',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
-
-            // Important: reload the page because dash state may be different for POST(create) and GET requests.
-            page.reload();
 
             await firstTabIsVisible(dashboardPage);
 
