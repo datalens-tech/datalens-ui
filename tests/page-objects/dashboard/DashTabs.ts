@@ -1,5 +1,5 @@
 import {Page} from '@playwright/test';
-import {slct} from 'utils';
+import {slct} from '../../utils';
 import {DashTabsQA} from '../../../src/shared/constants/qa/components';
 
 export class DashTabs {
