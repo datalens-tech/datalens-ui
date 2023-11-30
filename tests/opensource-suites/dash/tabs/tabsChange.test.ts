@@ -5,18 +5,16 @@ import {Workbook} from 'page-objects/workbook/Workbook';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {deleteEntity} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-
-const firstTabText = 'First tab text';
-const secondTabText = 'Second tab text';
+import {arbitraryText} from './constants';
 
 const firstTabIsVisible = async (dashboardPage: DashboardPage) => {
-    await expect(dashboardPage.getDashKitTextItem(firstTabText)).toBeVisible();
-    await expect(dashboardPage.getDashKitTextItem(secondTabText)).not.toBeVisible();
+    await expect(dashboardPage.getDashKitTextItem(arbitraryText.first)).toBeVisible();
+    await expect(dashboardPage.getDashKitTextItem(arbitraryText.second)).not.toBeVisible();
 };
 
 const secondTabIsVisible = async (dashboardPage: DashboardPage) => {
-    await expect(dashboardPage.getDashKitTextItem(firstTabText)).not.toBeVisible();
-    await expect(dashboardPage.getDashKitTextItem(secondTabText)).toBeVisible();
+    await expect(dashboardPage.getDashKitTextItem(arbitraryText.first)).not.toBeVisible();
+    await expect(dashboardPage.getDashKitTextItem(arbitraryText.second)).toBeVisible();
 };
 
 datalensTest.describe(`Dashboards - switch tabs`, () => {
@@ -28,10 +26,10 @@ datalensTest.describe(`Dashboards - switch tabs`, () => {
 
         await workbookPO.createDashboard({
             editDash: async () => {
-                await dashboardPage.addText(firstTabText);
+                await dashboardPage.addText(arbitraryText.first);
                 await dashboardPage.addTab();
                 await dashboardPage.dashTabs.switchTabByIdx(1);
-                await dashboardPage.addText(secondTabText);
+                await dashboardPage.addText(arbitraryText.second);
             },
         });
     });

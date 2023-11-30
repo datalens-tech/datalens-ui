@@ -10,13 +10,11 @@ import {Workbook} from 'page-objects/workbook/Workbook';
 import {COMMON_DASH_SELECTORS} from 'suites/dash/constants';
 import {DialogTabsQA, EntryDialogQA} from '../../../../src/shared/constants';
 import {dragAndDropListItem, openTabPopupWidgetOrder} from '../../../suites/dash/helpers';
+import {arbitraryText} from './constants';
 
 const SELECTORS = {
     SELECTOR_LIST_ITEMS: '.yc-list__item',
 };
-
-const firstTabText = 'First tab text';
-const secondTabText = 'Second tab text';
 
 datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
@@ -27,8 +25,8 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
 
         await workbookPO.createDashboard({
             editDash: async () => {
-                await dashboardPage.addText(firstTabText);
-                await dashboardPage.addText(secondTabText);
+                await dashboardPage.addText(arbitraryText.first);
+                await dashboardPage.addText(arbitraryText.second);
             },
         });
     });
