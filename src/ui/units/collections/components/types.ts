@@ -13,6 +13,8 @@ type CollectionContentProps = {
     getCollectionActions: (
         item: CollectionWithPermissions,
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
+    onUpdateCheckbox: (checked: boolean, entityId: string) => void;
+    selectedMap: Record<string, boolean>;
 };
 
 export {CollectionContentProps};

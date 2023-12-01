@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {DropdownMenu} from '@gravity-ui/uikit';
+import {Checkbox, DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Link} from 'react-router-dom';
@@ -18,12 +18,23 @@ const i18n = I18n.keyset('collections');
 const b = block('dl-collection-content-table');
 
 export const CollectionContentTable = React.memo<CollectionContentProps>(
-    ({contentItems, filters, setFilters, getWorkbookActions, getCollectionActions}) => {
+    ({
+        contentItems,
+        filters,
+        setFilters,
+        getWorkbookActions,
+        getCollectionActions,
+        onUpdateCheckbox,
+        selectedMap,
+    }) => {
         return (
             <div className={b()}>
                 <div className={b('table')}>
                     <div className={b('header')}>
                         <div className={b('header-row')}>
+                            <div className={b('header-cell')}>
+                                <Checkbox size="l" />
+                            </div>
                             <div className={b('header-cell')}>{i18n('label_title')}</div>
                             <div className={b('header-cell')}>{i18n('label_last-modified')}</div>
                             <div className={b('header-cell')} />
@@ -33,16 +44,30 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
                         {contentItems.map((item) => {
                             if ('workbookId' in item) {
                                 const actions = getWorkbookActions(item);
+                                const propsLink = {
+                                    key: item.workbookId,
+                                    to: `/workbooks/${item.workbookId}`,
+                                    onClick: () => {
+                                        setFilters({...filters, filterString: undefined});
+                                    },
+                                };
+
                                 return (
-                                    <Link
-                                        key={item.workbookId}
-                                        to={`/workbooks/${item.workbookId}`}
-                                        className={b('content-row')}
-                                        onClick={() => {
-                                            setFilters({...filters, filterString: undefined});
-                                        }}
-                                    >
-                                        <div className={b('content-cell', {title: true})}>
+                                    <div className={b('content-row')}>
+                                        <div className={b('content-cell')}>
+                                            <Checkbox
+                                                size="l"
+                                                onUpdate={(checked) => {
+                                                    onUpdateCheckbox(checked, item.workbookId);
+                                                }}
+                                                checked={selectedMap[item.workbookId]}
+                                            />
+                                        </div>
+
+                                        <Link
+                                            {...propsLink}
+                                            className={b('content-cell', {title: true})}
+                                        >
                                             <div className={b('title-col')}>
                                                 <div className={b('title-col-icon')}>
                                                     <WorkbookIcon title={item.title} />
@@ -51,33 +76,49 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
                                                     {item.title}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className={b('content-cell')}>
+                                        </Link>
+                                        <Link {...propsLink} className={b('content-cell')}>
                                             {dateTime({
                                                 input: item.updatedAt,
                                             }).fromNow()}
-                                        </div>
-                                        <div className={b('content-cell', {control: true})}>
+                                        </Link>
+                                        <Link
+                                            {...propsLink}
+                                            className={b('content-cell', {control: true})}
+                                        >
                                             {actions.length > 0 && (
                                                 <div onClick={onClickStopPropagation}>
                                                     <DropdownMenu size="s" items={actions} />
                                                 </div>
                                             )}
-                                        </div>
-                                    </Link>
+                                        </Link>
+                                    </div>
                                 );
                             } else {
                                 const actions = getCollectionActions(item);
+                                const propsLink = {
+                                    key: item.collectionId,
+                                    to: `/collections/${item.collectionId}`,
+                                    onClick: () => {
+                                        setFilters({...filters, filterString: undefined});
+                                    },
+                                };
+
                                 return (
-                                    <Link
-                                        key={item.collectionId}
-                                        to={`/collections/${item.collectionId}`}
-                                        className={b('content-row')}
-                                        onClick={() => {
-                                            setFilters({...filters, filterString: undefined});
-                                        }}
-                                    >
-                                        <div className={b('content-cell', {title: true})}>
+                                    <div className={b('content-row')}>
+                                        <div className={b('content-cell')}>
+                                            <Checkbox
+                                                size="l"
+                                                onUpdate={(checked) => {
+                                                    onUpdateCheckbox(checked, item.collectionId);
+                                                }}
+                                                checked={selectedMap[item.collectionId]}
+                                            />
+                                        </div>
+                                        <Link
+                                            {...propsLink}
+                                            className={b('content-cell', {title: true})}
+                                        >
                                             <div className={b('title-col')}>
                                                 <div className={b('title-col-icon')}>
                                                     <CollectionIcon />
@@ -86,23 +127,25 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
                                                     {item.title}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className={b('content-cell')}>
+                                        </Link>
+                                        <Link {...propsLink} className={b('content-cell')}>
                                             {dateTime({
                                                 input: item.updatedAt,
                                             }).fromNow()}
-                                        </div>
-                                        <div
+                                        </Link>
+                                        <Link
+                                            {...propsLink}
                                             className={b('content-cell', {control: true})}
-                                            onClick={onClickStopPropagation}
                                         >
-                                            {actions.length > 0 ? (
-                                                <div>
-                                                    <DropdownMenu size="s" items={actions} />
-                                                </div>
-                                            ) : null}
-                                        </div>
-                                    </Link>
+                                            <div onClick={onClickStopPropagation}>
+                                                {actions.length > 0 ? (
+                                                    <div>
+                                                        <DropdownMenu size="s" items={actions} />
+                                                    </div>
+                                                ) : null}
+                                            </div>
+                                        </Link>
+                                    </div>
                                 );
                             }
                         })}
