@@ -304,7 +304,7 @@ export const SET_ACTIVE_SELECTOR_INDEX = Symbol('dash/SET_ACTIVE_SELECTOR)INDEX'
 
 export type SelectorSourceType = 'dataset' | 'manual' | 'external';
 
-export type SelectorElementType = 'select' | 'date' | 'input';
+export type SelectorElementType = 'select' | 'date' | 'input' | 'checkbox';
 
 export type SelectorDialogState = {
     title?: string;

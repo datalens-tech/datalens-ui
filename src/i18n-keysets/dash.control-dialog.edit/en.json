@@ -62,6 +62,7 @@
   "value_date-forward": "forward",
   "value_date-manual": "Selecting a value",
   "value_date-no-limits": "No limits",
+  "value_element-checkbox": "Checkbox",
   "value_element-date": "Calendar",
   "value_element-input": "Input field",
   "value_element-select": "List",

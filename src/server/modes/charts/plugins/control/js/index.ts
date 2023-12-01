@@ -174,6 +174,19 @@ export default ({
 
             break;
 
+        case ELEMENT_TYPE.CHECKBOX:
+            uiControl.type = source.elementType;
+
+            if (!params[param]) {
+                if (typeof source.defaultValue === 'undefined') {
+                    params[param] = ['false'];
+                } else {
+                    params[param] = [source.defaultValue];
+                }
+            }
+
+            break;
+
         default:
             uiControl.type = source.elementType;
 

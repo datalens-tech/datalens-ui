@@ -16,6 +16,7 @@ import {
 import {FilterValue} from '../../../../../../../../shared/modules';
 import {DATASET_FIELD_TYPES} from '../../../../../../../../shared/types';
 import DateDefaultValue from '../../../Control/Date/Default/Default';
+import {CHECKBOX_CONTROL_VALUE} from '../../../Control/constants';
 
 import {ListValueControl} from './ListValueControl/ListValueControl';
 
@@ -122,6 +123,44 @@ const DateValueControl = () => {
     );
 };
 
+const CheckboxValueControl = () => {
+    const dispatch = useDispatch();
+    const defaultValue = useSelector(selectSelectorDefaultValue);
+    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+
+    // This is a forced setting of the default value so that the checkbox affects the dashboard immediately without switching it
+    React.useEffect(() => {
+        dispatch(
+            setSelectorDialogItem({
+                defaultValue: CHECKBOX_CONTROL_VALUE.FALSE,
+            }),
+        );
+    }, [dispatch]);
+
+    const handleUpdate = React.useCallback(
+        (value: boolean) => {
+            dispatch(
+                setSelectorDialogItem({
+                    defaultValue: String(value),
+                }),
+            );
+        },
+        [dispatch],
+    );
+
+    return (
+        <FormRow label={i18n('field_default-value')}>
+            <Checkbox
+                className={b('checkbox-option')}
+                disabled={isFieldDisabled}
+                checked={defaultValue === CHECKBOX_CONTROL_VALUE.TRUE}
+                onUpdate={handleUpdate}
+                size="l"
+            />
+        </FormRow>
+    );
+};
+
 const ValueSelector: React.FC = () => {
     const controlType = useSelector(selectSelectorControlType);
 
@@ -138,6 +177,10 @@ const ValueSelector: React.FC = () => {
         }
         case 'input': {
             inputControl = <InputValueControl />;
+            break;
+        }
+        case 'checkbox': {
+            inputControl = <CheckboxValueControl />;
         }
     }
 

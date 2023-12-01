@@ -17,8 +17,8 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 
 const ELEMENT_TYPE_OPTIONS = [
     {
-        title: i18n('value_element-select'),
         value: ELEMENT_TYPE.SELECT,
+        title: i18n('value_element-select'),
     },
     {
         value: ELEMENT_TYPE.INPUT,
@@ -27,6 +27,10 @@ const ELEMENT_TYPE_OPTIONS = [
     {
         value: ELEMENT_TYPE.DATE,
         title: i18n('value_element-date'),
+    },
+    {
+        value: ELEMENT_TYPE.CHECKBOX,
+        title: i18n('value_element-checkbox'),
     },
 ];
 
@@ -56,6 +60,9 @@ const InputTypeSelector = () => {
                 fieldType !== DATASET_FIELD_TYPES.GENERICDATETIME) ||
                 datasetFieldType === DatasetFieldType.Measure),
         [ELEMENT_TYPE.SELECT]: datasetFieldType === DatasetFieldType.Measure,
+        [ELEMENT_TYPE.CHECKBOX]:
+            sourceType === DashTabItemControlSourceType.Dataset &&
+            fieldType !== DATASET_FIELD_TYPES.BOOLEAN,
     };
 
     return (
