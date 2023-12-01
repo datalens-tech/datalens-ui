@@ -18,7 +18,7 @@ import {
     TableHead,
     TableRow,
     TableTitle,
-    TablehWidgetEventScope,
+    TableWidgetEventScope,
     WidgetEvent,
 } from '../../../../shared';
 import {ChartsData} from '../modules/data-provider/charts';
@@ -240,7 +240,7 @@ export type TableWidget = WidgetBaseWithData &
             };
             drillDown?: DrillDownConfig;
             events?: {
-                click?: WidgetEvent<TablehWidgetEventScope> | WidgetEvent<TablehWidgetEventScope>[];
+                click?: WidgetEvent<TableWidgetEventScope> | WidgetEvent<TableWidgetEventScope>[];
             };
         };
         unresolvedParams?: StringParams;

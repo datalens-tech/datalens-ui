@@ -143,7 +143,7 @@ export const openDeletePaletteConfirm = ({onApply}: OpenDialogSaveChartConfirmAr
             isWarningConfirm: true,
             cancelButtonView: 'flat',
             confirmButtonView: 'outlined-danger',
-            hideIcon: true,
+            showIcon: false,
             onCancel: () => dispatch(closeDialog()),
             widthType: 'medium',
             confirmHeaderText: i18n('button_delete-title'),
