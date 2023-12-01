@@ -17,6 +17,7 @@ import {
     EntryDialogues,
 } from 'ui';
 import {registry} from 'ui/registry';
+import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'ui/store/actions/dialog';
 import Utils from 'utils';
 
 import {GetEntryResponse} from '../../../../../shared/schema';
@@ -32,11 +33,11 @@ import {isEmbeddedMode} from '../../../../utils/embedded';
 import {DIALOG_TYPE} from '../../containers/Dialogs/constants';
 import {purgeData} from '../../store/actions/dash';
 import {
-    cancelDashEditMode,
     saveDashAsDraft,
     saveDashAsNewDash,
     setActualDash,
     setDashViewMode,
+    setDefaultViewState,
     setPageDefaultTabItems,
     setPublishDraft,
 } from '../../store/actions/dashTyped';
@@ -49,6 +50,7 @@ import {DashEntry} from '../../typings/entry';
 
 import {EditControls} from './EditControls/EditControls';
 import {ViewControls} from './ViewControls/ViewControls';
+import {cancelEditClick} from './helpers';
 
 import './DashActionPanel.scss';
 
@@ -165,7 +167,12 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     };
 
     handlerCancelEditClick = () => {
-        this.props.cancelDashEditMode({isDraft: this.props.isDraft});
+        cancelEditClick({
+            isDraft: this.props.isDraft,
+            setDefaultViewState: this.props.setDefaultViewState,
+            openDialogConfirm: this.props.openDialogConfirm,
+            closeDialogConfirm: this.props.closeDialogConfirm,
+        });
     };
 
     handlerSaveAsNewClick = async () => {
@@ -291,7 +298,9 @@ const mapDispatchToProps = {
     saveDashAsDraft,
     saveDashAsNewDash,
     setPageDefaultTabItems,
-    cancelDashEditMode,
+    setDefaultViewState,
+    openDialogConfirm,
+    closeDialogConfirm,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashActionPanel);

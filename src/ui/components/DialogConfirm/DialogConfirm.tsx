@@ -22,7 +22,7 @@ export interface DialogConfirmProps {
     confirmButtonText?: string;
     confirmHeaderText?: string;
     isWarningConfirm?: boolean;
-    hideIcon?: boolean;
+    showIcon?: boolean;
     confirmOnEnterPress?: boolean;
     widthType?: 'medium'; // dialog width presets
     applyBtnLoadingStatus?: DialogConfirmApplyStatus;
@@ -56,7 +56,7 @@ const DialogConfirm: React.FC<DialogConfirmProps> = (props) => {
         confirmHeaderText,
         widthType,
         applyBtnLoadingStatus,
-        hideIcon,
+        showIcon = true,
         cancelButtonView = 'normal',
         confirmButtonView = 'action',
         showAlert,
@@ -104,7 +104,7 @@ const DialogConfirm: React.FC<DialogConfirmProps> = (props) => {
                     <Alert theme="warning" message={message} view="outlined" />
                 ) : (
                     <div className={b('body', {warning: isWarningConfirm})}>
-                        {hideIcon ? null : (
+                        {showIcon && (
                             <div className={b('icon', {warning: isWarningConfirm})}>
                                 <Icon data={TriangleExclamationFill} size={32} />
                             </div>
@@ -112,7 +112,7 @@ const DialogConfirm: React.FC<DialogConfirmProps> = (props) => {
                         <div
                             className={b('message', {
                                 warning: isWarningConfirm,
-                                'hide-icon': hideIcon,
+                                'no-icon': !showIcon,
                             })}
                         >
                             {message}

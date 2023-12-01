@@ -228,7 +228,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
                         isWarningConfirm: true,
                         cancelButtonView: 'flat',
                         confirmButtonView: 'normal',
-                        hideIcon: true,
+                        showIcon: false,
                         onCancel: () => {
                             failCallback();
                             dispatch(closeDialogConfirm());
@@ -270,7 +270,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
                         isWarningConfirm: true,
                         cancelButtonView: 'flat',
                         confirmButtonView: 'normal',
-                        hideIcon: true,
+                        showIcon: false,
                         onCancel: () => {
                             failCallback();
                             if (mode === Mode.Edit) {

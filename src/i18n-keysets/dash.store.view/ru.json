@@ -1,7 +1,5 @@
 {
-  "button_back": "Назад",
   "button_cancel": "Отмена",
-  "button_continue": "Продолжить",
   "button_edit-anyway": "Все равно редактировать",
   "button_reload-page": "Обновить страницу",
   "label_copied-widget-postfix": "копия",
@@ -11,7 +9,5 @@
   "label_obsolete-dash": "Дашборд устарел",
   "label_obsolete-version": "Текущая версия дашборда устарела. Обновите страницу, чтобы перейти к последней версии.",
   "label_unexpected-error": "Ошибка",
-  "label_unsaved-changes-title": "На странице остались несохранённые изменения",
-  "label_unsaved-changes-warning": "Вы можете вернуться на дашборд и сохранить их. Если вы продолжите, эти изменения будут потеряны.",
   "label_selector-dialog": "Селектор 1"
 }
