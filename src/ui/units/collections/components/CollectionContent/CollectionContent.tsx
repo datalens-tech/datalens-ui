@@ -72,6 +72,7 @@ type Props = {
         workbooksNextPageToken?: string | null;
     };
     refreshContent: () => void;
+    refreshCollections: () => void;
     getCollectionContentRecursively: (
         args: GetCollectionContentArgs,
     ) => CancellablePromise<GetCollectionContentResponse | null>;
@@ -96,6 +97,7 @@ export const CollectionContent = React.memo<Props>(
         onCreateWorkbookClick,
         onClearFiltersClick,
         refreshContent,
+        refreshCollections,
     }) => {
         const [waypointDisabled, setWaypointDisabled] = React.useState(false);
         const history = useHistory();
@@ -234,7 +236,7 @@ export const CollectionContent = React.memo<Props>(
                                     description: item?.description ?? '',
                                     onApply: (collection: UpdateCollectionResponse | null) => {
                                         if (collection) {
-                                            refreshContent();
+                                            refreshCollections();
                                         }
                                     },
                                     onClose: () => {
@@ -314,7 +316,7 @@ export const CollectionContent = React.memo<Props>(
                                         description: item?.description ?? '',
                                         onApply: (workbook: UpdateWorkbookResponse | null) => {
                                             if (workbook) {
-                                                refreshContent();
+                                                refreshCollections();
                                             }
                                         },
                                         onClose: () => {

@@ -203,21 +203,19 @@ export const CollectionPage = React.memo<Props>(
             };
         }, [collectionId, getCollection, getCollectionBreadcrumbs, resetCollectionInfo]);
 
-        const refreshContent = React.useCallback(() => {
-            initLoadCollection();
+        const refreshCollections = React.useCallback(() => {
             resetCollectionContent();
             getCollectionContentRecursively({
                 collectionId: curCollectionId,
                 pageSize: PAGE_SIZE,
                 ...filters,
             });
-        }, [
-            curCollectionId,
-            filters,
-            getCollectionContentRecursively,
-            initLoadCollection,
-            resetCollectionContent,
-        ]);
+        }, [curCollectionId, filters, getCollectionContentRecursively, resetCollectionContent]);
+
+        const refreshContent = React.useCallback(() => {
+            initLoadCollection();
+            refreshCollections();
+        }, [initLoadCollection, refreshCollections]);
 
         const onChangeCollectionPageViewMode = React.useCallback(
             (value: CollectionPageViewMode) => {
@@ -475,6 +473,7 @@ export const CollectionPage = React.memo<Props>(
                                     isDefaultFilters={isDefaultFilters}
                                     pageSize={PAGE_SIZE}
                                     refreshContent={refreshContent}
+                                    refreshCollections={refreshCollections}
                                     canCreateWorkbook={
                                         collectionId && collection
                                             ? collection.permissions.createWorkbook

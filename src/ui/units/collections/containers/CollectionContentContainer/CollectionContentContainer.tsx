@@ -30,6 +30,7 @@ type OuterProps = {
     pageSize: number;
     canCreateWorkbook: boolean;
     refreshContent: () => void;
+    refreshCollections: () => void;
     getCollectionContentRecursively: (
         args: GetCollectionContentArgs,
     ) => CancellablePromise<GetCollectionContentResponse | null>;
@@ -55,6 +56,7 @@ class CollectionContentContainer extends React.Component<Props> {
             nextPageTokens,
             canCreateWorkbook,
             refreshContent,
+            refreshCollections,
             getCollectionContentRecursively,
             onCreateWorkbookClick,
             onClearFiltersClick,
@@ -73,6 +75,7 @@ class CollectionContentContainer extends React.Component<Props> {
                 contentItems={contentItems}
                 nextPageTokens={nextPageTokens}
                 refreshContent={refreshContent}
+                refreshCollections={refreshCollections}
                 getCollectionContentRecursively={getCollectionContentRecursively}
                 onCreateWorkbookClick={onCreateWorkbookClick}
                 canCreateWorkbook={canCreateWorkbook}
