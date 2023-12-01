@@ -8,7 +8,7 @@ import debounce from 'lodash/debounce';
 import {Feature} from 'shared';
 import {GetCollectionContentMode} from 'shared/schema/us/types/collections';
 import {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
-import Utils from 'ui/utils';
+import Utils, {FilterStorage} from 'ui/utils';
 
 import GridIcon from 'assets/icons/collections/grid.svg';
 
@@ -26,10 +26,6 @@ export enum SortType {
 }
 
 export const collectionPageViewModeStore = 'collectionPageViewMode';
-export const collectionPageFilterOnlyMyStore = 'collectionPageFilterOnlyMyStore';
-export const collectionPageFilterContentModeStore = 'collectionPageFilterContentModeStore';
-export const collectionPageFilterOrderDirectionStore = 'collectionPageFilterOrderDirectionStore';
-export const collectionPageFilterOrderFieldStore = 'collectionPageFilterOrderFieldStore';
 
 export enum CollectionPageViewMode {
     Grid = 'grid',
@@ -123,7 +119,7 @@ export const CollectionFilters = React.memo<Props>(
                 });
 
                 if (!compactMode) {
-                    Utils.store(collectionPageFilterContentModeStore, val);
+                    FilterStorage.store({mode: val});
                 }
             },
             [handleChangeFilters],
@@ -136,7 +132,7 @@ export const CollectionFilters = React.memo<Props>(
                 });
 
                 if (!compactMode) {
-                    Utils.store(collectionPageFilterOnlyMyStore, value);
+                    FilterStorage.store({onlyMy: value});
                 }
             },
             [handleChangeFilters],
@@ -147,7 +143,7 @@ export const CollectionFilters = React.memo<Props>(
                 onChangeCollectionPageViewMode?.(value);
 
                 if (!compactMode) {
-                    Utils.store(collectionPageViewModeStore, value);
+                    FilterStorage.store({mode: value});
                 }
             },
             [onChangeCollectionPageViewMode],
@@ -164,11 +160,10 @@ export const CollectionFilters = React.memo<Props>(
                 });
 
                 if (!compactMode) {
-                    Utils.store(collectionPageFilterOrderFieldStore, sortTypeValues.orderField);
-                    Utils.store(
-                        collectionPageFilterOrderDirectionStore,
-                        sortTypeValues.orderDirection,
-                    );
+                    FilterStorage.store({
+                        orderField: sortTypeValues.orderField,
+                        orderDirection: sortTypeValues.orderDirection,
+                    });
                 }
             },
             [handleChangeFilters],

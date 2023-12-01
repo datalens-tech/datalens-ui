@@ -32,16 +32,13 @@ import {AppDispatch} from 'store';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import {DL} from 'ui/constants';
 import {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
+import {FilterStorage} from 'ui/utils/filterStorage';
 import Utils from 'utils';
 
 import {
     CollectionContentFilters,
     CollectionFilters,
     CollectionPageViewMode,
-    collectionPageFilterContentModeStore,
-    collectionPageFilterOnlyMyStore,
-    collectionPageFilterOrderDirectionStore,
-    collectionPageFilterOrderFieldStore,
     collectionPageViewModeStore,
 } from '../../../../components/CollectionFilters';
 import {registry} from '../../../../registry';
@@ -61,10 +58,10 @@ const PAGE_SIZE = 50;
 
 const DEFAULT_FILTERS = {
     filterString: undefined,
-    orderField: Utils.restore(collectionPageFilterOrderFieldStore) || OrderBasicField.CreatedAt,
-    orderDirection: Utils.restore(collectionPageFilterOrderDirectionStore) || OrderDirection.Desc,
-    mode: Utils.restore(collectionPageFilterContentModeStore) || GetCollectionContentMode.All,
-    onlyMy: Utils.restore(collectionPageFilterOnlyMyStore) || false,
+    orderField: FilterStorage.restore()?.orderField || OrderBasicField.CreatedAt,
+    orderDirection: FilterStorage.restore()?.orderDirection || OrderDirection.Desc,
+    mode: FilterStorage.restore()?.mode || GetCollectionContentMode.All,
+    onlyMy: FilterStorage.restore()?.onlyMy || false,
 };
 
 const defaultCollectionPageViewMode =
