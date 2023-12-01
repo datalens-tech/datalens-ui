@@ -1,7 +1,9 @@
 {
   "button_add-favorite": "Add to favorites",
+  "button_back": "Back",
   "button_cancel": "Cancel",
   "button_connections": "Links",
+  "button_continue": "Continue",
   "button_edit": "Edit",
   "button_mailing": "Mailing",
   "button_menu": "Menu",
@@ -17,6 +19,8 @@
   "label_mailing": "Go to the tab and choose selector values",
   "label_save_and_publish": "Save and make actual",
   "label_save_as_new": "Save as new dashboard",
+  "label_unsaved-changes-title": "There are unsaved changes on this page",
+  "label_unsaved-changes-warning": "You can return to the dashboard and save them. If you continue, these changes will be lost.",
   "toast_error": "An error occurred",
   "toast_failed-add-favorite": "Failed to add to favorites",
   "toast_failed-remove-favorite": "Failed to delete from favorites",

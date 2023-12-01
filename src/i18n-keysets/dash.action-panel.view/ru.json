@@ -1,7 +1,9 @@
 {
   "button_add-favorite": "Добавить в избранное",
+  "button_back": "Назад",
   "button_cancel": "Отменить",
   "button_connections": "Связи",
+  "button_continue": "Продолжить",
   "button_edit": "Редактировать",
   "button_mailing": "Рассылки",
   "button_menu": "Меню",
@@ -17,6 +19,8 @@
   "label_mailing": "Перейдите на вкладку и выберите значения селекторов",
   "label_save_and_publish": "Сохранить и сделать актуальным",
   "label_save_as_new": "Сохранить как новый дашборд",
+  "label_unsaved-changes-title": "На странице остались несохранённые изменения",
+  "label_unsaved-changes-warning": "Вы можете вернуться на дашборд и сохранить их. Если вы продолжите, эти изменения будут потеряны.",
   "toast_error": "Произошла ошибка",
   "toast_failed-add-favorite": "Не удалось добавить в избранное",
   "toast_failed-remove-favorite": "Не удалось удалить из избранного",

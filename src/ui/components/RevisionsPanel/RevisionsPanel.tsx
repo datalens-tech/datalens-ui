@@ -99,7 +99,7 @@ export const setLockedTextInfo = ({loginOrId, scope, callback, onError}: LockedT
                 cancelButtonView: 'flat',
                 confirmButtonView: 'normal',
                 isWarningConfirm: true,
-                hideIcon: true,
+                showIcon: false,
                 onCancel: () => {
                     dispatch(closeDialogConfirm());
                 },
