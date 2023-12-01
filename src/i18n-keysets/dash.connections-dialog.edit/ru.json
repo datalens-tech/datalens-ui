@@ -16,5 +16,6 @@
   "value_ignore": "Игнор",
   "value_input": "Вх. связь",
   "value_none": "Нет связи",
-  "value_output": "Исх. связь"
+  "value_output": "Исх. связь",
+  "value_error": "Ошибка"
 }
