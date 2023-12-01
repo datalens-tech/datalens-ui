@@ -122,7 +122,9 @@ export const CollectionFilters = React.memo<Props>(
                     mode: val,
                 });
 
-                Utils.store(collectionPageFilterContentModeStore, val);
+                if (!compactMode) {
+                    Utils.store(collectionPageFilterContentModeStore, val);
+                }
             },
             [handleChangeFilters],
         );
@@ -133,7 +135,9 @@ export const CollectionFilters = React.memo<Props>(
                     onlyMy: value === 'true',
                 });
 
-                Utils.store(collectionPageFilterOnlyMyStore, value);
+                if (!compactMode) {
+                    Utils.store(collectionPageFilterOnlyMyStore, value);
+                }
             },
             [handleChangeFilters],
         );
@@ -142,7 +146,9 @@ export const CollectionFilters = React.memo<Props>(
             (value) => {
                 onChangeCollectionPageViewMode?.(value);
 
-                Utils.store(collectionPageViewModeStore, value);
+                if (!compactMode) {
+                    Utils.store(collectionPageViewModeStore, value);
+                }
             },
             [onChangeCollectionPageViewMode],
         );
@@ -157,8 +163,13 @@ export const CollectionFilters = React.memo<Props>(
                     orderDirection: sortTypeValues.orderDirection,
                 });
 
-                Utils.store(collectionPageFilterOrderFieldStore, sortTypeValues.orderField);
-                Utils.store(collectionPageFilterOrderDirectionStore, sortTypeValues.orderDirection);
+                if (!compactMode) {
+                    Utils.store(collectionPageFilterOrderFieldStore, sortTypeValues.orderField);
+                    Utils.store(
+                        collectionPageFilterOrderDirectionStore,
+                        sortTypeValues.orderDirection,
+                    );
+                }
             },
             [handleChangeFilters],
         );
