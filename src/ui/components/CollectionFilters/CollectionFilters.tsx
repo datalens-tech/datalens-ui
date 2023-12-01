@@ -142,9 +142,7 @@ export const CollectionFilters = React.memo<Props>(
             (value) => {
                 onChangeCollectionPageViewMode?.(value);
 
-                if (!compactMode) {
-                    FilterStorage.store({mode: value});
-                }
+                Utils.store(collectionPageViewModeStore, value);
             },
             [onChangeCollectionPageViewMode],
         );
