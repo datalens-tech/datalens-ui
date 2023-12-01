@@ -7,7 +7,7 @@ import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/action
 import {MarkdownProvider, URL_QUERY, Utils} from 'ui';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
-import {EMBEDDED_MODE} from '../../../../constants';
+import {DL, EMBEDDED_MODE} from '../../../../constants';
 import ChartKit from '../../../../libs/DatalensChartkit';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
@@ -415,12 +415,14 @@ export const load = ({location, history, params}) => {
                 };
             }
 
+            const isEmptyDash = data.tabs.length === 1 && !data.tabs[0].items.length;
+            const hasEditPermissions = entry?.permissions?.admin || entry?.permissions?.edit;
+            const isOpenedActualRevision = !revId;
+            const isAvailableEditMode =
+                !Utils.isEnabledFeature(Feature.ReadOnlyMode) && !DL.IS_MOBILE;
+
             const mode =
-                data.tabs.length === 1 &&
-                !data.tabs[0].items.length &&
-                !revId &&
-                (entry?.permissions?.admin || entry?.permissions?.edit) &&
-                !Utils.isEnabledFeature(Feature.ReadOnlyMode)
+                isEmptyDash && isOpenedActualRevision && hasEditPermissions && isAvailableEditMode
                     ? Mode.Edit
                     : Mode.View;
 
