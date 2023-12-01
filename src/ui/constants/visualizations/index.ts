@@ -144,6 +144,10 @@ export const CHART_SETTINGS = {
         ON: 'on',
         OFF: 'off',
     },
+    QL_AUTO_EXECUTION_CHART: {
+        ON: 'on',
+        OFF: 'off',
+    },
 };
 
 export const VISUALIZATION_IDS = {

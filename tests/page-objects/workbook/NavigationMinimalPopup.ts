@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
-import {slct} from 'utils';
-import {WorkbookNavigationMinimalQa} from '../../../src/shared/constants/qa/components';
+import {slct} from '../../utils';
+import {WorkbookNavigationMinimalQa} from '../../../src/shared';
 
 export class NavigationMinimalPopup {
     slctPopup = slct(WorkbookNavigationMinimalQa.Popup);

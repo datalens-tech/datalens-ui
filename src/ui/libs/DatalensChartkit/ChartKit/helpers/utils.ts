@@ -14,13 +14,8 @@ export function getPointActionParams(point: Point): PointActionParams {
     );
 }
 
-export function isEmptyParam(paramValue: string | string[]) {
-    return Array.isArray(paramValue) ? paramValue.every((p) => p === '') : paramValue === '';
-}
-
-export function isPointSelected(point: Point, actionParams: StringParams = {}) {
-    const pointActionParams = getPointActionParams(point);
-    const matchedParamNames = Object.entries(pointActionParams).filter(([name]) => {
+export function hasMatchedActionParams(data: StringParams, actionParams: StringParams = {}) {
+    const matchedParamNames = Object.entries(data).filter(([name]) => {
         return name in actionParams && !isEmptyParam(actionParams[name]);
     });
 
@@ -36,6 +31,14 @@ export function isPointSelected(point: Point, actionParams: StringParams = {}) {
             return String(actionParamsValue) === pointParamValue;
         })
     );
+}
+
+export function isEmptyParam(paramValue: string | string[]) {
+    return Array.isArray(paramValue) ? paramValue.every((p) => p === '') : paramValue === '';
+}
+
+export function isPointSelected(point: Point, actionParams: StringParams = {}) {
+    return hasMatchedActionParams(getPointActionParams(point), actionParams);
 }
 
 export const extractHcTypeFromData = (data?: GraphWidget) => {

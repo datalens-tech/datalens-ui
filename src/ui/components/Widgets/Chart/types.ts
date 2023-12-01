@@ -119,6 +119,8 @@ export type ChartProviderPropsWithRefProps = Partial<Omit<ChartKitBaseWrapperPro
     ChartsProps & {
         forwardedRef: React.RefObject<ChartKit>;
         usageType: 'chart';
+        isPageHidden?: boolean;
+        autoupdateInterval?: number;
     };
 
 export type ChartSelectorWithRefProps = Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout'> &
@@ -267,6 +269,7 @@ export type ChartContentProps = Pick<
         showOverlayWithControlsOnEdit?: boolean;
         isWidgetMenuDataChanged?: boolean;
         initialParams: StringParams;
+        enableActionParams?: boolean;
     };
 
 export type WidgetDataRef = React.MutableRefObject<

@@ -12,6 +12,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ConnectionsDialogQA} from '../../../../src/shared';
 import {WorkbooksUrls} from 'constants/constants';
 import {Workbook} from 'page-objects/workbook/Workbook';
+import {ChartsParams} from 'constants/test-entities/charts';
 
 const SELECTORS = {
     CHART_LEGEND_ITEM: '.chartkit-d3-legend__item',
@@ -22,8 +23,6 @@ const PARAMS = {
     CONTROL_TITLE: 'test-control',
     CONTROL_FIELD_NAME: 'test-control-field',
     CONTROL_ITEMS: ['Dallas', 'Chicago'],
-    CHART_NAME: 'city-sales — Pie chart',
-    CHART_URL: '/wizard/q9z7zsseqg2qf-city-sales-pie-chart',
     CHART_FIELD: 'city',
 };
 
@@ -45,8 +44,8 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
             });
 
             await dashboardPage.addChart({
-                chartName: PARAMS.CHART_NAME,
-                chartUrl: PARAMS.CHART_URL,
+                chartName: ChartsParams.citySalesPieChart.name,
+                chartUrl: ChartsParams.citySalesPieChart.url,
             });
 
             await dashboardPage.setupLinks({

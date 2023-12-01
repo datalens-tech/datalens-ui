@@ -1,0 +1,19 @@
+{
+  "action_cancel": "Cancel",
+  "action_select": "Select",
+  "description_copy": "Copy object with links. The original objects will remain in the folders.",
+  "description_transfer": "Transfer all linked objects, including nested ones, to one general workbook.",
+  "list_first_item_copy": "Search for links only for the current object",
+  "list_second_item_copy": "Objects remain in folders",
+  "list_third_item_copy": "Links to objects will not change",
+  "list_fourth_item_copy": "Does not yet work for connections to Google Sheets and files (CSV)",
+  "list_first_item_transfer": "Recursive search for all nested links",
+  "list_first_item_transfer_help_text": "Search for links to the current object and all objects linked to it: “down“ to the connection level and “up“ to the dashboard level",
+  "list_second_item_transfer": "Objects will disappear from the folder",
+  "list_third_item_transfer": "Links to objects will redirect to workbooks",
+  "list_fourth_item_transfer": "Available for connections to Google Sheets or a file (CSV)",
+  "title": "Select a method of migration to the workbook",
+  "title_copy": "Copy",
+  "title_transfer": "Transfer",
+  "label": "NEW"
+}

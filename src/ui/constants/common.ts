@@ -260,6 +260,8 @@ export const URL_OPTIONS = {
     AUTOUPDATE: '_autoupdate',
 };
 
+export const MIN_AUTOUPDATE_CHART_INTERVAL = 15;
+
 export const DLS_SUBJECT = {
     ALL_ACTIVE_USERS: 'system_group:all_active_users',
 };

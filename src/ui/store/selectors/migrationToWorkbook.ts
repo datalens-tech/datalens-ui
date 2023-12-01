@@ -14,6 +14,9 @@ export const selectIsLoadingMigrateEntriesToWorkbook = createSelector(
 export const selectGetRelationsGraph = (state: DatalensGlobalState) =>
     state.migrationToWorkbook.getRelationsGraph;
 
+export const selectGetRelations = (state: DatalensGlobalState) =>
+    state.migrationToWorkbook.getRelations;
+
 export const selectIsLoadingTargetEntry = createSelector(
     [selectGetEntry],
     (getEntry) => getEntry.isLoading,
@@ -39,4 +42,19 @@ export const selectRelationsGraph = createSelector(
 export const selectRelationsGraphError = createSelector(
     [selectGetRelationsGraph],
     (getRelationsGraph) => getRelationsGraph.error,
+);
+
+export const selectIsLoadingRelations = createSelector(
+    [selectGetRelations],
+    (getRelations) => getRelations.isLoading,
+);
+
+export const selectRelations = createSelector(
+    [selectGetRelations],
+    (getRelations) => getRelations.data,
+);
+
+export const selectRelationsError = createSelector(
+    [selectGetRelations],
+    (getRelations) => getRelations.error,
 );
