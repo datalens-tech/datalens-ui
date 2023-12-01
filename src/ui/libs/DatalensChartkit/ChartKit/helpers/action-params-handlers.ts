@@ -22,11 +22,6 @@ const Opacity = {
     UNSELECTED: '0.5',
 };
 
-const setSeriesOpacity = (seriesItem: Highcharts.Series) => {
-    const opacity = seriesItem.selected ? Opacity.SELECTED : Opacity.UNSELECTED;
-    seriesItem.update({opacity, selected: seriesItem.selected});
-};
-
 function setPointSelectState(point: Point, selected: boolean) {
     const type = extractHcTypeFromSeries(point.series);
     const opacity = selected ? Opacity.SELECTED : Opacity.UNSELECTED;
@@ -165,27 +160,6 @@ export const setPointActionParamToParams = (args: {
     });
 };
 
-function seriesToParams(series: Highcharts.Series[]) {
-    return series.reduce<StringParams>((params, seriesItem) => {
-        const points = seriesItem.getPointsCollection();
-        const actionParams = points.map(getPointActionParams);
-
-        if (!Array.isArray(actionParams)) {
-            return params;
-        }
-
-        actionParams.forEach((actionParam: unknown) => {
-            setPointActionParamToParams({
-                actionParams: actionParam,
-                params,
-                selected: seriesItem.selected,
-            });
-        });
-
-        return params;
-    }, {});
-}
-
 export const handleChartLoadingForActionParams = (args: {
     clickScope: GraphWidgetEventScope;
     series: Highcharts.Series[];
@@ -215,15 +189,6 @@ export const handleChartLoadingForActionParams = (args: {
                     setSeriesSelectState(s, hasAnySelectedPoints);
                 });
                 series[0]?.chart.redraw();
-            }
-
-            break;
-        }
-        case 'series': {
-            const hasSelectedSeries = series.some((s) => s.selected);
-
-            if (hasSelectedSeries) {
-                series.forEach(setSeriesOpacity);
             }
 
             break;
@@ -297,23 +262,6 @@ export function handleSeriesClickForActionParams(args: {
                 });
             }
 
-            break;
-        }
-        case 'series': {
-            event.point.series.select();
-
-            if (!event.metaKey) {
-                chart.series
-                    .filter((s) => s.name !== event.point.series.name)
-                    .forEach((s) => {
-                        if (s.selected) {
-                            s.select();
-                        }
-                    });
-            }
-
-            chart.series.forEach(setSeriesOpacity);
-            newActionParams = seriesToParams(chart.series);
             break;
         }
     }

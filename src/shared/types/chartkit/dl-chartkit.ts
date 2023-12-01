@@ -13,7 +13,7 @@ type SetActionParamsEventHandler = {
 
 export type WidgetEventHandler = SetActionParamsEventHandler;
 
-export type GraphWidgetEventScope = 'point' | 'series';
+export type GraphWidgetEventScope = 'point';
 
 export type TableWidgetEventScope = 'row';
 
