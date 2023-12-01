@@ -833,12 +833,27 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
 
                 const needUpdateChartParams =
                     !isEqual(initialData.params, newParams) || callChangeByClick;
+                // if all action params contain empty values, we need to clean it
+                const isNewActionParamsEmpty = Object.values(
+                    pickActionParamsFromParams(newParams || {}),
+                ).every((item) => {
+                    if (typeof item === 'string') {
+                        return isEmpty(item.trim());
+                    } else {
+                        return isEmpty(item.filter((val) => !isEmpty(val.trim())));
+                    }
+                });
 
                 if (newParams && needUpdateChartParams) {
-                    const actionName =
+                    let actionName =
                         isEmpty(newParams) && callChangeByClick
                             ? WIDGET_CHART_RESET_CHANGED_PARAMS
                             : WIDGET_CHART_UPDATE_DATA_PARAMS;
+
+                    if (isNewActionParamsEmpty) {
+                        actionName = WIDGET_CHART_UPDATE_DATA_PARAMS;
+                        newParams = {...pickExceptActionParamsFromParams(newParams)};
+                    }
 
                     dispatch({
                         type: actionName,
