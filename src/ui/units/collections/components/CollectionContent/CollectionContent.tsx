@@ -71,8 +71,8 @@ type Props = {
         collectionsNextPageToken?: string | null;
         workbooksNextPageToken?: string | null;
     };
+    refreshPage: () => void;
     refreshContent: () => void;
-    refreshCollections: () => void;
     getCollectionContentRecursively: (
         args: GetCollectionContentArgs,
     ) => CancellablePromise<GetCollectionContentResponse | null>;
@@ -96,8 +96,8 @@ export const CollectionContent = React.memo<Props>(
         getCollectionContentRecursively,
         onCreateWorkbookClick,
         onClearFiltersClick,
+        refreshPage,
         refreshContent,
-        refreshCollections,
     }) => {
         const [waypointDisabled, setWaypointDisabled] = React.useState(false);
         const history = useHistory();
@@ -119,11 +119,11 @@ export const CollectionContent = React.memo<Props>(
         const handeCloseMoveDialog = React.useCallback(
             (structureChanged: boolean) => {
                 if (structureChanged) {
-                    refreshContent();
+                    refreshPage();
                 }
                 dispatch(closeDialog());
             },
-            [dispatch, refreshContent],
+            [dispatch, refreshPage],
         );
 
         React.useEffect(() => {
@@ -236,7 +236,7 @@ export const CollectionContent = React.memo<Props>(
                                     description: item?.description ?? '',
                                     onApply: (collection: UpdateCollectionResponse | null) => {
                                         if (collection) {
-                                            refreshCollections();
+                                            refreshContent();
                                         }
                                     },
                                     onClose: () => {
@@ -261,7 +261,7 @@ export const CollectionContent = React.memo<Props>(
                                     collectionId: item.collectionId,
                                     collectionTitle: item.title,
                                     initialParentId: item.parentId,
-                                    onApply: refreshContent,
+                                    onApply: refreshPage,
                                     onClose: handeCloseMoveDialog,
                                 },
                             }),
@@ -316,7 +316,7 @@ export const CollectionContent = React.memo<Props>(
                                         description: item?.description ?? '',
                                         onApply: (workbook: UpdateWorkbookResponse | null) => {
                                             if (workbook) {
-                                                refreshCollections();
+                                                refreshContent();
                                             }
                                         },
                                         onClose: () => {
@@ -344,7 +344,7 @@ export const CollectionContent = React.memo<Props>(
                                     workbookId: item.workbookId,
                                     workbookTitle: item.title,
                                     initialCollectionId: item.collectionId,
-                                    onApply: refreshContent,
+                                    onApply: refreshPage,
                                     onClose: handeCloseMoveDialog,
                                 },
                             }),

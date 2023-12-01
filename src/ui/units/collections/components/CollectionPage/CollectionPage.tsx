@@ -203,7 +203,7 @@ export const CollectionPage = React.memo<Props>(
             };
         }, [collectionId, getCollection, getCollectionBreadcrumbs, resetCollectionInfo]);
 
-        const refreshCollections = React.useCallback(() => {
+        const refreshContent = React.useCallback(() => {
             resetCollectionContent();
             getCollectionContentRecursively({
                 collectionId: curCollectionId,
@@ -212,10 +212,10 @@ export const CollectionPage = React.memo<Props>(
             });
         }, [curCollectionId, filters, getCollectionContentRecursively, resetCollectionContent]);
 
-        const refreshContent = React.useCallback(() => {
+        const refreshPage = React.useCallback(() => {
             initLoadCollection();
-            refreshCollections();
-        }, [initLoadCollection, refreshCollections]);
+            refreshContent();
+        }, [initLoadCollection, refreshContent]);
 
         const onChangeCollectionPageViewMode = React.useCallback(
             (value: CollectionPageViewMode) => {
@@ -247,11 +247,11 @@ export const CollectionPage = React.memo<Props>(
         const handeCloseMoveDialog = React.useCallback(
             (structureChanged: boolean) => {
                 if (structureChanged) {
-                    refreshContent();
+                    refreshPage();
                 }
                 dispatch(closeDialog());
             },
-            [dispatch, refreshContent],
+            [dispatch, refreshPage],
         );
 
         const handleCreateWorkbook = React.useCallback(() => {
@@ -412,7 +412,7 @@ export const CollectionPage = React.memo<Props>(
                                                     collectionId: collection.collectionId,
                                                     collectionTitle: collection.title,
                                                     initialParentId: collection.parentId,
-                                                    onApply: refreshContent,
+                                                    onApply: refreshPage,
                                                     onClose: handeCloseMoveDialog,
                                                 },
                                             }),
@@ -472,8 +472,8 @@ export const CollectionPage = React.memo<Props>(
                                     setFilters={setFilters}
                                     isDefaultFilters={isDefaultFilters}
                                     pageSize={PAGE_SIZE}
+                                    refreshPage={refreshPage}
                                     refreshContent={refreshContent}
-                                    refreshCollections={refreshCollections}
                                     canCreateWorkbook={
                                         collectionId && collection
                                             ? collection.permissions.createWorkbook

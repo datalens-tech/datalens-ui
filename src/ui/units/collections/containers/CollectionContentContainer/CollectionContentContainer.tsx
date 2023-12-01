@@ -29,8 +29,8 @@ type OuterProps = {
     isDefaultFilters: boolean;
     pageSize: number;
     canCreateWorkbook: boolean;
+    refreshPage: () => void;
     refreshContent: () => void;
-    refreshCollections: () => void;
     getCollectionContentRecursively: (
         args: GetCollectionContentArgs,
     ) => CancellablePromise<GetCollectionContentResponse | null>;
@@ -55,8 +55,8 @@ class CollectionContentContainer extends React.Component<Props> {
             contentItems,
             nextPageTokens,
             canCreateWorkbook,
+            refreshPage,
             refreshContent,
-            refreshCollections,
             getCollectionContentRecursively,
             onCreateWorkbookClick,
             onClearFiltersClick,
@@ -74,8 +74,8 @@ class CollectionContentContainer extends React.Component<Props> {
                 contentLoadingError={contentLoadingError}
                 contentItems={contentItems}
                 nextPageTokens={nextPageTokens}
+                refreshPage={refreshPage}
                 refreshContent={refreshContent}
-                refreshCollections={refreshCollections}
                 getCollectionContentRecursively={getCollectionContentRecursively}
                 onCreateWorkbookClick={onCreateWorkbookClick}
                 canCreateWorkbook={canCreateWorkbook}
