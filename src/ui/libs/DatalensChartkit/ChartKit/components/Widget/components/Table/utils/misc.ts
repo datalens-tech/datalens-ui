@@ -373,9 +373,10 @@ export function getRowActionParams(args: {row?: DataTableData; head?: TableHead[
         return {};
     }
 
+    const canAutoGenerateParams = head && !hasGroups(head);
     return Object.keys(row).reduce<StringParams>((acc, columnName, index) => {
         const cell = row[columnName];
-        const headColumn = head?.[index];
+        const headColumn = canAutoGenerateParams ? head?.[index] : undefined;
 
         return Object.assign(acc, extractCellActionParams({cell, head: headColumn}));
     }, {});
