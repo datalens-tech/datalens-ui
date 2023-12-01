@@ -21,6 +21,8 @@ import {
     MigrateEntriesToWorkbookResponse,
     MoveWorkbookArgs,
     MoveWorkbookResponse,
+    MoveWorkbooksArgs,
+    MoveWorkbooksResponse,
     UpdateWorkbookArgs,
     UpdateWorkbookResponse,
 } from '../types';
@@ -95,6 +97,15 @@ export const workbooksActions = {
         method: 'POST',
         path: ({workbookId}) => `${PATH_PREFIX}/${workbookId}/move`,
         params: ({collectionId, title}, headers) => ({body: {collectionId, title}, headers}),
+    }),
+
+    moveWorkbooks: createAction<MoveWorkbooksResponse, MoveWorkbooksArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/move-workbooks`,
+        params: ({workbookIds, collectionId}, headers) => ({
+            body: {workbookIds, collectionId},
+            headers,
+        }),
     }),
 
     deleteWorkbook: createAction<DeleteWorkbookResponse, DeleteWorkbookArgs>({

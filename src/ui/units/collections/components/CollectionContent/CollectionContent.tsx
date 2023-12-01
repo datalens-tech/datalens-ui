@@ -9,6 +9,7 @@ import {
     DIALOG_EDIT_COLLECTION,
     DIALOG_EDIT_WORKBOOK,
     DIALOG_MOVE_COLLECTION,
+    DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
     DIALOG_MOVE_WORKBOOK,
 } from 'components/CollectionsStructure';
 import {IamAccessDialog} from 'components/IamAccessDialog/IamAccessDialog';
@@ -424,7 +425,21 @@ export const CollectionContent: React.FC<Props> = ({
             ...resetedSelected,
         });
     };
-    const setBatchAction = () => {};
+    const setBatchAction = () => {
+        dispatch(
+            openDialog({
+                id: DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
+                props: {
+                    // open: true,
+                    // collectionId: item.collectionId,
+                    // collectionTitle: item.title,
+                    // initialParentId: item.parentId,
+                    // onApply: refreshContent,
+                    // onClose: handeCloseMoveDialog,
+                },
+            }),
+        );
+    };
 
     const contentProps = {
         contentItems,

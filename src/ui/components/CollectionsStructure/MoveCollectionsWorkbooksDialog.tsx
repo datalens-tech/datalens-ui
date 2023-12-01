@@ -5,7 +5,8 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import {
     CollectionsStructureDispatch,
-    moveCollection,
+    moveCollections,
+    moveWorkbooks,
 } from '../../store/actions/collectionsStructure';
 import {selectMoveIsLoading} from '../../store/selectors/collectionsStructure';
 import DialogManager from '../DialogManager/DialogManager';
@@ -16,8 +17,8 @@ const i18n = I18n.keyset('component.collections-structure');
 
 export type Props = {
     open: boolean;
-    collectionId: string;
-    collectionTitle: string;
+    collectionIds?: string;
+    workbookIds?: string[];
     initialParentId?: string | null;
     onApply: () => void;
     onClose: (structureChanged: boolean) => void;
@@ -32,8 +33,8 @@ export type OpenDialogMoveCollectionsWorkbooksArgs = {
 
 export const MoveCollectionsWorkbooksDialog: React.FC<Props> = ({
     open,
-    collectionId,
-    collectionTitle,
+    collectionIds,
+    workbookIds,
     initialParentId = null,
     onApply,
     onClose,
@@ -43,24 +44,28 @@ export const MoveCollectionsWorkbooksDialog: React.FC<Props> = ({
     const moveIsLoading = useSelector(selectMoveIsLoading);
 
     const onApplys = React.useCallback(
-        async ({
-            targetCollectionId,
-            targetTitle,
-        }: {
-            targetCollectionId: string | null;
-            targetWorkbookId: string | null;
-            targetTitle?: string;
-        }) => {
-            await dispatch(
-                moveCollection({
-                    collectionId,
-                    parentId: targetCollectionId,
-                    title: targetTitle ?? collectionTitle,
-                }),
-            );
+        async ({targetCollectionId}: {targetCollectionId: string | null}) => {
+            if (collectionIds.length) {
+                await dispatch(
+                    moveCollections({
+                        collectionIds,
+                        parentId: targetCollectionId,
+                    }),
+                );
+            }
+
+            if (workbookIds.length) {
+                await dispatch(
+                    moveWorkbooks({
+                        workbookIds,
+                        collectionId: targetCollectionId,
+                    }),
+                );
+            }
+
             onApply();
         },
-        [collectionId, collectionTitle, onApply, dispatch],
+        [dispatch, collectionIds, workbookIds, onApply],
     );
 
     return (
@@ -68,7 +73,6 @@ export const MoveCollectionsWorkbooksDialog: React.FC<Props> = ({
             open={open}
             type={ResourceType.Collection}
             initialCollectionId={initialParentId}
-            defaultTitle={collectionTitle}
             canSelectInitialCollectionId={false}
             caption={i18n('label_move')}
             textButtonApply={i18n('action_move')}

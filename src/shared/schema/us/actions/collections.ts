@@ -13,6 +13,8 @@ import {
     GetRootCollectionPermissionsResponse,
     MoveCollectionArgs,
     MoveCollectionResponse,
+    MoveCollectionsArgs,
+    MoveCollectionsResponse,
     UpdateCollectionArgs,
     UpdateCollectionResponse,
 } from '../types';
@@ -115,6 +117,15 @@ export const collectionsActions = {
                 parentId,
                 title,
             },
+            headers,
+        }),
+    }),
+
+    moveCollections: createAction<MoveCollectionsResponse, MoveCollectionsArgs>({
+        method: 'POST',
+        path: () => `${COLLECTIONS_PATH_PREFIX}/move-collections`,
+        params: ({collectionIds, parentId}, headers) => ({
+            body: {collectionIds, parentId},
             headers,
         }),
     }),

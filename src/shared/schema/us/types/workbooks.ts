@@ -103,6 +103,13 @@ export type MoveWorkbookArgs = {
 
 export type MoveWorkbookResponse = Workbook;
 
+export type MoveWorkbooksArgs = {
+    workbookIds: string[];
+    collectionId: string | null;
+};
+
+export type MoveWorkbooksResponse = Workbook[];
+
 export type DeleteWorkbookArgs = {
     workbookId: string;
 };
