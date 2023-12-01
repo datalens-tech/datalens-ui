@@ -4,7 +4,7 @@ import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
-import {DashTabItemText} from 'shared';
+import {DashTabItemText, DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
 import {DatalensGlobalState} from 'ui';
 
 import {TextEditor} from '../../../../../components/TextEditor/TextEditor';
@@ -64,6 +64,7 @@ class Text extends React.PureComponent<TextProps, State> {
                 onClose={this.props.closeDialog}
                 disableOutsideClick={true}
                 disableFocusTrap={true}
+                qa={DialogDashWidgetItemQA.Text}
             >
                 <Dialog.Header caption={i18n('label_text')} />
                 <Dialog.Body className={b()}>
@@ -74,6 +75,8 @@ class Text extends React.PureComponent<TextProps, State> {
                     textButtonApply={id ? i18n('button_save') : i18n('button_add')}
                     onClickButtonCancel={this.props.closeDialog}
                     textButtonCancel={i18n('button_cancel')}
+                    propsButtonApply={{qa: DialogDashWidgetQA.Apply}}
+                    propsButtonCancel={{qa: DialogDashWidgetQA.Cancel}}
                 />
             </Dialog>
         );

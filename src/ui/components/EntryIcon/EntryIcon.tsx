@@ -40,6 +40,7 @@ import iconYT from '../../assets/icons/files-con-yt.svg';
 import iconCHBA from '../../assets/icons/files-conn-ch-ba.svg';
 import iconChytYC from '../../assets/icons/files-conn-chyt-yc.svg';
 import iconEqueo from '../../assets/icons/files-conn-equeo.svg';
+import iconExtractor1C from '../../assets/icons/files-conn-extractor1c.svg';
 import iconKonturMarket from '../../assets/icons/files-conn-kontur-market.svg';
 import iconKpIndex from '../../assets/icons/files-conn-kp-index.svg';
 import iconMarketCouriers from '../../assets/icons/files-conn-market-couriers.svg';
@@ -94,6 +95,7 @@ const typeToIcon: Record<string, IconData> = {
     [ConnectorType.Snowflake]: iconSnowflake,
     [ConnectorType.Equeo]: iconEqueo,
     [ConnectorType.KonturMarket]: iconKonturMarket,
+    [ConnectorType.Extractor1c]: iconExtractor1C,
 };
 
 const entityTypeIcons: Record<string, string> = {

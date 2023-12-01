@@ -22,6 +22,7 @@ import {
 } from 'shared';
 
 import {Markup} from '../../../../../../../../components/Markup';
+import {markupToRawString} from '../../../../../../modules/table';
 import {ChartKitDataTable, DataTableData} from '../../../../../../types';
 import {Bar} from '../Bar/Bar';
 import {TableProps} from '../types';
@@ -442,8 +443,8 @@ export const getColumnsAndNames = ({
                         let additionalStyles: React.CSSProperties | undefined;
 
                         if (actionParamsData) {
-                            rowActionParams = getRowActionParams(row);
-                            additionalStyles = getAdditionalStyles({actionParamsData, row});
+                            rowActionParams = getRowActionParams({row, head});
+                            additionalStyles = getAdditionalStyles({actionParamsData, row, head});
                         }
 
                         if (cellClickArgs || rowActionParams) {
@@ -460,6 +461,11 @@ export const getColumnsAndNames = ({
                     },
                     sortAccessor: (row) => {
                         const column = row[columnName];
+
+                        if (typeof column === 'object' && isMarkupItem(column.value)) {
+                            return markupToRawString(column.value);
+                        }
+
                         if (typeof column === 'object' && column && 'value' in column) {
                             const value = column.value;
                             return Array.isArray(value) ? value[0] : value;
@@ -469,12 +475,14 @@ export const getColumnsAndNames = ({
                     sortAscending: hasTreeSetColumn(rows[0])
                         ? getTreeSetColumnSortAscending(columnName, rows)
                         : undefined,
-                    onClick: ({row}, {name: columnName}) => {
-                        const cellClickArgs = getCellClickArgs(row, columnName);
+                    onClick: ({row}, col) => {
+                        const cellClickArgs = getCellClickArgs(row, col.name);
                         const cellActionParams = actionParamsData
                             ? getActionParams({
                                   actionParamsData,
                                   row,
+                                  column: col,
+                                  head,
                               })
                             : undefined;
 

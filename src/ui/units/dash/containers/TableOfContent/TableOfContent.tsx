@@ -100,7 +100,7 @@ const TableOfContent: React.FC = React.memo(() => {
     const tabsItems = React.useMemo(
         () =>
             localTabs.map((tab) => (
-                <div className={b('tabs')} key={tab.id}>
+                <div className={b('tab-item')} key={tab.id}>
                     <Link
                         to={getLinkTo(tab.id)}
                         className={b('title', {selected: isSelectedTab(tab.id)})}

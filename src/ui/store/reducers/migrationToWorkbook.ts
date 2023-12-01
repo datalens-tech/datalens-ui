@@ -6,6 +6,9 @@ import {
     GET_RELATIONS_GRAPH_LOADING,
     GET_RELATIONS_GRAPH_SUCCESS,
     GET_RELATIONS_GRAPH_FAILED,
+    GET_RELATIONS_LOADING,
+    GET_RELATIONS_SUCCESS,
+    GET_RELATIONS_FAILED,
     MIGRATE_ENTRIES_TO_WORKBOOK_LOADING,
     MIGRATE_ENTRIES_TO_WORKBOOK_SUCCESS,
     MIGRATE_ENTRIES_TO_WORKBOOK_FAILED,
@@ -14,6 +17,7 @@ import {MigrationToWorkbookAction} from '../actions/migrationToWorkbook';
 import type {
     GetEntryResponse,
     GetRelationsGraphResponse,
+    GetRelationsResponse,
     MigrateEntriesToWorkbookResponse,
 } from '../../../shared/schema';
 
@@ -26,6 +30,11 @@ export type MigrationToWorkbookState = {
     getRelationsGraph: {
         isLoading: boolean;
         data: GetRelationsGraphResponse | null;
+        error: Error | null;
+    };
+    getRelations: {
+        isLoading: boolean;
+        data: GetRelationsResponse | null;
         error: Error | null;
     };
     migrateEntriesToWorkbook: {
@@ -42,6 +51,11 @@ const initialState: MigrationToWorkbookState = {
         error: null,
     },
     getRelationsGraph: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    getRelations: {
         isLoading: false,
         data: null,
         error: null,
@@ -119,6 +133,37 @@ export const migrationToWorkbook = (
                 ...state,
                 getRelationsGraph: {
                     ...state.getRelationsGraph,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        case GET_RELATIONS_LOADING: {
+            return {
+                ...state,
+                getRelations: {
+                    ...state.getRelations,
+                    isLoading: true,
+                    error: null,
+                },
+            };
+        }
+        case GET_RELATIONS_SUCCESS: {
+            return {
+                ...state,
+                getRelations: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case GET_RELATIONS_FAILED: {
+            return {
+                ...state,
+                getRelations: {
+                    ...state.getRelations,
                     isLoading: false,
                     error: action.error,
                 },

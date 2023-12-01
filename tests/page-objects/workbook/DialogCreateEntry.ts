@@ -1,5 +1,5 @@
 import {Page} from '@playwright/test';
-import {slct} from 'utils';
+import {getUniqueTimestamp, slct} from 'utils';
 import {DialogCreateWorkbookEntryQa} from '../../../src/shared/constants/qa/components';
 
 export class DialogCreateEntry {
@@ -23,5 +23,11 @@ export class DialogCreateEntry {
 
     async clickApplyButton() {
         this.page.click(slct(DialogCreateWorkbookEntryQa.ApplyButton));
+    }
+
+    async createEntryWithName(name?: string) {
+        await this.waitForOpen();
+        await this.fillNameField(name || `e2e-entry-${getUniqueTimestamp()}`);
+        await this.clickApplyButton();
     }
 }

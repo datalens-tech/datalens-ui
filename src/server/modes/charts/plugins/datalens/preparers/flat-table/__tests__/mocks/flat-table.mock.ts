@@ -18,6 +18,14 @@ const i18nMock = {
 const getTranslation = (keyset: string, key: string, params: Record<string, string | number>) =>
     i18nMock.I18n.keyset(keyset)(key, params);
 
+const chartEditorMock = {
+    getParam: () => null,
+    getCurrentPage() {},
+    getLang: () => 'en',
+    getTranslation,
+    getWidgetConfig: () => undefined,
+};
+
 export const formattingIntPrecisionData = {
     colors: [],
     colorsConfig: {},
@@ -50,11 +58,7 @@ export const formattingIntPrecisionData = {
     shared: {
         sharedData: {},
     },
-    ChartEditor: {
-        getCurrentPage() {},
-        getParam: () => null,
-        getTranslation,
-    },
+    ChartEditor: chartEditorMock,
 };
 
 export const formattingFloatPrecisionData = {
@@ -89,11 +93,7 @@ export const formattingFloatPrecisionData = {
     shared: {
         sharedData: {},
     },
-    ChartEditor: {
-        getCurrentPage() {},
-        getParam: () => null,
-        getTranslation,
-    },
+    ChartEditor: chartEditorMock,
 };
 
 export const flatTablePrepareArgsWithTotals = {
@@ -249,10 +249,5 @@ export const flatTablePrepareArgsWithTotals = {
     shared: {
         sharedData: {},
     },
-    ChartEditor: {
-        getParam: () => null,
-        getCurrentPage() {},
-        getLang: () => 'en',
-        getTranslation,
-    },
+    ChartEditor: chartEditorMock,
 };

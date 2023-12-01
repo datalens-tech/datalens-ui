@@ -8,11 +8,15 @@
     "TRANSLATED"
   ],
   "status": {
+    "action_back": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "action_cancel": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "action_move": {
+    "action_next": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -25,6 +29,10 @@
       "ru": "APPROVED"
     },
     "label_connections": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "md_label_copy-extension-warning": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -64,7 +72,11 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "title": {
+    "title_transfer": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_copy": {
       "en": "APPROVED",
       "ru": "APPROVED"
     }

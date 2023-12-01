@@ -1,10 +1,10 @@
 import get from 'lodash/get';
-import {TableRow, TablehWidgetEventScope} from 'shared';
+import {TableRow, TableWidgetEventScope} from 'shared';
 import {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 
 import {TableWidget} from '../../../../../../types';
 
-const AVAILABLE_TABLE_CLICK_SCOPES: TablehWidgetEventScope[] = ['row'];
+const AVAILABLE_TABLE_CLICK_SCOPES: TableWidgetEventScope[] = ['row'];
 
 function validateConfigEvents(events?: NonNullable<TableWidget['config']>['events']) {
     if (!events?.click) {

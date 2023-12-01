@@ -91,6 +91,7 @@ export enum Feature {
     AddDemoWorkbook = 'AddDemoWorkbook',
     CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
     WizardChartChartFilteringAvailable = 'WizardChartChartFilteringAvailable',
+    QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
 }
 
 export type FeatureConfig = Record<string, boolean>;

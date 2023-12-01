@@ -117,9 +117,11 @@ export const getAlertsMenuItem = ({
 export const getNewWindowMenuItem = ({
     chartsDataProvider,
     customConfig,
+    extraOptions,
 }: {
     chartsDataProvider: ChartKitDataProvider;
     customConfig?: Partial<MenuItemConfig>;
+    extraOptions?: Record<string, unknown>;
 }): MenuItemConfig => ({
     id: MenuItemsIds.NEW_WINDOW,
     get title() {
@@ -132,12 +134,13 @@ export const getNewWindowMenuItem = ({
     action:
         customConfig?.action ||
         (({loadedData, propsData, chartsDataProvider: dataProvider}) => {
+            const enableAP = Boolean(extraOptions?.enableActionParams);
             const link = (dataProvider || chartsDataProvider)?.getGoAwayLink(
                 {loadedData, propsData},
                 {
                     urlPostfix: '/preview',
                     idPrefix: '/editor/',
-                    extraParams: {[COMMON_URL_OPTIONS.ACTION_PARAMS_ENABLED]: '1'},
+                    extraParams: enableAP ? {[COMMON_URL_OPTIONS.ACTION_PARAMS_ENABLED]: '1'} : {},
                 },
             );
 

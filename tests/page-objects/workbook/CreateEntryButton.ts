@@ -1,5 +1,5 @@
 import {Page} from '@playwright/test';
-import {slct} from 'utils';
+import {slct} from '../../utils';
 import {CreateEntityButton} from '../../../src/shared';
 
 export class CreateEntryButton {

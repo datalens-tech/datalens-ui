@@ -1,0 +1,19 @@
+{
+  "action_cancel": "Отменить",
+  "action_select": "Выбрать",
+  "description_copy": "Копирование объекта со связями. Оригиналы объектов останутся в папках.",
+  "description_transfer": "Перенос всех связанных объектов, включая вложенные, в один общий воркбук.",
+  "list_first_item_copy": "Поиск связей только для текущего объекта",
+  "list_second_item_copy": "Объекты останутся в папках",
+  "list_third_item_copy": "Ссылки на объекты не изменятся",
+  "list_fourth_item_copy": "Пока не работает для подключений к Google Sheets и файлу (CSV)",
+  "list_first_item_transfer": "Рекурсивный поиск всех вложенных связей",
+  "list_first_item_transfer_help_text": "Поиск связей для текущего объекта и всех связанных с ним объектов: «вниз» до уровня подключений и «вверх» до уровня дашбордов",
+  "list_second_item_transfer": "Объекты исчезнут из папок",
+  "list_third_item_transfer": "Ссылки на объекты будут перенаправлять в воркбуки",
+  "list_fourth_item_transfer": "Доступно для подключений к Google Sheets и файлу (CSV)",
+  "title": "Выберите способ миграции в воркбук",
+  "title_copy": "Копирование",
+  "title_transfer": "Перенос",
+  "label": "NEW"
+}
