@@ -21,6 +21,7 @@ import {
 } from 'ui';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 
+import {TabQueryQA} from '../../../../../../../../shared';
 import {EditableText} from '../../../../../../../components/EditableText/EditableText';
 import {prepareChartDataBeforeSave} from '../../../../../modules/helpers';
 import {
@@ -344,7 +345,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                         onClick={() => this.onClickButtonAddQuery()}
                         key="button-run"
                         className={b('add-query-btn')}
-                        qa={'add-promql-query-btn'}
+                        qa={TabQueryQA.AddPromQLQueryBtn}
                     >
                         {i18n('sql', 'label_add-query')}
                     </Button>

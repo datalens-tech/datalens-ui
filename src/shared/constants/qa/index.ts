@@ -6,4 +6,5 @@ export * from './dash';
 export * from './dl-navigation';
 export * from './wizard';
 export * from './control';
+export * from './ql';
 export {VisualizationsQa} from './visualization';
