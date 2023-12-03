@@ -79,6 +79,10 @@
     "value_output": {
       "en": "APPROVED",
       "ru": "APPROVED"
+    },
+    "value_error": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
     }
   }
 }

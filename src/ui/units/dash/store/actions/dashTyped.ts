@@ -19,6 +19,7 @@ import {
     Operations,
 } from 'shared';
 import {GetWidgetsDatasetsFieldsItem} from 'shared/schema';
+import {AppDispatch} from 'ui/store';
 import {DashState} from 'ui/units/dash/store/reducers/dashTypedReducer';
 import {validateParamTitleOnlyUnderscore} from 'units/dash/components/ParamsSettings/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
@@ -855,6 +856,13 @@ export function saveDashAsNewDash({key, workbookId, name}: SaveAsNewDashArgs) {
         return null;
     };
 }
+
+export const setDefaultViewState = () => {
+    return (dispatch: AppDispatch) => {
+        dispatch(setDashViewMode());
+        dispatch(setPageDefaultTabItems());
+    };
+};
 
 export const SET_DASH_KEY = Symbol('dash/SET_DASH_KEY');
 export type SetDashKeyAction = {

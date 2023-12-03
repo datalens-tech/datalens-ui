@@ -8,11 +8,11 @@ import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {EntryScope, Feature, PLACE, QLChartType} from 'shared';
 import {DL, DatalensGlobalState, NavigationMinimal, Utils as UIUtils, sdk} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import Utils from 'utils';
 
+import {EntryScope, Feature, PLACE, QLChartType, ViewSetupQA} from '../../../../../../shared';
 import type {GetEntryResponse} from '../../../../../../shared/schema';
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
@@ -191,7 +191,7 @@ class ViewSetup extends React.PureComponent<ViewSetupInnerProps, ViewSetupState>
                                         chartType === QLChartType.Monitoringql &&
                                         Utils.isEnabledFeature(Feature.EnableCustomMonitoring)
                                     }
-                                    qa="select-connection"
+                                    qa={ViewSetupQA.SelectConnection}
                                     className={b('connection-select-btn')}
                                 >
                                     {i18n('sql', 'label_select-connection')}
@@ -237,7 +237,7 @@ class ViewSetup extends React.PureComponent<ViewSetupInnerProps, ViewSetupState>
                             className={b('create-btn')}
                             view="action"
                             size="l"
-                            qa="view-setup-create"
+                            qa={ViewSetupQA.ViewSetupCreate}
                             onClick={this.onCreateClick}
                         >
                             {i18n('sql', 'label_create')}

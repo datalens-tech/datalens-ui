@@ -29,6 +29,7 @@ import Item from './Item/Item';
 import ManageAlias from './ManageAlias/ManageAlias';
 import Param from './Param/Param';
 
+import iconAlert from 'ui/assets/icons/alert.svg';
 import iconArrowLeft from 'ui/assets/icons/arrow-left.svg';
 import iconArrowRight from 'ui/assets/icons/arrow-right.svg';
 import iconArrowOpposite from 'ui/assets/icons/arrows-opposite.svg';
@@ -530,12 +531,21 @@ class Connections extends React.PureComponent {
 
         const SelectItem = (props) => (
             <div className={b('select-item')}>
-                <Icon
-                    size={16}
-                    className={b('select-item-icon', {[props.mod || 'none']: true})}
-                    data={props.icon}
-                />
-                <span>{props.title}</span>
+                {props.icon ? (
+                    <Icon
+                        size={16}
+                        className={b('select-item-icon', {[props.mod || 'none']: true})}
+                        data={props.icon}
+                    />
+                ) : (
+                    <Icon
+                        size={16}
+                        className={b('select-item-icon', {['error']: true})}
+                        data={iconAlert}
+                    />
+                )}
+
+                <span>{props.title || i18n('dash.connections-dialog.edit', 'value_error')}</span>
             </div>
         );
 

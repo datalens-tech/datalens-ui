@@ -355,6 +355,25 @@ class DashboardPage extends BasePage {
             const deleteLockPromise = this.page.waitForRequest(URLS.deleteLock);
             await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
             await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
+
+            // if there are changes, a dialog with a warning about the unsaved changes will appear
+            const warningCancelDialog = this.page.locator(
+                slct(DashboardPage.selectors.dialogConfirm),
+            );
+            const editButton = this.page.locator(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
+
+            await expect(editButton.or(warningCancelDialog)).toBeVisible();
+
+            if (await editButton.isVisible()) {
+                await deleteLockPromise;
+                return;
+            }
+
+            // if there is a dialog, click the apply button
+            const applyBtn = await this.page.waitForSelector(
+                slct(DashboardPage.selectors.dialogConfirmApplyBtn),
+            );
+            await applyBtn.click();
             await deleteLockPromise;
             await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
         } catch {
