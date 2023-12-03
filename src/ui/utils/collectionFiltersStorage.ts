@@ -4,21 +4,21 @@ import {Utils} from 'ui';
 
 const KEY = 'collectionPageFilters';
 
-type Filter = {
+type Filters = {
     orderField?: OrderBasicField;
     orderDirection?: OrderDirection;
     mode?: GetCollectionContentMode;
     onlyMy?: boolean;
 };
 
-export class FilterStorage {
-    static restore(): Filter | null {
-        return Utils.restore<Filter>(KEY);
+export class CollectionFiltersStorage {
+    static restore(): Filters | null {
+        return Utils.restore<Filters>(KEY);
     }
 
-    static store(data: Filter = {}) {
+    static store(data: Filters = {}) {
         Utils.store(KEY, {
-            ...(FilterStorage.restore() || {}),
+            ...(CollectionFiltersStorage.restore() || {}),
             ...data,
         });
     }

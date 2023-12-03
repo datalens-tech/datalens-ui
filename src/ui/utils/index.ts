@@ -11,5 +11,5 @@ export * from './urlUtils';
 export * from './scrollUtils';
 export * from './icons';
 export * from './colors';
-export * from './filterStorage';
+export * from './collectionFiltersStorage';
 export {getFilteredObject} from './helpers';

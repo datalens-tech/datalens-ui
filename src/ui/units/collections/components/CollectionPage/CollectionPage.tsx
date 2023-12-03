@@ -32,8 +32,7 @@ import {AppDispatch} from 'store';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import {DL} from 'ui/constants';
 import {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
-import {FilterStorage} from 'ui/utils/filterStorage';
-import Utils from 'utils';
+import Utils, {CollectionFiltersStorage} from 'utils';
 
 import {
     CollectionContentFilters,
@@ -58,10 +57,10 @@ const PAGE_SIZE = 50;
 
 const DEFAULT_FILTERS = {
     filterString: undefined,
-    orderField: FilterStorage.restore()?.orderField || OrderBasicField.CreatedAt,
-    orderDirection: FilterStorage.restore()?.orderDirection || OrderDirection.Desc,
-    mode: FilterStorage.restore()?.mode || GetCollectionContentMode.All,
-    onlyMy: FilterStorage.restore()?.onlyMy || false,
+    orderField: CollectionFiltersStorage.restore()?.orderField || OrderBasicField.CreatedAt,
+    orderDirection: CollectionFiltersStorage.restore()?.orderDirection || OrderDirection.Desc,
+    mode: CollectionFiltersStorage.restore()?.mode || GetCollectionContentMode.All,
+    onlyMy: CollectionFiltersStorage.restore()?.onlyMy || false,
 };
 
 const defaultCollectionPageViewMode =

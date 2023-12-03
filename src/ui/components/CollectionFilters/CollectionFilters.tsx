@@ -8,7 +8,7 @@ import debounce from 'lodash/debounce';
 import {Feature} from 'shared';
 import {GetCollectionContentMode} from 'shared/schema/us/types/collections';
 import {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
-import Utils, {FilterStorage} from 'ui/utils';
+import Utils, {CollectionFiltersStorage} from 'ui/utils';
 
 import GridIcon from 'assets/icons/collections/grid.svg';
 
@@ -119,10 +119,10 @@ export const CollectionFilters = React.memo<Props>(
                 });
 
                 if (!compactMode) {
-                    FilterStorage.store({mode: val});
+                    CollectionFiltersStorage.store({mode: val});
                 }
             },
-            [handleChangeFilters],
+            [compactMode, handleChangeFilters],
         );
 
         const handleChangeOnlyMy = React.useCallback(
@@ -132,10 +132,10 @@ export const CollectionFilters = React.memo<Props>(
                 });
 
                 if (!compactMode) {
-                    FilterStorage.store({onlyMy: value});
+                    CollectionFiltersStorage.store({onlyMy: value});
                 }
             },
-            [handleChangeFilters],
+            [compactMode, handleChangeFilters],
         );
 
         const handleChangeView = React.useCallback(
@@ -158,13 +158,13 @@ export const CollectionFilters = React.memo<Props>(
                 });
 
                 if (!compactMode) {
-                    FilterStorage.store({
+                    CollectionFiltersStorage.store({
                         orderField: sortTypeValues.orderField,
                         orderDirection: sortTypeValues.orderDirection,
                     });
                 }
             },
-            [handleChangeFilters],
+            [compactMode, handleChangeFilters],
         );
 
         React.useEffect(() => {
