@@ -23,13 +23,11 @@ export const migrateOrAutofillVisualization = ({
     order,
     fields,
     colors: originalColors,
-    rows,
 }: {
     visualization: ServerVisualization;
     order?: QlConfigResultEntryMetadataDataColumnOrGroup[];
     fields: Field[];
     colors?: Field[];
-    rows?: string[][];
 }) => {
     const {id: visualizationId} = originalVisualization;
 
@@ -68,7 +66,6 @@ export const migrateOrAutofillVisualization = ({
             // Old order was not set, so we can do autofill
             const {xFields, yFields, colors} = autofillLineVisualization({
                 fields,
-                rows,
             });
 
             newVisualization.placeholders[0].items = xFields;
