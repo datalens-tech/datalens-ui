@@ -141,7 +141,7 @@ const CheckboxValueControl = () => {
         (value: string) => {
             dispatch(
                 setSelectorDialogItem({
-                    defaultValue: String(value),
+                    defaultValue: value,
                 }),
             );
         },
