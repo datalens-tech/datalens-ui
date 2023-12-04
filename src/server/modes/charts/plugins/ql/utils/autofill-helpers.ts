@@ -1,6 +1,6 @@
 import {DATASET_FIELD_TYPES, DatasetFieldType, Field} from '../../../../../../shared';
 
-export const autofillLineVisualization = ({fields}: {fields: Field[]}) => {
+export const autofillLineVisualization = ({fields, rows}: {fields: Field[]; rows?: string[][]}) => {
     const yIndexes: number[] = [];
     const findNewYIndex = () =>
         fields.findIndex(
@@ -31,10 +31,49 @@ export const autofillLineVisualization = ({fields}: {fields: Field[]}) => {
         yFields.push(fields[index]);
     });
 
-    return {
+    const colorIndexes: number[] = [];
+
+    if (rows) {
+        const homogeneousValues: Set<String>[] = [];
+        const iToHomogeneity: Boolean[] = [];
+        rows.forEach((row) => {
+            row.forEach((value, i) => {
+                if (typeof homogeneousValues[i] === 'undefined') {
+                    homogeneousValues[i] = new Set([value]);
+                    iToHomogeneity[i] = true;
+                } else if (iToHomogeneity[i] === false) {
+                    return;
+                } else if (!homogeneousValues[i].has(value)) {
+                    iToHomogeneity[i] = false;
+                }
+            });
+        });
+
+        iToHomogeneity.forEach((_homogeneity, i) => {
+            // Removed the uniformity check within CHARTS-5955
+            // It may need to be returned in the future for more complex logic, but for now it is superfluous
+            if (xIndex !== i && !yIndexes.includes(i)) {
+                colorIndexes.push(i);
+            }
+        });
+    }
+
+    const colors: Field[] = [];
+
+    colorIndexes.forEach((index) => {
+        colors.push(fields[index]);
+    });
+
+    const result: {xFields: Field[]; yFields: Field[]; colors?: Field[]} = {
         xFields,
         yFields,
     };
+
+    if (colors.length) {
+        result.colors = colors;
+    }
+
+    return result;
 };
 
 export const autofillScatterVisualization = ({fields}: {fields: Field[]}) => {

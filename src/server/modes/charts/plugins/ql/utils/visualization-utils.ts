@@ -23,11 +23,13 @@ export const migrateOrAutofillVisualization = ({
     order,
     fields,
     colors: originalColors,
+    rows,
 }: {
     visualization: ServerVisualization;
     order?: QlConfigResultEntryMetadataDataColumnOrGroup[];
     fields: Field[];
     colors?: Field[];
+    rows?: string[][];
 }) => {
     const {id: visualizationId} = originalVisualization;
 
@@ -64,12 +66,17 @@ export const migrateOrAutofillVisualization = ({
             newColors = migratedColors;
         } else {
             // Old order was not set, so we can do autofill
-            const {xFields, yFields} = autofillLineVisualization({
+            const {xFields, yFields, colors} = autofillLineVisualization({
                 fields,
+                rows,
             });
 
             newVisualization.placeholders[0].items = xFields;
             newVisualization.placeholders[1].items = yFields;
+
+            if (colors) {
+                newColors = colors;
+            }
         }
     } else if (
         [WizardVisualizationId.Scatter, WizardVisualizationId.ScatterD3].includes(

@@ -189,6 +189,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 order: sharedOrder,
                 visualization: sharedVisualization,
                 colors: sharedColors,
+                rows,
             });
 
             if (colors) {
