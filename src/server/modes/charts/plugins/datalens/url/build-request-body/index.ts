@@ -36,15 +36,9 @@ import {
 import {registry} from '../../../../../../registry';
 import {ApiVersion, BaseUrlPayload, PayloadParameter} from '../../types';
 import {mapChartsConfigToServerConfig} from '../../utils/config-helpers';
-import {
-    DEFAULT_DATETIME_FORMAT,
-    DEFAULT_DATE_FORMAT,
-    SERVER_DATETIME_FORMAT,
-    SERVER_DATE_FORMAT,
-    SORT_ORDER,
-} from '../../utils/constants';
+import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT, SORT_ORDER} from '../../utils/constants';
 import {preprocessHierarchies} from '../../utils/hierarchy-helpers';
-import {getAllPlaceholderItems, log} from '../../utils/misc-helpers';
+import {getAllPlaceholderItems, getServerDateFormat, log} from '../../utils/misc-helpers';
 import {
     getBackgroundColorFieldsIds,
     getParametersMap,
@@ -265,10 +259,7 @@ function formatFilters({
                                 ? DEFAULT_DATETIME_FORMAT
                                 : DEFAULT_DATE_FORMAT;
 
-                        const serverFormat =
-                            field.data_type === 'datetime' || field.data_type === 'genericdatetime'
-                                ? SERVER_DATETIME_FORMAT
-                                : SERVER_DATE_FORMAT;
+                        const serverFormat = getServerDateFormat(field.data_type);
 
                         acc[field.guid] =
                             dateTimeParse(el, {format: clientFormat})?.format(serverFormat) || el;

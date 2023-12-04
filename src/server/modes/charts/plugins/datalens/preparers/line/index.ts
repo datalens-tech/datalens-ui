@@ -36,6 +36,7 @@ import {
     numericCollator,
 } from '../../utils/misc-helpers';
 import {mapAndShapeGraph} from '../../utils/shape-helpers';
+import {addActionParamValue} from '../helpers/action-params';
 import {PrepareFunctionArgs} from '../types';
 
 import {
@@ -426,16 +427,10 @@ function prepareLine({
                             point.label = pointLabel === undefined ? '' : pointLabel;
 
                             if (isActionParamsEnable) {
-                                const actionParams: Record<string, any> = {};
-
-                                if (isDimensionField(x)) {
-                                    actionParams[x.guid] = point.x;
-                                }
-
                                 const [yField] = ySectionItems || [];
-                                if (isDimensionField(yField)) {
-                                    actionParams[yField.guid] = point.y;
-                                }
+                                const actionParams: Record<string, any> = {};
+                                addActionParamValue(actionParams, x, point.x);
+                                addActionParamValue(actionParams, yField, point.y);
 
                                 point.custom = {
                                     ...point.custom,
@@ -487,23 +482,14 @@ function prepareLine({
                     const actionParams: Record<string, any> = {};
 
                     // bar-x only
-                    if (x2 && isDimensionField(x2)) {
-                        actionParams[x2.guid] = line.stack;
-                    }
+                    addActionParamValue(actionParams, x2, line.stack);
 
                     // bar-y only
                     const [, yField2] = ySectionItems || [];
-                    if (isDimensionField(yField2)) {
-                        actionParams[yField2.guid] = line.stack;
-                    }
+                    addActionParamValue(actionParams, yField2, line.stack);
 
-                    if (isDimensionField(colorItem)) {
-                        actionParams[colorItem.guid] = line.colorValue;
-                    }
-
-                    if (isDimensionField(shapeItem)) {
-                        actionParams[shapeItem.guid] = line.shapeValue;
-                    }
+                    addActionParamValue(actionParams, colorItem, line.colorValue);
+                    addActionParamValue(actionParams, shapeItem, line.shapeValue);
 
                     graph.custom = {
                         ...graph.custom,
