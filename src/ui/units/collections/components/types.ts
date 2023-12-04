@@ -25,6 +25,7 @@ type CollectionContentProps = {
     onSelectAll: (checked: boolean) => void;
     selectedMap: SelectedMap;
     countSelected: number;
+    isOpenSelectionMode?: boolean;
 };
 
 export {CollectionContentProps};

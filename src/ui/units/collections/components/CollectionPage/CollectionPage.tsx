@@ -43,7 +43,7 @@ import {
 import {registry} from '../../../../registry';
 import {AddDemoWorkbookDialogContainer} from '../../containers/AddDemoWorkbookDialogContainer/AddDemoWorkbookDialogContainer';
 import {CollectionContentContainer} from '../../containers/CollectionContentContainer/CollectionContentContainer';
-import {selectBreadcrumbsError} from '../../store/selectors';
+import {selectBreadcrumbsError, selectCollectionContentItems} from '../../store/selectors';
 import {GetCollectionContentArgs} from '../../types';
 import {CollectionActionPanel} from '../CollectionActionPanel/CollectionActionPanel';
 import {CollectionActions} from '../CollectionActions/CollectionActions';
@@ -118,6 +118,7 @@ export const CollectionPage = React.memo<Props>(
         resetCollectionContent,
         breadcrumbs,
     }) => {
+        const [isOpenSelectionMode, setIsOpenSelectionMode] = React.useState(false);
         const history = useHistory();
 
         const dispatch: AppDispatch = useDispatch();
@@ -127,6 +128,7 @@ export const CollectionPage = React.memo<Props>(
         const curCollectionId = collectionId ?? null;
 
         const breadcrumbsError = useSelector(selectBreadcrumbsError);
+        const contentItems = useSelector(selectCollectionContentItems);
 
         const getCollectionContentRecursively = React.useCallback(
             (
@@ -340,6 +342,14 @@ export const CollectionPage = React.memo<Props>(
             }
         };
 
+        const onOpenSelectionMode = () => {
+            setIsOpenSelectionMode(true);
+        };
+
+        const onCloseSelectionMode = () => {
+            setIsOpenSelectionMode(false);
+        };
+
         return (
             <div className={b()}>
                 <CollectionActionPanel
@@ -474,6 +484,7 @@ export const CollectionPage = React.memo<Props>(
                                     isDefaultFilters={isDefaultFilters}
                                     pageSize={PAGE_SIZE}
                                     refreshContent={refreshContent}
+                                    contentItems={contentItems}
                                     canCreateWorkbook={
                                         collectionId && collection
                                             ? collection.permissions.createWorkbook
@@ -483,8 +494,11 @@ export const CollectionPage = React.memo<Props>(
                                     onClearFiltersClick={() => {
                                         setFilters(DEFAULT_FILTERS);
                                     }}
+                                    isOpenSelectionMode={isOpenSelectionMode}
                                 />
                             }
+                            onOpenSelectionMode={onOpenSelectionMode}
+                            onCloseSelectionMode={onCloseSelectionMode}
                         />
                     </React.Fragment>
                 )}

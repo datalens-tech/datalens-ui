@@ -68,6 +68,7 @@ type Props = {
     setFilters: (filters: CollectionContentFilters) => void;
     isDefaultFilters: boolean;
     isContentLoading: boolean;
+    isOpenSelectionMode: boolean;
     contentLoadingError: Error | null;
     canCreateWorkbook: boolean;
     contentItems: (CollectionWithPermissions | WorkbookWithPermissions)[];
@@ -92,6 +93,7 @@ export const CollectionContent: React.FC<Props> = ({
     isDefaultFilters,
     canCreateWorkbook,
     isContentLoading,
+    isOpenSelectionMode,
     contentLoadingError,
     contentItems,
     nextPageTokens,
@@ -500,7 +502,10 @@ export const CollectionContent: React.FC<Props> = ({
     return (
         <React.Fragment>
             {collectionPageViewMode === CollectionPageViewMode.Grid ? (
-                <CollectionContentGrid {...contentProps} />
+                <CollectionContentGrid
+                    {...contentProps}
+                    isOpenSelectionMode={isOpenSelectionMode}
+                />
             ) : (
                 <CollectionContentTable {...contentProps} />
             )}

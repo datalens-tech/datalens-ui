@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {DropdownMenu} from '@gravity-ui/uikit';
+import {Checkbox, DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Link} from 'react-router-dom';
 import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
@@ -15,7 +15,19 @@ import './CollectionContentGrid.scss';
 const b = block('dl-collection-content-grid');
 
 export const CollectionContentGrid = React.memo<CollectionContentProps>(
-    ({contentItems, filters, setFilters, getWorkbookActions, getCollectionActions}) => {
+    ({
+        contentItems,
+        filters,
+        setFilters,
+        getWorkbookActions,
+        getCollectionActions,
+        onUpdateCheckbox,
+        selectedMap,
+        isOpenSelectionMode,
+        countSelected,
+    }) => {
+        const isSelectionMode = isOpenSelectionMode || countSelected > 0;
+
         return (
             <div className={b()}>
                 <div className={b('grid')}>
@@ -24,76 +36,128 @@ export const CollectionContentGrid = React.memo<CollectionContentProps>(
                             const actions = getWorkbookActions(item);
 
                             return (
-                                <Link
+                                <div
                                     key={item.workbookId}
-                                    to={`/workbooks/${item.workbookId}`}
                                     className={b('content-item')}
                                     onClick={() => {
-                                        setFilters({...filters, filterString: undefined});
+                                        onUpdateCheckbox(
+                                            !selectedMap[item.workbookId]?.checked,
+                                            'workbook',
+                                            item.workbookId,
+                                        );
                                     }}
                                 >
-                                    <div className={b('content-cell', {title: true})}>
-                                        <div className={b('title-col')}>
-                                            <div className={b('title-col-icon')}>
-                                                <WorkbookIcon title={item.title} size="l" />
+                                    {isSelectionMode && (
+                                        <Checkbox
+                                            size="l"
+                                            className={b('content-item-checkbox')}
+                                            checked={selectedMap[item.workbookId]?.checked}
+                                        />
+                                    )}
+                                    <Link
+                                        to={`/workbooks/${item.workbookId}`}
+                                        className={b('content-item-link', {
+                                            'selection-mode': isSelectionMode,
+                                        })}
+                                        onClick={() => {
+                                            setFilters({...filters, filterString: undefined});
+                                        }}
+                                    >
+                                        <div className={b('content-cell', {title: true})}>
+                                            <div className={b('title-col')}>
+                                                <div
+                                                    className={b('title-col-icon', {
+                                                        'selection-mode': isSelectionMode,
+                                                    })}
+                                                >
+                                                    <WorkbookIcon title={item.title} size="l" />
+                                                </div>
+                                                <div className={b('title-col-text')}>
+                                                    {item.title}
+                                                </div>
                                             </div>
-                                            <div className={b('title-col-text')}>{item.title}</div>
                                         </div>
-                                    </div>
-                                    <div className={b('content-footer')}>
-                                        <div className={b('content-date')}>
-                                            {dateTime({
-                                                input: item.updatedAt,
-                                            }).fromNow()}
-                                        </div>
+                                        <div className={b('content-footer')}>
+                                            <div className={b('content-date')}>
+                                                {dateTime({
+                                                    input: item.updatedAt,
+                                                }).fromNow()}
+                                            </div>
 
-                                        {actions.length > 0 && (
-                                            <div
-                                                className={b('content-actions')}
-                                                onClick={onClickStopPropagation}
-                                            >
-                                                <DropdownMenu size="s" items={actions} />
-                                            </div>
-                                        )}
-                                    </div>
-                                </Link>
+                                            {actions.length > 0 && (
+                                                <div
+                                                    className={b('content-actions')}
+                                                    onClick={onClickStopPropagation}
+                                                >
+                                                    <DropdownMenu size="s" items={actions} />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Link>
+                                </div>
                             );
                         } else {
                             const actions = getCollectionActions(item);
 
                             return (
-                                <Link
+                                <div
                                     key={item.collectionId}
-                                    to={`/collections/${item.collectionId}`}
                                     className={b('content-item')}
                                     onClick={() => {
-                                        setFilters({...filters, filterString: undefined});
+                                        onUpdateCheckbox(
+                                            !selectedMap[item.collectionId]?.checked,
+                                            'collection',
+                                            item.collectionId,
+                                        );
                                     }}
                                 >
-                                    <div className={b('content-cell', {title: true})}>
-                                        <div className={b('title-col')}>
-                                            <div className={b('title-col-icon')}>
-                                                <CollectionIcon isIconBig size={125} />
+                                    {isSelectionMode && (
+                                        <Checkbox
+                                            size="l"
+                                            className={b('content-item-checkbox')}
+                                            checked={selectedMap[item.collectionId]?.checked}
+                                        />
+                                    )}
+                                    <Link
+                                        to={`/collections/${item.collectionId}`}
+                                        className={b('content-item-link', {
+                                            'selection-mode': isSelectionMode,
+                                        })}
+                                        onClick={() => {
+                                            setFilters({...filters, filterString: undefined});
+                                        }}
+                                    >
+                                        <div className={b('content-cell', {title: true})}>
+                                            <div className={b('title-col')}>
+                                                <div
+                                                    className={b('title-col-icon', {
+                                                        'selection-mode': isSelectionMode,
+                                                    })}
+                                                >
+                                                    <CollectionIcon isIconBig size={125} />
+                                                </div>
+                                                <div className={b('title-col-text')}>
+                                                    {item.title}
+                                                </div>
                                             </div>
-                                            <div className={b('title-col-text')}>{item.title}</div>
                                         </div>
-                                    </div>
-                                    <div className={b('content-footer')}>
-                                        <div className={b('content-date')}>
-                                            {dateTime({
-                                                input: item.updatedAt,
-                                            }).fromNow()}
-                                        </div>
-                                        {actions.length > 0 ? (
-                                            <div
-                                                className={b('content-actions')}
-                                                onClick={onClickStopPropagation}
-                                            >
-                                                <DropdownMenu size="s" items={actions} />
+                                        <div className={b('content-footer')}>
+                                            <div className={b('content-date')}>
+                                                {dateTime({
+                                                    input: item.updatedAt,
+                                                }).fromNow()}
                                             </div>
-                                        ) : null}
-                                    </div>
-                                </Link>
+                                            {actions.length > 0 ? (
+                                                <div
+                                                    className={b('content-actions')}
+                                                    onClick={onClickStopPropagation}
+                                                >
+                                                    <DropdownMenu size="s" items={actions} />
+                                                </div>
+                                            ) : null}
+                                        </div>
+                                    </Link>
+                                </div>
                             );
                         }
                     })}

@@ -4,6 +4,7 @@ import {CancellablePromise} from '@gravity-ui/sdk';
 import {DatalensGlobalState} from 'index';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
+import {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema';
 
 import type {GetCollectionContentResponse} from '../../../../../shared/schema';
 import type {
@@ -12,7 +13,6 @@ import type {
 } from '../../../../components/CollectionFilters/CollectionFilters';
 import {CollectionContent} from '../../components/CollectionContent/CollectionContent';
 import {
-    selectCollectionContentItems,
     selectContentError,
     selectContentIsLoading,
     selectNextPageTokens,
@@ -27,6 +27,7 @@ type OuterProps = {
     collectionPageViewMode: CollectionPageViewMode;
     setFilters: (filters: CollectionContentFilters) => void;
     isDefaultFilters: boolean;
+    isOpenSelectionMode: boolean;
     pageSize: number;
     canCreateWorkbook: boolean;
     refreshContent: () => void;
@@ -35,6 +36,7 @@ type OuterProps = {
     ) => CancellablePromise<GetCollectionContentResponse | null>;
     onCreateWorkbookClick: () => void;
     onClearFiltersClick: () => void;
+    contentItems: (CollectionWithPermissions | WorkbookWithPermissions)[];
 };
 type InnerProps = StateProps;
 
@@ -50,6 +52,7 @@ class CollectionContentContainer extends React.Component<Props> {
             setFilters,
             isDefaultFilters,
             isContentLoading,
+            isOpenSelectionMode,
             contentLoadingError,
             contentItems,
             nextPageTokens,
@@ -69,6 +72,7 @@ class CollectionContentContainer extends React.Component<Props> {
                 setFilters={setFilters}
                 isDefaultFilters={isDefaultFilters}
                 isContentLoading={isContentLoading}
+                isOpenSelectionMode={isOpenSelectionMode}
                 contentLoadingError={contentLoadingError}
                 contentItems={contentItems}
                 nextPageTokens={nextPageTokens}
@@ -86,7 +90,6 @@ const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         isContentLoading: selectContentIsLoading(state),
         contentLoadingError: selectContentError(state),
-        contentItems: selectCollectionContentItems(state),
         nextPageTokens: selectNextPageTokens(state),
     };
 };

@@ -29,7 +29,7 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
         selectedMap,
         countSelected,
     }) => {
-        const checkboxProps = React.useMemo(() => {
+        const checkboxPropsSelected = React.useMemo(() => {
             if (countSelected > 0) {
                 if (countSelected === contentItems.length) {
                     return {checked: true};
@@ -52,7 +52,7 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
                                     onUpdate={() => {
                                         onSelectAll(countSelected !== contentItems.length);
                                     }}
-                                    {...checkboxProps}
+                                    {...checkboxPropsSelected}
                                 />
                             </div>
                             <div className={b('header-cell')}>{i18n('label_title')}</div>
