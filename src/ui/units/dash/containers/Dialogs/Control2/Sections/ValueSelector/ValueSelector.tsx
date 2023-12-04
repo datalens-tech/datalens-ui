@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import {Checkbox, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, RadioGroup, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -16,7 +16,7 @@ import {
 import {FilterValue} from '../../../../../../../../shared/modules';
 import {DATASET_FIELD_TYPES} from '../../../../../../../../shared/types';
 import DateDefaultValue from '../../../Control/Date/Default/Default';
-import {CHECKBOX_CONTROL_VALUE} from '../../../Control/constants';
+import {CheckboxControlValue} from '../../../Control/constants';
 
 import {ListValueControl} from './ListValueControl/ListValueControl';
 
@@ -128,17 +128,17 @@ const CheckboxValueControl = () => {
     const defaultValue = useSelector(selectSelectorDefaultValue);
     const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
 
-    // This is a forced setting of the default value so that the checkbox affects the dashboard immediately without switching it
+    // This is setting the initial default value so that it's not undefined when you save it without switching between radio buttons
     React.useEffect(() => {
         dispatch(
             setSelectorDialogItem({
-                defaultValue: CHECKBOX_CONTROL_VALUE.FALSE,
+                defaultValue: CheckboxControlValue.FALSE,
             }),
         );
     }, [dispatch]);
 
     const handleUpdate = React.useCallback(
-        (value: boolean) => {
+        (value: string) => {
             dispatch(
                 setSelectorDialogItem({
                     defaultValue: String(value),
@@ -150,13 +150,22 @@ const CheckboxValueControl = () => {
 
     return (
         <FormRow label={i18n('field_default-value')}>
-            <Checkbox
-                className={b('checkbox-option')}
-                disabled={isFieldDisabled}
-                checked={defaultValue === CHECKBOX_CONTROL_VALUE.TRUE}
+            <RadioGroup
+                className={b('radio-option')}
                 onUpdate={handleUpdate}
-                size="l"
-            />
+                disabled={isFieldDisabled}
+                defaultValue={CheckboxControlValue.FALSE}
+                value={defaultValue as CheckboxControlValue | undefined}
+            >
+                <RadioGroup.Option
+                    value={CheckboxControlValue.TRUE}
+                    content={i18n('value_checkbox-default-value-true')}
+                />
+                <RadioGroup.Option
+                    value={CheckboxControlValue.FALSE}
+                    content={i18n('value_checkbox-default-value-false')}
+                />
+            </RadioGroup>
         </FormRow>
     );
 };

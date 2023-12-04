@@ -178,7 +178,7 @@ export default ({
             uiControl.type = source.elementType;
 
             if (!params[param]) {
-                if (typeof source.defaultValue === 'undefined') {
+                if (source.defaultValue === undefined) {
                     params[param] = ['false'];
                 } else {
                     params[param] = [source.defaultValue];
@@ -191,7 +191,7 @@ export default ({
             uiControl.type = source.elementType;
 
             if (!params[param]) {
-                if (typeof source.defaultValue === 'undefined') {
+                if (source.defaultValue === undefined) {
                     params[param] = [''];
                 } else {
                     params[param] = [source.defaultValue];

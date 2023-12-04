@@ -62,6 +62,8 @@
   "value_date-forward": "forward",
   "value_date-manual": "Selecting a value",
   "value_date-no-limits": "No limits",
+  "value_checkbox-default-value-false": "False",
+  "value_checkbox-default-value-true": "True",
   "value_element-checkbox": "Checkbox",
   "value_element-date": "Calendar",
   "value_element-input": "Input field",

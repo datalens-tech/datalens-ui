@@ -10,10 +10,10 @@ export const ELEMENT_TYPE: {
     CHECKBOX: 'checkbox',
 };
 
-export const CHECKBOX_CONTROL_VALUE = {
-    TRUE: 'true',
-    FALSE: 'false',
-};
+export enum CheckboxControlValue {
+    TRUE = 'true',
+    FALSE = 'false',
+}
 
 export const DATE_FORMAT = 'DD.MM.YYYY';
 
