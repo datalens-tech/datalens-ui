@@ -8,7 +8,7 @@ import {Link} from 'react-router-dom';
 import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
-import {CollectionContentProps} from '../types';
+import {CollectionContentTableProps} from '../types';
 import {onClickStopPropagation} from '../utils';
 
 import './CollectionContentTable.scss';
@@ -17,7 +17,7 @@ const i18n = I18n.keyset('collections');
 
 const b = block('dl-collection-content-table');
 
-export const CollectionContentTable = React.memo<CollectionContentProps>(
+export const CollectionContentTable = React.memo<CollectionContentTableProps>(
     ({
         contentItems,
         filters,

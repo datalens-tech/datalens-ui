@@ -25,7 +25,7 @@ export interface ContentProps {
     onSelectAll: (checked: boolean) => void;
     selectedMap: SelectedMap;
     countSelected: number;
-    isOpenSelectionMode?: boolean;
+    isOpenSelectionMode: boolean;
 }
 
 interface CollectionContentProps extends ContentProps {
@@ -37,4 +37,8 @@ interface CollectionContentProps extends ContentProps {
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
 }
 
-export {CollectionContentProps};
+type CollectionContentGridProps = CollectionContentProps;
+
+type CollectionContentTableProps = Omit<CollectionContentProps, 'isOpenSelectionMode'>;
+
+export {CollectionContentGridProps, CollectionContentTableProps};

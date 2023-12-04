@@ -30,6 +30,8 @@ interface OuterProps extends ContentProps {
     ) => CancellablePromise<GetCollectionContentResponse | null>;
     onCreateWorkbookClick: () => void;
     onClearFiltersClick: () => void;
+    setBatchAction: () => void;
+    resetSelected: () => void;
 }
 type InnerProps = StateProps;
 

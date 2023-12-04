@@ -75,6 +75,8 @@ interface Props extends ContentProps {
     ) => CancellablePromise<GetCollectionContentResponse | null>;
     onCreateWorkbookClick: () => void;
     onClearFiltersClick: () => void;
+    setBatchAction: () => void;
+    resetSelected: () => void;
 }
 
 export const CollectionContent: React.FC<Props> = ({

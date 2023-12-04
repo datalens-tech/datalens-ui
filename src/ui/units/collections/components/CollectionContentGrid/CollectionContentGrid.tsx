@@ -7,14 +7,14 @@ import {Link} from 'react-router-dom';
 import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
-import {CollectionContentProps} from '../types';
+import {CollectionContentGridProps} from '../types';
 import {onClickStopPropagation} from '../utils';
 
 import './CollectionContentGrid.scss';
 
 const b = block('dl-collection-content-grid');
 
-export const CollectionContentGrid = React.memo<CollectionContentProps>(
+export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
     ({
         contentItems,
         filters,
