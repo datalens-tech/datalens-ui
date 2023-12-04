@@ -339,7 +339,7 @@ export const prepareLines = (args: PrepareLinesArgs) => {
 
         if (segmentNameKey) {
             // segments should not use unique id, because id is used for legend item click in chartkit
-            // it leads to problem with hiding and displying data.
+            // it leads to problem with hiding and displaying data.
             lines[keys.key] = extendLineWithSegmentsData({
                 line: currentLine,
                 segmentNameKey,
@@ -347,7 +347,8 @@ export const prepareLines = (args: PrepareLinesArgs) => {
         } else {
             lines[keys.key] = {
                 ...currentLine,
-                id: currentLine.title,
+                // the same problem as with segments - see the comment above
+                id: currentLine.legendTitle || currentLine.title,
             };
         }
         lines[keys.key].fieldTitle = getFakeTitleOrTitle(field);
