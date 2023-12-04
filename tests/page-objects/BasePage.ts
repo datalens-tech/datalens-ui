@@ -78,12 +78,12 @@ export class BasePage {
     }
 
     getEntryIdFromUrl() {
-        const urlWithoutProtocol = this.page.url().replace('https://', '');
+        const urlWithoutProtocol = this.page.url().replace(RegExp('https://|http://'), '');
         const [_domain, _path, rawEntryId] = urlWithoutProtocol.split('/');
-        const questionMarkIndex = rawEntryId.indexOf('?');
+        const questionMarkIndex = (rawEntryId || _path).indexOf('?');
         if (questionMarkIndex !== -1) {
             return extractEntryId(rawEntryId.slice(0, questionMarkIndex));
         }
-        return extractEntryId(rawEntryId);
+        return extractEntryId(rawEntryId || _path);
     }
 }
