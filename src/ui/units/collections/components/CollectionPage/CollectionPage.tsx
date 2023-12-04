@@ -360,6 +360,10 @@ export const CollectionPage = React.memo<Props>(
                     checked,
                 },
             });
+
+            if (checked && !isOpenSelectionMode) {
+                setIsOpenSelectionMode(true);
+            }
         };
 
         const resetSelected = () => {
@@ -396,6 +400,10 @@ export const CollectionPage = React.memo<Props>(
                 ...selectedMap,
                 ...selected,
             });
+
+            if (checked && !isOpenSelectionMode) {
+                setIsOpenSelectionMode(true);
+            }
         };
 
         const setBatchAction = () => {

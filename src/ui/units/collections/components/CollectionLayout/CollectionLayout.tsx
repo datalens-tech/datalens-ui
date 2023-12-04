@@ -40,13 +40,25 @@ export const CollectionLayout = React.memo<Props>(
     }) => {
         const selectBtn = React.useMemo(() => {
             if (countSelected === 0 && !isOpenSelectionMode) {
-                return <Button onClick={onOpenSelectionMode}>Выбрать</Button>;
+                return (
+                    <Button view="outlined" onClick={onOpenSelectionMode}>
+                        Выбрать
+                    </Button>
+                );
             }
 
             if (countSelected > 0) {
-                return <Button onClick={resetSelected}>Снять все</Button>;
+                return (
+                    <Button view="outlined" onClick={resetSelected}>
+                        Снять все
+                    </Button>
+                );
             } else {
-                return <Button onClick={() => onSelectAll(true)}>Выбрать все</Button>;
+                return (
+                    <Button view="outlined" onClick={() => onSelectAll(true)}>
+                        Выбрать все
+                    </Button>
+                );
             }
         }, [countSelected, isOpenSelectionMode, onOpenSelectionMode, onSelectAll, resetSelected]);
 
@@ -60,7 +72,7 @@ export const CollectionLayout = React.memo<Props>(
                             {collectionPageViewMode === CollectionPageViewMode.Grid && (
                                 <>
                                     {selectBtn}
-                                    {isOpenSelectionMode && (
+                                    {(isOpenSelectionMode || Boolean(countSelected)) && (
                                         <Button
                                             className={b('cancel-btn')}
                                             view="outlined-danger"
