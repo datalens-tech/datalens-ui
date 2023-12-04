@@ -437,6 +437,26 @@ export const CollectionContent: React.FC<Props> = ({
         });
     };
 
+    const onSelectAll = (checked: boolean) => {
+        const selected: SelectedMap = {};
+
+        contentItems.forEach((item) => {
+            const isWorkbook = 'workbookId' in item;
+            const id = isWorkbook ? item.workbookId : item.collectionId;
+            const type = isWorkbook ? 'workbook' : 'collection';
+
+            selected[id] = {
+                type,
+                checked,
+            };
+        });
+
+        setSelectedMap({
+            ...selectedMap,
+            ...selected,
+        });
+    };
+
     const setBatchAction = () => {
         const workbookIds: string[] = [];
         const collectionIds: string[] = [];
@@ -472,7 +492,9 @@ export const CollectionContent: React.FC<Props> = ({
         getWorkbookActions,
         getCollectionActions,
         onUpdateCheckbox,
+        onSelectAll,
         selectedMap,
+        countSelected,
     };
 
     return (

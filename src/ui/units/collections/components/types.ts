@@ -22,7 +22,9 @@ type CollectionContentProps = {
         item: CollectionWithPermissions,
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
     onUpdateCheckbox: (checked: boolean, type: 'workbook' | 'collection', entityId: string) => void;
+    onSelectAll: (checked: boolean) => void;
     selectedMap: SelectedMap;
+    countSelected: number;
 };
 
 export {CollectionContentProps};

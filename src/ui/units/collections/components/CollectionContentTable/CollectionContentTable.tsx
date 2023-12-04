@@ -25,15 +25,35 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
         getWorkbookActions,
         getCollectionActions,
         onUpdateCheckbox,
+        onSelectAll,
         selectedMap,
+        countSelected,
     }) => {
+        const checkboxProps = React.useMemo(() => {
+            if (countSelected > 0) {
+                if (countSelected === contentItems.length) {
+                    return {checked: true};
+                } else {
+                    return {indeterminate: true};
+                }
+            } else {
+                return {checked: false};
+            }
+        }, [contentItems.length, countSelected]);
+
         return (
             <div className={b()}>
                 <div className={b('table')}>
                     <div className={b('header')}>
                         <div className={b('header-row')}>
                             <div className={b('header-cell')}>
-                                <Checkbox size="l" />
+                                <Checkbox
+                                    size="l"
+                                    onUpdate={() => {
+                                        onSelectAll(countSelected !== contentItems.length);
+                                    }}
+                                    {...checkboxProps}
+                                />
                             </div>
                             <div className={b('header-cell')}>{i18n('label_title')}</div>
                             <div className={b('header-cell')}>{i18n('label_last-modified')}</div>
