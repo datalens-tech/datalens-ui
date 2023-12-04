@@ -45,7 +45,6 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
                             if ('workbookId' in item) {
                                 const actions = getWorkbookActions(item);
                                 const propsLink = {
-                                    key: item.workbookId,
                                     to: `/workbooks/${item.workbookId}`,
                                     onClick: () => {
                                         setFilters({...filters, filterString: undefined});
@@ -53,14 +52,18 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
                                 };
 
                                 return (
-                                    <div className={b('content-row')}>
+                                    <div key={item.workbookId} className={b('content-row')}>
                                         <div className={b('content-cell')}>
                                             <Checkbox
                                                 size="l"
                                                 onUpdate={(checked) => {
-                                                    onUpdateCheckbox(checked, item.workbookId);
+                                                    onUpdateCheckbox(
+                                                        checked,
+                                                        'workbook',
+                                                        item.workbookId,
+                                                    );
                                                 }}
-                                                checked={selectedMap[item.workbookId]}
+                                                checked={selectedMap[item.workbookId]?.checked}
                                             />
                                         </div>
 
@@ -97,7 +100,6 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
                             } else {
                                 const actions = getCollectionActions(item);
                                 const propsLink = {
-                                    key: item.collectionId,
                                     to: `/collections/${item.collectionId}`,
                                     onClick: () => {
                                         setFilters({...filters, filterString: undefined});
@@ -105,14 +107,18 @@ export const CollectionContentTable = React.memo<CollectionContentProps>(
                                 };
 
                                 return (
-                                    <div className={b('content-row')}>
+                                    <div key={item.collectionId} className={b('content-row')}>
                                         <div className={b('content-cell')}>
                                             <Checkbox
                                                 size="l"
                                                 onUpdate={(checked) => {
-                                                    onUpdateCheckbox(checked, item.collectionId);
+                                                    onUpdateCheckbox(
+                                                        checked,
+                                                        'collection',
+                                                        item.collectionId,
+                                                    );
                                                 }}
-                                                checked={selectedMap[item.collectionId]}
+                                                checked={selectedMap[item.collectionId]?.checked}
                                             />
                                         </div>
                                         <Link

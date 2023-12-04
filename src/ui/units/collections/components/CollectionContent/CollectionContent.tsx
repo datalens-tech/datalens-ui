@@ -43,6 +43,7 @@ import {updateCollectionInItems, updateWorkbookInItems} from '../../store/action
 import {GetCollectionContentArgs} from '../../types';
 import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
+import {SelectedMap} from '../types';
 
 import {DropdownAction} from './DropdownAction/DropdownAction';
 
@@ -100,9 +101,9 @@ export const CollectionContent: React.FC<Props> = ({
     refreshContent,
 }) => {
     const [waypointDisabled, setWaypointDisabled] = React.useState(false);
-    const [selectedMap, setSelectedMap] = React.useState<Record<string, boolean>>({});
+    const [selectedMap, setSelectedMap] = React.useState<SelectedMap>({});
     const countSelected = React.useMemo(() => {
-        return Object.values(selectedMap).filter((item) => item).length;
+        return Object.values(selectedMap).filter((item) => item.checked).length;
     }, [selectedMap]);
 
     const history = useHistory();
@@ -406,10 +407,17 @@ export const CollectionContent: React.FC<Props> = ({
         return actions;
     };
 
-    const onUpdateCheckbox = (checked: boolean, entityId: string) => {
+    const onUpdateCheckbox = (
+        checked: boolean,
+        type: 'workbook' | 'collection',
+        entityId: string,
+    ) => {
         setSelectedMap({
             ...selectedMap,
-            [entityId]: checked,
+            [entityId]: {
+                type,
+                checked,
+            },
         });
     };
 
@@ -417,7 +425,10 @@ export const CollectionContent: React.FC<Props> = ({
         const resetedSelected = selectedMap;
 
         Object.keys(resetedSelected).forEach(function (key) {
-            resetedSelected[key] = false;
+            resetedSelected[key] = {
+                ...resetedSelected[key],
+                checked: false,
+            };
         });
 
         setSelectedMap({
@@ -425,17 +436,30 @@ export const CollectionContent: React.FC<Props> = ({
             ...resetedSelected,
         });
     };
+
     const setBatchAction = () => {
+        const workbookIds: string[] = [];
+        const collectionIds: string[] = [];
+
+        Object.keys(selectedMap).forEach((key) => {
+            const item = selectedMap[key];
+            if (item.checked) {
+                if (item.type === 'workbook') {
+                    workbookIds.push(key);
+                } else {
+                    collectionIds.push(key);
+                }
+            }
+        });
         dispatch(
             openDialog({
                 id: DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
                 props: {
-                    // open: true,
-                    // collectionId: item.collectionId,
-                    // collectionTitle: item.title,
-                    // initialParentId: item.parentId,
-                    // onApply: refreshContent,
-                    // onClose: handeCloseMoveDialog,
+                    open: true,
+                    onApply: refreshContent,
+                    onClose: handeCloseMoveDialog,
+                    workbookIds,
+                    collectionIds,
                 },
             }),
         );

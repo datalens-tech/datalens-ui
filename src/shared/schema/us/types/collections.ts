@@ -111,7 +111,7 @@ export type MoveCollectionsArgs = {
     parentId: string | null;
 };
 
-export type MoveCollectionsResponse = Collection;
+export type MoveCollectionsResponse = Collection[];
 
 export type UpdateCollectionArgs = {
     collectionId: string;

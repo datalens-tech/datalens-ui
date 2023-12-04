@@ -27,6 +27,7 @@ import type {OpenDialogDuplicateEntryInWorkbookArgs} from '../../units/workbooks
 import type {OpenDialogConnS3Sources} from '../../units/connections/components/dialogs';
 import type {OpenDialogConnWithInputArgs} from '../../units/connections/components/custom-forms/components/DialogWithInput';
 import type {OpenDialogConnConfirmArgs} from '../../units/connections/components/dialogs/Confirm';
+import type {OpenDialogMoveCollectionsWorkbooksArgs} from '../../components/CollectionsStructure/MoveCollectionsWorkbooksDialog';
 import type {OpenDialogMoveCollectionArgs} from '../../components/CollectionsStructure/MoveCollectionDialog';
 import type {OpenDialogMoveWorkbookArgs} from '../../components/CollectionsStructure/MoveWorkbookDialog';
 import type {OpenDialogCopyWorkbookArgs} from '../../components/CollectionsStructure/CopyWorkbookDialog';
@@ -70,6 +71,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogConnWithInputArgs<T>
     | OpenDialogConnConfirmArgs
     | OpenDialogConnS3Sources
+    | OpenDialogMoveCollectionsWorkbooksArgs
     | OpenDialogMoveCollectionArgs
     | OpenDialogMoveWorkbookArgs
     | OpenDialogCopyWorkbookArgs

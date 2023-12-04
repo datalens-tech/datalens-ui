@@ -493,7 +493,7 @@ type MoveCollectionsLoadingAction = {
 };
 type MoveCollectionsSuccessAction = {
     type: typeof MOVE_COLLECTIONS_SUCCESS;
-    data: MoveCollectionResponse;
+    data: MoveCollectionResponse[];
 };
 type MoveCollectionsFailedAction = {
     type: typeof MOVE_COLLECTIONS_FAILED;
@@ -515,6 +515,7 @@ export const moveCollections = ({
         dispatch({
             type: MOVE_COLLECTIONS_LOADING,
         });
+
         return getSdk()
             .us.moveCollections({
                 collectionIds,
@@ -555,7 +556,7 @@ type MoveWorkbooksLoadingAction = {
 };
 type MoveWorkbooksSuccessAction = {
     type: typeof MOVE_WORKBOOKS_SUCCESS;
-    data: MoveCollectionResponse;
+    data: MoveWorkbookResponse[];
 };
 type MoveWorkbooksFailedAction = {
     type: typeof MOVE_WORKBOOKS_FAILED;

@@ -17,7 +17,7 @@ const i18n = I18n.keyset('component.collections-structure');
 
 export type Props = {
     open: boolean;
-    collectionIds?: string;
+    collectionIds?: string[];
     workbookIds?: string[];
     initialParentId?: string | null;
     onApply: () => void;
@@ -43,9 +43,9 @@ export const MoveCollectionsWorkbooksDialog: React.FC<Props> = ({
 
     const moveIsLoading = useSelector(selectMoveIsLoading);
 
-    const onApplys = React.useCallback(
+    const handleMove = React.useCallback(
         async ({targetCollectionId}: {targetCollectionId: string | null}) => {
-            if (collectionIds.length) {
+            if (collectionIds?.length) {
                 await dispatch(
                     moveCollections({
                         collectionIds,
@@ -54,7 +54,7 @@ export const MoveCollectionsWorkbooksDialog: React.FC<Props> = ({
                 );
             }
 
-            if (workbookIds.length) {
+            if (workbookIds?.length) {
                 await dispatch(
                     moveWorkbooks({
                         workbookIds,
@@ -79,7 +79,8 @@ export const MoveCollectionsWorkbooksDialog: React.FC<Props> = ({
             operationDeniedMessage={i18n('label_move-denied-title')}
             applyIsLoading={moveIsLoading}
             workbookSelectionMode={false}
-            onApply={onApplys}
+            massMoveMode
+            onApply={handleMove}
             onClose={onClose}
         />
     );
