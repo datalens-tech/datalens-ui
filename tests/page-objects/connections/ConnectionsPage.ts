@@ -1,12 +1,15 @@
 import {
     ConnectionsActionPanelControls,
     ConnectionsBaseQA,
+    DialogCreateWorkbookEntryQa,
     EntryDialogQA,
 } from '../../../src/shared/constants';
 import uuid from 'uuid/v1';
 
-import {slct} from '../../utils';
-import {BasePage, BasePageProps} from '../BasePage';
+import {slct, waitForCondition} from '../../utils';
+import {BasePage} from '../BasePage';
+import type {BasePageProps} from '../BasePage';
+import type {ConsoleMessage} from '@playwright/test';
 
 type ConnectionsPageProps = BasePageProps;
 type FillInputArgs = {name: string; value: string};
@@ -42,6 +45,50 @@ class ConnectionsPage extends BasePage {
         } catch {
             throw new Error("Connection wasn't created");
         }
+    }
+
+    async createConnectionInWorkbook({name = uuid()}: {name?: string} = {}) {
+        const formSubmit = await this.page.waitForSelector(
+            slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON),
+        );
+        // open creation dialog
+        await formSubmit.click();
+        const textInput = await this.page.waitForSelector(slct(DialogCreateWorkbookEntryQa.Input));
+        // clear input
+        await textInput.press('Meta+A');
+        await textInput.press('Backspace');
+        // type connection name
+        await textInput.type(name);
+        const dialogApplyButton = await this.page.waitForSelector(
+            slct(DialogCreateWorkbookEntryQa.ApplyButton),
+        );
+        // create connection
+        await dialogApplyButton.click();
+        try {
+            await this.page.waitForURL(() => {
+                return this.page.url().includes(name);
+            });
+        } catch {
+            throw new Error("Connection wasn't created");
+        }
+    }
+
+    async checkClientValidationErrors() {
+        let hasValidationErrors = false;
+        const onConsoleLog = (msg: ConsoleMessage) => {
+            if (msg.text().includes('Validation errors')) {
+                hasValidationErrors = true;
+            }
+        };
+        this.page.on('console', onConsoleLog);
+        const formSubmit = await this.page.waitForSelector(
+            slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON),
+        );
+        await formSubmit.click();
+        await waitForCondition(async () => {
+            return hasValidationErrors;
+        });
+        this.page.off('console', onConsoleLog);
     }
 
     async fillInput({name, value}: {name: string; value: string}) {
