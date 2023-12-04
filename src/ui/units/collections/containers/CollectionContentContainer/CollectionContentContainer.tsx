@@ -4,15 +4,11 @@ import {CancellablePromise} from '@gravity-ui/sdk';
 import {DatalensGlobalState} from 'index';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
-import {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema';
 
 import type {GetCollectionContentResponse} from '../../../../../shared/schema';
-import type {
-    CollectionContentFilters,
-    CollectionPageViewMode,
-} from '../../../../components/CollectionFilters/CollectionFilters';
+import type {CollectionPageViewMode} from '../../../../components/CollectionFilters/CollectionFilters';
 import {CollectionContent} from '../../components/CollectionContent/CollectionContent';
-import {SelectedMap, UpdateCheckbox} from '../../components/types';
+import {ContentProps} from '../../components/types';
 import {
     selectContentError,
     selectContentIsLoading,
@@ -22,15 +18,11 @@ import {GetCollectionContentArgs} from '../../types';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 
-type OuterProps = {
+interface OuterProps extends ContentProps {
     collectionId: string | null;
-    filters: CollectionContentFilters;
     collectionPageViewMode: CollectionPageViewMode;
-    setFilters: (filters: CollectionContentFilters) => void;
     isDefaultFilters: boolean;
-    isOpenSelectionMode: boolean;
     pageSize: number;
-    countSelected: number;
     canCreateWorkbook: boolean;
     refreshContent: () => void;
     getCollectionContentRecursively: (
@@ -38,13 +30,7 @@ type OuterProps = {
     ) => CancellablePromise<GetCollectionContentResponse | null>;
     onCreateWorkbookClick: () => void;
     onClearFiltersClick: () => void;
-    contentItems: (CollectionWithPermissions | WorkbookWithPermissions)[];
-    selectedMap: SelectedMap;
-    setBatchAction: () => void;
-    resetSelected: () => void;
-    onSelectAll: (checked: boolean) => void;
-    onUpdateCheckbox: UpdateCheckbox;
-};
+}
 type InnerProps = StateProps;
 
 type Props = OuterProps & InnerProps;

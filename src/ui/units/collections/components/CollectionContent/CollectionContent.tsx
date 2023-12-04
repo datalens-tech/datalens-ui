@@ -28,10 +28,7 @@ import {BatchPanel} from 'ui/components/Navigation/components/BatchPanel/BatchPa
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
 import {Feature} from '../../../../../shared';
-import {
-    CollectionContentFilters,
-    CollectionPageViewMode,
-} from '../../../../components/CollectionFilters/CollectionFilters';
+import {CollectionPageViewMode} from '../../../../components/CollectionFilters/CollectionFilters';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
 import {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
@@ -42,7 +39,7 @@ import {updateCollectionInItems, updateWorkbookInItems} from '../../store/action
 import {GetCollectionContentArgs} from '../../types';
 import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
-import {SelectedMap, UpdateCheckbox} from '../types';
+import {ContentProps} from '../types';
 
 import {DropdownAction} from './DropdownAction/DropdownAction';
 
@@ -59,20 +56,15 @@ export enum DialogState {
 const b = block('dl-collection-content');
 const i18n = I18n.keyset('collections');
 
-type Props = {
+interface Props extends ContentProps {
     collectionId: string | null;
     pageSize: number;
-    filters: CollectionContentFilters;
     collectionPageViewMode: CollectionPageViewMode;
-    setFilters: (filters: CollectionContentFilters) => void;
     isDefaultFilters: boolean;
     isContentLoading: boolean;
     isOpenSelectionMode: boolean;
     contentLoadingError: Error | null;
     canCreateWorkbook: boolean;
-    contentItems: (CollectionWithPermissions | WorkbookWithPermissions)[];
-    countSelected: number;
-    selectedMap: SelectedMap;
     nextPageTokens: {
         collectionsNextPageToken?: string | null;
         workbooksNextPageToken?: string | null;
@@ -83,11 +75,7 @@ type Props = {
     ) => CancellablePromise<GetCollectionContentResponse | null>;
     onCreateWorkbookClick: () => void;
     onClearFiltersClick: () => void;
-    setBatchAction: () => void;
-    resetSelected: () => void;
-    onSelectAll: (checked: boolean) => void;
-    onUpdateCheckbox: UpdateCheckbox;
-};
+}
 
 export const CollectionContent: React.FC<Props> = ({
     collectionId,

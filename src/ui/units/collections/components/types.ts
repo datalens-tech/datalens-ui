@@ -17,21 +17,24 @@ export type UpdateCheckbox = (
     entityId: string,
 ) => void;
 
-type CollectionContentProps = {
+export interface ContentProps {
     contentItems: (CollectionWithPermissions | WorkbookWithPermissions)[];
     filters: CollectionContentFilters;
     setFilters: (filters: CollectionContentFilters) => void;
+    onUpdateCheckbox: UpdateCheckbox;
+    onSelectAll: (checked: boolean) => void;
+    selectedMap: SelectedMap;
+    countSelected: number;
+    isOpenSelectionMode?: boolean;
+}
+
+interface CollectionContentProps extends ContentProps {
     getWorkbookActions: (
         item: WorkbookWithPermissions,
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
     getCollectionActions: (
         item: CollectionWithPermissions,
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
-    onUpdateCheckbox: UpdateCheckbox;
-    onSelectAll: (checked: boolean) => void;
-    selectedMap: SelectedMap;
-    countSelected: number;
-    isOpenSelectionMode?: boolean;
-};
+}
 
 export {CollectionContentProps};

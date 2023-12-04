@@ -123,8 +123,7 @@ export const CollectionPage = React.memo<Props>(
         const [isOpenSelectionMode, setIsOpenSelectionMode] = React.useState(false);
         const [selectedMap, setSelectedMap] = React.useState<SelectedMap>({});
         const countSelected = React.useMemo(() => {
-            return Object.values(selectedMap).filter(({checked}: {checked: boolean}) => checked)
-                .length;
+            return Object.values(selectedMap).filter((item) => item.checked).length;
         }, [selectedMap]);
         const history = useHistory();
 
