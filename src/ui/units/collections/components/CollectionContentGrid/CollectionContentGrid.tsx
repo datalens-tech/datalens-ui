@@ -39,13 +39,17 @@ export const CollectionContentGrid = React.memo<CollectionContentProps>(
                                 <div
                                     key={item.workbookId}
                                     className={b('content-item')}
-                                    onClick={() => {
-                                        onUpdateCheckbox(
-                                            !selectedMap[item.workbookId]?.checked,
-                                            'workbook',
-                                            item.workbookId,
-                                        );
-                                    }}
+                                    onClick={
+                                        isSelectionMode
+                                            ? () => {
+                                                  onUpdateCheckbox(
+                                                      !selectedMap[item.workbookId]?.checked,
+                                                      'workbook',
+                                                      item.workbookId,
+                                                  );
+                                              }
+                                            : undefined
+                                    }
                                 >
                                     {isSelectionMode && (
                                         <Checkbox
@@ -103,13 +107,17 @@ export const CollectionContentGrid = React.memo<CollectionContentProps>(
                                 <div
                                     key={item.collectionId}
                                     className={b('content-item')}
-                                    onClick={() => {
-                                        onUpdateCheckbox(
-                                            !selectedMap[item.collectionId]?.checked,
-                                            'collection',
-                                            item.collectionId,
-                                        );
-                                    }}
+                                    onClick={
+                                        isSelectionMode
+                                            ? () => {
+                                                  onUpdateCheckbox(
+                                                      !selectedMap[item.collectionId]?.checked,
+                                                      'collection',
+                                                      item.collectionId,
+                                                  );
+                                              }
+                                            : undefined
+                                    }
                                 >
                                     {isSelectionMode && (
                                         <Checkbox

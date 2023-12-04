@@ -123,7 +123,8 @@ export const CollectionPage = React.memo<Props>(
         const [isOpenSelectionMode, setIsOpenSelectionMode] = React.useState(false);
         const [selectedMap, setSelectedMap] = React.useState<SelectedMap>({});
         const countSelected = React.useMemo(() => {
-            return Object.values(selectedMap).filter((item) => item.checked).length;
+            return Object.values(selectedMap).filter(({checked}: {checked: boolean}) => checked)
+                .length;
         }, [selectedMap]);
         const history = useHistory();
 
@@ -210,6 +211,21 @@ export const CollectionPage = React.memo<Props>(
             };
         }, [collectionId, getCollection, getCollectionBreadcrumbs, resetCollectionInfo]);
 
+        const resetSelected = React.useCallback(() => {
+            const resetedSelected = selectedMap;
+
+            Object.keys(resetedSelected).forEach(function (key) {
+                resetedSelected[key] = {
+                    ...resetedSelected[key],
+                    checked: false,
+                };
+            });
+
+            setSelectedMap({
+                ...resetedSelected,
+            });
+        }, [selectedMap]);
+
         const refreshContent = React.useCallback(() => {
             initLoadCollection();
             resetCollectionContent();
@@ -218,12 +234,16 @@ export const CollectionPage = React.memo<Props>(
                 pageSize: PAGE_SIZE,
                 ...filters,
             });
+
+            setIsOpenSelectionMode(false);
+            resetSelected();
         }, [
             curCollectionId,
             filters,
             getCollectionContentRecursively,
             initLoadCollection,
             resetCollectionContent,
+            resetSelected,
         ]);
 
         const onChangeCollectionPageViewMode = React.useCallback(
@@ -366,22 +386,6 @@ export const CollectionPage = React.memo<Props>(
             }
         };
 
-        const resetSelected = () => {
-            const resetedSelected = selectedMap;
-
-            Object.keys(resetedSelected).forEach(function (key) {
-                resetedSelected[key] = {
-                    ...resetedSelected[key],
-                    checked: false,
-                };
-            });
-
-            setSelectedMap({
-                ...selectedMap,
-                ...resetedSelected,
-            });
-        };
-
         const onSelectAll = (checked: boolean) => {
             const selected: SelectedMap = {};
 
@@ -397,7 +401,6 @@ export const CollectionPage = React.memo<Props>(
             });
 
             setSelectedMap({
-                ...selectedMap,
                 ...selected,
             });
 
