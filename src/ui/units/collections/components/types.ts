@@ -11,6 +11,12 @@ export type SelectedMap = Record<
     }
 >;
 
+export type UpdateCheckbox = (
+    checked: boolean,
+    type: 'workbook' | 'collection',
+    entityId: string,
+) => void;
+
 type CollectionContentProps = {
     contentItems: (CollectionWithPermissions | WorkbookWithPermissions)[];
     filters: CollectionContentFilters;
@@ -21,7 +27,7 @@ type CollectionContentProps = {
     getCollectionActions: (
         item: CollectionWithPermissions,
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
-    onUpdateCheckbox: (checked: boolean, type: 'workbook' | 'collection', entityId: string) => void;
+    onUpdateCheckbox: UpdateCheckbox;
     onSelectAll: (checked: boolean) => void;
     selectedMap: SelectedMap;
     countSelected: number;

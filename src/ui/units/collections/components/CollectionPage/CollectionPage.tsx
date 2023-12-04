@@ -10,6 +10,7 @@ import {
     DIALOG_CREATE_WORKBOOK,
     DIALOG_EDIT_COLLECTION,
     DIALOG_MOVE_COLLECTION,
+    DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
 } from 'components/CollectionsStructure';
 import {IamAccessDialog} from 'components/IamAccessDialog/IamAccessDialog';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
@@ -48,6 +49,7 @@ import {GetCollectionContentArgs} from '../../types';
 import {CollectionActionPanel} from '../CollectionActionPanel/CollectionActionPanel';
 import {CollectionActions} from '../CollectionActions/CollectionActions';
 import {CollectionLayout} from '../CollectionLayout/CollectionLayout';
+import {SelectedMap} from '../types';
 
 import './CollectionPage.scss';
 
@@ -119,6 +121,10 @@ export const CollectionPage = React.memo<Props>(
         breadcrumbs,
     }) => {
         const [isOpenSelectionMode, setIsOpenSelectionMode] = React.useState(false);
+        const [selectedMap, setSelectedMap] = React.useState<SelectedMap>({});
+        const countSelected = React.useMemo(() => {
+            return Object.values(selectedMap).filter((item) => item.checked).length;
+        }, [selectedMap]);
         const history = useHistory();
 
         const dispatch: AppDispatch = useDispatch();
@@ -342,12 +348,92 @@ export const CollectionPage = React.memo<Props>(
             }
         };
 
+        const onUpdateCheckbox = (
+            checked: boolean,
+            type: 'workbook' | 'collection',
+            entityId: string,
+        ) => {
+            setSelectedMap({
+                ...selectedMap,
+                [entityId]: {
+                    type,
+                    checked,
+                },
+            });
+        };
+
+        const resetSelected = () => {
+            const resetedSelected = selectedMap;
+
+            Object.keys(resetedSelected).forEach(function (key) {
+                resetedSelected[key] = {
+                    ...resetedSelected[key],
+                    checked: false,
+                };
+            });
+
+            setSelectedMap({
+                ...selectedMap,
+                ...resetedSelected,
+            });
+        };
+
+        const onSelectAll = (checked: boolean) => {
+            const selected: SelectedMap = {};
+
+            contentItems.forEach((item) => {
+                const isWorkbook = 'workbookId' in item;
+                const id = isWorkbook ? item.workbookId : item.collectionId;
+                const type = isWorkbook ? 'workbook' : 'collection';
+
+                selected[id] = {
+                    type,
+                    checked,
+                };
+            });
+
+            setSelectedMap({
+                ...selectedMap,
+                ...selected,
+            });
+        };
+
+        const setBatchAction = () => {
+            const workbookIds: string[] = [];
+            const collectionIds: string[] = [];
+
+            Object.keys(selectedMap).forEach((key) => {
+                const item = selectedMap[key];
+                if (item.checked) {
+                    if (item.type === 'workbook') {
+                        workbookIds.push(key);
+                    } else {
+                        collectionIds.push(key);
+                    }
+                }
+            });
+            dispatch(
+                openDialog({
+                    id: DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
+                    props: {
+                        open: true,
+                        onApply: refreshContent,
+                        onClose: handeCloseMoveDialog,
+                        workbookIds,
+                        collectionIds,
+                    },
+                }),
+            );
+        };
+
         const onOpenSelectionMode = () => {
             setIsOpenSelectionMode(true);
         };
 
-        const onCloseSelectionMode = () => {
+        const onCancelSelectionMode = () => {
             setIsOpenSelectionMode(false);
+
+            resetSelected();
         };
 
         return (
@@ -463,6 +549,9 @@ export const CollectionPage = React.memo<Props>(
                             description={
                                 curCollectionId && collection ? collection.description : null
                             }
+                            countSelected={countSelected}
+                            isOpenSelectionMode={isOpenSelectionMode}
+                            collectionPageViewMode={collectionPageViewMode}
                             controls={
                                 <CollectionFilters
                                     filters={filters}
@@ -485,6 +574,8 @@ export const CollectionPage = React.memo<Props>(
                                     pageSize={PAGE_SIZE}
                                     refreshContent={refreshContent}
                                     contentItems={contentItems}
+                                    countSelected={countSelected}
+                                    selectedMap={selectedMap}
                                     canCreateWorkbook={
                                         collectionId && collection
                                             ? collection.permissions.createWorkbook
@@ -495,10 +586,16 @@ export const CollectionPage = React.memo<Props>(
                                         setFilters(DEFAULT_FILTERS);
                                     }}
                                     isOpenSelectionMode={isOpenSelectionMode}
+                                    setBatchAction={setBatchAction}
+                                    onUpdateCheckbox={onUpdateCheckbox}
+                                    resetSelected={resetSelected}
+                                    onSelectAll={onSelectAll}
                                 />
                             }
                             onOpenSelectionMode={onOpenSelectionMode}
-                            onCloseSelectionMode={onCloseSelectionMode}
+                            onCancelSelectionMode={onCancelSelectionMode}
+                            resetSelected={resetSelected}
+                            onSelectAll={onSelectAll}
                         />
                     </React.Fragment>
                 )}

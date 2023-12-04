@@ -2,6 +2,7 @@ import React from 'react';
 
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {CollectionPageViewMode} from 'ui/components/CollectionFilters';
 
 import './CollectionLayout.scss';
 
@@ -13,8 +14,13 @@ type Props = {
     controls?: React.ReactNode;
     content: React.ReactNode;
     editBtn: React.ReactNode | null;
+    countSelected: number;
+    isOpenSelectionMode: boolean;
+    collectionPageViewMode: CollectionPageViewMode;
     onOpenSelectionMode: () => void;
-    onCloseSelectionMode: () => void;
+    onCancelSelectionMode: () => void;
+    resetSelected: () => void;
+    onSelectAll: (checked: boolean) => void;
 };
 
 export const CollectionLayout = React.memo<Props>(
@@ -24,9 +30,26 @@ export const CollectionLayout = React.memo<Props>(
         controls,
         content,
         editBtn,
+        countSelected,
+        collectionPageViewMode,
+        isOpenSelectionMode,
         onOpenSelectionMode,
-        onCloseSelectionMode,
+        onCancelSelectionMode,
+        resetSelected,
+        onSelectAll,
     }) => {
+        const selectBtn = React.useMemo(() => {
+            if (countSelected === 0 && !isOpenSelectionMode) {
+                return <Button onClick={onOpenSelectionMode}>Выбрать</Button>;
+            }
+
+            if (countSelected > 0) {
+                return <Button onClick={resetSelected}>Снять все</Button>;
+            } else {
+                return <Button onClick={() => onSelectAll(true)}>Выбрать все</Button>;
+            }
+        }, [countSelected, isOpenSelectionMode, onOpenSelectionMode, onSelectAll, resetSelected]);
+
         return (
             <div className={b()}>
                 <div className={b('container')}>
@@ -34,14 +57,20 @@ export const CollectionLayout = React.memo<Props>(
                         <h1 className={b('title')}>{title}</h1>
                         {editBtn}
                         <div className={b('select-actions')}>
-                            <Button onClick={onOpenSelectionMode}>Выбрать</Button>
-                            <Button
-                                className={b('cancel-btn')}
-                                view="outlined-danger"
-                                onClick={onCloseSelectionMode}
-                            >
-                                Отменить
-                            </Button>
+                            {collectionPageViewMode === CollectionPageViewMode.Grid && (
+                                <>
+                                    {selectBtn}
+                                    {isOpenSelectionMode && (
+                                        <Button
+                                            className={b('cancel-btn')}
+                                            view="outlined-danger"
+                                            onClick={onCancelSelectionMode}
+                                        >
+                                            Отменить
+                                        </Button>
+                                    )}
+                                </>
+                            )}
                         </div>
                     </div>
                     {description && <div className={b('description')}>{description}</div>}

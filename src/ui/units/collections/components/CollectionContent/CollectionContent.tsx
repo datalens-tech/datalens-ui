@@ -9,7 +9,6 @@ import {
     DIALOG_EDIT_COLLECTION,
     DIALOG_EDIT_WORKBOOK,
     DIALOG_MOVE_COLLECTION,
-    DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
     DIALOG_MOVE_WORKBOOK,
 } from 'components/CollectionsStructure';
 import {IamAccessDialog} from 'components/IamAccessDialog/IamAccessDialog';
@@ -43,7 +42,7 @@ import {updateCollectionInItems, updateWorkbookInItems} from '../../store/action
 import {GetCollectionContentArgs} from '../../types';
 import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
-import {SelectedMap} from '../types';
+import {SelectedMap, UpdateCheckbox} from '../types';
 
 import {DropdownAction} from './DropdownAction/DropdownAction';
 
@@ -72,6 +71,8 @@ type Props = {
     contentLoadingError: Error | null;
     canCreateWorkbook: boolean;
     contentItems: (CollectionWithPermissions | WorkbookWithPermissions)[];
+    countSelected: number;
+    selectedMap: SelectedMap;
     nextPageTokens: {
         collectionsNextPageToken?: string | null;
         workbooksNextPageToken?: string | null;
@@ -82,6 +83,10 @@ type Props = {
     ) => CancellablePromise<GetCollectionContentResponse | null>;
     onCreateWorkbookClick: () => void;
     onClearFiltersClick: () => void;
+    setBatchAction: () => void;
+    resetSelected: () => void;
+    onSelectAll: (checked: boolean) => void;
+    onUpdateCheckbox: UpdateCheckbox;
 };
 
 export const CollectionContent: React.FC<Props> = ({
@@ -96,18 +101,19 @@ export const CollectionContent: React.FC<Props> = ({
     isOpenSelectionMode,
     contentLoadingError,
     contentItems,
+    selectedMap,
+    countSelected,
     nextPageTokens,
     getCollectionContentRecursively,
     onCreateWorkbookClick,
     onClearFiltersClick,
     refreshContent,
+    setBatchAction,
+    resetSelected,
+    onSelectAll,
+    onUpdateCheckbox,
 }) => {
     const [waypointDisabled, setWaypointDisabled] = React.useState(false);
-    const [selectedMap, setSelectedMap] = React.useState<SelectedMap>({});
-    const countSelected = React.useMemo(() => {
-        return Object.values(selectedMap).filter((item) => item.checked).length;
-    }, [selectedMap]);
-
     const history = useHistory();
 
     const dispatch: AppDispatch = useDispatch();
@@ -407,84 +413,6 @@ export const CollectionContent: React.FC<Props> = ({
 
         actions.push([...otherActions]);
         return actions;
-    };
-
-    const onUpdateCheckbox = (
-        checked: boolean,
-        type: 'workbook' | 'collection',
-        entityId: string,
-    ) => {
-        setSelectedMap({
-            ...selectedMap,
-            [entityId]: {
-                type,
-                checked,
-            },
-        });
-    };
-
-    const resetSelected = () => {
-        const resetedSelected = selectedMap;
-
-        Object.keys(resetedSelected).forEach(function (key) {
-            resetedSelected[key] = {
-                ...resetedSelected[key],
-                checked: false,
-            };
-        });
-
-        setSelectedMap({
-            ...selectedMap,
-            ...resetedSelected,
-        });
-    };
-
-    const onSelectAll = (checked: boolean) => {
-        const selected: SelectedMap = {};
-
-        contentItems.forEach((item) => {
-            const isWorkbook = 'workbookId' in item;
-            const id = isWorkbook ? item.workbookId : item.collectionId;
-            const type = isWorkbook ? 'workbook' : 'collection';
-
-            selected[id] = {
-                type,
-                checked,
-            };
-        });
-
-        setSelectedMap({
-            ...selectedMap,
-            ...selected,
-        });
-    };
-
-    const setBatchAction = () => {
-        const workbookIds: string[] = [];
-        const collectionIds: string[] = [];
-
-        Object.keys(selectedMap).forEach((key) => {
-            const item = selectedMap[key];
-            if (item.checked) {
-                if (item.type === 'workbook') {
-                    workbookIds.push(key);
-                } else {
-                    collectionIds.push(key);
-                }
-            }
-        });
-        dispatch(
-            openDialog({
-                id: DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
-                props: {
-                    open: true,
-                    onApply: refreshContent,
-                    onClose: handeCloseMoveDialog,
-                    workbookIds,
-                    collectionIds,
-                },
-            }),
-        );
     };
 
     const contentProps = {
