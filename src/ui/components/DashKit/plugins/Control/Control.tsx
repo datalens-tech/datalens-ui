@@ -43,6 +43,7 @@ import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
 import {ChartKitCustomError} from '../../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import {
+    ControlCheckbox,
     ControlDatepicker,
     ControlInput,
     ControlRangeDatepicker,
@@ -78,7 +79,7 @@ type GetDistincts = DatalensSdk<{
     root: typeof schema;
 }>['bi']['getDistinctsApiV2'];
 
-type ControlType = 'select' | 'input' | 'datepicker' | 'range-datepicker';
+type ControlType = 'select' | 'input' | 'datepicker' | 'range-datepicker' | 'checkbox';
 type LoadStatus = 'pending' | 'success' | 'fail';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -200,6 +201,7 @@ const TYPE: Record<string, ControlType> = {
     INPUT: 'input',
     DATEPICKER: 'datepicker',
     RANGE_DATEPICKER: 'range-datepicker',
+    CHECKBOX: 'checkbox',
 };
 
 type ChartControlRef =
@@ -1094,6 +1096,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     return <ControlDatepicker {...props} />;
                 case TYPE.RANGE_DATEPICKER:
                     return <ControlRangeDatepicker returnInterval={true} {...props} />;
+                case TYPE.CHECKBOX:
+                    return <ControlCheckbox {...props} />;
             }
 
             return null;

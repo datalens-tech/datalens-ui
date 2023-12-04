@@ -7,6 +7,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import {ControlQA, resolveIntervalDate, resolveRelativeDate} from 'shared';
 import {registry} from 'ui/registry';
+import {CheckboxControlValue} from 'ui/units/dash/containers/Dialogs/Control/constants';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {YCSelect} from '../../../../../components/common/YCSelect/YCSelect';
@@ -410,7 +411,7 @@ BaseControlButton.propTypes = {
 };
 
 function BaseControlCheckbox({label, value, onChange}) {
-    const checked = value === 'true';
+    const checked = value === CheckboxControlValue.TRUE;
 
     const size = isMobileView ? MOBILE_SIZE.CHECKBOX : 'm';
 
@@ -420,7 +421,9 @@ function BaseControlCheckbox({label, value, onChange}) {
             view="default"
             size={size}
             checked={checked}
-            onChange={() => onChange(checked ? 'false' : 'true')}
+            onChange={() =>
+                onChange(checked ? CheckboxControlValue.FALSE : CheckboxControlValue.TRUE)
+            }
         >
             {label}
         </Checkbox>

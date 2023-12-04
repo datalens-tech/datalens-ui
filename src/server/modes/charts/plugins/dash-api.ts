@@ -274,6 +274,20 @@ export const dashApiValidation: ValidationConfig = {
                             },
                         },
                     },
+                    {
+                        if: {
+                            properties: {
+                                elementType: {
+                                    const: DashTabItemControlElementType.Checkbox,
+                                },
+                            },
+                        },
+                        then: {
+                            properties: {
+                                defaultValue: {type: 'string'},
+                            },
+                        },
+                    },
                 ],
             },
         },
