@@ -346,17 +346,6 @@ const getGoogleCredentials = async (
     }
 };
 
-const revokeGoogleRefreshToken = async (
-    refreshToken: string,
-): Promise<{error?: DataLensApiError}> => {
-    try {
-        await getSdk().googleapis.revokeToken({refreshToken});
-        return {};
-    } catch (error) {
-        return {error};
-    }
-};
-
 export const api = {
     fetchEntry,
     fetchConnectionData,
@@ -378,5 +367,4 @@ export const api = {
     updateS3BasedConnectionData,
     getGoogleAuthorizationUrl,
     getGoogleCredentials,
-    revokeGoogleRefreshToken,
 };
