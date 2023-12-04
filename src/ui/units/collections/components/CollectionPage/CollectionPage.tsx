@@ -32,7 +32,7 @@ import {AppDispatch} from 'store';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import {DL} from 'ui/constants';
 import {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
-import Utils from 'utils';
+import Utils, {CollectionFiltersStorage} from 'utils';
 
 import {
     CollectionContentFilters,
@@ -57,10 +57,10 @@ const PAGE_SIZE = 50;
 
 const DEFAULT_FILTERS = {
     filterString: undefined,
-    orderField: OrderBasicField.CreatedAt,
-    orderDirection: OrderDirection.Desc,
-    mode: GetCollectionContentMode.All,
-    onlyMy: false,
+    orderField: CollectionFiltersStorage.restore()?.orderField || OrderBasicField.CreatedAt,
+    orderDirection: CollectionFiltersStorage.restore()?.orderDirection || OrderDirection.Desc,
+    mode: CollectionFiltersStorage.restore()?.mode || GetCollectionContentMode.All,
+    onlyMy: CollectionFiltersStorage.restore()?.onlyMy || false,
 };
 
 const defaultCollectionPageViewMode =
@@ -203,20 +203,18 @@ export const CollectionPage = React.memo<Props>(
         }, [collectionId, getCollection, getCollectionBreadcrumbs, resetCollectionInfo]);
 
         const refreshContent = React.useCallback(() => {
-            initLoadCollection();
             resetCollectionContent();
             getCollectionContentRecursively({
                 collectionId: curCollectionId,
                 pageSize: PAGE_SIZE,
                 ...filters,
             });
-        }, [
-            curCollectionId,
-            filters,
-            getCollectionContentRecursively,
-            initLoadCollection,
-            resetCollectionContent,
-        ]);
+        }, [curCollectionId, filters, getCollectionContentRecursively, resetCollectionContent]);
+
+        const refreshPage = React.useCallback(() => {
+            initLoadCollection();
+            refreshContent();
+        }, [initLoadCollection, refreshContent]);
 
         const onChangeCollectionPageViewMode = React.useCallback(
             (value: CollectionPageViewMode) => {
@@ -248,11 +246,11 @@ export const CollectionPage = React.memo<Props>(
         const handeCloseMoveDialog = React.useCallback(
             (structureChanged: boolean) => {
                 if (structureChanged) {
-                    refreshContent();
+                    refreshPage();
                 }
                 dispatch(closeDialog());
             },
-            [dispatch, refreshContent],
+            [dispatch, refreshPage],
         );
 
         const handleCreateWorkbook = React.useCallback(() => {
@@ -413,7 +411,7 @@ export const CollectionPage = React.memo<Props>(
                                                     collectionId: collection.collectionId,
                                                     collectionTitle: collection.title,
                                                     initialParentId: collection.parentId,
-                                                    onApply: refreshContent,
+                                                    onApply: refreshPage,
                                                     onClose: handeCloseMoveDialog,
                                                 },
                                             }),
@@ -473,6 +471,7 @@ export const CollectionPage = React.memo<Props>(
                                     setFilters={setFilters}
                                     isDefaultFilters={isDefaultFilters}
                                     pageSize={PAGE_SIZE}
+                                    refreshPage={refreshPage}
                                     refreshContent={refreshContent}
                                     canCreateWorkbook={
                                         collectionId && collection
