@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Alert, Text} from '@gravity-ui/uikit';
+import {Alert, Button, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
@@ -20,9 +20,18 @@ const i18n = I18n.keyset('component.migrate-to-workbook-dialog');
 export type BodyProps = {
     targetEntry: GetEntryResponse;
     relationsGraph: GetRelationsGraphResponse;
+    isTransferToWorkbook?: boolean;
+    disableCopy?: boolean;
+    handleGoBack: () => void;
 };
 
-export const Body: React.FC<BodyProps> = ({targetEntry, relationsGraph}) => {
+export const Body: React.FC<BodyProps> = ({
+    targetEntry,
+    relationsGraph,
+    isTransferToWorkbook,
+    disableCopy,
+    handleGoBack,
+}) => {
     const groups = React.useMemo(() => {
         return {
             dashboards: relationsGraph.filter((entry) => entry.scope === Scope.Dash),
@@ -34,7 +43,28 @@ export const Body: React.FC<BodyProps> = ({targetEntry, relationsGraph}) => {
 
     return (
         <div className={b()}>
+            {disableCopy && (
+                <div className={b('alert-warning')}>
+                    <Alert
+                        theme="warning"
+                        layout="horizontal"
+                        message={
+                            <YfmWrapper
+                                content={i18n('md_label_copy-extension-warning')}
+                                setByInnerHtml
+                            />
+                        }
+                        actions={
+                            <Button view="action" onClick={handleGoBack}>
+                                {i18n('action_back')}
+                            </Button>
+                        }
+                    />
+                </div>
+            )}
+
             <Text variant="subheader-1">{i18n('label_current-entry')}</Text>
+
             <EntryRow
                 className={b('target-entry')}
                 entry={{
@@ -42,12 +72,16 @@ export const Body: React.FC<BodyProps> = ({targetEntry, relationsGraph}) => {
                     name: Utils.getEntryNameFromKey(targetEntry.key),
                 }}
             />
-            <div className={b('alert')}>
-                <Alert
-                    theme="info"
-                    message={<YfmWrapper content={i18n('md_label_copy-warning')} setByInnerHtml />}
-                />
-            </div>
+            {isTransferToWorkbook && (
+                <div className={b('alert-info')}>
+                    <Alert
+                        theme="info"
+                        message={
+                            <YfmWrapper content={i18n('md_label_copy-warning')} setByInnerHtml />
+                        }
+                    />
+                </div>
+            )}
             <div className={b('relations')}>
                 <Text variant="subheader-1">{i18n('label_linked-objects')}</Text>
                 <div className={b('relations-groups')}>

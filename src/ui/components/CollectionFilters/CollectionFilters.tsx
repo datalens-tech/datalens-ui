@@ -8,7 +8,7 @@ import debounce from 'lodash/debounce';
 import {Feature} from 'shared';
 import {GetCollectionContentMode} from 'shared/schema/us/types/collections';
 import {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
-import Utils from 'ui/utils';
+import Utils, {CollectionFiltersStorage} from 'ui/utils';
 
 import GridIcon from 'assets/icons/collections/grid.svg';
 
@@ -113,11 +113,16 @@ export const CollectionFilters = React.memo<Props>(
 
         const handleChangeMode = React.useCallback(
             (value) => {
+                const val = value[0];
                 handleChangeFilters({
-                    mode: value[0],
+                    mode: val,
                 });
+
+                if (!compactMode) {
+                    CollectionFiltersStorage.store({mode: val});
+                }
             },
-            [handleChangeFilters],
+            [compactMode, handleChangeFilters],
         );
 
         const handleChangeOnlyMy = React.useCallback(
@@ -125,8 +130,12 @@ export const CollectionFilters = React.memo<Props>(
                 handleChangeFilters({
                     onlyMy: value === 'true',
                 });
+
+                if (!compactMode) {
+                    CollectionFiltersStorage.store({onlyMy: value});
+                }
             },
-            [handleChangeFilters],
+            [compactMode, handleChangeFilters],
         );
 
         const handleChangeView = React.useCallback(
@@ -147,8 +156,15 @@ export const CollectionFilters = React.memo<Props>(
                     orderField: sortTypeValues.orderField,
                     orderDirection: sortTypeValues.orderDirection,
                 });
+
+                if (!compactMode) {
+                    CollectionFiltersStorage.store({
+                        orderField: sortTypeValues.orderField,
+                        orderDirection: sortTypeValues.orderDirection,
+                    });
+                }
             },
-            [handleChangeFilters],
+            [compactMode, handleChangeFilters],
         );
 
         React.useEffect(() => {

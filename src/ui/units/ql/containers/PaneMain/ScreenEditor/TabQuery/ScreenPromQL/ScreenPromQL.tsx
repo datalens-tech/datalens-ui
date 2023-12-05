@@ -21,6 +21,8 @@ import {
 } from 'ui';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 
+import {TabQueryQA} from '../../../../../../../../shared';
+import {EditableText} from '../../../../../../../components/EditableText/EditableText';
 import {prepareChartDataBeforeSave} from '../../../../../modules/helpers';
 import {
     addParamInQuery,
@@ -127,10 +129,19 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                     className={b('query-row-collapse')}
                                     title={
                                         <div className={b('query-row-header')}>
-                                            <span className={b('query-row-title')}>{`${i18n(
-                                                'sql',
-                                                'label_query',
-                                            )} ${queryIndex + 1}`}</span>
+                                            <EditableText
+                                                text={query.queryName}
+                                                textClassName={b('query-row-title')}
+                                                onInputApply={(queryName) => {
+                                                    if (queryName === query.queryName) {
+                                                        return;
+                                                    }
+                                                    this.props.updateQueryAndRedraw({
+                                                        query: {...query, queryName},
+                                                        index: queryIndex,
+                                                    });
+                                                }}
+                                            />
                                         </div>
                                     }
                                     toolbar={
@@ -334,7 +345,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                         onClick={() => this.onClickButtonAddQuery()}
                         key="button-run"
                         className={b('add-query-btn')}
-                        qa={'add-promql-query-btn'}
+                        qa={TabQueryQA.AddPromQLQueryBtn}
                     >
                         {i18n('sql', 'label_add-query')}
                     </Button>

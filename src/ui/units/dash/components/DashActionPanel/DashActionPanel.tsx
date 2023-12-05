@@ -17,6 +17,7 @@ import {
     EntryDialogues,
 } from 'ui';
 import {registry} from 'ui/registry';
+import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'ui/store/actions/dialog';
 import Utils from 'utils';
 
 import {GetEntryResponse} from '../../../../../shared/schema';
@@ -36,6 +37,7 @@ import {
     saveDashAsNewDash,
     setActualDash,
     setDashViewMode,
+    setDefaultViewState,
     setPageDefaultTabItems,
     setPublishDraft,
 } from '../../store/actions/dashTyped';
@@ -48,6 +50,7 @@ import {DashEntry} from '../../typings/entry';
 
 import {EditControls} from './EditControls/EditControls';
 import {ViewControls} from './ViewControls/ViewControls';
+import {cancelEditClick} from './helpers';
 
 import './DashActionPanel.scss';
 
@@ -164,8 +167,12 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     };
 
     handlerCancelEditClick = () => {
-        this.props.setDashViewMode();
-        this.props.setPageDefaultTabItems();
+        cancelEditClick({
+            isDraft: this.props.isDraft,
+            setDefaultViewState: this.props.setDefaultViewState,
+            openDialogConfirm: this.props.openDialogConfirm,
+            closeDialogConfirm: this.props.closeDialogConfirm,
+        });
     };
 
     handlerSaveAsNewClick = async () => {
@@ -285,12 +292,15 @@ const mapStateToProps = (state: DatalensGlobalState) => {
 };
 
 const mapDispatchToProps = {
+    setDashViewMode,
     setActualDash,
     setPublishDraft,
     saveDashAsDraft,
     saveDashAsNewDash,
-    setDashViewMode,
     setPageDefaultTabItems,
+    setDefaultViewState,
+    openDialogConfirm,
+    closeDialogConfirm,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashActionPanel);

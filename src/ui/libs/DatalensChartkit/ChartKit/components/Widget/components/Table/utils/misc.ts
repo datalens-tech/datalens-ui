@@ -2,9 +2,8 @@ import React from 'react';
 
 import {sanitizeUrl} from '@braintree/sanitize-url';
 import {transformParamsToActionParams} from '@gravity-ui/dashkit';
-import {Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
+import {Column, Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
 import get from 'lodash/get';
-import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import isPlainObject from 'lodash/isPlainObject';
 import {
@@ -18,12 +17,13 @@ import {
     TableCommonCell,
     TableHead,
     TableRow,
-    TablehWidgetEventScope,
+    TableWidgetEventScope,
 } from 'shared';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
 
 import {MarkupItem, MarkupItemType} from '../../../../../../../../components/Markup';
 import {DataTableData, TableWidget} from '../../../../../../types';
+import {hasMatchedActionParams} from '../../../../../helpers/utils';
 import {CLICK_ACTION_TYPE} from '../../constants';
 
 import type {ActionParamsData} from './types';
@@ -336,80 +336,65 @@ export function getTreeSetColumnSortAscending(
 
 export function getActionParamsEventScope(
     events?: NonNullable<TableWidget['config']>['events'],
-): TablehWidgetEventScope | undefined {
+): TableWidgetEventScope | undefined {
     if (!events?.click) {
         return undefined;
     }
 
     const normalizedEvents = Array.isArray(events.click) ? events.click : [events.click];
 
-    return normalizedEvents.reduce<TablehWidgetEventScope | undefined>((_, e) => {
+    return normalizedEvents.reduce<TableWidgetEventScope | undefined>((_, e) => {
         return e.scope;
     }, undefined);
 }
 
-function extractCellActionParams(args: {columnId: string; row?: DataTableData}) {
-    const {columnId, row} = args;
-    const cell = row ? row[columnId] : undefined;
-    const cellValue = get(cell, 'value') as string | undefined;
-    const cellActionParams = get(cell, 'custom.actionParams') as StringParams | undefined;
+function extractCellActionParams(args: {cell: TableCell; head?: TableHead}) {
+    const {cell, head} = args;
+    const cellCustomData = get(cell, 'custom');
 
-    if (!cellActionParams) {
-        return cellValue ? {[columnId]: [cellValue]} : undefined;
+    if (cellCustomData && 'actionParams' in cellCustomData) {
+        return cellCustomData.actionParams;
     }
 
-    if (isEmpty(cellActionParams)) {
-        return undefined;
+    if (head?.id) {
+        const key = head?.id;
+        const value = typeof cell === 'string' ? cell : String(cell.value);
+
+        return {[key]: [value]};
     }
 
-    return cellActionParams;
+    return {};
 }
 
-export function getRowActionParams(row?: DataTableData): StringParams {
+export function getRowActionParams(args: {row?: DataTableData; head?: TableHead[]}): StringParams {
+    const {row, head} = args;
+
     if (!row) {
         return {};
     }
 
-    return Object.keys(row).reduce<Record<string, string | string[]>>((acc, columnId) => {
-        const cellActionParams = extractCellActionParams({columnId, row});
+    const canAutoGenerateParams = head && !hasGroups(head);
+    return Object.keys(row).reduce<StringParams>((acc, columnName, index) => {
+        const cell = row[columnName];
+        const headColumn = canAutoGenerateParams ? head?.[index] : undefined;
 
-        if (cellActionParams) {
-            Object.assign(acc, cellActionParams);
-        }
-
-        return acc;
+        return Object.assign(acc, extractCellActionParams({cell, head: headColumn}));
     }, {});
-}
-
-function isRowSelected(args: {actionParams: StringParams; rowActionParams: StringParams}) {
-    const {actionParams, rowActionParams} = args;
-
-    return Object.entries(rowActionParams).every(([key, value]) => {
-        const normalizedValue = Array.isArray(value) ? value : [value];
-        const param = actionParams[key];
-
-        if (!param) {
-            return false;
-        }
-
-        const normalizedParam = Array.isArray(param) ? param : [param];
-
-        return normalizedValue.every((val) => normalizedParam.includes(val));
-    });
 }
 
 function getActionParamsByRow(args: {
     actionParams: StringParams;
     row?: DataTableData;
+    head?: TableHead[];
 }): StringParams {
-    const {actionParams, row} = args;
+    const {actionParams, row, head} = args;
 
     if (!row) {
         return {};
     }
 
-    const rowActionParams = getRowActionParams(row);
-    const isRowAlreadySelected = isRowSelected({actionParams, rowActionParams});
+    const rowActionParams = getRowActionParams({row, head});
+    const isRowAlreadySelected = hasMatchedActionParams(rowActionParams, actionParams);
 
     if (isRowAlreadySelected) {
         Object.keys(rowActionParams).forEach((key) => {
@@ -423,12 +408,14 @@ function getActionParamsByRow(args: {
 export function getActionParams(args: {
     actionParamsData: ActionParamsData;
     row?: DataTableData;
+    column?: Column<DataTableData>;
+    head?: TableHead[];
 }): StringParams {
-    const {actionParamsData, row} = args;
+    const {actionParamsData, row, head} = args;
 
     switch (actionParamsData.scope) {
         case 'row': {
-            return getActionParamsByRow({actionParams: actionParamsData.params, row});
+            return getActionParamsByRow({actionParams: actionParamsData.params, row, head});
         }
         // There is no way to reach this code. Just satisfies ts
         default: {
@@ -440,10 +427,11 @@ export function getActionParams(args: {
 function getAdditionalStylesByRow(args: {
     actionParams: StringParams;
     row?: DataTableData;
+    head?: TableHead[];
 }): React.CSSProperties | undefined {
-    const {actionParams, row} = args;
-    const rowActionParams = getRowActionParams(row);
-    const rowSelected = isRowSelected({actionParams, rowActionParams});
+    const {actionParams, row, head} = args;
+    const rowActionParams = getRowActionParams({row, head});
+    const rowSelected = hasMatchedActionParams(rowActionParams, actionParams);
     const actionParamsKeys = Object.keys(actionParams);
     const hasAtLeastOneActionParam =
         actionParamsKeys.length &&
@@ -465,12 +453,13 @@ function getAdditionalStylesByRow(args: {
 export function getAdditionalStyles(args: {
     actionParamsData: ActionParamsData;
     row?: DataTableData;
+    head?: TableHead[];
 }): React.CSSProperties | undefined {
-    const {actionParamsData, row} = args;
+    const {actionParamsData, row, head} = args;
 
     switch (actionParamsData.scope) {
         case 'row': {
-            return getAdditionalStylesByRow({actionParams: actionParamsData.params, row});
+            return getAdditionalStylesByRow({actionParams: actionParamsData.params, row, head});
         }
         // There is no way to reach this code. Just satisfies ts
         default: {

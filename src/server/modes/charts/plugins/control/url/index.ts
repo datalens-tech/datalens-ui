@@ -40,6 +40,7 @@ const buildSources = ({
             if (
                 shared.source.elementType !== ELEMENT_TYPE.DATE &&
                 shared.source.elementType !== ELEMENT_TYPE.INPUT &&
+                shared.source.elementType !== ELEMENT_TYPE.CHECKBOX &&
                 shared.source.datasetFieldType !== DatasetFieldType.Measure
             ) {
                 sources.distincts = prepareDistinctsRequest({shared, params, ChartEditor});

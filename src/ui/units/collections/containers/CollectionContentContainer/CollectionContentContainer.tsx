@@ -24,6 +24,7 @@ interface OuterProps extends ContentProps {
     isDefaultFilters: boolean;
     pageSize: number;
     canCreateWorkbook: boolean;
+    refreshPage: () => void;
     refreshContent: () => void;
     getCollectionContentRecursively: (
         args: GetCollectionContentArgs,
@@ -54,6 +55,7 @@ class CollectionContentContainer extends React.Component<Props> {
             countSelected,
             nextPageTokens,
             canCreateWorkbook,
+            refreshPage,
             refreshContent,
             getCollectionContentRecursively,
             onCreateWorkbookClick,
@@ -79,6 +81,7 @@ class CollectionContentContainer extends React.Component<Props> {
                 selectedMap={selectedMap}
                 countSelected={countSelected}
                 nextPageTokens={nextPageTokens}
+                refreshPage={refreshPage}
                 refreshContent={refreshContent}
                 getCollectionContentRecursively={getCollectionContentRecursively}
                 onCreateWorkbookClick={onCreateWorkbookClick}

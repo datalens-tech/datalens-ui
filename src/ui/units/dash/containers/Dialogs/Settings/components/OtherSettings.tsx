@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {HelpPopover} from '@gravity-ui/components';
 import {Button, Checkbox, SelectProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -52,7 +53,9 @@ export const OtherSettings = ({
     return (
         <SectionWrapper title={i18n('label_other-settings')} titleMods={b('section-title')}>
             <Row>
-                <Title text={i18n('label_load-only-visibile-charts')} />
+                <Title text={i18n('label_load-only-visible-charts')}>
+                    <HelpPopover htmlContent={i18n('hint_load-only-visible-charts')} />
+                </Title>
                 <Checkbox
                     size="l"
                     checked={loadOnlyVisibleCharts}

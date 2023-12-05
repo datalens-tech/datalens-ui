@@ -4,10 +4,5 @@
     &__btn {
         display: flex;
         overflow: hidden;
-
-        // because it looks like an input, but there is a button under the hood, you have to customize it for the input
-        & .yc-button__text {
-            margin: 0 8px;
-        }
     }
 }

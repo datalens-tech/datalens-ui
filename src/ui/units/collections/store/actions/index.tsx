@@ -12,8 +12,6 @@ import type {
     GetCollectionBreadcrumbsResponse,
     GetCollectionContentResponse,
     GetRootCollectionPermissionsResponse,
-    UpdateCollectionResponse,
-    UpdateWorkbookResponse,
 } from '../../../../../shared/schema';
 import {GetCollectionContentMode} from '../../../../../shared/schema/us/types/collections';
 import {OrderBasicField, OrderDirection} from '../../../../../shared/schema/us/types/sort';
@@ -44,8 +42,6 @@ import {
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
     RESET_COLLECTION_CONTENT,
     RESET_COLLECTION_INFO,
-    UPDATE_COLLECTION_IN_ITEMS,
-    UPDATE_WORKBOOK_IN_ITEMS,
 } from '../constants';
 
 type GetRootCollectionPermissionsLoadingAction = {
@@ -116,34 +112,6 @@ type GetCollectionsContentAction =
     | GetCollectionsContentLoadingAction
     | GetCollectionsContentSuccessAction
     | GetCollectionsContentFailedAction;
-
-type UpdateCollectionInItemsAction = {
-    type: typeof UPDATE_COLLECTION_IN_ITEMS;
-    data: UpdateCollectionResponse;
-};
-
-type UpdateWorkbookInItemsAction = {
-    type: typeof UPDATE_WORKBOOK_IN_ITEMS;
-    data: UpdateWorkbookResponse;
-};
-
-export const updateCollectionInItems = (collection: UpdateCollectionResponse) => {
-    return (dispatch: CollectionsDispatch) => {
-        dispatch({
-            type: UPDATE_COLLECTION_IN_ITEMS,
-            data: collection,
-        });
-    };
-};
-
-export const updateWorkbookInItems = (workbook: UpdateWorkbookResponse) => {
-    return (dispatch: CollectionsDispatch) => {
-        dispatch({
-            type: UPDATE_WORKBOOK_IN_ITEMS,
-            data: workbook,
-        });
-    };
-};
 
 export const getCollectionContent = ({
     collectionId,
@@ -576,8 +544,6 @@ export type CollectionsAction =
     | ResetCollectionContentAction
     | DeleteCollectionAction
     | AddDemoWorkbookAction
-    | DeleteWorkbookAction
-    | UpdateCollectionInItemsAction
-    | UpdateWorkbookInItemsAction;
+    | DeleteWorkbookAction;
 
 export type CollectionsDispatch = ThunkDispatch<DatalensGlobalState, void, CollectionsAction>;

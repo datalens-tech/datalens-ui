@@ -1,4 +1,4 @@
-import type {QLEntryDataShared} from '../../../../types';
+import type {QlConfig} from '../../../../types';
 import {QlConfigVersions} from '../../../../types/ql/versions';
 import {mapQlConfigToLatestVersion} from '../mapQlConfigToLatestVersion';
 
@@ -8,9 +8,9 @@ describe('mapQlConfigToLatestVersion', () => {
 
         const latest = versions[versions.length - 1];
 
-        const config = {} as QLEntryDataShared;
+        const config = {} as QlConfig;
 
-        const latestConfig = mapQlConfigToLatestVersion(config);
+        const latestConfig = mapQlConfigToLatestVersion(config, {i18n: jest.fn()});
 
         expect(latestConfig.version).toEqual(latest);
     });

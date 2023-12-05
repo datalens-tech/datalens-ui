@@ -1,11 +1,11 @@
-import type {OpenDialogMetricSettingsArgs} from 'units/wizard/components/Dialogs/DialogMetricSettings/DialogMetricSettings';
-import type {OpenDialogColorArgs} from 'units/wizard/components/Dialogs/DialogColor/DialogColor';
-import type {OpenDialogFieldInspectorArgs} from 'units/wizard/components/Dialogs/DialogFieldInspector/DialogFieldInspector';
-import type {OpenDialogShapesArgs} from 'units/wizard/components/Dialogs/DialogShapes/DialogShapes';
-import type {OpenDialogFieldArgs} from 'units/wizard/components/Dialogs/DialogField/DialogField';
-import type {OpenDialogFilterArgs} from 'ui';
-import type {OpenDialogPlaceholderArgs} from 'units/wizard/components/Dialogs/DialogPlaceholder/DialogPlaceholder';
-import type {OpenDialogPointsSizeArgs} from 'units/wizard/components/Dialogs/DialogPointsSize';
+import type {OpenDialogMetricSettingsArgs} from '../../units/wizard/components/Dialogs/DialogMetricSettings/DialogMetricSettings';
+import type {OpenDialogColorArgs} from '../../units/wizard/components/Dialogs/DialogColor/DialogColor';
+import type {OpenDialogFieldInspectorArgs} from '../../units/wizard/components/Dialogs/DialogFieldInspector/DialogFieldInspector';
+import type {OpenDialogShapesArgs} from '../../units/wizard/components/Dialogs/DialogShapes/DialogShapes';
+import type {OpenDialogFieldArgs} from '../../units/wizard/components/Dialogs/DialogField/DialogField';
+import type {OpenDialogFilterArgs} from '../../index';
+import type {OpenDialogPlaceholderArgs} from '../../units/wizard/components/Dialogs/DialogPlaceholder/DialogPlaceholder';
+import type {OpenDialogPointsSizeArgs} from '../../units/wizard/components/Dialogs/DialogPointsSize';
 import type {OpenDialogErrorWithTabsArgs} from '../../components/DialogErrorWithTabs/DialogErrorWithTabs';
 import type {OpenDialogNeedResetArgs} from '../../components/OpenDialogNeedReset/OpenDialogNeedReset';
 import type {OpenDialogChartSettingsArgs} from '../../units/wizard/components/Dialogs/Settings/Settings';
@@ -37,11 +37,12 @@ import type {OpenDialogCreateWorkbookArgs} from '../../components/CollectionsStr
 import type {OpenDialogEditCollectionArgs} from '../../components/CollectionsStructure/EditCollectionDialog';
 import type {OpenDialogCreateCollectionArgs} from '../../components/CollectionsStructure/CreateCollectionDialog';
 import type {OpenDialogCopyEntriesArgs} from '../../components/CollectionsStructure/CopyEntriesDialog';
-
+import type {OpenDialogQLParameterArgs} from '../../components/DialogQLParameter/DialogQLParameter';
+import type {OpenDialogSelectMigrationToWorkbookArgs} from '../../components/SelectMigrationToWorkbookDialog/SelectMigrationToWorkbookDialog';
 import type {OpenDialogMigrateToWorkbookArgs} from '../../components/MigrateToWorkbookDialog/MigrateToWorkbookDialog';
 import type {OpenDialogLabelSettingsArgs} from '../../units/wizard/components/Dialogs/DialogLabelSettings/DialogLabelSettings';
-import type {OpenDialogControlsPlacementArgs} from 'ui/units/dash/containers/Dialogs/GroupControl/ControlsPlacementDialog/ControlsPlacementDialog';
-import type {OpenDialogCopyEntriesToWorkbookArgs} from 'ui/components/CopyEntriesToWorkbookDialog/CopyEntriesToWorkbookDialog';
+import type {OpenDialogControlsPlacementArgs} from '../../units/dash/containers/Dialogs/GroupControl/ControlsPlacementDialog/ControlsPlacementDialog';
+import type {OpenDialogCopyEntriesToWorkbookArgs} from '../../components/CopyEntriesToWorkbookDialog/CopyEntriesToWorkbookDialog';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogMetricSettingsArgs
@@ -50,6 +51,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogShapesArgs
     | OpenDialogFieldArgs
     | OpenDialogFilterArgs
+    | OpenDialogQLParameterArgs
     | OpenDialogPlaceholderArgs
     | OpenDialogPointsSizeArgs
     | OpenDialogErrorWithTabsArgs
@@ -82,6 +84,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogCreateCollectionArgs
     | OpenDialogCreateWorkbookArgs
     | OpenDialogMigrateToWorkbookArgs
+    | OpenDialogSelectMigrationToWorkbookArgs
     | OpenDialogMigrateEntryToWorkbookArgs
     | OpenDialogCopyEntriesToWorkbookArgs
     | OpenDialogCopyEntriesArgs;

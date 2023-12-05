@@ -2,7 +2,7 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {Button, Dialog, Loader, Sheet, Tabs, TabsItemProps} from '@gravity-ui/uikit';
+import {Button, Loader, Tabs, TabsItemProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
@@ -14,6 +14,7 @@ import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import logger from '../../libs/logger';
 import {parseError} from '../../utils/errors/parse';
+import {AdaptiveDialog} from '../AdaptiveDialog/AdaptiveDialog';
 import DialogManager from '../DialogManager/DialogManager';
 
 import DebugInfo from './DebugInfo/DebugInfo';
@@ -130,41 +131,31 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
         const {title = i18n('label_error')} = this.props;
         const {loading} = this.state;
 
-        return isMobileView ? (
-            <Sheet
+        return (
+            <AdaptiveDialog
                 visible={true}
                 onClose={this.onClose}
-                allowHideOnContentScroll={false}
-                contentClassName={b({mobile: true})}
+                sheetContentClassName={b({mobile: true})}
+                dialogBodyClassName={b('content')}
+                renderSheetFooter={() => this.renderFooterButtons()}
+                renderDialogFooter={() => this.renderFooterButtons()}
+                dialogProps={{
+                    disableEscapeKeyDown: true,
+                    disableOutsideClick: true,
+                    className: b(),
+                }}
+                dialogHeaderProps={{caption: title}}
+                dialogFooterProps={{
+                    preset: 'default',
+                    showError: false,
+                    listenKeyEnter: false,
+                    onClickButtonCancel: this.onClose,
+                    textButtonCancel: i18n('button_close'),
+                    loading: false,
+                }}
             >
-                <React.Fragment>
-                    {loading ? this.renderLoader() : this.renderDialogBody()}
-                    <div className={b('footer-buttons')}>{this.renderFooterButtons()}</div>
-                </React.Fragment>
-            </Sheet>
-        ) : (
-            <Dialog
-                onClose={this.onClose}
-                open={true}
-                disableEscapeKeyDown={true}
-                disableOutsideClick={true}
-                className={b()}
-            >
-                <Dialog.Header caption={title} />
-                <Dialog.Body className={b('content')}>
-                    {loading ? this.renderLoader() : this.renderDialogBody()}
-                </Dialog.Body>
-                <Dialog.Footer
-                    preset={'default'}
-                    showError={false}
-                    listenKeyEnter={false}
-                    onClickButtonCancel={this.onClose}
-                    textButtonCancel={i18n('button_close')}
-                    loading={false}
-                >
-                    {this.renderFooterButtons()}
-                </Dialog.Footer>
-            </Dialog>
+                {loading ? this.renderLoader() : this.renderDialogBody()}
+            </AdaptiveDialog>
         );
     }
 
@@ -287,7 +278,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
         const buttonsSize = isMobileView ? MOBILE_SIZE.BUTTON : 'l';
 
         return (
-            <React.Fragment>
+            <div className={b('footer-buttons')}>
                 {withReport && (
                     <ReportButton
                         error={error}
@@ -309,7 +300,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                         {i18n('button_retry')}
                     </Button>
                 )}
-            </React.Fragment>
+            </div>
         );
     }
 

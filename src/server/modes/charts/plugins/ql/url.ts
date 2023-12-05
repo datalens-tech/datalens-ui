@@ -7,6 +7,7 @@ import {
     isMonitoringOrPrometheusChart,
     resolveIntervalDate,
     resolveOperation,
+    resolveRelativeDate,
 } from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import type {QlConfig} from '../../../../../shared/types/config/ql';
@@ -27,8 +28,14 @@ const resolveUrlParameter = (urlParamValue: string | string[]) => {
     }
 };
 
+const prepareDefaultDate = (date: string) => {
+    const resolvedDate = resolveRelativeDate(date);
+
+    return resolvedDate || date;
+};
+
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
-    const config = mapQlConfigToLatestVersion(shared);
+    const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
 
     const urlParams = ChartEditor.getParams();
 
@@ -81,11 +88,11 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                     } else if (typeof param.defaultValue === 'object') {
                         // And if there is no override, then we take default
                         if (typeof param.defaultValue?.from !== 'undefined') {
-                            accumulated[fromKey] = param.defaultValue?.from;
+                            accumulated[fromKey] = prepareDefaultDate(param.defaultValue?.from);
                         }
 
                         if (typeof param.defaultValue?.to !== 'undefined') {
-                            accumulated[toKey] = param.defaultValue?.to;
+                            accumulated[toKey] = prepareDefaultDate(param.defaultValue?.to);
                         }
                     }
                 } else if (typeof param.defaultValue === 'string') {
@@ -100,8 +107,12 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                     ) {
                         // Otherwise, we take override (if there is)
                         accumulated[param.name] = param.overridenValue;
+                    } else if (
+                        param.type === QLParamType.Date ||
+                        param.type === QLParamType.Datetime
+                    ) {
+                        accumulated[param.name] = prepareDefaultDate(param.defaultValue);
                     } else {
-                        // Otherwise we take default
                         accumulated[param.name] = param.defaultValue;
                     }
                 } else if (Array.isArray(param.defaultValue)) {

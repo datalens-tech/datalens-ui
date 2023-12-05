@@ -3,9 +3,10 @@ import {Response, expect} from '@playwright/test';
 import {
     ConnectionsDialogQA,
     ControlQA,
+    DashEntryQa,
+    DialogDashWidgetQA,
     DialogTabsQA,
     EntryDialogQA,
-    DialogDashWidgetQA,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -23,20 +24,21 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
-import Description from './Description';
-import TableOfContent from './TableOfContent';
+import {DashboardDialogSettingsQa, DialogDashWidgetItemQA} from '../../../src/shared';
 import {
     ActionPanelDashSaveControls,
     ActionPanelEntryContextMenuQa,
 } from '../../../src/shared/constants/qa/action-panel';
 import {
+    DashKitOverlayMenuQa,
     DashboardAddWidgetQa,
     DashboardDialogControl,
-    DashKitOverlayMenuQa,
 } from '../../../src/shared/constants/qa/dash';
 import {CommonSelectors} from '../constants/common-selectors';
-import {DashboardDialogSettingsQa} from '../../../src/shared';
+import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
+import Description from './Description';
+import TableOfContent from './TableOfContent';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -88,6 +90,7 @@ class DashboardPage extends BasePage {
         dialogCancelBtn: 'dialog-cancel-button',
         chartGridItemContainer: `${slct(COMMON_DASH_SELECTORS.DASH_GRID_ITEM)} .chartkit`,
         dashPluginWidgetBody: slct('chart-widget'),
+        dashkitGridItem: slct('dashkit-grid-item'),
     };
 
     static qa = {
@@ -98,6 +101,7 @@ class DashboardPage extends BasePage {
     tableOfContent: TableOfContent;
     description: Description;
     dialogControl: DialogControl;
+    dashTabs: DashTabs;
 
     constructor({page}: DashboardPageProps) {
         super({page});
@@ -105,6 +109,7 @@ class DashboardPage extends BasePage {
         this.description = new Description(page);
         this.tableOfContent = new TableOfContent(page, this);
         this.dialogControl = new DialogControl(page);
+        this.dashTabs = new DashTabs(page);
     }
 
     async waitForResponses(url: string, timeout = API_TIMEOUT): Promise<Array<Response>> {
@@ -150,9 +155,7 @@ class DashboardPage extends BasePage {
         ]);
 
         // check that the dashboard has loaded by its name
-        await this.page.waitForSelector(
-            `${slct(COMMON_SELECTORS.DASH_ENTRY_NAME)} >> text=${dashName}`,
-        );
+        await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
     }
 
     async copyDashboard(dashName: string) {
@@ -279,6 +282,23 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
 
+    async clickAddText() {
+        await this.page.click(slct(DashboardAddWidgetQa.AddText));
+    }
+
+    async addText(text: string) {
+        await this.clickAddText();
+        await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
+        await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+        await this.page.click(slct(DialogDashWidgetQA.Apply));
+    }
+
+    getDashKitTextItem(text: string) {
+        return this.page
+            .locator(DashboardPage.selectors.dashkitGridItem)
+            .getByText(text, {exact: true});
+    }
+
     async deleteSelector(controlTitle: string) {
         const control = this.page.locator(slct('dashkit-grid-item'), {
             has: this.page.locator(slct('chartkit-control-title', controlTitle)),
@@ -335,6 +355,25 @@ class DashboardPage extends BasePage {
             const deleteLockPromise = this.page.waitForRequest(URLS.deleteLock);
             await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
             await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
+
+            // if there are changes, a dialog with a warning about the unsaved changes will appear
+            const warningCancelDialog = this.page.locator(
+                slct(DashboardPage.selectors.dialogConfirm),
+            );
+            const editButton = this.page.locator(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
+
+            await expect(editButton.or(warningCancelDialog)).toBeVisible();
+
+            if (await editButton.isVisible()) {
+                await deleteLockPromise;
+                return;
+            }
+
+            // if there is a dialog, click the apply button
+            const applyBtn = await this.page.waitForSelector(
+                slct(DashboardPage.selectors.dialogConfirmApplyBtn),
+            );
+            await applyBtn.click();
             await deleteLockPromise;
             await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
         } catch {
@@ -691,12 +730,6 @@ class DashboardPage extends BasePage {
             const elems = await this.page.$$(DashboardPage.selectors.chartGridItemContainer);
             return elems.length === 0;
         });
-    }
-
-    async getTabByIdx(idx: number) {
-        return this.page.$(
-            `${DashboardPage.selectors.tabContainer}:nth-child(${idx}) .dl-tabs__tab`,
-        );
     }
 }
 

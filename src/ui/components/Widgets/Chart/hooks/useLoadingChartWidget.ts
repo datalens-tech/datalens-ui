@@ -223,6 +223,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         loadControls,
         drillDownFilters,
         drillDownLevel,
+        setCurrentDrillDownLevel,
         yandexMapAPIWaiting,
         setCanBeLoaded,
         isInit,
@@ -428,13 +429,21 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                     >,
                 );
             }
+            setCurrentDrillDownLevel(0);
             onStateAndParamsChange({
                 state: {
                     tabId: newTabId,
                 },
             });
         },
-        [onStateAndParamsChange, isLoading, requestId, requestCancellationRef, dataProvider],
+        [
+            onStateAndParamsChange,
+            isLoading,
+            requestId,
+            requestCancellationRef,
+            dataProvider,
+            setCurrentDrillDownLevel,
+        ],
     );
 
     /**

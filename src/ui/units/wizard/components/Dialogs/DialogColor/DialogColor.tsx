@@ -7,7 +7,7 @@ import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ColorMode, ColorsConfig, Field, isMeasureValue, isNumberField} from 'shared';
+import {ColorMode, ColorsConfig, Field, isMeasureValue} from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {setDialogColorPaletteState} from 'units/wizard/actions/dialogColor';
 import {selectDataset, selectParameters} from 'units/wizard/selectors/dataset';
@@ -63,15 +63,11 @@ class DialogColorComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        let colorMode = props.colorsConfig?.colorMode;
+        const colorMode = props.colorsConfig?.colorMode;
 
-        if (colorMode) {
-            if (colorMode === ColorMode.GRADIENT && !isNumberField(props.item)) {
-                colorMode = ColorMode.PALETTE;
-            }
-
+        if (colorMode && props.isColorModeChangeAvailable) {
             this.state = {
-                colorMode: colorMode,
+                colorMode,
             };
         } else {
             const isGradient = isGradientDialog({

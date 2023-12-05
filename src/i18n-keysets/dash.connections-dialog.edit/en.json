@@ -16,5 +16,6 @@
   "value_ignore": "Ignore",
   "value_input": "Incoming link",
   "value_none": "No link",
-  "value_output": "Outgoing link"
+  "value_output": "Outgoing link",
+  "value_error": "Error"
 }

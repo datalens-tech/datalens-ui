@@ -127,12 +127,20 @@ export const workbooksActions = {
         params: ({collectionId, title}, headers) => ({body: {collectionId, title}, headers}),
     }),
 
-    migrateEntriesToWorkbook: createAction<
+    migrateEntriesToWorkbookByTransfer: createAction<
         MigrateEntriesToWorkbookResponse,
         MigrateEntriesToWorkbookArgs
     >({
         method: 'POST',
         path: ({workbookId}) => `${PATH_PREFIX}/${workbookId}/migrate-entries`,
+        params: ({entryIds}, headers) => ({body: {entryIds}, headers}),
+    }),
+    migrateEntriesToWorkbookByCopy: createAction<
+        MigrateEntriesToWorkbookResponse,
+        MigrateEntriesToWorkbookArgs
+    >({
+        method: 'POST',
+        path: ({workbookId}) => `${PATH_PREFIX}/${workbookId}/migrate-copied-entries`,
         params: ({entryIds}, headers) => ({body: {entryIds}, headers}),
     }),
 };
