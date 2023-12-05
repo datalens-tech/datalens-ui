@@ -159,4 +159,9 @@
             display: none;
         }
     }
+
+    &__td {
+        // safari(15) cannot apply 100% row height to a cell
+        height: var(--data-table-row-height);
+    }
 }
