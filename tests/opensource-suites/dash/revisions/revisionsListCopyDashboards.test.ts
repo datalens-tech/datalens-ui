@@ -1,13 +1,13 @@
 import {Page} from '@playwright/test';
 
-import {Workbook} from 'page-objects/workbook/Workbook';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {ActionPanelDashSaveControls} from '../../../../src/shared/constants/qa/action-panel';
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage, {RENDER_TIMEOUT} from '../../../page-objects/dashboard/DashboardPage';
 import {cssSlct, deleteEntity, slct} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {WorkbooksUrls} from 'constants/constants';
+import {WorkbooksUrls} from '../../../constants/constants';
 import {arbitraryText} from '../constants';
 
 datalensTest.describe('Dashboard Versioning', () => {
