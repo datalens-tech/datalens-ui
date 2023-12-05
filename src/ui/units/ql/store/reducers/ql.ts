@@ -93,10 +93,10 @@ const initialState: QLState = {
     },
     entry: null,
     metadata: {
-        order: [],
+        order: null,
     },
     tablePreviewData: {},
-    order: [],
+    order: null,
     params: [],
     connection: null,
     connectionSources: [],
@@ -349,7 +349,7 @@ export const getEntryNotChanged = createSelector(
                 queries,
                 chartType,
                 visualization,
-                order: [],
+                order: null,
                 version: QlConfigVersions.V2,
             };
 

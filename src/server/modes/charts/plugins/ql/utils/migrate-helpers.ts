@@ -15,87 +15,111 @@ export const migrateLineVisualization = ({
     let collectingColor = false;
 
     let xIndex = -1;
+    let xFields: Field[] = [];
     const yIndexes: number[] = [];
     const colorIndexes: number[] = [];
 
     let xDeclared = false;
     let yDeclared = false;
 
-    order.forEach((item: QlConfigResultEntryMetadataDataColumnOrGroup) => {
-        const itemIsGroup = isGroup(item);
+    if (order.length) {
+        order.forEach((item: QlConfigResultEntryMetadataDataColumnOrGroup) => {
+            const itemIsGroup = isGroup(item);
 
-        if (itemIsGroup && item.name === 'X') {
-            collectingX = true;
-            return;
-        }
-
-        if (itemIsGroup && item.name === 'Y') {
-            collectingX = false;
-            collectingY = true;
-            return;
-        }
-
-        if (itemIsGroup && item.name === 'Colors') {
-            collectingY = false;
-            collectingColor = true;
-            return;
-        }
-
-        if (itemIsGroup && item.name === 'Available') {
-            collectingX = false;
-            collectingY = false;
-            collectingColor = false;
-            return;
-        }
-
-        if (collectingX && !itemIsGroup) {
-            xIndex = fields.findIndex((column) => column.title === item.name);
-
-            xDeclared = true;
-        }
-
-        if (collectingY && !itemIsGroup) {
-            const yIndex = fields.findIndex((column) => column.title === item.name);
-
-            if (yIndex > -1) {
-                yIndexes.push(yIndex);
+            if (itemIsGroup && item.name === 'X') {
+                collectingX = true;
+                return;
             }
 
-            yDeclared = true;
+            if (itemIsGroup && item.name === 'Y') {
+                collectingX = false;
+                collectingY = true;
+                return;
+            }
+
+            if (itemIsGroup && item.name === 'Colors') {
+                collectingY = false;
+                collectingColor = true;
+                return;
+            }
+
+            if (itemIsGroup && item.name === 'Available') {
+                collectingX = false;
+                collectingY = false;
+                collectingColor = false;
+                return;
+            }
+
+            if (collectingX && !itemIsGroup) {
+                xIndex = fields.findIndex((column) => column.title === item.name);
+
+                xDeclared = true;
+            }
+
+            if (collectingY && !itemIsGroup) {
+                const yIndex = fields.findIndex((column) => column.title === item.name);
+
+                if (yIndex > -1) {
+                    yIndexes.push(yIndex);
+                }
+
+                yDeclared = true;
+            }
+
+            if (collectingColor && !itemIsGroup) {
+                colorIndexes.push(fields.findIndex((column) => column.title === item.name));
+            }
+        });
+
+        if (xDeclared && xIndex === -1) {
+            xIndex = fields.findIndex(
+                (_column, index) => !yIndexes.includes(index) && !colorIndexes.includes(index),
+            );
         }
 
-        if (collectingColor && !itemIsGroup) {
-            colorIndexes.push(fields.findIndex((column) => column.title === item.name));
+        if (yDeclared) {
+            const findNewYIndex = () =>
+                fields.findIndex(
+                    (column, index) =>
+                        (column.cast === DATASET_FIELD_TYPES.INTEGER ||
+                            column.cast === DATASET_FIELD_TYPES.FLOAT) &&
+                        index !== xIndex &&
+                        !colorIndexes.includes(index) &&
+                        !yIndexes.includes(index),
+                );
+
+            let newFoundYIndex = findNewYIndex();
+
+            while (newFoundYIndex > -1) {
+                yIndexes.push(newFoundYIndex);
+
+                newFoundYIndex = findNewYIndex();
+            }
         }
-    });
-
-    if (xDeclared && xIndex === -1) {
-        xIndex = fields.findIndex(
-            (_column, index) => !yIndexes.includes(index) && !colorIndexes.includes(index),
-        );
-    }
-
-    if (yDeclared) {
+    } else {
         const findNewYIndex = () =>
             fields.findIndex(
                 (column, index) =>
                     (column.cast === DATASET_FIELD_TYPES.INTEGER ||
                         column.cast === DATASET_FIELD_TYPES.FLOAT) &&
-                    index !== xIndex &&
-                    !colorIndexes.includes(index) &&
                     !yIndexes.includes(index),
             );
 
         let newFoundYIndex = findNewYIndex();
-
         while (newFoundYIndex > -1) {
             yIndexes.push(newFoundYIndex);
 
             newFoundYIndex = findNewYIndex();
         }
-    }
 
-    let xFields: Field[] = [];
+        xIndex = fields.findIndex((_field, index) => !yIndexes.includes(index));
+
+        fields.forEach((_field, i) => {
+            if (xIndex !== i && !yIndexes.includes(i)) {
+                colorIndexes.push(i);
+            }
+        });
+    }
 
     if (xIndex > -1) {
         xFields = [fields[xIndex]];

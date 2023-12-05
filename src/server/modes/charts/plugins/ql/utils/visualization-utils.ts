@@ -25,7 +25,7 @@ export const migrateOrAutofillVisualization = ({
     colors: originalColors,
 }: {
     visualization: ServerVisualization;
-    order?: QlConfigResultEntryMetadataDataColumnOrGroup[];
+    order?: QlConfigResultEntryMetadataDataColumnOrGroup[] | null;
     fields: Field[];
     colors?: Field[];
 }) => {
@@ -47,7 +47,7 @@ export const migrateOrAutofillVisualization = ({
             WizardVisualizationId.BarXD3,
         ]).has(visualizationId as WizardVisualizationId)
     ) {
-        if (order && order.length > 0) {
+        if (order) {
             // Order is set, so we need to migrate old order to new structure
             const {
                 xFields,
