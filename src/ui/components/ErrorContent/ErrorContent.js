@@ -267,15 +267,17 @@ class ErrorContent extends React.PureComponent {
 
         return (
             <div className={b({'no-controls': noControls, mobile: DL.IS_MOBILE, size}, className)}>
-                <PlaceholderIllustration
-                    name={imageName}
-                    title={this.renderTitle()}
-                    description={this.renderDescription()}
-                    renderAction={this.renderAction}
-                    size={size}
-                    direction={direction}
-                />
-                {isMobileView && this.renderActions()}
+                <div className={b('illustration-container')}>
+                    <PlaceholderIllustration
+                        name={imageName}
+                        title={this.renderTitle()}
+                        description={this.renderDescription()}
+                        renderAction={this.renderAction}
+                        size={size}
+                        direction={direction}
+                    />
+                    {isMobileView && this.renderActions()}
+                </div>
                 {showDebugActions && this.renderDebugInfo()}
             </div>
         );
