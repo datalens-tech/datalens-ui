@@ -103,6 +103,11 @@ export enum TabMenuQA {
 
 export enum DialogDashWidgetItemQA {
     Text = 'dialog_widget-text',
+    Title = 'dialog_widget-title',
+}
+
+export enum DialogDashTitleQA {
+    Input = 'dialog-dash-title-input',
 }
 
 export enum DialogDashWidgetQA {
