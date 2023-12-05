@@ -1,7 +1,7 @@
 import {ElementHandle, Page} from '@playwright/test';
 
-import {WorkbooksUrls} from 'constants/constants';
-import {Workbook} from 'page-objects/workbook/Workbook';
+import {WorkbooksUrls} from '../../../constants/constants';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {DashEntryQa} from '../../../../src/shared/constants';
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage, {RENDER_TIMEOUT} from '../../../page-objects/dashboard/DashboardPage';

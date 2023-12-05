@@ -1,7 +1,7 @@
 import {Browser, Page} from '@playwright/test';
 
-import {WorkbooksUrls} from 'constants/constants';
-import {Workbook} from 'page-objects/workbook/Workbook';
+import {WorkbooksUrls} from '../../../constants/constants';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {ControlQA} from '../../../../src/shared/constants/qa/control';
 import {DashKitOverlayMenuQa} from '../../../../src/shared/constants/qa/dash';
 import Revisions from '../../../page-objects/common/Revisions';
