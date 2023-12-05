@@ -9,13 +9,18 @@ import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {EntryScope, PLACE} from 'shared';
+import {QLChartType} from 'shared/constants/ql';
 import {DL, DatalensGlobalState, EntryDialogues, MonacoTypes, NavigationMinimal, sdk} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
+import {
+    AVAILABLE_MONITORINGQL_CONNECTION_TYPES,
+    AVAILABLE_PROMQL_CONNECTION_TYPES,
+} from 'ui/units/ql/constants/index';
 
 import {ScreenEditorQA, TabQueryQA} from '../../../../../../shared';
 import {registry} from '../../../../../registry';
-import {AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE} from '../../../constants';
+import {AVAILABLE_CONNECTION_TYPES} from '../../../constants';
 import {drawPreview, performManualConfiguration} from '../../../store/actions/ql';
 import {
     getChartType,
@@ -167,9 +172,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                                 onEntryClick={this.onNavigationEntryClick}
                                 workbookId={workbookId}
                                 scope={EntryScope.Connection}
-                                includeClickableType={
-                                    AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE[chartType]
-                                }
+                                includeClickableType={AVAILABLE_CONNECTION_TYPES}
                             />
                         ) : (
                             <NavigationMinimal
@@ -186,9 +189,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                                     PLACE.FAVORITES,
                                     PLACE.CONNECTIONS,
                                 ])}
-                                includeClickableType={
-                                    AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE[chartType]
-                                }
+                                includeClickableType={AVAILABLE_CONNECTION_TYPES}
                             />
                         )}
                     </div>
@@ -237,15 +238,28 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
         });
     };
 
-    private onNavigationEntryClick = async (newConnection: {entryId: string}) => {
+    private onNavigationEntryClick = async (newConnection: {entryId: string; type: string}) => {
         const connection = {
-            ...newConnection,
+            ...(newConnection as any),
             data: null,
             public: false,
             revId: '',
             tenantId: '',
             unversionedData: null,
         } as QLConnectionEntry;
+
+        let chartType = QLChartType.Sql;
+
+        if (AVAILABLE_PROMQL_CONNECTION_TYPES.includes(newConnection.type)) {
+            chartType = QLChartType.Promql;
+        } else if (AVAILABLE_MONITORINGQL_CONNECTION_TYPES.includes(newConnection.type)) {
+            chartType = QLChartType.Monitoringql;
+        }
+
+        this.props.performManualConfiguration({
+            connection,
+            chartType,
+        });
 
         this.props.performManualConfiguration({connection});
 

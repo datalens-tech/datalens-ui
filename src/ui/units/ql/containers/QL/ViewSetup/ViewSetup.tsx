@@ -17,7 +17,7 @@ import type {GetEntryResponse} from '../../../../../../shared/schema';
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {registry} from '../../../../../registry';
-import {AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE, AppStatus} from '../../../constants';
+import {AVAILABLE_CONNECTION_TYPES, AppStatus} from '../../../constants';
 import {performManualConfiguration, setError, setStatus} from '../../../store/actions/ql';
 import {getDefaultPath, getEntry} from '../../../store/reducers/ql';
 import {QLConnectionEntry, QLEntry} from '../../../store/typings/ql';
@@ -206,9 +206,7 @@ class ViewSetup extends React.PureComponent<ViewSetupInnerProps, ViewSetupState>
                                 onEntryClick={this.onNavigationEntryClick}
                                 workbookId={workbookId}
                                 scope={EntryScope.Connection}
-                                includeClickableType={
-                                    AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE[chartType]
-                                }
+                                includeClickableType={AVAILABLE_CONNECTION_TYPES}
                             />
                         ) : (
                             <NavigationMinimal
@@ -226,9 +224,7 @@ class ViewSetup extends React.PureComponent<ViewSetupInnerProps, ViewSetupState>
                                     PLACE.FAVORITES,
                                     PLACE.CONNECTIONS,
                                 ])}
-                                includeClickableType={
-                                    AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE[chartType]
-                                }
+                                includeClickableType={AVAILABLE_CONNECTION_TYPES}
                             />
                         )}
                     </div>
