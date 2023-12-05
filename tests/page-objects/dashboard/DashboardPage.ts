@@ -24,7 +24,11 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
-import {DashboardDialogSettingsQa, DialogDashWidgetItemQA} from '../../../src/shared';
+import {
+    DashboardDialogSettingsQa,
+    DialogDashTitleQA,
+    DialogDashWidgetItemQA,
+} from '../../../src/shared';
 import {
     ActionPanelDashSaveControls,
     ActionPanelEntryContextMenuQa,
@@ -291,6 +295,17 @@ class DashboardPage extends BasePage {
         await this.clickAddText();
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
         await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+        await this.page.click(slct(DialogDashWidgetQA.Apply));
+    }
+
+    async clickAddTitle() {
+        await this.page.click(slct(DashboardAddWidgetQa.AddTitle));
+    }
+
+    async addTitle(text: string) {
+        await this.clickAddTitle();
+        await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Title));
+        await this.page.fill(`${slct(DialogDashTitleQA.Input)} input`, text);
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
 
