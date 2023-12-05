@@ -63,14 +63,14 @@ export function App({...routeProps}: RouteComponentProps) {
         return () => {
             Utils.removeBodyClass(...dashClasses);
 
-            if (showAsideHeader) {
+            if (showAsideHeader || DL.IS_MOBILE) {
                 dispatch(setCurrentPageEntry(null));
             }
         };
     }, [dispatch]);
 
     React.useEffect(() => {
-        if (showAsideHeader) {
+        if (showAsideHeader || DL.IS_MOBILE) {
             dispatch(setCurrentPageEntry(entry as unknown as CurrentPageEntry));
         }
     }, [entry, showAsideHeader, dispatch]);
