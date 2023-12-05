@@ -1,11 +1,11 @@
 import {Page} from '@playwright/test';
 
-import {Workbook} from 'page-objects/workbook/Workbook';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
-import {deleteEntity} from 'utils';
-import {WorkbooksUrls} from 'constants/constants';
+import {deleteEntity} from '../../../utils';
+import {WorkbooksUrls} from '../../../constants/constants';
 
 datalensTest.describe('Dashboard - Table of Contents', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
