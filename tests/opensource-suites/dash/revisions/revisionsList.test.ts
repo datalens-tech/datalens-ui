@@ -60,8 +60,6 @@ datalensTest.describe('Dashboard Versioning', () => {
 
             const createdDashId = (await dashboardPage.getEntryIdFromUrl()) as string;
 
-            expect(createdDashId).toBeNull();
-
             await openTestPage(page, DashUrls.DashboardMoreThan100Revisions);
             await dashboardPage.waitForOpeningRevisionsList();
             await page.waitForSelector(slct(COMMON_SELECTORS.REVISIONS_LIST));

@@ -112,7 +112,6 @@ datalensTest.describe('Dashboard Versioning', () => {
             expect(draftItems).toHaveLength(0);
 
             await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
-            // await dashboardPage.deleteDashFromViewMode();
 
             await openTestPage(page, prevPagePathname);
 
