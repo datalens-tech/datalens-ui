@@ -62,7 +62,6 @@ class DashboardPage extends BasePage {
         dialogWarningEditBtn: 'dialog-draft-warning-edit-btn',
         dialogConfirm: 'dialog-confirm',
         dialogConfirmApplyBtn: 'dialog-confirm-apply-button',
-        dialogDashMeta: '.dialog-dash-meta',
         mobileModal: '.yc-mobile-modal',
         tabsContainer: '.gc-adaptive-tabs',
         tabsList: '.gc-adaptive-tabs__tabs-list',
@@ -92,10 +91,6 @@ class DashboardPage extends BasePage {
         chartGridItemContainer: `${slct(COMMON_DASH_SELECTORS.DASH_GRID_ITEM)} .chartkit`,
         dashPluginWidgetBody: slct('chart-widget'),
         dashkitGridItem: slct('dashkit-grid-item'),
-    };
-
-    static qa = {
-        dialogDashMeta: 'dialog-dash-meta',
     };
 
     revisions: Revisions;

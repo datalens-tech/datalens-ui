@@ -1,10 +1,9 @@
 import {Page} from '@playwright/test';
 
-import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
 import {slct, waitForCondition} from '../../utils';
 import {COMMON_SELECTORS} from '../../utils/constants';
 
-import DashboardPage from './DashboardPage';
+import {DashMetaQa} from '../../../src/shared';
 
 export default class Description {
     page: Page;
@@ -19,16 +18,16 @@ export default class Description {
     }
 
     async close() {
-        await this.page.click(`${slct(DashboardPage.qa.dialogDashMeta)} .yc-dialog-btn-close__btn`);
+        await this.page.click(`${slct(DashMetaQa.Dialog)} .yc-dialog-btn-close__btn`);
         await this.closed();
     }
 
     async isViewMode() {
-        await this.page.waitForSelector(slct(COMMON_DASH_SELECTORS.DASH_META_EDIT_BTN));
+        await this.page.waitForSelector(slct(DashMetaQa.EditButton));
     }
 
     async isEditMode() {
-        await this.page.waitForSelector(slct(COMMON_DASH_SELECTORS.DASH_META_SAVE_BTN));
+        await this.page.waitForSelector(slct(DashMetaQa.SaveButton));
     }
 
     private async clickDescription() {
@@ -36,12 +35,12 @@ export default class Description {
     }
 
     private async opened() {
-        await this.page.$$(DashboardPage.selectors.dialogDashMeta);
+        await this.page.$$(`.${DashMetaQa.Dialog}`);
     }
 
     private async closed() {
         await waitForCondition(async () => {
-            const elements = await this.page.$$(DashboardPage.selectors.dialogDashMeta);
+            const elements = await this.page.$$(`.${DashMetaQa.Dialog}`);
             return elements.length === 0;
         });
     }

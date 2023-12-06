@@ -7,6 +7,7 @@ import {I18n} from 'i18n';
 import {TextEditor} from 'ui/components/TextEditor/TextEditor';
 import {DialogDashMetaProps} from 'ui/registry/units/dash/types/DialogDashMeta';
 
+import {DashMetaQa} from '../../../../shared/constants/qa/dash';
 import logger from '../../../libs/logger';
 import {MarkdownProvider} from '../../../modules';
 import {YfmWrapper} from '../../YfmWrapper/YfmWrapper';
@@ -89,7 +90,7 @@ export const DialogDashMeta = (props: DialogDashMetaProps) => {
             open={props.visible}
             onClose={handleClose}
             disableOutsideClick={true}
-            qa="dialog-dash-meta"
+            qa={DashMetaQa.Dialog}
             disableFocusTrap={true}
         >
             <Dialog.Header caption={props.title} />
@@ -113,7 +114,7 @@ export const DialogDashMeta = (props: DialogDashMetaProps) => {
                         textButtonApply={i18n('button_save')}
                         propsButtonApply={{
                             disabled: props.maxLength ? text.length > props.maxLength : false,
-                            qa: 'dash-meta-save-button',
+                            qa: DashMetaQa.SaveButton,
                         }}
                         onClickButtonCancel={handleClose}
                         textButtonCancel={i18n('button_cancel')}
@@ -142,7 +143,7 @@ export const DialogDashMeta = (props: DialogDashMetaProps) => {
                             <Button
                                 view="flat-secondary"
                                 onClick={handleEdit}
-                                qa="dash-meta-edit-button"
+                                qa={DashMetaQa.EditButton}
                             >
                                 <Icon data={Pencil} size={16} />
                                 {i18n('button_edit')}
