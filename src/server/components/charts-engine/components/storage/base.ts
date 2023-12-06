@@ -18,6 +18,7 @@ export type ResolveConfigProps = {
     unreleased?: boolean;
     noCache?: boolean;
     requestId?: string;
+    usUrl?: string;
 };
 
 export type BaseStorageInitParams = {
@@ -110,9 +111,10 @@ export class BaseStorage {
             headers: Request['headers'];
             unreleased: boolean;
             requestId?: string;
+            usUrl?: string;
         },
     ): Promise<ResolvedConfig | EmbeddingInfo> {
-        const {headers, unreleased, requestId} = params;
+        const {headers, unreleased, requestId, usUrl} = params;
         if (requestId) {
             headers[this.requestIdHeaderName] = requestId;
         }
@@ -121,6 +123,7 @@ export class BaseStorage {
             headers,
             unreleased: this.flags.alwaysUnreleased ? true : unreleased,
             includePermissionsInfo: true,
+            usUrl,
         };
 
         const onConfigFetched = this.telemetryCallbacks.onConfigFetched || (() => {});
@@ -181,6 +184,7 @@ export class BaseStorage {
             unreleased = false,
             noCache = false,
             requestId,
+            usUrl,
         } = props;
         if (!noCache && !unreleased && this.cachedConfigs[key]) {
             ctx.log('STORAGE_CONF_PRELOAD_HIT', {key});
@@ -194,6 +198,7 @@ export class BaseStorage {
             headers,
             unreleased,
             requestId,
+            usUrl,
         });
     }
 

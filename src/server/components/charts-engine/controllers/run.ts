@@ -11,7 +11,14 @@ import {resolveConfig} from '../components/storage';
 import {ResolveConfigProps} from '../components/storage/base';
 import {getDuration} from '../components/utils';
 
-export const runController = (chartsEngine: ChartsEngine) => {
+type RunControllerExtraSettings = {
+    usUrl?: string;
+};
+
+export const runController = (
+    chartsEngine: ChartsEngine,
+    extraSettings?: RunControllerExtraSettings,
+) => {
     return function chartsRunController(req: Request, res: Response) {
         const {ctx} = req;
         const app = registry.getApp();
@@ -80,6 +87,7 @@ export const runController = (chartsEngine: ChartsEngine) => {
                     ...ctx.getMetadata(),
                 },
                 requestId: req.id,
+                usUrl: extraSettings?.usUrl,
             };
 
             configPromise = ctx.call('configLoading', (cx) => resolveConfig(cx, configResolveArgs));
