@@ -1,7 +1,6 @@
 import {AppContext} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
-import {SUBJECT_TOKEN_HEADER} from '../../../../../../shared/constants';
 import {Feature, isEnabledServerFeature} from '../../../../shared';
 import {Processor, ProcessorParams} from '../components/processor';
 import {getDuration} from '../components/utils';
@@ -18,7 +17,7 @@ export const runEditor = (
 
     const {params, actionParams, widgetConfig} = req.body;
 
-    const iamToken = res?.locals?.iamToken ?? req.headers[SUBJECT_TOKEN_HEADER];
+    const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
