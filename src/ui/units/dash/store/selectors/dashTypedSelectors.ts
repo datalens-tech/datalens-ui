@@ -1,4 +1,4 @@
-import {Operation} from 'components/DialogFilter/constants';
+import {BOOLEAN_OPERATIONS, Operation} from 'components/DialogFilter/constants';
 import {getAvailableOperations} from 'components/DialogFilter/utils';
 import {DatalensGlobalState} from 'index';
 import {getFilterOperations} from 'libs/datasetHelper';
@@ -113,6 +113,10 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
         state.dash as DashState
     ).selectorDialog;
 
+    if (sourceType !== 'dataset' && elementType === 'checkbox') {
+        return BOOLEAN_OPERATIONS;
+    }
+
     if (sourceType !== 'dataset') {
         return ALL_OPERATIONS;
     }
@@ -153,6 +157,11 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
             }
 
             inputOperations = INPUT_OPERATIONS_NUMBER_OR_DATE;
+            break;
+        }
+
+        case 'checkbox': {
+            inputOperations = BOOLEAN_OPERATIONS;
             break;
         }
     }

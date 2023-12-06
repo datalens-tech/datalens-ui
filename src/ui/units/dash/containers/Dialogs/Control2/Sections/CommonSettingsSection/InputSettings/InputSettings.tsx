@@ -35,7 +35,7 @@ const InputSettings = ({isSectionHidden}: InputSettingsProps) => {
         <React.Fragment>
             <SectionWrapper
                 isStylesHidden={isSectionHidden}
-                title={!isSectionHidden ? i18n('label_common-settings') : ''}
+                title={isSectionHidden ? '' : i18n('label_common-settings')}
             >
                 <FormRow label={i18n('field_field-name')}>
                     <FieldWrapper error={validation.fieldName}>

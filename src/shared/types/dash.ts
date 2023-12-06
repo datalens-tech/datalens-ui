@@ -26,6 +26,7 @@ export enum DashTabItemControlElementType {
     Select = 'select',
     Date = 'date',
     Input = 'input',
+    Checkbox = 'checkbox',
 }
 
 export enum DashTabConnectionKind {

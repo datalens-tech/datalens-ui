@@ -111,6 +111,10 @@ function DatasetSelector() {
                 elementType = ELEMENT_TYPE.INPUT;
             }
 
+            if (data.fieldType === DATASET_FIELD_TYPES.BOOLEAN) {
+                elementType = ELEMENT_TYPE.CHECKBOX;
+            }
+
             const args: SetSelectorDialogItemArgs = {
                 datasetFieldId: data.fieldId,
                 elementType,

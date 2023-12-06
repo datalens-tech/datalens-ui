@@ -7,5 +7,6 @@ export const dash: DashParametrizationConfig = {
         DashboardLoadPriorityCharts: DashUrls.DashboardLoadPriorityCharts,
         DashboardLoadPrioritySelectors: DashUrls.DashboardLoadPrioritySelectors,
         DashboardWithTabsAndSelectors: DashUrls.DashboardWithTabsAndSelectors,
+        DashboardMoreThan100Revisions: DashUrls.DashboardMoreThan100Revisions,
     },
 };

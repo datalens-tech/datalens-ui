@@ -50,6 +50,3 @@ export const DELETE_WORKBOOK_LOADING = Symbol('collections/DELETE_WORKBOOK_LOADI
 export const DELETE_WORKBOOK_SUCCESS = Symbol('collections/DELETE_WORKBOOK_SUCCESS');
 export const DELETE_WORKBOOK_FAILED = Symbol('collections/DELETE_WORKBOOK_FAILED');
 export const DELETE_WORKBOOK_IN_ITEMS = Symbol('collections/DELETE_WORKBOOK_IN_ITEMS');
-
-export const UPDATE_COLLECTION_IN_ITEMS = Symbol('collections/UPDATE_COLLECTION_IN_ITEMS');
-export const UPDATE_WORKBOOK_IN_ITEMS = Symbol('collections/UPDATE_WORKBOOK_IN_ITEMS');

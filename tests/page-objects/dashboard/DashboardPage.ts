@@ -57,6 +57,7 @@ export interface DashboardPageProps extends BasePageProps {}
 class DashboardPage extends BasePage {
     static selectors = {
         title: 'dashkit-plugin-title',
+        text: 'dashkit-plugin-text',
         dialogWarning: 'dialog-draft-warning',
         dialogWarningEditBtn: 'dialog-draft-warning-edit-btn',
         dialogConfirm: 'dialog-confirm',
@@ -523,12 +524,17 @@ class DashboardPage extends BasePage {
             });
     }
 
-    async saveChangesAsNewDash(dashName: string) {
-        // save your changes as a new dashboard
+    async clickSaveChangesAsNewDash() {
         await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
 
         await clickDropDownOption(this.page, ActionPanelDashSaveControls.SaveAsNewDropdownItem);
+    }
+
+    async saveChangesAsNewDash(dashName: string) {
+        // save your changes as a new dashboard
+        await this.clickSaveChangesAsNewDash();
+
         // click the Apply button in the dashboard copy dialog
         await this.page.waitForSelector(slct(EntryDialogQA.Apply));
         await Promise.all([
