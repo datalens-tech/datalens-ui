@@ -12,7 +12,7 @@ import {ResolveConfigProps} from '../components/storage/base';
 import {getDuration} from '../components/utils';
 
 type RunControllerExtraSettings = {
-    usUrl?: string;
+    usPath?: string;
 };
 
 export const runController = (
@@ -87,7 +87,7 @@ export const runController = (
                     ...ctx.getMetadata(),
                 },
                 requestId: req.id,
-                usUrl: extraSettings?.usUrl,
+                usPath: extraSettings?.usPath,
             };
 
             configPromise = ctx.call('configLoading', (cx) => resolveConfig(cx, configResolveArgs));

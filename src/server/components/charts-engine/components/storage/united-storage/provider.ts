@@ -251,10 +251,10 @@ export class USProvider {
             includeLinks,
             includePermissionsInfo,
             headers,
-            usUrl,
+            usPath,
         }: {
             id: string;
-            usUrl?: string;
+            usPath?: string;
             unreleased: boolean | string;
             includeLinks?: boolean | string;
             includePermissionsInfo?: boolean | string;
@@ -286,7 +286,7 @@ export class USProvider {
         }
         const formattedHeaders = formatPassedHeaders(headers, ctx);
         const axiosArgs: AxiosRequestConfig = {
-            url: usUrl || `${usEndpoint}/v1/entries/${id}`,
+            url: usPath ? `${usEndpoint}${usPath}/${id}` : `${usEndpoint}/v1/entries/${id}`,
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             params,
