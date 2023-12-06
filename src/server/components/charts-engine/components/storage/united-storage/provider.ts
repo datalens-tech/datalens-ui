@@ -141,7 +141,11 @@ const PASSED_HEADERS = [
 const DEFAULT_MAX_BODY_LENGTH = 15 * 1024 * 1024; // 100 MB
 const DEFAULT_MAX_CONTENT_LENGTH = 15 * 1024 * 1024; // 100 MB
 
-function formatPassedHeaders(headers: Request['headers'], ctx: AppContext) {
+function formatPassedHeaders(
+    headers: Request['headers'],
+    ctx: AppContext,
+    extraAllowedHeaders?: string[],
+) {
     const headersNew: Request['headers'] = {};
 
     const {headersMap} = ctx.config;
@@ -153,6 +157,7 @@ function formatPassedHeaders(headers: Request['headers'], ctx: AppContext) {
         headersMap.subjectToken,
         PROJECT_ID_HEADER,
         TENANT_ID_HEADER,
+        ...(extraAllowedHeaders || []),
     ];
 
     if (headers) {
@@ -252,9 +257,11 @@ export class USProvider {
             includePermissionsInfo,
             headers,
             usPath,
+            extraAllowedHeaders,
         }: {
             id: string;
             usPath?: string;
+            extraAllowedHeaders?: string[];
             unreleased: boolean | string;
             includeLinks?: boolean | string;
             includePermissionsInfo?: boolean | string;
@@ -284,7 +291,7 @@ export class USProvider {
         if (revId) {
             params.revId = revId;
         }
-        const formattedHeaders = formatPassedHeaders(headers, ctx);
+        const formattedHeaders = formatPassedHeaders(headers, ctx, extraAllowedHeaders);
         const axiosArgs: AxiosRequestConfig = {
             url: usPath ? `${usEndpoint}${usPath}/${id}` : `${usEndpoint}/v1/entries/${id}`,
             method: 'get',

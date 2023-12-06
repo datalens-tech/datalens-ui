@@ -13,6 +13,7 @@ import {getDuration} from '../components/utils';
 
 type RunControllerExtraSettings = {
     usPath?: string;
+    extraAllowedHeaders?: string[];
 };
 
 export const runController = (
@@ -87,7 +88,7 @@ export const runController = (
                     ...ctx.getMetadata(),
                 },
                 requestId: req.id,
-                usPath: extraSettings?.usPath,
+                ...extraSettings,
             };
 
             configPromise = ctx.call('configLoading', (cx) => resolveConfig(cx, configResolveArgs));
