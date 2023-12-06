@@ -127,7 +127,7 @@ class DatasetItem extends React.Component<DatasetItemInnerProps> {
                 </div>
                 <div
                     className={`${b('item-title')}`}
-                    data-qa="section-dataset-draggable-item-title"
+                    data-qa={SectionDatasetQA.ItemTitle}
                     title={itemTitleAndDescription}
                 >
                     {itemTitle}

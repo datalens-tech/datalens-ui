@@ -117,6 +117,7 @@ export const enum DialogFieldEditorQA {
 
 export const enum NavigationMinimalPlaceSelectQa {
     Connections = 'navigation-minimal-place-connections',
+    Datasets = 'navigation-minimal-place-datasets',
 }
 
 export const enum RelativeDatepickerQa {
