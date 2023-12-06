@@ -12,7 +12,7 @@ import {ResolveConfigProps} from '../components/storage/base';
 import {getDuration} from '../components/utils';
 
 type RunControllerExtraSettings = {
-    usPath?: string;
+    storageApiPath?: string;
     extraAllowedHeaders?: string[];
 };
 

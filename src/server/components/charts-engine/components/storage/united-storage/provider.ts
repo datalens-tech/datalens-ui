@@ -203,7 +203,7 @@ function formatPassedProperties(entry: Entry = {}) {
     return formattedData as ResolvedConfig;
 }
 
-let usEndpoint: string;
+let storageEndpoint: string;
 
 export type ProviderUpdateParams = {
     entryId: string;
@@ -242,7 +242,7 @@ export class USProvider {
     };
 
     static init({endpoint, requestIdHeaderName}: {endpoint: string; requestIdHeaderName: string}) {
-        usEndpoint = endpoint;
+        storageEndpoint = endpoint;
 
         PASSED_HEADERS.push(requestIdHeaderName);
     }
@@ -256,11 +256,11 @@ export class USProvider {
             includeLinks,
             includePermissionsInfo,
             headers,
-            usPath,
+            storageApiPath,
             extraAllowedHeaders,
         }: {
             id: string;
-            usPath?: string;
+            storageApiPath?: string;
             extraAllowedHeaders?: string[];
             unreleased: boolean | string;
             includeLinks?: boolean | string;
@@ -293,7 +293,9 @@ export class USProvider {
         }
         const formattedHeaders = formatPassedHeaders(headers, ctx, extraAllowedHeaders);
         const axiosArgs: AxiosRequestConfig = {
-            url: usPath ? `${usEndpoint}${usPath}/${id}` : `${usEndpoint}/v1/entries/${id}`,
+            url: storageApiPath
+                ? `${storageEndpoint}${storageApiPath}/${id}`
+                : `${storageEndpoint}/v1/entries/${id}`,
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             params,
@@ -367,7 +369,7 @@ export class USProvider {
 
         const formattedHeaders = formatPassedHeaders(headers, ctx);
         const axiosArgs: AxiosRequestConfig = {
-            url: `${usEndpoint}/v1/entriesByKey`,
+            url: `${storageEndpoint}/v1/entriesByKey`,
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             params,
@@ -420,7 +422,7 @@ export class USProvider {
         };
         const formattedHeaders = formatPassedHeaders(headersWithToken, ctx);
         const axiosArgs: AxiosRequestConfig = {
-            url: `${usEndpoint}/v1/embedded-chart/`,
+            url: `${storageEndpoint}/v1/embedded-chart/`,
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             timeout: TEN_SECONDS,
@@ -508,7 +510,7 @@ export class USProvider {
         }
         const formattedHeaders = formatPassedHeaders(headers, ctx);
         const axiosArgs: AxiosRequestConfig = {
-            url: `${usEndpoint}/v1/entries`,
+            url: `${storageEndpoint}/v1/entries`,
             method: 'post',
             headers: injectMetadata(formattedHeaders, ctx),
             data: postedData,
@@ -593,7 +595,7 @@ export class USProvider {
         }
         const formattedHeaders = formatPassedHeaders(headers, ctx);
         const axiosArgs: AxiosRequestConfig = {
-            url: `${usEndpoint}/v1/entries/${entryId}`,
+            url: `${storageEndpoint}/v1/entries/${entryId}`,
             method: 'post',
             headers: injectMetadata(formattedHeaders, ctx),
             data: postedData,
@@ -636,7 +638,7 @@ export class USProvider {
         const hrStart = process.hrtime();
         const formattedHeaders = formatPassedHeaders(headers, ctx);
         const axiosArgs: AxiosRequestConfig = {
-            url: `${usEndpoint}/v1/entries/${id}`,
+            url: `${storageEndpoint}/v1/entries/${id}`,
             method: 'delete',
             headers: injectMetadata(formattedHeaders, ctx),
             timeout: TEN_SECONDS,

@@ -18,7 +18,7 @@ export type ResolveConfigProps = {
     unreleased?: boolean;
     noCache?: boolean;
     requestId?: string;
-    usPath?: string;
+    storageApiPath?: string;
     extraAllowedHeaders?: string[];
 };
 
@@ -112,20 +112,20 @@ export class BaseStorage {
             headers: Request['headers'];
             unreleased: boolean;
             requestId?: string;
-            usPath?: string;
+            storageApiPath?: string;
             extraAllowedHeaders?: string[];
         },
     ): Promise<ResolvedConfig | EmbeddingInfo> {
-        const {headers, unreleased, requestId, usPath, extraAllowedHeaders} = params;
+        const {headers, unreleased, requestId, storageApiPath, extraAllowedHeaders} = params;
         if (requestId) {
             headers[this.requestIdHeaderName] = requestId;
         }
 
-        const usRetrieveArgs = {
+        const storageRetrieveArgs = {
             headers,
             unreleased: this.flags.alwaysUnreleased ? true : unreleased,
             includePermissionsInfo: true,
-            usPath,
+            storageApiPath,
             extraAllowedHeaders,
         };
 
@@ -138,16 +138,16 @@ export class BaseStorage {
         let id: string;
 
         if (params.id) {
-            retrieve = this.provider.retrieveById(ctx, {id: params.id, ...usRetrieveArgs});
+            retrieve = this.provider.retrieveById(ctx, {id: params.id, ...storageRetrieveArgs});
             id = params.id;
         } else if (params.embedToken) {
             retrieve = this.provider.retrieveByToken(ctx, {
                 token: params.embedToken,
-                ...usRetrieveArgs,
+                ...storageRetrieveArgs,
             });
             id = params.embedId || 'wrongToken';
         } else if (params.key) {
-            retrieve = this.provider.retrieveByKey(ctx, {key: params.key, ...usRetrieveArgs});
+            retrieve = this.provider.retrieveByKey(ctx, {key: params.key, ...storageRetrieveArgs});
             id = params.key;
         } else {
             throw new Error('Wrong fetch config params');
@@ -187,7 +187,7 @@ export class BaseStorage {
             unreleased = false,
             noCache = false,
             requestId,
-            usPath,
+            storageApiPath,
             extraAllowedHeaders,
         } = props;
         if (!noCache && !unreleased && this.cachedConfigs[key]) {
@@ -202,7 +202,7 @@ export class BaseStorage {
             headers,
             unreleased,
             requestId,
-            usPath,
+            storageApiPath,
             extraAllowedHeaders,
         });
     }
