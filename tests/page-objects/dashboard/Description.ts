@@ -35,12 +35,12 @@ export default class Description {
     }
 
     private async opened() {
-        await this.page.$$(`.${DashMetaQa.Dialog}`);
+        await this.page.waitForSelector(slct(DashMetaQa.Dialog));
     }
 
     private async closed() {
         await waitForCondition(async () => {
-            const elements = await this.page.$$(`.${DashMetaQa.Dialog}`);
+            const elements = await this.page.$$(slct(DashMetaQa.Dialog));
             return elements.length === 0;
         });
     }
