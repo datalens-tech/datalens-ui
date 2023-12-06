@@ -3,6 +3,17 @@ import type {QlConfigResultEntryMetadataDataColumnOrGroup} from '../../../../../
 
 import {isGroup} from './misc-helpers';
 
+const findIndexes = ({fields, forbiddenIndexes}: {fields: Field[]; forbiddenIndexes: number[]}) =>
+    fields
+        .map((field, fieldIndex) =>
+            (field.cast === DATASET_FIELD_TYPES.INTEGER ||
+                field.cast === DATASET_FIELD_TYPES.FLOAT) &&
+            !forbiddenIndexes.includes(fieldIndex)
+                ? fieldIndex
+                : null,
+        )
+        .filter((value) => value !== null) as number[];
+
 export const migrateLineVisualization = ({
     order,
     fields,
@@ -18,8 +29,8 @@ export const migrateLineVisualization = ({
 
     let xIndex = -1;
     let xFields: Field[] = [];
-    const yIndexes: number[] = [];
-    const colorIndexes: number[] = [];
+    let yIndexes: number[] = [];
+    let colorIndexes: number[] = [];
 
     let xDeclared = false;
     let yDeclared = false;
@@ -80,62 +91,44 @@ export const migrateLineVisualization = ({
         }
 
         if (yDeclared) {
-            const findNewYIndex = () =>
-                fields.findIndex(
-                    (column, index) =>
-                        (column.cast === DATASET_FIELD_TYPES.INTEGER ||
-                            column.cast === DATASET_FIELD_TYPES.FLOAT) &&
-                        index !== xIndex &&
-                        !colorIndexes.includes(index) &&
-                        !yIndexes.includes(index),
-                );
+            const newYIndexes = findIndexes({
+                fields,
+                forbiddenIndexes: [...yIndexes, xIndex, ...colorIndexes],
+            });
 
-            let newFoundYIndex = findNewYIndex();
-
-            while (newFoundYIndex > -1) {
-                yIndexes.push(newFoundYIndex);
-
-                newFoundYIndex = findNewYIndex();
-            }
+            yIndexes = [...yIndexes, ...newYIndexes];
         }
     } else {
-        const findNewYIndex = () =>
-            fields.findIndex(
-                (column, index) =>
-                    (column.cast === DATASET_FIELD_TYPES.INTEGER ||
-                        column.cast === DATASET_FIELD_TYPES.FLOAT) &&
-                    !yIndexes.includes(index),
-            );
-
-        let newFoundYIndex = findNewYIndex();
-        while (newFoundYIndex > -1) {
-            yIndexes.push(newFoundYIndex);
-
-            newFoundYIndex = findNewYIndex();
-        }
+        yIndexes = findIndexes({
+            fields,
+            forbiddenIndexes: [],
+        });
 
         xIndex = fields.findIndex((_field, index) => !yIndexes.includes(index));
 
-        const homogeneousValues: Set<String>[] = [];
-        const iToHomogeneity: Boolean[] = [];
-        rows.forEach((row) => {
-            row.forEach((value, i) => {
-                if (typeof homogeneousValues[i] === 'undefined') {
-                    homogeneousValues[i] = new Set([value]);
-                    iToHomogeneity[i] = true;
-                } else if (iToHomogeneity[i] === false) {
-                    return;
-                } else if (!homogeneousValues[i].has(value)) {
-                    iToHomogeneity[i] = false;
-                }
-            });
-        });
+        colorIndexes = fields
+            .map((_field, fieldIndex) => {
+                const homogeneousValues: Set<string> = new Set();
 
-        iToHomogeneity.forEach((homogeneity, i) => {
-            if (!homogeneity && xIndex !== i && !yIndexes.includes(i)) {
-                colorIndexes.push(i);
-            }
-        });
+                const homogeneity = rows.every((row, rowIndex) => {
+                    const value = row[fieldIndex];
+
+                    if (rowIndex === 0) {
+                        homogeneousValues.add(value);
+
+                        return true;
+                    }
+
+                    if (homogeneousValues.has(value)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
+
+                return homogeneity ? -1 : fieldIndex;
+            })
+            .filter((index) => index !== -1 && xIndex !== index && !yIndexes.includes(index));
 
         colorIndexes.sort((colorIndex1: number, colorIndex2: number) => {
             if (fields[colorIndex1] && fields[colorIndex2]) {
