@@ -36,7 +36,7 @@ datalensTest.describe('Dashboard Versioning', () => {
             await controlSwitcher.click();
             await page.click(slct(DashKitOverlayMenuQa.RemoveButton));
             await dashboardPage.addText(text);
-            await dashboardPage.saveChanges();
+            await dashboardPage.clickSaveButton();
             await workbookPO.editEntityButton.waitForVisible();
         }
     });
