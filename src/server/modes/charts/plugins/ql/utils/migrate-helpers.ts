@@ -6,9 +6,11 @@ import {isGroup} from './misc-helpers';
 export const migrateLineVisualization = ({
     order,
     fields,
+    rows,
 }: {
     order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     fields: Field[];
+    rows: string[][];
 }) => {
     let collectingX = false;
     let collectingY = false;
@@ -114,9 +116,32 @@ export const migrateLineVisualization = ({
 
         xIndex = fields.findIndex((_field, index) => !yIndexes.includes(index));
 
-        fields.forEach((_field, i) => {
-            if (xIndex !== i && !yIndexes.includes(i)) {
+        const homogeneousValues: Set<String>[] = [];
+        const iToHomogeneity: Boolean[] = [];
+        rows.forEach((row) => {
+            row.forEach((value, i) => {
+                if (typeof homogeneousValues[i] === 'undefined') {
+                    homogeneousValues[i] = new Set([value]);
+                    iToHomogeneity[i] = true;
+                } else if (iToHomogeneity[i] === false) {
+                    return;
+                } else if (!homogeneousValues[i].has(value)) {
+                    iToHomogeneity[i] = false;
+                }
+            });
+        });
+
+        iToHomogeneity.forEach((homogeneity, i) => {
+            if (!homogeneity && xIndex !== i && !yIndexes.includes(i)) {
                 colorIndexes.push(i);
+            }
+        });
+
+        colorIndexes.sort((colorIndex1: number, colorIndex2: number) => {
+            if (fields[colorIndex1] && fields[colorIndex2]) {
+                return fields[colorIndex1].title > fields[colorIndex2].title ? 1 : -1;
+            } else {
+                return 0;
             }
         });
     }

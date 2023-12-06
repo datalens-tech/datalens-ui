@@ -20,13 +20,15 @@ import {
 
 export const migrateOrAutofillVisualization = ({
     visualization: originalVisualization,
-    order,
     fields,
+    rows,
+    order,
     colors: originalColors,
 }: {
     visualization: ServerVisualization;
-    order?: QlConfigResultEntryMetadataDataColumnOrGroup[] | null;
     fields: Field[];
+    rows: string[][];
+    order?: QlConfigResultEntryMetadataDataColumnOrGroup[] | null;
     colors?: Field[];
 }) => {
     const {id: visualizationId} = originalVisualization;
@@ -56,6 +58,7 @@ export const migrateOrAutofillVisualization = ({
             } = migrateLineVisualization({
                 order,
                 fields,
+                rows,
             });
 
             newVisualization.placeholders[0].items = xFields;
