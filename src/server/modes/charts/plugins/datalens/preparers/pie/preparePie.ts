@@ -4,7 +4,6 @@ import {
     ExtendedSeriesLineOptions,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
-    isDimensionField,
 } from '../../../../../../../shared';
 import {ChartColorsConfig} from '../../js/helpers/colors';
 import {ColorValue, getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
@@ -16,6 +15,7 @@ import {
     isGradientMode,
     isNumericalDataType,
 } from '../../utils/misc-helpers';
+import {addActionParamValue} from '../helpers/action-params';
 import {PiePoint, PrepareFunctionArgs} from '../types';
 
 export type PieConfig = {
@@ -273,10 +273,7 @@ export function preparePie({
 
             if (widgetConfig?.actionParams?.enable) {
                 const actionParams: Record<string, any> = {};
-
-                if (isDimensionField(colorField)) {
-                    actionParams[colorField.guid] = key;
-                }
+                addActionParamValue(actionParams, colorField, key);
 
                 point.custom = {
                     actionParams,

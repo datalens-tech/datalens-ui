@@ -9,7 +9,6 @@ import {
     ServerField,
     getFormatOptions,
     isDateField,
-    isDimensionField,
     isEnabledServerFeature,
 } from '../../../../../../../shared';
 import {registry} from '../../../../../../registry';
@@ -30,6 +29,7 @@ import {
     isGradientMode,
     isNumericalDataType,
 } from '../../utils/misc-helpers';
+import {addActionParamValue} from '../helpers/action-params';
 import {PrepareFunctionArgs} from '../types';
 
 import {mapPointsByShape} from './helpers/shape';
@@ -340,18 +340,9 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
         if (isActionParamsEnable) {
             const actionParams: Record<string, any> = {};
-
-            if (isDimensionField(x)) {
-                actionParams[x.guid] = xValueRaw;
-            }
-
-            if (isDimensionField(y)) {
-                actionParams[y.guid] = yValueRaw;
-            }
-
-            if (isDimensionField(z)) {
-                actionParams[z.guid] = zValueRaw;
-            }
+            addActionParamValue(actionParams, x, xValueRaw);
+            addActionParamValue(actionParams, y, yValueRaw);
+            addActionParamValue(actionParams, z, zValueRaw);
 
             point.custom = {
                 ...point.custom,
@@ -403,14 +394,8 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
         if (isActionParamsEnable) {
             const actionParams: Record<string, any> = {};
-
-            if (isDimensionField(color)) {
-                actionParams[color.guid] = graph.data?.[0]?.colorValue;
-            }
-
-            if (isDimensionField(shape)) {
-                actionParams[shape.guid] = graph.data?.[0]?.shapeValue;
-            }
+            addActionParamValue(actionParams, color, graph.data?.[0]?.colorValue);
+            addActionParamValue(actionParams, shape, graph.data?.[0]?.shapeValue);
 
             graph.custom = {
                 ...graph.custom,

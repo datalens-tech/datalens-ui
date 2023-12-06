@@ -25,6 +25,7 @@ import {
     isNumericalDataType,
     numericCollator,
 } from '../../utils/misc-helpers';
+import {addActionParamValue} from '../helpers/action-params';
 import {
     getSegmentsIndexInOrder,
     getSegmentsMap,
@@ -391,10 +392,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
                             if (isActionParamsEnable) {
                                 const actionParams: Record<string, any> = {};
-
-                                if (x && isDimensionField(x)) {
-                                    actionParams[x.guid] = category;
-                                }
+                                addActionParamValue(actionParams, x, category);
 
                                 point.custom = {
                                     ...point.custom,
