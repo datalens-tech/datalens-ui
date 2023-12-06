@@ -4,15 +4,17 @@ import type {QlConfigResultEntryMetadataDataColumnOrGroup} from '../../../../../
 import {isGroup} from './misc-helpers';
 
 const findIndexes = ({fields, forbiddenIndexes}: {fields: Field[]; forbiddenIndexes: number[]}) =>
-    fields
-        .map((field, fieldIndex) =>
+    fields.reduce((result: number[], field: Field, fieldIndex: number) => {
+        if (
             (field.cast === DATASET_FIELD_TYPES.INTEGER ||
                 field.cast === DATASET_FIELD_TYPES.FLOAT) &&
             !forbiddenIndexes.includes(fieldIndex)
-                ? fieldIndex
-                : null,
-        )
-        .filter((value) => value !== null) as number[];
+        ) {
+            return [...result, fieldIndex];
+        } else {
+            return result;
+        }
+    }, []);
 
 export const migrateLineVisualization = ({
     order,

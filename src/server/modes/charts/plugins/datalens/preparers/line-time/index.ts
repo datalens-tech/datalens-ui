@@ -226,7 +226,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
             graph.spanGaps = yPlaceholderSettings.nulls === 'connect';
         });
 
-        if (colorData.length > 1 && shared.extraSettings?.legendMode !== 'hide') {
+        if (result.graphs.length > 1 && shared.extraSettings?.legendMode !== 'hide') {
             ChartEditor.updateLibraryConfig({
                 legend: {
                     show: true,
