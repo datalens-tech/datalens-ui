@@ -44,7 +44,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
                 defaultValue: controlDefaultValue,
             });
 
-            await dashboardPage.saveChanges();
+            await dashboardPage.clickSaveButton();
 
             // get the control by name
             const control = await getControlByTitle(page, PARAMS.CONTROL_TITLE);

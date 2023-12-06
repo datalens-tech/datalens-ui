@@ -150,7 +150,7 @@ class DashboardPage extends BasePage {
         // TODO: CHARTS-8652, refine tests for new behavior
         // temp step of changing the settings, because it is impossible to save the untouched dash
         await this.enableDashboardTOC();
-        await this.saveChanges();
+        await this.clickSaveButton();
 
         // waiting for the dialog to open, specify the name, save
         // waiting for the transition to the dashboard page
@@ -480,17 +480,17 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(ConnectionsDialogQA.Apply));
     }
 
-    async saveChanges() {
+    async clickSaveButton() {
         // save the changes made on the dashboard
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
     }
 
-    async saveChangesWithRenderCheck() {
+    async saveChanges() {
         const savePromise = this.page.waitForRequest((request) =>
             request.url().includes(URLS.savePath),
         );
         const deleteLockPromise = this.page.waitForRequest(URLS.deleteLock);
-        await this.saveChanges();
+        await this.clickSaveButton();
         await Promise.all([deleteLockPromise, savePromise]);
         await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
     }

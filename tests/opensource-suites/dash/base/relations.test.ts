@@ -54,7 +54,7 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
                 selectorName: PARAMS.CONTROL_TITLE,
             });
 
-            await dashboardPage.saveChanges();
+            await dashboardPage.clickSaveButton();
 
             const dashName = `${PARAMS.DASH_NAME_PREFIX}-${getUniqueTimestamp()}`;
             await workbookPO.dialogCreateEntry.waitForOpen();
