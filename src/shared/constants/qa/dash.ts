@@ -40,3 +40,9 @@ export enum DashRevisions {
 export enum DashEntryQa {
     EntryName = 'dash-entry-name',
 }
+
+export enum DashMetaQa {
+    Dialog = 'dialog-dash-meta',
+    SaveButton = 'dash-meta-save-button',
+    EditButton = 'dash-meta-edit-button',
+}

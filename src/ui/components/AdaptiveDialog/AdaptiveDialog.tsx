@@ -11,12 +11,14 @@ import {isMobileView} from 'ui/utils/mobile';
 
 type AdaptiveDialogProps = {
     visible: boolean;
+    id?: string;
     onClose: () => void;
     sheetContentClassName?: string;
     dialogBodyClassName?: string;
     renderSheetFooter?: () => React.ReactNode;
     renderDialogFooter?: () => React.ReactNode;
-    dialogProps?: Pick<DialogProps, 'disableEscapeKeyDown' | 'disableOutsideClick' | 'className'>;
+    qa?: string;
+    dialogProps?: Omit<DialogProps, 'open' | 'onClose' | 'qa' | 'children'>;
     dialogHeaderProps?: DialogHeaderProps;
     dialogFooterProps?: DialogFooterProps;
 };
@@ -32,20 +34,25 @@ export const AdaptiveDialog: React.FC<AdaptiveDialogProps> = ({
     dialogHeaderProps,
     dialogFooterProps,
     visible,
+    qa,
+    id,
 }) => {
     const showDialogFooter = renderDialogFooter || dialogFooterProps;
+
     return isMobileView ? (
         <Sheet
             visible={visible}
             onClose={onClose}
             allowHideOnContentScroll={false}
             contentClassName={sheetContentClassName}
+            qa={qa}
+            id={id}
         >
             {children}
             {renderSheetFooter?.()}
         </Sheet>
     ) : (
-        <Dialog open={visible} onClose={onClose} {...dialogProps}>
+        <Dialog open={visible} onClose={onClose} qa={qa} {...dialogProps}>
             <Dialog.Header {...dialogHeaderProps} />
             <Dialog.Body className={dialogBodyClassName}>{children}</Dialog.Body>
             {showDialogFooter && (
