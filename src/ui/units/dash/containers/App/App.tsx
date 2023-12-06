@@ -53,7 +53,10 @@ export function App({...routeProps}: RouteComponentProps) {
 
     const prevAsideHeaderSize = usePrevious(asideHeaderData.size);
 
+    const isMobileEnabled = DL.IS_MOBILE && Utils.isEnabledFeature(Feature.EnableMobileHeader);
     const showAsideHeader = !isEmbedded && !isFullscreenMode && isAsideHeaderEnabled;
+    const showMobileHeader =
+        !isFullscreenMode && !isAsideHeaderEnabled && !isEmbedded && isMobileEnabled;
 
     React.useEffect(() => {
         const dashClasses = dashBlock({'no-scroll': isNoScrollMode()}).split(' ');
@@ -63,17 +66,17 @@ export function App({...routeProps}: RouteComponentProps) {
         return () => {
             Utils.removeBodyClass(...dashClasses);
 
-            if (showAsideHeader || DL.IS_MOBILE) {
+            if (showAsideHeader || showMobileHeader) {
                 dispatch(setCurrentPageEntry(null));
             }
         };
     }, [dispatch]);
 
     React.useEffect(() => {
-        if (showAsideHeader || DL.IS_MOBILE) {
+        if (showAsideHeader || showMobileHeader) {
             dispatch(setCurrentPageEntry(entry as unknown as CurrentPageEntry));
         }
-    }, [entry, showAsideHeader, dispatch]);
+    }, [entry, showAsideHeader, dispatch, showMobileHeader]);
 
     const locationChangeHandler = React.useCallback(
         async (data) => {
@@ -136,13 +139,10 @@ export function App({...routeProps}: RouteComponentProps) {
         dispatchResize();
     }
 
-    const isMobileEnabled = DL.IS_MOBILE && Utils.isEnabledFeature(Feature.EnableMobileHeader);
-    const showHeader = !isFullscreenMode && !isAsideHeaderEnabled && !isEmbedded && isMobileEnabled;
-
     return (
         <div className={b({mobile: DL.IS_MOBILE, embedded: isEmbedded})} ref={wrapRef}>
             <LocationChange onLocationChanged={locationChangeHandler} />
-            {showHeader && <MobileHeader />}
+            {showMobileHeader && <MobileHeader />}
             <div className={b('content')}>
                 <DashWrapper {...routeProps} />
             </div>
