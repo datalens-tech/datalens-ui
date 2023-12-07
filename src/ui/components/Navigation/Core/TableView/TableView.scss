@@ -249,11 +249,41 @@
         }
     }
 
+    &__revert-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 4px;
+
+        &:hover {
+            cursor: pointer;
+            background: var(--g-color-base-simple-hover);
+        }
+    }
+
+    &__edit-alias-btn {
+        &_visible {
+            visibility: visible;
+        }
+    }
+
+    &__alias-input {
+        margin-right: 10px;
+    }
+
+    &__icon-pencil-stroke {
+        display: none;
+    }
+
     &__icon-star-stroke {
         display: none;
     }
 
     #{$class} &__lock {
+        width: 28px;
+        height: 28px;
         margin: 0 10px;
         flex: 0 0 16px;
         color: var(--g-color-text-hint);
@@ -262,6 +292,7 @@
     &__name {
         flex: 3 1 30%;
         display: flex;
+        align-items: center;
         overflow: hidden;
         min-width: 100px;
         color: var(--g-color-text-primary);
@@ -319,7 +350,7 @@
     &__name-line {
         display: flex;
         flex: 1 1 auto;
-        line-height: 20px;
+        line-height: 28px;
         overflow: hidden;
     }
 

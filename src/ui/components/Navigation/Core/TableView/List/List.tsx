@@ -147,9 +147,11 @@ export class List extends React.PureComponent<ListProps> {
                 ) : (
                     <Row
                         mode={this.props.mode}
+                        place={this.props.place}
                         displayParentFolder={this.props.displayParentFolder}
                         onEntryContextClick={this.props.onEntryContextClick}
                         onChangeFavorite={this.props.onChangeFavorite}
+                        onRenameFavorite={this.props.onRenameFavorite}
                         currentEntryContext={this.props.currentEntryContext}
                         currentPageEntry={this.props.currentPageEntry}
                         clickableScope={this.props.clickableScope}

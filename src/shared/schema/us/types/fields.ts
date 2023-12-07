@@ -46,6 +46,7 @@ export interface EntryNavigationFields {
     scope: string;
     type: string;
     key: string;
+    alias?: string | null;
     meta: EntryFieldMeta;
     createdBy: string;
     createdAt: string;

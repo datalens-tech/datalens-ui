@@ -12,12 +12,14 @@ export type ParentFolderEntry = {
 
 export type TableViewProps = {
     mode: Mode;
+    place: string;
     entries: NavigationEntry[];
     displayParentFolder: boolean;
     onCloseEntryContextMenu: () => void;
     onLoadMore: () => void;
     onEntryContextClick: EntryContextButtonProps['onClick'];
     onChangeFavorite: (entry: NavigationEntry) => void;
+    onRenameFavorite: (entryId: string, alias: string | null) => void;
     refreshNavigation: () => void;
     onChangeLocation: ChangeLocation;
     currentEntryContext?: NavigationEntry | null;

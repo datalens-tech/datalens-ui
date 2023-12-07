@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import {DL} from 'constants/common';
 
 import React from 'react';
@@ -179,6 +180,12 @@ class NavigationEntries extends React.Component {
             this.setState({entries, filteredEntries});
         }
     }
+    changeFavoriteAlias(entryId, alias) {
+        const {entries: stateEntries} = this.state;
+        const entries = stateEntries.map((e) => (e.entryId === entryId ? {...e, alias} : e));
+        const filteredEntries = this.getFilteredEntries(entries);
+        this.setState({entries, filteredEntries});
+    }
     requestList({isSearch}) {
         const {
             scope,
@@ -312,6 +319,27 @@ class NavigationEntries extends React.Component {
             return result;
         }
     }
+
+    onRenameFavorite = async (entryId, name) => {
+        const {entries} = this.state;
+        const prevAlias = entries.find((e) => e.entryId === entryId).alias;
+        this.changeFavoriteAlias(entryId, name);
+
+        try {
+            await getSdk().us.renameFavorite({entryId, name});
+        } catch (error) {
+            logger.logError('NavigationEntries: onRenameFavorite failed', error);
+
+            this.changeFavoriteAlias(entryId, prevAlias);
+
+            this.props.showToast({
+                title: i18n('toast_failed-rename-favorite'),
+                name: 'RenameFavoriteFailed',
+                error,
+            });
+        }
+    };
+
     onChangeFavorite = async (entry) => {
         const {path} = this.props;
         const {entryId, isFavorite} = entry;
@@ -633,6 +661,7 @@ class NavigationEntries extends React.Component {
                 <TableView
                     linkWrapper={this.props.linkWrapper}
                     mode={this.props.mode}
+                    place={place}
                     clickableScope={this.props.clickableScope}
                     inactiveEntryKeys={this.props.inactiveEntryKeys}
                     currentPageEntry={this.props.currentPageEntry}
@@ -642,6 +671,7 @@ class NavigationEntries extends React.Component {
                     currentEntryContext={currentEntryContext}
                     displayParentFolder={!this.props.isMobileNavigation && displayParentFolder}
                     onChangeFavorite={this.onChangeFavorite}
+                    onRenameFavorite={this.onRenameFavorite}
                     onEntryContextClick={this.onEntryContextClick}
                     onCloseEntryContextMenu={this.closeEntryContextMenu}
                     onEntryParentClick={this.props.onEntryParentClick}

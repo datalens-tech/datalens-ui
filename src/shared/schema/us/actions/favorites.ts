@@ -9,6 +9,8 @@ import {
     GetFavoritesArgs,
     GetFavoritesOutput,
     GetFavoritesResponse,
+    RenameFavoriteArgs,
+    RenameFavoriteResponse,
 } from '../types';
 
 const PATH_PREFIX = '/v1';
@@ -23,6 +25,11 @@ export const favoritesActions = {
         method: 'DELETE',
         path: ({entryId}) => `${PATH_PREFIX}/favorites/${filterUrlFragment(entryId)}`,
         params: (_, headers) => ({headers}),
+    }),
+    renameFavorite: createAction<RenameFavoriteResponse, RenameFavoriteArgs>({
+        method: 'POST',
+        path: ({entryId}) => `${PATH_PREFIX}/favorites/${filterUrlFragment(entryId)}/rename`,
+        params: ({name}, headers) => ({body: {name}, headers}),
     }),
     getFavorites: createAction<GetFavoritesOutput, GetFavoritesArgs, GetFavoritesResponse>({
         method: 'GET',

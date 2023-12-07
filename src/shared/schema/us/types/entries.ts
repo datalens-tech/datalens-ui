@@ -103,6 +103,7 @@ export interface GetEntriesEntryOutput extends EntryNavigationFields {
 
 export interface GetEntriesEntryResponse extends GetEntriesEntryOutput {
     name: string;
+    alias?: string;
 }
 
 export interface GetEntriesEntryWithPermissions
