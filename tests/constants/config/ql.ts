@@ -1,4 +1,4 @@
-import {QlUrls, QlQueries} from 'constants/test-entities/ql';
+import {QlUrls, QlQueries, QlQa} from 'constants/test-entities/ql';
 import {QlParametrizationConfig} from 'types/config/ql';
 
 export const ql: QlParametrizationConfig = {
@@ -8,5 +8,9 @@ export const ql: QlParametrizationConfig = {
     },
     queries: {
         citySales: QlQueries.citySales,
+        salesBySalesFloat: QlQueries.salesBySalesFloat,
+    },
+    qa: {
+        visualizationList: QlQa.visualizationList,
     },
 };

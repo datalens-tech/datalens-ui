@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {dateTimeParse} from '@gravity-ui/date-utils';
 import {Xmark} from '@gravity-ui/icons';
 import {Button, Icon, Select, SelectOption, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -10,24 +9,21 @@ import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {QlConfigParam} from 'shared/types/config/ql';
 import {DatalensGlobalState} from 'ui';
-import {registry} from 'ui/registry';
 
-import {QLParamType} from '../../../../../../../shared';
-import {DEFAULT_TIMEZONE} from '../../../../constants';
+import {QLParamType, TabParamsQA, resolveRelativeDate} from '../../../../../../../shared';
+import {openDialogQLParameter} from '../../../../store/actions/dialog';
 import {addParam, drawPreview, removeParam, updateParam} from '../../../../store/actions/ql';
 import {getChartType, getParams, getPreviewData, getValid} from '../../../../store/reducers/ql';
 
-import './TabParams.scss';
+import {DefaultValue} from './DefaultValue';
+import {OverridenValue} from './OverridenValue';
 
-const {SimpleDatepicker, RangeDatepicker} = registry.common.components.getAll();
+import './TabParams.scss';
 
 const b = block('ql-tab-params');
 
-function formatDate(date: string) {
-    return dateTimeParse(date, {
-        timeZone: DEFAULT_TIMEZONE,
-    })?.toISOString();
-}
+const TODAY = '__relative_+0d';
+const THREE_DAYS_BEFORE = '__relative_-3d';
 
 type TabParamsMakeMapStateToPropsResult = ReturnType<typeof makeMapStateToProps>;
 type TabParamsMapDispatchToPropsResult = typeof mapDispatchToProps;
@@ -108,17 +104,21 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                             >
                                 <Select
                                     onUpdate={([selectedType]) => {
-                                        this.handleParameterTypeUpdate(selectedType, {
-                                            param,
-                                            paramIndex,
-                                            paramIsDate,
-                                            paramIsInterval,
-                                        });
+                                        this.handleParameterTypeUpdate(
+                                            selectedType as QLParamType,
+                                            {
+                                                param,
+                                                paramIndex,
+                                                paramIsDate,
+                                                paramIsInterval,
+                                            },
+                                        );
                                     }}
                                     options={this.paramTypes}
                                     className={b('select')}
                                     popupClassName={b('select-popup')}
                                     value={param.type ? [param.type] : []}
+                                    qa={TabParamsQA.ParamType}
                                 />
                                 <TextInput
                                     view="normal"
@@ -134,9 +134,19 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                                         this.onEditParam({param: newParam, paramIndex});
                                     }}
                                     autoFocus={true}
+                                    qa={TabParamsQA.ParamName}
                                 />
                                 <span className={b('delimeter')}>:</span>
-                                {this.renderParamDefaultValueContent(param, paramIndex)}
+                                <DefaultValue
+                                    param={param}
+                                    paramIndex={paramIndex}
+                                    onClickButtonEditParamValue={this.onClickButtonEditParamValue}
+                                    onEditParam={this.onEditParam}
+                                    onClickButtonAddParamValue={this.onClickButtonAddParamValue}
+                                    onClickButtonRemoveParamValue={
+                                        this.onClickButtonRemoveParamValue
+                                    }
+                                />
                                 <Button
                                     view="flat-secondary"
                                     size="m"
@@ -189,7 +199,12 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                                                 className={b('overriden-param-note_value-wrapper')}
                                             >
                                                 <span className={b('overriden-param-note_value')}>
-                                                    {JSON.stringify(param.overridenValue)}
+                                                    <OverridenValue
+                                                        overridenValue={param.overridenValue}
+                                                        type={param.type as QLParamType}
+                                                        paramIsInterval={paramIsInterval}
+                                                        paramIsDate={paramIsDate}
+                                                    />
                                                 </span>
                                                 <span
                                                     onClick={() =>
@@ -215,6 +230,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                     onClick={() => this.onClickButtonAddParam()}
                     key="button-add-param"
                     className={b('add-param-btn')}
+                    qa={TabParamsQA.AddParamBtn}
                 >
                     {i18n('sql', 'button_add-param')}
                 </Button>
@@ -223,7 +239,7 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
     }
 
     private handleParameterTypeUpdate = (
-        type: string,
+        type: QLParamType,
         options: {
             paramIsInterval: boolean;
             paramIsDate: boolean;
@@ -248,11 +264,11 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
 
         if (paramIsInterval) {
             newParam.defaultValue = {
-                from: formatDate('now-3d'),
-                to: formatDate('now-0d'),
+                from: resolveRelativeDate(THREE_DAYS_BEFORE) as string,
+                to: resolveRelativeDate(TODAY) as string,
             };
         } else if (paramIsDate) {
-            newParam.defaultValue = formatDate('now-0d');
+            newParam.defaultValue = resolveRelativeDate(TODAY) as string;
         } else if (oldParamIsInterval || oldParamIsDate) {
             newParam.defaultValue = '';
         }
@@ -260,165 +276,20 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
         this.onEditParam({param: newParam, paramIndex: options.paramIndex});
     };
 
-    private renderParamDefaultValueContent = (param: QlConfigParam, paramIndex: number) => {
-        const paramIsInterval =
-            param.type === QLParamType.DateInterval || param.type === QLParamType.DatetimeInterval;
-
-        const paramIsDate = param.type === QLParamType.Date || param.type === QLParamType.Datetime;
-
-        if (
-            paramIsInterval &&
-            typeof param.defaultValue === 'object' &&
-            !Array.isArray(param.defaultValue) &&
-            param.defaultValue.from &&
-            param.defaultValue.to
-        ) {
-            return (
-                <RangeDatepicker
-                    wrapClassName={b('default-value-interval')}
-                    from={formatDate(param.defaultValue.from)}
-                    to={formatDate(param.defaultValue.to)}
-                    dateFormat="YYYY-MM-DD"
-                    timeFormat="HH:mm:ss"
-                    onUpdate={(newValue) => {
-                        let parsedValueFrom;
-                        if (newValue.from?.date) {
-                            parsedValueFrom = dateTimeParse(newValue.from.date, {
-                                timeZone: DEFAULT_TIMEZONE,
-                            });
-                        }
-
-                        let parsedValueTo;
-                        if (newValue.to?.date) {
-                            parsedValueTo = dateTimeParse(newValue.to.date || '', {
-                                timeZone: DEFAULT_TIMEZONE,
-                            });
-                        }
-
-                        const newParam = {...param};
-
-                        if (parsedValueFrom && parsedValueTo) {
-                            newParam.defaultValue = {
-                                from: parsedValueFrom.toISOString(),
-                                to: parsedValueTo.toISOString(),
-                            };
-                        }
-
-                        this.onEditParam({param: newParam, paramIndex});
-                    }}
-                    hasCalendarIcon={false}
-                    allowNullableValues={false}
-                    hasClear={false}
-                    withTime={param.type === QLParamType.DatetimeInterval}
-                    timeZone={DEFAULT_TIMEZONE}
-                />
-            );
-        } else if (paramIsDate && typeof param.defaultValue === 'string') {
-            return (
-                <SimpleDatepicker
-                    wrapClassName={b('default-value-date')}
-                    date={param.defaultValue}
-                    withTime={param.type === QLParamType.Datetime}
-                    allowRelative={true}
-                    hasClear={false}
-                    onUpdate={({date}: {date: string | null}) => {
-                        const newParam = {...param};
-
-                        if (date !== null) {
-                            newParam.defaultValue = date;
-                        }
-
-                        this.onEditParam({param: newParam, paramIndex});
-                    }}
-                />
-            );
-        } else if (typeof param.defaultValue === 'string') {
-            return (
-                <div className={b('default-value-array')}>
-                    <div key={`default-value-0`}>
-                        <TextInput
-                            className={b('default-value-text')}
-                            placeholder={i18n('sql', 'label_placeholder-default-value')}
-                            value={param.defaultValue}
-                            onUpdate={(defaultValue) => {
-                                const newParam = {...param};
-
-                                newParam.defaultValue = defaultValue;
-
-                                this.onEditParam({param: newParam, paramIndex});
-                            }}
-                            autoFocus={true}
-                        />
-                    </div>
-                    <div className={b('default-value-add', 'initial')}>
-                        <Button
-                            view="normal-contrast"
-                            size="s"
-                            onClick={() => this.onClickButtonAddParamValue({paramIndex})}
-                            key="button-add-param-value"
-                            className={b('default-value-add-btn')}
-                        >
-                            {i18n('sql', 'button_add-param-value')}
-                        </Button>
-                    </div>
-                </div>
-            );
-        } else if (Array.isArray(param.defaultValue)) {
-            return (
-                <div className={b('default-value-array')}>
-                    {param.defaultValue.map((defaultValue, i) => (
-                        <div
-                            key={`default-value-${i}`}
-                            className={b('default-value-entry', {'not-first': i > 0})}
-                        >
-                            <TextInput
-                                className={b('default-value-text', {'not-first': i > 0})}
-                                placeholder={i18n('sql', 'label_placeholder-default-value')}
-                                value={defaultValue}
-                                onUpdate={(newDefaultValue) => {
-                                    const newParam = {...param};
-
-                                    newParam.defaultValue = (param.defaultValue as string[]).map(
-                                        (item, index) => (i === index ? newDefaultValue : item),
-                                    );
-
-                                    this.onEditParam({param: newParam, paramIndex});
-                                }}
-                                autoFocus={true}
-                            />
-                            <Button
-                                view="flat-secondary"
-                                size="m"
-                                onClick={() =>
-                                    this.onClickButtonRemoveParamValue({
-                                        paramIndex,
-                                        valueIndex: i,
-                                    })
-                                }
-                                key="button-remove-param-value"
-                                className={b('remove-param-value-btn')}
-                                title={i18n('sql', 'label_delete-param-value')}
-                            >
-                                <Icon data={Xmark} />
-                            </Button>
-                        </div>
-                    ))}
-                    <div className={b('default-value-add')}>
-                        <Button
-                            view="normal-contrast"
-                            size="s"
-                            onClick={() => this.onClickButtonAddParamValue({paramIndex})}
-                            key="button-add-param-value"
-                            className={b('default-value-add-btn')}
-                        >
-                            {i18n('sql', 'button_add-param-value')}
-                        </Button>
-                    </div>
-                </div>
-            );
-        } else {
-            return null;
-        }
+    private onClickButtonEditParamValue = ({
+        value,
+        type,
+        onApply,
+    }: {
+        value: string;
+        type: QLParamType;
+        onApply: ({value}: {value: string}) => void;
+    }) => {
+        this.props.openDialogQLParameter({
+            value,
+            type,
+            onApply,
+        });
     };
 
     private onClickButtonAddParam = () => {
@@ -537,6 +408,7 @@ const mapDispatchToProps = {
     addParam,
     updateParam,
     removeParam,
+    openDialogQLParameter,
 };
 
 export default connect(

@@ -35,8 +35,6 @@ import {
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
     RESET_COLLECTION_CONTENT,
     RESET_COLLECTION_INFO,
-    UPDATE_COLLECTION_IN_ITEMS,
-    UPDATE_WORKBOOK_IN_ITEMS,
 } from '../constants';
 
 export type CollectionsState = {
@@ -281,38 +279,6 @@ export const collectionsReducer = (
                 ...state,
                 getCollectionContent: initialState.getCollectionContent,
                 items: initialState.items,
-            };
-        }
-
-        case UPDATE_COLLECTION_IN_ITEMS: {
-            return {
-                ...state,
-                items: state.items.map((item) => {
-                    if (!('workbookId' in item) && action.data.collectionId === item.collectionId) {
-                        // We leave the original permissions
-                        return {
-                            ...item,
-                            ...action.data,
-                        };
-                    }
-                    return item;
-                }),
-            };
-        }
-
-        case UPDATE_WORKBOOK_IN_ITEMS: {
-            return {
-                ...state,
-                items: state.items.map((item) => {
-                    if ('workbookId' in item && action.data.workbookId === item.workbookId) {
-                        // We leave the original permissions
-                        return {
-                            ...item,
-                            ...action.data,
-                        };
-                    }
-                    return item;
-                }),
             };
         }
 

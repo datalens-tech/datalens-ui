@@ -3,9 +3,10 @@ import {Response, expect} from '@playwright/test';
 import {
     ConnectionsDialogQA,
     ControlQA,
+    DashEntryQa,
+    DialogDashWidgetQA,
     DialogTabsQA,
     EntryDialogQA,
-    DialogDashWidgetQA,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -23,20 +24,25 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
-import Description from './Description';
-import TableOfContent from './TableOfContent';
+import {
+    DashboardDialogSettingsQa,
+    DialogDashTitleQA,
+    DialogDashWidgetItemQA,
+} from '../../../src/shared';
 import {
     ActionPanelDashSaveControls,
     ActionPanelEntryContextMenuQa,
 } from '../../../src/shared/constants/qa/action-panel';
 import {
+    DashKitOverlayMenuQa,
     DashboardAddWidgetQa,
     DashboardDialogControl,
-    DashKitOverlayMenuQa,
 } from '../../../src/shared/constants/qa/dash';
 import {CommonSelectors} from '../constants/common-selectors';
-import {DashboardDialogSettingsQa} from '../../../src/shared';
+import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
+import Description from './Description';
+import TableOfContent from './TableOfContent';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -55,16 +61,17 @@ export interface DashboardPageProps extends BasePageProps {}
 class DashboardPage extends BasePage {
     static selectors = {
         title: 'dashkit-plugin-title',
+        text: 'dashkit-plugin-text',
         dialogWarning: 'dialog-draft-warning',
         dialogWarningEditBtn: 'dialog-draft-warning-edit-btn',
         dialogConfirm: 'dialog-confirm',
         dialogConfirmApplyBtn: 'dialog-confirm-apply-button',
-        dialogDashMeta: '.dialog-dash-meta',
         mobileModal: '.yc-mobile-modal',
         tabsContainer: '.gc-adaptive-tabs',
         tabsList: '.gc-adaptive-tabs__tabs-list',
         tabItem: '.gc-adaptive-tabs__tab',
         tabItemActive: '.gc-adaptive-tabs__tab_active',
+        tabContainer: '.gc-adaptive-tabs__tab-container',
         selectControl: '.yc-select-control',
         /** @deprecated instead use selectItems */
         ycSelectItems: '.yc-select-items',
@@ -85,16 +92,16 @@ class DashboardPage extends BasePage {
         acceptableSelectBtn: 'select-acceptable-button',
         dialogApplyBtn: 'dialog-apply-button',
         dialogCancelBtn: 'dialog-cancel-button',
-    };
-
-    static qa = {
-        dialogDashMeta: 'dialog-dash-meta',
+        chartGridItemContainer: `${slct(COMMON_DASH_SELECTORS.DASH_GRID_ITEM)} .chartkit`,
+        dashPluginWidgetBody: slct('chart-widget'),
+        dashkitGridItem: slct('dashkit-grid-item'),
     };
 
     revisions: Revisions;
     tableOfContent: TableOfContent;
     description: Description;
     dialogControl: DialogControl;
+    dashTabs: DashTabs;
 
     constructor({page}: DashboardPageProps) {
         super({page});
@@ -102,6 +109,7 @@ class DashboardPage extends BasePage {
         this.description = new Description(page);
         this.tableOfContent = new TableOfContent(page, this);
         this.dialogControl = new DialogControl(page);
+        this.dashTabs = new DashTabs(page);
     }
 
     async waitForResponses(url: string, timeout = API_TIMEOUT): Promise<Array<Response>> {
@@ -137,7 +145,7 @@ class DashboardPage extends BasePage {
         // TODO: CHARTS-8652, refine tests for new behavior
         // temp step of changing the settings, because it is impossible to save the untouched dash
         await this.enableDashboardTOC();
-        await this.saveChanges();
+        await this.clickSaveButton();
 
         // waiting for the dialog to open, specify the name, save
         // waiting for the transition to the dashboard page
@@ -147,9 +155,7 @@ class DashboardPage extends BasePage {
         ]);
 
         // check that the dashboard has loaded by its name
-        await this.page.waitForSelector(
-            `${slct(COMMON_SELECTORS.DASH_ENTRY_NAME)} >> text=${dashName}`,
-        );
+        await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
     }
 
     async copyDashboard(dashName: string) {
@@ -276,6 +282,34 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
 
+    async clickAddText() {
+        await this.page.click(slct(DashboardAddWidgetQa.AddText));
+    }
+
+    async addText(text: string) {
+        await this.clickAddText();
+        await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
+        await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+        await this.page.click(slct(DialogDashWidgetQA.Apply));
+    }
+
+    async clickAddTitle() {
+        await this.page.click(slct(DashboardAddWidgetQa.AddTitle));
+    }
+
+    async addTitle(text: string) {
+        await this.clickAddTitle();
+        await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Title));
+        await this.page.fill(`${slct(DialogDashTitleQA.Input)} input`, text);
+        await this.page.click(slct(DialogDashWidgetQA.Apply));
+    }
+
+    getDashKitTextItem(text: string) {
+        return this.page
+            .locator(DashboardPage.selectors.dashkitGridItem)
+            .getByText(text, {exact: true});
+    }
+
     async deleteSelector(controlTitle: string) {
         const control = this.page.locator(slct('dashkit-grid-item'), {
             has: this.page.locator(slct('chartkit-control-title', controlTitle)),
@@ -301,12 +335,56 @@ class DashboardPage extends BasePage {
         await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
     }
 
+    async forceEnterEditMode() {
+        // switch to edit mode from view
+        const createLockPromise = this.page.waitForRequest(URLS.createLock);
+        await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
+
+        // waiting for the opening of the warning dialog or the Cancel edit button
+        const elem = await this.page.waitForSelector(
+            `${slct(DashboardPage.selectors.dialogConfirm)}, ${slct(
+                COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN,
+            )}`,
+        );
+
+        const qaAttr = await elem.getAttribute('data-qa');
+
+        if (qaAttr !== DashboardPage.selectors.dialogConfirm) {
+            await createLockPromise;
+            return;
+        }
+
+        // click "Edit anyway"
+        await this.page.click(slct(DashboardPage.selectors.dialogConfirmApplyBtn));
+        await createLockPromise;
+        await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
+    }
+
     async exitEditMode() {
         // exiting the default editing mode of an empty dashboard
         try {
             const deleteLockPromise = this.page.waitForRequest(URLS.deleteLock);
             await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
             await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
+
+            // if there are changes, a dialog with a warning about the unsaved changes will appear
+            const warningCancelDialog = this.page.locator(
+                slct(DashboardPage.selectors.dialogConfirm),
+            );
+            const editButton = this.page.locator(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
+
+            await expect(editButton.or(warningCancelDialog)).toBeVisible();
+
+            if (await editButton.isVisible()) {
+                await deleteLockPromise;
+                return;
+            }
+
+            // if there is a dialog, click the apply button
+            const applyBtn = await this.page.waitForSelector(
+                slct(DashboardPage.selectors.dialogConfirmApplyBtn),
+            );
+            await applyBtn.click();
             await deleteLockPromise;
             await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
         } catch {
@@ -336,7 +414,7 @@ class DashboardPage extends BasePage {
     async openDashConnections() {
         // switch to edit mode from view
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
-        // waiting for the opening of the warning dialog or the Undo edit button
+        // waiting for the opening of the warning dialog or the Cancel edit button
         const elem = await this.page.waitForSelector(
             `${slct(DashboardPage.selectors.dialogConfirm)}, ${slct(
                 COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN,
@@ -397,17 +475,17 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(ConnectionsDialogQA.Apply));
     }
 
-    async saveChanges() {
+    async clickSaveButton() {
         // save the changes made on the dashboard
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
     }
 
-    async saveChangesWithRenderCheck() {
+    async saveChanges() {
         const savePromise = this.page.waitForRequest((request) =>
             request.url().includes(URLS.savePath),
         );
         const deleteLockPromise = this.page.waitForRequest(URLS.deleteLock);
-        await this.saveChanges();
+        await this.clickSaveButton();
         await Promise.all([deleteLockPromise, savePromise]);
         await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
     }
@@ -456,12 +534,17 @@ class DashboardPage extends BasePage {
             });
     }
 
-    async saveChangesAsNewDash(dashName: string) {
-        // save your changes as a new dashboard
+    async clickSaveChangesAsNewDash() {
         await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
 
         await clickDropDownOption(this.page, ActionPanelDashSaveControls.SaveAsNewDropdownItem);
+    }
+
+    async saveChangesAsNewDash(dashName: string) {
+        // save your changes as a new dashboard
+        await this.clickSaveChangesAsNewDash();
+
         // click the Apply button in the dashboard copy dialog
         await this.page.waitForSelector(slct(EntryDialogQA.Apply));
         await Promise.all([
@@ -648,6 +731,21 @@ class DashboardPage extends BasePage {
             .filter({hasText: title})
             .filter({has: this.page.locator(slct(ControlQA.controlSelect))})
             .click();
+    }
+
+    async waitForSomeItemVisible() {
+        await this.page.waitForSelector(slct('dashkit-grid-item'));
+    }
+
+    async waitForSomeChartItemVisible() {
+        await this.page.waitForSelector(DashboardPage.selectors.chartGridItemContainer);
+    }
+
+    async shouldNotContainsChartItems() {
+        await waitForCondition(async () => {
+            const elems = await this.page.$$(DashboardPage.selectors.chartGridItemContainer);
+            return elems.length === 0;
+        });
     }
 }
 

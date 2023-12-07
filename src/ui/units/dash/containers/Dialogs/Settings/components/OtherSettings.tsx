@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {HelpPopover} from '@gravity-ui/components';
 import {Button, Checkbox, SelectProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -28,6 +29,8 @@ type OtherSettingsProps = {
     onUpdateLoadPriorityValue: (value: DashLoadPriority) => void;
     onAccessDescriptionClick: () => void;
     onSupportDescriptionClick: () => void;
+    loadOnlyVisibleCharts: boolean;
+    onUpdateLoadOnlyVisibleCharts: () => void;
 };
 
 export const OtherSettings = ({
@@ -40,6 +43,8 @@ export const OtherSettings = ({
     onUpdateLoadPriorityValue,
     onAccessDescriptionClick,
     onSupportDescriptionClick,
+    loadOnlyVisibleCharts,
+    onUpdateLoadOnlyVisibleCharts,
 }: OtherSettingsProps) => {
     const showAccessDescriptionSetting = Utils.isEnabledFeature(Feature.DashBoardAccessDescription);
     const showSupportDescriptionSetting = Utils.isEnabledFeature(
@@ -47,6 +52,17 @@ export const OtherSettings = ({
     );
     return (
         <SectionWrapper title={i18n('label_other-settings')} titleMods={b('section-title')}>
+            <Row>
+                <Title text={i18n('label_load-only-visible-charts')}>
+                    <HelpPopover htmlContent={i18n('hint_load-only-visible-charts')} />
+                </Title>
+                <Checkbox
+                    size="l"
+                    checked={loadOnlyVisibleCharts}
+                    onChange={onUpdateLoadOnlyVisibleCharts}
+                    className={b('box')}
+                />
+            </Row>
             <MaxConnection
                 maxValue={maxConcurrentRequestsValue}
                 onUpdate={onUpdateMaxConcurrentRequestsValue}

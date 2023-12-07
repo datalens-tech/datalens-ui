@@ -5,9 +5,17 @@ import ChartKit from '../wizard/ChartKit';
 import ChartSettings from '../wizard/ChartSettings';
 import NavigationMinimal, {Ownership} from '../wizard/NavigationMinimal';
 import VisualizationItemDialog from '../wizard/VisualizationItemDialog';
+import {CommonSelectors} from '../constants/common-selectors';
 
 import PreviewTable from './PreviewTable';
 import {NavigationMinimalPlaceSelectQa} from '../../../src/shared/constants/qa/components';
+import {
+    ViewSetupQA,
+    TabQueryQA,
+    TabParamsQA,
+    DialogQLParameterQA,
+    ScreenEditorQA,
+} from '../../../src/shared/constants/qa/ql';
 import SectionVisualization from '../wizard/SectionVisualization';
 
 interface QLPageProps extends BasePageProps {}
@@ -18,7 +26,7 @@ class QLPage extends ChartPage {
     chartSettings: ChartSettings;
     visualizationItemDialog: VisualizationItemDialog;
     sectionVisualization: SectionVisualization;
-    private selectConnectionButtonSelector = slct('select-connection');
+    private selectConnectionButtonSelector = slct(TabQueryQA.SelectConnection);
     private navigationMinimal: NavigationMinimal;
 
     constructor({page}: QLPageProps) {
@@ -32,7 +40,7 @@ class QLPage extends ChartPage {
     }
 
     async clickCreate() {
-        await this.page.click(slct('view-setup-create'));
+        await this.page.click(slct(ViewSetupQA.ViewSetupCreate));
     }
 
     async selectConnection(connectionName: string) {
@@ -143,8 +151,87 @@ class QLPage extends ChartPage {
         await this.saveAsNewChart(entryName);
     }
 
+    async openParamsTab() {
+        await this.page.click(slct(ScreenEditorQA.ParamsTab));
+    }
+
+    async addParam() {
+        await this.page.click(slct(TabParamsQA.AddParamBtn));
+    }
+
+    async selectParamType(type: string) {
+        await this.page.click(slct(TabParamsQA.ParamType));
+
+        await this.page.click(`${CommonSelectors.SelectItem} >> text=${type}`);
+    }
+
+    async setParamName(name: string) {
+        const inputLocator = this.page.locator(
+            `${slct(TabParamsQA.ParamName)} ${CommonSelectors.TextInput}`,
+        );
+
+        await inputLocator.fill(name);
+    }
+
+    async openParamDialog() {
+        await this.page.click(slct(TabParamsQA.OpenParamDialogBtn));
+    }
+
+    async applyParamDialog() {
+        await this.page.click('.yc-dialog-footer__button_action_apply');
+    }
+
+    async selectDate(dateValue: string) {
+        await this.page.fill(
+            `${slct(DialogQLParameterQA.Dialog)} .yc-text-input__control`,
+            dateValue,
+        );
+
+        await this.closeDatepickerPopup();
+    }
+
+    async selectRangeDate(dateValue: [string | null, string]) {
+        const startDate = dateValue[0];
+        const endDate = dateValue[1];
+
+        if (startDate) {
+            await this.page.fill(
+                `${slct(DialogQLParameterQA.Dialog)} ${slct(
+                    DialogQLParameterQA.DatepickerStart,
+                )} .yc-text-input__control`,
+                startDate,
+            );
+        }
+
+        await this.closeDatepickerPopup();
+
+        await this.page.fill(
+            `${slct(DialogQLParameterQA.Dialog)} ${slct(
+                DialogQLParameterQA.DatepickerEnd,
+            )} .yc-text-input__control`,
+            endDate,
+        );
+
+        await this.closeDatepickerPopup();
+    }
+
+    async closeDatepickerPopup() {
+        // position is needed just for click on the left corner of container
+        return this.page.click(slct(DialogQLParameterQA.Dialog), {position: {x: 0, y: 0}});
+    }
+
     waitForSomeSuccessfulRender() {
         return new Promise((resolve, reject) => {
+            this.page
+                .waitForSelector('.chartkit .chartkit-d3-bar-x')
+                .then(resolve, () => undefined);
+
+            this.page
+                .waitForSelector('.chartkit .chartkit-d3-scatter')
+                .then(resolve, () => undefined);
+
+            this.page.waitForSelector('.chartkit .chartkit-d3-pie').then(resolve, () => undefined);
+
             this.page.waitForSelector('.chartkit .chartkit-graph').then(resolve, () => undefined);
 
             this.page
@@ -174,7 +261,7 @@ class QLPage extends ChartPage {
     }
 
     async addEmptyPromQlQuery() {
-        await this.page.click(slct('add-promql-query-btn'));
+        await this.page.click(slct(TabQueryQA.AddPromQLQueryBtn));
     }
 
     async clickConnectionButton() {

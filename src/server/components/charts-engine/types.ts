@@ -135,6 +135,7 @@ export interface PluginRoute {
     path: string;
     handler: AppRouteDescription['handler'];
     authPolicy?: AppRouteDescription['authPolicy'];
+    disableCsrf?: boolean;
     validationConfig?: {
         [key: string]: any;
         query?: Object;

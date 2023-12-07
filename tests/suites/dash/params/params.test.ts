@@ -587,7 +587,7 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
             // adding a selector to the dashboard
             await page.click(slct(ControlQA.dialogControlApplyBtn));
 
-            await dashboardPage.saveChanges();
+            await dashboardPage.clickSaveButton();
 
             // checking the correct presence of a selector with unpublished changes
             await dashboardPage.waitForSelector(

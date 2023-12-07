@@ -94,6 +94,7 @@ export interface CommonSharedExtraSettings {
     navigatorSettings?: NavigatorSettings;
     enableGPTInsights?: boolean;
     labelsPosition?: LabelsPositions;
+    qlAutoExecuteChart?: 'on' | 'off';
 }
 
 interface CommonShared {

@@ -1176,14 +1176,26 @@ export const setQlChartActualRevision = (isDraft?: boolean) => {
     };
 };
 
-export const updateQueryAndRedraw = ({query, index}: {query: QLConfigQuery; index: number}) => {
+const drawPreviewIfValid = () => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
-        dispatch(updateQuery({query, index}));
-
         const valid = getValid(getState());
 
         if (valid) {
             dispatch(drawPreview());
         }
+    };
+};
+
+export const updateQueryAndRedraw = ({query, index}: {query: QLConfigQuery; index: number}) => {
+    return (dispatch: AppDispatch) => {
+        dispatch(updateQuery({query, index}));
+        dispatch(drawPreviewIfValid());
+    };
+};
+
+export const removeQueryAndRedraw = ({index}: {index: number}) => {
+    return (dispatch: AppDispatch) => {
+        dispatch(removeQuery({index}));
+        dispatch(drawPreviewIfValid());
     };
 };

@@ -36,3 +36,13 @@ export enum DashRevisions {
     EXPANDABLE_PANEL_EXPANDED_BTN = 'expandable-panel-toggle-btn-expanded',
     EXPANDABLE_PANEL_CLOSE = 'expandable-panel-close',
 }
+
+export enum DashEntryQa {
+    EntryName = 'dash-entry-name',
+}
+
+export enum DashMetaQa {
+    Dialog = 'dialog-dash-meta',
+    SaveButton = 'dash-meta-save-button',
+    EditButton = 'dash-meta-edit-button',
+}

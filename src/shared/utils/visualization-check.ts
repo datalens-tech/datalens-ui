@@ -1,7 +1,7 @@
 import {Link} from '../../shared';
 import {QLChartType} from '../constants/ql';
 
-export function isMonitoringOrPrometheusChart(chartType: string) {
+export function isMonitoringOrPrometheusChart(chartType: string | null | undefined) {
     return chartType === QLChartType.Monitoringql || chartType === QLChartType.Promql;
 }
 

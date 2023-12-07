@@ -31,10 +31,12 @@ import {
     collator,
     formatDate,
     getTimezoneOffsettedTime,
+    isGradientMode,
     isNumericalDataType,
     numericCollator,
 } from '../../utils/misc-helpers';
 import {mapAndShapeGraph} from '../../utils/shape-helpers';
+import {addActionParamValue} from '../helpers/action-params';
 import {PrepareFunctionArgs} from '../types';
 
 import {
@@ -118,7 +120,14 @@ function prepareLine({
         : true;
 
     const colorItem = colors[0];
+    const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;
+
     const shapeItem = shapes[0];
+
+    const gradientMode =
+        colorItem &&
+        colorFieldDataType &&
+        isGradientMode({colorField: colorItem, colorFieldDataType, colorsConfig});
 
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
@@ -142,6 +151,7 @@ function prepareLine({
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
 
     const isColorizeByMeasure = isMeasureField(colorItem);
+    const colorMode = colorsConfig.colorMode;
     const isColorizeByMeasureValue = isMeasureValue(colorItem);
 
     /*
@@ -274,6 +284,7 @@ function prepareLine({
                 labelItem,
                 segmentIndexInOrder,
                 layers: shared.visualization?.layers,
+                colorMode,
             });
         });
 
@@ -416,16 +427,10 @@ function prepareLine({
                             point.label = pointLabel === undefined ? '' : pointLabel;
 
                             if (isActionParamsEnable) {
-                                const actionParams: Record<string, any> = {};
-
-                                if (isDimensionField(x)) {
-                                    actionParams[x.guid] = point.x;
-                                }
-
                                 const [yField] = ySectionItems || [];
-                                if (isDimensionField(yField)) {
-                                    actionParams[yField.guid] = point.y;
-                                }
+                                const actionParams: Record<string, any> = {};
+                                addActionParamValue(actionParams, x, point.x);
+                                addActionParamValue(actionParams, yField, point.y);
 
                                 point.custom = {
                                     ...point.custom,
@@ -477,23 +482,14 @@ function prepareLine({
                     const actionParams: Record<string, any> = {};
 
                     // bar-x only
-                    if (x2 && isDimensionField(x2)) {
-                        actionParams[x2.guid] = line.stack;
-                    }
+                    addActionParamValue(actionParams, x2, line.stack);
 
                     // bar-y only
                     const [, yField2] = ySectionItems || [];
-                    if (isDimensionField(yField2)) {
-                        actionParams[yField2.guid] = line.stack;
-                    }
+                    addActionParamValue(actionParams, yField2, line.stack);
 
-                    if (isDimensionField(colorItem)) {
-                        actionParams[colorItem.guid] = line.colorValue;
-                    }
-
-                    if (isDimensionField(shapeItem)) {
-                        actionParams[shapeItem.guid] = line.shapeValue;
-                    }
+                    addActionParamValue(actionParams, colorItem, line.colorValue);
+                    addActionParamValue(actionParams, shapeItem, line.shapeValue);
 
                     graph.custom = {
                         ...graph.custom,
@@ -505,7 +501,7 @@ function prepareLine({
             });
         });
 
-        if (isColorizeByMeasure || isColorizeByMeasureValue) {
+        if (gradientMode) {
             colorizeByGradient(visualizationId as WizardVisualizationId, {
                 graphs,
                 colorsConfig,
@@ -520,6 +516,7 @@ function prepareLine({
                 usedColors,
             });
         }
+
         if (visualizationId === 'line') {
             mapAndShapeGraph({
                 graphs,

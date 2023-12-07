@@ -34,7 +34,7 @@ datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
 
             // Save the dashboard settings and the dashboard itself
             await dashboardSettings.save();
-            await dashboardPage.saveChanges();
+            await dashboardPage.clickSaveButton();
 
             await page.waitForTimeout(RENDER_TIMEOUT);
             // Reloading the page and waiting for the open table of contents
@@ -49,7 +49,7 @@ datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
 
             // Save the dashboard settings and the dashboard itself
             await dashboardSettings.save();
-            await dashboardPage.saveChanges();
+            await dashboardPage.clickSaveButton();
 
             await page.waitForTimeout(RENDER_TIMEOUT);
             // Reload the page and wait for the closed table of contents

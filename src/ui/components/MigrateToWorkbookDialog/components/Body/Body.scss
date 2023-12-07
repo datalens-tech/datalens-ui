@@ -11,8 +11,13 @@
         }
     }
 
-    &__alert {
+    &__alert-info,
+    &__alert-warning {
         margin-top: 12px;
+    }
+
+    &__alert-warning {
+        margin-bottom: 12px;
     }
 
     &__relations {

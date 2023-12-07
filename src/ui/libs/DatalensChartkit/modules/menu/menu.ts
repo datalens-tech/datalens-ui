@@ -28,6 +28,7 @@ export const getChartkitMenuByType = (props?: GetChartkitMenuByType) => {
         chartsDataProvider: dataProvider,
         onExportLoading,
         isEditAvaible,
+        extraOptions,
     } = props || {};
 
     const chartsDataProvider = dataProvider as ChartKitDataProvider;
@@ -38,6 +39,7 @@ export const getChartkitMenuByType = (props?: GetChartkitMenuByType) => {
         type,
         config,
         chartsDataProvider,
+        extraOptions,
         customOptions: {
             [MenuItemsIds.NEW_WINDOW]: {
                 title: i18n('dash.chartkit-menu.view', 'button_new-tab'),

@@ -1,13 +1,6 @@
 import {ColorPalette, selectPaletteById} from '../../shared';
 import {registry} from '../registry';
 
-const THEME_OVERRIDE_QUERY_PARAM_NAME = '_theme';
-const LANG_OVERRIDE_QUERY_PARAM_NAME = '_lang';
-const EMBEDD_QUERY_PARAM_NAME = '_embedded';
-const YC_THEME_OVERRIDE_COOKIE_NAME = 'yc_theme';
-const YC_LANG_OVERRIDE_COOKIE_NAME = 'yc_lang';
-const YC_OVERRIDE_COOKIE_VALUE_REG = /^[a-z]+$/;
-
 const DASH_API_BASE_URL = '/api/dash/v1/dashboards';
 const CHARTS_API_BASE_URL = '/api/charts/v1/charts';
 const YAV_API_BASE_URL = '/api/yav';
@@ -67,12 +60,6 @@ const selectServerPalette = (
 const SERVICE_NAME_DATALENS = 'DataLens';
 
 export {
-    THEME_OVERRIDE_QUERY_PARAM_NAME,
-    LANG_OVERRIDE_QUERY_PARAM_NAME,
-    EMBEDD_QUERY_PARAM_NAME,
-    YC_THEME_OVERRIDE_COOKIE_NAME,
-    YC_LANG_OVERRIDE_COOKIE_NAME,
-    YC_OVERRIDE_COOKIE_VALUE_REG,
     DASH_API_BASE_URL,
     CHARTS_API_BASE_URL,
     YAV_API_BASE_URL,

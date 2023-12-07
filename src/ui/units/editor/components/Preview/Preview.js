@@ -6,14 +6,14 @@ import {useLocation} from 'react-router-dom';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
 import {URL_QUERY} from '../../../../constants';
-import {UrlSearch} from '../../../../utils';
+import Utils, {UrlSearch} from '../../../../utils';
 import {Status} from '../../constants/common';
 
 import './Preview.scss';
 
 const b = block('chart-preview');
 
-const Preview = ({chartData, onLoadData, queryParams, widgetRef}) => {
+const Preview = ({chartData, onLoadData, queryParams, widgetRef, actionParamsEnabled}) => {
     const onLoad = (result) => {
         const status = result.status === Status.Success ? Status.Success : Status.Failed;
         onLoadData({data: result.data, status});
@@ -27,7 +27,7 @@ const Preview = ({chartData, onLoadData, queryParams, widgetRef}) => {
                 config={chartData.editMode}
                 params={queryParams}
                 onChartLoad={onLoad}
-                actionParamsEnabled={true}
+                actionParamsEnabled={actionParamsEnabled}
                 forwardedRef={widgetRef}
             />
         </div>
@@ -45,6 +45,7 @@ Preview.propTypes = {
     onLoadData: PropTypes.func.isRequired,
     queryParams: PropTypes.object,
     widgetRef: PropTypes.object,
+    actionParamsEnabled: PropTypes.bool,
 };
 
 const MemoPreview = React.memo(Preview);
@@ -57,6 +58,7 @@ function PreviewWrap(props) {
     const queryParams = React.useMemo(() => {
         return new UrlSearch(search).delete(Object.values(URL_QUERY)).toObject();
     }, [search]);
+    const {actionParamsEnabled} = Utils.getOptionsFromSearch(search);
 
     React.useEffect(() => {
         if (widgetRef.current && typeof widgetRef.current.reflow === 'function') {
@@ -74,6 +76,7 @@ function PreviewWrap(props) {
             {...restProps}
             queryParams={queryParams}
             widgetRef={widgetRef}
+            actionParamsEnabled={actionParamsEnabled}
         />
     );
 }

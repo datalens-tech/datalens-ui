@@ -61,6 +61,7 @@ export const Content = (props: ChartContentProps) => {
         dataProvider,
         isWidgetMenuDataChanged,
         renderPluginLoader,
+        enableActionParams,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -121,6 +122,7 @@ export const Content = (props: ChartContentProps) => {
                 onChange={onChange}
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 onExportLoading={handleExportLoading}
+                enableActionParams={enableActionParams}
             />
             <div
                 className={b(

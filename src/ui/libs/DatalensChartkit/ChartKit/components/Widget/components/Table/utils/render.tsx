@@ -14,6 +14,7 @@ import {
     DiffTableColumn,
     NumberTableColumn,
     NumberViewOptions,
+    StringParams,
     TableCell,
     TableColumn,
     TableHead,
@@ -21,6 +22,7 @@ import {
 } from 'shared';
 
 import {Markup} from '../../../../../../../../components/Markup';
+import {markupToRawString} from '../../../../../../modules/table';
 import {ChartKitDataTable, DataTableData} from '../../../../../../types';
 import {Bar} from '../Bar/Bar';
 import {TableProps} from '../types';
@@ -28,9 +30,11 @@ import {TableProps} from '../types';
 import {
     camelCaseCss,
     generateName,
-    getCellClickActionParams,
+    getActionParams,
+    getAdditionalStyles,
     getCellClickArgs,
     getCellWidth,
+    getRowActionParams,
     getTreeSetColumnSortAscending,
     hasTreeSetColumn,
     isCellValueNullable,
@@ -39,6 +43,7 @@ import {
     prepareLinkHref,
     selectBarSettingValue,
 } from './misc';
+import type {ActionParamsData} from './types';
 
 const b = block('chartkit-table');
 const DATE_FORMAT_BY_SCALE = {
@@ -278,6 +283,7 @@ export const getColumnsAndNames = ({
     shift = 0,
     topLevelWidth,
     tableRef,
+    actionParamsData,
 }: {
     onChange: TableProps['onChange'];
     head: TableHead[];
@@ -288,8 +294,10 @@ export const getColumnsAndNames = ({
     shift?: number;
     tableWidth?: number;
     topLevelWidth?: number;
+    actionParamsData?: ActionParamsData;
 }) => {
     return head.reduce(
+        // eslint-disable-next-line complexity
         (
             result: {
                 columns: Column<DataTableData>[];
@@ -316,6 +324,7 @@ export const getColumnsAndNames = ({
                     topLevelWidth: currentColumnWidth
                         ? currentColumnWidth / column.sub.length
                         : undefined,
+                    actionParamsData,
                 });
                 const columnName = generateName({
                     id: column.id,
@@ -428,15 +437,22 @@ export const getColumnsAndNames = ({
                         }
                         const cell = row && row[name];
 
-                        let defaultStyles;
-
+                        const defaultStyles: React.CSSProperties = {};
                         const cellClickArgs = getCellClickArgs(row, columnName);
-                        const cellActionParams = getCellClickActionParams(row, columnName);
+                        let rowActionParams: StringParams | undefined;
+                        let additionalStyles: React.CSSProperties | undefined;
 
-                        if (cellClickArgs || cellActionParams) {
-                            defaultStyles = {
-                                cursor: 'pointer',
-                            };
+                        if (actionParamsData) {
+                            rowActionParams = getRowActionParams({row, head});
+                            additionalStyles = getAdditionalStyles({actionParamsData, row, head});
+                        }
+
+                        if (cellClickArgs || rowActionParams) {
+                            defaultStyles.cursor = 'pointer';
+                        }
+
+                        if (additionalStyles) {
+                            Object.assign(defaultStyles, additionalStyles);
                         }
 
                         return camelCaseCss(
@@ -445,6 +461,11 @@ export const getColumnsAndNames = ({
                     },
                     sortAccessor: (row) => {
                         const column = row[columnName];
+
+                        if (typeof column === 'object' && isMarkupItem(column.value)) {
+                            return markupToRawString(column.value);
+                        }
+
                         if (typeof column === 'object' && column && 'value' in column) {
                             const value = column.value;
                             return Array.isArray(value) ? value[0] : value;
@@ -454,17 +475,24 @@ export const getColumnsAndNames = ({
                     sortAscending: hasTreeSetColumn(rows[0])
                         ? getTreeSetColumnSortAscending(columnName, rows)
                         : undefined,
-                    onClick: ({row}, {name: columnName}) => {
-                        const cellClickArgs = getCellClickArgs(row, columnName);
-                        const cellActionParams = getCellClickActionParams(row, columnName);
+                    onClick: ({row}, col) => {
+                        const cellClickArgs = getCellClickArgs(row, col.name);
+                        const cellActionParams = actionParamsData
+                            ? getActionParams({
+                                  actionParamsData,
+                                  row,
+                                  column: col,
+                                  head,
+                              })
+                            : undefined;
 
                         if ((cellClickArgs || cellActionParams) && onChange) {
-                            const paramsData = cellClickArgs || {};
-                            const actionParamsData = cellActionParams || {};
+                            const extractedParams = cellClickArgs || {};
+                            const extractedActionParams = cellActionParams || {};
                             onChange(
                                 {
                                     type: 'PARAMS_CHANGED',
-                                    data: {params: {...paramsData, ...actionParamsData}},
+                                    data: {params: {...extractedParams, ...extractedActionParams}},
                                 },
                                 {forceUpdate: true},
                                 true,

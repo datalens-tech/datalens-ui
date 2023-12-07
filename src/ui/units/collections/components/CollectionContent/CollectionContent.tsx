@@ -37,7 +37,6 @@ import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
 import {DeleteCollectionDialogContainer} from '../../containers/DeleteCollectionDialogContainer/DeleteCollectionDialogContainer';
 import {DeleteWorkbookDialogContainer} from '../../containers/DeleteWorkbookDialogContainer/DeleteWorkbookDialogContainer';
-import {updateCollectionInItems, updateWorkbookInItems} from '../../store/actions';
 import {GetCollectionContentArgs} from '../../types';
 import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
@@ -72,6 +71,7 @@ type Props = {
         collectionsNextPageToken?: string | null;
         workbooksNextPageToken?: string | null;
     };
+    refreshPage: () => void;
     refreshContent: () => void;
     getCollectionContentRecursively: (
         args: GetCollectionContentArgs,
@@ -96,6 +96,7 @@ export const CollectionContent = React.memo<Props>(
         getCollectionContentRecursively,
         onCreateWorkbookClick,
         onClearFiltersClick,
+        refreshPage,
         refreshContent,
     }) => {
         const [waypointDisabled, setWaypointDisabled] = React.useState(false);
@@ -118,11 +119,11 @@ export const CollectionContent = React.memo<Props>(
         const handeCloseMoveDialog = React.useCallback(
             (structureChanged: boolean) => {
                 if (structureChanged) {
-                    refreshContent();
+                    refreshPage();
                 }
                 dispatch(closeDialog());
             },
-            [dispatch, refreshContent],
+            [dispatch, refreshPage],
         );
 
         React.useEffect(() => {
@@ -214,8 +215,10 @@ export const CollectionContent = React.memo<Props>(
             );
         }
 
-        const getCollectionActions = (item: CollectionWithPermissions) => {
-            const actions: DropdownMenuItem[] = [];
+        const getCollectionActions = (
+            item: CollectionWithPermissions,
+        ): (DropdownMenuItem[] | DropdownMenuItem)[] => {
+            const actions: (DropdownMenuItem[] | DropdownMenuItem)[] = [];
 
             if (item.permissions.update) {
                 actions.push({
@@ -233,7 +236,7 @@ export const CollectionContent = React.memo<Props>(
                                     description: item?.description ?? '',
                                     onApply: (collection: UpdateCollectionResponse | null) => {
                                         if (collection) {
-                                            dispatch(updateCollectionInItems(collection));
+                                            refreshContent();
                                         }
                                     },
                                     onClose: () => {
@@ -277,8 +280,9 @@ export const CollectionContent = React.memo<Props>(
                 });
             }
 
+            const otherActions: DropdownMenuItem[] = [];
             if (item.permissions.delete) {
-                actions.push({
+                otherActions.push({
                     text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
                     action: () => {
                         setDialogState(DialogState.DeleteCollection);
@@ -288,11 +292,14 @@ export const CollectionContent = React.memo<Props>(
                 });
             }
 
+            actions.push([...otherActions]);
             return actions;
         };
 
-        const getWorkbookActions = (item: WorkbookWithPermissions) => {
-            const actions: DropdownMenuItem[] = [];
+        const getWorkbookActions = (
+            item: WorkbookWithPermissions,
+        ): (DropdownMenuItem[] | DropdownMenuItem)[] => {
+            const actions: (DropdownMenuItem[] | DropdownMenuItem)[] = [];
 
             if (item.permissions.update) {
                 actions.push({
@@ -309,7 +316,7 @@ export const CollectionContent = React.memo<Props>(
                                         description: item?.description ?? '',
                                         onApply: (workbook: UpdateWorkbookResponse | null) => {
                                             if (workbook) {
-                                                dispatch(updateWorkbookInItems(workbook));
+                                                refreshContent();
                                             }
                                         },
                                         onClose: () => {
@@ -380,9 +387,9 @@ export const CollectionContent = React.memo<Props>(
                     },
                 });
             }
-
+            const otherActions: DropdownMenuItem[] = [];
             if (item.permissions.delete) {
-                actions.push({
+                otherActions.push({
                     text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
                     action: () => {
                         setDialogState(DialogState.DeleteWorkbook);
@@ -392,6 +399,7 @@ export const CollectionContent = React.memo<Props>(
                 });
             }
 
+            actions.push([...otherActions]);
             return actions;
         };
 

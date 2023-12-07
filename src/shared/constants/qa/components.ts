@@ -101,6 +101,15 @@ export enum TabMenuQA {
     Add = 'tab-menu-add',
 }
 
+export enum DialogDashWidgetItemQA {
+    Text = 'dialog_widget-text',
+    Title = 'dialog_widget-title',
+}
+
+export enum DialogDashTitleQA {
+    Input = 'dialog-dash-title-input',
+}
+
 export enum DialogDashWidgetQA {
     Apply = 'dialog_widget-apply-btn',
     Cancel = 'dialog_widget-cancel-btn',
@@ -135,4 +144,8 @@ export const enum DialogCreateWorkbookEntryQa {
 export const enum CreateEntityButton {
     Button = 'create-entry-button',
     Popup = 'create-entry-button-popup',
+}
+
+export enum DashTabsQA {
+    Root = 'dash-tabs',
 }

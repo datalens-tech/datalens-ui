@@ -8,6 +8,11 @@ import {DashRevisions} from '../../../src/shared';
 const REVISIONS_LOAD_TIMEOUT = 2000;
 
 export default class Revisions {
+    static selectors = {
+        qa: {
+            listRow: slct(COMMON_SELECTORS.REVISIONS_LIST_ROW),
+        },
+    };
     static getUrlRevIdParam(page: Page): string | null {
         const pageURL = new URL(page.url());
         // so far, it is not possible to use a common constant from the 'ui' before updating playwright
@@ -33,6 +38,7 @@ export default class Revisions {
 
         // waiting for the revision list to be uploaded
         await this.page.waitForSelector(slct(COMMON_SELECTORS.REVISIONS_LIST));
+        await this.page.waitForSelector(slct(COMMON_SELECTORS.REVISIONS_LIST_ROW));
     }
 
     async openActualVersion() {
@@ -108,5 +114,13 @@ export default class Revisions {
 
     async openRevisionsListByRevisionsPanelControl() {
         await this.page.click(slct(this.showRevisionsActionPanelButtonQa));
+    }
+
+    getRevisionByIdx(idx: number) {
+        return this.page.locator(Revisions.selectors.qa.listRow).nth(idx);
+    }
+
+    async getRevisionIdByIdx(idx: number) {
+        return await this.getRevisionByIdx(idx).getAttribute('data-qa-revid');
     }
 }

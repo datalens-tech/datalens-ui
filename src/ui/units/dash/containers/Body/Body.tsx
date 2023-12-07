@@ -7,6 +7,7 @@ import {
     ActionPanel as DashkitActionPanel,
     ActionPanelItem as DashkitActionPanelItem,
     MenuItems,
+    type PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
 import {ChartColumn, CopyPlus, Gear, Heading, Sliders, TextAlignLeft} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
@@ -21,8 +22,17 @@ import debounce from 'lodash/debounce';
 import {ResolveThunks, connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {ControlQA, DashTab, DashTabItem, DashboardAddWidgetQa, Feature} from 'shared';
+import {
+    ControlQA,
+    DashEntryQa,
+    DashTab,
+    DashTabItem,
+    DashboardAddWidgetQa,
+    Feature,
+    StringParams,
+} from 'shared';
 import {DatalensGlobalState} from 'ui';
+import {registry} from 'ui/registry';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
@@ -41,6 +51,7 @@ import {
     sortByOrderIdOrLayoutComparator,
     stringifyMemoize,
 } from '../../modules/helpers';
+import PostMessage, {PostMessageCode} from '../../modules/postMessage';
 import {openDialog, openItemDialog, setCurrentTabData} from '../../store/actions/dash';
 import {
     TabsHashStates,
@@ -128,6 +139,12 @@ class Body extends React.PureComponent<BodyProps> {
         history.push({
             ...location,
             search: `?${searchParams.toString()}`,
+        });
+
+        // TODO: CHARTS-8789
+        PostMessage.send({
+            code: PostMessageCode.UrlChanged,
+            data: {pathname: location.pathname, search: `?${searchParams.toString()}`},
         });
     }, 1000);
 
@@ -254,34 +271,60 @@ class Body extends React.PureComponent<BodyProps> {
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
-    renderBody() {
+    getPreparedCopyItemOptions = (itemToCopy: PreparedCopyItemOptions, tabData: DashTab | null) => {
+        if (!tabData?.items || !itemToCopy || !itemToCopy.data.tabs?.length) {
+            return itemToCopy;
+        }
+        const copyItemTabsWidgetParams: Record<string, StringParams> = {};
+        itemToCopy.data.tabs.forEach((copiedTabItem) => {
+            const {id, params} = copiedTabItem;
+            copyItemTabsWidgetParams[id] = params || {};
+        });
+
+        tabData.items.forEach((dashTabItem) => {
+            if ('tabs' in dashTabItem.data) {
+                dashTabItem.data.tabs.forEach((item) => {
+                    if (item.id in copyItemTabsWidgetParams) {
+                        copyItemTabsWidgetParams[item.id] = item.params;
+                    }
+                });
+            }
+        });
+        itemToCopy.data.tabs.forEach((copiedTabItem) => {
+            if (copiedTabItem.id in copyItemTabsWidgetParams) {
+                const {id} = copiedTabItem;
+                copiedTabItem.params = copyItemTabsWidgetParams[id];
+            }
+        });
+        return itemToCopy;
+    };
+
+    render() {
+        return (
+            <div className={b()}>
+                {this.renderBody()}
+                <PaletteEditor />
+                <EntryDialogues sdk={getSdk() as unknown as SDK} ref={this.entryDialoguesRef} />
+            </div>
+        );
+    }
+
+    storageHandler = () => {
+        this.setState({hasCopyInBuffer: getPastedWidgetData()});
+    };
+
+    private renderDashkit = () => {
         const {
             mode,
             settings,
             tabs,
-            showTableOfContent,
             tabData,
             tabDataWithDashDatasets,
             handlerEditClick,
             isEditModeLoading,
-            isSidebarOpened,
         } = this.props;
 
-        switch (mode) {
-            case Mode.Loading:
-            case Mode.Updating:
-                return <Loader size="l" />;
-            case Mode.Error:
-                return <Error />;
-        }
-
-        const localTabs = memoizedGetLocalTabs(tabs);
-
-        const hasTableOfContent = !(localTabs.length === 1 && !localTabs[0].items.length);
-
         let tabDataConfig = (tabDataWithDashDatasets || tabData) as DashKitProps['config'] | null;
-
-        const isEmptyTab = !tabDataConfig?.items.length;
 
         if (DL.IS_MOBILE && tabDataConfig) {
             const [layoutMap, layoutColumns] = getLayoutMap(tabDataConfig.layout);
@@ -298,9 +341,121 @@ class Body extends React.PureComponent<BodyProps> {
             };
         }
 
-        const overlayControls: DashKitProps['overlayControls'] = Utils.isEnabledFeature(
-            Feature.ShowNewRelations,
-        )
+        const dashkitSettings = {
+            ...settings,
+        } as NonNullable<DashKitProps['settings']>;
+
+        const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
+        const {autoupdateInterval} = Utils.getOptionsFromSearch(window.location.search);
+        if (autoupdateInterval) {
+            const minAutoupdateInterval = getMinAutoupdateInterval();
+
+            dashkitSettings.autoupdateInterval =
+                autoupdateInterval >= getMinAutoupdateInterval()
+                    ? autoupdateInterval
+                    : minAutoupdateInterval;
+        }
+
+        const overlayControls = this.getOverlayControls();
+
+        const DashKit = getConfiguredDashKit();
+
+        const isEmptyTab = !tabDataConfig?.items.length;
+
+        return isEmptyTab ? (
+            <EmptyState
+                openDialog={this.props.openDialog}
+                canEdit={this.props.canEdit}
+                isEditMode={mode === Mode.Edit}
+                isTabView={!settings.hideTabs && tabs.length > 1}
+                onEditClick={handlerEditClick}
+                isEditModeLoading={isEditModeLoading}
+            />
+        ) : (
+            <DashKit
+                ref={this.dashKitRef}
+                config={tabDataConfig as DashKitProps['config']}
+                editMode={mode === Mode.Edit}
+                itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
+                context={{
+                    getPreparedCopyItemOptions: (itemToCopy: PreparedCopyItemOptions) => {
+                        return this.getPreparedCopyItemOptions(itemToCopy, tabData);
+                    },
+                }}
+                onItemEdit={this.props.openItemDialog}
+                onChange={this.onChange}
+                settings={dashkitSettings}
+                defaultGlobalParams={settings.globalParams}
+                globalParams={
+                    this.getUrlGlobalParams(
+                        this.props.location.search,
+                        this.props.settings.globalParams,
+                    ) as DashKitProps['globalParams']
+                }
+                overlayControls={overlayControls}
+            />
+        );
+    };
+
+    private renderBody() {
+        const {mode, settings, tabs, showTableOfContent, isSidebarOpened} = this.props;
+
+        switch (mode) {
+            case Mode.Loading:
+            case Mode.Updating:
+                return <Loader size="l" />;
+            case Mode.Error:
+                return <Error />;
+        }
+
+        const localTabs = memoizedGetLocalTabs(tabs);
+
+        const hasTableOfContent = !(localTabs.length === 1 && !localTabs[0].items.length);
+
+        const showEditActionPanel = mode === Mode.Edit;
+
+        return (
+            <div className={b('content-wrapper')}>
+                <div
+                    className={b('content-container', {
+                        'no-title':
+                            settings.hideDashTitle && (settings.hideTabs || tabs.length === 1),
+                        'no-title-with-tabs':
+                            settings.hideDashTitle && !settings.hideTabs && tabs.length > 1,
+                    })}
+                >
+                    <TableOfContent />
+                    <div
+                        className={b('content', {
+                            'with-table-of-content': showTableOfContent && hasTableOfContent,
+                            mobile: DL.IS_MOBILE,
+                            aside: getIsAsideHeaderEnabled(),
+                            'with-edit-panel': showEditActionPanel,
+                        })}
+                    >
+                        {!settings.hideDashTitle && !DL.IS_MOBILE && (
+                            <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
+                                {Utils.getEntryNameFromKey(this.props.entry?.key)}
+                            </div>
+                        )}
+                        {!settings.hideTabs && <Tabs />}
+                        {this.renderDashkit()}
+                        {showEditActionPanel && (
+                            <DashkitActionPanel
+                                items={this.getActionPanelItems()}
+                                className={b('edit-panel', {
+                                    'aside-opened': isSidebarOpened,
+                                })}
+                            />
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    private getOverlayControls = (): DashKitProps['overlayControls'] => {
+        return Utils.isEnabledFeature(Feature.ShowNewRelations)
             ? {
                   overlayControls: [
                       {
@@ -332,93 +487,6 @@ class Body extends React.PureComponent<BodyProps> {
                   ],
               }
             : {};
-
-        const DashKit = getConfiguredDashKit();
-
-        const showEditActionPanel = mode === Mode.Edit;
-
-        return (
-            <div className={b('content-wrapper')}>
-                {!settings.hideDashTitle && !DL.IS_MOBILE && (
-                    <div className={b('entry-name')} data-qa="dash-entry-name">
-                        {Utils.getEntryNameFromKey(this.props.entry?.key)}
-                    </div>
-                )}
-                <div
-                    className={b('content-container', {
-                        'no-title':
-                            settings.hideDashTitle && (settings.hideTabs || tabs.length === 1),
-                        'no-title-with-tabs':
-                            settings.hideDashTitle && !settings.hideTabs && tabs.length > 1,
-                    })}
-                >
-                    <TableOfContent />
-                    <div
-                        className={b('content', {
-                            'with-table-of-content': showTableOfContent && hasTableOfContent,
-                            mobile: DL.IS_MOBILE,
-                            aside: getIsAsideHeaderEnabled(),
-                            'with-edit-panel': showEditActionPanel,
-                        })}
-                    >
-                        {!settings.hideTabs && <Tabs />}
-                        {isEmptyTab ? (
-                            <EmptyState
-                                openDialog={this.props.openDialog}
-                                canEdit={this.props.canEdit}
-                                isEditMode={mode === Mode.Edit}
-                                isTabView={!settings.hideTabs && tabs.length > 1}
-                                onEditClick={handlerEditClick}
-                                isEditModeLoading={isEditModeLoading}
-                            />
-                        ) : (
-                            <DashKit
-                                ref={this.dashKitRef}
-                                config={tabDataConfig as DashKitProps['config']}
-                                editMode={mode === Mode.Edit}
-                                itemsStateAndParams={
-                                    this.props.hashStates as DashKitProps['itemsStateAndParams']
-                                }
-                                onItemEdit={this.props.openItemDialog}
-                                onChange={this.onChange}
-                                settings={settings as DashKitProps['settings']}
-                                defaultGlobalParams={settings.globalParams}
-                                globalParams={
-                                    this.getUrlGlobalParams(
-                                        this.props.location.search,
-                                        this.props.settings.globalParams,
-                                    ) as DashKitProps['globalParams']
-                                }
-                                overlayControls={overlayControls}
-                            />
-                        )}
-                        {showEditActionPanel && (
-                            <DashkitActionPanel
-                                items={this.getActionPanelItems()}
-                                className={b('edit-panel', {
-                                    'aside-opened': isSidebarOpened,
-                                })}
-                            />
-                        )}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    render() {
-        const content = this.renderBody();
-        return (
-            <div className={b()}>
-                {content}
-                <PaletteEditor />
-                <EntryDialogues sdk={getSdk() as unknown as SDK} ref={this.entryDialoguesRef} />
-            </div>
-        );
-    }
-
-    storageHandler = () => {
-        this.setState({hasCopyInBuffer: getPastedWidgetData()});
     };
 }
 

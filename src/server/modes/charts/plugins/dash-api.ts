@@ -274,6 +274,20 @@ export const dashApiValidation: ValidationConfig = {
                             },
                         },
                     },
+                    {
+                        if: {
+                            properties: {
+                                elementType: {
+                                    const: DashTabItemControlElementType.Checkbox,
+                                },
+                            },
+                        },
+                        then: {
+                            properties: {
+                                defaultValue: {type: 'string'},
+                            },
+                        },
+                    },
                 ],
             },
         },
@@ -598,7 +612,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                     );
 
                     if (result.scope !== EntryScope.Dash) {
-                        res.status(404).send({message: 'Dash not found'});
+                        res.status(404).send({message: 'No entry found'});
                         return;
                     }
 

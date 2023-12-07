@@ -79,6 +79,14 @@ export type LoadingChartHookProps = {
     hasChangedActionParams?: boolean;
     enableActionParams?: boolean;
     widgetType?: ChartSelectorWithRefProps['widgetType'];
+    isPageHidden?: boolean;
+    autoupdateInterval?: number;
+};
+
+type AutoupdateDataType = {
+    isPageHidden?: boolean;
+    reloadTimeout?: NodeJS.Timeout;
+    lastReloadAt?: number;
 };
 
 const WIDGET_LOADING_VISIBLE_OFFSET = 300; // '300px'; // offset before div for start loading TODO - return here CHARTS-7043
@@ -111,6 +119,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         onInnerParamsChanged,
         enableActionParams,
         widgetType,
+        autoupdateInterval,
+        isPageHidden,
     } = props;
 
     const [canBeLoaded, setCanBeLoaded] = React.useState<boolean>(false);
@@ -139,6 +149,14 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
 
     const [renderedCallbackCalledOnce, setRenderedCallbackCalledOnce] = React.useState(false);
     const [changedInnerFlag, setChangedInnerFlag] = React.useState<boolean>(false);
+
+    // need to track the current values in setTimeout callback of reloadChart
+    const autoupdateDataRef = React.useRef<AutoupdateDataType>({
+        isPageHidden: false,
+        reloadTimeout: undefined,
+        lastReloadAt: undefined,
+    });
+    autoupdateDataRef.current.isPageHidden = isPageHidden;
 
     const currentChangeParamsRef = React.useRef<ChartsProps['params'] | null>(null);
 
@@ -276,6 +294,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         if (!requestDataProps) {
             return;
         }
+
         // need to prevent double request before get response
         if (changedInnerFlag) {
             setChangedInnerFlag(false);
@@ -496,6 +515,41 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         }
     }, [throttledInViewportCheck]);
 
+    /**
+     * reload chart by timer when the _autoupdate param is passed
+     */
+    const reloadChart = React.useCallback(() => {
+        const autoupdateIntervalMs = Number(autoupdateInterval) * 1000;
+        if (autoupdateIntervalMs) {
+            const timeSinceLastReload =
+                new Date().getTime() - (autoupdateDataRef.current.lastReloadAt || 0);
+            const reloadIntervalRemains = autoupdateIntervalMs - timeSinceLastReload;
+
+            if (
+                (!autoupdateDataRef.current.isPageHidden || isEmbeddedMode()) &&
+                reloadIntervalRemains <= 0 &&
+                autoupdateDataRef.current.reloadTimeout
+            ) {
+                autoupdateDataRef.current.lastReloadAt = new Date().getTime();
+                loadChartData();
+            }
+
+            autoupdateDataRef.current.reloadTimeout = setTimeout(
+                () => reloadChart(),
+                autoupdateIntervalMs,
+            );
+        }
+    }, [loadChartData, autoupdateInterval]);
+
+    // need update timeout if it's first render with autoupdateInterval = 0, or if visibility of page is changed
+    // reloadChart is excluded from deps intentionally to reduce the number of reloadChart calls
+    React.useEffect(() => {
+        clearTimeout(autoupdateDataRef.current.reloadTimeout);
+        if (!isPageHidden) {
+            reloadChart();
+        }
+    }, [isPageHidden, autoupdateInterval]);
+
     React.useEffect(() => {
         if (isInit) {
             unbindScrollHandler();
@@ -524,6 +578,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         return () => {
             unbindScrollHandler();
             unbindResizeHandler();
+            clearTimeout(autoupdateDataRef.current?.reloadTimeout);
         };
     }, [
         rootNodeRef,
@@ -541,6 +596,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         if (!canBeLoaded || isInit) {
             return;
         }
+
         setIsInit(true);
         loadChartData();
     }, [canBeLoaded, isInit, loadChartData]);
@@ -696,6 +752,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         if (!canBeLoaded || !isInit) {
             return;
         }
+
         loadChartData();
     }, [canBeLoaded, isInit, loadChartData]);
 
@@ -853,6 +910,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         loadControls,
         drillDownFilters,
         drillDownLevel: currentDrillDownLevel,
+        setCurrentDrillDownLevel,
         yandexMapAPIWaiting,
         setCanBeLoaded,
         isInit,

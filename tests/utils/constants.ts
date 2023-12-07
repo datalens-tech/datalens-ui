@@ -129,6 +129,7 @@ export enum RobotChartsDashboardUrls {
     DashboardWithEditorSelectorsWithoutParams = '/saj2by7fkc64i',
     DashboardWithEditorSelectorsWithParams = '/4mwiptdrf4n8u',
     DashboardWithEditorSelectorAndChart = '/7skevi65rzjyx',
+    DashboardWithEditorChartWithParams = '/h0w5teta52p86',
 }
 
 export enum RobotChartsPreviewUrls {
@@ -185,7 +186,6 @@ export const COMMON_SELECTORS = {
     ACTION_PANEL_SAVE_AS_MENU: 'action-save-menu',
     ACTION_BTN_CONNECTIONS: 'action-button-connections',
     ACTION_BTN_TABS: 'action-button-tabs',
-    DASH_ENTRY_NAME: 'dash-entry-name',
     ENTRY_CONTEXT_MENU_KEY: 'entry-context-menu',
     REVISIONS_LIST: 'revisions-list',
     REVISIONS_LIST_ROW: 'revisions-list-row',

@@ -17,6 +17,8 @@ export const runEditor = (
 
     const {params, actionParams, widgetConfig} = req.body;
 
+    const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
+
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
         paramsOverride: params,
@@ -27,7 +29,7 @@ export const runEditor = (
         userId: res.locals && res.locals.userId,
         subrequestHeaders: res.locals.subrequestHeaders,
         req,
-        iamToken: res.locals && res.locals.iamToken,
+        iamToken,
         isEditMode: Boolean(res.locals.editMode),
         configResolving,
         cacheToken: req.headers['x-charts-cache-token'] || null,

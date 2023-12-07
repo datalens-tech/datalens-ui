@@ -81,14 +81,23 @@ datalensTest.describe('Wizard - export. Scatter plot', () => {
     datalensTest('Points with size and color. Markdown', async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
 
+        let apiRunRequest = wizardPage.page.waitForRequest(
+            (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,
+        );
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Size, 'Year');
+        await (await apiRunRequest).response();
+
         await wizardPage.visualizationItemDialog.open(PlaceholderName.Size, 'Year');
         await wizardPage.visualizationItemDialog.setAggregation(
             DialogFieldAggregationSelectorValuesQa.Max,
         );
+        apiRunRequest = wizardPage.page.waitForRequest(
+            (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,
+        );
         await wizardPage.visualizationItemDialog.clickOnApplyButton();
+        await (await apiRunRequest).response();
 
-        const apiRunRequest = wizardPage.page.waitForRequest(
+        apiRunRequest = wizardPage.page.waitForRequest(
             (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,
         );
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Colors, 'Profit AVG');

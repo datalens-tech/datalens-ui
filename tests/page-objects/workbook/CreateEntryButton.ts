@@ -1,5 +1,5 @@
 import {Page} from '@playwright/test';
-import {slct} from 'utils';
+import {slct} from '../../utils';
 import {CreateEntityButton} from '../../../src/shared';
 
 export class CreateEntryButton {
@@ -21,7 +21,7 @@ export class CreateEntryButton {
         await this.page.waitForSelector(slct(CreateEntityButton.Popup));
     }
 
-    async performCreateDashboard() {
+    async createDashboard() {
         await this.click();
         await this.waitForPopupOpen();
         await this.page
