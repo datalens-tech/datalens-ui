@@ -67,6 +67,7 @@ export const getPlaceParameters = memoize((place) => {
                 ownership: true,
                 order: true,
             },
+            qa: NavigationMinimalPlaceSelectQa.Datasets,
         },
         {
             place: PLACE.WIDGETS,

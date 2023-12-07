@@ -1,7 +1,12 @@
 export const enum SectionDatasetQA {
+    DatasetContainer = 'datasets-container',
+    DatasetEmptyMessage = 'datasets-blank',
+    DatasetSelect = 'dataset-select',
+    DatasetFields = 'dataset-fields',
     AddField = 'add-param',
     SectionParameters = 'section-parameters',
     ItemIcon = 'item-icon',
+    ItemTitle = 'section-dataset-draggable-item-title',
     AddDatasetButton = 'add-dataset-button',
     CreateFieldButton = 'create-field-button',
     CreateHierarchyButton = 'create-hierarchy-button',
@@ -12,6 +17,7 @@ export const enum SectionDatasetQA {
     SettingsDatasetButton = 'settings-dataset-action-button',
     DatasetSelectMoreMenu = 'dataset-select-more-menu',
     RequestDatasetAccess = 'request-rights-button',
+    DatasetSelectMore = 'dataset-select-more',
 }
 
 export const enum DialogColumnSettingsQa {

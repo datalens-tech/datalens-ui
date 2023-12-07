@@ -14,7 +14,7 @@ class DatasetSelector {
     }
 
     async click() {
-        await this.page.click(slct('dataset-select'));
+        await this.page.click(slct(SectionDatasetQA.DatasetSelect));
     }
 
     async waitForSelectedValue(dataset: RobotChartsDatasets) {
@@ -38,7 +38,7 @@ class DatasetSelector {
 
         const parent = (await getParentByQARole(datasetSelectorNode, 'dataset-select-item'))!;
 
-        const button = (await parent.$(slct('dataset-select-more')))!;
+        const button = (await parent.$(slct(SectionDatasetQA.DatasetSelectMore)))!;
 
         await button.click();
     }
