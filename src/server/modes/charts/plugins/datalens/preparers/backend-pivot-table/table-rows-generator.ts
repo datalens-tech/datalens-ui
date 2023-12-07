@@ -232,8 +232,15 @@ export const generateTableRows = ({
                 headerParentByIndex[headerIndex] = getCellValueForHeader(value, {datasetField});
 
                 const isLastHeader = headerIndex === pivotDataRow.header.length - 1;
+                const isSortingAllowed =
+                    isSortByRowAllowed &&
+                    rowsMeta[rowIndex] &&
+                    datasetField &&
+                    isLastHeader &&
+                    // DLFR-1767 sorting for null values is not supported on the backend yet
+                    cell.value !== null;
 
-                if (isSortByRowAllowed && rowsMeta[rowIndex] && datasetField && isLastHeader) {
+                if (isSortingAllowed) {
                     const sortMeta = getSortMeta({
                         meta: rowsMeta[rowIndex],
                         path: [...path, value],
