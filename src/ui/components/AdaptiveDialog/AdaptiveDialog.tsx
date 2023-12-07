@@ -15,6 +15,7 @@ type AdaptiveDialogProps = {
     onClose: () => void;
     sheetContentClassName?: string;
     dialogBodyClassName?: string;
+    title?: string;
     renderSheetFooter?: () => React.ReactNode;
     renderDialogFooter?: () => React.ReactNode;
     qa?: string;
@@ -28,6 +29,7 @@ export const AdaptiveDialog: React.FC<AdaptiveDialogProps> = ({
     onClose,
     renderSheetFooter,
     renderDialogFooter,
+    title,
     sheetContentClassName,
     dialogBodyClassName,
     dialogProps,
@@ -47,13 +49,14 @@ export const AdaptiveDialog: React.FC<AdaptiveDialogProps> = ({
             contentClassName={sheetContentClassName}
             qa={qa}
             id={id}
+            title={title}
         >
             {children}
             {renderSheetFooter?.()}
         </Sheet>
     ) : (
         <Dialog open={visible} onClose={onClose} qa={qa} {...dialogProps}>
-            <Dialog.Header {...dialogHeaderProps} />
+            <Dialog.Header caption={title} {...dialogHeaderProps} />
             <Dialog.Body className={dialogBodyClassName}>{children}</Dialog.Body>
             {showDialogFooter && (
                 <Dialog.Footer {...dialogFooterProps}>{renderDialogFooter?.()}</Dialog.Footer>

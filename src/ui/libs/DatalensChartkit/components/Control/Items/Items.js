@@ -49,6 +49,7 @@ const tryResolveIntervalDate = (value) => {
 };
 
 const controlSize = isMobileView ? MOBILE_SIZE.CONTROL : 'm';
+const controlWidth = isMobileView ? '100%' : undefined;
 
 function BaseControlSelect({
     searchable = true,
@@ -272,6 +273,7 @@ function BaseControlDatepicker({minDate, maxDate, format, timeFormat, value, onC
             emptyValueText={i18n('chartkit.control.items', 'value_undefined')}
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
+            controlWidth={controlWidth}
         />
     );
 }
@@ -356,6 +358,7 @@ function BaseControlRangeDatepicker({
             emptyValueText={i18n('chartkit.control.items', 'value_undefined')}
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
+            controlWidth={controlWidth}
         />
     );
 }
