@@ -89,10 +89,10 @@ export class Row extends React.Component<RowProps> {
         const iconSize = isMobileView ? MOBILE_SIZE.NAVIGATION_ICON : 24;
         const entityIconSize = isMobileView ? MOBILE_SIZE.ENTITY_ICON : 's';
 
-        const isFavoritesNameAliacesEnabled =
-            Utils.isEnabledFeature(Feature.EnableFavoritesNameAliaces) && place === PLACE.FAVORITES;
+        const isFavoritesNameAliasesEnabled =
+            Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases) && place === PLACE.FAVORITES;
 
-        const nameElement = isFavoritesNameAliacesEnabled ? (
+        const nameElement = isFavoritesNameAliasesEnabled ? (
             <FavoritesNameWithAliasItem
                 entryId={entryId}
                 name={name}
