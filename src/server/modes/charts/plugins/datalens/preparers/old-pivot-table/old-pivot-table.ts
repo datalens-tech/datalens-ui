@@ -799,7 +799,6 @@ function preparePivotTable({
                         key: currentKey,
                         css: {
                             fontSize: '13px',
-                            minHeight: '26px',
                             lineHeight: '15px',
                         },
                     };
@@ -1136,7 +1135,6 @@ function preparePivotTable({
 
             Object.assign(cell.css, {
                 fontSize: '13px',
-                minHeight: '26px',
                 lineHeight: '15px',
             });
 
