@@ -25,7 +25,7 @@ import type {
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
 
-import {LINEAR_VISUALIZATIONS, LOG_INFO, LOG_TIMING} from './constants';
+import {LINEAR_VISUALIZATIONS, LOG_INFO, LOG_TIMING, QUERY_TITLE} from './constants';
 
 let currentConsole: {log: Function} = console;
 
@@ -638,7 +638,7 @@ export function getColumnsAndRows({
 
             localColumns.push({
                 biType: 'string',
-                name: 'query #',
+                name: QUERY_TITLE,
                 typeName: 'string',
             });
 
