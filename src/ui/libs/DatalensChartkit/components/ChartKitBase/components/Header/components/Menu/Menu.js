@@ -224,8 +224,6 @@ export class Menu extends React.PureComponent {
 
         const menuItems = this.prepareItems(visibleItems, data, onChange);
 
-        const mobileItems = menuItems.flat();
-
         const renderSheet = () => (
             <React.Fragment>
                 <SwitcherButton onClick={this.handleMobileSwitchClick} />
@@ -238,7 +236,7 @@ export class Menu extends React.PureComponent {
                     id="menu-sheet"
                 >
                     <ListMenu size="xl" className={b('sheet-menu')}>
-                        {mobileItems.map((item) => (
+                        {menuItems.flat().map((item) => (
                             <ListMenu.Item
                                 key={item.key}
                                 qa={item.qa}
