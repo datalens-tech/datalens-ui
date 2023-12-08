@@ -9,6 +9,7 @@ import {I18n} from 'i18n';
 import {useInView} from 'react-intersection-observer';
 import {useDispatch} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {EntryScope} from 'shared';
 import {DIALOG_COPY_ENTRIES_TO_WORKBOOK} from 'ui/components/CopyEntriesToWorkbookDialog';
 
 import {GetEntryResponse} from '../../../../../../shared/schema';
@@ -124,6 +125,32 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         );
 
         const chunks = useChunkedEntries(entries);
+        const dashChunks: ChunkItem[] = [];
+        const connChunks: ChunkItem[] = [];
+        const datasetChunks: ChunkItem[] = [];
+        const widgetChunks: ChunkItem[] = [];
+        const chunksEntity = [dashChunks, connChunks, datasetChunks, widgetChunks];
+
+        chunks.forEach((chunk) => {
+            chunk.forEach((chunkItem) => {
+                if (chunkItem.type === 'entry') {
+                    switch (chunkItem.item.scope) {
+                        case EntryScope.Dash:
+                            dashChunks.push(chunkItem);
+                            break;
+                        case EntryScope.Connection:
+                            connChunks.push(chunkItem);
+                            break;
+                        case EntryScope.Dataset:
+                            datasetChunks.push(chunkItem);
+                            break;
+                        case EntryScope.Widget:
+                            widgetChunks.push(chunkItem);
+                            break;
+                    }
+                }
+            });
+        });
 
         return (
             <div className={b()}>
@@ -137,19 +164,20 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             <div className={b('header-cell')} />
                         </div>
                     </div>
-                    {chunks.map((chunk) => {
-                        return (
-                            <ChunkGroup
-                                key={chunk[0].key}
-                                workbook={workbook}
-                                chunk={chunk}
-                                onRenameEntry={onRenameEntry}
-                                onDeleteEntry={onDeleteEntry}
-                                onDuplicateEntry={onDuplicateEntry}
-                                onCopyEntry={onCopyEntry}
-                            />
-                        );
-                    })}
+                    {chunksEntity.map(
+                        (chunk) =>
+                            chunk.length > 0 && (
+                                <ChunkGroup
+                                    key={chunk[0].key}
+                                    workbook={workbook}
+                                    chunk={chunk}
+                                    onRenameEntry={onRenameEntry}
+                                    onDeleteEntry={onDeleteEntry}
+                                    onDuplicateEntry={onDuplicateEntry}
+                                    onCopyEntry={onCopyEntry}
+                                />
+                            ),
+                    )}
                 </div>
             </div>
         );
