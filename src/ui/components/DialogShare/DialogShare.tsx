@@ -4,7 +4,7 @@ import {Button, Checkbox, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ChartkitMenuDialogsQA} from 'shared';
-import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
+import {URL_OPTIONS as COMMON_URL_OPTIONS, DL, PRODUCT_NAME} from 'ui/constants';
 import {ChartKitProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {URL_OPTIONS as CHARTKIT_URL_OPTIONS} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
@@ -117,8 +117,10 @@ export const DialogShare: React.FC<DialogShareProps> = ({
 
     const handleShareClick = async () => {
         if (navigator && typeof navigator.share === 'function') {
-            await navigator.share({url: getLink()});
+            await navigator.share({url: getLink(), text: PRODUCT_NAME});
+            return;
         }
+        await navigator.clipboard.writeText(getLink());
     };
 
     const selectSize = DL.IS_MOBILE ? MOBILE_SIZE.SELECT : 'm';
