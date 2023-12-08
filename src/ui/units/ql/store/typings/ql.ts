@@ -41,11 +41,11 @@ export interface QLState {
     visualization: Shared['visualization'] | null;
     entry: QLEntry | null;
     metadata: {
-        order: QlConfigResultEntryMetadataDataColumnOrGroup[];
+        order: QlConfigResultEntryMetadataDataColumnOrGroup[] | null;
     };
     tablePreviewData: QlConfigPreviewTableData;
     params: QlConfigParam[];
-    order: QlConfigResultEntryMetadataDataColumnOrGroup[];
+    order: QlConfigResultEntryMetadataDataColumnOrGroup[] | null;
     connection: QLConnectionEntry | null;
     connectionSources: {
         title: string;

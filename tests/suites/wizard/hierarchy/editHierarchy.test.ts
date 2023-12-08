@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
+import {SectionDatasetQA, WizardVisualizationId} from '../../../../src/shared';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct, waitForCondition} from '../../../utils';
@@ -30,7 +30,7 @@ datalensTest.describe('Wizard Hierarchy', () => {
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
 
-            await page.click(`${slct('datasets-container')} .hierarchy-icon`);
+            await page.click(`${slct(SectionDatasetQA.DatasetContainer)} .hierarchy-icon`);
 
             await waitForCondition(() => {
                 return wizardPage.hierarchyEditor.isVisible();
@@ -64,7 +64,7 @@ datalensTest.describe('Wizard Hierarchy', () => {
         const wizardPage = new WizardPage({page});
 
         const openHierarchyEditor = async () => {
-            await page.click(`${slct('datasets-container')} .hierarchy-icon`);
+            await page.click(`${slct(SectionDatasetQA.DatasetContainer)} .hierarchy-icon`);
         };
 
         await openHierarchyEditor();

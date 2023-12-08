@@ -48,7 +48,7 @@ async function checkLabels(
     // enable the internal title and title in the selector settings
     await dashboardPage.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
     await dialogControl.editSelectorTitlesAndSave(title, innerTitle);
-    await dashboardPage.saveChangesWithRenderCheck();
+    await dashboardPage.saveChanges();
 
     //checking label
     const selectorControl = await dialogControl.getControlByTitle(title);

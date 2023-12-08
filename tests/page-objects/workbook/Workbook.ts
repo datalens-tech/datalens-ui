@@ -35,7 +35,7 @@ export class Workbook {
 
         await editDash();
 
-        await this.dashboardPage.saveChanges();
+        await this.dashboardPage.clickSaveButton();
         await this.dialogCreateEntry.createEntryWithName();
         await this.editEntityButton.waitForVisible();
 

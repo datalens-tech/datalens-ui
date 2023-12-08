@@ -20,13 +20,15 @@ import {
 
 export const migrateOrAutofillVisualization = ({
     visualization: originalVisualization,
-    order,
     fields,
+    rows,
+    order,
     colors: originalColors,
 }: {
     visualization: ServerVisualization;
-    order?: QlConfigResultEntryMetadataDataColumnOrGroup[];
     fields: Field[];
+    rows: string[][];
+    order?: QlConfigResultEntryMetadataDataColumnOrGroup[] | null;
     colors?: Field[];
 }) => {
     const {id: visualizationId} = originalVisualization;
@@ -47,7 +49,7 @@ export const migrateOrAutofillVisualization = ({
             WizardVisualizationId.BarXD3,
         ]).has(visualizationId as WizardVisualizationId)
     ) {
-        if (order && order.length > 0) {
+        if (order) {
             // Order is set, so we need to migrate old order to new structure
             const {
                 xFields,
@@ -56,6 +58,7 @@ export const migrateOrAutofillVisualization = ({
             } = migrateLineVisualization({
                 order,
                 fields,
+                rows,
             });
 
             newVisualization.placeholders[0].items = xFields;
@@ -64,12 +67,16 @@ export const migrateOrAutofillVisualization = ({
             newColors = migratedColors;
         } else {
             // Old order was not set, so we can do autofill
-            const {xFields, yFields} = autofillLineVisualization({
+            const {xFields, yFields, colors} = autofillLineVisualization({
                 fields,
             });
 
             newVisualization.placeholders[0].items = xFields;
             newVisualization.placeholders[1].items = yFields;
+
+            if (colors) {
+                newColors = colors;
+            }
         }
     } else if (
         [WizardVisualizationId.Scatter, WizardVisualizationId.ScatterD3].includes(
