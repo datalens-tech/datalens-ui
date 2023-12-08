@@ -116,7 +116,9 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     const handleChangeTheme = (values: string[]) => setSelectedTheme(values[0]);
 
     const handleShareClick = async () => {
-        await navigator.share({url: getLink()});
+        if (navigator && typeof navigator.share === 'function') {
+            await navigator.share({url: getLink()});
+        }
     };
 
     const selectSize = DL.IS_MOBILE ? MOBILE_SIZE.SELECT : 'm';
