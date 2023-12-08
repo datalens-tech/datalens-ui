@@ -299,7 +299,5 @@ export default ({
         disableDefaultSorting,
     };
 
-    console.log(JSON.stringify(prepareFunctionArgs));
-
     return (prepare as PrepareFunction)(prepareFunctionArgs);
 };

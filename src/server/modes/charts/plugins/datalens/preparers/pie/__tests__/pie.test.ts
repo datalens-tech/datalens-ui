@@ -1,14 +1,14 @@
-import cloneDeep from 'lodash/cloneDeep';
-import merge from 'lodash/merge';
-
 import {PrepareFunctionArgs} from '../../types';
+import {prepareHighchartsPie} from '../highcharts';
 import {preparePie} from '../preparePie';
 
 import {
-    PREPARE_FUNCTION_ARGS,
-    SET_WITH_DIMENSION_AND_MEASURE,
-    SET_WITH_MEASURE_NUMBER_AND_MEASURE,
-    SET_WITH_MEASURE_TEXT_AND_MEASURE,
+    dimensionAndMeasure,
+    getPrepareFunctionArgs,
+    measureNumberAndMeasure,
+    measureTextAndMeasure,
+    piePrepareForQLArgs,
+    piePrepareForQLResult,
 } from './mocks/pie.mock';
 
 jest.mock('../../../../../../../registry', () => ({
@@ -19,14 +19,10 @@ jest.mock('../../../../../../../registry', () => ({
     },
 }));
 
-function getPrepareFunctionArgs(options: Partial<PrepareFunctionArgs> = {}) {
-    return merge(cloneDeep(PREPARE_FUNCTION_ARGS), options) as unknown as PrepareFunctionArgs;
-}
-
 describe('preparePie', () => {
     test('dimension + measure: colorizing', () => {
         const options = getPrepareFunctionArgs(
-            SET_WITH_DIMENSION_AND_MEASURE as unknown as Partial<PrepareFunctionArgs>,
+            dimensionAndMeasure as unknown as Partial<PrepareFunctionArgs>,
         );
 
         const result = preparePie(options);
@@ -43,7 +39,7 @@ describe('preparePie', () => {
 
     test('measure number + measure: colorizing', () => {
         const options = getPrepareFunctionArgs(
-            SET_WITH_MEASURE_NUMBER_AND_MEASURE as unknown as Partial<PrepareFunctionArgs>,
+            measureNumberAndMeasure as unknown as Partial<PrepareFunctionArgs>,
         );
         const result = preparePie(options);
         const items = result.graphs[0].data?.map((item) => ({
@@ -59,7 +55,7 @@ describe('preparePie', () => {
 
     test('measure text + measure: colorizing', () => {
         const options = getPrepareFunctionArgs(
-            SET_WITH_MEASURE_TEXT_AND_MEASURE as unknown as Partial<PrepareFunctionArgs>,
+            measureTextAndMeasure as unknown as Partial<PrepareFunctionArgs>,
         );
         const result = preparePie(options);
         const items = result.graphs[0].data?.map((item) => ({
@@ -71,5 +67,13 @@ describe('preparePie', () => {
             {color: '#4DA2F1', colorValue: '2'},
             {color: '#FF3D64', colorValue: '1'},
         ]);
+    });
+});
+
+describe('prepareHighchartsPie', () => {
+    test('should render simple pie correctly', () => {
+        const result = prepareHighchartsPie(piePrepareForQLArgs as unknown as PrepareFunctionArgs);
+
+        expect(result).toEqual(piePrepareForQLResult);
     });
 });
