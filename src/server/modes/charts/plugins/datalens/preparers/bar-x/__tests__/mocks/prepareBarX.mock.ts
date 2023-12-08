@@ -16,7 +16,7 @@ export const x1Field = {
     datasetId,
     title: 'X1Field',
     guid: 'guidX1',
-    data_type: DATASET_FIELD_TYPES.GENERICDATETIME,
+    data_type: DATASET_FIELD_TYPES.DATE,
 } as ServerField;
 
 export const x2Field = {
