@@ -248,6 +248,8 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
         result = prepareSingleResult(prepareSingleResultArgs);
 
+        console.log(JSON.stringify(result));
+
         if (config.preview) {
             result.tablePreviewData = preparePreviewTable({
                 shared: config,

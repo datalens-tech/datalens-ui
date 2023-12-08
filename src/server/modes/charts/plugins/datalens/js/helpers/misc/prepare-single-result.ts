@@ -108,11 +108,11 @@ export default ({
     const segments = shared.segments || [];
 
     switch (visualization.id) {
-        case 'line':
-        case 'area':
-        case 'area100p':
-        case 'column':
-        case 'column100p': {
+        case WizardVisualizationId.Line:
+        case WizardVisualizationId.Area:
+        case WizardVisualizationId.Area100p:
+        case WizardVisualizationId.Column:
+        case WizardVisualizationId.Column100p: {
             if (chartType && isMonitoringOrPrometheusChart(chartType)) {
                 prepare = prepareLineTime;
                 rowsLimit = 75000;
@@ -123,8 +123,8 @@ export default ({
             break;
         }
 
-        case 'bar':
-        case 'bar100p': {
+        case WizardVisualizationId.Bar:
+        case WizardVisualizationId.Bar100p: {
             prepare = prepareLineData;
             rowsLimit = 75000;
             break;
@@ -136,7 +136,7 @@ export default ({
             break;
         }
 
-        case 'scatter':
+        case WizardVisualizationId.Scatter:
             prepare = prepareHighchartsScatter;
             rowsLimit = 75000;
             break;
@@ -146,8 +146,8 @@ export default ({
             rowsLimit = 75000;
             break;
 
-        case 'pie':
-        case 'donut':
+        case WizardVisualizationId.Pie:
+        case WizardVisualizationId.Donut:
             prepare = prepareHighchartsPie;
             rowsLimit = 1000;
             break;
@@ -157,22 +157,22 @@ export default ({
             rowsLimit = 1000;
             break;
 
-        case 'metric':
+        case WizardVisualizationId.Metric:
             prepare = prepareMetricData;
             rowsLimit = 1000;
             break;
 
-        case 'treemap':
+        case WizardVisualizationId.Treemap:
             prepare = prepareTreemapData;
             rowsLimit = 800;
             break;
 
-        case 'flatTable':
+        case WizardVisualizationId.FlatTable:
             prepare = prepareFlatTableData;
             rowsLimit = 100000;
             break;
 
-        case 'pivotTable': {
+        case WizardVisualizationId.PivotTable: {
             const pivotFallbackEnabled = shared.extraSettings?.pivotFallback === 'on';
 
             if (pivotFallbackEnabled) {
@@ -298,6 +298,8 @@ export default ({
 
         disableDefaultSorting,
     };
+
+    console.log(JSON.stringify(prepareFunctionArgs));
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);
 };

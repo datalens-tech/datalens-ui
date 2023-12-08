@@ -6,10 +6,10 @@ const {
     barXColoringDimensionByGradientResult,
     barXColoringDimensionByPaletteArgs,
     barXColoringDimensionByPaletteResult,
-} = require('./mocks/bar-x.mock');
+} = require('./mocks/prepareHighchartsBarX.mock');
 
-describe('bar-x preparer', () => {
-    describe('bar', () => {
+describe('prepareHighchartsBarX', () => {
+    describe('colors', () => {
         test('should prepare bar-x with coloring by gradient with dimension', () => {
             const result = prepareHighchartsBarX({
                 ...barXColoringBaseArgs,
