@@ -14,6 +14,7 @@ import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
 import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds} from 'shared';
+import {isWidgetTypeDoNotNeedOverlay} from 'ui/components/DashKit/plugins/Widget/components/helpers';
 import {DialogShare} from 'ui/components/DialogShare/DialogShare';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
 import {registry} from 'ui/registry';
@@ -288,11 +289,17 @@ export const getFullscreenMenuItem = (customConfig: Partial<MenuItemConfig>): Me
             className={ICONS_MENU_DEFAULT_CLASSNAME}
         />
     ),
-    isVisible: () => {
+    isVisible: ({loadedData, error}: MenuItemArgs) => {
         const searchParams = new URLSearchParams(window.location.search);
         const isFullscreenMode = searchParams.has(FOCUSED_WIDGET_PARAM_NAME);
 
-        return DL.IS_MOBILE && !isFullscreenMode;
+        return Boolean(
+            DL.IS_MOBILE &&
+                loadedData &&
+                !error &&
+                !isWidgetTypeDoNotNeedOverlay(loadedData.type) &&
+                !isFullscreenMode,
+        );
     },
     action: customConfig?.action || customConfig?.onFullscreenClick || function () {},
 });
