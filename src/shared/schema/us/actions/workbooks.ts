@@ -101,7 +101,7 @@ export const workbooksActions = {
 
     moveWorkbooks: createAction<MoveWorkbooksResponse, MoveWorkbooksArgs>({
         method: 'POST',
-        path: () => `${PATH_PREFIX}/move-workbooks`,
+        path: () => `${PATH_PREFIX}/moveList`,
         params: ({workbookIds, collectionId}, headers) => ({
             body: {workbookIds, collectionId},
             headers,

@@ -123,7 +123,7 @@ export const collectionsActions = {
 
     moveCollections: createAction<MoveCollectionsResponse, MoveCollectionsArgs>({
         method: 'POST',
-        path: () => `${COLLECTIONS_PATH_PREFIX}/move-collections`,
+        path: () => `${COLLECTIONS_PATH_PREFIX}/moveList`,
         params: ({collectionIds, parentId}, headers) => ({
             body: {collectionIds, parentId},
             headers,
