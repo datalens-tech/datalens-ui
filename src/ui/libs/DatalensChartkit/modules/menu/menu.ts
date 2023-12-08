@@ -27,6 +27,7 @@ export const getChartkitMenuByType = (props?: GetChartkitMenuByType) => {
         customOptions,
         chartsDataProvider: dataProvider,
         onExportLoading,
+        onFullscreenClick,
         isEditAvaible,
         extraOptions,
     } = props || {};
@@ -64,6 +65,9 @@ export const getChartkitMenuByType = (props?: GetChartkitMenuByType) => {
             },
             [MenuItemsIds.EXPORT]: {
                 onExportLoading,
+            },
+            [MenuItemsIds.FULLSCREEEN]: {
+                onFullscreenClick,
             },
             ...customOptions,
         } as GetChartkitMenuByType['customOptions'],
