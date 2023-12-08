@@ -112,7 +112,7 @@ const DatasetSelectItem: React.FC<DatasetSelectItemProps> = (props) => {
                             qa: SectionDatasetQA.DatasetSelectMoreMenu,
                         }}
                         switcher={
-                            <Button view="flat-secondary" qa="dataset-select-more">
+                            <Button view="flat-secondary" qa={SectionDatasetQA.DatasetSelectMore}>
                                 <Icon data={Ellipsis} size={16} />
                             </Button>
                         }

@@ -351,7 +351,7 @@ export const setQueryMetadata = ({metadata}: SetQueryMetadataProps) => {
 
             dispatch(
                 setColumnsOrder({
-                    order: [],
+                    order: null,
                 }),
             );
         }
@@ -383,7 +383,7 @@ export const toggleTablePreview = () => {
 };
 
 interface SetColumnsOrderProps {
-    order: QlConfigResultEntryMetadataDataColumnOrGroup[];
+    order: QlConfigResultEntryMetadataDataColumnOrGroup[] | null;
 }
 
 export const setColumnsOrder = ({order}: SetColumnsOrderProps) => {
@@ -785,10 +785,10 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                 // We will put down the legacy-order, if there is one
                 // When you save the chart, it will be deleted and you can forget about it
-                if (order && order.length > 0) {
+                if (order) {
                     dispatch(
                         setColumnsOrder({
-                            order: order || [],
+                            order: order || null,
                         }),
                     );
                 }

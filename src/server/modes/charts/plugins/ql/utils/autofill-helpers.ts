@@ -1,5 +1,7 @@
 import {DATASET_FIELD_TYPES, DatasetFieldType, Field} from '../../../../../../shared';
 
+import {QUERY_ALIAS_TITLE, QUERY_TITLE} from './constants';
+
 export const autofillLineVisualization = ({fields}: {fields: Field[]}) => {
     const yIndexes: number[] = [];
     const findNewYIndex = () =>
@@ -31,10 +33,22 @@ export const autofillLineVisualization = ({fields}: {fields: Field[]}) => {
         yFields.push(fields[index]);
     });
 
-    return {
+    let colorIndex = fields.findIndex((column) => column.title === QUERY_ALIAS_TITLE);
+
+    if (colorIndex === -1) {
+        colorIndex = fields.findIndex((column) => column.title === QUERY_TITLE);
+    }
+
+    const result: {xFields: Field[]; yFields: Field[]; colors?: Field[]} = {
         xFields,
         yFields,
     };
+
+    if (colorIndex > -1) {
+        result.colors = [fields[colorIndex]];
+    }
+
+    return result;
 };
 
 export const autofillScatterVisualization = ({fields}: {fields: Field[]}) => {

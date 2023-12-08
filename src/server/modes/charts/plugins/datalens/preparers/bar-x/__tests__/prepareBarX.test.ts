@@ -40,6 +40,30 @@ describe('prepareBarX', () => {
         expect(items).toEqual(['X2Field: A', 'X2Field: B']);
     });
 
+    test('two fields in X section, second has date type -> legendTitle should be constructed with formatted date value"', () => {
+        const options = getPrepareFunctionArgs({
+            placeholders: [
+                {
+                    id: 'x',
+                    items: [x2Field, x1Field],
+                },
+                {
+                    id: 'y',
+                    items: [yField],
+                },
+            ],
+            resultData: {
+                data: [['A', '2023-05-10T00:00:00', '10']],
+                order: [x2Field, x1Field, yField],
+                totals: [],
+            },
+        });
+        const result = prepareBarX(options);
+        const items = uniq(result.graphs.map((item) => item.legendTitle));
+
+        expect(items).toEqual(['X1Field: 10.05.2023']);
+    });
+
     test('two fields in X section and filed in Colors section -> legendTitle should be constructed as "[Color field value]", series id must match the legend title', () => {
         const options = getPrepareFunctionArgs({
             placeholders: [

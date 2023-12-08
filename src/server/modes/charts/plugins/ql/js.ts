@@ -185,9 +185,10 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
         if (visualizationIsEmpty) {
             // Visualization is empty, so we need to autofill it
             const {colors, visualization} = migrateOrAutofillVisualization({
-                fields,
-                order: sharedOrder,
                 visualization: sharedVisualization,
+                fields,
+                rows,
+                order: sharedOrder,
                 colors: sharedColors,
             });
 

@@ -103,10 +103,12 @@ class WizardPage extends ChartPage {
         const selector = fieldType ? `${fieldType}-item` : 'item';
 
         await this.page.waitForSelector(
-            `${slct('datasets-container')} .dnd-container .${selector}`,
+            `${slct(SectionDatasetQA.DatasetContainer)} .dnd-container .${selector}`,
         );
 
-        return this.page.$$(`${slct('datasets-container')} .dnd-container .${selector}`);
+        return this.page.$$(
+            `${slct(SectionDatasetQA.DatasetContainer)} .dnd-container .${selector}`,
+        );
     }
 
     async waitForFieldAndMeasuresCount(count: number) {
@@ -173,9 +175,10 @@ class WizardPage extends ChartPage {
     }
 
     isMeasureNamesAndValuesExists() {
+        const datasetContainer = slct(SectionDatasetQA.DatasetContainer);
         return Promise.all([
-            this.page.$(`${slct('datasets-container')} .pseudo-item >> text=Measure Names`),
-            this.page.$(`${slct('datasets-container')} .pseudo-item >> text=Measure Values`),
+            this.page.$(`${datasetContainer} .pseudo-item >> text=Measure Names`),
+            this.page.$(`${datasetContainer} .pseudo-item >> text=Measure Values`),
         ]).then((elements) => elements.every(Boolean));
     }
 
