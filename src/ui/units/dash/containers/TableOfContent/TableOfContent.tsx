@@ -1,13 +1,14 @@
 import React from 'react';
 
 import {Xmark} from '@gravity-ui/icons';
-import {Icon} from '@gravity-ui/uikit';
+import {Icon, Sheet} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useShallowEqualSelector} from 'hooks';
-import {i18n} from 'i18n';
+import {I18n} from 'i18n';
 import {DatalensGlobalState} from 'index';
 import {useDispatch} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
+import {DL} from 'ui/constants';
 import {
     selectHashStates,
     selectShowTableOfContent,
@@ -26,6 +27,8 @@ import {setPageTab, toggleTableOfContent} from '../../store/actions/dashTyped';
 
 import './TableOfContent.scss';
 
+const i18n = I18n.keyset('dash.table-of-content.view');
+
 const b = block('table-of-content');
 
 const scrollIntoViewOptions: ScrollIntoViewOptions = {behavior: 'smooth'};
@@ -43,11 +46,18 @@ const TableOfContent: React.FC = React.memo(() => {
         [currentTabId],
     );
 
+    const handleToggleTableOfContent = React.useCallback(() => {
+        dispatch(toggleTableOfContent());
+    }, [dispatch]);
+
     const handleTabClick = React.useCallback(
         (tabId: string) => () => {
             dispatch(setPageTab(tabId));
+            if (DL.IS_MOBILE) {
+                handleToggleTableOfContent();
+            }
         },
-        [dispatch],
+        [dispatch, handleToggleTableOfContent],
     );
 
     const handleItemClick = React.useCallback(
@@ -55,9 +65,18 @@ const TableOfContent: React.FC = React.memo(() => {
             if (!isSelectedTab(tabId)) {
                 dispatch(setPageTab(tabId));
             }
+            if (DL.IS_MOBILE) {
+                handleToggleTableOfContent();
+            }
         },
-        [dispatch, isSelectedTab],
+        [dispatch, isSelectedTab, handleToggleTableOfContent],
     );
+
+    const handleSheetClose = () => {
+        if (opened) {
+            handleToggleTableOfContent();
+        }
+    };
 
     const getLinkTo = React.useCallback(
         (tabId: string, itemTitle?: string) => ({
@@ -73,10 +92,6 @@ const TableOfContent: React.FC = React.memo(() => {
         }),
         [hashStates, isSelectedTab, location],
     );
-
-    const handlerToggleTableOfContent = React.useCallback(() => {
-        dispatch(toggleTableOfContent());
-    }, [dispatch]);
 
     React.useEffect(() => {
         if (location.hash) {
@@ -130,24 +145,42 @@ const TableOfContent: React.FC = React.memo(() => {
     }
 
     return (
-        <div className={b()} data-qa="table-of-content">
-            <div className={b('wrapper', {opened})}>
-                <div className={b('sidebar', {opened})}>
-                    <div className={b('header')}>
-                        <span className={b('header-title')}>
-                            {i18n('dash.table-of-content.view', 'label_table-of-content')}
-                        </span>
-                        <span
-                            className={b('header-close', null, 'data-qa-table-of-content-close')}
-                            onClick={handlerToggleTableOfContent}
-                        >
-                            <Icon data={Xmark} width="20" />
-                        </span>
-                    </div>
+        <React.Fragment>
+            {DL.IS_MOBILE ? (
+                <Sheet
+                    title={i18n('label_table-of-content')}
+                    visible={opened}
+                    id="dash-table-of-content"
+                    allowHideOnContentScroll={false}
+                    onClose={handleSheetClose}
+                >
                     <div className={b('tabs')}>{tabsItems}</div>
+                </Sheet>
+            ) : (
+                <div className={b()} data-qa="table-of-content">
+                    <div className={b('wrapper', {opened})}>
+                        <div className={b('sidebar', {opened})}>
+                            <div className={b('header')}>
+                                <span className={b('header-title')}>
+                                    {i18n('label_table-of-content')}
+                                </span>
+                                <span
+                                    className={b(
+                                        'header-close',
+                                        null,
+                                        'data-qa-table-of-content-close',
+                                    )}
+                                    onClick={handleToggleTableOfContent}
+                                >
+                                    <Icon data={Xmark} width="20" />
+                                </span>
+                            </div>
+                            <div className={b('tabs')}>{tabsItems}</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            )}
+        </React.Fragment>
     );
 });
 

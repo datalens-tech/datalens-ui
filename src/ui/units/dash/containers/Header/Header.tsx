@@ -2,7 +2,11 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
+import {ChevronDown} from '@gravity-ui/icons';
+import {Icon} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
 import {History, Location} from 'history';
+import {i18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
 import {DatalensGlobalState} from 'ui';
 import EntryDialogues from 'ui/components/EntryDialogues/EntryDialogues';
@@ -18,6 +22,10 @@ import {
     isDraft,
     isEditMode,
 } from '../../store/selectors/dashTypedSelectors';
+
+import './Header.scss';
+
+const b = block('dash-header');
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -37,13 +45,6 @@ type State = {};
 class Header extends React.PureComponent<Props, State> {
     state: State = {};
 
-    toggleFullscreenModeMobile = () => {
-        this.props.toggleFullscreenMode({
-            location: this.props.location,
-            history: this.props.history,
-        });
-    };
-
     render() {
         if (!this.props.entry) {
             return null;
@@ -51,11 +52,16 @@ class Header extends React.PureComponent<Props, State> {
 
         if (DL.IS_MOBILE) {
             return (
-                <DashActionPanelMobile
-                    entry={this.props.entry}
-                    isFullscreenMode={Boolean(this.props.isFullscreenMode)}
-                    toggleFullscreenMode={this.toggleFullscreenModeMobile}
-                />
+                <React.Fragment>
+                    <DashActionPanelMobile entry={this.props.entry} />
+                    <div
+                        className={b('toc-toggle')}
+                        onClick={() => this.props.toggleTableOfContent()}
+                    >
+                        {i18n('dash.table-of-content.view', 'label_table-of-content')}
+                        <Icon data={ChevronDown} />
+                    </div>
+                </React.Fragment>
             );
         }
 

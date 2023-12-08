@@ -434,7 +434,9 @@ export const load = ({location, history, params}) => {
 
             if (data.settings) {
                 // Boolean is used to handle the case when there is no expandTOC setting in the object (undefined)
-                dispatch(toggleTableOfContent(Boolean(data.settings.expandTOC)));
+                if (!DL.IS_MOBILE) {
+                    dispatch(toggleTableOfContent(Boolean(data.settings.expandTOC)));
+                }
 
                 if (data.settings.maxConcurrentRequests) {
                     ChartKit.setDataProviderSettings({
