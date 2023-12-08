@@ -103,6 +103,11 @@ export enum TabMenuQA {
 
 export enum DialogDashWidgetItemQA {
     Text = 'dialog_widget-text',
+    Title = 'dialog_widget-title',
+}
+
+export enum DialogDashTitleQA {
+    Input = 'dialog-dash-title-input',
 }
 
 export enum DialogDashWidgetQA {
@@ -117,6 +122,7 @@ export const enum DialogFieldEditorQA {
 
 export const enum NavigationMinimalPlaceSelectQa {
     Connections = 'navigation-minimal-place-connections',
+    Datasets = 'navigation-minimal-place-datasets',
 }
 
 export const enum RelativeDatepickerQa {

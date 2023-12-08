@@ -105,7 +105,7 @@ datalensTest.describe('Dashboard Versioning', () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
             await dashboardPage.editDashWithoutSaving();
-            await dashboardPage.saveChanges();
+            await dashboardPage.clickSaveButton();
             await dashboardPage.waitForOpeningRevisionsList();
 
             const items = await page.$$(slct(COMMON_SELECTORS.REVISIONS_LIST_ROW));

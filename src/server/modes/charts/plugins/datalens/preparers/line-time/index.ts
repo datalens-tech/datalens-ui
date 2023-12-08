@@ -20,7 +20,8 @@ const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base
 
 // eslint-disable-next-line complexity
 function prepareLineTime(options: PrepareFunctionArgs) {
-    const {placeholders, resultData, colors, idToTitle, colorsConfig, shared} = options;
+    const {placeholders, resultData, colors, idToTitle, colorsConfig, shared, ChartEditor} =
+        options;
 
     const {data, order} = resultData;
 
@@ -224,6 +225,14 @@ function prepareLineTime(options: PrepareFunctionArgs) {
             graph.color = colorData[i];
             graph.spanGaps = yPlaceholderSettings.nulls === 'connect';
         });
+
+        if (result.graphs.length > 1 && shared.extraSettings?.legendMode !== 'hide') {
+            ChartEditor.updateLibraryConfig({
+                legend: {
+                    show: true,
+                },
+            });
+        }
     }
 
     result.axes = [

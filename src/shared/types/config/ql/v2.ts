@@ -74,7 +74,7 @@ export interface QlConfigV2 {
     visualization: Shared['visualization'] & {highchartsId?: string};
     params: QLParamV2[];
     connection: QLEntryDataSharedConnectionV2;
-    order?: QLResultEntryMetadataDataColumnOrGroupV2[];
+    order?: QLResultEntryMetadataDataColumnOrGroupV2[] | null;
     preview?: boolean;
 
     colors?: Field[];

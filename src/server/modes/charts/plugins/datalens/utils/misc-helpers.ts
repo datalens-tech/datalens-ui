@@ -32,6 +32,8 @@ import {
     DEFAULT_MIN_POINT_RADIUS,
     LOG_INFO,
     LOG_TIMING,
+    SERVER_DATETIME_FORMAT,
+    SERVER_DATE_FORMAT,
     SORT_ORDER,
 } from './constants';
 
@@ -75,6 +77,12 @@ export function getDefaultDateFormat(valueType?: string | null) {
     return valueType === 'datetime' || valueType === 'genericdatetime'
         ? DEFAULT_DATETIME_FORMAT
         : DEFAULT_DATE_FORMAT;
+}
+
+export function getServerDateFormat(fieldType: string) {
+    return fieldType === 'datetime' || fieldType === 'genericdatetime'
+        ? SERVER_DATETIME_FORMAT
+        : SERVER_DATE_FORMAT;
 }
 
 function formatDate({

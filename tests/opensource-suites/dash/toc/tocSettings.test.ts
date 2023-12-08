@@ -1,21 +1,31 @@
 import {Page} from '@playwright/test';
 
-import DashboardPage, {RENDER_TIMEOUT} from '../../../page-objects/dashboard/DashboardPage';
+import {WorkbooksUrls} from '../../../constants/constants';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
+import {DashboardDialogSettingsQa} from '../../../../src/shared';
+import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import DashboardSettings from '../../../page-objects/dashboard/DashboardSettings';
 import TableOfContent from '../../../page-objects/dashboard/TableOfContent';
-import {getUniqueTimestamp, openTestPage, slct} from '../../../utils';
-import {RobotChartsDashboardUrls} from '../../../utils/constants';
+import {deleteEntity, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {DashboardDialogSettingsQa} from '../../../../src/shared';
+import {arbitraryText} from '../constants';
 
 datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const dashWithTocName = `e2e-test-dash-with-toc-copy-${getUniqueTimestamp()}`;
-
+        const workbookPO = new Workbook(page);
         const dashboardPage = new DashboardPage({page});
-        await openTestPage(page, RobotChartsDashboardUrls.DashboardWithTOC);
 
-        await dashboardPage.copyDashboard(dashWithTocName);
+        await workbookPO.openE2EWorkbookPage();
+
+        await workbookPO.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addTitle(arbitraryText.first);
+                await dashboardPage.addTitle(arbitraryText.second);
+            },
+        });
+    });
+    datalensTest.afterEach(async ({page}: {page: Page}) => {
+        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
     });
 
     datalensTest(
@@ -34,9 +44,8 @@ datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
 
             // Save the dashboard settings and the dashboard itself
             await dashboardSettings.save();
-            await dashboardPage.clickSaveButton();
+            await dashboardPage.saveChanges();
 
-            await page.waitForTimeout(RENDER_TIMEOUT);
             // Reloading the page and waiting for the open table of contents
             await dashboardPage.page.reload();
             await tableOfContent.opened();
@@ -44,19 +53,15 @@ datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
             // Disable opening the table of contents
             await dashboardPage.enterEditMode();
             await dashboardSettings.open();
-            await page.waitForTimeout(RENDER_TIMEOUT);
             await page.click(slct(DashboardDialogSettingsQa.TOCSwitch));
 
             // Save the dashboard settings and the dashboard itself
             await dashboardSettings.save();
-            await dashboardPage.clickSaveButton();
+            await dashboardPage.saveChanges();
 
-            await page.waitForTimeout(RENDER_TIMEOUT);
             // Reload the page and wait for the closed table of contents
             await dashboardPage.page.reload();
             await tableOfContent.closed();
-
-            await dashboardPage.deleteDashFromViewMode();
         },
     );
 
@@ -80,17 +85,11 @@ datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
             // Waiting for an open table of contents
             await tableOfContent.opened();
 
-            // Waiting for the rendered table of contents
-            await page.waitForTimeout(RENDER_TIMEOUT);
-
             // Cancel editing the dashboard without saving
             await dashboardPage.exitEditMode();
 
             // Waiting for a closed table of contents
             await tableOfContent.closed();
-
-            await page.waitForTimeout(RENDER_TIMEOUT);
-            await dashboardPage.deleteDashFromViewMode();
         },
     );
 });

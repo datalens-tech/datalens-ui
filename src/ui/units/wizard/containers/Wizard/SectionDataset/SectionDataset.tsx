@@ -760,6 +760,7 @@ class SectionDataset extends React.Component<Props, State> {
         return (
             <div
                 className="dataset-wrapper"
+                data-qa={SectionDatasetQA.DatasetFields}
                 style={{
                     height: `calc(100% - ${this.state.datasetSelectHeight}px)`,
                 }}
@@ -846,7 +847,11 @@ class SectionDataset extends React.Component<Props, State> {
     }
 
     renderBlank() {
-        return <div className="dataset-blank">{i18n('wizard', 'label_dataset-blank')}</div>;
+        return (
+            <div className="dataset-blank" data-qa={SectionDatasetQA.DatasetEmptyMessage}>
+                {i18n('wizard', 'label_dataset-blank')}
+            </div>
+        );
     }
 
     renderSectionsOrBlank = () => {
@@ -967,7 +972,7 @@ class SectionDataset extends React.Component<Props, State> {
         return (
             <div
                 className={`container datasets-container${!datasetLoaded ? ' blank' : ''}`}
-                data-qa="datasets-container"
+                data-qa={SectionDatasetQA.DatasetContainer}
             >
                 <div
                     className="actions-container datasets-actions-container"

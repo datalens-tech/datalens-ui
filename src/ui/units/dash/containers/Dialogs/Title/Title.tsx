@@ -5,7 +5,12 @@ import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
-import {DashTabItemTitle} from 'shared';
+import {
+    DashTabItemTitle,
+    DialogDashTitleQA,
+    DialogDashWidgetItemQA,
+    DialogDashWidgetQA,
+} from 'shared';
 import {DatalensGlobalState} from 'ui';
 
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
@@ -69,7 +74,11 @@ class Title extends React.PureComponent<Props, State> {
         const {id, visible} = this.props;
         const {text, size, showInTOC, validation} = this.state;
         return (
-            <Dialog open={visible} onClose={this.props.closeDialog}>
+            <Dialog
+                open={visible}
+                onClose={this.props.closeDialog}
+                qa={DialogDashWidgetItemQA.Title}
+            >
                 <Dialog.Header caption={i18n('dash.title-dialog.edit', 'label_title')} />
                 <Dialog.Body className={b()}>
                     <FieldWrapper error={validation?.text}>
@@ -80,6 +89,7 @@ class Title extends React.PureComponent<Props, State> {
                             placeholder={i18n('dash.title-dialog.edit', 'context_fill-title')}
                             onUpdate={this.onTextUpdate}
                             className={b('input', {size: this.state.size})}
+                            qa={DialogDashTitleQA.Input}
                         />
                     </FieldWrapper>
                     <HoverRadioButton
@@ -108,6 +118,8 @@ class Title extends React.PureComponent<Props, State> {
                     }
                     onClickButtonCancel={this.props.closeDialog}
                     textButtonCancel={i18n('dash.title-dialog.edit', 'button_cancel')}
+                    propsButtonApply={{qa: DialogDashWidgetQA.Apply}}
+                    propsButtonCancel={{qa: DialogDashWidgetQA.Cancel}}
                 />
             </Dialog>
         );

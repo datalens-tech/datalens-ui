@@ -17,3 +17,6 @@ export const LINEAR_VISUALIZATIONS = new Set([
 ]);
 
 export const PIE_VISUALIZATIONS = new Set([VISUALIZATION_IDS.PIE, VISUALIZATION_IDS.DONUT]);
+
+export const QUERY_TITLE = 'query #';
+export const QUERY_ALIAS_TITLE = '_alias';

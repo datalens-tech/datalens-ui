@@ -24,7 +24,11 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
-import {DashboardDialogSettingsQa, DialogDashWidgetItemQA} from '../../../src/shared';
+import {
+    DashboardDialogSettingsQa,
+    DialogDashTitleQA,
+    DialogDashWidgetItemQA,
+} from '../../../src/shared';
 import {
     ActionPanelDashSaveControls,
     ActionPanelEntryContextMenuQa,
@@ -57,11 +61,11 @@ export interface DashboardPageProps extends BasePageProps {}
 class DashboardPage extends BasePage {
     static selectors = {
         title: 'dashkit-plugin-title',
+        text: 'dashkit-plugin-text',
         dialogWarning: 'dialog-draft-warning',
         dialogWarningEditBtn: 'dialog-draft-warning-edit-btn',
         dialogConfirm: 'dialog-confirm',
         dialogConfirmApplyBtn: 'dialog-confirm-apply-button',
-        dialogDashMeta: '.dialog-dash-meta',
         mobileModal: '.yc-mobile-modal',
         tabsContainer: '.gc-adaptive-tabs',
         tabsList: '.gc-adaptive-tabs__tabs-list',
@@ -91,10 +95,6 @@ class DashboardPage extends BasePage {
         chartGridItemContainer: `${slct(COMMON_DASH_SELECTORS.DASH_GRID_ITEM)} .chartkit`,
         dashPluginWidgetBody: slct('chart-widget'),
         dashkitGridItem: slct('dashkit-grid-item'),
-    };
-
-    static qa = {
-        dialogDashMeta: 'dialog-dash-meta',
     };
 
     revisions: Revisions;
@@ -145,7 +145,7 @@ class DashboardPage extends BasePage {
         // TODO: CHARTS-8652, refine tests for new behavior
         // temp step of changing the settings, because it is impossible to save the untouched dash
         await this.enableDashboardTOC();
-        await this.saveChanges();
+        await this.clickSaveButton();
 
         // waiting for the dialog to open, specify the name, save
         // waiting for the transition to the dashboard page
@@ -290,6 +290,17 @@ class DashboardPage extends BasePage {
         await this.clickAddText();
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
         await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+        await this.page.click(slct(DialogDashWidgetQA.Apply));
+    }
+
+    async clickAddTitle() {
+        await this.page.click(slct(DashboardAddWidgetQa.AddTitle));
+    }
+
+    async addTitle(text: string) {
+        await this.clickAddTitle();
+        await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Title));
+        await this.page.fill(`${slct(DialogDashTitleQA.Input)} input`, text);
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
 
@@ -464,17 +475,17 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(ConnectionsDialogQA.Apply));
     }
 
-    async saveChanges() {
+    async clickSaveButton() {
         // save the changes made on the dashboard
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
     }
 
-    async saveChangesWithRenderCheck() {
+    async saveChanges() {
         const savePromise = this.page.waitForRequest((request) =>
             request.url().includes(URLS.savePath),
         );
         const deleteLockPromise = this.page.waitForRequest(URLS.deleteLock);
-        await this.saveChanges();
+        await this.clickSaveButton();
         await Promise.all([deleteLockPromise, savePromise]);
         await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
     }
@@ -523,12 +534,17 @@ class DashboardPage extends BasePage {
             });
     }
 
-    async saveChangesAsNewDash(dashName: string) {
-        // save your changes as a new dashboard
+    async clickSaveChangesAsNewDash() {
         await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
 
         await clickDropDownOption(this.page, ActionPanelDashSaveControls.SaveAsNewDropdownItem);
+    }
+
+    async saveChangesAsNewDash(dashName: string) {
+        // save your changes as a new dashboard
+        await this.clickSaveChangesAsNewDash();
+
         // click the Apply button in the dashboard copy dialog
         await this.page.waitForSelector(slct(EntryDialogQA.Apply));
         await Promise.all([

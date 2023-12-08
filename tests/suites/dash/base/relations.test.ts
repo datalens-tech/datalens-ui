@@ -55,7 +55,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
                 selectorName: PARAMS.CONTROL_TITLE,
             });
 
-            await dashboardPage.saveChanges();
+            await dashboardPage.clickSaveButton();
 
             await waitForCondition(async () => {
                 const elems = await page.$$(SELECTORS.CHART_LEGEND_ITEM);

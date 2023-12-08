@@ -152,7 +152,7 @@ class DatasetSelect extends React.Component<DatasetSelectProps, DatasetSelectSta
                 view="flat"
                 pin="brick-brick"
                 size="l"
-                qa={'dataset-select'}
+                qa={SectionDatasetQA.DatasetSelect}
                 onClick={onPreselectClick}
             >
                 <div className={b('container')}>

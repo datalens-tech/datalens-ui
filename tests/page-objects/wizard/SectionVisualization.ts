@@ -1,5 +1,5 @@
 import {ElementHandle, Page} from '@playwright/test';
-import {AddFieldQA} from '../../../src/shared/constants';
+import {AddFieldQA, SectionDatasetQA} from '../../../src/shared/constants';
 
 import {dragAndDrop, getParentByQARole, slct, waitForCondition} from '../../utils';
 import {waitForSuccessfulResponse} from '../BasePage';
@@ -66,7 +66,7 @@ export default class SectionVisualization {
         ))!;
 
         const target = (await this.page.$(
-            `${slct('datasets-container')} ${slct('dnd-container')}`,
+            `${slct(SectionDatasetQA.DatasetContainer)} ${slct('dnd-container')}`,
         ))!;
 
         await dragAndDrop(this.page, source, target);
@@ -102,11 +102,9 @@ export default class SectionVisualization {
     }
 
     async addFieldByDragAndDrop(placeholder: PlaceholderName, fieldName: string) {
-        await this.page.waitForSelector(slct('section-dataset-draggable-item-title'));
+        await this.page.waitForSelector(slct(SectionDatasetQA.ItemTitle));
 
-        const source = (await this.page.$(
-            slct('section-dataset-draggable-item-title', fieldName),
-        ))!;
+        const source = (await this.page.$(slct(SectionDatasetQA.ItemTitle, fieldName)))!;
 
         const target = (await this.page.$(`${slct(placeholder)} ${slct('dnd-container')}`))!;
 
@@ -118,7 +116,7 @@ export default class SectionVisualization {
         oldField: string,
         newField: string,
     ) {
-        const sourceSelector = slct('section-dataset-draggable-item-title', newField);
+        const sourceSelector = slct(SectionDatasetQA.ItemTitle, newField);
         const targetSelector = `${slct(placeholder)} ${slct('dnd-container')} >> text=${oldField}`;
         await this.page.waitForSelector(sourceSelector);
         await this.page.waitForSelector(targetSelector);

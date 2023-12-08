@@ -1,7 +1,7 @@
 import {ElementHandle, Page} from '@playwright/test';
 
-import {WorkbooksUrls} from 'constants/constants';
-import {Workbook} from 'page-objects/workbook/Workbook';
+import {WorkbooksUrls} from '../../../constants/constants';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {DashRevisions} from '../../../../src/shared';
 import {ActionPanelEntryContextMenuQa} from '../../../../src/shared/constants/qa/action-panel';
 import Revisions from '../../../page-objects/common/Revisions';
@@ -103,7 +103,7 @@ datalensTest.describe('Dashboard Versioning', () => {
             const dashboardPage = new DashboardPage({page});
             await dashboardPage.enterEditMode();
             await dashboardPage.editDashWithoutSaving();
-            await dashboardPage.saveChanges();
+            await dashboardPage.clickSaveButton();
             await dashboardPage.waitForOpeningRevisionsList();
 
             const items = await page.$$(slct(COMMON_SELECTORS.REVISIONS_LIST_ROW));

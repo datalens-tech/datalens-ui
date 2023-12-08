@@ -19,7 +19,7 @@ datalensTest.describe(`Dashboards - tabs`, () => {
             chartName: ChartsParams.citySalesPieChart.name,
             chartUrl: ChartsParams.citySalesPieChart.url,
         });
-        await dashboardPage.saveChanges();
+        await dashboardPage.clickSaveButton();
         await workbookPO.dialogCreateEntry.createEntryWithName();
     });
 

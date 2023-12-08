@@ -428,7 +428,9 @@ export const options = {
         sort: [],
         sharedData: {},
     },
-    ChartEditor: {},
+    ChartEditor: {
+        updateLibraryConfig: () => {},
+    },
     shapes: [],
     segments: [],
 };

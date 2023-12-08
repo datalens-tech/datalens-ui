@@ -51,6 +51,7 @@ import {
     sortByOrderIdOrLayoutComparator,
     stringifyMemoize,
 } from '../../modules/helpers';
+import PostMessage, {PostMessageCode} from '../../modules/postMessage';
 import {openDialog, openItemDialog, setCurrentTabData} from '../../store/actions/dash';
 import {
     TabsHashStates,
@@ -138,6 +139,12 @@ class Body extends React.PureComponent<BodyProps> {
         history.push({
             ...location,
             search: `?${searchParams.toString()}`,
+        });
+
+        // TODO: CHARTS-8789
+        PostMessage.send({
+            code: PostMessageCode.UrlChanged,
+            data: {pathname: location.pathname, search: `?${searchParams.toString()}`},
         });
     }, 1000);
 
