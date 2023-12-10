@@ -2,6 +2,7 @@ import React from 'react';
 
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {CollectionPageViewMode} from 'ui/components/CollectionFilters';
 
 import './CollectionLayout.scss';
@@ -23,6 +24,8 @@ type Props = {
     onSelectAll: (checked: boolean) => void;
 };
 
+const i18n = I18n.keyset('collections');
+
 export const CollectionLayout = React.memo<Props>(
     ({
         title,
@@ -42,7 +45,7 @@ export const CollectionLayout = React.memo<Props>(
             if (countSelected === 0 && !isOpenSelectionMode) {
                 return (
                     <Button view="outlined" onClick={onOpenSelectionMode}>
-                        Выбрать
+                        {i18n('action_select')}
                     </Button>
                 );
             }
@@ -50,13 +53,13 @@ export const CollectionLayout = React.memo<Props>(
             if (countSelected > 0) {
                 return (
                     <Button view="outlined" onClick={resetSelected}>
-                        Снять все
+                        {i18n('action_remove-all')}
                     </Button>
                 );
             } else {
                 return (
                     <Button view="outlined" onClick={() => onSelectAll(true)}>
-                        Выбрать все
+                        {i18n('action_select-all')}
                     </Button>
                 );
             }
@@ -78,7 +81,7 @@ export const CollectionLayout = React.memo<Props>(
                                             view="outlined-danger"
                                             onClick={onCancelSelectionMode}
                                         >
-                                            Отменить
+                                            {i18n('action_cancel')}
                                         </Button>
                                     )}
                                 </>
