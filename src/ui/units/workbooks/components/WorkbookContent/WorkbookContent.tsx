@@ -67,7 +67,7 @@ export const WorkbookContent = React.memo<Props>(
             footer = <SmartLoader size="m" showAfter={0} />;
         } else if (workbookEntriesError) {
             footer = buttonRetry;
-        } else {
+        } else if (scope) {
             footer = <Waypoint onEnter={loadMoreEntries} />;
         }
 
@@ -77,6 +77,7 @@ export const WorkbookContent = React.memo<Props>(
                     refreshEntries={refreshEntries}
                     workbook={workbook}
                     entries={entries}
+                    scope={scope}
                 />
                 {footer}
             </React.Fragment>

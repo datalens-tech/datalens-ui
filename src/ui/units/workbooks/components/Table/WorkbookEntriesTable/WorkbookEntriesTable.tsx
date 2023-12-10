@@ -48,10 +48,11 @@ type WorkbookEntriesTableProps = {
     workbook: WorkbookWithPermissions;
     entries: GetEntryResponse[];
     refreshEntries: () => void;
+    scope?: EntryScope;
 };
 
 export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
-    ({workbook, entries, refreshEntries}) => {
+    ({workbook, entries, refreshEntries, scope}) => {
         const dispatch: AppDispatch = useDispatch();
 
         const onRenameEntry = React.useCallback(
@@ -129,7 +130,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         const connChunks: ChunkItem[] = [];
         const datasetChunks: ChunkItem[] = [];
         const widgetChunks: ChunkItem[] = [];
-        const chunksEntity = [dashChunks, connChunks, datasetChunks, widgetChunks];
+        // const chunksEntity = [dashChunks, connChunks, datasetChunks, widgetChunks];
 
         chunks.forEach((chunk) => {
             chunk.forEach((chunkItem) => {
@@ -152,6 +153,76 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             });
         });
 
+        const MainTab = () => {
+            return (
+                <>
+                    <div>
+                        <div>Дашборды</div>
+                        <div>Создать дашборд</div>
+                        <div>
+                            <ChunkGroup
+                                key={dashChunks[0].key}
+                                workbook={workbook}
+                                chunk={dashChunks}
+                                onRenameEntry={onRenameEntry}
+                                onDeleteEntry={onDeleteEntry}
+                                onDuplicateEntry={onDuplicateEntry}
+                                onCopyEntry={onCopyEntry}
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <div>Widget</div>
+                        <div>Создать Widget</div>
+                        <div>
+                            <ChunkGroup
+                                key={widgetChunks[0].key}
+                                workbook={workbook}
+                                chunk={widgetChunks}
+                                onRenameEntry={onRenameEntry}
+                                onDeleteEntry={onDeleteEntry}
+                                onDuplicateEntry={onDuplicateEntry}
+                                onCopyEntry={onCopyEntry}
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <div>datasetChunks</div>
+                        <div>Создать datasetChunks</div>
+                        <div>
+                            <ChunkGroup
+                                key={datasetChunks[0].key}
+                                workbook={workbook}
+                                chunk={datasetChunks}
+                                onRenameEntry={onRenameEntry}
+                                onDeleteEntry={onDeleteEntry}
+                                onDuplicateEntry={onDuplicateEntry}
+                                onCopyEntry={onCopyEntry}
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <div>connChunks</div>
+                        <div>Создать connChunks</div>
+                        <div>
+                            <ChunkGroup
+                                key={connChunks[0].key}
+                                workbook={workbook}
+                                chunk={connChunks}
+                                onRenameEntry={onRenameEntry}
+                                onDeleteEntry={onDeleteEntry}
+                                onDuplicateEntry={onDuplicateEntry}
+                                onCopyEntry={onCopyEntry}
+                            />
+                        </div>
+                    </div>
+                </>
+            );
+        };
+
         return (
             <div className={b()}>
                 <div className={b('table')}>
@@ -164,19 +235,20 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             <div className={b('header-cell')} />
                         </div>
                     </div>
-                    {chunksEntity.map(
-                        (chunk) =>
-                            chunk.length > 0 && (
-                                <ChunkGroup
-                                    key={chunk[0].key}
-                                    workbook={workbook}
-                                    chunk={chunk}
-                                    onRenameEntry={onRenameEntry}
-                                    onDeleteEntry={onDeleteEntry}
-                                    onDuplicateEntry={onDuplicateEntry}
-                                    onCopyEntry={onCopyEntry}
-                                />
-                            ),
+                    {scope ? (
+                        chunks.map((chunk) => (
+                            <ChunkGroup
+                                key={chunk[0].key}
+                                workbook={workbook}
+                                chunk={chunk}
+                                onRenameEntry={onRenameEntry}
+                                onDeleteEntry={onDeleteEntry}
+                                onDuplicateEntry={onDuplicateEntry}
+                                onCopyEntry={onCopyEntry}
+                            />
+                        ))
+                    ) : (
+                        <MainTab />
                     )}
                 </div>
             </div>

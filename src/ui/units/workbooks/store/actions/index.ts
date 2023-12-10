@@ -155,11 +155,13 @@ export const getWorkbookEntries = ({
     filters,
     scope,
     nextPageToken,
+    pageSize = 200,
 }: {
     workbookId: string;
     filters: WorkbookEntriesFilters;
     scope?: EntryScope;
     nextPageToken?: string;
+    pageSize?: number;
 }) => {
     return async (dispatch: WorkbooksDispatch) => {
         dispatch({
@@ -168,7 +170,7 @@ export const getWorkbookEntries = ({
 
         const args: GetWorkbookEntriesArgs = {
             workbookId,
-            pageSize: 200,
+            pageSize,
             page: Number(nextPageToken || 0),
             orderBy: {
                 field: filters.orderField,
