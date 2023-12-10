@@ -29,6 +29,7 @@ import type {
 } from 'shared/schema';
 import {GetCollectionContentMode} from 'shared/schema/us/types/collections';
 import {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
+import {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import {AppDispatch} from 'store';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import {DL} from 'ui/constants';
@@ -134,7 +135,9 @@ export const CollectionPage = React.memo<Props>(
         const curCollectionId = collectionId ?? null;
 
         const breadcrumbsError = useSelector(selectBreadcrumbsError);
-        const contentItems = useSelector(selectCollectionContentItems);
+        const contentItems: (CollectionWithPermissions | WorkbookWithPermissions)[] = useSelector(
+            selectCollectionContentItems,
+        );
 
         const getCollectionContentRecursively = React.useCallback(
             (
@@ -251,6 +254,10 @@ export const CollectionPage = React.memo<Props>(
         const onChangeCollectionPageViewMode = React.useCallback(
             (value: CollectionPageViewMode) => {
                 setCollectionPageViewMode(value);
+
+                if (value === CollectionPageViewMode.Grid && countSelected === 0) {
+                    setIsOpenSelectionMode(false);
+                }
             },
             [],
         );
