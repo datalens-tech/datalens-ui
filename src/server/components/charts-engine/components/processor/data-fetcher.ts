@@ -116,6 +116,10 @@ function filterObjectWhitelist(source: Record<string, any>, whitelist?: string[]
         : source;
 }
 
+const isFetchLimitError = (errorMessage: string) =>
+    errorMessage === `Error: ${REQUEST_SIZE_LIMIT_EXCEEDED}` ||
+    errorMessage === `Error: ${ALL_REQUESTS_SIZE_LIMIT_EXCEEDED}`;
+
 export type DataFetcherResult = {
     sourceId: string;
     sourceType: string;
@@ -771,9 +775,11 @@ export class DataFetcher {
                 .catch((error) => {
                     const latency = new Date().getTime() - fetchingStartTime;
 
+                    const statusCode = isFetchLimitError(error.message) ? 200 : error.statusCode;
+
                     onDataFetchingFailed(error, {
                         sourceName: dataSourceName,
-                        statusCode: error.statusCode,
+                        statusCode,
                         requestId: req.id,
                         latency,
                         url: publicTargetUri,
@@ -827,10 +833,7 @@ export class DataFetcher {
                         const errorMessage = error.message;
                         let errorCode = error.code;
 
-                        if (
-                            errorMessage === `Error: ${REQUEST_SIZE_LIMIT_EXCEEDED}` ||
-                            errorMessage === `Error: ${ALL_REQUESTS_SIZE_LIMIT_EXCEEDED}`
-                        ) {
+                        if (isFetchLimitError(errorMessage)) {
                             errorCode = error.message.replace('Error: ', '');
 
                             let cancelCode = errorCode;

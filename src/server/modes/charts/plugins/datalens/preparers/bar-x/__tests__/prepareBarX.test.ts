@@ -18,7 +18,7 @@ const X1_FIELD = {
     datasetId: DATASET_ID,
     title: 'X1Field',
     guid: 'guidX1',
-    data_type: DATASET_FIELD_TYPES.GENERICDATETIME,
+    data_type: DATASET_FIELD_TYPES.DATE,
 } as ServerField;
 const X2_FIELD = {
     datasetId: DATASET_ID,
@@ -124,6 +124,30 @@ describe('prepareBarX: legendTitle', () => {
         const items = uniq(result.graphs.map((item) => item.legendTitle));
 
         expect(items).toEqual(['X2Field: A', 'X2Field: B']);
+    });
+
+    test('two fields in X section, second has date type -> legendTitle should be constructed with formatted date value"', () => {
+        const options = getPrepareFunctionArgs({
+            placeholders: [
+                {
+                    id: 'x',
+                    items: [X2_FIELD, X1_FIELD],
+                },
+                {
+                    id: 'y',
+                    items: [Y_FIELD],
+                },
+            ],
+            resultData: {
+                data: [['A', '2023-05-10T00:00:00', '10']],
+                order: [X2_FIELD, X1_FIELD, Y_FIELD],
+                totals: [],
+            },
+        });
+        const result = prepareBarX(options);
+        const items = uniq(result.graphs.map((item) => item.legendTitle));
+
+        expect(items).toEqual(['X1Field: 10.05.2023']);
     });
 
     test('two fields in X section and filed in Colors section -> legendTitle should be constructed as "[Color field value]", series id must match the legend title', () => {
