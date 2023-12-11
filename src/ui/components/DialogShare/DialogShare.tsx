@@ -130,7 +130,7 @@ export const DialogShare: React.FC<DialogShareProps> = ({
         <AdaptiveDialog
             onClose={onClose}
             visible={true}
-            dialogHeaderProps={{caption: i18n('title_share')}}
+            title={i18n('title_share')}
             dialogProps={{className: b()}}
             sheetContentClassName={b({mobile: DL.IS_MOBILE})}
         >
