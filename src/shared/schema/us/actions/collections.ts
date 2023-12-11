@@ -21,6 +21,7 @@ import {
 
 export const COLLECTIONS_PATH_PREFIX = '/v1/collections';
 const COLLECTION_CONTENT_PATH_PREFIX = '/v1/collection-content';
+const COLLECTION_MOVE_LIST_PATH_PREFIX = '/v1/move-collections';
 const ROOT_COLLECTION_PERMISSIONS_PATH_PREFIX = '/v1/root-collection-permissions';
 
 export const collectionsActions = {
@@ -123,7 +124,7 @@ export const collectionsActions = {
 
     moveCollections: createAction<MoveCollectionsResponse, MoveCollectionsArgs>({
         method: 'POST',
-        path: () => `${COLLECTIONS_PATH_PREFIX}/moveList`,
+        path: () => COLLECTION_MOVE_LIST_PATH_PREFIX,
         params: ({collectionIds, parentId}, headers) => ({
             body: {collectionIds, parentId},
             headers,

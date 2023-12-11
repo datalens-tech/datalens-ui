@@ -28,6 +28,7 @@ import {
 } from '../types';
 
 export const PATH_PREFIX = '/v2/workbooks';
+const MOVE_LIST_PATH_PREFIX = '/v2/move-workbooks';
 
 export const workbooksActions = {
     createWorkbook: createAction<CreateWorkbookResponse, CreateWorkbookArgs>({
@@ -101,7 +102,7 @@ export const workbooksActions = {
 
     moveWorkbooks: createAction<MoveWorkbooksResponse, MoveWorkbooksArgs>({
         method: 'POST',
-        path: () => `${PATH_PREFIX}/moveList`,
+        path: () => MOVE_LIST_PATH_PREFIX,
         params: ({workbookIds, collectionId}, headers) => ({
             body: {workbookIds, collectionId},
             headers,
