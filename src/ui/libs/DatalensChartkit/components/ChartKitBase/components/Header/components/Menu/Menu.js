@@ -164,6 +164,7 @@ export class Menu extends React.PureComponent {
         // for a late start of the callback, so that the sheet has time to close before rerenders of fullscreen
         if (!isSheetVisible && sheetCloseCb) {
             sheetCloseCb();
+            this.setState({sheetCloseCb: null});
             return;
         }
         this.setState({isSheetVisible: false});
