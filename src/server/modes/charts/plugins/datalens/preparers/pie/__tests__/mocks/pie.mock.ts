@@ -4,6 +4,15 @@ import merge from 'lodash/merge';
 import {DATASET_FIELD_TYPES, IChartEditor} from '../../../../../../../../../shared';
 import {PrepareFunctionArgs} from '../../../types';
 
+const chartEditorMock = {
+    getLang: () => {
+        return 'en';
+    },
+    updateHighchartsConfig: () => {},
+    updateConfig: () => {},
+    getWidgetConfig: () => {},
+};
+
 const datasetId = 'j43msj9o23ge9';
 
 export const colorFieldDimension = {
@@ -38,7 +47,7 @@ export const measureField = {
     data_type: DATASET_FIELD_TYPES.INTEGER,
 };
 
-export const dimensionAndMeasure = {
+export const piePrepareBaseArgs = {
     placeholders: [
         {
             id: 'dimensions',
@@ -209,7 +218,7 @@ export const piePrepareArgs = {
         [colorFieldMeasureString.guid]: colorFieldMeasureString.title,
         [measureField.guid]: measureField.title,
     },
-    ...dimensionAndMeasure,
+    ...piePrepareBaseArgs,
 };
 
 export const piePrepareForQLArgs = {
@@ -322,10 +331,7 @@ export const piePrepareForQLArgs = {
     shared: {
         sharedData: {},
     },
-    ChartEditor: {
-        getWidgetConfig: () => {},
-        updateHighchartsConfig: (_config: {[key: string]: any}) => {},
-    } as IChartEditor,
+    ChartEditor: chartEditorMock,
     shapes: [],
     shapesConfig: {},
     segments: [],

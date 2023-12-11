@@ -3,10 +3,10 @@ import {prepareHighchartsPie} from '../highcharts';
 import {preparePie} from '../preparePie';
 
 import {
-    dimensionAndMeasure,
     getPrepareFunctionArgs,
     measureNumberAndMeasure,
     measureTextAndMeasure,
+    piePrepareBaseArgs,
     piePrepareForQLArgs,
     piePrepareForQLResult,
 } from './mocks/pie.mock';
@@ -22,7 +22,7 @@ jest.mock('../../../../../../../registry', () => ({
 describe('preparePie', () => {
     test('dimension + measure: colorizing', () => {
         const options = getPrepareFunctionArgs(
-            dimensionAndMeasure as unknown as Partial<PrepareFunctionArgs>,
+            piePrepareBaseArgs as unknown as Partial<PrepareFunctionArgs>,
         );
 
         const result = preparePie(options);

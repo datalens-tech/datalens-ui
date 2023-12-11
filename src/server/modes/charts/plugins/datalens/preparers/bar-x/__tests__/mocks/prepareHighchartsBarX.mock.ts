@@ -1,3 +1,12 @@
+const chartEditorMock = {
+    getLang: () => {
+        return 'en';
+    },
+    updateHighchartsConfig: () => {},
+    updateConfig: () => {},
+    getWidgetConfig: () => {},
+};
+
 export const barXColoringBaseArgs = {
     placeholders: [
         {
@@ -261,7 +270,7 @@ export const barXColoringBaseArgs = {
     shared: {
         sharedData: {},
     },
-    ChartEditor: {getWidgetConfig: () => ({}), updateHighchartsConfig: () => ({})},
+    ChartEditor: chartEditorMock,
     shapes: [],
     segments: [],
 };
@@ -722,7 +731,7 @@ export const barXPrepareForQLArgs = {
     shared: {
         sharedData: {},
     },
-    ChartEditor: {getWidgetConfig: () => ({}), updateHighchartsConfig: () => ({})},
+    ChartEditor: chartEditorMock,
     shapes: [],
     shapesConfig: {},
     segments: [],
