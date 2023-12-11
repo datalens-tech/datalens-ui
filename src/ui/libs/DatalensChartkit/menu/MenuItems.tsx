@@ -9,6 +9,7 @@ import {
     Megaphone,
     Pencil,
 } from '@gravity-ui/icons';
+import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
 import {Feature, MenuItemsIds} from 'shared';
@@ -33,7 +34,7 @@ import './MenuItems.scss';
 const b = block('dl-chartkit-menu-items');
 
 export const ICONS_MENU_DEFAULT_CLASSNAME = b('icon');
-export const ICONS_MENU_DEFAULT_SIZE = 16;
+export const ICONS_MENU_DEFAULT_SIZE = DL.IS_MOBILE ? 18 : 16;
 
 export type MenuItemArgs = {
     loadedData: MenuLoadedData;
@@ -128,7 +129,11 @@ export const getNewWindowMenuItem = ({
         return customConfig?.title || i18n('chartkit.menu', 'open-in-window');
     },
     icon: customConfig?.icon || (
-        <ChartKitIcon data={ArrowUpRightFromSquare} className={ICONS_MENU_DEFAULT_CLASSNAME} />
+        <Icon
+            data={ArrowUpRightFromSquare}
+            size={ICONS_MENU_DEFAULT_SIZE}
+            className={ICONS_MENU_DEFAULT_CLASSNAME}
+        />
     ),
     isVisible: () => true,
     action:
@@ -187,7 +192,11 @@ export const getOpenAsTableMenuItem = ({
         return customConfig?.title || i18n('chartkit.menu', 'open-as-table');
     },
     icon: customConfig?.icon || (
-        <ChartKitIcon data={LayoutCells} className={ICONS_MENU_DEFAULT_CLASSNAME} />
+        <Icon
+            data={LayoutCells}
+            size={ICONS_MENU_DEFAULT_SIZE}
+            className={ICONS_MENU_DEFAULT_CLASSNAME}
+        />
     ),
     isVisible: ({loadedData, error}: MenuItemArgs) => {
         const isGraphWidget = loadedData?.data && loadedData?.type === CHARTKIT_WIDGET_TYPE.GRAPH;
@@ -218,7 +227,11 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
         return customConfig?.title || i18n('chartkit.menu', 'get-code');
     },
     icon: customConfig?.icon || (
-        <ChartKitIcon data={ArrowShapeTurnUpRight} className={ICONS_MENU_DEFAULT_CLASSNAME} />
+        <Icon
+            data={ArrowShapeTurnUpRight}
+            size={ICONS_MENU_DEFAULT_SIZE}
+            className={ICONS_MENU_DEFAULT_CLASSNAME}
+        />
     ),
     isVisible: ({loadedData}: MenuItemArgs) => !DL.IS_MOBILE && Boolean(loadedData?.type),
     action:
@@ -251,7 +264,7 @@ export const getEmbeddedMenuItem = (customConfig?: Partial<MenuItemConfig>): Men
         return customConfig?.title || i18n('chartkit.menu', 'embedded');
     },
     icon: customConfig?.icon || (
-        <ChartKitIcon data={Code} className={ICONS_MENU_DEFAULT_CLASSNAME} />
+        <Icon data={Code} size={ICONS_MENU_DEFAULT_SIZE} className={ICONS_MENU_DEFAULT_CLASSNAME} />
     ),
     isVisible: () => !DL.IS_MOBILE,
     action:

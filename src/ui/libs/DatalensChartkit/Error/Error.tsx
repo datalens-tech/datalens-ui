@@ -255,7 +255,7 @@ const ChartKitError: React.FC<any> = (props) => {
 
     return (
         <div className={b()} data-qa={ChartkitMenuDialogsQA.chartError}>
-            <div data-qa={code} className={b('title')}>
+            <div data-qa={code} className={b('title', {mobile: DL.IS_MOBILE})}>
                 <Icon data={iconData} className={b('icon', iconModes)} />
                 {Array.isArray(detailedTitle) ? (
                     <div>

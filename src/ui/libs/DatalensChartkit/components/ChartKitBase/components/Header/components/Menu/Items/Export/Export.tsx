@@ -5,7 +5,7 @@ import {Icon, Toaster} from '@gravity-ui/uikit';
 import copy from 'copy-to-clipboard';
 import {I18n} from 'i18n';
 import {Feature, MenuItemsIds} from 'shared';
-import {DL, URL_OPTIONS} from 'ui/constants/common';
+import {URL_OPTIONS} from 'ui/constants/common';
 import {
     MenuActionComponent,
     MenuItemConfig,
@@ -16,6 +16,7 @@ import Utils from 'ui/utils';
 
 import {
     ICONS_MENU_DEFAULT_CLASSNAME,
+    ICONS_MENU_DEFAULT_SIZE,
     type MenuItemArgs,
 } from '../../../../../../../../menu/MenuItems';
 import {
@@ -216,8 +217,7 @@ const getSubItems = ({
         {
             id: MenuItemsIds.EXPORT_CSV,
             title: i18n('format_csv'),
-            isVisible: ({loadedData, error}: MenuItemArgs) =>
-                !DL.IS_MOBILE && isExportVisible({loadedData, error}),
+            isVisible: ({loadedData, error}: MenuItemArgs) => isExportVisible({loadedData, error}),
             action: csvExportAction(chartsDataProvider, onExportLoading),
         },
         {
@@ -237,7 +237,7 @@ const getSubItems = ({
             id: MenuItemsIds.EXPORT_SCREENSHOT,
             title: i18n('format_image'),
             isVisible: ({loadedData, error}: MenuItemArgs) =>
-                !DL.IS_MOBILE && Boolean(showScreenshot) && isExportVisible({loadedData, error}),
+                Boolean(showScreenshot) && isExportVisible({loadedData, error}),
             action: screenshotExportAction(chartsDataProvider, customConfig),
         },
     ];
@@ -262,7 +262,13 @@ export const getExportItem = ({
     },
     icon: ({loadedData, error}: MenuItemArgs) => {
         const iconData = isExportVisible({loadedData, error}) && !error ? ArrowDownToLine : Picture;
-        return <Icon size={16} data={iconData} className={ICONS_MENU_DEFAULT_CLASSNAME} />;
+        return (
+            <Icon
+                size={ICONS_MENU_DEFAULT_SIZE}
+                data={iconData}
+                className={ICONS_MENU_DEFAULT_CLASSNAME}
+            />
+        );
     },
     items: getSubItems({
         showWiki,
@@ -275,8 +281,7 @@ export const getExportItem = ({
         const isScreenshotVisible = loadedData?.data && showScreenshot;
 
         return Boolean(
-            isExportAllowed &&
-                (isExportVisible({loadedData, error}) || (isScreenshotVisible && !DL.IS_MOBILE)),
+            isExportAllowed && (isExportVisible({loadedData, error}) || isScreenshotVisible),
         );
     },
     action: (data: ExportActionArgs) => {

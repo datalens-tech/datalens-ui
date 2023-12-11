@@ -139,12 +139,12 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                 dialogBodyClassName={b('content')}
                 renderSheetFooter={() => this.renderFooterButtons()}
                 renderDialogFooter={() => this.renderFooterButtons()}
+                title={title}
                 dialogProps={{
                     disableEscapeKeyDown: true,
                     disableOutsideClick: true,
                     className: b(),
                 }}
-                dialogHeaderProps={{caption: title}}
                 dialogFooterProps={{
                     preset: 'default',
                     showError: false,
