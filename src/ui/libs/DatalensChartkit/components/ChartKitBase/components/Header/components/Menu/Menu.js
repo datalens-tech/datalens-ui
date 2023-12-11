@@ -1,16 +1,28 @@
 import React from 'react';
 
 import {Ellipsis} from '@gravity-ui/icons';
-import {Button, DropdownMenu, Icon, Portal} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon, Menu as ListMenu, Portal, Sheet} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {ChartkitMenuDialogsQA} from 'shared';
+import {DL} from 'ui/constants';
 
 import {getVisibleItems} from '../../../../helpers';
 
 import './Menu.scss';
 
+const i18n = I18n.keyset('chartkit.menu');
+
 const b = block('chartkit-menu');
+
+const SwitcherButton = (props) => {
+    return (
+        <Button {...props} view="flat-secondary" size="l" className={b('switcher')}>
+            <Icon data={Ellipsis} size={16} />
+        </Button>
+    );
+};
 
 export class Menu extends React.PureComponent {
     static propTypes = {
@@ -33,12 +45,18 @@ export class Menu extends React.PureComponent {
         widgetRenderTimeRef: PropTypes.object,
         callbackOnCommentsChanged: PropTypes.func,
         commentsLength: PropTypes.number,
+        chartsDataProvider: PropTypes.object,
         /**
          * extra prop for rerender chart after show/hide comments menu
          * because it doesn't trigger any callbacks (and it should not trigger it)
          * but we need to toggle show/hide comments menu
          */
         hideChartComments: PropTypes.bool,
+    };
+
+    state = {
+        modal: null,
+        isSheetVisible: false,
     };
 
     modalRef = React.createRef();
@@ -138,6 +156,10 @@ export class Menu extends React.PureComponent {
         return visibleItems;
     };
 
+    handleMobileSwitchClick = () => this.setState({isSheetVisible: true});
+    handleSheetClose = () => this.setState({isSheetVisible: false});
+    handleModalClose = () => this.setState({modal: null, isSheetVisible: false});
+
     render() {
         const {
             items,
@@ -158,6 +180,8 @@ export class Menu extends React.PureComponent {
             configMenu,
             commentsLength,
         } = this.props;
+
+        const {isSheetVisible, modal: ModalComponent} = this.state;
 
         const data = {
             widget,
@@ -199,29 +223,55 @@ export class Menu extends React.PureComponent {
         }
 
         const menuItems = this.prepareItems(visibleItems, data, onChange);
-        const ModalComponent = this.state?.modal;
+
+        const renderSheet = () => (
+            <React.Fragment>
+                <SwitcherButton onClick={this.handleMobileSwitchClick} />
+                <Sheet
+                    onClose={this.handleSheetClose}
+                    visible={isSheetVisible}
+                    title={i18n('title_select-action')}
+                    contentClassName={b('sheet-content')}
+                    allowHideOnContentScroll={false}
+                    id="menu-sheet"
+                >
+                    <ListMenu size="xl" className={b('sheet-menu')}>
+                        {menuItems.flat().map((item) => (
+                            <ListMenu.Item
+                                key={item.key}
+                                qa={item.qa}
+                                onClick={item.action}
+                                iconStart={item.icon}
+                            >
+                                {item.text}
+                            </ListMenu.Item>
+                        ))}
+                    </ListMenu>
+                </Sheet>
+            </React.Fragment>
+        );
 
         return (
             <div
                 className={b('switcher-button')}
                 data-qa={ChartkitMenuDialogsQA.chartMenuDropDownSwitcher}
             >
-                <DropdownMenu
-                    size="s"
-                    switcher={
-                        <Button view="flat-secondary" size="l" className={b('switcher')}>
-                            <Icon data={Ellipsis} size={16} />
-                        </Button>
-                    }
-                    items={menuItems}
-                    menuProps={{
-                        qa: ChartkitMenuDialogsQA.chartMenuDropDown,
-                    }}
-                />
+                {DL.IS_MOBILE ? (
+                    renderSheet()
+                ) : (
+                    <DropdownMenu
+                        size="s"
+                        renderSwitcher={(props) => <SwitcherButton {...props} />}
+                        items={menuItems}
+                        menuProps={{
+                            qa: ChartkitMenuDialogsQA.chartMenuDropDown,
+                        }}
+                    />
+                )}
                 <div className={b('modal-anchor')} ref={this.modalRef} />
                 {ModalComponent && (
                     <Portal>
-                        <ModalComponent onClose={() => this.setState({modal: null})} />
+                        <ModalComponent onClose={this.handleModalClose} />
                     </Portal>
                 )}
             </div>
