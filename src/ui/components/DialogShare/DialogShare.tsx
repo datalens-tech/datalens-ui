@@ -120,6 +120,7 @@ export const DialogShare: React.FC<DialogShareProps> = ({
             await navigator.share({url: getLink(), text: PRODUCT_NAME});
             return;
         }
+        // if Web Share API is not supported
         await navigator.clipboard.writeText(getLink());
     };
 
