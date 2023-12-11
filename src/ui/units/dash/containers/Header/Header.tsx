@@ -42,6 +42,15 @@ type Props = StateProps & DispatchProps & OwnProps;
 
 type State = {};
 
+const MobileTocHeader = ({onClick}: {onClick: () => void}) => {
+    return (
+        <div className={b('toc-toggle')} onClick={onClick}>
+            {i18n('dash.table-of-content.view', 'label_table-of-content')}
+            <Icon data={ChevronDown} />
+        </div>
+    );
+};
+
 class Header extends React.PureComponent<Props, State> {
     state: State = {};
 
@@ -50,17 +59,16 @@ class Header extends React.PureComponent<Props, State> {
             return null;
         }
 
+        const handleTocHeaderClick = () => this.props.toggleTableOfContent();
+
+        const showTocHeader =
+            this.props.hasTableOfContent && this.props.entry?.data?.settings.expandTOC;
+
         if (DL.IS_MOBILE) {
             return (
                 <React.Fragment>
                     <DashActionPanelMobile entry={this.props.entry} />
-                    <div
-                        className={b('toc-toggle')}
-                        onClick={() => this.props.toggleTableOfContent()}
-                    >
-                        {i18n('dash.table-of-content.view', 'label_table-of-content')}
-                        <Icon data={ChevronDown} />
-                    </div>
+                    {showTocHeader && <MobileTocHeader onClick={handleTocHeaderClick} />}
                 </React.Fragment>
             );
         }
