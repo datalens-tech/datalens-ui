@@ -8,8 +8,8 @@ import debounce from 'lodash/debounce';
 import {ResolveThunks, connect} from 'react-redux';
 import {
     DashTabItemControlDataset,
-    DashTabItemControlExternal,
     DashTabItemControlManual,
+    DashTabItemGroupControlData,
     ServerFilter,
     StringParams,
 } from 'shared';
@@ -143,23 +143,19 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     render() {
         const {data} = this.props;
-        const controlData = data as unknown as {
-            items: Record<
-                string,
-                DashTabItemControlExternal | DashTabItemControlManual | DashTabItemControlDataset
-            >;
-        };
+        const controlData = data as unknown as DashTabItemGroupControlData;
 
-        const source = (
-            Object.values(controlData.items)[0] as unknown as
-                | DashTabItemControlManual
-                | DashTabItemControlDataset
-        ).source;
+        const sources = Object.values(controlData.items).map((item) => item.source);
 
-        const paramIdDebug = ((source as DashTabItemControlDataset['source']).datasetFieldId ||
-            (source as DashTabItemControlManual['source']).fieldName ||
-            data.param ||
-            '') as string;
+        const paramIdDebug = sources
+            .map(
+                (source) =>
+                    (source as DashTabItemControlDataset['source']).datasetFieldId ||
+                    (source as DashTabItemControlManual['source']).fieldName ||
+                    data.param ||
+                    '',
+            )
+            .join(', ') as string;
 
         return (
             <div ref={this.rootNode} className={b({mobile: isMobileView})}>
