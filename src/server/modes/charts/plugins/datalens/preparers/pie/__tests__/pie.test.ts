@@ -71,9 +71,13 @@ describe('preparePie', () => {
 });
 
 describe('prepareHighchartsPie', () => {
-    test('should render simple pie correctly', () => {
-        const result = prepareHighchartsPie(piePrepareForQLArgs as unknown as PrepareFunctionArgs);
+    describe('ql', () => {
+        test('should render simple pie correctly', () => {
+            const result = prepareHighchartsPie(
+                piePrepareForQLArgs as unknown as PrepareFunctionArgs,
+            );
 
-        expect(result).toEqual(piePrepareForQLResult);
+            expect(result).toEqual(piePrepareForQLResult);
+        });
     });
 });
