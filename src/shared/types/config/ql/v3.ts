@@ -14,8 +14,6 @@ export interface QLResultEntryMetadataDataGroupV3 {
 }
 
 export interface QLResultEntryMetadataDataColumnV3 {
-    // typeName -- legacy type that is incompatible with Field
-    // How to turn on wizard ql common visualization -- you can delete
     typeName: string;
 
     // biType -- a new type compatible with Field and general visualization section
