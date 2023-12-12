@@ -4,6 +4,7 @@ import type {Highcharts, HighchartsComment} from '@gravity-ui/chartkit/highchart
 import {
     ArrowShapeTurnUpRight,
     ArrowUpRightFromSquare,
+    ChevronsExpandUpRight,
     Code,
     LayoutCells,
     Megaphone,
@@ -12,7 +13,8 @@ import {
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
-import {Feature, MenuItemsIds} from 'shared';
+import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds} from 'shared';
+import {isWidgetTypeDoNotNeedOverlay} from 'ui/components/DashKit/plugins/Widget/components/helpers';
 import {DialogShare} from 'ui/components/DialogShare/DialogShare';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
 import {registry} from 'ui/registry';
@@ -233,7 +235,7 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
             className={ICONS_MENU_DEFAULT_CLASSNAME}
         />
     ),
-    isVisible: ({loadedData}: MenuItemArgs) => !DL.IS_MOBILE && Boolean(loadedData?.type),
+    isVisible: ({loadedData}: MenuItemArgs) => Boolean(loadedData?.type),
     action:
         customConfig?.action ||
         function action({loadedData, propsData}) {
@@ -266,7 +268,7 @@ export const getEmbeddedMenuItem = (customConfig?: Partial<MenuItemConfig>): Men
     icon: customConfig?.icon || (
         <Icon data={Code} size={ICONS_MENU_DEFAULT_SIZE} className={ICONS_MENU_DEFAULT_CLASSNAME} />
     ),
-    isVisible: () => !DL.IS_MOBILE,
+    isVisible: () => true,
     action:
         customConfig?.action ||
         function action({propsData, loadedData}) {
@@ -285,4 +287,31 @@ export const getEmbeddedMenuItem = (customConfig?: Partial<MenuItemConfig>): Men
                 );
             };
         },
+});
+
+export const getFullscreenMenuItem = (customConfig: Partial<MenuItemConfig>): MenuItemConfig => ({
+    id: MenuItemsIds.FULLSCREEEN,
+    get title() {
+        return customConfig?.title || i18n('chartkit.menu', 'open-fullscreen');
+    },
+    icon: customConfig?.icon || (
+        <Icon
+            data={ChevronsExpandUpRight}
+            size={ICONS_MENU_DEFAULT_SIZE}
+            className={ICONS_MENU_DEFAULT_CLASSNAME}
+        />
+    ),
+    isVisible: ({loadedData, error}: MenuItemArgs) => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const isFullscreenMode = searchParams.has(FOCUSED_WIDGET_PARAM_NAME);
+
+        return Boolean(
+            DL.IS_MOBILE &&
+                loadedData &&
+                !error &&
+                !isWidgetTypeDoNotNeedOverlay(loadedData.type) &&
+                !isFullscreenMode,
+        );
+    },
+    action: customConfig?.action || customConfig?.onFullscreenClick || function () {},
 });
