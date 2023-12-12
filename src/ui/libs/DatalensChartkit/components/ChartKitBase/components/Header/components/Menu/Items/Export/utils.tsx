@@ -7,6 +7,7 @@ import {isObject} from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import ReactDOM from 'react-dom';
 import {formatBytes} from 'shared/modules/format-units/formatUnit';
+import {DL} from 'ui/constants/common';
 import type {MenuLoadedData} from 'ui/libs/DatalensChartkit/menu/Menu';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
@@ -124,7 +125,7 @@ export const isExportVisible = ({
     loadedData: MenuLoadedData;
     error?: DatalensChartkitCustomError;
 }) => {
-    if (!loadedData || error) {
+    if (!loadedData || error || DL.IS_MOBILE) {
         return false;
     }
 
