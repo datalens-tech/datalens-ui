@@ -4,6 +4,7 @@ import {MenuItemConfig, MenuType} from 'ui/libs/DatalensChartkit/menu/Menu';
 
 export type GetChartkitMenuByType = GetChartkitMenuItems & {
     onExportLoading?: (isLoading: boolean) => void;
+    onFullscreenClick?: () => void;
     isEditAvaible?: boolean;
     extraOptions?: Record<string, unknown>;
 };
