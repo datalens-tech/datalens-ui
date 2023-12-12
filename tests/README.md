@@ -16,7 +16,7 @@ For additional configuration check [list of available ENV variables](documentati
 
 
 ### Running test
-Start containers by docker compose 
+Start containers by docker compose
 ```bash
 # It will run containers and UI from current branch.
 docker compose -f tests/docker-compose.e2e.yml up
@@ -31,7 +31,7 @@ npm run test:e2e:opensource
 
 Install Node.js >= v18.17.0 manually or via [node version manager](https://github.com/nvm-sh/nvm).
 
-Start project in dev mode:
+Start project in dev mode (don't forget to update docker images first):
 
 ```bash
 docker compose -f tests/docker-compose.e2e.yml -f tests/docker-compose.e2e-dev.yml up
@@ -47,8 +47,8 @@ npm run test:install:chromium
 npm run test:e2e:opensource
 ```
 
-### How to add new connection/dataset/chart/dashboard for E2E tests:
+### How to add or modify new connection/dataset/chart/dashboard for E2E tests:
 
-1. Start project `sudo rm -rf tests/metadata && docker compose -f tests/docker-compose.e2e.yml up`
+1. Start project `sudo rm -rf tests/metadata && docker compose -f tests/docker-compose.e2e.yml pull && docker compose -f tests/docker-compose.e2e.yml up`
 2. Create necessary test entries in interface
-3. Run `npm run test:e2e:us-dump` - this command will create new database dump with test entries which you just created 
+3. Run `npm run test:e2e:us-dump` - this command will create new database dump with test entries which you just created
