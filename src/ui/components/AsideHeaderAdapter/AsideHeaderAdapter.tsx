@@ -14,7 +14,7 @@ import {I18n, i18n as baseI18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {DlNavigationQA, Feature} from 'shared';
-import {DL} from 'ui/constants';
+import {DL, PRODUCT_NAME} from 'ui/constants';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import Utils from 'ui/utils';
 
@@ -237,7 +237,7 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
         <AsideHeader
             compact={isCompact}
             logo={{
-                text: 'DataLens',
+                text: PRODUCT_NAME,
                 icon: iconNavigationDefault,
                 iconSize: LOGO_DEFAULT_SIZE,
                 iconClassName: b('logo-icon'),

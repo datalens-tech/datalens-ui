@@ -123,6 +123,7 @@ export const Content = (props: ChartContentProps) => {
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 onExportLoading={handleExportLoading}
                 enableActionParams={enableActionParams}
+                onFullscreenClick={onFullscreenClick}
             />
             <div
                 className={b(

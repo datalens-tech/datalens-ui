@@ -44,6 +44,7 @@ export type HeaderProps = Pick<
     isMenuAvailable: boolean;
     isWidgetMenuDataChanged?: boolean;
     onExportLoading: (isLoading: boolean) => void;
+    onFullscreenClick?: () => void;
 };
 
 const b = block('dl-widget');
@@ -66,6 +67,7 @@ export const Header = (props: HeaderProps) => {
         onChange,
         isWidgetMenuDataChanged,
         onExportLoading,
+        onFullscreenClick,
         enableActionParams,
     } = props;
 
@@ -98,6 +100,7 @@ export const Header = (props: HeaderProps) => {
               chartsDataProvider: (menuChartkitConfig?.chartsDataProvider ||
                   dataProvider) as ChartKitDataProvider,
               onExportLoading,
+              onFullscreenClick,
               isEditAvaible,
               extraOptions: {enableActionParams},
           })
