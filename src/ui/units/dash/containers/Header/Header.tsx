@@ -62,7 +62,7 @@ class Header extends React.PureComponent<Props, State> {
         const handleTocHeaderClick = () => this.props.toggleTableOfContent();
 
         const showTocHeader =
-            this.props.hasTableOfContent && this.props.entry?.data?.settings.expandTOC;
+            this.props.hasTableOfContent && this.props.entry?.data?.settings?.expandTOC;
 
         if (DL.IS_MOBILE) {
             return (

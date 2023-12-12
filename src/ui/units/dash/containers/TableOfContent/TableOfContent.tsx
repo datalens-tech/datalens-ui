@@ -8,6 +8,7 @@ import {I18n} from 'i18n';
 import {DatalensGlobalState} from 'index';
 import {useDispatch} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
+import {TableOfContentQa} from 'shared';
 import {DL} from 'ui/constants';
 import {
     selectHashStates,
@@ -157,7 +158,7 @@ const TableOfContent: React.FC = React.memo(() => {
                     <div className={b('tabs')}>{tabsItems}</div>
                 </Sheet>
             ) : (
-                <div className={b()} data-qa="table-of-content">
+                <div className={b()} data-qa={TableOfContentQa.TableOfContent}>
                     <div className={b('wrapper', {opened})}>
                         <div className={b('sidebar', {opened})}>
                             <div className={b('header')}>
@@ -165,11 +166,8 @@ const TableOfContent: React.FC = React.memo(() => {
                                     {i18n('label_table-of-content')}
                                 </span>
                                 <span
-                                    className={b(
-                                        'header-close',
-                                        null,
-                                        'data-qa-table-of-content-close',
-                                    )}
+                                    className={b('header-close', null)}
+                                    data-qa={TableOfContentQa.CloseBtn}
                                     onClick={handleToggleTableOfContent}
                                 >
                                     <Icon data={Xmark} width="20" />
