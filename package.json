@@ -47,7 +47,7 @@
     "@gravity-ui/app-layout": "^1.2.0",
     "@gravity-ui/browserslist-config": "^4.1.1",
     "@gravity-ui/chartkit": "^4.9.2",
-    "@gravity-ui/dashkit": "^6.7.0",
+    "@gravity-ui/dashkit": "^6.7.1",
     "@gravity-ui/date-utils": "^1.3.1",
     "@gravity-ui/expresskit": "^1.1.2",
     "@gravity-ui/gateway": "^1.5.1",
