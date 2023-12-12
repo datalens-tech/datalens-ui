@@ -4,7 +4,7 @@ import {Button, Checkbox, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ChartkitMenuDialogsQA} from 'shared';
-import {URL_OPTIONS as COMMON_URL_OPTIONS, DL, PRODUCT_NAME} from 'ui/constants';
+import {URL_OPTIONS as COMMON_URL_OPTIONS, DL, PRODUCT_NAME, SHEET_IDS} from 'ui/constants';
 import {ChartKitProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {URL_OPTIONS as CHARTKIT_URL_OPTIONS} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
@@ -134,6 +134,7 @@ export const DialogShare: React.FC<DialogShareProps> = ({
             title={i18n('title_share')}
             dialogProps={{className: b()}}
             sheetContentClassName={b({mobile: DL.IS_MOBILE})}
+            id={SHEET_IDS.DIALOG_SHARE}
         >
             <div className={b('body')} data-qa={ChartkitMenuDialogsQA.chartMenuShareModalBody}>
                 <div className={b('params')}>

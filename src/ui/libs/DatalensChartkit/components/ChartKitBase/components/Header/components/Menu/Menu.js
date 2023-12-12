@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {ChartkitMenuDialogsQA, MenuItemsIds} from 'shared';
-import {DL} from 'ui/constants';
+import {DL, SHEET_IDS} from 'ui/constants';
 
 import {getVisibleItems} from '../../../../helpers';
 
@@ -185,7 +185,7 @@ export class Menu extends React.PureComponent {
                 title={i18n('title_select-action')}
                 contentClassName={b('sheet-content')}
                 allowHideOnContentScroll={false}
-                id="menu-sheet"
+                id={SHEET_IDS.CHART_MENU}
             >
                 <ListMenu size="xl" className={b('sheet-menu')}>
                     {menuItems.flat().map((item) => (
