@@ -9,6 +9,7 @@ import {MenuItemConfig} from './Menu';
 import {
     getEditMenuItem,
     getExportMenuItem,
+    getFullscreenMenuItem,
     getInspectorMenuItem,
     getNewWindowMenuItem,
     getOpenAsTableMenuItem,
@@ -33,6 +34,7 @@ export const getWidgetChartMenu = ({
     extraOptions?: Record<string, unknown>;
 }) => {
     return [
+        getFullscreenMenuItem(customOptions[MenuItemsIds.FULLSCREEEN]),
         getExportMenuItem({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.EXPORT],

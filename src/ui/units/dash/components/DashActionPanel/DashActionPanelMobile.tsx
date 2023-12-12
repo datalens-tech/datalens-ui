@@ -16,8 +16,6 @@ import './DashActionPanelMobile.scss';
 const b = block('dash-action-panel-mobile');
 
 type Props = {
-    isFullscreenMode: boolean;
-    toggleFullscreenMode: () => void;
     entry: DashEntry;
 };
 

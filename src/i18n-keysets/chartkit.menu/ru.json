@@ -19,9 +19,11 @@
   "open-chart-editor": "Редактировать в ChartEditor",
   "open-chart-wizard": "Редактировать в ChartWizard",
   "open-edit": "Редактировать",
+  "open-fullscreen": "Открыть на весь экран",
   "open-in-window": "Открыть в новой вкладке",
   "show-comments": "Показать комментарии",
   "show-full-period": "Посмотреть весь период",
   "show-holidays": "Показать выходные",
-  "show-sources": "Источники"
+  "show-sources": "Источники",
+  "title_select-action": "Выберите действие"
 }
