@@ -59,8 +59,6 @@ class Header extends React.PureComponent<Props, State> {
             return null;
         }
 
-        const handleTocHeaderClick = () => this.props.toggleTableOfContent();
-
         const showTocHeader =
             this.props.hasTableOfContent && this.props.entry?.data?.settings?.expandTOC;
 
@@ -68,7 +66,7 @@ class Header extends React.PureComponent<Props, State> {
             return (
                 <React.Fragment>
                     <DashActionPanelMobile entry={this.props.entry} />
-                    {showTocHeader && <MobileTocHeader onClick={handleTocHeaderClick} />}
+                    {showTocHeader && <MobileTocHeader onClick={this.props.toggleTableOfContent} />}
                 </React.Fragment>
             );
         }
