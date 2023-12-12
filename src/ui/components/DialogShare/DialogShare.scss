@@ -4,6 +4,7 @@
 $shareLinkScrollWidth: 2px;
 
 .dialog-share {
+    $class: &;
     width: 716px;
 
     &__body {
@@ -100,5 +101,32 @@ $shareLinkScrollWidth: 2px;
 
     &__share-link &__subheader ~ &__copy-block &__text-field {
         @include scrollbar-on-hover($shareLinkScrollWidth);
+    }
+
+    &__share-button {
+        margin-top: 24px;
+    }
+
+    &_mobile {
+        width: unset;
+        padding: 0 16px;
+
+        #{$class}__body {
+            padding-bottom: 16px;
+        }
+
+        #{$class}__subheader {
+            margin-bottom: 0;
+        }
+
+        #{$class}__params {
+            flex: 1;
+        }
+
+        #{$class}__checkboxes,
+        #{$class}__selects {
+            gap: 16px;
+            margin-top: 16px;
+        }
     }
 }

@@ -5,8 +5,8 @@ import {Button, DropdownMenu, Icon, Menu as ListMenu, Portal, Sheet} from '@grav
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
-import {ChartkitMenuDialogsQA} from 'shared';
-import {DL} from 'ui/constants';
+import {ChartkitMenuDialogsQA, MenuItemsIds} from 'shared';
+import {DL, SHEET_IDS} from 'ui/constants';
 
 import {getVisibleItems} from '../../../../helpers';
 
@@ -57,6 +57,7 @@ export class Menu extends React.PureComponent {
     state = {
         modal: null,
         isSheetVisible: false,
+        sheetCloseCb: null,
     };
 
     modalRef = React.createRef();
@@ -80,6 +81,7 @@ export class Menu extends React.PureComponent {
 
         return {
             key: `ch-menu-item-${id}-${index}`,
+            id,
             qa: id,
             extraProps: {
                 'data-qa': id,
@@ -157,8 +159,53 @@ export class Menu extends React.PureComponent {
     };
 
     handleMobileSwitchClick = () => this.setState({isSheetVisible: true});
-    handleSheetClose = () => this.setState({isSheetVisible: false});
+    handleSheetClose = () => {
+        const {isSheetVisible, sheetCloseCb} = this.state;
+        // for a late start of the callback, so that the sheet has time to close before rerenders of fullscreen
+        if (!isSheetVisible && sheetCloseCb) {
+            sheetCloseCb();
+            this.setState({sheetCloseCb: null});
+            return;
+        }
+        this.setState({isSheetVisible: false});
+    };
     handleModalClose = () => this.setState({modal: null, isSheetVisible: false});
+    handleFullscreenOpen = (itemAction) => {
+        return () => {
+            this.setState({isSheetVisible: false, sheetCloseCb: itemAction});
+        };
+    };
+
+    renderSheet = (menuItems) => (
+        <React.Fragment>
+            <SwitcherButton onClick={this.handleMobileSwitchClick} />
+            <Sheet
+                onClose={this.handleSheetClose}
+                visible={this.state.isSheetVisible}
+                title={i18n('title_select-action')}
+                contentClassName={b('sheet-content')}
+                allowHideOnContentScroll={false}
+                id={SHEET_IDS.CHART_MENU}
+            >
+                <ListMenu size="xl" className={b('sheet-menu')}>
+                    {menuItems.flat().map((item) => (
+                        <ListMenu.Item
+                            key={item.key}
+                            qa={item.qa}
+                            onClick={
+                                item.id === MenuItemsIds.FULLSCREEEN
+                                    ? this.handleFullscreenOpen(item.action)
+                                    : item.action
+                            }
+                            iconStart={item.icon}
+                        >
+                            {item.text}
+                        </ListMenu.Item>
+                    ))}
+                </ListMenu>
+            </Sheet>
+        </React.Fragment>
+    );
 
     render() {
         const {
@@ -181,7 +228,7 @@ export class Menu extends React.PureComponent {
             commentsLength,
         } = this.props;
 
-        const {isSheetVisible, modal: ModalComponent} = this.state;
+        const {modal: ModalComponent} = this.state;
 
         const data = {
             widget,
@@ -224,40 +271,13 @@ export class Menu extends React.PureComponent {
 
         const menuItems = this.prepareItems(visibleItems, data, onChange);
 
-        const renderSheet = () => (
-            <React.Fragment>
-                <SwitcherButton onClick={this.handleMobileSwitchClick} />
-                <Sheet
-                    onClose={this.handleSheetClose}
-                    visible={isSheetVisible}
-                    title={i18n('title_select-action')}
-                    contentClassName={b('sheet-content')}
-                    allowHideOnContentScroll={false}
-                    id="menu-sheet"
-                >
-                    <ListMenu size="xl" className={b('sheet-menu')}>
-                        {menuItems.flat().map((item) => (
-                            <ListMenu.Item
-                                key={item.key}
-                                qa={item.qa}
-                                onClick={item.action}
-                                iconStart={item.icon}
-                            >
-                                {item.text}
-                            </ListMenu.Item>
-                        ))}
-                    </ListMenu>
-                </Sheet>
-            </React.Fragment>
-        );
-
         return (
             <div
                 className={b('switcher-button')}
                 data-qa={ChartkitMenuDialogsQA.chartMenuDropDownSwitcher}
             >
                 {DL.IS_MOBILE ? (
-                    renderSheet()
+                    this.renderSheet(menuItems)
                 ) : (
                     <DropdownMenu
                         size="s"
