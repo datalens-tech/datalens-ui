@@ -1,0 +1,63 @@
+import React from 'react';
+
+import block from 'bem-cn-lite';
+import {useInView} from 'react-intersection-observer';
+
+import {EmptyRow, Row} from '../Row/Row';
+import {ROW_HEIGHT, options} from '../constants';
+import {WorkbookEntriesTableProps} from '../types';
+import {ChunkItem} from '../useChunkedEntries';
+
+import './ChunkGroup.scss';
+
+interface ChunkGroupProps extends WorkbookEntriesTableProps {
+    chunk: ChunkItem[];
+    isOpen?: boolean;
+}
+
+const b = block('dl-chunk-group');
+
+function ChunkGroup({
+    chunk,
+    workbook,
+    isOpen,
+    onRenameEntry,
+    onDeleteEntry,
+    onDuplicateEntry,
+    onCopyEntry,
+}: ChunkGroupProps) {
+    const {ref, inView} = useInView(options);
+
+    const height = chunk.length * ROW_HEIGHT;
+
+    const renderContent = () =>
+        chunk.map((chunkItem) => {
+            switch (chunkItem.type) {
+                case 'entry':
+                    return (
+                        <Row
+                            key={chunkItem.key}
+                            workbook={workbook}
+                            item={chunkItem.item}
+                            onRenameEntry={onRenameEntry}
+                            onDeleteEntry={onDeleteEntry}
+                            onDuplicateEntry={onDuplicateEntry}
+                            onCopyEntry={onCopyEntry}
+                            isOpen={isOpen}
+                        />
+                    );
+                case 'empty':
+                    return <EmptyRow key={chunkItem.key} />;
+                default:
+                    return null;
+            }
+        });
+
+    return (
+        <div ref={ref} className={b()}>
+            {inView ? renderContent() : <div className={b('hidden-row')} style={{height}} />}
+        </div>
+    );
+}
+
+export {ChunkGroup};

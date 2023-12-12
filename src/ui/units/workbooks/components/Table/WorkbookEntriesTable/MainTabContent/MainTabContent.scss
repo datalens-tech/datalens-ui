@@ -1,0 +1,20 @@
+.dl-main-tab-content {
+    display: flex;
+
+    &__visibility-btn {
+        cursor: pointer;
+    }
+
+    &__title {
+        font-style: normal;
+        font-weight: 500;
+    }
+
+    &__count {
+        margin-left: 6px;
+    }
+
+    &__create-btn {
+        margin-left: auto;
+    }
+}
