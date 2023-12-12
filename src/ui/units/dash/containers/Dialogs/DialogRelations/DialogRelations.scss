@@ -23,6 +23,13 @@
         color: var(--g-color-text-hint);
     }
 
+    &__icon-title-colored {
+        margin-right: 8px;
+        min-width: 24px;
+        align-self: flex-start;
+        filter: contrast(0) brightness(0.85);
+    }
+
     &__alias-add-icon-type {
         margin-right: 8px;
         margin-left: 4px;
