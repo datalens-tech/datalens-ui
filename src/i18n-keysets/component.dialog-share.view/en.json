@@ -1,4 +1,5 @@
 {
+  "button_share": "Share",
   "field_language": "Language: ",
   "field_theme": "Theme: ",
   "label_editors-hint": "The editor type should match the service",

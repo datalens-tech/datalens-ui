@@ -67,9 +67,9 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
     const sharedVisualization = config.visualization as ServerVisualization;
     const {
-        colors: sharedColors = [],
-        labels: sharedLabels = [],
-        shapes: sharedShapes = [],
+        colors: sharedColors,
+        labels: sharedLabels,
+        shapes: sharedShapes,
         order: sharedOrder,
     } = config;
 
@@ -173,9 +173,9 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             });
         });
 
-        let newColors: Field[] = sharedColors || [];
-        let newLabels: Field[] = sharedLabels || [];
-        let newShapes: Field[] = sharedShapes || [];
+        let newColors = sharedColors;
+        let newLabels = sharedLabels;
+        let newShapes = sharedShapes;
         let newVisualization: ServerVisualization = sharedVisualization;
 
         const visualizationIsEmpty = sharedVisualization.placeholders.every(
@@ -207,17 +207,17 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
             newColors = mapItems({
                 fields,
-                items: sharedColors as Field[],
+                items: sharedColors,
             });
 
             newLabels = mapItems({
                 fields,
-                items: sharedLabels as Field[],
+                items: sharedLabels,
             });
 
             newShapes = mapItems({
                 fields,
-                items: sharedShapes as Field[],
+                items: sharedShapes,
             });
         }
 

@@ -7,10 +7,10 @@ import {
     NumberFormatUnit,
     getFakeTitleOrTitle,
     isDateField,
-} from '../../../../../../shared';
-import {findIndexInOrder, isFloatDataType, isNumericalDataType} from '../utils/misc-helpers';
+} from '../../../../../../../shared';
+import {findIndexInOrder, isFloatDataType, isNumericalDataType} from '../../utils/misc-helpers';
 
-import {PrepareFunctionArgs} from './types';
+import {PrepareFunctionArgs} from './../types';
 
 type MetricCurrent = {
     value: string | number | null;
