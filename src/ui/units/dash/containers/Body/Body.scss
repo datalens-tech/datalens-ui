@@ -22,7 +22,7 @@ $contentMobilePadding: 16px;
         transition: width 0.1s;
         padding: 20px #{$contentPadding} 48px;
 
-        &_with-table-of-content {
+        &_with-table-of-content:not(&_mobile) {
             width: calc(100% - 250px);
         }
 

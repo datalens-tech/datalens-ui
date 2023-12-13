@@ -2,11 +2,11 @@
 
 .dash-action-panel-mobile {
     width: 100%;
-    height: 56px;
+    height: 44px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    padding: 0 20px;
+    padding: 8px 10px 8px 22px;
     border-bottom: 1px solid var(--g-color-line-generic);
     background: var(--g-color-base-background);
     justify-content: space-between;
@@ -15,7 +15,6 @@
         @include overflow-ellipsis();
         @include text-subheader-2();
         max-width: 50%;
-        font-weight: bold;
     }
 
     &__controls {

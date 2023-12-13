@@ -5,7 +5,7 @@ import {Redirect, Route, RouteComponentProps, Switch} from 'react-router-dom';
 import {ConnectorType, extractEntryId} from 'shared';
 import {ConnectorAlias} from 'ui/constants';
 
-import {ChOverYT, ConnectorForm, ConnectorsList, File, GSheetsV2} from '../';
+import {ChOverYT, ConnectorForm, ConnectorsList, File, GSheetsV2, Yadocs} from '../';
 import type {ConnectorItem, GetConnectorsResponse} from '../../../../../shared/schema';
 import {FieldKey} from '../../constants';
 import {FormDict} from '../../typings';
@@ -63,6 +63,8 @@ const Connector = (props: {type: ConnectorType} | {connector: ConnectorItem}) =>
             return <File />;
         case ConnectorType.GsheetsV2:
             return <GSheetsV2 />;
+        case ConnectorType.Yadocs:
+            return <Yadocs />;
     }
 
     return <ConnectorForm type={type} />;
