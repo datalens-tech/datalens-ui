@@ -37,9 +37,9 @@ datalensTest.describe('SQL connection selection', () => {
 
         await qlPage.clickConnectionButton();
 
-        await workbookPO.navigationMinimalPopup.selectListItem(
-            ConnectionsNames.ConnectionPostgreSQL,
-        );
+        await workbookPO.navigationMinimalPopup.selectListItem({
+            name: ConnectionsNames.ConnectionPostgreSQL,
+        });
 
         await qlPage.clickCreate();
 

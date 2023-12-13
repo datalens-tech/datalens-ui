@@ -24,8 +24,11 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
+import {ElementTypes} from 'page-objects/common/DialogControlPO/ElementType';
+import {SourceTypes} from 'page-objects/common/DialogControlPO/SourceType';
 import {
     DashboardDialogSettingsQa,
+    DialogControlQa,
     DialogDashTitleQA,
     DialogDashWidgetItemQA,
 } from '../../../src/shared';
@@ -43,6 +46,7 @@ import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
 import Description from './Description';
 import TableOfContent from './TableOfContent';
+import {ListItemByParams} from 'page-objects/types';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -54,6 +58,19 @@ export const URLS = {
     createLock: '/gateway/root/us/createLock',
     deleteLock: '/gateway/root/us/deleteLock',
     savePath: '/api/dash/v1/dashboards',
+};
+
+type SelectorSettings = {
+    sourceType?: SourceTypes;
+    dataset?: ListItemByParams;
+    datasetField?: ListItemByParams;
+    elementType?: ElementTypes;
+    appearance?: {
+        title?: string;
+        titleEnabled?: boolean;
+        innerTitle?: string;
+        innerTitleEnabled?: boolean;
+    };
 };
 
 export interface DashboardPageProps extends BasePageProps {}
@@ -82,7 +99,7 @@ class DashboardPage extends BasePage {
         selectItemsMobile: '.g-select-list_mobile',
         selectItemTitle: '.g-select-list__option',
 
-        radioManualControl: 'radio-source-type',
+        radioManualControl: DialogControlQa.radioSourceType,
         inputNameControl: 'control-name-input',
         inputNameField: 'field-name-input',
         acceptableValuesSelect: ControlQA.selectDefaultAcceptable,
@@ -257,6 +274,65 @@ class DashboardPage extends BasePage {
 
         // adding a selector to the dashboard
         await this.page.click(slct(ControlQA.dialogControlApplyBtn));
+    }
+
+    async editSelectorBySettings(setting: SelectorSettings = {}) {
+        await this.dialogControl.waitForVisible();
+
+        if (setting.sourceType) {
+            await this.dialogControl.sourceType.selectType(setting.sourceType);
+        }
+
+        if (setting.dataset?.name || typeof setting.dataset?.idx === 'number') {
+            await this.dialogControl.selectDatasetButton.click();
+            await this.dialogControl.selectDatasetButton.navigationMinimal.selectListItem(
+                setting.dataset,
+            );
+        }
+
+        if (setting.datasetField?.name || typeof setting.datasetField?.idx === 'number') {
+            await this.dialogControl.datasetFieldSelector.click();
+            await this.dialogControl.datasetFieldSelector.selectListItem(setting.datasetField);
+        }
+
+        if (setting.elementType) {
+            await this.dialogControl.elementType.selectType(setting.elementType);
+        }
+
+        if (typeof setting.appearance?.titleEnabled === 'boolean') {
+            await this.dialogControl.appearanceTitle.switchCheckbox(
+                setting.appearance.titleEnabled,
+            );
+        }
+
+        if (setting.appearance?.title) {
+            await this.dialogControl.appearanceTitle.fillInput(setting.appearance.title);
+        }
+
+        if (typeof setting.appearance?.innerTitleEnabled === 'boolean') {
+            await this.dialogControl.appearanceInnerTitle.switchCheckbox(
+                setting.appearance.innerTitleEnabled,
+            );
+        }
+
+        if (setting.appearance?.innerTitle) {
+            await this.dialogControl.appearanceInnerTitle.fillInput(setting.appearance.innerTitle);
+        }
+
+        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
+    }
+
+    async addSelectorBySettings(setting: SelectorSettings = {}) {
+        const defaultSettings: SelectorSettings = {
+            sourceType: 'dataset',
+            elementType: 'select',
+            appearance: {titleEnabled: true},
+            dataset: {idx: 0},
+            datasetField: {idx: 0},
+        };
+        await this.clickAddSelector();
+
+        await this.editSelectorBySettings({...defaultSettings, ...setting});
     }
 
     async clickAddChart() {
@@ -746,6 +822,13 @@ class DashboardPage extends BasePage {
             const elems = await this.page.$$(DashboardPage.selectors.chartGridItemContainer);
             return elems.length === 0;
         });
+    }
+
+    async clickFirstControlSettingsButton() {
+        const controlSettingsButton = await this.page.waitForSelector(
+            slct(ControlQA.controlSettings),
+        );
+        await controlSettingsButton.click();
     }
 }
 
