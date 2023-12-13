@@ -30,5 +30,6 @@
   "menu_editor-chart": "Чарт в Editor",
   "menu_ql-chart": "QL-чарт",
   "menu_wizard-chart": "Чарт в Wizard",
+  "no_objects": "Пока нет объектов",
   "section_delete-entry": "Вы действительно хотите удалить \"{{entryName}}\"?"
 }

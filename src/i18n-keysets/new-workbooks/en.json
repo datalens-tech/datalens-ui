@@ -30,5 +30,6 @@
   "menu_editor-chart": "Editor chart",
   "menu_ql-chart": "QL Chart",
   "menu_wizard-chart": "Wizard chart",
+  "no_objects": "No objects yet",
   "section_delete-entry": "Are you sure you want to delete \"{{entryName}}\"?"
 }

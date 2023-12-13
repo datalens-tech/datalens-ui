@@ -1,7 +1,9 @@
 import React from 'react';
 
-import {ChevronDown, ChevronUp} from '@gravity-ui/icons';
+import {ChevronDown, ChevronUp, Plus} from '@gravity-ui/icons';
+import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {EntryScope} from 'shared';
 
 import {ChunkGroup} from '../ChunkGroup/ChunkGroup';
@@ -11,6 +13,8 @@ import {ChunkItem} from '../useChunkedEntries';
 import './MainTabContent.scss';
 
 const b = block('dl-main-tab-content');
+
+const i18n = I18n.keyset('new-workbooks');
 
 interface MainTabContentProps extends WorkbookEntriesTableProps {
     chunks: ChunkItem[][];
@@ -24,8 +28,20 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
     onDuplicateEntry,
     onCopyEntry,
 }) => {
-    const [isOpen, setIsOpen] = React.useState(true);
+    const [mapOpenness, setMapOpenness] = React.useState<Record<string, boolean>>({});
+
+    React.useEffect(() => {
+        const openness: Record<string, boolean> = {};
+
+        Object.keys(EntryScope).forEach((key: string) => {
+            openness[key] = true;
+        });
+
+        setMapOpenness(mapOpenness);
+    }, [mapOpenness]);
+
     const dashChunk: ChunkItem[] = [];
+
     const connChunk: ChunkItem[] = [];
     const datasetChunk: ChunkItem[] = [];
     const widgetChunk: ChunkItem[] = [];
@@ -51,29 +67,54 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
         });
     });
 
+    const getNoObjectsText = (key: string) =>
+        mapOpenness[key] && <div className={b('no-objects')}>{i18n('no_objects')}</div>;
+
+    const handleVisibility = (key: string) => {
+        setMapOpenness({
+            ...mapOpenness,
+            [key]: !mapOpenness[key],
+        });
+    };
+
     return (
         <>
-            {dashChunk.length > 0 && (
-                <>
-                    <div className={b()}>
-                        <div className={b('visibility-btn')} onClick={() => setIsOpen(!isOpen)}>
-                            {isOpen ? <ChevronDown /> : <ChevronUp />}
+            <div className={b()}>
+                <div className={b('content-cell')}>
+                    <div className={b('title')}>
+                        <div
+                            className={b('visibility-btn')}
+                            onClick={() => handleVisibility(EntryScope.Dash)}
+                        >
+                            {mapOpenness['dash'] ? <ChevronDown /> : <ChevronUp />}
                         </div>
-                        <div className={b('title')}>Дашборды</div>
-                        <div className={b('count')}>{dashChunk.length} объектов</div>
-                        <div className={b('create-btn')}>Создать дашборд</div>
+                        <div className={b('title-text')}>Дашборды</div>
                     </div>
-                    <ChunkGroup
-                        key={dashChunk[0].key}
-                        workbook={workbook}
-                        chunk={dashChunk}
-                        onRenameEntry={onRenameEntry}
-                        onDeleteEntry={onDeleteEntry}
-                        onDuplicateEntry={onDuplicateEntry}
-                        onCopyEntry={onCopyEntry}
-                        isOpen={isOpen}
-                    />
-                </>
+                </div>
+                <div className={b('content-cell')} />
+                <div className={b('content-cell')}>
+                    <div className={b('create-btn')}>
+                        <Button>
+                            <Icon data={Plus} />
+                            {i18n('action_create-dashboard')}
+                        </Button>
+                    </div>
+                </div>
+            </div>
+
+            {dashChunk.length > 0 ? (
+                <ChunkGroup
+                    key={dashChunk[0].key}
+                    workbook={workbook}
+                    chunk={dashChunk}
+                    onRenameEntry={onRenameEntry}
+                    onDeleteEntry={onDeleteEntry}
+                    onDuplicateEntry={onDuplicateEntry}
+                    onCopyEntry={onCopyEntry}
+                    isOpen={mapOpenness[EntryScope.Dash]}
+                />
+            ) : (
+                getNoObjectsText(EntryScope.Dash)
             )}
 
             {widgetChunk.length > 0 && (
