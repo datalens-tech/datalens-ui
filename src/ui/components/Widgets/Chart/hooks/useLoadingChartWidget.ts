@@ -192,9 +192,13 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 setOnStateAndParamsChangeData(changedProps);
                 return;
             }
-
             if (changedProps.type === 'PARAMS_CHANGED') {
-                onStateAndParamsChange({params: changedProps.data.params || {}});
+                onStateAndParamsChange(
+                    {
+                        params: changedProps.data.params || {},
+                    },
+                    changedProps.options,
+                );
             }
         },
         [onStateAndParamsChange, needWaitForDSFields],
