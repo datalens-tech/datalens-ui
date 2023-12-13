@@ -22,3 +22,13 @@ export const ControlQA = {
     selectDefaultAcceptable: 'select-default-acceptable',
     acceptableDialogButton: 'acceptable-dialog-button',
 };
+
+export const DialogControlQa = {
+    selectDatasetButton: 'dialog-control-select-dataset-button',
+    elementTypeRadioGroup: 'dialog-control-element-type-radio-group',
+    fieldSelect: 'dialog-control-field-select',
+    valueSelect: 'dialog-control-value-select',
+    radioSourceType: 'radio-source-type',
+    appearanceTitle: 'dialog-control-appearance-title',
+    appearanceInnerTitle: 'dialog-control-appearance-inner-title',
+};

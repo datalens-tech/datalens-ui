@@ -3,7 +3,7 @@ import React from 'react';
 import {RadioButton, RadioButtonSize} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashTabItemControlSourceType, Feature} from 'shared';
+import {DashTabItemControlSourceType, DialogControlQa, Feature} from 'shared';
 import Utils from 'ui/utils';
 import {SelectorSourceType, setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
@@ -59,7 +59,7 @@ const SelectorTypeSelect = ({size = 'l', showExternalType = true}: SelectorTypeS
             onUpdate={handleSourceTypeChange}
             size={size}
             width="max"
-            qa="radio-source-type"
+            qa={DialogControlQa.radioSourceType}
         >
             {options.map((item) => (
                 <RadioButton.Option key={item.value} value={item.value}>
