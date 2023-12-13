@@ -1,20 +1,32 @@
 .dl-main-tab-content {
-    display: flex;
+    display: table-row;
+    height: 48px;
 
     &__visibility-btn {
         cursor: pointer;
     }
 
+    &__content-cell {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
     &__title {
+        display: flex;
         font-style: normal;
         font-weight: 500;
     }
 
-    &__count {
+    &__title-text {
         margin-left: 6px;
     }
 
     &__create-btn {
-        margin-left: auto;
+        text-align: right;
+    }
+
+    &__no-objects {
+        color: var(--g-color-text-secondary);
+        margin-left: 20px;
     }
 }

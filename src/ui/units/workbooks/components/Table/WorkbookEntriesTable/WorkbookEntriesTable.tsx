@@ -112,14 +112,10 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         return (
             <div className={b()}>
                 <div className={b('table')}>
-                    <div className={b('header')}>
-                        <div className={b('header-row')} style={defaultRowStyle}>
-                            <div className={b('header-cell', {title: true})}>
-                                {i18n('label_title')}
-                            </div>
-                            <div className={b('header-cell')}>{i18n('label_last-modified')}</div>
-                            <div className={b('header-cell')} />
-                        </div>
+                    <div className={b('header')} style={defaultRowStyle}>
+                        <div className={b('header-cell', {title: true})}>{i18n('label_title')}</div>
+                        <div className={b('header-cell')}>{i18n('label_last-modified')}</div>
+                        <div className={b('header-cell')} />
                     </div>
                     {scope ? (
                         chunks.map((chunk) => (
