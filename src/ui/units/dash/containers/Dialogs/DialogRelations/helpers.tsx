@@ -48,7 +48,7 @@ const getIconByVisualizationId = ({
         <IconById
             id={visualization.iconProps.id}
             size={iconSize || DEFAULT_TITLE_ICON_SIZE}
-            className={`${className}-colored`}
+            className={`${className} ${b('icon-visualization')}`}
         />
     ) : (
         <Icon
@@ -87,11 +87,11 @@ export const getDialogCaptionIcon = ({
                 iconSize,
                 className: className || b('icon-title'),
             });
-        } else {
-            iconData =
-                RELATIONS_CHARTS_ICONS_DICT[currentWidgetMeta.type as RelationChartType] ||
-                RELATIONS_CHARTS_ICONS_DICT.widget;
         }
+
+        iconData =
+            RELATIONS_CHARTS_ICONS_DICT[currentWidgetMeta.type as RelationChartType] ||
+            RELATIONS_CHARTS_ICONS_DICT.widget;
     }
 
     return iconData ? (
@@ -118,15 +118,15 @@ export const getDialogRowIcon = (
             iconSize,
             className,
         });
-    } else {
-        const iconData =
-            widgetMeta.type === DashTabItemType.Control
-                ? RELATIONS_CHARTS_ICONS_DICT.control
-                : RELATIONS_CHARTS_ICONS_DICT[widgetMeta.type as RelationChartType] ||
-                  RELATIONS_CHARTS_ICONS_DICT.widget;
-
-        return <Icon data={iconData} size={iconSize || DEFAULT_ICON_SIZE} className={className} />;
     }
+
+    const iconData =
+        widgetMeta.type === DashTabItemType.Control
+            ? RELATIONS_CHARTS_ICONS_DICT.control
+            : RELATIONS_CHARTS_ICONS_DICT[widgetMeta.type as RelationChartType] ||
+              RELATIONS_CHARTS_ICONS_DICT.widget;
+
+    return <Icon data={iconData} size={iconSize || DEFAULT_ICON_SIZE} className={className} />;
 };
 
 const getChangedConnections = ({
