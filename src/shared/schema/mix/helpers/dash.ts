@@ -5,14 +5,12 @@ import {AppContext, AppContextParams} from '@gravity-ui/nodekit';
 
 import {registry} from '../../../../server/registry';
 import {DatalensGatewaySchemas} from '../../../../server/types/gateway';
-import {Dataset} from '../../../types';
-import {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../bi/types';
+import {DatasetField} from '../../../types';
+import {GetDataSetFieldsByIdResponse} from '../../bi/types';
 import {simpleSchema} from '../../simple-schema';
+import {GetEntryResponse} from '../../us/types/entries';
 
-// two actions with different return value can be used
-type DatasetData = Partial<Dataset> & Partial<DatasetFieldsData>;
-
-export type DatasetDictResponse = {datasetId: string; data: DatasetData | null};
+export type DatasetDictResponse = {datasetId: string; data: GetEntryResponse | null};
 
 export const fetchDataset = async ({
     datasetId,
@@ -24,28 +22,18 @@ export const fetchDataset = async ({
     ctx: AppContext;
 }): Promise<DatasetDictResponse> => {
     try {
-        const data: Dataset = await typedApi.bi.getDatasetByVersion({
-            datasetId,
-            version: 'draft',
+        const data: GetEntryResponse = await typedApi.us.getEntry({
+            entryId: datasetId,
         });
+
         return {
             datasetId,
             data,
         };
     } catch (error) {
-        ctx.logError('DASH_GET_DATASETS_BY_IDS_FIELDS_GET_DATASET_BY_VERSION_FAILED', error);
+        ctx.logError('DASH_FETCH_DATASET_BY_GET_ENTRY_FAILED', error);
     }
     return {datasetId, data: null};
-};
-
-const getDatasetFieldsData = (fields: PartialDatasetField[]) => {
-    return fields.map(({title, guid, type}) => {
-        return {
-            title,
-            guid,
-            type,
-        };
-    });
 };
 
 export const prepareDatasetData = (args: {
@@ -62,15 +50,13 @@ export const prepareDatasetData = (args: {
         return emptyValue;
     }
 
-    const {dataset, responseData, key} = items.data;
+    const {data, key} = items.data;
 
-    const fields = dataset ? dataset.result_schema : responseData?.fields;
+    const result_schema = data?.result_schema as DatasetField[];
 
-    if (!fields) {
+    if (!result_schema) {
         return emptyValue;
     }
-
-    const datasetFields = getDatasetFieldsData(fields);
 
     // we form an array of elements of the following type:
     // * wizard and dataset are not in datasetsIds
@@ -85,8 +71,14 @@ export const prepareDatasetData = (args: {
         entryId,
         type,
         datasetId,
-        datasetName: key?.match(/[^/]*$/)?.[0] || '',
-        datasetFields,
+        datasetName: key.match(/[^/]*$/)?.[0] || '',
+        datasetFields: result_schema.map(({title, guid, type: fieldType}) => {
+            return {
+                title,
+                guid,
+                type: fieldType,
+            };
+        }),
     };
 };
 
