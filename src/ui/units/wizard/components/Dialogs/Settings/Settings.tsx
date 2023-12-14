@@ -22,6 +22,7 @@ import {
     Shared,
     WizardVisualizationId,
     getIsNavigatorAvailable,
+    isD3Visualization,
     isDateField,
     isTreeField,
 } from 'shared';
@@ -36,7 +37,6 @@ import {getQlAutoExecuteChartValue} from '../../../../ql/utils/chart-settings';
 import {CHART_SETTINGS, SETTINGS, VISUALIZATION_IDS} from '../../../constants';
 import {getDefaultChartName} from '../../../utils/helpers';
 
-import {isD3Visualization} from './../../../utils/visualization';
 import LimitInput from './LimitInput/LimitInput';
 import SettingFeed from './SettingFeed/SettingFeed';
 import SettingNavigator from './SettingNavigator/SettingNavigator';
@@ -79,6 +79,7 @@ const DEFAULT_PERIOD: Period = 'day';
 const visualizationsWithLegendDict = (
     [
         VISUALIZATION_IDS.LINE,
+        WizardVisualizationId.LineD3,
 
         VISUALIZATION_IDS.AREA,
         VISUALIZATION_IDS.AREA_100P,

@@ -5,7 +5,6 @@ import {
     DatasetFieldAggregation,
     Field,
     Shared,
-    WizardVisualizationId,
     isFieldHierarchy,
     isParameter,
 } from '../../../../shared';
@@ -26,6 +25,7 @@ import {
     GEOPOINT_WITH_CLUSTER_VISUALIZATION,
     GEOPOLYGON_VISUALIZATION,
     HEATMAP_VISUALIZATION,
+    LINE_D3_VISUALIZATION,
     LINE_VISUALIZATION,
     METRIC_VISUALIZATION,
     PIE_D3_VISUALIZATION,
@@ -81,6 +81,10 @@ export function getAvailableVisualizations(options?: ChartkitGlobalSettings) {
         {
             value: LINE_VISUALIZATION,
             enabled: isHighchartsEnabled,
+        },
+        {
+            value: {...LINE_D3_VISUALIZATION, hidden: isHighchartsEnabled},
+            enabled: true,
         },
         {
             value: AREA_VISUALIZATION,
@@ -178,13 +182,4 @@ export function getAvailableVisualizations(options?: ChartkitGlobalSettings) {
     ];
 
     return _.cloneDeep(items.filter((item) => item.enabled).map(({value}) => value));
-}
-
-export function isD3Visualization(id: WizardVisualizationId) {
-    const d3Visualizations = [
-        WizardVisualizationId.ScatterD3,
-        WizardVisualizationId.PieD3,
-        WizardVisualizationId.BarXD3,
-    ];
-    return d3Visualizations.includes(id);
 }

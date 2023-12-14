@@ -9,7 +9,13 @@ import {
     Link,
     ServerDatasetField,
 } from '../';
-import {ColorMode, GradientType, NavigatorLinesMode, NavigatorPeriod} from '../../constants';
+import {
+    ColorMode,
+    GradientType,
+    NavigatorLinesMode,
+    NavigatorPeriod,
+    WizardVisualizationId,
+} from '../../constants';
 import {IconId} from '../../types';
 import {CommonUpdate, CommonUpdateField} from '../common-update';
 import {DatasetField} from '../dataset';
@@ -170,6 +176,7 @@ export interface GraphShared extends CommonShared {
     visualization: {
         id:
             | 'line'
+            | WizardVisualizationId.LineD3
             | 'area'
             | 'area100p'
             | 'column'

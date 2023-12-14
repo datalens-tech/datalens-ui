@@ -80,11 +80,17 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
                         key: 'name',
                     },
                 },
+                line: {
+                    lineWidth: 2,
+                },
             },
         },
         chart: {
             margin: {
-                bottom: 10,
+                top: 10,
+                left: 10,
+                right: 10,
+                bottom: 15,
             },
         },
     };

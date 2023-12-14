@@ -6,6 +6,7 @@ import {
     PlaceholderId,
     PlaceholderIndexes,
     Shared,
+    WizardVisualizationId,
     createMeasureNames,
     isMeasureField,
     isMeasureName,
@@ -227,6 +228,59 @@ export function onMeasureAxisChange({
     }
 }
 
+const LineXPlaceholder = {
+    allowedTypes: ITEM_TYPES.ALL,
+    allowedDataTypes: PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
+    id: 'x',
+    type: 'x',
+    title: 'section_x',
+    iconProps: {data: ArrowRight},
+    items: [],
+    required: true,
+    capacity: 1,
+    settings: {
+        title: 'off',
+        titleValue: '',
+        type: 'linear',
+        grid: 'on',
+        gridStep: 'auto',
+        gridStepValue: 50,
+        hideLabels: 'no',
+        labelsView: 'auto',
+        holidays: 'off',
+        axisFormatMode: 'auto',
+        axisModeMap: {},
+    },
+    transform: prepareFieldToDimensionTransformation,
+};
+
+const LineYPlaceholder = {
+    allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
+    allowedFinalTypes: ITEM_TYPES.MEASURES,
+    allowedDataTypes: PRIMITIVE_DATA_TYPES,
+    id: 'y',
+    type: 'y',
+    title: 'section_y',
+    iconProps: {data: ArrowUp},
+    items: [],
+    onChange: onMeasureAxisChange,
+    settings: {
+        scale: 'auto',
+        scaleValue: 'min-max',
+        title: 'off',
+        titleValue: '',
+        type: 'linear',
+        grid: 'on',
+        gridStep: 'auto',
+        gridStepValue: 50,
+        hideLabels: 'no',
+        labelsView: 'auto',
+        nulls: 'ignore',
+        axisFormatMode: 'auto',
+    },
+    transform: prepareFieldToMeasureTransformation,
+};
+
 export const LINE_VISUALIZATION: GraphShared['visualization'] = {
     id: 'line' as const,
     type: 'line',
@@ -264,57 +318,8 @@ export const LINE_VISUALIZATION: GraphShared['visualization'] = {
     availableLabelModes: ['absolute'],
     onDesignItemsChange: onLineChartDesignItemsChange,
     placeholders: [
-        {
-            allowedTypes: ITEM_TYPES.ALL,
-            allowedDataTypes: PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
-            id: 'x',
-            type: 'x',
-            title: 'section_x',
-            iconProps: {data: ArrowRight},
-            items: [],
-            required: true,
-            capacity: 1,
-            settings: {
-                title: 'off',
-                titleValue: '',
-                type: 'linear',
-                grid: 'on',
-                gridStep: 'auto',
-                gridStepValue: 50,
-                hideLabels: 'no',
-                labelsView: 'auto',
-                holidays: 'off',
-                axisFormatMode: 'auto',
-                axisModeMap: {},
-            },
-            transform: prepareFieldToDimensionTransformation,
-        },
-        {
-            allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
-            allowedFinalTypes: ITEM_TYPES.MEASURES,
-            allowedDataTypes: PRIMITIVE_DATA_TYPES,
-            id: 'y',
-            type: 'y',
-            title: 'section_y',
-            iconProps: {data: ArrowUp},
-            items: [],
-            onChange: onMeasureAxisChange,
-            settings: {
-                scale: 'auto',
-                scaleValue: 'min-max',
-                title: 'off',
-                titleValue: '',
-                type: 'linear',
-                grid: 'on',
-                gridStep: 'auto',
-                gridStepValue: 50,
-                hideLabels: 'no',
-                labelsView: 'auto',
-                nulls: 'ignore',
-                axisFormatMode: 'auto',
-            },
-            transform: prepareFieldToMeasureTransformation,
-        },
+        LineXPlaceholder,
+        LineYPlaceholder,
         {
             allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
             allowedFinalTypes: ITEM_TYPES.MEASURES,
@@ -342,6 +347,14 @@ export const LINE_VISUALIZATION: GraphShared['visualization'] = {
             transform: prepareFieldToMeasureTransformation,
         },
     ],
+};
+
+export const LINE_D3_VISUALIZATION: GraphShared['visualization'] = {
+    ...LINE_VISUALIZATION,
+    id: WizardVisualizationId.LineD3,
+    placeholders: [LineXPlaceholder, {...LineYPlaceholder, required: true}],
+    allowSegments: false,
+    allowShapes: false,
 };
 
 export const AREA_VISUALIZATION: GraphShared['visualization'] = {
