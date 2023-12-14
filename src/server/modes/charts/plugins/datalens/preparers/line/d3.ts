@@ -4,10 +4,12 @@ import type {
     LineSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import {PlaceholderId, ServerField, getFakeTitleOrTitle} from '../../../../../../../shared';
+import {PlaceholderId, ServerField} from '../../../../../../../shared';
 import {getAxisType} from '../../d3/utils';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
 import {PrepareFunctionArgs} from '../types';
+
+import {getYFields} from './utils/fields';
 
 import prepareLine from './index';
 
@@ -15,8 +17,7 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
     const {labels, placeholders, disableDefaultSorting = false} = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
-    const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
-    const yField: ServerField | undefined = yPlaceholder?.items?.[0];
+    const yFields = getYFields(placeholders);
     const labelField = labels?.[0];
     const isDataLabelsEnabled = Boolean(labelField);
     const isCategoriesXAxis =
@@ -24,7 +25,7 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
         getAxisType(xField, xPlaceholder?.settings) === 'category' ||
         disableDefaultSorting;
 
-    if (!xField || !yField) {
+    if (!xField || !yFields.length) {
         return {
             series: {
                 data: [],
@@ -35,51 +36,39 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
     const preparedData = prepareLine(args);
     const xCategories = preparedData.categories;
 
-    let seriesData: LineSeries[] = [];
-    if (yField) {
-        seriesData = preparedData.graphs.map<LineSeries>((graph: any) => {
-            return {
-                name: graph.title,
-                type: 'line',
-                color: graph.color,
-                data: graph.data.reduce((acc: LineSeriesData[], item: any, index: number) => {
-                    const dataItem: LineSeriesData = {
-                        y: item?.y || 0,
-                    };
+    const seriesData: LineSeries[] = preparedData.graphs.map<LineSeries>((graph: any) => {
+        return {
+            name: graph.title,
+            type: 'line',
+            color: graph.color,
+            data: graph.data.reduce((acc: LineSeriesData[], item: any, index: number) => {
+                const dataItem: LineSeriesData = {
+                    y: item?.y || 0,
+                };
 
-                    if (isDataLabelsEnabled) {
-                        dataItem.label =
-                            item?.y === null ? ' ' : getFormattedLabel(item?.label, labelField);
-                    }
+                if (isDataLabelsEnabled) {
+                    dataItem.label =
+                        item?.y === null ? ' ' : getFormattedLabel(item?.label, labelField);
+                }
 
-                    if (isCategoriesXAxis) {
-                        dataItem.x = index;
-                    } else if (!item && xCategories) {
-                        dataItem.x = xCategories[index];
-                    } else {
-                        dataItem.x = item?.x;
-                    }
+                if (isCategoriesXAxis) {
+                    dataItem.x = index;
+                } else if (!item && xCategories) {
+                    dataItem.x = xCategories[index];
+                } else {
+                    dataItem.x = item?.x;
+                }
 
-                    acc.push(dataItem);
+                acc.push(dataItem);
 
-                    return acc;
-                }, []),
-                custom: {},
-                dataLabels: {
-                    enabled: isDataLabelsEnabled,
-                },
-            };
-        });
-    } else {
-        // const xValues: (string | number)[] = xCategories || preparedData.categories_ms;
-        seriesData = [
-            {
-                name: getFakeTitleOrTitle(xField),
-                type: 'line',
-                data: [],
+                return acc;
+            }, []),
+            custom: {},
+            dataLabels: {
+                enabled: isDataLabelsEnabled,
             },
-        ];
-    }
+        };
+    });
 
     const config: ChartKitWidgetData = {
         series: {
