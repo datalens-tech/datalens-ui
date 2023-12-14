@@ -15,10 +15,7 @@ import {StringParams} from 'shared';
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
-import {
-    selectDashWidgetsDatasetsFields,
-    selectSkipReload,
-} from '../../../units/dash/store/selectors/dashTypedSelectors';
+import {selectSkipReload} from '../../../units/dash/store/selectors/dashTypedSelectors';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
 
@@ -79,7 +76,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     } = props;
 
     const skipReload = useSelector(selectSkipReload);
-    const dashDatasetFields = useSelector(selectDashWidgetsDatasetsFields);
 
     const [isWizardChart, setIsWizardChart] = React.useState(false);
 
@@ -90,27 +86,13 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     const initName = React.useMemo(() => currentTab.title, [currentTab]);
     const {chartId, enableActionParams} = currentTab;
 
-    const widgetDatasetFields = React.useMemo(
-        () =>
-            (dashDatasetFields?.find((item) => item.entryId === chartId)?.datasetFields || null) as
-                | string[]
-                | null,
-        [chartId, dashDatasetFields],
-    );
-    const prevWidgetDatasetFields = usePrevious(widgetDatasetFields);
-
-    const loadedDSFields = widgetDatasetFields && widgetDatasetFields !== prevWidgetDatasetFields;
-
     const chartkitParams = React.useMemo(() => {
-        let res = removeEmptyNDatasetFieldsProperties(
-            props.params,
-            loadedDSFields && isWizardChart ? widgetDatasetFields : undefined,
-        );
+        let res = removeEmptyNDatasetFieldsProperties(props.params);
         if (!enableActionParams) {
             res = pickExceptActionParamsFromParams(res);
         }
         return res;
-    }, [props.params, enableActionParams, loadedDSFields, isWizardChart, widgetDatasetFields]);
+    }, [props.params, enableActionParams]);
 
     const prevTabIndex = usePrevious(tabIndex);
     const hasChartTabChanged = prevTabIndex !== undefined && prevTabIndex !== tabIndex;
@@ -150,14 +132,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     let hasChangedActionParams = false;
 
     const hasChangedOuterParams = React.useMemo(() => {
-        const propsParams =
-            isWizardChart && loadedDSFields
-                ? removeEmptyNDatasetFieldsProperties(props.params, widgetDatasetFields)
-                : props.params;
-        const prevSavedPropsParams =
-            prevSavedProps && isWizardChart && loadedDSFields
-                ? removeEmptyNDatasetFieldsProperties(prevSavedProps.params, widgetDatasetFields)
-                : prevSavedProps?.params;
+        const propsParams = props.params;
+        const prevSavedPropsParams = prevSavedProps?.params;
         const isEqualParamsWithPrev = prevSavedProps && isEqual(prevSavedPropsParams, propsParams);
 
         let changedParams = !prevSavedProps || !isEqualParamsWithPrev;
@@ -244,15 +220,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         }
 
         return changedParams;
-    }, [
-        prevSavedProps?.params,
-        props.params,
-        usedParamsRef,
-        innerParamsRef,
-        widgetDatasetFields,
-        loadedDSFields,
-        isWizardChart,
-    ]);
+    }, [prevSavedProps?.params, props.params, usedParamsRef, innerParamsRef, isWizardChart]);
 
     const hasChangedInnerParamsFromInside = React.useMemo(() => {
         return prevInnerParams && !isEqual(innerParamsRef?.current, prevInnerParams);
@@ -368,7 +336,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetRenderTimeRef,
         usageType,
         enableActionParams,
-        widgetDatasetFields,
     });
 
     const handleFiltersClear = React.useCallback(() => {
