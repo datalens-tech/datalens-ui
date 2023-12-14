@@ -20,7 +20,7 @@ import {QLConnectionEntry, QLEntry} from 'units/ql/store/typings/ql';
 import {resetWizardStore} from 'units/wizard/actions';
 import {getUrlParamFromStr} from 'utils';
 
-import ViewSetup from './ViewSetup/ViewSetup';
+import {registry} from '../../../../registry';
 
 import './QL.scss';
 
@@ -117,6 +117,8 @@ class QL extends React.PureComponent<QLInnerProps> {
 
     private renderContent() {
         const {appStatus, history, location, match} = this.props;
+
+        const ViewSetup = registry.ql.components.get('QlUnconfiguredChartView');
 
         switch (appStatus) {
             case AppStatus.Loading:

@@ -50,7 +50,7 @@ interface ViewSetupState {
     showConnectionError: boolean;
 }
 
-class ViewSetup extends React.PureComponent<ViewSetupInnerProps, ViewSetupState> {
+class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSetupState> {
     navigationButtonRef: React.RefObject<HTMLDivElement>;
     defaultMonitoringQLConnection: QLConnectionEntry | null = null;
 
@@ -374,7 +374,13 @@ const mapDispatchToProps = {
     setError,
 };
 
-export default connect(
+const ViewSetupComponentConnected = connect(
     makeMapStateToProps,
     mapDispatchToProps,
-)(compose<ViewSetupInnerProps, ViewSetupProps>(withRouter)(ViewSetup));
+)(compose<ViewSetupInnerProps, ViewSetupProps>(withRouter)(ViewSetupComponent));
+
+const ViewSetup: React.FC = () => {
+    return <ViewSetupComponentConnected />;
+};
+
+export default ViewSetup;
