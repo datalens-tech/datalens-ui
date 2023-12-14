@@ -30,6 +30,8 @@ import {
     SET_SUBMIT_LOADING,
     SET_UPLOADED_FILES,
     SET_VALIDATION_ERRORS,
+    SET_YADOCS_ACTIVE_DIALOG,
+    SET_YADOCS_ADD_SECTION_STATE,
 } from '../actions';
 import {initialState} from '../constants';
 import {ConnectionsReduxAction, ConnectionsReduxState} from '../typings';
@@ -329,6 +331,28 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                 ...state,
                 gsheet: {
                     ...state.gsheet,
+                    activeDialog,
+                },
+            };
+        }
+        case SET_YADOCS_ADD_SECTION_STATE: {
+            return {
+                ...state,
+                yadocs: {
+                    ...state.yadocs,
+                    addSectionState: {
+                        ...state.yadocs.addSectionState,
+                        ...action.payload,
+                    },
+                },
+            };
+        }
+        case SET_YADOCS_ACTIVE_DIALOG: {
+            const {activeDialog} = action.payload;
+            return {
+                ...state,
+                yadocs: {
+                    ...state.yadocs,
                     activeDialog,
                 },
             };
