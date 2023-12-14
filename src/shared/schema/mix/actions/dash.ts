@@ -34,7 +34,7 @@ export const dashActions = {
     getEntriesDatasetsFields: createAction<
         GetEntriesDatasetsFieldsResponse,
         GetEntriesDatasetsFieldsArgs
-    >(async (api, {entriesIds, datasetsIds}, {ctx}) => {
+    >(async (api, {entriesIds, datasetsIds}, {ctx, headers}) => {
         const typedApi = getTypedApi(api);
         const {entries} = await typedApi.us.getEntries({
             scope: 'widget',
@@ -60,7 +60,22 @@ export const dashActions = {
         );
 
         const allDatasetsFetchedData = await Promise.all([...allDatasetsPromises]);
-        const allDatasetsFetchedDataDict = allDatasetsFetchedData
+
+        // for requests that ended in error, we try to get the dataset fields using `fetchDatasetFieldsById`, which doesn't require edit rights to the dataset
+        const retryDatasetsPromises: Promise<DatasetFieldsDictResponse>[] = [];
+        const succeedDatasetsFetchedData = allDatasetsFetchedData.filter((fetchedData) => {
+            if (!fetchedData.data) {
+                retryDatasetsPromises.push(
+                    fetchDatasetFieldsById({datasetId: fetchedData.datasetId, ctx, headers}),
+                );
+            }
+            return fetchedData.data;
+        });
+
+        const retriedDatasetsFetchedData = await Promise.all([...retryDatasetsPromises]);
+
+        const allDatasetsFetchedDataDict = succeedDatasetsFetchedData
+            .concat(retriedDatasetsFetchedData)
             .filter((item) => Boolean(item.data && item.datasetId))
             .reduce((res: Record<string, DatasetDictResponse>, item: DatasetDictResponse) => {
                 res[item.datasetId] = {...item};
@@ -129,6 +144,7 @@ export const dashActions = {
         );
 
         const allDatasetsFetchedData = await Promise.all([...allDatasetsPromises]);
+
         const allDatasetsFetchedDataDict = allDatasetsFetchedData
             .filter((item) => Boolean(item.data && item.datasetId))
             .reduce(

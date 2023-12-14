@@ -6,10 +6,13 @@ import {AppContext, AppContextParams} from '@gravity-ui/nodekit';
 import {registry} from '../../../../server/registry';
 import {DatalensGatewaySchemas} from '../../../../server/types/gateway';
 import {Dataset} from '../../../types';
-import {GetDataSetFieldsByIdResponse} from '../../bi/types';
+import {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../bi/types';
 import {simpleSchema} from '../../simple-schema';
 
-export type DatasetDictResponse = {datasetId: string; data: Dataset | null};
+// two actions with different return value can be used
+type DatasetData = Partial<Dataset> & Partial<DatasetFieldsData>;
+
+export type DatasetDictResponse = {datasetId: string; data: DatasetData | null};
 
 export const fetchDataset = async ({
     datasetId,
@@ -35,6 +38,16 @@ export const fetchDataset = async ({
     return {datasetId, data: null};
 };
 
+const getDatasetFieldsData = (fields: PartialDatasetField[]) => {
+    return fields.map(({title, guid, type}) => {
+        return {
+            title,
+            guid,
+            type,
+        };
+    });
+};
+
 export const prepareDatasetData = (args: {
     items: DatasetDictResponse;
     type: string | null;
@@ -43,14 +56,21 @@ export const prepareDatasetData = (args: {
 }) => {
     const {entryId, datasetId, type, items} = args;
 
-    if (!items.data) {
-        return {entryId, type: null};
+    const emptyValue = {entryId, type: null};
+
+    if (!items?.data) {
+        return emptyValue;
     }
 
-    const {
-        key,
-        dataset: {result_schema},
-    } = items.data;
+    const {dataset, responseData, key} = items.data;
+
+    const fields = dataset ? dataset.result_schema : responseData?.fields;
+
+    if (!fields) {
+        return emptyValue;
+    }
+
+    const datasetFields = getDatasetFieldsData(fields);
 
     // we form an array of elements of the following type:
     // * wizard and dataset are not in datasetsIds
@@ -65,14 +85,8 @@ export const prepareDatasetData = (args: {
         entryId,
         type,
         datasetId,
-        datasetName: key.match(/[^/]*$/)?.[0] || '',
-        datasetFields: result_schema.map(({title, guid, type: fieldType}) => {
-            return {
-                title,
-                guid,
-                type: fieldType,
-            };
-        }),
+        datasetName: key?.match(/[^/]*$/)?.[0] || '',
+        datasetFields,
     };
 };
 
