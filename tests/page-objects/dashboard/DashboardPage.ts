@@ -1,4 +1,4 @@
-import {Response, expect, Page} from '@playwright/test';
+import {Response, expect} from '@playwright/test';
 
 import {
     ConnectionsDialogQA,
@@ -6,11 +6,10 @@ import {
     DashCommonQa,
     DashEntryQa,
     DashRelationTypes,
-    DialogCreateWorkbookEntryQa,
     DialogDashWidgetQA,
     DialogTabsQA,
     EntryDialogQA,
-    Select,
+    SelectQA,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -194,24 +193,11 @@ class DashboardPage extends BasePage {
         await this.page.locator(slct(WorkbookPage.MenuItemDuplicate)).click();
 
         // waiting for the dialog to open, specify the name, save
-        await this.workbookDialogFillAndSave(this.page, newDashName);
+        await workbookPO.dialogCreateEntry.createEntryWithName(newDashName);
 
         await this.page
             .locator(`${slct(WorkbookPage.ListItem)}:has-text('${newDashName}')`)
             .click();
-    }
-
-    // Fill in the input with the name of the entity being created in the EntryDialog (the dialog that appears when saving entities) and click the "Create" button
-    async workbookDialogFillAndSave(page: Page, entryName: string) {
-        // waiting for the save dialog to open
-        const entryDialogInput = await page.locator(
-            `${slct(DialogCreateWorkbookEntryQa.Input)} input`,
-        );
-        // filling in the input
-        await entryDialogInput.fill(entryName);
-
-        // save
-        await page.click(slct(DialogCreateWorkbookEntryQa.ApplyButton));
     }
 
     async clickAddSelector() {
@@ -502,12 +488,7 @@ class DashboardPage extends BasePage {
         firstParamName,
         secondParamName,
     }: {
-        linkType:
-            | DashRelationTypes.output
-            | DashRelationTypes.input
-            | DashRelationTypes.both
-            | DashRelationTypes.ignore
-            | DashRelationTypes.unknown;
+        linkType: DashRelationTypes;
         firstParamName: string;
         widgetElem: Locator;
         secondParamName: string;
@@ -521,11 +502,11 @@ class DashboardPage extends BasePage {
 
         // select field for first item
         await this.page.click(slct(DashCommonQa.AliasSelectLeft));
-        await this.page.locator(slct(Select.Popup, firstParamName)).click();
+        await this.page.locator(slct(SelectQA.Popup, firstParamName)).click();
 
         // select field for second item
         await this.page.click(slct(DashCommonQa.AliasSelectRight));
-        await this.page.locator(slct(Select.Popup, secondParamName)).click();
+        await this.page.locator(slct(SelectQA.Popup, secondParamName)).click();
 
         // click apply in all relation dialogs
         await this.page.click(slct(DashCommonQa.AliasAddBtn));

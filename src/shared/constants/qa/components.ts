@@ -151,6 +151,6 @@ export enum DashTabsQA {
     Root = 'dash-tabs',
 }
 
-export enum Select {
+export enum SelectQA {
     Popup = 'select-popup',
 }

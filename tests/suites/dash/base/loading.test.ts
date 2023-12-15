@@ -119,7 +119,7 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
         },
     );
     datalensTest(
-        "Load ing charts that didn't get into the viewport when opening links",
+        "Loading charts that didn't get into the viewport when opening links",
         async ({page}: {page: Page}) => {
             // copy the original dashboard with delayed widget loading,
             // so that the tests do not collapse due to the transition to editing and locks
