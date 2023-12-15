@@ -1,6 +1,5 @@
 import {Request, Response} from '@gravity-ui/expresskit';
 
-import {ConnectorType} from '../shared';
 import {FeaturesConfig} from '../src/components/features/types';
 
 export interface SharedAppConfig {
@@ -51,7 +50,6 @@ export interface SharedAppConfig {
     requestIdHeaderName: string;
     gatewayProxyHeaders: string[];
     headersMap: Record<string, string>;
-    connectorTypeToQlConnectionsTypeMap: Record<string, ConnectorType>;
 }
 
 export interface SharedAppDynamicConfig {
