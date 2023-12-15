@@ -25,6 +25,7 @@ import {getDatasetIdAndLayerIdFromKey, getFieldList} from '../../helpers/misc';
 import prepareBackendPivotTableData from '../preparers/backend-pivot-table';
 import {PivotData} from '../preparers/backend-pivot-table/types';
 import {prepareD3BarX, prepareHighchartsBarX} from '../preparers/bar-x';
+import {prepareHighchartsBarY} from '../preparers/bar-y';
 import prepareFlatTableData from '../preparers/flat-table';
 import prepareGeopointData from '../preparers/geopoint';
 import prepareGeopointWithClusterData from '../preparers/geopoint-with-cluster';
@@ -485,15 +486,20 @@ function prepareSingleResult({
     switch (visualization.id) {
         case 'line':
         case 'area':
-        case 'area100p':
-        case 'bar':
-        case 'bar100p': {
+        case 'area100p': {
             if (visualization.id === 'line') {
                 shapes = shared.shapes || [];
                 shapesConfig = shared.shapesConfig;
             }
 
             prepare = prepareHighchartsLine;
+            rowsLimit = 75000;
+            break;
+        }
+
+        case 'bar':
+        case 'bar100p': {
+            prepare = prepareHighchartsBarY;
             rowsLimit = 75000;
             break;
         }

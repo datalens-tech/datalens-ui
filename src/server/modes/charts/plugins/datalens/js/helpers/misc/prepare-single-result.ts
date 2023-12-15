@@ -11,6 +11,7 @@ import {
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
 import {PivotData} from '../../../preparers/backend-pivot-table/types';
 import {prepareD3BarX} from '../../../preparers/bar-x';
+import {prepareHighchartsBarY} from '../../../preparers/bar-y';
 import prepareFlatTableData from '../../../preparers/flat-table';
 import prepareGeopointData from '../../../preparers/geopoint';
 import prepareGeopolygonData from '../../../preparers/geopolygon';
@@ -113,19 +114,16 @@ export default ({
         case WizardVisualizationId.Area100p:
         case WizardVisualizationId.Column:
         case WizardVisualizationId.Column100p: {
-            if (chartType && isMonitoringOrPrometheusChart(chartType)) {
-                prepare = prepareLineTime;
-                rowsLimit = 75000;
-            } else {
-                prepare = prepareHighchartsLine;
-                rowsLimit = 75000;
-            }
+            rowsLimit = 75000;
+            prepare = isMonitoringOrPrometheusChart(chartType)
+                ? prepareLineTime
+                : prepareHighchartsLine;
             break;
         }
 
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
-            prepare = prepareHighchartsLine;
+            prepare = prepareHighchartsBarY;
             rowsLimit = 75000;
             break;
         }
