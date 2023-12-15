@@ -105,7 +105,7 @@
     "@gravity-ui/dynamic-forms": "^3.0.0",
     "@gravity-ui/eslint-config": "^2.2.0",
     "@gravity-ui/icons": "^2.2.0",
-    "@gravity-ui/navigation": "^1.6.2",
+    "@gravity-ui/navigation": "^1.8.1",
     "@gravity-ui/prettier-config": "^1.0.1",
     "@gravity-ui/react-data-table": "^1.2.0",
     "@gravity-ui/sdk": "^1.0.0",
