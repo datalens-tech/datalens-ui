@@ -695,13 +695,10 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                 dispatch(setConnection(connection));
 
-                if (
-                    ![
-                        ConnectorType.Monitoring,
-                        ConnectorType.MonitoringExt,
-                        ConnectorType.Promql,
-                    ].includes(connection.type as ConnectorType)
-                ) {
+                // By default ChartType === 'sql', since there were only sql charts before
+                const chartType = entry?.data.shared.chartType || 'sql';
+
+                if (chartType === QLChartType.Sql) {
                     dispatch(fetchConnectionSources({entryId: loadedConnectionEntry.entryId}));
                 }
 
@@ -748,9 +745,6 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 });
 
                 applyUrlParams(params);
-
-                // By default ChartType === 'sql', since there were only sql charts before
-                const chartType = entry?.data.shared.chartType || 'sql';
 
                 dispatch(
                     setSettings({
