@@ -3,7 +3,13 @@ import {ConnectionsDialogQA} from '../../../../src/shared/constants';
 
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../../utils';
+import {
+    getUniqueTimestamp,
+    isEnabledFeature,
+    openTestPage,
+    slct,
+    waitForCondition,
+} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {COMMON_DASH_SELECTORS} from '../constants';
@@ -113,7 +119,7 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
         },
     );
     datalensTest(
-        "Loading charts that didn't get into the viewport when opening links",
+        "Load ing charts that didn't get into the viewport when opening links",
         async ({page}: {page: Page}) => {
             // copy the original dashboard with delayed widget loading,
             // so that the tests do not collapse due to the transition to editing and locks
@@ -136,7 +142,12 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
                 return elems.length === 0;
             });
 
-            await dashboardPage.openDashConnections();
+            const isEnabledNewRelations = await isEnabledFeature(page, 'showNewRelations');
+            if (isEnabledNewRelations) {
+                await dashboardPage.openControlRelationsDialog();
+            } else {
+                await dashboardPage.openDashConnections();
+            }
 
             // waiting for the chart to load
             await initPromise;

@@ -1,12 +1,16 @@
-import {Response, expect} from '@playwright/test';
+import {Response, expect, Page} from '@playwright/test';
 
 import {
     ConnectionsDialogQA,
     ControlQA,
+    DashCommonQa,
     DashEntryQa,
+    DashRelationTypes,
+    DialogCreateWorkbookEntryQa,
     DialogDashWidgetQA,
     DialogTabsQA,
     EntryDialogQA,
+    Select,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -43,6 +47,9 @@ import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
 import Description from './Description';
 import TableOfContent from './TableOfContent';
+import {Locator} from 'playwright-core';
+import {Workbook} from '../workbook/Workbook';
+import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -177,6 +184,36 @@ class DashboardPage extends BasePage {
         ]);
     }
 
+    async duplicateDashboardFromWorkbook(dashId: string, newDashName: string) {
+        const workbookPO = new Workbook(this.page);
+
+        await workbookPO.openE2EWorkbookPage();
+
+        await workbookPO.openWorkbookItemMenu(dashId);
+
+        await this.page.locator(slct(WorkbookPage.MenuItemDuplicate)).click();
+
+        // waiting for the dialog to open, specify the name, save
+        await this.workbookDialogFillAndSave(this.page, newDashName);
+
+        await this.page
+            .locator(`${slct(WorkbookPage.ListItem)}:has-text('${newDashName}')`)
+            .click();
+    }
+
+    // Fill in the input with the name of the entity being created in the EntryDialog (the dialog that appears when saving entities) and click the "Create" button
+    async workbookDialogFillAndSave(page: Page, entryName: string) {
+        // waiting for the save dialog to open
+        const entryDialogInput = await page.locator(
+            `${slct(DialogCreateWorkbookEntryQa.Input)} input`,
+        );
+        // filling in the input
+        await entryDialogInput.fill(entryName);
+
+        // save
+        await page.click(slct(DialogCreateWorkbookEntryQa.ApplyButton));
+    }
+
     async clickAddSelector() {
         await this.page.click(slct(DashboardAddWidgetQa.AddControl));
     }
@@ -263,7 +300,15 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddWidget));
     }
 
-    async addChart({chartUrl, chartName}: {chartUrl: string; chartName: string}) {
+    async addChart({
+        chartUrl,
+        chartName,
+        hideTitle,
+    }: {
+        chartUrl: string;
+        chartName: string;
+        hideTitle?: boolean;
+    }) {
         // adding a chart
         await this.clickAddChart();
 
@@ -277,6 +322,10 @@ class DashboardPage extends BasePage {
         await this.page.click(slct('navigation-input-ok-button'));
         // making sure that the necessary chart is selected
         await this.page.waitForSelector(`[data-qa=entry-title] * >> text=${chartName}`);
+
+        if (hideTitle) {
+            await this.page.click(slct(DashCommonQa.WidgetShowTitleCheckbox));
+        }
 
         // adding to the dashboard
         await this.page.click(slct(DialogDashWidgetQA.Apply));
@@ -430,6 +479,58 @@ class DashboardPage extends BasePage {
 
         // click on the "connections" button
         await this.clickOnLinksBtn();
+    }
+
+    async getDashControlLinksIconElem(controlQa: string) {
+        // open dialog relations by click on dashkit item links icon (via parents nodes)
+        const dashkitItemElem = await this.page
+            .locator(slct(ControlQA.chartkitControl))
+            .locator('../../../..');
+        return dashkitItemElem.locator(slct(controlQa));
+    }
+
+    async openControlRelationsDialog() {
+        await this.enterEditMode();
+        // open dialog relations by control icon click
+        const selectorElem = await this.getDashControlLinksIconElem(ControlQA.controlLinks);
+        await selectorElem.click();
+    }
+
+    async setupNewLinks({
+        linkType,
+        widgetElem,
+        firstParamName,
+        secondParamName,
+    }: {
+        linkType:
+            | DashRelationTypes.output
+            | DashRelationTypes.input
+            | DashRelationTypes.both
+            | DashRelationTypes.ignore
+            | DashRelationTypes.unknown;
+        firstParamName: string;
+        widgetElem: Locator;
+        secondParamName: string;
+    }) {
+        // open dialog relations by click on control item links icon
+        await widgetElem.click();
+
+        // choose new link
+        await this.page.click(slct(DashCommonQa.RelationTypeButton));
+        await this.page.click(slct(linkType));
+
+        // select field for first item
+        await this.page.click(slct(DashCommonQa.AliasSelectLeft));
+        await this.page.locator(slct(Select.Popup, firstParamName)).click();
+
+        // select field for second item
+        await this.page.click(slct(DashCommonQa.AliasSelectRight));
+        await this.page.locator(slct(Select.Popup, secondParamName)).click();
+
+        // click apply in all relation dialogs
+        await this.page.click(slct(DashCommonQa.AliasAddBtn));
+        await this.page.click(slct(DashCommonQa.AliasAddApplyBtn));
+        await this.page.click(slct(DashCommonQa.RelationsApplyBtn));
     }
 
     async setupLinks({

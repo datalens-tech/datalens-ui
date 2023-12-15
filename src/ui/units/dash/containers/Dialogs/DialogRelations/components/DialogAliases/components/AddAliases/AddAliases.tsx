@@ -4,6 +4,7 @@ import {Check, Xmark} from '@gravity-ui/icons';
 import {Button, Icon, Select, SelectOption} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {DashCommonQa} from 'shared';
 
 import {addAlias} from '../../../../helpers';
 import {AliasesContext} from '../../../../hooks/useRelations';
@@ -183,6 +184,7 @@ export const AddAliases = ({
                         value={leftAliasSelected === undefined ? [] : leftAliasSelected}
                         popupClassName={b('dialog-popup')}
                         renderSelectedOption={(value) => getFieldName(widget, value)}
+                        qa={DashCommonQa.AliasSelectLeft}
                     />
                 </div>
 
@@ -202,6 +204,7 @@ export const AddAliases = ({
                         value={rightAliasSelected === undefined ? [] : rightAliasSelected}
                         popupClassName={b('dialog-popup')}
                         renderSelectedOption={(value) => getFieldName(currentRow, value)}
+                        qa={DashCommonQa.AliasSelectRight}
                     />
                 </div>
 
@@ -209,7 +212,12 @@ export const AddAliases = ({
                     <Icon data={Xmark} />
                 </Button>
 
-                <Button className={b('button')} view="normal" onClick={handleAddAlias}>
+                <Button
+                    className={b('button')}
+                    view="normal"
+                    onClick={handleAddAlias}
+                    qa={DashCommonQa.AliasAddBtn}
+                >
                     <Icon data={Check} />
                 </Button>
             </div>
