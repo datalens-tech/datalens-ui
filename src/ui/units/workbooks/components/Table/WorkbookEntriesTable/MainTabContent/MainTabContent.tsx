@@ -4,7 +4,9 @@ import {ChevronDown, ChevronUp, Plus} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {EntryScope} from 'shared';
+import {useDispatch} from 'react-redux';
+import {CreateEntryActionType} from 'ui/units/workbooks/constants';
+import {setCreateWorkbookEntryType} from 'ui/units/workbooks/store/actions';
 
 import {ChunkGroup} from '../ChunkGroup/ChunkGroup';
 import {WorkbookEntriesTableProps} from '../types';
@@ -17,158 +19,70 @@ const b = block('dl-main-tab-content');
 const i18n = I18n.keyset('new-workbooks');
 
 interface MainTabContentProps extends WorkbookEntriesTableProps {
-    chunks: ChunkItem[][];
+    chunk: ChunkItem[];
+    actionCreateText: string;
+    title: string;
+    actionType: CreateEntryActionType;
 }
 
 const MainTabContent: React.FC<MainTabContentProps> = ({
     workbook,
-    chunks,
+    chunk,
     onRenameEntry,
     onDeleteEntry,
     onDuplicateEntry,
     onCopyEntry,
+    actionCreateText,
+    title,
+    actionType,
 }) => {
-    const [mapOpenness, setMapOpenness] = React.useState<Record<string, boolean>>({});
+    const [isOpen, setIsOpen] = React.useState(true);
 
-    React.useEffect(() => {
-        const openness: Record<string, boolean> = {};
+    const dispatch = useDispatch();
 
-        Object.keys(EntryScope).forEach((key: string) => {
-            openness[key] = true;
-        });
-
-        setMapOpenness(mapOpenness);
-    }, [mapOpenness]);
-
-    const dashChunk: ChunkItem[] = [];
-
-    const connChunk: ChunkItem[] = [];
-    const datasetChunk: ChunkItem[] = [];
-    const widgetChunk: ChunkItem[] = [];
-
-    chunks.forEach((chunk) => {
-        chunk.forEach((chunkItem) => {
-            if (chunkItem.type === 'entry') {
-                switch (chunkItem.item.scope) {
-                    case EntryScope.Dash:
-                        dashChunk.push(chunkItem);
-                        break;
-                    case EntryScope.Connection:
-                        connChunk.push(chunkItem);
-                        break;
-                    case EntryScope.Dataset:
-                        datasetChunk.push(chunkItem);
-                        break;
-                    case EntryScope.Widget:
-                        widgetChunk.push(chunkItem);
-                        break;
-                }
-            }
-        });
-    });
-
-    const getNoObjectsText = (key: string) =>
-        mapOpenness[key] && <div className={b('no-objects')}>{i18n('no_objects')}</div>;
-
-    const handleVisibility = (key: string) => {
-        setMapOpenness({
-            ...mapOpenness,
-            [key]: !mapOpenness[key],
-        });
+    const handleCreateEntity = () => {
+        dispatch(setCreateWorkbookEntryType(actionType));
     };
+
+    const getNoObjectsText = () =>
+        isOpen && <div className={b('no-objects')}>{i18n('no_objects')}</div>;
 
     return (
         <>
             <div className={b()}>
                 <div className={b('content-cell')}>
                     <div className={b('title')}>
-                        <div
-                            className={b('visibility-btn')}
-                            onClick={() => handleVisibility(EntryScope.Dash)}
-                        >
-                            {mapOpenness['dash'] ? <ChevronDown /> : <ChevronUp />}
+                        <div className={b('visibility-btn')} onClick={() => setIsOpen(!isOpen)}>
+                            {isOpen ? <ChevronDown /> : <ChevronUp />}
                         </div>
-                        <div className={b('title-text')}>Дашборды</div>
+                        <div className={b('title-text')}>{title}</div>
                     </div>
                 </div>
                 <div className={b('content-cell')} />
-                <div className={b('content-cell')}>
-                    <div className={b('create-btn')}>
-                        <Button>
-                            <Icon data={Plus} />
-                            {i18n('action_create-dashboard')}
-                        </Button>
+                {workbook.permissions.update && (
+                    <div className={b('content-cell')}>
+                        <div className={b('create-btn')}>
+                            <Button onClick={handleCreateEntity}>
+                                <Icon data={Plus} />
+                                {actionCreateText}
+                            </Button>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
 
-            {dashChunk.length > 0 ? (
+            {chunk.length > 0 && isOpen ? (
                 <ChunkGroup
-                    key={dashChunk[0].key}
+                    key={chunk[0].key}
                     workbook={workbook}
-                    chunk={dashChunk}
+                    chunk={chunk}
                     onRenameEntry={onRenameEntry}
                     onDeleteEntry={onDeleteEntry}
                     onDuplicateEntry={onDuplicateEntry}
                     onCopyEntry={onCopyEntry}
-                    isOpen={mapOpenness[EntryScope.Dash]}
                 />
             ) : (
-                getNoObjectsText(EntryScope.Dash)
-            )}
-
-            {widgetChunk.length > 0 && (
-                <div>
-                    <div>Widget</div>
-                    <div>Создать Widget</div>
-                    <div>
-                        <ChunkGroup
-                            key={widgetChunk[0].key}
-                            workbook={workbook}
-                            chunk={widgetChunk}
-                            onRenameEntry={onRenameEntry}
-                            onDeleteEntry={onDeleteEntry}
-                            onDuplicateEntry={onDuplicateEntry}
-                            onCopyEntry={onCopyEntry}
-                        />
-                    </div>
-                </div>
-            )}
-
-            {datasetChunk.length > 0 && (
-                <div>
-                    <div>datasetChunks</div>
-                    <div>Создать datasetChunks</div>
-                    <div>
-                        <ChunkGroup
-                            key={datasetChunk[0].key}
-                            workbook={workbook}
-                            chunk={datasetChunk}
-                            onRenameEntry={onRenameEntry}
-                            onDeleteEntry={onDeleteEntry}
-                            onDuplicateEntry={onDuplicateEntry}
-                            onCopyEntry={onCopyEntry}
-                        />
-                    </div>
-                </div>
-            )}
-
-            {connChunk.length > 0 && (
-                <div>
-                    <div>connChunks</div>
-                    <div>Создать connChunks</div>
-                    <div>
-                        <ChunkGroup
-                            key={connChunk[0].key}
-                            workbook={workbook}
-                            chunk={connChunk}
-                            onRenameEntry={onRenameEntry}
-                            onDeleteEntry={onDeleteEntry}
-                            onDuplicateEntry={onDuplicateEntry}
-                            onCopyEntry={onCopyEntry}
-                        />
-                    </div>
-                </div>
+                getNoObjectsText()
             )}
         </>
     );

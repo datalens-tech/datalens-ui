@@ -42,15 +42,12 @@ const Row: React.FC<RowProps> = ({
     onDeleteEntry,
     onDuplicateEntry,
     onCopyEntry,
-    isOpen,
 }) => {
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
     const url = getWorkbookEntryUrl(item, workbook);
 
-    const visibilityState = isOpen ? 'visible' : 'hidden';
-
     return (
-        <Link to={url} className={b()} style={{...defaultRowStyle, visibility: visibilityState}}>
+        <Link to={url} className={b()} style={defaultRowStyle}>
             <div className={b('content-cell', {title: true})}>
                 <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>
                     <EntryIcon entry={item} className={b('icon')} width="24" height="24" />

@@ -12,7 +12,6 @@ import './ChunkGroup.scss';
 
 interface ChunkGroupProps extends WorkbookEntriesTableProps {
     chunk: ChunkItem[];
-    isOpen?: boolean;
 }
 
 const b = block('dl-chunk-group');
@@ -20,7 +19,6 @@ const b = block('dl-chunk-group');
 function ChunkGroup({
     chunk,
     workbook,
-    isOpen,
     onRenameEntry,
     onDeleteEntry,
     onDuplicateEntry,
@@ -43,7 +41,6 @@ function ChunkGroup({
                             onDeleteEntry={onDeleteEntry}
                             onDuplicateEntry={onDuplicateEntry}
                             onCopyEntry={onCopyEntry}
-                            isOpen={isOpen}
                         />
                     );
                 case 'empty':
