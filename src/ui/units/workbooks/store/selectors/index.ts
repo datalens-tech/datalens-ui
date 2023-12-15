@@ -3,7 +3,8 @@ import {createSelector} from 'reselect';
 
 const selectGetWorkbook = (state: DatalensGlobalState) => state.workbooks.getWorkbook;
 
-const selectGetWorkbookEntries = (state: DatalensGlobalState) => state.workbooks.getWorkbookEntries;
+export const selectGetWorkbookEntries = (state: DatalensGlobalState) =>
+    state.workbooks.getWorkbookEntries;
 
 const selectGetWorkbookBreadcrumbs = (state: DatalensGlobalState) =>
     state.workbooks.getWorkbookBreadcrumbs;

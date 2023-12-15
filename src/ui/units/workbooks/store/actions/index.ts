@@ -155,7 +155,7 @@ export const getWorkbookEntries = ({
     filters,
     scope,
     nextPageToken,
-    pageSize = 200,
+    pageSize = 1,
 }: {
     workbookId: string;
     filters: WorkbookEntriesFilters;
@@ -193,9 +193,11 @@ export const getWorkbookEntries = ({
                 type: GET_WORKBOOK_ENTRIES_SUCCESS,
                 data,
             });
+
+            return data;
         } catch (error) {
             if (getSdk().isCancel(error)) {
-                return;
+                return null;
             }
             logger.logError('workbooks/getWorkbookEntries failed', error);
             dispatch(

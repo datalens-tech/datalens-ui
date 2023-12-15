@@ -24,13 +24,14 @@ const i18n = I18n.keyset('new-workbooks');
 
 type Props = {
     loadMoreEntries: () => void;
+    loadMoreEntriesByScope: (entryScope: EntryScope) => void;
     retryLoadEntries: () => void;
     refreshEntries: () => void;
     scope?: EntryScope;
 };
 
 export const WorkbookContent = React.memo<Props>(
-    ({loadMoreEntries, retryLoadEntries, refreshEntries, scope}) => {
+    ({loadMoreEntries, loadMoreEntriesByScope, retryLoadEntries, refreshEntries, scope}) => {
         const workbook = useSelector(selectWorkbook);
         const entries = useSelector(selectWorkbookItems);
         const isEntriesLoading = useSelector(selectWorkbookEntriesIsLoading);
@@ -63,12 +64,15 @@ export const WorkbookContent = React.memo<Props>(
         }
 
         let footer: React.ReactNode = null;
-        if (isEntriesLoading) {
-            footer = <SmartLoader size="m" showAfter={0} />;
-        } else if (workbookEntriesError) {
-            footer = buttonRetry;
-        } else if (scope) {
-            footer = <Waypoint onEnter={loadMoreEntries} />;
+
+        if (scope) {
+            if (isEntriesLoading) {
+                footer = <SmartLoader size="m" showAfter={0} />;
+            } else if (workbookEntriesError) {
+                footer = buttonRetry;
+            } else {
+                footer = <Waypoint onEnter={loadMoreEntries} />;
+            }
         }
 
         return (
@@ -78,6 +82,7 @@ export const WorkbookContent = React.memo<Props>(
                     workbook={workbook}
                     entries={entries}
                     scope={scope}
+                    loadMoreEntriesByScope={loadMoreEntriesByScope}
                 />
                 {footer}
             </React.Fragment>

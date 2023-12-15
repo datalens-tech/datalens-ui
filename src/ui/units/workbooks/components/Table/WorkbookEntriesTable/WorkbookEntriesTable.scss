@@ -18,6 +18,10 @@
         border-bottom: 1px solid var(--g-color-line-generic);
     }
 
+    &__header-cell_empty {
+        border: none;
+    }
+
     &__header-cell {
         display: table-cell;
         box-sizing: content-box;
@@ -40,5 +44,10 @@
 
     &__icon {
         flex-shrink: 0;
+    }
+
+    &__show-more-btn {
+        width: 100%;
+        margin-top: 16px;
     }
 }

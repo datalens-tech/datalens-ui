@@ -60,6 +60,10 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
+    "action_show-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "button_apply": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -105,6 +109,22 @@
       "ru": "APPROVED"
     },
     "label_placeholder": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_dashboards": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_charts": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_datasets": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_connections": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
