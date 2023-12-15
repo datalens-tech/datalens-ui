@@ -15,7 +15,6 @@ import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 
 import {ScreenEditorQA, TabQueryQA} from '../../../../../../shared';
 import {registry} from '../../../../../registry';
-import {AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE} from '../../../constants';
 import {drawPreview, performManualConfiguration} from '../../../store/actions/ql';
 import {
     getChartType,
@@ -91,6 +90,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
         const workbookId = entry?.workbookId || null;
 
         const {getPlaceSelectParameters} = registry.common.functions.getAll();
+        const {getConnectionsByChartType} = registry.ql.functions.getAll();
 
         return (
             chartType && (
@@ -167,9 +167,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                                 onEntryClick={this.onNavigationEntryClick}
                                 workbookId={workbookId}
                                 scope={EntryScope.Connection}
-                                includeClickableType={
-                                    AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE[chartType]
-                                }
+                                includeClickableType={getConnectionsByChartType(chartType)}
                             />
                         ) : (
                             <NavigationMinimal
@@ -186,9 +184,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                                     PLACE.FAVORITES,
                                     PLACE.CONNECTIONS,
                                 ])}
-                                includeClickableType={
-                                    AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE[chartType]
-                                }
+                                includeClickableType={getConnectionsByChartType(chartType)}
                             />
                         )}
                     </div>
