@@ -55,7 +55,6 @@ import {
 import {setExtraSettings as setWizardExtraSettings} from '../../../wizard/actions/widget';
 import {
     AVAILABLE_CHART_TYPES,
-    AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE,
     AppStatus,
     QL_MOCKED_DATASET_ID,
     VisualizationStatus,
@@ -1020,12 +1019,14 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                         dispatch(setConnection(connection));
 
+                        const {getConnectionsByChartType} = registry.ql.functions.getAll();
+
                         let newChartType;
                         AVAILABLE_CHART_TYPES.some((possibleChartType) => {
                             if (
-                                AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE[
-                                    possibleChartType
-                                ].includes(connection.type as ConnectorType)
+                                getConnectionsByChartType(possibleChartType).includes(
+                                    connection.type as ConnectorType,
+                                )
                             ) {
                                 dispatch(setChartType(possibleChartType));
 
