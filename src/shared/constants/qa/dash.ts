@@ -39,6 +39,12 @@ export enum DashRevisions {
 
 export enum DashEntryQa {
     EntryName = 'dash-entry-name',
+    TableOfContent = 'table-of-content',
+}
+
+export enum TableOfContentQa {
+    TableOfContent = 'table-of-content',
+    CloseBtn = 'table-of-content-close',
 }
 
 export enum DashMetaQa {

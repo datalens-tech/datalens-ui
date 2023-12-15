@@ -18,13 +18,7 @@ import {collectDashStats} from '../../modules/pushStats';
 import * as actionTypes from '../constants/dashActionTypes';
 import {getFakeDashEntry} from '../utils';
 
-import {
-    SET_ERROR_MODE,
-    SET_STATE,
-    loadDashDatasets,
-    setDashViewMode,
-    toggleTableOfContent,
-} from './dashTyped';
+import {SET_ERROR_MODE, SET_STATE, setDashViewMode, toggleTableOfContent} from './dashTyped';
 import {
     DOES_NOT_EXIST_ERROR_TEXT,
     NOT_FOUND_ERROR_TEXT,
@@ -433,8 +427,10 @@ export const load = ({location, history, params}) => {
             });
 
             if (data.settings) {
-                // Boolean is used to handle the case when there is no expandTOC setting in the object (undefined)
-                dispatch(toggleTableOfContent(Boolean(data.settings.expandTOC)));
+                if (!DL.IS_MOBILE) {
+                    // Boolean is used to handle the case when there is no expandTOC setting in the object (undefined)
+                    dispatch(toggleTableOfContent(Boolean(data.settings.expandTOC)));
+                }
 
                 if (data.settings.maxConcurrentRequests) {
                     ChartKit.setDataProviderSettings({
@@ -468,8 +464,6 @@ export const load = ({location, history, params}) => {
             if (mode === Mode.Edit) {
                 await dispatch(setEditMode());
             }
-
-            dispatch(loadDashDatasets(entry, tabId));
         } catch (error) {
             logger.logError('load dash failed', error);
 
