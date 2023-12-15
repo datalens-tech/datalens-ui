@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import {CurrentTab} from 'components/DashKit/plugins/Widget/types';
 import {ChartkitMenuDialogsQA} from 'shared';
+import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
@@ -110,7 +111,7 @@ export const WidgetHeader = (props: HeaderProps) => {
                 {withShareWidget && (
                     <div className={b('share-widget')}>
                         <SharePopover
-                            useWebShareApi
+                            useWebShareApi={DL.IS_MOBILE}
                             url={window.location.href}
                             title={currentTab.title}
                             text={currentTab.title}
