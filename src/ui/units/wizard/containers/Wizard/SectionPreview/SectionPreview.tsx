@@ -183,6 +183,7 @@ class SectionPreview extends Component<Props> {
             <div className="dataset-stub-container">
                 <PlaceholderIllustration
                     description={i18n('wizard', 'label_preview-dataset-stub')}
+                    direction="column"
                     name="template"
                 />
             </div>
