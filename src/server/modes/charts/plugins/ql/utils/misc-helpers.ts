@@ -406,18 +406,6 @@ function dumpReqParam(
     return {type_name: bi_type, value: dumped};
 }
 
-function convertConnectionType(connectionType: string) {
-    const app = registry.getApp();
-    const config = app.config;
-    const mappedConnectionType = config.connectorTypeToQlConnectionsTypeMap[connectionType];
-
-    if (!mappedConnectionType) {
-        throw new Error('Unsupported connection type');
-    }
-
-    return mappedConnectionType;
-}
-
 export function buildSource({
     id,
     connectionType,
@@ -431,6 +419,7 @@ export function buildSource({
     params: StringParams;
     paramsDescription: QlConfigParam[];
 }) {
+    const convertConnectionType = registry.getConvertConnectorTypeToQLConnectionType();
     let sqlQuery = query;
 
     const datalensQLConnectionType = convertConnectionType(connectionType);
@@ -546,6 +535,8 @@ export function getColumns(
     field = 'sql',
 ): QlConfigResultEntryMetadataDataColumn[] | null {
     const row = data[field].find((entry: QLResultEntry) => entry.event === 'metadata');
+
+    const convertConnectionType = registry.getConvertConnectorTypeToQLConnectionType();
 
     const datalensQLConnectionType = convertConnectionType(connectionType);
 

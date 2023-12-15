@@ -9,6 +9,7 @@ import {AppContext} from '@gravity-ui/nodekit';
 
 import type {ChartsEngine} from '../components/charts-engine';
 import {GetLayoutConfig} from '../types/app-layout';
+import type {ConvertConnectorTypeToQLConnectionType} from '../types/connections';
 import {XlsxConverterFn} from '../types/xlsxConverter';
 
 import commonRegistry from './units/common';
@@ -25,6 +26,7 @@ let gateway: ReturnType<typeof wrapperGetGatewayControllers>;
 let getLayoutConfig: GetLayoutConfig | undefined;
 let yfmPlugins: MarkdownItPluginCb[];
 let getXlsxConverter: XlsxConverterFn | undefined;
+let convertConnectorTypeToQLConnectionType: ConvertConnectorTypeToQLConnectionType | undefined;
 
 export const registry = {
     common: commonRegistry,
@@ -108,5 +110,16 @@ export const registry = {
     },
     getXlsxConverter() {
         return getXlsxConverter;
+    },
+    registerConvertConnectorTypeToQLConnectionType(fn: ConvertConnectorTypeToQLConnectionType) {
+        if (!convertConnectorTypeToQLConnectionType) {
+            convertConnectorTypeToQLConnectionType = fn;
+        }
+    },
+    getConvertConnectorTypeToQLConnectionType() {
+        if (!convertConnectorTypeToQLConnectionType) {
+            throw new Error('First of all register convertConnectorTypeToQLConnectionType');
+        }
+        return convertConnectorTypeToQLConnectionType;
     },
 };
