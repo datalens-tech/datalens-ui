@@ -2,9 +2,16 @@ import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 
 import {PrepareFunctionArgs} from '../../types';
+import {prepareHighchartsScatter} from '../highcharts';
 import {prepareScatter} from '../prepareScatter';
 
-import {COLOR_FIELD, PREPARE_FUNCTION_ARGS, SHAPE_FIELD} from './mocks/scatter.mock';
+import {
+    colorField,
+    scatterPrepareBaseArgs,
+    scatterPrepareForQLArgs,
+    scatterPrepareForQLResult,
+    shapeField,
+} from './mocks/scatter.mock';
 
 jest.mock('../../../../../../../registry', () => ({
     registry: {
@@ -15,7 +22,7 @@ jest.mock('../../../../../../../registry', () => ({
 }));
 
 function getPrepareFunctionArgs(options: Partial<PrepareFunctionArgs> = {}) {
-    return merge(cloneDeep(PREPARE_FUNCTION_ARGS), options) as unknown as PrepareFunctionArgs;
+    return merge(cloneDeep(scatterPrepareBaseArgs), options) as unknown as PrepareFunctionArgs;
 }
 
 describe('prepareScatter', () => {
@@ -36,7 +43,7 @@ describe('prepareScatter', () => {
 
     test("should set default marker symbols and different colors when Shapes is empty and Colors isn't empty", () => {
         const options = getPrepareFunctionArgs({
-            colors: [COLOR_FIELD],
+            colors: [colorField],
         });
         const result = prepareScatter(options);
         const items = result.graphs.map((item) => ({marker: item.marker, color: item.color}));
@@ -59,7 +66,7 @@ describe('prepareScatter', () => {
 
     test("should set different marker symbols and default color when Colors is empty and Shapes isn't empty", () => {
         const options = getPrepareFunctionArgs({
-            shapes: [SHAPE_FIELD],
+            shapes: [shapeField],
         });
         const result = prepareScatter(options);
         const items = result.graphs.map((item) => ({marker: item.marker, color: item.color}));
@@ -82,8 +89,8 @@ describe('prepareScatter', () => {
 
     test("should set different marker symbols and colors when Colors and Shapes aren't empty", () => {
         const options = getPrepareFunctionArgs({
-            colors: [COLOR_FIELD],
-            shapes: [SHAPE_FIELD],
+            colors: [colorField],
+            shapes: [shapeField],
         });
         const result = prepareScatter(options);
         const items = result.graphs.map((item) => ({marker: item.marker, color: item.color}));
@@ -118,7 +125,7 @@ describe('prepareScatter', () => {
 
     test("should set mounted marker symbols when shapeConfig isn't empty", () => {
         const options = getPrepareFunctionArgs({
-            shapes: [SHAPE_FIELD],
+            shapes: [shapeField],
             shapesConfig: {
                 mountedShapes: {
                     'Shape-1': 'square',
@@ -143,5 +150,17 @@ describe('prepareScatter', () => {
                 },
             },
         ]);
+    });
+});
+
+describe('prepareHighchartsScatter', () => {
+    describe('ql', () => {
+        test('should render simple scatter correctly', () => {
+            const result = prepareHighchartsScatter(
+                scatterPrepareForQLArgs as unknown as PrepareFunctionArgs,
+            );
+
+            expect(result).toEqual(scatterPrepareForQLResult);
+        });
     });
 });

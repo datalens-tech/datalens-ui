@@ -1,7 +1,11 @@
 import React from 'react';
 
 import {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {pickActionParamsFromParams, pickExceptActionParamsFromParams} from '@gravity-ui/dashkit';
+import {
+    ItemStateAndParamsChangeOptions,
+    pickActionParamsFromParams,
+    pickExceptActionParamsFromParams,
+} from '@gravity-ui/dashkit';
 import {usePrevious} from 'hooks';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
@@ -834,6 +838,17 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 const needUpdateChartParams =
                     !isEqual(initialData.params, newParams) || callChangeByClick;
 
+                // if all action params contain empty values, we need to clean it
+                const isNewActionParamsEmpty = Object.values(
+                    pickActionParamsFromParams(newParams || {}),
+                ).every((item) => {
+                    if (typeof item === 'string') {
+                        return isEmpty(item.trim());
+                    } else {
+                        return isEmpty(item.filter((val) => !isEmpty(val.trim())));
+                    }
+                });
+
                 if (newParams && needUpdateChartParams) {
                     const actionName =
                         isEmpty(newParams) && callChangeByClick
@@ -858,11 +873,18 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                     typeof handleChangeCallback === 'function' &&
                     newParams
                 ) {
+                    const options: ItemStateAndParamsChangeOptions | undefined =
+                        isNewActionParamsEmpty
+                            ? {
+                                  action: 'removeItem',
+                              }
+                            : undefined;
                     handleChangeCallback({
                         type: 'PARAMS_CHANGED',
                         data: {
                             params: newParams,
                         },
+                        options,
                     });
                 }
             } else if (callExternalOnChange && typeof handleChangeCallback === 'function') {
