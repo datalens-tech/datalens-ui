@@ -332,8 +332,8 @@ function dumpReqParamValue(input: string, type: string, datalensQLConnectionType
         case QLParamType.Date:
         case QLParamType.DateInterval:
             if (
-                datalensQLConnectionType === ConnectorType.Monitoring ||
-                datalensQLConnectionType === ConnectorType.Promql
+                datalensQLConnectionType === DATALENS_QL_CONNECTION_TYPES.MONITORING ||
+                datalensQLConnectionType === DATALENS_QL_CONNECTION_TYPES.PROMQL
             ) {
                 newValue = dateTimeParse(input, {timeZone: 'UTC'})?.toISOString();
 
