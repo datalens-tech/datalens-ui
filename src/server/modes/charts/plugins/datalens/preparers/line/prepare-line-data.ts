@@ -3,19 +3,18 @@ import _isEmpty from 'lodash/isEmpty';
 import {
     HighchartsSeriesCustomObject,
     PlaceholderId,
-    ServerField,
-    ServerPlaceholder,
     WizardVisualizationId,
     getAxisMode,
     getFakeTitleOrTitle,
     isDateField,
-    isDimensionField,
     isMeasureField,
     isMeasureValue,
+    isNumberField,
     isPercentVisualization,
+    isPseudoField,
+    isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
 import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
-import {PSEUDO} from '../../utils/constants';
 import {
     chartKitFormatNumberWrapper,
     collator,
@@ -25,24 +24,22 @@ import {
     isNumericalDataType,
     numericCollator,
 } from '../../utils/misc-helpers';
+import {mapAndShapeGraph} from '../../utils/shape-helpers';
 import {addActionParamValue} from '../helpers/action-params';
 import {getSegmentMap} from '../helpers/segments';
-import {
-    getSegmentsIndexInOrder,
-    getSortedCategories,
-    getXAxisValue,
-    prepareLines,
-} from '../line/helpers';
-import {colorizeByGradient} from '../line/helpers/color-helpers/colorizeByGradient';
-import {getSortedLineKeys} from '../line/helpers/getSortedLineKeys';
-import {LineTemplate, LinesRecord, MergedYSectionItems} from '../line/types';
 import {PrepareFunctionArgs} from '../types';
 
+import {getSegmentsIndexInOrder, getSortedCategories, getXAxisValue, prepareLines} from './helpers';
+import {colorizeByGradient} from './helpers/color-helpers/colorizeByGradient';
+import {getSortedLineKeys} from './helpers/getSortedLineKeys';
+import {LineTemplate, LinesRecord, MergedYSectionItems} from './types';
+
 // eslint-disable-next-line complexity
-export function prepareBarX(args: PrepareFunctionArgs) {
+export function prepareLineData(args: PrepareFunctionArgs) {
     const {
+        ChartEditor,
         placeholders,
-        resultData,
+        resultData: {data, order},
         colors,
         colorsConfig,
         sort,
@@ -52,50 +49,44 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         visualizationId,
         datasets = [],
         shared,
+        shapes,
         shapesConfig,
         segments,
         layerChartMeta,
         usedColors,
-        ChartEditor,
         disableDefaultSorting = false,
     } = args;
-    const {data, order} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xPlaceholderSettings = xPlaceholder?.settings;
-    const x: ServerField | undefined = xPlaceholder?.items[0];
-    const xDataType = x ? idToDataType[x.guid] : null;
-    const xIsNumber = Boolean(xDataType && isNumericalDataType(xDataType));
-    const xIsPseudo = Boolean(x && x.type === 'PSEUDO');
-    const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
-
-    const xAxisMode = getAxisMode(xPlaceholderSettings, x?.guid);
-
-    const x2 = placeholders[0].items[1];
+    const xField = xPlaceholder?.items[0];
+    const xDataType = xField ? idToDataType[xField.guid] : null;
+    const xAxisMode = getAxisMode(xPlaceholderSettings, xField?.guid);
+    const x2 = isVisualizationWithSeveralFieldsXPlaceholder(visualizationId)
+        ? xPlaceholder?.items[1]
+        : undefined;
     const x2DataType = x2 ? idToDataType[x2.guid] : null;
-    const x2IsNumber = Boolean(x2DataType && isNumericalDataType(x2DataType));
-    const x2IsDate = Boolean(x2DataType && isDateField({data_type: x2DataType}));
-    const x2IsPseudo = Boolean(x2 && x2.type === PSEUDO);
 
-    const yPlaceholder: ServerPlaceholder = placeholders[1];
+    const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
+    const y2Placeholder = placeholders.find((p) => p.id === PlaceholderId.Y2);
 
-    const ySectionItems = yPlaceholder.items;
-    const mergedYSections = [...ySectionItems];
-
-    const sortItems = sort;
-    const sortItem = sortItems?.[0];
-    const isSortItemExists = Boolean(sort && sort.length);
-    const sortXItem = sort.find((s) => x && s.guid === x.guid);
-    const isSortingXAxis = Boolean(isSortItemExists && sortXItem);
-    const isSortingYAxis =
-        isSortItemExists && ySectionItems.find((item) => item?.guid === sort[0].guid);
+    const ySectionItems = yPlaceholder?.items || [];
+    const y2SectionItems = y2Placeholder?.items || [];
+    const mergedYSections = [...ySectionItems, ...y2SectionItems];
+    const isMultiAxis = Boolean(ySectionItems.length && y2SectionItems.length);
+    const sortItem = sort?.[0];
+    const isSortItemExists = sort.length > 0;
+    const isSortingXAxis = sort?.some((s) => s.guid === xField?.guid);
+    const isSortingYAxis = mergedYSections.some((item) => item.guid === sortItem?.guid);
     const isSortCategoriesAvailable = layerChartMeta
         ? Boolean(layerChartMeta.isCategoriesSortAvailable)
         : true;
 
     const colorItem = colors[0];
     const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;
+
+    const shapeItem = shapes[0];
 
     const gradientMode =
         colorItem &&
@@ -110,9 +101,8 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const segmentsMap = getSegmentMap(args);
     const isSegmentsExists = !_isEmpty(segmentsMap);
 
-    const isShapeItemExist = false;
+    const isShapeItemExist = Boolean(shapeItem && shapeItem.type !== 'PSEUDO');
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
-
     const isColorizeByMeasure = isMeasureField(colorItem);
     const colorMode = colorsConfig.colorMode;
     const isColorizeByMeasureValue = isMeasureValue(colorItem);
@@ -129,7 +119,8 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         measureColorSortLine[getFakeTitleOrTitle(colorItem)] = {data: {}};
     }
 
-    const nullsY1 = placeholders?.[1]?.settings?.nulls;
+    const nullsY1 = yPlaceholder?.settings?.nulls;
+    const nullsY2 = y2Placeholder?.settings?.nulls;
 
     const categoriesMap = new Map<string | number, boolean>();
 
@@ -142,35 +133,40 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
         const labelsValues: Record<string, Record<string, any>> = {};
 
-        const mergedYSectionItems: MergedYSectionItems[] = ySectionItems.map(
-            (field): MergedYSectionItems => {
-                return {
-                    field,
-                    lines: lines1,
-                    nullsSetting: nullsY1,
-                    isFirstSection: true,
-                    labelsValues,
-                };
+        const mergedYSectionItems: MergedYSectionItems[] = [ySectionItems, y2SectionItems].reduce(
+            (acc, fields, index) => {
+                const isFirstSection = index === 0;
+                const items: MergedYSectionItems[] = fields.map((field): MergedYSectionItems => {
+                    return {
+                        field,
+                        lines: isFirstSection ? lines1 : lines2,
+                        nullsSetting: isFirstSection ? nullsY1 : nullsY2,
+                        isFirstSection,
+                        labelsValues,
+                    };
+                });
+                return acc.concat(...items);
             },
+            [] as MergedYSectionItems[],
         );
 
         data.forEach((values) => {
             let xValue: ReturnType<typeof getXAxisValue>;
-            if (x) {
+            if (xField) {
                 xValue = getXAxisValue({
-                    x,
+                    x: xField,
                     ys1: ySectionItems,
                     order,
                     values,
                     idToTitle,
                     categories,
-                    xIsDate,
-                    xIsNumber,
+                    xIsDate: isDateField(xField),
+                    xIsNumber: isNumberField(xField),
                     xDataType: xDataType!,
-                    xIsPseudo: Boolean(xIsPseudo),
+                    xIsPseudo: isPseudoField(xField),
                     categoriesMap,
                 });
-                if ((xValue === null || xValue === undefined) && !xIsPseudo) {
+                if ((xValue === null || xValue === undefined) && !isPseudoField(xField)) {
                     return;
                 }
             } else if (ySectionItems.length > 1) {
@@ -199,13 +195,13 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                     idToTitle,
                     order,
                     values,
-                    xIsNumber: x2IsNumber,
+                    xIsNumber: isNumberField(x2),
                     xDataType: x2DataType!,
-                    xIsDate: x2IsDate,
-                    xIsPseudo: x2IsPseudo,
+                    xIsDate: isDateField(x2),
+                    xIsPseudo: isPseudoField(x2),
                     categoriesMap,
                 });
-                if ((x2Value === null || x2Value === undefined) && !x2IsPseudo) {
+                if ((x2Value === null || x2Value === undefined) && !isPseudoField(x2)) {
                     return;
                 }
             }
@@ -224,13 +220,14 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 colorItem,
                 rawXValue: xValue,
                 rawX2Value: x2Value,
-                x2IsDate,
+                x2IsDate: isDateField(x2),
                 isSortByMeasureColor,
                 measureColorSortLine,
                 isShapeItemExist,
                 isColorItemExist,
-                isMultiAxis: false,
-                xField: x,
+                isMultiAxis,
+                shapeItem,
+                xField: xField,
                 shapesConfig,
                 labelItem,
                 segmentIndexInOrder,
@@ -240,9 +237,9 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         });
 
         let lineKeys1 = Object.keys(lines1);
-        let lineKeys2 = [];
+        let lineKeys2 = Object.keys(lines2);
 
-        if (xIsDate && !disableDefaultSorting) {
+        if (isDateField(xField) && !disableDefaultSorting) {
             (categories as number[]).sort(numericCollator);
         }
 
@@ -250,7 +247,9 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         const isSortBySegments = Boolean(
             isSortItemExists && segmentField && sortItem.guid === segmentField.guid,
         );
-        const isSortableXAxis = !isPercentVisualization(visualizationId);
+        const isSortableXAxis =
+            visualizationId !== WizardVisualizationId.Area &&
+            !isPercentVisualization(visualizationId);
 
         if (!disableDefaultSorting) {
             categories = getSortedCategories({
@@ -259,9 +258,9 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 categories,
                 ySectionItems,
                 isSortWithYSectionItem: Boolean(ySectionItems.length && isSortableXAxis),
-                sortItem: sortItems[0],
+                sortItem,
                 isSortAvailable: isSortItemExists && isSortCategoriesAvailable,
-                isXNumber: xIsNumber,
+                isXNumber: isNumberField(xField),
                 measureColorSortLine,
                 isSegmentsExists,
                 isSortBySegments,
@@ -280,7 +279,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         });
 
         lineKeys1 = sortedLineKeys[0] || lineKeys1;
-        lineKeys2 = sortedLineKeys[1] || [];
+        lineKeys2 = sortedLineKeys[1] || lineKeys2;
 
         const graphs: any[] = [];
         const uniqueTitles: string[] = [];
@@ -289,14 +288,14 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         const isSortNumberTypeXAxisByMeasure =
             isSortCategoriesAvailable &&
             isSortItemExists &&
-            xIsNumber &&
+            isNumberField(xField) &&
             !isSortingXAxis &&
             (isSortingYAxis || isSortByMeasureColor);
 
         const isXCategoryAxis =
             isXDiscrete ||
             xDataType === 'string' ||
-            xIsPseudo ||
+            isPseudoField(xField) ||
             isSortNumberTypeXAxisByMeasure ||
             disableDefaultSorting;
 
@@ -311,7 +310,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                     nulls = nullsY1;
                 } else {
                     line = lines2[lineKey];
-                    nulls = undefined;
+                    nulls = nullsY2;
                 }
 
                 const innerLabels = labelsValues[lineKey];
@@ -324,7 +323,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                     tooltip: line.tooltip,
                     dataLabels: line.dataLabels,
                     data: categories
-                        .map((category) => {
+                        .map((category, i) => {
                             const lineData = line.data[category];
                             const colorValue = lineData?.colorValue;
                             let value = lineData?.value;
@@ -345,6 +344,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                             };
 
                             const point: any = {
+                                x: i,
                                 y,
                                 colorValue,
                                 dataLabels,
@@ -363,25 +363,26 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
                                 point.x = pointX;
 
-                                if (x && isNumericalDataType(x.data_type) && x.formatting) {
+                                if (
+                                    xField &&
+                                    isNumericalDataType(xField.data_type) &&
+                                    xField.formatting
+                                ) {
                                     point.xFormatted = chartKitFormatNumberWrapper(Number(pointX), {
                                         lang: 'ru',
-                                        ...x.formatting,
+                                        ...xField.formatting,
                                     });
                                 }
                             }
 
                             const pointLabel = innerLabels && innerLabels[category];
-
-                            if (pointLabel === undefined) {
-                                point.label = '';
-                            } else {
-                                point.label = pointLabel;
-                            }
+                            point.label = pointLabel === undefined ? '' : pointLabel;
 
                             if (isActionParamsEnable) {
+                                const [yField] = ySectionItems || [];
                                 const actionParams: Record<string, any> = {};
-                                addActionParamValue(actionParams, x, category);
+                                addActionParamValue(actionParams, xField, point.x);
+                                addActionParamValue(actionParams, yField, point.y);
 
                                 point.custom = {
                                     ...point.custom,
@@ -397,6 +398,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                     drillDownFilterValue: line.drillDownFilterValue,
                     colorKey: line.colorKey,
                     colorGuid: colorItem?.guid || null,
+                    shapeGuid: shapeItem?.guid || null,
                     connectNulls: nulls === 'connect',
                     measureFieldTitle: line.fieldTitle,
                 };
@@ -431,13 +433,15 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 if (isActionParamsEnable) {
                     const actionParams: Record<string, any> = {};
 
-                    if (x2) {
-                        actionParams[x2.guid] = line.stack;
-                    }
+                    // bar-x only
+                    addActionParamValue(actionParams, x2, line.stack);
 
-                    if (isDimensionField(colorItem)) {
-                        actionParams[colorItem.guid] = line.colorValue;
-                    }
+                    // bar-y only
+                    const [, yField2] = ySectionItems || [];
+                    addActionParamValue(actionParams, yField2, line.stack);
+
+                    addActionParamValue(actionParams, colorItem, line.colorValue);
+                    addActionParamValue(actionParams, shapeItem, line.shapeValue);
 
                     graph.custom = {
                         ...graph.custom,
@@ -465,12 +469,26 @@ export function prepareBarX(args: PrepareFunctionArgs) {
             });
         }
 
+        if (visualizationId === WizardVisualizationId.Line) {
+            mapAndShapeGraph({
+                graphs,
+                shapesConfig,
+                isSegmentsExists,
+                isShapesDefault: shapes.length === 0 || isPseudoField(shapes[0]),
+            });
+        }
+
         if (isXCategoryAxis) {
             return {
                 graphs,
                 categories: categories.map((value) => {
-                    return xIsDate
-                        ? formatDate({valueType: xDataType!, value, format: x?.format, utc: true})
+                    return isDateField(xField)
+                        ? formatDate({
+                              valueType: xDataType!,
+                              value,
+                              format: xField?.format,
+                              utc: true,
+                          })
                         : value;
                 }),
             };
@@ -490,7 +508,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
             }
 
             let xValue;
-            if (xIsDate) {
+            if (isDateField(xField)) {
                 const time = new Date(value);
 
                 if (xDataType === 'datetime' || xDataType === 'genericdatetime') {
@@ -498,7 +516,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 }
 
                 xValue = time.getTime();
-            } else if (xIsNumber) {
+            } else if (isNumberField(xField)) {
                 xValue = Number(value);
             } else {
                 xValue = value;
@@ -512,7 +530,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
         // Default sorting
         if ((!isSortItemExists || !isSortCategoriesAvailable) && !disableDefaultSorting) {
-            if (xIsNumber) {
+            if (isNumberField(xField)) {
                 (categories as number[]).sort(numericCollator);
             } else {
                 (categories as string[]).sort(collator.compare);
@@ -527,10 +545,10 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         ];
 
         // If there are dates on the X axis, then we pass them as dates
-        if (xIsDate && xAxisMode !== 'discrete') {
+        if (isDateField(xField) && xAxisMode !== 'discrete') {
             return {graphs, categories_ms: categories};
-        } else {
-            return {graphs, categories};
         }
+
+        return {graphs, categories};
     }
 }

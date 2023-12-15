@@ -5,27 +5,24 @@ import {
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
     ServerPlaceholder,
-    Shared,
     WizardVisualizationId,
     getAxisMode,
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
     isDateField,
-    isDimensionField,
     isMeasureNameOrValue,
-    isVisualizationWithLayers,
 } from '../../../../../../../shared';
-import {getGradientStops} from '../../utils/color-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
-import {isGradientMode, isNumericalDataType} from '../../utils/misc-helpers';
+import {isNumericalDataType} from '../../utils/misc-helpers';
 import {
-    getSegmentsIndexInOrder,
-    getSegmentsMap,
-    getSegmentsYAxis,
-    getSortedSegmentsList,
-} from '../line/helpers';
+    getHighchartsColorAxis,
+    isXAxisReversed,
+    shouldUseGradientLegend,
+} from '../helpers/highcharts';
+import {getYPlaceholders} from '../helpers/layers';
+import {getSegmentMap} from '../helpers/segments';
+import {getSegmentsYAxis} from '../line/helpers';
 import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
-import {getLayerPlaceholderWithItems} from '../line/helpers/axis/getLayerPlaceholderWithItems';
 import {PrepareFunctionArgs} from '../types';
 
 import {prepareBarX} from './prepareBarX';
@@ -35,18 +32,13 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
     const {
         ChartEditor,
         placeholders,
-        resultData,
         colors,
         colorsConfig,
         sort,
-        idToTitle,
         idToDataType,
         visualizationId,
         shared,
-        layerSettings,
-        segments,
     } = args;
-    const {data, order} = resultData;
     const preparedData = prepareBarX(args);
     const {graphs} = preparedData;
 
@@ -56,41 +48,14 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
     const xIsNumber = Boolean(xDataType && isNumericalDataType(xDataType));
     const xIsFloat = x ? xDataType === 'float' : null;
     const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
-
     const xPlaceholderSettings = xPlaceholder?.settings;
     const xAxisMode = getAxisMode(xPlaceholderSettings, x?.guid);
     const isXDiscrete = xAxisMode === 'discrete';
-
     const x2 = placeholders[0].items[1];
-
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yFields = yPlaceholder?.items || [];
-
     const colorItem = colors[0];
-    const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;
-
-    const gradientMode =
-        colorItem &&
-        colorFieldDataType &&
-        isGradientMode({colorField: colorItem, colorFieldDataType, colorsConfig});
-
-    const sortItem = sort?.[0];
-    const isSortItemExists = Boolean(sort && sort.length);
-    const sortXItem = sort.find((s) => x && s.guid === x.guid);
-
-    const segmentField = segments[0];
-    const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
-    const segmentsList = getSortedSegmentsList({
-        sortItem,
-        segmentField,
-        segmentIndexInOrder,
-        data,
-        idToDataType,
-    });
-    const segmentsMap = getSegmentsMap({
-        segments: segmentsList,
-        y2SectionItems: [],
-    });
+    const segmentsMap = getSegmentMap(args);
     const isSegmentsExists = !_isEmpty(segmentsMap);
 
     // Here we manage the highcharts settings depending on the parameters
@@ -105,7 +70,11 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
 
             const customConfig: any = {
                 xAxis: {},
-                plotOptions: {},
+                plotOptions: {
+                    column: {
+                        borderWidth: 1,
+                    },
+                },
                 axesFormatting: {xAxis: [], yAxis: []},
                 exporting: {
                     csv: {
@@ -123,52 +92,15 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                 );
             }
 
-            const visualization = shared.visualization as Shared['visualization'];
+            const [layerYPlaceholder, layerY2Placeholder] = getYPlaceholders(args);
 
-            let layerYPlaceholder;
-            let layerY2Placeholder;
-
-            if (isVisualizationWithLayers(visualization)) {
-                const lastLayer = visualization.layers[visualization.layers.length - 1];
-
-                if (lastLayer.layerSettings.id === layerSettings.id) {
-                    layerYPlaceholder = yPlaceholder;
-                    layerY2Placeholder = undefined;
-
-                    if (!layerYPlaceholder || !layerYPlaceholder.items.length) {
-                        layerYPlaceholder = getLayerPlaceholderWithItems(
-                            shared.visualization,
-                            PlaceholderId.Y,
-                            {isFirstFromTheTop: true},
-                        );
-                    }
-
-                    layerY2Placeholder = getLayerPlaceholderWithItems(
-                        shared.visualization,
-                        PlaceholderId.Y2,
-                        {isFirstFromTheTop: true},
-                    );
-                }
-            } else {
-                layerYPlaceholder = yPlaceholder;
-                layerY2Placeholder = undefined;
-            }
-
-            if (
-                layerYPlaceholder &&
-                layerYPlaceholder.settings?.axisFormatMode === 'by-field' &&
-                !isSegmentsExists
-            ) {
+            if (layerYPlaceholder?.settings?.axisFormatMode === 'by-field' && !isSegmentsExists) {
                 customConfig.axesFormatting.yAxis.push(
                     getAxisFormattingByField(layerYPlaceholder, visualizationId),
                 );
             }
 
-            if (
-                layerY2Placeholder &&
-                layerY2Placeholder.settings?.axisFormatMode === 'by-field' &&
-                !isSegmentsExists
-            ) {
+            if (layerY2Placeholder?.settings?.axisFormatMode === 'by-field' && !isSegmentsExists) {
                 customConfig.axesFormatting.yAxis.push(
                     getAxisFormattingByField(layerY2Placeholder, visualizationId),
                 );
@@ -176,34 +108,8 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
 
             const isLegendEnabled = shared.extraSettings?.legendMode !== 'hide';
 
-            const isCombinedChartColorizedBySomeDimension =
-                shared.visualization.id === 'combined-chart' &&
-                shared.visualization.layers?.some((layer) => {
-                    return layer.commonPlaceholders.colors.some((field) => isDimensionField(field));
-                });
-
-            const isShouldShowMeasureLegend =
-                gradientMode && !isCombinedChartColorizedBySomeDimension;
-
-            if (isShouldShowMeasureLegend) {
-                const points: Highcharts.PointOptionsObject[] = (graphs as any[]).reduce(
-                    (acc: Highcharts.PointOptionsObject[], graph) => [...acc, ...graph.data],
-                    [],
-                );
-                const colorValues = points
-                    .map((point) => point.colorValue)
-                    .filter((cv): cv is number => Boolean(cv));
-
-                const minColorValue = Math.min(...colorValues);
-                const maxColorValue = Math.max(...colorValues);
-
-                customConfig.colorAxis = {
-                    startOnTick: false,
-                    endOnTick: false,
-                    min: minColorValue,
-                    max: maxColorValue,
-                    stops: getGradientStops(colorsConfig, points, minColorValue, maxColorValue),
-                };
+            if (shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
+                customConfig.colorAxis = getHighchartsColorAxis(graphs, colorsConfig);
                 customConfig.legend = {
                     title: {
                         text: getFakeTitleOrTitle(colorItem),
@@ -211,33 +117,14 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                     enabled: isLegendEnabled,
                     symbolWidth: null,
                 };
-                customConfig.plotOptions = {
-                    bar: {
-                        borderWidth: 1,
-                    },
-                    column: {
-                        borderWidth: 1,
-                    },
-                };
             }
 
             if (xIsDate || xIsNumber) {
-                if (
-                    isSortItemExists &&
-                    sortXItem &&
-                    (sortXItem.direction === 'DESC' || !sortXItem.direction)
-                ) {
-                    if (
-                        visualizationId === WizardVisualizationId.Bar ||
-                        visualizationId === WizardVisualizationId.Bar100p
-                    ) {
-                        // It turns out that in order to expand the X-axis for a Bar chart in Highcharts, you need to pass false
-                        // While in all other types of charts you need to pass true
-                        customConfig.xAxis.reversed = false;
-                    } else {
-                        customConfig.xAxis.reversed = true;
-                    }
-                }
+                customConfig.xAxis.reversed = isXAxisReversed(
+                    x,
+                    sort,
+                    visualizationId as WizardVisualizationId,
+                );
 
                 if (
                     isXDiscrete &&
@@ -304,13 +191,11 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
             const customConfig: any = {xAxis: {}};
 
             if (xIsDate || xIsNumber) {
-                if (
-                    isSortItemExists &&
-                    sortXItem &&
-                    (sortXItem.direction === 'DESC' || !sortXItem.direction)
-                ) {
-                    customConfig.xAxis.reversed = true;
-                }
+                customConfig.xAxis.reversed = isXAxisReversed(
+                    x,
+                    sort,
+                    visualizationId as WizardVisualizationId,
+                );
 
                 if (xIsDate) {
                     if (xAxisMode === 'discrete') {

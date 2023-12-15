@@ -30,7 +30,7 @@ import prepareGeopointData from '../preparers/geopoint';
 import prepareGeopointWithClusterData from '../preparers/geopoint-with-cluster';
 import prepareGeopolygonData from '../preparers/geopolygon';
 import prepareHeatmapData from '../preparers/heatmap';
-import prepareLineData from '../preparers/line';
+import {prepareHighchartsLine} from '../preparers/line';
 import prepareMetricData from '../preparers/metric';
 import preparePivotTableData from '../preparers/old-pivot-table/old-pivot-table';
 import {prepareD3Pie, prepareHighchartsPie} from '../preparers/pie';
@@ -493,7 +493,7 @@ function prepareSingleResult({
                 shapesConfig = shared.shapesConfig;
             }
 
-            prepare = prepareLineData;
+            prepare = prepareHighchartsLine;
             rowsLimit = 75000;
             break;
         }

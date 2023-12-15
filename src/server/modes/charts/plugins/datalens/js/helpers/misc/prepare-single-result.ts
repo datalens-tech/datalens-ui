@@ -15,7 +15,7 @@ import prepareFlatTableData from '../../../preparers/flat-table';
 import prepareGeopointData from '../../../preparers/geopoint';
 import prepareGeopolygonData from '../../../preparers/geopolygon';
 import prepareHeatmapData from '../../../preparers/heatmap';
-import prepareLineData from '../../../preparers/line';
+import {prepareHighchartsLine} from '../../../preparers/line';
 import prepareLineTime from '../../../preparers/line-time';
 import prepareMetricData from '../../../preparers/metric';
 import preparePivotTableData from '../../../preparers/old-pivot-table/old-pivot-table';
@@ -117,7 +117,7 @@ export default ({
                 prepare = prepareLineTime;
                 rowsLimit = 75000;
             } else {
-                prepare = prepareLineData;
+                prepare = prepareHighchartsLine;
                 rowsLimit = 75000;
             }
             break;
@@ -125,7 +125,7 @@ export default ({
 
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
-            prepare = prepareLineData;
+            prepare = prepareHighchartsLine;
             rowsLimit = 75000;
             break;
         }

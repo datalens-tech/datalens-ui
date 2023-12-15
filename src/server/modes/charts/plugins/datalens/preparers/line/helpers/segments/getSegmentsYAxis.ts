@@ -10,7 +10,7 @@ const DEFAULT_SPACE_BETWEEN_SEGMENTS = 4;
 
 export const getSegmentsYAxis = (
     segmentsMap: SegmentsMap,
-    placeholders: {y: ServerPlaceholder; y2: ServerPlaceholder},
+    placeholders: {y?: ServerPlaceholder; y2?: ServerPlaceholder},
     visualizationId: string,
 ): {yAxisSettings: Highcharts.AxisOptions[]; yAxisFormattings: any[]} => {
     const segments = Object.keys(segmentsMap);

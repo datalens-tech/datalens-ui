@@ -1,4 +1,4 @@
-import linePrepare from '../index';
+import {prepareHighchartsLine as linePrepare} from '../index';
 
 const {
     regularTitle,
