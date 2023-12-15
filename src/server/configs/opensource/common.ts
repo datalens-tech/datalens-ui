@@ -1,4 +1,11 @@
-import {AppEnvironment, AppInstallation, Language, isTrueArg} from '../../../shared';
+import {
+    AppEnvironment,
+    AppInstallation,
+    ConnectorType,
+    DATALENS_QL_CONNECTION_TYPES,
+    Language,
+    isTrueArg,
+} from '../../../shared';
 import {resolveSource} from '../../../shared/endpoints/sources';
 import {nativeModules} from '../../components/charts-engine/components/processor/native-modules';
 import {SERVICE_NAME_DATALENS} from '../../constants';
@@ -190,5 +197,23 @@ export default {
         yandexMap: {
             enabled: isTrueArg(process.env.YANDEX_MAP_ENABLED),
         },
+    },
+    connectorTypeToQlConnectionsTypeMap: {
+        [ConnectorType.Postgres]: DATALENS_QL_CONNECTION_TYPES.POSTGRESQL,
+        [ConnectorType.Greenplum]: DATALENS_QL_CONNECTION_TYPES.POSTGRESQL,
+        [ConnectorType.Clickhouse]: DATALENS_QL_CONNECTION_TYPES.CLICKHOUSE,
+        [ConnectorType.ChOverYt]: DATALENS_QL_CONNECTION_TYPES.CLICKHOUSE,
+        [ConnectorType.ChOverYtUserAuth]: DATALENS_QL_CONNECTION_TYPES.CLICKHOUSE,
+        [ConnectorType.Chydb]: DATALENS_QL_CONNECTION_TYPES.CLICKHOUSE,
+        [ConnectorType.ChFrozenDemo]: DATALENS_QL_CONNECTION_TYPES.CLICKHOUSE,
+        [ConnectorType.Chyt]: DATALENS_QL_CONNECTION_TYPES.CLICKHOUSE,
+        [ConnectorType.Mssql]: DATALENS_QL_CONNECTION_TYPES.MSSQL,
+        [ConnectorType.Mysql]: DATALENS_QL_CONNECTION_TYPES.MYSQL,
+        [ConnectorType.Oracle]: DATALENS_QL_CONNECTION_TYPES.ORACLE,
+        [ConnectorType.Ydb]: DATALENS_QL_CONNECTION_TYPES.YQL,
+        [ConnectorType.Yq]: DATALENS_QL_CONNECTION_TYPES.YQL,
+        [ConnectorType.Promql]: DATALENS_QL_CONNECTION_TYPES.PROMQL,
+        [ConnectorType.Monitoring]: DATALENS_QL_CONNECTION_TYPES.MONITORING,
+        [ConnectorType.MonitoringExt]: DATALENS_QL_CONNECTION_TYPES.MONITORING,
     },
 };
