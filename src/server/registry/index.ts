@@ -8,6 +8,7 @@ import getGatewayControllers, {
 import {AppContext} from '@gravity-ui/nodekit';
 
 import type {ChartsEngine} from '../components/charts-engine';
+import {convertConnectionType} from '../modes/charts/plugins/ql/utils/connection';
 import {GetLayoutConfig} from '../types/app-layout';
 import type {ConvertConnectorTypeToQLConnectionType} from '../types/connections';
 import {XlsxConverterFn} from '../types/xlsxConverter';
@@ -118,7 +119,7 @@ export const registry = {
     },
     getConvertConnectorTypeToQLConnectionType() {
         if (!convertConnectorTypeToQLConnectionType) {
-            throw new Error('First of all register convertConnectorTypeToQLConnectionType');
+            return convertConnectionType;
         }
         return convertConnectorTypeToQLConnectionType;
     },
