@@ -31,3 +31,8 @@ export const selectUserThemeSettings = createSelector(
     [selectUserSettings],
     (userSettings) => userSettings.themeSettings,
 );
+
+export const selectUserHolidaySettings = createSelector(
+    [selectUserSettings],
+    (userSettings) => userSettings.new_year,
+);
