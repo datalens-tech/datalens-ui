@@ -32,6 +32,7 @@ export const DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES = {
     metric2: 'metric2',
     ymap: 'ymap',
     markdown: 'markdown',
+    d3: 'd3',
 };
 
 export type AcceptFiltersWidgetType =
@@ -49,6 +50,7 @@ export const DASH_WIDGET_TYPES = {
     CONTROL: 'control',
     MARKDOWN: 'markdown',
     TIMESERIES: 'timeseries',
+    D3: 'd3',
 } as const;
 
 export type WidgetType = typeof DASH_WIDGET_TYPES[keyof typeof DASH_WIDGET_TYPES];
