@@ -161,8 +161,11 @@ export const getWidgetMeta = ({
             usedParams: loadedData?.usedParams
                 ? Object.keys(loadedData?.usedParams || {}) || null
                 : null,
-            datasets: loadedData?.datasets || null,
-            datasetId: (loadedData?.sources as ResponseSourcesSuccess)?.fields?.datasetId || '',
+            datasets: loadedData?.datasets || loadedData?.extra?.datasets || null,
+            datasetId:
+                (loadedData?.sources as ResponseSourcesSuccess)?.fields?.datasetId ||
+                loadedData?.extra?.datasets?.[0]?.id ||
+                '',
             type: (loadedData?.type as DashTabItemType) || null,
             visualizationType: loadedData?.libraryConfig?.chart?.type || null,
             loadError: loadedWithError,
