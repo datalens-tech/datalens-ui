@@ -3,13 +3,7 @@ import {ConnectionsDialogQA} from '../../../../src/shared/constants';
 
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {
-    getUniqueTimestamp,
-    isEnabledFeature,
-    openTestPage,
-    slct,
-    waitForCondition,
-} from '../../../utils';
+import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {COMMON_DASH_SELECTORS} from '../constants';
@@ -142,12 +136,7 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
                 return elems.length === 0;
             });
 
-            const isEnabledNewRelations = await isEnabledFeature(page, 'showNewRelations');
-            if (isEnabledNewRelations) {
-                await dashboardPage.openControlRelationsDialog();
-            } else {
-                await dashboardPage.openDashConnections();
-            }
+            await dashboardPage.openDashConnections();
 
             // waiting for the chart to load
             await initPromise;

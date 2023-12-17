@@ -35,15 +35,18 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
     });
-    datalensTest('Opening relations list with dummy text', async ({page}: {page: Page}) => {
-        const dashboardPage = new DashboardPage({page});
+    datalensTest(
+        'Pop-up opening and the presence of the inscription "No elements for links"',
+        async ({page}: {page: Page}) => {
+            const dashboardPage = new DashboardPage({page});
 
-        await dashboardPage.openControlRelationsDialog();
+            await dashboardPage.openControlRelationsDialog();
 
-        await page.locator(slct(DashCommonQa.RelationsDialogEmptyText));
+            await page.locator(slct(DashCommonQa.RelationsDialogEmptyText));
 
-        await page.locator(slct(DashCommonQa.RelationsCancelBtn)).click();
+            await page.locator(slct(DashCommonQa.RelationsCancelBtn)).click();
 
-        await dashboardPage.exitEditMode();
-    });
+            await dashboardPage.exitEditMode();
+        },
+    );
 });

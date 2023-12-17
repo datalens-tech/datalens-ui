@@ -61,11 +61,6 @@ const isChartRequestSent = (reqData: string | null) => {
 };
 
 datalensTest.describe('Dashboards - Widget Downloads', () => {
-    /**
-     * Tests is not included in the set:
-     * 1. Loading charts that didn't get into the viewport when opening links
-     */
-
     datalensTest(
         'When loading a dashboard, the selectors have priority for loading api/run',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
