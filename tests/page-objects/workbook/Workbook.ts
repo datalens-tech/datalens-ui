@@ -2,10 +2,10 @@ import {Page} from '@playwright/test';
 import {DialogCreateEntry} from './DialogCreateEntry';
 import {CreateEntryButton} from './CreateEntryButton';
 import {NavigationMinimalPopup} from './NavigationMinimalPopup';
-import {openTestPage, slct} from 'utils';
-import {WorkbooksUrls} from 'constants/constants';
+import {openTestPage, slct} from '../../utils';
+import {WorkbooksUrls} from '../../constants/constants';
 import {EditEntityButton} from './EditEntityButton';
-import DashboardPage from 'page-objects/dashboard/DashboardPage';
+import DashboardPage from '../../page-objects/dashboard/DashboardPage';
 import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
 
 export class Workbook {
