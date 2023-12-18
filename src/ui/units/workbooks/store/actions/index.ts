@@ -210,6 +210,8 @@ export const getWorkbookEntries = ({
                 type: GET_WORKBOOK_ENTRIES_FAILED,
                 error,
             });
+
+            return null;
         }
     };
 };

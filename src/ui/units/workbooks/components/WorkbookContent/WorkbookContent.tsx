@@ -28,10 +28,18 @@ type Props = {
     retryLoadEntries: () => void;
     refreshEntries: () => void;
     scope?: EntryScope;
+    mapTokens: Record<string, string>;
 };
 
 export const WorkbookContent = React.memo<Props>(
-    ({loadMoreEntries, loadMoreEntriesByScope, retryLoadEntries, refreshEntries, scope}) => {
+    ({
+        loadMoreEntries,
+        loadMoreEntriesByScope,
+        retryLoadEntries,
+        refreshEntries,
+        scope,
+        mapTokens,
+    }) => {
         const workbook = useSelector(selectWorkbook);
         const entries = useSelector(selectWorkbookItems);
         const isEntriesLoading = useSelector(selectWorkbookEntriesIsLoading);
@@ -83,6 +91,7 @@ export const WorkbookContent = React.memo<Props>(
                     entries={entries}
                     scope={scope}
                     loadMoreEntriesByScope={loadMoreEntriesByScope}
+                    mapTokens={mapTokens}
                 />
                 {footer}
             </React.Fragment>
