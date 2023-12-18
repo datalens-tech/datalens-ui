@@ -1,4 +1,5 @@
 import type {QLConfigQuery} from '../../../../../../../shared';
+import {convertConnectionType} from '../connection';
 import {buildSource, iterateThroughVisibleQueries} from '../misc-helpers';
 
 const MOCK_ID = 'MOCK_ID';
@@ -62,6 +63,14 @@ const expectedBuildSourceResultPrewrapped = {
         params: {},
     },
 };
+
+jest.mock('../../../../../../registry', () => {
+    return {
+        registry: {
+            getConvertConnectorTypeToQLConnectionType: () => convertConnectionType,
+        },
+    };
+});
 
 describe('buildSource', () => {
     it('should work correctly with parameter-set substitution', () => {

@@ -104,6 +104,7 @@ export const getConnectorIconDataWithoutDefault = (type?: string): IconData | un
             return iconPromql;
         case ConnectorType.Monitoring:
         case ConnectorType.MonitoringExt:
+        case ConnectorType.MonitoringV2:
             return iconMonitoring;
         case ConnectorType.Bitrix:
         case ConnectorType.Bitrix24:

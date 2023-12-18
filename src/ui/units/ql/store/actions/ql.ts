@@ -55,7 +55,6 @@ import {
 import {setExtraSettings as setWizardExtraSettings} from '../../../wizard/actions/widget';
 import {
     AVAILABLE_CHART_TYPES,
-    AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE,
     AppStatus,
     QL_MOCKED_DATASET_ID,
     VisualizationStatus,
@@ -696,13 +695,10 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                 dispatch(setConnection(connection));
 
-                if (
-                    ![
-                        ConnectorType.Monitoring,
-                        ConnectorType.MonitoringExt,
-                        ConnectorType.Promql,
-                    ].includes(connection.type as ConnectorType)
-                ) {
+                // By default ChartType === 'sql', since there were only sql charts before
+                const chartType = entry?.data.shared.chartType || 'sql';
+
+                if (chartType === QLChartType.Sql) {
                     dispatch(fetchConnectionSources({entryId: loadedConnectionEntry.entryId}));
                 }
 
@@ -749,9 +745,6 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 });
 
                 applyUrlParams(params);
-
-                // By default ChartType === 'sql', since there were only sql charts before
-                const chartType = entry?.data.shared.chartType || 'sql';
 
                 dispatch(
                     setSettings({
@@ -1020,12 +1013,14 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                         dispatch(setConnection(connection));
 
+                        const {getConnectionsByChartType} = registry.ql.functions.getAll();
+
                         let newChartType;
                         AVAILABLE_CHART_TYPES.some((possibleChartType) => {
                             if (
-                                AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE[
-                                    possibleChartType
-                                ].includes(connection.type as ConnectorType)
+                                getConnectionsByChartType(possibleChartType).includes(
+                                    connection.type as ConnectorType,
+                                )
                             ) {
                                 dispatch(setChartType(possibleChartType));
 
