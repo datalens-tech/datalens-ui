@@ -34,10 +34,11 @@ type WorkbookEntriesTableProps = {
     refreshEntries: () => void;
     loadMoreEntriesByScope: (entryScope: EntryScope) => void;
     scope?: EntryScope;
+    mapTokens: Record<string, string>;
 };
 
 export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
-    ({workbook, entries, refreshEntries, loadMoreEntriesByScope, scope}) => {
+    ({workbook, entries, refreshEntries, loadMoreEntriesByScope, scope, mapTokens}) => {
         const dispatch: AppDispatch = useDispatch();
 
         const onRenameEntry = React.useCallback(
@@ -192,13 +193,13 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                 />
                             </div>
 
-                            {dashChunk.length > 0 && (
+                            {dashChunk.length > 0 && mapTokens[EntryScope.Dash] && (
                                 <Button
                                     onClick={() => loadMoreEntriesByScope(EntryScope.Dash)}
                                     className={b('show-more-btn')}
                                     view="outlined"
                                 >
-                                    {i18n('action_show-all')}
+                                    {i18n('action_show-more')}
                                 </Button>
                             )}
 
@@ -219,7 +220,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                     className={b('show-more-btn')}
                                     view="outlined"
                                 >
-                                    {i18n('action_show-all')}
+                                    {i18n('action_show-more')}
                                 </Button>
                             )}
 
@@ -240,7 +241,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                     className={b('show-more-btn')}
                                     view="outlined"
                                 >
-                                    {i18n('action_show-all')}
+                                    {i18n('action_show-more')}
                                 </Button>
                             )}
 
@@ -261,7 +262,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                     className={b('show-more-btn')}
                                     view="outlined"
                                 >
-                                    {i18n('action_show-all')}
+                                    {i18n('action_show-more')}
                                 </Button>
                             )}
                         </>

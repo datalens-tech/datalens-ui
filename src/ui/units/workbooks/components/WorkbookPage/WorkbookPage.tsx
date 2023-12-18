@@ -1,6 +1,6 @@
 import {DL} from 'constants/common';
 
-import React, {useMemo} from 'react';
+import React from 'react';
 
 import {PencilToLine} from '@gravity-ui/icons';
 import {ActionBar} from '@gravity-ui/navigation';
@@ -71,11 +71,7 @@ export const WorkbookPage = () => {
 
     const nextPageToken = useSelector(selectNextPageToken);
     const filters = useSelector(selectWorkbookFilters);
-    const mapTokens = React.useRef<Record<string, string>>({});
-    const scopes = useMemo(
-        () => [EntryScope.Dash, EntryScope.Dataset, EntryScope.Widget, EntryScope.Connection],
-        [],
-    );
+    const [mapTokens, setMapTokens] = React.useState<Record<string, string>>({});
 
     const isMainTab = activeTab === TAB_ALL;
     const scope = isMainTab ? undefined : activeTab;
@@ -103,18 +99,19 @@ export const WorkbookPage = () => {
     }, [nextPageToken, dispatch, workbookId, filters, scope]);
 
     const loadMoreEntriesByScope = (entryScope: EntryScope) => {
-        if (mapTokens.current[entryScope]) {
+        if (mapTokens[entryScope]) {
             dispatch(
                 getWorkbookEntries({
                     workbookId,
                     filters,
-                    scope: scope || entryScope,
-                    nextPageToken: mapTokens.current[entryScope],
+                    scope: entryScope,
+                    nextPageToken: mapTokens[entryScope],
                 }),
             ).then((data) => {
-                if (entryScope) {
-                    mapTokens.current[entryScope] = data?.nextPageToken || '';
-                }
+                setMapTokens({
+                    ...mapTokens,
+                    [entryScope]: data?.nextPageToken || '',
+                });
             });
         }
     };
@@ -156,37 +153,33 @@ export const WorkbookPage = () => {
         if (activeTab) {
             (async () => {
                 if (isMainTab) {
+                    const tokensMap: Record<string, string> = {};
+
                     await dispatch(
                         getWorkbookEntries({workbookId, filters, scope: EntryScope.Dash}),
                     ).then((data) => {
-                        mapTokens.current[EntryScope.Dash] = data?.nextPageToken || '';
-
-                        return data;
+                        tokensMap[EntryScope.Dash] = data?.nextPageToken || '';
                     });
 
                     await dispatch(
                         getWorkbookEntries({workbookId, filters, scope: EntryScope.Dataset}),
                     ).then((data) => {
-                        mapTokens.current[EntryScope.Dataset] = data?.nextPageToken || '';
-
-                        return data;
+                        tokensMap[EntryScope.Dataset] = data?.nextPageToken || '';
                     });
 
                     await dispatch(
                         getWorkbookEntries({workbookId, filters, scope: EntryScope.Widget}),
                     ).then((data) => {
-                        mapTokens.current[EntryScope.Widget] = data?.nextPageToken || '';
-
-                        return data;
+                        tokensMap[EntryScope.Widget] = data?.nextPageToken || '';
                     });
 
                     await dispatch(
                         getWorkbookEntries({workbookId, filters, scope: EntryScope.Connection}),
                     ).then((data) => {
-                        mapTokens.current[EntryScope.Connection] = data?.nextPageToken || '';
-
-                        return data;
+                        tokensMap[EntryScope.Connection] = data?.nextPageToken || '';
                     });
+
+                    setMapTokens(tokensMap);
                 } else {
                     await dispatch(getWorkbookEntries({workbookId, filters, scope})).then(
                         (data) => data,
@@ -194,7 +187,7 @@ export const WorkbookPage = () => {
                 }
             })();
         }
-    }, [dispatch, workbookId, filters, activeTab, scope, isMainTab, scopes, mapTokens]);
+    }, []);
 
     if (
         pageError ||
@@ -297,6 +290,7 @@ export const WorkbookPage = () => {
                                 retryLoadEntries={retryLoadEntries}
                                 refreshEntries={refreshEntries}
                                 scope={scope}
+                                mapTokens={mapTokens}
                             />
                         </div>
                     </div>
