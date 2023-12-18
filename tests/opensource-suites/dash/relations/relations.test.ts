@@ -4,9 +4,9 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {deleteEntity, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ControlQA, DashRelationTypes} from '../../../../src/shared';
-import {WorkbooksUrls} from 'constants/constants';
-import {Workbook} from 'page-objects/workbook/Workbook';
-import {ChartsParams} from 'constants/test-entities/charts';
+import {WorkbooksUrls} from '../../../constants/constants';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
+import {ChartsParams} from '../../../constants/test-entities/charts';
 
 const SELECTORS = {
     CHART_LEGEND_ITEM: '.chartkit-d3-legend__item',

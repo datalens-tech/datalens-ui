@@ -4,10 +4,10 @@ import ConnectionsPage from '../../../page-objects/connections/ConnectionsPage';
 import QLPage from '../../../page-objects/ql/QLPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
-import {TestParametrizationConfig} from 'types/config';
-import {Workbook} from 'page-objects/workbook/Workbook';
-import {QlUrls} from 'constants/test-entities/ql';
-import {ConnectionsNames} from 'constants/test-entities/connections';
+import {TestParametrizationConfig} from '../../../types/config';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
+import {QlUrls} from '../../../constants/test-entities/ql';
+import {ConnectionsNames} from '../../../constants/test-entities/connections';
 
 datalensTest.describe('SQL connection selection', () => {
     datalensTest(

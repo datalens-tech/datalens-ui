@@ -4,8 +4,8 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {openTestPage, slct} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {WorkbooksUrls} from 'constants/constants';
-import {Workbook} from 'page-objects/workbook/Workbook';
+import {WorkbooksUrls} from '../../../constants/constants';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
 
 const PARAMS = {
     CONTROL_TITLE: 'test-control',

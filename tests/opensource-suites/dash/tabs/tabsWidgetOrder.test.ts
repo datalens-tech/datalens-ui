@@ -5,9 +5,9 @@ import {deleteEntity, slct} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
-import {WorkbooksUrls} from 'constants/constants';
-import {Workbook} from 'page-objects/workbook/Workbook';
-import {COMMON_DASH_SELECTORS} from 'suites/dash/constants';
+import {WorkbooksUrls} from '../../../constants/constants';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
+import {COMMON_DASH_SELECTORS} from '../../../suites/dash/constants';
 import {DialogTabsQA, EntryDialogQA} from '../../../../src/shared/constants';
 import {dragAndDropListItem, openTabPopupWidgetOrder} from '../../../suites/dash/helpers';
 import {arbitraryText} from '../constants';

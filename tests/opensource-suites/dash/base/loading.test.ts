@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {TestParametrizationConfig} from 'types/config';
+import {TestParametrizationConfig} from '../../../types/config';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {
     deleteEntity,
