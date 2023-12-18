@@ -1,5 +1,21 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
+.yc-root_theme_dark {
+    .dialog-relations {
+        &__icon-visualization {
+            filter: contrast(0) brightness(0.85);
+        }
+    }
+}
+
+.yc-root_theme_light {
+    .dialog-relations {
+        &__icon-visualization {
+            filter: contrast(0) brightness(1.3);
+        }
+    }
+}
+
 .dialog-relations {
     width: 600px;
 
