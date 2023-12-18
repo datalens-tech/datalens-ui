@@ -5,7 +5,7 @@ import {Checkbox, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {ControlQA} from 'shared';
+import {ControlQA, DialogControlQa} from 'shared';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectIsDatasetSelectorAndNoFieldSelected,
@@ -60,7 +60,10 @@ export const InnerTitleRow = () => {
     );
     return (
         <FormRow label={label}>
-            <div className={b('operation-container')}>
+            <div
+                className={b('operation-container')}
+                data-qa={DialogControlQa.appearanceInnerTitle}
+            >
                 <Checkbox
                     className={b('operation-checkbox')}
                     disabled={isInnerTitleDisabled}
