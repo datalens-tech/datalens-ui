@@ -1,6 +1,7 @@
 import {ColorMode} from '../../../constants';
 import {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
 import {
+    AxisLabelFormatMode,
     AxisMode,
     ChartsConfigVersion,
     ColumnSettings,
@@ -167,7 +168,7 @@ export type V9PlaceholderSettings = {
     labelsView?: 'horizontal' | 'vertical' | 'angle';
     nulls?: 'ignore' | 'connect' | 'as-0';
     holidays?: 'on' | 'off';
-    axisFormatMode?: 'auto' | 'by-field';
+    axisFormatMode?: AxisLabelFormatMode;
     axisModeMap?: Record<string, AxisMode>;
     disableAxisMode?: boolean;
 };

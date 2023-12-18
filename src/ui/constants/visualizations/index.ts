@@ -1,4 +1,4 @@
-import {AxisMode, LabelsPositions} from 'shared';
+import {AxisLabelFormatMode, AxisMode, LabelsPositions} from 'shared';
 
 export * from './flatTable';
 export * from './pivotTable';
@@ -42,8 +42,8 @@ import {TREEMAP_VISUALIZATION} from './treemap';
 
 export const SETTINGS = {
     AXIS_FORMAT_MODE: {
-        AUTO: 'auto',
-        BY_FIELD: 'by-field',
+        AUTO: AxisLabelFormatMode.Auto,
+        BY_FIELD: AxisLabelFormatMode.ByField,
     },
     SCALE: {
         AUTO: 'auto',

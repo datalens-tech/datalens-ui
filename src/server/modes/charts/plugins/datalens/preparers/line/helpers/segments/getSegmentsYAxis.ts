@@ -1,6 +1,6 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
-import {ServerPlaceholder} from '../../../../../../../../../shared';
+import {AxisLabelFormatMode, ServerPlaceholder} from '../../../../../../../../../shared';
 import {applyPlaceholderSettingsToAxis} from '../../../../utils/axis-helpers';
 import {getAxisFormattingByField} from '../axis/getAxisFormattingByField';
 
@@ -75,7 +75,7 @@ export const getSegmentsYAxis = (
         applyPlaceholderSettingsToAxis(placeholder, axis, {title: true});
 
         yAxis[yAxisIndex] = axis;
-        if (placeholder && placeholder.settings?.axisFormatMode === 'by-field') {
+        if (placeholder && placeholder.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
             yAxisFormattings[yAxisIndex] = getAxisFormattingByField(placeholder, visualizationId);
         }
     });

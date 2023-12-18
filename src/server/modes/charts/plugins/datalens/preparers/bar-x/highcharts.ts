@@ -1,6 +1,7 @@
 import _isEmpty from 'lodash/isEmpty';
 
 import {
+    AxisLabelFormatMode,
     AxisMode,
     ChartkitHandlers,
     MINIMUM_FRACTION_DIGITS,
@@ -87,7 +88,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                 },
             };
 
-            if (xPlaceholder?.settings?.axisFormatMode === 'by-field') {
+            if (xPlaceholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
                 customConfig.axesFormatting.xAxis.push(
                     getAxisFormattingByField(xPlaceholder, visualizationId),
                 );
@@ -95,13 +96,19 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
 
             const [layerYPlaceholder, layerY2Placeholder] = getYPlaceholders(args);
 
-            if (layerYPlaceholder?.settings?.axisFormatMode === 'by-field' && !isSegmentsExists) {
+            if (
+                layerYPlaceholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField &&
+                !isSegmentsExists
+            ) {
                 customConfig.axesFormatting.yAxis.push(
                     getAxisFormattingByField(layerYPlaceholder, visualizationId),
                 );
             }
 
-            if (layerY2Placeholder?.settings?.axisFormatMode === 'by-field' && !isSegmentsExists) {
+            if (
+                layerY2Placeholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField &&
+                !isSegmentsExists
+            ) {
                 customConfig.axesFormatting.yAxis.push(
                     getAxisFormattingByField(layerY2Placeholder, visualizationId),
                 );

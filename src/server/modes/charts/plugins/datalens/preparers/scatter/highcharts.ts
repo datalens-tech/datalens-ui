@@ -1,6 +1,7 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
 import {
+    AxisLabelFormatMode,
     ChartkitHandlers,
     ExtendedExportingCsvOptions,
     isDateField,
@@ -88,13 +89,13 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
             };
         }
 
-        if (xPlaceholderSettings?.axisFormatMode === 'by-field') {
+        if (xPlaceholderSettings?.axisFormatMode === AxisLabelFormatMode.ByField) {
             customConfig.axesFormatting.xAxis.push(
                 getAxisFormattingByField(xPlaceholder, shared.visualization.id),
             );
         }
 
-        if (yPlaceholderSettings?.axisFormatMode === 'by-field') {
+        if (yPlaceholderSettings?.axisFormatMode === AxisLabelFormatMode.ByField) {
             customConfig.axesFormatting.yAxis.push(
                 getAxisFormattingByField(yPlaceholder, shared.visualization.id),
             );
