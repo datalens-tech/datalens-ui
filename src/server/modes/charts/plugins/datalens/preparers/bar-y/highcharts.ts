@@ -1,6 +1,7 @@
 import _isEmpty from 'lodash/isEmpty';
 
 import {
+    AxisMode,
     ChartkitHandlers,
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
@@ -37,7 +38,7 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xPlaceholderSettings = xPlaceholder?.settings;
     const x: ServerField | undefined = xPlaceholder?.items[0];
-    const isXDiscrete = getAxisMode(xPlaceholderSettings, x?.guid) === 'discrete';
+    const isXDiscrete = getAxisMode(xPlaceholderSettings, x?.guid) === AxisMode.Discrete;
     const x2 = isVisualizationWithSeveralFieldsXPlaceholder(visualizationId)
         ? xPlaceholder?.items[1]
         : undefined;

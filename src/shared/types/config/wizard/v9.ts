@@ -1,6 +1,7 @@
-import {ColorMode} from '../../../constants/gradients';
+import {ColorMode} from '../../../constants';
 import {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
 import {
+    AxisMode,
     ChartsConfigVersion,
     ColumnSettings,
     LabelsPositions,
@@ -8,8 +9,8 @@ import {
     NumberFormatUnit,
     TableBarsSettings,
     TableFieldBackgroundSettings,
+    TableSubTotalsSettings,
 } from '../../wizard';
-import {TableSubTotalsSettings} from '../../wizard/sub-totals';
 
 export type V9ChartsConfig = {
     title?: string;
@@ -167,7 +168,7 @@ export type V9PlaceholderSettings = {
     nulls?: 'ignore' | 'connect' | 'as-0';
     holidays?: 'on' | 'off';
     axisFormatMode?: 'auto' | 'by-field';
-    axisModeMap?: Record<string, 'discrete' | 'continuous'>;
+    axisModeMap?: Record<string, AxisMode>;
     disableAxisMode?: boolean;
 };
 

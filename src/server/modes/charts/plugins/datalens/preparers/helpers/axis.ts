@@ -1,4 +1,5 @@
 import {
+    AxisMode,
     ServerField,
     ServerPlaceholderSettings,
     getAxisMode,
@@ -9,7 +10,7 @@ import {
 export function getAxisType(field?: ServerField, settings?: ServerPlaceholderSettings) {
     const axisMode = getAxisMode(settings, field?.guid);
 
-    if (axisMode !== 'discrete') {
+    if (axisMode !== AxisMode.Discrete) {
         if (isDateField(field)) {
             return 'datetime';
         }

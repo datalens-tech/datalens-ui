@@ -1,4 +1,5 @@
 import {
+    AxisMode,
     HighchartsSeriesCustomObject,
     ServerField,
     ServerPlaceholder,
@@ -261,7 +262,7 @@ export function prepareBarYData({
         const graphs: any[] = [];
         const uniqueTitles: string[] = [];
 
-        const isXDiscrete = xAxisMode === 'discrete';
+        const isXDiscrete = xAxisMode === AxisMode.Discrete;
         const isSortNumberTypeXAxisByMeasure =
             isSortCategoriesAvailable &&
             isSortItemExists &&
@@ -485,7 +486,7 @@ export function prepareBarYData({
         ];
 
         // If there are dates on the X axis, then we pass them as dates
-        if (xIsDate && xAxisMode !== 'discrete') {
+        if (xIsDate && xAxisMode !== AxisMode.Discrete) {
             return {graphs, categories_ms: categories};
         } else {
             return {graphs, categories};

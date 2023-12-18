@@ -1,4 +1,4 @@
-import {LabelsPositions} from 'shared';
+import {AxisMode, LabelsPositions} from 'shared';
 
 export * from './flatTable';
 export * from './pivotTable';
@@ -94,8 +94,8 @@ export const SETTINGS = {
         OFF: 'off',
     },
     AXIS_MODE: {
-        DISCRETE: 'discrete',
-        CONTINUOUS: 'continuous',
+        DISCRETE: AxisMode.Discrete,
+        CONTINUOUS: AxisMode.Continuous,
     },
 };
 

@@ -1,6 +1,7 @@
 import _isEmpty from 'lodash/isEmpty';
 
 import {
+    AxisMode,
     HighchartsSeriesCustomObject,
     PlaceholderId,
     WizardVisualizationId,
@@ -284,7 +285,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         const graphs: any[] = [];
         const uniqueTitles: string[] = [];
 
-        const isXDiscrete = xAxisMode === 'discrete';
+        const isXDiscrete = xAxisMode === AxisMode.Discrete;
         const isSortNumberTypeXAxisByMeasure =
             isSortCategoriesAvailable &&
             isSortItemExists &&
@@ -545,7 +546,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         ];
 
         // If there are dates on the X axis, then we pass them as dates
-        if (isDateField(xField) && xAxisMode !== 'discrete') {
+        if (isDateField(xField) && xAxisMode !== AxisMode.Discrete) {
             return {graphs, categories_ms: categories};
         }
 

@@ -23,3 +23,8 @@ export const enum TableFieldDisplayMode {
     Visible = 'visible',
     Hidden = 'hidden',
 }
+
+export const enum AxisMode {
+    Discrete = 'discrete',
+    Continuous = 'continuous',
+}

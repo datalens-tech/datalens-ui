@@ -1,6 +1,7 @@
 import _isEmpty from 'lodash/isEmpty';
 
 import {
+    AxisMode,
     ChartkitHandlers,
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
@@ -50,7 +51,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
     const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
     const xPlaceholderSettings = xPlaceholder?.settings;
     const xAxisMode = getAxisMode(xPlaceholderSettings, x?.guid);
-    const isXDiscrete = xAxisMode === 'discrete';
+    const isXDiscrete = xAxisMode === AxisMode.Discrete;
     const x2 = placeholders[0].items[1];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yFields = yPlaceholder?.items || [];
@@ -198,7 +199,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                 );
 
                 if (xIsDate) {
-                    if (xAxisMode === 'discrete') {
+                    if (xAxisMode === AxisMode.Discrete) {
                         customConfig.xAxis.labels = {
                             formatter: ChartkitHandlers.WizardXAxisFormatter,
                         };

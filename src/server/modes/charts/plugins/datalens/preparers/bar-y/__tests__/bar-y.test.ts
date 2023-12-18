@@ -1,5 +1,6 @@
 import pick from 'lodash/pick';
 
+import {AxisMode} from '../../../../../../../../shared';
 import {DateTimeField, EmptyPrepapreArgs, IntegerField} from '../../__tests__/common.mock';
 import {PrepareFunctionArgs} from '../../types';
 import {prepareBarYData} from '../prepare-bar-y-data';
@@ -42,7 +43,7 @@ describe('prepareBarYData', () => {
                     items: [DateTimeField],
                     settings: {
                         axisModeMap: {
-                            [DateTimeField.guid]: 'continuous',
+                            [DateTimeField.guid]: AxisMode.Continuous,
                         },
                     },
                 },
@@ -69,7 +70,7 @@ describe('prepareBarYData', () => {
                     items: [DateTimeField],
                     settings: {
                         axisModeMap: {
-                            [DateTimeField.guid]: 'continuous',
+                            [DateTimeField.guid]: AxisMode.Continuous,
                         },
                     },
                 },
