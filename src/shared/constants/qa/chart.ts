@@ -23,4 +23,5 @@ export const ChartkitMenuDialogsQA = {
     chartPreview: 'chart-preview',
     errorButtonRetry: 'chartkit-error-actions',
     widgetTab: 'widget-chart-tab',
+    chartWidget: 'chart-widget',
 };
