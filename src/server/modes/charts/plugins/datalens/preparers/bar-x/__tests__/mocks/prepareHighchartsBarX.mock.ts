@@ -1,3 +1,5 @@
+import {AxisMode} from '../../../../../../../../../shared';
+
 const chartEditorMock = {
     getLang: () => {
         return 'en';
@@ -59,7 +61,7 @@ export const barXColoringBaseArgs = {
                 labelsView: 'auto',
                 holidays: 'off',
                 axisFormatMode: 'auto',
-                axisModeMap: {'e83fb454-ca9a-4083-95be-1994e9957655': 'continuous'},
+                axisModeMap: {'e83fb454-ca9a-4083-95be-1994e9957655': AxisMode.Continuous},
             },
         },
         {
@@ -636,7 +638,7 @@ export const barXPrepareForQLArgs = {
                 labelsView: 'auto',
                 holidays: 'off',
                 axisFormatMode: 'auto',
-                axisModeMap: {'built_year-0': 'discrete'},
+                axisModeMap: {'built_year-0': AxisMode.Discrete},
                 disableAxisMode: false,
             },
         },
