@@ -9,6 +9,7 @@ import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
 import intersection from 'lodash/intersection';
 import isEqual from 'lodash/isEqual';
+import {DashCommonQa} from 'shared';
 
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../../constants';
 import {getNormalizedAliases} from '../../helpers';
@@ -390,7 +391,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
                 showError={false}
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={i18n('button_apply')}
-                propsButtonApply={{disabled: disableApplyButton}}
+                propsButtonApply={{disabled: disableApplyButton, qa: DashCommonQa.AliasAddApplyBtn}}
                 propsButtonCancel={{view: 'outlined'}}
                 onClickButtonApply={handleApplyChanges}
                 onClickButtonCancel={handleCancel}

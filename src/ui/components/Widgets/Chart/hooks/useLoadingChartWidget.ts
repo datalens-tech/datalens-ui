@@ -67,7 +67,6 @@ type LoadingChartWidgetHookProps = Pick<
         widgetId: WidgetPluginProps['id'];
         currentTab: CurrentTab;
         hasHideTitleChanged?: boolean;
-        widgetDatasetFields?: string[] | null;
     };
 
 const WIDGET_DEBOUNCE_TIMEOUT = 300;
@@ -106,7 +105,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         widgetRenderTimeRef,
         usageType,
         enableActionParams,
-        widgetDatasetFields,
         settings,
     } = props;
 
@@ -125,18 +123,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const mutationObserver = React.useRef<MutationObserver | null>(null);
     const resizeObserver = React.useRef<ResizeObserver | null>(null);
 
-    const [onStateAndParamsChangeData, setOnStateAndParamsChangeData] =
-        React.useState<null | OnChangeData>(null);
-    const [isTriggeredChangedDataOnce, setIsTriggeredChangedDataOnce] = React.useState(false);
-
     const isNewRelations = useSelector(selectIsNewRelations);
-
-    /**
-     * waiting for dataset fields only for wizard charts with enableActionParams setting
-     */
-    const needWaitForDSFields = React.useMemo(() => {
-        return enableActionParams && isLoadedWidgetWizard && !widgetDatasetFields;
-    }, [isLoadedWidgetWizard, widgetDatasetFields, enableActionParams]);
 
     const history = useHistory();
 
@@ -188,10 +175,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      */
     const handleChangeCallback = React.useCallback(
         async (changedProps: OnChangeData) => {
-            if (needWaitForDSFields) {
-                setOnStateAndParamsChangeData(changedProps);
-                return;
-            }
             if (changedProps.type === 'PARAMS_CHANGED') {
                 onStateAndParamsChange(
                     {
@@ -201,7 +184,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 );
             }
         },
-        [onStateAndParamsChange, needWaitForDSFields],
+        [onStateAndParamsChange],
     );
 
     /**
@@ -284,7 +267,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 widgetId,
                 hideTitle: Boolean(data.hideTitle),
                 tabsLength: tabs.length,
-                needWaitForDSFields,
             }),
         [
             isLoading,
@@ -613,27 +595,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             setIsLoadedWidgetWizard(true);
         }
     }, [loadedData?.isNewWizard, isLoadedWidgetWizard]);
-
-    React.useEffect(() => {
-        const needFireChange =
-            !needWaitForDSFields &&
-            widgetDatasetFields &&
-            onStateAndParamsChangeData &&
-            !isTriggeredChangedDataOnce;
-        if (!needFireChange) {
-            return;
-        }
-
-        setIsTriggeredChangedDataOnce(true);
-        if (onStateAndParamsChangeData.type === 'PARAMS_CHANGED') {
-            onStateAndParamsChange({params: onStateAndParamsChangeData.data.params || {}});
-        }
-    }, [
-        needWaitForDSFields,
-        widgetDatasetFields,
-        onStateAndParamsChangeData,
-        isTriggeredChangedDataOnce,
-    ]);
 
     /**
      * set force load all charts (no matter if they are in viewport or not) if there is loadOnlyVisibleCharts setting disabled

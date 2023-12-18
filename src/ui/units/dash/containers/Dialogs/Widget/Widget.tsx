@@ -7,6 +7,7 @@ import {i18n} from 'i18n';
 import update, {Context, CustomCommands, Spec} from 'immutability-helper';
 import {ResolveThunks, connect} from 'react-redux';
 import {
+    DashCommonQa,
     DashTabItemWidget,
     DashTabItemWidgetTab,
     DialogDashWidgetQA,
@@ -495,6 +496,7 @@ class Widget extends React.PureComponent<Props, State> {
                                 size="m"
                                 onChange={this.onVisibilityCheckboxToggle}
                                 checked={!this.state.hideTitle}
+                                qa={DashCommonQa.WidgetShowTitleCheckbox}
                             >
                                 {i18n('dash.widget-dialog.edit', 'field_show-title')}
                             </Checkbox>

@@ -6,6 +6,7 @@ import {EntryTitle} from 'components/EntryTitle';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+import {DialogControlQa} from 'shared';
 import {NavigationMinimal, PLACE, QUICK_ITEMS, Utils, sdk} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 
@@ -184,6 +185,7 @@ class DropdownNavigation extends React.PureComponent {
                     onClick={() => this.setState({showNavigation: !this.state.showNavigation})}
                     ref={this.setButtonRef}
                     className={b('button')}
+                    qa={DialogControlQa.selectDatasetButton}
                 >
                     {this.state.entry ? (
                         <EntryTitle entry={this.state.entry} theme="inline" />

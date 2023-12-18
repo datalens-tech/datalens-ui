@@ -11,7 +11,6 @@ import {
     DashTabItemWidgetTab,
     Operations,
 } from 'shared';
-import {getConfigWithDSDefaults} from 'ui/units/dash/utils/helpers';
 
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
@@ -214,9 +213,6 @@ export const selectIsFullscreenMode = (state: DatalensGlobalState) => state.dash
 export const selectDashWorkbookId = (state: DatalensGlobalState) =>
     state.dash?.entry?.workbookId || null;
 
-export const selectDashWidgetsDatasetsFields = (state: DatalensGlobalState) =>
-    state.dash?.widgetsDatasetsFields || null;
-
 // reselectors below
 
 export const selectDashMode = createSelector([selectDash], (dash) => dash.mode);
@@ -333,13 +329,4 @@ export const selectCurrentTabConnectableItems = createSelector([selectCurrentTab
 export const selectCurrentTabAliases = createSelector(
     [selectCurrentTab],
     (currentTab) => currentTab?.aliases || null,
-);
-
-/**
- * Forming clone of currentTab but with merged dataset fields for wizard charts,
- * new object in order to not mutating origin currentTab (it causes errors in work)
- */
-export const selectCurrentTabWithDashDatasets = createSelector(
-    [selectCurrentTab, selectDashWidgetsDatasetsFields],
-    (currentTab, dashDatasetsFields) => getConfigWithDSDefaults(currentTab, dashDatasetsFields),
 );

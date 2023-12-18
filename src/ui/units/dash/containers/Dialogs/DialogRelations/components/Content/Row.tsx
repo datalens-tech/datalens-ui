@@ -3,6 +3,7 @@ import React from 'react';
 import {Button, DropdownMenu, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {DashCommonQa, DashRelationTypes} from 'shared';
 
 import {DEFAULT_ICON_SIZE, RELATION_TYPES, TEXT_LIMIT} from '../../constants';
 import {getDialogRowIcon} from '../../helpers';
@@ -241,7 +242,7 @@ const getDropdownItems = ({
         },
         icon: <Icon data={getLinkIcon(item)} size={ICON_SIZE} className={b('icon-link', item)} />,
         text: (
-            <div className={b('list-link')}>
+            <div className={b('list-link')} data-qa={DashRelationTypes[item as RelationType]}>
                 <span>{i18n(`label_${item}`)}</span>
                 <div className={b('info-text')}>
                     {getRelationDetailsText({
@@ -349,7 +350,11 @@ export const Row = ({
                             size="l"
                             items={items}
                             switcher={
-                                <Button view="flat" className={b('button-link')}>
+                                <Button
+                                    view="flat"
+                                    className={b('button-link')}
+                                    qa={DashCommonQa.RelationTypeButton}
+                                >
                                     <span className={b('button-link-icon-wrap')}>
                                         <Icon
                                             data={getLinkIcon(relationType)}

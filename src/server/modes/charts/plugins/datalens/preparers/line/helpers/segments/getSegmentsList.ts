@@ -1,5 +1,5 @@
-import {SortDirection} from '../../../../../../../../../shared';
-import {collator, isNumericalDataType, numericStringCollator} from '../../../../utils/misc-helpers';
+import {SortDirection, isNumberField} from '../../../../../../../../../shared';
+import {collator, numericStringCollator} from '../../../../utils/misc-helpers';
 
 import {getSegmentName} from './getSegmentName';
 import {GetSegmentsList, GetSortedSegmentsList} from './types';
@@ -23,17 +23,14 @@ export const getSegmentsList = (args: GetSegmentsList): string[] => {
 };
 
 export const getSortedSegmentsList = (args: GetSortedSegmentsList) => {
-    const {data, segmentIndexInOrder, sortItem, segmentField, idToDataType} = args;
+    const {data, segmentIndexInOrder, sortItem, segmentField} = args;
 
     if (!segmentField) {
         return [];
     }
 
     const segments = getSegmentsList({data, segmentField, segmentIndexInOrder});
-
-    const segmentType = idToDataType[segmentField.guid] || segmentField.data_type;
-    const sortFn = isNumericalDataType(segmentType) ? numericStringCollator : collator.compare;
-
+    const sortFn = isNumberField(segmentField) ? numericStringCollator : collator.compare;
     segments.sort(sortFn);
 
     if (
