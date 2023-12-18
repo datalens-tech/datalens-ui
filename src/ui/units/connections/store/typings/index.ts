@@ -41,15 +41,19 @@ import {
     SET_SUBMIT_LOADING,
     SET_UPLOADED_FILES,
     SET_VALIDATION_ERRORS,
+    SET_YADOCS_ACTIVE_DIALOG,
+    SET_YADOCS_ADD_SECTION_STATE,
 } from '../actions';
 
 import type {FileSource, ReplaceSourceActionData, UploadedFile} from './file';
 import type {GSheetActiveDialog, GSheetAddSectionState, GSheetItem} from './gsheet';
 import type {ReplaceSource} from './s3-based';
+import {YadocsActiveDialog, YadocsAddSectionState} from './yadocs';
 
 export * from './file';
 export * from './gsheet';
 export * from './s3-based';
+export * from './yadocs';
 
 export type GetState = () => DatalensGlobalState;
 
@@ -103,6 +107,10 @@ export type ConnectionsReduxState = {
         selectedItemId: string;
         addSectionState: GSheetAddSectionState;
         activeDialog?: GSheetActiveDialog;
+    };
+    yadocs: {
+        addSectionState: YadocsAddSectionState;
+        activeDialog?: YadocsActiveDialog;
     };
     currentTenantId?: string;
     entry?: GetEntryResponse;
@@ -311,6 +319,18 @@ export type SetGSheetActiveDialog = {
     };
 };
 
+export type SetYadocsAddSectionState = {
+    type: typeof SET_YADOCS_ADD_SECTION_STATE;
+    payload: Partial<GSheetAddSectionState>;
+};
+
+export type SetYadocsActiveDialog = {
+    type: typeof SET_YADOCS_ACTIVE_DIALOG;
+    payload: {
+        activeDialog?: YadocsActiveDialog;
+    };
+};
+
 export type ConnectionsReduxAction =
     | SetGroupedConnectors
     | SetFlattenConnectors
@@ -343,6 +363,8 @@ export type ConnectionsReduxAction =
     | SetGSheetItems
     | SetGSheetActiveDialog
     | OpenDialogAction
-    | CloseDialogAction;
+    | CloseDialogAction
+    | SetYadocsAddSectionState
+    | SetYadocsActiveDialog;
 
 export type ConnectionsReduxDispatch = AppDispatch<ConnectionsReduxAction>;

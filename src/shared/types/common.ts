@@ -104,6 +104,8 @@ export interface DLUserSettings {
         token: string;
         createdAt: string;
     };
+
+    new_year?: boolean;
 }
 
 export interface DLUserAccount {

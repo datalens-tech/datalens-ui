@@ -105,7 +105,11 @@ export class Helper {
                 entryId: '',
                 type: '',
             },
-            version: QlConfigVersions.V2,
+            colors: [],
+            shapes: [],
+            labels: [],
+            tooltips: [],
+            version: QlConfigVersions.V3,
         };
 
         return {

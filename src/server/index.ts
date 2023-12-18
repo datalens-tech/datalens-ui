@@ -7,12 +7,14 @@ import {getAppEndpointsConfig} from '../shared/endpoints';
 
 import {appEnv} from './app-env';
 import {getOpensourceLayoutConfig} from './components/layout/opensource-layout-config';
+import {convertConnectionType} from './modes/charts/plugins/ql/utils/connection';
 import initOpensourceApp from './modes/opensource/app';
 import {nodekit} from './nodekit';
 import {registry} from './registry';
 import {registerAppPlugins} from './registry/utils/register-app-plugins';
 
 registry.registerGetLayoutConfig(getOpensourceLayoutConfig);
+registry.registerConvertConnectorTypeToQLConnectionType(convertConnectionType);
 
 registerAppPlugins();
 

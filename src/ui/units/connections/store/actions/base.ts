@@ -29,6 +29,8 @@ import {
     SetSubmitLoading,
     SetUploadedFiles,
     SetValidationErrors,
+    SetYadocsActiveDialog,
+    SetYadocsAddSectionState,
 } from '../typings';
 
 export const SET_GROUPED_CONNECTORS = Symbol('connections/SET_GROUPED_CONNECTORS');
@@ -61,6 +63,8 @@ export const SET_GSHEET_SELECTED_ITEM_ID = Symbol('connections/SET_GSHEET_SELECT
 export const SET_GSHEET_COLUMN_FILTER = Symbol('connections/SET_GSHEET_COLUMN_FILTER');
 export const SET_GSHEET_ITEMS = Symbol('connections/SET_GSHEET_ITEMS');
 export const SET_GSHEET_ACTIVE_DIALOG = Symbol('connections/SET_GSHEET_ACTIVE_DIALOG');
+export const SET_YADOCS_ADD_SECTION_STATE = Symbol('connections/SET_YADOCS_ADD_SECTION_STATE');
+export const SET_YADOCS_ACTIVE_DIALOG = Symbol('connections/SET_YADOCS_ACTIVE_DIALOG');
 
 export function setEntry(payload: SetEntry['payload']): SetEntry {
     return {type: SET_ENTRY, payload};
@@ -282,6 +286,24 @@ export function setGSheetActiveDialog(
 ): SetGSheetActiveDialog {
     return {
         type: SET_GSHEET_ACTIVE_DIALOG,
+        payload,
+    };
+}
+
+export function setYadocsAddSectionState(
+    payload: SetYadocsAddSectionState['payload'],
+): SetYadocsAddSectionState {
+    return {
+        type: SET_YADOCS_ADD_SECTION_STATE,
+        payload,
+    };
+}
+
+export function setYadocsActiveDialog(
+    payload: SetYadocsActiveDialog['payload'],
+): SetYadocsActiveDialog {
+    return {
+        type: SET_YADOCS_ACTIVE_DIALOG,
         payload,
     };
 }

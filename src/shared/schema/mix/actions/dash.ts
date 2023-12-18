@@ -60,6 +60,7 @@ export const dashActions = {
         );
 
         const allDatasetsFetchedData = await Promise.all([...allDatasetsPromises]);
+
         const allDatasetsFetchedDataDict = allDatasetsFetchedData
             .filter((item) => Boolean(item.data && item.datasetId))
             .reduce((res: Record<string, DatasetDictResponse>, item: DatasetDictResponse) => {
@@ -129,6 +130,7 @@ export const dashActions = {
         );
 
         const allDatasetsFetchedData = await Promise.all([...allDatasetsPromises]);
+
         const allDatasetsFetchedDataDict = allDatasetsFetchedData
             .filter((item) => Boolean(item.data && item.datasetId))
             .reduce(
