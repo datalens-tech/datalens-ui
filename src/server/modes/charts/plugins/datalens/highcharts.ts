@@ -6,6 +6,7 @@ import {
     DATASET_FIELD_TYPES,
     Feature,
     LabelsPositions,
+    LegendDisplayMode,
     PlaceholderId,
     ServerChartsConfig,
     ServerPlaceholder,
@@ -243,7 +244,7 @@ export default (...options: [{shared: ServerChartsConfig} | ServerChartsConfig])
         chart.zoomType = undefined;
     }
 
-    if (shared.extraSettings && shared.extraSettings?.legendMode === 'hide') {
+    if (shared.extraSettings?.legendMode === LegendDisplayMode.Hide) {
         legend = {
             enabled: false,
         };

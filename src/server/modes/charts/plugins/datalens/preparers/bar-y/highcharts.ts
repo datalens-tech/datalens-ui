@@ -17,6 +17,7 @@ import {
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
+import {isLegendEnabled} from '../../utils/misc-helpers';
 import {getAxisType} from '../helpers/axis';
 import {
     getHighchartsColorAxis,
@@ -77,15 +78,13 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
     };
 
     if (ySectionItems.length) {
-        const isLegendEnabled = shared.extraSettings?.legendMode !== 'hide';
-
         if (shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
             customConfig.colorAxis = getHighchartsColorAxis(graphs, colorsConfig);
             customConfig.legend = {
                 title: {
                     text: getFakeTitleOrTitle(colorItem),
                 },
-                enabled: isLegendEnabled,
+                enabled: isLegendEnabled(shared.extraSettings),
                 symbolWidth: null,
             };
         }
@@ -122,7 +121,9 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
             }
         } else {
             customConfig.legend = {
-                enabled: Boolean(colorItem || x2 || ySectionItems.length > 1) && isLegendEnabled,
+                enabled:
+                    Boolean(colorItem || x2 || ySectionItems.length > 1) &&
+                    isLegendEnabled(shared.extraSettings),
             };
 
             const {yAxisFormattings, yAxisSettings} = getSegmentsYAxis(

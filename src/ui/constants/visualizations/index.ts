@@ -1,4 +1,4 @@
-import {AxisLabelFormatMode, AxisMode, LabelsPositions} from 'shared';
+import {AxisLabelFormatMode, AxisMode, LabelsPositions, LegendDisplayMode} from 'shared';
 
 export * from './flatTable';
 export * from './pivotTable';
@@ -105,8 +105,8 @@ export const CHART_SETTINGS = {
         HIDE: 'hide',
     },
     LEGEND: {
-        SHOW: 'show',
-        HIDE: 'hide',
+        SHOW: LegendDisplayMode.Show,
+        HIDE: LegendDisplayMode.Hide,
     },
     TOOLTIP_SUM: {
         ON: 'on',

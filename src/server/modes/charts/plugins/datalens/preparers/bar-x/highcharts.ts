@@ -15,7 +15,7 @@ import {
     isMeasureNameOrValue,
 } from '../../../../../../../shared';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
-import {isNumericalDataType} from '../../utils/misc-helpers';
+import {isLegendEnabled, isNumericalDataType} from '../../utils/misc-helpers';
 import {
     getHighchartsColorAxis,
     isXAxisReversed,
@@ -114,15 +114,13 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                 );
             }
 
-            const isLegendEnabled = shared.extraSettings?.legendMode !== 'hide';
-
             if (shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
                 customConfig.colorAxis = getHighchartsColorAxis(graphs, colorsConfig);
                 customConfig.legend = {
                     title: {
                         text: getFakeTitleOrTitle(colorItem),
                     },
-                    enabled: isLegendEnabled,
+                    enabled: isLegendEnabled(shared.extraSettings),
                     symbolWidth: null,
                 };
             }
@@ -179,7 +177,9 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
 
             if (isSegmentsExists) {
                 customConfig.legend = {
-                    enabled: Boolean(colorItem || x2 || yFields.length > 1) && isLegendEnabled,
+                    enabled:
+                        Boolean(colorItem || x2 || yFields.length > 1) &&
+                        isLegendEnabled(shared.extraSettings),
                 };
 
                 const {yAxisFormattings, yAxisSettings} = getSegmentsYAxis(

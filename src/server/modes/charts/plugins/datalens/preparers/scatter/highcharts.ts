@@ -4,6 +4,7 @@ import {
     AxisLabelFormatMode,
     ChartkitHandlers,
     ExtendedExportingCsvOptions,
+    LegendDisplayMode,
     isDateField,
 } from '../../../../../../../shared';
 import {getGradientStops} from '../../utils/color-helpers';
@@ -36,7 +37,7 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
         };
     }
 
-    const legendIsHidden = shared.extraSettings && shared.extraSettings?.legendMode === 'hide';
+    const legendIsHidden = shared.extraSettings?.legendMode === LegendDisplayMode.Hide;
 
     if (ChartEditor) {
         const xPlaceholder = placeholders.find((placeholder) => placeholder.id === 'x')!;
