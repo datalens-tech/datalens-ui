@@ -17,7 +17,7 @@ class DatasetSelector {
     async open() {
         await this.page.hover('.dataset-select');
 
-        await this.page.click(slct('dataset-select-more'));
+        await this.page.click(slct(SectionDatasetQA.DatasetSelectMore));
 
         await this.page.click(slct(SectionDatasetQA.SettingsDatasetButton));
     }
