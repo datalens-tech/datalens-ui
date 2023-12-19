@@ -1,9 +1,4 @@
-//@import '~@gravity-ui/uikit/styles/mixins';
-
 .dl-core-navigation-favorites-alias {
-    $class: &;
-    $checkboxWidth: 30px;
-
     width: 100%;
     height: 100%;
     position: relative;
@@ -17,11 +12,6 @@
         justify-content: center;
         cursor: pointer;
         border-radius: 4px;
-
-        #{$class}__row:hover &,
-        #{$class}__row_hovered & {
-            visibility: visible;
-        }
 
         &:hover,
         &_hovered {
@@ -39,22 +29,16 @@
         }
     }
 
-    &__icon-alias-stroke {
-        display: none;
+    &__lock {
+        margin: 2px 5px 0 10px;
+        flex: 0 0 16px;
+        color: var(--g-color-text-hint);
     }
-
-    // #{$class} &__lock {
-    //     width: 28px;
-    //     height: 28px;
-    //     margin: 0 10px;
-    //     flex: 0 0 16px;
-    //     color: var(--g-color-text-hint);
-    // }
 
     &__name-line {
         display: flex;
         flex: 1 1 auto;
-        line-height: 28px;
+        line-height: 20px;
         overflow: hidden;
     }
 }
