@@ -1,13 +1,12 @@
-import {Column} from '@gravity-ui/react-data-table';
-import {TableHead} from 'shared';
-import {TableProps} from 'ui/libs/DatalensChartkit/ChartKit/components/Widget/components/Table/types';
-import {
-    getActionParams,
-    getCellOnClick,
-} from 'ui/libs/DatalensChartkit/ChartKit/components/Widget/components/Table/utils/misc';
-import {ActionParamsData} from 'ui/libs/DatalensChartkit/ChartKit/components/Widget/components/Table/utils/types';
-import {CLICK_ACTION_TYPE} from 'ui/libs/DatalensChartkit/modules/constants/constants';
-import {DataTableData} from 'ui/libs/DatalensChartkit/types';
+import type {Column} from '@gravity-ui/react-data-table';
+import type {TableHead} from 'shared';
+
+import {CLICK_ACTION_TYPE} from '../../../../../../modules/constants/constants';
+import type {DataTableData} from '../../../../../../types';
+import type {TableProps} from '../types';
+
+import {getActionParams, getCellOnClick} from './misc';
+import {ActionParamsData} from './types';
 
 export const getCellClickArgs = (row: DataTableData | undefined, columnName: string) => {
     const onClick = getCellOnClick(row, columnName);
