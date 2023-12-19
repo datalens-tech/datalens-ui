@@ -5,6 +5,10 @@ body,
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+html,
+body {
     // for correct overflow: hidden in safari
     position: relative;
 }
