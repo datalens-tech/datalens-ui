@@ -151,7 +151,6 @@ export class List extends React.PureComponent<ListProps> {
                         displayParentFolder={this.props.displayParentFolder}
                         onEntryContextClick={this.props.onEntryContextClick}
                         onChangeFavorite={this.props.onChangeFavorite}
-                        onRenameFavorite={this.props.onRenameFavorite}
                         currentEntryContext={this.props.currentEntryContext}
                         currentPageEntry={this.props.currentPageEntry}
                         clickableScope={this.props.clickableScope}
@@ -165,6 +164,7 @@ export class List extends React.PureComponent<ListProps> {
                         onEntrySelect={this.props.onEntrySelect}
                         isBatchEnabled={this.props.isBatchEnabled}
                         entry={entry}
+                        onMenuClick={this.props.onMenuClick}
                     />
                 )}
             </div>

@@ -249,31 +249,15 @@
         }
     }
 
-    &__revert-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 28px;
-        height: 28px;
-        border-radius: 4px;
-
-        &:hover {
-            cursor: pointer;
-            background: var(--g-color-base-simple-hover);
-        }
-    }
-
     &__edit-alias-btn {
+        margin-right: 5px;
+
         &_visible {
             visibility: visible;
         }
     }
 
-    &__alias-input {
-        margin-right: 10px;
-    }
-
-    &__icon-pencil-stroke {
+    &__icon-alias-stroke {
         display: none;
     }
 

@@ -1,4 +1,3 @@
-/* eslint-disable complexity */
 import {DL} from 'constants/common';
 
 import React from 'react';
@@ -180,12 +179,6 @@ class NavigationEntries extends React.Component {
             this.setState({entries, filteredEntries});
         }
     }
-    changeFavoriteAlias(entryId, alias) {
-        const {entries: stateEntries} = this.state;
-        const entries = stateEntries.map((e) => (e.entryId === entryId ? {...e, alias} : e));
-        const filteredEntries = this.getFilteredEntries(entries);
-        this.setState({entries, filteredEntries});
-    }
     requestList({isSearch}) {
         const {
             scope,
@@ -319,26 +312,6 @@ class NavigationEntries extends React.Component {
             return result;
         }
     }
-
-    onRenameFavorite = async (entryId, name) => {
-        const {entries} = this.state;
-        const prevAlias = entries.find((e) => e.entryId === entryId).alias;
-        this.changeFavoriteAlias(entryId, name);
-
-        try {
-            await getSdk().us.renameFavorite({entryId, name});
-        } catch (error) {
-            logger.logError('NavigationEntries: onRenameFavorite failed', error);
-
-            this.changeFavoriteAlias(entryId, prevAlias);
-
-            this.props.showToast({
-                title: i18n('toast_failed-rename-favorite'),
-                name: 'RenameFavoriteFailed',
-                error,
-            });
-        }
-    };
 
     onChangeFavorite = async (entry) => {
         const {path} = this.props;
@@ -629,7 +602,10 @@ class NavigationEntries extends React.Component {
                     visible={true}
                     entry={this.state.currentEntryContext}
                     anchorRef={this.state.currentEntryContextButton}
-                    items={this.props.getContextMenuItems({entry: this.state.currentEntryContext})}
+                    items={this.props.getContextMenuItems({
+                        entry: this.state.currentEntryContext,
+                        place: this.state.place,
+                    })}
                     onMenuClick={this.props.onContextMenuClick}
                     onClose={this.closeEntryContextMenu}
                 />
@@ -682,6 +658,7 @@ class NavigationEntries extends React.Component {
                     isMobileNavigation={this.props.isMobileNavigation}
                     refreshNavigation={this.refresh}
                     onChangeLocation={this.props.onChangeLocation}
+                    onMenuClick={this.props.onContextMenuClick}
                 />
             </div>
         );

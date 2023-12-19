@@ -42,13 +42,20 @@ const OVERRIDE_CONTEXT_MENU = {
 
 // eslint-disable-next-line complexity
 export const getEntryContextMenuItems = (
-    {entry, isEditMode, showSpecificItems = false, isLimitedView = false} = {} as ContextMenuParams,
+    {
+        entry,
+        isEditMode,
+        place,
+        showSpecificItems = false,
+        isLimitedView = false,
+    } = {} as ContextMenuParams,
 ): EntryContextMenuItems => {
     const entryContextMenuItems = getFilteredEntryContextMenu({
         entry,
         isEditMode,
         showSpecificItems,
         isLimitedView,
+        place,
     }).map(
         (menuItem) =>
             ({
@@ -88,6 +95,7 @@ export const withConfiguredEntryContextMenu = (
                               isEditMode: props.isEditMode,
                               showSpecificItems: props.showSpecificItems,
                               isLimitedView: props.isLimitedView,
+                              // place: props.place,
                           }).concat(props.additionalItems),
                           {
                               type: 'entry',

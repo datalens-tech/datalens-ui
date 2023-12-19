@@ -50,7 +50,6 @@ type RowProps = Pick<
     | 'displayParentFolder'
     | 'onEntryContextClick'
     | 'onChangeFavorite'
-    | 'onRenameFavorite'
     | 'currentEntryContext'
     | 'currentPageEntry'
     | 'clickableScope'
@@ -60,6 +59,7 @@ type RowProps = Pick<
     | 'onEntryClick'
     | 'onEntryParentClick'
     | 'linkWrapper'
+    | 'onMenuClick'
 > &
     Pick<HookBatchSelectResult, 'isBatchEnabled' | 'onEntrySelect' | 'selectedIds'> & {
         entry: NavigationEntry;
@@ -76,7 +76,7 @@ export class Row extends React.Component<RowProps> {
             mode,
             place,
             isBatchEnabled,
-            onRenameFavorite,
+            onMenuClick,
         } = this.props;
         const {name, alias, entryId, hidden = false} = entry;
 
@@ -98,8 +98,8 @@ export class Row extends React.Component<RowProps> {
                 name={name}
                 alias={alias ?? ''}
                 isLocked={isLocked}
-                onRenameFavorite={onRenameFavorite}
-            ></FavoritesNameWithAliasItem>
+                onMenuClick={onMenuClick}
+            />
         ) : (
             <div title={name} className={b('name-line')}>
                 <span>{name}</span>

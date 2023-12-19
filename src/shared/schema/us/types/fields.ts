@@ -5,6 +5,7 @@ type EntryFieldPublishedId = null | string;
 
 // corresponds to RETURN_COLUMNS from US
 export interface EntryFields {
+    alias?: string | null;
     createdAt: string;
     createdBy: string;
     data: EntryFieldData;

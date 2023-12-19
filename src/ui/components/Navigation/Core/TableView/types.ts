@@ -1,5 +1,5 @@
 import type {NavigationEntry} from '../../../../../shared/schema';
-import {ChangeLocation, CurrentPageEntry, LinkWrapperArgs, Mode} from '../../types';
+import {ChangeLocation, CurrentPageEntry, LinkWrapperArgs, MenuClickArgs, Mode} from '../../types';
 import {checkEntryActivity} from '../../util';
 import {EntryContextButtonProps} from '../EntryContextButton/EntryContextButton';
 
@@ -19,7 +19,6 @@ export type TableViewProps = {
     onLoadMore: () => void;
     onEntryContextClick: EntryContextButtonProps['onClick'];
     onChangeFavorite: (entry: NavigationEntry) => void;
-    onRenameFavorite: (entryId: string, alias: string | null) => void;
     refreshNavigation: () => void;
     onChangeLocation: ChangeLocation;
     currentEntryContext?: NavigationEntry | null;
@@ -40,6 +39,7 @@ export type TableViewProps = {
     loading?: boolean;
     hasNextPage?: boolean;
     isMobileNavigation?: boolean;
+    onMenuClick: (args: MenuClickArgs) => void;
 };
 
 export type HookBatchSelectResult = {

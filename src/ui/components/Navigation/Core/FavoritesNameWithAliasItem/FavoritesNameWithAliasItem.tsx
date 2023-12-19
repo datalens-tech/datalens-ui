@@ -1,8 +1,11 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 
-import {ArrowRotateLeft, Lock, Pencil} from '@gravity-ui/icons';
-import {Icon, TextInput} from '@gravity-ui/uikit';
+import {Lock, Tag} from '@gravity-ui/icons';
+import {Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {ENTRY_CONTEXT_MENU_ACTION} from 'ui/components/EntryContextMenu';
+
+import {MenuClickArgs} from '../../types';
 
 const b = block('dl-core-navigation-table-view');
 
@@ -11,104 +14,49 @@ type FavoritesNameWithAliasItemProps = {
     name: string;
     alias: string;
     isLocked: boolean;
-    onRenameFavorite: (entryId: string, alias: string | null) => void;
+    onMenuClick: (args: MenuClickArgs) => void;
 };
 
 export const FavoritesNameWithAliasItem = (props: FavoritesNameWithAliasItemProps) => {
-    const {entryId, name, alias, isLocked, onRenameFavorite} = props;
+    const {name, alias, isLocked, onMenuClick} = props;
 
-    const inputRef = React.useRef<HTMLInputElement>(null);
-
-    const [editMode, setEditMode] = React.useState(false);
     const [localText, setLocalText] = React.useState('');
 
-    useEffect(() => {
+    React.useEffect(() => {
         const value = alias === '' ? name : alias;
         setLocalText(value);
     }, [alias, name]);
 
-    const submit = () => {
-        const str = localText.trim();
-        if (name !== str) {
-            onRenameFavorite(entryId, str);
-        } else if (alias !== '') {
-            onRenameFavorite(entryId, null);
-        }
-
-        setEditMode(false);
-    };
-
-    const onPencilClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const onLabelClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.preventDefault();
         e.stopPropagation();
 
-        setEditMode(true);
+        onMenuClick({
+            entry: {entryId: props.entryId, alias: props.alias},
+            action: ENTRY_CONTEXT_MENU_ACTION.EDIT_ALIAS,
+        });
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key !== 'Enter') {
-            return;
-        }
-
-        submit();
-    };
-
-    const handleUpdate = (str: string) => setLocalText(str);
-
-    const handleOnInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-    };
-
-    const handleBlur = () => submit();
-
-    const onRevertMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        onRenameFavorite(entryId, null);
-
-        setEditMode(false);
-    };
-
-    const isPencilVisible = alias !== '';
+    const isAliasVisible = alias !== '';
 
     return (
         <>
-            {editMode ? (
-                <div title={name} className={b('name-line')}>
-                    <TextInput
-                        controlRef={inputRef}
-                        className={b('alias-input')}
-                        autoComplete="off"
-                        autoFocus={true}
-                        controlProps={{onClick: handleOnInputClick}}
-                        value={localText}
-                        onKeyDown={handleKeyDown}
-                        onUpdate={handleUpdate}
-                        onBlur={handleBlur}
-                        rightContent={
-                            <div className={b('revert-btn')} onMouseDown={onRevertMouseDown}>
-                                <Icon data={ArrowRotateLeft} />
-                            </div>
-                        }
-                    />
-                    {isLocked ? <Icon data={Lock} className={b('lock')} /> : null}
-                </div>
-            ) : (
-                <>
-                    <div title={name} className={b('name-line')}>
-                        <span>{localText}</span>
-                        {isLocked ? <Icon data={Lock} className={b('lock')} /> : null}
-                    </div>
+            <div title={name} className={b('name-line')}>
+                <span>{localText}</span>
+                {isLocked ? <Icon data={Lock} className={b('lock')} /> : null}
+            </div>
 
-                    <div
-                        className={b('row-btn', b('edit-alias-btn', {visible: isPencilVisible}))}
-                        onClick={onPencilClick}
-                    >
-                        <Icon className={b('icon-pencil-fill')} data={Pencil} />
-                        <Icon className={b('icon-pencil-stroke')} data={Pencil} />
-                    </div>
+            {isAliasVisible && (
+                <>
+                    <Popover placement={['right', 'left', 'bottom', 'top']} content={name}>
+                        <div
+                            className={b('row-btn', b('edit-alias-btn', {visible: isAliasVisible}))}
+                            onClick={onLabelClick}
+                        >
+                            <Icon className={b('icon-alias-fill')} data={Tag} />
+                            <Icon className={b('icon-alias-stroke')} data={Tag} />
+                        </div>
+                    </Popover>
                 </>
             )}
         </>

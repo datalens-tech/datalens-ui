@@ -5,7 +5,7 @@ import {Icon} from '@gravity-ui/uikit';
 
 import type {NavigationEntry} from '../../../../../shared/schema';
 
-type OnClickArgs = {
+export type OnClickArgs = {
     buttonRef: React.RefObject<HTMLDivElement>;
     entry: NavigationEntry;
     event: React.MouseEvent<HTMLDivElement, MouseEvent>;

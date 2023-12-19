@@ -1,7 +1,13 @@
-import {Clock, Copy, FolderArrowDown, FontCursor, Link, TrashBin} from '@gravity-ui/icons';
+import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin} from '@gravity-ui/icons';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 
-import {EntryScope, Feature, isUsersFolder} from '../../../shared';
+import {
+    EntryScope,
+    Feature,
+    PLACE,
+    isFavoritesAliasAvailable,
+    isUsersFolder,
+} from '../../../shared';
 import {ALL_SCOPES, URL_QUERY} from '../../constants';
 import {registry} from '../../registry';
 import Utils from '../../utils/utils';
@@ -11,6 +17,8 @@ import {ContextMenuItem, ContextMenuParams} from './types';
 
 export const ENTRY_CONTEXT_MENU_ACTION = {
     RENAME: 'rename',
+    ADD_ALIAS: 'add-alias',
+    EDIT_ALIAS: 'edit-alias',
     DELETE: 'delete',
     MOVE: 'move',
     COPY: 'copy',
@@ -89,6 +97,30 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         scopes: ALL_SCOPES,
         isVisible({entry}: ContextMenuParams) {
             return !isUsersFolder(entry?.key);
+        },
+    },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.ADD_ALIAS,
+        action: ENTRY_CONTEXT_MENU_ACTION.ADD_ALIAS,
+        icon: Tag,
+        text: 'Добавить лейбл',
+        place: PLACE.FAVORITES,
+        enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
+        scopes: ALL_SCOPES,
+        isVisible({entry}: ContextMenuParams) {
+            return !isFavoritesAliasAvailable(entry?.alias);
+        },
+    },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.EDIT_ALIAS,
+        action: ENTRY_CONTEXT_MENU_ACTION.EDIT_ALIAS,
+        icon: Tag,
+        text: 'Изменить лейбл',
+        place: PLACE.FAVORITES,
+        enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
+        scopes: ALL_SCOPES,
+        isVisible({entry}: ContextMenuParams) {
+            return isFavoritesAliasAvailable(entry?.alias);
         },
     },
     {

@@ -170,6 +170,26 @@ class NavigationBase extends React.Component {
         });
         this.update(response, EntryDialogName.Rename, entry);
     }
+    async addAliasToEntry(entry) {
+        const response = await this.refDialogues.current.open({
+            dialog: EntryDialogName.AddAlias,
+            dialogProps: {
+                entryId: entry.entryId,
+                alias: entry.alias,
+            },
+        });
+        this.update(response, EntryDialogName.AddAlias, entry);
+    }
+    async editAliasInEntry(entry) {
+        const response = await this.refDialogues.current.open({
+            dialog: EntryDialogName.EditAlias,
+            dialogProps: {
+                entryId: entry.entryId,
+                alias: entry.alias,
+            },
+        });
+        this.update(response, EntryDialogName.EditAlias, entry);
+    }
     async moveEntry(entry) {
         const response = await this.refDialogues.current.open({
             dialog: EntryDialogName.Move,
@@ -312,6 +332,12 @@ class NavigationBase extends React.Component {
             case ENTRY_CONTEXT_MENU_ACTION.RENAME: {
                 return this.renameEntry(entry);
             }
+            case ENTRY_CONTEXT_MENU_ACTION.ADD_ALIAS: {
+                return this.addAliasToEntry(entry);
+            }
+            case ENTRY_CONTEXT_MENU_ACTION.EDIT_ALIAS: {
+                return this.editAliasInEntry(entry);
+            }
             case ENTRY_CONTEXT_MENU_ACTION.MOVE: {
                 return this.moveEntry(entry);
             }
@@ -358,11 +384,16 @@ class NavigationBase extends React.Component {
     }
     render() {
         const {root, navConstructor, sdk, navigationUrl, closeNavigation, ...props} = this.props;
-        const getMenuItems = (params) =>
-            getGroupedMenu(getEntryContextMenuItems(params), {
+        const getMenuItems = (params) => {
+            const items = getEntryContextMenuItems(params);
+
+            const menu = getGroupedMenu(items, {
                 type: 'entry',
                 isFlat: Utils.isEnabledFeature(Feature.MenuItemsFlatView),
             });
+
+            return menu;
+        };
         const navigationNode = React.createElement(navConstructor, {
             ref: this.refNavigation,
             sdk,
