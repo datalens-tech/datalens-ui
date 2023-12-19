@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import get from 'lodash/get';
 
 import {
     ChartkitGlobalSettings,
@@ -198,4 +199,12 @@ export function getHighchartsAnalog(visualizationId: WizardVisualizationId) {
 
 export function getD3Analog(visualizationId: WizardVisualizationId) {
     return highchartsD3Map.find(([hc, _d3]) => hc === visualizationId)?.[1];
+}
+
+export function getDefaultVisualization() {
+    const defaultVisualizationIds = [WizardVisualizationId.Column, WizardVisualizationId.BarXD3];
+
+    return getAvailableVisualizations().find((v) => {
+        return defaultVisualizationIds.includes(v.id as WizardVisualizationId) && !get(v, 'hidden');
+    });
 }
