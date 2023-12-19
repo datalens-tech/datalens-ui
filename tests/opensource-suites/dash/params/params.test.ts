@@ -2,17 +2,9 @@ import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 
-import {
-    deleteEntity,
-    getUniqueTimestamp,
-    openTestPage,
-    slct,
-    waitForCondition,
-} from '../../../utils';
+import {deleteEntity, openTestPage, slct, waitForCondition} from '../../../utils';
 
-import {COMMON_SELECTORS} from '../../../utils/constants';
 import {
-    ControlQA,
     DialogDashWidgetQA,
     NavigationInputQA,
     ParamsSettingsQA,
@@ -279,33 +271,35 @@ const removeParam = async (page: Page, paramTitle: string) => {
 
 datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters`, () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const dashName = `e2e-test-dash-params-${getUniqueTimestamp()}`;
         const dashboardPage = new DashboardPage({page});
         const workbookPO = new Workbook(page);
 
         await openTestPage(page, WorkbooksUrls.E2EWorkbook);
 
-        await workbookPO.createEntryButton.createDashboard();
-
-        await dashboardPage.addChart({
-            chartName: ChartsParams.citySalesPieChart.name,
-            chartUrl: ChartsParams.citySalesPieChart.url,
+        await workbookPO.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addChart({
+                    chartName: ChartsParams.citySalesPieChart.name,
+                    chartUrl: ChartsParams.citySalesPieChart.url,
+                });
+            },
         });
+    });
 
-        await dashboardPage.clickSaveButton();
+    datalensTest.afterEach(async ({page}: {page: Page}) => {
+        const dashboardPage = new DashboardPage({page});
 
-        await workbookPO.dialogCreateEntry.waitForOpen();
-        await workbookPO.dialogCreateEntry.fillNameField(dashName);
-        await workbookPO.dialogCreateEntry.clickApplyButton();
+        await dashboardPage.exitEditMode();
+        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
     });
 
     datalensTest(
         'Parsing of chart parameters when adding a chart by link',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
-            await page.click(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
+            await dashboardPage.enterEditMode();
 
-            await page.click(slct(ControlQA.controlSettings));
+            await dashboardPage.clickFirstControlSettingsButton();
 
             // finding the current element with a link to the chart to attach parameters to it
             const chartLinkEl = await dashboardPage.waitForSelector(slct(NavigationInputQA.Open));
@@ -369,17 +363,14 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
             expect(actualParams).toEqual(paramsString);
 
             await page.click(slct(DialogDashWidgetQA.Cancel));
-
-            await dashboardPage.exitEditMode();
-            await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
         },
     );
 
     datalensTest('Correct addition/removal of parameters', async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 
-        await page.click(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
-        await page.click(slct(ControlQA.controlSettings));
+        await dashboardPage.enterEditMode();
+        await dashboardPage.clickFirstControlSettingsButton();
 
         // getting the current chart parameters
         const currentParams = await getParamsFromPage(page);
@@ -435,8 +426,5 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
         expect(actualParams).toEqual([newParam.join('=')]);
 
         await page.click(slct(DialogDashWidgetQA.Cancel));
-
-        await dashboardPage.exitEditMode();
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
     });
 });
