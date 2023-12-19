@@ -187,11 +187,7 @@
     "toast_failed-add-favorite": {
       "en": "APPROVED",
       "ru": "APPROVED"
-    },
-    "toast_failed-rename-favorite": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },    
+    },   
     "toast_failed-remove-favorite": {
       "en": "APPROVED",
       "ru": "APPROVED"

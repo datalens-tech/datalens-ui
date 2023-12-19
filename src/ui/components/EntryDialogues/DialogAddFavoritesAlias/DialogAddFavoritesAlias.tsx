@@ -14,12 +14,12 @@ import {EntryDialogProps} from '../types';
 const b = block('dl-public-alert-dialog');
 const i18n = I18n.keyset('component.dialog-rename-entry.view');
 
-export interface DialogAddAliasEntryProps extends EntryDialogProps {
+export interface DialogAddFavoritesAliasProps extends EntryDialogProps {
     entryId: string;
     alias: string | null;
 }
 
-export const DialogAddAliasEntry: React.FC<DialogAddAliasEntryProps> = ({
+export const DialogAddFavoritesAlias: React.FC<DialogAddFavoritesAliasProps> = ({
     entryId,
     visible,
     alias,
@@ -40,22 +40,26 @@ export const DialogAddAliasEntry: React.FC<DialogAddAliasEntryProps> = ({
             if (name === '') name = null;
         }
 
-        try {
-            await getSdk().us.renameFavorite({entryId, name});
-            onClose({status: EntryDialogResolveStatus.Success});
-        } catch (error) {
-            logger.logError('DialogAddAliasEntry: renameAlias failed', error);
-
-            dispatch(
-                showToast({
-                    title: i18n('toast_rename-failed'),
-                    name: 'DialogAddAliasEntry',
-                    error,
-                    withReport: true,
-                }),
-            );
-
+        if (name === alias) {
             onClose({status: EntryDialogResolveStatus.Close});
+        } else {
+            try {
+                await getSdk().us.renameFavorite({entryId, name});
+                onClose({status: EntryDialogResolveStatus.Success});
+            } catch (error) {
+                logger.logError('DialogAddFavoritesAlias: renameAlias failed', error);
+
+                dispatch(
+                    showToast({
+                        title: i18n('toast_rename-failed'),
+                        name: 'DialogAddFavoritesAlias',
+                        error,
+                        withReport: true,
+                    }),
+                );
+
+                onClose({status: EntryDialogResolveStatus.Close});
+            }
         }
     }
 
@@ -87,7 +91,7 @@ export const DialogAddAliasEntry: React.FC<DialogAddAliasEntryProps> = ({
             <div className={b()}>
                 <Dialog.Header caption={caption} />
                 <Dialog.Body>
-                    <div className={b('content')} data-qa="entry-dialog-content">
+                    <div className={b('content')}>
                         <TextInput
                             autoFocus={true}
                             size="l"

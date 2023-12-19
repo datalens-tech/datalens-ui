@@ -170,25 +170,25 @@ class NavigationBase extends React.Component {
         });
         this.update(response, EntryDialogName.Rename, entry);
     }
-    async addAliasToEntry(entry) {
+    async addFavoritesAliasEntry(entry) {
         const response = await this.refDialogues.current.open({
-            dialog: EntryDialogName.AddAlias,
+            dialog: EntryDialogName.AddFavoritesAlias,
             dialogProps: {
                 entryId: entry.entryId,
                 alias: entry.alias,
             },
         });
-        this.update(response, EntryDialogName.AddAlias, entry);
+        this.update(response, EntryDialogName.AddFavoritesAlias, entry);
     }
-    async editAliasInEntry(entry) {
+    async editFavoritesAliasEntry(entry) {
         const response = await this.refDialogues.current.open({
-            dialog: EntryDialogName.EditAlias,
+            dialog: EntryDialogName.EditFavoritesAlias,
             dialogProps: {
                 entryId: entry.entryId,
                 alias: entry.alias,
             },
         });
-        this.update(response, EntryDialogName.EditAlias, entry);
+        this.update(response, EntryDialogName.EditFavoritesAlias, entry);
     }
     async moveEntry(entry) {
         const response = await this.refDialogues.current.open({
@@ -333,10 +333,10 @@ class NavigationBase extends React.Component {
                 return this.renameEntry(entry);
             }
             case ENTRY_CONTEXT_MENU_ACTION.ADD_ALIAS: {
-                return this.addAliasToEntry(entry);
+                return this.addFavoritesAliasEntry(entry);
             }
             case ENTRY_CONTEXT_MENU_ACTION.EDIT_ALIAS: {
-                return this.editAliasInEntry(entry);
+                return this.editFavoritesAliasEntry(entry);
             }
             case ENTRY_CONTEXT_MENU_ACTION.MOVE: {
                 return this.moveEntry(entry);
