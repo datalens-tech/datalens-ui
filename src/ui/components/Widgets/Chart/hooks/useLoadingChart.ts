@@ -211,13 +211,23 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 ? omit(localParams, clearedOuterParams)
                 : localParams;
 
-            res = {
-                ...res,
-                params: {
-                    ...filteredLocalParams,
-                    ...params,
-                },
-            };
+            // when clear params of widget from outer (ex cleared actionParams from other chart cause empty params in curent)
+            if (hasChangedOuterParams && isEmpty(params)) {
+                res = {
+                    ...res,
+                    params: {
+                        ...params,
+                    },
+                };
+            } else {
+                res = {
+                    ...res,
+                    params: {
+                        ...filteredLocalParams,
+                        ...params,
+                    },
+                };
+            }
         } else {
             res = {
                 ...res,
