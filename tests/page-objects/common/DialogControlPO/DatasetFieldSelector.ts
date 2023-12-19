@@ -2,7 +2,7 @@ import {Page} from '@playwright/test';
 import {slct} from '../../../utils';
 
 import {DialogControlQa} from '../../../../src/shared/constants/qa/control';
-import {ListItemByParams} from 'page-objects/types';
+import {ListItemByParams} from '../../../page-objects/types';
 
 export class DatasetFieldSelector {
     static selectors = {
