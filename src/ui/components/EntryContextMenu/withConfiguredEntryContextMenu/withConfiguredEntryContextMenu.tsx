@@ -95,7 +95,6 @@ export const withConfiguredEntryContextMenu = (
                               isEditMode: props.isEditMode,
                               showSpecificItems: props.showSpecificItems,
                               isLimitedView: props.isLimitedView,
-                              // place: props.place,
                           }).concat(props.additionalItems),
                           {
                               type: 'entry',
