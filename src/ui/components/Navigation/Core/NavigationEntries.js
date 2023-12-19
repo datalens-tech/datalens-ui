@@ -647,7 +647,6 @@ class NavigationEntries extends React.Component {
                     currentEntryContext={currentEntryContext}
                     displayParentFolder={!this.props.isMobileNavigation && displayParentFolder}
                     onChangeFavorite={this.onChangeFavorite}
-                    onRenameFavorite={this.onRenameFavorite}
                     onEntryContextClick={this.onEntryContextClick}
                     onCloseEntryContextMenu={this.closeEntryContextMenu}
                     onEntryParentClick={this.props.onEntryParentClick}

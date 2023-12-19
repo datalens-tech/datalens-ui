@@ -386,12 +386,10 @@ class NavigationBase extends React.Component {
         const {root, navConstructor, sdk, navigationUrl, closeNavigation, ...props} = this.props;
         const getMenuItems = (params) => {
             const items = getEntryContextMenuItems(params);
-
             const menu = getGroupedMenu(items, {
                 type: 'entry',
                 isFlat: Utils.isEnabledFeature(Feature.MenuItemsFlatView),
             });
-
             return menu;
         };
         const navigationNode = React.createElement(navConstructor, {

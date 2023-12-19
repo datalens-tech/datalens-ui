@@ -11,8 +11,10 @@ import {showToast} from 'ui/store/actions/toaster';
 import {EntryDialogResolveStatus} from '../constants';
 import {EntryDialogProps} from '../types';
 
-const b = block('dl-public-alert-dialog');
-const i18n = I18n.keyset('component.dialog-rename-entry.view');
+import './DialogAddFavoritesAlias.scss';
+
+const b = block('dl-add-favorites-alias');
+const i18n = I18n.keyset('component.dialog-add-favorites-alias.view');
 
 export interface DialogAddFavoritesAliasProps extends EntryDialogProps {
     entryId: string;
@@ -51,7 +53,7 @@ export const DialogAddFavoritesAlias: React.FC<DialogAddFavoritesAliasProps> = (
 
                 dispatch(
                     showToast({
-                        title: i18n('toast_rename-failed'),
+                        title: i18n('toast_rename-favorites-alias-failed'),
                         name: 'DialogAddFavoritesAlias',
                         error,
                         withReport: true,
@@ -77,7 +79,7 @@ export const DialogAddFavoritesAlias: React.FC<DialogAddFavoritesAliasProps> = (
 
     const aliasExists = alias !== '' && alias !== null;
 
-    const caption = aliasExists ? 'Изменить лейбл' : 'Добавить лейбл';
+    const caption = aliasExists ? i18n('caption_rename') : i18n('caption_add');
 
     return (
         <Dialog
@@ -105,7 +107,7 @@ export const DialogAddFavoritesAlias: React.FC<DialogAddFavoritesAliasProps> = (
                 <Dialog.Footer
                     onClickButtonCancel={onCloseDialog}
                     onClickButtonApply={onApplyDialog}
-                    textButtonApply={'Сохранить'}
+                    textButtonApply={i18n('button_apply')}
                     textButtonCancel={i18n('button_cancel')}
                 >
                     {aliasExists && (
@@ -115,7 +117,7 @@ export const DialogAddFavoritesAlias: React.FC<DialogAddFavoritesAliasProps> = (
                             disabled={false}
                             onClick={onResetAlias}
                         >
-                            Удалить лейбл
+                            {i18n('button_delete')}
                         </Button>
                     )}
                 </Dialog.Footer>
