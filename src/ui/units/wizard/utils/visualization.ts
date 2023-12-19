@@ -5,6 +5,7 @@ import {
     DatasetFieldAggregation,
     Field,
     Shared,
+    WizardVisualizationId,
     isFieldHierarchy,
     isParameter,
 } from '../../../../shared';
@@ -182,4 +183,19 @@ export function getAvailableVisualizations(options?: ChartkitGlobalSettings) {
     ];
 
     return _.cloneDeep(items.filter((item) => item.enabled).map(({value}) => value));
+}
+
+const highchartsD3Map = [
+    [WizardVisualizationId.Line, WizardVisualizationId.LineD3],
+    [WizardVisualizationId.Column, WizardVisualizationId.BarXD3],
+    [WizardVisualizationId.Scatter, WizardVisualizationId.ScatterD3],
+    [WizardVisualizationId.Pie, WizardVisualizationId.PieD3],
+];
+
+export function getHighchartsAnalog(visualizationId: WizardVisualizationId) {
+    return highchartsD3Map.find(([_hc, d3]) => d3 === visualizationId)?.[0];
+}
+
+export function getD3Analog(visualizationId: WizardVisualizationId) {
+    return highchartsD3Map.find(([hc, _d3]) => hc === visualizationId)?.[1];
 }

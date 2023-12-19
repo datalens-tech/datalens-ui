@@ -36,6 +36,7 @@ import {DEFAULT_PAGE_ROWS_LIMIT} from '../../../../../constants/misc';
 import {getQlAutoExecuteChartValue} from '../../../../ql/utils/chart-settings';
 import {CHART_SETTINGS, SETTINGS, VISUALIZATION_IDS} from '../../../constants';
 import {getDefaultChartName} from '../../../utils/helpers';
+import {getD3Analog, getHighchartsAnalog} from '../../../utils/visualization';
 
 import LimitInput from './LimitInput/LimitInput';
 import SettingFeed from './SettingFeed/SettingFeed';
@@ -417,21 +418,12 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const {visualization} = this.props;
         const {d3Fallback} = this.state;
 
-        const highchartsD3Map: Record<string, string> = {
-            [WizardVisualizationId.Scatter]: WizardVisualizationId.ScatterD3,
-            [WizardVisualizationId.Pie]: WizardVisualizationId.PieD3,
-            [WizardVisualizationId.Column]: WizardVisualizationId.BarXD3,
-        };
-        const D3HighchartsMap = Object.fromEntries(
-            Object.entries(highchartsD3Map).map(([key, value]) => [value, key]),
-        );
-
-        if (d3Fallback === CHART_SETTINGS.D3_FALLBACK.OFF && visualization.id in highchartsD3Map) {
-            return highchartsD3Map[visualization.id] as WizardVisualizationId;
+        if (d3Fallback === CHART_SETTINGS.D3_FALLBACK.OFF) {
+            return getD3Analog(visualization.id as WizardVisualizationId);
         }
 
-        if (d3Fallback === CHART_SETTINGS.D3_FALLBACK.ON && visualization.id in D3HighchartsMap) {
-            return D3HighchartsMap[visualization.id] as WizardVisualizationId;
+        if (d3Fallback === CHART_SETTINGS.D3_FALLBACK.ON) {
+            return getHighchartsAnalog(visualization.id as WizardVisualizationId);
         }
 
         return null;
@@ -794,23 +786,11 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     renderD3Switch() {
         const {visualization} = this.props;
         const {d3Fallback} = this.state;
-        const currentVisualizationId = visualization.id as WizardVisualizationId;
-        const isScatterVisualization = [
-            WizardVisualizationId.Scatter,
-            WizardVisualizationId.ScatterD3,
-        ].includes(currentVisualizationId);
-        const isPieVisualization = [
-            WizardVisualizationId.Pie,
-            WizardVisualizationId.PieD3,
-        ].includes(currentVisualizationId);
-        const isColumnVisualization = [
-            WizardVisualizationId.Column,
-            WizardVisualizationId.BarXD3,
-        ].includes(currentVisualizationId);
-        const enabled =
-            (isScatterVisualization && Utils.isEnabledFeature(Feature.D3ScatterVisualization)) ||
-            (isPieVisualization && Utils.isEnabledFeature(Feature.D3PieVisualization)) ||
-            (isColumnVisualization && Utils.isEnabledFeature(Feature.D3BarXVisualization));
+        const visualizationId = visualization.id as WizardVisualizationId;
+        const hasOtherLibraryAnalog = isD3Visualization(visualizationId)
+            ? getHighchartsAnalog(visualizationId)
+            : getD3Analog(visualizationId);
+        const enabled = hasOtherLibraryAnalog && Utils.isEnabledFeature(Feature.D3Visualizations);
 
         if (!enabled) {
             return null;

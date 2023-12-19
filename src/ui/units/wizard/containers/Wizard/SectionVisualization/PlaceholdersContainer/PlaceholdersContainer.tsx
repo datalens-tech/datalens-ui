@@ -7,6 +7,7 @@ import {Dispatch, bindActionCreators} from 'redux';
 import {
     Field,
     Placeholder,
+    PlaceholderId,
     Shared,
     VisualizationLayerShared,
     VisualizationWithLayersShared,
@@ -71,7 +72,6 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
             qlMode,
         );
 
-        const placeholders = visualization.placeholders;
         const allowShapes =
             currentVisualization?.allowShapes &&
             !(qlMode && qlChartType && isYAGRVisualization(qlChartType, currentVisualization.id));
@@ -88,21 +88,31 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         onUpdate={onUpdate}
                     />
                 )}
-                {placeholders.map((placeholder: Placeholder) => {
+                {currentVisualization?.placeholders.map((placeholderConfig: Placeholder) => {
+                    const placeholder = visualization.placeholders.find(
+                        (p) => p.id === placeholderConfig.id,
+                    );
                     const placeholderNode = (
                         <VisualizationPlaceholder
                             wrapTo={this.renderDatasetItem}
                             onBeforeRemoveItem={this.removeItemQuickFormula}
                             datasetError={datasetError}
                             visualization={visualization}
-                            placeholder={placeholder}
-                            key={`${placeholder.id}-placeholder-component`}
+                            placeholder={{
+                                ...placeholderConfig,
+                                items: placeholder?.items || [],
+                                settings: placeholder?.settings,
+                            }}
+                            key={`${placeholderConfig.id}-placeholder-component`}
                             onUpdate={onUpdate}
                             addFieldItems={this.addFieldItems}
                         />
                     );
 
-                    if (placeholder.id === 'x' && globalVisualization.id === 'combined-chart') {
+                    if (
+                        placeholderConfig.id === PlaceholderId.X &&
+                        globalVisualization.id === WizardVisualizationId.CombinedChart
+                    ) {
                         return (
                             <React.Fragment key="section-with-layer-control">
                                 {placeholderNode}

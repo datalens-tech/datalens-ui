@@ -5,19 +5,18 @@ import type {
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
 import {PlaceholderId, ServerField} from '../../../../../../../shared';
-import {getAxisType} from '../../d3/utils';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
+import {getAxisType} from '../helpers/axis';
 import {PrepareFunctionArgs} from '../types';
 
-import {getYFields} from './utils/fields';
-
-import prepareLine from './index';
+import {prepareLineData} from './prepare-line-data';
 
 export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
     const {labels, placeholders, disableDefaultSorting = false} = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
-    const yFields = getYFields(placeholders);
+    const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
+    const yFields = yPlaceholder?.items || [];
     const labelField = labels?.[0];
     const isDataLabelsEnabled = Boolean(labelField);
     const isCategoriesXAxis =
@@ -33,7 +32,7 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
         };
     }
 
-    const preparedData = prepareLine(args);
+    const preparedData = prepareLineData(args);
     const xCategories = preparedData.categories;
 
     const seriesData: LineSeries[] = preparedData.graphs.map<LineSeries>((graph: any) => {
