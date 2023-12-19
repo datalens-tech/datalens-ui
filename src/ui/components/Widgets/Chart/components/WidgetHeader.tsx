@@ -30,12 +30,13 @@ type HeaderProps = {
     editMode: boolean;
     hideTabs: boolean;
     withShareWidget: boolean;
-    tabsItems: Array<TabItem>;
-    currentTab: CurrentTab;
-    onSelectTab: (param: string) => void;
+    tabsItems?: Array<TabItem>;
+    currentTab?: CurrentTab;
+    onSelectTab?: (param: string) => void;
     hideDebugTool?: boolean;
     showActionParamsFilter?: boolean;
-    onFiltersClear: () => void;
+    onFiltersClear?: () => void;
+    title?: string;
 };
 
 const socialNets = [ShareOptions.Telegram, ShareOptions.Twitter, ShareOptions.VK];
@@ -55,13 +56,19 @@ export const WidgetHeader = (props: HeaderProps) => {
         hideDebugTool,
         showActionParamsFilter,
         onFiltersClear,
+        title,
     } = props;
 
     const size = isMobileView ? MOBILE_SIZE.TABS : 'm';
 
+    const showTabs = tabsItems && currentTab && onSelectTab;
+
+    const widgetTitle = currentTab?.title || title;
+    const showFiltersClear = showActionParamsFilter && onFiltersClear;
+
     const renderTabs = () => (
         <div className={b('tabs', {'edit-mode': editMode}, DRAGGABLE_HANDLE_CLASS_NAME)}>
-            {!hideTabs && (
+            {showTabs && (
                 <AdaptiveTabs
                     size={size}
                     items={tabsItems}
@@ -107,19 +114,19 @@ export const WidgetHeader = (props: HeaderProps) => {
                         <Icon data={ArrowLeft} />
                     </span>
                 )}
-                {isFullscreen ? <div className={b('title')}>{currentTab.title}</div> : renderTabs()}
+                {hideTabs ? <div className={b('title')}>{widgetTitle}</div> : renderTabs()}
                 {withShareWidget && (
                     <div className={b('share-widget')}>
                         <SharePopover
                             useWebShareApi={DL.IS_MOBILE}
                             url={window.location.href}
-                            title={currentTab.title}
-                            text={currentTab.title}
+                            title={widgetTitle}
+                            text={widgetTitle}
                             shareOptions={socialNets}
                         />
                     </div>
                 )}
-                {showActionParamsFilter && (
+                {showFiltersClear && (
                     <div className={b('filters-controls')}>
                         <Button onClick={onFiltersClear}>
                             <Icon

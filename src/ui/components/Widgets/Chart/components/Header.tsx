@@ -6,6 +6,7 @@ import {StringParams} from 'shared';
 import {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
+import {isMobileView} from 'ui/utils/mobile';
 
 import {
     drawComments,
@@ -112,7 +113,7 @@ export const Header = (props: HeaderProps) => {
     };
 
     return (
-        <div className={b('chart-header')}>
+        <div className={b('chart-header', {mobile: isMobileView})}>
             {chartsInsightsData && (
                 <ChartsInsights
                     items={chartsInsightsData.items}

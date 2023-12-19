@@ -307,6 +307,11 @@ $fullscreenZIndex: 999;
     &__container &__chart-header {
         top: -4px;
         right: 3px;
+
+        &_mobile {
+            top: -40px;
+            right: 8px;
+        }
     }
     & .chartkit-loader__loader_compact {
         top: -35px;

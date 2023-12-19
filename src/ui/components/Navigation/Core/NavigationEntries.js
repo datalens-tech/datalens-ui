@@ -45,12 +45,16 @@ const mobileTabsItems = [
     {id: OWNERSHIP.FAVORITES, title: i18n('label_mobile-navigation-filters-favorites')},
 ];
 
+const MOBILE_PLACES = [MAP_PLACE_TO_SCOPE[PLACE.DASHBOARDS], MAP_PLACE_TO_SCOPE[PLACE.WIDGETS]];
+
 class NavigationEntries extends React.Component {
     static propTypes = {
         scope: PropTypes.string,
         path: PropTypes.string,
         place: PropTypes.string,
         mode: PropTypes.string,
+        // used only in mobile navigation
+        defaultPlace: PropTypes.string,
 
         clickableScope: PropTypes.string,
         inactiveEntryKeys: PropTypes.arrayOf(PropTypes.string),
@@ -92,12 +96,17 @@ class NavigationEntries extends React.Component {
             path === prevState.path &&
             place === prevState.place
         );
-        let {searchValue, hasNextPage, page} = prevState;
+        let {searchValue, hasNextPage, page, ownership} = prevState;
+
         if (needUpdate) {
             searchValue = '';
             hasNextPage = false;
             page = null;
         }
+        if (scope !== prevState.scope && scope !== MAP_PLACE_TO_SCOPE[PLACE.FAVORITES]) {
+            ownership = OWNERSHIP.ONLY_MINE;
+        }
+
         return {
             scope,
             path,
@@ -106,12 +115,14 @@ class NavigationEntries extends React.Component {
             searchValue,
             hasNextPage,
             page,
+            ownership,
         };
     }
     constructor(props) {
         super(props);
         const settings = new NavigationSettings();
         const createdBy = settings.getCreatedBy();
+
         this.state = {
             settings,
             entries: [],
@@ -147,7 +158,7 @@ class NavigationEntries extends React.Component {
             const showEntry = !entry.hidden || this.showHidden;
 
             return this.props.isMobileNavigation
-                ? showEntry && entry.scope === MAP_PLACE_TO_SCOPE[PLACE.DASHBOARDS]
+                ? showEntry && MOBILE_PLACES.includes(entry.scope)
                 : showEntry;
         });
     }
@@ -180,14 +191,7 @@ class NavigationEntries extends React.Component {
         }
     }
     requestList({isSearch}) {
-        const {
-            scope,
-            isMobileNavigation,
-            path = '',
-            place,
-            getPlaceParameters,
-            ignoreWorkbookEntries,
-        } = this.props;
+        const {scope, path = '', place, getPlaceParameters, ignoreWorkbookEntries} = this.props;
         const {page: currentPage, searchValue, orderBy} = this.state;
         const placeParameters = getPlaceParameters(place);
 
@@ -200,7 +204,7 @@ class NavigationEntries extends React.Component {
         return getSdk().mix.getNavigationList(
             {
                 place,
-                scope: isMobileNavigation ? MAP_PLACE_TO_SCOPE[PLACE.DASHBOARDS] : scope,
+                scope,
                 path: normalizeDestination(path),
                 orderBy,
                 createdBy:
@@ -452,6 +456,7 @@ class NavigationEntries extends React.Component {
     };
 
     onSelectTab = (tabId) => {
+        const {onPlaceChange, defaultPlace} = this.props;
         this.setState(
             {
                 ownership: tabId,
@@ -460,11 +465,11 @@ class NavigationEntries extends React.Component {
             },
             () => {
                 if (tabId === OWNERSHIP.ONLY_MINE || tabId === OWNERSHIP.ALL) {
-                    this.props.onPlaceChange(PLACE.DASHBOARDS);
+                    onPlaceChange(defaultPlace || PLACE.DASHBOARDS);
                     this.getListDirectory();
                     return;
                 }
-                this.props.onPlaceChange(PLACE.FAVORITES);
+                onPlaceChange(PLACE.FAVORITES);
             },
         );
     };
