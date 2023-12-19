@@ -17,8 +17,8 @@ import {ContextMenuItem, ContextMenuParams} from './types';
 
 export const ENTRY_CONTEXT_MENU_ACTION = {
     RENAME: 'rename',
-    ADD_ALIAS: 'add-alias',
-    EDIT_ALIAS: 'edit-alias',
+    ADD_FAVORITES_ALIAS: 'add-favorites-alias',
+    EDIT_FAVORITES_ALIAS: 'edit-favorites-alias',
     DELETE: 'delete',
     MOVE: 'move',
     COPY: 'copy',
@@ -100,8 +100,8 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         },
     },
     {
-        id: ENTRY_CONTEXT_MENU_ACTION.ADD_ALIAS,
-        action: ENTRY_CONTEXT_MENU_ACTION.ADD_ALIAS,
+        id: ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS,
+        action: ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS,
         icon: Tag,
         text: 'Добавить лейбл',
         place: PLACE.FAVORITES,
@@ -112,8 +112,8 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         },
     },
     {
-        id: ENTRY_CONTEXT_MENU_ACTION.EDIT_ALIAS,
-        action: ENTRY_CONTEXT_MENU_ACTION.EDIT_ALIAS,
+        id: ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS,
+        action: ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS,
         icon: Tag,
         text: 'Изменить лейбл',
         place: PLACE.FAVORITES,

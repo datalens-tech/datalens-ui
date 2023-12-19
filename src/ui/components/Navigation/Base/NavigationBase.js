@@ -332,10 +332,10 @@ class NavigationBase extends React.Component {
             case ENTRY_CONTEXT_MENU_ACTION.RENAME: {
                 return this.renameEntry(entry);
             }
-            case ENTRY_CONTEXT_MENU_ACTION.ADD_ALIAS: {
+            case ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS: {
                 return this.addFavoritesAliasEntry(entry);
             }
-            case ENTRY_CONTEXT_MENU_ACTION.EDIT_ALIAS: {
+            case ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS: {
                 return this.editFavoritesAliasEntry(entry);
             }
             case ENTRY_CONTEXT_MENU_ACTION.MOVE: {

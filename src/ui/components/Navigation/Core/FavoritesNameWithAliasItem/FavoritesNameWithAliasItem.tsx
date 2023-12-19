@@ -7,7 +7,9 @@ import {ENTRY_CONTEXT_MENU_ACTION} from 'ui/components/EntryContextMenu';
 
 import {MenuClickArgs} from '../../types';
 
-const b = block('dl-core-navigation-table-view');
+import './FavoritesNameWithAliasItem.scss';
+
+const b = block('dl-core-navigation-favorites-alias');
 
 type FavoritesNameWithAliasItemProps = {
     entryId: string;
@@ -33,7 +35,7 @@ export const FavoritesNameWithAliasItem = (props: FavoritesNameWithAliasItemProp
 
         onMenuClick({
             entry: {entryId: props.entryId, alias: props.alias},
-            action: ENTRY_CONTEXT_MENU_ACTION.EDIT_ALIAS,
+            action: ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS,
         });
     };
 
