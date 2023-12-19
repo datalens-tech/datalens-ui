@@ -1,5 +1,5 @@
-import {QlUrls, QlQueries, QlQa} from 'constants/test-entities/ql';
-import {QlParametrizationConfig} from 'types/config/ql';
+import {QlUrls, QlQueries, QlQa} from '../../constants/test-entities/ql';
+import {QlParametrizationConfig} from '../../types/config/ql';
 
 export const ql: QlParametrizationConfig = {
     urls: {

@@ -1,7 +1,7 @@
 import {Page} from '@playwright/test';
 
-import {WorkbooksUrls} from 'constants/constants';
-import {Workbook} from 'page-objects/workbook/Workbook';
+import {WorkbooksUrls} from '../../../constants/constants';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {deleteEntity} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';

@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {TestParametrizationConfig} from 'types/config';
+import {TestParametrizationConfig} from '../../../types/config';
 
 import QLPage from '../../../page-objects/ql/QLPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';

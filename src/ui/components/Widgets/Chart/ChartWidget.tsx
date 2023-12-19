@@ -105,6 +105,12 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     const hasHideTitleChanged =
         prevHideTitle !== undefined && !isEqual(data.hideTitle, prevHideTitle);
 
+    const prevEnableActionParams = usePrevious(currentTab.enableActionParams);
+    const hasEnableActionParamsChanged = Boolean(
+        prevEnableActionParams !== undefined &&
+            prevEnableActionParams !== currentTab.enableActionParams,
+    );
+
     const initialData: DataProps = React.useMemo(
         () =>
             getDataProviderData({
@@ -127,7 +133,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     const hasChangedOuterProps =
         !prevSavedProps ||
         !isEqual(omit(prevSavedProps, 'params'), omit(pick(props, influencingProps), 'params')) ||
-        Boolean(prevSavedChartId && prevSavedChartId !== chartId);
+        Boolean(prevSavedChartId && prevSavedChartId !== chartId) ||
+        hasEnableActionParamsChanged;
 
     let hasChangedActionParams = false;
 

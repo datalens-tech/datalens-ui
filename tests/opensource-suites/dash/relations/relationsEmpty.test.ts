@@ -4,8 +4,8 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {deleteEntity, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {DashCommonQa} from '../../../../src/shared';
-import {WorkbooksUrls} from 'constants/constants';
-import {Workbook} from 'page-objects/workbook/Workbook';
+import {WorkbooksUrls} from '../../../constants/constants';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
 
 const PARAMS = {
     DASH_NAME_PREFIX: 'e2e-test-dash',

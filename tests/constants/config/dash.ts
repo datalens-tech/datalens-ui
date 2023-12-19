@@ -1,5 +1,5 @@
-import {DashUrls} from 'constants/test-entities/dash';
-import {DashParametrizationConfig} from 'types/config/dash';
+import {DashUrls} from '../../constants/test-entities/dash';
+import {DashParametrizationConfig} from '../../types/config/dash';
 
 export const dash: DashParametrizationConfig = {
     urls: {

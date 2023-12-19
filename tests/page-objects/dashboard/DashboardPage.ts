@@ -27,8 +27,8 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
-import {ElementTypes} from 'page-objects/common/DialogControlPO/ElementType';
-import {SourceTypes} from 'page-objects/common/DialogControlPO/SourceType';
+import {ElementTypes} from '../../page-objects/common/DialogControlPO/ElementType';
+import {SourceTypes} from '../../page-objects/common/DialogControlPO/SourceType';
 import {
     DashboardDialogSettingsQa,
     DialogControlQa,
@@ -49,7 +49,7 @@ import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
 import Description from './Description';
 import TableOfContent from './TableOfContent';
-import {ListItemByParams} from 'page-objects/types';
+import {ListItemByParams} from '../../page-objects/types';
 import {Locator} from 'playwright-core';
 import {Workbook} from '../workbook/Workbook';
 import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';

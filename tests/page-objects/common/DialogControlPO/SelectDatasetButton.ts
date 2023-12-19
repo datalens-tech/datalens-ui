@@ -2,7 +2,7 @@ import {Page} from '@playwright/test';
 import {slct} from '../../../utils';
 
 import {DialogControlQa} from '../../../../src/shared/constants/qa/control';
-import {NavigationMinimalPopup} from 'page-objects/workbook/NavigationMinimalPopup';
+import {NavigationMinimalPopup} from '../../../page-objects/workbook/NavigationMinimalPopup';
 
 export class SelectDatasetButton {
     static selectors = {

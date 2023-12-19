@@ -28,6 +28,7 @@ import DatalensChartkitCustomError, {
     formatError,
 } from '../../../../libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {CombinedError, OnChangeData} from '../../../../libs/DatalensChartkit/types';
+import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
     WIDGET_CHART_RESET_CHANGED_PARAMS,
@@ -137,6 +138,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     } | null>(null);
     const [isWidgetMenuDataChanged, setIsWidgetMenuDataChanged] = React.useState<boolean>(false);
     const prevWidgetMenuData = usePrevious(widgetMenuData);
+    const prevInnerParamsRefCurrent = usePrevious(innerParamsRef?.current);
 
     const [
         {
@@ -838,23 +840,22 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 const needUpdateChartParams =
                     !isEqual(initialData.params, newParams) || callChangeByClick;
 
-                // if all action params contain empty values, we need to clean it
-                const isNewActionParamsEmpty = Object.values(
-                    pickActionParamsFromParams(newParams || {}),
-                ).every((item) => {
-                    if (typeof item === 'string') {
-                        return isEmpty(item.trim());
-                    } else {
-                        return isEmpty(item.filter((val) => !isEmpty(val.trim())));
-                    }
-                });
+                // if widget has setting filtering chart
+                // & prev loading chart params contained actionParams
+                // & newParams contain only empty values,
+                // we need to clean it
+                const needClearParamsQueue =
+                    enableActionParams &&
+                    !isAllParamsEmpty(
+                        pickActionParamsFromParams(prevInnerParamsRefCurrent || undefined),
+                    ) &&
+                    isAllParamsEmpty(newParams);
 
                 if (newParams && needUpdateChartParams) {
                     const actionName =
                         isEmpty(newParams) && callChangeByClick
                             ? WIDGET_CHART_RESET_CHANGED_PARAMS
                             : WIDGET_CHART_UPDATE_DATA_PARAMS;
-
                     dispatch({
                         type: actionName,
                         payload: newParams,
@@ -874,7 +875,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                     newParams
                 ) {
                     const options: ItemStateAndParamsChangeOptions | undefined =
-                        isNewActionParamsEmpty
+                        needClearParamsQueue
                             ? {
                                   action: 'removeItem',
                               }
@@ -898,7 +899,15 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 handleChangeCallback(res);
             }
         },
-        [dispatch, currentDrillDownLevel, handleChangeCallback, enableActionParams],
+        [
+            prevInnerParamsRefCurrent,
+            handleChangeCallback,
+            initialData.params,
+            innerParamsRef,
+            enableActionParams,
+            onInnerParamsChanged,
+            currentDrillDownLevel,
+        ],
     );
 
     const handleRetry = React.useCallback(

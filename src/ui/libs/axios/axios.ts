@@ -26,7 +26,7 @@ client.interceptors.request.use((config) => {
 client.interceptors.response.use(
     (data) => data,
     (error) => {
-        if (error?.response?.status === 503) {
+        if (error?.response?.status === 451) {
             showReadOnlyToast();
         }
 
