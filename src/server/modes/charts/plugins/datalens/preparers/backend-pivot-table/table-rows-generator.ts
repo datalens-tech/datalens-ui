@@ -2,6 +2,7 @@ import {
     ApiV2Annotations,
     BarViewOptions,
     ColorPalette,
+    IChartEditor,
     ServerColor,
     ServerField,
     getFormatOptions,
@@ -146,6 +147,7 @@ type GenerateTableRowsArgs = {
     pivotStructure: PivotDataStructure[];
     sortSettings: PivotTableSortSettings;
     headerTotalsIndexMap: Record<number, boolean>;
+    ChartEditor: IChartEditor;
 };
 
 export const generateTableRows = ({
@@ -159,6 +161,7 @@ export const generateTableRows = ({
     pivotStructure,
     sortSettings,
     headerTotalsIndexMap,
+    ChartEditor,
 }: GenerateTableRowsArgs): ChartkitTableRows => {
     const {rowsMeta, isSortByRowAllowed} = sortSettings;
     const cellId = {current: 0};
@@ -233,27 +236,36 @@ export const generateTableRows = ({
 
                 const isLastHeader = headerIndex === pivotDataRow.header.length - 1;
                 const isSortingAllowed =
-                    isSortByRowAllowed &&
-                    rowsMeta[rowIndex] &&
-                    datasetField &&
-                    isLastHeader &&
-                    // DLFR-1767 sorting for null values is not supported on the backend yet
-                    cell.value !== null;
+                    isSortByRowAllowed && rowsMeta[rowIndex] && datasetField && isLastHeader;
 
                 if (isSortingAllowed) {
-                    const sortMeta = getSortMeta({
-                        meta: rowsMeta[rowIndex],
-                        path: [...path, value],
-                        measureGuid,
-                        fieldOrder,
-                    });
-                    cell.sortDirection = sortMeta.currentSortDirection;
-                    cell.onClick = {
-                        action: 'setParams',
-                        args: {
-                            _sortRowMeta: JSON.stringify(sortMeta),
-                        },
-                    };
+                    if (cell.value === null) {
+                        // DLFR-1767 sorting for null values is not supported on the backend yet
+                        cell.onClick = {
+                            action: 'showMsg',
+                            args: {
+                                message: ChartEditor.getTranslation(
+                                    'wizard.prepares',
+                                    'label_null-sorting-disabled-info',
+                                ),
+                            },
+                        };
+                    } else {
+                        const sortMeta = getSortMeta({
+                            meta: rowsMeta[rowIndex],
+                            path: [...path, value],
+                            measureGuid,
+                            fieldOrder,
+                        });
+                        cell.sortDirection = sortMeta.currentSortDirection;
+                        cell.onClick = {
+                            action: 'setParams',
+                            args: {
+                                _sortRowMeta: JSON.stringify(sortMeta),
+                            },
+                        };
+                    }
+
                     cell.css = {
                         ...(cell.css || {}),
                         cursor: 'pointer',

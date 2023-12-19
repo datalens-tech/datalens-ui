@@ -164,6 +164,7 @@ const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTable
         pivotStructure,
         sortSettings,
         headerTotalsIndexMap,
+        ChartEditor: args.ChartEditor,
     });
 
     const columns = pivotData.columns;
