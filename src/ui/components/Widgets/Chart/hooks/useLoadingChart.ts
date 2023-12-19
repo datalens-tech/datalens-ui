@@ -840,7 +840,10 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 const needUpdateChartParams =
                     !isEqual(initialData.params, newParams) || callChangeByClick;
 
-                // if widget has setting filtering chart & prev loading chart params contained actionParams & newPara all action params contain empty values, we need to clean it
+                // if widget has setting filtering chart
+                // & prev loading chart params contained actionParams
+                // & newParams contain only empty values,
+                // we need to clean it
                 const needClearParamsQueue =
                     enableActionParams &&
                     !isAllParamsEmpty(
