@@ -73,8 +73,6 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
         series: {
             data: seriesData,
         },
-        // @ts-ignore
-        preparedData: preparedData,
     };
 
     if (config.series.data.length <= 1) {
