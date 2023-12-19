@@ -3,6 +3,7 @@ import React from 'react';
 import {DropdownMenu, DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
+import {WorkbookPage} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types';
 import {EntryScope} from 'shared/types/common';
 import Utils from 'ui/utils';
@@ -47,6 +48,7 @@ export const EntryActions = ({
                   {
                       action: onDuplicateEntry,
                       text: i18n('action_duplicate'),
+                      qa: WorkbookPage.MenuItemDuplicate,
                   },
               ]
             : []),
@@ -66,5 +68,11 @@ export const EntryActions = ({
         },
     ];
 
-    return <DropdownMenu size="s" items={items} />;
+    return (
+        <DropdownMenu
+            size="s"
+            items={items}
+            defaultSwitcherProps={{qa: WorkbookPage.MenuDropDownBtn}}
+        />
+    );
 };

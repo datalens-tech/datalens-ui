@@ -1,4 +1,4 @@
-import linePrepare from '../index';
+import {prepareHighchartsLine as linePrepare} from '../index';
 
 const {
     regularTitle,
@@ -10,7 +10,7 @@ const {
     linesColoredByFieldWithPostfixResult,
 } = require('./mocks/line.mock');
 
-describe('line preparer', () => {
+describe('linePrepare', () => {
     describe('bar', () => {
         test('should has regular title in case with one field in X section', () => {
             const result = linePrepare(regularTitle);

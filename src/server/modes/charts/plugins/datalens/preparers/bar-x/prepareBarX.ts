@@ -1,6 +1,7 @@
 import _isEmpty from 'lodash/isEmpty';
 
 import {
+    AxisMode,
     HighchartsSeriesCustomObject,
     PlaceholderId,
     ServerField,
@@ -26,11 +27,10 @@ import {
     numericCollator,
 } from '../../utils/misc-helpers';
 import {addActionParamValue} from '../helpers/action-params';
+import {getSegmentMap} from '../helpers/segments';
 import {
     getSegmentsIndexInOrder,
-    getSegmentsMap,
     getSortedCategories,
-    getSortedSegmentsList,
     getXAxisValue,
     prepareLines,
 } from '../line/helpers';
@@ -108,17 +108,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
     const segmentField = segments[0];
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
-    const segmentsList = getSortedSegmentsList({
-        sortItem,
-        segmentField,
-        segmentIndexInOrder,
-        data,
-        idToDataType,
-    });
-    const segmentsMap = getSegmentsMap({
-        segments: segmentsList,
-        y2SectionItems: [],
-    });
+    const segmentsMap = getSegmentMap(args);
     const isSegmentsExists = !_isEmpty(segmentsMap);
 
     const isShapeItemExist = false;
@@ -296,7 +286,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         const graphs: any[] = [];
         const uniqueTitles: string[] = [];
 
-        const isXDiscrete = xAxisMode === 'discrete';
+        const isXDiscrete = xAxisMode === AxisMode.Discrete;
         const isSortNumberTypeXAxisByMeasure =
             isSortCategoriesAvailable &&
             isSortItemExists &&
@@ -538,7 +528,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         ];
 
         // If there are dates on the X axis, then we pass them as dates
-        if (xIsDate && xAxisMode !== 'discrete') {
+        if (xIsDate && xAxisMode !== AxisMode.Discrete) {
             return {graphs, categories_ms: categories};
         } else {
             return {graphs, categories};

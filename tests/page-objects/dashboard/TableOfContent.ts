@@ -1,10 +1,10 @@
 import {Page} from '@playwright/test';
 
-import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
-import {clickDropDownOption, cssSlct, slct} from '../../utils';
+import {clickDropDownOption, slct} from '../../utils';
 
 import DashboardPage from './DashboardPage';
 import {ActionPanelEntryContextMenuQa} from '../../../src/shared/constants/qa/action-panel';
+import {TableOfContentQa} from '../../../src/shared/constants/qa/dash';
 
 export default class TableOfContent {
     page: Page;
@@ -21,13 +21,13 @@ export default class TableOfContent {
     }
 
     async closed() {
-        await this.page.waitForSelector(slct(COMMON_DASH_SELECTORS.TABLE_OF_CONTENT), {
+        await this.page.waitForSelector(slct(TableOfContentQa.TableOfContent), {
             state: 'hidden',
         });
     }
 
     async opened() {
-        await this.page.waitForSelector(slct(COMMON_DASH_SELECTORS.TABLE_OF_CONTENT));
+        await this.page.waitForSelector(slct(TableOfContentQa.TableOfContent));
     }
 
     async open() {
@@ -36,7 +36,7 @@ export default class TableOfContent {
     }
 
     async close() {
-        await this.page.click(cssSlct(COMMON_DASH_SELECTORS.TABLE_OF_CONTENT_CROSS));
+        await this.page.click(slct(TableOfContentQa.CloseBtn));
         await this.closed();
     }
 }

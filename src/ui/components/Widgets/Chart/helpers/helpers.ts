@@ -2,6 +2,7 @@ import {DL, URL_OPTIONS} from 'constants/common';
 
 import {AxiosResponse} from 'axios';
 import {History} from 'history';
+import isEmpty from 'lodash/isEmpty';
 import {DashTabItemType, FOCUSED_WIDGET_PARAM_NAME, Feature, StringParams, isTrueArg} from 'shared';
 import DatalensChartkitCustomError, {
     ERROR_CODE,
@@ -161,8 +162,11 @@ export const getWidgetMeta = ({
             usedParams: loadedData?.usedParams
                 ? Object.keys(loadedData?.usedParams || {}) || null
                 : null,
-            datasets: loadedData?.datasets || null,
-            datasetId: (loadedData?.sources as ResponseSourcesSuccess)?.fields?.datasetId || '',
+            datasets: loadedData?.datasets || loadedData?.extra?.datasets || null,
+            datasetId:
+                (loadedData?.sources as ResponseSourcesSuccess)?.fields?.datasetId ||
+                loadedData?.extra?.datasets?.[0]?.id ||
+                '',
             type: (loadedData?.type as DashTabItemType) || null,
             visualizationType: loadedData?.libraryConfig?.chart?.type || null,
             loadError: loadedWithError,
@@ -419,4 +423,15 @@ export const updateImmediateLayout = ({
         layout,
         cb,
     });
+};
+
+export const isAllParamsEmpty = (params?: StringParams | null) => {
+    const res = Object.values(params || {}).every((item) => {
+        if (typeof item === 'string') {
+            return isEmpty(item.trim());
+        } else {
+            return isEmpty(item.filter((val) => !isEmpty(val.trim())));
+        }
+    });
+    return Boolean(res);
 };

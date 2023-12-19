@@ -1,5 +1,5 @@
-import {ConnectionsNames, ConnectionsUrls} from 'constants/test-entities/connections';
-import {ConnectionsParametrizationConfig} from 'types/config/connections';
+import {ConnectionsNames, ConnectionsUrls} from '../../constants/test-entities/connections';
+import {ConnectionsParametrizationConfig} from '../../types/config/connections';
 
 export const connections: ConnectionsParametrizationConfig = {
     urls: {

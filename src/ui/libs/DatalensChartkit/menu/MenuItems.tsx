@@ -4,14 +4,17 @@ import type {Highcharts, HighchartsComment} from '@gravity-ui/chartkit/highchart
 import {
     ArrowShapeTurnUpRight,
     ArrowUpRightFromSquare,
+    ChevronsExpandUpRight,
     Code,
     LayoutCells,
     Megaphone,
     Pencil,
 } from '@gravity-ui/icons';
+import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
-import {Feature, MenuItemsIds} from 'shared';
+import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds} from 'shared';
+import {isWidgetTypeDoNotNeedOverlay} from 'ui/components/DashKit/plugins/Widget/components/helpers';
 import {DialogShare} from 'ui/components/DialogShare/DialogShare';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
 import {registry} from 'ui/registry';
@@ -33,7 +36,7 @@ import './MenuItems.scss';
 const b = block('dl-chartkit-menu-items');
 
 export const ICONS_MENU_DEFAULT_CLASSNAME = b('icon');
-export const ICONS_MENU_DEFAULT_SIZE = 16;
+export const ICONS_MENU_DEFAULT_SIZE = DL.IS_MOBILE ? 18 : 16;
 
 export type MenuItemArgs = {
     loadedData: MenuLoadedData;
@@ -128,7 +131,11 @@ export const getNewWindowMenuItem = ({
         return customConfig?.title || i18n('chartkit.menu', 'open-in-window');
     },
     icon: customConfig?.icon || (
-        <ChartKitIcon data={ArrowUpRightFromSquare} className={ICONS_MENU_DEFAULT_CLASSNAME} />
+        <Icon
+            data={ArrowUpRightFromSquare}
+            size={ICONS_MENU_DEFAULT_SIZE}
+            className={ICONS_MENU_DEFAULT_CLASSNAME}
+        />
     ),
     isVisible: () => true,
     action:
@@ -187,7 +194,11 @@ export const getOpenAsTableMenuItem = ({
         return customConfig?.title || i18n('chartkit.menu', 'open-as-table');
     },
     icon: customConfig?.icon || (
-        <ChartKitIcon data={LayoutCells} className={ICONS_MENU_DEFAULT_CLASSNAME} />
+        <Icon
+            data={LayoutCells}
+            size={ICONS_MENU_DEFAULT_SIZE}
+            className={ICONS_MENU_DEFAULT_CLASSNAME}
+        />
     ),
     isVisible: ({loadedData, error}: MenuItemArgs) => {
         const isGraphWidget = loadedData?.data && loadedData?.type === CHARTKIT_WIDGET_TYPE.GRAPH;
@@ -218,9 +229,13 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
         return customConfig?.title || i18n('chartkit.menu', 'get-code');
     },
     icon: customConfig?.icon || (
-        <ChartKitIcon data={ArrowShapeTurnUpRight} className={ICONS_MENU_DEFAULT_CLASSNAME} />
+        <Icon
+            data={ArrowShapeTurnUpRight}
+            size={ICONS_MENU_DEFAULT_SIZE}
+            className={ICONS_MENU_DEFAULT_CLASSNAME}
+        />
     ),
-    isVisible: ({loadedData}: MenuItemArgs) => !DL.IS_MOBILE && Boolean(loadedData?.type),
+    isVisible: ({loadedData}: MenuItemArgs) => Boolean(loadedData?.type),
     action:
         customConfig?.action ||
         function action({loadedData, propsData}) {
@@ -251,9 +266,9 @@ export const getEmbeddedMenuItem = (customConfig?: Partial<MenuItemConfig>): Men
         return customConfig?.title || i18n('chartkit.menu', 'embedded');
     },
     icon: customConfig?.icon || (
-        <ChartKitIcon data={Code} className={ICONS_MENU_DEFAULT_CLASSNAME} />
+        <Icon data={Code} size={ICONS_MENU_DEFAULT_SIZE} className={ICONS_MENU_DEFAULT_CLASSNAME} />
     ),
-    isVisible: () => !DL.IS_MOBILE,
+    isVisible: () => true,
     action:
         customConfig?.action ||
         function action({propsData, loadedData}) {
@@ -272,4 +287,31 @@ export const getEmbeddedMenuItem = (customConfig?: Partial<MenuItemConfig>): Men
                 );
             };
         },
+});
+
+export const getFullscreenMenuItem = (customConfig: Partial<MenuItemConfig>): MenuItemConfig => ({
+    id: MenuItemsIds.FULLSCREEEN,
+    get title() {
+        return customConfig?.title || i18n('chartkit.menu', 'open-fullscreen');
+    },
+    icon: customConfig?.icon || (
+        <Icon
+            data={ChevronsExpandUpRight}
+            size={ICONS_MENU_DEFAULT_SIZE}
+            className={ICONS_MENU_DEFAULT_CLASSNAME}
+        />
+    ),
+    isVisible: ({loadedData, error}: MenuItemArgs) => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const isFullscreenMode = searchParams.has(FOCUSED_WIDGET_PARAM_NAME);
+
+        return Boolean(
+            DL.IS_MOBILE &&
+                loadedData &&
+                !error &&
+                !isWidgetTypeDoNotNeedOverlay(loadedData.type) &&
+                !isFullscreenMode,
+        );
+    },
+    action: customConfig?.action || customConfig?.onFullscreenClick || function () {},
 });

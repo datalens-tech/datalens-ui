@@ -6,7 +6,7 @@ import {Button, Loader, Tabs, TabsItemProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
-import {DataLensApiError} from 'ui';
+import {DataLensApiError, SHEET_IDS} from 'ui';
 import {registry} from 'ui/registry';
 import {FetchDocumentationArgs} from 'ui/registry/units/common/types/functions/fetchDocumentation';
 import Utils from 'ui/utils';
@@ -139,12 +139,12 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                 dialogBodyClassName={b('content')}
                 renderSheetFooter={() => this.renderFooterButtons()}
                 renderDialogFooter={() => this.renderFooterButtons()}
+                title={title}
                 dialogProps={{
                     disableEscapeKeyDown: true,
                     disableOutsideClick: true,
                     className: b(),
                 }}
-                dialogHeaderProps={{caption: title}}
                 dialogFooterProps={{
                     preset: 'default',
                     showError: false,
@@ -153,6 +153,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                     textButtonCancel: i18n('button_close'),
                     loading: false,
                 }}
+                id={SHEET_IDS.DIALOG_ERROR}
             >
                 {loading ? this.renderLoader() : this.renderDialogBody()}
             </AdaptiveDialog>

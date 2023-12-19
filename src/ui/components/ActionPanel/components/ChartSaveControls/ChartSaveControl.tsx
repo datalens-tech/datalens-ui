@@ -69,7 +69,7 @@ export const ChartSaveControls: React.FC<ChartSaveControlProps> = (
             extraProps: {
                 'data-qa': 'save-as-draft',
             } as any,
-            hidden: isNewChart,
+            hidden: isNewChart || isLocked,
         };
 
         const saveAndPublishItem = {

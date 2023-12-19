@@ -5,11 +5,12 @@ import {AppContext, AppContextParams} from '@gravity-ui/nodekit';
 
 import {registry} from '../../../../server/registry';
 import {DatalensGatewaySchemas} from '../../../../server/types/gateway';
-import {Dataset} from '../../../types';
+import {DatasetField} from '../../../types';
 import {GetDataSetFieldsByIdResponse} from '../../bi/types';
 import {simpleSchema} from '../../simple-schema';
+import {GetEntryResponse} from '../../us/types/entries';
 
-export type DatasetDictResponse = {datasetId: string; data: Dataset | null};
+export type DatasetDictResponse = {datasetId: string; data: GetEntryResponse | null};
 
 export const fetchDataset = async ({
     datasetId,
@@ -21,16 +22,16 @@ export const fetchDataset = async ({
     ctx: AppContext;
 }): Promise<DatasetDictResponse> => {
     try {
-        const data: Dataset = await typedApi.bi.getDatasetByVersion({
-            datasetId,
-            version: 'draft',
+        const data: GetEntryResponse = await typedApi.us.getEntry({
+            entryId: datasetId,
         });
+
         return {
             datasetId,
             data,
         };
     } catch (error) {
-        ctx.logError('DASH_GET_DATASETS_BY_IDS_FIELDS_GET_DATASET_BY_VERSION_FAILED', error);
+        ctx.logError('DASH_FETCH_DATASET_BY_GET_ENTRY_FAILED', error);
     }
     return {datasetId, data: null};
 };
@@ -43,14 +44,19 @@ export const prepareDatasetData = (args: {
 }) => {
     const {entryId, datasetId, type, items} = args;
 
-    if (!items.data) {
-        return {entryId, type: null};
+    const emptyValue = {entryId, type: null};
+
+    if (!items?.data) {
+        return emptyValue;
     }
 
-    const {
-        key,
-        dataset: {result_schema},
-    } = items.data;
+    const {data, key} = items.data;
+
+    const result_schema = data?.result_schema as DatasetField[];
+
+    if (!result_schema) {
+        return emptyValue;
+    }
 
     // we form an array of elements of the following type:
     // * wizard and dataset are not in datasetsIds

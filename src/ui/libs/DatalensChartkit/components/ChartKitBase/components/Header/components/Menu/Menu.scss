@@ -7,12 +7,6 @@
         cursor: pointer;
     }
 
-    &__icon {
-        display: flex;
-        width: $menuIconSize;
-        margin-right: $menuIconMarginRight;
-    }
-
     &__switcher {
         opacity: 1;
         transition: opacity 0.2s;
@@ -32,5 +26,13 @@
         &:hover {
             color: var(--g-color-text-primary);
         }
+    }
+
+    &__sheet-menu {
+        margin-bottom: 10px;
+    }
+
+    &__sheet-content {
+        padding: 0;
     }
 }

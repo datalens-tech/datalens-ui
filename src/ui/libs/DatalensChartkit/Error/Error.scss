@@ -1,3 +1,5 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 
 .datalens-chartkit-error {
@@ -15,6 +17,10 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         font-size: 13px;
         line-height: 16px;
         margin-bottom: 12px;
+
+        &_mobile {
+            @include text-body-2;
+        }
     }
 
     & &__icon {

@@ -93,6 +93,7 @@ export enum Feature {
     WizardChartChartFilteringAvailable = 'WizardChartChartFilteringAvailable',
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
+    HolidayNavigation = 'HolidayNavigation',
 }
 
 export type FeatureConfig = Record<string, boolean>;

@@ -11,6 +11,7 @@ import {
     DATASET_FIELD_TYPES,
     DatasetFieldCalcMode,
     DatasetFieldType,
+    DialogControlQa,
     isParameter,
 } from '../../../../../../../../shared';
 import logger from '../../../../../../../libs/logger';
@@ -171,6 +172,7 @@ export class DatasetField extends React.PureComponent<Props, State> {
                 renderOption={this.renderOptions}
                 popupClassName={b('dataset-popup')}
                 filterPlaceholder={i18n('dash.control-dialog.edit', 'placeholder_search')}
+                qa={DialogControlQa.fieldSelect}
             />
         );
     }

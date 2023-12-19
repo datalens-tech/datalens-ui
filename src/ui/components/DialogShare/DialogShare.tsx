@@ -1,16 +1,18 @@
 import React from 'react';
 
-import {Checkbox, Dialog, Select} from '@gravity-ui/uikit';
+import {Button, Checkbox, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ChartkitMenuDialogsQA} from 'shared';
-import {URL_OPTIONS as COMMON_URL_OPTIONS} from 'ui/constants';
+import {URL_OPTIONS as COMMON_URL_OPTIONS, DL, PRODUCT_NAME, SHEET_IDS} from 'ui/constants';
 import {ChartKitProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {URL_OPTIONS as CHARTKIT_URL_OPTIONS} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import URI from 'ui/libs/DatalensChartkit/modules/uri/uri';
 import {Widget} from 'ui/libs/DatalensChartkit/types';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
+import {AdaptiveDialog} from '../AdaptiveDialog/AdaptiveDialog';
 import DialogManager from '../DialogManager/DialogManager';
 
 import {MarkupShareLink} from './MarkupShareLink/MarkupShareLink';
@@ -113,43 +115,80 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     const handleChangeLang = (values: string[]) => setSelectedLang(values[0]);
     const handleChangeTheme = (values: string[]) => setSelectedTheme(values[0]);
 
-    return (
-        <Dialog onClose={onClose} open={true} className={b()}>
-            <Dialog.Header caption={i18n('title_share')} />
-            <Dialog.Body>
-                <div className={b('body')} data-qa={ChartkitMenuDialogsQA.chartMenuShareModalBody}>
-                    <div className={b('params')}>
-                        <div className={b('subheader')}>{i18n('label_params')}</div>
-                        <div className={b('description')}>{i18n('label_params-description')}</div>
+    const handleShareClick = async () => {
+        if (navigator && typeof navigator.share === 'function') {
+            await navigator.share({url: getLink(), text: PRODUCT_NAME});
+            return;
+        }
+        // if Web Share API is not supported
+        await navigator.clipboard.writeText(getLink());
+    };
 
-                        <div className={b('checkboxes')}>
-                            <Checkbox checked={hideMenu} onChange={handleChangeMenuParam}>
-                                {i18n('value_hide-menu')}
+    const selectSize = DL.IS_MOBILE ? MOBILE_SIZE.SELECT : 'm';
+    const checkboxSize = DL.IS_MOBILE ? MOBILE_SIZE.CHECKBOX : 'm';
+
+    return (
+        <AdaptiveDialog
+            onClose={onClose}
+            visible={true}
+            title={i18n('title_share')}
+            dialogProps={{className: b()}}
+            sheetContentClassName={b({mobile: DL.IS_MOBILE})}
+            id={SHEET_IDS.DIALOG_SHARE}
+        >
+            <div className={b('body')} data-qa={ChartkitMenuDialogsQA.chartMenuShareModalBody}>
+                <div className={b('params')}>
+                    <div className={b('subheader')}>{i18n('label_params')}</div>
+                    {!DL.IS_MOBILE && (
+                        <div className={b('description')}>{i18n('label_params-description')}</div>
+                    )}
+                    <div className={b('checkboxes')}>
+                        <Checkbox
+                            checked={hideMenu}
+                            onChange={handleChangeMenuParam}
+                            size={checkboxSize}
+                        >
+                            {i18n('value_hide-menu')}
+                        </Checkbox>
+                        {showHideComments && (
+                            <Checkbox
+                                checked={hideComments}
+                                onChange={handleChangeCommentsParam}
+                                size={checkboxSize}
+                            >
+                                {i18n('value_hide-comments')}
                             </Checkbox>
-                            {showHideComments && (
-                                <Checkbox
-                                    checked={hideComments}
-                                    onChange={handleChangeCommentsParam}
-                                >
-                                    {i18n('value_hide-comments')}
-                                </Checkbox>
-                            )}
-                        </div>
-                        <div className={b('selects')}>
-                            <Select
-                                value={[selectedLang]}
-                                onUpdate={handleChangeLang}
-                                options={languageOptions}
-                                label={i18n('field_language')}
-                            />
-                            <Select
-                                value={[selectedTheme]}
-                                onUpdate={handleChangeTheme}
-                                options={themeOptions}
-                                label={i18n('field_theme')}
-                            />
-                        </div>
+                        )}
                     </div>
+                    <div className={b('selects')}>
+                        <Select
+                            value={[selectedLang]}
+                            onUpdate={handleChangeLang}
+                            options={languageOptions}
+                            label={i18n('field_language')}
+                            size={selectSize}
+                        />
+                        <Select
+                            value={[selectedTheme]}
+                            onUpdate={handleChangeTheme}
+                            options={themeOptions}
+                            label={i18n('field_theme')}
+                            size={selectSize}
+                        />
+                    </div>
+                    {DL.IS_MOBILE && (
+                        <Button
+                            size="xl"
+                            width="max"
+                            view="action"
+                            onClick={handleShareClick}
+                            className={b('share-button')}
+                        >
+                            {i18n('button_share')}
+                        </Button>
+                    )}
+                </div>
+                {!DL.IS_MOBILE && (
                     <div className={b('links')}>
                         <ShareLink
                             title={i18n('label_link')}
@@ -171,9 +210,9 @@ export const DialogShare: React.FC<DialogShareProps> = ({
                             showDescription={showLinkDescription}
                         />
                     </div>
-                </div>
-            </Dialog.Body>
-        </Dialog>
+                )}
+            </div>
+        </AdaptiveDialog>
     );
 };
 

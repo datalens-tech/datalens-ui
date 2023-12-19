@@ -1,16 +1,17 @@
 import {
+    AxisMode,
     DATASET_FIELD_TYPES,
     DatasetFieldType,
     Field,
     IChartEditor,
     PlaceholderId,
+    QlConfig,
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
     isMonitoringOrPrometheusChart,
 } from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
-import type {QlConfig} from '../../../../../shared/types/config/ql';
 import prepareSingleResult from '../datalens/js/helpers/misc/prepare-single-result';
 import {getFieldList} from '../helpers/misc';
 
@@ -67,9 +68,9 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
     const sharedVisualization = config.visualization as ServerVisualization;
     const {
-        colors: sharedColors = [],
-        labels: sharedLabels = [],
-        shapes: sharedShapes = [],
+        colors: sharedColors,
+        labels: sharedLabels,
+        shapes: sharedShapes,
         order: sharedOrder,
     } = config;
 
@@ -173,9 +174,9 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             });
         });
 
-        let newColors: Field[] = sharedColors || [];
-        let newLabels: Field[] = sharedLabels || [];
-        let newShapes: Field[] = sharedShapes || [];
+        let newColors = sharedColors;
+        let newLabels = sharedLabels;
+        let newShapes = sharedShapes;
         let newVisualization: ServerVisualization = sharedVisualization;
 
         const visualizationIsEmpty = sharedVisualization.placeholders.every(
@@ -207,17 +208,17 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
             newColors = mapItems({
                 fields,
-                items: sharedColors as Field[],
+                items: sharedColors,
             });
 
             newLabels = mapItems({
                 fields,
-                items: sharedLabels as Field[],
+                items: sharedLabels,
             });
 
             newShapes = mapItems({
                 fields,
-                items: sharedShapes as Field[],
+                items: sharedShapes,
             });
         }
 
@@ -273,7 +274,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 if (disableDefaultSorting) {
                     targetPlaceholder.settings = {
                         axisModeMap: {
-                            [targetPlaceholder.items[0].guid]: 'discrete',
+                            [targetPlaceholder.items[0].guid]: AxisMode.Discrete,
                         },
                         disableAxisMode: true,
                     };

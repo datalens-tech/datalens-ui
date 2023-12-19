@@ -1,4 +1,5 @@
 import {getColorsConfigKey, isMeasureNameOrValue} from '../../../../../../../../../shared';
+import {getFormattedValue} from '../../../helpers/get-formatted-value';
 import {getLineKey} from '../utils';
 
 import {getColorShapeMappingValue} from './helpers';
@@ -43,18 +44,19 @@ export const mapDataToLines = ({
 
         if (x2) {
             line.stack = x2Value;
+            const formattedX2Value = getFormattedValue(x2, x2Value);
 
             // Exactly ==
             // eslint-disable-next-line eqeqeq
-            if (shownTitle == x2Value) {
+            if (shownTitle == formattedX2Value) {
                 line.title = `${shownTitle}`;
                 line.legendTitle = `${shownTitle}`;
             } else if (x && isMeasureNameOrValue(x)) {
-                line.title = `${x2Value}`;
-                line.legendTitle = `${shownTitle}: ${x2Value}`;
+                line.title = `${formattedX2Value}`;
+                line.legendTitle = `${shownTitle}: ${formattedX2Value}`;
             } else {
-                line.title = `${shownTitle}: ${x2Value}`;
-                line.legendTitle = `${shownTitle}: ${x2Value}`;
+                line.title = `${shownTitle}: ${formattedX2Value}`;
+                line.legendTitle = `${shownTitle}: ${formattedX2Value}`;
             }
         } else {
             line.title = shownTitle;

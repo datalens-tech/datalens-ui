@@ -3,10 +3,13 @@ import {Response, expect} from '@playwright/test';
 import {
     ConnectionsDialogQA,
     ControlQA,
+    DashCommonQa,
     DashEntryQa,
+    DashRelationTypes,
     DialogDashWidgetQA,
     DialogTabsQA,
     EntryDialogQA,
+    SelectQA,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -24,8 +27,11 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
+import {ElementTypes} from '../../page-objects/common/DialogControlPO/ElementType';
+import {SourceTypes} from '../../page-objects/common/DialogControlPO/SourceType';
 import {
     DashboardDialogSettingsQa,
+    DialogControlQa,
     DialogDashTitleQA,
     DialogDashWidgetItemQA,
 } from '../../../src/shared';
@@ -43,6 +49,10 @@ import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
 import Description from './Description';
 import TableOfContent from './TableOfContent';
+import {ListItemByParams} from '../../page-objects/types';
+import {Locator} from 'playwright-core';
+import {Workbook} from '../workbook/Workbook';
+import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -54,6 +64,19 @@ export const URLS = {
     createLock: '/gateway/root/us/createLock',
     deleteLock: '/gateway/root/us/deleteLock',
     savePath: '/api/dash/v1/dashboards',
+};
+
+type SelectorSettings = {
+    sourceType?: SourceTypes;
+    dataset?: ListItemByParams;
+    datasetField?: ListItemByParams;
+    elementType?: ElementTypes;
+    appearance?: {
+        title?: string;
+        titleEnabled?: boolean;
+        innerTitle?: string;
+        innerTitleEnabled?: boolean;
+    };
 };
 
 export interface DashboardPageProps extends BasePageProps {}
@@ -82,7 +105,7 @@ class DashboardPage extends BasePage {
         selectItemsMobile: '.g-select-list_mobile',
         selectItemTitle: '.g-select-list__option',
 
-        radioManualControl: 'radio-source-type',
+        radioManualControl: DialogControlQa.radioSourceType,
         inputNameControl: 'control-name-input',
         inputNameField: 'field-name-input',
         acceptableValuesSelect: ControlQA.selectDefaultAcceptable,
@@ -177,6 +200,23 @@ class DashboardPage extends BasePage {
         ]);
     }
 
+    async duplicateDashboardFromWorkbook(dashId: string, newDashName: string) {
+        const workbookPO = new Workbook(this.page);
+
+        await workbookPO.openE2EWorkbookPage();
+
+        await workbookPO.openWorkbookItemMenu(dashId);
+
+        await this.page.locator(slct(WorkbookPage.MenuItemDuplicate)).click();
+
+        // waiting for the dialog to open, specify the name, save
+        await workbookPO.dialogCreateEntry.createEntryWithName(newDashName);
+
+        await this.page
+            .locator(`${slct(WorkbookPage.ListItem)}:has-text('${newDashName}')`)
+            .click();
+    }
+
     async clickAddSelector() {
         await this.page.click(slct(DashboardAddWidgetQa.AddControl));
     }
@@ -259,11 +299,78 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(ControlQA.dialogControlApplyBtn));
     }
 
+    async editSelectorBySettings(setting: SelectorSettings = {}) {
+        await this.dialogControl.waitForVisible();
+
+        if (setting.sourceType) {
+            await this.dialogControl.sourceType.selectType(setting.sourceType);
+        }
+
+        if (setting.dataset?.name || typeof setting.dataset?.idx === 'number') {
+            await this.dialogControl.selectDatasetButton.click();
+            await this.dialogControl.selectDatasetButton.navigationMinimal.selectListItem(
+                setting.dataset,
+            );
+        }
+
+        if (setting.datasetField?.name || typeof setting.datasetField?.idx === 'number') {
+            await this.dialogControl.datasetFieldSelector.click();
+            await this.dialogControl.datasetFieldSelector.selectListItem(setting.datasetField);
+        }
+
+        if (setting.elementType) {
+            await this.dialogControl.elementType.selectType(setting.elementType);
+        }
+
+        if (typeof setting.appearance?.titleEnabled === 'boolean') {
+            await this.dialogControl.appearanceTitle.switchCheckbox(
+                setting.appearance.titleEnabled,
+            );
+        }
+
+        if (setting.appearance?.title) {
+            await this.dialogControl.appearanceTitle.fillInput(setting.appearance.title);
+        }
+
+        if (typeof setting.appearance?.innerTitleEnabled === 'boolean') {
+            await this.dialogControl.appearanceInnerTitle.switchCheckbox(
+                setting.appearance.innerTitleEnabled,
+            );
+        }
+
+        if (setting.appearance?.innerTitle) {
+            await this.dialogControl.appearanceInnerTitle.fillInput(setting.appearance.innerTitle);
+        }
+
+        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
+    }
+
+    async addSelectorBySettings(setting: SelectorSettings = {}) {
+        const defaultSettings: SelectorSettings = {
+            sourceType: 'dataset',
+            elementType: 'select',
+            appearance: {titleEnabled: true},
+            dataset: {idx: 0},
+            datasetField: {idx: 0},
+        };
+        await this.clickAddSelector();
+
+        await this.editSelectorBySettings({...defaultSettings, ...setting});
+    }
+
     async clickAddChart() {
         await this.page.click(slct(DashboardAddWidgetQa.AddWidget));
     }
 
-    async addChart({chartUrl, chartName}: {chartUrl: string; chartName: string}) {
+    async addChart({
+        chartUrl,
+        chartName,
+        hideTitle,
+    }: {
+        chartUrl: string;
+        chartName: string;
+        hideTitle?: boolean;
+    }) {
         // adding a chart
         await this.clickAddChart();
 
@@ -277,6 +384,10 @@ class DashboardPage extends BasePage {
         await this.page.click(slct('navigation-input-ok-button'));
         // making sure that the necessary chart is selected
         await this.page.waitForSelector(`[data-qa=entry-title] * >> text=${chartName}`);
+
+        if (hideTitle) {
+            await this.page.click(slct(DashCommonQa.WidgetShowTitleCheckbox));
+        }
 
         // adding to the dashboard
         await this.page.click(slct(DialogDashWidgetQA.Apply));
@@ -430,6 +541,53 @@ class DashboardPage extends BasePage {
 
         // click on the "connections" button
         await this.clickOnLinksBtn();
+    }
+
+    async getDashControlLinksIconElem(controlQa: string) {
+        // open dialog relations by click on dashkit item links icon (via parents nodes)
+        const dashkitItemElem = await this.page
+            .locator(slct(ControlQA.chartkitControl))
+            .locator('../../../..');
+        return dashkitItemElem.locator(slct(controlQa));
+    }
+
+    async openControlRelationsDialog() {
+        await this.enterEditMode();
+        // open dialog relations by control icon click
+        const selectorElem = await this.getDashControlLinksIconElem(ControlQA.controlLinks);
+        await selectorElem.click();
+    }
+
+    async setupNewLinks({
+        linkType,
+        widgetElem,
+        firstParamName,
+        secondParamName,
+    }: {
+        linkType: DashRelationTypes;
+        firstParamName: string;
+        widgetElem: Locator;
+        secondParamName: string;
+    }) {
+        // open dialog relations by click on control item links icon
+        await widgetElem.click();
+
+        // choose new link
+        await this.page.click(slct(DashCommonQa.RelationTypeButton));
+        await this.page.click(slct(linkType));
+
+        // select field for first item
+        await this.page.click(slct(DashCommonQa.AliasSelectLeft));
+        await this.page.locator(slct(SelectQA.Popup, firstParamName)).click();
+
+        // select field for second item
+        await this.page.click(slct(DashCommonQa.AliasSelectRight));
+        await this.page.locator(slct(SelectQA.Popup, secondParamName)).click();
+
+        // click apply in all relation dialogs
+        await this.page.click(slct(DashCommonQa.AliasAddBtn));
+        await this.page.click(slct(DashCommonQa.AliasAddApplyBtn));
+        await this.page.click(slct(DashCommonQa.RelationsApplyBtn));
     }
 
     async setupLinks({
@@ -746,6 +904,13 @@ class DashboardPage extends BasePage {
             const elems = await this.page.$$(DashboardPage.selectors.chartGridItemContainer);
             return elems.length === 0;
         });
+    }
+
+    async clickFirstControlSettingsButton() {
+        const controlSettingsButton = await this.page.waitForSelector(
+            slct(ControlQA.controlSettings),
+        );
+        await controlSettingsButton.click();
     }
 }
 

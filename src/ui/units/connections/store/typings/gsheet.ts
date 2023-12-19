@@ -7,7 +7,7 @@ import type {
 } from '../../../../../shared/schema';
 import type {DataLensApiError} from '../../../../typings';
 
-/* * Google sheet from the moment of uploading to successful status polling and requesting sources*/
+/** Google sheet from the moment of uploading to successful status polling and requesting sources*/
 export type UploadedGSheet = {
     type: 'uploadedGSheet';
     status: StateStatus;
@@ -16,7 +16,7 @@ export type UploadedGSheet = {
     error?: DataLensApiError | null;
 };
 
-/* * Brief information on the Google sheet source before successfully obtaining all data on this source*/
+/** Brief information on the Google sheet source before successfully obtaining all data on this source*/
 export type GSheetSourceInfo = {
     type: 'gsheetSourceInfo';
     status: StateStatus;
@@ -25,7 +25,7 @@ export type GSheetSourceInfo = {
     error?: DataLensApiError | null;
 };
 
-/* * Full information on the Google sheet source. Available for editing*/
+/** Full information on the Google sheet source. Available for editing*/
 export type GSheetEditableSource = {
     type: 'gsheetEditableSource';
     status: StateStatus;
@@ -33,7 +33,7 @@ export type GSheetEditableSource = {
     error?: DataLensApiError | null;
 };
 
-/* * Information on the source of an already created connection. Read-only*/
+/** Information on the source of an already created connection. Read-only*/
 export type GSheetReadonlySource = {
     type: 'gsheetReadonlySource';
     status: StateStatus;

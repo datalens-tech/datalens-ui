@@ -47,6 +47,7 @@ import iconMarketCouriers from '../../assets/icons/files-conn-market-couriers.sv
 import iconSchoolbookJournal from '../../assets/icons/files-conn-schoolbook-journal.svg';
 import iconSmbHeatmaps from '../../assets/icons/files-conn-smb-heatmaps.svg';
 import iconSnowflake from '../../assets/icons/files-conn-snowflake.svg';
+import iconYadocs from '../../assets/icons/files-conn-yadocs.svg';
 
 const typeToIcon: Record<string, IconData> = {
     [ConnectorType.Csv]: iconCSV,
@@ -96,6 +97,8 @@ const typeToIcon: Record<string, IconData> = {
     [ConnectorType.Equeo]: iconEqueo,
     [ConnectorType.KonturMarket]: iconKonturMarket,
     [ConnectorType.Extractor1c]: iconExtractor1C,
+    [ConnectorType.Yadocs]: iconYadocs,
+    [ConnectorType.MonitoringV2]: iconMonitoring,
 };
 
 const entityTypeIcons: Record<string, string> = {

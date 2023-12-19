@@ -4,7 +4,12 @@ import {FormRow} from '@gravity-ui/components';
 import {RadioButton} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DATASET_FIELD_TYPES, DashTabItemControlSourceType, DatasetFieldType} from 'shared';
+import {
+    DATASET_FIELD_TYPES,
+    DashTabItemControlSourceType,
+    DatasetFieldType,
+    DialogControlQa,
+} from 'shared';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import {SelectorElementType, setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
@@ -72,6 +77,7 @@ const InputTypeSelector = () => {
                 disabled={isFieldDisabled}
                 onChange={handleInputTypeChange}
                 width="max"
+                qa={DialogControlQa.elementTypeRadioGroup}
             >
                 {ELEMENT_TYPE_OPTIONS.map((item) => (
                     <RadioButton.Option

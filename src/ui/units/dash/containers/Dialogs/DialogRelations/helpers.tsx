@@ -5,7 +5,10 @@ import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
-import {DashTabItem, DashTabItemType} from 'shared';
+
+import {DashTabItem, DashTabItemType} from '../../../../../../shared';
+import {IconById} from '../../../../../components/IconById/IconById';
+import {VISUALIZATIONS_BY_ID} from '../../../../../constants/visualizations';
 
 import {
     DEFAULT_ALIAS_NAMESPACE,
@@ -30,6 +33,32 @@ import './DialogRelations.scss';
 
 const b = block('dialog-relations');
 
+const getIconByVisualizationId = ({
+    visualizationId,
+    iconSize,
+    className,
+}: {
+    visualizationId: string;
+    iconSize?: number;
+    className?: string;
+}) => {
+    const visualization = VISUALIZATIONS_BY_ID[visualizationId];
+
+    return visualization ? (
+        <IconById
+            id={visualization.iconProps.id}
+            size={iconSize || DEFAULT_TITLE_ICON_SIZE}
+            className={`${className} ${b('icon-visualization')}`}
+        />
+    ) : (
+        <Icon
+            data={RELATIONS_CHARTS_ICONS_DICT.widget}
+            size={iconSize || DEFAULT_TITLE_ICON_SIZE}
+            className={className}
+        />
+    );
+};
+
 export const getDialogCaptionIcon = ({
     widget,
     currentWidgetMeta,
@@ -42,18 +71,29 @@ export const getDialogCaptionIcon = ({
     className?: string;
 }) => {
     let iconData = null;
-    if (
+
+    const isControl =
         widget.type === DashTabItemType.Control ||
-        currentWidgetMeta.type === DashTabItemType.Control
-    ) {
+        currentWidgetMeta.type === DashTabItemType.Control;
+
+    const isWidget = widget.type === DashTabItemType.Widget;
+
+    if (isControl) {
         iconData = RELATIONS_CHARTS_ICONS_DICT.control;
-    }
-    if (widget.type === DashTabItemType.Widget) {
+    } else if (isWidget) {
+        if (currentWidgetMeta.visualizationType) {
+            return getIconByVisualizationId({
+                visualizationId: currentWidgetMeta.visualizationType,
+                iconSize,
+                className: className || b('icon-title'),
+            });
+        }
+
         iconData =
-            RELATIONS_CHARTS_ICONS_DICT[currentWidgetMeta.visualizationType as RelationChartType] ||
             RELATIONS_CHARTS_ICONS_DICT[currentWidgetMeta.type as RelationChartType] ||
             RELATIONS_CHARTS_ICONS_DICT.widget;
     }
+
     return iconData ? (
         <Icon
             data={iconData}
@@ -72,11 +112,18 @@ export const getDialogRowIcon = (
         return null;
     }
 
+    if (widgetMeta.visualizationType) {
+        return getIconByVisualizationId({
+            visualizationId: widgetMeta.visualizationType,
+            iconSize,
+            className,
+        });
+    }
+
     const iconData =
         widgetMeta.type === DashTabItemType.Control
             ? RELATIONS_CHARTS_ICONS_DICT.control
-            : RELATIONS_CHARTS_ICONS_DICT[widgetMeta.visualizationType as RelationChartType] ||
-              RELATIONS_CHARTS_ICONS_DICT[widgetMeta.type as RelationChartType] ||
+            : RELATIONS_CHARTS_ICONS_DICT[widgetMeta.type as RelationChartType] ||
               RELATIONS_CHARTS_ICONS_DICT.widget;
 
     return <Icon data={iconData} size={iconSize || DEFAULT_ICON_SIZE} className={className} />;

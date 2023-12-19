@@ -1,7 +1,11 @@
 import React from 'react';
 
 import {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {pickActionParamsFromParams, pickExceptActionParamsFromParams} from '@gravity-ui/dashkit';
+import {
+    ItemStateAndParamsChangeOptions,
+    pickActionParamsFromParams,
+    pickExceptActionParamsFromParams,
+} from '@gravity-ui/dashkit';
 import {usePrevious} from 'hooks';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
@@ -24,6 +28,7 @@ import DatalensChartkitCustomError, {
     formatError,
 } from '../../../../libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {CombinedError, OnChangeData} from '../../../../libs/DatalensChartkit/types';
+import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
     WIDGET_CHART_RESET_CHANGED_PARAMS,
@@ -133,6 +138,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     } | null>(null);
     const [isWidgetMenuDataChanged, setIsWidgetMenuDataChanged] = React.useState<boolean>(false);
     const prevWidgetMenuData = usePrevious(widgetMenuData);
+    const prevInnerParamsRefCurrent = usePrevious(innerParamsRef?.current);
 
     const [
         {
@@ -834,12 +840,22 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 const needUpdateChartParams =
                     !isEqual(initialData.params, newParams) || callChangeByClick;
 
+                // if widget has setting filtering chart
+                // & prev loading chart params contained actionParams
+                // & newParams contain only empty values,
+                // we need to clean it
+                const needClearParamsQueue =
+                    enableActionParams &&
+                    !isAllParamsEmpty(
+                        pickActionParamsFromParams(prevInnerParamsRefCurrent || undefined),
+                    ) &&
+                    isAllParamsEmpty(newParams);
+
                 if (newParams && needUpdateChartParams) {
                     const actionName =
                         isEmpty(newParams) && callChangeByClick
                             ? WIDGET_CHART_RESET_CHANGED_PARAMS
                             : WIDGET_CHART_UPDATE_DATA_PARAMS;
-
                     dispatch({
                         type: actionName,
                         payload: newParams,
@@ -858,11 +874,18 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                     typeof handleChangeCallback === 'function' &&
                     newParams
                 ) {
+                    const options: ItemStateAndParamsChangeOptions | undefined =
+                        needClearParamsQueue
+                            ? {
+                                  action: 'removeItem',
+                              }
+                            : undefined;
                     handleChangeCallback({
                         type: 'PARAMS_CHANGED',
                         data: {
                             params: newParams,
                         },
+                        options,
                     });
                 }
             } else if (callExternalOnChange && typeof handleChangeCallback === 'function') {
@@ -876,7 +899,15 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 handleChangeCallback(res);
             }
         },
-        [dispatch, currentDrillDownLevel, handleChangeCallback, enableActionParams],
+        [
+            prevInnerParamsRefCurrent,
+            handleChangeCallback,
+            initialData.params,
+            innerParamsRef,
+            enableActionParams,
+            onInnerParamsChanged,
+            currentDrillDownLevel,
+        ],
     );
 
     const handleRetry = React.useCallback(

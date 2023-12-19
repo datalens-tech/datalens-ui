@@ -69,15 +69,12 @@ import {
     canEdit,
     selectCurrentTab,
     selectCurrentTabId,
-    selectCurrentTabWithDashDatasets,
-    selectDashWidgetsDatasetsFields,
     selectEntryId,
     selectSettings,
     selectShowTableOfContent,
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
-import {getConfigWithoutDSDefaults} from '../../utils/helpers';
 import {DIALOG_TYPE} from '../Dialogs/constants';
 import Error from '../Error/Error';
 import TableOfContent from '../TableOfContent/TableOfContent';
@@ -261,13 +258,7 @@ class Body extends React.PureComponent<BodyProps> {
     }
 
     onStateChange = (hashStates: TabsHashStates, config: DashTab) => {
-        this.props.setHashState(
-            hashStates,
-            getConfigWithoutDSDefaults({
-                config,
-                dashDatasetsFields: this.props.dashDatasetsFields,
-            }),
-        );
+        this.props.setHashState(hashStates, config);
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
@@ -314,17 +305,9 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     private renderDashkit = () => {
-        const {
-            mode,
-            settings,
-            tabs,
-            tabData,
-            tabDataWithDashDatasets,
-            handlerEditClick,
-            isEditModeLoading,
-        } = this.props;
+        const {mode, settings, tabs, tabData, handlerEditClick, isEditModeLoading} = this.props;
 
-        let tabDataConfig = (tabDataWithDashDatasets || tabData) as DashKitProps['config'] | null;
+        let tabDataConfig = tabData as DashKitProps['config'] | null;
 
         if (DL.IS_MOBILE && tabDataConfig) {
             const [layoutMap, layoutColumns] = getLayoutMap(tabDataConfig.layout);
@@ -498,8 +481,6 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     hashStates: selectTabHashState(state),
     settings: selectSettings(state),
     tabData: selectCurrentTab(state),
-    tabDataWithDashDatasets: selectCurrentTabWithDashDatasets(state),
-    dashDatasetsFields: selectDashWidgetsDatasetsFields(state),
     dashKitRef: state.dash.dashKitRef,
     canEdit: canEdit(state),
     tabs: selectTabs(state),
