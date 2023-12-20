@@ -17,6 +17,7 @@
   "button_cancel": "Cancel",
   "button_workbook-table-load-more": "Load more",
   "button_workbook-table-retry": "Reload page",
+  "label_author": "Author",
   "label_copy": "copy",
   "label_delete-entry": "Delete",
   "label_entry-name-already-exists": "That name is already in use, try another one",

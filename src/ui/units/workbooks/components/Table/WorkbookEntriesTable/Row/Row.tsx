@@ -3,16 +3,21 @@ import {DL} from 'constants/common';
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
+import {Star, StarFill} from '@gravity-ui/icons';
+import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {I18n} from 'i18n';
+import {useDispatch} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import {registry} from 'ui/registry/index';
+import {AppDispatch} from 'ui/store';
+import {changeFavoriteEntry} from 'ui/units/workbooks/store/actions';
 import {WorkbookEntry} from 'ui/units/workbooks/types/index';
 
 import {EntryActions} from '../../../EntryActions/EntryActions';
-import {DATETIME_FORMAT, defaultRowStyle} from '../constants';
+import {defaultRowStyle} from '../constants';
 
 import './Row.scss';
 
@@ -43,11 +48,53 @@ const Row: React.FC<RowProps> = ({
     onDuplicateEntry,
     onCopyEntry,
 }) => {
+    const [isFavoriteIcon, setIsFavoriteIcon] = React.useState(true);
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
+    const {getLoginById} = registry.common.functions.getAll();
+
+    const dispatch: AppDispatch = useDispatch();
+
     const url = getWorkbookEntryUrl(item, workbook);
 
+    const LoginById = getLoginById();
+
+    const isShowLogin = LoginById && item.createdBy;
+
+    const onChangeFavorite = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const {entryId, isFavorite} = item;
+
+        dispatch(
+            changeFavoriteEntry({
+                entryId,
+                isFavorite,
+                updateInline: true,
+            }),
+        );
+    };
+
+    const getFavoriteIcon = () => {
+        if (isFavoriteIcon) {
+            if (item.isFavorite) {
+                return <Icon className={b('icon-star-fill')} data={StarFill} />;
+            }
+
+            return <Icon className={b('icon-star-stroke')} data={Star} />;
+        }
+
+        return null;
+    };
+
     return (
-        <Link to={url} className={b()} style={defaultRowStyle}>
+        <Link
+            to={url}
+            className={b()}
+            style={defaultRowStyle}
+            onMouseEnter={() => setIsFavoriteIcon(true)}
+            onMouseLeave={() => setIsFavoriteIcon(false)}
+        >
             <div className={b('content-cell', {title: true})}>
                 <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>
                     <EntryIcon entry={item} className={b('icon')} width="24" height="24" />
@@ -56,10 +103,27 @@ const Row: React.FC<RowProps> = ({
                     </div>
                 </div>
             </div>
+            <div className={b('content-cell', {author: true})}>
+                {isShowLogin && (
+                    <LoginById
+                        className={b('author-text')}
+                        loginOrId={item.createdBy}
+                        view="secondary"
+                    />
+                )}
+            </div>
             <div className={b('content-cell')}>
                 {dateTime({
                     input: item.updatedAt,
-                }).format(DATETIME_FORMAT)}
+                }).fromNow()}
+            </div>
+            <div className={b('content-cell')}>
+                <div
+                    className={b('btn-favorite', {isFavorite: item.isFavorite})}
+                    onClick={onChangeFavorite}
+                >
+                    {getFavoriteIcon()}
+                </div>
             </div>
             {workbook.permissions.update && (
                 <div className={b('content-cell')} onClick={onClickStopPropogation}>

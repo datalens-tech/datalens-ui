@@ -31,6 +31,10 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         vertical-align: middle;
+
+        &_author {
+            width: 170px;
+        }
     }
 
     &__header-cell {
@@ -44,10 +48,5 @@
 
     &__icon {
         flex-shrink: 0;
-    }
-
-    &__show-more-btn {
-        width: 100%;
-        margin-top: 16px;
     }
 }

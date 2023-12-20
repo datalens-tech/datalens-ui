@@ -1,6 +1,8 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
 .dl-content-row {
+    $class: &;
+
     display: table-row;
     color: inherit;
     text-decoration: none;
@@ -52,8 +54,35 @@
         margin-left: 12px;
     }
 
+    &__content-cell {
+        &_author {
+            width: 170px;
+        }
+    }
+
+    &__author-text {
+        overflow-wrap: break-word;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     &__control-col {
         display: flex;
         justify-content: flex-end;
+    }
+
+    &__btn-favorite {
+        color: var(--g-color-base-misc-heavy-hover);
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 4px;
+
+        &:hover {
+            background: var(--g-color-base-simple-hover);
+        }
     }
 }

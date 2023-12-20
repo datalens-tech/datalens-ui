@@ -17,6 +17,7 @@
   "button_cancel": "Отменить",
   "button_workbook-table-load-more": "Загрузить ещё",
   "button_workbook-table-retry": "Обновить страницу",
+  "label_author": "Автор",
   "label_copy": "копия",
   "label_delete-entry": "Удаление",
   "label_entry-name-already-exists": "Название уже используется, придумайте другое",
