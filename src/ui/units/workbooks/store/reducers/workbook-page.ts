@@ -1,5 +1,7 @@
 import {
+    AddFavoriteResponse,
     DeleteEntryResponse,
+    DeleteFavoriteResponse,
     EntryFields,
     GetCollectionBreadcrumbsResponse,
     GetEntryResponse,
@@ -15,6 +17,10 @@ import {WorkbookEntriesFilters} from '../../types';
 import {WorkbooksAction} from '../actions';
 import {
     ADD_WORKBOOK_INFO,
+    CHANGE_FAVORITE_ENTRY_FAILED,
+    CHANGE_FAVORITE_ENTRY_INLINE,
+    CHANGE_FAVORITE_ENTRY_LOADING,
+    CHANGE_FAVORITE_ENTRY_SUCCESS,
     CHANGE_FILTERS,
     DELETE_ENTRY_FAILED,
     DELETE_ENTRY_INLINE,
@@ -64,6 +70,11 @@ export type WorkbooksState = {
         data: RenameEntryResponse | null;
         error: Error | null;
     };
+    changeFavoriteEntry: {
+        isLoading: boolean;
+        data: AddFavoriteResponse | DeleteFavoriteResponse | null;
+        error: Error | null;
+    };
     deleteEntry: {
         isLoading: boolean;
         data: DeleteEntryResponse | null;
@@ -95,6 +106,11 @@ const initialState: WorkbooksState = {
         type: null,
     },
     renameEntry: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    changeFavoriteEntry: {
         isLoading: false,
         data: null,
         error: null,
@@ -293,6 +309,55 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
                                 (newItem as any)[typedKey] = renamedEntry[typedKey];
                             }
                         });
+
+                        return newItem;
+                    }
+                    return item;
+                }),
+            };
+        }
+
+        // Renaming the entry
+        case CHANGE_FAVORITE_ENTRY_LOADING: {
+            return {
+                ...state,
+                changeFavoriteEntry: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case CHANGE_FAVORITE_ENTRY_SUCCESS: {
+            return {
+                ...state,
+                changeFavoriteEntry: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case CHANGE_FAVORITE_ENTRY_FAILED: {
+            return {
+                ...state,
+                changeFavoriteEntry: {
+                    ...state.changeFavoriteEntry,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+        case CHANGE_FAVORITE_ENTRY_INLINE: {
+            const changeFavoriteEntry = Array.isArray(action.data) ? action.data[0] : action.data;
+
+            return {
+                ...state,
+                items: state.items.map((item) => {
+                    if (changeFavoriteEntry.entryId === item.entryId) {
+                        const newItem = {...item} as GetEntryResponse;
+
+                        newItem.isFavorite = !newItem.isFavorite;
 
                         return newItem;
                     }

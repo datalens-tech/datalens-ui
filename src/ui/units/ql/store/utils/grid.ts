@@ -120,6 +120,7 @@ export class Helper {
             publishedId: '1',
             updatedAt: moment().format(),
             isFavorite: false,
+            isLocked: false,
             createdAt: '',
             createdBy: '',
             hidden: false,

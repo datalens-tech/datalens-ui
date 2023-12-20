@@ -6,8 +6,10 @@ import {EntryScope} from 'shared';
 import {showToast} from 'store/actions/toaster';
 
 import type {
+    AddFavoriteResponse,
     DeleteEntryArgs,
     DeleteEntryResponse,
+    DeleteFavoriteResponse,
     GetCollectionBreadcrumbsResponse,
     GetWorkbookEntriesArgs,
     GetWorkbookEntriesResponse,
@@ -19,6 +21,10 @@ import {CreateEntryActionType} from '../../constants';
 import {WorkbookEntriesFilters} from '../../types';
 import {
     ADD_WORKBOOK_INFO,
+    CHANGE_FAVORITE_ENTRY_FAILED,
+    CHANGE_FAVORITE_ENTRY_INLINE,
+    CHANGE_FAVORITE_ENTRY_LOADING,
+    CHANGE_FAVORITE_ENTRY_SUCCESS,
     CHANGE_FILTERS,
     DELETE_ENTRY_FAILED,
     DELETE_ENTRY_INLINE,
@@ -321,6 +327,91 @@ export const renameEntry = ({
     };
 };
 
+type ChangeFavoriteEntryLoadingAction = {
+    type: typeof CHANGE_FAVORITE_ENTRY_LOADING;
+};
+type ChangeFavoriteEntrySuccessAction = {
+    type: typeof CHANGE_FAVORITE_ENTRY_SUCCESS;
+    data: AddFavoriteResponse | DeleteFavoriteResponse;
+};
+type ChangeFavoriteEntryFailedAction = {
+    type: typeof CHANGE_FAVORITE_ENTRY_FAILED;
+    error: Error;
+};
+type ChangeFavoriteEntryInlineAction = {
+    type: typeof CHANGE_FAVORITE_ENTRY_INLINE;
+    data: AddFavoriteResponse | DeleteFavoriteResponse;
+};
+type ChangeFavoriteEntryAction =
+    | ChangeFavoriteEntryLoadingAction
+    | ChangeFavoriteEntrySuccessAction
+    | ChangeFavoriteEntryFailedAction
+    | ChangeFavoriteEntryInlineAction;
+
+export const changeFavoriteEntry = ({
+    entryId,
+    isFavorite = false,
+    updateInline = false,
+}: {
+    entryId: string;
+    isFavorite?: boolean;
+    updateInline: boolean;
+}) => {
+    return (dispatch: WorkbooksDispatch) => {
+        const thenHandler = (data: AddFavoriteResponse | DeleteFavoriteResponse) => {
+            dispatch({
+                type: CHANGE_FAVORITE_ENTRY_SUCCESS,
+                data,
+            });
+
+            if (updateInline) {
+                dispatch({
+                    type: CHANGE_FAVORITE_ENTRY_INLINE,
+                    data,
+                });
+            }
+            return data;
+        };
+
+        const catchHandler = (error: Error) => {
+            if (!getSdk().isCancel(error)) {
+                logger.logError('workbooks/changeFavoriteEntry failed', error);
+                dispatch(
+                    showToast({
+                        title: error.message,
+                        error,
+                    }),
+                );
+            }
+            dispatch({
+                type: RENAME_ENTRY_FAILED,
+                error,
+            });
+            return null;
+        };
+
+        dispatch({
+            type: CHANGE_FAVORITE_ENTRY_LOADING,
+        });
+
+        if (isFavorite) {
+            return getSdk()
+                .us.deleteFavorite({
+                    entryId,
+                })
+                .then(thenHandler)
+                .catch(catchHandler);
+        } else {
+            return getSdk()
+                .us.addFavorite({
+                    entryId,
+                })
+                .then(thenHandler)
+                .catch(catchHandler);
+        }
+    };
+};
+
 type DeleteEntryLoadingAction = {
     type: typeof DELETE_ENTRY_LOADING;
 };
@@ -461,6 +552,7 @@ export type WorkbooksAction =
     | SetCreateWorkbookEntryTypeAction
     | ResetCreateWorkbookEntryTypeAction
     | RenameEntryAction
+    | ChangeFavoriteEntryAction
     | DeleteEntryAction
     | ResetWorkbookStateAction
     | ChangeFiltersAction

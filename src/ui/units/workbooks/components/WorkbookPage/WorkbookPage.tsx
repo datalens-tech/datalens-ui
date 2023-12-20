@@ -187,7 +187,7 @@ export const WorkbookPage = () => {
                 }
             })();
         }
-    }, []);
+    }, [activeTab, dispatch, filters, isMainTab, scope, workbookId]);
 
     if (
         pageError ||

@@ -23,6 +23,8 @@ interface MainTabContentProps extends WorkbookEntriesTableProps {
     actionCreateText: string;
     title: string;
     actionType: CreateEntryActionType;
+    isShowMoreBtn: boolean;
+    loadMoreEntries: () => void;
 }
 
 const MainTabContent: React.FC<MainTabContentProps> = ({
@@ -35,6 +37,8 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
     actionCreateText,
     title,
     actionType,
+    isShowMoreBtn,
+    loadMoreEntries,
 }) => {
     const [isOpen, setIsOpen] = React.useState(true);
 
@@ -50,39 +54,55 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
     return (
         <>
             <div className={b()}>
-                <div className={b('content-cell')}>
-                    <div className={b('title')}>
-                        <div className={b('visibility-btn')} onClick={() => setIsOpen(!isOpen)}>
-                            {isOpen ? <ChevronDown /> : <ChevronUp />}
-                        </div>
-                        <div className={b('title-text')}>{title}</div>
-                    </div>
+                <div className={b('header')}>
+                    <div className={b('header-cell', {title: true})} />
+                    <div className={b('header-cell')} />
+                    <div className={b('header-cell')} />
+                    <div className={b('header-cell')} />
                 </div>
-                <div className={b('content-cell')} />
-                {workbook.permissions.update && (
+                <div className={b('table')}>
                     <div className={b('content-cell')}>
-                        <div className={b('create-btn')}>
-                            <Button onClick={handleCreateEntity}>
-                                <Icon data={Plus} />
-                                {actionCreateText}
-                            </Button>
+                        <div className={b('title')}>
+                            <div className={b('visibility-btn')} onClick={() => setIsOpen(!isOpen)}>
+                                {isOpen ? <ChevronDown /> : <ChevronUp />}
+                            </div>
+                            <div className={b('title-text')}>{title}</div>
                         </div>
                     </div>
+                    <div className={b('content-cell')} />
+                    <div className={b('content-cell')} />
+                    <div className={b('content-cell')} />
+                    {workbook.permissions.update && (
+                        <div className={b('content-cell')}>
+                            <div className={b('create-btn')}>
+                                <Button onClick={handleCreateEntity}>
+                                    <Icon data={Plus} />
+                                    {actionCreateText}
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {chunk.length > 0 && isOpen ? (
+                    <ChunkGroup
+                        key={chunk[0].key}
+                        workbook={workbook}
+                        chunk={chunk}
+                        onRenameEntry={onRenameEntry}
+                        onDeleteEntry={onDeleteEntry}
+                        onDuplicateEntry={onDuplicateEntry}
+                        onCopyEntry={onCopyEntry}
+                    />
+                ) : (
+                    getNoObjectsText()
                 )}
             </div>
 
-            {chunk.length > 0 && isOpen ? (
-                <ChunkGroup
-                    key={chunk[0].key}
-                    workbook={workbook}
-                    chunk={chunk}
-                    onRenameEntry={onRenameEntry}
-                    onDeleteEntry={onDeleteEntry}
-                    onDuplicateEntry={onDuplicateEntry}
-                    onCopyEntry={onCopyEntry}
-                />
-            ) : (
-                getNoObjectsText()
+            {isShowMoreBtn && isOpen && (
+                <Button onClick={loadMoreEntries} className={b('show-more-btn')} view="outlined">
+                    {i18n('action_show-more')}
+                </Button>
             )}
         </>
     );

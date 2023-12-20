@@ -1,6 +1,25 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .dl-main-tab-content {
-    display: table-row;
-    height: 48px;
+    display: table;
+    width: 100%;
+
+    &__table {
+        display: table-row;
+        height: 48px;
+    }
+
+    &__header {
+        display: table-header-group;
+    }
+
+    &__header-cell {
+        display: table-cell;
+    }
+
+    &__header-cell_title {
+        width: 60%;
+    }
 
     &__visibility-btn {
         cursor: pointer;
@@ -28,5 +47,10 @@
     &__no-objects {
         color: var(--g-color-text-secondary);
         margin-left: 20px;
+    }
+
+    &__show-more-btn {
+        width: 100%;
+        margin-top: 16px;
     }
 }
