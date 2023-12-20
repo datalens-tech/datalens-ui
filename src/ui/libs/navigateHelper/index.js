@@ -1,5 +1,6 @@
 import {NAVIGATION_ROUTE} from 'shared';
 
+import {EntryScope, getEntryNameByKey, makeSlugName} from '../../../shared';
 import {DL} from '../../constants/common';
 import {registry} from '../../registry';
 
@@ -10,6 +11,14 @@ const formUrl = (url) => {
 const navigateHelper = {
     redirectUrlSwitcher({entryId, scope, type, key}) {
         const {getUIEntryRoute} = registry.common.functions.getAll();
+
+        if (DL.IS_MOBILE && scope === EntryScope.Widget) {
+            const name = getEntryNameByKey({key, index: -1});
+            const slugName = makeSlugName(entryId, name);
+
+            return `/preview/${slugName}`;
+        }
+
         return getUIEntryRoute({
             origin: window.location.origin,
             installationType: window.DL.installationType,

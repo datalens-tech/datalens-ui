@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import {Route, RouteComponentProps, Switch, withRouter} from 'react-router-dom';
 import {Dispatch, bindActionCreators} from 'redux';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
-import {DatalensGlobalState} from 'ui';
+import {DL, DatalensGlobalState} from 'ui';
 import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
 import Utils from 'ui/utils/utils';
 
@@ -42,7 +42,7 @@ const App: React.FunctionComponent<Props> = (props) => {
     }, []);
 
     return (
-        <div className={b()}>
+        <div className={b({mobile: DL.IS_MOBILE})}>
             {isEmbeddedMode() || isAsideHeaderEnabled ? null : <MobileHeader />}
             <Switch>
                 <Route
