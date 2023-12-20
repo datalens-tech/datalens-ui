@@ -1,4 +1,3 @@
-import {getFakeTitleOrTitle} from '../../../../../../../../shared';
 import {findIndexInOrder, getTimezoneOffsettedTime} from '../../../utils/misc-helpers';
 
 import {GetXAxisValueArgs, XAxisValue} from './types';
@@ -14,11 +13,12 @@ export const getXAxisValue = ({
     xDataType,
     xIsPseudo,
     categoriesMap,
+    idToTitle,
 }: GetXAxisValueArgs): XAxisValue => {
     let xValue;
     if (xIsPseudo) {
         ys1.forEach((y) => {
-            const title = getFakeTitleOrTitle(y);
+            const title = y.fakeTitle || idToTitle[y.guid];
 
             if (!categoriesMap.has(title)) {
                 categoriesMap.set(title, true);
@@ -26,7 +26,7 @@ export const getXAxisValue = ({
             }
         });
     } else {
-        const xTitle = x.title;
+        const xTitle = idToTitle[x.guid];
         const xi = findIndexInOrder(order, x, xTitle);
         const value = values[xi];
         if (value === null) {

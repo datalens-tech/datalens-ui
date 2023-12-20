@@ -10,7 +10,7 @@ import {
 } from '../../../../../../../../shared';
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
 import {PivotData} from '../../../preparers/backend-pivot-table/types';
-import {prepareD3BarX} from '../../../preparers/bar-x';
+import {prepareD3BarX, prepareHighchartsBarX} from '../../../preparers/bar-x';
 import {prepareHighchartsBarY} from '../../../preparers/bar-y';
 import prepareFlatTableData from '../../../preparers/flat-table';
 import prepareGeopointData from '../../../preparers/geopoint';
@@ -111,13 +111,20 @@ export default ({
     switch (visualization.id) {
         case WizardVisualizationId.Line:
         case WizardVisualizationId.Area:
-        case WizardVisualizationId.Area100p:
+        case WizardVisualizationId.Area100p: {
+            rowsLimit = 75000;
+            prepare = isMonitoringOrPrometheusChart(chartType)
+                ? prepareLineTime
+                : prepareHighchartsLine;
+            break;
+        }
+
         case WizardVisualizationId.Column:
         case WizardVisualizationId.Column100p: {
             rowsLimit = 75000;
             prepare = isMonitoringOrPrometheusChart(chartType)
                 ? prepareLineTime
-                : prepareHighchartsLine;
+                : prepareHighchartsBarX;
             break;
         }
 
