@@ -12,6 +12,10 @@
         height: 48px;
     }
 
+    &__header_closed {
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
     &__table-header {
         display: table-header-group;
     }

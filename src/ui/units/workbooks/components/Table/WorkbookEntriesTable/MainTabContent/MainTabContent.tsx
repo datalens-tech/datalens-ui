@@ -53,7 +53,7 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
 
     return (
         <div className={b()}>
-            <div className={b('header')}>
+            <div className={b('header', {closed: !isOpen})}>
                 <div className={b('content')}>
                     <div className={b('title')}>
                         <div className={b('visibility-btn')} onClick={() => setIsOpen(!isOpen)}>
