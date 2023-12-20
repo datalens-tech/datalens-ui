@@ -7,6 +7,12 @@ body,
     box-sizing: border-box;
 }
 
+html,
+body {
+    // for correct overflow: hidden in safari
+    position: relative;
+}
+
 *,
 :after,
 :before {
@@ -17,7 +23,7 @@ body.js-screenshot-mode * {
     transition: none !important; // stylelint-disable-line declaration-no-important
 }
 
-/* 
+/*
     At the moment of dynamic loading of the charts from @gravity-ui/chartkit, the main styles come to the runtime
     from @gravity-ui/uikit, which override font-family, where the basic font is 'Helvetica Neue'
     https://github.com/gravity-ui/uikit/blob/main/styles/typography.scss#L2

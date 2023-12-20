@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {TestParametrizationConfig} from 'types/config';
+import {TestParametrizationConfig} from '../../../types/config';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
 import QLPage from '../../../page-objects/ql/QLPage';
 import {openTestPage, slct} from '../../../utils';

@@ -23,4 +23,5 @@ export enum MenuItemsIds {
     EMBEDDED = 'embedded',
     SETTINGS = 'settings',
     ALERTS = 'alerts',
+    FULLSCREEEN = 'fullscreen',
 }

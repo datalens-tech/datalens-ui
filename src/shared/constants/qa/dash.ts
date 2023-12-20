@@ -39,10 +39,36 @@ export enum DashRevisions {
 
 export enum DashEntryQa {
     EntryName = 'dash-entry-name',
+    TableOfContent = 'table-of-content',
+}
+
+export enum TableOfContentQa {
+    TableOfContent = 'table-of-content',
+    CloseBtn = 'table-of-content-close',
 }
 
 export enum DashMetaQa {
     Dialog = 'dialog-dash-meta',
     SaveButton = 'dash-meta-save-button',
     EditButton = 'dash-meta-edit-button',
+}
+
+export enum DashCommonQa {
+    RelationTypeButton = 'relation-type-btn',
+    AliasSelectLeft = 'alias-first-select',
+    AliasSelectRight = 'alias-second-select',
+    AliasAddBtn = 'alias-add-new-btn',
+    AliasAddApplyBtn = 'alias-add-new-apply-btn',
+    RelationsApplyBtn = 'relations-apply-btn',
+    RelationsCancelBtn = 'relations-cancel-btn',
+    WidgetShowTitleCheckbox = 'dialog-widget-settings-show-title',
+    RelationsDialogEmptyText = 'dialog-relations-empty-text',
+}
+
+export enum DashRelationTypes {
+    output = 'relation-type-option-output',
+    input = 'relation-type-option-input',
+    ignore = 'relation-type-option-ignore',
+    both = 'relation-type-option-both',
+    unknown = 'relation-type-option-unknown',
 }

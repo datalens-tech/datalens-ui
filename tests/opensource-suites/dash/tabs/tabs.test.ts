@@ -3,9 +3,9 @@ import {Page} from '@playwright/test';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {deleteEntity, openTestPage} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {Workbook} from 'page-objects/workbook/Workbook';
-import {WorkbooksUrls} from 'constants/constants';
-import {ChartsParams} from 'constants/test-entities/charts';
+import {Workbook} from '../../../page-objects/workbook/Workbook';
+import {WorkbooksUrls} from '../../../constants/constants';
+import {ChartsParams} from '../../../constants/test-entities/charts';
 
 datalensTest.describe(`Dashboards - tabs`, () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {

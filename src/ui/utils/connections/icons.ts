@@ -37,6 +37,7 @@ import iconSnowflake from '../../assets/icons/connections/snowflake.svg';
 import iconUndefined from '../../assets/icons/connections/undefined.svg';
 import iconUsageTrackingYT from '../../assets/icons/connections/utyt.svg';
 import iconYaMusicPodcast from '../../assets/icons/connections/ya-music-podcast.svg';
+import iconYadocs from '../../assets/icons/connections/yadocs.svg';
 import iconYDB from '../../assets/icons/connections/ydb.svg';
 import iconYQ from '../../assets/icons/connections/yq.svg';
 import iconYt from '../../assets/icons/connections/yt.svg';
@@ -103,6 +104,7 @@ export const getConnectorIconDataWithoutDefault = (type?: string): IconData | un
             return iconPromql;
         case ConnectorType.Monitoring:
         case ConnectorType.MonitoringExt:
+        case ConnectorType.MonitoringV2:
             return iconMonitoring;
         case ConnectorType.Bitrix:
         case ConnectorType.Bitrix24:
@@ -129,6 +131,8 @@ export const getConnectorIconDataWithoutDefault = (type?: string): IconData | un
             return iconKonturMarket;
         case ConnectorType.Extractor1c:
             return iconExtractor1C;
+        case ConnectorType.Yadocs:
+            return iconYadocs;
         default:
             return undefined;
     }

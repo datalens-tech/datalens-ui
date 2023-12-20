@@ -579,7 +579,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                     res.status(200).send(purgeResult(result));
                 } catch (error) {
                     const errorCode = Utils.getErrorCode(error);
-                    const errorStatus = errorCode === ErrorCode.ReadOnlyMode ? 503 : 500;
+                    const errorStatus = errorCode === ErrorCode.ReadOnlyMode ? 451 : 500;
                     res.status(errorStatus).send({
                         message: Utils.getErrorMessage(error),
                         details: Utils.getErrorDetails(error),
@@ -646,7 +646,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                     if (Utils.getErrorStatus(error) === 403) {
                         errorStatus = 403;
                     } else if (Utils.getErrorCode(error) === ErrorCode.ReadOnlyMode) {
-                        errorStatus = 503;
+                        errorStatus = 451;
                     }
                     res.status(errorStatus).send({message: Utils.getErrorMessage(error)});
                 }
@@ -671,7 +671,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                     if (Utils.getErrorStatus(error) === 403) {
                         errorStatus = 403;
                     } else if (Utils.getErrorCode(error) === ErrorCode.ReadOnlyMode) {
-                        errorStatus = 503;
+                        errorStatus = 451;
                     }
                     res.status(errorStatus).send({message: Utils.getErrorMessage(error)});
                 }

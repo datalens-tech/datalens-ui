@@ -19,6 +19,7 @@ export {
     activeGSheetDialogSelector,
     gsheetUpdatingSelector,
 } from './gsheet';
+export * from './yadocs';
 
 export const newConnectionSelector = (state: DatalensGlobalState) => {
     return !state.connections.entry?.entryId;

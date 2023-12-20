@@ -5,6 +5,7 @@ import type {
     HighchartsWidgetData,
 } from '@gravity-ui/chartkit/highcharts';
 import {Yagr, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
+import type {ItemStateAndParamsChangeOptions} from '@gravity-ui/dashkit';
 import DataTable, {DataTableProps} from '@gravity-ui/react-data-table';
 import {Optional, Required} from 'utility-types';
 
@@ -315,6 +316,7 @@ type ParamsChangedOnChange = {
     data: {
         params: StringParams;
     };
+    options?: ItemStateAndParamsChangeOptions;
 };
 
 type YMapGeoObjectVisibilityChangedOnChange = {

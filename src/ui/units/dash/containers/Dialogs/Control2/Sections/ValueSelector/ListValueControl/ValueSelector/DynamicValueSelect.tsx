@@ -5,7 +5,7 @@ import {I18n} from 'i18n';
 import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
 import {useSelector} from 'react-redux';
-import {TIMEOUT_90_SEC, getFieldsApiV2RequestSection} from 'shared';
+import {DialogControlQa, TIMEOUT_90_SEC, getFieldsApiV2RequestSection} from 'shared';
 import {VIEW_MODES} from 'ui/components/Select/hooks/useSelectRenderFilter/useSelectRenderFilter';
 import {
     SelectFeaturedAsync,
@@ -144,6 +144,7 @@ export const DynamicValueSelect = () => {
             fetcher={fetcher}
             onFilterChange={onFilterChange}
             placeholder={i18n('value_undefined')}
+            qa={DialogControlQa.valueSelect}
         />
     );
 };

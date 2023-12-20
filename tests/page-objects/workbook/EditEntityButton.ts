@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 import {slct} from '../../utils';
-import {COMMON_SELECTORS} from 'utils/constants';
+import {COMMON_SELECTORS} from '../../utils/constants';
 
 export class EditEntityButton {
     protected page: Page;

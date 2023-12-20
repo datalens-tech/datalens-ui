@@ -6,6 +6,7 @@ import {History, Location} from 'history';
 import {ResolveThunks, connect} from 'react-redux';
 import {DatalensGlobalState} from 'ui';
 import EntryDialogues from 'ui/components/EntryDialogues/EntryDialogues';
+import {MobileTocToggle} from 'ui/components/MobileTocToggle/MobileTocToggle';
 import {DashEntry} from 'ui/units/dash/typings/entry';
 import {DashActionPanelMobile} from 'units/dash/components/DashActionPanel/DashActionPanelMobile';
 
@@ -37,25 +38,20 @@ type State = {};
 class Header extends React.PureComponent<Props, State> {
     state: State = {};
 
-    toggleFullscreenModeMobile = () => {
-        this.props.toggleFullscreenMode({
-            location: this.props.location,
-            history: this.props.history,
-        });
-    };
-
     render() {
         if (!this.props.entry) {
             return null;
         }
 
+        const showTocHeader =
+            this.props.hasTableOfContent && this.props.entry?.data?.settings?.expandTOC;
+
         if (DL.IS_MOBILE) {
             return (
-                <DashActionPanelMobile
-                    entry={this.props.entry}
-                    isFullscreenMode={Boolean(this.props.isFullscreenMode)}
-                    toggleFullscreenMode={this.toggleFullscreenModeMobile}
-                />
+                <React.Fragment>
+                    <DashActionPanelMobile entry={this.props.entry} />
+                    {showTocHeader && <MobileTocToggle onClick={this.props.toggleTableOfContent} />}
+                </React.Fragment>
             );
         }
 

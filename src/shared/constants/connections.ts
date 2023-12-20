@@ -48,6 +48,8 @@ export enum ConnectorType {
     SmbHeatmaps = 'smb_heatmaps',
     Chyt = 'chyt',
     Extractor1c = 'extractor1c',
+    Yadocs = 'yadocs',
+    MonitoringV2 = 'monitoring_v2',
 }
 
 export type ActualConnectorType =

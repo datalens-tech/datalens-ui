@@ -12,15 +12,12 @@ import {
     DashTab,
     DashTabItem,
     DashTabItemControlSourceType,
-    DashTabItemType,
     Dataset,
     DatasetFieldType,
     EntryUpdateMode,
     Operations,
 } from 'shared';
-import {GetWidgetsDatasetsFieldsItem} from 'shared/schema';
 import {AppDispatch} from 'ui/store';
-import {DashState} from 'ui/units/dash/store/reducers/dashTypedReducer';
 import {validateParamTitleOnlyUnderscore} from 'units/dash/components/ParamsSettings/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import {addOperationForValue} from 'units/dash/modules/helpers';
@@ -895,69 +892,3 @@ export const setSkipReload = (skipReload: boolean): SetSkipReloadAction => ({
     type: SET_SKIP_RELOAD,
     payload: skipReload,
 });
-export const SET_DASH_DS_FIELDS = Symbol('dash/SET_DASH_DS_FIELDS');
-export type SetDashDSAction = {
-    type: typeof SET_DASH_DS_FIELDS;
-    payload: {widgetsDatasetsFields: GetWidgetsDatasetsFieldsItem[]};
-};
-export const setDashDatasets = (data: SetDashDSAction['payload']): SetDashDSAction => ({
-    type: SET_DASH_DS_FIELDS,
-    payload: data,
-});
-export const RESET_DASH_DS_FIELDS = Symbol('dash/RESET_DASH_DS_FIELDS');
-export type ResetDashDSAction = {
-    type: typeof RESET_DASH_DS_FIELDS;
-};
-export const resetDashDatasetsFields = (): ResetDashDSAction => ({
-    type: RESET_DASH_DS_FIELDS,
-});
-
-const LOAD_DASH_DATASETS_CONCURRENT_ID = 'dashLoadDatasets';
-
-/**
- * Do not wait for the answer when call this function:
- * this data will be needed later, not immediately after loading dash
- * @param entry
- * @param tabId
- */
-export function loadDashDatasets(entry: Partial<DashState>, tabId: string) {
-    return async function (dispatch: DashDispatch) {
-        const tabs = entry.data?.tabs || [];
-        if (!tabs.length) {
-            return;
-        }
-
-        const tabIndex = tabs.findIndex((item) => item.id === tabId);
-
-        if (tabIndex === -1) {
-            return;
-        }
-
-        const dashTabItems = tabs[tabIndex].items || [];
-        if (!dashTabItems.length) {
-            return;
-        }
-        let entriesIds: string[] = [];
-        dashTabItems.forEach((dashItem) => {
-            if (dashItem.type === DashTabItemType.Widget) {
-                const chartData = dashItem.data;
-                const widgetChartIds = chartData.tabs
-                    .filter((chartTabItem) => Boolean(chartTabItem.enableActionParams))
-                    ?.map((chartTabItem) => chartTabItem.chartId);
-                entriesIds = entriesIds.concat(widgetChartIds);
-            }
-        });
-        entriesIds = [...new Set(entriesIds)];
-
-        if (isEmpty(entriesIds)) {
-            return;
-        }
-
-        const entriesDatasetsFields = await getSdk().mix.getWidgetsDatasetsFields(
-            {entriesIds},
-            {concurrentId: LOAD_DASH_DATASETS_CONCURRENT_ID},
-        );
-
-        dispatch(setDashDatasets({widgetsDatasetsFields: entriesDatasetsFields}));
-    };
-}

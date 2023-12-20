@@ -5,7 +5,7 @@ import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct} from '../../../utils';
 import {RobotChartsEditorUrls, RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import EditorPage from 'page-objects/editor/EditorPage';
+import EditorPage from '../../../page-objects/editor/EditorPage';
 
 const PARAMS = {
     CHART_TITLE: 'ForbiddenExport test',

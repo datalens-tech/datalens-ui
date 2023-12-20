@@ -10,6 +10,7 @@ import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {WorkbookPage} from 'shared/constants/qa/workbooks';
 import {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import {registry} from 'ui/registry/index';
 import {AppDispatch} from 'ui/store';
@@ -92,10 +93,11 @@ const Row: React.FC<RowProps> = ({
             to={url}
             className={b()}
             style={defaultRowStyle}
+            data-qa={WorkbookPage.ListItem}
             onMouseEnter={() => setIsFavoriteBtn(true)}
             onMouseLeave={() => setIsFavoriteBtn(false)}
         >
-            <div className={b('content-cell', {title: true})}>
+            <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
                 <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>
                     <EntryIcon entry={item} className={b('icon')} width="24" height="24" />
                     <div className={b('title-col-text')} title={item.name}>

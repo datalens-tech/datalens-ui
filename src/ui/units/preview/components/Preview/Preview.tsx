@@ -5,8 +5,9 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import {RouteComponentProps} from 'react-router-dom';
-import {extractEntryId} from 'shared';
+import {Feature, extractEntryId} from 'shared';
 import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
+import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
 import {pushStats} from 'ui/components/Widgets/Chart/helpers/helpers';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {getSdk} from 'ui/libs/schematic-sdk';
@@ -26,6 +27,7 @@ import {registry} from '../../../../registry';
 import {SNAPTER_DESIRED_CLASS} from '../../modules/constants/constants';
 
 import './Preview.scss';
+import 'ui/components/Widgets/Chart/Chart.scss';
 
 const b = block('preview');
 
@@ -216,7 +218,21 @@ const Preview: React.FC<PreviewProps> = (props) => {
             {Boolean(possibleEntryId) && (
                 <SlugifyUrl entryId={possibleEntryId} name={name} history={history} />
             )}
-            <div className={b(null, SNAPTER_DESIRED_CLASS)} ref={previewRef}>
+            <div className={b({mobile: DL.IS_MOBILE}, SNAPTER_DESIRED_CLASS)} ref={previewRef}>
+                {DL.IS_MOBILE && (
+                    <WidgetHeader
+                        isFullscreen={true}
+                        editMode={false}
+                        hideTabs={true}
+                        withShareWidget={Utils.isEnabledFeature(Feature.EnableShareWidget)}
+                        widgetId={possibleEntryId || ''}
+                        hideDebugTool={true}
+                        onFullscreenClick={() => {
+                            history.push('/widgets');
+                        }}
+                        title={name || ''}
+                    />
+                )}
                 <ChartWrapper
                     usageType="chart"
                     {...chartKitProps}
