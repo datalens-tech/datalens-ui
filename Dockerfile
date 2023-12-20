@@ -60,4 +60,4 @@ RUN update-ca-certificates
 
 USER app
 
-CMD /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
