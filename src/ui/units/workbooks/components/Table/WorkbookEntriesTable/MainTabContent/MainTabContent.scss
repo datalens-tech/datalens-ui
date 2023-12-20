@@ -1,33 +1,39 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
 .dl-main-tab-content {
-    display: table;
-    width: 100%;
-
     &__table {
-        display: table-row;
-        height: 48px;
+        display: table;
+        width: 100%;
     }
 
     &__header {
+        display: flex;
+        justify-content: space-between;
+        height: 48px;
+    }
+
+    &__table-header {
         display: table-header-group;
     }
 
-    &__header-cell {
+    &__table-header-cell {
         display: table-cell;
     }
 
-    &__header-cell_title {
+    &__table-header-cell_title {
         width: 60%;
+    }
+
+    &__table-header-cell_author {
+        width: 170px;
     }
 
     &__visibility-btn {
         cursor: pointer;
     }
 
-    &__content-cell {
-        display: table-cell;
-        vertical-align: middle;
+    &__content {
+        margin: auto 0;
     }
 
     &__title {
