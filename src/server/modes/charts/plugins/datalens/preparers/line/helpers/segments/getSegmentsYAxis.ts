@@ -1,6 +1,6 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
-import {AxisLabelFormatMode, ServerPlaceholder} from '../../../../../../../../../shared';
+import {ServerPlaceholder} from '../../../../../../../../../shared';
 import {applyPlaceholderSettingsToAxis} from '../../../../utils/axis-helpers';
 import {getAxisFormattingByField} from '../axis/getAxisFormattingByField';
 
@@ -10,7 +10,7 @@ const DEFAULT_SPACE_BETWEEN_SEGMENTS = 4;
 
 export const getSegmentsYAxis = (
     segmentsMap: SegmentsMap,
-    placeholders: {y?: ServerPlaceholder; y2?: ServerPlaceholder},
+    placeholders: {y: ServerPlaceholder; y2: ServerPlaceholder},
     visualizationId: string,
 ): {yAxisSettings: Highcharts.AxisOptions[]; yAxisFormattings: any[]} => {
     const segments = Object.keys(segmentsMap);
@@ -75,7 +75,7 @@ export const getSegmentsYAxis = (
         applyPlaceholderSettingsToAxis(placeholder, axis, {title: true});
 
         yAxis[yAxisIndex] = axis;
-        if (placeholder && placeholder.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
+        if (placeholder && placeholder.settings?.axisFormatMode === 'by-field') {
             yAxisFormattings[yAxisIndex] = getAxisFormattingByField(placeholder, visualizationId);
         }
     });

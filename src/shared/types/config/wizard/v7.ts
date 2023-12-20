@@ -1,15 +1,13 @@
 import {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
 import {
-    AxisLabelFormatMode,
-    AxisMode,
     ChartsConfigVersion,
     ColumnSettings,
     NumberFormatType,
     NumberFormatUnit,
     TableBarsSettings,
     TableFieldBackgroundSettings,
-    TableSubTotalsSettings,
 } from '../../wizard';
+import {TableSubTotalsSettings} from '../../wizard/sub-totals';
 
 export type V7ChartsConfig = {
     title?: string;
@@ -166,8 +164,8 @@ export type V7Placeholder = {
         labelsView?: 'horizontal' | 'vertical' | 'angle';
         nulls?: 'ignore' | 'connect' | 'as-0';
         holidays?: 'on' | 'off';
-        axisFormatMode?: AxisLabelFormatMode;
-        axisModeMap?: Record<string, AxisMode>;
+        axisFormatMode?: 'auto' | 'by-field';
+        axisModeMap?: Record<string, 'discrete' | 'continuous'>;
     };
     required?: boolean;
     capacity?: number;

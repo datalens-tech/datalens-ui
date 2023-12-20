@@ -11,7 +11,6 @@ export const calculatedTitle = {
     ChartEditor: chartEditorMock,
     placeholders: [
         {
-            id: 'x',
             items: [
                 {
                     guid: 'ac8dd226-3372-4212-bde7-17afc792a728',
@@ -30,7 +29,6 @@ export const calculatedTitle = {
             ],
         },
         {
-            id: 'y',
             items: [
                 {
                     guid: '809d03e1-15b7-4bdc-b108-653603a27001',
@@ -72,7 +70,6 @@ export const regularTitle = {
     ChartEditor: chartEditorMock,
     placeholders: [
         {
-            id: 'x',
             items: [
                 {
                     guid: 'ac8dd226-3372-4212-bde7-17afc792a728',
@@ -84,7 +81,6 @@ export const regularTitle = {
             ],
         },
         {
-            id: 'y',
             items: [
                 {
                     guid: '809d03e1-15b7-4bdc-b108-653603a27001',

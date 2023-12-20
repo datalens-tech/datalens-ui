@@ -2,7 +2,6 @@ import {omit} from 'lodash';
 
 import {PlaceholderId, WizardVisualizationId} from '../../../../constants';
 import {
-    AxisMode,
     ChartsConfigVersion,
     ServerChartsConfig,
     V6ChartsConfig,
@@ -57,13 +56,13 @@ const mapV6PlaceholdersToV7Placeholders = (
                         const isContinuousMode = isAllAxisModesAvailable(field) && !sortHasMeasure;
 
                         if (isContinuousMode) {
-                            acc[field.guid] = AxisMode.Continuous;
+                            acc[field.guid] = 'continuous';
                         } else {
-                            acc[field.guid] = AxisMode.Discrete;
+                            acc[field.guid] = 'discrete';
                         }
 
                         return acc;
-                    }, {} as Record<string, AxisMode>);
+                    }, {} as Record<string, 'continuous' | 'discrete'>);
 
                     return {
                         ...v6Placeholder,
@@ -80,9 +79,7 @@ const mapV6PlaceholdersToV7Placeholders = (
                         settings: {
                             ...omit(v6Settings, 'axisMode'),
                             axisModeMap: {
-                                [firstField.guid]: isContinuousMode
-                                    ? AxisMode.Continuous
-                                    : AxisMode.Discrete,
+                                [firstField.guid]: isContinuousMode ? 'continuous' : 'discrete',
                             },
                         },
                     };

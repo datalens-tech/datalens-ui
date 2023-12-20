@@ -4,7 +4,6 @@ import {RadioButtonOption, SelectOptionGroup} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import {
     AvailableFieldType,
-    AxisMode,
     CommonNumberFormattingOptions,
     DATASET_FIELD_TYPES,
     DatasetFieldAggregation,
@@ -92,7 +91,7 @@ export class DialogFieldMainSection extends React.Component<Props> {
             visualizationId &&
             ((isDateField(item) &&
                 (currentPlaceholder?.settings as PlaceholderSettings)?.axisModeMap?.[item.guid] ===
-                    AxisMode.Discrete) ||
+                    'discrete') ||
                 this.isTableVisualization ||
                 this.isMetricVisualization) &&
             (commonDataType === 'date' || item.grouping);

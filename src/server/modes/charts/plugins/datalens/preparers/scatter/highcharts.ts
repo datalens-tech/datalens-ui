@@ -1,10 +1,8 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
 import {
-    AxisLabelFormatMode,
     ChartkitHandlers,
     ExtendedExportingCsvOptions,
-    LegendDisplayMode,
     isDateField,
 } from '../../../../../../../shared';
 import {getGradientStops} from '../../utils/color-helpers';
@@ -37,7 +35,7 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
         };
     }
 
-    const legendIsHidden = shared.extraSettings?.legendMode === LegendDisplayMode.Hide;
+    const legendIsHidden = shared.extraSettings && shared.extraSettings?.legendMode === 'hide';
 
     if (ChartEditor) {
         const xPlaceholder = placeholders.find((placeholder) => placeholder.id === 'x')!;
@@ -90,13 +88,13 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
             };
         }
 
-        if (xPlaceholderSettings?.axisFormatMode === AxisLabelFormatMode.ByField) {
+        if (xPlaceholderSettings?.axisFormatMode === 'by-field') {
             customConfig.axesFormatting.xAxis.push(
                 getAxisFormattingByField(xPlaceholder, shared.visualization.id),
             );
         }
 
-        if (yPlaceholderSettings?.axisFormatMode === AxisLabelFormatMode.ByField) {
+        if (yPlaceholderSettings?.axisFormatMode === 'by-field') {
             customConfig.axesFormatting.yAxis.push(
                 getAxisFormattingByField(yPlaceholder, shared.visualization.id),
             );

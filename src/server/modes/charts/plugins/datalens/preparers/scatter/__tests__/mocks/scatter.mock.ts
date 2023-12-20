@@ -1,5 +1,4 @@
 import {
-    AxisMode,
     DATASET_FIELD_TYPES,
     IChartEditor,
     ServerColor,
@@ -136,7 +135,7 @@ export const scatterPrepareForQLArgs = {
                 labelsView: 'auto',
                 holidays: 'off',
                 axisFormatMode: 'auto',
-                axisModeMap: {'built_year-0': AxisMode.Discrete},
+                axisModeMap: {'built_year-0': 'discrete'},
             },
         },
         {
