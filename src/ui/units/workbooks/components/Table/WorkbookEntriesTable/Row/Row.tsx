@@ -48,7 +48,7 @@ const Row: React.FC<RowProps> = ({
     onDuplicateEntry,
     onCopyEntry,
 }) => {
-    const [isFavoriteIcon, setIsFavoriteIcon] = React.useState(true);
+    const [isFavoriteBtn, setIsFavoriteBtn] = React.useState(true);
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
     const {getLoginById} = registry.common.functions.getAll();
 
@@ -76,7 +76,7 @@ const Row: React.FC<RowProps> = ({
     };
 
     const getFavoriteIcon = () => {
-        if (isFavoriteIcon) {
+        if (isFavoriteBtn) {
             if (item.isFavorite) {
                 return <Icon className={b('icon-star-fill')} data={StarFill} />;
             }
@@ -92,8 +92,8 @@ const Row: React.FC<RowProps> = ({
             to={url}
             className={b()}
             style={defaultRowStyle}
-            onMouseEnter={() => setIsFavoriteIcon(true)}
-            onMouseLeave={() => setIsFavoriteIcon(false)}
+            onMouseEnter={() => setIsFavoriteBtn(true)}
+            onMouseLeave={() => setIsFavoriteBtn(false)}
         >
             <div className={b('content-cell', {title: true})}>
                 <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>
@@ -103,7 +103,7 @@ const Row: React.FC<RowProps> = ({
                     </div>
                 </div>
             </div>
-            <div className={b('content-cell', {author: true})}>
+            <div className={b('content-cell')}>
                 {isShowLogin && (
                     <LoginById
                         className={b('author-text')}
