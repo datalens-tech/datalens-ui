@@ -52,6 +52,30 @@ $titleHeight: 57px;
         padding: 12px 16px 0;
     }
 
+    &__add-section-controls {
+        display: grid;
+        grid-template:
+            'a a' 1fr
+            'b b' 1fr
+            'c d' 1fr;
+        row-gap: 8px;
+        column-gap: 6px;
+    }
+
+    &__add-section-controls-area-a {
+        grid-area: a;
+    }
+
+    &__add-section-controls-area-b {
+        display: flex;
+        align-items: center;
+        grid-area: b;
+    }
+
+    &__add-section-controls-area-b-input {
+        margin-right: 5px;
+    }
+
     &__workspace {
         position: relative;
         display: flex;

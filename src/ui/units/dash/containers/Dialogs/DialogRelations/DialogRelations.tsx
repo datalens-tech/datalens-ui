@@ -10,7 +10,7 @@ import intersection from 'lodash/intersection';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashTab, DashTabItem, DatasetField} from 'shared';
+import {DashCommonQa, DashTab, DashTabItem, DatasetField} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
 
@@ -415,11 +415,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 showError={false}
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={i18n('button_apply')}
-                propsButtonCancel={{view: 'outlined'}}
+                propsButtonCancel={{view: 'outlined', qa: DashCommonQa.RelationsCancelBtn}}
                 onClickButtonApply={handleSaveRelations}
                 onClickButtonCancel={onClose}
                 propsButtonApply={{
                     disabled: isLoading,
+                    qa: DashCommonQa.RelationsApplyBtn,
                 }}
             >
                 <Button

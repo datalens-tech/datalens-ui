@@ -37,88 +37,6 @@ $fullscreenZIndex: 999;
         left: 0;
         top: 0;
         z-index: $fullscreenZIndex;
-
-        #{$class}__tabs {
-            padding-left: 45px;
-            padding-right: 50px;
-        }
-    }
-
-    &_with-shares {
-        #{$class}__tabs {
-            padding-right: 80px;
-        }
-    }
-
-    &__back-icon {
-        position: absolute;
-        top: 14px;
-        left: 14px;
-    }
-
-    &__share-widget {
-        position: absolute;
-        top: 13px;
-        right: 50px;
-    }
-
-    .gc-adaptive-tabs {
-        --gc-tabs-space-between: 14px;
-        --gc-tabs-height: 44px;
-        --gc-tabs-color-text-inactive: var(--g-color-text-primary);
-
-        @include dl-adaptive-tabs;
-    }
-
-    &__tabs {
-        display: flex;
-        padding: 0 65px 0 16px;
-        font-size: 15px;
-
-        &_edit-mode.dl-draggable-handle-element {
-            cursor: move;
-
-            .gc-adaptive-tabs__tab {
-                cursor: move;
-            }
-        }
-
-        // TODO: remove after https://github.com/gravity-ui/components/issues/26 will be resolved
-        .gc-adaptive-tabs__tabs-as-select-control {
-            #{$class}__tab {
-                opacity: 1;
-            }
-        }
-    }
-
-    &__tab {
-        display: inline-flex;
-        width: 100%;
-        margin: 0 15px 0 0;
-        color: inherit;
-        cursor: pointer;
-        opacity: 0.5;
-        position: relative;
-
-        &:hover,
-        &_active {
-            opacity: 1;
-        }
-    }
-
-    &__title {
-        color: var(--g-color-text-primary);
-        font-size: 15px;
-        height: 44px;
-        text-decoration: none;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        width: 100%;
-        white-space: nowrap;
-        padding-left: 45px;
-        padding-right: 50px;
-        display: flex;
-        align-items: center;
     }
 
     &__description {
@@ -293,13 +211,6 @@ $fullscreenZIndex: 999;
             #{$class}__chart-header {
                 top: calc(-1 * var(--dl-dk-map-padding) + var(--dl-dk-header-offset));
             }
-        }
-    }
-
-    &__header_mobile {
-        #{$class}__title,
-        #{$class}__tabs {
-            @include text-subheader-3();
         }
     }
 

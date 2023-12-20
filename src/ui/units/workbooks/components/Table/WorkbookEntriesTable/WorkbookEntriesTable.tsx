@@ -9,6 +9,7 @@ import {I18n} from 'i18n';
 import {useInView} from 'react-intersection-observer';
 import {useDispatch} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {WorkbookPage} from 'shared/constants/qa/workbooks';
 import {DIALOG_COPY_ENTRIES_TO_WORKBOOK} from 'ui/components/CopyEntriesToWorkbookDialog';
 
 import {GetEntryResponse} from '../../../../../../shared/schema';
@@ -228,8 +229,13 @@ function Row({
     const url = getWorkbookEntryUrl(item, workbook);
 
     return (
-        <Link to={url} className={b('content-row')} style={defaultRowStyle}>
-            <div className={b('content-cell', {title: true})}>
+        <Link
+            to={url}
+            className={b('content-row')}
+            style={defaultRowStyle}
+            data-qa={WorkbookPage.ListItem}
+        >
+            <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
                 <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>
                     <EntryIcon entry={item} className={b('icon')} width="24" height="24" />
                     <div className={b('title-col-text')} title={item.name}>

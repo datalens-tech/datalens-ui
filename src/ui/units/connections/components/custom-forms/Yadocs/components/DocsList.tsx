@@ -1,21 +1,30 @@
 import React from 'react';
 
-import {Plus} from '@gravity-ui/icons';
-import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {YadocsAddSectionState} from 'ui/units/connections/store';
 
-import {i18n8857} from '../constants';
+import {AddSection} from '../components';
+import type {AddYandexDoc, UpdateAddSectionState} from '../types';
 
 const b = block('conn-form-yadocs');
 
-export const DocsList = () => {
+type Props = {
+    addSectionState: YadocsAddSectionState;
+    addYandexDoc: AddYandexDoc;
+    updateAddSectionState: UpdateAddSectionState;
+};
+
+export const DocsList = (props: Props) => {
+    const {addSectionState, addYandexDoc, updateAddSectionState} = props;
+
     return (
         <div className={b('list')}>
             <div className={b('add-section')}>
-                <Button view="outlined">
-                    <Icon data={Plus} size={14} />
-                    {i18n8857['button_add-document']}
-                </Button>
+                <AddSection
+                    {...addSectionState}
+                    addYandexDoc={addYandexDoc}
+                    updateAddSectionState={updateAddSectionState}
+                />
             </div>
         </div>
     );

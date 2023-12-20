@@ -6,4 +6,14 @@
     .datalens-chartkit-error {
         padding: 20px;
     }
+
+    &_mobile {
+        flex-direction: column;
+        position: relative;
+
+        .dl-widget__container .dl-widget__chart-header {
+            top: -40px;
+            right: 8px;
+        }
+    }
 }

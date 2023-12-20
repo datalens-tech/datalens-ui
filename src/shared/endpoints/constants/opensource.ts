@@ -1,7 +1,7 @@
 export const opensourceEndpoints = {
     development: {
         api: {
-            us: process.env.US_ENDPOINT || 'http://localhost:50500',
+            us: process.env.US_ENDPOINT || 'http://localhost:8083',
             bi: process.env.BI_API_ENDPOINT || 'http://localhost:8081',
             biData: process.env.BI_DATA_ENDPOINT || 'http://localhost:8082',
             charts: process.env.CHARTS_ENDPOINT || '/',

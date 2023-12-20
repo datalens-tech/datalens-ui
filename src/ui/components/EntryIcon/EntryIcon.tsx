@@ -98,6 +98,7 @@ const typeToIcon: Record<string, IconData> = {
     [ConnectorType.KonturMarket]: iconKonturMarket,
     [ConnectorType.Extractor1c]: iconExtractor1C,
     [ConnectorType.Yadocs]: iconYadocs,
+    [ConnectorType.MonitoringV2]: iconMonitoring,
 };
 
 const entityTypeIcons: Record<string, string> = {

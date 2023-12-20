@@ -1,5 +1,5 @@
 import {Page} from '@playwright/test';
-import {getUniqueTimestamp, slct} from 'utils';
+import {getUniqueTimestamp, slct} from '../../utils';
 import {DialogCreateWorkbookEntryQa} from '../../../src/shared/constants/qa/components';
 
 export class DialogCreateEntry {

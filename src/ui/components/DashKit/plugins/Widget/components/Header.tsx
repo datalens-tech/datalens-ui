@@ -5,6 +5,7 @@ import {ArrowLeft} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DRAGGABLE_HANDLE_CLASS_NAME} from 'ui/components/Widgets/Chart/helpers/helpers';
+import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
@@ -96,7 +97,7 @@ export const Header = (props: HeaderProps) => {
                 {withShareWidget && (
                     <div className={b('share-widget')}>
                         <SharePopover
-                            useWebShareApi
+                            useWebShareApi={DL.IS_MOBILE}
                             url={window.location.href}
                             title={currentTab.title}
                             text={currentTab.title}
