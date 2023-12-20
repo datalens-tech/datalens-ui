@@ -317,7 +317,7 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
             };
         }
 
-        // Renaming the entry
+        // Change favorite the entry
         case CHANGE_FAVORITE_ENTRY_LOADING: {
             return {
                 ...state,
