@@ -16,7 +16,6 @@ import {cloneDeep} from 'lodash';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
 import {
-    AxisMode,
     DATASET_FIELD_TYPES,
     DatasetField,
     DatasetFieldCalcMode,
@@ -835,7 +834,7 @@ class VisualizationItem extends React.Component<Props, State> {
             if (placeholder && cast) {
                 const axisModeMap =
                     (placeholder.settings as PlaceholderSettings)?.axisModeMap || {};
-                const axisMode = axisModeMap[target.guid] || AxisMode.Discrete;
+                const axisMode = axisModeMap[target.guid] || 'discrete';
 
                 if (
                     !isAllAxisModesAvailable({data_type: cast}) &&

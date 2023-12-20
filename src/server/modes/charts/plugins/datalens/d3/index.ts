@@ -1,4 +1,4 @@
-import type {ChartKitWidgetAxisType, ChartKitWidgetData} from '@gravity-ui/chartkit';
+import type {ChartKitWidgetData} from '@gravity-ui/chartkit';
 
 import {
     PlaceholderId,
@@ -7,11 +7,10 @@ import {
     ServerVisualization,
     isDateField,
 } from '../../../../../../shared';
-import {getAxisType} from '../preparers/helpers/axis';
 import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../utils/axis-helpers';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 
-import {getChartTitle} from './utils';
+import {getAxisType, getChartTitle} from './utils';
 
 type BuildD3ConfigArgs = {
     extraSettings?: ServerCommonSharedExtraSettings;
@@ -35,7 +34,7 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
         tooltip: {enabled: true},
         legend: {enabled: isLegendEnabled},
         xAxis: {
-            type: getAxisType(xItem, xPlaceholderSettings) as ChartKitWidgetAxisType | undefined,
+            type: getAxisType(xItem, xPlaceholderSettings),
             labels: {
                 enabled: xPlaceholderSettings?.hideLabels !== 'yes',
             },

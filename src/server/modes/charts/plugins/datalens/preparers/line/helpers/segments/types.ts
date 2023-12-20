@@ -1,8 +1,9 @@
-import {ServerField, ServerSort} from '../../../../../../../../../shared';
+import {DATASET_FIELD_TYPES, ServerField, ServerSort} from '../../../../../../../../../shared';
 import {PrepareFunctionDataRow} from '../../../types';
 
 export interface GetSortedSegmentsList extends GetSegmentsList {
     sortItem: ServerSort | undefined;
+    idToDataType: Record<string, DATASET_FIELD_TYPES>;
 }
 
 export interface GetSegmentsList {

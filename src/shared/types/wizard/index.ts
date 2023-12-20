@@ -73,15 +73,10 @@ export enum LabelsPositions {
     Inside = 'inside',
 }
 
-export const enum LegendDisplayMode {
-    Show = 'show',
-    Hide = 'hide',
-}
-
 export interface CommonSharedExtraSettings {
     title?: string;
     titleMode?: 'show' | 'hide';
-    legendMode?: LegendDisplayMode;
+    legendMode?: 'show' | 'hide';
     overlap?: 'on' | 'off';
     metricFontSize?: string;
     metricFontColor?: string;

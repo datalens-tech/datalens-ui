@@ -1,6 +1,4 @@
 import {
-    AxisLabelFormatMode,
-    AxisMode,
     ChartsConfigVersion,
     ColumnSettings,
     DatasetFieldCalcMode,
@@ -166,8 +164,8 @@ export type V5Placeholder = {
         labelsView?: 'horizontal' | 'vertical' | 'angle';
         nulls?: 'ignore' | 'connect' | 'as-0';
         holidays?: 'on' | 'off';
-        axisFormatMode?: AxisLabelFormatMode;
-        axisMode?: AxisMode;
+        axisFormatMode?: 'auto' | 'by-field';
+        axisMode?: 'discrete' | 'continuous';
     };
     required?: boolean;
     capacity?: number;

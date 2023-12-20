@@ -4,8 +4,7 @@ import type {
     QlConfigResultEntryMetadataDataColumn,
     QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
-} from '../../../../../../shared';
-import {isLegendEnabled} from '../../datalens/utils/misc-helpers';
+} from '../../../../../../shared/types/config/ql';
 import {
     QLRenderResultYagr,
     QLRenderResultYagrGraph,
@@ -259,7 +258,7 @@ export default ({
             ++colorGroup.size;
         });
 
-        if (isLegendEnabled(shared.extraSettings)) {
+        if (shared.extraSettings?.legendMode !== 'hide') {
             ChartEditor.updateLibraryConfig({
                 legend: {
                     show: true,

@@ -42,6 +42,12 @@ const AVAILABLE_FIELD_TYPES = [
     'geopolygon',
 ];
 
+const DATE_MODES = {
+    DEFAULT: 'continuous',
+    CONINUOUS: 'continuous',
+    DISCRETE: 'discrete',
+} as const;
+
 const HIDE_LABEL_MODES = {
     DEFAULT: 'show',
     HIDE: 'hide',
@@ -126,6 +132,7 @@ export {
     CONFLICT_TOOLTIPS,
     DATASET_ERRORS,
     AVAILABLE_FIELD_TYPES,
+    DATE_MODES,
     HIDE_LABEL_MODES,
     AVAILABLE_LABEL_MODES,
     PREFIX,

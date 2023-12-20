@@ -1,6 +1,5 @@
 import {getFakeTitleOrTitle, isNumberField} from '../../../../../../../shared';
 import {getGradientStops} from '../../utils/color-helpers';
-import {isLegendEnabled} from '../../utils/misc-helpers';
 
 import preparePie from './preparePie';
 
@@ -28,6 +27,8 @@ export function prepareHighchartsPie(args: any) {
 
         const isColoringByMeasure = color.type === 'MEASURE' && isNumberField(color);
 
+        const isLegendEnabled = shared.extraSettings?.legendMode !== 'hide';
+
         if (isColoringByMeasure) {
             pie.showInLegend = false;
 
@@ -49,7 +50,7 @@ export function prepareHighchartsPie(args: any) {
                 title: {
                     text: getFakeTitleOrTitle(color),
                 },
-                enabled: isLegendEnabled(shared.extraSettings),
+                enabled: isLegendEnabled,
                 symbolWidth: null,
             };
         }
