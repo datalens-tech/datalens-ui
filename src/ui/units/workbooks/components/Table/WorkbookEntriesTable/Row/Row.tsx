@@ -48,7 +48,7 @@ const Row: React.FC<RowProps> = ({
     onDuplicateEntry,
     onCopyEntry,
 }) => {
-    const [isFavoriteBtn, setIsFavoriteBtn] = React.useState(true);
+    const [isFavoriteBtn, setIsFavoriteBtn] = React.useState(false);
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
     const {getLoginById} = registry.common.functions.getAll();
 
@@ -76,11 +76,9 @@ const Row: React.FC<RowProps> = ({
     };
 
     const getFavoriteIcon = () => {
-        if (isFavoriteBtn) {
-            if (item.isFavorite) {
-                return <Icon className={b('icon-star-fill')} data={StarFill} />;
-            }
+        if (item.isFavorite) return <Icon className={b('icon-star-fill')} data={StarFill} />;
 
+        if (isFavoriteBtn) {
             return <Icon className={b('icon-star-stroke')} data={Star} />;
         }
 
