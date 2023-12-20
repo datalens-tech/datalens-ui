@@ -161,7 +161,7 @@ export const getWorkbookEntries = ({
     filters,
     scope,
     nextPageToken,
-    pageSize = 1,
+    pageSize = 10,
 }: {
     workbookId: string;
     filters: WorkbookEntriesFilters;
