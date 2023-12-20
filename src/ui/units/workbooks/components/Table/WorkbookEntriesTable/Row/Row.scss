@@ -1,8 +1,6 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
 .dl-content-row {
-    $class: &;
-
     display: table-row;
     color: inherit;
     text-decoration: none;
