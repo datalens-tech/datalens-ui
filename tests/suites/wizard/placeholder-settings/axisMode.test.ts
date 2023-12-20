@@ -8,7 +8,7 @@ import {
     RadioButtonsValues,
 } from '../../../page-objects/wizard/PlaceholderDialog';
 import {openTestPage} from '../../../utils';
-import {AxisMode, DialogFieldAggregationSelectorValuesQa} from '../../../../src/shared';
+import {DialogFieldAggregationSelectorValuesQa} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
     datalensTest.beforeEach(async ({page}) => {
@@ -28,7 +28,7 @@ datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
                 RadioButtons.AxisMode,
             );
 
-            expect(selectedMode).toEqual(AxisMode.Continuous);
+            expect(selectedMode).toEqual('continuous');
         },
     );
 
@@ -45,7 +45,7 @@ datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
                 RadioButtons.AxisMode,
             );
 
-            expect(selectedMode).toEqual(AxisMode.Continuous);
+            expect(selectedMode).toEqual('continuous');
         },
     );
 
@@ -62,7 +62,7 @@ datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
                 RadioButtons.AxisMode,
             );
 
-            expect(selectedMode).toEqual(AxisMode.Discrete);
+            expect(selectedMode).toEqual('discrete');
         },
     );
 
@@ -86,7 +86,7 @@ datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
             RadioButtons.AxisMode,
         );
 
-        expect(selectedValue).toEqual(AxisMode.Discrete);
+        expect(selectedValue).toEqual('discrete');
 
         await wizardPage.placeholderDialog.close();
 
@@ -100,7 +100,7 @@ datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
             RadioButtons.AxisMode,
         );
 
-        expect(selectedValue).toEqual(AxisMode.Continuous);
+        expect(selectedValue).toEqual('continuous');
     });
 
     datalensTest(
@@ -124,7 +124,7 @@ datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
                 RadioButtons.AxisMode,
             );
             // First level field with type date ([DATE]) (must be continuous mode).
-            expect(selectedMode).toEqual(AxisMode.Continuous);
+            expect(selectedMode).toEqual('continuous');
 
             await wizardPage.placeholderDialog.close();
 
@@ -137,7 +137,7 @@ datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
             );
 
             // The second level is a field with the type string ([Category]) (there must be a discrete mode).
-            expect(selectedMode).toEqual(AxisMode.Discrete);
+            expect(selectedMode).toEqual('discrete');
 
             await wizardPage.placeholderDialog.close();
 
@@ -150,7 +150,7 @@ datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
             );
 
             // The third level is a field with the type number ([Year]) (must be continuous mode).
-            expect(selectedMode).toEqual(AxisMode.Continuous);
+            expect(selectedMode).toEqual('continuous');
 
             await wizardPage.placeholderDialog.close();
         },
@@ -189,7 +189,7 @@ datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
             );
 
             // Second level, field with type number ([Year]). There must be a continuous mode
-            expect(selectedValue).toEqual(AxisMode.Continuous);
+            expect(selectedValue).toEqual('continuous');
 
             await wizardPage.placeholderDialog.close();
 
@@ -202,7 +202,7 @@ datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
             );
 
             // First level, a field with the date ([DATE]) type. Since the discrete mode was selected, it should be preserved
-            expect(selectedValue).toEqual(AxisMode.Discrete);
+            expect(selectedValue).toEqual('discrete');
         },
     );
 
@@ -224,7 +224,7 @@ datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
                 RadioButtons.AxisMode,
             );
 
-            expect(selectedMode).toEqual(AxisMode.Continuous);
+            expect(selectedMode).toEqual('continuous');
         },
     );
 });

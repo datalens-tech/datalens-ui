@@ -1,17 +1,16 @@
 import {
-    AxisMode,
     DATASET_FIELD_TYPES,
     DatasetFieldType,
     Field,
     IChartEditor,
     PlaceholderId,
-    QlConfig,
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
     isMonitoringOrPrometheusChart,
 } from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 import prepareSingleResult from '../datalens/js/helpers/misc/prepare-single-result';
 import {getFieldList} from '../helpers/misc';
 
@@ -274,7 +273,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 if (disableDefaultSorting) {
                     targetPlaceholder.settings = {
                         axisModeMap: {
-                            [targetPlaceholder.items[0].guid]: AxisMode.Discrete,
+                            [targetPlaceholder.items[0].guid]: 'discrete',
                         },
                         disableAxisMode: true,
                     };

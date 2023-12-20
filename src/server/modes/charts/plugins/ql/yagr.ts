@@ -1,13 +1,8 @@
 import type {ChartType, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 
-import {
-    IChartEditor,
-    LegendDisplayMode,
-    QlVisualizationId,
-    ServerVisualization,
-} from '../../../../../shared';
-import type {QlConfig} from '../../../../../shared';
+import {IChartEditor, QlVisualizationId, ServerVisualization} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
+import type {QlConfig} from '../../../../../shared/types/config/ql';
 
 const applyPlaceholderSettingsToYAxis = ({
     visualization,
@@ -74,7 +69,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
     });
 
     const isLegendEnabled = Boolean(
-        config.colors?.length && config.extraSettings?.legendMode !== LegendDisplayMode.Hide,
+        config.colors?.length && config.extraSettings?.legendMode !== 'hide',
     );
 
     const widgetData: YagrWidgetData['libraryConfig'] = {

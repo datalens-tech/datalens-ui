@@ -1,5 +1,4 @@
 import {
-    AxisLabelFormatMode,
     ChartsConfigVersion,
     ColumnSettings,
     DatasetFieldCalcMode,
@@ -8,7 +7,7 @@ import {
     ParameterDefaultValue,
     TableBarsSettings,
 } from '../../index';
-import {TableFieldBackgroundSettings} from '../../wizard';
+import {TableFieldBackgroundSettings} from '../../wizard/background-settings';
 
 export type V4ChartsConfig = {
     title?: string;
@@ -165,7 +164,7 @@ export type V4Placeholder = {
         labelsView?: 'horizontal' | 'vertical' | 'angle';
         nulls?: 'ignore' | 'connect' | 'as-0';
         holidays?: 'on' | 'off';
-        axisFormatMode?: AxisLabelFormatMode;
+        axisFormatMode?: 'auto' | 'by-field';
     };
     required?: boolean;
     capacity?: number;

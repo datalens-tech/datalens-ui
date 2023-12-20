@@ -1,7 +1,5 @@
 import {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
 import {
-    AxisLabelFormatMode,
-    AxisMode,
     ChartsConfigVersion,
     ColumnSettings,
     LabelsPositions,
@@ -167,8 +165,8 @@ export type V8PlaceholderSettings = {
     labelsView?: 'horizontal' | 'vertical' | 'angle';
     nulls?: 'ignore' | 'connect' | 'as-0';
     holidays?: 'on' | 'off';
-    axisFormatMode?: AxisLabelFormatMode;
-    axisModeMap?: Record<string, AxisMode>;
+    axisFormatMode?: 'auto' | 'by-field';
+    axisModeMap?: Record<string, 'discrete' | 'continuous'>;
 };
 
 export type V8Placeholder = {
