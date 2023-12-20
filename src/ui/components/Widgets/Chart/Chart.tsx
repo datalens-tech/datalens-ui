@@ -7,16 +7,13 @@ import {usePrevious} from 'hooks';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import {useHistory} from 'react-router-dom';
 import {StringParams} from 'shared';
 import {getDataProviderData} from 'ui/libs/DatalensChartkit/components/ChartKitBase/helpers';
-import Utils from 'ui/utils';
 
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 
 import {Content} from './components/Content';
-import {WidgetHeader} from './components/WidgetHeader';
 import {
     COMPONENT_CLASSNAME,
     getPreparedConstants,
@@ -76,8 +73,6 @@ export const Chart = (props: ChartNoWidgetProps) => {
         isPageHidden,
         autoupdateInterval,
     } = props;
-
-    const history = useHistory();
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
     const prevInnerParams = usePrevious(innerParamsRef?.current);
@@ -194,58 +189,35 @@ export const Chart = (props: ChartNoWidgetProps) => {
         setInitialParams(loadedData?.defaultParams || {});
     }, [loadedData?.defaultParams]);
 
-    const {
-        mods,
-        widgetBodyClassName,
-        hasHiddenClassMod,
-        veil,
-        showLoader,
-        widgetType,
-        withShareWidget,
-    } = React.useMemo(
-        () =>
-            getPreparedConstants({
+    const {mods, widgetBodyClassName, hasHiddenClassMod, veil, showLoader, widgetType} =
+        React.useMemo(
+            () =>
+                getPreparedConstants({
+                    isLoading,
+                    error,
+                    loadedData,
+                    isReloadWithNoVeil,
+                    noLoader,
+                    noVeil,
+                    isSilentReload,
+                    disableChartLoader,
+                }),
+            [
                 isLoading,
                 error,
                 loadedData,
                 isReloadWithNoVeil,
                 noLoader,
                 noVeil,
-                isSilentReload,
+                compactLoader,
+                loaderDelay,
                 disableChartLoader,
-            }),
-        [
-            isLoading,
-            error,
-            loadedData,
-            isReloadWithNoVeil,
-            noLoader,
-            noVeil,
-            compactLoader,
-            loaderDelay,
-            disableChartLoader,
-        ],
-    );
-
-    const widgetTitle = Utils.getEntryNameFromKey(loadedData?.key || '');
+            ],
+        );
 
     return (
         <div ref={rootNodeRef} className={`${b(mods)}`}>
             <DebugInfoTool data={[{label: 'chartId', value: chartId || ''}]} />
-            {DL.IS_MOBILE && (
-                <WidgetHeader
-                    isFullscreen={true}
-                    editMode={false}
-                    hideTabs={true}
-                    withShareWidget={withShareWidget}
-                    widgetId={chartId || ''}
-                    hideDebugTool={true}
-                    onFullscreenClick={() => {
-                        history.push('/widgets');
-                    }}
-                    title={widgetTitle}
-                />
-            )}
             <Content
                 initialParams={initialParams}
                 dataProps={dataProps}

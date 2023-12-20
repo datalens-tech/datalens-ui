@@ -9,13 +9,13 @@ import {CurrentTab} from 'components/DashKit/plugins/Widget/types';
 import {ChartkitMenuDialogsQA} from 'shared';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
-import {COMPONENT_CLASSNAME, DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
+import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
 
 import iconClearActionParams from '../../../../assets/icons/funnel-clear.svg';
 
-import '../ChartWidget.scss';
+import './WidgetHeader.scss';
 
 type TabItem = {
     id: string;
@@ -40,7 +40,7 @@ type HeaderProps = {
 };
 
 const socialNets = [ShareOptions.Telegram, ShareOptions.Twitter, ShareOptions.VK];
-const b = block(COMPONENT_CLASSNAME);
+const b = block('widget-header');
 
 export const WidgetHeader = (props: HeaderProps) => {
     const {
@@ -59,7 +59,7 @@ export const WidgetHeader = (props: HeaderProps) => {
         title,
     } = props;
 
-    const size = isMobileView ? MOBILE_SIZE.TABS : 'm';
+    const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
 
     const showTabs = tabsItems && currentTab && onSelectTab;
 
@@ -104,7 +104,13 @@ export const WidgetHeader = (props: HeaderProps) => {
     return (
         <React.Fragment>
             {!hideDebugTool && <DebugInfoTool label="id" value={widgetId} modType="outer" />}
-            <div className={b('header', {mobile: isMobileView})}>
+            <div
+                className={b({
+                    mobile: DL.IS_MOBILE,
+                    fullscreen: isFullscreen,
+                    'with-shares': withShareWidget,
+                })}
+            >
                 {isFullscreen && (
                     <span
                         className={b('back-icon')}

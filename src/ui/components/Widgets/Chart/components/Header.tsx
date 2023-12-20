@@ -3,10 +3,10 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useSelector} from 'react-redux';
 import {StringParams} from 'shared';
+import {DL} from 'ui/constants';
 import {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
-import {isMobileView} from 'ui/utils/mobile';
 
 import {
     drawComments,
@@ -113,7 +113,7 @@ export const Header = (props: HeaderProps) => {
     };
 
     return (
-        <div className={b('chart-header', {mobile: isMobileView})}>
+        <div className={b('chart-header', {mobile: DL.IS_MOBILE})}>
             {chartsInsightsData && (
                 <ChartsInsights
                     items={chartsInsightsData.items}
