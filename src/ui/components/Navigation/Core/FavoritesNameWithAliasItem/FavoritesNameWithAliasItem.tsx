@@ -37,7 +37,7 @@ export const FavoritesNameWithAliasItem = (props: FavoritesNameWithAliasItemProp
 
     return (
         <>
-            <div title={name} className={b('name-line')}>
+            <div title={text} className={b('name-line')}>
                 <span>{text}</span>
                 {isLocked ? <Icon data={Lock} className={b('lock')} /> : null}
             </div>

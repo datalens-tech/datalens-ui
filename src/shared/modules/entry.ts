@@ -22,6 +22,6 @@ export function isUsersFolder(key = '') {
     return key.toLowerCase() === 'users/';
 }
 
-export function isFavoritesAliasAvailable(alias?: string | null) {
+export const isFavoritesAliasAvailable = (alias?: string | null) => {
     return alias !== null && alias !== undefined && alias !== '';
-}
+};

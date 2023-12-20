@@ -170,16 +170,6 @@ class NavigationBase extends React.Component {
         });
         this.update(response, EntryDialogName.Rename, entry);
     }
-    async addFavoritesAliasEntry(entry) {
-        const response = await this.refDialogues.current.open({
-            dialog: EntryDialogName.AddFavoritesAlias,
-            dialogProps: {
-                entryId: entry.entryId,
-                alias: entry.alias,
-            },
-        });
-        this.update(response, EntryDialogName.AddFavoritesAlias, entry);
-    }
     async editFavoritesAliasEntry(entry) {
         const response = await this.refDialogues.current.open({
             dialog: EntryDialogName.EditFavoritesAlias,
@@ -332,9 +322,7 @@ class NavigationBase extends React.Component {
             case ENTRY_CONTEXT_MENU_ACTION.RENAME: {
                 return this.renameEntry(entry);
             }
-            case ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS: {
-                return this.addFavoritesAliasEntry(entry);
-            }
+            case ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS:
             case ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS: {
                 return this.editFavoritesAliasEntry(entry);
             }

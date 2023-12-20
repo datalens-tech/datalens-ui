@@ -11,17 +11,17 @@ import {showToast} from 'ui/store/actions/toaster';
 import {EntryDialogResolveStatus} from '../constants';
 import {EntryDialogProps} from '../types';
 
-import './DialogAddFavoritesAlias.scss';
+import './DialogEditFavoritesAlias.scss';
 
-const b = block('dl-add-favorites-alias');
-const i18n = I18n.keyset('component.dialog-add-favorites-alias.view');
+const b = block('dl-edit-favorites-alias');
+const i18n = I18n.keyset('component.dialog-edit-favorites-alias.view');
 
-export interface DialogAddFavoritesAliasProps extends EntryDialogProps {
+export interface DialogEditFavoritesAliasProps extends EntryDialogProps {
     entryId: string;
     alias: string | null;
 }
 
-export const DialogAddFavoritesAlias: React.FC<DialogAddFavoritesAliasProps> = ({
+export const DialogEditFavoritesAlias: React.FC<DialogEditFavoritesAliasProps> = ({
     entryId,
     visible,
     alias,
@@ -30,11 +30,11 @@ export const DialogAddFavoritesAlias: React.FC<DialogAddFavoritesAliasProps> = (
     const [text, setText] = React.useState<string>(alias ?? '');
     const dispatch = useDispatch();
 
-    function onCloseDialog() {
+    const onCloseDialog = () => {
         onClose({status: EntryDialogResolveStatus.Close});
-    }
+    };
 
-    async function renameAlias(str: string | null) {
+    const renameAlias = async (str: string | null) => {
         let name = str;
 
         if (name !== null) {
@@ -49,12 +49,12 @@ export const DialogAddFavoritesAlias: React.FC<DialogAddFavoritesAliasProps> = (
                 await getSdk().us.renameFavorite({entryId, name});
                 onClose({status: EntryDialogResolveStatus.Success});
             } catch (error) {
-                logger.logError('DialogAddFavoritesAlias: renameAlias failed', error);
+                logger.logError('DialogEditFavoritesAlias: renameAlias failed', error);
 
                 dispatch(
                     showToast({
                         title: i18n('toast_rename-favorites-alias-failed'),
-                        name: 'DialogAddFavoritesAlias',
+                        name: 'DialogEditFavoritesAlias',
                         error,
                         withReport: true,
                     }),
@@ -63,19 +63,19 @@ export const DialogAddFavoritesAlias: React.FC<DialogAddFavoritesAliasProps> = (
                 onClose({status: EntryDialogResolveStatus.Close});
             }
         }
-    }
+    };
 
-    async function onApplyDialog() {
+    const onApplyDialog = () => {
         renameAlias(text);
-    }
+    };
 
-    async function onResetAlias() {
+    const onResetAlias = () => {
         renameAlias(null);
-    }
+    };
 
-    function onChangeInput(str: string): void {
+    const onChangeInput = (str: string): void => {
         setText(str);
-    }
+    };
 
     const aliasExists = alias !== '' && alias !== null;
 

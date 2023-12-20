@@ -7,7 +7,6 @@ import SDK, {sdk} from '../../libs/sdk';
 import {registry} from '../../registry';
 
 import {DialogAccess, DialogAccessProps} from './DialogAccess/DialogAccess';
-import {DialogAddFavoritesAlias, DialogAddFavoritesAliasProps} from './DialogAddFavoritesAlias';
 import {DialogCopyEntry, DialogCopyEntryProps} from './DialogCopyEntry';
 import {DialogCreateDashboard, DialogCreateDashboardProps} from './DialogCreateDashboard';
 import {DialogCreateEditorChart, DialogCreateEditorChartProps} from './DialogCreateEditorChart';
@@ -16,6 +15,7 @@ import {DialogCreateQLChart, DialogCreateQLChartProps} from './DialogCreateQLCha
 import {DialogCreateWizardChart, DialogCreateWizardChartProps} from './DialogCreateWizardChart';
 import {DialogDashMetaWrapper as DialogDashMeta} from './DialogDashMeta/DialogDashMetaWrapper';
 import {DialogDeleteEntry, DialogDeleteEntryProps} from './DialogDeleteEntry';
+import {DialogEditFavoritesAlias, DialogEditFavoritesAliasProps} from './DialogEditFavoritesAlias';
 import DialogEditWarning, {DialogEditWarningProps} from './DialogEditWarning/DialogEditWarning';
 import {DialogEntrySaveAsNew, DialogEntrySaveAsNewProps} from './DialogEntrySaveAsNew';
 import DialogMakeActualConfirm, {
@@ -30,7 +30,6 @@ import {EntryDialogOnClose, EntryDialogOnCloseArg} from './types';
 
 export enum EntryDialogName {
     Rename = 'rename',
-    AddFavoritesAlias = 'add_favorites_alias',
     EditFavoritesAlias = 'edit_favorites_alias',
     Copy = 'copy',
     Move = 'move',
@@ -59,8 +58,7 @@ const getMapDialogues = (): Record<string, any> => {
         [EntryDialogName.Delete]: DialogDeleteEntry,
         [EntryDialogName.Move]: DialogMoveEntry,
         [EntryDialogName.Rename]: DialogRenameEntry,
-        [EntryDialogName.AddFavoritesAlias]: DialogAddFavoritesAlias,
-        [EntryDialogName.EditFavoritesAlias]: DialogAddFavoritesAlias,
+        [EntryDialogName.EditFavoritesAlias]: DialogEditFavoritesAlias,
         [EntryDialogName.Copy]: DialogCopyEntry,
         [EntryDialogName.CreateFolder]: DialogCreateFolder,
         [EntryDialogName.CreateDashboard]: DialogCreateDashboard,
@@ -86,8 +84,7 @@ interface MapDialoguesProps {
     [EntryDialogName.Copy]: DialogCopyEntryProps;
     [EntryDialogName.CreateFolder]: DialogCreateFolderProps;
     [EntryDialogName.Rename]: DialogRenameEntryProps;
-    [EntryDialogName.AddFavoritesAlias]: DialogAddFavoritesAliasProps;
-    [EntryDialogName.EditFavoritesAlias]: DialogAddFavoritesAliasProps;
+    [EntryDialogName.EditFavoritesAlias]: DialogEditFavoritesAliasProps;
     [EntryDialogName.CreateDashboard]: DialogCreateDashboardProps;
     [EntryDialogName.CreateEditorChart]: DialogCreateEditorChartProps;
     [EntryDialogName.SwitchPublic]: DialogSwitchPublicProps;
