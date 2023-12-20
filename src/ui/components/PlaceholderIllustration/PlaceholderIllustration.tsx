@@ -23,8 +23,8 @@ export const PlaceholderIllustration = ({
 
         const store = getIllustrationStore();
 
-        return <PlaceholderIllustrationImage illustrationStore={store} name={name} />;
-    }, [name]);
+        return <PlaceholderIllustrationImage illustrationStore={store} name={name} size={size} />;
+    }, [name, size]);
 
     return (
         <PlaceholderContainer
