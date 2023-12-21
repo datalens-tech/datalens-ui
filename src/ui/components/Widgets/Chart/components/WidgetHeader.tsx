@@ -61,7 +61,7 @@ export const WidgetHeader = (props: HeaderProps) => {
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
 
-    const showTabs = tabsItems && currentTab && onSelectTab;
+    const showTabs = !hideTabs && tabsItems && currentTab && onSelectTab;
 
     const widgetTitle = currentTab?.title || title;
     const showFiltersClear = showActionParamsFilter && onFiltersClear;
@@ -120,7 +120,7 @@ export const WidgetHeader = (props: HeaderProps) => {
                         <Icon data={ArrowLeft} />
                     </span>
                 )}
-                {hideTabs ? <div className={b('title')}>{widgetTitle}</div> : renderTabs()}
+                {isFullscreen ? <div className={b('title')}>{widgetTitle}</div> : renderTabs()}
                 {withShareWidget && (
                     <div className={b('share-widget')}>
                         <SharePopover
