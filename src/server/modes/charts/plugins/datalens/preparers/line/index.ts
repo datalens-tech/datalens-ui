@@ -429,7 +429,7 @@ function prepareLine({
                             if (isActionParamsEnable) {
                                 const [yField] = ySectionItems || [];
                                 const actionParams: Record<string, any> = {};
-                                addActionParamValue(actionParams, x, point.x);
+                                addActionParamValue(actionParams, x, category);
                                 addActionParamValue(actionParams, yField, point.y);
 
                                 point.custom = {
