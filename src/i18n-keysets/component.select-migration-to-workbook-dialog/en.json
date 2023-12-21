@@ -1,5 +1,6 @@
 {
   "action_cancel": "Cancel",
+  "action_сhoose": "Choose",
   "description_copy": "Copy all objects with links. Original objects remain in directories.",
   "description_transfer": "Transfer all recursively linked object into one common workbook.",
   "list_first_item_copy": "Only search links for current object",
