@@ -19,7 +19,7 @@ const b = block('mobile-header');
 const menuItems = [
     {
         id: 'collections',
-        title: i18n('label_collections'),
+        title: i18n('switch_collections'),
         icon: iconCollection,
         link: '/collections',
         closeMenuOnClick: true,

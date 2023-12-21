@@ -284,7 +284,7 @@ export const getPreparedConstants = (props: {
         noControls = isTrueArg(searchParams.get(URL_OPTIONS.NO_CONTROLS));
     }
 
-    const hideTabs = isFullscreen ? false : Boolean(tabsLength === 1 && hideTitle);
+    const hideTabs = isFullscreen ? true : Boolean(tabsLength === 1 && hideTitle);
     const withShareWidget = Utils.isEnabledFeature(Feature.EnableShareWidget) && isFullscreen;
 
     const isFirstLoadOrAfterError = loadedData === null;
@@ -295,9 +295,8 @@ export const getPreparedConstants = (props: {
         ((!isSilentReload && !noLoader) || isFirstLoadOrAfterError);
 
     const mods = {
-        'no-tabs': hideTabs,
-        fullscreen: Boolean(isFullscreen),
-        'with-shares': Boolean(withShareWidget),
+        'no-tabs': !isFullscreen && hideTabs,
+        fullscreen: isFullscreen,
         [String(widgetType)]: Boolean(widgetType),
     };
     const hasVeil = Boolean(loadedData && !error && !noVeil && !isReloadWithNoVeil);

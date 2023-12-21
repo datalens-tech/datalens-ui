@@ -9,13 +9,13 @@ import {CurrentTab} from 'components/DashKit/plugins/Widget/types';
 import {ChartkitMenuDialogsQA} from 'shared';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
-import {COMPONENT_CLASSNAME, DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
+import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
 
 import iconClearActionParams from '../../../../assets/icons/funnel-clear.svg';
 
-import '../ChartWidget.scss';
+import './WidgetHeader.scss';
 
 type TabItem = {
     id: string;
@@ -30,16 +30,17 @@ type HeaderProps = {
     editMode: boolean;
     hideTabs: boolean;
     withShareWidget: boolean;
-    tabsItems: Array<TabItem>;
-    currentTab: CurrentTab;
-    onSelectTab: (param: string) => void;
+    tabsItems?: Array<TabItem>;
+    currentTab?: CurrentTab;
+    onSelectTab?: (param: string) => void;
     hideDebugTool?: boolean;
     showActionParamsFilter?: boolean;
-    onFiltersClear: () => void;
+    onFiltersClear?: () => void;
+    title?: string;
 };
 
 const socialNets = [ShareOptions.Telegram, ShareOptions.Twitter, ShareOptions.VK];
-const b = block(COMPONENT_CLASSNAME);
+const b = block('widget-header');
 
 export const WidgetHeader = (props: HeaderProps) => {
     const {
@@ -55,13 +56,19 @@ export const WidgetHeader = (props: HeaderProps) => {
         hideDebugTool,
         showActionParamsFilter,
         onFiltersClear,
+        title,
     } = props;
 
-    const size = isMobileView ? MOBILE_SIZE.TABS : 'm';
+    const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
+
+    const showTabs = !hideTabs && tabsItems && currentTab && onSelectTab;
+
+    const widgetTitle = currentTab?.title || title;
+    const showFiltersClear = showActionParamsFilter && onFiltersClear;
 
     const renderTabs = () => (
         <div className={b('tabs', {'edit-mode': editMode}, DRAGGABLE_HANDLE_CLASS_NAME)}>
-            {!hideTabs && (
+            {showTabs && (
                 <AdaptiveTabs
                     size={size}
                     items={tabsItems}
@@ -97,7 +104,13 @@ export const WidgetHeader = (props: HeaderProps) => {
     return (
         <React.Fragment>
             {!hideDebugTool && <DebugInfoTool label="id" value={widgetId} modType="outer" />}
-            <div className={b('header', {mobile: isMobileView})}>
+            <div
+                className={b({
+                    mobile: DL.IS_MOBILE,
+                    fullscreen: isFullscreen,
+                    'with-shares': withShareWidget,
+                })}
+            >
                 {isFullscreen && (
                     <span
                         className={b('back-icon')}
@@ -107,19 +120,19 @@ export const WidgetHeader = (props: HeaderProps) => {
                         <Icon data={ArrowLeft} />
                     </span>
                 )}
-                {isFullscreen ? <div className={b('title')}>{currentTab.title}</div> : renderTabs()}
+                {isFullscreen ? <div className={b('title')}>{widgetTitle}</div> : renderTabs()}
                 {withShareWidget && (
                     <div className={b('share-widget')}>
                         <SharePopover
                             useWebShareApi={DL.IS_MOBILE}
                             url={window.location.href}
-                            title={currentTab.title}
-                            text={currentTab.title}
+                            title={widgetTitle}
+                            text={widgetTitle}
                             shareOptions={socialNets}
                         />
                     </div>
                 )}
-                {showActionParamsFilter && (
+                {showFiltersClear && (
                     <div className={b('filters-controls')}>
                         <Button onClick={onFiltersClear}>
                             <Icon
