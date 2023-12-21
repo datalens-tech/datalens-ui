@@ -1,0 +1,44 @@
+.dl-core-navigation-favorites-alias {
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+    &__row-btn {
+        visibility: hidden;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 4px;
+
+        &:hover,
+        &_hovered {
+            background: var(--g-color-base-simple-hover);
+        }
+
+        color: var(--g-color-text-secondary);
+    }
+
+    &__edit-alias-btn {
+        margin-right: 5px;
+
+        &_visible {
+            visibility: visible;
+        }
+    }
+
+    &__lock {
+        margin: 2px 5px 0 10px;
+        flex: 0 0 16px;
+        color: var(--g-color-text-hint);
+    }
+
+    &__name-line {
+        display: flex;
+        flex: 1 1 auto;
+        line-height: 20px;
+        overflow: hidden;
+    }
+}

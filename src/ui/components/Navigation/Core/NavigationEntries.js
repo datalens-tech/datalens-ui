@@ -316,6 +316,7 @@ class NavigationEntries extends React.Component {
             return result;
         }
     }
+
     onChangeFavorite = async (entry) => {
         const {path} = this.props;
         const {entryId, isFavorite} = entry;
@@ -606,7 +607,10 @@ class NavigationEntries extends React.Component {
                     visible={true}
                     entry={this.state.currentEntryContext}
                     anchorRef={this.state.currentEntryContextButton}
-                    items={this.props.getContextMenuItems({entry: this.state.currentEntryContext})}
+                    items={this.props.getContextMenuItems({
+                        entry: this.state.currentEntryContext,
+                        place: this.state.place,
+                    })}
                     onMenuClick={this.props.onContextMenuClick}
                     onClose={this.closeEntryContextMenu}
                 />
@@ -638,6 +642,7 @@ class NavigationEntries extends React.Component {
                 <TableView
                     linkWrapper={this.props.linkWrapper}
                     mode={this.props.mode}
+                    place={place}
                     clickableScope={this.props.clickableScope}
                     inactiveEntryKeys={this.props.inactiveEntryKeys}
                     currentPageEntry={this.props.currentPageEntry}
@@ -657,6 +662,7 @@ class NavigationEntries extends React.Component {
                     isMobileNavigation={this.props.isMobileNavigation}
                     refreshNavigation={this.refresh}
                     onChangeLocation={this.props.onChangeLocation}
+                    onMenuClick={this.props.onContextMenuClick}
                 />
             </div>
         );

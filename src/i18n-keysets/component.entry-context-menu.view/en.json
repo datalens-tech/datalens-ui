@@ -7,5 +7,7 @@
   "value_migrate-to-workbook": "Migrate to workbook",
   "value_move": "Move",
   "value_rename": "Rename",
-  "value_revisions": "Change history"
+  "value_revisions": "Change history",
+  "value_add-favorites-alias": "Add label",
+  "value_edit-favorites-alias": "Rename label"
 }

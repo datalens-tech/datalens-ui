@@ -170,6 +170,16 @@ class NavigationBase extends React.Component {
         });
         this.update(response, EntryDialogName.Rename, entry);
     }
+    async editFavoritesAliasEntry(entry) {
+        const response = await this.refDialogues.current.open({
+            dialog: EntryDialogName.EditFavoritesAlias,
+            dialogProps: {
+                entryId: entry.entryId,
+                alias: entry.alias,
+            },
+        });
+        this.update(response, EntryDialogName.EditFavoritesAlias, entry);
+    }
     async moveEntry(entry) {
         const response = await this.refDialogues.current.open({
             dialog: EntryDialogName.Move,
@@ -312,6 +322,10 @@ class NavigationBase extends React.Component {
             case ENTRY_CONTEXT_MENU_ACTION.RENAME: {
                 return this.renameEntry(entry);
             }
+            case ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS:
+            case ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS: {
+                return this.editFavoritesAliasEntry(entry);
+            }
             case ENTRY_CONTEXT_MENU_ACTION.MOVE: {
                 return this.moveEntry(entry);
             }
@@ -358,11 +372,14 @@ class NavigationBase extends React.Component {
     }
     render() {
         const {root, navConstructor, sdk, navigationUrl, closeNavigation, ...props} = this.props;
-        const getMenuItems = (params) =>
-            getGroupedMenu(getEntryContextMenuItems(params), {
+        const getMenuItems = (params) => {
+            const items = getEntryContextMenuItems(params);
+            const menu = getGroupedMenu(items, {
                 type: 'entry',
                 isFlat: Utils.isEnabledFeature(Feature.MenuItemsFlatView),
             });
+            return menu;
+        };
         const navigationNode = React.createElement(navConstructor, {
             ref: this.refNavigation,
             sdk,
