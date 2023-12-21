@@ -9,7 +9,6 @@ import {
     TableHead,
     isDateField,
     isDateType,
-    isDimensionField,
     isMarkupDataType,
     isNumberField,
     isTreeDataType,
@@ -30,6 +29,7 @@ import {
     isTableBarsSettingsEnabled,
     isTableFieldBackgroundSettingsEnabled,
 } from '../../utils/misc-helpers';
+import {canUseFieldForFiltering} from '../helpers/action-params';
 import {getBarSettingsValue, getBarSettingsViewOptions} from '../helpers/barsSettings';
 import {getColumnWidthValue} from '../helpers/columnSettings';
 import {PrepareFunctionArgs} from '../types';
@@ -273,7 +273,7 @@ function prepareFlatTable({
             }
 
             if (isActionParamsEnable) {
-                if (!isDimensionField(item)) {
+                if (!canUseFieldForFiltering(item)) {
                     // Need to add an empty object to exclude the measure field value from the filtering data
                     // (otherwise cell.value will be used by default)
                     cell.custom = {

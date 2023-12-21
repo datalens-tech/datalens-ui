@@ -3,8 +3,13 @@ import {
     StringParams,
     isDateField,
     isDimensionField,
+    isMarkupField,
 } from '../../../../../../../shared';
 import {formatDate, getServerDateFormat} from '../../utils/misc-helpers';
+
+export function canUseFieldForFiltering(field: ServerField) {
+    return isDimensionField(field) && !isMarkupField(field);
+}
 
 export function addActionParamValue(
     actionParams: StringParams,
@@ -15,7 +20,7 @@ export function addActionParamValue(
         return actionParams;
     }
 
-    if (field && isDimensionField(field)) {
+    if (field && canUseFieldForFiltering(field)) {
         let paramValue = String(value);
         if (isDateField(field)) {
             paramValue = formatDate({
