@@ -447,6 +447,7 @@ export const CollectionPage = React.memo<Props>(
                         open: true,
                         onApply: refreshContent,
                         onClose: handeCloseMoveDialog,
+                        initialParentId: collection?.parentId,
                         workbookIds,
                         collectionIds,
                     },
@@ -566,7 +567,7 @@ export const CollectionPage = React.memo<Props>(
                                     curCollectionId && collection && collection.permissions.update,
                                 ) && (
                                     <Tooltip content={i18n('action_edit')}>
-                                        <div>
+                                        <div className={b('edit-btn')}>
                                             <Button onClick={onEditClick}>
                                                 <Icon data={PencilToLine} />
                                             </Button>
