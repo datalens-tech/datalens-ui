@@ -11,12 +11,11 @@ import {
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
 import {PivotData} from '../../../preparers/backend-pivot-table/types';
 import {prepareD3BarX} from '../../../preparers/bar-x';
-import {prepareHighchartsBarY} from '../../../preparers/bar-y';
 import prepareFlatTableData from '../../../preparers/flat-table';
 import prepareGeopointData from '../../../preparers/geopoint';
 import prepareGeopolygonData from '../../../preparers/geopolygon';
 import prepareHeatmapData from '../../../preparers/heatmap';
-import {prepareHighchartsLine} from '../../../preparers/line';
+import prepareLineData from '../../../preparers/line';
 import prepareLineTime from '../../../preparers/line-time';
 import prepareMetricData from '../../../preparers/metric';
 import preparePivotTableData from '../../../preparers/old-pivot-table/old-pivot-table';
@@ -114,16 +113,19 @@ export default ({
         case WizardVisualizationId.Area100p:
         case WizardVisualizationId.Column:
         case WizardVisualizationId.Column100p: {
-            rowsLimit = 75000;
-            prepare = isMonitoringOrPrometheusChart(chartType)
-                ? prepareLineTime
-                : prepareHighchartsLine;
+            if (chartType && isMonitoringOrPrometheusChart(chartType)) {
+                prepare = prepareLineTime;
+                rowsLimit = 75000;
+            } else {
+                prepare = prepareLineData;
+                rowsLimit = 75000;
+            }
             break;
         }
 
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
-            prepare = prepareHighchartsBarY;
+            prepare = prepareLineData;
             rowsLimit = 75000;
             break;
         }
