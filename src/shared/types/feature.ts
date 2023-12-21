@@ -92,6 +92,7 @@ export enum Feature {
     CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
     WizardChartChartFilteringAvailable = 'WizardChartChartFilteringAvailable',
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
+    EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     HolidayNavigation = 'HolidayNavigation',
 }
 

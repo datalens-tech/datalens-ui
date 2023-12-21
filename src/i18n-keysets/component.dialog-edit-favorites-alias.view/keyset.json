@@ -8,47 +8,31 @@
     "TRANSLATED"
   ],
   "status": {
-    "value_access": {
+    "button_apply": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "value_copy": {
+    "button_cancel": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "value_copy-link": {
+    "button_delete": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "value_delete": {
+    "caption_add": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "value_duplicate": {
+    "caption_rename": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "value_migrate-to-workbook": {
+    "label_placeholder": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "value_move": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "value_rename": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "value_revisions": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "value_add-favorites-alias": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "value_edit-favorites-alias": {
+    "toast_rename-favorites-alias-failed": {
       "en": "APPROVED",
       "ru": "APPROVED"
     }
