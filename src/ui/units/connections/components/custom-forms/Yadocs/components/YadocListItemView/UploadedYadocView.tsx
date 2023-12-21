@@ -6,16 +6,14 @@ import {parseError} from 'ui/utils/errors/parse';
 import {ConverterErrorCode} from '../../../../../constants';
 import type {UploadedYadoc} from '../../../../../store';
 import {ListItem, ListItemAction} from '../../../components';
-// import type {HandleItemClick} from '../../types';
+import type {HandleItemClick} from '../../types';
 
 const i18n = I18n.keyset('connections.gsheet.view');
 
 type UploadedYadocViewProps = {
     item: UploadedYadoc;
-    // deleteListItem: HandleItemClick;
-    // clickErrorAction: HandleItemClick;
-    deleteListItem?: () => void;
-    clickErrorAction?: () => void;
+    deleteListItem: HandleItemClick;
+    clickErrorAction: HandleItemClick;
 };
 
 // Forbids retry because of ...

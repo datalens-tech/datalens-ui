@@ -4,16 +4,16 @@ import {I18n} from 'i18n';
 
 import type {YadocSource} from '../../../../../store';
 import {ListItem, ListItemAction} from '../../../components';
-// import type {HandleItemClick} from '../../types';
+import type {HandleItemClick} from '../../types';
 
 const i18n = I18n.keyset('connections.gsheet.view');
 
 type YadocSourceViewProps = {
     item: YadocSource;
-    deleteListItem?: () => void;
-    clickErrorAction?: () => void;
-    clickRenameAction?: () => void;
-    clickReplaceAction?: () => void;
+    deleteListItem?: HandleItemClick;
+    clickErrorAction?: HandleItemClick;
+    clickRenameAction?: HandleItemClick;
+    clickReplaceAction?: HandleItemClick;
 };
 
 const YadocSourceViewComponent = (props: YadocSourceViewProps) => {
