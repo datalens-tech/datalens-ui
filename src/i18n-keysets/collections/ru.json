@@ -13,7 +13,7 @@
   "action_edit": "Редактировать",
   "action_select": "Выбрать",
   "action_select-all": "Выбрать все",
-  "action_remove-all": "Снять все",
+  "action_reset-all": "Снять все",
   "action_move": "Переместить",
   "label_add-demo-workbook": "Добавить пример воркбука",
   "label_add-learning-materials-workbook": "Добавить учебные материалы",

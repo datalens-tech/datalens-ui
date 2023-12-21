@@ -53,7 +53,7 @@ export const CollectionLayout = React.memo<Props>(
             if (countSelected > 0) {
                 return (
                     <Button view="outlined" onClick={resetSelected}>
-                        {i18n('action_remove-all')}
+                        {i18n('action_reset-all')}
                     </Button>
                 );
             } else {
