@@ -12,8 +12,8 @@ const i18n = I18n.keyset('connections.gsheet.view');
 
 type UploadedYadocViewProps = {
     item: UploadedYadoc;
-    deleteListItem: HandleItemClick;
-    clickErrorAction: HandleItemClick;
+    deleteListItem?: HandleItemClick;
+    clickErrorAction?: HandleItemClick;
 };
 
 // Forbids retry because of ...
