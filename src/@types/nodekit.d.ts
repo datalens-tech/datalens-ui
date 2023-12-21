@@ -10,7 +10,7 @@ export interface SharedAppConfig {
     usMasterToken?: string;
 
     regionalEnvConfig?: {allowLanguages?: string[]; defaultLang?: string; langRegion?: string};
-    fallbackHost?: string;
+
     chartsMonitoringEnabled?: boolean;
 
     faviconUrl: string;
