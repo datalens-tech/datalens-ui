@@ -1,13 +1,7 @@
 import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin} from '@gravity-ui/icons';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 
-import {
-    EntryScope,
-    Feature,
-    PLACE,
-    isFavoritesAliasAvailable,
-    isUsersFolder,
-} from '../../../shared';
+import {EntryScope, Feature, PLACE, isUsersFolder} from '../../../shared';
 import {ALL_SCOPES, URL_QUERY} from '../../constants';
 import {registry} from '../../registry';
 import Utils from '../../utils/utils';
@@ -108,7 +102,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
         scopes: ALL_SCOPES,
         isVisible({entry}: ContextMenuParams) {
-            return !isFavoritesAliasAvailable(entry?.alias);
+            return !entry?.alias;
         },
     },
     {
@@ -120,7 +114,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
         scopes: ALL_SCOPES,
         isVisible({entry}: ContextMenuParams) {
-            return isFavoritesAliasAvailable(entry?.alias);
+            return Boolean(entry?.alias);
         },
     },
     {

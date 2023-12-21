@@ -21,7 +21,3 @@ export function normalizeDestination(destination = '') {
 export function isUsersFolder(key = '') {
     return key.toLowerCase() === 'users/';
 }
-
-export const isFavoritesAliasAvailable = (alias?: string | null) => {
-    return alias !== null && alias !== undefined && alias !== '';
-};

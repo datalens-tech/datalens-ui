@@ -43,7 +43,7 @@ export const DialogEditFavoritesAlias: React.FC<DialogEditFavoritesAliasProps> =
         }
 
         if (name === alias) {
-            onClose({status: EntryDialogResolveStatus.Close});
+            onCloseDialog();
         } else {
             try {
                 await getSdk().us.renameFavorite({entryId, name});
@@ -60,7 +60,7 @@ export const DialogEditFavoritesAlias: React.FC<DialogEditFavoritesAliasProps> =
                     }),
                 );
 
-                onClose({status: EntryDialogResolveStatus.Close});
+                onCloseDialog();
             }
         }
     };
@@ -77,8 +77,7 @@ export const DialogEditFavoritesAlias: React.FC<DialogEditFavoritesAliasProps> =
         setText(str);
     };
 
-    const aliasExists = alias !== '' && alias !== null;
-
+    const aliasExists = Boolean(alias);
     const caption = aliasExists ? i18n('caption_rename') : i18n('caption_add');
 
     return (
@@ -90,38 +89,31 @@ export const DialogEditFavoritesAlias: React.FC<DialogEditFavoritesAliasProps> =
             onClose={onCloseDialog}
             disableFocusTrap={true}
         >
-            <div className={b()}>
-                <Dialog.Header caption={caption} />
-                <Dialog.Body>
-                    <div className={b('content')}>
-                        <TextInput
-                            autoFocus={true}
-                            size="l"
-                            onUpdate={onChangeInput}
-                            placeholder={i18n('label_placeholder')}
-                            value={text}
-                            hasClear={true}
-                        />
-                    </div>
-                </Dialog.Body>
-                <Dialog.Footer
-                    onClickButtonCancel={onCloseDialog}
-                    onClickButtonApply={onApplyDialog}
-                    textButtonApply={i18n('button_apply')}
-                    textButtonCancel={i18n('button_cancel')}
-                >
-                    {aliasExists && (
-                        <Button
-                            view="outlined-danger"
-                            size="l"
-                            disabled={false}
-                            onClick={onResetAlias}
-                        >
-                            {i18n('button_delete')}
-                        </Button>
-                    )}
-                </Dialog.Footer>
-            </div>
+            <Dialog.Header caption={caption} />
+            <Dialog.Body>
+                <div className={b('content')}>
+                    <TextInput
+                        autoFocus={true}
+                        size="l"
+                        onUpdate={onChangeInput}
+                        placeholder={i18n('label_placeholder')}
+                        value={text}
+                        hasClear={true}
+                    />
+                </div>
+            </Dialog.Body>
+            <Dialog.Footer
+                onClickButtonCancel={onCloseDialog}
+                onClickButtonApply={onApplyDialog}
+                textButtonApply={i18n('button_apply')}
+                textButtonCancel={i18n('button_cancel')}
+            >
+                {aliasExists && (
+                    <Button view="outlined-danger" size="l" disabled={false} onClick={onResetAlias}>
+                        {i18n('button_delete')}
+                    </Button>
+                )}
+            </Dialog.Footer>
         </Dialog>
     );
 };

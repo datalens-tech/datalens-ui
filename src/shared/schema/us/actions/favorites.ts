@@ -28,7 +28,7 @@ export const favoritesActions = {
     }),
     renameFavorite: createAction<RenameFavoriteResponse, RenameFavoriteArgs>({
         method: 'POST',
-        path: ({entryId}) => `${PATH_PREFIX}/favorites/${filterUrlFragment(entryId)}/rename`,
+        path: ({entryId}) => `${PATH_PREFIX}/favorites/${entryId}/rename`,
         params: ({name}, headers) => ({body: {name}, headers}),
     }),
     getFavorites: createAction<GetFavoritesOutput, GetFavoritesArgs, GetFavoritesResponse>({
