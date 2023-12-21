@@ -33,7 +33,7 @@
         border-bottom: 1px solid var(--g-color-line-generic);
         box-sizing: content-box;
         line-height: 18px;
-        padding: 11px 0;
+        padding: 11px 10px;
         text-align: left;
         vertical-align: middle;
 
@@ -41,11 +41,14 @@
         text-decoration: none;
 
         &:last-child {
-            padding-right: 10px;
+            padding-right: 12px;
+            padding-left: 0;
         }
 
         &:first-child {
-            padding-left: 10px;
+            padding-right: 0;
+            padding-left: 12px;
+            width: 27px;
         }
     }
 

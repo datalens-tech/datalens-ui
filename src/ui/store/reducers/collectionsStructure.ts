@@ -52,7 +52,9 @@ import type {
     Workbook,
     CreateCollectionResponse,
     MoveCollectionResponse,
+    MoveCollectionsResponse,
     MoveWorkbookResponse,
+    MoveWorkbooksResponse,
     CopyWorkbookResponse,
     CreateWorkbookResponse,
     UpdateWorkbookResponse,
@@ -98,7 +100,7 @@ export type CollectionsStructureState = {
     };
     moveCollections: {
         isLoading: boolean;
-        data: MoveCollectionResponse[] | null;
+        data: MoveCollectionsResponse[] | null;
         error: Error | null;
     };
     moveWorkbook: {
@@ -108,7 +110,7 @@ export type CollectionsStructureState = {
     };
     moveWorkbooks: {
         isLoading: boolean;
-        data: MoveWorkbookResponse[] | null;
+        data: MoveWorkbooksResponse[] | null;
         error: Error | null;
     };
     copyWorkbook: {
@@ -462,7 +464,7 @@ export const collectionsStructure = (
             };
         }
 
-        // Moving a collection
+        // Moving collections
         case MOVE_COLLECTIONS_LOADING: {
             return {
                 ...state,
@@ -526,7 +528,7 @@ export const collectionsStructure = (
             };
         }
 
-        // Moving list workbooks
+        // Moving workbooks
         case MOVE_WORKBOOKS_LOADING: {
             return {
                 ...state,

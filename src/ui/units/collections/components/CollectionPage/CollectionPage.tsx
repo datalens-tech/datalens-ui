@@ -124,7 +124,7 @@ export const CollectionPage = React.memo<Props>(
         const [isOpenSelectionMode, setIsOpenSelectionMode] = React.useState(false);
         const [selectedMap, setSelectedMap] = React.useState<SelectedMap>({});
         const countSelected = React.useMemo(() => {
-            return Object.values(selectedMap).filter((item) => item.checked).length;
+            return Object.keys(selectedMap).length;
         }, [selectedMap]);
         const history = useHistory();
 
@@ -193,6 +193,10 @@ export const CollectionPage = React.memo<Props>(
             };
         }, [collectionId, rootPermissions, getRootCollectionPermissions]);
 
+        React.useEffect(() => {
+            setSelectedMap({});
+        }, [filters]);
+
         const initLoadCollection = React.useCallback(() => {
             let collectionPromise: CancellablePromise<unknown>;
             let breadcrumbsPromise: CancellablePromise<unknown>;
@@ -214,19 +218,8 @@ export const CollectionPage = React.memo<Props>(
         }, [collectionId, getCollection, getCollectionBreadcrumbs, resetCollectionInfo]);
 
         const resetSelected = React.useCallback(() => {
-            const resetedSelected = selectedMap;
-
-            Object.keys(resetedSelected).forEach(function (key) {
-                resetedSelected[key] = {
-                    ...resetedSelected[key],
-                    checked: false,
-                };
-            });
-
-            setSelectedMap({
-                ...resetedSelected,
-            });
-        }, [selectedMap]);
+            setSelectedMap({});
+        }, []);
 
         const refreshContent = React.useCallback(() => {
             resetCollectionContent();
@@ -382,13 +375,23 @@ export const CollectionPage = React.memo<Props>(
             type: 'workbook' | 'collection',
             entityId: string,
         ) => {
-            setSelectedMap({
-                ...selectedMap,
-                [entityId]: {
-                    type,
-                    checked,
-                },
-            });
+            if (checked) {
+                setSelectedMap({
+                    ...selectedMap,
+                    [entityId]: {
+                        type,
+                        checked,
+                    },
+                });
+            } else {
+                const mapSelected = selectedMap;
+
+                delete mapSelected[entityId];
+
+                setSelectedMap({
+                    ...mapSelected,
+                });
+            }
 
             if (checked && !isOpenSelectionMode) {
                 setIsOpenSelectionMode(true);
@@ -396,22 +399,26 @@ export const CollectionPage = React.memo<Props>(
         };
 
         const onSelectAll = (checked: boolean) => {
-            const selected: SelectedMap = {};
+            if (checked) {
+                const selected: SelectedMap = {};
 
-            contentItems.forEach((item) => {
-                const isWorkbook = 'workbookId' in item;
-                const id = isWorkbook ? item.workbookId : item.collectionId;
-                const type = isWorkbook ? 'workbook' : 'collection';
+                contentItems.forEach((item) => {
+                    const isWorkbook = 'workbookId' in item;
+                    const id = isWorkbook ? item.workbookId : item.collectionId;
+                    const type = isWorkbook ? 'workbook' : 'collection';
 
-                selected[id] = {
-                    type,
-                    checked,
-                };
-            });
+                    selected[id] = {
+                        type,
+                        checked,
+                    };
+                });
 
-            setSelectedMap({
-                ...selected,
-            });
+                setSelectedMap({
+                    ...selected,
+                });
+            } else {
+                resetSelected();
+            }
 
             if (checked && !isOpenSelectionMode) {
                 setIsOpenSelectionMode(true);
@@ -432,6 +439,7 @@ export const CollectionPage = React.memo<Props>(
                     }
                 }
             });
+
             dispatch(
                 openDialog({
                     id: DIALOG_MOVE_COLLECTIONS_WORKBOOKS,

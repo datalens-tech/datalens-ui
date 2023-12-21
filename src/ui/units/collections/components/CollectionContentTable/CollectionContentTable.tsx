@@ -83,7 +83,9 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                         item.workbookId,
                                                     );
                                                 }}
-                                                checked={selectedMap[item.workbookId]?.checked}
+                                                checked={Boolean(
+                                                    selectedMap[item.workbookId]?.checked,
+                                                )}
                                             />
                                         </div>
 
@@ -138,7 +140,9 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                         item.collectionId,
                                                     );
                                                 }}
-                                                checked={selectedMap[item.collectionId]?.checked}
+                                                checked={Boolean(
+                                                    selectedMap[item.collectionId]?.checked,
+                                                )}
                                             />
                                         </div>
                                         <Link

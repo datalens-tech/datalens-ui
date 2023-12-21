@@ -55,7 +55,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                         <Checkbox
                                             size="l"
                                             className={b('content-item-checkbox')}
-                                            checked={selectedMap[item.workbookId]?.checked}
+                                            checked={Boolean(selectedMap[item.workbookId]?.checked)}
                                         />
                                     )}
                                     <Link
@@ -123,7 +123,9 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                         <Checkbox
                                             size="l"
                                             className={b('content-item-checkbox')}
-                                            checked={selectedMap[item.collectionId]?.checked}
+                                            checked={Boolean(
+                                                selectedMap[item.collectionId]?.checked,
+                                            )}
                                         />
                                     )}
                                     <Link

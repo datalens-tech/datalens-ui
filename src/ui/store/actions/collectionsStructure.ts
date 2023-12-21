@@ -57,6 +57,8 @@ import type {
     CreateCollectionResponse,
     GetRootCollectionPermissionsResponse,
     MoveCollectionResponse,
+    MoveCollectionsResponse,
+    MoveWorkbooksResponse,
     MoveWorkbookResponse,
     CollectionWithPermissions,
     CopyWorkbookResponse,
@@ -493,7 +495,7 @@ type MoveCollectionsLoadingAction = {
 };
 type MoveCollectionsSuccessAction = {
     type: typeof MOVE_COLLECTIONS_SUCCESS;
-    data: MoveCollectionResponse[];
+    data: MoveCollectionsResponse;
 };
 type MoveCollectionsFailedAction = {
     type: typeof MOVE_COLLECTIONS_FAILED;
@@ -556,7 +558,7 @@ type MoveWorkbooksLoadingAction = {
 };
 type MoveWorkbooksSuccessAction = {
     type: typeof MOVE_WORKBOOKS_SUCCESS;
-    data: MoveWorkbookResponse[];
+    data: MoveWorkbooksResponse;
 };
 type MoveWorkbooksFailedAction = {
     type: typeof MOVE_WORKBOOKS_FAILED;
