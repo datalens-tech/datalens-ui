@@ -200,6 +200,7 @@ export type DLGlobalData = {
     chartkitSettings?: ChartkitGlobalSettings;
     extraPalettes?: Record<string, Palette>;
     headersMap?: Record<string, string>;
+    fallbackHost?: string;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {
