@@ -16,6 +16,7 @@ import {
     WizardVisualizationId,
     getIsNavigatorEnabled,
     isEnabledServerFeature,
+    isTreeField,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
 
@@ -117,6 +118,18 @@ function getActionParamsEvents(
     }
 
     return undefined;
+}
+
+function canUseActionParams(shared: ServerChartsConfig) {
+    const hasDrillDownEvents = Boolean(shared.sharedData?.drillDownData);
+    const tableVisualization = shared.visualization.id === WizardVisualizationId.FlatTable;
+    const hasTreeFields =
+        tableVisualization &&
+        shared.visualization.placeholders.find(
+            (p) => p.id === PlaceholderId.FlatTableColumns && p.items.some(isTreeField),
+        );
+
+    return !hasDrillDownEvents && !hasTreeFields;
 }
 
 // eslint-disable-next-line complexity
@@ -265,7 +278,7 @@ export default (
         config.calcClosestPointManually = true;
     }
 
-    if (widgetConfig?.actionParams?.enable) {
+    if (widgetConfig?.actionParams?.enable && canUseActionParams(shared)) {
         (config as ConfigWithActionParams).events = getActionParamsEvents(
             visualizationId as WizardVisualizationId,
         );
