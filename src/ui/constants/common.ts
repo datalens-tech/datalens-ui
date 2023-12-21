@@ -223,9 +223,6 @@ export const DL = {
     get HEADERS_MAP() {
         return window.DL.headersMap || {};
     },
-    get FALLBACK_HOST() {
-        return window.DL.fallbackHost || '';
-    },
 };
 
 export const LIGHT_THEME = 'light';
