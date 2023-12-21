@@ -5,11 +5,16 @@ import {DateTimeField, EmptyPrepapreArgs, IntegerField} from '../../__tests__/co
 import {PrepareFunctionArgs} from '../../types';
 import {prepareBarYData} from '../prepare-bar-y-data';
 
-const DimensionField = {...IntegerField, type: 'DIMENSION'};
+const DimensionField = {...IntegerField, type: 'DIMENSION', guid: 'DimensionField_guid'};
 
 describe('prepareBarYData', () => {
     const args: PrepareFunctionArgs = {
         ...EmptyPrepapreArgs,
+        idToTitle: {
+            [IntegerField.guid]: IntegerField.title,
+            [DateTimeField.guid]: DateTimeField.title,
+            [DimensionField.guid]: DimensionField.title,
+        },
     };
 
     test('X is empty, Y has integer field -> categories contain values from the Y field', () => {
