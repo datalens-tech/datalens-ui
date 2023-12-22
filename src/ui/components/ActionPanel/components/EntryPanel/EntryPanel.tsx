@@ -11,8 +11,8 @@ import {Dispatch, bindActionCreators} from 'redux';
 import {ActionPanelQA} from 'shared';
 import {DatalensGlobalState, EntryDialogues, sdk} from 'ui';
 import {registry} from 'ui/registry';
-import {addWorkbookInfo, resetWorkbookPermissions} from 'units/workbooks/store/actions';
-import {selectWorkbookName} from 'units/workbooks/store/selectors';
+import {getWorkbook, resetWorkbookPermissions} from 'units/workbooks/store/actions';
+import {selectWorkbook} from 'units/workbooks/store/selectors';
 
 import type {GetEntryResponse} from '../../../../../shared/schema';
 import {DL} from '../../../../constants/common';
@@ -104,7 +104,7 @@ class EntryPanel extends React.Component<Props, State> {
         const workbookId = this.state.entry?.workbookId;
 
         if (workbookId) {
-            this.props.actions.addWorkbookInfo(workbookId);
+            this.props.actions.getWorkbook({workbookId});
         }
     }
 
@@ -113,7 +113,7 @@ class EntryPanel extends React.Component<Props, State> {
         const prevWorkbookId = prevProps.entry?.workbookId;
 
         if (prevWorkbookId !== workbookId && workbookId) {
-            this.props.actions.addWorkbookInfo(workbookId);
+            this.props.actions.getWorkbook({workbookId});
         }
 
         if (prevWorkbookId && !workbookId) {
@@ -141,7 +141,7 @@ class EntryPanel extends React.Component<Props, State> {
                 <EntryBreadcrumbs
                     renderRootContent={this.renderRootContent}
                     entry={this.state.entry}
-                    workbookName={this.props.workbookName}
+                    workbook={this.props.workbook}
                     openNavigationAction={this.openNavigation}
                 />
                 <div className={b()}>
@@ -331,11 +331,9 @@ class EntryPanel extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
-    const workbookId = ownProps.entry?.workbookId || '';
-
+const mapStateToProps = (state: DatalensGlobalState) => {
     return {
-        workbookName: selectWorkbookName(state, workbookId),
+        workbook: selectWorkbook(state),
     };
 };
 
@@ -343,7 +341,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
         actions: bindActionCreators(
             {
-                addWorkbookInfo,
+                getWorkbook,
                 resetWorkbookPermissions,
             },
             dispatch,
