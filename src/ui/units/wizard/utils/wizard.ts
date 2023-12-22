@@ -444,24 +444,35 @@ export const getFieldFormat = (field: Field) => {
     return format;
 };
 
+function resolveDateValue(value: string) {
+    if (/^__relative/.test(value)) {
+        return [resolveRelativeDate(value)];
+    }
+
+    if (/^__interval/.test(value)) {
+        const resolvedValue = resolveIntervalDate(value);
+        return [resolvedValue?.from, resolvedValue?.to];
+    }
+
+    return null;
+}
+
 export const parseFilterDate = (item: Field): string => {
     const {filter} = item;
-
-    if (!filter) {
-        return '';
-    }
-
     const format = getFieldFormat(item);
+    const dateValue = filter?.value[0];
 
-    const value = filter.value[0];
-    const operation = filter.operation.code;
-    const resolved = resolveIntervalDate(value);
-    if (!resolved) {
+    if (!dateValue) {
         return '';
     }
 
-    const {from, to} = resolved;
-    if (operation === Operations.BETWEEN) {
+    const resolved = resolveDateValue(dateValue);
+    if (!resolved) {
+        return moment(dateValue).utc().format(format);
+    }
+
+    const [from, to] = resolved;
+    if (filter.operation.code === Operations.BETWEEN) {
         return `${moment(from).utc().format(format)}-${moment(to).utc().format(format)}`;
     }
     return moment(from).utc().format(format);
@@ -472,15 +483,9 @@ export const parseParameterDefaultValue = (item: Field): string => {
     const defaultValue = String(item.default_value);
 
     if (isDateField(item)) {
-        if (/^__relative/.test(defaultValue)) {
-            const resolvedValue = resolveRelativeDate(defaultValue);
-
-            return moment(resolvedValue).format(format);
-        } else if (/^__interval/.test(defaultValue)) {
-            const resolvedValue = resolveIntervalDate(defaultValue);
-            return `${moment(resolvedValue?.from).format(format)}-${moment(
-                resolvedValue?.to,
-            ).format(format)}`;
+        const resolved = resolveDateValue(defaultValue);
+        if (resolved) {
+            return resolved.map((dateValue) => moment(dateValue).format(format)).join('-');
         }
     }
 
