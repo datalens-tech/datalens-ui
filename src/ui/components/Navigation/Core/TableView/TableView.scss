@@ -254,7 +254,7 @@
     }
 
     #{$class} &__lock {
-        margin: 0 10px;
+        margin: 2px 5px 0 10px;
         flex: 0 0 16px;
         color: var(--g-color-text-hint);
     }
@@ -262,6 +262,7 @@
     &__name {
         flex: 3 1 30%;
         display: flex;
+        align-items: center;
         overflow: hidden;
         min-width: 100px;
         color: var(--g-color-text-primary);

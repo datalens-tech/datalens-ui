@@ -37,6 +37,11 @@ export type LinkWrapperArgs = {
     className?: string;
 };
 
+export type MenuClickArgs = {
+    entry: {entryId: string; alias: string};
+    action: string;
+};
+
 export type BatchAction = 'move';
 
 export type ChangeLocation = (place: string, path: string) => void;

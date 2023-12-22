@@ -22,7 +22,7 @@ type AddSectionProps = YadocsAddSectionState & {
 };
 
 export const AddSection = (props: AddSectionProps) => {
-    const {url, mode, active, uploading, disabled, addYandexDoc, updateAddSectionState} = props;
+    const {path, mode, active, uploading, disabled, addYandexDoc, updateAddSectionState} = props;
     const inputRef = React.useRef<HTMLInputElement>(null);
     const inputPlaceholder =
         mode === 'private'
@@ -39,7 +39,7 @@ export const AddSection = (props: AddSectionProps) => {
 
     const handleDeactivation = React.useCallback(() => {
         updateAddSectionState({
-            url: '',
+            path: '',
             active: false,
         });
     }, [updateAddSectionState]);
@@ -52,28 +52,28 @@ export const AddSection = (props: AddSectionProps) => {
     );
 
     const handleInputUpdate = React.useCallback<NonNullable<TextInputProps['onUpdate']>>(
-        (nextUrl) => {
-            updateAddSectionState({url: nextUrl});
+        (nexPath) => {
+            updateAddSectionState({path: nexPath});
         },
         [updateAddSectionState],
     );
 
     const handleInputKeyDown = React.useCallback<NonNullable<TextInputProps['onKeyDown']>>(
         (e) => {
-            if (e.key === 'Enter' && url) {
-                addYandexDoc(url);
+            if (e.key === 'Enter' && path) {
+                addYandexDoc(path);
             }
 
             if (e.key === 'Escape') {
                 handleDeactivation();
             }
         },
-        [url, addYandexDoc, handleDeactivation],
+        [path, addYandexDoc, handleDeactivation],
     );
 
     const handleButtonAddClick = React.useCallback(() => {
-        addYandexDoc(url);
-    }, [url, addYandexDoc]);
+        addYandexDoc(path);
+    }, [path, addYandexDoc]);
 
     React.useEffect(() => {
         if (active) {
@@ -101,7 +101,7 @@ export const AddSection = (props: AddSectionProps) => {
                         <TextInput
                             controlRef={inputRef}
                             className={b('add-section-controls-area-b-input')}
-                            value={url}
+                            value={path}
                             placeholder={inputPlaceholder}
                             hasClear={true}
                             disabled={uploading}
@@ -114,7 +114,7 @@ export const AddSection = (props: AddSectionProps) => {
                     <Button
                         view="action"
                         loading={uploading}
-                        disabled={!url}
+                        disabled={!path}
                         onClick={handleButtonAddClick}
                     >
                         {i18n8857.button_add}

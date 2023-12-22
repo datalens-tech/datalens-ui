@@ -23,6 +23,7 @@ export const getFilteredEntryContextMenu = ({
     isEditMode,
     showSpecificItems,
     isLimitedView,
+    place,
 }: ContextMenuParams) => {
     const isOnEditMode = isEditMode === 'edit';
 
@@ -48,6 +49,8 @@ export const getFilteredEntryContextMenu = ({
             (menuItem.isOnEditMode === undefined || menuItem.isOnEditMode === isOnEditMode) &&
             // check the match of the menu item to display specific
             (menuItem.isSpecific === undefined || menuItem.isSpecific === showSpecificItems) &&
+            // check place in menuitem
+            (menuItem.place === undefined || menuItem.place === place) &&
             // check rights
             (menuItem.permissions === undefined ||
                 checkPermissions(
@@ -57,7 +60,7 @@ export const getFilteredEntryContextMenu = ({
                 )) &&
             // check corner states
             (menuItem.isVisible === undefined ||
-                menuItem.isVisible({entry, showSpecificItems, isEditMode, isLimitedView}))
+                menuItem.isVisible({entry, showSpecificItems, isEditMode, isLimitedView, place}))
         );
     });
 };

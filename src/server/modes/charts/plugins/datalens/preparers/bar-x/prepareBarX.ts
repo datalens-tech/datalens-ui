@@ -325,7 +325,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                     tooltip: line.tooltip,
                     dataLabels: line.dataLabels,
                     data: categories
-                        .map((category) => {
+                        .map((category, i) => {
                             const lineData = line.data[category];
                             const colorValue = lineData?.colorValue;
                             let value = lineData?.value;
@@ -346,6 +346,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                             };
 
                             const point: any = {
+                                x: i,
                                 y,
                                 colorValue,
                                 dataLabels,
