@@ -2,8 +2,6 @@ import fs from 'fs';
 import {unlink} from 'fs/promises';
 import {monitorEventLoopDelay, performance} from 'perf_hooks';
 
-// @ts-ignore temporary ignore because we need to add @datalens-tech/xlsx
-// to the proprietary code
 import XLSX from '@datalens-tech/xlsx';
 import {dateTime} from '@gravity-ui/date-utils';
 import {Request, Response} from '@gravity-ui/expresskit';
