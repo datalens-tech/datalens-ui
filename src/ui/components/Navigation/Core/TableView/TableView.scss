@@ -249,6 +249,33 @@
         }
     }
 
+    &__edit-favorites-alias-btn {
+        visibility: hidden;
+        margin-right: 5px;
+        min-width: 28px;
+        min-height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 4px;
+
+        &_isVisible {
+            visibility: visible;
+        }
+
+        &:hover {
+            background: var(--g-color-base-simple-hover);
+        }
+
+        #{$class}__row:hover &,
+        #{$class}__row_hovered & {
+            visibility: visible;
+        }
+
+        color: var(--g-color-text-secondary);
+    }
+
     &__icon-star-stroke {
         display: none;
     }
