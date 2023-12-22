@@ -5,7 +5,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DashTabItemControlSourceType, DialogControlQa, Feature} from 'shared';
 import Utils from 'ui/utils';
-import {SelectorSourceType, setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
+import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
@@ -37,7 +37,7 @@ const SelectorTypeSelect = ({size = 'l', showExternalType = true}: SelectorTypeS
     const handleSourceTypeChange = React.useCallback((value: string) => {
         dispatch(
             setSelectorDialogItem({
-                sourceType: value as SelectorSourceType,
+                sourceType: value as DashTabItemControlSourceType,
                 fieldType: undefined,
             }),
         );

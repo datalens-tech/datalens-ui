@@ -7,6 +7,7 @@ export enum DashTabItemType {
     Text = 'text',
     Widget = 'widget',
     Control = 'control',
+    GroupControl = 'group_control',
 }
 
 export enum DashTabItemTitleSize {
@@ -92,7 +93,8 @@ export type DashTabItem =
     | DashTabItemText
     | DashTabItemTitle
     | DashTabItemWidget
-    | DashTabItemControl;
+    | DashTabItemControl
+    | DashTabItemGroupControl;
 
 export interface DashTabItemBase {
     id: string;
@@ -151,6 +153,9 @@ export interface DashTabItemControlData {
         | DashTabItemControlDataset['source']
         | DashTabItemControlManual['source']
         | DashTabItemControlExternal['source'];
+    placementMode?: string;
+    width?: string;
+    index?: number;
 }
 
 export interface DashTabItemControlDataset extends DashTabItemControlData {
@@ -216,6 +221,19 @@ export interface DashTabItemControlExternal extends DashTabItemControlData {
     source: {
         chartId: string;
     };
+}
+
+export interface DashTabItemGroupControl extends DashTabItemBase {
+    type: DashTabItemType.GroupControl;
+    data: DashTabItemGroupControlData;
+    defaults: StringParams;
+}
+
+export interface DashTabItemGroupControlData {
+    autoHeight: boolean;
+    buttonApply: boolean;
+    buttonReset: boolean;
+    items: DashTabItemControlData[];
 }
 
 export interface DashTabLayout {

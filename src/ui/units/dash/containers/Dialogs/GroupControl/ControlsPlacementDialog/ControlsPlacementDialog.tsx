@@ -54,8 +54,8 @@ const ReturnButton = ({onClose}: ReturnButtonProps) => {
 };
 
 const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
-    const items = useSelector(selectSelectorsGroup);
-    const [itemsState, setItemsState] = React.useState(items);
+    const selectorsGroup = useSelector(selectSelectorsGroup);
+    const [itemsState, setItemsState] = React.useState(selectorsGroup.items);
     const [errorsIndexes, setErrorsIndexes] = React.useState<number[]>([]);
     const [showErrors, setShowErrors] = React.useState(false);
     const dispatch = useDispatch();
@@ -81,9 +81,14 @@ const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
             return;
         }
         const updatedItemsState = resetAutoValues(itemsState);
-        dispatch(updateSelectorsGroup(updatedItemsState));
+        dispatch(
+            updateSelectorsGroup({
+                ...selectorsGroup,
+                items: updatedItemsState,
+            }),
+        );
         onClose();
-    }, [itemsState, dispatch, onClose, errorsIndexes.length]);
+    }, [selectorsGroup, itemsState, dispatch, onClose, errorsIndexes.length]);
 
     const handlePlacementModeUpdate = React.useCallback(
         (targetIndex: number, newType: SelectorDialogState['placementMode']) => {
