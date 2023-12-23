@@ -92,7 +92,7 @@ export class Row extends React.Component<RowProps> {
         const isFavoritesNameAliasesEnabled =
             Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases) && place === PLACE.FAVORITES;
 
-        const isVisible = Boolean(alias);
+        const visible = Boolean(alias);
 
         const nameElement = isFavoritesNameAliasesEnabled ? (
             <FavoritesNameWithAliasItem
@@ -101,7 +101,7 @@ export class Row extends React.Component<RowProps> {
                 alias={alias ?? ''}
                 isLocked={isLocked}
                 onMenuClick={onMenuClick}
-                className={b('edit-favorites-alias-btn', {isVisible})}
+                className={b('edit-favorites-alias-btn', {visible})}
             />
         ) : (
             <div title={name} className={b('name-line')}>
