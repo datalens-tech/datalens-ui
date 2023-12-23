@@ -34,6 +34,7 @@
 
         &_disabled {
             background-color: var(--g-color-base-generic-accent-disabled);
+            cursor: default;
         }
 
         &_selected {
