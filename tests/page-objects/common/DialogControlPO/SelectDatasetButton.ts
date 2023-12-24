@@ -3,33 +3,21 @@ import {slct} from '../../../utils';
 
 import {DialogControlQa} from '../../../../src/shared/constants/qa/control';
 import {NavigationMinimalPopup} from '../../../page-objects/workbook/NavigationMinimalPopup';
+import {ElementPO} from '../abstract/ElementPO';
 
-export class SelectDatasetButton {
-    static selectors = {
-        qa: {
-            root: slct(DialogControlQa.selectDatasetButton),
-        },
-    };
-
+export class SelectDatasetButton extends ElementPO {
     navigationMinimal: NavigationMinimalPopup;
 
-    protected page: Page;
-
     constructor(page: Page) {
-        this.page = page;
+        super({
+            page,
+            selectors: {
+                qa: {
+                    root: slct(DialogControlQa.selectDatasetButton),
+                },
+            },
+        });
+
         this.navigationMinimal = new NavigationMinimalPopup(page);
-    }
-
-    async expectVisible() {
-        await expect(this.page.locator(SelectDatasetButton.selectors.qa.root)).toBeVisible();
-    }
-
-    async waitForVisible() {
-        await this.page.waitForSelector(SelectDatasetButton.selectors.qa.root);
-    }
-
-    async click() {
-        await this.expectVisible();
-        await this.page.locator(SelectDatasetButton.selectors.qa.root).click();
     }
 }
