@@ -63,6 +63,7 @@ export enum DashCommonQa {
     RelationsCancelBtn = 'relations-cancel-btn',
     WidgetShowTitleCheckbox = 'dialog-widget-settings-show-title',
     RelationsDialogEmptyText = 'dialog-relations-empty-text',
+    RelationsDisconnectAllButton = 'dialog-relations-disconnect-all-button',
 }
 
 export enum DashRelationTypes {
