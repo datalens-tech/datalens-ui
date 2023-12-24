@@ -338,6 +338,7 @@ export const Row = ({
                         title={i18n('label_add-alias')}
                         className={b('button-alias')}
                         onClick={handleAliasCLick}
+                        qa={DashCommonQa.AliasShowBtn}
                     >
                         <Icon data={iconAlias} className={b('icon-alias')} />
                     </Button>
