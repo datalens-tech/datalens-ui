@@ -153,3 +153,16 @@ export type UpdateS3BasedConnectionDataArgs = {
     connection_id?: string;
     refresh_token?: GoogleRefreshToken;
 };
+
+export type AddYandexDocumentResponse = {
+    file_id: string;
+    title: string;
+};
+
+export type AddYandexDocumentArgs = {
+    authorized: boolean;
+    type: 'yadocs';
+    private_path?: string;
+    public_link?: string;
+    oauth_token?: GoogleRefreshToken;
+};

@@ -1,0 +1,9 @@
+{
+  "button_apply": "Готово",
+  "button_cancel": "Отменить",
+  "button_delete": "Удалить лейбл",
+  "caption_add": "Добавить лейбл",
+  "caption_rename": "Изменить лейбл",
+  "label_placeholder": "Введите новое имя",
+  "toast_rename-favorites-alias-failed": "Не удалось переименовать лейбл"
+}

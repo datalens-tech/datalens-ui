@@ -50,6 +50,7 @@ export * from './base';
 export * from './file';
 export * from './gsheet';
 export * from './s3-based';
+export * from './yadoc';
 
 const i18n = I18n.keyset('connections.form');
 

@@ -17,6 +17,21 @@
         right: 50px;
     }
 
+    &__filters-controls {
+        position: absolute;
+        top: 4px;
+        right: 44px;
+        z-index: 10;
+        background-color: var(--g-color-base-background);
+        padding: 2px;
+        border-radius: var(--yc-border-radius-l);
+        box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    &__icon-filter-clear {
+        color: var(--g-color-text-primary);
+    }
+
     .gc-adaptive-tabs {
         --gc-tabs-space-between: 14px;
         --gc-tabs-height: 44px;
