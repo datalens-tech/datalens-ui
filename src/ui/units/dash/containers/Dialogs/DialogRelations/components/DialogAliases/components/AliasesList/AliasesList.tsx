@@ -4,6 +4,7 @@ import {Magnifier, TrashBin, Xmark} from '@gravity-ui/icons';
 import {Button, ButtonView, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {DashCommonQa} from 'shared';
 import {DatasetsFieldsListData} from 'ui/components/DashKit/plugins/types';
 
 import {AliasesContext} from '../../../../hooks/useRelations';
@@ -129,6 +130,7 @@ const AliasesListItem = ({
                                         field,
                                     })
                                 }
+                                qa={DashCommonQa.AliasItem}
                             >
                                 {fieldName}
                                 {datasetId && <span className={b('info')}>{datasetText}</span>}
@@ -167,6 +169,7 @@ const AliasesListItem = ({
                     view="flat"
                     onClick={handleRemoveAliasRow}
                     title={i18n('button_delete-alias')}
+                    qa={DashCommonQa.AliasRemoveBtn}
                 >
                     <Icon data={TrashBin} />
                 </Button>

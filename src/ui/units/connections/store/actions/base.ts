@@ -31,6 +31,8 @@ import {
     SetValidationErrors,
     SetYadocsActiveDialog,
     SetYadocsAddSectionState,
+    SetYadocsItems,
+    SetYadocsSelectedItemId,
 } from '../typings';
 
 export const SET_GROUPED_CONNECTORS = Symbol('connections/SET_GROUPED_CONNECTORS');
@@ -64,6 +66,8 @@ export const SET_GSHEET_COLUMN_FILTER = Symbol('connections/SET_GSHEET_COLUMN_FI
 export const SET_GSHEET_ITEMS = Symbol('connections/SET_GSHEET_ITEMS');
 export const SET_GSHEET_ACTIVE_DIALOG = Symbol('connections/SET_GSHEET_ACTIVE_DIALOG');
 export const SET_YADOCS_ADD_SECTION_STATE = Symbol('connections/SET_YADOCS_ADD_SECTION_STATE');
+export const SET_YADOCS_SELECTED_ITEM_ID = Symbol('connections/SET_YADOCS_SELECTED_ITEM_ID');
+export const SET_YADOCS_ITEMS = Symbol('connections/SET_YADOCS_ITEMS');
 export const SET_YADOCS_ACTIVE_DIALOG = Symbol('connections/SET_YADOCS_ACTIVE_DIALOG');
 
 export function setEntry(payload: SetEntry['payload']): SetEntry {
@@ -286,6 +290,22 @@ export function setGSheetActiveDialog(
 ): SetGSheetActiveDialog {
     return {
         type: SET_GSHEET_ACTIVE_DIALOG,
+        payload,
+    };
+}
+
+export function setYadocsItems(payload: SetYadocsItems['payload']): SetYadocsItems {
+    return {
+        type: SET_YADOCS_ITEMS,
+        payload,
+    };
+}
+
+export function setYadocsSelectedItemId(
+    payload: SetYadocsSelectedItemId['payload'],
+): SetYadocsSelectedItemId {
+    return {
+        type: SET_YADOCS_SELECTED_ITEM_ID,
         payload,
     };
 }

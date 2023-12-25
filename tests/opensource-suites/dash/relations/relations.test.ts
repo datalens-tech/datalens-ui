@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {deleteEntity, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ControlQA, DashRelationTypes} from '../../../../src/shared';
+import {ControlQA, DashCommonQa, DashRelationTypes} from '../../../../src/shared';
 import {WorkbooksUrls} from '../../../constants/constants';
 import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {ChartsParams} from '../../../constants/test-entities/charts';
@@ -85,4 +85,54 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
             });
         },
     );
+    datalensTest('Remove alias (new relations)', async ({page}: {page: Page}) => {
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.enterEditMode();
+
+        const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+            ControlQA.controlLinks,
+        );
+
+        await dashboardPage.setupNewLinks({
+            linkType: DashRelationTypes.output,
+            firstParamName: PARAMS.CONTROL_FIELD_NAME,
+            secondParamName: PARAMS.CHART_FIELD,
+            widgetElem: selectorElem,
+        });
+
+        await dashboardPage.saveChanges();
+        await dashboardPage.page.reload();
+
+        await dashboardPage.enterEditMode();
+
+        // open dialog relations by click on control item links icon
+        await selectorElem.click();
+        // open aliases list popup
+        await page.locator(slct(DashCommonQa.AliasShowBtn)).first().click();
+        // expand added aliases list
+        await page.locator(slct(DashCommonQa.AliasesListCollapse)).click();
+
+        // hover to show controls
+        await page.hover(slct(DashCommonQa.AliasItem));
+        // remove alias
+        await page.locator(slct(DashCommonQa.AliasRemoveBtn)).click();
+
+        // apply all
+        await page.locator(slct(DashCommonQa.AliasAddApplyBtn)).click();
+        await page.click(slct(DashCommonQa.RelationsApplyBtn));
+        await dashboardPage.saveChanges();
+
+        await dashboardPage.clickSelectWithTitle(PARAMS.CONTROL_TITLE);
+
+        const defaultSelectValue = PARAMS.CONTROL_ITEMS[PARAMS.CONTROL_ITEMS.length - 1];
+
+        await page.click(slct(SELECTORS.CONTROL_SELECT_ITEMS_KEY, defaultSelectValue));
+
+        // making sure that the request has then completed successfully
+        await waitForCondition(async () => {
+            const elems = await page.$$(SELECTORS.CHART_LEGEND_ITEM);
+
+            return elems.length > 2;
+        });
+    });
 });

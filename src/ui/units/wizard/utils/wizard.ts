@@ -39,7 +39,6 @@ import {
 } from 'shared';
 import uuid from 'uuid/v1';
 
-import {getDatesFromValue} from '../../../components/RelativeDatesPicker/utils';
 import history from '../../../utils/history';
 import Utils from '../../../utils/utils';
 import {getPlaceholdersWithMergedSettings} from '../reducers/utils';
@@ -433,18 +432,6 @@ export const isFieldVisible = (field: Field) =>
 
 export const isFieldPseudo = (field: Field) => field.type === DatasetFieldType.Pseudo;
 
-const resolveDateForFiltersValue = (value: string) => {
-    const [dateFrom, dateTo] = getDatesFromValue(value);
-    const result = {dateFrom, dateTo};
-    if (dateFrom && dateFrom.indexOf('__relative_') !== -1) {
-        result.dateFrom = resolveRelativeDate(dateFrom);
-    }
-    if (dateTo && dateTo.indexOf('__relative_') !== -1) {
-        result.dateTo = resolveRelativeDate(dateTo);
-    }
-    return result;
-};
-
 export const getFieldFormat = (field: Field) => {
     let format = field.format;
     if (!format) {
@@ -457,22 +444,38 @@ export const getFieldFormat = (field: Field) => {
     return format;
 };
 
+function resolveDateValue(value: string) {
+    if (/^__relative/.test(value)) {
+        return [resolveRelativeDate(value)];
+    }
+
+    if (/^__interval/.test(value)) {
+        const resolvedValue = resolveIntervalDate(value);
+        return [resolvedValue?.from, resolvedValue?.to];
+    }
+
+    return null;
+}
+
 export const parseFilterDate = (item: Field): string => {
     const {filter} = item;
+    const format = getFieldFormat(item);
+    const dateValue = filter?.value[0];
 
-    if (!filter) {
+    if (!dateValue) {
         return '';
     }
 
-    const format = getFieldFormat(item);
-
-    const value = filter.value[0];
-    const operation = filter.operation.code;
-    const {dateFrom, dateTo} = resolveDateForFiltersValue(value);
-    if (operation === Operations.BETWEEN) {
-        return `${moment(dateFrom).utc().format(format)}-${moment(dateTo).utc().format(format)}`;
+    const resolved = resolveDateValue(dateValue);
+    if (!resolved) {
+        return moment(dateValue).utc().format(format);
     }
-    return moment(dateFrom).utc().format(format);
+
+    const [from, to] = resolved;
+    if (filter.operation.code === Operations.BETWEEN) {
+        return `${moment(from).utc().format(format)}-${moment(to).utc().format(format)}`;
+    }
+    return moment(from).utc().format(format);
 };
 
 export const parseParameterDefaultValue = (item: Field): string => {
@@ -480,15 +483,9 @@ export const parseParameterDefaultValue = (item: Field): string => {
     const defaultValue = String(item.default_value);
 
     if (isDateField(item)) {
-        if (/^__relative/.test(defaultValue)) {
-            const resolvedValue = resolveRelativeDate(defaultValue);
-
-            return moment(resolvedValue).format(format);
-        } else if (/^__interval/.test(defaultValue)) {
-            const resolvedValue = resolveIntervalDate(defaultValue);
-            return `${moment(resolvedValue?.from).format(format)}-${moment(
-                resolvedValue?.to,
-            ).format(format)}`;
+        const resolved = resolveDateValue(defaultValue);
+        if (resolved) {
+            return resolved.map((dateValue) => moment(dateValue).format(format)).join('-');
         }
     }
 

@@ -1,10 +1,11 @@
 import {ConnectionData, TIMEOUT_65_SEC} from 'shared';
-import type {FormSchema} from 'shared/schema/types';
 import {DL} from 'ui';
 
 import {
     AddGoogleSheetResponse,
+    AddYandexDocumentResponse,
     ApplySourceSettingsArgs,
+    FormSchema,
     GetAuthorizationUrlResponse,
     GetConnectorSchemaArgs,
     GetConnectorsResponse,
@@ -346,6 +347,32 @@ const getGoogleCredentials = async (
     }
 };
 
+const addYandexDocument = async ({
+    authorized = false,
+    privatePath,
+    publicLink,
+    oauthToken,
+}: {
+    authorized: boolean;
+    privatePath?: string;
+    publicLink?: string;
+    oauthToken?: string;
+}): Promise<{document?: AddYandexDocumentResponse; error?: DataLensApiError}> => {
+    try {
+        const document = await getSdk().biConverter.addYandexDocument({
+            authorized,
+            type: 'yadocs',
+            private_path: privatePath,
+            public_link: publicLink,
+            oauth_token: oauthToken,
+        });
+        return {document};
+    } catch (error) {
+        logger.logError('Redux actions (conn): addYadoc failed', error);
+        return {error};
+    }
+};
+
 export const api = {
     fetchEntry,
     fetchConnectionData,
@@ -367,4 +394,5 @@ export const api = {
     updateS3BasedConnectionData,
     getGoogleAuthorizationUrl,
     getGoogleCredentials,
+    addYandexDocument,
 };

@@ -48,6 +48,14 @@ $titleHeight: 57px;
         background-color: var(--g-color-base-generic-ultralight);
     }
 
+    &__list-container {
+        flex-grow: 0;
+    }
+
+    &__list-item-wrap {
+        cursor: pointer;
+    }
+
     &__add-section {
         padding: 12px 16px 0;
     }

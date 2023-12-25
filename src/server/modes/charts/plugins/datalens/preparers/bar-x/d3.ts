@@ -10,8 +10,8 @@ import {
     ServerField,
     getFakeTitleOrTitle,
 } from '../../../../../../../shared';
-import {getAxisType} from '../../d3/utils';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
+import {getAxisType} from '../helpers/axis';
 import {PrepareFunctionArgs} from '../types';
 
 import {prepareBarX} from './prepareBarX';
