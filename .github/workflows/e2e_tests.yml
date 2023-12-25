@@ -12,9 +12,9 @@ on:
         description: 'custom us version'
 
 env:
-  CONTROL_API_VERSION: github.event.inputs.control_api
-  US_VERSION: github.event.inputs.data-api
-  DATA_API_VERSION: github.event.inputs.us
+  CONTROL_API_VERSION: ${{github.event.inputs.control_api}}
+  US_VERSION: ${{github.event.inputs.data-api}}
+  DATA_API_VERSION: ${{github.event.inputs.us}}
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
