@@ -1,6 +1,6 @@
 import {AppContext} from '@gravity-ui/nodekit';
+import {crc32c} from '@node-rs/crc32';
 import {Promise} from 'bluebird';
-import crc32 from 'fast-crc32c';
 import {RequiredUriUrl} from 'request';
 import requestPromise, {RequestPromise, RequestPromiseOptions} from 'request-promise';
 
@@ -147,9 +147,9 @@ export class Request {
         if (requestOptions.body || requestOptions.form) {
             try {
                 if (requestOptions.body) {
-                    dataHash = crc32.calculate(JSON.stringify(requestOptions.body));
+                    dataHash = crc32c(JSON.stringify(requestOptions.body));
                 } else if (requestOptions.form) {
-                    dataHash = crc32.calculate(JSON.stringify(requestOptions.form));
+                    dataHash = crc32c(JSON.stringify(requestOptions.form));
                 }
             } catch (error) {
                 ctx.logError('Failed to calculate data hash', error);
