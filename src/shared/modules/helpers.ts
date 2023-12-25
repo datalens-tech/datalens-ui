@@ -137,7 +137,7 @@ export function getAxisMode(
         xAxisMode = xAxisModeMap[fieldGuid];
     }
 
-    return xAxisMode || 'discrete';
+    return xAxisMode || AxisMode.Discrete;
 }
 
 export function getIsNavigatorAvailable(
@@ -165,7 +165,7 @@ export function getIsNavigatorAvailable(
         VISUALIZATIONS_WITH_NAVIGATOR.has(id as WizardVisualizationId) &&
             xItems.length &&
             isDateField(xItems[0]) &&
-            getAxisMode(xPlaceholder.settings, xItems[0].guid) !== 'discrete',
+            getAxisMode(xPlaceholder.settings, xItems[0].guid) !== AxisMode.Discrete,
     );
 }
 

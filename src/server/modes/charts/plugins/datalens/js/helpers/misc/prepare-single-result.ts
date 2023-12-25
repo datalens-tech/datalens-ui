@@ -10,12 +10,13 @@ import {
 } from '../../../../../../../../shared';
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
 import {PivotData} from '../../../preparers/backend-pivot-table/types';
-import {prepareD3BarX} from '../../../preparers/bar-x';
+import {prepareD3BarX, prepareHighchartsBarX} from '../../../preparers/bar-x';
+import {prepareHighchartsBarY} from '../../../preparers/bar-y';
 import prepareFlatTableData from '../../../preparers/flat-table';
 import prepareGeopointData from '../../../preparers/geopoint';
 import prepareGeopolygonData from '../../../preparers/geopolygon';
 import prepareHeatmapData from '../../../preparers/heatmap';
-import prepareLineData from '../../../preparers/line';
+import {prepareHighchartsLine} from '../../../preparers/line';
 import prepareLineTime from '../../../preparers/line-time';
 import prepareMetricData from '../../../preparers/metric';
 import preparePivotTableData from '../../../preparers/old-pivot-table/old-pivot-table';
@@ -110,22 +111,26 @@ export default ({
     switch (visualization.id) {
         case WizardVisualizationId.Line:
         case WizardVisualizationId.Area:
-        case WizardVisualizationId.Area100p:
+        case WizardVisualizationId.Area100p: {
+            rowsLimit = 75000;
+            prepare = isMonitoringOrPrometheusChart(chartType)
+                ? prepareLineTime
+                : prepareHighchartsLine;
+            break;
+        }
+
         case WizardVisualizationId.Column:
         case WizardVisualizationId.Column100p: {
-            if (chartType && isMonitoringOrPrometheusChart(chartType)) {
-                prepare = prepareLineTime;
-                rowsLimit = 75000;
-            } else {
-                prepare = prepareLineData;
-                rowsLimit = 75000;
-            }
+            rowsLimit = 75000;
+            prepare = isMonitoringOrPrometheusChart(chartType)
+                ? prepareLineTime
+                : prepareHighchartsBarX;
             break;
         }
 
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
-            prepare = prepareLineData;
+            prepare = prepareHighchartsBarY;
             rowsLimit = 75000;
             break;
         }
