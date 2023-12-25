@@ -563,10 +563,11 @@ class DashboardPage extends BasePage {
         await this.clickOnLinksBtn();
     }
 
-    async getDashControlLinksIconElem(controlQa: string) {
+    async getDashControlLinksIconElem(controlQa: string, counter?: number) {
         // open dialog relations by click on dashkit item links icon (via parents nodes)
         const dashkitItemElem = await this.page
             .locator(slct(ControlQA.chartkitControl))
+            .nth(counter === undefined ? 0 : counter)
             .locator('../../../..');
         return dashkitItemElem.locator(slct(controlQa));
     }
@@ -576,6 +577,23 @@ class DashboardPage extends BasePage {
         // open dialog relations by control icon click
         const selectorElem = await this.getDashControlLinksIconElem(ControlQA.controlLinks);
         await selectorElem.click();
+    }
+
+    async setupIgnoreAllLinks(widgetElem: Locator) {
+        await widgetElem.click();
+        await this.page.locator(slct(DashCommonQa.RelationsDisconnectAllButton)).click();
+        await this.page.click(slct(DashCommonQa.RelationsApplyBtn));
+    }
+
+    async setupIgnoreLink(widgetElem: Locator) {
+        // open dialog relations by click on control item links icon
+        await widgetElem.click();
+
+        // choose new link
+        await this.page.click(slct(DashCommonQa.RelationTypeButton));
+        await this.page.click(slct(DashRelationTypes.ignore));
+
+        await this.page.click(slct(DashCommonQa.RelationsApplyBtn));
     }
 
     async setupNewLinks({
@@ -903,9 +921,10 @@ class DashboardPage extends BasePage {
         await this.description.isEditMode();
     }
 
-    async clickSelectWithTitle(title: string) {
+    async clickSelectWithTitle(title: string, counter?: number) {
         await this.page
             .locator(slct(ControlQA.chartkitControl))
+            .nth(counter === undefined ? 0 : counter)
             .filter({hasText: title})
             .filter({has: this.page.locator(slct(ControlQA.controlSelect))})
             .click();

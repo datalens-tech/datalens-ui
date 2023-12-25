@@ -103,10 +103,10 @@ export type Field =
 
 export type FieldGuid = string;
 
-export function isIntegerField(field: {data_type: string}): field is IntegerField {
+export function isIntegerField(field?: {data_type: string}): field is IntegerField {
     return (
-        field.data_type === DATASET_FIELD_TYPES.INTEGER ||
-        field.data_type === DATASET_FIELD_TYPES.UINTEGER
+        field?.data_type === DATASET_FIELD_TYPES.INTEGER ||
+        field?.data_type === DATASET_FIELD_TYPES.UINTEGER
     );
 }
 
