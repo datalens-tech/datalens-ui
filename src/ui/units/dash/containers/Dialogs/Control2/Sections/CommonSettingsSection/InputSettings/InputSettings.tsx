@@ -5,6 +5,7 @@ import {TextInput} from '@gravity-ui/uikit';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {DialogControlQa} from 'shared/constants/qa/control';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
@@ -40,7 +41,7 @@ const InputSettings = ({isSectionHidden}: InputSettingsProps) => {
                 <FormRow label={i18n('field_field-name')}>
                     <FieldWrapper error={validation.fieldName}>
                         <TextInput
-                            qa="field-name-input"
+                            qa={DialogControlQa.fieldNameInput}
                             value={fieldName}
                             onUpdate={handleFieldNameUpdate}
                         />

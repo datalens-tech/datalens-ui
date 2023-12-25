@@ -30,12 +30,14 @@ export class NavigationMinimalPopup {
         await this.page.fill(`${this.slctPopup} ${this.slctInput} input`, value);
     }
 
-    async selectListItem({name, idx}: ListItemByParams) {
+    async selectListItem({innerText, idx}: ListItemByParams) {
         await this.waitForOpen();
-        if (name) {
-            await this.fillInput(name);
-            await this.page.waitForSelector(`${this.slctPopup} ${this.slctList} ${slct(name)}`);
-            await this.page.click(`${this.slctPopup} ${this.slctList} ${slct(name)}`);
+        if (innerText) {
+            await this.fillInput(innerText);
+            await this.page.waitForSelector(
+                `${this.slctPopup} ${this.slctList} ${slct(innerText)}`,
+            );
+            await this.page.click(`${this.slctPopup} ${this.slctList} ${slct(innerText)}`);
         } else if (typeof idx === 'number') {
             await this.selectListItemByIdx(idx);
         }

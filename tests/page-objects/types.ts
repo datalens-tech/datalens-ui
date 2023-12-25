@@ -1,4 +1,4 @@
 export type ListItemByParams = {
-    name?: string;
+    innerText?: string;
     idx?: number;
 };
