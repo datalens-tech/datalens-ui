@@ -11,9 +11,7 @@ export class SourceType extends RadioGroupElementPO {
         super({
             page,
             selectors: {
-                qa: {
-                    root: slct(DialogControlQa.radioSourceType),
-                },
+                root: slct(DialogControlQa.radioSourceType),
             },
         });
     }

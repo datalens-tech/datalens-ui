@@ -2,9 +2,7 @@ import {Page} from '@playwright/test';
 
 export type ElementSelectors = {
     parent?: string;
-    qa: {
-        root: string;
-    };
+    root: string;
 };
 
 export type ElementPOProps = {

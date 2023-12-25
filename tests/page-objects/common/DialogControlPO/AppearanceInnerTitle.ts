@@ -11,14 +11,14 @@ export class AppearanceInnerTitle extends ElementPO {
     checkbox: CheckboxElementPO;
 
     constructor(page: Page) {
-        super({page, selectors: {qa: {root: slct(DialogControlQa.appearanceInnerTitle)}}});
+        super({page, selectors: {root: slct(DialogControlQa.appearanceInnerTitle)}});
         this.textInput = new TextInputElementPO({
             page,
-            selectors: {qa: {root: slct(ControlQA.inputInnerLabelControl)}},
+            selectors: {root: slct(ControlQA.inputInnerLabelControl)},
         });
         this.checkbox = new CheckboxElementPO({
             page,
-            selectors: {qa: {root: slct(ControlQA.showInnerTitleCheckbox)}},
+            selectors: {root: slct(ControlQA.showInnerTitleCheckbox)},
         });
     }
 }

@@ -9,9 +9,7 @@ export class ElementType extends SelectElementPO {
         super({
             page,
             selectors: {
-                qa: {
-                    root: slct(DialogControlQa.elementTypeSelect),
-                },
+                root: slct(DialogControlQa.elementTypeSelect),
             },
         });
     }

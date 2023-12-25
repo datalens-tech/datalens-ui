@@ -13,8 +13,8 @@ export class ElementPO {
 
     getSelector() {
         return this.selectors.parent
-            ? `${this.selectors.parent} ${this.selectors.qa.root}`
-            : this.selectors.qa.root;
+            ? `${this.selectors.parent} ${this.selectors.root}`
+            : this.selectors.root;
     }
 
     getLocator() {

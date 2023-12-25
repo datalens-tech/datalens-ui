@@ -6,6 +6,6 @@ import {TextInputElementPO} from '../abstract/TextInputElementPO';
 
 export class FieldName extends TextInputElementPO {
     constructor(page: Page) {
-        super({page, selectors: {qa: {root: slct(DialogControlQa.fieldNameInput)}}});
+        super({page, selectors: {root: slct(DialogControlQa.fieldNameInput)}});
     }
 }

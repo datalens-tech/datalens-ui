@@ -11,14 +11,14 @@ export class AppearanceTitle extends ElementPO {
     checkbox: CheckboxElementPO;
 
     constructor(page: Page) {
-        super({page, selectors: {qa: {root: slct(DialogControlQa.appearanceTitle)}}});
+        super({page, selectors: {root: slct(DialogControlQa.appearanceTitle)}});
         this.textInput = new TextInputElementPO({
             page,
-            selectors: {qa: {root: slct(ControlQA.inputNameControl)}},
+            selectors: {root: slct(ControlQA.inputNameControl)},
         });
         this.checkbox = new CheckboxElementPO({
             page,
-            selectors: {qa: {root: slct(ControlQA.showLabelCheckbox)}},
+            selectors: {root: slct(ControlQA.showLabelCheckbox)},
         });
     }
 }

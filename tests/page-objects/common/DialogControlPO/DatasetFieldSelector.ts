@@ -9,9 +9,7 @@ export class DatasetFieldSelector extends SelectElementPO {
         super({
             page,
             selectors: {
-                qa: {
-                    root: slct(DialogControlQa.fieldSelect),
-                },
+                root: slct(DialogControlQa.fieldSelect),
             },
         });
     }

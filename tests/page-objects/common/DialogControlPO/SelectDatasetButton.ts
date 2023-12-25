@@ -12,9 +12,7 @@ export class SelectDatasetButton extends ElementPO {
         super({
             page,
             selectors: {
-                qa: {
-                    root: slct(DialogControlQa.selectDatasetButton),
-                },
+                root: slct(DialogControlQa.selectDatasetButton),
             },
         });
 
