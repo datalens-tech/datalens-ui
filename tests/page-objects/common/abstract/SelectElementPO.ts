@@ -2,12 +2,13 @@ import {slct} from '../../../utils';
 
 import {ListItemByParams} from '../../types';
 import {ElementPO} from './ElementPO';
+import {SelectQa} from '@gravity-ui/uikit';
 
 export class SelectElementPO extends ElementPO {
     static selectors = {
         qa: {
-            popup: slct('select-popup'),
-            list: slct('select-list'),
+            popup: slct(SelectQa.POPUP),
+            list: slct(SelectQa.LIST),
         },
     };
 
