@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       control_api:
-        description: 'custom control-api version'     
+        description: 'custom control-api version' 
       data-api:
         description: 'custom data-api version'
       us:
@@ -31,6 +31,10 @@ jobs:
           node-version: 18
           cache: 'npm'
           cache-dependency-path: ./package-lock.json
+
+      - name: Check Docker Compose Config
+        working-directory: ./tests
+        run: docker compose -f ./docker-compose.e2e.yml config
 
       - name: Run Docker Compose and Install dependencies for Datalens-UI
         working-directory: ./tests
