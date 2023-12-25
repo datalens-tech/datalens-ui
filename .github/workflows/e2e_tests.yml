@@ -45,6 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write 
     continue-on-error: true
     env:
       # Unique URL path for each workflow run attempt
