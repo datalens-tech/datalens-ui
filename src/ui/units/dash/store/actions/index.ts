@@ -29,6 +29,7 @@ import {
     SetSupportDescriptionAction,
     SetTabHashStateAction,
     SetViewModeAction,
+    SetWidgetCurrentTabAction,
     ToggleTableOfContentAction,
     UpdateSelectorsGroupAction,
 } from './dashTyped';
@@ -63,6 +64,7 @@ export type DashAction<T = unknown> =
     | SetDashKeyAction
     | SetRenameWithoutReloadAction
     | SetActiveSelectorIndexAction
-    | SetSkipReloadAction;
+    | SetSkipReloadAction
+    | SetWidgetCurrentTabAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;
