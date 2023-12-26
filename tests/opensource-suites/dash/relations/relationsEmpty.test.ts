@@ -16,28 +16,21 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Relations (new)', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const workbookPO = new Workbook(page);
-        const dashboardPage = new DashboardPage({page});
-
-        await workbookPO.openE2EWorkbookPage();
-
-        await workbookPO.createDashboard({
-            editDash: async () => {
-                await dashboardPage.addSelector({
-                    controlTitle: PARAMS.CONTROL_TITLE,
-                    controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                    controlItems: PARAMS.CONTROL_ITEMS,
-                });
-            },
-        });
-    });
-    datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
-    });
     datalensTest(
         'Pop-up opening and the presence of the inscription "No elements for links"',
         async ({page}: {page: Page}) => {
+            const workbookPO = new Workbook(page);
+            await workbookPO.openE2EWorkbookPage();
+            await workbookPO.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addSelector({
+                        controlTitle: PARAMS.CONTROL_TITLE,
+                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+                        controlItems: PARAMS.CONTROL_ITEMS,
+                    });
+                },
+            });
+
             const dashboardPage = new DashboardPage({page});
 
             await dashboardPage.openControlRelationsDialog();
@@ -46,6 +39,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
 
             await dashboardPage.cancelRelationsChanges();
             await dashboardPage.exitEditMode();
+            await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
         },
     );
 });

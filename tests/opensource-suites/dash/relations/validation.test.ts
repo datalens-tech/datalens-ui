@@ -13,7 +13,7 @@ const PARAMS = {
         'You cannot create aliases between fields of the same dataset or between fields with the same ID in different datasets.',
 };
 
-datalensTest.describe('Dashboards - Relations types check (new)', () => {
+datalensTest.describe('Dashboards - Relations (new), validation', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const workbookPO = new Workbook(page);
         await workbookPO.openE2EWorkbookPage();
