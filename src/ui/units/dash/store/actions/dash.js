@@ -402,7 +402,9 @@ export const load = ({location, history, params}) => {
             data.tabs[tabIndex].items.forEach(({id: widgetId, data}) => {
                 if (data.tabs && data.tabs.length > 1) {
                     const defaultTab = data.tabs.find(({isDefault}) => isDefault);
-                    widgetsCurrentTab[widgetId] = defaultTab.id;
+                    if (defaultTab) {
+                        widgetsCurrentTab[widgetId] = defaultTab.id;
+                    }
                 }
             });
 
