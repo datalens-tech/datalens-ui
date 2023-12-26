@@ -205,6 +205,7 @@ export function doesSortingAffectAxisMode(visualizationId: WizardVisualizationId
         WizardVisualizationId.Area,
         WizardVisualizationId.Area100p,
         WizardVisualizationId.Column100p,
+        WizardVisualizationId.Bar100p,
     ].includes(visualizationId);
 }
 
