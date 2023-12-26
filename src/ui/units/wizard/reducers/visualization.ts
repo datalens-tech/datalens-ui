@@ -49,6 +49,7 @@ import {
     VisualizationAction,
 } from '../actions/visualization';
 import {getSelectedLayer} from '../utils/helpers';
+import {getPlaceholderAxisModeMap, isPlaceholderWithAxisMode} from '../utils/placeholder';
 
 import {clearUnusedVisualizationItems, getPlaceholdersWithMergedSettings} from './utils';
 import {updateColorsHierarchies} from './utils/updateColorHierarchies';
@@ -584,6 +585,17 @@ export function visualization(
 
                 if (onChange) {
                     onChange({placeholder, visualization, colors, shapes, sort});
+                }
+
+                if (isPlaceholderWithAxisMode(placeholder)) {
+                    const axisModeMap = getPlaceholderAxisModeMap({
+                        placeholder,
+                        visualizationId: visualization.id as WizardVisualizationId,
+                        sort,
+                    });
+                    placeholder.settings = Object.assign({}, placeholder.settings, {
+                        axisModeMap,
+                    });
                 }
             });
 
