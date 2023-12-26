@@ -72,11 +72,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
 
             const customConfig: any = {
                 xAxis: {},
-                plotOptions: {
-                    column: {
-                        borderWidth: 1,
-                    },
-                },
+                plotOptions: {},
                 axesFormatting: {xAxis: [], yAxis: []},
                 exporting: {
                     csv: {
@@ -122,6 +118,11 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                     },
                     enabled: isLegendEnabled(shared.extraSettings),
                     symbolWidth: null,
+                };
+                customConfig.plotOptions = {
+                    column: {
+                        borderWidth: 1,
+                    },
                 };
             }
 
