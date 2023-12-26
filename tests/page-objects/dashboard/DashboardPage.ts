@@ -572,6 +572,18 @@ class DashboardPage extends BasePage {
         return dashkitItemElem.locator(slct(controlQa));
     }
 
+    async applyAliasesChanges() {
+        await this.page.locator(slct(DashCommonQa.AliasAddApplyBtn)).click();
+    }
+
+    async applyRelationsChanges() {
+        await this.page.locator(slct(DashCommonQa.RelationsApplyBtn)).click();
+    }
+
+    async cancelRelationsChanges() {
+        await this.page.locator(slct(DashCommonQa.RelationsCancelBtn)).click();
+    }
+
     async openControlRelationsDialog() {
         await this.enterEditMode();
         // open dialog relations by control icon click
@@ -582,7 +594,7 @@ class DashboardPage extends BasePage {
     async setupIgnoreAllLinks(widgetElem: Locator) {
         await widgetElem.click();
         await this.page.locator(slct(DashCommonQa.RelationsDisconnectAllButton)).click();
-        await this.page.click(slct(DashCommonQa.RelationsApplyBtn));
+        await this.applyRelationsChanges();
     }
 
     async setupIgnoreLink(widgetElem: Locator) {
@@ -593,7 +605,7 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashCommonQa.RelationTypeButton));
         await this.page.click(slct(DashRelationTypes.ignore));
 
-        await this.page.click(slct(DashCommonQa.RelationsApplyBtn));
+        await this.applyRelationsChanges();
     }
 
     async setupNewLinks({
@@ -624,8 +636,8 @@ class DashboardPage extends BasePage {
 
         // click apply in all relation dialogs
         await this.page.click(slct(DashCommonQa.AliasAddBtn));
-        await this.page.click(slct(DashCommonQa.AliasAddApplyBtn));
-        await this.page.click(slct(DashCommonQa.RelationsApplyBtn));
+        await this.applyAliasesChanges();
+        await this.applyRelationsChanges();
     }
 
     async setupLinks({
