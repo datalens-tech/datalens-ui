@@ -86,8 +86,8 @@ export function getActualAxisModeForField(args: {
 }
 
 export function isPlaceholderWithAxisMode(placeholder: Placeholder | undefined) {
-    const placeholderSettings = placeholder?.settings as PlaceholderSettings;
-    return Boolean(placeholderSettings.axisModeMap);
+    const placeholderSettings = (placeholder?.settings || {}) as PlaceholderSettings;
+    return Boolean(placeholderSettings?.axisModeMap);
 }
 
 export function getPlaceholderAxisModeMap(args: {
