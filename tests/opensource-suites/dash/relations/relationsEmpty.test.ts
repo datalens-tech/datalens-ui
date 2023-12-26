@@ -44,8 +44,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
 
             await page.locator(slct(DashCommonQa.RelationsDialogEmptyText));
 
-            await page.locator(slct(DashCommonQa.RelationsCancelBtn)).click();
-
+            await dashboardPage.cancelRelationsChanges();
             await dashboardPage.exitEditMode();
         },
     );
