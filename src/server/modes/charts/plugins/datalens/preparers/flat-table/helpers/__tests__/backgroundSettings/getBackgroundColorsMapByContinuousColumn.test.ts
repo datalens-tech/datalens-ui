@@ -67,7 +67,7 @@ describe('colorizeFlatTableColumn', () => {
         expect(removeLineBreaksAndSpace(result)).toEqual(['rgb(84,165,32)']);
     });
 
-    it('Some do not have data for the column -> calculate the gradient only from non-empty values', () => {
+    it('Some rows do not have data for the column -> calculate the gradient only from non-empty values', () => {
         const data = [[], ['0.5'], ['1.5']];
         const index = 0;
         const colorsConfig: ChartColorsConfig = {
