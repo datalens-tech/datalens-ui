@@ -43,6 +43,7 @@ import {
     selectDashWorkbookId,
     selectIsDialogVisible,
     selectOpenedItemData,
+    selectWidgetsCurrentTab,
 } from '../../../store/selectors/dashTypedSelectors';
 
 import {ListState, TabMenu} from './TabMenu/TabMenu';
@@ -112,7 +113,6 @@ type State = {
     error: boolean;
     data: DashTabItemWidget['data'];
     tabIndex: number;
-    tabDefault: number;
     isManualTitle: boolean;
     selectedWidgetType?: WidgetKind;
     selectedEntryType?: WidgetType;
@@ -145,13 +145,19 @@ class Widget extends React.PureComponent<Props, State> {
             return null;
         }
 
+        let currentTab: string;
+        let tabIndex = 0;
+        if (nextProps.id) {
+            currentTab = nextProps.widgetsCurrentTab[nextProps.id];
+            tabIndex = nextProps.data.tabs.findIndex(({id}) => id === currentTab);
+        }
+
         return {
             hideTitle: nextProps.data.tabs.length === 1 && nextProps.data.hideTitle,
             prevVisible: nextProps.visible,
             error: false,
             data: nextProps.data,
-            tabIndex: 0,
-            tabDefault: 0,
+            tabIndex: tabIndex === -1 ? 0 : tabIndex,
             isManualTitle: Boolean(nextProps.id),
             selectedWidgetType: null,
             selectedEntryType: null,
@@ -166,7 +172,6 @@ class Widget extends React.PureComponent<Props, State> {
         prevVisible: false,
         error: false,
         tabIndex: 0,
-        tabDefault: 0,
         data: Widget.defaultProps.data,
         isManualTitle: false,
         tabParams: {},
@@ -186,8 +191,8 @@ class Widget extends React.PureComponent<Props, State> {
         );
 
         const {tabs} = this.state.data;
-        // We don't support tabs in dc yet
         const tabIndex = tabs.findIndex(({chartId}) => !chartId);
+
         if (tabIndex === -1) {
             const newData = {
                 hideTitle: tabs.length === 1 && this.state.hideTitle,
@@ -669,6 +674,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     visible: selectIsDialogVisible(state, DIALOG_TYPE.WIDGET),
     currentTabId: selectCurrentTabId(state),
     workbookId: selectDashWorkbookId(state),
+    widgetsCurrentTab: selectWidgetsCurrentTab(state),
 });
 
 const mapDispatchToProps = {

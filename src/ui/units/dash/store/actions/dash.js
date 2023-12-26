@@ -391,10 +391,20 @@ export const load = ({location, history, params}) => {
             let tabId = searchParams.has(URL_QUERY.TAB_ID)
                 ? searchParams.get(URL_QUERY.TAB_ID)
                 : data.tabs[0].id;
-            if (data.tabs.findIndex(({id}) => id === tabId) === -1) {
+            let tabIndex = data.tabs.findIndex(({id}) => id === tabId);
+            const widgetsCurrentTab = {};
+            if (tabIndex === -1) {
+                tabIndex = 0;
                 tabId = data.tabs[0].id;
                 removeParamAndUpdate(history, searchParams, URL_QUERY.TAB_ID);
             }
+
+            data.tabs[tabIndex].items.forEach(({id: widgetId, data}) => {
+                if (data.tabs && data.tabs.length > 1) {
+                    const defaultTab = data.tabs.find(({isDefault}) => isDefault);
+                    widgetsCurrentTab[widgetId] = defaultTab.id;
+                }
+            });
 
             let hashStates = {};
             if (hashData) {
@@ -458,6 +468,7 @@ export const load = ({location, history, params}) => {
                     tabId,
                     stateHashId: hash,
                     currentRevId: entry.revId,
+                    widgetsCurrentTab,
                 },
             });
 
