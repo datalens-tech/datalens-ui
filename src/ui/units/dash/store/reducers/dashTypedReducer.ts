@@ -32,6 +32,7 @@ import {
     SET_STATE,
     SET_STATE_HASH_ID,
     SET_TAB_HASH_STATE,
+    SET_WIDGET_CURRENT_TAB,
     SelectorDialogState,
     TOGGLE_TABLE_OF_CONTENT,
     TabsHashStates,
@@ -53,7 +54,7 @@ export type DashState = {
     dashKitRef: null | React.RefObject<DashKit>;
     error: null | Error;
     openedDialog: null; // TODO: clarify types
-    openedItemId: null; // TODO: clarify types
+    openedItemId: string | null;
     showTableOfContent: boolean;
     lastUsedDatasetId: null | string;
     entry: DashEntry;
@@ -71,6 +72,8 @@ export type DashState = {
     isRenameWithoutReload?: boolean;
     skipReload?: boolean;
     openedItemWidgetType?: WidgetType;
+    // contains widgetId: curentTabId to open widget dialog with current tab
+    widgetsCurrentTab: {[key: string]: string};
 };
 
 // eslint-disable-next-line complexity
@@ -384,6 +387,16 @@ export function dashTypedReducer(
             return {
                 ...state,
                 isRenameWithoutReload: action.payload || false,
+            };
+        }
+
+        case SET_WIDGET_CURRENT_TAB: {
+            return {
+                ...state,
+                widgetsCurrentTab: {
+                    ...state.widgetsCurrentTab,
+                    [action.payload.widgetId]: action.payload.tabId,
+                },
             };
         }
 

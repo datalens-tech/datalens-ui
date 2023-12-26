@@ -6,5 +6,6 @@
   "label_segment": "Отрезок: {{value}}",
   "label_total": "Итого",
   "label_total-value": "Итого: {{value}}",
-  "label_new-layer": "Слой 1"
+  "label_new-layer": "Слой 1",
+  "label_null-sorting-disabled-info": "Сортировка по значениям NULL не поддерживается"
 }

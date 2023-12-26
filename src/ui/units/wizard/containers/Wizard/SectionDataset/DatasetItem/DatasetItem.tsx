@@ -147,6 +147,7 @@ class DatasetItem extends React.Component<DatasetItemInnerProps> {
                             onClick={() => {
                                 this.props.onClickEditDatasetItem(item);
                             }}
+                            data-qa={SectionDatasetQA.ItemFunction}
                         >
                             <Icon data={Function} size={14} />
                         </div>

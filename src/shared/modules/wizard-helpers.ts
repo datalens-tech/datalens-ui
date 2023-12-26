@@ -24,6 +24,8 @@ import {
     isNumberField,
 } from '../types';
 
+import {isMeasureField} from './helpers';
+
 export const isMeasureName = (field: {type: string; title: string}) =>
     field.type === 'PSEUDO' && field.title === PseudoFieldTitle.MeasureNames;
 
@@ -197,3 +199,43 @@ export const isPlaceholderSupportsAxisMode = (
 export const isAllAxisModesAvailable = (field?: {data_type: string}) => {
     return isNumberField(field) || isDateField(field);
 };
+
+export function doesSortingAffectAxisMode(visualizationId: WizardVisualizationId) {
+    return ![
+        WizardVisualizationId.Area,
+        WizardVisualizationId.Area100p,
+        WizardVisualizationId.Column100p,
+        WizardVisualizationId.Bar100p,
+    ].includes(visualizationId);
+}
+
+export enum AxisModeDisabledReason {
+    FieldType = 'fieldType',
+    HasSortingField = 'sorting',
+    Unknown = 'unknown',
+}
+
+export function isContinuousAxisModeDisabled(args: {
+    field: Field;
+    axisSettings: {disableAxisMode?: boolean} | undefined;
+    visualizationId: WizardVisualizationId;
+    sort: Field[];
+}) {
+    const {field, axisSettings, visualizationId, sort} = args;
+
+    if (!isAllAxisModesAvailable(field)) {
+        return AxisModeDisabledReason.FieldType;
+    }
+
+    const disableDueToSorting =
+        doesSortingAffectAxisMode(visualizationId) && sort.some(isMeasureField);
+    if (disableDueToSorting) {
+        return AxisModeDisabledReason.HasSortingField;
+    }
+
+    if (axisSettings?.disableAxisMode) {
+        return AxisModeDisabledReason.Unknown;
+    }
+
+    return null;
+}

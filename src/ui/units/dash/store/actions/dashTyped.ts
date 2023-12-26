@@ -892,3 +892,19 @@ export const setSkipReload = (skipReload: boolean): SetSkipReloadAction => ({
     type: SET_SKIP_RELOAD,
     payload: skipReload,
 });
+
+export type SetWidgetCurrentTabArgs = {
+    widgetId: string;
+    tabId: string;
+};
+export const SET_WIDGET_CURRENT_TAB = Symbol('dash/SET_WIDGET_CURRENT_TAB');
+export type SetWidgetCurrentTabAction = {
+    type: typeof SET_WIDGET_CURRENT_TAB;
+    payload: SetWidgetCurrentTabArgs;
+};
+export const setWidgetCurrentTab = (
+    payload: SetWidgetCurrentTabArgs,
+): SetWidgetCurrentTabAction => ({
+    type: SET_WIDGET_CURRENT_TAB,
+    payload,
+});

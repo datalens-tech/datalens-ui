@@ -30,6 +30,7 @@
   "label_table-column-author": "Author",
   "label_table-column-date": "Date",
   "label_table-column-entry-name": "Name",
+  "label_original-name": "Original name",
   "section_batch-move-access-error": "Access error",
   "section_batch-move-error": "Error moving",
   "section_batch-move-progress": "Move files …",
