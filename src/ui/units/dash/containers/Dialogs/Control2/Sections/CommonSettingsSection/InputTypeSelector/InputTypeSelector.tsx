@@ -104,7 +104,7 @@ const InputTypeSelector = () => {
                 disabled={isFieldDisabled}
                 onUpdate={handleInputTypeChange}
                 width="max"
-                qa={DialogControlQa.elementTypeRadioGroup}
+                qa={DialogControlQa.elementTypeSelect}
                 options={options}
                 renderOption={renderOptions}
                 renderSelectedOption={renderOptions}

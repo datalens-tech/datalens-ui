@@ -6,7 +6,7 @@ import type {
 
 import {ServerField, getFakeTitleOrTitle} from '../../../../../../../shared';
 import {PointCustomData, ScatterSeriesCustomData} from '../../../../../../../shared/types/chartkit';
-import {getAxisType} from '../../d3/utils';
+import {getAxisType} from '../helpers/axis';
 import {PrepareFunctionArgs} from '../types';
 
 import {ScatterGraph, prepareScatter} from './prepareScatter';

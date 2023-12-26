@@ -1,32 +1,19 @@
 .dl-core-navigation-favorites-alias {
-    width: 100%;
-    height: 100%;
-    position: relative;
-
-    &__row-btn {
-        visibility: hidden;
-        width: 28px;
-        height: 28px;
+    &__edit-favorites-alias-btn {
+        margin-right: 5px;
+        min-width: 28px;
+        min-height: 28px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         border-radius: 4px;
 
-        &:hover,
-        &_hovered {
+        &:hover {
             background: var(--g-color-base-simple-hover);
         }
 
         color: var(--g-color-text-secondary);
-    }
-
-    &__edit-alias-btn {
-        margin-right: 5px;
-
-        &_visible {
-            visibility: visible;
-        }
     }
 
     &__lock {

@@ -54,5 +54,3 @@ export type Placeholder = {
     allowedDataTypes?: Set<string>;
     allowedFinalTypes?: Set<string>;
 };
-
-export type AxisMode = 'discrete' | 'continuous';

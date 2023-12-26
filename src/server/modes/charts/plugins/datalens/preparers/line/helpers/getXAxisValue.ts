@@ -7,13 +7,13 @@ export const getXAxisValue = ({
     ys1,
     order,
     values,
-    idToTitle,
     categories,
     xIsDate,
     xIsNumber,
     xDataType,
     xIsPseudo,
     categoriesMap,
+    idToTitle,
 }: GetXAxisValueArgs): XAxisValue => {
     let xValue;
     if (xIsPseudo) {
