@@ -43,6 +43,7 @@
   "dependencies": {
     "@aws-sdk/client-sts": "^3.168.0",
     "@braintree/sanitize-url": "^6.0.0",
+    "@datalens-tech/xlsx": "^0.20.1",
     "@doc-tools/transform": "^2.18.3",
     "@gravity-ui/app-layout": "^1.2.0",
     "@gravity-ui/browserslist-config": "^4.1.1",
