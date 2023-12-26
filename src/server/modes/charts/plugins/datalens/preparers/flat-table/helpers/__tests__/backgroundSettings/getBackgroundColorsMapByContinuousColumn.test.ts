@@ -66,4 +66,25 @@ describe('colorizeFlatTableColumn', () => {
 
         expect(removeLineBreaksAndSpace(result)).toEqual(['rgb(84,165,32)']);
     });
+
+    it('Some do not have data for the column -> calculate the gradient only from non-empty values', () => {
+        const data = [[], ['0.5'], ['1.5']];
+        const index = 0;
+        const colorsConfig: ChartColorsConfig = {
+            gradientMode: GradientType.TWO_POINT,
+            gradientPalette: 'blue',
+            reversed: false,
+            colors: [],
+            gradientColors: getBlueGradientColors(),
+            loadedColorPalettes: {},
+        };
+
+        const result = colorizeFlatTableColumn({data, colorsConfig, index});
+
+        expect(removeLineBreaksAndSpace(result)).toEqual([
+            null,
+            'rgb(0,68,163)', // min possible value
+            'rgb(140,203,255)', // max possible value
+        ]);
+    });
 });
