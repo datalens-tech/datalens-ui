@@ -5,4 +5,5 @@ export enum DashUrls {
     DashboardWithTabsAndSelectors = '/eymsqpg3m4xm3',
     DashboardMoreThan100Revisions = '/ufvydpjatl0mj',
     DashboardWithErrorChart = '/2rzei9dbn9mcq',
+    DashboardWithAPIErrorChart = '/yn3ikt4znjyom',
 }
