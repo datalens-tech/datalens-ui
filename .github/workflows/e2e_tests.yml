@@ -4,6 +4,9 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
+      distinct_id:
+        description: 'for return-dispatch action'
+        required: false
       control-api:
         description: 'custom control-api version' 
       data-api:
@@ -25,6 +28,9 @@ jobs:
     name: Install Datalens and Run E2E Tests
     runs-on: ubuntu-latest
     steps:
+      - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
+        run: echo ${{ github.event.inputs.distinct_id }}
+
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
