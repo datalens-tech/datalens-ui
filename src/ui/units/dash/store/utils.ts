@@ -33,6 +33,15 @@ export const getFakeDashEntry = (workbookId?: string) => {
         ],
         counter,
         salt,
+        settings: {
+            hideTabs: false,
+            expandTOC: false,
+            hideDashTitle: false,
+            silentLoading: false,
+            autoupdateInterval: null,
+            dependentSelectors: true,
+            maxConcurrentRequests: null,
+        },
     };
 
     return {
