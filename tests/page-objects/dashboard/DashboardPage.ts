@@ -233,18 +233,13 @@ class DashboardPage extends BasePage {
         });
     }
 
-    async addDateRangeSelector({
+    async fillSelectorSettingsDialogFields({
         controlTitle,
         controlFieldName,
-        range,
     }: {
         controlTitle: string;
         controlFieldName: string;
-        range: string[];
     }) {
-        // adding a selector
-        await this.clickAddSelector();
-
         // waiting for the selector settings dialog to appear
         await this.page.waitForSelector(slct(ControlQA.dialogControl));
 
@@ -270,33 +265,38 @@ class DashboardPage extends BasePage {
             `${slct(DashboardPage.selectors.inputNameField)} input`,
             controlFieldName,
         );
+    }
+
+    async addDateRangeSelector({
+        controlTitle,
+        controlFieldName,
+        range,
+    }: {
+        controlTitle: string;
+        controlFieldName: string;
+        range: string[];
+    }) {
+        // adding a selector
+        await this.clickAddSelector();
+
+        await this.fillSelectorSettingsDialogFields({controlTitle, controlFieldName});
 
         await this.dialogControl.elementType.click();
         await this.dialogControl.datasetFieldSelector.selectListItem({innerText: 'Calendar'});
 
-        const checkboxes = await this.page.getByRole('checkbox').all();
-
-        // Set Time and Range Checkboxes
-        for (let index = 0; index < 2; index++) {
-            await checkboxes[index].click();
-        }
+        await this.page.click(slct(DialogControlQa.dateRangeCheckbox));
+        await this.page.click(slct(DialogControlQa.dateTimeCheckbox));
 
         // click on the button for setting possible values
         await this.page.click(slct(DashboardPage.selectors.acceptableValuesBtn));
 
         await this.page.getByText('Selecting a value').click();
 
-        await this.page.fill(
-            `${slct(DialogQLParameterQA.DatepickerStart)} .yc-text-input__control`,
-            range[0],
-        );
+        await this.page.fill(`${slct(DialogQLParameterQA.DatepickerStart)} input`, range[0]);
 
         await this.closeDatepickerPopup();
 
-        await this.page.fill(
-            `${slct(DialogQLParameterQA.DatepickerEnd)} .yc-text-input__control`,
-            range[1],
-        );
+        await this.page.fill(`${slct(DialogQLParameterQA.DatepickerEnd)} input`, range[1]);
 
         await this.closeDatepickerPopup();
 
@@ -317,35 +317,12 @@ class DashboardPage extends BasePage {
         controlFieldName: string;
         controlItems?: string[];
         defaultValue?: string;
+        dateRange?: string[];
     }) {
         // adding a selector
         await this.clickAddSelector();
 
-        // waiting for the selector settings dialog to appear
-        await this.page.waitForSelector(slct(ControlQA.dialogControl));
-
-        // select "manual input"
-        await this.page.click(
-            `${slct(DashboardPage.selectors.radioManualControl)} ${
-                CommonSelectors.RadioButtonOptionControl
-            }[value="manual"]`,
-            {
-                force: true,
-            },
-        );
-
-        // fill in the fields in the selector settings dialog:
-        // "name"
-        await this.page.fill(
-            `${slct(DashboardPage.selectors.inputNameControl)} input`,
-            controlTitle,
-        );
-
-        // "field name"
-        await this.page.fill(
-            `${slct(DashboardPage.selectors.inputNameField)} input`,
-            controlFieldName,
-        );
+        await this.fillSelectorSettingsDialogFields({controlTitle, controlFieldName});
 
         // click on the button for setting possible values
         await this.page.click(slct(DashboardPage.selectors.acceptableValuesBtn));

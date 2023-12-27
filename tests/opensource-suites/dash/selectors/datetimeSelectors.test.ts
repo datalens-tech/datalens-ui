@@ -5,6 +5,7 @@ import {deleteEntity, openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {WorkbooksUrls} from '../../../constants/constants';
+import {ControlQA} from '../../../../src/shared';
 
 const expectedValues = [
     '01.08.2022 14:11:11 - 09.08.2022 15:22:23',
@@ -23,22 +24,22 @@ datalensTest.describe('Dashboards - Selectors by date/time', () => {
                 await dashboardPage.addDateRangeSelector({
                     controlTitle: 'test-control-1',
                     controlFieldName: 'test-control-field-1',
-                    range: ['01.08.2022 14:11:11', '09.08.2022 15:22:23'],
+                    range: expectedValues[0].split(' - '),
                 });
 
                 await dashboardPage.addDateRangeSelector({
                     controlTitle: 'test-control',
                     controlFieldName: 'test-control-field',
-                    range: ['03.09.2022 13:22:11', '08.09.2022 11:11:11'],
+                    range: expectedValues[1].split(' - '),
                 });
             },
         });
 
         await dashboardPage.waitForSelector(
-            `${slct('chartkit-control')} input[value='${expectedValues[0]}']`,
+            `${slct(ControlQA.chartkitControl)} input[value='${expectedValues[0]}']`,
         );
         await dashboardPage.waitForSelector(
-            `${slct('chartkit-control')} input[value='${expectedValues[1]}']`,
+            `${slct(ControlQA.chartkitControl)} input[value='${expectedValues[1]}']`,
         );
 
         await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
