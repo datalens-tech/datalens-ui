@@ -7,6 +7,7 @@ import {
     DashEntryQa,
     DashRelationTypes,
     DialogDashWidgetQA,
+    DialogQLParameterQA,
     DialogTabsQA,
     EntryDialogQA,
     SelectQA,
@@ -222,6 +223,88 @@ class DashboardPage extends BasePage {
 
     async clickAddSelector() {
         await this.page.click(slct(DashboardAddWidgetQa.AddControl));
+    }
+
+    async closeDatepickerPopup() {
+        // position is needed just for click on the left corner of container
+        return this.page.click(slct(ControlQA.dialogControl), {
+            position: {x: 0, y: 0},
+            force: true,
+        });
+    }
+
+    async addDateRangeSelector({
+        controlTitle,
+        controlFieldName,
+        range,
+    }: {
+        controlTitle: string;
+        controlFieldName: string;
+        range: string[];
+    }) {
+        // adding a selector
+        await this.clickAddSelector();
+
+        // waiting for the selector settings dialog to appear
+        await this.page.waitForSelector(slct(ControlQA.dialogControl));
+
+        // select "manual input"
+        await this.page.click(
+            `${slct(DashboardPage.selectors.radioManualControl)} ${
+                CommonSelectors.RadioButtonOptionControl
+            }[value="manual"]`,
+            {
+                force: true,
+            },
+        );
+
+        // fill in the fields in the selector settings dialog:
+        // "name"
+        await this.page.fill(
+            `${slct(DashboardPage.selectors.inputNameControl)} input`,
+            controlTitle,
+        );
+
+        // "field name"
+        await this.page.fill(
+            `${slct(DashboardPage.selectors.inputNameField)} input`,
+            controlFieldName,
+        );
+
+        await this.dialogControl.elementType.click();
+        await this.dialogControl.datasetFieldSelector.selectListItem({innerText: 'Calendar'});
+
+        const checkboxes = await this.page.getByRole('checkbox').all();
+
+        // Set Time and Range Checkboxes
+        for (let index = 0; index < 2; index++) {
+            await checkboxes[index].click();
+        }
+
+        // click on the button for setting possible values
+        await this.page.click(slct(DashboardPage.selectors.acceptableValuesBtn));
+
+        await this.page.getByText('Selecting a value').click();
+
+        await this.page.fill(
+            `${slct(DialogQLParameterQA.DatepickerStart)} .yc-text-input__control`,
+            range[0],
+        );
+
+        await this.closeDatepickerPopup();
+
+        await this.page.fill(
+            `${slct(DialogQLParameterQA.DatepickerEnd)} .yc-text-input__control`,
+            range[1],
+        );
+
+        await this.closeDatepickerPopup();
+
+        // saving the added possible values
+        await this.page.click(slct(DashboardPage.selectors.dialogApplyBtn));
+
+        // adding a selector to the dashboard
+        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
     }
 
     async addSelector({
