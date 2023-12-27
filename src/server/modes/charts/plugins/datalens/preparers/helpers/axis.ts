@@ -1,13 +1,15 @@
 import {
     AxisMode,
-    ServerField,
     ServerPlaceholderSettings,
     getAxisMode,
     isDateField,
     isNumberField,
 } from '../../../../../../../shared';
 
-export function getAxisType(field?: ServerField, settings?: ServerPlaceholderSettings) {
+export function getAxisType(
+    field?: {data_type: string; guid: string},
+    settings?: ServerPlaceholderSettings,
+) {
     const axisMode = getAxisMode(settings, field?.guid);
 
     if (axisMode !== AxisMode.Discrete) {

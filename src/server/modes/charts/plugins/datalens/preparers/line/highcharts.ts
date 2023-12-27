@@ -34,8 +34,17 @@ import {prepareLineData} from './prepare-line-data';
 
 // eslint-disable-next-line complexity
 function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
-    const {placeholders, colors, colorsConfig, sort, visualizationId, shared, shapes, graphs} =
-        args;
+    const {
+        placeholders,
+        colors,
+        colorsConfig,
+        sort,
+        visualizationId,
+        shared,
+        shapes,
+        graphs,
+        idToDataType,
+    } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xPlaceholderSettings = xPlaceholder?.settings;
     const x: ServerField | undefined = xPlaceholder?.items[0];
@@ -52,9 +61,10 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
     const shapeItem = shapes[0];
     const segmentsMap = getSegmentMap(args);
 
+    const xField = x ? {guid: x.guid, data_type: idToDataType[x.guid]} : x;
     const customConfig: any = {
         xAxis: {
-            type: getAxisType(x, xPlaceholder?.settings),
+            type: getAxisType(xField, xPlaceholder?.settings),
             reversed: isXAxisReversed(x, sort, visualizationId as WizardVisualizationId),
             labels: {
                 formatter:
