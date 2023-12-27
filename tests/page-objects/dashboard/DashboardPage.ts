@@ -7,6 +7,7 @@ import {
     DashEntryQa,
     DashRelationTypes,
     DialogDashWidgetQA,
+    DialogQLParameterQA,
     DialogTabsQA,
     EntryDialogQA,
     SelectQA,
@@ -224,20 +225,21 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddControl));
     }
 
-    async addSelector({
+    async closeDatepickerPopup() {
+        // position is needed just for click on the left corner of container
+        return this.page.click(slct(ControlQA.dialogControl), {
+            position: {x: 0, y: 0},
+            force: true,
+        });
+    }
+
+    async fillSelectorSettingsDialogFields({
         controlTitle,
         controlFieldName,
-        controlItems = ['Richmond', 'Springfield'],
-        defaultValue,
     }: {
         controlTitle: string;
         controlFieldName: string;
-        controlItems?: string[];
-        defaultValue?: string;
     }) {
-        // adding a selector
-        await this.clickAddSelector();
-
         // waiting for the selector settings dialog to appear
         await this.page.waitForSelector(slct(ControlQA.dialogControl));
 
@@ -263,6 +265,64 @@ class DashboardPage extends BasePage {
             `${slct(DashboardPage.selectors.inputNameField)} input`,
             controlFieldName,
         );
+    }
+
+    async addDateRangeSelector({
+        controlTitle,
+        controlFieldName,
+        range,
+    }: {
+        controlTitle: string;
+        controlFieldName: string;
+        range: string[];
+    }) {
+        // adding a selector
+        await this.clickAddSelector();
+
+        await this.fillSelectorSettingsDialogFields({controlTitle, controlFieldName});
+
+        await this.dialogControl.elementType.click();
+        await this.dialogControl.datasetFieldSelector.selectListItem({innerText: 'Calendar'});
+
+        await this.page.click(slct(DialogControlQa.dateRangeCheckbox));
+        await this.page.click(slct(DialogControlQa.dateTimeCheckbox));
+
+        // click on the button for setting possible values
+        await this.page.click(slct(DashboardPage.selectors.acceptableValuesBtn));
+
+        await this.page.getByText('Selecting a value').click();
+
+        await this.page.fill(`${slct(DialogQLParameterQA.DatepickerStart)} input`, range[0]);
+
+        await this.closeDatepickerPopup();
+
+        await this.page.fill(`${slct(DialogQLParameterQA.DatepickerEnd)} input`, range[1]);
+
+        await this.closeDatepickerPopup();
+
+        // saving the added possible values
+        await this.page.click(slct(DashboardPage.selectors.dialogApplyBtn));
+
+        // adding a selector to the dashboard
+        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
+    }
+
+    async addSelector({
+        controlTitle,
+        controlFieldName,
+        controlItems = ['Richmond', 'Springfield'],
+        defaultValue,
+    }: {
+        controlTitle: string;
+        controlFieldName: string;
+        controlItems?: string[];
+        defaultValue?: string;
+        dateRange?: string[];
+    }) {
+        // adding a selector
+        await this.clickAddSelector();
+
+        await this.fillSelectorSettingsDialogFields({controlTitle, controlFieldName});
 
         // click on the button for setting possible values
         await this.page.click(slct(DashboardPage.selectors.acceptableValuesBtn));
