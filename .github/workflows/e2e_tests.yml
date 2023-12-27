@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       distinct_id:
-        description: 'for return-dispatch action'
+        description: 'for the return-dispatch action'
         required: false
       control-api:
         description: 'custom control-api version' 
