@@ -22,9 +22,14 @@
 
     &__content {
         overflow-y: auto;
+        width: 705px;
 
-        &:not(&_no-sidebar) {
-            width: 705px;
+        &_no-content-header {
+            // TODO: this is an private api and may silently changed. We should use local styles
+            padding-top: calc(
+                var(--g-text-subheader-3-line-height) + var(--yc-dialog-header-padding-top) +
+                    var(--yc-dialog-header-padding-bottom)
+            );
         }
     }
 }
