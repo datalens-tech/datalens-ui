@@ -164,7 +164,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     idToTitle,
                     categories,
                     xIsDate,
-                    xIsNumber: xIsNumber,
+                    xIsNumber,
                     xDataType: xDataType!,
                     xIsPseudo: isPseudoField(xField),
                     categoriesMap,
