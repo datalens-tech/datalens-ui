@@ -112,6 +112,7 @@ export const updateGSheetSource = (args: UpdateGSheetSourceArgs) => {
     };
 };
 
+// TODO: https://github.com/datalens-tech/datalens-ui/issues/375
 export const handleReplacedSources = (args: HandleReplacedSourcesArgs) => {
     return (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const replaceSources = get(

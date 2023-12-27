@@ -42,6 +42,7 @@ import type {OpenDialogMigrateToWorkbookArgs} from '../../components/MigrateToWo
 import type {OpenDialogLabelSettingsArgs} from '../../units/wizard/components/Dialogs/DialogLabelSettings/DialogLabelSettings';
 import type {OpenDialogControlsPlacementArgs} from '../../units/dash/containers/Dialogs/GroupControl/ControlsPlacementDialog/ControlsPlacementDialog';
 import type {OpenDialogCopyEntriesToWorkbookArgs} from '../../components/CopyEntriesToWorkbookDialog/CopyEntriesToWorkbookDialog';
+import type {OpenDialogConnAddYadocArgs} from '../../units/connections/components/custom-forms/Yadocs/components/DialogAddDocument/DialogAddDocument';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogMetricSettingsArgs
@@ -69,6 +70,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogRenameEntryInNewWorkbookArgs
     | OpenDialogDeleteEntryInNewWorkbookArgs
     | OpenDialogDuplicateEntryInWorkbookArgs
+    | OpenDialogConnAddYadocArgs<T>
     | OpenDialogConnWithInputArgs<T>
     | OpenDialogConnConfirmArgs
     | OpenDialogConnS3Sources
