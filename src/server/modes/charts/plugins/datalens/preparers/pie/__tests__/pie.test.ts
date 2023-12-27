@@ -1,14 +1,13 @@
 import {PrepareFunctionArgs} from '../../types';
-import {prepareHighchartsPie} from '../highcharts';
-import {preparePie} from '../preparePie';
+import {preparePieData} from '../prepare-pie-data';
 
 import {
+    colorFieldDimensionFloat,
     getPrepareFunctionArgs,
+    measureField,
     measureNumberAndMeasure,
     measureTextAndMeasure,
     piePrepareBaseArgs,
-    piePrepareForQLArgs,
-    piePrepareForQLResult,
 } from './mocks/pie.mock';
 
 jest.mock('../../../../../../../registry', () => ({
@@ -25,7 +24,7 @@ describe('preparePie', () => {
             piePrepareBaseArgs as unknown as Partial<PrepareFunctionArgs>,
         );
 
-        const result = preparePie(options);
+        const result = preparePieData(options);
         const items = result.graphs[0].data?.map((item) => ({
             colorValue: item.colorValue,
             color: item.color,
@@ -41,23 +40,50 @@ describe('preparePie', () => {
         const options = getPrepareFunctionArgs(
             measureNumberAndMeasure as unknown as Partial<PrepareFunctionArgs>,
         );
-        const result = preparePie(options);
+        const result = preparePieData(options);
         const items = result.graphs[0].data?.map((item) => ({
             colorValue: item.colorValue,
             color: item.color,
         }));
 
         expect(items).toEqual([
-            {color: 'rgb(208, 163, 255)', colorValue: 2},
-            {color: 'rgb(107, 50, 201)', colorValue: 1},
+            {color: 'rgb(208, 163, 255)', colorValue: '2'},
+            {color: 'rgb(107, 50, 201)', colorValue: '1'},
         ]);
+    });
+
+    test('Fractional values in the "Color" section: the colors specified by the user are used', () => {
+        const options = getPrepareFunctionArgs({
+            placeholders: [{items: [colorFieldDimensionFloat]}],
+            resultData: {
+                data: [
+                    ['2.0', '3'],
+                    ['0.5', '2'],
+                    ['1.0', '1'],
+                ],
+                order: [colorFieldDimensionFloat, measureField],
+                totals: [],
+            },
+            colorsConfig: {
+                fieldGuid: colorFieldDimensionFloat.guid,
+                mountedColors: {
+                    '0.5': 'color_0.5',
+                    '1.0': 'color_1.0',
+                    '2.0': 'color_2.0',
+                },
+            },
+        } as unknown as PrepareFunctionArgs);
+        const result = preparePieData(options);
+        const items = result.graphs[0].data?.map((item) => item.color);
+
+        expect(items).toEqual(['color_2.0', 'color_0.5', 'color_1.0']);
     });
 
     test('measure text + measure: colorizing', () => {
         const options = getPrepareFunctionArgs(
             measureTextAndMeasure as unknown as Partial<PrepareFunctionArgs>,
         );
-        const result = preparePie(options);
+        const result = preparePieData(options);
         const items = result.graphs[0].data?.map((item) => ({
             colorValue: item.colorValue,
             color: item.color,
@@ -67,17 +93,5 @@ describe('preparePie', () => {
             {color: '#4DA2F1', colorValue: '2'},
             {color: '#FF3D64', colorValue: '1'},
         ]);
-    });
-});
-
-describe('prepareHighchartsPie', () => {
-    describe('ql', () => {
-        test('should render simple pie correctly', () => {
-            const result = prepareHighchartsPie(
-                piePrepareForQLArgs as unknown as PrepareFunctionArgs,
-            );
-
-            expect(result).toEqual(piePrepareForQLResult);
-        });
     });
 });
