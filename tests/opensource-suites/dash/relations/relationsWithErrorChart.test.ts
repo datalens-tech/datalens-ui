@@ -31,7 +31,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
 
             await dashboardPage.openControlRelationsDialog();
 
-            await page.locator(slct(DashCommonQa.RelationsDialogEmptyText));
+            await dashboardPage.waitForSelector(slct(DashCommonQa.RelationsDialogEmptyText));
 
             await dashboardPage.cancelRelationsChanges();
             await dashboardPage.exitEditMode();
@@ -55,7 +55,6 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
 
             await dashboardPage.openControlRelationsDialog();
 
-            await page.pause();
             await dashboardPage.waitForSelector(`text=${PARAMS.UNKNOWN}`);
 
             await dashboardPage.cancelRelationsChanges();

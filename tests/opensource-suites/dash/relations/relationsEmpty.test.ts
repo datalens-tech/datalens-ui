@@ -20,6 +20,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         'Pop-up opening and the presence of the inscription "No elements for links"',
         async ({page}: {page: Page}) => {
             const workbookPO = new Workbook(page);
+            const dashboardPage = new DashboardPage({page});
             await workbookPO.openE2EWorkbookPage();
             await workbookPO.createDashboard({
                 editDash: async () => {
@@ -31,11 +32,9 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
                 },
             });
 
-            const dashboardPage = new DashboardPage({page});
-
             await dashboardPage.openControlRelationsDialog();
 
-            await page.locator(slct(DashCommonQa.RelationsDialogEmptyText));
+            await dashboardPage.waitForSelector(slct(DashCommonQa.RelationsDialogEmptyText));
 
             await dashboardPage.cancelRelationsChanges();
             await dashboardPage.exitEditMode();
