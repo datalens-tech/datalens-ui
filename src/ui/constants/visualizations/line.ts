@@ -282,7 +282,7 @@ const LineYPlaceholder = {
 };
 
 export const LINE_VISUALIZATION: GraphShared['visualization'] = {
-    id: 'line' as const,
+    id: WizardVisualizationId.Line,
     type: 'line',
     name: 'label_visualization-line',
     iconProps: {id: 'visLines', width: '24'},
@@ -358,7 +358,7 @@ export const LINE_D3_VISUALIZATION: GraphShared['visualization'] = {
 };
 
 export const AREA_VISUALIZATION: GraphShared['visualization'] = {
-    id: 'area',
+    id: WizardVisualizationId.Area,
     type: 'line',
     name: 'label_visualization-area',
     iconProps: {id: 'visArea', width: '24'},
@@ -430,7 +430,7 @@ export const AREA_VISUALIZATION: GraphShared['visualization'] = {
 
 export const AREA_100P_VISUALIZATION: GraphShared['visualization'] = {
     ...AREA_VISUALIZATION,
-    id: 'area100p',
+    id: WizardVisualizationId.Area100p,
     highchartsId: 'area',
     name: 'label_visualization-area-100p',
     availableLabelModes: ['absolute', 'percent'],
@@ -438,7 +438,7 @@ export const AREA_100P_VISUALIZATION: GraphShared['visualization'] = {
 };
 
 export const COLUMN_VISUALIZATION: GraphShared['visualization'] = {
-    id: 'column',
+    id: WizardVisualizationId.Column,
     type: 'column',
     name: 'label_visualization-column',
     iconProps: {id: 'visColumn', width: '24'},
@@ -539,7 +539,7 @@ export const COLUMN_VISUALIZATION: GraphShared['visualization'] = {
 
 export const COLUMN_100P_VISUALIZATION: GraphShared['visualization'] = {
     ...COLUMN_VISUALIZATION,
-    id: 'column100p',
+    id: WizardVisualizationId.Column100p,
     highchartsId: 'column',
     name: 'label_visualization-column-100p',
     availableLabelModes: ['absolute', 'percent'],
@@ -547,7 +547,7 @@ export const COLUMN_100P_VISUALIZATION: GraphShared['visualization'] = {
 };
 
 export const BAR_VISUALIZATION: GraphShared['visualization'] = {
-    id: 'bar',
+    id: WizardVisualizationId.Bar,
     type: 'column',
     name: 'label_visualization-bar',
     iconProps: {id: 'visBar', width: '24'},
@@ -641,7 +641,7 @@ export const BAR_VISUALIZATION: GraphShared['visualization'] = {
 
 export const BAR_100P_VISUALIZATION: GraphShared['visualization'] = {
     ...BAR_VISUALIZATION,
-    id: 'bar100p',
+    id: WizardVisualizationId.Bar100p,
     highchartsId: 'bar',
     name: 'label_visualization-bar-100p',
     availableLabelModes: ['absolute', 'percent'],

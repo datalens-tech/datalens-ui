@@ -62,9 +62,13 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
 
                 return acc;
             }, []),
-            custom: {},
             dataLabels: {
                 enabled: isDataLabelsEnabled,
+            },
+            legend: {
+                symbol: {
+                    width: 36,
+                },
             },
         };
     });
