@@ -13,7 +13,7 @@ import {
     renderValue,
 } from '../../../ql/utils/misc-helpers';
 import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
-import {findIndexInOrder} from '../../utils/misc-helpers';
+import {findIndexInOrder, isLegendEnabled} from '../../utils/misc-helpers';
 import {PrepareFunctionArgs} from '../types';
 
 const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
@@ -226,7 +226,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
             graph.spanGaps = yPlaceholderSettings.nulls === 'connect';
         });
 
-        if (result.graphs.length > 1 && shared.extraSettings?.legendMode !== 'hide') {
+        if (result.graphs.length > 1 && isLegendEnabled(shared.extraSettings)) {
             ChartEditor.updateLibraryConfig({
                 legend: {
                     show: true,

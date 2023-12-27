@@ -1,9 +1,12 @@
 import escape from 'lodash/escape';
 
 import {
+    AxisLabelFormatMode,
+    ChartkitHandlers,
     DATASET_FIELD_TYPES,
     Feature,
     LabelsPositions,
+    LegendDisplayMode,
     PlaceholderId,
     ServerChartsConfig,
     ServerPlaceholder,
@@ -13,7 +16,6 @@ import {
     isDateField,
     isEnabledServerFeature,
 } from '../../../../../shared';
-import {ChartkitHandlers} from '../../../../../shared/constants/chartkit-handlers';
 import {registry} from '../../../../registry';
 
 import {IgnoreProps, applyPlaceholderSettingsToAxis} from './utils/axis-helpers';
@@ -208,7 +210,7 @@ export default (...options: [{shared: ServerChartsConfig} | ServerChartsConfig])
                 if (
                     !isNumericalDataType(yItem.data_type as DATASET_FIELD_TYPES) &&
                     !isDateField(yItem) &&
-                    yPlaceholder.settings?.axisFormatMode !== 'by-field'
+                    yPlaceholder.settings?.axisFormatMode !== AxisLabelFormatMode.ByField
                 ) {
                     // A special formatter that returns text labels on the Y axis
                     yAxis.labels.formatter = function () {
@@ -242,7 +244,7 @@ export default (...options: [{shared: ServerChartsConfig} | ServerChartsConfig])
         chart.zoomType = undefined;
     }
 
-    if (shared.extraSettings && shared.extraSettings?.legendMode === 'hide') {
+    if (shared.extraSettings?.legendMode === LegendDisplayMode.Hide) {
         legend = {
             enabled: false,
         };

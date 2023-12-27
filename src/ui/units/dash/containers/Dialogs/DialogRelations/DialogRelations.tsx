@@ -429,6 +429,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     size="l"
                     onClick={handleDisconnectAll}
                     disabled={isDisconnectDisabled}
+                    qa={DashCommonQa.RelationsDisconnectAllButton}
                 >
                     {i18n('button_disconnect')}
                 </Button>

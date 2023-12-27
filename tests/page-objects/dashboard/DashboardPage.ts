@@ -7,6 +7,7 @@ import {
     DashEntryQa,
     DashRelationTypes,
     DialogDashWidgetQA,
+    DialogQLParameterQA,
     DialogTabsQA,
     EntryDialogQA,
     SelectQA,
@@ -27,7 +28,6 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
-import {ElementTypes} from '../../page-objects/common/DialogControlPO/ElementType';
 import {SourceTypes} from '../../page-objects/common/DialogControlPO/SourceType';
 import {
     DashboardDialogSettingsQa,
@@ -53,6 +53,7 @@ import {ListItemByParams} from '../../page-objects/types';
 import {Locator} from 'playwright-core';
 import {Workbook} from '../workbook/Workbook';
 import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
+import {ChartkitControl} from './ChartkitControl';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -66,11 +67,12 @@ export const URLS = {
     savePath: '/api/dash/v1/dashboards',
 };
 
-type SelectorSettings = {
+export type SelectorSettings = {
     sourceType?: SourceTypes;
+    fieldName?: string;
     dataset?: ListItemByParams;
     datasetField?: ListItemByParams;
-    elementType?: ElementTypes;
+    elementType?: ListItemByParams;
     appearance?: {
         title?: string;
         titleEnabled?: boolean;
@@ -107,7 +109,7 @@ class DashboardPage extends BasePage {
 
         radioManualControl: DialogControlQa.radioSourceType,
         inputNameControl: 'control-name-input',
-        inputNameField: 'field-name-input',
+        inputNameField: DialogControlQa.fieldNameInput,
         acceptableValuesSelect: ControlQA.selectDefaultAcceptable,
         acceptableValuesBtn: ControlQA.acceptableDialogButton,
         dialogAcceptable: 'select-acceptable',
@@ -125,6 +127,7 @@ class DashboardPage extends BasePage {
     description: Description;
     dialogControl: DialogControl;
     dashTabs: DashTabs;
+    chartkitControl: ChartkitControl;
 
     constructor({page}: DashboardPageProps) {
         super({page});
@@ -133,6 +136,7 @@ class DashboardPage extends BasePage {
         this.tableOfContent = new TableOfContent(page, this);
         this.dialogControl = new DialogControl(page);
         this.dashTabs = new DashTabs(page);
+        this.chartkitControl = new ChartkitControl(page);
     }
 
     async waitForResponses(url: string, timeout = API_TIMEOUT): Promise<Array<Response>> {
@@ -221,20 +225,21 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddControl));
     }
 
-    async addSelector({
+    async closeDatepickerPopup() {
+        // position is needed just for click on the left corner of container
+        return this.page.click(slct(ControlQA.dialogControl), {
+            position: {x: 0, y: 0},
+            force: true,
+        });
+    }
+
+    async fillSelectorSettingsDialogFields({
         controlTitle,
         controlFieldName,
-        controlItems = ['Richmond', 'Springfield'],
-        defaultValue,
     }: {
         controlTitle: string;
         controlFieldName: string;
-        controlItems?: string[];
-        defaultValue?: string;
     }) {
-        // adding a selector
-        await this.clickAddSelector();
-
         // waiting for the selector settings dialog to appear
         await this.page.waitForSelector(slct(ControlQA.dialogControl));
 
@@ -260,6 +265,64 @@ class DashboardPage extends BasePage {
             `${slct(DashboardPage.selectors.inputNameField)} input`,
             controlFieldName,
         );
+    }
+
+    async addDateRangeSelector({
+        controlTitle,
+        controlFieldName,
+        range,
+    }: {
+        controlTitle: string;
+        controlFieldName: string;
+        range: string[];
+    }) {
+        // adding a selector
+        await this.clickAddSelector();
+
+        await this.fillSelectorSettingsDialogFields({controlTitle, controlFieldName});
+
+        await this.dialogControl.elementType.click();
+        await this.dialogControl.datasetFieldSelector.selectListItem({innerText: 'Calendar'});
+
+        await this.page.click(slct(DialogControlQa.dateRangeCheckbox));
+        await this.page.click(slct(DialogControlQa.dateTimeCheckbox));
+
+        // click on the button for setting possible values
+        await this.page.click(slct(DashboardPage.selectors.acceptableValuesBtn));
+
+        await this.page.getByText('Selecting a value').click();
+
+        await this.page.fill(`${slct(DialogQLParameterQA.DatepickerStart)} input`, range[0]);
+
+        await this.closeDatepickerPopup();
+
+        await this.page.fill(`${slct(DialogQLParameterQA.DatepickerEnd)} input`, range[1]);
+
+        await this.closeDatepickerPopup();
+
+        // saving the added possible values
+        await this.page.click(slct(DashboardPage.selectors.dialogApplyBtn));
+
+        // adding a selector to the dashboard
+        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
+    }
+
+    async addSelector({
+        controlTitle,
+        controlFieldName,
+        controlItems = ['Richmond', 'Springfield'],
+        defaultValue,
+    }: {
+        controlTitle: string;
+        controlFieldName: string;
+        controlItems?: string[];
+        defaultValue?: string;
+        dateRange?: string[];
+    }) {
+        // adding a selector
+        await this.clickAddSelector();
+
+        await this.fillSelectorSettingsDialogFields({controlTitle, controlFieldName});
 
         // click on the button for setting possible values
         await this.page.click(slct(DashboardPage.selectors.acceptableValuesBtn));
@@ -303,43 +366,52 @@ class DashboardPage extends BasePage {
         await this.dialogControl.waitForVisible();
 
         if (setting.sourceType) {
-            await this.dialogControl.sourceType.selectType(setting.sourceType);
+            await this.dialogControl.sourceType.selectByName(setting.sourceType);
         }
 
-        if (setting.dataset?.name || typeof setting.dataset?.idx === 'number') {
-            await this.dialogControl.selectDatasetButton.click();
-            await this.dialogControl.selectDatasetButton.navigationMinimal.selectListItem(
-                setting.dataset,
-            );
+        if (setting.sourceType === 'manual') {
+            if (setting.fieldName) {
+                await this.dialogControl.fieldName.fill(setting.fieldName);
+            }
+        } else {
+            if (setting.dataset?.innerText || typeof setting.dataset?.idx === 'number') {
+                await this.dialogControl.selectDatasetButton.click();
+                await this.dialogControl.selectDatasetButton.navigationMinimal.selectListItem(
+                    setting.dataset,
+                );
+            }
+
+            if (setting.datasetField?.innerText || typeof setting.datasetField?.idx === 'number') {
+                await this.dialogControl.datasetFieldSelector.click();
+                await this.dialogControl.datasetFieldSelector.selectListItem(setting.datasetField);
+            }
         }
 
-        if (setting.datasetField?.name || typeof setting.datasetField?.idx === 'number') {
-            await this.dialogControl.datasetFieldSelector.click();
-            await this.dialogControl.datasetFieldSelector.selectListItem(setting.datasetField);
-        }
-
-        if (setting.elementType) {
-            await this.dialogControl.elementType.selectType(setting.elementType);
+        if (setting.elementType?.innerText || typeof setting.elementType?.idx === 'number') {
+            await this.dialogControl.elementType.click();
+            await this.dialogControl.datasetFieldSelector.selectListItem(setting.elementType);
         }
 
         if (typeof setting.appearance?.titleEnabled === 'boolean') {
-            await this.dialogControl.appearanceTitle.switchCheckbox(
+            await this.dialogControl.appearanceTitle.checkbox.toggle(
                 setting.appearance.titleEnabled,
             );
         }
 
         if (setting.appearance?.title) {
-            await this.dialogControl.appearanceTitle.fillInput(setting.appearance.title);
+            await this.dialogControl.appearanceTitle.textInput.fill(setting.appearance.title);
         }
 
         if (typeof setting.appearance?.innerTitleEnabled === 'boolean') {
-            await this.dialogControl.appearanceInnerTitle.switchCheckbox(
+            await this.dialogControl.appearanceInnerTitle.checkbox.toggle(
                 setting.appearance.innerTitleEnabled,
             );
         }
 
         if (setting.appearance?.innerTitle) {
-            await this.dialogControl.appearanceInnerTitle.fillInput(setting.appearance.innerTitle);
+            await this.dialogControl.appearanceInnerTitle.textInput.fill(
+                setting.appearance.innerTitle,
+            );
         }
 
         await this.page.click(slct(ControlQA.dialogControlApplyBtn));
@@ -348,7 +420,7 @@ class DashboardPage extends BasePage {
     async addSelectorBySettings(setting: SelectorSettings = {}) {
         const defaultSettings: SelectorSettings = {
             sourceType: 'dataset',
-            elementType: 'select',
+            elementType: {innerText: 'List'},
             appearance: {titleEnabled: true},
             dataset: {idx: 0},
             datasetField: {idx: 0},
@@ -435,6 +507,14 @@ class DashboardPage extends BasePage {
         await controlSwitcher.click();
 
         await this.page.click(slct(DashKitOverlayMenuQa.RemoveButton));
+    }
+
+    async editDashboard({editDash}: {editDash: () => Promise<void>}) {
+        await this.enterEditMode();
+
+        await editDash();
+
+        await this.saveChanges();
     }
 
     async enterEditMode() {
@@ -543,12 +623,25 @@ class DashboardPage extends BasePage {
         await this.clickOnLinksBtn();
     }
 
-    async getDashControlLinksIconElem(controlQa: string) {
+    async getDashControlLinksIconElem(controlQa: string, counter?: number) {
         // open dialog relations by click on dashkit item links icon (via parents nodes)
         const dashkitItemElem = await this.page
             .locator(slct(ControlQA.chartkitControl))
+            .nth(counter === undefined ? 0 : counter)
             .locator('../../../..');
         return dashkitItemElem.locator(slct(controlQa));
+    }
+
+    async applyAliasesChanges() {
+        await this.page.locator(slct(DashCommonQa.AliasAddApplyBtn)).click();
+    }
+
+    async applyRelationsChanges() {
+        await this.page.locator(slct(DashCommonQa.RelationsApplyBtn)).click();
+    }
+
+    async cancelRelationsChanges() {
+        await this.page.locator(slct(DashCommonQa.RelationsCancelBtn)).click();
     }
 
     async openControlRelationsDialog() {
@@ -556,6 +649,23 @@ class DashboardPage extends BasePage {
         // open dialog relations by control icon click
         const selectorElem = await this.getDashControlLinksIconElem(ControlQA.controlLinks);
         await selectorElem.click();
+    }
+
+    async setupIgnoreAllLinks(widgetElem: Locator) {
+        await widgetElem.click();
+        await this.page.locator(slct(DashCommonQa.RelationsDisconnectAllButton)).click();
+        await this.applyRelationsChanges();
+    }
+
+    async setupIgnoreLink(widgetElem: Locator) {
+        // open dialog relations by click on control item links icon
+        await widgetElem.click();
+
+        // choose new link
+        await this.page.click(slct(DashCommonQa.RelationTypeButton));
+        await this.page.click(slct(DashRelationTypes.ignore));
+
+        await this.applyRelationsChanges();
     }
 
     async setupNewLinks({
@@ -586,8 +696,8 @@ class DashboardPage extends BasePage {
 
         // click apply in all relation dialogs
         await this.page.click(slct(DashCommonQa.AliasAddBtn));
-        await this.page.click(slct(DashCommonQa.AliasAddApplyBtn));
-        await this.page.click(slct(DashCommonQa.RelationsApplyBtn));
+        await this.applyAliasesChanges();
+        await this.applyRelationsChanges();
     }
 
     async setupLinks({
@@ -883,9 +993,10 @@ class DashboardPage extends BasePage {
         await this.description.isEditMode();
     }
 
-    async clickSelectWithTitle(title: string) {
+    async clickSelectWithTitle(title: string, counter?: number) {
         await this.page
             .locator(slct(ControlQA.chartkitControl))
+            .nth(counter === undefined ? 0 : counter)
             .filter({hasText: title})
             .filter({has: this.page.locator(slct(ControlQA.controlSelect))})
             .click();

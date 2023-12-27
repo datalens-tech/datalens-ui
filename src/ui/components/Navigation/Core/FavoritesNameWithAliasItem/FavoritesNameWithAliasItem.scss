@@ -1,0 +1,31 @@
+.dl-core-navigation-favorites-alias {
+    &__edit-favorites-alias-btn {
+        margin-right: 5px;
+        min-width: 28px;
+        min-height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 4px;
+
+        &:hover {
+            background: var(--g-color-base-simple-hover);
+        }
+
+        color: var(--g-color-text-secondary);
+    }
+
+    &__lock {
+        margin: 2px 5px 0 10px;
+        flex: 0 0 16px;
+        color: var(--g-color-text-hint);
+    }
+
+    &__name-line {
+        display: flex;
+        flex: 1 1 auto;
+        line-height: 20px;
+        overflow: hidden;
+    }
+}

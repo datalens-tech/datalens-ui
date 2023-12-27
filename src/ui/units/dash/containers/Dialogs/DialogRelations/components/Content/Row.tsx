@@ -324,7 +324,7 @@ export const Row = ({
     const title = (showDebugInfo ? `(${data.widgetId}) ` : '') + rowTitle;
 
     return (
-        <div className={b('row')}>
+        <div className={b('row')} data-qa={DashCommonQa.RelationsListRow}>
             <div className={b('left')}>
                 {icon}
                 <span className={b('text', {'with-icon': showAliasIcon})} title={title}>
@@ -338,6 +338,7 @@ export const Row = ({
                         title={i18n('label_add-alias')}
                         className={b('button-alias')}
                         onClick={handleAliasCLick}
+                        qa={DashCommonQa.AliasShowBtn}
                     >
                         <Icon data={iconAlias} className={b('icon-alias')} />
                     </Button>
@@ -370,6 +371,7 @@ export const Row = ({
                             content={<div title={tooltipTitle}>{tooltipContent}</div>}
                             placement="bottom"
                             hasArrow={false}
+                            qa={DashCommonQa.RelationsRowPopover}
                         >
                             <Icon data={iconInfo} size={ICON_SIZE} className={b('icon-info')} />
                         </Popover>

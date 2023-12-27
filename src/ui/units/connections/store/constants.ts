@@ -53,10 +53,8 @@ export const initialState: ConnectionsReduxState = {
         activeDialog: undefined,
     },
     yadocs: {
-        addSectionState: {
-            mode: 'public',
-            url: '',
-        },
+        items: [],
+        selectedItemId: '',
         activeDialog: undefined,
     },
     entry: undefined,

@@ -43,6 +43,14 @@
     "value_revisions": {
       "en": "APPROVED",
       "ru": "APPROVED"
+    },
+    "value_add-favorites-alias": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "value_edit-favorites-alias": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
     }
   }
 }

@@ -1,3 +1,5 @@
+import {AxisMode} from '../../../../../../../../../shared';
+
 export const expectedResult = {
     timeline: [
         new Date('2023-03-01T00:00:00').getTime() / 1000,
@@ -81,7 +83,7 @@ export const options = {
                 holidays: 'off',
                 axisFormatMode: 'auto',
                 axisModeMap: {},
-                axisMode: 'continuous',
+                axisMode: AxisMode.Continuous,
             },
         },
         {
@@ -328,7 +330,7 @@ export const options = {
                         holidays: 'off',
                         axisFormatMode: 'auto',
                         axisModeMap: {},
-                        axisMode: 'continuous',
+                        axisMode: AxisMode.Continuous,
                     },
                 },
                 {

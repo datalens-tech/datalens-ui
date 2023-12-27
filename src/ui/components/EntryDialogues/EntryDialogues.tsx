@@ -15,6 +15,7 @@ import {DialogCreateQLChart, DialogCreateQLChartProps} from './DialogCreateQLCha
 import {DialogCreateWizardChart, DialogCreateWizardChartProps} from './DialogCreateWizardChart';
 import {DialogDashMetaWrapper as DialogDashMeta} from './DialogDashMeta/DialogDashMetaWrapper';
 import {DialogDeleteEntry, DialogDeleteEntryProps} from './DialogDeleteEntry';
+import {DialogEditFavoritesAlias, DialogEditFavoritesAliasProps} from './DialogEditFavoritesAlias';
 import DialogEditWarning, {DialogEditWarningProps} from './DialogEditWarning/DialogEditWarning';
 import {DialogEntrySaveAsNew, DialogEntrySaveAsNewProps} from './DialogEntrySaveAsNew';
 import DialogMakeActualConfirm, {
@@ -29,6 +30,7 @@ import {EntryDialogOnClose, EntryDialogOnCloseArg} from './types';
 
 export enum EntryDialogName {
     Rename = 'rename',
+    EditFavoritesAlias = 'edit_favorites_alias',
     Copy = 'copy',
     Move = 'move',
     Delete = 'delete',
@@ -56,6 +58,7 @@ const getMapDialogues = (): Record<string, any> => {
         [EntryDialogName.Delete]: DialogDeleteEntry,
         [EntryDialogName.Move]: DialogMoveEntry,
         [EntryDialogName.Rename]: DialogRenameEntry,
+        [EntryDialogName.EditFavoritesAlias]: DialogEditFavoritesAlias,
         [EntryDialogName.Copy]: DialogCopyEntry,
         [EntryDialogName.CreateFolder]: DialogCreateFolder,
         [EntryDialogName.CreateDashboard]: DialogCreateDashboard,
@@ -81,6 +84,7 @@ interface MapDialoguesProps {
     [EntryDialogName.Copy]: DialogCopyEntryProps;
     [EntryDialogName.CreateFolder]: DialogCreateFolderProps;
     [EntryDialogName.Rename]: DialogRenameEntryProps;
+    [EntryDialogName.EditFavoritesAlias]: DialogEditFavoritesAliasProps;
     [EntryDialogName.CreateDashboard]: DialogCreateDashboardProps;
     [EntryDialogName.CreateEditorChart]: DialogCreateEditorChartProps;
     [EntryDialogName.SwitchPublic]: DialogSwitchPublicProps;
@@ -135,8 +139,10 @@ export default class EntryDialogues extends React.Component<
     render() {
         let content: React.ReactNode = null;
         const mapDialogues = getMapDialogues();
+
         if (this.state.dialog !== null && this.state.dialog in mapDialogues) {
-            content = React.createElement(mapDialogues[this.state.dialog], {
+            const dialog = mapDialogues[this.state.dialog];
+            content = React.createElement(dialog, {
                 ...this.state.dialogProps,
                 sdk,
                 visible: this.state.visible,

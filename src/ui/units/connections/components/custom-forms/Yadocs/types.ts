@@ -1,4 +1,6 @@
-import {YadocsAddSectionState} from '../../../store';
+import type {ListItemData} from '@gravity-ui/uikit';
 
-export type AddYandexDoc = (url: string) => void;
-export type UpdateAddSectionState = (updates: Partial<YadocsAddSectionState>) => void;
+import type {YadocItem} from '../../../store';
+
+export type YadocListItem = ListItemData<YadocItem>;
+export type HandleItemClick = (item: YadocListItem) => void;

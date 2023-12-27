@@ -2,6 +2,22 @@ name: E2E Tests
 
 on:
   pull_request:
+  workflow_dispatch:
+    inputs:
+      distinct_id:
+        description: 'for the return-dispatch action'
+        required: false
+      control-api:
+        description: 'custom control-api version' 
+      data-api:
+        description: 'custom data-api version'
+      us:
+        description: 'custom us version'
+
+env:
+  CONTROL_API_VERSION: ${{github.event.inputs.control-api}}
+  DATA_API_VERSION: ${{github.event.inputs.data-api}}
+  US_VERSION: ${{github.event.inputs.us}}
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
@@ -12,12 +28,19 @@ jobs:
     name: Install Datalens and Run E2E Tests
     runs-on: ubuntu-latest
     steps:
+      - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
+        run: echo ${{ github.event.inputs.distinct_id }}
+
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
           cache-dependency-path: ./package-lock.json
+
+      - name: Check Docker Compose Config
+        working-directory: ./tests
+        run: docker compose -f ./docker-compose.e2e.yml config
 
       - name: Run Docker Compose and Install dependencies for Datalens-UI
         working-directory: ./tests
@@ -45,6 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write 
     continue-on-error: true
     env:
       # Unique URL path for each workflow run attempt

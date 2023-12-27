@@ -1,0 +1,26 @@
+.conn-form-yadocs {
+    &__add-dialog-body {
+        display: flex;
+        flex-direction: column;
+        row-gap: 16px;
+    }
+
+    &__add-dialog-row {
+        display: grid;
+        grid-template-columns: 152px auto;
+        column-gap: 10px;
+
+        // https://github.com/gravity-ui/uikit/issues/1223
+        & .yc-outer-additional-content__note {
+            margin-left: 0;
+        }
+    }
+
+    &__add-dialog-row-label {
+        line-height: 28px;
+    }
+
+    &__add-dialog-row-input-note {
+        color: var(--g-color-text-hint);
+    }
+}

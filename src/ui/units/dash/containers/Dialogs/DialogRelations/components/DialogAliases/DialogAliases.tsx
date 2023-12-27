@@ -339,6 +339,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
                                     className={b('collapse-list')}
                                     titleSize="s"
                                     contentClassName={b('collapse-list-content')}
+                                    arrowQa={DashCommonQa.AliasesListCollapse}
                                 >
                                     <AliasesList
                                         widgetId={currentRow.widgetId}

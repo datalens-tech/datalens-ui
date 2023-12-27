@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import moment from 'moment';
 import {useHistory} from 'react-router-dom';
-import {DlNavigationQA} from 'shared';
+import {DlNavigationQA, Feature, PLACE} from 'shared';
 import {registry} from 'ui/registry';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 import Utils from 'utils';
@@ -14,6 +14,7 @@ import Utils from 'utils';
 import type {NavigationEntry} from '../../../../../../shared/schema';
 import {getPathDisplayName} from '../../../util';
 import EntryContextButton from '../../EntryContextButton/EntryContextButton';
+import {FavoritesNameWithAliasItem} from '../../FavoritesNameWithAliasItem/FavoritesNameWithAliasItem';
 import {HookBatchSelectResult, ParentFolderEntry, TableViewProps} from '../types';
 
 import workbookIcon from '../../../../../assets/icons/collections/workbook.svg';
@@ -45,6 +46,7 @@ const WorkbookItem: React.FC<{workbookId: string; workbookTitle?: string | null}
 type RowProps = Pick<
     TableViewProps,
     | 'mode'
+    | 'place'
     | 'displayParentFolder'
     | 'onEntryContextClick'
     | 'onChangeFavorite'
@@ -57,6 +59,7 @@ type RowProps = Pick<
     | 'onEntryClick'
     | 'onEntryParentClick'
     | 'linkWrapper'
+    | 'onMenuClick'
 > &
     Pick<HookBatchSelectResult, 'isBatchEnabled' | 'onEntrySelect' | 'selectedIds'> & {
         entry: NavigationEntry;
@@ -71,9 +74,11 @@ export class Row extends React.Component<RowProps> {
             displayParentFolder,
             linkWrapper,
             mode,
+            place,
             isBatchEnabled,
+            onMenuClick,
         } = this.props;
-        const {name, hidden = false} = entry;
+        const {name, alias, entryId, hidden = false} = entry;
 
         const isLocked = this.isLockedEntry();
         const inactive = !this.isEntryActive();
@@ -83,6 +88,27 @@ export class Row extends React.Component<RowProps> {
 
         const iconSize = isMobileView ? MOBILE_SIZE.NAVIGATION_ICON : 24;
         const entityIconSize = isMobileView ? MOBILE_SIZE.ENTITY_ICON : 's';
+
+        const isFavoritesNameAliasesEnabled =
+            Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases) && place === PLACE.FAVORITES;
+
+        const visible = Boolean(alias);
+
+        const nameElement = isFavoritesNameAliasesEnabled ? (
+            <FavoritesNameWithAliasItem
+                entryId={entryId}
+                name={name}
+                alias={alias ?? ''}
+                isLocked={isLocked}
+                onMenuClick={onMenuClick}
+                className={b('edit-favorites-alias-btn', {visible})}
+            />
+        ) : (
+            <div title={name} className={b('name-line')}>
+                <span>{name}</span>
+                {isLocked ? <Icon data={Lock} className={b('lock')} /> : null}
+            </div>
+        );
 
         const node = (
             <div className={b('row-link-wrap')} onClick={this.onClick}>
@@ -94,10 +120,7 @@ export class Row extends React.Component<RowProps> {
                 />
                 <div className={b('info')}>
                     <div className={b('name')}>
-                        <div title={name} className={b('name-line')}>
-                            <span>{name}</span>
-                            {isLocked ? <Icon data={Lock} className={b('lock')} /> : null}
-                        </div>
+                        {nameElement}
                         {displayParentFolder && this.renderParentFolder()}
                     </div>
                     {this.renderDetails()}

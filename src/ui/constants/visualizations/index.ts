@@ -1,4 +1,4 @@
-import {LabelsPositions} from 'shared';
+import {AxisLabelFormatMode, AxisMode, LabelsPositions, LegendDisplayMode} from 'shared';
 
 export * from './flatTable';
 export * from './pivotTable';
@@ -42,8 +42,8 @@ import {TREEMAP_VISUALIZATION} from './treemap';
 
 export const SETTINGS = {
     AXIS_FORMAT_MODE: {
-        AUTO: 'auto',
-        BY_FIELD: 'by-field',
+        AUTO: AxisLabelFormatMode.Auto,
+        BY_FIELD: AxisLabelFormatMode.ByField,
     },
     SCALE: {
         AUTO: 'auto',
@@ -94,8 +94,8 @@ export const SETTINGS = {
         OFF: 'off',
     },
     AXIS_MODE: {
-        DISCRETE: 'discrete',
-        CONTINUOUS: 'continuous',
+        DISCRETE: AxisMode.Discrete,
+        CONTINUOUS: AxisMode.Continuous,
     },
 };
 
@@ -105,8 +105,8 @@ export const CHART_SETTINGS = {
         HIDE: 'hide',
     },
     LEGEND: {
-        SHOW: 'show',
-        HIDE: 'hide',
+        SHOW: LegendDisplayMode.Show,
+        HIDE: LegendDisplayMode.Hide,
     },
     TOOLTIP_SUM: {
         ON: 'on',

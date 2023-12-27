@@ -31,7 +31,8 @@ import {
     SET_UPLOADED_FILES,
     SET_VALIDATION_ERRORS,
     SET_YADOCS_ACTIVE_DIALOG,
-    SET_YADOCS_ADD_SECTION_STATE,
+    SET_YADOCS_ITEMS,
+    SET_YADOCS_SELECTED_ITEM_ID,
 } from '../actions';
 import {initialState} from '../constants';
 import {ConnectionsReduxAction, ConnectionsReduxState} from '../typings';
@@ -335,15 +336,24 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                 },
             };
         }
-        case SET_YADOCS_ADD_SECTION_STATE: {
+        case SET_YADOCS_ITEMS: {
+            const {items} = action.payload;
             return {
                 ...state,
                 yadocs: {
                     ...state.yadocs,
-                    addSectionState: {
-                        ...state.yadocs.addSectionState,
-                        ...action.payload,
-                    },
+                    items,
+                },
+            };
+        }
+
+        case SET_YADOCS_SELECTED_ITEM_ID: {
+            const {selectedItemId} = action.payload;
+            return {
+                ...state,
+                yadocs: {
+                    ...state.yadocs,
+                    selectedItemId,
                 },
             };
         }

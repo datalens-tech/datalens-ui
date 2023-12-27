@@ -5,8 +5,10 @@ import {
     ColorMode,
     CommonNumberFormattingOptions,
     DATASET_FIELD_TYPES,
+    LegendDisplayMode,
     MINIMUM_FRACTION_DIGITS,
     ServerColor,
+    ServerCommonSharedExtraSettings,
     ServerField,
     ServerPlaceholder,
     ServerPointSizeConfig,
@@ -359,6 +361,10 @@ function isGradientMode({
         isMeasureField(colorField) ||
         (isNumericalDataType(colorFieldDataType) && colorsConfig.colorMode === ColorMode.GRADIENT)
     );
+}
+
+export function isLegendEnabled(chartSetting?: ServerCommonSharedExtraSettings) {
+    return chartSetting?.legendMode !== LegendDisplayMode.Hide;
 }
 
 export {

@@ -1,7 +1,7 @@
-import {Clock, Copy, FolderArrowDown, FontCursor, Link, TrashBin} from '@gravity-ui/icons';
+import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin} from '@gravity-ui/icons';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 
-import {EntryScope, Feature, isUsersFolder} from '../../../shared';
+import {EntryScope, Feature, PLACE, isUsersFolder} from '../../../shared';
 import {ALL_SCOPES, URL_QUERY} from '../../constants';
 import {registry} from '../../registry';
 import Utils from '../../utils/utils';
@@ -11,6 +11,8 @@ import {ContextMenuItem, ContextMenuParams} from './types';
 
 export const ENTRY_CONTEXT_MENU_ACTION = {
     RENAME: 'rename',
+    ADD_FAVORITES_ALIAS: 'add-favorites-alias',
+    EDIT_FAVORITES_ALIAS: 'edit-favorites-alias',
     DELETE: 'delete',
     MOVE: 'move',
     COPY: 'copy',
@@ -89,6 +91,30 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         scopes: ALL_SCOPES,
         isVisible({entry}: ContextMenuParams) {
             return !isUsersFolder(entry?.key);
+        },
+    },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS,
+        action: ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS,
+        icon: Tag,
+        text: 'value_add-favorites-alias',
+        place: PLACE.FAVORITES,
+        enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
+        scopes: ALL_SCOPES,
+        isVisible({entry}: ContextMenuParams) {
+            return !entry?.alias;
+        },
+    },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS,
+        action: ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS,
+        icon: Tag,
+        text: 'value_edit-favorites-alias',
+        place: PLACE.FAVORITES,
+        enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
+        scopes: ALL_SCOPES,
+        isVisible({entry}: ContextMenuParams) {
+            return Boolean(entry?.alias);
         },
     },
     {
