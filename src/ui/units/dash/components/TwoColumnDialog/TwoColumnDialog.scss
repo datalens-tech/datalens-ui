@@ -26,10 +26,8 @@
 
         &_no-content-header {
             // TODO: this is an private api and may silently changed. We should use local styles
-            padding-top: calc(
-                var(--g-text-subheader-3-line-height) + var(--yc-dialog-header-padding-top) +
-                    var(--yc-dialog-header-padding-bottom)
-            );
+            // Used values from redefined --yc-dialog-header-padding
+            padding-top: calc(var(--g-text-subheader-3-line-height) + 30px + 16px);
         }
     }
 }
