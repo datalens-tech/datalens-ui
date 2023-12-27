@@ -76,6 +76,7 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
             currentVisualization?.allowShapes &&
             !(qlMode && qlChartType && isYAGRVisualization(qlChartType, currentVisualization.id));
         const allowSegments = currentVisualization?.allowSegments;
+        const placeholders = visualization.placeholders;
 
         return (
             <>
@@ -88,29 +89,22 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         onUpdate={onUpdate}
                     />
                 )}
-                {currentVisualization?.placeholders.map((placeholderConfig: Placeholder) => {
-                    const placeholder = visualization.placeholders.find(
-                        (p) => p.id === placeholderConfig.id,
-                    );
+                {placeholders.map((placeholder: Placeholder) => {
                     const placeholderNode = (
                         <VisualizationPlaceholder
                             wrapTo={this.renderDatasetItem}
                             onBeforeRemoveItem={this.removeItemQuickFormula}
                             datasetError={datasetError}
                             visualization={visualization}
-                            placeholder={{
-                                ...placeholderConfig,
-                                items: placeholder?.items || [],
-                                settings: placeholder?.settings,
-                            }}
-                            key={`${placeholderConfig.id}-placeholder-component`}
+                            placeholder={placeholder}
+                            key={`${placeholder.id}-placeholder-component`}
                             onUpdate={onUpdate}
                             addFieldItems={this.addFieldItems}
                         />
                     );
 
                     if (
-                        placeholderConfig.id === PlaceholderId.X &&
+                        placeholder.id === PlaceholderId.X &&
                         globalVisualization.id === WizardVisualizationId.CombinedChart
                     ) {
                         return (
