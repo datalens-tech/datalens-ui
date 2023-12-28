@@ -1,5 +1,6 @@
 import {generateUniqId} from '@gravity-ui/dashkit';
 import {I18n} from 'i18n';
+import {DashLoadPriority} from 'shared/types/dash';
 import {DL, URL_QUERY} from 'ui/constants';
 import Utils from 'ui/utils';
 
@@ -41,6 +42,8 @@ export const getFakeDashEntry = (workbookId?: string) => {
             autoupdateInterval: null,
             dependentSelectors: true,
             maxConcurrentRequests: null,
+            loadOnlyVisibleCharts: true,
+            loadPriority: DashLoadPriority.Charts,
         },
     };
 
