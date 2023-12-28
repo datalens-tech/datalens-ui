@@ -42,7 +42,6 @@ import {
     SET_UPLOADED_FILES,
     SET_VALIDATION_ERRORS,
     SET_YADOCS_ACTIVE_DIALOG,
-    SET_YADOCS_ADD_SECTION_STATE,
     SET_YADOCS_ITEMS,
     SET_YADOCS_SELECTED_ITEM_ID,
 } from '../actions';
@@ -50,7 +49,7 @@ import {
 import type {FileSource, ReplaceSourceActionData, UploadedFile} from './file';
 import type {GSheetActiveDialog, GSheetAddSectionState, GSheetItem} from './gsheet';
 import type {ReplaceSource} from './s3-based';
-import {YadocItem, YadocsActiveDialog, YadocsAddSectionState} from './yadocs';
+import {YadocItem, YadocsActiveDialog} from './yadocs';
 
 export * from './file';
 export * from './gsheet';
@@ -113,7 +112,6 @@ export type ConnectionsReduxState = {
     yadocs: {
         items: YadocItem[];
         selectedItemId: string;
-        addSectionState: YadocsAddSectionState;
         activeDialog?: YadocsActiveDialog;
     };
     currentTenantId?: string;
@@ -337,11 +335,6 @@ export type SetYadocsSelectedItemId = {
     };
 };
 
-export type SetYadocsAddSectionState = {
-    type: typeof SET_YADOCS_ADD_SECTION_STATE;
-    payload: Partial<GSheetAddSectionState>;
-};
-
 export type SetYadocsActiveDialog = {
     type: typeof SET_YADOCS_ACTIVE_DIALOG;
     payload: {
@@ -384,7 +377,6 @@ export type ConnectionsReduxAction =
     | CloseDialogAction
     | SetYadocsItems
     | SetYadocsSelectedItemId
-    | SetYadocsAddSectionState
     | SetYadocsActiveDialog;
 
 export type ConnectionsReduxDispatch = AppDispatch<ConnectionsReduxAction>;

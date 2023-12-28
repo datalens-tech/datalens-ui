@@ -2,7 +2,8 @@
     "extends": "@gravity-ui/eslint-config/client",
     "rules": {
         "camelcase": 0,
-        "react/display-name": [1]
+        "react/display-name": [1],
+        "valid-jsdoc": 0
     },
     "overrides": [
         {
