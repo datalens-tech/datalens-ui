@@ -40,9 +40,9 @@ function mapAndColorizePieByGradient(
     });
 
     points.forEach((point) => {
-        const pointColorValue = point.colorValue;
+        const pointColorValue = Number(point.colorValue);
 
-        if (typeof pointColorValue === 'number' && gradientColors[pointColorValue]) {
+        if (gradientColors[pointColorValue]) {
             point.color = gradientColors[pointColorValue];
         }
     });
@@ -98,7 +98,7 @@ function mapAndColorizePieByPalette({
 }
 
 // eslint-disable-next-line complexity
-export function preparePie({
+export function preparePieData({
     placeholders,
     resultData,
     sort,
@@ -249,7 +249,7 @@ export function preparePie({
                     colorKey = key;
                 } else if (isNumericalDataType(colorFieldDataType)) {
                     name = key;
-                    colorKey = Number(key);
+                    colorKey = key;
 
                     if (colorField.formatting) {
                         formattedName = chartKitFormatNumberWrapper(Number(key), {
@@ -335,4 +335,4 @@ export function preparePie({
     return {graphs, categories, totals: totalsValue, label, measure};
 }
 
-export default preparePie;
+export default preparePieData;
