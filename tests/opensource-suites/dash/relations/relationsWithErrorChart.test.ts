@@ -1,9 +1,10 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {getUniqueTimestamp, openTestPage, slct} from '../../../utils';
+import {deleteEntity, getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {DashCommonQa} from '../../../../src/shared';
+import {WorkbooksUrls} from '../../../constants/constants';
 
 import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {DashUrls} from '../../../constants/test-entities/dash';
@@ -13,6 +14,12 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Relations (new)', () => {
+    datalensTest.afterEach(async ({page}: {page: Page}) => {
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.cancelRelationsChanges();
+        await dashboardPage.exitEditMode();
+        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+    });
     datalensTest(
         'Pop-up opening for chart with error and the presence of the inscription "No elements for links"',
         async ({page}: {page: Page}) => {
@@ -32,9 +39,6 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
             await dashboardPage.openControlRelationsDialog();
 
             await dashboardPage.waitForSelector(slct(DashCommonQa.RelationsDialogEmptyText));
-
-            await dashboardPage.cancelRelationsChanges();
-            await dashboardPage.exitEditMode();
         },
     );
     datalensTest(
@@ -56,9 +60,6 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
             await dashboardPage.openControlRelationsDialog();
 
             await dashboardPage.waitForSelector(`text=${PARAMS.UNKNOWN}`);
-
-            await dashboardPage.cancelRelationsChanges();
-            await dashboardPage.exitEditMode();
         },
     );
 });
