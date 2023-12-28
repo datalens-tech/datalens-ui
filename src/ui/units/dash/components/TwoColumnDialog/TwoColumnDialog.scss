@@ -1,8 +1,23 @@
 .two-column-dialog {
+    $dialogPaddingHorizontal: 24px;
+
+    // Header
+    $dialogHeaderPaddingTop: 30px;
+    $dialogHeaderPaddingBottom: 16px;
+    $dialogHeaderPaddingHorizontal: $dialogPaddingHorizontal;
+
+    // Body
+    $dialogBodyPaddingHorizontal: $dialogPaddingHorizontal;
+    $dialogBodyPaddingVertical: 0px;
+
+    // Footer
+    $dialogFooterPaddingHorizontal: $dialogPaddingHorizontal;
+    $dialogFooterPaddingVertical: 28px;
+
     // TODO: this is an private api and may silently changed. We should use local styles
-    --yc-dialog-header-padding: 30px 24px 16px;
-    --yc-dialog-body-padding: 0 24px;
-    --yc-dialog-footer-padding: 28px 24px;
+    --yc-dialog-header-padding: #{$dialogHeaderPaddingTop} #{$dialogHeaderPaddingHorizontal} #{$dialogHeaderPaddingBottom};
+    --yc-dialog-body-padding: #{$dialogBodyPaddingVertical} #{$dialogBodyPaddingHorizontal};
+    --yc-dialog-footer-padding: #{$dialogFooterPaddingVertical} #{$dialogFooterPaddingHorizontal};
 
     // TODO: this is an private api and may silently changed. We should use local styles
     border-radius: var(--yc-modal-border-radius);
@@ -25,9 +40,10 @@
         width: 705px;
 
         &_no-content-header {
-            // TODO: this is an private api and may silently changed. We should use local styles
-            // Used values from redefined --yc-dialog-header-padding
-            padding-top: calc(var(--g-text-subheader-3-line-height) + 30px + 16px);
+            padding-top: calc(
+                var(--g-text-subheader-3-line-height) + #{$dialogHeaderPaddingTop +
+                    $dialogHeaderPaddingBottom}
+            );
         }
     }
 }
