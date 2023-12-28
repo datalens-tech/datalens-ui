@@ -36,7 +36,11 @@ import {DEFAULT_PAGE_ROWS_LIMIT} from '../../../../../constants/misc';
 import {getQlAutoExecuteChartValue} from '../../../../ql/utils/chart-settings';
 import {CHART_SETTINGS, SETTINGS, VISUALIZATION_IDS} from '../../../constants';
 import {getDefaultChartName} from '../../../utils/helpers';
-import {getD3Analog, getHighchartsAnalog} from '../../../utils/visualization';
+import {
+    getAvailableVisualizations,
+    getD3Analog,
+    getHighchartsAnalog,
+} from '../../../utils/visualization';
 
 import LimitInput from './LimitInput/LimitInput';
 import SettingFeed from './SettingFeed/SettingFeed';
@@ -403,11 +407,12 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         }
 
         const newVisualizationId = this.getNewVisualizationId();
-        if (newVisualizationId) {
-            visualization = {
-                ...visualization,
-                id: newVisualizationId,
-            } as Shared['visualization'];
+        const newVisualization = getAvailableVisualizations().find(
+            (v) => v.id === newVisualizationId,
+        ) as Shared['visualization'];
+
+        if (newVisualization) {
+            visualization = newVisualization as Shared['visualization'];
             isSettingsEqual = false;
         }
 
