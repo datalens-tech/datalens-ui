@@ -63,6 +63,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const xPlaceholderSettings = xPlaceholder?.settings;
     const xField = xPlaceholder?.items[0];
     const xDataType = xField ? idToDataType[xField.guid] : null;
+    const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
+    const xIsNumber = Boolean(xDataType && isNumberField({data_type: xDataType}));
     const xAxisMode = getAxisMode(xPlaceholderSettings, xField?.guid);
     const x2 = isVisualizationWithSeveralFieldsXPlaceholder(visualizationId)
         ? xPlaceholder?.items[1]
@@ -161,12 +163,13 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     values,
                     idToTitle,
                     categories,
-                    xIsDate: isDateField(xField),
-                    xIsNumber: isNumberField(xField),
+                    xIsDate,
+                    xIsNumber,
                     xDataType: xDataType!,
                     xIsPseudo: isPseudoField(xField),
                     categoriesMap,
                 });
+
                 if ((xValue === null || xValue === undefined) && !isPseudoField(xField)) {
                     return;
                 }
@@ -196,9 +199,9 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     idToTitle,
                     order,
                     values,
-                    xIsNumber: isNumberField(x2),
+                    xIsNumber: Boolean(x2DataType && isNumberField({data_type: x2DataType})),
                     xDataType: x2DataType!,
-                    xIsDate: isDateField(x2),
+                    xIsDate: Boolean(x2DataType && isDateField({data_type: x2DataType})),
                     xIsPseudo: isPseudoField(x2),
                     categoriesMap,
                 });
@@ -221,7 +224,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                 colorItem,
                 rawXValue: xValue,
                 rawX2Value: x2Value,
-                x2IsDate: isDateField(x2),
+                x2IsDate: Boolean(x2DataType && isDateField({data_type: x2DataType})),
                 isSortByMeasureColor,
                 measureColorSortLine,
                 isShapeItemExist,
@@ -240,7 +243,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         let lineKeys1 = Object.keys(lines1);
         let lineKeys2 = Object.keys(lines2);
 
-        if (isDateField(xField) && !disableDefaultSorting) {
+        if (xIsDate && !disableDefaultSorting) {
             (categories as number[]).sort(numericCollator);
         }
 
@@ -261,7 +264,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                 isSortWithYSectionItem: Boolean(ySectionItems.length && isSortableXAxis),
                 sortItem,
                 isSortAvailable: isSortItemExists && isSortCategoriesAvailable,
-                isXNumber: isNumberField(xField),
+                isXNumber: xIsNumber,
                 measureColorSortLine,
                 isSegmentsExists,
                 isSortBySegments,
@@ -289,7 +292,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         const isSortNumberTypeXAxisByMeasure =
             isSortCategoriesAvailable &&
             isSortItemExists &&
-            isNumberField(xField) &&
+            xIsNumber &&
             !isSortingXAxis &&
             (isSortingYAxis || isSortByMeasureColor);
 
@@ -483,7 +486,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             return {
                 graphs,
                 categories: categories.map((value) => {
-                    return isDateField(xField)
+                    return xIsDate
                         ? formatDate({
                               valueType: xDataType!,
                               value,
@@ -509,7 +512,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             }
 
             let xValue;
-            if (isDateField(xField)) {
+            if (xIsDate) {
                 const time = new Date(value);
 
                 if (xDataType === 'datetime' || xDataType === 'genericdatetime') {
@@ -517,7 +520,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                 }
 
                 xValue = time.getTime();
-            } else if (isNumberField(xField)) {
+            } else if (xIsNumber) {
                 xValue = Number(value);
             } else {
                 xValue = value;
@@ -531,7 +534,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
         // Default sorting
         if ((!isSortItemExists || !isSortCategoriesAvailable) && !disableDefaultSorting) {
-            if (isNumberField(xField)) {
+            if (xIsNumber) {
                 (categories as number[]).sort(numericCollator);
             } else {
                 (categories as string[]).sort(collator.compare);
@@ -546,7 +549,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         ];
 
         // If there are dates on the X axis, then we pass them as dates
-        if (isDateField(xField) && xAxisMode !== AxisMode.Discrete) {
+        if (xIsDate && xAxisMode !== AxisMode.Discrete) {
             return {graphs, categories_ms: categories};
         }
 

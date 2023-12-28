@@ -31,7 +31,6 @@ import {
     SET_UPLOADED_FILES,
     SET_VALIDATION_ERRORS,
     SET_YADOCS_ACTIVE_DIALOG,
-    SET_YADOCS_ADD_SECTION_STATE,
     SET_YADOCS_ITEMS,
     SET_YADOCS_SELECTED_ITEM_ID,
 } from '../actions';
@@ -355,18 +354,6 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                 yadocs: {
                     ...state.yadocs,
                     selectedItemId,
-                },
-            };
-        }
-        case SET_YADOCS_ADD_SECTION_STATE: {
-            return {
-                ...state,
-                yadocs: {
-                    ...state.yadocs,
-                    addSectionState: {
-                        ...state.yadocs.addSectionState,
-                        ...action.payload,
-                    },
                 },
             };
         }

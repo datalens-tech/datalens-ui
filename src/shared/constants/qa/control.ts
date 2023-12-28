@@ -32,4 +32,6 @@ export const DialogControlQa = {
     appearanceTitle: 'dialog-control-appearance-title',
     appearanceInnerTitle: 'dialog-control-appearance-inner-title',
     fieldNameInput: 'field-name-input',
+    dateRangeCheckbox: 'date-range-checkbox',
+    dateTimeCheckbox: 'date-time-checkbox',
 };
