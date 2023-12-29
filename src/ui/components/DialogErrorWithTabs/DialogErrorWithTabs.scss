@@ -20,6 +20,14 @@
         flex-direction: column;
     }
 
+    &__header {
+        & .yc-dialog-header__caption {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+
     &__loader {
         margin: auto;
     }
