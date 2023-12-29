@@ -64,16 +64,20 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                         {contentItems.map((item) => {
                             if ('workbookId' in item) {
                                 const actions = getWorkbookActions(item);
-                                const propsLink = {
-                                    to: `/workbooks/${item.workbookId}`,
-                                    onClick: () => {
-                                        setFilters({...filters, filterString: undefined});
-                                    },
-                                };
 
                                 return (
-                                    <div key={item.workbookId} className={b('content-row')}>
-                                        <div className={b('content-cell')}>
+                                    <Link
+                                        to={`/workbooks/${item.workbookId}`}
+                                        onClick={() => {
+                                            setFilters({...filters, filterString: undefined});
+                                        }}
+                                        key={item.workbookId}
+                                        className={b('content-row')}
+                                    >
+                                        <div
+                                            className={b('content-cell')}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
                                             <Checkbox
                                                 size="l"
                                                 onUpdate={(checked) => {
@@ -89,10 +93,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                             />
                                         </div>
 
-                                        <Link
-                                            {...propsLink}
-                                            className={b('content-cell', {title: true})}
-                                        >
+                                        <div className={b('content-cell', {title: true})}>
                                             <div className={b('title-col')}>
                                                 <div className={b('title-col-icon')}>
                                                     <WorkbookIcon title={item.title} />
@@ -101,36 +102,37 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                     {item.title}
                                                 </div>
                                             </div>
-                                        </Link>
-                                        <Link {...propsLink} className={b('content-cell')}>
+                                        </div>
+                                        <div className={b('content-cell')}>
                                             {dateTime({
                                                 input: item.updatedAt,
                                             }).fromNow()}
-                                        </Link>
-                                        <Link
-                                            {...propsLink}
-                                            className={b('content-cell', {control: true})}
-                                        >
+                                        </div>
+                                        <div className={b('content-cell', {control: true})}>
                                             {actions.length > 0 && (
                                                 <div onClick={onClickStopPropagation}>
                                                     <DropdownMenu size="s" items={actions} />
                                                 </div>
                                             )}
-                                        </Link>
-                                    </div>
+                                        </div>
+                                    </Link>
                                 );
                             } else {
                                 const actions = getCollectionActions(item);
-                                const propsLink = {
-                                    to: `/collections/${item.collectionId}`,
-                                    onClick: () => {
-                                        setFilters({...filters, filterString: undefined});
-                                    },
-                                };
 
                                 return (
-                                    <div key={item.collectionId} className={b('content-row')}>
-                                        <div className={b('content-cell')}>
+                                    <Link
+                                        to={`/collections/${item.collectionId}`}
+                                        key={item.collectionId}
+                                        onClick={() => {
+                                            setFilters({...filters, filterString: undefined});
+                                        }}
+                                        className={b('content-row')}
+                                    >
+                                        <div
+                                            className={b('content-cell')}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
                                             <Checkbox
                                                 size="l"
                                                 onUpdate={(checked) => {
@@ -145,10 +147,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                 )}
                                             />
                                         </div>
-                                        <Link
-                                            {...propsLink}
-                                            className={b('content-cell', {title: true})}
-                                        >
+                                        <div className={b('content-cell', {title: true})}>
                                             <div className={b('title-col')}>
                                                 <div className={b('title-col-icon')}>
                                                     <CollectionIcon />
@@ -157,16 +156,13 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                     {item.title}
                                                 </div>
                                             </div>
-                                        </Link>
-                                        <Link {...propsLink} className={b('content-cell')}>
+                                        </div>
+                                        <div className={b('content-cell')}>
                                             {dateTime({
                                                 input: item.updatedAt,
                                             }).fromNow()}
-                                        </Link>
-                                        <Link
-                                            {...propsLink}
-                                            className={b('content-cell', {control: true})}
-                                        >
+                                        </div>
+                                        <div className={b('content-cell', {control: true})}>
                                             <div onClick={onClickStopPropagation}>
                                                 {actions.length > 0 ? (
                                                     <div>
@@ -174,8 +170,8 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                     </div>
                                                 ) : null}
                                             </div>
-                                        </Link>
-                                    </div>
+                                        </div>
+                                    </Link>
                                 );
                             }
                         })}

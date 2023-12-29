@@ -45,8 +45,11 @@ export const MoveCollectionsWorkbooksDialog: React.FC<Props> = ({
 
     const handleMove = React.useCallback(
         async ({targetCollectionId}: {targetCollectionId: string | null}) => {
+            let moveCollectionsPromise: Promise<unknown> = Promise.resolve();
+            let moveWorkbooksPromise: Promise<unknown> = Promise.resolve();
+
             if (collectionIds?.length) {
-                await dispatch(
+                moveCollectionsPromise = dispatch(
                     moveCollections({
                         collectionIds,
                         parentId: targetCollectionId,
@@ -55,13 +58,15 @@ export const MoveCollectionsWorkbooksDialog: React.FC<Props> = ({
             }
 
             if (workbookIds?.length) {
-                await dispatch(
+                moveWorkbooksPromise = dispatch(
                     moveWorkbooks({
                         workbookIds,
                         collectionId: targetCollectionId,
                     }),
                 );
             }
+
+            await Promise.all([moveCollectionsPromise, moveWorkbooksPromise]);
 
             onApply();
         },

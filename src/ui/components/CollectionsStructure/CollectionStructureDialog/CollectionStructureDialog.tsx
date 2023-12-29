@@ -239,8 +239,12 @@ export const CollectionStructureDialog = React.memo<Props>(
 
         const handleClickApplyButton = React.useCallback(() => {
             if (!applyButtonDisabled) {
-                if (workbookSelectionMode || massMoveMode) {
-                    onApply({targetCollectionId, targetWorkbookId}).then(() => {
+                if (workbookSelectionMode) {
+                    onApply({targetCollectionId: null, targetWorkbookId}).then(() => {
+                        handleClose();
+                    });
+                } else if (massMoveMode) {
+                    onApply({targetCollectionId, targetWorkbookId: null}).then(() => {
                         handleClose();
                     });
                 } else {

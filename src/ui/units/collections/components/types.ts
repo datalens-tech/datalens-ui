@@ -37,7 +37,7 @@ interface CollectionContentProps extends ContentProps {
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
 }
 
-type CollectionContentGridProps = CollectionContentProps;
+type CollectionContentGridProps = Omit<CollectionContentProps, 'countSelected'>;
 
 type CollectionContentTableProps = Omit<CollectionContentProps, 'isOpenSelectionMode'>;
 

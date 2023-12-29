@@ -24,10 +24,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
         onUpdateCheckbox,
         selectedMap,
         isOpenSelectionMode,
-        countSelected,
     }) => {
-        const isSelectionMode = isOpenSelectionMode || countSelected > 0;
-
         return (
             <div className={b()}>
                 <div className={b('grid')}>
@@ -40,7 +37,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                     key={item.workbookId}
                                     className={b('content-item')}
                                     onClick={
-                                        isSelectionMode
+                                        isOpenSelectionMode
                                             ? () => {
                                                   onUpdateCheckbox(
                                                       !selectedMap[item.workbookId]?.checked,
@@ -51,7 +48,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                             : undefined
                                     }
                                 >
-                                    {isSelectionMode && (
+                                    {isOpenSelectionMode && (
                                         <Checkbox
                                             size="l"
                                             className={b('content-item-checkbox')}
@@ -61,7 +58,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                     <Link
                                         to={`/workbooks/${item.workbookId}`}
                                         className={b('content-item-link', {
-                                            'selection-mode': isSelectionMode,
+                                            'selection-mode': isOpenSelectionMode,
                                         })}
                                         onClick={() => {
                                             setFilters({...filters, filterString: undefined});
@@ -71,7 +68,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                             <div className={b('title-col')}>
                                                 <div
                                                     className={b('title-col-icon', {
-                                                        'selection-mode': isSelectionMode,
+                                                        'selection-mode': isOpenSelectionMode,
                                                     })}
                                                 >
                                                     <WorkbookIcon title={item.title} size="l" />
@@ -108,7 +105,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                     key={item.collectionId}
                                     className={b('content-item')}
                                     onClick={
-                                        isSelectionMode
+                                        isOpenSelectionMode
                                             ? () => {
                                                   onUpdateCheckbox(
                                                       !selectedMap[item.collectionId]?.checked,
@@ -119,7 +116,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                             : undefined
                                     }
                                 >
-                                    {isSelectionMode && (
+                                    {isOpenSelectionMode && (
                                         <Checkbox
                                             size="l"
                                             className={b('content-item-checkbox')}
@@ -131,7 +128,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                     <Link
                                         to={`/collections/${item.collectionId}`}
                                         className={b('content-item-link', {
-                                            'selection-mode': isSelectionMode,
+                                            'selection-mode': isOpenSelectionMode,
                                         })}
                                         onClick={() => {
                                             setFilters({...filters, filterString: undefined});
@@ -141,7 +138,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                             <div className={b('title-col')}>
                                                 <div
                                                     className={b('title-col-icon', {
-                                                        'selection-mode': isSelectionMode,
+                                                        'selection-mode': isOpenSelectionMode,
                                                     })}
                                                 >
                                                     <CollectionIcon isIconBig size={125} />

@@ -405,27 +405,32 @@ export const CollectionContent: React.FC<Props> = ({
         return actions;
     };
 
-    const contentProps = {
-        contentItems,
-        filters,
-        setFilters,
-        getWorkbookActions,
-        getCollectionActions,
-        onUpdateCheckbox,
-        onSelectAll,
-        selectedMap,
-        countSelected,
-    };
-
     return (
         <React.Fragment>
             {collectionPageViewMode === CollectionPageViewMode.Grid ? (
                 <CollectionContentGrid
-                    {...contentProps}
+                    contentItems={contentItems}
+                    filters={filters}
+                    setFilters={setFilters}
+                    getWorkbookActions={getWorkbookActions}
+                    getCollectionActions={getCollectionActions}
+                    onUpdateCheckbox={onUpdateCheckbox}
+                    onSelectAll={onSelectAll}
+                    selectedMap={selectedMap}
                     isOpenSelectionMode={isOpenSelectionMode}
                 />
             ) : (
-                <CollectionContentTable {...contentProps} />
+                <CollectionContentTable
+                    contentItems={contentItems}
+                    filters={filters}
+                    setFilters={setFilters}
+                    getWorkbookActions={getWorkbookActions}
+                    getCollectionActions={getCollectionActions}
+                    onUpdateCheckbox={onUpdateCheckbox}
+                    onSelectAll={onSelectAll}
+                    selectedMap={selectedMap}
+                    countSelected={countSelected}
+                />
             )}
 
             {Boolean(countSelected) && (

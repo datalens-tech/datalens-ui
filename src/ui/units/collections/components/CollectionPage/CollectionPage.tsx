@@ -193,9 +193,10 @@ export const CollectionPage = React.memo<Props>(
             };
         }, [collectionId, rootPermissions, getRootCollectionPermissions]);
 
-        React.useEffect(() => {
+        const updateFilters = React.useCallback((newFilters: CollectionContentFilters) => {
             setSelectedMap({});
-        }, [filters]);
+            setFilters(newFilters);
+        }, []);
 
         const initLoadCollection = React.useCallback(() => {
             let collectionPromise: CancellablePromise<unknown>;
@@ -252,7 +253,7 @@ export const CollectionPage = React.memo<Props>(
                     setIsOpenSelectionMode(false);
                 }
             },
-            [],
+            [countSelected],
         );
 
         // Information for the current collection
@@ -264,6 +265,8 @@ export const CollectionPage = React.memo<Props>(
         React.useEffect(() => {
             resetCollectionContent();
 
+            resetSelected();
+
             const contentItemsPromise = getCollectionContentRecursively({
                 collectionId: curCollectionId,
                 pageSize: PAGE_SIZE,
@@ -273,7 +276,13 @@ export const CollectionPage = React.memo<Props>(
             return () => {
                 contentItemsPromise.cancel();
             };
-        }, [curCollectionId, filters, getCollectionContentRecursively, resetCollectionContent]);
+        }, [
+            curCollectionId,
+            filters,
+            getCollectionContentRecursively,
+            resetCollectionContent,
+            resetSelected,
+        ]);
 
         const handeCloseMoveDialog = React.useCallback(
             (structureChanged: boolean) => {
@@ -297,7 +306,7 @@ export const CollectionPage = React.memo<Props>(
                                 history.push(`/workbooks/${result.workbookId}`);
                                 return Promise.resolve();
                             } else {
-                                setFilters(DEFAULT_FILTERS);
+                                updateFilters(DEFAULT_FILTERS);
                                 resetCollectionContent();
                                 return getCollectionContentRecursively({
                                     collectionId: curCollectionId,
@@ -317,6 +326,7 @@ export const CollectionPage = React.memo<Props>(
             getCollectionContentRecursively,
             history,
             resetCollectionContent,
+            updateFilters,
         ]);
 
         const isDefaultFilters =
@@ -384,7 +394,7 @@ export const CollectionPage = React.memo<Props>(
                     },
                 });
             } else {
-                const mapSelected = selectedMap;
+                const mapSelected = {...selectedMap};
 
                 delete mapSelected[entityId];
 
@@ -447,7 +457,7 @@ export const CollectionPage = React.memo<Props>(
                         open: true,
                         onApply: refreshContent,
                         onClose: handeCloseMoveDialog,
-                        initialParentId: collection?.parentId,
+                        initialParentId: collection?.collectionId,
                         workbookIds,
                         collectionIds,
                     },
@@ -506,7 +516,7 @@ export const CollectionPage = React.memo<Props>(
                                                         );
                                                         return Promise.resolve();
                                                     } else {
-                                                        setFilters(DEFAULT_FILTERS);
+                                                        updateFilters(DEFAULT_FILTERS);
                                                         resetCollectionContent();
                                                         return getCollectionContentRecursively({
                                                             collectionId: curCollectionId,
@@ -567,7 +577,7 @@ export const CollectionPage = React.memo<Props>(
                                     curCollectionId && collection && collection.permissions.update,
                                 ) && (
                                     <Tooltip content={i18n('action_edit')}>
-                                        <div className={b('edit-btn')}>
+                                        <div>
                                             <Button onClick={onEditClick}>
                                                 <Icon data={PencilToLine} />
                                             </Button>
@@ -585,7 +595,7 @@ export const CollectionPage = React.memo<Props>(
                                 <CollectionFilters
                                     filters={filters}
                                     controlSize="l"
-                                    onChange={setFilters}
+                                    onChange={updateFilters}
                                     collectionPageViewMode={collectionPageViewMode}
                                     onChangeCollectionPageViewMode={onChangeCollectionPageViewMode}
                                 />
@@ -598,7 +608,7 @@ export const CollectionPage = React.memo<Props>(
                                     }
                                     collectionPageViewMode={collectionPageViewMode}
                                     filters={filters}
-                                    setFilters={setFilters}
+                                    setFilters={updateFilters}
                                     isDefaultFilters={isDefaultFilters}
                                     pageSize={PAGE_SIZE}
                                     refreshPage={refreshPage}
@@ -613,7 +623,7 @@ export const CollectionPage = React.memo<Props>(
                                     }
                                     onCreateWorkbookClick={handleCreateWorkbook}
                                     onClearFiltersClick={() => {
-                                        setFilters(DEFAULT_FILTERS);
+                                        updateFilters(DEFAULT_FILTERS);
                                     }}
                                     isOpenSelectionMode={isOpenSelectionMode}
                                     setBatchAction={setBatchAction}
@@ -624,7 +634,6 @@ export const CollectionPage = React.memo<Props>(
                             }
                             onOpenSelectionMode={onOpenSelectionMode}
                             onCancelSelectionMode={onCancelSelectionMode}
-                            resetSelected={resetSelected}
                             onSelectAll={onSelectAll}
                         />
                     </React.Fragment>
@@ -651,7 +660,7 @@ export const CollectionPage = React.memo<Props>(
                                 history.push(`/workbooks/${result.workbookId}`);
                                 return Promise.resolve();
                             } else {
-                                setFilters(DEFAULT_FILTERS);
+                                updateFilters(DEFAULT_FILTERS);
                                 resetCollectionContent();
                                 return getCollectionContentRecursively({
                                     collectionId: curCollectionId,

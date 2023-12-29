@@ -108,7 +108,9 @@ export type MoveWorkbooksArgs = {
     collectionId: string | null;
 };
 
-export type MoveWorkbooksResponse = Workbook[];
+export type MoveWorkbooksResponse = {
+    workbooks: Workbook[];
+};
 
 export type DeleteWorkbookArgs = {
     workbookId: string;
