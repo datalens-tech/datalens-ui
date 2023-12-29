@@ -2,11 +2,11 @@ import {getFakeTitleOrTitle, isNumberField} from '../../../../../../../shared';
 import {getGradientStops} from '../../utils/color-helpers';
 import {isLegendEnabled} from '../../utils/misc-helpers';
 
-import preparePie from './preparePie';
+import preparePieData from './prepare-pie-data';
 
 export function prepareHighchartsPie(args: any) {
     const {ChartEditor, colorsConfig, labels, shared, placeholders} = args;
-    const {graphs, categories, totals, measure, label} = preparePie(args);
+    const {graphs, categories, totals, measure, label} = preparePieData(args);
 
     const labelsLength = labels && labels.length;
     const isHideLabel = measure?.hideLabelMode === 'hide';

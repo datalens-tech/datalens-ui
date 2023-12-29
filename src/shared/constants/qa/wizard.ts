@@ -7,6 +7,7 @@ export const enum SectionDatasetQA {
     SectionParameters = 'section-parameters',
     ItemIcon = 'item-icon',
     ItemTitle = 'section-dataset-draggable-item-title',
+    ItemFunction = 'section-dataset-item-function',
     AddDatasetButton = 'add-dataset-button',
     CreateFieldButton = 'create-field-button',
     CreateHierarchyButton = 'create-hierarchy-button',

@@ -8,7 +8,7 @@ import {ServerField} from '../../../../../../../shared';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
 import {PrepareFunctionArgs} from '../types';
 
-import preparePie, {PieConfig} from './preparePie';
+import preparePieData, {PieConfig} from './prepare-pie-data';
 
 type MapPieSeriesArgs = {
     graph: PieConfig;
@@ -43,7 +43,7 @@ function mapPieSeries(args: MapPieSeriesArgs): PieSeries {
 
 export function prepareD3Pie(args: PrepareFunctionArgs): ChartKitWidgetData {
     const {labels} = args;
-    const {graphs, label, measure} = preparePie(args);
+    const {graphs, label, measure} = preparePieData(args);
     const isLabelsEnabled = Boolean(labels?.length && label && measure?.hideLabelMode !== 'hide');
 
     return {

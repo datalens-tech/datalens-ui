@@ -6,6 +6,7 @@ import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAppLayoutSettings} from '../../components/app-layout/app-layout-settings';
 import {createLayoutPlugin} from '../../components/app-layout/plugins/layout';
 import {ChartsEngine} from '../../components/charts-engine';
+import {xlsxConverter} from '../../controllers/xlsx-converter';
 import {
     beforeAuthDefaults,
     createAppLayoutMiddleware,
@@ -25,6 +26,8 @@ import {getRoutes} from './routes';
 export default function initApp(nodekit: NodeKit) {
     const beforeAuth: AppMiddleware[] = [];
     const afterAuth: AppMiddleware[] = [];
+
+    registry.setupXlsxConverter(xlsxConverter);
 
     if (isFullMode || isDatalensMode) {
         initDataLensApp({beforeAuth, afterAuth});

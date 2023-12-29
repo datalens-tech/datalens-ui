@@ -249,6 +249,19 @@
         }
     }
 
+    &__edit-favorites-alias-btn {
+        visibility: hidden;
+
+        &_visible {
+            visibility: visible;
+        }
+
+        #{$class}__row:hover &,
+        #{$class}__row_hovered & {
+            visibility: visible;
+        }
+    }
+
     &__icon-star-stroke {
         display: none;
     }

@@ -35,6 +35,10 @@
     "label_total-value": {
       "en": "APPROVED",
       "ru": "APPROVED"
+    },
+    "label_null-sorting-disabled-info": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
     }
   }
 }

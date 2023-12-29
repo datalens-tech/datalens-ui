@@ -76,6 +76,12 @@ export interface DashData {
     supportDescription?: string;
 }
 
+// config with strict requirements of settings for new dash
+// schemeVersion comes from server
+export type FakeDashData = Omit<DashData, 'schemeVersion'> & {
+    settings: Required<DashSettings>;
+};
+
 export interface DashTab {
     id: string;
     title: string;

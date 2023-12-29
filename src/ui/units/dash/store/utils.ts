@@ -1,5 +1,6 @@
 import {generateUniqId} from '@gravity-ui/dashkit';
 import {I18n} from 'i18n';
+import {DashLoadPriority, FakeDashData} from 'shared/types/dash';
 import {DL, URL_QUERY} from 'ui/constants';
 import Utils from 'ui/utils';
 
@@ -20,7 +21,7 @@ export const getFakeDashEntry = (workbookId?: string) => {
 
     const initialKey = `${path}${dashCreateI18n('label_default-name')}`;
 
-    const data = {
+    const data: FakeDashData = {
         tabs: [
             {
                 id: newTabId,
@@ -33,6 +34,18 @@ export const getFakeDashEntry = (workbookId?: string) => {
         ],
         counter,
         salt,
+        settings: {
+            hideTabs: false,
+            expandTOC: false,
+            hideDashTitle: false,
+            silentLoading: false,
+            autoupdateInterval: null,
+            dependentSelectors: true,
+            maxConcurrentRequests: null,
+            loadOnlyVisibleCharts: true,
+            loadPriority: DashLoadPriority.Charts,
+            globalParams: {},
+        },
     };
 
     return {

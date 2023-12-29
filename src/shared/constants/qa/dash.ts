@@ -59,6 +59,7 @@ export enum DashCommonQa {
     AliasSelectRight = 'alias-second-select',
     AliasAddBtn = 'alias-add-new-btn',
     AliasAddApplyBtn = 'alias-add-new-apply-btn',
+    AliasesCancelBtn = 'aliases-dialog-cancel-btn',
     AliasShowBtn = 'alias-show-btn',
     AliasesListCollapse = 'aliases-list-collapse-btn',
     AliasRemoveBtn = 'alias-remove-btn',
@@ -68,6 +69,8 @@ export enum DashCommonQa {
     WidgetShowTitleCheckbox = 'dialog-widget-settings-show-title',
     RelationsDialogEmptyText = 'dialog-relations-empty-text',
     RelationsDisconnectAllButton = 'dialog-relations-disconnect-all-button',
+    RelationsListRow = 'dialog-relations-list-row',
+    RelationsRowPopover = 'dialog-relations-row-popover',
 }
 
 export enum DashRelationTypes {

@@ -24,7 +24,6 @@ import {formatNumber} from 'shared/modules/format-units/formatUnit';
 import {MarkupItem, MarkupItemType} from '../../../../../../../../components/Markup';
 import {DataTableData, TableWidget} from '../../../../../../types';
 import {hasMatchedActionParams} from '../../../../../helpers/utils';
-import {CLICK_ACTION_TYPE} from '../../constants';
 
 import type {ActionParamsData} from './types';
 
@@ -134,15 +133,6 @@ export const getCellOnClick = (row: DataTableData | undefined, columnName: strin
         typeof column === 'object' && column && 'onClick' in column ? column.onClick : undefined;
 
     return onClick;
-};
-
-export const getCellClickArgs = (row: DataTableData | undefined, columnName: string) => {
-    const onClick = getCellOnClick(row, columnName);
-    if (onClick && onClick.action === CLICK_ACTION_TYPE.SET_PARAMS && onClick.args) {
-        return onClick.args;
-    }
-
-    return undefined;
 };
 
 export const hasGroups = (head: TableHead[]): boolean => {
