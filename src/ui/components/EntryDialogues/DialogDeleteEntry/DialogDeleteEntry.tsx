@@ -7,7 +7,7 @@ import {ResolveThunks, connect} from 'react-redux';
 import {showToast} from 'store/actions/toaster';
 import {DatalensGlobalState} from 'ui';
 import {selectLockToken} from 'ui/store/selectors/entryContent';
-import {deleteLock, setLock} from 'units/dash/store/actions/dash';
+import {cleanLock} from 'units/dash/store/actions/dash';
 
 import type {EntryFields} from '../../../../shared/schema';
 import {getSdk} from '../../../libs/schematic-sdk';
@@ -56,27 +56,18 @@ class DialogDeleteEntry extends React.Component<Props> {
     }
 
     private onApply = async () => {
-        const {entry, lockToken, deleteLock, setLock} = this.props;
-        try {
-            if (lockToken) {
-                await deleteLock();
-            }
-        } catch (err) {}
-        try {
-            await getSdk().mix.deleteEntry({
-                entryId: entry.entryId,
-                scope: entry.scope,
-            });
-
-            const workbookId = entry?.workbookId;
-            return {entryId: entry.entryId, workbookId};
-        } catch (err) {
-            if (lockToken) {
-                await setLock(entry.entryId);
-            }
-
-            throw err;
+        const {entry, cleanLock, lockToken} = this.props;
+        await getSdk().mix.deleteEntry({
+            entryId: entry.entryId,
+            scope: entry.scope,
+            ...(lockToken ? {lockToken} : {}),
+        });
+        if (lockToken) {
+            cleanLock();
         }
+
+        const workbookId = entry?.workbookId;
+        return {entryId: entry.entryId, workbookId};
     };
 
     private onError = (error: DataLensApiError) => {
@@ -100,8 +91,7 @@ class DialogDeleteEntry extends React.Component<Props> {
 
 const mapDispatchToProps = {
     showToast,
-    deleteLock,
-    setLock,
+    cleanLock,
 };
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
