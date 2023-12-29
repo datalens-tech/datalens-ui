@@ -11,7 +11,7 @@ import {prepareFieldToMeasureTransformation} from '../../units/wizard/utils/visu
 import {onMeasureAxisChange} from './line';
 
 export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
-    id: 'scatter',
+    id: WizardVisualizationId.Scatter,
     type: 'line',
     name: 'label_visualization-scatter',
     iconProps: {id: 'visScatter', width: '24'},
