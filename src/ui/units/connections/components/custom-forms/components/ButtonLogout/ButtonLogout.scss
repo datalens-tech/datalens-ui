@@ -1,0 +1,28 @@
+.conn-button-logout {
+    position: relative;
+
+    &__label-content {
+        margin-right: 22px;
+    }
+
+    &__action {
+        position: absolute;
+        right: 0;
+
+        // TODO: use public css api. It will be available in 6 uikit
+        --yc-button-background-color: transparent;
+        --yc-button-background-color-hover: var(--g-color-base-misc-heavy-hover);
+        --yc-button-border-radius: 4px;
+
+        color: var(--g-color-text-misc);
+
+        &:active,
+        &:focus {
+            color: var(--g-color-text-misc);
+        }
+
+        &:hover {
+            color: var(--g-color-text-inverted-primary);
+        }
+    }
+}
