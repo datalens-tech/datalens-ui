@@ -81,15 +81,47 @@ export const getDatasetFields = async (args: {
     let datasetFields: PartialDatasetField[];
     let revisionId: string;
 
-    const cacheResponse = await cacheClient.get({key: cacheKey});
+    if (cacheClient.client) {
+        const cacheResponse = await cacheClient.get({key: cacheKey});
 
-    if (cacheResponse.status === Cache.OK) {
-        datasetFields = cacheResponse.data.datasetFields;
-        revisionId = cacheResponse.data.revisionId;
-        req.ctx.log('DATASET_FIELDS_WAS_RECEIVED_FROM_CACHE');
+        if (cacheResponse.status === Cache.OK) {
+            datasetFields = cacheResponse.data.datasetFields;
+            revisionId = cacheResponse.data.revisionId;
+            req.ctx.log('DATASET_FIELDS_WAS_RECEIVED_FROM_CACHE');
+        } else {
+            req.ctx.log('DATASET_FIELDS_IN_CACHE_WAS_NOT_FOUND');
+
+            const response = await getDatasetFieldsById(
+                datasetId,
+                req,
+                rejectFetchingSource,
+                iamToken,
+                pluginOptions,
+            );
+            datasetFields = response.fields;
+            revisionId = response.revision_id;
+            cacheClient
+                .set({
+                    key: cacheKey,
+                    ttl: pluginOptions?.cache || DEFAULT_CACHE_TTL,
+                    value: {datasetFields, revisionId},
+                })
+                .then((setCacheResponse) => {
+                    if (setCacheResponse.status === Cache.OK) {
+                        req.ctx.log('SET_DATASET_IN_CACHE_SUCCESS');
+                    } else {
+                        req.ctx.logError('SET_DATASET_FIELDS_IN_CACHE_FAILED', setCacheResponse);
+                        req.ctx.logError(
+                            'SET_DATASET_FIELDS_IN_CACHE_FAILED',
+                            new Error(setCacheResponse.message),
+                        );
+                    }
+                })
+                .catch((error) => {
+                    req.ctx.logError('SET_DATASET_FIELDS_UNHANDLED_ERROR', error);
+                });
+        }
     } else {
-        req.ctx.log('DATASET_FIELDS_IN_CACHE_WAS_NOT_FOUND');
-
         const response = await getDatasetFieldsById(
             datasetId,
             req,
@@ -99,22 +131,6 @@ export const getDatasetFields = async (args: {
         );
         datasetFields = response.fields;
         revisionId = response.revision_id;
-        cacheClient
-            .set({
-                key: cacheKey,
-                ttl: pluginOptions?.cache || DEFAULT_CACHE_TTL,
-                value: {datasetFields, revisionId},
-            })
-            .then((setCacheResponse) => {
-                if (setCacheResponse.status === Cache.OK) {
-                    req.ctx.log('SET_DATASET_IN_CACHE_SUCCESS');
-                } else {
-                    req.ctx.logError('SET_DATASET_FIELDS_IN_CACHE_FAILED', setCacheResponse);
-                }
-            })
-            .catch((error) => {
-                req.ctx.logError('SET_DATASET_FIELDS_UNHANDLED_ERROR', error);
-            });
     }
 
     req.ctx.log('DATASET_FIELDS_WAS_SUCCESSFULLY_PROCESSED');
