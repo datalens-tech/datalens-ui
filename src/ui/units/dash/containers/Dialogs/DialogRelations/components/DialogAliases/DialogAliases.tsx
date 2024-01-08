@@ -393,7 +393,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={i18n('button_apply')}
                 propsButtonApply={{disabled: disableApplyButton, qa: DashCommonQa.AliasAddApplyBtn}}
-                propsButtonCancel={{view: 'outlined'}}
+                propsButtonCancel={{view: 'outlined', qa: DashCommonQa.AliasesCancelBtn}}
                 onClickButtonApply={handleApplyChanges}
                 onClickButtonCancel={handleCancel}
             />

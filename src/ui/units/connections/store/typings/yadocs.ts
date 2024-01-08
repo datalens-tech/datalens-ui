@@ -78,8 +78,13 @@ export type YadocsActiveDialogReplace = {
     oauthToken?: string;
 };
 
+type YadocsActiveDialogLogout = {
+    type: 'dialog-logout';
+};
+
 export type YadocsActiveDialog =
     | YadocsActiveAddDocument
     | YadocsActiveDialogSources
     | YadocsActiveDialogRename
-    | YadocsActiveDialogReplace;
+    | YadocsActiveDialogReplace
+    | YadocsActiveDialogLogout;

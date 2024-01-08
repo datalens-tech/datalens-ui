@@ -1,8 +1,10 @@
 import get from 'lodash/get';
 import {batch} from 'react-redux';
+import {FieldKey, InnerFieldKey} from 'ui/units/connections/constants';
 
+import {connectionDataSelector} from '../../selectors';
 import type {ConnectionsReduxDispatch, GetState, UploadedYadoc} from '../../typings';
-import {setYadocsItems, setYadocsSelectedItemId} from '../base';
+import {setForm, setInnerForm, setYadocsItems, setYadocsSelectedItemId} from '../base';
 
 import {pollYadocStatus, updateYadocItem} from './misc-actions';
 import {getYadocItemIndex, shapeUploadedYadocItem} from './utils';
@@ -57,5 +59,29 @@ export const retryPollYadocStatus = (fileId: string) => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         dispatch(updateYadocItem({id: fileId, updates: {status: 'in_progress', error: null}}));
         pollYadocStatus({fileId, dispatch, getState});
+    };
+};
+
+export const oauthLogin = (oauthToken: string) => {
+    return async (dispatch: ConnectionsReduxDispatch) => {
+        batch(() => {
+            dispatch(setForm({updates: {[FieldKey.OAuthToken]: oauthToken}}));
+            dispatch(setInnerForm({updates: {[InnerFieldKey.Authorized]: true}}));
+        });
+    };
+};
+
+export const oauthLogout = () => {
+    return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
+        const connectionData = connectionDataSelector(getState());
+        const initialAuthorized = connectionData[InnerFieldKey.Authorized];
+        // When logging out in an already created connection, we send null,
+        // on this basis, the back will delete the previously saved token
+        const nextRefreshToken = initialAuthorized ? null : undefined;
+
+        batch(() => {
+            dispatch(setForm({updates: {[FieldKey.OAuthToken]: nextRefreshToken}}));
+            dispatch(setInnerForm({updates: {[InnerFieldKey.Authorized]: false}}));
+        });
     };
 };

@@ -636,6 +636,10 @@ class DashboardPage extends BasePage {
         await this.page.locator(slct(DashCommonQa.AliasAddApplyBtn)).click();
     }
 
+    async cancelAliasesChanges() {
+        await this.page.locator(slct(DashCommonQa.AliasesCancelBtn)).click();
+    }
+
     async applyRelationsChanges() {
         await this.page.locator(slct(DashCommonQa.RelationsApplyBtn)).click();
     }

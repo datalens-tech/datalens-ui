@@ -45,7 +45,10 @@ import {
 import {DataLensApiError} from 'typings';
 import {DatalensGlobalState, Utils} from 'ui';
 import {navigateHelper} from 'ui/libs';
-import {getAvailableVisualizations} from 'ui/units/wizard/utils/visualization';
+import {
+    getAvailableVisualizations,
+    getDefaultVisualization,
+} from 'ui/units/wizard/utils/visualization';
 import history from 'ui/utils/history';
 import {DatasetState} from 'units/wizard/reducers/dataset';
 import {selectDataset, selectDatasets} from 'units/wizard/selectors/dataset';
@@ -58,7 +61,6 @@ import {getSdk} from '../../../libs/schematic-sdk';
 import {sdk as oldSdk} from '../../../libs/sdk';
 import {showToast} from '../../../store/actions/toaster';
 import {getFilteredObject} from '../../../utils';
-import {DEFAULT_VISUALIZATION_ID_WIZARD} from '../constants';
 import {WizardDispatch} from '../reducers';
 import {selectVisualization} from '../selectors/visualization';
 import {filterVisualizationColors} from '../utils/colors';
@@ -2133,11 +2135,7 @@ export function setDefaults({entryId, revId}: SetDefaultsArgs) {
                 }),
             );
         } else {
-            const availableVisualizations = getAvailableVisualizations();
-            const defaultVisualization =
-                availableVisualizations.find(
-                    (visualization) => visualization.id === DEFAULT_VISUALIZATION_ID_WIZARD,
-                ) || availableVisualizations[0];
+            const defaultVisualization = getDefaultVisualization();
 
             dispatch(
                 setVisualization({

@@ -59,6 +59,7 @@ export enum DashCommonQa {
     AliasSelectRight = 'alias-second-select',
     AliasAddBtn = 'alias-add-new-btn',
     AliasAddApplyBtn = 'alias-add-new-apply-btn',
+    AliasesCancelBtn = 'aliases-dialog-cancel-btn',
     AliasShowBtn = 'alias-show-btn',
     AliasesListCollapse = 'aliases-list-collapse-btn',
     AliasRemoveBtn = 'alias-remove-btn',
