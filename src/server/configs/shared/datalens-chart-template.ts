@@ -1,5 +1,11 @@
-import {ExtendedChartsConfig, Feature, isEnabledServerFeature} from '../../../shared';
-import {mapChartsConfigToLatestVersion} from '../../../shared/modules/config/wizard/mapChartsConfigToLatestVersion';
+import {
+    ExtendedChartsConfig,
+    Feature,
+    WizardVisualizationId,
+    isD3Visualization,
+    isEnabledServerFeature,
+    mapChartsConfigToLatestVersion,
+} from '../../../shared';
 import {registry} from '../../registry';
 
 export default {
@@ -20,6 +26,10 @@ export default {
             throw new Error('UNABLE_TO_IDENTIFY_CHART_TYPE');
         }
 
+        if (isD3Visualization(visualizationId as WizardVisualizationId)) {
+            return 'd3_wizard_node';
+        }
+
         switch (visualizationId) {
             case 'flatTable':
             case 'pivotTable': {
@@ -33,11 +43,6 @@ export default {
             }
             case 'metric': {
                 return 'metric_wizard_node';
-            }
-            case 'scatter-d3':
-            case 'bar-x-d3':
-            case 'pie-d3': {
-                return 'd3_wizard_node';
             }
             default: {
                 return 'graph_wizard_node';

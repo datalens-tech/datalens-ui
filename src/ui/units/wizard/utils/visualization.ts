@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import get from 'lodash/get';
 
 import {
     ChartkitGlobalSettings,
@@ -26,6 +27,7 @@ import {
     GEOPOINT_WITH_CLUSTER_VISUALIZATION,
     GEOPOLYGON_VISUALIZATION,
     HEATMAP_VISUALIZATION,
+    LINE_D3_VISUALIZATION,
     LINE_VISUALIZATION,
     METRIC_VISUALIZATION,
     PIE_D3_VISUALIZATION,
@@ -81,6 +83,10 @@ export function getAvailableVisualizations(options?: ChartkitGlobalSettings) {
         {
             value: LINE_VISUALIZATION,
             enabled: isHighchartsEnabled,
+        },
+        {
+            value: {...LINE_D3_VISUALIZATION, hidden: isHighchartsEnabled},
+            enabled: true,
         },
         {
             value: AREA_VISUALIZATION,
@@ -180,11 +186,25 @@ export function getAvailableVisualizations(options?: ChartkitGlobalSettings) {
     return _.cloneDeep(items.filter((item) => item.enabled).map(({value}) => value));
 }
 
-export function isD3Visualization(id: WizardVisualizationId) {
-    const d3Visualizations = [
-        WizardVisualizationId.ScatterD3,
-        WizardVisualizationId.PieD3,
-        WizardVisualizationId.BarXD3,
-    ];
-    return d3Visualizations.includes(id);
+const highchartsD3Map = [
+    [WizardVisualizationId.Line, WizardVisualizationId.LineD3],
+    [WizardVisualizationId.Column, WizardVisualizationId.BarXD3],
+    [WizardVisualizationId.Scatter, WizardVisualizationId.ScatterD3],
+    [WizardVisualizationId.Pie, WizardVisualizationId.PieD3],
+];
+
+export function getHighchartsAnalog(visualizationId: WizardVisualizationId) {
+    return highchartsD3Map.find(([_hc, d3]) => d3 === visualizationId)?.[0];
+}
+
+export function getD3Analog(visualizationId: WizardVisualizationId) {
+    return highchartsD3Map.find(([hc, _d3]) => hc === visualizationId)?.[1];
+}
+
+export function getDefaultVisualization() {
+    const defaultVisualizationIds = [WizardVisualizationId.Column, WizardVisualizationId.BarXD3];
+
+    return getAvailableVisualizations().find((v) => {
+        return defaultVisualizationIds.includes(v.id as WizardVisualizationId) && !get(v, 'hidden');
+    });
 }

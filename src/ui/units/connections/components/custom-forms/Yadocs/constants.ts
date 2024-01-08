@@ -18,4 +18,7 @@ export const i18n8857 = {
     'label_radio-value-private': 'Private',
     'label_access-type': 'Access type',
     'label_add-document': 'Add document',
+    'label_logout-dialog-description':
+        'Sheets from files with restricted access will no longer be displayed',
+    'label_logout-dialog-title': 'Are you sure you want to revoke your token?',
 };

@@ -8,7 +8,7 @@ import {
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES, PRIMITIVE_DATA_TYPES_AND_HIERARCHY} from '../misc';
 
 export const PIE_VISUALIZATION: GraphShared['visualization'] = {
-    id: 'pie',
+    id: WizardVisualizationId.Pie,
     type: 'pie',
     name: 'label_visualization-pie',
     iconProps: {id: 'visPie', width: '24'},

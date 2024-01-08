@@ -1,5 +1,5 @@
-import {Link} from '../../shared';
-import {QLChartType} from '../constants/ql';
+import {Link, WizardVisualizationId} from '../../shared';
+import {QLChartType} from '../constants';
 
 export function isMonitoringOrPrometheusChart(chartType: string | null | undefined) {
     return chartType === QLChartType.Monitoringql || chartType === QLChartType.Promql;
@@ -26,4 +26,14 @@ export function getItemLinkWithDatasets(
         });
 
     return targetLink;
+}
+
+export function isD3Visualization(id: WizardVisualizationId) {
+    const d3Visualizations = [
+        WizardVisualizationId.ScatterD3,
+        WizardVisualizationId.PieD3,
+        WizardVisualizationId.BarXD3,
+        WizardVisualizationId.LineD3,
+    ];
+    return d3Visualizations.includes(id);
 }
