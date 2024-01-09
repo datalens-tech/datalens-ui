@@ -9,20 +9,25 @@
     width: 100%;
     max-width: $contencDesktopMaxWidth;
 
+    &_mobile {
+        max-width: none;
+    }
+
     &__content {
         width: $contencDesktopMaxWidth;
-        @media (max-width: 480px) {
-            width: $contentSmallScreenWidth;
-        }
         max-height: 80vh;
         height: 500px;
         display: flex;
         flex-direction: column;
+
+        @media (max-width: 480px) {
+            width: $contentSmallScreenWidth;
+        }
     }
 
     &__header {
         max-width: 100%;
-        word-break: break-all;
+        word-break: break-word;
     }
 
     &__loader {
