@@ -55,10 +55,20 @@ export const CREATE_WORKBOOK_LOADING = Symbol('collectionsStructure/CREATE_WORKB
 export const CREATE_WORKBOOK_SUCCESS = Symbol('collectionsStructure/CREATE_WORKBOOK_SUCCESS');
 export const CREATE_WORKBOOK_FAILED = Symbol('collectionsStructure/CREATE_WORKBOOK_FAILED');
 
+// Moving collections
+export const MOVE_COLLECTIONS_LOADING = Symbol('collectionsStructure/MOVE_COLLECTIONS_LOADING');
+export const MOVE_COLLECTIONS_SUCCESS = Symbol('collectionsStructure/MOVE_COLLECTIONS_SUCCESS');
+export const MOVE_COLLECTIONS_FAILED = Symbol('collectionsStructure/MOVE_COLLECTIONS_FAILED');
+
 // Moving a collection
 export const MOVE_COLLECTION_LOADING = Symbol('collectionsStructure/MOVE_COLLECTION_LOADING');
 export const MOVE_COLLECTION_SUCCESS = Symbol('collectionsStructure/MOVE_COLLECTION_SUCCESS');
 export const MOVE_COLLECTION_FAILED = Symbol('collectionsStructure/MOVE_COLLECTION_FAILED');
+
+// Moving workbooks
+export const MOVE_WORKBOOKS_LOADING = Symbol('collectionsStructure/MOVE_WORKBOOKS_LOADING');
+export const MOVE_WORKBOOKS_SUCCESS = Symbol('collectionsStructure/MOVE_WORKBOOKS_SUCCESS');
+export const MOVE_WORKBOOKS_FAILED = Symbol('collectionsStructure/MOVE_WORKBOOKS_FAILED');
 
 // Moving the workbook
 export const MOVE_WORKBOOK_LOADING = Symbol('collectionsStructure/MOVE_WORKBOOK_LOADING');

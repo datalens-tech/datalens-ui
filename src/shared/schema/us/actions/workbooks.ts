@@ -21,11 +21,14 @@ import {
     MigrateEntriesToWorkbookResponse,
     MoveWorkbookArgs,
     MoveWorkbookResponse,
+    MoveWorkbooksArgs,
+    MoveWorkbooksResponse,
     UpdateWorkbookArgs,
     UpdateWorkbookResponse,
 } from '../types';
 
 export const PATH_PREFIX = '/v2/workbooks';
+const MOVE_LIST_PATH_PREFIX = '/v2/move-workbooks';
 
 export const workbooksActions = {
     createWorkbook: createAction<CreateWorkbookResponse, CreateWorkbookArgs>({
@@ -95,6 +98,15 @@ export const workbooksActions = {
         method: 'POST',
         path: ({workbookId}) => `${PATH_PREFIX}/${workbookId}/move`,
         params: ({collectionId, title}, headers) => ({body: {collectionId, title}, headers}),
+    }),
+
+    moveWorkbooks: createAction<MoveWorkbooksResponse, MoveWorkbooksArgs>({
+        method: 'POST',
+        path: () => MOVE_LIST_PATH_PREFIX,
+        params: ({workbookIds, collectionId}, headers) => ({
+            body: {workbookIds, collectionId},
+            headers,
+        }),
     }),
 
     deleteWorkbook: createAction<DeleteWorkbookResponse, DeleteWorkbookArgs>({

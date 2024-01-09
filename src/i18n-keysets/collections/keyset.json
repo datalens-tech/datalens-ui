@@ -56,6 +56,18 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
+    "action_select": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_select-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "action_reset-all": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "action_move": {
       "en": "APPROVED",
       "ru": "APPROVED"

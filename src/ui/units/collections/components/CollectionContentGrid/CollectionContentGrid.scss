@@ -6,10 +6,25 @@
     }
 
     &__content-item {
+        position: relative;
         height: auto;
+        cursor: pointer;
+    }
 
-        color: inherit;
+    &__content-item-link {
         text-decoration: none;
+        color: inherit;
+
+        &_selection-mode {
+            pointer-events: none;
+        }
+    }
+
+    &__content-item-checkbox {
+        position: absolute;
+        left: 14px;
+        top: 14px;
+        z-index: 9;
     }
 
     &__title-col-text {
@@ -21,6 +36,12 @@
         max-width: 125px;
         overflow: hidden;
         white-space: nowrap;
+    }
+
+    &__title-col-icon {
+        &_selection-mode {
+            opacity: 0.5;
+        }
     }
 
     &__content-footer {

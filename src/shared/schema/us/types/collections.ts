@@ -106,6 +106,15 @@ export type MoveCollectionArgs = {
 
 export type MoveCollectionResponse = Collection;
 
+export type MoveCollectionsArgs = {
+    collectionIds: string[];
+    parentId: string | null;
+};
+
+export type MoveCollectionsResponse = {
+    collections: Collection[];
+};
+
 export type UpdateCollectionArgs = {
     collectionId: string;
     title?: string;
