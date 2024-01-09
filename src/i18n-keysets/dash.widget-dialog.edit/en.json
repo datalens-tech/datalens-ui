@@ -22,7 +22,6 @@
   "label_filtering-other-charts": "Filtering",
   "label_new-param": "New parameter",
   "label_settings": "Settings",
-  "label_tab-settings": "Tab settings",
   "label_widget": "Chart",
   "toast_required-field": "The field cannot be empty",
   "value_title-default": "Title {{index}}"

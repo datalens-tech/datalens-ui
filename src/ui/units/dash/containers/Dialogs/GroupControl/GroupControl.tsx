@@ -35,7 +35,6 @@ export const GroupControl = () => {
             footer={<GroupControlFooter handleClose={handleClose} />}
             contentClassMixin={b('content')}
             sidebarClassMixin={b('sidebar-content')}
-            hideSideBar={false}
         />
     );
 };

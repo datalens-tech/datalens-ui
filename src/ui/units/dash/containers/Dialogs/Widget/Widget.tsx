@@ -419,11 +419,7 @@ class Widget extends React.PureComponent<Props, State> {
         }
         const {data, tabIndex, selectedEntryType} = this.state;
         const caption = (
-            <div
-                className={b('caption', {
-                    inactive: !isEntryTypeWithFiltering(selectedEntryType),
-                })}
-            >
+            <div className={b('caption')}>
                 <span className={b('caption-text')}>
                     {i18n('dash.widget-dialog.edit', 'label_filtering-other-charts')}
                 </span>
@@ -454,11 +450,7 @@ class Widget extends React.PureComponent<Props, State> {
         const {workbookId} = this.props;
 
         const autoHeightCheckboxCaption = (
-            <div
-                className={b('caption', {
-                    inactive: !isWidgetTypeWithAutoHeight(selectedWidgetType),
-                })}
-            >
+            <div className={b('caption')}>
                 <span className={b('caption-text')}>
                     {i18n('dash.widget-dialog.edit', 'field_autoheight')}
                 </span>
@@ -645,8 +637,6 @@ class Widget extends React.PureComponent<Props, State> {
         const sidebar = this.renderDialogSidebar();
         const footer = this.renderDialogFooter();
         const content = this.renderDialogBody();
-        const bodyHeaderKey = 'label_tab-settings';
-        const bodyHeader = i18n('dash.widget-dialog.edit', bodyHeaderKey);
 
         const showFilteringChartSetting = Utils.isEnabledFeature(Feature.ShowFilteringChartSetting);
 
@@ -657,10 +647,11 @@ class Widget extends React.PureComponent<Props, State> {
                 onClose={closeDialog}
                 sidebarHeader={i18n('dash.widget-dialog.edit', 'label_widget')}
                 sidebar={sidebar}
-                bodyHeader={bodyHeader}
                 body={content}
                 footer={footer}
                 sidebarClassMixin={b('dialog-sidebar')}
+                contentClassMixin={b('content')}
+                bodyClassMixin={b('content-body')}
                 disableFocusTrap={true}
             />
         );

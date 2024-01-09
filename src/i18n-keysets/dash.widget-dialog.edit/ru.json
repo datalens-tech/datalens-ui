@@ -22,7 +22,6 @@
   "label_filtering-other-charts": "Фильтрация",
   "label_new-param": "Новый параметр",
   "label_settings": "Настройки",
-  "label_tab-settings": "Настройка таба",
   "label_widget": "Чарт",
   "toast_required-field": "Поле должно быть заполнено",
   "value_title-default": "Заголовок {{index}}"
