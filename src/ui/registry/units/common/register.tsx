@@ -15,6 +15,7 @@ import {getInitDestination} from '../../../components/Navigation/Base/utils';
 import {getPlaceSelectParameters} from '../../../components/Navigation/util';
 import {UserAvatarById} from '../../../components/UserAvatar/UserAvatarById';
 import {YfmWrapperContent} from '../../../components/YfmWrapper/YfmWrapperContent';
+import {DatepickerControl} from '../../../components/common/DatepickerControl/DatepickerControl';
 import {getUpdatedUserSettings} from '../../../store/utils/user';
 import {getIconDataById} from '../../../utils/icons';
 import {getUIEntryRoute} from '../../../utils/urlUtils';
@@ -30,6 +31,7 @@ export const registerCommonPlugins = () => {
         UserAvatarById,
         EntryBreadcrumbs,
         YfmWrapperContent,
+        DatepickerControl,
     });
 
     registry.common.functions.register({

@@ -16,6 +16,7 @@ import {
 
 import {FilterValue} from '../../../../../../../../shared/modules';
 import {DATASET_FIELD_TYPES} from '../../../../../../../../shared/types';
+import {registry} from '../../../../../../../registry';
 import DateDefaultValue from '../../../Control/Date/Default/Default';
 import {CheckboxControlValue} from '../../../Control/constants';
 
@@ -176,7 +177,13 @@ const CheckboxValueControl = () => {
 const ValueSelector: React.FC = () => {
     const controlType = useSelector(selectSelectorControlType);
 
-    let inputControl = null;
+    const {getExtendedValueSelector} = registry.dash.functions.getAll();
+
+    let inputControl = getExtendedValueSelector(controlType);
+
+    if (inputControl) {
+        return inputControl;
+    }
 
     switch (controlType) {
         case 'date': {

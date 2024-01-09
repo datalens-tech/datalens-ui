@@ -26,6 +26,7 @@ import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/er
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
+import {registry} from '../../../../registry';
 import {loadRevisions, setEntryContent} from '../../../../store/actions/entryContent';
 import {showToast} from '../../../../store/actions/toaster';
 import {EntryGlobalState, RevisionsMode} from '../../../../store/typings/entryContent';
@@ -279,12 +280,13 @@ type SetItemDataBase = {
     autoHeight?: boolean;
     source?: ItemDataSource;
 };
-type SetItemDataText = Partial<PluginTextProps['data']> & SetItemDataBase;
-type SetItemDataTitle = Partial<PluginTitleProps['data']> & SetItemDataBase;
+export type SetItemDataText = Partial<PluginTextProps['data']> & SetItemDataBase;
+export type SetItemDataTitle = Partial<PluginTitleProps['data']> & SetItemDataBase;
+export type SetItemDataDefaults = Record<string, string | string[]>;
 
-type SetItemDataArgs = {
+export type SetItemDataArgs = {
     data: SetItemDataText | SetItemDataTitle;
-    defaults?: Record<string, string | string[]>;
+    defaults?: SetItemDataDefaults;
 };
 
 export const setItemData = (data: SetItemDataArgs) => ({
@@ -520,15 +522,21 @@ export const applyControl2Dialog = () => {
                 );
             }
 
+            const {getExtendedItemData} = registry.dash.functions.getAll();
+
+            const data = {
+                title,
+                sourceType,
+                autoHeight,
+                source: getItemDataSource(selectorDialog),
+            };
+
+            const itemData = getExtendedItemData({data, defaults});
+
             dispatch(
                 setItemData({
-                    data: {
-                        title,
-                        sourceType,
-                        autoHeight,
-                        source: getItemDataSource(selectorDialog),
-                    },
-                    defaults,
+                    data: itemData.data,
+                    defaults: itemData.defaults,
                 }),
             );
 
