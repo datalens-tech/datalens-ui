@@ -1,5 +1,6 @@
 .dl-field-editor {
     $docPaddingSide: 24px;
+    $controlsPaddingSide: 32px;
 
     width: 80vw;
     min-width: 800px;
@@ -10,12 +11,13 @@
     &__settings {
         display: flex;
         align-items: center;
-        padding: 5px 32px 20px;
+        padding: 5px $controlsPaddingSide 20px;
         border-bottom: 1px solid var(--g-color-line-generic);
     }
 
     &__settings-field-name {
-        width: 300px;
+        flex-grow: 1;
+        max-width: 500px;
         height: 28px;
     }
 
@@ -49,16 +51,18 @@
     }
 
     &__source-section {
-        padding-left: 32px;
-        padding-top: 20px;
+        padding: 20px $controlsPaddingSide 0;
         overflow-y: auto;
     }
 
     &__source-section-control {
+        flex-grow: 1;
+        max-width: 585px;
         width: 300px;
 
         &_short {
             width: 200px;
+            max-width: 200px;
         }
     }
 
@@ -227,5 +231,5 @@
         z-index: 0;
     }
 
-    --dl-dataset-field-list-item-padding-left: 32px;
+    --dl-dataset-field-list-item-padding-left: #{$controlsPaddingSide};
 }

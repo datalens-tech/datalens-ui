@@ -3,7 +3,6 @@ import React from 'react';
 import {HelpPopover} from '@gravity-ui/components';
 import {Select, SelectOption, SelectProps, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
 import {
     AvailableFieldType,
@@ -183,16 +182,15 @@ const SourceSection: React.FC<SourceSectionProps> = (props) => {
                 <div className={b('label')}>
                     <span>{i18n('label_field-source')}</span>
                 </div>
-                <FieldWrapper error={sourceErrorMessageKey && i18n(sourceErrorMessageKey)}>
-                    <Select
-                        className={b('source-section-control')}
-                        filterable={true}
-                        options={sourceItems}
-                        value={source ? [source] : []}
-                        disabled={!sourceItems.length}
-                        onUpdate={handleSourceChange}
-                    />
-                </FieldWrapper>
+                <Select
+                    error={sourceErrorMessageKey && i18n(sourceErrorMessageKey)}
+                    className={b('source-section-control')}
+                    filterable={true}
+                    options={sourceItems}
+                    value={source ? [source] : []}
+                    disabled={!sourceItems.length}
+                    onUpdate={handleSourceChange}
+                />
             </div>
             <div className={b('row')}>
                 <div className={b('label')}>
