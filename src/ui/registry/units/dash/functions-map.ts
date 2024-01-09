@@ -1,7 +1,12 @@
+import type {ReactElement} from 'react';
+
 import type {EntryDialogOnCloseArg} from 'ui/components/EntryDialogues/types';
 
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
-import type {SetItemDataArgs} from '../../../units/dash/store/actions/dashTyped';
+import type {
+    SelectorElementType,
+    SetItemDataArgs,
+} from '../../../units/dash/store/actions/dashTyped';
 import {EXAMPLE_FUNCTION} from '../common/constants/functions';
 
 export const dashFunctionsMap = {
@@ -11,4 +16,8 @@ export const dashFunctionsMap = {
     getNewDashUrl: makeFunctionTemplate<(workbookId?: string) => string>(),
     getMinAutoupdateInterval: makeFunctionTemplate<() => number>(),
     getExtendedItemData: makeFunctionTemplate<(args: SetItemDataArgs) => SetItemDataArgs>(),
+    getExtendedValueSelector:
+        makeFunctionTemplate<
+            (controlType: SelectorElementType | undefined) => ReactElement | null
+        >(),
 } as const;
