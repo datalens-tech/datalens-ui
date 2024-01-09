@@ -417,23 +417,34 @@ type AddWorkbookInfoAction = {
         workbookId: string;
         workbookName: string;
         workbookPermissions: WorkbookPermission;
+        workbookBreadcrumbs: GetCollectionBreadcrumbsResponse | null;
     };
 };
 
-export const addWorkbookInfo = (workbookId: string) => {
-    return (dispatch: WorkbooksDispatch) => {
-        getSdk()
-            .us.getWorkbook({workbookId, includePermissionsInfo: true})
-            .then((workbook) => {
-                dispatch({
-                    type: ADD_WORKBOOK_INFO,
-                    data: {
-                        workbookId,
-                        workbookName: workbook.title,
-                        workbookPermissions: workbook.permissions,
-                    },
-                });
-            });
+export const addWorkbookInfo = (workbookId: string, withBreadcrumbs = false) => {
+    return async (dispatch: WorkbooksDispatch) => {
+        const workbook = await getSdk().us.getWorkbook({workbookId, includePermissionsInfo: true});
+
+        let workbookBreadcrumbs = null;
+
+        if (withBreadcrumbs && workbook.collectionId) {
+            workbookBreadcrumbs = await getSdk().us.getCollectionBreadcrumbs(
+                {
+                    collectionId: workbook.collectionId,
+                },
+                {concurrentId: 'workbooks/getCollectionBreadcrumbs'},
+            );
+        }
+
+        dispatch({
+            type: ADD_WORKBOOK_INFO,
+            data: {
+                workbookId,
+                workbookName: workbook.title,
+                workbookPermissions: workbook.permissions,
+                workbookBreadcrumbs,
+            },
+        });
     };
 };
 

@@ -11,8 +11,8 @@ import {Dispatch, bindActionCreators} from 'redux';
 import {ActionPanelQA} from 'shared';
 import {DatalensGlobalState, EntryDialogues, sdk} from 'ui';
 import {registry} from 'ui/registry';
-import {getWorkbook, resetWorkbookPermissions} from 'units/workbooks/store/actions';
-import {selectWorkbook} from 'units/workbooks/store/selectors';
+import {addWorkbookInfo, resetWorkbookPermissions} from 'units/workbooks/store/actions';
+import {selectWorkbookBreadcrumbs, selectWorkbookName} from 'units/workbooks/store/selectors';
 
 import type {GetEntryResponse} from '../../../../../shared/schema';
 import {DL} from '../../../../constants/common';
@@ -104,7 +104,7 @@ class EntryPanel extends React.Component<Props, State> {
         const workbookId = this.state.entry?.workbookId;
 
         if (workbookId) {
-            this.props.actions.getWorkbook({workbookId});
+            this.props.actions.addWorkbookInfo(workbookId, true);
         }
     }
 
@@ -113,7 +113,7 @@ class EntryPanel extends React.Component<Props, State> {
         const prevWorkbookId = prevProps.entry?.workbookId;
 
         if (prevWorkbookId !== workbookId && workbookId) {
-            this.props.actions.getWorkbook({workbookId});
+            this.props.actions.addWorkbookInfo(workbookId, true);
         }
 
         if (prevWorkbookId && !workbookId) {
@@ -122,7 +122,7 @@ class EntryPanel extends React.Component<Props, State> {
     }
 
     render() {
-        const {children} = this.props;
+        const {children, workbookName, workbookBreadcrumbs} = this.props;
         const {
             entry: {isFavorite} = {isFavorite: undefined},
             entry,
@@ -141,7 +141,8 @@ class EntryPanel extends React.Component<Props, State> {
                 <EntryBreadcrumbs
                     renderRootContent={this.renderRootContent}
                     entry={this.state.entry}
-                    workbook={this.props.workbook}
+                    workbookName={workbookName}
+                    workbookBreadcrumbs={workbookBreadcrumbs}
                     openNavigationAction={this.openNavigation}
                 />
                 <div className={b()}>
@@ -331,9 +332,12 @@ class EntryPanel extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state: DatalensGlobalState) => {
+const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
+    const workbookId = ownProps.entry?.workbookId || '';
+
     return {
-        workbook: selectWorkbook(state),
+        workbookName: selectWorkbookName(state, workbookId),
+        workbookBreadcrumbs: selectWorkbookBreadcrumbs(state),
     };
 };
 
@@ -341,7 +345,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
         actions: bindActionCreators(
             {
-                getWorkbook,
+                addWorkbookInfo,
                 resetWorkbookPermissions,
             },
             dispatch,
