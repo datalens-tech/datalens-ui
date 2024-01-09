@@ -145,6 +145,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                     disableOutsideClick: true,
                     className: b(),
                 }}
+                dialogHeaderProps={{className: b('header')}}
                 dialogFooterProps={{
                     preset: 'default',
                     showError: false,

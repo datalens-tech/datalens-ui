@@ -22,7 +22,7 @@ import {
 export const entriesActions = {
     deleteEntry: createAction<DeleteEntryResponse, DeleteEntryArgs>(async (api, args) => {
         const typedApi = getTypedApi(api);
-        const {entryId, scope} = args;
+        const {entryId, lockToken, scope} = args;
         switch (scope) {
             case 'dataset': {
                 const data = await typedApi.bi.deleteDataset({datasetId: entryId});
@@ -33,7 +33,7 @@ export const entriesActions = {
                 return data;
             }
             default: {
-                const data = await typedApi.us._deleteUSEntry({entryId});
+                const data = await typedApi.us._deleteUSEntry({entryId, lockToken});
                 return data;
             }
         }

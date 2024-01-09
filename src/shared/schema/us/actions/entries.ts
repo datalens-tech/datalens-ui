@@ -238,7 +238,7 @@ export const entriesActions = {
     _deleteUSEntry: createAction<DeleteUSEntryResponse, DeleteUSEntryArgs>({
         method: 'DELETE',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: (_, headers) => ({headers}),
+        params: ({lockToken}, headers) => ({query: {lockToken}, headers}),
     }),
     searchEntries: createAction<SearchEntriesResponse, SearchEntriesArgs>({
         method: 'GET',

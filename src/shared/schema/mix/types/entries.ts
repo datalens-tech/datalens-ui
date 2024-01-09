@@ -22,6 +22,7 @@ export type DeleteEntryResponse =
 export interface DeleteEntryArgs {
     entryId: string;
     scope: string;
+    lockToken?: string;
 }
 
 export interface GetPublicationPreviewEntry extends Required<GetRelationsEntry, 'permissions'> {

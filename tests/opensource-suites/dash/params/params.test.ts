@@ -15,6 +15,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {WorkbooksUrls} from '../../../constants/constants';
 import {ChartsParams} from '../../../constants/test-entities/charts';
+import {dragAndDropListItem} from '../../../suites/dash/helpers';
 
 const DASH_PARAMS: Array<[string, string]> = [
     ['param1', ''],
@@ -427,4 +428,52 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
 
         await page.click(slct(DialogDashWidgetQA.Cancel));
     });
+
+    datalensTest(
+        'When dragging the chart tabs, the parameters do not change',
+        async ({page}: {page: Page}) => {
+            const dashboardPage = new DashboardPage({page});
+
+            await dashboardPage.enterEditMode();
+            await dashboardPage.clickFirstControlSettingsButton();
+
+            await addParam(page, {title: 'paramDnDCheck', value: 'valueDnDCheck'});
+
+            // getting the current parameters of the first tab
+            const firstTabParams = await getParamsFromPage(page);
+
+            const currentTabMenuItems = await page.$$(slct(TabMenuQA.Item));
+
+            // adding a new tab with empty parameters
+            await page.click(slct(TabMenuQA.Add));
+
+            let actualTabMenuItems;
+
+            // expecting that the number of chart tabs has increased by 1
+            await waitForCondition(async () => {
+                actualTabMenuItems = await page.$$(slct(TabMenuQA.Item));
+
+                return actualTabMenuItems.length === currentTabMenuItems.length + 1;
+            });
+
+            // dragging the first tab to the place of the added one
+            await dragAndDropListItem(page, {
+                listSelector: slct(TabMenuQA.List),
+                sourceIndex: 0,
+                targetIndex: 1,
+            });
+
+            actualTabMenuItems = await page.$$(slct(TabMenuQA.Item));
+
+            // switching to the second tab (with the old parameters)
+            await actualTabMenuItems[1].click();
+
+            const actualParams = await getParamsFromPage(page);
+
+            // the parameters should remain unchanged
+            expect(actualParams).toEqual(firstTabParams);
+
+            await page.click(slct(DialogDashWidgetQA.Cancel));
+        },
+    );
 });

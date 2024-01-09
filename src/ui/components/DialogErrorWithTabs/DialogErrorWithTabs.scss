@@ -1,18 +1,29 @@
 .dl-dialog-error {
+    $contentDesktopMaxWidth: 630px;
+    $contentSmallScreenWidth: 300px;
     // TODO: this is an private api and may silently changed. We should use local styles
     --yc-tabs-space-between: 20px;
 
     $class: &;
 
+    width: 100%;
+    max-width: $contentDesktopMaxWidth;
+
     &__content {
-        width: 630px;
-        @media (min-width: 320px) and (max-width: 480px) {
-            width: 300px;
-        }
+        width: $contentDesktopMaxWidth;
         max-height: 80vh;
         height: 500px;
         display: flex;
         flex-direction: column;
+
+        @media (max-width: 480px) {
+            width: $contentSmallScreenWidth;
+        }
+    }
+
+    &__header {
+        max-width: 100%;
+        word-break: break-word;
     }
 
     &__loader {
@@ -25,6 +36,7 @@
 
     &_mobile {
         padding: 0 16px;
+        max-width: none;
 
         #{$class}__tab-navigation {
             margin-top: 8px;
