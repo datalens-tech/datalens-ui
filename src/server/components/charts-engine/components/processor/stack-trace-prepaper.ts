@@ -3,7 +3,6 @@ export class StackTracePreparer {
         const TRACE_STOP_LINES = [
             'ContextifyScript.Script.runInContext',
             'Object.exports.runInNewContext',
-            'bluebird/js/release/debuggability.js',
             '/components/editor-engine/',
         ];
         const TRACE_SANDBOX_ENTRY_LINE = 'components/editor-engine/sandbox';

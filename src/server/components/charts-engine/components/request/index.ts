@@ -1,14 +1,14 @@
 import {AppContext} from '@gravity-ui/nodekit';
 import {crc32c} from '@node-rs/crc32';
-import {Promise} from 'bluebird';
 import {RequiredUriUrl} from 'request';
-import requestPromise, {RequestPromise, RequestPromiseOptions} from 'request-promise';
+import requestPromise, {RequestPromise, RequestPromiseOptions} from 'request-promise-native';
 
 import {CacheClient} from '../../../cache-client';
 import {config} from '../../constants';
 import {hideSensitiveData} from '../utils';
 
-type RequestOptions = RequiredUriUrl & RequestPromiseOptions & {useCaching?: boolean};
+type RequestOptions = RequiredUriUrl &
+    RequestPromiseOptions & {useCaching?: boolean; signal: AbortSignal};
 
 type CachedRequestOptions = RequestOptions & {
     uri: string;
@@ -71,6 +71,12 @@ export class Request {
             allBuffersLength: number;
         };
     }) {
+        const {signal} = requestOptions;
+
+        if (signal?.aborted === true) {
+            throw new Error(signal.reason);
+        }
+
         function dataLengthCheck(requestInstance: RequestPromise) {
             let bufferLength = 0;
 
