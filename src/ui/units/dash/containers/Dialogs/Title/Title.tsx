@@ -77,6 +77,7 @@ class Title extends React.PureComponent<Props, State> {
             <Dialog
                 open={visible}
                 onClose={this.props.closeDialog}
+                onEnterKeyDown={this.onApply}
                 qa={DialogDashWidgetItemQA.Title}
             >
                 <Dialog.Header caption={i18n('dash.title-dialog.edit', 'label_title')} />

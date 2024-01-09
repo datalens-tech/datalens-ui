@@ -230,6 +230,8 @@ export function visualization(
                     case 'treemap-column100p':
                     case 'treemap-bar':
                     case 'treemap-bar100p':
+                    case 'line-line-d3':
+                    case 'line-d3-line':
                         if (oldPlaceholders[0].items.length) {
                             const isNextVisualizationCombinedChart =
                                 action.visualization.id === WizardVisualizationId.CombinedChart;

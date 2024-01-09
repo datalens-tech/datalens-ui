@@ -18,6 +18,7 @@ import prepareGeopolygonData from '../../../preparers/geopolygon';
 import prepareHeatmapData from '../../../preparers/heatmap';
 import {prepareHighchartsLine} from '../../../preparers/line';
 import prepareLineTime from '../../../preparers/line-time';
+import {prepareD3Line} from '../../../preparers/line/d3';
 import prepareMetricData from '../../../preparers/metric';
 import preparePivotTableData from '../../../preparers/old-pivot-table/old-pivot-table';
 import {prepareD3Pie, prepareHighchartsPie} from '../../../preparers/pie';
@@ -26,13 +27,13 @@ import {prepareD3Scatter, prepareHighchartsScatter} from '../../../preparers/sca
 import prepareTreemapData from '../../../preparers/treemap';
 import {PrepareFunction, PrepareFunctionResultData} from '../../../preparers/types';
 import {OversizeErrorType} from '../../constants/errors';
-import {getChartColorsConfig} from '../../helpers/colors';
-import {getOversizeError} from '../../helpers/errors/oversize-error';
+import {getChartColorsConfig} from '../colors';
+import {getOversizeError} from '../errors/oversize-error';
 import {
     isBackendPivotCellsOversizeError,
     isBackendPivotColumnsOversizeError,
     isDefaultOversizeError,
-} from '../../helpers/errors/oversize-error/utils';
+} from '../errors/oversize-error/utils';
 
 type PrepareSingleResultArgs = {
     resultData: PrepareFunctionResultData;
@@ -125,6 +126,12 @@ export default ({
             prepare = isMonitoringOrPrometheusChart(chartType)
                 ? prepareLineTime
                 : prepareHighchartsBarX;
+            break;
+        }
+
+        case WizardVisualizationId.LineD3: {
+            prepare = isMonitoringOrPrometheusChart(chartType) ? prepareLineTime : prepareD3Line;
+            rowsLimit = 75000;
             break;
         }
 

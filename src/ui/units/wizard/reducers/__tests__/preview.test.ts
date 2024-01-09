@@ -27,6 +27,7 @@ describe('Preview reducer', () => {
             [VISUALIZATION_IDS.BAR_X_D3]: WizardType.D3WizardNode,
             [VISUALIZATION_IDS.BAR_100P]: WizardType.GraphWizardNode,
             [VISUALIZATION_IDS.LINE]: WizardType.GraphWizardNode,
+            [VISUALIZATION_IDS.LINE_D3]: WizardType.D3WizardNode,
             [VISUALIZATION_IDS.COLUMN]: WizardType.GraphWizardNode,
             [VISUALIZATION_IDS.COLUMN_100P]: WizardType.GraphWizardNode,
             [VISUALIZATION_IDS.PIE]: WizardType.GraphWizardNode,

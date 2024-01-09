@@ -9,7 +9,13 @@ import {
     Link,
     ServerDatasetField,
 } from '../';
-import {ColorMode, GradientType, NavigatorLinesMode, NavigatorPeriod} from '../../constants';
+import {
+    ColorMode,
+    GradientType,
+    NavigatorLinesMode,
+    NavigatorPeriod,
+    WizardVisualizationId,
+} from '../../constants';
 import {IconId} from '../../types';
 import {CommonUpdate, CommonUpdateField} from '../common-update';
 import {DatasetField} from '../dataset';
@@ -169,20 +175,21 @@ interface CommonSharedLayer extends CommonShared {
 export interface GraphShared extends CommonShared {
     visualization: {
         id:
-            | 'line'
-            | 'area'
-            | 'area100p'
-            | 'column'
-            | 'column100p'
-            | 'bar'
-            | 'bar100p'
-            | 'bar-x-d3'
-            | 'pie'
-            | 'pie-d3'
-            | 'donut'
-            | 'scatter'
-            | 'scatter-d3'
-            | 'treemap';
+            | WizardVisualizationId.Line
+            | WizardVisualizationId.LineD3
+            | WizardVisualizationId.Area
+            | WizardVisualizationId.Area100p
+            | WizardVisualizationId.Column
+            | WizardVisualizationId.BarXD3
+            | WizardVisualizationId.Column100p
+            | WizardVisualizationId.Bar
+            | WizardVisualizationId.Bar100p
+            | WizardVisualizationId.Pie
+            | WizardVisualizationId.PieD3
+            | WizardVisualizationId.Donut
+            | WizardVisualizationId.Scatter
+            | WizardVisualizationId.ScatterD3
+            | WizardVisualizationId.Treemap;
         iconProps: VisualizationIconProps;
         name: string;
         hidden?: boolean;

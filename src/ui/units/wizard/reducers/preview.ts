@@ -18,6 +18,8 @@ import {
     Update,
     VisualizationWithLayersShared,
     WizardType,
+    WizardVisualizationId,
+    isD3Visualization,
     isVisualizationWithLayers,
 } from 'shared';
 
@@ -266,6 +268,10 @@ function mutateAndValidateVisualization({
 }
 
 const getChartTypeByVisualizationId = (visualizationId: string): WizardType => {
+    if (isD3Visualization(visualizationId as WizardVisualizationId)) {
+        return WizardType.D3WizardNode;
+    }
+
     switch (visualizationId) {
         case VISUALIZATION_IDS.FLAT_TABLE:
         case VISUALIZATION_IDS.PIVOT_TABLE: {
@@ -280,11 +286,6 @@ const getChartTypeByVisualizationId = (visualizationId: string): WizardType => {
         }
         case VISUALIZATION_IDS.METRIC: {
             return WizardType.MetricWizardNode;
-        }
-        case VISUALIZATION_IDS.SCATTER_D3:
-        case VISUALIZATION_IDS.BAR_X_D3:
-        case VISUALIZATION_IDS.PIE_D3: {
-            return WizardType.D3WizardNode;
         }
         default: {
             return WizardType.GraphWizardNode;

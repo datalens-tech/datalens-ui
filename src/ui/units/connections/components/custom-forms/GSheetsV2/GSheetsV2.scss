@@ -30,29 +30,6 @@ $titleHeight: 57px;
         align-items: center;
     }
 
-    &__title-add-logout-label > .yc-label__text {
-        margin-right: 0;
-    }
-
-    &__title-add-logout-btn {
-        // TODO: this is an private api and may silently changed. We should use local styles
-        --yc-button-background-color: transparent;
-        --yc-button-background-color-hover: var(--g-color-base-misc-heavy-hover);
-        --yc-button-border-radius: 4px;
-
-        margin-left: 6px;
-        color: var(--g-color-text-misc);
-
-        &:active,
-        &:focus {
-            color: var(--g-color-text-misc);
-        }
-
-        &:hover {
-            color: var(--g-color-text-inverted-primary);
-        }
-    }
-
     &__help-btn {
         top: 1px;
         left: 5px;

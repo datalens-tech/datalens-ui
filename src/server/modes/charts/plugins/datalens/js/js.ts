@@ -18,6 +18,7 @@ import {
     ServerVisualization,
     ServerVisualizationLayer,
     Shared,
+    WizardVisualizationId,
     isDateType,
     isMarkupField,
 } from '../../../../../../shared';
@@ -31,7 +32,7 @@ import prepareGeopointData from '../preparers/geopoint';
 import prepareGeopointWithClusterData from '../preparers/geopoint-with-cluster';
 import prepareGeopolygonData from '../preparers/geopolygon';
 import prepareHeatmapData from '../preparers/heatmap';
-import {prepareHighchartsLine} from '../preparers/line';
+import {prepareD3Line, prepareHighchartsLine} from '../preparers/line';
 import prepareMetricData from '../preparers/metric';
 import preparePivotTableData from '../preparers/old-pivot-table/old-pivot-table';
 import {prepareD3Pie, prepareHighchartsPie} from '../preparers/pie';
@@ -500,6 +501,14 @@ function prepareSingleResult({
         case 'bar':
         case 'bar100p': {
             prepare = prepareHighchartsBarY;
+            rowsLimit = 75000;
+            break;
+        }
+
+        case WizardVisualizationId.LineD3: {
+            shapes = shared.shapes || [];
+            shapesConfig = shared.shapesConfig;
+            prepare = prepareD3Line;
             rowsLimit = 75000;
             break;
         }
