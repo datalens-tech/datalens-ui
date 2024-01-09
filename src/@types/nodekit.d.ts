@@ -1,4 +1,4 @@
-import {Link} from '@gravity-ui/app-layout';
+import {Link, Meta} from '@gravity-ui/app-layout';
 import {Request, Response} from '@gravity-ui/expresskit';
 
 import {FeaturesConfig} from '../src/components/features/types';
@@ -17,6 +17,7 @@ export interface SharedAppConfig {
     faviconUrl: string;
 
     links?: Link[];
+    meta?: Meta[];
 
     chartkitSettings?: ChartkitGlobalSettings;
     serviceName: string;
