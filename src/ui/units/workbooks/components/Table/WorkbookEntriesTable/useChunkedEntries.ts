@@ -41,7 +41,7 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
                 return workbookEntry;
             });
 
-        const items: ChunkItem[] = [];
+        let items: ChunkItem[] = [];
 
         if (workbookEntries.length === 0) {
             items.push({
@@ -49,13 +49,11 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
                 key: 'empty',
             });
         } else {
-            items.push(
-                ...workbookEntries.map<EntryChunkItem>((item) => ({
-                    type: 'entry',
-                    item,
-                    key: item.entryId,
-                })),
-            );
+            items = workbookEntries.map<EntryChunkItem>((item) => ({
+                type: 'entry',
+                item,
+                key: item.entryId,
+            }));
         }
 
         return _.chunk(items, CHUNK_SIZE);

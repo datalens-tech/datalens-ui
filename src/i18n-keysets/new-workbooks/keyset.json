@@ -60,6 +60,10 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
+    "action_show-more": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "button_apply": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -73,6 +77,10 @@
       "ru": "APPROVED"
     },
     "button_workbook-table-retry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_author": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -108,6 +116,22 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
+    "title_dashboards": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_charts": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_datasets": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "title_connections": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "menu_connection": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -129,6 +153,10 @@
       "ru": "APPROVED"
     },
     "menu_wizard-chart": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "no_objects": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },

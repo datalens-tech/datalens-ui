@@ -37,6 +37,12 @@ export const DELETE_ENTRY_SUCCESS = Symbol('workbooks/DELETE_ENTRY_SUCCESS');
 export const DELETE_ENTRY_FAILED = Symbol('workbooks/DELETE_ENTRY_FAILED');
 export const DELETE_ENTRY_INLINE = Symbol('workbooks/DELETE_ENTRY_INLINE');
 
+// Changing favorite an entry
+export const CHANGE_FAVORITE_ENTRY_LOADING = Symbol('workbooks/CHANGE_FAVORITE_ENTRY_LOADING');
+export const CHANGE_FAVORITE_ENTRY_SUCCESS = Symbol('workbooks/CHANGE_FAVORITE_ENTRY_SUCCESS');
+export const CHANGE_FAVORITE_ENTRY_FAILED = Symbol('workbooks/CHANGE_FAVORITE_ENTRY_FAILED');
+export const CHANGE_FAVORITE_ENTRY_INLINE = Symbol('workbooks/CHANGE_FAVORITE_ENTRY_INLINE');
+
 // Resetting the entire state of workbooks to initialState
 export const RESET_WORKBOOK_STATE = Symbol('workbooks/RESET_WORKBOOK_STATE');
 

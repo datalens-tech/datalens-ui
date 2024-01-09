@@ -13,11 +13,13 @@ import {ViewError} from 'components/ViewError/ViewError';
 import {I18N} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
+import {EntryScope} from 'shared';
 import {Utils} from 'ui';
 
 import {registry} from '../../../../registry';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import {
+    WorkbooksDispatch,
     changeFilters,
     getWorkbook,
     getWorkbookBreadcrumbs,
@@ -58,17 +60,21 @@ export const WorkbookPage = () => {
         return queryTab ? (queryTab as TabId) : undefined;
     }, [search]);
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<WorkbooksDispatch>();
+    const dialogDispatch = useDispatch();
     const collectionId = useSelector(selectCollectionId);
     const breadcrumbs = useSelector(selectBreadcrumbs);
     const workbook = useSelector(selectWorkbook);
     const pageError = useSelector(selectPageError);
     const breadcrumbsError = useSelector(selectBreadcrumbsError);
     const isWorkbookInfoLoading = useSelector(selectWorkbookInfoIsLoading);
+
     const nextPageToken = useSelector(selectNextPageToken);
     const filters = useSelector(selectWorkbookFilters);
+    const [mapTokens, setMapTokens] = React.useState<Record<string, string>>({});
 
-    const scope = activeTab === TAB_ALL ? undefined : activeTab;
+    const isMainTab = activeTab === TAB_ALL;
+    const scope = isMainTab ? undefined : activeTab;
 
     const initLoadWorkbook = React.useCallback(() => {
         dispatch(resetWorkbookState());
@@ -81,9 +87,34 @@ export const WorkbookPage = () => {
 
     const loadMoreEntries = React.useCallback(() => {
         if (nextPageToken) {
-            dispatch(getWorkbookEntries({workbookId, filters, scope, nextPageToken}));
+            dispatch(
+                getWorkbookEntries({
+                    workbookId,
+                    filters,
+                    scope,
+                    nextPageToken,
+                }),
+            );
         }
-    }, [nextPageToken, dispatch, filters, workbookId, scope]);
+    }, [nextPageToken, dispatch, workbookId, filters, scope]);
+
+    const loadMoreEntriesByScope = (entryScope: EntryScope) => {
+        if (mapTokens[entryScope]) {
+            dispatch(
+                getWorkbookEntries({
+                    workbookId,
+                    filters,
+                    scope: entryScope,
+                    nextPageToken: mapTokens[entryScope],
+                }),
+            ).then((data) => {
+                setMapTokens({
+                    ...mapTokens,
+                    [entryScope]: data?.nextPageToken || '',
+                });
+            });
+        }
+    };
 
     const retryLoadEntries = React.useCallback(() => {
         dispatch(getWorkbookEntries({workbookId, filters, scope, nextPageToken}));
@@ -120,9 +151,43 @@ export const WorkbookPage = () => {
 
         // Get entries only if active tab selected
         if (activeTab) {
-            dispatch(getWorkbookEntries({workbookId, filters, scope}));
+            (async () => {
+                if (isMainTab) {
+                    const tokensMap: Record<string, string> = {};
+
+                    await dispatch(
+                        getWorkbookEntries({workbookId, filters, scope: EntryScope.Dash}),
+                    ).then((data) => {
+                        tokensMap[EntryScope.Dash] = data?.nextPageToken || '';
+                    });
+
+                    await dispatch(
+                        getWorkbookEntries({workbookId, filters, scope: EntryScope.Dataset}),
+                    ).then((data) => {
+                        tokensMap[EntryScope.Dataset] = data?.nextPageToken || '';
+                    });
+
+                    await dispatch(
+                        getWorkbookEntries({workbookId, filters, scope: EntryScope.Widget}),
+                    ).then((data) => {
+                        tokensMap[EntryScope.Widget] = data?.nextPageToken || '';
+                    });
+
+                    await dispatch(
+                        getWorkbookEntries({workbookId, filters, scope: EntryScope.Connection}),
+                    ).then((data) => {
+                        tokensMap[EntryScope.Connection] = data?.nextPageToken || '';
+                    });
+
+                    setMapTokens(tokensMap);
+                } else {
+                    await dispatch(getWorkbookEntries({workbookId, filters, scope})).then(
+                        (data) => data,
+                    );
+                }
+            })();
         }
-    }, [dispatch, workbookId, filters, activeTab, scope]);
+    }, [activeTab, dispatch, filters, isMainTab, scope, workbookId]);
 
     if (
         pageError ||
@@ -187,7 +252,7 @@ export const WorkbookPage = () => {
                                     <div>
                                         <Button
                                             onClick={() => {
-                                                dispatch(
+                                                dialogDispatch(
                                                     openDialog({
                                                         id: DIALOG_EDIT_WORKBOOK,
                                                         props: {
@@ -198,7 +263,7 @@ export const WorkbookPage = () => {
                                                                 workbook?.description ?? '',
                                                             onApply: refreshWorkbookInfo,
                                                             onClose: () => {
-                                                                dispatch(closeDialog());
+                                                                dialogDispatch(closeDialog());
                                                             },
                                                         },
                                                     }),
@@ -221,9 +286,11 @@ export const WorkbookPage = () => {
                         <div className={b('content')}>
                             <WorkbookContent
                                 loadMoreEntries={loadMoreEntries}
+                                loadMoreEntriesByScope={loadMoreEntriesByScope}
                                 retryLoadEntries={retryLoadEntries}
                                 refreshEntries={refreshEntries}
                                 scope={scope}
+                                mapTokens={mapTokens}
                             />
                         </div>
                     </div>

@@ -1,0 +1,66 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.dl-main-tab-content {
+    &__table {
+        display: table;
+        width: 100%;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        height: 48px;
+    }
+
+    &__header_closed {
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &__table-header {
+        display: table-header-group;
+    }
+
+    &__table-header-cell {
+        display: table-cell;
+    }
+
+    &__table-header-cell_title {
+        width: 60%;
+    }
+
+    &__table-header-cell_author {
+        width: 170px;
+    }
+
+    &__visibility-btn {
+        cursor: pointer;
+    }
+
+    &__content {
+        margin: auto 0;
+    }
+
+    &__title {
+        display: flex;
+        font-style: normal;
+        font-weight: 500;
+    }
+
+    &__title-text {
+        margin-left: 6px;
+    }
+
+    &__create-btn {
+        text-align: right;
+    }
+
+    &__no-objects {
+        color: var(--g-color-text-secondary);
+        margin-left: 20px;
+    }
+
+    &__show-more-btn {
+        width: 100%;
+        margin-top: 16px;
+    }
+}
