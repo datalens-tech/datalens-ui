@@ -17,6 +17,7 @@ import {
     isNumericalDataType,
 } from '../../../../utils/misc-helpers';
 import {LineTemplate} from '../../types';
+import {getDateAxisValue} from '../getXAxisValue';
 import {getSegmentName} from '../segments/getSegmentName';
 import {getY2SegmentNameKey} from '../segments/getSegmentsMap';
 import {RowDataValue} from '../types';
@@ -229,6 +230,8 @@ export const prepareLines = (args: PrepareLinesArgs) => {
             } else {
                 yValue = Number(yValue);
             }
+        } else if (yValue !== null && isDateField({data_type: yDataType})) {
+            yValue = getDateAxisValue(yValue, yDataType);
         }
 
         const yItemFormatting = field.formatting as CommonNumberFormattingOptions | undefined;
