@@ -110,7 +110,6 @@ export const getDatasetFields = async (args: {
                     if (setCacheResponse.status === Cache.OK) {
                         req.ctx.log('SET_DATASET_IN_CACHE_SUCCESS');
                     } else {
-                        req.ctx.logError('SET_DATASET_FIELDS_IN_CACHE_FAILED', setCacheResponse);
                         req.ctx.logError(
                             'SET_DATASET_FIELDS_IN_CACHE_FAILED',
                             new Error(setCacheResponse.message),
