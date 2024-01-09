@@ -143,7 +143,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                 dialogProps={{
                     disableEscapeKeyDown: true,
                     disableOutsideClick: true,
-                    className: b({mobile: isMobileView}),
+                    className: b(),
                 }}
                 dialogHeaderProps={{className: b('header')}}
                 dialogFooterProps={{
