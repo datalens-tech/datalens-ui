@@ -2,7 +2,7 @@ import React from 'react';
 
 import {
     Breadcrumbs,
-    BreadcrumbsProps,
+    BreadcrumbsItem,
     FirstDisplayedItemsCount,
     LastDisplayedItemsCount,
 } from '@gravity-ui/uikit';
@@ -17,17 +17,22 @@ import './EntryBreadcrumbs.scss';
 const b = block('entry-panel-breadcrumbs');
 
 export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
-    const {renderRootContent, entry, workbookName} = props;
+    const {renderRootContent, entry, workbookName, workbookBreadcrumbs} = props;
 
     const history = useHistory();
     const location = useLocation();
 
-    const breadcrumbsItems: BreadcrumbsProps['items'] = getWorkbookBreadcrumbsItems({
-        entry,
-        workbookName,
-        history,
-        location,
-    });
+    let breadcrumbsItems: BreadcrumbsItem[] = [];
+
+    if (entry?.workbookId) {
+        breadcrumbsItems = getWorkbookBreadcrumbsItems({
+            workbookBreadcrumbs,
+            workbookName,
+            entry,
+            history,
+            location,
+        });
+    }
 
     return (
         <Breadcrumbs

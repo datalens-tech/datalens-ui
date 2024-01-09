@@ -20,6 +20,9 @@ const selectDeleteEntry = (state: DatalensGlobalState) => state.workbooks.delete
 export const selectWorkbookPermissions = (state: DatalensGlobalState) =>
     state.workbooks.workbookPermissions;
 
+export const selectWorkbookBreadcrumbs = (state: DatalensGlobalState) =>
+    state.workbooks.workbookBreadcrumbs;
+
 // Status of loading information about the workbook
 export const selectWorkbookInfoIsLoading = createSelector(
     [selectGetWorkbook, selectGetWorkbookBreadcrumbs],

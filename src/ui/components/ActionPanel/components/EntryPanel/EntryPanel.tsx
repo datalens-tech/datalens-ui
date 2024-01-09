@@ -12,7 +12,7 @@ import {ActionPanelQA} from 'shared';
 import {DatalensGlobalState, EntryDialogues, sdk} from 'ui';
 import {registry} from 'ui/registry';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'units/workbooks/store/actions';
-import {selectWorkbookName} from 'units/workbooks/store/selectors';
+import {selectWorkbookBreadcrumbs, selectWorkbookName} from 'units/workbooks/store/selectors';
 
 import type {GetEntryResponse} from '../../../../../shared/schema';
 import {DL} from '../../../../constants/common';
@@ -104,7 +104,7 @@ class EntryPanel extends React.Component<Props, State> {
         const workbookId = this.state.entry?.workbookId;
 
         if (workbookId) {
-            this.props.actions.addWorkbookInfo(workbookId);
+            this.props.actions.addWorkbookInfo(workbookId, true);
         }
     }
 
@@ -113,7 +113,7 @@ class EntryPanel extends React.Component<Props, State> {
         const prevWorkbookId = prevProps.entry?.workbookId;
 
         if (prevWorkbookId !== workbookId && workbookId) {
-            this.props.actions.addWorkbookInfo(workbookId);
+            this.props.actions.addWorkbookInfo(workbookId, true);
         }
 
         if (prevWorkbookId && !workbookId) {
@@ -122,7 +122,7 @@ class EntryPanel extends React.Component<Props, State> {
     }
 
     render() {
-        const {children} = this.props;
+        const {children, workbookName, workbookBreadcrumbs} = this.props;
         const {
             entry: {isFavorite} = {isFavorite: undefined},
             entry,
@@ -141,7 +141,8 @@ class EntryPanel extends React.Component<Props, State> {
                 <EntryBreadcrumbs
                     renderRootContent={this.renderRootContent}
                     entry={this.state.entry}
-                    workbookName={this.props.workbookName}
+                    workbookName={workbookName}
+                    workbookBreadcrumbs={workbookBreadcrumbs}
                     openNavigationAction={this.openNavigation}
                 />
                 <div className={b()}>
@@ -336,6 +337,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
 
     return {
         workbookName: selectWorkbookName(state, workbookId),
+        workbookBreadcrumbs: selectWorkbookBreadcrumbs(state),
     };
 };
 

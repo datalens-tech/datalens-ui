@@ -72,6 +72,7 @@ export type WorkbooksState = {
     filters: WorkbookEntriesFilters;
     workbooksNames: Record<string, string>;
     workbookPermissions: WorkbookPermission | null;
+    workbookBreadcrumbs: GetCollectionBreadcrumbsResponse | null;
 };
 
 const initialState: WorkbooksState = {
@@ -111,6 +112,7 @@ const initialState: WorkbooksState = {
     },
     workbooksNames: {},
     workbookPermissions: null,
+    workbookBreadcrumbs: null,
 };
 
 // eslint-disable-next-line complexity
@@ -362,6 +364,7 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
                     [action.data.workbookId]: action.data.workbookName,
                 },
                 workbookPermissions: action.data.workbookPermissions,
+                workbookBreadcrumbs: action.data.workbookBreadcrumbs,
             };
         }
 
