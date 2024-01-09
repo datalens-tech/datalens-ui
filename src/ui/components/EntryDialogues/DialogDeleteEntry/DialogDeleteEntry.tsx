@@ -7,6 +7,7 @@ import {ResolveThunks, connect} from 'react-redux';
 import {showToast} from 'store/actions/toaster';
 import {DatalensGlobalState} from 'ui';
 import {selectLockToken} from 'ui/store/selectors/entryContent';
+// For now only dash is using lock if any other locks appear change it to entry action
 import {cleanLock} from 'units/dash/store/actions/dash';
 
 import type {EntryFields} from '../../../../shared/schema';
