@@ -9,10 +9,6 @@
     width: 100%;
     max-width: $contentDesktopMaxWidth;
 
-    &_mobile {
-        max-width: none;
-    }
-
     &__content {
         width: $contentDesktopMaxWidth;
         max-height: 80vh;
@@ -40,6 +36,7 @@
 
     &_mobile {
         padding: 0 16px;
+        max-width: none;
 
         #{$class}__tab-navigation {
             margin-top: 8px;
