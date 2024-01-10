@@ -31,6 +31,6 @@ jobs:
                   SERVER_URL: "http://158.160.122.254"
                   TOKEN: ${{ secrets.WEBLATE_TOKEN }}
                   PROJECT: "datalens"
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GITHUB_TOKEN: ${{ secrets.WEBLATE_BOT_GITHUB_TOKEN }}
 
 # TODO remove weblate branch after merge pull request
