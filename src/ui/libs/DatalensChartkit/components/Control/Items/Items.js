@@ -17,7 +17,7 @@ import withWrapForControls from './withWrapForControls';
 
 import './Items.scss';
 
-const {DatepickerControl} = registry.common.components.getAll();
+const DatepickerControl = registry.common.components.get('DatepickerControl', {wrap: true});
 
 const b = block('chartkit-control-item');
 
