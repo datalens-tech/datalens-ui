@@ -5,6 +5,6 @@ export const ChartsParams = {
     },
     citySalesTableChart: {
         name: 'city-sales - Table chart',
-        url: '/wizard/xptedsklgpzul-city-sales-table-chart',
+        url: '/wizard/1txl2kjn79jyp-city-sales-table-chart',
     },
 };
