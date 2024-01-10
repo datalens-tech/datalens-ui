@@ -428,12 +428,24 @@ export const addWorkbookInfo = (workbookId: string, withBreadcrumbs = false) => 
         let workbookBreadcrumbs = null;
 
         if (withBreadcrumbs && workbook.collectionId) {
-            workbookBreadcrumbs = await getSdk().us.getCollectionBreadcrumbs(
-                {
-                    collectionId: workbook.collectionId,
-                },
-                {concurrentId: 'workbooks/getCollectionBreadcrumbs'},
-            );
+            workbookBreadcrumbs = await getSdk()
+                .us.getCollectionBreadcrumbs(
+                    {
+                        collectionId: workbook.collectionId,
+                    },
+                    {concurrentId: 'workbooks/getCollectionBreadcrumbs'},
+                )
+                .catch(() => {
+                    // If we don't have permission for getting breadcrumbs, add workbook info without workbookBreadcrumbs
+                    dispatch({
+                        type: ADD_WORKBOOK_INFO,
+                        data: {
+                            workbookId,
+                            workbookName: workbook.title,
+                            workbookPermissions: workbook.permissions,
+                        },
+                    });
+                });
         }
 
         dispatch({
