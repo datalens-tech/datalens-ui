@@ -28,10 +28,6 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_columns-rows-danger": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "label_config-resolving": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -72,23 +68,7 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_series-points-danger": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_series-points-warning": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "label_source-info": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_source-latency-danger": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_source-latency-warning": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -105,14 +85,6 @@
       "ru": "APPROVED"
     },
     "label_source-response-body": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_source-size-danger": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_source-size-warning": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },

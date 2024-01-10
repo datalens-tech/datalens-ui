@@ -65,21 +65,21 @@ const BASELINE = {
         GRAPH: {
             WARNING: {
                 limit: 50000,
-                message: () => i18n('chartkit.menu.inspector', 'label_series-points-warning'),
+                message: () => '',
             },
             DANGER: {
                 limit: 100000,
-                message: () => i18n('chartkit.menu.inspector', 'label_series-points-danger'),
+                message: () => '',
             },
         },
         TIMESERIES: {
             WARNING: {
                 limit: 500000,
-                message: () => i18n('chartkit.menu.inspector', 'label_series-points-warning'),
+                message: () => '',
             },
             DANGER: {
                 limit: 1000000,
-                message: () => i18n('chartkit.menu.inspector', 'label_series-points-danger'),
+                message: () => '',
             },
         },
     },
@@ -90,7 +90,7 @@ const BASELINE = {
         },
         DANGER: {
             limit: 10000,
-            message: () => i18n('chartkit.menu.inspector', 'label_columns-rows-danger'),
+            message: () => '',
         },
     },
 };

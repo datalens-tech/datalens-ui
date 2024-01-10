@@ -20,21 +20,21 @@ const BASELINE = {
     LATENCY: {
         WARNING: {
             limit: 5000,
-            message: () => i18n('chartkit.menu.inspector', 'label_source-latency-warning'),
+            message: () => '',
         },
         DANGER: {
             limit: 10000,
-            message: () => i18n('chartkit.menu.inspector', 'label_source-latency-danger'),
+            message: () => '',
         },
     },
     SIZE: {
         WARNING: {
             limit: 5242880, // 5 MB
-            message: () => i18n('chartkit.menu.inspector', 'label_source-size-warning'),
+            message: () => '',
         },
         DANGER: {
             limit: 10485760, // 10 MB
-            message: () => i18n('chartkit.menu.inspector', 'label_source-size-danger'),
+            message: () => '',
         },
     },
 };
