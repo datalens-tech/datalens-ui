@@ -151,7 +151,7 @@ export interface PluginControl extends Plugin<PluginControlProps> {
 }
 
 interface SelectControlProps {
-    id: string;
+    widgetId: string;
     content: any;
     editMode: boolean;
     label: string;
@@ -976,7 +976,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const preparedValue = unwrapFromArrayAndSkipOperation(this.actualParams[fieldId]);
 
         const props: SelectControlProps = {
-            id,
+            widgetId: id,
             content: content || preselectedContent,
             label: (source.showTitle ? title : '') as string,
             innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
@@ -1069,7 +1069,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const props = {
                 ...control,
-                id,
+                widgetId: id,
                 className: b('item'),
                 key: param,
                 value: preparedValue,

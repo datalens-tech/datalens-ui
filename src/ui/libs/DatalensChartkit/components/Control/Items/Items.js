@@ -140,7 +140,7 @@ BaseControlSelect.propTypes = {
     itemsLoaderClassName: PropTypes.string,
     onOpenChange: PropTypes.func,
     placeholder: PropTypes.string,
-    id: PropTypes.string,
+    widgetId: PropTypes.string,
 };
 
 function BaseControlInput({placeholder, value, onChange, innerLabel, labelInside, label}) {
@@ -184,7 +184,7 @@ BaseControlInput.propTypes = {
     hidden: PropTypes.bool,
     innerLabel: PropTypes.string,
     labelInside: PropTypes.bool,
-    id: PropTypes.string,
+    widgetId: PropTypes.string,
 };
 
 function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
@@ -250,10 +250,18 @@ BaseControlTextArea.propTypes = {
     className: PropTypes.string,
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     hidden: PropTypes.bool,
-    id: PropTypes.string,
+    widgetId: PropTypes.string,
 };
 
-function BaseControlDatepicker({minDate, maxDate, format, timeFormat, value, onChange, id = ''}) {
+function BaseControlDatepicker({
+    minDate,
+    maxDate,
+    format,
+    timeFormat,
+    value,
+    onChange,
+    widgetId = '',
+}) {
     const date = (value && tryResolveRelativeDate(value)) || value;
 
     const wrappedOnChange = React.useCallback(
@@ -263,7 +271,7 @@ function BaseControlDatepicker({minDate, maxDate, format, timeFormat, value, onC
 
     return (
         <DatepickerControl
-            controlId={id}
+            widgetId={widgetId}
             min={minDate}
             max={maxDate}
             from={date}
@@ -294,7 +302,7 @@ BaseControlDatepicker.propTypes = {
     className: PropTypes.string,
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     hidden: PropTypes.bool,
-    id: PropTypes.string,
+    widgetId: PropTypes.string,
 };
 
 function BaseControlRangeDatepicker({
@@ -305,7 +313,7 @@ function BaseControlRangeDatepicker({
     value,
     returnInterval,
     onChange,
-    id = '',
+    widgetId = '',
 }) {
     let from;
     let to;
@@ -352,7 +360,7 @@ function BaseControlRangeDatepicker({
 
     return (
         <DatepickerControl
-            controlId={id}
+            widgetId={widgetId}
             min={minDate}
             max={maxDate}
             from={from}
@@ -391,7 +399,7 @@ BaseControlRangeDatepicker.propTypes = {
     className: PropTypes.string,
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     hidden: PropTypes.bool,
-    id: PropTypes.string,
+    widgetId: PropTypes.string,
 };
 
 function BaseControlButton({label, theme, onChange}) {
@@ -419,7 +427,7 @@ BaseControlButton.propTypes = {
     className: PropTypes.string,
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     hidden: PropTypes.bool,
-    id: PropTypes.string,
+    widgetId: PropTypes.string,
 };
 
 function BaseControlCheckbox({label, value, onChange}) {
@@ -453,7 +461,7 @@ BaseControlCheckbox.propTypes = {
     className: PropTypes.string,
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     hidden: PropTypes.bool,
-    id: PropTypes.string,
+    widgetId: PropTypes.string,
 };
 
 const ControlInput = withWrapForControls(BaseControlInput);
