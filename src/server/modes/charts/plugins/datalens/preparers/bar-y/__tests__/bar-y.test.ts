@@ -8,6 +8,8 @@ import {prepareBarYData} from '../prepare-bar-y-data';
 const DimensionField = {...IntegerField, type: 'DIMENSION', guid: 'DimensionField_guid'};
 
 describe('prepareBarYData', () => {
+    jest.spyOn(Date.prototype, 'getTimezoneOffset').mockImplementation(() => 0);
+
     const args: PrepareFunctionArgs = {
         ...EmptyPrepapreArgs,
         idToTitle: {
@@ -68,7 +70,7 @@ describe('prepareBarYData', () => {
                 totals: [],
             },
         });
-        expect(result.categories_ms).toEqual([1694919600000, 1695006000000]);
+        expect(result.categories_ms).toEqual([1694908800000, 1694995200000]);
     });
 
     test('X is not empty, Y has datetime field -> categories and categories_ms are undefined, result contain one graph', () => {
@@ -103,8 +105,8 @@ describe('prepareBarYData', () => {
         expect(result.graphs.map((g) => pick(g, 'data'))).toEqual([
             {
                 data: [
-                    {y: 100, x: 1694919600000},
-                    {y: 200, x: 1695006000000},
+                    {y: 100, x: 1694908800000},
+                    {y: 200, x: 1694995200000},
                 ],
             },
         ]);
