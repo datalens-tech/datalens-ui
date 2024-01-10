@@ -16,9 +16,8 @@
     }
 
     &__settings-field-name {
-        flex-grow: 1;
-        max-width: 500px;
         height: 28px;
+        width: 300px;
     }
 
     &__settings-switcher {
@@ -57,13 +56,12 @@
 
     &__source-section-control {
         flex-grow: 1;
-        max-width: 585px;
-        width: 300px;
+        max-width: 580px;
         // while we can not control error div container we still can apply break-word
         word-break: break-word;
+        width: 100%;
 
         &_short {
-            width: 200px;
             max-width: 200px;
         }
     }
