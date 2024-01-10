@@ -59,6 +59,8 @@
         flex-grow: 1;
         max-width: 585px;
         width: 300px;
+        // while we can not control error div container we still can apply break-word
+        word-break: break-word;
 
         &_short {
             width: 200px;
