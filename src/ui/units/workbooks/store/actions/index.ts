@@ -426,6 +426,7 @@ export const addWorkbookInfo = (workbookId: string, withBreadcrumbs = false) => 
         const workbook = await getSdk().us.getWorkbook({workbookId, includePermissionsInfo: true});
 
         let workbookBreadcrumbs = null;
+        let hasBreadcrumbs = true;
 
         if (withBreadcrumbs && workbook.collectionId) {
             workbookBreadcrumbs = await getSdk()
@@ -445,18 +446,22 @@ export const addWorkbookInfo = (workbookId: string, withBreadcrumbs = false) => 
                             workbookPermissions: workbook.permissions,
                         },
                     });
+
+                    hasBreadcrumbs = false;
                 });
         }
 
-        dispatch({
-            type: ADD_WORKBOOK_INFO,
-            data: {
-                workbookId,
-                workbookName: workbook.title,
-                workbookPermissions: workbook.permissions,
-                workbookBreadcrumbs,
-            },
-        });
+        if (hasBreadcrumbs) {
+            dispatch({
+                type: ADD_WORKBOOK_INFO,
+                data: {
+                    workbookId,
+                    workbookName: workbook.title,
+                    workbookPermissions: workbook.permissions,
+                    workbookBreadcrumbs,
+                },
+            });
+        }
     };
 };
 
