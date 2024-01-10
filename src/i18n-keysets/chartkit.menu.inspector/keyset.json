@@ -28,7 +28,23 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
+    "label_columns-rows-danger": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_columns-rows-warning": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "label_config-resolving": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_config-resolving-danger": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_config-resolving-warning": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -68,7 +84,23 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
+    "label_series-points-danger": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_series-points-warning": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "label_source-info": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_source-latency-danger": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_source-latency-warning": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -88,11 +120,27 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
+    "label_source-size-danger": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_source-size-warning": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "label_sources": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
     "label_widget-rendering": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_widget-rendering-danger": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_widget-rendering-warning": {
       "en": "APPROVED",
       "ru": "APPROVED"
     }

@@ -15,11 +15,11 @@ const BASELINE = {
     CONFIG_RESOLVING: {
         WARNING: {
             limit: 500,
-            message: () => '',
+            message: () => i18n('chartkit.menu.inspector', 'label_config-resolving-warning'),
         },
         DANGER: {
             limit: 1000,
-            message: () => '',
+            message: () => i18n('chartkit.menu.inspector', 'label_config-resolving-danger'),
         },
     },
     DATA_FETCHING: {
@@ -45,11 +45,11 @@ const BASELINE = {
     WIDGET_RENDERING: {
         WARNING: {
             limit: 1000,
-            message: () => '',
+            message: () => i18n('chartkit.menu.inspector', 'label_widget-rendering-warning'),
         },
         DANGER: {
             limit: 5000,
-            message: () => '',
+            message: () => i18n('chartkit.menu.inspector', 'label_widget-rendering-danger'),
         },
     },
     // TODO:
@@ -65,32 +65,32 @@ const BASELINE = {
         GRAPH: {
             WARNING: {
                 limit: 50000,
-                message: () => '',
+                message: () => i18n('chartkit.menu.inspector', 'label_series-points-warning'),
             },
             DANGER: {
                 limit: 100000,
-                message: () => '',
+                message: () => i18n('chartkit.menu.inspector', 'label_series-points-danger'),
             },
         },
         TIMESERIES: {
             WARNING: {
                 limit: 500000,
-                message: () => '',
+                message: () => i18n('chartkit.menu.inspector', 'label_series-points-warning'),
             },
             DANGER: {
                 limit: 1000000,
-                message: () => '',
+                message: () => i18n('chartkit.menu.inspector', 'label_series-points-danger'),
             },
         },
     },
     COLUMNS_ROWS: {
         WARNING: {
             limit: 1000,
-            message: () => '',
+            message: () => i18n('chartkit.menu.inspector', 'label_columns-rows-warning'),
         },
         DANGER: {
             limit: 10000,
-            message: () => '',
+            message: () => i18n('chartkit.menu.inspector', 'label_columns-rows-danger'),
         },
     },
 };
