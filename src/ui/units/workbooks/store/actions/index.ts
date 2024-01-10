@@ -426,41 +426,36 @@ export const addWorkbookInfo = (workbookId: string, withBreadcrumbs = false) => 
         const workbook = await getSdk().us.getWorkbook({workbookId, includePermissionsInfo: true});
 
         let workbookBreadcrumbs = null;
-        let hasBreadcrumbs = true;
 
         if (withBreadcrumbs && workbook.collectionId) {
-            workbookBreadcrumbs = await getSdk()
-                .us.getCollectionBreadcrumbs(
+            try {
+                workbookBreadcrumbs = await getSdk().us.getCollectionBreadcrumbs(
                     {
                         collectionId: workbook.collectionId,
                     },
                     {concurrentId: 'workbooks/getCollectionBreadcrumbs'},
-                )
-                .catch(() => {
-                    // If we don't have permission for getting breadcrumbs, add workbook info without workbookBreadcrumbs
-                    dispatch({
-                        type: ADD_WORKBOOK_INFO,
-                        data: {
-                            workbookId,
-                            workbookName: workbook.title,
-                            workbookPermissions: workbook.permissions,
-                        },
-                    });
+                );
 
-                    hasBreadcrumbs = false;
+                dispatch({
+                    type: ADD_WORKBOOK_INFO,
+                    data: {
+                        workbookId,
+                        workbookName: workbook.title,
+                        workbookPermissions: workbook.permissions,
+                        workbookBreadcrumbs,
+                    },
                 });
-        }
-
-        if (hasBreadcrumbs) {
-            dispatch({
-                type: ADD_WORKBOOK_INFO,
-                data: {
-                    workbookId,
-                    workbookName: workbook.title,
-                    workbookPermissions: workbook.permissions,
-                    workbookBreadcrumbs,
-                },
-            });
+            } catch (e) {
+                // If we don't have permission for getting breadcrumbs, add workbook info without workbookBreadcrumbs
+                dispatch({
+                    type: ADD_WORKBOOK_INFO,
+                    data: {
+                        workbookId,
+                        workbookName: workbook.title,
+                        workbookPermissions: workbook.permissions,
+                    },
+                });
+            }
         }
     };
 };
