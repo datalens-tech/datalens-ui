@@ -1,5 +1,6 @@
 .dl-field-editor {
     $docPaddingSide: 24px;
+    $controlsPaddingSide: 32px;
 
     width: 80vw;
     min-width: 800px;
@@ -10,13 +11,13 @@
     &__settings {
         display: flex;
         align-items: center;
-        padding: 5px 32px 20px;
+        padding: 5px $controlsPaddingSide 20px;
         border-bottom: 1px solid var(--g-color-line-generic);
     }
 
     &__settings-field-name {
-        width: 300px;
         height: 28px;
+        width: 300px;
     }
 
     &__settings-switcher {
@@ -49,23 +50,24 @@
     }
 
     &__source-section {
-        padding-left: 32px;
-        padding-top: 20px;
+        padding: 20px $controlsPaddingSide 0;
         overflow-y: auto;
     }
 
     &__source-section-control {
-        width: 300px;
+        flex-grow: 1;
+        max-width: 580px;
+        // while we can not control error div container we still can apply break-word
+        word-break: break-word;
+        width: 100%;
 
         &_short {
-            width: 200px;
+            max-width: 200px;
         }
     }
 
     &__source-section-hint {
-        top: 5px;
         left: 5px;
-        height: 16px;
     }
 
     &__row {
@@ -227,5 +229,5 @@
         z-index: 0;
     }
 
-    --dl-dataset-field-list-item-padding-left: 32px;
+    --dl-dataset-field-list-item-padding-left: #{$controlsPaddingSide};
 }

@@ -5,6 +5,7 @@ import type {
     ServerPlaceholder,
     ServerPlaceholderSettings,
 } from '../../../../../../shared';
+import {isDateField} from '../../../../../../shared';
 
 import {getOriginalTitleOrTitle} from './misc-helpers';
 
@@ -71,12 +72,10 @@ export const applyPlaceholderSettingsToAxis = (
             axis.title = {text: axisTitle};
         }
 
-        // We put the logarithmic type for the y axis
-        // The linear type is there and so by default
-        if (placeholder.settings.type === 'logarithmic') {
-            axis.type = 'logarithmic';
+        if (isDateField(placeholder.items[0])) {
+            axis.type = 'datetime';
         } else {
-            axis.type = 'linear';
+            axis.type = placeholder.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
         }
 
         if (!isGridEnabled(placeholder.settings)) {
