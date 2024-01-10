@@ -44,15 +44,17 @@ export const getWorkbookBreadcrumbsItems = ({
         });
     }
 
-    breadcrumbsItems.push({
-        text: workbookName,
-        action: () => {
-            history.push({
-                ...location,
-                pathname: `/workbooks/${entry.workbookId}`,
-            });
-        },
-    });
+    if (workbookName) {
+        breadcrumbsItems.push({
+            text: workbookName,
+            action: () => {
+                history.push({
+                    ...location,
+                    pathname: `/workbooks/${entry.workbookId}`,
+                });
+            },
+        });
+    }
 
     let entryName = Utils.getEntryNameFromKey(entry?.key || '');
     entryName = (entry as {fake?: boolean}).fake ? '' : entryName;
