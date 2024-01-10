@@ -595,6 +595,10 @@ export function removeDataset({
                             'barsSettings',
                         ];
 
+                        if (item.filter) {
+                            fieldSettings.push('unsaved', 'disabled');
+                        }
+
                         fieldSettings.forEach((fieldSettingName) => {
                             if (item[fieldSettingName]) {
                                 resultField = {
