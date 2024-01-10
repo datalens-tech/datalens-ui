@@ -8,6 +8,7 @@
   "label_link": "Link",
   "label_link-description": "The object will be available via the link",
   "label_markup": "Embed in internal service",
+  "label_markup-description": "",
   "label_new-editor": "New editor",
   "label_old-editor": "Old editor",
   "label_params": "Parameters",

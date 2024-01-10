@@ -62,7 +62,7 @@ export const MarkupShareLink: React.FC<MarkupShareLinkProps> = ({
     return (
         <ShareLink
             title={i18n('label_markup')}
-            description={''}
+            description={i18n('label_markup-description')}
             text={markupText}
             textToCopy={markupText}
             showDescription={showDescription}
