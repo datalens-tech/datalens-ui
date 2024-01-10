@@ -22,6 +22,7 @@ import {
     PlaceholderId,
     PlaceholderSettings,
     ServerPlaceholderSettings,
+    ServerSort,
     WizardVisualizationId,
     getAxisMode,
     isContinuousAxisModeDisabled,
@@ -396,7 +397,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                     field: firstField,
                     axisSettings: settings,
                     visualizationId,
-                    sort,
+                    sort: sort as ServerSort[],
                 });
 
                 if (reasonForDisabling) {
