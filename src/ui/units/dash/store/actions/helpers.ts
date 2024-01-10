@@ -1,6 +1,8 @@
 import {History} from 'history';
 import {DashEntry, DashTabItemType} from 'shared';
 
+import type {SetItemDataArgs} from './dashTyped';
+
 export const NOT_FOUND_ERROR_TEXT = 'No entry found';
 export const DOES_NOT_EXIST_ERROR_TEXT = "The entity doesn't exist";
 
@@ -31,3 +33,5 @@ export const removeParamAndUpdate = (
         hash: '',
     });
 };
+
+export const getExtendedItemData = (args: SetItemDataArgs) => args;
