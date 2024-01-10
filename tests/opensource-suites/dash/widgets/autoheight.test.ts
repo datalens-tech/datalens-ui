@@ -7,6 +7,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {WorkbooksUrls} from '../../../constants/constants';
 import {ChartsParams} from '../../../constants/test-entities/charts';
+import {TabMenuQA} from '../../../../src/shared';
 
 const CHARTKIT_SELECTOR = 'chartkit-body-entry-q9z7zsseqg2qf';
 
@@ -30,17 +31,16 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
                     chartName: ChartsParams.citySalesPieChart.name,
                     chartUrl: ChartsParams.citySalesPieChart.url,
                 });
+
+                await dashboardPage.clickFirstControlSettingsButton();
+
+                await page.click(slct(TabMenuQA.Add));
+
                 await dashboardPage.addChart({
                     chartName: ChartsParams.citySalesTableChart.name,
                     chartUrl: ChartsParams.citySalesTableChart.url,
                     enableAutoHeight: true,
-                });
-                await dashboardPage.addTab();
-                await dashboardPage.dashTabs.switchTabByIdx(1);
-                await dashboardPage.addChart({
-                    chartName: ChartsParams.citySalesTableChart.name,
-                    chartUrl: ChartsParams.citySalesTableChart.url,
-                    enableAutoHeight: true,
+                    addChartTab: true,
                 });
             },
         });
@@ -57,7 +57,7 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
             // we set a large viewport height so that there is no scrolling of the widget
             page.setViewportSize({width: 1000, height: 1600});
 
-            await dashboardPage.dashTabs.switchTabByIdx(1);
+            await dashboardPage.changeWidgetTab(ChartsParams.citySalesTableChart.name);
 
             // waiting for the widget content to load
             const selector = `.${COMMON_CHARTKIT_SELECTORS.scrollableNode}`;
@@ -81,7 +81,7 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
             // waiting for the widget content to load
             await page.waitForSelector(slct(CHARTKIT_SELECTOR));
 
-            await dashboardPage.dashTabs.switchTabByIdx(1);
+            await dashboardPage.changeWidgetTab(ChartsParams.citySalesTableChart.name);
 
             // waiting for the widget content to load
             const selector = `.${COMMON_CHARTKIT_SELECTORS.scrollableNode}`;
@@ -94,15 +94,12 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
             });
 
             // go back to the first tab
-            await dashboardPage.dashTabs.switchTabByIdx(0);
+            await dashboardPage.changeWidgetTab(ChartsParams.citySalesPieChart.name);
             // waiting for the widget content to load
-            await page.waitForSelector(selector);
+            await page.waitForSelector(slct(CHARTKIT_SELECTOR));
 
             // check that there is no scroll
-            await waitForCondition(async () => {
-                const noScroll = await hasNoScroll(page, selector);
-                return noScroll === true;
-            });
+            await expect(page.locator(selector)).not.toBeVisible();
         },
     );
 });

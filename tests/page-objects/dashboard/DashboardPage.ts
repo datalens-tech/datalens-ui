@@ -439,15 +439,18 @@ class DashboardPage extends BasePage {
         chartName,
         hideTitle,
         enableAutoHeight,
+        addChartTab,
     }: {
         chartUrl: string;
         chartName: string;
         hideTitle?: boolean;
         enableAutoHeight?: boolean;
+        addChartTab?: boolean;
     }) {
         // adding a chart
-        await this.clickAddChart();
-
+        if (!addChartTab) {
+            await this.clickAddChart();
+        }
         // click on "specify link
         await this.page.click(slct('navigation-input-use-link-button'));
 
