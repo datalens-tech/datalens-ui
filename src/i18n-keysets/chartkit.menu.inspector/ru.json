@@ -5,10 +5,7 @@
   "label_caption": "Инспектор",
   "label_columns": "Колонки",
   "label_columns-rows-danger": "",
-  "label_columns-rows-warning": "",
   "label_config-resolving": "Загрузка конфига",
-  "label_config-resolving-danger": "",
-  "label_config-resolving-warning": "",
   "label_data-fetching": "Загрузка данных",
   "label_data-fetching-danger": "Время загрузки данных превышает рекомендуемое. Оптимизируйте запрос либо ограничьте объем запрашиваемых данных.",
   "label_data-fetching-warning": "Время загрузки данных превышает рекомендуемое. Оптимизируйте запрос либо ограничьте объем запрашиваемых данных.",
@@ -30,7 +27,5 @@
   "label_source-size-danger": "",
   "label_source-size-warning": "",
   "label_sources": "Источники данных",
-  "label_widget-rendering": "Рендеринг",
-  "label_widget-rendering-danger": "",
-  "label_widget-rendering-warning": ""
+  "label_widget-rendering": "Рендеринг"
 }

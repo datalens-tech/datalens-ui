@@ -15,11 +15,11 @@ const BASELINE = {
     CONFIG_RESOLVING: {
         WARNING: {
             limit: 500,
-            message: () => i18n('chartkit.menu.inspector', 'label_config-resolving-warning'),
+            message: () => '',
         },
         DANGER: {
             limit: 1000,
-            message: () => i18n('chartkit.menu.inspector', 'label_config-resolving-danger'),
+            message: () => '',
         },
     },
     DATA_FETCHING: {
@@ -45,11 +45,11 @@ const BASELINE = {
     WIDGET_RENDERING: {
         WARNING: {
             limit: 1000,
-            message: () => i18n('chartkit.menu.inspector', 'label_widget-rendering-warning'),
+            message: () => '',
         },
         DANGER: {
             limit: 5000,
-            message: () => i18n('chartkit.menu.inspector', 'label_widget-rendering-danger'),
+            message: () => '',
         },
     },
     // TODO:
@@ -86,7 +86,7 @@ const BASELINE = {
     COLUMNS_ROWS: {
         WARNING: {
             limit: 1000,
-            message: () => i18n('chartkit.menu.inspector', 'label_columns-rows-warning'),
+            message: () => '',
         },
         DANGER: {
             limit: 10000,

@@ -32,19 +32,7 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_columns-rows-warning": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "label_config-resolving": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_config-resolving-danger": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_config-resolving-warning": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -133,14 +121,6 @@
       "ru": "APPROVED"
     },
     "label_widget-rendering": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_widget-rendering-danger": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_widget-rendering-warning": {
       "en": "APPROVED",
       "ru": "APPROVED"
     }

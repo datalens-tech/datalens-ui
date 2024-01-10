@@ -5,10 +5,7 @@
   "label_caption": "Inspector",
   "label_columns": "Columns",
   "label_columns-rows-danger": "",
-  "label_columns-rows-warning": "",
   "label_config-resolving": "Config resolving",
-  "label_config-resolving-danger": "",
-  "label_config-resolving-warning": "",
   "label_data-fetching": "Data fetching",
   "label_data-fetching-danger": "Data loading time exceeds recommended. Optimize the query or limit the amount of requested data.",
   "label_data-fetching-warning": "Data loading time exceeds recommended. Optimize the query or limit the amount of requested data.",
@@ -30,7 +27,5 @@
   "label_source-size-danger": "",
   "label_source-size-warning": "",
   "label_sources": "Data sources",
-  "label_widget-rendering": "Rendering",
-  "label_widget-rendering-danger": "",
-  "label_widget-rendering-warning": ""
+  "label_widget-rendering": "Rendering"
 }
