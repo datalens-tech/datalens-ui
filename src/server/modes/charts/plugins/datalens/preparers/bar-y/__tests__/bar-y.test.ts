@@ -1,6 +1,6 @@
 import pick from 'lodash/pick';
 
-import {AxisMode} from '../../../../../../../../shared';
+import {AxisMode, DATASET_FIELD_TYPES} from '../../../../../../../../shared';
 import {DateTimeField, EmptyPrepapreArgs, IntegerField} from '../../__tests__/common.mock';
 import {PrepareFunctionArgs} from '../../types';
 import {prepareBarYData} from '../prepare-bar-y-data';
@@ -8,6 +8,8 @@ import {prepareBarYData} from '../prepare-bar-y-data';
 const DimensionField = {...IntegerField, type: 'DIMENSION', guid: 'DimensionField_guid'};
 
 describe('prepareBarYData', () => {
+    jest.spyOn(Date.prototype, 'getTimezoneOffset').mockImplementation(() => 0);
+
     const args: PrepareFunctionArgs = {
         ...EmptyPrepapreArgs,
         idToTitle: {
@@ -15,6 +17,11 @@ describe('prepareBarYData', () => {
             [DateTimeField.guid]: DateTimeField.title,
             [DimensionField.guid]: DimensionField.title,
         },
+        idToDataType: {
+            [IntegerField.guid]: IntegerField.data_type,
+            [DateTimeField.guid]: DateTimeField.data_type,
+            [DimensionField.guid]: DimensionField.data_type,
+        } as Record<string, DATASET_FIELD_TYPES>,
     };
 
     test('X is empty, Y has integer field -> categories contain values from the Y field', () => {
