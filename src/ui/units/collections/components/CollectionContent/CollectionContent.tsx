@@ -178,14 +178,11 @@ export const CollectionContent: React.FC<Props> = ({
     };
 
     const renderClearFiltersAction = () => {
-        if (canCreateWorkbook) {
-            return (
-                <Button className={b('controls')} onClick={onClearFiltersClick}>
-                    {i18n('action_clear-filters')}
-                </Button>
-            );
-        }
-        return null;
+        return (
+            <Button className={b('controls')} onClick={onClearFiltersClick}>
+                {i18n('action_clear-filters')}
+            </Button>
+        );
     };
 
     if (isContentLoading && contentItems.length === 0) {

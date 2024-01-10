@@ -100,7 +100,7 @@ export type CollectionsStructureState = {
     };
     moveCollections: {
         isLoading: boolean;
-        data: MoveCollectionsResponse;
+        data: MoveCollectionsResponse | null;
         error: Error | null;
     };
     moveWorkbook: {
@@ -110,7 +110,7 @@ export type CollectionsStructureState = {
     };
     moveWorkbooks: {
         isLoading: boolean;
-        data: MoveWorkbooksResponse;
+        data: MoveWorkbooksResponse | null;
         error: Error | null;
     };
     copyWorkbook: {
@@ -169,9 +169,7 @@ const initialState: CollectionsStructureState = {
     },
     moveCollections: {
         isLoading: false,
-        data: {
-            collections: [],
-        },
+        data: null,
         error: null,
     },
     moveWorkbook: {
@@ -181,9 +179,7 @@ const initialState: CollectionsStructureState = {
     },
     moveWorkbooks: {
         isLoading: false,
-        data: {
-            workbooks: [],
-        },
+        data: null,
         error: null,
     },
     copyWorkbook: {

@@ -71,7 +71,7 @@ export const CollectionLayout = React.memo<Props>(
                         {editBtn}
                         <div className={b('select-actions')}>
                             {collectionPageViewMode === CollectionPageViewMode.Grid && (
-                                <>
+                                <React.Fragment>
                                     {selectBtn}
                                     {(isOpenSelectionMode || Boolean(countSelected)) && (
                                         <Button
@@ -82,7 +82,7 @@ export const CollectionLayout = React.memo<Props>(
                                             {i18n('action_cancel')}
                                         </Button>
                                     )}
-                                </>
+                                </React.Fragment>
                             )}
                         </div>
                     </div>
