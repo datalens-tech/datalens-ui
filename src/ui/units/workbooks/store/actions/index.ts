@@ -417,7 +417,7 @@ type AddWorkbookInfoAction = {
         workbookId: string;
         workbookName: string;
         workbookPermissions: WorkbookPermission;
-        workbookBreadcrumbs: GetCollectionBreadcrumbsResponse | null;
+        workbookBreadcrumbs?: GetCollectionBreadcrumbsResponse | null;
     };
 };
 
