@@ -79,7 +79,9 @@ export const linesColoredByFieldWithPostfixArgs = {
                 labelsView: 'auto',
                 holidays: 'off',
                 axisFormatMode: 'auto',
-                axisModeMap: {},
+                axisModeMap: {
+                    'e83fb454-ca9a-4083-95be-1994e9957655': 'discrete',
+                },
             },
         },
         {
