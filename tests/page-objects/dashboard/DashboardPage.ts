@@ -438,10 +438,12 @@ class DashboardPage extends BasePage {
         chartUrl,
         chartName,
         hideTitle,
+        enableAutoHeight,
     }: {
         chartUrl: string;
         chartName: string;
         hideTitle?: boolean;
+        enableAutoHeight?: boolean;
     }) {
         // adding a chart
         await this.clickAddChart();
@@ -459,6 +461,10 @@ class DashboardPage extends BasePage {
 
         if (hideTitle) {
             await this.page.click(slct(DashCommonQa.WidgetShowTitleCheckbox));
+        }
+
+        if (enableAutoHeight) {
+            await this.page.click(slct(DashCommonQa.WidgetEnableAutoHeightCheckbox));
         }
 
         // adding to the dashboard
