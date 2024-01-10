@@ -5,6 +5,7 @@ import {slct} from '../../utils';
 import {PlaceholderName} from './SectionVisualization';
 
 import {CommonQa} from '../constants/common-selectors';
+import {HierarchyEditorQa} from '../../../src/shared';
 
 export default class HierarchyEditor {
     private page: Page;
@@ -64,14 +65,20 @@ export default class HierarchyEditor {
             });
     }
 
+    getApplyButton() {
+        return this.page
+            .locator(slct(HierarchyEditorQa.Dialog))
+            .locator(slct(HierarchyEditorQa.ApplyButton));
+    }
+
     async clickSave() {
-        await this.page.click(slct('dialog-apply-button'));
+        await this.getApplyButton().click();
     }
 
     getHierarchyNameError() {
-        return this.page.locator(
-            `${slct('hierarchy-editor')} ${slct(CommonQa.ControlErrorMessage)}`,
-        );
+        return this.page
+            .locator(slct(HierarchyEditorQa.Dialog))
+            .locator(slct(CommonQa.ControlErrorMessage));
     }
 
     isApplyButtonDisabled() {
