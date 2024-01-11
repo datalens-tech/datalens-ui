@@ -140,7 +140,7 @@ datalensTest.describe('Wizard', () => {
             await expect(hierarchyLocator).not.toHaveClass(/item-error/);
         });
 
-        datalensTest.only('Create parameter', async ({page}) => {
+        datalensTest('Create parameter', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const datasetFields = page.locator(slct(SectionDatasetQA.DatasetFields));
 
