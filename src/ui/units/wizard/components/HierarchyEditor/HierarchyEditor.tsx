@@ -5,7 +5,7 @@ import {Dialog as CommonDialog, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import omit from 'lodash/omit';
-import {Field} from 'shared';
+import {Field, HierarchyEditorQa} from 'shared';
 import {getIconForDataType} from 'units/wizard/utils/helpers';
 
 import './HierarchyEditor.scss';
@@ -56,7 +56,7 @@ class HierarchyEditor extends React.Component<Props, State> {
 
         return (
             <CommonDialog size="m" open={visible} onClose={onClose}>
-                <div className={b()} data-qa="hierarchy-editor">
+                <div className={b()} data-qa={HierarchyEditorQa.Dialog}>
                     <CommonDialog.Header
                         caption={
                             <span>
@@ -105,7 +105,7 @@ class HierarchyEditor extends React.Component<Props, State> {
                         textButtonCancel={i18n('wizard.hierarchy-editor', 'button_cancel')}
                         propsButtonApply={{
                             disabled: saveButtonDisabled,
-                            qa: 'dialog-apply-button',
+                            qa: HierarchyEditorQa.ApplyButton,
                         }}
                     />
                 </div>
