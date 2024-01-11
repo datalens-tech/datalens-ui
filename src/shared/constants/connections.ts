@@ -47,6 +47,7 @@ export enum ConnectorType {
     SchoolbookJournal = 'schoolbook_journal',
     SmbHeatmaps = 'smb_heatmaps',
     Chyt = 'chyt',
+    ChytNb = 'chyt_nb',
     Extractor1c = 'extractor1c',
     Yadocs = 'yadocs',
     MonitoringV2 = 'monitoring_v2',

@@ -67,6 +67,7 @@ export const getConnectorIconDataWithoutDefault = (type?: string): IconData | un
         case ConnectorType.ChOverYtUserAuth:
             return iconChOverYtUser;
         case ConnectorType.Chyt:
+        case ConnectorType.ChytNb:
             return iconChytYC;
         case ConnectorType.Csv:
             return iconCsv;
