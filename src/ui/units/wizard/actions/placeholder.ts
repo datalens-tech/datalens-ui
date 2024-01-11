@@ -5,6 +5,7 @@ import {
     Placeholder,
     PlaceholderId,
     PlaceholderSettings,
+    ServerSort,
     Shared,
     SortDirection,
     VisualizationLayerShared,
@@ -76,7 +77,7 @@ export const updatePlaceholderSettingsAction = (
     options: {
         placeholder: Placeholder;
         visualization: Shared['visualization'];
-        sort: Field[];
+        sort: ServerSort[];
     },
 ) => {
     return function (dispatch: AppDispatch) {

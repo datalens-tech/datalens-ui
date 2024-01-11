@@ -2,10 +2,11 @@ import _isEmpty from 'lodash/isEmpty';
 
 import {
     AxisMode,
+    Field,
     HighchartsSeriesCustomObject,
     PlaceholderId,
     WizardVisualizationId,
-    getAxisMode,
+    getActualAxisModeForField,
     getFakeTitleOrTitle,
     isDateField,
     isMeasureField,
@@ -65,7 +66,17 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const xDataType = xField ? idToDataType[xField.guid] : null;
     const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
     const xIsNumber = Boolean(xDataType && isNumberField({data_type: xDataType}));
-    const xAxisMode = getAxisMode(xPlaceholderSettings, xField?.guid);
+
+    let xAxisMode = AxisMode.Discrete;
+    if (xField && xDataType) {
+        xAxisMode = getActualAxisModeForField({
+            field: {guid: xField.guid, data_type: xDataType} as Field,
+            axisSettings: xPlaceholderSettings,
+            visualizationId: visualizationId as WizardVisualizationId,
+            sort,
+        }) as AxisMode;
+    }
+
     const x2 = isVisualizationWithSeveralFieldsXPlaceholder(visualizationId)
         ? xPlaceholder?.items[1]
         : undefined;
