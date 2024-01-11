@@ -1,5 +1,4 @@
-const Redis = require('ioredis');
-Redis.Promise = require('bluebird');
+import Redis from 'ioredis';
 
 export type RedisConfig = {
     redis?: {
@@ -24,13 +23,23 @@ export type CacheClientResponse = {
 
 const REDIS_TIMEOUT = 2000;
 
+const timeout = <T>(prom: Promise<T>, time: number): Promise<T> => {
+    let timer: NodeJS.Timeout;
+    return Promise.race<T>([
+        prom,
+        new Promise((_r, rej) => {
+            timer = setTimeout(rej, time, Error('TimeoutError'));
+        }),
+    ]).finally(() => clearTimeout(timer));
+};
+
 export class CacheClient {
     static OK = Symbol('CACHE_STATUS_OK');
     static NOT_OK = Symbol('CACHE_STATUS_NOT_OK');
     static KEY_NOT_FOUND = Symbol('CACHE_STATUS_KEY_NOT_FOUND');
 
     _debug = false;
-    client: typeof Redis | null = null;
+    client: Redis.Redis | null = null;
 
     constructor({config}: {config: RedisConfig}) {
         this._debug = config.appInstallation === 'development';
@@ -43,7 +52,7 @@ export class CacheClient {
     async get({key}: {key: string}): Promise<CacheClientResponse> {
         if (this.client) {
             try {
-                const data = await this.client.get(key).timeout(REDIS_TIMEOUT);
+                const data = await timeout(this.client.get(key), REDIS_TIMEOUT);
                 if (data === null) {
                     return {
                         status: CacheClient.KEY_NOT_FOUND,
@@ -78,7 +87,10 @@ export class CacheClient {
     }): Promise<CacheClientResponse> {
         if (this.client) {
             try {
-                await this.client.set(key, JSON.stringify(value), 'EX', ttl).timeout(REDIS_TIMEOUT);
+                await timeout(
+                    this.client.set(key, JSON.stringify(value), 'EX', ttl),
+                    REDIS_TIMEOUT,
+                );
                 return {
                     status: CacheClient.OK,
                 };
@@ -99,7 +111,7 @@ export class CacheClient {
     async del({key}: {key: string}): Promise<CacheClientResponse> {
         if (this.client) {
             try {
-                await this.client.del(key).timeout(REDIS_TIMEOUT);
+                await timeout(this.client.del(key), REDIS_TIMEOUT);
                 return {
                     status: CacheClient.OK,
                 };
