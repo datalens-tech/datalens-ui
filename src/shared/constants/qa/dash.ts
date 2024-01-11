@@ -67,6 +67,7 @@ export enum DashCommonQa {
     RelationsApplyBtn = 'relations-apply-btn',
     RelationsCancelBtn = 'relations-cancel-btn',
     WidgetShowTitleCheckbox = 'dialog-widget-settings-show-title',
+    WidgetEnableAutoHeightCheckbox = 'dialog-widget-settings-enable-autoheight',
     RelationsDialogEmptyText = 'dialog-relations-empty-text',
     RelationsDisconnectAllButton = 'dialog-relations-disconnect-all-button',
     RelationsListRow = 'dialog-relations-list-row',
