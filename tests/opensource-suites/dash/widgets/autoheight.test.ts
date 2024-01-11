@@ -57,11 +57,16 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
             // we set a large viewport height so that there is no scrolling of the widget
             page.setViewportSize({width: 1000, height: 1600});
 
+            // waiting for the widget content to load
+            await page.waitForSelector(slct(CHARTKIT_SELECTOR));
+
             await dashboardPage.changeWidgetTab(ChartsParams.citySalesTableChart.name);
 
             // waiting for the widget content to load
             const selector = `.${COMMON_CHARTKIT_SELECTORS.scrollableNode}`;
             await page.waitForSelector(selector);
+
+            await page.reload();
 
             // check that there is no scroll
             await waitForCondition(async () => {
