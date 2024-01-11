@@ -2,15 +2,13 @@ import React from 'react';
 
 import type {Column} from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
-import type {UpdateFileSourceResponse} from 'shared/schema/types';
+import type {FileSourceSchema} from 'shared/schema/types';
 
 import DataTypeIcon from '../../../../../components/DataTypeIcon/DataTypeIcon';
 
 import './render.scss';
 
 const bIcon = block('conn-form-type-icon');
-
-type SourceSchema = UpdateFileSourceResponse['source']['raw_schema'];
 
 const isTitleMatchedByFilter = (title: string, filter: string) => {
     const lowerTitle = title.toLocaleLowerCase();
@@ -19,7 +17,7 @@ const isTitleMatchedByFilter = (title: string, filter: string) => {
     return Boolean(lowerTitle.match(lowerFilter));
 };
 
-export const getColumnsWithTypeIcons = (args: {schema: SourceSchema; filter: string}) => {
+export const getColumnsWithTypeIcons = (args: {schema: FileSourceSchema; filter: string}) => {
     const {schema, filter} = args;
 
     return (schema || []).reduce((acc, column, index) => {
