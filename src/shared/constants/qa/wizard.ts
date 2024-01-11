@@ -146,3 +146,8 @@ export const enum DialogMultiDatasetQa {
 export const enum PlaceholderActionQa {
     OpenColorDialogIcon = 'placeholder-action-open-color-dialog',
 }
+
+export const enum HierarchyEditorQa {
+    Dialog = 'hierarchy-editor',
+    ApplyButton = 'dialog-apply-button',
+}

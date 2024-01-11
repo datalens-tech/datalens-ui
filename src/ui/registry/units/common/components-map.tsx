@@ -18,6 +18,7 @@ import type {DialogAddParticipantsProps} from './types/components/DialogAddParti
 import type {DownloadScreenshotProps} from './types/components/DownloadScreenshot';
 import type {EntryBreadcrumbsProps} from './types/components/EntryBreadcrumbs';
 import type {IamAccessDialogProps} from './types/components/IamAccessDialog';
+import type {MarkupShareLinkProps} from './types/components/MarkupShareLink';
 import type {OAuthTokenButtonProps} from './types/components/OAuthTokenButton';
 import type {PlaceholderIllustrationImageProps} from './types/components/PlaceholderIllustrationImage';
 import type {ReportButtonProps} from './types/components/ReportButton';
@@ -47,4 +48,5 @@ export const commonComponentsMap = {
     RangeInputPicker: RangeInputPicker,
     ButtonFavorite: makeDefaultEmpty<ButtonFavoriteProps>(),
     OAuthTokenButton: makeDefaultEmpty<OAuthTokenButtonProps>(),
+    MarkupShareLink: makeDefaultEmpty<MarkupShareLinkProps>(),
 } as const;
