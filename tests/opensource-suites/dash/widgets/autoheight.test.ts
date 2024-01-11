@@ -104,6 +104,12 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
             await page.waitForSelector(slct(CHARTKIT_SELECTOR));
 
             // check that there is no scroll
+            await waitForCondition(async () => {
+                const noScroll = await hasNoScroll(page, slct(CHARTKIT_SELECTOR));
+                return noScroll === true;
+            });
+
+            // check that there is no scroll
             await expect(page.locator(selector)).not.toBeVisible();
         },
     );
