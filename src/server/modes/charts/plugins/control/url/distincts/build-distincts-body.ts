@@ -48,16 +48,18 @@ function buildDistinctsBodyRequest({
             return filter.ref.type === 'id' && filter.ref.id !== finalFieldGuid;
         });
 
-    const parameter_values = Object.keys(parameters).map<ApiV2Parameter>((key) => {
-        const guid = datasetFieldsMap[key]?.guid || key;
-        const parameterValue = parameters[key];
+    const parameter_values = Object.keys(parameters)
+        .map<ApiV2Parameter>((key) => {
+            const guid = datasetFieldsMap[key]?.guid || key;
+            const parameterValue = parameters[key];
 
-        return {
-            ref: {type: 'id', id: guid},
-            // Param does not works with multiselect, so we pick first value from array
-            value: Array.isArray(parameterValue) ? parameterValue[0] : parameterValue,
-        };
-    });
+            return {
+                ref: {type: 'id', id: guid},
+                // Param does not work with multiselect, so we pick first value from array
+                value: Array.isArray(parameterValue) ? parameterValue[0] : parameterValue,
+            };
+        })
+        .filter((item) => item.value !== '');
 
     return {
         ignore_nonexistent_filters: true,
