@@ -177,9 +177,9 @@ const CheckboxValueControl = () => {
 const ValueSelector: React.FC = () => {
     const controlType = useSelector(selectSelectorControlType);
 
-    const {getExtendedValueSelector} = registry.dash.functions.getAll();
+    const {useExtendedValueSelector} = registry.dash.functions.getAll();
 
-    let inputControl = getExtendedValueSelector(controlType);
+    let inputControl = useExtendedValueSelector(controlType);
 
     if (inputControl) {
         return inputControl;
