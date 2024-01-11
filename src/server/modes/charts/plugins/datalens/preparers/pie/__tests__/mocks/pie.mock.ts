@@ -23,6 +23,14 @@ export const colorFieldDimension = {
     data_type: DATASET_FIELD_TYPES.STRING,
 };
 
+export const colorFieldDimensionFloat = {
+    type: 'DIMENSION',
+    datasetId: datasetId,
+    title: 'ColorField',
+    guid: 'cddd9cad-52a2-4232-8898-ade9a972c864',
+    data_type: DATASET_FIELD_TYPES.FLOAT,
+};
+
 export const colorFieldMeasureNumber = {
     type: 'MEASURE',
     datasetId: datasetId,
@@ -208,12 +216,14 @@ export const piePrepareArgs = {
     },
     idToDataType: {
         [colorFieldDimension.guid]: colorFieldDimension.data_type,
+        [colorFieldDimensionFloat.guid]: colorFieldDimensionFloat.data_type,
         [colorFieldMeasureNumber.guid]: colorFieldMeasureNumber.data_type,
         [colorFieldMeasureString.guid]: colorFieldMeasureString.data_type,
         [measureField.guid]: measureField.data_type,
     },
     idToTitle: {
         [colorFieldDimension.guid]: colorFieldDimension.title,
+        [colorFieldDimensionFloat.guid]: colorFieldDimensionFloat.title,
         [colorFieldMeasureNumber.guid]: colorFieldMeasureNumber.title,
         [colorFieldMeasureString.guid]: colorFieldMeasureString.title,
         [measureField.guid]: measureField.title,

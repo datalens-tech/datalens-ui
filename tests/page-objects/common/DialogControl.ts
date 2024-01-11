@@ -8,6 +8,7 @@ import {ElementType} from './DialogControlPO/ElementType';
 import {switchCheckbox} from './utils';
 import {AppearanceTitle} from './DialogControlPO/AppearanceTitle';
 import {AppearanceInnerTitle} from './DialogControlPO/AppearanceInnerTitle';
+import {FieldName} from './DialogControlPO/FieldName';
 
 export default class DialogControl {
     static selectors = {
@@ -22,6 +23,7 @@ export default class DialogControl {
     elementType: ElementType;
     appearanceTitle: AppearanceTitle;
     appearanceInnerTitle: AppearanceInnerTitle;
+    fieldName: FieldName;
 
     protected page: Page;
 
@@ -33,6 +35,7 @@ export default class DialogControl {
         this.elementType = new ElementType(page);
         this.appearanceTitle = new AppearanceTitle(page);
         this.appearanceInnerTitle = new AppearanceInnerTitle(page);
+        this.fieldName = new FieldName(page);
     }
 
     async waitForVisible() {

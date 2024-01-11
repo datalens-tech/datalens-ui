@@ -5,6 +5,7 @@ import {Checkbox, RadioGroup, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {DialogControlQa} from 'shared';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectIsDatasetSelectorAndNoFieldSelected,
@@ -87,6 +88,7 @@ const DateValueControl = () => {
         <React.Fragment>
             <FormRow label={i18n('field_date-range')}>
                 <Checkbox
+                    qa={DialogControlQa.dateRangeCheckbox}
                     className={b('checkbox-option')}
                     checked={isRange}
                     disabled={isFieldDisabled}
@@ -98,6 +100,7 @@ const DateValueControl = () => {
             {sourceType === 'manual' ? (
                 <FormRow label={i18n('field_date-with-time')}>
                     <Checkbox
+                        qa={DialogControlQa.dateTimeCheckbox}
                         className={b('checkbox-option')}
                         checked={
                             fieldType === DATASET_FIELD_TYPES.DATETIME ||

@@ -118,8 +118,8 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         await page.locator(slct(DashCommonQa.AliasRemoveBtn)).click();
 
         // apply all
-        await page.locator(slct(DashCommonQa.AliasAddApplyBtn)).click();
-        await page.click(slct(DashCommonQa.RelationsApplyBtn));
+        await dashboardPage.applyAliasesChanges();
+        await dashboardPage.applyRelationsChanges();
         await dashboardPage.saveChanges();
 
         await dashboardPage.clickSelectWithTitle(PARAMS.CONTROL_TITLE);

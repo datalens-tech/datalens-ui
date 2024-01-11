@@ -1,3 +1,6 @@
+import isNil from 'lodash/isNil';
+import isNumber from 'lodash/isNumber';
+
 import {
     RGBColor,
     ServerField,
@@ -33,12 +36,15 @@ export const colorizeFlatTableColumn = ({
 }) => {
     const colorValues = data.reduce((acc, row) => {
         const rowValue = row[index];
-        const parsedRowValue = rowValue === null ? rowValue : parseFloat(rowValue);
+        const parsedRowValue = isNil(rowValue) ? null : parseFloat(rowValue);
 
         return [...acc, parsedRowValue];
     }, [] as (number | null)[]);
 
-    const {rangeMiddle, range, min} = getThresholdValues(colorsConfig, colorValues);
+    const {rangeMiddle, range, min} = getThresholdValues(
+        colorsConfig,
+        colorValues.filter(isNumber),
+    );
     const rangeMiddleRatio = range === 0 ? MAX_COLOR_DELTA_VALUE : rangeMiddle / range;
 
     const currentGradient = getCurrentGradient(colorsConfig);

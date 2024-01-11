@@ -54,12 +54,8 @@ export type YadocSource = YadocEditableSource | YadocReadonlySource;
 
 export type YadocItem = UploadedYadoc | YadocSourceInfo | YadocEditableSource | YadocReadonlySource;
 
-export type YadocsAddSectionState = {
-    mode: 'public' | 'private';
-    path: string;
-    active?: boolean;
-    disabled?: boolean;
-    uploading?: boolean;
+type YadocsActiveAddDocument = {
+    type: 'dialog-add-document';
 };
 
 type YadocsActiveDialogSources = {
@@ -68,4 +64,27 @@ type YadocsActiveDialogSources = {
     batch?: boolean;
 };
 
-export type YadocsActiveDialog = YadocsActiveDialogSources;
+export type YadocsActiveDialogRename = {
+    type: 'dialog-rename';
+    sourceId: string;
+    value?: string;
+};
+
+export type YadocsActiveDialogReplace = {
+    type: 'dialog-replace';
+    sourceId: string;
+    authorized: boolean;
+    connectionId?: string;
+    oauthToken?: string;
+};
+
+type YadocsActiveDialogLogout = {
+    type: 'dialog-logout';
+};
+
+export type YadocsActiveDialog =
+    | YadocsActiveAddDocument
+    | YadocsActiveDialogSources
+    | YadocsActiveDialogRename
+    | YadocsActiveDialogReplace
+    | YadocsActiveDialogLogout;

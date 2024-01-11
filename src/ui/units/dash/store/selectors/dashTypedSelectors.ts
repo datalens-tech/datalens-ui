@@ -69,6 +69,9 @@ export const selectActiveSelectorIndex = (state: DatalensGlobalState) =>
 export const selectSkipReload = (state: DatalensGlobalState) =>
     (state.dash as DashState)?.skipReload || false;
 
+export const selectWidgetsCurrentTab = (state: DatalensGlobalState) =>
+    (state.dash as DashState).widgetsCurrentTab;
+
 export const selectIsDatasetSelectorAndNoFieldSelected = (state: DatalensGlobalState) => {
     const selectorDialog = (state.dash as DashState).selectorDialog;
 

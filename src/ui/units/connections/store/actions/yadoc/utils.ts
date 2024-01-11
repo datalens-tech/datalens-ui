@@ -135,7 +135,7 @@ export const isYadocSourceItem = (item: YadocItem): item is YadocSource => {
     return item.type === 'yadocEditableSource' || item.type === 'yadocReadonlySource';
 };
 
-const gsheetSourceToAPIFormat = (source: YadocSource): CreatingSource | CreatedSource => {
+const yadocSourceToAPIFormat = (source: YadocSource): CreatingSource | CreatedSource => {
     if (source.type === 'yadocReadonlySource') {
         const id = get(source, ['data', 'id']);
         const title = get(source, ['data', 'title']);
@@ -154,7 +154,7 @@ const gsheetSourceToAPIFormat = (source: YadocSource): CreatingSource | CreatedS
 export const mapYadocItemsToAPIFormat = (items: YadocItem[]) => {
     return items.reduce((acc, item) => {
         if (isYadocSourceItem(item)) {
-            acc.push(gsheetSourceToAPIFormat(item));
+            acc.push(yadocSourceToAPIFormat(item));
         }
 
         return acc;

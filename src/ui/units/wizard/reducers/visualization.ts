@@ -49,6 +49,7 @@ import {
     VisualizationAction,
 } from '../actions/visualization';
 import {getSelectedLayer} from '../utils/helpers';
+import {getPlaceholderAxisModeMap, isPlaceholderWithAxisMode} from '../utils/placeholder';
 
 import {clearUnusedVisualizationItems, getPlaceholdersWithMergedSettings} from './utils';
 import {updateColorsHierarchies} from './utils/updateColorHierarchies';
@@ -229,6 +230,8 @@ export function visualization(
                     case 'treemap-column100p':
                     case 'treemap-bar':
                     case 'treemap-bar100p':
+                    case 'line-line-d3':
+                    case 'line-d3-line':
                         if (oldPlaceholders[0].items.length) {
                             const isNextVisualizationCombinedChart =
                                 action.visualization.id === WizardVisualizationId.CombinedChart;
@@ -584,6 +587,17 @@ export function visualization(
 
                 if (onChange) {
                     onChange({placeholder, visualization, colors, shapes, sort});
+                }
+
+                if (isPlaceholderWithAxisMode(placeholder)) {
+                    const axisModeMap = getPlaceholderAxisModeMap({
+                        placeholder,
+                        visualizationId: visualization.id as WizardVisualizationId,
+                        sort,
+                    });
+                    placeholder.settings = Object.assign({}, placeholder.settings, {
+                        axisModeMap,
+                    });
                 }
             });
 

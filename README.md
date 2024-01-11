@@ -21,7 +21,7 @@ docker compose up
 # Start datalens ui in dev mode:
 git clone git@github.com:datalens-tech/datalens-ui.git
 cd ui
-npm ci # Use next command on Apple M1: npm ci --target_arch=x64
+npm ci
 npm run dev
 ```
 
@@ -30,26 +30,31 @@ Now you can open datalens in dev mode at [http://localhost:3030](http://localhos
 ### Credentials for postgres
 
 Hostname:
+
 ```
 pg-demo-connection
 ```
 
 Port:
+
 ```
 5432
 ```
 
 Path to database:
+
 ```
 demo
 ```
 
 Username:
+
 ```
 demo
 ```
 
 Password:
+
 ```
 demo
 ```

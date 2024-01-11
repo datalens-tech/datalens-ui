@@ -9,8 +9,9 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {StringParams} from 'shared';
+import {setWidgetCurrentTab} from 'ui/units/dash/store/actions/dashTyped';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
@@ -76,6 +77,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     } = props;
 
     const skipReload = useSelector(selectSkipReload);
+
+    const dispatch = useDispatch();
 
     const [isWizardChart, setIsWizardChart] = React.useState(false);
 
@@ -377,6 +380,11 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         }
         setInitialParams({...loadedData?.defaultParams, ...currentTab.params});
     }, [hasCurrentTabDefaultsChanged, currentTab.params, loadedData, loadedData?.defaultParams]);
+
+    // Update currentTab in dash state after dashkit item state update
+    React.useEffect(() => {
+        dispatch(setWidgetCurrentTab({widgetId, tabId: currentTab.id}));
+    }, [currentTab, widgetId, dispatch]);
 
     const adaptiveTabsItems = React.useMemo(
         () =>

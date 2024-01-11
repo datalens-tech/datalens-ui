@@ -20,7 +20,7 @@ import {
     shapeYadocReadonlySourceItemAfterUpdate,
 } from './utils';
 
-export type UpdateGSheetItemArgs = {
+export type UpdateYadocItemArgs = {
     id: string;
     updates: Partial<Omit<YadocItem, 'type' | 'data'>> & {
         data?: RecursivePartial<YadocItem['data']>;
@@ -34,7 +34,7 @@ type PollingHandlerArgs = {
     getState: GetState;
 };
 
-type UpdateGSheetSourceArgs = {
+type UpdateYadocSourceArgs = {
     fileId: string;
     sourceId: string;
     initialPolling?: boolean;
@@ -50,7 +50,7 @@ export const setYadocItemsAndFormSources = (items: YadocItem[]) => {
     };
 };
 
-export const updateYadocItem = (args: UpdateGSheetItemArgs) => {
+export const updateYadocItem = (args: UpdateYadocItemArgs) => {
     return (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {id, updates, shouldUpdateForm} = args;
         const prevItems = get(getState().connections, ['yadocs', 'items']);
@@ -67,7 +67,7 @@ export const updateYadocItem = (args: UpdateGSheetItemArgs) => {
     };
 };
 
-export const updateYadocSource = (args: UpdateGSheetSourceArgs) => {
+export const updateYadocSource = (args: UpdateYadocSourceArgs) => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {fileId, sourceId, initialPolling} = args;
         let prevItems = get(getState().connections, ['yadocs', 'items']);

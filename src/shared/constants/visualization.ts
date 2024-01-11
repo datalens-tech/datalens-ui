@@ -1,5 +1,6 @@
 export enum WizardVisualizationId {
     Line = 'line',
+    LineD3 = 'line-d3',
     Area = 'area',
     Area100p = 'area100p',
     Column = 'column',

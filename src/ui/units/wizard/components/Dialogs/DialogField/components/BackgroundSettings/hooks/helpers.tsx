@@ -8,6 +8,7 @@ import {
     Placeholder,
     PlaceholderId,
     WizardVisualizationId,
+    getFakeTitleOrTitle,
     isDimensionField,
     isMeasureField,
     isMeasureName,
@@ -90,7 +91,7 @@ export const getBackgroundColorFieldSelectorItems = (
                 item.aggregation === 'none' ||
                 datasetFieldsMap[item.guid] ||
                 isPseudoField(item) ? (
-                    item.title
+                    getFakeTitleOrTitle(item)
                 ) : (
                     <VisualizationItemTitleWithAggregation
                         field={item}

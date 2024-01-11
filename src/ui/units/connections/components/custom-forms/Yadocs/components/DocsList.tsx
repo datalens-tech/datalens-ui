@@ -1,37 +1,54 @@
 import React from 'react';
 
-import {List} from '@gravity-ui/uikit';
+import {Plus} from '@gravity-ui/icons';
+import {Button, Icon, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import type {YadocItem, YadocsAddSectionState} from 'ui/units/connections/store';
+import type {YadocItem} from 'ui/units/connections/store';
 
-import {AddSection, YadocListItemView} from '../components';
-import type {AddYandexDoc, HandleItemClick, UpdateAddSectionState, YadocListItem} from '../types';
+import {YadocListItemView} from '../components';
+import {i18n8857} from '../constants';
+import type {HandleItemClick, YadocListItem} from '../types';
 
 const b = block('conn-form-yadocs');
 const ITEM_HEIGHT = 52;
 
 type Props = {
-    addSectionState: YadocsAddSectionState;
     items: YadocItem[];
     selectedItemIndex: number;
-    addYandexDoc: AddYandexDoc;
+    clickAddDocumentButton: () => void;
+    clickErrorAction: HandleItemClick;
     clickListItem: HandleItemClick;
-    updateAddSectionState: UpdateAddSectionState;
+    clickRenameAction: HandleItemClick;
+    clickReplaceAction: HandleItemClick;
+    deleteListItem: HandleItemClick;
 };
 
 export const DocsList = (props: Props) => {
     const {
-        addSectionState,
         items,
         selectedItemIndex,
-        addYandexDoc,
+        clickAddDocumentButton,
+        clickErrorAction,
         clickListItem,
-        updateAddSectionState,
+        clickRenameAction,
+        clickReplaceAction,
+        deleteListItem,
     } = props;
 
-    const renderItem = React.useCallback((item: YadocListItem) => {
-        return <YadocListItemView item={item} />;
-    }, []);
+    const renderItem = React.useCallback(
+        (item: YadocListItem) => {
+            return (
+                <YadocListItemView
+                    item={item}
+                    clickErrorAction={clickErrorAction}
+                    clickRenameAction={clickRenameAction}
+                    clickReplaceAction={clickReplaceAction}
+                    deleteListItem={deleteListItem}
+                />
+            );
+        },
+        [clickErrorAction, clickRenameAction, clickReplaceAction, deleteListItem],
+    );
 
     return (
         <div className={b('list')}>
@@ -46,11 +63,12 @@ export const DocsList = (props: Props) => {
                 renderItem={renderItem}
                 onItemClick={clickListItem}
             />
-            <AddSection
-                {...addSectionState}
-                addYandexDoc={addYandexDoc}
-                updateAddSectionState={updateAddSectionState}
-            />
+            <div className={b('add-section')}>
+                <Button view="outlined" onClick={clickAddDocumentButton}>
+                    <Icon data={Plus} size={14} />
+                    {i18n8857['label_add-document']}
+                </Button>
+            </div>
         </div>
     );
 };
