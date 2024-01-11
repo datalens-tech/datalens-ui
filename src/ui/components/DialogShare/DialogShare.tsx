@@ -9,6 +9,7 @@ import {ChartKitProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/Ch
 import {URL_OPTIONS as CHARTKIT_URL_OPTIONS} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import URI from 'ui/libs/DatalensChartkit/modules/uri/uri';
+// import {registry} from 'ui/registry';
 import {Widget} from 'ui/libs/DatalensChartkit/types';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
@@ -126,6 +127,9 @@ export const DialogShare: React.FC<DialogShareProps> = ({
 
     const selectSize = DL.IS_MOBILE ? MOBILE_SIZE.SELECT : 'm';
     const checkboxSize = DL.IS_MOBILE ? MOBILE_SIZE.CHECKBOX : 'm';
+
+    // TODO: open after plugging
+    // const {MarkupShareLink} = registry.common.components.getAll();
 
     return (
         <AdaptiveDialog
