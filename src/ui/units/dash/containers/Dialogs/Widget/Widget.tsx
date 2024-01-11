@@ -564,6 +564,7 @@ class Widget extends React.PureComponent<Props, State> {
                         onChange={this.onAutoHeightRadioButtonChange}
                         disabled={!isWidgetTypeWithAutoHeight(selectedWidgetType)}
                         checked={Boolean(autoHeight)}
+                        qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
                     >
                         {i18n('dash.widget-dialog.edit', 'label_autoheight-enable')}
                     </Checkbox>
