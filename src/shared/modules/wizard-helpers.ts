@@ -17,6 +17,7 @@ import {
     Field,
     MarkupItem,
     ServerFieldFormatting,
+    ServerSort,
     Update,
     V3Label,
     isDateField,
@@ -219,7 +220,7 @@ export function isContinuousAxisModeDisabled(args: {
     field: Field;
     axisSettings: {disableAxisMode?: boolean} | undefined;
     visualizationId: WizardVisualizationId;
-    sort: Field[];
+    sort: ServerSort[];
 }) {
     const {field, axisSettings, visualizationId, sort} = args;
 

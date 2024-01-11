@@ -467,7 +467,7 @@ export function buildSource({
         // For the rest - we leave the text as it is, we pass the parameters to the back.
         Object.keys(params).forEach((key) => {
             const paramDescription = paramsDescription.find((param) => param.name === key);
-            if (paramDescription && paramDescription.defaultValue) {
+            if (paramDescription?.defaultValue !== undefined) {
                 if (
                     paramDescription.type === QLParamType.DateInterval ||
                     paramDescription.type === QLParamType.DatetimeInterval

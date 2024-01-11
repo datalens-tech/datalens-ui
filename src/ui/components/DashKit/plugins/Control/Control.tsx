@@ -151,6 +151,7 @@ export interface PluginControl extends Plugin<PluginControlProps> {
 }
 
 interface SelectControlProps {
+    widgetId: string;
     content: any;
     editMode: boolean;
     label: string;
@@ -957,7 +958,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     renderSelector() {
-        const {defaults, data, editMode} = this.props;
+        const {defaults, data, editMode, id} = this.props;
 
         const {loadedData, status, loadingItems} = this.state;
         const controlData = data as unknown as DashTabItemControlDataset | DashTabItemControlManual;
@@ -975,6 +976,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const preparedValue = unwrapFromArrayAndSkipOperation(this.actualParams[fieldId]);
 
         const props: SelectControlProps = {
+            widgetId: id,
             content: content || preselectedContent,
             label: (source.showTitle ? title : '') as string,
             innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
@@ -1016,6 +1018,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const {
             data: {sourceType},
             editMode,
+            id,
         } = this.props;
 
         switch (this.state.status) {
@@ -1066,6 +1069,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const props = {
                 ...control,
+                widgetId: id,
                 className: b('item'),
                 key: param,
                 value: preparedValue,

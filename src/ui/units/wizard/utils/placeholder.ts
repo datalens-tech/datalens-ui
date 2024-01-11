@@ -2,15 +2,16 @@ import {
     Field,
     Placeholder,
     PlaceholderSettings,
+    ServerSort,
     Shared,
     WizardVisualizationId,
-    isContinuousAxisModeDisabled,
+    getActualAxisModeForField,
     isFieldHierarchy,
 } from 'shared';
 import {SETTINGS} from 'ui/constants/visualizations';
 
 type GetAxisModePlaceholderSettings = {
-    sort: Field[];
+    sort: ServerSort[];
     visualization: Shared['visualization'];
     placeholder: Placeholder;
     firstField: Field;
@@ -63,28 +64,6 @@ export const getFirstFieldInPlaceholder = (placeholder: Placeholder, drillDownLe
         : placeholder.items[0];
 };
 
-export function getActualAxisModeForField(args: {
-    field: Field;
-    axisSettings: {axisModeMap?: Record<string, string>; disableAxisMode?: boolean} | undefined;
-    visualizationId: WizardVisualizationId;
-    sort: Field[];
-}) {
-    const {field, axisSettings, visualizationId, sort} = args;
-    const isContinuousModeRestricted = isContinuousAxisModeDisabled({
-        field,
-        axisSettings,
-        visualizationId,
-        sort,
-    });
-
-    if (isContinuousModeRestricted) {
-        return SETTINGS.AXIS_MODE.DISCRETE;
-    }
-
-    const fieldAxisMode = axisSettings?.axisModeMap?.[field.guid];
-    return fieldAxisMode || SETTINGS.AXIS_MODE.CONTINUOUS;
-}
-
 export function isPlaceholderWithAxisMode(placeholder: Placeholder | undefined) {
     const placeholderSettings = (placeholder?.settings || {}) as PlaceholderSettings;
     return Boolean(placeholderSettings?.axisModeMap);
@@ -93,7 +72,7 @@ export function isPlaceholderWithAxisMode(placeholder: Placeholder | undefined) 
 export function getPlaceholderAxisModeMap(args: {
     placeholder: Placeholder;
     visualizationId: WizardVisualizationId;
-    sort: Field[];
+    sort: ServerSort[];
 }) {
     const {placeholder, visualizationId, sort} = args;
     const placeholderSettings = (placeholder.settings || {}) as PlaceholderSettings;

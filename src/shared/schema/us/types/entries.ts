@@ -181,6 +181,7 @@ export interface DeleteUSEntryResponse extends EntryFields {
 
 export interface DeleteUSEntryArgs {
     entryId: string;
+    lockToken?: string;
 }
 
 interface GetRelationsEntryOutput extends EntryRelationFields {

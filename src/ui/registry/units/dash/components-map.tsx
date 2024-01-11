@@ -1,6 +1,6 @@
 import {makeDefaultEmpty} from '../../components/DefaultEmpty';
 
-import {DialogDashMetaProps} from './types/DialogDashMeta';
+import type {DialogDashMetaProps} from './types/DialogDashMeta';
 
 export const dashComponentsMap = {
     DashSelectState: makeDefaultEmpty(),
