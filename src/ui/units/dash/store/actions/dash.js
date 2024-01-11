@@ -29,6 +29,11 @@ import {
 
 const i18n = I18n.keyset('dash.store.view');
 
+const getBeforeOpenDialogItemAction = () => {
+    const {beforeOpenItemDialog} = registry.dash.functions.getAll();
+    return beforeOpenItemDialog;
+};
+
 export function purgeData(data) {
     const allTabsIds = new Set();
     const allItemsIds = new Set();
@@ -576,8 +581,8 @@ export const openItemDialog = (data) => ({type: actionTypes.OPEN_ITEM_DIALOG, pa
 
 export const openItemDialogAndSetData = (data) => {
     return (dispatch) => {
-        const {beforeOpenItemDialog} = registry.dash.functions.getAll();
-        beforeOpenItemDialog(data);
+        const beforeOpenItemDialog = getBeforeOpenDialogItemAction();
+        dispatch(beforeOpenItemDialog(data));
         dispatch(openItemDialog(data));
     };
 };

@@ -1,6 +1,5 @@
 import type {ReactElement} from 'react';
 
-import type {ConfigItem} from '@gravity-ui/dashkit';
 import type {EntryDialogOnCloseArg} from 'ui/components/EntryDialogues/types';
 
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
@@ -9,6 +8,8 @@ import type {
     SetItemDataArgs,
 } from '../../../units/dash/store/actions/dashTyped';
 import {EXAMPLE_FUNCTION} from '../common/constants/functions';
+
+import type {BeforeOpenItemDialogAction} from './types/BeforeOpenItemDialog';
 
 export const dashFunctionsMap = {
     [EXAMPLE_FUNCTION]: makeFunctionTemplate<(arg: number) => string>(),
@@ -21,5 +22,5 @@ export const dashFunctionsMap = {
         makeFunctionTemplate<
             (controlType: SelectorElementType | undefined) => ReactElement | null
         >(),
-    beforeOpenItemDialog: makeFunctionTemplate<(data: ConfigItem) => void>(),
+    beforeOpenItemDialog: makeFunctionTemplate<BeforeOpenItemDialogAction>(),
 } as const;
