@@ -1,3 +1,4 @@
+import {MarkupShareLink} from 'ui/components/DialogShare/MarkupShareLink/MarkupShareLink';
 import {RangeInputPicker} from 'ui/components/common/RangeInputPicker';
 
 import {Datepicker} from '../../../components/common/Datepicker/Datepicker';
@@ -47,4 +48,5 @@ export const commonComponentsMap = {
     RangeInputPicker: RangeInputPicker,
     ButtonFavorite: makeDefaultEmpty<ButtonFavoriteProps>(),
     OAuthTokenButton: makeDefaultEmpty<OAuthTokenButtonProps>(),
+    MarkupShareLink,
 } as const;
