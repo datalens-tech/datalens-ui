@@ -11,6 +11,7 @@ import {DL, EMBEDDED_MODE} from '../../../../constants';
 import ChartKit from '../../../../libs/DatalensChartkit';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
+import {registry} from '../../../../registry';
 import {showToast} from '../../../../store/actions/toaster';
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, Mode} from '../../modules/constants';
@@ -572,6 +573,14 @@ export const openDialog = (dialogType) => ({
 });
 
 export const openItemDialog = (data) => ({type: actionTypes.OPEN_ITEM_DIALOG, payload: data});
+
+export const openItemDialogAndSetData = (data) => {
+    return (dispatch) => {
+        const {beforeOpenItemDialog} = registry.dash.functions.getAll();
+        beforeOpenItemDialog(data);
+        dispatch(openItemDialog(data));
+    };
+};
 
 export const closeDialog = () => ({
     type: actionTypes.CLOSE_DIALOG,

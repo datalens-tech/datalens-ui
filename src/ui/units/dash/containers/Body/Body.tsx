@@ -51,7 +51,7 @@ import {
     sortByOrderIdOrLayoutComparator,
     stringifyMemoize,
 } from '../../modules/helpers';
-import {openDialog, openItemDialog, setCurrentTabData} from '../../store/actions/dash';
+import {openDialog, openItemDialogAndSetData, setCurrentTabData} from '../../store/actions/dash';
 import {
     TabsHashStates,
     setDashKitRef,
@@ -358,7 +358,7 @@ class Body extends React.PureComponent<BodyProps> {
                         return this.getPreparedCopyItemOptions(itemToCopy, tabData);
                     },
                 }}
-                onItemEdit={this.props.openItemDialog}
+                onItemEdit={this.props.openItemDialogAndSetData}
                 onChange={this.onChange}
                 settings={dashkitSettings}
                 defaultGlobalParams={settings.globalParams}
@@ -484,7 +484,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
 const mapDispatchToProps = {
     setErrorMode,
     setCurrentTabData,
-    openItemDialog,
+    openItemDialogAndSetData,
     setHashState,
     setStateHashId,
     setDashKitRef,

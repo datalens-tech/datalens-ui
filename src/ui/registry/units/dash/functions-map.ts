@@ -1,5 +1,6 @@
 import type {ReactElement} from 'react';
 
+import type {ConfigItem} from '@gravity-ui/dashkit';
 import type {EntryDialogOnCloseArg} from 'ui/components/EntryDialogues/types';
 
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
@@ -20,4 +21,5 @@ export const dashFunctionsMap = {
         makeFunctionTemplate<
             (controlType: SelectorElementType | undefined) => ReactElement | null
         >(),
+    beforeOpenItemDialog: makeFunctionTemplate<(data: ConfigItem) => void>(),
 } as const;
