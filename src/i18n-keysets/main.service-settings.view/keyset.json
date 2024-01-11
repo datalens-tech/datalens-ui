@@ -8,6 +8,14 @@
     "TRANSLATED"
   ],
   "status": {
+    "label_custom-palettes-section-desc": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_custom-palettes-section-header": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "label_header": {
       "en": "APPROVED",
       "ru": "APPROVED"
