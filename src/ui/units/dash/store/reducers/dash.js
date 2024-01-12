@@ -59,6 +59,10 @@ const initialState = {
 };
 
 export function getSelectorDialogInitialState(args = {}) {
+    const isValueRequired = Utils.isEnabledFeature(Feature.SelectorRequiredValue)
+        ? {isValueRequired: false}
+        : {};
+
     return {
         elementType: ELEMENT_TYPE.SELECT,
         sourceType: DashTabItemControlSourceType.Dataset,
@@ -69,6 +73,7 @@ export function getSelectorDialogInitialState(args = {}) {
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
         id: getRandomKey(),
+        ...isValueRequired,
     };
 }
 

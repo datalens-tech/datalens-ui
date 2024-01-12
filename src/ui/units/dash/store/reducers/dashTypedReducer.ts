@@ -5,6 +5,7 @@ import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
 import {DashData, DashEntry, Permissions, WidgetType} from 'shared';
 
+import {ELEMENT_TYPE} from '../../containers/Dialogs/Control/constants';
 import {Mode} from '../../modules/constants';
 import {DashUpdateStatus} from '../../typings/dash';
 import {
@@ -235,6 +236,11 @@ export function dashTypedReducer(
             const elementTypeChanged =
                 payload.elementType && selectorDialog.elementType !== payload.elementType;
             const defaultValue = elementTypeChanged ? undefined : selectorDialog.defaultValue;
+            const isElementTypeWithoutRequired =
+                elementTypeChanged && payload.elementType === ELEMENT_TYPE.CHECKBOX;
+            const isValueRequired = isElementTypeWithoutRequired
+                ? false
+                : selectorDialog.isValueRequired;
 
             const validation: SelectorDialogState['validation'] = {
                 title:
@@ -249,12 +255,18 @@ export function dashTypedReducer(
                     selectorDialog.datasetFieldId === payload.datasetFieldId
                         ? selectorDialog.validation.datasetFieldId
                         : undefined,
+                defaultValue:
+                    !isElementTypeWithoutRequired &&
+                    selectorDialog.defaultValue === payload.defaultValue
+                        ? selectorDialog.validation.defaultValue
+                        : undefined,
             };
 
             const newSelectorState = {
                 ...state.selectorDialog,
                 defaultValue,
                 validation,
+                isValueRequired,
                 ...payload,
             };
 

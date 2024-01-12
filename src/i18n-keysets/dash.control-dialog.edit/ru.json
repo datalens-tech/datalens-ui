@@ -33,6 +33,7 @@
   "field_operation-note": "Тип операции не влияет на QL-чарты и параметры",
   "field_params": "Параметры",
   "field_preset": "Пресет",
+  "field_required-value": "Обязательный выбор значения",
   "field_selector-type": "Тип селектора",
   "field_show-title": "Показывать",
   "field_source": "Источник",

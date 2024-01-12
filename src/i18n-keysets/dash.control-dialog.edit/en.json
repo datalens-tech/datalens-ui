@@ -33,6 +33,7 @@
   "field_operation-note": "The type of operation has no effect on QL Charts and parameters",
   "field_params": "Parameters",
   "field_preset": "Type",
+  "field_required-value": "Required value selection",
   "field_selector-type": "Selector type",
   "field_show-title": "Show",
   "field_source": "Source",

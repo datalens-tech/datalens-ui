@@ -19,7 +19,7 @@ const DatasetSettings = ({isSectionHidden}: DatasetSettingsProps) => {
         <React.Fragment>
             <SectionWrapper
                 isStylesHidden={isSectionHidden}
-                title={!isSectionHidden ? i18n('label_common-settings') : ''}
+                title={isSectionHidden ? '' : i18n('label_common-settings')}
             >
                 <DatasetSelector />
                 <InputTypeSelector />

@@ -31,7 +31,7 @@ const getDatasetLink = (entryId: string) => `/datasets/${entryId}`;
 
 function DatasetSelector() {
     const dispatch = useDispatch();
-    const {datasetId, datasetFieldId, validation, isManualTitle, title, fieldType} =
+    const {datasetId, datasetFieldId, isManualTitle, title, fieldType, validation} =
         useSelector(selectSelectorDialog);
     const [isValidDataset, setIsValidDataset] = React.useState(false);
 
@@ -166,6 +166,7 @@ function DatasetSelector() {
                         datasetId={datasetId}
                         fieldId={datasetFieldId}
                         onChange={handleDatasetFieldChange}
+                        isValidationError={Boolean(validation.datasetFieldId)}
                     />
                 </FieldWrapper>
             </FormRow>

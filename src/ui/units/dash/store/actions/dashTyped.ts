@@ -272,6 +272,7 @@ type ItemDataSource = {
     operation?: Operations;
     showInnerTitle?: boolean;
     innerTitle?: string;
+    isValueRequired?: boolean;
 };
 
 type SetItemDataBase = {
@@ -324,6 +325,7 @@ export type SelectorDialogState = {
     isRange?: boolean;
     multiselectable?: boolean;
     defaults: Record<string, string | string[]>;
+    isValueRequired?: boolean;
     useDefaultValue?: boolean;
     usePreset?: boolean;
     operation?: Operations;
@@ -340,6 +342,7 @@ type SelectorDialogValidation = {
     title?: string;
     fieldName?: string;
     datasetFieldId?: string;
+    defaultValue?: string;
 };
 
 export type AcceptableValue = {
@@ -415,6 +418,7 @@ const getItemDataSource = (selectorDialog: SelectorDialogState): ItemDataSource 
         datasetFieldType,
         fieldName,
         acceptableValues,
+        isValueRequired,
 
         chartId,
         operation,
@@ -431,6 +435,7 @@ const getItemDataSource = (selectorDialog: SelectorDialogState): ItemDataSource 
         showInnerTitle,
         innerTitle,
         operation,
+        isValueRequired,
     };
 
     if (sourceType === DashTabItemControlSourceType.Dataset) {
@@ -472,8 +477,15 @@ const getItemDataSource = (selectorDialog: SelectorDialogState): ItemDataSource 
 export const applyControl2Dialog = () => {
     return (dispatch: Dispatch, getState: () => DatalensGlobalState) => {
         const selectorDialog = getState().dash.selectorDialog as SelectorDialogState;
-        const {title, sourceType, datasetFieldId, fieldName, defaultValue, autoHeight} =
-            selectorDialog;
+        const {
+            title,
+            sourceType,
+            datasetFieldId,
+            fieldName,
+            defaultValue,
+            autoHeight,
+            isValueRequired,
+        } = selectorDialog;
         let defaults = selectorDialog.defaults;
 
         let field;
@@ -500,6 +512,10 @@ export const applyControl2Dialog = () => {
 
         if (sourceType === DashTabItemControlSourceType.Dataset && !datasetFieldId) {
             validation.datasetFieldId = i18n('dash.control-dialog.edit', 'validation_required');
+        }
+
+        if (isValueRequired && (!defaultValue || !defaultValue?.length)) {
+            validation.defaultValue = i18n('dash.control-dialog.edit', 'validation_required');
         }
 
         if (isEmpty(validation)) {

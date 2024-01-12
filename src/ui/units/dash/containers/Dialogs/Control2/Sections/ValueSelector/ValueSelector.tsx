@@ -6,21 +6,25 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogControlQa} from 'shared';
+import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
+import {registry} from 'ui/registry';
+import Utils from 'ui/utils/utils';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectIsDatasetSelectorAndNoFieldSelected,
     selectSelectorControlType,
     selectSelectorDefaultValue,
     selectSelectorDialog,
+    selectSelectorValidation,
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
 import {FilterValue} from '../../../../../../../../shared/modules';
-import {DATASET_FIELD_TYPES} from '../../../../../../../../shared/types';
-import {registry} from '../../../../../../../registry';
+import {DATASET_FIELD_TYPES, Feature} from '../../../../../../../../shared/types';
 import DateDefaultValue from '../../../Control/Date/Default/Default';
 import {CheckboxControlValue} from '../../../Control/constants';
 
 import {ListValueControl} from './ListValueControl/ListValueControl';
+import {RequiredValueCheckbox} from './RequiredValueCheckbox/RequiredValueCheckbox';
 
 import './ValueSelector.scss';
 
@@ -32,6 +36,7 @@ const InputValueControl = () => {
     const dispatch = useDispatch();
     const defaultValue = useSelector(selectSelectorDefaultValue);
     const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const validation = useSelector(selectSelectorValidation);
 
     const handleUpdate = React.useCallback((value: string) => {
         dispatch(
@@ -43,11 +48,13 @@ const InputValueControl = () => {
 
     return (
         <FormRow label={i18n('field_default-value')}>
-            <TextInput
-                disabled={isFieldDisabled}
-                value={defaultValue as string}
-                onUpdate={handleUpdate}
-            />
+            <FieldWrapper error={validation.defaultValue}>
+                <TextInput
+                    disabled={isFieldDisabled}
+                    value={defaultValue as string}
+                    onUpdate={handleUpdate}
+                />
+            </FieldWrapper>
         </FormRow>
     );
 };
@@ -56,6 +63,7 @@ const DateValueControl = () => {
     const {isRange, acceptableValues, defaultValue, fieldType, sourceType} =
         useSelector(selectSelectorDialog);
     const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const validation = useSelector(selectSelectorValidation);
 
     const dispatch = useDispatch();
 
@@ -114,14 +122,17 @@ const DateValueControl = () => {
                 </FormRow>
             ) : null}
             <FormRow label={i18n('field_default-value')}>
-                <DateDefaultValue
-                    disabled={isFieldDisabled}
-                    acceptableValues={acceptableValues}
-                    defaultValue={defaultValue as string | undefined}
-                    isRange={Boolean(isRange)}
-                    onApply={handleDefaultValueChange}
-                    fieldType={fieldType}
-                />
+                <FieldWrapper error={validation.defaultValue}>
+                    <DateDefaultValue
+                        disabled={isFieldDisabled}
+                        acceptableValues={acceptableValues}
+                        defaultValue={defaultValue as string | undefined}
+                        isRange={Boolean(isRange)}
+                        onApply={handleDefaultValueChange}
+                        fieldType={fieldType}
+                        isValidationError={Boolean(validation.defaultValue)}
+                    />
+                </FieldWrapper>
             </FormRow>
         </React.Fragment>
     );
@@ -203,7 +214,12 @@ const ValueSelector: React.FC = () => {
         }
     }
 
-    return inputControl;
+    return (
+        <React.Fragment>
+            {Utils.isEnabledFeature(Feature.SelectorRequiredValue) && <RequiredValueCheckbox />}
+            {inputControl}
+        </React.Fragment>
+    );
 };
 
 export {ValueSelector};
