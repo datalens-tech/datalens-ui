@@ -95,6 +95,7 @@ export enum Feature {
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     HolidayNavigation = 'HolidayNavigation',
+    SelectorRequiredValue = 'SelectorRequiredValue',
 }
 
 export type FeatureConfig = Record<string, boolean>;

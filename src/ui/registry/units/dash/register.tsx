@@ -5,6 +5,7 @@ import {getMinAutoupdateInterval} from 'ui/units/dash/containers/Dialogs/Setting
 import {DialogDashMeta} from '../../../components/EntryDialogues/DialogDashMeta/DialogDashMeta';
 import {getCaptionText} from '../../../units/dash/containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import DialogText from '../../../units/dash/containers/Dialogs/Text/Text';
+import {getExtendedItemData} from '../../../units/dash/store/actions/helpers';
 import {getDashEntryUrl, getNewDashUrl} from '../../../units/dash/utils/url';
 import {registry} from '../../index';
 
@@ -20,5 +21,6 @@ export const registerDashPlugins = () => {
         getNewDashUrl,
         getDashEntryUrl,
         getMinAutoupdateInterval,
+        getExtendedItemData,
     });
 };

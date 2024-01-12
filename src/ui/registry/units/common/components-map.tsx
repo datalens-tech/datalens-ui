@@ -1,6 +1,7 @@
 import {RangeInputPicker} from 'ui/components/common/RangeInputPicker';
 
 import {Datepicker} from '../../../components/common/Datepicker/Datepicker';
+import type {DatepickerControlProps} from '../../../components/common/DatepickerControl/DatepickerControl';
 import {RangeDatepicker} from '../../../components/common/RangeDatepicker';
 import {SimpleDatepicker} from '../../../components/common/SimpleDatepicker';
 import Timings from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Timings/Timings';
@@ -17,6 +18,7 @@ import type {DialogAddParticipantsProps} from './types/components/DialogAddParti
 import type {DownloadScreenshotProps} from './types/components/DownloadScreenshot';
 import type {EntryBreadcrumbsProps} from './types/components/EntryBreadcrumbs';
 import type {IamAccessDialogProps} from './types/components/IamAccessDialog';
+import type {MarkupShareLinkProps} from './types/components/MarkupShareLink';
 import type {OAuthTokenButtonProps} from './types/components/OAuthTokenButton';
 import type {PlaceholderIllustrationImageProps} from './types/components/PlaceholderIllustrationImage';
 import type {ReportButtonProps} from './types/components/ReportButton';
@@ -39,10 +41,12 @@ export const commonComponentsMap = {
     IamAccessDialogComponent: makeDefaultEmpty<IamAccessDialogProps>(),
     UserAvatarById: makeDefaultEmpty<UserAvatarByIdProps>(),
     Datepicker: Datepicker,
+    DatepickerControl: makeDefaultEmpty<DatepickerControlProps>(),
     Timings: Timings,
     SimpleDatepicker: SimpleDatepicker,
     RangeDatepicker: RangeDatepicker,
     RangeInputPicker: RangeInputPicker,
     ButtonFavorite: makeDefaultEmpty<ButtonFavoriteProps>(),
     OAuthTokenButton: makeDefaultEmpty<OAuthTokenButtonProps>(),
+    MarkupShareLink: makeDefaultEmpty<MarkupShareLinkProps>(),
 } as const;
