@@ -77,16 +77,17 @@
   "label_delimiter-tab": "Tabulation character",
   "label_documentation": "documentation",
   "label_entry-name-already-exists": "That name is already in use, try another one",
-  "label_error-400-description": "",
+  "label_error-400-description": " ",
   "label_error-400-no-connection-title": "No connection",
   "label_error-400-title": "Incorrect request to connection",
   "label_error-403-title": "You don't have access to this connection",
   "label_error-404-title": "Connection not found",
-  "label_error-500-description": "",
+  "label_error-500-description": " ",
   "label_error-500-title": "Failed to load connection",
   "label_error-empty-field": "This is a required field",
   "label_error-length-field": "Value has an incorrect number of characters",
   "label_error-msg": "Failed to load list of connections",
+  "label_error-on-template-apply": "An error occurred while deploying the template",
   "label_expiration-date": "Expires {{date}}",
   "label_file-input-label": "File \"{{fileName}}\" successfully uploaded",
   "label_file-upload-failure": "Couldn't upload file, try again later",
@@ -174,6 +175,5 @@
   "value_permission-explicit": "Available to the company",
   "value_permission-owner-only": "Available only to me",
   "value_token-input-mode-automatic": "Automatic",
-  "value_token-input-mode-manually": "Manually",
-  "label_error-on-template-apply": "An error occurred while deploying the template"
+  "value_token-input-mode-manually": "Manually"
 }

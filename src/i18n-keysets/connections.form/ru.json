@@ -78,16 +78,17 @@
   "label_delimiter-tab": "Знак табуляции",
   "label_documentation": "документации",
   "label_entry-name-already-exists": "Название уже используется, придумайте другое",
-  "label_error-400-description": "",
+  "label_error-400-description": " ",
   "label_error-400-no-connection-title": "Отсутствует подключение",
   "label_error-400-title": "Некорректный запрос к подключению",
   "label_error-403-title": "У вас нет доступа к подключению",
   "label_error-404-title": "Подключение не найдено",
-  "label_error-500-description": "",
+  "label_error-500-description": " ",
   "label_error-500-title": "Не удалось загрузить подключение",
   "label_error-empty-field": "Поле обязательно для заполнения",
   "label_error-length-field": "Значение имеет некорректное количество символов",
   "label_error-msg": "Не удалось загрузить список подключений",
+  "label_error-on-template-apply": "При разворачивании темплейта произошла ошибка",
   "label_expiration-date": "Истекает {{date}}",
   "label_file-input-label": "Файл \"{{fileName}}\" успешно загружен",
   "label_file-upload-failure": "Не удалось загрузить файл, повторите попытку через некоторое время",
@@ -175,6 +176,5 @@
   "value_permission-explicit": "Доступно для компании",
   "value_permission-owner-only": "Доступно только мне",
   "value_token-input-mode-automatic": "Автоматически",
-  "value_token-input-mode-manually": "Вручную",
-  "label_error-on-template-apply": "При разворачивании темплейта произошла ошибка"
+  "value_token-input-mode-manually": "Вручную"
 }
