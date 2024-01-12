@@ -11,7 +11,6 @@ import {DL, EMBEDDED_MODE} from '../../../../constants';
 import ChartKit from '../../../../libs/DatalensChartkit';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
-import {registry} from '../../../../registry';
 import {showToast} from '../../../../store/actions/toaster';
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, Mode} from '../../modules/constants';
@@ -23,16 +22,12 @@ import {SET_ERROR_MODE, SET_STATE, setDashViewMode, toggleTableOfContent} from '
 import {
     DOES_NOT_EXIST_ERROR_TEXT,
     NOT_FOUND_ERROR_TEXT,
+    getBeforeOpenDialogItemAction,
     prepareLoadedData,
     removeParamAndUpdate,
 } from './helpers';
 
 const i18n = I18n.keyset('dash.store.view');
-
-const getBeforeOpenDialogItemAction = () => {
-    const {beforeOpenItemDialog} = registry.dash.functions.getAll();
-    return beforeOpenItemDialog;
-};
 
 export function purgeData(data) {
     const allTabsIds = new Set();

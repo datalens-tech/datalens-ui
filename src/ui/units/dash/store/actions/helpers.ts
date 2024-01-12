@@ -1,6 +1,8 @@
 import {History} from 'history';
 import {DashEntry, DashTabItemType} from 'shared';
 
+import {registry} from '../../../../registry';
+
 import type {SetItemDataArgs} from './dashTyped';
 
 export const NOT_FOUND_ERROR_TEXT = 'No entry found';
@@ -34,4 +36,14 @@ export const removeParamAndUpdate = (
     });
 };
 
-export const getExtendedItemData = (args: SetItemDataArgs) => args;
+export const getExtendedItemDataAction = () => {
+    const {getExtendedItemData} = registry.dash.functions.getAll();
+    return getExtendedItemData;
+};
+
+export const getBeforeOpenDialogItemAction = () => {
+    const {beforeOpenItemDialog} = registry.dash.functions.getAll();
+    return beforeOpenItemDialog;
+};
+
+export const getExtendedItemData = (args: SetItemDataArgs) => () => args;
