@@ -42,6 +42,7 @@ import {
     SET_UPLOADED_FILES,
     SET_VALIDATION_ERRORS,
     SET_YADOCS_ACTIVE_DIALOG,
+    SET_YADOCS_COLUMN_FILTER,
     SET_YADOCS_ITEMS,
     SET_YADOCS_SELECTED_ITEM_ID,
 } from '../actions';
@@ -111,6 +112,7 @@ export type ConnectionsReduxState = {
     };
     yadocs: {
         items: YadocItem[];
+        columnFilter: string;
         selectedItemId: string;
         activeDialog?: YadocsActiveDialog;
     };
@@ -342,6 +344,13 @@ export type SetYadocsActiveDialog = {
     };
 };
 
+export type SetYadocsColumnFilter = {
+    type: typeof SET_YADOCS_COLUMN_FILTER;
+    payload: {
+        columnFilter: string;
+    };
+};
+
 export type ConnectionsReduxAction =
     | SetGroupedConnectors
     | SetFlattenConnectors
@@ -377,6 +386,7 @@ export type ConnectionsReduxAction =
     | CloseDialogAction
     | SetYadocsItems
     | SetYadocsSelectedItemId
-    | SetYadocsActiveDialog;
+    | SetYadocsActiveDialog
+    | SetYadocsColumnFilter;
 
 export type ConnectionsReduxDispatch = AppDispatch<ConnectionsReduxAction>;

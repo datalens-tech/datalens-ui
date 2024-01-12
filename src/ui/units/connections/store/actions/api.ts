@@ -353,7 +353,7 @@ const addYandexDocument = async ({
     publicLink,
     oauthToken,
 }: {
-    authorized: boolean;
+    authorized?: boolean;
     privatePath?: string;
     publicLink?: string;
     oauthToken?: string;

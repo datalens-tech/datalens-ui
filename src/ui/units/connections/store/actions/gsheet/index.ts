@@ -239,6 +239,7 @@ export const updateConnectionData = () => {
         const sources = mapGSheetItemsToUpdateAPIFormat(items);
 
         const {files, error} = await api.updateS3BasedConnectionData({
+            type: 'gsheets',
             connection_id,
             refresh_token,
             sources,

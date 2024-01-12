@@ -31,6 +31,7 @@ import {
     SET_UPLOADED_FILES,
     SET_VALIDATION_ERRORS,
     SET_YADOCS_ACTIVE_DIALOG,
+    SET_YADOCS_COLUMN_FILTER,
     SET_YADOCS_ITEMS,
     SET_YADOCS_SELECTED_ITEM_ID,
 } from '../actions';
@@ -364,6 +365,16 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                 yadocs: {
                     ...state.yadocs,
                     activeDialog,
+                },
+            };
+        }
+        case SET_YADOCS_COLUMN_FILTER: {
+            const {columnFilter} = action.payload;
+            return {
+                ...state,
+                yadocs: {
+                    ...state.yadocs,
+                    columnFilter,
                 },
             };
         }

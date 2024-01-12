@@ -42,10 +42,11 @@ export type YadocReadonlySource = {
         id: string;
         status: StateStatus;
         title: string;
-        spreadsheet_id: string;
-        sheet_id: number;
         raw_schema: UpdateFileSourceResponse['source']['raw_schema'];
         preview: UpdateFileSourceResponse['source']['preview'];
+        public_link?: string;
+        private_path?: string;
+        sheet_id?: string | number;
     };
     error?: DataLensApiError | null;
 };
@@ -54,8 +55,11 @@ export type YadocSource = YadocEditableSource | YadocReadonlySource;
 
 export type YadocItem = UploadedYadoc | YadocSourceInfo | YadocEditableSource | YadocReadonlySource;
 
-type YadocsActiveAddDocument = {
+export type YadocsActiveAddDocument = {
     type: 'dialog-add-document';
+    authorized?: boolean;
+    connectionId?: string;
+    oauthToken?: string;
 };
 
 type YadocsActiveDialogSources = {
@@ -73,7 +77,7 @@ export type YadocsActiveDialogRename = {
 export type YadocsActiveDialogReplace = {
     type: 'dialog-replace';
     sourceId: string;
-    authorized: boolean;
+    authorized?: boolean;
     connectionId?: string;
     oauthToken?: string;
 };

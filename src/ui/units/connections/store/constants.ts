@@ -54,6 +54,7 @@ export const initialState: ConnectionsReduxState = {
     },
     yadocs: {
         items: [],
+        columnFilter: '',
         selectedItemId: '',
         activeDialog: undefined,
     },

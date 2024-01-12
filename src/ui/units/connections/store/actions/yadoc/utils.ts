@@ -1,4 +1,5 @@
 import get from 'lodash/get';
+import type {YandexDocumentUpdatedSource} from 'shared/schema';
 
 import {ManualError} from '../../../../../utils/errors/manual';
 import type {
@@ -78,7 +79,6 @@ export const shapeYadocReadonlySourceItemAfterUpdate = (
     const first_line_is_header = get(data, ['data_settings', 'first_line_is_header']);
     const id = get(data, ['source', 'source_id']);
     const title = get(data, ['source', 'title']);
-    const spreadsheet_id = get(data, ['source', 'spreadsheet_id']);
     const sheet_id = get(data, ['source', 'sheet_id']);
     const raw_schema = get(data, ['source', 'raw_schema']);
     const preview = get(data, ['source', 'preview']);
@@ -94,7 +94,6 @@ export const shapeYadocReadonlySourceItemAfterUpdate = (
             id,
             status,
             title,
-            spreadsheet_id,
             sheet_id,
             raw_schema,
             preview,
@@ -171,4 +170,44 @@ export const findUploadedYadoc = (items: YadocItem[], id: string) => {
     });
 
     return resultItem as UploadedYadoc | undefined;
+};
+
+export const getYadocSourceItemTitle = (item?: YadocItem) => {
+    if (!item || !isYadocSourceItem(item)) {
+        return undefined;
+    }
+
+    return 'source' in item.data ? item.data.source.title : item.data.title;
+};
+
+const yadocSourceToUpdateAPIFormat = (source: YadocSource): YandexDocumentUpdatedSource => {
+    if (source.type === 'yadocEditableSource') {
+        const first_line_is_header = get(source, ['data', 'data_settings', 'first_line_is_header']);
+        const id = get(source, ['data', 'source', 'source_id']);
+        const title = get(source, ['data', 'source', 'title']);
+        const sheet_id = get(source, ['data', 'source', 'sheet_id']);
+        const private_path = get(source, ['data', 'source', 'private_path']);
+        const public_link = get(source, ['data', 'source', 'public_link']);
+
+        return {first_line_is_header, id, title, sheet_id, private_path, public_link};
+    }
+
+    const first_line_is_header = get(source, ['data', 'first_line_is_header']);
+    const id = get(source, ['data', 'id']);
+    const title = get(source, ['data', 'title']);
+    const sheet_id = get(source, ['data', 'sheet_id']);
+    const private_path = get(source, ['data', 'private_path']);
+    const public_link = get(source, ['data', 'public_link']);
+
+    return {first_line_is_header, id, title, sheet_id, private_path, public_link};
+};
+
+export const mapYadocItemsToUpdateAPIFormat = (items: YadocItem[]) => {
+    return items.reduce<YandexDocumentUpdatedSource[]>((acc, item) => {
+        if (isYadocSourceItem(item)) {
+            acc.push(yadocSourceToUpdateAPIFormat(item));
+        }
+
+        return acc;
+    }, []);
 };

@@ -1,7 +1,7 @@
 import {get} from 'lodash';
 import {ManualError} from 'ui/utils/errors/manual';
 
-import type {GSheetUpdatedSource} from '../../../../../../shared/schema';
+import type {GoogleSheetUpdatedSource} from '../../../../../../shared/schema';
 import type {
     CreatedSource,
     CreatingSource,
@@ -186,7 +186,7 @@ export const getFilteredReplaceSources = (sources: ReplaceSource[], replacedSour
     };
 };
 
-const gsheetSourceToUpdateAPIFormat = (source: GSheetSource): GSheetUpdatedSource => {
+const gsheetSourceToUpdateAPIFormat = (source: GSheetSource): GoogleSheetUpdatedSource => {
     if (source.type === 'gsheetEditableSource') {
         const first_line_is_header = get(source, ['data', 'data_settings', 'first_line_is_header']);
         const id = get(source, ['data', 'source', 'source_id']);
@@ -207,13 +207,13 @@ const gsheetSourceToUpdateAPIFormat = (source: GSheetSource): GSheetUpdatedSourc
 };
 
 export const mapGSheetItemsToUpdateAPIFormat = (items: GSheetItem[]) => {
-    return items.reduce((acc, item) => {
+    return items.reduce<GoogleSheetUpdatedSource[]>((acc, item) => {
         if (isGSheetSourceItem(item)) {
             acc.push(gsheetSourceToUpdateAPIFormat(item));
         }
 
         return acc;
-    }, [] as GSheetUpdatedSource[]);
+    }, []);
 };
 
 export const getGSheetSourceItemTitle = (item?: GSheetItem) => {
