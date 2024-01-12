@@ -79,6 +79,7 @@ export enum Feature {
     D3ScatterVisualization = 'D3ScatterVisualization',
     D3PieVisualization = 'D3PieVisualization',
     D3BarXVisualization = 'D3BarXVisualization',
+    D3Visualizations = 'D3Visualizations',
     HideMultiDatasets = 'HideMultiDatasets',
     ShouldCheckEditorAccess = 'ShouldCheckEditorAccess',
     HideMultitenant = 'HideMultitenant',
@@ -94,6 +95,7 @@ export enum Feature {
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     HolidayNavigation = 'HolidayNavigation',
+    SelectorRequiredValue = 'SelectorRequiredValue',
 }
 
 export type FeatureConfig = Record<string, boolean>;

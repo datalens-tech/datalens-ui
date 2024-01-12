@@ -1,6 +1,5 @@
 import fs from 'fs';
 import {unlink} from 'fs/promises';
-import {monitorEventLoopDelay, performance} from 'perf_hooks';
 
 import XLSX from '@datalens-tech/xlsx';
 import {dateTime} from '@gravity-ui/date-utils';
@@ -14,17 +13,13 @@ import {Graph} from '../components/charts-engine/components/processor/comments-f
 const XLS_DATA_LIMIT = 1024 * 1024 * 50; // 50MB
 const MAX_EXCEL_CELL_LENGTH = 32767;
 
-// https://github.com/SheetJS/sheetjs/issues/2152
-// SheetJS Dates are anchored to Excel's 1900 epoch.
-//@ts-ignore
-const xlsxSecondsFix = new Date(Date.UTC(1900)).getSeconds();
-
 type Cell = {x: number; t: string; v: Date};
 type Row = (number | Date | string | Cell)[];
 
 function isCell(cellData: unknown): cellData is Cell {
     return isObject(cellData) && 't' in cellData && 'v' in cellData;
 }
+
 export function xlsxConverter(
     req: Request,
     res: Response,
@@ -41,25 +36,14 @@ export function xlsxConverter(
     const {ctx} = req;
     ctx.log('EXPORT_XLS');
     const reqDataLength = req.body.data.length;
-    const monitorHistogram = monitorEventLoopDelay();
-    monitorHistogram.enable();
 
     if (reqDataLength > XLS_DATA_LIMIT) {
         ctx.logError(`EXPORT_XLS_DATA_LIMIT_ERROR`, {
             bytes: reqDataLength,
         });
-        req.ctx.stats('exportSizeStats', {
-            datetime: Date.now(),
-            exportType: 'new_xlsx',
-            sizeBytes: reqDataLength,
-            timings: 0,
-            rejected: 'true',
-            requestId: req.id,
-        });
         res.sendStatus(413);
         return;
     }
-    const xslxStart = performance.now();
 
     const columns = [];
     columns.push({wch: 15});
@@ -99,11 +83,7 @@ export function xlsxConverter(
                 }
 
                 if (isCell(cellData) && cellData.t === 'd') {
-                    cellData.v = dateTime({input: cellData.v})
-                        .utc()
-                        .subtract(xlsxSecondsFix, 'seconds')
-                        .subtract(dateTime().utcOffset(), 'minutes')
-                        .toDate();
+                    cellData.v = dateTime({input: cellData.v}).utc().toDate();
                 }
 
                 row.push(cellData);
@@ -141,17 +121,6 @@ export function xlsxConverter(
                     ctx.log(`error ${error.message}`);
                 }
                 unlink(file).catch((e) => ctx.log(`error ${e.message}`));
-                monitorHistogram.disable();
-                const xslxStop = performance.now();
-                req.ctx.stats('exportSizeStats', {
-                    datetime: Date.now(),
-                    exportType: 'new_xlsx',
-                    sizeBytes: reqDataLength,
-                    timings: xslxStop - xslxStart,
-                    rejected: 'false',
-                    requestId: req.id,
-                    eventLoopDelay: monitorHistogram.max / 1000000,
-                });
             });
         });
     } catch (error) {

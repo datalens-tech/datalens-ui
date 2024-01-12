@@ -13,6 +13,7 @@ export enum FieldKey {
     Key = 'key',
     MdbFolderId = 'mdb_folder_id',
     Name = 'name',
+    OAuthToken = 'oauth_token',
     Password = 'password',
     Port = 'port',
     Portal = 'portal',

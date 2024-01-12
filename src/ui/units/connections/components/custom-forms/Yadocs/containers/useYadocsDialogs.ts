@@ -8,6 +8,7 @@ import {
     api,
     handleReplacedSourceBeforePolling,
     handleUploadedYadocBeforePolling,
+    oauthLogout,
     setYadocsActiveDialog,
     showGsheetUploadingFailureToast,
     updateYadocItem,
@@ -20,9 +21,10 @@ import type {
     YadocsActiveDialogRename,
     YadocsActiveDialogReplace,
 } from '../../../../store';
-import {DIALOG_CONN_S3_SOURCES} from '../../../dialogs';
+import {DIALOG_CONN_CONFIRM, DIALOG_CONN_S3_SOURCES} from '../../../dialogs';
 import {DIALOG_CONN_WITH_INPUT} from '../../components';
 import {DIALOG_CONN_ADD_YADOC} from '../components/DialogAddDocument/DialogAddDocument';
+import {i18n8857} from '../constants';
 
 type OpenSourcesDialogArgs = {
     yadoc: UploadedYadoc;
@@ -104,6 +106,15 @@ export const useYadocsDialogs = () => {
         },
         [dispatch, handleCloseDialog],
     );
+
+    const getApplyLogoutDialog = React.useCallback(() => {
+        return () => {
+            batch(() => {
+                dispatch(oauthLogout());
+                handleCloseDialog();
+            });
+        };
+    }, [dispatch, handleCloseDialog]);
 
     const openSourcesDialog = React.useCallback(
         (args: OpenSourcesDialogArgs) => {
@@ -194,8 +205,33 @@ export const useYadocsDialogs = () => {
         [dispatch, getSuccessReplaceDialog, handleCloseDialog],
     );
 
+    const openLogoutDialog = React.useCallback(() => {
+        const onApply = getApplyLogoutDialog();
+        dispatch(
+            openDialog({
+                id: DIALOG_CONN_CONFIRM,
+                props: {
+                    description: i18n8857['label_logout-dialog-description'],
+                    dialogProps: {
+                        onEnterKeyDown: onApply,
+                    },
+                    headerProps: {
+                        caption: i18n8857['label_logout-dialog-title'],
+                    },
+                    footerProps: {
+                        textButtonApply: i18n8857['button_apply'],
+                        textButtonCancel: i18n8857['button_cancel'],
+                    },
+                    onApply,
+                    onClose: handleCloseDialog,
+                },
+            }),
+        );
+    }, [dispatch, getApplyLogoutDialog, handleCloseDialog]);
+
     return {
         openAddDocumentDialog,
+        openLogoutDialog,
         openRenameSourceDialog,
         openReplaceSourceDialog,
         openSourcesDialog,

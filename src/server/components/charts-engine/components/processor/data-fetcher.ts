@@ -4,7 +4,6 @@ import querystring from 'querystring';
 import url from 'url';
 
 import {Request} from '@gravity-ui/expresskit';
-import type Bluebird from 'bluebird';
 import {isObject, isString} from 'lodash';
 import sizeof from 'object-sizeof';
 import PQueue from 'p-queue';
@@ -51,7 +50,7 @@ type ChartkitSource = {
     uiEndpoint?: string;
     dataEndpoint?: string;
 };
-type PatchedPromise<T> = Bluebird<T> & {_cancelCode?: string};
+type PromiseWithAbortController = [Promise<unknown>, AbortController];
 
 type DataFetcherOptions = {
     chartsEngine: ChartsEngine;
@@ -90,18 +89,16 @@ function getDatasetId(publicTargetUri?: string | Record<string, string>) {
 }
 
 function cancelRequestsPromises(
-    requestsPromises: PatchedPromise<unknown>[],
+    requestsPromises: PromiseWithAbortController[],
     cancelCode: string,
-    current?: PatchedPromise<unknown>,
+    current?: Promise<unknown>,
 ) {
-    requestsPromises.forEach((requestPromise: PatchedPromise<unknown>) => {
-        if (requestPromise === current) {
+    requestsPromises.forEach((requestPromise: PromiseWithAbortController) => {
+        if (requestPromise[0] === current) {
             return;
         }
 
-        requestPromise._cancelCode = cancelCode;
-
-        requestPromise.cancel();
+        requestPromise[1].abort(cancelCode);
     });
 }
 
@@ -152,7 +149,7 @@ export class DataFetcher {
 
         const fetchingStartTime = Date.now();
 
-        const processingRequests: PatchedPromise<unknown>[] = [];
+        const processingRequests: PromiseWithAbortController[] = [];
 
         const overallTimeout = setTimeout(() => {
             cancelRequestsPromises(processingRequests, ALL_REQUESTS_TIMEOUT_EXCEEDED);
@@ -377,10 +374,10 @@ export class DataFetcher {
     }
 
     private static removeFromProcessingRequests(
-        promise: PatchedPromise<unknown>,
-        processingRequests: PatchedPromise<unknown>[],
+        promise: Promise<unknown>,
+        processingRequests: PromiseWithAbortController[],
     ) {
-        const index = processingRequests.indexOf(promise);
+        const index = processingRequests.findIndex((elem) => elem[0] === promise);
 
         processingRequests.splice(index, 1);
     }
@@ -403,7 +400,7 @@ export class DataFetcher {
         chartsEngine: ChartsEngine;
         fetchingStartTime: number;
         subrequestHeaders: Record<string, string>;
-        processingRequests: PatchedPromise<unknown>[];
+        processingRequests: PromiseWithAbortController[];
         rejectFetchingSource: () => void;
         userId?: string | null;
         iamToken?: string | null;
@@ -766,13 +763,18 @@ export class DataFetcher {
             if (useCaching) {
                 ctx.log('Using caching', {publicTargetUri});
             }
-            const currentRequest: PatchedPromise<void> = RequestPromise.request({
-                requestOptions,
+            const abortController = new AbortController();
+            const signal = abortController.signal;
+            const currentRequest: Promise<void> = RequestPromise.request({
+                requestOptions: {...requestOptions, signal},
                 requestControl,
                 useCaching,
             })
                 // eslint-disable-next-line
                 .catch((error) => {
+                    if (signal.aborted) {
+                        return;
+                    }
                     const latency = new Date().getTime() - fetchingStartTime;
 
                     const statusCode = isFetchLimitError(error.message) ? 200 : error.statusCode;
@@ -963,8 +965,8 @@ export class DataFetcher {
                     });
                 })
                 .finally(() => {
-                    if (currentRequest.isCancelled()) {
-                        const code = currentRequest._cancelCode || REQUEST_CANCELLED;
+                    if (signal.aborted) {
+                        const code = signal.reason || REQUEST_CANCELLED;
 
                         fetchResolve({
                             sourceId: sourceName,
@@ -982,7 +984,7 @@ export class DataFetcher {
                     DataFetcher.removeFromProcessingRequests(currentRequest, processingRequests);
                 });
 
-            processingRequests.push(currentRequest);
+            processingRequests.push([currentRequest, abortController]);
         });
     }
 }

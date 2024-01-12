@@ -78,10 +78,12 @@ export const getPreparedMetaData = (
 
     metaDataWithNamespaces.forEach((item) => {
         if (item.datasets?.length) {
-            item.datasets!.forEach((datasetItem) => {
-                datasetsList[datasetItem.id] = {
-                    fields: datasetItem.fieldsList,
-                };
+            item.datasets.forEach((datasetItem) => {
+                if (datasetItem.id) {
+                    datasetsList[datasetItem.id] = {
+                        fields: datasetItem.fieldsList,
+                    };
+                }
             });
         }
         if (
@@ -91,16 +93,6 @@ export const getPreparedMetaData = (
             controlsList.push(item?.widgetId);
         }
     });
-
-    metaDataWithNamespaces
-        .filter((item) => Boolean(item.datasets?.length))
-        .forEach((item) => {
-            item.datasets!.forEach((datasetItem) => {
-                datasetsList[datasetItem.id] = {
-                    fields: datasetItem.fieldsList,
-                };
-            });
-        });
 
     const entriesList = [
         ...new Set(metaDataWithNamespaces.map((item) => item.entryId).filter(Boolean)),

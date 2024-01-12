@@ -7,6 +7,7 @@ import {Dispatch, bindActionCreators} from 'redux';
 import {
     Field,
     Placeholder,
+    PlaceholderId,
     Shared,
     VisualizationLayerShared,
     VisualizationWithLayersShared,
@@ -71,11 +72,11 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
             qlMode,
         );
 
-        const placeholders = visualization.placeholders;
         const allowShapes =
             currentVisualization?.allowShapes &&
             !(qlMode && qlChartType && isYAGRVisualization(qlChartType, currentVisualization.id));
         const allowSegments = currentVisualization?.allowSegments;
+        const placeholders = visualization.placeholders;
 
         return (
             <>
@@ -102,7 +103,10 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         />
                     );
 
-                    if (placeholder.id === 'x' && globalVisualization.id === 'combined-chart') {
+                    if (
+                        placeholder.id === PlaceholderId.X &&
+                        globalVisualization.id === WizardVisualizationId.CombinedChart
+                    ) {
                         return (
                             <React.Fragment key="section-with-layer-control">
                                 {placeholderNode}
