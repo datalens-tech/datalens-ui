@@ -133,4 +133,13 @@
     &__beta {
         margin-left: 4px;
     }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__content-body {
+        overflow-y: auto;
+    }
 }
