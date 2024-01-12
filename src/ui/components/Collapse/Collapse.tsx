@@ -149,7 +149,7 @@ function CollapseToggler({
     titleSize,
     isExpand,
 }: CollapseTogglerProps) {
-    const arrowDirection = isExpand ? 'bottom' : 'right';
+    const arrowDirection = isExpand ? 'top' : 'bottom';
 
     return (
         <div
