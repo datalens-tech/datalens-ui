@@ -4,7 +4,6 @@
   "from_error": "The first part of the range is specified incorrectly",
   "from_to_error": "Both parts of the range are specified incorrectly",
   "incomplete_range_error": "You must specify both parts of the range",
-  "label_empty": " ",
   "label_empty_zone": "Specify the time zone",
   "label_to": "to",
   "preset_from_start_of_M": "From start of month",
