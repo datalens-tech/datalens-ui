@@ -146,9 +146,12 @@ export class Table extends React.PureComponent<TableProps, TableState> {
     }
 
     componentDidUpdate(prevProps: TableProps) {
-        this.onLoad();
+        // requestAnimationFrame adding this callback after DataTable has calculated it's own sizes
+        requestAnimationFrame(() => {
+            this.onLoad();
 
-        this.props.onRender?.({renderTime: Number(Performance.getDuration(this.getId()))});
+            this.props.onRender?.({renderTime: Number(Performance.getDuration(this.getId()))});
+        });
 
         if (prevProps.data !== this.props.data) {
             validateConfigAndData({data: this.props.data.data, config: this.props.data.config});

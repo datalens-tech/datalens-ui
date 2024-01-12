@@ -5,6 +5,7 @@ import {PluginWidgetProps} from '@gravity-ui/dashkit';
 import {DL} from '../../constants';
 import {
     CHARTKIT_ERROR_NODE_CLASSNAME,
+    CHARTKIT_MAIN_CLASSNAME,
     CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
 } from '../../libs/DatalensChartkit/ChartKit/helpers/constants';
 
@@ -14,8 +15,8 @@ import {MAX_AUTO_HEIGHT_PX} from './constants';
     The description is taken from dashkit (removed from there), but the meaning has not changed much.
 
     In the method, we get a link to the PluginWidget component with the first argument,
-    we access the corresponding DOM node, remove the necessary dimensions 
-    (the height of the element taking into account the scroll (scrollHeight), 
+    we access the corresponding DOM node, remove the necessary dimensions
+    (the height of the element taking into account the scroll (scrollHeight),
     the offset of the scrollable element from the upper edge of the widget),
     having these dimensions and the height of the row grid (_gridLayout.rowhight),
     we get new values of the grid configuration parameters to adjust the height of element to grid
@@ -55,7 +56,8 @@ const setNewLayout = ({
     contentHeight: number;
 }) => {
     const {rowHeight, margin} = gridLayout;
-    const newHeight = Math.ceil(contentHeight / (rowHeight + margin[1])) + 1;
+    // contentHeight = n * rowHeight + (n - 1) * margin[y], where n is number of grid rows
+    const newHeight = Math.ceil((contentHeight + margin[1]) / (rowHeight + margin[1]));
     const correspondedLayoutItemIndex = layout.findIndex((layoutItem) => layoutItem.i === widgetId);
     const correspondedLayoutItem = layout[correspondedLayoutItemIndex];
 
@@ -97,6 +99,7 @@ export function adjustWidgetLayout({
     }
 
     const scrollableNode = node.querySelector(`.${CHARTKIT_SCROLLABLE_NODE_CLASSNAME}`);
+    const mainNode = node.querySelector(`.${CHARTKIT_MAIN_CLASSNAME}`);
 
     const errorNode = node.querySelector(`.${CHARTKIT_ERROR_NODE_CLASSNAME}`);
 
@@ -132,14 +135,30 @@ export function adjustWidgetLayout({
     // If widget has horizontal scroll, then we must add scrollBar height to fullContentHeight.
     // We consider that horizontal scrollBar is equal to vertical scrollBar,
     // so we could calculate horizontal scrollBar size.
-
+    // In that assumption it will work only if vertical scrollBar is not present we will calculate
+    // horizontal scrollBar height itself with that if content is already presented and loaded
+    // it should work fine
     let scrollBar = 0;
     if (scrollableNode.scrollWidth > scrollableNode.clientWidth) {
-        scrollBar = (scrollableNode as HTMLElement).offsetWidth - scrollableNode.clientWidth;
+        scrollBar =
+            (scrollableNode as HTMLElement).offsetWidth - scrollableNode.clientWidth ||
+            (scrollableNode as HTMLElement).offsetHeight - scrollableNode.clientHeight;
     }
 
+    // Getting additional bottom paddings and margins around mainNode
+    // for example tables spacing around scrollableNode
+    const additionalPaddings =
+        mainNode && mainNode.parentElement
+            ? mainNode.parentElement.getBoundingClientRect().bottom -
+              mainNode.getBoundingClientRect().bottom
+            : 0;
+
     const fullContentHeight =
-        scrollHeight + scrollableNodeTopOffsetFromRoot + belowLyingNodesHeight + scrollBar;
+        scrollHeight +
+        scrollableNodeTopOffsetFromRoot +
+        belowLyingNodesHeight +
+        scrollBar +
+        additionalPaddings;
 
     const contentHeight =
         fullContentHeight > MAX_AUTO_HEIGHT_PX ? MAX_AUTO_HEIGHT_PX : fullContentHeight;
