@@ -30,16 +30,22 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
         countSelected,
     }) => {
         const checkboxPropsSelected = React.useMemo(() => {
-            if (countSelected > 0) {
-                if (countSelected === contentItems.length) {
-                    return {checked: true};
+            const isNotDisabled = contentItems.some((item) => item.permissions.move);
+
+            if (isNotDisabled) {
+                if (countSelected > 0) {
+                    if (countSelected === contentItems.length) {
+                        return {checked: true};
+                    } else {
+                        return {indeterminate: true};
+                    }
                 } else {
-                    return {indeterminate: true};
+                    return {checked: false};
                 }
             } else {
-                return {checked: false};
+                return {disabled: true};
             }
-        }, [contentItems.length, countSelected]);
+        }, [contentItems, countSelected]);
 
         return (
             <div className={b()}>
@@ -62,6 +68,8 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                     </div>
                     <div className={b('content')}>
                         {contentItems.map((item) => {
+                            const canMove = item.permissions.move;
+
                             if ('workbookId' in item) {
                                 const actions = getWorkbookActions(item);
 
@@ -87,8 +95,10 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                         item.workbookId,
                                                     );
                                                 }}
+                                                disabled={!canMove}
                                                 checked={Boolean(
-                                                    selectedMap[item.workbookId]?.checked,
+                                                    selectedMap[item.workbookId]?.checked &&
+                                                        canMove,
                                                 )}
                                             />
                                         </div>
@@ -142,8 +152,10 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                         item.collectionId,
                                                     );
                                                 }}
+                                                disabled={!canMove}
                                                 checked={Boolean(
-                                                    selectedMap[item.collectionId]?.checked,
+                                                    selectedMap[item.collectionId]?.checked &&
+                                                        canMove,
                                                 )}
                                             />
                                         </div>
