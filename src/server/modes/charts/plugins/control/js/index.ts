@@ -112,6 +112,7 @@ export default ({
         multiselect: source.multiselectable,
         content,
         param,
+        isValueRequired: source.isValueRequired,
     };
 
     switch (source.elementType) {

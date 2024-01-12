@@ -342,6 +342,7 @@ function dash(state = initialState, action) {
                     innerTitle: data.source.innerTitle,
                     showInnerTitle: data.source.showInnerTitle,
                     id: getRandomKey(),
+                    isValueRequired: data.source.isValueRequired,
                 };
             }
 

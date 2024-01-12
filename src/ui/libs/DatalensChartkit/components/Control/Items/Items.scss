@@ -25,12 +25,26 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         }
     }
 
+    &__yc-select_error {
+        &#{&}.yc-select-control,
+        &#{&}.yc-select-control_focused:hover {
+            border-color: var(--g-color-text-danger);
+        }
+    }
+
+    &__datepicker_error {
+        .yc-text-input__content,
+        .yc-text-input__content:hover,
+        .yc-text-input__content:focus-within {
+            border-color: var(--g-color-text-danger);
+        }
+    }
+
     &__title {
         margin-right: 8px;
         font-size: 13px;
         font-weight: 500;
         white-space: nowrap;
-        //line-height: 1.2;
     }
 
     &__component {

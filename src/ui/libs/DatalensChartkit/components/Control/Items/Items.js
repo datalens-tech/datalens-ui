@@ -5,9 +5,10 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import {ControlQA, resolveIntervalDate, resolveRelativeDate} from 'shared';
+import {ControlQA, Feature, resolveIntervalDate, resolveRelativeDate} from 'shared';
 import {registry} from 'ui/registry';
 import {CheckboxControlValue} from 'ui/units/dash/containers/Dialogs/Control/constants';
+import Utils from 'ui/utils';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {YCSelect} from '../../../../../components/common/YCSelect/YCSelect';
@@ -66,7 +67,13 @@ function BaseControlSelect({
     itemsLoaderClassName,
     onOpenChange,
     placeholder,
+    isValueRequired,
+    validationError,
 }) {
+    const [currentValue, setCurrentValue] = React.useState(
+        multiselect ? wrapToArray(value) : value,
+    );
+
     const items = content
         // because the choice of such values leads to incorrect behavior
         .filter(({value}) => value !== null && value !== '' && value !== undefined)
@@ -76,18 +83,23 @@ function BaseControlSelect({
             key: value,
         }));
 
-    const wrappedValue = multiselect ? wrapToArray(value) : value;
-
     const wrappedOnChange = React.useCallback(
         (value) => {
-            // null - when SINGLE with allowEmptyValue and there is no selected value, otherwise [null] is obtained in the parameters
-            // [] - when MULTIPLE and there is no selected value, otherwise results in the parameters []
             const wrappedValue =
                 value === null || (Array.isArray(value) && !value.length) ? '' : value;
+
+            setCurrentValue(multiselect ? wrapToArray(wrappedValue) : wrappedValue);
             return onChange(wrappedValue);
         },
-        [onChange],
+        [onChange, multiselect],
     );
+
+    const allowEmptyValue =
+        Utils.isEnabledFeature(Feature.SelectorRequiredValue) && !isValueRequired;
+    const currentPlaceholder =
+        Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
+            ? validationError
+            : placeholder;
 
     const size = isMobileView ? MOBILE_SIZE.YC_SELECT : 's';
 
@@ -95,9 +107,9 @@ function BaseControlSelect({
         <YCSelect
             showSearch={searchable}
             type={multiselect ? YCSelect.MULTIPLE : YCSelect.SINGLE}
-            allowEmptyValue={true}
+            allowEmptyValue={allowEmptyValue}
             showMissingItems={true}
-            value={wrappedValue}
+            value={currentValue}
             onUpdate={wrappedOnChange}
             controlTestAnchor={ControlQA.controlSelect}
             itemsListTestAnchor={ControlQA.controlSelectItems}
@@ -109,9 +121,9 @@ function BaseControlSelect({
             errorContent={errorContent}
             itemsLoaderClassName={itemsLoaderClassName}
             onOpenChange={onOpenChange}
-            placeholder={placeholder}
+            placeholder={currentPlaceholder}
             size={size}
-            className={b('yc-select')}
+            className={b('yc-select', {error: Boolean(validationError)})}
         />
     );
 }
@@ -141,15 +153,28 @@ BaseControlSelect.propTypes = {
     onOpenChange: PropTypes.func,
     placeholder: PropTypes.string,
     widgetId: PropTypes.string,
+    isValueRequired: PropTypes.bool,
+    validationError: PropTypes.string,
 };
 
-function BaseControlInput({placeholder, value, onChange, innerLabel, labelInside, label}) {
+function BaseControlInput({
+    placeholder,
+    value,
+    onChange,
+    innerLabel,
+    labelInside,
+    label,
+    validationError,
+}) {
     const [text, setText] = React.useState(value);
+
     React.useEffect(() => setText(value), [value]);
+
+    const currentPlaceholder = validationError ? validationError : placeholder;
 
     return (
         <TextInput
-            placeholder={placeholder}
+            placeholder={currentPlaceholder}
             className={b('component', {input: true})}
             value={text}
             onUpdate={(value) => setText(value)}
@@ -169,6 +194,7 @@ function BaseControlInput({placeholder, value, onChange, innerLabel, labelInside
             // corrected in lor 3.2.0 ISL-5502
             // onKeyDown={event => event.keyCode === 13 && props.onEnter(text)}
             size={controlSize}
+            error={Boolean(validationError)}
         />
     );
 }
@@ -185,6 +211,8 @@ BaseControlInput.propTypes = {
     innerLabel: PropTypes.string,
     labelInside: PropTypes.bool,
     widgetId: PropTypes.string,
+    isValueRequired: PropTypes.bool,
+    validationError: PropTypes.string,
 };
 
 function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
@@ -261,6 +289,8 @@ function BaseControlDatepicker({
     value,
     onChange,
     widgetId = '',
+    isValueRequired,
+    validationError,
 }) {
     const date = (value && tryResolveRelativeDate(value)) || value;
 
@@ -268,6 +298,12 @@ function BaseControlDatepicker({
         ({from}) => onChange(from === null ? '' : from),
         [onChange],
     );
+
+    const hasClear = Utils.isEnabledFeature(Feature.SelectorRequiredValue) && !isValueRequired;
+    const emptyValueText =
+        Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
+            ? validationError
+            : i18n('chartkit.control.items', 'value_undefined');
 
     return (
         <DatepickerControl
@@ -279,13 +315,15 @@ function BaseControlDatepicker({
             scale="day"
             timezoneOffset={0}
             range={false}
-            hasClear={true}
+            hasClear={hasClear}
             showApply={false}
             allowNullableValues={true}
-            emptyValueText={i18n('chartkit.control.items', 'value_undefined')}
+            emptyValueText={emptyValueText}
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
+            className={b('datepicker', {error: Boolean(validationError)})}
+            error={validationError}
         />
     );
 }
@@ -303,6 +341,8 @@ BaseControlDatepicker.propTypes = {
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     hidden: PropTypes.bool,
     widgetId: PropTypes.string,
+    isValueRequired: PropTypes.bool,
+    validationError: PropTypes.string,
 };
 
 function BaseControlRangeDatepicker({
@@ -314,6 +354,8 @@ function BaseControlRangeDatepicker({
     returnInterval,
     onChange,
     widgetId = '',
+    isValueRequired,
+    validationError,
 }) {
     let from;
     let to;
@@ -358,6 +400,12 @@ function BaseControlRangeDatepicker({
         [returnInterval, onChange],
     );
 
+    const hasClear = !(Utils.isEnabledFeature(Feature.SelectorRequiredValue) && isValueRequired);
+    const emptyValueText =
+        Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
+            ? validationError
+            : i18n('chartkit.control.items', 'value_undefined');
+
     return (
         <DatepickerControl
             widgetId={widgetId}
@@ -367,13 +415,14 @@ function BaseControlRangeDatepicker({
             to={to}
             format={format || `dd.MM.yyyy ${timeFormat || ''}`.trim()}
             timezoneOffset={0}
-            hasClear={true}
+            hasClear={hasClear}
             showApply={false}
             allowNullableValues={true}
-            emptyValueText={i18n('chartkit.control.items', 'value_undefined')}
+            emptyValueText={emptyValueText}
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
+            className={b('datepicker', {error: Boolean(validationError)})}
         />
     );
 }
@@ -400,6 +449,8 @@ BaseControlRangeDatepicker.propTypes = {
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     hidden: PropTypes.bool,
     widgetId: PropTypes.string,
+    isValueRequired: PropTypes.bool,
+    validationError: PropTypes.string,
 };
 
 function BaseControlButton({label, theme, onChange}) {

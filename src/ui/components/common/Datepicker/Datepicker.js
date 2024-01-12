@@ -113,6 +113,16 @@ export class Datepicker extends React.PureComponent {
             changedState.error = '';
         }
 
+        if (props.emptyValueText !== state.prevProps.emptyValueText) {
+            changedState.searchText = getSearchText({
+                from: changedState.from,
+                to: changedState.to,
+                format: props.format,
+                emptyValueText: props.emptyValueText,
+                range: props.range,
+            });
+        }
+
         changedState.prevProps = props;
 
         return changedState;
