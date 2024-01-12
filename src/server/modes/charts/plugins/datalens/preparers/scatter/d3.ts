@@ -4,7 +4,7 @@ import type {
     ScatterSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import {ServerField, getFakeTitleOrTitle} from '../../../../../../../shared';
+import {ServerField, WizardVisualizationId, getFakeTitleOrTitle} from '../../../../../../../shared';
 import {PointCustomData, ScatterSeriesCustomData} from '../../../../../../../shared/types/chartkit';
 import {getAxisType} from '../helpers/axis';
 import {PrepareFunctionArgs} from '../types';
@@ -39,13 +39,25 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
                     },
                 };
 
-                if (getAxisType(x) === 'category') {
+                if (
+                    getAxisType({
+                        field: x,
+                        visualizationId: WizardVisualizationId.ScatterD3,
+                        sort: [],
+                    }) === 'category'
+                ) {
                     pointData.x = typeof item.x === 'number' ? item.x : index;
                 } else {
                     pointData.x = item.x;
                 }
 
-                if (getAxisType(y) === 'category') {
+                if (
+                    getAxisType({
+                        field: y,
+                        visualizationId: WizardVisualizationId.ScatterD3,
+                        sort: [],
+                    }) === 'category'
+                ) {
                     pointData.y = typeof item.y === 'number' ? item.y : index;
                 } else {
                     pointData.y = item.y;
@@ -78,7 +90,13 @@ export function prepareD3Scatter(
         },
     };
 
-    if (getAxisType(x) === 'category') {
+    if (
+        getAxisType({
+            field: x,
+            visualizationId: WizardVisualizationId.ScatterD3,
+            sort: [],
+        }) === 'category'
+    ) {
         config.xAxis = {
             categories: xCategories,
         };

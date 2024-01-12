@@ -4,6 +4,7 @@ import {
     AxisLabelFormatMode,
     AxisMode,
     ChartkitHandlers,
+    Field,
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
     ServerField,
@@ -61,14 +62,20 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
     const shapeItem = shapes[0];
     const segmentsMap = getSegmentMap(args);
 
-    const xField = x ? {guid: x.guid, data_type: idToDataType[x.guid]} : x;
+    const xField = x ? ({guid: x.guid, data_type: idToDataType[x.guid]} as Field) : x;
+    const xAxisType = getAxisType({
+        field: xField,
+        settings: xPlaceholder?.settings,
+        sort,
+        visualizationId: visualizationId as WizardVisualizationId,
+    });
     const customConfig: any = {
         xAxis: {
-            type: getAxisType(xField, xPlaceholder?.settings),
+            type: xAxisType,
             reversed: isXAxisReversed(x, sort, visualizationId as WizardVisualizationId),
             labels: {
                 formatter:
-                    isDateField(x) && isXDiscrete
+                    isDateField(x) && xAxisType === 'category'
                         ? ChartkitHandlers.WizardXAxisFormatter
                         : undefined,
             },

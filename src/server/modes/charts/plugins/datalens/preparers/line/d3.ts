@@ -4,7 +4,7 @@ import type {
     LineSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import {PlaceholderId, ServerField} from '../../../../../../../shared';
+import {PlaceholderId, ServerField, WizardVisualizationId} from '../../../../../../../shared';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
 import {getAxisType} from '../helpers/axis';
 import {PrepareFunctionArgs} from '../types';
@@ -12,7 +12,7 @@ import {PrepareFunctionArgs} from '../types';
 import {prepareLineData} from './prepare-line-data';
 
 export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
-    const {labels, placeholders, disableDefaultSorting = false} = args;
+    const {labels, placeholders, disableDefaultSorting = false, visualizationId, sort} = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
@@ -21,7 +21,12 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
     const isDataLabelsEnabled = Boolean(labelField);
     const isCategoriesXAxis =
         !xField ||
-        getAxisType(xField, xPlaceholder?.settings) === 'category' ||
+        getAxisType({
+            field: xField,
+            settings: xPlaceholder?.settings,
+            visualizationId: visualizationId as WizardVisualizationId,
+            sort,
+        }) === 'category' ||
         disableDefaultSorting;
 
     if (!xField || !yFields.length) {
