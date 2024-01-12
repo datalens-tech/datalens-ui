@@ -4,6 +4,7 @@
   "from_error": "Первая часть диапазона указана некорректно",
   "from_to_error": "Обе части диапазона указаны некорректно",
   "incomplete_range_error": "Необходимо указать обе части диапазона",
+  "label_empty": "",
   "label_empty_zone": "Укажите таймзону",
   "label_to": "до",
   "preset_from_start_of_M": "С начала месяца",
