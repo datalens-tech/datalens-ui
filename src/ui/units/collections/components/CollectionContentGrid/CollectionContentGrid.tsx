@@ -29,6 +29,8 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
             <div className={b()}>
                 <div className={b('grid')}>
                     {contentItems.map((item) => {
+                        const canMove = item.permissions.move;
+
                         if ('workbookId' in item) {
                             const actions = getWorkbookActions(item);
 
@@ -37,7 +39,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                     key={item.workbookId}
                                     className={b('content-item')}
                                     onClick={
-                                        isOpenSelectionMode
+                                        isOpenSelectionMode && canMove
                                             ? () => {
                                                   onUpdateCheckbox(
                                                       !selectedMap[item.workbookId]?.checked,
@@ -52,7 +54,10 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                         <Checkbox
                                             size="l"
                                             className={b('content-item-checkbox')}
-                                            checked={Boolean(selectedMap[item.workbookId]?.checked)}
+                                            disabled={!canMove}
+                                            checked={Boolean(
+                                                selectedMap[item.workbookId]?.checked && canMove,
+                                            )}
                                         />
                                     )}
                                     <Link
@@ -105,7 +110,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                     key={item.collectionId}
                                     className={b('content-item')}
                                     onClick={
-                                        isOpenSelectionMode
+                                        isOpenSelectionMode && canMove
                                             ? () => {
                                                   onUpdateCheckbox(
                                                       !selectedMap[item.collectionId]?.checked,
@@ -120,8 +125,9 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                         <Checkbox
                                             size="l"
                                             className={b('content-item-checkbox')}
+                                            disabled={!canMove}
                                             checked={Boolean(
-                                                selectedMap[item.collectionId]?.checked,
+                                                selectedMap[item.collectionId]?.checked && canMove,
                                             )}
                                         />
                                     )}

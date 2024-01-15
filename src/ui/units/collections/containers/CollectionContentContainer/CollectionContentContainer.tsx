@@ -49,6 +49,7 @@ class CollectionContentContainer extends React.Component<Props> {
             isDefaultFilters,
             isContentLoading,
             isOpenSelectionMode,
+            isСanMove,
             contentLoadingError,
             contentItems,
             selectedMap,
@@ -76,6 +77,7 @@ class CollectionContentContainer extends React.Component<Props> {
                 isDefaultFilters={isDefaultFilters}
                 isContentLoading={isContentLoading}
                 isOpenSelectionMode={isOpenSelectionMode}
+                isСanMove={isСanMove}
                 contentLoadingError={contentLoadingError}
                 contentItems={contentItems}
                 selectedMap={selectedMap}

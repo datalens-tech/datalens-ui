@@ -89,6 +89,7 @@ export const CollectionContent: React.FC<Props> = ({
     canCreateWorkbook,
     isContentLoading,
     isOpenSelectionMode,
+    isСanMove,
     contentLoadingError,
     contentItems,
     selectedMap,
@@ -427,6 +428,7 @@ export const CollectionContent: React.FC<Props> = ({
                     onSelectAll={onSelectAll}
                     selectedMap={selectedMap}
                     countSelected={countSelected}
+                    isСanMove={isСanMove}
                 />
             )}
 

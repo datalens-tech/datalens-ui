@@ -26,6 +26,7 @@ export interface ContentProps {
     selectedMap: SelectedMap;
     countSelected: number;
     isOpenSelectionMode: boolean;
+    isСanMove: boolean;
 }
 
 interface CollectionContentProps extends ContentProps {
@@ -37,7 +38,7 @@ interface CollectionContentProps extends ContentProps {
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
 }
 
-type CollectionContentGridProps = Omit<CollectionContentProps, 'countSelected'>;
+type CollectionContentGridProps = Omit<CollectionContentProps, 'countSelected' | 'isСanMove'>;
 
 type CollectionContentTableProps = Omit<CollectionContentProps, 'isOpenSelectionMode'>;
 

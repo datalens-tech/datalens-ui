@@ -17,6 +17,7 @@ type Props = {
     editBtn: React.ReactNode | null;
     countSelected: number;
     isOpenSelectionMode: boolean;
+    isСanMove: boolean;
     collectionPageViewMode: CollectionPageViewMode;
     onOpenSelectionMode: () => void;
     onCancelSelectionMode: () => void;
@@ -35,6 +36,7 @@ export const CollectionLayout = React.memo<Props>(
         countSelected,
         collectionPageViewMode,
         isOpenSelectionMode,
+        isСanMove,
         onOpenSelectionMode,
         onCancelSelectionMode,
         onSelectAll,
@@ -42,7 +44,7 @@ export const CollectionLayout = React.memo<Props>(
         const selectBtn = React.useMemo(() => {
             if (countSelected === 0 && !isOpenSelectionMode) {
                 return (
-                    <Button view="outlined" onClick={onOpenSelectionMode}>
+                    <Button disabled={!isСanMove} view="outlined" onClick={onOpenSelectionMode}>
                         {i18n('action_select')}
                     </Button>
                 );
@@ -61,7 +63,7 @@ export const CollectionLayout = React.memo<Props>(
                     </Button>
                 );
             }
-        }, [countSelected, isOpenSelectionMode, onOpenSelectionMode, onSelectAll]);
+        }, [countSelected, isOpenSelectionMode, isСanMove, onOpenSelectionMode, onSelectAll]);
 
         return (
             <div className={b()}>

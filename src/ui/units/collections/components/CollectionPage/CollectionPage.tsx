@@ -475,6 +475,8 @@ export const CollectionPage = React.memo<Props>(
             resetSelected();
         };
 
+        const isСanMove = contentItems.some((item) => item.permissions.move);
+
         return (
             <div className={b()}>
                 <CollectionActionPanel
@@ -577,7 +579,7 @@ export const CollectionPage = React.memo<Props>(
                                     curCollectionId && collection && collection.permissions.update,
                                 ) && (
                                     <Tooltip content={i18n('action_edit')}>
-                                        <div className={b('edit-btn')}>
+                                        <div>
                                             <Button onClick={onEditClick}>
                                                 <Icon data={PencilToLine} />
                                             </Button>
@@ -590,6 +592,7 @@ export const CollectionPage = React.memo<Props>(
                             }
                             countSelected={countSelected}
                             isOpenSelectionMode={isOpenSelectionMode}
+                            isСanMove={isСanMove}
                             collectionPageViewMode={collectionPageViewMode}
                             controls={
                                 <CollectionFilters
@@ -626,6 +629,7 @@ export const CollectionPage = React.memo<Props>(
                                         updateFilters(DEFAULT_FILTERS);
                                     }}
                                     isOpenSelectionMode={isOpenSelectionMode}
+                                    isСanMove={isСanMove}
                                     setBatchAction={setBatchAction}
                                     onUpdateCheckbox={onUpdateCheckbox}
                                     resetSelected={resetSelected}

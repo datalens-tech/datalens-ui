@@ -28,11 +28,10 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
         onSelectAll,
         selectedMap,
         countSelected,
+        isСanMove,
     }) => {
         const checkboxPropsSelected = React.useMemo(() => {
-            const isNotDisabled = contentItems.some((item) => item.permissions.move);
-
-            if (isNotDisabled) {
+            if (isСanMove) {
                 if (countSelected > 0) {
                     if (countSelected === contentItems.length) {
                         return {checked: true};
@@ -45,7 +44,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
             } else {
                 return {disabled: true};
             }
-        }, [contentItems, countSelected]);
+        }, [contentItems.length, countSelected, isСanMove]);
 
         return (
             <div className={b()}>
