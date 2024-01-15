@@ -576,8 +576,8 @@ export const openItemDialog = (data) => ({type: actionTypes.OPEN_ITEM_DIALOG, pa
 
 export const openItemDialogAndSetData = (data) => {
     return (dispatch) => {
-        const beforeOpenItemDialog = getBeforeOpenDialogItemAction();
-        dispatch(beforeOpenItemDialog(data));
+        const beforeOpenDialogItem = getBeforeOpenDialogItemAction();
+        dispatch(beforeOpenDialogItem(data));
         dispatch(openItemDialog(data));
     };
 };

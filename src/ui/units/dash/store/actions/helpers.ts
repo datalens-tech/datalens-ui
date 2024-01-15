@@ -42,13 +42,13 @@ export const getExtendedItemDataAction = () => {
 };
 
 export const getBeforeOpenDialogItemAction = () => {
-    const {beforeOpenItemDialog} = registry.dash.functions.getAll();
-    return beforeOpenItemDialog;
+    const {beforeOpenDialogItem} = registry.dash.functions.getAll();
+    return beforeOpenDialogItem;
 };
 
 export const getBeforeCloseDialogItemAction = () => {
-    const {beforeCloseItemDialog} = registry.dash.functions.getAll();
-    return beforeCloseItemDialog;
+    const {beforeCloseDialogItem} = registry.dash.functions.getAll();
+    return beforeCloseDialogItem;
 };
 
 export const getExtendedItemData = (args: SetItemDataArgs) => () => args;

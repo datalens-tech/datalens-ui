@@ -916,8 +916,8 @@ export const setWidgetCurrentTab = (
 
 export const closeControl2Dialog = () => {
     return (dispatch: AppDispatch) => {
-        const beforeCloseItemDialog = getBeforeCloseDialogItemAction();
-        dispatch(beforeCloseItemDialog());
+        const beforeCloseDialogItem = getBeforeCloseDialogItemAction();
+        dispatch(beforeCloseDialogItem());
         dispatch(closeDashDialog());
     };
 };

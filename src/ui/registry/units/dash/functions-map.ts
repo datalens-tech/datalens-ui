@@ -6,8 +6,8 @@ import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplat
 import type {SelectorElementType} from '../../../units/dash/store/actions/dashTyped';
 import {EXAMPLE_FUNCTION} from '../common/constants/functions';
 
-import type {BeforeCloseItemDialogAction} from './types/BeforeCloseItemDialog';
-import type {BeforeOpenItemDialogAction} from './types/BeforeOpenItemDialog';
+import type {BeforeCloseDialogItemAction} from './types/BeforeCloseDialogItem';
+import type {BeforeOpenDialogItemAction} from './types/BeforeOpenDialogItem';
 import type {GetExtendedItemData} from './types/GetExtendedItemData';
 
 export const dashFunctionsMap = {
@@ -16,11 +16,17 @@ export const dashFunctionsMap = {
     getDashEntryUrl: makeFunctionTemplate<(response: EntryDialogOnCloseArg) => string>(),
     getNewDashUrl: makeFunctionTemplate<(workbookId?: string) => string>(),
     getMinAutoupdateInterval: makeFunctionTemplate<() => number>(),
-    getExtendedItemData: makeFunctionTemplate<GetExtendedItemData>(),
+    getExtendedItemData: makeFunctionTemplate<GetExtendedItemData>({
+        isReduxThunkActionTemplate: true,
+    }),
     useExtendedValueSelector:
         makeFunctionTemplate<
             (controlType: SelectorElementType | undefined) => ReactElement | null
         >(),
-    beforeOpenItemDialog: makeFunctionTemplate<BeforeOpenItemDialogAction>(),
-    beforeCloseItemDialog: makeFunctionTemplate<BeforeCloseItemDialogAction>(),
+    beforeOpenDialogItem: makeFunctionTemplate<BeforeOpenDialogItemAction>({
+        isReduxThunkActionTemplate: true,
+    }),
+    beforeCloseDialogItem: makeFunctionTemplate<BeforeCloseDialogItemAction>({
+        isReduxThunkActionTemplate: true,
+    }),
 } as const;
