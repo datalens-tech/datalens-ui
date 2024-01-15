@@ -92,6 +92,7 @@ export const CollectionContent: React.FC<Props> = ({
     isСanMove,
     contentLoadingError,
     contentItems,
+    countItemsWithPermissionMove,
     selectedMap,
     countSelected,
     nextPageTokens,
@@ -408,6 +409,7 @@ export const CollectionContent: React.FC<Props> = ({
             {collectionPageViewMode === CollectionPageViewMode.Grid ? (
                 <CollectionContentGrid
                     contentItems={contentItems}
+                    countItemsWithPermissionMove={countItemsWithPermissionMove}
                     filters={filters}
                     setFilters={setFilters}
                     getWorkbookActions={getWorkbookActions}
@@ -420,6 +422,7 @@ export const CollectionContent: React.FC<Props> = ({
             ) : (
                 <CollectionContentTable
                     contentItems={contentItems}
+                    countItemsWithPermissionMove={countItemsWithPermissionMove}
                     filters={filters}
                     setFilters={setFilters}
                     getWorkbookActions={getWorkbookActions}

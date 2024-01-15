@@ -52,6 +52,7 @@ class CollectionContentContainer extends React.Component<Props> {
             isСanMove,
             contentLoadingError,
             contentItems,
+            countItemsWithPermissionMove,
             selectedMap,
             countSelected,
             nextPageTokens,
@@ -80,6 +81,7 @@ class CollectionContentContainer extends React.Component<Props> {
                 isСanMove={isСanMove}
                 contentLoadingError={contentLoadingError}
                 contentItems={contentItems}
+                countItemsWithPermissionMove={countItemsWithPermissionMove}
                 selectedMap={selectedMap}
                 countSelected={countSelected}
                 nextPageTokens={nextPageTokens}

@@ -20,6 +20,7 @@ const b = block('dl-collection-content-table');
 export const CollectionContentTable = React.memo<CollectionContentTableProps>(
     ({
         contentItems,
+        countItemsWithPermissionMove,
         filters,
         setFilters,
         getWorkbookActions,
@@ -33,7 +34,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
         const checkboxPropsSelected = React.useMemo(() => {
             if (isСanMove) {
                 if (countSelected > 0) {
-                    if (countSelected === contentItems.length) {
+                    if (countSelected === countItemsWithPermissionMove) {
                         return {checked: true};
                     } else {
                         return {indeterminate: true};
@@ -44,7 +45,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
             } else {
                 return {disabled: true};
             }
-        }, [contentItems.length, countSelected, isСanMove]);
+        }, [countSelected, isСanMove, countItemsWithPermissionMove]);
 
         return (
             <div className={b()}>
@@ -55,7 +56,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                 <Checkbox
                                     size="l"
                                     onUpdate={() => {
-                                        onSelectAll(countSelected !== contentItems.length);
+                                        onSelectAll(countSelected !== countItemsWithPermissionMove);
                                     }}
                                     {...checkboxPropsSelected}
                                 />

@@ -24,6 +24,7 @@ export interface ContentProps {
     onUpdateCheckbox: UpdateCheckbox;
     onSelectAll: (checked: boolean) => void;
     selectedMap: SelectedMap;
+    countItemsWithPermissionMove: number;
     countSelected: number;
     isOpenSelectionMode: boolean;
     isСanMove: boolean;

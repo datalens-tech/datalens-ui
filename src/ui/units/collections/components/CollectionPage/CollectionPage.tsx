@@ -139,6 +139,9 @@ export const CollectionPage = React.memo<Props>(
             selectCollectionContentItems,
         );
 
+        const itemsWithPermissionMove = contentItems.filter((item) => item.permissions.move);
+        const isСanMove = itemsWithPermissionMove.length > 0;
+
         const getCollectionContentRecursively = React.useCallback(
             (
                 args: GetCollectionContentArgs,
@@ -412,7 +415,7 @@ export const CollectionPage = React.memo<Props>(
             if (checked) {
                 const selected: SelectedMap = {};
 
-                contentItems.forEach((item) => {
+                itemsWithPermissionMove.forEach((item) => {
                     const isWorkbook = 'workbookId' in item;
                     const id = isWorkbook ? item.workbookId : item.collectionId;
                     const type = isWorkbook ? 'workbook' : 'collection';
@@ -474,8 +477,6 @@ export const CollectionPage = React.memo<Props>(
 
             resetSelected();
         };
-
-        const isСanMove = contentItems.some((item) => item.permissions.move);
 
         return (
             <div className={b()}>
@@ -619,6 +620,7 @@ export const CollectionPage = React.memo<Props>(
                                     contentItems={contentItems}
                                     countSelected={countSelected}
                                     selectedMap={selectedMap}
+                                    countItemsWithPermissionMove={itemsWithPermissionMove.length}
                                     canCreateWorkbook={
                                         collectionId && collection
                                             ? collection.permissions.createWorkbook
