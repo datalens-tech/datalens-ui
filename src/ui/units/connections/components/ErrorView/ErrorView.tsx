@@ -62,7 +62,7 @@ const getErrorData = (args: {
             return {
                 type: ErrorContentTypes.ERROR,
                 title: title || i18nForm('label_error-400-title'),
-                description: description || i18nForm('label_error-400-description'),
+                description,
             };
         }
         case 403: {
@@ -84,7 +84,7 @@ const getErrorData = (args: {
             return {
                 type: ErrorContentTypes.ERROR,
                 title: title || getDefaultResultTitle(scope),
-                description: description || i18nForm('label_error-500-description'),
+                description,
             };
         }
     }

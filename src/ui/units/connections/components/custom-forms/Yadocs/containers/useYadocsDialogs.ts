@@ -18,6 +18,7 @@ import type {
     UpdateYadocItemArgs,
     UploadedYadoc,
     YadocItem,
+    YadocsActiveAddDocument,
     YadocsActiveDialogRename,
     YadocsActiveDialogReplace,
 } from '../../../../store';
@@ -25,6 +26,8 @@ import {DIALOG_CONN_CONFIRM, DIALOG_CONN_S3_SOURCES} from '../../../dialogs';
 import {DIALOG_CONN_WITH_INPUT} from '../../components';
 import {DIALOG_CONN_ADD_YADOC} from '../components/DialogAddDocument/DialogAddDocument';
 import {i18n8857} from '../constants';
+
+type OpenAddDocumentDialogArgs = Omit<YadocsActiveAddDocument, 'type'>;
 
 type OpenSourcesDialogArgs = {
     yadoc: UploadedYadoc;
@@ -154,31 +157,31 @@ export const useYadocsDialogs = () => {
         [dispatch, getApplyRenameDialog, handleCloseDialog],
     );
 
-    const openAddDocumentDialog = React.useCallback(() => {
-        dispatch(
-            openDialog({
-                id: DIALOG_CONN_ADD_YADOC,
-                props: {
-                    onApply: (pathData) => {
-                        return api.addYandexDocument({
-                            ...pathData,
-                            authorized: false,
-                        });
+    const openAddDocumentDialog = React.useCallback(
+        (args: OpenAddDocumentDialogArgs) => {
+            dispatch(
+                openDialog({
+                    id: DIALOG_CONN_ADD_YADOC,
+                    props: {
+                        onApply: (pathData) => {
+                            return api.addYandexDocument({...pathData, ...args});
+                        },
+                        onClose: handleCloseDialog,
+                        onError: (error) => dispatch(showGsheetUploadingFailureToast(error)),
+                        onSuccess: ({document}) => {
+                            if (document) {
+                                batch(() => {
+                                    dispatch(handleUploadedYadocBeforePolling(document));
+                                    handleCloseDialog();
+                                });
+                            }
+                        },
                     },
-                    onClose: handleCloseDialog,
-                    onError: (error) => dispatch(showGsheetUploadingFailureToast(error)),
-                    onSuccess: ({document}) => {
-                        if (document) {
-                            batch(() => {
-                                dispatch(handleUploadedYadocBeforePolling(document));
-                                handleCloseDialog();
-                            });
-                        }
-                    },
-                },
-            }),
-        );
-    }, [dispatch, handleCloseDialog]);
+                }),
+            );
+        },
+        [dispatch, handleCloseDialog],
+    );
 
     const openReplaceSourceDialog = React.useCallback(
         (args: OpenReplaceSourceDialogArgs) => {

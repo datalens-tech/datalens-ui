@@ -173,7 +173,7 @@
     "object-hash": "^2.2.0",
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
-    "postcss": "^8.4.31",
+    "postcss": "^8.4.33",
     "prettier": "^2.6.0",
     "prop-types": "^15.8.0",
     "react-copy-to-clipboard": "^5.0.3",

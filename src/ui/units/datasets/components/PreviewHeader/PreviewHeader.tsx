@@ -46,10 +46,6 @@ class PreviewHeader extends React.Component<Props> {
                         type="number"
                         value={String(amountPreviewRows)}
                         onUpdate={this.changeAmountPreviewRows}
-                        placeholder={i18n(
-                            'dataset.dataset-editor.modify',
-                            'button_enter-amount-rows',
-                        )}
                     />
                     <span className={b('fade-text')}>
                         {i18n('dataset.dataset-editor.modify', 'label_max-amount-rows', {

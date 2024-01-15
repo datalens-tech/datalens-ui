@@ -26,7 +26,7 @@ jobs:
                   ref: ${{ github.event.pull_request.head.sha }}
 
             - name: Verifying changes with Weblate
-              uses: dgaponov/weblate-action@v1.30.0
+              uses: dgaponov/weblate-action@v1.32.0
               with:
                   SERVER_URL: "http://158.160.122.254"
                   TOKEN: ${{ secrets.WEBLATE_TOKEN }}

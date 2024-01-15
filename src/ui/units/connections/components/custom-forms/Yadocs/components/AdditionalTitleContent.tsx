@@ -16,12 +16,24 @@ const ICON_SIZE = 18;
 
 type Props = {
     authorized: boolean;
+    disableControls: boolean;
+    refreshEnabled: boolean;
+    clickAutoUpdateCheckbox: (value: boolean) => void;
     clickLoginButton: (oauthToken: string) => void;
     clickLogoutButton: () => void;
+    updateData: () => void;
 };
 
 export const AdditionalTitleContent = (props: Props) => {
-    const {authorized, clickLoginButton, clickLogoutButton} = props;
+    const {
+        authorized,
+        disableControls,
+        refreshEnabled,
+        clickAutoUpdateCheckbox,
+        clickLoginButton,
+        clickLogoutButton,
+        updateData,
+    } = props;
     const {OAuthTokenButton} = registry.common.components.getAll();
 
     return (
@@ -38,12 +50,18 @@ export const AdditionalTitleContent = (props: Props) => {
                 )}
             </div>
             <div className={b('title-add-content')}>
-                <Checkbox>{i18n8857['label_auto-update']}</Checkbox>
+                <Checkbox
+                    checked={refreshEnabled}
+                    disabled={disableControls}
+                    onUpdate={clickAutoUpdateCheckbox}
+                >
+                    {i18n8857['label_auto-update']}
+                </Checkbox>
                 <HelpPopover
                     className={b('help-btn', {'with-margin-right': true})}
                     content={i18n8857['label_auto-update-help']}
                 />
-                <Button>
+                <Button disabled={disableControls} onClick={updateData}>
                     <Icon data={iconSync} size={ICON_SIZE} />
                     {i18n8857.button_update}
                 </Button>

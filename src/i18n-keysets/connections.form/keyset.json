@@ -324,10 +324,6 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "label_error-400-description": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "label_error-400-no-connection-title": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -341,10 +337,6 @@
       "ru": "APPROVED"
     },
     "label_error-404-title": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "label_error-500-description": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },

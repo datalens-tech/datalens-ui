@@ -25,3 +25,8 @@ export const validationErrorsSelector = (state: DatalensGlobalState) => {
 export const formSchemaSelector = (state: DatalensGlobalState) => {
     return state.connections.schema;
 };
+
+export const formOauthTokenSelector = (state: DatalensGlobalState) => {
+    const form = formSelector(state);
+    return form[FieldKey.OAuthToken] as string | undefined;
+};
