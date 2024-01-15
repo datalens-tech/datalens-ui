@@ -46,4 +46,9 @@ export const getBeforeOpenDialogItemAction = () => {
     return beforeOpenItemDialog;
 };
 
+export const getBeforeCloseDialogItemAction = () => {
+    const {beforeCloseItemDialog} = registry.dash.functions.getAll();
+    return beforeCloseItemDialog;
+};
+
 export const getExtendedItemData = (args: SetItemDataArgs) => () => args;

@@ -35,7 +35,7 @@ import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
 
 import {closeDialog as closeDashDialog, deleteLock, purgeData, save, setLock} from './dash';
-import {getExtendedItemDataAction} from './helpers';
+import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
 
 import {DashDispatch} from './index';
 
@@ -913,3 +913,11 @@ export const setWidgetCurrentTab = (
     type: SET_WIDGET_CURRENT_TAB,
     payload,
 });
+
+export const closeControl2Dialog = () => {
+    return (dispatch: AppDispatch) => {
+        const beforeCloseItemDialog = getBeforeCloseDialogItemAction();
+        dispatch(beforeCloseItemDialog());
+        dispatch(closeDashDialog());
+    };
+};

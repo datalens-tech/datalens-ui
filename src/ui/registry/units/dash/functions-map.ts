@@ -6,6 +6,7 @@ import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplat
 import type {SelectorElementType} from '../../../units/dash/store/actions/dashTyped';
 import {EXAMPLE_FUNCTION} from '../common/constants/functions';
 
+import type {BeforeCloseItemDialogAction} from './types/BeforeCloseItemDialog';
 import type {BeforeOpenItemDialogAction} from './types/BeforeOpenItemDialog';
 import type {GetExtendedItemData} from './types/GetExtendedItemData';
 
@@ -21,4 +22,5 @@ export const dashFunctionsMap = {
             (controlType: SelectorElementType | undefined) => ReactElement | null
         >(),
     beforeOpenItemDialog: makeFunctionTemplate<BeforeOpenItemDialogAction>(),
+    beforeCloseItemDialog: makeFunctionTemplate<BeforeCloseItemDialogAction>(),
 } as const;
