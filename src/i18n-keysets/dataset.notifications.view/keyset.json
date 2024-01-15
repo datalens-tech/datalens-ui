@@ -20,10 +20,6 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "toast_dataset-fetch-preview-msgs-success": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "toast_dataset-save-msgs-failure": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -33,10 +29,6 @@
       "ru": "APPROVED"
     },
     "toast_dataset-validation-msgs-failure": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "toast_dataset-validation-msgs-success": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },
@@ -52,19 +44,7 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
-    "toast_fetch-types-msgs-success": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "toast_field-duplicated-msgs-failure": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
     "toast_field-duplicated-msgs-success": {
-      "en": "APPROVED",
-      "ru": "APPROVED"
-    },
-    "toast_field-remove-msgs-failure": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },

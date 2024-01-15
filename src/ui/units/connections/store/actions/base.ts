@@ -30,6 +30,7 @@ import {
     SetUploadedFiles,
     SetValidationErrors,
     SetYadocsActiveDialog,
+    SetYadocsColumnFilter,
     SetYadocsItems,
     SetYadocsSelectedItemId,
 } from '../typings';
@@ -67,6 +68,7 @@ export const SET_GSHEET_ACTIVE_DIALOG = Symbol('connections/SET_GSHEET_ACTIVE_DI
 export const SET_YADOCS_SELECTED_ITEM_ID = Symbol('connections/SET_YADOCS_SELECTED_ITEM_ID');
 export const SET_YADOCS_ITEMS = Symbol('connections/SET_YADOCS_ITEMS');
 export const SET_YADOCS_ACTIVE_DIALOG = Symbol('connections/SET_YADOCS_ACTIVE_DIALOG');
+export const SET_YADOCS_COLUMN_FILTER = Symbol('connections/SET_YADOCS_COLUMN_FILTER');
 
 export function setEntry(payload: SetEntry['payload']): SetEntry {
     return {type: SET_ENTRY, payload};
@@ -313,6 +315,15 @@ export function setYadocsActiveDialog(
 ): SetYadocsActiveDialog {
     return {
         type: SET_YADOCS_ACTIVE_DIALOG,
+        payload,
+    };
+}
+
+export function setYadocsColumnFilter(
+    payload: SetYadocsColumnFilter['payload'],
+): SetYadocsColumnFilter {
+    return {
+        type: SET_YADOCS_COLUMN_FILTER,
         payload,
     };
 }

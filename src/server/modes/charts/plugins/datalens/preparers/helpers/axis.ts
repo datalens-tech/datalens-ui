@@ -1,16 +1,30 @@
 import {
     AxisMode,
     ServerPlaceholderSettings,
-    getAxisMode,
+    ServerSort,
+    WizardVisualizationId,
+    getActualAxisModeForField,
     isDateField,
     isNumberField,
 } from '../../../../../../../shared';
 
-export function getAxisType(
-    field?: {data_type: string; guid: string},
-    settings?: ServerPlaceholderSettings,
-) {
-    const axisMode = getAxisMode(settings, field?.guid);
+export function getAxisType(args: {
+    field?: {guid: string; data_type: string};
+    settings?: ServerPlaceholderSettings;
+    visualizationId: WizardVisualizationId;
+    sort: ServerSort[];
+}) {
+    const {field, settings, visualizationId, sort} = args;
+
+    let axisMode = AxisMode.Discrete;
+    if (field) {
+        axisMode = getActualAxisModeForField({
+            field,
+            axisSettings: settings,
+            visualizationId: visualizationId as WizardVisualizationId,
+            sort,
+        }) as AxisMode;
+    }
 
     if (axisMode !== AxisMode.Discrete) {
         if (isDateField(field)) {

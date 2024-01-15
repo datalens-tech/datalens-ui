@@ -3,16 +3,16 @@ import React from 'react';
 import {I18n} from 'i18n';
 import get from 'lodash/get';
 import {batch, useDispatch, useSelector} from 'react-redux';
-import {InnerFieldKey} from 'ui/units/connections/constants';
 
 import {
     connectionIdSelector,
     extractYadocItemId,
     findUploadedYadoc,
+    formOauthTokenSelector,
     getFilteredYadocItems,
     getYadocItemIndex,
     handleReplacedSources,
-    innerFormSelector,
+    innerAuthorizedSelector,
     retryPollYadocStatus,
     setYadocItemsAndFormSources,
     setYadocsActiveDialog,
@@ -38,24 +38,27 @@ export const DocsListContainer = () => {
         openReplaceSourceDialog,
     } = useYadocsDialogs();
     const activeDialog = useSelector(yadocsActiveDialogSelector);
+    const authorized = useSelector(innerAuthorizedSelector);
     const connectionId = useSelector(connectionIdSelector);
-    const innerForm = useSelector(innerFormSelector);
     const items = useSelector(yadocsItemsSelector);
+    const oauthToken = useSelector(formOauthTokenSelector);
     const selectedItemId = useSelector(yadocsSelectedItemIdSelector);
     const selectedItemIndex = React.useMemo(() => {
         return getYadocItemIndex(items, selectedItemId);
     }, [selectedItemId, items]);
-    const authorized = innerForm[InnerFieldKey.Authorized] as boolean;
 
     const clickAddDocumentButton = React.useCallback(() => {
         dispatch(
             setYadocsActiveDialog({
                 activeDialog: {
                     type: 'dialog-add-document',
+                    authorized,
+                    connectionId,
+                    oauthToken,
                 },
             }),
         );
-    }, [dispatch]);
+    }, [authorized, connectionId, oauthToken, dispatch]);
 
     const clickListItem = React.useCallback<HandleItemClick>(
         (item) => {
@@ -193,33 +196,25 @@ export const DocsListContainer = () => {
                     break;
                 }
                 case 'dialog-add-document': {
-                    openAddDocumentDialog();
+                    const {type: _, ...dialogArgs} = activeDialog;
+                    openAddDocumentDialog(dialogArgs);
                     break;
                 }
                 case 'dialog-rename': {
-                    const {sourceId, value} = activeDialog;
-                    const type = items[getYadocItemIndex(items, sourceId)]?.type;
+                    const {type: _, ...dialogArgs} = activeDialog;
+                    const type = items[getYadocItemIndex(items, dialogArgs.sourceId)]?.type;
                     openRenameSourceDialog({
+                        ...dialogArgs,
                         type,
-                        sourceId,
-                        value,
                         caption: i18n('label_replace-name'),
                     });
 
                     break;
                 }
                 case 'dialog-replace': {
-                    const {
-                        sourceId,
-                        connectionId: dialogConnectionId,
-                        authorized: dialogAuthorized,
-                        oauthToken: dialogOauthToken,
-                    } = activeDialog;
+                    const {type: _, ...dialogArgs} = activeDialog;
                     openReplaceSourceDialog({
-                        sourceId,
-                        connectionId: dialogConnectionId,
-                        authorized: dialogAuthorized,
-                        oauthToken: dialogOauthToken,
+                        ...dialogArgs,
                         caption: i18n('label_replace-source'),
                     });
                 }
@@ -228,6 +223,8 @@ export const DocsListContainer = () => {
     }, [
         items,
         activeDialog,
+        authorized,
+        oauthToken,
         openSourcesDialog,
         openRenameSourceDialog,
         openAddDocumentDialog,

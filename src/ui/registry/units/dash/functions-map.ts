@@ -16,7 +16,7 @@ export const dashFunctionsMap = {
     getNewDashUrl: makeFunctionTemplate<(workbookId?: string) => string>(),
     getMinAutoupdateInterval: makeFunctionTemplate<() => number>(),
     getExtendedItemData: makeFunctionTemplate<(args: SetItemDataArgs) => SetItemDataArgs>(),
-    getExtendedValueSelector:
+    useExtendedValueSelector:
         makeFunctionTemplate<
             (controlType: SelectorElementType | undefined) => ReactElement | null
         >(),

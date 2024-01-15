@@ -140,7 +140,7 @@ export const yadocToSourcesInfo = (fileId: string, sourcesId: string[]) => {
     };
 };
 
-export async function pollYadocStatus(args: PollingHandlerArgs) {
+export const pollYadocStatus = async (args: PollingHandlerArgs) => {
     const {fileId, dispatch, getState} = args;
     const {status, error} = await api.checkFileStatus(fileId);
     const items = get(getState().connections, ['yadocs', 'items']);
@@ -184,4 +184,35 @@ export async function pollYadocStatus(args: PollingHandlerArgs) {
             dispatch(updateYadocItem({id: fileId, updates: {status, error}}));
         }
     }
-}
+};
+
+export const pollYadocSourceStatus = async (
+    args: PollingHandlerArgs & {sourceId: string; initialPolling?: boolean},
+) => {
+    const {fileId, sourceId, initialPolling, dispatch, getState} = args;
+    const {status, error} = await api.checkFileSourceStatus(fileId, sourceId);
+    const items = get(getState().connections, ['yadocs', 'items']);
+    const index = getYadocItemIndex(items, sourceId);
+
+    if (index === -1) {
+        return;
+    }
+
+    switch (status) {
+        case 'ready': {
+            dispatch(updateYadocSource({fileId, sourceId, initialPolling}));
+            break;
+        }
+        case 'in_progress': {
+            if (items[index].status !== status) {
+                dispatch(updateYadocItem({id: sourceId, updates: {status}}));
+            }
+
+            setTimeout(() => pollYadocSourceStatus(args), 1000);
+            break;
+        }
+        case 'failed': {
+            dispatch(updateYadocItem({id: sourceId, updates: {status, error}}));
+        }
+    }
+};

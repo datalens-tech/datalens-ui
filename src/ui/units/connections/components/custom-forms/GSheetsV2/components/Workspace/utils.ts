@@ -1,12 +1,13 @@
 import {get} from 'lodash';
+import type {FileSourcePreview, FileSourceSchema} from 'shared/schema';
 
 import type {GSheetSource} from '../../../../../store';
 import {isGSheetSourceItem} from '../../../../../store';
-import type {GSheetListItem, SourcePreview, SourceSchema} from '../../types';
+import type {GSheetListItem} from '../../types';
 
 export const getGSheetSourceWorkspaceData = (source: GSheetSource) => {
-    let preview: SourcePreview = [];
-    let schema: SourceSchema = [];
+    let preview: FileSourcePreview = [];
+    let schema: FileSourceSchema = [];
     let firstLineIsHeader = false;
 
     switch (source.type) {

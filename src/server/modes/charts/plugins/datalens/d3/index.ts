@@ -4,7 +4,9 @@ import {
     PlaceholderId,
     ServerChartsConfig,
     ServerCommonSharedExtraSettings,
+    ServerSort,
     ServerVisualization,
+    WizardVisualizationId,
     isDateField,
 } from '../../../../../../shared';
 import {getAxisType} from '../preparers/helpers/axis';
@@ -16,10 +18,11 @@ import {getChartTitle} from './utils';
 type BuildD3ConfigArgs = {
     extraSettings?: ServerCommonSharedExtraSettings;
     visualization: ServerVisualization;
+    sort?: ServerSort[];
 };
 
 export function buildD3Config(args: BuildD3ConfigArgs) {
-    const {extraSettings, visualization} = args;
+    const {extraSettings, visualization, sort = []} = args;
     const isLegendEnabled = extraSettings?.legendMode !== 'hide';
 
     const xPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.X);
@@ -35,7 +38,12 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
         tooltip: {enabled: true},
         legend: {enabled: isLegendEnabled},
         xAxis: {
-            type: getAxisType(xItem, xPlaceholderSettings) as ChartKitWidgetAxisType | undefined,
+            type: getAxisType({
+                field: xItem,
+                settings: xPlaceholderSettings,
+                visualizationId: visualization.id as WizardVisualizationId,
+                sort,
+            }) as ChartKitWidgetAxisType | undefined,
             labels: {
                 enabled: xPlaceholderSettings?.hideLabels !== 'yes',
             },
