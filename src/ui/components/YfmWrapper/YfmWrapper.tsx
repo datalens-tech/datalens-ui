@@ -5,7 +5,7 @@ import {registry} from 'ui/registry';
 import {YfmWrapperProps} from '../../registry/units/common/types/components/YfmWrapper';
 
 export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps, 'ref'>>(
-    function YfmWrapper(props, ref) {
+    (props, ref) => {
         const YfmWrapperContent = registry.common.components.get('YfmWrapperContent');
 
         return (
@@ -19,3 +19,5 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
         );
     },
 );
+
+YfmWrapper.displayName = 'YfmWrapper';

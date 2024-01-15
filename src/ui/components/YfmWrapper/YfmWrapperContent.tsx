@@ -15,7 +15,7 @@ type YfmWrapperProps = {
 };
 
 export const YfmWrapperContent = React.forwardRef<HTMLDivElement, YfmWrapperProps>(
-    function YfmWrapperContent({content, setByInnerHtml, className}, ref) {
+    ({content, setByInnerHtml, className}, ref) => {
         const componentClassName = className ? ` ${className}` : '';
 
         const yfmClassName = `${YFM_MARKDOWN_CLASSNAME}${componentClassName}`;
@@ -38,3 +38,5 @@ export const YfmWrapperContent = React.forwardRef<HTMLDivElement, YfmWrapperProp
         );
     },
 );
+
+YfmWrapperContent.displayName = 'YfmWrapperContent';
