@@ -5,4 +5,5 @@ export type YfmWrapperProps = {
     setByInnerHtml?: boolean;
     className?: string;
     noMagicLinks?: boolean;
+    ref?: React.Ref<HTMLDivElement>;
 };
