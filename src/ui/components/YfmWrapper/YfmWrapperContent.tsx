@@ -14,26 +14,29 @@ type YfmWrapperProps = {
     className?: string;
 };
 
-export const YfmWrapperContent = ({content, setByInnerHtml, className}: YfmWrapperProps) => {
-    const refLink = React.useRef<HTMLDivElement>(null);
-    const componentClassName = className ? ` ${className}` : '';
-    const yfmClassName = `${YFM_MARKDOWN_CLASSNAME}${componentClassName}`;
+export const YfmWrapperContent = React.forwardRef<HTMLDivElement, YfmWrapperProps>(
+    ({content, setByInnerHtml, className}, ref) => {
+        const componentClassName = className ? ` ${className}` : '';
 
-    const yfmContent = setByInnerHtml ? (content as string) || '' : content;
+        const yfmClassName = `${YFM_MARKDOWN_CLASSNAME}${componentClassName}`;
+        const yfmContent = setByInnerHtml ? (content as string) || '' : content;
 
-    if (setByInnerHtml) {
+        if (setByInnerHtml) {
+            return (
+                <div
+                    ref={ref}
+                    className={yfmClassName}
+                    dangerouslySetInnerHTML={{__html: String(yfmContent)}}
+                />
+            );
+        }
+
         return (
-            <div
-                ref={refLink}
-                className={yfmClassName}
-                dangerouslySetInnerHTML={{__html: String(yfmContent)}}
-            />
+            <div ref={ref} className={yfmClassName}>
+                {yfmContent}
+            </div>
         );
-    }
+    },
+);
 
-    return (
-        <div ref={refLink} className={yfmClassName}>
-            {yfmContent}
-        </div>
-    );
-};
+YfmWrapperContent.displayName = 'YfmWrapperContent';
