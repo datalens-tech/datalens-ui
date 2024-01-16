@@ -4,11 +4,12 @@ import {
     AxisLabelFormatMode,
     AxisMode,
     ChartkitHandlers,
+    Field,
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
     ServerPlaceholder,
     WizardVisualizationId,
-    getAxisMode,
+    getActualAxisModeForField,
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
     isDateField,
@@ -51,7 +52,16 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
     const xIsFloat = x ? xDataType === 'float' : null;
     const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
     const xPlaceholderSettings = xPlaceholder?.settings;
-    const xAxisMode = getAxisMode(xPlaceholderSettings, x?.guid);
+    let xAxisMode = AxisMode.Discrete;
+    if (x && xDataType) {
+        xAxisMode = getActualAxisModeForField({
+            field: {guid: x.guid, data_type: xDataType} as Field,
+            axisSettings: xPlaceholderSettings,
+            visualizationId: visualizationId as WizardVisualizationId,
+            sort,
+        }) as AxisMode;
+    }
+
     const isXDiscrete = xAxisMode === AxisMode.Discrete;
     const x2 = placeholders[0].items[1];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
