@@ -417,23 +417,53 @@ type AddWorkbookInfoAction = {
         workbookId: string;
         workbookName: string;
         workbookPermissions: WorkbookPermission;
+        workbookBreadcrumbs?: GetCollectionBreadcrumbsResponse | null;
     };
 };
 
-export const addWorkbookInfo = (workbookId: string) => {
-    return (dispatch: WorkbooksDispatch) => {
-        getSdk()
-            .us.getWorkbook({workbookId, includePermissionsInfo: true})
-            .then((workbook) => {
+export const addWorkbookInfo = (workbookId: string, withBreadcrumbs = false) => {
+    return async (dispatch: WorkbooksDispatch) => {
+        const workbook = await getSdk().us.getWorkbook({workbookId, includePermissionsInfo: true});
+
+        let workbookBreadcrumbs = null;
+        let requestedWithBreadcrumbs = false;
+
+        if (withBreadcrumbs && workbook.collectionId) {
+            try {
+                workbookBreadcrumbs = await getSdk().us.getCollectionBreadcrumbs(
+                    {
+                        collectionId: workbook.collectionId,
+                    },
+                    {concurrentId: 'workbooks/getCollectionBreadcrumbs'},
+                );
+
                 dispatch({
                     type: ADD_WORKBOOK_INFO,
                     data: {
                         workbookId,
                         workbookName: workbook.title,
                         workbookPermissions: workbook.permissions,
+                        workbookBreadcrumbs,
                     },
                 });
+
+                // If we have permissions for getting breadcrumbs, set flag to exclude the next request
+                requestedWithBreadcrumbs = true;
+            } catch (e) {
+                logger.logError('workbooks/getCollectionBreadcrumbs failed', e);
+            }
+        }
+
+        if (!requestedWithBreadcrumbs) {
+            dispatch({
+                type: ADD_WORKBOOK_INFO,
+                data: {
+                    workbookId,
+                    workbookName: workbook.title,
+                    workbookPermissions: workbook.permissions,
+                },
             });
+        }
     };
 };
 

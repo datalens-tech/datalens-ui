@@ -28,73 +28,55 @@
     "Month",
     "Months",
     "Months",
-    "Months",
-    "",
-    ""
+    "Months"
   ],
   "label_scale-Q": [
     "Quarter",
     "Quarters",
     "Quarters",
-    "Quarters",
-    "",
-    ""
+    "Quarters"
   ],
   "label_scale-d": [
     "Day",
     "Days",
     "Days",
-    "Days",
-    "",
-    ""
+    "Days"
   ],
   "label_scale-h": [
     "Hour",
     "Hours",
     "Hours",
-    "Hours",
-    "",
-    ""
+    "Hours"
   ],
   "label_scale-m": [
     "Minute",
     "Minutes",
     "Minutes",
-    "Minutes",
-    "",
-    ""
+    "Minutes"
   ],
   "label_scale-ms": [
     "Millisecond",
     "Milliseconds",
     "Milliseconds",
-    "Milliseconds",
-    "",
-    ""
+    "Milliseconds"
   ],
   "label_scale-s": [
     "Second",
     "Seconds",
     "Seconds",
-    "Seconds",
-    "",
-    ""
+    "Seconds"
   ],
   "label_scale-w": [
     "Week",
     "Weeks",
     "Weeks",
-    "Weeks",
-    "",
-    ""
+    "Weeks"
   ],
   "label_scale-y": [
     "Year",
     "Years",
     "Years",
-    "Years",
-    "",
-    ""
+    "Years"
   ],
   "label_sign+": " Plus",
   "label_sign-": "Minus",

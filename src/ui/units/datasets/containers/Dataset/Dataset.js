@@ -281,7 +281,6 @@ class Dataset extends React.Component {
                         return {
                             type: 'error',
                             title: i18n('label_error-400-title'),
-                            description: i18n('label_error-400-description'),
                         };
                 }
             case 403:
@@ -306,7 +305,6 @@ class Dataset extends React.Component {
                 return {
                     type: 'error',
                     title: i18n('label_error-500-title'),
-                    description: i18n('label_error-500-description'),
                 };
         }
     };

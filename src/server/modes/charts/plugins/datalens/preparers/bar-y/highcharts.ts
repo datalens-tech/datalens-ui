@@ -51,7 +51,12 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
 
     const customConfig: any = {
         xAxis: {
-            type: getAxisType(x, xPlaceholder?.settings),
+            type: getAxisType({
+                field: x,
+                settings: xPlaceholder?.settings,
+                visualizationId: visualizationId as WizardVisualizationId,
+                sort,
+            }),
             reversed: isXAxisReversed(x, sort, visualizationId as WizardVisualizationId),
             labels: {
                 formatter:

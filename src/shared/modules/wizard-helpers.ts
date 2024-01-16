@@ -217,7 +217,7 @@ export enum AxisModeDisabledReason {
 }
 
 export function isContinuousAxisModeDisabled(args: {
-    field: Field;
+    field: {guid: string; data_type: string};
     axisSettings: {disableAxisMode?: boolean} | undefined;
     visualizationId: WizardVisualizationId;
     sort: ServerSort[];

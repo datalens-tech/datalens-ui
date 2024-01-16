@@ -6,7 +6,6 @@ import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Titl
 import {i18n} from 'i18n';
 import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
-import {Dispatch} from 'redux';
 import {
     DATASET_FIELD_TYPES,
     DashTab,
@@ -26,7 +25,6 @@ import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/er
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
-import {registry} from '../../../../registry';
 import {loadRevisions, setEntryContent} from '../../../../store/actions/entryContent';
 import {showToast} from '../../../../store/actions/toaster';
 import {EntryGlobalState, RevisionsMode} from '../../../../store/typings/entryContent';
@@ -37,6 +35,7 @@ import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
 
 import {closeDialog as closeDashDialog, deleteLock, purgeData, save, setLock} from './dash';
+import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
 
 import {DashDispatch} from './index';
 
@@ -475,7 +474,7 @@ const getItemDataSource = (selectorDialog: SelectorDialogState): ItemDataSource 
 };
 
 export const applyControl2Dialog = () => {
-    return (dispatch: Dispatch, getState: () => DatalensGlobalState) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const selectorDialog = getState().dash.selectorDialog as SelectorDialogState;
         const {
             title,
@@ -538,16 +537,14 @@ export const applyControl2Dialog = () => {
                 );
             }
 
-            const {getExtendedItemData} = registry.dash.functions.getAll();
-
             const data = {
                 title,
                 sourceType,
                 autoHeight,
                 source: getItemDataSource(selectorDialog),
             };
-
-            const itemData = getExtendedItemData({data, defaults});
+            const getExtendedItemData = getExtendedItemDataAction();
+            const itemData = dispatch(getExtendedItemData({data, defaults}));
 
             dispatch(
                 setItemData({
@@ -932,3 +929,11 @@ export const setWidgetCurrentTab = (
     type: SET_WIDGET_CURRENT_TAB,
     payload,
 });
+
+export const closeControl2Dialog = () => {
+    return (dispatch: AppDispatch) => {
+        const beforeCloseDialogItem = getBeforeCloseDialogItemAction();
+        dispatch(beforeCloseDialogItem());
+        dispatch(closeDashDialog());
+    };
+};

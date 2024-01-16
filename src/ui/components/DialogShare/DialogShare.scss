@@ -92,13 +92,6 @@ $shareLinkScrollWidth: 2px;
         padding-right: 4px;
     }
 
-    &__markup-switcher {
-        display: flex;
-        gap: 5px;
-        align-items: center;
-        margin: 8px 0;
-    }
-
     &__share-link &__subheader ~ &__copy-block &__text-field {
         @include scrollbar-on-hover($shareLinkScrollWidth);
     }

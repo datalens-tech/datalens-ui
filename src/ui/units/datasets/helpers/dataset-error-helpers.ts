@@ -3,6 +3,7 @@ import {DatasetError} from 'units/datasets/store/types';
 
 const i18n = I18n.keyset('dataset.notifications.view');
 
+// Empty lines are added to preserve the consistency of the object structure
 function getMessageText() {
     return {
         CREATE_DATASET_MSGS: {
@@ -11,26 +12,26 @@ function getMessageText() {
         },
         FIELD_DUPLICATED_MSGS: {
             NOTIFICATION_SUCCESS: i18n('toast_field-duplicated-msgs-success'),
-            NOTIFICATION_FAILURE: i18n('toast_field-duplicated-msgs-failure'),
+            NOTIFICATION_FAILURE: '',
         },
         FIELD_REMOVE_MSGS: {
             NOTIFICATION_SUCCESS: i18n('toast_field-remove-msgs-success'),
-            NOTIFICATION_FAILURE: i18n('toast_field-remove-msgs-failure'),
+            NOTIFICATION_FAILURE: '',
         },
         DATASET_SAVE_MSGS: {
             NOTIFICATION_SUCCESS: i18n('toast_dataset-save-msgs-success'),
             NOTIFICATION_FAILURE: i18n('toast_dataset-save-msgs-failure'),
         },
         DATASET_FETCH_PREVIEW_MSGS: {
-            NOTIFICATION_SUCCESS: i18n('toast_dataset-fetch-preview-msgs-success'),
+            NOTIFICATION_SUCCESS: '',
             NOTIFICATION_FAILURE: i18n('toast_dataset-fetch-preview-msgs-failure'),
         },
         DATASET_VALIDATION_MSGS: {
-            NOTIFICATION_SUCCESS: i18n('toast_dataset-validation-msgs-success'),
+            NOTIFICATION_SUCCESS: '',
             NOTIFICATION_FAILURE: i18n('toast_dataset-validation-msgs-failure'),
         },
         FETCH_TYPES_MSGS: {
-            NOTIFICATION_SUCCESS: i18n('toast_fetch-types-msgs-success'),
+            NOTIFICATION_SUCCESS: '',
             NOTIFICATION_FAILURE: i18n('toast_fetch-types-msgs-failure'),
         },
     };
@@ -74,6 +75,9 @@ export function getToastTitle(
 
         case 'types': {
             return getMessageText().FETCH_TYPES_MSGS[type];
+        }
+        default: {
+            return '';
         }
     }
 }

@@ -21,4 +21,6 @@ export const i18n8857 = {
     'label_logout-dialog-description':
         'Sheets from files with restricted access will no longer be displayed',
     'label_logout-dialog-title': 'Are you sure you want to revoke your token?',
+    'label_403-not-authotized-description':
+        'Log in to your Yandex account or change your file access settings and try adding it again',
 };

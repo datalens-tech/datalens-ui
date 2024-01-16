@@ -2,12 +2,13 @@ import {I18n} from 'i18n';
 import type {DataLensApiError} from 'ui/typings';
 import {parseError} from 'ui/utils/errors/parse';
 
+import {i18n8857} from '../components/custom-forms/Yadocs/constants';
 import {ConverterErrorCode} from '../constants';
-import type {GSheetItem} from '../store';
+import type {YadocItem} from '../store';
 
 const i18n = I18n.keyset('connections.gsheet.view');
 
-const getErrorTitle = ({type, code}: {type: GSheetItem['type']; code: string}) => {
+const getErrorTitle = ({type, code}: {type: YadocItem['type']; code: string}) => {
     switch (code) {
         case ConverterErrorCode.FILE_LIMIT_EXCEEDED: {
             return i18n('label_file-limit-exceeded');
@@ -34,7 +35,7 @@ const getErrorTitle = ({type, code}: {type: GSheetItem['type']; code: string}) =
 
     // Defaults
     switch (type) {
-        case 'uploadedGSheet': {
+        case 'uploadedYadoc': {
             return i18n('label_gsheet-uploading-failure');
         }
         default: {
@@ -46,7 +47,7 @@ const getErrorTitle = ({type, code}: {type: GSheetItem['type']; code: string}) =
 const getErrorDescription = ({code}: {code?: string}) => {
     switch (code) {
         case ConverterErrorCode.PERMISSION_DENIED: {
-            return i18n('label_403-not-authotized-description');
+            return i18n8857['label_403-not-authotized-description'];
         }
         default: {
             return '';
@@ -55,11 +56,11 @@ const getErrorDescription = ({code}: {code?: string}) => {
 };
 
 // TODO: https://github.com/datalens-tech/datalens-ui/issues/375
-export const getGSheetErrorData = ({
+export const getYadocErrorData = ({
     type,
     error,
 }: {
-    type: GSheetItem['type'];
+    type: YadocItem['type'];
     error: DataLensApiError;
 }) => {
     const {code} = parseError(error);

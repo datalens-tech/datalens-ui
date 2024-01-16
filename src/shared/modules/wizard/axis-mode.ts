@@ -1,9 +1,9 @@
 import {WizardVisualizationId} from '../../constants';
-import {AxisMode, Field, ServerSort} from '../../types';
+import {AxisMode, ServerSort} from '../../types';
 import {isContinuousAxisModeDisabled} from '../wizard-helpers';
 
 export function getActualAxisModeForField(args: {
-    field: Field;
+    field: {guid: string; data_type: string};
     axisSettings: {axisModeMap?: Record<string, string>; disableAxisMode?: boolean} | undefined;
     visualizationId: WizardVisualizationId;
     sort: ServerSort[];
