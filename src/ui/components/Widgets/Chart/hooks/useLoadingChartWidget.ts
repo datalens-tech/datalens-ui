@@ -605,13 +605,13 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      * Resize observer adjustLayout called on screen resize
      */
     const isAutoHeight = tabs[tabIndex].autoHeight;
-    const isFirstCall = React.useRef(true);
+    const isInitResizeCall = React.useRef(true);
 
     const debounceResizeAdjustLayot = React.useCallback(
         debounce(() => {
             // Skipping first call as it's init call
-            if (isFirstCall.current) {
-                isFirstCall.current = !isFirstCall.current;
+            if (isInitResizeCall.current) {
+                isInitResizeCall.current = false;
                 return;
             }
 
@@ -624,8 +624,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             resizeObserver.current.disconnect();
             resizeObserver.current = null;
         }
-        isFirstCall.current = true;
-    }, [resizeObserver, isFirstCall]);
+        isInitResizeCall.current = true;
+    }, [resizeObserver, isInitResizeCall]);
 
     React.useLayoutEffect(() => {
         if (!rootNodeRef.current) {
