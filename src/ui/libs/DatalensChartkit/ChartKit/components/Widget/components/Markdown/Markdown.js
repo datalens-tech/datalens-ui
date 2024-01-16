@@ -59,7 +59,7 @@ export function Markdown({data, onLoad, id}) {
                 onLoad({widgetRendering: Performance.getDuration(generatedId)});
             });
         }
-    }, [generatedId, onLoad, html, refLink]);
+    }, [generatedId, onLoad, refLink]);
 
     return html ? (
         <YfmWrapper
