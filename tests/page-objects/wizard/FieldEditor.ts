@@ -1,11 +1,11 @@
 import {Page} from '@playwright/test';
 
 import {slct} from '../../utils';
-import {DialogFieldEditorQA, SectionDatasetQA} from '../../../src/shared';
+import {DialogFieldEditorQA, FieldEditorQa, SectionDatasetQA} from '../../../src/shared';
 
 export default class FieldEditor {
     static slct(childSelector: string) {
-        return `${slct('dl-field-editor')} ${childSelector}`;
+        return `${slct(FieldEditorQa.Dialog)} ${childSelector}`;
     }
     private fieldNameSelector = FieldEditor.slct(`${slct('field-name')} input`);
     private applyButtonSelector = slct(DialogFieldEditorQA.ApplyButton);

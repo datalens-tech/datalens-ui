@@ -151,3 +151,7 @@ export const enum HierarchyEditorQa {
     Dialog = 'hierarchy-editor',
     ApplyButton = 'dialog-apply-button',
 }
+
+export const enum VisualizationItemQa {
+    FormulaIcon = 'formula-icon',
+}
