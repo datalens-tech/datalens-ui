@@ -115,6 +115,7 @@ export interface DLUserAccount {
     federationId: string;
     lang: Lang;
     login: string;
+    id: string;
     uid: string;
     avatarHost: string;
     formattedLogin: string;
