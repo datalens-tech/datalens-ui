@@ -129,7 +129,8 @@ export class Datepicker extends React.PureComponent {
             });
         }
 
-        // for preventing not-defined values in search text. it will update 'to' value and 'searchText' if:
+        // for preventing not-defined values in search text.
+        // it will update 'to' value and 'searchText' if all conditions are met:
         // 1. it is a control with required value
         // 2. it is a range datepicker
         // 3. only 'from' in state range exists, but "to" exists in the props

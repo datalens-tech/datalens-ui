@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import moment from 'moment';
 import {
+    ControlQA,
     DATASET_FIELD_TYPES,
     FilterValue,
     getParsedIntervalDates,
@@ -208,6 +209,7 @@ class Default extends React.PureComponent<Props, State> {
                     className={b('default-btn', {error: this.props.isValidationError})}
                     view="outlined"
                     width="max"
+                    qa={ControlQA.acceptableDialogButton}
                 >
                     {this.getText()}
                 </Button>

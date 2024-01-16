@@ -74,6 +74,10 @@ function BaseControlSelect({
         multiselect ? wrapToArray(value) : value,
     );
 
+    React.useEffect(() => {
+        setCurrentValue(multiselect ? wrapToArray(value) : value);
+    }, [value, multiselect]);
+
     const items = content
         // because the choice of such values leads to incorrect behavior
         .filter(({value}) => value !== null && value !== '' && value !== undefined)
@@ -85,6 +89,8 @@ function BaseControlSelect({
 
     const wrappedOnChange = React.useCallback(
         (value) => {
+            // null - when SINGLE with allowEmptyValue and there is no selected value, otherwise [null] is obtained in the parameters
+            // [] - when MULTIPLE and there is no selected value, otherwise results in the parameters []
             const wrappedValue =
                 value === null || (Array.isArray(value) && !value.length) ? '' : value;
 
@@ -173,6 +179,8 @@ function BaseControlInput({
 
     React.useEffect(() => setText(value), [value]);
 
+    const isInvalid = isValidationError && !text.length;
+
     return (
         <TextInput
             placeholder={placeholder}
@@ -195,7 +203,7 @@ function BaseControlInput({
             // corrected in lor 3.2.0 ISL-5502
             // onKeyDown={event => event.keyCode === 13 && props.onEnter(text)}
             size={controlSize}
-            error={isValidationError}
+            error={isInvalid}
         />
     );
 }

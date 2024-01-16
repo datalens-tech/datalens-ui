@@ -909,12 +909,12 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 : emptyPaceholder;
 
         const onChange = (value: string | string[]) => {
-            const validation = this.checkValueValidation({
+            const isValid = this.checkValueValidation({
                 isValueRequired: source.isValueRequired,
                 value,
             });
 
-            if (!validation) {
+            if (!isValid) {
                 return;
             }
 
@@ -1013,12 +1013,12 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             const validationError = this.state.validationError || initialValidationError;
 
             const onChange = (value: string | string[]) => {
-                const validation = this.checkValueValidation({
+                const isValid = this.checkValueValidation({
                     isValueRequired: source.isValueRequired,
                     value,
                 });
 
-                if (!validation) {
+                if (!isValid) {
                     return;
                 }
 
