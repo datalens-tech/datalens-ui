@@ -3,9 +3,13 @@ import React from 'react';
 import {sanitizeUrl} from '@braintree/sanitize-url';
 import {transformParamsToActionParams} from '@gravity-ui/dashkit';
 import {Column, Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
+import clone from 'lodash/clone';
 import get from 'lodash/get';
+import intersection from 'lodash/intersection';
 import isEqual from 'lodash/isEqual';
 import isPlainObject from 'lodash/isPlainObject';
+import union from 'lodash/union';
+import without from 'lodash/without';
 import {
     BarTableCell,
     BarViewOptions,
@@ -356,6 +360,139 @@ function extractCellActionParams(args: {cell: TableCell; head?: TableHead}) {
     return {};
 }
 
+function getValuesMap(selectedRows: TableRow[]) {
+    return selectedRows.reduce<Record<string, number>>((acc, row) => {
+        if (!('cells' in row)) {
+            return acc;
+        }
+
+        row.cells.forEach((cell) => {
+            if (typeof cell !== 'object' || !('value' in cell)) {
+                return;
+            }
+
+            const stringifiedValue = String(cell.value);
+
+            if (typeof acc[stringifiedValue] === 'undefined') {
+                acc[stringifiedValue] = 0;
+            }
+
+            acc[stringifiedValue] = acc[stringifiedValue] + 1;
+        });
+
+        return acc;
+    }, {});
+}
+
+function mergeStringParamsByRowDeselecting(args: {
+    current: StringParams;
+    row: StringParams;
+    selectedRows: TableRow[];
+}) {
+    const {current, row, selectedRows} = args;
+    return Object.keys(current).reduce<StringParams>((acc, key) => {
+        acc[key] = current[key];
+        const valuesMap = getValuesMap(selectedRows);
+        const hasSelectedRows = Boolean(selectedRows.length);
+
+        if (typeof acc[key] === 'string') {
+            if (
+                typeof row[key] === 'string' &&
+                acc[key] === row[key] &&
+                (!hasSelectedRows || valuesMap[String(acc[key])] === 1)
+            ) {
+                acc[key] = [''];
+            } else if (
+                Array.isArray(row[key]) &&
+                row[key].includes(acc[key] as string) &&
+                (!hasSelectedRows || valuesMap[String(acc[key])] === 1)
+            ) {
+                acc[key] = [''];
+            }
+        } else if (Array.isArray(acc[key])) {
+            const intersectedValues = intersection(acc[key], row[key]);
+
+            if (
+                typeof row[key] === 'string' &&
+                acc[key].includes(row[key] as string) &&
+                (!hasSelectedRows || valuesMap[String(row[key])] === 1)
+            ) {
+                acc[key] = (acc[key] as string[]).filter((value) => value !== row[key]);
+                if (!acc[key].length) {
+                    acc[key] = [''];
+                }
+            } else if (Array.isArray(row[key]) && intersectedValues.length) {
+                const itemsToFilter = hasSelectedRows
+                    ? intersectedValues.filter((value) => {
+                          return (
+                              typeof valuesMap[String(value)] === 'number' &&
+                              valuesMap[String(value)] === 1
+                          );
+                      })
+                    : intersectedValues;
+
+                acc[key] = without(acc[key], ...itemsToFilter);
+                if (!acc[key].length) {
+                    acc[key] = [''];
+                }
+            }
+        }
+
+        return acc;
+    }, {});
+}
+
+function mergeStringParamsByRowAdding(args: {current: StringParams; row: StringParams}) {
+    const {current, row} = args;
+    return Object.keys(current).reduce<StringParams>((acc, key) => {
+        acc[key] = current[key];
+
+        if (typeof acc[key] === 'string') {
+            if (typeof row[key] === 'string' && acc[key] !== row[key]) {
+                acc[key] = [acc[key] as string, row[key] as string];
+            } else if (Array.isArray(row[key]) && !row[key].includes(acc[key] as string)) {
+                acc[key] = [acc[key] as string, ...row[key]];
+            }
+        }
+
+        if (Array.isArray(acc[key])) {
+            if (typeof row[key] === 'string' && !acc[key].includes(row[key] as string)) {
+                acc[key] = [...acc[key], row[key] as string];
+            } else if (Array.isArray(row[key])) {
+                acc[key] = union(acc[key], row[key]);
+            }
+        }
+
+        return acc;
+    }, {});
+}
+
+export function mergeStringParams(args: {
+    current: StringParams;
+    row: StringParams;
+    metaKey?: boolean;
+    selectedRows?: TableRow[];
+}): StringParams {
+    const {current, row, metaKey, selectedRows = []} = args;
+    const isRowAlreadySelected = hasMatchedActionParams(row, current);
+
+    if (metaKey) {
+        return isRowAlreadySelected
+            ? mergeStringParamsByRowDeselecting({current, row, selectedRows})
+            : mergeStringParamsByRowAdding({current, row});
+    }
+
+    const result = clone(row);
+
+    if (isRowAlreadySelected) {
+        Object.keys(result).forEach((key) => {
+            result[key] = [''];
+        });
+    }
+
+    return result;
+}
+
 export function getRowActionParams(args: {row?: DataTableData; head?: TableHead[]}): StringParams {
     const {row, head} = args;
 
@@ -376,23 +513,24 @@ function getActionParamsByRow(args: {
     actionParams: StringParams;
     row?: DataTableData;
     head?: TableHead[];
+    metaKey?: boolean;
+    selectedRows?: TableRow[];
 }): StringParams {
-    const {actionParams, row, head} = args;
+    const {actionParams, row, head, metaKey, selectedRows} = args;
 
     if (!row) {
         return {};
     }
 
     const rowActionParams = getRowActionParams({row, head});
-    const isRowAlreadySelected = hasMatchedActionParams(rowActionParams, actionParams);
+    const resultParams = mergeStringParams({
+        current: actionParams,
+        row: rowActionParams,
+        metaKey,
+        selectedRows,
+    });
 
-    if (isRowAlreadySelected) {
-        Object.keys(rowActionParams).forEach((key) => {
-            rowActionParams[key] = [''];
-        });
-    }
-
-    return transformParamsToActionParams(rowActionParams);
+    return transformParamsToActionParams(resultParams);
 }
 
 export function getActionParams(args: {
@@ -400,12 +538,20 @@ export function getActionParams(args: {
     row?: DataTableData;
     column?: Column<DataTableData>;
     head?: TableHead[];
+    metaKey?: boolean;
+    selectedRows?: TableRow[];
 }): StringParams {
-    const {actionParamsData, row, head} = args;
+    const {actionParamsData, row, head, metaKey, selectedRows} = args;
 
     switch (actionParamsData.scope) {
         case 'row': {
-            return getActionParamsByRow({actionParams: actionParamsData.params, row, head});
+            return getActionParamsByRow({
+                actionParams: actionParamsData.params,
+                row,
+                head,
+                metaKey,
+                selectedRows,
+            });
         }
         // There is no way to reach this code. Just satisfies ts
         default: {
