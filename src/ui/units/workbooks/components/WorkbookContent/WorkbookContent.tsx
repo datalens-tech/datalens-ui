@@ -26,7 +26,7 @@ type Props = {
     loadMoreEntries: () => void;
     loadMoreEntriesByScope: (entryScope: EntryScope) => void;
     retryLoadEntries: () => void;
-    refreshEntries: () => void;
+    refreshEntries: (scope?: EntryScope) => void;
     scope?: EntryScope;
     mapTokens: Record<string, string>;
 };

@@ -120,10 +120,16 @@ export const WorkbookPage = () => {
         dispatch(getWorkbookEntries({workbookId, filters, scope, nextPageToken}));
     }, [dispatch, workbookId, filters, scope, nextPageToken]);
 
-    const refreshEntries = React.useCallback(() => {
-        dispatch(resetWorkbookEntries());
-        dispatch(getWorkbookEntries({workbookId, filters, scope}));
-    }, [dispatch, workbookId, filters, scope]);
+    const refreshEntries = React.useCallback(
+        (entryScope?: EntryScope) => {
+            if (!isMainTab) {
+                dispatch(resetWorkbookEntries());
+            }
+
+            dispatch(getWorkbookEntries({workbookId, filters, scope: entryScope || scope}));
+        },
+        [isMainTab, dispatch, workbookId, filters, scope],
+    );
 
     const handleChangeFilters = React.useCallback(
         (newFilters) => {
@@ -153,31 +159,51 @@ export const WorkbookPage = () => {
         if (activeTab) {
             (async () => {
                 if (isMainTab) {
+                    const dashes = dispatch(
+                        getWorkbookEntries({
+                            workbookId,
+                            filters,
+                            scope: EntryScope.Dash,
+                            ignoreConcurrentId: true,
+                        }),
+                    );
+
+                    const datasets = dispatch(
+                        getWorkbookEntries({
+                            workbookId,
+                            filters,
+                            scope: EntryScope.Dataset,
+                            ignoreConcurrentId: true,
+                        }),
+                    );
+
+                    const widgets = dispatch(
+                        getWorkbookEntries({
+                            workbookId,
+                            filters,
+                            scope: EntryScope.Widget,
+                            ignoreConcurrentId: true,
+                        }),
+                    );
+
+                    const connections = dispatch(
+                        getWorkbookEntries({
+                            workbookId,
+                            filters,
+                            scope: EntryScope.Connection,
+                            ignoreConcurrentId: true,
+                        }),
+                    );
+
+                    const [dataDashes, dataDatasets, dataWidgets, dataConnections] =
+                        await Promise.all([dashes, datasets, widgets, connections]);
+
                     const tokensMap: Record<string, string> = {};
 
-                    await dispatch(
-                        getWorkbookEntries({workbookId, filters, scope: EntryScope.Dash}),
-                    ).then((data) => {
-                        tokensMap[EntryScope.Dash] = data?.nextPageToken || '';
-                    });
-
-                    await dispatch(
-                        getWorkbookEntries({workbookId, filters, scope: EntryScope.Dataset}),
-                    ).then((data) => {
-                        tokensMap[EntryScope.Dataset] = data?.nextPageToken || '';
-                    });
-
-                    await dispatch(
-                        getWorkbookEntries({workbookId, filters, scope: EntryScope.Widget}),
-                    ).then((data) => {
-                        tokensMap[EntryScope.Widget] = data?.nextPageToken || '';
-                    });
-
-                    await dispatch(
-                        getWorkbookEntries({workbookId, filters, scope: EntryScope.Connection}),
-                    ).then((data) => {
-                        tokensMap[EntryScope.Connection] = data?.nextPageToken || '';
-                    });
+                    tokensMap[EntryScope.Dash] = dataDashes?.nextPageToken || '';
+                    tokensMap[EntryScope.Dataset] = dataDatasets?.nextPageToken || '';
+                    tokensMap[EntryScope.Widget] = dataWidgets?.nextPageToken || '';
+                    tokensMap[EntryScope.Connection] = dataConnections?.nextPageToken || '';
 
                     setMapTokens(tokensMap);
                 } else {

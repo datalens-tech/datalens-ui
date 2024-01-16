@@ -25,11 +25,15 @@
     }
 
     &__table-header-cell_title {
-        width: 60%;
+        width: 58%;
     }
 
     &__table-header-cell_author {
         width: 170px;
+    }
+
+    &__table-header-cell_date {
+        width: 150px;
     }
 
     &__visibility-btn {

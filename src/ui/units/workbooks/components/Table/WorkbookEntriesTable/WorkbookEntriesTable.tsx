@@ -30,7 +30,7 @@ const b = block('dl-workbook-entries-table');
 type WorkbookEntriesTableProps = {
     workbook: WorkbookWithPermissions;
     entries: GetEntryResponse[];
-    refreshEntries: () => void;
+    refreshEntries: (scope?: EntryScope) => void;
     loadMoreEntriesByScope: (entryScope: EntryScope) => void;
     scope?: EntryScope;
     mapTokens: Record<string, string>;
@@ -72,9 +72,12 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             [dispatch],
         );
 
-        const onApplyDuplicate = React.useCallback(() => {
-            refreshEntries();
-        }, [refreshEntries]);
+        const onApplyDuplicate = React.useCallback(
+            (entryScope?: EntryScope) => {
+                refreshEntries(entryScope);
+            },
+            [refreshEntries],
+        );
 
         const onDuplicateEntry = React.useCallback(
             (entity: WorkbookEntry) => {
@@ -84,7 +87,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                         props: {
                             open: true,
                             onClose: () => dispatch(closeDialog()),
-                            onApply: onApplyDuplicate,
+                            onApply: () => onApplyDuplicate(entity.scope as EntryScope),
                             initName: entity.name,
                             entryId: entity.entryId,
                         },
@@ -157,7 +160,9 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             <div className={b('header-cell', {author: true})}>
                                 {i18n('label_author')}
                             </div>
-                            <div className={b('header-cell')}>{i18n('label_last-modified')}</div>
+                            <div className={b('header-cell', {date: true})}>
+                                {i18n('label_last-modified')}
+                            </div>
                             <div className={b('header-cell')} />
                             <div className={b('header-cell')} />
                         </div>
@@ -201,31 +206,37 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                 {...mainTabProps}
                             />
 
-                            <MainTabContent
-                                chunk={datasetChunk}
-                                actionCreateText={i18n('action_create-dataset')}
-                                title={i18n('title_datasets')}
-                                actionType={CreateEntryActionType.Dataset}
-                                isShowMoreBtn={Boolean(
-                                    datasetChunk.length > 0 && mapTokens[EntryScope.Dataset],
-                                )}
-                                loadMoreEntries={() => loadMoreEntriesByScope(EntryScope.Dataset)}
-                                {...mainTabProps}
-                            />
+                            {!workbook.permissions.limitedView && (
+                                <MainTabContent
+                                    chunk={datasetChunk}
+                                    actionCreateText={i18n('action_create-dataset')}
+                                    title={i18n('title_datasets')}
+                                    actionType={CreateEntryActionType.Dataset}
+                                    isShowMoreBtn={Boolean(
+                                        datasetChunk.length > 0 && mapTokens[EntryScope.Dataset],
+                                    )}
+                                    loadMoreEntries={() =>
+                                        loadMoreEntriesByScope(EntryScope.Dataset)
+                                    }
+                                    {...mainTabProps}
+                                />
+                            )}
 
-                            <MainTabContent
-                                chunk={connChunk}
-                                actionCreateText={i18n('action_create-connection')}
-                                title={i18n('title_connections')}
-                                actionType={CreateEntryActionType.Connection}
-                                isShowMoreBtn={Boolean(
-                                    connChunk.length > 0 && mapTokens[EntryScope.Connection],
-                                )}
-                                loadMoreEntries={() =>
-                                    loadMoreEntriesByScope(EntryScope.Connection)
-                                }
-                                {...mainTabProps}
-                            />
+                            {!workbook.permissions.limitedView && (
+                                <MainTabContent
+                                    chunk={connChunk}
+                                    actionCreateText={i18n('action_create-connection')}
+                                    title={i18n('title_connections')}
+                                    actionType={CreateEntryActionType.Connection}
+                                    isShowMoreBtn={Boolean(
+                                        connChunk.length > 0 && mapTokens[EntryScope.Connection],
+                                    )}
+                                    loadMoreEntries={() =>
+                                        loadMoreEntriesByScope(EntryScope.Connection)
+                                    }
+                                    {...mainTabProps}
+                                />
+                            )}
                         </>
                     )}
                 </div>
