@@ -22,6 +22,7 @@ import {SET_ERROR_MODE, SET_STATE, setDashViewMode, toggleTableOfContent} from '
 import {
     DOES_NOT_EXIST_ERROR_TEXT,
     NOT_FOUND_ERROR_TEXT,
+    getBeforeOpenDialogItemAction,
     prepareLoadedData,
     removeParamAndUpdate,
 } from './helpers';
@@ -572,6 +573,14 @@ export const openDialog = (dialogType) => ({
 });
 
 export const openItemDialog = (data) => ({type: actionTypes.OPEN_ITEM_DIALOG, payload: data});
+
+export const openItemDialogAndSetData = (data) => {
+    return (dispatch) => {
+        const beforeOpenDialogItem = getBeforeOpenDialogItemAction();
+        dispatch(beforeOpenDialogItem(data));
+        dispatch(openItemDialog(data));
+    };
+};
 
 export const closeDialog = () => ({
     type: actionTypes.CLOSE_DIALOG,
