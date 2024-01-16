@@ -162,12 +162,14 @@ export const getWorkbookEntries = ({
     scope,
     nextPageToken,
     pageSize = 10,
+    ignoreConcurrentId = false,
 }: {
     workbookId: string;
     filters: WorkbookEntriesFilters;
     scope?: EntryScope;
     nextPageToken?: string;
     pageSize?: number;
+    ignoreConcurrentId?: boolean;
 }) => {
     return async (dispatch: WorkbooksDispatch) => {
         dispatch({
@@ -193,7 +195,7 @@ export const getWorkbookEntries = ({
 
         try {
             const data = await getSdk().us.getWorkbookEntries(args, {
-                concurrentId: 'workbooks/getWorkbookEntries',
+                concurrentId: ignoreConcurrentId ? undefined : 'workbooks/getWorkbookEntries',
             });
             dispatch({
                 type: GET_WORKBOOK_ENTRIES_SUCCESS,

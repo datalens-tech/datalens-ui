@@ -78,6 +78,7 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
                 <div className={b('table-header')}>
                     <div className={b('table-header-cell', {title: true})} />
                     <div className={b('table-header-cell', {author: true})} />
+                    <div className={b('table-header-cell', {date: true})} />
                     <div className={b('table-header-cell')} />
                     <div className={b('table-header-cell')} />
                 </div>

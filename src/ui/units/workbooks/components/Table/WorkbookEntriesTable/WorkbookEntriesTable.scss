@@ -35,6 +35,10 @@
         &_author {
             width: 170px;
         }
+
+        &_date {
+            width: 150px;
+        }
     }
 
     &__header-cell {
@@ -43,7 +47,7 @@
     }
 
     &__header-cell_title {
-        width: 60%;
+        width: 58%;
     }
 
     &__icon {
