@@ -52,7 +52,7 @@ export function Markdown({data, onLoad, id}) {
     Performance.mark(generatedId);
 
     const refLink = React.useRef(null);
-    const {html, markdown} = data.data;
+    const {html = '', markdown = ''} = data.data;
 
     React.useLayoutEffect(() => {
         if (onLoad) {
