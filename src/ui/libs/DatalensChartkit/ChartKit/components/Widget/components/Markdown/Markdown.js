@@ -43,7 +43,8 @@ async function preloadContent(div) {
         ]);
     }
 
-    return Promise.resolve();
+    // if not img waiting only for fonts
+    return document.fonts.ready;
 }
 
 export function Markdown({data, onLoad, id}) {
