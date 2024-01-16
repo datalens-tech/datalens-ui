@@ -124,7 +124,11 @@ const LIMIT = 1000;
 const CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
 const isValidationError = ({isValueRequired, value}: ValidationErrorData) => {
-    return isValueRequired && (!value || !value?.length);
+    return (
+        Utils.isEnabledFeature(Feature.SelectorRequiredValue) &&
+        isValueRequired &&
+        (!value || !value?.length)
+    );
 };
 
 class Control extends React.PureComponent<PluginControlProps, PluginControlState> {
@@ -872,7 +876,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     renderSelector() {
         const {defaults, data, editMode, id} = this.props;
 
-        const {loadedData, status, loadingItems, validationError} = this.state;
+        const {loadedData, status, loadingItems} = this.state;
         const controlData = data as unknown as DashTabItemControlDataset | DashTabItemControlManual;
         const source = controlData.source;
         const title = controlData.title;
@@ -884,15 +888,25 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const preselectedContent = [{title: selectedValue, value: selectedValue}];
         // @ts-ignore
         const content = loadedData?.uiScheme?.controls[0].content;
+        const emptyPaceholder = Utils.isEnabledFeature(Feature.EmptySelector)
+            ? i18n('placeholder_empty')
+            : undefined;
 
         const preparedValue = unwrapFromArrayAndSkipOperation(this.actualParams[fieldId]);
 
+        // for first initialization of control
         const initialValidationError = isValidationError({
             isValueRequired: source.isValueRequired,
             value: preparedValue,
         })
-            ? 'Ужас!'
+            ? i18n('value_required')
             : null;
+        const validationError = this.state.validationError || initialValidationError;
+
+        const placeholder =
+            Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
+                ? validationError
+                : emptyPaceholder;
 
         const onChange = (value: string | string[]) => {
             const validation = this.checkValueValidation({
@@ -900,14 +914,16 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 value,
             });
 
-            if (validation) {
-                const valueWithOperation = addOperationForValue({
-                    value,
-                    operation: source.operation,
-                });
-
-                this.onChange(fieldId, valueWithOperation);
+            if (!validation) {
+                return;
             }
+
+            const valueWithOperation = addOperationForValue({
+                value,
+                operation: source.operation,
+            });
+
+            this.onChange(fieldId, valueWithOperation);
         };
 
         const props: SelectControlProps = {
@@ -925,11 +941,9 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             onChange,
             onOpenChange: this.onOpenChange,
             loadingItems,
-            placeholder: Utils.isEnabledFeature(Feature.EmptySelector)
-                ? i18n('placeholder_empty')
-                : undefined,
+            placeholder,
             isValueRequired: source.isValueRequired,
-            validationError: validationError || initialValidationError,
+            isValidationError: Boolean(validationError),
         };
 
         if (status === LOAD_STATUS.FAIL) {
@@ -974,6 +988,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
         const uiScheme = loadedData?.uiScheme;
         // @ts-ignore
+        // eslint-disable-next-line complexity
         return uiScheme?.controls.map((control) => {
             const {param, type} = control;
             const data = this.props.data as unknown as
@@ -988,12 +1003,14 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const preparedValue = unwrapFromArrayAndSkipOperation(this.actualParams[param]);
 
+            // for first initialization of control
             const initialValidationError = isValidationError({
                 isValueRequired: source.isValueRequired,
                 value: preparedValue,
             })
-                ? 'Ужас!'
+                ? i18n('value_required')
                 : null;
+            const validationError = this.state.validationError || initialValidationError;
 
             const onChange = (value: string | string[]) => {
                 const validation = this.checkValueValidation({
@@ -1001,14 +1018,16 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     value,
                 });
 
-                if (validation) {
-                    const valueWithOperation = addOperationForValue({
-                        value,
-                        operation: source.operation,
-                    });
-
-                    this.onChange(param, valueWithOperation);
+                if (!validation) {
+                    return;
                 }
+
+                const valueWithOperation = addOperationForValue({
+                    value,
+                    operation: source.operation,
+                });
+
+                this.onChange(param, valueWithOperation);
             };
 
             const props = {
@@ -1022,10 +1041,15 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
                 label: (source.showTitle ? title : '') as string,
                 isValueRequired: source.isValueRequired,
-                validationError: this.state.validationError || initialValidationError,
+                isValidationError: Boolean(validationError),
             };
 
             if (type === TYPE.RANGE_DATEPICKER || type === TYPE.DATEPICKER) {
+                props.emptyValueText =
+                    Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
+                        ? validationError
+                        : i18n('value_undefined');
+
                 let fieldType = source?.fieldType || null;
                 if (sourceType === DashTabItemControlSourceType.Dataset) {
                     const {datasetFieldType} = this.getDatasetSourceInfo();
@@ -1037,6 +1061,13 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 ) {
                     props.timeFormat = 'HH:mm:ss';
                 }
+            }
+
+            if (type === TYPE.INPUT) {
+                props.placeholder =
+                    Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
+                        ? validationError
+                        : control.placeholder;
             }
 
             switch (type) {
@@ -1155,7 +1186,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
     private checkValueValidation(args: ValidationErrorData) {
         if (isValidationError(args)) {
-            this.setState({validationError: 'Значение обязательно'});
+            this.setState({validationError: i18n('value_required')});
             return false;
         }
 

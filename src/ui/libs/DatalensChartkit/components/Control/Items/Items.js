@@ -68,7 +68,7 @@ function BaseControlSelect({
     onOpenChange,
     placeholder,
     isValueRequired,
-    validationError,
+    isValidationError,
 }) {
     const [currentValue, setCurrentValue] = React.useState(
         multiselect ? wrapToArray(value) : value,
@@ -94,12 +94,13 @@ function BaseControlSelect({
         [onChange, multiselect],
     );
 
-    const allowEmptyValue =
-        Utils.isEnabledFeature(Feature.SelectorRequiredValue) && !isValueRequired;
-    const currentPlaceholder =
-        Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
-            ? validationError
-            : placeholder;
+    const isRequired = Utils.isEnabledFeature(Feature.SelectorRequiredValue) && !isValueRequired;
+    const showSelectAll =
+        Utils.isEnabledFeature(Feature.SelectorRequiredValue) &&
+        currentValue?.length === items?.length &&
+        isValueRequired
+            ? false
+            : undefined;
 
     const size = isMobileView ? MOBILE_SIZE.YC_SELECT : 's';
 
@@ -107,7 +108,7 @@ function BaseControlSelect({
         <YCSelect
             showSearch={searchable}
             type={multiselect ? YCSelect.MULTIPLE : YCSelect.SINGLE}
-            allowEmptyValue={allowEmptyValue}
+            allowEmptyValue={isRequired}
             showMissingItems={true}
             value={currentValue}
             onUpdate={wrappedOnChange}
@@ -121,9 +122,11 @@ function BaseControlSelect({
             errorContent={errorContent}
             itemsLoaderClassName={itemsLoaderClassName}
             onOpenChange={onOpenChange}
-            placeholder={currentPlaceholder}
+            placeholder={placeholder}
             size={size}
-            className={b('yc-select', {error: Boolean(validationError)})}
+            className={b('yc-select')}
+            showSelectAll={showSelectAll}
+            isValidationError={isValidationError}
         />
     );
 }
@@ -154,7 +157,7 @@ BaseControlSelect.propTypes = {
     placeholder: PropTypes.string,
     widgetId: PropTypes.string,
     isValueRequired: PropTypes.bool,
-    validationError: PropTypes.string,
+    isValidationError: PropTypes.bool,
 };
 
 function BaseControlInput({
@@ -164,17 +167,15 @@ function BaseControlInput({
     innerLabel,
     labelInside,
     label,
-    validationError,
+    isValidationError,
 }) {
     const [text, setText] = React.useState(value);
 
     React.useEffect(() => setText(value), [value]);
 
-    const currentPlaceholder = validationError ? validationError : placeholder;
-
     return (
         <TextInput
-            placeholder={currentPlaceholder}
+            placeholder={placeholder}
             className={b('component', {input: true})}
             value={text}
             onUpdate={(value) => setText(value)}
@@ -194,7 +195,7 @@ function BaseControlInput({
             // corrected in lor 3.2.0 ISL-5502
             // onKeyDown={event => event.keyCode === 13 && props.onEnter(text)}
             size={controlSize}
-            error={Boolean(validationError)}
+            error={isValidationError}
         />
     );
 }
@@ -212,7 +213,7 @@ BaseControlInput.propTypes = {
     labelInside: PropTypes.bool,
     widgetId: PropTypes.string,
     isValueRequired: PropTypes.bool,
-    validationError: PropTypes.string,
+    isValidationError: PropTypes.bool,
 };
 
 function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
@@ -290,7 +291,8 @@ function BaseControlDatepicker({
     onChange,
     widgetId = '',
     isValueRequired,
-    validationError,
+    isValidationError,
+    emptyValueText,
 }) {
     const date = (value && tryResolveRelativeDate(value)) || value;
 
@@ -300,10 +302,6 @@ function BaseControlDatepicker({
     );
 
     const hasClear = Utils.isEnabledFeature(Feature.SelectorRequiredValue) && !isValueRequired;
-    const emptyValueText =
-        Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
-            ? validationError
-            : i18n('chartkit.control.items', 'value_undefined');
 
     return (
         <DatepickerControl
@@ -322,8 +320,9 @@ function BaseControlDatepicker({
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
-            className={b('datepicker', {error: Boolean(validationError)})}
-            error={validationError}
+            className={b('datepicker')}
+            isValidationError={isValidationError}
+            isValueRequired={isValueRequired}
         />
     );
 }
@@ -342,7 +341,8 @@ BaseControlDatepicker.propTypes = {
     hidden: PropTypes.bool,
     widgetId: PropTypes.string,
     isValueRequired: PropTypes.bool,
-    validationError: PropTypes.string,
+    isValidationError: PropTypes.bool,
+    emptyValueText: PropTypes.string,
 };
 
 function BaseControlRangeDatepicker({
@@ -355,7 +355,8 @@ function BaseControlRangeDatepicker({
     onChange,
     widgetId = '',
     isValueRequired,
-    validationError,
+    isValidationError,
+    emptyValueText,
 }) {
     let from;
     let to;
@@ -379,7 +380,7 @@ function BaseControlRangeDatepicker({
             const resultFrom = from === null ? '' : from;
             let resultTo = to === null ? '' : to;
 
-            // if "from" is selected but not "before"
+            // if "from" is selected but not "to"
             if (resultFrom && !resultTo) {
                 const diff = moment.utc(resultFrom).startOf('day').diff(resultFrom);
                 // if "from" is the beginning of the day, then for "to" put the end of the day
@@ -401,10 +402,6 @@ function BaseControlRangeDatepicker({
     );
 
     const hasClear = !(Utils.isEnabledFeature(Feature.SelectorRequiredValue) && isValueRequired);
-    const emptyValueText =
-        Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
-            ? validationError
-            : i18n('chartkit.control.items', 'value_undefined');
 
     return (
         <DatepickerControl
@@ -422,7 +419,9 @@ function BaseControlRangeDatepicker({
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
-            className={b('datepicker', {error: Boolean(validationError)})}
+            className={b('datepicker')}
+            isValidationError={isValidationError}
+            isValueRequired={isValueRequired}
         />
     );
 }
@@ -450,7 +449,8 @@ BaseControlRangeDatepicker.propTypes = {
     hidden: PropTypes.bool,
     widgetId: PropTypes.string,
     isValueRequired: PropTypes.bool,
-    validationError: PropTypes.string,
+    isValidationError: PropTypes.bool,
+    emptyValueText: PropTypes.string,
 };
 
 function BaseControlButton({label, theme, onChange}) {

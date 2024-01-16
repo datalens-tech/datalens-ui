@@ -101,7 +101,7 @@ export interface SelectControlProps {
     >;
     placeholder: string | undefined;
     isValueRequired?: boolean;
-    validationError: null | string;
+    isValidationError: boolean;
 }
 
 export type ChartControlRef =
@@ -110,4 +110,7 @@ export type ChartControlRef =
       })
     | null;
 
-export type ValidationErrorData = {isValueRequired?: boolean; value?: string | string[]};
+export type ValidationErrorData = {
+    isValueRequired?: boolean;
+    value?: string | string[];
+};

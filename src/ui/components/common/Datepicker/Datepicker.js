@@ -63,6 +63,8 @@ export class Datepicker extends React.PureComponent {
         controlSize: PropTypes.oneOf(['s', 'm', 'l', 'xl']),
         className: PropTypes.string,
         popupClassName: PropTypes.string,
+        isValueRequired: PropTypes.bool,
+        isValidationError: PropTypes.bool,
     };
 
     static defaultProps = datepickerDefaultProps;
@@ -71,18 +73,21 @@ export class Datepicker extends React.PureComponent {
         const changedState = {};
         const zone = getZone(props.timezoneOffset);
 
+        let fromProps = createDateTime({date: props.from, zone});
+        let toProps = createDateTime({date: props.to, zone});
+
+        [fromProps, toProps] = resolveDates({
+            from: fromProps,
+            to: toProps,
+        });
+
         if (
             props.from !== state.prevProps.from ||
             props.to !== state.prevProps.to ||
             props.timezoneOffset !== state.prevProps.timezoneOffset
         ) {
-            changedState.from = createDateTime({date: props.from, zone});
-            changedState.to = createDateTime({date: props.to, zone});
-
-            [changedState.from, changedState.to] = resolveDates({
-                from: changedState.from,
-                to: changedState.to,
-            });
+            changedState.from = fromProps;
+            changedState.to = toProps;
 
             changedState.searchText = getSearchText({
                 from: changedState.from,
@@ -113,10 +118,35 @@ export class Datepicker extends React.PureComponent {
             changedState.error = '';
         }
 
-        if (props.emptyValueText !== state.prevProps.emptyValueText) {
+        // only for updating emptyValueText in search text on validation error, it uses current values of for and to
+        if (props.isValueRequired && props.emptyValueText !== state.prevProps.emptyValueText) {
             changedState.searchText = getSearchText({
-                from: changedState.from,
-                to: changedState.to,
+                from: state.from,
+                to: state.to,
+                format: props.format,
+                emptyValueText: props.emptyValueText,
+                range: props.range,
+            });
+        }
+
+        // for preventing not-defined values in search text. it will update 'to' value and 'searchText' if:
+        // 1. it is a control with required value
+        // 2. it is a range datepicker
+        // 3. only 'from' in state range exists, but "to" exists in the props
+        // 4. the calendar of datepicker is not opened
+        if (
+            props.isValueRequired &&
+            props.range &&
+            state.from &&
+            !state.to &&
+            props.to &&
+            !state.active
+        ) {
+            changedState.to = toProps;
+
+            changedState.searchText = getSearchText({
+                from: fromProps,
+                to: toProps,
                 format: props.format,
                 emptyValueText: props.emptyValueText,
                 range: props.range,
@@ -516,9 +546,18 @@ export class Datepicker extends React.PureComponent {
     }
 
     render() {
-        const {controlWidth, hasClear, disabled, controlSize, className, popupClassName} =
-            this.props;
+        const {
+            controlWidth,
+            hasClear,
+            disabled,
+            controlSize,
+            className,
+            popupClassName,
+            isValidationError,
+        } = this.props;
         const {searchText, active, error} = this.state;
+
+        const isControlError = isValidationError && !active;
 
         return (
             <MobileContext.Consumer>
@@ -543,6 +582,10 @@ export class Datepicker extends React.PureComponent {
                                     onFocus={this.onInputFocus}
                                     onKeyDown={this.onInputKeyPress}
                                     controlRef={this.ControlNodeRef}
+                                    error={isValidationError}
+                                    controlProps={{
+                                        className: b('input', {error: isControlError}),
+                                    }}
                                 />
                                 {mobile && (
                                     <div
