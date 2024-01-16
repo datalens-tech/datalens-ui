@@ -2,12 +2,13 @@ import _isEmpty from 'lodash/isEmpty';
 
 import {
     AxisMode,
+    Field,
     HighchartsSeriesCustomObject,
     PlaceholderId,
     ServerField,
     ServerPlaceholder,
     WizardVisualizationId,
-    getAxisMode,
+    getActualAxisModeForField,
     getFakeTitleOrTitle,
     isDateField,
     isDimensionField,
@@ -71,7 +72,15 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const xIsPseudo = Boolean(x && x.type === 'PSEUDO');
     const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
 
-    const xAxisMode = getAxisMode(xPlaceholderSettings, x?.guid);
+    let xAxisMode = AxisMode.Discrete;
+    if (x && xDataType) {
+        xAxisMode = getActualAxisModeForField({
+            field: {guid: x.guid, data_type: xDataType} as Field,
+            axisSettings: xPlaceholderSettings,
+            visualizationId: visualizationId as WizardVisualizationId,
+            sort,
+        }) as AxisMode;
+    }
 
     const x2 = placeholders[0].items[1];
     const x2DataType = x2 ? idToDataType[x2.guid] : null;
