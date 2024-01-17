@@ -46,7 +46,7 @@
     "@datalens-tech/xlsx": "^0.20.1",
     "@doc-tools/transform": "^2.18.3",
     "@gravity-ui/app-layout": "^1.2.0",
-    "@gravity-ui/browserslist-config": "^4.2.0",
+    "@gravity-ui/browserslist-config": "^4.3.0",
     "@gravity-ui/chartkit": "^4.15.0",
     "@gravity-ui/dashkit": "^6.7.2",
     "@gravity-ui/date-utils": "^1.3.1",
