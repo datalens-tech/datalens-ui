@@ -33,6 +33,8 @@ import type {ActionParamsData} from './types';
 
 const MARKUP_ITEM_TYPES: MarkupItemType[] = ['bold', 'concat', 'italics', 'text', 'url'];
 
+type ValuesMap = Record<string, number>;
+
 const decodeURISafe = (uri: string) => {
     return decodeURI(uri.replace(/%(?![0-9a-fA-F][0-9a-fA-F]+)/g, '%25'));
 };
@@ -342,7 +344,7 @@ export function getActionParamsEventScope(
     }, undefined);
 }
 
-function extractCellActionParams(args: {cell: TableCell; head?: TableHead}) {
+function extractCellActionParams(args: {cell: TableCell; head?: TableHead}): StringParams {
     const {cell, head} = args;
     const cellCustomData = get(cell, 'custom');
 
@@ -360,24 +362,35 @@ function extractCellActionParams(args: {cell: TableCell; head?: TableHead}) {
     return {};
 }
 
-function getValuesMap(selectedRows: TableRow[]) {
-    return selectedRows.reduce<Record<string, number>>((acc, row) => {
+function setMapValue(map: ValuesMap, value: string) {
+    if (typeof map[value] === 'undefined') {
+        // eslint-disable-next-line no-param-reassign
+        map[value] = 0;
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    map[value] = map[value] + 1;
+}
+
+function getValuesMap(args: {selectedRows: TableRow[]; head?: TableHead[]}) {
+    const {selectedRows, head} = args;
+
+    return selectedRows.reduce<ValuesMap>((acc, row) => {
         if (!('cells' in row)) {
             return acc;
         }
 
-        row.cells.forEach((cell) => {
-            if (typeof cell !== 'object' || !('value' in cell)) {
-                return;
-            }
-
-            const stringifiedValue = String(cell.value);
-
-            if (typeof acc[stringifiedValue] === 'undefined') {
-                acc[stringifiedValue] = 0;
-            }
-
-            acc[stringifiedValue] = acc[stringifiedValue] + 1;
+        row.cells.forEach((cell, i) => {
+            const cellParams = extractCellActionParams({cell, head: head?.[i]});
+            Object.values(cellParams).forEach((cellValue) => {
+                if (Array.isArray(cellValue)) {
+                    cellValue.forEach((value) => {
+                        setMapValue(acc, value);
+                    });
+                } else {
+                    setMapValue(acc, cellValue);
+                }
+            });
         });
 
         return acc;
@@ -388,11 +401,12 @@ function mergeStringParamsByRowDeselecting(args: {
     current: StringParams;
     row: StringParams;
     selectedRows: TableRow[];
+    head?: TableHead[];
 }) {
-    const {current, row, selectedRows} = args;
+    const {current, row, selectedRows, head} = args;
     return Object.keys(current).reduce<StringParams>((acc, key) => {
         acc[key] = current[key];
-        const valuesMap = getValuesMap(selectedRows);
+        const valuesMap = getValuesMap({selectedRows, head});
         const hasSelectedRows = Boolean(selectedRows.length);
 
         if (typeof acc[key] === 'string') {
@@ -470,15 +484,16 @@ function mergeStringParamsByRowAdding(args: {current: StringParams; row: StringP
 export function mergeStringParams(args: {
     current: StringParams;
     row: StringParams;
+    head?: TableHead[];
     metaKey?: boolean;
     selectedRows?: TableRow[];
 }): StringParams {
-    const {current, row, metaKey, selectedRows = []} = args;
+    const {current, row, metaKey, selectedRows = [], head} = args;
     const isRowAlreadySelected = hasMatchedActionParams(row, current);
 
     if (metaKey) {
         return isRowAlreadySelected
-            ? mergeStringParamsByRowDeselecting({current, row, selectedRows})
+            ? mergeStringParamsByRowDeselecting({current, row, selectedRows, head})
             : mergeStringParamsByRowAdding({current, row});
     }
 
@@ -526,6 +541,7 @@ function getActionParamsByRow(args: {
     const resultParams = mergeStringParams({
         current: actionParams,
         row: rowActionParams,
+        head,
         metaKey,
         selectedRows,
     });

@@ -1,5 +1,5 @@
 import {SortedDataItem} from '@gravity-ui/react-data-table';
-import {StringParams} from 'shared';
+import {StringParams, TableHead} from 'shared';
 import {DataTableData} from 'ui/libs/DatalensChartkit/types';
 
 import {
@@ -8,6 +8,8 @@ import {
     mergeStringParams,
     prepareLinkHref,
 } from '../utils/misc';
+
+const HEAD_1 = {id: 'p1'} as TableHead;
 
 describe('chartkit/Table/utils/misc', () => {
     test.each<
@@ -169,12 +171,14 @@ describe('chartkit/Table/utils/misc', () => {
         [{current: {p1: '1'}, row: {p1: '1'}, metaKey: true}, {p1: ['']}],
         [{current: {p1: '1'}, row: {p1: ['1']}, metaKey: true}, {p1: ['']}],
         [{current: {p1: ['1']}, row: {p1: '1'}, metaKey: true}, {p1: ['']}],
+
         [
             {
                 current: {p1: ['1']},
                 row: {p1: ['1']},
                 metaKey: true,
                 selectedRows: [{cells: [{value: '1'}]}],
+                head: [HEAD_1],
             },
             {p1: ['']},
         ],
@@ -184,6 +188,7 @@ describe('chartkit/Table/utils/misc', () => {
                 row: {p1: ['1']},
                 metaKey: true,
                 selectedRows: [{cells: [{value: '1'}]}, {cells: [{value: '1'}]}],
+                head: [HEAD_1],
             },
             {p1: ['1']},
         ],
@@ -193,6 +198,7 @@ describe('chartkit/Table/utils/misc', () => {
                 row: {p1: ['1']},
                 metaKey: true,
                 selectedRows: [{cells: [{value: '1'}]}, {cells: [{value: '1'}]}],
+                head: [HEAD_1],
             },
             {p1: '1'},
         ],
@@ -202,6 +208,7 @@ describe('chartkit/Table/utils/misc', () => {
                 row: {p1: '1'},
                 metaKey: true,
                 selectedRows: [{cells: [{value: '1'}]}, {cells: [{value: '1'}]}],
+                head: [HEAD_1],
             },
             {p1: '1'},
         ],
@@ -211,10 +218,35 @@ describe('chartkit/Table/utils/misc', () => {
                 row: {p1: '1'},
                 metaKey: true,
                 selectedRows: [{cells: [{value: '1'}]}, {cells: [{value: '1'}]}],
+                head: [HEAD_1],
             },
             {p1: ['1']},
         ],
-    ])('mergeStringParams (args: %j)', (args, expected) => {
+
+        [
+            {
+                current: {p1: ['1p']},
+                row: {p1: ['1p']},
+                metaKey: true,
+                selectedRows: [{cells: [{value: '1', custom: {actionParams: {p1: ['1p']}}}]}],
+                head: [HEAD_1],
+            },
+            {p1: ['']},
+        ],
+        [
+            {
+                current: {p1: ['1p']},
+                row: {p1: ['1p']},
+                metaKey: true,
+                selectedRows: [
+                    {cells: [{value: '1', custom: {actionParams: {p1: ['1p']}}}]},
+                    {cells: [{value: '1', custom: {actionParams: {p1: ['1p']}}}]},
+                ],
+                head: [HEAD_1],
+            },
+            {p1: ['1p']},
+        ],
+    ])('mergeStringParams (argIndex: %#)', (args, expected) => {
         const result = mergeStringParams(args);
         expect(result).toEqual(expected);
     });
