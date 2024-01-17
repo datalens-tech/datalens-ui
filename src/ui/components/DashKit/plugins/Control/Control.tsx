@@ -1045,11 +1045,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             };
 
             if (type === TYPE.RANGE_DATEPICKER || type === TYPE.DATEPICKER) {
-                props.emptyValueText =
-                    Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
-                        ? validationError
-                        : i18n('value_undefined');
-
                 let fieldType = source?.fieldType || null;
                 if (sourceType === DashTabItemControlSourceType.Dataset) {
                     const {datasetFieldType} = this.getDatasetSourceInfo();

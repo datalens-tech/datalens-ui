@@ -300,7 +300,6 @@ function BaseControlDatepicker({
     widgetId = '',
     isValueRequired,
     isValidationError,
-    emptyValueText,
 }) {
     const date = (value && tryResolveRelativeDate(value)) || value;
 
@@ -324,7 +323,7 @@ function BaseControlDatepicker({
             hasClear={hasClear}
             showApply={false}
             allowNullableValues={true}
-            emptyValueText={emptyValueText}
+            emptyValueText={i18n('chartkit.control.items', 'value_undefined')}
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
@@ -350,7 +349,6 @@ BaseControlDatepicker.propTypes = {
     widgetId: PropTypes.string,
     isValueRequired: PropTypes.bool,
     isValidationError: PropTypes.bool,
-    emptyValueText: PropTypes.string,
 };
 
 function BaseControlRangeDatepicker({
@@ -364,7 +362,6 @@ function BaseControlRangeDatepicker({
     widgetId = '',
     isValueRequired,
     isValidationError,
-    emptyValueText,
 }) {
     let from;
     let to;
@@ -423,7 +420,7 @@ function BaseControlRangeDatepicker({
             hasClear={hasClear}
             showApply={false}
             allowNullableValues={true}
-            emptyValueText={emptyValueText}
+            emptyValueText={i18n('chartkit.control.items', 'value_undefined')}
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
@@ -458,7 +455,6 @@ BaseControlRangeDatepicker.propTypes = {
     widgetId: PropTypes.string,
     isValueRequired: PropTypes.bool,
     isValidationError: PropTypes.bool,
-    emptyValueText: PropTypes.string,
 };
 
 function BaseControlButton({label, theme, onChange}) {

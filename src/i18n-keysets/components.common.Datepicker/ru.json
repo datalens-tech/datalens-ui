@@ -49,5 +49,6 @@
   "preset_current": "Текущий",
   "preset_past": "Прошедший",
   "error_date": "Укажите дату",
-  "error_dates_range": "Укажите обе даты диапазона"
+  "error_dates_range": "Укажите обе даты диапазона",
+  "value_required": "Обязательно для заполнения"
 }

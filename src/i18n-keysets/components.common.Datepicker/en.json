@@ -49,5 +49,6 @@
   "preset_current": "Current",
   "preset_past": "Past",
   "error_date": "Specify date",
-  "error_dates_range": "Specify both dates of the range"
+  "error_dates_range": "Specify both dates of the range",
+  "value_required": "This field is required"
 }

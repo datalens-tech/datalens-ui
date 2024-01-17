@@ -40,7 +40,7 @@ export function getPlaceholder(format) {
         .join('');
 }
 
-export function getSearchText({from, to, format, emptyValueText, range}) {
+export function getSearchText({from, to, format, emptyValueText, range, isValueRequired}) {
     switch (true) {
         case Boolean(!range && from): {
             return `${from.toFormat(format)}`;
@@ -51,11 +51,14 @@ export function getSearchText({from, to, format, emptyValueText, range}) {
         case Boolean(from && to): {
             return `${from.toFormat(format)} - ${to.toFormat(format)}`;
         }
+        case isValueRequired: {
+            return i18n('value_required');
+        }
         case Boolean(range): {
             return emptyValueText ? `${emptyValueText} - ${emptyValueText}` : '';
         }
         default: {
-            return emptyValueText ? `${emptyValueText}` : '';
+            return emptyValueText || '';
         }
     }
 }
