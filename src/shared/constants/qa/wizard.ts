@@ -19,6 +19,7 @@ export const enum SectionDatasetQA {
     DatasetSelectMoreMenu = 'dataset-select-more-menu',
     RequestDatasetAccess = 'request-rights-button',
     DatasetSelectMore = 'dataset-select-more',
+    FieldActions = 'field-actions',
 }
 
 export const enum DialogColumnSettingsQa {

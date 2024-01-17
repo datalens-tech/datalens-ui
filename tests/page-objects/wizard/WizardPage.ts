@@ -1,5 +1,3 @@
-import {ElementHandle} from '@playwright/test';
-
 import {slct, waitForCondition} from '../../utils';
 import {RobotChartsDatasets} from '../../utils/constants';
 import {BasePageProps} from '../BasePage';
@@ -154,24 +152,18 @@ class WizardPage extends ChartPage {
     }
 
     async callDatasetFieldAction(field: string, action: DatasetItemActionsQa) {
-        const cityField = await getFieldByName(await this.getFields(), field);
-
-        await cityField.hover();
-
-        await (await cityField!.$(slct('field-actions')))!.click();
-
-        let promise = Promise.resolve();
+        const datasetFields = this.page.locator(slct(SectionDatasetQA.DatasetFields));
+        const fieldLocator = datasetFields.locator(slct(field), {
+            hasText: field,
+        });
+        await fieldLocator.hover();
+        await fieldLocator.locator(slct(SectionDatasetQA.FieldActions)).click();
 
         if (action === DatasetItemActionsQa.RemoveField) {
-            promise = new Promise<void>((resolve) => {
-                this.page.on('dialog', (dialog) => {
-                    dialog.accept();
-                    resolve();
-                });
-            });
+            this.page.on('dialog', (dialog) => dialog.accept());
         }
 
-        await Promise.all([this.page.click(slct(action)), promise]);
+        await this.page.click(slct(action));
     }
 
     isMeasureNamesAndValuesExists() {
@@ -207,24 +199,6 @@ class WizardPage extends ChartPage {
     async saveWizardAsNew(entryName: string) {
         await this.saveAsNewChart(entryName);
     }
-}
-
-async function getFieldByName(
-    fields: ElementHandle<HTMLElement | SVGElement>[],
-    fieldName: string,
-): Promise<ElementHandle<HTMLElement>> {
-    let cityField;
-
-    for (const field of fields) {
-        const title = await field.getAttribute('title');
-
-        if (title === fieldName) {
-            cityField = field as ElementHandle<HTMLElement>;
-            break;
-        }
-    }
-
-    return cityField as ElementHandle<HTMLElement>;
 }
 
 export default WizardPage;

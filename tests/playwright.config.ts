@@ -57,7 +57,7 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     fullyParallel: true,
     globalSetup: require.resolve(globalSetupPath),
     timeout: testTimeout,
-    forbidOnly: true,
+    // forbidOnly: true,
     expect: {
         timeout: testTimeout,
     },

@@ -173,11 +173,11 @@ datalensTest.describe('Wizard', () => {
                     });
                 await expect(sectionField).toBeVisible();
 
+                await sectionField.hover();
                 await sectionField.locator(slct(VisualizationItemQa.FormulaIcon)).click();
-                const fieldEditor = page.locator(FieldEditorQa.Dialog);
+                const fieldEditor = page.locator(slct(FieldEditorQa.Dialog));
                 await expect(fieldEditor).toBeVisible();
-                const formula = await wizardPage.fieldEditor.getFormula();
-                expect(formula).toEqual('countd(str([city]))');
+                await wizardPage.fieldEditor.checkFormula('countd(str([city]))');
             },
         );
     });

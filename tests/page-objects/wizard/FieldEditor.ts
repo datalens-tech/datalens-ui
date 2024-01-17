@@ -1,4 +1,4 @@
-import {Page} from '@playwright/test';
+import {expect, Page} from '@playwright/test';
 
 import {slct} from '../../utils';
 import {DialogFieldEditorQA, FieldEditorQa, SectionDatasetQA} from '../../../src/shared';
@@ -43,9 +43,8 @@ export default class FieldEditor {
         await this.page.click(`${this.fieldItemSelector} >> text=${field}`);
     }
 
-    async getFormula() {
+    async checkFormula(formula: string) {
         const item = this.page.locator(`${this.fieldEditorSelector} .lines-content`);
-
-        return item.textContent();
+        await expect(item).toHaveText(formula);
     }
 }
