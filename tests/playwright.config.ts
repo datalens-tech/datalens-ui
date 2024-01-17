@@ -61,6 +61,7 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     expect: {
         timeout: testTimeout,
     },
+    snapshotPathTemplate: '__screenshots__{/projectName}/{testFilePath}/{arg}{ext}',
     use: {
         browserName: 'chromium',
         launchOptions: {
