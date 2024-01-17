@@ -41,6 +41,7 @@ import {
 } from '../actions/dashTyped';
 import {DashAction} from '../actions/index';
 import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
+import {getInitialDefaultValue} from '../utils';
 
 import {TAB_PROPERTIES, getSelectorDialogInitialState} from './dash';
 
@@ -235,7 +236,9 @@ export function dashTypedReducer(
 
             const elementTypeChanged =
                 payload.elementType && selectorDialog.elementType !== payload.elementType;
-            const defaultValue = elementTypeChanged ? undefined : selectorDialog.defaultValue;
+            const defaultValue = elementTypeChanged
+                ? getInitialDefaultValue(payload.elementType!)
+                : selectorDialog.defaultValue;
             const isElementTypeWithoutRequired =
                 elementTypeChanged && payload.elementType === ELEMENT_TYPE.CHECKBOX;
             const isValueRequired = isElementTypeWithoutRequired

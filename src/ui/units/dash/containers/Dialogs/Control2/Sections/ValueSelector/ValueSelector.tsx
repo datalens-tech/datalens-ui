@@ -143,15 +143,6 @@ const CheckboxValueControl = () => {
     const defaultValue = useSelector(selectSelectorDefaultValue);
     const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
 
-    // This is setting the initial default value so that it's not undefined when you save it without switching between radio buttons
-    React.useEffect(() => {
-        dispatch(
-            setSelectorDialogItem({
-                defaultValue: CheckboxControlValue.FALSE,
-            }),
-        );
-    }, [dispatch]);
-
     const handleUpdate = React.useCallback(
         (value: string) => {
             dispatch(
