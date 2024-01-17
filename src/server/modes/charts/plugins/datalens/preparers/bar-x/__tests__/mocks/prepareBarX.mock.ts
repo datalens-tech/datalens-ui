@@ -14,38 +14,38 @@ const ChartEditor = {
     getWidgetConfig: () => {},
 } as IChartEditor;
 
-const firstDatasetId = 'j43msj9o23ge9';
+const datasetId = 'someDatasetId';
 
 export const x1Field = {
-    datasetId: firstDatasetId,
+    datasetId,
     title: 'X1Field',
     guid: 'guidX1',
     data_type: DATASET_FIELD_TYPES.DATE,
 } as ServerField;
 
 export const x2Field = {
-    datasetId: firstDatasetId,
+    datasetId,
     title: 'X2Field',
     guid: 'guidX2',
     data_type: DATASET_FIELD_TYPES.STRING,
 } as ServerField;
 
 export const yField = {
-    datasetId: firstDatasetId,
+    datasetId,
     title: 'YField',
     guid: 'a6b94410-e219-11e9-a279-0b30c0a74ab7',
     data_type: DATASET_FIELD_TYPES.FLOAT,
 } as ServerField;
 
 export const colorField = {
-    datasetId: firstDatasetId,
+    datasetId,
     title: 'ColorField',
     guid: '38e0b1f4-d46b-48a0-8905-6a6d1e61900d',
     data_type: DATASET_FIELD_TYPES.STRING,
 } as ServerColor;
 
 export const shapeField = {
-    datasetId: firstDatasetId,
+    datasetId,
     title: 'ShapeField',
     guid: '45bdfbb6-1dd9-41bd-9871-b011efd8ec6b',
     data_type: DATASET_FIELD_TYPES.STRING,
@@ -93,17 +93,15 @@ export const prepareBarXArgs = {
     },
 };
 
-const secondDatasetId = 'y55xt5d3p9csw';
-
 const monthField = {
-    datasetId: secondDatasetId,
+    datasetId,
     title: 'Month',
     guid: 'e83fb454-ca9a-4083-95be-1994e9957655',
     data_type: DATASET_FIELD_TYPES.INTEGER,
 } as ServerField;
 
 const profitField = {
-    datasetId: secondDatasetId,
+    datasetId,
     title: 'Profit',
     guid: '4b6463d1-30e1-425e-b7d2-77205bc75de6',
     data_type: DATASET_FIELD_TYPES.INTEGER,
@@ -161,7 +159,7 @@ export const prepareBarXWithMeasureValuesArgs = {
     visualizationId: 'column',
     labels: [],
     tooltips: [],
-    datasets: [secondDatasetId],
+    datasets: [datasetId],
     resultData: {
         data: [
             ['1', '8970'],
@@ -174,8 +172,8 @@ export const prepareBarXWithMeasureValuesArgs = {
             [0, 1],
         ],
         order: [
-            {datasetId: secondDatasetId, title: monthField.title, dataType: monthField.data_type},
-            {datasetId: secondDatasetId, title: profitField.title, dataType: profitField.data_type},
+            {datasetId, title: monthField.title, dataType: monthField.data_type},
+            {datasetId, title: profitField.title, dataType: profitField.data_type},
         ],
         totals: [],
     },

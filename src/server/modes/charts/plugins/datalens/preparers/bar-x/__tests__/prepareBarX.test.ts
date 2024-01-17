@@ -99,7 +99,7 @@ describe('prepareBarX', () => {
         expect(seriesIds).toEqual(legendTitles);
     });
 
-    test('Measure Values field in colors section -> chart should be by default colored with gradient by measure values', () => {
+    test('Measure Values field in colors section -> chart should be colored with gradient by measure values by default without any settings', () => {
         const result = prepareBarX(prepareBarXWithMeasureValuesArgs);
 
         expect(result.graphs[0].data).toEqual(prepareBarXWithMeasureValuesResult.graphs[0].data);
