@@ -12,6 +12,7 @@ import {PopupContent} from './PopupContent/PopupContent';
 import {AVAILABLE_POPUP_PLACEMENT, DISPLAY_FORMAT, OUTPUT_FORMAT, TABS} from './constants';
 import {
     createDateTime,
+    fillEmptyToDate,
     getHashedData,
     getListWithoutNullableValues,
     getPlaceholder,
@@ -38,6 +39,7 @@ export const datepickerDefaultProps = {
     hasClear: true,
     disabled: false,
     controlSize: 'm',
+    fillEmptyValues: false,
 };
 
 export class Datepicker extends React.PureComponent {
@@ -65,6 +67,7 @@ export class Datepicker extends React.PureComponent {
         popupClassName: PropTypes.string,
         isValueRequired: PropTypes.bool,
         isValidationError: PropTypes.bool,
+        fillEmptyValues: PropTypes.bool,
     };
 
     static defaultProps = datepickerDefaultProps;
@@ -117,32 +120,6 @@ export class Datepicker extends React.PureComponent {
 
         if (props.disabled && !state.prevProps.disabled) {
             changedState.error = '';
-        }
-
-        // for preventing not-defined values in search text.
-        // it will update 'to' value and 'searchText' if all conditions are met:
-        // 1. it is a control with required value
-        // 2. it is a range datepicker
-        // 3. only 'from' in state range exists, but "to" exists in the props
-        // 4. the calendar of datepicker is not opened
-        if (
-            props.isValueRequired &&
-            props.range &&
-            state.from &&
-            !state.to &&
-            props.to &&
-            !state.active
-        ) {
-            changedState.to = toProps;
-
-            changedState.searchText = getSearchText({
-                from: fromProps,
-                to: toProps,
-                format: props.format,
-                emptyValueText: props.emptyValueText,
-                range: props.range,
-                isValueRequired: props.isValueRequired,
-            });
         }
 
         changedState.prevProps = props;
@@ -442,7 +419,7 @@ export class Datepicker extends React.PureComponent {
     };
 
     onUpdate = () => {
-        const {allowNullableValues, onError} = this.props;
+        const {allowNullableValues, onError, fillEmptyValues} = this.props;
         const {min, max} = this.state;
 
         if (this.isInvalidState()) {
@@ -477,6 +454,11 @@ export class Datepicker extends React.PureComponent {
         }
 
         [from, to] = resolveDates({from, to});
+
+        if (fillEmptyValues && from && !to) {
+            // for the selector to work correctly on the dashboard 'to' will not be empty
+            to = fillEmptyToDate(from);
+        }
 
         const searchText = getSearchText({
             from,

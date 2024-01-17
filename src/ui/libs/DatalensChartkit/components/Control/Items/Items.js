@@ -3,7 +3,6 @@ import React from 'react';
 import {Button, Checkbox, Dialog, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import {ControlQA, Feature, resolveIntervalDate, resolveRelativeDate} from 'shared';
 import {registry} from 'ui/registry';
@@ -179,7 +178,7 @@ function BaseControlInput({
 
     React.useEffect(() => setText(value), [value]);
 
-    const isInvalid = isValidationError && !text.length;
+    const isInvalid = isValidationError && !text?.length;
 
     return (
         <TextInput
@@ -383,15 +382,7 @@ function BaseControlRangeDatepicker({
     const wrappedOnChange = React.useCallback(
         ({from, to}) => {
             const resultFrom = from === null ? '' : from;
-            let resultTo = to === null ? '' : to;
-
-            // if "from" is selected but not "to"
-            if (resultFrom && !resultTo) {
-                const diff = moment.utc(resultFrom).startOf('day').diff(resultFrom);
-                // if "from" is the beginning of the day, then for "to" put the end of the day
-                resultTo =
-                    diff === 0 ? moment.utc(resultFrom).endOf('day').toISOString() : resultFrom;
-            }
+            const resultTo = to === null ? '' : to;
 
             let result;
 
@@ -427,6 +418,7 @@ function BaseControlRangeDatepicker({
             className={b('datepicker')}
             isValidationError={isValidationError}
             isValueRequired={isValueRequired}
+            fillEmptyValues={true}
         />
     );
 }
