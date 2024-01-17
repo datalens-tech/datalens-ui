@@ -38,7 +38,7 @@ export type LinkWrapperArgs = {
 };
 
 export type MenuClickArgs = {
-    entry: {entryId: string; alias: string};
+    entry: {entryId: string; displayAlias?: string | null};
     action: string;
 };
 

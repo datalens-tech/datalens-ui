@@ -102,7 +102,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
         scopes: ALL_SCOPES,
         isVisible({entry}: ContextMenuParams) {
-            return !entry?.alias;
+            return !entry?.displayAlias;
         },
     },
     {
@@ -114,7 +114,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
         scopes: ALL_SCOPES,
         isVisible({entry}: ContextMenuParams) {
-            return Boolean(entry?.alias);
+            return Boolean(entry?.displayAlias);
         },
     },
     {

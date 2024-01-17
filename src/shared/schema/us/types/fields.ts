@@ -5,7 +5,7 @@ type EntryFieldPublishedId = null | string;
 
 // corresponds to RETURN_COLUMNS from US
 export interface EntryFields {
-    alias?: string | null;
+    displayAlias?: string | null;
     createdAt: string;
     createdBy: string;
     data: EntryFieldData;
@@ -47,7 +47,7 @@ export interface EntryNavigationFields {
     scope: string;
     type: string;
     key: string;
-    alias?: string | null;
+    displayAlias?: string | null;
     meta: EntryFieldMeta;
     createdBy: string;
     createdAt: string;

@@ -45,7 +45,7 @@ export interface GetFavoritesEntryResponse extends GetFavoritesEntryOutput {
 export interface GetFavoritesEntryWithPermissions
     extends Omit<GetFavoritesEntryResponse, 'permissions'> {
     permissions: Permissions;
-    alias?: string;
+    displayAlias: string | null;
 }
 
 export interface GetFavoritesOutput {
