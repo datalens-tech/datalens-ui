@@ -5,6 +5,7 @@ import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
 import {DashData, DashEntry, Permissions, WidgetType} from 'shared';
 
+import {ELEMENT_TYPE} from '../../containers/Dialogs/Control/constants';
 import {Mode} from '../../modules/constants';
 import {DashUpdateStatus} from '../../typings/dash';
 import {
@@ -40,6 +41,7 @@ import {
 } from '../actions/dashTyped';
 import {DashAction} from '../actions/index';
 import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
+import {getInitialDefaultValue} from '../utils';
 
 import {TAB_PROPERTIES, getSelectorDialogInitialState} from './dash';
 
@@ -234,7 +236,12 @@ export function dashTypedReducer(
 
             const elementTypeChanged =
                 payload.elementType && selectorDialog.elementType !== payload.elementType;
-            const defaultValue = elementTypeChanged ? undefined : selectorDialog.defaultValue;
+            const defaultValue = elementTypeChanged
+                ? getInitialDefaultValue(payload.elementType!)
+                : selectorDialog.defaultValue;
+            const isElementTypeWithoutRequired =
+                elementTypeChanged && payload.elementType === ELEMENT_TYPE.CHECKBOX;
+            const required = isElementTypeWithoutRequired ? false : selectorDialog.required;
 
             const validation: SelectorDialogState['validation'] = {
                 title:
@@ -249,12 +256,18 @@ export function dashTypedReducer(
                     selectorDialog.datasetFieldId === payload.datasetFieldId
                         ? selectorDialog.validation.datasetFieldId
                         : undefined,
+                defaultValue:
+                    !isElementTypeWithoutRequired &&
+                    selectorDialog.defaultValue === payload.defaultValue
+                        ? selectorDialog.validation.defaultValue
+                        : undefined,
             };
 
             const newSelectorState = {
                 ...state.selectorDialog,
                 defaultValue,
                 validation,
+                required,
                 ...payload,
             };
 

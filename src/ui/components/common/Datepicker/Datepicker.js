@@ -12,6 +12,7 @@ import {PopupContent} from './PopupContent/PopupContent';
 import {AVAILABLE_POPUP_PLACEMENT, DISPLAY_FORMAT, OUTPUT_FORMAT, TABS} from './constants';
 import {
     createDateTime,
+    fillEmptyToDate,
     getHashedData,
     getListWithoutNullableValues,
     getPlaceholder,
@@ -38,6 +39,7 @@ export const datepickerDefaultProps = {
     hasClear: true,
     disabled: false,
     controlSize: 'm',
+    fillEmptyValues: false,
 };
 
 export class Datepicker extends React.PureComponent {
@@ -63,6 +65,9 @@ export class Datepicker extends React.PureComponent {
         controlSize: PropTypes.oneOf(['s', 'm', 'l', 'xl']),
         className: PropTypes.string,
         popupClassName: PropTypes.string,
+        required: PropTypes.bool,
+        hasValidationError: PropTypes.bool,
+        fillEmptyValues: PropTypes.bool,
     };
 
     static defaultProps = datepickerDefaultProps;
@@ -90,6 +95,7 @@ export class Datepicker extends React.PureComponent {
                 format: props.format,
                 emptyValueText: props.emptyValueText,
                 range: props.range,
+                required: props.required,
             });
             changedState.zone = zone;
 
@@ -121,7 +127,7 @@ export class Datepicker extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const {format, timezoneOffset, emptyValueText, range} = this.props;
+        const {format, timezoneOffset, emptyValueText, range, required} = this.props;
 
         const zone = getZone(timezoneOffset);
         let from = createDateTime({date: this.props.from, zone});
@@ -129,7 +135,14 @@ export class Datepicker extends React.PureComponent {
         const min = createDateTime({date: this.props.min, zone});
         const max = createDateTime({date: this.props.max, zone});
         [from, to] = resolveDates({from, to});
-        const searchText = getSearchText({from, to, format, emptyValueText, range});
+        const searchText = getSearchText({
+            from,
+            to,
+            format,
+            emptyValueText,
+            range,
+            required,
+        });
 
         this.ControlNodeRef = React.createRef();
         this.state = {
@@ -233,6 +246,7 @@ export class Datepicker extends React.PureComponent {
             format: this.props.format,
             emptyValueText: this.props.emptyValueText,
             range: this.props.range,
+            required: this.props.required,
         });
 
         this.setState(state, () => {
@@ -286,6 +300,7 @@ export class Datepicker extends React.PureComponent {
             format: this.props.format,
             emptyValueText: this.props.emptyValueText,
             range: this.props.range,
+            required: this.props.required,
         });
 
         this.setState(
@@ -379,7 +394,7 @@ export class Datepicker extends React.PureComponent {
             return;
         }
 
-        const {format, emptyValueText, range} = this.props;
+        const {format, emptyValueText, range, required} = this.props;
         const {from, to, lastValidHash} = this.state;
 
         const currentHash = getHashedData({from, to});
@@ -391,6 +406,7 @@ export class Datepicker extends React.PureComponent {
                 format,
                 emptyValueText,
                 range,
+                required,
             });
 
             this.setState({searchText, active: false});
@@ -400,7 +416,7 @@ export class Datepicker extends React.PureComponent {
     };
 
     onUpdate = () => {
-        const {allowNullableValues, onError} = this.props;
+        const {allowNullableValues, onError, fillEmptyValues} = this.props;
         const {min, max} = this.state;
 
         if (this.isInvalidState()) {
@@ -436,12 +452,18 @@ export class Datepicker extends React.PureComponent {
 
         [from, to] = resolveDates({from, to});
 
+        if (fillEmptyValues && from && !to) {
+            // 'to' will not be empty for correct work of the selector on the dashboard
+            to = fillEmptyToDate(from);
+        }
+
         const searchText = getSearchText({
             from,
             to,
             format: this.props.format,
             emptyValueText: this.props.emptyValueText,
             range: this.props.range,
+            required: this.props.required,
         });
 
         this.ControlNodeRef.current.blur();
@@ -506,9 +528,18 @@ export class Datepicker extends React.PureComponent {
     }
 
     render() {
-        const {controlWidth, hasClear, disabled, controlSize, className, popupClassName} =
-            this.props;
-        const {searchText, active, error} = this.state;
+        const {
+            controlWidth,
+            hasClear,
+            disabled,
+            controlSize,
+            className,
+            popupClassName,
+            hasValidationError,
+        } = this.props;
+        const {searchText, active, error, from} = this.state;
+
+        const hasPlaceholderError = hasValidationError && !from;
 
         return (
             <MobileContext.Consumer>
@@ -533,6 +564,10 @@ export class Datepicker extends React.PureComponent {
                                     onFocus={this.onInputFocus}
                                     onKeyDown={this.onInputKeyPress}
                                     controlRef={this.ControlNodeRef}
+                                    error={hasValidationError}
+                                    controlProps={{
+                                        className: b('input', {error: hasPlaceholderError}),
+                                    }}
                                 />
                                 {mobile && (
                                     <div

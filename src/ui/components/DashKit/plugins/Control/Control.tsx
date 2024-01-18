@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React from 'react';
 
 import {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Button, Loader} from '@gravity-ui/uikit';
@@ -23,7 +23,6 @@ import {
     DatasetFieldType,
     Feature,
     Operations,
-    ServerFilter,
     StringParams,
     resolveIntervalDate,
     resolveOperation,
@@ -32,9 +31,7 @@ import {
     transformParamsToUrlParams,
     transformUrlParamsToParams,
 } from 'shared';
-import type {schema} from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
-import {ResolveWidgetControlDataRefArgs} from 'ui/components/Widgets/Chart/types';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
@@ -57,7 +54,6 @@ import {
 } from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import {ControlBase, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
-import {DatalensSdk} from '../../../../libs/schematic-sdk';
 import {closeDialog, openDialogErrorWithTabs} from '../../../../store/actions/dialog';
 import {
     addOperationForValue,
@@ -72,115 +68,33 @@ import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
 import {Error} from './Error/Error';
 import {prerenderMiddleware} from './prerenderMiddleware';
+import {
+    ChartControlRef,
+    ControlSettings,
+    ControlType,
+    ErrorData,
+    GetDistincts,
+    LoadStatus,
+    PluginControlState,
+    SelectControlProps,
+    ValidationErrorData,
+} from './types';
+import {isValidationError} from './utils';
 
 import './Control.scss';
-
-type GetDistincts = DatalensSdk<{
-    root: typeof schema;
-}>['bi']['getDistinctsApiV2'];
-
-type ControlType = 'select' | 'input' | 'datepicker' | 'range-datepicker' | 'checkbox';
-type LoadStatus = 'pending' | 'success' | 'fail';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 
-type ErrorData = {
-    data: {
-        error?: SelectorError;
-        title?: string;
-        message?: string;
-        status?: number;
-    };
-    requestId?: string;
-};
-
-type SelectorError = {
-    code: string;
-    debug: string | {requestId?: string};
-    details?: {
-        sources?: {
-            distincts?: {
-                body?: {
-                    debug: Record<string, string>;
-                    message: string;
-                    details: Record<string, string>;
-                    code: string;
-                };
-                data?: {
-                    ignore_nonexistent_filters: boolean;
-                    fuild_guid: string;
-                    where: ServerFilter[];
-                };
-                message?: string;
-                sourceType?: string;
-                status?: number;
-                uiUrl?: string;
-                url?: string;
-            };
-        };
-    };
-};
-
-interface ControlSettings {
-    getDistincts?: GetDistincts;
-}
-
-interface PluginControlProps
+export interface PluginControlProps
     extends PluginWidgetProps,
         ControlSettings,
         StateProps,
         DispatchProps {}
 
-interface PluginControlState {
-    status: LoadStatus;
-    loadedData: null | ResponseSuccessControls;
-    errorData: null | ErrorData;
-    silentLoading: boolean;
-    showSilentLoader: boolean;
-    forceUpdate: boolean;
-    dialogVisible: boolean;
-    loadingItems: boolean;
-    initialParams?: StringParams;
-    isInit: boolean;
-}
-
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: GetDistincts;
-}
-
-interface SelectControlProps {
-    widgetId: string;
-    content: any;
-    editMode: boolean;
-    label: string;
-    innerLabel: string;
-    param: string;
-    multiselect: boolean;
-    type: ControlType;
-    className: string;
-    key: string;
-    value: string;
-    onChange: (value: string) => void;
-    onOpenChange: ({open}: {open: boolean}) => void;
-    loadingItems: boolean;
-    errorContent?: ReactNode;
-    itemsLoaderClassName?: string;
-    getItems?: ({
-        searchPattern,
-        exactKeys,
-        nextPageToken,
-    }: {
-        searchPattern: string;
-        exactKeys: string[];
-        nextPageToken?: number;
-    }) => Promise<
-        | {nextPageToken: undefined | number; items: any}
-        | {nextPageToken: number; items: {title: string; value: string}[]}
-        | {items: any[]}
-    >;
-    placeholder: string | undefined;
 }
 
 const b = block('dashkit-plugin-control');
@@ -204,12 +118,6 @@ const TYPE: Record<string, ControlType> = {
     RANGE_DATEPICKER: 'range-datepicker',
     CHECKBOX: 'checkbox',
 };
-
-type ChartControlRef =
-    | (ChartsChartKit & {
-          getMeta: () => Promise<ResolveWidgetControlDataRefArgs | null>;
-      })
-    | null;
 
 // This value is also used in charts
 const LIMIT = 1000;
@@ -261,6 +169,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             dialogVisible: false,
             loadingItems: true,
             isInit: false,
+            validationError: null,
         };
     }
 
@@ -972,8 +881,43 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const preselectedContent = [{title: selectedValue, value: selectedValue}];
         // @ts-ignore
         const content = loadedData?.uiScheme?.controls[0].content;
+        const emptyPaceholder = Utils.isEnabledFeature(Feature.EmptySelector)
+            ? i18n('placeholder_empty')
+            : undefined;
 
         const preparedValue = unwrapFromArrayAndSkipOperation(this.actualParams[fieldId]);
+
+        // for first initialization of control
+        const initialValidationError = isValidationError({
+            required: source.required,
+            value: preparedValue,
+        })
+            ? i18n('value_required')
+            : null;
+        const validationError = this.state.validationError || initialValidationError;
+
+        const placeholder =
+            Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
+                ? validationError
+                : emptyPaceholder;
+
+        const onChange = (value: string | string[]) => {
+            const isValid = this.checkValueValidation({
+                required: source.required,
+                value,
+            });
+
+            if (!isValid) {
+                return;
+            }
+
+            const valueWithOperation = addOperationForValue({
+                value,
+                operation: source.operation,
+            });
+
+            this.onChange(fieldId, valueWithOperation);
+        };
 
         const props: SelectControlProps = {
             widgetId: id,
@@ -987,19 +931,12 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             key: fieldId,
             value: preparedValue as string,
             editMode,
-            onChange: (value: string | string[]) => {
-                const valueWithOperation = addOperationForValue({
-                    value,
-                    operation: source.operation,
-                });
-
-                this.onChange(fieldId, valueWithOperation);
-            },
+            onChange,
             onOpenChange: this.onOpenChange,
             loadingItems,
-            placeholder: Utils.isEnabledFeature(Feature.EmptySelector)
-                ? i18n('placeholder_empty')
-                : undefined,
+            placeholder,
+            required: source.required,
+            hasValidationError: Boolean(validationError),
         };
 
         if (status === LOAD_STATUS.FAIL) {
@@ -1058,7 +995,25 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const preparedValue = unwrapFromArrayAndSkipOperation(this.actualParams[param]);
 
+            // for first initialization of control
+            const initialValidationError = isValidationError({
+                required: source.required,
+                value: preparedValue,
+            })
+                ? i18n('value_required')
+                : null;
+            const validationError = this.state.validationError || initialValidationError;
+
             const onChange = (value: string | string[]) => {
+                const isValid = this.checkValueValidation({
+                    required: source.required,
+                    value,
+                });
+
+                if (!isValid) {
+                    return;
+                }
+
                 const valueWithOperation = addOperationForValue({
                     value,
                     operation: source.operation,
@@ -1077,6 +1032,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 editMode,
                 innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
                 label: (source.showTitle ? title : '') as string,
+                required: source.required,
+                hasValidationError: Boolean(validationError),
             };
 
             if (type === TYPE.RANGE_DATEPICKER || type === TYPE.DATEPICKER) {
@@ -1091,6 +1048,13 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 ) {
                     props.timeFormat = 'HH:mm:ss';
                 }
+            }
+
+            if (type === TYPE.INPUT) {
+                props.placeholder =
+                    Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
+                        ? validationError
+                        : control.placeholder;
             }
 
             switch (type) {
@@ -1115,6 +1079,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             | DashTabItemControlManual
             | DashTabItemControlDataset;
         const sourceType = controlData.sourceType;
+
         if (sourceType === DashTabItemControlSourceType.External) {
             const chartId = (data as unknown as DashTabItemControlExternal).source.chartId;
             return (
@@ -1204,6 +1169,18 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 loadingItems: false,
             });
         }
+    }
+
+    private checkValueValidation(args: ValidationErrorData) {
+        if (isValidationError(args)) {
+            this.setState({validationError: i18n('value_required')});
+            return false;
+        }
+
+        if (this.state.validationError) {
+            this.setState({validationError: null});
+        }
+        return true;
     }
 }
 

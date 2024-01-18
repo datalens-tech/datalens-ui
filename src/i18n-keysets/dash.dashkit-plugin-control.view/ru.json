@@ -2,5 +2,6 @@
   "button_details": "Подробнее",
   "button_retry": "Повторить",
   "placeholder_empty": "Нет выбранных значений",
+  "value_required": "Обязательно для заполнения",
   "value_undefined": "Не определено"
 }

@@ -4,6 +4,7 @@ import {FormRow} from '@gravity-ui/components';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {DashTabItemControlSourceType} from 'shared';
+import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
 import Acceptable from './Acceptable/Acceptable';
@@ -14,7 +15,7 @@ import {StaticValueSelect} from './ValueSelector/StaticValueSelect';
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
 export const ListValueControl = () => {
-    const {sourceType} = useSelector(selectSelectorDialog);
+    const {sourceType, required, validation} = useSelector(selectSelectorDialog);
 
     return (
         <React.Fragment>
@@ -26,13 +27,23 @@ export const ListValueControl = () => {
                         <Acceptable />
                     </FormRow>
                     <FormRow label={i18n('field_default-value')}>
-                        <StaticValueSelect />
+                        <FieldWrapper error={validation.defaultValue}>
+                            <StaticValueSelect
+                                hasValidationError={Boolean(validation.defaultValue)}
+                                hasClear={!required}
+                            />
+                        </FieldWrapper>
                     </FormRow>
                 </React.Fragment>
             )}
             {sourceType !== DashTabItemControlSourceType.Manual && (
                 <FormRow label={i18n('field_default-value')}>
-                    <DynamicValueSelect />
+                    <FieldWrapper error={validation.defaultValue}>
+                        <DynamicValueSelect
+                            hasValidationError={Boolean(validation.defaultValue)}
+                            hasClear={!required}
+                        />
+                    </FieldWrapper>
                 </FormRow>
             )}
         </React.Fragment>
