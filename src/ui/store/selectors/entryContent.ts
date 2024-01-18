@@ -44,4 +44,4 @@ export const selectRevisionsItems = createSelector(selectRevisions, (items: Arra
 );
 
 export const selectLockToken = (state: DatalensGlobalState): string | null =>
-    state.dash.lockToken || null;
+    state.dash?.lockToken || null;
