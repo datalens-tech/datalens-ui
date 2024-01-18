@@ -190,7 +190,7 @@ describe('chartkit/Table/utils/misc', () => {
                 selectedRows: [{cells: [{value: '1'}]}, {cells: [{value: '1'}]}],
                 head: [HEAD_1],
             },
-            {p1: ['1']},
+            {p1: ['']},
         ],
         [
             {
@@ -200,7 +200,7 @@ describe('chartkit/Table/utils/misc', () => {
                 selectedRows: [{cells: [{value: '1'}]}, {cells: [{value: '1'}]}],
                 head: [HEAD_1],
             },
-            {p1: '1'},
+            {p1: ['']},
         ],
         [
             {
@@ -210,7 +210,7 @@ describe('chartkit/Table/utils/misc', () => {
                 selectedRows: [{cells: [{value: '1'}]}, {cells: [{value: '1'}]}],
                 head: [HEAD_1],
             },
-            {p1: '1'},
+            {p1: ['']},
         ],
         [
             {
@@ -220,7 +220,7 @@ describe('chartkit/Table/utils/misc', () => {
                 selectedRows: [{cells: [{value: '1'}]}, {cells: [{value: '1'}]}],
                 head: [HEAD_1],
             },
-            {p1: ['1']},
+            {p1: ['']},
         ],
 
         [
@@ -244,7 +244,7 @@ describe('chartkit/Table/utils/misc', () => {
                 ],
                 head: [HEAD_1],
             },
-            {p1: ['1p']},
+            {p1: ['']},
         ],
     ])('mergeStringParams (argIndex: %#)', (args, expected) => {
         const result = mergeStringParams(args);

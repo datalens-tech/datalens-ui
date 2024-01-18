@@ -33,7 +33,7 @@ import type {ActionParamsData} from './types';
 
 const MARKUP_ITEM_TYPES: MarkupItemType[] = ['bold', 'concat', 'italics', 'text', 'url'];
 
-type ValuesMap = Record<string, number>;
+type ValuesMap = Record<string, {value: number; hashes: string[]}>;
 
 const decodeURISafe = (uri: string) => {
     return decodeURI(uri.replace(/%(?![0-9a-fA-F][0-9a-fA-F]+)/g, '%25'));
@@ -362,14 +362,18 @@ function extractCellActionParams(args: {cell: TableCell; head?: TableHead}): Str
     return {};
 }
 
-function setMapValue(map: ValuesMap, value: string) {
+function setMapValue(map: ValuesMap, value: string, hash: string) {
     if (typeof map[value] === 'undefined') {
         // eslint-disable-next-line no-param-reassign
-        map[value] = 0;
+        map[value] = {value: 0, hashes: []};
+    }
+
+    if (map[value].hashes.indexOf(hash) === -1) {
+        map[value].hashes.push(hash);
     }
 
     // eslint-disable-next-line no-param-reassign
-    map[value] = map[value] + 1;
+    map[value].value = map[value].value + 1;
 }
 
 function getValuesMap(args: {selectedRows: TableRow[]; head?: TableHead[]}) {
@@ -380,21 +384,35 @@ function getValuesMap(args: {selectedRows: TableRow[]; head?: TableHead[]}) {
             return acc;
         }
 
+        const rowHash = Object.values(row.cells).reduce<string>((acc, cell, i) => {
+            const cellParams = extractCellActionParams({cell, head: head?.[i]});
+            return acc + Object.values(cellParams).join();
+        }, '');
+
         row.cells.forEach((cell, i) => {
             const cellParams = extractCellActionParams({cell, head: head?.[i]});
             Object.values(cellParams).forEach((cellValue) => {
                 if (Array.isArray(cellValue)) {
                     cellValue.forEach((value) => {
-                        setMapValue(acc, value);
+                        setMapValue(acc, value, rowHash);
                     });
                 } else {
-                    setMapValue(acc, cellValue);
+                    setMapValue(acc, cellValue, rowHash);
                 }
             });
         });
 
         return acc;
     }, {});
+}
+
+function shouldRemoveValue(map: ValuesMap, key: string) {
+    return (
+        // Value is contained only in one row
+        map[key]?.value === 1 ||
+        // Values are contained in completely identical rows
+        (map[key]?.value > 1 && map[key].hashes.length === 1)
+    );
 }
 
 function mergeStringParamsByRowDeselecting(args: {
@@ -413,13 +431,13 @@ function mergeStringParamsByRowDeselecting(args: {
             if (
                 typeof row[key] === 'string' &&
                 acc[key] === row[key] &&
-                (!hasSelectedRows || valuesMap[String(acc[key])] === 1)
+                (!hasSelectedRows || shouldRemoveValue(valuesMap, String(acc[key])))
             ) {
                 acc[key] = [''];
             } else if (
                 Array.isArray(row[key]) &&
                 row[key].includes(acc[key] as string) &&
-                (!hasSelectedRows || valuesMap[String(acc[key])] === 1)
+                (!hasSelectedRows || shouldRemoveValue(valuesMap, String(acc[key])))
             ) {
                 acc[key] = [''];
             }
@@ -429,7 +447,7 @@ function mergeStringParamsByRowDeselecting(args: {
             if (
                 typeof row[key] === 'string' &&
                 acc[key].includes(row[key] as string) &&
-                (!hasSelectedRows || valuesMap[String(row[key])] === 1)
+                (!hasSelectedRows || shouldRemoveValue(valuesMap, String(row[key])))
             ) {
                 acc[key] = (acc[key] as string[]).filter((value) => value !== row[key]);
                 if (!acc[key].length) {
@@ -439,8 +457,8 @@ function mergeStringParamsByRowDeselecting(args: {
                 const itemsToFilter = hasSelectedRows
                     ? intersectedValues.filter((value) => {
                           return (
-                              typeof valuesMap[String(value)] === 'number' &&
-                              valuesMap[String(value)] === 1
+                              typeof valuesMap[String(value)]?.value === 'number' &&
+                              shouldRemoveValue(valuesMap, String(value))
                           );
                       })
                     : intersectedValues;
