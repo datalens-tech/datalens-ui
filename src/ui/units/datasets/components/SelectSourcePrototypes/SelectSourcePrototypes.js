@@ -144,6 +144,7 @@ function ConnectionMenu(props) {
                     popupPlacement="auto"
                     includeClickableType={clickableTypes}
                     inactiveEntryIds={inactiveEntryIds}
+                    ignoreWorkbookEntries={true}
                     placeSelectParameters={getPlaceSelectParameters([
                         PLACE.ROOT,
                         PLACE.FAVORITES,
