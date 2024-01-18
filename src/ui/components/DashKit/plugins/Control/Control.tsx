@@ -79,6 +79,7 @@ import {
     SelectControlProps,
     ValidationErrorData,
 } from './types';
+import {isValidationError} from './utils';
 
 import './Control.scss';
 
@@ -122,14 +123,6 @@ const TYPE: Record<string, ControlType> = {
 const LIMIT = 1000;
 
 const CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
-
-const isValidationError = ({isValueRequired, value}: ValidationErrorData) => {
-    return (
-        Utils.isEnabledFeature(Feature.SelectorRequiredValue) &&
-        isValueRequired &&
-        (!value || !value?.length)
-    );
-};
 
 class Control extends React.PureComponent<PluginControlProps, PluginControlState> {
     static getStatus(status: LoadStatus) {
@@ -988,7 +981,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
         const uiScheme = loadedData?.uiScheme;
         // @ts-ignore
-        // eslint-disable-next-line complexity
         return uiScheme?.controls.map((control) => {
             const {param, type} = control;
             const data = this.props.data as unknown as

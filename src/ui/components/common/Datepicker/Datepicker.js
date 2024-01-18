@@ -76,21 +76,18 @@ export class Datepicker extends React.PureComponent {
         const changedState = {};
         const zone = getZone(props.timezoneOffset);
 
-        let fromProps = createDateTime({date: props.from, zone});
-        let toProps = createDateTime({date: props.to, zone});
-
-        [fromProps, toProps] = resolveDates({
-            from: fromProps,
-            to: toProps,
-        });
-
         if (
             props.from !== state.prevProps.from ||
             props.to !== state.prevProps.to ||
             props.timezoneOffset !== state.prevProps.timezoneOffset
         ) {
-            changedState.from = fromProps;
-            changedState.to = toProps;
+            changedState.from = createDateTime({date: props.from, zone});
+            changedState.to = createDateTime({date: props.to, zone});
+
+            [changedState.from, changedState.to] = resolveDates({
+                from: changedState.from,
+                to: changedState.to,
+            });
 
             changedState.searchText = getSearchText({
                 from: changedState.from,
@@ -456,7 +453,7 @@ export class Datepicker extends React.PureComponent {
         [from, to] = resolveDates({from, to});
 
         if (fillEmptyValues && from && !to) {
-            // for the selector to work correctly on the dashboard 'to' will not be empty
+            // 'to' will not be empty for correct work of the selector on the dashboard
             to = fillEmptyToDate(from);
         }
 
