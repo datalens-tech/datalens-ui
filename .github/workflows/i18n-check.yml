@@ -26,7 +26,7 @@ jobs:
                   ref: ${{ github.event.pull_request.head.sha }}
 
             - name: Verifying changes with Weblate
-              uses: dgaponov/weblate-action@v1.33.0
+              uses: dgaponov/weblate-action@v1.35.0
               with:
                   SERVER_URL: "https://weblate.gravity-ui.com"
                   TOKEN: ${{ secrets.WEBLATE_TOKEN }}
