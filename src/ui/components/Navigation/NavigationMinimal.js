@@ -34,6 +34,7 @@ class NavigationMinimalService extends React.PureComponent {
             quickItems: PropTypes.array,
         }),
         inactiveEntryIds: PropTypes.arrayOf(PropTypes.string),
+        ignoreWorkbookEntries: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -167,7 +168,7 @@ class NavigationMinimalService extends React.PureComponent {
                     ref={this.refNavigation}
                     getPlaceParameters={getPlaceParameters}
                     placeSelectNode={placeSelectNode}
-                    ignoreWorkbookEntries
+                    ignoreWorkbookEntries={this.props.ignoreWorkbookEntries}
                     onPermissionError={this.onPermissionError}
                 />
                 <EntryDialogues ref={this.refDialogues} sdk={this.props.sdk} />
