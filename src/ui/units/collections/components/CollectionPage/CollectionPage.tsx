@@ -140,7 +140,7 @@ export const CollectionPage = React.memo<Props>(
         );
 
         const itemsWithPermissionMove = contentItems.filter((item) => item.permissions.move);
-        const isСanMove = itemsWithPermissionMove.length > 0;
+        const canMove = itemsWithPermissionMove.length > 0;
 
         const getCollectionContentRecursively = React.useCallback(
             (
@@ -593,7 +593,7 @@ export const CollectionPage = React.memo<Props>(
                             }
                             countSelected={countSelected}
                             isOpenSelectionMode={isOpenSelectionMode}
-                            isСanMove={isСanMove}
+                            canMove={canMove}
                             collectionPageViewMode={collectionPageViewMode}
                             controls={
                                 <CollectionFilters
@@ -631,7 +631,7 @@ export const CollectionPage = React.memo<Props>(
                                         updateFilters(DEFAULT_FILTERS);
                                     }}
                                     isOpenSelectionMode={isOpenSelectionMode}
-                                    isСanMove={isСanMove}
+                                    canMove={canMove}
                                     setBatchAction={setBatchAction}
                                     onUpdateCheckbox={onUpdateCheckbox}
                                     resetSelected={resetSelected}

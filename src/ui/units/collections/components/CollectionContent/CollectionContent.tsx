@@ -89,7 +89,7 @@ export const CollectionContent: React.FC<Props> = ({
     canCreateWorkbook,
     isContentLoading,
     isOpenSelectionMode,
-    isСanMove,
+    canMove,
     contentLoadingError,
     contentItems,
     countItemsWithPermissionMove,
@@ -431,7 +431,7 @@ export const CollectionContent: React.FC<Props> = ({
                     onSelectAll={onSelectAll}
                     selectedMap={selectedMap}
                     countSelected={countSelected}
-                    isСanMove={isСanMove}
+                    canMove={canMove}
                 />
             )}
 

@@ -27,7 +27,7 @@ export interface ContentProps {
     countItemsWithPermissionMove: number;
     countSelected: number;
     isOpenSelectionMode: boolean;
-    isСanMove: boolean;
+    canMove: boolean;
 }
 
 interface CollectionContentProps extends ContentProps {
@@ -39,7 +39,7 @@ interface CollectionContentProps extends ContentProps {
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
 }
 
-type CollectionContentGridProps = Omit<CollectionContentProps, 'countSelected' | 'isСanMove'>;
+type CollectionContentGridProps = Omit<CollectionContentProps, 'countSelected' | 'canMove'>;
 
 type CollectionContentTableProps = Omit<CollectionContentProps, 'isOpenSelectionMode'>;
 

@@ -29,10 +29,10 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
         onSelectAll,
         selectedMap,
         countSelected,
-        isСanMove,
+        canMove,
     }) => {
         const checkboxPropsSelected = React.useMemo(() => {
-            if (isСanMove) {
+            if (canMove) {
                 if (countSelected > 0) {
                     if (countSelected === countItemsWithPermissionMove) {
                         return {checked: true};
@@ -45,7 +45,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
             } else {
                 return {disabled: true};
             }
-        }, [countSelected, isСanMove, countItemsWithPermissionMove]);
+        }, [countSelected, canMove, countItemsWithPermissionMove]);
 
         return (
             <div className={b()}>
@@ -68,7 +68,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                     </div>
                     <div className={b('content')}>
                         {contentItems.map((item) => {
-                            const canMove = item.permissions.move;
+                            const canMoveItem = item.permissions.move;
 
                             if ('workbookId' in item) {
                                 const actions = getWorkbookActions(item);
@@ -83,7 +83,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                         className={b('content-row')}
                                     >
                                         <div
-                                            className={b('content-cell')}
+                                            className={b('content-cell', {disabled: !canMoveItem})}
                                             onClick={(e) => e.stopPropagation()}
                                         >
                                             <Checkbox
@@ -95,10 +95,10 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                         item.workbookId,
                                                     );
                                                 }}
-                                                disabled={!canMove}
+                                                disabled={!canMoveItem}
                                                 checked={Boolean(
                                                     selectedMap[item.workbookId]?.checked &&
-                                                        canMove,
+                                                        canMoveItem,
                                                 )}
                                             />
                                         </div>
@@ -140,7 +140,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                         className={b('content-row')}
                                     >
                                         <div
-                                            className={b('content-cell')}
+                                            className={b('content-cell', {disabled: !canMoveItem})}
                                             onClick={(e) => e.stopPropagation()}
                                         >
                                             <Checkbox
@@ -152,10 +152,10 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                         item.collectionId,
                                                     );
                                                 }}
-                                                disabled={!canMove}
+                                                disabled={!canMoveItem}
                                                 checked={Boolean(
                                                     selectedMap[item.collectionId]?.checked &&
-                                                        canMove,
+                                                        canMoveItem,
                                                 )}
                                             />
                                         </div>

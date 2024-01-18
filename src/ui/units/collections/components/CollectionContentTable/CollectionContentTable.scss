@@ -50,6 +50,10 @@
             padding-left: 12px;
             width: 27px;
         }
+
+        &_disabled {
+            pointer-events: none;
+        }
     }
 
     &__content-row:last-child &__content-cell {
