@@ -34,6 +34,7 @@ class NavigationMinimal extends React.Component {
         onCrumbClick: PropTypes.func,
         getPlaceParameters: PropTypes.func.isRequired,
         placeSelectNode: PropTypes.element,
+        ignoreWorkbookEntries: PropTypes.bool,
         place: PropTypes.string,
         onPermissionError: PropTypes.func,
     };
@@ -174,6 +175,7 @@ class NavigationMinimal extends React.Component {
                             getPlaceParameters={this.props.getPlaceParameters}
                             setBreadCrumbs={this.setBreadCrumbs}
                             onPermissionError={this.props.onPermissionError}
+                            ignoreWorkbookEntries={this.props.ignoreWorkbookEntries}
                         />
                         {hasButtonsChoose && this.renderFooter()}
                     </div>

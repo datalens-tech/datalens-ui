@@ -167,6 +167,7 @@ class NavigationMinimalService extends React.PureComponent {
                     ref={this.refNavigation}
                     getPlaceParameters={getPlaceParameters}
                     placeSelectNode={placeSelectNode}
+                    ignoreWorkbookEntries={true}
                     onPermissionError={this.onPermissionError}
                 />
                 <EntryDialogues ref={this.refDialogues} sdk={this.props.sdk} />
