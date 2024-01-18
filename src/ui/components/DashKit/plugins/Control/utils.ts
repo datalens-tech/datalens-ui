@@ -3,8 +3,8 @@ import Utils from 'ui/utils/utils';
 
 import {ValidationErrorData} from './types';
 
-export const isValidationError = ({isValueRequired, value}: ValidationErrorData) => {
-    const isRequired = Utils.isEnabledFeature(Feature.SelectorRequiredValue) && isValueRequired;
+export const isValidationError = ({required, value}: ValidationErrorData) => {
+    const isRequired = Utils.isEnabledFeature(Feature.SelectorRequiredValue) && required;
 
     const isEmptyArray = Array.isArray(value) && !value.length;
     const isEmptyDateObject =

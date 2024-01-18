@@ -33,7 +33,7 @@ type Props = {
         fieldName: string;
         datasetFieldType: DatasetFieldType;
     }) => void;
-    isValidationError: boolean;
+    hasValidationError: boolean;
 };
 
 type State = {
@@ -157,7 +157,7 @@ export class DatasetField extends React.PureComponent<Props, State> {
     renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
     render() {
-        const {fieldId, isValidationError} = this.props;
+        const {fieldId, hasValidationError} = this.props;
         const {items} = this.state;
 
         return (
@@ -174,7 +174,7 @@ export class DatasetField extends React.PureComponent<Props, State> {
                 popupClassName={b('dataset-popup')}
                 filterPlaceholder={i18n('dash.control-dialog.edit', 'placeholder_search')}
                 qa={DialogControlQa.fieldSelect}
-                error={isValidationError}
+                error={hasValidationError}
             />
         );
     }

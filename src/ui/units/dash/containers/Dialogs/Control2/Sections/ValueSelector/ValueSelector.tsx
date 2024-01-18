@@ -130,7 +130,7 @@ const DateValueControl = () => {
                         isRange={Boolean(isRange)}
                         onApply={handleDefaultValueChange}
                         fieldType={fieldType}
-                        isValidationError={Boolean(validation.defaultValue)}
+                        hasValidationError={Boolean(validation.defaultValue)}
                     />
                 </FieldWrapper>
             </FormRow>

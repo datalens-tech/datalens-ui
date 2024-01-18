@@ -889,7 +889,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
         // for first initialization of control
         const initialValidationError = isValidationError({
-            isValueRequired: source.isValueRequired,
+            required: source.required,
             value: preparedValue,
         })
             ? i18n('value_required')
@@ -903,7 +903,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
         const onChange = (value: string | string[]) => {
             const isValid = this.checkValueValidation({
-                isValueRequired: source.isValueRequired,
+                required: source.required,
                 value,
             });
 
@@ -935,8 +935,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             onOpenChange: this.onOpenChange,
             loadingItems,
             placeholder,
-            isValueRequired: source.isValueRequired,
-            isValidationError: Boolean(validationError),
+            required: source.required,
+            hasValidationError: Boolean(validationError),
         };
 
         if (status === LOAD_STATUS.FAIL) {
@@ -997,7 +997,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             // for first initialization of control
             const initialValidationError = isValidationError({
-                isValueRequired: source.isValueRequired,
+                required: source.required,
                 value: preparedValue,
             })
                 ? i18n('value_required')
@@ -1006,7 +1006,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const onChange = (value: string | string[]) => {
                 const isValid = this.checkValueValidation({
-                    isValueRequired: source.isValueRequired,
+                    required: source.required,
                     value,
                 });
 
@@ -1032,8 +1032,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 editMode,
                 innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
                 label: (source.showTitle ? title : '') as string,
-                isValueRequired: source.isValueRequired,
-                isValidationError: Boolean(validationError),
+                required: source.required,
+                hasValidationError: Boolean(validationError),
             };
 
             if (type === TYPE.RANGE_DATEPICKER || type === TYPE.DATEPICKER) {

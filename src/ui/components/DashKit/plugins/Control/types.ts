@@ -100,8 +100,8 @@ export interface SelectControlProps {
         | {items: any[]}
     >;
     placeholder: string | undefined;
-    isValueRequired?: boolean;
-    isValidationError: boolean;
+    required?: boolean;
+    hasValidationError: boolean;
 }
 
 export type ChartControlRef =
@@ -111,7 +111,7 @@ export type ChartControlRef =
     | null;
 
 export type ValidationErrorData = {
-    isValueRequired?: boolean;
+    required?: boolean;
     value?:
         | string
         | string[]

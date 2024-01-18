@@ -98,7 +98,7 @@ const getDistincts = async ({
     }
 };
 
-export const DynamicValueSelect = ({isValidationError, hasClear}: ValueSelectorProps) => {
+export const DynamicValueSelect = ({hasValidationError, hasClear}: ValueSelectorProps) => {
     const [searchPattern, setSearchPattern] = React.useState('');
 
     const selectorDialogState = useSelector(selectSelectorDialog);
@@ -146,7 +146,7 @@ export const DynamicValueSelect = ({isValidationError, hasClear}: ValueSelectorP
             onFilterChange={onFilterChange}
             placeholder={i18n('value_undefined')}
             qa={DialogControlQa.valueSelect}
-            isValidationError={isValidationError}
+            hasValidationError={hasValidationError}
             hasClear={hasClear}
         />
     );

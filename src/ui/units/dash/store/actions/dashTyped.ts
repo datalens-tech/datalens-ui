@@ -271,7 +271,7 @@ type ItemDataSource = {
     operation?: Operations;
     showInnerTitle?: boolean;
     innerTitle?: string;
-    isValueRequired?: boolean;
+    required?: boolean;
 };
 
 type SetItemDataBase = {
@@ -324,7 +324,7 @@ export type SelectorDialogState = {
     isRange?: boolean;
     multiselectable?: boolean;
     defaults: Record<string, string | string[]>;
-    isValueRequired?: boolean;
+    required?: boolean;
     useDefaultValue?: boolean;
     usePreset?: boolean;
     operation?: Operations;
@@ -417,7 +417,7 @@ const getItemDataSource = (selectorDialog: SelectorDialogState): ItemDataSource 
         datasetFieldType,
         fieldName,
         acceptableValues,
-        isValueRequired,
+        required,
 
         chartId,
         operation,
@@ -434,7 +434,7 @@ const getItemDataSource = (selectorDialog: SelectorDialogState): ItemDataSource 
         showInnerTitle,
         innerTitle,
         operation,
-        isValueRequired,
+        required,
     };
 
     if (sourceType === DashTabItemControlSourceType.Dataset) {
@@ -476,15 +476,8 @@ const getItemDataSource = (selectorDialog: SelectorDialogState): ItemDataSource 
 export const applyControl2Dialog = () => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const selectorDialog = getState().dash.selectorDialog as SelectorDialogState;
-        const {
-            title,
-            sourceType,
-            datasetFieldId,
-            fieldName,
-            defaultValue,
-            autoHeight,
-            isValueRequired,
-        } = selectorDialog;
+        const {title, sourceType, datasetFieldId, fieldName, defaultValue, autoHeight, required} =
+            selectorDialog;
         let defaults = selectorDialog.defaults;
 
         let field;
@@ -513,7 +506,7 @@ export const applyControl2Dialog = () => {
             validation.datasetFieldId = i18n('dash.control-dialog.edit', 'validation_required');
         }
 
-        if (isValueRequired && (!defaultValue || !defaultValue?.length)) {
+        if (required && (!defaultValue || !defaultValue?.length)) {
             validation.defaultValue = i18n('dash.control-dialog.edit', 'validation_required');
         }
 

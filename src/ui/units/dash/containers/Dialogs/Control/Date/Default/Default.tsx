@@ -61,7 +61,7 @@ interface Props {
     fieldType?: DATASET_FIELD_TYPES;
     withTime?: boolean;
     disabled?: boolean;
-    isValidationError: boolean;
+    hasValidationError: boolean;
 }
 
 interface State {
@@ -206,7 +206,7 @@ class Default extends React.PureComponent<Props, State> {
                 <Button
                     onClick={() => this.setState({showDialog: !this.state.showDialog})}
                     disabled={this.props.disabled}
-                    className={b('default-btn', {error: this.props.isValidationError})}
+                    className={b('default-btn', {error: this.props.hasValidationError})}
                     view="outlined"
                     width="max"
                     qa={ControlQA.acceptableDialogButton}

@@ -1,4 +1,4 @@
 export type ValueSelectorProps = {
-    isValidationError: boolean;
+    hasValidationError: boolean;
     hasClear?: boolean;
 };

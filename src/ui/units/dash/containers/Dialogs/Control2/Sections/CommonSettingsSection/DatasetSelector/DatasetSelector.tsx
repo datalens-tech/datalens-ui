@@ -166,7 +166,7 @@ function DatasetSelector() {
                         datasetId={datasetId}
                         fieldId={datasetFieldId}
                         onChange={handleDatasetFieldChange}
-                        isValidationError={Boolean(validation.datasetFieldId)}
+                        hasValidationError={Boolean(validation.datasetFieldId)}
                     />
                 </FieldWrapper>
             </FormRow>

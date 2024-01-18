@@ -59,9 +59,7 @@ const initialState = {
 };
 
 export function getSelectorDialogInitialState(args = {}) {
-    const isValueRequired = Utils.isEnabledFeature(Feature.SelectorRequiredValue)
-        ? {isValueRequired: false}
-        : {};
+    const required = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? {required: false} : {};
 
     return {
         elementType: ELEMENT_TYPE.SELECT,
@@ -73,7 +71,7 @@ export function getSelectorDialogInitialState(args = {}) {
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
         id: getRandomKey(),
-        ...isValueRequired,
+        ...required,
     };
 }
 
@@ -342,7 +340,7 @@ function dash(state = initialState, action) {
                     innerTitle: data.source.innerTitle,
                     showInnerTitle: data.source.showInnerTitle,
                     id: getRandomKey(),
-                    isValueRequired: data.source.isValueRequired,
+                    required: data.source.required,
                 };
             }
 

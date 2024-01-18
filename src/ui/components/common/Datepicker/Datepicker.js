@@ -65,8 +65,8 @@ export class Datepicker extends React.PureComponent {
         controlSize: PropTypes.oneOf(['s', 'm', 'l', 'xl']),
         className: PropTypes.string,
         popupClassName: PropTypes.string,
-        isValueRequired: PropTypes.bool,
-        isValidationError: PropTypes.bool,
+        required: PropTypes.bool,
+        hasValidationError: PropTypes.bool,
         fillEmptyValues: PropTypes.bool,
     };
 
@@ -95,7 +95,7 @@ export class Datepicker extends React.PureComponent {
                 format: props.format,
                 emptyValueText: props.emptyValueText,
                 range: props.range,
-                isValueRequired: props.isValueRequired,
+                required: props.required,
             });
             changedState.zone = zone;
 
@@ -127,7 +127,7 @@ export class Datepicker extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const {format, timezoneOffset, emptyValueText, range, isValueRequired} = this.props;
+        const {format, timezoneOffset, emptyValueText, range, required} = this.props;
 
         const zone = getZone(timezoneOffset);
         let from = createDateTime({date: this.props.from, zone});
@@ -141,7 +141,7 @@ export class Datepicker extends React.PureComponent {
             format,
             emptyValueText,
             range,
-            isValueRequired,
+            required,
         });
 
         this.ControlNodeRef = React.createRef();
@@ -246,7 +246,7 @@ export class Datepicker extends React.PureComponent {
             format: this.props.format,
             emptyValueText: this.props.emptyValueText,
             range: this.props.range,
-            isValueRequired: this.props.isValueRequired,
+            required: this.props.required,
         });
 
         this.setState(state, () => {
@@ -300,7 +300,7 @@ export class Datepicker extends React.PureComponent {
             format: this.props.format,
             emptyValueText: this.props.emptyValueText,
             range: this.props.range,
-            isValueRequired: this.props.isValueRequired,
+            required: this.props.required,
         });
 
         this.setState(
@@ -394,7 +394,7 @@ export class Datepicker extends React.PureComponent {
             return;
         }
 
-        const {format, emptyValueText, range, isValueRequired} = this.props;
+        const {format, emptyValueText, range, required} = this.props;
         const {from, to, lastValidHash} = this.state;
 
         const currentHash = getHashedData({from, to});
@@ -406,7 +406,7 @@ export class Datepicker extends React.PureComponent {
                 format,
                 emptyValueText,
                 range,
-                isValueRequired,
+                required,
             });
 
             this.setState({searchText, active: false});
@@ -463,7 +463,7 @@ export class Datepicker extends React.PureComponent {
             format: this.props.format,
             emptyValueText: this.props.emptyValueText,
             range: this.props.range,
-            isValueRequired: this.props.isValueRequired,
+            required: this.props.required,
         });
 
         this.ControlNodeRef.current.blur();
@@ -535,11 +535,11 @@ export class Datepicker extends React.PureComponent {
             controlSize,
             className,
             popupClassName,
-            isValidationError,
+            hasValidationError,
         } = this.props;
-        const {searchText, active, error} = this.state;
+        const {searchText, active, error, from} = this.state;
 
-        const isControlError = isValidationError && !active;
+        const hasPlaceholderError = hasValidationError && !from;
 
         return (
             <MobileContext.Consumer>
@@ -564,9 +564,9 @@ export class Datepicker extends React.PureComponent {
                                     onFocus={this.onInputFocus}
                                     onKeyDown={this.onInputKeyPress}
                                     controlRef={this.ControlNodeRef}
-                                    error={isValidationError}
+                                    error={hasValidationError}
                                     controlProps={{
-                                        className: b('input', {error: isControlError}),
+                                        className: b('input', {error: hasPlaceholderError}),
                                     }}
                                 />
                                 {mobile && (

@@ -22,7 +22,7 @@ export type ControlShared = {
                   to: string;
               };
         defaultValue: any;
-        isValueRequired?: boolean;
+        required?: boolean;
     };
     sourceType: 'dataset' | 'manual';
     type: 'control_dash';
@@ -45,5 +45,5 @@ export type UIControl = {
     type?: string;
     minDate?: string;
     maxDate?: string;
-    isValueRequired?: boolean;
+    required?: boolean;
 };

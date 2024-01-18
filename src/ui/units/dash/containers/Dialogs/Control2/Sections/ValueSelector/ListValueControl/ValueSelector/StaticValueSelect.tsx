@@ -14,7 +14,7 @@ import '../../../../Control2.scss';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-export const StaticValueSelect = ({isValidationError, hasClear}: ValueSelectorProps) => {
+export const StaticValueSelect = ({hasValidationError, hasClear}: ValueSelectorProps) => {
     const {
         acceptableValues = [],
         defaultValue,
@@ -54,7 +54,7 @@ export const StaticValueSelect = ({isValidationError, hasClear}: ValueSelectorPr
             options={options}
             onUpdate={handleUpdate}
             placeholder={i18n('value_undefined')}
-            isValidationError={isValidationError}
+            hasValidationError={hasValidationError}
             hasClear={hasClear}
         />
     );

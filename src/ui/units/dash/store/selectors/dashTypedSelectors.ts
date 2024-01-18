@@ -57,8 +57,8 @@ export const selectSelectorControlType = (state: DatalensGlobalState) =>
 export const selectSelectorDefaultValue = (state: DatalensGlobalState) =>
     (state.dash as DashState).selectorDialog.defaultValue;
 
-export const selectSelectorIsValueRequired = (state: DatalensGlobalState) =>
-    (state.dash as DashState).selectorDialog.isValueRequired;
+export const selectSelectorRequired = (state: DatalensGlobalState) =>
+    (state.dash as DashState).selectorDialog.required;
 
 export const selectSelectorValidation = (state: DatalensGlobalState) =>
     (state.dash as DashState).selectorDialog.validation;

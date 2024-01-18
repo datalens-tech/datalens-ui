@@ -40,7 +40,7 @@ export function getPlaceholder(format) {
         .join('');
 }
 
-export function getSearchText({from, to, format, emptyValueText, range, isValueRequired}) {
+export function getSearchText({from, to, format, emptyValueText, range, required}) {
     switch (true) {
         case Boolean(!range && from): {
             return `${from.toFormat(format)}`;
@@ -51,7 +51,7 @@ export function getSearchText({from, to, format, emptyValueText, range, isValueR
         case Boolean(from && to): {
             return `${from.toFormat(format)} - ${to.toFormat(format)}`;
         }
-        case isValueRequired: {
+        case required: {
             return i18n('value_required');
         }
         case Boolean(range): {

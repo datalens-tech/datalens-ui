@@ -9,7 +9,7 @@ import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectIsDatasetSelectorAndNoFieldSelected,
     selectSelectorControlType,
-    selectSelectorIsValueRequired,
+    selectSelectorRequired,
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
 import {ELEMENT_TYPE} from '../../../../Control/constants';
@@ -22,7 +22,7 @@ const b = block('value-selector-wrapper');
 
 export const RequiredValueCheckbox = () => {
     const dispatch = useDispatch();
-    const isValueRequired = useSelector(selectSelectorIsValueRequired);
+    const required = useSelector(selectSelectorRequired);
 
     const elementType = useSelector(selectSelectorControlType);
     const isNoFieldSelected = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
@@ -31,12 +31,12 @@ export const RequiredValueCheckbox = () => {
     const handleUpdate = (value: boolean) => {
         dispatch(
             setSelectorDialogItem({
-                isValueRequired: value,
+                required: value,
             }),
         );
     };
 
-    const value = isValueRequired ?? false;
+    const value = required ?? false;
 
     return (
         <FormRow label={i18n('field_required-value')}>

@@ -241,9 +241,7 @@ export function dashTypedReducer(
                 : selectorDialog.defaultValue;
             const isElementTypeWithoutRequired =
                 elementTypeChanged && payload.elementType === ELEMENT_TYPE.CHECKBOX;
-            const isValueRequired = isElementTypeWithoutRequired
-                ? false
-                : selectorDialog.isValueRequired;
+            const required = isElementTypeWithoutRequired ? false : selectorDialog.required;
 
             const validation: SelectorDialogState['validation'] = {
                 title:
@@ -269,7 +267,7 @@ export function dashTypedReducer(
                 ...state.selectorDialog,
                 defaultValue,
                 validation,
-                isValueRequired,
+                required,
                 ...payload,
             };
 

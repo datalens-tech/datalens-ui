@@ -15,7 +15,7 @@ import {StaticValueSelect} from './ValueSelector/StaticValueSelect';
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
 export const ListValueControl = () => {
-    const {sourceType, isValueRequired, validation} = useSelector(selectSelectorDialog);
+    const {sourceType, required, validation} = useSelector(selectSelectorDialog);
 
     return (
         <React.Fragment>
@@ -29,8 +29,8 @@ export const ListValueControl = () => {
                     <FormRow label={i18n('field_default-value')}>
                         <FieldWrapper error={validation.defaultValue}>
                             <StaticValueSelect
-                                isValidationError={Boolean(validation.defaultValue)}
-                                hasClear={!isValueRequired}
+                                hasValidationError={Boolean(validation.defaultValue)}
+                                hasClear={!required}
                             />
                         </FieldWrapper>
                     </FormRow>
@@ -40,8 +40,8 @@ export const ListValueControl = () => {
                 <FormRow label={i18n('field_default-value')}>
                     <FieldWrapper error={validation.defaultValue}>
                         <DynamicValueSelect
-                            isValidationError={Boolean(validation.defaultValue)}
-                            hasClear={!isValueRequired}
+                            hasValidationError={Boolean(validation.defaultValue)}
+                            hasClear={!required}
                         />
                     </FieldWrapper>
                 </FormRow>
