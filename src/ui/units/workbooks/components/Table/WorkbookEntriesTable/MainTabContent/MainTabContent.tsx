@@ -22,9 +22,11 @@ interface MainTabContentProps extends WorkbookEntriesTableProps {
     chunk: ChunkItem[];
     actionCreateText: string;
     title: string;
+    isErrorMessage?: boolean;
     actionType: CreateEntryActionType;
     isShowMoreBtn: boolean;
     loadMoreEntries: () => void;
+    retryLoadEntries: () => void;
 }
 
 const MainTabContent: React.FC<MainTabContentProps> = ({
@@ -39,6 +41,8 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
     actionType,
     isShowMoreBtn,
     loadMoreEntries,
+    retryLoadEntries,
+    isErrorMessage,
 }) => {
     const [isOpen, setIsOpen] = React.useState(true);
 
@@ -48,8 +52,48 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
         dispatch(setCreateWorkbookEntryType(actionType));
     };
 
-    const getNoObjectsText = () =>
-        isOpen && <div className={b('no-objects')}>{i18n('no_objects')}</div>;
+    const getContentTab = () => {
+        if (isErrorMessage)
+            return <div className={b('error-text')}>{i18n('label_error-load-entities')}</div>;
+
+        if (chunk.length > 0 && isOpen) {
+            return (
+                <ChunkGroup
+                    key={chunk[0].key}
+                    workbook={workbook}
+                    chunk={chunk}
+                    onRenameEntry={onRenameEntry}
+                    onDeleteEntry={onDeleteEntry}
+                    onDuplicateEntry={onDuplicateEntry}
+                    onCopyEntry={onCopyEntry}
+                />
+            );
+        }
+
+        if (isOpen) return <div className={b('no-objects')}>{i18n('no_objects')}</div>;
+
+        return null;
+    };
+
+    const getActionBtn = () => {
+        if (isErrorMessage) {
+            return (
+                <Button onClick={retryLoadEntries} className={b('retry-btn')} view="outlined">
+                    {i18n('action_retry')}
+                </Button>
+            );
+        }
+
+        if (isShowMoreBtn && isOpen) {
+            return (
+                <Button onClick={loadMoreEntries} className={b('show-more-btn')} view="outlined">
+                    {i18n('action_show-more')}
+                </Button>
+            );
+        }
+
+        return null;
+    };
 
     return (
         <div className={b()}>
@@ -82,26 +126,10 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
                     <div className={b('table-header-cell')} />
                     <div className={b('table-header-cell')} />
                 </div>
-                {chunk.length > 0 && isOpen ? (
-                    <ChunkGroup
-                        key={chunk[0].key}
-                        workbook={workbook}
-                        chunk={chunk}
-                        onRenameEntry={onRenameEntry}
-                        onDeleteEntry={onDeleteEntry}
-                        onDuplicateEntry={onDuplicateEntry}
-                        onCopyEntry={onCopyEntry}
-                    />
-                ) : (
-                    getNoObjectsText()
-                )}
+                {getContentTab()}
             </div>
 
-            {isShowMoreBtn && isOpen && (
-                <Button onClick={loadMoreEntries} className={b('show-more-btn')} view="outlined">
-                    {i18n('action_show-more')}
-                </Button>
-            )}
+            {getActionBtn()}
         </div>
     );
 };

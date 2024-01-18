@@ -56,6 +56,10 @@
       "en": "APPROVED",
       "ru": "APPROVED"
     },
+    "action_retry": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
     "action_duplicate": {
       "en": "APPROVED",
       "ru": "APPROVED"
@@ -93,6 +97,10 @@
       "ru": "APPROVED"
     },
     "label_entry-name-already-exists": {
+      "en": "APPROVED",
+      "ru": "APPROVED"
+    },
+    "label_error-load-entities": {
       "en": "APPROVED",
       "ru": "APPROVED"
     },

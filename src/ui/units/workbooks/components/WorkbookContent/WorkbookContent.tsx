@@ -26,9 +26,12 @@ type Props = {
     loadMoreEntries: () => void;
     loadMoreEntriesByScope: (entryScope: EntryScope) => void;
     retryLoadEntries: () => void;
+    retryLoadEntriesByScope: (entryScope: EntryScope) => void;
     refreshEntries: (scope?: EntryScope) => void;
     scope?: EntryScope;
     mapTokens: Record<string, string>;
+    mapErrors: Record<string, boolean>;
+    isLoadingMainTab: boolean;
 };
 
 export const WorkbookContent = React.memo<Props>(
@@ -36,16 +39,19 @@ export const WorkbookContent = React.memo<Props>(
         loadMoreEntries,
         loadMoreEntriesByScope,
         retryLoadEntries,
+        retryLoadEntriesByScope,
         refreshEntries,
+        isLoadingMainTab,
         scope,
         mapTokens,
+        mapErrors,
     }) => {
         const workbook = useSelector(selectWorkbook);
         const entries = useSelector(selectWorkbookItems);
         const isEntriesLoading = useSelector(selectWorkbookEntriesIsLoading);
         const workbookEntriesError = useSelector(selectWorkbookEntriesError);
 
-        if (isEntriesLoading && entries.length === 0) {
+        if ((isEntriesLoading || isLoadingMainTab) && entries.length === 0) {
             return <SmartLoader size="l" />;
         }
 
@@ -91,7 +97,9 @@ export const WorkbookContent = React.memo<Props>(
                     entries={entries}
                     scope={scope}
                     loadMoreEntriesByScope={loadMoreEntriesByScope}
+                    retryLoadEntriesByScope={retryLoadEntriesByScope}
                     mapTokens={mapTokens}
+                    mapErrors={mapErrors}
                 />
                 {footer}
             </React.Fragment>

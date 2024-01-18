@@ -67,4 +67,13 @@
         width: 100%;
         margin-top: 16px;
     }
+
+    &__retry-btn {
+        margin-top: 16px;
+    }
+
+    &__error-text {
+        font-size: 15px;
+        color: var(--yc-color-text-danger);
+    }
 }

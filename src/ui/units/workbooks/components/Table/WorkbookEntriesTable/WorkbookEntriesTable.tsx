@@ -32,12 +32,23 @@ type WorkbookEntriesTableProps = {
     entries: GetEntryResponse[];
     refreshEntries: (scope?: EntryScope) => void;
     loadMoreEntriesByScope: (entryScope: EntryScope) => void;
+    retryLoadEntriesByScope: (entryScope: EntryScope) => void;
     scope?: EntryScope;
     mapTokens: Record<string, string>;
+    mapErrors: Record<string, boolean>;
 };
 
 export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
-    ({workbook, entries, refreshEntries, loadMoreEntriesByScope, scope, mapTokens}) => {
+    ({
+        workbook,
+        entries,
+        refreshEntries,
+        retryLoadEntriesByScope,
+        loadMoreEntriesByScope,
+        scope,
+        mapTokens,
+        mapErrors,
+    }) => {
         const dispatch: AppDispatch = useDispatch();
 
         const onRenameEntry = React.useCallback(
@@ -191,6 +202,8 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                     dashChunk.length > 0 && mapTokens[EntryScope.Dash],
                                 )}
                                 loadMoreEntries={() => loadMoreEntriesByScope(EntryScope.Dash)}
+                                retryLoadEntries={() => retryLoadEntriesByScope(EntryScope.Dash)}
+                                isErrorMessage={mapErrors[EntryScope.Dash]}
                                 {...mainTabProps}
                             />
 
@@ -203,6 +216,8 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                     widgetChunk.length > 0 && mapTokens[EntryScope.Widget],
                                 )}
                                 loadMoreEntries={() => loadMoreEntriesByScope(EntryScope.Widget)}
+                                retryLoadEntries={() => retryLoadEntriesByScope(EntryScope.Widget)}
+                                isErrorMessage={mapErrors[EntryScope.Widget]}
                                 {...mainTabProps}
                             />
 
@@ -218,6 +233,10 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                     loadMoreEntries={() =>
                                         loadMoreEntriesByScope(EntryScope.Dataset)
                                     }
+                                    retryLoadEntries={() =>
+                                        retryLoadEntriesByScope(EntryScope.Dataset)
+                                    }
+                                    isErrorMessage={mapErrors[EntryScope.Dataset]}
                                     {...mainTabProps}
                                 />
                             )}
@@ -234,6 +253,10 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                     loadMoreEntries={() =>
                                         loadMoreEntriesByScope(EntryScope.Connection)
                                     }
+                                    retryLoadEntries={() =>
+                                        retryLoadEntriesByScope(EntryScope.Connection)
+                                    }
+                                    isErrorMessage={mapErrors[EntryScope.Connection]}
                                     {...mainTabProps}
                                 />
                             )}

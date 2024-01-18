@@ -72,6 +72,8 @@ export const WorkbookPage = () => {
     const nextPageToken = useSelector(selectNextPageToken);
     const filters = useSelector(selectWorkbookFilters);
     const [mapTokens, setMapTokens] = React.useState<Record<string, string>>({});
+    const [mapErrors, setMapErrors] = React.useState<Record<string, boolean>>({});
+    const [isLoadingMainTab, setIsLoadingMainTab] = React.useState(false);
 
     const isMainTab = activeTab === TAB_ALL;
     const scope = isMainTab ? undefined : activeTab;
@@ -117,8 +119,38 @@ export const WorkbookPage = () => {
     };
 
     const retryLoadEntries = React.useCallback(() => {
-        dispatch(getWorkbookEntries({workbookId, filters, scope, nextPageToken}));
+        dispatch(
+            getWorkbookEntries({
+                workbookId,
+                filters,
+                scope,
+                nextPageToken,
+            }),
+        );
     }, [dispatch, workbookId, filters, scope, nextPageToken]);
+
+    const retryLoadEntriesByScope = React.useCallback(
+        (entryScope: EntryScope) => {
+            dispatch(
+                getWorkbookEntries({
+                    workbookId,
+                    filters,
+                    scope: entryScope,
+                    nextPageToken,
+                }),
+            ).then((data) => {
+                setMapErrors({
+                    ...mapErrors,
+                    [entryScope]: false,
+                });
+                setMapTokens({
+                    ...mapTokens,
+                    [entryScope]: data?.nextPageToken || '',
+                });
+            });
+        },
+        [dispatch, workbookId, filters, nextPageToken, mapErrors, mapTokens],
+    );
 
     const refreshEntries = React.useCallback(
         (entryScope?: EntryScope) => {
@@ -195,8 +227,30 @@ export const WorkbookPage = () => {
                         }),
                     );
 
+                    setIsLoadingMainTab(true);
+
                     const [dataDashes, dataDatasets, dataWidgets, dataConnections] =
                         await Promise.all([dashes, datasets, widgets, connections]);
+
+                    const errors: Record<string, boolean> = {};
+
+                    if (dataDashes === null) {
+                        errors[EntryScope.Dash] = true;
+                    }
+
+                    if (dataDatasets === null) {
+                        errors[EntryScope.Dataset] = true;
+                    }
+
+                    if (dataWidgets === null) {
+                        errors[EntryScope.Widget] = true;
+                    }
+
+                    if (dataConnections === null) {
+                        errors[EntryScope.Connection] = true;
+                    }
+
+                    setMapErrors(errors);
 
                     const tokensMap: Record<string, string> = {};
 
@@ -206,10 +260,10 @@ export const WorkbookPage = () => {
                     tokensMap[EntryScope.Connection] = dataConnections?.nextPageToken || '';
 
                     setMapTokens(tokensMap);
+
+                    setIsLoadingMainTab(false);
                 } else {
-                    await dispatch(getWorkbookEntries({workbookId, filters, scope})).then(
-                        (data) => data,
-                    );
+                    await dispatch(getWorkbookEntries({workbookId, filters, scope}));
                 }
             })();
         }
@@ -314,9 +368,12 @@ export const WorkbookPage = () => {
                                 loadMoreEntries={loadMoreEntries}
                                 loadMoreEntriesByScope={loadMoreEntriesByScope}
                                 retryLoadEntries={retryLoadEntries}
+                                retryLoadEntriesByScope={retryLoadEntriesByScope}
                                 refreshEntries={refreshEntries}
+                                isLoadingMainTab={isLoadingMainTab}
                                 scope={scope}
                                 mapTokens={mapTokens}
+                                mapErrors={mapErrors}
                             />
                         </div>
                     </div>
