@@ -14,6 +14,7 @@ import {
     Field,
     HierarchyField,
     Link,
+    SectionDatasetQA,
     Update,
     isParameter,
 } from 'shared';
@@ -29,7 +30,6 @@ import {selectUpdates, selectUpdatesByFieldId} from 'units/wizard/selectors/prev
 import {getIconForDataType} from 'units/wizard/utils/helpers';
 import Utils from 'utils';
 
-import {SectionDatasetQA} from '../../../../../../../shared/constants/qa/wizard';
 import {updateDatasetByValidation} from '../../../../actions';
 import {setUpdates} from '../../../../actions/preview';
 import {WizardDispatch} from '../../../../reducers';
@@ -183,7 +183,7 @@ class DatasetItem extends React.Component<DatasetItemInnerProps> {
                             <DropdownMenu
                                 size="s"
                                 defaultSwitcherProps={{
-                                    qa: 'field-actions',
+                                    qa: SectionDatasetQA.FieldActions,
                                     size: 's',
                                     width: 'max',
                                 }}

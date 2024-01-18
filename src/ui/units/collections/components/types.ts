@@ -3,16 +3,44 @@ import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/sc
 
 import {CollectionContentFilters} from '../../../components/CollectionFilters/CollectionFilters';
 
-type CollectionContentProps = {
+export type SelectedMap = Record<
+    string,
+    {
+        type: 'workbook' | 'collection';
+        checked: boolean;
+    }
+>;
+
+export type UpdateCheckbox = (
+    checked: boolean,
+    type: 'workbook' | 'collection',
+    entityId: string,
+) => void;
+
+export interface ContentProps {
     contentItems: (CollectionWithPermissions | WorkbookWithPermissions)[];
     filters: CollectionContentFilters;
     setFilters: (filters: CollectionContentFilters) => void;
+    onUpdateCheckbox: UpdateCheckbox;
+    onSelectAll: (checked: boolean) => void;
+    selectedMap: SelectedMap;
+    countItemsWithPermissionMove: number;
+    countSelected: number;
+    isOpenSelectionMode: boolean;
+    canMove: boolean;
+}
+
+interface CollectionContentProps extends ContentProps {
     getWorkbookActions: (
         item: WorkbookWithPermissions,
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
     getCollectionActions: (
         item: CollectionWithPermissions,
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
-};
+}
 
-export {CollectionContentProps};
+type CollectionContentGridProps = Omit<CollectionContentProps, 'countSelected' | 'canMove'>;
+
+type CollectionContentTableProps = Omit<CollectionContentProps, 'isOpenSelectionMode'>;
+
+export {CollectionContentGridProps, CollectionContentTableProps};

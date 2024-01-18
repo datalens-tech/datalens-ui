@@ -99,7 +99,9 @@ function BaseControlSelect({
         [onChange, multiselect],
     );
 
-    const isRequired = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? !required : true;
+    const allowEmptyValue = Utils.isEnabledFeature(Feature.SelectorRequiredValue)
+        ? !required
+        : true;
     const showSelectAll =
         Utils.isEnabledFeature(Feature.SelectorRequiredValue) &&
         currentValue?.length === items?.length &&
@@ -113,7 +115,7 @@ function BaseControlSelect({
         <YCSelect
             showSearch={searchable}
             type={multiselect ? YCSelect.MULTIPLE : YCSelect.SINGLE}
-            allowEmptyValue={isRequired}
+            allowEmptyValue={allowEmptyValue}
             showMissingItems={true}
             value={currentValue}
             onUpdate={wrappedOnChange}

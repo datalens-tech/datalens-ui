@@ -6,13 +6,10 @@ import {connect} from 'react-redux';
 import {compose} from 'recompose';
 
 import type {GetCollectionContentResponse} from '../../../../../shared/schema';
-import type {
-    CollectionContentFilters,
-    CollectionPageViewMode,
-} from '../../../../components/CollectionFilters/CollectionFilters';
+import type {CollectionPageViewMode} from '../../../../components/CollectionFilters/CollectionFilters';
 import {CollectionContent} from '../../components/CollectionContent/CollectionContent';
+import {ContentProps} from '../../components/types';
 import {
-    selectCollectionContentItems,
     selectContentError,
     selectContentIsLoading,
     selectNextPageTokens,
@@ -21,11 +18,9 @@ import {GetCollectionContentArgs} from '../../types';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 
-type OuterProps = {
+interface OuterProps extends ContentProps {
     collectionId: string | null;
-    filters: CollectionContentFilters;
     collectionPageViewMode: CollectionPageViewMode;
-    setFilters: (filters: CollectionContentFilters) => void;
     isDefaultFilters: boolean;
     pageSize: number;
     canCreateWorkbook: boolean;
@@ -36,7 +31,9 @@ type OuterProps = {
     ) => CancellablePromise<GetCollectionContentResponse | null>;
     onCreateWorkbookClick: () => void;
     onClearFiltersClick: () => void;
-};
+    setBatchAction: () => void;
+    resetSelected: () => void;
+}
 type InnerProps = StateProps;
 
 type Props = OuterProps & InnerProps;
@@ -51,8 +48,13 @@ class CollectionContentContainer extends React.Component<Props> {
             setFilters,
             isDefaultFilters,
             isContentLoading,
+            isOpenSelectionMode,
+            canMove,
             contentLoadingError,
             contentItems,
+            countItemsWithPermissionMove,
+            selectedMap,
+            countSelected,
             nextPageTokens,
             canCreateWorkbook,
             refreshPage,
@@ -60,6 +62,10 @@ class CollectionContentContainer extends React.Component<Props> {
             getCollectionContentRecursively,
             onCreateWorkbookClick,
             onClearFiltersClick,
+            setBatchAction,
+            resetSelected,
+            onSelectAll,
+            onUpdateCheckbox,
         } = this.props;
 
         return (
@@ -71,8 +77,13 @@ class CollectionContentContainer extends React.Component<Props> {
                 setFilters={setFilters}
                 isDefaultFilters={isDefaultFilters}
                 isContentLoading={isContentLoading}
+                isOpenSelectionMode={isOpenSelectionMode}
+                canMove={canMove}
                 contentLoadingError={contentLoadingError}
                 contentItems={contentItems}
+                countItemsWithPermissionMove={countItemsWithPermissionMove}
+                selectedMap={selectedMap}
+                countSelected={countSelected}
                 nextPageTokens={nextPageTokens}
                 refreshPage={refreshPage}
                 refreshContent={refreshContent}
@@ -80,6 +91,10 @@ class CollectionContentContainer extends React.Component<Props> {
                 onCreateWorkbookClick={onCreateWorkbookClick}
                 canCreateWorkbook={canCreateWorkbook}
                 onClearFiltersClick={onClearFiltersClick}
+                setBatchAction={setBatchAction}
+                onSelectAll={onSelectAll}
+                resetSelected={resetSelected}
+                onUpdateCheckbox={onUpdateCheckbox}
             />
         );
     }
@@ -89,7 +104,6 @@ const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         isContentLoading: selectContentIsLoading(state),
         contentLoadingError: selectContentError(state),
-        contentItems: selectCollectionContentItems(state),
         nextPageTokens: selectNextPageTokens(state),
     };
 };

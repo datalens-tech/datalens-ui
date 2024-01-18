@@ -23,9 +23,15 @@ import {
     MOVE_COLLECTION_LOADING,
     MOVE_COLLECTION_SUCCESS,
     MOVE_COLLECTION_FAILED,
+    MOVE_COLLECTIONS_LOADING,
+    MOVE_COLLECTIONS_SUCCESS,
+    MOVE_COLLECTIONS_FAILED,
     MOVE_WORKBOOK_LOADING,
     MOVE_WORKBOOK_SUCCESS,
     MOVE_WORKBOOK_FAILED,
+    MOVE_WORKBOOKS_LOADING,
+    MOVE_WORKBOOKS_SUCCESS,
+    MOVE_WORKBOOKS_FAILED,
     COPY_WORKBOOK_LOADING,
     COPY_WORKBOOK_SUCCESS,
     COPY_WORKBOOK_FAILED,
@@ -46,7 +52,9 @@ import type {
     Workbook,
     CreateCollectionResponse,
     MoveCollectionResponse,
+    MoveCollectionsResponse,
     MoveWorkbookResponse,
+    MoveWorkbooksResponse,
     CopyWorkbookResponse,
     CreateWorkbookResponse,
     UpdateWorkbookResponse,
@@ -90,9 +98,19 @@ export type CollectionsStructureState = {
         data: MoveCollectionResponse | null;
         error: Error | null;
     };
+    moveCollections: {
+        isLoading: boolean;
+        data: MoveCollectionsResponse | null;
+        error: Error | null;
+    };
     moveWorkbook: {
         isLoading: boolean;
         data: MoveWorkbookResponse | null;
+        error: Error | null;
+    };
+    moveWorkbooks: {
+        isLoading: boolean;
+        data: MoveWorkbooksResponse | null;
         error: Error | null;
     };
     copyWorkbook: {
@@ -149,7 +167,17 @@ const initialState: CollectionsStructureState = {
         data: null,
         error: null,
     },
+    moveCollections: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
     moveWorkbook: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    moveWorkbooks: {
         isLoading: false,
         data: null,
         error: null,
@@ -436,6 +464,38 @@ export const collectionsStructure = (
             };
         }
 
+        // Moving collections
+        case MOVE_COLLECTIONS_LOADING: {
+            return {
+                ...state,
+                moveCollections: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case MOVE_COLLECTIONS_SUCCESS: {
+            return {
+                ...state,
+                moveCollections: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case MOVE_COLLECTIONS_FAILED: {
+            return {
+                ...state,
+                moveCollections: {
+                    ...state.moveCollections,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
         // Moving the workbook
         case MOVE_WORKBOOK_LOADING: {
             return {
@@ -462,6 +522,38 @@ export const collectionsStructure = (
                 ...state,
                 moveWorkbook: {
                     ...state.moveWorkbook,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        // Moving workbooks
+        case MOVE_WORKBOOKS_LOADING: {
+            return {
+                ...state,
+                moveWorkbooks: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case MOVE_WORKBOOKS_SUCCESS: {
+            return {
+                ...state,
+                moveWorkbooks: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case MOVE_WORKBOOKS_FAILED: {
+            return {
+                ...state,
+                moveWorkbooks: {
+                    ...state.moveWorkbooks,
                     isLoading: false,
                     error: action.error,
                 },

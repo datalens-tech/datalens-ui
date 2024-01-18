@@ -16,10 +16,20 @@
         margin: 28px 0 0;
     }
 
+    &__select-actions {
+        margin-left: 8px;
+        white-space: nowrap;
+    }
+
+    &__cancel-btn {
+        margin-left: 8px;
+    }
+
     &__title {
         margin: 0 8px 0 0;
         font-size: 24px;
         line-height: 28px;
+        flex: 1;
     }
 
     &__controls {
@@ -34,6 +44,6 @@
         display: flex;
         flex: 1;
         flex-direction: column;
-        margin: 28px 0;
+        margin: 28px 0 60px;
     }
 }

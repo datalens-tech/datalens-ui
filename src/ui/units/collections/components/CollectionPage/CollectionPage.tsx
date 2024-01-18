@@ -10,6 +10,7 @@ import {
     DIALOG_CREATE_WORKBOOK,
     DIALOG_EDIT_COLLECTION,
     DIALOG_MOVE_COLLECTION,
+    DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
 } from 'components/CollectionsStructure';
 import {IamAccessDialog} from 'components/IamAccessDialog/IamAccessDialog';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
@@ -28,6 +29,7 @@ import type {
 } from 'shared/schema';
 import {GetCollectionContentMode} from 'shared/schema/us/types/collections';
 import {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
+import {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import {AppDispatch} from 'store';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import {DL} from 'ui/constants';
@@ -43,11 +45,12 @@ import {
 import {registry} from '../../../../registry';
 import {AddDemoWorkbookDialogContainer} from '../../containers/AddDemoWorkbookDialogContainer/AddDemoWorkbookDialogContainer';
 import {CollectionContentContainer} from '../../containers/CollectionContentContainer/CollectionContentContainer';
-import {selectBreadcrumbsError} from '../../store/selectors';
+import {selectBreadcrumbsError, selectCollectionContentItems} from '../../store/selectors';
 import {GetCollectionContentArgs} from '../../types';
 import {CollectionActionPanel} from '../CollectionActionPanel/CollectionActionPanel';
 import {CollectionActions} from '../CollectionActions/CollectionActions';
 import {CollectionLayout} from '../CollectionLayout/CollectionLayout';
+import {SelectedMap} from '../types';
 
 import './CollectionPage.scss';
 
@@ -118,6 +121,11 @@ export const CollectionPage = React.memo<Props>(
         resetCollectionContent,
         breadcrumbs,
     }) => {
+        const [isOpenSelectionMode, setIsOpenSelectionMode] = React.useState(false);
+        const [selectedMap, setSelectedMap] = React.useState<SelectedMap>({});
+        const countSelected = React.useMemo(() => {
+            return Object.keys(selectedMap).length;
+        }, [selectedMap]);
         const history = useHistory();
 
         const dispatch: AppDispatch = useDispatch();
@@ -127,6 +135,12 @@ export const CollectionPage = React.memo<Props>(
         const curCollectionId = collectionId ?? null;
 
         const breadcrumbsError = useSelector(selectBreadcrumbsError);
+        const contentItems: (CollectionWithPermissions | WorkbookWithPermissions)[] = useSelector(
+            selectCollectionContentItems,
+        );
+
+        const itemsWithPermissionMove = contentItems.filter((item) => item.permissions.move);
+        const canMove = itemsWithPermissionMove.length > 0;
 
         const getCollectionContentRecursively = React.useCallback(
             (
@@ -182,6 +196,11 @@ export const CollectionPage = React.memo<Props>(
             };
         }, [collectionId, rootPermissions, getRootCollectionPermissions]);
 
+        const updateFilters = React.useCallback((newFilters: CollectionContentFilters) => {
+            setSelectedMap({});
+            setFilters(newFilters);
+        }, []);
+
         const initLoadCollection = React.useCallback(() => {
             let collectionPromise: CancellablePromise<unknown>;
             let breadcrumbsPromise: CancellablePromise<unknown>;
@@ -202,6 +221,10 @@ export const CollectionPage = React.memo<Props>(
             };
         }, [collectionId, getCollection, getCollectionBreadcrumbs, resetCollectionInfo]);
 
+        const resetSelected = React.useCallback(() => {
+            setSelectedMap({});
+        }, []);
+
         const refreshContent = React.useCallback(() => {
             resetCollectionContent();
             getCollectionContentRecursively({
@@ -209,7 +232,16 @@ export const CollectionPage = React.memo<Props>(
                 pageSize: PAGE_SIZE,
                 ...filters,
             });
-        }, [curCollectionId, filters, getCollectionContentRecursively, resetCollectionContent]);
+
+            setIsOpenSelectionMode(false);
+            resetSelected();
+        }, [
+            curCollectionId,
+            filters,
+            getCollectionContentRecursively,
+            resetCollectionContent,
+            resetSelected,
+        ]);
 
         const refreshPage = React.useCallback(() => {
             initLoadCollection();
@@ -219,8 +251,12 @@ export const CollectionPage = React.memo<Props>(
         const onChangeCollectionPageViewMode = React.useCallback(
             (value: CollectionPageViewMode) => {
                 setCollectionPageViewMode(value);
+
+                if (value === CollectionPageViewMode.Grid && countSelected === 0) {
+                    setIsOpenSelectionMode(false);
+                }
             },
-            [],
+            [countSelected],
         );
 
         // Information for the current collection
@@ -232,6 +268,8 @@ export const CollectionPage = React.memo<Props>(
         React.useEffect(() => {
             resetCollectionContent();
 
+            resetSelected();
+
             const contentItemsPromise = getCollectionContentRecursively({
                 collectionId: curCollectionId,
                 pageSize: PAGE_SIZE,
@@ -241,7 +279,13 @@ export const CollectionPage = React.memo<Props>(
             return () => {
                 contentItemsPromise.cancel();
             };
-        }, [curCollectionId, filters, getCollectionContentRecursively, resetCollectionContent]);
+        }, [
+            curCollectionId,
+            filters,
+            getCollectionContentRecursively,
+            resetCollectionContent,
+            resetSelected,
+        ]);
 
         const handeCloseMoveDialog = React.useCallback(
             (structureChanged: boolean) => {
@@ -265,7 +309,7 @@ export const CollectionPage = React.memo<Props>(
                                 history.push(`/workbooks/${result.workbookId}`);
                                 return Promise.resolve();
                             } else {
-                                setFilters(DEFAULT_FILTERS);
+                                updateFilters(DEFAULT_FILTERS);
                                 resetCollectionContent();
                                 return getCollectionContentRecursively({
                                     collectionId: curCollectionId,
@@ -285,6 +329,7 @@ export const CollectionPage = React.memo<Props>(
             getCollectionContentRecursively,
             history,
             resetCollectionContent,
+            updateFilters,
         ]);
 
         const isDefaultFilters =
@@ -338,6 +383,101 @@ export const CollectionPage = React.memo<Props>(
             }
         };
 
+        const onUpdateCheckbox = (
+            checked: boolean,
+            type: 'workbook' | 'collection',
+            entityId: string,
+        ) => {
+            if (checked) {
+                setSelectedMap({
+                    ...selectedMap,
+                    [entityId]: {
+                        type,
+                        checked,
+                    },
+                });
+            } else {
+                const mapSelected = {...selectedMap};
+
+                delete mapSelected[entityId];
+
+                setSelectedMap({
+                    ...mapSelected,
+                });
+            }
+
+            if (checked && !isOpenSelectionMode) {
+                setIsOpenSelectionMode(true);
+            }
+        };
+
+        const onSelectAll = (checked: boolean) => {
+            if (checked) {
+                const selected: SelectedMap = {};
+
+                itemsWithPermissionMove.forEach((item) => {
+                    const isWorkbook = 'workbookId' in item;
+                    const id = isWorkbook ? item.workbookId : item.collectionId;
+                    const type = isWorkbook ? 'workbook' : 'collection';
+
+                    selected[id] = {
+                        type,
+                        checked,
+                    };
+                });
+
+                setSelectedMap({
+                    ...selected,
+                });
+            } else {
+                resetSelected();
+            }
+
+            if (checked && !isOpenSelectionMode) {
+                setIsOpenSelectionMode(true);
+            }
+        };
+
+        const setBatchAction = () => {
+            const workbookIds: string[] = [];
+            const collectionIds: string[] = [];
+
+            Object.keys(selectedMap).forEach((key) => {
+                const item = selectedMap[key];
+                if (item.checked) {
+                    if (item.type === 'workbook') {
+                        workbookIds.push(key);
+                    } else {
+                        collectionIds.push(key);
+                    }
+                }
+            });
+
+            dispatch(
+                openDialog({
+                    id: DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
+                    props: {
+                        open: true,
+                        onApply: refreshContent,
+                        onClose: handeCloseMoveDialog,
+                        initialParentId: collection?.collectionId,
+                        workbookIds,
+                        collectionIds,
+                    },
+                }),
+            );
+        };
+
+        const onOpenSelectionMode = () => {
+            setIsOpenSelectionMode(true);
+        };
+
+        const onCancelSelectionMode = () => {
+            setIsOpenSelectionMode(false);
+
+            resetSelected();
+        };
+
         return (
             <div className={b()}>
                 <CollectionActionPanel
@@ -379,7 +519,7 @@ export const CollectionPage = React.memo<Props>(
                                                         );
                                                         return Promise.resolve();
                                                     } else {
-                                                        setFilters(DEFAULT_FILTERS);
+                                                        updateFilters(DEFAULT_FILTERS);
                                                         resetCollectionContent();
                                                         return getCollectionContentRecursively({
                                                             collectionId: curCollectionId,
@@ -451,11 +591,15 @@ export const CollectionPage = React.memo<Props>(
                             description={
                                 curCollectionId && collection ? collection.description : null
                             }
+                            countSelected={countSelected}
+                            isOpenSelectionMode={isOpenSelectionMode}
+                            canMove={canMove}
+                            collectionPageViewMode={collectionPageViewMode}
                             controls={
                                 <CollectionFilters
                                     filters={filters}
                                     controlSize="l"
-                                    onChange={setFilters}
+                                    onChange={updateFilters}
                                     collectionPageViewMode={collectionPageViewMode}
                                     onChangeCollectionPageViewMode={onChangeCollectionPageViewMode}
                                 />
@@ -468,11 +612,15 @@ export const CollectionPage = React.memo<Props>(
                                     }
                                     collectionPageViewMode={collectionPageViewMode}
                                     filters={filters}
-                                    setFilters={setFilters}
+                                    setFilters={updateFilters}
                                     isDefaultFilters={isDefaultFilters}
                                     pageSize={PAGE_SIZE}
                                     refreshPage={refreshPage}
                                     refreshContent={refreshContent}
+                                    contentItems={contentItems}
+                                    countSelected={countSelected}
+                                    selectedMap={selectedMap}
+                                    countItemsWithPermissionMove={itemsWithPermissionMove.length}
                                     canCreateWorkbook={
                                         collectionId && collection
                                             ? collection.permissions.createWorkbook
@@ -480,10 +628,19 @@ export const CollectionPage = React.memo<Props>(
                                     }
                                     onCreateWorkbookClick={handleCreateWorkbook}
                                     onClearFiltersClick={() => {
-                                        setFilters(DEFAULT_FILTERS);
+                                        updateFilters(DEFAULT_FILTERS);
                                     }}
+                                    isOpenSelectionMode={isOpenSelectionMode}
+                                    canMove={canMove}
+                                    setBatchAction={setBatchAction}
+                                    onUpdateCheckbox={onUpdateCheckbox}
+                                    resetSelected={resetSelected}
+                                    onSelectAll={onSelectAll}
                                 />
                             }
+                            onOpenSelectionMode={onOpenSelectionMode}
+                            onCancelSelectionMode={onCancelSelectionMode}
+                            onSelectAll={onSelectAll}
                         />
                     </React.Fragment>
                 )}
@@ -509,7 +666,7 @@ export const CollectionPage = React.memo<Props>(
                                 history.push(`/workbooks/${result.workbookId}`);
                                 return Promise.resolve();
                             } else {
-                                setFilters(DEFAULT_FILTERS);
+                                updateFilters(DEFAULT_FILTERS);
                                 resetCollectionContent();
                                 return getCollectionContentRecursively({
                                     collectionId: curCollectionId,

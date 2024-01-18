@@ -2,9 +2,10 @@ import {expect} from '@playwright/test';
 
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage, slct} from '../../../utils';
-import {SectionDatasetQA} from '../../../../src/shared';
+import {FieldEditorQa, SectionDatasetQA, VisualizationItemQa} from '../../../../src/shared';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {DialogParameterDataTypes} from '../../../page-objects/common/DialogParameter';
+import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Fields', () => {
@@ -16,7 +17,7 @@ datalensTest.describe('Wizard', () => {
             const wizardPage = new WizardPage({page});
             const datasetFields = page.locator(slct(SectionDatasetQA.DatasetFields));
 
-            // 1. write the formula in the text field
+            // 1. Write the formula in the text field
             const newField1 = 'NewFormulaField1';
             await expect(
                 datasetFields.locator(slct(SectionDatasetQA.ItemTitle), {hasText: newField1}),
@@ -34,7 +35,7 @@ datalensTest.describe('Wizard', () => {
             await expect(newField1Locator).toBeVisible();
             await expect(newField1Locator).not.toHaveClass(/item-error/);
 
-            // 2. selecting a field for a formula by click
+            // 2. Selecting a field for a formula by click
             const newField2 = 'NewFormulaField2';
             await expect(
                 datasetFields.locator(slct(SectionDatasetQA.ItemTitle), {hasText: newField2}),
@@ -49,7 +50,7 @@ datalensTest.describe('Wizard', () => {
             await expect(newField2Locator).toBeVisible();
             await expect(newField2Locator).not.toHaveClass(/item-error/);
 
-            // 3. create a field with an invalid formula
+            // 3. Create a field with an invalid formula
             const invalidField = 'NewInvalidField';
             await expect(
                 datasetFields.locator(slct(SectionDatasetQA.ItemTitle), {hasText: invalidField}),
@@ -57,7 +58,7 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.fieldEditor.open();
             await wizardPage.fieldEditor.setName(invalidField);
             await wizardPage.fieldEditor.setFormula('invalid formula');
-            // an error icon should be displayed in the formula editor
+            // An error icon should be displayed in the formula editor
             await expect(page.locator('.dl-field-editor__formula-editor-glyph')).toBeVisible();
             await wizardPage.fieldEditor.clickToApplyButton();
             const invalidFieldLocator = datasetFields.locator(slct(invalidField), {
@@ -66,7 +67,7 @@ datalensTest.describe('Wizard', () => {
             await expect(invalidFieldLocator).toBeVisible();
             await expect(invalidFieldLocator).toHaveClass(/item-error/);
 
-            // 4. create a formula field with a parameter
+            // 4. Create a formula field with a parameter
             const parameter = 'p1';
             const newField3 = 'NewFormulaFieldWithParameter';
             await wizardPage.parameterEditor.openCreateParameter();
@@ -116,7 +117,7 @@ datalensTest.describe('Wizard', () => {
             const wizardPage = new WizardPage({page});
             const datasetFields = page.locator(slct(SectionDatasetQA.DatasetFields));
 
-            // add first field with default name
+            // Add first field with default name
             let newHierarchyName = 'New hierarchy';
             await wizardPage.openHierarchyEditor();
             await wizardPage.hierarchyEditor.selectFields(['city', 'country']);
@@ -127,7 +128,7 @@ datalensTest.describe('Wizard', () => {
             await expect(hierarchyLocator).toBeVisible();
             await expect(hierarchyLocator).not.toHaveClass(/item-error/);
 
-            // add second field with default name
+            // Add second field with default name
             // The created hierarchies should be automatically named "New hierarchy (N)"
             newHierarchyName = 'New hierarchy (1)';
             await wizardPage.openHierarchyEditor();
@@ -156,5 +157,28 @@ datalensTest.describe('Wizard', () => {
             });
             await expect(newFieldLocator).toBeVisible();
         });
+
+        datalensTest(
+            'Auto-generation of a formula when adding a dimension to a section with measures',
+            async ({page}) => {
+                const wizardPage = new WizardPage({page});
+
+                const fieldName = 'city';
+                await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, fieldName);
+
+                const sectionField = page
+                    .locator(slct(PlaceholderName.Y))
+                    .locator(slct(fieldName), {
+                        hasText: fieldName,
+                    });
+                await expect(sectionField).toBeVisible();
+
+                await sectionField.hover();
+                await sectionField.locator(slct(VisualizationItemQa.FormulaIcon)).click();
+                const fieldEditor = page.locator(slct(FieldEditorQa.Dialog));
+                await expect(fieldEditor).toBeVisible();
+                await wizardPage.fieldEditor.checkFormula('countd(str([city]))');
+            },
+        );
     });
 });
