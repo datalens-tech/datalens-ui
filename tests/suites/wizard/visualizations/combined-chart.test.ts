@@ -5,11 +5,12 @@ import {openTestPage, slct} from '../../../utils';
 import {ChartKitQa, WizardPageQa, WizardVisualizationId} from '../../../../src/shared';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
+import {RobotChartsWizardUrls} from '../../../utils/constants';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Visualizations. Combined chart', () => {
-        datalensTest.beforeEach(async ({page, config}) => {
-            await openTestPage(page, config.wizard.urls.WizardBasicDataset);
+        datalensTest.beforeEach(async ({page}) => {
+            await openTestPage(page, RobotChartsWizardUrls.WizardBasicDataset);
             const wizardPage = new WizardPage({page});
             await wizardPage.setVisualization(WizardVisualizationId.CombinedChart);
         });
@@ -20,7 +21,7 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.sectionVisualization.selectCombinedChartLayerVisualization(
                 WizardVisualizationId.Column,
             );
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'sales');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
 
             const chartLocator = page.locator(slct(WizardPageQa.SectionPreview));
             const previewLoader = chartLocator.locator(slct(ChartKitQa.Loader));
