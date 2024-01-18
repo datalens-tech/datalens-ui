@@ -100,11 +100,13 @@ export function adjustWidgetLayout({
 
     const scrollableNode = node.querySelector(`.${CHARTKIT_SCROLLABLE_NODE_CLASSNAME}`);
     const mainNode = node.querySelector(`.${CHARTKIT_MAIN_CLASSNAME}`);
-
     const errorNode = node.querySelector(`.${CHARTKIT_ERROR_NODE_CLASSNAME}`);
 
+    const rootNodeTopPosition = node.getBoundingClientRect().top;
+
     if (errorNode && !scrollableNode) {
-        const fullContentHeight = errorNode.scrollHeight;
+        const errorOffsetFromRoot = errorNode.getBoundingClientRect().top - rootNodeTopPosition;
+        const fullContentHeight = errorNode.scrollHeight + errorOffsetFromRoot;
 
         const contentHeight =
             fullContentHeight > MAX_AUTO_HEIGHT_PX ? MAX_AUTO_HEIGHT_PX : fullContentHeight;
@@ -124,9 +126,7 @@ export function adjustWidgetLayout({
         return;
     }
 
-    const rootNodeTopPosition = node.getBoundingClientRect().top;
     const scrollableNodeTopPosition = scrollableNode.getBoundingClientRect().top;
-
     const scrollableNodeTopOffsetFromRoot = scrollableNodeTopPosition - rootNodeTopPosition;
     const belowLyingNodesHeight = collectBelowLyingNodesHeight(scrollableNode, node, 0);
 

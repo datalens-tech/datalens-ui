@@ -38,6 +38,7 @@ import {
     ResolveWidgetDataRef,
 } from '../types';
 
+import {useResizeObserver} from './useAutoHeightResizeObserver';
 import {LoadingChartHookProps, useLoadingChart} from './useLoadingChart';
 
 type LoadingChartWidgetHookProps = Pick<
@@ -121,7 +122,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
     const resolveWidgetDataRef = React.useRef<ResolveWidgetDataRef>();
     const mutationObserver = React.useRef<MutationObserver | null>(null);
-    const resizeObserver = React.useRef<ResizeObserver | null>(null);
 
     const isNewRelations = useSelector(selectIsNewRelations);
 
@@ -152,19 +152,14 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             if (renderedData?.status === 'success') {
                 pushStats(renderedData, 'dash', dataProvider);
             }
+
             const newAutoHeight = isWidgetTypeWithAutoHeight(loadedWidgetType)
                 ? tabs[tabIndex].autoHeight
                 : false;
             if (loadedWidgetType === DASH_WIDGET_TYPES.TABLE) {
-                if (document.fonts?.ready) {
-                    document.fonts.ready.then(() => {
-                        adjustLayout(!newAutoHeight);
-                    });
-                } else {
-                    setTimeout(() => {
-                        adjustLayout(!newAutoHeight);
-                    }, WIDGET_DEBOUNCE_TIMEOUT);
-                }
+                document.fonts.ready.then(() => {
+                    adjustLayout(!newAutoHeight);
+                });
             } else {
                 adjustLayout(!newAutoHeight);
             }
@@ -602,55 +597,22 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     }, [loadedData?.isNewWizard, isLoadedWidgetWizard]);
 
     /**
-     * Resize observer adjustLayout called on screen resize
+     * Resize observer adjustLayout
      */
-    const isAutoHeight = tabs[tabIndex].autoHeight;
-    const isInitResizeCall = React.useRef(true);
-
+    const autoHeight = Boolean(tabs[tabIndex].autoHeight);
     const debounceResizeAdjustLayot = React.useCallback(
         debounce(() => {
-            // Skipping first call as it's init call
-            if (isInitResizeCall.current) {
-                isInitResizeCall.current = false;
-                return;
-            }
-
-            adjustLayout(!isAutoHeight);
+            adjustLayout(!autoHeight);
         }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-        [adjustLayout, isAutoHeight],
+        [adjustLayout, autoHeight],
     );
-    const disconnectResizeObserver = React.useCallback(() => {
-        if (resizeObserver.current) {
-            resizeObserver.current.disconnect();
-            resizeObserver.current = null;
-        }
-        isInitResizeCall.current = true;
-    }, [resizeObserver, isInitResizeCall]);
 
-    React.useLayoutEffect(() => {
-        if (!rootNodeRef.current) {
-            return;
-        }
-
-        if (!isAutoHeight) {
-            disconnectResizeObserver();
-            return;
-        }
-
-        if (!resizeObserver.current) {
-            resizeObserver.current = new ResizeObserver(debounceResizeAdjustLayot);
-            resizeObserver.current.observe(rootNodeRef.current);
-        }
-    }, [
-        isAutoHeight,
-        resizeObserver,
+    useResizeObserver({
+        onResize: debounceResizeAdjustLayot,
+        autoHeight,
+        isInit,
         rootNodeRef,
-        debounceResizeAdjustLayot,
-        disconnectResizeObserver,
-    ]);
-
-    // Removind resizeObserver
-    React.useEffect(() => () => disconnectResizeObserver(), [disconnectResizeObserver]);
+    });
 
     /**
      * set force load all charts (no matter if they are in viewport or not) if there is loadOnlyVisibleCharts setting disabled

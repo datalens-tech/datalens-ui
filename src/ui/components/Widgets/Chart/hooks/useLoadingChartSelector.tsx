@@ -31,6 +31,7 @@ import {
     ResolveWidgetControlDataRefArgs,
 } from '../types';
 
+import {useResizeObserver} from './useAutoHeightResizeObserver';
 import {LoadingChartHookProps, useLoadingChart} from './useLoadingChart';
 
 type LoadingChartSelectorHookProps = Pick<
@@ -56,7 +57,7 @@ type LoadingChartSelectorHookProps = Pick<
         chartId: string;
     };
 
-const WIDGET_DEBOUNCE_TIMEOUT = 300;
+// const WIDGET_DEBOUNCE_TIMEOUT = 300;
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 600;
 export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) => {
     const {
@@ -151,9 +152,9 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
             const newAutoHeight = Boolean(props.data.autoHeight);
             // fix same as for table at CHARTS-7640
             if (widgetType === DashTabItemControlSourceType.External) {
-                setTimeout(() => {
+                document.fonts.ready.then(() => {
                     adjustLayout(!newAutoHeight);
-                }, WIDGET_DEBOUNCE_TIMEOUT);
+                });
             } else {
                 adjustLayout(!newAutoHeight);
             }
@@ -331,6 +332,24 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
             resolveWidgetDataRef,
         ],
     );
+
+    /**
+     * Resize observer adjustLayout
+     */
+    const autoHeight = Boolean(props.data.autoHeight);
+    const debounceResizeAdjustLayot = React.useCallback(
+        debounce(() => {
+            adjustLayout(!autoHeight);
+        }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
+        [adjustLayout, autoHeight],
+    );
+
+    useResizeObserver({
+        onResize: debounceResizeAdjustLayot,
+        autoHeight,
+        isInit,
+        rootNodeRef,
+    });
 
     /**
      * changed widget content size

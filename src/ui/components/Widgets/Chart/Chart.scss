@@ -227,4 +227,12 @@ $fullscreenZIndex: 999;
         top: -46px;
         right: 12px;
     }
+
+    // Resseing height 100% for table errors
+    // if autoHeight enabled there error doesn't shrink if container is bigger than error itself
+    &_table {
+        .datalens-chartkit-error {
+            height: auto;
+        }
+    }
 }
