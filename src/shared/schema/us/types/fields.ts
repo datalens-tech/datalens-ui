@@ -47,6 +47,7 @@ export interface EntryNavigationFields {
     scope: string;
     type: string;
     key: string;
+    alias?: string | null;
     displayAlias?: string | null;
     meta: EntryFieldMeta;
     createdBy: string;
@@ -66,6 +67,8 @@ export interface EntryFavoriteFields {
     scope: string;
     type: string;
     key: string;
+    alias?: string | null;
+    displayAlias?: string | null;
     createdBy: string;
     updatedAt: string;
     createdAt: string;
