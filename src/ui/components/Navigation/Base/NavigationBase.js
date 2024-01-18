@@ -175,7 +175,7 @@ class NavigationBase extends React.Component {
             dialog: EntryDialogName.EditFavoritesAlias,
             dialogProps: {
                 entryId: entry.entryId,
-                alias: entry.alias,
+                displayAlias: entry.displayAlias,
             },
         });
         this.update(response, EntryDialogName.EditFavoritesAlias, entry);
