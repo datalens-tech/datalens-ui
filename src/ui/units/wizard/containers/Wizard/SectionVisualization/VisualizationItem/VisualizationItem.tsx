@@ -28,6 +28,7 @@ import {
     Shared,
     Sort,
     SortDirection,
+    VisualizationItemQa,
     WizardVisualizationId,
     isAllAxisModesAvailable,
     isMeasureName,
@@ -413,6 +414,7 @@ class VisualizationItem extends React.Component<Props, State> {
                     )}
                     {showFormulaIcon && (
                         <div
+                            data-qa={VisualizationItemQa.FormulaIcon}
                             className="item-right-icon formula-icon"
                             onClick={(event) => {
                                 this.openDialogFieldEditor(item);

@@ -36,6 +36,24 @@
         padding: 11px 10px;
         text-align: left;
         vertical-align: middle;
+
+        color: inherit;
+        text-decoration: none;
+
+        &:last-child {
+            padding-right: 12px;
+            padding-left: 0;
+        }
+
+        &:first-child {
+            padding-right: 0;
+            padding-left: 12px;
+            width: 27px;
+        }
+
+        &_disabled {
+            pointer-events: none;
+        }
     }
 
     &__content-row:last-child &__content-cell {

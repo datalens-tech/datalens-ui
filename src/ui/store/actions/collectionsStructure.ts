@@ -27,6 +27,12 @@ import {
     CREATE_WORKBOOK_LOADING,
     CREATE_WORKBOOK_SUCCESS,
     CREATE_WORKBOOK_FAILED,
+    MOVE_COLLECTIONS_LOADING,
+    MOVE_COLLECTIONS_SUCCESS,
+    MOVE_COLLECTIONS_FAILED,
+    MOVE_WORKBOOKS_LOADING,
+    MOVE_WORKBOOKS_SUCCESS,
+    MOVE_WORKBOOKS_FAILED,
     MOVE_COLLECTION_LOADING,
     MOVE_COLLECTION_SUCCESS,
     MOVE_COLLECTION_FAILED,
@@ -51,6 +57,8 @@ import type {
     CreateCollectionResponse,
     GetRootCollectionPermissionsResponse,
     MoveCollectionResponse,
+    MoveCollectionsResponse,
+    MoveWorkbooksResponse,
     MoveWorkbookResponse,
     CollectionWithPermissions,
     CopyWorkbookResponse,
@@ -482,6 +490,131 @@ export const createWorkbook = ({
     };
 };
 
+type MoveCollectionsLoadingAction = {
+    type: typeof MOVE_COLLECTIONS_LOADING;
+};
+type MoveCollectionsSuccessAction = {
+    type: typeof MOVE_COLLECTIONS_SUCCESS;
+    data: MoveCollectionsResponse;
+};
+type MoveCollectionsFailedAction = {
+    type: typeof MOVE_COLLECTIONS_FAILED;
+    error: Error | null;
+};
+type MoveCollectionsAction =
+    | MoveCollectionsLoadingAction
+    | MoveCollectionsSuccessAction
+    | MoveCollectionsFailedAction;
+
+export const moveCollections = ({
+    collectionIds,
+    parentId,
+}: {
+    collectionIds: string[];
+    parentId: string | null;
+}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: MOVE_COLLECTIONS_LOADING,
+        });
+
+        return getSdk()
+            .us.moveCollections({
+                collectionIds,
+                parentId,
+            })
+            .then((data) => {
+                dispatch({
+                    type: MOVE_COLLECTIONS_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/moveCollections failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: MOVE_COLLECTIONS_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
+type MoveWorkbooksLoadingAction = {
+    type: typeof MOVE_WORKBOOKS_LOADING;
+};
+type MoveWorkbooksSuccessAction = {
+    type: typeof MOVE_WORKBOOKS_SUCCESS;
+    data: MoveWorkbooksResponse;
+};
+type MoveWorkbooksFailedAction = {
+    type: typeof MOVE_WORKBOOKS_FAILED;
+    error: Error | null;
+};
+type MoveWorkbooksAction =
+    | MoveWorkbooksLoadingAction
+    | MoveWorkbooksSuccessAction
+    | MoveWorkbooksFailedAction;
+
+export const moveWorkbooks = ({
+    workbookIds,
+    collectionId,
+}: {
+    workbookIds: string[];
+    collectionId: string | null;
+}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: MOVE_WORKBOOKS_LOADING,
+        });
+        return getSdk()
+            .us.moveWorkbooks({
+                workbookIds,
+                collectionId,
+            })
+            .then((data) => {
+                dispatch({
+                    type: MOVE_WORKBOOKS_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/moveWorkbooks failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: MOVE_WORKBOOKS_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
 type MoveCollectionLoadingAction = {
     type: typeof MOVE_COLLECTION_LOADING;
 };
@@ -834,6 +967,8 @@ export type CollectionsStructureAction =
     | CreateWorkbookAction
     | MoveCollectionAction
     | MoveWorkbookAction
+    | MoveCollectionsAction
+    | MoveWorkbooksAction
     | CopyWorkbookAction
     | UpdateWorkbookAction
     | UpdateCollectionAction;
