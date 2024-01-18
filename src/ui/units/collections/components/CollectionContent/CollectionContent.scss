@@ -13,4 +13,11 @@
     &__loader {
         margin-top: 12px;
     }
+
+    &__batch-panel {
+        position: fixed;
+        width: 100%;
+        max-width: 896px;
+        bottom: 8px;
+    }
 }
