@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
+import {WizardVisualizationId} from '../../../../src/shared';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, waitForCondition} from '../../../utils';
@@ -18,12 +18,7 @@ datalensTest.describe('Wizard Fields', () => {
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Region');
 
             await wizardPage.clickFxForItem('Region');
-
-            await waitForCondition(async () => {
-                const formula = await wizardPage.fieldEditor.getFormula();
-
-                return formula === 'countd(str([Region]))';
-            });
+            await wizardPage.fieldEditor.checkFormula('countd(str([Region]))');
         },
     );
 

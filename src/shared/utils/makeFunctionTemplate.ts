@@ -1,3 +1,3 @@
-export const makeFunctionTemplate = <T>(): T => {
-    return (() => {}) as T;
+export const makeFunctionTemplate = <T>(options?: {isReduxThunkActionTemplate?: boolean}): T => {
+    return (options?.isReduxThunkActionTemplate ? () => () => {} : () => {}) as T;
 };

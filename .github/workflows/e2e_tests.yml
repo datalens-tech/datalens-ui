@@ -8,7 +8,7 @@ on:
         description: 'for the return-dispatch action'
         required: false
       control-api:
-        description: 'custom control-api version' 
+        description: 'custom control-api version'
       data-api:
         description: 'custom data-api version'
       us:
@@ -22,7 +22,7 @@ env:
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
-  
+
 jobs:
   run-e2e:
     name: Install Datalens and Run E2E Tests
@@ -46,13 +46,13 @@ jobs:
         working-directory: ./tests
         run: docker compose -f ./docker-compose.e2e.yml up -d & cd .. && npm ci && npm run test:install:chromium & wait
 
-      - name: Run Test 
-        run: E2E_DOMAIN="http://localhost:8080" NO_AUTH=true npm run test:e2e:opensource
-      
+      - name: Run Test
+        run: E2E_DOMAIN="http://localhost:8080" E2E_RETRY_TIMES=1 NO_AUTH=true npm run test:e2e:opensource
+
       - name: Run Docker Shutdown
         working-directory: ./tests
         run: docker compose -f ./docker-compose.e2e.yml down
-      
+
       - uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pages: write 
+      pages: write
     continue-on-error: true
     env:
       # Unique URL path for each workflow run attempt
@@ -96,14 +96,14 @@ jobs:
         run: |
           git add .
           git commit -m "workflow: add HTML report for run-id ${{ github.run_id }} (attempt:  ${{ github.run_attempt }})"
-  
+
           while true; do
             git pull --rebase
             if [ $? -ne 0 ]; then
               echo "Failed to rebase. Please review manually."
               exit 1
             fi
-  
+
             git push
             if [ $? -eq 0 ]; then
               echo "Successfully pushed HTML report to repo."
@@ -113,6 +113,6 @@ jobs:
       - name: Output Report URL as Worfklow Annotation
         run: |
           FULL_HTML_REPORT_URL=https://datalens-tech.github.io/datalens-ui/$HTML_REPORT_URL_PATH/report
-  
+
           echo "::notice title=📋 Published Playwright Test Report::$FULL_HTML_REPORT_URL"
 

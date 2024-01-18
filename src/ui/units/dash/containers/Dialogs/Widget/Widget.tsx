@@ -151,18 +151,19 @@ class Widget extends React.PureComponent<Props, State> {
             currentTab = nextProps.widgetsCurrentTab[nextProps.id];
             tabIndex = nextProps.data.tabs.findIndex(({id}) => id === currentTab);
         }
+        tabIndex = tabIndex === -1 ? 0 : tabIndex;
 
         return {
             hideTitle: nextProps.data.tabs.length === 1 && nextProps.data.hideTitle,
             prevVisible: nextProps.visible,
             error: false,
             data: nextProps.data,
-            tabIndex: tabIndex === -1 ? 0 : tabIndex,
+            tabIndex,
             isManualTitle: Boolean(nextProps.id),
             selectedWidgetType: null,
             selectedEntryType: null,
             // new params logic, local state for current tab params
-            tabParams: nextProps.data.tabs[0]?.params || {},
+            tabParams: nextProps.data.tabs[tabIndex]?.params || {},
             legacyChanged: 0,
         };
     }
