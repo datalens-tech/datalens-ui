@@ -112,5 +112,14 @@ export type ChartControlRef =
 
 export type ValidationErrorData = {
     isValueRequired?: boolean;
-    value?: string | string[];
+    value?:
+        | string
+        | string[]
+        | {
+              from: string | string[];
+              to: string | string[];
+          };
+    index?: string;
 };
+
+export type IndexedValidationErrorData = ValidationErrorData & {index: string};
