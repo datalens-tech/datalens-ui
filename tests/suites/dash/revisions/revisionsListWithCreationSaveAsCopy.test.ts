@@ -8,7 +8,7 @@ import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
 const PARAMS = {
-    START_TEXT: 'New dash',
+    INITIAL_TITLE: 'New dash',
 };
 
 const waitCheckActualizeRevisionList = async ({
@@ -50,7 +50,7 @@ datalensTest.describe('Dashboard Versioning', () => {
         await openTestPage(page, '/dashboards');
         await dashboardPage.createDashboard({
             editDash: async () => {
-                await dashboardPage.addText(PARAMS.START_TEXT);
+                await dashboardPage.addTitle(PARAMS.INITIAL_TITLE);
             },
             dashName,
         });

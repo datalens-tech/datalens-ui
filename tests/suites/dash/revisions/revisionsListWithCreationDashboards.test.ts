@@ -16,7 +16,7 @@ import {ActionPanelEntryContextMenuQa} from '../../../../src/shared/constants/qa
 import {DashRevisions} from '../../../../src/shared';
 
 const PARAMS = {
-    START_TEXT: 'New dash',
+    INITIAL_TITLE: 'New dash',
 };
 
 const waitCheckActualizeRevisionList = async ({
@@ -58,7 +58,7 @@ datalensTest.describe('Dashboard Versioning', () => {
         await openTestPage(page, '/dashboards');
         await dashboardPage.createDashboard({
             editDash: async () => {
-                await dashboardPage.addText(PARAMS.START_TEXT);
+                await dashboardPage.addTitle(PARAMS.INITIAL_TITLE);
             },
             dashName,
         });
