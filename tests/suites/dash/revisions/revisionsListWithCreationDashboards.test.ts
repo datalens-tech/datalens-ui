@@ -15,7 +15,9 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ActionPanelEntryContextMenuQa} from '../../../../src/shared/constants/qa/action-panel';
 import {DashRevisions} from '../../../../src/shared';
 
-const TIMEOUT = 4000;
+const PARAMS = {
+    START_TEXT: 'New dash',
+};
 
 const waitCheckActualizeRevisionList = async ({
     page,
@@ -54,8 +56,12 @@ datalensTest.describe('Dashboard Versioning', () => {
         const dashName = `e2e-test-dash-revisions-${getUniqueTimestamp()}`;
 
         await openTestPage(page, '/dashboards');
-        await dashboardPage.createDashboard(dashName);
-        await page.waitForTimeout(TIMEOUT);
+        await dashboardPage.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addText(PARAMS.START_TEXT);
+            },
+            dashName,
+        });
     });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
@@ -66,7 +72,6 @@ datalensTest.describe('Dashboard Versioning', () => {
         'Creating a dashboard, checking the rendering of the revision list',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
-            await dashboardPage.exitEditMode();
             await dashboardPage.waitForOpeningRevisionsList();
 
             let items = await page.$$(slct(COMMON_SELECTORS.REVISIONS_LIST_ROW));
@@ -104,6 +109,7 @@ datalensTest.describe('Dashboard Versioning', () => {
         'Creating a dashboard, editing, checking the updated revision list',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
+            await dashboardPage.enterEditMode();
             await dashboardPage.editDashWithoutSaving();
             await dashboardPage.clickSaveButton();
             await dashboardPage.waitForOpeningRevisionsList();
@@ -118,6 +124,7 @@ datalensTest.describe('Dashboard Versioning', () => {
         'Creating a dashboard, editing, saving as a draft, making the draft version relevant',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
+            await dashboardPage.enterEditMode();
             await dashboardPage.makeDraft();
             await dashboardPage.waitForOpeningRevisionsList();
 
@@ -183,6 +190,7 @@ datalensTest.describe('Dashboard Versioning', () => {
         'Creating a dashboard, editing, saving and publishing, checking the updated revision list',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
+            await dashboardPage.enterEditMode();
             await dashboardPage.makeDraft();
             await dashboardPage.enterEditMode();
             await dashboardPage.editDashWithoutSaving();
