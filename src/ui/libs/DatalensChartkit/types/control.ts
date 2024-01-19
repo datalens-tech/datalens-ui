@@ -20,6 +20,9 @@ interface ControlSelect extends ControlBase {
     multiselect: boolean;
     searchable: boolean;
     content: {title: string; value: string}[];
+    required?: boolean;
+    placeholder?: string;
+    hasValidationError?: boolean;
 }
 
 interface ControlTextarea extends ControlBase {
@@ -32,6 +35,8 @@ interface ControlInput extends ControlBase {
     placeholder: string;
     labelInside: boolean;
     innerLabel: string;
+    required?: boolean;
+    hasValidationError?: boolean;
 }
 
 interface ControlCheckbox extends ControlBase {
@@ -42,6 +47,9 @@ interface ControlDatepicker extends ControlBase {
     type: 'datepicker';
     minDate: string | null;
     maxDate: string | null;
+    required?: boolean;
+    emptyValueText?: string;
+    hasValidationError?: boolean;
 }
 
 export interface ControlRangeDatepicker extends ControlBase {
@@ -50,6 +58,9 @@ export interface ControlRangeDatepicker extends ControlBase {
     paramTo: string;
     minDate: string | null;
     maxDate: string | null;
+    required?: boolean;
+    emptyValueText?: string;
+    hasValidationError?: boolean;
 }
 
 interface ControlButton extends ControlBase {
@@ -74,3 +85,9 @@ export type ActiveControl =
     | ControlButton;
 
 export type Control = ActiveControl | ControlLineBreak;
+
+export type ValidatedControl =
+    | ControlSelect
+    | ControlInput
+    | ControlDatepicker
+    | ControlRangeDatepicker;

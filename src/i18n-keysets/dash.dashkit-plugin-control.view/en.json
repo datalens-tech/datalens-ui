@@ -1,6 +1,7 @@
 {
   "button_details": "Details",
   "button_retry": "Retry",
+  "label-control-error": "An error has occurred",
   "placeholder_empty": "No selected values",
   "value_required": "This field is required",
   "value_undefined": "Not defined"

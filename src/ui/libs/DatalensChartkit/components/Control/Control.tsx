@@ -2,24 +2,23 @@ import React from 'react';
 
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
-import {StringParams} from 'shared';
-import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import {Feature, StringParams} from 'shared';
+import {IndexedValidationErrorData} from 'ui/components/DashKit/plugins/Control/types';
+import {isValidationError} from 'ui/components/DashKit/plugins/Control/utils';
 import {isMobileView} from 'ui/utils/mobile';
+import Utils from 'ui/utils/utils';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'units/dash/modules/helpers';
 
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../ChartKit/helpers/constants';
-import {i18n} from '../../ChartKit/modules/i18n/i18n';
 import {wrapToArray} from '../../helpers/helpers';
 import {CLICK_ACTION_TYPE, CONTROL_TYPE} from '../../modules/constants/constants';
 import {
     ActiveControl,
-    ControlsOnlyWidget,
-    OnChangeData,
-    OnLoadData,
     Control as TControl,
     ControlRangeDatepicker as TControlRangeDatepicker,
-    WidgetProps,
+    ValidatedControl,
 } from '../../types';
 
 import {
@@ -31,31 +30,15 @@ import {
     ControlSelect,
     ControlTextArea,
 } from './Items/Items';
+import {
+    ControlItemProps,
+    ControlProps,
+    ControlState,
+    ControlValue,
+    SimpleControlValue,
+} from './types';
 
 import './Control.scss';
-
-type ControlProps<TProviderData = unknown> = {
-    data: ControlsOnlyWidget & TProviderData;
-    getControls: (params: StringParams) => Promise<(ControlsOnlyWidget & TProviderData) | null>;
-    onLoad: (data?: OnLoadData) => void;
-    onChange: (
-        data: OnChangeData,
-        state: {forceUpdate: boolean},
-        callExternalOnChange?: boolean,
-        callChangeByClick?: boolean,
-    ) => void;
-    initialParams?: ChartInitialParams;
-} & Omit<WidgetProps, 'data'>;
-
-interface ControlState {
-    status: 'loading' | 'done' | 'error';
-    data: ControlProps['data'];
-    // TODO: think about to move logic to componentDidUpdate
-    // TODO: think about to move logic to ChartKit by calling onChange in onLoad, and not immediately
-    savedData: ControlProps['data'];
-    params: StringParams;
-    statePriority: boolean;
-}
 
 function isNotSingleParam(control: TControl): control is TControlRangeDatepicker {
     return 'paramFrom' in control && 'paramTo' in control;
@@ -68,6 +51,8 @@ const STATUS = {
 } as const;
 
 const b = block('chartkit-control');
+
+const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 
 class Control<TProviderData> extends React.PureComponent<
     ControlProps<TProviderData>,
@@ -109,6 +94,7 @@ class Control<TProviderData> extends React.PureComponent<
         savedData: this.props.data,
         params: this.props.data.params,
         statePriority: false,
+        validationErrors: {},
     };
 
     componentDidMount() {
@@ -168,45 +154,25 @@ class Control<TProviderData> extends React.PureComponent<
         );
     }
 
-    onChange(control: ActiveControl, value: string | string[] | {from: string; to: string}) {
-        let newParams = {...this.params};
-        let callExternalOnChange = this.isStandalone;
-        let callChangeByClick = false;
-        const {type, param, updateControlsOnChange, updateOnChange, postUpdateOnChange, operation} =
-            control;
+    onChange(control: ActiveControl, value: SimpleControlValue, index: number) {
+        const {type, updateControlsOnChange, updateOnChange, postUpdateOnChange} = control;
 
-        // checks for type, to disable possible use in other controls
-        if (
-            control.type === 'range-datepicker' &&
-            control.paramFrom &&
-            control.paramTo &&
-            typeof value === 'object' &&
-            !Array.isArray(value)
-        ) {
-            newParams[control.paramFrom] = [value.from];
-            newParams[control.paramTo] = [value.to];
-        } else if (
-            control.type === 'button' &&
-            control.onClick &&
-            control.onClick.action === CLICK_ACTION_TYPE.SET_PARAMS &&
-            control.onClick.args
-        ) {
-            newParams = control.onClick.args;
-            callExternalOnChange = true;
-            callChangeByClick = true;
-        } else if (
-            control.type === 'button' &&
-            control.onClick &&
-            control.onClick.action === CLICK_ACTION_TYPE.SET_INITIAL_PARAMS &&
-            this.props.initialParams?.params
-        ) {
-            newParams = this.props.initialParams?.params;
-            callExternalOnChange = true;
-            callChangeByClick = true;
-        } else {
-            newParams[param] = wrapToArray(value as string).map(
-                (value: string) => addOperationForValue({value, operation}) as string,
-            );
+        const {newParams, callExternalOnChange, callChangeByClick} = this.getChangedParams(
+            control,
+            value,
+        );
+
+        const isValid =
+            Utils.isEnabledFeature(Feature.SelectorRequiredValue) && 'required' in control
+                ? this.checkValueValidation({
+                      required: control.required,
+                      value,
+                      index: String(index),
+                  })
+                : true;
+
+        if (!isValid) {
+            return;
         }
 
         if (!isEqual(newParams, this.params) || type === CONTROL_TYPE.BUTTON) {
@@ -245,20 +211,24 @@ class Control<TProviderData> extends React.PureComponent<
         const {label, param} = control;
 
         const notSingleParam = isNotSingleParam(control);
+        const value = isNotSingleParam(control)
+            ? {
+                  from: unwrapFromArrayAndSkipOperation(this.params[control.paramFrom]),
+                  to: unwrapFromArrayAndSkipOperation(this.params[control.paramTo]),
+              }
+            : unwrapFromArrayAndSkipOperation(this.params[param]);
 
-        const props = {
+        let props: ControlItemProps = {
             ...control,
             className: b('item'),
             key: index + (param || (isNotSingleParam(control) && control.paramFrom) || label),
-            value: isNotSingleParam(control)
-                ? {
-                      from: unwrapFromArrayAndSkipOperation(this.params[control.paramFrom]),
-                      to: unwrapFromArrayAndSkipOperation(this.params[control.paramTo]),
-                  }
-                : unwrapFromArrayAndSkipOperation(this.params[param]),
-            onChange: (value: string | string[] | {from: string; to: string}) =>
-                this.onChange(control, value),
+            value,
+            onChange: (value: SimpleControlValue) => this.onChange(control, value, index),
         };
+
+        if (Utils.isEnabledFeature(Feature.SelectorRequiredValue) && 'required' in control) {
+            props = {...props, ...this.getValidationProps(control, value, index)};
+        }
 
         switch (control.type) {
             case CONTROL_TYPE.SELECT:
@@ -284,7 +254,7 @@ class Control<TProviderData> extends React.PureComponent<
         const {status} = this.state;
 
         if (status === STATUS.ERROR) {
-            return <div className={b('error')}>{i18n('charkit', 'label-control-error')}</div>;
+            return <div className={b('error')}>{i18n('label-control-error')}</div>;
         }
 
         return (
@@ -324,6 +294,107 @@ class Control<TProviderData> extends React.PureComponent<
         }
 
         return null;
+    }
+
+    private getChangedParams = (
+        control: ActiveControl,
+        value: string | string[] | {from: string; to: string},
+    ) => {
+        let newParams = {...this.params};
+        let callExternalOnChange = this.isStandalone;
+        let callChangeByClick = false;
+
+        // checks for type, to disable possible use in other controls
+        if (
+            control.type === 'range-datepicker' &&
+            control.paramFrom &&
+            control.paramTo &&
+            typeof value === 'object' &&
+            !Array.isArray(value)
+        ) {
+            newParams[control.paramFrom] = [value.from];
+            newParams[control.paramTo] = [value.to];
+        } else if (
+            control.type === 'button' &&
+            control.onClick &&
+            control.onClick.action === CLICK_ACTION_TYPE.SET_PARAMS &&
+            control.onClick.args
+        ) {
+            newParams = control.onClick.args;
+            callExternalOnChange = true;
+            callChangeByClick = true;
+        } else if (
+            control.type === 'button' &&
+            control.onClick &&
+            control.onClick.action === CLICK_ACTION_TYPE.SET_INITIAL_PARAMS &&
+            this.props.initialParams?.params
+        ) {
+            newParams = this.props.initialParams?.params;
+            callExternalOnChange = true;
+            callChangeByClick = true;
+        } else {
+            newParams[control.param] = wrapToArray(value as string).map(
+                (value: string) =>
+                    addOperationForValue({value, operation: control.operation}) as string,
+            );
+        }
+
+        return {newParams, callExternalOnChange, callChangeByClick};
+    };
+
+    private getValidationProps = (
+        control: ValidatedControl,
+        value: ControlValue,
+        index: number,
+    ) => {
+        const validationProps: {
+            required?: boolean;
+            hasValidationError?: boolean;
+            placeholder?: string;
+        } = {};
+
+        // for first initialization of control
+        const initialValidationError = isValidationError({
+            required: control.required,
+            value,
+        })
+            ? i18n('value_required')
+            : null;
+        const validationErrors = initialValidationError || this.state.validationErrors[index];
+
+        validationProps.required = control.required;
+        validationProps.hasValidationError = Boolean(validationErrors);
+
+        if (control.type === 'input' || control.type === 'select') {
+            validationProps.placeholder =
+                Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationErrors
+                    ? validationErrors
+                    : control.placeholder;
+        }
+
+        return validationProps;
+    };
+
+    private checkValueValidation({index, ...args}: IndexedValidationErrorData) {
+        if (isValidationError(args)) {
+            this.setState({
+                validationErrors: {
+                    ...this.state.validationErrors,
+                    [index]: i18n('value_required'),
+                },
+            });
+            return false;
+        }
+
+        if (this.state.validationErrors) {
+            this.setState({
+                validationErrors: {
+                    ...this.state.validationErrors,
+                    [index]: null,
+                },
+            });
+        }
+        return true;
     }
 }
 
