@@ -436,7 +436,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     return (
         <div
             ref={rootNodeRef}
-            className={`${b(mods)}`}
+            className={`${b({...mods, autoheight: Boolean(tabs[tabIndex]?.autoHeight)})}`}
             data-qa="chart-widget"
             data-qa-mod={isFullscreen ? 'fullscreen' : ''}
         >
