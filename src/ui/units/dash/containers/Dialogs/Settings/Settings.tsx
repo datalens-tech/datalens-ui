@@ -229,12 +229,7 @@ const Settings = () => {
                     loadOnlyVisibleCharts={loadOnlyVisibleCharts}
                     onUpdateLoadOnlyVisibleCharts={handleUpdateLoadOnlyVisibleCharts}
                 />
-                {Utils.isEnabledFeature(Feature.DashBoardGlobalParams) && (
-                    <Params
-                        paramsValue={globalParams}
-                        onChangeParamsValue={handleChangeGlobalParams}
-                    />
-                )}
+                <Params paramsValue={globalParams} onChangeParamsValue={handleChangeGlobalParams} />
                 <EntryDialogues ref={entryDialoguesRef} />
             </Dialog.Body>
             <Dialog.Footer
