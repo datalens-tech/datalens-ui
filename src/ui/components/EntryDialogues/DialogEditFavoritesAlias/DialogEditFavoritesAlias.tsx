@@ -18,16 +18,16 @@ const i18n = I18n.keyset('component.dialog-edit-favorites-alias.view');
 
 export interface DialogEditFavoritesAliasProps extends EntryDialogProps {
     entryId: string;
-    alias: string | null;
+    displayAlias: string | null;
 }
 
 export const DialogEditFavoritesAlias: React.FC<DialogEditFavoritesAliasProps> = ({
     entryId,
     visible,
-    alias,
+    displayAlias,
     onClose,
 }) => {
-    const [text, setText] = React.useState<string>(alias ?? '');
+    const [text, setText] = React.useState<string>(displayAlias ?? '');
     const dispatch = useDispatch();
 
     const onCloseDialog = () => {
@@ -42,7 +42,7 @@ export const DialogEditFavoritesAlias: React.FC<DialogEditFavoritesAliasProps> =
             if (name === '') name = null;
         }
 
-        if (name === alias) {
+        if (name === displayAlias) {
             onCloseDialog();
         } else {
             try {
@@ -77,7 +77,7 @@ export const DialogEditFavoritesAlias: React.FC<DialogEditFavoritesAliasProps> =
         setText(str);
     };
 
-    const aliasExists = Boolean(alias);
+    const aliasExists = Boolean(displayAlias);
     const caption = aliasExists ? i18n('caption_rename') : i18n('caption_add');
 
     return (

@@ -3,7 +3,6 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import {Calendar, FontCursor, ListUl, SquareCheck} from '@gravity-ui/icons';
 import {Icon, Select, SelectOption} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -23,8 +22,6 @@ import {
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-const b = block('input-type-selector');
-
 const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
 const getElementOptions = (disabledOptions: Record<string, boolean>) => [
@@ -33,14 +30,14 @@ const getElementOptions = (disabledOptions: Record<string, boolean>) => [
         content: i18n('value_element-select'),
         disabled: disabledOptions[ELEMENT_TYPE.SELECT],
         data: {
-            icon: <Icon data={ListUl} className={b('icon')} />,
+            icon: <Icon data={ListUl} />,
         },
     },
     {
         value: ELEMENT_TYPE.INPUT,
         content: i18n('value_element-input'),
         data: {
-            icon: <Icon data={FontCursor} className={b('icon')} />,
+            icon: <Icon data={FontCursor} />,
         },
     },
     {
@@ -48,7 +45,7 @@ const getElementOptions = (disabledOptions: Record<string, boolean>) => [
         content: i18n('value_element-date'),
         disabled: disabledOptions[ELEMENT_TYPE.DATE],
         data: {
-            icon: <Icon data={Calendar} className={b('icon')} />,
+            icon: <Icon data={Calendar} />,
         },
     },
     {
@@ -56,7 +53,7 @@ const getElementOptions = (disabledOptions: Record<string, boolean>) => [
         content: i18n('value_element-checkbox'),
         disabled: disabledOptions[ELEMENT_TYPE.CHECKBOX],
         data: {
-            icon: <Icon data={SquareCheck} className={b('icon')} />,
+            icon: <Icon data={SquareCheck} />,
         },
     },
 ];

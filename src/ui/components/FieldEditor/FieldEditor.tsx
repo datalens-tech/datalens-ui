@@ -14,6 +14,7 @@ import {
     DatasetSourceAvatar,
     DialogFieldEditorQA,
     Feature,
+    FieldEditorQa,
 } from 'shared';
 import {updateUserSettings} from 'store/actions/user';
 import {selectFieldEditorDocShown} from 'store/selectors/user';
@@ -123,7 +124,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
 
         return (
             <Dialog open={true} disableFocusTrap={true} onClose={this.onClose}>
-                <div className={b()} data-qa={b()}>
+                <div className={b()} data-qa={FieldEditorQa.Dialog}>
                     <Dialog.Header caption={i18n('label_title')} />
                     <Settings
                         field={field}

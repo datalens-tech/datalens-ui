@@ -18,7 +18,9 @@
     &_state_error {
         .yc-select,
         .yc-select-control,
-        .yc-text-input__control {
+        .yc-text-input__control,
+        .yc-text-input__content:hover,
+        .yc-text-input__content:focus-within {
             border-color: var(--g-color-text-danger);
         }
     }

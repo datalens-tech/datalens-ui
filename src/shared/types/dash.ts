@@ -198,6 +198,7 @@ export interface DashTabItemControlElementBase {
     showInnerTitle?: boolean;
     innerTitle?: boolean;
     fieldType?: string;
+    required?: boolean;
 }
 
 export interface DashTabItemControlElementSelect extends DashTabItemControlElementBase {
