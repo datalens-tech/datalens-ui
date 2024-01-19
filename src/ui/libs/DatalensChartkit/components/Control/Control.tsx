@@ -12,6 +12,7 @@ import Utils from 'ui/utils/utils';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'units/dash/modules/helpers';
 
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../ChartKit/helpers/constants';
+import {i18n} from '../../ChartKit/modules/i18n/i18n';
 import {wrapToArray} from '../../helpers/helpers';
 import {CLICK_ACTION_TYPE, CONTROL_TYPE} from '../../modules/constants/constants';
 import {
@@ -52,7 +53,7 @@ const STATUS = {
 
 const b = block('chartkit-control');
 
-const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
+const dashI18n = I18n.keyset('dash.dashkit-plugin-control.view');
 
 class Control<TProviderData> extends React.PureComponent<
     ControlProps<TProviderData>,
@@ -254,7 +255,7 @@ class Control<TProviderData> extends React.PureComponent<
         const {status} = this.state;
 
         if (status === STATUS.ERROR) {
-            return <div className={b('error')}>{i18n('label-control-error')}</div>;
+            return <div className={b('error')}>{i18n('chartkit', 'label-control-error')}</div>;
         }
 
         return (
@@ -358,7 +359,7 @@ class Control<TProviderData> extends React.PureComponent<
             required: control.required,
             value,
         })
-            ? i18n('value_required')
+            ? dashI18n('value_required')
             : null;
         const validationErrors = initialValidationError || this.state.validationErrors[index];
 
@@ -380,7 +381,7 @@ class Control<TProviderData> extends React.PureComponent<
             this.setState({
                 validationErrors: {
                     ...this.state.validationErrors,
-                    [index]: i18n('value_required'),
+                    [index]: dashI18n('value_required'),
                 },
             });
             return false;
