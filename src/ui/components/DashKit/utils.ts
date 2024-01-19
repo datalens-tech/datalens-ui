@@ -80,6 +80,8 @@ const setNewLayout = ({
     cb({widgetId, needSetDefault, adjustedWidgetLayout});
 };
 
+const getScrollbarWidth = (node: HTMLElement) => node.offsetWidth - node.clientWidth;
+
 export function adjustWidgetLayout({
     widgetId,
     rootNode,
@@ -98,7 +100,9 @@ export function adjustWidgetLayout({
         return;
     }
 
-    const scrollableNode = node.querySelector(`.${CHARTKIT_SCROLLABLE_NODE_CLASSNAME}`);
+    const scrollableNode = node.querySelector(
+        `.${CHARTKIT_SCROLLABLE_NODE_CLASSNAME}`,
+    ) as HTMLElement | null;
     const mainNode = node.querySelector(`.${CHARTKIT_MAIN_CLASSNAME}`);
     const errorNode = node.querySelector(`.${CHARTKIT_ERROR_NODE_CLASSNAME}`);
 
@@ -130,19 +134,27 @@ export function adjustWidgetLayout({
     const scrollableNodeTopOffsetFromRoot = scrollableNodeTopPosition - rootNodeTopPosition;
     const belowLyingNodesHeight = collectBelowLyingNodesHeight(scrollableNode, node, 0);
 
-    const {scrollHeight} = scrollableNode;
+    // Calculationg scrollHeight without scroll and scrollbar width
+    let scrollBar = getScrollbarWidth(scrollableNode);
+    let scrollHeight = scrollableNode.scrollHeight;
 
-    // If widget has horizontal scroll, then we must add scrollBar height to fullContentHeight.
-    // We consider that horizontal scrollBar is equal to vertical scrollBar,
-    // so we could calculate horizontal scrollBar size.
-    // In that assumption it will work only if vertical scrollBar is not present we will calculate
-    // horizontal scrollBar height itself with that if content is already presented and loaded
-    // it should work fine
-    let scrollBar = 0;
-    if (scrollableNode.scrollWidth > scrollableNode.clientWidth) {
-        scrollBar =
-            (scrollableNode as HTMLElement).offsetWidth - scrollableNode.clientWidth ||
-            (scrollableNode as HTMLElement).offsetHeight - scrollableNode.clientHeight;
+    const styleAttrValue = scrollableNode.getAttribute('style');
+    if (scrollBar > 0) {
+        // If scrollBar is presented and there is scalable content
+        // gecalculating height widthout scroll
+        scrollableNode.style.overflowY = 'hidden';
+        scrollHeight = scrollableNode.scrollHeight;
+    } else {
+        // opposite if no scrollbar is presented
+        scrollableNode.style.overflowY = 'scroll';
+        scrollBar = getScrollbarWidth(scrollableNode);
+    }
+
+    // cleanup
+    if (styleAttrValue) {
+        scrollableNode.setAttribute('style', styleAttrValue);
+    } else {
+        scrollableNode.removeAttribute('style');
     }
 
     // Getting additional bottom paddings and margins around mainNode
