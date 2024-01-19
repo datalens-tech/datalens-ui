@@ -14,6 +14,7 @@ import {I18N} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
 import {EntryScope} from 'shared';
+import {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import {Utils} from 'ui';
 
 import {registry} from '../../../../registry';
@@ -64,7 +65,7 @@ export const WorkbookPage = () => {
     const dialogDispatch = useDispatch();
     const collectionId = useSelector(selectCollectionId);
     const breadcrumbs = useSelector(selectBreadcrumbs);
-    const workbook = useSelector(selectWorkbook);
+    const workbook: WorkbookWithPermissions | null = useSelector(selectWorkbook);
     const pageError = useSelector(selectPageError);
     const breadcrumbsError = useSelector(selectBreadcrumbsError);
     const isWorkbookInfoLoading = useSelector(selectWorkbookInfoIsLoading);
@@ -191,83 +192,97 @@ export const WorkbookPage = () => {
         if (activeTab) {
             (async () => {
                 if (isMainTab) {
-                    const dashes = dispatch(
-                        getWorkbookEntries({
-                            workbookId,
-                            filters,
-                            scope: EntryScope.Dash,
-                            ignoreConcurrentId: true,
-                        }),
-                    );
+                    if (workbook) {
+                        const promises = [];
 
-                    const datasets = dispatch(
-                        getWorkbookEntries({
-                            workbookId,
-                            filters,
-                            scope: EntryScope.Dataset,
-                            ignoreConcurrentId: true,
-                        }),
-                    );
+                        promises.push(
+                            dispatch(
+                                getWorkbookEntries({
+                                    workbookId,
+                                    filters,
+                                    scope: EntryScope.Dash,
+                                    ignoreConcurrentId: true,
+                                }),
+                            ),
+                        );
 
-                    const widgets = dispatch(
-                        getWorkbookEntries({
-                            workbookId,
-                            filters,
-                            scope: EntryScope.Widget,
-                            ignoreConcurrentId: true,
-                        }),
-                    );
+                        if (!workbook?.permissions.limitedView) {
+                            promises.push(
+                                dispatch(
+                                    getWorkbookEntries({
+                                        workbookId,
+                                        filters,
+                                        scope: EntryScope.Dataset,
+                                        ignoreConcurrentId: true,
+                                    }),
+                                ),
+                            );
 
-                    const connections = dispatch(
-                        getWorkbookEntries({
-                            workbookId,
-                            filters,
-                            scope: EntryScope.Connection,
-                            ignoreConcurrentId: true,
-                        }),
-                    );
+                            promises.push(
+                                dispatch(
+                                    getWorkbookEntries({
+                                        workbookId,
+                                        filters,
+                                        scope: EntryScope.Connection,
+                                        ignoreConcurrentId: true,
+                                    }),
+                                ),
+                            );
+                        }
 
-                    setIsLoadingMainTab(true);
+                        promises.push(
+                            dispatch(
+                                getWorkbookEntries({
+                                    workbookId,
+                                    filters,
+                                    scope: EntryScope.Widget,
+                                    ignoreConcurrentId: true,
+                                }),
+                            ),
+                        );
 
-                    const [dataDashes, dataDatasets, dataWidgets, dataConnections] =
-                        await Promise.all([dashes, datasets, widgets, connections]);
+                        setIsLoadingMainTab(true);
 
-                    const errors: Record<string, boolean> = {};
+                        const [dataDashes, dataDatasets, dataConnections, dataWidgets] =
+                            await Promise.all(promises);
 
-                    if (dataDashes === null) {
-                        errors[EntryScope.Dash] = true;
+                        const errors: Record<string, boolean> = {};
+
+                        if (dataDashes === null) {
+                            errors[EntryScope.Dash] = true;
+                        }
+
+                        if (dataDatasets === null) {
+                            errors[EntryScope.Dataset] = true;
+                        }
+
+                        if (dataWidgets === null) {
+                            errors[EntryScope.Widget] = true;
+                        }
+
+                        if (dataConnections === null) {
+                            errors[EntryScope.Connection] = true;
+                        }
+
+                        setMapErrors(errors);
+
+                        const tokensMap: Record<string, string> = {};
+
+                        tokensMap[EntryScope.Dash] = dataDashes?.nextPageToken || '';
+                        tokensMap[EntryScope.Dataset] = dataDatasets?.nextPageToken || '';
+                        tokensMap[EntryScope.Widget] = dataWidgets?.nextPageToken || '';
+                        tokensMap[EntryScope.Connection] = dataConnections?.nextPageToken || '';
+
+                        setMapTokens(tokensMap);
+
+                        setIsLoadingMainTab(false);
                     }
-
-                    if (dataDatasets === null) {
-                        errors[EntryScope.Dataset] = true;
-                    }
-
-                    if (dataWidgets === null) {
-                        errors[EntryScope.Widget] = true;
-                    }
-
-                    if (dataConnections === null) {
-                        errors[EntryScope.Connection] = true;
-                    }
-
-                    setMapErrors(errors);
-
-                    const tokensMap: Record<string, string> = {};
-
-                    tokensMap[EntryScope.Dash] = dataDashes?.nextPageToken || '';
-                    tokensMap[EntryScope.Dataset] = dataDatasets?.nextPageToken || '';
-                    tokensMap[EntryScope.Widget] = dataWidgets?.nextPageToken || '';
-                    tokensMap[EntryScope.Connection] = dataConnections?.nextPageToken || '';
-
-                    setMapTokens(tokensMap);
-
-                    setIsLoadingMainTab(false);
                 } else {
                     await dispatch(getWorkbookEntries({workbookId, filters, scope}));
                 }
             })();
         }
-    }, [activeTab, dispatch, filters, isMainTab, scope, workbookId]);
+    }, [activeTab, dispatch, filters, isMainTab, scope, workbook, workbookId]);
 
     if (
         pageError ||
