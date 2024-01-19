@@ -3,9 +3,12 @@ import React from 'react';
 import {sanitizeUrl} from '@braintree/sanitize-url';
 import {transformParamsToActionParams} from '@gravity-ui/dashkit';
 import {Column, Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
+import clone from 'lodash/clone';
 import get from 'lodash/get';
+import intersection from 'lodash/intersection';
 import isEqual from 'lodash/isEqual';
 import isPlainObject from 'lodash/isPlainObject';
+import without from 'lodash/without';
 import {
     BarTableCell,
     BarViewOptions,
@@ -23,11 +26,14 @@ import {formatNumber} from 'shared/modules/format-units/formatUnit';
 
 import {MarkupItem, MarkupItemType} from '../../../../../../../../components/Markup';
 import {DataTableData, TableWidget} from '../../../../../../types';
+import {addParams} from '../../../../../helpers/action-params-handlers';
 import {hasMatchedActionParams} from '../../../../../helpers/utils';
 
 import type {ActionParamsData} from './types';
 
 const MARKUP_ITEM_TYPES: MarkupItemType[] = ['bold', 'concat', 'italics', 'text', 'url'];
+
+type ValuesMap = Record<string, {value: number; hashes: string[]}>;
 
 const decodeURISafe = (uri: string) => {
     return decodeURI(uri.replace(/%(?![0-9a-fA-F][0-9a-fA-F]+)/g, '%25'));
@@ -338,7 +344,7 @@ export function getActionParamsEventScope(
     }, undefined);
 }
 
-function extractCellActionParams(args: {cell: TableCell; head?: TableHead}) {
+function extractCellActionParams(args: {cell: TableCell; head?: TableHead}): StringParams {
     const {cell, head} = args;
     const cellCustomData = get(cell, 'custom');
 
@@ -354,6 +360,121 @@ function extractCellActionParams(args: {cell: TableCell; head?: TableHead}) {
     }
 
     return {};
+}
+
+function setMapValue(map: ValuesMap, value: string, hash: string) {
+    if (typeof map[value] === 'undefined') {
+        // eslint-disable-next-line no-param-reassign
+        map[value] = {value: 0, hashes: []};
+    }
+
+    if (map[value].hashes.indexOf(hash) === -1) {
+        map[value].hashes.push(hash);
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    map[value].value = map[value].value + 1;
+}
+
+function getValuesMap(args: {selectedRows: TableRow[]; head?: TableHead[]}) {
+    const {selectedRows, head} = args;
+
+    return selectedRows.reduce<ValuesMap>((acc, row) => {
+        if (!('cells' in row)) {
+            return acc;
+        }
+
+        const rowHash = Object.values(row.cells).reduce<string>((acc, cell, i) => {
+            const cellParams = extractCellActionParams({cell, head: head?.[i]});
+            return acc + Object.values(cellParams).join();
+        }, '');
+
+        row.cells.forEach((cell, i) => {
+            const cellParams = extractCellActionParams({cell, head: head?.[i]});
+            Object.values(cellParams).forEach((cellValue) => {
+                if (Array.isArray(cellValue)) {
+                    cellValue.forEach((value) => {
+                        setMapValue(acc, value, rowHash);
+                    });
+                } else {
+                    setMapValue(acc, cellValue, rowHash);
+                }
+            });
+        });
+
+        return acc;
+    }, {});
+}
+
+function shouldRemoveValue(map: ValuesMap, key: string) {
+    return (
+        // Value is contained only in one row
+        map[key]?.value === 1 ||
+        // Values are contained in completely identical rows
+        (map[key]?.value > 1 && map[key].hashes.length === 1)
+    );
+}
+
+function mergeStringParamsByRowDeselecting(args: {
+    current: StringParams;
+    row: StringParams;
+    selectedRows: TableRow[];
+    head?: TableHead[];
+}) {
+    const {current, row, selectedRows, head} = args;
+    const valuesMap = getValuesMap({selectedRows, head});
+    const hasSelectedRows = Boolean(selectedRows.length);
+
+    return Object.keys(current).reduce<StringParams>((acc, key) => {
+        acc[key] = Array.isArray(current[key]) ? current[key] : [current[key] as string];
+        const rowKey = Array.isArray(row[key]) ? row[key] : [row[key] as string];
+        const intersectedValues = intersection(acc[key], rowKey);
+
+        if (intersectedValues.length) {
+            const itemsToFilter = hasSelectedRows
+                ? intersectedValues.filter((value) => {
+                      return (
+                          typeof valuesMap[String(value)]?.value === 'number' &&
+                          shouldRemoveValue(valuesMap, String(value))
+                      );
+                  })
+                : intersectedValues;
+
+            acc[key] = without(acc[key], ...itemsToFilter);
+            if (!acc[key].length) {
+                acc[key] = [''];
+            }
+        }
+
+        return acc;
+    }, {});
+}
+
+export function mergeStringParams(args: {
+    current: StringParams;
+    row: StringParams;
+    head?: TableHead[];
+    metaKey?: boolean;
+    selectedRows?: TableRow[];
+}): StringParams {
+    const {current, row, metaKey, selectedRows = [], head} = args;
+    const isRowAlreadySelected = hasMatchedActionParams(row, current);
+
+    if (metaKey) {
+        return isRowAlreadySelected
+            ? mergeStringParamsByRowDeselecting({current, row, selectedRows, head})
+            : addParams(current, row);
+    }
+
+    const result = clone(row);
+
+    if (isRowAlreadySelected) {
+        Object.keys(result).forEach((key) => {
+            result[key] = [''];
+        });
+    }
+
+    return result;
 }
 
 export function getRowActionParams(args: {row?: DataTableData; head?: TableHead[]}): StringParams {
@@ -376,23 +497,25 @@ function getActionParamsByRow(args: {
     actionParams: StringParams;
     row?: DataTableData;
     head?: TableHead[];
+    metaKey?: boolean;
+    selectedRows?: TableRow[];
 }): StringParams {
-    const {actionParams, row, head} = args;
+    const {actionParams, row, head, metaKey, selectedRows} = args;
 
     if (!row) {
         return {};
     }
 
     const rowActionParams = getRowActionParams({row, head});
-    const isRowAlreadySelected = hasMatchedActionParams(rowActionParams, actionParams);
+    const resultParams = mergeStringParams({
+        current: actionParams,
+        row: rowActionParams,
+        head,
+        metaKey,
+        selectedRows,
+    });
 
-    if (isRowAlreadySelected) {
-        Object.keys(rowActionParams).forEach((key) => {
-            rowActionParams[key] = [''];
-        });
-    }
-
-    return transformParamsToActionParams(rowActionParams);
+    return transformParamsToActionParams(resultParams);
 }
 
 export function getActionParams(args: {
@@ -400,12 +523,20 @@ export function getActionParams(args: {
     row?: DataTableData;
     column?: Column<DataTableData>;
     head?: TableHead[];
+    metaKey?: boolean;
+    selectedRows?: TableRow[];
 }): StringParams {
-    const {actionParamsData, row, head} = args;
+    const {actionParamsData, row, head, metaKey, selectedRows} = args;
 
     switch (actionParamsData.scope) {
         case 'row': {
-            return getActionParamsByRow({actionParams: actionParamsData.params, row, head});
+            return getActionParamsByRow({
+                actionParams: actionParamsData.params,
+                row,
+                head,
+                metaKey,
+                selectedRows,
+            });
         }
         // There is no way to reach this code. Just satisfies ts
         default: {
