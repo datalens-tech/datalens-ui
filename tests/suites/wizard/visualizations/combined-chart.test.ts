@@ -17,16 +17,18 @@ datalensTest.describe('Wizard', () => {
 
         datalensTest('Axis type and formatting', async ({page}) => {
             const wizardPage = new WizardPage({page});
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'ship_date');
+            const chartLocator = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartLocator.locator(slct(ChartKitQa.Loader));
             await wizardPage.sectionVisualization.selectCombinedChartLayerVisualization(
                 WizardVisualizationId.Column,
             );
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
-
-            const chartLocator = page.locator(slct(WizardPageQa.SectionPreview));
-            const previewLoader = chartLocator.locator(slct(ChartKitQa.Loader));
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'ship_date');
             await expect(previewLoader).toBeVisible();
             await expect(previewLoader).not.toBeVisible();
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
+            await expect(previewLoader).toBeVisible();
+            await expect(previewLoader).not.toBeVisible();
+
             await expect(chartLocator).toHaveScreenshot();
 
             // uncomment after the CHARTS-9014: The X-axis display mode in the combined chart is not displayed correctly
