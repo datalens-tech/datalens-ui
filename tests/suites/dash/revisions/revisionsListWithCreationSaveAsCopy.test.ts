@@ -109,7 +109,7 @@ datalensTest.describe('Dashboard Versioning', () => {
             // wait for page load to be able to remove
             await page.waitForTimeout(RENDER_TIMEOUT);
 
-            await dashboardPage.deleteDashFromEditMode();
+            await dashboardPage.deleteDashFromViewMode();
         },
     );
 });
