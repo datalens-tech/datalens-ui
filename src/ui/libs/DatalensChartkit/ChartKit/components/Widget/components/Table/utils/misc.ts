@@ -8,7 +8,6 @@ import get from 'lodash/get';
 import intersection from 'lodash/intersection';
 import isEqual from 'lodash/isEqual';
 import isPlainObject from 'lodash/isPlainObject';
-import union from 'lodash/union';
 import without from 'lodash/without';
 import {
     BarTableCell,
@@ -27,6 +26,7 @@ import {formatNumber} from 'shared/modules/format-units/formatUnit';
 
 import {MarkupItem, MarkupItemType} from '../../../../../../../../components/Markup';
 import {DataTableData, TableWidget} from '../../../../../../types';
+import {addParams} from '../../../../../helpers/action-params-handlers';
 import {hasMatchedActionParams} from '../../../../../helpers/utils';
 
 import type {ActionParamsData} from './types';
@@ -422,76 +422,27 @@ function mergeStringParamsByRowDeselecting(args: {
     head?: TableHead[];
 }) {
     const {current, row, selectedRows, head} = args;
+    const valuesMap = getValuesMap({selectedRows, head});
+    const hasSelectedRows = Boolean(selectedRows.length);
+
     return Object.keys(current).reduce<StringParams>((acc, key) => {
-        acc[key] = current[key];
-        const valuesMap = getValuesMap({selectedRows, head});
-        const hasSelectedRows = Boolean(selectedRows.length);
+        acc[key] = Array.isArray(current[key]) ? current[key] : [current[key] as string];
+        const rowKey = Array.isArray(row[key]) ? row[key] : [row[key] as string];
+        const intersectedValues = intersection(acc[key], rowKey);
 
-        if (typeof acc[key] === 'string') {
-            if (
-                typeof row[key] === 'string' &&
-                acc[key] === row[key] &&
-                (!hasSelectedRows || shouldRemoveValue(valuesMap, String(acc[key])))
-            ) {
+        if (intersectedValues.length) {
+            const itemsToFilter = hasSelectedRows
+                ? intersectedValues.filter((value) => {
+                      return (
+                          typeof valuesMap[String(value)]?.value === 'number' &&
+                          shouldRemoveValue(valuesMap, String(value))
+                      );
+                  })
+                : intersectedValues;
+
+            acc[key] = without(acc[key], ...itemsToFilter);
+            if (!acc[key].length) {
                 acc[key] = [''];
-            } else if (
-                Array.isArray(row[key]) &&
-                row[key].includes(acc[key] as string) &&
-                (!hasSelectedRows || shouldRemoveValue(valuesMap, String(acc[key])))
-            ) {
-                acc[key] = [''];
-            }
-        } else if (Array.isArray(acc[key])) {
-            const intersectedValues = intersection(acc[key], row[key]);
-
-            if (
-                typeof row[key] === 'string' &&
-                acc[key].includes(row[key] as string) &&
-                (!hasSelectedRows || shouldRemoveValue(valuesMap, String(row[key])))
-            ) {
-                acc[key] = (acc[key] as string[]).filter((value) => value !== row[key]);
-                if (!acc[key].length) {
-                    acc[key] = [''];
-                }
-            } else if (Array.isArray(row[key]) && intersectedValues.length) {
-                const itemsToFilter = hasSelectedRows
-                    ? intersectedValues.filter((value) => {
-                          return (
-                              typeof valuesMap[String(value)]?.value === 'number' &&
-                              shouldRemoveValue(valuesMap, String(value))
-                          );
-                      })
-                    : intersectedValues;
-
-                acc[key] = without(acc[key], ...itemsToFilter);
-                if (!acc[key].length) {
-                    acc[key] = [''];
-                }
-            }
-        }
-
-        return acc;
-    }, {});
-}
-
-function mergeStringParamsByRowAdding(args: {current: StringParams; row: StringParams}) {
-    const {current, row} = args;
-    return Object.keys(current).reduce<StringParams>((acc, key) => {
-        acc[key] = current[key];
-
-        if (typeof acc[key] === 'string') {
-            if (typeof row[key] === 'string' && acc[key] !== row[key]) {
-                acc[key] = [acc[key] as string, row[key] as string];
-            } else if (Array.isArray(row[key]) && !row[key].includes(acc[key] as string)) {
-                acc[key] = [acc[key] as string, ...row[key]];
-            }
-        }
-
-        if (Array.isArray(acc[key])) {
-            if (typeof row[key] === 'string' && !acc[key].includes(row[key] as string)) {
-                acc[key] = [...acc[key], row[key] as string];
-            } else if (Array.isArray(row[key])) {
-                acc[key] = union(acc[key], row[key]);
             }
         }
 
@@ -512,7 +463,7 @@ export function mergeStringParams(args: {
     if (metaKey) {
         return isRowAlreadySelected
             ? mergeStringParamsByRowDeselecting({current, row, selectedRows, head})
-            : mergeStringParamsByRowAdding({current, row});
+            : addParams(current, row);
     }
 
     const result = clone(row);
