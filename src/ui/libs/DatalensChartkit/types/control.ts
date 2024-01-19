@@ -48,7 +48,6 @@ interface ControlDatepicker extends ControlBase {
     minDate: string | null;
     maxDate: string | null;
     required?: boolean;
-    emptyValueText?: string;
     hasValidationError?: boolean;
 }
 
@@ -59,14 +58,13 @@ export interface ControlRangeDatepicker extends ControlBase {
     minDate: string | null;
     maxDate: string | null;
     required?: boolean;
-    emptyValueText?: string;
     hasValidationError?: boolean;
 }
 
 interface ControlButton extends ControlBase {
     type: 'button';
     onClick?: {
-        action: 'setParams';
+        action: 'setParams' | 'setInitialParams';
         args: StringParams;
     };
 }

@@ -53,7 +53,10 @@ export function getSearchText({from, to, format, emptyValueText, range, required
         case Boolean(from && to): {
             return `${from.toFormat(format)} - ${to.toFormat(format)}`;
         }
-        case Utils.isEnabledFeature(Feature.SelectorRequiredValue) && required: {
+        // return value_required text if value is required and is not fully filled
+        case Utils.isEnabledFeature(Feature.SelectorRequiredValue) &&
+            required &&
+            ((range && !from && !to) || (!range && !from)): {
             return i18n('value_required');
         }
         case Boolean(range): {
