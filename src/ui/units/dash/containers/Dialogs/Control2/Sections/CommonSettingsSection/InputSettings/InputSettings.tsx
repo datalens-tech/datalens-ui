@@ -32,6 +32,8 @@ const InputSettings = ({isSectionHidden}: InputSettingsProps) => {
         );
     }, []);
 
+    const value = fieldName ?? '';
+
     return (
         <React.Fragment>
             <SectionWrapper
@@ -42,7 +44,7 @@ const InputSettings = ({isSectionHidden}: InputSettingsProps) => {
                     <FieldWrapper error={validation.fieldName}>
                         <TextInput
                             qa={DialogControlQa.fieldNameInput}
-                            value={fieldName}
+                            value={value}
                             onUpdate={handleFieldNameUpdate}
                         />
                     </FieldWrapper>

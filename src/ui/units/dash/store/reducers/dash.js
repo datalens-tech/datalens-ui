@@ -59,6 +59,8 @@ const initialState = {
 };
 
 export function getSelectorDialogInitialState(args = {}) {
+    const required = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? {required: false} : {};
+
     return {
         elementType: ELEMENT_TYPE.SELECT,
         sourceType: DashTabItemControlSourceType.Dataset,
@@ -69,6 +71,7 @@ export function getSelectorDialogInitialState(args = {}) {
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
         id: getRandomKey(),
+        ...required,
     };
 }
 
@@ -337,6 +340,7 @@ function dash(state = initialState, action) {
                     innerTitle: data.source.innerTitle,
                     showInnerTitle: data.source.showInnerTitle,
                     id: getRandomKey(),
+                    required: data.source.required,
                 };
             }
 

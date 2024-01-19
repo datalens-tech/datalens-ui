@@ -41,6 +41,7 @@ export const favoritesActions = {
                 ...entry,
                 isFavorite: true,
                 name: getEntryNameByKey({key: entry.key, index: -1}),
+                displayAlias: entry.displayAlias ?? entry.alias,
             })),
         }),
         paramsSerializer: defaultParamsSerializer,

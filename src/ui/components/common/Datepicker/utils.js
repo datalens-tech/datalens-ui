@@ -40,7 +40,7 @@ export function getPlaceholder(format) {
         .join('');
 }
 
-export function getSearchText({from, to, format, emptyValueText, range}) {
+export function getSearchText({from, to, format, emptyValueText, range, required}) {
     switch (true) {
         case Boolean(!range && from): {
             return `${from.toFormat(format)}`;
@@ -51,11 +51,14 @@ export function getSearchText({from, to, format, emptyValueText, range}) {
         case Boolean(from && to): {
             return `${from.toFormat(format)} - ${to.toFormat(format)}`;
         }
+        case required: {
+            return i18n('value_required');
+        }
         case Boolean(range): {
             return emptyValueText ? `${emptyValueText} - ${emptyValueText}` : '';
         }
         default: {
-            return emptyValueText ? `${emptyValueText}` : '';
+            return emptyValueText || '';
         }
     }
 }
@@ -247,3 +250,10 @@ export function getListWithoutNullableValues(...args) {
 export function hasTimeUnitsInFormat(format) {
     return /H|h|m|s/.test(format);
 }
+
+export const fillEmptyToDate = (from) => {
+    const diff = from.toUTC().startOf('day').diff(from).toMillis();
+
+    // if "from" is the beginning of the day, then for "to" put the end of the day
+    return diff === 0 ? from.toUTC().endOf('day') : from;
+};
