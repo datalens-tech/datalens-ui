@@ -52,7 +52,6 @@ export default {
             ', object values must be a string or a function which returns a string',
         'label-palette-editor': 'Color palette editor',
         'label-load-from-file': 'Load from file',
-        'label-control-error': 'An error has occurred',
     },
     'chartkit-table': {
         'message-no-data': 'No data',

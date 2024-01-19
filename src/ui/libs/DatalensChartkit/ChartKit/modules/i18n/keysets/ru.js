@@ -54,7 +54,6 @@ export default {
             ', значением объекта может быть либо строка, либо функция возвращающая строку',
         'label-palette-editor': 'Редактор цветовой схемы',
         'label-load-from-file': 'Загрузить из файла',
-        'label-control-error': 'Произошла ошибка',
     },
     'chartkit-table': {
         'message-no-data': 'Нет данных',
