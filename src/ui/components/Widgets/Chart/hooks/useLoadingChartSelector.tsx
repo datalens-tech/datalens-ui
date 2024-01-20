@@ -4,7 +4,7 @@ import {AxiosResponse} from 'axios';
 import debounce from 'lodash/debounce';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {DashTabItemControl, DashTabItemControlSourceType, Feature} from 'shared';
+import {DashTabItemControl, Feature} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
 import {
@@ -120,8 +120,11 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
             if (renderedData?.status === 'success') {
                 pushStats(renderedData, 'dash', dataProvider);
             }
+
+            const newAutoHeight = Boolean(props.data.autoHeight);
+            adjustLayout(!newAutoHeight);
         },
-        [dataProvider],
+        [adjustLayout, dataProvider, props.data.autoHeight],
     );
 
     /**
@@ -149,17 +152,11 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
                 adjustLayout(false);
                 return;
             }
+
             const newAutoHeight = Boolean(props.data.autoHeight);
-            // fix same as for table at CHARTS-7640
-            if (widgetType === DashTabItemControlSourceType.External) {
-                document.fonts.ready.then(() => {
-                    adjustLayout(!newAutoHeight);
-                });
-            } else {
-                adjustLayout(!newAutoHeight);
-            }
+            adjustLayout(!newAutoHeight);
         },
-        [adjustLayout, widgetType, props.data.autoHeight],
+        [adjustLayout, props.data.autoHeight],
     );
 
     const {
@@ -335,20 +332,22 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
 
     /**
      * Resize observer adjustLayout
+     *
+     * For selector if autoHeight prop enabled or when an error occurred
      */
-    const autoHeight = Boolean(props.data.autoHeight);
+    const autoHeightEnabled = isInit && (Boolean(props.data.autoHeight) || Boolean(error));
+
     const debounceResizeAdjustLayot = React.useCallback(
         debounce(() => {
-            adjustLayout(!autoHeight);
+            adjustLayout(false);
         }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-        [adjustLayout, autoHeight],
+        [adjustLayout],
     );
 
     useResizeObserver({
         onResize: debounceResizeAdjustLayot,
-        autoHeight,
-        isInit,
         rootNodeRef,
+        enable: autoHeightEnabled,
     });
 
     /**

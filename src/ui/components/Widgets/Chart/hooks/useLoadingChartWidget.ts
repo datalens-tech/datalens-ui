@@ -7,7 +7,6 @@ import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {DashSettings, FOCUSED_WIDGET_PARAM_NAME, Feature} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
-import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
 
 import {
     ChartKitWrapperLoadStatusUnknown,
@@ -153,16 +152,12 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 pushStats(renderedData, 'dash', dataProvider);
             }
 
-            const newAutoHeight = isWidgetTypeWithAutoHeight(loadedWidgetType)
-                ? tabs[tabIndex].autoHeight
-                : false;
-            if (loadedWidgetType === DASH_WIDGET_TYPES.TABLE) {
-                document.fonts.ready.then(() => {
-                    adjustLayout(!newAutoHeight);
-                });
-            } else {
-                adjustLayout(!newAutoHeight);
-            }
+            const newAutoHeight =
+                isWidgetTypeWithAutoHeight(loadedWidgetType) || renderedData?.status === 'error'
+                    ? tabs[tabIndex].autoHeight
+                    : false;
+
+            adjustLayout(!newAutoHeight);
         },
         [dataProvider, tabs, tabIndex, adjustLayout, loadedWidgetType],
     );
@@ -598,20 +593,37 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
     /**
      * Resize observer adjustLayout
+     * If widget is loaded and is valid type or has error -> taking autoHeight prop value
      */
-    const autoHeight = Boolean(tabs[tabIndex].autoHeight);
+
     const debounceResizeAdjustLayot = React.useCallback(
         debounce(() => {
-            adjustLayout(!autoHeight);
+            updateImmediateLayout({
+                type: loadedWidgetType,
+                autoHeight: tabs[tabIndex].autoHeight,
+                widgetId,
+                gridLayout,
+                rootNode: rootNodeRef,
+                layout,
+                cb: props.adjustWidgetLayout,
+            });
         }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-        [adjustLayout, autoHeight],
+        [
+            widgetId,
+            loadedWidgetType,
+            tabs,
+            tabIndex,
+            gridLayout,
+            rootNodeRef,
+            layout,
+            props.adjustWidgetLayout,
+        ],
     );
 
     useResizeObserver({
         onResize: debounceResizeAdjustLayot,
-        autoHeight,
-        isInit,
         rootNodeRef,
+        enable: isInit && Boolean(tabs[tabIndex].autoHeight),
     });
 
     /**

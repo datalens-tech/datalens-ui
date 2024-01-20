@@ -9,13 +9,16 @@ import React from 'react';
 export const useResizeObserver = (options: {
     rootNodeRef: React.RefObject<HTMLElement>;
     onResize: () => void;
-    isInit: boolean;
-    autoHeight: boolean;
+    enable: boolean;
 }) => {
+    const {rootNodeRef, enable, onResize} = options;
+
     const isInitResizeCall = React.useRef(true);
     const resizeObserver = React.useRef<ResizeObserver | null>(null);
     const previousWidthValue = React.useRef<number | null>(null);
-    const {isInit, rootNodeRef, autoHeight, onResize} = options;
+
+    const onResizeRef = React.useRef(onResize);
+    onResizeRef.current = onResize;
 
     const resizeObserverHandler = React.useCallback(() => {
         if (!rootNodeRef.current) {
@@ -24,19 +27,20 @@ export const useResizeObserver = (options: {
 
         const {clientWidth} = rootNodeRef.current;
         if (isInitResizeCall.current) {
-            // Skipping first call as it's init call and saving width value
-            previousWidthValue.current = clientWidth;
             isInitResizeCall.current = false;
+            previousWidthValue.current = clientWidth;
             return;
-        } else if (previousWidthValue.current === clientWidth) {
+        }
+
+        if (previousWidthValue.current === clientWidth) {
             // As we are looking only cases when width change skipping other cases
             // to prevent when autoHeight value is set
             return;
         }
 
         previousWidthValue.current = clientWidth;
-        onResize();
-    }, [isInitResizeCall, onResize, previousWidthValue, rootNodeRef]);
+        onResizeRef.current();
+    }, [onResizeRef, previousWidthValue, rootNodeRef, isInitResizeCall]);
 
     const disconnectResizeObserver = React.useCallback(() => {
         if (resizeObserver.current) {
@@ -47,28 +51,27 @@ export const useResizeObserver = (options: {
     }, [resizeObserver, isInitResizeCall]);
 
     React.useLayoutEffect(() => {
-        if (!rootNodeRef.current || !isInit) {
+        if (!rootNodeRef.current) {
             return;
         }
 
-        if (!autoHeight) {
+        if (!enable) {
             disconnectResizeObserver();
             return;
-        }
-
-        if (!resizeObserver.current) {
+        } else if (!resizeObserver.current) {
             previousWidthValue.current = null;
             resizeObserver.current = new ResizeObserver(resizeObserverHandler);
             resizeObserver.current.observe(rootNodeRef.current);
         }
-    }, [
-        isInit,
-        autoHeight,
-        rootNodeRef,
-        resizeObserver,
-        resizeObserverHandler,
-        disconnectResizeObserver,
-    ]);
+    }, [enable, rootNodeRef, resizeObserver, resizeObserverHandler, disconnectResizeObserver]);
 
-    React.useEffect(() => () => disconnectResizeObserver(), [disconnectResizeObserver]);
+    // Unmount
+    React.useEffect(() => {
+        return () => {
+            if (resizeObserver.current) {
+                resizeObserver.current.disconnect();
+                resizeObserver.current = null;
+            }
+        };
+    }, [resizeObserver]);
 };

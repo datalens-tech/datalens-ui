@@ -40,6 +40,8 @@ export type AdjustWidgetLayoutProps = {
     cb: PluginWidgetProps['adjustWidgetLayout'];
 };
 
+const getScrollbarWidth = (node: HTMLElement) => node.offsetWidth - node.clientWidth;
+
 const setNewLayout = ({
     gridLayout,
     layout,
@@ -133,29 +135,23 @@ export function adjustWidgetLayout({
     const belowLyingNodesHeight = collectBelowLyingNodesHeight(scrollableNode, node, 0);
 
     // Calculationg scrollHeight without scroll and scrollbar width
-    const scrollVertical = scrollableNode.offsetWidth - scrollableNode.clientWidth;
-    let scrollHorizontal = scrollableNode.offsetHeight - scrollableNode.offsetHeight;
+    let scrollBar = getScrollbarWidth(scrollableNode);
     let scrollHeight = scrollableNode.scrollHeight;
 
-    // When scrollbar will appear or dissapear
-    // the width would change and if content has scalable content(img[style="width:100%"])
-    // so in advance lets calculated expected height without scrollBar
-    if (scrollVertical > 0) {
-        const styleAttrValue = scrollableNode.getAttribute('style');
-
+    if (scrollBar > 0) {
         // If scrollBar is presented and there is scalable content
-        // calculating scrollHeight without scroll
+        // calculating height without scroll
+        const overflowY = scrollableNode.style.overflowY;
         scrollableNode.style.overflowY = 'hidden';
-
-        scrollHorizontal = scrollableNode.offsetHeight - scrollableNode.offsetHeight;
         scrollHeight = scrollableNode.scrollHeight;
-
-        // cleanup
-        if (styleAttrValue) {
-            scrollableNode.setAttribute('style', styleAttrValue);
-        } else {
-            scrollableNode.removeAttribute('style');
-        }
+        scrollableNode.style.overflowY = overflowY;
+    } else if (scrollableNode.clientWidth < scrollableNode.scrollWidth) {
+        // if scrollbar hidden but content is bigger that container
+        // we assuming that horizaontal scroll is equal to vertical
+        const overflowY = scrollableNode.style.overflowY;
+        scrollableNode.style.overflowY = 'scroll';
+        scrollBar = getScrollbarWidth(scrollableNode);
+        scrollableNode.style.overflowY = overflowY;
     }
 
     // Getting additional bottom paddings and margins around mainNode
@@ -169,7 +165,7 @@ export function adjustWidgetLayout({
     const fullContentHeight =
         scrollableNodeTopOffsetFromRoot +
         scrollHeight +
-        scrollHorizontal +
+        scrollBar +
         belowLyingNodesHeight +
         additionalPaddings;
 

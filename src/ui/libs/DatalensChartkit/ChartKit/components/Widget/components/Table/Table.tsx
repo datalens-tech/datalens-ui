@@ -115,34 +115,19 @@ function attachTreeHandler(cell: TableCommonCell, tableProps: TableProps) {
 export class Table extends React.PureComponent<TableProps, TableState> {
     state: TableState = {waitingForFont: true, dataTableRefInitialized: false};
 
-    private timer: ReturnType<typeof setTimeout> | null = null;
     private dataTableRef?: ChartKitDataTable;
     private id?: string;
 
     componentDidMount() {
         validateConfigAndData({data: this.props.data.data, config: this.props.data.config});
-        // @ts-ignore | ts doesn't know about FontFaceSet API
-        document.fonts.load('700 10pt "YS Text"').then((fonts) => {
-            if (!fonts.length) {
-                console.warn(
-                    'The font used for the table headers has not loaded,' +
-                        ' the table may not be displayed correctly',
-                );
-            }
 
+        // fix same as for table at CHARTS-7640
+        document.fonts.ready.finally(() => {
             this.setState({waitingForFont: false}, () => {
                 this.onLoad();
                 this.props.onChartLoad?.({widget: this.dataTableRef});
             });
-
-            if (this.timer) {
-                clearTimeout(this.timer);
-            }
         });
-
-        this.timer = setTimeout(() => {
-            this.setState({waitingForFont: false}, this.onLoad);
-        }, 2000);
     }
 
     componentDidUpdate(prevProps: TableProps) {
@@ -155,12 +140,6 @@ export class Table extends React.PureComponent<TableProps, TableState> {
 
         if (prevProps.data !== this.props.data) {
             validateConfigAndData({data: this.props.data.data, config: this.props.data.config});
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.timer) {
-            clearTimeout(this.timer);
         }
     }
 
