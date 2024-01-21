@@ -51,6 +51,7 @@ export type GetSourceResponse = {
 
 export type GetSourceArgs = {
     connectionId: string;
+    workbookId: string | null;
     limit?: number;
 };
 
@@ -60,7 +61,8 @@ export type DeleteDatasetArgs = DatasetId;
 
 export type GetDatasetByVersionResponse = Dataset;
 
-export type GetDatasetByVersionArgs = {version: string} & DatasetId;
+// TODO: workbookId is required
+export type GetDatasetByVersionArgs = {version: string} & DatasetId & {workbookId?: string | null};
 
 export type CheckDatasetsForPublicationResponse = {
     result: {
@@ -88,6 +90,8 @@ export type ValidateDatasetResponse = {
 
 export type ValidateDatasetArgs = {
     dataset: Partial<Dataset['dataset']>;
+    // TODO: workbookId is required
+    workbookId?: string | null;
     updates: ValidateDatasetUpdate[];
     version: DatasetVersion;
 } & DatasetId;
@@ -147,6 +151,7 @@ export type UpdateDatasetArgs = {
 export type GetPreviewResponse = DistinctResult;
 
 export type GetPreviewArgs = {
+    workbookId: string | null;
     dataset: Dataset['dataset'];
     version: DatasetVersion;
     limit?: number;

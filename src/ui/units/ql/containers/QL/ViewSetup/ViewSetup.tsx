@@ -84,7 +84,7 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
 
             const defaultMonitoringQLConnectionId = getDefaultMonitoringQLConnectionId(DL.ENV);
 
-            this.fetchConnection(defaultMonitoringQLConnectionId).then(
+            this.fetchConnection(defaultMonitoringQLConnectionId, null).then(
                 (connection: QLConnectionEntry | void) => {
                     if (connection) {
                         this.defaultMonitoringQLConnection = connection;
@@ -245,9 +245,9 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
         );
     }
 
-    private fetchConnection(connectionId: string) {
+    private fetchConnection(connectionId: string, workbookId: string | null) {
         return getSdk()
-            .us.getEntry({entryId: connectionId})
+            .us.getEntry({entryId: connectionId, workbookId})
             .then((loadedConnectionEntry?: GetEntryResponse) => {
                 if (!loadedConnectionEntry) {
                     throw new Error(i18n('sql', 'error_failed-to-load-default-connection'));
@@ -286,7 +286,7 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
 
                 const defaultMonitoringQLConnectionId = getDefaultMonitoringQLConnectionId(DL.ENV);
 
-                this.fetchConnection(defaultMonitoringQLConnectionId).then(
+                this.fetchConnection(defaultMonitoringQLConnectionId, null).then(
                     (connection: QLConnectionEntry | void) => {
                         if (connection) {
                             this.defaultMonitoringQLConnection = connection;

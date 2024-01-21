@@ -66,8 +66,17 @@ export function setPageData({entryId, workbookId}: {entryId?: string | null; wor
         let connectionError: DataLensApiError | undefined;
 
         if (entryId) {
-            ({entry, error: entryError} = await api.fetchEntry(entryId));
-            ({connectionData, error: connectionError} = await api.fetchConnectionData(entryId));
+            let correctedWorkbookId = null;
+            if (workbookId === undefined) {
+                const response = await api.fetchEntryMeta(entryId);
+                correctedWorkbookId = response.entryMeta?.workbookId ?? null;
+            }
+
+            ({entry, error: entryError} = await api.fetchEntry(entryId, correctedWorkbookId));
+            ({connectionData, error: connectionError} = await api.fetchConnectionData(
+                entryId,
+                correctedWorkbookId,
+            ));
         }
 
         if (!entry) {
@@ -359,7 +368,7 @@ export function checkConnection() {
 
         pipe([setCheckLoading, dispatch])({loading: true});
         const checkData = await (connectionId
-            ? api.checkConnection(params, connectionId)
+            ? api.checkConnection(params, connectionId, entry?.workbookId ?? null)
             : api.checkConnectionParams(params));
 
         batch(() => {

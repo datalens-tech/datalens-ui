@@ -70,6 +70,7 @@ class ActionPanel extends React.Component<Props, State> {
     componentDidMount() {
         const {entryId, actions} = this.props;
 
+        // TODO: Fetch only if `entry` does not exist ???
         if (entryId) {
             this.concurrentId = `fetchEntryById-${entryId}`;
             actions.fetchEntryById(entryId, this.concurrentId, (entry) => {

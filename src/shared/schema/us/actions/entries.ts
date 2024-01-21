@@ -5,6 +5,7 @@ import {
     DlComponentHeader,
     TIMEOUT_90_SEC,
     US_MASTER_TOKEN_HEADER,
+    WORKBOOK_ID_HEADER,
 } from '../../../constants';
 import {getEntryNameByKey, normalizeDestination} from '../../../modules';
 import {Feature} from '../../../types/feature';
@@ -62,10 +63,11 @@ export const entriesActions = {
     getEntry: createAction<GetEntryResponse, GetEntryArgs>({
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: ({entryId: _entryId, includeDlComponentUiData, ...query}, headers) => ({
+        params: ({entryId: _entryId, workbookId, includeDlComponentUiData, ...query}, headers) => ({
             query,
             headers: {
                 ...headers,
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                 ...(includeDlComponentUiData ? {[DL_COMPONENT_HEADER]: DlComponentHeader.UI} : {}),
             },
         }),

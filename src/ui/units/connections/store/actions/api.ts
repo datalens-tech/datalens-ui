@@ -9,6 +9,7 @@ import {
     GetAuthorizationUrlResponse,
     GetConnectorSchemaArgs,
     GetConnectorsResponse,
+    GetEntryMetaResponse,
     GetEntryResponse,
     GetFileSourceStatusResponse,
     GetFileSourcesResponse,
@@ -29,8 +30,26 @@ import {ConverterErrorCode} from '../../constants';
 import type {FormDict} from '../../typings';
 import type {CheckData, UploadedFile} from '../typings';
 
+const fetchEntryMeta = async (
+    entryId: string,
+): Promise<{
+    entryMeta?: GetEntryMetaResponse;
+    error?: DataLensApiError;
+}> => {
+    try {
+        const entryMeta = await getSdk().us.getEntryMeta({
+            entryId,
+        });
+        return {entryMeta};
+    } catch (error) {
+        logger.logError('Redux actions (conn): fetchEntry failed', error);
+        return {entryMeta: undefined, error};
+    }
+};
+
 const fetchEntry = async (
     entryId: string,
+    workbookId: string | null,
 ): Promise<{
     entry?: GetEntryResponse;
     error?: DataLensApiError;
@@ -38,6 +57,7 @@ const fetchEntry = async (
     try {
         const entry = await getSdk().us.getEntry({
             entryId,
+            workbookId,
             includePermissionsInfo: true,
         });
         return {entry};
@@ -49,12 +69,13 @@ const fetchEntry = async (
 
 const fetchConnectionData = async (
     connectionId: string,
+    workbookId: string | null,
 ): Promise<{
     connectionData: ConnectionData;
     error?: DataLensApiError;
 }> => {
     try {
-        const connectionData = await getSdk().bi.getConnection({connectionId});
+        const connectionData = await getSdk().bi.getConnection({connectionId, workbookId});
         return {connectionData};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchConnectionData failed', error);
@@ -140,9 +161,13 @@ const checkConnectionParams = async (params: FormDict): Promise<CheckData> => {
     }
 };
 
-const checkConnection = async (params: FormDict, connectionId: string): Promise<CheckData> => {
+const checkConnection = async (
+    params: FormDict,
+    connectionId: string,
+    workbookId: string | null,
+): Promise<CheckData> => {
     try {
-        await getSdk().bi.verifyConnection({...params, connectionId});
+        await getSdk().bi.verifyConnection({...params, connectionId, workbookId});
         return {status: 'success', error: undefined};
     } catch (error) {
         logger.logError('Redux actions (conn): checkConnection failed', error);
@@ -374,6 +399,7 @@ const addYandexDocument = async ({
 };
 
 export const api = {
+    fetchEntryMeta,
     fetchEntry,
     fetchConnectionData,
     fetchConnectors,

@@ -80,6 +80,7 @@ export type ConnectionEntry = {
     entryId: string;
     type: string;
     permissions?: Permissions;
+    workbookId: string | null;
 };
 
 export type BaseSource = {
