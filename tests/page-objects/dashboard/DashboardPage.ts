@@ -97,6 +97,7 @@ class DashboardPage extends BasePage {
         tabsList: '.gc-adaptive-tabs__tabs-list',
         tabItem: '.gc-adaptive-tabs__tab',
         tabItemActive: '.gc-adaptive-tabs__tab_active',
+        tabItemDisabled: '.gc-adaptive-tabs__tab_disabled',
         tabContainer: '.gc-adaptive-tabs__tab-container',
         selectControl: '.yc-select-control',
         /** @deprecated instead use selectItems */
@@ -107,6 +108,7 @@ class DashboardPage extends BasePage {
         selectItems: '.g-select-list',
         selectItemsMobile: '.g-select-list_mobile',
         selectItemTitle: '.g-select-list__option',
+        selectItemTitleDisabled: '.g-select-list__option_disabled',
 
         radioManualControl: DialogControlQa.radioSourceType,
         inputNameControl: 'control-name-input',
@@ -921,7 +923,7 @@ class DashboardPage extends BasePage {
 
         if (fullTab) {
             const tab = await fullTab.waitForSelector(
-                `${DashboardPage.selectors.tabItem} >> text=${tabName}`,
+                `${DashboardPage.selectors.tabItem}:not(${DashboardPage.selectors.tabItemDisabled}) >> text=${tabName}`,
             );
             await tab.click();
             return;
@@ -935,7 +937,7 @@ class DashboardPage extends BasePage {
         if (shortTab) {
             await shortTab.click();
             const tab = await this.page.waitForSelector(
-                `${DashboardPage.selectors.selectItems} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`,
+                `${DashboardPage.selectors.selectItems} ${DashboardPage.selectors.selectItemTitle}:not(${DashboardPage.selectors.selectItemTitleDisabled}) >> text=${tabName}`,
             );
             await tab.click();
             return;
