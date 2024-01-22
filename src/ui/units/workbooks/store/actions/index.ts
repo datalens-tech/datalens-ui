@@ -161,7 +161,7 @@ export const getWorkbookEntries = ({
     filters,
     scope,
     nextPageToken,
-    pageSize = 10,
+    pageSize = 200,
     ignoreConcurrentId = false,
 }: {
     workbookId: string;
@@ -386,7 +386,7 @@ export const changeFavoriteEntry = ({
                 );
             }
             dispatch({
-                type: RENAME_ENTRY_FAILED,
+                type: CHANGE_FAVORITE_ENTRY_FAILED,
                 error,
             });
             return null;

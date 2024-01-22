@@ -52,6 +52,8 @@ const b = block('dl-workbook-page');
 
 const i18n = I18N.keyset('new-workbooks');
 
+const PAGE_SIZE_MAIN_TAB = 10;
+
 export const WorkbookPage = () => {
     const {search} = useLocation();
     const {workbookId} = useParams<{workbookId: string}>();
@@ -138,6 +140,7 @@ export const WorkbookPage = () => {
                     filters,
                     scope: entryScope,
                     nextPageToken,
+                    pageSize: PAGE_SIZE_MAIN_TAB,
                 }),
             ).then((data) => {
                 setMapErrors({
@@ -202,6 +205,7 @@ export const WorkbookPage = () => {
                                     filters,
                                     scope: EntryScope.Dash,
                                     ignoreConcurrentId: true,
+                                    pageSize: PAGE_SIZE_MAIN_TAB,
                                 }),
                             ),
                         );
@@ -214,6 +218,7 @@ export const WorkbookPage = () => {
                                         filters,
                                         scope: EntryScope.Dataset,
                                         ignoreConcurrentId: true,
+                                        pageSize: PAGE_SIZE_MAIN_TAB,
                                     }),
                                 ),
                             );
@@ -225,6 +230,7 @@ export const WorkbookPage = () => {
                                         filters,
                                         scope: EntryScope.Connection,
                                         ignoreConcurrentId: true,
+                                        pageSize: PAGE_SIZE_MAIN_TAB,
                                     }),
                                 ),
                             );
@@ -237,6 +243,7 @@ export const WorkbookPage = () => {
                                     filters,
                                     scope: EntryScope.Widget,
                                     ignoreConcurrentId: true,
+                                    pageSize: PAGE_SIZE_MAIN_TAB,
                                 }),
                             ),
                         );
