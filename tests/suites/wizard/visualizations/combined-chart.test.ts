@@ -29,6 +29,7 @@ datalensTest.describe('Wizard', () => {
             await expect(previewLoader).toBeVisible();
             await expect(previewLoader).not.toBeVisible();
 
+            // await expect(await chartLocator.innerHTML()).toMatchSnapshot();
             await expect(chartLocator).toHaveScreenshot();
 
             // uncomment after the CHARTS-9014: The X-axis display mode in the combined chart is not displayed correctly
