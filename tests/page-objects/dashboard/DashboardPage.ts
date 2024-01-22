@@ -30,6 +30,7 @@ import Revisions from '../common/Revisions';
 
 import {SourceTypes} from '../../page-objects/common/DialogControlPO/SourceType';
 import {
+    CreateEntityButton,
     DashboardDialogSettingsQa,
     DialogControlQa,
     DialogDashTitleQA,
@@ -165,13 +166,13 @@ class DashboardPage extends BasePage {
         return makrdownNode.innerHTML();
     }
 
-    async createDashboard(dashName: string) {
+    async createDashboard({editDash, dashName}: {editDash: () => Promise<void>; dashName: string}) {
         // click the button to create a new dashboard
-        await this.page.click(slct('create-entry-button'));
+        await this.page.click(slct(CreateEntityButton.Button));
 
-        // TODO: CHARTS-8652, refine tests for new behavior
-        // temp step of changing the settings, because it is impossible to save the untouched dash
-        await this.enableDashboardTOC();
+        // callback with start actions with dash in edit mode
+        await editDash();
+
         await this.clickSaveButton();
 
         // waiting for the dialog to open, specify the name, save

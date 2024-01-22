@@ -34,17 +34,18 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
 
             await openTestPage(page, '/dashboards');
 
-            await dashboardPage.createDashboard(dashName);
-
-            // adding a selector with a default value
-            await dashboardPage.addSelector({
-                controlTitle: PARAMS.CONTROL_TITLE,
-                controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                controlItems,
-                defaultValue: controlDefaultValue,
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    // adding a selector with a default value
+                    await dashboardPage.addSelector({
+                        controlTitle: PARAMS.CONTROL_TITLE,
+                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+                        controlItems,
+                        defaultValue: controlDefaultValue,
+                    });
+                },
+                dashName,
             });
-
-            await dashboardPage.clickSaveButton();
 
             // get the control by name
             const control = await getControlByTitle(page, PARAMS.CONTROL_TITLE);
