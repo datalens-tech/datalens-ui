@@ -30,11 +30,13 @@
   "label_duplicate": "Duplicate",
   "label_empty-chart": "The visualization will appear here as soon as you write the SQL query and press Run in the bottom-left corner",
   "label_empty-chart_il": "The visualization will appear here as soon as you select a connection, write an SQL query, and click Run in the bottom-left corner.",
+  "label_failed-connection-text": "Failed to load connection",
   "label_new-chart-type-text": "Select chart type to start:",
-  "label_new-connection-text": "Select connection to start:",
+  "label_new-connection-text": "To start, select a connection",
   "label_params": "Params",
   "label_placeholder-default-value": "Default value",
   "label_placeholder-name": "Name",
+  "label_ql-auto-execution-chart": "Automatically apply changes",
   "label_query": "Query",
   "label_run": "Run",
   "label_select-connection": "Select",
@@ -52,6 +54,5 @@
   "label_visualization-pie": "Pie chart",
   "label_visualization-scatter": "Scatter chart",
   "label_visualization-treemap": "Tree chart",
-  "text_default-name": "New QL-сhart",
-  "label_ql-auto-execution-chart": "Automatically apply changes"
+  "text_default-name": "New QL-сhart"
 }

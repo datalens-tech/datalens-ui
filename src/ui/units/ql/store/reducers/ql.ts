@@ -17,7 +17,13 @@ import {
 } from 'units/wizard/selectors/visualization';
 import {selectExtraSettings as getExtraSettingsWizard} from 'units/wizard/selectors/widget';
 
-import {AppStatus, DEFAULT_SALT, PANE_VIEWS, VisualizationStatus} from '../../constants';
+import {
+    AppStatus,
+    ConnectionStatus,
+    DEFAULT_SALT,
+    PANE_VIEWS,
+    VisualizationStatus,
+} from '../../constants';
 import {isPromQlQueriesEmpty, isQLQueryEmpty} from '../../utils/query';
 import {
     ADD_PARAM,
@@ -33,6 +39,7 @@ import {
     SET_CONNECTION,
     SET_CONNECTION_SOURCES,
     SET_CONNECTION_SOURCE_SCHEMA,
+    SET_CONNECTION_STATUS,
     SET_DEFAULT_PATH,
     SET_ENTRY,
     SET_ERROR,
@@ -60,6 +67,7 @@ import {
     QLActionSetConnection,
     QLActionSetConnectionSourceSchema,
     QLActionSetConnectionSources,
+    QLActionSetConnectionStatus,
     QLActionSetDefaultPath,
     QLActionSetEntry,
     QLActionSetError,
@@ -84,6 +92,7 @@ const initialState: QLState = {
     appStatus: AppStatus.Loading,
     defaultPath: DL.USER_LOGIN ? DL.USER_FOLDER : '/',
     visualizationStatus: VisualizationStatus.Empty,
+    connectionStatus: ConnectionStatus.Empty,
     extraSettings: {},
     tablePreviewVisible: true,
     error: null,
@@ -125,6 +134,8 @@ const initialState: QLState = {
 export const getChartType = (state: DatalensGlobalState) => state.ql?.chartType;
 
 export const getConnection = (state: DatalensGlobalState) => state.ql.connection;
+
+export const getConnectionStatus = (state: DatalensGlobalState) => state.ql.connectionStatus;
 
 export const getConnectionSources = (state: DatalensGlobalState) => state.ql.connectionSources;
 
@@ -854,6 +865,14 @@ export default function ql(state: QLState = initialState, action: QLAction) {
             return {
                 ...state,
                 connection,
+            };
+        }
+
+        case SET_CONNECTION_STATUS: {
+            const {connectionStatus} = action as QLActionSetConnectionStatus;
+            return {
+                ...state,
+                connectionStatus,
             };
         }
 
