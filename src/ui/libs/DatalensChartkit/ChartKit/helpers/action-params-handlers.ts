@@ -76,7 +76,7 @@ function setSeriesSelectState(series: Highcharts.Series, selected: boolean) {
     }
 }
 
-function addParams(params: StringParams, addition: StringParams = {}) {
+export function addParams(params: StringParams, addition: StringParams = {}) {
     const result = cloneDeep(params);
 
     return Object.entries(addition).reduce((acc, [key, val]) => {

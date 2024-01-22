@@ -1,6 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ConnectorType} from 'shared';
 
@@ -18,11 +19,11 @@ import {
 } from '../../../../store';
 import {FormTitle} from '../../../FormTitle/FormTitle';
 import {AdditionalTitleContent} from '../components';
-import {i18n8857} from '../constants';
 
 import {useYadocsDialogs} from './useYadocsDialogs';
 
 const b = block('conn-form-yadocs');
+const i18n = I18n.keyset('connections.yadocs.view');
 
 export const ActionBarContainer = () => {
     const dispatch = useDispatch();
@@ -104,7 +105,7 @@ export const ActionBarContainer = () => {
         <FormTitle
             className={b('title')}
             type={ConnectorType.Yadocs}
-            title={i18n8857['label_form-tile']}
+            title={i18n('label_form-tile')}
             additionalContent={additionalContent}
             showArrow={newConnection}
         />
