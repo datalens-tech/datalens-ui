@@ -26,17 +26,15 @@ import {
 import {Markup} from '../../../../../../../../components/Markup';
 import {markupToRawString} from '../../../../../../modules/table';
 import {ChartKitDataTable, DataTableData} from '../../../../../../types';
-import {hasMatchedActionParams} from '../../../../../helpers/utils';
 import {Bar} from '../Bar/Bar';
 import {TableProps} from '../types';
 
+import {getAdditionalStyles, getRowActionParams} from './action-params';
 import {getCellClickArgs, getCellOnClickHandler} from './event-handlers';
 import {
     camelCaseCss,
     generateName,
-    getAdditionalStyles,
     getCellWidth,
-    getRowActionParams,
     getTreeSetColumnSortAscending,
     hasTreeSetColumn,
     isCellValueNullable,
@@ -307,20 +305,6 @@ export const getColumnsAndNames = ({
     topLevelWidth?: number;
     actionParamsData?: ActionParamsData;
 }) => {
-    const selectedRows = rows.filter((row) => {
-        if (!('cells' in row)) {
-            return false;
-        }
-
-        const preparedRow = row.cells.reduce<DataTableData>((acc, cell, i) => {
-            acc[`cell-${i}`] = cell;
-            return acc;
-        }, {});
-        const actionParams = getRowActionParams({row: preparedRow, head});
-
-        return Boolean(hasMatchedActionParams(actionParams, actionParamsData?.params));
-    });
-
     return head.reduce(
         // eslint-disable-next-line complexity
         (
@@ -374,8 +358,15 @@ export const getColumnsAndNames = ({
                         if (header) {
                             return camelCaseCss(column.css);
                         }
+
+                        const style = {};
                         const cell = row && row[name];
-                        return camelCaseCss((typeof cell === 'object' && cell?.css) || undefined);
+
+                        if (typeof cell === 'object' && cell?.css) {
+                            Object.assign(style, cell.css);
+                        }
+
+                        return camelCaseCss(style);
                     },
                     align: DataTable.CENTER,
                     sub: columns,
@@ -419,6 +410,7 @@ export const getColumnsAndNames = ({
                     };
                 }
 
+                const isHeadColumn = get(column, 'header');
                 const columnData: Column<DataTableData> = {
                     name: columnName,
                     header: (
@@ -433,6 +425,7 @@ export const getColumnsAndNames = ({
                     className: b('cell', {
                         type,
                         'with-fixed-width': Boolean(columnWidth),
+                        selectable: !isHeadColumn,
                     }),
                     accessor: (row) => {
                         const column = row[columnName];
@@ -467,9 +460,15 @@ export const getColumnsAndNames = ({
                         let rowActionParams: StringParams | undefined;
                         let additionalStyles: React.CSSProperties | undefined;
 
-                        if (actionParamsData) {
+                        if (!isHeadColumn && actionParamsData) {
                             rowActionParams = getRowActionParams({row, head});
-                            additionalStyles = getAdditionalStyles({actionParamsData, row, head});
+                            additionalStyles = getAdditionalStyles({
+                                actionParamsData,
+                                row,
+                                rows,
+                                head,
+                                cell,
+                            });
                         }
 
                         if (cellClickArgs || rowActionParams) {
@@ -480,9 +479,11 @@ export const getColumnsAndNames = ({
                             Object.assign(defaultStyles, additionalStyles);
                         }
 
-                        return camelCaseCss(
-                            (typeof cell === 'object' && cell?.css) || defaultStyles,
-                        );
+                        if (typeof cell === 'object' && cell?.css) {
+                            Object.assign(defaultStyles, cell.css);
+                        }
+
+                        return camelCaseCss(defaultStyles);
                     },
                     sortAccessor: (row) => {
                         const column = row[columnName];
@@ -501,9 +502,9 @@ export const getColumnsAndNames = ({
                         ? getTreeSetColumnSortAscending(columnName, rows)
                         : undefined,
                     onClick: getCellOnClickHandler({
-                        actionParamsData,
+                        actionParamsData: isHeadColumn ? undefined : actionParamsData,
                         head,
-                        selectedRows,
+                        rows,
                         onChange,
                     }),
                     sortable: isGroupSortAvailable && isColumnSortable,

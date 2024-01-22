@@ -98,7 +98,7 @@ export function addParams(params: StringParams, addition: StringParams = {}) {
     }, result);
 }
 
-function subtractParameters(params: StringParams, sub: StringParams = {}) {
+export function subtractParameters(params: StringParams, sub: StringParams = {}) {
     const result = cloneDeep(params);
     return Object.entries(sub).reduce((acc, [key, val]) => {
         const paramValue = acc[key];

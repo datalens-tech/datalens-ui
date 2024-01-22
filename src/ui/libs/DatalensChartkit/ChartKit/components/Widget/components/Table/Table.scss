@@ -45,6 +45,11 @@
         &_sortable:hover {
             cursor: pointer;
         }
+
+        &_selectable.data-table__td:hover {
+            background: var(--data-table-color-hover-area);
+            cursor: pointer;
+        }
     }
 
     &__cell_type_grid:not(th) {
