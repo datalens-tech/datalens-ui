@@ -1,0 +1,23 @@
+{
+  "button_add": "Add",
+  "button_apply": "Add",
+  "button_auth": "Authentication",
+  "button_cancel": "Cancel",
+  "button_update": "Update data",
+  "label_403-not-authotized-description": "Log in to your Yandex account or change the file access type and try adding it again",
+  "label_access-type": "Access type",
+  "label_add-document": "Add document",
+  "label_add-input-help": "It is forbidden to add links to or download files restricted by password. Use private files that are available after authentication.",
+  "label_add-input-private": "Path to file",
+  "label_add-input-private-note": "Example: /path/to/document",
+  "label_add-input-public": "Link to file",
+  "label_add-input-public-note": "Example: https://disk.yandex.ru/i/id",
+  "label_auto-update": "Update automatically",
+  "label_auto-update-help": "Data in the tables will be updated no more than once every 30 minutes",
+  "label_form-tile": "Yandex Documents",
+  "label_logout-dialog-description": "Sheets from files with restricted access will no longer be displayed",
+  "label_logout-dialog-title": "Are you sure you want to revoke your token?",
+  "label_radio-value-private": "Private",
+  "label_radio-value-public": "Public",
+  "label_workspace-placeholder": "To create a connection, add links to files in Yandex Documents. Supported formats: {{formats}}."
+}
