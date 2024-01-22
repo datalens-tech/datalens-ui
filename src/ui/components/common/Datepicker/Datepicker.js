@@ -39,7 +39,7 @@ export const datepickerDefaultProps = {
     hasClear: true,
     disabled: false,
     controlSize: 'm',
-    fillEmptyValues: false,
+    fillPartialInterval: false,
 };
 
 export class Datepicker extends React.PureComponent {
@@ -67,7 +67,8 @@ export class Datepicker extends React.PureComponent {
         popupClassName: PropTypes.string,
         required: PropTypes.bool,
         hasValidationError: PropTypes.bool,
-        fillEmptyValues: PropTypes.bool,
+        fillPartialInterval: PropTypes.bool,
+        canBeEmpty: PropTypes.bool,
     };
 
     static defaultProps = datepickerDefaultProps;
@@ -325,7 +326,7 @@ export class Datepicker extends React.PureComponent {
     };
 
     onInputUpdate = (searchText) => {
-        const {format, range} = this.props;
+        const {format, range, canBeEmpty} = this.props;
         const {zone} = this.state;
         const dates = searchText.split(/\s-\s?/);
         let from;
@@ -343,21 +344,24 @@ export class Datepicker extends React.PureComponent {
             isToValid = isValidDate(to);
         }
 
+        const isInvalidEmpty = !canBeEmpty && !from && !to;
+
+        if (!isFromValid || !isToValid || isInvalidEmpty) {
+            // if isInvalidEmpty we skip error of invalid input and leave the previous valid values
+            this.setState({
+                searchText,
+                invalidInput: !isInvalidEmpty,
+            });
+
+            return;
+        }
+
         if (range) {
             [from, to] = resolveDates({from, to});
 
             if (to && !hasTimeUnitsInFormat(format)) {
                 to = to.endOf('day');
             }
-        }
-
-        if (!isFromValid || !isToValid) {
-            this.setState({
-                searchText,
-                invalidInput: true,
-            });
-
-            return;
         }
 
         const resetPickCounter = !searchText || (range && !to);
@@ -416,7 +420,7 @@ export class Datepicker extends React.PureComponent {
     };
 
     onUpdate = () => {
-        const {allowNullableValues, onError, fillEmptyValues} = this.props;
+        const {allowNullableValues, onError, fillPartialInterval} = this.props;
         const {min, max} = this.state;
 
         if (this.isInvalidState()) {
@@ -452,7 +456,7 @@ export class Datepicker extends React.PureComponent {
 
         [from, to] = resolveDates({from, to});
 
-        if (fillEmptyValues && from && !to) {
+        if (fillPartialInterval && from && !to) {
             // 'to' will not be empty for correct work of the selector on the dashboard
             to = fillEmptyToDate(from);
         }

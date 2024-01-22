@@ -110,6 +110,7 @@ function BaseControlSelect({
             : undefined;
 
     const size = isMobileView ? MOBILE_SIZE.YC_SELECT : 's';
+    const canBeEmpty = !Utils.isEnabledFeature(Feature.SelectorRequiredValue) || !required;
 
     return (
         <YCSelect
@@ -134,6 +135,7 @@ function BaseControlSelect({
             className={b('yc-select')}
             showSelectAll={showSelectAll}
             hasValidationError={hasValidationError}
+            canBeEmpty={canBeEmpty}
         />
     );
 }
@@ -310,6 +312,7 @@ function BaseControlDatepicker({
     );
 
     const hasClear = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? !required : true;
+    const canBeEmpty = !Utils.isEnabledFeature(Feature.SelectorRequiredValue) || !required;
 
     return (
         <DatepickerControl
@@ -331,6 +334,7 @@ function BaseControlDatepicker({
             className={b('datepicker')}
             hasValidationError={hasValidationError}
             required={required}
+            canBeEmpty={canBeEmpty}
         />
     );
 }
@@ -400,6 +404,7 @@ function BaseControlRangeDatepicker({
     );
 
     const hasClear = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? !required : true;
+    const canBeEmpty = !Utils.isEnabledFeature(Feature.SelectorRequiredValue) || !required;
 
     return (
         <DatepickerControl
@@ -420,7 +425,8 @@ function BaseControlRangeDatepicker({
             className={b('datepicker')}
             hasValidationError={hasValidationError}
             required={required}
-            fillEmptyValues={true}
+            fillPartialInterval={true}
+            canBeEmpty={canBeEmpty}
         />
     );
 }

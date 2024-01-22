@@ -332,6 +332,7 @@ export class YCSelect extends React.PureComponent {
         onFetchErrorDetails: PropTypes.func,
         fetchErrorDetailsTitle: PropTypes.string,
         hasValidationError: PropTypes.bool,
+        canBeEmpty: PropTypes.bool,
     };
 
     constructor(props) {
@@ -550,13 +551,14 @@ export class YCSelect extends React.PureComponent {
     };
 
     selectItems = (item) => {
-        const {getItems} = this.props;
+        const {getItems, canBeEmpty} = this.props;
         const {items} = this.state;
         const innerValue = new Set(this.state.innerValue);
+        const canBeRemoved = !canBeEmpty || innerValue.size > 1;
 
-        if (innerValue.has(item.value)) {
+        if (innerValue.has(item.value) && canBeRemoved) {
             innerValue.delete(item.value);
-        } else {
+        } else if (!innerValue.has(item.value)) {
             innerValue.add(item.value);
         }
 
@@ -1695,6 +1697,7 @@ export const YCSelectDefaultProps = {
     loading: false,
     applyOnOutsideClick: true,
     loadingItems: false,
+    canBeEmpty: false,
 };
 
 YCSelect.defaultProps = YCSelectDefaultProps;
