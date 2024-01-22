@@ -26,10 +26,14 @@ const DASH_PARAMS: Array<[string, string]> = [
 ];
 
 const openParams = async (page: Page) => {
-    // checking for a new view of parameter setting
-    const newParamsButton = await page.waitForSelector(slct(ParamsSettingsQA.Open));
-    await newParamsButton.click();
-    await page.waitForSelector(slct(ParamsSettingsQA.Settings));
+    const newParamsButton = await page.$(slct(ParamsSettingsQA.Open));
+    if (newParamsButton !== null) {
+        const newParams = await page.$(slct(ParamsSettingsQA.Settings));
+
+        if (!newParams) {
+            await newParamsButton.click();
+        }
+    }
 };
 
 const getParamsFromPage = async (page: Page) => {
