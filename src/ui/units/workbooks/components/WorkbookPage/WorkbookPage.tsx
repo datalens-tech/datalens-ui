@@ -206,7 +206,7 @@ export const WorkbookPage = () => {
                             ),
                         );
 
-                        if (!workbook?.permissions.limitedView) {
+                        if (workbook.permissions.view) {
                             promises.push(
                                 dispatch(
                                     getWorkbookEntries({

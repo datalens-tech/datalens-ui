@@ -221,7 +221,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                 {...mainTabProps}
                             />
 
-                            {!workbook.permissions.limitedView && (
+                            {workbook.permissions.view && (
                                 <MainTabContent
                                     chunk={datasetChunk}
                                     actionCreateText={i18n('action_create-dataset')}
@@ -241,7 +241,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                 />
                             )}
 
-                            {!workbook.permissions.limitedView && (
+                            {workbook.permissions.view && (
                                 <MainTabContent
                                     chunk={connChunk}
                                     actionCreateText={i18n('action_create-connection')}
