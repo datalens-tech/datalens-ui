@@ -36,26 +36,26 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
 
             await openTestPage(page, '/dashboards');
 
-            await dashboardPage.createDashboard(dashName);
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addSelector({
+                        controlTitle: PARAMS.CONTROL_TITLE,
+                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+                        controlItems: PARAMS.CONTROL_ITEMS,
+                    });
 
-            await dashboardPage.addSelector({
-                controlTitle: PARAMS.CONTROL_TITLE,
-                controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                controlItems: PARAMS.CONTROL_ITEMS,
+                    await dashboardPage.addChart({
+                        chartName: PARAMS.CHART_NAME,
+                        chartUrl: PARAMS.CHART_URL,
+                    });
+                    await dashboardPage.setupLinks({
+                        linkType: ConnectionsDialogQA.TypeSelectOutputOption,
+                        chartField: PARAMS.CHART_FIELD,
+                        selectorName: PARAMS.CONTROL_TITLE,
+                    });
+                },
+                dashName,
             });
-
-            await dashboardPage.addChart({
-                chartName: PARAMS.CHART_NAME,
-                chartUrl: PARAMS.CHART_URL,
-            });
-
-            await dashboardPage.setupLinks({
-                linkType: ConnectionsDialogQA.TypeSelectOutputOption,
-                chartField: PARAMS.CHART_FIELD,
-                selectorName: PARAMS.CONTROL_TITLE,
-            });
-
-            await dashboardPage.clickSaveButton();
 
             await waitForCondition(async () => {
                 const elems = await page.$$(SELECTORS.CHART_LEGEND_ITEM);

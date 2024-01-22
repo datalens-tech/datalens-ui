@@ -94,10 +94,10 @@
     }
 
     &_error {
-        border-color: var(--g-color-base-danger-heavy);
+        border-color: var(--g-color-line-danger);
 
         &:hover {
-            border-color: var(--g-color-base-danger-heavy-hover);
+            border-color: var(--g-color-line-danger);
         }
     }
 

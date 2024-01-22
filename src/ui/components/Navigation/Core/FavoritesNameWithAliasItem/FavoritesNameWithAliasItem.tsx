@@ -17,27 +17,27 @@ const i18n = I18n.keyset('component.navigation.view');
 type FavoritesNameWithAliasItemProps = {
     entryId: string;
     name: string;
-    alias: string;
+    displayAlias?: string | null;
     isLocked: boolean;
     className?: string;
     onMenuClick: (args: MenuClickArgs) => void;
 };
 
 export const FavoritesNameWithAliasItem = (props: FavoritesNameWithAliasItemProps) => {
-    const {name, alias, isLocked, className, onMenuClick} = props;
+    const {name, displayAlias, isLocked, className, onMenuClick} = props;
 
     const onLabelClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.preventDefault();
         e.stopPropagation();
 
         onMenuClick({
-            entry: {entryId: props.entryId, alias: props.alias},
+            entry: {entryId: props.entryId, displayAlias: props.displayAlias},
             action: ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS,
         });
     };
 
-    const text = alias === '' ? name : alias;
-    const isAliasVisible = alias !== '';
+    const isAliasVisible = Boolean(displayAlias);
+    const text = displayAlias ? displayAlias : name;
 
     return (
         <React.Fragment>

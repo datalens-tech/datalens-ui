@@ -29,8 +29,9 @@ export const InnerTitleRow = () => {
         (elementType !== ELEMENT_TYPE.SELECT && elementType !== ELEMENT_TYPE.INPUT) ||
         isFieldDisabled;
     const isInnerTitleActive =
-        (elementType === ELEMENT_TYPE.SELECT || elementType === ELEMENT_TYPE.INPUT) &&
-        showInnerTitle;
+        ((elementType === ELEMENT_TYPE.SELECT || elementType === ELEMENT_TYPE.INPUT) &&
+            showInnerTitle) ??
+        false;
 
     const handleShowInnerTitleUpdate = React.useCallback((showInnerTitle: boolean) => {
         dispatch(
@@ -58,6 +59,7 @@ export const InnerTitleRow = () => {
             />
         </React.Fragment>
     );
+
     return (
         <FormRow label={label}>
             <div
