@@ -25,248 +25,133 @@ const DASH_PARAMS: Array<[string, string]> = [
     ['param3', 'value1'],
 ];
 
-const checkNewParams = async (page: Page) => {
+const openParams = async (page: Page) => {
     // checking for a new view of parameter setting
-    const newParamsButton = await page.$(slct(ParamsSettingsQA.Open));
-    let isNewParams = false;
-    if (newParamsButton !== null) {
-        const newParams = await page.$(slct(ParamsSettingsQA.Settings));
-
-        if (!newParams) {
-            await newParamsButton.click();
-        }
-        isNewParams = true;
-    }
-
-    return isNewParams;
+    const newParamsButton = await page.waitForSelector(slct(ParamsSettingsQA.Open));
+    await newParamsButton.click();
+    await page.waitForSelector(slct(ParamsSettingsQA.Settings));
 };
 
-const getParamsFromPage = async (
-    page: Page,
-    {isOldDialogParams}: {isOldDialogParams?: boolean} = {},
-) => {
-    const isNewParams = await checkNewParams(page);
+const getParamsFromPage = async (page: Page) => {
+    await openParams(page);
 
-    // if the type of parameters is new
-    if (isNewParams) {
-        // getting the entire list of parameters without errors
-        const paramRows = await page.$$(slct(ParamsSettingsQA.ParamRow));
+    // getting the entire list of parameters without errors
+    const paramRows = await page.$$(slct(ParamsSettingsQA.ParamRow));
 
-        // for each row, getting the parameters and values in the array of arrays
-        const paramsContent = await Promise.all(
-            paramRows.map((paramRow) =>
-                (async () => {
-                    const paramsSeed: string[] = [];
+    // for each row, getting the parameters and values in the array of arrays
+    const paramsContent = await Promise.all(
+        paramRows.map((paramRow) =>
+            (async () => {
+                const paramsSeed: string[] = [];
 
-                    // getting the name of the parameter
-                    const titleEl = await paramRow.$(`${slct(ParamsSettingsQA.ParamTitle)} input`);
-                    const title = ((await titleEl?.inputValue()) || '').trim();
+                // getting the name of the parameter
+                const titleEl = await paramRow.$(`${slct(ParamsSettingsQA.ParamTitle)} input`);
+                const title = ((await titleEl?.inputValue()) || '').trim();
 
-                    // if the parameter name is empty, then ignoring the line
-                    if (title === '') {
-                        return paramsSeed;
-                    }
-
-                    // getting the parameter values
-                    const valuesEl = await paramRow.$$(slct(ParamsSettingsQA.ParamValue));
-
-                    // if there are no parameter values, adding a parameter without a value
-                    if (valuesEl.length < 1) {
-                        paramsSeed.push(`${title}=`);
-                        return paramsSeed;
-                    }
-
-                    for (let i = 0; i < valuesEl.length; i++) {
-                        const valuePromise = valuesEl[i]?.textContent();
-
-                        const value = ((await valuePromise) || '').trim();
-
-                        paramsSeed.push(`${title}=${value}`);
-                    }
+                // if the parameter name is empty, then ignoring the line
+                if (title === '') {
                     return paramsSeed;
-                })(),
-            ),
-        );
+                }
 
-        // transforming to single-level array of all parameters from an array of arrays
-        return paramsContent.flat();
-    }
+                // getting the parameter values
+                const valuesEl = await paramRow.$$(slct(ParamsSettingsQA.ParamValue));
 
-    // if the view of parameters is old, but the values need to be retrieved from the dialog
-    if (isOldDialogParams) {
-        // opening the parameters dialog
-        await page.click(slct(ParamsSettingsQA.AddOld));
-
-        // getting the entire list of parameters
-        const paramRows = await page.$$(slct(ParamsSettingsQA.ParamRow));
-
-        // for each row, getting the parameters and values in the array of arrays
-        const paramsContent = await Promise.all(
-            paramRows.map((paramRow) =>
-                (async () => {
-                    const paramsSeed: string[] = [];
-
-                    // getting the name of the parameter
-                    const titleEl = await paramRow.$(`${slct(ParamsSettingsQA.ParamTitle)} input`);
-                    const title = ((await titleEl?.inputValue()) || '').trim();
-
-                    // if the parameter name is empty, then ignoring the line
-                    if (title === '') {
-                        return paramsSeed;
-                    }
-
-                    // getting the parameter values
-                    const valuesEl = await paramRow.$$(
-                        `${slct(ParamsSettingsQA.ParamValue)} input`,
-                    );
-
-                    // if there are no parameter values, adding a parameter without a value
-                    if (valuesEl.length < 1) {
-                        paramsSeed.push(`${title}=`);
-                        return paramsSeed;
-                    }
-
-                    for (let i = 0; i < valuesEl.length; i++) {
-                        const valuePromise = valuesEl[i]?.inputValue();
-
-                        const value = ((await valuePromise) || '').trim();
-
-                        paramsSeed.push(`${title}=${value}`);
-                    }
+                // if there are no parameter values, adding a parameter without a value
+                if (valuesEl.length < 1) {
+                    paramsSeed.push(`${title}=`);
                     return paramsSeed;
-                })(),
-            ),
-        );
+                }
 
-        // closing the parameters dialog
-        await page.click(slct(ParamsSettingsQA.ApplyOld));
+                for (let i = 0; i < valuesEl.length; i++) {
+                    const valuePromise = valuesEl[i]?.textContent();
 
-        // transforming to a single-level array of all parameters from an array of arrays
-        return paramsContent.flat();
-    }
+                    const value = ((await valuePromise) || '').trim();
 
-    // if the view of parameters is old without a dialog, then getting all the values at once
-    const paramsEl = await page.$$(slct(ParamsSettingsQA.ParamContentOld));
+                    paramsSeed.push(`${title}=${value}`);
+                }
+                return paramsSeed;
+            })(),
+        ),
+    );
 
-    const paramsContent = await Promise.all(paramsEl.map((el) => el.textContent()));
-
-    const params = paramsContent.map((param) => (param || '').trim());
-    return params;
+    // transforming to single-level array of all parameters from an array of arrays
+    return paramsContent.flat();
 };
 
 const addParam = async (page: Page, param: {title: string; value: string}) => {
-    const isNewParams = await checkNewParams(page);
+    await openParams(page);
 
-    if (isNewParams) {
-        // click the add parameters button to ensure that a new line appears
-        await page.click(slct(ParamsSettingsQA.Add));
+    // click the add parameters button to ensure that a new line appears
+    await page.click(slct(ParamsSettingsQA.Add));
 
-        // getting the entire list of parameters
-        const paramRows = await page.$$(slct(ParamsSettingsQA.ParamRow));
+    // getting the entire list of parameters
+    const paramRows = await page.$$(slct(ParamsSettingsQA.ParamRow));
 
-        // getting all the parameter names
-        const paramRowsTitles = await Promise.all(
-            paramRows.map((paramRow) =>
-                (async () => {
-                    const titleEl = await paramRow.$(`input`);
-                    const title = ((await titleEl?.inputValue()) || '').trim();
+    // getting all the parameter names
+    const paramRowsTitles = await Promise.all(
+        paramRows.map((paramRow) =>
+            (async () => {
+                const titleEl = await paramRow.$(`input`);
+                const title = ((await titleEl?.inputValue()) || '').trim();
 
-                    return title;
-                })(),
-            ),
-        );
+                return title;
+            })(),
+        ),
+    );
 
-        // finding the index of the first line of the parameter with an empty name
-        const addIndex = paramRowsTitles.findIndex((title) => title === '');
+    // finding the index of the first line of the parameter with an empty name
+    const addIndex = paramRowsTitles.findIndex((title) => title === '');
 
-        const lastParamRow = paramRows[addIndex];
+    const lastParamRow = paramRows[addIndex];
 
-        // filling the name of the parameter
-        const paramTitleInput = await lastParamRow.$(`${slct(ParamsSettingsQA.ParamTitle)} input`);
-        paramTitleInput?.fill(param.title);
+    // filling the name of the parameter
+    const paramTitleInput = await lastParamRow.$(`${slct(ParamsSettingsQA.ParamTitle)} input`);
+    paramTitleInput?.fill(param.title);
 
-        if (param.value) {
-            // click on the button to add a new value for the input field appears
-            const addParamValueButton = await lastParamRow.$(slct(ParamsSettingsQA.ParamAddValue));
-            await addParamValueButton?.click();
-
-            // finding the parameter value input field and add the value
-            const paramValueInput = await lastParamRow.$(
-                `${slct(ParamsSettingsQA.ParamValue)} input`,
-            );
-            await paramValueInput?.fill(param.value);
-
-            // shifting the focus from the input field for the value is preserved
-            await paramTitleInput?.focus();
-        }
-
-        return;
-    }
-
-    // if the view of parameters is old, then open the dialog for add a parameter and fill in the values
-    await page.click(slct(ParamsSettingsQA.AddOld));
-    await page.fill(`${slct(ParamsSettingsQA.ParamTitle)} input`, param.title);
     if (param.value) {
-        await page.fill(`${slct(ParamsSettingsQA.ParamValue)} input`, param.value);
+        // click on the button to add a new value for the input field appears
+        const addParamValueButton = await lastParamRow.$(slct(ParamsSettingsQA.ParamAddValue));
+        await addParamValueButton?.click();
+
+        // finding the parameter value input field and add the value
+        const paramValueInput = await lastParamRow.$(`${slct(ParamsSettingsQA.ParamValue)} input`);
+        await paramValueInput?.fill(param.value);
+
+        // shifting the focus from the input field for the value is preserved
+        await paramTitleInput?.focus();
     }
-    await page.click(slct(ParamsSettingsQA.ApplyOld));
 };
 
 const removeParam = async (page: Page, paramTitle: string) => {
-    const isNewParams = await checkNewParams(page);
+    await openParams(page);
 
-    if (isNewParams) {
-        await page.click(slct(ParamsSettingsQA.Add));
+    await page.click(slct(ParamsSettingsQA.Add));
 
-        // getting the entire list of parameters
-        const paramRows = await page.$$(slct(ParamsSettingsQA.ParamRow));
+    // getting the entire list of parameters
+    const paramRows = await page.$$(slct(ParamsSettingsQA.ParamRow));
 
-        // getting all the parameter names
-        const paramRowsTitles = await Promise.all(
-            paramRows.map((paramRow) =>
-                (async () => {
-                    const titleEl = await paramRow.$(`input`);
-                    const title = ((await titleEl?.inputValue()) || '').trim();
+    // getting all the parameter names
+    const paramRowsTitles = await Promise.all(
+        paramRows.map((paramRow) =>
+            (async () => {
+                const titleEl = await paramRow.$(`input`);
+                const title = ((await titleEl?.inputValue()) || '').trim();
 
-                    return title;
-                })(),
-            ),
-        );
-
-        // finding the index of the parameter to be deleted
-        const removeIndex = paramRowsTitles.findIndex((title) => title === paramTitle);
-        if (removeIndex < 0) {
-            throw new Error('index of param for delete not found');
-        }
-
-        // emulating hovering over a line for the delete button to appear
-        await paramRows[removeIndex].hover();
-
-        const removeButton = await paramRows[removeIndex].$(slct(ParamsSettingsQA.Remove));
-        await removeButton?.click();
-
-        return;
-    }
-
-    // if the view of parameters is old, then first getting all the parameters
-    let paramsEl = await page.$$(slct(ParamsSettingsQA.ParamContentOld));
-    const paramsContent = await Promise.all(paramsEl.map((el) => el.textContent()));
-
-    const paramsTitles = paramsContent.map((param) => (param || '').split('=').shift()?.trim());
+                return title;
+            })(),
+        ),
+    );
 
     // finding the index of the parameter to be deleted
-    const removeIndex = paramsTitles.findIndex((title) => title === paramTitle);
+    const removeIndex = paramRowsTitles.findIndex((title) => title === paramTitle);
     if (removeIndex < 0) {
         throw new Error('index of param for delete not found');
     }
 
-    // again getting the full components of the parameters, not just the content
-    paramsEl = await page.$$(slct(ParamsSettingsQA.ParamOld));
+    // emulating hovering over a line for the delete button to appear
+    await paramRows[removeIndex].hover();
 
-    // emulating hovering over a parameter to make the delete button appear
-    await paramsEl[removeIndex].hover();
-
-    const removeButton = await paramsEl[removeIndex].$(slct(ParamsSettingsQA.ParamRemoveOld));
+    const removeButton = await paramRows[removeIndex].$(slct(ParamsSettingsQA.Remove));
     await removeButton?.click();
 };
 
@@ -506,7 +391,7 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
             // adding a valid parameter
             await addParam(page, {title: validParam[0], value: validParam[1]});
 
-            let actualParams = await getParamsFromPage(page, {isOldDialogParams: true});
+            let actualParams = await getParamsFromPage(page);
 
             // checking if there is only one valid parameter on the page
             expect(actualParams).toEqual([validParam.join('=')]);
@@ -534,7 +419,7 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
             // adding a valid parameter
             await addParam(page, {title: validParam[0], value: validParam[1]});
 
-            actualParams = await getParamsFromPage(page, {isOldDialogParams: true});
+            actualParams = await getParamsFromPage(page);
 
             // checking if there is only one valid parameter on the page
             expect(actualParams).toEqual([validParam.join('=')]);
