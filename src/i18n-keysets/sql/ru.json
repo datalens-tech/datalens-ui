@@ -30,11 +30,13 @@
   "label_duplicate": "Дублировать",
   "label_empty-chart": "Визуализация появится, как только вы напишете SQL-запрос и нажмете кнопку «Запустить» в левом нижнем углу",
   "label_empty-chart_il": "Чтобы построить визуализацию, выберите подключение, напишите SQL-запрос и нажмите кнопку «Запустить» в левом нижнем углу.",
+  "label_failed-connection-text": "Не удалось загрузить подключение",
   "label_new-chart-type-text": "Выберите тип чарта, чтобы начать:",
-  "label_new-connection-text": "Выберите подключение, чтобы начать:",
+  "label_new-connection-text": "Выберите подключение, чтобы начать",
   "label_params": "Параметры",
   "label_placeholder-default-value": "Значение по умолчанию",
   "label_placeholder-name": "Имя",
+  "label_ql-auto-execution-chart": "Автоматически применять изменения",
   "label_query": "Запрос",
   "label_run": "Запустить",
   "label_select-connection": "Выбрать",
@@ -52,6 +54,5 @@
   "label_visualization-pie": "Круговая диаграмма",
   "label_visualization-scatter": "Точечная диаграмма",
   "label_visualization-treemap": "Древовидная диаграмма",
-  "text_default-name": "Новый QL-чарт",
-  "label_ql-auto-execution-chart": "Автоматически применять изменения"
+  "text_default-name": "Новый QL-чарт"
 }
