@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {DatalensGlobalState} from 'ui';
-import {drawPreviewIfValid} from 'units/ql/store/actions/ql';
+import {drawPreview} from 'units/ql/store/actions/ql';
 import SectionVisualization from 'units/wizard/containers/Wizard/SectionVisualization/SectionVisualization';
 
 import {getIsQLQueryEmpty} from '../../store/reducers/ql';
@@ -35,7 +35,11 @@ class PaneVisualization extends React.PureComponent<
             <SectionVisualization
                 availableVisualizations={getAvailableQlVisualizations()}
                 onUpdate={() => {
-                    this.props.drawPreviewIfValid({
+                    if (this.props.isQueryEmpty) {
+                        return;
+                    }
+
+                    this.props.drawPreview({
                         withoutTable: true,
                     });
                 }}
@@ -46,7 +50,7 @@ class PaneVisualization extends React.PureComponent<
 }
 
 const mapDispatchToProps = {
-    drawPreviewIfValid,
+    drawPreview,
 };
 
 const makeMapStateToProps = (state: DatalensGlobalState) => {
