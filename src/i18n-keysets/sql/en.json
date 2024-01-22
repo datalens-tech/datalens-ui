@@ -36,6 +36,7 @@
   "label_params": "Params",
   "label_placeholder-default-value": "Default value",
   "label_placeholder-name": "Name",
+  "label_ql-auto-execution-chart": "Automatically apply changes",
   "label_query": "Query",
   "label_run": "Run",
   "label_select-connection": "Select",
@@ -53,6 +54,5 @@
   "label_visualization-pie": "Pie chart",
   "label_visualization-scatter": "Scatter chart",
   "label_visualization-treemap": "Tree chart",
-  "text_default-name": "New QL-сhart",
-  "label_ql-auto-execution-chart": "Automatically apply changes"
+  "text_default-name": "New QL-сhart"
 }
