@@ -935,7 +935,6 @@ class DashboardPage extends BasePage {
         );
 
         if (shortTab) {
-            // g-select-list__option-default-label_disabled
             await shortTab.click();
             const tab = await this.page.waitForSelector(
                 `${DashboardPage.selectors.selectItems} ${DashboardPage.selectors.selectItemTitle}:not(${DashboardPage.selectors.selectItemTitleDisabled}) >> text=${tabName}`,
