@@ -43,15 +43,11 @@ export const EntryActions = ({
             action: onRenameClick,
             text: i18n('action_rename'),
         },
-        ...(entry.scope !== EntryScope.Connection && entry.scope !== EntryScope.Dataset
-            ? [
-                  {
-                      action: onDuplicateEntry,
-                      text: i18n('action_duplicate'),
-                      qa: WorkbookPage.MenuItemDuplicate,
-                  },
-              ]
-            : []),
+        {
+            action: onDuplicateEntry,
+            text: i18n('action_duplicate'),
+            qa: WorkbookPage.MenuItemDuplicate,
+        },
         ...(!isFileConnection && copyEntriesToWorkbookEnabled
             ? [
                   {

@@ -150,7 +150,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
     // different Copy menu for dash/widgets and datasets/configs
     {
         ...CONTEXT_MENU_COPY,
-        scopes: [EntryScope.Dash, EntryScope.Widget],
+        scopes: [EntryScope.Dash, EntryScope.Widget, EntryScope.Connection],
         // allow to show if there are no permissions
     },
     {
@@ -159,10 +159,6 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         permissions: {admin: true, edit: true, read: false, execute: false},
         isStrictPermissions: true, // strict check with disallow when there are no permissions object
         isVisible(args) {
-            if (args.entry?.workbookId) {
-                return false;
-            }
-
             return CONTEXT_MENU_COPY.isVisible(args);
         },
     },
