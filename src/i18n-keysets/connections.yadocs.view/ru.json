@@ -1,0 +1,23 @@
+{
+  "button_add": "Добавить",
+  "button_apply": "Добавить",
+  "button_auth": "Аутентификация",
+  "button_cancel": "Отмена",
+  "button_update": "Обновить данные",
+  "label_403-not-authotized-description": "Войдите в свой аккаунт на Яндексе или измените тип доступа к файлу и попробуйте добавить его снова",
+  "label_access-type": "Доступ к файлу",
+  "label_add-document": "Добавить документ",
+  "label_add-input-help": "Добавлять ссылки на файлы, доступ к которым ограничен с помощью пароля, а также скачивать такие файлы запрещено. Используйте приватные файлы, доступные после аутентификации.",
+  "label_add-input-private": "Путь до файла",
+  "label_add-input-private-note": "Пример: /path/to/document",
+  "label_add-input-public": "Ссылка на файл",
+  "label_add-input-public-note": "Пример: https://disk.yandex.ru/i/id",
+  "label_auto-update": "Обновлять автоматически",
+  "label_auto-update-help": "Данные в таблицах будут обновляться не чаще, чем один раз за 30 минут.",
+  "label_form-tile": "Яндекс Документы",
+  "label_logout-dialog-description": "Содержимое файлов с приватным доступом перестанет отображаться",
+  "label_logout-dialog-title": "Вы действительно хотите отозвать свой токен?",
+  "label_radio-value-private": "Приватный",
+  "label_radio-value-public": "Публичный",
+  "label_workspace-placeholder": "Чтобы создать подключение, добавьте ссылки на файлы в Яндекс Документах. Поддерживаемые форматы: {{formats}}."
+}

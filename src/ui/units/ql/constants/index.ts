@@ -2,9 +2,9 @@ import {ConnectorType, QLChartType} from '../../../../shared';
 import {VISUALIZATION_IDS} from '../../../constants/visualizations';
 
 export enum AppStatus {
+    Unconfigured = 'unconfigured',
     Loading = 'loading',
     Failed = 'failed',
-    Unconfigured = 'unconfigured',
     Ready = 'ready',
 }
 
@@ -12,6 +12,12 @@ export enum VisualizationStatus {
     Empty = 'empty',
     LoadingChart = 'loadingChart',
     LoadingEverything = 'loadingEverything',
+    Ready = 'ready',
+}
+
+export enum ConnectionStatus {
+    Empty = 'empty',
+    Failed = 'failed',
     Ready = 'ready',
 }
 
