@@ -41,7 +41,7 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
     const xCategories = preparedData.categories;
 
     const seriesData: LineSeries[] = preparedData.graphs.map<LineSeries>((graph: any) => {
-        return {
+        const d3Graph: LineSeries = {
             name: graph.title,
             type: 'line',
             color: graph.color,
@@ -76,6 +76,12 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
                 },
             },
         };
+
+        if (graph.dashStyle) {
+            d3Graph.dashStyle = graph.dashStyle;
+        }
+
+        return d3Graph;
     });
 
     const config: ChartKitWidgetData = {
