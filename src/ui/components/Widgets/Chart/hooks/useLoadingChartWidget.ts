@@ -60,6 +60,7 @@ type LoadingChartWidgetHookProps = Pick<
         | 'widgetDataRef'
         | 'widgetRenderTimeRef'
         | 'enableActionParams'
+        | 'clearedOuterParams'
     > &
     ChartWidgetProps & {
         tabIndex: number;
@@ -106,6 +107,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         usageType,
         enableActionParams,
         settings,
+        clearedOuterParams,
     } = props;
 
     const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts;
@@ -239,6 +241,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         usageType,
         ignoreUsedParams: true, // tmp fix CHARTS-7290 TODO: CHARTS-6619 return this later with announcement of changes
         enableActionParams,
+        clearedOuterParams,
     });
 
     const {
