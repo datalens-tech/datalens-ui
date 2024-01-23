@@ -92,6 +92,27 @@ function getAdditionalStylesByCell(args: {
     return undefined;
 }
 
+function getSelectedRows(args: {
+    actionParamsData: ActionParamsData;
+    head?: TableHead[];
+    rows: TableRow[];
+}) {
+    const {actionParamsData, head, rows} = args;
+    return rows.filter((row) => {
+        if (!('cells' in row)) {
+            return false;
+        }
+
+        const preparedRow = row.cells.reduce<DataTableData>((acc, cell, i) => {
+            acc[`cell-${i}`] = cell;
+            return acc;
+        }, {});
+        const actionParams = getRowActionParams({row: preparedRow, head});
+
+        return Boolean(hasMatchedActionParams(actionParams, actionParamsData?.params));
+    });
+}
+
 export function getActionParams(args: {
     actionParamsData: ActionParamsData;
     row?: DataTableData;
@@ -104,30 +125,16 @@ export function getActionParams(args: {
 
     switch (actionParamsData.scope) {
         case 'row': {
-            const selectedRows = rows.filter((row) => {
-                if (!('cells' in row)) {
-                    return false;
-                }
-
-                const preparedRow = row.cells.reduce<DataTableData>((acc, cell, i) => {
-                    acc[`cell-${i}`] = cell;
-                    return acc;
-                }, {});
-                const actionParams = getRowActionParams({row: preparedRow, head});
-
-                return Boolean(hasMatchedActionParams(actionParams, actionParamsData?.params));
-            });
-
-            return getActionParamsByRow({
+            return getUpdatedActionParamsForRowScope({
                 actionParams: actionParamsData.params,
                 row,
                 head,
                 metaKey,
-                selectedRows,
+                selectedRows: getSelectedRows({actionParamsData, rows, head}),
             });
         }
         case 'cell': {
-            const newActionParams = getNewActionParamsForCell({
+            const newActionParams = getUpdatedActionParamsForCellScope({
                 actionParams: actionParamsData.params,
                 row,
                 column,
@@ -148,7 +155,7 @@ function isCellSelected(cell: TableCell, actionParams: StringParams) {
     return hasMatchedActionParams(extractCellActionParams({cell}), actionParams);
 }
 
-function getNewActionParamsForCell(args: {
+function getUpdatedActionParamsForCellScope(args: {
     actionParams: StringParams;
     row?: DataTableData;
     column?: Column<DataTableData>;
@@ -205,7 +212,7 @@ function getNewActionParamsForCell(args: {
     return newActionParams;
 }
 
-function getActionParamsByRow(args: {
+function getUpdatedActionParamsForRowScope(args: {
     actionParams: StringParams;
     row?: DataTableData;
     head?: TableHead[];
