@@ -10,5 +10,8 @@
     "*.{css,scss}": [
       "stylelint --fix --quiet",
       "prettier --write"
+    ],
+    "src/i18n-keysets/**/!({keyset,context}).json": [
+      "npm run lint:i18n"
     ]
 }
