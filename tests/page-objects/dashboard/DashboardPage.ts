@@ -30,6 +30,7 @@ import Revisions from '../common/Revisions';
 
 import {SourceTypes} from '../../page-objects/common/DialogControlPO/SourceType';
 import {
+    CreateEntityButton,
     DashboardDialogSettingsQa,
     DialogControlQa,
     DialogDashTitleQA,
@@ -96,6 +97,7 @@ class DashboardPage extends BasePage {
         tabsList: '.gc-adaptive-tabs__tabs-list',
         tabItem: '.gc-adaptive-tabs__tab',
         tabItemActive: '.gc-adaptive-tabs__tab_active',
+        tabItemDisabled: '.gc-adaptive-tabs__tab_disabled',
         tabContainer: '.gc-adaptive-tabs__tab-container',
         selectControl: '.yc-select-control',
         /** @deprecated instead use selectItems */
@@ -106,6 +108,7 @@ class DashboardPage extends BasePage {
         selectItems: '.g-select-list',
         selectItemsMobile: '.g-select-list_mobile',
         selectItemTitle: '.g-select-list__option',
+        selectItemTitleDisabled: '.g-select-list__option_disabled',
 
         radioManualControl: DialogControlQa.radioSourceType,
         inputNameControl: 'control-name-input',
@@ -165,13 +168,13 @@ class DashboardPage extends BasePage {
         return makrdownNode.innerHTML();
     }
 
-    async createDashboard(dashName: string) {
+    async createDashboard({editDash, dashName}: {editDash: () => Promise<void>; dashName: string}) {
         // click the button to create a new dashboard
-        await this.page.click(slct('create-entry-button'));
+        await this.page.click(slct(CreateEntityButton.Button));
 
-        // TODO: CHARTS-8652, refine tests for new behavior
-        // temp step of changing the settings, because it is impossible to save the untouched dash
-        await this.enableDashboardTOC();
+        // callback with start actions with dash in edit mode
+        await editDash();
+
         await this.clickSaveButton();
 
         // waiting for the dialog to open, specify the name, save
@@ -920,7 +923,7 @@ class DashboardPage extends BasePage {
 
         if (fullTab) {
             const tab = await fullTab.waitForSelector(
-                `${DashboardPage.selectors.tabItem} >> text=${tabName}`,
+                `${DashboardPage.selectors.tabItem}:not(${DashboardPage.selectors.tabItemDisabled}) >> text=${tabName}`,
             );
             await tab.click();
             return;
@@ -934,7 +937,7 @@ class DashboardPage extends BasePage {
         if (shortTab) {
             await shortTab.click();
             const tab = await this.page.waitForSelector(
-                `${DashboardPage.selectors.selectItems} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`,
+                `${DashboardPage.selectors.selectItems} ${DashboardPage.selectors.selectItemTitle}:not(${DashboardPage.selectors.selectItemTitleDisabled}) >> text=${tabName}`,
             );
             await tab.click();
             return;
