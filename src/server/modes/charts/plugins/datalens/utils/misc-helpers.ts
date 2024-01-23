@@ -18,6 +18,7 @@ import {
     formatNumber as chartKitFormatNumber,
     isDateField,
     isMeasureField,
+    isMeasureValue,
 } from '../../../../../../shared';
 import type {ChartColorsConfig} from '../js/helpers/colors';
 import {ChartKitFormatSettings, ResultDataOrder} from '../preparers/types';
@@ -359,6 +360,7 @@ function isGradientMode({
 }) {
     return (
         isMeasureField(colorField) ||
+        isMeasureValue(colorField) ||
         (isNumericalDataType(colorFieldDataType) && colorsConfig.colorMode === ColorMode.GRADIENT)
     );
 }

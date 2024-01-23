@@ -5,6 +5,8 @@ import {prepareBarX} from '../prepareBarX';
 import {
     colorField,
     getPrepareFunctionArgs,
+    prepareBarXWithMeasureValuesArgs,
+    prepareBarXWithMeasureValuesResult,
     x1Field,
     x2Field,
     yField,
@@ -95,5 +97,11 @@ describe('prepareBarX', () => {
 
         expect(legendTitles).toEqual(['Color-1', 'Color-2']);
         expect(seriesIds).toEqual(legendTitles);
+    });
+
+    test('Measure Values field in colors section -> chart should be colored with gradient by measure values by default without any settings', () => {
+        const result = prepareBarX(prepareBarXWithMeasureValuesArgs);
+
+        expect(result.graphs[0].data).toEqual(prepareBarXWithMeasureValuesResult.graphs[0].data);
     });
 });

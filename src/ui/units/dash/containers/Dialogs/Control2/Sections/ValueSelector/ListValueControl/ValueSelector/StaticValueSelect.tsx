@@ -7,13 +7,14 @@ import {SelectFeatured} from 'ui/components/Select/wrappers/SelectFeatured';
 import {selectSelectorDialog} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import {useSetSelectorDialogItem} from './hooks';
+import {ValueSelectorProps} from './types';
 import {convertDefaultValue} from './utils';
 
 import '../../../../Control2.scss';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-export const StaticValueSelect = () => {
+export const StaticValueSelect = ({hasValidationError, hasClear}: ValueSelectorProps) => {
     const {
         acceptableValues = [],
         defaultValue,
@@ -53,6 +54,8 @@ export const StaticValueSelect = () => {
             options={options}
             onUpdate={handleUpdate}
             placeholder={i18n('value_undefined')}
+            hasValidationError={hasValidationError}
+            hasClear={hasClear}
         />
     );
 };

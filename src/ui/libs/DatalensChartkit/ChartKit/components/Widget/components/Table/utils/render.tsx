@@ -26,6 +26,7 @@ import {
 import {Markup} from '../../../../../../../../components/Markup';
 import {markupToRawString} from '../../../../../../modules/table';
 import {ChartKitDataTable, DataTableData} from '../../../../../../types';
+import {hasMatchedActionParams} from '../../../../../helpers/utils';
 import {Bar} from '../Bar/Bar';
 import {TableProps} from '../types';
 
@@ -306,6 +307,20 @@ export const getColumnsAndNames = ({
     topLevelWidth?: number;
     actionParamsData?: ActionParamsData;
 }) => {
+    const selectedRows = rows.filter((row) => {
+        if (!('cells' in row)) {
+            return false;
+        }
+
+        const preparedRow = row.cells.reduce<DataTableData>((acc, cell, i) => {
+            acc[`cell-${i}`] = cell;
+            return acc;
+        }, {});
+        const actionParams = getRowActionParams({row: preparedRow, head});
+
+        return Boolean(hasMatchedActionParams(actionParams, actionParamsData?.params));
+    });
+
     return head.reduce(
         // eslint-disable-next-line complexity
         (
@@ -488,6 +503,7 @@ export const getColumnsAndNames = ({
                     onClick: getCellOnClickHandler({
                         actionParamsData,
                         head,
+                        selectedRows,
                         onChange,
                     }),
                     sortable: isGroupSortAvailable && isColumnSortable,

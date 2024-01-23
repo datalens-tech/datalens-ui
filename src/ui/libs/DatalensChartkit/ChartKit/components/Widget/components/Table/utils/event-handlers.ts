@@ -1,5 +1,5 @@
 import type {Column} from '@gravity-ui/react-data-table';
-import type {TableHead} from 'shared';
+import type {TableHead, TableRow} from 'shared';
 
 import {CLICK_ACTION_TYPE} from '../../../../../../modules/constants/constants';
 import type {DataTableData} from '../../../../../../types';
@@ -21,10 +21,11 @@ export function getCellOnClickHandler(args: {
     actionParamsData?: ActionParamsData;
     onChange: TableProps['onChange'];
     head: TableHead[];
+    selectedRows?: TableRow[];
 }) {
-    const {actionParamsData, head, onChange} = args;
+    const {actionParamsData, head, selectedRows, onChange} = args;
 
-    const handleCellClick: Column<DataTableData>['onClick'] = ({row}, col) => {
+    const handleCellClick: Column<DataTableData>['onClick'] = ({row}, col, event) => {
         const onClick = getCellOnClick(row, col.name);
         const cellActionParams = actionParamsData
             ? getActionParams({
@@ -32,6 +33,8 @@ export function getCellOnClickHandler(args: {
                   row,
                   column: col,
                   head,
+                  metaKey: event.metaKey,
+                  selectedRows,
               })
             : undefined;
 

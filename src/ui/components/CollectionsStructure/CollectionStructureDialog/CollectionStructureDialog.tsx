@@ -75,6 +75,7 @@ export type Props = {
     textButtonApply: string;
     applyIsLoading: boolean;
     workbookSelectionMode: boolean;
+    massMoveMode?: boolean;
     onApply: ({
         targetCollectionId,
         targetWorkbookId,
@@ -99,6 +100,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         textButtonApply,
         applyIsLoading,
         workbookSelectionMode,
+        massMoveMode,
         onApply,
         onClose,
     }) => {
@@ -238,7 +240,11 @@ export const CollectionStructureDialog = React.memo<Props>(
         const handleClickApplyButton = React.useCallback(() => {
             if (!applyButtonDisabled) {
                 if (workbookSelectionMode) {
-                    onApply({targetCollectionId, targetWorkbookId}).then(() => {
+                    onApply({targetCollectionId: null, targetWorkbookId}).then(() => {
+                        handleClose();
+                    });
+                } else if (massMoveMode) {
+                    onApply({targetCollectionId, targetWorkbookId: null}).then(() => {
                         handleClose();
                     });
                 } else {
@@ -246,6 +252,7 @@ export const CollectionStructureDialog = React.memo<Props>(
                 }
             }
         }, [
+            massMoveMode,
             applyButtonDisabled,
             workbookSelectionMode,
             onApply,

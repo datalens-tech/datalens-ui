@@ -2,5 +2,6 @@
   "button_details": "Details",
   "button_retry": "Retry",
   "placeholder_empty": "No selected values",
+  "value_required": "This field is required",
   "value_undefined": "Not defined"
 }

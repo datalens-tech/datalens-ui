@@ -20,4 +20,12 @@
     &__input-single-place {
         padding-top: 15px;
     }
+
+    &__default-btn {
+        display: flex;
+
+        &_error::after {
+            border: 1px solid var(--g-color-text-danger);
+        }
+    }
 }
