@@ -238,10 +238,10 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         const prevSavedPropsParams = prevSavedProps?.params;
         const isEqualParamsWithPrev = prevSavedProps && isEqual(prevSavedPropsParams, propsParams);
 
-        const changedParams = !prevSavedProps || !isEqualParamsWithPrev;
+        const hasParamsChanged = !prevSavedProps || !isEqualParamsWithPrev;
 
         const isOuterAndInnerParamsEqual =
-            changedParams && innerParamsRef?.current
+            hasParamsChanged && innerParamsRef?.current
                 ? isEqual(innerParamsRef?.current, propsParams)
                 : false;
 
