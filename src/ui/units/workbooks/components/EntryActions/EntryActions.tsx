@@ -3,6 +3,7 @@ import React from 'react';
 import {DropdownMenu, DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
+import {ConnectorType} from 'shared/constants/connections';
 import {WorkbookPage} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types';
 import {EntryScope} from 'shared/types/common';
@@ -34,21 +35,26 @@ export const EntryActions = ({
 }: EntryActionsProps) => {
     const {useAdditionalWorkbookEntryActions} = registry.workbooks.functions.getAll();
 
-    const isFileConnection =
-        entry.scope === EntryScope.Connection &&
-        (entry.type === 'file' || entry.type === 'gsheets_v2');
+    const isConnection = entry.scope === EntryScope.Connection;
+    const isNotFileConnection =
+        entry.type !== ConnectorType.File || entry.type !== ConnectorType.GsheetsV2;
+    const isShowActionCopy = !isConnection && isNotFileConnection;
 
     const items: DropdownMenuItemMixed<unknown>[] = [
         {
             action: onRenameClick,
             text: i18n('action_rename'),
         },
-        {
-            action: onDuplicateEntry,
-            text: i18n('action_duplicate'),
-            qa: WorkbookPage.MenuItemDuplicate,
-        },
-        ...(!isFileConnection && copyEntriesToWorkbookEnabled
+        ...(isNotFileConnection
+            ? [
+                  {
+                      action: onDuplicateEntry,
+                      text: i18n('action_duplicate'),
+                      qa: WorkbookPage.MenuItemDuplicate,
+                  },
+              ]
+            : []),
+        ...(isShowActionCopy && copyEntriesToWorkbookEnabled
             ? [
                   {
                       action: onCopyEntry,

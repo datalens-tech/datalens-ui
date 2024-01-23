@@ -1,4 +1,5 @@
 import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin} from '@gravity-ui/icons';
+import {ConnectorType} from 'shared/constants/connections';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 
 import {EntryScope, Feature, PLACE, isUsersFolder} from '../../../shared';
@@ -150,8 +151,24 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
     // different Copy menu for dash/widgets and datasets/configs
     {
         ...CONTEXT_MENU_COPY,
-        scopes: [EntryScope.Dash, EntryScope.Widget, EntryScope.Connection],
+        scopes: [EntryScope.Dash, EntryScope.Widget],
         // allow to show if there are no permissions
+    },
+    {
+        ...CONTEXT_MENU_COPY,
+        scopes: [EntryScope.Connection],
+        isVisible(args) {
+            const entry = args.entry;
+            const isFileConnection =
+                entry?.scope === EntryScope.Connection &&
+                (entry?.type === ConnectorType.File || entry?.type === ConnectorType.GsheetsV2);
+
+            if (!args.entry?.workbookId || isFileConnection) {
+                return false;
+            }
+
+            return CONTEXT_MENU_COPY.isVisible(args);
+        },
     },
     {
         ...CONTEXT_MENU_COPY,
