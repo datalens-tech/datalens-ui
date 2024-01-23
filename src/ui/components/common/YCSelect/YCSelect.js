@@ -554,7 +554,7 @@ export class YCSelect extends React.PureComponent {
         const {getItems, canBeEmpty} = this.props;
         const {items} = this.state;
         const innerValue = new Set(this.state.innerValue);
-        const canBeRemoved = !canBeEmpty || innerValue.size > 1;
+        const canBeRemoved = canBeEmpty || innerValue.size > 1;
 
         if (innerValue.has(item.value) && canBeRemoved) {
             innerValue.delete(item.value);
