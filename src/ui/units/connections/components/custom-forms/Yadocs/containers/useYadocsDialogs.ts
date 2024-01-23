@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {batch, useDispatch} from 'react-redux';
 
@@ -25,7 +26,8 @@ import type {
 import {DIALOG_CONN_CONFIRM, DIALOG_CONN_S3_SOURCES} from '../../../dialogs';
 import {DIALOG_CONN_WITH_INPUT} from '../../components';
 import {DIALOG_CONN_ADD_YADOC} from '../components/DialogAddDocument/DialogAddDocument';
-import {i18n8857} from '../constants';
+
+const i18n = I18n.keyset('connections.yadocs.view');
 
 type OpenAddDocumentDialogArgs = Omit<YadocsActiveAddDocument, 'type'>;
 
@@ -214,16 +216,16 @@ export const useYadocsDialogs = () => {
             openDialog({
                 id: DIALOG_CONN_CONFIRM,
                 props: {
-                    description: i18n8857['label_logout-dialog-description'],
+                    description: i18n('label_logout-dialog-description'),
                     dialogProps: {
                         onEnterKeyDown: onApply,
                     },
                     headerProps: {
-                        caption: i18n8857['label_logout-dialog-title'],
+                        caption: i18n('label_logout-dialog-title'),
                     },
                     footerProps: {
-                        textButtonApply: i18n8857['button_apply'],
-                        textButtonCancel: i18n8857['button_cancel'],
+                        textButtonApply: i18n('button_apply'),
+                        textButtonCancel: i18n('button_cancel'),
                     },
                     onApply,
                     onClose: handleCloseDialog,

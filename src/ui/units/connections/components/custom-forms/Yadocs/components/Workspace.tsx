@@ -3,6 +3,7 @@ import React from 'react';
 import DataTable from '@gravity-ui/react-data-table';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import clone from 'lodash/clone';
 import get from 'lodash/get';
 import type {FileSourcePreview, FileSourceSchema} from 'shared/schema/types';
@@ -16,9 +17,10 @@ import {getYadocErrorData} from '../../../../utils';
 import {ErrorView} from '../../../ErrorView/ErrorView';
 import {ColumnFilter, ColumnsHeaderSwitcher} from '../../components';
 import {getColumnsWithTypeIcons} from '../../utils/render';
-import {i18n8857} from '../constants';
 
 const b = block('conn-form-yadocs');
+const i18n = I18n.keyset('connections.yadocs.view');
+const ACCEPTED_EXTENTIONS = ['XLSX'];
 
 const shouldToShowVeil = (item?: YadocItem) => {
     return Boolean(item && isYadocSourceItem(item) && item.status === 'in_progress');
@@ -49,7 +51,9 @@ const EmptyWorkspace = () => {
     return (
         <PlaceholderIllustration
             name="template"
-            description={i18n8857['label_workspace-placeholder']}
+            description={i18n('label_workspace-placeholder', {
+                formats: ACCEPTED_EXTENTIONS.join(', '),
+            })}
         />
     );
 };
