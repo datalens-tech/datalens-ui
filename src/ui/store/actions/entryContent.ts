@@ -19,11 +19,7 @@ export function fetchEntryById(
         let entry;
 
         try {
-            const meta = await getSdk().us.getEntryMeta({entryId});
-            entry = await getSdk().us.getEntry(
-                {entryId, workbookId: meta.workbookId, includePermissionsInfo: true},
-                params,
-            );
+            entry = await getSdk().us.getEntry({entryId, includePermissionsInfo: true}, params);
         } catch (error: any) {
             if (getSdk().isCancel(error)) {
                 entry = null;

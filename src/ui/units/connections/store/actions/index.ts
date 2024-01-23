@@ -66,16 +66,10 @@ export function setPageData({entryId, workbookId}: {entryId?: string | null; wor
         let connectionError: DataLensApiError | undefined;
 
         if (entryId) {
-            let correctedWorkbookId = null;
-            if (workbookId === undefined) {
-                const response = await api.fetchEntryMeta(entryId);
-                correctedWorkbookId = response.entryMeta?.workbookId ?? null;
-            }
-
-            ({entry, error: entryError} = await api.fetchEntry(entryId, correctedWorkbookId));
+            ({entry, error: entryError} = await api.fetchEntry(entryId));
             ({connectionData, error: connectionError} = await api.fetchConnectionData(
                 entryId,
-                correctedWorkbookId,
+                entry?.workbookId ?? null,
             ));
         }
 

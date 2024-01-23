@@ -136,7 +136,7 @@ export function refetchPreviewDataset() {
     };
 }
 
-function setInitialSources(ids, workbookId) {
+function setInitialSources(ids) {
     return async (dispatch) => {
         try {
             let initialConnections = [];
@@ -146,7 +146,6 @@ function setInitialSources(ids, workbookId) {
                     ids.map((id) =>
                         getSdk().us.getEntry({
                             entryId: id,
-                            workbookId,
                             includePermissionsInfo: true,
                         }),
                     ),
@@ -190,10 +189,7 @@ function setInitialSources(ids, workbookId) {
 export function initializeDataset({connectionId}) {
     return async (dispatch) => {
         if (connectionId) {
-            const meta = await getSdk().us.getEntryMeta({entryId: connectionId});
-            const workbookId = meta.workbookId ?? null;
-
-            await dispatch(setInitialSources([connectionId], workbookId));
+            await dispatch(setInitialSources([connectionId]));
         }
 
         dispatch(_getSources());
@@ -235,7 +231,7 @@ export function initialFetchDataset({datasetId}) {
             );
             const ids = Array.from(connectionsIds);
 
-            await dispatch(setInitialSources(ids, workbookId));
+            await dispatch(setInitialSources(ids));
 
             dispatch({
                 type: DATASET_ACTION_TYPES.DATASET_INITIAL_FETCH_SUCCESS,

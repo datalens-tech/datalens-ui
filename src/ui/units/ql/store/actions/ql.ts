@@ -651,13 +651,9 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
         const urlEntryId = extractEntryId(location.pathname || '');
 
         if (urlEntryId) {
-            const meta = await getSdk().us.getEntryMeta({entryId: urlEntryId});
-            const workbookId = meta.workbookId ?? null;
-
             try {
                 const getEntryArgs: GetEntryArgs = {
                     entryId: urlEntryId,
-                    workbookId,
                     includePermissionsInfo: true,
                     includeLinks: true,
                     revId: getUrlParamFromStr(location.search, URL_QUERY.REV_ID) || undefined,
@@ -727,7 +723,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                             dispatch(
                                 fetchConnectionSources({
                                     entryId: loadedConnectionEntry.entryId,
-                                    workbookId,
+                                    workbookId: loadedConnectionEntry.workbookId,
                                 }),
                             );
                         }
@@ -936,7 +932,6 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                     try {
                         const loadedConnectionEntry = await getSdk().us.getEntry({
                             entryId: defaultMonitoringQLConnectionId,
-                            workbookId: null, // TODO: check
                         });
 
                         if (!loadedConnectionEntry) {
@@ -1032,15 +1027,9 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 const connectionEntryId = urlSearch.get('connectionId');
                 if (connectionEntryId) {
                     try {
-                        const meta = await getSdk().us.getEntryMeta({
-                            entryId: connectionEntryId,
-                        });
-                        const workbookId = meta.workbookId;
-
                         // We request the connection for which the chart is built
                         const loadedConnectionEntry = await getSdk().us.getEntry({
                             entryId: connectionEntryId,
-                            workbookId,
                         });
 
                         if (!loadedConnectionEntry) {
@@ -1077,7 +1066,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                             dispatch(
                                 fetchConnectionSources({
                                     entryId: loadedConnectionEntry.entryId,
-                                    workbookId,
+                                    workbookId: loadedConnectionEntry.workbookId,
                                 }),
                             );
                         }

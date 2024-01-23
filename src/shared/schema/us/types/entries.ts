@@ -21,8 +21,6 @@ export interface GetEntryArgs {
     entryId: string;
     revId?: string;
     branch?: string;
-    // TODO: workbookId is required
-    workbookId?: string | null;
     includePermissionsInfo?: boolean;
     includeLinks?: boolean;
     includeDlComponentUiData?: boolean;

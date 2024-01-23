@@ -9,7 +9,6 @@ import {
     GetAuthorizationUrlResponse,
     GetConnectorSchemaArgs,
     GetConnectorsResponse,
-    GetEntryMetaResponse,
     GetEntryResponse,
     GetFileSourceStatusResponse,
     GetFileSourcesResponse,
@@ -30,26 +29,8 @@ import {ConverterErrorCode} from '../../constants';
 import type {FormDict} from '../../typings';
 import type {CheckData, UploadedFile} from '../typings';
 
-const fetchEntryMeta = async (
-    entryId: string,
-): Promise<{
-    entryMeta?: GetEntryMetaResponse;
-    error?: DataLensApiError;
-}> => {
-    try {
-        const entryMeta = await getSdk().us.getEntryMeta({
-            entryId,
-        });
-        return {entryMeta};
-    } catch (error) {
-        logger.logError('Redux actions (conn): fetchEntry failed', error);
-        return {entryMeta: undefined, error};
-    }
-};
-
 const fetchEntry = async (
     entryId: string,
-    workbookId: string | null,
 ): Promise<{
     entry?: GetEntryResponse;
     error?: DataLensApiError;
@@ -57,7 +38,6 @@ const fetchEntry = async (
     try {
         const entry = await getSdk().us.getEntry({
             entryId,
-            workbookId,
             includePermissionsInfo: true,
         });
         return {entry};
@@ -399,7 +379,6 @@ const addYandexDocument = async ({
 };
 
 export const api = {
-    fetchEntryMeta,
     fetchEntry,
     fetchConnectionData,
     fetchConnectors,
