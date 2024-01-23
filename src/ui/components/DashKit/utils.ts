@@ -160,6 +160,7 @@ export function adjustWidgetLayout({
         // calculating height without scroll
         const reset = setOverflowYStyle(scrollableNode, 'hidden');
         scrollHeight = scrollableNode.scrollHeight;
+        scrollBar = scrollableNode.clientWidth >= scrollableNode.scrollWidth ? 0 : scrollBar;
         reset();
     } else if (scrollableNode.clientWidth < scrollableNode.scrollWidth) {
         // if scrollbar hidden but content is bigger that container
