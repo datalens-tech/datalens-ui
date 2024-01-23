@@ -84,7 +84,7 @@ function getAdditionalStylesByCell(args: {
 
         if (hasSomeCellSelected && !isCellSelected(cell, actionParams)) {
             return {
-                color: 'var(--g-color-text-hint)',
+                opacity: 0.5,
             };
         }
     }

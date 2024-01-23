@@ -411,6 +411,8 @@ export const getColumnsAndNames = ({
                 }
 
                 const isHeadColumn = get(column, 'header');
+                const isSelectable =
+                    context.isHasGroups && !isHeadColumn && actionParamsData?.scope === 'cell';
                 const columnData: Column<DataTableData> = {
                     name: columnName,
                     header: (
@@ -425,7 +427,7 @@ export const getColumnsAndNames = ({
                     className: b('cell', {
                         type,
                         'with-fixed-width': Boolean(columnWidth),
-                        selectable: !isHeadColumn,
+                        selectable: isSelectable,
                     }),
                     accessor: (row) => {
                         const column = row[columnName];

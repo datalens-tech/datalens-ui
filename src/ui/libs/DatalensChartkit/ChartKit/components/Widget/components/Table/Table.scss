@@ -49,6 +49,7 @@
         &_selectable.data-table__td:hover {
             background: var(--data-table-color-hover-area);
             cursor: pointer;
+            opacity: 1 !important; // stylelint-disable-line declaration-no-important
         }
     }
 
