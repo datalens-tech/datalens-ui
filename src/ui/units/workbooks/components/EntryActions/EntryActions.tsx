@@ -10,7 +10,7 @@ import {EntryScope} from 'shared/types/common';
 import Utils from 'ui/utils';
 
 import {registry} from '../../../../registry';
-import {WorkbookEntry} from '../../types';
+import type {WorkbookEntry} from '../../types';
 
 const i18n = I18n.keyset('new-workbooks');
 
@@ -37,7 +37,7 @@ export const EntryActions = ({
 
     const isConnection = entry.scope === EntryScope.Connection;
     const isNotFileConnection =
-        entry.type !== ConnectorType.File || entry.type !== ConnectorType.GsheetsV2;
+        entry.type !== ConnectorType.File && entry.type !== ConnectorType.GsheetsV2;
     const isShowActionCopy = !isConnection && isNotFileConnection;
 
     const items: DropdownMenuItemMixed<unknown>[] = [
