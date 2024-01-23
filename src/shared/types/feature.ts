@@ -31,7 +31,6 @@ export enum Feature {
     InnerDocumentation = 'InnerDocumentation',
     Comments = 'Comments',
     ShowFilteringChartSetting = 'ShowFilteringChartSetting',
-    DashBoardGlobalParams = 'dashBoardGlobalParams',
     EmptySelector = 'emptySelector',
     ChartEditorDeveloperModeCheck = 'ChartEditorDeveloperModeCheck',
     StartInDataLens = 'StartInDataLens',
