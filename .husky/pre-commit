@@ -2,5 +2,3 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 git status && npx lint-staged --relative
-
-node "$(dirname -- "$0")/../scripts/i18n-keysets-sort.js"
