@@ -122,6 +122,9 @@ export class Table extends React.PureComponent<TableProps, TableState> {
         validateConfigAndData({data: this.props.data.data, config: this.props.data.config});
 
         // fix same as for table at CHARTS-7640
+        // before we were waiting only for '700 10pt "YS Text"'
+        // but we are not using this font on every project
+        // so now we wait all queued fonts to be ready before trigger onLoad
         document.fonts.ready.finally(() => {
             this.setState({waitingForFont: false}, () => {
                 this.onLoad();

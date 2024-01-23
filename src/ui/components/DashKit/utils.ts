@@ -82,6 +82,23 @@ const setNewLayout = ({
     cb({widgetId, needSetDefault, adjustedWidgetLayout});
 };
 
+const setOverflowYStyle = (node: HTMLElement, value: string) => {
+    const st = node.getAttribute('style');
+    // If there are inline styles, we adding scrollY style in the end with !important
+    node.setAttribute(
+        'style',
+        `${st || ''}${!st || st?.endsWith(';') ? '' : ';'}overflow-y: ${value} !important;`,
+    );
+
+    return () => {
+        if (st) {
+            node.setAttribute('style', st);
+        } else {
+            node.removeAttribute('style');
+        }
+    };
+};
+
 export function adjustWidgetLayout({
     widgetId,
     rootNode,
@@ -134,24 +151,22 @@ export function adjustWidgetLayout({
     const scrollableNodeTopOffsetFromRoot = scrollableNodeTopPosition - rootNodeTopPosition;
     const belowLyingNodesHeight = collectBelowLyingNodesHeight(scrollableNode, node, 0);
 
-    // Calculationg scrollHeight without scroll and scrollbar width
+    // Calculating scrollHeight without scroll and scrollbar width
     let scrollBar = getScrollbarWidth(scrollableNode);
     let scrollHeight = scrollableNode.scrollHeight;
 
     if (scrollBar > 0) {
         // If scrollBar is presented and there is scalable content
         // calculating height without scroll
-        const overflowY = scrollableNode.style.overflowY;
-        scrollableNode.style.overflowY = 'hidden';
+        const reset = setOverflowYStyle(scrollableNode, 'hidden');
         scrollHeight = scrollableNode.scrollHeight;
-        scrollableNode.style.overflowY = overflowY;
+        reset();
     } else if (scrollableNode.clientWidth < scrollableNode.scrollWidth) {
         // if scrollbar hidden but content is bigger that container
         // we assuming that horizaontal scroll is equal to vertical
-        const overflowY = scrollableNode.style.overflowY;
-        scrollableNode.style.overflowY = 'scroll';
+        const reset = setOverflowYStyle(scrollableNode, 'scroll');
         scrollBar = getScrollbarWidth(scrollableNode);
-        scrollableNode.style.overflowY = overflowY;
+        reset();
     }
 
     // Getting additional bottom paddings and margins around mainNode

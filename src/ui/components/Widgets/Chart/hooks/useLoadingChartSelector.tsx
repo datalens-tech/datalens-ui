@@ -57,7 +57,6 @@ type LoadingChartSelectorHookProps = Pick<
         chartId: string;
     };
 
-// const WIDGET_DEBOUNCE_TIMEOUT = 300;
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 600;
 export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) => {
     const {

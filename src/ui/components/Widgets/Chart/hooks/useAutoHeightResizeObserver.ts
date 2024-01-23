@@ -4,7 +4,7 @@ import React from 'react';
  * resizeObserver hook takes two conditional options
  * isInit - enables resizeObserver only for loaded components
  * autoHeight - property if changes to false removes resizeObserver
- * onResize is only called when width is changes, height is ignored
+ * onResize is only called when width changes, height is ignored
  */
 export const useResizeObserver = (options: {
     rootNodeRef: React.RefObject<HTMLElement>;
@@ -47,6 +47,7 @@ export const useResizeObserver = (options: {
             resizeObserver.current.disconnect();
             resizeObserver.current = null;
             isInitResizeCall.current = true;
+            previousWidthValue.current = null;
         }
     }, [resizeObserver, isInitResizeCall]);
 
