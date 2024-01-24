@@ -132,18 +132,6 @@ export const getMetaDataWithDatasetInfo = ({
         const {type, datasetId, datasetName, datasetFields} = entryWithDataset;
         const key = datasetId as string;
 
-        // synchronize entry fields
-        if (type !== 'dataset' && datasetFields) {
-            const datasetFieldNames = datasetFields.map(({guid}) => guid) || [];
-            const diffFields = item.datasets
-                ?.find(({id}) => id === datasetId)
-                ?.fieldsList.filter(({guid}) => !datasetFieldNames.includes(guid));
-
-            if (diffFields?.length) {
-                datasetFields.push(...diffFields);
-            }
-        }
-
         if (datasetFields) {
             datasetsList[key] = datasetsList[key] || {};
             datasetsList[key].name = datasetName || '';
@@ -159,6 +147,14 @@ export const getMetaDataWithDatasetInfo = ({
             itemWithDataset.usedParams = Array.isArray(fields)
                 ? fields.map((fieldItem) => fieldItem.guid)
                 : Object.keys(fields);
+
+            item.datasets
+                ?.find(({id}) => id === datasetId)
+                ?.fieldsList.forEach(({guid}) => {
+                    if (!itemWithDataset.usedParams?.includes(guid)) {
+                        itemWithDataset.usedParams?.push(guid);
+                    }
+                });
 
             itemWithDataset.datasets = (
                 item.datasets?.length
