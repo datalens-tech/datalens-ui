@@ -121,28 +121,45 @@ const getFieldText = ({
 
 const getConnectionByInfo = ({
     byFields,
+    byUsedParams,
     byAliases,
     relationType,
 }: {
     relationType: RelationType;
     byFields: string[] | string;
+    byUsedParams: string[] | string;
     byAliases: string[][] | string;
 }) => {
     const availableLink =
         relationType !== RELATION_TYPES.ignore && relationType !== RELATION_TYPES.unknown;
 
+    const hasUsedParams = Array.isArray(byUsedParams)
+        ? Boolean(byUsedParams.length)
+        : Boolean(byUsedParams);
+    const showByUsedParams = hasUsedParams && hasUsedParams;
     const hasFields = Array.isArray(byFields) ? Boolean(byFields.length) : Boolean(byFields);
     const showByField = hasFields && availableLink;
     const hasAliases = Array.isArray(byAliases) ? Boolean(byAliases.length) : Boolean(byAliases);
     const showByAlias = hasAliases && availableLink;
 
+    let field: Parameters<typeof getFieldText>[0]['field'] = [];
+    let type: Parameters<typeof getFieldText>[0]['type'] = 'field';
+    if (hasFields) {
+        field = byFields;
+    } else if (hasAliases) {
+        field = byAliases;
+        type = 'alias';
+    } else if (hasUsedParams) {
+        field = byUsedParams;
+    }
+
     const {fieldText, fieldTextWithStrong} = getFieldText({
-        field: hasFields ? byFields : byAliases,
-        type: hasFields ? 'field' : 'alias',
+        field,
+        type,
     });
 
     return {
-        showByField: showByField || showByAlias,
+        showByField: showByField || showByAlias || showByUsedParams,
         fieldText,
         fieldTextWithStrong,
     };
@@ -154,17 +171,20 @@ export const getTooltipInfo = ({
     relationType,
     byFields,
     byAliases,
+    byUsedParams,
 }: {
     widget: DashkitMetaDataItem;
     row: DashkitMetaDataItem;
     relationType: RelationType;
     byFields: string[] | string;
     byAliases: string[][] | string;
+    byUsedParams: string[] | string;
 }) => {
     const {fieldText, fieldTextWithStrong, showByField} = getConnectionByInfo({
         byFields,
         byAliases,
         relationType,
+        byUsedParams,
     });
 
     const widgetLabel = widget?.label && widget?.title !== widget?.label ? `${widget?.label}` : '';
@@ -266,7 +286,13 @@ export const Row = ({
     widgetIcon,
 }: RowParams) => {
     const relations = data?.relations;
-    const {type: relationType, available: availableRelations, byFields, byAliases} = relations;
+    const {
+        type: relationType,
+        available: availableRelations,
+        byFields,
+        byAliases,
+        byUsedParams,
+    } = relations;
 
     const {tooltipContent, tooltipTitle, aliasDetailTitle} = getTooltipInfo({
         widget: widgetMeta,
@@ -274,6 +300,7 @@ export const Row = ({
         relationType,
         byFields,
         byAliases,
+        byUsedParams,
     });
 
     const icon = getDialogRowIcon(data, b('icon-row'), DEFAULT_ICON_SIZE);
