@@ -17,6 +17,24 @@ export const isValidationError = ({required, value}: ValidationErrorData) => {
     return false;
 };
 
-export const getAsterisk = (showAsterisk?: boolean) => {
-    return Utils.isEnabledFeature(Feature.SelectorRequiredValue) && showAsterisk ? '*' : '';
+export const getRequiredLabel = ({title, required}: {title: string; required?: boolean}) => {
+    return Utils.isEnabledFeature(Feature.SelectorRequiredValue) && required ? `${title}*` : title;
+};
+
+export const getRequiredInnerLabel = ({
+    showTitle,
+    innerTitle,
+    required,
+}: {
+    showTitle: boolean;
+    innerTitle?: string;
+    required?: boolean;
+}) => {
+    // if only innerTitle is visible and label is not we add '*' to it
+    return Utils.isEnabledFeature(Feature.SelectorRequiredValue) &&
+        required &&
+        !showTitle &&
+        innerTitle
+        ? `${innerTitle}*`
+        : innerTitle;
 };

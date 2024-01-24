@@ -79,7 +79,7 @@ import {
     SelectControlProps,
     ValidationErrorData,
 } from './types';
-import {getAsterisk, isValidationError} from './utils';
+import {getRequiredInnerLabel, getRequiredLabel, isValidationError} from './utils';
 
 import './Control.scss';
 
@@ -874,6 +874,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const source = controlData.source;
         const title = controlData.title;
         const sourceType = controlData.sourceType;
+        const {required, showInnerTitle, innerTitle, showTitle} = source;
         const fieldId =
             (source as DashTabItemControlDataset['source']).datasetFieldId ||
             (source as DashTabItemControlManual['source']).fieldName;
@@ -919,11 +920,16 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             this.onChange(fieldId, valueWithOperation);
         };
 
-        const label = source.showTitle ? `${title}${getAsterisk(source.required)}` : '';
-        // if only innerLabel is visible in required selector we add '*' to it
-        const innerLabel = source.showInnerTitle
-            ? `${source.innerTitle}${getAsterisk(source.required && !source.showTitle)}`
-            : '';
+        const label = showTitle ? getRequiredLabel({title, required}) : '';
+        const innerLabel = (
+            showInnerTitle
+                ? getRequiredInnerLabel({
+                      innerTitle,
+                      required,
+                      showTitle,
+                  })
+                : ''
+        ) as string;
 
         const props: SelectControlProps = {
             widgetId: id,
@@ -994,6 +1000,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 | DashTabItemControlDataset;
 
             const {source, title} = data;
+            const {required, operation, showInnerTitle, innerTitle, showTitle} = source;
 
             if (!Object.keys(this.actualParams).includes(param)) {
                 return null;
@@ -1003,7 +1010,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             // for first initialization of control
             const initialValidationError = isValidationError({
-                required: source.required,
+                required,
                 value: preparedValue,
             })
                 ? i18n('value_required')
@@ -1012,7 +1019,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const onChange = (value: string | string[]) => {
                 const isValid = this.checkValueValidation({
-                    required: source.required,
+                    required,
                     value,
                 });
 
@@ -1022,16 +1029,19 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
                 const valueWithOperation = addOperationForValue({
                     value,
-                    operation: source.operation,
+                    operation,
                 });
 
                 this.onChange(param, valueWithOperation);
             };
 
-            const label = source.showTitle ? `${title}${getAsterisk(source.required)}` : '';
-            // if only innerTitle is visible in required selector we add '*' to it
-            const innerLabel = source.showInnerTitle
-                ? `${source.innerTitle}${getAsterisk(source.required && !source.showTitle)}`
+            const label = showTitle ? getRequiredLabel({title, required}) : '';
+            const innerLabel = showInnerTitle
+                ? getRequiredInnerLabel({
+                      innerTitle,
+                      required,
+                      showTitle,
+                  })
                 : '';
 
             const props = {
@@ -1044,7 +1054,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 editMode,
                 innerLabel,
                 label,
-                required: source.required,
+                required,
                 hasValidationError: Boolean(validationError),
             };
 
