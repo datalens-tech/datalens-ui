@@ -196,7 +196,7 @@ export interface DashTabItemControlElementBase {
     elementType: DashTabItemControlElementType;
     operation?: Operations;
     showInnerTitle?: boolean;
-    innerTitle?: boolean;
+    innerTitle?: string;
     fieldType?: string;
     required?: boolean;
 }
