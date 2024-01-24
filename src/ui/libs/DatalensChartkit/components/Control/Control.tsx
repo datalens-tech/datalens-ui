@@ -352,6 +352,7 @@ class Control<TProviderData> extends React.PureComponent<
             required?: boolean;
             hasValidationError?: boolean;
             placeholder?: string;
+            label?: string;
         } = {};
 
         // for first initialization of control
@@ -365,6 +366,12 @@ class Control<TProviderData> extends React.PureComponent<
 
         validationProps.required = control.required;
         validationProps.hasValidationError = Boolean(validationErrors);
+        validationProps.label =
+            control.label &&
+            Utils.isEnabledFeature(Feature.SelectorRequiredValue) &&
+            control.required
+                ? `${control.label}*`
+                : control.label;
 
         if (control.type === 'input' || control.type === 'select') {
             validationProps.placeholder =

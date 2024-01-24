@@ -16,3 +16,7 @@ export const isValidationError = ({required, value}: ValidationErrorData) => {
 
     return false;
 };
+
+export const getAsterisk = (required?: boolean) => {
+    return Utils.isEnabledFeature(Feature.SelectorRequiredValue) && required ? '*' : '';
+};

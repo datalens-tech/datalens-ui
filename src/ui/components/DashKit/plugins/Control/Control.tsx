@@ -79,7 +79,7 @@ import {
     SelectControlProps,
     ValidationErrorData,
 } from './types';
-import {isValidationError} from './utils';
+import {getAsterisk, isValidationError} from './utils';
 
 import './Control.scss';
 
@@ -919,10 +919,12 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             this.onChange(fieldId, valueWithOperation);
         };
 
+        const label = source.showTitle ? `${title}${getAsterisk(source.required)}` : '';
+
         const props: SelectControlProps = {
             widgetId: id,
             content: content || preselectedContent,
-            label: (source.showTitle ? title : '') as string,
+            label,
             innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
             param: fieldId,
             multiselect: (source as DashTabItemControlElementSelect).multiselectable,
@@ -1022,6 +1024,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 this.onChange(param, valueWithOperation);
             };
 
+            const label = source.showTitle ? `${title}${getAsterisk(source.required)}` : '';
+
             const props = {
                 ...control,
                 widgetId: id,
@@ -1031,7 +1035,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 onChange,
                 editMode,
                 innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
-                label: (source.showTitle ? title : '') as string,
+                label,
                 required: source.required,
                 hasValidationError: Boolean(validationError),
             };
