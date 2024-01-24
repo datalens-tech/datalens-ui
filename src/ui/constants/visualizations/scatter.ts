@@ -118,6 +118,5 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
 export const SCATTER_D3_VISUALIZATION: GraphShared['visualization'] = {
     ...SCATTER_VISUALIZATION,
     id: WizardVisualizationId.ScatterD3,
-    allowShapes: true,
     allowComments: false,
 };
