@@ -1,3 +1,4 @@
+import {SymbolType} from '@gravity-ui/chartkit/build/constants';
 import type {
     ChartKitWidgetData,
     ScatterSeries,
@@ -20,7 +21,7 @@ type MapScatterSeriesArgs = {
 function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustomData> {
     const {x, y, graph} = args;
 
-    return {
+    const series: ScatterSeries<PointCustomData> = {
         type: 'scatter',
         name: graph.name || '',
         color: typeof graph.color === 'string' ? graph.color : undefined,
@@ -66,6 +67,12 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
                 return pointData;
             }) || [],
     };
+
+    if (graph.marker?.symbol) {
+        series.symbolType = graph.marker?.symbol as SymbolType;
+    }
+
+    return series;
 }
 
 export function prepareD3Scatter(
