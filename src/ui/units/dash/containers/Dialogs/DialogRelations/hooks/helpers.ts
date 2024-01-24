@@ -131,28 +131,27 @@ export const getMetaDataWithDatasetInfo = ({
 
         const {type, datasetId, datasetName, datasetFields} = entryWithDataset;
         const key = datasetId as string;
+
+        // synchronize entry fields
+        if (type !== 'dataset' && datasetFields) {
+            const datasetFieldNames = datasetFields.map(({guid}) => guid) || [];
+            const diffFields = item.datasets
+                ?.find(({id}) => id === datasetId)
+                ?.fieldsList.filter(({guid}) => !datasetFieldNames.includes(guid));
+
+            if (diffFields?.length) {
+                datasetFields.push(...diffFields);
+            }
+        }
+
         if (datasetFields) {
-            const datasetFieldNames: string[] = [];
             datasetsList[key] = datasetsList[key] || {};
             datasetsList[key].name = datasetName || '';
-            datasetsList[key].fields = datasetFields.map((fieldItem) => {
-                datasetFieldNames.push(fieldItem.guid);
-
-                return {
-                    title: fieldItem.title,
-                    guid: fieldItem.guid,
-                    dataType: fieldItem.dataType || fieldItem.type || '',
-                };
-            });
-
-            // Adding missing params from entry
-            if (type !== 'dataset') {
-                const diffParams = item.datasets
-                    ?.find(({id}) => id === datasetId)
-                    ?.fieldsList.filter(({guid}) => !datasetFieldNames.includes(guid));
-
-                datasetsList[key].fields.push(...(diffParams || []));
-            }
+            datasetsList[key].fields = datasetFields.map((fieldItem) => ({
+                title: fieldItem.title,
+                guid: fieldItem.guid,
+                dataType: fieldItem.dataType || fieldItem.type || '',
+            }));
         }
 
         if (datasetId && datasetsList[datasetId]) {
