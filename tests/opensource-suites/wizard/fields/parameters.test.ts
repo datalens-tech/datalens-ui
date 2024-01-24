@@ -38,7 +38,7 @@ datalensTest.describe('Wizard', () => {
             const parameterizedFieldName = 'parameterized';
             await wizardPage.fieldEditor.open();
             await wizardPage.fieldEditor.setName(parameterizedFieldName);
-            const formula = `CASE [category] when [${parameterName}] then 'parameter_title' else [Category] END`;
+            const formula = `CASE [Category] when [${parameterName}] then 'parameter_title' else [Category] END`;
             await wizardPage.fieldEditor.setFormula(formula);
             await wizardPage.fieldEditor.clickToApplyButton();
             await expect(
