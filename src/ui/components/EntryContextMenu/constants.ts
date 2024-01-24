@@ -157,6 +157,8 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
     {
         ...CONTEXT_MENU_COPY,
         scopes: [EntryScope.Connection],
+        permissions: {admin: true, edit: true, read: false, execute: false},
+        isStrictPermissions: true, // strict check with disallow when there are no permissions object
         isVisible(args) {
             const entry = args.entry;
             const isFileConnection =
@@ -175,9 +177,6 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         scopes: [EntryScope.Dataset],
         permissions: {admin: true, edit: true, read: false, execute: false},
         isStrictPermissions: true, // strict check with disallow when there are no permissions object
-        isVisible(args) {
-            return CONTEXT_MENU_COPY.isVisible(args);
-        },
     },
     getContextMenuAccess(),
     {
