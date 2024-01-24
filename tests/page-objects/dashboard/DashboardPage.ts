@@ -786,14 +786,14 @@ class DashboardPage extends BasePage {
     async saveChangesAsDraft() {
         // save the changes made on the dashboard as a draft
         await this.page
-            .waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_DRAFT_BTN), {
+            .waitForSelector(slct(ActionPanelDashSaveControls.SaveAsDraft), {
                 timeout: BUTTON_CHECK_TIMEOUT,
             })
             .then(async () => {
                 // in ActionPanel, the default save button is "Save as Draft"
                 const deleteLockPromise = this.page.waitForRequest(URLS.deleteLock);
                 const savePromise = this.page.waitForRequest(URLS.savePath);
-                await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_DRAFT_BTN));
+                await this.page.click(slct(ActionPanelDashSaveControls.SaveAsDraft));
                 await Promise.all([deleteLockPromise, savePromise]);
                 await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
             })
@@ -810,7 +810,7 @@ class DashboardPage extends BasePage {
     async saveChangesAndPublish() {
         // save and publish the changes made on the dashboard
         await this.page
-            .waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_DRAFT_BTN), {
+            .waitForSelector(slct(ActionPanelDashSaveControls.SaveAsDraft), {
                 timeout: BUTTON_CHECK_TIMEOUT,
             })
             .then(async () => {

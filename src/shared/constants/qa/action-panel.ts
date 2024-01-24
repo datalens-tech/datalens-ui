@@ -11,4 +11,5 @@ export const enum ActionPanelDashSaveControls {
     SaveAndPublishDropdownItem = 'action-panel-save-and-publish-dropdown-item',
     SaveAsNewDropdownItem = 'action-panel-save-as-new-dropdown-item',
     Save = 'action-panel-button-save',
+    SaveAsDraft = 'action-panel-button-save-as-draft',
 }

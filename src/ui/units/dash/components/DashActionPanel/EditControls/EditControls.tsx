@@ -5,6 +5,7 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
+import {ActionPanelDashSaveControls} from 'shared/constants/qa/action-panel';
 import {DashboardActionPanelControlsQa} from 'shared/constants/qa/dash';
 import Utils from 'ui/utils';
 
@@ -62,8 +63,8 @@ export const EditControls = (props: EditControlsProps) => {
         ? onSaveAndPublishDashClick
         : onSaveAsDraftDashClick;
     const defaultButtonSaveQA = isCurrentRevisionActual
-        ? 'action-button-save'
-        : 'action-button-save-as-draft';
+        ? ActionPanelDashSaveControls.Save
+        : ActionPanelDashSaveControls.SaveAsDraft;
 
     const savingControls = (
         <React.Fragment>
