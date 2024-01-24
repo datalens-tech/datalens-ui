@@ -4,7 +4,7 @@ import {AxiosResponse} from 'axios';
 import debounce from 'lodash/debounce';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {DashTabItemControl, DashTabItemControlSourceType, Feature} from 'shared';
+import {DashTabItemControl, Feature} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
 import {
@@ -31,6 +31,7 @@ import {
     ResolveWidgetControlDataRefArgs,
 } from '../types';
 
+import {useResizeObserver} from './useAutoHeightResizeObserver';
 import {LoadingChartHookProps, useLoadingChart} from './useLoadingChart';
 
 type LoadingChartSelectorHookProps = Pick<
@@ -56,7 +57,6 @@ type LoadingChartSelectorHookProps = Pick<
         chartId: string;
     };
 
-const WIDGET_DEBOUNCE_TIMEOUT = 300;
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 600;
 export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) => {
     const {
@@ -119,8 +119,11 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
             if (renderedData?.status === 'success') {
                 pushStats(renderedData, 'dash', dataProvider);
             }
+
+            const newAutoHeight = Boolean(props.data.autoHeight);
+            adjustLayout(!newAutoHeight);
         },
-        [dataProvider],
+        [adjustLayout, dataProvider, props.data.autoHeight],
     );
 
     /**
@@ -148,17 +151,11 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
                 adjustLayout(false);
                 return;
             }
+
             const newAutoHeight = Boolean(props.data.autoHeight);
-            // fix same as for table at CHARTS-7640
-            if (widgetType === DashTabItemControlSourceType.External) {
-                setTimeout(() => {
-                    adjustLayout(!newAutoHeight);
-                }, WIDGET_DEBOUNCE_TIMEOUT);
-            } else {
-                adjustLayout(!newAutoHeight);
-            }
+            adjustLayout(!newAutoHeight);
         },
-        [adjustLayout, widgetType, props.data.autoHeight],
+        [adjustLayout, props.data.autoHeight],
     );
 
     const {
@@ -331,6 +328,26 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
             resolveWidgetDataRef,
         ],
     );
+
+    /**
+     * Resize observer adjustLayout
+     *
+     * For selector if autoHeight prop enabled or when an error occurred
+     */
+    const autoHeightEnabled = isInit && (Boolean(props.data.autoHeight) || Boolean(error));
+
+    const debounceResizeAdjustLayot = React.useCallback(
+        debounce(() => {
+            adjustLayout(false);
+        }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
+        [adjustLayout],
+    );
+
+    useResizeObserver({
+        onResize: debounceResizeAdjustLayot,
+        rootNodeRef,
+        enable: autoHeightEnabled,
+    });
 
     /**
      * changed widget content size
