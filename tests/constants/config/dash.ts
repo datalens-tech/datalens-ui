@@ -13,6 +13,6 @@ export const dash: DashParametrizationConfig = {
         DashboardWithAPIErrorChart: DashUrls.DashboardWithAPIErrorChart,
     },
     endpoints: {
-        createDash: `/workbook/${WorkbookIds.E2EWorkbook}/dashboards`,
+        createDash: `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`,
     },
 };
