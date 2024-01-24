@@ -5,8 +5,8 @@ import {deleteEntity, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ControlQA, DashCommonQa} from '../../../../src/shared';
 import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {ChartsParams} from '../../../constants/test-entities/charts';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const PARAMS = {
     WARNING_SAME_DATASET_FIELDS:
@@ -14,19 +14,14 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Relations (new), validation', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const workbookPO = new Workbook(page);
-        await workbookPO.openE2EWorkbookPage();
-    });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
     });
     datalensTest(
         'Check for unable adding new alias for widget on same dataset',
-        async ({page}: {page: Page}) => {
-            const workbookPO = new Workbook(page);
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
-            await workbookPO.createDashboard({
+            await dashboardPage.createDashboard({
                 editDash: async () => {
                     await dashboardPage.addSelectorBySettings({});
 
@@ -36,6 +31,7 @@ datalensTest.describe('Dashboards - Relations (new), validation', () => {
                         hideTitle: true,
                     });
                 },
+                config,
             });
             await dashboardPage.enterEditMode();
 

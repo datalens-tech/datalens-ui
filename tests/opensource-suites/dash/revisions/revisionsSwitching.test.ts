@@ -10,36 +10,37 @@ import {deleteEntity, slct} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const revTexts = ['Revision 1', 'Revision 2', 'Revision 3'];
 
 let page: Page;
 datalensTest.describe('Dashboard Versioning', () => {
-    datalensTest.beforeAll(async ({browser}: {browser: Browser}) => {
-        page = await browser.newPage();
+    datalensTest.beforeAll(
+        async ({browser, config}: {browser: Browser; config: TestParametrizationConfig}) => {
+            page = await browser.newPage();
+            const workbookPO = new Workbook(page);
+            const dashboardPage = new DashboardPage({page});
 
-        const workbookPO = new Workbook(page);
-        const dashboardPage = new DashboardPage({page});
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addText(arbitraryText.first);
+                },
+                config,
+            });
 
-        await workbookPO.openE2EWorkbookPage();
-
-        await workbookPO.createDashboard({
-            editDash: async () => {
-                await dashboardPage.addText(arbitraryText.first);
-            },
-        });
-
-        for (const text of revTexts) {
-            await dashboardPage.enterEditMode();
-            const controlSwitcher = page.locator(slct(ControlQA.controlMenu));
-            expect(controlSwitcher).toBeVisible();
-            await controlSwitcher.click();
-            await page.click(slct(DashKitOverlayMenuQa.RemoveButton));
-            await dashboardPage.addText(text);
-            await dashboardPage.clickSaveButton();
-            await workbookPO.editEntityButton.waitForVisible();
-        }
-    });
+            for (const text of revTexts) {
+                await dashboardPage.enterEditMode();
+                const controlSwitcher = page.locator(slct(ControlQA.controlMenu));
+                expect(controlSwitcher).toBeVisible();
+                await controlSwitcher.click();
+                await page.click(slct(DashKitOverlayMenuQa.RemoveButton));
+                await dashboardPage.addText(text);
+                await dashboardPage.clickSaveButton();
+                await workbookPO.editEntityButton.waitForVisible();
+            }
+        },
+    );
 
     datalensTest.afterAll(async () => {
         await deleteEntity(page, WorkbooksUrls.E2EWorkbook);

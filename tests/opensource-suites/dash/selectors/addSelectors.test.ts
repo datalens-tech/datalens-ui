@@ -3,9 +3,9 @@ import {Page} from '@playwright/test';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {deleteEntity, openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {WorkbooksUrls} from '../../../constants/constants';
 import {ControlQA} from '../../../../src/shared';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const PARAMS = {
     CONTROL_TITLE: 'test-control',
@@ -19,9 +19,8 @@ const CONTROL_ITEM_COUNT = 3;
 datalensTest.describe('Dashboards are Basic functionality', () => {
     datalensTest(
         'Adding a chart and selector with manual input of values and default value',
-        async ({page}: {page: Page}) => {
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
-            const workbookPO = new Workbook(page);
 
             await openTestPage(page, WorkbooksUrls.E2EWorkbook);
 
@@ -32,7 +31,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
             }
             const controlDefaultValue = controlItems[controlItems.length - 1];
 
-            await workbookPO.createDashboard({
+            await dashboardPage.createDashboard({
                 editDash: async () => {
                     await dashboardPage.addSelector({
                         controlTitle: PARAMS.CONTROL_TITLE,
@@ -41,6 +40,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
                         defaultValue: controlDefaultValue,
                     });
                 },
+                config,
             });
 
             // check that the default value is set correctly

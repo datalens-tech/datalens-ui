@@ -1,6 +1,5 @@
 import {Page} from '@playwright/test';
 
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {ActionPanelDashSaveControls} from '../../../../src/shared/constants/qa/action-panel';
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage, {RENDER_TIMEOUT} from '../../../page-objects/dashboard/DashboardPage';
@@ -9,24 +8,25 @@ import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {WorkbooksUrls} from '../../../constants/constants';
 import {arbitraryText} from '../constants';
+import {TestParametrizationConfig} from '../../../types/config';
 
 datalensTest.describe('Dashboard Versioning', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const dashboardPage = new DashboardPage({page});
-        const workbookPO = new Workbook(page);
+    datalensTest.beforeEach(
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            const dashboardPage = new DashboardPage({page});
 
-        await workbookPO.openE2EWorkbookPage();
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addText(arbitraryText.first);
+                },
+                config,
+            });
 
-        await workbookPO.createDashboard({
-            editDash: async () => {
-                await dashboardPage.addText(arbitraryText.first);
-            },
-        });
-
-        await dashboardPage.enterEditMode();
-        await dashboardPage.makeDraft();
-        await dashboardPage.waitForOpeningActual();
-    });
+            await dashboardPage.enterEditMode();
+            await dashboardPage.makeDraft();
+            await dashboardPage.waitForOpeningActual();
+        },
+    );
 
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
@@ -50,7 +50,7 @@ datalensTest.describe('Dashboard Versioning', () => {
             await dashboardPage.editDashWithoutSaving();
 
             // check the corresponding button
-            await page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+            await page.waitForSelector(slct(ActionPanelDashSaveControls.Save));
             //click on the dropdown arrow
             await page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
 

@@ -2,12 +2,12 @@ import type {Page} from '@playwright/test';
 
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, openTestPage, slct, waitForCondition} from '../../../utils';
+import {deleteEntity, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {WorkbooksUrls} from '../../../constants/constants';
 import {ChartsParams} from '../../../constants/test-entities/charts';
 import {TabMenuQA} from '../../../../src/shared';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const CHARTKIT_SELECTOR = 'chartkit-body-entry-q9z7zsseqg2qf';
 
@@ -19,32 +19,32 @@ const hasNoScroll = async (page: Page, selector: string) => {
 };
 
 datalensTest.describe('Dashboards - Auto-height of widgets', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const dashboardPage = new DashboardPage({page});
-        const workbookPO = new Workbook(page);
+    datalensTest.beforeEach(
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            const dashboardPage = new DashboardPage({page});
 
-        await openTestPage(page, WorkbooksUrls.E2EWorkbook);
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addChart({
+                        chartName: ChartsParams.citySalesPieChart.name,
+                        chartUrl: ChartsParams.citySalesPieChart.url,
+                    });
 
-        await workbookPO.createDashboard({
-            editDash: async () => {
-                await dashboardPage.addChart({
-                    chartName: ChartsParams.citySalesPieChart.name,
-                    chartUrl: ChartsParams.citySalesPieChart.url,
-                });
+                    await dashboardPage.clickFirstControlSettingsButton();
 
-                await dashboardPage.clickFirstControlSettingsButton();
+                    await page.click(slct(TabMenuQA.Add));
 
-                await page.click(slct(TabMenuQA.Add));
-
-                await dashboardPage.addChart({
-                    chartName: ChartsParams.citySalesTableChart.name,
-                    chartUrl: ChartsParams.citySalesTableChart.url,
-                    enableAutoHeight: true,
-                    addChartTab: true,
-                });
-            },
-        });
-    });
+                    await dashboardPage.addChart({
+                        chartName: ChartsParams.citySalesTableChart.name,
+                        chartUrl: ChartsParams.citySalesTableChart.url,
+                        enableAutoHeight: true,
+                        addChartTab: true,
+                    });
+                },
+                config,
+            });
+        },
+    );
 
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         await deleteEntity(page, WorkbooksUrls.E2EWorkbook);

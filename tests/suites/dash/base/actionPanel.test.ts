@@ -2,9 +2,9 @@ import {Page, expect} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {openTestPage, slct} from '../../../utils';
-import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {CreateEntityButton} from '../../../../src/shared/constants/qa/components';
+import {ActionPanelDashSaveControls} from '../../../../src/shared/constants/qa/action-panel';
 
 const PARAMS = {
     DASH_NAME_PREFIX: 'e2e-test-dash',
@@ -20,7 +20,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
 
         await page.click(slct(CreateEntityButton.Button));
 
-        const saveButton = dashboardPage.page.locator(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+        const saveButton = dashboardPage.page.locator(slct(ActionPanelDashSaveControls.Save));
 
         await expect(saveButton, 'Save button is active').toBeDisabled();
 
@@ -41,9 +41,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
 
             await page.click(slct(CreateEntityButton.Button));
 
-            const saveButton = dashboardPage.page.locator(
-                slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN),
-            );
+            const saveButton = dashboardPage.page.locator(slct(ActionPanelDashSaveControls.Save));
 
             await expect(saveButton, 'Save button is active').toBeDisabled();
 

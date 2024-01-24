@@ -1,25 +1,18 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {
-    deleteEntity,
-    getUniqueTimestamp,
-    openTestPage,
-    slct,
-    waitForCondition,
-} from '../../../utils';
+import {deleteEntity, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ConnectionsDialogQA} from '../../../../src/shared';
 import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {ChartsParams} from '../../../constants/test-entities/charts';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
     CHART_LEGEND_ITEM: '.chartkit-d3-legend__item',
     CONTROL_SELECT_ITEMS_KEY: 'chartkit-control-select-items',
 };
 const PARAMS = {
-    DASH_NAME_PREFIX: 'e2e-test-dash',
     CONTROL_TITLE: 'test-control',
     CONTROL_FIELD_NAME: 'test-control-field',
     CONTROL_ITEMS: ['Dallas', 'Chicago'],
@@ -29,37 +22,32 @@ const PARAMS = {
 datalensTest.describe('Dashboards - Basic functionality', () => {
     datalensTest(
         'Adding a chart and selector with manual input of values, creating a link',
-        async ({page}: {page: Page}) => {
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
-            const workbookPO = new Workbook(page);
 
-            await openTestPage(page, WorkbooksUrls.E2EWorkbook);
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addSelector({
+                        controlTitle: PARAMS.CONTROL_TITLE,
+                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+                        controlItems: PARAMS.CONTROL_ITEMS,
+                    });
 
-            await workbookPO.createEntryButton.createDashboard();
+                    await dashboardPage.addChart({
+                        chartName: ChartsParams.citySalesPieChart.name,
+                        chartUrl: ChartsParams.citySalesPieChart.url,
+                    });
 
-            await dashboardPage.addSelector({
-                controlTitle: PARAMS.CONTROL_TITLE,
-                controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                controlItems: PARAMS.CONTROL_ITEMS,
+                    await dashboardPage.setupLinks({
+                        linkType: ConnectionsDialogQA.TypeSelectOutputOption,
+                        chartField: PARAMS.CHART_FIELD,
+                        selectorName: PARAMS.CONTROL_TITLE,
+                    });
+
+                    await dashboardPage.clickSaveButton();
+                },
+                config,
             });
-
-            await dashboardPage.addChart({
-                chartName: ChartsParams.citySalesPieChart.name,
-                chartUrl: ChartsParams.citySalesPieChart.url,
-            });
-
-            await dashboardPage.setupLinks({
-                linkType: ConnectionsDialogQA.TypeSelectOutputOption,
-                chartField: PARAMS.CHART_FIELD,
-                selectorName: PARAMS.CONTROL_TITLE,
-            });
-
-            await dashboardPage.clickSaveButton();
-
-            const dashName = `${PARAMS.DASH_NAME_PREFIX}-${getUniqueTimestamp()}`;
-            await workbookPO.dialogCreateEntry.waitForOpen();
-            await workbookPO.dialogCreateEntry.fillNameField(dashName);
-            await workbookPO.dialogCreateEntry.clickApplyButton();
 
             await waitForCondition(async () => {
                 const elems = await page.$$(SELECTORS.CHART_LEGEND_ITEM);

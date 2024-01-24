@@ -1,12 +1,13 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {RobotChartsDashboardUrls, COMMON_SELECTORS} from '../../../utils/constants';
+import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {dragAndDropListItem, openTabPopupWidgetOrder} from '../helpers';
 import {COMMON_DASH_SELECTORS} from '../constants';
 import {DialogTabsQA, EntryDialogQA} from '../../../../src/shared/constants';
+import {ActionPanelDashSaveControls} from '../../../../src/shared/constants/qa/action-panel';
 
 const SELECTORS = {
     SELECTOR_LIST_ITEMS: '.yc-list__item',
@@ -58,7 +59,7 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
             await page.click(slct(DialogTabsQA.Cancel));
 
             await dashboardPage.waitForSelector(
-                `${slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN)}[disabled]`,
+                `${slct(ActionPanelDashSaveControls.Save)}[disabled]`,
             );
         },
     );
@@ -88,7 +89,7 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
             await page.click(slct(DialogTabsQA.Save));
 
             await dashboardPage.waitForSelector(
-                `${slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN)}:not([disabled])`,
+                `${slct(ActionPanelDashSaveControls.Save)}:not([disabled])`,
             );
             await dashboardPage.exitEditMode();
 

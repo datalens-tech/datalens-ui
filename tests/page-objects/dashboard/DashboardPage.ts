@@ -21,6 +21,8 @@ import {
     deleteEntity,
     entryDialogFillAndSave,
     getAddress,
+    getUniqueTimestamp,
+    openTestPage,
     slct,
     waitForCondition,
 } from '../../utils';
@@ -30,7 +32,6 @@ import Revisions from '../common/Revisions';
 
 import {SourceTypes} from '../../page-objects/common/DialogControlPO/SourceType';
 import {
-    CreateEntityButton,
     DashboardDialogSettingsQa,
     DialogControlQa,
     DialogDashTitleQA,
@@ -55,6 +56,7 @@ import {Locator} from 'playwright-core';
 import {Workbook} from '../workbook/Workbook';
 import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
 import {ChartkitControl} from './ChartkitControl';
+import {TestParametrizationConfig} from '../../types/config';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -168,14 +170,21 @@ class DashboardPage extends BasePage {
         return makrdownNode.innerHTML();
     }
 
-    async createDashboard({editDash, dashName}: {editDash: () => Promise<void>; dashName: string}) {
-        // click the button to create a new dashboard
-        await this.page.click(slct(CreateEntityButton.Button));
+    async createDashboard({
+        editDash,
+        config,
+    }: {
+        editDash: () => Promise<void>;
+        config?: TestParametrizationConfig;
+    }) {
+        openTestPage(this.page, config ? config.dash.endpoints.createDash : '/dashboards/new');
 
         // callback with start actions with dash in edit mode
         await editDash();
 
         await this.clickSaveButton();
+
+        const dashName = `e2e-entry-${getUniqueTimestamp()}`;
 
         // waiting for the dialog to open, specify the name, save
         // waiting for the transition to the dashboard page
@@ -761,7 +770,7 @@ class DashboardPage extends BasePage {
 
     async clickSaveButton() {
         // save the changes made on the dashboard
-        await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+        await this.page.click(slct(ActionPanelDashSaveControls.Save));
     }
 
     async saveChanges() {
@@ -814,7 +823,7 @@ class DashboardPage extends BasePage {
             })
             .catch(async () => {
                 // in ActionPanel, the default save button is "Save"
-                await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+                await this.page.click(slct(ActionPanelDashSaveControls.Save));
             });
     }
 

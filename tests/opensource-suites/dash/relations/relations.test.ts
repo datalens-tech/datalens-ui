@@ -5,8 +5,8 @@ import {deleteEntity, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ControlQA, DashCommonQa, DashRelationTypes} from '../../../../src/shared';
 import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {ChartsParams} from '../../../constants/test-entities/charts';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
     CHART_LEGEND_ITEM: '.chartkit-d3-legend__item',
@@ -22,28 +22,28 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Relations (new)', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const workbookPO = new Workbook(page);
-        const dashboardPage = new DashboardPage({page});
+    datalensTest.beforeEach(
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            const dashboardPage = new DashboardPage({page});
 
-        await workbookPO.openE2EWorkbookPage();
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addSelector({
+                        controlTitle: PARAMS.CONTROL_TITLE,
+                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+                        controlItems: PARAMS.CONTROL_ITEMS,
+                    });
 
-        await workbookPO.createDashboard({
-            editDash: async () => {
-                await dashboardPage.addSelector({
-                    controlTitle: PARAMS.CONTROL_TITLE,
-                    controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                    controlItems: PARAMS.CONTROL_ITEMS,
-                });
-
-                await dashboardPage.addChart({
-                    chartName: ChartsParams.citySalesPieChart.name,
-                    chartUrl: ChartsParams.citySalesPieChart.url,
-                    hideTitle: true,
-                });
-            },
-        });
-    });
+                    await dashboardPage.addChart({
+                        chartName: ChartsParams.citySalesPieChart.name,
+                        chartUrl: ChartsParams.citySalesPieChart.url,
+                        hideTitle: true,
+                    });
+                },
+                config,
+            });
+        },
+    );
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
     });

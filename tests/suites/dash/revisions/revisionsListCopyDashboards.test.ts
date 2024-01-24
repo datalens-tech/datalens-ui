@@ -38,7 +38,7 @@ datalensTest.describe('Dashboard Versioning', () => {
             await dashboardPage.editDashWithoutSaving();
 
             // check the corresponding button
-            await page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+            await page.waitForSelector(slct(ActionPanelDashSaveControls.Save));
             //click on the dropdown arrow
             await page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
 

@@ -5,7 +5,7 @@ import {deleteEntity, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {DashCommonQa} from '../../../../src/shared';
 import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const PARAMS = {
     DASH_NAME_PREFIX: 'e2e-test-dash',
@@ -18,11 +18,10 @@ const PARAMS = {
 datalensTest.describe('Dashboards - Relations (new)', () => {
     datalensTest(
         'Pop-up opening and the presence of the inscription "No elements for links"',
-        async ({page}: {page: Page}) => {
-            const workbookPO = new Workbook(page);
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
-            await workbookPO.openE2EWorkbookPage();
-            await workbookPO.createDashboard({
+
+            await dashboardPage.createDashboard({
                 editDash: async () => {
                     await dashboardPage.addSelector({
                         controlTitle: PARAMS.CONTROL_TITLE,
@@ -30,6 +29,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
                         controlItems: PARAMS.CONTROL_ITEMS,
                     });
                 },
+                config,
             });
 
             await dashboardPage.openControlRelationsDialog();

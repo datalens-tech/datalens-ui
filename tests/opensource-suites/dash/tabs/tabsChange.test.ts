@@ -1,11 +1,11 @@
 import {Page} from '@playwright/test';
 
 import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {deleteEntity} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const firstTabIsVisible = async (dashboardPage: DashboardPage) => {
     await expect(dashboardPage.getDashKitTextItem(arbitraryText.first)).toBeVisible();
@@ -18,21 +18,21 @@ const secondTabIsVisible = async (dashboardPage: DashboardPage) => {
 };
 
 datalensTest.describe(`Dashboards - switch tabs`, () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const dashboardPage = new DashboardPage({page});
-        const workbookPO = new Workbook(page);
+    datalensTest.beforeEach(
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            const dashboardPage = new DashboardPage({page});
 
-        await workbookPO.openE2EWorkbookPage();
-
-        await workbookPO.createDashboard({
-            editDash: async () => {
-                await dashboardPage.addText(arbitraryText.first);
-                await dashboardPage.addTab();
-                await dashboardPage.dashTabs.switchTabByIdx(1);
-                await dashboardPage.addText(arbitraryText.second);
-            },
-        });
-    });
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addText(arbitraryText.first);
+                    await dashboardPage.addTab();
+                    await dashboardPage.dashTabs.switchTabByIdx(1);
+                    await dashboardPage.addText(arbitraryText.second);
+                },
+                config,
+            });
+        },
+    );
 
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         await deleteEntity(page, WorkbooksUrls.E2EWorkbook);

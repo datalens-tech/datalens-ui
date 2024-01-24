@@ -15,6 +15,7 @@ import {
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const waitCheckActualizeRevisionList = async ({
     page,
@@ -48,18 +49,18 @@ const waitCheckActualizeRevisionList = async ({
 };
 
 datalensTest.describe('Dashboard Versioning', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const dashboardPage = new DashboardPage({page});
-        const workbookPO = new Workbook(page);
+    datalensTest.beforeEach(
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            const dashboardPage = new DashboardPage({page});
 
-        await workbookPO.openE2EWorkbookPage();
-
-        await workbookPO.createDashboard({
-            editDash: async () => {
-                await dashboardPage.addText(arbitraryText.first);
-            },
-        });
-    });
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addText(arbitraryText.first);
+                },
+                config,
+            });
+        },
+    );
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
     });
