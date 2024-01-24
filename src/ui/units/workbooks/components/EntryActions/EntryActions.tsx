@@ -38,7 +38,10 @@ export const EntryActions = ({
     const isConnection = entry.scope === EntryScope.Connection;
     const isNotFileConnection =
         entry.type !== ConnectorType.File && entry.type !== ConnectorType.GsheetsV2;
-    const isShowActionCopy = !isConnection && isNotFileConnection && copyEntriesToWorkbookEnabled;
+
+    const isFileConnection =
+        isConnection &&
+        (entry.type === ConnectorType.File || entry.type === ConnectorType.GsheetsV2);
 
     const items: DropdownMenuItemMixed<unknown>[] = [
         {
@@ -54,7 +57,7 @@ export const EntryActions = ({
                   },
               ]
             : []),
-        ...(isShowActionCopy
+        ...(!isFileConnection && copyEntriesToWorkbookEnabled
             ? [
                   {
                       action: onCopyEntry,
