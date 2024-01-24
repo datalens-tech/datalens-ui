@@ -32,7 +32,7 @@ export const getConfiguredDashKit = () => {
                 ? getSdk().bi.getPublicDistinctsApiV2
                 : getSdk().bi.getDistinctsApiV2,
         }),
-        pluginGroupControl,
+        ...(Utils.isEnabledFeature(Feature.GroupControls) ? [pluginGroupControl] : []),
         widgetPlugin,
     );
 
