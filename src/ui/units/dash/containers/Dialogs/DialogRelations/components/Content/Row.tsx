@@ -41,6 +41,16 @@ type RowParams = {
     widgetIcon: React.ReactNode;
 };
 
+type ConnectionByFieldsProp = string[] | string;
+type ConnectionByUsedParamsProp = string[] | string;
+type ConnectionByAliasesProp = string[][] | string;
+
+type ConnectionField =
+    | ConnectionByFieldsProp
+    | ConnectionByUsedParamsProp
+    | ConnectionByAliasesProp;
+type ConnectionType = 'alias' | 'field';
+
 const getRelationDetailsText = ({
     text,
     linkType,
@@ -83,13 +93,7 @@ const getRelationDetailsText = ({
     return text;
 };
 
-const getFieldText = ({
-    field,
-    type,
-}: {
-    field: string[][] | string[] | string;
-    type: 'field' | 'alias';
-}) => {
+const getFieldText = ({field, type}: {field: ConnectionField; type: ConnectionType}) => {
     let fieldText = '';
     let fieldTextWithStrong = null;
 
@@ -126,9 +130,9 @@ const getConnectionByInfo = ({
     relationType,
 }: {
     relationType: RelationType;
-    byFields: string[] | string;
-    byUsedParams: string[] | string;
-    byAliases: string[][] | string;
+    byFields: ConnectionByFieldsProp;
+    byUsedParams: ConnectionByUsedParamsProp;
+    byAliases: ConnectionByAliasesProp;
 }) => {
     const availableLink =
         relationType !== RELATION_TYPES.ignore && relationType !== RELATION_TYPES.unknown;
@@ -142,8 +146,8 @@ const getConnectionByInfo = ({
     const hasAliases = Array.isArray(byAliases) ? Boolean(byAliases.length) : Boolean(byAliases);
     const showByAlias = hasAliases && availableLink;
 
-    let field: Parameters<typeof getFieldText>[0]['field'] = [];
-    let type: Parameters<typeof getFieldText>[0]['type'] = 'field';
+    let field: ConnectionField = [];
+    let type: ConnectionType = 'field';
     if (hasFields) {
         field = byFields;
     } else if (hasAliases) {
@@ -176,9 +180,9 @@ export const getTooltipInfo = ({
     widget: DashkitMetaDataItem;
     row: DashkitMetaDataItem;
     relationType: RelationType;
-    byFields: string[] | string;
-    byAliases: string[][] | string;
-    byUsedParams: string[] | string;
+    byFields: ConnectionByFieldsProp;
+    byAliases: ConnectionByAliasesProp;
+    byUsedParams: ConnectionByUsedParamsProp;
 }) => {
     const {fieldText, fieldTextWithStrong, showByField} = getConnectionByInfo({
         byFields,
