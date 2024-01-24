@@ -920,12 +920,16 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         };
 
         const label = source.showTitle ? `${title}${getAsterisk(source.required)}` : '';
+        // if only innerLabel is visible in required selector we add '*' to it
+        const innerLabel = source.showInnerTitle
+            ? `${source.innerTitle}${getAsterisk(source.required && !source.showTitle)}`
+            : '';
 
         const props: SelectControlProps = {
             widgetId: id,
             content: content || preselectedContent,
             label,
-            innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
+            innerLabel,
             param: fieldId,
             multiselect: (source as DashTabItemControlElementSelect).multiselectable,
             type: TYPE.SELECT,
@@ -1025,6 +1029,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             };
 
             const label = source.showTitle ? `${title}${getAsterisk(source.required)}` : '';
+            // if only innerTitle is visible in required selector we add '*' to it
+            const innerLabel = source.showInnerTitle
+                ? `${source.innerTitle}${getAsterisk(source.required && !source.showTitle)}`
+                : '';
 
             const props = {
                 ...control,
@@ -1034,7 +1042,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 value: preparedValue,
                 onChange,
                 editMode,
-                innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
+                innerLabel,
                 label,
                 required: source.required,
                 hasValidationError: Boolean(validationError),
