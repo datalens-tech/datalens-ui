@@ -132,13 +132,27 @@ export const getMetaDataWithDatasetInfo = ({
         const {type, datasetId, datasetName, datasetFields} = entryWithDataset;
         const key = datasetId as string;
         if (datasetFields) {
+            const datasetFieldNames: string[] = [];
             datasetsList[key] = datasetsList[key] || {};
             datasetsList[key].name = datasetName || '';
-            datasetsList[key].fields = datasetFields.map((fieldItem) => ({
-                title: fieldItem.title,
-                guid: fieldItem.guid,
-                dataType: fieldItem.dataType || fieldItem.type || '',
-            }));
+            datasetsList[key].fields = datasetFields.map((fieldItem) => {
+                datasetFieldNames.push(fieldItem.guid);
+
+                return {
+                    title: fieldItem.title,
+                    guid: fieldItem.guid,
+                    dataType: fieldItem.dataType || fieldItem.type || '',
+                };
+            });
+
+            // Adding missing params from entry
+            if (type !== 'dataset') {
+                const diffParams = item.datasets
+                    ?.find(({id}) => id === datasetId)
+                    ?.fieldsList.filter(({guid}) => !datasetFieldNames.includes(guid));
+
+                datasetsList[key].fields.push(...(diffParams || []));
+            }
         }
 
         if (datasetId && datasetsList[datasetId]) {
