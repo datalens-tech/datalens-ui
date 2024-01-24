@@ -109,6 +109,7 @@ export function getSelectorDialogFromData(data, defaults) {
         innerTitle: data.source.innerTitle,
         showInnerTitle: data.source.showInnerTitle,
         id: getRandomKey(),
+        required: data.source.required,
     };
 }
 
@@ -137,6 +138,7 @@ export function getSelectorGroupDialogFromData(data, defaults) {
             innerTitle: item.source.innerTitle,
             showInnerTitle: item.source.showInnerTitle,
             id: getRandomKey(),
+            required: item.source.required,
             placementMode: item.placementMode,
             width: item.width,
         }))
@@ -413,6 +415,8 @@ function dash(state = initialState, action) {
             } else if (openedDialog === 'group_control') {
                 newState.selectorsGroup = getSelectorGroupDialogFromData(data, defaults);
                 newState.selectorDialog = newState.selectorsGroup.items[0];
+            } else {
+                newState.selectorDialog = getSelectorDialogFromData(data, defaults);
             }
 
             newState.openedDialog = openedDialog;

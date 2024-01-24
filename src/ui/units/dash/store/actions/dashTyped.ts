@@ -6,12 +6,14 @@ import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Titl
 import {i18n} from 'i18n';
 import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
+import {Dispatch} from 'redux';
 import {
     DATASET_FIELD_TYPES,
     DashTab,
     DashTabItem,
     DashTabItemControlData,
     DashTabItemControlSourceType,
+    DashTabItemType,
     Dataset,
     DatasetFieldType,
     EntryUpdateMode,
@@ -36,7 +38,7 @@ import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
 
 import {closeDialog as closeDashDialog, deleteLock, purgeData, save, setLock} from './dash';
-import {getBeforeCloseDialogItemAction} from './helpers';
+import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
 
 import {DashDispatch} from './index';
 
@@ -490,7 +492,7 @@ const getItemDataSource = (selectorDialog: SelectorDialogState): ItemDataSource 
 };
 
 const getControlValidation = (selectorDialog: SelectorDialogState) => {
-    const {title, sourceType, datasetFieldId, fieldName} = selectorDialog;
+    const {title, sourceType, datasetFieldId, fieldName, defaultValue, required} = selectorDialog;
 
     const validation: SelectorDialogValidation = {};
 
@@ -504,6 +506,10 @@ const getControlValidation = (selectorDialog: SelectorDialogState) => {
 
     if (sourceType === DashTabItemControlSourceType.Dataset && !datasetFieldId) {
         validation.datasetFieldId = i18n('dash.control-dialog.edit', 'validation_required');
+    }
+
+    if (required && (!defaultValue || !defaultValue?.length)) {
+        validation.defaultValue = i18n('dash.control-dialog.edit', 'validation_required');
     }
 
     return validation;
@@ -561,6 +567,16 @@ export const applyControl2Dialog = () => {
         }
 
         const defaults = getControlDefaultsForField(selectorDialog.defaults, selectorDialog);
+
+        const data = {
+            title,
+            sourceType,
+            autoHeight,
+            source: getItemDataSource(selectorDialog),
+        };
+        const getExtendedItemData = getExtendedItemDataAction();
+        const itemData = dispatch(getExtendedItemData({data, defaults}));
+
         const itemType =
             getState().dash.openedDialog === DashTabItemType.GroupControl
                 ? DashTabItemType.Control
@@ -568,14 +584,9 @@ export const applyControl2Dialog = () => {
 
         dispatch(
             setItemData({
-                data: {
-                    title,
-                    sourceType,
-                    autoHeight,
-                    source: getItemDataSource(selectorDialog),
-                },
+                data: itemData.data,
                 type: itemType,
-                defaults,
+                defaults: itemData.defaults,
             }),
         );
 
@@ -639,6 +650,10 @@ export const applyGroupControlDialog = () => {
                 {},
             ),
         };
+
+        // TODO what is getExtendedItemData from single control?
+        // const getExtendedItemData = getExtendedItemDataAction();
+        // const itemData = dispatch(getExtendedItemData({data, defaults}));
 
         dispatch(
             setItemData({
