@@ -739,10 +739,13 @@ export function iterateThroughVisibleQueries(
 }
 
 export const prepareQuery = (query: string) => {
-    return query
-        .replace(/--[^\n]*\n/g, '')
-        .trim()
-        .replace(/;+$/g, '');
+    return query.trim().replace(/;+$/g, '');
+};
+
+export const doesQueryContainOrderBy = (query: string) => {
+    const queryWithoutComments = query.replace(/(\/\*[^*]*\*\/)|(\/\/[^*]*)|(--[^.].*)/gm, '');
+
+    return /order by/gim.test(queryWithoutComments);
 };
 
 export const visualizationCanHaveContinuousAxis = (visualization: ServerVisualization) => {
