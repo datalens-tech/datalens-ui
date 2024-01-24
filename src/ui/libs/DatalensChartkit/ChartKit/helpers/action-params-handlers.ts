@@ -76,7 +76,7 @@ function setSeriesSelectState(series: Highcharts.Series, selected: boolean) {
     }
 }
 
-function addParams(params: StringParams, addition: StringParams = {}) {
+export function addParams(params: StringParams, addition: StringParams = {}) {
     const result = cloneDeep(params);
 
     return Object.entries(addition).reduce((acc, [key, val]) => {
@@ -198,18 +198,23 @@ export const handleChartLoadingForActionParams = (args: {
 
 export function handleSeriesClickForActionParams(args: {
     chart: Highcharts.Chart;
+    point?: Highcharts.Point;
     clickScope: GraphWidgetEventScope;
-    event: Highcharts.SeriesClickEventObject;
+    event: MouseEvent;
     onChange?: ChartKitAdapterProps['onChange'];
     actionParams: StringParams;
 }) {
-    const {chart, clickScope, event, onChange, actionParams: prevActionParams} = args;
+    const {chart, clickScope, event, point, onChange, actionParams: prevActionParams} = args;
     const multiSelect = Boolean(event.metaKey);
     let newActionParams: StringParams = prevActionParams;
 
     switch (clickScope) {
         case 'point': {
-            const currentPoint = event.point;
+            if (!point) {
+                return;
+            }
+
+            const currentPoint = point;
             const currentPointParams = getPointActionParams(currentPoint);
             const chartPoints = chart.series.reduce(
                 (acc, s) => acc.concat(s.getPointsCollection()),

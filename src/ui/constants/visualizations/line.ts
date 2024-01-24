@@ -354,7 +354,6 @@ export const LINE_D3_VISUALIZATION: GraphShared['visualization'] = {
     id: WizardVisualizationId.LineD3,
     placeholders: [LineXPlaceholder, {...LineYPlaceholder, required: true}],
     allowSegments: false,
-    allowShapes: false,
 };
 
 export const AREA_VISUALIZATION: GraphShared['visualization'] = {

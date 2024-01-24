@@ -38,6 +38,7 @@ class PaneVisualization extends React.PureComponent<
                     if (this.props.isQueryEmpty) {
                         return;
                     }
+
                     this.props.drawPreview({
                         withoutTable: true,
                     });

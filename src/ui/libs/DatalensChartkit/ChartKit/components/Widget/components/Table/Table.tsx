@@ -115,49 +115,32 @@ function attachTreeHandler(cell: TableCommonCell, tableProps: TableProps) {
 export class Table extends React.PureComponent<TableProps, TableState> {
     state: TableState = {waitingForFont: true, dataTableRefInitialized: false};
 
-    private timer: ReturnType<typeof setTimeout> | null = null;
     private dataTableRef?: ChartKitDataTable;
     private id?: string;
 
     componentDidMount() {
         validateConfigAndData({data: this.props.data.data, config: this.props.data.config});
-        // @ts-ignore | ts doesn't know about FontFaceSet API
-        document.fonts.load('700 10pt "YS Text"').then((fonts) => {
-            if (!fonts.length) {
-                console.warn(
-                    'The font used for the table headers has not loaded,' +
-                        ' the table may not be displayed correctly',
-                );
-            }
 
+        // after fonts load table is reflowing
+        // so now we wait all queued fonts to be ready before trigger onLoad
+        document.fonts.ready.finally(() => {
             this.setState({waitingForFont: false}, () => {
                 this.onLoad();
                 this.props.onChartLoad?.({widget: this.dataTableRef});
             });
-
-            if (this.timer) {
-                clearTimeout(this.timer);
-            }
         });
-
-        this.timer = setTimeout(() => {
-            this.setState({waitingForFont: false}, this.onLoad);
-        }, 2000);
     }
 
     componentDidUpdate(prevProps: TableProps) {
-        this.onLoad();
+        // requestAnimationFrame adding this callback after DataTable has calculated it's own sizes
+        requestAnimationFrame(() => {
+            this.onLoad();
 
-        this.props.onRender?.({renderTime: Number(Performance.getDuration(this.getId()))});
+            this.props.onRender?.({renderTime: Number(Performance.getDuration(this.getId()))});
+        });
 
         if (prevProps.data !== this.props.data) {
             validateConfigAndData({data: this.props.data.data, config: this.props.data.config});
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.timer) {
-            clearTimeout(this.timer);
         }
     }
 

@@ -179,11 +179,19 @@ export function openDialogPointsSize({
     visualization,
 }: OpenDialogPointsSizeArguments) {
     return function (dispatch: WizardDispatch) {
+        const visualizationId = visualization.id;
+
+        const pointType =
+            visualizationId === WizardVisualizationId.Scatter ||
+            visualizationId === WizardVisualizationId.ScatterD3
+                ? 'scatter'
+                : 'geopoint';
+
         dispatch(
             openDialog({
                 id: DIALOG_POINTS_SIZE,
                 props: {
-                    pointType: visualization.id as 'geopoint' | 'scatter',
+                    pointType,
                     geopointsConfig: geopointsConfig,
                     hasMeasure: Boolean(placeholder.items.length),
                     onCancel: () => dispatch(closeDialog()),

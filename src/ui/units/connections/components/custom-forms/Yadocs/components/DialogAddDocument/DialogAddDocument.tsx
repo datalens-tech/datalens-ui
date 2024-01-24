@@ -1,16 +1,18 @@
 import React from 'react';
 
+import {HelpPopover} from '@gravity-ui/components';
 import {Dialog, RadioButton, TextInput} from '@gravity-ui/uikit';
 import type {ButtonProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 
 import DialogManager from '../../../../../../../components/DialogManager/DialogManager';
 import {DataLensApiError} from '../../../../../../../typings';
-import {i18n8857} from '../../constants';
 
 import './DialogAddDocument.scss';
 
 const b = block('conn-form-yadocs');
+const i18n = I18n.keyset('connections.yadocs.view');
 const FILE_MODE = {
     PUBLIC: 'public',
     PRIVATE: 'private',
@@ -42,13 +44,11 @@ const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
     const propsButtonApply: Partial<ButtonProps> = {disabled: !value, loading};
     const applyDisabled = !value || loading;
     const inputLabel =
-        mode === 'private'
-            ? i18n8857['label_add-input-private']
-            : i18n8857['label_add-input-public'];
+        mode === 'private' ? i18n('label_add-input-private') : i18n('label_add-input-public');
     const inputNote =
         mode === 'private'
-            ? i18n8857['label_add-input-private-note']
-            : i18n8857['label_add-input-public-note'];
+            ? i18n('label_add-input-private-note')
+            : i18n('label_add-input-public-note');
 
     const handleInputUpdate = (nextPath: string) => {
         setValue(nextPath);
@@ -91,27 +91,31 @@ const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
 
     return (
         <Dialog open={true} onClose={onClose} size="m" onEnterKeyDown={handleApply}>
-            <Dialog.Header caption={caption || i18n8857['label_add-document']} />
+            <Dialog.Header caption={caption || i18n('label_add-document')} />
             <Dialog.Body className={b('add-dialog-body')}>
                 <div className={b('add-dialog-row')}>
-                    <label className={b('add-dialog-row-label')}>
-                        {i18n8857['label_access-type']}
-                    </label>
+                    <label className={b('add-dialog-row-label')}>{i18n('label_access-type')}</label>
                     <RadioButton
                         style={{width: 'fit-content'}}
                         value={mode}
                         onUpdate={handleRadioButtonUpdate}
                     >
                         <RadioButton.Option value={FILE_MODE.PUBLIC}>
-                            {i18n8857['label_radio-value-public']}
+                            {i18n('label_radio-value-public')}
                         </RadioButton.Option>
                         <RadioButton.Option value={FILE_MODE.PRIVATE}>
-                            {i18n8857['label_radio-value-private']}
+                            {i18n('label_radio-value-private')}
                         </RadioButton.Option>
                     </RadioButton>
                 </div>
                 <div className={b('add-dialog-row')}>
-                    <label className={b('add-dialog-row-label')}>{inputLabel}</label>
+                    <label className={b('add-dialog-row-label')}>
+                        {inputLabel}
+                        <HelpPopover
+                            className={b('help-btn')}
+                            content={i18n('label_add-input-help')}
+                        />
+                    </label>
                     <TextInput
                         value={value}
                         note={<span className={b('add-dialog-row-input-note')}>{inputNote}</span>}
@@ -124,8 +128,8 @@ const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
             <Dialog.Footer
                 onClickButtonCancel={onClose}
                 onClickButtonApply={handleApply}
-                textButtonApply={i18n8857['button_apply']}
-                textButtonCancel={i18n8857['button_cancel']}
+                textButtonApply={i18n('button_apply')}
+                textButtonCancel={i18n('button_cancel')}
                 propsButtonApply={propsButtonApply}
             />
         </Dialog>
