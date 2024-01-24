@@ -83,8 +83,6 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
         {
             name: 'basic',
             testDir: process.env.E2E_SUITE ? `./suites/${process.env.E2E_SUITE}` : './suites',
-            // remove after the screenshot tests are stabilized
-            grepInvert: [/@screenshot/],
         },
         {
             name: 'opensource',

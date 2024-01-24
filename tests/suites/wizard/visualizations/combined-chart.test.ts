@@ -15,7 +15,8 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.setVisualization(WizardVisualizationId.CombinedChart);
         });
 
-        datalensTest('Axis type and formatting @screenshot', async ({page}) => {
+        // remove skip after the screenshot tests are stabilized
+        datalensTest.skip('Axis type and formatting @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartLocator = page.locator(slct(WizardPageQa.SectionPreview));
             const previewLoader = chartLocator.locator(slct(ChartKitQa.Loader));
