@@ -23,9 +23,9 @@ import preparePreviewTable from './preparers/preview-table';
 import prepareTable from './preparers/table';
 import {LINEAR_VISUALIZATIONS, PIE_VISUALIZATIONS} from './utils/constants';
 import {
+    doesQueryContainOrderBy,
     getColumnsAndRows,
     log,
-    prepareQuery,
     visualizationCanHaveContinuousAxis,
 } from './utils/misc-helpers';
 import {
@@ -224,9 +224,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
         const available = [...(fields as unknown as Field[])];
 
-        const preparedQuery = prepareQuery(shared.queryValue);
-
-        const disableDefaultSorting = /order by/gi.test(preparedQuery);
+        const disableDefaultSorting = doesQueryContainOrderBy(shared.queryValue);
 
         const prepareSingleResultArgs = {
             resultData,
