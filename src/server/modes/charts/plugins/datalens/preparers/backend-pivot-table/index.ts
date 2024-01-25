@@ -1,5 +1,6 @@
-import {PlaceholderId, ServerPlaceholder} from '../../../../../../../shared';
+import {PlaceholderId, ServerPlaceholder, StringParams} from '../../../../../../../shared';
 import {getPivotTableSubTotals} from '../../utils/pivot-table/totals';
+import {addActionParamValue} from '../helpers/action-params';
 import {PrepareFunctionArgs} from '../types';
 
 import {
@@ -209,6 +210,35 @@ const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTable
             const rowsToRemove = rows.length - totalRowIndex;
             footer = rows.splice(totalRowIndex, rowsToRemove);
         }
+    }
+
+    const widgetConfig = args.ChartEditor.getWidgetConfig();
+    const isActionParamsEnable = widgetConfig?.actionParams?.enable;
+    if (isActionParamsEnable) {
+        const headParams = rawPivotData.columns.map<StringParams>((items) => {
+            const actionParams = {};
+            items.forEach((cell) => {
+                const [[value, legend_item_id]] = cell;
+                const pivotField = fieldsItemIdMap[legend_item_id];
+                addActionParamValue(actionParams, fieldDict[pivotField?.id], value);
+            });
+
+            return actionParams;
+        });
+
+        rows.forEach((row) => {
+            const rowActionParams = {};
+            row.cells.forEach((cell: any, cellIndex: number) => {
+                if (cellIndex < rowHeaders.length) {
+                    const [[, legend_item_id]] = rowHeaders[cellIndex] || [];
+                    const pivotField = fieldsItemIdMap[legend_item_id];
+                    addActionParamValue(rowActionParams, fieldDict[pivotField?.id], cell.value);
+                } else {
+                    const headCellParams = headParams[cellIndex - rowHeaders.length];
+                    cell.custom = {actionParams: {...rowActionParams, ...headCellParams}};
+                }
+            });
+        });
     }
 
     return {head, rows, footer};

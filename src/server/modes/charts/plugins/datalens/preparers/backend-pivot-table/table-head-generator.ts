@@ -298,6 +298,7 @@ export const generateTableHead = ({
         }
 
         head[index].name = fieldName;
+        head[index].header = true;
     });
 
     return head;
