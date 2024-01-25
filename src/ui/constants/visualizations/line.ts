@@ -14,11 +14,8 @@ import {
     prepareFieldToMeasureTransformation,
 } from 'units/wizard/utils/visualization';
 
-import {
-    linearCheckColor,
-    onLineChartDesignItemsChange,
-    onMeasureAxisChange,
-} from '../../utils/visualizations/line';
+import {linearCheckColor, onLineChartDesignItemsChange} from '../../utils/visualizations/line';
+import {onMeasureAxisChange} from '../../utils/visualizations/placeholders/common-measures';
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES, PRIMITIVE_DATA_TYPES_AND_HIERARCHY} from '../misc';
 
 const LineXPlaceholder = {
