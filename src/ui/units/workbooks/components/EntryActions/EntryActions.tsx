@@ -47,7 +47,7 @@ export const EntryActions = ({
             text: i18n('action_rename'),
         },
 
-        ...(isS3BasedConnector === false
+        ...(isFileConnection === false
             ? [
                   {
                       action: onDuplicateEntry,
