@@ -1,38 +1,34 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, slct} from '../../../utils';
+import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
-import {WorkbooksUrls} from '../../../constants/constants';
 import {COMMON_DASH_SELECTORS} from '../../../suites/dash/constants';
 import {DialogTabsQA, EntryDialogQA} from '../../../../src/shared/constants';
 import {dragAndDropListItem, openTabPopupWidgetOrder} from '../../../suites/dash/helpers';
 import {arbitraryText} from '../constants';
 import {ActionPanelDashSaveControls} from '../../../../src/shared/constants/qa/action-panel';
-import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
     SELECTOR_LIST_ITEMS: '.yc-list__item',
 };
 
 datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
-    datalensTest.beforeEach(
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
-            const dashboardPage = new DashboardPage({page});
+    datalensTest.beforeEach(async ({page}: {page: Page}) => {
+        const dashboardPage = new DashboardPage({page});
 
-            await dashboardPage.createDashboard({
-                editDash: async () => {
-                    await dashboardPage.addText(arbitraryText.first);
-                    await dashboardPage.addText(arbitraryText.second);
-                },
-                createDashUrl: config.dash.endpoints.createDash,
-            });
-        },
-    );
+        await dashboardPage.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addText(arbitraryText.first);
+                await dashboardPage.addText(arbitraryText.second);
+            },
+        });
+    });
 
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(

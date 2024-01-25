@@ -1,11 +1,9 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, slct} from '../../../utils';
+import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {DashCommonQa} from '../../../../src/shared';
-import {WorkbooksUrls} from '../../../constants/constants';
-import {TestParametrizationConfig} from '../../../types/config';
 
 const PARAMS = {
     DASH_NAME_PREFIX: 'e2e-test-dash',
@@ -18,7 +16,7 @@ const PARAMS = {
 datalensTest.describe('Dashboards - Relations (new)', () => {
     datalensTest(
         'Pop-up opening and the presence of the inscription "No elements for links"',
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+        async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
             await dashboardPage.createDashboard({
@@ -29,7 +27,6 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
                         controlItems: PARAMS.CONTROL_ITEMS,
                     });
                 },
-                createDashUrl: config.dash.endpoints.createDash,
             });
 
             await dashboardPage.openControlRelationsDialog();
@@ -38,7 +35,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
 
             await dashboardPage.cancelRelationsChanges();
             await dashboardPage.exitEditMode();
-            await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+            await dashboardPage.deleteDash();
         },
     );
 });

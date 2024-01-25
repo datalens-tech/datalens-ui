@@ -3,36 +3,31 @@ import {Page} from '@playwright/test';
 import {ActionPanelDashSaveControls} from '../../../../src/shared/constants/qa/action-panel';
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage, {RENDER_TIMEOUT} from '../../../page-objects/dashboard/DashboardPage';
-import {cssSlct, deleteEntity, slct} from '../../../utils';
+import {cssSlct, slct} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {WorkbooksUrls} from '../../../constants/constants';
 import {arbitraryText} from '../constants';
-import {TestParametrizationConfig} from '../../../types/config';
 
 datalensTest.describe('Dashboard Versioning', () => {
-    datalensTest.beforeEach(
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
-            const dashboardPage = new DashboardPage({page});
+    datalensTest.beforeEach(async ({page}: {page: Page}) => {
+        const dashboardPage = new DashboardPage({page});
 
-            await dashboardPage.createDashboard({
-                editDash: async () => {
-                    await dashboardPage.addText(arbitraryText.first);
-                },
-                createDashUrl: config.dash.endpoints.createDash,
-            });
+        await dashboardPage.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addText(arbitraryText.first);
+            },
+        });
 
-            await dashboardPage.enterEditMode();
-            await dashboardPage.makeDraft();
-            await dashboardPage.waitForOpeningActual();
-        },
-    );
+        await dashboardPage.enterEditMode();
+        await dashboardPage.makeDraft();
+        await dashboardPage.waitForOpeningActual();
+    });
 
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.exitEditMode();
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(

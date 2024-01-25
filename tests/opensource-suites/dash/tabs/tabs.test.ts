@@ -1,31 +1,27 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {WorkbooksUrls} from '../../../constants/constants';
 import {ChartsParams} from '../../../constants/test-entities/charts';
-import {TestParametrizationConfig} from '../../../types/config';
 
 datalensTest.describe(`Dashboards - tabs`, () => {
-    datalensTest.beforeEach(
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
-            const dashboardPage = new DashboardPage({page});
+    datalensTest.beforeEach(async ({page}: {page: Page}) => {
+        const dashboardPage = new DashboardPage({page});
 
-            await dashboardPage.createDashboard({
-                editDash: async () => {
-                    await dashboardPage.addChart({
-                        chartName: ChartsParams.citySalesPieChart.name,
-                        chartUrl: ChartsParams.citySalesPieChart.url,
-                    });
-                },
-                createDashUrl: config.dash.endpoints.createDash,
-            });
-        },
-    );
+        await dashboardPage.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addChart({
+                    chartName: ChartsParams.citySalesPieChart.name,
+                    chartUrl: ChartsParams.citySalesPieChart.url,
+                });
+            },
+        });
+    });
 
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(

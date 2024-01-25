@@ -1,11 +1,10 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, openTestPage, slct} from '../../../utils';
+import {openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {WorkbooksUrls} from '../../../constants/constants';
 import {ControlQA} from '../../../../src/shared';
-import {TestParametrizationConfig} from '../../../types/config';
 
 const PARAMS = {
     CONTROL_TITLE: 'test-control',
@@ -19,7 +18,7 @@ const CONTROL_ITEM_COUNT = 3;
 datalensTest.describe('Dashboards are Basic functionality', () => {
     datalensTest(
         'Adding a chart and selector with manual input of values and default value',
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+        async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
             await openTestPage(page, WorkbooksUrls.E2EWorkbook);
@@ -40,7 +39,6 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
                         defaultValue: controlDefaultValue,
                     });
                 },
-                createDashUrl: config.dash.endpoints.createDash,
             });
 
             // check that the default value is set correctly
@@ -50,7 +48,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
                 )} .yc-select-control__tokens-text >> text=${controlDefaultValue}`,
             );
 
-            await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+            await dashboardPage.deleteDash();
         },
     );
 });

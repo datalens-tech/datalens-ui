@@ -1,10 +1,9 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, getUniqueTimestamp, openTestPage, slct} from '../../../utils';
+import {openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {DashCommonQa} from '../../../../src/shared';
-import {WorkbooksUrls} from '../../../constants/constants';
 
 import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {TestParametrizationConfig} from '../../../types/config';
@@ -18,7 +17,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         const dashboardPage = new DashboardPage({page});
         await dashboardPage.cancelRelationsChanges();
         await dashboardPage.exitEditMode();
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        await dashboardPage.deleteDash();
     });
     datalensTest(
         'Pop-up opening for chart with error and the presence of the inscription "No elements for links"',
@@ -28,13 +27,9 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
 
             // copy the original dashboard with delayed widget loading,
             // so that the tests do not collapse due to the transition to editing and locks
-            const dashName = `e2e-test-dash-with-defered-chart-${getUniqueTimestamp()}`;
             const dashboardPage = new DashboardPage({page});
             await openTestPage(page, config.dash.urls.DashboardWithErrorChart);
-            await dashboardPage.duplicateDashboardFromWorkbook(
-                config.dash.urls.DashboardWithErrorChart,
-                dashName,
-            );
+            await dashboardPage.duplicateDashboard(config.dash.urls.DashboardWithErrorChart);
 
             await dashboardPage.openControlRelationsDialog();
 
@@ -49,13 +44,9 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
 
             // copy the original dashboard with delayed widget loading,
             // so that the tests do not collapse due to the transition to editing and locks
-            const dashName = `e2e-test-dash-with-defered-chart-${getUniqueTimestamp()}`;
             const dashboardPage = new DashboardPage({page});
             await openTestPage(page, config.dash.urls.DashboardWithAPIErrorChart);
-            await dashboardPage.duplicateDashboardFromWorkbook(
-                config.dash.urls.DashboardWithAPIErrorChart,
-                dashName,
-            );
+            await dashboardPage.duplicateDashboard(config.dash.urls.DashboardWithAPIErrorChart);
 
             await dashboardPage.openControlRelationsDialog();
 

@@ -1,15 +1,13 @@
 import {ElementHandle, Page} from '@playwright/test';
 
-import {WorkbooksUrls} from '../../../constants/constants';
 import {DashRevisions} from '../../../../src/shared';
 import {ActionPanelEntryContextMenuQa} from '../../../../src/shared/constants/qa/action-panel';
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {clickDropDownOption, cssSlct, deleteEntity, slct, waitForCondition} from '../../../utils';
+import {clickDropDownOption, cssSlct, slct, waitForCondition} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
-import {TestParametrizationConfig} from '../../../types/config';
 
 const waitCheckActualizeRevisionList = async ({
     page,
@@ -43,20 +41,19 @@ const waitCheckActualizeRevisionList = async ({
 };
 
 datalensTest.describe('Dashboard Versioning', () => {
-    datalensTest.beforeEach(
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
-            const dashboardPage = new DashboardPage({page});
+    datalensTest.beforeEach(async ({page}: {page: Page}) => {
+        const dashboardPage = new DashboardPage({page});
 
-            await dashboardPage.createDashboard({
-                editDash: async () => {
-                    await dashboardPage.addText(arbitraryText.first);
-                },
-                createDashUrl: config.dash.endpoints.createDash,
-            });
-        },
-    );
+        await dashboardPage.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addText(arbitraryText.first);
+            },
+        });
+    });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(

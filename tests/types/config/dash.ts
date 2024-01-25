@@ -8,10 +8,4 @@ export type DashParametrizationConfig = {
         DashboardWithErrorChart: string;
         DashboardWithAPIErrorChart: string;
     };
-    endpoints: DashConfigEndpoints;
-};
-
-export type DashConfigEndpoints = {
-    createDash: string;
-    navigationPage: string;
 };

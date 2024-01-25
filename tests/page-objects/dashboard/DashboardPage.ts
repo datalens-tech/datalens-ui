@@ -59,7 +59,7 @@ import {Workbook} from '../workbook/Workbook';
 import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
 import {ChartkitControl} from './ChartkitControl';
 import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
-import {DashConfigEndpoints} from '../../types/config/dash';
+import {WorkbookIds, WorkbooksUrls} from '../../constants/constants';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -175,14 +175,17 @@ class DashboardPage extends BasePage {
         return makrdownNode.innerHTML();
     }
 
-    async createDashboard({
-        editDash,
-        createDashUrl,
-    }: {
-        editDash: () => Promise<void>;
-        createDashUrl?: DashConfigEndpoints['createDash'];
-    }) {
-        await openTestPage(this.page, createDashUrl || '/dashboards/new');
+    async openDashToCreate() {
+        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
+        const createDashUrl = isEnabledCollections
+            ? `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`
+            : '/dashboards';
+        await openTestPage(this.page, createDashUrl);
+    }
+
+    async createDashboard({editDash}: {editDash: () => Promise<void>}) {
+        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
+        await this.openDashToCreate();
 
         // callback with start actions with dash in edit mode
         await editDash();
@@ -190,8 +193,6 @@ class DashboardPage extends BasePage {
         await this.clickSaveButton();
 
         const dashName = `e2e-entry-${getUniqueTimestamp()}`;
-
-        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
 
         // waiting for the dialog to open, specify the name, save
         if (isEnabledCollections) {
@@ -866,10 +867,17 @@ class DashboardPage extends BasePage {
         ]);
     }
 
+    async deleteDash() {
+        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
+        const urlOnDelete = isEnabledCollections ? WorkbooksUrls.E2EWorkbook : '/dashboards';
+
+        await deleteEntity(this.page, urlOnDelete);
+    }
+
     async deleteDashFromEditMode() {
         try {
             await this.exitEditMode();
-            await deleteEntity(this.page, URLS.navigationOnDelete);
+            await this.deleteDash();
         } catch {
             // can't delete dash from edit mode
         }
@@ -877,7 +885,7 @@ class DashboardPage extends BasePage {
 
     async deleteDashFromViewMode() {
         try {
-            await deleteEntity(this.page, URLS.navigationOnDelete);
+            await await this.deleteDash();
         } catch {
             // can't delete dash from view mode
         }

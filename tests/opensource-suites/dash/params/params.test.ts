@@ -2,7 +2,7 @@ import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 
-import {deleteEntity, slct, waitForCondition} from '../../../utils';
+import {slct, waitForCondition} from '../../../utils';
 
 import {
     DialogDashWidgetQA,
@@ -12,10 +12,8 @@ import {
 } from '../../../../src/shared/constants';
 
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {WorkbooksUrls} from '../../../constants/constants';
 import {ChartsParams} from '../../../constants/test-entities/charts';
 import {dragAndDropListItem} from '../../../suites/dash/helpers';
-import {TestParametrizationConfig} from '../../../types/config';
 
 const DASH_PARAMS: Array<[string, string]> = [
     ['param1', ''],
@@ -160,27 +158,24 @@ const removeParam = async (page: Page, paramTitle: string) => {
 };
 
 datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters`, () => {
-    datalensTest.beforeEach(
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
-            const dashboardPage = new DashboardPage({page});
+    datalensTest.beforeEach(async ({page}: {page: Page}) => {
+        const dashboardPage = new DashboardPage({page});
 
-            await dashboardPage.createDashboard({
-                editDash: async () => {
-                    await dashboardPage.addChart({
-                        chartName: ChartsParams.citySalesPieChart.name,
-                        chartUrl: ChartsParams.citySalesPieChart.url,
-                    });
-                },
-                createDashUrl: config.dash.endpoints.createDash,
-            });
-        },
-    );
+        await dashboardPage.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addChart({
+                    chartName: ChartsParams.citySalesPieChart.name,
+                    chartUrl: ChartsParams.citySalesPieChart.url,
+                });
+            },
+        });
+    });
 
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.exitEditMode();
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(

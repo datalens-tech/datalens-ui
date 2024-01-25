@@ -2,7 +2,6 @@ import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {TestParametrizationConfig} from '../../../types/config';
 
 const expectedHTML = `
 <div class="dashkit-plugin-text dashkit-plugin-text_withMarkdown"><div class="yfm"><p>This text is highlighted <strong>in bold</strong>.</p>
@@ -32,21 +31,17 @@ This text is in *italics*.
 * Element 3`;
 
 datalensTest.describe('Dashboards - Markdown', () => {
-    datalensTest(
-        'Markdown should turn into HTML tags',
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
-            const dashboardPage = new DashboardPage({page});
+    datalensTest('Markdown should turn into HTML tags', async ({page}: {page: Page}) => {
+        const dashboardPage = new DashboardPage({page});
 
-            await dashboardPage.createDashboard({
-                editDash: async () => {
-                    await dashboardPage.addText(text);
-                },
-                createDashUrl: config.dash.endpoints.createDash,
-            });
+        await dashboardPage.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addText(text);
+            },
+        });
 
-            const receivedHTML = await dashboardPage.getMarkdownHTML();
-            const hasText = receivedHTML.trim().includes(expectedHTML.trim());
-            expect(hasText).toBeTruthy();
-        },
-    );
+        const receivedHTML = await dashboardPage.getMarkdownHTML();
+        const hasText = receivedHTML.trim().includes(expectedHTML.trim());
+        expect(hasText).toBeTruthy();
+    });
 });

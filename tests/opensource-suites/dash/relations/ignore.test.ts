@@ -1,12 +1,10 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, slct, waitForCondition} from '../../../utils';
+import {slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ControlQA, DashRelationTypes} from '../../../../src/shared';
-import {WorkbooksUrls} from '../../../constants/constants';
 import {ChartsParams} from '../../../constants/test-entities/charts';
-import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
     CHART_LEGEND_ITEM: '.chartkit-d3-legend__item',
@@ -24,61 +22,59 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Relations (new)', () => {
-    datalensTest.beforeEach(
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
-            const dashboardPage = new DashboardPage({page});
-            await dashboardPage.createDashboard({
-                editDash: async () => {
-                    await dashboardPage.addSelector({
-                        controlTitle: PARAMS.CONTROL_TITLE,
-                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                        controlItems: PARAMS.CONTROL_ITEMS,
-                    });
-                    await dashboardPage.addSelector({
-                        controlTitle: PARAMS.CONTROL_TITLE_2,
-                        controlFieldName: PARAMS.CONTROL_FIELD_NAME_2,
-                        controlItems: PARAMS.CONTROL_ITEMS,
-                    });
+    datalensTest.beforeEach(async ({page}: {page: Page}) => {
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addSelector({
+                    controlTitle: PARAMS.CONTROL_TITLE,
+                    controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+                    controlItems: PARAMS.CONTROL_ITEMS,
+                });
+                await dashboardPage.addSelector({
+                    controlTitle: PARAMS.CONTROL_TITLE_2,
+                    controlFieldName: PARAMS.CONTROL_FIELD_NAME_2,
+                    controlItems: PARAMS.CONTROL_ITEMS,
+                });
 
-                    await dashboardPage.addChart({
-                        chartName: ChartsParams.citySalesPieChart.name,
-                        chartUrl: ChartsParams.citySalesPieChart.url,
-                        hideTitle: true,
-                    });
-                },
-                createDashUrl: config.dash.endpoints.createDash,
-            });
-            await dashboardPage.enterEditMode();
+                await dashboardPage.addChart({
+                    chartName: ChartsParams.citySalesPieChart.name,
+                    chartUrl: ChartsParams.citySalesPieChart.url,
+                    hideTitle: true,
+                });
+            },
+        });
+        await dashboardPage.enterEditMode();
 
-            // adding links to controls
+        // adding links to controls
 
-            const selectorElem = await dashboardPage.getDashControlLinksIconElem(
-                ControlQA.controlLinks,
-                0,
-            );
+        const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+            ControlQA.controlLinks,
+            0,
+        );
 
-            await dashboardPage.setupNewLinks({
-                linkType: DashRelationTypes.output,
-                firstParamName: PARAMS.CONTROL_FIELD_NAME,
-                secondParamName: PARAMS.CHART_FIELD,
-                widgetElem: selectorElem,
-            });
+        await dashboardPage.setupNewLinks({
+            linkType: DashRelationTypes.output,
+            firstParamName: PARAMS.CONTROL_FIELD_NAME,
+            secondParamName: PARAMS.CHART_FIELD,
+            widgetElem: selectorElem,
+        });
 
-            const selectorElem2 = await dashboardPage.getDashControlLinksIconElem(
-                ControlQA.controlLinks,
-                1,
-            );
+        const selectorElem2 = await dashboardPage.getDashControlLinksIconElem(
+            ControlQA.controlLinks,
+            1,
+        );
 
-            await dashboardPage.setupNewLinks({
-                linkType: DashRelationTypes.output,
-                firstParamName: PARAMS.CONTROL_FIELD_NAME_2,
-                secondParamName: PARAMS.CHART_FIELD,
-                widgetElem: selectorElem2,
-            });
-        },
-    );
+        await dashboardPage.setupNewLinks({
+            linkType: DashRelationTypes.output,
+            firstParamName: PARAMS.CONTROL_FIELD_NAME_2,
+            secondParamName: PARAMS.CHART_FIELD,
+            widgetElem: selectorElem2,
+        });
+    });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.deleteDash();
     });
     datalensTest('Ignore relations by manual change', async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});

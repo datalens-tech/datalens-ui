@@ -1,9 +1,8 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, slct} from '../../../utils';
+import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {WorkbooksUrls} from '../../../constants/constants';
 import {ControlQA} from '../../../../src/shared';
 import {TestParametrizationConfig} from '../../../types/config';
 
@@ -15,7 +14,7 @@ const expectedValues = [
 datalensTest.describe('Dashboards - Selectors by date/time', () => {
     datalensTest(
         'Date/time selectors should display the time',
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+        async ({page}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
 
             await dashboardPage.createDashboard({
@@ -32,7 +31,6 @@ datalensTest.describe('Dashboards - Selectors by date/time', () => {
                         range: expectedValues[1].split(' - '),
                     });
                 },
-                createDashUrl: config.dash.endpoints.createDash,
             });
 
             await dashboardPage.waitForSelector(
@@ -42,7 +40,7 @@ datalensTest.describe('Dashboards - Selectors by date/time', () => {
                 `${slct(ControlQA.chartkitControl)} input[value='${expectedValues[1]}']`,
             );
 
-            await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+            await dashboardPage.deleteDash();
         },
     );
 });

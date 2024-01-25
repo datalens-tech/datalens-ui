@@ -1,8 +1,7 @@
 import {Page} from '@playwright/test';
 
-import {WorkbooksUrls} from '../../../constants/constants';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, openTestPage, slct, waitForCondition} from '../../../utils';
+import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
@@ -44,7 +43,6 @@ datalensTest.describe('Dashboard Versioning', () => {
                 editDash: async () => {
                     await dashboardPage.addText(arbitraryText.first);
                 },
-                createDashUrl: config.dash.endpoints.createDash,
             });
 
             await dashboardPage.waitForOpeningRevisionsList();
@@ -66,7 +64,7 @@ datalensTest.describe('Dashboard Versioning', () => {
             expect(items).toHaveLength(100);
 
             await openTestPage(page, createdDashId);
-            await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+            await dashboardPage.deleteDash();
         },
     );
 });

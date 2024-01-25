@@ -1,12 +1,10 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, isEnabledFeature, openTestPage, slct, waitForCondition} from '../../../utils';
+import {isEnabledFeature, openTestPage, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ConnectionsDialogQA, Feature} from '../../../../src/shared';
-import {WorkbooksUrls} from '../../../constants/constants';
 import {ChartsParams} from '../../../constants/test-entities/charts';
-import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
     CHART_LEGEND_ITEM: '.chartkit-d3-legend__item',
@@ -22,7 +20,7 @@ const PARAMS = {
 datalensTest.describe('Dashboards - Basic functionality', () => {
     datalensTest(
         'Adding a chart and selector with manual input of values, creating a link',
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+        async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
             await openTestPage(page, '/');
 
@@ -55,7 +53,6 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
 
                     await dashboardPage.clickSaveButton();
                 },
-                createDashUrl: config.dash.endpoints.createDash,
             });
 
             await waitForCondition(async () => {
@@ -76,7 +73,7 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
                 return elems.length === 1;
             });
 
-            await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+            await dashboardPage.deleteDash();
         },
     );
 });
