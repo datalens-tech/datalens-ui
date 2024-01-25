@@ -1,5 +1,4 @@
 import {
-    Feature,
     Field,
     Placeholder,
     PlaceholderId,
@@ -10,8 +9,6 @@ import {
     isMeasureNameOrValue,
     isMeasureValue,
 } from 'shared';
-
-import Utils from '../../utils';
 
 function isMeasureFieldInColors(colors: Field[]) {
     return colors.length && isMeasureField(colors[0] || isMeasureValue(colors[0]));
@@ -76,10 +73,6 @@ export function onMeasureAxisChange({
         oppositeMeasurePlaceholder.id === oppositeMeasurePlaceholderId
     ) {
         totalItemsCount += (oppositeMeasurePlaceholder.items || []).length;
-    }
-
-    if (Utils.isEnabledFeature(Feature.MultipleColorsInVisualization)) {
-        return;
     }
 
     if (totalItemsCount > 1) {
