@@ -175,17 +175,14 @@ class DashboardPage extends BasePage {
         return makrdownNode.innerHTML();
     }
 
-    async openDashToCreate() {
+    async createDashboard({editDash}: {editDash: () => Promise<void>}) {
+        // some page need to be loaded so we can get data of feature flag from DL var
+        await openTestPage(this.page, '/');
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         const createDashUrl = isEnabledCollections
             ? `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`
             : '/dashboards';
         await openTestPage(this.page, createDashUrl);
-    }
-
-    async createDashboard({editDash}: {editDash: () => Promise<void>}) {
-        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
-        await this.openDashToCreate();
 
         // callback with start actions with dash in edit mode
         await editDash();
