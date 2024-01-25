@@ -466,7 +466,7 @@ class DashboardPage extends BasePage {
         await this.page.waitForSelector(`[data-qa=entry-title] * >> text=${chartName}`);
 
         if (hideTitle) {
-            await this.page.click(slct(DashCommonQa.WidgetShowTitleCheckbox));
+            await this.page.locator(slct(DashCommonQa.WidgetShowTitleCheckbox)).click();
         }
 
         if (enableAutoHeight) {

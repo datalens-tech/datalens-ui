@@ -24,7 +24,7 @@ datalensTest.describe('Wizard', () => {
             ).not.toBeVisible();
             await wizardPage.fieldEditor.open();
             await wizardPage.fieldEditor.setName(newField1);
-            await wizardPage.fieldEditor.setFormula('[city]');
+            await wizardPage.fieldEditor.setFormula('[City]');
             await wizardPage.fieldEditor.clickToApplyButton();
             await expect(
                 datasetFields.locator(slct(SectionDatasetQA.ItemTitle), {hasText: newField1}),
@@ -42,7 +42,7 @@ datalensTest.describe('Wizard', () => {
             ).not.toBeVisible();
             await wizardPage.fieldEditor.open();
             await wizardPage.fieldEditor.setName(newField2);
-            await wizardPage.fieldEditor.selectField('city');
+            await wizardPage.fieldEditor.selectField('City');
             await wizardPage.fieldEditor.clickToApplyButton();
             const newField2Locator = datasetFields.locator(slct(newField2), {
                 hasText: newField2,
@@ -78,7 +78,7 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.fieldEditor.open();
             await wizardPage.fieldEditor.setName(newField3);
             await wizardPage.fieldEditor.setFormula(
-                'case [city] when [p1] then "param" else [city] end',
+                'case [City] when [p1] then "param" else [City] end',
             );
             await wizardPage.fieldEditor.clickToApplyButton();
             const newField3Locator = datasetFields.locator(slct(newField3), {
@@ -95,7 +95,7 @@ datalensTest.describe('Wizard', () => {
             const newHierarchyField = 'City -> Country';
             await wizardPage.openHierarchyEditor();
             await wizardPage.hierarchyEditor.setName(newHierarchyField);
-            await wizardPage.hierarchyEditor.selectFields(['city', 'country']);
+            await wizardPage.hierarchyEditor.selectFields(['City', 'country']);
             await wizardPage.hierarchyEditor.clickSave();
 
             const hierarchyLocator = datasetFields.locator(slct(newHierarchyField), {
@@ -106,7 +106,7 @@ datalensTest.describe('Wizard', () => {
 
             // You cannot create two hierarchies with the same name
             await wizardPage.openHierarchyEditor();
-            await wizardPage.hierarchyEditor.selectFields(['city', 'country']);
+            await wizardPage.hierarchyEditor.selectFields(['City', 'country']);
             await expect(wizardPage.hierarchyEditor.getApplyButton()).not.toBeDisabled();
             await wizardPage.hierarchyEditor.setName(newHierarchyField);
             await expect(wizardPage.hierarchyEditor.getHierarchyNameError()).toBeVisible();
@@ -120,7 +120,7 @@ datalensTest.describe('Wizard', () => {
             // Add first field with default name
             let newHierarchyName = 'New hierarchy';
             await wizardPage.openHierarchyEditor();
-            await wizardPage.hierarchyEditor.selectFields(['city', 'country']);
+            await wizardPage.hierarchyEditor.selectFields(['City', 'country']);
             await wizardPage.hierarchyEditor.clickSave();
             let hierarchyLocator = datasetFields.locator(slct(newHierarchyName), {
                 hasText: newHierarchyName,
@@ -132,7 +132,7 @@ datalensTest.describe('Wizard', () => {
             // The created hierarchies should be automatically named "New hierarchy (N)"
             newHierarchyName = 'New hierarchy (1)';
             await wizardPage.openHierarchyEditor();
-            await wizardPage.hierarchyEditor.selectFields(['city', 'country']);
+            await wizardPage.hierarchyEditor.selectFields(['City', 'country']);
             await wizardPage.hierarchyEditor.clickSave();
             hierarchyLocator = datasetFields.locator(slct(newHierarchyName), {
                 hasText: newHierarchyName,
@@ -163,7 +163,7 @@ datalensTest.describe('Wizard', () => {
             async ({page}) => {
                 const wizardPage = new WizardPage({page});
 
-                const fieldName = 'city';
+                const fieldName = 'City';
                 await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, fieldName);
 
                 const sectionField = page
@@ -177,7 +177,7 @@ datalensTest.describe('Wizard', () => {
                 await sectionField.locator(slct(VisualizationItemQa.FormulaIcon)).click();
                 const fieldEditor = page.locator(slct(FieldEditorQa.Dialog));
                 await expect(fieldEditor).toBeVisible();
-                await wizardPage.fieldEditor.checkFormula('countd(str([city]))');
+                await wizardPage.fieldEditor.checkFormula('countd(str([City]))');
             },
         );
     });
