@@ -7,7 +7,7 @@ import {
     PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
 } from '../../constants/misc';
 import {prepareFieldToMeasureTransformation} from '../../units/wizard/utils/visualization';
-import {onMeasureAxisChange} from '../../utils';
+import {onMeasureAxisChange} from '../../utils/visualizations/line';
 
 export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
     id: WizardVisualizationId.Scatter,

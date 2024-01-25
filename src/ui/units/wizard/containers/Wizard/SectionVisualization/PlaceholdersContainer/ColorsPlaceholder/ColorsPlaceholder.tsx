@@ -9,10 +9,10 @@ import {
     Field,
     PlaceholderActionQa,
     Shared,
+    isChartSupportMultipleColors,
     isFieldHierarchy,
     isMeasureField,
 } from 'shared';
-import {isChartSupportMultipleColors} from 'shared/modules/visualization';
 import {DatalensGlobalState} from 'ui';
 import {selectDataset} from 'units/wizard/selectors/dataset';
 import {

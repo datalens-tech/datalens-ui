@@ -1,3 +1,4 @@
+import {QLChartType} from '../constants';
 import {Field, ServerField} from '../types';
 
 import {getFakeTitleOrTitle} from './fields';
@@ -27,3 +28,8 @@ export const getColorsConfigKey = (
 
     return undefined;
 };
+const chartTypeWithMultipleColors: Record<string, boolean> = {
+    [QLChartType.Monitoringql]: true,
+};
+export const isChartSupportMultipleColors = (chartType: string) =>
+    chartTypeWithMultipleColors[chartType];
