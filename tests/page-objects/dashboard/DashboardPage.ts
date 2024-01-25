@@ -180,7 +180,10 @@ class DashboardPage extends BasePage {
         editDash: () => Promise<void>;
         config?: TestParametrizationConfig;
     }) {
-        openTestPage(this.page, config ? config.dash.endpoints.createDash : '/dashboards/new');
+        await openTestPage(
+            this.page,
+            config ? config.dash.endpoints.createDash : '/dashboards/new',
+        );
 
         // callback with start actions with dash in edit mode
         await editDash();
@@ -190,7 +193,7 @@ class DashboardPage extends BasePage {
         const dashName = `e2e-entry-${getUniqueTimestamp()}`;
 
         if (config && config.dash.structureType === 'workbooks') {
-            this.dialogCreateEntry.createEntryWithName(dashName);
+            await this.dialogCreateEntry.createEntryWithName(dashName);
         } else {
             // waiting for the dialog to open, specify the name, save
             await entryDialogFillAndSave(this.page, dashName);
