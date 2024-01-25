@@ -7,6 +7,7 @@ import {ConnectorType} from 'shared/constants/connections';
 import {WorkbookPage} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types';
 import {EntryScope} from 'shared/types/common';
+import {S3_BASED_CONNECTORS} from 'ui/constants';
 import Utils from 'ui/utils';
 
 import {registry} from '../../../../registry';
@@ -36,19 +37,17 @@ export const EntryActions = ({
     const {useAdditionalWorkbookEntryActions} = registry.workbooks.functions.getAll();
 
     const isConnection = entry.scope === EntryScope.Connection;
-    const isNotFileConnection =
-        entry.type !== ConnectorType.File && entry.type !== ConnectorType.GsheetsV2;
+    const isS3BasedConnector = S3_BASED_CONNECTORS.includes(entry.type as ConnectorType);
 
-    const isFileConnection =
-        isConnection &&
-        (entry.type === ConnectorType.File || entry.type === ConnectorType.GsheetsV2);
+    const isFileConnection = isConnection && isS3BasedConnector;
 
     const items: DropdownMenuItemMixed<unknown>[] = [
         {
             action: onRenameClick,
             text: i18n('action_rename'),
         },
-        ...(isNotFileConnection
+        // eslint-disable-next-line no-negated-condition
+        ...(!isS3BasedConnector
             ? [
                   {
                       action: onDuplicateEntry,
