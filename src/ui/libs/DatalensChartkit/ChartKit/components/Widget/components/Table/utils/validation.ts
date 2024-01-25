@@ -4,7 +4,7 @@ import {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/cha
 
 import {TableWidget} from '../../../../../../types';
 
-const AVAILABLE_TABLE_CLICK_SCOPES: TableWidgetEventScope[] = ['row'];
+const AVAILABLE_TABLE_CLICK_SCOPES: TableWidgetEventScope[] = ['row', 'cell'];
 
 function validateConfigEvents(events?: NonNullable<TableWidget['config']>['events']) {
     if (!events?.click) {
@@ -51,7 +51,7 @@ function isContainsActionParamsEvents(events?: NonNullable<TableWidget['config']
 }
 
 function validateDataEvents(args: {rows: TableRow[]; hasActionParamsEvents: boolean}) {
-    const {rows, hasActionParamsEvents} = args;
+    const {rows} = args;
 
     rows.forEach((row) => {
         if ('cells' in row) {
@@ -83,12 +83,6 @@ Seems you are trying to define "setActionParams" handler in unsupported way. Thi
         }
     };
 }`,
-                    });
-                }
-
-                if (hasActionParamsEvents && action === 'setParams') {
-                    throw new ChartKitCustomError(null, {
-                        details: `Seems you are trying to define "setActionParams" and "setParams" handlers at once.`,
                     });
                 }
             });

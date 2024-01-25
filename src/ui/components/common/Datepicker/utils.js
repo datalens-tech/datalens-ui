@@ -1,5 +1,7 @@
 import {I18n} from 'i18n';
 import {DateTime} from 'luxon';
+import {Feature} from 'shared';
+import Utils from 'ui/utils';
 
 import {MINUTES_IN_HOUR} from './constants';
 
@@ -51,7 +53,10 @@ export function getSearchText({from, to, format, emptyValueText, range, required
         case Boolean(from && to): {
             return `${from.toFormat(format)} - ${to.toFormat(format)}`;
         }
-        case required: {
+        // return value_required text if value is required and is not fully filled
+        case Utils.isEnabledFeature(Feature.SelectorRequiredValue) &&
+            required &&
+            ((range && !from && !to) || (!range && !from)): {
             return i18n('value_required');
         }
         case Boolean(range): {

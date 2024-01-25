@@ -211,7 +211,9 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 ? omit(localParams, clearedOuterParams)
                 : localParams;
 
-            // when clear params of widget from outer (ex cleared actionParams from other chart cause empty params in curent)
+            // when clear params of widget from outer
+            // ex cleared actionParams from other chart cause empty params in current
+            // or params contains params without local
             const newParams =
                 hasChangedOuterParams && isEmpty(params)
                     ? {

@@ -7,7 +7,6 @@ import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {DashSettings, FOCUSED_WIDGET_PARAM_NAME, Feature} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
-import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
 
 import {
     ChartKitWrapperLoadStatusUnknown,
@@ -38,6 +37,7 @@ import {
     ResolveWidgetDataRef,
 } from '../types';
 
+import {useResizeObserver} from './useAutoHeightResizeObserver';
 import {LoadingChartHookProps, useLoadingChart} from './useLoadingChart';
 
 type LoadingChartWidgetHookProps = Pick<
@@ -60,6 +60,7 @@ type LoadingChartWidgetHookProps = Pick<
         | 'widgetDataRef'
         | 'widgetRenderTimeRef'
         | 'enableActionParams'
+        | 'clearedOuterParams'
     > &
     ChartWidgetProps & {
         tabIndex: number;
@@ -106,6 +107,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         usageType,
         enableActionParams,
         settings,
+        clearedOuterParams,
     } = props;
 
     const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts;
@@ -121,7 +123,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
     const resolveWidgetDataRef = React.useRef<ResolveWidgetDataRef>();
     const mutationObserver = React.useRef<MutationObserver | null>(null);
-    const resizeObserver = React.useRef<ResizeObserver | null>(null);
 
     const isNewRelations = useSelector(selectIsNewRelations);
 
@@ -152,16 +153,13 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             if (renderedData?.status === 'success') {
                 pushStats(renderedData, 'dash', dataProvider);
             }
-            const newAutoHeight = isWidgetTypeWithAutoHeight(loadedWidgetType)
-                ? tabs[tabIndex].autoHeight
-                : false;
-            if (loadedWidgetType === DASH_WIDGET_TYPES.TABLE) {
-                setTimeout(() => {
-                    adjustLayout(!newAutoHeight);
-                }, WIDGET_DEBOUNCE_TIMEOUT);
-            } else {
-                adjustLayout(!newAutoHeight);
-            }
+
+            const newAutoHeight =
+                isWidgetTypeWithAutoHeight(loadedWidgetType) || renderedData?.status === 'error'
+                    ? tabs[tabIndex].autoHeight
+                    : false;
+
+            adjustLayout(!newAutoHeight);
         },
         [dataProvider, tabs, tabIndex, adjustLayout, loadedWidgetType],
     );
@@ -239,6 +237,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         usageType,
         ignoreUsedParams: true, // tmp fix CHARTS-7290 TODO: CHARTS-6619 return this later with announcement of changes
         enableActionParams,
+        clearedOuterParams,
     });
 
     const {
@@ -353,7 +352,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         loadDescription();
         return () => {
             mutationObserver.current?.disconnect();
-            resizeObserver.current?.disconnect();
         };
     }, [loadDescription]);
 
@@ -595,6 +593,41 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             setIsLoadedWidgetWizard(true);
         }
     }, [loadedData?.isNewWizard, isLoadedWidgetWizard]);
+
+    /**
+     * Resize observer adjustLayout
+     * If widget is loaded and is valid type or has error -> taking autoHeight prop value
+     */
+
+    const debounceResizeAdjustLayot = React.useCallback(
+        debounce(() => {
+            updateImmediateLayout({
+                type: loadedWidgetType,
+                autoHeight: tabs[tabIndex].autoHeight,
+                widgetId,
+                gridLayout,
+                rootNode: rootNodeRef,
+                layout,
+                cb: props.adjustWidgetLayout,
+            });
+        }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
+        [
+            widgetId,
+            loadedWidgetType,
+            tabs,
+            tabIndex,
+            gridLayout,
+            rootNodeRef,
+            layout,
+            props.adjustWidgetLayout,
+        ],
+    );
+
+    useResizeObserver({
+        onResize: debounceResizeAdjustLayot,
+        rootNodeRef,
+        enable: isInit && Boolean(tabs[tabIndex].autoHeight),
+    });
 
     /**
      * set force load all charts (no matter if they are in viewport or not) if there is loadOnlyVisibleCharts setting disabled
