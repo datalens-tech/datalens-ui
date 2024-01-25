@@ -200,7 +200,6 @@ class DashboardPage extends BasePage {
             await entryDialogFillAndSave(this.page, dashName);
         }
 
-        await this.page.reload();
         // check that the dashboard has loaded by its name
         await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
     }

@@ -23,6 +23,9 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
 
+            // we set a large viewport height so that there is no scrolling of the autoheight widget
+            page.setViewportSize({width: 1200, height: 1600});
+
             await dashboardPage.createDashboard({
                 editDash: async () => {
                     await dashboardPage.addChart({
@@ -54,8 +57,6 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
         'When you first open the widget with auto-height, it adjusts without scrolling',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
-            // we set a large viewport height so that there is no scrolling of the widget
-            page.setViewportSize({width: 1000, height: 1600});
 
             // waiting for the widget content to load
             await page.waitForSelector(slct(CHARTKIT_SELECTOR));
@@ -78,9 +79,6 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
     datalensTest(
         'When switching to another widget tab with auto-height, it adjusts without scrolling',
         async ({page}: {page: Page}) => {
-            // we set a large viewport height so that there is no scrolling of the widget
-            page.setViewportSize({width: 1200, height: 1600});
-
             const dashboardPage = new DashboardPage({page});
 
             // waiting for the widget content to load
