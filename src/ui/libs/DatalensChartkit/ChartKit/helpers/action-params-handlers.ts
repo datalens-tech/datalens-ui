@@ -200,7 +200,7 @@ export function handleSeriesClickForActionParams(args: {
     chart: Highcharts.Chart;
     point?: Highcharts.Point;
     clickScope: GraphWidgetEventScope;
-    event: MouseEvent;
+    event: {metaKey?: boolean};
     onChange?: ChartKitAdapterProps['onChange'];
     actionParams: StringParams;
 }) {
