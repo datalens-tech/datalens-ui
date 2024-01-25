@@ -1,4 +1,3 @@
-export * from './connectors';
 export * from './form';
 export * from './validation';
 
