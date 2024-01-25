@@ -1,6 +1,6 @@
 import type {QLConfigQuery} from '../../../../../../../shared';
 import {convertConnectionType} from '../connection';
-import {buildSource, iterateThroughVisibleQueries} from '../misc-helpers';
+import {buildSource, doesQueryContainOrderBy, iterateThroughVisibleQueries} from '../misc-helpers';
 
 const MOCK_ID = 'MOCK_ID';
 
@@ -113,5 +113,33 @@ describe('iterateThroughVisibleQueries', () => {
                 return index !== 1;
             }),
         );
+    });
+});
+
+describe('doesQueryContainOrderBy', () => {
+    it('should return true when order by is used normally', () => {
+        const queryContainsOrderBy = doesQueryContainOrderBy('select a from b order by a desc');
+
+        expect(queryContainsOrderBy).toEqual(true);
+    });
+
+    it('should return false when order by is not used', () => {
+        const queryContainsOrderBy = doesQueryContainOrderBy('select a from b');
+
+        expect(queryContainsOrderBy).toEqual(false);
+    });
+
+    it('should return false when order by is commented out', () => {
+        const queryContainsOrderBy = doesQueryContainOrderBy('select a from b -- order by a desc');
+
+        expect(queryContainsOrderBy).toEqual(false);
+    });
+
+    it('should return true when order by is used normally, but query contains -- in quotes', () => {
+        const queryContainsOrderBy = doesQueryContainOrderBy(
+            `select a from b where a like '%--%' order by a`,
+        );
+
+        expect(queryContainsOrderBy).toEqual(true);
     });
 });
