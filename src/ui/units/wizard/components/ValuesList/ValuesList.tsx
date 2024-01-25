@@ -10,17 +10,14 @@ import {
     ApiV2RequestField,
     DATASET_FIELD_TYPES,
     DatasetOptions,
-    Feature,
     Field,
     FilterField,
     MarkupItem,
-    QLChartType,
     TIMEOUT_90_SEC,
     Update,
     getFieldsApiV2RequestSection,
     getFiltersApiV2RequestSection,
     getParametersApiV2RequestSection,
-    isChartSupportMultipleColors,
     isMeasureName,
     markupToRawString,
 } from 'shared';
@@ -30,7 +27,6 @@ import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
 import {getWhereOperation} from '../../../../libs/datasetHelper';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
-import Utils from '../../../../utils';
 import {ExtraSettings} from '../Dialogs/DialogColor/DialogColor';
 
 import './ValuesList.scss';
@@ -67,7 +63,7 @@ export interface Props {
     onChangeSelectedValue: (selectedValue: string | null, shouldClearPalette?: boolean) => void;
     extra?: ExtraSettings;
     distincts?: Record<string, string[]>;
-    chartType?: QLChartType | null;
+    isMultipleFieldsSupported?: boolean;
 }
 
 interface State {
@@ -79,7 +75,6 @@ interface State {
     suggestFetching: boolean;
     error: any | undefined;
     fetching: boolean;
-    isMultipleColorsSupported: boolean;
 }
 
 class ValuesList extends React.Component<Props, State> {
@@ -94,9 +89,6 @@ class ValuesList extends React.Component<Props, State> {
 
         this.state = {
             values: [],
-            isMultipleColorsSupported:
-                Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
-                isChartSupportMultipleColors(props.chartType ?? ''),
             searchValue: '',
             itemGuid: undefined,
             isRetry: false,
@@ -109,7 +101,7 @@ class ValuesList extends React.Component<Props, State> {
 
     componentDidMount() {
         const {items} = this.props;
-        if (items?.length && !this.state.isMultipleColorsSupported) {
+        if (items?.length && !this.props.isMultipleFieldsSupported) {
             this.composeData();
             return;
         }
@@ -222,7 +214,7 @@ class ValuesList extends React.Component<Props, State> {
             let values: string[] = [];
             if (externalDistincts) {
                 const placeholderFields =
-                    this.state.isMultipleColorsSupported && items ? items : [item];
+                    this.props.isMultipleFieldsSupported && items ? items : [item];
 
                 const distincts = placeholderFields.map((v) => {
                     return externalDistincts[v.guid || v.title];

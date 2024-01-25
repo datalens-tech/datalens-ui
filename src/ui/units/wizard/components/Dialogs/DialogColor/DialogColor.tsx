@@ -42,6 +42,7 @@ interface OwnProps {
     colorsConfig: ColorsConfig;
     extra?: ExtraSettings;
     isColorModeChangeAvailable: boolean;
+    isMultipleColorsSupported: boolean;
 }
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -83,7 +84,8 @@ class DialogColorComponent extends React.Component<Props, State> {
     }
 
     render() {
-        const {item, items, dataset, isColorModeChangeAvailable} = this.props;
+        const {item, items, dataset, isColorModeChangeAvailable, isMultipleColorsSupported} =
+            this.props;
         const {mountedColors = {}} = this.props.paletteState;
         const {validationStatus} = this.props.gradientState;
         const {colorMode} = this.state;
@@ -111,6 +113,7 @@ class DialogColorComponent extends React.Component<Props, State> {
                             extra={this.props.extra}
                             colorMode={this.state.colorMode}
                             isColorModeChangeAvailable={isColorModeChangeAvailable}
+                            isMultipleColorsSupported={isMultipleColorsSupported}
                             onColorModeChange={this.onColorModeChange}
                         />
                     </Dialog.Body>

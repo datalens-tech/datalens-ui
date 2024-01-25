@@ -3,7 +3,7 @@ import React from 'react';
 import {RadioButton, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {ColorPalette, DatasetOptions, Field, FilterField, QLChartType, Update} from 'shared';
+import {ColorPalette, DatasetOptions, Field, FilterField, Update} from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
 
 import {PaletteTypes} from '../../../../constants';
@@ -30,7 +30,6 @@ export interface PaletteState {
 export interface Props {
     item: Field;
     items?: Field[];
-    chartType?: QLChartType | null;
     distincts?: Record<string, string[]>;
     filters: FilterField[];
     parameters: Field[];
@@ -44,6 +43,7 @@ export interface Props {
     extra: ExtraSettings;
     colorPalettes: ColorPalette[];
     colorsList: string[];
+    isMultipleColorsSupported: boolean;
 }
 
 class PaletteContainer extends React.Component<Props> {
@@ -51,7 +51,7 @@ class PaletteContainer extends React.Component<Props> {
         return (
             <div className={b('container')}>
                 <ValuesList
-                    chartType={this.props.chartType}
+                    isMultipleFieldsSupported={this.props.isMultipleColorsSupported}
                     item={this.props.item}
                     items={this.props.items}
                     distincts={this.props.distincts}

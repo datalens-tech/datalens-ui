@@ -126,14 +126,15 @@ class ColorsPlaceholder extends React.Component<Props> {
         const {colors, visualization, chartType} = this.props;
         const {placeholders} = visualization;
 
-        const isMultipleColorSupported =
+        const isMultipleColorsSupported =
             Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
             isChartSupportMultipleColors(chartType ?? '');
 
-        const item = isMultipleColorSupported ? colors : getDialogItem(colors, placeholders);
+        const item = isMultipleColorsSupported ? colors : getDialogItem(colors, placeholders);
 
         this.props.openDialogColors({
             item,
+            isMultipleColorsSupported,
             onApply: () => {
                 if (this.props.onUpdate) {
                     this.props.onUpdate();
