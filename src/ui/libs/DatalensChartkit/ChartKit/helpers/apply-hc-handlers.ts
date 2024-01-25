@@ -76,6 +76,26 @@ export const applySetActionParamsEvents = (args: {
     );
 
     wrap(
+        get(data, pathToSeriesEvents),
+        'click',
+        function (
+            this: Highcharts.Series,
+            proceed: Highcharts.SeriesClickCallbackFunction,
+            event: Highcharts.SeriesClickEventObject,
+        ) {
+            handleSeriesClickForActionParams({
+                chart: this.chart,
+                clickScope,
+                event,
+                onChange,
+                actionParams,
+                point: event.point,
+            });
+            proceed?.apply(this, [event]);
+        },
+    );
+
+    wrap(
         get(data, pathToChartEvents),
         'click',
         function (
