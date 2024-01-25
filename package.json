@@ -114,7 +114,7 @@
     "@gravity-ui/ui-logger": "^1.1.0",
     "@gravity-ui/uikit": "^5.19.0",
     "@microsoft/fetch-event-source": "^2.0.1",
-    "@playwright/test": "^1.41.0",
+    "@playwright/test": "^1.40.0",
     "@stripe/react-stripe-js": "^1.8.1",
     "@stripe/stripe-js": "^1.30.0",
     "@testing-library/jest-dom": "^5.16.2",
