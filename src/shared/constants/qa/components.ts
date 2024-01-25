@@ -68,14 +68,6 @@ export enum MenuItemsQA {
 }
 
 export enum ParamsSettingsQA {
-    AddOld = 'params-settings-add-old-btn',
-    ApplyOld = 'params-settings-apply-old-btn',
-    CancelOld = 'params-settings-cancel-old-btn',
-    ParamOld = 'params-settings-param-old',
-    ParamContentOld = 'params-settings-param-content-old',
-    ParamEditOld = 'params-settings-param-edit-old',
-    ParamRemoveOld = 'params-settings-param-remove-old',
-
     Settings = 'params-settings',
     Open = 'params-settings-open-btn',
     Add = 'params-settings-add-btn',

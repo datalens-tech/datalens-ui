@@ -739,10 +739,30 @@ export function iterateThroughVisibleQueries(
 }
 
 export const prepareQuery = (query: string) => {
-    return query
-        .replace(/--[^\n]*\n/g, '')
-        .trim()
-        .replace(/;+$/g, '');
+    return query.trim().replace(/;+$/g, '');
+};
+
+const removeComments = (query: string) => {
+    const result = query.replace(
+        /("(""|[^"])*")|('(''|[^'])*')|(--[^\n\r]*)|(\/\*[\w\W]*?(?=\*\/)\*\/)/gm,
+        (match) => {
+            if (
+                (match[0] === '"' && match[match.length - 1] === '"') ||
+                (match[0] === "'" && match[match.length - 1] === "'")
+            )
+                return match;
+
+            return '';
+        },
+    );
+
+    return result;
+};
+
+export const doesQueryContainOrderBy = (query: string) => {
+    const queryWithoutComments = removeComments(query);
+
+    return /order by/gim.test(queryWithoutComments);
 };
 
 export const visualizationCanHaveContinuousAxis = (visualization: ServerVisualization) => {

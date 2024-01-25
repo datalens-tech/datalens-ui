@@ -102,6 +102,11 @@ function getActionParamsEvents(
                 click: [{handler: {type: 'setActionParams'}, scope: 'row'}],
             };
         }
+        case WizardVisualizationId.PivotTable: {
+            return {
+                click: [{handler: {type: 'setActionParams'}, scope: 'cell'}],
+            };
+        }
         case WizardVisualizationId.Line:
         case WizardVisualizationId.Area:
         case WizardVisualizationId.Column:

@@ -8,6 +8,7 @@ import Utils from '../../utils/utils';
 
 import {getDashKitMenu} from './helpers';
 import pluginControl from './plugins/Control/Control';
+import pluginGroupControl from './plugins/GroupControl/GroupControl';
 import textPlugin from './plugins/Text/Text';
 import pluginTitle from './plugins/Title/Title';
 import widgetPlugin from './plugins/Widget/WidgetPlugin';
@@ -31,6 +32,7 @@ export const getConfiguredDashKit = () => {
                 ? getSdk().bi.getPublicDistinctsApiV2
                 : getSdk().bi.getDistinctsApiV2,
         }),
+        ...(Utils.isEnabledFeature(Feature.GroupControls) ? [pluginGroupControl] : []),
         widgetPlugin,
     );
 

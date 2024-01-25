@@ -232,6 +232,35 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         return changedParams;
     }, [prevSavedProps?.params, props.params, usedParamsRef, innerParamsRef, isWizardChart]);
 
+    const clearedOuterParams = React.useMemo(() => {
+        let clearedParams;
+        const propsParams = props.params;
+        const prevSavedPropsParams = prevSavedProps?.params;
+        const isEqualParamsWithPrev = prevSavedProps && isEqual(prevSavedPropsParams, propsParams);
+
+        const hasParamsChanged = !prevSavedProps || !isEqualParamsWithPrev;
+
+        const isOuterAndInnerParamsEqual =
+            hasParamsChanged && innerParamsRef?.current
+                ? isEqual(innerParamsRef?.current, propsParams)
+                : false;
+
+        if (!hasChangedActionParams && !isOuterAndInnerParamsEqual) {
+            clearedParams = prevSavedProps
+                ? Object.keys(omit(prevSavedProps.params, Object.keys(props?.params || {})))
+                : [];
+        }
+
+        return clearedParams;
+    }, [
+        hasChangedActionParams,
+        prevSavedProps?.params,
+        props.params,
+        usedParamsRef,
+        innerParamsRef,
+        isWizardChart,
+    ]);
+
     const hasChangedInnerParamsFromInside = React.useMemo(() => {
         return prevInnerParams && !isEqual(innerParamsRef?.current, prevInnerParams);
     }, [prevInnerParams, innerParamsRef?.current]);
@@ -346,6 +375,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetRenderTimeRef,
         usageType,
         enableActionParams,
+        clearedOuterParams,
     });
 
     const handleFiltersClear = React.useCallback(() => {
@@ -436,7 +466,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     return (
         <div
             ref={rootNodeRef}
-            className={`${b(mods)}`}
+            className={`${b({...mods, autoheight: Boolean(tabs[tabIndex]?.autoHeight)})}`}
             data-qa="chart-widget"
             data-qa-mod={isFullscreen ? 'fullscreen' : ''}
         >

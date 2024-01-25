@@ -32,24 +32,32 @@ export const GroupControlSidebar = () => {
     const dispatch = useDispatch();
 
     const initialTabIndex =
-        selectorsGroup[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
+        selectorsGroup.items[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
     const [defaultTabIndex, setDefaultTabIndex] = React.useState(initialTabIndex);
 
-    const isMultipleSelectors = selectorsGroup.length > 1;
+    const isMultipleSelectors = selectorsGroup.items.length > 1;
 
     const updateSelectorsList = React.useCallback(
         ({items, selectedItemIndex, action}: ListState<SelectorDialogState>) => {
-            dispatch(setActiveSelectorIndex(selectedItemIndex));
-
             if (action === 'add') {
                 const newSelector = items[items.length - 1];
                 dispatch(addSelectorToGroup(newSelector));
-                return;
+            } else {
+                dispatch(
+                    updateSelectorsGroup({
+                        ...selectorsGroup,
+                        items,
+                    }),
+                );
             }
 
-            dispatch(updateSelectorsGroup(items));
+            dispatch(
+                setActiveSelectorIndex({
+                    activeSelectorIndex: selectedItemIndex,
+                }),
+            );
         },
-        [dispatch],
+        [dispatch, selectorsGroup],
     );
 
     const getDefaultTabText = React.useCallback(() => {
@@ -72,11 +80,47 @@ export const GroupControlSidebar = () => {
         );
     }, [dispatch, handleClosePlacementDialog]);
 
+    const handleChangeAutoHeight = React.useCallback(
+        (value) => {
+            dispatch(
+                updateSelectorsGroup({
+                    ...selectorsGroup,
+                    autoHeight: value,
+                }),
+            );
+        },
+        [dispatch, selectorsGroup],
+    );
+
+    const handleChangeButtonApply = React.useCallback(
+        (value) => {
+            dispatch(
+                updateSelectorsGroup({
+                    ...selectorsGroup,
+                    buttonApply: value,
+                }),
+            );
+        },
+        [dispatch, selectorsGroup],
+    );
+
+    const handleChangeButtonReset = React.useCallback(
+        (value) => {
+            dispatch(
+                updateSelectorsGroup({
+                    ...selectorsGroup,
+                    buttonReset: value,
+                }),
+            );
+        },
+        [dispatch, selectorsGroup],
+    );
+
     return (
         <div className={b('sidebar')}>
             <div className={b('selectors-list')}>
                 <TabMenu
-                    items={selectorsGroup}
+                    items={selectorsGroup.items}
                     selectedItemIndex={activeSelectorIndex}
                     update={updateSelectorsList}
                     addButtonText={i18n('button_add-selector')}
@@ -89,28 +133,44 @@ export const GroupControlSidebar = () => {
                     <div>
                         <span>{i18n('label_autoheight-checkbox')}</span>
                     </div>
-                    <Checkbox size="l" />
+                    <Checkbox
+                        checked={selectorsGroup.autoHeight}
+                        onUpdate={handleChangeAutoHeight}
+                        size="l"
+                    />
                 </div>
-                <div className={b('settings-container')}>
-                    <div>
-                        <span>{i18n('label_apply-button-checkbox')}</span>
-                        <HelpPopover
-                            className={b('help-icon')}
-                            htmlContent={i18n('context_apply-button')}
+                {isMultipleSelectors && (
+                    <div className={b('settings-container')}>
+                        <div>
+                            <span>{i18n('label_apply-button-checkbox')}</span>
+                            <HelpPopover
+                                className={b('help-icon')}
+                                htmlContent={i18n('context_apply-button')}
+                            />
+                        </div>
+                        <Checkbox
+                            checked={selectorsGroup.buttonApply}
+                            onUpdate={handleChangeButtonApply}
+                            size="l"
                         />
                     </div>
-                    <Checkbox size="l" />
-                </div>
-                <div className={b('settings-container')}>
-                    <div>
-                        <span>{i18n('label_reset-button-checkbox')}</span>
-                        <HelpPopover
-                            className={b('help-icon')}
-                            htmlContent={i18n('context_reset-button')}
+                )}
+                {isMultipleSelectors && (
+                    <div className={b('settings-container')}>
+                        <div>
+                            <span>{i18n('label_reset-button-checkbox')}</span>
+                            <HelpPopover
+                                className={b('help-icon')}
+                                htmlContent={i18n('context_reset-button')}
+                            />
+                        </div>
+                        <Checkbox
+                            checked={selectorsGroup.buttonReset}
+                            onUpdate={handleChangeButtonReset}
+                            size="l"
                         />
                     </div>
-                    <Checkbox size="l" />
-                </div>
+                )}
                 {isMultipleSelectors && (
                     <Button
                         view="outlined"
