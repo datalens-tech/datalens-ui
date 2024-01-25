@@ -1,6 +1,7 @@
 import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin} from '@gravity-ui/icons';
 import {ConnectorType} from 'shared/constants/connections';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
+import {S3_BASED_CONNECTORS} from 'ui/constants/connections';
 
 import {EntryScope, Feature, PLACE, isUsersFolder} from '../../../shared';
 import {ALL_SCOPES, URL_QUERY} from '../../constants';
@@ -161,9 +162,8 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         isStrictPermissions: true, // strict check with disallow when there are no permissions object
         isVisible(args) {
             const entry = args.entry;
-            const isFileConnection =
-                entry?.scope === EntryScope.Connection &&
-                (entry?.type === ConnectorType.File || entry?.type === ConnectorType.GsheetsV2);
+            const isS3BasedConnector = S3_BASED_CONNECTORS.includes(entry?.type as ConnectorType);
+            const isFileConnection = entry?.scope === EntryScope.Connection && isS3BasedConnector;
 
             if (!args.entry?.workbookId || isFileConnection) {
                 return false;
