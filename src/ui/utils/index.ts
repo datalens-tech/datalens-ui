@@ -13,3 +13,8 @@ export * from './icons';
 export * from './colors';
 export * from './collectionFiltersStorage';
 export {getFilteredObject} from './helpers';
+export {
+    onMeasureAxisChange,
+    onLineChartDesignItemsChange,
+    linearCheckColor,
+} from './visualizations/line';
