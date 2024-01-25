@@ -10,5 +10,8 @@
     "*.{css,scss}": [
       "stylelint --fix --quiet",
       "prettier --write"
+    ],
+    "src/i18n-keysets/**/!({keyset,context}).json": [
+      "node scripts/i18n-keysets-sort.js"
     ]
 }

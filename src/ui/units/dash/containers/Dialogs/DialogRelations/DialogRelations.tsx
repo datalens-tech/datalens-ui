@@ -10,9 +10,10 @@ import intersection from 'lodash/intersection';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashCommonQa, DashTab, DashTabItem, DatasetField} from 'shared';
+import {DashCommonQa, DashTab, DashTabItem, DatasetField, Feature} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
+import Utils from 'ui/utils';
 
 import {updateCurrentTabData} from '../../../store/actions/dash';
 import {openDialogAliases} from '../../../store/actions/relations/actions';
@@ -351,7 +352,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 (showDebugInfo && currentWidgetMeta?.widgetId
                     ? ` (${currentWidgetMeta.widgetId})`
                     : '')}
-            <BetaMark className={b('beta')} />
+            {Utils.isEnabledFeature(Feature.HideOldRelations) && <BetaMark className={b('beta')} />}
         </div>
     );
 

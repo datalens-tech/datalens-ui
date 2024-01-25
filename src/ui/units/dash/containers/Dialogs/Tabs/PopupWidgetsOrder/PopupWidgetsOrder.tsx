@@ -29,6 +29,7 @@ const LIST_PREFIX_TEXTS = {
     title: i18n('label_title'),
     text: i18n('label_text'),
     control: i18n('label_control'),
+    group_control: i18n('label_group_control'),
     widget: i18n('label_widget'),
 };
 
