@@ -60,11 +60,7 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     forbidOnly: true,
     expect: {
         timeout: testTimeout,
-        toHaveScreenshot: {
-            stylePath: './playwright.screenshot.css',
-        },
     },
-    snapshotPathTemplate: '__screenshots__{/projectName}/{testFilePath}/{arg}{ext}',
     use: {
         browserName: 'chromium',
         launchOptions: {
