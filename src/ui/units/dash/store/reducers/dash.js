@@ -415,7 +415,7 @@ function dash(state = initialState, action) {
             } else if (openedDialog === 'group_control') {
                 newState.selectorsGroup = getSelectorGroupDialogFromData(data, defaults);
                 newState.selectorDialog = newState.selectorsGroup.items[0];
-            } else {
+            } else if (openedDialog === 'control' && data.sourceType !== 'external') {
                 newState.selectorDialog = getSelectorDialogFromData(data, defaults);
             }
 
