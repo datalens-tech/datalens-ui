@@ -207,17 +207,17 @@ class DashboardPage extends BasePage {
         await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
     }
 
-    async duplicateDashboard(
-        structureType?: TestParametrizationConfig['dash']['structureType'],
-        dashId?: string,
-    ) {
+    async duplicateDashboard(dashId?: string) {
         const newDashName = `e2e-test-dash-copy-${getUniqueTimestamp()}`;
-        if (structureType === 'workbooks') {
-            await this.duplicateDashboardFromWorkbook(dashId as string, newDashName);
+
+        const isEnabledUseNavigation = await isEnabledFeature(this.page, Feature.UseNavigation);
+
+        if (isEnabledUseNavigation) {
+            await this.copyDashboard(newDashName);
             return;
         }
 
-        await this.copyDashboard(newDashName);
+        await this.duplicateDashboardFromWorkbook(dashId as string, newDashName);
     }
 
     async copyDashboard(newDashName: string) {
