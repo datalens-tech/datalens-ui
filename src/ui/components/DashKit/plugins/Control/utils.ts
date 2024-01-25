@@ -1,3 +1,4 @@
+import {DashTabItemControlDataset, DashTabItemControlManual} from 'shared/types/dash';
 import {Feature} from 'shared/types/feature';
 import Utils from 'ui/utils/utils';
 
@@ -21,20 +22,26 @@ export const getRequiredLabel = ({title, required}: {title: string; required?: b
     return Utils.isEnabledFeature(Feature.SelectorRequiredValue) && required ? `${title}*` : title;
 };
 
-export const getRequiredInnerLabel = ({
-    showTitle,
-    innerTitle,
-    required,
+export const getLabels = ({
+    controlData,
 }: {
-    showTitle: boolean;
-    innerTitle?: string;
-    required?: boolean;
+    controlData: DashTabItemControlDataset | DashTabItemControlManual;
 }) => {
-    // if only innerTitle is visible and label is not we add '*' to it
-    return Utils.isEnabledFeature(Feature.SelectorRequiredValue) &&
-        required &&
-        !showTitle &&
-        innerTitle
-        ? `${innerTitle}*`
-        : innerTitle;
+    const title = controlData.title;
+    const {showTitle, showInnerTitle, innerTitle, required} = controlData.source;
+
+    let label = '';
+    let innerLabel = '';
+    if (showTitle) {
+        // if showing title than don't add possible asterisk to innerLabel
+        label = getRequiredLabel({title, required});
+        innerLabel = showInnerTitle ? innerTitle || '' : '';
+    } else {
+        // if not showing title that trying to add asterisk to innerLabel
+        label = '';
+        innerLabel =
+            showInnerTitle && innerTitle ? getRequiredLabel({title: innerTitle, required}) : '';
+    }
+
+    return {label, innerLabel};
 };

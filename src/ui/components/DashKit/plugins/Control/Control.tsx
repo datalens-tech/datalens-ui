@@ -79,7 +79,7 @@ import {
     SelectControlProps,
     ValidationErrorData,
 } from './types';
-import {getRequiredInnerLabel, getRequiredLabel, isValidationError} from './utils';
+import {getLabels, isValidationError} from './utils';
 
 import './Control.scss';
 
@@ -872,9 +872,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const {loadedData, status, loadingItems} = this.state;
         const controlData = data as unknown as DashTabItemControlDataset | DashTabItemControlManual;
         const source = controlData.source;
-        const title = controlData.title;
         const sourceType = controlData.sourceType;
-        const {required, showInnerTitle, innerTitle, showTitle} = source;
         const fieldId =
             (source as DashTabItemControlDataset['source']).datasetFieldId ||
             (source as DashTabItemControlManual['source']).fieldName;
@@ -920,16 +918,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             this.onChange(fieldId, valueWithOperation);
         };
 
-        const label = showTitle ? getRequiredLabel({title, required}) : '';
-        const innerLabel = (
-            showInnerTitle
-                ? getRequiredInnerLabel({
-                      innerTitle,
-                      required,
-                      showTitle,
-                  })
-                : ''
-        ) as string;
+        const {label, innerLabel} = getLabels({controlData});
 
         const props: SelectControlProps = {
             widgetId: id,
@@ -999,8 +988,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 | DashTabItemControlManual
                 | DashTabItemControlDataset;
 
-            const {source, title} = data;
-            const {required, operation, showInnerTitle, innerTitle, showTitle} = source;
+            const {source} = data;
+            const {required, operation} = source;
 
             if (!Object.keys(this.actualParams).includes(param)) {
                 return null;
@@ -1035,14 +1024,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 this.onChange(param, valueWithOperation);
             };
 
-            const label = showTitle ? getRequiredLabel({title, required}) : '';
-            const innerLabel = showInnerTitle
-                ? getRequiredInnerLabel({
-                      innerTitle,
-                      required,
-                      showTitle,
-                  })
-                : '';
+            const {label, innerLabel} = getLabels({controlData: data});
 
             const props = {
                 ...control,
