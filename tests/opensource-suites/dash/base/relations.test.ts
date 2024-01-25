@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {deleteEntity, isEnabledFeature, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ConnectionsDialogQA} from '../../../../src/shared';
+import {ConnectionsDialogQA, Feature} from '../../../../src/shared';
 import {WorkbooksUrls} from '../../../constants/constants';
 import {ChartsParams} from '../../../constants/test-entities/charts';
 import {TestParametrizationConfig} from '../../../types/config';
@@ -25,7 +25,10 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
 
-            const isEnabledHideOldRelations = await isEnabledFeature(page, 'hideOldRelations');
+            const isEnabledHideOldRelations = await isEnabledFeature(
+                page,
+                Feature.HideOldRelations,
+            );
             if (isEnabledHideOldRelations) {
                 return;
             }

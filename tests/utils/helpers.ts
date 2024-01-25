@@ -84,7 +84,7 @@ export const hoverTooltip = async (page: Page, chartId: string) => {
 
 export async function isEnabledFeature(page: Page, featureName: string) {
     // problems with fair DL imports, that's why using evaluate window
-    const isDynamicFeature = await page.evaluate(`window.DL.dynamicFeatures?.${featureName}`);
+    const isDynamicFeature = await page.evaluate(`window.DL?.dynamicFeatures?.${featureName}`);
     const isFeature = await page.evaluate(`window.DL.features?.${featureName}`);
     return Boolean(typeof isDynamicFeature === 'undefined' ? isFeature : isDynamicFeature);
 }

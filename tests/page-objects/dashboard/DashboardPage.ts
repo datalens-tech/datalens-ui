@@ -22,6 +22,7 @@ import {
     entryDialogFillAndSave,
     getAddress,
     getUniqueTimestamp,
+    isEnabledFeature,
     openTestPage,
     slct,
     waitForCondition,
@@ -36,6 +37,7 @@ import {
     DialogControlQa,
     DialogDashTitleQA,
     DialogDashWidgetItemQA,
+    Feature,
 } from '../../../src/shared';
 import {
     ActionPanelDashSaveControls,
@@ -192,11 +194,13 @@ class DashboardPage extends BasePage {
 
         const dashName = `e2e-entry-${getUniqueTimestamp()}`;
 
-        if (config && config.dash.structureType === 'workbooks') {
-            await this.dialogCreateEntry.createEntryWithName(dashName);
-        } else {
-            // waiting for the dialog to open, specify the name, save
+        const isEnabledUseNavigation = await isEnabledFeature(this.page, Feature.UseNavigation);
+
+        // waiting for the dialog to open, specify the name, save
+        if (isEnabledUseNavigation) {
             await entryDialogFillAndSave(this.page, dashName);
+        } else {
+            await this.dialogCreateEntry.createEntryWithName(dashName);
         }
 
         // check that the dashboard has loaded by its name
