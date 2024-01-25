@@ -11,4 +11,5 @@ export type DashParametrizationConfig = {
     endpoints: {
         createDash: string;
     };
+    structureType: 'workbooks' | 'navigation';
 };

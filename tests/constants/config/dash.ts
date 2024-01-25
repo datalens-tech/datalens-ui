@@ -15,4 +15,5 @@ export const dash: DashParametrizationConfig = {
     endpoints: {
         createDash: `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`,
     },
+    structureType: 'workbooks',
 };

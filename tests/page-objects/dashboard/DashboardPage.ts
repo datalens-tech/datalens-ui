@@ -57,6 +57,7 @@ import {Workbook} from '../workbook/Workbook';
 import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
 import {ChartkitControl} from './ChartkitControl';
 import {TestParametrizationConfig} from '../../types/config';
+import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -133,6 +134,7 @@ class DashboardPage extends BasePage {
     dialogControl: DialogControl;
     dashTabs: DashTabs;
     chartkitControl: ChartkitControl;
+    dialogCreateEntry: DialogCreateEntry;
 
     constructor({page}: DashboardPageProps) {
         super({page});
@@ -142,6 +144,7 @@ class DashboardPage extends BasePage {
         this.dialogControl = new DialogControl(page);
         this.dashTabs = new DashTabs(page);
         this.chartkitControl = new ChartkitControl(page);
+        this.dialogCreateEntry = new DialogCreateEntry(page);
     }
 
     async waitForResponses(url: string, timeout = API_TIMEOUT): Promise<Array<Response>> {
@@ -186,8 +189,12 @@ class DashboardPage extends BasePage {
 
         const dashName = `e2e-entry-${getUniqueTimestamp()}`;
 
-        // waiting for the dialog to open, specify the name, save
-        await entryDialogFillAndSave(this.page, dashName);
+        if (config && config.dash.structureType === 'workbooks') {
+            this.dialogCreateEntry.createEntryWithName(dashName);
+        } else {
+            // waiting for the dialog to open, specify the name, save
+            await entryDialogFillAndSave(this.page, dashName);
+        }
 
         // check that the dashboard has loaded by its name
         await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
@@ -195,7 +202,20 @@ class DashboardPage extends BasePage {
         this.page.reload();
     }
 
-    async copyDashboard(dashName: string) {
+    async duplicateDashboard(
+        structureType?: TestParametrizationConfig['dash']['structureType'],
+        dashId?: string,
+    ) {
+        const newDashName = `e2e-test-dash-copy-${getUniqueTimestamp()}`;
+        if (structureType === 'workbooks') {
+            await this.duplicateDashboardFromWorkbook(dashId as string, newDashName);
+            return;
+        }
+
+        await this.copyDashboard(newDashName);
+    }
+
+    async copyDashboard(newDashName: string) {
         // click on the ellipsis in the upper panel
         await this.page.click(slct(COMMON_SELECTORS.ENTRY_PANEL_MORE_BTN));
         await this.page.waitForSelector(cssSlct(COMMON_SELECTORS.ENTRY_CONTEXT_MENU_KEY));
@@ -210,7 +230,7 @@ class DashboardPage extends BasePage {
         // waiting for the transition to the dashboard page
         await Promise.all([
             this.page.waitForNavigation(),
-            entryDialogFillAndSave(this.page, dashName),
+            entryDialogFillAndSave(this.page, newDashName),
         ]);
     }
 
