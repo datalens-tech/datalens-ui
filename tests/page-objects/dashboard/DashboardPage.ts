@@ -198,8 +198,6 @@ class DashboardPage extends BasePage {
 
         // check that the dashboard has loaded by its name
         await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
-        // Important: reload the page because dash state may be different for POST(create) and GET requests.
-        this.page.reload();
     }
 
     async duplicateDashboard(

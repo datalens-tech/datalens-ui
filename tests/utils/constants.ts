@@ -180,7 +180,6 @@ export const COMMON_SELECTORS = {
     ACTION_PANEL_DESCRIPTION_BTN: 'action-button-description',
     ACTION_PANEL_CANCEL_BTN: 'action-button-cancel',
     ACTION_PANEL_EDIT_BTN: 'action-button-edit',
-    ACTION_PANEL_SAVE_BTN: 'action-button-save',
     ACTION_PANEL_SAVE_AS_BTN: 'action-button-save-as',
     ACTION_PANEL_SAVE_AS_MENU: 'action-save-menu',
     ACTION_BTN_CONNECTIONS: 'action-button-connections',

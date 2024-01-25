@@ -2,9 +2,9 @@ import {Page, expect} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {openTestPage, slct} from '../../../utils';
-import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {TestParametrizationConfig} from '../../../types/config';
+import {ActionPanelDashSaveControls} from '../../../../src/shared/constants/qa/action-panel';
 
 const PARAMS = {
     CONTROL_TITLE: 'test-control',
@@ -19,9 +19,7 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
 
             await openTestPage(page, config.dash.endpoints.createDash);
 
-            const saveButton = dashboardPage.page.locator(
-                slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN),
-            );
+            const saveButton = page.locator(slct(ActionPanelDashSaveControls.Save));
 
             await expect(saveButton, 'Save button is disabled').toBeDisabled();
 
@@ -41,9 +39,7 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
 
             await openTestPage(page, config.dash.endpoints.createDash);
 
-            const saveButton = dashboardPage.page.locator(
-                slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN),
-            );
+            const saveButton = dashboardPage.page.locator(slct(ActionPanelDashSaveControls.Save));
 
             await expect(saveButton, 'Save button is disabled').toBeDisabled();
 
