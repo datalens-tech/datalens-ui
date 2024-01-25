@@ -14,11 +14,13 @@ import {
     Field,
     FilterField,
     MarkupItem,
+    QLChartType,
     TIMEOUT_90_SEC,
     Update,
     getFieldsApiV2RequestSection,
     getFiltersApiV2RequestSection,
     getParametersApiV2RequestSection,
+    isChartSupportMultipleColors,
     isMeasureName,
     markupToRawString,
 } from 'shared';
@@ -65,6 +67,7 @@ export interface Props {
     onChangeSelectedValue: (selectedValue: string | null, shouldClearPalette?: boolean) => void;
     extra?: ExtraSettings;
     distincts?: Record<string, string[]>;
+    chartType?: QLChartType | null;
 }
 
 interface State {
@@ -76,6 +79,7 @@ interface State {
     suggestFetching: boolean;
     error: any | undefined;
     fetching: boolean;
+    isMultipleColorsSupported: boolean;
 }
 
 class ValuesList extends React.Component<Props, State> {
@@ -90,6 +94,9 @@ class ValuesList extends React.Component<Props, State> {
 
         this.state = {
             values: [],
+            isMultipleColorsSupported:
+                Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+                isChartSupportMultipleColors(props.chartType ?? ''),
             searchValue: '',
             itemGuid: undefined,
             isRetry: false,
@@ -102,8 +109,7 @@ class ValuesList extends React.Component<Props, State> {
 
     componentDidMount() {
         const {items} = this.props;
-
-        if (items?.length && !Utils.isEnabledFeature(Feature.MultipleColorsInVisualization)) {
+        if (items?.length && !this.state.isMultipleColorsSupported) {
             this.composeData();
             return;
         }
@@ -216,9 +222,7 @@ class ValuesList extends React.Component<Props, State> {
             let values: string[] = [];
             if (externalDistincts) {
                 const placeholderFields =
-                    Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) && items
-                        ? items
-                        : [item];
+                    this.state.isMultipleColorsSupported && items ? items : [item];
 
                 const distincts = placeholderFields.map((v) => {
                     return externalDistincts[v.guid || v.title];

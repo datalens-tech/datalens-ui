@@ -25,6 +25,7 @@ import {
     selectFilters,
 } from 'units/wizard/selectors/visualization';
 
+import {getChartType} from '../../../../../ql/store/reducers/ql';
 import {
     selectClientPaletteColors,
     selectDialogColorGradientState,
@@ -117,6 +118,7 @@ class ColorSettingsContainer extends React.Component<Props> {
                         ...paletteState,
                     });
                 }}
+                chartType={this.props.chartType}
                 parameters={this.props.parameters}
                 dashboardParameters={this.props.dashboardParameters}
                 extra={this.props.extra || {}}
@@ -189,6 +191,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
             (item) => item.isGradient === (ownProps.colorMode === ColorMode.GRADIENT),
         ),
         colorsList: selectClientPaletteColors(state).concat([DEFAULT_COLOR]),
+        chartType: getChartType(state),
     };
 };
 
