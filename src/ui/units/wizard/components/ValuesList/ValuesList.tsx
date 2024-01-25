@@ -10,6 +10,7 @@ import {
     ApiV2RequestField,
     DATASET_FIELD_TYPES,
     DatasetOptions,
+    Feature,
     Field,
     FilterField,
     MarkupItem,
@@ -27,6 +28,7 @@ import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
 import {getWhereOperation} from '../../../../libs/datasetHelper';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
+import Utils from '../../../../utils';
 import {ExtraSettings} from '../Dialogs/DialogColor/DialogColor';
 
 import './ValuesList.scss';
@@ -101,11 +103,12 @@ class ValuesList extends React.Component<Props, State> {
     componentDidMount() {
         const {items} = this.props;
 
-        if (items?.length) {
+        if (items?.length && !Utils.isEnabledFeature(Feature.MultipleColorsInVisualization)) {
             this.composeData();
-        } else {
-            this.fetchInitialData();
+            return;
         }
+
+        this.fetchInitialData();
     }
 
     componentDidUpdate(prevProps: Readonly<Props>) {
@@ -202,7 +205,7 @@ class ValuesList extends React.Component<Props, State> {
     };
 
     async fetchInitialData() {
-        const {item, distincts: externalDistincts} = this.props;
+        const {item, distincts: externalDistincts, items} = this.props;
         const {isRetry} = this.state;
 
         this.setState({
@@ -210,14 +213,20 @@ class ValuesList extends React.Component<Props, State> {
         });
 
         try {
-            let distincts;
             let values: string[] = [];
-
             if (externalDistincts) {
-                values = externalDistincts[item.guid];
+                const placeholderFields =
+                    Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) && items
+                        ? items
+                        : [item];
+
+                const distincts = placeholderFields.map((v) => {
+                    return externalDistincts[v.guid || v.title];
+                });
+
+                values = this.buildMultipleColorsDistincts(distincts, 0);
             } else {
-                distincts = await this.getDistincts();
-                values = this.getValuesFromDistincts(distincts);
+                values = this.getValuesFromDistincts(await this.getDistincts());
             }
 
             const useSuggest = values.length === VALUES_LOAD_LIMIT;
@@ -388,6 +397,22 @@ class ValuesList extends React.Component<Props, State> {
 
         this.props.onChangeSelectedValue(values[0] || null);
     };
+
+    private buildMultipleColorsDistincts(distincts: string[][], index: number): string[] {
+        const root = distincts[index];
+        if (distincts.length - 1 === index) {
+            return root;
+        }
+
+        return root.reduce((acc, v) => {
+            return [
+                ...acc,
+                ...this.buildMultipleColorsDistincts(distincts, index + 1).map(
+                    (v2) => `${v}; ${v2}`,
+                ),
+            ];
+        }, [] as string[]);
+    }
 }
 
 export default ValuesList;

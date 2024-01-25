@@ -123,9 +123,14 @@ class ColorsPlaceholder extends React.Component<Props> {
     };
 
     private openDialogColor = () => {
-        const {colors, visualization} = this.props;
+        const {colors, visualization, chartType} = this.props;
         const {placeholders} = visualization;
-        const item = getDialogItem(colors, placeholders);
+
+        const isMultipleColorSupported =
+            Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+            isChartSupportMultipleColors(chartType ?? '');
+
+        const item = isMultipleColorSupported ? colors : getDialogItem(colors, placeholders);
 
         this.props.openDialogColors({
             item,
