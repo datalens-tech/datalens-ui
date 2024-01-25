@@ -46,8 +46,8 @@ export const EntryActions = ({
             action: onRenameClick,
             text: i18n('action_rename'),
         },
-        // eslint-disable-next-line no-negated-condition
-        ...(!isS3BasedConnector
+
+        ...(isS3BasedConnector === false
             ? [
                   {
                       action: onDuplicateEntry,
