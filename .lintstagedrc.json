@@ -12,6 +12,6 @@
       "prettier --write"
     ],
     "src/i18n-keysets/**/!({keyset,context}).json": [
-      "npm run lint:i18n"
+      "node scripts/i18n-keysets-sort.js"
     ]
 }
