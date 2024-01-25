@@ -187,14 +187,12 @@ class DashboardPage extends BasePage {
         const dashName = `e2e-entry-${getUniqueTimestamp()}`;
 
         // waiting for the dialog to open, specify the name, save
-        // waiting for the transition to the dashboard page
-        await Promise.all([
-            this.page.waitForNavigation(),
-            entryDialogFillAndSave(this.page, dashName),
-        ]);
+        await entryDialogFillAndSave(this.page, dashName);
 
         // check that the dashboard has loaded by its name
         await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
+        // Important: reload the page because dash state may be different for POST(create) and GET requests.
+        this.page.reload();
     }
 
     async copyDashboard(dashName: string) {
