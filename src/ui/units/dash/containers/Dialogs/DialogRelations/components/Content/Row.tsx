@@ -49,7 +49,7 @@ type ConnectionField =
     | ConnectionByFieldsProp
     | ConnectionByUsedParamsProp
     | ConnectionByAliasesProp;
-type ConnectionType = 'alias' | 'field';
+type ConnectionType = 'alias' | 'field' | 'param';
 
 const getRelationDetailsText = ({
     text,
@@ -93,14 +93,27 @@ const getRelationDetailsText = ({
     return text;
 };
 
+const labelsMap = {
+    field: {
+        singleLabel: i18n('label_by-field'),
+        multiLabel: i18n('label_by-fields'),
+    },
+    alias: {
+        singleLabel: i18n('label_by-alias'),
+        multiLabel: i18n('label_by-aliases'),
+    },
+    param: {
+        singleLabel: i18n('label_by-parameter'),
+        multiLabel: i18n('label_by-parameters'),
+    },
+};
+
 const getFieldText = ({field, type}: {field: ConnectionField; type: ConnectionType}) => {
     let fieldText = '';
     let fieldTextWithStrong = null;
 
-    const byField = type === 'field';
-
-    const singleLabel = byField ? i18n('label_by-field') : i18n('label_by-alias');
-    const multiLabel = byField ? i18n('label_by-fields') : i18n('label_by-aliases');
+    const byField = type === 'field' || type === 'param';
+    const {singleLabel, multiLabel} = labelsMap[type];
 
     if (Array.isArray(field) && field.length) {
         const fieldLabel = field.length === 1 ? singleLabel : multiLabel;
@@ -148,13 +161,16 @@ const getConnectionByInfo = ({
 
     let field: ConnectionField = [];
     let type: ConnectionType = 'field';
+
     if (hasFields) {
         field = byFields;
+        type = 'field';
     } else if (hasAliases) {
         field = byAliases;
         type = 'alias';
     } else if (hasUsedParams) {
         field = byUsedParams;
+        type = 'param';
     }
 
     const {fieldText, fieldTextWithStrong} = getFieldText({
