@@ -171,7 +171,7 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
                         chartUrl: ChartsParams.citySalesPieChart.url,
                     });
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
         },
     );

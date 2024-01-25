@@ -27,7 +27,7 @@ datalensTest.describe('Dashboards are Possible selector values', () => {
                         controlFieldName: PARAMS.CONTROL_FIELD_NAME,
                     });
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
         },
     );

@@ -32,7 +32,7 @@ datalensTest.describe('Dashboards - Selectors by date/time', () => {
                         range: expectedValues[1].split(' - '),
                     });
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
 
             await dashboardPage.waitForSelector(

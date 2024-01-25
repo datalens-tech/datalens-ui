@@ -40,7 +40,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
                         defaultValue: controlDefaultValue,
                     });
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
 
             // check that the default value is set correctly

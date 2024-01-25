@@ -1,7 +1,7 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, isEnabledFeature, slct, waitForCondition} from '../../../utils';
+import {deleteEntity, isEnabledFeature, openTestPage, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ConnectionsDialogQA, Feature} from '../../../../src/shared';
 import {WorkbooksUrls} from '../../../constants/constants';
@@ -24,6 +24,7 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
         'Adding a chart and selector with manual input of values, creating a link',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
+            await openTestPage(page, '/');
 
             const isEnabledHideOldRelations = await isEnabledFeature(
                 page,
@@ -54,7 +55,7 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
 
                     await dashboardPage.clickSaveButton();
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
 
             await waitForCondition(async () => {

@@ -26,7 +26,7 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
                     await dashboardPage.addText(arbitraryText.first);
                     await dashboardPage.addText(arbitraryText.second);
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
         },
     );

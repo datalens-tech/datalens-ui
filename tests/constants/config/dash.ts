@@ -1,6 +1,6 @@
 import {DashUrls} from '../../constants/test-entities/dash';
 import {DashParametrizationConfig} from '../../types/config/dash';
-import {WorkbookIds} from '../constants';
+import {WorkbookIds, WorkbooksUrls} from '../constants';
 
 export const dash: DashParametrizationConfig = {
     urls: {
@@ -14,6 +14,6 @@ export const dash: DashParametrizationConfig = {
     },
     endpoints: {
         createDash: `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`,
+        navigationPage: WorkbooksUrls.E2EWorkbook,
     },
-    structureType: 'workbooks',
 };

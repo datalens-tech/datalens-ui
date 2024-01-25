@@ -19,7 +19,7 @@ datalensTest.describe(`Dashboards - tabs`, () => {
                         chartUrl: ChartsParams.citySalesPieChart.url,
                     });
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
         },
     );

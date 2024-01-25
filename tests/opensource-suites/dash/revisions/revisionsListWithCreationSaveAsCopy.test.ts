@@ -57,7 +57,7 @@ datalensTest.describe('Dashboard Versioning', () => {
                 editDash: async () => {
                     await dashboardPage.addText(arbitraryText.first);
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
         },
     );

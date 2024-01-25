@@ -47,7 +47,7 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
                         hideTitle: true,
                     });
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
             await dashboardPage.enterEditMode();
 
@@ -96,7 +96,7 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
                         hideTitle: true,
                     });
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
             await dashboardPage.enterEditMode();
 
@@ -132,7 +132,7 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
                         hideTitle: true,
                     });
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
             await dashboardPage.enterEditMode();
 

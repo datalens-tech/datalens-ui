@@ -29,7 +29,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
                         controlItems: PARAMS.CONTROL_ITEMS,
                     });
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
 
             await dashboardPage.openControlRelationsDialog();

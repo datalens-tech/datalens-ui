@@ -29,7 +29,7 @@ datalensTest.describe(`Dashboards - switch tabs`, () => {
                     await dashboardPage.dashTabs.switchTabByIdx(1);
                     await dashboardPage.addText(arbitraryText.second);
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
         },
     );

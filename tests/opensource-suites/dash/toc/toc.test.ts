@@ -17,7 +17,7 @@ datalensTest.describe('Dashboard - Table of Contents', () => {
                     await dashboardPage.addTitle(arbitraryText.first);
                     await dashboardPage.addTitle(arbitraryText.second);
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
         },
     );

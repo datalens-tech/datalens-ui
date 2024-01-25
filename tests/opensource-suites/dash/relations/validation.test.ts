@@ -31,7 +31,7 @@ datalensTest.describe('Dashboards - Relations (new), validation', () => {
                         hideTitle: true,
                     });
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
             await dashboardPage.enterEditMode();
 

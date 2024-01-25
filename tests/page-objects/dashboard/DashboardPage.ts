@@ -58,8 +58,8 @@ import {Locator} from 'playwright-core';
 import {Workbook} from '../workbook/Workbook';
 import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
 import {ChartkitControl} from './ChartkitControl';
-import {TestParametrizationConfig} from '../../types/config';
 import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
+import {DashConfigEndpoints} from '../../types/config/dash';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -177,15 +177,12 @@ class DashboardPage extends BasePage {
 
     async createDashboard({
         editDash,
-        config,
+        createDashUrl,
     }: {
         editDash: () => Promise<void>;
-        config?: TestParametrizationConfig;
+        createDashUrl?: DashConfigEndpoints['createDash'];
     }) {
-        await openTestPage(
-            this.page,
-            config ? config.dash.endpoints.createDash : '/dashboards/new',
-        );
+        await openTestPage(this.page, createDashUrl || '/dashboards/new');
 
         // callback with start actions with dash in edit mode
         await editDash();
@@ -194,13 +191,13 @@ class DashboardPage extends BasePage {
 
         const dashName = `e2e-entry-${getUniqueTimestamp()}`;
 
-        const isEnabledUseNavigation = await isEnabledFeature(this.page, Feature.UseNavigation);
+        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
 
         // waiting for the dialog to open, specify the name, save
-        if (isEnabledUseNavigation) {
-            await entryDialogFillAndSave(this.page, dashName);
-        } else {
+        if (isEnabledCollections) {
             await this.dialogCreateEntry.createEntryWithName(dashName);
+        } else {
+            await entryDialogFillAndSave(this.page, dashName);
         }
 
         // check that the dashboard has loaded by its name
@@ -210,14 +207,14 @@ class DashboardPage extends BasePage {
     async duplicateDashboard(dashId?: string) {
         const newDashName = `e2e-test-dash-copy-${getUniqueTimestamp()}`;
 
-        const isEnabledUseNavigation = await isEnabledFeature(this.page, Feature.UseNavigation);
+        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
 
-        if (isEnabledUseNavigation) {
-            await this.copyDashboard(newDashName);
+        if (isEnabledCollections) {
+            await this.duplicateDashboardFromWorkbook(dashId as string, newDashName);
             return;
         }
 
-        await this.duplicateDashboardFromWorkbook(dashId as string, newDashName);
+        await this.copyDashboard(newDashName);
     }
 
     async copyDashboard(newDashName: string) {

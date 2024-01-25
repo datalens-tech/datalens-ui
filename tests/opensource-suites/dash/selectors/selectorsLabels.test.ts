@@ -36,7 +36,7 @@ const createDashWithSelector = async ({
                 ...settings,
             });
         },
-        config,
+        createDashUrl: config.dash.endpoints.createDash,
     });
 };
 

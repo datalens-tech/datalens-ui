@@ -41,7 +41,7 @@ datalensTest.describe('Dashboards - Markdown', () => {
                 editDash: async () => {
                     await dashboardPage.addText(text);
                 },
-                config,
+                createDashUrl: config.dash.endpoints.createDash,
             });
 
             const receivedHTML = await dashboardPage.getMarkdownHTML();
