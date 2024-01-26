@@ -3,6 +3,7 @@ import {
     ExtendedSeriesLineOptions,
     isDateField,
 } from '../../../../../../../shared';
+import {getLineTimeDistinctValue} from '../../../../../../../shared/modules/colors/distincts-helpers';
 import {getColorsForNames} from '../../../ql/utils/colors';
 import {
     QLRenderResultYagr,
@@ -76,14 +77,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                         const colorValuePart: QLValue =
                             colors[j].type === 'PSEUDO' ? yFields[i].title : row[colorIndex];
 
-                        if (colorValuePart === 'null') {
-                            return;
-                        }
-
-                        colorValue =
-                            colorValue.length > 0
-                                ? `${colorValue}; ${String(colorValuePart)}`
-                                : String(colorValuePart);
+                        colorValue = getLineTimeDistinctValue(colorValuePart, colorValue);
                     });
 
                     let dataCell = dataMatrix[String(xValue)] as Record<

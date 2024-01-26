@@ -21,7 +21,8 @@ import {
     isMeasureName,
     markupToRawString,
 } from 'shared';
-import {getColorsConfigKey} from 'shared/modules/colors-helpers';
+import {getColorsConfigKey} from 'shared/modules/colors/common-helpers';
+import {getLineTimeDistinctValue} from 'shared/modules/colors/distincts-helpers';
 import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
 
 import {getWhereOperation} from '../../../../libs/datasetHelper';
@@ -63,6 +64,8 @@ export interface Props {
     onChangeSelectedValue: (selectedValue: string | null, shouldClearPalette?: boolean) => void;
     extra?: ExtraSettings;
     distincts?: Record<string, string[]>;
+    // this prop is only used when section supports handling of multiple fields; otherwise it must be only undefined.
+    sectionFields?: Field[];
 }
 
 interface State {
@@ -100,12 +103,12 @@ class ValuesList extends React.Component<Props, State> {
 
     componentDidMount() {
         const {items} = this.props;
-
         if (items?.length) {
             this.composeData();
-        } else {
-            this.fetchInitialData();
+            return;
         }
+
+        this.fetchInitialData();
     }
 
     componentDidUpdate(prevProps: Readonly<Props>) {
@@ -202,7 +205,7 @@ class ValuesList extends React.Component<Props, State> {
     };
 
     async fetchInitialData() {
-        const {item, distincts: externalDistincts} = this.props;
+        const {item, distincts: externalDistincts, sectionFields} = this.props;
         const {isRetry} = this.state;
 
         this.setState({
@@ -210,14 +213,17 @@ class ValuesList extends React.Component<Props, State> {
         });
 
         try {
-            let distincts;
             let values: string[] = [];
-
             if (externalDistincts) {
-                values = externalDistincts[item.guid];
+                const placeholderFields = sectionFields || [item];
+
+                const distincts = placeholderFields.map((v) => {
+                    return externalDistincts[v.guid];
+                });
+
+                values = this.buildMultipleColorsDistincts(distincts, 0);
             } else {
-                distincts = await this.getDistincts();
-                values = this.getValuesFromDistincts(distincts);
+                values = this.getValuesFromDistincts(await this.getDistincts());
             }
 
             const useSuggest = values.length === VALUES_LOAD_LIMIT;
@@ -388,6 +394,22 @@ class ValuesList extends React.Component<Props, State> {
 
         this.props.onChangeSelectedValue(values[0] || null);
     };
+
+    private buildMultipleColorsDistincts(distincts: string[][], index: number): string[] {
+        const root = distincts[index];
+        if (distincts.length - 1 === index) {
+            return root;
+        }
+
+        return root.reduce((acc, rootDistinct) => {
+            return [
+                ...acc,
+                ...this.buildMultipleColorsDistincts(distincts, index + 1).map((subDistinct) =>
+                    getLineTimeDistinctValue(subDistinct, rootDistinct),
+                ),
+            ];
+        }, [] as string[]);
+    }
 }
 
 export default ValuesList;
