@@ -882,7 +882,7 @@ class DashboardPage extends BasePage {
 
     async deleteDashFromViewMode() {
         try {
-            await await this.deleteDash();
+            await this.deleteDash();
         } catch {
             // can't delete dash from view mode
         }

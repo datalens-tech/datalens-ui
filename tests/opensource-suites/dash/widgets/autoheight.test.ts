@@ -21,7 +21,7 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
         const dashboardPage = new DashboardPage({page});
 
         // we set a large viewport height so that there is no scrolling of the autoheight widget
-        page.setViewportSize({width: 1200, height: 1600});
+        await page.setViewportSize({width: 1200, height: 1600});
 
         await dashboardPage.createDashboard({
             editDash: async () => {
