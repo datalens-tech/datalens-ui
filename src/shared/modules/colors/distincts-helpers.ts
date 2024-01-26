@@ -3,7 +3,7 @@ export const getLineTimeDistinctValue = (
     prevDistinct: string,
 ): string => {
     if (distinct === 'null') {
-        return '';
+        return prevDistinct;
     }
 
     return prevDistinct.length > 0 ? `${prevDistinct}; ${distinct}` : `${distinct}`;
