@@ -161,7 +161,7 @@ function formatError({
         switch (originalError.code) {
             case ERROR_CODE.UNKNOWN_EXTENSION:
                 message = i18n('chartkit.custom-error', 'error-unknown-extension');
-                extra.hideRetry = true;
+                extra.hideRetry = false;
                 break;
             case ERROR_CODE.DATA_PROVIDER_ERROR: {
                 message = i18n('chartkit.custom-error', 'error-data-provider');
