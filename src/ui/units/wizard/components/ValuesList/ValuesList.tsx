@@ -21,7 +21,8 @@ import {
     isMeasureName,
     markupToRawString,
 } from 'shared';
-import {getColorsConfigKey} from 'shared/modules/colors-helpers';
+import {getColorsConfigKey} from 'shared/modules/colors/common-helpers';
+import {getLineTimeDistinctValue} from 'shared/modules/colors/distincts-helpers';
 import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
 
 import {getWhereOperation} from '../../../../libs/datasetHelper';
@@ -63,7 +64,8 @@ export interface Props {
     onChangeSelectedValue: (selectedValue: string | null, shouldClearPalette?: boolean) => void;
     extra?: ExtraSettings;
     distincts?: Record<string, string[]>;
-    isMultipleFieldsSupported?: boolean;
+    // this prop is only used when section supports handling of multiple fields; otherwise it must be only undefined.
+    sectionFields?: Field[];
 }
 
 interface State {
@@ -101,7 +103,7 @@ class ValuesList extends React.Component<Props, State> {
 
     componentDidMount() {
         const {items} = this.props;
-        if (items?.length && !this.props.isMultipleFieldsSupported) {
+        if (items?.length) {
             this.composeData();
             return;
         }
@@ -203,7 +205,7 @@ class ValuesList extends React.Component<Props, State> {
     };
 
     async fetchInitialData() {
-        const {item, distincts: externalDistincts, items} = this.props;
+        const {item, distincts: externalDistincts, sectionFields} = this.props;
         const {isRetry} = this.state;
 
         this.setState({
@@ -213,8 +215,7 @@ class ValuesList extends React.Component<Props, State> {
         try {
             let values: string[] = [];
             if (externalDistincts) {
-                const placeholderFields =
-                    this.props.isMultipleFieldsSupported && items ? items : [item];
+                const placeholderFields = sectionFields || [item];
 
                 const distincts = placeholderFields.map((v) => {
                     return externalDistincts[v.guid];
@@ -400,11 +401,11 @@ class ValuesList extends React.Component<Props, State> {
             return root;
         }
 
-        return root.reduce((acc, v) => {
+        return root.reduce((acc, rootDistinct) => {
             return [
                 ...acc,
-                ...this.buildMultipleColorsDistincts(distincts, index + 1).map(
-                    (v2) => `${v}; ${v2}`,
+                ...this.buildMultipleColorsDistincts(distincts, index + 1).map((subDistinct) =>
+                    getLineTimeDistinctValue(subDistinct, rootDistinct),
                 ),
             ];
         }, [] as string[]);

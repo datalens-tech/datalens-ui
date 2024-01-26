@@ -46,7 +46,7 @@ type OwnProps = {
     colorMode: ColorMode;
     onColorModeChange: (value: ColorMode) => void;
     isColorModeChangeAvailable: boolean;
-    isMultipleColorsSupported: boolean;
+    colorSectionFields?: Field[];
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -118,7 +118,7 @@ class ColorSettingsContainer extends React.Component<Props> {
                         ...paletteState,
                     });
                 }}
-                isMultipleColorsSupported={this.props.isMultipleColorsSupported}
+                colorSectionFields={this.props.colorSectionFields}
                 parameters={this.props.parameters}
                 dashboardParameters={this.props.dashboardParameters}
                 extra={this.props.extra || {}}

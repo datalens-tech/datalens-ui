@@ -210,15 +210,12 @@ export function openDialogPointsSize({
 
 type OpenDialogColorsArguments = {
     item?: Field | Field[];
+    // this prop is used only when multiple colors supported in colors section; otherwise it will be undefined;
+    colorSectionFields?: Field[];
     onApply?: () => void;
-    isMultipleColorsSupported?: boolean;
 };
 
-export function openDialogColors({
-    item,
-    onApply,
-    isMultipleColorsSupported = false,
-}: OpenDialogColorsArguments) {
+export function openDialogColors({item, onApply, colorSectionFields}: OpenDialogColorsArguments) {
     return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const datalensGlobalState = getState();
         const {visualization: visualizationState, dataset: datasetState} =
@@ -253,14 +250,8 @@ export function openDialogColors({
                   (heatmapPlaceholder && heatmapPlaceholder.items[0])
                 : (item as Field);
 
-            let dialogColorItems;
-
-            if (isMultipleColorsSupported) {
-                dialogColorItems = item as Field[];
-            } else {
-                dialogColorItems =
-                    isArray && !isMeasureValue(dialogColorItem) ? (item as Field[]) : undefined;
-            }
+            const dialogColorItems =
+                isArray && !isMeasureValue(dialogColorItem) ? (item as Field[]) : undefined;
 
             const isColorModeChangeAvailableValue = isColorModeChangeAvailable({
                 item: dialogColorItem,
@@ -271,6 +262,7 @@ export function openDialogColors({
                 openDialogColor({
                     item: dialogColorItem,
                     extra,
+                    colorSectionFields,
                     items: dialogColorItems,
                     isColorModeChangeAvailable: isColorModeChangeAvailableValue,
                     onApply: (config: ColorsConfig) => {
@@ -289,7 +281,6 @@ export function openDialogColors({
                         }
                     },
                     colorsConfig,
-                    isMultipleColorsSupported,
                 }),
             );
         }

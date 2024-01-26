@@ -9,10 +9,10 @@ import {
     Field,
     PlaceholderActionQa,
     Shared,
-    isChartSupportMultipleColors,
     isFieldHierarchy,
     isMeasureField,
 } from 'shared';
+import {isChartSupportMultipleColors} from 'shared/modules/colors/common-helpers';
 import {DatalensGlobalState} from 'ui';
 import {selectDataset} from 'units/wizard/selectors/dataset';
 import {
@@ -133,11 +133,11 @@ class ColorsPlaceholder extends React.Component<Props> {
             Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
             isChartSupportMultipleColors(chartType ?? '', visualization.id);
 
-        const item = isMultipleColorsSupported ? colors : getDialogItem(colors, placeholders);
+        const item = getDialogItem(colors, placeholders);
 
         this.props.openDialogColors({
             item,
-            isMultipleColorsSupported,
+            colorSectionFields: isMultipleColorsSupported ? colors : undefined,
             onApply: () => {
                 if (this.props.onUpdate) {
                     this.props.onUpdate();

@@ -11,7 +11,6 @@ import {
     SortDirection,
     VisualizationLayerShared,
     WizardVisualizationId,
-    isChartSupportMultipleColors,
     isMeasureField,
     isNumberField,
     isPercentVisualization,
@@ -19,6 +18,7 @@ import {
     isVisualizationWithDimensionsAsColors,
     isVisualizationWithLayers,
 } from 'shared';
+import {isChartSupportMultipleColors} from 'shared/modules/colors/common-helpers';
 import {ApplyData, DatalensGlobalState} from 'ui';
 import {
     getAxisModePlaceholderSettings,
