@@ -118,14 +118,7 @@ export default class SectionVisualization {
     ) {
         const sourceSelector = slct(SectionDatasetQA.ItemTitle, newField);
         const targetSelector = `${slct(placeholder)} ${slct('dnd-container')} >> text=${oldField}`;
-        await this.page.waitForSelector(sourceSelector);
-        await this.page.waitForSelector(targetSelector);
-
-        const source = (await this.page.$(sourceSelector))!;
-
-        const target = (await this.page.$(targetSelector))!;
-
-        await dragAndDrop(this.page, source, target);
+        await this.page.dragAndDrop(sourceSelector, targetSelector);
     }
 
     async addFieldByClick(
