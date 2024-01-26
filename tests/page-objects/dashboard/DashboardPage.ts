@@ -181,7 +181,7 @@ class DashboardPage extends BasePage {
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         const createDashUrl = isEnabledCollections
             ? `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`
-            : '/dashboards';
+            : '/dashboards/new';
         await openTestPage(this.page, createDashUrl);
 
         // callback with start actions with dash in edit mode
