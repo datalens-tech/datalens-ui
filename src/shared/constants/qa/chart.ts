@@ -25,3 +25,7 @@ export const ChartkitMenuDialogsQA = {
     widgetTab: 'widget-chart-tab',
     chartWidget: 'chart-widget',
 };
+
+export const enum ChartKitQa {
+    Loader = 'chartkit-loader',
+}

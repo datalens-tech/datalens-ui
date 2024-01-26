@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
-import {MenuItemsIds, StringParams} from 'shared';
+import {MenuItemsIds, StringParams, WizardPageQa} from 'shared';
 import {DatalensGlobalState, Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {setDrillDownLevel} from 'units/wizard/actions/visualization';
@@ -192,7 +192,9 @@ class SectionPreview extends Component<Props> {
     render() {
         return (
             <div className={'container preview-container'}>
-                <div className="preview-chartkit">{this.renderChartkit()}</div>
+                <div className="preview-chartkit" data-qa={WizardPageQa.SectionPreview}>
+                    {this.renderChartkit()}
+                </div>
             </div>
         );
     }

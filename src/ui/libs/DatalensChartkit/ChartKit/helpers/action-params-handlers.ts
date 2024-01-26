@@ -98,7 +98,7 @@ export function addParams(params: StringParams, addition: StringParams = {}) {
     }, result);
 }
 
-function subtractParameters(params: StringParams, sub: StringParams = {}) {
+export function subtractParameters(params: StringParams, sub: StringParams = {}) {
     const result = cloneDeep(params);
     return Object.entries(sub).reduce((acc, [key, val]) => {
         const paramValue = acc[key];
@@ -200,7 +200,7 @@ export function handleSeriesClickForActionParams(args: {
     chart: Highcharts.Chart;
     point?: Highcharts.Point;
     clickScope: GraphWidgetEventScope;
-    event: MouseEvent;
+    event: {metaKey?: boolean};
     onChange?: ChartKitAdapterProps['onChange'];
     actionParams: StringParams;
 }) {

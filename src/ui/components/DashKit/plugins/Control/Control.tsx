@@ -79,7 +79,7 @@ import {
     SelectControlProps,
     ValidationErrorData,
 } from './types';
-import {isValidationError} from './utils';
+import {getLabels, isValidationError} from './utils';
 
 import './Control.scss';
 
@@ -872,7 +872,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const {loadedData, status, loadingItems} = this.state;
         const controlData = data as unknown as DashTabItemControlDataset | DashTabItemControlManual;
         const source = controlData.source;
-        const title = controlData.title;
         const sourceType = controlData.sourceType;
         const fieldId =
             (source as DashTabItemControlDataset['source']).datasetFieldId ||
@@ -919,11 +918,13 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             this.onChange(fieldId, valueWithOperation);
         };
 
+        const {label, innerLabel} = getLabels({controlData});
+
         const props: SelectControlProps = {
             widgetId: id,
             content: content || preselectedContent,
-            label: (source.showTitle ? title : '') as string,
-            innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
+            label,
+            innerLabel,
             param: fieldId,
             multiselect: (source as DashTabItemControlElementSelect).multiselectable,
             type: TYPE.SELECT,
@@ -987,7 +988,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 | DashTabItemControlManual
                 | DashTabItemControlDataset;
 
-            const {source, title} = data;
+            const {source} = data;
+            const {required, operation} = source;
 
             if (!Object.keys(this.actualParams).includes(param)) {
                 return null;
@@ -997,7 +999,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             // for first initialization of control
             const initialValidationError = isValidationError({
-                required: source.required,
+                required,
                 value: preparedValue,
             })
                 ? i18n('value_required')
@@ -1006,7 +1008,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const onChange = (value: string | string[]) => {
                 const isValid = this.checkValueValidation({
-                    required: source.required,
+                    required,
                     value,
                 });
 
@@ -1016,11 +1018,13 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
                 const valueWithOperation = addOperationForValue({
                     value,
-                    operation: source.operation,
+                    operation,
                 });
 
                 this.onChange(param, valueWithOperation);
             };
+
+            const {label, innerLabel} = getLabels({controlData: data});
 
             const props = {
                 ...control,
@@ -1030,9 +1034,9 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 value: preparedValue,
                 onChange,
                 editMode,
-                innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
-                label: (source.showTitle ? title : '') as string,
-                required: source.required,
+                innerLabel,
+                label,
+                required,
                 hasValidationError: Boolean(validationError),
             };
 

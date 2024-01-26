@@ -6,6 +6,7 @@ import {
     DashTab,
     DashTabItem,
     DashTabItemBase,
+    DashTabItemControlData,
     DashTabItemType,
     DashTabItemWidgetTab,
     DashTabLayout,
@@ -30,6 +31,12 @@ export const getWidgetRowText = (item: DashTabItem) => {
         case DashTabItemType.Widget:
             item.data.tabs.forEach((widgetTabItem: DashTabItemWidgetTab) => {
                 widgetTabs.push(widgetTabItem.title);
+            });
+            break;
+        case DashTabItemType.GroupControl:
+            // TODO fix only one element widget order
+            Object.values(item.data.items).forEach((controlItem: DashTabItemControlData) => {
+                widgetTabs.push(controlItem.title);
             });
             break;
         case DashTabItemType.Control:

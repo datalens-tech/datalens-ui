@@ -6,6 +6,7 @@ export enum Feature {
     Ql = 'ql',
     CrawlerPromo = 'crawlerPromo',
     ShowNewRelations = 'showNewRelations',
+    HideOldRelations = 'hideOldRelations',
     ShowPromoIntro = 'ShowPromoIntro',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     HelpCenterEnabled = 'HelpCenterEnabled',

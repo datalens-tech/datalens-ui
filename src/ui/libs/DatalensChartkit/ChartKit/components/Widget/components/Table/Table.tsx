@@ -18,13 +18,13 @@ import {TableProps} from './types';
 import {
     camelCaseCss,
     concatStrings,
-    getActionParamsEventScope,
     getColumnsAndNames,
     getIdFromGeneratedName,
     hasGroups,
     validateConfigAndData,
 } from './utils';
 import type {ActionParamsData} from './utils';
+import {getActionParamsEventScope} from './utils/action-params';
 
 import './Table.scss';
 

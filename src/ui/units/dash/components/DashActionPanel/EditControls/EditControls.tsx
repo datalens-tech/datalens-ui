@@ -4,7 +4,9 @@ import {Gear} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {Feature} from 'shared';
 import {DashboardActionPanelControlsQa} from 'shared/constants/qa/dash';
+import Utils from 'ui/utils';
 
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import NavigationPrompt from '../../../../../components/NavigationPrompt/NavigationPrompt';
@@ -106,14 +108,16 @@ export const EditControls = (props: EditControlsProps) => {
                 <Icon data={Gear} height={18} width={18} />
             </Button>
             <Description canEdit={true} entryDialoguesRef={entryDialoguesRef} />
-            <Button
-                view="normal"
-                size="m"
-                onClick={onOpenDialogConnectionsClick}
-                qa="action-button-connections"
-            >
-                {i18n('button_connections')}
-            </Button>
+            {!Utils.isEnabledFeature(Feature.HideOldRelations) && (
+                <Button
+                    view="normal"
+                    size="m"
+                    onClick={onOpenDialogConnectionsClick}
+                    qa="action-button-connections"
+                >
+                    {i18n('button_connections')}
+                </Button>
+            )}
             <Button view="normal" size="m" onClick={onOpenDialogTabsClick} qa="action-button-tabs">
                 {i18n('button_tabs')}
             </Button>
