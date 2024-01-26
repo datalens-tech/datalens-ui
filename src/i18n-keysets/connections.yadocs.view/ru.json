@@ -8,7 +8,7 @@
   "label_access-type": "Доступ к файлу",
   "label_add-document": "Добавить документ",
   "label_add-input-help": "Добавлять ссылки на файлы, доступ к которым ограничен с помощью пароля, а также скачивать такие файлы запрещено. Используйте приватные файлы, доступные после аутентификации.",
-  "label_add-input-link": "<br></br>Перейти в <link>Яндекс Документы</link>",
+  "label_add-input-link": "Перейти в <link>Яндекс Документы</link>",
   "label_add-input-private": "Путь до файла",
   "label_add-input-private-note": "Пример: /path/to/document",
   "label_add-input-public": "Ссылка на файл",

@@ -127,10 +127,10 @@ const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
                         />
                         <div className={b('add-dialog-row-input-note')}>
                             {inputNote}
+                            <br />
                             <Interpolate
                                 text={i18n('label_add-input-link')}
                                 matches={{
-                                    br: () => <br />,
                                     link: (match) => (
                                         <React.Fragment>
                                             <Link href="https://docs.yandex.ru" target="_blank">
