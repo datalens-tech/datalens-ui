@@ -63,7 +63,7 @@ class ColorsPlaceholder extends React.Component<Props> {
 
         const colorsCapacity =
             Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
-            isChartSupportMultipleColors(chartType ?? '')
+            isChartSupportMultipleColors(chartType ?? '', visualization.id)
                 ? undefined
                 : visualization.colorsCapacity || 1;
 
@@ -106,7 +106,7 @@ class ColorsPlaceholder extends React.Component<Props> {
             return false;
         }
 
-        const {globalVisualization, visualization, colors} = this.props;
+        const {globalVisualization, visualization, colors, chartType} = this.props;
 
         if (globalVisualization?.id === 'combined-chart' && isMeasureField(item)) {
             return false;
@@ -118,6 +118,9 @@ class ColorsPlaceholder extends React.Component<Props> {
                     item,
                     visualization,
                     designItems: colors,
+                    isMultipleColorsSupported:
+                        Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+                        isChartSupportMultipleColors(chartType ?? '', visualization.id),
                 }),
         );
     };
@@ -128,7 +131,7 @@ class ColorsPlaceholder extends React.Component<Props> {
 
         const isMultipleColorsSupported =
             Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
-            isChartSupportMultipleColors(chartType ?? '');
+            isChartSupportMultipleColors(chartType ?? '', visualization.id);
 
         const item = isMultipleColorsSupported ? colors : getDialogItem(colors, placeholders);
 

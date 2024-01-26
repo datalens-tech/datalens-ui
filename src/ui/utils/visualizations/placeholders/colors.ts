@@ -1,14 +1,5 @@
-import {
-    Feature,
-    Field,
-    Placeholder,
-    PlaceholderId,
-    type Shared,
-    isMeasureNameOrValue,
-} from 'shared';
+import {Field, Placeholder, PlaceholderId, type Shared, isMeasureNameOrValue} from 'shared';
 import {selectPlaceholders} from 'shared/modules/visualization/placeholder';
-
-import Utils from '../../utils';
 
 type UpdateMultipleColorsArgs = {
     colors: Field[];
@@ -38,15 +29,12 @@ type UpdateColorsArgs = {
     prevColors: Field[];
     placeholders: Placeholder[];
     visualization: Shared['visualization'];
+    isMultipleColorsSupported?: boolean;
 };
 export const updateColors = (args: UpdateColorsArgs) => {
-    const {colors, prevColors, placeholders, visualization} = args;
+    const {colors, prevColors, placeholders, visualization, isMultipleColorsSupported} = args;
 
-    const isMultipleColorsFeatureEnabled = Utils.isEnabledFeature(
-        Feature.MultipleColorsInVisualization,
-    );
-
-    if (colors?.length && isMultipleColorsFeatureEnabled) {
+    if (colors?.length && isMultipleColorsSupported) {
         return updateMultipleColors({
             colors,
             prevColors,

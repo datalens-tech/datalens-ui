@@ -3,19 +3,26 @@ import {
     Placeholder,
     Shared,
     isMeasureField,
+    isMeasureName,
     isMeasureNameOrValue,
     isMeasureValue,
 } from 'shared';
 
 import {updateColors} from './placeholders/colors';
 
-type LinearCheckColorArgs = {
+type CommonCheckColorArgs = {
     item: Field;
     designItems: Field[];
     visualization?: Shared['visualization'];
+    isMultipleColorsSupported?: boolean;
 };
 
-export function linearCheckColor({item, visualization, designItems}: LinearCheckColorArgs) {
+export function linearCheckColor({
+    item,
+    visualization,
+    designItems,
+    isMultipleColorsSupported,
+}: CommonCheckColorArgs) {
     if (isMeasureField(item) || isMeasureValue(item)) {
         return false;
     }
@@ -37,10 +44,36 @@ export function linearCheckColor({item, visualization, designItems}: LinearCheck
             [],
         );
 
+        if (isMultipleColorsSupported) {
+            selectedItems.push(...designItems);
+        }
+
         return selectedItems.every((selectedItem: Field) => {
             return selectedItem.guid !== item.guid;
         });
     }
+}
+
+export function lineCommonCheckColor({
+    item,
+    designItems,
+    isMultipleColorsSupported,
+}: CommonCheckColorArgs) {
+    if (isMeasureName(item)) {
+        return designItems.every((selectedItem) => {
+            return !isMeasureName(selectedItem);
+        });
+    } else if (isMeasureValue(item)) {
+        return designItems.every((selectedItem) => {
+            return !isMeasureValue(selectedItem);
+        });
+    }
+
+    if (isMultipleColorsSupported) {
+        return designItems.every((selectedItem) => selectedItem.guid !== item.guid);
+    }
+
+    return true;
 }
 
 type OnLineChartColorsChangeArgs = {
@@ -48,6 +81,7 @@ type OnLineChartColorsChangeArgs = {
     shapes?: Field[];
     prevColors?: Field[];
     visualization: Shared['visualization'];
+    isMultipleColorsSupported?: boolean;
 };
 
 export function onLineChartDesignItemsChange({
@@ -55,6 +89,7 @@ export function onLineChartDesignItemsChange({
     visualization,
     prevColors = [],
     shapes = [],
+    isMultipleColorsSupported = false,
 }: OnLineChartColorsChangeArgs) {
     const placeholders = visualization.placeholders;
     const shapesCopy: Field[] = [...shapes];
@@ -78,6 +113,12 @@ export function onLineChartDesignItemsChange({
     }
     return {
         shapes: shapesCopy,
-        colors: updateColors({colors, prevColors, placeholders, visualization}),
+        colors: updateColors({
+            colors,
+            prevColors,
+            placeholders,
+            visualization,
+            isMultipleColorsSupported,
+        }),
     };
 }

@@ -5,7 +5,6 @@ import {
     Placeholder,
     Shared,
     WizardVisualizationId,
-    isMeasureName,
     isMeasureValue,
 } from 'shared';
 import {checkAllowedAreaSort} from 'units/wizard/utils/helpers';
@@ -14,7 +13,11 @@ import {
     prepareFieldToMeasureTransformation,
 } from 'units/wizard/utils/visualization';
 
-import {linearCheckColor, onLineChartDesignItemsChange} from '../../utils/visualizations/line';
+import {
+    lineCommonCheckColor,
+    linearCheckColor,
+    onLineChartDesignItemsChange,
+} from '../../utils/visualizations/line';
 import {onMeasureAxisChange} from '../../utils/visualizations/placeholders/common-measures';
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES, PRIMITIVE_DATA_TYPES_AND_HIERARCHY} from '../misc';
 
@@ -254,19 +257,7 @@ export const COLUMN_VISUALIZATION: GraphShared['visualization'] = {
 
         return selectedItems.some((selectedItem) => selectedItem.guid === item.guid);
     },
-    checkAllowedDesignItems: ({item, designItems}: {item: Field; designItems: Field[]}) => {
-        if (isMeasureName(item)) {
-            return designItems.every((selectedItem) => {
-                return !isMeasureName(selectedItem);
-            });
-        } else if (isMeasureValue(item)) {
-            return designItems.every((selectedItem) => {
-                return !isMeasureValue(selectedItem);
-            });
-        }
-
-        return true;
-    },
+    checkAllowedDesignItems: lineCommonCheckColor,
     checkAllowedLabels: (item: Field) =>
         ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item),
     availableLabelModes: ['absolute'],
@@ -356,19 +347,7 @@ export const BAR_VISUALIZATION: GraphShared['visualization'] = {
 
         return selectedItems.some((selectedItem) => selectedItem.guid === item.guid);
     },
-    checkAllowedDesignItems: ({item, designItems}: {item: Field; designItems: Field[]}) => {
-        if (isMeasureName(item)) {
-            return designItems.every((selectedItem) => {
-                return !isMeasureName(selectedItem);
-            });
-        } else if (isMeasureValue(item)) {
-            return designItems.every((selectedItem) => {
-                return !isMeasureValue(selectedItem);
-            });
-        }
-
-        return true;
-    },
+    checkAllowedDesignItems: lineCommonCheckColor,
     checkAllowedLabels: (item: Field) =>
         ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item),
     availableLabelModes: ['absolute'],

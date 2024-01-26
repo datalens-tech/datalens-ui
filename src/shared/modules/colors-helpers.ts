@@ -1,4 +1,4 @@
-import {QLChartType} from '../constants';
+import {QLChartType, WizardVisualizationId} from '../constants';
 import {Field, ServerField} from '../types';
 
 import {getFakeTitleOrTitle} from './fields';
@@ -28,8 +28,19 @@ export const getColorsConfigKey = (
 
     return undefined;
 };
-const chartTypeWithMultipleColors: Record<string, boolean> = {
-    [QLChartType.Monitoringql]: true,
+const chartTypeWithMultipleColors: Record<
+    string,
+    Partial<Record<WizardVisualizationId, boolean>>
+> = {
+    [QLChartType.Monitoringql]: {
+        [WizardVisualizationId.Line]: true,
+        [WizardVisualizationId.Area]: true,
+        [WizardVisualizationId.Area100p]: true,
+        [WizardVisualizationId.Column]: true,
+        [WizardVisualizationId.Column100p]: true,
+        [WizardVisualizationId.Bar]: true,
+        [WizardVisualizationId.Bar100p]: true,
+    },
 };
-export const isChartSupportMultipleColors = (chartType: string) =>
-    chartTypeWithMultipleColors[chartType];
+export const isChartSupportMultipleColors = (chartType: string, visualizationId: string): boolean =>
+    Boolean(chartTypeWithMultipleColors[chartType]?.[visualizationId as WizardVisualizationId]);
