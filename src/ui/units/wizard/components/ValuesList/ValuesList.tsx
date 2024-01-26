@@ -217,7 +217,7 @@ class ValuesList extends React.Component<Props, State> {
                     this.props.isMultipleFieldsSupported && items ? items : [item];
 
                 const distincts = placeholderFields.map((v) => {
-                    return externalDistincts[v.guid || v.title];
+                    return externalDistincts[v.guid];
                 });
 
                 values = this.buildMultipleColorsDistincts(distincts, 0);
