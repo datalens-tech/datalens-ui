@@ -1,13 +1,11 @@
-import {ElementHandle, Page} from '@playwright/test';
+import {SelectQa} from '@gravity-ui/uikit';
+import {ElementHandle, Page, expect} from '@playwright/test';
 import dotenv from 'dotenv';
 import moment from 'moment';
-
-import {ActionPanelQA, EntryDialogQA} from '../../src/shared/constants';
-
-import {SelectQa} from '@gravity-ui/uikit';
-import {ActionPanelEntryContextMenuQa} from '../../src/shared/constants/qa/action-panel';
 import path from 'path';
 
+import {ActionPanelQA, EntryDialogQA} from '../../src/shared';
+import {ActionPanelEntryContextMenuQa} from '../../src/shared/constants/qa/action-panel';
 export * from './helpers';
 
 export const ROOT_ENV_PATH = path.resolve(__dirname, '..', '..', '.env');
@@ -51,29 +49,23 @@ export const cssSlct = (nodeAnchorKey: string, text?: string) => {
 
 // Delete the entity on the page where the test is being performed. You need to delete the entities created by the tests so that they do not block navigation.
 export async function deleteEntity(page: Page, url?: string) {
-    await page.waitForSelector(slct(ActionPanelQA.MoreBtn));
-    await page.locator(slct(ActionPanelQA.MoreBtn)).click();
+    const moreButton = page.locator(slct(ActionPanelQA.MoreBtn));
+    await expect(moreButton).toBeVisible();
+    await moreButton.click();
 
-    await page.waitForSelector(
-        `${slct(ActionPanelEntryContextMenuQa.Menu)} ${slct(ActionPanelEntryContextMenuQa.Remove)}`,
-    );
-    await page
-        .locator(
-            `${slct(ActionPanelEntryContextMenuQa.Menu)} ${slct(
-                ActionPanelEntryContextMenuQa.Remove,
-            )}`,
-        )
-        .click();
+    const menuItemRemove = page
+        .locator(slct(ActionPanelEntryContextMenuQa.Menu))
+        .locator(slct(ActionPanelEntryContextMenuQa.Remove));
+    await expect(menuItemRemove).toBeVisible();
+    await menuItemRemove.click();
 
-    await page.waitForSelector(slct(EntryDialogQA.Apply));
+    const applyButton = page.locator(slct(EntryDialogQA.Apply));
+    await expect(applyButton).toBeVisible();
 
     if (url) {
-        await Promise.all([
-            page.waitForURL(() => page.url().includes(url)),
-            page.click(slct(EntryDialogQA.Apply)),
-        ]);
+        await Promise.all([page.waitForURL(() => page.url().includes(url)), applyButton.click()]);
     } else {
-        await Promise.all([page.waitForNavigation(), page.click(slct(EntryDialogQA.Apply))]);
+        await Promise.all([page.waitForNavigation(), applyButton.click()]);
     }
 }
 

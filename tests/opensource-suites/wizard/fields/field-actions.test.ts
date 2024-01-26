@@ -7,8 +7,8 @@ import WizardPage from '../../../page-objects/wizard/WizardPage';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Fields', () => {
-        const datasetFieldName = 'city';
-        const newField = 'city2';
+        const datasetFieldName = 'City';
+        const newField = 'City2';
 
         datalensTest.beforeEach(async ({page, config}) => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
@@ -81,7 +81,7 @@ datalensTest.describe('Wizard', () => {
             await datasetFieldLocator.locator(slct(SectionDatasetQA.FieldActions)).click();
             await page.click(slct(DatasetItemActionsQa.DuplicateField));
             // // The duplicated field should be automatically named "<OriginalName>(N)""
-            const duplicatedDatasetField = 'city (1)';
+            const duplicatedDatasetField = 'City (1)';
             await expect(
                 datasetFields.locator(slct(duplicatedDatasetField), {
                     hasText: duplicatedDatasetField,
@@ -95,7 +95,7 @@ datalensTest.describe('Wizard', () => {
             await chartLocalFieldLocator.hover();
             await chartLocalFieldLocator.locator(slct(SectionDatasetQA.FieldActions)).click();
             await page.click(slct(DatasetItemActionsQa.DuplicateField));
-            const duplicatedLocalField = 'city2 (1)';
+            const duplicatedLocalField = 'City2 (1)';
             await expect(
                 datasetFields.locator(slct(duplicatedLocalField), {
                     hasText: duplicatedLocalField,

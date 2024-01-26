@@ -622,7 +622,7 @@ export const getRelationsData = ({
 };
 
 const getCurrentWidgetTabShortInfo = (data: DashKit | null, widget: DashTabItem) => {
-    if (widget.type === DashTabItemType.Control) {
+    if (widget.type === DashTabItemType.Control || widget.type === DashTabItemType.GroupControl) {
         return widget;
     }
     if (!data || widget.type !== DashTabItemType.Widget) {
