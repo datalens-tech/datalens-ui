@@ -58,6 +58,8 @@ export enum RobotChartsWizardUrls {
 
     WizardWithEditorId = '/wizard/j2ac4oofeuzm9',
     WizardWithSQLId = '/wizard/estm3g44u4g84',
+
+    WizardBasicDataset = '/wizard/?__datasetId=o3qzuaoe5jsud',
 }
 
 export enum RobotChartsEditorUrls {
