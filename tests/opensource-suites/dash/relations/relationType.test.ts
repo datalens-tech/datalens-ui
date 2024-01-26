@@ -16,9 +16,9 @@ const PARAMS = {
     CONTROL_FIELD_NAME: 'test-control-field',
     CONTROL_FIELD_NAME_2: 'city',
     CONTROL_ITEMS: ['Dallas', 'Chicago'],
-    CHART_FIELD: 'city',
+    CHART_FIELD: 'City',
     RELATION_TYPE_BY_ALIAS: 'by alias',
-    RELATION_TYPE_BY_FIELD: 'category affects city-sales — Pie cha... by field category',
+    RELATION_TYPE_BY_FIELD: 'Category affects city-sales — Pie cha... by field Category',
     RELATION_TEXT: 'city affects city-sales — Pie cha...',
 };
 

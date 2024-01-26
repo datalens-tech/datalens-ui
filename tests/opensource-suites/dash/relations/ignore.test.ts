@@ -18,7 +18,7 @@ const PARAMS = {
     CONTROL_FIELD_NAME: 'test-control-field',
     CONTROL_FIELD_NAME_2: 'test-control-field-2',
     CONTROL_ITEMS: ['Dallas', 'Chicago'],
-    CHART_FIELD: 'city',
+    CHART_FIELD: 'City',
 };
 
 datalensTest.describe('Dashboards - Relations (new)', () => {
