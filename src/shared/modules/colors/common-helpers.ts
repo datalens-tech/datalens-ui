@@ -1,7 +1,6 @@
-import {QLChartType, WizardVisualizationId} from '../constants';
-import {Field, ServerField} from '../types';
-
-import {getFakeTitleOrTitle} from './fields';
+import {QLChartType, WizardVisualizationId} from '../../constants';
+import {Field, ServerField} from '../../types';
+import {getFakeTitleOrTitle} from '../fields';
 
 type GetColorsConfigKeyOptions = {
     isMeasureNames: boolean;

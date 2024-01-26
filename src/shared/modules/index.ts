@@ -14,6 +14,6 @@ export * from './bi-api';
 export * from './fields';
 export * from './sleep';
 export * from './qa-helpers';
-export * from './colors-helpers';
+export * from './colors/colors-helpers';
 export * from './format-units';
 export * from './wizard';
