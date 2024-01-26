@@ -6,6 +6,7 @@ export type ChartEditorTypeKey =
     | 'table_node'
     | 'text_node'
     | 'markdown_node'
+    | 'markup_node'
     | 'metric_node'
     | 'map_node'
     | 'ymap_node'
@@ -41,6 +42,7 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
         METRIC: `${prefix}/editor/widgets/metric/`,
         MAP: `${prefix}/editor/widgets/map/`,
         YANDEX_MAP: `${prefix}/editor/widgets/yandex-map/`,
+        MARKUP: `${prefix}/editor/widgets/markup/`,
     };
 
     const docsVendor = {
@@ -541,6 +543,41 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
                             path: DOCS_PATH.MODULE,
                         },
                     ],
+                },
+            ],
+        },
+        markup_node: {
+            name: 'Markup',
+            tabs: [
+                {
+                    name: 'Urls',
+                    id: 'url',
+                    language: 'javascript',
+                    docs: docsUrls,
+                },
+                {
+                    name: 'Params',
+                    id: 'params',
+                    language: 'javascript',
+                    docs: docsParams,
+                },
+                {
+                    name: 'JavaScript',
+                    id: 'js',
+                    language: 'javascript',
+                    docs: [
+                        {
+                            title: 'section_common-information',
+                            path: DOCS_PATH.MARKUP,
+                        },
+                        docsVendor,
+                    ],
+                },
+                {
+                    name: 'Shared',
+                    id: 'shared',
+                    language: 'json',
+                    docs: docsShare,
                 },
             ],
         },

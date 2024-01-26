@@ -298,6 +298,11 @@ export interface YMapWidget extends WidgetBaseWithData {
     type: 'ymap';
 }
 
+export type MarkupWidget = WidgetBaseWithData & {
+    type: 'markup';
+    data: {};
+};
+
 export type Widget =
     | GraphWidget
     | D3Widget
@@ -309,7 +314,8 @@ export type Widget =
     | Metric2Widget
     | YMapWidget
     | TextWidget
-    | TimeseriesWidget;
+    | TimeseriesWidget
+    | MarkupWidget;
 
 type ParamsChangedOnChange = {
     type: 'PARAMS_CHANGED';

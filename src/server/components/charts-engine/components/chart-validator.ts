@@ -17,6 +17,8 @@ const MODEL_TABS = {
 
     markdown_node: new Set(['js,params,shared,url', 'js,params,secrets,shared,url']),
 
+    markup_node: new Set(['js,params,shared,url', 'js,params,secrets,shared,url']),
+
     module: new Set([
         'documentation_en,documentation_ru,js',
         'documentation_ru,js',
