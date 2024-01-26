@@ -19,7 +19,7 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
         const isEnabledCollections = await isEnabledFeature(page, Feature.CollectionsEnabled);
         const createDashUrl = isEnabledCollections
             ? `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`
-            : '/dashboards';
+            : '/dashboards/new';
         await openTestPage(page, createDashUrl);
     });
     datalensTest('Adding a selector, the save button is active', async ({page}: {page: Page}) => {

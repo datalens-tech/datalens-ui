@@ -7,7 +7,6 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {COMMON_DASH_SELECTORS} from '../../../suites/dash/constants';
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 import {ConnectionsDialogQA, DashCommonQa, Feature} from '../../../../src/shared';
-import {DashUrls} from '../../../constants/test-entities/dash';
 
 const TEXTS = {
     TAB2: 'Tab 2',
@@ -121,7 +120,7 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
             // copy the original dashboard with delayed widget loading,
             // so that the tests do not collapse due to the transition to editing and locks
             const dashboardPage = new DashboardPage({page});
-            await openTestPage(page, DashUrls.DashboardWithLongContentBeforeChart);
+            await openTestPage(page, config.dash.urls.DashboardWithLongContentBeforeChart);
             await dashboardPage.duplicateDashboard(
                 config.dash.urls.DashboardWithLongContentBeforeChart,
             );
