@@ -420,7 +420,7 @@ function BaseControlRangeDatepicker({
             className={b('datepicker')}
             hasValidationError={hasValidationError}
             required={required}
-            fillEmptyValues={true}
+            fillPartialInterval={true}
         />
     );
 }

@@ -39,7 +39,7 @@ export const datepickerDefaultProps = {
     hasClear: true,
     disabled: false,
     controlSize: 'm',
-    fillEmptyValues: false,
+    fillPartialInterval: false,
 };
 
 export class Datepicker extends React.PureComponent {
@@ -67,7 +67,7 @@ export class Datepicker extends React.PureComponent {
         popupClassName: PropTypes.string,
         required: PropTypes.bool,
         hasValidationError: PropTypes.bool,
-        fillEmptyValues: PropTypes.bool,
+        fillPartialInterval: PropTypes.bool,
     };
 
     static defaultProps = datepickerDefaultProps;
@@ -416,7 +416,7 @@ export class Datepicker extends React.PureComponent {
     };
 
     onUpdate = () => {
-        const {allowNullableValues, onError, fillEmptyValues} = this.props;
+        const {allowNullableValues, onError, fillPartialInterval} = this.props;
         const {min, max} = this.state;
 
         if (this.isInvalidState()) {
@@ -452,7 +452,7 @@ export class Datepicker extends React.PureComponent {
 
         [from, to] = resolveDates({from, to});
 
-        if (fillEmptyValues && from && !to) {
+        if (fillPartialInterval && from && !to) {
             // 'to' will not be empty for correct work of the selector on the dashboard
             to = fillEmptyToDate(from);
         }
