@@ -30,17 +30,11 @@ export const getLabels = ({
     const title = controlData.title;
     const {showTitle, showInnerTitle, innerTitle, required} = controlData.source;
 
-    let label = '';
+    const label = showTitle ? getRequiredLabel({title, required}) : '';
     let innerLabel = '';
-    if (showTitle) {
-        // if showing title than don't add possible asterisk to innerLabel
-        label = getRequiredLabel({title, required});
-        innerLabel = showInnerTitle ? innerTitle || '' : '';
-    } else {
-        // if not showing title that trying to add asterisk to innerLabel
-        label = '';
-        innerLabel =
-            showInnerTitle && innerTitle ? getRequiredLabel({title: innerTitle, required}) : '';
+    if (showInnerTitle && innerTitle) {
+        // if title isn't shown than trying to add asterisk to innerLabel
+        innerLabel = showTitle ? innerTitle : getRequiredLabel({title: innerTitle, required});
     }
 
     return {label, innerLabel};
