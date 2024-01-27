@@ -7,12 +7,12 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
 import {EntryScope} from 'shared';
+import {WorkbookWithPermissions} from 'shared/schema';
 import {AppDispatch} from 'ui/store';
 
 import {getWorkbookEntries, resetWorkbookEntries} from '../../store/actions';
 import {
     selectNextPageToken,
-    selectWorkbook,
     selectWorkbookEntriesError,
     selectWorkbookEntriesIsLoading,
     selectWorkbookItems,
@@ -30,10 +30,10 @@ type Props = {
     scope?: EntryScope;
     filters: WorkbookEntriesFilters;
     workbookId: string;
+    workbook: WorkbookWithPermissions | null;
 };
 
-export const WorkbookContent = React.memo<Props>(({workbookId, filters, scope}) => {
-    const workbook = useSelector(selectWorkbook);
+export const WorkbookContent = React.memo<Props>(({workbookId, workbook, filters, scope}) => {
     const entries = useSelector(selectWorkbookItems);
     const isEntriesLoading = useSelector(selectWorkbookEntriesIsLoading);
     const workbookEntriesError = useSelector(selectWorkbookEntriesError);

@@ -3,6 +3,7 @@ import React from 'react';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {useDispatch, useSelector} from 'react-redux';
 import {EntryScope} from 'shared';
+import {WorkbookWithPermissions} from 'shared/schema';
 import {AppDispatch} from 'ui/store';
 
 import {
@@ -10,11 +11,7 @@ import {
     getWorkbookEntries,
     resetWorkbookEntries,
 } from '../../store/actions';
-import {
-    selectWorkbook,
-    selectWorkbookEntriesIsLoading,
-    selectWorkbookItems,
-} from '../../store/selectors';
+import {selectWorkbookEntriesIsLoading, selectWorkbookItems} from '../../store/selectors';
 import {WorkbookEntriesFilters} from '../../types';
 import {EmptyWorkbookContainer} from '../EmptyWorkbook/EmptyWorkbookContainer';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
@@ -24,16 +21,16 @@ import './WorkbookContent.scss';
 type Props = {
     filters: WorkbookEntriesFilters;
     workbookId: string;
+    workbook: WorkbookWithPermissions | null;
 };
 
 const PAGE_SIZE_MAIN_TAB = 10;
 
-export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId}) => {
+export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, workbook}) => {
     const [mapTokens, setMapTokens] = React.useState<Record<string, string>>({});
     const [mapErrors, setMapErrors] = React.useState<Record<string, boolean>>({});
     const [isLoading, setIsLoading] = React.useState(false);
 
-    const workbook = useSelector(selectWorkbook);
     const dispatch = useDispatch<AppDispatch>();
     const entries = useSelector(selectWorkbookItems);
     const isEntriesLoading = useSelector(selectWorkbookEntriesIsLoading);
@@ -60,10 +57,10 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId}) 
                     }),
                 );
 
+                const errors: Record<string, boolean> = {};
+
                 if (data) {
                     const [dataDashes, dataWidgets, dataDatasets, dataConnections] = data;
-
-                    const errors: Record<string, boolean> = {};
 
                     if (dataDashes === null) {
                         errors[EntryScope.Dash] = true;
@@ -81,8 +78,6 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId}) 
                         errors[EntryScope.Connection] = true;
                     }
 
-                    setMapErrors(errors);
-
                     const tokensMap: Record<string, string> = {};
 
                     tokensMap[EntryScope.Dash] = dataDashes?.nextPageToken || '';
@@ -91,7 +86,18 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId}) 
                     tokensMap[EntryScope.Connection] = dataConnections?.nextPageToken || '';
 
                     setMapTokens(tokensMap);
+                } else {
+                    [
+                        EntryScope.Dash,
+                        EntryScope.Dataset,
+                        EntryScope.Widget,
+                        EntryScope.Connection,
+                    ].forEach((scope) => {
+                        errors[scope] = true;
+                    });
                 }
+
+                setMapErrors(errors);
 
                 setIsLoading(false);
             }
@@ -131,14 +137,16 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId}) 
                     pageSize: PAGE_SIZE_MAIN_TAB,
                 }),
             ).then((data) => {
-                setMapErrors({
-                    ...mapErrors,
-                    [entryScope]: false,
-                });
-                setMapTokens({
-                    ...mapTokens,
-                    [entryScope]: data?.nextPageToken || '',
-                });
+                if (data) {
+                    setMapErrors({
+                        ...mapErrors,
+                        [entryScope]: false,
+                    });
+                    setMapTokens({
+                        ...mapTokens,
+                        [entryScope]: data?.nextPageToken || '',
+                    });
+                }
             });
         },
         [dispatch, workbookId, filters, mapErrors, mapTokens],
@@ -157,7 +165,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId}) 
         return <SmartLoader size="l" />;
     }
 
-    if (!workbook || entries.length === 0) {
+    if (!workbook) {
         return <EmptyWorkbookContainer />;
     }
 

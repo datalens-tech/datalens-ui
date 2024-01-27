@@ -199,12 +199,17 @@ export const WorkbookPage = () => {
                         </div>
                         <div className={b('content')}>
                             {isMainTab ? (
-                                <WorkbookMainTabContent filters={filters} workbookId={workbookId} />
+                                <WorkbookMainTabContent
+                                    workbook={workbook}
+                                    filters={filters}
+                                    workbookId={workbookId}
+                                />
                             ) : (
                                 <WorkbookContent
                                     filters={filters}
                                     scope={scope}
                                     workbookId={workbookId}
+                                    workbook={workbook}
                                 />
                             )}
                         </div>
