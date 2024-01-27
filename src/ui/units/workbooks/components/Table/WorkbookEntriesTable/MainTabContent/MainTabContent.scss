@@ -36,10 +36,6 @@
         width: 145px;
     }
 
-    &__visibility-btn {
-        cursor: pointer;
-    }
-
     &__content {
         margin: auto 0;
     }
@@ -48,6 +44,7 @@
         display: flex;
         font-style: normal;
         font-weight: 500;
+        cursor: pointer;
     }
 
     &__title-text {

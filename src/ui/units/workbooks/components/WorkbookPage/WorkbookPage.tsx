@@ -14,13 +14,12 @@ import {I18N} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
 import {EntryScope} from 'shared';
-import {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import {Utils} from 'ui';
+import {AppDispatch} from 'ui/store';
 
 import {registry} from '../../../../registry';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import {
-    WorkbooksDispatch,
     changeFilters,
     getAllWorkbookEntriesSeparately,
     getWorkbook,
@@ -64,11 +63,11 @@ export const WorkbookPage = () => {
         return queryTab ? (queryTab as TabId) : undefined;
     }, [search]);
 
-    const dispatch = useDispatch<WorkbooksDispatch>();
-    const dialogDispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
+
     const collectionId = useSelector(selectCollectionId);
     const breadcrumbs = useSelector(selectBreadcrumbs);
-    const workbook: WorkbookWithPermissions | null = useSelector(selectWorkbook);
+    const workbook = useSelector(selectWorkbook);
     const pageError = useSelector(selectPageError);
     const breadcrumbsError = useSelector(selectBreadcrumbsError);
     const isWorkbookInfoLoading = useSelector(selectWorkbookInfoIsLoading);
@@ -104,23 +103,27 @@ export const WorkbookPage = () => {
         }
     }, [nextPageToken, dispatch, workbookId, filters, scope]);
 
-    const loadMoreEntriesByScope = (entryScope: EntryScope) => {
-        if (mapTokens[entryScope]) {
-            dispatch(
-                getWorkbookEntries({
-                    workbookId,
-                    filters,
-                    scope: entryScope,
-                    nextPageToken: mapTokens[entryScope],
-                }),
-            ).then((data) => {
-                setMapTokens({
-                    ...mapTokens,
-                    [entryScope]: data?.nextPageToken || '',
+    const loadMoreEntriesByScope = React.useCallback(
+        (entryScope: EntryScope) => {
+            if (mapTokens[entryScope]) {
+                dispatch(
+                    getWorkbookEntries({
+                        workbookId,
+                        filters,
+                        scope: entryScope,
+                        nextPageToken: mapTokens[entryScope],
+                        pageSize: PAGE_SIZE_MAIN_TAB,
+                    }),
+                ).then((data) => {
+                    setMapTokens({
+                        ...mapTokens,
+                        [entryScope]: data?.nextPageToken || '',
+                    });
                 });
-            });
-        }
-    };
+            }
+        },
+        [dispatch, filters, mapTokens, workbookId],
+    );
 
     const retryLoadEntries = React.useCallback(() => {
         dispatch(
@@ -319,7 +322,7 @@ export const WorkbookPage = () => {
                                     <div>
                                         <Button
                                             onClick={() => {
-                                                dialogDispatch(
+                                                dispatch(
                                                     openDialog({
                                                         id: DIALOG_EDIT_WORKBOOK,
                                                         props: {
@@ -330,7 +333,7 @@ export const WorkbookPage = () => {
                                                                 workbook?.description ?? '',
                                                             onApply: refreshWorkbookInfo,
                                                             onClose: () => {
-                                                                dialogDispatch(closeDialog());
+                                                                dispatch(closeDialog());
                                                             },
                                                         },
                                                     }),

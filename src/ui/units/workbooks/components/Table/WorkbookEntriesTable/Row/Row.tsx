@@ -49,7 +49,7 @@ const Row: React.FC<RowProps> = ({
     onDuplicateEntry,
     onCopyEntry,
 }) => {
-    const [isFavoriteBtn, setIsFavoriteBtn] = React.useState(false);
+    const [isVisibleFavorite, setIsVisibleFavorite] = React.useState(false);
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
     const {getLoginById} = registry.common.functions.getAll();
 
@@ -79,7 +79,7 @@ const Row: React.FC<RowProps> = ({
     const getFavoriteIcon = () => {
         if (item.isFavorite) return <Icon className={b('icon-star-fill')} data={StarFill} />;
 
-        if (isFavoriteBtn) {
+        if (isVisibleFavorite) {
             return <Icon className={b('icon-star-stroke')} data={Star} />;
         }
 
@@ -92,8 +92,8 @@ const Row: React.FC<RowProps> = ({
             className={b()}
             style={defaultRowStyle}
             data-qa={WorkbookPage.ListItem}
-            onMouseEnter={() => setIsFavoriteBtn(true)}
-            onMouseLeave={() => setIsFavoriteBtn(false)}
+            onMouseEnter={() => setIsVisibleFavorite(true)}
+            onMouseLeave={() => setIsVisibleFavorite(false)}
         >
             <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
                 <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>

@@ -99,10 +99,9 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
         <div className={b()}>
             <div className={b('header', {closed: !isOpen})}>
                 <div className={b('content')}>
-                    <div className={b('title')}>
-                        <div className={b('visibility-btn')} onClick={() => setIsOpen(!isOpen)}>
-                            {isOpen ? <ChevronDown /> : <ChevronUp />}
-                        </div>
+                    <div className={b('title')} onClick={() => setIsOpen(!isOpen)}>
+                        {isOpen ? <ChevronDown /> : <ChevronUp />}
+
                         <div className={b('title-text')}>{title}</div>
                     </div>
                 </div>

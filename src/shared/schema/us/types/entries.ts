@@ -157,8 +157,6 @@ export interface CopyWorkbookEntryArgs {
 
 export type RenameEntryResponse = EntryFields[];
 
-export type ChangeFavoriteEntryResponse = EntryFields[];
-
 export interface RenameEntryArgs {
     entryId: string;
     name: string;
