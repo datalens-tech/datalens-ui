@@ -21,7 +21,7 @@ import {WorkbookEntriesFilters} from '../../types';
 import {EmptyWorkbookContainer} from '../EmptyWorkbook/EmptyWorkbookContainer';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
 
-import './WorkbookContent.scss';
+import './WorkbookTabContent.scss';
 
 const b = block('dl-workbook-content');
 const i18n = I18n.keyset('new-workbooks');
@@ -33,7 +33,7 @@ type Props = {
     workbook: WorkbookWithPermissions | null;
 };
 
-export const WorkbookContent = React.memo<Props>(({workbookId, workbook, filters, scope}) => {
+export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filters, scope}) => {
     const entries = useSelector(selectWorkbookItems);
     const isEntriesLoading = useSelector(selectWorkbookEntriesIsLoading);
     const workbookEntriesError = useSelector(selectWorkbookEntriesError);
@@ -131,4 +131,4 @@ export const WorkbookContent = React.memo<Props>(({workbookId, workbook, filters
     );
 });
 
-WorkbookContent.displayName = 'WorkbookContent';
+WorkbookTabContent.displayName = 'WorkbookTabContent';

@@ -16,8 +16,6 @@ import {WorkbookEntriesFilters} from '../../types';
 import {EmptyWorkbookContainer} from '../EmptyWorkbook/EmptyWorkbookContainer';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
 
-import './WorkbookContent.scss';
-
 type Props = {
     filters: WorkbookEntriesFilters;
     workbookId: string;

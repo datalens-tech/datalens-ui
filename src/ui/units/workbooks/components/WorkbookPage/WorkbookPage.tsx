@@ -37,9 +37,9 @@ import {
 } from '../../store/selectors';
 import {CreateEntryDialog} from '../CreateEntryDialog/CreateEntryDialog';
 import {WorkbookActions} from '../WorkbookActions/WorkbookActions';
-import {WorkbookContent} from '../WorkbookContent/WorkbookContent';
-import {WorkbookMainTabContent} from '../WorkbookContent/WorkbookMainTabContent';
 import {WorkbookFilters} from '../WorkbookFilters/WorkbookFilters';
+import {WorkbookMainTabContent} from '../WorkbookMainTabContent/WorkbookMainTabContent';
+import {WorkbookTabContent} from '../WorkbookTabContent/WorkbookTabContent';
 import {WorkbookTabs} from '../WorkbookTabs/WorkbookTabs';
 import {TAB_ALL} from '../WorkbookTabs/constants';
 import {TabId} from '../WorkbookTabs/types';
@@ -205,7 +205,7 @@ export const WorkbookPage = () => {
                                     workbookId={workbookId}
                                 />
                             ) : (
-                                <WorkbookContent
+                                <WorkbookTabContent
                                     filters={filters}
                                     scope={scope}
                                     workbookId={workbookId}
