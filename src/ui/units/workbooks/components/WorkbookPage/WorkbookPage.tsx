@@ -13,7 +13,6 @@ import {ViewError} from 'components/ViewError/ViewError';
 import {I18N} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
-import {EntryScope} from 'shared';
 import {Utils} from 'ui';
 import {AppDispatch} from 'ui/store';
 
@@ -21,7 +20,6 @@ import {registry} from '../../../../registry';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import {
     changeFilters,
-    getAllWorkbookEntriesSeparately,
     getWorkbook,
     getWorkbookBreadcrumbs,
     getWorkbookEntries,
@@ -32,7 +30,6 @@ import {
     selectBreadcrumbs,
     selectBreadcrumbsError,
     selectCollectionId,
-    selectNextPageToken,
     selectPageError,
     selectWorkbook,
     selectWorkbookFilters,
@@ -41,6 +38,7 @@ import {
 import {CreateEntryDialog} from '../CreateEntryDialog/CreateEntryDialog';
 import {WorkbookActions} from '../WorkbookActions/WorkbookActions';
 import {WorkbookContent} from '../WorkbookContent/WorkbookContent';
+import {WorkbookMainTabContent} from '../WorkbookContent/WorkbookMainTabContent';
 import {WorkbookFilters} from '../WorkbookFilters/WorkbookFilters';
 import {WorkbookTabs} from '../WorkbookTabs/WorkbookTabs';
 import {TAB_ALL} from '../WorkbookTabs/constants';
@@ -51,8 +49,6 @@ import './WorkbookPage.scss';
 const b = block('dl-workbook-page');
 
 const i18n = I18N.keyset('new-workbooks');
-
-const PAGE_SIZE_MAIN_TAB = 10;
 
 export const WorkbookPage = () => {
     const {search} = useLocation();
@@ -72,11 +68,7 @@ export const WorkbookPage = () => {
     const breadcrumbsError = useSelector(selectBreadcrumbsError);
     const isWorkbookInfoLoading = useSelector(selectWorkbookInfoIsLoading);
 
-    const nextPageToken = useSelector(selectNextPageToken);
     const filters = useSelector(selectWorkbookFilters);
-    const [mapTokens, setMapTokens] = React.useState<Record<string, string>>({});
-    const [mapErrors, setMapErrors] = React.useState<Record<string, boolean>>({});
-    const [isLoadingMainTab, setIsLoadingMainTab] = React.useState(false);
 
     const isMainTab = activeTab === TAB_ALL;
     const scope = isMainTab ? undefined : activeTab;
@@ -89,87 +81,6 @@ export const WorkbookPage = () => {
     const refreshWorkbookInfo = React.useCallback(() => {
         dispatch(getWorkbook({workbookId}));
     }, [dispatch, workbookId]);
-
-    const loadMoreEntries = React.useCallback(() => {
-        if (nextPageToken) {
-            dispatch(
-                getWorkbookEntries({
-                    workbookId,
-                    filters,
-                    scope,
-                    nextPageToken,
-                }),
-            );
-        }
-    }, [nextPageToken, dispatch, workbookId, filters, scope]);
-
-    const loadMoreEntriesByScope = React.useCallback(
-        (entryScope: EntryScope) => {
-            if (mapTokens[entryScope]) {
-                dispatch(
-                    getWorkbookEntries({
-                        workbookId,
-                        filters,
-                        scope: entryScope,
-                        nextPageToken: mapTokens[entryScope],
-                        pageSize: PAGE_SIZE_MAIN_TAB,
-                    }),
-                ).then((data) => {
-                    setMapTokens({
-                        ...mapTokens,
-                        [entryScope]: data?.nextPageToken || '',
-                    });
-                });
-            }
-        },
-        [dispatch, filters, mapTokens, workbookId],
-    );
-
-    const retryLoadEntries = React.useCallback(() => {
-        dispatch(
-            getWorkbookEntries({
-                workbookId,
-                filters,
-                scope,
-                nextPageToken,
-            }),
-        );
-    }, [dispatch, workbookId, filters, scope, nextPageToken]);
-
-    const retryLoadEntriesByScope = React.useCallback(
-        (entryScope: EntryScope) => {
-            dispatch(
-                getWorkbookEntries({
-                    workbookId,
-                    filters,
-                    scope: entryScope,
-                    nextPageToken: mapTokens[entryScope],
-                    pageSize: PAGE_SIZE_MAIN_TAB,
-                }),
-            ).then((data) => {
-                setMapErrors({
-                    ...mapErrors,
-                    [entryScope]: false,
-                });
-                setMapTokens({
-                    ...mapTokens,
-                    [entryScope]: data?.nextPageToken || '',
-                });
-            });
-        },
-        [dispatch, workbookId, filters, mapErrors, mapTokens],
-    );
-
-    const refreshEntries = React.useCallback(
-        (entryScope?: EntryScope) => {
-            if (!isMainTab) {
-                dispatch(resetWorkbookEntries());
-            }
-
-            dispatch(getWorkbookEntries({workbookId, filters, scope: entryScope || scope}));
-        },
-        [isMainTab, dispatch, workbookId, filters, scope],
-    );
 
     const handleChangeFilters = React.useCallback(
         (newFilters) => {
@@ -191,73 +102,6 @@ export const WorkbookPage = () => {
             dispatch(getWorkbookBreadcrumbs({collectionId}));
         }
     }, [dispatch, collectionId]);
-
-    React.useEffect(() => {
-        dispatch(resetWorkbookEntries());
-
-        // Get entries only if active tab selected
-        if (activeTab) {
-            (async () => {
-                if (isMainTab) {
-                    if (workbook) {
-                        const scopesForRequest = [EntryScope.Dash, EntryScope.Widget];
-
-                        if (workbook.permissions.view) {
-                            scopesForRequest.push(EntryScope.Dataset, EntryScope.Connection);
-                        }
-
-                        setIsLoadingMainTab(true);
-
-                        const data = await dispatch(
-                            getAllWorkbookEntriesSeparately({
-                                workbookId,
-                                filters,
-                                scopes: scopesForRequest,
-                                pageSize: PAGE_SIZE_MAIN_TAB,
-                            }),
-                        );
-
-                        if (data) {
-                            const [dataDashes, dataWidgets, dataDatasets, dataConnections] = data;
-
-                            const errors: Record<string, boolean> = {};
-
-                            if (dataDashes === null) {
-                                errors[EntryScope.Dash] = true;
-                            }
-
-                            if (dataDatasets === null) {
-                                errors[EntryScope.Dataset] = true;
-                            }
-
-                            if (dataWidgets === null) {
-                                errors[EntryScope.Widget] = true;
-                            }
-
-                            if (dataConnections === null) {
-                                errors[EntryScope.Connection] = true;
-                            }
-
-                            setMapErrors(errors);
-
-                            const tokensMap: Record<string, string> = {};
-
-                            tokensMap[EntryScope.Dash] = dataDashes?.nextPageToken || '';
-                            tokensMap[EntryScope.Dataset] = dataDatasets?.nextPageToken || '';
-                            tokensMap[EntryScope.Widget] = dataWidgets?.nextPageToken || '';
-                            tokensMap[EntryScope.Connection] = dataConnections?.nextPageToken || '';
-
-                            setMapTokens(tokensMap);
-                        }
-
-                        setIsLoadingMainTab(false);
-                    }
-                } else {
-                    await dispatch(getWorkbookEntries({workbookId, filters, scope}));
-                }
-            })();
-        }
-    }, [activeTab, dispatch, filters, isMainTab, scope, workbook, workbookId]);
 
     if (
         pageError ||
@@ -354,17 +198,15 @@ export const WorkbookPage = () => {
                             {workbook && <WorkbookTabs workbook={workbook} />}
                         </div>
                         <div className={b('content')}>
-                            <WorkbookContent
-                                loadMoreEntries={loadMoreEntries}
-                                loadMoreEntriesByScope={loadMoreEntriesByScope}
-                                retryLoadEntries={retryLoadEntries}
-                                retryLoadEntriesByScope={retryLoadEntriesByScope}
-                                refreshEntries={refreshEntries}
-                                isLoadingMainTab={isLoadingMainTab}
-                                scope={scope}
-                                mapTokens={mapTokens}
-                                mapErrors={mapErrors}
-                            />
+                            {isMainTab ? (
+                                <WorkbookMainTabContent filters={filters} workbookId={workbookId} />
+                            ) : (
+                                <WorkbookContent
+                                    filters={filters}
+                                    scope={scope}
+                                    workbookId={workbookId}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
