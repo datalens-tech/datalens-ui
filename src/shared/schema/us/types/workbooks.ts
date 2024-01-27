@@ -65,6 +65,7 @@ export type GetWorkbookEntriesArgs = {
 };
 
 export type GetWorkbookEntriesResponse = {
+    filter(arg0: (entry: {entryId: string}) => boolean): unknown;
     entries: GetEntryResponse[]; // TODO: Take into account permishins
     nextPageToken?: string;
 };

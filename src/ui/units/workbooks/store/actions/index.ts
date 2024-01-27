@@ -30,6 +30,7 @@ import {
     DELETE_ENTRY_INLINE,
     DELETE_ENTRY_LOADING,
     DELETE_ENTRY_SUCCESS,
+    GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS,
     GET_WORKBOOK_BREADCRUMBS_FAILED,
     GET_WORKBOOK_BREADCRUMBS_LOADING,
     GET_WORKBOOK_BREADCRUMBS_SUCCESS,
@@ -199,6 +200,93 @@ export const getWorkbookEntries = ({
             });
             dispatch({
                 type: GET_WORKBOOK_ENTRIES_SUCCESS,
+                data,
+            });
+
+            return data;
+        } catch (error) {
+            if (getSdk().isCancel(error)) {
+                return null;
+            }
+            logger.logError('workbooks/getWorkbookEntries failed', error);
+            dispatch(
+                showToast({
+                    title: error.message,
+                    error,
+                }),
+            );
+            dispatch({
+                type: GET_WORKBOOK_ENTRIES_FAILED,
+                error,
+            });
+
+            return null;
+        }
+    };
+};
+
+type GetAllWorkbookEntriesSeparatelyLoadingAction = {
+    type: typeof GET_WORKBOOK_ENTRIES_LOADING;
+};
+type GetAllWorkbookEntriesSeparatelySuccessAction = {
+    type: typeof GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS;
+    data: GetWorkbookEntriesResponse[];
+};
+type GetAllWorkbookEntriesSeparatelyFailedAction = {
+    type: typeof GET_WORKBOOK_ENTRIES_FAILED;
+    error: Error;
+};
+type GetAllWorkbookEntriesSeparatelyAction =
+    | GetAllWorkbookEntriesSeparatelyLoadingAction
+    | GetAllWorkbookEntriesSeparatelySuccessAction
+    | GetAllWorkbookEntriesSeparatelyFailedAction;
+
+export const getAllWorkbookEntriesSeparately = ({
+    workbookId,
+    filters,
+    scopes,
+    nextPageToken,
+    pageSize = 200,
+}: {
+    workbookId: string;
+    filters: WorkbookEntriesFilters;
+    scopes: EntryScope[];
+    nextPageToken?: string;
+    pageSize?: number;
+}) => {
+    return async (dispatch: WorkbooksDispatch) => {
+        dispatch({
+            type: GET_WORKBOOK_ENTRIES_LOADING,
+        });
+
+        const args: GetWorkbookEntriesArgs = {
+            workbookId,
+            pageSize,
+            page: Number(nextPageToken || 0),
+            orderBy: {
+                field: filters.orderField,
+                direction: filters.orderDirection,
+            },
+        };
+
+        if (filters.filterString) {
+            args.filters = {
+                name: filters.filterString,
+            };
+        }
+
+        try {
+            const promises = scopes.map((scope) => {
+                return getSdk().us.getWorkbookEntries({
+                    ...args,
+                    scope,
+                });
+            });
+
+            const data = await Promise.all(promises);
+
+            dispatch({
+                type: GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS,
                 data,
             });
 
@@ -580,6 +668,7 @@ export type WorkbooksAction =
     | GetWorkbookAction
     | GetWorkbookBreadcrumbsAction
     | GetWorkbookEntriesAction
+    | GetAllWorkbookEntriesSeparatelyAction
     | ResetWorkbookEntriesAction
     | SetCreateWorkbookEntryTypeAction
     | ResetCreateWorkbookEntryTypeAction

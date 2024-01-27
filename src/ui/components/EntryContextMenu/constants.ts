@@ -1,5 +1,7 @@
 import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin} from '@gravity-ui/icons';
+import {ConnectorType} from 'shared/constants/connections';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
+import {S3_BASED_CONNECTORS} from 'ui/constants/connections';
 
 import {EntryScope, Feature, PLACE, isUsersFolder} from '../../../shared';
 import {ALL_SCOPES, URL_QUERY} from '../../constants';
@@ -155,16 +157,26 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
     },
     {
         ...CONTEXT_MENU_COPY,
-        scopes: [EntryScope.Dataset],
+        scopes: [EntryScope.Connection],
         permissions: {admin: true, edit: true, read: false, execute: false},
         isStrictPermissions: true, // strict check with disallow when there are no permissions object
         isVisible(args) {
-            if (args.entry?.workbookId) {
+            const entry = args.entry;
+            const isS3BasedConnector = S3_BASED_CONNECTORS.includes(entry?.type as ConnectorType);
+            const isFileConnection = entry?.scope === EntryScope.Connection && isS3BasedConnector;
+
+            if (!args.entry?.workbookId || isFileConnection) {
                 return false;
             }
 
             return CONTEXT_MENU_COPY.isVisible(args);
         },
+    },
+    {
+        ...CONTEXT_MENU_COPY,
+        scopes: [EntryScope.Dataset],
+        permissions: {admin: true, edit: true, read: false, execute: false},
+        isStrictPermissions: true, // strict check with disallow when there are no permissions object
     },
     getContextMenuAccess(),
     {

@@ -26,6 +26,7 @@ import {
     DELETE_ENTRY_INLINE,
     DELETE_ENTRY_LOADING,
     DELETE_ENTRY_SUCCESS,
+    GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS,
     GET_WORKBOOK_BREADCRUMBS_FAILED,
     GET_WORKBOOK_BREADCRUMBS_LOADING,
     GET_WORKBOOK_BREADCRUMBS_SUCCESS,
@@ -228,6 +229,35 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
                 items: [...state.items, ...newEntries],
             };
         }
+
+        case GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS: {
+            const loadedIds = new Set(
+                state.items.map((item) => {
+                    return item.entryId;
+                }),
+            );
+
+            const newEntries: GetEntryResponse[] = [];
+
+            action.data.forEach((workbookEntries) => {
+                return workbookEntries.entries.forEach((entry) => {
+                    if (!loadedIds.has(entry.entryId)) {
+                        newEntries.push(entry);
+                    }
+                });
+            });
+
+            return {
+                ...state,
+                getWorkbookEntries: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+                items: [...state.items, ...newEntries],
+            };
+        }
+
         case GET_WORKBOOK_ENTRIES_FAILED: {
             return {
                 ...state,

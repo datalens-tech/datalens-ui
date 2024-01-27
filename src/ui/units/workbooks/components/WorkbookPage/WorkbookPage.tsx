@@ -22,6 +22,7 @@ import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import {
     WorkbooksDispatch,
     changeFilters,
+    getAllWorkbookEntriesSeparately,
     getWorkbook,
     getWorkbookBreadcrumbs,
     getWorkbookEntries,
@@ -139,7 +140,7 @@ export const WorkbookPage = () => {
                     workbookId,
                     filters,
                     scope: entryScope,
-                    nextPageToken,
+                    nextPageToken: mapTokens[entryScope],
                     pageSize: PAGE_SIZE_MAIN_TAB,
                 }),
             ).then((data) => {
@@ -153,7 +154,7 @@ export const WorkbookPage = () => {
                 });
             });
         },
-        [dispatch, workbookId, filters, nextPageToken, mapErrors, mapTokens],
+        [dispatch, workbookId, filters, mapErrors, mapTokens],
     );
 
     const refreshEntries = React.useCallback(
@@ -196,91 +197,55 @@ export const WorkbookPage = () => {
             (async () => {
                 if (isMainTab) {
                     if (workbook) {
-                        const promises = [];
-
-                        promises.push(
-                            dispatch(
-                                getWorkbookEntries({
-                                    workbookId,
-                                    filters,
-                                    scope: EntryScope.Dash,
-                                    ignoreConcurrentId: true,
-                                    pageSize: PAGE_SIZE_MAIN_TAB,
-                                }),
-                            ),
-                        );
+                        const scopesForRequest = [EntryScope.Dash, EntryScope.Widget];
 
                         if (workbook.permissions.view) {
-                            promises.push(
-                                dispatch(
-                                    getWorkbookEntries({
-                                        workbookId,
-                                        filters,
-                                        scope: EntryScope.Dataset,
-                                        ignoreConcurrentId: true,
-                                        pageSize: PAGE_SIZE_MAIN_TAB,
-                                    }),
-                                ),
-                            );
-
-                            promises.push(
-                                dispatch(
-                                    getWorkbookEntries({
-                                        workbookId,
-                                        filters,
-                                        scope: EntryScope.Connection,
-                                        ignoreConcurrentId: true,
-                                        pageSize: PAGE_SIZE_MAIN_TAB,
-                                    }),
-                                ),
-                            );
+                            scopesForRequest.push(EntryScope.Dataset, EntryScope.Connection);
                         }
-
-                        promises.push(
-                            dispatch(
-                                getWorkbookEntries({
-                                    workbookId,
-                                    filters,
-                                    scope: EntryScope.Widget,
-                                    ignoreConcurrentId: true,
-                                    pageSize: PAGE_SIZE_MAIN_TAB,
-                                }),
-                            ),
-                        );
 
                         setIsLoadingMainTab(true);
 
-                        const [dataDashes, dataDatasets, dataConnections, dataWidgets] =
-                            await Promise.all(promises);
+                        const data = await dispatch(
+                            getAllWorkbookEntriesSeparately({
+                                workbookId,
+                                filters,
+                                scopes: scopesForRequest,
+                                pageSize: PAGE_SIZE_MAIN_TAB,
+                            }),
+                        );
 
-                        const errors: Record<string, boolean> = {};
+                        if (data) {
+                            const [dataDashes, dataWidgets, dataDatasets, dataConnections] = data;
 
-                        if (dataDashes === null) {
-                            errors[EntryScope.Dash] = true;
+                            const errors: Record<string, boolean> = {};
+
+                            if (dataDashes === null) {
+                                errors[EntryScope.Dash] = true;
+                            }
+
+                            if (dataDatasets === null) {
+                                errors[EntryScope.Dataset] = true;
+                            }
+
+                            if (dataWidgets === null) {
+                                errors[EntryScope.Widget] = true;
+                            }
+
+                            if (dataConnections === null) {
+                                errors[EntryScope.Connection] = true;
+                            }
+
+                            setMapErrors(errors);
+
+                            const tokensMap: Record<string, string> = {};
+
+                            tokensMap[EntryScope.Dash] = dataDashes?.nextPageToken || '';
+                            tokensMap[EntryScope.Dataset] = dataDatasets?.nextPageToken || '';
+                            tokensMap[EntryScope.Widget] = dataWidgets?.nextPageToken || '';
+                            tokensMap[EntryScope.Connection] = dataConnections?.nextPageToken || '';
+
+                            setMapTokens(tokensMap);
                         }
-
-                        if (dataDatasets === null) {
-                            errors[EntryScope.Dataset] = true;
-                        }
-
-                        if (dataWidgets === null) {
-                            errors[EntryScope.Widget] = true;
-                        }
-
-                        if (dataConnections === null) {
-                            errors[EntryScope.Connection] = true;
-                        }
-
-                        setMapErrors(errors);
-
-                        const tokensMap: Record<string, string> = {};
-
-                        tokensMap[EntryScope.Dash] = dataDashes?.nextPageToken || '';
-                        tokensMap[EntryScope.Dataset] = dataDatasets?.nextPageToken || '';
-                        tokensMap[EntryScope.Widget] = dataWidgets?.nextPageToken || '';
-                        tokensMap[EntryScope.Connection] = dataConnections?.nextPageToken || '';
-
-                        setMapTokens(tokensMap);
 
                         setIsLoadingMainTab(false);
                     }
