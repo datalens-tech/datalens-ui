@@ -153,10 +153,13 @@ const Row: React.FC<RowProps> = ({
     );
 };
 
-const EmptyRow = () => {
+const EmptyRow = ({label}: {label?: React.ReactNode}) => {
     return (
         <div className={b('empty-row')} style={defaultRowStyle}>
-            <div className={b('empty-cell')}>{i18n('label_no-data')}</div>
+            <div className={b('empty-cell')}>{label || i18n('label_no-data')}</div>
+
+            <div className={b('empty-cell')} />
+            <div className={b('empty-cell')} />
             <div className={b('empty-cell')} />
             <div className={b('empty-cell')} />
         </div>

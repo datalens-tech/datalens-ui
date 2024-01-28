@@ -9,6 +9,7 @@ import {CreateEntryActionType} from 'ui/units/workbooks/constants';
 import {setCreateWorkbookEntryType} from 'ui/units/workbooks/store/actions';
 
 import {ChunkGroup} from '../ChunkGroup/ChunkGroup';
+import {EmptyRow} from '../Row/Row';
 import {WorkbookEntriesTableProps} from '../types';
 import {ChunkItem} from '../useChunkedEntries';
 
@@ -70,7 +71,8 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
             );
         }
 
-        if (isOpen) return <div className={b('no-objects')}>{i18n('no_objects')}</div>;
+        if (isOpen)
+            return <EmptyRow label={<div className={b('no-objects')}>{i18n('no_objects')}</div>} />;
 
         return null;
     };
