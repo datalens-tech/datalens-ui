@@ -38,7 +38,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
 
         (async () => {
             if (workbook) {
-                const scopesForRequest = [EntryScope.Dash + 1, EntryScope.Widget];
+                const scopesForRequest = [EntryScope.Dash, EntryScope.Widget];
 
                 if (workbook.permissions.view) {
                     scopesForRequest.push(EntryScope.Dataset, EntryScope.Connection);
