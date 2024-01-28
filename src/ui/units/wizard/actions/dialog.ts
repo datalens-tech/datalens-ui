@@ -40,6 +40,7 @@ import {DIALOG_CHART_SETTINGS} from '../components/Dialogs/Settings/Settings';
 import {PaletteTypes, VISUALIZATION_IDS} from '../constants';
 import {WizardDispatch} from '../reducers';
 import {getChangedPlaceholderSettings} from '../reducers/utils/getPlaceholdersWithMergedSettings';
+import {selectWizardWorkbookId} from '../selectors';
 import {selectParameters} from '../selectors/dataset';
 import {
     selectDashboardParameters,
@@ -441,6 +442,7 @@ export function openWizardDialogFilter({
         const updates = state.wizard.preview.updates;
         const parameters = selectParameters(state);
         const dashboardParameters = selectDashboardParameters(state);
+        const workbookId = selectWizardWorkbookId(state);
 
         const dataset = datasets.find((currDataset) => currDataset.id === filterItem.datasetId);
         const isFieldExist = dataset?.dataset.result_schema.some(
@@ -461,6 +463,7 @@ export function openWizardDialogFilter({
                 openDialogFilter({
                     field: filterItem,
                     datasetId: dataset.id,
+                    workbookId,
                     options: dataset.options,
                     onApply: onDialogFilterApply,
                     onClose: onDialogFilterCancel,

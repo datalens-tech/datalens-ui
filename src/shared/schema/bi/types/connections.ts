@@ -1,6 +1,8 @@
 import {ConnectorType} from '../../../constants';
 import {ConnectionData} from '../../../types';
 
+import {WorkbookId} from './common';
+
 type BICounter = {
     id: string;
     name: string;
@@ -56,7 +58,7 @@ export type GetConnectorsResponse = {
 
 export type GetConnectionResponse = ConnectionData;
 
-export type GetConnectionArgs = BaseArgs & {workbookId: string | null};
+export type GetConnectionArgs = BaseArgs & {workbookId: WorkbookId};
 
 export type CreateConnectionResponse = {
     id: string;
@@ -76,7 +78,7 @@ export type UpdateConnectionArgs = BaseArgs & ConnectionData;
 
 export type VerifyConnectionResponse = {};
 
-export type VerifyConnectionArgs = BaseArgs & ConnectionData;
+export type VerifyConnectionArgs = BaseArgs & ConnectionData & {workbookId: WorkbookId};
 
 export type VerifyConnectionParamsResponse = {};
 
@@ -87,14 +89,14 @@ export type GetConnectionSourcesResponse = {
     freeform_sources: Record<string, string>[];
 };
 
-export type GetConnectionSourcesArgs = BaseArgs & {workbookId: string | null};
+export type GetConnectionSourcesArgs = BaseArgs & {workbookId: WorkbookId};
 
 export type GetConnectionSourceSchemaResponse = {
     raw_schema: Record<string, string>[];
 };
 
 export type GetConnectionSourceSchemaArgs = BaseArgs & {
-    workbookId: string | null;
+    workbookId: WorkbookId;
     source: {
         title: string;
         group: string[];

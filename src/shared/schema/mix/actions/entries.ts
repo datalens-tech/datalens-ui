@@ -39,7 +39,7 @@ export const entriesActions = {
         }
     }),
     getPublicationPreview: createAction<GetPublicationPreviewResponse, GetPublicationPreviewArgs>(
-        async (api, {entryId}) => {
+        async (api, {entryId, workbookId}) => {
             const typedApi = getTypedApi(api);
             const relations = (await typedApi.us.getRelations({
                 entryId,
@@ -49,6 +49,7 @@ export const entriesActions = {
             if (filteredDatasetsIds.length) {
                 const {result: datasets} = await typedApi.bi.checkDatasetsForPublication({
                     datasetsIds: filteredDatasetsIds,
+                    workbookId,
                 });
                 const normalizedDatasets = keyBy(datasets, (dataset) => dataset.dataset_id);
                 return relations.map((entry) => {
@@ -71,11 +72,12 @@ export const entriesActions = {
     switchPublicationStatus: createAction<
         SwitchPublicationStatusResponse,
         MixedSwitchPublicationStatusArgs
-    >(async (api, {entries, mainEntry}) => {
+    >(async (api, {entries, mainEntry, workbookId}) => {
         const typedApi = getTypedApi(api);
         const filteredDatasetsIds = filterDatasetsIdsForCheck(entries);
         if (filteredDatasetsIds.length) {
             const {result: datasets} = await typedApi.bi.checkDatasetsForPublication({
+                workbookId,
                 datasetsIds: filteredDatasetsIds,
             });
             if (datasets.some((datasetEntry) => !datasetEntry.allowed)) {

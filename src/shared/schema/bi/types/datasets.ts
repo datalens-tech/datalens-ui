@@ -1,6 +1,8 @@
 import {Dataset, DatasetField, DatasetFieldCalcMode, DatasetFieldError} from '../../../types';
 import {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
 
+import {WorkbookId} from './common';
+
 type Id = {id: string};
 
 type DatasetId = {datasetId: string};
@@ -51,7 +53,7 @@ export type GetSourceResponse = {
 
 export type GetSourceArgs = {
     connectionId: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     limit?: number;
 };
 
@@ -61,8 +63,7 @@ export type DeleteDatasetArgs = DatasetId;
 
 export type GetDatasetByVersionResponse = Dataset;
 
-// TODO: workbookId is required
-export type GetDatasetByVersionArgs = {version: string} & DatasetId & {workbookId?: string | null};
+export type GetDatasetByVersionArgs = {version: string} & DatasetId & {workbookId: string | null};
 
 export type CheckDatasetsForPublicationResponse = {
     result: {
@@ -74,6 +75,7 @@ export type CheckDatasetsForPublicationResponse = {
 
 export type CheckDatasetsForPublicationArgs = {
     datasetsIds: string[];
+    workbookId: WorkbookId;
 };
 
 export type ValidateDatasetErrorResponse = {
@@ -90,8 +92,7 @@ export type ValidateDatasetResponse = {
 
 export type ValidateDatasetArgs = {
     dataset: Partial<Dataset['dataset']>;
-    // TODO: workbookId is required
-    workbookId?: string | null;
+    workbookId: WorkbookId;
     updates: ValidateDatasetUpdate[];
     version: DatasetVersion;
 } & DatasetId;
@@ -119,6 +120,7 @@ export type GetDataSetFieldsByIdResponse = {
 
 export type GetDataSetFieldsByIdArgs = {
     dataSetId: string;
+    workbookId: WorkbookId;
 };
 
 export type CreateDatasetResponse = Id & DatasetWithOptions;
@@ -151,7 +153,7 @@ export type UpdateDatasetArgs = {
 export type GetPreviewResponse = DistinctResult;
 
 export type GetPreviewArgs = {
-    workbookId: string | null;
+    workbookId: WorkbookId;
     dataset: Dataset['dataset'];
     version: DatasetVersion;
     limit?: number;
@@ -171,6 +173,7 @@ export type ValidateDatasetFormulaResponse = {
 
 export type ValidateDatasetFormulaArgs = {
     dataset: Dataset['dataset'];
+    workbookId: WorkbookId;
     field: DatasetField;
 } & DatasetId;
 
@@ -194,4 +197,4 @@ export type GetDistinctsApiV2Args = Omit<
     ApiV2RequestBody,
     'pivot' | 'order_by' | 'disable_group_by' | 'with_totals' | 'autofill_legend'
 > &
-    DatasetId;
+    DatasetId & {workbookId: WorkbookId};

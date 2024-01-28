@@ -111,10 +111,12 @@ export const prepareWidgetDatasetData = (args: {
 
 export const fetchDatasetFieldsById = async ({
     datasetId,
+    workbookId,
     ctx,
     headers,
 }: {
     datasetId: string;
+    workbookId: string | null;
     ctx: AppContext;
     headers: IncomingHttpHeaders;
 }): Promise<DatasetFieldsDictResponse> => {
@@ -131,6 +133,7 @@ export const fetchDatasetFieldsById = async ({
             authArgs: {iamToken},
             args: {
                 dataSetId: datasetId,
+                workbookId,
             },
         });
 

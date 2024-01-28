@@ -39,4 +39,5 @@ export type GetWidgetsDatasetsFieldsResponse = GetWidgetsDatasetsFieldsItem[];
 
 export type GetWidgetsDatasetsFieldsArgs = {
     entriesIds: string[];
+    workbookId: string | null;
 };

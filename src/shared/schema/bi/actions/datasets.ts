@@ -68,12 +68,14 @@ export const actions = {
         path: () => `${API_V1}/info/field_types`,
         params: (_, headers) => ({headers}),
     }),
-    // ?
+    // +
     getDataSetFieldsById: createAction<GetDataSetFieldsByIdResponse, GetDataSetFieldsByIdArgs>({
         method: 'GET',
         endpoint: 'datasetDataApiEndpoint',
         path: ({dataSetId}) => `${API_DATA_V1}/datasets/${filterUrlFragment(dataSetId)}/fields`,
-        params: (_, headers) => ({headers}),
+        params: ({workbookId}, headers) => ({
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
     }),
     // -
     embedsGetDataSetFieldsById: createAction<
@@ -101,15 +103,19 @@ export const actions = {
             },
         }),
     }),
-    // ?
+    // +
     checkDatasetsForPublication: createAction<
         CheckDatasetsForPublicationResponse,
         CheckDatasetsForPublicationArgs
     >({
         method: 'POST',
         path: () => `${API_V1}/info/datasets_publicity_checker`,
-        params: ({datasetsIds}, headers) => ({body: {datasets: datasetsIds}, headers}),
+        params: ({datasetsIds, workbookId}, headers) => ({
+            body: {datasets: datasetsIds},
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
     }),
+    // -
     createDataset: createAction<CreateDatasetResponse, CreateDatasetArgs>({
         method: 'POST',
         path: () => `${API_V1}/datasets`,
@@ -156,7 +162,7 @@ export const actions = {
         }),
         timeout: TIMEOUT_95_SEC,
     }),
-    // ?
+    // +
     validateDatasetFormula: createAction<
         ValidateDatasetFormulaResponse,
         ValidateDatasetFormulaArgs
@@ -168,7 +174,10 @@ export const actions = {
                       datasetId,
                   )}/versions/draft/validators/field`
                 : `${API_V1}/datasets/validators/field`,
-        params: ({dataset, field}, headers) => ({body: {dataset, field}, headers}),
+        params: ({dataset, workbookId, field}, headers) => ({
+            body: {dataset, field},
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
         transformResponseError: transformValidateDatasetFormulaResponseError,
     }),
     // -
@@ -177,7 +186,7 @@ export const actions = {
         path: ({datasetId}) => `${API_V1}/datasets/${filterUrlFragment(datasetId)}/copy`,
         params: ({new_key}, headers) => ({body: {new_key}, headers}),
     }),
-    // ?
+    // +
     getDistinctsApiV2: createAction<
         GetDistinctsApiV2Response,
         GetDistinctsApiV2Args,
@@ -186,10 +195,14 @@ export const actions = {
         method: 'POST',
         endpoint: 'datasetDataApiEndpoint',
         path: ({datasetId}) => `${API_DATA_V2}/datasets/${datasetId}/values/distinct`,
-        params: ({datasetId: _datasetId, ...body}, headers) => ({body, headers}),
+        params: ({datasetId: _datasetId, workbookId, ...body}, headers) => ({
+            body,
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
         transformResponseData: transformApiV2DistinctsResponse,
         timeout: TIMEOUT_95_SEC,
     }),
+    // -
     getPublicDistinctsApiV2: createAction<
         GetDistinctsApiV2Response,
         GetDistinctsApiV2Args,

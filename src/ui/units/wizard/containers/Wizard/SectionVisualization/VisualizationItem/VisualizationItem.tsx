@@ -58,6 +58,7 @@ import {
 } from 'units/wizard/components/Dialogs/DialogField/DialogField';
 import {DIALOG_FIELD_INSPECTOR} from 'units/wizard/components/Dialogs/DialogFieldInspector/DialogFieldInspector';
 import {CONFLICT_TOOLTIPS, SETTINGS} from 'units/wizard/constants';
+import {selectWizardWorkbookId} from 'units/wizard/selectors';
 import {
     selectDataset,
     selectDatasets,
@@ -539,7 +540,7 @@ class VisualizationItem extends React.Component<Props, State> {
     };
 
     private openDialogFieldEditor = (item: Field) => {
-        const {fields, dataset} = this.props;
+        const {fields, dataset, workbookId} = this.props;
 
         let field;
 
@@ -602,6 +603,7 @@ class VisualizationItem extends React.Component<Props, State> {
             props: {
                 datasetContent: dataset?.dataset,
                 datasetId: dataset?.id || '',
+                workbookId,
                 datasetOptions: dataset?.options,
 
                 field,
@@ -968,6 +970,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         colorsConfig: selectColorsConfig(state),
         shapesConfig: selectShapesConfig(state),
         extraSettings: selectExtraSettings(state),
+        workbookId: selectWizardWorkbookId(state),
     };
 };
 

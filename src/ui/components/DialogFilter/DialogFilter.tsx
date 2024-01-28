@@ -71,6 +71,7 @@ export interface DialogFilterProps {
     onApply: (data: ApplyData) => void;
     onClose: () => void;
     datasetId: string;
+    workbookId: string | null;
     visible: boolean;
     options: DatasetOptions;
     fields?: DatasetField[];
@@ -470,7 +471,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
         field: DatasetField | Field,
         filters: ApiV2Filter[] = [],
     ): Promise<GetDistinctsApiV2TransformedResponse> => {
-        const {updates = [], parameters = [], dashboardParameters = []} = this.props;
+        const {updates = [], parameters = [], dashboardParameters = [], workbookId} = this.props;
 
         const fields = getFieldsApiV2RequestSection([field], 'distinct');
         const parameter_values = getParametersApiV2RequestSection({
@@ -483,6 +484,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
         return getSdk().bi.getDistinctsApiV2(
             {
                 datasetId,
+                workbookId,
                 fields,
                 limit: VALUES_LOAD_LIMIT,
                 updates,

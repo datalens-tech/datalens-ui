@@ -24,6 +24,7 @@ const b = block('control-switcher-dataset-field');
 type Props = {
     title?: string;
     datasetId?: string;
+    workbookId: string | null;
     fieldId?: string;
     ignoredFieldTypes?: DatasetFieldType[];
     ignoredDataTypes?: DATASET_FIELD_TYPES[];
@@ -78,10 +79,17 @@ export class DatasetField extends React.PureComponent<Props, State> {
     }
 
     getDatasetFields() {
-        const {ignoredFieldTypes = [DatasetFieldType.Measure], ignoredDataTypes = []} = this.props;
+        const {
+            ignoredFieldTypes = [DatasetFieldType.Measure],
+            ignoredDataTypes = [],
+            workbookId,
+        } = this.props;
 
         getSdk()
-            .bi.getDataSetFieldsById({dataSetId: this.props.datasetId!})
+            .bi.getDataSetFieldsById({
+                dataSetId: this.props.datasetId!,
+                workbookId,
+            })
             .then(({fields}) =>
                 this.setState(
                     {

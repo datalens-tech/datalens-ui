@@ -34,6 +34,7 @@ export type GetPublicationPreviewResponse = GetPublicationPreviewEntry[];
 
 export interface GetPublicationPreviewArgs {
     entryId: string;
+    workbookId: string | null;
 }
 
 export interface MixedSwitchPublicationStatusArgs {
@@ -46,6 +47,7 @@ export interface MixedSwitchPublicationStatusArgs {
         entryId: string;
         unversionedData: unknown;
     };
+    workbookId: string | null;
 }
 
 export type ResolveEntryByLinkComponentResponse = {

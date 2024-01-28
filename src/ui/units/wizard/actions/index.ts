@@ -62,6 +62,7 @@ import {sdk as oldSdk} from '../../../libs/sdk';
 import {showToast} from '../../../store/actions/toaster';
 import {getFilteredObject} from '../../../utils';
 import {WizardDispatch} from '../reducers';
+import {selectWizardWorkbookId} from '../selectors';
 import {selectVisualization} from '../selectors/visualization';
 import {filterVisualizationColors} from '../utils/colors';
 import {getChartFiltersWithDisabledProp} from '../utils/filters';
@@ -155,12 +156,14 @@ export function prepareDataset({dataset, widgetDataset}: PrepareDatasetArgs) {
 
 type GetDatasetArgs = {
     id: string;
+    workbookId: string | null;
 };
 
-function getDataset({id}: GetDatasetArgs) {
+function getDataset({id, workbookId}: GetDatasetArgs) {
     return getSdk()
         .bi.getDatasetByVersion({
             datasetId: id,
+            workbookId,
             version: 'draft',
         })
         .then((dataset) => {
@@ -179,15 +182,16 @@ function getDataset({id}: GetDatasetArgs) {
 
 type GetDatasetsArgs = {
     datasetsIds: string[];
+    workbookId: string | null;
 };
 
-export async function getDatasets({datasetsIds}: GetDatasetsArgs) {
+export async function getDatasets({datasetsIds, workbookId}: GetDatasetsArgs) {
     const errors: DatasetApiError[] = [];
 
     const items = await Promise.all(
         datasetsIds.map(async (datasetId) => {
             try {
-                return await getDataset({id: datasetId});
+                return await getDataset({id: datasetId, workbookId});
             } catch (error) {
                 errors.push({datasetId, error});
                 return null;
@@ -204,10 +208,11 @@ export async function getDatasets({datasetsIds}: GetDatasetsArgs) {
 type FetchDatasetArgs = {
     id: string;
     replacing?: boolean;
+    initial?: boolean;
 };
 
-export function fetchDataset({id, replacing}: FetchDatasetArgs) {
-    return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
+export function fetchDataset({id, replacing, initial = false}: FetchDatasetArgs) {
+    return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const datasetState = getState().wizard.dataset;
         const originalDatasets = datasetState.originalDatasets;
         if (!getState().wizard.visualization.visualization) {
@@ -218,7 +223,16 @@ export function fetchDataset({id, replacing}: FetchDatasetArgs) {
 
         dispatch(setDatasetLoading({loading: true}));
 
-        return getDataset({id})
+        let workbookId: string | null = null;
+
+        if (initial) {
+            const entryMeta = await getSdk().us.getEntryMeta({entryId: id});
+            workbookId = entryMeta.workbookId;
+        } else {
+            workbookId = selectWizardWorkbookId(getState());
+        }
+
+        return getDataset({id, workbookId})
             .then(async (dataset: Dataset) => {
                 dispatch(setDataset({dataset}));
 
@@ -1212,7 +1226,7 @@ export function updateDatasetByValidation({
 }
 
 const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[]}) => {
-    return async (dispatch: WizardDispatch) => {
+    return async (dispatch: WizardDispatch, getState: () => DatalensGlobalState) => {
         const preparedUpdates = updates.map((update) => {
             const {field} = update;
             Object.keys(field).forEach((key: string) => {
@@ -1224,11 +1238,14 @@ const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[
             return update;
         });
 
+        const workbookId = selectWizardWorkbookId(getState());
+
         try {
             return await getSdk().bi.validateDataset(
                 {
                     version: 'draft',
                     datasetId: dataset.id,
+                    workbookId,
                     dataset: dataset.dataset,
                     updates: preparedUpdates,
                 },
@@ -1816,7 +1833,9 @@ function processWidget(args: ProcessWidgetArgs) {
         }),
     );
 
-    return getDatasets({datasetsIds})
+    const workbookId = widget.workbookId ?? null;
+
+    return getDatasets({datasetsIds, workbookId})
         .then(async (all) => {
             const {datasets: loadedOriginalDatasets, errors: datasetApiErrors} = all;
             for (const loadedDataset of loadedOriginalDatasets) {
@@ -2158,6 +2177,7 @@ export function setDefaults({entryId, revId}: SetDefaultsArgs) {
                 dispatch(
                     fetchDataset({
                         id: datasetId,
+                        initial: true,
                     }),
                 );
             }

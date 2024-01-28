@@ -654,6 +654,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const {result} = await this.props.getDistincts!({
                 datasetId,
+                workbookId: null, // TODO: add workbookId
                 fields: [
                     {
                         ref: {type: 'id', id: datasetFieldId},

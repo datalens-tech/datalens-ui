@@ -31,14 +31,14 @@ import {
 const PATH_PREFIX = '/api/v1';
 
 export const actions = {
-    // ?
+    // ? no use cases
     ensureUploadRobot: createAction<EnsureUploadRobotResponse, EnsureUploadRobotArgs>({
         method: 'POST',
         path: ({connectionId}) =>
             `${PATH_PREFIX}/connections/${filterUrlFragment(connectionId)}/ensure_upload_robot`,
         params: (_, headers) => ({headers}),
     }),
-    // ?
+    // ? no use cases
     getAvailableCounters: createAction<GetAvailableCountersResponse, GetAvailableCountersArgs>({
         method: 'GET',
         path: ({connectionId}) =>
@@ -78,7 +78,7 @@ export const actions = {
         }),
         transformResponseError: transformConnectionResponseError,
     }),
-    // ?
+    // -
     verifyConnectionParams: createAction<
         VerifyConnectionParamsResponse,
         VerifyConnectionParamsArgs

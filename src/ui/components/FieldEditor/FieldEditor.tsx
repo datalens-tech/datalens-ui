@@ -56,6 +56,7 @@ export type FieldEditorProps = {
     fields: DatasetField[];
     sources: DatasetSource[];
     datasetId: string;
+    workbookId: string | null;
     dataset?: Dataset['dataset'];
     sourceAvatars: DatasetSourceAvatar[];
     options?: DatasetOptions;
@@ -276,7 +277,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
     };
 
     validateFormula = async () => {
-        const {datasetId, dataset} = this.props;
+        const {datasetId, workbookId, dataset} = this.props;
         const {field} = this.state;
 
         if (!dataset) {
@@ -289,6 +290,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
             await getSdk().bi.validateDatasetFormula(
                 {
                     datasetId,
+                    workbookId,
                     dataset,
                     field,
                 },
