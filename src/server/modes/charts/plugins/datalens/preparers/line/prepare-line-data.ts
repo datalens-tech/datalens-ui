@@ -484,7 +484,10 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             });
         }
 
-        if (visualizationId === WizardVisualizationId.Line) {
+        if (
+            visualizationId === WizardVisualizationId.Line ||
+            visualizationId === WizardVisualizationId.LineD3
+        ) {
             mapAndShapeGraph({
                 graphs,
                 shapesConfig,

@@ -4,6 +4,7 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {
     deleteEntity,
     getUniqueTimestamp,
+    isEnabledFeature,
     openTestPage,
     slct,
     waitForCondition,
@@ -28,12 +29,17 @@ const PARAMS = {
 
 datalensTest.describe('Dashboards - Basic functionality', () => {
     datalensTest(
-        'Adding a chart and selector with manual input of values, creating a link',
+        'Adding a chart and selector with manual input of values, creating a link os old',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
             const workbookPO = new Workbook(page);
 
             await openTestPage(page, WorkbooksUrls.E2EWorkbook);
+
+            const isEnabledHideOldRelations = await isEnabledFeature(page, 'hideOldRelations');
+            if (isEnabledHideOldRelations) {
+                return;
+            }
 
             await workbookPO.createEntryButton.createDashboard();
 

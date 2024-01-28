@@ -6,6 +6,7 @@ export enum Feature {
     Ql = 'ql',
     CrawlerPromo = 'crawlerPromo',
     ShowNewRelations = 'showNewRelations',
+    HideOldRelations = 'hideOldRelations',
     ShowPromoIntro = 'ShowPromoIntro',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     HelpCenterEnabled = 'HelpCenterEnabled',
@@ -92,6 +93,7 @@ export enum Feature {
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     HolidayNavigation = 'HolidayNavigation',
     SelectorRequiredValue = 'SelectorRequiredValue',
+    MultipleColorsInVisualization = 'MultipleColorsInVisualization',
 }
 
 export type FeatureConfig = Record<string, boolean>;

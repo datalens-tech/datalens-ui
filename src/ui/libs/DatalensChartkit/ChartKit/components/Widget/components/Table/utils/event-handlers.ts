@@ -5,7 +5,8 @@ import {CLICK_ACTION_TYPE} from '../../../../../../modules/constants/constants';
 import type {DataTableData} from '../../../../../../types';
 import type {TableProps} from '../types';
 
-import {getActionParams, getCellOnClick} from './misc';
+import {getActionParams} from './action-params';
+import {getCellOnClick} from './misc';
 import {ActionParamsData} from './types';
 
 export const getCellClickArgs = (row: DataTableData | undefined, columnName: string) => {
@@ -21,9 +22,9 @@ export function getCellOnClickHandler(args: {
     actionParamsData?: ActionParamsData;
     onChange: TableProps['onChange'];
     head: TableHead[];
-    selectedRows?: TableRow[];
+    rows: TableRow[];
 }) {
-    const {actionParamsData, head, selectedRows, onChange} = args;
+    const {actionParamsData, head, rows, onChange} = args;
 
     const handleCellClick: Column<DataTableData>['onClick'] = ({row}, col, event) => {
         const onClick = getCellOnClick(row, col.name);
@@ -34,7 +35,7 @@ export function getCellOnClickHandler(args: {
                   column: col,
                   head,
                   metaKey: event.metaKey,
-                  selectedRows,
+                  rows,
               })
             : undefined;
 

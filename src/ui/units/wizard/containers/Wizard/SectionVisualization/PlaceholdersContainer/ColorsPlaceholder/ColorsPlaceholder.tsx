@@ -4,7 +4,15 @@ import {BucketPaint} from '@gravity-ui/icons';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
-import {Field, PlaceholderActionQa, Shared, isFieldHierarchy, isMeasureField} from 'shared';
+import {
+    Feature,
+    Field,
+    PlaceholderActionQa,
+    Shared,
+    isFieldHierarchy,
+    isMeasureField,
+} from 'shared';
+import {isChartSupportMultipleColors} from 'shared/modules/colors/common-helpers';
 import {DatalensGlobalState} from 'ui';
 import {selectDataset} from 'units/wizard/selectors/dataset';
 import {
@@ -13,6 +21,8 @@ import {
     selectFilters,
 } from 'units/wizard/selectors/visualization';
 
+import Utils from '../../../../../../../utils';
+import {getChartType} from '../../../../../../ql/store/reducers/ql';
 import {openDialogColors} from '../../../../../actions/dialog';
 import {updateColors} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
@@ -34,8 +44,15 @@ type Props = {
 
 class ColorsPlaceholder extends React.Component<Props> {
     render() {
-        const {addFieldItems, colors, visualization, wrapTo, datasetError, onBeforeRemoveItem} =
-            this.props;
+        const {
+            addFieldItems,
+            colors,
+            visualization,
+            wrapTo,
+            datasetError,
+            onBeforeRemoveItem,
+            chartType,
+        } = this.props;
 
         const colorsContainsHierarchies = colors.some(isFieldHierarchy);
 
@@ -43,6 +60,12 @@ class ColorsPlaceholder extends React.Component<Props> {
         const disabledText = colorsContainsHierarchies
             ? i18n('wizard', 'label_no-colors-setup-for-hierarchy')
             : undefined;
+
+        const colorsCapacity =
+            Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+            isChartSupportMultipleColors(chartType ?? '', visualization.id)
+                ? undefined
+                : visualization.colorsCapacity || 1;
 
         return (
             <PlaceholderComponent
@@ -55,7 +78,7 @@ class ColorsPlaceholder extends React.Component<Props> {
                 onActionIconClick={onActionIconClick}
                 actionIconQa={PlaceholderActionQa.OpenColorDialogIcon}
                 items={colors}
-                capacity={visualization.colorsCapacity || 1}
+                capacity={colorsCapacity}
                 checkAllowed={this.checkAllowedColors}
                 onUpdate={this.onColorsUpdate}
                 wrapTo={wrapTo}
@@ -83,7 +106,7 @@ class ColorsPlaceholder extends React.Component<Props> {
             return false;
         }
 
-        const {globalVisualization, visualization, colors} = this.props;
+        const {globalVisualization, visualization, colors, chartType} = this.props;
 
         if (globalVisualization?.id === 'combined-chart' && isMeasureField(item)) {
             return false;
@@ -95,17 +118,26 @@ class ColorsPlaceholder extends React.Component<Props> {
                     item,
                     visualization,
                     designItems: colors,
+                    isMultipleColorsSupported:
+                        Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+                        isChartSupportMultipleColors(chartType ?? '', visualization.id),
                 }),
         );
     };
 
     private openDialogColor = () => {
-        const {colors, visualization} = this.props;
+        const {colors, visualization, chartType} = this.props;
         const {placeholders} = visualization;
+
+        const isMultipleColorsSupported =
+            Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+            isChartSupportMultipleColors(chartType ?? '', visualization.id);
+
         const item = getDialogItem(colors, placeholders);
 
         this.props.openDialogColors({
             item,
+            colorSectionFields: isMultipleColorsSupported ? colors : undefined,
             onApply: () => {
                 if (this.props.onUpdate) {
                     this.props.onUpdate();
@@ -157,6 +189,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         dataset: selectDataset(state),
         colorsConfig: selectColorsConfig(state),
         filters: selectFilters(state),
+        chartType: getChartType(state),
     };
 };
 
