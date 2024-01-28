@@ -228,7 +228,7 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
             const newEntries: GetEntryResponse[] = [];
 
             action.data.forEach((workbookEntries) => {
-                return workbookEntries.entries.forEach((entry) => {
+                return workbookEntries?.entries.forEach((entry) => {
                     newEntries.push(entry);
                 });
             });

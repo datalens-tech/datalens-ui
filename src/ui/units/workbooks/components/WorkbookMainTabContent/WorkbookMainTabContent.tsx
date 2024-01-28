@@ -38,7 +38,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
 
         (async () => {
             if (workbook) {
-                const scopesForRequest = [EntryScope.Dash, EntryScope.Widget];
+                const scopesForRequest = [EntryScope.Dash + 1, EntryScope.Widget];
 
                 if (workbook.permissions.view) {
                     scopesForRequest.push(EntryScope.Dataset, EntryScope.Connection);
@@ -50,6 +50,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                     getAllWorkbookEntriesSeparately({
                         workbookId,
                         filters,
+                        // @ts-ignore
                         scopes: scopesForRequest,
                         pageSize: PAGE_SIZE_MAIN_TAB,
                     }),
@@ -57,43 +58,32 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
 
                 const errors: Record<string, boolean> = {};
 
-                if (data) {
-                    const [dataDashes, dataWidgets, dataDatasets, dataConnections] = data;
+                const [dataDashes, dataWidgets, dataDatasets, dataConnections] = data;
 
-                    if (dataDashes === null) {
-                        errors[EntryScope.Dash] = true;
-                    }
-
-                    if (dataDatasets === null) {
-                        errors[EntryScope.Dataset] = true;
-                    }
-
-                    if (dataWidgets === null) {
-                        errors[EntryScope.Widget] = true;
-                    }
-
-                    if (dataConnections === null) {
-                        errors[EntryScope.Connection] = true;
-                    }
-
-                    const tokensMap: Record<string, string> = {};
-
-                    tokensMap[EntryScope.Dash] = dataDashes?.nextPageToken || '';
-                    tokensMap[EntryScope.Dataset] = dataDatasets?.nextPageToken || '';
-                    tokensMap[EntryScope.Widget] = dataWidgets?.nextPageToken || '';
-                    tokensMap[EntryScope.Connection] = dataConnections?.nextPageToken || '';
-
-                    setMapTokens(tokensMap);
-                } else {
-                    [
-                        EntryScope.Dash,
-                        EntryScope.Dataset,
-                        EntryScope.Widget,
-                        EntryScope.Connection,
-                    ].forEach((scope) => {
-                        errors[scope] = true;
-                    });
+                if (dataDashes === null) {
+                    errors[EntryScope.Dash] = true;
                 }
+
+                if (dataDatasets === null) {
+                    errors[EntryScope.Dataset] = true;
+                }
+
+                if (dataWidgets === null) {
+                    errors[EntryScope.Widget] = true;
+                }
+
+                if (dataConnections === null) {
+                    errors[EntryScope.Connection] = true;
+                }
+
+                const tokensMap: Record<string, string> = {};
+
+                tokensMap[EntryScope.Dash] = dataDashes?.nextPageToken || '';
+                tokensMap[EntryScope.Dataset] = dataDatasets?.nextPageToken || '';
+                tokensMap[EntryScope.Widget] = dataWidgets?.nextPageToken || '';
+                tokensMap[EntryScope.Connection] = dataConnections?.nextPageToken || '';
+
+                setMapTokens(tokensMap);
 
                 setMapErrors(errors);
 

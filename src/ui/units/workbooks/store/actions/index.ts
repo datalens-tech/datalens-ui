@@ -230,7 +230,7 @@ type GetAllWorkbookEntriesSeparatelyLoadingAction = {
 };
 type GetAllWorkbookEntriesSeparatelySuccessAction = {
     type: typeof GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS;
-    data: GetWorkbookEntriesResponse[];
+    data: (GetWorkbookEntriesResponse | null)[];
 };
 type GetAllWorkbookEntriesSeparatelyFailedAction = {
     type: typeof GET_WORKBOOK_ENTRIES_FAILED;
@@ -275,40 +275,40 @@ export const getAllWorkbookEntriesSeparately = ({
             };
         }
 
-        try {
-            const promises = scopes.map((scope) => {
-                return getSdk().us.getWorkbookEntries({
-                    ...args,
-                    scope,
+        const promises = scopes.map((scope) => {
+            return getSdk().us.getWorkbookEntries({
+                ...args,
+                scope,
+            });
+        });
+
+        const results = await Promise.allSettled(promises);
+
+        const data: (GetWorkbookEntriesResponse | null)[] = results.map((result) => {
+            if (result.status === 'fulfilled') {
+                return result.value;
+            }
+
+            if (result.status === 'rejected') {
+                logger.logError('workbooks/getWorkbookEntries failed', result.reason);
+
+                dispatch({
+                    type: GET_WORKBOOK_ENTRIES_FAILED,
+                    error: result.reason,
                 });
-            });
 
-            const data = await Promise.all(promises);
-
-            dispatch({
-                type: GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS,
-                data,
-            });
-
-            return data;
-        } catch (error) {
-            if (getSdk().isCancel(error)) {
                 return null;
             }
-            logger.logError('workbooks/getWorkbookEntries failed', error);
-            dispatch(
-                showToast({
-                    title: error.message,
-                    error,
-                }),
-            );
-            dispatch({
-                type: GET_WORKBOOK_ENTRIES_FAILED,
-                error,
-            });
 
             return null;
-        }
+        });
+
+        dispatch({
+            type: GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS,
+            data,
+        });
+
+        return data;
     };
 };
 
