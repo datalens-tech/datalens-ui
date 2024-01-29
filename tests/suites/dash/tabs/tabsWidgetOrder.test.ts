@@ -7,7 +7,7 @@ import {getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {dragAndDropListItem, openTabPopupWidgetOrder} from '../helpers';
 import {COMMON_DASH_SELECTORS} from '../constants';
 import {DialogTabsQA, EntryDialogQA} from '../../../../src/shared/constants';
-import {ActionPanelDashSaveControls} from '../../../../src/shared/constants/qa/action-panel';
+import {ActionPanelDashSaveControlsQa} from '../../../../src/shared/constants/qa/action-panel';
 
 const SELECTORS = {
     SELECTOR_LIST_ITEMS: '.yc-list__item',
@@ -59,7 +59,7 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
             await page.click(slct(DialogTabsQA.Cancel));
 
             await dashboardPage.waitForSelector(
-                `${slct(ActionPanelDashSaveControls.Save)}[disabled]`,
+                `${slct(ActionPanelDashSaveControlsQa.Save)}[disabled]`,
             );
         },
     );
@@ -89,7 +89,7 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
             await page.click(slct(DialogTabsQA.Save));
 
             await dashboardPage.waitForSelector(
-                `${slct(ActionPanelDashSaveControls.Save)}:not([disabled])`,
+                `${slct(ActionPanelDashSaveControlsQa.Save)}:not([disabled])`,
             );
             await dashboardPage.exitEditMode();
 

@@ -3,7 +3,7 @@ import {Page, expect} from '@playwright/test';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {isEnabledFeature, openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ActionPanelDashSaveControls} from '../../../../src/shared/constants/qa/action-panel';
+import {ActionPanelDashSaveControlsQa} from '../../../../src/shared/constants/qa/action-panel';
 import {Feature} from '../../../../src/shared/types/feature';
 import {WorkbookIds} from '../../../constants/constants';
 
@@ -25,7 +25,7 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
     datalensTest('Adding a selector, the save button is active', async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 
-        const saveButton = page.locator(slct(ActionPanelDashSaveControls.Save));
+        const saveButton = page.locator(slct(ActionPanelDashSaveControlsQa.Save));
 
         await expect(saveButton, 'Save button is disabled').toBeDisabled();
 
@@ -42,7 +42,7 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
-            const saveButton = dashboardPage.page.locator(slct(ActionPanelDashSaveControls.Save));
+            const saveButton = dashboardPage.page.locator(slct(ActionPanelDashSaveControlsQa.Save));
 
             await expect(saveButton, 'Save button is disabled').toBeDisabled();
 

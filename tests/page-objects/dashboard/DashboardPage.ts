@@ -40,7 +40,7 @@ import {
     Feature,
 } from '../../../src/shared';
 import {
-    ActionPanelDashSaveControls,
+    ActionPanelDashSaveControlsQa,
     ActionPanelEntryContextMenuQa,
 } from '../../../src/shared/constants/qa/action-panel';
 import {
@@ -788,7 +788,7 @@ class DashboardPage extends BasePage {
 
     async clickSaveButton() {
         // save the changes made on the dashboard
-        await this.page.click(slct(ActionPanelDashSaveControls.Save));
+        await this.page.click(slct(ActionPanelDashSaveControlsQa.Save));
     }
 
     async saveChanges() {
@@ -804,14 +804,14 @@ class DashboardPage extends BasePage {
     async saveChangesAsDraft() {
         // save the changes made on the dashboard as a draft
         await this.page
-            .waitForSelector(slct(ActionPanelDashSaveControls.SaveAsDraft), {
+            .waitForSelector(slct(ActionPanelDashSaveControlsQa.SaveAsDraft), {
                 timeout: BUTTON_CHECK_TIMEOUT,
             })
             .then(async () => {
                 // in ActionPanel, the default save button is "Save as Draft"
                 const deleteLockPromise = this.page.waitForRequest(URLS.deleteLock);
                 const savePromise = this.page.waitForRequest(URLS.savePath);
-                await this.page.click(slct(ActionPanelDashSaveControls.SaveAsDraft));
+                await this.page.click(slct(ActionPanelDashSaveControlsQa.SaveAsDraft));
                 await Promise.all([deleteLockPromise, savePromise]);
                 await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
             })
@@ -820,7 +820,7 @@ class DashboardPage extends BasePage {
                 await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
                 await clickDropDownOption(
                     this.page,
-                    ActionPanelDashSaveControls.SaveAsDraftDropdownItem,
+                    ActionPanelDashSaveControlsQa.SaveAsDraftDropdownItem,
                 );
             });
     }
@@ -828,7 +828,7 @@ class DashboardPage extends BasePage {
     async saveChangesAndPublish() {
         // save and publish the changes made on the dashboard
         await this.page
-            .waitForSelector(slct(ActionPanelDashSaveControls.SaveAsDraft), {
+            .waitForSelector(slct(ActionPanelDashSaveControlsQa.SaveAsDraft), {
                 timeout: BUTTON_CHECK_TIMEOUT,
             })
             .then(async () => {
@@ -836,12 +836,12 @@ class DashboardPage extends BasePage {
                 await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
                 await clickDropDownOption(
                     this.page,
-                    ActionPanelDashSaveControls.SaveAndPublishDropdownItem,
+                    ActionPanelDashSaveControlsQa.SaveAndPublishDropdownItem,
                 );
             })
             .catch(async () => {
                 // in ActionPanel, the default save button is "Save"
-                await this.page.click(slct(ActionPanelDashSaveControls.Save));
+                await this.page.click(slct(ActionPanelDashSaveControlsQa.Save));
             });
     }
 
@@ -849,7 +849,7 @@ class DashboardPage extends BasePage {
         await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
 
-        await clickDropDownOption(this.page, ActionPanelDashSaveControls.SaveAsNewDropdownItem);
+        await clickDropDownOption(this.page, ActionPanelDashSaveControlsQa.SaveAsNewDropdownItem);
     }
 
     async saveChangesAsNewDash(dashName: string) {

@@ -18,10 +18,15 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Basic functionality', () => {
+    datalensTest.beforeEach(async ({page}: {page: Page}) => {
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.deleteDash();
+    });
     datalensTest(
         'Adding a chart and selector with manual input of values, creating a link',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
+            // some page need to be loaded so we can get data of feature flag from DL var
             await openTestPage(page, '/');
 
             const isEnabledHideOldRelations = await isEnabledFeature(
@@ -72,8 +77,6 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
 
                 return elems.length === 1;
             });
-
-            await dashboardPage.deleteDash();
         },
     );
 });
