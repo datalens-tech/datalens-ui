@@ -41,6 +41,7 @@ export const QL_TYPE = {
     D3_QL_NODE: 'd3_ql_node',
     TIMESERIES_QL_NODE: 'timeseries_ql_node',
     TABLE_QL_NODE: 'table_ql_node',
+    LOGGING_TABLE_QL_NODE: 'logging_table_ql_node',
     YMAP_QL_NODE: 'ymap_ql_node',
     METRIC_QL_NODE: 'metric2_ql_node',
     LEGACY_GRAPH_QL_NODE: 'graph_sql_node',

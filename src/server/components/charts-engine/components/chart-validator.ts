@@ -23,6 +23,8 @@ const MODEL_TABS = {
         'documentation_en,js',
         'js',
     ]),
+
+    loggingtable: new Set(['js,params,shared,url', 'js,params,secrets,shared,url']),
 };
 
 export const chartValidator = {

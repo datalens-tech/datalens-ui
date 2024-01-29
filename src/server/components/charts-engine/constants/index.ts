@@ -6,6 +6,7 @@ const CONFIG_TYPE = {
     YMAP_NODE: 'ymap_node',
     CONTROL_NODE: 'control_node',
     MARKDOWN_NODE: 'markdown_node',
+    LOGGING_TABLE_NODE: 'loggingtable_node',
 
     GRAPH_WIZARD_NODE: 'graph_wizard_node',
     TABLE_WIZARD_NODE: 'table_wizard_node',

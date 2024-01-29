@@ -66,6 +66,7 @@ export const EDITOR_TYPE_CONFIG_TABS = {
     table_wizard_node: 'table',
     table_sql_node: 'table',
     table_ql_node: 'table',
+    logging_table_ql_node: 'table',
     text_node: 'statface_text',
     metric_node: 'statface_metric',
     metric_wizard_node: 'statface_metric',
