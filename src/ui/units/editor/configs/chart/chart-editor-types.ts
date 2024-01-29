@@ -575,7 +575,7 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
                 },
                 {
                     name: 'Config',
-                    id: 'markup_config',
+                    id: 'config',
                     language: 'javascript',
                 },
                 {

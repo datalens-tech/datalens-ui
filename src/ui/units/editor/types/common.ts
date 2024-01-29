@@ -40,7 +40,7 @@ export interface MarkupNodeTypeData {
     url: string;
     params: string;
     js: string;
-    markup_config: string;
+    config: string;
     shared: string;
 }
 

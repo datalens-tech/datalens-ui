@@ -112,7 +112,7 @@ interface ConfigNodeMarkdown extends ConfigNodeBase {
 
 interface ConfigNodeMarkup extends ConfigNodeBase {
     type: 'markup_node';
-    data: {[key in 'js' | 'params' | 'url' | 'shared' | 'markup_config']: string};
+    data: {[key in 'js' | 'params' | 'url' | 'shared' | 'config']: string};
 }
 
 interface ConfigNodeControl extends ConfigNodeBase {
