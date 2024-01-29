@@ -2,10 +2,8 @@ import {Page} from '@playwright/test';
 import {ControlQA} from '../../../../src/shared/constants';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, openTestPage, slct} from '../../../utils';
+import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
-import {WorkbooksUrls} from '../../../constants/constants';
 
 const PARAMS = {
     ORIGINAL_VALUES_COUNT: 2,
@@ -17,11 +15,8 @@ const PARAMS = {
 datalensTest.describe('Dashboards are Possible selector values', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const workbookPO = new Workbook(page);
 
-        await openTestPage(page, WorkbooksUrls.E2EWorkbook);
-
-        await workbookPO.createDashboard({
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addSelector({
                     controlTitle: PARAMS.CONTROL_TITLE,
@@ -36,7 +31,7 @@ datalensTest.describe('Dashboards are Possible selector values', () => {
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.exitEditMode();
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(
