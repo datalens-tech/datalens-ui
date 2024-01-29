@@ -58,6 +58,7 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     globalSetup: require.resolve(globalSetupPath),
     timeout: testTimeout,
     forbidOnly: true,
+    snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
     expect: {
         timeout: testTimeout,
     },

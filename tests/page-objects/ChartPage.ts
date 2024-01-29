@@ -1,17 +1,11 @@
 import {ElementHandle} from '@playwright/test';
 
-import {
-    ControlQA,
-    DlNavigationQA,
-    EntryDialogQA,
-    VisualizationsQa,
-} from '../../src/shared/constants';
+import {ControlQA, DlNavigationQA, EntryDialogQA, VisualizationsQa} from '../../src/shared';
 import {copyEntity, deleteEntity, entryDialogFillAndSave, slct, waitForCondition} from '../utils';
 
 import {BasePage, BasePageProps} from './BasePage';
 import {ChartContainer} from './common/ChartContainer';
 import Revisions from './common/Revisions';
-import {QlVisualizationId, WizardVisualizationId} from './common/Visualization';
 import ChartKit from './wizard/ChartKit';
 
 export enum ChartType {
@@ -62,10 +56,13 @@ export class ChartPage extends BasePage {
         return await Promise.all(items.map((item) => item.getAttribute('data-qa')));
     }
 
-    async setVisualization(id: WizardVisualizationId | QlVisualizationId) {
+    async setVisualization(ids: string | string[]) {
         await this.page.click(`${slct('visualization-select-btn')}`);
 
-        return this.page.click(`${slct(`visualization-item-${id}`)}`);
+        const visualizationIds = Array.isArray(ids) ? ids : [ids];
+        const selector = visualizationIds.map((id) => slct(`visualization-item-${id}`)).join(', ');
+
+        return await this.page.locator(selector).click();
     }
 
     async getVisualizations(): Promise<string[]> {
