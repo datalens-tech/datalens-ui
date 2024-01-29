@@ -45,14 +45,11 @@ const waitCheckActualizeRevisionList = async ({
 datalensTest.describe('Dashboard Versioning', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const dashName = `e2e-test-dash-revisions-${getUniqueTimestamp()}`;
 
-        await openTestPage(page, '/dashboards');
         await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addTitle(PARAMS.INITIAL_TITLE);
             },
-            dashName,
         });
         await dashboardPage.enterEditMode();
     });

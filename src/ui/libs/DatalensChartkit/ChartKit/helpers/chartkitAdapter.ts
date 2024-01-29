@@ -9,7 +9,7 @@ import {ChartKitCustomError} from '../modules/chartkit-custom-error/chartkit-cus
 import type {ChartKitAdapterProps} from '../types';
 
 import {applySetActionParamsEvents, fixPieTotals} from './apply-hc-handlers';
-import {tooltipRenderer} from './tooltip';
+import {getTooltipRenderer} from './tooltip';
 import {extractHcTypeFromData} from './utils';
 
 const getNormalizedClickActions = (data: GraphWidget) => {
@@ -207,7 +207,7 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
             const chartWidgetData: ChartKitWidgetData = merge({}, config, widgetData, {
                 tooltip: {
                     ...widgetData.tooltip,
-                    renderer: tooltipRenderer,
+                    renderer: getTooltipRenderer(widgetData),
                 },
             });
 

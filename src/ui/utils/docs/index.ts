@@ -13,15 +13,13 @@ function formUrl(endpoint: string, path: string) {
 }
 
 export function formDocsEndpointDL(path: string): string {
-    const {datalensDocsEn, datalensDocsRu} = DL.ENDPOINTS;
-    const endpoint = DL.USER_LANG === 'ru' ? datalensDocsRu : datalensDocsEn;
-    return formUrl(endpoint, path);
+    const {datalensDocs} = DL.ENDPOINTS;
+    return formUrl(datalensDocs, path);
 }
 
 export function formDocsEndpoint(path: string): string {
-    const {docsEn, docsRu} = DL.ENDPOINTS;
-    const endpoint = DL.USER_LANG === 'ru' ? docsRu : docsEn;
-    return formUrl(endpoint, path);
+    const {docs} = DL.ENDPOINTS;
+    return formUrl(docs, path);
 }
 
 export function replaceRelativeLinksToAbsoluteInHTML(doc: string) {

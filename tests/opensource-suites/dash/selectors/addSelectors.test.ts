@@ -1,9 +1,8 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, openTestPage, slct} from '../../../utils';
+import {openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {WorkbooksUrls} from '../../../constants/constants';
 import {ControlQA} from '../../../../src/shared';
 
@@ -21,7 +20,6 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
         'Adding a chart and selector with manual input of values and default value',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
-            const workbookPO = new Workbook(page);
 
             await openTestPage(page, WorkbooksUrls.E2EWorkbook);
 
@@ -32,7 +30,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
             }
             const controlDefaultValue = controlItems[controlItems.length - 1];
 
-            await workbookPO.createDashboard({
+            await dashboardPage.createDashboard({
                 editDash: async () => {
                     await dashboardPage.addSelector({
                         controlTitle: PARAMS.CONTROL_TITLE,
@@ -50,7 +48,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
                 )} .yc-select-control__tokens-text >> text=${controlDefaultValue}`,
             );
 
-            await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+            await dashboardPage.deleteDash();
         },
     );
 });

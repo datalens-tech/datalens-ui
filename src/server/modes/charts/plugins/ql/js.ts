@@ -2,6 +2,7 @@ import {
     AxisMode,
     DATASET_FIELD_TYPES,
     DatasetFieldType,
+    Feature,
     Field,
     IChartEditor,
     PlaceholderId,
@@ -9,9 +10,12 @@ import {
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
+    isEnabledServerFeature,
     isMonitoringOrPrometheusChart,
 } from '../../../../../shared';
+import {isChartSupportMultipleColors} from '../../../../../shared/modules/colors/common-helpers';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
+import {registry} from '../../../../registry';
 import prepareSingleResult from '../datalens/js/helpers/misc/prepare-single-result';
 import {getFieldList} from '../helpers/misc';
 
@@ -36,6 +40,7 @@ import {
 
 // eslint-disable-next-line complexity
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
+    const app = registry.getApp();
     const data = ChartEditor.getLoadedData();
 
     log('LOADED DATA:', data);
@@ -184,6 +189,9 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
         );
 
         if (visualizationIsEmpty) {
+            const isMultipleDistinctsAvailable =
+                isEnabledServerFeature(app.nodekit.ctx, Feature.MultipleColorsInVisualization) &&
+                isChartSupportMultipleColors(config.chartType, sharedVisualization.id);
             // Visualization is empty, so we need to autofill it
             const {colors, visualization} = migrateOrAutofillVisualization({
                 visualization: sharedVisualization,
@@ -191,6 +199,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 rows,
                 order: sharedOrder,
                 colors: sharedColors,
+                distinctsMap: isMultipleDistinctsAvailable ? resultDistincts : undefined,
             });
 
             if (colors) {

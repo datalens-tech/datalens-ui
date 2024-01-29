@@ -1,11 +1,9 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, slct, waitForCondition} from '../../../utils';
+import {slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ControlQA, DashCommonQa, DashRelationTypes} from '../../../../src/shared';
-import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {ChartsParams} from '../../../constants/test-entities/charts';
 
 const SELECTORS = {
@@ -23,12 +21,9 @@ const PARAMS = {
 
 datalensTest.describe('Dashboards - Relations (new)', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const workbookPO = new Workbook(page);
         const dashboardPage = new DashboardPage({page});
 
-        await workbookPO.openE2EWorkbookPage();
-
-        await workbookPO.createDashboard({
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addSelector({
                     controlTitle: PARAMS.CONTROL_TITLE,
@@ -45,7 +40,8 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         });
     });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.deleteDash();
     });
     datalensTest(
         'Adding a chart and selector with manual input of values, creating a link (new relations)',

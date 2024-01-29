@@ -8,5 +8,7 @@ export const dash: DashParametrizationConfig = {
         DashboardLoadPrioritySelectors: DashUrls.DashboardLoadPrioritySelectors,
         DashboardWithTabsAndSelectors: DashUrls.DashboardWithTabsAndSelectors,
         DashboardMoreThan100Revisions: DashUrls.DashboardMoreThan100Revisions,
+        DashboardWithErrorChart: DashUrls.DashboardWithErrorChart,
+        DashboardWithAPIErrorChart: DashUrls.DashboardWithAPIErrorChart,
     },
 };

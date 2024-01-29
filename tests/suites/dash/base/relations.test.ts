@@ -1,13 +1,7 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {
-    getControlByTitle,
-    getUniqueTimestamp,
-    openTestPage,
-    slct,
-    waitForCondition,
-} from '../../../utils';
+import {getControlByTitle, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ConnectionsDialogQA} from '../../../../src/shared';
 
@@ -32,10 +26,6 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
-            const dashName = `${PARAMS.DASH_NAME_PREFIX}-${getUniqueTimestamp()}`;
-
-            await openTestPage(page, '/dashboards');
-
             await dashboardPage.createDashboard({
                 editDash: async () => {
                     await dashboardPage.addSelector({
@@ -54,7 +44,6 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
                         selectorName: PARAMS.CONTROL_TITLE,
                     });
                 },
-                dashName,
             });
 
             await waitForCondition(async () => {

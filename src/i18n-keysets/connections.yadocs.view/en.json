@@ -8,6 +8,7 @@
   "label_access-type": "Access type",
   "label_add-document": "Add document",
   "label_add-input-help": "It is forbidden to add links to or download files restricted by password. Use private files that are available after authentication.",
+  "label_add-input-link": "Go to <link>Yandex Documents</link>",
   "label_add-input-private": "Path to file",
   "label_add-input-private-note": "Example: /path/to/document",
   "label_add-input-public": "Link to file",
