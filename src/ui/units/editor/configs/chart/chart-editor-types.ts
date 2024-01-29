@@ -574,6 +574,11 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
                     ],
                 },
                 {
+                    name: 'Config',
+                    id: 'markup_config',
+                    language: 'javascript',
+                },
+                {
                     name: 'Shared',
                     id: 'shared',
                     language: 'json',

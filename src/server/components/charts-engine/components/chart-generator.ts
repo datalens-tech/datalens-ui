@@ -153,6 +153,7 @@ type Chart = {
     statface_metric?: string;
     graph?: string;
     statface_graph?: string;
+    markup_config?: string;
 };
 
 export const chartGenerator = {
@@ -207,6 +208,8 @@ export const chartGenerator = {
             chart.table = chart.config.replace('#module', chartTemplate.module);
         } else if (type.indexOf('metric') > -1) {
             chart.statface_metric = chart.config.replace('#module', chartTemplate.module);
+        } else if (type.indexOf('markup') > -1) {
+            chart.markup_config = chart.config.replace('#module', chartTemplate.module);
         } else if (type.indexOf('d3') > -1) {
             chart.graph = commonTemplateD3Graph.replace('#module', chartTemplate.module);
         } else {
