@@ -5,7 +5,6 @@ import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
 
 import {Markup} from '../../../../../../components/Markup';
-import {MarkupItemType} from '../../../../../../components/Markup/types';
 import Performance from '../../../../modules/perfomance';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import type {MarkupWidgetProps} from '../types';
@@ -40,31 +39,11 @@ const MarkupWidget = React.forwardRef<ChartKitWidgetRef | undefined, MarkupWidge
             });
         }
 
-        const tempValue = {
-            type: 'concat' as MarkupItemType,
-            children: [
-                {
-                    type: 'bold' as MarkupItemType,
-                    content: {
-                        type: 'text' as MarkupItemType,
-                        content: 'Bold ololo',
-                    },
-                },
-                {
-                    type: 'italics' as MarkupItemType,
-                    content: {
-                        type: 'text' as MarkupItemType,
-                        content: ' Italic ololo',
-                    },
-                },
-            ],
-        };
-
         return (
             <div className={b()}>
                 <div className={b('wrapper')}>
                     <Markup
-                        item={tempValue}
+                        item={data}
                         externalProps={{
                             url: {
                                 onClick: (event: React.SyntheticEvent) => {
