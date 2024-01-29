@@ -56,7 +56,7 @@ export const WorkbookPage = () => {
 
     const activeTab = React.useMemo<TabId | undefined>(() => {
         const queryTab = new URLSearchParams(search).get('tab');
-        return queryTab ? (queryTab as TabId) : undefined;
+        return queryTab ? (queryTab as TabId) : TAB_ALL;
     }, [search]);
 
     const dispatch = useDispatch<AppDispatch>();

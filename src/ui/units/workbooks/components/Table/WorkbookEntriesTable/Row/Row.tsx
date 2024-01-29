@@ -70,7 +70,7 @@ const Row: React.FC<RowProps> = ({
         dispatch(
             changeFavoriteEntry({
                 entryId,
-                isFavorite,
+                isFavorite: !isFavorite,
                 updateInline: true,
             }),
         );

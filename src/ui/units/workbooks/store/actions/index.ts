@@ -292,11 +292,6 @@ export const getAllWorkbookEntriesSeparately = ({
             if (result.status === 'rejected') {
                 logger.logError('workbooks/getWorkbookEntries failed', result.reason);
 
-                dispatch({
-                    type: GET_WORKBOOK_ENTRIES_FAILED,
-                    error: result.reason,
-                });
-
                 return null;
             }
 
@@ -430,7 +425,10 @@ type ChangeFavoriteEntryFailedAction = {
 };
 type ChangeFavoriteEntryInlineAction = {
     type: typeof CHANGE_FAVORITE_ENTRY_INLINE;
-    data: AddFavoriteResponse | DeleteFavoriteResponse;
+    data: {
+        entryId: string;
+        isFavorite: boolean;
+    };
 };
 type ChangeFavoriteEntryAction =
     | ChangeFavoriteEntryLoadingAction
@@ -454,12 +452,6 @@ export const changeFavoriteEntry = ({
                 data,
             });
 
-            if (updateInline) {
-                dispatch({
-                    type: CHANGE_FAVORITE_ENTRY_INLINE,
-                    data,
-                });
-            }
             return data;
         };
 
@@ -477,6 +469,17 @@ export const changeFavoriteEntry = ({
                 type: CHANGE_FAVORITE_ENTRY_FAILED,
                 error,
             });
+
+            if (updateInline) {
+                dispatch({
+                    type: CHANGE_FAVORITE_ENTRY_INLINE,
+                    data: {
+                        entryId,
+                        isFavorite: !isFavorite,
+                    },
+                });
+            }
+
             return null;
         };
 
@@ -484,16 +487,26 @@ export const changeFavoriteEntry = ({
             type: CHANGE_FAVORITE_ENTRY_LOADING,
         });
 
+        if (updateInline) {
+            dispatch({
+                type: CHANGE_FAVORITE_ENTRY_INLINE,
+                data: {
+                    entryId,
+                    isFavorite,
+                },
+            });
+        }
+
         if (isFavorite) {
             return getSdk()
-                .us.deleteFavorite({
+                .us.addFavorite({
                     entryId,
                 })
                 .then(thenHandler)
                 .catch(catchHandler);
         } else {
             return getSdk()
-                .us.addFavorite({
+                .us.deleteFavorite({
                     entryId,
                 })
                 .then(thenHandler)
