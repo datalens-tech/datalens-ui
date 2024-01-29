@@ -50,7 +50,6 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                     getAllWorkbookEntriesSeparately({
                         workbookId,
                         filters,
-                        // @ts-ignore
                         scopes: scopesForRequest,
                         pageSize: PAGE_SIZE_MAIN_TAB,
                     }),
