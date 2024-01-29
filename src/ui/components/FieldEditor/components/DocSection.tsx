@@ -189,8 +189,7 @@ class DocSection extends React.Component<DocSectionProps, DocSectionState> {
     };
 
     fetchFunctionDoc = async (item: FunctionDocListItem) => {
-        const {datalensDocsRu, datalensDocsEn} = DL.ENDPOINTS;
-        const docsEndpoint = DL.USER_LANG === 'ru' ? datalensDocsRu : datalensDocsEn;
+        const {datalensDocs} = DL.ENDPOINTS;
 
         this.setState({functionLoading: true});
 
@@ -200,7 +199,7 @@ class DocSection extends React.Component<DocSectionProps, DocSectionState> {
             const {getFieldEditorDocPath} = registry.docs.functions.getAll();
             const path = getFieldEditorDocPath(href);
 
-            const functionDoc = await fetchFunctionsDocumentation(docsEndpoint, path);
+            const functionDoc = await fetchFunctionsDocumentation(datalensDocs, path);
 
             this.setState({
                 functionDoc,
