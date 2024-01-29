@@ -211,7 +211,13 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
             };
         }
         case GET_WORKBOOK_ENTRIES_SUCCESS: {
-            const newEntries = action.data.entries;
+            const loadedIds = new Set(
+                state.items.map((item) => {
+                    return item.entryId;
+                }),
+            );
+
+            const newEntries = action.data.entries.filter((entry) => !loadedIds.has(entry.entryId));
 
             return {
                 ...state,
