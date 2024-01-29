@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {ChartKitWidgetData} from '@gravity-ui/chartkit';
 import type {
     ChartKitWidgetTooltip,
     ScatterSeries,
@@ -11,15 +12,22 @@ import {PointCustomData, ScatterSeriesCustomData} from '../../../../../shared/ty
 type CustomScatterSeries = ScatterSeries<PointCustomData> & {custom: ScatterSeriesCustomData};
 type TooltipRenderer = NonNullable<ChartKitWidgetTooltip['renderer']>;
 
-export const scatterTooltipRenderer: TooltipRenderer = (data) => {
-    const series = data.hovered[0].series as CustomScatterSeries | undefined;
+export const scatterTooltipRenderer = (
+    widgetData: ChartKitWidgetData,
+    data: Parameters<TooltipRenderer>[0],
+) => {
+    const seriesName = data.hovered[0].series.name;
+    const series = widgetData.series.data.find(
+        (s) => (s as CustomScatterSeries).name === seriesName,
+    );
     const point = data.hovered[0].data as ScatterSeriesData<PointCustomData> | undefined;
 
     if (!series || !point) {
         return null;
     }
 
-    const {pointTitle, xTitle, yTitle, colorTitle, shapeTitle, sizeTitle} = series.custom || {};
+    const {pointTitle, xTitle, yTitle, colorTitle, shapeTitle, sizeTitle} =
+        (series as CustomScatterSeries).custom || {};
     const shouldShowShape = shapeTitle && shapeTitle !== colorTitle;
 
     return (
@@ -54,13 +62,20 @@ export const scatterTooltipRenderer: TooltipRenderer = (data) => {
     );
 };
 
-export const tooltipRenderer = (data: Parameters<TooltipRenderer>[0]) => {
-    switch (data.hovered[0].series.type) {
-        case 'scatter': {
-            return scatterTooltipRenderer(data);
-        }
-        default: {
-            return undefined;
+export const getTooltipRenderer = (widgetData: ChartKitWidgetData): TooltipRenderer | undefined => {
+    const seriesTypes = (widgetData?.series?.data || []).map((s) => s.type);
+
+    if (seriesTypes.length === 1) {
+        switch (seriesTypes[0]) {
+            case 'scatter': {
+                return (data: Parameters<TooltipRenderer>[0]) =>
+                    scatterTooltipRenderer(widgetData, data);
+            }
+            default: {
+                return undefined;
+            }
         }
     }
+
+    return undefined;
 };

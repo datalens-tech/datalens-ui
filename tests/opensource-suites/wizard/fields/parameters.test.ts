@@ -78,7 +78,7 @@ datalensTest.describe('Wizard', () => {
                 await wizardPage.parameterEditor.setName(parameterName);
                 await wizardPage.parameterEditor.setDefaultValue('1');
                 await wizardPage.parameterEditor.apply();
-                const parameterLocator = datasetFields.locator(slct(parameterName), {
+                let parameterLocator = datasetFields.locator(slct(parameterName), {
                     hasText: parameterName,
                 });
                 await expect(parameterLocator).toBeVisible();
@@ -115,19 +115,24 @@ datalensTest.describe('Wizard', () => {
                 await expect(noData).toBeVisible();
 
                 // Rename parameter
+                const newName = 'run1';
                 await parameterLocator.locator(slct(SectionDatasetQA.ItemIcon)).click();
-                await wizardPage.parameterEditor.setName('run1');
+                await wizardPage.parameterEditor.setName(newName);
                 await wizardPage.parameterEditor.apply();
+                parameterLocator = datasetFields.locator(slct(newName), {
+                    hasText: newName,
+                });
                 await expect(previewLoader).toBeVisible();
                 await expect(previewLoader).not.toBeVisible();
                 await expect(noData).toBeVisible();
 
-                // // Change parameter value to 1
-                // await wizardPage.parameterEditor.setDefaultValue('1');
-                // await wizardPage.parameterEditor.apply();
-                // await expect(previewLoader).toBeVisible();
-                // await expect(previewLoader).not.toBeVisible();
-                // await expect(chart).toBeVisible();
+                // Change parameter value to 1
+                await parameterLocator.locator(slct(SectionDatasetQA.ItemIcon)).click();
+                await wizardPage.parameterEditor.setDefaultValue('1');
+                await wizardPage.parameterEditor.apply();
+                await expect(previewLoader).toBeVisible();
+                await expect(previewLoader).not.toBeVisible();
+                await expect(chart).toBeVisible();
             },
         );
     });
