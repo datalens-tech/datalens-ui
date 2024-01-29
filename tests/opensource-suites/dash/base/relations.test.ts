@@ -18,10 +18,6 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Basic functionality', () => {
-    datalensTest.afterEach(async ({page}: {page: Page}) => {
-        const dashboardPage = new DashboardPage({page});
-        await dashboardPage.deleteDash();
-    });
     datalensTest(
         'Adding a chart and selector with manual input of values, creating a link',
         async ({page}: {page: Page}) => {
@@ -77,6 +73,8 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
 
                 return elems.length === 1;
             });
+
+            await dashboardPage.deleteDash();
         },
     );
 });
