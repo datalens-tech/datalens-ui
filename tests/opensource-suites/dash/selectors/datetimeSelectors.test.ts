@@ -11,6 +11,11 @@ const expectedValues = [
 ];
 
 datalensTest.describe('Dashboards - Selectors by date/time', () => {
+    datalensTest.afterEach(async ({page}: {page: Page}) => {
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.deleteDash();
+    });
+
     datalensTest('Date/time selectors should display the time', async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 
@@ -36,7 +41,5 @@ datalensTest.describe('Dashboards - Selectors by date/time', () => {
         await dashboardPage.waitForSelector(
             `${slct(ControlQA.chartkitControl)} input[value='${expectedValues[1]}']`,
         );
-
-        await dashboardPage.deleteDash();
     });
 });

@@ -18,7 +18,7 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Basic functionality', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
+    datalensTest.afterEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
         await dashboardPage.deleteDash();
     });
