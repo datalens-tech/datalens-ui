@@ -15,6 +15,7 @@ const getStatusFromError = (error: unknown) =>
 
 export const getDatasetFieldsById = async (
     datasetId: string,
+    workbookId: string | null,
     req: Request,
     rejectFetchingSource: (reason?: any) => void,
     iamToken?: string,
@@ -43,6 +44,7 @@ export const getDatasetFieldsById = async (
                   authArgs: {iamToken},
                   args: {
                       dataSetId: datasetId,
+                      workbookId,
                   },
               });
 
@@ -64,6 +66,7 @@ export const getDatasetFieldsById = async (
 
 export const getDatasetFields = async (args: {
     datasetId: string;
+    workbookId: string | null;
     req: Request;
     iamToken?: string;
     cacheClient: Cache;
@@ -71,8 +74,16 @@ export const getDatasetFields = async (args: {
     rejectFetchingSource: (reason: any) => void;
     pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
 }): Promise<{datasetFields: PartialDatasetField[]; revisionId: string}> => {
-    const {datasetId, cacheClient, req, userId, iamToken, rejectFetchingSource, pluginOptions} =
-        args;
+    const {
+        datasetId,
+        workbookId,
+        cacheClient,
+        req,
+        userId,
+        iamToken,
+        rejectFetchingSource,
+        pluginOptions,
+    } = args;
 
     const cacheKey = `${datasetId}__${userId}`;
 
@@ -93,6 +104,7 @@ export const getDatasetFields = async (args: {
 
             const response = await getDatasetFieldsById(
                 datasetId,
+                workbookId,
                 req,
                 rejectFetchingSource,
                 iamToken,
@@ -123,6 +135,7 @@ export const getDatasetFields = async (args: {
     } else {
         const response = await getDatasetFieldsById(
             datasetId,
+            workbookId,
             req,
             rejectFetchingSource,
             iamToken,

@@ -60,6 +60,7 @@ import {
     unwrapFromArrayAndSkipOperation,
 } from '../../../../units/dash/modules/helpers';
 import {
+    selectDashWorkbookId,
     selectIsNewRelations,
     selectSkipReload,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
@@ -654,7 +655,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const {result} = await this.props.getDistincts!({
                 datasetId,
-                workbookId: null, // TODO: add workbookId
+                workbookId: this.props.workbookId,
                 fields: [
                     {
                         ref: {type: 'id', id: datasetFieldId},
@@ -1190,6 +1191,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
+    workbookId: selectDashWorkbookId(state),
     skipReload: selectSkipReload(state),
     isNewRelations: selectIsNewRelations(state),
 });

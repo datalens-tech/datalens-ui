@@ -80,7 +80,7 @@ export const actions = {
     // -
     embedsGetDataSetFieldsById: createAction<
         GetDataSetFieldsByIdResponse,
-        GetDataSetFieldsByIdArgs
+        Omit<GetDataSetFieldsByIdArgs, 'workbookId'>
     >({
         method: 'GET',
         endpoint: 'datasetDataEmbedsApiEndpoint',
@@ -90,7 +90,7 @@ export const actions = {
     // -
     publicGetDataSetFieldsById: createAction<
         GetDataSetFieldsByIdResponse,
-        GetDataSetFieldsByIdArgs
+        Omit<GetDataSetFieldsByIdArgs, 'workbookId'>
     >({
         method: 'GET',
         endpoint: 'datasetDataApiEndpoint',

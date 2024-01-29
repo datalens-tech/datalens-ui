@@ -17,6 +17,7 @@ export default async (
 
     const datasetFieldsResponse = await getDatasetFields({
         datasetId,
+        workbookId: null, // TODO: add workbookId
         req,
         cacheClient,
         userId,
