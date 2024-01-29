@@ -1,14 +1,15 @@
 .two-column-dialog {
-    $dialogPaddingHorizontal: 24px;
+    $dialogPaddingHorizontal: 32px;
 
     // Header
-    $dialogHeaderPaddingTop: 30px;
-    $dialogHeaderPaddingBottom: 16px;
+    $dialogHeaderPaddingTop: 20px;
+    $dialogHeaderPaddingBottom: 10px;
     $dialogHeaderPaddingHorizontal: $dialogPaddingHorizontal;
 
     // Body
     $dialogBodyPaddingHorizontal: $dialogPaddingHorizontal;
-    $dialogBodyPaddingVertical: 0px;
+    $dialogBodyPaddingTo: 14px;
+    $dialogBodyPaddingBottom: 0px;
 
     // Footer
     $dialogFooterPaddingHorizontal: $dialogPaddingHorizontal;
@@ -16,7 +17,7 @@
 
     // TODO: this is an private api and may silently changed. We should use local styles
     --yc-dialog-header-padding: #{$dialogHeaderPaddingTop} #{$dialogHeaderPaddingHorizontal} #{$dialogHeaderPaddingBottom};
-    --yc-dialog-body-padding: #{$dialogBodyPaddingVertical} #{$dialogBodyPaddingHorizontal};
+    --yc-dialog-body-padding: #{$dialogBodyPaddingTo} #{$dialogBodyPaddingHorizontal} #{$dialogBodyPaddingBottom};
     --yc-dialog-footer-padding: #{$dialogFooterPaddingVertical} #{$dialogFooterPaddingHorizontal};
 
     // TODO: this is an private api and may silently changed. We should use local styles
@@ -27,7 +28,6 @@
 
     &__sidebar {
         background: var(--g-color-base-generic-ultralight);
-        width: 255px;
     }
 
     &__sidebar-body {
@@ -37,7 +37,7 @@
 
     &__content {
         overflow-y: auto;
-        width: 705px;
+        width: 100%;
 
         &_no-content-header {
             padding-top: calc(
