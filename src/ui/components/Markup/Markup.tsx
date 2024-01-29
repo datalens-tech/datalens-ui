@@ -1,13 +1,17 @@
+/* eslint complexity: 0, no-param-reassign: 0, @typescript-eslint/no-explicit-any: 0 */
+
 import React from 'react';
 
 import {Link} from '@gravity-ui/uikit';
+import merge from 'lodash/merge';
 
 import {MarkupItem, MarkupItemType} from './types';
+import {isNumericCSSValueValid} from './utils';
 
 type TemplateItem = {
-    element?: string | React.ComponentClass | React.ExoticComponent;
-    props?: {[key: string]: string};
     children: (TemplateItem | string)[];
+    element?: string | React.ComponentClass | React.ExoticComponent;
+    props?: {[key: string]: string | Record<string, any>};
 };
 
 type Props = {
@@ -45,9 +49,8 @@ const getConfig = (
             configItem.element = 'b';
             break;
         }
-
         case 'concat': {
-            configItem.element = React.Fragment;
+            configItem.element = 'span';
 
             if (markupItem.children) {
                 configItem.children.push(
@@ -59,26 +62,41 @@ const getConfig = (
 
             break;
         }
-
         case 'italics': {
             configItem.element = 'i';
             break;
         }
-
         case 'url': {
             configItem.element = Link;
-            configItem.props = {
+            configItem.props = merge(configItem.props, {
                 view: 'normal',
-                href: markupItem.url!,
+                href: markupItem.url || '',
                 target: '_blank',
-            };
+            });
+            break;
+        }
+        case 'color': {
+            configItem.props = merge(configItem.props, {style: {color: markupItem.color}});
+            break;
+        }
+        case 'br': {
+            configItem.element = 'br';
+            break;
+        }
+        case 'size': {
+            const fontSize = isNumericCSSValueValid(markupItem.size) ? markupItem.size : undefined;
+
+            if (fontSize) {
+                configItem.props = merge(configItem.props, {
+                    style: {fontSize, lineHeight: fontSize},
+                });
+            }
         }
     }
 
-    configItem.props = {
-        ...configItem.props,
-        ...(externalProps?.[markupItem.type] || {}),
-    };
+    if (externalProps?.[markupItem.type]) {
+        configItem.props = merge(configItem.props, externalProps[markupItem.type]);
+    }
 
     const content = markupItem.content as MarkupItem;
     let nextConfigItem: TemplateItem = {children: []};
@@ -102,10 +120,12 @@ const renderTemplate = (templateItem: TemplateItem | string): JSX.Element => {
     }
 
     return React.createElement(
-        templateItem.element || React.Fragment,
+        templateItem.element || 'span',
         templateItem.props,
         ...templateItem.children.map((child) => renderTemplate(child)),
     );
 };
 
-export default (props: Props) => renderTemplate(getConfig(props.item, props.externalProps));
+export default (props: Props) => {
+    return renderTemplate(getConfig(props.item, props.externalProps));
+};

@@ -1,8 +1,18 @@
-export type MarkupItemType = 'bold' | 'concat' | 'italics' | 'url' | 'text';
+export type MarkupItemType =
+    | 'bold'
+    | 'br'
+    | 'color'
+    | 'concat'
+    | 'italics'
+    | 'size'
+    | 'text'
+    | 'url';
 
 export type MarkupItem = {
     type: MarkupItemType;
-    url?: string;
     children?: (MarkupItem | string)[];
+    color?: string;
     content?: string | MarkupItem;
+    size?: string | number;
+    url?: string;
 };
