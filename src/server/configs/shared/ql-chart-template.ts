@@ -56,7 +56,7 @@ export default {
         switch (id) {
             case 'table': // Legacy
             case 'flatTable': // Available with WizardQLCommonVisualization feature
-                return QL_TYPE.TABLE_QL_NODE;
+                return QL_TYPE.LOGGING_TABLE_QL_NODE;
 
             case 'line':
             case 'area':

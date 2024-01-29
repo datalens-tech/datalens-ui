@@ -53,6 +53,7 @@ const runners: Runner[] = [
             'control_dash',
             'timeseries_wizard_node',
             'd3_wizard_node',
+            'loggingtable_node',
         ]),
         safeConfig: true,
         handler: runChart,

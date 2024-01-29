@@ -101,6 +101,13 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
 
             break;
         }
+        // @ts-ignore
+        case 'logging': {
+            // @ts-ignore
+            chartkitType = 'loggingtable';
+
+            break;
+        }
     }
 
     return chartkitType;
@@ -126,6 +133,13 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
         }
         case 'metric': {
             const data = {...(loadedData as ChartKitProps<'metric'>['data'])};
+
+            return data;
+        }
+        // @ts-ignore
+        case 'loggingtable': {
+            // @ts-ignore
+            const data = {...(loadedData as ChartKitProps<'loggingtable'>['data'])};
 
             return data;
         }
