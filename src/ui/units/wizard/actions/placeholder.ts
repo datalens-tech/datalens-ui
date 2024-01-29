@@ -1,4 +1,5 @@
 import {
+    Feature,
     Field,
     FilterField,
     GraphShared,
@@ -17,6 +18,7 @@ import {
     isVisualizationWithDimensionsAsColors,
     isVisualizationWithLayers,
 } from 'shared';
+import {isChartSupportMultipleColors} from 'shared/modules/colors/common-helpers';
 import {ApplyData, DatalensGlobalState} from 'ui';
 import {
     getAxisModePlaceholderSettings,
@@ -25,6 +27,8 @@ import {
 
 import {SETTINGS} from '../../../constants/visualizations';
 import {AppDispatch} from '../../../store';
+import Utils from '../../../utils';
+import {getChartType} from '../../ql/store/reducers/ql';
 import {
     selectDashboardParameters,
     selectDrillDownLevel,
@@ -129,6 +133,12 @@ export function updateColors(args: CommonUpdatePlaceholderArgs) {
         const visualizationState = getState().wizard.visualization;
         const {visualization} = visualizationState;
 
+        const chartType = getChartType(getState());
+
+        const isMultipleColorsSupported =
+            Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+            isChartSupportMultipleColors(chartType ?? '', visualization?.id ?? '');
+
         const previewState = getState().wizard.preview;
         const prevColors = previewState.colors;
 
@@ -142,6 +152,7 @@ export function updateColors(args: CommonUpdatePlaceholderArgs) {
             updatedColors = onDesignItemsChange({
                 colors: items,
                 prevColors: prevColors,
+                isMultipleColorsSupported,
                 // onDesignItemsChange is mutating visualization
                 // That's why we are setting new visualization below
                 visualization: visualizationCopy as GraphShared['visualization'],

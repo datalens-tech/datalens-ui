@@ -43,6 +43,7 @@ export interface Props {
     extra: ExtraSettings;
     colorPalettes: ColorPalette[];
     colorsList: string[];
+    colorSectionFields?: Field[];
 }
 
 class PaletteContainer extends React.Component<Props> {
@@ -50,6 +51,7 @@ class PaletteContainer extends React.Component<Props> {
         return (
             <div className={b('container')}>
                 <ValuesList
+                    sectionFields={this.props.colorSectionFields}
                     item={this.props.item}
                     items={this.props.items}
                     distincts={this.props.distincts}
