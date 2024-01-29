@@ -34,6 +34,7 @@ jobs:
       - name: Extract env from workflow
         run: |
           echo "HTML_REPORT_URL_PATH=$(cat tests/artifacts/report-link)" >> "$GITHUB_ENV"
+          echo "REPORT_PR_NUMBER=$(cat tests/artifacts/report-pr)" >> "$GITHUB_ENV"
           mv tests/artifacts ${{ env.HTML_REPORT_URL_PATH }}
       - name: Push HTML Report
         timeout-minutes: 3
@@ -61,3 +62,8 @@ jobs:
           FULL_HTML_REPORT_URL=https://datalens-tech.github.io/datalens-ui/${{ env.HTML_REPORT_URL_PATH }}/report
 
           echo "::notice title=📋 Published Playwright Test Report::$FULL_HTML_REPORT_URL"
+      - name: Create Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          number: ${{ env.REPORT_PR_NUMBER }}
+          message: '[E2E Report](https://datalens-tech.github.io/datalens-ui/${{ env.HTML_REPORT_URL_PATH }}/report) is ready.'
