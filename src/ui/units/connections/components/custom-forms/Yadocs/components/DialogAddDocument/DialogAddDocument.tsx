@@ -1,10 +1,12 @@
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {Dialog, RadioButton, TextInput} from '@gravity-ui/uikit';
+import {ArrowUpRightFromSquare} from '@gravity-ui/icons';
+import {Dialog, Icon, Link, RadioButton, TextInput} from '@gravity-ui/uikit';
 import type {ButtonProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {Interpolate} from 'ui/components/Interpolate';
 
 import DialogManager from '../../../../../../../components/DialogManager/DialogManager';
 import {DataLensApiError} from '../../../../../../../typings';
@@ -116,13 +118,32 @@ const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
                             content={i18n('label_add-input-help')}
                         />
                     </label>
-                    <TextInput
-                        value={value}
-                        note={<span className={b('add-dialog-row-input-note')}>{inputNote}</span>}
-                        autoFocus={true}
-                        disabled={loading}
-                        onUpdate={handleInputUpdate}
-                    />
+                    <div>
+                        <TextInput
+                            value={value}
+                            autoFocus={true}
+                            disabled={loading}
+                            onUpdate={handleInputUpdate}
+                        />
+                        <div className={b('add-dialog-row-input-note')}>
+                            {inputNote}
+                            <br />
+                            <Interpolate
+                                text={i18n('label_add-input-link')}
+                                matches={{
+                                    link: (match) => (
+                                        <React.Fragment>
+                                            <Link href="https://docs.yandex.ru" target="_blank">
+                                                {match}
+                                                <Icon data={ArrowUpRightFromSquare} />
+                                            </Link>
+                                        </React.Fragment>
+                                    ),
+                                }}
+                            />
+                            <br />
+                        </div>
+                    </div>
                 </div>
             </Dialog.Body>
             <Dialog.Footer

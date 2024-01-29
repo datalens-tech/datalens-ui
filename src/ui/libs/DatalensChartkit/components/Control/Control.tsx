@@ -352,6 +352,8 @@ class Control<TProviderData> extends React.PureComponent<
             required?: boolean;
             hasValidationError?: boolean;
             placeholder?: string;
+            label?: string;
+            innerLabel?: string;
         } = {};
 
         // for first initialization of control
@@ -362,9 +364,19 @@ class Control<TProviderData> extends React.PureComponent<
             ? dashI18n('value_required')
             : null;
         const validationErrors = initialValidationError || this.state.validationErrors[index];
+        const isRequired =
+            Utils.isEnabledFeature(Feature.SelectorRequiredValue) && control.required;
 
         validationProps.required = control.required;
         validationProps.hasValidationError = Boolean(validationErrors);
+
+        if (control.label && isRequired) {
+            validationProps.label = `${control.label}*`;
+        }
+        // if only innerLabel is visible in required selector we add '*' to it
+        if ('innerLabel' in control && !control.label && control.innerLabel && isRequired) {
+            validationProps.innerLabel = `${control.innerLabel}*`;
+        }
 
         if (control.type === 'input' || control.type === 'select') {
             validationProps.placeholder =

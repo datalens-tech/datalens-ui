@@ -210,10 +210,12 @@ export function openDialogPointsSize({
 
 type OpenDialogColorsArguments = {
     item?: Field | Field[];
+    // this prop is used only when multiple colors supported in colors section; otherwise it will be undefined;
+    colorSectionFields?: Field[];
     onApply?: () => void;
 };
 
-export function openDialogColors({item, onApply}: OpenDialogColorsArguments) {
+export function openDialogColors({item, onApply, colorSectionFields}: OpenDialogColorsArguments) {
     return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const datalensGlobalState = getState();
         const {visualization: visualizationState, dataset: datasetState} =
@@ -260,6 +262,7 @@ export function openDialogColors({item, onApply}: OpenDialogColorsArguments) {
                 openDialogColor({
                     item: dialogColorItem,
                     extra,
+                    colorSectionFields,
                     items: dialogColorItems,
                     isColorModeChangeAvailable: isColorModeChangeAvailableValue,
                     onApply: (config: ColorsConfig) => {

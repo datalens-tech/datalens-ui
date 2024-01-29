@@ -200,6 +200,7 @@ export interface GraphShared extends CommonShared {
             shapes?: Field[];
             colors?: Field[];
             prevColors?: Field[];
+            isMultipleColorsSupported?: boolean;
             visualization: GraphShared['visualization'];
         }) => {shapes: Field[]; colors: Field[]};
         allowAvailable?: boolean;
@@ -216,6 +217,7 @@ export interface GraphShared extends CommonShared {
             item: Field;
             visualization?: Shared['visualization'];
             designItems: Field[];
+            isMultipleColorsSupported?: boolean;
         }) => boolean;
         checkAllowedLabels?: (item: Field) => boolean;
         checkAllowedShapes?: (args: {
