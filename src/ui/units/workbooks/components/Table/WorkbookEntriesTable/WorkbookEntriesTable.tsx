@@ -30,7 +30,7 @@ const b = block('dl-workbook-entries-table');
 type WorkbookEntriesTableProps = {
     workbook: WorkbookWithPermissions;
     entries: GetEntryResponse[];
-    refreshEntries: (scope?: EntryScope) => void;
+    refreshEntries: (scope: EntryScope) => void;
     loadMoreEntries?: (entryScope: EntryScope) => void;
     retryLoadEntries?: (entryScope: EntryScope) => void;
     scope?: EntryScope;
@@ -84,7 +84,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         );
 
         const onApplyDuplicate = React.useCallback(
-            (entryScope?: EntryScope) => {
+            (entryScope: EntryScope) => {
                 refreshEntries(entryScope);
             },
             [refreshEntries],
@@ -152,14 +152,6 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             });
         });
 
-        const mainTabProps = {
-            workbook,
-            onRenameEntry,
-            onDeleteEntry,
-            onDuplicateEntry,
-            onCopyEntry,
-        };
-
         return (
             <>
                 <div className={b()}>
@@ -205,7 +197,11 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dash)}
                             retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dash)}
                             isErrorMessage={mapErrors?.[EntryScope.Dash]}
-                            {...mainTabProps}
+                            workbook={workbook}
+                            onRenameEntry={onRenameEntry}
+                            onDeleteEntry={onDeleteEntry}
+                            onDuplicateEntry={onDuplicateEntry}
+                            onCopyEntry={onCopyEntry}
                         />
 
                         <MainTabContent
@@ -219,7 +215,11 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             loadMoreEntries={() => loadMoreEntries?.(EntryScope.Widget)}
                             retryLoadEntries={() => retryLoadEntries?.(EntryScope.Widget)}
                             isErrorMessage={mapErrors?.[EntryScope.Widget]}
-                            {...mainTabProps}
+                            workbook={workbook}
+                            onRenameEntry={onRenameEntry}
+                            onDeleteEntry={onDeleteEntry}
+                            onDuplicateEntry={onDuplicateEntry}
+                            onCopyEntry={onCopyEntry}
                         />
 
                         {workbook.permissions.view && (
@@ -234,7 +234,11 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                 loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dataset)}
                                 retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dataset)}
                                 isErrorMessage={mapErrors?.[EntryScope.Dataset]}
-                                {...mainTabProps}
+                                workbook={workbook}
+                                onRenameEntry={onRenameEntry}
+                                onDeleteEntry={onDeleteEntry}
+                                onDuplicateEntry={onDuplicateEntry}
+                                onCopyEntry={onCopyEntry}
                             />
                         )}
 
@@ -250,7 +254,11 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                 loadMoreEntries={() => loadMoreEntries?.(EntryScope.Connection)}
                                 retryLoadEntries={() => retryLoadEntries?.(EntryScope.Connection)}
                                 isErrorMessage={mapErrors?.[EntryScope.Connection]}
-                                {...mainTabProps}
+                                workbook={workbook}
+                                onRenameEntry={onRenameEntry}
+                                onDeleteEntry={onDeleteEntry}
+                                onDuplicateEntry={onDuplicateEntry}
+                                onCopyEntry={onCopyEntry}
                             />
                         )}
                     </>

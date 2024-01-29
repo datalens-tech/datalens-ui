@@ -23,7 +23,7 @@ import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntrie
 
 import './WorkbookTabContent.scss';
 
-const b = block('dl-workbook-content');
+const b = block('dl-workbook-tab-content');
 const i18n = I18n.keyset('new-workbooks');
 
 type Props = {
@@ -48,12 +48,12 @@ export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filt
     }, [dispatch, filters, scope, workbook, workbookId]);
 
     const refreshEntries = React.useCallback(
-        (entryScope?: EntryScope) => {
+        (entryScope: EntryScope) => {
             dispatch(resetWorkbookEntries());
 
-            dispatch(getWorkbookEntries({workbookId, filters, scope: entryScope || scope}));
+            dispatch(getWorkbookEntries({workbookId, filters, scope: entryScope}));
         },
-        [dispatch, workbookId, filters, scope],
+        [dispatch, workbookId, filters],
     );
 
     const retryLoadEntries = React.useCallback(() => {

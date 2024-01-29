@@ -103,10 +103,12 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                         pageSize: PAGE_SIZE_MAIN_TAB,
                     }),
                 ).then((data) => {
-                    setMapTokens({
-                        ...mapTokens,
-                        [entryScope]: data?.nextPageToken || '',
-                    });
+                    if (data) {
+                        setMapTokens({
+                            ...mapTokens,
+                            [entryScope]: data?.nextPageToken || '',
+                        });
+                    }
                 });
             }
         },
@@ -140,10 +142,8 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
     );
 
     const refreshEntries = React.useCallback(
-        (entryScope?: EntryScope) => {
-            if (entryScope) {
-                dispatch(getWorkbookEntries({workbookId, filters, scope: entryScope}));
-            }
+        (entryScope: EntryScope) => {
+            dispatch(getWorkbookEntries({workbookId, filters, scope: entryScope}));
         },
         [dispatch, workbookId, filters],
     );
