@@ -22,6 +22,7 @@ import {
     TableWidgetEventScope,
     WidgetEvent,
 } from '../../../../shared';
+import {MarkupItem} from '../../../components/Markup';
 import {ChartsData} from '../modules/data-provider/charts';
 
 import {CombinedError} from './common';
@@ -300,7 +301,7 @@ export interface YMapWidget extends WidgetBaseWithData {
 
 export type MarkupWidget = WidgetBaseWithData & {
     type: 'markup';
-    data: {};
+    data: MarkupItem;
 };
 
 export type Widget =
