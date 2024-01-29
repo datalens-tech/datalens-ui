@@ -14,8 +14,7 @@ const ruUser = {
     },
 };
 
-const datalensDocsRu = 'https://datalens.docs.endpoint.ru';
-const datalensDocsEn = 'https://datalens.docs.endpoint.en';
+const datalensDocs = 'https://datalens.docs.endpoint';
 
 describe('replaceRelativeLinksToAbsoluteInHTML', () => {
     let windowSpy: jest.SpyInstance<{DL: DLGlobalData}>;
@@ -32,8 +31,7 @@ describe('replaceRelativeLinksToAbsoluteInHTML', () => {
             DL: {
                 ...enUser,
                 endpoints: {
-                    datalensDocsEn,
-                    datalensDocsRu,
+                    datalensDocs,
                 },
             } as unknown as DLGlobalData,
         }));
@@ -51,8 +49,7 @@ describe('replaceRelativeLinksToAbsoluteInHTML', () => {
             DL: {
                 ...enUser,
                 endpoints: {
-                    datalensDocsEn,
-                    datalensDocsRu,
+                    datalensDocs,
                 },
             } as unknown as DLGlobalData,
         }));
@@ -64,8 +61,8 @@ describe('replaceRelativeLinksToAbsoluteInHTML', () => {
 
         const expectedResult = `<div>
             <a href="http://www.very.important.link/path">Click</a>
-            <a href="${datalensDocsEn}/path">Click2</a>
-            <a href="${datalensDocsEn}/path2">Click3</a>
+            <a href="${datalensDocs}/path">Click2</a>
+            <a href="${datalensDocs}/path2">Click3</a>
         </div>`;
 
         const result = replaceRelativeLinksToAbsoluteInHTML(html);
@@ -78,8 +75,7 @@ describe('replaceRelativeLinksToAbsoluteInHTML', () => {
             DL: {
                 ...ruUser,
                 endpoints: {
-                    datalensDocsEn,
-                    datalensDocsRu,
+                    datalensDocs,
                 },
             } as unknown as DLGlobalData,
         }));
@@ -91,8 +87,8 @@ describe('replaceRelativeLinksToAbsoluteInHTML', () => {
 
         const expectedResult = `<div>
             <a href="http://www.very.important.link/path">Click</a>
-            <a href="${datalensDocsRu}/path">Click2</a>
-            <a href="${datalensDocsRu}/path2">Click3</a>
+            <a href="${datalensDocs}/path">Click2</a>
+            <a href="${datalensDocs}/path2">Click3</a>
         </div>`;
 
         const result = replaceRelativeLinksToAbsoluteInHTML(html);
@@ -105,8 +101,7 @@ describe('replaceRelativeLinksToAbsoluteInHTML', () => {
             DL: {
                 ...enUser,
                 endpoints: {
-                    datalensDocsEn,
-                    datalensDocsRu,
+                    datalensDocs,
                 },
             } as unknown as DLGlobalData,
         }));
@@ -120,10 +115,10 @@ describe('replaceRelativeLinksToAbsoluteInHTML', () => {
 
         const expectedResult = `<div>
             <a href="http://www.very.important.link/path">Click</a>
-            <a href="${datalensDocsEn}/path/abc/wow">Click2</a>
-            <a href="${datalensDocsEn}/path2/super_2_important_link/123/qwe">Click3</a>
-            <a href="${datalensDocsEn}/path3/qwe/123/q_1_2">Click3</a>
-            <a href="${datalensDocsEn}/path3/qwe/123/q_1_2">Click3</a>
+            <a href="${datalensDocs}/path/abc/wow">Click2</a>
+            <a href="${datalensDocs}/path2/super_2_important_link/123/qwe">Click3</a>
+            <a href="${datalensDocs}/path3/qwe/123/q_1_2">Click3</a>
+            <a href="${datalensDocs}/path3/qwe/123/q_1_2">Click3</a>
         </div>`;
 
         const result = replaceRelativeLinksToAbsoluteInHTML(html);
