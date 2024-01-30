@@ -1,5 +1,5 @@
 import {I18n} from 'i18n';
-import {pipe} from 'lodash/fp';
+import {flow} from 'lodash';
 import {batch} from 'react-redux';
 import {ConnectionData, ConnectorType} from 'shared';
 import type {FormSchema, GetEntryResponse} from 'shared/schema/types';
@@ -129,13 +129,13 @@ function setDefaultFormData(args: {type: ConnectorType; schema: FormSchema}) {
 
         if (Object.keys(defaults.form).length) {
             batch(() => {
-                pipe([setInitialForm, dispatch])({updates: defaults.form});
-                pipe([setForm, dispatch])({updates: defaults.form});
+                flow([setInitialForm, dispatch])({updates: defaults.form});
+                flow([setForm, dispatch])({updates: defaults.form});
             });
         }
 
         if (Object.keys(defaults.innerForm).length) {
-            pipe([setInnerForm, dispatch])({updates: defaults.innerForm});
+            flow([setInnerForm, dispatch])({updates: defaults.innerForm});
         }
     };
 }
@@ -149,8 +149,8 @@ function setFetchedFormData(schema: FormSchema) {
 
         if (Object.keys(fetchedFormData).length) {
             batch(() => {
-                pipe([setInitialForm, dispatch])({updates: fetchedFormData});
-                pipe([setForm, dispatch])({updates: fetchedFormData});
+                flow([setInitialForm, dispatch])({updates: fetchedFormData});
+                flow([setForm, dispatch])({updates: fetchedFormData});
             });
         }
     };
@@ -205,13 +205,13 @@ export function getConnectorSchema(type: ConnectorType) {
 
 export function changeForm(formUpdates: ConnectionsReduxState['form']) {
     return (dispatch: ConnectionsReduxDispatch) => {
-        pipe([setForm, dispatch])({updates: formUpdates});
+        flow([setForm, dispatch])({updates: formUpdates});
     };
 }
 
 export function changeInnerForm(innerFormUpdates: ConnectionsReduxState['innerForm']) {
     return (dispatch: ConnectionsReduxDispatch) => {
-        pipe([setInnerForm, dispatch])({updates: innerFormUpdates});
+        flow([setInnerForm, dispatch])({updates: innerFormUpdates});
     };
 }
 
@@ -241,7 +241,7 @@ export function createConnection(name: string, dirPath?: string) {
             resultForm[FieldKey.WorkbookId] = getWorkbookIdFromPathname();
         }
 
-        pipe([setSubmitLoading, dispatch])({loading: true});
+        flow([setSubmitLoading, dispatch])({loading: true});
         const {id: connectionId, error: connError} = await api.createConnection(resultForm);
         let templateFolderId: string | undefined;
         let templateError: DataLensApiError | undefined;
@@ -255,7 +255,7 @@ export function createConnection(name: string, dirPath?: string) {
 
         if (connectionId) {
             // technotes [2]
-            pipe([resetFormsData, dispatch])();
+            flow([resetFormsData, dispatch])();
         }
 
         batch(() => {
@@ -266,12 +266,12 @@ export function createConnection(name: string, dirPath?: string) {
             }
 
             if (templateError) {
-                pipe([showToast, dispatch])({
+                flow([showToast, dispatch])({
                     title: i18n('label_error-on-template-apply'),
                     error: templateError,
                 });
             } else if (connError) {
-                pipe([showToast, dispatch])({
+                flow([showToast, dispatch])({
                     title: isEntryAlreadyExists(connError)
                         ? i18n('label_entry-name-already-exists')
                         : i18n('toast_create-connection-error'),
@@ -279,7 +279,7 @@ export function createConnection(name: string, dirPath?: string) {
                 });
             }
 
-            pipe([setSubmitLoading, dispatch])({loading: false});
+            flow([setSubmitLoading, dispatch])({loading: false});
         });
     };
 }
@@ -310,22 +310,22 @@ export function updateConnection() {
             form: resultForm,
             innerForm,
         });
-        pipe([setValidationErrors, dispatch])({errors: validationErrors});
+        flow([setValidationErrors, dispatch])({errors: validationErrors});
 
         if (validationErrors.length) {
             return;
         }
 
-        pipe([setSubmitLoading, dispatch])({loading: true});
+        flow([setSubmitLoading, dispatch])({loading: true});
         const {error} = await api.updateConnection(resultForm, connectionData.id as string);
         batch(() => {
             if (error) {
-                pipe([showToast, dispatch])({title: i18n('toast_modify-connection-error'), error});
+                flow([showToast, dispatch])({title: i18n('toast_modify-connection-error'), error});
             } else {
-                pipe([setInitialForm, dispatch])({updates: form});
+                flow([setInitialForm, dispatch])({updates: form});
             }
 
-            pipe([setSubmitLoading, dispatch])({loading: false});
+            flow([setSubmitLoading, dispatch])({loading: false});
         });
     };
 }
@@ -357,22 +357,22 @@ export function checkConnection() {
 
         const connectionId = connectionData.id && (connectionData.id as string);
 
-        pipe([setCheckLoading, dispatch])({loading: true});
+        flow([setCheckLoading, dispatch])({loading: true});
         const checkData = await (connectionId
             ? api.checkConnection(params, connectionId)
             : api.checkConnectionParams(params));
 
         batch(() => {
-            pipe([setCheckData, dispatch])({...checkData});
+            flow([setCheckData, dispatch])({...checkData});
 
             if (checkData.error) {
-                pipe([showToast, dispatch])({
+                flow([showToast, dispatch])({
                     title: i18n('toast_verify-error'),
                     error: checkData.error,
                 });
             }
 
-            pipe([setCheckLoading, dispatch])({loading: false});
+            flow([setCheckLoading, dispatch])({loading: false});
         });
     };
 }
