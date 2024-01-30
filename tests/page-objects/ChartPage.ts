@@ -69,7 +69,7 @@ export class ChartPage extends BasePage {
         const selector = visualizationIds.map((id) => slct(`visualization-item-${id}`)).join(', ');
 
         return await this.page
-            .locator(WizardPageQa.VisualizationSelectPopup)
+            .locator(slct(WizardPageQa.VisualizationSelectPopup))
             .locator(selector)
             .click();
     }
