@@ -79,7 +79,7 @@ import {
     SelectControlProps,
     ValidationErrorData,
 } from './types';
-import {getLabels, isValidationError} from './utils';
+import {getLabels, isValidRequiredValue} from './utils';
 
 import './Control.scss';
 
@@ -897,7 +897,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 : emptyPaceholder;
 
         const onChange = (value: string | string[]) => {
-            const hasError = this.checkValueValidation({
+            const hasError = this.validateValue({
                 required: source.required,
                 value,
             });
@@ -999,7 +999,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             });
 
             const onChange = (value: string | string[]) => {
-                const hasError = this.checkValueValidation({
+                const hasError = this.validateValue({
                     required,
                     value,
                 });
@@ -1178,8 +1178,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
     }
 
-    private checkValueValidation(args: ValidationErrorData) {
-        const hasError = isValidationError(args);
+    private validateValue(args: ValidationErrorData) {
+        const hasError = isValidRequiredValue(args);
         this.setValidationError(hasError);
 
         return hasError;
@@ -1190,7 +1190,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
         if (required) {
             // for first initialization of control
-            const initialValidationError = isValidationError({
+            const initialValidationError = isValidRequiredValue({
                 required,
                 value,
             })

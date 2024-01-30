@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
 import {Feature, StringParams} from 'shared';
-import {isValidationError} from 'ui/components/DashKit/plugins/Control/utils';
+import {isValidRequiredValue} from 'ui/components/DashKit/plugins/Control/utils';
 import {isMobileView} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'units/dash/modules/helpers';
@@ -162,7 +162,7 @@ class Control<TProviderData> extends React.PureComponent<
 
         const hasError =
             Utils.isEnabledFeature(Feature.SelectorRequiredValue) && 'required' in control
-                ? isValidationError({
+                ? isValidRequiredValue({
                       required: control.required,
                       value,
                       index: String(index),
@@ -355,7 +355,7 @@ class Control<TProviderData> extends React.PureComponent<
         } = {};
 
         // for first initialization of control
-        const initialValidationError = isValidationError({
+        const initialValidationError = isValidRequiredValue({
             required: control.required,
             value,
         })
