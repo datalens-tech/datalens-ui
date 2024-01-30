@@ -14,9 +14,9 @@ interface ChunkGroupProps extends WorkbookEntriesTableProps {
     chunk: ChunkItem[];
 }
 
-const b = block('dl-chunk-group');
+const b = block('dl-workbook-entries-chunk-group');
 
-function ChunkGroup({
+export function ChunkGroup({
     chunk,
     workbook,
     onRenameEntry,
@@ -56,5 +56,3 @@ function ChunkGroup({
         </div>
     );
 }
-
-export {ChunkGroup};

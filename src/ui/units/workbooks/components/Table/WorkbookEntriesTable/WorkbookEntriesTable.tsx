@@ -19,7 +19,7 @@ import {DIALOG_RENAME_ENTRY_IN_NEW_WORKBOOK} from '../../RenameEntryDialog/Renam
 import {ChunkGroup} from './ChunkGroup/ChunkGroup';
 import {MainTabContent} from './MainTabContent/MainTabContent';
 import {defaultRowStyle} from './constants';
-import {ChunkItem, useChunkedEntries} from './useChunkedEntries';
+import {useChunkedEntries} from './useChunkedEntries';
 
 import './WorkbookEntriesTable.scss';
 
@@ -124,33 +124,8 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             [dispatch],
         );
 
-        const chunks = useChunkedEntries(entries);
-
-        const dashChunk: ChunkItem[] = [];
-        const connChunk: ChunkItem[] = [];
-        const datasetChunk: ChunkItem[] = [];
-        const widgetChunk: ChunkItem[] = [];
-
-        chunks.forEach((chunk) => {
-            chunk.forEach((chunkItem) => {
-                if (chunkItem.type === 'entry') {
-                    switch (chunkItem.item.scope) {
-                        case EntryScope.Dash:
-                            dashChunk.push(chunkItem);
-                            break;
-                        case EntryScope.Connection:
-                            connChunk.push(chunkItem);
-                            break;
-                        case EntryScope.Dataset:
-                            datasetChunk.push(chunkItem);
-                            break;
-                        case EntryScope.Widget:
-                            widgetChunk.push(chunkItem);
-                            break;
-                    }
-                }
-            });
-        });
+        const chunks = useChunkedEntries(entries, !scope);
+        const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = []] = chunks;
 
         return (
             <>
@@ -192,7 +167,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             title={i18n('title_dashboards')}
                             actionType={CreateEntryActionType.Dashboard}
                             isShowMoreBtn={Boolean(
-                                dashChunk.length > 0 && mapTokens?.[EntryScope.Dash],
+                                dashChunk?.length > 0 && mapTokens?.[EntryScope.Dash],
                             )}
                             loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dash)}
                             retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dash)}
@@ -210,7 +185,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             title={i18n('title_charts')}
                             actionType={CreateEntryActionType.Wizard}
                             isShowMoreBtn={Boolean(
-                                widgetChunk.length > 0 && mapTokens?.[EntryScope.Widget],
+                                widgetChunk?.length > 0 && mapTokens?.[EntryScope.Widget],
                             )}
                             loadMoreEntries={() => loadMoreEntries?.(EntryScope.Widget)}
                             retryLoadEntries={() => retryLoadEntries?.(EntryScope.Widget)}
@@ -229,7 +204,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                 title={i18n('title_datasets')}
                                 actionType={CreateEntryActionType.Dataset}
                                 isShowMoreBtn={Boolean(
-                                    datasetChunk.length > 0 && mapTokens?.[EntryScope.Dataset],
+                                    datasetChunk?.length > 0 && mapTokens?.[EntryScope.Dataset],
                                 )}
                                 loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dataset)}
                                 retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dataset)}
@@ -249,7 +224,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                 title={i18n('title_connections')}
                                 actionType={CreateEntryActionType.Connection}
                                 isShowMoreBtn={Boolean(
-                                    connChunk.length > 0 && mapTokens?.[EntryScope.Connection],
+                                    connChunk?.length > 0 && mapTokens?.[EntryScope.Connection],
                                 )}
                                 loadMoreEntries={() => loadMoreEntries?.(EntryScope.Connection)}
                                 retryLoadEntries={() => retryLoadEntries?.(EntryScope.Connection)}

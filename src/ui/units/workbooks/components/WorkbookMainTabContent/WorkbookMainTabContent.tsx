@@ -143,7 +143,14 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
 
     const refreshEntries = React.useCallback(
         (entryScope: EntryScope) => {
-            dispatch(getWorkbookEntries({workbookId, filters, scope: entryScope}));
+            dispatch(
+                getWorkbookEntries({
+                    workbookId,
+                    filters,
+                    scope: entryScope,
+                    pageSize: PAGE_SIZE_MAIN_TAB,
+                }),
+            );
         },
         [dispatch, workbookId, filters],
     );
@@ -157,17 +164,15 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
     }
 
     return (
-        <React.Fragment>
-            <WorkbookEntriesTable
-                refreshEntries={refreshEntries}
-                workbook={workbook}
-                entries={entries}
-                loadMoreEntries={loadMoreEntries}
-                retryLoadEntries={retryLoadEntries}
-                mapTokens={mapTokens}
-                mapErrors={mapErrors}
-            />
-        </React.Fragment>
+        <WorkbookEntriesTable
+            refreshEntries={refreshEntries}
+            workbook={workbook}
+            entries={entries}
+            loadMoreEntries={loadMoreEntries}
+            retryLoadEntries={retryLoadEntries}
+            mapTokens={mapTokens}
+            mapErrors={mapErrors}
+        />
     );
 });
 

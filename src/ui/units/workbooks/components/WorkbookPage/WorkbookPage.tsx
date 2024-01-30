@@ -70,6 +70,8 @@ export const WorkbookPage = () => {
 
     const filters = useSelector(selectWorkbookFilters);
 
+    const showContentLoader = isWorkbookInfoLoading || !workbook || (collectionId && !breadcrumbs);
+
     const isMainTab = activeTab === TAB_ALL;
     const scope = isMainTab ? undefined : activeTab;
 
@@ -154,7 +156,7 @@ export const WorkbookPage = () => {
                     </ActionBar.Group>
                 </ActionBar.Section>
             </ActionBar>
-            {isWorkbookInfoLoading ? (
+            {showContentLoader ? (
                 <SmartLoader size="l" />
             ) : (
                 <div className={b('layout')}>

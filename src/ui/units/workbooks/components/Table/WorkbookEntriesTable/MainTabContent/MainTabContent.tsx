@@ -30,7 +30,7 @@ interface MainTabContentProps extends WorkbookEntriesTableProps {
     retryLoadEntries: () => void;
 }
 
-const MainTabContent: React.FC<MainTabContentProps> = ({
+const MainTabContent = ({
     workbook,
     chunk,
     onRenameEntry,
@@ -44,7 +44,7 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
     loadMoreEntries,
     retryLoadEntries,
     isErrorMessage,
-}) => {
+}: MainTabContentProps) => {
     const [isOpen, setIsOpen] = React.useState(true);
 
     const dispatch = useDispatch();
