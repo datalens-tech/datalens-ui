@@ -9,11 +9,6 @@
         display: grid;
         grid-template-columns: 152px auto;
         column-gap: 10px;
-
-        // https://github.com/gravity-ui/uikit/issues/1223
-        & .yc-outer-additional-content__note {
-            margin-left: 0;
-        }
     }
 
     &__add-dialog-row-label {
@@ -21,6 +16,7 @@
     }
 
     &__add-dialog-row-input-note {
+        margin-top: 5px;
         color: var(--g-color-text-hint);
     }
 }

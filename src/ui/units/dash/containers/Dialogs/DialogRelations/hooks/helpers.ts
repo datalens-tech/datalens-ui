@@ -131,6 +131,7 @@ export const getMetaDataWithDatasetInfo = ({
 
         const {type, datasetId, datasetName, datasetFields} = entryWithDataset;
         const key = datasetId as string;
+
         if (datasetFields) {
             datasetsList[key] = datasetsList[key] || {};
             datasetsList[key].name = datasetName || '';
@@ -146,6 +147,14 @@ export const getMetaDataWithDatasetInfo = ({
             itemWithDataset.usedParams = Array.isArray(fields)
                 ? fields.map((fieldItem) => fieldItem.guid)
                 : Object.keys(fields);
+
+            item.datasets
+                ?.find(({id}) => id === datasetId)
+                ?.fieldsList.forEach(({guid}) => {
+                    if (!itemWithDataset.usedParams?.includes(guid)) {
+                        itemWithDataset.usedParams?.push(guid);
+                    }
+                });
 
             itemWithDataset.datasets = (
                 item.datasets?.length

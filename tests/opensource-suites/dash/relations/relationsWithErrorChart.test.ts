@@ -1,13 +1,12 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, getUniqueTimestamp, openTestPage, slct} from '../../../utils';
+import {openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {DashCommonQa} from '../../../../src/shared';
-import {WorkbooksUrls} from '../../../constants/constants';
 
 import {Workbook} from '../../../page-objects/workbook/Workbook';
-import {DashUrls} from '../../../constants/test-entities/dash';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const PARAMS = {
     UNKNOWN: 'Unspecified',
@@ -18,23 +17,19 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         const dashboardPage = new DashboardPage({page});
         await dashboardPage.cancelRelationsChanges();
         await dashboardPage.exitEditMode();
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        await dashboardPage.deleteDash();
     });
     datalensTest(
         'Pop-up opening for chart with error and the presence of the inscription "No elements for links"',
-        async ({page}: {page: Page}) => {
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const workbookPO = new Workbook(page);
             await workbookPO.openE2EWorkbookPage();
 
             // copy the original dashboard with delayed widget loading,
             // so that the tests do not collapse due to the transition to editing and locks
-            const dashName = `e2e-test-dash-with-defered-chart-${getUniqueTimestamp()}`;
             const dashboardPage = new DashboardPage({page});
-            await openTestPage(page, DashUrls.DashboardWithErrorChart);
-            await dashboardPage.duplicateDashboardFromWorkbook(
-                DashUrls.DashboardWithErrorChart,
-                dashName,
-            );
+            await openTestPage(page, config.dash.urls.DashboardWithErrorChart);
+            await dashboardPage.duplicateDashboard(config.dash.urls.DashboardWithErrorChart);
 
             await dashboardPage.openControlRelationsDialog();
 
@@ -43,19 +38,15 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
     );
     datalensTest(
         'Pop-up opening for chart with error and there is possibility to set ignore link',
-        async ({page}: {page: Page}) => {
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const workbookPO = new Workbook(page);
             await workbookPO.openE2EWorkbookPage();
 
             // copy the original dashboard with delayed widget loading,
             // so that the tests do not collapse due to the transition to editing and locks
-            const dashName = `e2e-test-dash-with-defered-chart-${getUniqueTimestamp()}`;
             const dashboardPage = new DashboardPage({page});
-            await openTestPage(page, DashUrls.DashboardWithAPIErrorChart);
-            await dashboardPage.duplicateDashboardFromWorkbook(
-                DashUrls.DashboardWithAPIErrorChart,
-                dashName,
-            );
+            await openTestPage(page, config.dash.urls.DashboardWithAPIErrorChart);
+            await dashboardPage.duplicateDashboard(config.dash.urls.DashboardWithAPIErrorChart);
 
             await dashboardPage.openControlRelationsDialog();
 

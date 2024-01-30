@@ -1,11 +1,9 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, slct} from '../../../utils';
+import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {DashCommonQa} from '../../../../src/shared';
-import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 
 const PARAMS = {
     DASH_NAME_PREFIX: 'e2e-test-dash',
@@ -19,10 +17,9 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
     datalensTest(
         'Pop-up opening and the presence of the inscription "No elements for links"',
         async ({page}: {page: Page}) => {
-            const workbookPO = new Workbook(page);
             const dashboardPage = new DashboardPage({page});
-            await workbookPO.openE2EWorkbookPage();
-            await workbookPO.createDashboard({
+
+            await dashboardPage.createDashboard({
                 editDash: async () => {
                     await dashboardPage.addSelector({
                         controlTitle: PARAMS.CONTROL_TITLE,
@@ -38,7 +35,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
 
             await dashboardPage.cancelRelationsChanges();
             await dashboardPage.exitEditMode();
-            await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+            await dashboardPage.deleteDash();
         },
     );
 });
