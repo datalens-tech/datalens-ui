@@ -1,12 +1,7 @@
-export type MarkupItemType =
-    | 'bold'
-    | 'br'
-    | 'color'
-    | 'concat'
-    | 'italics'
-    | 'size'
-    | 'text'
-    | 'url';
+import {MarkupItemTypeDict} from './constants';
+
+const items = Object.values(MarkupItemTypeDict);
+export type MarkupItemType = typeof items[number];
 
 export type MarkupItem = {
     type: MarkupItemType;

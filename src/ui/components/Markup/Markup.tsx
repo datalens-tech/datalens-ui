@@ -1,59 +1,71 @@
-/* eslint complexity: 0, no-param-reassign: 0, @typescript-eslint/no-explicit-any: 0 */
-
 import React from 'react';
 
 import {Link} from '@gravity-ui/uikit';
 import merge from 'lodash/merge';
 
+import {MarkupItemTypeDict} from './constants';
 import {MarkupItem, MarkupItemType} from './types';
 import {isNumericCSSValueValid} from './utils';
 
 type TemplateItem = {
     children: (TemplateItem | string)[];
     element?: string | React.ComponentClass | React.ExoticComponent;
-    props?: {[key: string]: string | Record<string, any>};
+    props?: {[key: string]: string | Record<string, unknown>};
 };
 
 type Props = {
     item: MarkupItem;
-    externalProps?: Partial<Record<MarkupItemType, Record<string, any>>>;
+    externalProps?: Partial<Record<MarkupItemType, Record<string, unknown>>>;
 };
 
+// eslint-disable-next-line complexity
 const getConfig = (
     markupItem?: string | MarkupItem,
     externalProps?: Props['externalProps'],
-    configItem: TemplateItem = {children: []},
+    configItem?: TemplateItem,
     config?: TemplateItem,
 ): TemplateItem => {
     if (!markupItem) {
         return config as TemplateItem;
     }
 
+    const iteratedConfigItem = configItem || {children: []};
+
     if (typeof markupItem === 'string') {
-        configItem.children.push(markupItem);
+        iteratedConfigItem.children.push(markupItem);
         return config as TemplateItem;
     }
 
-    if (markupItem.type === 'text') {
-        configItem.children.push(markupItem.content as TemplateItem);
+    if (markupItem.type === MarkupItemTypeDict.Text) {
+        iteratedConfigItem.children.push(markupItem.content as TemplateItem);
 
         if (!config) {
-            configItem.element = 'span';
+            iteratedConfigItem.element = 'span';
         }
 
-        return config || configItem;
+        return config || iteratedConfigItem;
     }
 
     switch (markupItem.type) {
-        case 'bold': {
-            configItem.element = 'b';
+        case MarkupItemTypeDict.Bold: {
+            iteratedConfigItem.element = 'b';
             break;
         }
-        case 'concat': {
-            configItem.element = 'span';
+        case MarkupItemTypeDict.Br: {
+            iteratedConfigItem.element = 'br';
+            break;
+        }
+        case MarkupItemTypeDict.Color: {
+            iteratedConfigItem.props = merge(iteratedConfigItem.props, {
+                style: {color: markupItem.color},
+            });
+            break;
+        }
+        case MarkupItemTypeDict.Concat: {
+            iteratedConfigItem.element = 'span';
 
             if (markupItem.children) {
-                configItem.children.push(
+                iteratedConfigItem.children.push(
                     ...markupItem.children.map((child) => {
                         return getConfig(child, externalProps, {children: []});
                     }),
@@ -62,52 +74,45 @@ const getConfig = (
 
             break;
         }
-        case 'italics': {
-            configItem.element = 'i';
+        case MarkupItemTypeDict.Italics: {
+            iteratedConfigItem.element = 'i';
             break;
         }
-        case 'url': {
-            configItem.element = Link;
-            configItem.props = merge(configItem.props, {
+        case MarkupItemTypeDict.Size: {
+            const fontSize = isNumericCSSValueValid(markupItem.size) ? markupItem.size : undefined;
+
+            if (fontSize) {
+                iteratedConfigItem.props = merge(iteratedConfigItem.props, {
+                    style: {fontSize, lineHeight: fontSize},
+                });
+            }
+            break;
+        }
+        case MarkupItemTypeDict.Url: {
+            iteratedConfigItem.element = Link;
+            iteratedConfigItem.props = merge(iteratedConfigItem.props, {
                 view: 'normal',
                 href: markupItem.url || '',
                 target: '_blank',
             });
             break;
         }
-        case 'color': {
-            configItem.props = merge(configItem.props, {style: {color: markupItem.color}});
-            break;
-        }
-        case 'br': {
-            configItem.element = 'br';
-            break;
-        }
-        case 'size': {
-            const fontSize = isNumericCSSValueValid(markupItem.size) ? markupItem.size : undefined;
-
-            if (fontSize) {
-                configItem.props = merge(configItem.props, {
-                    style: {fontSize, lineHeight: fontSize},
-                });
-            }
-        }
     }
 
     if (externalProps?.[markupItem.type]) {
-        configItem.props = merge(configItem.props, externalProps[markupItem.type]);
+        iteratedConfigItem.props = merge(iteratedConfigItem.props, externalProps[markupItem.type]);
     }
 
     const content = markupItem.content as MarkupItem;
     let nextConfigItem: TemplateItem = {children: []};
 
-    if (content?.type && content.type !== 'text') {
-        configItem.children.push(nextConfigItem);
+    if (content?.type && content.type !== MarkupItemTypeDict.Text) {
+        iteratedConfigItem.children.push(nextConfigItem);
     } else {
-        nextConfigItem = configItem;
+        nextConfigItem = iteratedConfigItem;
     }
 
-    const nextConfig = config || configItem;
+    const nextConfig = config || iteratedConfigItem;
 
     return getConfig(markupItem.content, externalProps, nextConfigItem, nextConfig);
 };
@@ -126,6 +131,4 @@ const renderTemplate = (templateItem: TemplateItem | string): JSX.Element => {
     );
 };
 
-export default (props: Props) => {
-    return renderTemplate(getConfig(props.item, props.externalProps));
-};
+export default (props: Props) => renderTemplate(getConfig(props.item, props.externalProps));
