@@ -61,7 +61,7 @@ import {
     VisualizationStatus,
 } from '../../constants';
 import {prepareChartDataBeforeSave} from '../../modules/helpers';
-import {getAvailableQlVisualizations, getDefaultQlVisualization} from '../../utils/visualization';
+import {getDefaultQlVisualization, getQlVisualization} from '../../utils/visualization';
 import {
     getEntry,
     getGridSchemes,
@@ -789,10 +789,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 const fixedVisualizationId =
                     loadedVisualizationId === 'table' ? 'flatTable' : loadedVisualizationId;
 
-                const availableVisualizations = getAvailableQlVisualizations();
-                const visualization = (availableVisualizations.find((someVisualization) => {
-                    return someVisualization.id === fixedVisualizationId;
-                }) || getDefaultQlVisualization()) as Shared['visualization'];
+                const visualization = getQlVisualization(fixedVisualizationId, loadedVisualization);
 
                 dispatch(
                     setVisualizationWizard({

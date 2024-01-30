@@ -1,4 +1,5 @@
 import cloneDeep from 'lodash/cloneDeep';
+import merge from 'lodash/merge';
 
 import {ChartkitGlobalSettings, Placeholder, Shared} from '../../../../shared';
 import {DL} from '../../../constants';
@@ -22,7 +23,9 @@ import {
 } from '../../../constants/visualizations';
 import {DEFAULT_VISUALIZATION_ID_QL} from '../constants';
 
-export function getAvailableQlVisualizations(options?: ChartkitGlobalSettings) {
+export function getAvailableQlVisualizations(
+    options?: ChartkitGlobalSettings,
+): Array<Shared['visualization']> {
     const {highcharts: {enabled: isHighchartsEnabled = false} = {}} =
         options || DL.CHARTKIT_SETTINGS;
 
@@ -123,3 +126,18 @@ export function getDefaultQlVisualization(): Shared['visualization'] {
         ) || availableVisualizations[0]
     );
 }
+
+export const getQlVisualization = (
+    visualizationId: string,
+    loadedVisualization: Shared['visualization'],
+): Shared['visualization'] => {
+    const availableVisualizations = getAvailableQlVisualizations();
+
+    const candidate = availableVisualizations.find((vis) => vis.id === visualizationId);
+
+    if (candidate) {
+        return merge({}, candidate, loadedVisualization);
+    } else {
+        return getDefaultQlVisualization();
+    }
+};
