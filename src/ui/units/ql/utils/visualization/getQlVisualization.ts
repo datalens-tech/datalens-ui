@@ -1,5 +1,5 @@
 import mergeWith from 'lodash/mergeWith';
-import {Shared} from 'shared';
+import {QlVisualizationId, Shared, WizardVisualizationId} from 'shared';
 
 import {getAvailableQlVisualizations, getDefaultQlVisualization} from '../visualization';
 
@@ -7,7 +7,9 @@ export const getQlVisualization = (
     loadedVisualization: Shared['visualization'],
 ): Shared['visualization'] => {
     const visualizationId =
-        loadedVisualization.id === 'table' ? 'flatTable' : loadedVisualization.id;
+        loadedVisualization.id === QlVisualizationId.FlatTable
+            ? WizardVisualizationId.FlatTable
+            : loadedVisualization.id;
     const availableVisualizations = getAvailableQlVisualizations();
 
     const candidate = availableVisualizations.find((vis) => vis.id === visualizationId);
@@ -24,7 +26,7 @@ export const getQlVisualization = (
                 obj: Shared['visualization'] | {},
                 source: Shared['visualization'],
             ) => {
-                // it needs to prevent override properties which already defined in candidate visualization
+                // It needs to prevent override properties which already defined in candidate visualization
                 if (
                     Object.hasOwnProperty.call(obj, key) &&
                     Object.hasOwnProperty.call(source, key)
