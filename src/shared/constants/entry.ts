@@ -66,6 +66,7 @@ export const EDITOR_TYPE = {
     YMAP_NODE: 'ymap_node',
     CONTROL_NODE: 'control_node',
     MARKDOWN_NODE: 'markdown_node',
+    MARKUP_NODE: 'markup_node',
     TIMESERIES_NODE: 'timeseries_node',
 };
 
