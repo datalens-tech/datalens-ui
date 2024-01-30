@@ -10,6 +10,7 @@ import {
     DashWidgetConfig,
     EntryPublicAuthor,
     Feature,
+    WORKBOOK_ID_HEADER,
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {config as configConstants} from '../../constants';
@@ -148,6 +149,7 @@ export type ProcessorParams = {
     configResolving: number;
     ctx: AppContext;
     cacheToken: string | string[] | null;
+    workbookId?: string | null;
 };
 
 export class Processor {
@@ -169,6 +171,7 @@ export class Processor {
         isEditMode,
         configResolving,
         ctx,
+        workbookId,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -316,6 +319,7 @@ export class Processor {
                         key: configName,
                         headers: {...subrequestHeaders},
                         requestId: req.id,
+                        workbookId,
                     }));
             } catch (e) {
                 return {
@@ -602,6 +606,10 @@ export class Processor {
                     subrequestHeaders[DL_CONTEXT_HEADER] = JSON.stringify(dlContext);
                 }
 
+                if (workbookId) {
+                    subrequestHeaders[WORKBOOK_ID_HEADER] = workbookId;
+                }
+
                 resolvedSources = await DataFetcher.fetch({
                     chartsEngine,
                     sources,
@@ -612,6 +620,7 @@ export class Processor {
                         ...xChartsHeaders,
                     },
                     userId,
+                    workbookId,
                 });
 
                 if (Object.keys(resolvedSources).length) {

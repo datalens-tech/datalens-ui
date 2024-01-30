@@ -20,6 +20,7 @@ export type ResolveConfigProps = {
     requestId?: string;
     storageApiPath?: string;
     extraAllowedHeaders?: string[];
+    workbookId?: string | null;
 };
 
 export type BaseStorageInitParams = {
@@ -114,9 +115,11 @@ export class BaseStorage {
             requestId?: string;
             storageApiPath?: string;
             extraAllowedHeaders?: string[];
+            workbookId?: string | null;
         },
     ): Promise<ResolvedConfig | EmbeddingInfo> {
-        const {headers, unreleased, requestId, storageApiPath, extraAllowedHeaders} = params;
+        const {headers, unreleased, requestId, storageApiPath, extraAllowedHeaders, workbookId} =
+            params;
         if (requestId) {
             headers[this.requestIdHeaderName] = requestId;
         }
@@ -138,7 +141,11 @@ export class BaseStorage {
         let id: string;
 
         if (params.id) {
-            retrieve = this.provider.retrieveById(ctx, {id: params.id, ...storageRetrieveArgs});
+            retrieve = this.provider.retrieveById(ctx, {
+                id: params.id,
+                workbookId,
+                ...storageRetrieveArgs,
+            });
             id = params.id;
         } else if (params.embedToken) {
             retrieve = this.provider.retrieveByToken(ctx, {
@@ -189,6 +196,7 @@ export class BaseStorage {
             requestId,
             storageApiPath,
             extraAllowedHeaders,
+            workbookId,
         } = props;
         if (!noCache && !unreleased && this.cachedConfigs[key]) {
             ctx.log('STORAGE_CONF_PRELOAD_HIT', {key});
@@ -204,6 +212,7 @@ export class BaseStorage {
             requestId,
             storageApiPath,
             extraAllowedHeaders,
+            workbookId,
         });
     }
 

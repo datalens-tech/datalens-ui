@@ -19,6 +19,7 @@ export default async (
         ChartsEngine,
         userId,
         iamToken,
+        workbookId,
         rejectFetchingSource,
         pluginOptions,
     } = args;
@@ -44,7 +45,7 @@ export default async (
     } else {
         const datasetFieldsResponse = await getDatasetFields({
             datasetId,
-            workbookId: null, // TODO: add workbookId
+            workbookId: workbookId ?? null,
             req,
             cacheClient,
             userId,

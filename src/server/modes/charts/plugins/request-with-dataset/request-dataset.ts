@@ -44,7 +44,7 @@ export const getDatasetFieldsById = async (
                   authArgs: {iamToken},
                   args: {
                       dataSetId: datasetId,
-                      workbookId,
+                      workbookId: workbookId,
                   },
               });
 

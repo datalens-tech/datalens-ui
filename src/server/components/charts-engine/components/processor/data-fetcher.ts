@@ -13,6 +13,7 @@ import {
     DL_EMBED_TOKEN_HEADER,
     Feature,
     SuperuserHeader,
+    WORKBOOK_ID_HEADER,
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
@@ -65,6 +66,7 @@ type DataFetcherOptions = {
     subrequestHeaders: Record<string, string>;
     userId?: string | null;
     iamToken?: string | null;
+    workbookId?: string | null;
 };
 
 type DataFetcherRequestOptions = {
@@ -144,6 +146,7 @@ export class DataFetcher {
         subrequestHeaders,
         userId,
         iamToken,
+        workbookId,
     }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
         const fetchingTimeout = chartsEngine.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
 
@@ -181,6 +184,7 @@ export class DataFetcher {
                               rejectFetchingSource: reject,
                               userId,
                               iamToken,
+                              workbookId,
                           })
                         : {
                               sourceId: sourceName,
@@ -393,6 +397,7 @@ export class DataFetcher {
         rejectFetchingSource,
         userId,
         iamToken,
+        workbookId,
     }: {
         sourceName: string;
         source: Source;
@@ -404,6 +409,7 @@ export class DataFetcher {
         rejectFetchingSource: () => void;
         userId?: string | null;
         iamToken?: string | null;
+        workbookId?: string | null;
     }) {
         const ctx = req.ctx;
         const singleFetchingTimeout =
@@ -641,6 +647,10 @@ export class DataFetcher {
             headers[DL_CONTEXT_HEADER] = subrequestHeaders[DL_CONTEXT_HEADER];
         }
 
+        if (workbookId) {
+            headers[WORKBOOK_ID_HEADER] = workbookId;
+        }
+
         if (subrequestHeaders['x-dl-debug-mode']) {
             headers['x-dl-debug-mode'] = subrequestHeaders['x-dl-debug-mode'];
         }
@@ -729,6 +739,7 @@ export class DataFetcher {
                     sourceName,
                     req,
                     iamToken: iamToken ?? undefined,
+                    workbookId,
                     ChartsEngine: chartsEngine,
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,

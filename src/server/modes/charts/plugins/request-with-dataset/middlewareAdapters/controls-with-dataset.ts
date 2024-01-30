@@ -9,7 +9,16 @@ export default async (
         pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
     },
 ) => {
-    const {source, req, ChartsEngine, userId, iamToken, rejectFetchingSource, pluginOptions} = args;
+    const {
+        source,
+        req,
+        ChartsEngine,
+        userId,
+        iamToken,
+        workbookId,
+        rejectFetchingSource,
+        pluginOptions,
+    } = args;
 
     const cacheClient = ChartsEngine.cacheClient as Cache;
 
@@ -17,7 +26,7 @@ export default async (
 
     const datasetFieldsResponse = await getDatasetFields({
         datasetId,
-        workbookId: null, // TODO: add workbookId
+        workbookId: workbookId ?? null,
         req,
         cacheClient,
         userId,

@@ -46,6 +46,7 @@ export interface MiddlewareSourceAdapterArgs {
     };
     req: Request;
     iamToken?: string;
+    workbookId?: string | null;
     ChartsEngine: ChartsEngine;
     userId: string | null;
     rejectFetchingSource: (reason: any) => void;

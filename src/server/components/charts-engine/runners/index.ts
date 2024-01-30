@@ -25,6 +25,7 @@ export type RunnerHandlerProps = {
     res: Response;
     config: ResolvedConfig;
     configResolving: number;
+    workbookId?: string | null;
 };
 
 const runners: Runner[] = [
