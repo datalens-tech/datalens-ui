@@ -4,9 +4,10 @@ import {Shared} from 'shared';
 import {getAvailableQlVisualizations, getDefaultQlVisualization} from '../visualization';
 
 export const getQlVisualization = (
-    visualizationId: string,
     loadedVisualization: Shared['visualization'],
 ): Shared['visualization'] => {
+    const visualizationId =
+        loadedVisualization.id === 'table' ? 'flatTable' : loadedVisualization.id;
     const availableVisualizations = getAvailableQlVisualizations();
 
     const candidate = availableVisualizations.find((vis) => vis.id === visualizationId);
@@ -23,10 +24,10 @@ export const getQlVisualization = (
                 obj: Shared['visualization'] | {},
                 source: Shared['visualization'],
             ) => {
+                // it needs to prevent override properties which already defined in candidate visualization
                 if (
-                    key === 'placeholders' &&
-                    Object.hasOwnProperty.call(obj, 'placeholders') &&
-                    Object.hasOwnProperty.call(source, 'placeholders')
+                    Object.hasOwnProperty.call(obj, key) &&
+                    Object.hasOwnProperty.call(source, key)
                 ) {
                     return value;
                 }

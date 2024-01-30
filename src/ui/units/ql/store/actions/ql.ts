@@ -741,8 +741,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 const loadedVisualization = entry.data.shared
                     .visualization as Shared['visualization'];
 
-                const {id: loadedVisualizationId, placeholders: loadedVisualizationPlaceholders} =
-                    loadedVisualization;
+                const {placeholders: loadedVisualizationPlaceholders} = loadedVisualization;
 
                 // Clone the parameters so as not to transform them into entry
                 const params = entry.data.shared.params
@@ -786,10 +785,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                 dispatch(setWizardExtraSettings(extraSettings));
 
-                const fixedVisualizationId =
-                    loadedVisualizationId === 'table' ? 'flatTable' : loadedVisualizationId;
-
-                const visualization = getQlVisualization(fixedVisualizationId, loadedVisualization);
+                const visualization = getQlVisualization(loadedVisualization);
 
                 dispatch(
                     setVisualizationWizard({
