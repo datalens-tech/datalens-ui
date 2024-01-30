@@ -47,6 +47,8 @@ export const useChunkedEntries = (
         let items: ChunkItem[] = [];
 
         if (workbookEntries.length === 0) {
+            if (separateByScope) return [];
+
             items.push({
                 type: 'empty',
                 key: 'empty',

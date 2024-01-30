@@ -10,6 +10,7 @@ import {
     getAllWorkbookEntriesSeparately,
     getWorkbookEntries,
     resetWorkbookEntries,
+    resetWorkbookEntriesByScope,
 } from '../../store/actions';
 import {selectWorkbookEntriesIsLoading, selectWorkbookItems} from '../../store/selectors';
 import {WorkbookEntriesFilters} from '../../types';
@@ -143,6 +144,8 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
 
     const refreshEntries = React.useCallback(
         (entryScope: EntryScope) => {
+            dispatch(resetWorkbookEntriesByScope(entryScope));
+
             dispatch(
                 getWorkbookEntries({
                     workbookId,

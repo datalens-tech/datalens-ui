@@ -14,6 +14,8 @@ export const GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS = Symbol(
 
 export const RESET_WORKBOOK_ENTRIES = Symbol('workbooks/RESET_WORKBOOK_ENTRIES');
 
+export const RESET_WORKBOOK_ENTRIES_BY_SCOPE = Symbol('workbooks/RESET_WORKBOOK_ENTRIES_BY_SCOPE');
+
 // Bread crumbs of the workbook
 export const GET_WORKBOOK_BREADCRUMBS_LOADING = Symbol(
     'workbooks/GET_WORKBOOK_BREADCRUMBS_LOADING',

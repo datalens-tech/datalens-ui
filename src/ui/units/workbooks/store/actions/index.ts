@@ -46,6 +46,7 @@ import {
     RENAME_ENTRY_SUCCESS,
     RESET_CREATE_WORKBOOK_ENTRY_TYPE,
     RESET_WORKBOOK_ENTRIES,
+    RESET_WORKBOOK_ENTRIES_BY_SCOPE,
     RESET_WORKBOOK_PERMISSIONS,
     RESET_WORKBOOK_STATE,
     SET_CREATE_WORKBOOK_ENTRY_TYPE,
@@ -314,6 +315,17 @@ type ResetWorkbookEntriesAction = {
 export const resetWorkbookEntries = () => {
     return (dispatch: WorkbooksDispatch) => {
         dispatch({type: RESET_WORKBOOK_ENTRIES});
+    };
+};
+
+type ResetWorkbookEntriesByScopeAction = {
+    type: typeof RESET_WORKBOOK_ENTRIES_BY_SCOPE;
+    data: EntryScope;
+};
+
+export const resetWorkbookEntriesByScope = (scope: EntryScope) => {
+    return (dispatch: WorkbooksDispatch) => {
+        dispatch({type: RESET_WORKBOOK_ENTRIES_BY_SCOPE, data: scope});
     };
 };
 
@@ -683,6 +695,7 @@ export type WorkbooksAction =
     | GetWorkbookEntriesAction
     | GetAllWorkbookEntriesSeparatelyAction
     | ResetWorkbookEntriesAction
+    | ResetWorkbookEntriesByScopeAction
     | SetCreateWorkbookEntryTypeAction
     | ResetCreateWorkbookEntryTypeAction
     | RenameEntryAction

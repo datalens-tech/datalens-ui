@@ -42,6 +42,7 @@ import {
     RENAME_ENTRY_SUCCESS,
     RESET_CREATE_WORKBOOK_ENTRY_TYPE,
     RESET_WORKBOOK_ENTRIES,
+    RESET_WORKBOOK_ENTRIES_BY_SCOPE,
     RESET_WORKBOOK_PERMISSIONS,
     SET_CREATE_WORKBOOK_ENTRY_TYPE,
 } from '../constants';
@@ -267,6 +268,19 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
                 ...state,
                 getWorkbookEntries: initialState.getWorkbookEntries,
                 items: initialState.items,
+            };
+        }
+
+        case RESET_WORKBOOK_ENTRIES_BY_SCOPE: {
+            const entries = state.items.filter((entry) => entry.scope !== action.data);
+
+            return {
+                ...state,
+                getWorkbookEntries: {
+                    ...state.getWorkbookEntries,
+                    data: entries,
+                },
+                items: entries,
             };
         }
 
