@@ -1,6 +1,12 @@
 import {ElementHandle} from '@playwright/test';
 
-import {ControlQA, DlNavigationQA, EntryDialogQA, VisualizationsQa} from '../../src/shared';
+import {
+    ControlQA,
+    DlNavigationQA,
+    EntryDialogQA,
+    VisualizationsQa,
+    WizardPageQa,
+} from '../../src/shared';
 import {copyEntity, deleteEntity, entryDialogFillAndSave, slct, waitForCondition} from '../utils';
 
 import {BasePage, BasePageProps} from './BasePage';
@@ -46,11 +52,11 @@ export class ChartPage extends BasePage {
         await this.page.click(slct('visualization-select-btn'));
 
         await waitForCondition(async () => {
-            return await this.page.locator(slct('visualization-select-popup')).isVisible();
+            return await this.page.locator(slct(WizardPageQa.VisualizationSelectPopup)).isVisible();
         });
 
         const items = await this.page.$$(
-            `${slct('visualization-select-popup')} .visualization-item`,
+            `${slct(WizardPageQa.VisualizationSelectPopup)} .visualization-item`,
         );
 
         return await Promise.all(items.map((item) => item.getAttribute('data-qa')));
@@ -62,18 +68,23 @@ export class ChartPage extends BasePage {
         const visualizationIds = Array.isArray(ids) ? ids : [ids];
         const selector = visualizationIds.map((id) => slct(`visualization-item-${id}`)).join(', ');
 
-        return await this.page.locator(selector).click();
+        return await this.page
+            .locator(WizardPageQa.VisualizationSelectPopup)
+            .locator(selector)
+            .click();
     }
 
     async getVisualizations(): Promise<string[]> {
         await this.page.click(slct('visualization-select-btn'));
 
         await this.page.waitForSelector(
-            `${slct('visualization-select-popup')} .yc-menu__list-item`,
+            `${slct(WizardPageQa.VisualizationSelectPopup)} .yc-menu__list-item`,
         );
 
         const visualizationsNodes = await this.page.$$(
-            `${slct('visualization-select-popup')} .yc-menu__list-item .visualization-item`,
+            `${slct(
+                WizardPageQa.VisualizationSelectPopup,
+            )} .yc-menu__list-item .visualization-item`,
         );
 
         const visualizations = await Promise.all(
