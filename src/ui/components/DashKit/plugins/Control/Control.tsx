@@ -886,14 +886,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
         const preparedValue = unwrapFromArrayAndSkipOperation(this.actualParams[fieldId]);
 
-        // for first initialization of control
-        const initialValidationError = isValidationError({
+        const validationError = this.getValidationError({
             required: source.required,
             value: preparedValue,
-        })
-            ? i18n('value_required')
-            : null;
-        const validationError = this.state.validationError || initialValidationError;
+        });
 
         const placeholder =
             Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
@@ -901,12 +897,12 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 : emptyPaceholder;
 
         const onChange = (value: string | string[]) => {
-            const isValid = this.checkValueValidation({
+            const hasError = this.checkValueValidation({
                 required: source.required,
                 value,
             });
 
-            if (!isValid) {
+            if (hasError) {
                 return;
             }
 
@@ -997,22 +993,18 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const preparedValue = unwrapFromArrayAndSkipOperation(this.actualParams[param]);
 
-            // for first initialization of control
-            const initialValidationError = isValidationError({
+            const validationError = this.getValidationError({
                 required,
                 value: preparedValue,
-            })
-                ? i18n('value_required')
-                : null;
-            const validationError = this.state.validationError || initialValidationError;
+            });
 
             const onChange = (value: string | string[]) => {
-                const isValid = this.checkValueValidation({
+                const hasError = this.checkValueValidation({
                     required,
                     value,
                 });
 
-                if (!isValid) {
+                if (hasError) {
                     return;
                 }
 
@@ -1175,16 +1167,39 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
     }
 
-    private checkValueValidation(args: ValidationErrorData) {
-        if (isValidationError(args)) {
+    private setValidationError(hasError?: boolean) {
+        if (hasError) {
             this.setState({validationError: i18n('value_required')});
-            return false;
+            return;
         }
 
         if (this.state.validationError) {
             this.setState({validationError: null});
         }
-        return true;
+    }
+
+    private checkValueValidation(args: ValidationErrorData) {
+        const hasError = isValidationError(args);
+        this.setValidationError(hasError);
+
+        return hasError;
+    }
+
+    private getValidationError({required, value}: {required?: boolean; value: string | string[]}) {
+        let validationError = null;
+
+        if (required) {
+            // for first initialization of control
+            const initialValidationError = isValidationError({
+                required,
+                value,
+            })
+                ? i18n('value_required')
+                : null;
+            validationError = this.state.validationError || initialValidationError;
+        }
+
+        return validationError;
     }
 }
 

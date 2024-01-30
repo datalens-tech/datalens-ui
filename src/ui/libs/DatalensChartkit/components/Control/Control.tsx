@@ -5,7 +5,6 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
 import {Feature, StringParams} from 'shared';
-import {IndexedValidationErrorData} from 'ui/components/DashKit/plugins/Control/types';
 import {isValidationError} from 'ui/components/DashKit/plugins/Control/utils';
 import {isMobileView} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
@@ -59,8 +58,6 @@ class Control<TProviderData> extends React.PureComponent<
     ControlProps<TProviderData>,
     ControlState
 > {
-    // TODO: static propTypes = {};
-
     static getDerivedStateFromProps(nextProps: ControlProps, prevState: ControlState) {
         const resultState = {
             ...prevState,
@@ -163,16 +160,17 @@ class Control<TProviderData> extends React.PureComponent<
             value,
         );
 
-        const isValid =
+        const hasError =
             Utils.isEnabledFeature(Feature.SelectorRequiredValue) && 'required' in control
-                ? this.checkValueValidation({
+                ? isValidationError({
                       required: control.required,
                       value,
                       index: String(index),
                   })
-                : true;
+                : false;
+        this.setValidationError(String(index), hasError);
 
-        if (!isValid) {
+        if (hasError) {
             return;
         }
 
@@ -388,18 +386,18 @@ class Control<TProviderData> extends React.PureComponent<
         return validationProps;
     };
 
-    private checkValueValidation({index, ...args}: IndexedValidationErrorData) {
-        if (isValidationError(args)) {
+    private setValidationError(index: string, hasError?: boolean) {
+        if (hasError) {
             this.setState({
                 validationErrors: {
                     ...this.state.validationErrors,
                     [index]: dashI18n('value_required'),
                 },
             });
-            return false;
+            return;
         }
 
-        if (this.state.validationErrors) {
+        if (this.state.validationErrors[index]) {
             this.setState({
                 validationErrors: {
                     ...this.state.validationErrors,
@@ -407,7 +405,6 @@ class Control<TProviderData> extends React.PureComponent<
                 },
             });
         }
-        return true;
     }
 }
 
