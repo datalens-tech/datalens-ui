@@ -1,18 +1,9 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {
-    deleteEntity,
-    getUniqueTimestamp,
-    isEnabledFeature,
-    openTestPage,
-    slct,
-    waitForCondition,
-} from '../../../utils';
+import {isEnabledFeature, openTestPage, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ConnectionsDialogQA} from '../../../../src/shared';
-import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
+import {ConnectionsDialogQA, Feature} from '../../../../src/shared';
 import {ChartsParams} from '../../../constants/test-entities/charts';
 
 const SELECTORS = {
@@ -20,7 +11,6 @@ const SELECTORS = {
     CONTROL_SELECT_ITEMS_KEY: 'chartkit-control-select-items',
 };
 const PARAMS = {
-    DASH_NAME_PREFIX: 'e2e-test-dash',
     CONTROL_TITLE: 'test-control',
     CONTROL_FIELD_NAME: 'test-control-field',
     CONTROL_ITEMS: ['Dallas', 'Chicago'],
@@ -29,43 +19,42 @@ const PARAMS = {
 
 datalensTest.describe('Dashboards - Basic functionality', () => {
     datalensTest(
-        'Adding a chart and selector with manual input of values, creating a link os old',
+        'Adding a chart and selector with manual input of values, creating a link',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
-            const workbookPO = new Workbook(page);
+            // some page need to be loaded so we can get data of feature flag from DL var
+            await openTestPage(page, '/');
 
-            await openTestPage(page, WorkbooksUrls.E2EWorkbook);
-
-            const isEnabledHideOldRelations = await isEnabledFeature(page, 'hideOldRelations');
+            const isEnabledHideOldRelations = await isEnabledFeature(
+                page,
+                Feature.HideOldRelations,
+            );
             if (isEnabledHideOldRelations) {
                 return;
             }
 
-            await workbookPO.createEntryButton.createDashboard();
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addSelector({
+                        controlTitle: PARAMS.CONTROL_TITLE,
+                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+                        controlItems: PARAMS.CONTROL_ITEMS,
+                    });
 
-            await dashboardPage.addSelector({
-                controlTitle: PARAMS.CONTROL_TITLE,
-                controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                controlItems: PARAMS.CONTROL_ITEMS,
+                    await dashboardPage.addChart({
+                        chartName: ChartsParams.citySalesPieChart.name,
+                        chartUrl: ChartsParams.citySalesPieChart.url,
+                    });
+
+                    await dashboardPage.setupLinks({
+                        linkType: ConnectionsDialogQA.TypeSelectOutputOption,
+                        chartField: PARAMS.CHART_FIELD,
+                        selectorName: PARAMS.CONTROL_TITLE,
+                    });
+
+                    await dashboardPage.clickSaveButton();
+                },
             });
-
-            await dashboardPage.addChart({
-                chartName: ChartsParams.citySalesPieChart.name,
-                chartUrl: ChartsParams.citySalesPieChart.url,
-            });
-
-            await dashboardPage.setupLinks({
-                linkType: ConnectionsDialogQA.TypeSelectOutputOption,
-                chartField: PARAMS.CHART_FIELD,
-                selectorName: PARAMS.CONTROL_TITLE,
-            });
-
-            await dashboardPage.clickSaveButton();
-
-            const dashName = `${PARAMS.DASH_NAME_PREFIX}-${getUniqueTimestamp()}`;
-            await workbookPO.dialogCreateEntry.waitForOpen();
-            await workbookPO.dialogCreateEntry.fillNameField(dashName);
-            await workbookPO.dialogCreateEntry.clickApplyButton();
 
             await waitForCondition(async () => {
                 const elems = await page.$$(SELECTORS.CHART_LEGEND_ITEM);
@@ -85,7 +74,7 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
                 return elems.length === 1;
             });
 
-            await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+            await dashboardPage.deleteDash();
         },
     );
 });

@@ -3,7 +3,7 @@ import React from 'react';
 import {ChevronDown} from '@gravity-ui/icons';
 import {Button, DropdownMenu, DropdownMenuItem, Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
-import {ActionPanelDashSaveControls} from 'shared/constants/qa/action-panel';
+import {ActionPanelDashSaveControlsQa} from 'shared/constants/qa/action-panel';
 
 const i18n = I18n.keyset('dash.action-panel.view');
 
@@ -23,12 +23,12 @@ export const SaveDropDown: React.FC<SaveDropDownProps> = ({
     const saveAsDraftItem: DropdownMenuItem = {
         action: () => onSaveDraftClick(),
         text: i18n('label_as_draft'),
-        qa: ActionPanelDashSaveControls.SaveAsDraftDropdownItem,
+        qa: ActionPanelDashSaveControlsQa.SaveAsDraftDropdownItem,
     };
     const saveAndPublishItem: DropdownMenuItem = {
         action: () => onSavePublishClick(),
         text: i18n('label_save_and_publish'),
-        qa: ActionPanelDashSaveControls.SaveAndPublishDropdownItem,
+        qa: ActionPanelDashSaveControlsQa.SaveAndPublishDropdownItem,
     };
 
     const items: DropdownMenuItem[] = [];
@@ -36,7 +36,7 @@ export const SaveDropDown: React.FC<SaveDropDownProps> = ({
     items.push({
         action: () => onSaveAsNewClick(),
         text: i18n('label_save_as_new'),
-        qa: ActionPanelDashSaveControls.SaveAsNewDropdownItem,
+        qa: ActionPanelDashSaveControlsQa.SaveAsNewDropdownItem,
     });
 
     return (

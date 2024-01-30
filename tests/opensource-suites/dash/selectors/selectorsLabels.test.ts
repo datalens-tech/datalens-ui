@@ -2,9 +2,6 @@ import {Page} from '@playwright/test';
 
 import DashboardPage, {SelectorSettings} from '../../../page-objects/dashboard/DashboardPage';
 
-import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
-import {deleteEntity} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
 const TITLE = 'City';
@@ -18,9 +15,8 @@ const createDashWithSelector = async ({
     settings: SelectorSettings;
 }) => {
     const dashboardPage = new DashboardPage({page});
-    const workbookPO = new Workbook(page);
 
-    await workbookPO.createDashboard({
+    await dashboardPage.createDashboard({
         editDash: async () => {
             await dashboardPage.addSelectorBySettings({
                 ...{
@@ -39,13 +35,10 @@ const createDashWithSelector = async ({
 };
 
 datalensTest.describe('Dashboards are the internal header of selectors', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const workbookPO = new Workbook(page);
-        await workbookPO.openE2EWorkbookPage();
-    });
-
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(
@@ -53,7 +46,10 @@ datalensTest.describe('Dashboards are the internal header of selectors', () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
-            await createDashWithSelector({page, settings: {elementType: {innerText: 'List'}}});
+            await createDashWithSelector({
+                page,
+                settings: {elementType: {innerText: 'List'}},
+            });
 
             await dashboardPage.chartkitControl.expectTitleVisible(TITLE);
             await dashboardPage.chartkitControl.expectSelectInnerTitleVisible(INNER_TITLE);

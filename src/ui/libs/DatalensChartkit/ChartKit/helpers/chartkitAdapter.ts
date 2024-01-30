@@ -78,6 +78,12 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
             break;
         }
 
+        case 'markup': {
+            chartkitType = 'markup';
+
+            break;
+        }
+
         case 'map': {
             chartkitType = 'highchartsmap';
 
@@ -126,6 +132,11 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
         }
         case 'metric': {
             const data = {...(loadedData as ChartKitProps<'metric'>['data'])};
+
+            return data;
+        }
+        case 'markup': {
+            const data = {...(loadedData as ChartKitProps<'markup'>['data'])};
 
             return data;
         }

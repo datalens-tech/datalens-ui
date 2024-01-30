@@ -8,4 +8,5 @@ export const enum EditorTemplatesQA {
     Table = 'editor-templates-table-item',
     Markdown = 'editor-templates-markdown-item',
     Timeseries = 'editor-templates-timeseries-item',
+    Markup = 'editor-templates-markup-item',
 }
