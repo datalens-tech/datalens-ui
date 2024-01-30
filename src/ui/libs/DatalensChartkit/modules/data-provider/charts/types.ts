@@ -18,6 +18,7 @@ import type {
     Control,
     GraphWidget,
     MarkdownWidget,
+    MarkupWidget,
     TableWidget,
     Widget,
     WithControls,
@@ -109,6 +110,11 @@ interface ConfigNodeMarkdown extends ConfigNodeBase {
     data: {[key in 'js' | 'params' | 'url' | 'shared']: string};
 }
 
+interface ConfigNodeMarkup extends ConfigNodeBase {
+    type: 'markup_node';
+    data: {[key in 'js' | 'params' | 'url' | 'shared' | 'config']: string};
+}
+
 interface ConfigNodeControl extends ConfigNodeBase {
     type: 'control_node';
     data: {[key in 'js' | 'params' | 'url' | 'shared' | 'ui']: string};
@@ -136,6 +142,7 @@ export type ConfigNode = (
     | ConfigNodeMetric
     | ConfigNodeYMap
     | ConfigNodeMarkdown
+    | ConfigNodeMarkup
     | ConfigNodeControl
     | ConfigNodeMap
     | ConfigNodeText
@@ -421,6 +428,11 @@ export interface ResponseSuccessControlNode extends ResponseSuccessNodeBaseWithD
 export interface ResponseSuccessMarkdownNode extends ResponseSuccessNodeBaseWithData {
     type: 'markdown_node';
     data: MarkdownWidget['data'];
+}
+
+export interface ResponseSuccessMarkupNode extends ResponseSuccessNodeBaseWithData {
+    type: 'markup_node';
+    data: MarkupWidget;
 }
 
 // TODO@types: other chart types

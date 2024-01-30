@@ -2,14 +2,7 @@ import {ElementHandle, Page} from '@playwright/test';
 
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {
-    clickDropDownOption,
-    cssSlct,
-    getUniqueTimestamp,
-    openTestPage,
-    slct,
-    waitForCondition,
-} from '../../../utils';
+import {clickDropDownOption, cssSlct, slct, waitForCondition} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ActionPanelEntryContextMenuQa} from '../../../../src/shared/constants/qa/action-panel';
@@ -53,14 +46,11 @@ const waitCheckActualizeRevisionList = async ({
 datalensTest.describe('Dashboard Versioning', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const dashName = `e2e-test-dash-revisions-${getUniqueTimestamp()}`;
 
-        await openTestPage(page, '/dashboards');
         await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addTitle(PARAMS.INITIAL_TITLE);
             },
-            dashName,
         });
     });
     datalensTest.afterEach(async ({page}: {page: Page}) => {

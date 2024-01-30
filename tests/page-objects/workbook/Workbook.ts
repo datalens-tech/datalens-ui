@@ -31,19 +31,6 @@ export class Workbook {
         await openTestPage(this.page, WorkbooksUrls.E2EWorkbook);
     }
 
-    async createDashboard({editDash}: {editDash: () => Promise<void>}) {
-        await this.createEntryButton.createDashboard();
-
-        await editDash();
-
-        await this.dashboardPage.clickSaveButton();
-        await this.dialogCreateEntry.createEntryWithName();
-        await this.editEntityButton.waitForVisible();
-
-        // Important: reload the page because dash state may be different for POST(create) and GET requests.
-        this.page.reload();
-    }
-
     async openWorkbookItemMenu(dashId: string) {
         await this.page
             .locator(`${slct(WorkbookPage.ListItem)} ${slct(dashId.replace('/', ''))}`)

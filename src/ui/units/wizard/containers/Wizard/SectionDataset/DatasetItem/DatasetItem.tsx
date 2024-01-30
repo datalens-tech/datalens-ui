@@ -346,7 +346,7 @@ class DatasetItem extends React.Component<DatasetItemInnerProps> {
                 },
             ];
         } else {
-            // We need to update both guid and title at once. Since tilte === guid, and the backend can't do that.
+            // We need to update both guid and title at once. Since title === guid, and the backend can't do that.
             // Therefore, we first update the guid and the title and the rest of the field with a separate update
             updates = [
                 // Updating the guid first
