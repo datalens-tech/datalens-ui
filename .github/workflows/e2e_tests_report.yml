@@ -11,7 +11,7 @@ jobs:
     name: Publish E2E Report
     if: >
       github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success'
+      (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -33,9 +33,9 @@ jobs:
           run_id: ${{ github.event.workflow_run.id }}
       - name: Extract env from workflow
         run: |
-          echo "HTML_REPORT_URL_PATH=$(cat tests/artifacts/report-link)" >> "$GITHUB_ENV"
-          echo "REPORT_PR_NUMBER=$(cat tests/artifacts/report-pr)" >> "$GITHUB_ENV"
-          mv tests/artifacts ${{ env.HTML_REPORT_URL_PATH }}
+          echo "HTML_REPORT_URL_PATH=$(cat playwright-report/report-link)" >> "$GITHUB_ENV"
+          echo "REPORT_PR_NUMBER=$(cat playwright-report/report-pr)" >> "$GITHUB_ENV"
+          mv playwright-report/report ${{ env.HTML_REPORT_URL_PATH }}/report
       - name: Push HTML Report
         timeout-minutes: 3
         # commit report, then try push-rebase-loop until it's able to merge the HTML report to the gh-pages branch
