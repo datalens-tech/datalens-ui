@@ -35,6 +35,8 @@ const reporter: ReporterDescription[] = [
     ['list'],
 ];
 
+const updateSnapshots = process.env.E2E_UPDATE_SNAPSHOTS === '1' ? 'all' : undefined;
+
 // While we are too lazy to add expect to each file.
 Object.defineProperty(global, 'expect', {
     writable: false,
@@ -59,6 +61,7 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     timeout: testTimeout,
     forbidOnly: true,
     snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
+    updateSnapshots,
     expect: {
         timeout: testTimeout,
     },
