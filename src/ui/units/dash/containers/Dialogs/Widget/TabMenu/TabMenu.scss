@@ -2,7 +2,7 @@ $class: 'tab-menu';
 $addTabButtonHeight: 40px;
 
 .#{$class} {
-    $listItemPadding: 0 24px 0 32px;
+    $listItemPadding: 0 24px;
 
     width: 100%;
     max-height: 100%;
