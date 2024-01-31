@@ -48,7 +48,7 @@
     "@doc-tools/transform": "^2.18.3",
     "@gravity-ui/app-layout": "^1.2.0",
     "@gravity-ui/browserslist-config": "^4.3.0",
-    "@gravity-ui/chartkit": "^4.18.0",
+    "@gravity-ui/chartkit": "^4.18.2",
     "@gravity-ui/dashkit": "^6.7.2",
     "@gravity-ui/date-utils": "^1.3.1",
     "@gravity-ui/expresskit": "^1.1.2",
@@ -103,7 +103,6 @@
   "devDependencies": {
     "@gravity-ui/app-builder": "^0.7.1",
     "@gravity-ui/components": "^2.10.0",
-    "@gravity-ui/dynamic-forms": "^3.0.0",
     "@gravity-ui/eslint-config": "^2.2.0",
     "@gravity-ui/icons": "^2.2.0",
     "@gravity-ui/navigation": "^1.8.2",
