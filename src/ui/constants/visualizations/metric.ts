@@ -15,7 +15,7 @@ export const METRIC_VISUALIZATION: Shared['visualization'] = {
     placeholders: [
         {
             allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
-            allowedFinalTypes: ITEM_TYPES.MEASURES,
+            allowedFinalTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
             allowedDataTypes: PRIMITIVE_DATA_TYPES_AND_MARKUP,
             id: 'measures',
             type: 'measures',

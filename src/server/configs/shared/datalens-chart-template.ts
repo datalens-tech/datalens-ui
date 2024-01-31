@@ -1,4 +1,5 @@
 import {
+    DATASET_FIELD_TYPES,
     ExtendedChartsConfig,
     Feature,
     WizardVisualizationId,
@@ -13,7 +14,7 @@ export default {
     identifyParams: () => {
         return {};
     },
-    identifyChartType: (chart: {visualization: {id: string}}) => {
+    identifyChartType: (chart: ExtendedChartsConfig) => {
         let visualizationId;
 
         if (
@@ -42,7 +43,13 @@ export default {
                 return 'ymap_wizard_node';
             }
             case 'metric': {
-                return 'metric_wizard_node';
+                const metricField = chart.visualization.placeholders[0].items[0];
+
+                if (metricField.data_type === DATASET_FIELD_TYPES.MARKUP) {
+                    return 'markup_node';
+                } else {
+                    return 'metric_wizard_node';
+                }
             }
             default: {
                 return 'graph_wizard_node';
