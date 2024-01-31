@@ -95,6 +95,7 @@ type EntitiesType =
     | 'ymap_node'
     | 'ymap_wizard_node'
     | 'markdown_node'
+    | 'markup_node'
     | 'control_node'
     | 'map_node'
     | 'control_dash';
@@ -202,7 +203,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                         message = i18n('chartkit.data-provider', 'error-not-found');
                         debug = details;
                         details = {};
-                        extra.hideRetry = true;
+                        extra.hideRetry = false;
                         extra.hideDebugInfo = true;
                         break;
                     default:
@@ -223,7 +224,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             }
             case CHARTS_ERROR_CODE.RUNTIME_TIMEOUT_ERROR: {
                 message = i18n('chartkit.data-provider', 'error-runtime-timeout');
-                extra.hideRetry = true;
+                extra.hideRetry = false;
                 extra.showMore = true;
                 debug.code = originalError.code;
                 break;
@@ -262,7 +263,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             }
             case CHARTS_ERROR_CODE.ROWS_NUMBER_OVERSIZE:
                 message = i18n('chartkit.data-provider', 'error-too-many-rows');
-                extra.hideRetry = true;
+                extra.hideRetry = false;
                 break;
             case CHARTS_ERROR_CODE.TABLE_OVERSIZE: {
                 const detailsType = details.type as 'cells' | 'columns';
@@ -270,7 +271,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 message = i18n('chartkit.data-provider', 'error-oversize-table', {
                     type,
                 });
-                extra.hideRetry = true;
+                extra.hideRetry = false;
 
                 delete details.type;
                 break;
@@ -279,7 +280,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 message = i18n('chartkit.data-provider', 'error-oversize-segments', {
                     maxNumber: MAX_SEGMENTS_NUMBER,
                 });
-                extra.hideRetry = true;
+                extra.hideRetry = false;
                 break;
             }
             case CHARTS_ERROR_CODE.SECRETS_ACCESS:

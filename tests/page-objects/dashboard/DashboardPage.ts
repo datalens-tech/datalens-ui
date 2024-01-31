@@ -21,6 +21,9 @@ import {
     deleteEntity,
     entryDialogFillAndSave,
     getAddress,
+    getUniqueTimestamp,
+    isEnabledFeature,
+    openTestPage,
     slct,
     waitForCondition,
 } from '../../utils';
@@ -34,9 +37,10 @@ import {
     DialogControlQa,
     DialogDashTitleQA,
     DialogDashWidgetItemQA,
+    Feature,
 } from '../../../src/shared';
 import {
-    ActionPanelDashSaveControls,
+    ActionPanelDashSaveControlsQa,
     ActionPanelEntryContextMenuQa,
 } from '../../../src/shared/constants/qa/action-panel';
 import {
@@ -54,6 +58,8 @@ import {Locator} from 'playwright-core';
 import {Workbook} from '../workbook/Workbook';
 import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
 import {ChartkitControl} from './ChartkitControl';
+import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
+import {WorkbookIds, WorkbooksUrls} from '../../constants/constants';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -96,6 +102,7 @@ class DashboardPage extends BasePage {
         tabsList: '.gc-adaptive-tabs__tabs-list',
         tabItem: '.gc-adaptive-tabs__tab',
         tabItemActive: '.gc-adaptive-tabs__tab_active',
+        tabItemDisabled: '.gc-adaptive-tabs__tab_disabled',
         tabContainer: '.gc-adaptive-tabs__tab-container',
         selectControl: '.yc-select-control',
         /** @deprecated instead use selectItems */
@@ -106,6 +113,7 @@ class DashboardPage extends BasePage {
         selectItems: '.g-select-list',
         selectItemsMobile: '.g-select-list_mobile',
         selectItemTitle: '.g-select-list__option',
+        selectItemTitleDisabled: '.g-select-list__option_disabled',
 
         radioManualControl: DialogControlQa.radioSourceType,
         inputNameControl: 'control-name-input',
@@ -128,6 +136,7 @@ class DashboardPage extends BasePage {
     dialogControl: DialogControl;
     dashTabs: DashTabs;
     chartkitControl: ChartkitControl;
+    dialogCreateEntry: DialogCreateEntry;
 
     constructor({page}: DashboardPageProps) {
         super({page});
@@ -137,6 +146,7 @@ class DashboardPage extends BasePage {
         this.dialogControl = new DialogControl(page);
         this.dashTabs = new DashTabs(page);
         this.chartkitControl = new ChartkitControl(page);
+        this.dialogCreateEntry = new DialogCreateEntry(page);
     }
 
     async waitForResponses(url: string, timeout = API_TIMEOUT): Promise<Array<Response>> {
@@ -165,27 +175,47 @@ class DashboardPage extends BasePage {
         return makrdownNode.innerHTML();
     }
 
-    async createDashboard(dashName: string) {
-        // click the button to create a new dashboard
-        await this.page.click(slct('create-entry-button'));
+    async createDashboard({editDash}: {editDash: () => Promise<void>}) {
+        // some page need to be loaded so we can get data of feature flag from DL var
+        await openTestPage(this.page, '/');
+        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
+        const createDashUrl = isEnabledCollections
+            ? `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`
+            : '/dashboards/new';
+        await openTestPage(this.page, createDashUrl);
 
-        // TODO: CHARTS-8652, refine tests for new behavior
-        // temp step of changing the settings, because it is impossible to save the untouched dash
-        await this.enableDashboardTOC();
+        // callback with start actions with dash in edit mode
+        await editDash();
+
         await this.clickSaveButton();
 
+        const dashName = `e2e-entry-${getUniqueTimestamp()}`;
+
         // waiting for the dialog to open, specify the name, save
-        // waiting for the transition to the dashboard page
-        await Promise.all([
-            this.page.waitForNavigation(),
-            entryDialogFillAndSave(this.page, dashName),
-        ]);
+        if (isEnabledCollections) {
+            await this.dialogCreateEntry.createEntryWithName(dashName);
+        } else {
+            await entryDialogFillAndSave(this.page, dashName);
+        }
 
         // check that the dashboard has loaded by its name
         await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
     }
 
-    async copyDashboard(dashName: string) {
+    async duplicateDashboard(dashId?: string) {
+        const newDashName = `e2e-test-dash-copy-${getUniqueTimestamp()}`;
+
+        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
+
+        if (isEnabledCollections) {
+            await this.duplicateDashboardFromWorkbook(dashId as string, newDashName);
+            return;
+        }
+
+        await this.copyDashboard(newDashName);
+    }
+
+    async copyDashboard(newDashName: string) {
         // click on the ellipsis in the upper panel
         await this.page.click(slct(COMMON_SELECTORS.ENTRY_PANEL_MORE_BTN));
         await this.page.waitForSelector(cssSlct(COMMON_SELECTORS.ENTRY_CONTEXT_MENU_KEY));
@@ -200,7 +230,7 @@ class DashboardPage extends BasePage {
         // waiting for the transition to the dashboard page
         await Promise.all([
             this.page.waitForNavigation(),
-            entryDialogFillAndSave(this.page, dashName),
+            entryDialogFillAndSave(this.page, newDashName),
         ]);
     }
 
@@ -463,7 +493,7 @@ class DashboardPage extends BasePage {
         await this.page.waitForSelector(`[data-qa=entry-title] * >> text=${chartName}`);
 
         if (hideTitle) {
-            await this.page.click(slct(DashCommonQa.WidgetShowTitleCheckbox));
+            await this.page.locator(slct(DashCommonQa.WidgetShowTitleCheckbox)).click();
         }
 
         if (enableAutoHeight) {
@@ -758,7 +788,7 @@ class DashboardPage extends BasePage {
 
     async clickSaveButton() {
         // save the changes made on the dashboard
-        await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+        await this.page.click(slct(ActionPanelDashSaveControlsQa.Save));
     }
 
     async saveChanges() {
@@ -774,14 +804,14 @@ class DashboardPage extends BasePage {
     async saveChangesAsDraft() {
         // save the changes made on the dashboard as a draft
         await this.page
-            .waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_DRAFT_BTN), {
+            .waitForSelector(slct(ActionPanelDashSaveControlsQa.SaveAsDraft), {
                 timeout: BUTTON_CHECK_TIMEOUT,
             })
             .then(async () => {
                 // in ActionPanel, the default save button is "Save as Draft"
                 const deleteLockPromise = this.page.waitForRequest(URLS.deleteLock);
                 const savePromise = this.page.waitForRequest(URLS.savePath);
-                await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_DRAFT_BTN));
+                await this.page.click(slct(ActionPanelDashSaveControlsQa.SaveAsDraft));
                 await Promise.all([deleteLockPromise, savePromise]);
                 await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
             })
@@ -790,7 +820,7 @@ class DashboardPage extends BasePage {
                 await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
                 await clickDropDownOption(
                     this.page,
-                    ActionPanelDashSaveControls.SaveAsDraftDropdownItem,
+                    ActionPanelDashSaveControlsQa.SaveAsDraftDropdownItem,
                 );
             });
     }
@@ -798,7 +828,7 @@ class DashboardPage extends BasePage {
     async saveChangesAndPublish() {
         // save and publish the changes made on the dashboard
         await this.page
-            .waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_DRAFT_BTN), {
+            .waitForSelector(slct(ActionPanelDashSaveControlsQa.SaveAsDraft), {
                 timeout: BUTTON_CHECK_TIMEOUT,
             })
             .then(async () => {
@@ -806,12 +836,12 @@ class DashboardPage extends BasePage {
                 await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
                 await clickDropDownOption(
                     this.page,
-                    ActionPanelDashSaveControls.SaveAndPublishDropdownItem,
+                    ActionPanelDashSaveControlsQa.SaveAndPublishDropdownItem,
                 );
             })
             .catch(async () => {
                 // in ActionPanel, the default save button is "Save"
-                await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+                await this.page.click(slct(ActionPanelDashSaveControlsQa.Save));
             });
     }
 
@@ -819,7 +849,7 @@ class DashboardPage extends BasePage {
         await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
 
-        await clickDropDownOption(this.page, ActionPanelDashSaveControls.SaveAsNewDropdownItem);
+        await clickDropDownOption(this.page, ActionPanelDashSaveControlsQa.SaveAsNewDropdownItem);
     }
 
     async saveChangesAsNewDash(dashName: string) {
@@ -834,10 +864,17 @@ class DashboardPage extends BasePage {
         ]);
     }
 
+    async deleteDash() {
+        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
+        const urlOnDelete = isEnabledCollections ? WorkbooksUrls.E2EWorkbook : '/dashboards';
+
+        await deleteEntity(this.page, urlOnDelete);
+    }
+
     async deleteDashFromEditMode() {
         try {
             await this.exitEditMode();
-            await deleteEntity(this.page, URLS.navigationOnDelete);
+            await this.deleteDash();
         } catch {
             // can't delete dash from edit mode
         }
@@ -845,7 +882,7 @@ class DashboardPage extends BasePage {
 
     async deleteDashFromViewMode() {
         try {
-            await deleteEntity(this.page, URLS.navigationOnDelete);
+            await this.deleteDash();
         } catch {
             // can't delete dash from view mode
         }
@@ -920,7 +957,7 @@ class DashboardPage extends BasePage {
 
         if (fullTab) {
             const tab = await fullTab.waitForSelector(
-                `${DashboardPage.selectors.tabItem} >> text=${tabName}`,
+                `${DashboardPage.selectors.tabItem}:not(${DashboardPage.selectors.tabItemDisabled}) >> text=${tabName}`,
             );
             await tab.click();
             return;
@@ -934,7 +971,7 @@ class DashboardPage extends BasePage {
         if (shortTab) {
             await shortTab.click();
             const tab = await this.page.waitForSelector(
-                `${DashboardPage.selectors.selectItems} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`,
+                `${DashboardPage.selectors.selectItems} ${DashboardPage.selectors.selectItemTitle}:not(${DashboardPage.selectors.selectItemTitleDisabled}) >> text=${tabName}`,
             );
             await tab.click();
             return;

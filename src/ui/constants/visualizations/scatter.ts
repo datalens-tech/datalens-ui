@@ -7,8 +7,7 @@ import {
     PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
 } from '../../constants/misc';
 import {prepareFieldToMeasureTransformation} from '../../units/wizard/utils/visualization';
-
-import {onMeasureAxisChange} from './line';
+import {onMeasureAxisChange} from '../../utils/visualizations/placeholders/common-measures';
 
 export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
     id: WizardVisualizationId.Scatter,
@@ -118,6 +117,5 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
 export const SCATTER_D3_VISUALIZATION: GraphShared['visualization'] = {
     ...SCATTER_VISUALIZATION,
     id: WizardVisualizationId.ScatterD3,
-    allowShapes: false,
     allowComments: false,
 };

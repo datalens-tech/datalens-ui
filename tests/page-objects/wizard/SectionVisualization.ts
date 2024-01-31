@@ -1,7 +1,7 @@
 import {ElementHandle, Page} from '@playwright/test';
 import {AddFieldQA, SectionDatasetQA} from '../../../src/shared/constants';
 
-import {dragAndDrop, getParentByQARole, slct, waitForCondition} from '../../utils';
+import {getParentByQARole, slct, waitForCondition} from '../../utils';
 import {waitForSuccessfulResponse} from '../BasePage';
 import {WizardVisualizationId} from '../common/Visualization';
 
@@ -61,15 +61,10 @@ export default class SectionVisualization {
     }
 
     async removeFieldByDragAndDrop(placeholder: PlaceholderName, fieldName: string) {
-        const source = (await this.page.$(
-            `${slct(placeholder)} ${slct('dnd-container')} >> text=${fieldName}`,
-        ))!;
+        const source = `${slct(placeholder)} ${slct('dnd-container')} >> text=${fieldName}`;
+        const target = `${slct(SectionDatasetQA.DatasetContainer)} ${slct('dnd-container')}`;
 
-        const target = (await this.page.$(
-            `${slct(SectionDatasetQA.DatasetContainer)} ${slct('dnd-container')}`,
-        ))!;
-
-        await dragAndDrop(this.page, source, target);
+        await this.page.dragAndDrop(source, target);
     }
 
     async dragAndDropFieldBetweenPlaceholders({
@@ -82,33 +77,19 @@ export default class SectionVisualization {
         fieldName: string;
     }) {
         const dndContainerSelector = slct('dnd-container');
-        const sourceLocator = await this.page.locator(
-            `${slct(from)} ${dndContainerSelector} >> text=${fieldName}`,
-        );
-        const targetLocator = await this.page.locator(`${slct(to)} ${dndContainerSelector}`);
+        const sourceLocator = `${slct(from)} ${dndContainerSelector} >> text=${fieldName}`;
+        const targetLocator = `${slct(to)} ${dndContainerSelector}`;
 
-        const source = await sourceLocator.elementHandle();
-        const target = await targetLocator.elementHandle();
-
-        if (!source) {
-            throw new Error(`dnd-container for field '${fieldName}' not found`);
-        }
-
-        if (!target) {
-            throw new Error(`target dnd-container not found`);
-        }
-
-        await dragAndDrop(this.page, source, target);
+        await this.page.dragAndDrop(sourceLocator, targetLocator);
     }
 
     async addFieldByDragAndDrop(placeholder: PlaceholderName, fieldName: string) {
         await this.page.waitForSelector(slct(SectionDatasetQA.ItemTitle));
 
-        const source = (await this.page.$(slct(SectionDatasetQA.ItemTitle, fieldName)))!;
+        const source = slct(SectionDatasetQA.ItemTitle, fieldName);
+        const target = `${slct(placeholder)} ${slct('dnd-container')}`;
 
-        const target = (await this.page.$(`${slct(placeholder)} ${slct('dnd-container')}`))!;
-
-        await dragAndDrop(this.page, source, target);
+        await this.page.dragAndDrop(source, target);
     }
 
     async replaceFieldByDragAndDrop(
@@ -118,14 +99,7 @@ export default class SectionVisualization {
     ) {
         const sourceSelector = slct(SectionDatasetQA.ItemTitle, newField);
         const targetSelector = `${slct(placeholder)} ${slct('dnd-container')} >> text=${oldField}`;
-        await this.page.waitForSelector(sourceSelector);
-        await this.page.waitForSelector(targetSelector);
-
-        const source = (await this.page.$(sourceSelector))!;
-
-        const target = (await this.page.$(targetSelector))!;
-
-        await dragAndDrop(this.page, source, target);
+        await this.page.dragAndDrop(sourceSelector, targetSelector);
     }
 
     async addFieldByClick(

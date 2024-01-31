@@ -79,7 +79,7 @@ import {
     SelectControlProps,
     ValidationErrorData,
 } from './types';
-import {isValidationError} from './utils';
+import {getLabels, isValidRequiredValue} from './utils';
 
 import './Control.scss';
 
@@ -872,7 +872,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const {loadedData, status, loadingItems} = this.state;
         const controlData = data as unknown as DashTabItemControlDataset | DashTabItemControlManual;
         const source = controlData.source;
-        const title = controlData.title;
         const sourceType = controlData.sourceType;
         const fieldId =
             (source as DashTabItemControlDataset['source']).datasetFieldId ||
@@ -887,14 +886,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
         const preparedValue = unwrapFromArrayAndSkipOperation(this.actualParams[fieldId]);
 
-        // for first initialization of control
-        const initialValidationError = isValidationError({
+        const validationError = this.getValidationError({
             required: source.required,
             value: preparedValue,
-        })
-            ? i18n('value_required')
-            : null;
-        const validationError = this.state.validationError || initialValidationError;
+        });
 
         const placeholder =
             Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
@@ -902,12 +897,12 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 : emptyPaceholder;
 
         const onChange = (value: string | string[]) => {
-            const isValid = this.checkValueValidation({
+            const hasError = this.validateValue({
                 required: source.required,
                 value,
             });
 
-            if (!isValid) {
+            if (hasError) {
                 return;
             }
 
@@ -919,11 +914,13 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             this.onChange(fieldId, valueWithOperation);
         };
 
+        const {label, innerLabel} = getLabels({controlData});
+
         const props: SelectControlProps = {
             widgetId: id,
             content: content || preselectedContent,
-            label: (source.showTitle ? title : '') as string,
-            innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
+            label,
+            innerLabel,
             param: fieldId,
             multiselect: (source as DashTabItemControlElementSelect).multiselectable,
             type: TYPE.SELECT,
@@ -987,7 +984,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 | DashTabItemControlManual
                 | DashTabItemControlDataset;
 
-            const {source, title} = data;
+            const {source} = data;
+            const {required, operation} = source;
 
             if (!Object.keys(this.actualParams).includes(param)) {
                 return null;
@@ -995,32 +993,30 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const preparedValue = unwrapFromArrayAndSkipOperation(this.actualParams[param]);
 
-            // for first initialization of control
-            const initialValidationError = isValidationError({
-                required: source.required,
+            const validationError = this.getValidationError({
+                required,
                 value: preparedValue,
-            })
-                ? i18n('value_required')
-                : null;
-            const validationError = this.state.validationError || initialValidationError;
+            });
 
             const onChange = (value: string | string[]) => {
-                const isValid = this.checkValueValidation({
-                    required: source.required,
+                const hasError = this.validateValue({
+                    required,
                     value,
                 });
 
-                if (!isValid) {
+                if (hasError) {
                     return;
                 }
 
                 const valueWithOperation = addOperationForValue({
                     value,
-                    operation: source.operation,
+                    operation,
                 });
 
                 this.onChange(param, valueWithOperation);
             };
+
+            const {label, innerLabel} = getLabels({controlData: data});
 
             const props = {
                 ...control,
@@ -1030,9 +1026,9 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 value: preparedValue,
                 onChange,
                 editMode,
-                innerLabel: (source.showInnerTitle ? source.innerTitle : '') as string,
-                label: (source.showTitle ? title : '') as string,
-                required: source.required,
+                innerLabel,
+                label,
+                required,
                 hasValidationError: Boolean(validationError),
             };
 
@@ -1171,16 +1167,39 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
     }
 
-    private checkValueValidation(args: ValidationErrorData) {
-        if (isValidationError(args)) {
+    private setValidationError(hasError?: boolean) {
+        if (hasError) {
             this.setState({validationError: i18n('value_required')});
-            return false;
+            return;
         }
 
         if (this.state.validationError) {
             this.setState({validationError: null});
         }
-        return true;
+    }
+
+    private validateValue(args: ValidationErrorData) {
+        const hasError = isValidRequiredValue(args);
+        this.setValidationError(hasError);
+
+        return hasError;
+    }
+
+    private getValidationError({required, value}: {required?: boolean; value: string | string[]}) {
+        let validationError = null;
+
+        if (required) {
+            // for first initialization of control
+            const initialValidationError = isValidRequiredValue({
+                required,
+                value,
+            })
+                ? i18n('value_required')
+                : null;
+            validationError = this.state.validationError || initialValidationError;
+        }
+
+        return validationError;
     }
 }
 

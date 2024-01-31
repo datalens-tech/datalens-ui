@@ -67,7 +67,7 @@ export const selectSelectorDialog = (state: DatalensGlobalState) =>
     (state.dash as DashState).selectorDialog;
 
 export const selectSelectorsGroup = (state: DatalensGlobalState) =>
-    (state.dash as DashState).selectorsGroup || [];
+    (state.dash as DashState).selectorsGroup;
 
 export const selectActiveSelectorIndex = (state: DatalensGlobalState) =>
     (state.dash as DashState).activeSelectorIndex || 0;

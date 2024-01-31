@@ -58,6 +58,8 @@ export enum RobotChartsWizardUrls {
 
     WizardWithEditorId = '/wizard/j2ac4oofeuzm9',
     WizardWithSQLId = '/wizard/estm3g44u4g84',
+
+    WizardBasicDataset = '/wizard/?__datasetId=o3qzuaoe5jsud',
 }
 
 export enum RobotChartsEditorUrls {
@@ -180,9 +182,7 @@ export const COMMON_SELECTORS = {
     ACTION_PANEL_DESCRIPTION_BTN: 'action-button-description',
     ACTION_PANEL_CANCEL_BTN: 'action-button-cancel',
     ACTION_PANEL_EDIT_BTN: 'action-button-edit',
-    ACTION_PANEL_SAVE_BTN: 'action-button-save',
     ACTION_PANEL_SAVE_AS_BTN: 'action-button-save-as',
-    ACTION_PANEL_SAVE_AS_DRAFT_BTN: 'action-button-save-as-draft',
     ACTION_PANEL_SAVE_AS_MENU: 'action-save-menu',
     ACTION_BTN_CONNECTIONS: 'action-button-connections',
     ACTION_BTN_TABS: 'action-button-tabs',

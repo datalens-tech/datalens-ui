@@ -5,8 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
 import {Feature, StringParams} from 'shared';
-import {IndexedValidationErrorData} from 'ui/components/DashKit/plugins/Control/types';
-import {isValidationError} from 'ui/components/DashKit/plugins/Control/utils';
+import {isValidRequiredValue} from 'ui/components/DashKit/plugins/Control/utils';
 import {isMobileView} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'units/dash/modules/helpers';
@@ -59,8 +58,6 @@ class Control<TProviderData> extends React.PureComponent<
     ControlProps<TProviderData>,
     ControlState
 > {
-    // TODO: static propTypes = {};
-
     static getDerivedStateFromProps(nextProps: ControlProps, prevState: ControlState) {
         const resultState = {
             ...prevState,
@@ -163,16 +160,17 @@ class Control<TProviderData> extends React.PureComponent<
             value,
         );
 
-        const isValid =
+        const hasError =
             Utils.isEnabledFeature(Feature.SelectorRequiredValue) && 'required' in control
-                ? this.checkValueValidation({
+                ? isValidRequiredValue({
                       required: control.required,
                       value,
                       index: String(index),
                   })
-                : true;
+                : false;
+        this.setValidationError(String(index), hasError);
 
-        if (!isValid) {
+        if (hasError) {
             return;
         }
 
@@ -352,19 +350,31 @@ class Control<TProviderData> extends React.PureComponent<
             required?: boolean;
             hasValidationError?: boolean;
             placeholder?: string;
+            label?: string;
+            innerLabel?: string;
         } = {};
 
         // for first initialization of control
-        const initialValidationError = isValidationError({
+        const initialValidationError = isValidRequiredValue({
             required: control.required,
             value,
         })
             ? dashI18n('value_required')
             : null;
         const validationErrors = initialValidationError || this.state.validationErrors[index];
+        const isRequired =
+            Utils.isEnabledFeature(Feature.SelectorRequiredValue) && control.required;
 
         validationProps.required = control.required;
         validationProps.hasValidationError = Boolean(validationErrors);
+
+        if (control.label && isRequired) {
+            validationProps.label = `${control.label}*`;
+        }
+        // if only innerLabel is visible in required selector we add '*' to it
+        if ('innerLabel' in control && !control.label && control.innerLabel && isRequired) {
+            validationProps.innerLabel = `${control.innerLabel}*`;
+        }
 
         if (control.type === 'input' || control.type === 'select') {
             validationProps.placeholder =
@@ -376,18 +386,18 @@ class Control<TProviderData> extends React.PureComponent<
         return validationProps;
     };
 
-    private checkValueValidation({index, ...args}: IndexedValidationErrorData) {
-        if (isValidationError(args)) {
+    private setValidationError(index: string, hasError?: boolean) {
+        if (hasError) {
             this.setState({
                 validationErrors: {
                     ...this.state.validationErrors,
                     [index]: dashI18n('value_required'),
                 },
             });
-            return false;
+            return;
         }
 
-        if (this.state.validationErrors) {
+        if (this.state.validationErrors[index]) {
             this.setState({
                 validationErrors: {
                     ...this.state.validationErrors,
@@ -395,7 +405,6 @@ class Control<TProviderData> extends React.PureComponent<
                 },
             });
         }
-        return true;
     }
 }
 

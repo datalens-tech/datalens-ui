@@ -3,6 +3,8 @@ import React from 'react';
 import {Loader as CommonLoader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
+import {ChartKitQa} from '../../../../../../../shared';
+
 import './Loader.scss';
 
 interface LoaderProps {
@@ -30,7 +32,7 @@ const Loader: React.FC<LoaderProps> = ({visible, compact, veil, delay}) => {
     }
 
     return (
-        <div className={b({veil})} data-qa="chartkit-loader">
+        <div className={b({veil})} data-qa={ChartKitQa.Loader}>
             <div className={b('loader', {compact})}>
                 <CommonLoader size="m" />
             </div>

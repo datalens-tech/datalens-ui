@@ -1,11 +1,11 @@
 import {Page, expect} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {openTestPage, slct} from '../../../utils';
-import {COMMON_SELECTORS} from '../../../utils/constants';
+import {isEnabledFeature, openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
+import {ActionPanelDashSaveControlsQa} from '../../../../src/shared/constants/qa/action-panel';
+import {Feature} from '../../../../src/shared/types/feature';
+import {WorkbookIds} from '../../../constants/constants';
 
 const PARAMS = {
     CONTROL_TITLE: 'test-control',
@@ -13,15 +13,19 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Basic functionality', () => {
+    datalensTest.beforeEach(async ({page}: {page: Page}) => {
+        // some page need to be loaded so we can get data of feature flag from DL var
+        await openTestPage(page, '/');
+        const isEnabledCollections = await isEnabledFeature(page, Feature.CollectionsEnabled);
+        const createDashUrl = isEnabledCollections
+            ? `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`
+            : '/dashboards/new';
+        await openTestPage(page, createDashUrl);
+    });
     datalensTest('Adding a selector, the save button is active', async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const workbookPO = new Workbook(page);
 
-        await openTestPage(page, WorkbooksUrls.E2EWorkbook);
-
-        await workbookPO.createEntryButton.createDashboard();
-
-        const saveButton = dashboardPage.page.locator(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+        const saveButton = page.locator(slct(ActionPanelDashSaveControlsQa.Save));
 
         await expect(saveButton, 'Save button is disabled').toBeDisabled();
 
@@ -37,15 +41,8 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
         'Adding a selector and deleting it, the save button is disabled',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
-            const workbookPO = new Workbook(page);
 
-            await openTestPage(page, WorkbooksUrls.E2EWorkbook);
-
-            await workbookPO.createEntryButton.createDashboard();
-
-            const saveButton = dashboardPage.page.locator(
-                slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN),
-            );
+            const saveButton = dashboardPage.page.locator(slct(ActionPanelDashSaveControlsQa.Save));
 
             await expect(saveButton, 'Save button is disabled').toBeDisabled();
 
