@@ -4,7 +4,7 @@ import Utils from 'ui/utils/utils';
 
 import {ValidationErrorData} from './types';
 
-export const isValidationError = ({required, value}: ValidationErrorData) => {
+export const isValidRequiredValue = ({required, value}: ValidationErrorData) => {
     const isRequired = Utils.isEnabledFeature(Feature.SelectorRequiredValue) && required;
 
     const isEmptyArray = Array.isArray(value) && !value.length;
