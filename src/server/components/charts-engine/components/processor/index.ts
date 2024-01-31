@@ -10,7 +10,6 @@ import {
     DashWidgetConfig,
     EntryPublicAuthor,
     Feature,
-    WORKBOOK_ID_HEADER,
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {config as configConstants} from '../../constants';
@@ -380,6 +379,7 @@ export class Processor {
                     subrequestHeaders,
                     req,
                     ctx,
+                    workbookId,
                 });
             } catch (error) {
                 ctx.logError('DEPS_RESOLVE_ERROR', error);
@@ -604,10 +604,6 @@ export class Processor {
                     }
 
                     subrequestHeaders[DL_CONTEXT_HEADER] = JSON.stringify(dlContext);
-                }
-
-                if (workbookId) {
-                    subrequestHeaders[WORKBOOK_ID_HEADER] = workbookId;
                 }
 
                 resolvedSources = await DataFetcher.fetch({
@@ -1127,12 +1123,14 @@ export class Processor {
         subrequestHeaders,
         req,
         ctx,
+        workbookId,
     }: {
         chartsEngine: ChartsEngine;
         subrequestHeaders: Record<string, string>;
         config: {data: Record<string, string>; key: string};
         req: Request;
         ctx: AppContext;
+        workbookId?: string | null;
     }): Promise<ResolvedConfig[]> {
         const code = Object.keys(config.data).reduce((acc, tabName) => {
             return `${acc}\n${config.data[tabName]}`;
@@ -1164,6 +1162,7 @@ export class Processor {
                     headers: {...subrequestHeaders},
                     key: path,
                     requestId: req.id,
+                    workbookId, // for the future, when we will resolve deps by entryId
                 })) as unknown as ResolvedConfig;
 
                 resolvedConfig.key = name;
