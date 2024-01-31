@@ -8,7 +8,7 @@ import {i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import {batch, connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
-import {Shared, VisualizationIconProps, VisualizationWithLayersShared} from 'shared';
+import {Shared, VisualizationIconProps, VisualizationWithLayersShared, WizardPageQa} from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {selectDataset, selectDatasets} from 'units/wizard/selectors/dataset';
 import {selectUpdates} from 'units/wizard/selectors/preview';
@@ -112,7 +112,7 @@ class VisualizationSelector extends React.Component<Props> {
                     }}
                     menuProps={{
                         className: b('popup-content'),
-                        qa: 'visualization-select-popup',
+                        qa: WizardPageQa.VisualizationSelectPopup,
                     }}
                 />
             </div>

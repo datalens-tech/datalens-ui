@@ -2,7 +2,6 @@ import {settings as settingsChartKit} from '@gravity-ui/chartkit';
 import {configure as configureComponents} from '@gravity-ui/components';
 import {setLang as setLangDashKit} from '@gravity-ui/dashkit';
 import {settings as settingsDateUtils} from '@gravity-ui/date-utils';
-import {configure as configureDynamicForms} from '@gravity-ui/dynamic-forms';
 import {configure as configureNavigation} from '@gravity-ui/navigation';
 import {configure as configurePageConstructor} from '@gravity-ui/page-constructor';
 import {Lang, ThemeSettings, configure as configureUikit} from '@gravity-ui/uikit';
@@ -157,7 +156,6 @@ export default class Utils {
         setLangDashKit(lang);
         configureUikit({lang});
         configureNavigation({lang});
-        configureDynamicForms({lang: lang as Lang});
         configurePageConstructor({lang: lang as Lang});
         configureComponents({lang});
 

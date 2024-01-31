@@ -1,6 +1,6 @@
-import {EditorTemplatesQA} from 'shared/constants/qa/editor';
+import {EditorTemplatesQA} from '../../../../../shared/constants/qa/editor';
 
-export const config = {
+export const config: {templates: Record<string, Record<string, string>>} = {
     templates: {
         'control-10': {
             text: 'Селектор',
@@ -36,6 +36,11 @@ export const config = {
             text: 'Markdown',
             path: 'markdown',
             qa: EditorTemplatesQA.Markdown,
+        },
+        'markup-10': {
+            text: 'Markup',
+            path: 'markup',
+            qa: EditorTemplatesQA.Markup,
         },
         'timeseries-10': {
             text: 'Timeseries',

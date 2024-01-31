@@ -3,8 +3,7 @@ import React from 'react';
 import {Column} from '@gravity-ui/react-data-table';
 import type {ListItemData, ListProps} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
-import {get} from 'lodash';
-import {pipe} from 'lodash/fp';
+import {flow, get} from 'lodash';
 import {DATASET_FIELD_TYPES, type NonNullableBy} from 'shared';
 
 import type {DataLensApiError} from '../../../../../typings';
@@ -200,7 +199,7 @@ export const getGroupedItems = (items: ListItemProps[]): FileListItem[] => {
         return items;
     }
 
-    return pipe([getSortedListItems, getGroupedListItems])(items);
+    return flow([getSortedListItems, getGroupedListItems])(items);
 };
 
 export const getListItemHeight: ListProps<FileListItem>['itemHeight'] = (item) => {
