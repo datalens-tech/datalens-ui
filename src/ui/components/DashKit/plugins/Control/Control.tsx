@@ -660,7 +660,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     render() {
-        const {data, editMode, id, defaults} = this.props;
+        const {data, editMode, id, defaults, getDistincts} = this.props;
         const controlData = data as unknown as
             | DashTabItemControlExternal
             | DashTabItemControlManual
@@ -735,6 +735,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         validationError={validationError}
                         errorData={errorData}
                         validateValue={this.validateValue}
+                        getDistincts={getDistincts}
                     />
                 ) : (
                     this.renderControls()
