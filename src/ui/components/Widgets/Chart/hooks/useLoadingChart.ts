@@ -11,7 +11,6 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import throttle from 'lodash/throttle';
 import {DashTabItemControlSourceType, StringParams} from 'shared';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
@@ -56,6 +55,8 @@ import {
     WidgetDataRef,
 } from '../types';
 
+import {useIntersectionObserver} from './useIntersectionObserver';
+
 export type LoadingChartHookProps = {
     dataProvider: ChartWithProviderProps['dataProvider'];
     initialData: DataProps;
@@ -94,8 +95,6 @@ type AutoupdateDataType = {
     lastReloadAt?: number;
 };
 
-const WIDGET_LOADING_VISIBLE_OFFSET = 300; // '300px'; // offset before div for start loading TODO - return here CHARTS-7043
-const CHART_DEBOUNCE_TIMEOUT = 100;
 const EXCLUDE_CHART_WITH_AXIS_FOR_MENU_RERENDER = ['map'];
 
 export const useLoadingChart = (props: LoadingChartHookProps) => {
@@ -455,82 +454,19 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
      * check if current widget is in viewport
      * turn on loading widget data flag if it's in viewport
      */
-    // Did not clean up at all, we will do it in the near future here - TODO CHARTS-7043
-    /*const debouncedInViewportCheck = React.useCallback(
-        debounce(([e]) => {
-            if (e.intersectionRatio < 0.1) {
-                return;
-            }
-            setCanBeLoaded(true);
-            observer.current?.disconnect();
-        }, CHART_DEBOUNCE_TIMEOUT),
-        [setCanBeLoaded, observer],
-    );*/
-
-    /**
-     * create observer for check when widget became visible,
-     * is needed for loading only visible on screen charts
-     */
-    // Did not clean up at all, we will do it in the near future here - TODO CHARTS-7043
-    /*React.useEffect(() => {
-        if (isInit) {
-            observer.current?.disconnect();
-            return;
-        }
-
-        if (!observer.current) {
-            observer.current = new IntersectionObserver(debouncedInViewportCheck, {
-                threshold: [0, 0.5, 1],
-                rootMargin: WIDGET_LOADING_VISIBLE_OFFSET,
-            });
-        }
-
-        if (rootNodeRef.current) {
-            observer.current.observe(rootNodeRef.current);
-        }
-        return () => {
-            observer.current?.disconnect();
-        };
-    }, [debouncedInViewportCheck, observer, isInit, rootNodeRef]);*/
-
-    const throttledInViewportCheck = React.useCallback(
-        throttle(() => {
-            if (!rootNodeRef.current) {
-                return;
-            }
-            const {top, height}: {top: number; height: number} =
-                rootNodeRef.current.getBoundingClientRect();
-            const bottom: number = top + height;
-
-            const isVisible =
-                Number(top) < window.innerHeight + WIDGET_LOADING_VISIBLE_OFFSET && bottom >= 0;
-
+    const intersectionChange = React.useCallback(
+        (isVisible: boolean) => {
             if (isVisible) {
                 setCanBeLoaded(true);
             }
-        }, CHART_DEBOUNCE_TIMEOUT),
-        [rootNodeRef],
+        },
+        [setCanBeLoaded],
     );
-
-    const bindScrollHandler = React.useCallback(() => {
-        window.document.addEventListener('scroll', throttledInViewportCheck, true);
-    }, [throttledInViewportCheck]);
-
-    const unbindScrollHandler = React.useCallback(() => {
-        window.document.removeEventListener('scroll', throttledInViewportCheck, true);
-    }, [throttledInViewportCheck]);
-
-    const bindResizeHandler = React.useCallback(() => {
-        if (isEmbeddedMode()) {
-            window.addEventListener('resize', throttledInViewportCheck, true);
-        }
-    }, [throttledInViewportCheck]);
-
-    const unbindResizeHandler = React.useCallback(() => {
-        if (isEmbeddedMode()) {
-            window.removeEventListener('resize', throttledInViewportCheck, true);
-        }
-    }, [throttledInViewportCheck]);
+    useIntersectionObserver({
+        nodeRef: rootNodeRef,
+        callback: intersectionChange,
+        enable: !isInit,
+    });
 
     /**
      * reload chart by timer when the _autoupdate param is passed
@@ -566,44 +502,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
             reloadChart();
         }
     }, [isPageHidden, autoupdateInterval]);
-
-    React.useEffect(() => {
-        if (isInit) {
-            unbindScrollHandler();
-            unbindResizeHandler();
-            return;
-        }
-
-        if (rootNodeRef.current) {
-            throttledInViewportCheck();
-        }
-
-        return () => {
-            unbindScrollHandler();
-            unbindResizeHandler();
-        };
-    }, [isInit, rootNodeRef, throttledInViewportCheck, unbindScrollHandler, unbindResizeHandler]);
-
-    /**
-     * unmount
-     */
-    React.useLayoutEffect(() => {
-        if (rootNodeRef.current) {
-            bindScrollHandler();
-            bindResizeHandler();
-        }
-        return () => {
-            unbindScrollHandler();
-            unbindResizeHandler();
-            clearTimeout(autoupdateDataRef.current?.reloadTimeout);
-        };
-    }, [
-        rootNodeRef,
-        bindScrollHandler,
-        unbindScrollHandler,
-        bindResizeHandler,
-        unbindResizeHandler,
-    ]);
 
     /**
      * force initializing chart loading data, when widget became visible,
