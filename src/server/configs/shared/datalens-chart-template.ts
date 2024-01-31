@@ -32,17 +32,17 @@ export default {
         }
 
         switch (visualizationId) {
-            case 'flatTable':
-            case 'pivotTable': {
+            case WizardVisualizationId.FlatTable:
+            case WizardVisualizationId.PivotTable: {
                 return 'table_wizard_node';
             }
-            case 'geolayer':
+            case WizardVisualizationId.Geolayer:
             case 'geopoint':
             case 'geopolygon':
             case 'heatmap': {
                 return 'ymap_wizard_node';
             }
-            case 'metric': {
+            case WizardVisualizationId.Metric: {
                 const metricField = chart.visualization.placeholders[0].items[0];
 
                 if (metricField.data_type === DATASET_FIELD_TYPES.MARKUP) {
