@@ -62,7 +62,6 @@ const config: ServiceConfig = {
             url: require.resolve('url'),
             'react/jsx-runtime': require.resolve('react/jsx-runtime'),
         },
-        analyzeBundle: 'statoscope',
     },
     server: {
         watch: ['dist/i18n', 'dist/shared'],
