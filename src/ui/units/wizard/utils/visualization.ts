@@ -3,6 +3,7 @@ import get from 'lodash/get';
 
 import {
     ChartkitGlobalSettings,
+    DATASET_FIELD_TYPES,
     DatasetFieldAggregation,
     Field,
     Shared,
@@ -43,7 +44,11 @@ import {ITEM_TYPES} from '../constants';
 import {getCommonDataType} from './helpers';
 
 export const prepareFieldToMeasureTransformation = (item: Field): Field => {
-    if (ITEM_TYPES.MEASURES_AND_PSEUDO.has(item.type) || isParameter(item)) {
+    if (
+        ITEM_TYPES.MEASURES_AND_PSEUDO.has(item.type) ||
+        isParameter(item) ||
+        item.data_type === DATASET_FIELD_TYPES.MARKUP
+    ) {
         return item;
     }
 

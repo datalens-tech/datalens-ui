@@ -4,9 +4,9 @@ import {LayoutRows} from '@gravity-ui/icons';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
-import {Field, isDimensionField} from 'shared';
 import {DatalensGlobalState} from 'ui';
 
+import {DATASET_FIELD_TYPES, Field, isDimensionField} from '../../../../../../../../shared';
 import {BetaMark} from '../../../../../../../components/BetaMark/BetaMark';
 import {updateSegments} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
@@ -54,7 +54,7 @@ class SegmentsPlaceholder extends React.Component<Props> {
     }
 
     handleCheckAllowed = (item: Field) => {
-        return isDimensionField(item);
+        return isDimensionField(item) && item.data_type !== DATASET_FIELD_TYPES.MARKUP;
     };
 
     handleUpdate = (segments: Field[]) => {

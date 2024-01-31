@@ -295,6 +295,7 @@ interface MetricShared extends CommonShared {
         allowSort?: boolean;
         allowLabels?: boolean;
         allowToltips?: boolean;
+        allowFilters?: boolean;
         availableLabelModes?: string[];
         colorsCapacity?: number;
         shapesCapacity?: number;

@@ -2,7 +2,7 @@ import {SquareHashtag} from '@gravity-ui/icons';
 import {Shared} from 'shared';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
-import {ITEM_TYPES, PRIMITIVE_DATA_TYPES} from '../misc';
+import {ITEM_TYPES, PRIMITIVE_DATA_TYPES_AND_MARKUP} from '../misc';
 
 export const METRIC_VISUALIZATION: Shared['visualization'] = {
     id: 'metric',
@@ -16,7 +16,7 @@ export const METRIC_VISUALIZATION: Shared['visualization'] = {
         {
             allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
             allowedFinalTypes: ITEM_TYPES.MEASURES,
-            allowedDataTypes: PRIMITIVE_DATA_TYPES,
+            allowedDataTypes: PRIMITIVE_DATA_TYPES_AND_MARKUP,
             id: 'measures',
             type: 'measures',
             title: 'section_measure',
