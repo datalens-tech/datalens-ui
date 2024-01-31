@@ -536,6 +536,31 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         );
     }
 
+    renderSelectControl() {
+        const {id, data, defaults, editMode, getDistincts} = this.props;
+        const {loadedData, status, loadingItems, errorData, validationError} = this.state;
+
+        return (
+            <ControlItemSelect
+                id={id}
+                data={data}
+                defaults={defaults}
+                editMode={editMode}
+                status={status}
+                loadedData={loadedData}
+                loadingItems={loadingItems}
+                actualParams={this.actualParams}
+                onChange={this.onChange}
+                init={this.init}
+                showItemsLoader={this.showItemsLoader}
+                validationError={validationError}
+                errorData={errorData}
+                validateValue={this.validateValue}
+                getDistincts={getDistincts}
+            />
+        );
+    }
+
     renderControls() {
         const {
             data: {sourceType},
@@ -660,7 +685,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     render() {
-        const {data, editMode, id, defaults, getDistincts} = this.props;
+        const {data, editMode, id} = this.props;
         const controlData = data as unknown as
             | DashTabItemControlExternal
             | DashTabItemControlManual
@@ -713,33 +738,13 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             data.param ||
             '') as string;
 
-        const {loadedData, status, loadingItems, errorData, validationError} = this.state;
-
         return (
             <div ref={this.rootNode} className={b({mobile: isMobileView})}>
                 {this.renderSilentLoader()}
                 <DebugInfoTool label={'paramId'} value={paramIdDebug} modType={'corner'} />
-                {source.elementType === TYPE.SELECT ? (
-                    <ControlItemSelect
-                        id={id}
-                        data={data}
-                        defaults={defaults}
-                        editMode={editMode}
-                        status={status}
-                        loadedData={loadedData}
-                        loadingItems={loadingItems}
-                        actualParams={this.actualParams}
-                        onChange={this.onChange}
-                        init={this.init}
-                        showItemsLoader={this.showItemsLoader}
-                        validationError={validationError}
-                        errorData={errorData}
-                        validateValue={this.validateValue}
-                        getDistincts={getDistincts}
-                    />
-                ) : (
-                    this.renderControls()
-                )}
+                {source.elementType === TYPE.SELECT
+                    ? this.renderSelectControl()
+                    : this.renderControls()}
             </div>
         );
     }
