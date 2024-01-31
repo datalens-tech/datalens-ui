@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {throttle} from 'lodash';
+import uuid from 'uuid/v4';
 
 type IntersectionCallback = (state: boolean) => void;
 
@@ -17,9 +18,10 @@ const deleteId = (node: ElementDomNode) => {
 };
 const hasId = (node: ElementDomNode) => Boolean(node[DOM_PATCH_PROP_NAME]);
 
+const LOADING_VISIBLE_OFFSET = 300;
+
 class Observer {
     intersectionObserver: IntersectionObserver;
-    counter = 0;
     callbacksMap: Map<string, IntersectionCallback> = new Map();
     intersectionChangesQueue: Record<string, boolean> = {};
 
@@ -36,7 +38,7 @@ class Observer {
     constructor() {
         this.intersectionObserver = new IntersectionObserver(this.intersectionHandler, {
             threshold: [0, 0.5, 1],
-            rootMargin: '300px',
+            rootMargin: `${LOADING_VISIBLE_OFFSET}px`,
         });
     }
 
@@ -61,7 +63,15 @@ class Observer {
     };
 
     generateId() {
-        return `${++this.counter}`;
+        return uuid();
+    }
+
+    triggerSync(element: HTMLDivElement, callback: IntersectionCallback) {
+        const {top, height}: {top: number; height: number} = element.getBoundingClientRect();
+        const bottom: number = top + height;
+
+        const isVisible = Number(top) < window.innerHeight + LOADING_VISIBLE_OFFSET && bottom >= 0;
+        callback(isVisible);
     }
 
     subscribe(element: HTMLDivElement, callback: IntersectionCallback) {
@@ -69,18 +79,17 @@ class Observer {
 
         this.intersectionObserver.observe(element);
         this.callbacksMap.set(id, callback);
+        this.triggerSync(element, callback);
     }
 
     ubsubscibe(element: HTMLDivElement) {
         const id = getId(element);
-
-        if (!id) {
-            return;
-        }
-
-        this.callbacksMap.delete(id);
         this.intersectionObserver.unobserve(element);
-        deleteId(element);
+
+        if (id) {
+            this.callbacksMap.delete(id);
+            deleteId(element);
+        }
     }
 }
 
