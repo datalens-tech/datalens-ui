@@ -3,6 +3,7 @@ export enum WizardType {
     TableWizardNode = 'table_wizard_node',
     YmapWizardNode = 'ymap_wizard_node',
     MetricWizardNode = 'metric_wizard_node',
+    MarkupWizardNode = 'markup_wizard_node',
     TimeseriesWizardNode = 'timeseries_wizard_node',
     D3WizardNode = 'd3_wizard_node',
 }

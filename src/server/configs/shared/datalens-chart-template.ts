@@ -46,7 +46,7 @@ export default {
                 const metricField = chart.visualization.placeholders[0].items[0];
 
                 if (metricField.data_type === DATASET_FIELD_TYPES.MARKUP) {
-                    return 'markup_node';
+                    return 'markup_wizard_node';
                 } else {
                     return 'metric_wizard_node';
                 }

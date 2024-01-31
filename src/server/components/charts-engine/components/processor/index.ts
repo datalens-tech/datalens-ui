@@ -73,6 +73,7 @@ export const EDITOR_TYPE_CONFIG_TABS = {
     metric_ql_node: 'statface_metric',
     map_node: 'statface_map',
     markup_node: 'config',
+    markup_wizard_node: 'config',
     markdown_node: '',
     module: '',
 };
