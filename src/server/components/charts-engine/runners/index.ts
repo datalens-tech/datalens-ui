@@ -39,6 +39,7 @@ const runners: Runner[] = [
             'ymap_node',
             'control_node',
             'markdown_node',
+            'markup_node',
             'timeseries_node',
         ]),
         handler: runEditor,

@@ -26,3 +26,4 @@ src/i18n/keysets
 
 tests/metadata
 tests/certs
+tests/test-results
