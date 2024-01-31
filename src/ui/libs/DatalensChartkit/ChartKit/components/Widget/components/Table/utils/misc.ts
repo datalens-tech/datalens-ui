@@ -17,10 +17,10 @@ import {
 } from 'shared';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
 
-import {MarkupItem, MarkupItemType} from '../../../../../../../../components/Markup';
+import {MarkupItem, MarkupItemTypeDict} from '../../../../../../../../components/Markup';
 import {DataTableData} from '../../../../../../types';
 
-const MARKUP_ITEM_TYPES: MarkupItemType[] = ['bold', 'concat', 'italics', 'text', 'url'];
+const MARKUP_ITEM_TYPES = Object.values(MarkupItemTypeDict);
 
 const decodeURISafe = (uri: string) => {
     return decodeURI(uri.replace(/%(?![0-9a-fA-F][0-9a-fA-F]+)/g, '%25'));
