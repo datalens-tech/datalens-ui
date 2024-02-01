@@ -288,6 +288,10 @@ class VisualizationPlaceholder extends React.Component<Props> {
             return false;
         }
 
+        if (placeholder.checkAllowed && !placeholder.checkAllowed(item)) {
+            return false;
+        }
+
         if (visualization.id === 'pivotTable' && placeholder.id === 'rows') {
             const isAllowedType = ITEM_TYPES.DIMENSIONS_AND_PSEUDO.has(item.type);
             const pivotFallbackSettingValues = this.props.extraSettings?.pivotFallback;

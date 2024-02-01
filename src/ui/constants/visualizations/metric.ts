@@ -1,8 +1,9 @@
 import {SquareHashtag} from '@gravity-ui/icons';
-import {Shared} from 'shared';
-import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
-import {ITEM_TYPES, PRIMITIVE_DATA_TYPES_AND_MARKUP} from '../misc';
+import {Feature, Field, Shared} from '../../../shared';
+import {prepareFieldToMeasureTransformation} from '../../units/wizard/utils/visualization';
+import Utils from '../../utils';
+import {ITEM_TYPES, PRIMITIVE_DATA_TYPES, PRIMITIVE_DATA_TYPES_AND_MARKUP} from '../misc';
 
 export const METRIC_VISUALIZATION: Shared['visualization'] = {
     id: 'metric',
@@ -14,9 +15,15 @@ export const METRIC_VISUALIZATION: Shared['visualization'] = {
     allowSort: false,
     placeholders: [
         {
-            allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
+            allowedTypes: undefined,
             allowedFinalTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
-            allowedDataTypes: PRIMITIVE_DATA_TYPES_AND_MARKUP,
+            checkAllowed: (item: Field) => {
+                const allowedDataTypes = Utils.isEnabledFeature(Feature.MarkupIndicator)
+                    ? PRIMITIVE_DATA_TYPES_AND_MARKUP
+                    : PRIMITIVE_DATA_TYPES;
+
+                return allowedDataTypes.has(item.data_type);
+            },
             id: 'measures',
             type: 'measures',
             title: 'section_measure',
