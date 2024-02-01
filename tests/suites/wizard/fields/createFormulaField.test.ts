@@ -109,15 +109,8 @@ datalensTest.describe('Wizard Fields', () => {
 });
 
 datalensTest.describe('Wizard - Parameterized fields', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const wizardPage = new WizardPage({page});
-
-        await openTestPage(page, RobotChartsWizardUrls.WizardWithLocalParameterChart);
-
-        await wizardPage.fieldEditor.open();
-    });
-
     datalensTest('Creating a formula field with a parameter', async ({page}: {page: Page}) => {
+        await openTestPage(page, RobotChartsWizardUrls.WizardWithLocalParameterChart);
         const wizardPage = new WizardPage({page});
 
         const parameterizedFieldName = 'PARAMETERIZED_FIELD';
