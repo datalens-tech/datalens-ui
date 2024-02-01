@@ -1,56 +1,41 @@
 import React from 'react';
 
 import {throttle} from 'lodash';
-import uuid from 'uuid/v4';
 
 type IntersectionCallback = (state: boolean) => void;
-
-// DOM element monkey patch helpers
-const DOM_PATCH_PROP_NAME = Symbol('useIntersectionObserver-key');
-type ElementDomNode = any;
-const getId = (node: ElementDomNode) => node[DOM_PATCH_PROP_NAME];
-const setId = (node: ElementDomNode, id: string) => {
-    node[DOM_PATCH_PROP_NAME] = id;
-    return id;
-};
-const deleteId = (node: ElementDomNode) => {
-    delete node[DOM_PATCH_PROP_NAME];
-};
-const hasId = (node: ElementDomNode) => Boolean(node[DOM_PATCH_PROP_NAME]);
 
 const LOADING_VISIBLE_OFFSET = 300;
 
 class Observer {
-    intersectionObserver: IntersectionObserver;
-    callbacksMap: Map<string, IntersectionCallback> = new Map();
-    intersectionChangesQueue: Record<string, boolean> = {};
+    callbacksMap: Map<HTMLDivElement, IntersectionCallback> = new Map();
+    changesQueue: Map<HTMLDivElement, boolean> | null = null;
+    intersectionObserver: IntersectionObserver | null = null;
 
     intersectionFlushQueue = throttle(() => {
-        const {callbacksMap} = this;
-        const changes = this.intersectionChangesQueue;
-        this.intersectionChangesQueue = {};
+        if (this.changesQueue === null) {
+            return;
+        }
 
-        Object.entries(changes).forEach(([id, isVisible]) => {
-            callbacksMap.get(id)?.(isVisible);
+        const {callbacksMap, changesQueue} = this;
+        const changes = changesQueue;
+        this.changesQueue = null;
+
+        changes.forEach((isVisible, el) => {
+            callbacksMap.get(el)?.(isVisible);
         });
+        changes.clear();
     }, 100);
 
-    constructor() {
-        this.intersectionObserver = new IntersectionObserver(this.intersectionHandler, {
-            threshold: [0, 0.5, 1],
-            rootMargin: `${LOADING_VISIBLE_OFFSET}px`,
-        });
-    }
-
     intersectionHandler = (entries: IntersectionObserverEntry[]) => {
-        const {intersectionChangesQueue: intersectionChanges} = this;
+        this.changesQueue = this.changesQueue || new Map();
 
         const hasChanges = entries.reduce((memo, e) => {
+            const target = e.target as HTMLDivElement;
             const state = e.intersectionRatio > 0;
-            const id = getId(e.target);
+            const currentState = this.changesQueue?.get(target);
 
-            if (intersectionChanges[id] !== state) {
-                intersectionChanges[id] = state;
+            if (currentState !== state) {
+                this.changesQueue?.set(target, state);
                 return true;
             }
 
@@ -62,34 +47,49 @@ class Observer {
         }
     };
 
-    generateId() {
-        return uuid();
+    getIntersectionObserver() {
+        if (this.intersectionObserver === null) {
+            this.intersectionObserver = new IntersectionObserver(this.intersectionHandler, {
+                threshold: [0, 0.5, 1],
+                rootMargin: `${LOADING_VISIBLE_OFFSET}px`,
+            });
+        }
+
+        return this.intersectionObserver;
     }
 
-    triggerSync(element: HTMLDivElement, callback: IntersectionCallback) {
+    cleanIntersectionObserver() {
+        if (this.callbacksMap.size === 0) {
+            this.getIntersectionObserver().disconnect();
+            this.intersectionObserver = null;
+        }
+    }
+
+    subscribe(element: HTMLDivElement, callback: IntersectionCallback) {
+        this.getIntersectionObserver().observe(element);
+        this.callbacksMap.set(element, callback);
+
+        this.triggerSync(element, callback);
+    }
+
+    ubsubscibe(element: HTMLDivElement) {
+        this.getIntersectionObserver().unobserve(element);
+        this.callbacksMap.delete(element);
+        this.changesQueue?.delete(element);
+
+        this.cleanIntersectionObserver();
+    }
+
+    private triggerSync(element: HTMLDivElement, callback: IntersectionCallback) {
+        // Sync call for priority loading to work as intended
+        // cause all selectors are added to load queue while first render
+        // if we will delegate this to IntersectionObserver init call micro-task
+        // we will be already late by the time when loading will be already started
         const {top, height}: {top: number; height: number} = element.getBoundingClientRect();
         const bottom: number = top + height;
 
         const isVisible = Number(top) < window.innerHeight + LOADING_VISIBLE_OFFSET && bottom >= 0;
         callback(isVisible);
-    }
-
-    subscribe(element: HTMLDivElement, callback: IntersectionCallback) {
-        const id = hasId(element) ? getId(element) : setId(element, this.generateId());
-
-        this.intersectionObserver.observe(element);
-        this.callbacksMap.set(id, callback);
-        this.triggerSync(element, callback);
-    }
-
-    ubsubscibe(element: HTMLDivElement) {
-        const id = getId(element);
-        this.intersectionObserver.unobserve(element);
-
-        if (id) {
-            this.callbacksMap.delete(id);
-            deleteId(element);
-        }
     }
 }
 
