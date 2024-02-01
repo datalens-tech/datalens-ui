@@ -121,14 +121,10 @@ datalensTest.describe('Wizard - Parameterized fields', () => {
         const wizardPage = new WizardPage({page});
 
         const parameterizedFieldName = 'PARAMETERIZED_FIELD';
-
-        await wizardPage.fieldEditor.setName(parameterizedFieldName);
-
-        await wizardPage.fieldEditor.setFormula(
+        await wizardPage.createNewFieldWithFormula(
+            parameterizedFieldName,
             "case [Category] when [local_parameter] then 'parameter_title' else [Category] end",
         );
-
-        await wizardPage.fieldEditor.clickToApplyButton();
 
         await waitForValidField(wizardPage, parameterizedFieldName);
     });

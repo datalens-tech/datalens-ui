@@ -56,7 +56,6 @@ describe('colorizeFlatTableColumn', () => {
             gradientMode: GradientType.THREE_POINT,
             gradientPalette: 'red-orange-green',
             reversed: false,
-
             colors: [],
             gradientColors: getRedOrangeGreenGradientColors(),
             loadedColorPalettes: {},
