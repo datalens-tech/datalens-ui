@@ -73,7 +73,11 @@ class Observer {
     }
 
     ubsubscibe(element: HTMLDivElement) {
-        this.getIntersectionObserver().unobserve(element);
+        if (this.intersectionObserver === null) {
+            return;
+        }
+
+        this.intersectionObserver.unobserve(element);
         this.callbacksMap.delete(element);
         this.changesQueue?.delete(element);
 
@@ -101,7 +105,7 @@ export const useIntersectionObserver = ({
     enable,
 }: {
     nodeRef: React.RefObject<HTMLDivElement>;
-    callback: (isVisible: boolean) => void;
+    callback: IntersectionCallback;
     enable: boolean;
 }) => {
     React.useEffect(() => {
