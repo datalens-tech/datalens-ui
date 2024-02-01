@@ -30,6 +30,7 @@ import {
     DELETE_ENTRY_INLINE,
     DELETE_ENTRY_LOADING,
     DELETE_ENTRY_SUCCESS,
+    GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS,
     GET_WORKBOOK_BREADCRUMBS_FAILED,
     GET_WORKBOOK_BREADCRUMBS_LOADING,
     GET_WORKBOOK_BREADCRUMBS_SUCCESS,
@@ -45,6 +46,7 @@ import {
     RENAME_ENTRY_SUCCESS,
     RESET_CREATE_WORKBOOK_ENTRY_TYPE,
     RESET_WORKBOOK_ENTRIES,
+    RESET_WORKBOOK_ENTRIES_BY_SCOPE,
     RESET_WORKBOOK_PERMISSIONS,
     RESET_WORKBOOK_STATE,
     SET_CREATE_WORKBOOK_ENTRY_TYPE,
@@ -161,7 +163,7 @@ export const getWorkbookEntries = ({
     filters,
     scope,
     nextPageToken,
-    pageSize = 10,
+    pageSize = 200,
     ignoreConcurrentId = false,
 }: {
     workbookId: string;
@@ -224,6 +226,88 @@ export const getWorkbookEntries = ({
     };
 };
 
+type GetAllWorkbookEntriesSeparatelyLoadingAction = {
+    type: typeof GET_WORKBOOK_ENTRIES_LOADING;
+};
+type GetAllWorkbookEntriesSeparatelySuccessAction = {
+    type: typeof GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS;
+    data: (GetWorkbookEntriesResponse | null)[];
+};
+type GetAllWorkbookEntriesSeparatelyFailedAction = {
+    type: typeof GET_WORKBOOK_ENTRIES_FAILED;
+    error: Error;
+};
+type GetAllWorkbookEntriesSeparatelyAction =
+    | GetAllWorkbookEntriesSeparatelyLoadingAction
+    | GetAllWorkbookEntriesSeparatelySuccessAction
+    | GetAllWorkbookEntriesSeparatelyFailedAction;
+
+export const getAllWorkbookEntriesSeparately = ({
+    workbookId,
+    filters,
+    scopes,
+    nextPageToken,
+    pageSize = 200,
+}: {
+    workbookId: string;
+    filters: WorkbookEntriesFilters;
+    scopes: EntryScope[];
+    nextPageToken?: string;
+    pageSize?: number;
+}) => {
+    return async (dispatch: WorkbooksDispatch) => {
+        dispatch({
+            type: GET_WORKBOOK_ENTRIES_LOADING,
+        });
+
+        const args: GetWorkbookEntriesArgs = {
+            workbookId,
+            pageSize,
+            page: Number(nextPageToken || 0),
+            orderBy: {
+                field: filters.orderField,
+                direction: filters.orderDirection,
+            },
+        };
+
+        if (filters.filterString) {
+            args.filters = {
+                name: filters.filterString,
+            };
+        }
+
+        const promises = scopes.map((scope) => {
+            return getSdk().us.getWorkbookEntries({
+                ...args,
+                scope,
+            });
+        });
+
+        const results = await Promise.allSettled(promises);
+
+        const data: (GetWorkbookEntriesResponse | null)[] = results.map((result) => {
+            if (result.status === 'fulfilled') {
+                return result.value;
+            }
+
+            if (result.status === 'rejected') {
+                logger.logError('workbooks/getWorkbookEntries failed', result.reason);
+
+                return null;
+            }
+
+            return null;
+        });
+
+        dispatch({
+            type: GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS,
+            data,
+        });
+
+        return data;
+    };
+};
+
 type ResetWorkbookEntriesAction = {
     type: typeof RESET_WORKBOOK_ENTRIES;
 };
@@ -231,6 +315,17 @@ type ResetWorkbookEntriesAction = {
 export const resetWorkbookEntries = () => {
     return (dispatch: WorkbooksDispatch) => {
         dispatch({type: RESET_WORKBOOK_ENTRIES});
+    };
+};
+
+type ResetWorkbookEntriesByScopeAction = {
+    type: typeof RESET_WORKBOOK_ENTRIES_BY_SCOPE;
+    data: EntryScope;
+};
+
+export const resetWorkbookEntriesByScope = (scope: EntryScope) => {
+    return (dispatch: WorkbooksDispatch) => {
+        dispatch({type: RESET_WORKBOOK_ENTRIES_BY_SCOPE, data: scope});
     };
 };
 
@@ -342,7 +437,10 @@ type ChangeFavoriteEntryFailedAction = {
 };
 type ChangeFavoriteEntryInlineAction = {
     type: typeof CHANGE_FAVORITE_ENTRY_INLINE;
-    data: AddFavoriteResponse | DeleteFavoriteResponse;
+    data: {
+        entryId: string;
+        isFavorite: boolean;
+    };
 };
 type ChangeFavoriteEntryAction =
     | ChangeFavoriteEntryLoadingAction
@@ -366,12 +464,6 @@ export const changeFavoriteEntry = ({
                 data,
             });
 
-            if (updateInline) {
-                dispatch({
-                    type: CHANGE_FAVORITE_ENTRY_INLINE,
-                    data,
-                });
-            }
             return data;
         };
 
@@ -386,9 +478,20 @@ export const changeFavoriteEntry = ({
                 );
             }
             dispatch({
-                type: RENAME_ENTRY_FAILED,
+                type: CHANGE_FAVORITE_ENTRY_FAILED,
                 error,
             });
+
+            if (updateInline) {
+                dispatch({
+                    type: CHANGE_FAVORITE_ENTRY_INLINE,
+                    data: {
+                        entryId,
+                        isFavorite: !isFavorite,
+                    },
+                });
+            }
+
             return null;
         };
 
@@ -396,16 +499,26 @@ export const changeFavoriteEntry = ({
             type: CHANGE_FAVORITE_ENTRY_LOADING,
         });
 
+        if (updateInline) {
+            dispatch({
+                type: CHANGE_FAVORITE_ENTRY_INLINE,
+                data: {
+                    entryId,
+                    isFavorite,
+                },
+            });
+        }
+
         if (isFavorite) {
             return getSdk()
-                .us.deleteFavorite({
+                .us.addFavorite({
                     entryId,
                 })
                 .then(thenHandler)
                 .catch(catchHandler);
         } else {
             return getSdk()
-                .us.addFavorite({
+                .us.deleteFavorite({
                     entryId,
                 })
                 .then(thenHandler)
@@ -580,7 +693,9 @@ export type WorkbooksAction =
     | GetWorkbookAction
     | GetWorkbookBreadcrumbsAction
     | GetWorkbookEntriesAction
+    | GetAllWorkbookEntriesSeparatelyAction
     | ResetWorkbookEntriesAction
+    | ResetWorkbookEntriesByScopeAction
     | SetCreateWorkbookEntryTypeAction
     | ResetCreateWorkbookEntryTypeAction
     | RenameEntryAction

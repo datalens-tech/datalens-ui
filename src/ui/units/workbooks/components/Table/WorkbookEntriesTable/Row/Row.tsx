@@ -10,6 +10,7 @@ import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {WorkbookPage} from 'shared/constants/qa/workbooks';
 import {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import {registry} from 'ui/registry/index';
 import {AppDispatch} from 'ui/store';
@@ -48,7 +49,7 @@ const Row: React.FC<RowProps> = ({
     onDuplicateEntry,
     onCopyEntry,
 }) => {
-    const [isFavoriteBtn, setIsFavoriteBtn] = React.useState(false);
+    const [isVisibleFavorite, setIsVisibleFavorite] = React.useState(false);
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
     const {getLoginById} = registry.common.functions.getAll();
 
@@ -69,7 +70,7 @@ const Row: React.FC<RowProps> = ({
         dispatch(
             changeFavoriteEntry({
                 entryId,
-                isFavorite,
+                isFavorite: !isFavorite,
                 updateInline: true,
             }),
         );
@@ -78,7 +79,7 @@ const Row: React.FC<RowProps> = ({
     const getFavoriteIcon = () => {
         if (item.isFavorite) return <Icon className={b('icon-star-fill')} data={StarFill} />;
 
-        if (isFavoriteBtn) {
+        if (isVisibleFavorite) {
             return <Icon className={b('icon-star-stroke')} data={Star} />;
         }
 
@@ -90,10 +91,11 @@ const Row: React.FC<RowProps> = ({
             to={url}
             className={b()}
             style={defaultRowStyle}
-            onMouseEnter={() => setIsFavoriteBtn(true)}
-            onMouseLeave={() => setIsFavoriteBtn(false)}
+            data-qa={WorkbookPage.ListItem}
+            onMouseEnter={() => setIsVisibleFavorite(true)}
+            onMouseLeave={() => setIsVisibleFavorite(false)}
         >
-            <div className={b('content-cell', {title: true})}>
+            <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
                 <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>
                     <EntryIcon entry={item} className={b('icon')} width="24" height="24" />
                     <div className={b('title-col-text')} title={item.name}>
@@ -151,10 +153,13 @@ const Row: React.FC<RowProps> = ({
     );
 };
 
-const EmptyRow = () => {
+const EmptyRow = ({label}: {label?: React.ReactNode}) => {
     return (
         <div className={b('empty-row')} style={defaultRowStyle}>
-            <div className={b('empty-cell')}>{i18n('label_no-data')}</div>
+            <div className={b('empty-cell')}>{label || i18n('label_no-data')}</div>
+
+            <div className={b('empty-cell')} />
+            <div className={b('empty-cell')} />
             <div className={b('empty-cell')} />
             <div className={b('empty-cell')} />
         </div>

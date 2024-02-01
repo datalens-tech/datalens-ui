@@ -9,6 +9,7 @@ import {CreateEntryActionType} from 'ui/units/workbooks/constants';
 import {setCreateWorkbookEntryType} from 'ui/units/workbooks/store/actions';
 
 import {ChunkGroup} from '../ChunkGroup/ChunkGroup';
+import {EmptyRow} from '../Row/Row';
 import {WorkbookEntriesTableProps} from '../types';
 import {ChunkItem} from '../useChunkedEntries';
 
@@ -22,12 +23,14 @@ interface MainTabContentProps extends WorkbookEntriesTableProps {
     chunk: ChunkItem[];
     actionCreateText: string;
     title: string;
+    isErrorMessage?: boolean;
     actionType: CreateEntryActionType;
     isShowMoreBtn: boolean;
     loadMoreEntries: () => void;
+    retryLoadEntries: () => void;
 }
 
-const MainTabContent: React.FC<MainTabContentProps> = ({
+const MainTabContent = ({
     workbook,
     chunk,
     onRenameEntry,
@@ -39,7 +42,9 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
     actionType,
     isShowMoreBtn,
     loadMoreEntries,
-}) => {
+    retryLoadEntries,
+    isErrorMessage,
+}: MainTabContentProps) => {
     const [isOpen, setIsOpen] = React.useState(true);
 
     const dispatch = useDispatch();
@@ -48,17 +53,57 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
         dispatch(setCreateWorkbookEntryType(actionType));
     };
 
-    const getNoObjectsText = () =>
-        isOpen && <div className={b('no-objects')}>{i18n('no_objects')}</div>;
+    const getContentTab = () => {
+        if (isErrorMessage)
+            return <div className={b('error-text')}>{i18n('label_error-load-entities')}</div>;
+
+        if (chunk.length > 0 && isOpen) {
+            return (
+                <ChunkGroup
+                    key={chunk[0].key}
+                    workbook={workbook}
+                    chunk={chunk}
+                    onRenameEntry={onRenameEntry}
+                    onDeleteEntry={onDeleteEntry}
+                    onDuplicateEntry={onDuplicateEntry}
+                    onCopyEntry={onCopyEntry}
+                />
+            );
+        }
+
+        if (isOpen)
+            return <EmptyRow label={<div className={b('no-objects')}>{i18n('no_objects')}</div>} />;
+
+        return null;
+    };
+
+    const getActionBtn = () => {
+        if (isErrorMessage) {
+            return (
+                <Button onClick={retryLoadEntries} className={b('retry-btn')} view="outlined">
+                    {i18n('action_retry')}
+                </Button>
+            );
+        }
+
+        if (isShowMoreBtn && isOpen) {
+            return (
+                <Button onClick={loadMoreEntries} className={b('show-more-btn')} view="outlined">
+                    {i18n('action_show-more')}
+                </Button>
+            );
+        }
+
+        return null;
+    };
 
     return (
         <div className={b()}>
             <div className={b('header', {closed: !isOpen})}>
                 <div className={b('content')}>
-                    <div className={b('title')}>
-                        <div className={b('visibility-btn')} onClick={() => setIsOpen(!isOpen)}>
-                            {isOpen ? <ChevronDown /> : <ChevronUp />}
-                        </div>
+                    <div className={b('title')} onClick={() => setIsOpen(!isOpen)}>
+                        {isOpen ? <ChevronDown /> : <ChevronUp />}
+
                         <div className={b('title-text')}>{title}</div>
                     </div>
                 </div>
@@ -82,26 +127,10 @@ const MainTabContent: React.FC<MainTabContentProps> = ({
                     <div className={b('table-header-cell')} />
                     <div className={b('table-header-cell')} />
                 </div>
-                {chunk.length > 0 && isOpen ? (
-                    <ChunkGroup
-                        key={chunk[0].key}
-                        workbook={workbook}
-                        chunk={chunk}
-                        onRenameEntry={onRenameEntry}
-                        onDeleteEntry={onDeleteEntry}
-                        onDuplicateEntry={onDuplicateEntry}
-                        onCopyEntry={onCopyEntry}
-                    />
-                ) : (
-                    getNoObjectsText()
-                )}
+                {getContentTab()}
             </div>
 
-            {isShowMoreBtn && isOpen && (
-                <Button onClick={loadMoreEntries} className={b('show-more-btn')} view="outlined">
-                    {i18n('action_show-more')}
-                </Button>
-            )}
+            {getActionBtn()}
         </div>
     );
 };

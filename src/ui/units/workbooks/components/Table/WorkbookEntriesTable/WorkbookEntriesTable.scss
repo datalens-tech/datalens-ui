@@ -33,7 +33,7 @@
         vertical-align: middle;
 
         &_author {
-            width: 170px;
+            width: 165px;
         }
 
         &_date {
@@ -48,9 +48,5 @@
 
     &__header-cell_title {
         width: 58%;
-    }
-
-    &__icon {
-        flex-shrink: 0;
     }
 }

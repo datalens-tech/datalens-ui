@@ -22,7 +22,10 @@ type EmptyChunkItem = {
 
 export type ChunkItem = EntryChunkItem | EmptyChunkItem;
 
-export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] => {
+export const useChunkedEntries = (
+    entries: GetEntryResponse[],
+    separateByScope?: boolean,
+): ChunkItem[][] => {
     const chunks = React.useMemo(() => {
         const allowedScopes = new Set([
             EntryScope.Dash,
@@ -44,10 +47,42 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
         let items: ChunkItem[] = [];
 
         if (workbookEntries.length === 0) {
+            if (separateByScope) return [];
+
             items.push({
                 type: 'empty',
                 key: 'empty',
             });
+        } else if (separateByScope) {
+            const dashChunk: ChunkItem[] = [];
+            const connChunk: ChunkItem[] = [];
+            const datasetChunk: ChunkItem[] = [];
+            const widgetChunk: ChunkItem[] = [];
+
+            workbookEntries.forEach((chunkItem) => {
+                const item = {
+                    type: 'entry',
+                    item: chunkItem,
+                    key: chunkItem.entryId,
+                } as EntryChunkItem;
+
+                switch (chunkItem.scope) {
+                    case EntryScope.Dash:
+                        dashChunk.push(item);
+                        break;
+                    case EntryScope.Connection:
+                        connChunk.push(item);
+                        break;
+                    case EntryScope.Dataset:
+                        datasetChunk.push(item);
+                        break;
+                    case EntryScope.Widget:
+                        widgetChunk.push(item);
+                        break;
+                }
+            });
+
+            return [dashChunk, connChunk, datasetChunk, widgetChunk];
         } else {
             items = workbookEntries.map<EntryChunkItem>((item) => ({
                 type: 'entry',
@@ -57,7 +92,7 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
         }
 
         return _.chunk(items, CHUNK_SIZE);
-    }, [entries]);
+    }, [entries, separateByScope]);
 
     return chunks;
 };

@@ -8,7 +8,13 @@ export const GET_WORKBOOK_ENTRIES_LOADING = Symbol('workbooks/GET_WORKBOOK_ENTRI
 export const GET_WORKBOOK_ENTRIES_SUCCESS = Symbol('workbooks/GET_WORKBOOK_ENTRIES_SUCCESS');
 export const GET_WORKBOOK_ENTRIES_FAILED = Symbol('workbooks/GET_WORKBOOK_ENTRIES_FAILED');
 
+export const GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS = Symbol(
+    'workbooks/GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS',
+);
+
 export const RESET_WORKBOOK_ENTRIES = Symbol('workbooks/RESET_WORKBOOK_ENTRIES');
+
+export const RESET_WORKBOOK_ENTRIES_BY_SCOPE = Symbol('workbooks/RESET_WORKBOOK_ENTRIES_BY_SCOPE');
 
 // Bread crumbs of the workbook
 export const GET_WORKBOOK_BREADCRUMBS_LOADING = Symbol(
