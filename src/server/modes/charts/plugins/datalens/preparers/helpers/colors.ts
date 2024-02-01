@@ -19,9 +19,9 @@ export function interpolateRgbBasis(colors: RGBColor[]) {
 
     return function (value: number) {
         const result: RGBColor = {
-            red: redFn(value),
-            green: greenFn(value),
-            blue: blueFn(value),
+            red: Math.round(redFn(value)),
+            green: Math.round(greenFn(value)),
+            blue: Math.round(blueFn(value)),
         };
 
         return result;
