@@ -21,8 +21,8 @@ import {ResponseSuccessControls} from '../../../../libs/DatalensChartkit/modules
 import logger from '../../../../libs/logger';
 import {selectSkipReload} from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import {adjustWidgetLayout} from '../../utils';
-import {LOAD_STATUS} from '../Control/Control';
 import {Error} from '../Control/Error/Error';
+import {LOAD_STATUS} from '../Control/constants';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
 import './GroupControl.scss';

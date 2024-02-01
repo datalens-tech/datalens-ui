@@ -20,12 +20,7 @@ const getFileCacheConfig = () => {
 };
 
 const vendors = (vendorsList: string[]) => {
-    return (
-        vendorsList
-            // @see https://github.com/gravity-ui/app-builder/pull/120
-            .filter((item) => item !== 'lodash')
-            .concat(['react-split-pane', 'react-dnd', 'react-grid-layout'])
-    );
+    return vendorsList.concat(['react-split-pane', 'react-dnd', 'react-grid-layout']);
 };
 
 const config: ServiceConfig = {
