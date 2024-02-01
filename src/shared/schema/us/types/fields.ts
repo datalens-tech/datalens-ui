@@ -11,6 +11,7 @@ export interface EntryFields {
     data: EntryFieldData;
     entryId: string;
     hidden: boolean;
+    mirrored?: boolean;
     key: string;
     meta: EntryFieldMeta;
     public: boolean;
