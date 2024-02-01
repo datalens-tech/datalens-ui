@@ -1,7 +1,7 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {getControlByTitle, getUniqueTimestamp, openTestPage} from '../../../utils';
+import {getControlByTitle} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
 const PARAMS = {
@@ -29,11 +29,7 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
             }
             const controlDefaultValue = controlItems[controlItems.length - 1];
 
-            // creating an empty dashboard
-            const dashName = `${PARAMS.DASH_NAME_PREFIX}-${getUniqueTimestamp()}`;
-
-            await openTestPage(page, '/dashboards');
-
+            // creating a new dashboard
             await dashboardPage.createDashboard({
                 editDash: async () => {
                     // adding a selector with a default value
@@ -44,7 +40,6 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
                         defaultValue: controlDefaultValue,
                     });
                 },
-                dashName,
             });
 
             // get the control by name

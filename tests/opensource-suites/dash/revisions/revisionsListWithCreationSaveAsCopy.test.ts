@@ -1,17 +1,10 @@
 import {ElementHandle, Page} from '@playwright/test';
 
-import {WorkbooksUrls} from '../../../constants/constants';
 import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {DashEntryQa} from '../../../../src/shared/constants';
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage, {RENDER_TIMEOUT} from '../../../page-objects/dashboard/DashboardPage';
-import {
-    deleteEntity,
-    getUniqueTimestamp,
-    openTestPage,
-    slct,
-    waitForCondition,
-} from '../../../utils';
+import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
@@ -50,18 +43,17 @@ const waitCheckActualizeRevisionList = async ({
 datalensTest.describe('Dashboard Versioning', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const workbookPO = new Workbook(page);
 
-        await workbookPO.openE2EWorkbookPage();
-
-        await workbookPO.createDashboard({
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addText(arbitraryText.first);
             },
         });
     });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(
@@ -111,7 +103,7 @@ datalensTest.describe('Dashboard Versioning', () => {
             // check that there is no draft in the revision list
             expect(draftItems).toHaveLength(0);
 
-            await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+            await dashboardPage.deleteDash();
 
             await openTestPage(page, prevPagePathname);
 

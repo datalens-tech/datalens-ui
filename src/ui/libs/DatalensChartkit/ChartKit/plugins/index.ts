@@ -4,6 +4,7 @@ import {IndicatorPlugin} from '@gravity-ui/chartkit/indicator';
 import {YagrPlugin} from '@gravity-ui/chartkit/yagr';
 
 import {HighchartsMapPlugin} from './HighchartsMap';
+import {MarkupPlugin} from './Markup';
 import {MetricPlugin} from './Metric';
 import {YandexMapPlugin} from './YandexMap';
 
@@ -13,6 +14,7 @@ export {YandexMapPlugin} from './YandexMap';
 export type {MetricWidgetData, MetricWidgetProps} from './Metric/types';
 export type {HighchartsMapWidgetData, HighchartsMapWidgetProps} from './HighchartsMap/types';
 export type {YandexMapWidgetData, YandexMapWidgetProps} from './YandexMap/types';
+export type {MarkupWidgetData, MarkupWidgetProps} from './Markup/types';
 
 export const getChartkitPlugins = () => [
     YagrPlugin,
@@ -22,4 +24,5 @@ export const getChartkitPlugins = () => [
     YandexMapPlugin,
     HighchartsPlugin,
     D3Plugin,
+    MarkupPlugin,
 ];

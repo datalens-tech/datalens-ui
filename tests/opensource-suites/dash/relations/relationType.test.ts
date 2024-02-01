@@ -1,11 +1,9 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, slct} from '../../../utils';
+import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ControlQA, DashCommonQa, DashRelationTypes} from '../../../../src/shared';
-import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {ChartsParams} from '../../../constants/test-entities/charts';
 
 const SELECTORS = {
@@ -18,24 +16,22 @@ const PARAMS = {
     CONTROL_FIELD_NAME: 'test-control-field',
     CONTROL_FIELD_NAME_2: 'city',
     CONTROL_ITEMS: ['Dallas', 'Chicago'],
-    CHART_FIELD: 'city',
+    CHART_FIELD: 'City',
     RELATION_TYPE_BY_ALIAS: 'by alias',
-    RELATION_TYPE_BY_FIELD: 'category affects city-sales — Pie cha... by field category',
+    RELATION_TYPE_BY_FIELD: 'Category affects city-sales — Pie cha... by field Category',
     RELATION_TEXT: 'city affects city-sales — Pie cha...',
 };
 
 datalensTest.describe('Dashboards - Relations types check (new)', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const workbookPO = new Workbook(page);
-        await workbookPO.openE2EWorkbookPage();
-    });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+
+        await dashboardPage.deleteDash();
     });
     datalensTest('Relation by alias', async ({page}: {page: Page}) => {
-        const workbookPO = new Workbook(page);
         const dashboardPage = new DashboardPage({page});
-        await workbookPO.createDashboard({
+
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addSelector({
                     controlTitle: PARAMS.CONTROL_TITLE,
@@ -80,9 +76,9 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
     datalensTest(
         'Relation for manual control with same param as in chart',
         async ({page}: {page: Page}) => {
-            const workbookPO = new Workbook(page);
             const dashboardPage = new DashboardPage({page});
-            await workbookPO.createDashboard({
+
+            await dashboardPage.createDashboard({
                 editDash: async () => {
                     await dashboardPage.addSelector({
                         controlTitle: PARAMS.CONTROL_TITLE_2,
@@ -117,9 +113,9 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
         },
     );
     datalensTest('Relation for dataset control', async ({page}: {page: Page}) => {
-        const workbookPO = new Workbook(page);
         const dashboardPage = new DashboardPage({page});
-        await workbookPO.createDashboard({
+
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addSelectorBySettings({});
 

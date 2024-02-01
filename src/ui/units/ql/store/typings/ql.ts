@@ -10,7 +10,7 @@ import type {
 import {DatasetAction} from 'units/wizard/actions/dataset';
 import {VisualizationAction} from 'units/wizard/actions/visualization';
 
-import {AppStatus, VisualizationStatus} from '../../constants';
+import {AppStatus, ConnectionStatus, VisualizationStatus} from '../../constants';
 
 // QLEntry - chart created in QL
 export interface QLEntry extends GetEntryResponse {
@@ -34,6 +34,7 @@ export interface QLState {
     appStatus: AppStatus;
     defaultPath: string;
     visualizationStatus: VisualizationStatus;
+    connectionStatus: ConnectionStatus;
     extraSettings: CommonSharedExtraSettings;
     tablePreviewVisible: boolean;
     error: Error | null;
@@ -188,6 +189,11 @@ export interface QLActionSetChartType {
 export interface QLActionSetConnection {
     type: symbol;
     connection: QLConnectionEntry;
+}
+
+export interface QLActionSetConnectionStatus {
+    type: symbol;
+    connectionStatus: ConnectionStatus;
 }
 
 export interface QLActionSetQueryValue {

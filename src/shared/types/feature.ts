@@ -6,6 +6,7 @@ export enum Feature {
     Ql = 'ql',
     CrawlerPromo = 'crawlerPromo',
     ShowNewRelations = 'showNewRelations',
+    HideOldRelations = 'hideOldRelations',
     ShowPromoIntro = 'ShowPromoIntro',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     HelpCenterEnabled = 'HelpCenterEnabled',
@@ -31,7 +32,6 @@ export enum Feature {
     InnerDocumentation = 'InnerDocumentation',
     Comments = 'Comments',
     ShowFilteringChartSetting = 'ShowFilteringChartSetting',
-    DashBoardGlobalParams = 'dashBoardGlobalParams',
     EmptySelector = 'emptySelector',
     ChartEditorDeveloperModeCheck = 'ChartEditorDeveloperModeCheck',
     StartInDataLens = 'StartInDataLens',
@@ -93,6 +93,7 @@ export enum Feature {
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     HolidayNavigation = 'HolidayNavigation',
     SelectorRequiredValue = 'SelectorRequiredValue',
+    MultipleColorsInVisualization = 'MultipleColorsInVisualization',
 }
 
 export type FeatureConfig = Record<string, boolean>;

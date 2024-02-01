@@ -37,6 +37,8 @@ export interface ExtraSettings {
 interface OwnProps {
     item: Field;
     items?: Field[];
+    // this prop is used only when multiple colors supported in colors section; otherwise it will be undefined;
+    colorSectionFields?: Field[] | undefined;
     onApply: (colorsConfig: ColorsConfig) => void;
     onCancel: () => void;
     colorsConfig: ColorsConfig;
@@ -83,7 +85,7 @@ class DialogColorComponent extends React.Component<Props, State> {
     }
 
     render() {
-        const {item, items, dataset, isColorModeChangeAvailable} = this.props;
+        const {item, items, dataset, isColorModeChangeAvailable, colorSectionFields} = this.props;
         const {mountedColors = {}} = this.props.paletteState;
         const {validationStatus} = this.props.gradientState;
         const {colorMode} = this.state;
@@ -108,6 +110,7 @@ class DialogColorComponent extends React.Component<Props, State> {
                             colorsConfig={this.props.colorsConfig}
                             item={item}
                             items={items}
+                            colorSectionFields={colorSectionFields}
                             extra={this.props.extra}
                             colorMode={this.state.colorMode}
                             isColorModeChangeAvailable={isColorModeChangeAvailable}

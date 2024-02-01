@@ -4,7 +4,12 @@ import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import type {CombinedError, LoadedWidgetData, OnChangeData, OnLoadData} from '../types';
 
 import YandexMap from './modules/yandex-map/yandex-map';
-import type {HighchartsMapWidgetData, MetricWidgetData, YandexMapWidgetData} from './plugins';
+import type {
+    HighchartsMapWidgetData,
+    MarkupWidgetData,
+    MetricWidgetData,
+    YandexMapWidgetData,
+} from './plugins';
 
 export type ChartKitAdapterProps = {
     loadedData?: LoadedWidgetData;
@@ -38,6 +43,10 @@ declare module '@gravity-ui/chartkit' {
         yandexmap: {
             data: YandexMapWidgetData;
             widget: YandexMap;
+        };
+        markup: {
+            data: MarkupWidgetData;
+            widget: never;
         };
     }
 }

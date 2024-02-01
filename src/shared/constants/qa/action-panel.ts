@@ -6,8 +6,10 @@ export const enum ActionPanelEntryContextMenuQa {
     TableOfContent = 'action-panel-entry-context-menu-item-table-of-content',
 }
 
-export const enum ActionPanelDashSaveControls {
+export const enum ActionPanelDashSaveControlsQa {
     SaveAsDraftDropdownItem = 'action-panel-save-as-draft-dropdown-item',
     SaveAndPublishDropdownItem = 'action-panel-save-and-publish-dropdown-item',
     SaveAsNewDropdownItem = 'action-panel-save-as-new-dropdown-item',
+    Save = 'action-panel-button-save',
+    SaveAsDraft = 'action-panel-button-save-as-draft',
 }

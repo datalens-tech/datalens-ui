@@ -75,6 +75,7 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
                     width: 36,
                 },
             },
+            dashStyle: graph.dashStyle,
         };
     });
 

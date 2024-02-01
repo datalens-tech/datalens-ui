@@ -1,7 +1,7 @@
 import uuid from 'uuid/v1';
 import {DatasetActionQA, EntryDialogQA} from '../../../src/shared/constants';
 
-import {dragAndDrop, slct} from '../../utils';
+import {slct} from '../../utils';
 import {BasePage, BasePageProps} from '../BasePage';
 import DialogParameter from '../common/DialogParameter';
 
@@ -31,13 +31,14 @@ class DatasetPage extends BasePage {
             throw new Error("Couldn't find the table");
         }
 
-        const target = await this.page.$(slct('ds-relations-map'));
+        const targetSelector = slct('ds-relations-map');
+        const target = await this.page.$(targetSelector);
 
         if (!target) {
             throw new Error("Couldn't find an area to drag");
         }
 
-        await dragAndDrop(this.page, source, target);
+        await this.page.dragAndDrop(selector, targetSelector);
     }
 
     async openSourcesPanel() {

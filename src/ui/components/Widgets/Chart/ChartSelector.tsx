@@ -304,7 +304,11 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
     );
 
     return (
-        <div ref={rootNodeRef} className={`${b(mods)}`} data-qa="chart-widget-selectors">
+        <div
+            ref={rootNodeRef}
+            className={`${b({...mods, autoheight: Boolean(props.data?.autoHeight)})}`}
+            data-qa="chart-widget-selectors"
+        >
             <DebugInfoTool
                 data={[
                     {label: 'widgetId', value: widgetId},

@@ -44,6 +44,13 @@ export default class FilterEditor {
         await this.closeDatepickerPopup();
     }
 
+    async selectRadio(value: string) {
+        await this.page
+            .locator('.dl-dialog-filter__body')
+            .locator(`.yc-radio-group__option`, {hasText: value})
+            .click();
+    }
+
     async selectValues(fields: string[]) {
         for (const field of fields) {
             await this.page.fill(

@@ -36,6 +36,14 @@ export interface MarkdownNodeTypeData {
     shared: string;
 }
 
+export interface MarkupNodeTypeData {
+    url: string;
+    params: string;
+    js: string;
+    config: string;
+    shared: string;
+}
+
 export interface MetricNodeTypeData {
     url: string;
     params: string;

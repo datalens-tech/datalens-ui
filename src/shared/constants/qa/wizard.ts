@@ -1,3 +1,8 @@
+export const enum WizardPageQa {
+    SectionPreview = 'preview-chartkit',
+    VisualizationSelectPopup = 'visualization-select-popup',
+}
+
 export const enum SectionDatasetQA {
     DatasetContainer = 'datasets-container',
     DatasetEmptyMessage = 'datasets-blank',

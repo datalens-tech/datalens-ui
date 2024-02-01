@@ -113,9 +113,34 @@ function mergeUpdates(prevUpdates: Update[], updates: Update[], datasetId: strin
         return acc;
     }, []);
 
+    const fieldsWithRenamedGuides = updates.reduce((acc, update) => {
+        if (
+            update.field.new_id &&
+            update.field.new_id !== update.field.guid &&
+            !isDeleteUpdate(update)
+        ) {
+            acc.set(update.field.new_id, update);
+        }
+        return acc;
+    }, new Map<Update['field']['new_id'], Update>());
+
+    updates.forEach((update: Update) => {
+        if (fieldsWithRenamedGuides.has(update.field.guid) && update.action === 'update_field') {
+            update.field = {
+                ...fieldsWithRenamedGuides.get(update.field.guid)?.field,
+                ...update.field,
+            };
+            delete update.field['new_id'];
+            update.action = 'add_field';
+        }
+    });
+
     const filteredNewUpdates = updates.filter((update: Update) => {
-        const isDeleteUpdateAfterValidation = Boolean(update.deleteUpdateAfterValidation);
-        return !isDeleteUpdate(update) && !isDeleteUpdateAfterValidation;
+        return (
+            !isDeleteUpdate(update) &&
+            !update.deleteUpdateAfterValidation &&
+            !fieldsWithRenamedGuides.has(update.field.new_id)
+        );
     });
 
     return filteredOldUpdates.concat(filteredNewUpdates);

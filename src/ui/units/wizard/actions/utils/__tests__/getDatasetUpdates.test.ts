@@ -49,4 +49,54 @@ describe('getDatasetUpdates', () => {
         const expected: Update[] = [];
         expect(result.updates).toEqual(expected);
     });
+
+    it('rename parameter', () => {
+        const result = getDatasetUpdates({
+            ...args,
+            currentUpdates: [
+                {
+                    action: 'add_field',
+                    field: {
+                        guid: 'old_name',
+                        title: 'old_name',
+                        datasetId: DATASET_ID,
+                        calc_mode: 'parameter',
+                    },
+                },
+            ],
+            updates: [
+                {
+                    action: 'update_field',
+                    field: {
+                        guid: 'old_name',
+                        new_id: 'new_name',
+                        title: 'new_name',
+                        datasetId: DATASET_ID,
+                        calc_mode: 'parameter',
+                    },
+                },
+                {
+                    action: 'update_field',
+                    field: {
+                        guid: 'new_name',
+                        title: 'new_name',
+                        datasetId: DATASET_ID,
+                        calc_mode: 'parameter',
+                    },
+                },
+            ],
+        });
+        const expected: Update[] = [
+            {
+                action: 'add_field',
+                field: {
+                    guid: 'new_name',
+                    title: 'new_name',
+                    datasetId: DATASET_ID,
+                    calc_mode: 'parameter',
+                },
+            },
+        ];
+        expect(result.updates).toEqual(expected);
+    });
 });

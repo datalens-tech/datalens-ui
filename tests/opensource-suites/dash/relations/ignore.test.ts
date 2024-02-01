@@ -1,11 +1,9 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, slct, waitForCondition} from '../../../utils';
+import {slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ControlQA, DashRelationTypes} from '../../../../src/shared';
-import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {ChartsParams} from '../../../constants/test-entities/charts';
 
 const SELECTORS = {
@@ -20,15 +18,13 @@ const PARAMS = {
     CONTROL_FIELD_NAME: 'test-control-field',
     CONTROL_FIELD_NAME_2: 'test-control-field-2',
     CONTROL_ITEMS: ['Dallas', 'Chicago'],
-    CHART_FIELD: 'city',
+    CHART_FIELD: 'City',
 };
 
 datalensTest.describe('Dashboards - Relations (new)', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const workbookPO = new Workbook(page);
-        await workbookPO.openE2EWorkbookPage();
         const dashboardPage = new DashboardPage({page});
-        await workbookPO.createDashboard({
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addSelector({
                     controlTitle: PARAMS.CONTROL_TITLE,
@@ -77,7 +73,8 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         });
     });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.deleteDash();
     });
     datalensTest('Ignore relations by manual change', async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});

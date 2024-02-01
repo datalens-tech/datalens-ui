@@ -5,5 +5,7 @@ export type DashParametrizationConfig = {
         DashboardLoadPrioritySelectors: string;
         DashboardWithTabsAndSelectors: string;
         DashboardMoreThan100Revisions: string;
+        DashboardWithErrorChart: string;
+        DashboardWithAPIErrorChart: string;
     };
 };

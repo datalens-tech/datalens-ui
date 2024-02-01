@@ -52,11 +52,18 @@ const initialState = {
     lastUsedDatasetId: null,
 
     selectorDialog: getSelectorDialogInitialState(),
-    selectorsGroup: [],
+    selectorsGroup: getGroupSelectorDialogInitialState(),
     activeSelectorIndex: 0,
 
     skipReload: false,
 };
+
+export function getGroupSelectorDialogInitialState() {
+    return {
+        items: [],
+        id: getRandomKey(),
+    };
+}
 
 export function getSelectorDialogInitialState(args = {}) {
     const required = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? {required: false} : {};
@@ -75,6 +82,79 @@ export function getSelectorDialogInitialState(args = {}) {
     };
 }
 
+export function getSelectorDialogFromData(data, defaults) {
+    return {
+        validation: {},
+        isManualTitle: true,
+
+        defaults,
+
+        title: data.title,
+        sourceType: data.sourceType,
+        autoHeight: data.autoHeight,
+
+        datasetId: data.source.datasetId,
+        elementType: data.source.elementType || ELEMENT_TYPE.SELECT,
+        defaultValue: data.source.defaultValue,
+        datasetFieldId: data.source.datasetFieldId,
+        showTitle: data.source.showTitle,
+        multiselectable: data.source.multiselectable,
+        isRange: data.source.isRange,
+        fieldName: data.source.fieldName,
+        fieldType: data.source.fieldType,
+        datasetFieldType: data.source.datasetFieldType,
+        acceptableValues: data.source.acceptableValues,
+        chartId: data.source.chartId,
+        operation: data.source.operation,
+        innerTitle: data.source.innerTitle,
+        showInnerTitle: data.source.showInnerTitle,
+        id: getRandomKey(),
+        required: data.source.required,
+    };
+}
+
+export function getSelectorGroupDialogFromData(data, defaults) {
+    const items = Object.values(data.items)
+        .map((item) => ({
+            validation: {},
+            isManualTitle: true,
+
+            title: item.title,
+            sourceType: item.sourceType,
+
+            datasetId: item.source.datasetId,
+            elementType: item.source.elementType || ELEMENT_TYPE.SELECT,
+            defaultValue: item.source.defaultValue,
+            datasetFieldId: item.source.datasetFieldId,
+            showTitle: item.source.showTitle,
+            multiselectable: item.source.multiselectable,
+            isRange: item.source.isRange,
+            fieldName: item.source.fieldName,
+            fieldType: item.source.fieldType,
+            datasetFieldType: item.source.datasetFieldType,
+            acceptableValues: item.source.acceptableValues,
+            chartId: item.source.chartId,
+            operation: item.source.operation,
+            innerTitle: item.source.innerTitle,
+            showInnerTitle: item.source.showInnerTitle,
+            id: getRandomKey(),
+            required: item.source.required,
+            placementMode: item.placementMode,
+            width: item.width,
+        }))
+        .sort((a, b) => a.index - b.index);
+
+    return {
+        defaults,
+
+        autoHeight: data.autoHeight,
+        buttonApply: data.buttonApply,
+        buttonReset: data.buttonReset,
+
+        items,
+    };
+}
+
 // eslint-disable-next-line complexity
 function dash(state = initialState, action) {
     const {data, tabId} = state;
@@ -86,7 +166,11 @@ function dash(state = initialState, action) {
         case actionTypes.SAVE_DASH_SUCCESS:
         case actionTypes.SAVE_DASH_ERROR:
         case actionTypes.CLOSE_DIALOG:
-            return {...state, selectorsGroup: [], ...action.payload};
+            return {
+                ...state,
+                selectorsGroup: getGroupSelectorDialogInitialState(),
+                ...action.payload,
+            };
         case actionTypes.OPEN_DIALOG: {
             const selectorDialog =
                 action.payload?.openedDialog === 'control' ||
@@ -95,6 +179,7 @@ function dash(state = initialState, action) {
                           lastUsedDatasetId: state.lastUsedDatasetId,
                       })
                     : state.selectorDialog;
+
             if (
                 Utils.isEnabledFeature(Feature.GroupControls) &&
                 action.payload?.openedDialog === 'group_control'
@@ -102,11 +187,18 @@ function dash(state = initialState, action) {
                 // TODO: move to getSelectorDialogInitialState after the release of the feature
                 selectorDialog.title = i18n('label_selector-dialog');
             }
+
             return {
                 ...state,
                 ...action.payload,
                 selectorDialog,
-                selectorsGroup: [selectorDialog],
+                selectorsGroup: {
+                    items: [selectorDialog],
+                    autoHeight: Boolean(selectorDialog.autoHeight),
+                    buttonApply: Boolean(selectorDialog.buttonApply),
+                    buttonReset: Boolean(selectorDialog.buttonReset),
+                    defaults: selectorDialog.defaults,
+                },
                 activeSelectorIndex: 0,
             };
         }
@@ -271,7 +363,7 @@ function dash(state = initialState, action) {
             const tabData = DashKit.setItem({
                 item: {
                     id: state.openedItemId,
-                    type: state.openedDialog,
+                    type: action.payload.type || state.openedDialog,
                     data: action.payload.data,
                     namespace: action.payload.namespace,
                     operation: action.payload.operation,
@@ -298,60 +390,38 @@ function dash(state = initialState, action) {
             const {id: openedItemId, data, defaults} = payload;
             let {type: openedDialog} = tab.items.find(({id}) => id === openedItemId);
 
-            let selectorTitle = data.title;
-            let selectorDialog = state.selectorDialog;
+            const newState = {
+                ...state,
+                openedItemId,
+                activeSelectorIndex: 0,
+            };
 
             if (
                 Utils.isEnabledFeature(Feature.GroupControls) &&
                 openedDialog === 'control' &&
                 data.sourceType !== 'external'
             ) {
+                const selectorDialog = getSelectorDialogFromData(data, defaults);
+
+                // migration forward to group
                 openedDialog = 'group_control';
-                selectorTitle =
-                    data.source.innerTitle && data.source.showInnerTitle
-                        ? `${data.title} ${data.source.innerTitle}`
-                        : data.title;
-            }
-
-            if (openedDialog === 'control' || openedDialog === 'group_control') {
-                selectorDialog = {
-                    validation: {},
-                    isManualTitle: true,
-
-                    defaults,
-
-                    title: selectorTitle,
-                    sourceType: data.sourceType,
-                    autoHeight: data.autoHeight,
-
-                    datasetId: data.source.datasetId,
-                    elementType: data.source.elementType || ELEMENT_TYPE.SELECT,
-                    defaultValue: data.source.defaultValue,
-                    datasetFieldId: data.source.datasetFieldId,
-                    showTitle: data.source.showTitle,
-                    multiselectable: data.source.multiselectable,
-                    isRange: data.source.isRange,
-                    fieldName: data.source.fieldName,
-                    fieldType: data.source.fieldType,
-                    datasetFieldType: data.source.datasetFieldType,
-                    acceptableValues: data.source.acceptableValues,
-                    chartId: data.source.chartId,
-                    operation: data.source.operation,
-                    innerTitle: data.source.innerTitle,
-                    showInnerTitle: data.source.showInnerTitle,
-                    id: getRandomKey(),
-                    required: data.source.required,
+                newState.selectorsGroup = {
+                    autoHeight: Boolean(data.autoHeight),
+                    buttonApply: false,
+                    buttonReset: false,
+                    items: [selectorDialog],
                 };
+                newState.selectorDialog = selectorDialog;
+            } else if (openedDialog === 'group_control') {
+                newState.selectorsGroup = getSelectorGroupDialogFromData(data, defaults);
+                newState.selectorDialog = newState.selectorsGroup.items[0];
+            } else if (openedDialog === 'control') {
+                newState.selectorDialog = getSelectorDialogFromData(data, defaults);
             }
 
-            return {
-                ...state,
-                openedItemId,
-                openedDialog,
-                selectorDialog,
-                selectorsGroup: [selectorDialog],
-                activeSelectorIndex: 0,
-            };
+            newState.openedDialog = openedDialog;
+
+            return newState;
         }
 
         case actionTypes.TOGGLE_FULLSCREEN_MODE:
