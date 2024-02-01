@@ -165,8 +165,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
 
     const currentChangeParamsRef = React.useRef<ChartsProps['params'] | null>(null);
 
-    // const observer = React.useRef<IntersectionObserver | null>(null); TODO return here CHARTS-7043
-
     const loadedDrillDownLevel = React.useMemo(() => {
         let level = Array.isArray(loadedData?.params.drillDownLevel)
             ? loadedData?.params.drillDownLevel[0]
@@ -451,24 +449,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     ]);
 
     /**
-     * check if current widget is in viewport
-     * turn on loading widget data flag if it's in viewport
-     */
-    const intersectionChange = React.useCallback(
-        (isVisible: boolean) => {
-            if (isVisible) {
-                setCanBeLoaded(true);
-            }
-        },
-        [setCanBeLoaded],
-    );
-    useIntersectionObserver({
-        nodeRef: rootNodeRef,
-        callback: intersectionChange,
-        enable: !isInit,
-    });
-
-    /**
      * reload chart by timer when the _autoupdate param is passed
      */
     const reloadChart = React.useCallback(() => {
@@ -502,6 +482,26 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
             reloadChart();
         }
     }, [isPageHidden, autoupdateInterval]);
+
+    /**
+     * check if current widget is in viewport
+     * turn on loading widget data flag if it's in viewport
+     */
+    const intersectionChange = React.useCallback(
+        (isVisible: boolean) => {
+            if (isVisible) {
+                setCanBeLoaded(true);
+                setIsInit(true);
+                loadChartData();
+            }
+        },
+        [loadChartData],
+    );
+    useIntersectionObserver({
+        nodeRef: rootNodeRef,
+        callback: intersectionChange,
+        enable: !isInit && !canBeLoaded,
+    });
 
     /**
      * force initializing chart loading data, when widget became visible,
