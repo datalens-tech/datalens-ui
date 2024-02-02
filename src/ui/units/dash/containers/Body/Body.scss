@@ -4,7 +4,7 @@ $contentPadding: 24px;
 $contentMobilePadding: 16px;
 
 .dash-body {
-    --dashkit-grid-item-edit-opacity: 1;
+    --dashkit-grid-item-edit-opacity: 0.99; // Chrome z-index opacity leaking
     --dashkit-overlay-color: var(--g-color-base-float);
     --dashkit-overlay-border-color: var(--g-color-base-float);
     --dashkit-overlay-opacity: 0.5;
