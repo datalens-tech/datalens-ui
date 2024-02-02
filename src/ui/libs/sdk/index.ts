@@ -15,6 +15,7 @@ import type {CreateWidgetArgs} from '../../../shared/old-schema/charts';
 import {registry} from '../../registry';
 import {Entry} from '../../typings';
 import axiosInstance from '../axios/axios';
+import Utils from 'ui/utils';
 
 import {ConfigSdk, DataMethodGateway, HeadersSdk, OptionsMethodGateway, SendRequest} from './types';
 
@@ -154,6 +155,7 @@ class SDK {
                 ...this.getHeaders(),
                 'Content-Type': 'multipart/form-data',
                 'x-request-id': `dl.${(DL.REQUEST_ID || '').slice(0, 6)}_conn`,
+                'x-rpc-authorization': Utils.getRpcAuthorization()
             },
             data: formData,
         };

@@ -34,7 +34,7 @@ import type {
 } from '../../../components/ChartKitBase/ChartKitBase';
 import {ControlsOnlyWidget, DataProvider, GraphWidget, TableWidget, Widget} from '../../../types';
 import axiosInstance, {initConcurrencyManager} from '../../axios/axios';
-import {REQUEST_ID_HEADER, TRACE_ID_HEADER, URL_OPTIONS} from '../../constants/constants';
+import {REQUEST_ID_HEADER, RPC_AUTHORIZATION, TRACE_ID_HEADER, URL_OPTIONS} from '../../constants/constants';
 import DatalensChartkitCustomError, {
     ERROR_CODE,
     ExtraParams,
@@ -749,6 +749,10 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             headers[DL_COMPONENT_HEADER] = DlComponentHeader.UI;
         }
 
+        if(Utils.getRpcAuthorization()) {
+            headers[RPC_AUTHORIZATION] = Utils.getRpcAuthorization();
+        }
+
         return headers;
     }
 
@@ -821,6 +825,10 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
             if (headers[TRACE_ID_HEADER]) {
                 responseData.traceId = headers[TRACE_ID_HEADER];
+            }
+
+            if(headers[RPC_AUTHORIZATION]) {
+                responseData.rpcAuthorization = headers[RPC_AUTHORIZATION]
             }
 
             if (this.settings.includeUnresolvedParams) {

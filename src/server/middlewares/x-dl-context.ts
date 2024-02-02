@@ -5,6 +5,7 @@ import {
     DL_CONTEXT_HEADER,
     REQUEST_ID_HEADER,
     TENANT_ID_HEADER,
+    RPC_AUTHORIZATION,
 } from '../../shared';
 
 type DlContext = Record<string, string | string[] | undefined>;
@@ -22,6 +23,7 @@ export default function xDlContext() {
             folderId: folderId || tenantId,
             tenantId,
             requestId: req.headers[REQUEST_ID_HEADER],
+            rpcAuthorization: req.headers[RPC_AUTHORIZATION],
             referer: req.ctx.utils.redactSensitiveQueryParams(req.headers['referer']),
         };
 

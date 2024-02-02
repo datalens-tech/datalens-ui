@@ -58,3 +58,24 @@ Password:
 ```
 demo
 ```
+## Комментарий
+Ключ для авторизации требуется передать в адресной строке, как `x-rpc-authorization=bW9iaWxlOjEyMzQ1`.
+
+Во все внешние запросы прокидывается дополнительный заголовок: `X-Rpc-Authorization`.
+
+## Отладка и запуск проекта
+Требуется установить WSL2 и запусить проект в Visual Code
+
+В терминале выбрать `Ubuntu WSL` и выполнить команду `code .`
+
+Подробнее:
+* https://www.petermorlion.com/debugging-wsl-from-vs-code/
+* https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode
+
+
+## Сборка
+<pre>
+docker login -u [username]
+docker build -t akrasnov87/datalens-ui:0.1245.0 .
+docker push akrasnov87/datalens-ui:0.1245.0
+</pre>

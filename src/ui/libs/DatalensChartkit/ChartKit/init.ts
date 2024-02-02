@@ -49,6 +49,7 @@ export const initChartKitSettings = () => {
             const CSRFToken = Utils.getCSRFToken();
 
             request.headers[ACCEPT_LANGUAGE_HEADER] = DL.USER_LANG;
+            request.headers['X-Rpc-Authorization'] = Utils.getRpcAuthorization();
 
             if (CSRFToken) {
                 request.headers[X_CSRF_TOKEN_HEADER] = CSRFToken;

@@ -179,10 +179,28 @@ export default class Utils {
         window.sdk = getSdk();
     }
 
+    static setRpcAuthorization() {
+        var loc:any = document.location;
+        let params = (new URL(loc)).searchParams;
+        let token:any = params.get("x-rpc-authorization");
+        if(token) {
+            window.sessionStorage.setItem('x-rpc-authorization', token);
+        }
+    }
+
+    static getRpcAuthorization() {
+        var loc:any = document.location;
+        let params = (new URL(loc)).searchParams;
+        let token:any = params.get("x-rpc-authorization");
+
+        return window.sessionStorage.getItem('x-rpc-authorization') || token;
+    }
+
     static setup() {
         Utils.setBodyFeatures();
         Utils.setLang();
         Utils.setSdk();
+        Utils.setRpcAuthorization();
     }
 
     static setMobileMetaViewport() {

@@ -12,6 +12,7 @@ import {
     FORWARDED_FOR_HEADER,
     PROJECT_ID_HEADER,
     REQUEST_ID_HEADER,
+    RPC_AUTHORIZATION,
     SuperuserHeader,
     TENANT_ID_HEADER,
 } from '../../shared';
@@ -32,6 +33,7 @@ class Utils {
             folderIdHeader,
             TENANT_ID_HEADER,
             PROJECT_ID_HEADER,
+            RPC_AUTHORIZATION,
             subjectTokenHeader,
         ];
 
