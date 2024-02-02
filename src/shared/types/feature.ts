@@ -94,7 +94,7 @@ export enum Feature {
     HolidayNavigation = 'HolidayNavigation',
     SelectorRequiredValue = 'SelectorRequiredValue',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
-    MarkupIndicator = 'MarkupIndicator',
+    MarkupMetric = 'MarkupMetric',
 }
 
 export type FeatureConfig = Record<string, boolean>;

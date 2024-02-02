@@ -1,5 +1,4 @@
 import {
-    DATASET_FIELD_TYPES,
     ExtendedChartsConfig,
     Feature,
     WizardVisualizationId,
@@ -43,9 +42,14 @@ export default {
                 return 'ymap_wizard_node';
             }
             case WizardVisualizationId.Metric: {
-                const metricField = chart.visualization.placeholders[0].items[0];
+                const app = registry.getApp();
 
-                if (metricField.data_type === DATASET_FIELD_TYPES.MARKUP) {
+                const useMarkupMetric = isEnabledServerFeature(
+                    app.nodekit.ctx,
+                    Feature.MarkupMetric,
+                );
+
+                if (useMarkupMetric) {
                     return 'markup_wizard_node';
                 } else {
                     return 'metric_wizard_node';
