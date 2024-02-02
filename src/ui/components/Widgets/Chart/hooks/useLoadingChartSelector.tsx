@@ -4,7 +4,7 @@ import {AxiosResponse} from 'axios';
 import debounce from 'lodash/debounce';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {DashTabItemControl, Feature} from 'shared';
+import {DashSettings, DashTabItemControl, Feature} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
 import {
@@ -85,6 +85,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         usageType,
         chartId,
         widgetType,
+        settings,
     } = props;
 
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
@@ -93,6 +94,8 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     const isNewRelations = useSelector(selectIsNewRelations);
 
     const history = useHistory();
+
+    const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts;
 
     /**
      * debounced call of recalculate widget layout after rerender
@@ -355,6 +358,15 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     React.useEffect(() => {
         debouncedChartReflow();
     }, [width, height, debouncedChartReflow]);
+
+    /**
+     * Load selector if load only visible setting disabled
+     */
+    React.useEffect(() => {
+        if (loadOnlyVisibleCharts === false) {
+            setCanBeLoaded(true);
+        }
+    }, [setCanBeLoaded, loadOnlyVisibleCharts]);
 
     return {
         loadedData,
