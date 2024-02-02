@@ -239,6 +239,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         handleChange,
         handleError,
         handleRetry,
+        handleUpdate,
         loadChartData,
         setLoadingProps,
         getControls,
@@ -332,6 +333,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                             onLoad={handleRenderChart}
                             onError={handleError}
                             onChange={handleChange}
+                            onUpdate={handleUpdate}
                             getControls={getControls}
                             nonBodyScroll={nonBodyScroll}
                             initialParams={controlInitialParams}

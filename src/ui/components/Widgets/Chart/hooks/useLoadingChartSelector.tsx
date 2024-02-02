@@ -338,9 +338,9 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
 
     const debounceResizeAdjustLayot = React.useCallback(
         debounce(() => {
-            adjustLayout(false);
+            adjustLayout(!props.data.autoHeight);
         }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-        [adjustLayout],
+        [adjustLayout, props.data.autoHeight],
     );
 
     useResizeObserver({
@@ -366,6 +366,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         handleChange,
         handleError,
         handleRetry,
+        handleUpdate: debounceResizeAdjustLayot,
         handleGetWidgetMeta,
         mods,
         widgetBodyClassName,
