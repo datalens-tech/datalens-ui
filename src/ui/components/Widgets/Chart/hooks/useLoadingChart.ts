@@ -97,6 +97,22 @@ type AutoupdateDataType = {
 
 const EXCLUDE_CHART_WITH_AXIS_FOR_MENU_RERENDER = ['map'];
 
+type LoadingStateType = {
+    canBeLoaded: boolean;
+    isInit: boolean;
+};
+
+const loadingStateReducer = (state: LoadingStateType, newState: Partial<LoadingStateType>) => {
+    const hasChanges = Object.entries(newState).find(
+        ([k, v]) => state[k as keyof LoadingStateType] !== v,
+    );
+
+    if (hasChanges) {
+        return {...state, ...newState};
+    }
+    return state;
+};
+
 export const useLoadingChart = (props: LoadingChartHookProps) => {
     const {
         dataProvider,
@@ -127,8 +143,13 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isPageHidden,
     } = props;
 
-    const [canBeLoaded, setCanBeLoaded] = React.useState<boolean>(false);
-    const [isInit, setIsInit] = React.useState<boolean>(false);
+    const [{isInit, canBeLoaded}, setLoadingState] = React.useReducer(loadingStateReducer, {
+        isInit: false,
+        canBeLoaded: false,
+    });
+    const setIsInit = React.useCallback((state) => setLoadingState({isInit: state}), []);
+    const setCanBeLoaded = React.useCallback((state) => setLoadingState({canBeLoaded: state}), []);
+
     const [yandexMapAPIWaiting, setYandexMapAPIWaiting] =
         React.useState<ChartContentProps['yandexMapAPIWaiting']>();
 
@@ -490,8 +511,10 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     const intersectionChange = React.useCallback(
         (isVisible: boolean) => {
             if (isVisible) {
-                setCanBeLoaded(true);
-                setIsInit(true);
+                setLoadingState({
+                    canBeLoaded: true,
+                    isInit: true,
+                });
                 loadChartData();
             }
         },
