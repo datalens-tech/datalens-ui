@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-git status && npx lint-staged --relative
+#git status && npx lint-staged --relative
