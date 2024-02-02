@@ -26,7 +26,7 @@ describe('colorizeFlatTableColumn', () => {
 
         expect(removeLineBreaksAndSpace(result)).toEqual([
             'rgb(0,68,163)',
-            'rgb(46,113,193)',
+            'rgb(47,113,194)',
             'rgb(93,158,224)',
             'rgb(140,203,255)',
         ]);
@@ -56,7 +56,6 @@ describe('colorizeFlatTableColumn', () => {
             gradientMode: GradientType.THREE_POINT,
             gradientPalette: 'red-orange-green',
             reversed: false,
-
             colors: [],
             gradientColors: getRedOrangeGreenGradientColors(),
             loadedColorPalettes: {},

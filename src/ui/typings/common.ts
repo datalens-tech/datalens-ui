@@ -22,6 +22,7 @@ export interface Entry {
     data?: Record<string, any>;
     meta?: Record<string, any>;
     hidden: boolean;
+    mirrored?: boolean;
     public: boolean;
     isFavorite: boolean;
     isLocked: boolean;

@@ -19,7 +19,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
     const config: Pick<
         HighchartsWidgetData['config'],
-        'title' | 'hideHolidaysBands' | 'linesLimit' | 'tooltip'
+        'title' | 'hideHolidaysBands' | 'linesLimit' | 'tooltip' | 'enableSum'
     > & {
         enableGPTInsights?: boolean;
     } = {
@@ -27,11 +27,17 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
     };
 
     if (qlConfig.extraSettings) {
-        if (qlConfig.extraSettings.title && qlConfig.extraSettings.titleMode === 'show') {
-            config.title = qlConfig.extraSettings.title;
+        const {title, titleMode, tooltipSum, enableGPTInsights} = qlConfig.extraSettings;
+
+        if (title && titleMode === 'show') {
+            config.title = title;
         }
 
-        config.enableGPTInsights = qlConfig.extraSettings.enableGPTInsights;
+        if (typeof tooltipSum === 'undefined' || tooltipSum === 'on') {
+            config.enableSum = true;
+        }
+
+        config.enableGPTInsights = enableGPTInsights;
     }
 
     const app = registry.getApp();

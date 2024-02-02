@@ -458,9 +458,10 @@ function getThresholdValues(
 
     const mid =
         colorsConfig.thresholdsMode === 'manual' &&
+        colorsConfig.gradientMode === GradientType.THREE_POINT &&
         typeof colorsConfig.middleThreshold !== 'undefined'
             ? Number(colorsConfig.middleThreshold)
-            : range / 2;
+            : max - range / 2;
 
     const rangeMiddle = mid === range / 2 ? mid : mid - min;
 

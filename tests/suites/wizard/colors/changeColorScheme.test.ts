@@ -1,7 +1,5 @@
 import {Page} from '@playwright/test';
-import {DialogColor} from '../../../../src/shared/constants';
-
-import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
+import {DialogColorQa, WizardVisualizationId} from '../../../../src/shared';
 import {ColorValue} from '../../../page-objects/wizard/ColorDialog';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
@@ -18,9 +16,9 @@ const testPaletteId = testPalette.id;
 const testPaletteColorScheme = testPalette.scheme.slice(0, 3);
 
 const switchPalette = async (page: Page, paletteId: string) => {
-    await page.click(slct(DialogColor.PaletteSelect));
+    await page.click(slct(DialogColorQa.PaletteSelect));
     await page.click(slct(paletteId));
-    await page.click(slct(DialogColor.ApplyButton));
+    await page.click(slct(DialogColorQa.ApplyButton));
 };
 
 const getColumnWithColorSelector = (color: string) => `//*[@fill='${color}']`;

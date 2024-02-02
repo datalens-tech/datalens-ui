@@ -1,29 +1,19 @@
 import {Page} from '@playwright/test';
 import _isEqual from 'lodash/isEqual';
 
-import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
+import {
+    DialogFieldGroupingSelectorValuesQa,
+    DialogFieldMainSectionQa,
+    DialogFieldTypeSelectorValuesQa,
+    WizardVisualizationId,
+} from '../../../../src/shared';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {
-    DialogFieldGroupingSelectorValuesQa,
-    DialogFieldMainSectionQa,
-    DialogFieldTypeSelectorValuesQa,
-} from '../../../../src/shared/constants';
 
 const DATETIME_FIELD_NAME = '__test_field_DATETIME';
-
-const createTestField = async (wizardPage: WizardPage) => {
-    await wizardPage.fieldEditor.open();
-
-    await wizardPage.fieldEditor.setFormula('DATETIME([DATE])');
-
-    await wizardPage.fieldEditor.setName(DATETIME_FIELD_NAME);
-
-    await wizardPage.fieldEditor.clickToApplyButton();
-};
 
 datalensTest.describe('Wizard - date grouping', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
@@ -223,7 +213,7 @@ datalensTest.describe('Wizard - date grouping', () => {
                 );
             };
 
-            await createTestField(wizardPage);
+            await wizardPage.createNewFieldWithFormula(DATETIME_FIELD_NAME, 'DATETIME([DATE])');
 
             await wizardPage.sectionVisualization.addFieldByClick(
                 PlaceholderName.FlatTableColumns,

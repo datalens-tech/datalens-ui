@@ -407,6 +407,7 @@ class Widget extends React.PureComponent<Props, State> {
                         items={data.tabs}
                         selectedItemIndex={tabIndex}
                         update={this.updateTabMenu}
+                        tabIconMixin={b('add-icon')}
                     />
                 </div>
             </div>

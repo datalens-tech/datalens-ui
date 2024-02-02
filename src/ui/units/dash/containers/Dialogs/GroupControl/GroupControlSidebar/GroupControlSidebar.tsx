@@ -14,6 +14,7 @@ import {
 
 import {
     SelectorDialogState,
+    SelectorsGroupDialogState,
     addSelectorToGroup,
     setActiveSelectorIndex,
     updateSelectorsGroup,
@@ -25,6 +26,11 @@ import './../GroupControl.scss';
 
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
+
+const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
+    buttonApply: false,
+    buttonReset: false,
+};
 
 export const GroupControlSidebar = () => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
@@ -47,6 +53,7 @@ export const GroupControlSidebar = () => {
                     updateSelectorsGroup({
                         ...selectorsGroup,
                         items,
+                        ...(items.length === 1 ? SINGLE_SELECTOR_SETTINGS : {}),
                     }),
                 );
             }
