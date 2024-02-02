@@ -147,8 +147,11 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isInit: false,
         canBeLoaded: false,
     });
-    const setIsInit = React.useCallback((state) => setLoadingState({isInit: state}), []);
-    const setCanBeLoaded = React.useCallback((state) => setLoadingState({canBeLoaded: state}), []);
+    const setIsInit = React.useCallback((state: boolean) => setLoadingState({isInit: state}), []);
+    const setCanBeLoaded = React.useCallback(
+        (state: boolean) => setLoadingState({canBeLoaded: state}),
+        [],
+    );
 
     const [yandexMapAPIWaiting, setYandexMapAPIWaiting] =
         React.useState<ChartContentProps['yandexMapAPIWaiting']>();
