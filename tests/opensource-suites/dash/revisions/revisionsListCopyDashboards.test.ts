@@ -1,23 +1,18 @@
 import {Page} from '@playwright/test';
 
-import {Workbook} from '../../../page-objects/workbook/Workbook';
-import {ActionPanelDashSaveControls} from '../../../../src/shared/constants/qa/action-panel';
+import {ActionPanelDashSaveControlsQa} from '../../../../src/shared/constants/qa/action-panel';
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage, {RENDER_TIMEOUT} from '../../../page-objects/dashboard/DashboardPage';
-import {cssSlct, deleteEntity, slct} from '../../../utils';
+import {cssSlct, slct} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {WorkbooksUrls} from '../../../constants/constants';
 import {arbitraryText} from '../constants';
 
 datalensTest.describe('Dashboard Versioning', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const workbookPO = new Workbook(page);
 
-        await workbookPO.openE2EWorkbookPage();
-
-        await workbookPO.createDashboard({
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addText(arbitraryText.first);
             },
@@ -32,7 +27,7 @@ datalensTest.describe('Dashboard Versioning', () => {
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.exitEditMode();
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(
@@ -50,14 +45,14 @@ datalensTest.describe('Dashboard Versioning', () => {
             await dashboardPage.editDashWithoutSaving();
 
             // check the corresponding button
-            await page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+            await page.waitForSelector(slct(ActionPanelDashSaveControlsQa.Save));
             //click on the dropdown arrow
             await page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
 
             // check the corresponding dropdown menu items
             await page.waitForSelector(cssSlct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_MENU));
-            await page.waitForSelector(slct(ActionPanelDashSaveControls.SaveAsDraftDropdownItem));
-            await page.waitForSelector(slct(ActionPanelDashSaveControls.SaveAsNewDropdownItem));
+            await page.waitForSelector(slct(ActionPanelDashSaveControlsQa.SaveAsDraftDropdownItem));
+            await page.waitForSelector(slct(ActionPanelDashSaveControlsQa.SaveAsNewDropdownItem));
         },
     );
 
@@ -76,15 +71,15 @@ datalensTest.describe('Dashboard Versioning', () => {
             await dashboardPage.enterEditMode();
             await dashboardPage.editDashWithoutSaving();
             // check the corresponding button
-            await page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_DRAFT_BTN));
+            await page.waitForSelector(slct(ActionPanelDashSaveControlsQa.SaveAsDraft));
             //click on the dropdown arrow
             await page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
             // check the corresponding dropdown menu items
             await page.waitForSelector(cssSlct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_MENU));
             await page.waitForSelector(
-                slct(ActionPanelDashSaveControls.SaveAndPublishDropdownItem),
+                slct(ActionPanelDashSaveControlsQa.SaveAndPublishDropdownItem),
             );
-            await page.waitForSelector(slct(ActionPanelDashSaveControls.SaveAsNewDropdownItem));
+            await page.waitForSelector(slct(ActionPanelDashSaveControlsQa.SaveAsNewDropdownItem));
         },
     );
 });

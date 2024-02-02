@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
+import {ChartkitGlobalSettings, Placeholder, Shared} from 'shared';
+import {DL} from 'ui/constants/common';
 
-import {ChartkitGlobalSettings, Placeholder, Shared} from '../../../../shared';
-import {DL} from '../../../constants';
 import {
     AREA_100P_VISUALIZATION,
     AREA_VISUALIZATION,
@@ -19,10 +19,11 @@ import {
     SCATTER_D3_VISUALIZATION,
     SCATTER_VISUALIZATION,
     TREEMAP_VISUALIZATION,
-} from '../../../constants/visualizations';
-import {DEFAULT_VISUALIZATION_ID_QL} from '../constants';
+} from '../../../../constants/visualizations';
 
-export function getAvailableQlVisualizations(options?: ChartkitGlobalSettings) {
+export function getAvailableQlVisualizations(
+    options?: ChartkitGlobalSettings,
+): Array<Shared['visualization']> {
     const {highcharts: {enabled: isHighchartsEnabled = false} = {}} =
         options || DL.CHARTKIT_SETTINGS;
 
@@ -110,16 +111,5 @@ export function getAvailableQlVisualizations(options?: ChartkitGlobalSettings) {
                 allowAvailable: true,
             };
         },
-    );
-}
-
-export function getDefaultQlVisualization(): Shared['visualization'] {
-    const availableVisualizations = getAvailableQlVisualizations();
-
-    // We use column chart as initial visualization type in QL and Wizard
-    return (
-        availableVisualizations.find(
-            (visualization) => visualization.id === DEFAULT_VISUALIZATION_ID_QL,
-        ) || availableVisualizations[0]
     );
 }

@@ -2,9 +2,6 @@ import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage} from '../../../utils';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
-import {WorkbooksUrls} from '../../../constants/constants';
 
 const expectedHTML = `
 <div class="dashkit-plugin-text dashkit-plugin-text_withMarkdown"><div class="yfm"><p>This text is highlighted <strong>in bold</strong>.</p>
@@ -36,11 +33,8 @@ This text is in *italics*.
 datalensTest.describe('Dashboards - Markdown', () => {
     datalensTest('Markdown should turn into HTML tags', async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const workbookPO = new Workbook(page);
 
-        await openTestPage(page, WorkbooksUrls.E2EWorkbook);
-
-        await workbookPO.createDashboard({
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addText(text);
             },

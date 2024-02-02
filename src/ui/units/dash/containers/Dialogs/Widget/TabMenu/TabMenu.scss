@@ -2,17 +2,20 @@ $class: 'tab-menu';
 $addTabButtonHeight: 40px;
 
 .#{$class} {
-    // TODO: this is an private api and may silently changed. We should use local styles
-    --yc-list-margin: 24px;
+    $listItemPadding: 0 24px;
 
     width: 100%;
     max-height: 100%;
     font-size: 13px;
 
+    &__list-item {
+        padding: $listItemPadding;
+    }
+
     &__add-tab {
         color: var(--g-color-text-secondary);
         display: flex;
-        padding: 0 8px;
+        padding: $listItemPadding;
         align-items: center;
         cursor: pointer;
         height: 40px;
@@ -23,7 +26,7 @@ $addTabButtonHeight: 40px;
     }
 
     &__add-tab-icon {
-        margin: 0 8px 0 20px;
+        margin-right: 8px;
     }
 
     &__item {

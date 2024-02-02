@@ -73,6 +73,7 @@ export enum Feature {
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     SelectorRequiredValue = 'SelectorRequiredValue',
+    MultipleColorsInVisualization = 'MultipleColorsInVisualization',
 }
 
 export type FeatureConfig = Record<string, boolean>;

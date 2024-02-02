@@ -14,11 +14,15 @@
     --yc-dialog-header-padding-top: 30px;
 
     &__sidebar {
-        width: 100%;
         max-height: 100%;
         display: flex;
         flex: 1;
         flex-direction: column;
+        width: 255px;
+    }
+
+    &__add-icon {
+        margin-left: 6px;
     }
 
     &__dialog-sidebar {

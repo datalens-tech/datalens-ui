@@ -2,7 +2,7 @@ import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 
-import {deleteEntity, openTestPage, slct, waitForCondition} from '../../../utils';
+import {slct, waitForCondition} from '../../../utils';
 
 import {
     DialogDashWidgetQA,
@@ -12,8 +12,6 @@ import {
 } from '../../../../src/shared/constants';
 
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
-import {WorkbooksUrls} from '../../../constants/constants';
 import {ChartsParams} from '../../../constants/test-entities/charts';
 import {dragAndDropListItem} from '../../../suites/dash/helpers';
 
@@ -162,11 +160,8 @@ const removeParam = async (page: Page, paramTitle: string) => {
 datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters`, () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const workbookPO = new Workbook(page);
 
-        await openTestPage(page, WorkbooksUrls.E2EWorkbook);
-
-        await workbookPO.createDashboard({
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addChart({
                     chartName: ChartsParams.citySalesPieChart.name,
@@ -180,7 +175,7 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.exitEditMode();
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(

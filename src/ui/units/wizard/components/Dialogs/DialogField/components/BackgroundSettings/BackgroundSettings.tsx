@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {
     ClientChartsConfig,
+    DialogFieldBackgroundSettingsQa,
     Field,
     NestedPartial,
     PlaceholderId,
@@ -80,6 +81,7 @@ export const BackgroundSettings: React.FC<Props> = (props) => {
                         checked={state.enabled}
                         onUpdate={handleSwitchUpdate}
                         disabled={!selectItems.length}
+                        qa={DialogFieldBackgroundSettingsQa.EnableButton}
                     />
                 }
             />
@@ -103,6 +105,7 @@ export const BackgroundSettings: React.FC<Props> = (props) => {
                         value={selectedRadioButton}
                         onUpdate={handleModeRadioButtonsUpdate}
                         disabled={!state.enabled}
+                        qa={DialogFieldBackgroundSettingsQa.FillTypeButtons}
                     />
                 }
             />
@@ -120,6 +123,7 @@ export const BackgroundSettings: React.FC<Props> = (props) => {
                             numericDimensionByGradient: state.settings.isContinuous,
                             extraDistinctsForDiscreteMode: extraDistincts,
                         }}
+                        qa={DialogFieldBackgroundSettingsQa.ButtonColorDialog}
                     />
                 }
             />

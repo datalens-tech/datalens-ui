@@ -22,6 +22,7 @@ import {
     TableWidgetEventScope,
     WidgetEvent,
 } from '../../../../shared';
+import {MarkupItem} from '../../../components/Markup';
 import {ChartsData} from '../modules/data-provider/charts';
 
 import {CombinedError} from './common';
@@ -298,6 +299,11 @@ export interface YMapWidget extends WidgetBaseWithData {
     type: 'ymap';
 }
 
+export type MarkupWidget = WidgetBaseWithData & {
+    type: 'markup';
+    data: MarkupItem;
+};
+
 export type Widget =
     | GraphWidget
     | D3Widget
@@ -309,7 +315,8 @@ export type Widget =
     | Metric2Widget
     | YMapWidget
     | TextWidget
-    | TimeseriesWidget;
+    | TimeseriesWidget
+    | MarkupWidget;
 
 type ParamsChangedOnChange = {
     type: 'PARAMS_CHANGED';

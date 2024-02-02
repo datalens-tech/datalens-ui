@@ -10,7 +10,6 @@ import {ChartColorsConfig} from '../../../../js/helpers/colors';
 import {
     getCurrentGradient,
     getRangeDelta,
-    getRgbColorValue,
     getRgbColors,
     getThresholdValues,
 } from '../../../../utils/color-helpers';
@@ -19,13 +18,14 @@ import {
     isTableFieldBackgroundSettingsEnabled,
 } from '../../../../utils/misc-helpers';
 import {getCurrentBackgroundGradient} from '../../../helpers/backgroundSettings/misc';
+import {interpolateRgbBasis} from '../../../helpers/colors';
 import {PrepareFunctionDataRow} from '../../../types';
 
 import {GetBackgroundColorsMapByContinuousColumn} from './types';
 
 const MAX_COLOR_DELTA_VALUE = 1;
 
-export const colorizeFlatTableColumn = ({
+export function colorizeFlatTableColumn({
     data,
     colorsConfig,
     index,
@@ -33,7 +33,7 @@ export const colorizeFlatTableColumn = ({
     data: PrepareFunctionDataRow[];
     index: number;
     colorsConfig: ChartColorsConfig;
-}) => {
+}) {
     const colorValues = data.reduce((acc, row) => {
         const rowValue = row[index];
         const parsedRowValue = isNil(rowValue) ? null : parseFloat(rowValue);
@@ -41,24 +41,33 @@ export const colorizeFlatTableColumn = ({
         return [...acc, parsedRowValue];
     }, [] as (number | null)[]);
 
-    const {rangeMiddle, range, min} = getThresholdValues(
-        colorsConfig,
-        colorValues.filter(isNumber),
-    );
-    const rangeMiddleRatio = range === 0 ? MAX_COLOR_DELTA_VALUE : rangeMiddle / range;
-
+    const {min, mid, max} = getThresholdValues(colorsConfig, colorValues.filter(isNumber));
     const currentGradient = getCurrentGradient(colorsConfig);
-
     const colors: RGBColor[] = getRgbColors(currentGradient.colors, Boolean(colorsConfig.reversed));
+    const getRgbColor = interpolateRgbBasis(colors);
 
     let deltas: (number | null)[];
 
-    if (range === 0) {
+    if (min === max) {
         // If all values are the same, then we paint in the maximum color.
         deltas = colorValues.map(() => MAX_COLOR_DELTA_VALUE);
     } else {
         deltas = colorValues.map((colorValue) => {
-            return getRangeDelta(colorValue, min, range);
+            if (colorValue === null) {
+                return null;
+            }
+
+            if (colorValue <= min) {
+                return 0;
+            }
+
+            if (colorValue >= max) {
+                return 1;
+            }
+
+            return colorValue >= mid
+                ? getRangeDelta(colorValue, 2 * mid - max, 2 * (max - mid))
+                : getRangeDelta(colorValue, min, 2 * (mid - min));
         });
     }
 
@@ -66,9 +75,11 @@ export const colorizeFlatTableColumn = ({
         if (delta === null) {
             return null;
         }
-        return getRgbColorValue(delta, colorsConfig.gradientMode || '', rangeMiddleRatio, colors);
+
+        const {red, green, blue} = getRgbColor(delta);
+        return `rgb(${red}, ${green}, ${blue})`;
     });
-};
+}
 
 export const getBackgroundColorsMapByContinuousColumn = (
     args: GetBackgroundColorsMapByContinuousColumn,

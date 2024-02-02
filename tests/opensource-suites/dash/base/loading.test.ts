@@ -2,20 +2,11 @@ import {Page} from '@playwright/test';
 
 import {TestParametrizationConfig} from '../../../types/config';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {
-    deleteEntity,
-    getUniqueTimestamp,
-    isEnabledFeature,
-    openTestPage,
-    slct,
-    waitForCondition,
-} from '../../../utils';
+import {isEnabledFeature, openTestPage, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {COMMON_DASH_SELECTORS} from '../../../suites/dash/constants';
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
-import {ConnectionsDialogQA, DashCommonQa} from '../../../../src/shared';
-import {WorkbooksUrls} from '../../../constants/constants';
-import {DashUrls} from '../../../constants/test-entities/dash';
+import {ConnectionsDialogQA, DashCommonQa, Feature} from '../../../../src/shared';
 
 const TEXTS = {
     TAB2: 'Tab 2',
@@ -125,15 +116,13 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
     );
     datalensTest(
         "Loading charts that didn't get into the viewport when opening links",
-        async ({page}: {page: Page}) => {
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             // copy the original dashboard with delayed widget loading,
             // so that the tests do not collapse due to the transition to editing and locks
-            const dashName = `e2e-test-dash-with-defered-chart-${getUniqueTimestamp()}`;
             const dashboardPage = new DashboardPage({page});
-            await openTestPage(page, DashUrls.DashboardWithLongContentBeforeChart);
-            await dashboardPage.duplicateDashboardFromWorkbook(
-                DashUrls.DashboardWithLongContentBeforeChart,
-                dashName,
+            await openTestPage(page, config.dash.urls.DashboardWithLongContentBeforeChart);
+            await dashboardPage.duplicateDashboard(
+                config.dash.urls.DashboardWithLongContentBeforeChart,
             );
 
             // we set small viewport sizes for a more stable check
@@ -150,7 +139,7 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
                 return elems.length === 0;
             });
 
-            const isEnabledNewRelations = await isEnabledFeature(page, 'showNewRelations');
+            const isEnabledNewRelations = await isEnabledFeature(page, Feature.ShowNewRelations);
             if (isEnabledNewRelations) {
                 await dashboardPage.openControlRelationsDialog();
             } else {
@@ -172,7 +161,7 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
             await page.waitForSelector(SELECTORS.CHART_LINE_ITEM);
 
             await dashboardPage.exitEditMode();
-            await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+            await dashboardPage.deleteDash();
         },
     );
     datalensTest(

@@ -1,23 +1,18 @@
 import {Page} from '@playwright/test';
 
-import {WorkbooksUrls} from '../../../constants/constants';
-import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {DashboardDialogSettingsQa} from '../../../../src/shared';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import DashboardSettings from '../../../page-objects/dashboard/DashboardSettings';
 import TableOfContent from '../../../page-objects/dashboard/TableOfContent';
-import {deleteEntity, slct} from '../../../utils';
+import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
 
 datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const workbookPO = new Workbook(page);
         const dashboardPage = new DashboardPage({page});
 
-        await workbookPO.openE2EWorkbookPage();
-
-        await workbookPO.createDashboard({
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addTitle(arbitraryText.first);
                 await dashboardPage.addTitle(arbitraryText.second);
@@ -25,7 +20,8 @@ datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
         });
     });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(

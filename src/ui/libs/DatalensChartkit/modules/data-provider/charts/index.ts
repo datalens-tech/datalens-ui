@@ -95,6 +95,7 @@ type EntitiesType =
     | 'ymap_node'
     | 'ymap_wizard_node'
     | 'markdown_node'
+    | 'markup_node'
     | 'control_node'
     | 'map_node'
     | 'control_dash';

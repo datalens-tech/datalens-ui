@@ -24,12 +24,15 @@ export const migrateOrAutofillVisualization = ({
     rows,
     order,
     colors: originalColors,
+    distinctsMap,
 }: {
     visualization: ServerVisualization;
     fields: Field[];
     rows: string[][];
     order?: QlConfigResultEntryMetadataDataColumnOrGroup[] | null;
     colors?: Field[];
+    // distincts are optional and is used only for visualization which supports multiple color fields in section
+    distinctsMap?: Record<string, string[]>;
 }) => {
     const {id: visualizationId} = originalVisualization;
 
@@ -69,6 +72,7 @@ export const migrateOrAutofillVisualization = ({
             // Old order was not set, so we can do autofill
             const {xFields, yFields, colors} = autofillLineVisualization({
                 fields,
+                distinctsMap,
             });
 
             newVisualization.placeholders[0].items = xFields;
