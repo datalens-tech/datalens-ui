@@ -84,15 +84,17 @@ class Observer {
         this.cleanIntersectionObserver();
     }
 
+    /**
+     * Sync call for priority loading to work as intended
+     * cause all selectors are added to load queue while first render
+     * if we will delegate this to IntersectionObserver init call micro-task
+     * we will be already late by the time when loading will be already started
+     */
     private triggerSync(element: HTMLDivElement, callback: IntersectionCallback) {
-        // Sync call for priority loading to work as intended
-        // cause all selectors are added to load queue while first render
-        // if we will delegate this to IntersectionObserver init call micro-task
-        // we will be already late by the time when loading will be already started
-        const {top, height}: {top: number; height: number} = element.getBoundingClientRect();
-        const bottom: number = top + height;
+        const {top, height} = element.getBoundingClientRect();
+        const bottom = top + height;
 
-        const isVisible = Number(top) < window.innerHeight + LOADING_VISIBLE_OFFSET && bottom >= 0;
+        const isVisible = top < window.innerHeight + LOADING_VISIBLE_OFFSET && bottom >= 0;
         callback(isVisible);
     }
 }
