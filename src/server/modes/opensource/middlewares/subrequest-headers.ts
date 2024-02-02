@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
-import {DL_COMPONENT_HEADER, DL_CONTEXT_HEADER, TENANT_ID_HEADER} from '../../../../shared';
+import {DL_COMPONENT_HEADER, RPC_AUTHORIZATION, DL_CONTEXT_HEADER, TENANT_ID_HEADER} from '../../../../shared';
 
 type SubrequestHeaders = Record<string, unknown>;
 type AuthFlags = Record<string, boolean>;
@@ -34,6 +34,10 @@ export function setSubrequestHeaders(req: Request, res: Response, next: NextFunc
 
     req.headers[subjectTokenHeader] = res.locals.iam?.token;
 
+    if(req.headers[RPC_AUTHORIZATION]) {
+        subrequestHeaders[RPC_AUTHORIZATION] = req.headers[RPC_AUTHORIZATION];
+    }
+    
     if (req.headers[subjectTokenHeader]) {
         subrequestHeaders[subjectTokenHeader] = req.headers[subjectTokenHeader];
     }

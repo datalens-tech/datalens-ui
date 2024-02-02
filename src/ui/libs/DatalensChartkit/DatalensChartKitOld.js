@@ -5,6 +5,7 @@ import {
     Feature,
     SUPERUSER_SWITCH_MODE_COOKIE_NAME,
     SuperuserHeader,
+    RPC_AUTHORIZATION,
     TENANT_ID_HEADER,
 } from '../../../shared';
 import {DL, Scope} from '../../constants';
@@ -47,6 +48,10 @@ ChartKit.setDataProviderSettings({
 
         if (DL.CURRENT_TENANT_ID) {
             request.headers[TENANT_ID_HEADER] = DL.CURRENT_TENANT_ID;
+        }
+
+        if (Utils.getRpcAuthorization()) {
+            request.headers[RPC_AUTHORIZATION] = Utils.getRpcAuthorization();
         }
 
         if (DL.DISPLAY_SUPERUSER_SWITCH) {

@@ -8,6 +8,7 @@ import {
     PROJECT_ID_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
+    RPC_AUTHORIZATION
 } from '../../shared';
 import {SERVICE_NAME_DATALENS, errorBooster} from '../components';
 
@@ -33,6 +34,7 @@ export default {
         ...DEFAULT_PROXY_HEADERS,
         PROJECT_ID_HEADER,
         TENANT_ID_HEADER,
+        RPC_AUTHORIZATION,
         SuperuserHeader.XDlAllowSuperuser,
         SuperuserHeader.XDlSudo,
         AuthHeader.Authorization,
