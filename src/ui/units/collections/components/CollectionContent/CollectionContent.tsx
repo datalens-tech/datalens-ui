@@ -29,6 +29,7 @@ import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/Pla
 
 import {Feature} from '../../../../../shared';
 import {CollectionPageViewMode} from '../../../../components/CollectionFilters/CollectionFilters';
+import {DropdownAction} from '../../../../components/DropdownAction/DropdownAction';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
 import {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
@@ -39,8 +40,6 @@ import {GetCollectionContentArgs} from '../../types';
 import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
 import {ContentProps} from '../types';
-
-import {DropdownAction} from './DropdownAction/DropdownAction';
 
 import './CollectionContent.scss';
 
