@@ -13,6 +13,7 @@ import {
 export interface GetEntryResponse extends EntryFields {
     isFavorite: boolean;
     permissions?: Permissions;
+    isLocked: boolean;
     links?: EntryFieldLinks;
     parentDashEntryId?: string;
     parentDashName?: string;
@@ -161,6 +162,8 @@ export interface RenameEntryArgs {
     entryId: string;
     name: string;
 }
+
+export type ChangeFavoriteEntryResponse = EntryFields[];
 
 export interface CreateFolderResponse extends EntryFields {
     links: EntryFieldLinks;

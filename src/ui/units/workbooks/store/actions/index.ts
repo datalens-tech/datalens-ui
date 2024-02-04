@@ -6,8 +6,10 @@ import {EntryScope} from 'shared';
 import {showToast} from 'store/actions/toaster';
 
 import type {
+    AddFavoriteResponse,
     DeleteEntryArgs,
     DeleteEntryResponse,
+    DeleteFavoriteResponse,
     GetCollectionBreadcrumbsResponse,
     GetWorkbookEntriesArgs,
     GetWorkbookEntriesResponse,
@@ -19,11 +21,16 @@ import {CreateEntryActionType} from '../../constants';
 import {WorkbookEntriesFilters} from '../../types';
 import {
     ADD_WORKBOOK_INFO,
+    CHANGE_FAVORITE_ENTRY_FAILED,
+    CHANGE_FAVORITE_ENTRY_INLINE,
+    CHANGE_FAVORITE_ENTRY_LOADING,
+    CHANGE_FAVORITE_ENTRY_SUCCESS,
     CHANGE_FILTERS,
     DELETE_ENTRY_FAILED,
     DELETE_ENTRY_INLINE,
     DELETE_ENTRY_LOADING,
     DELETE_ENTRY_SUCCESS,
+    GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS,
     GET_WORKBOOK_BREADCRUMBS_FAILED,
     GET_WORKBOOK_BREADCRUMBS_LOADING,
     GET_WORKBOOK_BREADCRUMBS_SUCCESS,
@@ -39,6 +46,7 @@ import {
     RENAME_ENTRY_SUCCESS,
     RESET_CREATE_WORKBOOK_ENTRY_TYPE,
     RESET_WORKBOOK_ENTRIES,
+    RESET_WORKBOOK_ENTRIES_BY_SCOPE,
     RESET_WORKBOOK_PERMISSIONS,
     RESET_WORKBOOK_STATE,
     SET_CREATE_WORKBOOK_ENTRY_TYPE,
@@ -155,11 +163,15 @@ export const getWorkbookEntries = ({
     filters,
     scope,
     nextPageToken,
+    pageSize = 200,
+    ignoreConcurrentId = false,
 }: {
     workbookId: string;
     filters: WorkbookEntriesFilters;
     scope?: EntryScope;
     nextPageToken?: string;
+    pageSize?: number;
+    ignoreConcurrentId?: boolean;
 }) => {
     return async (dispatch: WorkbooksDispatch) => {
         dispatch({
@@ -168,7 +180,7 @@ export const getWorkbookEntries = ({
 
         const args: GetWorkbookEntriesArgs = {
             workbookId,
-            pageSize: 200,
+            pageSize,
             page: Number(nextPageToken || 0),
             orderBy: {
                 field: filters.orderField,
@@ -185,15 +197,17 @@ export const getWorkbookEntries = ({
 
         try {
             const data = await getSdk().us.getWorkbookEntries(args, {
-                concurrentId: 'workbooks/getWorkbookEntries',
+                concurrentId: ignoreConcurrentId ? undefined : 'workbooks/getWorkbookEntries',
             });
             dispatch({
                 type: GET_WORKBOOK_ENTRIES_SUCCESS,
                 data,
             });
+
+            return data;
         } catch (error) {
             if (getSdk().isCancel(error)) {
-                return;
+                return null;
             }
             logger.logError('workbooks/getWorkbookEntries failed', error);
             dispatch(
@@ -206,7 +220,91 @@ export const getWorkbookEntries = ({
                 type: GET_WORKBOOK_ENTRIES_FAILED,
                 error,
             });
+
+            return null;
         }
+    };
+};
+
+type GetAllWorkbookEntriesSeparatelyLoadingAction = {
+    type: typeof GET_WORKBOOK_ENTRIES_LOADING;
+};
+type GetAllWorkbookEntriesSeparatelySuccessAction = {
+    type: typeof GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS;
+    data: (GetWorkbookEntriesResponse | null)[];
+};
+type GetAllWorkbookEntriesSeparatelyFailedAction = {
+    type: typeof GET_WORKBOOK_ENTRIES_FAILED;
+    error: Error;
+};
+type GetAllWorkbookEntriesSeparatelyAction =
+    | GetAllWorkbookEntriesSeparatelyLoadingAction
+    | GetAllWorkbookEntriesSeparatelySuccessAction
+    | GetAllWorkbookEntriesSeparatelyFailedAction;
+
+export const getAllWorkbookEntriesSeparately = ({
+    workbookId,
+    filters,
+    scopes,
+    nextPageToken,
+    pageSize = 200,
+}: {
+    workbookId: string;
+    filters: WorkbookEntriesFilters;
+    scopes: EntryScope[];
+    nextPageToken?: string;
+    pageSize?: number;
+}) => {
+    return async (dispatch: WorkbooksDispatch) => {
+        dispatch({
+            type: GET_WORKBOOK_ENTRIES_LOADING,
+        });
+
+        const args: GetWorkbookEntriesArgs = {
+            workbookId,
+            pageSize,
+            page: Number(nextPageToken || 0),
+            orderBy: {
+                field: filters.orderField,
+                direction: filters.orderDirection,
+            },
+        };
+
+        if (filters.filterString) {
+            args.filters = {
+                name: filters.filterString,
+            };
+        }
+
+        const promises = scopes.map((scope) => {
+            return getSdk().us.getWorkbookEntries({
+                ...args,
+                scope,
+            });
+        });
+
+        const results = await Promise.allSettled(promises);
+
+        const data: (GetWorkbookEntriesResponse | null)[] = results.map((result) => {
+            if (result.status === 'fulfilled') {
+                return result.value;
+            }
+
+            if (result.status === 'rejected') {
+                logger.logError('workbooks/getWorkbookEntries failed', result.reason);
+
+                return null;
+            }
+
+            return null;
+        });
+
+        dispatch({
+            type: GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS,
+            data,
+        });
+
+        return data;
     };
 };
 
@@ -217,6 +315,17 @@ type ResetWorkbookEntriesAction = {
 export const resetWorkbookEntries = () => {
     return (dispatch: WorkbooksDispatch) => {
         dispatch({type: RESET_WORKBOOK_ENTRIES});
+    };
+};
+
+type ResetWorkbookEntriesByScopeAction = {
+    type: typeof RESET_WORKBOOK_ENTRIES_BY_SCOPE;
+    data: EntryScope;
+};
+
+export const resetWorkbookEntriesByScope = (scope: EntryScope) => {
+    return (dispatch: WorkbooksDispatch) => {
+        dispatch({type: RESET_WORKBOOK_ENTRIES_BY_SCOPE, data: scope});
     };
 };
 
@@ -312,6 +421,109 @@ export const renameEntry = ({
                 });
                 return null;
             });
+    };
+};
+
+type ChangeFavoriteEntryLoadingAction = {
+    type: typeof CHANGE_FAVORITE_ENTRY_LOADING;
+};
+type ChangeFavoriteEntrySuccessAction = {
+    type: typeof CHANGE_FAVORITE_ENTRY_SUCCESS;
+    data: AddFavoriteResponse | DeleteFavoriteResponse;
+};
+type ChangeFavoriteEntryFailedAction = {
+    type: typeof CHANGE_FAVORITE_ENTRY_FAILED;
+    error: Error;
+};
+type ChangeFavoriteEntryInlineAction = {
+    type: typeof CHANGE_FAVORITE_ENTRY_INLINE;
+    data: {
+        entryId: string;
+        isFavorite: boolean;
+    };
+};
+type ChangeFavoriteEntryAction =
+    | ChangeFavoriteEntryLoadingAction
+    | ChangeFavoriteEntrySuccessAction
+    | ChangeFavoriteEntryFailedAction
+    | ChangeFavoriteEntryInlineAction;
+
+export const changeFavoriteEntry = ({
+    entryId,
+    isFavorite = false,
+    updateInline = false,
+}: {
+    entryId: string;
+    isFavorite?: boolean;
+    updateInline: boolean;
+}) => {
+    return (dispatch: WorkbooksDispatch) => {
+        const thenHandler = (data: AddFavoriteResponse | DeleteFavoriteResponse) => {
+            dispatch({
+                type: CHANGE_FAVORITE_ENTRY_SUCCESS,
+                data,
+            });
+
+            return data;
+        };
+
+        const catchHandler = (error: Error) => {
+            if (!getSdk().isCancel(error)) {
+                logger.logError('workbooks/changeFavoriteEntry failed', error);
+                dispatch(
+                    showToast({
+                        title: error.message,
+                        error,
+                    }),
+                );
+            }
+            dispatch({
+                type: CHANGE_FAVORITE_ENTRY_FAILED,
+                error,
+            });
+
+            if (updateInline) {
+                dispatch({
+                    type: CHANGE_FAVORITE_ENTRY_INLINE,
+                    data: {
+                        entryId,
+                        isFavorite: !isFavorite,
+                    },
+                });
+            }
+
+            return null;
+        };
+
+        dispatch({
+            type: CHANGE_FAVORITE_ENTRY_LOADING,
+        });
+
+        if (updateInline) {
+            dispatch({
+                type: CHANGE_FAVORITE_ENTRY_INLINE,
+                data: {
+                    entryId,
+                    isFavorite,
+                },
+            });
+        }
+
+        if (isFavorite) {
+            return getSdk()
+                .us.addFavorite({
+                    entryId,
+                })
+                .then(thenHandler)
+                .catch(catchHandler);
+        } else {
+            return getSdk()
+                .us.deleteFavorite({
+                    entryId,
+                })
+                .then(thenHandler)
+                .catch(catchHandler);
+        }
     };
 };
 
@@ -481,10 +693,13 @@ export type WorkbooksAction =
     | GetWorkbookAction
     | GetWorkbookBreadcrumbsAction
     | GetWorkbookEntriesAction
+    | GetAllWorkbookEntriesSeparatelyAction
     | ResetWorkbookEntriesAction
+    | ResetWorkbookEntriesByScopeAction
     | SetCreateWorkbookEntryTypeAction
     | ResetCreateWorkbookEntryTypeAction
     | RenameEntryAction
+    | ChangeFavoriteEntryAction
     | DeleteEntryAction
     | ResetWorkbookStateAction
     | ChangeFiltersAction
