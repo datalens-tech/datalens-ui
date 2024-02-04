@@ -36,6 +36,7 @@ type WorkbookEntriesTableProps = {
     scope?: EntryScope;
     mapTokens?: Record<string, string>;
     mapErrors?: Record<string, boolean>;
+    mapLoaders?: Record<string, boolean>;
 };
 
 export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
@@ -48,6 +49,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         scope,
         mapTokens,
         mapErrors,
+        mapLoaders,
     }) => {
         const dispatch: AppDispatch = useDispatch();
 
@@ -172,6 +174,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dash)}
                             retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dash)}
                             isErrorMessage={mapErrors?.[EntryScope.Dash]}
+                            isLoading={mapLoaders?.[EntryScope.Dash]}
                             workbook={workbook}
                             onRenameEntry={onRenameEntry}
                             onDeleteEntry={onDeleteEntry}
@@ -190,6 +193,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             loadMoreEntries={() => loadMoreEntries?.(EntryScope.Widget)}
                             retryLoadEntries={() => retryLoadEntries?.(EntryScope.Widget)}
                             isErrorMessage={mapErrors?.[EntryScope.Widget]}
+                            isLoading={mapLoaders?.[EntryScope.Widget]}
                             workbook={workbook}
                             onRenameEntry={onRenameEntry}
                             onDeleteEntry={onDeleteEntry}
@@ -209,6 +213,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                 loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dataset)}
                                 retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dataset)}
                                 isErrorMessage={mapErrors?.[EntryScope.Dataset]}
+                                isLoading={mapLoaders?.[EntryScope.Dataset]}
                                 workbook={workbook}
                                 onRenameEntry={onRenameEntry}
                                 onDeleteEntry={onDeleteEntry}
@@ -229,6 +234,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                 loadMoreEntries={() => loadMoreEntries?.(EntryScope.Connection)}
                                 retryLoadEntries={() => retryLoadEntries?.(EntryScope.Connection)}
                                 isErrorMessage={mapErrors?.[EntryScope.Connection]}
+                                isLoading={mapLoaders?.[EntryScope.Connection]}
                                 workbook={workbook}
                                 onRenameEntry={onRenameEntry}
                                 onDeleteEntry={onDeleteEntry}

@@ -28,6 +28,7 @@ const PAGE_SIZE_MAIN_TAB = 10;
 export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, workbook}) => {
     const [mapTokens, setMapTokens] = React.useState<Record<string, string>>({});
     const [mapErrors, setMapErrors] = React.useState<Record<string, boolean>>({});
+    const [mapLoaders, setMapLoaders] = React.useState<Record<string, boolean>>({});
     const [isLoading, setIsLoading] = React.useState(false);
 
     const dispatch = useDispatch<AppDispatch>();
@@ -118,6 +119,10 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
 
     const retryLoadEntries = React.useCallback(
         (entryScope: EntryScope) => {
+            setMapLoaders({
+                [entryScope]: true,
+            });
+
             dispatch(
                 getWorkbookEntries({
                     workbookId,
@@ -126,24 +131,33 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                     nextPageToken: mapTokens[entryScope],
                     pageSize: PAGE_SIZE_MAIN_TAB,
                 }),
-            ).then((data) => {
-                if (data) {
-                    setMapErrors({
-                        ...mapErrors,
+            )
+                .then((data) => {
+                    if (data) {
+                        setMapErrors({
+                            ...mapErrors,
+                            [entryScope]: false,
+                        });
+                        setMapTokens({
+                            ...mapTokens,
+                            [entryScope]: data?.nextPageToken || '',
+                        });
+                    }
+                })
+                .finally(() => {
+                    setMapLoaders({
                         [entryScope]: false,
                     });
-                    setMapTokens({
-                        ...mapTokens,
-                        [entryScope]: data?.nextPageToken || '',
-                    });
-                }
-            });
+                });
         },
         [dispatch, workbookId, filters, mapErrors, mapTokens],
     );
 
     const refreshEntries = React.useCallback(
         (entryScope: EntryScope) => {
+            setMapLoaders({
+                [entryScope]: true,
+            });
             dispatch(resetWorkbookEntriesByScope(entryScope));
 
             dispatch(
@@ -153,19 +167,29 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                     scope: entryScope,
                     pageSize: PAGE_SIZE_MAIN_TAB,
                 }),
-            ).then((data) => {
-                if (data) {
-                    setMapTokens({
-                        ...mapTokens,
-                        [entryScope]: data?.nextPageToken || '',
+            )
+                .then((data) => {
+                    if (data) {
+                        setMapTokens({
+                            ...mapTokens,
+                            [entryScope]: data?.nextPageToken || '',
+                        });
+                    }
+                })
+                .finally(() => {
+                    setMapLoaders({
+                        [entryScope]: false,
                     });
-                }
-            });
+                });
         },
         [dispatch, workbookId, filters, mapTokens],
     );
 
-    if ((isEntriesLoading || isLoading) && entries.length === 0) {
+    if (
+        (isEntriesLoading || isLoading) &&
+        entries.length === 0 &&
+        Object.keys(mapErrors).length === 0
+    ) {
         return <SmartLoader size="l" />;
     }
 
@@ -182,6 +206,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
             retryLoadEntries={retryLoadEntries}
             mapTokens={mapTokens}
             mapErrors={mapErrors}
+            mapLoaders={mapLoaders}
         />
     );
 });

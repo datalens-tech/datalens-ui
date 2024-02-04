@@ -3,6 +3,7 @@ import React from 'react';
 import {ChevronDown, ChevronUp, Plus} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {CreateEntryActionType} from 'ui/units/workbooks/constants';
@@ -24,6 +25,7 @@ interface MainTabContentProps extends WorkbookEntriesTableProps {
     actionCreateText: string;
     title: string;
     isErrorMessage?: boolean;
+    isLoading?: boolean;
     actionType: CreateEntryActionType;
     isShowMoreBtn: boolean;
     loadMoreEntries: () => void;
@@ -44,6 +46,7 @@ const MainTabContent = ({
     loadMoreEntries,
     retryLoadEntries,
     isErrorMessage,
+    isLoading,
 }: MainTabContentProps) => {
     const [isOpen, setIsOpen] = React.useState(true);
 
@@ -127,10 +130,10 @@ const MainTabContent = ({
                     <div className={b('table-header-cell')} />
                     <div className={b('table-header-cell')} />
                 </div>
-                {getContentTab()}
+                {!isLoading && getContentTab()}
             </div>
 
-            {getActionBtn()}
+            {isLoading ? <SmartLoader size="m" showAfter={0} /> : getActionBtn()}
         </div>
     );
 };
