@@ -21,6 +21,7 @@ import VisualizationItemDialog from './VisualizationItemDialog';
 import MetricSettingsDialog from './MetricSettingsDialog';
 import LabelsSettingsDialog from './LabelsSettingsDialog';
 import {DatasetItemActionsQa, SectionDatasetQA} from '../../../src/shared';
+import {expect} from '@playwright/test';
 
 export interface WizardPageProps extends BasePageProps {}
 
@@ -198,6 +199,21 @@ class WizardPage extends ChartPage {
 
     async saveWizardAsNew(entryName: string) {
         await this.saveAsNewChart(entryName);
+    }
+
+    async createNewFieldWithFormula(fieldName: string, formula: string) {
+        const datasetFields = this.page.locator(slct(SectionDatasetQA.DatasetFields));
+
+        await this.fieldEditor.open();
+        await this.fieldEditor.setName(fieldName);
+        await this.fieldEditor.setFormula(formula);
+        await this.fieldEditor.clickToApplyButton();
+
+        await expect(
+            datasetFields.locator(slct(SectionDatasetQA.ItemTitle), {
+                hasText: fieldName,
+            }),
+        ).toBeVisible();
     }
 }
 

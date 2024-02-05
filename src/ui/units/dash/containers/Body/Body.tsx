@@ -416,14 +416,14 @@ class Body extends React.PureComponent<BodyProps> {
                         )}
                         {!settings.hideTabs && <Tabs />}
                         {this.renderDashkit()}
-                        {showEditActionPanel && (
-                            <DashkitActionPanel
-                                items={this.getActionPanelItems()}
-                                className={b('edit-panel', {
-                                    'aside-opened': isSidebarOpened,
-                                })}
-                            />
-                        )}
+                        <DashkitActionPanel
+                            toggleAnimation={true}
+                            disable={!showEditActionPanel}
+                            items={this.getActionPanelItems()}
+                            className={b('edit-panel', {
+                                'aside-opened': isSidebarOpened,
+                            })}
+                        />
                     </div>
                 </div>
             </div>
