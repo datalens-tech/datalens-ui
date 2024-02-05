@@ -17,6 +17,7 @@ import {
     TENANT_ID_HEADER,
     TRACE_ID_HEADER,
     US_PUBLIC_API_TOKEN_HEADER,
+    RPC_AUTHORIZATION
 } from '../../../../../../shared';
 import {createErrorHandler} from '../../error-handler';
 import {getDuration} from '../../utils';
@@ -136,6 +137,8 @@ const PASSED_HEADERS = [
     DL_EMBED_TOKEN_HEADER,
 
     DL_COMPONENT_HEADER,
+
+    RPC_AUTHORIZATION
 ];
 
 const DEFAULT_MAX_BODY_LENGTH = 15 * 1024 * 1024; // 100 MB
@@ -157,6 +160,7 @@ function formatPassedHeaders(
         headersMap.subjectToken,
         PROJECT_ID_HEADER,
         TENANT_ID_HEADER,
+        
         ...(extraAllowedHeaders || []),
     ];
 

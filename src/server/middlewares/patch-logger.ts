@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
 export default function (req: Request, _res: Response, next: NextFunction) {
     const logErrorCore = req.ctx.logError;
+
     // It is suspicious that monkey patching is only for utils, because there is still ctx
     req.ctx.logError = (message, error: any, extra) => {
         if (error && error.response) {
