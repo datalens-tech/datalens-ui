@@ -17,13 +17,13 @@ import {
     Sort,
     Update,
     VisualizationWithLayersShared,
+    isVisualizationWithLayers,
 } from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {DatasetState} from 'ui/units/wizard/reducers/dataset';
 import {VisualizationState} from 'ui/units/wizard/reducers/visualization';
 import {WidgetState} from 'ui/units/wizard/reducers/widget';
 
-import {isVisualizationWithLayers} from '../../../../shared/types/index';
 import {WizardDispatch} from '../reducers';
 import {
     actualizeUpdates,
