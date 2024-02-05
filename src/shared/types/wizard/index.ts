@@ -449,7 +449,9 @@ export const isMetricShared = (shared: Shared): shared is MetricShared =>
 export function isVisualizationWithLayers(
     visualization: ExtendedChartsConfig['visualization'] | undefined,
 ): visualization is VisualizationWithLayersShared['visualization'] {
-    return visualization?.id === 'geolayer' || visualization?.id === 'combined-chart';
+    return [WizardVisualizationId.Geolayer, WizardVisualizationId.CombinedChart].includes(
+        visualization?.id as WizardVisualizationId,
+    );
 }
 
 export type Update = CommonUpdate<Field>;

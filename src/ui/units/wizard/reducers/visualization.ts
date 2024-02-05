@@ -554,14 +554,6 @@ export function visualization(
                 tooltips = [];
             }
 
-            if (colors.length) {
-                colors.forEach((item: Field) => {
-                    if (item.conflict) {
-                        delete item.conflict;
-                    }
-                });
-            }
-
             if (shapes.length) {
                 shapes.forEach((item: Field) => {
                     if (item.conflict) {
