@@ -33,13 +33,10 @@ jobs:
           run_id: ${{ github.event.workflow_run.id }}
       - name: Extract env from workflow
         run: |
-          ls playwright-report/
-          cat playwright-report/report-link
-          cat playwright-report/report-pr
           echo "HTML_REPORT_URL_PATH=$(cat playwright-report/report-link)" >> "$GITHUB_ENV"
           echo "REPORT_PR_NUMBER=$(cat playwright-report/report-pr)" >> "$GITHUB_ENV"
       - name: Move report to commit folder
-        run: mv playwright-report/report ${{ env.HTML_REPORT_URL_PATH }}/report
+        run: mkdir -p ${{ env.HTML_REPORT_URL_PATH }} && mv playwright-report/report ${{ env.HTML_REPORT_URL_PATH }}/report
       - name: Push HTML Report
         timeout-minutes: 3
         # commit report, then try push-rebase-loop until it's able to merge the HTML report to the gh-pages branch
