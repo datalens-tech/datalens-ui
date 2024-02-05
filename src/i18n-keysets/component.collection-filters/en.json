@@ -8,5 +8,6 @@
   "label_sort-first-alphabet-asc": "Sort A to Z",
   "label_sort-first-alphabet-desc": "Sort Z to A",
   "label_sort-first-new": "Newest first",
-  "label_sort-first-old": "Oldest first"
+  "label_sort-first-old": "Oldest first",
+  "next": "Next"
 }

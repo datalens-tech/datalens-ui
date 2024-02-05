@@ -8,5 +8,6 @@
   "label_sort-first-alphabet-asc": "Сортировка от А до Я",
   "label_sort-first-alphabet-desc": "Сортировка от Я до А",
   "label_sort-first-new": "Сначала новые",
-  "label_sort-first-old": "Сначала старые"
+  "label_sort-first-old": "Сначала старые",
+  "next": "Следующий"
 }
