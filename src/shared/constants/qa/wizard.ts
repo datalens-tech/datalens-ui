@@ -36,6 +36,12 @@ export const enum DialogColumnSettingsQa {
     WidthValueInput = 'dialog-column-settings-width-input',
 }
 
+export const enum DialogFieldBackgroundSettingsQa {
+    EnableButton = 'dialog-field-bg-switcher',
+    FillTypeButtons = 'dialog-field-bg-fill-type',
+    ButtonColorDialog = 'button-color-dialog',
+}
+
 export const enum DialogFieldBarsSettingsQa {
     EnableButton = 'dialog-field-bars-switcher',
     ColorTypeRadioButtons = 'dialog-field-color-type-radio-buttons',
@@ -109,8 +115,9 @@ export const enum DialogFieldSubTotalsQa {
     SubTotalsSwitch = 'sub-totals-switch',
 }
 
-export const enum DialogColor {
+export const enum DialogColorQa {
     PaletteSelect = 'palette-select',
+    GradientType = 'color-dialog-gradient-type-radio',
     ApplyButton = 'color-dialog-apply-button',
 }
 

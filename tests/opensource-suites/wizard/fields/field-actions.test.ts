@@ -15,15 +15,7 @@ datalensTest.describe('Wizard', () => {
 
             // Create local chart field
             const wizardPage = new WizardPage({page});
-            await wizardPage.fieldEditor.open();
-            await wizardPage.fieldEditor.setName(newField);
-            await wizardPage.fieldEditor.setFormula(`[${datasetFieldName}]`);
-            await wizardPage.fieldEditor.clickToApplyButton();
-            await expect(
-                page.locator(slct(SectionDatasetQA.DatasetFields)).locator(slct(newField), {
-                    hasText: newField,
-                }),
-            ).toBeVisible();
+            await wizardPage.createNewFieldWithFormula(newField, `[${datasetFieldName}]`);
         });
 
         datalensTest('Field actions', async ({page}) => {

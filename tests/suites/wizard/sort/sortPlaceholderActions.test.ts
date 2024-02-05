@@ -233,13 +233,7 @@ datalensTest.describe('Wizard - Sort', () => {
             const formula = `FLOAT(ROUND([Month]/123, 2))`;
             const name = 'FloatColor';
 
-            await wizardPage.fieldEditor.open();
-
-            await wizardPage.fieldEditor.setFormula(formula);
-
-            await wizardPage.fieldEditor.setName(name);
-
-            await wizardPage.fieldEditor.clickToApplyButton();
+            await wizardPage.createNewFieldWithFormula(name, formula);
 
             const expectedValues = [
                 '0.1',
