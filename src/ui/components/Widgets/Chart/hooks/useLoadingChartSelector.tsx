@@ -95,7 +95,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
 
     const history = useHistory();
 
-    const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts;
+    const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts ?? true;
 
     /**
      * debounced call of recalculate widget layout after rerender
