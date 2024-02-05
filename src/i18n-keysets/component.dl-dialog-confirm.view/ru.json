@@ -3,5 +3,6 @@
   "button-save-chart_cancel": "Отмена",
   "button_apply": "Да",
   "button_cancel": "Нет",
-  "confirm-header": "Подтвердите действие"
+  "confirm-header": "Подтвердите действие",
+  "yes_key": "Да"
 }
