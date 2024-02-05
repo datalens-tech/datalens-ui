@@ -2,5 +2,6 @@
   "button_add-param": "Добавить параметр",
   "button_remove-all": "Удалить все",
   "label_name": "Название",
-  "label_value": "Значение"
+  "label_value": "Значение",
+  "new_key": "Новый"
 }
