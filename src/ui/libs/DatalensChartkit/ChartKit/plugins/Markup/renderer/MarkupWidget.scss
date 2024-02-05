@@ -2,5 +2,20 @@
     height: 100%;
     overflow: auto;
 
-    padding: 20px;
+    padding: 15px;
+
+    .markup-indicator-title {
+        color: var(--yc-color-text-primary);
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 19px;
+    }
+
+    .markup-indicator-value {
+        color: rgb(77, 162, 241);
+        font-size: 48px;
+        font-weight: 500;
+        line-height: 61px;
+        white-space: nowrap;
+    }
 }

@@ -18,26 +18,17 @@ export const prepareMarkupMetricVariant = ({
                 type: 'concat',
                 children: [
                     {
-                        type: 'bold',
-                        content: {
-                            type: 'text',
-                            content: measure.fakeTitle || measure.title,
-                        },
+                        className: 'markup-indicator-title',
+                        type: 'text',
+                        content: measure.fakeTitle || measure.title,
                     },
                     {
                         type: 'br',
                     },
                     {
-                        type: 'size',
-                        size: '40px',
-                        content: {
-                            type: 'color',
-                            color: 'blue',
-                            content: {
-                                type: 'text',
-                                content: value,
-                            },
-                        },
+                        className: 'markup-indicator-value',
+                        type: 'text',
+                        content: value,
                     },
                 ],
             },
