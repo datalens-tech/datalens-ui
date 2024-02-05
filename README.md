@@ -79,3 +79,19 @@ docker login -u [username]
 docker build -t akrasnov87/datalens-ui:0.1245.0 .
 docker push akrasnov87/datalens-ui:0.1245.0
 </pre>
+
+## Тестирвование
+
+В корне проекта создать файл .env и добавить туда строки:
+<pre>
+US_ENDPOINT="http://host.docker.internal:8030"
+BI_API_ENDPOINT="http://host.docker.internal:8031"
+BI_DATA_ENDPOINT="http://host.docker.internal:8032"
+### TEMPLATE SECRETS BEGIN
+APP_MODE=full
+APP_ENV=development
+APP_INSTALLATION=opensource
+APP_DEV_MODE=1
+
+### TEMPLATE SECRETS END
+</pre>
