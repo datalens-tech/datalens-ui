@@ -15,7 +15,8 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.setVisualization([WizardVisualizationId.Metric]);
         });
 
-        datalensTest('Metric chart with integer measure field', async ({page}) => {
+        // remove skip after enabling new markup charts
+        datalensTest.skip('Metric chart with integer measure field', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
             const chart = chartContainer.locator('.chartkit-markup');
@@ -35,7 +36,8 @@ datalensTest.describe('Wizard', () => {
             await expect(chart).toBeVisible();
         });
 
-        datalensTest('Metric chart with markup measure field', async ({page}) => {
+        // remove skip after enabling new markup charts
+        datalensTest.skip('Metric chart with markup measure field', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
             const chart = chartContainer.locator('.chartkit-markup');
