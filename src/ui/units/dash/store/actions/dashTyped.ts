@@ -9,11 +9,13 @@ import isEmpty from 'lodash/isEmpty';
 import {Dispatch} from 'redux';
 import {
     DATASET_FIELD_TYPES,
+    DashData,
     DashTab,
     DashTabItem,
     DashTabItemControlData,
     DashTabItemControlSourceType,
     DashTabItemType,
+    DashTabItemWidget,
     Dataset,
     DatasetFieldType,
     EntryUpdateMode,
@@ -32,12 +34,13 @@ import {loadRevisions, setEntryContent} from '../../../../store/actions/entryCon
 import {showToast} from '../../../../store/actions/toaster';
 import {EntryGlobalState, RevisionsMode} from '../../../../store/typings/entryContent';
 import history from '../../../../utils/history';
+import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {Mode} from '../../modules/constants';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
 
-import {closeDialog as closeDashDialog, deleteLock, purgeData, save, setLock} from './dash';
+import {closeDialog as closeDashDialog, deleteLock, save, setLock} from './dash';
 import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
 
 import {DashDispatch} from './index';
@@ -941,6 +944,70 @@ export function saveDashAsDraft(setForce?: boolean) {
             dispatch(setLoadingEditMode(false));
         }
         return null;
+    };
+}
+
+export function purgeData(data: DashData) {
+    const allTabsIds = new Set();
+    const allItemsIds = new Set();
+    const allWidgetTabsIds = new Set();
+
+    return {
+        ...data,
+        tabs: data.tabs.map((tab) => {
+            const {id: tabId, items: tabItems, layout, connections, aliases} = tab;
+
+            const currentItemsIds = new Set();
+            const currentWidgetTabsIds = new Set();
+            const currentControlsIds = new Set();
+
+            allTabsIds.add(tabId);
+
+            const resultItems = tabItems
+                // there are empty data
+                .filter((item) => !isEmpty(item.data))
+                .map((item) => {
+                    const {id: itemId, type, data} = item;
+
+                    allItemsIds.add(itemId);
+                    currentItemsIds.add(itemId);
+
+                    if (type === ITEM_TYPE.CONTROL) {
+                        currentControlsIds.add(itemId);
+                    } else if (type === ITEM_TYPE.WIDGET) {
+                        (data as DashTabItemWidget['data']).tabs.forEach(({id: widgetTabId}) => {
+                            allWidgetTabsIds.add(widgetTabId);
+                            currentWidgetTabsIds.add(widgetTabId);
+                        });
+                    }
+
+                    return item;
+                });
+
+            return {
+                ...tab,
+                items: resultItems,
+                // since items is filtered above, then layout needs to be filtered as well.
+                layout: layout.filter(({i}) => currentItemsIds.has(i)),
+                connections: connections.filter(
+                    ({from, to}) =>
+                        // connections can only have elements with from or to
+                        from &&
+                        to &&
+                        // there may be elements in connections that are no longer in items
+                        (currentControlsIds.has(from) || currentWidgetTabsIds.has(from)) &&
+                        (currentControlsIds.has(to) || currentWidgetTabsIds.has(to)),
+                ),
+                aliases: Object.entries(aliases).reduce<typeof aliases>((result, [key, value]) => {
+                    result[key] = value
+                        // the array of aliases can be null
+                        .map((alias) => alias.filter(Boolean))
+                        // there may be less than 2 elements in the alias array
+                        .filter((alias) => alias.length > 1);
+                    return result;
+                }, {}),
+            };
+        }),
     };
 }
 

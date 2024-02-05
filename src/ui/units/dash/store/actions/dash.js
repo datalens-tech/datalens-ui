@@ -1,7 +1,6 @@
 import {lockedTextInfo} from 'components/RevisionsPanel/RevisionsPanel';
 import {I18n} from 'i18n';
 import {sdk} from 'libs/sdk';
-import isEmpty from 'lodash/isEmpty';
 import {DashSchemeConverter, EntryScope, Feature, extractEntryId} from 'shared';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
 import {MarkdownProvider, URL_QUERY, Utils} from 'ui';
@@ -12,13 +11,18 @@ import ChartKit from '../../../../libs/DatalensChartkit';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {showToast} from '../../../../store/actions/toaster';
-import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, Mode} from '../../modules/constants';
 import {collectDashStats} from '../../modules/pushStats';
 import * as actionTypes from '../constants/dashActionTypes';
 import {getFakeDashEntry} from '../utils';
 
-import {SET_ERROR_MODE, SET_STATE, setDashViewMode, toggleTableOfContent} from './dashTyped';
+import {
+    SET_ERROR_MODE,
+    SET_STATE,
+    purgeData,
+    setDashViewMode,
+    toggleTableOfContent,
+} from './dashTyped';
 import {
     DOES_NOT_EXIST_ERROR_TEXT,
     NOT_FOUND_ERROR_TEXT,
@@ -28,70 +32,6 @@ import {
 } from './helpers';
 
 const i18n = I18n.keyset('dash.store.view');
-
-export function purgeData(data) {
-    const allTabsIds = new Set();
-    const allItemsIds = new Set();
-    const allWidgetTabsIds = new Set();
-
-    return {
-        ...data,
-        tabs: data.tabs.map((tab) => {
-            const {id: tabId, items: tabItems, layout, connections, aliases} = tab;
-
-            const currentItemsIds = new Set();
-            const currentWidgetTabsIds = new Set();
-            const currentControlsIds = new Set();
-
-            allTabsIds.add(tabId);
-
-            const resultItems = tabItems
-                // there are empty data
-                .filter((item) => !isEmpty(item.data))
-                .map((item) => {
-                    const {id: itemId, type, data} = item;
-
-                    allItemsIds.add(itemId);
-                    currentItemsIds.add(itemId);
-
-                    if (type === ITEM_TYPE.CONTROL) {
-                        currentControlsIds.add(itemId);
-                    } else if (type === ITEM_TYPE.WIDGET) {
-                        data.tabs.forEach(({id: widgetTabId}) => {
-                            allWidgetTabsIds.add(widgetTabId);
-                            currentWidgetTabsIds.add(widgetTabId);
-                        });
-                    }
-
-                    return item;
-                });
-
-            return {
-                ...tab,
-                items: resultItems,
-                // since items is filtered above, then layout needs to be filtered as well.
-                layout: layout.filter(({i}) => currentItemsIds.has(i)),
-                connections: connections.filter(
-                    ({from, to}) =>
-                        // connections can only have elements with from or to
-                        from &&
-                        to &&
-                        // there may be elements in connections that are no longer in items
-                        (currentControlsIds.has(from) || currentWidgetTabsIds.has(from)) &&
-                        (currentControlsIds.has(to) || currentWidgetTabsIds.has(to)),
-                ),
-                aliases: Object.entries(aliases).reduce((result, [key, value]) => {
-                    result[key] = value
-                        // the array of aliases can be null
-                        .map((alias) => alias.filter(Boolean))
-                        // there may be less than 2 elements in the alias array
-                        .filter((alias) => alias.length > 1);
-                    return result;
-                }, {}),
-            };
-        }),
-    };
-}
 
 export const setSelectStateMode = ({tabId: selectedTabId, stateHash, history, location}) => {
     return async function (dispatch, getState) {
