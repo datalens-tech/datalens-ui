@@ -64,7 +64,7 @@ const Settings = () => {
         settings.dependentSelectors || false,
     );
     const [loadOnlyVisibleCharts, setLoadOnlyVisibleCharts] = React.useState(
-        settings.loadOnlyVisibleCharts === undefined ? true : settings.loadOnlyVisibleCharts,
+        settings.loadOnlyVisibleCharts ?? true,
     );
     const [globalParams, setGlobalParams] = React.useState(settings.globalParams || {});
     const [isGlobalParamsError, setIsGlobalParamsError] = React.useState(false);
