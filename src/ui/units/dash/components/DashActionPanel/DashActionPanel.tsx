@@ -178,7 +178,6 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     handlerSaveAsNewClick = async () => {
         if (this.props.entryDialoguesRef.current) {
             const {entry, data, lockToken} = this.props.dashEntry;
-            // const dialogProps
             const response = await this.props.entryDialoguesRef.current.open({
                 dialog: EntryDialogName.SaveAsNew,
                 dialogProps: {
