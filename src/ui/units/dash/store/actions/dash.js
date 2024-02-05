@@ -11,7 +11,7 @@ import ChartKit from '../../../../libs/DatalensChartkit';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {showToast} from '../../../../store/actions/toaster';
-import {LOCK_DURATION, Mode} from '../../modules/constants';
+import {Mode} from '../../modules/constants';
 import {collectDashStats} from '../../modules/pushStats';
 import * as actionTypes from '../constants/dashActionTypes';
 import {getFakeDashEntry} from '../utils';
@@ -21,6 +21,7 @@ import {
     SET_STATE,
     purgeData,
     setDashViewMode,
+    setLock,
     toggleTableOfContent,
 } from './dashTyped';
 import {
@@ -89,51 +90,6 @@ export const setSelectStateMode = ({tabId: selectedTabId, stateHash, history, lo
 
         history.push({...location, search: `?${search.join('&')}`, hash: ''});
         dispatch({type: SET_STATE, payload});
-    };
-};
-
-export const setLock = (entryId, force = false, noEditMode = false) => {
-    return async function (dispatch) {
-        const {lockToken} = await getSdk().us.createLock({
-            entryId,
-            data: {duration: LOCK_DURATION, force},
-        });
-
-        const payload = {lockToken};
-        if (!noEditMode) {
-            payload.mode = Mode.Edit;
-        }
-
-        dispatch({
-            type: SET_STATE,
-            payload,
-        });
-    };
-};
-
-export const deleteLock = () => {
-    return async function (dispatch, getState) {
-        const state = getState();
-
-        if (!state.dash) {
-            return;
-        }
-
-        const {lockToken, entry} = state.dash;
-
-        const entryId = entry?.entryId || null;
-
-        if (lockToken && entryId) {
-            return getSdk()
-                .us.deleteLock({
-                    entryId: entryId,
-                    params: {lockToken},
-                })
-                .then(() => {
-                    dispatch(cleanLock());
-                })
-                .catch((error) => logger.logError('LOCK_DELETE', error));
-        }
     };
 };
 
@@ -233,8 +189,6 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
         }
     };
 };
-
-export const cleanLock = () => ({type: SET_STATE, payload: {lockToken: null}});
 
 /**
  * Loading dash data: dash config from us, dash state from us, and in parallel all datasets schemas, which is used in dash items

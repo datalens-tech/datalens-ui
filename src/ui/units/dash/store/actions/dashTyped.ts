@@ -35,12 +35,13 @@ import {showToast} from '../../../../store/actions/toaster';
 import {EntryGlobalState, RevisionsMode} from '../../../../store/typings/entryContent';
 import history from '../../../../utils/history';
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
-import {Mode} from '../../modules/constants';
+import {LOCK_DURATION, Mode} from '../../modules/constants';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
+import type {DashState} from '../reducers/dashTypedReducer';
 
-import {closeDialog as closeDashDialog, deleteLock, save, setLock} from './dash';
+import {closeDialog as closeDashDialog, save} from './dash';
 import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
 
 import {DashDispatch} from './index';
@@ -58,6 +59,57 @@ export const SET_STATE = Symbol('dash/SET_STATE');
 export type SetStateAction<T> = {
     type: typeof SET_STATE;
     payload: T;
+};
+
+export const cleanLock = (): SetStateAction<{lockToken: null}> => ({
+    type: SET_STATE,
+    payload: {lockToken: null},
+});
+
+export const setLock = (entryId: string, force = false, noEditMode = false) => {
+    return async function (dispatch: DashDispatch) {
+        const {lockToken} = await getSdk().us.createLock({
+            entryId,
+            data: {duration: LOCK_DURATION, force},
+        });
+
+        const payload: Partial<DashState> = {lockToken};
+        if (!noEditMode) {
+            payload.mode = Mode.Edit;
+        }
+
+        dispatch({
+            type: SET_STATE,
+            payload,
+        });
+    };
+};
+
+export const deleteLock = () => {
+    return async function (dispatch: DashDispatch, getState: GetState): Promise<void> {
+        const state = getState();
+
+        if (!state.dash) {
+            return;
+        }
+
+        const {lockToken, entry} = state.dash;
+
+        const entryId = entry?.entryId || null;
+
+        if (lockToken && entryId) {
+            await getSdk()
+                .us.deleteLock({
+                    entryId: entryId,
+                    params: {lockToken},
+                })
+                .then(() => {
+                    dispatch(cleanLock());
+                    return;
+                })
+                .catch((error) => logger.logError('LOCK_DELETE', error));
+        }
+    };
 };
 
 export const SET_PAGE_TAB = Symbol('dash/SET_PAGE_TAB');

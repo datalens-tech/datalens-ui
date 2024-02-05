@@ -3,7 +3,7 @@ import {Route, Switch, RouteComponentProps, match} from 'react-router-dom';
 import {bindActionCreators, Dispatch} from 'redux';
 import {connect} from 'react-redux';
 
-import {deleteLock} from '../../../units/dash/store/actions/dash';
+import {deleteLock} from '../../../units/dash/store/actions/dashTyped';
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
