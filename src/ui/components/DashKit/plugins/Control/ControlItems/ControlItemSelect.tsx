@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ConfigItem} from '@gravity-ui/dashkit';
+import {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -50,20 +50,21 @@ import {
 
 type ControlItemSelectProps = {
     id: string;
-    data: ConfigItem['data'];
+    data: ConfigItemData;
     defaults: ConfigItem['defaults'];
-    editMode: boolean;
     status: LoadStatus;
     loadedData: null | ResponseSuccessControls;
     loadingItems: boolean;
     actualParams: StringParams;
-    onChange: (param: string, value: string | string[]) => void;
+    onChange: ({param, value}: {param: string; value: string | string[]}) => void;
     init: () => void;
     showItemsLoader: () => void;
     getDistincts?: GetDistincts;
     validationError: string | null;
     errorData: null | ErrorData;
     validateValue: (args: ValidationErrorData) => boolean | undefined;
+    classMixin?: string;
+    width?: string;
 };
 
 const b = block('dashkit-plugin-control');
@@ -72,7 +73,6 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 export const ControlItemSelect = ({
     defaults,
     data,
-    editMode,
     id,
     loadedData,
     status,
@@ -85,6 +85,8 @@ export const ControlItemSelect = ({
     init,
     showItemsLoader,
     validateValue,
+    classMixin,
+    width,
 }: ControlItemSelectProps) => {
     const dispatch = useDispatch();
     let _loadingItemsTimer: NodeJS.Timeout | undefined;
@@ -336,7 +338,7 @@ export const ControlItemSelect = ({
             operation: source.operation,
         });
 
-        onChange(fieldId, valueWithOperation);
+        onChange({param: fieldId, value: valueWithOperation});
     };
 
     const {label, innerLabel} = getLabels({controlData});
@@ -349,16 +351,16 @@ export const ControlItemSelect = ({
         param: fieldId,
         multiselect: (source as DashTabItemControlElementSelect).multiselectable,
         type: TYPE.SELECT,
-        className: b('item'),
+        className: b('item', classMixin),
         key: fieldId,
         value: preparedValue as string,
-        editMode,
         onChange: onSelectChange,
         onOpenChange,
         loadingItems,
         placeholder,
         required: source.required,
         hasValidationError: Boolean(validationError),
+        width,
     };
 
     if (status === LOAD_STATUS.FAIL) {

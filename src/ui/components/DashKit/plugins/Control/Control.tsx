@@ -9,7 +9,7 @@ import {DatalensGlobalState, Utils} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
-import {ResolveThunks, connect} from 'react-redux';
+import {connect} from 'react-redux';
 import {
     DATASET_FIELD_TYPES,
     DATASET_IGNORED_DATA_TYPES,
@@ -27,7 +27,6 @@ import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
-import {ChartKitCustomError} from '../../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import {
     ControlCheckbox,
     ControlDatepicker,
@@ -40,7 +39,6 @@ import {
 } from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import {ControlBase, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
-import {closeDialog, openDialogErrorWithTabs} from '../../../../store/actions/dialog';
 import {
     addOperationForValue,
     unwrapFromArrayAndSkipOperation,
@@ -65,24 +63,13 @@ import {
     PluginControlState,
     ValidationErrorData,
 } from './types';
-import {
-    getDatasetSourceInfo,
-    getLabels,
-    getStatus,
-    isValidRequiredValue,
-    prepareSelectorError,
-} from './utils';
+import {getDatasetSourceInfo, getLabels, getStatus, isValidRequiredValue} from './utils';
 
 import './Control.scss';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 
-export interface PluginControlProps
-    extends PluginWidgetProps,
-        ControlSettings,
-        StateProps,
-        DispatchProps {}
+export interface PluginControlProps extends PluginWidgetProps, ControlSettings, StateProps {}
 
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
@@ -472,7 +459,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
     };
 
-    onChange = (param: string, value: string | string[]) => {
+    onChange = ({param, value}: {param: string; value: string | string[]}) => {
         this.props.onStateAndParamsChange({params: {[param]: value}});
     };
 
@@ -512,32 +499,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         return null;
     }
 
-    renderError() {
-        const errorData = this.state.errorData;
-        const errorTitle = errorData?.data?.title;
-        return (
-            <div className={b('error')}>
-                <Error
-                    onClick={() =>
-                        this.props.openDialogErrorWithTabs({
-                            error: prepareSelectorError(
-                                errorData?.data || {},
-                                errorData?.requestId,
-                            ) as ChartKitCustomError,
-                            title: errorTitle,
-                            onRetry: () => {
-                                this.reload();
-                                this.props.closeDialog();
-                            },
-                        })
-                    }
-                />
-            </div>
-        );
-    }
-
     renderSelectControl() {
-        const {id, data, defaults, editMode, getDistincts} = this.props;
+        const {id, data, defaults, getDistincts} = this.props;
         const {loadedData, status, loadingItems, errorData, validationError} = this.state;
 
         return (
@@ -545,7 +508,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 id={id}
                 data={data}
                 defaults={defaults}
-                editMode={editMode}
                 status={status}
                 loadedData={loadedData}
                 loadingItems={loadingItems}
@@ -564,7 +526,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     renderControls() {
         const {
             data: {sourceType},
-            editMode,
             id,
         } = this.props;
 
@@ -583,7 +544,14 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 }
                 break;
             case LOAD_STATUS.FAIL: {
-                return this.renderError();
+                return (
+                    <Error
+                        errorData={this.state.errorData}
+                        onClickRetry={() => {
+                            this.reload();
+                        }}
+                    />
+                );
             }
         }
 
@@ -626,7 +594,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     operation,
                 });
 
-                this.onChange(param, valueWithOperation);
+                this.onChange({param, value: valueWithOperation});
             };
 
             const {label, innerLabel} = getLabels({controlData: data});
@@ -638,7 +606,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 key: param,
                 value: preparedValue,
                 onChange,
-                editMode,
                 innerLabel,
                 label,
                 required,
@@ -830,14 +797,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     isNewRelations: selectIsNewRelations(state),
 });
 
-const mapDispatchToProps = {
-    openDialogErrorWithTabs,
-    closeDialog,
-};
-
-const ControlWithStore = connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true})(
-    Control,
-);
+const ControlWithStore = connect(mapStateToProps, null, null, {forwardRef: true})(Control);
 
 const plugin: PluginControl = {
     type: 'control',

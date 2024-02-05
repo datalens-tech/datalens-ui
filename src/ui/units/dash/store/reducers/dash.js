@@ -2,7 +2,7 @@ import {DashKit, generateUniqId} from '@gravity-ui/dashkit';
 import {I18n} from 'i18n';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
-import {DashTabItemControlSourceType, Feature} from 'shared';
+import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import Utils from 'utils';
@@ -173,8 +173,8 @@ function dash(state = initialState, action) {
             };
         case actionTypes.OPEN_DIALOG: {
             const selectorDialog =
-                action.payload?.openedDialog === 'control' ||
-                action.payload?.openedDialog === 'group_control'
+                action.payload?.openedDialog === DashTabItemType.Control ||
+                action.payload?.openedDialog === DashTabItemType.GroupControl
                     ? getSelectorDialogInitialState({
                           lastUsedDatasetId: state.lastUsedDatasetId,
                       })
@@ -182,7 +182,7 @@ function dash(state = initialState, action) {
 
             if (
                 Utils.isEnabledFeature(Feature.GroupControls) &&
-                action.payload?.openedDialog === 'group_control'
+                action.payload?.openedDialog === DashTabItemType.GroupControl
             ) {
                 // TODO: move to getSelectorDialogInitialState after the release of the feature
                 selectorDialog.title = i18n('label_selector-dialog');

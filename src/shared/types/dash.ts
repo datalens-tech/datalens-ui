@@ -1,3 +1,5 @@
+import {ConfigItemData} from '@gravity-ui/dashkit';
+
 import {Operations} from '../modules';
 
 import {ClientChartsConfig, Dictionary, Entry, EntryScope, Params, StringParams} from './index';
@@ -240,7 +242,7 @@ export interface DashTabItemGroupControlData {
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
-    items: Record<string, DashTabItemControlData>;
+    items: Record<string, ConfigItemData>;
 }
 
 export interface DashTabLayout {

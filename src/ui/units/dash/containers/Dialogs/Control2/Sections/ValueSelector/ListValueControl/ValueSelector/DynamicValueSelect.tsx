@@ -129,7 +129,8 @@ export const DynamicValueSelect = ({hasValidationError, hasClear}: ValueSelector
 
     const handleUpdate = React.useCallback(
         (val) => {
-            setSelectorDialogItem({defaultValue: val});
+            const newValue = !val.length ? undefined : val;
+            setSelectorDialogItem({defaultValue: newValue});
         },
         [setSelectorDialogItem],
     );
