@@ -109,7 +109,7 @@ export function mapChartsConfigToClientConfig(
         return acc;
     }, {});
 
-    const colors = mapServerFieldToWizardField<Field>(serverColors, fieldsDict);
+    let colors = mapServerFieldToWizardField<Field>(serverColors, fieldsDict);
     const filters = mapServerFieldToWizardField<FilterField>(serverFilters, fieldsDict);
     const labels = mapServerFieldToWizardField<Field>(serverLabels, fieldsDict);
     const sort = mapServerFieldToWizardField<Sort>(serverSort, fieldsDict);
@@ -126,6 +126,9 @@ export function mapChartsConfigToClientConfig(
         };
     });
 
+    const layerVisualization =
+        serverVisualization as VisualizationWithLayersShared['visualization'];
+
     const visualization: Shared['visualization'] = {
         ...serverVisualization,
         placeholders: serverVisualization.placeholders?.map((placeholder: Placeholder) => {
@@ -134,22 +137,31 @@ export function mapChartsConfigToClientConfig(
                 items: mapServerFieldToWizardField<Field>(placeholder.items, fieldsDict),
             };
         }),
-        layers: (serverVisualization as VisualizationWithLayersShared['visualization']).layers?.map(
-            (geoLayer) => {
-                return {
-                    ...geoLayer,
-                    placeholders: geoLayer.placeholders.map((placeholder: Placeholder) => {
-                        return {
-                            ...placeholder,
-                            items: mapServerFieldToWizardField<Field>(
-                                placeholder.items,
-                                fieldsDict,
-                            ),
-                        };
-                    }),
-                };
-            },
-        ),
+        layers: layerVisualization.layers?.map((layer) => {
+            const {placeholders, commonPlaceholders} = layer;
+            const layerColors = mapServerFieldToWizardField<Field>(
+                commonPlaceholders.colors,
+                fieldsDict,
+            );
+
+            if (layer.layerSettings.id === layerVisualization.selectedLayerId) {
+                colors = layerColors;
+            }
+
+            return {
+                ...layer,
+                placeholders: placeholders.map((placeholder: Placeholder) => {
+                    return {
+                        ...placeholder,
+                        items: mapServerFieldToWizardField<Field>(placeholder.items, fieldsDict),
+                    };
+                }),
+                commonPlaceholders: {
+                    ...commonPlaceholders,
+                    colors: layerColors,
+                },
+            };
+        }),
     } as Shared['visualization'];
 
     return {

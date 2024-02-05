@@ -193,7 +193,9 @@ class Control<TProviderData> extends React.PureComponent<
             } else if (updateControlsOnChange) {
                 this.run(newParams);
             } else {
-                this.setStatePriority({params: newParams});
+                this.setStatePriority({params: newParams}, () => {
+                    this.props.onUpdate?.({type: 'PARAMS_CHANGED', data: {params: newParams}});
+                });
             }
         }
     }

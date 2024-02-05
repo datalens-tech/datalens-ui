@@ -1,23 +1,15 @@
 import {IconProps} from '@gravity-ui/uikit';
 
-import {
-    ChartsConfig,
-    Dataset,
-    ExtendedChartsConfig,
-    FilterField,
-    HierarchyField,
-    Link,
-    ServerDatasetField,
-} from '../';
-import {
+import {ChartsConfig, Dataset, FilterField, HierarchyField, Link, ServerDatasetField} from '../';
+import type {
     ColorMode,
     GradientType,
     NavigatorLinesMode,
     NavigatorPeriod,
     WizardVisualizationId,
 } from '../../constants';
-import {IconId} from '../../types';
 import {CommonUpdate, CommonUpdateField} from '../common-update';
+import {IconId} from '../configs';
 import {DatasetField} from '../dataset';
 
 import {Field} from './field';
@@ -445,12 +437,6 @@ export const isTableShared = (shared: Shared): shared is TableShared =>
 
 export const isMetricShared = (shared: Shared): shared is MetricShared =>
     shared.visualization.id === 'metric';
-
-export function isVisualizationWithLayers(
-    visualization: ExtendedChartsConfig['visualization'] | undefined,
-): visualization is VisualizationWithLayersShared['visualization'] {
-    return visualization?.id === 'geolayer' || visualization?.id === 'combined-chart';
-}
 
 export type Update = CommonUpdate<Field>;
 export type UpdateField = CommonUpdateField<Field>;
