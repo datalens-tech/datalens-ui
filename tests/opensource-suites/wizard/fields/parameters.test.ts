@@ -33,16 +33,8 @@ datalensTest.describe('Wizard', () => {
 
             // Create parameterized field
             const parameterizedFieldName = 'parameterized';
-            await wizardPage.fieldEditor.open();
-            await wizardPage.fieldEditor.setName(parameterizedFieldName);
             const formula = `CASE [Category] when [${parameterName}] then 'parameter_title' else [Category] END`;
-            await wizardPage.fieldEditor.setFormula(formula);
-            await wizardPage.fieldEditor.clickToApplyButton();
-            await expect(
-                datasetFields.locator(slct(SectionDatasetQA.ItemTitle), {
-                    hasText: parameterizedFieldName,
-                }),
-            ).toBeVisible();
+            await wizardPage.createNewFieldWithFormula(parameterizedFieldName, formula);
 
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'Category');
             await expect(previewLoader).toBeVisible();
@@ -85,15 +77,10 @@ datalensTest.describe('Wizard', () => {
 
                 // Create parameterized field ([run] = '1')
                 const parameterizedFieldName = 'run-chart';
-                await wizardPage.fieldEditor.open();
-                await wizardPage.fieldEditor.setName(parameterizedFieldName);
-                await wizardPage.fieldEditor.setFormula(`[${parameterName}] = '1'`);
-                await wizardPage.fieldEditor.clickToApplyButton();
-                await expect(
-                    datasetFields.locator(slct(SectionDatasetQA.ItemTitle), {
-                        hasText: parameterizedFieldName,
-                    }),
-                ).toBeVisible();
+                await wizardPage.createNewFieldWithFormula(
+                    parameterizedFieldName,
+                    `[${parameterName}] = '1'`,
+                );
 
                 // Fill required fields for chart
                 await wizardPage.sectionVisualization.addFieldByClick(

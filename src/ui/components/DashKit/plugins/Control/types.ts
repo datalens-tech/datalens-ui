@@ -121,5 +121,3 @@ export type ValidationErrorData = {
           };
     index?: string;
 };
-
-export type IndexedValidationErrorData = ValidationErrorData & {index: string};

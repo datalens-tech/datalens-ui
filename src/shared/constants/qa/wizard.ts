@@ -1,5 +1,6 @@
 export const enum WizardPageQa {
     SectionPreview = 'preview-chartkit',
+    VisualizationSelectPopup = 'visualization-select-popup',
 }
 
 export const enum SectionDatasetQA {
@@ -33,6 +34,12 @@ export const enum DialogColumnSettingsQa {
     CancelButton = 'dialog-column-settings-cancel-button',
     UnitRadioButtons = 'dialog-column-settings-unit-radio-buttons',
     WidthValueInput = 'dialog-column-settings-width-input',
+}
+
+export const enum DialogFieldBackgroundSettingsQa {
+    EnableButton = 'dialog-field-bg-switcher',
+    FillTypeButtons = 'dialog-field-bg-fill-type',
+    ButtonColorDialog = 'button-color-dialog',
 }
 
 export const enum DialogFieldBarsSettingsQa {
@@ -108,8 +115,9 @@ export const enum DialogFieldSubTotalsQa {
     SubTotalsSwitch = 'sub-totals-switch',
 }
 
-export const enum DialogColor {
+export const enum DialogColorQa {
     PaletteSelect = 'palette-select',
+    GradientType = 'color-dialog-gradient-type-radio',
     ApplyButton = 'color-dialog-apply-button',
 }
 

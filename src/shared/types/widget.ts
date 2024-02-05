@@ -26,6 +26,7 @@ export enum EditorType {
     YmapNode = 'ymap_node',
     ControlNode = 'control_node',
     MarkdownNode = 'markdown_node',
+    MarkupNode = 'markup_node',
 }
 
 export enum WidgetKind {
