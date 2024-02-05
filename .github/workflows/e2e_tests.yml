@@ -120,3 +120,4 @@ jobs:
           FULL_HTML_REPORT_URL=https://datalens-tech.github.io/datalens-ui/$HTML_REPORT_URL_PATH/report
 
           echo "::notice title=📋 Published Playwright Test Report::$FULL_HTML_REPORT_URL"
+
