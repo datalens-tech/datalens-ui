@@ -275,6 +275,7 @@ export default ({
     });
 
     const result: QLRenderResultYagr = {
+        timeZone: 'UTC',
         metadata: {
             order,
         },

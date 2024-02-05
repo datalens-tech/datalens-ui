@@ -47,7 +47,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
         findIndexInOrder(order, color, idToTitle[color.guid] || color.title),
     );
 
-    const result: QLRenderResultYagr = {timeline: []};
+    const result: QLRenderResultYagr = {timeline: [], timeZone: 'UTC'};
 
     if (yFields.length > 0 && xField) {
         let xValues: QLValue[] = [];
