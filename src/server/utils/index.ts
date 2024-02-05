@@ -56,13 +56,18 @@ class Utils {
         return pick(headers, FORWARDED_FOR_HEADER);
     }
 
+    static pickRpcAuthorizationHeaders(headers: IncomingHttpHeaders) {
+        return pick(headers, RPC_AUTHORIZATION);
+    }
+
     static pickHeaders(req: Request) {
         return {
             ...Utils.pickAuthHeaders(req.headers, req),
             ...Utils.pickSuperuserHeaders(req.headers),
             ...Utils.pickDlContextHeaders(req.headers),
             ...Utils.pickForwardHeaders(req.headers),
-            [REQUEST_ID_HEADER]: req.id,
+            ...Utils.pickRpcAuthorizationHeaders(req.headers),
+            [REQUEST_ID_HEADER]: req.id
         };
     }
 
