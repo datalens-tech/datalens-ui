@@ -184,7 +184,7 @@ export default class Utils {
         let params = (new URL(loc)).searchParams;
         let token:any = params.get("x-rpc-authorization");
         if(token) {
-            window.sessionStorage.setItem('x-rpc-authorization', token);
+            window.localStorage.setItem('x-rpc-authorization', token);
         }
     }
 
@@ -193,7 +193,7 @@ export default class Utils {
         let params = (new URL(loc)).searchParams;
         let token:any = params.get("x-rpc-authorization");
 
-        return window.sessionStorage.getItem('x-rpc-authorization') || token;
+        return window.localStorage.getItem('x-rpc-authorization') || token;
     }
 
     static setup() {
