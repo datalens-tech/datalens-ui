@@ -6,7 +6,7 @@ import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/action
 import {MarkdownProvider, URL_QUERY, Utils} from 'ui';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
-import {DL, EMBEDDED_MODE} from '../../../../constants';
+import {DL} from '../../../../constants';
 import ChartKit from '../../../../libs/DatalensChartkit';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
@@ -547,27 +547,3 @@ export const updateCurrentTabData = (data) => ({
     type: actionTypes.UPDATE_CURRENT_TAB_DATA,
     payload: data,
 });
-
-export const toggleFullscreenMode =
-    ({history, location}) =>
-    (dispatch, getState) => {
-        const {
-            dash: {isFullscreenMode},
-        } = getState();
-        const {search} = location;
-
-        const searchParams = new URLSearchParams(search);
-
-        if (isFullscreenMode) {
-            searchParams.delete('mode');
-        } else {
-            searchParams.set('mode', EMBEDDED_MODE.TV);
-        }
-
-        history.replace({
-            ...location,
-            search: `?${searchParams.toString()}`,
-        });
-
-        dispatch({type: actionTypes.TOGGLE_FULLSCREEN_MODE});
-    };

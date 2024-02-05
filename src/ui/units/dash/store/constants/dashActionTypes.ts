@@ -15,8 +15,6 @@ export const SET_COPIED_ITEM_DATA = Symbol('dash/SET_COPIED_ITEM_DATA');
 export const SET_CURRENT_TAB_DATA = Symbol('dash/SET_CURRENT_TAB_DATA');
 export const UPDATE_CURRENT_TAB_DATA = Symbol('dash/UPDATE_CURRENT_TAB_DATA');
 
-export const TOGGLE_FULLSCREEN_MODE = Symbol('dash/TOGGLE_FULLSCREEN_MODE');
-
 export const SET_NEW_RELATIONS = Symbol('dash/SET_NEW_RELATIONS');
 
 export const SET_DISABLE_RELOAD = Symbol('dash/SET_DISABLE_RELOAD');
