@@ -51,7 +51,6 @@ class Observer {
     getIntersectionObserver() {
         if (this.intersectionObserver === null) {
             this.intersectionObserver = new IntersectionObserver(this.intersectionHandler, {
-                threshold: [0],
                 rootMargin: `${LOADING_VISIBLE_OFFSET}px`,
             });
         }
