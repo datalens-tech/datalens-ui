@@ -1,4 +1,3 @@
-import {ConfigItemData} from '@gravity-ui/dashkit';
 import {I18n} from 'i18n';
 import {
     DashTabItemControlDataset,
@@ -70,11 +69,10 @@ export const getDatasetSourceInfo = ({
     actualLoadedData,
 }: {
     currentLoadedData?: ResponseSuccessControls;
-    data: ConfigItemData;
+    data: DashTabItemControlDataset;
     actualLoadedData: null | ResponseSuccessControls;
 }) => {
-    const controlData = data as unknown as DashTabItemControlDataset;
-    const {datasetFieldId, datasetId} = controlData.source;
+    const {datasetFieldId, datasetId} = data.source;
     let datasetFieldType = null;
 
     const loadedData = currentLoadedData || (actualLoadedData as unknown as ChartsData);

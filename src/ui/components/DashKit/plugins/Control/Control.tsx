@@ -393,7 +393,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
     init = async () => {
         try {
-            const {data} = this.props;
+            const data = this.props.data as unknown as
+                | DashTabItemControlDataset
+                | DashTabItemControlManual
+                | DashTabItemControlExternal;
 
             const payload = {
                 data: {
@@ -426,7 +429,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 : loadedData.uiScheme;
 
             if (data.sourceType === DashTabItemControlSourceType.Dataset) {
-                this.checkDatasetFieldType(loadedData);
+                this.checkDatasetFieldType(loadedData, data);
             } else {
                 this.setLoadedData(loadedData, LOAD_STATUS.SUCCESS);
             }
@@ -500,7 +503,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     renderSelectControl() {
-        const {id, data, defaults, getDistincts} = this.props;
+        const data = this.props.data as unknown as
+            | DashTabItemControlDataset
+            | DashTabItemControlManual;
+        const {id, defaults, getDistincts} = this.props;
         const {loadedData, status, loadingItems, errorData, validationError} = this.state;
 
         return (
@@ -524,10 +530,12 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     renderControls() {
-        const {
-            data: {sourceType},
-            id,
-        } = this.props;
+        const data = this.props.data as unknown as
+            | DashTabItemControlManual
+            | DashTabItemControlDataset;
+
+        const {sourceType} = data;
+        const {id} = this.props;
 
         switch (this.state.status) {
             case LOAD_STATUS.PENDING:
@@ -561,9 +569,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         // @ts-ignore
         return uiScheme?.controls.map((control) => {
             const {param, type} = control;
-            const data = this.props.data as unknown as
-                | DashTabItemControlManual
-                | DashTabItemControlDataset;
 
             const {source} = data;
             const {required, operation} = source;
@@ -616,7 +621,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 let fieldType = source?.fieldType || null;
                 if (sourceType === DashTabItemControlSourceType.Dataset) {
                     const {datasetFieldType} = getDatasetSourceInfo({
-                        data: this.props.data,
+                        data,
                         actualLoadedData: this.state.loadedData,
                     });
                     fieldType = datasetFieldType;
@@ -716,10 +721,13 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         );
     }
 
-    private checkDatasetFieldType(loadedData: ResponseSuccessControls) {
+    private checkDatasetFieldType(
+        loadedData: ResponseSuccessControls,
+        data: DashTabItemControlDataset,
+    ) {
         const {datasetFieldType} = getDatasetSourceInfo({
             currentLoadedData: loadedData,
-            data: this.props.data,
+            data,
             actualLoadedData: this.state.loadedData,
         });
 

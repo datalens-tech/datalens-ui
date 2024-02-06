@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
+import {ConfigItem} from '@gravity-ui/dashkit';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -50,7 +50,7 @@ import {
 
 type ControlItemSelectProps = {
     id: string;
-    data: ConfigItemData;
+    data: DashTabItemControlDataset | DashTabItemControlManual;
     defaults: ConfigItem['defaults'];
     status: LoadStatus;
     loadedData: null | ResponseSuccessControls;
@@ -95,8 +95,9 @@ export const ControlItemSelect = ({
     const getSelectDistincts = React.useCallback(
         async ({searchPattern, nextPageToken}: {searchPattern: string; nextPageToken: number}) => {
             try {
+                const datasetData = data as DashTabItemControlDataset;
                 const {datasetId, datasetFieldId, datasetFields, datasetFieldsMap} =
-                    getDatasetSourceInfo({actualLoadedData: loadedData, data});
+                    getDatasetSourceInfo({actualLoadedData: loadedData, data: datasetData});
 
                 const splitParams = splitParamsToParametersAndFilters(
                     transformParamsToUrlParams(actualParams),
@@ -293,9 +294,8 @@ export const ControlItemSelect = ({
         }
     };
 
-    const controlData = data as unknown as DashTabItemControlDataset | DashTabItemControlManual;
-    const source = controlData.source;
-    const sourceType = controlData.sourceType;
+    const source = data.source;
+    const sourceType = data.sourceType;
     const fieldId =
         (source as DashTabItemControlDataset['source']).datasetFieldId ||
         (source as DashTabItemControlManual['source']).fieldName;
@@ -341,7 +341,7 @@ export const ControlItemSelect = ({
         onChange({param: fieldId, value: valueWithOperation});
     };
 
-    const {label, innerLabel} = getLabels({controlData});
+    const {label, innerLabel} = getLabels({controlData: data});
 
     const props: SelectControlProps = {
         widgetId: id,

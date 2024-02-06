@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ConfigItemData, Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
+import {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DatalensGlobalState, Utils} from 'index';
@@ -25,7 +25,6 @@ import {
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {isMobileView} from 'ui/utils/mobile';
 
-import logger from '../../../../libs/logger';
 import {selectSkipReload} from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import {adjustWidgetLayout} from '../../utils';
 import {Error} from '../Control/Error/Error';
@@ -53,7 +52,6 @@ interface PluginGroupControlState {
     silentLoading: boolean;
     showSilentLoader: boolean;
     forceUpdate: boolean;
-    dialogVisible: boolean;
     initialParams?: StringParams;
     isInit: boolean;
     stateParams: StringParams;
@@ -91,7 +89,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             silentLoading: false,
             showSilentLoader: false,
             forceUpdate: true,
-            dialogVisible: false,
             isInit: false,
             stateParams: {},
         };
@@ -108,7 +105,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         if (this.rootNode.current) {
             if (this.props.data.autoHeight) {
-                // if the "Auto-altitude" flag is set
+                // if the "Auto-height" flag is set
                 this.adjustWidgetLayout(false);
             } else if (prevProps.data.autoHeight) {
                 // if the "Auto-height" flag was set and then removed
@@ -242,7 +239,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         this.initialParams = updatedInitialParams;
     };
 
-    private renderControl(id: string, item: ConfigItemData) {
+    private renderControl(id: string, item: DashTabItemControlManual | DashTabItemControlDataset) {
         const {getDistincts, skipReload, defaults} = this.props;
         const {silentLoading, showSilentLoader} = this.state;
 
@@ -252,9 +249,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 id={id}
                 data={item}
                 initialParams={this.initialParams}
-                actualParams={this.actualParams}
+                actualParams={this.state.stateParams}
                 showSilentLoader={showSilentLoader}
-                onStatusChanged={() => {}}
+                onStatusChanged={(status: LoadStatus) => {
+                    if (this.props.data.autoHeight && status === LOAD_STATUS.SUCCESS) {
+                        this.adjustWidgetLayout(false);
+                    }
+                }}
                 silentLoading={silentLoading}
                 resolveMeta={this.resolveMeta}
                 defaults={defaults}
@@ -271,7 +272,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const controlData = data as unknown as DashTabItemGroupControlData;
 
         const onButtonChange = (action: string) => {
-            let newParams = {...this.actualParams};
+            let newParams = {};
 
             if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
                 newParams = this.state.stateParams;
@@ -279,7 +280,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 newParams = this.initialParams?.params;
             }
 
-            if (!isEqual(newParams, this.actualParams)) {
+            if (
+                !isEqual(newParams, this.actualParams) ||
+                !isEqual(newParams, this.state.stateParams)
+            ) {
                 this.onChange(newParams, true);
             }
         };
@@ -335,13 +339,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return null;
     }
 
-    private showSilentLoader = () => {
-        this.setState((prevState) => {
-            return prevState.status === LOAD_STATUS.PENDING && prevState.silentLoading
-                ? {showSilentLoader: true}
-                : null;
-        });
-    };
+    // private showSilentLoader = () => {
+    //     this.setState((prevState) => {
+    //         return prevState.status === LOAD_STATUS.PENDING && prevState.silentLoading
+    //             ? {showSilentLoader: true}
+    //             : null;
+    //     });
+    // };
 
     private renderError() {
         return (
@@ -352,49 +356,29 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         );
     }
 
-    // public
-    private getMeta() {
-        if (this.chartKitRef && this.chartKitRef.current) {
-            this.chartKitRef.current.undeferred();
-        }
-        return Promise.resolve({});
-    }
+    // // public
+    // private getMeta() {
+    //     if (this.chartKitRef && this.chartKitRef.current) {
+    //         this.chartKitRef.current.undeferred();
+    //     }
+    //     return Promise.resolve({});
+    // }
 
     get actualParams(): StringParams {
         return this.props.params;
     }
 
     private async init() {
-        try {
-            // FIXME: need implement init section for GroupControl
-
-            if (this.state.isInit === false) {
-                this.setState({isInit: true});
+        if (this.state.isInit === false) {
+            if (this.props.data.autoHeight) {
+                this.adjustWidgetLayout(false);
             }
-        } catch (error) {
-            if (this.state.isInit === false) {
-                this.setState({isInit: true});
-            }
-            logger.logError('DashKit: GroupControl init failed', error);
-            // eslint-disable-next-line no-console
-            console.error('DASHKIT_CONTROL_RUN', error);
 
-            // let errorData = null;
-
-            // if (this._isUnmounted) {
-            //     return;
-            // }
-
-            // if (error.response && error.response.data) {
-            //     errorData = {
-            //         data: {error: error.response.data?.error},
-            //         requestId: error.response.headers['x-request-id'],
-            //     };
-            // } else {
-            //     errorData = {data: {message: error.message}};
-            // }
-
-            // this.setErrorData(errorData, LOAD_STATUS.FAIL);
+            this.setState({
+                isInit: true,
+                initialParams: this.props.defaults,
+                stateParams: this.actualParams,
+            });
         }
     }
 

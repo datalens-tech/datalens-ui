@@ -25,8 +25,7 @@ export const StaticValueSelect = ({hasValidationError, hasClear}: ValueSelectorP
     const handleUpdate = React.useCallback(
         (val) => {
             //TODO: tradeoff to bring deselect for single select
-            const newValue =
-                (!multiselectable && val[0] === defaultValue?.[0]) || !val.length ? undefined : val;
+            const newValue = !multiselectable && val[0] === defaultValue?.[0] ? undefined : val;
             setSelectorDialogItem({defaultValue: newValue});
         },
         [setSelectorDialogItem, multiselectable, defaultValue],

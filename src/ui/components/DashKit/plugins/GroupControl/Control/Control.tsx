@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
+import {ConfigItem} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -59,7 +59,7 @@ const i18nError = I18n.keyset('dash.dashkit-control.error');
 
 type ControlProps = {
     id: string;
-    data: ConfigItemData;
+    data: DashTabItemControlManual | DashTabItemControlDataset;
     actualParams: StringParams;
     showSilentLoader: boolean;
     onStatusChanged: (status: LoadStatus) => void;
@@ -115,7 +115,7 @@ export const Control = ({
         loadedStatus: LoadStatus,
     ) => {
         //TODO: Add new relations logic
-        const newInitialParams = {...loadedData?.defaultParams, ...defaults};
+        const newInitialParams = {...newLoadedData?.defaultParams, ...defaults};
         const initialParamsChanged = !isEqual(newInitialParams, initialParams.params);
 
         if (initialParamsChanged) {
@@ -134,10 +134,13 @@ export const Control = ({
         resolveMeta(resolveDataArg);
     };
 
-    const checkDatasetFieldType = (currentLoadedData: ResponseSuccessControls) => {
+    const checkDatasetFieldType = (
+        currentLoadedData: ResponseSuccessControls,
+        datasetData: DashTabItemControlDataset,
+    ) => {
         const {datasetFieldType} = getDatasetSourceInfo({
             currentLoadedData: currentLoadedData,
-            data,
+            data: datasetData,
             actualLoadedData: loadedData,
         });
 
@@ -189,7 +192,7 @@ export const Control = ({
                 : newLoadedData.uiScheme;
 
             if (data.sourceType === DashTabItemControlSourceType.Dataset) {
-                checkDatasetFieldType(newLoadedData);
+                checkDatasetFieldType(newLoadedData, data);
             } else {
                 setLoadedDataState(newLoadedData, LOAD_STATUS.SUCCESS);
             }
@@ -250,33 +253,11 @@ export const Control = ({
         return activeValidationError;
     };
 
-    const onChangeParams = (
-        controlData: DashTabItemControlManual | DashTabItemControlDataset,
-        value: string | string[],
-        param?: string,
-    ) => {
-        const {source} = controlData;
-        const {required, operation} = source;
-
-        const hasError = validateValue({
-            required,
-            value,
-        });
-        dispatch(setValidationError({hasError}));
-
-        if (hasError) {
-            return;
-        }
-
-        const valueWithOperation = addOperationForValue({
-            value,
-            operation,
-        });
-
+    const onChangeParams = ({value, param}: {value: string | string[]; param: string}) => {
         const newParams = {...actualParams};
 
         if (param && value !== undefined) {
-            newParams[param] = valueWithOperation;
+            newParams[param] = value;
         }
 
         if (!isEqual(newParams, actualParams)) {
@@ -307,10 +288,10 @@ export const Control = ({
         }
 
         const {param, type} = control;
-        const controlData = data as unknown as DashTabItemControlData;
+        const controlData = data as unknown as DashTabItemControlDataset | DashTabItemControlManual;
 
         const {source, placementMode, width} = controlData;
-        const {required} = source;
+        const {required, operation} = source;
 
         const preparedValue = unwrapFromArrayAndSkipOperation(actualParams[param]);
 
@@ -319,8 +300,23 @@ export const Control = ({
             value: preparedValue,
         });
 
-        const onChangeControl = ({value}: {value: string | string[]}) => {
-            onChangeParams(controlData, value, param);
+        const onChangeControl = (value: string | string[]) => {
+            const hasError = validateValue({
+                required,
+                value,
+            });
+            dispatch(setValidationError({hasError}));
+
+            if (hasError) {
+                return;
+            }
+
+            const valueWithOperation = addOperationForValue({
+                value,
+                operation,
+            });
+
+            onChangeParams({value: valueWithOperation, param});
         };
 
         const {label, innerLabel} = getLabels({controlData});
@@ -344,7 +340,7 @@ export const Control = ({
             let fieldType = source?.fieldType || null;
             if (controlData.sourceType === DashTabItemControlSourceType.Dataset) {
                 const {datasetFieldType} = getDatasetSourceInfo({
-                    data,
+                    data: controlData,
                     actualLoadedData: loadedData,
                 });
                 fieldType = datasetFieldType;
@@ -375,7 +371,7 @@ export const Control = ({
                         loadedData={loadedData}
                         loadingItems={loadingItems}
                         actualParams={actualParams}
-                        onChange={onChangeControl}
+                        onChange={onChangeParams}
                         init={init}
                         showItemsLoader={showItemsLoader}
                         validationError={validationError}

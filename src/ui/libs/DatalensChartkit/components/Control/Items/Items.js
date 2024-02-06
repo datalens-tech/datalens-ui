@@ -176,7 +176,7 @@ function BaseControlInput({
     label,
     hasValidationError,
 }) {
-    const [text, setText] = React.useState(value);
+    const [text, setText] = React.useState(value || '');
 
     React.useEffect(() => setText(value), [value]);
 
