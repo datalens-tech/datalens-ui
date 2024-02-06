@@ -1,4 +1,4 @@
-import {Field, Placeholder, isParameter} from '../../../../../shared';
+import {Field, Placeholder, isParameter, isPseudoField} from '../../../../../shared';
 
 export function mutateAndValidateItem<T extends Field>({
     fields,
@@ -10,13 +10,13 @@ export function mutateAndValidateItem<T extends Field>({
     placeholder?: Placeholder;
 }): void {
     // We will validate the selected fields in the visualization section
-    if (!fields.length || item.type === 'PSEUDO') {
+    if (!fields.length || isPseudoField(item)) {
         return;
     }
 
     // If there is an up-to-date dataset, we compare it
     const existingField = fields.find((latestItem) => {
-        return latestItem.guid === item.guid;
+        return latestItem.guid === item.guid && latestItem.datasetId === item.datasetId;
     });
 
     if (isParameter(item)) {

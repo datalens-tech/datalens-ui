@@ -28,15 +28,15 @@ import {RevisionsListMode, RevisionsMode} from '../../../../store/typings/entryC
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, LOCK_EXTEND_TIMEOUT} from '../../modules/constants';
 import {CopiedConfigData, getTabTitleById} from '../../modules/helpers';
+import {load as loadDash, setEditMode} from '../../store/actions/dash';
 import {
     cleanLock,
     deleteLock,
-    load as loadDash,
     setCopiedItemData,
-    setEditMode,
+    setErrorMode,
     setLock,
-} from '../../store/actions/dash';
-import {setErrorMode, setPageTab} from '../../store/actions/dashTyped';
+    setPageTab,
+} from '../../store/actions/dashTyped';
 import {
     canEdit,
     isDraft,
@@ -89,7 +89,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
 
         // Fix case when open dash in edit mode then open dataset via navigation then click browser's back button.
         // We set lockToken again
-        if (!entry?.fake && this.props.isEditMode && lockToken === null) {
+        if (entryId && !entry?.fake && this.props.isEditMode && lockToken === null) {
             this.props.setLock(entryId, false, false);
         }
 
