@@ -45,13 +45,14 @@
         color: var(--g-color-text-hint);
         margin-left: 4px;
         text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     &__button-text {
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 100%;
-        display: block;
+        display: flex;
 
         &_with-remove {
             max-width: calc(100% - 20px);
