@@ -104,12 +104,13 @@ type LoadingStateType = {
 
 const loadingStateReducer = (state: LoadingStateType, newState: Partial<LoadingStateType>) => {
     const hasChanges = Object.entries(newState).find(
-        ([k, v]) => state[k as keyof LoadingStateType] !== v,
+        ([key, value]) => state[key as keyof LoadingStateType] !== value,
     );
 
     if (hasChanges) {
         return {...state, ...newState};
     }
+
     return state;
 };
 
@@ -147,9 +148,10 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isInit: false,
         canBeLoaded: false,
     });
-    const setIsInit = React.useCallback((state: boolean) => setLoadingState({isInit: state}), []);
+
+    const setIsInit = React.useCallback((value: boolean) => setLoadingState({isInit: value}), []);
     const setCanBeLoaded = React.useCallback(
-        (state: boolean) => setLoadingState({canBeLoaded: state}),
+        (value: boolean) => setLoadingState({canBeLoaded: value}),
         [],
     );
 
@@ -159,7 +161,9 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     const [widgetMenuData, setWidgetMenuData] = React.useState<{
         xAxis: Highcharts.Chart['xAxis'];
     } | null>(null);
+
     const [isWidgetMenuDataChanged, setIsWidgetMenuDataChanged] = React.useState<boolean>(false);
+
     const prevWidgetMenuData = usePrevious(widgetMenuData);
     const prevInnerParamsRefCurrent = usePrevious(innerParamsRef?.current);
 
@@ -523,6 +527,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         },
         [loadChartData],
     );
+
     useIntersectionObserver({
         nodeRef: rootNodeRef,
         callback: intersectionChange,

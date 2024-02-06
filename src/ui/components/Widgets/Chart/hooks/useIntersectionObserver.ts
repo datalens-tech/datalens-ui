@@ -1,9 +1,10 @@
 import React from 'react';
 
-import {throttle} from 'lodash';
+import throttle from 'lodash/throttle';
 
 type IntersectionCallback = (state: boolean) => void;
 
+const THROTTLE_VISIBLE_DELAY = 100;
 const LOADING_VISIBLE_OFFSET = 300;
 
 class Observer {
@@ -24,18 +25,18 @@ class Observer {
             callbacksMap.get(el)?.(isVisible);
         });
         changes.clear();
-    }, 100);
+    }, THROTTLE_VISIBLE_DELAY);
 
     intersectionHandler = (entries: IntersectionObserverEntry[]) => {
         this.changesQueue = this.changesQueue || new Map();
 
         const hasChanges = entries.reduce((memo, e) => {
             const target = e.target as HTMLDivElement;
-            const state = e.intersectionRatio > 0;
-            const currentState = this.changesQueue?.get(target);
+            const isVisible = e.intersectionRatio > 0;
+            const currentVisibility = this.changesQueue?.get(target);
 
-            if (currentState !== state) {
-                this.changesQueue?.set(target, state);
+            if (currentVisibility !== isVisible) {
+                this.changesQueue?.set(target, isVisible);
                 return true;
             }
 
@@ -50,7 +51,7 @@ class Observer {
     getIntersectionObserver() {
         if (this.intersectionObserver === null) {
             this.intersectionObserver = new IntersectionObserver(this.intersectionHandler, {
-                threshold: [0, 0.5, 1],
+                threshold: [0],
                 rootMargin: `${LOADING_VISIBLE_OFFSET}px`,
             });
         }
