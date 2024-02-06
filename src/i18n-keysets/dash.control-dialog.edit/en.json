@@ -27,7 +27,7 @@
   "field_field": "Field",
   "field_field-name": "Field or parameter name",
   "field_inner-title": "Inner title",
-  "field_inner-title-note": "The internal heading enables you to specify the type of operation inside the selector.<br><br>It is not available in the \"Checkbox\" selector type.",
+  "field_inner-title-note": "The inner title enables you to specify a text for use in the comparison operation inside the selector.<br><br>It is not available in the \"Checkbox\" selector type.",
   "field_multiselectable": "Multiple choice",
   "field_operation": "Operation",
   "field_operation-note": "The type of operation has no effect on QL Charts and parameters",
