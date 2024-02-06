@@ -16,6 +16,7 @@ jobs:
     permissions:
       contents: write
       pages: write
+      pull-requests: write
     steps:
       - name: Checkout GitHub Pages Branch
         uses: actions/checkout@v2
