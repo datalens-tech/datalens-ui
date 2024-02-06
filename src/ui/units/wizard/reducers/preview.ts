@@ -20,6 +20,9 @@ import {
     WizardType,
     WizardVisualizationId,
     isD3Visualization,
+    isDimensionField,
+    isMeasureField,
+    isPseudoField,
     isVisualizationWithLayers,
 } from 'shared';
 
@@ -116,6 +119,77 @@ export const getInitialState = (): PreviewState => ({
     segments: [],
 });
 
+function checkDatasetLinks(args: {fields: Field[]; links: Link[]}) {
+    const {fields, links} = args;
+    let isValid = true;
+
+    // We check the connections in pairs
+    for (let i = 0; i < fields.length; ++i) {
+        const field = fields[i];
+
+        if (isPseudoField(field)) {
+            continue;
+        }
+
+        for (let j = i + 1; j < fields.length; ++j) {
+            const otherField = fields[j];
+
+            if (isPseudoField(otherField)) {
+                continue;
+            }
+
+            if (field.datasetId !== otherField.datasetId) {
+                // All pairs of dimensions must be connected
+                if (isDimensionField(field) && isDimensionField(otherField)) {
+                    isValid = links.some((link: Link) => {
+                        const linkField = link.fields[field.datasetId];
+                        const linkOtherField = link.fields[otherField.datasetId];
+
+                        if (linkField && linkOtherField) {
+                            return (
+                                linkField.field.guid === field.guid ||
+                                linkOtherField.field.guid === otherField.guid
+                            );
+                        } else {
+                            return false;
+                        }
+                    });
+                    // In each pair of measurement and indicator, the indicator dataset must have
+                    // connection to this dimension
+                } else if (
+                    (isDimensionField(field) && isMeasureField(otherField)) ||
+                    (isMeasureField(field) && isDimensionField(otherField))
+                ) {
+                    const dimension = isDimensionField(field) ? field : otherField;
+                    const measure = isMeasureField(field) ? field : otherField;
+
+                    isValid = links.some((link: Link) => {
+                        const linkDimension = link.fields[dimension.datasetId];
+                        const linkMeasure = link.fields[measure.datasetId];
+
+                        if (linkDimension && linkMeasure) {
+                            return linkDimension.field.guid === dimension.guid;
+                        } else {
+                            return false;
+                        }
+                    });
+                }
+            }
+
+            if (!isValid) {
+                break;
+            }
+        }
+
+        if (!isValid) {
+            field.conflict = 'link-failed';
+            break;
+        }
+    }
+
+    return isValid;
+}
+
 interface MutateAndValidateVisualizationArgs {
     visualization: Shared['visualization'];
     datasets: Dataset[];
@@ -149,13 +223,10 @@ function mutateAndValidateVisualization({
         everythingIsOk &&
         visualization.placeholders.every((placeholder: Placeholder) => {
             const notEmpty = !placeholder.required || placeholder.items.length > 0;
-            const notConflicting =
+            return (
                 notEmpty &&
-                placeholder.items.every(
-                    (item) => !item.conflict || item.conflict === 'link-failed',
-                );
-
-            return notConflicting;
+                placeholder.items.every((item) => !item.conflict || item.conflict === 'link-failed')
+            );
         });
 
     // Are the filters valid
@@ -192,76 +263,7 @@ function mutateAndValidateVisualization({
             field.conflict = undefined;
         });
 
-        // We check the connections in pairs
-        for (let i = 0; i < fields.length; ++i) {
-            const field = fields[i];
-            const {datasetId} = field;
-
-            if (field.type === 'PSEUDO') {
-                continue;
-            }
-
-            for (let j = i + 1; j < fields.length; ++j) {
-                const otherField = fields[j];
-
-                // eslint-disable-next-line
-                if (otherField.type === 'PSEUDO') {
-                    continue;
-                }
-
-                const {datasetId: otherDatasetId} = otherField;
-
-                // eslint-disable-next-line
-                if (datasetId !== otherDatasetId) {
-                    // All pairs of dimensions must be connected
-
-                    // eslint-disable-next-line
-                    if (field.type === 'DIMENSION' && otherField.type === 'DIMENSION') {
-                        everythingIsOk = links.some((link: Link) => {
-                            const linkField = link.fields[datasetId];
-                            const linkOtherField = link.fields[otherDatasetId];
-
-                            if (linkField && linkOtherField) {
-                                return (
-                                    linkField.field.guid === field.guid ||
-                                    linkOtherField.field.guid === otherField.guid
-                                );
-                            } else {
-                                return false;
-                            }
-                        });
-                        // In each pair of measurement and indicator, the indicator dataset must have
-                        // connection to this dimension
-                    } else if (
-                        (field.type === 'DIMENSION' && otherField.type === 'MEASURE') ||
-                        (field.type === 'MEASURE' && otherField.type === 'DIMENSION')
-                    ) {
-                        const dimension = field.type === 'DIMENSION' ? field : otherField;
-                        const measure = field.type === 'MEASURE' ? field : otherField;
-
-                        everythingIsOk = links.some((link: Link) => {
-                            const linkDimension = link.fields[dimension.datasetId];
-                            const linkMeasure = link.fields[measure.datasetId];
-
-                            if (linkDimension && linkMeasure) {
-                                return linkDimension.field.guid === dimension.guid;
-                            } else {
-                                return false;
-                            }
-                        });
-                    }
-                }
-
-                if (!everythingIsOk) {
-                    break;
-                }
-            }
-
-            if (!everythingIsOk) {
-                field.conflict = 'link-failed';
-                break;
-            }
-        }
+        everythingIsOk = checkDatasetLinks({fields, links});
     }
 
     return everythingIsOk;

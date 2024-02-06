@@ -301,6 +301,9 @@ function BaseControlDatepicker({
     widgetId = '',
     required,
     hasValidationError,
+    innerLabel,
+    labelInside,
+    label,
 }) {
     const date = (value && tryResolveRelativeDate(value)) || value;
 
@@ -331,6 +334,7 @@ function BaseControlDatepicker({
             className={b('component')}
             hasValidationError={hasValidationError}
             required={required}
+            label={labelInside ? label : innerLabel}
         />
     );
 }
@@ -350,6 +354,8 @@ BaseControlDatepicker.propTypes = {
     widgetId: PropTypes.string,
     required: PropTypes.bool,
     hasValidationError: PropTypes.bool,
+    innerLabel: PropTypes.string,
+    labelInside: PropTypes.bool,
 };
 
 function BaseControlRangeDatepicker({
@@ -363,6 +369,9 @@ function BaseControlRangeDatepicker({
     widgetId = '',
     required,
     hasValidationError,
+    innerLabel,
+    labelInside,
+    label,
 }) {
     let from;
     let to;
@@ -421,6 +430,7 @@ function BaseControlRangeDatepicker({
             hasValidationError={hasValidationError}
             required={required}
             fillPartialInterval={true}
+            label={labelInside ? label : innerLabel}
         />
     );
 }
@@ -449,6 +459,8 @@ BaseControlRangeDatepicker.propTypes = {
     widgetId: PropTypes.string,
     required: PropTypes.bool,
     hasValidationError: PropTypes.bool,
+    innerLabel: PropTypes.string,
+    labelInside: PropTypes.bool,
 };
 
 function BaseControlButton({label, theme, onChange}) {

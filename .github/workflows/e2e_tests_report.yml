@@ -16,6 +16,7 @@ jobs:
     permissions:
       contents: write
       pages: write
+      pull-requests: write
     steps:
       - name: Checkout GitHub Pages Branch
         uses: actions/checkout@v2
@@ -35,7 +36,8 @@ jobs:
         run: |
           echo "HTML_REPORT_URL_PATH=$(cat playwright-report/report-link)" >> "$GITHUB_ENV"
           echo "REPORT_PR_NUMBER=$(cat playwright-report/report-pr)" >> "$GITHUB_ENV"
-          mv playwright-report/report ${{ env.HTML_REPORT_URL_PATH }}/report
+      - name: Move report to commit folder
+        run: mkdir -p ${{ env.HTML_REPORT_URL_PATH }} && mv playwright-report/report ${{ env.HTML_REPORT_URL_PATH }}/report
       - name: Push HTML Report
         timeout-minutes: 3
         # commit report, then try push-rebase-loop until it's able to merge the HTML report to the gh-pages branch
