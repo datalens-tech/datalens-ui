@@ -283,6 +283,7 @@ export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChang
         onLoad: ChartKitWrapperParams['onRender'];
         initialParams: ChartInitialParams;
         getControls?: ChartKitWrapperParams['getControls'];
+        onUpdate?: (data: OnChangeData) => void;
     };
 
 export type ResolveWidgetControlDataRefArgs =

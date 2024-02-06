@@ -22,7 +22,7 @@ export type UseSelectRenderFilter<T = any> = {
     options: SelectOption<T>[];
     disableUIKitFilterAlgorithm?: boolean;
     onFilterChange?: (filter: string, viewMode: keyof typeof VIEW_MODES) => void;
-} & Pick<SelectProps, 'value' | 'onUpdate' | 'multiple'>;
+} & Pick<SelectProps, 'value' | 'onUpdate' | 'multiple' | 'hasClear'>;
 
 const optionViewModes = [
     {content: i18n('radio-button_all'), value: VIEW_MODES.ALL},
@@ -36,6 +36,7 @@ export const useSelectRenderFilter = <T,>({
     multiple,
     disableUIKitFilterAlgorithm,
     onFilterChange,
+    hasClear,
 }: UseSelectRenderFilter<T>) => {
     const [viewMode, setViewMode] = React.useState(VIEW_MODES.ALL);
     const prev = React.useRef<{selectedModeOptions?: typeof options}>({});
@@ -121,6 +122,9 @@ export const useSelectRenderFilter = <T,>({
             onChange(searchPattern);
         }
 
+        // hide deselect button if hasClear is false
+        const showActionButton = hasClear || multiple;
+
         return (
             <div className={b()}>
                 <TextInput
@@ -150,9 +154,11 @@ export const useSelectRenderFilter = <T,>({
                         options={optionViewModes}
                         value={viewMode}
                     />
-                    <Button size="s" view="flat" {...buttonProps}>
-                        {buttonProps.title}
-                    </Button>
+                    {showActionButton && (
+                        <Button size="s" view="flat" {...buttonProps}>
+                            {buttonProps.title}
+                        </Button>
+                    )}
                 </div>
             </div>
         );

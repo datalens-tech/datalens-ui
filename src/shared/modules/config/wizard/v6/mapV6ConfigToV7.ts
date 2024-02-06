@@ -12,8 +12,8 @@ import {
     V7Layer,
     V7Placeholder,
     isFieldHierarchy,
-    isVisualizationWithLayers,
 } from '../../../../types';
+import {isVisualizationWithLayers} from '../../../../utils';
 import {isMeasureField} from '../../../helpers';
 import {isAllAxisModesAvailable, isPlaceholderSupportsAxisMode} from '../../../wizard-helpers';
 
