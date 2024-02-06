@@ -480,24 +480,3 @@ export const closeDialog = () => ({
     type: actionTypes.CLOSE_DIALOG,
     payload: {openedDialog: null, openedItemId: null},
 });
-
-export const setTabs = (tabs) => ({type: actionTypes.SET_TABS, payload: tabs});
-
-export const setSettings = (settings) => ({type: actionTypes.SET_SETTINGS, payload: settings});
-
-export const setCopiedItemData = (data) => ({
-    type: actionTypes.SET_COPIED_ITEM_DATA,
-    payload: {
-        data,
-    },
-});
-
-export const setCurrentTabData = (data) => ({
-    type: actionTypes.SET_CURRENT_TAB_DATA,
-    payload: data,
-});
-
-export const updateCurrentTabData = (data) => ({
-    type: actionTypes.UPDATE_CURRENT_TAB_DATA,
-    payload: data,
-});

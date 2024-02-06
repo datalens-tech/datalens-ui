@@ -51,9 +51,10 @@ import {
     sortByOrderIdOrLayoutComparator,
     stringifyMemoize,
 } from '../../modules/helpers';
-import {openDialog, openItemDialogAndSetData, setCurrentTabData} from '../../store/actions/dash';
+import {openDialog, openItemDialogAndSetData} from '../../store/actions/dash';
 import {
     TabsHashStates,
+    setCurrentTabData,
     setDashKitRef,
     setErrorMode,
     setHashState,
