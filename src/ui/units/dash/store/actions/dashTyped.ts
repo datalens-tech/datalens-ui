@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
+import {AddConfigItem, Config, DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
 import {PluginTextProps} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
 import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Title';
 import {i18n} from 'i18n';
@@ -10,6 +10,7 @@ import {Dispatch} from 'redux';
 import {
     DATASET_FIELD_TYPES,
     DashData,
+    DashSettings,
     DashTab,
     DashTabItem,
     DashTabItemControlData,
@@ -34,6 +35,7 @@ import {loadRevisions, setEntryContent} from '../../../../store/actions/entryCon
 import {showToast} from '../../../../store/actions/toaster';
 import {EntryGlobalState, RevisionsMode} from '../../../../store/typings/entryContent';
 import history from '../../../../utils/history';
+import {DashTabChanged} from '../../containers/Dialogs/Tabs/TabItem';
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, Mode} from '../../modules/constants';
 import {collectDashStats} from '../../modules/pushStats';
@@ -1095,6 +1097,36 @@ export function saveDashAsNewDash({key, workbookId, name}: SaveAsNewDashArgs) {
         return null;
     };
 }
+
+export const setTabs = (tabs: DashTabChanged[]) => ({
+    type: actionTypes.SET_TABS,
+    payload: tabs,
+});
+
+export const setCurrentTabData = (data: Config) => ({
+    type: actionTypes.SET_CURRENT_TAB_DATA,
+    payload: data,
+});
+
+export const updateCurrentTabData = (data: {
+    aliases?: DashTab['aliases'];
+    connections?: Config['connections'];
+}) => ({
+    type: actionTypes.UPDATE_CURRENT_TAB_DATA,
+    payload: data,
+});
+
+export const setSettings = (settings: DashSettings) => ({
+    type: actionTypes.SET_SETTINGS,
+    payload: settings,
+});
+
+export const setCopiedItemData = (data: AddConfigItem) => ({
+    type: actionTypes.SET_COPIED_ITEM_DATA,
+    payload: {
+        data,
+    },
+});
 
 export const setDefaultViewState = () => {
     return (dispatch: AppDispatch) => {

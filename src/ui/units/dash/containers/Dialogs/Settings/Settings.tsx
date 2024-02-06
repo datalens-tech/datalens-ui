@@ -14,10 +14,11 @@ import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialog
 import Utils from '../../../../../utils';
 import {validateParamTitle} from '../../../components/ParamsSettings/helpers';
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
-import {closeDialog, setSettings} from '../../../store/actions/dash';
+import {closeDialog} from '../../../store/actions/dash';
 import {
     setDashAccessDescription,
     setDashSupportDescription,
+    setSettings,
     toggleTableOfContent,
 } from '../../../store/actions/dashTyped';
 import {
@@ -121,7 +122,10 @@ const Settings = () => {
             dispatch(
                 setSettings({
                     ...settings,
-                    autoupdateInterval: autoupdateInterval || null,
+                    autoupdateInterval:
+                        (typeof autoupdateInterval === 'string'
+                            ? parseInt(autoupdateInterval)
+                            : autoupdateInterval) || null,
                     maxConcurrentRequests: maxConcurrentRequests > 0 ? maxConcurrentRequests : null,
                     loadOnlyVisibleCharts,
                     silentLoading,
