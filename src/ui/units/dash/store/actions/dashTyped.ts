@@ -636,20 +636,16 @@ export const applyGroupControlDialog = () => {
             autoHeight: selectorGroup.autoHeight,
             buttonApply: selectorGroup.buttonApply,
             buttonReset: selectorGroup.buttonReset,
-            items: selectorGroup.items.reduce<Record<string, Partial<DashTabItemControlData>>>(
-                (items, selector, index) => {
-                    items[selector.id] = {
-                        title: selector.title,
-                        sourceType: selector.sourceType,
-                        source: getItemDataSource(selector) as DashTabItemControlData['source'],
-                        placementMode: selector.placementMode,
-                        width: selector.width,
-                        index,
-                    };
-                    return items;
-                },
-                {},
-            ),
+            items: selectorGroup.items.map((selector) => {
+                return {
+                    id: selector.id,
+                    title: selector.title,
+                    sourceType: selector.sourceType,
+                    source: getItemDataSource(selector) as DashTabItemControlData['source'],
+                    placementMode: selector.placementMode,
+                    width: selector.width,
+                };
+            }),
         };
 
         // TODO what is getExtendedItemData from single control?

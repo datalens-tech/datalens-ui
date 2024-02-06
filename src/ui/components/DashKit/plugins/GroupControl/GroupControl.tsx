@@ -11,6 +11,7 @@ import {ResolveThunks, connect} from 'react-redux';
 import {
     DashTabItemControlDataset,
     DashTabItemControlManual,
+    DashTabItemControlSingle,
     DashTabItemGroupControlData,
     Feature,
     StringParams,
@@ -133,13 +134,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 status: LOAD_STATUS.PENDING,
                 silentLoading: true,
             });
-
-            this.clearSilentLoaderTimer();
-            // @ts-ignore
-            // if (this.props.data.source.elementType !== ELEMENT_TYPE.SELECT) {
-            //     this._silentLoaderTimer = setTimeout(this.showSilentLoader, 800);
-            // }
-
             this.init();
         }
     }
@@ -152,7 +146,11 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const {data} = this.props;
         const controlData = data as unknown as DashTabItemGroupControlData;
 
-        const sources = Object.values(controlData.items)
+        if (!Array.isArray(controlData.items)) {
+            return null;
+        }
+
+        const sources = controlData.items
             .filter((item) => 'source' in item)
             .map((item) => item.source);
 
@@ -239,14 +237,14 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         this.initialParams = updatedInitialParams;
     };
 
-    private renderControl(id: string, item: DashTabItemControlManual | DashTabItemControlDataset) {
+    private renderControl(item: DashTabItemControlSingle) {
         const {getDistincts, skipReload, defaults} = this.props;
         const {silentLoading, showSilentLoader} = this.state;
 
         return (
             <Control
-                key={id}
-                id={id}
+                key={item.id}
+                id={item.id}
                 data={item}
                 initialParams={this.initialParams}
                 actualParams={this.state.stateParams}
@@ -319,8 +317,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         return (
             <div>
-                {Object.entries(controlData.items).map(([id, item]) =>
-                    this.renderControl(id, item),
+                {controlData.items.map((item: DashTabItemControlSingle) =>
+                    this.renderControl(item),
                 )}
                 {this.renderButtons()}
             </div>
@@ -339,14 +337,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return null;
     }
 
-    // private showSilentLoader = () => {
-    //     this.setState((prevState) => {
-    //         return prevState.status === LOAD_STATUS.PENDING && prevState.silentLoading
-    //             ? {showSilentLoader: true}
-    //             : null;
-    //     });
-    // };
-
     private renderError() {
         return (
             <div className={b('error')}>
@@ -355,14 +345,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             </div>
         );
     }
-
-    // // public
-    // private getMeta() {
-    //     if (this.chartKitRef && this.chartKitRef.current) {
-    //         this.chartKitRef.current.undeferred();
-    //     }
-    //     return Promise.resolve({});
-    // }
 
     get actualParams(): StringParams {
         return this.props.params;

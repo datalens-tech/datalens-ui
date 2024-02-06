@@ -11,6 +11,7 @@ import {
     DashTabItemControlDataset,
     DashTabItemControlElementSelect,
     DashTabItemControlManual,
+    DashTabItemControlSingle,
     DashTabItemControlSourceType,
     DatasetFieldType,
     Feature,
@@ -50,7 +51,7 @@ import {
 
 type ControlItemSelectProps = {
     id: string;
-    data: DashTabItemControlDataset | DashTabItemControlManual;
+    data: DashTabItemControlSingle;
     defaults: ConfigItem['defaults'];
     status: LoadStatus;
     loadedData: null | ResponseSuccessControls;

@@ -1,7 +1,7 @@
 import {I18n} from 'i18n';
 import {
     DashTabItemControlDataset,
-    DashTabItemControlManual,
+    DashTabItemControlSingle,
     DatasetFieldType,
     Feature,
 } from 'shared';
@@ -45,11 +45,7 @@ export const getRequiredLabel = ({title, required}: {title: string; required?: b
     return Utils.isEnabledFeature(Feature.SelectorRequiredValue) && required ? `${title}*` : title;
 };
 
-export const getLabels = ({
-    controlData,
-}: {
-    controlData: DashTabItemControlDataset | DashTabItemControlManual;
-}) => {
+export const getLabels = ({controlData}: {controlData: DashTabItemControlSingle}) => {
     const title = controlData.title;
     const {showTitle, showInnerTitle, innerTitle, required} = controlData.source;
 

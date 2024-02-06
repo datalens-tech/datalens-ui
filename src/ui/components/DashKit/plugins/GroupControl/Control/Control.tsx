@@ -10,7 +10,7 @@ import {
     DATASET_IGNORED_DATA_TYPES,
     DashTabItemControlData,
     DashTabItemControlDataset,
-    DashTabItemControlManual,
+    DashTabItemControlSingle,
     DashTabItemControlSourceType,
     Feature,
     StringParams,
@@ -59,7 +59,7 @@ const i18nError = I18n.keyset('dash.dashkit-control.error');
 
 type ControlProps = {
     id: string;
-    data: DashTabItemControlManual | DashTabItemControlDataset;
+    data: DashTabItemControlSingle;
     actualParams: StringParams;
     showSilentLoader: boolean;
     onStatusChanged: (status: LoadStatus) => void;
@@ -88,12 +88,6 @@ export const Control = ({
     skipReload,
     onInitialParamsUpdate,
 }: ControlProps) => {
-    // const [status, setStatus] = React.useState(LOAD_STATUS.PENDING);
-    // const [loadedData, setLoadedData] = React.useState<ResponseSuccessControls | null>(null);
-    // const [errorData, setErrorData] = React.useState<ErrorData | null>(null);
-    // const [loadingItems, setLoadingItems] = React.useState(false);
-    // const [validationError, setValidationError] = React.useState(null);
-
     const [{status, loadedData, errorData, loadingItems, validationError, isInit}, dispatch] =
         React.useReducer(reducer, getInitialState());
 
@@ -288,7 +282,7 @@ export const Control = ({
         }
 
         const {param, type} = control;
-        const controlData = data as unknown as DashTabItemControlDataset | DashTabItemControlManual;
+        const controlData = data as unknown as DashTabItemControlSingle;
 
         const {source, placementMode, width} = controlData;
         const {required, operation} = source;
@@ -406,13 +400,6 @@ export const Control = ({
 
         return null;
     };
-
-    // const source = (data as unknown as DashTabItemControlManual | DashTabItemControlDataset).source;
-
-    // const paramIdDebug = ((source as DashTabItemControlDataset['source']).datasetFieldId ||
-    //     (source as DashTabItemControlManual['source']).fieldName ||
-    //     data.param ||
-    //     '') as string;
 
     const {placementMode, width} = data as unknown as DashTabItemControlData;
     const controlWidth = getControlWidth(placementMode, width);

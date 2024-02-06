@@ -16,6 +16,7 @@ import {
     DashTabItemControlDataset,
     DashTabItemControlExternal,
     DashTabItemControlManual,
+    DashTabItemControlSingle,
     DashTabItemControlSourceType,
     Feature,
     StringParams,
@@ -701,9 +702,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 </div>
             );
         }
-        const source = (
-            controlData as unknown as DashTabItemControlManual | DashTabItemControlDataset
-        ).source;
+        const source = (controlData as unknown as DashTabItemControlSingle).source;
 
         const paramIdDebug = ((source as DashTabItemControlDataset['source']).datasetFieldId ||
             (source as DashTabItemControlManual['source']).fieldName ||

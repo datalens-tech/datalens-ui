@@ -328,7 +328,7 @@ function BaseControlDatepicker({
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
-            className={b('datepicker')}
+            className={b('component')}
             hasValidationError={hasValidationError}
             required={required}
         />
@@ -417,7 +417,7 @@ function BaseControlRangeDatepicker({
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
-            className={b('datepicker')}
+            className={b('component')}
             hasValidationError={hasValidationError}
             required={required}
             fillPartialInterval={true}
