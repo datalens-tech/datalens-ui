@@ -19,6 +19,7 @@ export type ControlProps<TProviderData = unknown> = {
         callExternalOnChange?: boolean,
         callChangeByClick?: boolean,
     ) => void;
+    onUpdate?: (data: OnChangeData) => void;
     initialParams?: ChartInitialParams;
 } & Omit<WidgetProps, 'data'>;
 
