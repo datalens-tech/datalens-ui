@@ -105,7 +105,6 @@ export const deleteLock = () => {
                 })
                 .then(() => {
                     dispatch(cleanLock());
-                    return;
                 })
                 .catch((error) => logger.logError('LOCK_DELETE', error));
         }
