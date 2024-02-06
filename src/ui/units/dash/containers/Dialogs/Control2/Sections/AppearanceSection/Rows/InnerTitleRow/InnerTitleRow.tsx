@@ -25,13 +25,8 @@ export const InnerTitleRow = () => {
     const {elementType, showInnerTitle, innerTitle} = useSelector(selectSelectorDialog);
     const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
 
-    const isInnerTitleDisabled =
-        (elementType !== ELEMENT_TYPE.SELECT && elementType !== ELEMENT_TYPE.INPUT) ||
-        isFieldDisabled;
-    const isInnerTitleActive =
-        ((elementType === ELEMENT_TYPE.SELECT || elementType === ELEMENT_TYPE.INPUT) &&
-            showInnerTitle) ??
-        false;
+    const isInnerTitleDisabled = elementType === ELEMENT_TYPE.CHECKBOX || isFieldDisabled;
+    const isInnerTitleActive = (elementType !== ELEMENT_TYPE.CHECKBOX && showInnerTitle) ?? false;
 
     const handleShowInnerTitleUpdate = React.useCallback((showInnerTitle: boolean) => {
         dispatch(
