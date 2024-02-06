@@ -9,7 +9,7 @@
 ### Tests run configuration
 Create `.env` file in root of project. Should be `datalens-ui/.env` and add:
 ```dotenv
-E2E_DOMAIN=http://localhost:3030
+E2E_DOMAIN=http://localhost:8080
 NO_AUTH=true
 ```
 For additional configuration check [list of available ENV variables](documentation/env_configuration.md)
