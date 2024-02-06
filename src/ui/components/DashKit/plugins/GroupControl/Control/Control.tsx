@@ -15,7 +15,7 @@ import {
     Feature,
     StringParams,
 } from 'shared';
-import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {
     ControlCheckbox,
     ControlDatepicker,
@@ -23,6 +23,7 @@ import {
     ControlRangeDatepicker,
 } from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import {CONTROL_TYPE} from 'ui/libs/DatalensChartkit/modules/constants/constants';
+import type {EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
@@ -109,7 +110,7 @@ export const Control = ({
         loadedStatus: LoadStatus,
     ) => {
         //TODO: Add new relations logic
-        const newInitialParams = {...newLoadedData?.defaultParams, ...defaults};
+        const newInitialParams = {...defaults, ...newLoadedData?.defaultParams};
         const initialParamsChanged = !isEqual(newInitialParams, initialParams.params);
 
         if (initialParamsChanged) {
@@ -120,7 +121,6 @@ export const Control = ({
         const statusResponse = getStatus(loadedStatus);
         if (statusResponse) {
             dispatch(setLoadedData({status: statusResponse, loadedData: newLoadedData}));
-
             onStatusChanged(statusResponse);
         }
 
@@ -156,7 +156,7 @@ export const Control = ({
 
     const init = async () => {
         try {
-            const payload = {
+            const payload: EntityRequestOptions = {
                 data: {
                     config: {
                         data: {
@@ -172,7 +172,6 @@ export const Control = ({
 
             dispatch(setStatus({status: LOAD_STATUS.PENDING}));
 
-            // @ts-ignore
             const response = await chartsDataProvider.makeRequest(payload);
 
             if (response === null) {

@@ -504,9 +504,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     renderSelectControl() {
-        const data = this.props.data as unknown as
-            | DashTabItemControlDataset
-            | DashTabItemControlManual;
+        const data = this.props.data as unknown as DashTabItemControlSingle;
         const {id, defaults, getDistincts} = this.props;
         const {loadedData, status, loadingItems, errorData, validationError} = this.state;
 
@@ -531,9 +529,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     renderControls() {
-        const data = this.props.data as unknown as
-            | DashTabItemControlManual
-            | DashTabItemControlDataset;
+        const data = this.props.data as unknown as DashTabItemControlSingle;
 
         const {sourceType} = data;
         const {id} = this.props;
@@ -663,10 +659,11 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             | DashTabItemControlExternal
             | DashTabItemControlManual
             | DashTabItemControlDataset;
-        const sourceType = controlData.sourceType;
+        const {sourceType, source} = controlData;
 
         if (sourceType === DashTabItemControlSourceType.External) {
-            const chartId = (data as unknown as DashTabItemControlExternal).source.chartId;
+            const chartId = source.chartId;
+
             return (
                 <div
                     ref={this.rootNode}
@@ -702,7 +699,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 </div>
             );
         }
-        const source = (controlData as unknown as DashTabItemControlSingle).source;
 
         const paramIdDebug = ((source as DashTabItemControlDataset['source']).datasetFieldId ||
             (source as DashTabItemControlManual['source']).fieldName ||

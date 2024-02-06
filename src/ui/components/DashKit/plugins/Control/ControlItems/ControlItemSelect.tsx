@@ -10,7 +10,6 @@ import {
     ApiV2Parameter,
     DashTabItemControlDataset,
     DashTabItemControlElementSelect,
-    DashTabItemControlManual,
     DashTabItemControlSingle,
     DashTabItemControlSourceType,
     DatasetFieldType,
@@ -295,11 +294,11 @@ export const ControlItemSelect = ({
         }
     };
 
-    const source = data.source;
-    const sourceType = data.sourceType;
+    const {source, sourceType} = data;
     const fieldId =
-        (source as DashTabItemControlDataset['source']).datasetFieldId ||
-        (source as DashTabItemControlManual['source']).fieldName;
+        sourceType === DashTabItemControlSourceType.Dataset
+            ? source.datasetFieldId
+            : source.fieldName;
     const selectedValue = defaults![fieldId];
     const preselectedContent = [{title: selectedValue, value: selectedValue}];
     // @ts-ignore

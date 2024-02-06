@@ -7,7 +7,7 @@ import {DatalensGlobalState, Utils} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
-import {ResolveThunks, connect} from 'react-redux';
+import {connect} from 'react-redux';
 import {
     DashTabItemControlDataset,
     DashTabItemControlManual,
@@ -40,13 +40,8 @@ import './GroupControl.scss';
 const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 
-interface PluginGroupControlProps
-    extends PluginWidgetProps,
-        ControlSettings,
-        StateProps,
-        DispatchProps {}
+interface PluginGroupControlProps extends PluginWidgetProps, ControlSettings, StateProps {}
 
 interface PluginGroupControlState {
     status: LoadStatus;
@@ -146,23 +141,16 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const {data} = this.props;
         const controlData = data as unknown as DashTabItemGroupControlData;
 
-        if (!Array.isArray(controlData.items)) {
-            return null;
-        }
-
-        const sources = controlData.items
+        const paramIdDebug = controlData.items
             .filter((item) => 'source' in item)
-            .map((item) => item.source);
-
-        const paramIdDebug = sources
             .map(
-                (source) =>
+                ({source}) =>
                     (source as DashTabItemControlDataset['source']).datasetFieldId ||
                     (source as DashTabItemControlManual['source']).fieldName ||
                     data.param ||
                     '',
             )
-            .join(', ') as string;
+            .join(', ');
 
         return (
             <div ref={this.rootNode} className={b({mobile: isMobileView})}>
@@ -380,9 +368,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     skipReload: selectSkipReload(state),
 });
 
-const mapDispatchToProps = {};
-
-const GroupControlWithStore = connect(mapStateToProps, mapDispatchToProps, null, {
+const GroupControlWithStore = connect(mapStateToProps, null, null, {
     forwardRef: true,
 })(GroupControl);
 
