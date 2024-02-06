@@ -4,18 +4,52 @@
 
     padding: 15px;
 
+    .markup-indicator {
+        &_size_s .markup-indicator-title {
+            font-size: 13px;
+        }
+
+        &_size_s .markup-indicator-value {
+            font-size: 24px;
+        }
+
+        &_size_m .markup-indicator-title {
+            font-size: 16px;
+        }
+
+        &_size_m .markup-indicator-value {
+            font-size: 48px;
+        }
+
+        &_size_l .markup-indicator-title {
+            font-size: 20px;
+        }
+
+        &_size_l .markup-indicator-value {
+            font-size: 64px;
+        }
+
+        &_size_xl .markup-indicator-title {
+            font-size: 24px;
+        }
+
+        &_size_xl .markup-indicator-value {
+            font-size: 80px;
+        }
+    }
+
     .markup-indicator-title {
+        display: inline-block;
         color: var(--yc-color-text-primary);
-        font-size: 16px;
         font-weight: 500;
-        line-height: 19px;
+        line-height: 1.2;
+        padding-bottom: 0.125em;
     }
 
     .markup-indicator-value {
-        color: rgb(77, 162, 241);
-        font-size: 48px;
-        font-weight: 500;
-        line-height: 61px;
+        display: inline-block;
         white-space: nowrap;
+        font-weight: 500;
+        line-height: 1.2;
     }
 }
