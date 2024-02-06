@@ -8,11 +8,11 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {CreateEntryActionType} from 'ui/units/workbooks/constants';
 import {setCreateWorkbookEntryType} from 'ui/units/workbooks/store/actions';
+import {ChunkItem} from 'ui/units/workbooks/types';
 
 import {ChunkGroup} from '../ChunkGroup/ChunkGroup';
 import {EmptyRow} from '../Row/Row';
 import {WorkbookEntriesTableProps} from '../types';
-import {ChunkItem} from '../useChunkedEntries';
 
 import './MainTabContent.scss';
 

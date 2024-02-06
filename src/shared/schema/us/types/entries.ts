@@ -163,8 +163,6 @@ export interface RenameEntryArgs {
     name: string;
 }
 
-export type ChangeFavoriteEntryResponse = EntryFields[];
-
 export interface CreateFolderResponse extends EntryFields {
     links: EntryFieldLinks;
 }

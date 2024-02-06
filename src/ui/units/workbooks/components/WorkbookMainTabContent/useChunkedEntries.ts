@@ -2,30 +2,12 @@ import React from 'react';
 
 import _ from 'lodash';
 import {EntryScope} from 'shared';
+import {GetEntryResponse} from 'shared/schema';
 import Utils from 'utils';
 
-import {GetEntryResponse} from '../../../../../../shared/schema';
-import {WorkbookEntry} from '../../../types';
+import {ChunkItem, EntryChunkItem, WorkbookEntry} from '../../types';
 
-const CHUNK_SIZE = 100;
-
-type EntryChunkItem = {
-    type: 'entry';
-    item: WorkbookEntry;
-    key: string;
-};
-
-type EmptyChunkItem = {
-    type: 'empty';
-    key: 'empty';
-};
-
-export type ChunkItem = EntryChunkItem | EmptyChunkItem;
-
-export const useChunkedEntries = (
-    entries: GetEntryResponse[],
-    separateByScope?: boolean,
-): ChunkItem[][] => {
+export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] => {
     const chunks = React.useMemo(() => {
         const allowedScopes = new Set([
             EntryScope.Dash,
@@ -44,16 +26,9 @@ export const useChunkedEntries = (
                 return workbookEntry;
             });
 
-        let items: ChunkItem[] = [];
-
         if (workbookEntries.length === 0) {
-            if (separateByScope) return [];
-
-            items.push({
-                type: 'empty',
-                key: 'empty',
-            });
-        } else if (separateByScope) {
+            return [];
+        } else {
             const dashChunk: ChunkItem[] = [];
             const connChunk: ChunkItem[] = [];
             const datasetChunk: ChunkItem[] = [];
@@ -83,16 +58,8 @@ export const useChunkedEntries = (
             });
 
             return [dashChunk, connChunk, datasetChunk, widgetChunk];
-        } else {
-            items = workbookEntries.map<EntryChunkItem>((item) => ({
-                type: 'entry',
-                item,
-                key: item.entryId,
-            }));
         }
-
-        return _.chunk(items, CHUNK_SIZE);
-    }, [entries, separateByScope]);
+    }, [entries]);
 
     return chunks;
 };

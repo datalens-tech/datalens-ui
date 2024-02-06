@@ -4,14 +4,16 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {EntryScope} from 'shared';
+import {getUserId} from 'shared/modules/user';
 import {DIALOG_COPY_ENTRIES_TO_WORKBOOK} from 'ui/components/CopyEntriesToWorkbookDialog';
+import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
 import {CreateEntryActionType} from 'ui/units/workbooks/constants';
 
 import {GetEntryResponse} from '../../../../../../shared/schema';
 import {WorkbookWithPermissions} from '../../../../../../shared/schema/us/types';
 import {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
-import {WorkbookEntry} from '../../../types';
+import {ChunkItem, WorkbookEntry} from '../../../types';
 import {DIALOG_DELETE_ENTRY_IN_NEW_WORKBOOK} from '../../DeleteEntryDialog/DeleteEntryDialog';
 import {DIALOG_DUPLICATE_ENTRY_IN_WORKBOOK} from '../../DuplicateEntryDialog/DuplicateEntryDialog';
 import {DIALOG_RENAME_ENTRY_IN_NEW_WORKBOOK} from '../../RenameEntryDialog/RenameEntryDialog';
@@ -19,7 +21,6 @@ import {DIALOG_RENAME_ENTRY_IN_NEW_WORKBOOK} from '../../RenameEntryDialog/Renam
 import {ChunkGroup} from './ChunkGroup/ChunkGroup';
 import {MainTabContent} from './MainTabContent/MainTabContent';
 import {defaultRowStyle} from './constants';
-import {useChunkedEntries} from './useChunkedEntries';
 
 import './WorkbookEntriesTable.scss';
 
@@ -37,6 +38,7 @@ type WorkbookEntriesTableProps = {
     mapTokens?: Record<string, string>;
     mapErrors?: Record<string, boolean>;
     mapLoaders?: Record<string, boolean>;
+    chunks: ChunkItem[][];
 };
 
 export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
@@ -50,8 +52,19 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         mapTokens,
         mapErrors,
         mapLoaders,
+        chunks,
     }) => {
         const dispatch: AppDispatch = useDispatch();
+
+        React.useEffect(() => {
+            const resolveUsersByIds = getResolveUsersByIdsAction();
+            const userIds = new Set<string>();
+            entries.forEach((entry) => {
+                userIds.add(getUserId(entry.createdBy));
+            });
+
+            dispatch(resolveUsersByIds(Array.from(userIds)));
+        }, [dispatch, entries]);
 
         const onRenameEntry = React.useCallback(
             (entity: WorkbookEntry) => {
@@ -126,7 +139,6 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             [dispatch],
         );
 
-        const chunks = useChunkedEntries(entries, !scope);
         const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = []] = chunks;
 
         return (

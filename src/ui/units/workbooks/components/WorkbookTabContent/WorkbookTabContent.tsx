@@ -21,6 +21,8 @@ import {WorkbookEntriesFilters} from '../../types';
 import {EmptyWorkbookContainer} from '../EmptyWorkbook/EmptyWorkbookContainer';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
 
+import {useChunkedEntries} from './useChunkedEntries';
+
 import './WorkbookTabContent.scss';
 
 const b = block('dl-workbook-tab-content');
@@ -38,6 +40,8 @@ export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filt
     const isEntriesLoading = useSelector(selectWorkbookEntriesIsLoading);
     const workbookEntriesError = useSelector(selectWorkbookEntriesError);
     const nextPageToken = useSelector(selectNextPageToken);
+
+    const chunks = useChunkedEntries(entries);
 
     const dispatch = useDispatch<AppDispatch>();
 
@@ -125,6 +129,7 @@ export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filt
                 workbook={workbook}
                 entries={entries}
                 scope={scope}
+                chunks={chunks}
             />
             {footer}
         </React.Fragment>

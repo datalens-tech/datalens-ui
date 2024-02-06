@@ -14,13 +14,14 @@ import {
 } from '../../store/actions';
 import {selectWorkbookEntriesIsLoading, selectWorkbookItems} from '../../store/selectors';
 import {WorkbookEntriesFilters} from '../../types';
-import {EmptyWorkbookContainer} from '../EmptyWorkbook/EmptyWorkbookContainer';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
+
+import {useChunkedEntries} from './useChunkedEntries';
 
 type Props = {
     filters: WorkbookEntriesFilters;
     workbookId: string;
-    workbook: WorkbookWithPermissions | null;
+    workbook: WorkbookWithPermissions;
 };
 
 const PAGE_SIZE_MAIN_TAB = 10;
@@ -34,6 +35,8 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
     const dispatch = useDispatch<AppDispatch>();
     const entries = useSelector(selectWorkbookItems);
     const isEntriesLoading = useSelector(selectWorkbookEntriesIsLoading);
+
+    const chunks = useChunkedEntries(entries);
 
     React.useEffect(() => {
         dispatch(resetWorkbookEntries());
@@ -193,10 +196,6 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
         return <SmartLoader size="l" />;
     }
 
-    if (!workbook) {
-        return <EmptyWorkbookContainer />;
-    }
-
     return (
         <WorkbookEntriesTable
             refreshEntries={refreshEntries}
@@ -207,6 +206,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
             mapTokens={mapTokens}
             mapErrors={mapErrors}
             mapLoaders={mapLoaders}
+            chunks={chunks}
         />
     );
 });

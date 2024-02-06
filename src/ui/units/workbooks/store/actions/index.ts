@@ -246,13 +246,11 @@ export const getAllWorkbookEntriesSeparately = ({
     workbookId,
     filters,
     scopes,
-    nextPageToken,
     pageSize = 200,
 }: {
     workbookId: string;
     filters: WorkbookEntriesFilters;
     scopes: EntryScope[];
-    nextPageToken?: string;
     pageSize?: number;
 }) => {
     return async (dispatch: WorkbooksDispatch) => {
@@ -263,7 +261,7 @@ export const getAllWorkbookEntriesSeparately = ({
         const args: GetWorkbookEntriesArgs = {
             workbookId,
             pageSize,
-            page: Number(nextPageToken || 0),
+            page: 0,
             orderBy: {
                 field: filters.orderField,
                 direction: filters.orderDirection,
@@ -454,8 +452,8 @@ export const changeFavoriteEntry = ({
     updateInline = false,
 }: {
     entryId: string;
-    isFavorite?: boolean;
-    updateInline: boolean;
+    isFavorite: boolean;
+    updateInline?: boolean;
 }) => {
     return (dispatch: WorkbooksDispatch) => {
         const thenHandler = (data: AddFavoriteResponse | DeleteFavoriteResponse) => {
