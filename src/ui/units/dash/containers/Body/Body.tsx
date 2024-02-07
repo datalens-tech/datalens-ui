@@ -51,9 +51,10 @@ import {
     sortByOrderIdOrLayoutComparator,
     stringifyMemoize,
 } from '../../modules/helpers';
-import {openDialog, openItemDialogAndSetData, setCurrentTabData} from '../../store/actions/dash';
+import {openDialog, openItemDialogAndSetData} from '../../store/actions/dash';
 import {
     TabsHashStates,
+    setCurrentTabData,
     setDashKitRef,
     setErrorMode,
     setHashState,
@@ -416,14 +417,14 @@ class Body extends React.PureComponent<BodyProps> {
                         )}
                         {!settings.hideTabs && <Tabs />}
                         {this.renderDashkit()}
-                        {showEditActionPanel && (
-                            <DashkitActionPanel
-                                items={this.getActionPanelItems()}
-                                className={b('edit-panel', {
-                                    'aside-opened': isSidebarOpened,
-                                })}
-                            />
-                        )}
+                        <DashkitActionPanel
+                            toggleAnimation={true}
+                            disable={!showEditActionPanel}
+                            items={this.getActionPanelItems()}
+                            className={b('edit-panel', {
+                                'aside-opened': isSidebarOpened,
+                            })}
+                        />
                     </div>
                 </div>
             </div>

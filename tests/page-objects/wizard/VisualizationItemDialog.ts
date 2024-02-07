@@ -1,11 +1,15 @@
 import {Page} from '@playwright/test';
 import {
+    ColorMode,
+    DialogColorQa,
     DialogFieldAggregationSelectorValuesQa,
+    DialogFieldBackgroundSettingsQa,
     DialogFieldGroupingSelectorValuesQa,
     DialogFieldLabelModeValuesQa,
     DialogFieldMainSectionQa,
     DialogFieldTypeSelectorValuesQa,
-} from '../../../src/shared/constants';
+    GradientType,
+} from '../../../src/shared';
 
 import {slct, waitForCondition} from '../../utils';
 import {CommonSelectors} from '../constants/common-selectors';
@@ -109,5 +113,23 @@ export default class VisualizationItemDialog {
 
     async clickOnApplyButton() {
         await this.page.click(slct('field-dialog-apply'));
+    }
+
+    async setGradientBackground(gradientType: GradientType) {
+        await this.page.locator(slct(DialogFieldBackgroundSettingsQa.EnableButton)).click();
+        await this.page
+            .locator(slct(DialogFieldBackgroundSettingsQa.FillTypeButtons))
+            .locator(CommonSelectors.RadioButtonOption, {
+                has: this.page.locator(`[value="${ColorMode.GRADIENT}"]`),
+            })
+            .click();
+        await this.page.locator(slct(DialogFieldBackgroundSettingsQa.ButtonColorDialog)).click();
+        await this.page
+            .locator(slct(DialogColorQa.GradientType))
+            .locator(CommonSelectors.RadioButtonOption, {
+                has: this.page.locator(`[value="${gradientType}"]`),
+            })
+            .click();
+        await this.page.locator(slct(DialogColorQa.ApplyButton)).click();
     }
 }

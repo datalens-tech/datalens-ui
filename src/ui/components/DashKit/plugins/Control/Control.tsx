@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
-import {Button, Loader} from '@gravity-ui/uikit';
+import {Loader} from '@gravity-ui/uikit';
 import {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -11,31 +11,20 @@ import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import {ResolveThunks, connect} from 'react-redux';
 import {
-    ApiV2Filter,
-    ApiV2Parameter,
     DATASET_FIELD_TYPES,
     DATASET_IGNORED_DATA_TYPES,
     DashTabItemControlDataset,
-    DashTabItemControlElementSelect,
     DashTabItemControlExternal,
     DashTabItemControlManual,
     DashTabItemControlSourceType,
-    DatasetFieldType,
     Feature,
-    Operations,
     StringParams,
-    resolveIntervalDate,
-    resolveOperation,
-    resolveRelativeDate,
-    splitParamsToParametersAndFilters,
-    transformParamsToUrlParams,
-    transformUrlParamsToParams,
 } from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {isMobileView} from 'ui/utils/mobile';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
 import {ChartKitCustomError} from '../../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
@@ -44,11 +33,8 @@ import {
     ControlDatepicker,
     ControlInput,
     ControlRangeDatepicker,
-    ControlSelect,
 } from '../../../../libs/DatalensChartkit/components/Control/Items/Items';
 import {
-    ChartsData,
-    DatasetFieldsListItem,
     ResponseError,
     ResponseSuccessControls,
 } from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
@@ -67,20 +53,26 @@ import {
 import {adjustWidgetLayout} from '../../utils';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
+import {ControlItemSelect} from './ControlItems/ControlItemSelect';
 import {Error} from './Error/Error';
+import {ELEMENT_TYPE, LOAD_STATUS, TYPE} from './constants';
 import {prerenderMiddleware} from './prerenderMiddleware';
 import {
     ChartControlRef,
     ControlSettings,
-    ControlType,
     ErrorData,
     GetDistincts,
     LoadStatus,
     PluginControlState,
-    SelectControlProps,
     ValidationErrorData,
 } from './types';
-import {getLabels, isValidationError} from './utils';
+import {
+    getDatasetSourceInfo,
+    getLabels,
+    getStatus,
+    isValidRequiredValue,
+    prepareSelectorError,
+} from './utils';
 
 import './Control.scss';
 
@@ -102,46 +94,14 @@ const b = block('dashkit-plugin-control');
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 const i18nError = I18n.keyset('dash.dashkit-control.error');
 
-const ELEMENT_TYPE = {
-    SELECT: 'select',
-    DATE: 'date',
-    INPUT: 'input',
-};
-export const LOAD_STATUS: Record<string, LoadStatus> = {
-    PENDING: 'pending',
-    SUCCESS: 'success',
-    FAIL: 'fail',
-};
-const TYPE: Record<string, ControlType> = {
-    SELECT: 'select',
-    INPUT: 'input',
-    DATEPICKER: 'datepicker',
-    RANGE_DATEPICKER: 'range-datepicker',
-    CHECKBOX: 'checkbox',
-};
-
-// This value is also used in charts
-const LIMIT = 1000;
-
 const CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
 class Control extends React.PureComponent<PluginControlProps, PluginControlState> {
-    static getStatus(status: LoadStatus) {
-        let res = '';
-        for (const [key, val] of Object.entries(LOAD_STATUS)) {
-            if (status === val) {
-                res = key;
-            }
-        }
-        return LOAD_STATUS[res];
-    }
-
     chartKitRef: React.RefObject<ChartsChartKit> = React.createRef<ChartsChartKit>();
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
     _isUnmounted = false;
     _silentLoaderTimer: NodeJS.Timeout | undefined = undefined;
-    _loadingItemsTimer: NodeJS.Timeout | undefined = undefined;
     _cancelSource: any = null;
 
     adjustWidgetLayout = debounce(this.setAdjustWidgetLayout, CONTROL_LAYOUT_DEBOUNCE_TIME);
@@ -407,44 +367,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
     }
 
-    getDatasetSourceInfo(currentLoadedData?: ResponseSuccessControls) {
-        const {data} = this.props;
-        const {datasetFieldId, datasetId} = (data as unknown as DashTabItemControlDataset).source;
-        let datasetFieldType = null;
-
-        const loadedData = currentLoadedData || (this.state.loadedData as unknown as ChartsData);
-
-        let datasetFields: DatasetFieldsListItem[] = [];
-
-        if (loadedData && loadedData.extra.datasets) {
-            const dataset = loadedData.extra.datasets.find((dataset) => dataset.id === datasetId);
-            // when the dataset was changed for the selector.
-            // During the following several renders datasetId is not presented in loadedData.extra.datasets,
-            // datasetId will appears after new loadedData is received.
-            if (dataset) {
-                datasetFields = dataset.fieldsList;
-                const field = dataset.fieldsList.find((field) => field.guid === datasetFieldId);
-
-                if (field) {
-                    datasetFieldType = field.dataType;
-                }
-            }
-        }
-
-        const datasetFieldsMap = datasetFields.reduce((acc, field) => {
-            const fieldData = {
-                fieldType: field.fieldType,
-                guid: field.guid,
-            };
-            acc[field.guid] = fieldData;
-            acc[field.title] = fieldData;
-
-            return acc;
-        }, {} as Record<string, {guid: string; fieldType: DatasetFieldType}>);
-
-        return {datasetId, datasetFieldId, datasetFieldType, datasetFields, datasetFieldsMap};
-    }
-
     setLoadedData(loadedData: ResponseSuccessControls, status: LoadStatus) {
         const isNewRelations =
             Utils.isEnabledFeature(Feature.ShowNewRelations) && this.props.isNewRelations;
@@ -464,7 +386,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             this.initialParams.params = newInitialParams as StringParams;
         }
 
-        const statusResponse = Control.getStatus(status);
+        const statusResponse = getStatus(status);
         if (statusResponse) {
             this.setState({
                 status: statusResponse as LoadStatus,
@@ -483,7 +405,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
     }
 
-    async init() {
+    init = async () => {
         try {
             const {data} = this.props;
 
@@ -549,155 +471,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             this.setErrorData(errorData, LOAD_STATUS.FAIL);
         }
-    }
-
-    onChange(param: string, value: string | string[]) {
-        this.props.onStateAndParamsChange({params: {[param]: value}});
-    }
-
-    // TODO: seems like this function should be in shared/ui
-    getDistincts = async ({
-        searchPattern,
-        nextPageToken,
-    }: {
-        searchPattern: string;
-        nextPageToken: number;
-    }) => {
-        try {
-            const {datasetId, datasetFieldId, datasetFields, datasetFieldsMap} =
-                this.getDatasetSourceInfo();
-
-            const splitParams = splitParamsToParametersAndFilters(
-                transformParamsToUrlParams(this.actualParams),
-                datasetFields,
-            );
-
-            const filtersParams = transformUrlParamsToParams(splitParams.filtersParams);
-
-            const where = Object.entries(filtersParams).reduce(
-                (result, [key, rawValue]) => {
-                    // ignoring the values of the current field when filtering,
-                    // because it is enabled by default with operation: 'ICONTAINS',
-                    // otherwise, we will search among the selected
-                    if (key === datasetFieldId) {
-                        return result;
-                    }
-
-                    const valuesWithOperation = (
-                        Array.isArray(rawValue) ? rawValue : [rawValue]
-                    ).map((item) => resolveOperation(item));
-
-                    if (valuesWithOperation.length > 0 && valuesWithOperation[0]?.value) {
-                        const value = valuesWithOperation[0]?.value;
-                        let operation = valuesWithOperation[0]?.operation;
-                        let values = valuesWithOperation.map((item) => item?.value!);
-
-                        if (
-                            valuesWithOperation.length === 1 &&
-                            value.indexOf('__interval_') === 0
-                        ) {
-                            const resolvedInterval = resolveIntervalDate(value);
-
-                            if (resolvedInterval) {
-                                values = [resolvedInterval.from, resolvedInterval.to];
-                                operation = Operations.BETWEEN;
-                            }
-                        }
-
-                        if (
-                            valuesWithOperation.length === 1 &&
-                            value.indexOf('__relative_') === 0
-                        ) {
-                            const resolvedRelative = resolveRelativeDate(value);
-
-                            if (resolvedRelative) {
-                                values = [resolvedRelative];
-                            }
-                        }
-
-                        result.push({
-                            column: key,
-                            operation,
-                            values,
-                        });
-                    }
-
-                    return result;
-                },
-                [
-                    {
-                        column: datasetFieldId,
-                        operation: 'ICONTAINS',
-                        values: [searchPattern],
-                    },
-                ],
-            );
-
-            const filters: ApiV2Filter[] = where
-                .filter((el) => {
-                    return datasetFieldsMap[el.column]?.fieldType !== DatasetFieldType.Measure;
-                })
-                .map<ApiV2Filter>((filter) => {
-                    return {
-                        ref: {type: 'id', id: filter.column},
-                        operation: filter.operation,
-                        values: filter.values,
-                    };
-                });
-
-            const parameter_values: ApiV2Parameter[] =
-                splitParams.parametersParams.map<ApiV2Parameter>(([key, value]) => {
-                    return {
-                        ref: {type: 'id', id: key},
-                        value,
-                    };
-                });
-
-            const {result} = await this.props.getDistincts!({
-                datasetId,
-                workbookId: this.props.workbookId,
-                fields: [
-                    {
-                        ref: {type: 'id', id: datasetFieldId},
-                        role_spec: {role: 'distinct'},
-                    },
-                ],
-                limit: LIMIT,
-                offset: LIMIT * nextPageToken,
-                filters,
-                parameter_values,
-            });
-
-            return {
-                items: result.data.Data.map(([value]) => ({value, title: value})),
-                nextPageToken: result.data.Data.length < LIMIT ? undefined : nextPageToken + 1,
-            };
-        } catch (error) {
-            logger.logError('DashKit: Control getDistincts failed', error);
-            console.error('SELECT_GET_ITEMS_FAILED', error);
-            throw error;
-        }
     };
 
-    getItems = async ({
-        searchPattern,
-        exactKeys,
-        nextPageToken = 0,
-    }: {
-        searchPattern: string;
-        exactKeys: string[];
-        nextPageToken?: number;
-    }) => {
-        if (searchPattern || (!searchPattern && nextPageToken)) {
-            return this.getDistincts({searchPattern, nextPageToken});
-        } else if (exactKeys) {
-            return {
-                items: exactKeys.map((value) => ({value, title: value})),
-                nextPageToken: nextPageToken + 1,
-            };
-        }
-
-        return {items: []};
+    onChange = (param: string, value: string | string[]) => {
+        this.props.onStateAndParamsChange({params: {[param]: value}});
     };
 
     onChangeExternal = ({type, data}: OnChangeData) => {
@@ -724,114 +501,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             : this.setLoadedData({data, requestId} as any, LOAD_STATUS.FAIL);
     };
 
-    onOpenChange = ({open}: {open: boolean}) => {
-        clearTimeout(this._loadingItemsTimer as NodeJS.Timeout);
-
-        if (this.state.status === LOAD_STATUS.PENDING) {
-            if (open) {
-                this.showItemsLoader();
-            } else {
-                // A delay for displaying the Loader in the Popup, to prevent loading blinking while closing.
-                this._loadingItemsTimer = setTimeout(() => {
-                    if (this.state.status === LOAD_STATUS.PENDING) {
-                        this.showItemsLoader();
-                    }
-                }, 150);
-            }
-        }
-    };
-
-    getErrorText = (data: ErrorData['data']) => {
-        if (typeof data?.error?.code === 'string') {
-            return data.error.code;
-        }
-        if (typeof data?.error === 'string') {
-            return data.error;
-        }
-        if (typeof data?.message === 'string') {
-            return data.message;
-        }
-        if (data?.status && data.status === 504) {
-            return i18nError('label_error-timeout');
-        }
-
-        return i18nError('label_error');
-    };
-
-    prepareSelectorError = (data: ErrorData['data'], requestId?: string) => {
-        const errorBody = data?.error?.details?.sources?.distincts?.body;
-        if (errorBody) {
-            return {
-                isCustomError: true,
-                details: {
-                    source: {
-                        code: errorBody.code,
-                        details: errorBody.details,
-                        debug: errorBody.debug || (requestId ? {requestId} : ''),
-                    },
-                },
-                message: errorBody.message,
-                code: data.error?.code || '',
-            };
-        }
-
-        const errorContent = data?.error;
-        let debugInfo = errorContent?.debug || '';
-        if (typeof errorContent?.debug === 'object' && requestId) {
-            debugInfo = {...errorContent?.debug, requestId};
-        }
-
-        return {
-            ...errorContent,
-            debug: debugInfo,
-            message: this.getErrorText(data),
-            isCustomError: true,
-        };
-    };
-
-    getErrorContent() {
-        const {errorData} = this.state;
-        const data = errorData?.data;
-        const errorText = this.getErrorText(data || {});
-        const errorTitle = data?.title;
-
-        const buttonsSize = isMobileView ? MOBILE_SIZE.BUTTON : 's';
-        const buttonsWidth = isMobileView ? 'max' : 'auto';
-
-        return (
-            <div className={b('error', {inside: true, mobile: isMobileView})}>
-                <span className={b('error-text')} title={errorText}>
-                    {errorTitle || errorText}
-                </span>
-                <div className={b('buttons')}>
-                    <Button
-                        size={buttonsSize}
-                        onClick={() => {
-                            this.showItemsLoader();
-                            this.init();
-                        }}
-                        width={buttonsWidth}
-                    >
-                        {i18n('button_retry')}
-                    </Button>
-                    <Button
-                        size={buttonsSize}
-                        view="flat"
-                        onClick={() =>
-                            this.props.openDialogErrorWithTabs({
-                                error: this.prepareSelectorError(data || {}) as ChartKitCustomError,
-                                title: errorTitle,
-                            })
-                        }
-                        width={buttonsWidth}
-                    >
-                        {i18n('button_details')}
-                    </Button>
-                </div>
-            </div>
-        );
-    }
-
     renderSilentLoader() {
         if (this.state.showSilentLoader) {
             return (
@@ -852,7 +521,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 <Error
                     onClick={() =>
                         this.props.openDialogErrorWithTabs({
-                            error: this.prepareSelectorError(
+                            error: prepareSelectorError(
                                 errorData?.data || {},
                                 errorData?.requestId,
                             ) as ChartKitCustomError,
@@ -868,90 +537,29 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         );
     }
 
-    renderSelector() {
-        const {defaults, data, editMode, id} = this.props;
+    renderSelectControl() {
+        const {id, data, defaults, editMode, getDistincts} = this.props;
+        const {loadedData, status, loadingItems, errorData, validationError} = this.state;
 
-        const {loadedData, status, loadingItems} = this.state;
-        const controlData = data as unknown as DashTabItemControlDataset | DashTabItemControlManual;
-        const source = controlData.source;
-        const sourceType = controlData.sourceType;
-        const fieldId =
-            (source as DashTabItemControlDataset['source']).datasetFieldId ||
-            (source as DashTabItemControlManual['source']).fieldName;
-        const selectedValue = defaults![fieldId];
-        const preselectedContent = [{title: selectedValue, value: selectedValue}];
-        // @ts-ignore
-        const content = loadedData?.uiScheme?.controls[0].content;
-        const emptyPaceholder = Utils.isEnabledFeature(Feature.EmptySelector)
-            ? i18n('placeholder_empty')
-            : undefined;
-
-        const preparedValue = unwrapFromArrayAndSkipOperation(this.actualParams[fieldId]);
-
-        // for first initialization of control
-        const initialValidationError = isValidationError({
-            required: source.required,
-            value: preparedValue,
-        })
-            ? i18n('value_required')
-            : null;
-        const validationError = this.state.validationError || initialValidationError;
-
-        const placeholder =
-            Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
-                ? validationError
-                : emptyPaceholder;
-
-        const onChange = (value: string | string[]) => {
-            const isValid = this.checkValueValidation({
-                required: source.required,
-                value,
-            });
-
-            if (!isValid) {
-                return;
-            }
-
-            const valueWithOperation = addOperationForValue({
-                value,
-                operation: source.operation,
-            });
-
-            this.onChange(fieldId, valueWithOperation);
-        };
-
-        const {label, innerLabel} = getLabels({controlData});
-
-        const props: SelectControlProps = {
-            widgetId: id,
-            content: content || preselectedContent,
-            label,
-            innerLabel,
-            param: fieldId,
-            multiselect: (source as DashTabItemControlElementSelect).multiselectable,
-            type: TYPE.SELECT,
-            className: b('item'),
-            key: fieldId,
-            value: preparedValue as string,
-            editMode,
-            onChange,
-            onOpenChange: this.onOpenChange,
-            loadingItems,
-            placeholder,
-            required: source.required,
-            hasValidationError: Boolean(validationError),
-        };
-
-        if (status === LOAD_STATUS.FAIL) {
-            props.errorContent = this.getErrorContent();
-            props.itemsLoaderClassName = b('select-loader');
-        }
-
-        if (props.content.length >= LIMIT && sourceType === DashTabItemControlSourceType.Dataset) {
-            props.getItems = this.getItems;
-        }
-
-        return <ControlSelect {...props} />;
+        return (
+            <ControlItemSelect
+                id={id}
+                data={data}
+                defaults={defaults}
+                editMode={editMode}
+                status={status}
+                loadedData={loadedData}
+                loadingItems={loadingItems}
+                actualParams={this.actualParams}
+                onChange={this.onChange}
+                init={this.init}
+                showItemsLoader={this.showItemsLoader}
+                validationError={validationError}
+                errorData={errorData}
+                validateValue={this.validateValue}
+                getDistincts={getDistincts}
+            />
+        );
     }
 
     renderControls() {
@@ -999,22 +607,18 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const preparedValue = unwrapFromArrayAndSkipOperation(this.actualParams[param]);
 
-            // for first initialization of control
-            const initialValidationError = isValidationError({
+            const validationError = this.getValidationError({
                 required,
                 value: preparedValue,
-            })
-                ? i18n('value_required')
-                : null;
-            const validationError = this.state.validationError || initialValidationError;
+            });
 
             const onChange = (value: string | string[]) => {
-                const isValid = this.checkValueValidation({
+                const hasError = this.validateValue({
                     required,
                     value,
                 });
 
-                if (!isValid) {
+                if (hasError) {
                     return;
                 }
 
@@ -1045,7 +649,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             if (type === TYPE.RANGE_DATEPICKER || type === TYPE.DATEPICKER) {
                 let fieldType = source?.fieldType || null;
                 if (sourceType === DashTabItemControlSourceType.Dataset) {
-                    const {datasetFieldType} = this.getDatasetSourceInfo();
+                    const {datasetFieldType} = getDatasetSourceInfo({
+                        data: this.props.data,
+                        actualLoadedData: this.state.loadedData,
+                    });
                     fieldType = datasetFieldType;
                 }
                 if (
@@ -1136,13 +743,19 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             <div ref={this.rootNode} className={b({mobile: isMobileView})}>
                 {this.renderSilentLoader()}
                 <DebugInfoTool label={'paramId'} value={paramIdDebug} modType={'corner'} />
-                {source.elementType === TYPE.SELECT ? this.renderSelector() : this.renderControls()}
+                {source.elementType === TYPE.SELECT
+                    ? this.renderSelectControl()
+                    : this.renderControls()}
             </div>
         );
     }
 
     private checkDatasetFieldType(loadedData: ResponseSuccessControls) {
-        const {datasetFieldType} = this.getDatasetSourceInfo(loadedData);
+        const {datasetFieldType} = getDatasetSourceInfo({
+            currentLoadedData: loadedData,
+            data: this.props.data,
+            actualLoadedData: this.state.loadedData,
+        });
 
         if (
             datasetFieldType &&
@@ -1165,7 +778,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             return;
         }
 
-        const statusResponse = Control.getStatus(status);
+        const statusResponse = getStatus(status);
         if (statusResponse) {
             this.setState({
                 status: statusResponse as LoadStatus,
@@ -1177,16 +790,39 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
     }
 
-    private checkValueValidation(args: ValidationErrorData) {
-        if (isValidationError(args)) {
+    private setValidationError(hasError?: boolean) {
+        if (hasError) {
             this.setState({validationError: i18n('value_required')});
-            return false;
+            return;
         }
 
         if (this.state.validationError) {
             this.setState({validationError: null});
         }
-        return true;
+    }
+
+    private validateValue = (args: ValidationErrorData) => {
+        const hasError = isValidRequiredValue(args);
+        this.setValidationError(hasError);
+
+        return hasError;
+    };
+
+    private getValidationError({required, value}: {required?: boolean; value: string | string[]}) {
+        let validationError = null;
+
+        if (required) {
+            // for first initialization of control
+            const initialValidationError = isValidRequiredValue({
+                required,
+                value,
+            })
+                ? i18n('value_required')
+                : null;
+            validationError = this.state.validationError || initialValidationError;
+        }
+
+        return validationError;
     }
 }
 

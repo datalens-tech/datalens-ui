@@ -68,6 +68,7 @@ export class Datepicker extends React.PureComponent {
         required: PropTypes.bool,
         hasValidationError: PropTypes.bool,
         fillPartialInterval: PropTypes.bool,
+        label: PropTypes.string,
     };
 
     static defaultProps = datepickerDefaultProps;
@@ -536,6 +537,7 @@ export class Datepicker extends React.PureComponent {
             className,
             popupClassName,
             hasValidationError,
+            label,
         } = this.props;
         const {searchText, active, error, from} = this.state;
 
@@ -568,6 +570,7 @@ export class Datepicker extends React.PureComponent {
                                     controlProps={{
                                         className: b('input', {error: hasPlaceholderError}),
                                     }}
+                                    label={label}
                                 />
                                 {mobile && (
                                     <div

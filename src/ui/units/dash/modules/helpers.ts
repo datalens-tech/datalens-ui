@@ -1,6 +1,12 @@
 import React from 'react';
 
-import {Config, ConfigItem, ConfigItemData, extractIdsFromConfig} from '@gravity-ui/dashkit';
+import {
+    Config,
+    ConfigItem,
+    ConfigItemData,
+    ConfigLayout,
+    extractIdsFromConfig,
+} from '@gravity-ui/dashkit';
 import assignWith from 'lodash/assignWith';
 import memoize from 'lodash/memoize';
 import throttle from 'lodash/throttle';
@@ -19,7 +25,10 @@ import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 import {ITEM_TYPE} from '../containers/Dialogs/constants';
 import {TabsHashStates} from '../store/actions/dashTyped';
 
-export type CopiedConfigData = ConfigItem & Omit<ConfigItemData, 'tabs'>;
+export type CopiedConfigData = ConfigItem &
+    Omit<ConfigItemData, 'tabs'> & {
+        layout?: ConfigLayout;
+    };
 
 export const getPastedWidgetData: () => CopiedConfigData | null = () => {
     const itemData = Utils.restore(COPIED_WIDGET_STORAGE_KEY);

@@ -31,6 +31,7 @@ import {
     VisualizationLayerShared,
     VisualizationLayerType,
     VisualizationWithLayersShared,
+    WizardVisualizationId,
     createMeasureNames,
     filterUpdatesByDatasetId,
     getResultSchemaFromDataset,
@@ -796,6 +797,7 @@ interface PrivateReceiveVisualizationArgs {
     sort?: Sort[];
     shapes?: Field[];
     segments?: Field[];
+    tooltips?: Field[];
 }
 
 function _receiveVisualization({
@@ -806,18 +808,18 @@ function _receiveVisualization({
     sort,
     shapes,
     segments,
+    tooltips,
 }: PrivateReceiveVisualizationArgs) {
     const availableVisualizations = getAvailableVisualizations();
-    const presetVisualization = availableVisualizations.find((presetVisualization) => {
-        return presetVisualization.id === visualization.id;
-    }) as unknown as Shared['visualization'] | null;
+    const presetVisualization = availableVisualizations.find(({id}) => id === visualization.id) as
+        | Shared['visualization']
+        | null;
 
     if (!presetVisualization) {
         throw new Error('Unknown visualization');
     }
 
     const placeholders = [...(visualization.placeholders || [])];
-
     const fields = datasets.reduce((result: Field[], dataset: Dataset) => {
         return [...result, ...getResultSchemaFromDataset(dataset)] as Field[];
     }, []);
@@ -876,11 +878,11 @@ function _receiveVisualization({
             _receiveVisualization({
                 visualization: layer,
                 datasets,
-                filters,
-                colors,
-                sort,
-                shapes,
-                segments,
+                filters: layer.commonPlaceholders.filters,
+                colors: layer.commonPlaceholders.colors,
+                sort: layer.commonPlaceholders.sort,
+                shapes: layer.commonPlaceholders.shapes,
+                tooltips: layer.commonPlaceholders.tooltips,
             });
         });
     } else {
@@ -890,35 +892,12 @@ function _receiveVisualization({
     // Placeholders are recorded as new arrivals
     visualization.placeholders = placeholders;
 
-    if (filters && filters.length) {
-        filters.forEach((item) => {
-            mutateAndValidateItem({fields, item: item as unknown as Field});
-        });
-    }
-
-    if (colors && colors.length) {
-        colors.forEach((item) => {
-            mutateAndValidateItem({fields, item});
-        });
-    }
-
-    if (sort && sort.length) {
-        sort.forEach((item) => {
-            mutateAndValidateItem({fields, item});
-        });
-    }
-
-    if (shapes && shapes.length) {
-        shapes.forEach((item) => {
-            mutateAndValidateItem({fields, item});
-        });
-    }
-
-    if (segments && segments.length) {
-        segments.forEach((item) => {
-            mutateAndValidateItem({fields, item});
-        });
-    }
+    filters?.forEach((item) => mutateAndValidateItem({fields, item: item as unknown as Field}));
+    colors?.forEach((item) => mutateAndValidateItem({fields, item}));
+    sort?.forEach((item) => mutateAndValidateItem({fields, item}));
+    shapes?.forEach((item) => mutateAndValidateItem({fields, item}));
+    segments?.forEach((item) => mutateAndValidateItem({fields, item}));
+    tooltips?.forEach((item) => mutateAndValidateItem({fields, item}));
 }
 
 interface ReceiveVisualizationArgs {
@@ -987,9 +966,10 @@ export function receiveVisualization({
         sort,
         shapes,
         segments,
+        tooltips,
     });
 
-    if (selectedVisualization.id === 'pivotTable') {
+    if (selectedVisualization.id === WizardVisualizationId.PivotTable) {
         const visualizationAndFields = validatedAndUpdatePivotTableFields({
             colors: updatedColors,
             visualization: selectedVisualization,

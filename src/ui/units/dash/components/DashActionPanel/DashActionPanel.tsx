@@ -31,8 +31,8 @@ import {ICONS_MENU_DEFAULT_SIZE} from '../../../../libs/DatalensChartkit/menu/Me
 import navigateHelper from '../../../../libs/navigateHelper';
 import {isEmbeddedMode} from '../../../../utils/embedded';
 import {DIALOG_TYPE} from '../../containers/Dialogs/constants';
-import {purgeData} from '../../store/actions/dash';
 import {
+    purgeData,
     saveDashAsDraft,
     saveDashAsNewDash,
     setActualDash,
@@ -178,7 +178,6 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     handlerSaveAsNewClick = async () => {
         if (this.props.entryDialoguesRef.current) {
             const {entry, data, lockToken} = this.props.dashEntry;
-
             const response = await this.props.entryDialoguesRef.current.open({
                 dialog: EntryDialogName.SaveAsNew,
                 dialogProps: {

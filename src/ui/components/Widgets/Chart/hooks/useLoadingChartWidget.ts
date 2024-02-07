@@ -110,7 +110,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         clearedOuterParams,
     } = props;
 
-    const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts;
+    const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts ?? true;
 
     const tabs = props.tabs as WidgetPluginDataWithTabs['tabs'];
 

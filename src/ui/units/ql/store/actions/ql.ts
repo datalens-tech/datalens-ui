@@ -61,7 +61,7 @@ import {
     VisualizationStatus,
 } from '../../constants';
 import {prepareChartDataBeforeSave} from '../../modules/helpers';
-import {getAvailableQlVisualizations, getDefaultQlVisualization} from '../../utils/visualization';
+import {getDefaultQlVisualization, getQlVisualization} from '../../utils/visualization';
 import {
     getEntry,
     getGridSchemes,
@@ -747,8 +747,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 const loadedVisualization = entry.data.shared
                     .visualization as Shared['visualization'];
 
-                const {id: loadedVisualizationId, placeholders: loadedVisualizationPlaceholders} =
-                    loadedVisualization;
+                const {placeholders: loadedVisualizationPlaceholders} = loadedVisualization;
 
                 // Clone the parameters so as not to transform them into entry
                 const params = entry.data.shared.params
@@ -792,13 +791,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                 dispatch(setWizardExtraSettings(extraSettings));
 
-                const fixedVisualizationId =
-                    loadedVisualizationId === 'table' ? 'flatTable' : loadedVisualizationId;
-
-                const availableVisualizations = getAvailableQlVisualizations();
-                const visualization = (availableVisualizations.find((someVisualization) => {
-                    return someVisualization.id === fixedVisualizationId;
-                }) || getDefaultQlVisualization()) as Shared['visualization'];
+                const visualization = getQlVisualization(loadedVisualization);
 
                 dispatch(
                     setVisualizationWizard({
