@@ -424,12 +424,6 @@ function dash(state = initialState, action) {
             return newState;
         }
 
-        case actionTypes.TOGGLE_FULLSCREEN_MODE:
-            return {
-                ...state,
-                isFullscreenMode: !state.isFullscreenMode,
-            };
-
         default:
             return dashTypedReducer(state, action);
     }

@@ -2,7 +2,7 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
-import {DashEntry, EntryUpdateMode} from 'shared';
+import {DashData, EntryUpdateMode} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import {SaveAsNewDashArgs} from 'ui/units/dash/store/actions/dashTyped';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
@@ -15,7 +15,7 @@ import {EntryDialogProps} from '../types';
 
 export interface DialogEntrySaveAsNewProps extends EntryDialogProps {
     entryData: {
-        data: DashEntry;
+        data: DashData;
         lockToken: string | null;
         mode: EntryUpdateMode;
         meta: {is_release: boolean};
