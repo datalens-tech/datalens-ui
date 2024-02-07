@@ -5,7 +5,7 @@ import {useEffectOnce} from 'ui';
 import {registry} from 'ui/registry';
 
 import {DIALOG_TYPE} from '../../containers/Dialogs/constants';
-import {closeDialog} from '../../store/actions/dash';
+import {closeDialog} from '../../store/actions/dialogs/actions';
 
 import Connections from './Connections/Connections';
 import Control2 from './Control2/Control2';
