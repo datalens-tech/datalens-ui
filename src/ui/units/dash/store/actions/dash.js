@@ -27,10 +27,12 @@ import {
 import {
     DOES_NOT_EXIST_ERROR_TEXT,
     NOT_FOUND_ERROR_TEXT,
-    getBeforeOpenDialogItemAction,
     prepareLoadedData,
     removeParamAndUpdate,
 } from './helpers';
+
+// TODO CHARTS-6672 cleanup reexport after cleaning all js
+export * from './dialogs/actions';
 
 const i18n = I18n.keyset('dash.store.view');
 
@@ -460,23 +462,3 @@ export const save = (mode, isDraft = false) => {
         }
     };
 };
-
-export const openDialog = (dialogType) => ({
-    type: actionTypes.OPEN_DIALOG,
-    payload: {openedDialog: dialogType},
-});
-
-export const openItemDialog = (data) => ({type: actionTypes.OPEN_ITEM_DIALOG, payload: data});
-
-export const openItemDialogAndSetData = (data) => {
-    return (dispatch) => {
-        const beforeOpenDialogItem = getBeforeOpenDialogItemAction();
-        dispatch(beforeOpenDialogItem(data));
-        dispatch(openItemDialog(data));
-    };
-};
-
-export const closeDialog = () => ({
-    type: actionTypes.CLOSE_DIALOG,
-    payload: {openedDialog: null, openedItemId: null},
-});
