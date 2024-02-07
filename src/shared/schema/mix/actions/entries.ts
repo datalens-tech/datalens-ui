@@ -77,8 +77,8 @@ export const entriesActions = {
         const filteredDatasetsIds = filterDatasetsIdsForCheck(entries);
         if (filteredDatasetsIds.length) {
             const {result: datasets} = await typedApi.bi.checkDatasetsForPublication({
-                workbookId,
                 datasetsIds: filteredDatasetsIds,
+                workbookId,
             });
             if (datasets.some((datasetEntry) => !datasetEntry.allowed)) {
                 const errorMessage = JSON.stringify(

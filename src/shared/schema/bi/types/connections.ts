@@ -58,7 +58,7 @@ export type GetConnectorsResponse = {
 
 export type GetConnectionResponse = ConnectionData;
 
-export type GetConnectionArgs = BaseArgs & {workbookId: WorkbookId};
+export type GetConnectionArgs = BaseArgs & WorkbookId;
 
 export type CreateConnectionResponse = {
     id: string;
@@ -78,7 +78,7 @@ export type UpdateConnectionArgs = BaseArgs & ConnectionData;
 
 export type VerifyConnectionResponse = {};
 
-export type VerifyConnectionArgs = BaseArgs & ConnectionData & {workbookId: WorkbookId};
+export type VerifyConnectionArgs = BaseArgs & ConnectionData & WorkbookId;
 
 export type VerifyConnectionParamsResponse = {};
 
@@ -89,17 +89,17 @@ export type GetConnectionSourcesResponse = {
     freeform_sources: Record<string, string>[];
 };
 
-export type GetConnectionSourcesArgs = BaseArgs & {workbookId: WorkbookId};
+export type GetConnectionSourcesArgs = BaseArgs & WorkbookId;
 
 export type GetConnectionSourceSchemaResponse = {
     raw_schema: Record<string, string>[];
 };
 
-export type GetConnectionSourceSchemaArgs = BaseArgs & {
-    workbookId: WorkbookId;
-    source: {
-        title: string;
-        group: string[];
-        id: string;
+export type GetConnectionSourceSchemaArgs = BaseArgs &
+    WorkbookId & {
+        source: {
+            title: string;
+            group: string[];
+            id: string;
+        };
     };
-};

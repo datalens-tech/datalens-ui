@@ -69,6 +69,7 @@ import {
     canEdit,
     selectCurrentTab,
     selectCurrentTabId,
+    selectDashWorkbookId,
     selectEntryId,
     selectSettings,
     selectShowTableOfContent,
@@ -358,6 +359,7 @@ class Body extends React.PureComponent<BodyProps> {
                     getPreparedCopyItemOptions: (itemToCopy: PreparedCopyItemOptions) => {
                         return this.getPreparedCopyItemOptions(itemToCopy, tabData);
                     },
+                    workbookId: this.props.workbookId,
                 }}
                 onItemEdit={this.props.openItemDialogAndSetData}
                 onChange={this.onChange}
@@ -480,6 +482,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     tabs: selectTabs(state),
     tabId: selectCurrentTabId(state),
     isSidebarOpened: !selectAsideHeaderIsCompact(state),
+    workbookId: selectDashWorkbookId(state),
 });
 
 const mapDispatchToProps = {

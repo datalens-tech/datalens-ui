@@ -13,7 +13,14 @@ import './Preview.scss';
 
 const b = block('chart-preview');
 
-const Preview = ({chartData, onLoadData, queryParams, widgetRef, actionParamsEnabled}) => {
+const Preview = ({
+    chartData,
+    onLoadData,
+    queryParams,
+    widgetRef,
+    actionParamsEnabled,
+    workbookId,
+}) => {
     const onLoad = (result) => {
         const status = result.status === Status.Success ? Status.Success : Status.Failed;
         onLoadData({data: result.data, status});
@@ -29,6 +36,7 @@ const Preview = ({chartData, onLoadData, queryParams, widgetRef, actionParamsEna
                 onChartLoad={onLoad}
                 actionParamsEnabled={actionParamsEnabled}
                 forwardedRef={widgetRef}
+                workbookId={workbookId}
             />
         </div>
     );
@@ -46,6 +54,7 @@ Preview.propTypes = {
     queryParams: PropTypes.object,
     widgetRef: PropTypes.object,
     actionParamsEnabled: PropTypes.bool,
+    workbookId: PropTypes.string,
 };
 
 const MemoPreview = React.memo(Preview);
@@ -86,6 +95,7 @@ PreviewWrap.propTypes = {
     chartData: PropTypes.shape({
         updateKey: PropTypes.number.isRequired,
     }),
+    workbookId: PropTypes.string,
 };
 
 export default PreviewWrap;

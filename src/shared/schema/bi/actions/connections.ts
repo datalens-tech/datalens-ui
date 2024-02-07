@@ -31,14 +31,12 @@ import {
 const PATH_PREFIX = '/api/v1';
 
 export const actions = {
-    // ? no use cases
     ensureUploadRobot: createAction<EnsureUploadRobotResponse, EnsureUploadRobotArgs>({
         method: 'POST',
         path: ({connectionId}) =>
             `${PATH_PREFIX}/connections/${filterUrlFragment(connectionId)}/ensure_upload_robot`,
         params: (_, headers) => ({headers}),
     }),
-    // ? no use cases
     getAvailableCounters: createAction<GetAvailableCountersResponse, GetAvailableCountersArgs>({
         method: 'GET',
         path: ({connectionId}) =>
@@ -47,13 +45,11 @@ export const actions = {
             )}/metrica_available_counters`,
         params: (_, headers) => ({headers}),
     }),
-    // -
     getConnectors: createAction<GetConnectorsResponse>({
         method: 'GET',
         path: () => `${PATH_PREFIX}/info/connectors`,
         params: (_, headers) => ({headers}),
     }),
-    // +
     getConnection: createAction<GetConnectionResponse, GetConnectionArgs>({
         method: 'GET',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}`,
@@ -61,14 +57,12 @@ export const actions = {
             headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
         }),
     }),
-    // -
     createConnection: createAction<CreateConnectionResponse, CreateConnectionArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/connections`,
         params: (body, headers) => ({body, headers}),
         transformResponseError: transformConnectionResponseError,
     }),
-    // +
     verifyConnection: createAction<VerifyConnectionResponse, VerifyConnectionArgs>({
         method: 'POST',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/test_connection/${connectionId}`,
@@ -78,7 +72,6 @@ export const actions = {
         }),
         transformResponseError: transformConnectionResponseError,
     }),
-    // -
     verifyConnectionParams: createAction<
         VerifyConnectionParamsResponse,
         VerifyConnectionParamsArgs
@@ -88,20 +81,17 @@ export const actions = {
         params: (body, headers) => ({body, headers}),
         transformResponseError: transformConnectionResponseError,
     }),
-    // -
     updateConnection: createAction<UpdateConnectionResponse, UpdateConnectionArgs>({
         method: 'PUT',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}`,
         params: ({connectionId: _connectionId, ...body}, headers) => ({body, headers}),
         transformResponseError: transformConnectionResponseError,
     }),
-    // -
     deleteConnnection: createAction<DeleteConnectionResponse, DeleteConnectionArgs>({
         method: 'DELETE',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/${filterUrlFragment(connectionId)}`,
         params: (_, headers) => ({headers}),
     }),
-    // +
     getConnectionSources: createAction<GetConnectionSourcesResponse, GetConnectionSourcesArgs>({
         method: 'GET',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}/info/sources`,
@@ -109,7 +99,6 @@ export const actions = {
             headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
         }),
     }),
-    // +
     getConnectionSourceSchema: createAction<
         GetConnectionSourceSchemaResponse,
         GetConnectionSourceSchemaArgs
@@ -121,7 +110,6 @@ export const actions = {
             headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
         }),
     }),
-    // -
     getConnectorSchema: createAction<GetConnectorSchemaResponse, GetConnectorSchemaArgs>({
         method: 'GET',
         path: ({type, mode}) => `${PATH_PREFIX}/info/connectors/forms/${type}/${mode}`,

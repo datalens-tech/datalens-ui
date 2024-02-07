@@ -40,7 +40,6 @@ const API_DATA_V1 = '/api/data/v1';
 const API_DATA_V2 = '/api/data/v2';
 
 export const actions = {
-    // +
     getSources: createAction<GetSourceResponse, GetSourceArgs>({
         method: 'GET',
         path: ({connectionId}) =>
@@ -51,7 +50,6 @@ export const actions = {
         }),
         timeout: TIMEOUT_60_SEC,
     }),
-    // +
     getDatasetByVersion: createAction<GetDatasetByVersionResponse, GetDatasetByVersionArgs>({
         method: 'GET',
         path: ({datasetId, version}) =>
@@ -62,13 +60,11 @@ export const actions = {
             headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
         }),
     }),
-    // -
     getFieldTypes: createAction<GetFieldTypesResponse>({
         method: 'GET',
         path: () => `${API_V1}/info/field_types`,
         params: (_, headers) => ({headers}),
     }),
-    // +
     getDataSetFieldsById: createAction<GetDataSetFieldsByIdResponse, GetDataSetFieldsByIdArgs>({
         method: 'GET',
         endpoint: 'datasetDataApiEndpoint',
@@ -77,7 +73,6 @@ export const actions = {
             headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
         }),
     }),
-    // -
     embedsGetDataSetFieldsById: createAction<
         GetDataSetFieldsByIdResponse,
         Omit<GetDataSetFieldsByIdArgs, 'workbookId'>
@@ -87,7 +82,6 @@ export const actions = {
         path: ({dataSetId}) => `${API_DATA_V1}/datasets/${filterUrlFragment(dataSetId)}/fields`,
         params: (_, headers) => ({headers}),
     }),
-    // -
     publicGetDataSetFieldsById: createAction<
         GetDataSetFieldsByIdResponse,
         Omit<GetDataSetFieldsByIdArgs, 'workbookId'>
@@ -103,7 +97,6 @@ export const actions = {
             },
         }),
     }),
-    // +
     checkDatasetsForPublication: createAction<
         CheckDatasetsForPublicationResponse,
         CheckDatasetsForPublicationArgs
@@ -115,13 +108,11 @@ export const actions = {
             headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
         }),
     }),
-    // -
     createDataset: createAction<CreateDatasetResponse, CreateDatasetArgs>({
         method: 'POST',
         path: () => `${API_V1}/datasets`,
         params: (body, headers) => ({body, headers}),
     }),
-    // +
     validateDataset: createAction<ValidateDatasetResponse, ValidateDatasetArgs>({
         method: 'POST',
         path: ({datasetId, version}) =>
@@ -137,7 +128,6 @@ export const actions = {
         transformResponseError: transformValidateDatasetResponseError,
         timeout: TIMEOUT_95_SEC,
     }),
-    // -
     updateDataset: createAction<UpdateDatasetResponse, UpdateDatasetArgs>({
         method: 'PUT',
         path: ({datasetId, version}) =>
@@ -146,7 +136,6 @@ export const actions = {
             )}`,
         params: ({dataset, multisource}, headers) => ({body: {dataset, multisource}, headers}),
     }),
-    // +
     getPreview: createAction<GetPreviewResponse, GetPreviewArgs>({
         method: 'POST',
         endpoint: 'datasetDataApiEndpoint',
@@ -162,7 +151,6 @@ export const actions = {
         }),
         timeout: TIMEOUT_95_SEC,
     }),
-    // +
     validateDatasetFormula: createAction<
         ValidateDatasetFormulaResponse,
         ValidateDatasetFormulaArgs
@@ -180,13 +168,11 @@ export const actions = {
         }),
         transformResponseError: transformValidateDatasetFormulaResponseError,
     }),
-    // -
     copyDataset: createAction<CopyDatasetResponse, CopyDatasetArgs>({
         method: 'POST',
         path: ({datasetId}) => `${API_V1}/datasets/${filterUrlFragment(datasetId)}/copy`,
         params: ({new_key}, headers) => ({body: {new_key}, headers}),
     }),
-    // +
     getDistinctsApiV2: createAction<
         GetDistinctsApiV2Response,
         GetDistinctsApiV2Args,
@@ -202,7 +188,6 @@ export const actions = {
         transformResponseData: transformApiV2DistinctsResponse,
         timeout: TIMEOUT_95_SEC,
     }),
-    // -
     getPublicDistinctsApiV2: createAction<
         GetDistinctsApiV2Response,
         GetDistinctsApiV2Args,
@@ -220,7 +205,6 @@ export const actions = {
         transformResponseData: transformApiV2DistinctsResponse,
         timeout: TIMEOUT_95_SEC,
     }),
-    // -
     deleteDataset: createAction<DeleteDatasetResponse, DeleteDatasetArgs>({
         method: 'DELETE',
         path: ({datasetId}) => `${API_V1}/datasets/${filterUrlFragment(datasetId)}`,

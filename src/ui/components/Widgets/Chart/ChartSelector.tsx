@@ -68,6 +68,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         id: chartId,
         config,
         widgetId,
+        workbookId,
     } = props;
 
     const skipReload = useSelector(selectSkipReload);
@@ -88,8 +89,9 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                 id: chartId,
                 config,
                 params: chartkitParams,
+                workbookId,
             }),
-        [chartId, chartkitParams, config],
+        [chartId, chartkitParams, config, workbookId],
     );
 
     const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);

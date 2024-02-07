@@ -169,6 +169,7 @@ export interface ChartsProps {
         };
     };
     ignoreUsedParams?: boolean;
+    workbookId?: string | null;
 }
 
 export interface ChartsData {

@@ -1,1 +1,3 @@
-export type WorkbookId = string | null;
+export type WorkbookId = {
+    workbookId: string | null;
+};

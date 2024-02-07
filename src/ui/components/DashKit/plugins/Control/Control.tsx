@@ -46,7 +46,6 @@ import {
     unwrapFromArrayAndSkipOperation,
 } from '../../../../units/dash/modules/helpers';
 import {
-    selectDashWorkbookId,
     selectIsNewRelations,
     selectSkipReload,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
@@ -420,6 +419,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         },
                     },
                     params: this.actualParams,
+                    workbookId: this.props.workbookId,
                 },
             };
 
@@ -686,7 +686,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     render() {
-        const {data, editMode, id} = this.props;
+        const {data, editMode, id, workbookId} = this.props;
         const controlData = data as unknown as
             | DashTabItemControlExternal
             | DashTabItemControlManual
@@ -726,6 +726,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         widgetType={sourceType}
                         editMode={editMode}
                         forwardedRef={this.chartKitRef as any}
+                        workbookId={workbookId}
                     />
                 </div>
             );
@@ -827,7 +828,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
-    workbookId: selectDashWorkbookId(state),
     skipReload: selectSkipReload(state),
     isNewRelations: selectIsNewRelations(state),
 });
@@ -854,8 +854,15 @@ const plugin: PluginControl = {
     },
     prerenderMiddleware,
     renderer(props: PluginWidgetProps, forwardedRef) {
+        const workbookId = props.context.workbookId;
+
         return (
-            <ControlWithStore {...props} getDistincts={plugin.getDistincts} ref={forwardedRef} />
+            <ControlWithStore
+                {...props}
+                workbookId={workbookId}
+                getDistincts={plugin.getDistincts}
+                ref={forwardedRef}
+            />
         );
     },
 };

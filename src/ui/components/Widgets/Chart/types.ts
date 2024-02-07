@@ -160,7 +160,7 @@ export type ChartWrapperWithRefProps =
 
 export type ChartWithProviderWithRefProps = ChartProviderPropsWithRefProps;
 
-export type ChartWrapperWithProviderProps = ChartWrapperWithRefProps;
+export type ChartWrapperWithProviderProps = ChartWrapperWithRefProps & {workbookId?: string | null};
 
 export type ChartWidgetProps = ChartWidgetProviderPropsWithRefProps &
     ChartWidgetWithProviderProps &
