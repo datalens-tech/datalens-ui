@@ -16,8 +16,8 @@ import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {ITEM_TYPE} from '../../../containers/Dialogs/constants';
 import {CONNECTION_KIND} from '../../../modules/constants';
-import {closeDialog} from '../../../store/actions/dash';
 import {updateCurrentTabData} from '../../../store/actions/dashTyped';
+import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
     selectCurrentTab,
     selectCurrentTabConnectableItems,

@@ -51,7 +51,6 @@ import {
     sortByOrderIdOrLayoutComparator,
     stringifyMemoize,
 } from '../../modules/helpers';
-import {openDialog, openItemDialogAndSetData} from '../../store/actions/dash';
 import {
     TabsHashStates,
     setCurrentTabData,
@@ -60,6 +59,7 @@ import {
     setHashState,
     setStateHashId,
 } from '../../store/actions/dashTyped';
+import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
 import {
     closeDialogRelations,
     openDialogRelations,

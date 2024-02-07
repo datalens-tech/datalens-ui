@@ -18,6 +18,7 @@ import {
 } from 'ui';
 import {registry} from 'ui/registry';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'ui/store/actions/dialog';
+import {ValuesType} from 'utility-types';
 import Utils from 'utils';
 
 import {GetEntryResponse} from '../../../../../shared/schema';
@@ -71,7 +72,7 @@ type OwnProps = {
     location: Location;
     progress: boolean;
     handlerEditClick: () => void;
-    openDialog: (dialogType: string) => void;
+    openDialog: (dialogType: ValuesType<typeof DIALOG_TYPE>) => void;
     toggleTableOfContent: () => void;
     entryDialoguesRef: React.RefObject<EntryDialogues>;
 };

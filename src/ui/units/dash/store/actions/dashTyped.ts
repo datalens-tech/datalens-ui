@@ -43,7 +43,8 @@ import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
 import type {DashState} from '../reducers/dashTypedReducer';
 
-import {closeDialog as closeDashDialog, save} from './dash';
+import {save} from './dash';
+import {closeDialog as closeDashDialog} from './dialogs/actions';
 import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
 
 import {DashDispatch} from './index';
