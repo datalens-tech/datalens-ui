@@ -1,6 +1,6 @@
 import uniq from 'lodash/uniq';
 
-import {prepareBarX} from '../prepareBarX';
+import {prepareBarX} from '../prepare-bar-x';
 
 import {
     colorField,
