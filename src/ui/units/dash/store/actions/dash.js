@@ -1,97 +1,40 @@
 import {lockedTextInfo} from 'components/RevisionsPanel/RevisionsPanel';
 import {I18n} from 'i18n';
 import {sdk} from 'libs/sdk';
-import isEmpty from 'lodash/isEmpty';
 import {DashSchemeConverter, EntryScope, Feature, extractEntryId} from 'shared';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
 import {MarkdownProvider, URL_QUERY, Utils} from 'ui';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
-import {DL, EMBEDDED_MODE} from '../../../../constants';
+import {DL} from '../../../../constants';
 import ChartKit from '../../../../libs/DatalensChartkit';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {showToast} from '../../../../store/actions/toaster';
-import {ITEM_TYPE} from '../../containers/Dialogs/constants';
-import {LOCK_DURATION, Mode} from '../../modules/constants';
+import {Mode} from '../../modules/constants';
 import {collectDashStats} from '../../modules/pushStats';
 import * as actionTypes from '../constants/dashActionTypes';
 import {getFakeDashEntry} from '../utils';
 
-import {SET_ERROR_MODE, SET_STATE, setDashViewMode, toggleTableOfContent} from './dashTyped';
+import {
+    SET_ERROR_MODE,
+    SET_STATE,
+    purgeData,
+    setDashViewMode,
+    setLock,
+    toggleTableOfContent,
+} from './dashTyped';
 import {
     DOES_NOT_EXIST_ERROR_TEXT,
     NOT_FOUND_ERROR_TEXT,
-    getBeforeOpenDialogItemAction,
     prepareLoadedData,
     removeParamAndUpdate,
 } from './helpers';
 
+// TODO CHARTS-6672 cleanup reexport after cleaning all js
+export * from './dialogs/actions';
+
 const i18n = I18n.keyset('dash.store.view');
-
-export function purgeData(data) {
-    const allTabsIds = new Set();
-    const allItemsIds = new Set();
-    const allWidgetTabsIds = new Set();
-
-    return {
-        ...data,
-        tabs: data.tabs.map((tab) => {
-            const {id: tabId, items: tabItems, layout, connections, aliases} = tab;
-
-            const currentItemsIds = new Set();
-            const currentWidgetTabsIds = new Set();
-            const currentControlsIds = new Set();
-
-            allTabsIds.add(tabId);
-
-            const resultItems = tabItems
-                // there are empty data
-                .filter((item) => !isEmpty(item.data))
-                .map((item) => {
-                    const {id: itemId, type, data} = item;
-
-                    allItemsIds.add(itemId);
-                    currentItemsIds.add(itemId);
-
-                    if (type === ITEM_TYPE.CONTROL) {
-                        currentControlsIds.add(itemId);
-                    } else if (type === ITEM_TYPE.WIDGET) {
-                        data.tabs.forEach(({id: widgetTabId}) => {
-                            allWidgetTabsIds.add(widgetTabId);
-                            currentWidgetTabsIds.add(widgetTabId);
-                        });
-                    }
-
-                    return item;
-                });
-
-            return {
-                ...tab,
-                items: resultItems,
-                // since items is filtered above, then layout needs to be filtered as well.
-                layout: layout.filter(({i}) => currentItemsIds.has(i)),
-                connections: connections.filter(
-                    ({from, to}) =>
-                        // connections can only have elements with from or to
-                        from &&
-                        to &&
-                        // there may be elements in connections that are no longer in items
-                        (currentControlsIds.has(from) || currentWidgetTabsIds.has(from)) &&
-                        (currentControlsIds.has(to) || currentWidgetTabsIds.has(to)),
-                ),
-                aliases: Object.entries(aliases).reduce((result, [key, value]) => {
-                    result[key] = value
-                        // the array of aliases can be null
-                        .map((alias) => alias.filter(Boolean))
-                        // there may be less than 2 elements in the alias array
-                        .filter((alias) => alias.length > 1);
-                    return result;
-                }, {}),
-            };
-        }),
-    };
-}
 
 export const setSelectStateMode = ({tabId: selectedTabId, stateHash, history, location}) => {
     return async function (dispatch, getState) {
@@ -149,51 +92,6 @@ export const setSelectStateMode = ({tabId: selectedTabId, stateHash, history, lo
 
         history.push({...location, search: `?${search.join('&')}`, hash: ''});
         dispatch({type: SET_STATE, payload});
-    };
-};
-
-export const setLock = (entryId, force = false, noEditMode = false) => {
-    return async function (dispatch) {
-        const {lockToken} = await getSdk().us.createLock({
-            entryId,
-            data: {duration: LOCK_DURATION, force},
-        });
-
-        const payload = {lockToken};
-        if (!noEditMode) {
-            payload.mode = Mode.Edit;
-        }
-
-        dispatch({
-            type: SET_STATE,
-            payload,
-        });
-    };
-};
-
-export const deleteLock = () => {
-    return async function (dispatch, getState) {
-        const state = getState();
-
-        if (!state.dash) {
-            return;
-        }
-
-        const {lockToken, entry} = state.dash;
-
-        const entryId = entry?.entryId || null;
-
-        if (lockToken && entryId) {
-            return getSdk()
-                .us.deleteLock({
-                    entryId: entryId,
-                    params: {lockToken},
-                })
-                .then(() => {
-                    dispatch(cleanLock());
-                })
-                .catch((error) => logger.logError('LOCK_DELETE', error));
-        }
     };
 };
 
@@ -293,8 +191,6 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
         }
     };
 };
-
-export const cleanLock = () => ({type: SET_STATE, payload: {lockToken: null}});
 
 /**
  * Loading dash data: dash config from us, dash state from us, and in parallel all datasets schemas, which is used in dash items
@@ -566,68 +462,3 @@ export const save = (mode, isDraft = false) => {
         }
     };
 };
-
-export const openDialog = (dialogType) => ({
-    type: actionTypes.OPEN_DIALOG,
-    payload: {openedDialog: dialogType},
-});
-
-export const openItemDialog = (data) => ({type: actionTypes.OPEN_ITEM_DIALOG, payload: data});
-
-export const openItemDialogAndSetData = (data) => {
-    return (dispatch) => {
-        const beforeOpenDialogItem = getBeforeOpenDialogItemAction();
-        dispatch(beforeOpenDialogItem(data));
-        dispatch(openItemDialog(data));
-    };
-};
-
-export const closeDialog = () => ({
-    type: actionTypes.CLOSE_DIALOG,
-    payload: {openedDialog: null, openedItemId: null},
-});
-
-export const setTabs = (tabs) => ({type: actionTypes.SET_TABS, payload: tabs});
-
-export const setSettings = (settings) => ({type: actionTypes.SET_SETTINGS, payload: settings});
-
-export const setCopiedItemData = (data) => ({
-    type: actionTypes.SET_COPIED_ITEM_DATA,
-    payload: {
-        data,
-    },
-});
-
-export const setCurrentTabData = (data) => ({
-    type: actionTypes.SET_CURRENT_TAB_DATA,
-    payload: data,
-});
-
-export const updateCurrentTabData = (data) => ({
-    type: actionTypes.UPDATE_CURRENT_TAB_DATA,
-    payload: data,
-});
-
-export const toggleFullscreenMode =
-    ({history, location}) =>
-    (dispatch, getState) => {
-        const {
-            dash: {isFullscreenMode},
-        } = getState();
-        const {search} = location;
-
-        const searchParams = new URLSearchParams(search);
-
-        if (isFullscreenMode) {
-            searchParams.delete('mode');
-        } else {
-            searchParams.set('mode', EMBEDDED_MODE.TV);
-        }
-
-        history.replace({
-            ...location,
-            search: `?${searchParams.toString()}`,
-        });
-
-        dispatch({type: actionTypes.TOGGLE_FULLSCREEN_MODE});
-    };

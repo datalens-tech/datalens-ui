@@ -33,6 +33,7 @@ import {
     ToggleTableOfContentAction,
     UpdateSelectorsGroupAction,
 } from './dashTyped';
+import {CloseDialogAction, OpenDialogAction, OpenItemDialogAction} from './dialogs/actions';
 import {SetNewRelationsAction} from './relations/actions';
 
 export type DashAction<T = unknown> =
@@ -65,6 +66,9 @@ export type DashAction<T = unknown> =
     | SetRenameWithoutReloadAction
     | SetActiveSelectorIndexAction
     | SetSkipReloadAction
-    | SetWidgetCurrentTabAction;
+    | SetWidgetCurrentTabAction
+    | OpenDialogAction
+    | OpenItemDialogAction
+    | CloseDialogAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

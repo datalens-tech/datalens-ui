@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
+import {AddConfigItem, Config, DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
 import {PluginTextProps} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
 import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Title';
 import {i18n} from 'i18n';
@@ -9,11 +9,14 @@ import isEmpty from 'lodash/isEmpty';
 import {Dispatch} from 'redux';
 import {
     DATASET_FIELD_TYPES,
+    DashData,
+    DashSettings,
     DashTab,
     DashTabItem,
     DashTabItemControlData,
     DashTabItemControlSourceType,
     DashTabItemType,
+    DashTabItemWidget,
     Dataset,
     DatasetFieldType,
     EntryUpdateMode,
@@ -32,12 +35,16 @@ import {loadRevisions, setEntryContent} from '../../../../store/actions/entryCon
 import {showToast} from '../../../../store/actions/toaster';
 import {EntryGlobalState, RevisionsMode} from '../../../../store/typings/entryContent';
 import history from '../../../../utils/history';
-import {Mode} from '../../modules/constants';
+import {DashTabChanged} from '../../containers/Dialogs/Tabs/TabItem';
+import {ITEM_TYPE} from '../../containers/Dialogs/constants';
+import {LOCK_DURATION, Mode} from '../../modules/constants';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
+import type {DashState} from '../reducers/dashTypedReducer';
 
-import {closeDialog as closeDashDialog, deleteLock, purgeData, save, setLock} from './dash';
+import {save} from './dash';
+import {closeDialog as closeDashDialog} from './dialogs/actions';
 import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
 
 import {DashDispatch} from './index';
@@ -55,6 +62,56 @@ export const SET_STATE = Symbol('dash/SET_STATE');
 export type SetStateAction<T> = {
     type: typeof SET_STATE;
     payload: T;
+};
+
+export const cleanLock = (): SetStateAction<{lockToken: null}> => ({
+    type: SET_STATE,
+    payload: {lockToken: null},
+});
+
+export const setLock = (entryId: string, force = false, noEditMode = false) => {
+    return async function (dispatch: DashDispatch) {
+        const {lockToken} = await getSdk().us.createLock({
+            entryId,
+            data: {duration: LOCK_DURATION, force},
+        });
+
+        const payload: Partial<DashState> = {lockToken};
+        if (!noEditMode) {
+            payload.mode = Mode.Edit;
+        }
+
+        dispatch({
+            type: SET_STATE,
+            payload,
+        });
+    };
+};
+
+export const deleteLock = () => {
+    return async function (dispatch: DashDispatch, getState: GetState): Promise<void> {
+        const state = getState();
+
+        if (!state.dash) {
+            return;
+        }
+
+        const {lockToken, entry} = state.dash;
+
+        const entryId = entry?.entryId || null;
+
+        if (lockToken && entryId) {
+            await getSdk()
+                .us.deleteLock({
+                    entryId: entryId,
+                    params: {lockToken},
+                })
+                .then(() => {
+                    dispatch(cleanLock());
+                })
+                .catch((error) => logger.logError('LOCK_DELETE', error));
+        }
+    };
 };
 
 export const SET_PAGE_TAB = Symbol('dash/SET_PAGE_TAB');
@@ -944,6 +1001,70 @@ export function saveDashAsDraft(setForce?: boolean) {
     };
 }
 
+export function purgeData(data: DashData) {
+    const allTabsIds = new Set();
+    const allItemsIds = new Set();
+    const allWidgetTabsIds = new Set();
+
+    return {
+        ...data,
+        tabs: data.tabs.map((tab) => {
+            const {id: tabId, items: tabItems, layout, connections, aliases} = tab;
+
+            const currentItemsIds = new Set();
+            const currentWidgetTabsIds = new Set();
+            const currentControlsIds = new Set();
+
+            allTabsIds.add(tabId);
+
+            const resultItems = tabItems
+                // there are empty data
+                .filter((item) => !isEmpty(item.data))
+                .map((item) => {
+                    const {id: itemId, type, data} = item;
+
+                    allItemsIds.add(itemId);
+                    currentItemsIds.add(itemId);
+
+                    if (type === ITEM_TYPE.CONTROL) {
+                        currentControlsIds.add(itemId);
+                    } else if (type === ITEM_TYPE.WIDGET) {
+                        (data as DashTabItemWidget['data']).tabs.forEach(({id: widgetTabId}) => {
+                            allWidgetTabsIds.add(widgetTabId);
+                            currentWidgetTabsIds.add(widgetTabId);
+                        });
+                    }
+
+                    return item;
+                });
+
+            return {
+                ...tab,
+                items: resultItems,
+                // since items is filtered above, then layout needs to be filtered as well.
+                layout: layout.filter(({i}) => currentItemsIds.has(i)),
+                connections: connections.filter(
+                    ({from, to}) =>
+                        // connections can only have elements with from or to
+                        from &&
+                        to &&
+                        // there may be elements in connections that are no longer in items
+                        (currentControlsIds.has(from) || currentWidgetTabsIds.has(from)) &&
+                        (currentControlsIds.has(to) || currentWidgetTabsIds.has(to)),
+                ),
+                aliases: Object.entries(aliases).reduce<typeof aliases>((result, [key, value]) => {
+                    result[key] = value
+                        // the array of aliases can be null
+                        .map((alias) => alias.filter(Boolean))
+                        // there may be less than 2 elements in the alias array
+                        .filter((alias) => alias.length > 1);
+                    return result;
+                }, {}),
+            };
+        }),
+    };
+}
+
 export type SaveAsNewDashArgs = {
     key?: string;
     workbookId?: string;
@@ -977,6 +1098,36 @@ export function saveDashAsNewDash({key, workbookId, name}: SaveAsNewDashArgs) {
         return null;
     };
 }
+
+export const setTabs = (tabs: DashTabChanged[]) => ({
+    type: actionTypes.SET_TABS,
+    payload: tabs,
+});
+
+export const setCurrentTabData = (data: Config) => ({
+    type: actionTypes.SET_CURRENT_TAB_DATA,
+    payload: data,
+});
+
+export const updateCurrentTabData = (data: {
+    aliases?: DashTab['aliases'];
+    connections?: Config['connections'];
+}) => ({
+    type: actionTypes.UPDATE_CURRENT_TAB_DATA,
+    payload: data,
+});
+
+export const setSettings = (settings: DashSettings) => ({
+    type: actionTypes.SET_SETTINGS,
+    payload: settings,
+});
+
+export const setCopiedItemData = (data: AddConfigItem) => ({
+    type: actionTypes.SET_COPIED_ITEM_DATA,
+    payload: {
+        data,
+    },
+});
 
 export const setDefaultViewState = () => {
     return (dispatch: AppDispatch) => {
