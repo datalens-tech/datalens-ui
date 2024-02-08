@@ -33,9 +33,13 @@ datalensTest.describe('Wizard', () => {
             );
 
             await expect(chart).toBeVisible();
+
+            const text = await chart.innerText();
+
+            expect(text.replace(/(\r\n|\n|\r)/gm, '')).toEqual('OrdersCount1230');
         });
 
-        datalensTest.skip('Metric chart with markup measure field', async ({page}) => {
+        datalensTest('Metric chart with markup measure field', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
             const chart = chartContainer.locator(slct(ChartQa.Chart));
@@ -53,6 +57,10 @@ datalensTest.describe('Wizard', () => {
             );
 
             await expect(chart).toBeVisible();
+
+            const text = await chart.innerText();
+
+            expect(text.replace(/(\r\n|\n|\r)/gm, '')).toEqual('529');
         });
     });
 });
