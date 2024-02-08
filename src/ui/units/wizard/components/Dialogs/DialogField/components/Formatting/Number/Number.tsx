@@ -152,6 +152,7 @@ const NumberComponent: React.FC<NumberProps> = (originalProps) => {
                     value={props.formatting.format}
                     onChange={handleChangeFormat}
                     className={b('lego-control')}
+                    qa={DialogFieldMainSectionQa.NumberFormat}
                 >
                     <RadioButton.Option value={NumberFormatType.Number}>
                         {i18n(`value_format-${NumberFormatType.Number}`)}

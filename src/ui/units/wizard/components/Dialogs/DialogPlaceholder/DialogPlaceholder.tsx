@@ -373,6 +373,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                         items={radioOptions}
                         value={axisFormatMode}
                         onUpdate={this.handleAxisFormatModeRadioButtonUpdate}
+                        qa={DialogPlaceholderQa.AxisFormatMode}
                     />
                 }
             />
