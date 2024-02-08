@@ -36,7 +36,7 @@ datalensTest.describe('Wizard', () => {
 
             const text = await chart.innerText();
 
-            expect(text.replace(/(\r\n|\n|\r)/gm, '')).toEqual('OrdersCount1230');
+            expect(text).toEqual('OrdersCount\n1 230');
         });
 
         datalensTest('Metric chart with markup measure field', async ({page}) => {
@@ -60,7 +60,7 @@ datalensTest.describe('Wizard', () => {
 
             const text = await chart.innerText();
 
-            expect(text.replace(/(\r\n|\n|\r)/gm, '')).toEqual('529');
+            expect(text).toEqual('529');
         });
     });
 });
