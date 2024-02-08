@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {useHistory, useLocation, useParams} from 'react-router-dom';
 
-import {load as loadDash} from '../../store/actions/dash';
+import {load as loadDash} from '../../store/actions/dashboard/actions';
 
 function Error(props) {
     const location = useLocation();
