@@ -75,12 +75,17 @@ import {
 
 import './Control.scss';
 
+type ContextProps = {
+    workbookId?: string | null;
+};
+
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 
 export interface PluginControlProps
     extends PluginWidgetProps,
         ControlSettings,
+        ContextProps,
         StateProps,
         DispatchProps {}
 

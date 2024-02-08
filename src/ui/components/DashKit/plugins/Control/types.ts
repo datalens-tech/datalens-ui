@@ -53,7 +53,6 @@ export type SelectorError = {
 
 export interface ControlSettings {
     getDistincts?: GetDistincts;
-    workbookId?: string | null;
 }
 
 export interface PluginControlState {
