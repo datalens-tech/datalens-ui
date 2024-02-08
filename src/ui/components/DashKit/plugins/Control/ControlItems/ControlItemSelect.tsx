@@ -43,10 +43,11 @@ import {
 import {
     getDatasetSourceInfo,
     getErrorText,
-    getLabels,
     isValidRequiredValue,
     prepareSelectorError,
 } from '../utils';
+
+import './ControlItemSelect.scss';
 
 type ControlItemSelectProps = {
     id: string;
@@ -64,10 +65,10 @@ type ControlItemSelectProps = {
     errorData: null | ErrorData;
     validateValue: (args: ValidationErrorData) => boolean | undefined;
     classMixin?: string;
-    width?: string;
+    selectProps: Pick<SelectControlProps, 'width' | 'innerLabel' | 'label'>;
 };
 
-const b = block('dashkit-plugin-control');
+const b = block('control-item-select');
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 
 export const ControlItemSelect = ({
@@ -86,7 +87,7 @@ export const ControlItemSelect = ({
     showItemsLoader,
     validateValue,
     classMixin,
-    width,
+    selectProps,
 }: ControlItemSelectProps) => {
     const dispatch = useDispatch();
     let _loadingItemsTimer: NodeJS.Timeout | undefined;
@@ -341,17 +342,13 @@ export const ControlItemSelect = ({
         onChange({param: fieldId, value: valueWithOperation});
     };
 
-    const {label, innerLabel} = getLabels({controlData: data});
-
     const props: SelectControlProps = {
         widgetId: id,
         content: content || preselectedContent,
-        label,
-        innerLabel,
         param: fieldId,
         multiselect: (source as DashTabItemControlElementSelect).multiselectable,
         type: TYPE.SELECT,
-        className: b('item', classMixin),
+        className: b(null, classMixin),
         key: fieldId,
         value: preparedValue as string,
         onChange: onSelectChange,
@@ -360,7 +357,7 @@ export const ControlItemSelect = ({
         placeholder,
         required: source.required,
         hasValidationError: Boolean(validationError),
-        width,
+        ...selectProps,
     };
 
     if (status === LOAD_STATUS.FAIL) {

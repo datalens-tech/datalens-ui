@@ -4,7 +4,7 @@ import {DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
 import {PluginTextProps} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
 import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Title';
 import {i18n} from 'i18n';
-import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
+import {DatalensGlobalState, URL_QUERY, Utils, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
 import {Dispatch} from 'redux';
 import {
@@ -17,6 +17,7 @@ import {
     Dataset,
     DatasetFieldType,
     EntryUpdateMode,
+    Feature,
     Operations,
 } from 'shared';
 import {AppDispatch} from 'ui/store';
@@ -342,6 +343,8 @@ export type SelectorDialogState = {
     placementMode: 'auto' | '%' | 'px';
     width: string;
     id: string;
+    // TODO: temp solution to save old title and don't convert old selector to new
+    tempTitle?: string;
 };
 
 export type SelectorsGroupDialogState = {
@@ -554,7 +557,7 @@ const getControlDefaultsForField = (
 export const applyControl2Dialog = () => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const selectorDialog = getState().dash.selectorDialog as SelectorDialogState;
-        const {title, sourceType, autoHeight} = selectorDialog;
+        const {title, sourceType, autoHeight, tempTitle} = selectorDialog;
 
         const validation = getControlValidation(selectorDialog);
 
@@ -570,7 +573,7 @@ export const applyControl2Dialog = () => {
         const defaults = getControlDefaultsForField(selectorDialog.defaults, selectorDialog);
 
         const data = {
-            title,
+            title: Utils.isEnabledFeature(Feature.GroupControls) && tempTitle ? tempTitle : title,
             sourceType,
             autoHeight,
             source: getItemDataSource(selectorDialog),

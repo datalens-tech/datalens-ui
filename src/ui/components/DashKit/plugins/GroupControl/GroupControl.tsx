@@ -46,11 +46,11 @@ interface PluginGroupControlProps extends PluginWidgetProps, ControlSettings, St
 interface PluginGroupControlState {
     status: LoadStatus;
     silentLoading: boolean;
-    showSilentLoader: boolean;
-    forceUpdate: boolean;
     initialParams?: StringParams;
     isInit: boolean;
     stateParams: StringParams;
+    needReload: boolean;
+    forceUpdate: boolean;
 }
 
 export interface PluginGroupControl extends Plugin<PluginGroupControlProps> {
@@ -65,11 +65,15 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
     _isUnmounted = false;
-    _silentLoaderTimer: NodeJS.Timeout | undefined = undefined;
+    _cancelSource: any = null;
 
     adjustWidgetLayout = debounce(this.setAdjustWidgetLayout, GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME);
 
     resolve: ((value: unknown) => void) | null = null;
+
+    controlsCount = 0;
+    controlsLoadedCount = 0;
+    controlsStatus: Record<string, LoadStatus> = {};
 
     /**
      * can't use it in state because of doubling requests
@@ -80,13 +84,21 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     constructor(props: PluginGroupControlProps) {
         super(props);
+        const {data} = this.props;
+        const controlData = data as unknown as DashTabItemGroupControlData;
+
+        this.controlsCount = controlData.items.length;
+        controlData.items.forEach((item) => {
+            this.controlsStatus[item.id] = LOAD_STATUS.INITIAL;
+        });
+
         this.state = {
             status: LOAD_STATUS.PENDING,
             silentLoading: false,
-            showSilentLoader: false,
-            forceUpdate: true,
             isInit: false,
             stateParams: {},
+            needReload: false,
+            forceUpdate: true,
         };
     }
 
@@ -95,10 +107,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     }
 
     componentDidUpdate(prevProps: Readonly<PluginGroupControlProps>) {
-        if (this.state.status !== LOAD_STATUS.PENDING && this._silentLoaderTimer) {
-            this.clearSilentLoaderTimer();
-        }
-
         if (this.rootNode.current) {
             if (this.props.data.autoHeight) {
                 // if the "Auto-height" flag is set
@@ -109,10 +117,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             }
         }
         const hasDataChanged = !isEqual(this.props.data, prevProps.data);
-        const hasParamsChanged = !isEqual(
-            this.filterSignificantParams(this.props.params),
-            this.filterSignificantParams(prevProps.params),
-        );
+        const hasParamsChanged = !isEqual(this.props.params, prevProps.params);
+        const hasParamsUpdatedFromState = isEqual(this.props.params, this.state.stateParams);
 
         const hasDefaultsChanged = !isEqual(this.props.defaults, prevProps.defaults);
 
@@ -124,9 +130,23 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         const hasChanged = hasDataChanged || hasParamsChanged || hasDefaultsChanged;
 
+        if (hasParamsChanged && !hasParamsUpdatedFromState) {
+            // in case of change defaults of controls we find the different fields in actual params
+            // and update stateParams with them
+            const paramsDiff: StringParams = {};
+            Object.keys(this.props.params).forEach((param) => {
+                if (this.props.params[param] !== prevProps.params[param]) {
+                    paramsDiff[param] = this.props.params[param];
+                }
+            });
+
+            this.setState({stateParams: {...this.state.stateParams, ...paramsDiff}});
+        }
+
         if (this.state.forceUpdate && hasChanged) {
             this.setState({
                 status: LOAD_STATUS.PENDING,
+                needReload: true,
                 silentLoading: true,
             });
             this.init();
@@ -152,23 +172,23 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             )
             .join(', ');
 
+        const isLoading = this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading;
+
         return (
             <div ref={this.rootNode} className={b({mobile: isMobileView})}>
                 <div className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}>
-                    {this.renderSilentLoader()}
                     <DebugInfoTool label={'paramId'} value={paramIdDebug} modType={'corner'} />
+                    {isLoading && (
+                        <div className={b('loader')}>
+                            <Loader size="s" />
+                        </div>
+                    )}
                     {Utils.isEnabledFeature(Feature.GroupControls)
                         ? this.renderControls()
                         : this.renderError()}
                 </div>
             </div>
         );
-    }
-
-    private clearSilentLoaderTimer() {
-        if (this._silentLoaderTimer) {
-            clearTimeout(this._silentLoaderTimer);
-        }
     }
 
     private onChange = (params: StringParams, callChangeByClick?: boolean) => {
@@ -205,7 +225,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 result = {
                     id: this.props.id,
                     usedParams: loadedData.usedParams
-                        ? Object.keys(this.filterSignificantParams(loadedData))
+                        ? Object.keys(this.filterSignificantParams(loadedData.usedParams))
                         : null,
                     datasets: loadedData.extra.datasets,
                     // deprecated
@@ -225,9 +245,42 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         this.initialParams = updatedInitialParams;
     };
 
+    private handleStatusChanged = (controlId: string, status: LoadStatus) => {
+        const isLoaded = status === LOAD_STATUS.SUCCESS || status === LOAD_STATUS.ERROR;
+        const isBeginPending =
+            this.controlsStatus[controlId] !== LOAD_STATUS.INITIAL &&
+            status === LOAD_STATUS.PENDING;
+
+        if (isLoaded) {
+            this.controlsLoadedCount++;
+        }
+
+        if (isBeginPending) {
+            this.controlsLoadedCount--;
+        }
+
+        const isGroupLoaded = this.controlsLoadedCount === this.controlsCount;
+
+        if (isGroupLoaded) {
+            if (this.props.data.autoHeight) {
+                this.adjustWidgetLayout(false);
+            }
+
+            const newState = {
+                needReload: this.state.needReload ? false : this.state.needReload,
+                status: LOAD_STATUS.SUCCESS,
+                silentLoading: false,
+            };
+
+            this.setState(newState);
+        }
+
+        this.controlsStatus[controlId] = status;
+    };
+
     private renderControl(item: DashTabItemControlSingle) {
-        const {getDistincts, skipReload, defaults} = this.props;
-        const {silentLoading, showSilentLoader} = this.state;
+        const {getDistincts, defaults} = this.props;
+        const {silentLoading} = this.state;
 
         return (
             <Control
@@ -236,19 +289,15 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 data={item}
                 initialParams={this.initialParams}
                 actualParams={this.state.stateParams}
-                showSilentLoader={showSilentLoader}
-                onStatusChanged={(status: LoadStatus) => {
-                    if (this.props.data.autoHeight && status === LOAD_STATUS.SUCCESS) {
-                        this.adjustWidgetLayout(false);
-                    }
-                }}
+                onStatusChanged={this.handleStatusChanged}
                 silentLoading={silentLoading}
                 resolveMeta={this.resolveMeta}
                 defaults={defaults}
                 getDistincts={getDistincts}
                 onChange={this.onChange}
-                skipReload={skipReload}
+                needReload={this.state.needReload}
                 onInitialParamsUpdate={this.handleInitialParamsUpdate}
+                cancelSource={this._cancelSource}
             />
         );
     }
@@ -321,18 +370,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         );
     }
 
-    private renderSilentLoader() {
-        if (this.state.showSilentLoader) {
-            return (
-                <div className={b('loader', {silent: true})}>
-                    <Loader size="s" />
-                </div>
-            );
-        }
-
-        return null;
-    }
-
     private renderError() {
         return (
             <div className={b('error')}>
@@ -342,20 +379,30 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         );
     }
 
+    // @ts-ignore
+    // need for autoreload from dashkit
+    private reload({silentLoading}: {silentLoading?: boolean}) {
+        if (this.props.skipReload || !this.state.isInit) {
+            return;
+        }
+        this.setState({needReload: true, silentLoading: Boolean(silentLoading)});
+    }
+
     get actualParams(): StringParams {
         return this.props.params;
     }
 
     private async init() {
-        if (this.state.isInit === false) {
-            if (this.props.data.autoHeight) {
-                this.adjustWidgetLayout(false);
-            }
+        if (this._isUnmounted) {
+            return;
+        }
 
+        if (this.state.isInit === false) {
             this.setState({
                 isInit: true,
                 initialParams: this.props.defaults,
                 stateParams: this.actualParams,
+                status: LOAD_STATUS.PENDING,
             });
         }
     }
@@ -392,7 +439,13 @@ const plugin: PluginGroupControl = {
         return plugin;
     },
     renderer(props: PluginWidgetProps, forwardedRef) {
-        return <GroupControlWithStore {...props} ref={forwardedRef} />;
+        return (
+            <GroupControlWithStore
+                {...props}
+                getDistincts={plugin.getDistincts}
+                ref={forwardedRef}
+            />
+        );
     },
 };
 

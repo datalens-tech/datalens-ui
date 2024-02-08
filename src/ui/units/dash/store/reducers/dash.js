@@ -108,7 +108,7 @@ export function getSelectorDialogFromData(data, defaults) {
         operation: data.source.operation,
         innerTitle: data.source.innerTitle,
         showInnerTitle: data.source.showInnerTitle,
-        id: getRandomKey(),
+        id: data.id || getRandomKey(),
         required: data.source.required,
     };
 }
@@ -137,10 +137,10 @@ export function getSelectorGroupDialogFromData(data, defaults) {
             operation: item.source.operation,
             innerTitle: item.source.innerTitle,
             showInnerTitle: item.source.showInnerTitle,
-            id: getRandomKey(),
+            id: item.id || getRandomKey(),
             required: item.source.required,
-            placementMode: item.placementMode,
-            width: item.width,
+            placementMode: item.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
+            width: item.width || '',
         }))
         .sort((a, b) => a.index - b.index);
 
@@ -150,6 +150,8 @@ export function getSelectorGroupDialogFromData(data, defaults) {
         autoHeight: data.autoHeight,
         buttonApply: data.buttonApply,
         buttonReset: data.buttonReset,
+
+        id: data.id || getRandomKey(),
 
         items,
     };
@@ -402,6 +404,12 @@ function dash(state = initialState, action) {
                 data.sourceType !== 'external'
             ) {
                 const selectorDialog = getSelectorDialogFromData(data, defaults);
+                selectorDialog.title =
+                    data.source.innerTitle && data.source.showInnerTitle
+                        ? `${data.title} ${data.source.innerTitle}`
+                        : data.title;
+                // TODO: temp solution to save old title and don't convert old selector to new
+                selectorDialog.tempTitle = data.title;
 
                 // migration forward to group
                 openedDialog = 'group_control';

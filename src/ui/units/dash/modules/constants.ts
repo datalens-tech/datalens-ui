@@ -73,3 +73,5 @@ export enum Mode {
     Error = 'error',
     SelectState = 'selectState',
 }
+
+export const CONTROL_WIDTH_PROPERTY = '--control-custom-width';
