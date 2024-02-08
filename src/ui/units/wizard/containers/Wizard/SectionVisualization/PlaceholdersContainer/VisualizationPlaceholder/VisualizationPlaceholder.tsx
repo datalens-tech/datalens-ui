@@ -291,16 +291,18 @@ class VisualizationPlaceholder extends React.Component<Props> {
     private checkAllowedPlaceholderItem = (item: Field) => {
         const {placeholder, visualization} = this.props;
 
-        if (placeholder.checkAllowed && !placeholder.checkAllowed(item)) {
-            return false;
-        }
+        if (placeholder.checkAllowed) {
+            if (!placeholder.checkAllowed(item)) {
+                return false;
+            }
+        } else {
+            if (placeholder.allowedDataTypes && !placeholder.allowedDataTypes.has(item.data_type)) {
+                return false;
+            }
 
-        if (placeholder.allowedTypes && !placeholder.allowedTypes.has(item.type)) {
-            return false;
-        }
-
-        if (placeholder.allowedDataTypes && !placeholder.allowedDataTypes.has(item.data_type)) {
-            return false;
+            if (placeholder.allowedTypes && !placeholder.allowedTypes.has(item.type)) {
+                return false;
+            }
         }
 
         if (visualization.id === 'pivotTable' && placeholder.id === 'rows') {

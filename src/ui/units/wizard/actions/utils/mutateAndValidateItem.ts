@@ -47,9 +47,11 @@ export function mutateAndValidateItem<T extends Field>({
     }
 
     if (placeholder && existingField) {
-        if (placeholder.checkAllowed && !placeholder.checkAllowed(item)) {
-            item.conflict = 'wrong-type';
-            item.undragable = true;
+        if (placeholder.checkAllowed) {
+            if (!placeholder.checkAllowed(item)) {
+                item.conflict = 'wrong-type';
+                item.undragable = true;
+            }
         } else if (placeholder.allowedTypes && !placeholder.allowedTypes.has(item.type)) {
             item.conflict = 'wrong-type';
             item.undragable = true;
