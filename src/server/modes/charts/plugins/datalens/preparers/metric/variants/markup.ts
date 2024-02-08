@@ -1,9 +1,13 @@
 import {
+    CommonNumberFormattingOptions,
+    MINIMUM_FRACTION_DIGITS,
     MarkupItem,
     ServerCommonSharedExtraSettings,
     ServerField,
+    formatNumber,
     getFakeTitleOrTitle,
 } from '../../../../../../../../shared';
+import {isFloatDataType} from '../../../utils/misc-helpers';
 
 export const prepareMarkupMetricVariant = ({
     measure,
@@ -28,6 +32,27 @@ export const prepareMarkupMetricVariant = ({
             title = getFakeTitleOrTitle(measure);
         }
 
+        const formatOptions: CommonNumberFormattingOptions = {};
+
+        const measureFormatting = measure.formatting as CommonNumberFormattingOptions | undefined;
+
+        if (measureFormatting) {
+            formatOptions.format = measureFormatting.format;
+            formatOptions.postfix = measureFormatting.postfix;
+            formatOptions.prefix = measureFormatting.prefix;
+            formatOptions.showRankDelimiter = measureFormatting.showRankDelimiter;
+            formatOptions.unit = measureFormatting.unit;
+            formatOptions.precision =
+                isFloatDataType(measure.data_type) &&
+                typeof measureFormatting.precision !== 'number'
+                    ? MINIMUM_FRACTION_DIGITS
+                    : measureFormatting.precision;
+        } else if (isFloatDataType(measure.data_type)) {
+            formatOptions.precision = MINIMUM_FRACTION_DIGITS;
+        }
+
+        const formattedValue = formatNumber(value, formatOptions);
+
         return {
             value: {
                 type: 'concat',
@@ -47,7 +72,7 @@ export const prepareMarkupMetricVariant = ({
                         content: {
                             className: 'markup-indicator-value',
                             type: 'text',
-                            content: String(value),
+                            content: formattedValue,
                         },
                     },
                 ],
