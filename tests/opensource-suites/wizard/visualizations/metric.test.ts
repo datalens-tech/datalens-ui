@@ -2,7 +2,7 @@ import {expect} from '@playwright/test';
 
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage, slct} from '../../../utils';
-import {WizardPageQa, WizardVisualizationId} from '../../../../src/shared';
+import {WizardPageQa, ChartQa, WizardVisualizationId} from '../../../../src/shared';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 
@@ -15,11 +15,10 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.setVisualization([WizardVisualizationId.Metric]);
         });
 
-        // remove skip after enabling new markup charts
-        datalensTest.skip('Metric chart with integer measure field', async ({page}) => {
+        datalensTest('Metric chart with integer measure field', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const chart = chartContainer.locator('.chartkit-markup');
+            const chart = chartContainer.locator(slct(ChartQa.Chart));
 
             // Create integer measure field
             const ordersCountMeasureField = 'OrdersCount';
@@ -36,11 +35,10 @@ datalensTest.describe('Wizard', () => {
             await expect(chart).toBeVisible();
         });
 
-        // remove skip after enabling new markup charts
         datalensTest.skip('Metric chart with markup measure field', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const chart = chartContainer.locator('.chartkit-markup');
+            const chart = chartContainer.locator(slct(ChartQa.Chart));
 
             // Create markup measure field
             const citiesCountMeasureField = 'CitiesCount';

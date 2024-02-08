@@ -13,7 +13,9 @@ export const prepareMarkupMetricVariant = ({
     value: string | MarkupItem | null;
     extraSettings: ServerCommonSharedExtraSettings | undefined;
 }) => {
-    if (typeof value === 'string') {
+    if (typeof value === 'object') {
+        return {value};
+    } else {
         const size = (extraSettings && extraSettings.metricFontSize) || 'm';
         const color = (extraSettings && extraSettings.metricFontColor) || 'rgb(77, 162, 241)';
 
@@ -36,13 +38,11 @@ export const prepareMarkupMetricVariant = ({
                         content: {
                             className: 'markup-indicator-value',
                             type: 'text',
-                            content: value,
+                            content: String(value),
                         },
                     },
                 ],
             },
         };
-    } else {
-        return {value};
     }
 };

@@ -4,6 +4,7 @@ import {CHARTKIT_ERROR_CODE, ChartKitError} from '@gravity-ui/chartkit';
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
 
+import {ChartQa} from '../../../../../../../shared';
 import {Markup} from '../../../../../../components/Markup';
 import Performance from '../../../../modules/perfomance';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
@@ -36,7 +37,7 @@ const MarkupWidget = React.forwardRef<ChartKitWidgetRef | undefined, MarkupWidge
         }
 
         return (
-            <div className={b()}>
+            <div data-qa={ChartQa.Chart} className={b()}>
                 <span>
                     <Markup item={data.value} />
                 </span>
