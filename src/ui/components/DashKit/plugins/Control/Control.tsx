@@ -411,7 +411,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
     init = async () => {
         try {
-            const {data} = this.props;
+            const {data, workbookId} = this.props;
 
             const payload = {
                 data: {
@@ -424,7 +424,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         },
                     },
                     params: this.actualParams,
-                    workbookId: this.props.workbookId,
+                    ...(workbookId ? {workbookId} : {}),
                 },
             };
 
