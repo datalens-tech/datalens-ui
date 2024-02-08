@@ -15,67 +15,74 @@ export type State = {
     isInit: boolean;
 };
 
+export const CONTROL_SET_ERROR_DATA = Symbol('control/SET_ERROR_DATA');
 type SetErrorData = {
-    type: 'SET_ERROR_DATA';
+    type: typeof CONTROL_SET_ERROR_DATA;
     payload: {status: LoadStatus; errorData: ErrorData};
 };
 export const setErrorData = (payload: SetErrorData['payload']): SetErrorData => {
     return {
-        type: 'SET_ERROR_DATA',
+        type: CONTROL_SET_ERROR_DATA,
         payload,
     };
 };
+
+export const CONTROL_SET_LOADED_DATA = Symbol('control/SET_LOADED_DATA');
 type SetLoadedData = {
-    type: 'SET_LOADED_DATA';
+    type: typeof CONTROL_SET_LOADED_DATA;
     payload: {status: LoadStatus; loadedData: ResponseSuccessControls};
 };
 export const setLoadedData = (payload: SetLoadedData['payload']): SetLoadedData => {
     return {
-        type: 'SET_LOADED_DATA',
+        type: CONTROL_SET_LOADED_DATA,
         payload,
     };
 };
 
+export const CONTROL_SET_LOADING_ITEMS = Symbol('control/SET_LOADING_ITEMS');
 type SetLoadingItems = {
-    type: 'SET_LOADING_ITEMS';
+    type: typeof CONTROL_SET_LOADING_ITEMS;
     payload: {loadingItems: boolean};
 };
 export const setLoadingItems = (payload: SetLoadingItems['payload']): SetLoadingItems => {
     return {
-        type: 'SET_LOADING_ITEMS',
+        type: CONTROL_SET_LOADING_ITEMS,
         payload,
     };
 };
 
+export const CONTROL_SET_VALIDATION_ERROR = Symbol('control/SET_VALIDATION_ERROR');
 type SetValidationError = {
-    type: 'SET_VALIDATION_ERROR';
+    type: typeof CONTROL_SET_VALIDATION_ERROR;
     payload: {hasError?: boolean};
 };
 export const setValidationError = (payload: SetValidationError['payload']): SetValidationError => {
     return {
-        type: 'SET_VALIDATION_ERROR',
+        type: CONTROL_SET_VALIDATION_ERROR,
         payload,
     };
 };
 
+export const CONTROL_SET_STATUS = Symbol('control/SET_STATUS');
 type SetStatus = {
-    type: 'SET_STATUS';
+    type: typeof CONTROL_SET_STATUS;
     payload: {status: LoadStatus};
 };
 export const setStatus = (payload: SetStatus['payload']): SetStatus => {
     return {
-        type: 'SET_STATUS',
+        type: CONTROL_SET_STATUS,
         payload,
     };
 };
 
+export const CONTROL_SET_IS_INIT = Symbol('control/SET_IS_INIT');
 type SetIsInit = {
-    type: 'SET_IS_INIT';
+    type: typeof CONTROL_SET_IS_INIT;
     payload: {isInit: boolean};
 };
 export const setIsInit = (payload: SetIsInit['payload']): SetIsInit => {
     return {
-        type: 'SET_IS_INIT',
+        type: CONTROL_SET_IS_INIT,
         payload,
     };
 };
