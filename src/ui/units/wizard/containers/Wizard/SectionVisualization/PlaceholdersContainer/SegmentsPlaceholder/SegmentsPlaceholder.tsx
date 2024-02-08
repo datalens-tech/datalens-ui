@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
 import {DatalensGlobalState} from 'ui';
 
-import {DATASET_FIELD_TYPES, Field, isDimensionField} from '../../../../../../../../shared';
+import {Field, isDimensionField, isMarkupField} from '../../../../../../../../shared';
 import {BetaMark} from '../../../../../../../components/BetaMark/BetaMark';
 import {updateSegments} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
@@ -54,7 +54,7 @@ class SegmentsPlaceholder extends React.Component<Props> {
     }
 
     handleCheckAllowed = (item: Field) => {
-        return isDimensionField(item) && item.data_type !== DATASET_FIELD_TYPES.MARKUP;
+        return isDimensionField(item) && !isMarkupField(item);
     };
 
     handleUpdate = (segments: Field[]) => {

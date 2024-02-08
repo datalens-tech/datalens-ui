@@ -2,6 +2,7 @@ import {
     MarkupItem,
     ServerCommonSharedExtraSettings,
     ServerField,
+    getFakeTitleOrTitle,
 } from '../../../../../../../../shared';
 
 export const prepareMarkupMetricVariant = ({
@@ -19,6 +20,14 @@ export const prepareMarkupMetricVariant = ({
         const size = (extraSettings && extraSettings.metricFontSize) || 'm';
         const color = (extraSettings && extraSettings.metricFontColor) || 'rgb(77, 162, 241)';
 
+        let title;
+
+        if (extraSettings && extraSettings.title && extraSettings.titleMode === 'show') {
+            title = extraSettings.title;
+        } else {
+            title = getFakeTitleOrTitle(measure);
+        }
+
         return {
             value: {
                 type: 'concat',
@@ -27,7 +36,7 @@ export const prepareMarkupMetricVariant = ({
                     {
                         className: 'markup-indicator-title',
                         type: 'text',
-                        content: measure.fakeTitle || measure.title,
+                        content: title,
                     },
                     {
                         type: 'br',

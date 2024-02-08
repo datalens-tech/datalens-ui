@@ -38,9 +38,7 @@ const MarkupWidget = React.forwardRef<ChartKitWidgetRef | undefined, MarkupWidge
 
         return (
             <div data-qa={ChartQa.Chart} className={b()}>
-                <span>
-                    <Markup item={data.value} />
-                </span>
+                <Markup item={data.value} />
             </div>
         );
     },
