@@ -178,9 +178,8 @@ function getUpdatedActionParamsForCellScope(args: {
 
     if (hasSomeCellSelected) {
         if (isCellSelected(currentCell, prevActionParams)) {
-            newActionParams = subtractParameters(newActionParams, currentCellParams);
-
             if (multiSelect) {
+                newActionParams = subtractParameters(newActionParams, currentCellParams);
                 rows.forEach((r) => {
                     get(r, 'cells', []).forEach((c: TableCell) => {
                         if (isCellSelected(c, newActionParams)) {
@@ -189,6 +188,8 @@ function getUpdatedActionParamsForCellScope(args: {
                         }
                     });
                 });
+            } else {
+                newActionParams = {};
             }
         } else {
             if (!multiSelect) {
@@ -307,9 +308,9 @@ function getValuesMap(args: {selectedRows: TableRow[]; head?: TableHead[]}) {
             return acc;
         }
 
-        const rowHash = Object.values(row.cells).reduce<string>((acc, cell, i) => {
+        const rowHash = Object.values(row.cells).reduce<string>((rowHashAcc, cell, i) => {
             const cellParams = extractCellActionParams({cell, head: head?.[i]});
-            return acc + Object.values(cellParams).join();
+            return rowHashAcc + Object.values(cellParams).join();
         }, '');
 
         row.cells.forEach((cell, i) => {

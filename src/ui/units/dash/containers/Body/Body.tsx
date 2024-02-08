@@ -157,6 +157,9 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     componentDidMount() {
+        // if localStorage already have a dash item, we need to set it to state
+        this.storageHandler();
+
         window.addEventListener('storage', this.storageHandler);
     }
 
