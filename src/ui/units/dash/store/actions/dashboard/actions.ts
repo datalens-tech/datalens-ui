@@ -110,7 +110,7 @@ export const setSelectStateMode = ({
                     });
 
                 if (hashData && tabId) {
-                    // TODO
+                    // TODO find out from what controls field is
                     const {controls, ...states} = hashData.data as any;
                     payload.hashStates = {
                         [tabId]: {
@@ -287,7 +287,7 @@ export const load = ({
             }
 
             const [entry, hashData] = await Promise.all([
-                // TODO old api
+                // TODO Refactor old api schema
                 (sdk.charts as any).readDash({
                     id: entryId,
                     params: readDashParams,
@@ -354,7 +354,7 @@ export const load = ({
 
             let hashStates = {};
             if (hashData) {
-                // TODO
+                // TODO find out from what controls field is
                 const {controls, ...states} = hashData.data as any;
                 hashStates = {
                     [tabId]: {
@@ -424,10 +424,11 @@ export const load = ({
             logger.logError('load dash failed', error);
 
             const errorMessage = error?.response?.data?.message || error?.message;
+            // TODO It's invalid error object as legacy it's here but research should be made
             let errorParams: DashState['error'] | ManualError = {
                 code: errorMessage,
                 status: error.request?.status,
-            } as any; // TODO how it worked???
+            } as any;
 
             if (
                 errorMessage === NOT_FOUND_ERROR_TEXT ||
@@ -473,7 +474,7 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
             const isPublishing = mode === 'publish';
             const {entry: prevEntry, data, lockToken} = getState().dash;
 
-            // TODO old api
+            // TODO Refactor old api schema
             const updateData: {
                 id: string;
                 data: Partial<DashEntry> & {
@@ -492,7 +493,7 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
             } else {
                 updateData.data.data = purgeData(data);
             }
-            // TODO old api
+            // TODO Refactor old api schema
             const entry = await (sdk.charts as any).updateDash(updateData);
 
             const newMaxConcurrentRequestsValue = entry.data.settings?.maxConcurrentRequests;
