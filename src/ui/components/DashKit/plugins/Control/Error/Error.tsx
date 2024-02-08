@@ -27,7 +27,7 @@ export function Error({onClickRetry, errorData}: ErrorProps) {
     const dispatch = useDispatch();
     const errorTitle = errorData?.data?.title;
 
-    const onClick = () => {
+    const handleClick = () => {
         if (errorData) {
             dispatch(
                 openDialogErrorWithTabs({
@@ -44,9 +44,10 @@ export function Error({onClickRetry, errorData}: ErrorProps) {
             );
         }
     };
+
     return (
         <div className={b('error')}>
-            <div className={b({mobile: isMobileView})} onClick={onClick}>
+            <div className={b({mobile: isMobileView})} onClick={handleClick}>
                 <span className={b('label')}>{i18n('label_error')}</span>
                 <Icon data={iconAlert} className={b('icon')} />
             </div>

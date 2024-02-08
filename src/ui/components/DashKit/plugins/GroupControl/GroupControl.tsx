@@ -253,26 +253,34 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         );
     }
 
+    private applyButtonAction(action: string) {
+        let newParams = {};
+
+        if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
+            newParams = this.state.stateParams;
+        }
+        if (action === CLICK_ACTION_TYPE.SET_INITIAL_PARAMS) {
+            newParams = this.initialParams?.params;
+        }
+
+        if (!isEqual(newParams, this.actualParams) || !isEqual(newParams, this.state.stateParams)) {
+            this.onChange(newParams, true);
+        }
+    }
+
+    private handleApplyChange = () => {
+        this.applyButtonAction(CLICK_ACTION_TYPE.SET_PARAMS);
+    };
+
+    private handleResetChange = () => {
+        this.applyButtonAction(CLICK_ACTION_TYPE.SET_INITIAL_PARAMS);
+    };
+
     private renderButtons() {
         const {data} = this.props;
         const controlData = data as unknown as DashTabItemGroupControlData;
 
-        const onButtonChange = (action: string) => {
-            let newParams = {};
-
-            if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
-                newParams = this.state.stateParams;
-            } else if (action === CLICK_ACTION_TYPE.SET_INITIAL_PARAMS) {
-                newParams = this.initialParams?.params;
-            }
-
-            if (
-                !isEqual(newParams, this.actualParams) ||
-                !isEqual(newParams, this.state.stateParams)
-            ) {
-                this.onChange(newParams, true);
-            }
-        };
+        const resetAction = {action: CLICK_ACTION_TYPE.SET_INITIAL_PARAMS};
 
         return (
             <React.Fragment>
@@ -283,7 +291,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         updateOnChange={true}
                         theme="action"
                         className={b('item')}
-                        onChange={() => onButtonChange(CLICK_ACTION_TYPE.SET_PARAMS)}
+                        onChange={this.handleApplyChange}
                     />
                 )}
                 {controlData.buttonReset && (
@@ -291,8 +299,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         type={CONTROL_TYPE.BUTTON}
                         className={b('item')}
                         label={'RESET'}
-                        onClick={{action: 'setInitialParams'}}
-                        onChange={() => onButtonChange(CLICK_ACTION_TYPE.SET_INITIAL_PARAMS)}
+                        onClick={resetAction}
+                        onChange={this.handleResetChange}
                     />
                 )}
             </React.Fragment>

@@ -549,14 +549,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 }
                 break;
             case LOAD_STATUS.FAIL: {
-                return (
-                    <Error
-                        errorData={this.state.errorData}
-                        onClickRetry={() => {
-                            this.reload();
-                        }}
-                    />
-                );
+                return <Error errorData={this.state.errorData} onClickRetry={this.reload} />;
             }
         }
 
