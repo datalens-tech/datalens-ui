@@ -32,7 +32,8 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         white-space: nowrap;
     }
 
-    &__component {
+    &__component,
+    &__yc-select {
         flex-grow: 1;
         overflow: hidden;
     }

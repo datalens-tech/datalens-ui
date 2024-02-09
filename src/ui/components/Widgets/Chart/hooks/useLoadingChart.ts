@@ -388,7 +388,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
              * fix in CHARTS-7043
              */
             const getWidget = dataProvider.getWidget.bind(dataProvider);
-
             const loadedWidgetData = await getWidget({
                 props: getWidgetProps,
                 requestId,
