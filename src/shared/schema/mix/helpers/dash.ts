@@ -14,16 +14,19 @@ export type DatasetDictResponse = {datasetId: string; data: GetEntryResponse | n
 
 export const fetchDataset = async ({
     datasetId,
+    workbookId,
     typedApi,
     ctx,
 }: {
     datasetId: string;
+    workbookId: string | null;
     typedApi: ContextApiWithRoot<{root: typeof simpleSchema}>;
     ctx: AppContext;
 }): Promise<DatasetDictResponse> => {
     try {
         const data: GetEntryResponse = await typedApi.us.getEntry({
             entryId: datasetId,
+            workbookId,
         });
 
         return {

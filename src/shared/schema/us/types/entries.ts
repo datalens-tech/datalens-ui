@@ -19,6 +19,7 @@ export interface GetEntryResponse extends EntryFields {
 }
 export interface GetEntryArgs {
     entryId: string;
+    workbookId?: string | null;
     revId?: string;
     branch?: string;
     includePermissionsInfo?: boolean;

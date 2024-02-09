@@ -27,6 +27,7 @@ export type GetEntriesDatasetsFieldsResponse = GetEntriesDatasetsFieldsItem[];
 export type GetEntriesDatasetsFieldsArgs = {
     entriesIds: string[];
     datasetsIds: string[];
+    workbookId: string | null;
 };
 
 export type GetWidgetsDatasetsFieldsItem = {

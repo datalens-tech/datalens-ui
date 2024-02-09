@@ -29,10 +29,12 @@ export const useRelations = ({
     dashKitRef,
     widget,
     dialogAliases,
+    workbookId,
 }: {
     dashKitRef: React.RefObject<DashKit>;
     widget: DashTabItem;
     dialogAliases: Record<string, string[][]>;
+    workbookId: string | null;
 }) => {
     const [isInited, setIsInited] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -67,6 +69,7 @@ export const useRelations = ({
                 entriesDatasetsFields = await getSdk().mix.getEntriesDatasetsFields({
                     entriesIds: entriesList,
                     datasetsIds: Object.keys(datasetsList),
+                    workbookId,
                 });
             }
             const dashWidgetsMetaData = entriesDatasetsFields.length
@@ -145,7 +148,7 @@ export const useRelations = ({
             }
             getMetaData();
         }
-    }, [dashKitRef, isInited, widget, dialogAliases]);
+    }, [dashKitRef, isInited, widget, dialogAliases, workbookId]);
 
     return {isLoading, relations, currentWidgetMeta, datasets, dashWidgetsMeta, invalidAliases};
 };
