@@ -389,7 +389,7 @@ export const Control = ({
             case CONTROL_TYPE.RANGE_DATEPICKER:
                 return <ControlRangeDatepicker returnInterval={true} {...props} />;
             case CONTROL_TYPE.CHECKBOX:
-                return <ControlCheckbox {...props} />;
+                return <ControlCheckbox {...props} label={innerLabel} />;
         }
 
         return null;
