@@ -1,4 +1,4 @@
-import {ColorMode, DATASET_FIELD_TYPES} from '../../../../../../../../../shared';
+import {ColorMode, DATASET_FIELD_TYPES, getDistinctValue} from '../../../../../../../../../shared';
 import {COLOR_SHAPE_SEPARATOR} from '../../../../utils/constants';
 import {formatDate, getFieldTitle} from '../../../../utils/misc-helpers';
 import {ItemValues} from '../types';
@@ -92,10 +92,11 @@ export const mapDataToDimensionColoredLines = ({
     } else {
         itemValues = mappedItemsToValues.reduce(
             (acc: ItemValues, curr, index) => {
-                let {value, formattedValue} = curr;
-                let extraValue = value;
+                let {formattedValue} = curr;
+                let distinctValue = getDistinctValue(curr.value);
+                let extraValue = distinctValue;
                 if (index !== items.length - 1) {
-                    value = `${value}-`;
+                    distinctValue = `${distinctValue}-`;
                     formattedValue = `${formattedValue}-`;
                     extraValue = `${extraValue}${COLOR_SHAPE_SEPARATOR}`;
                 } else if (!hasColors) {
@@ -103,7 +104,7 @@ export const mapDataToDimensionColoredLines = ({
                 }
                 return {
                     ...acc,
-                    value: `${acc.value}${value}`,
+                    value: `${acc.value}${distinctValue}`,
                     formattedValue: `${acc.formattedValue}${formattedValue}`,
                     extraValue: `${acc.extraValue}${extraValue}`,
                 };

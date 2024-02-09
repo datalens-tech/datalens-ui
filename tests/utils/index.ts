@@ -113,6 +113,11 @@ export async function entryDialogFillAndSave(page: Page, entryName: string) {
     await page.click(slct(EntryDialogQA.Apply));
 }
 
+function getFullUrl(url: string) {
+    const formattedUrl = url.startsWith('/') ? url : `/${url}`;
+    return new URL(`${process.env.E2E_DOMAIN}${formattedUrl}`);
+}
+
 // Go to url by passing only pathname
 export async function goto(
     page: Page,
@@ -121,8 +126,7 @@ export async function goto(
         isRetry: false,
     },
 ) {
-    const formattedUrl = url.startsWith('/') ? url : `/${url}`;
-    const fullUrl = new URL(`${process.env.E2E_DOMAIN}${formattedUrl}`);
+    const fullUrl = getFullUrl(url);
 
     await page.goto(fullUrl.toString());
 
@@ -256,9 +260,10 @@ export const generateQueryString = (queryMap: Record<string, string>) => {
 };
 
 export const openTestPage = async (page: Page, url: string, queryMap?: Record<string, string>) => {
-    const query = queryMap ? generateQueryString(queryMap) : '';
+    const {pathname, searchParams} = getFullUrl(url);
+    const query = generateQueryString({...Object.fromEntries(searchParams), ...queryMap});
 
-    const fullUrl = query ? `${url}?${query}` : url;
+    const fullUrl = query ? `${pathname}?${query}` : url;
 
     await goto(page, fullUrl, {isRetry: false});
 };

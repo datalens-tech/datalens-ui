@@ -276,7 +276,7 @@ function prepareFlatTable({
                 if (canUseFieldForFiltering(item)) {
                     if (isDateField(item)) {
                         const actionParams = {};
-                        addActionParamValue({}, item, value);
+                        addActionParamValue(actionParams, item, value);
 
                         cell.custom = {actionParams};
                     }

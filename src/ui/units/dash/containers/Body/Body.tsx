@@ -51,14 +51,15 @@ import {
     sortByOrderIdOrLayoutComparator,
     stringifyMemoize,
 } from '../../modules/helpers';
-import {openDialog, openItemDialogAndSetData, setCurrentTabData} from '../../store/actions/dash';
 import {
     TabsHashStates,
+    setCurrentTabData,
     setDashKitRef,
     setErrorMode,
     setHashState,
     setStateHashId,
 } from '../../store/actions/dashTyped';
+import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
 import {
     closeDialogRelations,
     openDialogRelations,
@@ -155,6 +156,9 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     componentDidMount() {
+        // if localStorage already have a dash item, we need to set it to state
+        this.storageHandler();
+
         window.addEventListener('storage', this.storageHandler);
     }
 

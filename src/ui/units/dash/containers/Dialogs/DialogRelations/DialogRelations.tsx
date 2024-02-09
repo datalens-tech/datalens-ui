@@ -15,7 +15,7 @@ import {selectDebugMode} from 'store/selectors/user';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
 import Utils from 'ui/utils';
 
-import {updateCurrentTabData} from '../../../store/actions/dash';
+import {updateCurrentTabData} from '../../../store/actions/dashTyped';
 import {openDialogAliases} from '../../../store/actions/relations/actions';
 import {selectCurrentTabAliases} from '../../../store/selectors/dashTypedSelectors';
 

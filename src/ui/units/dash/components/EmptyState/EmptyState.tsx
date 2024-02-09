@@ -5,6 +5,9 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {DL} from 'ui/constants';
+import {ValuesType} from 'utility-types';
+
+import {DIALOG_TYPE} from '../../containers/Dialogs/constants';
 
 import './EmptyState.scss';
 
@@ -16,7 +19,7 @@ type EmptyStateProps = {
     canEdit: boolean;
     isTabView: boolean;
     onEditClick?: () => void;
-    openDialog?: () => void;
+    openDialog?: (type: ValuesType<typeof DIALOG_TYPE>) => void;
     isEditModeLoading?: boolean;
 };
 
