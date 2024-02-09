@@ -3,109 +3,69 @@ import React from 'react';
 import {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DatalensGlobalState} from 'index';
+import {DatalensGlobalState, Utils} from 'index';
 import debounce from 'lodash/debounce';
-import {ResolveThunks, connect} from 'react-redux';
+import isEqual from 'lodash/isEqual';
+import pick from 'lodash/pick';
+import {connect} from 'react-redux';
 import {
     DashTabItemControlDataset,
     DashTabItemControlManual,
+    DashTabItemControlSingle,
     DashTabItemGroupControlData,
-    ServerFilter,
+    Feature,
     StringParams,
 } from 'shared';
+import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
+import {
+    CLICK_ACTION_TYPE,
+    CONTROL_TYPE,
+} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {isMobileView} from 'ui/utils/mobile';
 
-import {ResponseSuccessControls} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
-import logger from '../../../../libs/logger';
 import {selectSkipReload} from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import {adjustWidgetLayout} from '../../utils';
 import {Error} from '../Control/Error/Error';
 import {LOAD_STATUS} from '../Control/constants';
+import {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
-import './GroupControl.scss';
+import {Control} from './Control/Control';
 
-type LoadStatus = 'pending' | 'success' | 'fail';
+import './GroupControl.scss';
 
 const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 
-type ErrorData = {
-    data: {
-        error?: SelectorError;
-        title?: string;
-        message?: string;
-    };
-    requestId?: string;
-};
-
-type SelectorError = {
-    code: string;
-    debug: string | {requestId?: string};
-    details?: {
-        sources?: {
-            distincts?: {
-                body?: {
-                    debug: Record<string, string>;
-                    message: string;
-                    details: Record<string, string>;
-                    code: string;
-                };
-                data?: {
-                    ignore_nonexistent_filters: boolean;
-                    fuild_guid: string;
-                    where: ServerFilter[];
-                };
-                message?: string;
-                sourceType?: string;
-                status?: number;
-                uiUrl?: string;
-                url?: string;
-            };
-        };
-    };
-};
-
-interface PluginGroupControlProps extends PluginWidgetProps, StateProps, DispatchProps {}
+interface PluginGroupControlProps extends PluginWidgetProps, ControlSettings, StateProps {}
 
 interface PluginGroupControlState {
     status: LoadStatus;
-    loadedData: null | ResponseSuccessControls;
-    errorData: null | ErrorData;
     silentLoading: boolean;
     showSilentLoader: boolean;
     forceUpdate: boolean;
-    dialogVisible: boolean;
-    loadingItems: boolean;
     initialParams?: StringParams;
     isInit: boolean;
+    stateParams: StringParams;
 }
 
-export interface PluginGroupControl extends Plugin<PluginGroupControlProps> {}
+export interface PluginGroupControl extends Plugin<PluginGroupControlProps> {
+    setSettings: (settings: ControlSettings) => Plugin;
+    getDistincts?: GetDistincts;
+}
 
 const b = block('dashkit-plugin-group-control');
 
 class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGroupControlState> {
-    static getStatus(status: LoadStatus) {
-        let res = '';
-        for (const [key, val] of Object.entries(LOAD_STATUS)) {
-            if (status === val) {
-                res = key;
-            }
-        }
-        return LOAD_STATUS[res];
-    }
-
     chartKitRef: React.RefObject<ChartsChartKit> = React.createRef<ChartsChartKit>();
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
     _isUnmounted = false;
     _silentLoaderTimer: NodeJS.Timeout | undefined = undefined;
-    _loadingItemsTimer: NodeJS.Timeout | undefined = undefined;
 
     adjustWidgetLayout = debounce(this.setAdjustWidgetLayout, GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME);
 
@@ -122,19 +82,55 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         super(props);
         this.state = {
             status: LOAD_STATUS.PENDING,
-            loadedData: null,
-            errorData: null,
             silentLoading: false,
             showSilentLoader: false,
             forceUpdate: true,
-            dialogVisible: false,
-            loadingItems: true,
             isInit: false,
+            stateParams: {},
         };
     }
 
     componentDidMount() {
         this.init();
+    }
+
+    componentDidUpdate(prevProps: Readonly<PluginGroupControlProps>) {
+        if (this.state.status !== LOAD_STATUS.PENDING && this._silentLoaderTimer) {
+            this.clearSilentLoaderTimer();
+        }
+
+        if (this.rootNode.current) {
+            if (this.props.data.autoHeight) {
+                // if the "Auto-height" flag is set
+                this.adjustWidgetLayout(false);
+            } else if (prevProps.data.autoHeight) {
+                // if the "Auto-height" flag was set and then removed
+                this.adjustWidgetLayout(true);
+            }
+        }
+        const hasDataChanged = !isEqual(this.props.data, prevProps.data);
+        const hasParamsChanged = !isEqual(
+            this.filterSignificantParams(this.props.params),
+            this.filterSignificantParams(prevProps.params),
+        );
+
+        const hasDefaultsChanged = !isEqual(this.props.defaults, prevProps.defaults);
+
+        if (hasDefaultsChanged) {
+            this.initialParams = {
+                params: {...this.initialParams.params, ...this.props.defaults},
+            } as ChartInitialParams;
+        }
+
+        const hasChanged = hasDataChanged || hasParamsChanged || hasDefaultsChanged;
+
+        if (this.state.forceUpdate && hasChanged) {
+            this.setState({
+                status: LOAD_STATUS.PENDING,
+                silentLoading: true,
+            });
+            this.init();
+        }
     }
 
     componentWillUnmount() {
@@ -145,28 +141,187 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const {data} = this.props;
         const controlData = data as unknown as DashTabItemGroupControlData;
 
-        const sources = Object.values(controlData.items).map((item) => item.source);
-
-        const paramIdDebug = sources
+        const paramIdDebug = controlData.items
+            .filter((item) => 'source' in item)
             .map(
-                (source) =>
+                ({source}) =>
                     (source as DashTabItemControlDataset['source']).datasetFieldId ||
                     (source as DashTabItemControlManual['source']).fieldName ||
                     data.param ||
                     '',
             )
-            .join(', ') as string;
+            .join(', ');
 
         return (
             <div ref={this.rootNode} className={b({mobile: isMobileView})}>
-                {this.renderSilentLoader()}
-                <DebugInfoTool label={'paramId'} value={paramIdDebug} modType={'corner'} />
-                {this.renderError()}
+                <div className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}>
+                    {this.renderSilentLoader()}
+                    <DebugInfoTool label={'paramId'} value={paramIdDebug} modType={'corner'} />
+                    {Utils.isEnabledFeature(Feature.GroupControls)
+                        ? this.renderControls()
+                        : this.renderError()}
+                </div>
             </div>
         );
     }
 
-    renderSilentLoader() {
+    private clearSilentLoaderTimer() {
+        if (this._silentLoaderTimer) {
+            clearTimeout(this._silentLoaderTimer);
+        }
+    }
+
+    private onChange = (params: StringParams, callChangeByClick?: boolean) => {
+        const controlData = this.props.data as unknown as DashTabItemGroupControlData;
+        if (!controlData.buttonApply || callChangeByClick) {
+            this.props.onStateAndParamsChange({params});
+        }
+        this.setState({stateParams: params});
+    };
+
+    private filterSignificantParams(loadedData?: any) {
+        const params = loadedData.usedParams;
+
+        if (!params) {
+            return {};
+        }
+
+        // @ts-ignore
+        const dependentSelectors = this.props.settings.dependentSelectors;
+
+        if (loadedData && loadedData.usedParams && dependentSelectors) {
+            return pick(params, Object.keys(loadedData.usedParams));
+        }
+
+        return dependentSelectors ? params : pick(params, Object.keys(this.props.defaults!));
+    }
+
+    private resolveMeta = (loadedData?: any) => {
+        // @ts-ignore
+        if (this.resolve) {
+            let result: any = {id: this.props.id};
+
+            if (loadedData && loadedData.extra) {
+                result = {
+                    id: this.props.id,
+                    usedParams: loadedData.usedParams
+                        ? Object.keys(this.filterSignificantParams(loadedData))
+                        : null,
+                    datasets: loadedData.extra.datasets,
+                    // deprecated
+                    datasetId: loadedData.extra.datasetId,
+                    datasetFields: loadedData.extra.datasetFields,
+                    type: 'control',
+                    sourceType: this.props.data?.sourceType,
+                };
+            }
+
+            // @ts-ignore
+            this.resolve(result);
+        }
+    };
+
+    private handleInitialParamsUpdate = (updatedInitialParams: ChartInitialParams) => {
+        this.initialParams = updatedInitialParams;
+    };
+
+    private renderControl(item: DashTabItemControlSingle) {
+        const {getDistincts, skipReload, defaults} = this.props;
+        const {silentLoading, showSilentLoader} = this.state;
+
+        return (
+            <Control
+                key={item.id}
+                id={item.id}
+                data={item}
+                initialParams={this.initialParams}
+                actualParams={this.state.stateParams}
+                showSilentLoader={showSilentLoader}
+                onStatusChanged={(status: LoadStatus) => {
+                    if (this.props.data.autoHeight && status === LOAD_STATUS.SUCCESS) {
+                        this.adjustWidgetLayout(false);
+                    }
+                }}
+                silentLoading={silentLoading}
+                resolveMeta={this.resolveMeta}
+                defaults={defaults}
+                getDistincts={getDistincts}
+                onChange={this.onChange}
+                skipReload={skipReload}
+                onInitialParamsUpdate={this.handleInitialParamsUpdate}
+            />
+        );
+    }
+
+    private applyButtonAction(action: string) {
+        let newParams = {};
+
+        if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
+            newParams = this.state.stateParams;
+        }
+        if (action === CLICK_ACTION_TYPE.SET_INITIAL_PARAMS) {
+            newParams = this.initialParams?.params;
+        }
+
+        if (!isEqual(newParams, this.actualParams) || !isEqual(newParams, this.state.stateParams)) {
+            this.onChange(newParams, true);
+        }
+    }
+
+    private handleApplyChange = () => {
+        this.applyButtonAction(CLICK_ACTION_TYPE.SET_PARAMS);
+    };
+
+    private handleResetChange = () => {
+        this.applyButtonAction(CLICK_ACTION_TYPE.SET_INITIAL_PARAMS);
+    };
+
+    private renderButtons() {
+        const {data} = this.props;
+        const controlData = data as unknown as DashTabItemGroupControlData;
+
+        const resetAction = {action: CLICK_ACTION_TYPE.SET_INITIAL_PARAMS};
+
+        return (
+            <React.Fragment>
+                {controlData.buttonApply && (
+                    <ControlButton
+                        type={CONTROL_TYPE.BUTTON}
+                        label={'APPLY'}
+                        updateOnChange={true}
+                        theme="action"
+                        className={b('item')}
+                        onChange={this.handleApplyChange}
+                    />
+                )}
+                {controlData.buttonReset && (
+                    <ControlButton
+                        type={CONTROL_TYPE.BUTTON}
+                        className={b('item')}
+                        label={'RESET'}
+                        onClick={resetAction}
+                        onChange={this.handleResetChange}
+                    />
+                )}
+            </React.Fragment>
+        );
+    }
+
+    private renderControls() {
+        const {data} = this.props;
+        const controlData = data as unknown as DashTabItemGroupControlData;
+
+        return (
+            <div>
+                {controlData.items.map((item: DashTabItemControlSingle) =>
+                    this.renderControl(item),
+                )}
+                {this.renderButtons()}
+            </div>
+        );
+    }
+
+    private renderSilentLoader() {
         if (this.state.showSilentLoader) {
             return (
                 <div className={b('loader', {silent: true})}>
@@ -178,64 +333,32 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return null;
     }
 
-    renderError() {
+    private renderError() {
         return (
             <div className={b('error')}>
-                <Error onClick={() => {}} />
+                <Error />
                 <div>Render not implemented</div>
             </div>
         );
-    }
-
-    // public
-    getMeta() {
-        if (this.chartKitRef && this.chartKitRef.current) {
-            this.chartKitRef.current.undeferred();
-        }
-        return Promise.resolve({});
     }
 
     get actualParams(): StringParams {
         return this.props.params;
     }
 
-    async init() {
-        try {
-            // FIXME: need implement init section for GroupControl
-
-            if (this.state.isInit === false) {
-                this.setState({isInit: true});
-            }
-        } catch (error) {
-            if (this.state.isInit === false) {
-                this.setState({isInit: true});
-            }
-            logger.logError('DashKit: GroupControl init failed', error);
-            // eslint-disable-next-line no-console
-            console.error('DASHKIT_CONTROL_RUN', error);
-
-            let errorData = null;
-
-            if (this._isUnmounted) {
-                return;
+    private async init() {
+        if (this.state.isInit === false) {
+            if (this.props.data.autoHeight) {
+                this.adjustWidgetLayout(false);
             }
 
-            if (error.response && error.response.data) {
-                errorData = {
-                    data: {error: error.response.data?.error},
-                    requestId: error.response.headers['x-request-id'],
-                };
-            } else {
-                errorData = {data: {message: error.message}};
-            }
-
-            this.setErrorData(errorData, LOAD_STATUS.FAIL);
+            this.setState({
+                isInit: true,
+                initialParams: this.props.defaults,
+                stateParams: this.actualParams,
+            });
         }
     }
-
-    reload = () => {
-        this.init();
-    };
 
     private setAdjustWidgetLayout(needSetDefault: boolean) {
         adjustWidgetLayout({
@@ -247,38 +370,27 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             cb: this.props.adjustWidgetLayout,
         });
     }
-
-    private setErrorData(errorData: ErrorData, status: LoadStatus) {
-        if (this._isUnmounted) {
-            return;
-        }
-
-        const statusResponse = GroupControl.getStatus(status);
-        if (statusResponse) {
-            this.setState({
-                status: statusResponse as LoadStatus,
-                errorData,
-                silentLoading: false,
-                showSilentLoader: false,
-                loadingItems: false,
-            });
-        }
-    }
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
     skipReload: selectSkipReload(state),
 });
 
-const mapDispatchToProps = {};
-
-const GroupControlWithStore = connect(mapStateToProps, mapDispatchToProps, null, {
+const GroupControlWithStore = connect(mapStateToProps, null, null, {
     forwardRef: true,
 })(GroupControl);
 
 const plugin: PluginGroupControl = {
     type: 'group_control',
     defaultLayout: {w: 8, h: 2},
+    setSettings(settings: ControlSettings) {
+        const {getDistincts} = settings;
+
+        // TODO: remove this. use basic ChartKit abilities
+        plugin.getDistincts = getDistincts;
+
+        return plugin;
+    },
     renderer(props: PluginWidgetProps, forwardedRef) {
         return <GroupControlWithStore {...props} ref={forwardedRef} />;
     },
