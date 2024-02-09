@@ -3,7 +3,6 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 import {ControlQA} from 'shared';
-import {CONTROL_WIDTH_PROPERTY} from 'ui/units/dash/modules/constants';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {CONTROL_TYPE} from '../../../modules/constants/constants';
@@ -18,8 +17,6 @@ function withWrapForControls(WrappedComponent) {
             return null;
         }
 
-        const controlWidth = width || undefined;
-
         const showLabel =
             label &&
             !labelInside &&
@@ -30,7 +27,7 @@ function withWrapForControls(WrappedComponent) {
         return (
             <div
                 className={b('control', {mobile: isMobileView}, className)}
-                style={{[CONTROL_WIDTH_PROPERTY]: controlWidth}}
+                style={{width}}
                 data-qa={ControlQA.chartkitControl}
             >
                 {showLabel && (

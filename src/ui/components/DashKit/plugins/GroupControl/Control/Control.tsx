@@ -24,7 +24,6 @@ import {CONTROL_TYPE} from 'ui/libs/DatalensChartkit/modules/constants/constants
 import type {EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import {ActiveControl} from 'ui/libs/DatalensChartkit/types';
-import {CONTROL_WIDTH_PROPERTY} from 'ui/units/dash/modules/constants';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
 import Utils from 'ui/utils/utils';
 
@@ -379,7 +378,7 @@ export const Control = ({
                         validateValue={validateValue}
                         getDistincts={getDistincts}
                         classMixin={b('item')}
-                        selectProps={{width: controlWidth, innerLabel}}
+                        selectProps={{innerLabel, width: controlWidth}}
                     />
                 );
             case CONTROL_TYPE.INPUT:
@@ -418,7 +417,7 @@ export const Control = ({
                     <div
                         className={b('item-loader')}
                         style={{
-                            [CONTROL_WIDTH_PROPERTY as string]: controlWidth,
+                            width: controlWidth,
                         }}
                     >
                         <Loader size="s" />

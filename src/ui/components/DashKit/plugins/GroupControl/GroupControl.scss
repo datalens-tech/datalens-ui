@@ -1,6 +1,5 @@
 .dashkit-plugin-group-control {
     $class: &;
-    $controlRightMargin: 10px;
 
     display: block;
     height: 100%;
@@ -47,14 +46,9 @@
         margin-top: 5px;
         max-width: 100%;
         padding: 0;
-        // custom control width is passed through js in the wrapper component of control items
-        width: var(--control-custom-width, 'auto');
 
         &:not(:last-child) {
-            --control-width-with-margin: calc(var(--control-custom-width) - #{$controlRightMargin});
-            margin-right: $controlRightMargin;
-            // fallback for width if --control-custom-width is not exist
-            width: var(--control-width-with-margin, 'auto');
+            padding-right: 10px;
         }
     }
 
