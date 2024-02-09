@@ -4,41 +4,41 @@
 
     padding: 15px;
 
-    .markup-indicator {
-        &_size_s .markup-indicator-title {
+    .markup-metric {
+        &_size_s .markup-metric-title {
             font-size: 13px;
         }
 
-        &_size_s .markup-indicator-value {
+        &_size_s .markup-metric-value {
             font-size: 24px;
         }
 
-        &_size_m .markup-indicator-title {
+        &_size_m .markup-metric-title {
             font-size: 16px;
         }
 
-        &_size_m .markup-indicator-value {
+        &_size_m .markup-metric-value {
             font-size: 48px;
         }
 
-        &_size_l .markup-indicator-title {
+        &_size_l .markup-metric-title {
             font-size: 20px;
         }
 
-        &_size_l .markup-indicator-value {
+        &_size_l .markup-metric-value {
             font-size: 64px;
         }
 
-        &_size_xl .markup-indicator-title {
+        &_size_xl .markup-metric-title {
             font-size: 24px;
         }
 
-        &_size_xl .markup-indicator-value {
+        &_size_xl .markup-metric-value {
             font-size: 80px;
         }
     }
 
-    .markup-indicator-title {
+    .markup-metric-title {
         display: inline-block;
         color: var(--yc-color-text-primary);
         font-weight: 500;
@@ -46,7 +46,7 @@
         padding-bottom: 0.125em;
     }
 
-    .markup-indicator-value {
+    .markup-metric-value {
         display: inline-block;
         white-space: nowrap;
         font-weight: 500;

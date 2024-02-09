@@ -56,10 +56,10 @@ export const prepareMarkupMetricVariant = ({
         return {
             value: {
                 type: 'concat',
-                className: `markup-indicator_size_${size}`,
+                className: `markup-metric markup-metric_size_${size}`,
                 children: [
                     {
-                        className: 'markup-indicator-title',
+                        className: 'markup-metric-title',
                         type: 'text',
                         content: title,
                     },
@@ -70,7 +70,7 @@ export const prepareMarkupMetricVariant = ({
                         type: 'color',
                         color,
                         content: {
-                            className: 'markup-indicator-value',
+                            className: 'markup-metric-value',
                             type: 'text',
                             content: formattedValue,
                         },
