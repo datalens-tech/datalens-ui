@@ -28,6 +28,7 @@ import {RevisionsListMode, RevisionsMode} from '../../../../store/typings/entryC
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, LOCK_EXTEND_TIMEOUT} from '../../modules/constants';
 import {CopiedConfigData, getTabTitleById} from '../../modules/helpers';
+import {load as loadDash, setEditMode} from '../../store/actions/base/actions';
 import {
     cleanLock,
     deleteLock,
@@ -36,7 +37,6 @@ import {
     setLock,
     setPageTab,
 } from '../../store/actions/dashTyped';
-import {load as loadDash, setEditMode} from '../../store/actions/dashboard/actions';
 import {
     canEdit,
     isDraft,

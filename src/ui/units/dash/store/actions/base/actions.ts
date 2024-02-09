@@ -72,7 +72,6 @@ export const setSelectStateMode = ({
     stateHash: string | null;
     location: Location;
     history: History;
-    params?: Record<string, string>;
 }) => {
     return async function (dispatch: DashDispatch, getState: () => DatalensGlobalState) {
         const {
