@@ -18,19 +18,39 @@ export const prepareMarkupMetricVariant = ({
     value: string | MarkupItem | null;
     extraSettings: ServerCommonSharedExtraSettings | undefined;
 }) => {
+    const title =
+        extraSettings && extraSettings.title && extraSettings.titleMode === 'show'
+            ? extraSettings.title
+            : getFakeTitleOrTitle(measure);
+
     if (typeof value === 'object') {
-        return {value};
+        if (title) {
+            return {
+                value: {
+                    type: 'concat',
+                    children: [
+                        {
+                            type: 'size',
+                            size: '16px',
+                            content: {
+                                className: 'markup-metric-title',
+                                type: 'text',
+                                content: title,
+                            },
+                        },
+                        {
+                            type: 'br',
+                        },
+                        value,
+                    ],
+                },
+            };
+        } else {
+            return {value};
+        }
     } else {
         const size = (extraSettings && extraSettings.metricFontSize) || 'm';
         const color = (extraSettings && extraSettings.metricFontColor) || 'rgb(77, 162, 241)';
-
-        let title;
-
-        if (extraSettings && extraSettings.title && extraSettings.titleMode === 'show') {
-            title = extraSettings.title;
-        } else {
-            title = getFakeTitleOrTitle(measure);
-        }
 
         const formatOptions: CommonNumberFormattingOptions = {};
 
