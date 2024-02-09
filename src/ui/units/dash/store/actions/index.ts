@@ -3,6 +3,7 @@ import {DatalensGlobalState} from 'ui';
 
 import {EntryContentAction} from '../../../../store/actions/entryContent';
 
+import {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
 import {
     AddSelectorToGroupAction,
     ChangeNavigationPathAction,
@@ -69,6 +70,8 @@ export type DashAction<T = unknown> =
     | SetWidgetCurrentTabAction
     | OpenDialogAction
     | OpenItemDialogAction
-    | CloseDialogAction;
+    | CloseDialogAction
+    | SaveDashSuccessAction
+    | SaveDashErrorAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;
