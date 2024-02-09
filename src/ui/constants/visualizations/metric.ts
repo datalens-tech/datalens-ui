@@ -17,6 +17,8 @@ export const METRIC_VISUALIZATION: Shared['visualization'] = {
         {
             allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
             allowedFinalTypes: ITEM_TYPES.MEASURES,
+            // We need to set allowedDataTypes to undefined, so it will overwrite client settings
+            allowedDataTypes: undefined,
             checkAllowed: (item: Field) => {
                 const allowedDataTypes = Utils.isEnabledFeature(Feature.MarkupMetric)
                     ? PRIMITIVE_DATA_TYPES_AND_MARKUP

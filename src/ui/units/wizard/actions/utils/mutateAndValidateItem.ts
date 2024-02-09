@@ -47,21 +47,22 @@ export function mutateAndValidateItem<T extends Field>({
     }
 
     if (placeholder && existingField) {
-        if (placeholder.checkAllowed) {
-            if (!placeholder.checkAllowed(item)) {
-                item.conflict = 'wrong-type';
-                item.undragable = true;
-            }
-        } else if (placeholder.allowedTypes && !placeholder.allowedTypes.has(item.type)) {
+        if (placeholder.checkAllowed && !placeholder.checkAllowed(item)) {
             item.conflict = 'wrong-type';
             item.undragable = true;
-        } else if (
-            placeholder.allowedDataTypes &&
-            !placeholder.allowedDataTypes.has(item.data_type)
-        ) {
+        }
+
+        if (placeholder.allowedTypes && !placeholder.allowedTypes.has(item.type)) {
             item.conflict = 'wrong-type';
             item.undragable = true;
-        } else if (placeholder.allowedFinalTypes && !placeholder.allowedFinalTypes.has(item.type)) {
+        }
+
+        if (placeholder.allowedDataTypes && !placeholder.allowedDataTypes.has(item.data_type)) {
+            item.conflict = 'wrong-type';
+            item.undragable = true;
+        }
+
+        if (placeholder.allowedFinalTypes && !placeholder.allowedFinalTypes.has(item.type)) {
             item.conflict = 'wrong-type';
             item.undragable = true;
             item.valid = false;
