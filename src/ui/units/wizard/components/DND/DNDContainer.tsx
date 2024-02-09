@@ -89,23 +89,25 @@ class DNDContainer extends Component<DNDContainerProps, DNDContainerState> {
                 dropPlaceExists = false;
             }
 
-            if (this.props.allowedTypes) {
-                canDrop = this.props.allowedTypes.has(draggingItem.item.type);
-            } else if (this.props.checkAllowed) {
+            if (this.props.checkAllowed) {
                 canDrop = this.props.checkAllowed(draggingItem.item);
             } else {
-                canDrop = true;
+                if (this.props.allowedTypes) {
+                    canDrop = this.props.allowedTypes.has(draggingItem.item.type);
+                } else {
+                    canDrop = true;
+                }
+
+                if (this.props.allowedDataTypes) {
+                    if (!this.props.allowedDataTypes.has(itemDataType)) {
+                        canDrop = false;
+                        dropPlaceExists = false;
+                    }
+                }
             }
 
             if (this.props.capacity && this.props.capacity <= this.state.items.length) {
                 dropPlaceExists = false;
-            }
-
-            if (this.props.allowedDataTypes) {
-                if (!this.props.allowedDataTypes.has(itemDataType)) {
-                    canDrop = false;
-                    dropPlaceExists = false;
-                }
             }
 
             if (!canDrop) {
