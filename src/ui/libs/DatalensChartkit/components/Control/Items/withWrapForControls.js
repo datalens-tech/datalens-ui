@@ -10,8 +10,6 @@ import {CONTROL_TYPE} from '../../../modules/constants/constants';
 
 const b = block('chartkit-control-item');
 
-export const CONTROLS_COLUMN_GAP = '10px';
-
 function withWrapForControls(WrappedComponent) {
     function WithWrapForControls(props) {
         const {type, width, hidden, label, labelInside, className} = props;
