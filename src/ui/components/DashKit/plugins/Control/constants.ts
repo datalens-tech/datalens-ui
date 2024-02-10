@@ -14,6 +14,7 @@ export const TYPE: Record<string, ControlType> = {
 };
 
 export const LOAD_STATUS: Record<string, LoadStatus> = {
+    INITIAL: 'initial',
     PENDING: 'pending',
     SUCCESS: 'success',
     FAIL: 'fail',

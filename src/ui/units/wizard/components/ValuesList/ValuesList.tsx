@@ -23,7 +23,7 @@ import {
     markupToRawString,
 } from 'shared';
 import {getColorsConfigKey} from 'shared/modules/colors/common-helpers';
-import {getLineTimeDistinctValue} from 'shared/modules/colors/distincts-helpers';
+import {getDistinctValue, getLineTimeDistinctValue} from 'shared/modules/colors/distincts-helpers';
 import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
 import {DatalensGlobalState} from 'ui';
 
@@ -283,7 +283,7 @@ class ValuesList extends React.Component<Props, State> {
             if (item.data_type === DATASET_FIELD_TYPES.MARKUP && rawDistinctValue) {
                 distinctValue = markupToRawString(rawDistinctValue as MarkupItem);
             } else {
-                distinctValue = (rawDistinctValue as string) || 'Null';
+                distinctValue = getDistinctValue(rawDistinctValue);
             }
 
             return acc.concat(distinctValue);

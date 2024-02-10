@@ -9,13 +9,14 @@ import {DatalensGlobalState, Utils} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
-import {ResolveThunks, connect} from 'react-redux';
+import {connect} from 'react-redux';
 import {
     DATASET_FIELD_TYPES,
     DATASET_IGNORED_DATA_TYPES,
     DashTabItemControlDataset,
     DashTabItemControlExternal,
     DashTabItemControlManual,
+    DashTabItemControlSingle,
     DashTabItemControlSourceType,
     Feature,
     StringParams,
@@ -27,7 +28,6 @@ import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
-import {ChartKitCustomError} from '../../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import {
     ControlCheckbox,
     ControlDatepicker,
@@ -40,7 +40,6 @@ import {
 } from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import {ControlBase, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
-import {closeDialog, openDialogErrorWithTabs} from '../../../../store/actions/dialog';
 import {
     addOperationForValue,
     unwrapFromArrayAndSkipOperation,
@@ -65,13 +64,7 @@ import {
     PluginControlState,
     ValidationErrorData,
 } from './types';
-import {
-    getDatasetSourceInfo,
-    getLabels,
-    getStatus,
-    isValidRequiredValue,
-    prepareSelectorError,
-} from './utils';
+import {getDatasetSourceInfo, getLabels, getStatus, isValidRequiredValue} from './utils';
 
 import './Control.scss';
 
@@ -80,14 +73,12 @@ type ContextProps = {
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 
 export interface PluginControlProps
     extends PluginWidgetProps,
-        ControlSettings,
         ContextProps,
-        StateProps,
-        DispatchProps {}
+        ControlSettings,
+        StateProps {}
 
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
@@ -411,7 +402,12 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
     init = async () => {
         try {
-            const {data, workbookId} = this.props;
+            const data = this.props.data as unknown as
+                | DashTabItemControlDataset
+                | DashTabItemControlManual
+                | DashTabItemControlExternal;
+
+            const {workbookId} = this.props;
 
             const payload = {
                 data: {
@@ -445,7 +441,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 : loadedData.uiScheme;
 
             if (data.sourceType === DashTabItemControlSourceType.Dataset) {
-                this.checkDatasetFieldType(loadedData);
+                this.checkDatasetFieldType(loadedData, data);
             } else {
                 this.setLoadedData(loadedData, LOAD_STATUS.SUCCESS);
             }
@@ -478,7 +474,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
     };
 
-    onChange = (param: string, value: string | string[]) => {
+    onChange = ({param, value}: {param: string; value: string | string[]}) => {
         this.props.onStateAndParamsChange({params: {[param]: value}});
     };
 
@@ -518,32 +514,9 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         return null;
     }
 
-    renderError() {
-        const errorData = this.state.errorData;
-        const errorTitle = errorData?.data?.title;
-        return (
-            <div className={b('error')}>
-                <Error
-                    onClick={() =>
-                        this.props.openDialogErrorWithTabs({
-                            error: prepareSelectorError(
-                                errorData?.data || {},
-                                errorData?.requestId,
-                            ) as ChartKitCustomError,
-                            title: errorTitle,
-                            onRetry: () => {
-                                this.reload();
-                                this.props.closeDialog();
-                            },
-                        })
-                    }
-                />
-            </div>
-        );
-    }
-
     renderSelectControl() {
-        const {id, data, defaults, editMode, getDistincts} = this.props;
+        const data = this.props.data as unknown as DashTabItemControlSingle;
+        const {id, defaults, getDistincts} = this.props;
         const {loadedData, status, loadingItems, errorData, validationError} = this.state;
 
         return (
@@ -551,7 +524,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 id={id}
                 data={data}
                 defaults={defaults}
-                editMode={editMode}
                 status={status}
                 loadedData={loadedData}
                 loadingItems={loadingItems}
@@ -568,11 +540,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     renderControls() {
-        const {
-            data: {sourceType},
-            editMode,
-            id,
-        } = this.props;
+        const data = this.props.data as unknown as DashTabItemControlSingle;
+
+        const {sourceType} = data;
+        const {id} = this.props;
 
         switch (this.state.status) {
             case LOAD_STATUS.PENDING:
@@ -589,7 +560,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 }
                 break;
             case LOAD_STATUS.FAIL: {
-                return this.renderError();
+                return <Error errorData={this.state.errorData} onClickRetry={this.reload} />;
             }
         }
 
@@ -599,9 +570,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         // @ts-ignore
         return uiScheme?.controls.map((control) => {
             const {param, type} = control;
-            const data = this.props.data as unknown as
-                | DashTabItemControlManual
-                | DashTabItemControlDataset;
 
             const {source} = data;
             const {required, operation} = source;
@@ -632,7 +600,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     operation,
                 });
 
-                this.onChange(param, valueWithOperation);
+                this.onChange({param, value: valueWithOperation});
             };
 
             const {label, innerLabel} = getLabels({controlData: data});
@@ -644,7 +612,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 key: param,
                 value: preparedValue,
                 onChange,
-                editMode,
                 innerLabel,
                 label,
                 required,
@@ -655,7 +622,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 let fieldType = source?.fieldType || null;
                 if (sourceType === DashTabItemControlSourceType.Dataset) {
                     const {datasetFieldType} = getDatasetSourceInfo({
-                        data: this.props.data,
+                        data,
                         actualLoadedData: this.state.loadedData,
                     });
                     fieldType = datasetFieldType;
@@ -696,10 +663,11 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             | DashTabItemControlExternal
             | DashTabItemControlManual
             | DashTabItemControlDataset;
-        const sourceType = controlData.sourceType;
+        const {sourceType, source} = controlData;
 
         if (sourceType === DashTabItemControlSourceType.External) {
-            const chartId = (data as unknown as DashTabItemControlExternal).source.chartId;
+            const chartId = source.chartId;
+
             return (
                 <div
                     ref={this.rootNode}
@@ -736,9 +704,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 </div>
             );
         }
-        const source = (
-            controlData as unknown as DashTabItemControlManual | DashTabItemControlDataset
-        ).source;
 
         const paramIdDebug = ((source as DashTabItemControlDataset['source']).datasetFieldId ||
             (source as DashTabItemControlManual['source']).fieldName ||
@@ -756,10 +721,13 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         );
     }
 
-    private checkDatasetFieldType(loadedData: ResponseSuccessControls) {
+    private checkDatasetFieldType(
+        loadedData: ResponseSuccessControls,
+        data: DashTabItemControlDataset,
+    ) {
         const {datasetFieldType} = getDatasetSourceInfo({
             currentLoadedData: loadedData,
-            data: this.props.data,
+            data,
             actualLoadedData: this.state.loadedData,
         });
 
@@ -837,14 +805,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     isNewRelations: selectIsNewRelations(state),
 });
 
-const mapDispatchToProps = {
-    openDialogErrorWithTabs,
-    closeDialog,
-};
-
-const ControlWithStore = connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true})(
-    Control,
-);
+const ControlWithStore = connect(mapStateToProps, null, null, {forwardRef: true})(Control);
 
 const plugin: PluginControl = {
     type: 'control',

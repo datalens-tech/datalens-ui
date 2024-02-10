@@ -28,7 +28,7 @@ import {getSegmentsYAxis} from '../line/helpers';
 import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
 import {PrepareFunctionArgs} from '../types';
 
-import {prepareBarX} from './prepareBarX';
+import {prepareBarX} from './prepare-bar-x';
 
 // eslint-disable-next-line complexity
 export function prepareHighchartsBarX(args: PrepareFunctionArgs) {

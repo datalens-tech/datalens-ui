@@ -214,6 +214,10 @@ class Body extends React.PureComponent<BodyProps> {
                 title: i18n('dash.main.view', 'button_edit-panel-selector'),
                 className: b('edit-panel-item'),
                 onClick: () => {
+                    if (Utils.isEnabledFeature(Feature.GroupControls)) {
+                        this.props.openDialog(DIALOG_TYPE.GROUP_CONTROL);
+                        return;
+                    }
                     this.props.openDialog(DIALOG_TYPE.CONTROL);
                 },
                 qa: DashboardAddWidgetQa.AddControl,

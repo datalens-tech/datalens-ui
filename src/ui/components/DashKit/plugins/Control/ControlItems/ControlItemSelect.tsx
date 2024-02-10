@@ -10,7 +10,7 @@ import {
     ApiV2Parameter,
     DashTabItemControlDataset,
     DashTabItemControlElementSelect,
-    DashTabItemControlManual,
+    DashTabItemControlSingle,
     DashTabItemControlSourceType,
     DatasetFieldType,
     Feature,
@@ -51,20 +51,21 @@ import {
 
 type ControlItemSelectProps = {
     id: string;
-    data: ConfigItem['data'];
+    data: DashTabItemControlSingle;
     defaults: ConfigItem['defaults'];
-    editMode: boolean;
     status: LoadStatus;
     loadedData: null | ResponseSuccessControls;
     loadingItems: boolean;
     actualParams: StringParams;
-    onChange: (param: string, value: string | string[]) => void;
+    onChange: ({param, value}: {param: string; value: string | string[]}) => void;
     init: () => void;
     showItemsLoader: () => void;
     getDistincts?: GetDistincts;
     validationError: string | null;
     errorData: null | ErrorData;
     validateValue: (args: ValidationErrorData) => boolean | undefined;
+    classMixin?: string;
+    width?: string;
 };
 
 const b = block('dashkit-plugin-control');
@@ -73,7 +74,6 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 export const ControlItemSelect = ({
     defaults,
     data,
-    editMode,
     id,
     loadedData,
     status,
@@ -86,6 +86,8 @@ export const ControlItemSelect = ({
     init,
     showItemsLoader,
     validateValue,
+    classMixin,
+    width,
 }: ControlItemSelectProps) => {
     const dispatch = useDispatch();
     let _loadingItemsTimer: NodeJS.Timeout | undefined;
@@ -96,8 +98,9 @@ export const ControlItemSelect = ({
     const getSelectDistincts = React.useCallback(
         async ({searchPattern, nextPageToken}: {searchPattern: string; nextPageToken: number}) => {
             try {
+                const datasetData = data as DashTabItemControlDataset;
                 const {datasetId, datasetFieldId, datasetFields, datasetFieldsMap} =
-                    getDatasetSourceInfo({actualLoadedData: loadedData, data});
+                    getDatasetSourceInfo({actualLoadedData: loadedData, data: datasetData});
 
                 const splitParams = splitParamsToParametersAndFilters(
                     transformParamsToUrlParams(actualParams),
@@ -295,12 +298,11 @@ export const ControlItemSelect = ({
         }
     };
 
-    const controlData = data as unknown as DashTabItemControlDataset | DashTabItemControlManual;
-    const source = controlData.source;
-    const sourceType = controlData.sourceType;
+    const {source, sourceType} = data;
     const fieldId =
-        (source as DashTabItemControlDataset['source']).datasetFieldId ||
-        (source as DashTabItemControlManual['source']).fieldName;
+        sourceType === DashTabItemControlSourceType.Dataset
+            ? source.datasetFieldId
+            : source.fieldName;
     const selectedValue = defaults![fieldId];
     const preselectedContent = [{title: selectedValue, value: selectedValue}];
     // @ts-ignore
@@ -340,10 +342,10 @@ export const ControlItemSelect = ({
             operation: source.operation,
         });
 
-        onChange(fieldId, valueWithOperation);
+        onChange({param: fieldId, value: valueWithOperation});
     };
 
-    const {label, innerLabel} = getLabels({controlData});
+    const {label, innerLabel} = getLabels({controlData: data});
 
     const props: SelectControlProps = {
         widgetId: id,
@@ -353,16 +355,16 @@ export const ControlItemSelect = ({
         param: fieldId,
         multiselect: (source as DashTabItemControlElementSelect).multiselectable,
         type: TYPE.SELECT,
-        className: b('item'),
+        className: b('item', classMixin),
         key: fieldId,
         value: preparedValue as string,
-        editMode,
         onChange: onSelectChange,
         onOpenChange,
         loadingItems,
         placeholder,
         required: source.required,
         hasValidationError: Boolean(validationError),
+        width,
     };
 
     if (status === LOAD_STATUS.FAIL) {

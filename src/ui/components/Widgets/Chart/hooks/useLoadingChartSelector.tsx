@@ -337,13 +337,14 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
      *
      * For selector if autoHeight prop enabled or when an error occurred
      */
-    const autoHeightEnabled = isInit && (Boolean(props.data.autoHeight) || Boolean(error));
+    const isAutoHeightEnabled = Boolean(props.data.autoHeight) || Boolean(error);
+    const autoHeightEnabled = isInit && isAutoHeightEnabled;
 
     const debounceResizeAdjustLayot = React.useCallback(
         debounce(() => {
-            adjustLayout(!props.data.autoHeight);
+            adjustLayout(!isAutoHeightEnabled);
         }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-        [adjustLayout, props.data.autoHeight],
+        [adjustLayout, isAutoHeightEnabled],
     );
 
     useResizeObserver({
@@ -373,6 +374,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         isLoading,
         isSilentReload,
         isReloadWithNoVeil,
+        isAutoHeightEnabled,
         error,
         handleChartkitReflow,
         handleChange,
