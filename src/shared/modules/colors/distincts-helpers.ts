@@ -8,3 +8,7 @@ export const getLineTimeDistinctValue = (
 
     return prevDistinct.length > 0 ? `${prevDistinct}; ${distinct}` : `${distinct}`;
 };
+
+export function getDistinctValue(value: unknown) {
+    return value === null ? 'Null' : String(value);
+}
