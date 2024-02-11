@@ -11,8 +11,8 @@ import {DashTabItem, DialogTabsQA} from 'shared';
 import {DatalensGlobalState} from 'ui';
 
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
-import {closeDialog} from '../../../store/actions/dash';
 import {setTabs} from '../../../store/actions/dashTyped';
+import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {selectIsDialogVisible, selectTabs} from '../../../store/selectors/dashTypedSelectors';
 
 import TabItem, {DashTabChanged} from './TabItem';

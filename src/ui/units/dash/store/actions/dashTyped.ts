@@ -43,7 +43,8 @@ import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
 import type {DashState} from '../reducers/dashTypedReducer';
 
-import {closeDialog as closeDashDialog, save} from './dash';
+import {save} from './base/actions';
+import {closeDialog as closeDashDialog} from './dialogs/actions';
 import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
 
 import {DashDispatch} from './index';
@@ -360,7 +361,7 @@ export const ADD_SELECTOR_TO_GROUP = Symbol('dash/ADD_SELECTOR_TO_GROUP');
 
 export const UPDATE_SELECTORS_GROUP = Symbol('dash/UPDATE_SELECTORS_GROUP');
 
-export const SET_ACTIVE_SELECTOR_INDEX = Symbol('dash/SET_ACTIVE_SELECTOR)INDEX');
+export const SET_ACTIVE_SELECTOR_INDEX = Symbol('dash/SET_ACTIVE_SELECTOR_INDEX');
 
 export type SelectorSourceType =
     | DashTabItemControlSourceType.Dataset
@@ -591,6 +592,7 @@ const getControlDefaultsForField = (
 
     if (field) {
         return {
+            ...defaults,
             [field]: addOperationForValue({
                 operation: selectorDialog.operation,
                 value: defaultValue || '',
@@ -652,15 +654,15 @@ export const applyControl2Dialog = () => {
 
 export const applyGroupControlDialog = () => {
     return (dispatch: Dispatch, getState: () => DatalensGlobalState) => {
-        const selectorGroups = getState().dash.selectorsGroup;
+        const selectorGroup = getState().dash.selectorsGroup;
 
         // backward to single `control` widget
-        if (selectorGroups.items.length < 2) {
+        if (selectorGroup.items.length < 2) {
             dispatch(
                 setSelectorDialogItem({
-                    ...selectorGroups.items[0],
-                    autoHeight: selectorGroups.autoHeight,
-                    defaults: selectorGroups.defaults,
+                    ...selectorGroup.items[0],
+                    autoHeight: selectorGroup.autoHeight,
+                    defaults: selectorGroup.defaults,
                 }),
             );
             applyControl2Dialog()(dispatch, getState);
@@ -670,8 +672,8 @@ export const applyGroupControlDialog = () => {
         let defaults: Record<string, string | string[]> = {};
 
         // check validation for every control
-        for (let i = 0; i < selectorGroups.items.length; i += 1) {
-            const validation = getControlValidation(selectorGroups.items[i]);
+        for (let i = 0; i < selectorGroup.items.length; i += 1) {
+            const validation = getControlValidation(selectorGroup.items[i]);
 
             if (!isEmpty(validation)) {
                 dispatch(setActiveSelectorIndex({activeSelectorIndex: i}));
@@ -683,28 +685,24 @@ export const applyGroupControlDialog = () => {
                 return;
             }
 
-            defaults = getControlDefaultsForField(defaults, selectorGroups.items[i]);
+            defaults = getControlDefaultsForField(defaults, selectorGroup.items[i]);
         }
 
         const data = {
-            id: selectorGroups.id,
-            autoHeight: selectorGroups.autoHeight,
-            buttonApply: selectorGroups.buttonApply,
-            buttonReset: selectorGroups.buttonReset,
-            items: selectorGroups.items.reduce<Record<string, Partial<DashTabItemControlData>>>(
-                (items, selector, index) => {
-                    items[selector.id] = {
-                        title: selector.title,
-                        sourceType: selector.sourceType,
-                        source: getItemDataSource(selector) as DashTabItemControlData['source'],
-                        placementMode: selector.placementMode,
-                        width: selector.width,
-                        index,
-                    };
-                    return items;
-                },
-                {},
-            ),
+            id: selectorGroup.id,
+            autoHeight: selectorGroup.autoHeight,
+            buttonApply: selectorGroup.buttonApply,
+            buttonReset: selectorGroup.buttonReset,
+            items: selectorGroup.items.map((selector) => {
+                return {
+                    id: selector.id,
+                    title: selector.title,
+                    sourceType: selector.sourceType,
+                    source: getItemDataSource(selector) as DashTabItemControlData['source'],
+                    placementMode: selector.placementMode,
+                    width: selector.width,
+                };
+            }),
         };
 
         // TODO what is getExtendedItemData from single control?

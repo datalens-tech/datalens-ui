@@ -15,7 +15,7 @@ import {getFormattedLabel} from '../../d3/utils/dataLabels';
 import {getAxisType} from '../helpers/axis';
 import {PrepareFunctionArgs} from '../types';
 
-import {prepareBarX} from './prepareBarX';
+import {prepareBarX} from './prepare-bar-x';
 
 type OldBarXDataItem = {
     y: number;

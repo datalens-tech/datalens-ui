@@ -243,6 +243,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         loadChartData,
         setLoadingProps,
         getControls,
+        isAutoHeightEnabled,
     } = useLoadingChartSelector({
         ...props,
         chartKitRef,
@@ -307,7 +308,10 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
     return (
         <div
             ref={rootNodeRef}
-            className={`${b({...mods, autoheight: Boolean(props.data?.autoHeight)})}`}
+            className={`${b({
+                ...mods,
+                autoheight: isAutoHeightEnabled,
+            })}`}
             data-qa="chart-widget-selectors"
         >
             <DebugInfoTool

@@ -105,7 +105,7 @@ export type EntityConfig = {
     meta: {stype: EntitiesType | WizardType | undefined};
 };
 
-interface EntityRequestOptions {
+export interface EntityRequestOptions {
     data: {
         config: EntityConfig | undefined;
         widgetType?: DashTabItemControlSourceType | WidgetType;

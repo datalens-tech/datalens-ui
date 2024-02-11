@@ -176,7 +176,7 @@ function BaseControlInput({
     label,
     hasValidationError,
 }) {
-    const [text, setText] = React.useState(value);
+    const [text, setText] = React.useState(value || '');
 
     React.useEffect(() => setText(value), [value]);
 
@@ -331,7 +331,7 @@ function BaseControlDatepicker({
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
-            className={b('datepicker')}
+            className={b('component')}
             hasValidationError={hasValidationError}
             required={required}
             label={labelInside ? label : innerLabel}
@@ -426,7 +426,7 @@ function BaseControlRangeDatepicker({
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
-            className={b('datepicker')}
+            className={b('component')}
             hasValidationError={hasValidationError}
             required={required}
             fillPartialInterval={true}

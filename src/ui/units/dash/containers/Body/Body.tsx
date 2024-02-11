@@ -51,7 +51,6 @@ import {
     sortByOrderIdOrLayoutComparator,
     stringifyMemoize,
 } from '../../modules/helpers';
-import {openDialog, openItemDialogAndSetData} from '../../store/actions/dash';
 import {
     TabsHashStates,
     setCurrentTabData,
@@ -60,6 +59,7 @@ import {
     setHashState,
     setStateHashId,
 } from '../../store/actions/dashTyped';
+import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
 import {
     closeDialogRelations,
     openDialogRelations,
@@ -156,6 +156,9 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     componentDidMount() {
+        // if localStorage already have a dash item, we need to set it to state
+        this.storageHandler();
+
         window.addEventListener('storage', this.storageHandler);
     }
 
@@ -210,6 +213,10 @@ class Body extends React.PureComponent<BodyProps> {
                 title: i18n('dash.main.view', 'button_edit-panel-selector'),
                 className: b('edit-panel-item'),
                 onClick: () => {
+                    if (Utils.isEnabledFeature(Feature.GroupControls)) {
+                        this.props.openDialog(DIALOG_TYPE.GROUP_CONTROL);
+                        return;
+                    }
                     this.props.openDialog(DIALOG_TYPE.CONTROL);
                 },
                 qa: DashboardAddWidgetQa.AddControl,

@@ -132,4 +132,9 @@ export default class VisualizationItemDialog {
             .click();
         await this.page.locator(slct(DialogColorQa.ApplyButton)).click();
     }
+
+    async selectOneOfValues(parent: string, value: string) {
+        const radioGroup = this.page.locator(slct(parent));
+        await radioGroup.locator(`[value="${value}"]`);
+    }
 }

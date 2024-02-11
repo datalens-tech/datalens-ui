@@ -64,6 +64,7 @@ export const enum DialogFieldMainSectionQa {
     PrecisionInput = 'precision-input',
     PrefixInput = 'prefix-input',
     PostfixInput = 'postfix-input',
+    NumberFormat = 'number-format-radio',
 }
 
 export const enum DialogFieldTypeSelectorValuesQa {
@@ -135,6 +136,7 @@ export const enum SectionVisualizationAddItemQa {
 export const enum DialogPlaceholderQa {
     TooltipZeroToMaxScale = 'dialog-placeholder-tooltip-zero-to-max-scale',
     TooltipLogarithmicAxis = 'dialog-placeholder-tooltip-logarithmic-axis',
+    AxisFormatMode = 'dialog-placeholder-axis-format-mode',
 }
 
 export const enum DatasetItemActionsQa {
