@@ -49,7 +49,6 @@ const Row: React.FC<RowProps> = ({
     onDuplicateEntry,
     onCopyEntry,
 }) => {
-    const [isVisibleFavorite, setIsVisibleFavorite] = React.useState(false);
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
     const {getLoginById} = registry.common.functions.getAll();
 
@@ -79,22 +78,11 @@ const Row: React.FC<RowProps> = ({
     const getFavoriteIcon = () => {
         if (item.isFavorite) return <Icon className={b('icon-star-fill')} data={StarFill} />;
 
-        if (isVisibleFavorite) {
-            return <Icon className={b('icon-star-stroke')} data={Star} />;
-        }
-
-        return null;
+        return <Icon className={b('icon-star-stroke')} data={Star} />;
     };
 
     return (
-        <Link
-            to={url}
-            className={b()}
-            style={defaultRowStyle}
-            data-qa={WorkbookPage.ListItem}
-            onMouseEnter={() => setIsVisibleFavorite(true)}
-            onMouseLeave={() => setIsVisibleFavorite(false)}
-        >
+        <Link to={url} className={b()} style={defaultRowStyle} data-qa={WorkbookPage.ListItem}>
             <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
                 <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>
                     <EntryIcon entry={item} className={b('icon')} width="24" height="24" />

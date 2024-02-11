@@ -1,6 +1,8 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
 .dl-content-row {
+    $class: &;
+
     display: table-row;
     color: inherit;
     text-decoration: none;
@@ -8,6 +10,10 @@
     &:hover {
         background-color: var(--g-color-base-simple-hover-solid);
         cursor: pointer;
+
+        #{$class}__btn-favorite {
+            visibility: visible;
+        }
     }
 
     &__empty-row {
@@ -76,5 +82,21 @@
         &:hover {
             background: var(--g-color-base-simple-hover);
         }
+    }
+
+    &__btn-favorite {
+        visibility: hidden;
+
+        &_isFavorite {
+            visibility: visible;
+
+            #{$class}__icon-star-stroke {
+                visibility: hidden;
+            }
+        }
+    }
+
+    &__btn-favorite_isFavorite {
+        visibility: visible;
     }
 }
