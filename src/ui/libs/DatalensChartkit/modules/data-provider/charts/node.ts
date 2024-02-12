@@ -6,7 +6,7 @@ import {UserSettings} from 'libs/userSettings';
 import {omit, partial, partialRight} from 'lodash';
 import {Optional} from 'utility-types';
 
-import {StringParams} from '../../../../../../shared';
+import {EDITOR_CHART_NODE, StringParams, WIZARD_CHART_NODE} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     ChartkitHandlersDict,
@@ -243,8 +243,9 @@ function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyW
             extra,
             requestId,
             traceId,
-            isNewWizard: loadedType.includes('_wizard_'),
+            isNewWizard: loadedType in WIZARD_CHART_NODE,
             isOldWizard: false,
+            isEditor: loadedType in EDITOR_CHART_NODE,
         };
 
         if ('unresolvedParams' in loaded) {
