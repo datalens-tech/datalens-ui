@@ -2,5 +2,54 @@
     height: 100%;
     overflow: auto;
 
-    padding: 20px;
+    padding: 15px;
+
+    .markup-metric {
+        &_size_s .markup-metric-title {
+            font-size: 13px;
+        }
+
+        &_size_s .markup-metric-value {
+            font-size: 24px;
+        }
+
+        &_size_m .markup-metric-title {
+            font-size: 16px;
+        }
+
+        &_size_m .markup-metric-value {
+            font-size: 48px;
+        }
+
+        &_size_l .markup-metric-title {
+            font-size: 20px;
+        }
+
+        &_size_l .markup-metric-value {
+            font-size: 64px;
+        }
+
+        &_size_xl .markup-metric-title {
+            font-size: 24px;
+        }
+
+        &_size_xl .markup-metric-value {
+            font-size: 80px;
+        }
+    }
+
+    .markup-metric-title {
+        display: inline-block;
+        color: var(--yc-color-text-primary);
+        font-weight: 500;
+        line-height: 1.2;
+        padding-bottom: 0.125em;
+    }
+
+    .markup-metric-value {
+        display: inline-block;
+        white-space: nowrap;
+        font-weight: 500;
+        line-height: 1.2;
+    }
 }

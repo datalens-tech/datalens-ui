@@ -1,4 +1,5 @@
 import {
+    DATASET_FIELD_TYPES,
     Field,
     Placeholder,
     Shared,
@@ -23,7 +24,11 @@ export function linearCheckColor({
     designItems,
     isMultipleColorsSupported,
 }: CommonCheckColorArgs) {
-    if (isMeasureField(item) || isMeasureValue(item)) {
+    if (
+        isMeasureField(item) ||
+        isMeasureValue(item) ||
+        item.data_type === DATASET_FIELD_TYPES.MARKUP
+    ) {
         return false;
     }
 

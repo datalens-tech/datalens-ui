@@ -111,7 +111,7 @@ interface ConfigNodeMarkdown extends ConfigNodeBase {
 }
 
 interface ConfigNodeMarkup extends ConfigNodeBase {
-    type: 'markup_node';
+    type: 'markup_node' | 'markup_wizard_node';
     data: {[key in 'js' | 'params' | 'url' | 'shared' | 'config']: string};
 }
 

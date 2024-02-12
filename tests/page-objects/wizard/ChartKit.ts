@@ -33,8 +33,8 @@ export default class ChartKit {
     xAxisLabel = '.highcharts-xaxis-labels text';
     chartTitle = '.highcharts-title';
     navigator = '.highcharts-navigator';
-    indicatorItemSelector = '.chartkit-indicator__item';
-    indicatorItemValueSelector = '.chartkit-indicator__item-value';
+    metricItemSelector = '.chartkit-indicator__item,.markup-metric';
+    metricItemValueSelector = '.chartkit-indicator__item-value,.markup-metric-value';
 
     private drillArrowsSelector = '.chartkit-drill__drill-action';
     private breadcrumbsSelector = '.chartkit-drill .yc-breadcrumbs__item';
@@ -108,16 +108,6 @@ export default class ChartKit {
 
     async waitForErrorTitle(errorQa: string) {
         await this.page.waitForSelector(slct(errorQa));
-    }
-
-    async waitForDefaultMetric() {
-        await this.page.waitForSelector(
-            `.chartkit-metric-2__metric, ${this.indicatorItemSelector}`,
-        );
-
-        await this.page.waitForSelector(
-            `.chartkit-metric-2__value, ${this.indicatorItemValueSelector}`,
-        );
     }
 
     async waitForSuccessfulRender() {
