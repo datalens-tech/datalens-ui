@@ -17,6 +17,12 @@ export const DIALOG_TYPE = Object.assign(
         SETTINGS: 'settings',
         SELECT_STATE: 'selectState',
         EDIT: 'edit',
+    } as {
+        TABS: 'tabs';
+        CONNECTIONS: 'connections';
+        SETTINGS: 'settings';
+        SELECT_STATE: 'selectState';
+        EDIT: 'edit';
     },
     ITEM_TYPE,
 );

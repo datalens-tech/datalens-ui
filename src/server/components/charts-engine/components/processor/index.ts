@@ -8,6 +8,7 @@ import {ChartsEngine} from '../..';
 import {
     DL_CONTEXT_HEADER,
     DashWidgetConfig,
+    EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
     Feature,
     isEnabledServerFeature,
@@ -54,29 +55,6 @@ const {
     REQUEST_SIZE_LIMIT_EXCEEDED,
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
 } = configConstants;
-
-export const EDITOR_TYPE_CONFIG_TABS = {
-    graph_node: 'statface_graph',
-    graph_wizard_node: 'statface_graph',
-    graph_sql_node: 'statface_graph',
-    graph_ql_node: 'statface_graph',
-    timeseries_ql_node: 'statface_graph',
-    graph_billing_node: 'statface_graph',
-    table_node: 'table',
-    table_wizard_node: 'table',
-    table_sql_node: 'table',
-    table_ql_node: 'table',
-    text_node: 'statface_text',
-    metric_node: 'statface_metric',
-    metric_wizard_node: 'statface_metric',
-    metric_sql_node: 'statface_metric',
-    metric_ql_node: 'statface_metric',
-    map_node: 'statface_map',
-    markup_node: 'config',
-    markup_wizard_node: 'config',
-    markdown_node: '',
-    module: '',
-};
 
 const TEN_SECONDS = 10000;
 const ONE_SECOND = 1000;

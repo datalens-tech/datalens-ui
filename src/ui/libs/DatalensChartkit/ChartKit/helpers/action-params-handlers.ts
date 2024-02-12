@@ -232,15 +232,16 @@ export function handleSeriesClickForActionParams(args: {
                         }
                     });
 
-                    newActionParams = subtractParameters(newActionParams, currentPointParams);
-
                     if (multiSelect) {
+                        newActionParams = subtractParameters(newActionParams, currentPointParams);
                         chartPoints.forEach((p) => {
                             if (isPointSelected(p, newActionParams)) {
                                 const pointParams = getPointActionParams(p);
                                 newActionParams = addParams(newActionParams, pointParams);
                             }
                         });
+                    } else {
+                        newActionParams = {};
                     }
                 } else {
                     if (!multiSelect) {

@@ -12,7 +12,7 @@ export type GetDistincts = DatalensSdk<{
 }>['bi']['getDistinctsApiV2'];
 
 export type ControlType = 'select' | 'input' | 'datepicker' | 'range-datepicker' | 'checkbox';
-export type LoadStatus = 'pending' | 'success' | 'fail';
+export type LoadStatus = 'pending' | 'success' | 'fail' | 'initial';
 
 export type ErrorData = {
     data: {
@@ -72,7 +72,7 @@ export interface PluginControlState {
 export interface SelectControlProps {
     widgetId: string;
     content: any;
-    editMode: boolean;
+    editMode?: boolean;
     label: string;
     innerLabel: string;
     param: string;
@@ -102,6 +102,7 @@ export interface SelectControlProps {
     placeholder: string | undefined;
     required?: boolean;
     hasValidationError: boolean;
+    width?: string;
 }
 
 export type ChartControlRef =

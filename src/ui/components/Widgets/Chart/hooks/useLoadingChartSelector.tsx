@@ -4,7 +4,7 @@ import {AxiosResponse} from 'axios';
 import debounce from 'lodash/debounce';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {DashTabItemControl, Feature} from 'shared';
+import {DashSettings, DashTabItemControl, Feature} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
 import {
@@ -85,6 +85,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         usageType,
         chartId,
         widgetType,
+        settings,
     } = props;
 
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
@@ -93,6 +94,8 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     const isNewRelations = useSelector(selectIsNewRelations);
 
     const history = useHistory();
+
+    const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts ?? true;
 
     /**
      * debounced call of recalculate widget layout after rerender
@@ -334,13 +337,14 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
      *
      * For selector if autoHeight prop enabled or when an error occurred
      */
-    const autoHeightEnabled = isInit && (Boolean(props.data.autoHeight) || Boolean(error));
+    const isAutoHeightEnabled = Boolean(props.data.autoHeight) || Boolean(error);
+    const autoHeightEnabled = isInit && isAutoHeightEnabled;
 
     const debounceResizeAdjustLayot = React.useCallback(
         debounce(() => {
-            adjustLayout(!props.data.autoHeight);
+            adjustLayout(!isAutoHeightEnabled);
         }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-        [adjustLayout, props.data.autoHeight],
+        [adjustLayout, isAutoHeightEnabled],
     );
 
     useResizeObserver({
@@ -356,11 +360,21 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         debouncedChartReflow();
     }, [width, height, debouncedChartReflow]);
 
+    /**
+     * Load selector if load only visible setting disabled
+     */
+    React.useEffect(() => {
+        if (loadOnlyVisibleCharts === false) {
+            setCanBeLoaded(true);
+        }
+    }, [setCanBeLoaded, loadOnlyVisibleCharts]);
+
     return {
         loadedData,
         isLoading,
         isSilentReload,
         isReloadWithNoVeil,
+        isAutoHeightEnabled,
         error,
         handleChartkitReflow,
         handleChange,

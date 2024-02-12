@@ -1,6 +1,5 @@
-import {EntryPublicAuthor, EntryScope} from '../../../../../shared';
+import {EDITOR_TYPE_CONFIG_TABS, EntryPublicAuthor, EntryScope} from '../../../../../shared';
 import {ChartTemplates} from '../chart-generator';
-import {EDITOR_TYPE_CONFIG_TABS} from '../processor';
 
 export type PublicAuthorData = {text?: string; link?: string};
 

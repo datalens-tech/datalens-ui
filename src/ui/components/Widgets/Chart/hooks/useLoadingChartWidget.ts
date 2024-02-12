@@ -110,7 +110,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         clearedOuterParams,
     } = props;
 
-    const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts;
+    const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts ?? true;
 
     const tabs = props.tabs as WidgetPluginDataWithTabs['tabs'];
 
@@ -623,10 +623,11 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         ],
     );
 
+    const isAutoHeightEnabled = Boolean(tabs[tabIndex].autoHeight);
     useResizeObserver({
         onResize: debounceResizeAdjustLayot,
         rootNodeRef,
-        enable: isInit && Boolean(tabs[tabIndex].autoHeight),
+        enable: isInit && isAutoHeightEnabled,
     });
 
     /**
@@ -643,6 +644,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         isLoading,
         isSilentReload,
         isReloadWithNoVeil,
+        isAutoHeightEnabled,
         error,
         handleRenderChart,
         description,
