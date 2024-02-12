@@ -3,6 +3,10 @@
         border-bottom: 1px solid var(--g-color-line-generic);
         display: flex;
         justify-content: space-between;
+
+        &:last-child {
+            border-bottom: none;
+        }
     }
 
     &__invalid-list &__row {
