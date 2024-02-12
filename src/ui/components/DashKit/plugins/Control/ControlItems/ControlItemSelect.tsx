@@ -356,7 +356,7 @@ export const ControlItemSelect = ({
         loadingItems,
         placeholder,
         required: source.required,
-        hasValidationError: Boolean(validationError),
+        hasValidationError: Boolean(selectValidationError),
         ...selectProps,
     };
 

@@ -259,15 +259,16 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsLoadedCount--;
         }
 
-        const isGroupLoaded = this.controlsLoadedCount === this.controlsCount;
-
-        if (isGroupLoaded) {
-            if (this.props.data.autoHeight) {
+        if (this.controlsLoadedCount === this.controlsCount) {
+            // adjust widget layout only for the first loading of widget
+            if (this.props.data.autoHeight && this.state.status !== LOAD_STATUS.SUCCESS) {
                 this.adjustWidgetLayout(false);
             }
 
+            // success status is set to indicate the end of the widget first loading
+            // big non-transparent loader depends on this
             const newState = {
-                needReload: this.state.needReload ? false : this.state.needReload,
+                needReload: false,
                 status: LOAD_STATUS.SUCCESS,
                 silentLoading: false,
             };
