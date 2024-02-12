@@ -1,3 +1,5 @@
+import {CSSProperties} from 'react';
+
 import type {StringParams} from '@gravity-ui/dashkit';
 import type {schema} from 'shared';
 import type {ServerFilter} from 'shared/types/config/wizard';
@@ -102,7 +104,7 @@ export interface SelectControlProps {
     placeholder: string | undefined;
     required?: boolean;
     hasValidationError: boolean;
-    width?: string;
+    style?: CSSProperties;
 }
 
 export type ChartControlRef =

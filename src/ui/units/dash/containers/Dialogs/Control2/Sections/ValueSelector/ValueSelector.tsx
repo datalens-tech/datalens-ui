@@ -51,7 +51,7 @@ const InputValueControl = () => {
             <FieldWrapper error={validation.defaultValue}>
                 <TextInput
                     disabled={isFieldDisabled}
-                    value={defaultValue as string}
+                    value={(defaultValue as string) || ''}
                     onUpdate={handleUpdate}
                 />
             </FieldWrapper>

@@ -1,5 +1,7 @@
 {
+  "button_apply": "Применить",
   "button_details": "Подробнее",
+  "button_reset": "Сбросить",
   "button_retry": "Повторить",
   "placeholder_empty": "Нет выбранных значений",
   "value_required": "Обязательно для заполнения",

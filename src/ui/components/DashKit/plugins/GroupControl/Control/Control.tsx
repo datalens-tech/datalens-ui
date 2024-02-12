@@ -40,7 +40,7 @@ import {
     getStatus,
     isValidRequiredValue,
 } from '../../Control/utils';
-import {cancelCurrentRequests, clearLoaderTimer, getControlWidth} from '../utils';
+import {cancelCurrentRequests, clearLoaderTimer, getControlWidthStyle} from '../utils';
 
 import {getInitialState, reducer} from './store/reducer';
 import {
@@ -320,7 +320,7 @@ export const Control = ({
         };
 
         const innerLabel = showTitle ? getRequiredLabel({title, required}) : '';
-        const controlWidth = getControlWidth(placementMode, width);
+        const style = getControlWidthStyle(placementMode, width);
 
         const props: Record<string, unknown> = {
             param,
@@ -332,7 +332,7 @@ export const Control = ({
             innerLabel,
             required,
             hasValidationError: Boolean(currentValidationError),
-            width: controlWidth,
+            style,
         };
 
         if (type === 'range-datepicker' || type === 'datepicker') {
@@ -378,7 +378,7 @@ export const Control = ({
                         validateValue={validateValue}
                         getDistincts={getDistincts}
                         classMixin={b('item')}
-                        selectProps={{innerLabel, width: controlWidth}}
+                        selectProps={{innerLabel, style}}
                     />
                 );
             case CONTROL_TYPE.INPUT:
@@ -411,15 +411,10 @@ export const Control = ({
         case LOAD_STATUS.PENDING:
             if (!silentLoading || !loadedData || !loadedData.uiScheme) {
                 const {placementMode, width} = data as unknown as DashTabItemControlData;
-                const controlWidth = getControlWidth(placementMode, width);
+                const style = getControlWidthStyle(placementMode, width);
 
                 return (
-                    <div
-                        className={b('item-loader')}
-                        style={{
-                            width: controlWidth,
-                        }}
-                    >
+                    <div className={b('item-loader')} style={style}>
                         <Loader size="s" />
                     </div>
                 );

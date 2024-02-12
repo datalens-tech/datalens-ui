@@ -660,17 +660,17 @@ export const applyGroupControlDialog = () => {
         const selectorGroup = getState().dash.selectorsGroup;
 
         // backward to single `control` widget
-        if (selectorGroup.items.length < 2) {
-            dispatch(
-                setSelectorDialogItem({
-                    ...selectorGroup.items[0],
-                    autoHeight: selectorGroup.autoHeight,
-                    defaults: selectorGroup.defaults,
-                }),
-            );
-            applyControl2Dialog()(dispatch, getState);
-            return;
-        }
+        // if (selectorGroup.items.length < 2) {
+        //     dispatch(
+        //         setSelectorDialogItem({
+        //             ...selectorGroup.items[0],
+        //             autoHeight: selectorGroup.autoHeight,
+        //             defaults: selectorGroup.defaults,
+        //         }),
+        //     );
+        //     applyControl2Dialog()(dispatch, getState);
+        //     return;
+        // }
 
         let defaults: Record<string, string | string[]> = {};
 
@@ -691,19 +691,21 @@ export const applyGroupControlDialog = () => {
             defaults = getControlDefaultsForField(defaults, selectorGroup.items[i]);
         }
 
+        const isSingleControl = selectorGroup.items.length < 2;
+
         const data = {
             id: selectorGroup.id,
-            autoHeight: selectorGroup.autoHeight,
-            buttonApply: selectorGroup.buttonApply,
-            buttonReset: selectorGroup.buttonReset,
+            autoHeight: isSingleControl ? false : selectorGroup.autoHeight,
+            buttonApply: isSingleControl ? false : selectorGroup.buttonApply,
+            buttonReset: isSingleControl ? false : selectorGroup.buttonReset,
             items: selectorGroup.items.map((selector) => {
                 return {
                     id: selector.id,
                     title: selector.title,
                     sourceType: selector.sourceType,
                     source: getItemDataSource(selector) as DashTabItemControlData['source'],
-                    placementMode: selector.placementMode,
-                    width: selector.width,
+                    placementMode: isSingleControl ? 'auto' : selector.placementMode,
+                    width: isSingleControl ? '' : selector.width,
                 };
             }),
         };
