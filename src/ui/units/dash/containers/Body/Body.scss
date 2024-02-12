@@ -95,4 +95,8 @@ $contentMobilePadding: 16px;
         background-color: var(--g-color-base-generic-ultralight);
         padding: 16px 0 4px;
     }
+
+    &__edit-panel {
+        z-index: 10;
+    }
 }
