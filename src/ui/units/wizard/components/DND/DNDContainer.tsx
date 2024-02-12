@@ -89,10 +89,10 @@ class DNDContainer extends Component<DNDContainerProps, DNDContainerState> {
                 dropPlaceExists = false;
             }
 
-            if (this.props.checkAllowed) {
-                canDrop = this.props.checkAllowed(draggingItem.item);
-            } else if (this.props.allowedTypes) {
+            if (this.props.allowedTypes) {
                 canDrop = this.props.allowedTypes.has(draggingItem.item.type);
+            } else if (this.props.checkAllowed) {
+                canDrop = this.props.checkAllowed(draggingItem.item);
             } else {
                 canDrop = true;
             }
@@ -207,9 +207,7 @@ const itemTarget = {
                         revert: true,
                     };
                 }
-            }
-
-            if (component.props.checkAllowed) {
+            } else if (component.props.checkAllowed) {
                 if (!component.props.checkAllowed(sourceObj.item)) {
                     return {
                         revert: true,
