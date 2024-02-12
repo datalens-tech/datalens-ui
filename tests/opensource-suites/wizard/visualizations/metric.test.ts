@@ -60,7 +60,7 @@ datalensTest.describe('Wizard', () => {
 
             const text = await chart.innerText();
 
-            expect(text).toEqual('529');
+            expect(text).toEqual('CitiesCount\n529');
         });
     });
 });
