@@ -1,3 +1,5 @@
+import {dateTime} from '@gravity-ui/date-utils';
+
 import {
     CommonNumberFormattingOptions,
     MINIMUM_FRACTION_DIGITS,
@@ -6,8 +8,9 @@ import {
     ServerField,
     formatNumber,
     getFakeTitleOrTitle,
+    isDateField,
 } from '../../../../../../../../shared';
-import {isFloatDataType} from '../../../utils/misc-helpers';
+import {isFloatDataType, isNumericalDataType} from '../../../utils/misc-helpers';
 
 export const prepareMarkupMetricVariant = ({
     measure,
@@ -18,6 +21,10 @@ export const prepareMarkupMetricVariant = ({
     value: string | MarkupItem | null;
     extraSettings: ServerCommonSharedExtraSettings | undefined;
 }) => {
+    if (!measure) {
+        return {};
+    }
+
     const title =
         extraSettings && extraSettings.title && extraSettings.titleMode === 'show'
             ? extraSettings.title
@@ -54,24 +61,32 @@ export const prepareMarkupMetricVariant = ({
 
         const formatOptions: CommonNumberFormattingOptions = {};
 
-        const measureFormatting = measure.formatting as CommonNumberFormattingOptions | undefined;
+        let formattedValue = String(value);
 
-        if (measureFormatting) {
-            formatOptions.format = measureFormatting.format;
-            formatOptions.postfix = measureFormatting.postfix;
-            formatOptions.prefix = measureFormatting.prefix;
-            formatOptions.showRankDelimiter = measureFormatting.showRankDelimiter;
-            formatOptions.unit = measureFormatting.unit;
-            formatOptions.precision =
-                isFloatDataType(measure.data_type) &&
-                typeof measureFormatting.precision !== 'number'
-                    ? MINIMUM_FRACTION_DIGITS
-                    : measureFormatting.precision;
-        } else if (isFloatDataType(measure.data_type)) {
-            formatOptions.precision = MINIMUM_FRACTION_DIGITS;
+        if (isNumericalDataType(measure.data_type)) {
+            const measureFormatting = measure.formatting as
+                | CommonNumberFormattingOptions
+                | undefined;
+
+            if (measureFormatting) {
+                formatOptions.format = measureFormatting.format;
+                formatOptions.postfix = measureFormatting.postfix;
+                formatOptions.prefix = measureFormatting.prefix;
+                formatOptions.showRankDelimiter = measureFormatting.showRankDelimiter;
+                formatOptions.unit = measureFormatting.unit;
+                formatOptions.precision =
+                    isFloatDataType(measure.data_type) &&
+                    typeof measureFormatting.precision !== 'number'
+                        ? MINIMUM_FRACTION_DIGITS
+                        : measureFormatting.precision;
+            } else if (isFloatDataType(measure.data_type)) {
+                formatOptions.precision = MINIMUM_FRACTION_DIGITS;
+            }
+
+            formattedValue = formatNumber(value, formatOptions);
+        } else if (isDateField(measure) && measure.format) {
+            formattedValue = dateTime({input: value}).format(measure.format);
         }
-
-        const formattedValue = formatNumber(value, formatOptions);
 
         return {
             value: {
