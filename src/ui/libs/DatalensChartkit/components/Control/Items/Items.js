@@ -238,10 +238,16 @@ function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
     }, [value, text]);
 
     const buttonTheme = theme in legoThemeNameMapper ? legoThemeNameMapper[theme] : theme;
+    const buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : 's';
 
     return (
         <React.Fragment>
-            <Button view={buttonTheme || 'normal'} width="max" onClick={() => setShowModal(true)}>
+            <Button
+                view={buttonTheme || 'normal'}
+                size={buttonSize}
+                width="max"
+                onClick={() => setShowModal(true)}
+            >
                 {label}
             </Button>
             {showModal && (

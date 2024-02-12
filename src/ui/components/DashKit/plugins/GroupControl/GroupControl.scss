@@ -9,25 +9,7 @@
     border-radius: 3px;
 
     &__container {
-        padding: 0 15px 4px;
-    }
-
-    &__error {
-        border-radius: 3px;
-        padding: 0 6px;
-
-        &_inside {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: space-around;
-            height: 70px;
-            width: 180px;
-        }
-
-        &:hover:not(#{&}_inside) {
-            background-color: var(--g-color-base-simple-hover);
-        }
+        padding: 0 5px 4px 15px;
     }
 
     &__loader {
@@ -39,6 +21,15 @@
         justify-content: center;
         z-index: 3; // to overlay Datepicker
         background-color: var(--g-color-base-float);
+
+        &_silent {
+            background-color: var(--g-color-sfx-fade);
+        }
+    }
+
+    &__controls {
+        display: flex;
+        flex-wrap: wrap;
     }
 
     &__item,
@@ -46,10 +37,7 @@
         margin-top: 5px;
         max-width: 100%;
         padding: 0;
-
-        &:not(:last-child) {
-            padding-right: 10px;
-        }
+        padding-right: 10px;
     }
 
     &__item-loader {
@@ -60,15 +48,16 @@
     }
 
     &_mobile {
-        min-height: 64px;
+        #{$class}__container {
+            padding: 0 10px 10px;
+        }
 
-        display: flex;
-        flex-direction: column;
-        padding-bottom: 6px;
+        #{$class}__controls {
+            flex-direction: column;
+        }
 
         #{$class}__item {
-            min-height: 64px;
-            margin-right: 0;
+            padding-right: 0;
             margin-top: 10px;
         }
     }

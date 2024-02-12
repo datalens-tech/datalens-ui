@@ -3,6 +3,7 @@ import React from 'react';
 import {ButtonProps, Dialog as CommonDialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import {BackButton} from 'ui/units/dash/components/ReturnButton/BackButton';
 
 import './Dialog.scss';
 
@@ -27,7 +28,10 @@ const Dialog: React.FunctionComponent<DialogProps> = ({
     return (
         <CommonDialog open={visible} onClose={onClose}>
             <div className={b()}>
-                <CommonDialog.Header caption={caption} />
+                <CommonDialog.Header
+                    caption={caption}
+                    insertBefore={<BackButton onClose={onClose} />}
+                />
                 <CommonDialog.Body>
                     {/* the class is not specifically placed in props in the Body, so that there is a correct scroll*/}
                     <div className={b('body')}>{visible ? children : null}</div>

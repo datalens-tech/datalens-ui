@@ -3,7 +3,8 @@ import React from 'react';
 import {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DatalensGlobalState, Utils} from 'index';
+import {I18n} from 'i18n';
+import {DatalensGlobalState} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
@@ -13,7 +14,6 @@ import {
     DashTabItemControlManual,
     DashTabItemControlSingle,
     DashTabItemGroupControlData,
-    Feature,
     StringParams,
 } from 'shared';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
@@ -28,7 +28,6 @@ import {isMobileView} from 'ui/utils/mobile';
 
 import {selectSkipReload} from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import {adjustWidgetLayout} from '../../utils';
-import {Error} from '../Control/Error/Error';
 import {LOAD_STATUS} from '../Control/constants';
 import {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
@@ -51,6 +50,7 @@ interface PluginGroupControlState {
     stateParams: StringParams;
     needReload: boolean;
     forceUpdate: boolean;
+    applyLoader: boolean;
 }
 
 export interface PluginGroupControl extends Plugin<PluginGroupControlProps> {
@@ -59,7 +59,7 @@ export interface PluginGroupControl extends Plugin<PluginGroupControlProps> {
 }
 
 const b = block('dashkit-plugin-group-control');
-
+const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGroupControlState> {
     chartKitRef: React.RefObject<ChartsChartKit> = React.createRef<ChartsChartKit>();
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
@@ -93,12 +93,14 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         });
 
         this.state = {
-            status: LOAD_STATUS.PENDING,
+            status: LOAD_STATUS.INITIAL,
             silentLoading: false,
             isInit: false,
             stateParams: {},
             needReload: false,
             forceUpdate: true,
+            // a quick loader for click on apply button
+            applyLoader: false,
         };
     }
 
@@ -149,7 +151,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 needReload: true,
                 silentLoading: true,
             });
-            this.init();
+        }
+
+        if (this.state.applyLoader) {
+            this.setState({applyLoader: false});
         }
     }
 
@@ -172,20 +177,20 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             )
             .join(', ');
 
-        const isLoading = this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading;
+        const isLoading =
+            (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
+            this.state.applyLoader;
 
         return (
             <div ref={this.rootNode} className={b({mobile: isMobileView})}>
                 <div className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}>
                     <DebugInfoTool label={'paramId'} value={paramIdDebug} modType={'corner'} />
                     {isLoading && (
-                        <div className={b('loader')}>
+                        <div className={b('loader', {silent: this.state.applyLoader})}>
                             <Loader size="s" />
                         </div>
                     )}
-                    {Utils.isEnabledFeature(Feature.GroupControls)
-                        ? this.renderControls()
-                        : this.renderError()}
+                    {this.renderControls()}
                 </div>
             </div>
         );
@@ -259,21 +264,25 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsLoadedCount--;
         }
 
+        if (
+            this.controlsLoadedCount !== this.controlsCount &&
+            this.state.status !== LOAD_STATUS.PENDING
+        ) {
+            this.setState({status: LOAD_STATUS.PENDING});
+        }
+
         if (this.controlsLoadedCount === this.controlsCount) {
             // adjust widget layout only for the first loading of widget
-            if (this.props.data.autoHeight && this.state.status !== LOAD_STATUS.SUCCESS) {
+            if (this.props.data.autoHeight && !this.state.isInit) {
                 this.adjustWidgetLayout(false);
             }
 
-            // success status is set to indicate the end of the widget first loading
-            // big non-transparent loader depends on this
-            const newState = {
+            this.setState({
                 needReload: false,
                 status: LOAD_STATUS.SUCCESS,
                 silentLoading: false,
-            };
-
-            this.setState(newState);
+                isInit: true,
+            });
         }
 
         this.controlsStatus[controlId] = status;
@@ -305,16 +314,26 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     private applyButtonAction(action: string) {
         let newParams = {};
+        let callChangeByClick = true;
 
-        if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
-            newParams = this.state.stateParams;
-        }
-        if (action === CLICK_ACTION_TYPE.SET_INITIAL_PARAMS) {
-            newParams = this.initialParams?.params;
+        switch (action) {
+            case CLICK_ACTION_TYPE.SET_PARAMS:
+                newParams = this.state.stateParams;
+                break;
+            case CLICK_ACTION_TYPE.SET_INITIAL_PARAMS:
+                newParams = this.initialParams?.params;
+                // if apply button is enabled, we apply new params only via click on 'Apply'
+                if (this.props.data.buttonApply) {
+                    callChangeByClick = false;
+                }
+                break;
         }
 
         if (!isEqual(newParams, this.actualParams) || !isEqual(newParams, this.state.stateParams)) {
-            this.onChange(newParams, true);
+            this.onChange(newParams, callChangeByClick);
+            if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
+                this.setState({applyLoader: true});
+            }
         }
     }
 
@@ -337,7 +356,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 {controlData.buttonApply && (
                     <ControlButton
                         type={CONTROL_TYPE.BUTTON}
-                        label={'APPLY'}
+                        label={i18n('button_apply')}
                         updateOnChange={true}
                         theme="action"
                         className={b('item')}
@@ -348,7 +367,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                     <ControlButton
                         type={CONTROL_TYPE.BUTTON}
                         className={b('item')}
-                        label={'RESET'}
+                        label={i18n('button_reset')}
                         onClick={resetAction}
                         onChange={this.handleResetChange}
                     />
@@ -362,20 +381,11 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const controlData = data as unknown as DashTabItemGroupControlData;
 
         return (
-            <div>
+            <div className={b('controls')}>
                 {controlData.items.map((item: DashTabItemControlSingle) =>
                     this.renderControl(item),
                 )}
                 {this.renderButtons()}
-            </div>
-        );
-    }
-
-    private renderError() {
-        return (
-            <div className={b('error')}>
-                <Error />
-                <div>Render not implemented</div>
             </div>
         );
     }
@@ -398,14 +408,11 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             return;
         }
 
-        if (this.state.isInit === false) {
-            this.setState({
-                isInit: true,
-                initialParams: this.props.defaults,
-                stateParams: this.actualParams,
-                status: LOAD_STATUS.PENDING,
-            });
-        }
+        this.setState({
+            initialParams: this.props.defaults,
+            stateParams: this.actualParams,
+            status: LOAD_STATUS.PENDING,
+        });
     }
 
     private setAdjustWidgetLayout(needSetDefault: boolean) {
