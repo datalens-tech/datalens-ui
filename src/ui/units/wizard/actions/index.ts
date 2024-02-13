@@ -63,7 +63,7 @@ import {sdk as oldSdk} from '../../../libs/sdk';
 import {showToast} from '../../../store/actions/toaster';
 import {getFilteredObject} from '../../../utils';
 import {WizardDispatch} from '../reducers';
-import {selectWizardWorkbookId} from '../selectors';
+import {selectWizardWorkbookId} from '../selectors/settings';
 import {selectVisualization} from '../selectors/visualization';
 import {filterVisualizationColors} from '../utils/colors';
 import {getChartFiltersWithDisabledProp} from '../utils/filters';
@@ -91,7 +91,7 @@ import {
     setOriginalDatasets,
 } from './dataset';
 import {actualizeAndSetUpdates, setUpdates, updatePreviewAndClientChartsConfig} from './preview';
-import {setDefaultsSet, toggleNavigation} from './settings';
+import {setDefaultsSet, setRouteWorkbookId, toggleNavigation} from './settings';
 import {getDatasetUpdates, mutateAndValidateItem} from './utils';
 import {
     _setSelectedLayerId,
@@ -209,10 +209,9 @@ export async function getDatasets({datasetsIds, workbookId}: GetDatasetsArgs) {
 type FetchDatasetArgs = {
     id: string;
     replacing?: boolean;
-    initial?: boolean;
 };
 
-export function fetchDataset({id, replacing, initial = false}: FetchDatasetArgs) {
+export function fetchDataset({id, replacing}: FetchDatasetArgs) {
     return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const datasetState = getState().wizard.dataset;
         const originalDatasets = datasetState.originalDatasets;
@@ -224,14 +223,7 @@ export function fetchDataset({id, replacing, initial = false}: FetchDatasetArgs)
 
         dispatch(setDatasetLoading({loading: true}));
 
-        let workbookId: string | null = null;
-
-        if (initial) {
-            const entryMeta = await getSdk().us.getEntryMeta({entryId: id});
-            workbookId = entryMeta.workbookId;
-        } else {
-            workbookId = selectWizardWorkbookId(getState());
-        }
+        const workbookId = selectWizardWorkbookId(getState());
 
         return getDataset({id, workbookId})
             .then(async (dataset: Dataset) => {
@@ -1813,7 +1805,7 @@ function processWidget(args: ProcessWidgetArgs) {
         }),
     );
 
-    const workbookId = widget.workbookId ?? null;
+    const workbookId = selectWizardWorkbookId(getState());
 
     return getDatasets({datasetsIds, workbookId})
         .then(async (all) => {
@@ -2126,10 +2118,15 @@ export function fetchWidget({entryId, revId, datasetsIds}: FetchWidgetArgs) {
 export type SetDefaultsArgs = {
     entryId: string | null;
     revId?: string;
+    routeWorkbookId?: string | null;
 };
 
-export function setDefaults({entryId, revId}: SetDefaultsArgs) {
+export function setDefaults({entryId, revId, routeWorkbookId}: SetDefaultsArgs) {
     return function (dispatch: WizardDispatch) {
+        if (routeWorkbookId) {
+            dispatch(setRouteWorkbookId(routeWorkbookId));
+        }
+
         if (entryId) {
             dispatch(
                 fetchWidget({
@@ -2157,7 +2154,6 @@ export function setDefaults({entryId, revId}: SetDefaultsArgs) {
                 dispatch(
                     fetchDataset({
                         id: datasetId,
-                        initial: true,
                     }),
                 );
             }

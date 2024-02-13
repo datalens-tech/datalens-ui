@@ -34,7 +34,7 @@ import {openDialogSaveChartConfirm} from '../../../../../store/actions/dialog';
 import {reloadRevisionsOnSave} from '../../../../../store/actions/entryContent';
 import {HighchartsWidget, setHighchartsWidget} from '../../../actions/preview';
 import {updateWizardWidgetAndDoAction} from '../../../actions/widget';
-import {selectWizardWorkbookId} from '../../../selectors';
+import {selectWizardWorkbookId} from '../../../selectors/settings';
 import {selectWidget} from '../../../selectors/widget';
 import {shouldComponentUpdateWithDeepComparison} from '../../../utils/helpers';
 

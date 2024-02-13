@@ -58,7 +58,6 @@ import {
 } from 'units/wizard/components/Dialogs/DialogField/DialogField';
 import {DIALOG_FIELD_INSPECTOR} from 'units/wizard/components/Dialogs/DialogFieldInspector/DialogFieldInspector';
 import {CONFLICT_TOOLTIPS, SETTINGS} from 'units/wizard/constants';
-import {selectWizardWorkbookId} from 'units/wizard/selectors';
 import {
     selectDataset,
     selectDatasets,
@@ -66,6 +65,7 @@ import {
     selectFields,
     selectMeasures,
 } from 'units/wizard/selectors/dataset';
+import {selectWizardWorkbookId} from 'units/wizard/selectors/settings';
 import {
     selectColorsConfig,
     selectShapesConfig,

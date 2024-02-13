@@ -30,7 +30,7 @@ import {DatalensGlobalState} from 'ui';
 import {getWhereOperation} from '../../../../libs/datasetHelper';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
-import {selectWizardWorkbookId} from '../../selectors/index';
+import {selectWizardWorkbookId} from '../../selectors/settings';
 import {ExtraSettings} from '../Dialogs/DialogColor/DialogColor';
 
 import './ValuesList.scss';

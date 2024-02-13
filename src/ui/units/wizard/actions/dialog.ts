@@ -40,8 +40,8 @@ import {DIALOG_CHART_SETTINGS} from '../components/Dialogs/Settings/Settings';
 import {PaletteTypes, VISUALIZATION_IDS} from '../constants';
 import {WizardDispatch} from '../reducers';
 import {getChangedPlaceholderSettings} from '../reducers/utils/getPlaceholdersWithMergedSettings';
-import {selectWizardWorkbookId} from '../selectors';
 import {selectParameters} from '../selectors/dataset';
+import {selectWizardWorkbookId} from '../selectors/settings';
 import {
     selectDashboardParameters,
     selectDistincts,
