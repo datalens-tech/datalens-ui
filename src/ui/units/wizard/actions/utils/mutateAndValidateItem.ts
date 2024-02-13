@@ -1,5 +1,6 @@
 import {Field, Placeholder, isParameter, isPseudoField} from '../../../../../shared';
 
+// eslint-disable-next-line complexity
 export function mutateAndValidateItem<T extends Field>({
     fields,
     item,
@@ -45,26 +46,23 @@ export function mutateAndValidateItem<T extends Field>({
         return;
     }
 
-    if (placeholder) {
-        if (existingField && placeholder.allowedTypes && !placeholder.allowedTypes.has(item.type)) {
+    if (placeholder && existingField) {
+        if (placeholder.checkAllowed && !placeholder.checkAllowed(item)) {
             item.conflict = 'wrong-type';
             item.undragable = true;
         }
 
-        if (
-            existingField &&
-            placeholder.allowedDataTypes &&
-            !placeholder.allowedDataTypes.has(item.data_type)
-        ) {
+        if (placeholder.allowedTypes && !placeholder.allowedTypes.has(item.type)) {
             item.conflict = 'wrong-type';
             item.undragable = true;
         }
 
-        if (
-            existingField &&
-            placeholder.allowedFinalTypes &&
-            !placeholder.allowedFinalTypes.has(item.type)
-        ) {
+        if (placeholder.allowedDataTypes && !placeholder.allowedDataTypes.has(item.data_type)) {
+            item.conflict = 'wrong-type';
+            item.undragable = true;
+        }
+
+        if (placeholder.allowedFinalTypes && !placeholder.allowedFinalTypes.has(item.type)) {
             item.conflict = 'wrong-type';
             item.undragable = true;
             item.valid = false;

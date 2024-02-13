@@ -52,6 +52,7 @@ const runners: Runner[] = [
             'table_wizard_node',
             'ymap_wizard_node',
             'metric_wizard_node',
+            'markup_wizard_node',
             'control_dash',
             'timeseries_wizard_node',
             'd3_wizard_node',

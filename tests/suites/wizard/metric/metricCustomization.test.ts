@@ -1,11 +1,11 @@
 import {Page, expect} from '@playwright/test';
 
-import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {CommonQa} from '../../../page-objects/constants/common-selectors';
+import {WizardPageQa, ChartQa, WizardVisualizationId} from '../../../../src/shared';
 import {openTestPage, slct} from '../../../utils';
 
 datalensTest.describe('Wizard - metric chart. Settings', () => {
@@ -15,17 +15,25 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         const wizardPage = new WizardPage({page});
 
         await openTestPage(page, RobotChartsWizardUrls.WizardCitiesDataset);
+
         await wizardPage.setVisualization(WizardVisualizationId.Metric);
+
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Measures, 'City');
-        await wizardPage.chartkit.waitForDefaultMetric();
+
+        const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+        const chart = chartContainer.locator(slct(ChartQa.Chart));
+
+        await expect(chart).toBeVisible();
     });
 
     datalensTest('Default values', async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
 
         await wizardPage.metricSettingsDialog.open();
+
         const paletteColor = await wizardPage.metricSettingsDialog.getSelectedPaletteColor();
         const inputValue = await wizardPage.metricSettingsDialog.getPaletteInput().inputValue();
+
         expect(paletteColor).toBe(defaultColor);
         expect(inputValue).toBe(defaultColor.replace('#', ''));
     });
@@ -37,10 +45,13 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         await wizardPage.metricSettingsDialog.selectSize('L');
         await wizardPage.metricSettingsDialog.apply();
 
-        const indicatorItem = wizardPage.page.locator(wizardPage.chartkit.indicatorItemSelector);
-        const indicatorClassname = await indicatorItem.getAttribute('class');
+        const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+        const chart = chartContainer.locator(slct(ChartQa.Chart));
 
-        expect(indicatorClassname).toContain('_size_xl');
+        const metricItem = chart.locator(wizardPage.chartkit.metricItemSelector);
+        const metricItemClassname = await metricItem.getAttribute('class');
+
+        expect(metricItemClassname).toContain('_size_xl');
     });
 
     datalensTest('Color change by click', async ({page}: {page: Page}) => {
@@ -59,7 +70,7 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         await wizardPage.metricSettingsDialog.apply();
 
         const indicatorColor = await wizardPage.page
-            .locator(wizardPage.chartkit.indicatorItemValueSelector)
+            .locator(wizardPage.chartkit.metricItemValueSelector)
             .evaluate(getElementHexColor);
         expect(indicatorColor).toBe(newColor);
     });
@@ -81,7 +92,7 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         await wizardPage.metricSettingsDialog.apply();
 
         const indicatorColor = await wizardPage.page
-            .locator(wizardPage.chartkit.indicatorItemValueSelector)
+            .locator(wizardPage.chartkit.metricItemValueSelector)
             .evaluate(getElementHexColor);
         expect(indicatorColor).toBe(expectedColor);
 
@@ -115,7 +126,7 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         await wizardPage.metricSettingsDialog.apply();
 
         const indicatorColor = await wizardPage.page
-            .locator(wizardPage.chartkit.indicatorItemValueSelector)
+            .locator(wizardPage.chartkit.metricItemValueSelector)
             .evaluate(getElementHexColor);
         expect(indicatorColor).toBe(customColor);
     });
