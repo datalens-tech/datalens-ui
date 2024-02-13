@@ -2,47 +2,47 @@ import {EditorTemplatesQA} from '../../../../../shared/constants/qa/editor';
 
 export const config: {templates: Record<string, Record<string, string>>} = {
     templates: {
-        'control-10': {
+        control: {
             text: 'Селектор',
             path: 'control',
             qa: EditorTemplatesQA.Selector,
         },
-        'graph-10': {
+        graph: {
             text: 'График',
             path: 'graph',
             qa: EditorTemplatesQA.Graph,
         },
-        'module-10': {
+        module: {
             text: 'Модуль',
             path: 'module',
             qa: EditorTemplatesQA.Module,
         },
-        'yandex-map-10': {
+        'yandex-map': {
             text: 'Яндекс.Карта',
             path: 'yandex-map',
             qa: EditorTemplatesQA.YMap,
         },
-        'metric-10': {
+        metric: {
             text: 'Показатель',
             path: 'metric',
             qa: EditorTemplatesQA.Metric,
         },
-        'table-10': {
+        table: {
             text: 'Таблица',
             path: 'table',
             qa: EditorTemplatesQA.Table,
         },
-        'markdown-10': {
+        markdown: {
             text: 'Markdown',
             path: 'markdown',
             qa: EditorTemplatesQA.Markdown,
         },
-        'markup-10': {
+        markup: {
             text: 'Markup',
             path: 'markup',
             qa: EditorTemplatesQA.Markup,
         },
-        'timeseries-10': {
+        timeseries: {
             text: 'Timeseries',
             path: 'timeseries',
             qa: EditorTemplatesQA.Timeseries,

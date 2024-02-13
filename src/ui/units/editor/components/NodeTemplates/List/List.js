@@ -5,17 +5,15 @@ import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {EditorTemplatesQA} from 'shared/constants/qa/editor';
 
-import {config} from '../config';
-
 import './List.scss';
 
 const b = block('node-templates-list');
 
 function Item({item, onClick}) {
-    const {text, path} = config.templates[item.name];
+    const {name} = item;
     return (
-        <div className={b('item')} onClick={() => onClick(item, path)} data-qa={item.qa}>
-            {text}
+        <div className={b('item')} onClick={() => onClick(item)} data-qa={item.qa}>
+            {i18n('editor.templates.view', `label_${name}`)}
         </div>
     );
 }
@@ -38,15 +36,9 @@ function List({items, onClick}) {
             >
                 {i18n('editor.common.view', 'label_without-template')}
             </div>
-            {items
-                .filter((item) => item.name in config.templates)
-                .map((item) => {
-                    const itemWithQa = {
-                        ...item,
-                        qa: config.templates[item.name]?.qa,
-                    };
-                    return <Item key={item.entryId} item={itemWithQa} onClick={onClick} />;
-                })}
+            {items.map((item) => {
+                return <Item key={item.entryId} item={item} onClick={onClick} />;
+            })}
         </div>
     );
 }
