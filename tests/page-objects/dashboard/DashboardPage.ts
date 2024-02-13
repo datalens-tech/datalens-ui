@@ -60,6 +60,7 @@ import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
 import {ChartkitControl} from './ChartkitControl';
 import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
 import {WorkbookIds, WorkbooksUrls} from '../../constants/constants';
+import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -128,6 +129,13 @@ class DashboardPage extends BasePage {
         chartGridItemContainer: `${slct(COMMON_DASH_SELECTORS.DASH_GRID_ITEM)} .chartkit`,
         dashPluginWidgetBody: slct('chart-widget'),
         dashkitGridItem: slct('dashkit-grid-item'),
+
+        chartResetButton: '.widget-header__filters-controls .yc-button',
+        yfmContentWrapper: slct('yfm-wrapper-html'),
+
+        // highcharts
+        highchartsXAxisLines: '.highcharts-xaxis-grid .highcharts-grid-line',
+        highchartsXAxisLabels: '.highcharts-xaxis-labels text',
     };
 
     revisions: Revisions;
@@ -1072,6 +1080,110 @@ class DashboardPage extends BasePage {
             slct(ControlQA.controlSettings),
         );
         await controlSettingsButton.click();
+    }
+
+    async getGridItemLocator(hasSelector: string) {
+        return this.page.locator(`.${COMMON_DASH_SELECTORS.DASH_GRID_ITEM}`, {
+            has: this.page.locator(hasSelector),
+        });
+    }
+
+    async waitForChartToUpdate(gridItemLocator: Locator) {
+        const loader = gridItemLocator.locator(`.${COMMON_CHARTKIT_SELECTORS.loader}`);
+
+        await loader.waitFor({state: 'attached'});
+        await loader.waitFor({state: 'detached'});
+    }
+
+    async waitForChartsRender(gridItemLocators: Locator[]) {
+        return Promise.all(
+            gridItemLocators.map((parent) =>
+                parent.locator(`.${COMMON_CHARTKIT_SELECTORS.chartkit}`).waitFor({
+                    state: 'visible',
+                }),
+            ),
+        );
+    }
+
+    async clickByXAxisPosition(gridItemLocator: Locator, position: number) {
+        const page = this.page;
+
+        await gridItemLocator.waitFor();
+
+        const line = gridItemLocator
+            .locator(DashboardPage.selectors.highchartsXAxisLines)
+            .nth(position);
+        let attempts = 3;
+        let boxLine: {x: number; y: number; width: number; height: number} | null = null;
+
+        while (attempts > 0) {
+            try {
+                boxLine = await line.boundingBox();
+            } catch (err) {}
+            attempts -= 1;
+        }
+
+        if (!boxLine) {
+            throw new Error('Highcharts not found');
+        }
+        const x = boxLine.x + boxLine.width / 2;
+        const y = boxLine.y + boxLine.height / 2;
+
+        const click = async () => {
+            await page.mouse.move(x, y);
+            await page.mouse.click(x, y);
+        };
+
+        return Promise.all([this.waitForChartToUpdate(gridItemLocator), click()]);
+    }
+
+    async getXAxisLabels(gridItemLocator: Locator) {
+        const labelsLocator = gridItemLocator.locator(
+            DashboardPage.selectors.highchartsXAxisLabels,
+        );
+
+        await labelsLocator.first().waitFor();
+
+        return labelsLocator.allTextContents();
+    }
+
+    async getTableFirstRowTexts(gridItemLocator: Locator) {
+        const firstCellLocator = gridItemLocator.locator('tbody tr td:first-child');
+
+        await firstCellLocator.first().waitFor();
+
+        return firstCellLocator.allInnerTexts();
+    }
+
+    async clickTableRowPosition(gridItemLocator: Locator, position: number) {
+        const rowLocator = gridItemLocator.locator('tbody tr').nth(position);
+
+        await rowLocator.waitFor();
+
+        return Promise.all([
+            this.waitForChartToUpdate(gridItemLocator),
+            rowLocator.getByRole('cell').first().click(),
+        ]);
+    }
+
+    async resetChartFiltering(gridItemLocator: Locator) {
+        const resetButton = gridItemLocator.locator(DashboardPage.selectors.chartResetButton);
+
+        await gridItemLocator.waitFor();
+
+        return Promise.all([this.waitForChartToUpdate(gridItemLocator), resetButton.click()]);
+    }
+
+    async getYfmText(gridItemLocator: Locator) {
+        const yfmLocator = gridItemLocator.locator(DashboardPage.selectors.yfmContentWrapper);
+
+        await yfmLocator.waitFor();
+
+        await gridItemLocator
+            .locator(`.${COMMON_CHARTKIT_SELECTORS.loader}`)
+            .waitFor({state: 'detached'});
+
+        return yfmLocator.innerText();
     }
 }
 
