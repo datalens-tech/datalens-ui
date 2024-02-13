@@ -195,6 +195,8 @@ export const showInRelation = (
         rowItem.enableFiltering;
 
     if (
+        currentItem.loadError ||
+        rowItem.loadError ||
         (currentItem.type === null && (currentItem.chartId || currentItem.datasetId)) ||
         (rowItem.type === null && (rowItem.chartId || rowItem.datasetId))
     ) {
