@@ -25,6 +25,7 @@
   "label_choose-field-for-alias": "Choose field for alias",
   "label_choose-fields-from-list": "Choose fields from list",
   "label_dataset": "dataset",
+  "label_datasets": "dataset's",
   "label_ignore": "Not linked",
   "label_input": "Input",
   "label_invalid-alias": "Field in the alias created doesn't belong to any dashboard widget parameters. Delete it to allow links to work correctly.",
