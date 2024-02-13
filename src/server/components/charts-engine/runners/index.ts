@@ -2,6 +2,7 @@ import {Request, Response} from '@gravity-ui/expresskit';
 import {AppContext} from '@gravity-ui/nodekit';
 
 import {ChartsEngine} from '..';
+import type {WorkbookId} from '../../../../shared';
 import {ResolvedConfig} from '../components/storage/types';
 
 import {runChart} from './chart';
@@ -25,7 +26,7 @@ export type RunnerHandlerProps = {
     res: Response;
     config: ResolvedConfig;
     configResolving: number;
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
 };
 
 const runners: Runner[] = [

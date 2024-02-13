@@ -12,6 +12,7 @@ import {
     DatasetFieldCalcMode,
     DatasetFieldType,
     DialogControlQa,
+    WorkbookId,
     isParameter,
 } from '../../../../../../../../shared';
 import logger from '../../../../../../../libs/logger';
@@ -24,7 +25,7 @@ const b = block('control-switcher-dataset-field');
 type Props = {
     title?: string;
     datasetId?: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     fieldId?: string;
     ignoredFieldTypes?: DatasetFieldType[];
     ignoredDataTypes?: DATASET_FIELD_TYPES[];

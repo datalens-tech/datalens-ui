@@ -18,6 +18,7 @@ import {
     TRACE_ID_HEADER,
     US_PUBLIC_API_TOKEN_HEADER,
     WORKBOOK_ID_HEADER,
+    WorkbookId,
 } from '../../../../../../shared';
 import {createErrorHandler} from '../../error-handler';
 import {getDuration} from '../../utils';
@@ -87,7 +88,7 @@ export type Entry = {
     };
     updatedAt?: string;
     updatedBy?: string;
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
 };
 
 export type EmbeddingInfo = {
@@ -271,7 +272,7 @@ export class USProvider {
             includePermissionsInfo?: boolean | string;
             revId?: string;
             headers: Request['headers'];
-            workbookId?: string | null;
+            workbookId?: WorkbookId;
         },
     ) {
         const hrStart = process.hrtime();

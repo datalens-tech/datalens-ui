@@ -11,6 +11,7 @@ import {
     EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
     Feature,
+    WorkbookId,
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {config as configConstants} from '../../constants';
@@ -127,7 +128,7 @@ export type ProcessorParams = {
     configResolving: number;
     ctx: AppContext;
     cacheToken: string | string[] | null;
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
 };
 
 export class Processor {
@@ -1109,7 +1110,7 @@ export class Processor {
         config: {data: Record<string, string>; key: string};
         req: Request;
         ctx: AppContext;
-        workbookId?: string | null;
+        workbookId?: WorkbookId;
     }): Promise<ResolvedConfig[]> {
         const code = Object.keys(config.data).reduce((acc, tabName) => {
             return `${acc}\n${config.data[tabName]}`;

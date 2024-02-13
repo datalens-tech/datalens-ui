@@ -1,6 +1,7 @@
 import {Request} from '@gravity-ui/expresskit';
 import {AppConfig, AppContext} from '@gravity-ui/nodekit';
 
+import type {WorkbookId} from '../../../../../shared';
 import {TelemetryCallbacks} from '../../types';
 
 import {ResolvedConfig} from './types';
@@ -20,7 +21,7 @@ export type ResolveConfigProps = {
     requestId?: string;
     storageApiPath?: string;
     extraAllowedHeaders?: string[];
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
 };
 
 export type BaseStorageInitParams = {
@@ -115,7 +116,7 @@ export class BaseStorage {
             requestId?: string;
             storageApiPath?: string;
             extraAllowedHeaders?: string[];
-            workbookId?: string | null;
+            workbookId?: WorkbookId;
         },
     ): Promise<ResolvedConfig | EmbeddingInfo> {
         const {headers, unreleased, requestId, storageApiPath, extraAllowedHeaders, workbookId} =

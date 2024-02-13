@@ -1,3 +1,5 @@
-export type WorkbookId = {
-    workbookId: string | null;
+import type {WorkbookId} from '../../../types';
+
+export type WorkbookIdArg = {
+    workbookId: WorkbookId;
 };

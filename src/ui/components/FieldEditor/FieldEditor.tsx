@@ -15,6 +15,7 @@ import {
     DialogFieldEditorQA,
     Feature,
     FieldEditorQa,
+    WorkbookId,
 } from 'shared';
 import {updateUserSettings} from 'store/actions/user';
 import {selectFieldEditorDocShown} from 'store/selectors/user';
@@ -56,7 +57,7 @@ export type FieldEditorProps = {
     fields: DatasetField[];
     sources: DatasetSource[];
     datasetId: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     dataset?: Dataset['dataset'];
     sourceAvatars: DatasetSourceAvatar[];
     options?: DatasetOptions;

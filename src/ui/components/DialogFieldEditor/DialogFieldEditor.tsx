@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Dataset, DatasetField, DatasetOptions} from 'shared';
+import {Dataset, DatasetField, DatasetOptions, WorkbookId} from 'shared';
 
 import {DataTypeConfig} from '../../typings/common';
 import DialogManager from '../DialogManager/DialogManager';
@@ -11,7 +11,7 @@ import './DialogFieldEditor.scss';
 export type DialogFieldEditorProps<T = DatasetField> = {
     datasetContent: Dataset['dataset'] | undefined;
     datasetId: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     datasetOptions: DatasetOptions | undefined;
     field?: T;
     fields: T[];

@@ -1,5 +1,6 @@
 import {Request} from '@gravity-ui/expresskit';
 
+import type {WorkbookId} from '../../../../shared';
 import type {ChartsEngine} from '../../../components/charts-engine';
 
 import {
@@ -46,7 +47,7 @@ export interface MiddlewareSourceAdapterArgs {
     };
     req: Request;
     iamToken?: string;
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
     ChartsEngine: ChartsEngine;
     userId: string | null;
     rejectFetchingSource: (reason: any) => void;

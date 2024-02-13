@@ -1,7 +1,7 @@
 import {Dataset, DatasetField, DatasetFieldCalcMode, DatasetFieldError} from '../../../types';
 import {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
 
-import {WorkbookId} from './common';
+import {WorkbookIdArg} from './common';
 
 type Id = {id: string};
 
@@ -54,7 +54,7 @@ export type GetSourceResponse = {
 export type GetSourceArgs = {
     connectionId: string;
     limit?: number;
-} & WorkbookId;
+} & WorkbookIdArg;
 
 export type DeleteDatasetResponse = unknown;
 
@@ -62,7 +62,7 @@ export type DeleteDatasetArgs = DatasetId;
 
 export type GetDatasetByVersionResponse = Dataset;
 
-export type GetDatasetByVersionArgs = {version: string} & DatasetId & WorkbookId;
+export type GetDatasetByVersionArgs = {version: string} & DatasetId & WorkbookIdArg;
 
 export type CheckDatasetsForPublicationResponse = {
     result: {
@@ -74,7 +74,7 @@ export type CheckDatasetsForPublicationResponse = {
 
 export type CheckDatasetsForPublicationArgs = {
     datasetsIds: string[];
-} & WorkbookId;
+} & WorkbookIdArg;
 
 export type ValidateDatasetErrorResponse = {
     code: string;
@@ -93,7 +93,7 @@ export type ValidateDatasetArgs = {
     updates: ValidateDatasetUpdate[];
     version: DatasetVersion;
 } & DatasetId &
-    WorkbookId;
+    WorkbookIdArg;
 
 export type GetFieldTypesResponse = {
     types: {
@@ -116,7 +116,7 @@ export type GetDataSetFieldsByIdResponse = {
     revision_id: string;
 };
 
-export type GetDataSetFieldsByIdArgs = WorkbookId & {
+export type GetDataSetFieldsByIdArgs = WorkbookIdArg & {
     dataSetId: string;
 };
 
@@ -154,7 +154,7 @@ export type GetPreviewArgs = {
     version: DatasetVersion;
     limit?: number;
 } & DatasetId &
-    WorkbookId;
+    WorkbookIdArg;
 
 export type ValidateDatasetFormulaErrorResponse = {
     code: string;
@@ -172,7 +172,7 @@ export type ValidateDatasetFormulaArgs = {
     dataset: Dataset['dataset'];
     field: DatasetField;
 } & DatasetId &
-    WorkbookId;
+    WorkbookIdArg;
 
 export type CopyDatasetResponse = Id;
 
@@ -195,4 +195,4 @@ export type GetDistinctsApiV2Args = Omit<
     'pivot' | 'order_by' | 'disable_group_by' | 'with_totals' | 'autofill_legend'
 > &
     DatasetId &
-    WorkbookId;
+    WorkbookIdArg;

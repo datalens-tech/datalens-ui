@@ -1,4 +1,4 @@
-import {DashStats} from '../../../types';
+import {DashStats, WorkbookId} from '../../../types';
 import {GetEntriesEntryResponse} from '../../us/types';
 
 export type CollectDashStatsResponse = {
@@ -27,7 +27,7 @@ export type GetEntriesDatasetsFieldsResponse = GetEntriesDatasetsFieldsItem[];
 export type GetEntriesDatasetsFieldsArgs = {
     entriesIds: string[];
     datasetsIds: string[];
-    workbookId: string | null;
+    workbookId: WorkbookId;
 };
 
 export type GetWidgetsDatasetsFieldsItem = {
@@ -40,5 +40,5 @@ export type GetWidgetsDatasetsFieldsResponse = GetWidgetsDatasetsFieldsItem[];
 
 export type GetWidgetsDatasetsFieldsArgs = {
     entriesIds: string[];
-    workbookId: string | null;
+    workbookId: WorkbookId;
 };

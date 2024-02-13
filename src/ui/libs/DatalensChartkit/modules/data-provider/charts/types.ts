@@ -10,6 +10,7 @@ import type {
     DatasetFieldType,
     EntryPublicAuthor,
     StringParams,
+    WorkbookId,
 } from 'shared';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 
@@ -169,7 +170,7 @@ export interface ChartsProps {
         };
     };
     ignoreUsedParams?: boolean;
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
 }
 
 export interface ChartsData {

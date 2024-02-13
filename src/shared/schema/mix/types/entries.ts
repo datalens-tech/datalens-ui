@@ -1,7 +1,7 @@
 import {AppContext} from '@gravity-ui/nodekit';
 import {Required} from 'utility-types';
 
-import {StringParams} from '../../../types';
+import {StringParams, WorkbookId} from '../../../types';
 import {DeleteConnectionResponse, DeleteDatasetResponse} from '../../bi/types';
 import {CheckStatReportExistsArgs, CheckStatReportExistsResponse} from '../../stat-api/types';
 import {
@@ -34,7 +34,7 @@ export type GetPublicationPreviewResponse = GetPublicationPreviewEntry[];
 
 export interface GetPublicationPreviewArgs {
     entryId: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
 }
 
 export interface MixedSwitchPublicationStatusArgs {
@@ -47,7 +47,7 @@ export interface MixedSwitchPublicationStatusArgs {
         entryId: string;
         unversionedData: unknown;
     };
-    workbookId: string | null;
+    workbookId: WorkbookId;
 }
 
 export type ResolveEntryByLinkComponentResponse = {

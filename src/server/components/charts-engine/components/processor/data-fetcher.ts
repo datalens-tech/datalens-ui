@@ -14,6 +14,7 @@ import {
     Feature,
     SuperuserHeader,
     WORKBOOK_ID_HEADER,
+    WorkbookId,
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
@@ -66,7 +67,7 @@ type DataFetcherOptions = {
     subrequestHeaders: Record<string, string>;
     userId?: string | null;
     iamToken?: string | null;
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
 };
 
 type DataFetcherRequestOptions = {
@@ -409,7 +410,7 @@ export class DataFetcher {
         rejectFetchingSource: () => void;
         userId?: string | null;
         iamToken?: string | null;
-        workbookId?: string | null;
+        workbookId?: WorkbookId;
     }) {
         const ctx = req.ctx;
         const singleFetchingTimeout =

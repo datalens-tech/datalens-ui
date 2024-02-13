@@ -1,6 +1,6 @@
 import {Request} from '@gravity-ui/expresskit';
 
-import {DL_EMBED_TOKEN_HEADER} from '../../../../../shared';
+import {DL_EMBED_TOKEN_HEADER, WorkbookId} from '../../../../../shared';
 import {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../../../../shared/schema';
 import Cache from '../../../../components/cache-client';
 import {registry} from '../../../../registry';
@@ -66,7 +66,7 @@ export const getDatasetFieldsById = async (
 
 export const getDatasetFields = async (args: {
     datasetId: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     req: Request;
     iamToken?: string;
     cacheClient: Cache;

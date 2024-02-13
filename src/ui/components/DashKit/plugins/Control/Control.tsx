@@ -20,6 +20,7 @@ import {
     DashTabItemControlSourceType,
     Feature,
     StringParams,
+    WorkbookId,
 } from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -69,7 +70,7 @@ import {getDatasetSourceInfo, getLabels, getStatus, isValidRequiredValue} from '
 import './Control.scss';
 
 type ContextProps = {
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

@@ -23,6 +23,7 @@ import {
     QLChartType,
     QlConfigPreviewTableData,
     Shared,
+    WorkbookId,
     extractEntryId,
     resolveIntervalDate,
     resolveOperation,
@@ -538,7 +539,7 @@ type InitializeApplicationArgs = {
 
 type FetchConnectionSourcesArgs = {
     entryId: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
 };
 
 export const fetchConnectionSources = ({entryId, workbookId}: FetchConnectionSourcesArgs) => {

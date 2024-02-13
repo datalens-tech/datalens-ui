@@ -5,7 +5,7 @@ import {I18n} from 'i18n';
 import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
 import {useSelector} from 'react-redux';
-import {DialogControlQa, TIMEOUT_90_SEC, getFieldsApiV2RequestSection} from 'shared';
+import {DialogControlQa, TIMEOUT_90_SEC, WorkbookId, getFieldsApiV2RequestSection} from 'shared';
 import {VIEW_MODES} from 'ui/components/Select/hooks/useSelectRenderFilter/useSelectRenderFilter';
 import {
     SelectFeaturedAsync,
@@ -41,7 +41,7 @@ const hasNextPage = (arr: unknown[], pageSize: number) => {
 
 type GetDistincts = {
     datasetId?: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     datasetFieldId?: string;
     searchPattern?: string;
     nextPageToken?: number | null;

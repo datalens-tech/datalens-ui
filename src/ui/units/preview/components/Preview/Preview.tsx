@@ -5,7 +5,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import {RouteComponentProps} from 'react-router-dom';
-import {Feature, extractEntryId} from 'shared';
+import {Feature, WorkbookId, extractEntryId} from 'shared';
 import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
@@ -86,7 +86,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
 
     const [workbookInfo, setWorkbookInfo] = React.useState<{
         isLoading: boolean;
-        workbookId?: string | null;
+        workbookId?: WorkbookId;
     }>({
         isLoading: true,
     });

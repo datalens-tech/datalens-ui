@@ -32,6 +32,7 @@ import {
     VisualizationLayerType,
     VisualizationWithLayersShared,
     WizardVisualizationId,
+    WorkbookId,
     createMeasureNames,
     filterUpdatesByDatasetId,
     getResultSchemaFromDataset,
@@ -157,7 +158,7 @@ export function prepareDataset({dataset, widgetDataset}: PrepareDatasetArgs) {
 
 type GetDatasetArgs = {
     id: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
 };
 
 function getDataset({id, workbookId}: GetDatasetArgs) {
@@ -183,7 +184,7 @@ function getDataset({id, workbookId}: GetDatasetArgs) {
 
 type GetDatasetsArgs = {
     datasetsIds: string[];
-    workbookId: string | null;
+    workbookId: WorkbookId;
 };
 
 export async function getDatasets({datasetsIds, workbookId}: GetDatasetsArgs) {
@@ -2118,7 +2119,7 @@ export function fetchWidget({entryId, revId, datasetsIds}: FetchWidgetArgs) {
 export type SetDefaultsArgs = {
     entryId: string | null;
     revId?: string;
-    routeWorkbookId?: string | null;
+    routeWorkbookId?: WorkbookId;
 };
 
 export function setDefaults({entryId, revId, routeWorkbookId}: SetDefaultsArgs) {

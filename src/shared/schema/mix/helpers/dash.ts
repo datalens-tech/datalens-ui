@@ -5,7 +5,7 @@ import {AppContext, AppContextParams} from '@gravity-ui/nodekit';
 
 import {registry} from '../../../../server/registry';
 import {DatalensGatewaySchemas} from '../../../../server/types/gateway';
-import {DatasetField} from '../../../types';
+import {DatasetField, WorkbookId} from '../../../types';
 import {GetDataSetFieldsByIdResponse} from '../../bi/types';
 import {simpleSchema} from '../../simple-schema';
 import {GetEntryResponse} from '../../us/types/entries';
@@ -19,7 +19,7 @@ export const fetchDataset = async ({
     ctx,
 }: {
     datasetId: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     typedApi: ContextApiWithRoot<{root: typeof simpleSchema}>;
     ctx: AppContext;
 }): Promise<DatasetDictResponse> => {
@@ -119,7 +119,7 @@ export const fetchDatasetFieldsById = async ({
     headers,
 }: {
     datasetId: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     ctx: AppContext;
     headers: IncomingHttpHeaders;
 }): Promise<DatasetFieldsDictResponse> => {

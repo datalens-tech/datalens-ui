@@ -14,6 +14,7 @@ import {
     Field,
     Operations,
     TIMEOUT_90_SEC,
+    WorkbookId,
     getFieldsApiV2RequestSection,
     getParametersApiV2RequestSection,
 } from 'shared';
@@ -71,7 +72,7 @@ export interface DialogFilterProps {
     onApply: (data: ApplyData) => void;
     onClose: () => void;
     datasetId: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     visible: boolean;
     options: DatasetOptions;
     fields?: DatasetField[];
