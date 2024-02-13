@@ -7,6 +7,7 @@ export interface CopyTemplateResponse {
 export interface CopyTemplateArgs {
     templateName: string;
     connectionId?: string;
+    workbookId?: string;
     path?: string;
     postfix?: string;
     meta?: NonNullable<EntryFieldMeta>;

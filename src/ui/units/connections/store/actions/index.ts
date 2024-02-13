@@ -235,10 +235,12 @@ export function createConnection(name: string, dirPath?: string) {
 
         resultForm[FieldKey.Name] = name;
 
+        const workbookId = getWorkbookIdFromPathname();
+
         if (typeof dirPath === 'string') {
             resultForm[FieldKey.DirPath] = dirPath;
         } else {
-            resultForm[FieldKey.WorkbookId] = getWorkbookIdFromPathname();
+            resultForm[FieldKey.WorkbookId] = workbookId;
         }
 
         flow([setSubmitLoading, dispatch])({loading: true});
@@ -250,6 +252,7 @@ export function createConnection(name: string, dirPath?: string) {
             ({entryId: templateFolderId, error: templateError} = await api.copyTemplate(
                 connectionId,
                 schema.templateName,
+                workbookId === '' ? undefined : workbookId,
             ));
         }
 
@@ -258,13 +261,15 @@ export function createConnection(name: string, dirPath?: string) {
             flow([resetFormsData, dispatch])();
         }
 
-        batch(() => {
-            if (templateFolderId) {
-                history.replace(`/navigation/${templateFolderId}`);
-            } else if (connectionId) {
-                history.replace(`/connections/${connectionId}`);
-            }
+        if (workbookId) {
+            history.replace(`/workbooks/${workbookId}?tab=all`);
+        } else if (templateFolderId) {
+            history.replace(`/navigation/${templateFolderId}`);
+        } else if (connectionId) {
+            history.replace(`/connections/${connectionId}`);
+        }
 
+        batch(() => {
             if (templateError) {
                 flow([showToast, dispatch])({
                     title: i18n('label_error-on-template-apply'),

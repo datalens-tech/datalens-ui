@@ -153,13 +153,14 @@ const checkConnection = async (params: FormDict, connectionId: string): Promise<
 const copyTemplate = async (
     connectionId: string,
     templateName: string,
+    workbookId?: string,
 ): Promise<{
     entryId?: string;
     error?: DataLensApiError;
 }> => {
     try {
         const {entryId} = await getSdk().us.copyTemplate(
-            {connectionId, templateName},
+            {connectionId, templateName, workbookId},
             {timeout: TIMEOUT_65_SEC},
         );
         return {entryId, error: undefined};
