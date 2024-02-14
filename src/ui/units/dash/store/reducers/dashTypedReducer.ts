@@ -290,13 +290,20 @@ export function dashTypedReducer(
 
         case ADD_SELECTOR_TO_GROUP: {
             const {payload} = action;
-            const newSelector = getSelectorDialogInitialState();
+            const newSelector = getSelectorDialogInitialState({
+                lastUsedDatasetId: state.lastUsedDatasetId,
+            });
+
+            // if current length is 1, the added selector will be the second so we enable autoHeight
+            const autoHeight =
+                state.selectorsGroup.items.length === 1 ? true : state.selectorsGroup.autoHeight;
 
             return {
                 ...state,
                 selectorsGroup: {
                     ...state.selectorsGroup,
                     items: [...state.selectorsGroup.items, {...newSelector, title: payload.title}],
+                    autoHeight,
                 },
             };
         }
