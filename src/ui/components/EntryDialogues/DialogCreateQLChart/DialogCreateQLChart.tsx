@@ -2,6 +2,7 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
+import type {WorkbookId} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import {DataLensApiError} from 'typings';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
@@ -19,7 +20,7 @@ export interface DialogCreateQLChartProps extends EntryDialogProps {
         convert?: boolean;
         [key: string]: any;
     };
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
 }
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;

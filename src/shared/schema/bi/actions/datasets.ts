@@ -1,4 +1,4 @@
-import {TIMEOUT_60_SEC, TIMEOUT_95_SEC} from '../../../constants';
+import {TIMEOUT_60_SEC, TIMEOUT_95_SEC, WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {
@@ -44,7 +44,10 @@ export const actions = {
         method: 'GET',
         path: ({connectionId}) =>
             `${API_V1}/connections/${filterUrlFragment(connectionId)}/info/sources`,
-        params: ({limit}, headers) => ({query: {limit}, headers}),
+        params: ({limit, workbookId}, headers) => ({
+            query: {limit},
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
         timeout: TIMEOUT_60_SEC,
     }),
     getDatasetByVersion: createAction<GetDatasetByVersionResponse, GetDatasetByVersionArgs>({
@@ -53,7 +56,9 @@ export const actions = {
             `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
                 version,
             )}`,
-        params: (_, headers) => ({headers}),
+        params: ({workbookId}, headers) => ({
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
     }),
     getFieldTypes: createAction<GetFieldTypesResponse>({
         method: 'GET',
@@ -64,11 +69,13 @@ export const actions = {
         method: 'GET',
         endpoint: 'datasetDataApiEndpoint',
         path: ({dataSetId}) => `${API_DATA_V1}/datasets/${filterUrlFragment(dataSetId)}/fields`,
-        params: (_, headers) => ({headers}),
+        params: ({workbookId}, headers) => ({
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
     }),
     embedsGetDataSetFieldsById: createAction<
         GetDataSetFieldsByIdResponse,
-        GetDataSetFieldsByIdArgs
+        Omit<GetDataSetFieldsByIdArgs, 'workbookId'>
     >({
         method: 'GET',
         endpoint: 'datasetDataEmbedsApiEndpoint',
@@ -77,7 +84,7 @@ export const actions = {
     }),
     publicGetDataSetFieldsById: createAction<
         GetDataSetFieldsByIdResponse,
-        GetDataSetFieldsByIdArgs
+        Omit<GetDataSetFieldsByIdArgs, 'workbookId'>
     >({
         method: 'GET',
         endpoint: 'datasetDataApiEndpoint',
@@ -96,7 +103,10 @@ export const actions = {
     >({
         method: 'POST',
         path: () => `${API_V1}/info/datasets_publicity_checker`,
-        params: ({datasetsIds}, headers) => ({body: {datasets: datasetsIds}, headers}),
+        params: ({datasetsIds, workbookId}, headers) => ({
+            body: {datasets: datasetsIds},
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
     }),
     createDataset: createAction<CreateDatasetResponse, CreateDatasetArgs>({
         method: 'POST',
@@ -111,7 +121,10 @@ export const actions = {
                       version,
                   )}/validators/schema`
                 : `${API_V1}/datasets/validators/dataset`,
-        params: ({dataset, updates}, headers) => ({body: {dataset, updates}, headers}),
+        params: ({dataset, workbookId, updates}, headers) => ({
+            body: {dataset, updates},
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
         transformResponseError: transformValidateDatasetResponseError,
         timeout: TIMEOUT_95_SEC,
     }),
@@ -132,7 +145,10 @@ export const actions = {
                       datasetId,
                   )}/versions/${filterUrlFragment(version)}/preview`
                 : `${API_DATA_V1}/datasets/data/preview`,
-        params: ({dataset, limit}, headers) => ({body: {dataset, limit}, headers}),
+        params: ({dataset, workbookId, limit}, headers) => ({
+            body: {dataset, limit},
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
         timeout: TIMEOUT_95_SEC,
     }),
     validateDatasetFormula: createAction<
@@ -146,7 +162,10 @@ export const actions = {
                       datasetId,
                   )}/versions/draft/validators/field`
                 : `${API_V1}/datasets/validators/field`,
-        params: ({dataset, field}, headers) => ({body: {dataset, field}, headers}),
+        params: ({dataset, workbookId, field}, headers) => ({
+            body: {dataset, field},
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
         transformResponseError: transformValidateDatasetFormulaResponseError,
     }),
     copyDataset: createAction<CopyDatasetResponse, CopyDatasetArgs>({
@@ -162,7 +181,10 @@ export const actions = {
         method: 'POST',
         endpoint: 'datasetDataApiEndpoint',
         path: ({datasetId}) => `${API_DATA_V2}/datasets/${datasetId}/values/distinct`,
-        params: ({datasetId: _datasetId, ...body}, headers) => ({body, headers}),
+        params: ({datasetId: _datasetId, workbookId, ...body}, headers) => ({
+            body,
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
         transformResponseData: transformApiV2DistinctsResponse,
         timeout: TIMEOUT_95_SEC,
     }),

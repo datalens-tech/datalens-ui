@@ -96,6 +96,7 @@ type EntitiesType =
     | 'ymap_wizard_node'
     | 'markdown_node'
     | 'markup_node'
+    | 'markup_wizard_node'
     | 'control_node'
     | 'map_node'
     | 'control_dash';
@@ -770,6 +771,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             widgetType,
             widgetConfig,
             config: {type, data: configData, key} = {},
+            workbookId,
         } = data;
 
         const isEditMode = Boolean(type && configData);
@@ -795,6 +797,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                     includeLogs,
                 },
                 uiOnly: onlyControls || undefined,
+                workbookId,
             },
             headers: this.getLoadHeaders(requestId),
             'axios-retry': {

@@ -48,6 +48,7 @@ export const WIZARD_CHART_NODE = {
     graph_wizard_node: 'statface_graph',
     table_wizard_node: 'table',
     metric_wizard_node: 'statface_metric',
+    markup_wizard_node: 'config',
 };
 
 export const QL_CHART_NODE = {

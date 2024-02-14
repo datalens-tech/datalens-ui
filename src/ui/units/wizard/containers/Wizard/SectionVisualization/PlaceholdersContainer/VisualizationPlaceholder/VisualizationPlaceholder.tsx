@@ -5,6 +5,11 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
+import {DatalensGlobalState} from 'ui';
+import {selectPointSizeConfig, selectVisualization} from 'units/wizard/selectors/visualization';
+import {selectExtraSettings} from 'units/wizard/selectors/widget';
+import {getGeolayerGroups} from 'units/wizard/utils/helpers';
+
 import {
     Field,
     Placeholder,
@@ -15,13 +20,9 @@ import {
     VisualizationLayerType,
     WizardVisualizationId,
     isFieldHierarchy,
+    isMarkupField,
     isVisualizationWithLayers,
-} from 'shared';
-import {DatalensGlobalState} from 'ui';
-import {selectPointSizeConfig, selectVisualization} from 'units/wizard/selectors/visualization';
-import {selectExtraSettings} from 'units/wizard/selectors/widget';
-import {getGeolayerGroups} from 'units/wizard/utils/helpers';
-
+} from '../../../../../../../../shared';
 import {
     changeVisualizationLayerType,
     setVisualizationPlaceholderItems,
@@ -146,12 +147,21 @@ class VisualizationPlaceholder extends React.Component<Props> {
                         : undefined,
                 };
             }
-            case 'metric':
-                return {
-                    hasSettings: true,
-                    onActionIconClick: this.openDialogMetric,
-                    actionIconQa: 'placeholder-action-open-metric-dialog',
-                };
+            case 'metric': {
+                const {items} = placeholder;
+
+                const item = items[0];
+
+                return isMarkupField(item)
+                    ? {
+                          hasSettings: false,
+                      }
+                    : {
+                          hasSettings: true,
+                          onActionIconClick: this.openDialogMetric,
+                          actionIconQa: 'placeholder-action-open-metric-dialog',
+                      };
+            }
             case 'flatTable': {
                 const hasSettings =
                     TABLE_PLACEHOLDERS_WITH_COLUMN_WIDTH_SETTINGS.has(placeholder.id) &&
@@ -280,12 +290,19 @@ class VisualizationPlaceholder extends React.Component<Props> {
 
     private checkAllowedPlaceholderItem = (item: Field) => {
         const {placeholder, visualization} = this.props;
-        if (placeholder.allowedTypes && !placeholder.allowedTypes.has(item.type)) {
-            return false;
-        }
 
-        if (placeholder.allowedDataTypes && !placeholder.allowedDataTypes.has(item.data_type)) {
-            return false;
+        if (placeholder.checkAllowed) {
+            if (!placeholder.checkAllowed(item)) {
+                return false;
+            }
+        } else {
+            if (placeholder.allowedDataTypes && !placeholder.allowedDataTypes.has(item.data_type)) {
+                return false;
+            }
+
+            if (placeholder.allowedTypes && !placeholder.allowedTypes.has(item.type)) {
+                return false;
+            }
         }
 
         if (visualization.id === 'pivotTable' && placeholder.id === 'rows') {

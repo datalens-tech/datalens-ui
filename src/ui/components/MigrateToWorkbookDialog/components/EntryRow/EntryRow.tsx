@@ -3,6 +3,7 @@ import React from 'react';
 import {Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import type {WorkbookId} from 'shared';
 
 import navigateHelper from '../../../../libs/navigateHelper';
 import {EntryIcon} from '../../../EntryIcon/EntryIcon';
@@ -20,7 +21,7 @@ export type EntryFields = {
     key: string;
     scope: string;
     type: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     name: string;
 };
 

@@ -2,6 +2,7 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import type {WorkbookId} from 'shared';
 
 import DialogManager from '../../components/DialogManager/DialogManager';
 import {CollectionsStructureDispatch, moveWorkbook} from '../../store/actions/collectionsStructure';
@@ -45,7 +46,7 @@ export const MoveWorkbookDialog: React.FC<Props> = ({
             targetTitle,
         }: {
             targetCollectionId: string | null;
-            targetWorkbookId: string | null;
+            targetWorkbookId: WorkbookId;
             targetTitle?: string;
         }) => {
             await dispatch(
