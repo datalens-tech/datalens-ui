@@ -83,7 +83,9 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
                 rel: 'stylesheet',
             },
         ],
-        bodyContent: {},
+        bodyContent: {
+            theme: DL.userSettings.theme,
+        },
         pluginsOptions: {
             layout: {name: appLayoutSettings.bundleName},
         },
