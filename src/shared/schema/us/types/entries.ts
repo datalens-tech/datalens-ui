@@ -1,3 +1,4 @@
+import type {WorkbookId} from '../../../../shared';
 import {InitialPermissions, Permissions} from '../../../types';
 
 import {EntriesCommonArgs} from './common';
@@ -20,6 +21,7 @@ export interface GetEntryResponse extends EntryFields {
 }
 export interface GetEntryArgs {
     entryId: string;
+    workbookId?: WorkbookId;
     revId?: string;
     branch?: string;
     includePermissionsInfo?: boolean;

@@ -297,7 +297,7 @@ class SectionDataset extends React.Component<Props, State> {
     };
 
     openDialogFieldEditor = async (item?: Field) => {
-        const {dataset, fields} = this.props;
+        const {dataset, fields, workbookId} = this.props;
 
         const fieldEditorFields = fields.filter(
             (field) => !field.quickFormula && !field.hidden && !field.virtual,
@@ -340,6 +340,7 @@ class SectionDataset extends React.Component<Props, State> {
             const props: DialogFieldEditorProps<Field> = {
                 datasetContent: dataset.dataset,
                 datasetId: dataset.id,
+                workbookId: workbookId ?? null,
                 datasetOptions: dataset.options,
                 field,
                 fields: fieldEditorFields,

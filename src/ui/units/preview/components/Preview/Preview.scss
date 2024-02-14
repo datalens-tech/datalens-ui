@@ -16,4 +16,10 @@
             right: 8px;
         }
     }
+
+    &__loader {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+    }
 }

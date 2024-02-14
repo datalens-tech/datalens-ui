@@ -1,6 +1,10 @@
-import {EntryPublicAuthor, EntryScope} from '../../../../../shared';
+import {
+    EDITOR_TYPE_CONFIG_TABS,
+    EntryPublicAuthor,
+    EntryScope,
+    WorkbookId,
+} from '../../../../../shared';
 import {ChartTemplates} from '../chart-generator';
-import {EDITOR_TYPE_CONFIG_TABS} from '../processor';
 
 export type PublicAuthorData = {text?: string; link?: string};
 
@@ -38,7 +42,7 @@ export type ResolvedConfig = {
     createdBy: string;
     updatedAt: string;
     updatedBy: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     template?: keyof ChartTemplates;
     owner?: string;
     publicAuthor?: EntryPublicAuthor;

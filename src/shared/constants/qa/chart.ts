@@ -29,3 +29,7 @@ export const ChartkitMenuDialogsQA = {
 export const enum ChartKitQa {
     Loader = 'chartkit-loader',
 }
+
+export const enum ChartQa {
+    Chart = 'chartkit-chart',
+}

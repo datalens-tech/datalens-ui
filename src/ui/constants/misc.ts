@@ -1,4 +1,4 @@
-import {CommonSharedExtraSettings, LabelsPositions} from 'shared';
+import {CommonSharedExtraSettings, DATASET_FIELD_TYPES, LabelsPositions} from '../../shared';
 
 const ITEM_TYPES = {
     DIMENSIONS: new Set(['DIMENSION']),
@@ -30,16 +30,16 @@ const DATASET_ERRORS = {
 };
 
 const AVAILABLE_FIELD_TYPES = [
-    'string',
-    'integer',
-    'float',
-    'date',
-    'datetime',
-    'genericdatetime',
-    'datetimetz',
-    'boolean',
-    'geopoint',
-    'geopolygon',
+    DATASET_FIELD_TYPES.STRING,
+    DATASET_FIELD_TYPES.INTEGER,
+    DATASET_FIELD_TYPES.FLOAT,
+    DATASET_FIELD_TYPES.DATE,
+    DATASET_FIELD_TYPES.DATETIME,
+    DATASET_FIELD_TYPES.GENERICDATETIME,
+    DATASET_FIELD_TYPES.DATETIMETZ,
+    DATASET_FIELD_TYPES.BOOLEAN,
+    DATASET_FIELD_TYPES.GEOPOINT,
+    DATASET_FIELD_TYPES.GEOPOLYGON,
 ];
 
 const HIDE_LABEL_MODES = {
@@ -70,21 +70,29 @@ const CLIENT_SIDE_FIELD_PROPS = [
 ];
 
 const PRIMITIVE_DATA_TYPES = new Set([
-    'integer',
-    'uinteger',
-    'float',
-    'date',
-    'datetime',
-    'genericdatetime',
-    'datetimetz',
-    'boolean',
-    'string',
-    'array_str',
-    'array_int',
-    'array_float',
+    DATASET_FIELD_TYPES.INTEGER,
+    DATASET_FIELD_TYPES.UINTEGER,
+    DATASET_FIELD_TYPES.FLOAT,
+    DATASET_FIELD_TYPES.DATE,
+    DATASET_FIELD_TYPES.DATETIME,
+    DATASET_FIELD_TYPES.GENERICDATETIME,
+    DATASET_FIELD_TYPES.DATETIMETZ,
+    DATASET_FIELD_TYPES.BOOLEAN,
+    DATASET_FIELD_TYPES.STRING,
+    DATASET_FIELD_TYPES.ARRAY_STR,
+    DATASET_FIELD_TYPES.ARRAY_INT,
+    DATASET_FIELD_TYPES.ARRAY_FLOAT,
 ]);
 
-const PRIMITIVE_DATA_TYPES_AND_HIERARCHY = new Set([...PRIMITIVE_DATA_TYPES, 'hierarchy']);
+const PRIMITIVE_DATA_TYPES_AND_HIERARCHY = new Set([
+    ...PRIMITIVE_DATA_TYPES,
+    DATASET_FIELD_TYPES.HIERARCHY,
+]);
+
+const PRIMITIVE_DATA_TYPES_AND_MARKUP = new Set([
+    ...PRIMITIVE_DATA_TYPES,
+    DATASET_FIELD_TYPES.MARKUP,
+]);
 
 const DEFAULT_PAGE_ROWS_LIMIT = 100;
 
@@ -132,6 +140,7 @@ export {
     CLIENT_SIDE_FIELD_PROPS,
     PRIMITIVE_DATA_TYPES,
     PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
+    PRIMITIVE_DATA_TYPES_AND_MARKUP,
     DEFAULT_PAGE_ROWS_LIMIT,
     DEFAULT_FLAT_TABLE_EXTRA_SETTINGS,
     DEFAULT_DONUT_EXTRA_SETTINGS,

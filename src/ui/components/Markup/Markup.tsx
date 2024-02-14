@@ -36,6 +36,12 @@ const getConfig = (
         return config as TemplateItem;
     }
 
+    if (markupItem.className) {
+        iteratedConfigItem.props = merge(iteratedConfigItem.props, {
+            className: markupItem.className,
+        });
+    }
+
     if (markupItem.type === MarkupItemTypeDict.Text) {
         iteratedConfigItem.children.push(markupItem.content as TemplateItem);
 

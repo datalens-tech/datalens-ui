@@ -4,6 +4,7 @@ import {Loader, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _ from 'lodash';
+import {connect} from 'react-redux';
 import {
     ApiV2Filter,
     ApiV2Parameter,
@@ -24,10 +25,12 @@ import {
 import {getColorsConfigKey} from 'shared/modules/colors/common-helpers';
 import {getDistinctValue, getLineTimeDistinctValue} from 'shared/modules/colors/distincts-helpers';
 import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
+import {DatalensGlobalState} from 'ui';
 
 import {getWhereOperation} from '../../../../libs/datasetHelper';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
+import {selectWizardWorkbookId} from '../../selectors/settings';
 import {ExtraSettings} from '../Dialogs/DialogColor/DialogColor';
 
 import './ValuesList.scss';
@@ -50,7 +53,7 @@ const getShownValues = ({searchValue, values}: {searchValue: string; values: str
 
     return shownValues.slice(0, MAX_VALUES_COUNT);
 };
-export interface Props {
+interface OwnProps {
     item: Field;
     items?: Field[];
     filters: FilterField[];
@@ -67,6 +70,10 @@ export interface Props {
     // this prop is only used when section supports handling of multiple fields; otherwise it must be only undefined.
     sectionFields?: Field[];
 }
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+
+export interface Props extends OwnProps, StateProps {}
 
 interface State {
     values: string[];
@@ -286,7 +293,7 @@ class ValuesList extends React.Component<Props, State> {
     };
 
     getDistincts = (): Promise<GetDistinctsApiV2TransformedResponse> => {
-        const {datasetId, updates, item} = this.props;
+        const {datasetId, updates, item, workbookId} = this.props;
 
         if (isMeasureName(item)) {
             return Promise.resolve({result: {data: {Data: []}}});
@@ -302,6 +309,7 @@ class ValuesList extends React.Component<Props, State> {
             {
                 updates,
                 datasetId,
+                workbookId,
                 limit: VALUES_LOAD_LIMIT,
                 fields,
                 filters,
@@ -412,4 +420,8 @@ class ValuesList extends React.Component<Props, State> {
     }
 }
 
-export default ValuesList;
+const mapStateToProps = (state: DatalensGlobalState) => ({
+    workbookId: selectWizardWorkbookId(state),
+});
+
+export default connect(mapStateToProps)(ValuesList);

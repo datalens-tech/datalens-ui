@@ -222,6 +222,7 @@ export const openDialogFilter = (
                 visible: true,
                 field: args.field,
                 datasetId: args.datasetId,
+                workbookId: args.workbookId,
                 options: args.options,
                 onClose: () => {
                     if (args.onClose) {

@@ -17,7 +17,10 @@ import Utils from 'ui/utils';
 
 import {updateCurrentTabData} from '../../../store/actions/dashTyped';
 import {openDialogAliases} from '../../../store/actions/relations/actions';
-import {selectCurrentTabAliases} from '../../../store/selectors/dashTypedSelectors';
+import {
+    selectCurrentTabAliases,
+    selectDashWorkbookId,
+} from '../../../store/selectors/dashTypedSelectors';
 
 import {Content} from './components/Content/Content';
 import {AliasesInvalidList} from './components/DialogAliases/components/AliasesList/AliasesInvalidList';
@@ -63,6 +66,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
     const dashTabAliases = useSelector(selectCurrentTabAliases);
+    const workbookId = useSelector(selectDashWorkbookId);
 
     const aliasWarnButtonRef = React.useRef<HTMLElement | null>(null);
 
@@ -78,6 +82,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             dashKitRef,
             widget,
             dialogAliases: aliases,
+            workbookId,
         });
 
     const [shownInvalidAliases, setShownInvalidAliases] = React.useState<string[] | null>(null);

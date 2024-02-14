@@ -1,5 +1,5 @@
 import _get from 'lodash/get';
-import {DatasetField, DatasetSource, DatasetSourceAvatar, Feature} from 'shared';
+import {DatasetField, DatasetSource, DatasetSourceAvatar, Feature, WorkbookId} from 'shared';
 import {DL} from 'ui';
 
 import Utils from '../../../utils';
@@ -68,7 +68,7 @@ export default class DatasetUtils {
     }: {
         datasetId: string;
         target?: string;
-        workbookId?: string | null;
+        workbookId?: WorkbookId;
     }) {
         const {endpoints: {wizard = '/wizard'} = {}} = window.DL;
 
