@@ -1,22 +1,23 @@
 import {
-    CommonNumberFormattingOptions,
     DATASET_FIELD_TYPES,
     ExtendedSeriesLineOptions,
     MINIMUM_FRACTION_DIGITS,
-    isDateField,
+    PlaceholderId,
+    getDistinctValue,
+    getFakeTitleOrTitle,
+    isMeasureName,
+    isMeasureValue,
+    isNumberField,
+    isPseudoField,
 } from '../../../../../../../shared';
 import {ChartColorsConfig} from '../../js/helpers/colors';
 import {ColorValue, getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {getColor, getMountedColor} from '../../utils/constants';
-import {
-    chartKitFormatNumberWrapper,
-    findIndexInOrder,
-    formatDate,
-    isGradientMode,
-    isNumericalDataType,
-} from '../../utils/misc-helpers';
+import {findIndexInOrder} from '../../utils/misc-helpers';
 import {addActionParamValue} from '../helpers/action-params';
 import {PiePoint, PrepareFunctionArgs} from '../types';
+
+import {getFormattedValue, isColoringByMeasure} from './utils';
 
 export type PieConfig = {
     name: string;
@@ -50,147 +51,88 @@ function mapAndColorizePieByGradient(
     return points;
 }
 
-function mapAndColorizePieByPalette({
-    graphs,
+function getPieSegmentColor({
+    item,
     colorsConfig,
-    isColorsItemExists,
     usedColors = [],
 }: {
-    graphs: (PiePoint & ExtendedSeriesLineOptions)[];
+    item: PiePoint;
     colorsConfig: ChartColorsConfig;
-    isColorsItemExists?: boolean;
     usedColors?: (string | undefined)[];
 }) {
-    // eslint-disable-next-line complexity
-    graphs.forEach((graph, i) => {
-        const colorValue = graph.colorValue;
+    if (
+        colorsConfig &&
+        colorsConfig.mountedColors &&
+        (item.colorGuid === colorsConfig.fieldGuid || colorsConfig.coloredByMeasure) &&
+        item.colorValue &&
+        colorsConfig.mountedColors[item.colorValue]
+    ) {
+        return getMountedColor(colorsConfig, item.colorValue);
+    }
 
-        const colorKey = colorValue;
+    const value = String(item.colorValue);
+    let colorIndex = usedColors.indexOf(value);
+    if (colorIndex === -1) {
+        usedColors.push(value);
+        colorIndex = usedColors.length - 1;
+    }
 
-        if (
-            colorsConfig &&
-            colorsConfig.mountedColors &&
-            (graph.colorGuid === colorsConfig.fieldGuid || colorsConfig.coloredByMeasure) &&
-            colorKey &&
-            colorsConfig.mountedColors[colorKey]
-        ) {
-            graph.color = getMountedColor(colorsConfig, colorKey);
-        } else {
-            let value = graph.colorValue;
-
-            if (isColorsItemExists && graph.legendTitle) {
-                value = graph.legendTitle;
-            }
-
-            // We use the index from forEach in the case of coloring the second y axis
-            let colorIndex = graph.yAxis === 0 ? usedColors.indexOf(value) : i;
-
-            if (colorIndex === -1) {
-                usedColors.push(value);
-                colorIndex = usedColors.length - 1;
-            }
-
-            graph.color = getColor(colorIndex, colorsConfig.colors);
-        }
-    });
-
-    return graphs;
+    return getColor(colorIndex, colorsConfig.colors);
 }
 
 // eslint-disable-next-line complexity
-export function preparePieData({
-    placeholders,
-    resultData,
-    sort,
-    labels,
-    colorsConfig,
-    idToTitle,
-    idToDataType,
-    ChartEditor,
-    disableDefaultSorting = false,
-}: PrepareFunctionArgs) {
+export function preparePieData(args: PrepareFunctionArgs) {
+    const {
+        placeholders,
+        resultData,
+        sort,
+        labels,
+        colorsConfig,
+        idToTitle,
+        idToDataType,
+        ChartEditor,
+        disableDefaultSorting = false,
+    } = args;
     const {data, order, totals} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
-    const groupedData: Record<string, number> = {};
-    const labelsData: Record<string, string | null> = {};
 
-    const colorField = placeholders[0].items[0];
-
-    if (!colorField) {
-        return {graphs: []};
-    }
-
-    const colorFieldDataType = colorField && colorField.data_type;
-    const colorIsNumber = Boolean(colorFieldDataType && isNumericalDataType(colorFieldDataType));
-
-    const colorActualTitle = idToTitle[colorField.guid];
-    const colorIndex = findIndexInOrder(order, colorField, colorActualTitle);
-
-    const gradientMode =
-        colorField &&
-        colorFieldDataType &&
-        isGradientMode({colorField, colorFieldDataType, colorsConfig});
-
-    const labelsLength = labels && labels.length;
-    const label = labels && labels[0];
-    let lDataType: DATASET_FIELD_TYPES | undefined = labels?.[0]?.data_type as DATASET_FIELD_TYPES;
-
-    const measure = placeholders[1].items[0];
+    const measure = placeholders.find((p) => p.id === PlaceholderId.Measures)?.items[0];
+    const colorField = placeholders.find((p) => p.id === PlaceholderId.Colors)?.items[0];
+    const dimensionField = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items[0];
 
     if (!measure) {
         return {graphs: []};
     }
 
-    const measureActualTitle = idToTitle[measure.guid];
-    const measureIndex = findIndexInOrder(order, measure, measureActualTitle);
-    const measureDataType = measure ? idToDataType[measure.guid] || measure.data_type : null;
+    const colorIndex = colorField
+        ? findIndexInOrder(order, colorField, idToTitle[colorField.guid])
+        : -1;
+    const shouldUseGradient = isColoringByMeasure(args);
+    const dimensionIndex = dimensionField
+        ? findIndexInOrder(order, dimensionField, idToTitle[dimensionField.guid])
+        : -1;
 
-    if (colorIndex === -1 || measureIndex === -1) {
+    const labelItem = labels?.[0];
+    const labelField = labelItem
+        ? {...labelItem, data_type: idToDataType[labelItem.guid]}
+        : labelItem;
+    const labelIndex = labelField
+        ? findIndexInOrder(order, labelField, idToTitle[labelField.guid])
+        : -1;
+
+    const measureIndex = findIndexInOrder(order, measure, idToTitle[measure.guid]);
+    const measureDataType = idToDataType[measure.guid] || measure.data_type;
+
+    if (measureIndex === -1) {
         return {graphs: []};
     }
 
-    const categories: string[] = [];
-
-    data.forEach((values) => {
-        let x = values[colorIndex];
-        const y = values[measureIndex];
-
-        if (x === null) {
-            x = 'null';
-        }
-
-        if (categories.indexOf(x) === -1) {
-            categories.push(x);
-        }
-
-        if (labelsLength) {
-            if (label.type === 'PSEUDO') {
-                if (label.title === 'Measure Values') {
-                    labelsData[x] = y;
-                    lDataType = undefined;
-                } else {
-                    labelsData[x] = x;
-                    lDataType = DATASET_FIELD_TYPES.STRING;
-                }
-            } else {
-                const labelTitle = idToTitle[label.guid];
-                const i = findIndexInOrder(order, label, labelTitle);
-                labelsData[x] = values[i];
-            }
-        }
-
-        groupedData[x] = Number(y);
-    });
-
-    const originalTitle = measure.originalTitle;
-    const guid = measure.guid;
-    const title = idToTitle[guid];
-    const name = title.includes(guid) && originalTitle ? originalTitle : title;
-    const labelFormatting = label?.formatting as CommonNumberFormattingOptions | undefined;
-    const measureFormatting = measure?.formatting as CommonNumberFormattingOptions | undefined;
-
-    const isLabelPseudo = label?.type === 'PSEUDO';
-    const labelFinalDataType = isLabelPseudo ? measureDataType : lDataType;
+    const title = idToTitle[measure.guid];
+    const name =
+        title.includes(measure.guid) && measure.originalTitle ? measure.originalTitle : title;
+    const measureFormatting = measure?.formatting;
+    const labelFormatting = isMeasureValue(labelField) ? measureFormatting : labelField?.formatting;
+    const labelFinalDataType = isPseudoField(labelField) ? measureDataType : labelField?.data_type;
 
     const pie: PieConfig = {
         name,
@@ -233,77 +175,80 @@ export function preparePieData({
                   },
     };
 
-    pie.data = categories
-        .map((key) => {
-            let name = 'Null';
-            let formattedName = '';
-            let colorKey: number | string = key;
+    const usedColors: string[] = [];
+    pie.data = data
+        .map((values) => {
+            const dimensionValue = values[dimensionIndex];
+            const measureValue = values[measureIndex];
+            const colorFieldValue = values[colorIndex];
+            const labelValue = values[labelIndex];
 
-            if (key !== 'null') {
-                if (isDateField(colorField)) {
-                    name = formatDate({
-                        valueType: colorFieldDataType,
-                        value: key,
-                        format: colorField.format,
-                    });
-                    colorKey = key;
-                } else if (isNumericalDataType(colorFieldDataType)) {
-                    name = key;
-                    colorKey = key;
+            let colorValue: string | number = name;
+            const legendParts: string[] = [];
+            const formattedNameParts: string[] = [];
 
-                    if (colorField.formatting) {
-                        formattedName = chartKitFormatNumberWrapper(Number(key), {
-                            lang: 'ru',
-                            ...colorField.formatting,
-                        });
-                    }
+            if (dimensionField) {
+                legendParts.push(String(dimensionValue));
+                formattedNameParts.push(
+                    getFormattedValue(dimensionValue, {
+                        ...dimensionField,
+                        data_type: idToDataType[dimensionField.guid],
+                    }),
+                );
+            }
+
+            if (colorField && typeof colorFieldValue !== 'undefined') {
+                if (shouldUseGradient) {
+                    colorValue = Number(colorFieldValue);
                 } else {
-                    name = key;
+                    colorValue = getDistinctValue(colorFieldValue);
+                    legendParts.push(String(colorFieldValue));
+                    formattedNameParts.push(
+                        getFormattedValue(colorFieldValue, {
+                            ...colorField,
+                            data_type: idToDataType[colorField.guid],
+                        }),
+                    );
                 }
             }
 
+            const pointName = legendParts.join(': ') || getFakeTitleOrTitle(measure);
+            const formattedName = formattedNameParts.join(': ');
+
             const point: PiePoint = {
-                name,
+                name: pointName,
                 formattedName,
-                drillDownFilterValue: key,
-                y: groupedData[key],
-                colorGuid: colorField.guid,
-                colorValue: colorKey || name || colorField.title,
+                drillDownFilterValue: pointName,
+                y: Number(measureValue),
+                colorGuid: colorField?.guid,
+                colorValue,
             };
+            point.color = getPieSegmentColor({item: point, colorsConfig, usedColors});
+
+            if (labelField) {
+                if (isMeasureName(labelField)) {
+                    point.label = formattedName;
+                } else if (isMeasureValue(labelField)) {
+                    point.label = Number(measureValue);
+                } else if (isNumberField(labelField)) {
+                    // The value will be formatted using dataLabels.chartKitFormatting
+                    point.label = Number(labelValue);
+                } else {
+                    point.label = getFormattedValue(labelValue, {
+                        ...labelField,
+                        data_type: idToDataType[labelField.guid],
+                    });
+                }
+            }
 
             if (widgetConfig?.actionParams?.enable) {
                 const actionParams: Record<string, any> = {};
-                addActionParamValue(actionParams, colorField, key);
+                addActionParamValue(actionParams, dimensionField, dimensionValue);
+                addActionParamValue(actionParams, colorField, colorValue);
 
                 point.custom = {
                     actionParams,
                 };
-            }
-
-            if (labelsLength) {
-                if (isNumericalDataType(lDataType!) || label.title === 'Measure Values') {
-                    // CLOUDSUPPORT-52785 - the logic below is a bypass of the problem that once manifested itself
-                    // in external datalens, when there is the same field in both the "Indicators" section and the
-                    // "Signatures" in labels turned out to be null-s, which is not logical. Since the reason for this could not be established
-                    // implemented fullback - with the same field in indicators and signatures and null-value
-                    // in labelsData[key], label data is taken from point.y
-                    const sameFieldInLabelsAndMeasures = label.title === measure.title;
-
-                    const labelValue =
-                        sameFieldInLabelsAndMeasures && labelsData[key] === null && point.y !== null
-                            ? point.y
-                            : labelsData[key];
-
-                    point.label = Number(labelValue);
-                } else if (isDateField({data_type: lDataType!})) {
-                    point.label = formatDate({
-                        valueType: lDataType!,
-                        value: labelsData[key],
-                        format: label.format,
-                    });
-                } else {
-                    point.label = labelsData[key];
-                }
             }
 
             return point;
@@ -312,27 +257,16 @@ export function preparePieData({
         .filter((point) => point.y > 0) as (PiePoint & ExtendedSeriesLineOptions)[];
 
     if (!disableDefaultSorting && (!sort || !sort.length)) {
-        pie.data!.sort((a, b) => {
+        pie.data.sort((a, b) => {
             return a.y > b.y ? -1 : a.y < b.y ? 1 : 0;
         });
     }
 
-    const isColoringByGradient = gradientMode && colorIsNumber;
-
-    if (isColoringByGradient) {
+    if (shouldUseGradient) {
         pie.data = mapAndColorizePieByGradient(pie.data, colorsConfig);
-    } else {
-        pie.data = mapAndColorizePieByPalette({
-            graphs: pie.data,
-            colorsConfig,
-            isColorsItemExists: Boolean(colorField),
-        });
     }
 
-    const graphs = [pie];
-    const totalsValue = totals.find((value) => value);
-
-    return {graphs, categories, totals: totalsValue, label, measure};
+    return {graphs: [pie], totals: totals.find((value) => value), label: labelField, measure};
 }
 
 export default preparePieData;

@@ -85,8 +85,9 @@ export type PiePoint = {
     formattedName: string;
     drillDownFilterValue: string;
     y: number;
-    colorGuid: string;
-    colorValue: string | number;
+    color?: string;
+    colorGuid?: string;
+    colorValue?: string | number;
     label?: string | number | null;
     custom?: object;
 };
