@@ -69,6 +69,13 @@ function getSpinner(utils: RenderHelpers) {
             height: 100%;
         }
 
+        .g-root_theme_dark .local_wrapper {
+            background-color: rgb(45, 44, 51);
+        }
+        .g-root_theme_dark-hc .local_wrapper {
+            background-color: rgb(34, 35, 38);
+        }
+
         html, body, #root {
             width: 100%;
             height: 100%;
