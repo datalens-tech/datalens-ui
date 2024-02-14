@@ -117,6 +117,7 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
                     noVeil={true}
                     menuType={this.getMenuType()}
                     forwardedRef={this.chartKitRef}
+                    workbookId={entry?.workbookId}
                 />
             </div>
         );

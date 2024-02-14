@@ -1,6 +1,7 @@
 import {ResetWizardStoreAction} from '../actions';
 import {
     SET_DEFAULTS_SET,
+    SET_ROUTE_WORKBOOK_ID,
     SettingsAction,
     TOGGLE_FULLSCREEN,
     TOGGLE_NAVIGATION,
@@ -12,6 +13,7 @@ export interface SettingsState {
     isFullscreen: boolean;
     defaultsSet: boolean;
     isViewOnlyMode: boolean;
+    routeWorkbookId?: string;
 }
 
 const initialState: SettingsState = {
@@ -53,6 +55,12 @@ export function settings(
             return {
                 ...state,
                 defaultsSet: true,
+            };
+        }
+        case SET_ROUTE_WORKBOOK_ID: {
+            return {
+                ...state,
+                routeWorkbookId: action.payload.routeWorkbookId,
             };
         }
         default:

@@ -5,13 +5,16 @@ import {I18n} from 'i18n';
 import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
 import {useSelector} from 'react-redux';
-import {DialogControlQa, TIMEOUT_90_SEC, getFieldsApiV2RequestSection} from 'shared';
+import {DialogControlQa, TIMEOUT_90_SEC, WorkbookId, getFieldsApiV2RequestSection} from 'shared';
 import {VIEW_MODES} from 'ui/components/Select/hooks/useSelectRenderFilter/useSelectRenderFilter';
 import {
     SelectFeaturedAsync,
     SelectFeaturedAsyncProps,
 } from 'ui/components/Select/wrappers/SelectFeaturedAsync';
-import {selectSelectorDialog} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {
+    selectDashWorkbookId,
+    selectSelectorDialog,
+} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import {useSetSelectorDialogItem} from './hooks';
 import {ValueSelectorProps} from './types';
@@ -38,6 +41,7 @@ const hasNextPage = (arr: unknown[], pageSize: number) => {
 
 type GetDistincts = {
     datasetId?: string;
+    workbookId: WorkbookId;
     datasetFieldId?: string;
     searchPattern?: string;
     nextPageToken?: number | null;
@@ -46,6 +50,7 @@ type GetDistincts = {
 
 const getDistincts = async ({
     datasetId,
+    workbookId,
     datasetFieldId,
     searchPattern,
     nextPageToken,
@@ -72,6 +77,7 @@ const getDistincts = async ({
         } = await getSdk().bi.getDistinctsApiV2(
             {
                 datasetId,
+                workbookId,
                 fields,
                 limit: pageSize,
                 offset: pageSize * (nextPageToken as number),
@@ -102,6 +108,7 @@ export const DynamicValueSelect = ({hasValidationError, hasClear}: ValueSelector
     const [searchPattern, setSearchPattern] = React.useState('');
 
     const selectorDialogState = useSelector(selectSelectorDialog);
+    const workbookId = useSelector(selectDashWorkbookId);
     const {datasetId, datasetFieldId, multiselectable} = selectorDialogState;
     const defaultValue = convertDefaultValue(selectorDialogState.defaultValue);
 
@@ -119,12 +126,13 @@ export const DynamicValueSelect = ({hasValidationError, hasClear}: ValueSelector
         ({pageNumber, pageSize} = {pageNumber: 0, pageSize: DEFAULT_PAGE_SIZE}) =>
             getDistincts({
                 datasetId,
+                workbookId,
                 datasetFieldId,
                 nextPageToken: pageNumber,
                 searchPattern,
                 pageSize,
             }),
-        [datasetId, datasetFieldId, searchPattern],
+        [datasetId, workbookId, datasetFieldId, searchPattern],
     );
 
     const handleUpdate = React.useCallback(

@@ -20,6 +20,7 @@ import {
     DashTabItemControlSourceType,
     Feature,
     StringParams,
+    WorkbookId,
 } from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -68,9 +69,17 @@ import {getDatasetSourceInfo, getLabels, getStatus, isValidRequiredValue} from '
 
 import './Control.scss';
 
+type ContextProps = {
+    workbookId?: WorkbookId;
+};
+
 type StateProps = ReturnType<typeof mapStateToProps>;
 
-export interface PluginControlProps extends PluginWidgetProps, ControlSettings, StateProps {}
+export interface PluginControlProps
+    extends PluginWidgetProps,
+        ContextProps,
+        ControlSettings,
+        StateProps {}
 
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
@@ -399,6 +408,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 | DashTabItemControlManual
                 | DashTabItemControlExternal;
 
+            const {workbookId} = this.props;
+
             const payload = {
                 data: {
                     config: {
@@ -410,6 +421,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         },
                     },
                     params: this.actualParams,
+                    ...(workbookId ? {workbookId} : {}),
                 },
             };
 
@@ -647,7 +659,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     render() {
-        const {data, editMode, id} = this.props;
+        const {data, editMode, id, workbookId} = this.props;
         const controlData = data as unknown as
             | DashTabItemControlExternal
             | DashTabItemControlManual
@@ -688,6 +700,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         widgetType={sourceType}
                         editMode={editMode}
                         forwardedRef={this.chartKitRef as any}
+                        workbookId={workbookId}
                     />
                 </div>
             );
@@ -808,8 +821,15 @@ const plugin: PluginControl = {
     },
     prerenderMiddleware,
     renderer(props: PluginWidgetProps, forwardedRef) {
+        const workbookId = props.context.workbookId;
+
         return (
-            <ControlWithStore {...props} getDistincts={plugin.getDistincts} ref={forwardedRef} />
+            <ControlWithStore
+                {...props}
+                workbookId={workbookId}
+                getDistincts={plugin.getDistincts}
+                ref={forwardedRef}
+            />
         );
     },
 };

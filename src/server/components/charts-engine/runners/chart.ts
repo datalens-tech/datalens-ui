@@ -9,7 +9,7 @@ import {RunnerHandler, RunnerHandlerProps} from '.';
 
 export const runChart: RunnerHandler = async (
     cx: AppContext,
-    {chartsEngine, req, res, config, configResolving}: RunnerHandlerProps,
+    {chartsEngine, req, res, config, configResolving, workbookId}: RunnerHandlerProps,
 ) => {
     let generatedConfig;
 
@@ -105,5 +105,6 @@ export const runChart: RunnerHandler = async (
         res,
         config: generatedConfig as ResolvedConfig,
         configResolving,
+        workbookId: workbookId ?? config.workbookId,
     });
 };
