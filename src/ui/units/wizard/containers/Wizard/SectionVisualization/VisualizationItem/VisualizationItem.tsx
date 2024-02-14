@@ -65,6 +65,7 @@ import {
     selectFields,
     selectMeasures,
 } from 'units/wizard/selectors/dataset';
+import {selectWizardWorkbookId} from 'units/wizard/selectors/settings';
 import {
     selectColorsConfig,
     selectShapesConfig,
@@ -539,7 +540,7 @@ class VisualizationItem extends React.Component<Props, State> {
     };
 
     private openDialogFieldEditor = (item: Field) => {
-        const {fields, dataset} = this.props;
+        const {fields, dataset, workbookId} = this.props;
 
         let field;
 
@@ -602,6 +603,7 @@ class VisualizationItem extends React.Component<Props, State> {
             props: {
                 datasetContent: dataset?.dataset,
                 datasetId: dataset?.id || '',
+                workbookId,
                 datasetOptions: dataset?.options,
 
                 field,
@@ -968,6 +970,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         colorsConfig: selectColorsConfig(state),
         shapesConfig: selectShapesConfig(state),
         extraSettings: selectExtraSettings(state),
+        workbookId: selectWizardWorkbookId(state),
     };
 };
 
