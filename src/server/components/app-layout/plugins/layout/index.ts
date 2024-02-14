@@ -70,10 +70,10 @@ function getSpinner(utils: RenderHelpers) {
         }
 
         .g-root_theme_dark .local_wrapper {
-            background-color: rgb(45, 44, 51);
+            background-color: var(--g-color-base-background, rgb(45, 44, 51));
         }
         .g-root_theme_dark-hc .local_wrapper {
-            background-color: rgb(34, 35, 38);
+            background-color: var(--g-color-base-background, rgb(34, 35, 38));
         }
 
         html, body, #root {
