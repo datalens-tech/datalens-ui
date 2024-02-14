@@ -37,7 +37,7 @@ function List({items, onClick}) {
                 {i18n('editor.common.view', 'label_without-template')}
             </div>
             {items.map((item) => {
-                return <Item key={item.entryId} item={item} onClick={onClick} />;
+                return <Item key={item.name} item={item} onClick={onClick} />;
             })}
         </div>
     );
@@ -46,7 +46,6 @@ function List({items, onClick}) {
 List.propTypes = {
     items: PropTypes.arrayOf(
         PropTypes.shape({
-            entryId: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,
         }).isRequired,
     ),

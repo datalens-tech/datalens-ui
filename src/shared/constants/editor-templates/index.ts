@@ -7,4 +7,6 @@ import table from './table';
 import timeseries from './timeseries';
 import yandexMap from './yandex-map';
 
-export default [control, graph, markdown, metric, module, table, timeseries, yandexMap];
+export const getEditorTemplates = () => {
+    return [control, graph, markdown, metric, module, table, timeseries, yandexMap];
+};

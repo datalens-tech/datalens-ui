@@ -8,8 +8,8 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import {extractEntryId} from 'shared';
 import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
 
-import templates from '../../../../../shared/constants/editor-templates';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
+import {registry} from '../../../../registry';
 import {EditorUrlParams, EditorUrls, Status} from '../../constants/common';
 import ActionPanel from '../../containers/ActionPanel/ActionPanel';
 import Grid from '../../containers/Grid/Grid';
@@ -54,6 +54,10 @@ const EditorPage = ({
 
     const isEntryInited = Boolean(entry) && !entry.fake;
     const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
+
+    const getEditorTemplates = registry.editor.functions.get('getEditorTemplates');
+
+    const templates = getEditorTemplates();
 
     React.useEffect(() => {
         async function getEntryItem() {
