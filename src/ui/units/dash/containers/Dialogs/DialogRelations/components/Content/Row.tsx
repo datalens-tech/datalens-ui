@@ -174,17 +174,15 @@ const getConnectionByInfo = ({
     let field: ConnectionField = [];
     let type: ConnectionType = 'field';
 
-    if (availableLink) {
-        if (hasAliases) {
-            field = byAliases;
-            type = 'alias';
-        } else if (hasFields || hasDataset) {
-            field = byFields;
-            type = 'field';
-        } else if (hasUsedParams) {
-            field = byUsedParams;
-            type = 'param';
-        }
+    if (showByAlias) {
+        field = byAliases;
+        type = 'alias';
+    } else if (showByField || (hasDataset && availableLink)) {
+        field = byFields;
+        type = 'field';
+    } else if (showByUsedParams) {
+        field = byUsedParams;
+        type = 'param';
     }
 
     const {fieldText, fieldTextWithStrong} = getFieldText({

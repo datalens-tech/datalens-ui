@@ -252,10 +252,10 @@ const getRelationTypeByIgnores = ({
     hasRelation: boolean;
 }) => {
     let relationType = '';
-    if (loadError && !(relations.isIgnored && relations.isIgnoring)) {
-        relationType = RELATION_TYPES.unknown;
-    } else if (relations.isIgnored && relations.isIgnoring) {
+    if (relations.isIgnored && relations.isIgnoring) {
         relationType = RELATION_TYPES.ignore;
+    } else if (loadError) {
+        relationType = RELATION_TYPES.unknown;
     } else if (hasRelation) {
         if (relations.isIgnored || relations.isIgnoring) {
             relationType = relations.isIgnored ? RELATION_TYPES.output : RELATION_TYPES.input;

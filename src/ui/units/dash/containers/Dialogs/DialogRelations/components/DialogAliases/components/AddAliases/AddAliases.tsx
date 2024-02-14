@@ -48,13 +48,13 @@ const getList = (data: DashkitMetaDataItem) => {
         // if there is no defaults in editor chart or in external selector there is no params for list options
         // until user add any param to default
         if (isEditorChart(data)) {
-            return isEmpty(data.params)
+            return !data.params || isEmpty(data.params)
                 ? []
-                : Object.keys(data.params || []).map(getParamsSelectOptions);
+                : Object.keys(data.params).map(getParamsSelectOptions);
         } else if (isExternalControl(data)) {
-            return isEmpty(data.widgetParams)
+            return !data.widgetParams || isEmpty(data.widgetParams)
                 ? []
-                : Object.keys(data.widgetParams || []).map(getParamsSelectOptions);
+                : Object.keys(data.widgetParams).map(getParamsSelectOptions);
         }
         res = data.usedParams?.map(getParamsSelectOptions) || [];
     }

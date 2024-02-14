@@ -53,7 +53,10 @@ const getDatasetsListWithFlatFields = (datasets: Datasets) => {
     const flatDatasetFields: DatasetsFlatListData = {};
     for (const [id, data] of Object.entries(datasets)) {
         flatDatasetFields[id] = data.fields.reduce(
-            (result, {guid, title}) => ({...result, [guid]: title}),
+            (result: Record<string, string>, {guid, title}) => {
+                result[guid] = title;
+                return result;
+            },
             {},
         );
     }
