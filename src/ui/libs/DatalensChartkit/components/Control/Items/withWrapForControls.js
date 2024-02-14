@@ -25,7 +25,8 @@ function withWrapForControls(WrappedComponent) {
             type !== CONTROL_TYPE.CHECKBOX &&
             type !== CONTROL_TYPE.TEXTAREA;
 
-        const controlStyle = DL.IS_MOBILE ? {width: '100%'} : style || {width};
+        const customStyle = style || {width};
+        const controlStyle = DL.IS_MOBILE ? {width: '100%'} : customStyle;
 
         return (
             <div
