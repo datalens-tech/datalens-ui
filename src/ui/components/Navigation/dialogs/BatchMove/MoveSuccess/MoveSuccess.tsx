@@ -29,7 +29,7 @@ export const MoveSuccess = ({onClose, onOpenFolder}: Props) => {
             <Dialog.Body>
                 <PlaceholderIllustration
                     name="successOperation"
-                    description={i18n('label_batch-move-success-description')}
+                    title={i18n('label_batch-move-success-description')}
                     direction="column"
                     renderAction={renderAction}
                 />
