@@ -4,9 +4,8 @@ import {AddConfigItem, Config, DashKit, ItemsStateAndParams} from '@gravity-ui/d
 import {PluginTextProps} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
 import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Title';
 import {i18n} from 'i18n';
-import {DatalensGlobalState, URL_QUERY, Utils, sdk} from 'index';
+import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
-import {Dispatch} from 'redux';
 import {
     DATASET_FIELD_TYPES,
     DashData,
@@ -20,7 +19,6 @@ import {
     Dataset,
     DatasetFieldType,
     EntryUpdateMode,
-    Feature,
     Operations,
 } from 'shared';
 import {AppDispatch} from 'ui/store';
@@ -400,8 +398,6 @@ export type SelectorDialogState = {
     placementMode: 'auto' | '%' | 'px';
     width: string;
     id: string;
-    // TODO: temp solution to save old title and don't convert old selector to new
-    tempTitle?: string;
 };
 
 export type SelectorsGroupDialogState = {
@@ -614,7 +610,7 @@ const getControlDefaultsForField = (
 export const applyControl2Dialog = () => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const selectorDialog = getState().dash.selectorDialog as SelectorDialogState;
-        const {title, sourceType, autoHeight, tempTitle} = selectorDialog;
+        const {title, sourceType, autoHeight} = selectorDialog;
 
         const validation = getControlValidation(selectorDialog);
 
@@ -630,7 +626,7 @@ export const applyControl2Dialog = () => {
         const defaults = getControlDefaultsForField(selectorDialog.defaults, selectorDialog);
 
         const data = {
-            title: Utils.isEnabledFeature(Feature.GroupControls) && tempTitle ? tempTitle : title,
+            title,
             sourceType,
             autoHeight,
             source: getItemDataSource(selectorDialog),
@@ -638,15 +634,10 @@ export const applyControl2Dialog = () => {
         const getExtendedItemData = getExtendedItemDataAction();
         const itemData = dispatch(getExtendedItemData({data, defaults}));
 
-        const itemType =
-            getState().dash.openedDialog === DashTabItemType.GroupControl
-                ? DashTabItemType.Control
-                : undefined;
-
         dispatch(
             setItemData({
                 data: itemData.data,
-                type: itemType,
+                type: DashTabItemType.Control,
                 defaults: itemData.defaults,
             }),
         );
@@ -656,21 +647,8 @@ export const applyControl2Dialog = () => {
 };
 
 export const applyGroupControlDialog = () => {
-    return (dispatch: Dispatch, getState: () => DatalensGlobalState) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const selectorGroup = getState().dash.selectorsGroup;
-
-        // backward to single `control` widget
-        // if (selectorGroup.items.length < 2) {
-        //     dispatch(
-        //         setSelectorDialogItem({
-        //             ...selectorGroup.items[0],
-        //             autoHeight: selectorGroup.autoHeight,
-        //             defaults: selectorGroup.defaults,
-        //         }),
-        //     );
-        //     applyControl2Dialog()(dispatch, getState);
-        //     return;
-        // }
 
         let defaults: Record<string, string | string[]> = {};
 
@@ -691,7 +669,7 @@ export const applyGroupControlDialog = () => {
             defaults = getControlDefaultsForField(defaults, selectorGroup.items[i]);
         }
 
-        const isSingleControl = selectorGroup.items.length < 2;
+        const isSingleControl = selectorGroup.items.length === 1;
 
         const data = {
             id: selectorGroup.id,
@@ -710,15 +688,14 @@ export const applyGroupControlDialog = () => {
             }),
         };
 
-        // TODO what is getExtendedItemData from single control?
-        // const getExtendedItemData = getExtendedItemDataAction();
-        // const itemData = dispatch(getExtendedItemData({data, defaults}));
+        const getExtendedItemData = getExtendedItemDataAction();
+        const itemData = dispatch(getExtendedItemData({data, defaults}));
 
         dispatch(
             setItemData({
-                data,
+                data: itemData.data,
                 type: DashTabItemType.GroupControl,
-                defaults,
+                defaults: itemData.defaults,
             }),
         );
 

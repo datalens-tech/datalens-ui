@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {BackButton} from 'ui/units/dash/components/ReturnButton/BackButton';
+import {BackButton} from 'ui/units/dash/components/BackButton/BackButton';
 import {SelectorDialogState, updateSelectorsGroup} from 'ui/units/dash/store/actions/dashTyped';
 import {selectSelectorsGroup} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 

@@ -15,6 +15,7 @@ import {
     DashTabItemControlSingle,
     DashTabItemGroupControlData,
     StringParams,
+    WorkbookId,
 } from 'shared';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -40,7 +41,15 @@ const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 
-interface PluginGroupControlProps extends PluginWidgetProps, ControlSettings, StateProps {}
+type ContextProps = {
+    workbookId?: WorkbookId;
+};
+
+interface PluginGroupControlProps
+    extends PluginWidgetProps,
+        ControlSettings,
+        StateProps,
+        ContextProps {}
 
 interface PluginGroupControlState {
     status: LoadStatus;
@@ -50,7 +59,6 @@ interface PluginGroupControlState {
     stateParams: StringParams;
     needReload: boolean;
     forceUpdate: boolean;
-    applyLoader: boolean;
 }
 
 export interface PluginGroupControl extends Plugin<PluginGroupControlProps> {
@@ -60,6 +68,7 @@ export interface PluginGroupControl extends Plugin<PluginGroupControlProps> {
 
 const b = block('dashkit-plugin-group-control');
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
+
 class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGroupControlState> {
     chartKitRef: React.RefObject<ChartsChartKit> = React.createRef<ChartsChartKit>();
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
@@ -74,6 +83,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     controlsCount = 0;
     controlsLoadedCount = 0;
     controlsStatus: Record<string, LoadStatus> = {};
+
+    // a quick loader for click on apply button
+    applyLoader = false;
 
     /**
      * can't use it in state because of doubling requests
@@ -99,8 +111,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             stateParams: {},
             needReload: false,
             forceUpdate: true,
-            // a quick loader for click on apply button
-            applyLoader: false,
         };
     }
 
@@ -152,10 +162,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 silentLoading: true,
             });
         }
-
-        if (this.state.applyLoader) {
-            this.setState({applyLoader: false});
-        }
     }
 
     componentWillUnmount() {
@@ -177,16 +183,21 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             )
             .join(', ');
 
+        const debugData = [
+            {label: 'widgetId', value: controlData.id},
+            {label: 'paramId', value: paramIdDebug},
+        ];
+
         const isLoading =
             (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
-            this.state.applyLoader;
+            this.applyLoader;
 
         return (
             <div ref={this.rootNode} className={b({mobile: isMobileView})}>
                 <div className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}>
-                    <DebugInfoTool label={'paramId'} value={paramIdDebug} modType={'corner'} />
+                    <DebugInfoTool data={debugData} modType={'corner'} />
                     {isLoading && (
-                        <div className={b('loader', {silent: this.state.applyLoader})}>
+                        <div className={b('loader', {silent: this.applyLoader})}>
                             <Loader size="s" />
                         </div>
                     )}
@@ -202,6 +213,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.props.onStateAndParamsChange({params});
         }
         this.setState({stateParams: params});
+        this.applyLoader = false;
     };
 
     private filterSignificantParams(loadedData?: any) {
@@ -264,9 +276,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsLoadedCount--;
         }
 
+        // if some controls start to reload after success loading we set pending status
         if (
             this.controlsLoadedCount !== this.controlsCount &&
-            this.state.status !== LOAD_STATUS.PENDING
+            this.state.status === LOAD_STATUS.SUCCESS
         ) {
             this.setState({status: LOAD_STATUS.PENDING});
         }
@@ -289,7 +302,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     };
 
     private renderControl(item: DashTabItemControlSingle) {
-        const {getDistincts, defaults} = this.props;
+        const {getDistincts, defaults, workbookId} = this.props;
         const {silentLoading} = this.state;
 
         return (
@@ -308,6 +321,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 needReload={this.state.needReload}
                 onInitialParamsUpdate={this.handleInitialParamsUpdate}
                 cancelSource={this._cancelSource}
+                workbookId={workbookId}
             />
         );
     }
@@ -330,10 +344,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         }
 
         if (!isEqual(newParams, this.actualParams) || !isEqual(newParams, this.state.stateParams)) {
-            this.onChange(newParams, callChangeByClick);
             if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
-                this.setState({applyLoader: true});
+                this.applyLoader = true;
             }
+            this.onChange(newParams, callChangeByClick);
         }
     }
 
@@ -447,10 +461,13 @@ const plugin: PluginGroupControl = {
         return plugin;
     },
     renderer(props: PluginWidgetProps, forwardedRef) {
+        const workbookId = props.context.workbookId;
+
         return (
             <GroupControlWithStore
                 {...props}
                 getDistincts={plugin.getDistincts}
+                workbookId={workbookId}
                 ref={forwardedRef}
             />
         );

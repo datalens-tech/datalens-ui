@@ -12,6 +12,7 @@ import {
     DashTabItemControlSourceType,
     Feature,
     StringParams,
+    WorkbookId,
 } from 'shared';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {
@@ -71,6 +72,7 @@ type ControlProps = {
     onInitialParamsUpdate: (initialParams: ChartInitialParams) => void;
     needReload: boolean;
     cancelSource: any;
+    workbookId?: WorkbookId;
 };
 
 export const Control = ({
@@ -87,6 +89,7 @@ export const Control = ({
     onInitialParamsUpdate,
     needReload,
     cancelSource,
+    workbookId,
 }: ControlProps) => {
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
     const [
@@ -145,6 +148,7 @@ export const Control = ({
                         },
                     },
                     params: actualParams,
+                    ...(workbookId ? {workbookId} : {}),
                 },
             };
 
