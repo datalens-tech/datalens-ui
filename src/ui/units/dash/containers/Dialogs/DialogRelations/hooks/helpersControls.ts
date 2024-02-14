@@ -195,7 +195,7 @@ export const getControlToControlRelations = ({
             row.widgetParams || {},
             widget.widgetParams || {},
         );
-        if (hasRelation) {
+        if (relations.byAliases.length || hasRelation) {
             newRelationType = RELATION_TYPES.both;
             availableRelations = [...FULL_RELATIONS];
         } else if (Object.keys(widget.widgetParams || {}).length) {
