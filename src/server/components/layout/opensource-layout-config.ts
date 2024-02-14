@@ -37,6 +37,14 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         console.warn('no language in cookie');
     }
 
+    let userSettings = {};
+    try {
+        const preparedCookie = JSON.parse(cookie);
+        userSettings = preparedCookie.userSettings;
+    } catch {
+        console.warn('no userSettings in cookie');
+    }
+
     const isAllowed = allowLanguages.includes(lang || '');
     if (!isAllowed) {
         lang = Language.En;
@@ -44,7 +52,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
 
     // TODO: check and remove optional props;
     const user: DLUser = {lang} as DLUser;
-    const userSettings = {};
+    // const userSettings = {};
     const iamUserId = '';
     const {scripts: chartkitScripts, inlineScripts: chartkitInlineScripts} =
         getChartkitLayoutSettings(config.chartkitSettings);
@@ -91,6 +99,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         },
         ...appLayoutSettings.renderConfig,
     };
+    console.log({theme: userSettings});
 
     return renderConfig;
 };
