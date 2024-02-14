@@ -5,8 +5,9 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import {RouteComponentProps} from 'react-router-dom';
-import {Feature, extractEntryId} from 'shared';
+import {Feature, WorkbookId, extractEntryId} from 'shared';
 import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
+import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
 import {pushStats} from 'ui/components/Widgets/Chart/helpers/helpers';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
@@ -83,6 +84,13 @@ const Preview: React.FC<PreviewProps> = (props) => {
     const previewRef = React.useRef<HTMLDivElement>(null);
     const chartKitRef = React.useRef<ChartsChartKit>(null);
 
+    const [workbookInfo, setWorkbookInfo] = React.useState<{
+        isLoading: boolean;
+        workbookId?: WorkbookId;
+    }>({
+        isLoading: true,
+    });
+
     const onVisibilityChange = () => {
         setIsPageHidden(document.hidden);
     };
@@ -115,10 +123,16 @@ const Preview: React.FC<PreviewProps> = (props) => {
 
             dispatch(
                 fetchEntryById(possibleEntryId, concurrentId, (entryItem) => {
-                    const workbookId = entryItem.workbookId;
+                    const entryWorkbookId = entryItem.workbookId;
+
+                    setWorkbookInfo({
+                        isLoading: false,
+                        workbookId: entryWorkbookId,
+                    });
+
                     concurrentId = '';
-                    if (workbookId) {
-                        dispatch(addWorkbookInfo(workbookId));
+                    if (entryWorkbookId) {
+                        dispatch(addWorkbookInfo(entryWorkbookId));
                     }
                 }),
             );
@@ -233,20 +247,27 @@ const Preview: React.FC<PreviewProps> = (props) => {
                         title={name || ''}
                     />
                 )}
-                <ChartWrapper
-                    usageType="chart"
-                    {...chartKitProps}
-                    params={params}
-                    onChartLoad={onChartLoad}
-                    onChartRender={onChartRender}
-                    noControls={noControls}
-                    actionParamsEnabled={actionParamsEnabled}
-                    forwardedRef={chartKitRef as unknown as React.RefObject<ChartKitType>}
-                    splitTooltip={hasSplitTooltip}
-                    menuType="preview"
-                    isPageHidden={isPageHidden}
-                    autoupdateInterval={autoupdateInterval}
-                />
+                {workbookInfo.isLoading ? (
+                    <div className={b('loader')}>
+                        <SmartLoader size="l" />
+                    </div>
+                ) : (
+                    <ChartWrapper
+                        usageType="chart"
+                        {...chartKitProps}
+                        params={params}
+                        onChartLoad={onChartLoad}
+                        onChartRender={onChartRender}
+                        noControls={noControls}
+                        actionParamsEnabled={actionParamsEnabled}
+                        forwardedRef={chartKitRef as unknown as React.RefObject<ChartKitType>}
+                        splitTooltip={hasSplitTooltip}
+                        menuType="preview"
+                        isPageHidden={isPageHidden}
+                        autoupdateInterval={autoupdateInterval}
+                        workbookId={workbookInfo.workbookId}
+                    />
+                )}
                 <PreviewExtension />
             </div>
         </React.Fragment>

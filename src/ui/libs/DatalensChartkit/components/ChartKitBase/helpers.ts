@@ -35,7 +35,7 @@ export function getVisibleItems(
     );
 }
 
-export const getDataProviderData = ({id, params, config}: ChartsProps) => {
+export const getDataProviderData = ({id, params, config, workbookId}: ChartsProps) => {
     const data: DataProps = {
         params: {},
     };
@@ -48,6 +48,9 @@ export const getDataProviderData = ({id, params, config}: ChartsProps) => {
     }
     if (config) {
         data.config = config;
+    }
+    if (workbookId) {
+        data.workbookId = workbookId;
     }
     return data;
 };

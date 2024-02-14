@@ -32,6 +32,7 @@ import {
     VisualizationLayerType,
     VisualizationWithLayersShared,
     WizardVisualizationId,
+    WorkbookId,
     createMeasureNames,
     filterUpdatesByDatasetId,
     getResultSchemaFromDataset,
@@ -63,6 +64,7 @@ import {sdk as oldSdk} from '../../../libs/sdk';
 import {showToast} from '../../../store/actions/toaster';
 import {getFilteredObject} from '../../../utils';
 import {WizardDispatch} from '../reducers';
+import {selectWizardWorkbookId} from '../selectors/settings';
 import {selectVisualization} from '../selectors/visualization';
 import {filterVisualizationColors} from '../utils/colors';
 import {getChartFiltersWithDisabledProp} from '../utils/filters';
@@ -90,7 +92,7 @@ import {
     setOriginalDatasets,
 } from './dataset';
 import {actualizeAndSetUpdates, setUpdates, updatePreviewAndClientChartsConfig} from './preview';
-import {setDefaultsSet, toggleNavigation} from './settings';
+import {setDefaultsSet, setRouteWorkbookId, toggleNavigation} from './settings';
 import {getDatasetUpdates, mutateAndValidateItem} from './utils';
 import {
     _setSelectedLayerId,
@@ -156,12 +158,14 @@ export function prepareDataset({dataset, widgetDataset}: PrepareDatasetArgs) {
 
 type GetDatasetArgs = {
     id: string;
+    workbookId: WorkbookId;
 };
 
-function getDataset({id}: GetDatasetArgs) {
+function getDataset({id, workbookId}: GetDatasetArgs) {
     return getSdk()
         .bi.getDatasetByVersion({
             datasetId: id,
+            workbookId,
             version: 'draft',
         })
         .then((dataset) => {
@@ -180,15 +184,16 @@ function getDataset({id}: GetDatasetArgs) {
 
 type GetDatasetsArgs = {
     datasetsIds: string[];
+    workbookId: WorkbookId;
 };
 
-export async function getDatasets({datasetsIds}: GetDatasetsArgs) {
+export async function getDatasets({datasetsIds, workbookId}: GetDatasetsArgs) {
     const errors: DatasetApiError[] = [];
 
     const items = await Promise.all(
         datasetsIds.map(async (datasetId) => {
             try {
-                return await getDataset({id: datasetId});
+                return await getDataset({id: datasetId, workbookId});
             } catch (error) {
                 errors.push({datasetId, error});
                 return null;
@@ -208,7 +213,7 @@ type FetchDatasetArgs = {
 };
 
 export function fetchDataset({id, replacing}: FetchDatasetArgs) {
-    return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
+    return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const datasetState = getState().wizard.dataset;
         const originalDatasets = datasetState.originalDatasets;
         if (!getState().wizard.visualization.visualization) {
@@ -219,7 +224,9 @@ export function fetchDataset({id, replacing}: FetchDatasetArgs) {
 
         dispatch(setDatasetLoading({loading: true}));
 
-        return getDataset({id})
+        const workbookId = selectWizardWorkbookId(getState());
+
+        return getDataset({id, workbookId})
             .then(async (dataset: Dataset) => {
                 dispatch(setDataset({dataset}));
 
@@ -1192,7 +1199,7 @@ export function updateDatasetByValidation({
 }
 
 const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[]}) => {
-    return async (dispatch: WizardDispatch) => {
+    return async (dispatch: WizardDispatch, getState: () => DatalensGlobalState) => {
         const preparedUpdates = updates.map((update) => {
             const {field} = update;
             Object.keys(field).forEach((key: string) => {
@@ -1204,11 +1211,14 @@ const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[
             return update;
         });
 
+        const workbookId = selectWizardWorkbookId(getState());
+
         try {
             return await getSdk().bi.validateDataset(
                 {
                     version: 'draft',
                     datasetId: dataset.id,
+                    workbookId,
                     dataset: dataset.dataset,
                     updates: preparedUpdates,
                 },
@@ -1796,7 +1806,9 @@ function processWidget(args: ProcessWidgetArgs) {
         }),
     );
 
-    return getDatasets({datasetsIds})
+    const workbookId = selectWizardWorkbookId(getState());
+
+    return getDatasets({datasetsIds, workbookId})
         .then(async (all) => {
             const {datasets: loadedOriginalDatasets, errors: datasetApiErrors} = all;
             for (const loadedDataset of loadedOriginalDatasets) {
@@ -2107,10 +2119,15 @@ export function fetchWidget({entryId, revId, datasetsIds}: FetchWidgetArgs) {
 export type SetDefaultsArgs = {
     entryId: string | null;
     revId?: string;
+    routeWorkbookId?: WorkbookId;
 };
 
-export function setDefaults({entryId, revId}: SetDefaultsArgs) {
+export function setDefaults({entryId, revId, routeWorkbookId}: SetDefaultsArgs) {
     return function (dispatch: WizardDispatch) {
+        if (routeWorkbookId) {
+            dispatch(setRouteWorkbookId(routeWorkbookId));
+        }
+
         if (entryId) {
             dispatch(
                 fetchWidget({

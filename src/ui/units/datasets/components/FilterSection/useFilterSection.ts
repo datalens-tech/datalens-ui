@@ -7,7 +7,7 @@ import {ApplyData} from 'ui';
 
 import {openDialogFilter} from '../../../../store/actions/dialog';
 import {useDatasetPageContext} from '../../containers/DatasetPage/DatasetPage';
-import {filteredDatasetParametersSelector} from '../../store/selectors';
+import {filteredDatasetParametersSelector, workbookIdSelector} from '../../store/selectors';
 import {ObligatoryFilter} from '../../typings/dataset';
 import {FieldColumn, FieldListColumn, FieldRowControlSettings} from '../DatasetTabFieldList/types';
 
@@ -42,6 +42,7 @@ export const useFilterSection = (args: UseFilterSectionArgs): UseFilterSection =
     const dispatch = useDispatch();
     const {datasetId} = useDatasetPageContext();
     const parameters = useSelector(filteredDatasetParametersSelector);
+    const workbookId = useSelector(workbookIdSelector);
 
     const {filters, options, fields, updateFilter, addFilter, deleteFilter} = args;
 
@@ -59,13 +60,14 @@ export const useFilterSection = (args: UseFilterSectionArgs): UseFilterSection =
                     filter: preparedFilter,
                     options,
                     datasetId,
+                    workbookId,
                     fields: dialogFilterFields,
                     parameters,
                     onApply: updateFilter,
                 }),
             );
         },
-        [updateFilter, datasetId, fields, filters, options, parameters],
+        [updateFilter, datasetId, workbookId, fields, filters, options, parameters],
     );
 
     const onOpenDialogFilterClick = React.useCallback(() => {
@@ -73,12 +75,13 @@ export const useFilterSection = (args: UseFilterSectionArgs): UseFilterSection =
             openDialogFilter({
                 fields: dialogFilterFields,
                 datasetId,
+                workbookId,
                 options,
                 parameters,
                 onApply: addFilter,
             }),
         );
-    }, [addFilter, datasetId, fields, options, parameters]);
+    }, [addFilter, datasetId, workbookId, fields, options, parameters]);
 
     const columns = React.useMemo(() => {
         return headerColumns

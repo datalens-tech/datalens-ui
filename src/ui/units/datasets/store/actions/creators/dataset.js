@@ -11,6 +11,7 @@ import {ComponentErrorType, SUBSELECT_SOURCE_TYPES} from '../../../constants';
 import {getToastTitle} from '../../../helpers/dataset-error-helpers';
 import {getComponentErrorsByType} from '../../../helpers/datasets';
 import DatasetUtils from '../../../helpers/utils';
+import {workbookIdSelector} from '../../selectors';
 import * as DATASET_ACTION_TYPES from '../types/dataset';
 
 import {
@@ -84,9 +85,12 @@ export function updateDatasetByValidation({
             if (fieldErrors.length) {
                 dispatch(clearDatasetPreview());
             } else {
+                const workbookId = workbookIdSelector(getState());
+
                 dispatch(
                     fetchPreviewDataset({
                         datasetId,
+                        workbookId,
                         resultSchema,
                         limit: amountPreviewRows,
                     }),
@@ -119,9 +123,12 @@ export function refetchPreviewDataset() {
             } = {},
         } = getState();
 
+        const workbookId = workbookIdSelector(getState());
+
         dispatch(
             fetchPreviewDataset({
                 datasetId,
+                workbookId,
                 resultSchema,
                 limit: amountPreviewRows,
             }),
@@ -137,7 +144,10 @@ function setInitialSources(ids) {
             if (ids.length) {
                 const result = await Promise.allSettled(
                     ids.map((id) =>
-                        getSdk().us.getEntry({entryId: id, includePermissionsInfo: true}),
+                        getSdk().us.getEntry({
+                            entryId: id,
+                            includePermissionsInfo: true,
+                        }),
                     ),
                 );
                 const entries = result
@@ -199,8 +209,12 @@ export function initialFetchDataset({datasetId}) {
                 payload: {},
             });
 
+            const meta = await getSdk().us.getEntryMeta({entryId: datasetId});
+            const workbookId = meta.workbookId ?? null;
+
             const dataset = await getSdk().bi.getDatasetByVersion({
                 datasetId,
+                workbookId,
                 version: 'draft',
             });
             const {
@@ -241,6 +255,7 @@ export function initialFetchDataset({datasetId}) {
                 dispatch(
                     fetchPreviewDataset({
                         datasetId,
+                        workbookId,
                         resultSchema,
                         limit: amountPreviewRows,
                     }),
@@ -259,15 +274,18 @@ export function initialFetchDataset({datasetId}) {
 }
 
 export function fetchDataset({datasetId}) {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
         try {
             dispatch({
                 type: DATASET_ACTION_TYPES.DATASET_FETCH_REQUEST,
                 payload: {},
             });
 
+            const workbookId = workbookIdSelector(getState());
+
             const dataset = await getSdk().bi.getDatasetByVersion({
                 datasetId,
+                workbookId,
                 version: 'draft',
             });
 
@@ -299,7 +317,7 @@ function clearDatasetPreview() {
 }
 
 const dispatchFetchPreviewDataset = async (
-    {datasetId, resultSchema, limit},
+    {datasetId, workbookId, resultSchema, limit},
     dispatch,
     getState,
 ) => {
@@ -319,6 +337,7 @@ const dispatchFetchPreviewDataset = async (
         if (resultSchema.length && !isLoading) {
             previewDataset = await getSdk().bi.getPreview({
                 datasetId,
+                workbookId,
                 limit,
                 dataset: content,
                 version: 'draft',
@@ -352,6 +371,7 @@ const debouncedFetchPreviewDataset = _debounce(dispatchFetchPreviewDataset, 3000
 
 export function fetchPreviewDataset({
     datasetId,
+    workbookId,
     resultSchema,
     limit = 100,
     debounceEnabled = false,
@@ -359,11 +379,13 @@ export function fetchPreviewDataset({
     return debounceEnabled
         ? debouncedFetchPreviewDataset.bind(this, {
               datasetId,
+              workbookId,
               resultSchema,
               limit,
           })
         : dispatchFetchPreviewDataset.bind(this, {
               datasetId,
+              workbookId,
               resultSchema,
               limit,
           });
@@ -504,18 +526,20 @@ function _getSources() {
             },
         } = getState();
 
+        const workbookId = workbookIdSelector(getState());
+
         const selectedConnection = selectedConnections.find(
             ({entryId}) => entryId === selectedConnectionId,
         );
 
         if (selectedConnection && !selectedConnection.deleted) {
             const {entryId} = selectedConnection;
-            dispatch(getSources(entryId));
+            dispatch(getSources(entryId, workbookId));
         }
     };
 }
 
-export function getSources(connectionId) {
+export function getSources(connectionId, workbookId) {
     return async (dispatch) => {
         dispatch(toggleSourcesLoader(true));
 
@@ -523,7 +547,7 @@ export function getSources(connectionId) {
 
         try {
             const result = await getSdk().bi.getSources(
-                {connectionId, limit: 10000},
+                {connectionId, workbookId, limit: 10000},
                 {concurrentId: 'getSources', timeout: TIMEOUT_65_SEC},
             );
             const freeformSources = result.freeform_sources;

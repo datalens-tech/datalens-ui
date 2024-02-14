@@ -2,7 +2,7 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
-import {EntryScope} from 'shared';
+import {EntryScope, WorkbookId} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import {DataLensApiError} from 'typings';
 import {DialogCreateWorkbookEntry} from 'ui';
@@ -25,7 +25,7 @@ export interface DialogCopyEntryProps extends EntryDialogProps {
     initDestination: string;
     initName?: string;
     scope: string;
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
 }
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;

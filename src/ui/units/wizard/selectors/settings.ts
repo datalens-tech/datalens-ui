@@ -1,3 +1,4 @@
+import {createSelector} from 'reselect';
 import {DL, DatalensGlobalState, URL_QUERY} from 'ui';
 
 import {selectDataset} from './dataset';
@@ -38,3 +39,12 @@ export const selectDefaultPath = (state: DatalensGlobalState) => {
 
 export const selectIsDefaultsSet = (state: DatalensGlobalState) =>
     state.wizard.settings.defaultsSet;
+
+export const selectRouteWorkbookId = (state: DatalensGlobalState) =>
+    state.wizard.settings.routeWorkbookId;
+
+export const selectWizardWorkbookId = createSelector(
+    selectRouteWorkbookId,
+    selectWidget,
+    (routeWorkbookId, widget) => routeWorkbookId || (widget.workbookId as string | null) || null,
+);
