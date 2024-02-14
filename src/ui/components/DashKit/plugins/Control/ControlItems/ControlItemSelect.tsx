@@ -4,7 +4,7 @@ import {ConfigItem} from '@gravity-ui/dashkit';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
     ApiV2Filter,
     ApiV2Parameter,
@@ -28,6 +28,7 @@ import {ControlSelect} from 'ui/libs/DatalensChartkit/components/Control/Items/I
 import {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
+import {selectDashWorkbookId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
 
@@ -90,6 +91,8 @@ export const ControlItemSelect = ({
 }: ControlItemSelectProps) => {
     const dispatch = useDispatch();
     let _loadingItemsTimer: NodeJS.Timeout | undefined;
+
+    const workbookId = useSelector(selectDashWorkbookId);
 
     // TODO: seems like this function should be in shared/ui
     const getSelectDistincts = React.useCallback(
@@ -187,6 +190,7 @@ export const ControlItemSelect = ({
 
                 const {result} = await getDistincts!({
                     datasetId,
+                    workbookId,
                     fields: [
                         {
                             ref: {type: 'id', id: datasetFieldId},
@@ -209,7 +213,7 @@ export const ControlItemSelect = ({
                 throw error;
             }
         },
-        [actualParams, data, getDistincts, loadedData],
+        [actualParams, data, getDistincts, loadedData, workbookId],
     );
 
     const getItems = async ({

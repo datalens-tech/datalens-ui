@@ -160,3 +160,7 @@ export const editorItemsToDisplaySelector = (state: DatalensGlobalState) => {
 };
 
 export const datasetPermissionsSelector = (state: DatalensGlobalState) => state.dataset.permissions;
+
+export const workbookIdSelector = (state: DatalensGlobalState) => {
+    return selectedConnectionSelector(state)?.workbookId || datasetWorkbookId(state) || null;
+};

@@ -49,12 +49,13 @@ const fetchEntry = async (
 
 const fetchConnectionData = async (
     connectionId: string,
+    workbookId: string | null,
 ): Promise<{
     connectionData: ConnectionData;
     error?: DataLensApiError;
 }> => {
     try {
-        const connectionData = await getSdk().bi.getConnection({connectionId});
+        const connectionData = await getSdk().bi.getConnection({connectionId, workbookId});
         return {connectionData};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchConnectionData failed', error);
@@ -140,9 +141,13 @@ const checkConnectionParams = async (params: FormDict): Promise<CheckData> => {
     }
 };
 
-const checkConnection = async (params: FormDict, connectionId: string): Promise<CheckData> => {
+const checkConnection = async (
+    params: FormDict,
+    connectionId: string,
+    workbookId: string | null,
+): Promise<CheckData> => {
     try {
-        await getSdk().bi.verifyConnection({...params, connectionId});
+        await getSdk().bi.verifyConnection({...params, connectionId, workbookId});
         return {status: 'success', error: undefined};
     } catch (error) {
         logger.logError('Redux actions (conn): checkConnection failed', error);

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import type {WorkbookId} from 'shared';
 
 import {CreateDatasetButton, CreateQlChartButton, S3BasedConnButton} from './components';
 
@@ -10,7 +11,7 @@ type ConnPanelActionsProps = {
     entryId: string | null;
     entryKey: string;
     s3BasedFormOpened: boolean;
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
 };
 
 const b = block('conn-panel-actions');

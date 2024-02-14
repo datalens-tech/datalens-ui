@@ -72,6 +72,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         actionParamsEnabled,
         isPageHidden,
         autoupdateInterval,
+        workbookId,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -88,8 +89,9 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 id: chartId,
                 config,
                 params: chartkitParams,
+                workbookId,
             }),
-        [config, chartId, chartkitParams],
+        [config, chartId, chartkitParams, workbookId],
     );
 
     const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);

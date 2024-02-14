@@ -61,7 +61,6 @@ import {
     datasetPreviewSelector,
     datasetSavingErrorSelector,
     datasetValidationErrorSelector,
-    datasetWorkbookId,
     isDatasetChangedDatasetSelector,
     isDatasetRevisionMismatchSelector,
     isFavoriteDatasetSelector,
@@ -69,9 +68,9 @@ import {
     isSavingDatasetDisabledSelector,
     isSavingDatasetSelector,
     previewEnabledSelector,
-    selectedConnectionSelector,
     sourcePrototypesSelector,
     sourceTemplateSelector,
+    workbookIdSelector,
 } from '../../store/selectors';
 import DatasetPreview from '../DatasetPreview/DatasetPreview';
 
@@ -381,11 +380,7 @@ class Dataset extends React.Component {
     };
 
     getWorkbookId() {
-        return (
-            this.props.match.params.workbookId ||
-            this.props.selectedConnection?.workbookId ||
-            this.props.datasetWorkbookId
-        );
+        return this.props.match.params.workbookId || this.props.workbookId;
     }
 
     refreshSources = () => {
@@ -664,7 +659,6 @@ Dataset.defaultProps = {
 
 const mapStateToProps = createStructuredSelector({
     datasetKey: datasetKeySelector,
-    datasetWorkbookId: datasetWorkbookId,
     datasetPermissions: datasetPermissionsSelector,
     datasetError: datasetErrorSelector,
     previewError: datasetPreviewErrorSelector,
@@ -678,10 +672,10 @@ const mapStateToProps = createStructuredSelector({
     isDatasetRevisionMismatch: isDatasetRevisionMismatchSelector,
     isProcessingSavingDataset: isSavingDatasetSelector,
     previewEnabled: previewEnabledSelector,
-    selectedConnection: selectedConnectionSelector,
     sourcePrototypes: sourcePrototypesSelector,
     sourceTemplate: sourceTemplateSelector,
     ui: UISelector,
+    workbookId: workbookIdSelector,
 });
 const mapDispatchToProps = {
     fetchFieldTypes,

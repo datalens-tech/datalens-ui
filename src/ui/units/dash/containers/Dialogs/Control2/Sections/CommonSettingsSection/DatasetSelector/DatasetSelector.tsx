@@ -16,7 +16,10 @@ import {
     setLastUsedDatasetId,
     setSelectorDialogItem,
 } from 'units/dash/store/actions/dashTyped';
-import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
+import {
+    selectDashWorkbookId,
+    selectSelectorDialog,
+} from 'units/dash/store/selectors/dashTypedSelectors';
 
 import DropdownNavigation from '../../../../../DropdownNavigation/DropdownNavigation';
 import {DatasetField} from '../../../../Control/Switchers/DatasetField/DatasetField';
@@ -33,12 +36,14 @@ function DatasetSelector() {
     const dispatch = useDispatch();
     const {datasetId, datasetFieldId, isManualTitle, title, fieldType, validation} =
         useSelector(selectSelectorDialog);
+    const workbookId = useSelector(selectDashWorkbookId);
     const [isValidDataset, setIsValidDataset] = React.useState(false);
 
     const fetchDataset = React.useCallback((entryId: string) => {
         getSdk()
             .bi.getDatasetByVersion({
                 datasetId: entryId,
+                workbookId,
                 version: 'draft',
             })
             .then((dataset: Dataset) => {
@@ -164,6 +169,7 @@ function DatasetSelector() {
                         ignoredFieldTypes={[]}
                         ignoredDataTypes={DATASET_IGNORED_DATA_TYPES}
                         datasetId={datasetId}
+                        workbookId={workbookId}
                         fieldId={datasetFieldId}
                         onChange={handleDatasetFieldChange}
                         hasValidationError={Boolean(validation.datasetFieldId)}

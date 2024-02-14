@@ -67,7 +67,10 @@ export function setPageData({entryId, workbookId}: {entryId?: string | null; wor
 
         if (entryId) {
             ({entry, error: entryError} = await api.fetchEntry(entryId));
-            ({connectionData, error: connectionError} = await api.fetchConnectionData(entryId));
+            ({connectionData, error: connectionError} = await api.fetchConnectionData(
+                entryId,
+                entry?.workbookId ?? null,
+            ));
         }
 
         if (!entry) {
@@ -364,7 +367,7 @@ export function checkConnection() {
 
         flow([setCheckLoading, dispatch])({loading: true});
         const checkData = await (connectionId
-            ? api.checkConnection(params, connectionId)
+            ? api.checkConnection(params, connectionId, entry?.workbookId ?? null)
             : api.checkConnectionParams(params));
 
         batch(() => {

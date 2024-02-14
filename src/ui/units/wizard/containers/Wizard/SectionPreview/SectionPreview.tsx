@@ -34,6 +34,7 @@ import {openDialogSaveChartConfirm} from '../../../../../store/actions/dialog';
 import {reloadRevisionsOnSave} from '../../../../../store/actions/entryContent';
 import {HighchartsWidget, setHighchartsWidget} from '../../../actions/preview';
 import {updateWizardWidgetAndDoAction} from '../../../actions/widget';
+import {selectWizardWorkbookId} from '../../../selectors/settings';
 import {selectWidget} from '../../../selectors/widget';
 import {shouldComponentUpdateWithDeepComparison} from '../../../utils/helpers';
 
@@ -138,7 +139,8 @@ class SectionPreview extends Component<Props> {
     };
 
     renderChartkit() {
-        const {configType, config, widget, previewEntryId, datasetError, chartKitRef} = this.props;
+        const {configType, config, widget, previewEntryId, datasetError, chartKitRef, workbookId} =
+            this.props;
 
         if (datasetError) {
             return (
@@ -175,6 +177,7 @@ class SectionPreview extends Component<Props> {
                     customMenuOptions={this.getCustomMenuOptions()}
                     forwardedRef={chartKitRef}
                     onInnerParamsChanged={this.handleInnerParamsChanged}
+                    workbookId={workbookId}
                 />
             );
         }
@@ -209,6 +212,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         widget: selectWidget(state),
         previewEntryId: selectPreviewEntryId(state),
         isChartSaved: selectIsChartSaved(state),
+        workbookId: selectWizardWorkbookId(state),
     };
 };
 

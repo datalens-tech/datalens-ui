@@ -233,7 +233,7 @@ class DatasetSources extends React.Component {
 
         this.props.clickConnection({connectionId});
 
-        return this.props.getSources(connectionId);
+        return this.props.getSources(connectionId, this.props.workbookId);
     };
 
     deleteConnection = ({connectionId}) => {
@@ -255,7 +255,7 @@ class DatasetSources extends React.Component {
             return;
         }
 
-        this.props.getSources(entryId);
+        this.props.getSources(entryId, this.props.workbookId);
     };
 
     updateDatasetByValidation = (data) => {

@@ -2,7 +2,7 @@ import React from 'react';
 
 import type {DashKit} from '@gravity-ui/dashkit';
 import isEmpty from 'lodash/isEmpty';
-import {DashTabItem} from 'shared';
+import {DashTabItem, WorkbookId} from 'shared';
 
 import {GetEntriesDatasetsFieldsResponse} from '../../../../../../../shared/schema';
 import {getSdk} from '../../../../../../libs/schematic-sdk';
@@ -29,10 +29,12 @@ export const useRelations = ({
     dashKitRef,
     widget,
     dialogAliases,
+    workbookId,
 }: {
     dashKitRef: React.RefObject<DashKit>;
     widget: DashTabItem;
     dialogAliases: Record<string, string[][]>;
+    workbookId: WorkbookId;
 }) => {
     const [isInited, setIsInited] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -67,6 +69,7 @@ export const useRelations = ({
                 entriesDatasetsFields = await getSdk().mix.getEntriesDatasetsFields({
                     entriesIds: entriesList,
                     datasetsIds: Object.keys(datasetsList),
+                    workbookId,
                 });
             }
             const dashWidgetsMetaData = entriesDatasetsFields.length
@@ -145,7 +148,7 @@ export const useRelations = ({
             }
             getMetaData();
         }
-    }, [dashKitRef, isInited, widget, dialogAliases]);
+    }, [dashKitRef, isInited, widget, dialogAliases, workbookId]);
 
     return {isLoading, relations, currentWidgetMeta, datasets, dashWidgetsMeta, invalidAliases};
 };
