@@ -37,7 +37,8 @@ export default {
             [1563753600000, 186931298]
         ]
     }
-];`,
+];
+`,
         ui: '',
         url: '',
         graph: `module.exports = {
@@ -81,7 +82,8 @@ export default {
             }
         }
     }
-};`,
+};
+`,
         params: '',
         shared: '',
         statface_graph: '',

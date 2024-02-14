@@ -62,7 +62,8 @@ const b = 10;
 
 module.exports = { 
     markdown
-};`,
+};
+`,
         url: '',
         params: '',
         shared: '',

@@ -110,7 +110,8 @@ module.exports = [
         // тема кнопки
         theme: 'action'
     }
-];`,
+];
+`,
         url: `const Stat = require('libs/stat/v1');
         
 module.exports = {
@@ -122,7 +123,7 @@ module.exports = {
         ui: true
     }
 };
-        `,
+`,
         params: `const moment = require('vendor/moment/v2.19');
         
 module.exports = {
@@ -134,7 +135,7 @@ module.exports = {
     checkbox: ['true'],
     scale: ['d']
 };
-        `,
+`,
         shared: '',
     },
 };
