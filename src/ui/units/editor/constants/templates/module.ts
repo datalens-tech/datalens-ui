@@ -5,36 +5,32 @@ export default {
     name: 'module',
     type: EDITOR_TYPE.MODULE,
     data: {
-        js: `// Перечисляем нужные и вспомогательные функции и переменные:
+        js: `// Functions and constants:
 
-// Константа 3.14
+// Constant PI
 const PI = Math.PI.toFixed(2);
 
-// Случайное число между 0 и 1
-// Вспомогательная функция
+// Random number between 0 and 1
 function getRandom() {
     return Math.random();
 }
 
-// Случайный HEX
+// Random HEX
 function getRandomHex() {
     return getRandom().toString(16).substring(2);
 }
 
-// Случайное число с {digits} разрядами и {decimalDigits} символами после точки
+// Random number with {digits} digits and {decimalDigits} digits points
 function getRandomNumber(digits, decimalDigits) {
     return (getRandom() * Math.pow(10, digits)).toFixed(decimalDigits);
 }
 
-// Описываем модуль с нужными функциями и переменными
+// Exports
 module.exports = {
     PI, 
     getRandomHex, 
     getRandomNumber
 };
-
-// вызываем на любой вкладке:
-// const randomModule = require('<путь до модуля>');
 `,
         documentation_en: '',
         documentation_ru: '',

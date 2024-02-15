@@ -14,9 +14,9 @@ export default {
                 radius: 20000
             },
             properties: {
-                name: 'Москва',
+                name: 'Moscow',
                 value: 12381,
-                text: 'население (тыс. на 1 января 2017)'
+                text: 'Population (thousands by JAN 2017)'
             }
         },
         options: {
@@ -33,7 +33,7 @@ export default {
             properties: {
                 name: 'Point',
                 value: Math.random(),
-                text: 'случайное число'
+                text: 'Random number'
             }
         },
         options: {}
@@ -68,7 +68,7 @@ export default {
             },
             properties: {
                 name: 'Rectangle',
-                text: 'прямоугольник'
+                text: 'Rect'
             }
         },
         options: {}
@@ -95,10 +95,10 @@ export default {
             properties: {
                 name: 'Point',
                 data: [
-                    {weight: 52, color: '#FFA002', text: 'оранжевый'},
-                    {weight: 42, color: '#880011', text: 'красный'},
-                    {weight: 23, color: '#035201', text: 'зеленый'},
-                    {weight: 12, color: '#002f55', text: 'синий'}
+                    {weight: 52, color: '#FFA002', text: 'Orange'},
+                    {weight: 42, color: '#880011', text: 'Red'},
+                    {weight: 23, color: '#035201', text: 'Green'},
+                    {weight: 12, color: '#002f55', text: 'Blue'}
                 ]
             }
         },
@@ -116,7 +116,7 @@ export default {
                             coordinates: [55.45, 38.20]
                         },
                         properties: {
-                            name: 'первый'
+                            name: 'First'
                         }
                     },
                     options: {}
@@ -128,7 +128,7 @@ export default {
                             coordinates: [55.45, 38.51]
                         },
                         properties: {
-                            name: 'второй'
+                            name: 'Second'
                         }
                     },
                     options: {}
@@ -140,7 +140,7 @@ export default {
                             coordinates: [55.40, 38.40]
                         },
                         properties: {
-                            name: 'третий'
+                            name: 'Third'
                         }
                     },
                     options: {}

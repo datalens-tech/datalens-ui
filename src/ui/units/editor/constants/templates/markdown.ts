@@ -5,59 +5,54 @@ export default {
     name: 'markdown',
     type: EDITOR_TYPE.MARKDOWN_NODE,
     data: {
-        js: `const inline = 'Для вставки кода внутри предложений нужно заключать этот код в апострофы \`<html class="ie no-js">\`.';
+        js: `const markdown = \`
+# Header h1
+## Header h2
+### Header h3
+#### Header h4
 
-const markdown = \`
-# Заголовок h1
-## Заголовок h2
-### Заголовок h3
-#### Заголовок h4
+~~Strikethrough~~
 
-~~Зачеркнуто~~
+This text is _**bold and italic**_.
 
-Этот текст _**жирный и наклонный**_.
-
-[Ссылка](https://docs.charts.yandex-team.ru)
+[Link](https://docs.charts.yandex-team.ru)
 
 ***
 
-> ## Цитата.
+> ## Quotation.
 >
-> 1.   Строчка 1.
-> 2.   Строчка 2.
+> 1.   String 1.
+> 2.   String 2.
 >
-> Конец.
+> End.
 
 ---
 
-- Элемент 1
-    - Элемент A
-    - Элемент B
-- Элемент 2
+- Element 1
+    - Element A
+    - Element B
+- Element 2
 
-1. Первый пункт
-    1. Вложенный пункт
-    1. Вложенный пункт
-1. Второй пункт
+1. First
+    1. A
+    1. B
+1. Second
 
 ---
 
-Колонка по левому краю | Колонка по правому краю | Колонка по центру
+Left side column | Right side column | Center column
 :--- | ---: | :---:
-Текст | Текст | Текст
+Text | Text | Text
 
 ---
 
 \\\`\\\`\\\`js
-// код
+// Code
 const b = 10;
 \\\`\\\`\\\`
 
-\${inline}
-
 ---
-
-![alt text](https://jing.yandex-team.ru/files/resure/1510243726_giphy%20%281%29.gif "Logo Title Text 1")\`;
+\`;
 
 module.exports = { 
     markdown

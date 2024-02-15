@@ -7,7 +7,7 @@ export default {
     data: {
         js: `module.exports = [
     {
-        name: 'Хиты',
+        name: 'Hits',
         color: 'blue',
         data: [
             {x: 1558915200000, y: 1165523823},
@@ -22,7 +22,7 @@ export default {
         ]
     },
     {
-        name: 'Посетители',
+        name: 'Visitors',
         color: 'red',
         data: [
             [1558915200000, 188814404],
@@ -42,7 +42,7 @@ export default {
         url: '',
         graph: `module.exports = {
     title: {
-        text: 'Morda/Totals/Totals'
+        text: 'Totals'
     },
     xAxis: {
         type: 'datetime',

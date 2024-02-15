@@ -5,11 +5,26 @@ export default {
     name: 'metric',
     type: EDITOR_TYPE.METRIC_NODE,
     data: {
-        js: `const moment = require('vendor/moment/v2.19');
-        
-const {fields, region, scale, date_min, date_max} = ChartEditor.getParams();
+        js: `const {fields, region, scale, date_min, date_max} = ChartEditor.getParams();
 
-const {report: {values}} = ChartEditor.getLoadedData();
+const values = [
+    {
+      "hits": 228343352,
+      "fielddate__ms": 1586908800000,
+      "visitors": 62091842
+    },
+    {
+      "hits": 251689342,
+      "fielddate__ms": 1586822400000,
+      "visitors": 61782759
+    },
+    {
+      "hits": 237761868,
+      "fielddate__ms": 1586736000000,
+      "visitors": 62212157
+    }
+];
+
 
 const datas = values.reverse().reduce((datas, value) => {
     fields.forEach((field) => {
@@ -21,18 +36,15 @@ const datas = values.reverse().reduce((datas, value) => {
 }, {});
         
 const TITLE_BY_FIELD = {
-    visitors: 'Посетители', 
-    hits: 'Хиты'
+    visitors: 'Visitors', 
+    hits: 'Hits'
 };
         
 const metrics = Object.keys(datas).reduce((metrics, key) => {
     const data = datas[key];
 
     metrics.push({
-        title: \`поле: \${key}, регион: \${region}, скейл: \${scale}, период: \${moment(
-            date_min,
-            'YYYY-MM-DD',
-        ).format('DD MMMM YYYY')} - \${moment(date_max, 'YYYY-MM-DD').format('DD MMMM YYYY')}\`,
+        title: "Hits and visitors",
         content: {
             current: { 
                 value: data[data.length - 1],
@@ -61,29 +73,11 @@ const metrics = Object.keys(datas).reduce((metrics, key) => {
         
 module.exports = metrics;
 `,
-        url: `const moment = require('vendor/moment/v2.19');
-        
-const Stat = require('libs/stat/v1');
-
-const {fields, region, scale, date_min, date_max} = ChartEditor.getParams();
-
-module.exports = {
-    report: Stat.buildReportSource({
-        report: '/Morda/Totals/Totals',
-        fields,
-        region: region[0],
-        scale: scale[0],
-    })
-};
-`,
-        params: `const moment = require('vendor/moment/v2.19');
-        
-module.exports = {
+        url: '',
+        params: `module.exports = {
     fields: ['hits', 'visitors'],
     region: 'TOT',
-    scale: 'd',
-    date_min: moment().subtract(2, 'months').format('YYYY-MM-DD'),
-    date_max: moment().format('YYYY-MM-DD') 
+    scale: 'd'
 };
 `,
         shared: '',
