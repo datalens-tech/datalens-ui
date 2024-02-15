@@ -6,7 +6,7 @@ import {ChartKitQa, WizardPageQa, WizardVisualizationId} from '../../../../../sr
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 
-datalensTest.describe.only('Wizard', () => {
+datalensTest.describe('Wizard', () => {
     datalensTest.describe('Pie chart', () => {
         datalensTest.beforeEach(async ({page, config}) => {
             const wizardPage = new WizardPage({page});

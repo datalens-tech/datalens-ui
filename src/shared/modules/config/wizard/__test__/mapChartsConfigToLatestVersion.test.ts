@@ -10,6 +10,6 @@ describe('mapChartsConfigToLatestVersion', () => {
             shouldMigrateDatetime: false,
         });
 
-        expect(result).toEqual({version: '9'});
+        expect(result).toEqual({version: '10'});
     });
 });

@@ -176,82 +176,84 @@ export function preparePieData(args: PrepareFunctionArgs) {
     };
 
     const usedColors: string[] = [];
-    pie.data = data
-        .map((values) => {
-            const dimensionValue = values[dimensionIndex];
-            const measureValue = values[measureIndex];
-            const colorFieldValue = values[colorIndex];
-            const labelValue = values[labelIndex];
+    const pieData = data.reduce((acc, values) => {
+        const dimensionValue = values[dimensionIndex];
+        const measureValue = values[measureIndex];
+        const colorFieldValue = values[colorIndex];
+        const labelValue = values[labelIndex];
 
-            let colorValue: string | number = name;
-            const legendParts: string[] = [];
-            const formattedNameParts: string[] = [];
+        let colorValue: string | number = name;
+        const legendParts: string[] = [];
+        const formattedNameParts: string[] = [];
 
-            if (dimensionField) {
-                legendParts.push(String(dimensionValue));
+        if (dimensionField) {
+            legendParts.push(String(dimensionValue));
+            formattedNameParts.push(
+                getFormattedValue(dimensionValue, {
+                    ...dimensionField,
+                    data_type: idToDataType[dimensionField.guid],
+                }),
+            );
+        }
+
+        if (colorField && typeof colorFieldValue !== 'undefined') {
+            if (shouldUseGradient) {
+                colorValue = Number(colorFieldValue);
+            } else {
+                colorValue = getDistinctValue(colorFieldValue);
+                legendParts.push(String(colorFieldValue));
                 formattedNameParts.push(
-                    getFormattedValue(dimensionValue, {
-                        ...dimensionField,
-                        data_type: idToDataType[dimensionField.guid],
+                    getFormattedValue(colorFieldValue, {
+                        ...colorField,
+                        data_type: idToDataType[colorField.guid],
                     }),
                 );
             }
+        }
 
-            if (colorField && typeof colorFieldValue !== 'undefined') {
-                if (shouldUseGradient) {
-                    colorValue = Number(colorFieldValue);
-                } else {
-                    colorValue = getDistinctValue(colorFieldValue);
-                    legendParts.push(String(colorFieldValue));
-                    formattedNameParts.push(
-                        getFormattedValue(colorFieldValue, {
-                            ...colorField,
-                            data_type: idToDataType[colorField.guid],
-                        }),
-                    );
-                }
+        const pointName = legendParts.join(': ') || getFakeTitleOrTitle(measure);
+        const formattedName = formattedNameParts.join(': ');
+
+        const point: PiePoint = {
+            name: pointName,
+            formattedName,
+            drillDownFilterValue: pointName,
+            y: Number(measureValue),
+            colorGuid: colorField?.guid,
+            colorValue,
+        };
+
+        if (labelField) {
+            if (isMeasureName(labelField)) {
+                point.label = formattedName;
+            } else if (isMeasureValue(labelField)) {
+                point.label = Number(measureValue);
+            } else if (isNumberField(labelField)) {
+                // The value will be formatted using dataLabels.chartKitFormatting
+                point.label = Number(labelValue);
+            } else {
+                point.label = getFormattedValue(labelValue, {
+                    ...labelField,
+                    data_type: idToDataType[labelField.guid],
+                });
             }
+        }
 
-            const pointName = legendParts.join(': ') || getFakeTitleOrTitle(measure);
-            const formattedName = formattedNameParts.join(': ');
+        if (widgetConfig?.actionParams?.enable) {
+            const actionParams: Record<string, any> = {};
+            addActionParamValue(actionParams, dimensionField, dimensionValue);
+            addActionParamValue(actionParams, colorField, colorValue);
 
-            const point: PiePoint = {
-                name: pointName,
-                formattedName,
-                drillDownFilterValue: pointName,
-                y: Number(measureValue),
-                colorGuid: colorField?.guid,
-                colorValue,
+            point.custom = {
+                actionParams,
             };
+        }
 
-            if (labelField) {
-                if (isMeasureName(labelField)) {
-                    point.label = formattedName;
-                } else if (isMeasureValue(labelField)) {
-                    point.label = Number(measureValue);
-                } else if (isNumberField(labelField)) {
-                    // The value will be formatted using dataLabels.chartKitFormatting
-                    point.label = Number(labelValue);
-                } else {
-                    point.label = getFormattedValue(labelValue, {
-                        ...labelField,
-                        data_type: idToDataType[labelField.guid],
-                    });
-                }
-            }
+        acc.set(point.name, point);
 
-            if (widgetConfig?.actionParams?.enable) {
-                const actionParams: Record<string, any> = {};
-                addActionParamValue(actionParams, dimensionField, dimensionValue);
-                addActionParamValue(actionParams, colorField, colorValue);
-
-                point.custom = {
-                    actionParams,
-                };
-            }
-
-            return point;
-        })
+        return acc;
+    }, new Map<string, PiePoint>());
+    pie.data = Array.from(pieData.values())
         // We remove negative values, since pie does not know how to display them
         .filter((point) => point.y > 0) as (PiePoint & ExtendedSeriesLineOptions)[];
 
