@@ -100,7 +100,6 @@ export const ViewError = ({
                     className={b('btn-retry')}
                     size={buttonSize}
                     width={buttonWidth}
-                    view="action"
                     onClick={() => retry()}
                 >
                     {i18n('button_retry')}
