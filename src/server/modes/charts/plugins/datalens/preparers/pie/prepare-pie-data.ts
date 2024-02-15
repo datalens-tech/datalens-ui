@@ -223,7 +223,6 @@ export function preparePieData(args: PrepareFunctionArgs) {
                 colorGuid: colorField?.guid,
                 colorValue,
             };
-            point.color = getPieSegmentColor({item: point, colorsConfig, usedColors});
 
             if (labelField) {
                 if (isMeasureName(labelField)) {
@@ -264,6 +263,10 @@ export function preparePieData(args: PrepareFunctionArgs) {
 
     if (shouldUseGradient) {
         pie.data = mapAndColorizePieByGradient(pie.data, colorsConfig);
+    } else {
+        pie.data.forEach((d) => {
+            d.color = getPieSegmentColor({item: d, colorsConfig, usedColors});
+        });
     }
 
     return {graphs: [pie], totals: totals.find((value) => value), label: labelField, measure};
