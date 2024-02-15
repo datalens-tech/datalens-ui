@@ -1,7 +1,5 @@
-@import '~@gravity-ui/uikit/styles/mixins';
-
 .dashkit-plugin-control {
-    $controlClass: &;
+    $class: &;
     display: flex;
     align-items: center;
     justify-content: center; // in particular for the loader
@@ -11,62 +9,6 @@
 
     background-color: var(--g-color-base-float);
     border-radius: 3px;
-
-    &__error {
-        $errorClass: &;
-        border-radius: 3px;
-        padding: 0 6px;
-
-        &_inside {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: space-around;
-            height: 70px;
-            width: 180px;
-        }
-
-        &_mobile {
-            #{$controlClass}__error-text {
-                @include text-body-2;
-            }
-
-            #{$controlClass}__buttons {
-                margin-top: 12px;
-
-                & > :first-child {
-                    margin-right: 12px;
-                }
-            }
-
-            &#{$errorClass}_inside {
-                width: 100%;
-                height: auto;
-                margin-bottom: 6px;
-            }
-        }
-
-        &:hover:not(#{&}_inside) {
-            background-color: var(--g-color-base-simple-hover);
-        }
-    }
-
-    &__error-text {
-        width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    &__buttons {
-        width: 100%;
-        display: flex;
-        align-items: center;
-
-        & > :first-child {
-            margin-right: 7px;
-        }
-    }
 
     &_external {
         align-items: normal;
@@ -93,14 +35,10 @@
         }
     }
 
-    &__select-loader {
-        height: 90px;
-    }
-
     &_mobile {
         min-height: 64px;
 
-        #{$controlClass}__item {
+        #{$class}__item {
             padding: 10px 15px;
         }
     }

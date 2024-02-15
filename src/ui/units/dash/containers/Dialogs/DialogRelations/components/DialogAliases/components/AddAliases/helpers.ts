@@ -70,3 +70,5 @@ export const isAddingAliasSameDataset = (
 
     return false;
 };
+
+export const getParamsSelectOptions = (item: string) => ({content: item, value: item});
