@@ -1,13 +1,11 @@
 import {Page} from '@playwright/test';
 import moment from 'moment';
-import {DEFAULT_DATE_FORMAT} from '../../../../src/shared/constants';
-
+import {DEFAULT_DATE_FORMAT, Operations} from '../../../../src/shared';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {Operations} from '../../../../src/shared';
 import {SCALES} from '../../../../src/shared/constants/datepicker/relative-datepicker';
 
 // In the test dataset, the maximum date that can be selected in datepicker is 2017
@@ -15,21 +13,21 @@ const FIXED_TEST_YEAR_VALUE = 2017;
 const CURRENT_YEAR_VALUE = new Date().getFullYear();
 
 const getPreviousDayDate = (value: number, period: typeof SCALES[keyof typeof SCALES]) => {
-    const date = new Date();
+    const date = moment.utc();
     switch (period) {
         case SCALES.y:
             {
-                const fullyear = date.getFullYear();
+                const fullyear = date.year();
                 // In order for the tests to always work, you need to subtract the difference between the current year and the test year from the current year
-                date.setFullYear(fullyear - (fullyear - FIXED_TEST_YEAR_VALUE) - value);
+                date.year(fullyear - (fullyear - FIXED_TEST_YEAR_VALUE) - value);
             }
             break;
         default:
-            date.setDate(date.getDate() - value);
+            date.date(date.date() - value);
             break;
     }
-    date.setHours(0, 0, 0, 0);
-    return moment(date).format(DEFAULT_DATE_FORMAT);
+    date.hours(0);
+    return date.format(DEFAULT_DATE_FORMAT);
 };
 
 datalensTest.describe('Wizard section "Filters" (with selected date or date time)', () => {
