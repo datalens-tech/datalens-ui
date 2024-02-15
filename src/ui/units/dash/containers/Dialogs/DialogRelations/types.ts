@@ -24,6 +24,8 @@ export type RelationsData = {
     type: RelationType;
     available: Array<RelationType>;
     byFields: Array<string> | string;
+    hasDataset: boolean;
+    forceAddAlias: boolean;
 };
 
 export type DatasetsListData = Record<

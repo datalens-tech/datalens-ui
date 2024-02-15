@@ -11,6 +11,7 @@ export type DashkitMetaDataItemBase = {
     label?: string;
     params: Array<StringParams> | StringParams;
     defaultParams: Array<StringParams> | StringParams;
+    widgetParams?: StringParams;
     loaded: boolean;
     usedParams: Array<string> | null;
     type: DashTabItemType | typeof DASH_WIDGET_TYPES;
@@ -21,6 +22,8 @@ export type DashkitMetaDataItemBase = {
     datasetId?: string;
     datasetFields?: Record<string, string>;
     enableFiltering?: boolean;
+    isWizard?: boolean;
+    isEditor?: boolean;
 };
 
 // Create new temporary type, Because the types of meta information of the plugin of the current implementation and the new one are slightly different.
