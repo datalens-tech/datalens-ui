@@ -262,7 +262,7 @@ module.exports = (...options: JSTabOptions) => {
 
         if (value.result && value.result.data_export_forbidden) {
             // Hiding the data export button in the ChartKit menu
-            ChartEditor.setExtra('dataExportForbidden', true);
+            ChartEditor.setExtra?.('dataExportForbidden', true);
         }
     });
 
