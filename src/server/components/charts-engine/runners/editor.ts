@@ -9,7 +9,7 @@ import {RunnerHandlerProps} from '.';
 
 export const runEditor = (
     parentContext: AppContext,
-    {chartsEngine, req, res, config, configResolving}: RunnerHandlerProps,
+    {chartsEngine, req, res, config, configResolving, workbookId}: RunnerHandlerProps,
 ) => {
     const ctx = parentContext.create('editorChartRunner');
 
@@ -48,6 +48,10 @@ export const runEditor = (
 
     if (config) {
         processorParams.configOverride = config;
+    }
+
+    if (workbookId) {
+        processorParams.workbookId = workbookId;
     }
 
     if (req.body.uiOnly) {

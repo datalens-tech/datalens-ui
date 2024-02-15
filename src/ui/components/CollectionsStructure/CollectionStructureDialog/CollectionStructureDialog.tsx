@@ -5,6 +5,7 @@ import {Button, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import type {WorkbookId} from 'shared';
 import {
     GetCollectionContentArgs,
     GetCollectionContentMode,
@@ -82,7 +83,7 @@ export type Props = {
         targetTitle,
     }: {
         targetCollectionId: string | null;
-        targetWorkbookId: string | null;
+        targetWorkbookId: WorkbookId;
         targetTitle?: string;
     }) => Promise<unknown>;
     onClose: (structureChanged: boolean) => void;

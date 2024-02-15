@@ -46,7 +46,7 @@
     "@braintree/sanitize-url": "^6.0.0",
     "@datalens-tech/xlsx": "^0.20.1",
     "@doc-tools/transform": "^2.18.3",
-    "@gravity-ui/app-layout": "^1.2.0",
+    "@gravity-ui/app-layout": "^1.7.0",
     "@gravity-ui/browserslist-config": "^4.3.0",
     "@gravity-ui/chartkit": "^4.20.1",
     "@gravity-ui/dashkit": "^6.8.0",

@@ -131,6 +131,10 @@ class Wizard extends React.Component<Props, State> {
                 params.revId = revId;
             }
 
+            if (props.match.params.workbookId) {
+                params.routeWorkbookId = props.match.params.workbookId;
+            }
+
             this.props.setDefaults(params);
         }
 

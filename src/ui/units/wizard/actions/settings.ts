@@ -2,6 +2,7 @@ export const TOGGLE_NAVIGATION = Symbol('wizard/settings/TOGGLE_NAVIGATION');
 export const TOGGLE_FULLSCREEN = Symbol('wizard/settings/TOGGLE_FULLSCREEN');
 export const SET_DEFAULTS_SET = Symbol('wizard/settings/SET_DEFAULTS_SET');
 export const TOGGLE_VIEW_ONLY_MODE = Symbol('wizard/settings/TOGGLE_VIEW_ONLY_MODE');
+export const SET_ROUTE_WORKBOOK_ID = Symbol('wizard/SET_ROUTE_WORKBOOK_ID');
 
 interface ToggleNavigationAction {
     type: typeof TOGGLE_NAVIGATION;
@@ -45,8 +46,25 @@ export function setDefaultsSet(): SetDefaultsSetAction {
     };
 }
 
+interface SetRouteWorkbookIdAction {
+    type: typeof SET_ROUTE_WORKBOOK_ID;
+    payload: {
+        routeWorkbookId: string;
+    };
+}
+
+export function setRouteWorkbookId(routeWorkbookId: string) {
+    return {
+        type: SET_ROUTE_WORKBOOK_ID,
+        payload: {
+            routeWorkbookId,
+        },
+    };
+}
+
 export type SettingsAction =
     | SetDefaultsSetAction
     | ToggleFullscreenAction
     | ToggleNavigationAction
-    | ToggleViewOnlyModeAction;
+    | ToggleViewOnlyModeAction
+    | SetRouteWorkbookIdAction;

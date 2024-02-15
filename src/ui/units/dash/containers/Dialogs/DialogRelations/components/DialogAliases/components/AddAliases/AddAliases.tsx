@@ -1,16 +1,21 @@
 import React from 'react';
 
 import {Check, Xmark} from '@gravity-ui/icons';
-import {Button, Icon, Select, SelectOption} from '@gravity-ui/uikit';
+import {Button, Icon, Link, Select, SelectOption} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import isEmpty from 'lodash/isEmpty';
 import {DashCommonQa} from 'shared';
+import {Interpolate} from 'ui/components/Interpolate';
+import {DL} from 'ui/constants/common';
 
 import {addAlias} from '../../../../helpers';
+import {isEditorChart} from '../../../../hooks/helpersChart';
+import {isExternalControl} from '../../../../hooks/helpersControls';
 import {AliasesContext} from '../../../../hooks/useRelations';
 import {DashkitMetaDataItem, DatasetsListData} from '../../../../types';
 
-import {isAddingAliasExists, isAddingAliasSameDataset} from './helpers';
+import {getParamsSelectOptions, isAddingAliasExists, isAddingAliasSameDataset} from './helpers';
 
 import './AddAliases.scss';
 
@@ -40,7 +45,18 @@ const getList = (data: DashkitMetaDataItem) => {
             value: item.guid,
         }));
     } else {
-        res = data.usedParams?.map((item) => ({content: item, value: item})) || [];
+        // if there is no defaults in editor chart or in external selector there is no params for list options
+        // until user add any param to default
+        if (isEditorChart(data)) {
+            return !data.params || isEmpty(data.params)
+                ? []
+                : Object.keys(data.params).map(getParamsSelectOptions);
+        } else if (isExternalControl(data)) {
+            return !data.widgetParams || isEmpty(data.widgetParams)
+                ? []
+                : Object.keys(data.widgetParams).map(getParamsSelectOptions);
+        }
+        res = data.usedParams?.map(getParamsSelectOptions) || [];
     }
 
     return res;
@@ -165,6 +181,36 @@ export const AddAliases = ({
         }
         setErrorMgs(error);
     }, [error]);
+
+    if (!currentItemOptions.length || !rowItemOptions.length) {
+        const hasExternalControl = isExternalControl(widget) || isExternalControl(currentRow);
+        const keyset = hasExternalControl
+            ? i18n('label_need-default-external-control')
+            : i18n('label_need-default-editor-chart');
+        const linkParam = hasExternalControl
+            ? '/editor/widgets/selector/external'
+            : '/editor/params';
+
+        return (
+            <div className={b()}>
+                <Interpolate
+                    text={keyset}
+                    matches={{
+                        link: (match) => (
+                            <React.Fragment>
+                                <Link
+                                    href={`${DL.ENDPOINTS.datalensDocs}${linkParam}`}
+                                    target="_blank"
+                                >
+                                    {match}
+                                </Link>
+                            </React.Fragment>
+                        ),
+                    }}
+                />
+            </div>
+        );
+    }
 
     return (
         <div className={b()}>

@@ -348,6 +348,7 @@ export const useDialogPublicState = ({
                 });
                 const relations = await getSdk().mix.getPublicationPreview({
                     entryId: entry.entryId,
+                    workbookId: entry.workbookId,
                 });
 
                 const extendedEntry: EntryDataExtended = {
@@ -450,6 +451,7 @@ export const useDialogPublicState = ({
                             },
                         },
                     },
+                    workbookId: propsEntry.workbookId,
                 })
                 .then(() => {
                     toaster.add({

@@ -1,3 +1,5 @@
+import type {WorkbookId} from '../../../types';
+
 export type EntryFieldData<T = Record<string, unknown>> = null | T;
 export type EntryFieldLinks = null | Record<string, string>;
 export type EntryFieldMeta<T = Record<string, unknown>> = null | T;
@@ -24,7 +26,7 @@ export interface EntryFields {
     updatedAt: string;
     updatedBy: string;
     unversionedData?: unknown;
-    workbookId: string | null;
+    workbookId: WorkbookId;
 }
 
 // corresponds to RETURN_META_COLUMNS from US
@@ -37,7 +39,7 @@ export interface EntryMetaFields {
     savedId: string;
     publishedId: EntryFieldPublishedId;
     tenantId: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     accessDescription?: string;
     supportDescription?: string;
 }
@@ -58,7 +60,7 @@ export interface EntryNavigationFields {
     savedId: string;
     publishedId: EntryFieldPublishedId;
     hidden: boolean;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     workbookTitle?: string | null;
 }
 
@@ -74,7 +76,7 @@ export interface EntryFavoriteFields {
     updatedAt: string;
     createdAt: string;
     hidden: boolean;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     workbookTitle?: string | null;
 }
 
@@ -88,5 +90,5 @@ export interface EntryRelationFields {
     depth: number;
     tenantId: string;
     public: boolean;
-    workbookId: string | null;
+    workbookId: WorkbookId;
 }

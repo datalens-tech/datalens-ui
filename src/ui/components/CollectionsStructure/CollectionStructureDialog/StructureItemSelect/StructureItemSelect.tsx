@@ -5,6 +5,7 @@ import {Card, Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Waypoint} from 'react-waypoint';
+import type {WorkbookId} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
 import {
@@ -29,7 +30,7 @@ const b = block('dl-collections-structure-structure-item-select');
 
 export type Props = {
     collectionId: string | null;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     contentIsLoading: boolean;
     contentError: Error | null;
     breadcrumbs: GetCollectionBreadcrumb[];
