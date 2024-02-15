@@ -1,3 +1,5 @@
+import {i18n} from 'i18n';
+
 import {RELATION_TYPES, TEXT_LIMIT} from '../../constants';
 import {RelationType} from '../../types';
 
@@ -64,5 +66,5 @@ export const getRowTitle = (title: string, label?: string) => {
     const separator = getTextSeparator(itemLabel, title);
     const rowTitle = `${itemLabel}${separator}${title}`.trim();
 
-    return rowTitle;
+    return rowTitle || i18n('component.dialog-relations.view', 'title-error');
 };

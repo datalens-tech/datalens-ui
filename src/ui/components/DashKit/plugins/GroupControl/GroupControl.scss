@@ -1,5 +1,6 @@
 .dashkit-plugin-group-control {
     $class: &;
+
     display: block;
     height: 100%;
     width: 100%;
@@ -37,10 +38,7 @@
         align-items: center;
         justify-content: center;
         z-index: 3; // to overlay Datepicker
-
-        &_silent {
-            background-color: var(--g-color-sfx-fade);
-        }
+        background-color: var(--g-color-base-float);
     }
 
     &__item,
@@ -50,7 +48,7 @@
         padding: 0;
 
         &:not(:last-child) {
-            margin-right: 10px;
+            padding-right: 10px;
         }
     }
 
