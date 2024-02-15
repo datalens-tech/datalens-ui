@@ -32,7 +32,7 @@ import type {OpenDialogMoveCollectionArgs} from '../../components/CollectionsStr
 import type {OpenDialogMoveWorkbookArgs} from '../../components/CollectionsStructure/MoveWorkbookDialog';
 import type {OpenDialogCopyWorkbookArgs} from '../../components/CollectionsStructure/CopyWorkbookDialog';
 import type {OpenDialogMigrateEntryToWorkbookArgs} from '../../components/CollectionsStructure/MigrateEntryToWorkbookDialog';
-import type {OpenDialogDeployEntryToWorkbookArgs} from '../../components/CollectionsStructure/DeployEntryToWorkbookDialog';
+import type {OpenDialogDeployTemplateToWorkbookArgs} from '../../components/CollectionsStructure/DeployTemplateToWorkbookDialog';
 import type {OpenDialogEditWorkbookArgs} from '../../components/CollectionsStructure/EditWorkbookDialog';
 import type {OpenDialogCreateWorkbookArgs} from '../../components/CollectionsStructure/CreateWorkbookDialog';
 import type {OpenDialogEditCollectionArgs} from '../../components/CollectionsStructure/EditCollectionDialog';
@@ -89,6 +89,6 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogMigrateToWorkbookArgs
     | OpenDialogSelectMigrationToWorkbookArgs
     | OpenDialogMigrateEntryToWorkbookArgs
-    | OpenDialogDeployEntryToWorkbookArgs
+    | OpenDialogDeployTemplateToWorkbookArgs
     | OpenDialogCopyEntriesToWorkbookArgs
     | OpenDialogCopyEntriesArgs;

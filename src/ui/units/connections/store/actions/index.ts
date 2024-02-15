@@ -262,7 +262,7 @@ export function createConnection(name: string, dirPath?: string) {
         }
 
         if (workbookId) {
-            history.replace(`/workbooks/${workbookId}?tab=all`);
+            history.replace(`/workbooks/${workbookId}`);
         } else if (templateFolderId) {
             history.replace(`/navigation/${templateFolderId}`);
         } else if (connectionId) {
