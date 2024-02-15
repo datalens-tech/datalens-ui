@@ -14,7 +14,7 @@ import {
 export interface GetEntryResponse extends EntryFields {
     isFavorite: boolean;
     permissions?: Permissions;
-    isLocked: boolean;
+    isLocked?: boolean;
     links?: EntryFieldLinks;
     parentDashEntryId?: string;
     parentDashName?: string;

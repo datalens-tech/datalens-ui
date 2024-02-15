@@ -50,13 +50,16 @@ const b = block('dl-workbook-page');
 
 const i18n = I18N.keyset('new-workbooks');
 
+const AVAILABLE_TABS = [TAB_ALL, 'dash', 'widget', 'dataset', 'connection'];
+
 export const WorkbookPage = () => {
     const {search} = useLocation();
     const {workbookId} = useParams<{workbookId: string}>();
 
     const activeTab = React.useMemo<TabId | undefined>(() => {
         const queryTab = new URLSearchParams(search).get('tab');
-        return queryTab ? (queryTab as TabId) : TAB_ALL;
+
+        return queryTab && AVAILABLE_TABS.includes(queryTab) ? (queryTab as TabId) : TAB_ALL;
     }, [search]);
 
     const dispatch = useDispatch<AppDispatch>();

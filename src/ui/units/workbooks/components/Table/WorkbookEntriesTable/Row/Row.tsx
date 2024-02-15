@@ -76,9 +76,9 @@ const Row: React.FC<RowProps> = ({
     };
 
     const getFavoriteIcon = () => {
-        if (item.isFavorite) return <Icon className={b('icon-star-fill')} data={StarFill} />;
+        if (item.isFavorite) return <Icon data={StarFill} />;
 
-        return <Icon className={b('icon-star-stroke')} data={Star} />;
+        return <Icon data={Star} />;
     };
 
     return (
@@ -107,7 +107,7 @@ const Row: React.FC<RowProps> = ({
             </div>
             <div className={b('content-cell')}>
                 <div
-                    className={b('btn-favorite', {isFavorite: item.isFavorite})}
+                    className={b('btn-favorite', {'is-favorite': item.isFavorite})}
                     onClick={onChangeFavorite}
                 >
                     {getFavoriteIcon()}

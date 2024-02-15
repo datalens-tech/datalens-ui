@@ -78,25 +78,14 @@
         justify-content: center;
         cursor: pointer;
         border-radius: 4px;
+        visibility: hidden;
+
+        &_is-favorite {
+            visibility: visible;
+        }
 
         &:hover {
             background: var(--g-color-base-simple-hover);
         }
-    }
-
-    &__btn-favorite {
-        visibility: hidden;
-
-        &_isFavorite {
-            visibility: visible;
-
-            #{$class}__icon-star-stroke {
-                visibility: hidden;
-            }
-        }
-    }
-
-    &__btn-favorite_isFavorite {
-        visibility: visible;
     }
 }
