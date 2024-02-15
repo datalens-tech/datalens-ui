@@ -349,7 +349,6 @@ class Body extends React.PureComponent<BodyProps> {
 
         return isEmptyTab ? (
             <EmptyState
-                openDialog={this.props.openDialog}
                 canEdit={this.props.canEdit}
                 isEditMode={mode === Mode.Edit}
                 isTabView={!settings.hideTabs && tabs.length > 1}
