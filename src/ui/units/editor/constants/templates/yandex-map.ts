@@ -1,5 +1,4 @@
-import {EDITOR_TYPE} from '../..';
-import {EditorTemplatesQA} from '../qa/editor';
+import {EDITOR_TYPE, EditorTemplatesQA} from '../../../../../shared/constants';
 
 export default {
     qa: EditorTemplatesQA.YMap,
