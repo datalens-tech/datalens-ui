@@ -31,7 +31,7 @@ export const EmptyWorkbook = ({workbook, filters, onChangeFilters, scope}: Props
 
     const renderClearFiltersAction = () => {
         return (
-            <Button className={b('controls')} view="normal" size="m" onClick={handleClearFilters}>
+            <Button className={b('controls')} view="normal" onClick={handleClearFilters}>
                 {i18n('button_clear-filters')}
             </Button>
         );
