@@ -12,7 +12,7 @@
   "label_copy": "Куда копировать",
   "label_copy-denied-title": "Недостаточно прав для копирования",
   "label_deploy": "Куда развернуть",
-  "label_deploy-denied-title": "Недостаточно прав для развертывания",
+  "label_deploy-denied-title": "Недостаточно прав для развёртывания",
   "label_description": "Описание",
   "label_empty-collection": "В коллекции пусто или не удалось ничего найти по условиям в фильтрах",
   "label_move": "Куда переместить",
