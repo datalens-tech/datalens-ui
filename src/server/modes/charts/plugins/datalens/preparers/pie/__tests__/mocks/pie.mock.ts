@@ -114,7 +114,6 @@ export const measureNumberAndMeasure = {
             items: [measureField],
         },
     ],
-    // colors: [colorFieldMeasureNumber],
     resultData: {
         data: [
             ['1', '1'],
