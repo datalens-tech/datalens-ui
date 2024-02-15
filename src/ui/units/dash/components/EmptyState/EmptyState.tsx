@@ -28,10 +28,9 @@ export const EmptyState = ({
     canEdit,
     isTabView,
     onEditClick,
-    openDialog,
     isEditModeLoading,
 }: EmptyStateProps) => {
-    const showActions = !DL.IS_MOBILE && canEdit && openDialog;
+    const showActions = !DL.IS_MOBILE && canEdit;
 
     const title = isTabView ? i18n('label_empty-tab') : i18n('label_empty-dash');
 
