@@ -3,9 +3,6 @@
   "label_graph": "График",
   "label_markdown": "Markdown",
   "label_markup": "Markup",
-  "label_metric": "Показатель",
   "label_module": "Модуль",
-  "label_table": "Таблица",
-  "label_timeseries": "Timeseries",
-  "label_yandex-map": "Яндекс.Карта"
+  "label_table": "Таблица"
 }

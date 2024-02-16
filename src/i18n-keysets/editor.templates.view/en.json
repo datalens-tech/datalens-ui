@@ -3,9 +3,6 @@
   "label_graph": "Graph",
   "label_markdown": "Markdown",
   "label_markup": "Markup",
-  "label_metric": "Metric",
   "label_module": "Module",
-  "label_table": "Table",
-  "label_timeseries": "Timeseries",
-  "label_yandex-map": "Yandex.Map"
+  "label_table": "Table"
 }
