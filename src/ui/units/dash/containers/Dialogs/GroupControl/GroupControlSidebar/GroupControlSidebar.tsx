@@ -30,6 +30,7 @@ const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
     buttonApply: false,
     buttonReset: false,
+    autoHeight: false,
 };
 
 export const GroupControlSidebar = () => {
@@ -135,18 +136,18 @@ export const GroupControlSidebar = () => {
                     enableActionMenu={true}
                 />
             </div>
-            <div className={b('settings')}>
-                <div className={b('settings-container')}>
-                    <div>
-                        <span>{i18n('label_autoheight-checkbox')}</span>
+            {isMultipleSelectors && (
+                <div className={b('settings')}>
+                    <div className={b('settings-container')}>
+                        <div>
+                            <span>{i18n('label_autoheight-checkbox')}</span>
+                        </div>
+                        <Checkbox
+                            checked={selectorsGroup.autoHeight}
+                            onUpdate={handleChangeAutoHeight}
+                            size="l"
+                        />
                     </div>
-                    <Checkbox
-                        checked={selectorsGroup.autoHeight}
-                        onUpdate={handleChangeAutoHeight}
-                        size="l"
-                    />
-                </div>
-                {isMultipleSelectors && (
                     <div className={b('settings-container')}>
                         <div>
                             <span>{i18n('label_apply-button-checkbox')}</span>
@@ -161,8 +162,7 @@ export const GroupControlSidebar = () => {
                             size="l"
                         />
                     </div>
-                )}
-                {isMultipleSelectors && (
+
                     <div className={b('settings-container')}>
                         <div>
                             <span>{i18n('label_reset-button-checkbox')}</span>
@@ -177,8 +177,7 @@ export const GroupControlSidebar = () => {
                             size="l"
                         />
                     </div>
-                )}
-                {isMultipleSelectors && (
+
                     <Button
                         view="outlined"
                         width="max"
@@ -188,8 +187,8 @@ export const GroupControlSidebar = () => {
                         <Icon data={Gear} height={16} width={16} />
                         {i18n('button_selectors-placement')}
                     </Button>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 };

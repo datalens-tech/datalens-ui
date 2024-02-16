@@ -55,7 +55,9 @@ export const commonFunctionsMap = {
         makeFunctionTemplate<
             (items: string[]) => NavigationMinimalProps['placeSelectParameters']
         >(),
-    resolveUsersByIds: makeFunctionTemplate<<T>(ids: string[]) => ResolveUsersByIds<T>>(),
+    resolveUsersByIds: makeFunctionTemplate<<T>(ids: string[]) => ResolveUsersByIds<T>>({
+        isReduxThunkActionTemplate: true,
+    }),
     getLoginById: makeFunctionTemplate<() => GetLoginById>(),
     getEntryName: makeFunctionTemplate<(entry: EntryData) => string>(),
     getInitDestination: makeFunctionTemplate<(path?: string) => string>(),

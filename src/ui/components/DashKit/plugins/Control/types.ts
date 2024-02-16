@@ -73,7 +73,7 @@ export interface SelectControlProps {
     widgetId: string;
     content: any;
     editMode?: boolean;
-    label: string;
+    label?: string;
     innerLabel: string;
     param: string;
     multiselect: boolean;

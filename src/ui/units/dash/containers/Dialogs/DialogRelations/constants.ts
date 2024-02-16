@@ -28,3 +28,14 @@ export const RELATION_TYPES = {
 };
 
 export const TEXT_LIMIT = 20;
+
+export const FULL_RELATIONS = [
+    RELATION_TYPES.both,
+    RELATION_TYPES.input,
+    RELATION_TYPES.output,
+    RELATION_TYPES.ignore,
+];
+
+export const INPUT_RELATIONS = [RELATION_TYPES.input, RELATION_TYPES.ignore];
+
+export const OUTPUT_RELATIONS = [RELATION_TYPES.output, RELATION_TYPES.ignore];
