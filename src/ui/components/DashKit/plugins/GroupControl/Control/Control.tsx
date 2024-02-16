@@ -41,6 +41,7 @@ import {
     getStatus,
     isValidRequiredValue,
 } from '../../Control/utils';
+import {ExtendedLoadedData} from '../types';
 import {cancelCurrentRequests, clearLoaderTimer, getControlWidthStyle} from '../utils';
 
 import {getInitialState, reducer} from './store/reducer';
@@ -62,10 +63,13 @@ type ControlProps = {
     id: string;
     data: DashTabItemControlSingle;
     actualParams: StringParams;
-    onStatusChanged: (controlId: string, status: LoadStatus) => void;
+    onStatusChanged: (
+        controlId: string,
+        status: LoadStatus,
+        loadedData?: ExtendedLoadedData | null,
+    ) => void;
     silentLoading: boolean;
     initialParams: ChartInitialParams;
-    resolveMeta: (loadedData?: ResponseSuccessControls | null) => void;
     defaults: ConfigItem['defaults'];
     getDistincts?: GetDistincts;
     onChange: (params: StringParams, callChangeByClick?: boolean) => void;
@@ -81,7 +85,6 @@ export const Control = ({
     actualParams,
     initialParams,
     silentLoading,
-    resolveMeta,
     onStatusChanged,
     defaults,
     getDistincts,
@@ -92,6 +95,7 @@ export const Control = ({
     workbookId,
 }: ControlProps) => {
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
+
     const [
         {status, loadedData, errorData, loadingItems, validationError, isInit, showSilentLoader},
         dispatch,
@@ -108,7 +112,7 @@ export const Control = ({
                     errorData: newErrorData,
                 }),
             );
-            onStatusChanged(id, statusResponse);
+            onStatusChanged(id, statusResponse, null);
         }
     };
 
@@ -116,7 +120,6 @@ export const Control = ({
         newLoadedData: ResponseSuccessControls,
         loadedStatus: LoadStatus,
     ) => {
-        //TODO: Add new relations logic
         const newInitialParams = {...defaults, ...newLoadedData?.defaultParams};
         const initialParamsChanged = !isEqual(newInitialParams, initialParams.params);
 
@@ -128,11 +131,12 @@ export const Control = ({
         const statusResponse = getStatus(loadedStatus);
         if (statusResponse) {
             dispatch(setLoadedData({status: statusResponse, loadedData: newLoadedData}));
-            onStatusChanged(id, statusResponse);
+            onStatusChanged(id, statusResponse, {
+                ...newLoadedData,
+                sourceType: data.sourceType,
+                id: data.id,
+            });
         }
-
-        const resolveDataArg = status === LOAD_STATUS.SUCCESS ? loadedData : null;
-        resolveMeta(resolveDataArg);
     };
 
     const init = async () => {

@@ -4,7 +4,7 @@ import {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DatalensGlobalState} from 'index';
+import {DatalensGlobalState, Utils} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
@@ -14,8 +14,8 @@ import {
     DashTabItemControlManual,
     DashTabItemControlSingle,
     DashTabItemGroupControlData,
+    Feature,
     StringParams,
-    WorkbookId,
 } from 'shared';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -24,16 +24,24 @@ import {
     CLICK_ACTION_TYPE,
     CONTROL_TYPE,
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
-import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {isMobileView} from 'ui/utils/mobile';
 
-import {selectSkipReload} from '../../../../units/dash/store/selectors/dashTypedSelectors';
+import {
+    selectIsNewRelations,
+    selectSkipReload,
+} from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
 import {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
 import {Control} from './Control/Control';
+import {
+    ContextProps,
+    ExtendedLoadedData,
+    PluginGroupControlState,
+    ResolveMetaResult,
+} from './types';
 
 import './GroupControl.scss';
 
@@ -41,27 +49,13 @@ const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 
-type ContextProps = {
-    workbookId?: WorkbookId;
-};
-
 interface PluginGroupControlProps
     extends PluginWidgetProps,
         ControlSettings,
         StateProps,
         ContextProps {}
 
-interface PluginGroupControlState {
-    status: LoadStatus;
-    silentLoading: boolean;
-    initialParams?: StringParams;
-    isInit: boolean;
-    stateParams: StringParams;
-    needReload: boolean;
-    forceUpdate: boolean;
-}
-
-export interface PluginGroupControl extends Plugin<PluginGroupControlProps> {
+interface PluginGroupControl extends Plugin<PluginGroupControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: GetDistincts;
 }
@@ -70,7 +64,6 @@ const b = block('dashkit-plugin-group-control');
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 
 class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGroupControlState> {
-    chartKitRef: React.RefObject<ChartsChartKit> = React.createRef<ChartsChartKit>();
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
     _isUnmounted = false;
@@ -83,6 +76,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     controlsCount = 0;
     controlsLoadedCount = 0;
     controlsStatus: Record<string, LoadStatus> = {};
+    controlsData: Record<string, ExtendedLoadedData | null> = {};
 
     // a quick loader for click on apply button
     applyLoader = false;
@@ -110,6 +104,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             isInit: false,
             stateParams: {},
             needReload: false,
+            needMeta: false,
             forceUpdate: true,
         };
     }
@@ -234,36 +229,108 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return dependentSelectors ? params : pick(params, Object.keys(this.props.defaults!));
     }
 
-    private resolveMeta = (loadedData?: any) => {
-        // @ts-ignore
-        if (this.resolve) {
-            let result: any = {id: this.props.id};
+    // public
+    // @ts-ignore
+    private getMeta() {
+        this.setState({needMeta: true});
 
-            if (loadedData && loadedData.extra) {
-                result = {
-                    id: this.props.id,
-                    usedParams: loadedData.usedParams
-                        ? Object.keys(this.filterSignificantParams(loadedData.usedParams))
-                        : null,
-                    datasets: loadedData.extra.datasets,
-                    // deprecated
-                    datasetId: loadedData.extra.datasetId,
-                    datasetFields: loadedData.extra.datasetFields,
-                    type: 'control',
-                    sourceType: this.props.data?.sourceType,
-                };
+        return new Promise((resolve) => {
+            this.resolve = resolve;
+
+            if (this.state.status === LOAD_STATUS.SUCCESS) {
+                this.resolveMetaInControl(Object.values(this.controlsData));
             }
+        });
+    }
 
-            // @ts-ignore
-            this.resolve(result);
+    private getCurrentWidgetResolvedMetaInfo = (loadedData: ExtendedLoadedData | null) => {
+        const label = loadedData?.uiScheme?.controls[0]?.label || '';
+
+        const widgetMetaInfo = {
+            layoutId: this.props.id,
+            chartId: null,
+            widgetId: this.props.id,
+            title: this.props.data?.title || '',
+            label,
+            params: loadedData?.params,
+            defaultParams: this.props.defaults,
+            loaded: Boolean(loadedData),
+            entryId: loadedData?.id,
+            usedParams: loadedData?.usedParams
+                ? Object.keys(this.filterSignificantParams(loadedData))
+                : null,
+            datasets: loadedData?.extra?.datasets || null,
+            datasetId: loadedData?.sources?.fields?.datasetId || '',
+            type: 'control',
+            sourceType: loadedData?.sourceType,
+            visualizationType: null,
+            loadError: !loadedData,
+        };
+
+        return widgetMetaInfo;
+    };
+
+    private resolveMeta = (loadedData: ExtendedLoadedData | null) => {
+        if (!loadedData) {
+            return null;
         }
+
+        const {id, extra, usedParams, sourceType} = loadedData;
+        let result: ResolveMetaResult = {id};
+        if (extra) {
+            result = {
+                id,
+                usedParams: usedParams
+                    ? Object.keys(this.filterSignificantParams(usedParams))
+                    : null,
+                datasets: extra.datasets,
+                // deprecated
+                datasetId: extra.datasetId,
+                datasetFields: extra.datasetFields,
+                type: 'control',
+                sourceType,
+            };
+        }
+
+        return result;
+    };
+
+    private resolveMetaInControl = (loadedData: (ExtendedLoadedData | null)[]) => {
+        if (!this.resolve) {
+            return;
+        }
+
+        const result = loadedData.reduce(
+            (
+                acc: (
+                    | ReturnType<typeof this.getCurrentWidgetResolvedMetaInfo>
+                    | ResolveMetaResult
+                    | null
+                )[],
+                dataItem,
+            ) => {
+                if (Utils.isEnabledFeature(Feature.ShowNewRelations) && this.props.isNewRelations) {
+                    acc.push(this.getCurrentWidgetResolvedMetaInfo(dataItem));
+                } else {
+                    acc.push(this.resolveMeta(dataItem));
+                }
+                return acc;
+            },
+            [],
+        );
+
+        this.resolve(result);
     };
 
     private handleInitialParamsUpdate = (updatedInitialParams: ChartInitialParams) => {
         this.initialParams = updatedInitialParams;
     };
 
-    private handleStatusChanged = (controlId: string, status: LoadStatus) => {
+    private handleStatusChanged = (
+        controlId: string,
+        status: LoadStatus,
+        loadedData?: ExtendedLoadedData | null,
+    ) => {
         const isLoaded = status === LOAD_STATUS.SUCCESS || status === LOAD_STATUS.ERROR;
         const isBeginPending =
             this.controlsStatus[controlId] !== LOAD_STATUS.INITIAL &&
@@ -271,6 +338,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         if (isLoaded) {
             this.controlsLoadedCount++;
+            if (loadedData) {
+                this.controlsData[controlId] = loadedData;
+            }
         }
 
         if (isBeginPending) {
@@ -281,6 +351,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             // adjust widget layout only for the first loading of widget
             if (this.props.data.autoHeight && !this.state.isInit) {
                 this.adjustWidgetLayout(false);
+            }
+
+            if (!this.state.isInit) {
+                this.resolveMetaInControl(Object.values(this.controlsData));
             }
 
             this.setState({
@@ -307,7 +381,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 actualParams={this.state.stateParams}
                 onStatusChanged={this.handleStatusChanged}
                 silentLoading={silentLoading}
-                resolveMeta={this.resolveMeta}
                 defaults={defaults}
                 getDistincts={getDistincts}
                 onChange={this.onChange}
@@ -441,6 +514,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
     skipReload: selectSkipReload(state),
+    isNewRelations: selectIsNewRelations(state),
 });
 
 const GroupControlWithStore = connect(mapStateToProps, null, null, {
