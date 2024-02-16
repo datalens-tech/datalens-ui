@@ -2,6 +2,8 @@ name: E2E Tests
 
 on:
   pull_request:
+    branches-ignore:
+      - 'WeblateGravity:**'
   workflow_dispatch:
     inputs:
       distinct_id:
