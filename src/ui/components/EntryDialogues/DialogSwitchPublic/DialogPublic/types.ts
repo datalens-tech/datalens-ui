@@ -17,6 +17,11 @@ export type EntryRelationExtended = EntryRelation & {
     disabled: boolean;
 };
 
+export type ValidationErrors = {
+    link: string | null;
+    text: string | null;
+};
+
 export type EntryAuthorData = {
     text?: string;
     link?: string;
@@ -48,6 +53,7 @@ export type State = {
     refetchCounter: number;
     onceChangePublish: boolean;
     onceChangeUnpublish: boolean;
+    validationErrors: ValidationErrors;
     entryAuthor: {
         link: string;
         text: string;

@@ -13,6 +13,7 @@ export type State = {
     loadingItems: boolean;
     validationError: null | string;
     isInit: boolean;
+    showSilentLoader: boolean;
 };
 
 export const CONTROL_SET_ERROR_DATA = Symbol('control/SET_ERROR_DATA');
@@ -87,10 +88,23 @@ export const setIsInit = (payload: SetIsInit['payload']): SetIsInit => {
     };
 };
 
+export const CONTROL_SET_SILENT_LOADER = Symbol('control/SET_SILENT_LOADER');
+type SetSilentLoader = {
+    type: typeof CONTROL_SET_SILENT_LOADER;
+    payload: {silentLoading: boolean};
+};
+export const setSilentLoader = (payload: SetSilentLoader['payload']): SetSilentLoader => {
+    return {
+        type: CONTROL_SET_SILENT_LOADER,
+        payload,
+    };
+};
+
 export type Action =
     | SetErrorData
     | SetLoadedData
     | SetLoadingItems
     | SetValidationError
     | SetStatus
-    | SetIsInit;
+    | SetIsInit
+    | SetSilentLoader;

@@ -4,7 +4,7 @@ import {Button, ButtonProps} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
-import {ConnectionsActionPanelControls, Feature, RawSQLLevel} from 'shared';
+import {ConnectionsActionPanelControls, Feature, RawSQLLevel, WorkbookId} from 'shared';
 import {DatalensGlobalState, Utils} from 'ui';
 
 import {FieldKey} from '../../../constants';
@@ -15,7 +15,7 @@ type DispatchState = ReturnType<typeof mapStateToProps>;
 type CreateQlChartButtonProps = DispatchState &
     Partial<ButtonProps> & {
         entryId?: string | null;
-        workbookId?: string | null;
+        workbookId?: WorkbookId;
     };
 
 const CreateQlChartButtonComponent = (props: CreateQlChartButtonProps) => {

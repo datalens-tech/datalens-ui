@@ -40,6 +40,7 @@ import {
     rlsSelector,
     sourcesSelector,
     typesSelector,
+    workbookIdSelector,
 } from '../../store/selectors/dataset';
 
 import {getFilteredFields, isShowHiddenFieldsUpdated} from './utils';
@@ -90,7 +91,7 @@ class DatasetEditor extends React.Component {
     };
 
     openDialogFieldEditor = async ({field} = {}) => {
-        const {fields, parameters, dataset, datasetId, options, types} = this.props;
+        const {fields, parameters, dataset, datasetId, options, types, workbookId} = this.props;
 
         const fieldsWithParameters = [...fields, ...parameters];
 
@@ -99,6 +100,7 @@ class DatasetEditor extends React.Component {
             props: {
                 datasetContent: dataset,
                 datasetId,
+                workbookId,
                 datasetOptions: options,
                 field,
                 fields: fieldsWithParameters,
@@ -333,6 +335,7 @@ DatasetEditor.propTypes = {
     datasetId: PropTypes.string,
     sourceAvatars: PropTypes.array,
     permissions: PropTypes.object,
+    workbookId: PropTypes.string,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -351,6 +354,7 @@ const mapStateToProps = createStructuredSelector({
     filter: editorFilterSelector,
     itemsToDisplay: editorItemsToDisplaySelector,
     permissions: datasetPermissionsSelector,
+    workbookId: workbookIdSelector,
 });
 const mapDispatchToProps = {
     updateDatasetByValidation,

@@ -1,3 +1,4 @@
+import {WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {transformConnectionResponseError} from '../helpers';
@@ -52,7 +53,9 @@ export const actions = {
     getConnection: createAction<GetConnectionResponse, GetConnectionArgs>({
         method: 'GET',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}`,
-        params: (_, headers) => ({headers}),
+        params: ({workbookId}, headers) => ({
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
     }),
     createConnection: createAction<CreateConnectionResponse, CreateConnectionArgs>({
         method: 'POST',
@@ -63,7 +66,10 @@ export const actions = {
     verifyConnection: createAction<VerifyConnectionResponse, VerifyConnectionArgs>({
         method: 'POST',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/test_connection/${connectionId}`,
-        params: ({connectionId: _connectionId, ...body}, headers) => ({body, headers}),
+        params: ({connectionId: _connectionId, workbookId, ...body}, headers) => ({
+            body,
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
         transformResponseError: transformConnectionResponseError,
     }),
     verifyConnectionParams: createAction<
@@ -89,7 +95,9 @@ export const actions = {
     getConnectionSources: createAction<GetConnectionSourcesResponse, GetConnectionSourcesArgs>({
         method: 'GET',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}/info/sources`,
-        params: (_, headers) => ({headers}),
+        params: ({workbookId}, headers) => ({
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
     }),
     getConnectionSourceSchema: createAction<
         GetConnectionSourceSchemaResponse,
@@ -97,9 +105,9 @@ export const actions = {
     >({
         method: 'POST',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}/info/source/schema`,
-        params: ({connectionId: _connectionId, ...body}, headers) => ({
+        params: ({connectionId: _connectionId, workbookId, ...body}, headers) => ({
             body: {...body},
-            headers,
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
         }),
     }),
     getConnectorSchema: createAction<GetConnectorSchemaResponse, GetConnectorSchemaArgs>({
