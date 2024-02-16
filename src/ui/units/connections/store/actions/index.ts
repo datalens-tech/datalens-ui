@@ -264,10 +264,12 @@ export function createConnection(name: string, dirPath?: string) {
             flow([resetFormsData, dispatch])();
         }
 
-        if (workbookId) {
-            history.replace(`/workbooks/${workbookId}`);
-        } else if (templateFolderId) {
-            history.replace(`/navigation/${templateFolderId}`);
+        if (templateFolderId) {
+            if (workbookId) {
+                history.replace(`/workbooks/${workbookId}`);
+            } else {
+                history.replace(`/navigation/${templateFolderId}`);
+            }
         } else if (connectionId) {
             history.replace(`/connections/${connectionId}`);
         }

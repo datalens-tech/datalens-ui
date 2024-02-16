@@ -75,7 +75,7 @@ export const DeployTemplateToWorkbookDialog: React.FC<Props> = ({
             );
             onApply(workbookId);
         },
-        [dispatch, templateName, onApply],
+        [dispatch, templateName, productId, onApply],
     );
 
     const isLoading = useSelector(selectCopyTemplateIsLoading);

@@ -64,13 +64,13 @@ class ConnectionsPage extends BasePage {
         );
         // create connection
         await dialogApplyButton.click();
-        // try {
-        //     await this.page.waitForURL(() => {
-        //         return this.page.url().includes(name);
-        //     });
-        // } catch {
-        //     throw new Error("Connection wasn't created");
-        // }
+        try {
+            await this.page.waitForURL(() => {
+                return this.page.url().includes(name);
+            });
+        } catch {
+            throw new Error("Connection wasn't created");
+        }
     }
 
     async checkClientValidationErrors() {
