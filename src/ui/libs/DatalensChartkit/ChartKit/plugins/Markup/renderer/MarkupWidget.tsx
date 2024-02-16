@@ -30,7 +30,7 @@ const MarkupWidget = React.forwardRef<ChartKitWidgetRef | undefined, MarkupWidge
             onLoad?.({widgetRendering: Performance.getDuration(generatedId)});
         }, [generatedId, onLoad]);
 
-        if (!data) {
+        if (!data || (typeof data === 'object' && !Object.keys(data).length)) {
             throw new ChartKitError({
                 code: CHARTKIT_ERROR_CODE.NO_DATA,
             });
