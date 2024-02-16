@@ -262,11 +262,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
             const changeFromUnknown = currentRelationType === RELATION_TYPES.unknown;
 
             const showAddAliasForm =
-                (changeFromUnknown && forceAddAlias) ||
-                (!changeFromUnknown &&
-                    currentRelationType === RELATION_TYPES.ignore &&
-                    type !== RELATION_TYPES.unknown) ||
-                forceAddAlias;
+                type !== RELATION_TYPES.ignore &&
+                ((changeFromUnknown && forceAddAlias) ||
+                    (!changeFromUnknown &&
+                        currentRelationType === RELATION_TYPES.ignore &&
+                        type !== RELATION_TYPES.unknown) ||
+                    forceAddAlias);
 
             if (showAddAliasForm) {
                 if (!isEmpty(newChanged[widgetId])) {
