@@ -1,6 +1,8 @@
 on:
-  push:
-    branches:
+  pull_request:
+    types:
+      - closed
+    branches: 
       - main
 
 concurrency:
@@ -14,6 +16,7 @@ permissions:
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     name: datalens-ui
     runs-on: ubuntu-latest
     steps:
@@ -71,7 +74,7 @@ jobs:
           tag_name: ${{ env.TAG_NEW_VERSION }}
           release_name: ${{ env.TAG_NEW_VERSION }}
           commitish: ${{ env.NEW_BRANCH }}
-          body: ${{ env.COMMIT_NAME }}
+          body: ${{ env.COMMIT_NAME }} ${{contains(github.event.pull_request.labels.*.name, 'changelog') && 'https://github.com/datalens-tech/datalens-ui/labels/changelog' || ''}}
           draft: false
           prerelease: false
       - name: 'Success notify'
