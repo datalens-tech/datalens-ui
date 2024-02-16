@@ -19,14 +19,12 @@
         line-height: var(--g-text-caption-2-line-height);
     }
 
-    &__row {
-        display: grid;
-        grid-template-columns: 120px auto;
+    &__form {
         margin-top: 12px;
     }
 
-    &__row-prefix {
-        display: flex;
-        align-items: center;
+    &__form-row {
+        --gc-form-row-label-width: 120px;
+        margin-bottom: 12px;
     }
 }
