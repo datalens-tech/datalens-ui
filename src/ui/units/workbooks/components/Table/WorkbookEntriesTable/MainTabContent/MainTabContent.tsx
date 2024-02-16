@@ -30,6 +30,7 @@ interface MainTabContentProps extends WorkbookEntriesTableProps {
     isShowMoreBtn: boolean;
     loadMoreEntries: () => void;
     retryLoadEntries: () => void;
+    createEntryBtn?: React.ReactNode;
 }
 
 const MainTabContent = ({
@@ -47,6 +48,7 @@ const MainTabContent = ({
     retryLoadEntries,
     isErrorMessage,
     isLoading,
+    createEntryBtn,
 }: MainTabContentProps) => {
     const [isOpen, setIsOpen] = React.useState(true);
 
@@ -57,8 +59,9 @@ const MainTabContent = ({
     };
 
     const getContentTab = () => {
-        if (isErrorMessage)
+        if (isErrorMessage) {
             return <div className={b('error-text')}>{i18n('label_error-load-entities')}</div>;
+        }
 
         if (chunk.length > 0 && isOpen) {
             return (
@@ -74,8 +77,9 @@ const MainTabContent = ({
             );
         }
 
-        if (isOpen)
+        if (isOpen) {
             return <EmptyRow label={<div className={b('no-objects')}>{i18n('no_objects')}</div>} />;
+        }
 
         return null;
     };
@@ -113,10 +117,12 @@ const MainTabContent = ({
                 {workbook.permissions.update && (
                     <div className={b('content')}>
                         <div className={b('create-btn')}>
-                            <Button onClick={handleCreateEntity}>
-                                <Icon data={Plus} />
-                                {actionCreateText}
-                            </Button>
+                            {createEntryBtn ?? (
+                                <Button onClick={handleCreateEntity}>
+                                    <Icon data={Plus} />
+                                    {actionCreateText}
+                                </Button>
+                            )}
                         </div>
                     </div>
                 )}

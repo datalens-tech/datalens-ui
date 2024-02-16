@@ -14,6 +14,7 @@ import {WorkbookWithPermissions} from '../../../../../../shared/schema/us/types'
 import {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {ChunkItem, WorkbookEntry} from '../../../types';
+import {CreateEntry} from '../../CreateEntry/CreateEntry';
 import {DIALOG_DELETE_ENTRY_IN_NEW_WORKBOOK} from '../../DeleteEntryDialog/DeleteEntryDialog';
 import {DIALOG_DUPLICATE_ENTRY_IN_WORKBOOK} from '../../DuplicateEntryDialog/DuplicateEntryDialog';
 import {DIALOG_RENAME_ENTRY_IN_NEW_WORKBOOK} from '../../RenameEntryDialog/RenameEntryDialog';
@@ -142,7 +143,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = []] = chunks;
 
         return (
-            <>
+            <React.Fragment>
                 <div className={b()}>
                     <div className={b('table')}>
                         <div className={b('header')} style={defaultRowStyle}>
@@ -211,6 +212,9 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             onDeleteEntry={onDeleteEntry}
                             onDuplicateEntry={onDuplicateEntry}
                             onCopyEntry={onCopyEntry}
+                            createEntryBtn={
+                                <CreateEntry className={b('controls')} scope={EntryScope.Widget} />
+                            }
                         />
 
                         {workbook.permissions.view && (
@@ -256,7 +260,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                         )}
                     </>
                 )}
-            </>
+            </React.Fragment>
         );
     },
 );
