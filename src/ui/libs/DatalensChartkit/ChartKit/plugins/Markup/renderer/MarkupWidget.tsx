@@ -18,7 +18,7 @@ const MarkupWidget = React.forwardRef<ChartKitWidgetRef | undefined, MarkupWidge
     (props, _ref) => {
         const {
             id,
-            onRender,
+            onLoad,
             data: {data},
         } = props;
 
@@ -27,8 +27,8 @@ const MarkupWidget = React.forwardRef<ChartKitWidgetRef | undefined, MarkupWidge
         Performance.mark(generatedId);
 
         React.useLayoutEffect(() => {
-            onRender?.({renderTime: Performance.getDuration(generatedId)});
-        }, [generatedId, onRender]);
+            onLoad?.({widgetRendering: Performance.getDuration(generatedId)});
+        }, [generatedId, onLoad]);
 
         if (!data) {
             throw new ChartKitError({
