@@ -29,5 +29,6 @@
   "ERR.DS_API.US.ACCESS_DENIED_DATASET": "Нет доступа к <link>датасету</link>",
   "ERR.DS_API.US.BAD_REQUEST": "Внутренняя ошибка",
   "ERR.DS_API.US.OBJ_NOT_FOUND": "Датасет не найден",
+  "ERR.DS_API.US.WORKBOOK_ISOLATION_INTERRUPTION_DATASET": "<link>Датасет</link> не найден в текущем воркбуке",
   "ERR.UNKNOWN": "Внутренняя ошибка"
 }
