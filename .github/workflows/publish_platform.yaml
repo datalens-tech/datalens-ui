@@ -74,7 +74,7 @@ jobs:
           tag_name: ${{ env.TAG_NEW_VERSION }}
           release_name: ${{ env.TAG_NEW_VERSION }}
           commitish: ${{ env.NEW_BRANCH }}
-          body: ${{ env.COMMIT_NAME }} ${{contains(github.event.pull_request.labels.*.name, 'changelog') && 'https://github.com/datalens-tech/datalens-ui/labels/changelog' || ''}}
+          body: ${{ env.COMMIT_NAME }} ${{contains(github.event.pull_request.labels.*.name, 'changelog') && 'https://github.com/datalens-tech/datalens-ui/labels/changelog' || ''}}${{contains(github.event.pull_request.labels.*.name, 'PB') && 'https://github.com/datalens-tech/datalens-ui/labels/PB' || ''}}
           draft: false
           prerelease: false
       - name: 'Success notify'
