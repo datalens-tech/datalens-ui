@@ -83,7 +83,7 @@ export const EntryActions = ({
 
     return (
         <DropdownMenu
-            size="s"
+            size="m"
             items={items}
             defaultSwitcherProps={{qa: WorkbookPage.MenuDropDownBtn}}
         />
