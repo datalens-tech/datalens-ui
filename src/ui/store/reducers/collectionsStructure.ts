@@ -408,7 +408,7 @@ export const collectionsStructure = (
             return {
                 ...state,
                 copyTemplate: {
-                    ...state.createCollection,
+                    ...state.copyTemplate,
                     isLoading: false,
                     error: action.error,
                 },
