@@ -228,7 +228,7 @@ BaseControlInput.propTypes = {
 function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
     const [text, setText] = React.useState(value);
     const [showModal, setShowModal] = React.useState(false);
-    const onClose = React.useCallback(() => {
+    const handleClose = React.useCallback(() => {
         if (text === value) {
             setShowModal(false);
         } else if (confirm(i18n('chartkit.control.items', 'close-confirm'))) {
@@ -236,6 +236,10 @@ function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
             setText(value);
         }
     }, [value, text]);
+
+    const handleClick = () => {
+        setShowModal(true);
+    };
 
     const buttonTheme = theme in legoThemeNameMapper ? legoThemeNameMapper[theme] : theme;
     const buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : 's';
@@ -246,12 +250,12 @@ function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
                 view={buttonTheme || 'normal'}
                 size={buttonSize}
                 width="max"
-                onClick={() => setShowModal(true)}
+                onClick={handleClick}
             >
                 {label}
             </Button>
             {showModal && (
-                <Dialog open={showModal} onClose={onClose}>
+                <Dialog open={showModal} onClose={handleClose}>
                     <Dialog.Header caption={label} />
                     <Dialog.Body>
                         <TextArea
@@ -276,7 +280,7 @@ function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
                             onChange(text);
                         }}
                         textButtonCancel={i18n('chartkit.control.items', 'close')}
-                        onClickButtonCancel={onClose}
+                        onClickButtonCancel={handleClose}
                     />
                 </Dialog>
             )}
@@ -474,13 +478,17 @@ function BaseControlButton({label, theme, onChange}) {
 
     const size = isMobileView ? MOBILE_SIZE.BUTTON : 's';
 
+    const handleClick = () => {
+        setTimeout(() => onChange());
+    };
+
     return (
         <Button
             view={buttonTheme || 'normal'}
             size={size}
             width="max"
             // Need setTimeout for common microtask queue: firstly fire onBlur (from Input), then onClick (from Button)
-            onClick={() => setTimeout(() => onChange())}
+            onClick={handleClick}
         >
             {label || i18n('chartkit.control.items', 'apply')}
         </Button>
