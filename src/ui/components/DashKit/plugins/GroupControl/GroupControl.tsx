@@ -276,14 +276,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsLoadedCount--;
         }
 
-        // if some controls start to reload after success loading we set pending status
-        if (
-            this.controlsLoadedCount !== this.controlsCount &&
-            this.state.status === LOAD_STATUS.SUCCESS
-        ) {
-            this.setState({status: LOAD_STATUS.PENDING});
-        }
-
         if (this.controlsLoadedCount === this.controlsCount) {
             // adjust widget layout only for the first loading of widget
             if (this.props.data.autoHeight && !this.state.isInit) {
@@ -410,7 +402,12 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         if (this.props.skipReload || !this.state.isInit) {
             return;
         }
-        this.setState({needReload: true, silentLoading: Boolean(silentLoading)});
+
+        this.setState({
+            needReload: true,
+            status: LOAD_STATUS.PENDING,
+            silentLoading: Boolean(silentLoading),
+        });
     }
 
     get actualParams(): StringParams {

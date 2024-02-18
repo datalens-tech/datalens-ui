@@ -410,10 +410,14 @@ export const Control = ({
         return null;
     };
 
+    const handleClickRetry = () => {
+        reload();
+    };
+
     switch (status) {
         case LOAD_STATUS.INITIAL:
         case LOAD_STATUS.PENDING:
-            if (!needReload && (!silentLoading || !loadedData || !loadedData.uiScheme)) {
+            if (!loadedData || !loadedData.uiScheme) {
                 const {placementMode, width} = data as unknown as DashTabItemControlData;
                 const style = getControlWidthStyle(placementMode, width);
 
@@ -425,7 +429,7 @@ export const Control = ({
             }
             break;
         case LOAD_STATUS.FAIL: {
-            return <Error errorData={errorData} onClickRetry={() => reload()} />;
+            return <Error errorData={errorData} onClickRetry={handleClickRetry} />;
         }
     }
 
