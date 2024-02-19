@@ -3,7 +3,7 @@ import {MarkupItemTypeDict} from './constants';
 const items = Object.values(MarkupItemTypeDict);
 export type MarkupItemType = typeof items[number];
 
-export type MarkupItem = {
+type BaseMarkupItem = {
     type: MarkupItemType;
     children?: (MarkupItem | string)[];
     color?: string;
@@ -12,3 +12,13 @@ export type MarkupItem = {
     url?: string;
     className?: string;
 };
+
+export type UserInfoMarkupItem = {
+    type: typeof MarkupItemTypeDict.UserInfo;
+    user_info: 'name' | 'email';
+    content: string;
+    className?: string;
+    children?: [];
+};
+
+export type MarkupItem = BaseMarkupItem | UserInfoMarkupItem;

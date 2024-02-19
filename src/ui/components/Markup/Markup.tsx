@@ -3,13 +3,14 @@ import React from 'react';
 import {Link} from '@gravity-ui/uikit';
 import merge from 'lodash/merge';
 
+import {UserInfo} from './components/UserInfo/UserInfo';
 import {MarkupItemTypeDict} from './constants';
-import {MarkupItem, MarkupItemType} from './types';
+import {MarkupItem, MarkupItemType, UserInfoMarkupItem} from './types';
 import {isNumericCSSValueValid} from './utils';
 
 type TemplateItem = {
     children: (TemplateItem | string)[];
-    element?: string | React.ComponentClass | React.ExoticComponent;
+    element?: string | React.ComponentClass | React.ExoticComponent | React.FC;
     props?: {[key: string]: string | Record<string, unknown>};
 };
 
@@ -101,6 +102,15 @@ const getConfig = (
                 href: markupItem.url || '',
                 target: '_blank',
             });
+            break;
+        }
+        case MarkupItemTypeDict.UserInfo: {
+            const {content: userId, user_info: fieldName} = markupItem as UserInfoMarkupItem;
+            iteratedConfigItem.element = UserInfo;
+            iteratedConfigItem.props = {
+                userId,
+                fieldName,
+            };
             break;
         }
     }
