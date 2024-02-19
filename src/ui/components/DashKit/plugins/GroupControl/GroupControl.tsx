@@ -214,6 +214,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         }
         this.applyLoader = false;
         this.setState({stateParams: params});
+        this.applyLoader = false;
     };
 
     private filterSignificantParams(loadedData?: any) {
