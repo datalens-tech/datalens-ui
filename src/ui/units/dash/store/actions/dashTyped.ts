@@ -12,8 +12,6 @@ import {
     DashSettings,
     DashTab,
     DashTabItem,
-    DashTabItemControlData,
-    DashTabItemControlSourceType,
     DashTabItemType,
     DashTabItemWidget,
     Dataset,
@@ -22,9 +20,6 @@ import {
     Operations,
 } from 'shared';
 import {AppDispatch} from 'ui/store';
-import {validateParamTitleOnlyUnderscore} from 'units/dash/components/ParamsSettings/helpers';
-import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
-import {addOperationForValue} from 'units/dash/modules/helpers';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -43,6 +38,12 @@ import * as actionTypes from '../constants/dashActionTypes';
 import type {DashState} from '../reducers/dashTypedReducer';
 
 import {save} from './base/actions';
+import {
+    getControlDefaultsForField,
+    getControlValidation,
+    getItemDataSource,
+} from './controls/helpers';
+import {ItemDataSource, SelectorDialogValidation, SelectorSourceType} from './controls/types';
 import {closeDialog as closeDashDialog} from './dialogs/actions';
 import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
 
@@ -314,25 +315,6 @@ export const setLastUsedDatasetId = (datasetId: string): SetLastUsedDatasetIdAct
     payload: datasetId,
 });
 
-type ItemDataSource = {
-    chartId?: string;
-    showTitle?: boolean;
-    elementType?: string;
-    defaultValue?: string | string[];
-    datasetId?: string;
-    datasetFieldId?: string;
-    fieldName?: string;
-    fieldType?: DATASET_FIELD_TYPES;
-    datasetFieldType?: DatasetFieldType;
-    acceptableValues?: Array<Record<string, any>>;
-    isRange?: boolean;
-    multiselectable?: boolean;
-    operation?: Operations;
-    showInnerTitle?: boolean;
-    innerTitle?: string;
-    required?: boolean;
-};
-
 type SetItemDataBase = {
     title?: string;
     sourceType?: string;
@@ -355,17 +337,6 @@ export const setItemData = (data: SetItemDataArgs) => ({
 });
 
 export const SET_SELECTOR_DIALOG_ITEM = Symbol('dash/SET_SELECTOR_DIALOG_ITEM');
-
-export const ADD_SELECTOR_TO_GROUP = Symbol('dash/ADD_SELECTOR_TO_GROUP');
-
-export const UPDATE_SELECTORS_GROUP = Symbol('dash/UPDATE_SELECTORS_GROUP');
-
-export const SET_ACTIVE_SELECTOR_INDEX = Symbol('dash/SET_ACTIVE_SELECTOR_INDEX');
-
-export type SelectorSourceType =
-    | DashTabItemControlSourceType.Dataset
-    | DashTabItemControlSourceType.Manual
-    | DashTabItemControlSourceType.External;
 
 export type SelectorElementType = 'select' | 'date' | 'input' | 'checkbox';
 
@@ -400,22 +371,6 @@ export type SelectorDialogState = {
     id: string;
 };
 
-export type SelectorsGroupDialogState = {
-    autoHeight: boolean;
-    buttonApply: boolean;
-    buttonReset: boolean;
-    defaults?: Record<string, string | string[]>;
-    items: SelectorDialogState[];
-    id?: string;
-};
-
-type SelectorDialogValidation = {
-    title?: string;
-    fieldName?: string;
-    datasetFieldId?: string;
-    defaultValue?: string;
-};
-
 export type AcceptableValue = {
     title: string;
     value: string;
@@ -433,178 +388,6 @@ export const setSelectorDialogItem = (payload: SetSelectorDialogItemArgs) => {
 export type SetSelectorDialogItemAction = {
     type: typeof SET_SELECTOR_DIALOG_ITEM;
     payload: SetSelectorDialogItemArgs;
-};
-
-export const addSelectorToGroup = (payload: SetSelectorDialogItemArgs) => {
-    return {
-        type: ADD_SELECTOR_TO_GROUP,
-        payload,
-    };
-};
-
-export type AddSelectorToGroupAction = {
-    type: typeof ADD_SELECTOR_TO_GROUP;
-    payload: SetSelectorDialogItemArgs;
-};
-
-export type SetActiveSelectorIndexAction = {
-    type: typeof SET_ACTIVE_SELECTOR_INDEX;
-    payload: {
-        activeSelectorIndex: number;
-    };
-};
-
-export const setActiveSelectorIndex = (payload: SetActiveSelectorIndexAction['payload']) => {
-    return {
-        type: SET_ACTIVE_SELECTOR_INDEX,
-        payload,
-    };
-};
-
-export type UpdateSelectorsGroupAction = {
-    type: typeof UPDATE_SELECTORS_GROUP;
-    payload: SelectorsGroupDialogState;
-};
-
-export const updateSelectorsGroup = (payload: UpdateSelectorsGroupAction['payload']) => {
-    return {
-        type: UPDATE_SELECTORS_GROUP,
-        payload,
-    };
-};
-
-const getItemDataSource = (selectorDialog: SelectorDialogState): ItemDataSource => {
-    const {
-        sourceType,
-
-        showTitle,
-        showInnerTitle,
-        innerTitle,
-        elementType,
-        multiselectable,
-        isRange,
-        defaultValue,
-
-        datasetId,
-        datasetFieldId,
-        fieldType,
-        datasetFieldType,
-        fieldName,
-        acceptableValues,
-        required,
-
-        chartId,
-        operation,
-    } = selectorDialog;
-
-    if (sourceType === DashTabItemControlSourceType.External) {
-        return {chartId};
-    }
-
-    let source: ItemDataSource = {
-        showTitle,
-        elementType,
-        defaultValue,
-        showInnerTitle,
-        innerTitle,
-        operation,
-        required,
-    };
-
-    if (sourceType === DashTabItemControlSourceType.Dataset) {
-        source = {
-            ...source,
-            datasetId,
-            datasetFieldId,
-            fieldType,
-            datasetFieldType,
-        };
-    }
-
-    if (sourceType === DashTabItemControlSourceType.Manual) {
-        source = {
-            ...source,
-            fieldName,
-            acceptableValues,
-        };
-    }
-
-    if (elementType === ELEMENT_TYPE.DATE) {
-        source = {
-            ...source,
-            isRange,
-            fieldType,
-        };
-    }
-
-    if (elementType === ELEMENT_TYPE.SELECT) {
-        source = {
-            ...source,
-            multiselectable,
-        };
-    }
-
-    return source;
-};
-
-const getControlValidation = (selectorDialog: SelectorDialogState) => {
-    const {title, sourceType, datasetFieldId, fieldName, defaultValue, required} = selectorDialog;
-
-    const validation: SelectorDialogValidation = {};
-
-    if (!title) {
-        validation.title = i18n('dash.control-dialog.edit', 'validation_required');
-    }
-
-    if (sourceType === DashTabItemControlSourceType.Manual && !fieldName) {
-        validation.fieldName = i18n('dash.control-dialog.edit', 'validation_required');
-    }
-
-    if (sourceType === DashTabItemControlSourceType.Dataset && !datasetFieldId) {
-        validation.datasetFieldId = i18n('dash.control-dialog.edit', 'validation_required');
-    }
-
-    if (required && (!defaultValue || !defaultValue?.length)) {
-        validation.defaultValue = i18n('dash.control-dialog.edit', 'validation_required');
-    }
-
-    return validation;
-};
-
-const getControlDefaultsForField = (
-    defaults: Record<string, string | string[]>,
-    selectorDialog: SelectorDialogState,
-) => {
-    const {sourceType, datasetFieldId, fieldName, defaultValue} = selectorDialog;
-
-    let field;
-    switch (sourceType) {
-        case DashTabItemControlSourceType.Manual:
-            field = fieldName;
-            break;
-        case DashTabItemControlSourceType.Dataset:
-            field = datasetFieldId;
-            break;
-        default:
-            break;
-    }
-
-    if (field) {
-        return {
-            ...defaults,
-            [field]: addOperationForValue({
-                operation: selectorDialog.operation,
-                value: defaultValue || '',
-            }),
-        };
-    }
-
-    return Object.keys(defaults).reduce<Record<string, string | string[]>>((params, paramTitle) => {
-        if (validateParamTitleOnlyUnderscore(paramTitle) === null) {
-            params[paramTitle] = defaults[paramTitle];
-        }
-        return params;
-    }, {});
 };
 
 export const applyControl2Dialog = () => {
@@ -638,63 +421,6 @@ export const applyControl2Dialog = () => {
             setItemData({
                 data: itemData.data,
                 type: DashTabItemType.Control,
-                defaults: itemData.defaults,
-            }),
-        );
-
-        dispatch(closeDashDialog());
-    };
-};
-
-export const applyGroupControlDialog = () => {
-    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
-        const selectorGroup = getState().dash.selectorsGroup;
-
-        let defaults: Record<string, string | string[]> = {};
-
-        // check validation for every control
-        for (let i = 0; i < selectorGroup.items.length; i += 1) {
-            const validation = getControlValidation(selectorGroup.items[i]);
-
-            if (!isEmpty(validation)) {
-                dispatch(setActiveSelectorIndex({activeSelectorIndex: i}));
-                dispatch(
-                    setSelectorDialogItem({
-                        validation,
-                    }),
-                );
-                return;
-            }
-
-            defaults = getControlDefaultsForField(defaults, selectorGroup.items[i]);
-        }
-
-        const isSingleControl = selectorGroup.items.length === 1;
-
-        const data = {
-            id: selectorGroup.id,
-            autoHeight: isSingleControl ? false : selectorGroup.autoHeight,
-            buttonApply: isSingleControl ? false : selectorGroup.buttonApply,
-            buttonReset: isSingleControl ? false : selectorGroup.buttonReset,
-            items: selectorGroup.items.map((selector) => {
-                return {
-                    id: selector.id,
-                    title: selector.title,
-                    sourceType: selector.sourceType,
-                    source: getItemDataSource(selector) as DashTabItemControlData['source'],
-                    placementMode: isSingleControl ? 'auto' : selector.placementMode,
-                    width: isSingleControl ? '' : selector.width,
-                };
-            }),
-        };
-
-        const getExtendedItemData = getExtendedItemDataAction();
-        const itemData = dispatch(getExtendedItemData({data, defaults}));
-
-        dispatch(
-            setItemData({
-                data: itemData.data,
-                type: DashTabItemType.GroupControl,
                 defaults: itemData.defaults,
             }),
         );
