@@ -1,6 +1,6 @@
 {
-  "label_control": "Control",
-  "label_graph": "Graph",
+  "label_control": "Selector",
+  "label_graph": "Chart",
   "label_markdown": "Markdown",
   "label_module": "Module",
   "label_table": "Table"
