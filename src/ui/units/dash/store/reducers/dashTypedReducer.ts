@@ -10,8 +10,12 @@ import {Mode} from '../../modules/constants';
 import {DashUpdateStatus} from '../../typings/dash';
 import {
     ADD_SELECTOR_TO_GROUP,
-    CHANGE_NAVIGATION_PATH,
     SET_ACTIVE_SELECTOR_INDEX,
+    UPDATE_SELECTORS_GROUP,
+} from '../actions/controls/actions';
+import {SelectorsGroupDialogState} from '../actions/controls/types';
+import {
+    CHANGE_NAVIGATION_PATH,
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
     SET_DASH_DESCRIPTION,
@@ -35,10 +39,8 @@ import {
     SET_TAB_HASH_STATE,
     SET_WIDGET_CURRENT_TAB,
     SelectorDialogState,
-    SelectorsGroupDialogState,
     TOGGLE_TABLE_OF_CONTENT,
     TabsHashStates,
-    UPDATE_SELECTORS_GROUP,
 } from '../actions/dashTyped';
 import {DashAction} from '../actions/index';
 import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
