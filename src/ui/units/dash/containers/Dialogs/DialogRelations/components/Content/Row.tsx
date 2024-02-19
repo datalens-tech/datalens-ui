@@ -402,23 +402,25 @@ export const Row = ({
     return (
         <div className={b('row')} data-qa={DashCommonQa.RelationsListRow}>
             <div className={b('left')}>
-                {icon}
-                <span className={b('text', {'with-icon': showAliasIcon})} title={title}>
-                    {debugInfo}
-                    {rowTitle}
-                </span>
-                {showAliasIcon && (
-                    <Button
-                        view="outlined"
-                        size="s"
-                        title={i18n('label_add-alias')}
-                        className={b('button-alias')}
-                        onClick={handleAliasCLick}
-                        qa={DashCommonQa.AliasShowBtn}
-                    >
-                        <Icon data={iconAlias} className={b('icon-alias')} />
-                    </Button>
-                )}
+                <div className={b('left-inner')}>
+                    {icon}
+                    <span className={b('text')} title={title}>
+                        {debugInfo}
+                        {rowTitle}
+                    </span>
+                    {showAliasIcon && (
+                        <Button
+                            view="outlined"
+                            size="s"
+                            title={i18n('label_add-alias')}
+                            className={b('button-alias')}
+                            onClick={handleAliasCLick}
+                            qa={DashCommonQa.AliasShowBtn}
+                        >
+                            <Icon data={iconAlias} className={b('icon-alias')} />
+                        </Button>
+                    )}
+                </div>
             </div>
             <div className={b('right')}>
                 {relationType && (

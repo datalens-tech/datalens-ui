@@ -17,11 +17,12 @@
 }
 
 .dialog-relations {
-    width: 600px;
+    min-width: 900px;
+    max-width: 90vw;
 
     &__caption {
         word-break: break-word;
-        max-width: 546px;
+        max-width: 100%;
         position: relative;
     }
 
@@ -71,7 +72,7 @@
 
     &__warn-content {
         padding: 20px 16px;
-        max-width: 500px;
+        max-width: calc(100% - 100px);
     }
 
     &__warn-title {
