@@ -10,6 +10,7 @@ export function getSegmentMap(args: PrepareFunctionArgs): SegmentsMap {
         resultData: {data, order},
         sort,
         segments,
+        idToTitle,
     } = args;
     const segmentField = segments[0];
 
@@ -17,10 +18,12 @@ export function getSegmentMap(args: PrepareFunctionArgs): SegmentsMap {
         return {} as SegmentsMap;
     }
 
+    const segmentFieldTitle = idToTitle[segmentField.guid];
+
     const segmentsList = getSortedSegmentsList({
         sortItem: sort?.[0],
         segmentField,
-        segmentIndexInOrder: findIndexInOrder(order, segmentField, segmentField.title),
+        segmentIndexInOrder: findIndexInOrder(order, segmentField, segmentFieldTitle),
         data,
     });
 

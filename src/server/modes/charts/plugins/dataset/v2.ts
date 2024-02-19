@@ -232,7 +232,7 @@ function processData(
         ChartEditor.setDataSourceInfo(field, {query});
 
         if (dataResult.data_export_forbidden) {
-            ChartEditor.setExtra('dataExportForbidden', true);
+            ChartEditor.setExtra?.('dataExportForbidden', true);
         }
     }
 
