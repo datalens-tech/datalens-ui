@@ -479,7 +479,7 @@ function BaseControlButton({label, theme, onChange}) {
     const size = isMobileView ? MOBILE_SIZE.BUTTON : 's';
 
     const handleClick = () => {
-        setTimeout(() => onChange());
+        setTimeout(onChange);
     };
 
     return (
