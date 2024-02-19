@@ -36,7 +36,7 @@
   "field_auth-method": "Authentication<br></br>method <tooltip></tooltip>",
   "field_cache-ttl-sec": "Cache TTL in seconds",
   "field_click-house-port": "HTTP interface port",
-  "field_clika": "",
+  "field_clika": "Clique",
   "field_cloud-and-folder": "Cloud and folder",
   "field_cluster": "Cluster",
   "field_connection-title": "Connection name",
