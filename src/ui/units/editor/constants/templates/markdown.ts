@@ -15,7 +15,7 @@ export default {
 
 This text is _**bold and italic**_.
 
-[Link](https://docs.charts.yandex-team.ru)
+[Link](https://datalens.tech/)
 
 ***
 
