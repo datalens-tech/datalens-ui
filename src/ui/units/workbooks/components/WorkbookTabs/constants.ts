@@ -1,1 +1,1 @@
-export const TAB_ALL = 'all';
+export const TAB_ALL = '';
