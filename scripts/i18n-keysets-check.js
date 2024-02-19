@@ -1,5 +1,5 @@
 /**
- * Weblate create PR with changed and approved keysets with sorted keys
+ * Weblate can’t create keyset, that is why we need to create new keysets in all languages
  * That's why we need to decrease diff
  */
 
