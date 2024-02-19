@@ -1,6 +1,6 @@
 import {GradientType} from '../../../../../../../../../../shared';
 import {ChartColorsConfig} from '../../../../../js/helpers/colors';
-import {colorizeFlatTableColumn} from '../../backgroundSettings';
+import {colorizeFlatTableColumn} from '../../background-settings';
 
 const getBlueGradientColors = () => ['#0044A3', '#8CCBFF'];
 
