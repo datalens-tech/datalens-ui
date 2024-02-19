@@ -1071,7 +1071,6 @@ class DashboardPage extends BasePage {
         valueTitle: string,
     ) {
         await this.clickSelectWithTitle(title, counter);
-        // await this.waitForSelector(DashboardPage.selectors.chartkitControlSelect);
         return this.page
             .locator(DashboardPage.selectors.chartkitControlSelect)
             .locator(`[data-value] >> text="${valueTitle}"`)
