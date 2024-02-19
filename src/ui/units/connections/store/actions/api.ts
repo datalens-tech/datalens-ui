@@ -162,13 +162,14 @@ const copyTemplate = async (
 ): Promise<{
     entryId?: string;
     error?: DataLensApiError;
+    workbookId?: string;
 }> => {
     try {
-        const {entryId} = await getSdk().us.copyTemplate(
+        const {entryId, workbookId: templateWorkbookId} = await getSdk().us.copyTemplate(
             {connectionId, templateName, workbookId},
             {timeout: TIMEOUT_65_SEC},
         );
-        return {entryId, error: undefined};
+        return {entryId, workbookId: templateWorkbookId, error: undefined};
     } catch (error) {
         logger.logError('Redux actions (conn): copyTemplate failed', error);
         return {entryId: undefined, error};

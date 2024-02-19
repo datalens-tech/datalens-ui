@@ -2,6 +2,7 @@ import {EntryFieldMeta} from './fields';
 
 export interface CopyTemplateResponse {
     entryId: string;
+    workbookId?: string;
 }
 
 export interface CopyTemplateArgs {

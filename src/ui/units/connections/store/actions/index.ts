@@ -249,10 +249,15 @@ export function createConnection(name: string, dirPath?: string) {
         flow([setSubmitLoading, dispatch])({loading: true});
         const {id: connectionId, error: connError} = await api.createConnection(resultForm);
         let templateFolderId: string | undefined;
+        let templateWorkbookId: string | undefined;
         let templateError: DataLensApiError | undefined;
 
         if (innerForm[InnerFieldKey.isAutoCreateDashboard] && schema.templateName && connectionId) {
-            ({entryId: templateFolderId, error: templateError} = await api.copyTemplate(
+            ({
+                entryId: templateFolderId,
+                workbookId: templateWorkbookId,
+                error: templateError,
+            } = await api.copyTemplate(
                 connectionId,
                 schema.templateName,
                 workbookId === '' ? undefined : workbookId,
@@ -265,11 +270,9 @@ export function createConnection(name: string, dirPath?: string) {
         }
 
         if (templateFolderId) {
-            if (workbookId) {
-                history.replace(`/workbooks/${workbookId}`);
-            } else {
-                history.replace(`/navigation/${templateFolderId}`);
-            }
+            history.replace(`/navigation/${templateFolderId}`);
+        } else if (templateWorkbookId) {
+            history.replace(`/workbooks/${templateWorkbookId}`);
         } else if (connectionId) {
             history.replace(`/connections/${connectionId}`);
         }
