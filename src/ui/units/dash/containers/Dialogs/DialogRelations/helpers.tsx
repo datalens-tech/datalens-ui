@@ -132,30 +132,33 @@ export const getDialogRowIcon = (
 const getChangedConnections = ({
     items,
     widgetId,
+    itemId,
     changedId,
     changedType,
 }: {
     items: Config['connections'];
     widgetId: string;
+    itemId?: string;
     changedId: string;
     changedType: string;
 }) => {
+    const currentId = itemId || widgetId;
     const relationFromWidgetToRow = {
-        from: widgetId,
+        from: currentId,
         kind: RELATION_TYPES.ignore as ConfigConnection['kind'],
         to: changedId,
     };
     const relationFromRowToWidget = {
         from: changedId,
         kind: RELATION_TYPES.ignore as ConfigConnection['kind'],
-        to: widgetId,
+        to: currentId,
     };
 
     const connectionsWithoutCurrentLink = items.filter(
         (item) =>
             item.kind === RELATION_TYPES.ignore &&
-            !(changedId === item.from && widgetId === item.to) &&
-            !(changedId === item.to && widgetId === item.from),
+            !(changedId === item.from && currentId === item.to) &&
+            !(changedId === item.to && currentId === item.from),
     );
     let result: Config['connections'] = [];
     switch (changedType) {
@@ -182,12 +185,14 @@ export const getUpdatedRelations = (
     items: Config['connections'],
     widgetId: DashkitMetaDataItem['widgetId'],
     changed: Record<string, RelationType>,
+    itemId?: DashkitMetaDataItem['itemId'],
 ) => {
     let updatedItems: Config['connections'] = [...items];
     for (const [key, type] of Object.entries(changed)) {
         updatedItems = getChangedConnections({
             items: updatedItems,
             widgetId,
+            itemId,
             changedId: key,
             changedType: type,
         });
@@ -197,9 +202,11 @@ export const getUpdatedRelations = (
 
 export const getRelationsForSave = ({
     currentWidgetId,
+    currentItemId,
     changed,
     dashkitData,
 }: {
+    currentItemId?: DashkitMetaDataItem['itemId'];
     currentWidgetId: DashkitMetaDataItem['widgetId'];
     changed: Record<string, RelationType> | undefined;
     dashkitData: DashKit | null;
@@ -210,7 +217,7 @@ export const getRelationsForSave = ({
 
     const {connections} = dashkitData.props.config;
 
-    return getUpdatedRelations(connections, currentWidgetId, changed);
+    return getUpdatedRelations(connections, currentWidgetId, changed, currentItemId);
 };
 
 const appendUniq = (first: string, second: string, alias: Array<string>) => {
@@ -346,6 +353,7 @@ export const getUpdatedPreparedRelations = (props: {
     }
     const connections = (getRelationsForSave({
         currentWidgetId: currentWidgetMeta.widgetId || '',
+        currentItemId: currentWidgetMeta.itemId,
         changed: changedWidgetsData,
         dashkitData,
     }) || []) as ConnectionsData;

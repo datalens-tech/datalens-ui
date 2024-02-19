@@ -162,7 +162,7 @@ export interface DashTabItemControlData {
         | DashTabItemControlExternal['source'];
     placementMode?: string;
     width?: string;
-    index?: number;
+    defaults?: StringParams;
 }
 
 export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
@@ -240,7 +240,6 @@ export interface DashTabItemGroupControl extends DashTabItemBase {
 }
 
 export interface DashTabItemGroupControlData {
-    id: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;

@@ -83,4 +83,10 @@
     &__warn-text {
         margin: 8px 0 4px;
     }
+
+    &__item-select {
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
 }

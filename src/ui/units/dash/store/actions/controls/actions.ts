@@ -80,7 +80,6 @@ export const applyGroupControlDialog = () => {
         const isSingleControl = selectorGroup.items.length === 1;
 
         const data = {
-            id: selectorGroup.id,
             autoHeight: isSingleControl ? false : selectorGroup.autoHeight,
             buttonApply: isSingleControl ? false : selectorGroup.buttonApply,
             buttonReset: isSingleControl ? false : selectorGroup.buttonReset,
@@ -92,6 +91,7 @@ export const applyGroupControlDialog = () => {
                     source: getItemDataSource(selector) as DashTabItemControlData['source'],
                     placementMode: isSingleControl ? 'auto' : selector.placementMode,
                     width: isSingleControl ? '' : selector.width,
+                    defaults: getControlDefaultsForField({}, selector),
                 };
             }),
         };

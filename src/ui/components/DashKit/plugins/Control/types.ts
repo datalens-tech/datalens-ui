@@ -14,7 +14,7 @@ export type GetDistincts = DatalensSdk<{
 }>['bi']['getDistinctsApiV2'];
 
 export type ControlType = 'select' | 'input' | 'datepicker' | 'range-datepicker' | 'checkbox';
-export type LoadStatus = 'pending' | 'success' | 'fail' | 'initial';
+export type LoadStatus = 'pending' | 'success' | 'fail' | 'initial' | 'destroyed';
 
 export type ErrorData = {
     data: {

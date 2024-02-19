@@ -26,6 +26,7 @@ export type DialogAliasesProps = AliasClickHandlerArgs & {
     onClose: NonNullable<AliasBase['onCloseCallback']>;
     changedWidgetsData?: AliasBase['changedWidgetsData'];
     changedWidgetId?: AliasBase['changedWidgetId'];
+    changedItemId?: AliasBase['changedItemId'];
 };
 
 export const DIALOG_ALIASES = Symbol('dash/DIALOG_ALIASES');
@@ -37,6 +38,7 @@ export type OpenDialogAliasesArgs = {
 const b = block('dialog-aliases');
 const i18n = I18n.keyset('component.dialog-aliases.view');
 
+/* eslint-disable complexity */
 const DialogAliases = (props: DialogAliasesProps) => {
     const {
         onClose,
@@ -53,6 +55,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
         forceAddAlias,
         changedWidgetsData,
         changedWidgetId,
+        changedItemId,
         invalidAliases,
         dialogAliases,
     } = props;
@@ -243,6 +246,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
         onClose({
             ...(changedWidgetsData ? {changedWidgetsData} : {}),
             ...(changedWidgetId ? {changedWidgetId} : {}),
+            ...(changedItemId ? {changedItemId} : {}),
             ...(aliases ? {aliases} : {}),
         });
     }, [

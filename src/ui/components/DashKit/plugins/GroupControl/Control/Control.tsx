@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {ConfigItem} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -70,7 +69,6 @@ type ControlProps = {
     ) => void;
     silentLoading: boolean;
     initialParams: ChartInitialParams;
-    defaults: ConfigItem['defaults'];
     getDistincts?: GetDistincts;
     onChange: (params: StringParams, callChangeByClick?: boolean) => void;
     onInitialParamsUpdate: (initialParams: ChartInitialParams) => void;
@@ -86,7 +84,6 @@ export const Control = ({
     initialParams,
     silentLoading,
     onStatusChanged,
-    defaults,
     getDistincts,
     onChange,
     onInitialParamsUpdate,
@@ -120,7 +117,7 @@ export const Control = ({
         newLoadedData: ResponseSuccessControls,
         loadedStatus: LoadStatus,
     ) => {
-        const newInitialParams = {...defaults, ...newLoadedData?.defaultParams};
+        const newInitialParams = {...initialParams.params, ...newLoadedData?.defaultParams};
         const initialParamsChanged = !isEqual(newInitialParams, initialParams.params);
 
         if (initialParamsChanged) {
@@ -131,11 +128,17 @@ export const Control = ({
         const statusResponse = getStatus(loadedStatus);
         if (statusResponse) {
             dispatch(setLoadedData({status: statusResponse, loadedData: newLoadedData}));
-            onStatusChanged(id, statusResponse, {
-                ...newLoadedData,
-                sourceType: data.sourceType,
-                id: data.id,
-            });
+            onStatusChanged(
+                id,
+                statusResponse,
+                newLoadedData
+                    ? {
+                          ...newLoadedData,
+                          sourceType: data.sourceType,
+                          id: data.id,
+                      }
+                    : null,
+            );
         }
     };
 
@@ -221,6 +224,7 @@ export const Control = ({
         return () => {
             clearLoaderTimer(silentLoaderTimer);
             cancelCurrentRequests(cancelSource);
+            onStatusChanged(id, LOAD_STATUS.DESTROYED);
         };
     }, []);
 
@@ -285,6 +289,46 @@ export const Control = ({
         }
     };
 
+    const getTypeProps = (
+        control: ActiveControl,
+        controlData: DashTabItemControlSingle,
+        currentValidationError: string | null,
+    ) => {
+        const {source} = controlData;
+        const {type} = control;
+
+        const typeProps: {
+            timeFormat?: string;
+            placeholder?: string;
+        } = {};
+
+        if (type === 'range-datepicker' || type === 'datepicker') {
+            let fieldType = source?.fieldType || null;
+            if (controlData.sourceType === DashTabItemControlSourceType.Dataset) {
+                const {datasetFieldType} = getDatasetSourceInfo({
+                    data: controlData,
+                    actualLoadedData: loadedData,
+                });
+                fieldType = datasetFieldType;
+            }
+            if (
+                fieldType === DATASET_FIELD_TYPES.DATETIME ||
+                fieldType === DATASET_FIELD_TYPES.GENERICDATETIME
+            ) {
+                typeProps.timeFormat = 'HH:mm:ss';
+            }
+        }
+
+        if (type === 'input') {
+            typeProps.placeholder =
+                Utils.isEnabledFeature(Feature.SelectorRequiredValue) && currentValidationError
+                    ? currentValidationError
+                    : control.placeholder;
+        }
+
+        return typeProps;
+    };
+
     const renderControl = () => {
         if (!loadedData || !loadedData?.uiScheme || !('controls' in loadedData.uiScheme)) {
             return null;
@@ -295,7 +339,8 @@ export const Control = ({
             return null;
         }
 
-        const {param, type} = control;
+        const {type, param} = control;
+
         const controlData = data as unknown as DashTabItemControlSingle;
 
         const {source, placementMode, width, title} = controlData;
@@ -341,39 +386,16 @@ export const Control = ({
             required,
             hasValidationError: Boolean(currentValidationError),
             style,
+            ...getTypeProps(control, controlData, currentValidationError),
         };
 
-        if (type === 'range-datepicker' || type === 'datepicker') {
-            let fieldType = source?.fieldType || null;
-            if (controlData.sourceType === DashTabItemControlSourceType.Dataset) {
-                const {datasetFieldType} = getDatasetSourceInfo({
-                    data: controlData,
-                    actualLoadedData: loadedData,
-                });
-                fieldType = datasetFieldType;
-            }
-            if (
-                fieldType === DATASET_FIELD_TYPES.DATETIME ||
-                fieldType === DATASET_FIELD_TYPES.GENERICDATETIME
-            ) {
-                props.timeFormat = 'HH:mm:ss';
-            }
-        }
-
-        if (type === 'input') {
-            props.placeholder =
-                Utils.isEnabledFeature(Feature.SelectorRequiredValue) && currentValidationError
-                    ? currentValidationError
-                    : control.placeholder;
-        }
-
-        switch (control.type) {
+        switch (type) {
             case CONTROL_TYPE.SELECT:
                 return (
                     <ControlItemSelect
                         id={id}
                         data={data}
-                        defaults={defaults}
+                        defaults={data.defaults || {}}
                         status={status}
                         loadedData={loadedData}
                         loadingItems={loadingItems}
