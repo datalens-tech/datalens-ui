@@ -2,6 +2,8 @@ name: Lint
 
 on:
   pull_request:
+    branches-ignore:
+      - 'weblate-**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
