@@ -151,7 +151,7 @@
   "value_enforce-collate-auto": "Авто",
   "value_enforce-collate-off": "Выкл",
   "value_enforce-collate-on": "Вкл",
-  "value_fill-mode-cloud": "Выбрать в каталоге",
+  "value_fill-mode-cloud": "Выбрать в организации",
   "value_fill-mode-manually": "Указать вручную",
   "value_metrica-counter-input-method-list": "Из списка",
   "value_metrica-counter-input-method-manually": "Вручную",
