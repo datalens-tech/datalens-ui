@@ -1,4 +1,4 @@
-import {Response, expect} from '@playwright/test';
+import {Page, Response, expect} from '@playwright/test';
 
 import {
     ConnectionsDialogQA,
@@ -116,6 +116,7 @@ class DashboardPage extends BasePage {
         selectItemsMobile: '.g-select-list_mobile',
         selectItemTitle: '.g-select-list__option',
         selectItemTitleDisabled: '.g-select-list__option_disabled',
+        chartkitControlSelect: slct('chartkit-control-select-items'),
 
         radioManualControl: DialogControlQa.radioSourceType,
         inputNameControl: 'control-name-input',
@@ -133,10 +134,6 @@ class DashboardPage extends BasePage {
 
         chartResetButton: '.widget-header__filters-controls .yc-button',
         yfmContentWrapper: slct('yfm-wrapper-html'),
-
-        // highcharts
-        highchartsXAxisLines: '.highcharts-xaxis-grid .highcharts-grid-line',
-        highchartsXAxisLabels: '.highcharts-xaxis-labels text',
     };
 
     revisions: Revisions;
@@ -182,6 +179,14 @@ class DashboardPage extends BasePage {
         const makrdownNode = await this.page.waitForSelector('.yfm');
 
         return makrdownNode.innerHTML();
+    }
+
+    async getMarkdownText(gridItemLocator?: Locator) {
+        const yfmLocator = (gridItemLocator || this.page).locator(
+            DashboardPage.selectors.yfmContentWrapper,
+        );
+
+        return yfmLocator.innerText();
     }
 
     async createDashboard({editDash}: {editDash: () => Promise<void>}) {
@@ -1061,6 +1066,18 @@ class DashboardPage extends BasePage {
             .click();
     }
 
+    async setSelectWithTitle(
+        {title, counter}: {title: string; counter?: number},
+        valueTitle: string,
+    ) {
+        await this.clickSelectWithTitle(title, counter);
+        // await this.waitForSelector(DashboardPage.selectors.chartkitControlSelect);
+        return this.page
+            .locator(DashboardPage.selectors.chartkitControlSelect)
+            .locator(`[data-value] >> text="${valueTitle}"`)
+            .click();
+    }
+
     async waitForSomeItemVisible() {
         await this.page.waitForSelector(slct('dashkit-grid-item'));
     }
@@ -1083,10 +1100,24 @@ class DashboardPage extends BasePage {
         await controlSettingsButton.click();
     }
 
-    async getGridItemLocator(hasSelector: string) {
-        return this.page.locator(`.${COMMON_DASH_SELECTORS.DASH_GRID_ITEM}`, {
-            has: this.page.locator(hasSelector),
-        });
+    async getGridItem(
+        filter: {byHeader?: string} & {byEntiryId?: string} & Parameters<Page['locator']>[1],
+    ) {
+        let gridItemFilter: Parameters<Page['locator']>[1];
+
+        if (filter.byHeader) {
+            gridItemFilter = {
+                has: this.page.locator(slct('widget-chart-tab', filter.byHeader)),
+            };
+        } else if (filter.byEntiryId) {
+            gridItemFilter = {
+                has: this.page.locator(slct(`chartkit-body-entry-${filter.byEntiryId}`)),
+            };
+        } else {
+            gridItemFilter = filter;
+        }
+
+        return this.page.locator(`.${COMMON_DASH_SELECTORS.DASH_GRID_ITEM}`, gridItemFilter);
     }
 
     async waitForChartsRender(gridItemLocators: Locator[]) {
@@ -1105,35 +1136,21 @@ class DashboardPage extends BasePage {
         return firstCellLocator.allInnerTexts();
     }
 
-    async fileterTableByText(gridItemLocator: Locator, text: string) {
+    async fileterTableByText(
+        gridItemLocator: Locator,
+        text: string,
+        options?: Parameters<Locator['click']>[0],
+    ) {
         const cellLocator = gridItemLocator.locator('tbody tr td:first-child').getByText(text);
 
         return Promise.all([
-            this.page.waitForResponse((resopnse) => {
-                if (resopnse.url().endsWith(CommonUrls.PartialCreateDashState)) {
-                    return false;
-                }
-
-                if (resopnse.status() !== 200) {
-                    throw new Error(
-                        'Failed to save dash state, server status code: ' + resopnse.status(),
-                    );
-                }
-
-                return true;
-            }),
-            cellLocator.first().click(),
+            this.waitForSuccessfulResponse(CommonUrls.PartialCreateDashState),
+            cellLocator.first().click(options),
         ]);
     }
 
     async resetChartFiltering(gridItemLocator: Locator) {
         return gridItemLocator.locator(DashboardPage.selectors.chartResetButton).click();
-    }
-
-    async getYfmText(gridItemLocator: Locator) {
-        const yfmLocator = gridItemLocator.locator(DashboardPage.selectors.yfmContentWrapper);
-
-        return yfmLocator.innerText();
     }
 }
 
