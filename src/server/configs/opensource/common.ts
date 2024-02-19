@@ -49,7 +49,7 @@ export default {
 
     // CHARTS MODE
 
-    allowBodyConfig: true,
+    allowBodyConfig: false,
 
     chartTemplates: {
         ql: qlChartTemplate,
