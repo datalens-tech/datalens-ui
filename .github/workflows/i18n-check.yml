@@ -20,7 +20,7 @@ on:
 jobs:
     i18n_check:
         runs-on: ubuntu-latest
-        if: github.actor != 'WeblateGravity'
+        if: github.actor != 'WeblateGravity' && github.event.pull_request.draft == false
         steps:
             - uses: actions/checkout@v4
               with:
@@ -34,5 +34,3 @@ jobs:
                   PROJECT: "datalens"
                   MAIN_LANGUAGE: "ru"
                   GITHUB_TOKEN: ${{ secrets.WEBLATE_BOT_GITHUB_TOKEN }}
-
-# TODO remove weblate branch after merge pull request
