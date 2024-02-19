@@ -2,9 +2,17 @@ import type {Request} from '@gravity-ui/expresskit';
 
 import type {ServerI18n} from '../../../i18n/types';
 import type {QlExtendedConfig, StringParams} from '../../../shared';
-import {QLChartType, QL_TYPE, isMonitoringOrPrometheusChart} from '../../../shared';
+import {
+    Feature,
+    QLChartType,
+    QL_TYPE,
+    WizardVisualizationId,
+    isEnabledServerFeature,
+    isMonitoringOrPrometheusChart,
+} from '../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../shared/modules/config/ql';
 import {getTranslationFn} from '../../../shared/modules/language';
+import {registry} from '../../registry';
 
 export default {
     module: 'libs/qlchart/v1',
@@ -68,6 +76,20 @@ export default {
                 } else {
                     return QL_TYPE.GRAPH_QL_NODE;
                 }
+            case WizardVisualizationId.Metric: {
+                const app = registry.getApp();
+
+                const useMarkupMetric = isEnabledServerFeature(
+                    app.nodekit.ctx,
+                    Feature.MarkupMetric,
+                );
+
+                if (useMarkupMetric) {
+                    return QL_TYPE.MARKUP_QL_NODE;
+                } else {
+                    return QL_TYPE.METRIC_QL_NODE;
+                }
+            }
             case 'metric':
                 return QL_TYPE.METRIC_QL_NODE;
             case 'scatter-d3':
