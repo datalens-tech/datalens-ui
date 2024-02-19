@@ -91,6 +91,9 @@ export type SelectorSettings = {
 
 export interface DashboardPageProps extends BasePageProps {}
 
+type LocatorOptionsType = Parameters<Page['locator']>[1];
+type LocatorClickOptionsType = Parameters<Locator['click']>[0];
+
 class DashboardPage extends BasePage {
     static selectors = {
         title: 'dashkit-plugin-title',
@@ -1099,10 +1102,22 @@ class DashboardPage extends BasePage {
         await controlSettingsButton.click();
     }
 
-    async getGridItem(
-        filter: {byHeader?: string} & {byEntiryId?: string} & Parameters<Page['locator']>[1],
-    ) {
-        let gridItemFilter: Parameters<Page['locator']>[1];
+    /**
+     *  Selector for gridItem
+     *
+     * @param filter
+     * filter.byHeader - search by header text in tabs,
+     * if tab is not shown currently in tabs list then filter will fail
+     *
+     * filter.byEntiryId - filters only currently rendered charts entities
+     * if element is not currenyly
+     *
+     * Otherwise default Locator options can be used: `has`, `hasNot`, `hasText`, `hasNotText`
+     *
+     * @return {Locator}
+     */
+    async getGridItem(filter: {byHeader?: string} & {byEntiryId?: string} & LocatorOptionsType) {
+        let gridItemFilter: LocatorOptionsType;
 
         if (filter.byHeader) {
             gridItemFilter = {
@@ -1138,7 +1153,7 @@ class DashboardPage extends BasePage {
     async fileterTableByText(
         gridItemLocator: Locator,
         text: string,
-        options?: Parameters<Locator['click']>[0],
+        options?: LocatorClickOptionsType,
     ) {
         const cellLocator = gridItemLocator.locator('tbody tr td:first-child').getByText(text);
 
