@@ -1,6 +1,7 @@
 export * from './components';
 export * from './connections';
 export * from './chart';
+export * from './editor';
 export * from './datasets';
 export * from './dash';
 export * from './dl-navigation';

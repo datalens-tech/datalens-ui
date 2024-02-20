@@ -21,6 +21,7 @@ export const ControlQA = {
     chartkitControl: 'chartkit-control',
     selectDefaultAcceptable: 'select-default-acceptable',
     acceptableDialogButton: 'acceptable-dialog-button',
+    filtersClear: 'filters-clear',
 };
 
 export const DialogControlQa = {
