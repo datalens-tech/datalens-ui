@@ -39,9 +39,6 @@ const head = [
                 id: 'rand-float',
                 name: 'Diff',
                 type: 'diff_only',
-                diff_formatter: {
-                    precision: 3
-                }
             }
         ]
     },
@@ -51,9 +48,6 @@ const head = [
         type: 'diff',
         precision: 2,
         formatter: {
-            multiplier: 100
-        },
-        diff_formatter: {
             multiplier: 100
         }
     }
