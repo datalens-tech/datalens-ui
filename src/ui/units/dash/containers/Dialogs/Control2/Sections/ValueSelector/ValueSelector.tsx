@@ -51,7 +51,7 @@ const InputValueControl = () => {
             <FieldWrapper error={validation.defaultValue}>
                 <TextInput
                     disabled={isFieldDisabled}
-                    value={defaultValue as string}
+                    value={(defaultValue ?? '') as string}
                     onUpdate={handleUpdate}
                 />
             </FieldWrapper>
@@ -99,7 +99,7 @@ const DateValueControl = () => {
                 <Checkbox
                     qa={DialogControlQa.dateRangeCheckbox}
                     className={b('checkbox-option')}
-                    checked={isRange}
+                    checked={isRange ?? false}
                     disabled={isFieldDisabled}
                     onUpdate={handleIsRangeUpdate}
                     size="l"

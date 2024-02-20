@@ -12,6 +12,7 @@ import {
     DashTabItemControlSourceType,
     Feature,
     StringParams,
+    WorkbookId,
 } from 'shared';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {
@@ -40,7 +41,7 @@ import {
     getStatus,
     isValidRequiredValue,
 } from '../../Control/utils';
-import {cancelCurrentRequests, clearLoaderTimer, getControlWidth} from '../utils';
+import {cancelCurrentRequests, clearLoaderTimer, getControlWidthStyle} from '../utils';
 
 import {getInitialState, reducer} from './store/reducer';
 import {
@@ -71,6 +72,7 @@ type ControlProps = {
     onInitialParamsUpdate: (initialParams: ChartInitialParams) => void;
     needReload: boolean;
     cancelSource: any;
+    workbookId?: WorkbookId;
 };
 
 export const Control = ({
@@ -87,6 +89,7 @@ export const Control = ({
     onInitialParamsUpdate,
     needReload,
     cancelSource,
+    workbookId,
 }: ControlProps) => {
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
     const [
@@ -145,6 +148,7 @@ export const Control = ({
                         },
                     },
                     params: actualParams,
+                    ...(workbookId ? {workbookId} : {}),
                 },
             };
 
@@ -320,7 +324,7 @@ export const Control = ({
         };
 
         const innerLabel = showTitle ? getRequiredLabel({title, required}) : '';
-        const controlWidth = getControlWidth(placementMode, width);
+        const style = getControlWidthStyle(placementMode, width);
 
         const props: Record<string, unknown> = {
             param,
@@ -332,7 +336,7 @@ export const Control = ({
             innerLabel,
             required,
             hasValidationError: Boolean(currentValidationError),
-            width: controlWidth,
+            style,
         };
 
         if (type === 'range-datepicker' || type === 'datepicker') {
@@ -378,7 +382,7 @@ export const Control = ({
                         validateValue={validateValue}
                         getDistincts={getDistincts}
                         classMixin={b('item')}
-                        selectProps={{innerLabel, width: controlWidth}}
+                        selectProps={{innerLabel, style}}
                     />
                 );
             case CONTROL_TYPE.INPUT:
@@ -406,27 +410,26 @@ export const Control = ({
         return null;
     };
 
+    const handleClickRetry = () => {
+        reload();
+    };
+
     switch (status) {
         case LOAD_STATUS.INITIAL:
         case LOAD_STATUS.PENDING:
-            if (!silentLoading || !loadedData || !loadedData.uiScheme) {
+            if (!loadedData || !loadedData.uiScheme) {
                 const {placementMode, width} = data as unknown as DashTabItemControlData;
-                const controlWidth = getControlWidth(placementMode, width);
+                const style = getControlWidthStyle(placementMode, width);
 
                 return (
-                    <div
-                        className={b('item-loader')}
-                        style={{
-                            width: controlWidth,
-                        }}
-                    >
+                    <div className={b('item-loader')} style={style}>
                         <Loader size="s" />
                     </div>
                 );
             }
             break;
         case LOAD_STATUS.FAIL: {
-            return <Error errorData={errorData} onClickRetry={() => reload()} />;
+            return <Error errorData={errorData} onClickRetry={handleClickRetry} />;
         }
     }
 
