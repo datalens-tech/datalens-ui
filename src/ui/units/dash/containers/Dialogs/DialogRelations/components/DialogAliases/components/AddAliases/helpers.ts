@@ -50,19 +50,24 @@ export const isAddingAliasSameDataset = (
         }, {});
     }
 
-    for (const datasetFields of Object.values(datasetsFields)) {
-        let counter = 0;
-        for (let i = 0; i < addedAliases.length; i++) {
-            // no need to check aliases contains of 2 fields (already checked the, earlier)
-            if (addedAliases[i].length < 3) {
-                continue;
-            }
-            for (let j = 0; j < addedAliases[i].length; j++) {
-                if (addedAliases[i][j] in datasetFields) {
-                    counter++;
-                }
-                if (counter > 1) {
-                    return true;
+    const datasetEntries = Object.entries(datasetsFields);
+    for (let i = 0; i < addedAliases.length; i++) {
+        // no need to check aliases contains of 2 fields (already checked the, earlier) with addAlias helper
+        if (addedAliases[i].length < 3) {
+            continue;
+        }
+
+        const datasetCounter: Record<string, boolean> = {};
+
+        for (let j = 0; j < addedAliases[i].length; j++) {
+            const field = addedAliases[i][j];
+            for (const [id, datasetFields] of datasetEntries) {
+                if (field in datasetFields) {
+                    if (datasetCounter[id]) {
+                        return true;
+                    } else {
+                        datasetCounter[id] = true;
+                    }
                 }
             }
         }
