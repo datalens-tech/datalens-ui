@@ -4,6 +4,7 @@ import {
     ServerPlaceholder,
     V4Field,
     isEnabledServerFeature,
+    isVisualizationWithLayers,
 } from '../../../../../../../shared';
 import {registry} from '../../../../../../registry';
 import {
@@ -161,16 +162,27 @@ const buildSources = (args: BuildSourcesArgs): SourceRequests => {
     });
 
     if (isEnabledServerFeature(app.nodekit.ctx, Feature.CustomColorPalettes)) {
-        const colorPaletteId =
-            config.colorsConfig?.palette || config.colorsConfig?.gradientPalette || '';
-
-        if (isCustomColorPaletteId(colorPaletteId)) {
-            requests[`colorPalettes_${colorPaletteId}`] = {
-                method: 'GET',
-                url: `/_us_color_palettes/${colorPaletteId}`,
-                hideInInspector: true,
-            };
+        const colorPalettes = new Set<string>();
+        if (isVisualizationWithLayers(visualization)) {
+            visualization.layers.forEach((layer) => {
+                const colorConfig = layer.commonPlaceholders.colorsConfig;
+                colorPalettes.add(colorConfig?.palette || colorConfig?.gradientPalette || '');
+            });
+        } else {
+            const colorPaletteId =
+                config.colorsConfig?.palette || config.colorsConfig?.gradientPalette || '';
+            colorPalettes.add(colorPaletteId);
         }
+
+        colorPalettes.forEach((colorPaletteId) => {
+            if (isCustomColorPaletteId(colorPaletteId)) {
+                requests[`colorPalettes_${colorPaletteId}`] = {
+                    method: 'GET',
+                    url: `/_us_color_palettes/${colorPaletteId}`,
+                    hideInInspector: true,
+                };
+            }
+        });
 
         visualization.placeholders?.forEach((placeholder) => {
             placeholder.items.forEach((item) => {
