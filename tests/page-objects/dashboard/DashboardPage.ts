@@ -1111,7 +1111,7 @@ class DashboardPage extends BasePage {
      * if tab is not shown currently in tabs list then filter will fail
      *
      * filter.byEntiryId - filters only currently rendered charts entities
-     * if element is not presented in DOM
+     * if element is not presented in DOM selector will fail
      *
      * Otherwise default Locator options can be used: `has`, `hasNot`, `hasText`, `hasNotText`
      *
