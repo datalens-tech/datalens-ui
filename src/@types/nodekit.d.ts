@@ -38,6 +38,7 @@ export interface SharedAppConfig {
         enableTelemetry: boolean;
         flags?: Record<string, boolean>;
         usEndpointPostfix: string;
+        dataFetcherProxiedHeaders?: string[];
     };
     // CHARTS ENGINE -- FINISH
 
