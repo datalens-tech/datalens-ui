@@ -624,10 +624,6 @@ export class DataFetcher {
             headers.referer = req.ctx.utils.redactSensitiveQueryParams(req.headers.referer);
         }
 
-        if (subrequestHeaders['x-chart-id']) {
-            headers['x-chart-id'] = subrequestHeaders['x-chart-id'];
-        }
-
         if (subrequestHeaders[SuperuserHeader.XDlAllowSuperuser]) {
             headers[SuperuserHeader.XDlAllowSuperuser] =
                 subrequestHeaders[SuperuserHeader.XDlAllowSuperuser];
