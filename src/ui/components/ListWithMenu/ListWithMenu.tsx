@@ -63,6 +63,7 @@ export const ListWithMenu = <T extends ItemWithTitle>({
             action: () => onRemoveItem(),
             text: i18n('button_delete'),
             icon: <Icon data={TrashBin} />,
+            className: b('delete-btn'),
         },
     ];
 

@@ -66,7 +66,7 @@ type ControlItemSelectProps = {
     errorData: null | ErrorData;
     validateValue: (args: ValidationErrorData) => boolean | undefined;
     classMixin?: string;
-    selectProps: Pick<SelectControlProps, 'width' | 'innerLabel' | 'label'>;
+    selectProps: Pick<SelectControlProps, 'style' | 'innerLabel' | 'label'>;
 };
 
 const b = block('control-item-select');

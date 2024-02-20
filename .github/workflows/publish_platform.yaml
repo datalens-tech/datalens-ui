@@ -17,6 +17,8 @@ permissions:
 jobs:
   build:
     if: github.event.pull_request.merged == true
+    permissions:
+      contents: write
     name: datalens-ui
     runs-on: ubuntu-latest
     steps:

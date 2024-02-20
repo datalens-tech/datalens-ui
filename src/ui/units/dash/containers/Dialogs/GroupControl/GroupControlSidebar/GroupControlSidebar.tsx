@@ -8,17 +8,17 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
-    selectActiveSelectorIndex,
-    selectSelectorsGroup,
-} from 'units/dash/store/selectors/dashTypedSelectors';
-
-import {
-    SelectorDialogState,
-    SelectorsGroupDialogState,
     addSelectorToGroup,
     setActiveSelectorIndex,
     updateSelectorsGroup,
-} from '../../../../store/actions/dashTyped';
+} from 'ui/units/dash/store/actions/controls/actions';
+import {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
+import {
+    selectActiveSelectorIndex,
+    selectSelectorsGroup,
+} from 'units/dash/store/selectors/controls/selectors';
+
+import {SelectorDialogState} from '../../../../store/actions/dashTyped';
 import {ListState, TabMenu} from '../../Widget/TabMenu/TabMenu';
 import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 
