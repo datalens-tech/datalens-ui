@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {registry} from 'ui/registry';
+import {registry} from '../../../../registry';
 
 interface UserInfoProps {
     className?: string;
