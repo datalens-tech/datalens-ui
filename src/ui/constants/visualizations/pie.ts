@@ -1,4 +1,4 @@
-import {BucketPaint, ChartPie, SquareHashtag} from '@gravity-ui/icons';
+import {BucketPaint, ChartPie, LayoutColumns3} from '@gravity-ui/icons';
 import {Field, GraphShared, Placeholder, PlaceholderId, WizardVisualizationId} from 'shared';
 import {
     prepareFieldToDimensionTransformation,
@@ -37,7 +37,7 @@ export const PIE_VISUALIZATION: GraphShared['visualization'] = {
             id: PlaceholderId.Dimensions,
             type: PlaceholderId.Dimensions,
             title: 'section_categories',
-            iconProps: {data: SquareHashtag},
+            iconProps: {data: LayoutColumns3},
             items: [],
             required: false,
             capacity: 1,
@@ -53,7 +53,6 @@ export const PIE_VISUALIZATION: GraphShared['visualization'] = {
             items: [],
             required: false,
             capacity: 1,
-            transform: prepareFieldToDimensionTransformation,
         },
         {
             allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
