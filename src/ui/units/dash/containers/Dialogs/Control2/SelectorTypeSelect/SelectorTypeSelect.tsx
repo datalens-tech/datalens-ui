@@ -9,11 +9,16 @@ import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
+const i18nConnectionBasedControlFake = (str: string) => str;
 
 const CONTROL_SOURCE_TYPES = [
     {
         title: i18n('value_source-dataset'),
         value: DashTabItemControlSourceType.Dataset,
+    },
+    {
+        title: i18nConnectionBasedControlFake('value_source-dataset'),
+        value: DashTabItemControlSourceType.Connection,
     },
     {
         title: i18n('value_source-manual'),
@@ -43,15 +48,19 @@ const SelectorTypeSelect = ({size = 'l', showExternalType = true}: SelectorTypeS
         );
     }, []);
 
-    let options;
+    const options = React.useMemo(() => {
+        const availabilityMap = {
+            [DashTabItemControlSourceType.Dataset]: true,
+            [DashTabItemControlSourceType.Manual]: true,
+            [DashTabItemControlSourceType.External]:
+                Utils.isEnabledFeature(Feature.ExternalSelectors) && showExternalType,
+            [DashTabItemControlSourceType.Connection]: Utils.isEnabledFeature(
+                Feature.ConnectionBasedControl,
+            ),
+        };
 
-    if (Utils.isEnabledFeature(Feature.ExternalSelectors) && showExternalType) {
-        options = CONTROL_SOURCE_TYPES;
-    } else {
-        options = CONTROL_SOURCE_TYPES.filter(
-            (item) => item.value !== DashTabItemControlSourceType.External,
-        );
-    }
+        return CONTROL_SOURCE_TYPES.filter((t) => availabilityMap[t.value]);
+    }, [showExternalType]);
 
     return (
         <RadioButton
