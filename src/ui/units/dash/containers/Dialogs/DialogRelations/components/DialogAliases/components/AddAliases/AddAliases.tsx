@@ -260,7 +260,7 @@ export const AddAliases = ({
 
                 <Button
                     className={b('button')}
-                    view="normal"
+                    view="action"
                     onClick={handleAddAlias}
                     qa={DashCommonQa.AliasAddBtn}
                 >

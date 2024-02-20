@@ -331,6 +331,9 @@ const DialogRelations = (props: DialogRelationsProps) => {
         if (!dashKitRef.current) {
             return;
         }
+        if (isLoading) {
+            onClose();
+        }
         const newData: {aliases?: DashTab['aliases']; connections?: Config['connections']} = {};
         if (changedWidgets) {
             const connections = getRelationsForSave({
@@ -349,8 +352,8 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
         if (!isEmpty(newData)) {
             dispatch(updateCurrentTabData(newData));
-            onClose();
         }
+        onClose();
     }, [dashKitRef, aliases, dashTabAliases, changedWidgets, currentWidgetMeta, dispatch, onClose]);
 
     const handleAliasesWarnClick = () => setAliasWarnPopupOpen(!aliasWarnPopupOpen);
@@ -436,7 +439,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 onClickButtonApply={handleSaveRelations}
                 onClickButtonCancel={onClose}
                 propsButtonApply={{
-                    disabled: isLoading,
                     qa: DashCommonQa.RelationsApplyBtn,
                 }}
             >
