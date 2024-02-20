@@ -6,3 +6,5 @@ export enum CreateEntryActionType {
     QL = 'ql',
     Wizard = 'wizard',
 }
+
+export const CHUNK_SIZE = 100;

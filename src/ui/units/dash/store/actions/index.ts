@@ -3,12 +3,15 @@ import {DatalensGlobalState} from 'ui';
 
 import {EntryContentAction} from '../../../../store/actions/entryContent';
 
-import {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
 import {
     AddSelectorToGroupAction,
+    SetActiveSelectorIndexAction,
+    UpdateSelectorsGroupAction,
+} from './controls/actions';
+import {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
+import {
     ChangeNavigationPathAction,
     SetAccessDescriptionAction,
-    SetActiveSelectorIndexAction,
     SetDashKeyAction,
     SetDashKitRefAction,
     SetDashUpdateStatusAction,
@@ -32,7 +35,6 @@ import {
     SetViewModeAction,
     SetWidgetCurrentTabAction,
     ToggleTableOfContentAction,
-    UpdateSelectorsGroupAction,
 } from './dashTyped';
 import {CloseDialogAction, OpenDialogAction, OpenItemDialogAction} from './dialogs/actions';
 import {SetNewRelationsAction} from './relations/actions';

@@ -44,4 +44,8 @@
         margin-left: 5px;
         visibility: hidden;
     }
+
+    &__delete-btn {
+        color: var(--g-color-text-danger);
+    }
 }

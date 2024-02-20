@@ -4,6 +4,7 @@
   "label_copy": "copy",
   "label_default-name": "New dataset",
   "label_entry-name-already-exists": "That name is already in use, try another one",
+  "label_error-on-template-apply": "An error occurred while deploying the template",
   "label_placeholder": "Name",
   "section_caption": "Where to copy?",
   "section_caption-dashboard": "Duplicate dashboard",

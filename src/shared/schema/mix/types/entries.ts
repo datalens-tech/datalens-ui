@@ -37,6 +37,13 @@ export interface GetPublicationPreviewArgs {
     workbookId: WorkbookId;
 }
 
+export type MixedSwitchPublicationStatusArgsUnversionedData = {
+    publicAuthor?: {
+        text?: string;
+        link?: string;
+    };
+};
+
 export interface MixedSwitchPublicationStatusArgs {
     entries: {
         entryId: string;
@@ -45,7 +52,7 @@ export interface MixedSwitchPublicationStatusArgs {
     }[];
     mainEntry?: {
         entryId: string;
-        unversionedData: unknown;
+        unversionedData: MixedSwitchPublicationStatusArgsUnversionedData;
     };
     workbookId: WorkbookId;
 }

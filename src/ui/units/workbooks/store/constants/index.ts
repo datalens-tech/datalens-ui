@@ -8,7 +8,13 @@ export const GET_WORKBOOK_ENTRIES_LOADING = Symbol('workbooks/GET_WORKBOOK_ENTRI
 export const GET_WORKBOOK_ENTRIES_SUCCESS = Symbol('workbooks/GET_WORKBOOK_ENTRIES_SUCCESS');
 export const GET_WORKBOOK_ENTRIES_FAILED = Symbol('workbooks/GET_WORKBOOK_ENTRIES_FAILED');
 
+export const GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS = Symbol(
+    'workbooks/GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS',
+);
+
 export const RESET_WORKBOOK_ENTRIES = Symbol('workbooks/RESET_WORKBOOK_ENTRIES');
+
+export const RESET_WORKBOOK_ENTRIES_BY_SCOPE = Symbol('workbooks/RESET_WORKBOOK_ENTRIES_BY_SCOPE');
 
 // Bread crumbs of the workbook
 export const GET_WORKBOOK_BREADCRUMBS_LOADING = Symbol(
@@ -36,6 +42,12 @@ export const DELETE_ENTRY_LOADING = Symbol('workbooks/DELETE_ENTRY_LOADING');
 export const DELETE_ENTRY_SUCCESS = Symbol('workbooks/DELETE_ENTRY_SUCCESS');
 export const DELETE_ENTRY_FAILED = Symbol('workbooks/DELETE_ENTRY_FAILED');
 export const DELETE_ENTRY_INLINE = Symbol('workbooks/DELETE_ENTRY_INLINE');
+
+// Changing favorite an entry
+export const CHANGE_FAVORITE_ENTRY_LOADING = Symbol('workbooks/CHANGE_FAVORITE_ENTRY_LOADING');
+export const CHANGE_FAVORITE_ENTRY_SUCCESS = Symbol('workbooks/CHANGE_FAVORITE_ENTRY_SUCCESS');
+export const CHANGE_FAVORITE_ENTRY_FAILED = Symbol('workbooks/CHANGE_FAVORITE_ENTRY_FAILED');
+export const CHANGE_FAVORITE_ENTRY_INLINE = Symbol('workbooks/CHANGE_FAVORITE_ENTRY_INLINE');
 
 // Resetting the entire state of workbooks to initialState
 export const RESET_WORKBOOK_STATE = Symbol('workbooks/RESET_WORKBOOK_STATE');
