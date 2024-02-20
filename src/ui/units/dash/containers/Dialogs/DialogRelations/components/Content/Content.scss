@@ -15,6 +15,12 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
     margin: 16px 0 0;
     flex-grow: 1;
 
+    &_with-loader {
+        justify-content: center;
+        align-items: center;
+        display: flex;
+    }
+
     &__loader-wrap {
         justify-content: center;
         align-items: center;
@@ -166,7 +172,7 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
 
     &__empty-text {
         text-align: center;
-        margin-top: 96px;
+        margin-top: 26px;
         color: var(--g-color-text-secondary);
     }
 
