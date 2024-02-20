@@ -36,7 +36,7 @@ export const isAddingAliasExists = (currentAliasRow: string[], newAlias: string[
  * @param addedAliases
  * @param datasets
  */
-export const hasSameAliasSameDataset = (
+export const hasAliasWithSameDataset = (
     addedAliases: string[][],
     datasets: DatasetsListData | null,
 ) => {
@@ -57,18 +57,18 @@ export const hasSameAliasSameDataset = (
             continue;
         }
 
-        const datasetCounter: Record<string, string[]> = {};
+        const fieldsByDataset: Record<string, string[]> = {};
         let hasErrors = false;
 
         for (let j = 0; j < addedAliases[i].length; j++) {
             const field = addedAliases[i][j];
             for (const [id, datasetFields] of datasetEntries) {
                 if (field in datasetFields) {
-                    if (datasetCounter[id]) {
-                        datasetCounter[id].push(field);
+                    if (fieldsByDataset[id]) {
+                        fieldsByDataset[id].push(field);
                         hasErrors = true;
                     } else {
-                        datasetCounter[id] = [field];
+                        fieldsByDataset[id] = [field];
                     }
                 }
             }
@@ -77,7 +77,7 @@ export const hasSameAliasSameDataset = (
         if (hasErrors) {
             return {
                 alias: addedAliases[i],
-                errors: Object.values(datasetCounter).reduce((memo, fields) => {
+                errors: Object.values(fieldsByDataset).reduce((memo, fields) => {
                     if (fields.length > 1) {
                         memo.push(...fields);
                     }

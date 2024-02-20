@@ -16,7 +16,7 @@ import {AliasesContext} from '../../../../hooks/useRelations';
 import {DashkitMetaDataItem, DatasetsListData} from '../../../../types';
 import {AliasesInvalidList} from '../AliasesList/AliasesInvalidList';
 
-import {getParamsSelectOptions, hasSameAliasSameDataset, isAddingAliasExists} from './helpers';
+import {getParamsSelectOptions, hasAliasWithSameDataset, isAddingAliasExists} from './helpers';
 
 import './AddAliases.scss';
 
@@ -169,7 +169,7 @@ export const AddAliases = ({
         }
 
         const addedAliases = addAlias(newAlias[0], newAlias[1], [...currentAliases]);
-        const sameDatasetAlias = hasSameAliasSameDataset(addedAliases, datasets);
+        const sameDatasetAlias = hasAliasWithSameDataset(addedAliases, datasets);
 
         if (sameDatasetAlias) {
             setErrorMgs(i18n('label_alias-same-dataset'));
