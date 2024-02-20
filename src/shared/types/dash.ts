@@ -240,6 +240,7 @@ export interface DashTabItemGroupControl extends DashTabItemBase {
 }
 
 export interface DashTabItemGroupControlData {
+    id: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
