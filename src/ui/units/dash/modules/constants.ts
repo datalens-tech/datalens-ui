@@ -51,6 +51,7 @@ export const DASH_WIDGET_TYPES = {
     MARKDOWN: 'markdown',
     TIMESERIES: 'timeseries',
     D3: 'd3',
+    MARKUP: 'markup',
 } as const;
 
 export type WidgetType = typeof DASH_WIDGET_TYPES[keyof typeof DASH_WIDGET_TYPES];
