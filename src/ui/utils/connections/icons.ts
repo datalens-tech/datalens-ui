@@ -22,7 +22,6 @@ import iconGoogleSheets from '../../assets/icons/connections/google-sheets.svg';
 import iconGreenplum from '../../assets/icons/connections/greenplum.svg';
 import iconKonturMarket from '../../assets/icons/connections/kontur-market.svg';
 import iconKpIndex from '../../assets/icons/connections/kp-index.svg';
-import iconMarketCouriers from '../../assets/icons/connections/market-couriers.svg';
 import iconMetrica from '../../assets/icons/connections/metrica.svg';
 import iconMonitoring from '../../assets/icons/connections/monitoring.svg';
 import iconMoySclad from '../../assets/icons/connections/moysklad.svg';
@@ -118,8 +117,6 @@ export const getConnectorIconDataWithoutDefault = (type?: string): IconData | un
             return iconFile;
         case ConnectorType.SmbHeatmaps:
             return iconSmbHeatmaps;
-        case ConnectorType.MarketCouriers:
-            return iconMarketCouriers;
         case ConnectorType.Bigquery:
             return iconBigQuery;
         case ConnectorType.UsageTrackingYT:

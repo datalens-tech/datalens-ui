@@ -408,8 +408,6 @@ function dash(state = initialState, action) {
                     data.source.innerTitle && data.source.showInnerTitle
                         ? `${data.title} ${data.source.innerTitle}`
                         : data.title;
-                // TODO: temp solution to save old title and don't convert old selector to new
-                selectorDialog.tempTitle = data.title;
 
                 // migration forward to group
                 openedDialog = 'group_control';

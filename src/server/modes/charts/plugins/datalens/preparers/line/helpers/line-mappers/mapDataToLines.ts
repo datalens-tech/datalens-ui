@@ -33,7 +33,7 @@ export const mapDataToLines = ({
         segmentName,
     });
 
-    if (!lines[key]) {
+    if (!Object.hasOwnProperty.call(lines, key)) {
         lines[key] = {
             data: {},
             ...seriesOptions,
