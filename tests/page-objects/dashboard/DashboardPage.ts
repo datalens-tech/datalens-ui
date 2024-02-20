@@ -11,6 +11,7 @@ import {
     DialogTabsQA,
     EntryDialogQA,
     SelectQA,
+    YfmQa,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -119,7 +120,7 @@ class DashboardPage extends BasePage {
         selectItemsMobile: '.g-select-list_mobile',
         selectItemTitle: '.g-select-list__option',
         selectItemTitleDisabled: '.g-select-list__option_disabled',
-        chartkitControlSelect: slct('chartkit-control-select-items'),
+        chartkitControlSelect: slct(ControlQA.controlSelectItems),
 
         radioManualControl: DialogControlQa.radioSourceType,
         inputNameControl: 'control-name-input',
@@ -135,8 +136,8 @@ class DashboardPage extends BasePage {
         dashPluginWidgetBody: slct('chart-widget'),
         dashkitGridItem: slct('dashkit-grid-item'),
 
-        chartResetButton: '.widget-header__filters-controls .yc-button',
-        yfmContentWrapper: slct('yfm-wrapper-html'),
+        chartResetButton: slct(ControlQA.filtersClear),
+        yfmContentWrapper: slct(YfmQa.WrapperHtml),
     };
 
     revisions: Revisions;
@@ -1110,13 +1111,13 @@ class DashboardPage extends BasePage {
      * if tab is not shown currently in tabs list then filter will fail
      *
      * filter.byEntiryId - filters only currently rendered charts entities
-     * if element is not currenyly
+     * if element is not presented in DOM
      *
      * Otherwise default Locator options can be used: `has`, `hasNot`, `hasText`, `hasNotText`
      *
      * @return {Locator}
      */
-    async getGridItem(filter: {byHeader?: string} & {byEntiryId?: string} & LocatorOptionsType) {
+    async getGridItem(filter: {byHeader?: string; byEntiryId?: string} & LocatorOptionsType) {
         let gridItemFilter: LocatorOptionsType;
 
         if (filter.byHeader) {
@@ -1150,7 +1151,7 @@ class DashboardPage extends BasePage {
         return firstCellLocator.allInnerTexts();
     }
 
-    async fileterTableByText(
+    async filterTableByText(
         gridItemLocator: Locator,
         text: string,
         options?: LocatorClickOptionsType,
