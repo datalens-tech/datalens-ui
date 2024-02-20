@@ -74,6 +74,7 @@ export enum Feature {
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     SelectorRequiredValue = 'SelectorRequiredValue',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
+    MarkupMetric = 'MarkupMetric',
 }
 
 export type FeatureConfig = Record<string, boolean>;

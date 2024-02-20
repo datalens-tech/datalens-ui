@@ -8,8 +8,10 @@ import {ChartsEngine} from '../..';
 import {
     DL_CONTEXT_HEADER,
     DashWidgetConfig,
+    EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
     Feature,
+    WorkbookId,
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {config as configConstants} from '../../constants';
@@ -54,28 +56,6 @@ const {
     REQUEST_SIZE_LIMIT_EXCEEDED,
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
 } = configConstants;
-
-export const EDITOR_TYPE_CONFIG_TABS = {
-    graph_node: 'statface_graph',
-    graph_wizard_node: 'statface_graph',
-    graph_sql_node: 'statface_graph',
-    graph_ql_node: 'statface_graph',
-    timeseries_ql_node: 'statface_graph',
-    graph_billing_node: 'statface_graph',
-    table_node: 'table',
-    table_wizard_node: 'table',
-    table_sql_node: 'table',
-    table_ql_node: 'table',
-    text_node: 'statface_text',
-    metric_node: 'statface_metric',
-    metric_wizard_node: 'statface_metric',
-    metric_sql_node: 'statface_metric',
-    metric_ql_node: 'statface_metric',
-    map_node: 'statface_map',
-    markup_node: 'config',
-    markdown_node: '',
-    module: '',
-};
 
 const TEN_SECONDS = 10000;
 const ONE_SECOND = 1000;
@@ -148,6 +128,7 @@ export type ProcessorParams = {
     configResolving: number;
     ctx: AppContext;
     cacheToken: string | string[] | null;
+    workbookId?: WorkbookId;
 };
 
 export class Processor {
@@ -169,6 +150,7 @@ export class Processor {
         isEditMode,
         configResolving,
         ctx,
+        workbookId,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -316,6 +298,7 @@ export class Processor {
                         key: configName,
                         headers: {...subrequestHeaders},
                         requestId: req.id,
+                        workbookId,
                     }));
             } catch (e) {
                 return {
@@ -376,6 +359,7 @@ export class Processor {
                     subrequestHeaders,
                     req,
                     ctx,
+                    workbookId,
                 });
             } catch (error) {
                 ctx.logError('DEPS_RESOLVE_ERROR', error);
@@ -607,6 +591,7 @@ export class Processor {
                     iamToken,
                     subrequestHeaders,
                     userId,
+                    workbookId,
                 });
 
                 if (Object.keys(resolvedSources).length) {
@@ -1113,12 +1098,14 @@ export class Processor {
         subrequestHeaders,
         req,
         ctx,
+        workbookId,
     }: {
         chartsEngine: ChartsEngine;
         subrequestHeaders: Record<string, string>;
         config: {data: Record<string, string>; key: string};
         req: Request;
         ctx: AppContext;
+        workbookId?: WorkbookId;
     }): Promise<ResolvedConfig[]> {
         const code = Object.keys(config.data).reduce((acc, tabName) => {
             return `${acc}\n${config.data[tabName]}`;
@@ -1150,6 +1137,7 @@ export class Processor {
                     headers: {...subrequestHeaders},
                     key: path,
                     requestId: req.id,
+                    workbookId, // for the future, when we will resolve deps by entryId
                 })) as unknown as ResolvedConfig;
 
                 resolvedConfig.key = name;

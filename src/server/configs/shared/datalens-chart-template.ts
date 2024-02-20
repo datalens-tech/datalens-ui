@@ -13,7 +13,7 @@ export default {
     identifyParams: () => {
         return {};
     },
-    identifyChartType: (chart: {visualization: {id: string}}) => {
+    identifyChartType: (chart: ExtendedChartsConfig) => {
         let visualizationId;
 
         if (
@@ -31,18 +31,29 @@ export default {
         }
 
         switch (visualizationId) {
-            case 'flatTable':
-            case 'pivotTable': {
+            case WizardVisualizationId.FlatTable:
+            case WizardVisualizationId.PivotTable: {
                 return 'table_wizard_node';
             }
-            case 'geolayer':
+            case WizardVisualizationId.Geolayer:
             case 'geopoint':
             case 'geopolygon':
             case 'heatmap': {
                 return 'ymap_wizard_node';
             }
-            case 'metric': {
-                return 'metric_wizard_node';
+            case WizardVisualizationId.Metric: {
+                const app = registry.getApp();
+
+                const useMarkupMetric = isEnabledServerFeature(
+                    app.nodekit.ctx,
+                    Feature.MarkupMetric,
+                );
+
+                if (useMarkupMetric) {
+                    return 'markup_wizard_node';
+                } else {
+                    return 'metric_wizard_node';
+                }
             }
             default: {
                 return 'graph_wizard_node';

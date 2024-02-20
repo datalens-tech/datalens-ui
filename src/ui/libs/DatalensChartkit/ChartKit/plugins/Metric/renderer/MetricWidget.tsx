@@ -4,6 +4,7 @@ import {CHARTKIT_ERROR_CODE, ChartKitError} from '@gravity-ui/chartkit';
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
 
+import {ChartQa} from '../../../../../../../shared';
 import Performance from '../../../../modules/perfomance';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../helpers/constants';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
@@ -41,7 +42,7 @@ const MetricWidget = React.forwardRef<ChartKitWidgetRef | undefined, MetricWidge
         }
 
         return (
-            <div className={b()}>
+            <div data-qa={ChartQa.Chart} className={b()}>
                 <div className={b('wrapper')}>
                     <div className={CHARTKIT_SCROLLABLE_NODE_CLASSNAME}>
                         {(Array.isArray(data) ? data : [data]).map((metricData, index) => (

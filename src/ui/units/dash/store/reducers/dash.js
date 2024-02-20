@@ -2,7 +2,7 @@ import {DashKit, generateUniqId} from '@gravity-ui/dashkit';
 import {I18n} from 'i18n';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
-import {DashTabItemControlSourceType, Feature} from 'shared';
+import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import Utils from 'utils';
@@ -108,7 +108,7 @@ export function getSelectorDialogFromData(data, defaults) {
         operation: data.source.operation,
         innerTitle: data.source.innerTitle,
         showInnerTitle: data.source.showInnerTitle,
-        id: getRandomKey(),
+        id: data.id || getRandomKey(),
         required: data.source.required,
     };
 }
@@ -137,10 +137,10 @@ export function getSelectorGroupDialogFromData(data, defaults) {
             operation: item.source.operation,
             innerTitle: item.source.innerTitle,
             showInnerTitle: item.source.showInnerTitle,
-            id: getRandomKey(),
+            id: item.id || getRandomKey(),
             required: item.source.required,
-            placementMode: item.placementMode,
-            width: item.width,
+            placementMode: item.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
+            width: item.width || '',
         }))
         .sort((a, b) => a.index - b.index);
 
@@ -150,6 +150,8 @@ export function getSelectorGroupDialogFromData(data, defaults) {
         autoHeight: data.autoHeight,
         buttonApply: data.buttonApply,
         buttonReset: data.buttonReset,
+
+        id: data.id || getRandomKey(),
 
         items,
     };
@@ -173,8 +175,8 @@ function dash(state = initialState, action) {
             };
         case actionTypes.OPEN_DIALOG: {
             const selectorDialog =
-                action.payload?.openedDialog === 'control' ||
-                action.payload?.openedDialog === 'group_control'
+                action.payload?.openedDialog === DashTabItemType.Control ||
+                action.payload?.openedDialog === DashTabItemType.GroupControl
                     ? getSelectorDialogInitialState({
                           lastUsedDatasetId: state.lastUsedDatasetId,
                       })
@@ -182,7 +184,7 @@ function dash(state = initialState, action) {
 
             if (
                 Utils.isEnabledFeature(Feature.GroupControls) &&
-                action.payload?.openedDialog === 'group_control'
+                action.payload?.openedDialog === DashTabItemType.GroupControl
             ) {
                 // TODO: move to getSelectorDialogInitialState after the release of the feature
                 selectorDialog.title = i18n('label_selector-dialog');
@@ -402,6 +404,10 @@ function dash(state = initialState, action) {
                 data.sourceType !== 'external'
             ) {
                 const selectorDialog = getSelectorDialogFromData(data, defaults);
+                selectorDialog.title =
+                    data.source.innerTitle && data.source.showInnerTitle
+                        ? `${data.title} ${data.source.innerTitle}`
+                        : data.title;
 
                 // migration forward to group
                 openedDialog = 'group_control';
@@ -423,12 +429,6 @@ function dash(state = initialState, action) {
 
             return newState;
         }
-
-        case actionTypes.TOGGLE_FULLSCREEN_MODE:
-            return {
-                ...state,
-                isFullscreenMode: !state.isFullscreenMode,
-            };
 
         default:
             return dashTypedReducer(state, action);

@@ -34,7 +34,7 @@ export const dashActions = {
     getEntriesDatasetsFields: createAction<
         GetEntriesDatasetsFieldsResponse,
         GetEntriesDatasetsFieldsArgs
-    >(async (api, {entriesIds, datasetsIds}, {ctx}) => {
+    >(async (api, {entriesIds, datasetsIds, workbookId}, {ctx}) => {
         const typedApi = getTypedApi(api);
         const {entries} = await typedApi.us.getEntries({
             scope: 'widget',
@@ -56,7 +56,7 @@ export const dashActions = {
 
         const allDatasetsIds = [...allDatasetsIdsSet];
         const allDatasetsPromises = allDatasetsIds.map((datasetId) =>
-            fetchDataset({datasetId, typedApi, ctx}),
+            fetchDataset({datasetId, workbookId, typedApi, ctx}),
         );
 
         const allDatasetsFetchedData = await Promise.all([...allDatasetsPromises]);
@@ -102,7 +102,7 @@ export const dashActions = {
     getWidgetsDatasetsFields: createAction<
         GetWidgetsDatasetsFieldsResponse,
         GetWidgetsDatasetsFieldsArgs
-    >(async (api, {entriesIds}, opt) => {
+    >(async (api, {entriesIds, workbookId}, opt) => {
         const {ctx, headers} = opt;
         const typedApi = getTypedApi(api);
 
@@ -126,7 +126,7 @@ export const dashActions = {
 
         const allDatasetsIds = [...allDatasetsIdsSet] as string[];
         const allDatasetsPromises = allDatasetsIds.map((datasetId) =>
-            fetchDatasetFieldsById({datasetId, ctx, headers}),
+            fetchDatasetFieldsById({datasetId, workbookId, ctx, headers}),
         );
 
         const allDatasetsFetchedData = await Promise.all([...allDatasetsPromises]);

@@ -176,7 +176,7 @@ function BaseControlInput({
     label,
     hasValidationError,
 }) {
-    const [text, setText] = React.useState(value);
+    const [text, setText] = React.useState(value || '');
 
     React.useEffect(() => setText(value), [value]);
 
@@ -228,7 +228,7 @@ BaseControlInput.propTypes = {
 function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
     const [text, setText] = React.useState(value);
     const [showModal, setShowModal] = React.useState(false);
-    const onClose = React.useCallback(() => {
+    const handleClose = React.useCallback(() => {
         if (text === value) {
             setShowModal(false);
         } else if (confirm(i18n('chartkit.control.items', 'close-confirm'))) {
@@ -237,15 +237,25 @@ function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
         }
     }, [value, text]);
 
+    const handleClick = () => {
+        setShowModal(true);
+    };
+
     const buttonTheme = theme in legoThemeNameMapper ? legoThemeNameMapper[theme] : theme;
+    const buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : 's';
 
     return (
         <React.Fragment>
-            <Button view={buttonTheme || 'normal'} width="max" onClick={() => setShowModal(true)}>
+            <Button
+                view={buttonTheme || 'normal'}
+                size={buttonSize}
+                width="max"
+                onClick={handleClick}
+            >
                 {label}
             </Button>
             {showModal && (
-                <Dialog open={showModal} onClose={onClose}>
+                <Dialog open={showModal} onClose={handleClose}>
                     <Dialog.Header caption={label} />
                     <Dialog.Body>
                         <TextArea
@@ -270,7 +280,7 @@ function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
                             onChange(text);
                         }}
                         textButtonCancel={i18n('chartkit.control.items', 'close')}
-                        onClickButtonCancel={onClose}
+                        onClickButtonCancel={handleClose}
                     />
                 </Dialog>
             )}
@@ -301,6 +311,9 @@ function BaseControlDatepicker({
     widgetId = '',
     required,
     hasValidationError,
+    innerLabel,
+    labelInside,
+    label,
 }) {
     const date = (value && tryResolveRelativeDate(value)) || value;
 
@@ -328,9 +341,10 @@ function BaseControlDatepicker({
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
-            className={b('datepicker')}
+            className={b('component')}
             hasValidationError={hasValidationError}
             required={required}
+            label={labelInside ? label : innerLabel}
         />
     );
 }
@@ -350,6 +364,8 @@ BaseControlDatepicker.propTypes = {
     widgetId: PropTypes.string,
     required: PropTypes.bool,
     hasValidationError: PropTypes.bool,
+    innerLabel: PropTypes.string,
+    labelInside: PropTypes.bool,
 };
 
 function BaseControlRangeDatepicker({
@@ -363,6 +379,9 @@ function BaseControlRangeDatepicker({
     widgetId = '',
     required,
     hasValidationError,
+    innerLabel,
+    labelInside,
+    label,
 }) {
     let from;
     let to;
@@ -417,10 +436,11 @@ function BaseControlRangeDatepicker({
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
-            className={b('datepicker')}
+            className={b('component')}
             hasValidationError={hasValidationError}
             required={required}
             fillPartialInterval={true}
+            label={labelInside ? label : innerLabel}
         />
     );
 }
@@ -449,6 +469,8 @@ BaseControlRangeDatepicker.propTypes = {
     widgetId: PropTypes.string,
     required: PropTypes.bool,
     hasValidationError: PropTypes.bool,
+    innerLabel: PropTypes.string,
+    labelInside: PropTypes.bool,
 };
 
 function BaseControlButton({label, theme, onChange}) {
@@ -456,13 +478,17 @@ function BaseControlButton({label, theme, onChange}) {
 
     const size = isMobileView ? MOBILE_SIZE.BUTTON : 's';
 
+    const handleClick = () => {
+        setTimeout(onChange);
+    };
+
     return (
         <Button
             view={buttonTheme || 'normal'}
             size={size}
             width="max"
             // Need setTimeout for common microtask queue: firstly fire onBlur (from Input), then onClick (from Button)
-            onClick={() => setTimeout(() => onChange())}
+            onClick={handleClick}
         >
             {label || i18n('chartkit.control.items', 'apply')}
         </Button>

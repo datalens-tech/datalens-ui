@@ -36,7 +36,7 @@ export const useSelectRenderFilter = <T,>({
     multiple,
     disableUIKitFilterAlgorithm,
     onFilterChange,
-    hasClear,
+    hasClear = true,
 }: UseSelectRenderFilter<T>) => {
     const [viewMode, setViewMode] = React.useState(VIEW_MODES.ALL);
     const prev = React.useRef<{selectedModeOptions?: typeof options}>({});

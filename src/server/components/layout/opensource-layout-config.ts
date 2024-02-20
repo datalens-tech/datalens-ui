@@ -30,11 +30,13 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
 
     const cookie = req.cookies[USER_SETTINGS_KEY];
     let lang = Language.En;
+    let theme;
     try {
         const preparedCookie = JSON.parse(cookie);
         lang = preparedCookie.language;
+        theme = preparedCookie.theme;
     } catch {
-        console.warn('no language in cookie');
+        console.warn('no userSettings in cookie');
     }
 
     const isAllowed = allowLanguages.includes(lang || '');
@@ -83,7 +85,9 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
                 rel: 'stylesheet',
             },
         ],
-        bodyContent: {},
+        bodyContent: {
+            theme,
+        },
         pluginsOptions: {
             layout: {name: appLayoutSettings.bundleName},
         },

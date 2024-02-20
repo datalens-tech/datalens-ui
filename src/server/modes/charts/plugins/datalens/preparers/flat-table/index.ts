@@ -37,7 +37,7 @@ import {PrepareFunctionArgs} from '../types';
 import {
     getBackgroundColorsMapByContinuousColumn,
     getFlatTableBackgroundStyles,
-} from './helpers/backgroundSettings';
+} from './helpers/background-settings';
 import {getFooter} from './helpers/footer';
 import {getColumnValuesByColumnWithBarSettings} from './helpers/misc';
 
@@ -276,7 +276,7 @@ function prepareFlatTable({
                 if (canUseFieldForFiltering(item)) {
                     if (isDateField(item)) {
                         const actionParams = {};
-                        addActionParamValue({}, item, value);
+                        addActionParamValue(actionParams, item, value);
 
                         cell.custom = {actionParams};
                     }

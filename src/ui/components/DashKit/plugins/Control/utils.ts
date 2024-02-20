@@ -1,8 +1,9 @@
-import {ConfigItem} from '@gravity-ui/dashkit';
 import {I18n} from 'i18n';
 import {
+    DATASET_FIELD_TYPES,
+    DATASET_IGNORED_DATA_TYPES,
     DashTabItemControlDataset,
-    DashTabItemControlManual,
+    DashTabItemControlSingle,
     DatasetFieldType,
     Feature,
 } from 'shared';
@@ -46,13 +47,9 @@ export const getRequiredLabel = ({title, required}: {title: string; required?: b
     return Utils.isEnabledFeature(Feature.SelectorRequiredValue) && required ? `${title}*` : title;
 };
 
-export const getLabels = ({
-    controlData,
-}: {
-    controlData: DashTabItemControlDataset | DashTabItemControlManual;
-}) => {
-    const title = controlData.title;
-    const {showTitle, showInnerTitle, innerTitle, required} = controlData.source;
+export const getLabels = (data: DashTabItemControlSingle) => {
+    const title = data.title;
+    const {showTitle, showInnerTitle, innerTitle, required} = data.source;
 
     const label = showTitle ? getRequiredLabel({title, required}) : '';
     let innerLabel = '';
@@ -70,10 +67,10 @@ export const getDatasetSourceInfo = ({
     actualLoadedData,
 }: {
     currentLoadedData?: ResponseSuccessControls;
-    data: ConfigItem['data'];
+    data: DashTabItemControlDataset;
     actualLoadedData: null | ResponseSuccessControls;
 }) => {
-    const {datasetFieldId, datasetId} = (data as unknown as DashTabItemControlDataset).source;
+    const {datasetFieldId, datasetId} = data.source;
     let datasetFieldType = null;
 
     const loadedData = currentLoadedData || (actualLoadedData as unknown as ChartsData);
@@ -107,6 +104,41 @@ export const getDatasetSourceInfo = ({
     }, {} as Record<string, {guid: string; fieldType: DatasetFieldType}>);
 
     return {datasetId, datasetFieldId, datasetFieldType, datasetFields, datasetFieldsMap};
+};
+
+export const checkDatasetFieldType = ({
+    currentLoadedData,
+    datasetData,
+    actualLoadedData,
+    onError,
+    onSucces,
+}: {
+    currentLoadedData: ResponseSuccessControls;
+    datasetData: DashTabItemControlDataset;
+    actualLoadedData: ResponseSuccessControls | null;
+    onError: (errorData: ErrorData, status: LoadStatus) => void;
+    onSucces: (loadedData: ResponseSuccessControls, status: LoadStatus) => void;
+}) => {
+    const {datasetFieldType} = getDatasetSourceInfo({
+        currentLoadedData,
+        data: datasetData,
+        actualLoadedData,
+    });
+
+    if (
+        datasetFieldType &&
+        DATASET_IGNORED_DATA_TYPES.includes(datasetFieldType as DATASET_FIELD_TYPES)
+    ) {
+        const datasetErrorData = {
+            data: {
+                title: i18nError('label_field-error-title'),
+                message: i18nError('label_field-error-text'),
+            },
+        };
+        onError(datasetErrorData, LOAD_STATUS.FAIL);
+    } else {
+        onSucces(currentLoadedData, LOAD_STATUS.SUCCESS);
+    }
 };
 
 export const getErrorText = (data: ErrorData['data']) => {

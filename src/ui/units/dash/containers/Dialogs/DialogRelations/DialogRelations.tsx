@@ -15,9 +15,12 @@ import {selectDebugMode} from 'store/selectors/user';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
 import Utils from 'ui/utils';
 
-import {updateCurrentTabData} from '../../../store/actions/dash';
+import {updateCurrentTabData} from '../../../store/actions/dashTyped';
 import {openDialogAliases} from '../../../store/actions/relations/actions';
-import {selectCurrentTabAliases} from '../../../store/selectors/dashTypedSelectors';
+import {
+    selectCurrentTabAliases,
+    selectDashWorkbookId,
+} from '../../../store/selectors/dashTypedSelectors';
 
 import {Content} from './components/Content/Content';
 import {AliasesInvalidList} from './components/DialogAliases/components/AliasesList/AliasesInvalidList';
@@ -63,6 +66,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
     const dashTabAliases = useSelector(selectCurrentTabAliases);
+    const workbookId = useSelector(selectDashWorkbookId);
 
     const aliasWarnButtonRef = React.useRef<HTMLElement | null>(null);
 
@@ -78,6 +82,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             dashKitRef,
             widget,
             dialogAliases: aliases,
+            workbookId,
         });
 
     const [shownInvalidAliases, setShownInvalidAliases] = React.useState<string[] | null>(null);
@@ -239,7 +244,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
      */
     const handleRelationTypeChange = React.useCallback(
         (changedData: RelationTypeChangeProps) => {
-            const {type, widgetId, ...rest} = changedData;
+            const {type, widgetId, forceAddAlias, ...rest} = changedData;
 
             const newChanged = {...changedWidgets};
             const currentRelations = preparedRelations.find(
@@ -248,17 +253,27 @@ const DialogRelations = (props: DialogRelationsProps) => {
             const currentRelationType = currentRelations?.type;
             if (currentRelationType === type) {
                 if (newChanged[widgetId]) {
+                    setChangedWidgets(newChanged);
                     delete newChanged[widgetId];
                 }
             } else {
                 newChanged[widgetId] = type;
             }
+            const changeFromUnknown = currentRelationType === RELATION_TYPES.unknown;
 
-            if (currentRelationType === RELATION_TYPES.ignore && type !== RELATION_TYPES.unknown) {
+            const showAddAliasForm =
+                type !== RELATION_TYPES.ignore &&
+                ((changeFromUnknown && forceAddAlias) ||
+                    (!changeFromUnknown &&
+                        currentRelationType === RELATION_TYPES.ignore &&
+                        type !== RELATION_TYPES.unknown) ||
+                    forceAddAlias);
+
+            if (showAddAliasForm) {
                 if (!isEmpty(newChanged[widgetId])) {
                     const hasRelationBy = hasConnectionsBy(currentRelations);
 
-                    if (hasRelationBy) {
+                    if (hasRelationBy && !forceAddAlias) {
                         setChangedWidgets(newChanged);
                     } else {
                         // if there is no native relation then open aliases popup
@@ -340,9 +355,10 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
     const handleAliasesWarnClick = () => setAliasWarnPopupOpen(!aliasWarnPopupOpen);
 
+    // todo add chart name (need to fetch getEntryMeta for title displaying cherteditor widgets)
     const label =
         currentWidgetMeta?.label && currentWidgetMeta?.title !== currentWidgetMeta?.label
-            ? `${currentWidgetMeta?.label} — `
+            ? `${currentWidgetMeta?.label} ${currentWidgetMeta?.title ? ' — ' : ''}`
             : '';
     const titleName = isLoading ? '' : `: ${label}${currentWidgetMeta?.title}`;
     const title = (

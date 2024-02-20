@@ -5,7 +5,7 @@ import {AppContext, AppContextParams} from '@gravity-ui/nodekit';
 
 import {registry} from '../../../../server/registry';
 import {DatalensGatewaySchemas} from '../../../../server/types/gateway';
-import {DatasetField} from '../../../types';
+import {DatasetField, WorkbookId} from '../../../types';
 import {GetDataSetFieldsByIdResponse} from '../../bi/types';
 import {simpleSchema} from '../../simple-schema';
 import {GetEntryResponse} from '../../us/types/entries';
@@ -14,16 +14,19 @@ export type DatasetDictResponse = {datasetId: string; data: GetEntryResponse | n
 
 export const fetchDataset = async ({
     datasetId,
+    workbookId,
     typedApi,
     ctx,
 }: {
     datasetId: string;
+    workbookId: WorkbookId;
     typedApi: ContextApiWithRoot<{root: typeof simpleSchema}>;
     ctx: AppContext;
 }): Promise<DatasetDictResponse> => {
     try {
         const data: GetEntryResponse = await typedApi.us.getEntry({
             entryId: datasetId,
+            workbookId,
         });
 
         return {
@@ -111,10 +114,12 @@ export const prepareWidgetDatasetData = (args: {
 
 export const fetchDatasetFieldsById = async ({
     datasetId,
+    workbookId,
     ctx,
     headers,
 }: {
     datasetId: string;
+    workbookId: WorkbookId;
     ctx: AppContext;
     headers: IncomingHttpHeaders;
 }): Promise<DatasetFieldsDictResponse> => {
@@ -131,6 +136,7 @@ export const fetchDatasetFieldsById = async ({
             authArgs: {iamToken},
             args: {
                 dataSetId: datasetId,
+                workbookId,
             },
         });
 

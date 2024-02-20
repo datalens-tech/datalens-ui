@@ -38,7 +38,7 @@ export const MultiselectableCheckbox = () => {
             <Checkbox
                 className={b('checkbox-option')}
                 disabled={isFieldDisabled}
-                checked={multiselectable}
+                checked={multiselectable ?? false}
                 onUpdate={handleUpdate}
                 size="l"
             />

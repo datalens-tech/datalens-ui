@@ -30,7 +30,7 @@ export const runController = (
 
         const hrStart = process.hrtime();
 
-        const {id, expectedType = null, config} = req.body;
+        const {id, workbookId, expectedType = null, config} = req.body;
 
         let {key, params} = req.body;
 
@@ -82,6 +82,7 @@ export const runController = (
                 unreleased: useUnreleasedConfig,
                 key,
                 id,
+                workbookId,
                 embedToken,
                 headers: {
                     ...res.locals.subrequestHeaders,
@@ -202,6 +203,7 @@ export const runController = (
                     res,
                     config,
                     configResolving,
+                    workbookId,
                 });
             })
             .catch((error) => {

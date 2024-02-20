@@ -1,3 +1,5 @@
+import {CSSProperties} from 'react';
+
 import type {StringParams} from '@gravity-ui/dashkit';
 import type {schema} from 'shared';
 import type {ServerFilter} from 'shared/types/config/wizard';
@@ -12,7 +14,7 @@ export type GetDistincts = DatalensSdk<{
 }>['bi']['getDistinctsApiV2'];
 
 export type ControlType = 'select' | 'input' | 'datepicker' | 'range-datepicker' | 'checkbox';
-export type LoadStatus = 'pending' | 'success' | 'fail';
+export type LoadStatus = 'pending' | 'success' | 'fail' | 'initial';
 
 export type ErrorData = {
     data: {
@@ -72,8 +74,8 @@ export interface PluginControlState {
 export interface SelectControlProps {
     widgetId: string;
     content: any;
-    editMode: boolean;
-    label: string;
+    editMode?: boolean;
+    label?: string;
     innerLabel: string;
     param: string;
     multiselect: boolean;
@@ -102,6 +104,7 @@ export interface SelectControlProps {
     placeholder: string | undefined;
     required?: boolean;
     hasValidationError: boolean;
+    style?: CSSProperties;
 }
 
 export type ChartControlRef =

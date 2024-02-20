@@ -149,10 +149,11 @@ export interface DashTabItemWidgetTab {
 export interface DashTabItemControl extends DashTabItemBase {
     type: DashTabItemType.Control;
     data: DashTabItemControlData;
-    defaults: Params;
+    defaults: StringParams;
 }
 
 export interface DashTabItemControlData {
+    id: string;
     title: string;
     sourceType: DashTabItemControlSourceType;
     source:
@@ -163,6 +164,8 @@ export interface DashTabItemControlData {
     width?: string;
     index?: number;
 }
+
+export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
 
 export interface DashTabItemControlDataset extends DashTabItemControlData {
     sourceType: DashTabItemControlSourceType.Dataset;
@@ -237,10 +240,11 @@ export interface DashTabItemGroupControl extends DashTabItemBase {
 }
 
 export interface DashTabItemGroupControlData {
+    id: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
-    items: Record<string, DashTabItemControlData>;
+    items: DashTabItemControlSingle[];
 }
 
 export interface DashTabLayout {

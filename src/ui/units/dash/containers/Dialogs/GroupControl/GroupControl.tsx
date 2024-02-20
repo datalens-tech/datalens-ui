@@ -3,10 +3,10 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
-import {applyGroupControlDialog} from 'units/dash/store/actions/dashTyped';
+import {applyGroupControlDialog} from 'units/dash/store/actions/controls/actions';
 
 import TwoColumnDialog from '../../../components/TwoColumnDialog/TwoColumnDialog';
-import {closeDialog} from '../../../store/actions/dash';
+import {closeDialog} from '../../../store/actions/dialogs/actions';
 
 import {GroupControlBody} from './GroupControlBody/GroupControlBody';
 import {GroupControlFooter} from './GroupControlFooter/GroupControlFooter';

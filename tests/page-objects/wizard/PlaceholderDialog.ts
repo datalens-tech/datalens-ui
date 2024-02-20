@@ -66,8 +66,9 @@ export default class PlaceholderDialog {
         );
     }
 
-    async toggleRadioButton(radioButton: RadioButtons, value: RadioButtonsValues) {
-        await this.page.click(`${slct(radioButton)} [value="${value}"]`);
+    async toggleRadioButton(radioButton: string, value: string) {
+        const radioGroupLocator = this.page.locator(slct(radioButton));
+        await radioGroupLocator.locator(`[value="${value}"]`).click();
     }
 
     async getDialogTooltip() {
