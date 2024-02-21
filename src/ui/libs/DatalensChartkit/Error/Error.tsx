@@ -204,9 +204,11 @@ const ChartKitError: React.FC<any> = (props) => {
                 const errorCode = source.code || source.status;
 
                 if (
-                    [ErrorCode.UsAccessDenied, ErrorCode.ReferencedEntryAccessDenied].includes(
-                        errorCode,
-                    ) &&
+                    [
+                        ErrorCode.UsAccessDenied,
+                        ErrorCode.ReferencedEntryAccessDenied,
+                        ErrorCode.WorkbookIsolationInterruptionDenied,
+                    ].includes(errorCode) &&
                     source.details &&
                     source.details.scope
                 ) {
@@ -214,7 +216,9 @@ const ChartKitError: React.FC<any> = (props) => {
 
                     if (scope === 'dataset' || scope === 'connection') {
                         const endpoint = getEndpointForScope(scope);
-                        const detailKey = `${errorCode}_${scope.toUpperCase()}`;
+                        const detailKey = `${
+                            ErrorCode.WorkbookIsolationInterruptionDenied
+                        }_${scope.toUpperCase()}`;
 
                         const text = i18n('component.chartkit-error.codes', detailKey);
                         const href = `${endpoint}/${source.details.entry_id}`;
