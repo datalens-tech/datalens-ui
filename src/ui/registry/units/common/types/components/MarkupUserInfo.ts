@@ -1,6 +1,6 @@
-import {UserInfoMarkupItem} from '../../../../../components/Markup/types';
+import {MarkupItem} from '../../../../../components/Markup/types';
 
 export type MarkupUserInfoProps = {
     userId: string;
-    content: UserInfoMarkupItem['user_info'];
+    content: MarkupItem['user_info'];
 };

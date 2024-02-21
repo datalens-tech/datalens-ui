@@ -5,7 +5,7 @@ import merge from 'lodash/merge';
 
 import {UserInfo} from './components/UserInfo/UserInfo';
 import {MarkupItemTypeDict} from './constants';
-import {MarkupItem, MarkupItemType, UserInfoMarkupItem} from './types';
+import {MarkupItem, MarkupItemType} from './types';
 import {isNumericCSSValueValid} from './utils';
 
 type TemplateItem = {
@@ -105,11 +105,11 @@ const getConfig = (
             break;
         }
         case MarkupItemTypeDict.UserInfo: {
-            const {content: userId, user_info: fieldName} = markupItem as UserInfoMarkupItem;
+            const {content: userId, user_info: fieldName} = markupItem;
             iteratedConfigItem.element = UserInfo;
             iteratedConfigItem.props = {
-                userId,
-                fieldName,
+                userId: String(userId),
+                fieldName: String(fieldName),
             };
             break;
         }
