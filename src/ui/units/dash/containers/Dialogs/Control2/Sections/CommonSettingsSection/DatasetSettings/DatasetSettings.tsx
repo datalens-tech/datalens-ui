@@ -39,7 +39,10 @@ const DatasetSettings = ({isSectionHidden}: DatasetSettingsProps) => {
                 sourceType === DashTabItemControlSourceType.Dataset &&
                 fieldType !== DATASET_FIELD_TYPES.BOOLEAN,
         };
-        return getElementOptions().map((v) => ({...v, disabled: disabledOptions[v.value]}));
+        return getElementOptions().map((option) => ({
+            ...option,
+            disabled: disabledOptions[option.value],
+        }));
     }, [sourceType, fieldType, controlType, datasetFieldType]);
 
     return (

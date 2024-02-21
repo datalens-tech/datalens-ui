@@ -59,7 +59,7 @@ const SelectorTypeSelect = ({size = 'l', showExternalType = true}: SelectorTypeS
             ),
         };
 
-        return CONTROL_SOURCE_TYPES.filter((t) => availabilityMap[t.value]);
+        return CONTROL_SOURCE_TYPES.filter(({value}) => availabilityMap[value]);
     }, [showExternalType]);
 
     return (

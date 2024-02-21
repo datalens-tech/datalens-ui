@@ -15,7 +15,7 @@ export const ConnectionSettings: React.FC = () => {
             [ELEMENT_TYPE.SELECT]: true,
             [ELEMENT_TYPE.INPUT]: true,
         };
-        return getElementOptions().filter((v) => allowedOptions[v.value]);
+        return getElementOptions().filter(({value}) => allowedOptions[value]);
     }, []);
 
     return (
