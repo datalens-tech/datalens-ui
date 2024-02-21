@@ -1,11 +1,11 @@
 import React from 'react';
 
 import {registry} from '../../../../registry';
+import type {UserInfoMarkupItem} from '../../types';
 
 interface UserInfoProps {
-    className?: string;
     userId?: string;
-    fieldName?: 'name' | 'email';
+    fieldName?: UserInfoMarkupItem['user_info'];
 }
 
 export const UserInfo: React.FC<UserInfoProps> = (props) => {
