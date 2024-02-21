@@ -5,6 +5,7 @@ import {I18n} from 'i18n';
 import {SectionWrapper} from '../../../../../../../../components/SectionWrapper/SectionWrapper';
 import {ELEMENT_TYPE} from '../../../../Control/constants';
 import {ValueSelector} from '../../ValueSelector/ValueSelector';
+import {ConnectionSelector} from '../ConnectionSelector/ConnectionSelector';
 import {InputTypeSelector} from '../InputTypeSelector/InputTypeSelector';
 import {getElementOptions} from '../helpers/input-type-select';
 
@@ -20,6 +21,7 @@ export const ConnectionSettings: React.FC = () => {
 
     return (
         <SectionWrapper title={i18n('label_common-settings')}>
+            <ConnectionSelector />
             <InputTypeSelector options={options} />
             <ValueSelector />
         </SectionWrapper>

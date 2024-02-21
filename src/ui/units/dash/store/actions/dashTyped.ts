@@ -352,6 +352,7 @@ export type SelectorDialogState = {
     defaultValue?: string | string[];
     dataset?: Dataset;
     datasetId?: string;
+    connectionId?: string;
     datasetFieldId?: string;
     fieldName?: string;
     acceptableValues?: AcceptableValue[];
