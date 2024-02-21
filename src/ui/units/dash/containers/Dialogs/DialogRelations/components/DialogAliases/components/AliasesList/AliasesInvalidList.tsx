@@ -15,8 +15,8 @@ type AliasesInvalidListProps = {
     aliases: string[][];
     invalidAliases: string[] | null;
     datasets: DatasetsListData | null;
-    onClose: () => void;
-    onClear: () => void;
+    onClose?: () => void;
+    onClear?: () => void;
 };
 
 type AliasesInvalidListItemProps = {
@@ -69,10 +69,13 @@ export const AliasesInvalidList = (props: AliasesInvalidListProps) => {
         return Boolean(itemsRow.filter((item) => invalidAliases?.includes(item)).length);
     });
 
-    const handleOnClear = () => {
-        onClear();
-        onClose();
-    };
+    const showControls = Boolean(onClose) && Boolean(onClear);
+    const handleOnClear = React.useCallback(() => {
+        if (onClose && onClear) {
+            onClear();
+            onClose();
+        }
+    }, [onClear, onClose]);
 
     return (
         <div className={b('invalid-list')}>
@@ -85,24 +88,26 @@ export const AliasesInvalidList = (props: AliasesInvalidListProps) => {
                 />
             ))}
 
-            <div className={b('controls')}>
-                <Button
-                    className={b('alias-clear-button')}
-                    view="flat"
-                    onClick={onClose}
-                    title={i18n('button_cancel')}
-                >
-                    {i18n('button_cancel')}
-                </Button>
-                <Button
-                    className={b('alias-clear-button')}
-                    view="outlined"
-                    onClick={handleOnClear}
-                    title={i18n('button_clear-alias')}
-                >
-                    {i18n('button_clear-alias')}
-                </Button>
-            </div>
+            {showControls ? (
+                <div className={b('controls')}>
+                    <Button
+                        className={b('alias-clear-button')}
+                        view="flat"
+                        onClick={onClose}
+                        title={i18n('button_cancel')}
+                    >
+                        {i18n('button_cancel')}
+                    </Button>
+                    <Button
+                        className={b('alias-clear-button')}
+                        view="outlined"
+                        onClick={handleOnClear}
+                        title={i18n('button_clear-alias')}
+                    >
+                        {i18n('button_clear-alias')}
+                    </Button>
+                </div>
+            ) : null}
         </div>
     );
 };

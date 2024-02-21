@@ -107,6 +107,10 @@ $fullscreenZIndex: 999;
         padding: 0 var(--dl-dk-metric-desc-padding) var(--dl-dk-metric-desc-padding);
     }
 
+    &__body_markup + &__description {
+        padding: 0 var(--dl-dk-metric-desc-padding) var(--dl-dk-metric-desc-padding);
+    }
+
     &__body_ymap + &__description {
         padding: 0 var(--dl-dk-map-desc-padding) var(--dl-dk-map-desc-padding);
     }
@@ -145,6 +149,14 @@ $fullscreenZIndex: 999;
     }
 
     #{$class}__body_metric2 {
+        padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
+
+        .chartkit-base__header {
+            right: calc(-1 * var(--dl-dk-metric-padding) + var(--dl-dk-header-offset));
+        }
+    }
+
+    #{$class}__body_markup {
         padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
 
         .chartkit-base__header {
@@ -198,6 +210,14 @@ $fullscreenZIndex: 999;
         }
 
         #{$class}__container_metric2 {
+            padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
+
+            #{$class}__chart-header {
+                top: calc(-1 * var(--dl-dk-metric-padding) + var(--dl-dk-header-offset));
+            }
+        }
+
+        #{$class}__container_markup {
             padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
 
             #{$class}__chart-header {
