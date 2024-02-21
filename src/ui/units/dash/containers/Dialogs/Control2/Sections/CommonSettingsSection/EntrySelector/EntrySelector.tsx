@@ -13,15 +13,16 @@ const b = block('entry-selector');
 
 type EntrySelectorProps = {
     label: string;
-    entryId: string;
+    entryId: string | undefined;
     scope: string;
     handleEntryChange: (entry: GetEntryResponse) => void;
-    showOpenButton: boolean;
+    isValidEntry: boolean;
     getEntryLink: (entryId: string) => string;
 };
 
 export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelectorProps) => {
-    const {label, getEntryLink, showOpenButton, entryId, handleEntryChange, scope} = props;
+    const {label, getEntryLink, isValidEntry, entryId, handleEntryChange, scope} = props;
+
     return (
         <FormRow label={label}>
             <div className={b('droplist')}>
@@ -35,7 +36,7 @@ export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelector
                     //@ts-ignore
                     onClick={handleEntryChange}
                 />
-                {showOpenButton && (
+                {isValidEntry && entryId && (
                     <Button className={b('button')} target="_blank" href={getEntryLink(entryId)}>
                         {i18n('button_open')}
                     </Button>

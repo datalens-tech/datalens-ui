@@ -1,8 +1,6 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import {Button} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
@@ -21,13 +19,10 @@ import {
     selectSelectorDialog,
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
-import DropdownNavigation from '../../../../../DropdownNavigation/DropdownNavigation';
 import {DatasetField} from '../../../../Control/Switchers/DatasetField/DatasetField';
 import {ELEMENT_TYPE} from '../../../../Control/constants';
+import {EntrySelector} from '../EntrySelector/EntrySelector';
 
-import './DatasetSelector.scss';
-
-const b = block('external-selector-wrapper');
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
 const getDatasetLink = (entryId: string) => `/datasets/${entryId}`;
@@ -136,33 +131,16 @@ function DatasetSelector() {
         [datasetFieldId, isManualTitle, title],
     );
 
-    const showOpenButton = isValidDataset && datasetId;
-
     return (
         <React.Fragment>
-            <FormRow label={i18n('field_dataset')}>
-                <div className={b('droplist')}>
-                    <DropdownNavigation
-                        //@ts-ignore
-                        size="m"
-                        //@ts-ignore
-                        entryId={datasetId}
-                        //@ts-ignore
-                        scope={ENTRY_SCOPE.DATASET}
-                        //@ts-ignore
-                        onClick={handleDatasetChange}
-                    />
-                    {showOpenButton && (
-                        <Button
-                            className={b('button')}
-                            target="_blank"
-                            href={getDatasetLink(datasetId)}
-                        >
-                            {i18n('button_open')}
-                        </Button>
-                    )}
-                </div>
-            </FormRow>
+            <EntrySelector
+                label={i18n('field_dataset')}
+                entryId={datasetId}
+                scope={ENTRY_SCOPE.DATASET}
+                handleEntryChange={handleDatasetChange}
+                isValidEntry={isValidDataset}
+                getEntryLink={getDatasetLink}
+            />
             <FormRow label={i18n('field_field')}>
                 <FieldWrapper error={validation.datasetFieldId}>
                     <DatasetField
