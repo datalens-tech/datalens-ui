@@ -13,6 +13,7 @@ export const RELATIONS_CHARTS_ICONS_DICT = {
     metric2: iconMetric,
     ymap: iconGeolayers,
     markdown: LogoMarkdownIcon,
+    markup: iconMetric,
 };
 
 export const DEFAULT_ALIAS_NAMESPACE = 'default';
