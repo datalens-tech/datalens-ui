@@ -22,6 +22,7 @@ import {
     shouldUseGradientLegend,
 } from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
+import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
 import {PrepareFunctionArgs} from '../types';
 
@@ -45,7 +46,7 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
             type: getAxisType({
                 field: x,
                 settings: xPlaceholder?.settings,
-                visualizationId: visualizationId as WizardVisualizationId,
+                visualizationIds: getAllVisualizationsIds(shared),
                 sort,
             }),
             reversed: isXAxisReversed(x, sort, visualizationId as WizardVisualizationId),

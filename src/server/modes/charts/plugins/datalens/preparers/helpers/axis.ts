@@ -11,17 +11,17 @@ import {
 export function getAxisType(args: {
     field?: {guid: string; data_type: string};
     settings?: ServerPlaceholderSettings;
-    visualizationId: WizardVisualizationId;
+    visualizationIds: WizardVisualizationId[];
     sort: ServerSort[];
 }) {
-    const {field, settings, visualizationId, sort} = args;
+    const {field, settings, visualizationIds, sort} = args;
 
     let axisMode = AxisMode.Discrete;
     if (field) {
         axisMode = getActualAxisModeForField({
             field,
             axisSettings: settings,
-            visualizationId: visualizationId as WizardVisualizationId,
+            visualizationIds,
             sort,
         }) as AxisMode;
     }
