@@ -13,7 +13,6 @@ import {
     DatasetFieldType,
     ENTRY_TYPES,
     ExtendedChartsConfig,
-    Feature,
     Field,
     FilterField,
     HierarchyField,
@@ -45,7 +44,7 @@ import {
     splitParamsToParametersAndFilters,
 } from 'shared';
 import {DataLensApiError} from 'typings';
-import {DatalensGlobalState, Utils} from 'ui';
+import {DatalensGlobalState} from 'ui';
 import {navigateHelper} from 'ui/libs';
 import {
     getAvailableVisualizations,
@@ -1770,9 +1769,7 @@ type ProcessWidgetArgs = {
 function processWidget(args: ProcessWidgetArgs) {
     const {widget, dispatch, getState} = args;
     const data = widget.data! as ExtendedChartsConfig;
-    const shouldMigrateDatetime = Utils.isEnabledFeature(Feature.GenericDatetimeMigration);
-
-    const config = mapChartsConfigToLatestVersion(data, {shouldMigrateDatetime});
+    const config = mapChartsConfigToLatestVersion(data);
 
     // Actualize widget data after mapping
     widget.data = config;

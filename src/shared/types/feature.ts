@@ -26,8 +26,6 @@ export enum Feature {
     ChartEditorDeveloperModeCheck = 'ChartEditorDeveloperModeCheck',
     QLPrometheus = 'QLPrometheus',
     QLMonitoring = 'QLMonitoring',
-    GenericDatetime = 'GenericDatetime',
-    GenericDatetimeMigration = 'GenericDatetimeMigration',
     CollectionsEnabled = 'CollectionsEnabled',
     CollectionsAccessEnabled = 'CollectionsAccessEnabled',
     DashBoardAccessDescription = 'DashBoardAccessDescription',
