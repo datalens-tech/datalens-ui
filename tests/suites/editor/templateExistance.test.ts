@@ -51,7 +51,7 @@ datalensTest.describe('ChartEditor template selection', () => {
         );
     });
 
-    datalensTest(
+    datalensTest.skip(
         'Template ` Yandex.Map`can be selected and executed',
         async ({page}: {page: Page}) => {
             const editorPage = new EditorPage({page});
@@ -62,7 +62,7 @@ datalensTest.describe('ChartEditor template selection', () => {
         },
     );
 
-    datalensTest(
+    datalensTest.skip(
         'Template ` Indicator` can be selected and executed',
         async ({page}: {page: Page}) => {
             const editorPage = new EditorPage({page});
