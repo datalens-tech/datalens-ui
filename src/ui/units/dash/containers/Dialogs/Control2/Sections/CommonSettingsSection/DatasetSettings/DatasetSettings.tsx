@@ -25,8 +25,8 @@ type DatasetSettingsProps = {
 const DatasetSettings = ({isSectionHidden}: DatasetSettingsProps) => {
     const {datasetFieldType, sourceType, fieldType} = useSelector(selectSelectorDialog);
     const controlType = useSelector(selectSelectorControlType);
-    const disabledOptions: Record<string, boolean> = React.useMemo(
-        () => ({
+    const options = React.useMemo(() => {
+        const disabledOptions: Record<string, boolean> = {
             [ELEMENT_TYPE.DATE]:
                 sourceType === DashTabItemControlSourceType.Dataset &&
                 ((controlType !== ELEMENT_TYPE.DATE &&
@@ -38,13 +38,9 @@ const DatasetSettings = ({isSectionHidden}: DatasetSettingsProps) => {
             [ELEMENT_TYPE.CHECKBOX]:
                 sourceType === DashTabItemControlSourceType.Dataset &&
                 fieldType !== DATASET_FIELD_TYPES.BOOLEAN,
-        }),
-        [sourceType, fieldType, controlType, datasetFieldType],
-    );
-
-    const options = React.useMemo(() => {
+        };
         return getElementOptions().map((v) => ({...v, disabled: disabledOptions[v.value]}));
-    }, [disabledOptions]);
+    }, [sourceType, fieldType, controlType, datasetFieldType]);
 
     return (
         <React.Fragment>
