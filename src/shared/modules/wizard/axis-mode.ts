@@ -5,16 +5,18 @@ import {isContinuousAxisModeDisabled} from '../wizard-helpers';
 export function getActualAxisModeForField(args: {
     field: {guid: string; data_type: string};
     axisSettings: {axisModeMap?: Record<string, string>; disableAxisMode?: boolean} | undefined;
-    visualizationId: WizardVisualizationId;
+    visualizationIds: WizardVisualizationId[];
     sort: ServerSort[];
 }) {
-    const {field, axisSettings, visualizationId, sort} = args;
-    const isContinuousModeRestricted = isContinuousAxisModeDisabled({
-        field,
-        axisSettings,
-        visualizationId,
-        sort,
-    });
+    const {field, axisSettings, visualizationIds, sort} = args;
+    const isContinuousModeRestricted = visualizationIds.some((visualizationId) =>
+        isContinuousAxisModeDisabled({
+            field,
+            axisSettings,
+            visualizationId,
+            sort,
+        }),
+    );
 
     if (isContinuousModeRestricted) {
         return AxisMode.Discrete;
