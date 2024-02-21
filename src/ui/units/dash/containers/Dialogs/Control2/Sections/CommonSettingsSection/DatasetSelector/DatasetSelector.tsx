@@ -5,9 +5,14 @@ import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import {useDispatch, useSelector} from 'react-redux';
-import {DATASET_FIELD_TYPES, DATASET_IGNORED_DATA_TYPES, Dataset, DatasetFieldType} from 'shared';
+import {
+    DATASET_FIELD_TYPES,
+    DATASET_IGNORED_DATA_TYPES,
+    Dataset,
+    DatasetFieldType,
+    EntryScope,
+} from 'shared';
 import logger from 'ui/libs/logger';
-import {ENTRY_SCOPE} from 'units/dash/modules/constants';
 import {
     SelectorElementType,
     SetSelectorDialogItemArgs,
@@ -136,7 +141,7 @@ function DatasetSelector() {
             <EntrySelector
                 label={i18n('field_dataset')}
                 entryId={datasetId}
-                scope={ENTRY_SCOPE.DATASET}
+                scope={EntryScope.Dataset}
                 handleEntryChange={handleDatasetChange}
                 isValidEntry={isValidDataset}
                 getEntryLink={getDatasetLink}
