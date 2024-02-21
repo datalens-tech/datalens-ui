@@ -61,7 +61,9 @@ export const prepareBarXArgs = {
     sort: [],
     segments: [],
     visualizationId: 'column',
-    shared: {},
+    shared: {
+        visualization: {id: 'column'},
+    },
     idToDataType: {
         [x1Field.guid]: x1Field.data_type,
         [x2Field.guid]: x2Field.data_type,
@@ -186,7 +188,7 @@ export const prepareBarXWithMeasureValuesArgs = {
         [monthField.guid]: monthField.data_type,
         [profitField.guid]: profitField.data_type,
     },
-    shared: {},
+    shared: {visualization: {id: 'column'}},
     shapes: [],
     segments: [],
 } as unknown as PrepareFunctionArgs;
