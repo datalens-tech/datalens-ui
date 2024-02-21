@@ -47,7 +47,7 @@ const DatalensPageView = () => {
         <React.Suspense fallback={<FallbackPage />}>
             <Switch>
                 <Route
-                    path={['/workbooks/:workbookId/datasets/:id', '/datasets/:id']}
+                    path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                     component={DatasetPage}
                 />
                 <Route path="/editor" component={EditorPage} />
@@ -57,7 +57,6 @@ const DatalensPageView = () => {
                         '/connections/:id',
                         '/workbooks/:workbookId/connections/new/:type',
                         '/workbooks/:workbookId/connections/new',
-                        '/workbooks/:workbookId/connections/:id',
                     ]}
                     component={ConnectionsPage}
                 />
