@@ -19,6 +19,7 @@ export enum DashTabItemTitleSize {
 
 export enum DashTabItemControlSourceType {
     Dataset = 'dataset',
+    Connection = 'connection',
     Manual = 'manual',
     External = 'external',
 }
