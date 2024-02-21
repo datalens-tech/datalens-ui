@@ -27,6 +27,7 @@ import {
 } from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
 import {getSegmentMap} from '../helpers/segments';
+import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {PrepareFunctionArgs} from '../types';
 
 import {getSegmentsYAxis} from './helpers';
@@ -67,7 +68,7 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
         field: xField,
         settings: xPlaceholder?.settings,
         sort,
-        visualizationId: visualizationId as WizardVisualizationId,
+        visualizationIds: getAllVisualizationsIds(shared),
     });
     const customConfig: any = {
         xAxis: {

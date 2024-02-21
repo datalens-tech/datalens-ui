@@ -40,7 +40,7 @@ export const getAxisModePlaceholderSettings = ({
                 field,
                 axisSettings: placeholder.settings,
                 sort,
-                visualizationId: visualization.id as WizardVisualizationId,
+                visualizationIds: [visualization.id as WizardVisualizationId],
             });
         });
 
@@ -87,7 +87,7 @@ export function getPlaceholderAxisModeMap(args: {
     return fields.reduce((acc, field) => {
         const itemAxisMode = getActualAxisModeForField({
             field,
-            visualizationId,
+            visualizationIds: [visualizationId],
             sort,
             axisSettings: placeholderSettings,
         });

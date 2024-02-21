@@ -19,17 +19,20 @@ datalensTest.describe('ChartEditor template selection', () => {
         },
     );
 
-    datalensTest('Template`Selector`can be selected and executed', async ({page}: {page: Page}) => {
-        const editorPage = new EditorPage({page});
-        await openTestPage(page, RobotChartsEditorUrls.EditorNew, DEFAULT_QUERY);
-        await editorPage.clickTemplate(EditorTemplatesQA.Selector);
-        await editorPage.drawPreview();
-        await page.waitForSelector(
-            `${slct('chart-preview')} ${slct(
-                'chartkit-control-select',
-            )} .yc-select-control__tokens-text >> text=Daily`,
-        );
-    });
+    datalensTest(
+        'Template `Selector` can be selected and executed',
+        async ({page}: {page: Page}) => {
+            const editorPage = new EditorPage({page});
+            await openTestPage(page, RobotChartsEditorUrls.EditorNew, DEFAULT_QUERY);
+            await editorPage.clickTemplate(EditorTemplatesQA.Selector);
+            await editorPage.drawPreview();
+            await page.waitForSelector(
+                `${slct('chart-preview')} ${slct(
+                    'chartkit-control-select',
+                )} .yc-select-control__tokens-text >> text=Daily`,
+            );
+        },
+    );
 
     datalensTest(
         'The template `Module` can be selected and there is a PI in the text',
@@ -51,30 +54,8 @@ datalensTest.describe('ChartEditor template selection', () => {
         );
     });
 
-    datalensTest.skip(
-        'Template ` Yandex.Map`can be selected and executed',
-        async ({page}: {page: Page}) => {
-            const editorPage = new EditorPage({page});
-            await openTestPage(page, RobotChartsEditorUrls.EditorNew, DEFAULT_QUERY);
-            await editorPage.clickTemplate(EditorTemplatesQA.YMap);
-            await editorPage.drawPreview();
-            await page.waitForSelector(`${slct('chart-preview')} ymaps`);
-        },
-    );
-
-    datalensTest.skip(
-        'Template ` Indicator` can be selected and executed',
-        async ({page}: {page: Page}) => {
-            const editorPage = new EditorPage({page});
-            await openTestPage(page, RobotChartsEditorUrls.EditorNew, DEFAULT_QUERY);
-            await editorPage.clickTemplate(EditorTemplatesQA.Metric);
-            await editorPage.drawPreview();
-            await page.waitForSelector(`${slct('chart-preview')} .chartkit-metric`);
-        },
-    );
-
     datalensTest(
-        'Template `Without template`can be selected and executed',
+        'Template `Without template` can be selected and executed',
         async ({page}: {page: Page}) => {
             const editorPage = new EditorPage({page});
             await openTestPage(page, RobotChartsEditorUrls.EditorNew, DEFAULT_QUERY);
