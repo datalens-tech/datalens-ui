@@ -8,6 +8,8 @@ import type {GetEntryResponse} from 'shared/schema/us/types/entries';
 
 import DropdownNavigation from '../../../../../DropdownNavigation/DropdownNavigation';
 
+import './EntrySelector.scss';
+
 const i18n = I18n.keyset('dash.control-dialog.edit');
 const b = block('entry-selector');
 
@@ -15,7 +17,7 @@ type EntrySelectorProps = {
     label: string;
     entryId: string | undefined;
     scope: string;
-    handleEntryChange: (entry: GetEntryResponse) => void;
+    handleEntryChange: (data: {entry: GetEntryResponse}) => void;
     isValidEntry: boolean;
     getEntryLink: (entryId: string) => string;
 };
