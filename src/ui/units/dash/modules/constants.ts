@@ -33,6 +33,7 @@ export const DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES = {
     ymap: 'ymap',
     markdown: 'markdown',
     d3: 'd3',
+    markup: 'markup',
 };
 
 export type AcceptFiltersWidgetType =
