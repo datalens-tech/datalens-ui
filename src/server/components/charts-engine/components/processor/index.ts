@@ -564,8 +564,6 @@ export class Processor {
                     sources = filteredSources;
                 }
 
-                const xChartsHeaders = {};
-
                 if (configOverride?.entryId || configId) {
                     let dlContext: Record<string, string> = {};
                     if (subrequestHeaders[DL_CONTEXT_HEADER]) {
@@ -591,10 +589,7 @@ export class Processor {
                     sources,
                     req,
                     iamToken,
-                    subrequestHeaders: {
-                        ...subrequestHeaders,
-                        ...xChartsHeaders,
-                    },
+                    subrequestHeaders,
                     userId,
                     workbookId,
                 });

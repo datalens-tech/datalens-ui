@@ -1,9 +1,11 @@
-import {registry} from 'ui/registry';
-import {exampleFunction} from 'ui/registry/functions/example-function';
-import {EXAMPLE_FUNCTION} from 'ui/registry/units/common/constants/functions';
+import {registry} from '../../../registry';
+import {exampleFunction} from '../../../registry/functions/example-function';
+import {EXAMPLE_FUNCTION} from '../../../registry/units/common/constants/functions';
+import {getEditorTemplates} from '../../../units/editor/constants/templates';
 
 export const registerEditorPlugins = () => {
     registry.editor.functions.register({
         [EXAMPLE_FUNCTION]: exampleFunction,
+        getEditorTemplates,
     });
 };

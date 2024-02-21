@@ -9,14 +9,13 @@ import {extractEntryId} from 'shared';
 import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
-import {getSdk} from '../../../../libs/schematic-sdk';
+import {registry} from '../../../../registry';
 import {EditorUrlParams, EditorUrls, Status} from '../../constants/common';
 import ActionPanel from '../../containers/ActionPanel/ActionPanel';
 import Grid from '../../containers/Grid/Grid';
 import UnloadConfirmation from '../../containers/UnloadConfirmation/UnloadConfirmation';
 import EditorPageError from '../EditorPageError/EditorPageError';
 import NewChart from '../NewChart/NewChart';
-import {config} from '../NodeTemplates/config';
 import {ViewLoader} from '../ViewLoader/ViewLoader';
 
 import './EditorPage.scss';
@@ -44,6 +43,7 @@ const EditorPage = ({
     const prevEditorPath = usePrevious(editorPath);
 
     const templatePath = React.useMemo(() => match.params.template, [match.params.template]);
+
     const loadAndSetTemplate = React.useCallback(
         (item) => {
             setTemplate(item);
@@ -55,12 +55,15 @@ const EditorPage = ({
     const isEntryInited = Boolean(entry) && !entry.fake;
     const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
 
+    const getEditorTemplates = registry.editor.functions.get('getEditorTemplates');
+
+    const templates = getEditorTemplates();
+
     React.useEffect(() => {
         async function getEntryItem() {
-            const res = await getSdk().us.listDirectory({path: 'TemplatesV2/'});
-            const templates = config.templates;
-            const entries = res.entries;
-            return entries.find(({name}) => templates[name].path === templatePath);
+            return templates.find(({name}) => {
+                return name === templatePath;
+            });
         }
 
         if (editorPath === EditorUrlParams.New) {
@@ -101,8 +104,8 @@ const EditorPage = ({
         };
     }, []);
 
-    function onClickNodeTemplate(item, entryPath) {
-        const urlPath = item.empty ? '' : `/${entryPath}`;
+    function onClickNodeTemplate(item) {
+        const urlPath = item.empty ? '' : `/${item.name}`;
         history.push(`${EditorUrls.EntryDraft}${urlPath}${location.search}`);
     }
 
