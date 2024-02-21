@@ -40,6 +40,7 @@ export enum WidgetKind {
     Ymap = 'ymap',
     Control = 'control',
     Markdown = 'markdown',
+    Markup = 'markup',
 }
 
 export type WidgetType = LegacyEditorType | EditorType | WizardType;

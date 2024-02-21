@@ -54,7 +54,7 @@ export const fetchInitialLoad = ({id, template, location}) => {
                 if (template.empty) {
                     entryData = Helper.getEmptyTemplate();
                 } else {
-                    entryData = await getSdk().us.getEntry({entryId: template.entryId});
+                    entryData = template;
                 }
                 entry = {
                     ...entryData,
