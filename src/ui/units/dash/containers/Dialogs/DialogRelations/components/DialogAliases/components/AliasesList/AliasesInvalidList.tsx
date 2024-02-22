@@ -79,15 +79,16 @@ export const AliasesInvalidList = (props: AliasesInvalidListProps) => {
 
     return (
         <div className={b('invalid-list')}>
-            {aliasesWithInvalidList.map((row: string[], indexRow: number) => (
-                <AliasesInvalidListItem
-                    key={`alias-invalid-${indexRow}-${row.join('-')}`}
-                    {...props}
-                    row={row}
-                    invalidAliases={invalidAliases}
-                />
-            ))}
-
+            <div className={b('invalid-list-items')}>
+                {aliasesWithInvalidList.map((row: string[], indexRow: number) => (
+                    <AliasesInvalidListItem
+                        key={`alias-invalid-${indexRow}-${row.join('-')}`}
+                        {...props}
+                        row={row}
+                        invalidAliases={invalidAliases}
+                    />
+                ))}
+            </div>
             {showControls ? (
                 <div className={b('controls')}>
                     <Button
