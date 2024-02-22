@@ -4,6 +4,6 @@ import {DIALOG_EDIT_QUERY} from '../../../containers/Dialogs/DialogEditQuery/Dia
 
 export const openDialogEditQuery = () => {
     return (dispatch: AppDispatch) => {
-        dispatch(openDialog({id: DIALOG_EDIT_QUERY}));
+        dispatch(openDialog({id: DIALOG_EDIT_QUERY, props: undefined}));
     };
 };

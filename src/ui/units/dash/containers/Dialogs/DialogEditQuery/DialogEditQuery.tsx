@@ -6,6 +6,7 @@ export const DIALOG_EDIT_QUERY = Symbol('DIALOG_EDIT_QUERY');
 
 export type OpenDialogEditQueryArgs = {
     id: typeof DIALOG_EDIT_QUERY;
+    props: undefined;
 };
 
 const DialogEditQuery: React.FC = () => {
