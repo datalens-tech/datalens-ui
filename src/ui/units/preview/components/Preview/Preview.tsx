@@ -30,8 +30,6 @@ import {SNAPTER_DESIRED_CLASS} from '../../modules/constants/constants';
 import './Preview.scss';
 import 'ui/components/Widgets/Chart/Chart.scss';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 const b = block('preview');
 
 interface PreviewProps extends RouteComponentProps<{idOrSource: string}> {
@@ -72,6 +70,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
 
     const {noControls, actionParamsEnabled} = Utils.getOptionsFromSearch(search);
 
+    const {extractEntryId} = registry.common.functions.getAll();
     const possibleEntryId = React.useMemo(() => extractEntryId(idOrSource), [idOrSource]);
 
     const [title, setTitle] = React.useState(idOrSource);

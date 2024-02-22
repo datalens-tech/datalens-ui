@@ -19,8 +19,6 @@ import {ViewLoader} from '../ViewLoader/ViewLoader';
 
 import './EditorPage.scss';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 const b = block('editor-page');
 
 const EditorPage = ({
@@ -38,6 +36,7 @@ const EditorPage = ({
     const [template, setTemplate] = React.useState(null);
 
     const editorPath = React.useMemo(() => {
+        const {extractEntryId} = registry.common.functions.getAll();
         const entryId = extractEntryId(match.params.path);
         return entryId ? entryId : match.params.path;
     }, [match.params.path]);

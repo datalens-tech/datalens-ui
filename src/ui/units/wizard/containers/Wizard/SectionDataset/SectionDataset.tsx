@@ -89,8 +89,6 @@ import iconPlus from 'ui/assets/icons/plus.svg';
 
 import './SectionDataset.scss';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 type OwnProps = {
@@ -492,6 +490,7 @@ class SectionDataset extends React.Component<Props, State> {
     };
 
     onButtonDatasetTryAgainClick = () => {
+        const {extractEntryId} = registry.common.functions.getAll();
         const entryId = extractEntryId(window.location.pathname);
 
         if (entryId) {

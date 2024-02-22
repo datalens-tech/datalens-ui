@@ -52,8 +52,6 @@ import Header from '../Header/Header';
 
 const AUTH_UPDATE_TIMEOUT = 40 * 60 * 1000;
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 type OwnProps = {};
@@ -75,6 +73,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
     private entryDialoguesRef = React.createRef<EntryDialogues>();
 
     componentDidMount() {
+        const {extractEntryId} = registry.common.functions.getAll();
         const entryId = extractEntryId(this.props.location.pathname);
         const {entry, lockToken, history, location, match} = this.props;
 
@@ -103,6 +102,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const currentLocation = this.props.location;
         const prevLocation = prevProps.location;
 
+        const {extractEntryId} = registry.common.functions.getAll();
         const entryId = extractEntryId(currentLocation.pathname);
         const prevEntryId = extractEntryId(prevLocation.pathname);
 

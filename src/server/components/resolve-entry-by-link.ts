@@ -11,8 +11,6 @@ import {
 } from '../../shared/schema';
 import {registry} from '../registry';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 export enum ErrorCode {
     IncorrectURL = 'INCORRECT_URL',
     NotFound = 'NOT_FOUND',
@@ -47,6 +45,9 @@ async function resolveEntryByLink({
         const params = parse(url.searchParams.toString()) as StringParams;
 
         let entry: GetEntryMetaResponse | GetEntryByKeyResponse;
+
+        const {extractEntryId} = registry.common.functions.getAll();
+
         const possibleEntryId = extractEntryId(idOrKeyOrReport);
 
         if (possibleEntryId) {

@@ -83,8 +83,6 @@ import WizardActionPanel from './WizardActionPanel/WizardActionPanel';
 
 import './Wizard.scss';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 const b = block('wizard');
 
 const SPLIT_PANE_MIN_SIZE = 256;
@@ -125,6 +123,7 @@ class Wizard extends React.Component<Props, State> {
         const {isDefaultsSet} = props;
 
         if (!isDefaultsSet) {
+            const {extractEntryId} = registry.common.functions.getAll();
             const entryId = extractEntryId(window.location.pathname);
 
             const revId = getUrlParamFromStr(this.props.location.search, URL_QUERY.REV_ID);
@@ -175,6 +174,7 @@ class Wizard extends React.Component<Props, State> {
             this.chartKitRef.current.reflow();
         }
 
+        const {extractEntryId} = registry.common.functions.getAll();
         const oldEntryId = extractEntryId(prevProps.match.url);
         const newEntryId = extractEntryId(match.url);
 

@@ -82,8 +82,6 @@ import {
 import {Helper} from '../utils/grid';
 import {prepareMonitoringPreset} from '../utils/monitoring';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 export const SET_CHART_TYPE = Symbol('ql/SET_CHART_TYPE');
 export const SET_STATUS = Symbol('ql/SET_STATUS');
 export const SET_ERROR = Symbol('ql/SET_ERROR');
@@ -650,6 +648,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
             }),
         );
 
+        const {extractEntryId} = registry.common.functions.getAll();
         const urlEntryId = extractEntryId(location.pathname || '');
 
         if (urlEntryId) {

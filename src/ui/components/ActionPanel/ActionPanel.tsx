@@ -32,8 +32,6 @@ import EntryPanel from './components/EntryPanel/EntryPanel';
 
 import './ActionPanel.scss';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 const b = block('action-panel');
 const i18n = I18n.keyset('component.action-panel.view');
 
@@ -94,6 +92,8 @@ class ActionPanel extends React.Component<Props, State> {
         const entryId = entry?.entryId;
         const prevEntryId = prevProps.entry?.entryId;
         const hasEntryChanged = entryId && prevEntryId && entryId !== prevEntryId;
+
+        const {extractEntryId} = registry.common.functions.getAll();
 
         const oldPageEntryId = extractEntryId(prevProps.match.url);
         const newPageEntryId = extractEntryId(match.url);

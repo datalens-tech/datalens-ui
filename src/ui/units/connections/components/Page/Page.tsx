@@ -25,8 +25,6 @@ import {isListPageOpened, isS3BasedConnForm} from './utils';
 
 import './Page.scss';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 const b = block('conn-page');
 
 type DispatchState = ReturnType<typeof mapStateToProps>;
@@ -88,6 +86,7 @@ const PageComponent = (props: PageProps) => {
         loading,
     } = props;
     const entryId = get(props.match?.params, 'id', '');
+    const {extractEntryId} = registry.common.functions.getAll();
     const extractedEntryId = extractEntryId(entryId);
     const workbookId = get(props.match?.params, 'workbookId');
     const queryType = get(props.match?.params, 'type', '');

@@ -14,7 +14,6 @@ import {
 import {GetEntryArgs} from 'shared/schema';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
 import {DatalensGlobalState, MarkdownProvider, URL_QUERY, Utils} from 'ui';
-import {registry} from 'ui/registry';
 import {ConnectionsReduxDispatch} from 'ui/units/connections/store';
 import {ManualError} from 'ui/utils/errors/manual';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
@@ -24,6 +23,7 @@ import {DL} from '../../../../../constants';
 import ChartKit from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
+import {registry} from '../../../../../registry';
 import {showToast} from '../../../../../store/actions/toaster';
 import {Mode} from '../../../modules/constants';
 import {collectDashStats} from '../../../modules/pushStats';
@@ -44,8 +44,6 @@ import {
     prepareLoadedData,
     removeParamAndUpdate,
 } from '../helpers';
-
-const {extractEntryId} = registry.common.functions.getAll();
 
 const i18n = I18n.keyset('dash.store.view');
 
@@ -256,6 +254,8 @@ export const load = ({
             const {pathname, search} = location;
 
             const searchParams = new URLSearchParams(search);
+
+            const {extractEntryId} = registry.common.functions.getAll();
 
             const entryId = extractEntryId(pathname);
             const isFakeEntry =

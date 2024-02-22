@@ -16,8 +16,6 @@ import {createDatasetPageContext} from './createDatasetPageContext';
 
 import './DatasetPage.scss';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 interface DatasetPageProps extends RouteComponentProps<Record<string, string>> {
     sdk: SDK;
     asideHeaderData: AsideHeaderData;
@@ -97,6 +95,8 @@ class DatasetPage extends React.Component<DatasetPageProps> {
         if (!datasetId) {
             return '';
         }
+
+        const {extractEntryId} = registry.common.functions.getAll();
 
         return extractEntryId(datasetId) || '';
     }

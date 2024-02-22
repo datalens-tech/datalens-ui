@@ -6,10 +6,9 @@ import {DatasetReduxAction, DatasetReduxState} from '../types';
 
 import dataset from './dataset';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 const datasetReducer = (state: DatasetReduxState, action: DatasetReduxAction) => {
     if (action.type === RESET_DATASET_STATE) {
+        const {extractEntryId} = registry.common.functions.getAll();
         const hasEntryId = Boolean(extractEntryId(window.location.pathname));
         const initialState = getInitialState({
             isLoading: hasEntryId,

@@ -19,8 +19,6 @@ import {datasetKeySelector} from '../../store/selectors/dataset';
 
 import './DatasetRouter.scss';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 const b = block('dataset-router');
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -42,6 +40,7 @@ const DatasetRouter = ({
     match,
 }: Props) => {
     const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
+    const {extractEntryId} = registry.common.functions.getAll();
     const possibleEntryId = extractEntryId(window.location.pathname);
 
     React.useEffect(() => {

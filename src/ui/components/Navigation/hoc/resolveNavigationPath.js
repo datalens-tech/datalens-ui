@@ -1,14 +1,12 @@
 import React from 'react';
 
 import PropTypes from 'prop-types';
+import {registry} from 'ui/registry';
 
 import {DL} from '../../../constants/common';
 import logger from '../../../libs/logger';
 import {getSdk} from '../../../libs/schematic-sdk';
 import {PLACE, PLACE_VALUES} from '../constants';
-import {registry} from '../registry';
-
-const {extractEntryId} = registry.common.functions.getAll();
 
 async function getEntryKey(entryId, defaultPath) {
     try {
@@ -30,6 +28,9 @@ export const resolveNavigationPath = (Component) => {
             async function setPath(origin = DL.USER_FOLDER) {
                 let path = '';
                 let root = PLACE.ROOT;
+
+                const {extractEntryId} = registry.common.functions.getAll();
+
                 const possibleEntryId = extractEntryId(origin);
 
                 if (resolvePathMode) {

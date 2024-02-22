@@ -13,8 +13,6 @@ import {FormDict} from '../../typings';
 import {getConnItemByType} from '../../utils';
 import {WrappedLoader} from '../WrappedLoader/WrappedLoader';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 type RouterProps = {
     flattenConnectors: ConnectorItem[];
     groupedConnectors: GetConnectorsResponse;
@@ -130,6 +128,8 @@ export const Router = ({flattenConnectors, groupedConnectors, connectionData}: R
                         const connectionId = get(props.match.params, 'connectionId');
                         const workbookId = get(props.match.params, 'workbookId');
                         const type = connectionData?.[FieldKey.DbType] as ConnectorType;
+                        const {extractEntryId} = registry.common.functions.getAll();
+
                         const extractedId = extractEntryId(connectionId);
 
                         if (!extractedId) {

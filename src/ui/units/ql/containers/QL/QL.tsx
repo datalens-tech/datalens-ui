@@ -23,8 +23,6 @@ import {registry} from '../../../../registry';
 
 import './QL.scss';
 
-const {extractEntryId} = registry.common.functions.getAll();
-
 const b = block('ql');
 
 type DispatchProps = typeof mapDispatchToProps;
@@ -59,6 +57,7 @@ class QL extends React.PureComponent<QLInnerProps> {
     componentDidUpdate(prevProps: QLInnerProps) {
         const {history, location, match} = this.props;
 
+        const {extractEntryId} = registry.common.functions.getAll();
         const prevEntryId = extractEntryId(prevProps.match.params.qlEntryId);
         const currentEntryId = extractEntryId(match.params.qlEntryId);
 
