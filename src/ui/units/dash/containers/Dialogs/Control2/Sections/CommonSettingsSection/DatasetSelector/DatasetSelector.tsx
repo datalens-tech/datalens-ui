@@ -104,7 +104,6 @@ function DatasetSelector() {
 
             if (
                 data.fieldType === DATASET_FIELD_TYPES.DATE ||
-                data.fieldType === DATASET_FIELD_TYPES.DATETIME ||
                 data.fieldType === DATASET_FIELD_TYPES.GENERICDATETIME
             ) {
                 elementType = ELEMENT_TYPE.DATE;

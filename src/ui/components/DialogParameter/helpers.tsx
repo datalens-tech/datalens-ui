@@ -64,7 +64,6 @@ export const getDatepickerFormat = (type: DATASET_FIELD_TYPES): string | undefin
     switch (type) {
         case DATASET_FIELD_TYPES.DATE:
             return 'dd.MM.yyyy';
-        case DATASET_FIELD_TYPES.DATETIME:
         case DATASET_FIELD_TYPES.GENERICDATETIME:
             return 'dd.MM.yyyy HH:mm:ss';
         default:

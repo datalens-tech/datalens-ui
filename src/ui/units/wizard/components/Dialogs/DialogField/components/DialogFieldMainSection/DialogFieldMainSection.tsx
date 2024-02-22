@@ -421,7 +421,6 @@ export class DialogFieldMainSection extends React.Component<Props> {
                 return this.isTableVisualization
                     ? AVAILABLE_DATETIMETZ_FORMATS
                     : AVAILABLE_DATETIMETZ_FORMATS_NON_TABLE;
-            case DATASET_FIELD_TYPES.DATETIME:
             case DATASET_FIELD_TYPES.GENERICDATETIME:
             default:
                 return this.isTableVisualization

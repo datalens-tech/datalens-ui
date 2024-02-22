@@ -5,10 +5,7 @@ import {GetXAxisValueArgs, XAxisValue} from './types';
 
 export function getDateAxisValue(value: string | number | Date, dataType: string) {
     const val = new Date(value);
-    if (
-        dataType === DATASET_FIELD_TYPES.DATETIME ||
-        dataType === DATASET_FIELD_TYPES.GENERICDATETIME
-    ) {
+    if (dataType === DATASET_FIELD_TYPES.GENERICDATETIME) {
         val.setTime(getTimezoneOffsettedTime(val));
     }
 

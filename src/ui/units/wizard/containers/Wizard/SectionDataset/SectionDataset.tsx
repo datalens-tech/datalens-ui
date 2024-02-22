@@ -1081,7 +1081,7 @@ class SectionDataset extends React.Component<Props, State> {
             // TODO: there are a couple of similar places, probably this good can be carried out in a separate function
             if (cast === 'date') {
                 target.format = AVAILABLE_DATE_FORMATS[2];
-            } else if (cast === 'datetime' || cast === 'genericdatetime') {
+            } else if (cast === 'genericdatetime') {
                 target.format = AVAILABLE_DATETIME_FORMATS[5];
             } else if (cast === 'datetimetz') {
                 target.format = AVAILABLE_DATETIMETZ_FORMATS[7];
