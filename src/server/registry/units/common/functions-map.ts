@@ -16,4 +16,5 @@ export const commonFunctionsMap = {
                 subrequestHeaders: Record<string, string>;
             }) => Record<string, string>
         >(),
+    isEntryId: makeFunctionTemplate<(value: string) => boolean>(),
 } as const;
