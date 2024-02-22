@@ -44,15 +44,15 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
 
     return (
         <React.Fragment>
-            {options.length > 1 ? (
-                <FormRow label={i18nConnectionBasedControlFake('field_query-type')}>
-                    <Select
-                        options={options}
-                        value={connectionQueryType ? [connectionQueryType] : []}
-                        onUpdate={handleQueryTypeUpdate}
-                    />
-                </FormRow>
-            ) : null}
+            <FormRow label={i18nConnectionBasedControlFake('field_query-type')}>
+                <Select
+                    width="max"
+                    options={options}
+                    value={connectionQueryType ? [connectionQueryType] : []}
+                    onUpdate={handleQueryTypeUpdate}
+                    placeholder={i18nConnectionBasedControlFake('placeholder_not-defined')}
+                />
+            </FormRow>
             {renderQueryContentControl(connectionQueryType)}
         </React.Fragment>
     );

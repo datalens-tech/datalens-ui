@@ -32,8 +32,8 @@ export const ConnectionSelector = () => {
     >();
 
     const fetchConnection = React.useCallback(
-        async (updatedConnectionId: string) => {
-            return getSdk()
+        (updatedConnectionId: string) => {
+            getSdk()
                 .bi.getConnection({
                     connectionId: updatedConnectionId,
                     workbookId,
@@ -43,13 +43,11 @@ export const ConnectionSelector = () => {
 
                     setUnsupportedConnectionError(error);
                     setIsValidConnection(true);
-
-                    return queryTypes;
+                    dispatch(setSelectorDialogItem({connectionQueryTypes: queryTypes}));
                 })
                 .catch((error) => {
                     setIsValidConnection(false);
                     logger.logError('Connection selector: load connection failed', error);
-                    return undefined;
                 });
         },
         [workbookId],
@@ -68,16 +66,16 @@ export const ConnectionSelector = () => {
 
         dispatch(setLastUsedConnectionId(updatedConnectionId));
 
-        fetchConnection(updatedConnectionId).then(() => {
-            dispatch(
-                setSelectorDialogItem({
-                    connectionId: data.entry.entryId,
-                    elementType: ELEMENT_TYPE.SELECT,
-                    defaultValue: undefined,
-                    useDefaultValue: false,
-                }),
-            );
-        });
+        fetchConnection(updatedConnectionId);
+        dispatch(
+            setSelectorDialogItem({
+                connectionId: data.entry.entryId,
+                elementType: ELEMENT_TYPE.SELECT,
+                defaultValue: undefined,
+                useDefaultValue: false,
+                connectionQueryType: undefined,
+            }),
+        );
     };
 
     return (
