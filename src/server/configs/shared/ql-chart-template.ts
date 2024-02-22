@@ -63,14 +63,14 @@ export default {
 
         switch (id) {
             case 'table': // Legacy
-            case 'flatTable': // Available with WizardQLCommonVisualization feature
+            case WizardVisualizationId.FlatTable: // Available with WizardQLCommonVisualization feature
                 return QL_TYPE.TABLE_QL_NODE;
 
-            case 'line':
-            case 'area':
-            case 'area100p':
-            case 'column':
-            case 'column100p':
+            case WizardVisualizationId.Line:
+            case WizardVisualizationId.Area:
+            case WizardVisualizationId.Area100p:
+            case WizardVisualizationId.Column:
+            case WizardVisualizationId.Column100p:
                 if (isMonitoringOrPrometheusChart(chartType)) {
                     return QL_TYPE.TIMESERIES_QL_NODE;
                 } else {
@@ -90,11 +90,9 @@ export default {
                     return QL_TYPE.METRIC_QL_NODE;
                 }
             }
-            case 'metric':
-                return QL_TYPE.METRIC_QL_NODE;
-            case 'scatter-d3':
-            case 'bar-x-d3':
-            case 'pie-d3': {
+            case WizardVisualizationId.ScatterD3:
+            case WizardVisualizationId.BarXD3:
+            case WizardVisualizationId.PieD3: {
                 return QL_TYPE.D3_QL_NODE;
             }
             default:
