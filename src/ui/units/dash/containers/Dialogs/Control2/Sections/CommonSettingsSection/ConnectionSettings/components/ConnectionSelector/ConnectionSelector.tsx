@@ -19,15 +19,14 @@ export const ConnectionSelector = () => {
     };
 
     return (
-        <React.Fragment>
-            <EntrySelector
-                label={i18nConnectionBasedControlFake('field_connection')}
-                entryId={connectionId}
-                scope={EntryScope.Connection}
-                handleEntryChange={handleEntryChange}
-                isValidEntry={true}
-                getEntryLink={getConnectionLink}
-            />
-        </React.Fragment>
+        <EntrySelector
+            label={i18nConnectionBasedControlFake('field_connection')}
+            entryId={connectionId}
+            scope={EntryScope.Connection}
+            handleEntryChange={handleEntryChange}
+            isValidEntry={true}
+            getEntryLink={getConnectionLink}
+            errorText={i18nConnectionBasedControlFake('error_unsupported-connection')}
+        />
     );
 };

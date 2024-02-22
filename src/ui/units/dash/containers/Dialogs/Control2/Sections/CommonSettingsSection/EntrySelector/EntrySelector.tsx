@@ -20,10 +20,13 @@ type EntrySelectorProps = {
     handleEntryChange: (data: {entry: GetEntryResponse}) => void;
     isValidEntry: boolean;
     getEntryLink: (entryId: string) => string;
+    error?: boolean;
+    errorText?: string;
 };
 
 export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelectorProps) => {
-    const {label, getEntryLink, isValidEntry, entryId, handleEntryChange, scope} = props;
+    const {label, getEntryLink, isValidEntry, errorText, error, entryId, handleEntryChange, scope} =
+        props;
 
     return (
         <FormRow label={label}>
@@ -37,6 +40,10 @@ export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelector
                     scope={scope}
                     //@ts-ignore
                     onClick={handleEntryChange}
+                    //@ts-ignore
+                    error={error}
+                    //@ts-ignore
+                    errorText={errorText}
                 />
                 {isValidEntry && entryId && (
                     <Button className={b('button')} target="_blank" href={getEntryLink(entryId)}>
