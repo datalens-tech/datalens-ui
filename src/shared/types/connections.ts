@@ -1,4 +1,4 @@
-import {ConnectionQueryTypes} from '../constants';
+import {ConnectionQueryTypeValues} from '../constants';
 
 export type ConnectionData = Record<
     string,
@@ -13,7 +13,7 @@ export type ConnectionOptions = {
 };
 
 export type ConnectionQueryType = {
-    query_type: ConnectionQueryTypes;
+    query_type: ConnectionQueryTypeValues;
     query_type_label: string;
     allow_selector: boolean;
     required_parameters: ConnectionRequiredParameter[];
