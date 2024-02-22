@@ -234,9 +234,7 @@ class QLPage extends ChartPage {
 
             this.page.waitForSelector('.chartkit .chartkit-graph').then(resolve, () => undefined);
 
-            this.page
-                .waitForSelector('.chartkit .chartkit-metric-2, .chartkit .chartkit-indicator')
-                .then(resolve, () => undefined);
+            this.page.waitForSelector('.chartkit .chartkit-markup').then(resolve, () => undefined);
 
             this.page.waitForSelector('.chartkit .chartkit-table').then(resolve, () => undefined);
 
