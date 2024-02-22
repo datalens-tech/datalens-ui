@@ -6,8 +6,9 @@ import {connect} from 'react-redux';
 import {RouteChildrenProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ConnectorType, extractEntryId} from 'shared';
+import {ConnectorType} from 'shared';
 import {DatalensGlobalState, PageTitle, SlugifyUrl, Utils} from 'ui';
+import {registry} from 'ui/registry';
 
 import {ErrorView, ErrorViewProps, Router, WrappedLoader} from '../';
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
@@ -85,6 +86,7 @@ const PageComponent = (props: PageProps) => {
         loading,
     } = props;
     const entryId = get(props.match?.params, 'id', '');
+    const {extractEntryId} = registry.common.functions.getAll();
     const extractedEntryId = extractEntryId(entryId);
     const workbookId = get(props.match?.params, 'workbookId');
     const queryType = get(props.match?.params, 'type', '');

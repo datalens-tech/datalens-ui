@@ -5,7 +5,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import {RouteComponentProps} from 'react-router-dom';
-import {Feature, WorkbookId, extractEntryId} from 'shared';
+import {Feature, WorkbookId} from 'shared';
 import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
@@ -70,6 +70,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
 
     const {noControls, actionParamsEnabled} = Utils.getOptionsFromSearch(search);
 
+    const {extractEntryId} = registry.common.functions.getAll();
     const possibleEntryId = React.useMemo(() => extractEntryId(idOrSource), [idOrSource]);
 
     const [title, setTitle] = React.useState(idOrSource);

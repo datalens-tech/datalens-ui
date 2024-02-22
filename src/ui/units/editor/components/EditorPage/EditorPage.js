@@ -5,7 +5,6 @@ import {usePrevious} from 'hooks';
 import PropTypes from 'prop-types';
 import {DndProvider} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import {extractEntryId} from 'shared';
 import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
@@ -37,6 +36,7 @@ const EditorPage = ({
     const [template, setTemplate] = React.useState(null);
 
     const editorPath = React.useMemo(() => {
+        const {extractEntryId} = registry.common.functions.getAll();
         const entryId = extractEntryId(match.params.path);
         return entryId ? entryId : match.params.path;
     }, [match.params.path]);
