@@ -190,7 +190,7 @@ export const openDialogParameter = ({
                 const {cast, default_value} = updatedField;
                 // temporary workaround CHARTS-6821
                 if (
-                    (cast === 'datetime' || cast === 'genericdatetime') &&
+                    cast === 'genericdatetime' &&
                     typeof default_value === 'string' &&
                     default_value.endsWith('Z')
                 ) {

@@ -149,7 +149,7 @@ function prepareFlatTable({
 
             if (item.format) {
                 dateHeadCell.format = item.format;
-            } else if (dataType === 'datetime' || dataType === 'genericdatetime') {
+            } else if (dataType === 'genericdatetime') {
                 dateHeadCell.format = DEFAULT_DATETIME_FORMAT;
             } else if (dataType === 'datetimetz') {
                 dateHeadCell.format = DEFAULT_DATETIMETZ_FORMAT;

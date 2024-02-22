@@ -830,7 +830,7 @@ class VisualizationItem extends React.Component<Props, State> {
         if (target.cast !== cast) {
             if (cast === 'date') {
                 target.format = AVAILABLE_DATE_FORMATS[2];
-            } else if (cast === 'datetime' || cast === 'genericdatetime') {
+            } else if (cast === 'genericdatetime') {
                 target.format = AVAILABLE_DATETIME_FORMATS[5];
             } else if (cast === 'datetimetz') {
                 target.format = AVAILABLE_DATETIMETZ_FORMATS[7];
@@ -944,7 +944,6 @@ class VisualizationItem extends React.Component<Props, State> {
         let filterValues: string;
         if (
             data_type === DATASET_FIELD_TYPES.DATE ||
-            data_type === DATASET_FIELD_TYPES.DATETIME ||
             data_type === DATASET_FIELD_TYPES.GENERICDATETIME
         ) {
             filterValues = parseFilterDate(item);

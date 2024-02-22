@@ -452,7 +452,7 @@ export function prepareBarYData({
             if (xIsDate) {
                 const time = new Date(value);
 
-                if (xDataType === 'datetime' || xDataType === 'genericdatetime') {
+                if (xDataType === 'genericdatetime') {
                     time.setTime(getTimezoneOffsettedTime(time));
                 }
 
