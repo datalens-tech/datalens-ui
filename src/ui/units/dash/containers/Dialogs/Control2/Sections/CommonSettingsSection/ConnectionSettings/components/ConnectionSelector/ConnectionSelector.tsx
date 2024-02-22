@@ -6,7 +6,10 @@ import type {GetEntryResponse} from 'shared/schema';
 
 import logger from '../../../../../../../../../../libs/logger';
 import {getSdk} from '../../../../../../../../../../libs/schematic-sdk';
-import {setSelectorDialogItem} from '../../../../../../../../store/actions/dashTyped';
+import {
+    setLastUsedConnectionId,
+    setSelectorDialogItem,
+} from '../../../../../../../../store/actions/dashTyped';
 import {
     selectDashWorkbookId,
     selectSelectorDialog,
@@ -52,22 +55,26 @@ export const ConnectionSelector = () => {
         [workbookId],
     );
 
+    React.useEffect(() => {
+        if (connectionId) {
+            fetchConnection(connectionId);
+        }
+    }, []);
     const handleEntryChange = (data: {entry: GetEntryResponse}) => {
         const updatedConnectionId = data.entry.entryId;
         if (updatedConnectionId === connectionId) {
             return;
         }
 
-        fetchConnection(updatedConnectionId).then((connectionQueryTypes) => {
-            const defaultQueryType = connectionQueryTypes?.[0]?.query_type;
+        dispatch(setLastUsedConnectionId(updatedConnectionId));
+
+        fetchConnection(updatedConnectionId).then(() => {
             dispatch(
                 setSelectorDialogItem({
                     connectionId: data.entry.entryId,
                     elementType: ELEMENT_TYPE.SELECT,
                     defaultValue: undefined,
                     useDefaultValue: false,
-                    connectionQueryTypes,
-                    connectionQueryType: defaultQueryType,
                 }),
             );
         });

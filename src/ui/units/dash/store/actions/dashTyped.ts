@@ -312,9 +312,21 @@ export type SetLastUsedDatasetIdAction = {
     type: typeof SET_LAST_USED_DATASET_ID;
     payload: string;
 };
+
 export const setLastUsedDatasetId = (datasetId: string): SetLastUsedDatasetIdAction => ({
     type: SET_LAST_USED_DATASET_ID,
     payload: datasetId,
+});
+
+export const SET_LAST_USED_CONNECTION_ID = Symbol('dash/SET_LAST_USED_CONNECTION_ID');
+export type SetLastUsedConnectionIdAction = {
+    type: typeof SET_LAST_USED_CONNECTION_ID;
+    payload: string;
+};
+
+export const setLastUsedConnectionId = (connectionId: string): SetLastUsedConnectionIdAction => ({
+    type: SET_LAST_USED_CONNECTION_ID,
+    payload: connectionId,
 });
 
 type SetItemDataBase = {
