@@ -17,4 +17,5 @@ export const commonFunctionsMap = {
             }) => Record<string, string>
         >(),
     isEntryId: makeFunctionTemplate<(value: string) => boolean>(),
+    extractEntryId: makeFunctionTemplate<(value: string) => string | null>(),
 } as const;

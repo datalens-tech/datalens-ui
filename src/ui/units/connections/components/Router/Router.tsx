@@ -2,8 +2,9 @@ import React from 'react';
 
 import {get} from 'lodash';
 import {Redirect, Route, RouteComponentProps, Switch} from 'react-router-dom';
-import {ConnectorType, extractEntryId} from 'shared';
+import {ConnectorType} from 'shared';
 import {ConnectorAlias} from 'ui/constants';
+import {registry} from 'ui/registry';
 
 import {ChOverYT, ConnectorForm, ConnectorsList, File, GSheetsV2, Yadocs} from '../';
 import type {ConnectorItem, GetConnectorsResponse} from '../../../../../shared/schema';
@@ -11,6 +12,8 @@ import {FieldKey} from '../../constants';
 import {FormDict} from '../../typings';
 import {getConnItemByType} from '../../utils';
 import {WrappedLoader} from '../WrappedLoader/WrappedLoader';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 type RouterProps = {
     flattenConnectors: ConnectorItem[];

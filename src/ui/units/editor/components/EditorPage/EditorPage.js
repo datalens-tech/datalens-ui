@@ -5,7 +5,6 @@ import {usePrevious} from 'hooks';
 import PropTypes from 'prop-types';
 import {DndProvider} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import {extractEntryId} from 'shared';
 import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
@@ -19,6 +18,8 @@ import NewChart from '../NewChart/NewChart';
 import {ViewLoader} from '../ViewLoader/ViewLoader';
 
 import './EditorPage.scss';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 const b = block('editor-page');
 

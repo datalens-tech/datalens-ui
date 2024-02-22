@@ -5,7 +5,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import {RouteComponentProps} from 'react-router-dom';
-import {Feature, WorkbookId, extractEntryId} from 'shared';
+import {Feature, WorkbookId} from 'shared';
 import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
@@ -29,6 +29,8 @@ import {SNAPTER_DESIRED_CLASS} from '../../modules/constants/constants';
 
 import './Preview.scss';
 import 'ui/components/Widgets/Chart/Chart.scss';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 const b = block('preview');
 

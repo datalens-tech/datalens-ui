@@ -2,13 +2,16 @@ import {parse} from 'querystring';
 
 import {AppError} from '@gravity-ui/nodekit';
 
-import {StringParams, extractEntryId} from '../../shared';
+import {StringParams} from '../../shared';
 import {
     GetEntryByKeyResponse,
     GetEntryMetaResponse,
     ResolveEntryByLinkComponentArgs,
     ResolveEntryByLinkComponentResponse,
 } from '../../shared/schema';
+import {registry} from '../registry';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 export enum ErrorCode {
     IncorrectURL = 'INCORRECT_URL',

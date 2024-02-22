@@ -7,7 +7,7 @@ import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
 import {ResolveThunks, connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router-dom';
-import {Feature, extractEntryId} from 'shared';
+import {Feature} from 'shared';
 import {EntryDialogName, EntryDialogues} from 'ui/components/EntryDialogues';
 import {PageTitle} from 'ui/components/PageTitle';
 import {SlugifyUrl} from 'ui/components/SlugifyUrl';
@@ -15,6 +15,7 @@ import {DL, URL_QUERY} from 'ui/constants';
 import {DatalensGlobalState} from 'ui/index';
 import {axiosInstance} from 'ui/libs';
 import {NULL_HEADER} from 'ui/libs/axios/axios';
+import {registry} from 'ui/registry';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'ui/units/workbooks/store/actions';
 import Utils from 'ui/utils';
 
@@ -50,6 +51,8 @@ import Dialogs from '../Dialogs/Dialogs';
 import Header from '../Header/Header';
 
 const AUTH_UPDATE_TIMEOUT = 40 * 60 * 1000;
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;

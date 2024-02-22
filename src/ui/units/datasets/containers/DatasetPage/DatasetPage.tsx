@@ -2,8 +2,9 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import type {RouteComponentProps} from 'react-router-dom';
-import {Feature, extractEntryId} from 'shared';
+import {Feature} from 'shared';
 import {SDK, Utils} from 'ui';
+import {registry} from 'ui/registry';
 
 import {AsideHeaderData} from '../../../../store/typings/asideHeader';
 import {DATASET_TABS, TAB_DATASET, TAB_SOURCES} from '../../constants';
@@ -14,6 +15,8 @@ import Dataset from '../Dataset/Dataset';
 import {createDatasetPageContext} from './createDatasetPageContext';
 
 import './DatasetPage.scss';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 interface DatasetPageProps extends RouteComponentProps<Record<string, string>> {
     sdk: SDK;

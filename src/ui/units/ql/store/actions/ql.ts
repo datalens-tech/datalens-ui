@@ -24,7 +24,6 @@ import {
     QlConfigPreviewTableData,
     Shared,
     WorkbookId,
-    extractEntryId,
     resolveIntervalDate,
     resolveOperation,
 } from '../../../../../shared';
@@ -82,6 +81,8 @@ import {
 } from '../typings/ql';
 import {Helper} from '../utils/grid';
 import {prepareMonitoringPreset} from '../utils/monitoring';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 export const SET_CHART_TYPE = Symbol('ql/SET_CHART_TYPE');
 export const SET_STATUS = Symbol('ql/SET_STATUS');

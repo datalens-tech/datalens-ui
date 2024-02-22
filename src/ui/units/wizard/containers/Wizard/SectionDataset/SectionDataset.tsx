@@ -20,7 +20,6 @@ import {
     PLACE,
     SectionDatasetQA,
     Update,
-    extractEntryId,
     getResultSchemaFromDataset,
 } from 'shared';
 import {closeDialog, openDialog, openDialogParameter} from 'store/actions/dialog';
@@ -89,6 +88,8 @@ import HierarchyEditor from './HierarchyEditor/HierarchyEditor';
 import iconPlus from 'ui/assets/icons/plus.svg';
 
 import './SectionDataset.scss';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;

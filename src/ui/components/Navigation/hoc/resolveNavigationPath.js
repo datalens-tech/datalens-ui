@@ -1,12 +1,14 @@
 import React from 'react';
 
 import PropTypes from 'prop-types';
-import {extractEntryId} from 'shared';
 
 import {DL} from '../../../constants/common';
 import logger from '../../../libs/logger';
 import {getSdk} from '../../../libs/schematic-sdk';
 import {PLACE, PLACE_VALUES} from '../constants';
+import {registry} from '../registry';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 async function getEntryKey(entryId, defaultPath) {
     try {

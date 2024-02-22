@@ -10,11 +10,11 @@ import {
     EntryScope,
     EntryUpdateMode,
     Feature,
-    extractEntryId,
 } from 'shared';
 import {GetEntryArgs} from 'shared/schema';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
 import {DatalensGlobalState, MarkdownProvider, URL_QUERY, Utils} from 'ui';
+import {registry} from 'ui/registry';
 import {ConnectionsReduxDispatch} from 'ui/units/connections/store';
 import {ManualError} from 'ui/utils/errors/manual';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
@@ -44,6 +44,8 @@ import {
     prepareLoadedData,
     removeParamAndUpdate,
 } from '../helpers';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 const i18n = I18n.keyset('dash.store.view');
 

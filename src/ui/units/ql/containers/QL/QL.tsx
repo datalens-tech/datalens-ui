@@ -7,7 +7,6 @@ import ViewLoader from 'components/ViewLoader/ViewLoader';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {extractEntryId} from 'shared';
 import {cleanRevisions, setRevisionsMode} from 'store/actions/entryContent';
 import {RevisionsMode} from 'store/typings/entryContent';
 import {DatalensGlobalState, EntryDialogues, URL_QUERY} from 'ui';
@@ -23,6 +22,8 @@ import {getUrlParamFromStr} from 'utils';
 import {registry} from '../../../../registry';
 
 import './QL.scss';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 const b = block('ql');
 

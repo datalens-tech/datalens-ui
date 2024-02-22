@@ -10,7 +10,7 @@ import {withRouter} from 'react-router-dom';
 import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ChartsConfig, EntryUpdateMode, Feature, extractEntryId} from 'shared';
+import {ChartsConfig, EntryUpdateMode, Feature} from 'shared';
 import {
     DL,
     DatalensGlobalState,
@@ -25,6 +25,7 @@ import {
     Utils,
     sdk,
 } from 'ui';
+import {registry} from 'ui/registry';
 import {
     selectConfig,
     selectConfigForSaving,
@@ -81,6 +82,8 @@ import SectionVisualization from './SectionVisualization/SectionVisualization';
 import WizardActionPanel from './WizardActionPanel/WizardActionPanel';
 
 import './Wizard.scss';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 const b = block('wizard');
 

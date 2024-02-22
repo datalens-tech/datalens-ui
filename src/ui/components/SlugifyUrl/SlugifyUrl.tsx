@@ -1,7 +1,10 @@
 import React from 'react';
 
 import {History} from 'history';
-import {extractEntryId, isEntryId, makeSlugName} from 'shared';
+import {isEntryId, makeSlugName} from 'shared';
+import {registry} from 'ui/registry';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 export interface SlugifyUrlProps {
     entryId?: string | null;

@@ -6,8 +6,9 @@ import {connect} from 'react-redux';
 import {RouteChildrenProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ConnectorType, extractEntryId} from 'shared';
+import {ConnectorType} from 'shared';
 import {DatalensGlobalState, PageTitle, SlugifyUrl, Utils} from 'ui';
+import {registry} from 'ui/registry';
 
 import {ErrorView, ErrorViewProps, Router, WrappedLoader} from '../';
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
@@ -23,6 +24,8 @@ import {useApiErrors} from './useApiErrors';
 import {isListPageOpened, isS3BasedConnForm} from './utils';
 
 import './Page.scss';
+
+const {extractEntryId} = registry.common.functions.getAll();
 
 const b = block('conn-page');
 
