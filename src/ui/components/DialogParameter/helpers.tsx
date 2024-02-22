@@ -5,7 +5,6 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {
     AVAILABLE_FIELD_TYPES,
-    AvailableFieldType,
     DATASET_FIELD_TYPES,
     DatasetField,
     DatasetFieldAggregation,
@@ -13,8 +12,6 @@ import {
     WithRequired,
 } from 'shared';
 import {DataTypeIcon} from 'ui';
-
-import {getDatetimeName} from '../../utils/helpers';
 
 import {ParameterFormState} from './useParameterForm';
 
@@ -32,9 +29,7 @@ const b = block('dialog-parameter');
 
 export const getTypesList = (): SelectOption[] => {
     return AVAILABLE_FIELD_TYPES.map((type): WithRequired<SelectOption, 'text'> => {
-        const dateTimeName = getDatetimeName(type) as AvailableFieldType;
-
-        const text = i18n('dataset.dataset-editor.modify', `value_${dateTimeName}`);
+        const text = i18n('dataset.dataset-editor.modify', `value_${type}`);
         return {
             qa: `dialog-parameter-${type}`,
             data: {
@@ -69,7 +64,6 @@ export const getDatepickerFormat = (type: DATASET_FIELD_TYPES): string | undefin
     switch (type) {
         case DATASET_FIELD_TYPES.DATE:
             return 'dd.MM.yyyy';
-        case DATASET_FIELD_TYPES.DATETIME:
         case DATASET_FIELD_TYPES.GENERICDATETIME:
             return 'dd.MM.yyyy HH:mm:ss';
         default:
