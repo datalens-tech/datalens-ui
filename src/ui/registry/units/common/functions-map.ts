@@ -89,5 +89,5 @@ export const commonFunctionsMap = {
             (docsEndpoint: string, path?: string) => Promise<FetchFunctionsDocumentationResponse>
         >(),
     isEntryId: makeFunctionTemplate<(value: string) => boolean>(),
-    extractEntryId: makeFunctionTemplate<(value: string) => string | null>(),
+    extractEntryId: makeFunctionTemplate<(value?: string) => string | null>(),
 } as const;
