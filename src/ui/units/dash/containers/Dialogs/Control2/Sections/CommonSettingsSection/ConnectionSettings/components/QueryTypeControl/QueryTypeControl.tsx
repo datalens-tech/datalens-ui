@@ -9,7 +9,6 @@ import {setSelectorDialogItem} from '../../../../../../../../store/actions/dashT
 import {selectSelectorDialog} from '../../../../../../../../store/selectors/dashTypedSelectors';
 
 import {EditQueryControl} from './components/EditQueryControl/EditQueryControl';
-import {LabelSelector} from './components/LabelSelector/LabelSelector';
 import {prepareQueryTypeSelectorOptions} from './helpers';
 
 const i18nConnectionBasedControlFake = (str: string) => str;
@@ -18,8 +17,6 @@ const renderQueryContentControl = (connectionQueryType: ConnectionQueryTypeValue
     switch (connectionQueryType) {
         case ConnectionQueryTypeValues.GenericQuery:
             return <EditQueryControl />;
-        case ConnectionQueryTypeValues.GenericLabelValues:
-            return <LabelSelector />;
         default:
             return null;
     }
