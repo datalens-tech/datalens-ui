@@ -1,0 +1,13 @@
+.query-editor {
+    height: 140px;
+    border: 1px solid var(--yc-color-line-generic);
+    border-radius: var(--yc-border-radius-l);
+
+    &__code-editor {
+        border: none;
+        .monaco-editor,
+        .overflow-guard {
+            border-radius: var(--yc-border-radius-l);
+        }
+    }
+}
