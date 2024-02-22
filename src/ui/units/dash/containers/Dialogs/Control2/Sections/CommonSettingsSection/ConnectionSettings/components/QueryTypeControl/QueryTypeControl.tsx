@@ -8,7 +8,22 @@ import {type ConnectionQueryType, ConnectionQueryTypeValues} from 'shared';
 import {setSelectorDialogItem} from '../../../../../../../../store/actions/dashTyped';
 import {selectSelectorDialog} from '../../../../../../../../store/selectors/dashTypedSelectors';
 
+import {EditQueryControl} from './components/EditQueryControl/EditQueryControl';
+import {LabelSelector} from './components/LabelSelector/LabelSelector';
 import {prepareQueryTypeSelectorOptions} from './helpers';
+
+const i18nConnectionBasedControlFake = (str: string) => str;
+
+const renderQueryContentControl = (connectionQueryType: ConnectionQueryTypeValues | undefined) => {
+    switch (connectionQueryType) {
+        case ConnectionQueryTypeValues.GenericQuery:
+            return <EditQueryControl />;
+        case ConnectionQueryTypeValues.GenericLabelValues:
+            return <LabelSelector />;
+        default:
+            return null;
+    }
+};
 
 type QueryTypeControlProps = {
     connectionQueryTypes: ConnectionQueryType[];
@@ -32,15 +47,16 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
 
     return (
         <React.Fragment>
-            <FormRow>
-                {options.length > 1 ? (
+            {options.length > 1 ? (
+                <FormRow label={i18nConnectionBasedControlFake('field_query-type')}>
                     <Select
                         options={options}
                         value={connectionQueryType ? [connectionQueryType] : []}
                         onUpdate={handleQueryTypeUpdate}
                     />
-                ) : null}
-            </FormRow>
+                </FormRow>
+            ) : null}
+            {renderQueryContentControl(connectionQueryType)}
         </React.Fragment>
     );
 };
