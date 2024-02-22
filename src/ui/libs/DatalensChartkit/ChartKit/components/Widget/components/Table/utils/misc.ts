@@ -4,6 +4,7 @@ import {sanitizeUrl} from '@braintree/sanitize-url';
 import {Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
 import isEqual from 'lodash/isEqual';
 import isPlainObject from 'lodash/isPlainObject';
+import memoize from 'lodash/memoize';
 import {
     BarTableCell,
     BarViewOptions,
@@ -20,14 +21,14 @@ import {formatNumber} from 'shared/modules/format-units/formatUnit';
 import {MarkupItem, MarkupItemTypeDict} from '../../../../../../../../components/Markup';
 import {DataTableData} from '../../../../../../types';
 
-const MARKUP_ITEM_TYPES = Object.values(MarkupItemTypeDict);
+const getMarkupItemTypes = memoize(() => Object.values(MarkupItemTypeDict));
 
 const decodeURISafe = (uri: string) => {
     return decodeURI(uri.replace(/%(?![0-9a-fA-F][0-9a-fA-F]+)/g, '%25'));
 };
 
 const isMarkupObject = (obj: MarkupItem | Object) => {
-    const hasRequiredType = 'type' in obj && MARKUP_ITEM_TYPES.includes(obj.type);
+    const hasRequiredType = 'type' in obj && getMarkupItemTypes().includes(obj.type);
     const hasAnyContent = 'children' in obj || 'content' in obj;
 
     return hasRequiredType && hasAnyContent;

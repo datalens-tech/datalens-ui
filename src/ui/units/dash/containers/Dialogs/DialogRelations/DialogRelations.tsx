@@ -501,6 +501,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                             anchorRef={aliasWarnButtonRef}
                             open={aliasWarnPopupOpen}
                             placement="right"
+                            className={b('invalid-list-popup')}
                         >
                             <div className={b('warn-content')}>
                                 <div className={b('warn-title')}>

@@ -24,6 +24,7 @@ import {
 } from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
 import {getSegmentMap} from '../helpers/segments';
+import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {getSegmentsYAxis} from '../line/helpers';
 import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
 import {PrepareFunctionArgs} from '../types';
@@ -56,8 +57,8 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
     if (x && xDataType) {
         xAxisMode = getActualAxisModeForField({
             field: {guid: x.guid, data_type: xDataType} as Field,
-            axisSettings: xPlaceholderSettings,
-            visualizationId: visualizationId as WizardVisualizationId,
+            axisSettings: xPlaceholder?.settings,
+            visualizationIds: getAllVisualizationsIds(shared),
             sort,
         }) as AxisMode;
     }

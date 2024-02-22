@@ -29,6 +29,7 @@ import {
 } from '../../utils/misc-helpers';
 import {addActionParamValue} from '../helpers/action-params';
 import {getSegmentMap} from '../helpers/segments';
+import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {
     getSegmentsIndexInOrder,
     getSortedCategories,
@@ -65,19 +66,17 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
-    const xPlaceholderSettings = xPlaceholder?.settings;
     const x: ServerField | undefined = xPlaceholder?.items[0];
     const xDataType = x ? idToDataType[x.guid] : null;
     const xIsNumber = Boolean(xDataType && isNumericalDataType(xDataType));
     const xIsPseudo = Boolean(x && x.type === 'PSEUDO');
     const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
-
     let xAxisMode = AxisMode.Discrete;
     if (x && xDataType) {
         xAxisMode = getActualAxisModeForField({
             field: {guid: x.guid, data_type: xDataType} as Field,
-            axisSettings: xPlaceholderSettings,
-            visualizationId: visualizationId as WizardVisualizationId,
+            axisSettings: xPlaceholder?.settings,
+            visualizationIds: getAllVisualizationsIds(shared),
             sort,
         }) as AxisMode;
     }

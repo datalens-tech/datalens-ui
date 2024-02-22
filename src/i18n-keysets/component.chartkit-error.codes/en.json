@@ -29,5 +29,6 @@
   "ERR.DS_API.US.ACCESS_DENIED_DATASET": "No access to <link>dataset</link>",
   "ERR.DS_API.US.BAD_REQUEST": "Internal error",
   "ERR.DS_API.US.OBJ_NOT_FOUND": "Dataset not found",
+  "ERR.DS_API.US.WORKBOOK_ISOLATION_INTERRUPTION_DATASET": "<link>Dataset</link> not found in the current workbook",
   "ERR.UNKNOWN": "Internal error"
 }

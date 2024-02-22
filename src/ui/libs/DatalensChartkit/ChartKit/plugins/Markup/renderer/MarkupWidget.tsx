@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {ChartQa} from '../../../../../../../shared';
 import {Markup} from '../../../../../../components/Markup';
 import Performance from '../../../../modules/perfomance';
+import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../helpers/constants';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import type {MarkupWidgetProps} from '../types';
 
@@ -37,8 +38,10 @@ const MarkupWidget = React.forwardRef<ChartKitWidgetRef | undefined, MarkupWidge
         }
 
         return (
-            <div data-qa={ChartQa.Chart} className={b()}>
-                <Markup item={data.value} />
+            <div className={b('content', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}>
+                <div data-qa={ChartQa.Chart} className={b()}>
+                    <Markup item={data.value} />
+                </div>
             </div>
         );
     },

@@ -45,9 +45,6 @@ export const prepareMarkupMetricVariant = ({
                                 content: title,
                             },
                         },
-                        {
-                            type: 'br',
-                        },
                         value,
                     ],
                 },
@@ -97,9 +94,6 @@ export const prepareMarkupMetricVariant = ({
                         className: 'markup-metric-title',
                         type: 'text',
                         content: title,
-                    },
-                    {
-                        type: 'br',
                     },
                     {
                         type: 'color',
