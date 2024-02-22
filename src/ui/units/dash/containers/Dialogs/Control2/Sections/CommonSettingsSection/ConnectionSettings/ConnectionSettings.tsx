@@ -5,9 +5,10 @@ import {I18n} from 'i18n';
 import {SectionWrapper} from '../../../../../../../../components/SectionWrapper/SectionWrapper';
 import {ELEMENT_TYPE} from '../../../../Control/constants';
 import {ValueSelector} from '../../ValueSelector/ValueSelector';
-import {ConnectionSelector} from '../ConnectionSelector/ConnectionSelector';
 import {InputTypeSelector} from '../InputTypeSelector/InputTypeSelector';
 import {getElementOptions} from '../helpers/input-type-select';
+
+import {ConnectionSelector} from './components/ConnectionSelector/ConnectionSelector';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 export const ConnectionSettings: React.FC = () => {
