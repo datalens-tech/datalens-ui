@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {GetEntryResponse} from 'shared/schema/us/types/entries';
 
+import {FieldWrapper} from '../../../../../../../../components/FieldWrapper/FieldWrapper';
 import DropdownNavigation from '../../../../../DropdownNavigation/DropdownNavigation';
 
 import './EntrySelector.scss';
@@ -30,27 +31,31 @@ export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelector
 
     return (
         <FormRow label={label}>
-            <div className={b('droplist')}>
-                <DropdownNavigation
-                    //@ts-ignore
-                    size="m"
-                    //@ts-ignore
-                    entryId={entryId}
-                    //@ts-ignore
-                    scope={scope}
-                    //@ts-ignore
-                    onClick={handleEntryChange}
-                    //@ts-ignore
-                    error={error}
-                    //@ts-ignore
-                    errorText={errorText}
-                />
-                {isValidEntry && entryId && (
-                    <Button className={b('button')} target="_blank" href={getEntryLink(entryId)}>
-                        {i18n('button_open')}
-                    </Button>
-                )}
-            </div>
+            <FieldWrapper error={errorText}>
+                <div className={b('droplist')}>
+                    <DropdownNavigation
+                        //@ts-ignore
+                        size="m"
+                        //@ts-ignore
+                        entryId={entryId}
+                        //@ts-ignore
+                        scope={scope}
+                        //@ts-ignore
+                        onClick={handleEntryChange}
+                        //@ts-ignore
+                        error={error}
+                    />
+                    {isValidEntry && entryId && (
+                        <Button
+                            className={b('button')}
+                            target="_blank"
+                            href={getEntryLink(entryId)}
+                        >
+                            {i18n('button_open')}
+                        </Button>
+                    )}
+                </div>
+            </FieldWrapper>
         </FormRow>
     );
 };

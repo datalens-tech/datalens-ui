@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, Flex, Popover} from '@gravity-ui/uikit';
+import {Button, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryTitle} from 'components/EntryTitle';
 import {i18n} from 'i18n';
@@ -54,7 +54,6 @@ class DropdownNavigation extends React.PureComponent {
         navigationPath: PropTypes.string.isRequired,
         changeNavigationPath: PropTypes.func.isRequired,
         error: PropTypes.bool,
-        errorText: PropTypes.string,
     };
 
     static defaultProps = {size: 'l'};
@@ -78,8 +77,6 @@ class DropdownNavigation extends React.PureComponent {
     }
 
     buttonRef = React.createRef();
-    controlRef = React.createRef();
-    popoverRef = React.createRef();
 
     get loading() {
         return this.props.entryId && this.props.entryId !== this.state.prevEntryId;
@@ -182,29 +179,11 @@ class DropdownNavigation extends React.PureComponent {
 
         return (
             <div className={b()} ref={this.buttonRef}>
-                {this.props.errorText && (
-                    <Popover
-                        ref={this.popoverRef}
-                        anchorRef={this.controlRef}
-                        content={this.props.errorText}
-                        placement="bottom"
-                    />
-                )}
                 <Button
                     view={this.props.error ? 'outlined-danger' : 'outlined'}
                     width={width}
                     size={this.props.size}
-                    ref={this.controlRef}
                     disabled={this.props.disabled}
-                    onMouseEnter={() => {
-                        const instance = this.popoverRef.current;
-                        if (this.props.error && this.props.errorText && instance) {
-                            instance.openTooltip();
-                        }
-                    }}
-                    onMouseLeave={() => {
-                        this.popoverRef.current?.closeTooltip();
-                    }}
                     onClick={() => this.setState({showNavigation: !this.state.showNavigation})}
                     className={b('button')}
                     qa={DialogControlQa.selectDatasetButton}
