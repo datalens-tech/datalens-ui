@@ -10,7 +10,6 @@ import {
     EntryScope,
     EntryUpdateMode,
     Feature,
-    extractEntryId,
 } from 'shared';
 import {GetEntryArgs} from 'shared/schema';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
@@ -24,6 +23,7 @@ import {DL} from '../../../../../constants';
 import ChartKit from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
+import {registry} from '../../../../../registry';
 import {showToast} from '../../../../../store/actions/toaster';
 import {Mode} from '../../../modules/constants';
 import {collectDashStats} from '../../../modules/pushStats';
@@ -254,6 +254,8 @@ export const load = ({
             const {pathname, search} = location;
 
             const searchParams = new URLSearchParams(search);
+
+            const {extractEntryId} = registry.common.functions.getAll();
 
             const entryId = extractEntryId(pathname);
             const isFakeEntry =
