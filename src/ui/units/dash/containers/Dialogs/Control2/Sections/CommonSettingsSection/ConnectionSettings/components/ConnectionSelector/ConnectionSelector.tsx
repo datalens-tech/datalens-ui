@@ -59,6 +59,7 @@ export const ConnectionSelector = () => {
         }
 
         fetchConnection(updatedConnectionId).then((connectionQueryTypes) => {
+            const defaultQueryType = connectionQueryTypes?.[0]?.query_type;
             dispatch(
                 setSelectorDialogItem({
                     connectionId: data.entry.entryId,
@@ -66,6 +67,7 @@ export const ConnectionSelector = () => {
                     defaultValue: undefined,
                     useDefaultValue: false,
                     connectionQueryTypes,
+                    connectionQueryType: defaultQueryType,
                 }),
             );
         });

@@ -21,7 +21,6 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
     const {connectionQueryTypes} = props;
 
     const options = prepareQueryTypeSelectorOptions(connectionQueryTypes);
-    const selectedConnectionQueryType = connectionQueryType || options[0]?.value;
 
     const handleQueryTypeUpdate = React.useCallback(
         (selected: string[]) => {
@@ -37,7 +36,7 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
                 {options.length > 1 ? (
                     <Select
                         options={options}
-                        value={[selectedConnectionQueryType]}
+                        value={connectionQueryType ? [connectionQueryType] : []}
                         onUpdate={handleQueryTypeUpdate}
                     />
                 ) : null}

@@ -11,6 +11,7 @@ import {InputTypeSelector} from '../InputTypeSelector/InputTypeSelector';
 import {getElementOptions} from '../helpers/input-type-select';
 
 import {ConnectionSelector} from './components/ConnectionSelector/ConnectionSelector';
+import {QueryTypeControl} from './components/QueryTypeControl/QueryTypeControl';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 export const ConnectionSettings: React.FC = () => {
@@ -24,13 +25,12 @@ export const ConnectionSettings: React.FC = () => {
         return getElementOptions().filter(({value}) => allowedOptions[value]);
     }, []);
 
-    const isConfigurationAvailable = Boolean(connectionQueryTypes?.length);
-
     return (
         <SectionWrapper title={i18n('label_common-settings')}>
             <ConnectionSelector />
-            {isConfigurationAvailable ? (
+            {connectionQueryTypes?.length ? (
                 <React.Fragment>
+                    <QueryTypeControl connectionQueryTypes={connectionQueryTypes} />
                     <InputTypeSelector options={options} />
                     <ValueSelector />
                 </React.Fragment>
