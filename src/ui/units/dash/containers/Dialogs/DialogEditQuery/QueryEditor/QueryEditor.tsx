@@ -41,8 +41,10 @@ export const QueryEditor: React.FC<QueryEditorProps> = (props: QueryEditorProps)
                 className={b('code-editor')}
                 value={query}
                 options={{
-                    glyphMargin: true,
-                    hideCursorInOverviewRuler: true,
+                    minimap: {
+                        enabled: false,
+                    },
+                    renderLineHighlight: 'none',
                 }}
             />
         </div>
