@@ -1,4 +1,8 @@
 .dialog-edit-query {
     width: 800px;
     min-height: 323px;
+
+    &__content {
+        gap: 15px;
+    }
 }

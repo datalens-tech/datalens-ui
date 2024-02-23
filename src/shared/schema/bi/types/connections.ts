@@ -112,3 +112,15 @@ export type GetConnectionTypedQueryDataArgs = BaseArgs &
     WorkbookIdArg & {body: ConnectionTypedQueryApiRequest};
 
 export type GetConnectionTypedQueryDataResponse = ConnectionTypedQueryApiResponse;
+
+export type GetConnectionTypedQueryErrorResponse = {
+    status: number;
+    message: string;
+    code: string;
+    details?: {
+        title?: string;
+        description?: string;
+        db_message?: string;
+    };
+    requestId: string;
+};
