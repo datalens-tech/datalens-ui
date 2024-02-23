@@ -216,9 +216,7 @@ const ChartKitError: React.FC<any> = (props) => {
 
                     if (scope === 'dataset' || scope === 'connection') {
                         const endpoint = getEndpointForScope(scope);
-                        const detailKey = `${
-                            ErrorCode.WorkbookIsolationInterruptionDenied
-                        }_${scope.toUpperCase()}`;
+                        const detailKey = `${errorCode}_${scope.toUpperCase()}`;
 
                         const text = i18n('component.chartkit-error.codes', detailKey);
                         const href = `${endpoint}/${source.details.entry_id}`;
