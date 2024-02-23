@@ -32,6 +32,14 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
     const {connectionQueryType} = useSelector(selectSelectorDialog);
     const {connectionQueryTypes} = props;
 
+    React.useEffect(() => {
+        if (!connectionQueryType && connectionQueryTypes.length === 1) {
+            dispatch(
+                setSelectorDialogItem({connectionQueryType: connectionQueryTypes[0].query_type}),
+            );
+        }
+    }, []);
+
     const options = prepareQueryTypeSelectorOptions(connectionQueryTypes);
 
     const handleQueryTypeUpdate = React.useCallback(
@@ -44,15 +52,17 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
 
     return (
         <React.Fragment>
-            <FormRow label={i18nConnectionBasedControlFake('field_query-type')}>
-                <Select
-                    width="max"
-                    options={options}
-                    value={connectionQueryType ? [connectionQueryType] : []}
-                    onUpdate={handleQueryTypeUpdate}
-                    placeholder={i18nConnectionBasedControlFake('placeholder_not-defined')}
-                />
-            </FormRow>
+            {options.length > 1 ? (
+                <FormRow label={i18nConnectionBasedControlFake('field_query-type')}>
+                    <Select
+                        width="max"
+                        options={options}
+                        value={connectionQueryType ? [connectionQueryType] : []}
+                        onUpdate={handleQueryTypeUpdate}
+                        placeholder={i18nConnectionBasedControlFake('placeholder_not-defined')}
+                    />
+                </FormRow>
+            ) : null}
             {renderQueryContentControl(connectionQueryType)}
         </React.Fragment>
     );
