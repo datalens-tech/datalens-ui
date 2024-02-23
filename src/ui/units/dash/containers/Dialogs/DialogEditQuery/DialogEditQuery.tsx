@@ -60,8 +60,9 @@ const DialogEditQuery: React.FC = () => {
                 },
             })
             .then(() => {
-                dispatch(setSelectorDialogItem({connectionQueryContent: queryContent}));
                 setErrorState(undefined);
+                dispatch(setSelectorDialogItem({connectionQueryContent: queryContent}));
+                dispatch(closeDialog());
             })
             .catch((e: GetConnectionTypedQueryErrorResponse) => {
                 setDisabled(true);
