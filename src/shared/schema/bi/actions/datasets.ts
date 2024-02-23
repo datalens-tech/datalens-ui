@@ -67,7 +67,7 @@ export const actions = {
     }),
     getDataSetFieldsById: createAction<GetDataSetFieldsByIdResponse, GetDataSetFieldsByIdArgs>({
         method: 'GET',
-        endpoint: 'dataApiEndpoint',
+        endpoint: 'datasetDataApiEndpoint',
         path: ({dataSetId}) => `${API_DATA_V1}/datasets/${filterUrlFragment(dataSetId)}/fields`,
         params: ({workbookId}, headers) => ({
             headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
@@ -87,7 +87,7 @@ export const actions = {
         Omit<GetDataSetFieldsByIdArgs, 'workbookId'>
     >({
         method: 'GET',
-        endpoint: 'dataApiEndpoint',
+        endpoint: 'datasetDataApiEndpoint',
         path: ({dataSetId}) =>
             `/public${API_DATA_V1}/datasets/${filterUrlFragment(dataSetId)}/fields`,
         params: (_, headers, {ctx}) => ({
@@ -138,7 +138,7 @@ export const actions = {
     }),
     getPreview: createAction<GetPreviewResponse, GetPreviewArgs>({
         method: 'POST',
-        endpoint: 'dataApiEndpoint',
+        endpoint: 'datasetDataApiEndpoint',
         path: ({datasetId, version}) =>
             datasetId
                 ? `${API_DATA_V1}/datasets/${filterUrlFragment(
@@ -179,7 +179,7 @@ export const actions = {
         GetDistinctsApiV2TransformedResponse
     >({
         method: 'POST',
-        endpoint: 'dataApiEndpoint',
+        endpoint: 'datasetDataApiEndpoint',
         path: ({datasetId}) => `${API_DATA_V2}/datasets/${datasetId}/values/distinct`,
         params: ({datasetId: _datasetId, workbookId, ...body}, headers) => ({
             body,

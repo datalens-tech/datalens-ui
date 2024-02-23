@@ -123,7 +123,7 @@ export const actions = {
         GetConnectionTypedQueryDataArgs
     >({
         method: 'POST',
-        endpoint: 'dataApiEndpoint',
+        endpoint: 'datasetDataApiEndpoint',
         path: ({connectionId}) => `${PATH_DATA_API_PREFIX}/connections/${connectionId}/typed_query`,
         params: ({body, workbookId}, headers) => ({
             body: {...body},
