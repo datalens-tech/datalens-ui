@@ -4,7 +4,7 @@ export const opensourceEndpoints = {
     development: {
         bi: {
             endpoint: endpoints.development.api.bi,
-            dataApiEndpoint: endpoints.development.api.biData,
+            datasetDataApiEndpoint: endpoints.development.api.biData,
         },
         us: {
             endpoint: endpoints.development.api.us,
@@ -13,7 +13,7 @@ export const opensourceEndpoints = {
     production: {
         bi: {
             endpoint: endpoints.production.api.bi,
-            dataApiEndpoint: endpoints.production.api.biData,
+            datasetDataApiEndpoint: endpoints.production.api.biData,
         },
         us: {
             endpoint: endpoints.production.api.us,
