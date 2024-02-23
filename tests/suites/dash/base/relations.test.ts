@@ -1,9 +1,16 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {getControlByTitle, slct, waitForCondition} from '../../../utils';
+import {
+    getControlByTitle,
+    isEnabledFeature,
+    openTestPage,
+    slct,
+    waitForCondition,
+} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ConnectionsDialogQA} from '../../../../src/shared';
+import {ConnectionsDialogQA, Feature} from '../../../../src/shared';
+import {RobotChartsDashboardUrls} from '../../../utils/constants';
 
 const SELECTORS = {
     CHART_LEGEND_ITEM: '.highcharts-legend-item',
@@ -25,6 +32,12 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
         'Adding a chart and selector with manual input of values, creating a link',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
+
+            await openTestPage(page, RobotChartsDashboardUrls.DashboardWithLongContentBeforeChart);
+            const hideOldRelations = await isEnabledFeature(page, Feature.HideOldRelations);
+            if (hideOldRelations) {
+                return;
+            }
 
             await dashboardPage.createDashboard({
                 editDash: async () => {
