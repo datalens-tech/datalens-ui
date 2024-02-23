@@ -23,3 +23,7 @@ export type ConnectionRequiredParameter = {
     name: string;
     data_type: string;
 };
+
+export type ConnectionQueryContent = {
+    query: string;
+};

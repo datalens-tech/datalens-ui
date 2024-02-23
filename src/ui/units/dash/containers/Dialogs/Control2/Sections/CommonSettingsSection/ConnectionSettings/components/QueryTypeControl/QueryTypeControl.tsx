@@ -8,6 +8,7 @@ import {type ConnectionQueryType, ConnectionQueryTypeValues} from 'shared';
 import {setSelectorDialogItem} from '../../../../../../../../store/actions/dashTyped';
 import {selectSelectorDialog} from '../../../../../../../../store/selectors/dashTypedSelectors';
 
+import {EditLabelControl} from './components/EditLabelControl/EditLabelControl';
 import {EditQueryControl} from './components/EditQueryControl/EditQueryControl';
 import {prepareQueryTypeSelectorOptions} from './helpers';
 
@@ -17,6 +18,8 @@ const renderQueryContentControl = (connectionQueryType: ConnectionQueryTypeValue
     switch (connectionQueryType) {
         case ConnectionQueryTypeValues.GenericQuery:
             return <EditQueryControl />;
+        case ConnectionQueryTypeValues.GenericLabelValues:
+            return <EditLabelControl />;
         default:
             return null;
     }
