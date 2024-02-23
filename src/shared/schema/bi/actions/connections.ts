@@ -17,6 +17,8 @@ import {
     GetConnectionSourceSchemaResponse,
     GetConnectionSourcesArgs,
     GetConnectionSourcesResponse,
+    type GetConnectionTypedQueryDataArgs,
+    type GetConnectionTypedQueryDataResponse,
     GetConnectorSchemaArgs,
     GetConnectorSchemaResponse,
     GetConnectorsResponse,
@@ -29,6 +31,7 @@ import {
 } from '../types';
 
 const PATH_PREFIX = '/api/v1';
+const PATH_DATA_API_PREFIX = '/api/data/v1';
 
 export const actions = {
     ensureUploadRobot: createAction<EnsureUploadRobotResponse, EnsureUploadRobotArgs>({
@@ -114,5 +117,17 @@ export const actions = {
         method: 'GET',
         path: ({type, mode}) => `${PATH_PREFIX}/info/connectors/forms/${type}/${mode}`,
         params: (_, headers) => ({headers}),
+    }),
+    getConnectionTypedQueryData: createAction<
+        GetConnectionTypedQueryDataResponse,
+        GetConnectionTypedQueryDataArgs
+    >({
+        method: 'POST',
+        endpoint: 'dataApiEndpoint',
+        path: ({connectionId}) => `${PATH_DATA_API_PREFIX}/connections/${connectionId}/typed_query`,
+        params: ({body, workbookId}, headers) => ({
+            body: {...body},
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
     }),
 };
