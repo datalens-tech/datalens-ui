@@ -4,12 +4,13 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {Feature} from 'shared';
 
+import {TemplateTextPaper} from '../../../../../../../../../../../../components/TemplateTextPaper/TemplateTextPaper';
 import Utils from '../../../../../../../../../../../../utils';
 import {
     SourcesConfig,
     SourceError as TSourceError,
 } from '../../../../../../../../../../modules/data-provider/charts';
-import {DetailsContent, Source, SourceDetails, getParams} from '../Source/Source';
+import {Source, getParams} from '../Source/Source';
 
 const b = block('chartkit-inspector-sources');
 
@@ -41,36 +42,36 @@ export const SourceError: React.FC<SourceErrorProps> = ({source, config, isColla
             content={
                 <React.Fragment>
                     <div className={b('source-expanded')}>
-                        <div className={b('source-details')}>
-                            <div className={b('details-title')}>URL</div>
-                            {dataUrlObj && (
-                                <DetailsContent
-                                    value={`${dataUrlObj.origin}${dataUrlObj.pathname}`}
-                                />
-                            )}
-                        </div>
+                        <TemplateTextPaper
+                            title="URL"
+                            content={
+                                dataUrlObj
+                                    ? `${dataUrlObj.origin}${dataUrlObj.pathname}`
+                                    : undefined
+                            }
+                        />
                         {showRequestQuery && (
-                            <SourceDetails
+                            <TemplateTextPaper
                                 title={i18n(
                                     'chartkit.menu.inspector',
                                     'label_source-request-query',
                                 )}
-                                value={JSON.stringify(dataUrlParams, null, 2)}
+                                content={JSON.stringify(dataUrlParams, null, 2)}
                             />
                         )}
                         {showData && (
-                            <SourceDetails
+                            <TemplateTextPaper
                                 title={i18n('chartkit.menu.inspector', 'label_source-request-data')}
-                                value={JSON.stringify(data, null, 2)}
+                                content={JSON.stringify(data, null, 2)}
                             />
                         )}
                         {body && (
-                            <SourceDetails
+                            <TemplateTextPaper
                                 title={i18n(
                                     'chartkit.menu.inspector',
                                     'label_source-response-body',
                                 )}
-                                value={JSON.stringify(body, null, 2)}
+                                content={JSON.stringify(body, null, 2)}
                             />
                         )}
                     </div>

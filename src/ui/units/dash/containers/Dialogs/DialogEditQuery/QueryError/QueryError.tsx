@@ -3,7 +3,7 @@ import React from 'react';
 import type {GetConnectionTypedQueryErrorResponse} from 'shared/schema';
 
 import {Collapse} from '../../../../../../components/Collapse/Collapse';
-import {SourceDetails} from '../../../../../../libs/DatalensChartkit/components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Sources/Source/Source';
+import {TemplateTextPaper} from '../../../../../../components/TemplateTextPaper/TemplateTextPaper';
 
 export type QueryErrorProps = {
     error: GetConnectionTypedQueryErrorResponse;
@@ -18,15 +18,15 @@ export const QueryError: React.FC<QueryErrorProps> = (props: QueryErrorProps) =>
     return (
         <Collapse title={i18nConnectionBasedControlFake('title_invalid-sql-query')} isExpand={true}>
             {dbResponse ? (
-                <SourceDetails
+                <TemplateTextPaper
                     title={i18nConnectionBasedControlFake('title_database-response')}
-                    value={dbResponse}
+                    content={dbResponse}
                 />
             ) : null}
             {query ? (
-                <SourceDetails
+                <TemplateTextPaper
                     title={i18nConnectionBasedControlFake('title_sent-query')}
-                    value={query}
+                    content={query}
                 />
             ) : null}
         </Collapse>
