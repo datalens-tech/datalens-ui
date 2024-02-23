@@ -32,8 +32,8 @@ export const ConnectionSelector = () => {
     >();
 
     const fetchConnection = React.useCallback(
-        (updatedConnectionId: string) => {
-            getSdk()
+        async (updatedConnectionId: string) => {
+            return getSdk()
                 .bi.getConnection({
                     connectionId: updatedConnectionId,
                     workbookId,
@@ -43,11 +43,12 @@ export const ConnectionSelector = () => {
 
                     setUnsupportedConnectionError(error);
                     setIsValidConnection(true);
-                    dispatch(setSelectorDialogItem({connectionQueryTypes: queryTypes}));
+                    return queryTypes;
                 })
                 .catch((error) => {
                     setIsValidConnection(false);
                     logger.logError('Connection selector: load connection failed', error);
+                    return undefined;
                 });
         },
         [workbookId],
@@ -55,7 +56,9 @@ export const ConnectionSelector = () => {
 
     React.useEffect(() => {
         if (connectionId) {
-            fetchConnection(connectionId);
+            fetchConnection(connectionId).then((connectionQueryTypes) => {
+                dispatch(setSelectorDialogItem({connectionQueryTypes}));
+            });
         }
     }, []);
     const handleEntryChange = (data: {entry: GetEntryResponse}) => {
@@ -66,16 +69,19 @@ export const ConnectionSelector = () => {
 
         dispatch(setLastUsedConnectionId(updatedConnectionId));
 
-        fetchConnection(updatedConnectionId);
-        dispatch(
-            setSelectorDialogItem({
-                connectionId: data.entry.entryId,
-                elementType: ELEMENT_TYPE.SELECT,
-                defaultValue: undefined,
-                useDefaultValue: false,
-                connectionQueryType: undefined,
-            }),
-        );
+        fetchConnection(updatedConnectionId).then((connectionQueryTypes) => {
+            dispatch(
+                setSelectorDialogItem({
+                    connectionId: data.entry.entryId,
+                    elementType: ELEMENT_TYPE.SELECT,
+                    defaultValue: undefined,
+                    useDefaultValue: false,
+                    connectionQueryType: undefined,
+                    connectionQueryContent: undefined,
+                    connectionQueryTypes,
+                }),
+            );
+        });
     };
 
     return (

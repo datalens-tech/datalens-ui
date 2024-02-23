@@ -32,7 +32,8 @@ type QueryTypeControlProps = {
 export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTypeControlProps) => {
     const dispatch = useDispatch();
 
-    const {connectionQueryType} = useSelector(selectSelectorDialog);
+    const {connectionQueryType, connectionId} = useSelector(selectSelectorDialog);
+
     const {connectionQueryTypes} = props;
 
     React.useEffect(() => {
@@ -41,7 +42,7 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
                 setSelectorDialogItem({connectionQueryType: connectionQueryTypes[0].query_type}),
             );
         }
-    }, []);
+    }, [connectionId]);
 
     const options = prepareQueryTypeSelectorOptions(connectionQueryTypes);
 
