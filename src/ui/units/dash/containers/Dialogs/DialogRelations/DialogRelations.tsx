@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Config, DashKit} from '@gravity-ui/dashkit';
 import {ChevronDown, TriangleExclamationFill} from '@gravity-ui/icons';
-import {Button, Dialog, DropdownMenu, Icon, Popup} from '@gravity-ui/uikit';
+import {Button, Dialog, DropdownMenu, Icon, Popup, type SwitcherProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -462,7 +462,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                             qa: DashCommonQa.RelationsDisconnectAllSelectors,
                         },
                     ]}
-                    renderSwitcher={(switcherProps) => (
+                    renderSwitcher={(switcherProps: SwitcherProps) => (
                         <Button
                             className={b('switcher-button')}
                             view="normal"
