@@ -94,8 +94,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const {data} = this.props;
         const controlData = data as unknown as DashTabItemGroupControlData;
 
-        this.controlsProgressCount = controlData.items.length;
-        controlData.items.forEach((item) => {
+        this.controlsProgressCount = controlData?.group?.length || 0;
+        controlData.group?.forEach((item) => {
             this.controlsStatus[item.id] = LOAD_STATUS.INITIAL;
         });
 
@@ -168,7 +168,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const {data} = this.props;
         const controlData = data as unknown as DashTabItemGroupControlData;
 
-        const paramIdDebug = controlData.items
+        const paramIdDebug = controlData.group
             .filter((item) => 'source' in item)
             .map(
                 ({source}) =>
@@ -205,6 +205,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     private onChange = (params: StringParams, callChangeByClick?: boolean) => {
         const controlData = this.props.data as unknown as DashTabItemGroupControlData;
+
         if (!controlData.buttonApply || callChangeByClick) {
             this.props.onStateAndParamsChange({params});
         }
@@ -257,7 +258,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             title: label,
             label,
             params: loadedData?.params,
-            defaultParams: this.props.defaults,
+            defaultParams: loadedData?.defaultParams,
             loaded: Boolean(loadedData),
             itemId: loadedData?.id,
             usedParams: loadedData?.usedParams
@@ -490,7 +491,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         return (
             <div className={b('controls')}>
-                {controlData.items.map((item: DashTabItemControlSingle) =>
+                {controlData.group?.map((item: DashTabItemControlSingle) =>
                     this.renderControl(item),
                 )}
                 {this.renderButtons()}

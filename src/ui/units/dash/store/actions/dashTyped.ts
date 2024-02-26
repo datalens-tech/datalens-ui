@@ -43,7 +43,12 @@ import {
     getControlValidation,
     getItemDataSource,
 } from './controls/helpers';
-import {ItemDataSource, SelectorDialogValidation, SelectorSourceType} from './controls/types';
+import {
+    ItemDataSource,
+    SelectorDialogValidation,
+    SelectorSourceType,
+    SelectorsGroupDialogState,
+} from './controls/types';
 import {closeDialog as closeDashDialog} from './dialogs/actions';
 import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
 
@@ -320,13 +325,14 @@ type SetItemDataBase = {
     sourceType?: string;
     autoHeight?: boolean;
     source?: ItemDataSource;
+    group?: Partial<SelectorDialogState>[];
 };
 export type SetItemDataText = Partial<PluginTextProps['data']> & SetItemDataBase;
 export type SetItemDataTitle = Partial<PluginTitleProps['data']> & SetItemDataBase;
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
 export type SetItemDataArgs = {
-    data: SetItemDataText | SetItemDataTitle;
+    data: SetItemDataText | SetItemDataTitle | SelectorsGroupDialogState;
     defaults?: SetItemDataDefaults;
     type?: string;
 };
@@ -369,6 +375,7 @@ export type SelectorDialogState = {
     placementMode: 'auto' | '%' | 'px';
     width: string;
     id: string;
+    namespace?: string;
 };
 
 export type AcceptableValue = {
@@ -732,9 +739,9 @@ export function purgeData(data: DashData) {
                     currentItemsIds.add(itemId);
 
                     if (type === ITEM_TYPE.CONTROL || type === ITEM_TYPE.GROUP_CONTROL) {
-                        // if it is group control all connections set on its items
-                        if ('items' in data) {
-                            data.items.forEach((widgetItem) => {
+                        // if it is group control all connections set on its group items
+                        if ('group' in data) {
+                            data.group.forEach((widgetItem) => {
                                 currentControlsIds.add(widgetItem.id);
                             });
                         } else {

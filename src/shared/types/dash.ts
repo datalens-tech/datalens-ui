@@ -244,7 +244,7 @@ export interface DashTabItemGroupControlData {
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
-    items: DashTabItemControlSingle[];
+    group: DashTabItemControlSingle[];
 }
 
 export interface DashTabLayout {

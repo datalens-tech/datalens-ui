@@ -15,7 +15,7 @@ export type SelectorsGroupDialogState = {
     buttonApply: boolean;
     buttonReset: boolean;
     defaults?: Record<string, string | string[]>;
-    items: SelectorDialogState[];
+    group: SelectorDialogState[];
     id?: string;
 };
 

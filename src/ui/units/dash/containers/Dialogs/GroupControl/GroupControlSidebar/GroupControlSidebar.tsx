@@ -39,10 +39,10 @@ export const GroupControlSidebar = () => {
     const dispatch = useDispatch();
 
     const initialTabIndex =
-        selectorsGroup.items[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
+        selectorsGroup.group?.[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
     const [defaultTabIndex, setDefaultTabIndex] = React.useState(initialTabIndex);
 
-    const isMultipleSelectors = selectorsGroup.items.length > 1;
+    const isMultipleSelectors = selectorsGroup.group?.length > 1;
 
     const updateSelectorsList = React.useCallback(
         ({items, selectedItemIndex, action}: ListState<SelectorDialogState>) => {
@@ -53,7 +53,7 @@ export const GroupControlSidebar = () => {
                 dispatch(
                     updateSelectorsGroup({
                         ...selectorsGroup,
-                        items,
+                        group: items,
                         ...(items.length === 1 ? SINGLE_SELECTOR_SETTINGS : {}),
                     }),
                 );
@@ -128,7 +128,7 @@ export const GroupControlSidebar = () => {
         <div className={b('sidebar')}>
             <div className={b('selectors-list')}>
                 <TabMenu
-                    items={selectorsGroup.items}
+                    items={selectorsGroup.group}
                     selectedItemIndex={activeSelectorIndex}
                     update={updateSelectorsList}
                     addButtonText={i18n('button_add-selector')}

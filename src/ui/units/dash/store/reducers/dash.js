@@ -60,7 +60,7 @@ const initialState = {
 
 export function getGroupSelectorDialogInitialState() {
     return {
-        items: [],
+        group: [],
         id: getRandomKey(),
     };
 }
@@ -82,12 +82,10 @@ export function getSelectorDialogInitialState(args = {}) {
     };
 }
 
-export function getSelectorDialogFromData(data, defaults) {
+export function getSelectorDialogFromData(data) {
     return {
         validation: {},
         isManualTitle: true,
-
-        defaults,
 
         title: data.title,
         sourceType: data.sourceType,
@@ -112,8 +110,8 @@ export function getSelectorDialogFromData(data, defaults) {
     };
 }
 
-export function getSelectorGroupDialogFromData(data, defaults) {
-    const items = Object.values(data.items)
+export function getSelectorGroupDialogFromData(data) {
+    const items = Object.values(data.tabs || data.group)
         .map((item) => ({
             validation: {},
             isManualTitle: true,
@@ -144,13 +142,11 @@ export function getSelectorGroupDialogFromData(data, defaults) {
         .sort((a, b) => a.index - b.index);
 
     return {
-        defaults,
-
         autoHeight: data.autoHeight,
         buttonApply: data.buttonApply,
         buttonReset: data.buttonReset,
 
-        items,
+        group: items,
     };
 }
 
@@ -192,7 +188,7 @@ function dash(state = initialState, action) {
                 ...action.payload,
                 selectorDialog,
                 selectorsGroup: {
-                    items: [selectorDialog],
+                    group: [selectorDialog],
                     autoHeight: Boolean(selectorDialog.autoHeight),
                     buttonApply: Boolean(selectorDialog.buttonApply),
                     buttonReset: Boolean(selectorDialog.buttonReset),
@@ -386,7 +382,7 @@ function dash(state = initialState, action) {
         }
         case actionTypes.OPEN_ITEM_DIALOG: {
             const payload = action.payload;
-            const {id: openedItemId, data, defaults} = payload;
+            const {id: openedItemId, data} = payload;
             let {type: openedDialog} = tab.items.find(({id}) => id === openedItemId);
 
             const newState = {
@@ -400,7 +396,7 @@ function dash(state = initialState, action) {
                 openedDialog === 'control' &&
                 data.sourceType !== 'external'
             ) {
-                const selectorDialog = getSelectorDialogFromData(data, defaults);
+                const selectorDialog = getSelectorDialogFromData(data);
                 selectorDialog.title =
                     data.source.innerTitle && data.source.showInnerTitle
                         ? `${data.title} ${data.source.innerTitle}`
@@ -412,14 +408,14 @@ function dash(state = initialState, action) {
                     autoHeight: Boolean(data.autoHeight),
                     buttonApply: false,
                     buttonReset: false,
-                    items: [selectorDialog],
+                    group: [selectorDialog],
                 };
                 newState.selectorDialog = selectorDialog;
             } else if (openedDialog === 'group_control') {
-                newState.selectorsGroup = getSelectorGroupDialogFromData(data, defaults);
-                newState.selectorDialog = newState.selectorsGroup.items[0];
+                newState.selectorsGroup = getSelectorGroupDialogFromData(data);
+                newState.selectorDialog = newState.selectorsGroup.group[0];
             } else if (openedDialog === 'control') {
-                newState.selectorDialog = getSelectorDialogFromData(data, defaults);
+                newState.selectorDialog = getSelectorDialogFromData(data);
             }
 
             newState.openedDialog = openedDialog;

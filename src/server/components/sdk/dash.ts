@@ -123,8 +123,8 @@ function validateData(data: DashData) {
 
             if (type === DashTabItemType.Control || type === DashTabItemType.GroupControl) {
                 // if it is group control all connections set on its items
-                if ('items' in data) {
-                    data.items.forEach((widgetItem) => {
+                if ('group' in data) {
+                    data.group.forEach((widgetItem) => {
                         currentControlsIds.add(widgetItem.id);
                     });
                 } else {
