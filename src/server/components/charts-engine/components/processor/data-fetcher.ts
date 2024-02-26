@@ -78,7 +78,7 @@ type DataFetcherRequestOptions = {
     spStatFormat: string | string[] | null;
     maxRedirects?: number;
     form?: string | Record<string, string>;
-    body?: string | Record<string, string>;
+    data?: string | Record<string, string>;
     json?: boolean;
 };
 
@@ -745,7 +745,7 @@ export class DataFetcher {
             if (sourceFormat === 'form') {
                 requestOptions.form = sourceData;
             } else {
-                requestOptions.body = sourceData;
+                requestOptions.data = sourceData;
 
                 if (typeof sourceData === 'object') {
                     requestOptions.json = true;
@@ -767,15 +767,15 @@ export class DataFetcher {
                 ctx.log('Using caching', {publicTargetUri});
             }
             const abortController = new AbortController();
-            const signal = abortController.signal;
             const currentRequest: Promise<void> = RequestPromise.request({
-                requestOptions: {...requestOptions, signal},
+                requestOptions: {...requestOptions},
                 requestControl,
                 useCaching,
+                abortController,
             })
                 // eslint-disable-next-line
                 .catch((error) => {
-                    if (signal.aborted) {
+                    if (abortController.signal.aborted) {
                         return;
                     }
                     const latency = new Date().getTime() - fetchingStartTime;
@@ -968,8 +968,8 @@ export class DataFetcher {
                     });
                 })
                 .finally(() => {
-                    if (signal.aborted) {
-                        const code = signal.reason || REQUEST_CANCELLED;
+                    if (abortController.signal.aborted) {
+                        const code = abortController.signal.reason || REQUEST_CANCELLED;
 
                         fetchResolve({
                             sourceId: sourceName,
