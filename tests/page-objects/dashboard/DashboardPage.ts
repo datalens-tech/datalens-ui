@@ -714,7 +714,8 @@ class DashboardPage extends BasePage {
 
     async setupIgnoreAllLinks(widgetElem: Locator) {
         await widgetElem.click();
-        await this.page.locator(slct(DashCommonQa.RelationsDisconnectAllButton)).click();
+        await this.page.locator(slct(DashCommonQa.RelationsDisconnectAllSwitcher)).click();
+        await this.page.locator(slct(DashCommonQa.RelationsDisconnectAllWidgets)).click();
         await this.applyRelationsChanges();
     }
 
