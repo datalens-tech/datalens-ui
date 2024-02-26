@@ -93,7 +93,7 @@ import {
 } from './dataset';
 import {actualizeAndSetUpdates, setUpdates, updatePreviewAndClientChartsConfig} from './preview';
 import {setDefaultsSet, setRouteWorkbookId, toggleNavigation} from './settings';
-import {getDatasetUpdates, mutateAndValidateItem} from './utils';
+import {getDatasetUpdates, isSharedPlaceholder, mutateAndValidateItem} from './utils';
 import {
     _setSelectedLayerId,
     _setVisualization,
@@ -431,7 +431,8 @@ export function setVisualizationPlaceholderItems({
                         };
                     }
 
-                    if (stateVisualization.id === 'combined-chart' && placeholder.id === 'x') {
+                    const visualizationId = stateVisualization.id as WizardVisualizationId;
+                    if (isSharedPlaceholder(placeholder.id as PlaceholderId, visualizationId)) {
                         layer.placeholders = layer.placeholders.map((p) => {
                             if (p.id === 'x') {
                                 return {
