@@ -1040,6 +1040,10 @@ function updatePlaceholderSettings(
                         (p) => p.id === placeholderId,
                     );
 
+                    if (!layer.placeholders[placeholderIndex]?.settings) {
+                        return acc;
+                    }
+
                     return Object.assign(acc, {
                         [index]: {
                             placeholders: {
@@ -1056,8 +1060,9 @@ function updatePlaceholderSettings(
         if (selectedLayerIndex !== -1) {
             const placeholders = layers[selectedLayerIndex]?.placeholders || [];
             const placeholderToUpdateIndex = placeholders.findIndex((p) => p.id === placeholderId);
+            const targetPlaceholder = placeholders[placeholderToUpdateIndex];
 
-            if (placeholderToUpdateIndex !== -1) {
+            if (targetPlaceholder?.settings) {
                 return update(visualization, {
                     layers: {
                         [selectedLayerIndex]: {
