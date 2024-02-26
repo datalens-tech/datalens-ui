@@ -8,6 +8,8 @@ import {
     GraphShared,
     HierarchyField,
     Placeholder,
+    PlaceholderId,
+    PlaceholderSettings,
     PointSizeConfig,
     ShapesConfig,
     Shared,
@@ -22,6 +24,7 @@ import {
     isVisualizationWithLayers,
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from 'shared';
+import {isSharedPlaceholder} from 'ui/units/wizard/actions/utils';
 
 import {ResetWizardStoreAction} from '../actions';
 import {SET_HIERARCHIES} from '../actions/dataset';
@@ -48,7 +51,7 @@ import {
     UPDATE_PLACEHOLDER_SETTINGS,
     VisualizationAction,
 } from '../actions/visualization';
-import {getSelectedLayer} from '../utils/helpers';
+import {getSelectedLayer, getSelectedLayerId} from '../utils/helpers';
 import {getPlaceholderAxisModeMap, isPlaceholderWithAxisMode} from '../utils/placeholder';
 
 import {clearUnusedVisualizationItems, getPlaceholdersWithMergedSettings} from './utils';
@@ -666,20 +669,13 @@ export function visualization(
         case UPDATE_PLACEHOLDER_SETTINGS: {
             const {settings, placeholderId} = action;
 
-            let updatedVisualization = state.visualization;
-
-            const placeholders = updatedVisualization?.placeholders || [];
-            const placeholderToUpdateIndex = placeholders.findIndex((p) => p.id === placeholderId);
-
-            if (placeholderToUpdateIndex >= 0 && placeholders[placeholderToUpdateIndex].settings) {
-                updatedVisualization = update(updatedVisualization, {
-                    placeholders: {[placeholderToUpdateIndex]: {settings: {$merge: settings}}},
-                });
-            }
-
             return {
                 ...state,
-                visualization: updatedVisualization,
+                visualization: updatePlaceholderSettings(
+                    state.visualization,
+                    placeholderId,
+                    settings,
+                ),
             };
         }
         case SET_HIERARCHIES: {
@@ -1025,4 +1021,64 @@ function updateCommonPlaceholders(
         ...visualization,
         layers,
     } as Shared['visualization'];
+}
+
+function updatePlaceholderSettings(
+    visualization: VisualizationState['visualization'],
+    placeholderId: PlaceholderId,
+    settings: Partial<PlaceholderSettings>,
+) {
+    if (isVisualizationWithLayers(visualization)) {
+        const visualizationId = visualization.id as WizardVisualizationId;
+        const layerId = getSelectedLayerId(visualization);
+        const layers = visualization.layers;
+
+        if (isSharedPlaceholder(placeholderId, visualizationId)) {
+            return update(visualization, {
+                layers: layers.reduce((acc, layer, index) => {
+                    const placeholderIndex = layer.placeholders?.findIndex(
+                        (p) => p.id === placeholderId,
+                    );
+
+                    return Object.assign(acc, {
+                        [index]: {
+                            placeholders: {
+                                [placeholderIndex]: {settings: {$merge: settings}},
+                            },
+                        },
+                    });
+                }, {}),
+            });
+        }
+
+        const selectedLayerIndex = layers.findIndex(({layerSettings: {id}}) => id === layerId);
+
+        if (selectedLayerIndex !== -1) {
+            const placeholders = layers[selectedLayerIndex]?.placeholders || [];
+            const placeholderToUpdateIndex = placeholders.findIndex((p) => p.id === placeholderId);
+
+            if (placeholderToUpdateIndex !== -1) {
+                return update(visualization, {
+                    layers: {
+                        [selectedLayerIndex]: {
+                            placeholders: {
+                                [placeholderToUpdateIndex]: {settings: {$merge: settings}},
+                            },
+                        },
+                    },
+                });
+            }
+        }
+    }
+
+    const placeholders = visualization?.placeholders || [];
+    const placeholderToUpdateIndex = placeholders.findIndex((p) => p.id === placeholderId);
+
+    if (placeholders[placeholderToUpdateIndex]?.settings) {
+        return update(visualization, {
+            placeholders: {[placeholderToUpdateIndex]: {settings: {$merge: settings}}},
+        });
+    }
+
+    return visualization;
 }
