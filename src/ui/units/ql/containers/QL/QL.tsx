@@ -7,7 +7,6 @@ import ViewLoader from 'components/ViewLoader/ViewLoader';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {extractEntryId} from 'shared';
 import {cleanRevisions, setRevisionsMode} from 'store/actions/entryContent';
 import {RevisionsMode} from 'store/typings/entryContent';
 import {DatalensGlobalState, EntryDialogues, URL_QUERY} from 'ui';
@@ -58,6 +57,7 @@ class QL extends React.PureComponent<QLInnerProps> {
     componentDidUpdate(prevProps: QLInnerProps) {
         const {history, location, match} = this.props;
 
+        const {extractEntryId} = registry.common.functions.getAll();
         const prevEntryId = extractEntryId(prevProps.match.params.qlEntryId);
         const currentEntryId = extractEntryId(match.params.qlEntryId);
 

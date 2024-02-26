@@ -13,6 +13,7 @@ import {SectionWrapper} from '../../../../../../../../components/SectionWrapper/
 import {OperationSelector} from '../../OperationSelector/OperationSelector';
 import {ValueSelector} from '../../ValueSelector/ValueSelector';
 import {InputTypeSelector} from '../InputTypeSelector/InputTypeSelector';
+import {getElementOptions} from '../helpers/input-type-select';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
@@ -34,6 +35,10 @@ const InputSettings = ({isSectionHidden}: InputSettingsProps) => {
 
     const value = fieldName ?? '';
 
+    const options = React.useMemo(() => {
+        return getElementOptions();
+    }, []);
+
     return (
         <React.Fragment>
             <SectionWrapper
@@ -49,7 +54,7 @@ const InputSettings = ({isSectionHidden}: InputSettingsProps) => {
                         />
                     </FieldWrapper>
                 </FormRow>
-                <InputTypeSelector />
+                <InputTypeSelector options={options} />
                 <OperationSelector />
                 <ValueSelector />
             </SectionWrapper>

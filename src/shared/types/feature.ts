@@ -75,6 +75,7 @@ export enum Feature {
     SelectorRequiredValue = 'SelectorRequiredValue',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     MarkupMetric = 'MarkupMetric',
+    ConnectionBasedControl = 'ConnectionBasedControl',
 }
 
 export type FeatureConfig = Record<string, boolean>;

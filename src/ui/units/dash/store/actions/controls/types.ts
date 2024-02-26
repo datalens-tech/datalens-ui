@@ -22,7 +22,8 @@ export type SelectorsGroupDialogState = {
 export type SelectorSourceType =
     | DashTabItemControlSourceType.Dataset
     | DashTabItemControlSourceType.Manual
-    | DashTabItemControlSourceType.External;
+    | DashTabItemControlSourceType.External
+    | DashTabItemControlSourceType.Connection;
 
 export type ItemDataSource = {
     chartId?: string;

@@ -83,4 +83,17 @@
     &__warn-text {
         margin: 8px 0 4px;
     }
+
+    &__invalid-list-popup {
+        max-width: 650px;
+
+        & .dialog-aliases-list__invalid-list-items {
+            max-height: 300px;
+            overflow: auto;
+        }
+    }
+
+    &__invalid-list-popup &__warn-content {
+        max-width: 100%;
+    }
 }
