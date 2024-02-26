@@ -1,9 +1,10 @@
 import React from 'react';
 
 import {Xmark} from '@gravity-ui/icons';
-import {Button as CommonButton, Icon, TextInput} from '@gravity-ui/uikit';
+import {Button as CommonButton, Icon, List, ListItemData, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import update from 'immutability-helper';
 import {ResolveThunks, connect} from 'react-redux';
 import {ControlQA} from 'shared';
 import {DashboardDialogControl} from 'shared/constants/qa/dash';
@@ -62,6 +63,49 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
         });
     }
 
+    handleOnSortEnd({
+        oldIndex,
+        newIndex,
+        acceptableValues,
+    }: {
+        oldIndex: number;
+        newIndex: number;
+        acceptableValues: string[];
+    }) {
+        if (oldIndex === newIndex) {
+            return;
+        }
+        const newItems = update(acceptableValues, {
+            $splice: [
+                [oldIndex, 1],
+                [newIndex, 0, acceptableValues[oldIndex]],
+            ],
+        });
+
+        this.setState({
+            acceptableValues: newItems,
+        });
+    }
+    renderListItem(args: {
+        item: ListItemData<string>;
+        //isItemActive: boolean;
+        itemIndex: number;
+        acceptableValues: string[];
+    }) {
+        const {item, itemIndex, acceptableValues} = args;
+        return (
+            <div className={b('item')} key={item} data-qa={ControlQA.selectAcceptableItem}>
+                <span title={item}>{item}</span>
+                <span
+                    onClick={() => this.handleRemoveItemClick(itemIndex, acceptableValues)}
+                    className={b('remove')}
+                    data-qa={ControlQA.selectAcceptableRemoveButton}
+                >
+                    <Icon data={Xmark} width="16" />
+                </span>
+            </div>
+        );
+    }
     renderBody() {
         const {newValue, acceptableValues} = this.state;
         const isEmpty = !acceptableValues.length;
@@ -90,26 +134,23 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
                     </CommonButton>
                 </div>
                 <div className={b('items', {empty: isEmpty})}>
-                    {isEmpty
-                        ? i18n('dash.control-dialog.edit', 'label_empty-list')
-                        : acceptableValues.map((item, index) => (
-                              <div
-                                  className={b('item')}
-                                  key={item}
-                                  data-qa={ControlQA.selectAcceptableItem}
-                              >
-                                  <span title={item}>{item}</span>
-                                  <span
-                                      onClick={() =>
-                                          this.handleRemoveItemClick(index, acceptableValues)
-                                      }
-                                      className={b('remove')}
-                                      data-qa={ControlQA.selectAcceptableRemoveButton}
-                                  >
-                                      <Icon data={Xmark} width="16" />
-                                  </span>
-                              </div>
-                          ))}
+                    {isEmpty ? (
+                        i18n('dash.control-dialog.edit', 'label_empty-list')
+                    ) : (
+                        <List
+                            filterable={false}
+                            virtualized={false}
+                            sortable={true}
+                            items={acceptableValues}
+                            className={b('list')}
+                            onSortEnd={(args) => this.handleOnSortEnd({...args, acceptableValues})}
+                            renderItem={(
+                                item: ListItemData<string>,
+                                _isItemActive: boolean,
+                                itemIndex: number,
+                            ) => this.renderListItem({item, itemIndex, acceptableValues})}
+                        />
+                    )}
                 </div>
             </React.Fragment>
         );
