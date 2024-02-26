@@ -5,7 +5,7 @@ import {I18n} from 'i18n';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ActionPanelQA, Feature, extractEntryId} from 'shared';
+import {ActionPanelQA, Feature} from 'shared';
 import {
     cleanRevisions,
     fetchEntryById,
@@ -17,6 +17,7 @@ import {
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
 import {selectEntryContent, selectIsRevisionsOpened} from 'store/selectors/entryContent';
 import {RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
+import {registry} from 'ui/registry';
 import Utils from 'ui/utils';
 
 import type {GetEntryResponse} from '../../../shared/schema';
@@ -91,6 +92,8 @@ class ActionPanel extends React.Component<Props, State> {
         const entryId = entry?.entryId;
         const prevEntryId = prevProps.entry?.entryId;
         const hasEntryChanged = entryId && prevEntryId && entryId !== prevEntryId;
+
+        const {extractEntryId} = registry.common.functions.getAll();
 
         const oldPageEntryId = extractEntryId(prevProps.match.url);
         const newPageEntryId = extractEntryId(match.url);

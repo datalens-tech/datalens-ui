@@ -27,7 +27,7 @@ function prepareMetric({placeholders, resultData, shared, idToTitle}: PrepareFun
 
     const useMarkupMetric = isEnabledServerFeature(app.nodekit.ctx, Feature.MarkupMetric);
 
-    if (useMarkupMetric && shared.type === 'datalens') {
+    if (useMarkupMetric) {
         return prepareMarkupMetricVariant({measure, value, extraSettings: shared.extraSettings});
     } else {
         return prepareBasicMetricVariant({measure, value, extraSettings: shared.extraSettings});

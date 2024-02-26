@@ -1,3 +1,4 @@
+import {extractEntryId, isEntryId} from 'shared';
 import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
@@ -52,5 +53,7 @@ export const registerCommonPlugins = () => {
         getFormatNumber: formatNumber,
         getAdditionalEntryDialoguesMap,
         getAdditionalEntryContextMenuItems,
+        isEntryId,
+        extractEntryId,
     });
 };

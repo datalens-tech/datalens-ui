@@ -1,4 +1,4 @@
-import {extractEntryId} from 'shared';
+import {registry} from 'ui/registry';
 
 import {RESET_DATASET_STATE} from '../actions/types/dataset';
 import {getInitialState, initialPreview} from '../constants';
@@ -8,6 +8,7 @@ import dataset from './dataset';
 
 const datasetReducer = (state: DatasetReduxState, action: DatasetReduxAction) => {
     if (action.type === RESET_DATASET_STATE) {
+        const {extractEntryId} = registry.common.functions.getAll();
         const hasEntryId = Boolean(extractEntryId(window.location.pathname));
         const initialState = getInitialState({
             isLoading: hasEntryId,

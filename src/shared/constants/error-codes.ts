@@ -22,6 +22,7 @@ export enum ErrorCode {
     SourceInvalidResponse = 'ERR.DS_API.DB.SOURCE_ERROR.INVALID_RESPONSE',
     SourceClosedPrematurely = 'ERR.DS_API.DB.SOURCE_ERROR.CLOSED_PREMATURELY',
     UsAccessDenied = 'ERR.DS_API.US.ACCESS_DENIED',
+    WorkbookIsolationInterruptionDenied = 'ERR.DS_API.US.WORKBOOK_ISOLATION_INTERRUPTION',
     ReferencedEntryAccessDenied = 'ERR.DS_API.REFERENCED_ENTRY_ACCESS_DENIED',
     NeedReset = 'NEED_RESET',
     MigrationOrgExists = 'MIGRATION_ORG_EXISTS',

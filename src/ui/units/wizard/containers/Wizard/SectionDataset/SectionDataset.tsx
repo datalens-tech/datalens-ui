@@ -20,7 +20,6 @@ import {
     PLACE,
     SectionDatasetQA,
     Update,
-    extractEntryId,
     getResultSchemaFromDataset,
 } from 'shared';
 import {closeDialog, openDialog, openDialogParameter} from 'store/actions/dialog';
@@ -491,6 +490,7 @@ class SectionDataset extends React.Component<Props, State> {
     };
 
     onButtonDatasetTryAgainClick = () => {
+        const {extractEntryId} = registry.common.functions.getAll();
         const entryId = extractEntryId(window.location.pathname);
 
         if (entryId) {

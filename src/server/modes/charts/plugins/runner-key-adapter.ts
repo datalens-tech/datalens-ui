@@ -3,6 +3,7 @@ import url from 'url';
 import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
 import {MiddlewareStage} from '../../../components/charts-engine/types';
+import {registry} from '../../../registry';
 
 export const plugin = {
     middlewares: [
@@ -50,7 +51,8 @@ export const plugin = {
                                     .replace(/^\/?wizard\//, '');
                             }
 
-                            if (/^[0-9a-z]{13}$/.test(params.name)) {
+                            const isEntryId = registry.common.functions.get('isEntryId');
+                            if (isEntryId(params.name)) {
                                 // If params.name looks like id - use it as id.
                                 body.id = params.name;
 

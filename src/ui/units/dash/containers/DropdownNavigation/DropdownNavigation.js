@@ -1,27 +1,28 @@
 import React from 'react';
 
-import {Button} from '@gravity-ui/uikit';
+import {Button, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryTitle} from 'components/EntryTitle';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {DialogControlQa} from 'shared';
+import {DialogControlQa, EntryScope} from 'shared';
 import {NavigationMinimal, PLACE, QUICK_ITEMS, Utils, sdk} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import Loader from '../../components/Loader/Loader';
-import {ENTRY_SCOPE, ENTRY_TYPE} from '../../modules/constants';
+import {ENTRY_TYPE} from '../../modules/constants';
 import {getPersonalFolderPath} from '../../modules/helpers';
 import {changeNavigationPath} from '../../store/actions/dashTyped';
 
 import './DropdownNavigation.scss';
 
 const SCOPE_TO_PLACE = {
-    [ENTRY_SCOPE.DATASET]: PLACE.DATASETS,
-    [ENTRY_SCOPE.WIDGET]: PLACE.WIDGETS,
+    [EntryScope.Dataset]: PLACE.DATASETS,
+    [EntryScope.Widget]: PLACE.WIDGETS,
+    [EntryScope.Connection]: PLACE.CONNECTIONS,
 };
 const popupPlacement = [
     'right-start',
@@ -46,12 +47,13 @@ class DropdownNavigation extends React.PureComponent {
         disabled: PropTypes.bool,
         onUpdate: PropTypes.func,
         onClick: PropTypes.func.isRequired,
-        scope: PropTypes.oneOf(Object.values(ENTRY_SCOPE)).isRequired,
+        scope: PropTypes.oneOf(Object.values(EntryScope)).isRequired,
         includeClickableType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
         excludeClickableType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
         size: PropTypes.string,
         navigationPath: PropTypes.string.isRequired,
         changeNavigationPath: PropTypes.func.isRequired,
+        error: PropTypes.bool,
     };
 
     static defaultProps = {size: 'l'};
@@ -178,20 +180,21 @@ class DropdownNavigation extends React.PureComponent {
         return (
             <div className={b()} ref={this.buttonRef}>
                 <Button
-                    view="outlined"
+                    view={this.props.error ? 'outlined-danger' : 'outlined'}
                     width={width}
                     size={this.props.size}
                     disabled={this.props.disabled}
                     onClick={() => this.setState({showNavigation: !this.state.showNavigation})}
-                    ref={this.setButtonRef}
                     className={b('button')}
                     qa={DialogControlQa.selectDatasetButton}
                 >
-                    {this.state.entry ? (
-                        <EntryTitle entry={this.state.entry} theme="inline" />
-                    ) : (
-                        i18n('dash.navigation-input.edit', 'button_choose')
-                    )}
+                    <Flex>
+                        {this.state.entry ? (
+                            <EntryTitle entry={this.state.entry} theme="inline" />
+                        ) : (
+                            i18n('dash.navigation-input.edit', 'button_choose')
+                        )}
+                    </Flex>
                 </Button>
                 {this.renderNavigation()}
             </div>

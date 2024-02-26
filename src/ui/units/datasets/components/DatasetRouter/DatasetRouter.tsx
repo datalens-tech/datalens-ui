@@ -7,9 +7,9 @@ import {SDK} from 'libs';
 import {connect} from 'react-redux';
 import {Route, RouteComponentProps, Switch, withRouter} from 'react-router-dom';
 import {Dispatch, bindActionCreators} from 'redux';
-import {extractEntryId} from 'shared';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
+import {registry} from 'ui/registry';
 import {resetDatasetState} from 'units/datasets/store/actions/creators';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
@@ -40,6 +40,7 @@ const DatasetRouter = ({
     match,
 }: Props) => {
     const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
+    const {extractEntryId} = registry.common.functions.getAll();
     const possibleEntryId = extractEntryId(window.location.pathname);
 
     React.useEffect(() => {
