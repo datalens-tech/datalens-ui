@@ -135,7 +135,9 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
                 </div>
                 <div className={b('items', {empty: isEmpty})}>
                     {isEmpty ? (
-                        i18n('dash.control-dialog.edit', 'label_empty-list')
+                        <span data-qa={ControlQA.selectAcceptableEmptyList}>
+                            {i18n('dash.control-dialog.edit', 'label_empty-list')}
+                        </span>
                     ) : (
                         <List
                             filterable={false}
