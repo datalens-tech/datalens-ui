@@ -348,7 +348,8 @@ export const Control = ({
                 });
                 fieldType = datasetFieldType;
             }
-            if (fieldType === DATASET_FIELD_TYPES.GENERICDATETIME) {
+            // Check 'datetime' for backward compatibility
+            if (fieldType === 'datetime' || fieldType === DATASET_FIELD_TYPES.GENERICDATETIME) {
                 props.timeFormat = 'HH:mm:ss';
             }
         }
