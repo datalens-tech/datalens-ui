@@ -54,11 +54,11 @@ function mapAndColorizePieByGradient(
 function getPieSegmentColor({
     item,
     colorsConfig,
-    usedColors = [],
+    index,
 }: {
     item: PiePoint;
     colorsConfig: ChartColorsConfig;
-    usedColors?: (string | undefined)[];
+    index: number;
 }) {
     if (
         colorsConfig &&
@@ -70,14 +70,7 @@ function getPieSegmentColor({
         return getMountedColor(colorsConfig, item.colorValue);
     }
 
-    const value = String(item.colorValue);
-    let colorIndex = usedColors.indexOf(value);
-    if (colorIndex === -1) {
-        usedColors.push(value);
-        colorIndex = usedColors.length - 1;
-    }
-
-    return getColor(colorIndex, colorsConfig.colors);
+    return getColor(index, colorsConfig.colors);
 }
 
 // eslint-disable-next-line complexity
@@ -175,7 +168,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
                   },
     };
 
-    const usedColors: string[] = [];
+    // const usedColors: string[] = [];
     const pieData = data.reduce((acc, values) => {
         const dimensionValue = values[dimensionIndex];
         const measureValue = values[measureIndex];
@@ -266,8 +259,8 @@ export function preparePieData(args: PrepareFunctionArgs) {
     if (shouldUseGradient) {
         pie.data = mapAndColorizePieByGradient(pie.data, colorsConfig);
     } else {
-        pie.data.forEach((d) => {
-            d.color = getPieSegmentColor({item: d, colorsConfig, usedColors});
+        pie.data.forEach((d, index) => {
+            d.color = getPieSegmentColor({item: d, colorsConfig, index});
         });
     }
 

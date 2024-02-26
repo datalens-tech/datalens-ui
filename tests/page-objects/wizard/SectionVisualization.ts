@@ -358,6 +358,7 @@ export const VISUALIZATION_PLACEHOLDERS = {
     ],
     donut: [
         'placeholder-dimensions',
+        'placeholder-colors',
         'placeholder-measures',
         'placeholder-sort',
         'placeholder-labels',
