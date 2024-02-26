@@ -6,7 +6,6 @@ import {sdk} from 'ui';
 
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
-import {getDatetimeName} from '../../../../../utils/helpers';
 import {ComponentErrorType, SUBSELECT_SOURCE_TYPES} from '../../../constants';
 import {getToastTitle} from '../../../helpers/dataset-error-helpers';
 import {getComponentErrorsByType} from '../../../helpers/datasets';
@@ -480,10 +479,7 @@ export function fetchFieldTypes() {
 
                     return {
                         ...type,
-                        title: i18n(
-                            'component.field-editor.view',
-                            `value_${getDatetimeName(name)}`,
-                        ),
+                        title: i18n('component.field-editor.view', `value_${name}`),
                         aggregations: aggregations.sort((current, next) => {
                             if (next === 'none') {
                                 return 1;

@@ -31,7 +31,6 @@ const DatasetSettings = ({isSectionHidden}: DatasetSettingsProps) => {
                 sourceType === DashTabItemControlSourceType.Dataset &&
                 ((controlType !== ELEMENT_TYPE.DATE &&
                     fieldType !== DATASET_FIELD_TYPES.DATE &&
-                    fieldType !== DATASET_FIELD_TYPES.DATETIME &&
                     fieldType !== DATASET_FIELD_TYPES.GENERICDATETIME) ||
                     datasetFieldType === DatasetFieldType.Measure),
             [ELEMENT_TYPE.SELECT]: datasetFieldType === DatasetFieldType.Measure,

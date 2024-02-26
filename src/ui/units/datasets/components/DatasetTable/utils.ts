@@ -15,8 +15,6 @@ import {
 import {Permissions} from 'shared/types/dls';
 import Utils from 'ui/utils';
 
-import {getDatetimeName} from '../../../../utils/helpers';
-
 import {
     getAggregationColumn,
     getCastColumn,
@@ -57,8 +55,7 @@ type GetColumnsArgs = {
 };
 
 export const getLabelValue = (key: string) => {
-    const fieldType = getDatetimeName(key) as AvailableFieldType;
-    return i18n('dataset.dataset-editor.modify', `value_${fieldType}`);
+    return i18n('dataset.dataset-editor.modify', `value_${key as AvailableFieldType}`);
 };
 
 export const getAggregationSwitchTo = (

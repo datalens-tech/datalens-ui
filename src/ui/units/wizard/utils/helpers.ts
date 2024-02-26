@@ -88,7 +88,6 @@ export function getCommonDataType(dataType: DATASET_FIELD_TYPES): CommonDataType
 
         case DATASET_FIELD_TYPES.DATETIMETZ:
         case DATASET_FIELD_TYPES.GENERICDATETIME:
-        case DATASET_FIELD_TYPES.DATETIME:
         case DATASET_FIELD_TYPES.DATE:
             return CommonDataType.Date;
 

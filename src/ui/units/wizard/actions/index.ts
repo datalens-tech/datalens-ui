@@ -13,7 +13,6 @@ import {
     DatasetFieldType,
     ENTRY_TYPES,
     ExtendedChartsConfig,
-    Feature,
     Field,
     FilterField,
     HierarchyField,
@@ -45,7 +44,7 @@ import {
     splitParamsToParametersAndFilters,
 } from 'shared';
 import {DataLensApiError} from 'typings';
-import {DatalensGlobalState, Utils} from 'ui';
+import {DatalensGlobalState} from 'ui';
 import {navigateHelper} from 'ui/libs';
 import {
     getAvailableVisualizations,
@@ -1388,8 +1387,7 @@ export const createFieldFromVisualization = ({
             let argument = `[${field.originalTitle || field.title}]`;
             // TODO: update this place after caste support for datetimetz
             const isShouldBeCastedToDatetime =
-                (field.data_type !== 'datetime' && field.cast === 'datetime') ||
-                (field.data_type !== 'genericdatetime' && field.cast === 'genericdatetime');
+                field.data_type !== 'genericdatetime' && field.cast === 'genericdatetime';
 
             if (isShouldBeCastedToDatetime) {
                 argument = `DATETIME(${argument})`;
@@ -1410,7 +1408,6 @@ export const createFieldFromVisualization = ({
             fieldNext.originalSource = field.source;
         } else if (
             field.cast === 'date' ||
-            field.cast === 'datetime' ||
             field.cast === 'datetimetz' ||
             field.cast === 'genericdatetime'
         ) {
@@ -1503,7 +1500,6 @@ export const updateFieldFromVisualization = ({
                 field.formula = '';
             } else if (
                 field.cast === 'date' ||
-                field.cast === 'datetime' ||
                 field.cast === 'datetimetz' ||
                 field.cast === 'genericdatetime'
             ) {
@@ -1513,7 +1509,6 @@ export const updateFieldFromVisualization = ({
             }
             if (
                 field.cast === 'date' ||
-                field.cast === 'datetime' ||
                 field.cast === 'datetimetz' ||
                 field.cast === 'genericdatetime'
             ) {
@@ -1545,8 +1540,7 @@ export const updateFieldFromVisualization = ({
             let argument = `[${field.originalTitle || field.title}]`;
             // TODO: update this place after caste support for datetimetz - BI-1478
             const isShouldBeCastedToDatetime =
-                (field.data_type !== 'datetime' && field.originalDateCast === 'datetime') ||
-                (field.data_type !== 'datetimetz' && field.originalDateCast === 'datetimetz');
+                field.data_type !== 'datetimetz' && field.originalDateCast === 'datetimetz';
 
             if (isShouldBeCastedToDatetime) {
                 argument = `DATETIME(${argument})`;
@@ -1771,9 +1765,7 @@ type ProcessWidgetArgs = {
 function processWidget(args: ProcessWidgetArgs) {
     const {widget, dispatch, getState} = args;
     const data = widget.data! as ExtendedChartsConfig;
-    const shouldMigrateDatetime = Utils.isEnabledFeature(Feature.GenericDatetimeMigration);
-
-    const config = mapChartsConfigToLatestVersion(data, {shouldMigrateDatetime});
+    const config = mapChartsConfigToLatestVersion(data);
 
     // Actualize widget data after mapping
     widget.data = config;
