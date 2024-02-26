@@ -81,15 +81,15 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
 
     const isMultipleControls =
-        widget.type === DashTabItemType.GroupControl && widget.data.items.length > 1;
-    const [itemId, setItemId] = React.useState(isMultipleControls ? widget.data.items[0].id : null);
+        widget.type === DashTabItemType.GroupControl && widget.data.group.length > 1;
+    const [itemId, setItemId] = React.useState(isMultipleControls ? widget.data.group[0].id : null);
 
     const handleItemChange = (value: string[]) => {
         setItemId(value[0]);
         setPreparedRelations([]);
     };
     const controlItems = isMultipleControls
-        ? widget.data.items.map((item) => ({value: item.id, content: item.title}))
+        ? widget.data.group.map((item) => ({value: item.id, content: item.title}))
         : [];
 
     const {isLoading, currentWidgetMeta, relations, datasets, dashWidgetsMeta, invalidAliases} =

@@ -86,6 +86,12 @@
         margin: 8px 0 4px;
     }
 
+    &__item-select {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
     &__invalid-list-popup {
         max-width: 650px;
 

@@ -58,11 +58,9 @@ export const applyGroupControlDialog = () => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const selectorGroup = getState().dash.selectorsGroup;
 
-        let defaults: Record<string, string | string[]> = {};
-
         // check validation for every control
-        for (let i = 0; i < selectorGroup.items.length; i += 1) {
-            const validation = getControlValidation(selectorGroup.items[i]);
+        for (let i = 0; i < selectorGroup.group.length; i += 1) {
+            const validation = getControlValidation(selectorGroup.group[i]);
 
             if (!isEmpty(validation)) {
                 dispatch(setActiveSelectorIndex({activeSelectorIndex: i}));
@@ -73,17 +71,15 @@ export const applyGroupControlDialog = () => {
                 );
                 return;
             }
-
-            defaults = getControlDefaultsForField(defaults, selectorGroup.items[i]);
         }
 
-        const isSingleControl = selectorGroup.items.length === 1;
+        const isSingleControl = selectorGroup.group.length === 1;
 
         const data = {
             autoHeight: isSingleControl ? false : selectorGroup.autoHeight,
             buttonApply: isSingleControl ? false : selectorGroup.buttonApply,
             buttonReset: isSingleControl ? false : selectorGroup.buttonReset,
-            items: selectorGroup.items.map((selector) => {
+            group: selectorGroup.group.map((selector) => {
                 return {
                     id: selector.id,
                     title: selector.title,
@@ -92,18 +88,18 @@ export const applyGroupControlDialog = () => {
                     placementMode: isSingleControl ? 'auto' : selector.placementMode,
                     width: isSingleControl ? '' : selector.width,
                     defaults: getControlDefaultsForField({}, selector),
+                    namespace: selector.namespace || 'default',
                 };
             }),
         };
 
         const getExtendedItemData = getExtendedItemDataAction();
-        const itemData = dispatch(getExtendedItemData({data, defaults}));
+        const itemData = dispatch(getExtendedItemData({data}));
 
         dispatch(
             setItemData({
                 data: itemData.data,
                 type: DashTabItemType.GroupControl,
-                defaults: itemData.defaults,
             }),
         );
 
