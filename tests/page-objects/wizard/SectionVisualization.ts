@@ -185,8 +185,6 @@ export default class SectionVisualization {
     }
 
     async removeGeoLayer(name: string) {
-        // await this.page.click(this.layersSelectSelector);
-
         const oldLayerName = await this.page.waitForSelector(slct(name));
 
         const oldLayerItem = (await getParentByQARole(oldLayerName, 'geolayer-select-item'))!;
