@@ -392,10 +392,16 @@ export function getDialogItem(items: Field[], placeholders: Placeholder[]) {
     return placeholdersItems.length ? placeholdersItems : undefined;
 }
 
+export function getSelectedLayerId(
+    visualization: VisualizationWithLayersShared['visualization'],
+): string | undefined {
+    return visualization.selectedLayerId || visualization.layers[0].layerSettings.id;
+}
+
 export function getSelectedLayer(
     visualization: VisualizationWithLayersShared['visualization'],
 ): VisualizationLayerShared['visualization'] | undefined {
-    const layerId = visualization.selectedLayerId || visualization.layers[0].layerSettings.id;
+    const layerId = getSelectedLayerId(visualization);
     return visualization.layers.find(({layerSettings: {id}}) => id === layerId);
 }
 

@@ -1,8 +1,8 @@
 import React from 'react';
 
 import {Config, DashKit} from '@gravity-ui/dashkit';
-import {TriangleExclamationFill} from '@gravity-ui/icons';
-import {Button, Dialog, Icon, Popup} from '@gravity-ui/uikit';
+import {ChevronDown, TriangleExclamationFill} from '@gravity-ui/icons';
+import {Button, Dialog, DropdownMenu, Icon, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -10,10 +10,8 @@ import intersection from 'lodash/intersection';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashCommonQa, DashTab, DashTabItem, DatasetField, Feature} from 'shared';
+import {DashCommonQa, DashTab, DashTabItem, DashTabItemType, DatasetField} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
-import {BetaMark} from 'ui/components/BetaMark/BetaMark';
-import Utils from 'ui/utils';
 
 import {updateCurrentTabData} from '../../../store/actions/dashTyped';
 import {openDialogAliases} from '../../../store/actions/relations/actions';
@@ -46,6 +44,8 @@ import './DialogRelations.scss';
 
 const b = block('dialog-relations');
 const i18n = I18n.keyset('component.dialog-relations.view');
+
+const ICON_SIZE = 16;
 
 export const DIALOG_RELATIONS = Symbol('dash/DIALOG_RELATIONS');
 
@@ -305,24 +305,33 @@ const DialogRelations = (props: DialogRelationsProps) => {
         setShownInvalidAliases([]);
     }, [aliases, handleUpdateAliases, shownInvalidAliases]);
 
-    const handleDisconnectAll = React.useCallback(() => {
-        const newChangedWidgets: WidgetsTypes = {};
+    const handleDisconnectAll = React.useCallback(
+        (disconnectType: 'widgets' | 'selectors') => {
+            const newChangedWidgets: WidgetsTypes = {};
+            const filteredIds = filteredRelations.reduce((res: Record<string, string>, item) => {
+                if (!item.widgetId) {
+                    return res;
+                }
+                if (
+                    disconnectType === 'widgets' ||
+                    (disconnectType === 'selectors' && item.type === DashTabItemType.Control)
+                ) {
+                    res[item.widgetId] = item.widgetId;
+                }
 
-        const filteredIds = filteredRelations.reduce((res: Record<string, string>, item) => {
-            if (item.widgetId) {
-                res[item.widgetId] = item.widgetId;
-            }
-            return res;
-        }, {});
+                return res;
+            }, {});
 
-        preparedRelations.forEach((item) => {
-            if (filteredIds[item.widgetId]) {
-                newChangedWidgets[item.widgetId] = RELATION_TYPES.ignore as RelationType;
-            }
-        });
+            preparedRelations.forEach((item) => {
+                if (filteredIds[item.widgetId]) {
+                    newChangedWidgets[item.widgetId] = RELATION_TYPES.ignore as RelationType;
+                }
+            });
 
-        setChangedWidgets(newChangedWidgets);
-    }, [preparedRelations, filteredRelations]);
+            setChangedWidgets(newChangedWidgets);
+        },
+        [preparedRelations, filteredRelations],
+    );
 
     /**
      * Triggers when click Apply button in relations dialog (saves in store and closes popup)
@@ -371,7 +380,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 (showDebugInfo && currentWidgetMeta?.widgetId
                     ? ` (${currentWidgetMeta.widgetId})`
                     : '')}
-            {Utils.isEnabledFeature(Feature.HideOldRelations) && <BetaMark className={b('beta')} />}
         </div>
     );
 
@@ -390,14 +398,10 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
     // disable disconnect button when loading
     // when selected only 'none' filter
-    // when selected filter and none of widgets is showed in list
     const isDisconnectDisabled = Boolean(
         isLoading ||
             (typeValues.length === 1 && typeValues[0] === 'none') ||
-            !filteredRelations.length ||
-            filteredRelations.every(
-                (filteredRealtion) => filteredRealtion?.relations.type === 'ignore',
-            ),
+            !filteredRelations.length,
     );
 
     React.useEffect(() => {
@@ -442,16 +446,37 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     qa: DashCommonQa.RelationsApplyBtn,
                 }}
             >
-                <Button
-                    view="outlined"
-                    className={b('button')}
-                    size="l"
-                    onClick={handleDisconnectAll}
+                <span className={b('disconnect-text')}>{i18n('button_disconnect')}</span>
+                <DropdownMenu
                     disabled={isDisconnectDisabled}
-                    qa={DashCommonQa.RelationsDisconnectAllButton}
-                >
-                    {i18n('button_disconnect')}
-                </Button>
+                    size="l"
+                    items={[
+                        {
+                            action: () => handleDisconnectAll('widgets'),
+                            text: i18n('label_widgets'),
+                            qa: DashCommonQa.RelationsDisconnectAllWidgets,
+                        },
+                        {
+                            action: () => handleDisconnectAll('selectors'),
+                            text: i18n('label_selectors'),
+                            qa: DashCommonQa.RelationsDisconnectAllSelectors,
+                        },
+                    ]}
+                    switcher={
+                        <Button
+                            className={b('switcher-button')}
+                            view="normal"
+                            qa={DashCommonQa.RelationsDisconnectAllSwitcher}
+                            disabled={isDisconnectDisabled}
+                        >
+                            <Icon
+                                className={b('switcher-button-icon')}
+                                data={ChevronDown}
+                                size={ICON_SIZE}
+                            />
+                        </Button>
+                    }
+                />
                 {Boolean(shownInvalidAliases?.length) && (
                     <React.Fragment>
                         <Button
