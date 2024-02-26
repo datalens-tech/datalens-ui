@@ -54,14 +54,16 @@ function mapAndColorizePieByGradient(
 function getPieSegmentColor({
     item,
     colorsConfig,
-    index,
     usedColors,
 }: {
     item: PiePoint;
     colorsConfig: ChartColorsConfig;
-    index: number;
     usedColors: Map<PiePoint['colorValue'], string>;
 }) {
+    if (!usedColors.has(item.colorValue)) {
+        usedColors.set(item.colorValue, getColor(usedColors.size, colorsConfig.colors));
+    }
+
     if (
         colorsConfig &&
         colorsConfig.mountedColors &&
@@ -70,10 +72,6 @@ function getPieSegmentColor({
         colorsConfig.mountedColors[item.colorValue]
     ) {
         return getMountedColor(colorsConfig, item.colorValue);
-    }
-
-    if (!usedColors.has(item.colorValue)) {
-        usedColors.set(item.colorValue, getColor(index, colorsConfig.colors));
     }
 
     return usedColors.get(item.colorValue);
@@ -265,8 +263,8 @@ export function preparePieData(args: PrepareFunctionArgs) {
         pie.data = mapAndColorizePieByGradient(pie.data, colorsConfig);
     } else {
         const usedColors = new Map();
-        pie.data.forEach((d, index) => {
-            d.color = getPieSegmentColor({item: d, colorsConfig, index, usedColors});
+        pie.data.forEach((d) => {
+            d.color = getPieSegmentColor({item: d, colorsConfig, usedColors});
         });
     }
 
