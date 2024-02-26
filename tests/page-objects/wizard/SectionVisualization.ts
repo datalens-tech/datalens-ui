@@ -216,7 +216,7 @@ export default class SectionVisualization {
 
         let cursor = 0;
         for (const locator of await locatorAll.all()) {
-            expect(locator).toHaveAttribute('data-qa', layers[cursor]);
+            await expect(locator).toHaveAttribute('data-qa', layers[cursor]);
             cursor++;
         }
     }
