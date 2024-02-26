@@ -212,11 +212,9 @@ export default class SectionVisualization {
 
         await this.expectLayersSelectItemsCount(layers.length);
 
-        let cursor = 0;
-        for (const locator of await locatorAll.all()) {
-            await expect(locator).toHaveAttribute('data-qa', layers[cursor]);
-            cursor++;
-        }
+        await Promise.all(
+            layers.map((layer, i) => expect(locatorAll.nth(i)).toHaveAttribute('data-qa', layer)),
+        );
     }
 
     async getAddFieldItemsList(placeholderName: PlaceholderName) {
