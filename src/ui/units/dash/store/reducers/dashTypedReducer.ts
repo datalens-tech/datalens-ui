@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {DashKit} from '@gravity-ui/dashkit';
+import {Config, DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
 import {DashData, DashEntry, Permissions, WidgetType} from 'shared';
@@ -16,6 +16,7 @@ import {
 import {SelectorsGroupDialogState} from '../actions/controls/types';
 import {
     CHANGE_NAVIGATION_PATH,
+    REMOVE_UNUSED_SUB_ITEMS,
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
     SET_DASH_DESCRIPTION,
@@ -90,6 +91,9 @@ export function dashTypedReducer(
 ): DashState {
     const {hashStates, tabId, data} = state;
 
+    const tabIndex = data ? data.tabs.findIndex(({id}) => id === tabId) : -1;
+    const tab = tabIndex === -1 ? null : data.tabs[tabIndex];
+
     switch (action.type) {
         case SET_STATE:
         case SET_PAGE_TAB:
@@ -100,9 +104,6 @@ export function dashTypedReducer(
 
         case SET_HASH_STATE: {
             const tabsHashState = {...hashStates} as TabsHashStates;
-            const tabIndex: number = data
-                ? data.tabs.findIndex(({id}: {id: string}) => id === tabId)
-                : -1;
             const config = action.payload.config;
             let newData = {};
             if (config) {
@@ -344,9 +345,6 @@ export function dashTypedReducer(
 
         case SET_DASH_VIEW_MODE: {
             const entryData = state.convertedEntryData || state.entry.data;
-            const tabIndex: number = entryData
-                ? entryData.tabs.findIndex(({id}: {id: string}) => id === tabId)
-                : -1;
 
             return {
                 ...state,
@@ -439,6 +437,28 @@ export function dashTypedReducer(
                     ...state.widgetsCurrentTab,
                     [action.payload.widgetId]: action.payload.tabId,
                 },
+            };
+        }
+
+        case REMOVE_UNUSED_SUB_ITEMS: {
+            const {itemsStateAndParams} = DashKit.removeUnusedSubItems({
+                item: action.payload.item,
+                config: {...tab, salt: data.salt, counter: data.counter} as Config,
+                itemsStateAndParams: tabId && hashStates?.[tabId] ? hashStates?.[tabId].state : {},
+            });
+
+            const tabsHashState = {...hashStates} as TabsHashStates;
+
+            if (tabId && hashStates) {
+                tabsHashState[tabId] = {
+                    hash: hashStates[tabId]?.hash,
+                    state: itemsStateAndParams,
+                };
+            }
+
+            return {
+                ...state,
+                hashStates: tabsHashState,
             };
         }
 

@@ -33,6 +33,11 @@
         padding-bottom: 8px;
     }
 
+    &__control-container {
+        display: contents;
+        position: relative;
+    }
+
     &__item,
     &__item-loader {
         margin-top: 8px;

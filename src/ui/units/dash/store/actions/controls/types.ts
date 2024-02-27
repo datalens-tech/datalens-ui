@@ -24,6 +24,7 @@ export type SelectorsGroupDialogState = {
     defaults?: Record<string, string | string[]>;
     group: SelectorDialogState[];
     id?: string;
+    namespace?: string;
 };
 
 export type SelectorSourceType =

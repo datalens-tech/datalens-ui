@@ -1,12 +1,6 @@
 import React from 'react';
 
-import {
-    AddConfigItem,
-    Config,
-    DashKit,
-    ItemsStateAndParams,
-    type StringParams,
-} from '@gravity-ui/dashkit';
+import {AddConfigItem, Config, ConfigItem, DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
 import {PluginTextProps} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
 import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Title';
 import {i18n} from 'i18n';
@@ -27,6 +21,8 @@ import {
     DatasetFieldType,
     EntryUpdateMode,
     Operations,
+    RecursivePartial,
+    StringParams,
 } from 'shared';
 import {AppDispatch} from 'ui/store';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
@@ -52,12 +48,7 @@ import {
     getControlValidation,
     getItemDataSource,
 } from './controls/helpers';
-import {
-    ItemDataSource,
-    SelectorDialogValidation,
-    SelectorSourceType,
-    SelectorsGroupDialogState,
-} from './controls/types';
+import {ItemDataSource, SelectorDialogValidation, SelectorSourceType} from './controls/types';
 import {closeDialog as closeDashDialog} from './dialogs/actions';
 import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
 
@@ -346,20 +337,33 @@ type SetItemDataBase = {
     sourceType?: string;
     autoHeight?: boolean;
     source?: ItemDataSource;
-    group?: Partial<SelectorDialogState>[];
 };
-export type SetItemDataText = Partial<PluginTextProps['data']> & SetItemDataBase;
-export type SetItemDataTitle = Partial<PluginTitleProps['data']> & SetItemDataBase;
+export type SetItemDataText = RecursivePartial<PluginTextProps['data']> & SetItemDataBase;
+export type SetItemDataTitle = RecursivePartial<PluginTitleProps['data']> & SetItemDataBase;
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
 export type SetItemDataArgs = {
-    data: SetItemDataText | SetItemDataTitle | SelectorsGroupDialogState;
+    data: SetItemDataText | SetItemDataTitle;
     defaults?: SetItemDataDefaults;
     type?: string;
 };
 
 export const setItemData = (data: SetItemDataArgs) => ({
     type: actionTypes.SET_ITEM_DATA,
+    payload: data,
+});
+
+export const REMOVE_UNUSED_SUB_ITEMS = Symbol('dash/REMOVE_UNUSED_SUB_ITEMS');
+
+export type RemoveUnusedSubItemsAction = {
+    type: typeof REMOVE_UNUSED_SUB_ITEMS;
+    payload: {item: ConfigItem};
+};
+
+export const removeUnusedSubItems = (
+    data: RemoveUnusedSubItemsAction['payload'],
+): RemoveUnusedSubItemsAction => ({
+    type: REMOVE_UNUSED_SUB_ITEMS,
     payload: data,
 });
 
@@ -401,7 +405,7 @@ export type SelectorDialogState = {
     datasetFieldType?: DatasetFieldType;
     placementMode: 'auto' | '%' | 'px';
     width: string;
-    id: string;
+    id?: string;
     namespace?: string;
 };
 

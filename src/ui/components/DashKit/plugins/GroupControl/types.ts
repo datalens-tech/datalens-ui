@@ -17,7 +17,7 @@ export interface PluginGroupControlState {
     silentLoading: boolean;
     initialParams?: StringParams;
     isInit: boolean;
-    stateParams: StringParams;
+    stateParams: Record<string, StringParams>;
     needReload: boolean;
     needMeta: boolean;
     forceUpdate: boolean;

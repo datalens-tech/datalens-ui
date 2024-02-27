@@ -13,6 +13,7 @@ import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
 import * as actionTypes from '../constants/dashActionTypes';
 
+import {migrateConnectionsForGroupControl} from './controls/helpers';
 import {dashTypedReducer} from './dashTypedReducer';
 
 const i18n = I18n.keyset('dash.store.view');
@@ -78,7 +79,6 @@ export function getSelectorDialogInitialState(args = {}) {
         showTitle: true,
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
-        id: getRandomKey(),
         ...required,
     };
 }
@@ -375,6 +375,21 @@ function dash(state = initialState, action) {
                     excludeIds: getUniqIdsFromDashData(data),
                 },
             });
+
+            // migration of connections if old selector becomes a group selector
+            // 1. state.openedItemId existance means that widget alredy exist
+            // 2. !action.payload.data.group[0].id - first selector doesn't have an id because it was just converted
+            if (
+                state.openedItemId &&
+                action.payload.type === DashTabItemType.GroupControl &&
+                !action.payload.data.group[0].id
+            ) {
+                tabData.connections = migrateConnectionsForGroupControl({
+                    openedItemId: state.openedItemId,
+                    currentTab: tab,
+                    tabDataItems: tabData.items,
+                });
+            }
 
             return {
                 ...state,

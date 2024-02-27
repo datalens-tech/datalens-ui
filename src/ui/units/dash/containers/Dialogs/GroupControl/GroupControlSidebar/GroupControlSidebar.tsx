@@ -136,8 +136,8 @@ export const GroupControlSidebar = () => {
                     enableActionMenu={true}
                 />
             </div>
-            {isMultipleSelectors && (
-                <div className={b('settings')}>
+            <div className={b('settings')}>
+                {isMultipleSelectors && (
                     <div className={b('settings-container')}>
                         <div>
                             <span>{i18n('label_autoheight-checkbox')}</span>
@@ -148,47 +148,47 @@ export const GroupControlSidebar = () => {
                             size="l"
                         />
                     </div>
-                    <div className={b('settings-container')}>
-                        <div>
-                            <span>{i18n('label_apply-button-checkbox')}</span>
-                            <HelpPopover
-                                className={b('help-icon')}
-                                htmlContent={i18n('context_apply-button')}
-                            />
-                        </div>
-                        <Checkbox
-                            checked={selectorsGroup.buttonApply}
-                            onUpdate={handleChangeButtonApply}
-                            size="l"
+                )}
+                <div className={b('settings-container')}>
+                    <div>
+                        <span>{i18n('label_apply-button-checkbox')}</span>
+                        <HelpPopover
+                            className={b('help-icon')}
+                            htmlContent={i18n('context_apply-button')}
                         />
                     </div>
-
-                    <div className={b('settings-container')}>
-                        <div>
-                            <span>{i18n('label_reset-button-checkbox')}</span>
-                            <HelpPopover
-                                className={b('help-icon')}
-                                htmlContent={i18n('context_reset-button')}
-                            />
-                        </div>
-                        <Checkbox
-                            checked={selectorsGroup.buttonReset}
-                            onUpdate={handleChangeButtonReset}
-                            size="l"
-                        />
-                    </div>
-
-                    <Button
-                        view="outlined"
-                        width="max"
-                        className={b('order-selectors-button')}
-                        onClick={handleSelectorsPlacementClick}
-                    >
-                        <Icon data={Gear} height={16} width={16} />
-                        {i18n('button_selectors-placement')}
-                    </Button>
+                    <Checkbox
+                        checked={selectorsGroup.buttonApply}
+                        onUpdate={handleChangeButtonApply}
+                        size="l"
+                    />
                 </div>
-            )}
+
+                <div className={b('settings-container')}>
+                    <div>
+                        <span>{i18n('label_reset-button-checkbox')}</span>
+                        <HelpPopover
+                            className={b('help-icon')}
+                            htmlContent={i18n('context_reset-button')}
+                        />
+                    </div>
+                    <Checkbox
+                        checked={selectorsGroup.buttonReset}
+                        onUpdate={handleChangeButtonReset}
+                        size="l"
+                    />
+                </div>
+
+                <Button
+                    view="outlined"
+                    width="max"
+                    className={b('order-selectors-button')}
+                    onClick={handleSelectorsPlacementClick}
+                >
+                    <Icon data={Gear} height={16} width={16} />
+                    {i18n('button_selectors-placement')}
+                </Button>
+            </div>
         </div>
     );
 };
