@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import intersection from 'lodash/intersection';
 import {StringParams} from 'shared';
 import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
@@ -195,15 +196,19 @@ export const getControlToControlRelations = ({
             row.widgetParams || {},
             widget.widgetParams || {},
         );
-        if (relations.byAliases.length || hasRelation) {
+
+        const hasWigetParams = Object.keys(widget.widgetParams || {}).length;
+        const hasRowParams = Object.keys(row.widgetParams || {}).length;
+
+        if ((relations.byAliases.length && hasWigetParams && hasRowParams) || hasRelation) {
             newRelationType = RELATION_TYPES.both;
             availableRelations = [...FULL_RELATIONS];
-        } else if (Object.keys(widget.widgetParams || {}).length) {
+        } else if (hasWigetParams) {
             newRelationType = RELATION_TYPES.output;
             availableRelations = [...OUTPUT_RELATIONS];
-        } else if (Object.keys(row.widgetParams || {}).length) {
+        } else if (hasRowParams) {
             newRelationType = RELATION_TYPES.input;
-            availableRelations = [...OUTPUT_RELATIONS];
+            availableRelations = [...INPUT_RELATIONS];
         } else {
             newRelationType = RELATION_TYPES.ignore;
             availableRelations = [...FULL_RELATIONS];
