@@ -12,6 +12,7 @@ import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelector
 import {SectionWrapper} from '../../../../../../../../components/SectionWrapper/SectionWrapper';
 import {OperationSelector} from '../../OperationSelector/OperationSelector';
 import {ValueSelector} from '../../ValueSelector/ValueSelector';
+import type {ValueSelectorControlProps} from '../../ValueSelector/types';
 import {InputTypeSelector} from '../InputTypeSelector/InputTypeSelector';
 import {getElementOptions} from '../helpers/input-type-select';
 
@@ -39,6 +40,11 @@ const InputSettings = ({isSectionHidden}: InputSettingsProps) => {
         return getElementOptions();
     }, []);
 
+    const controlProps: ValueSelectorControlProps = React.useMemo(
+        () => ({select: {type: 'manual'}}),
+        [],
+    );
+
     return (
         <React.Fragment>
             <SectionWrapper
@@ -56,7 +62,7 @@ const InputSettings = ({isSectionHidden}: InputSettingsProps) => {
                 </FormRow>
                 <InputTypeSelector options={options} />
                 <OperationSelector />
-                <ValueSelector />
+                <ValueSelector controlProps={controlProps} />
             </SectionWrapper>
         </React.Fragment>
     );

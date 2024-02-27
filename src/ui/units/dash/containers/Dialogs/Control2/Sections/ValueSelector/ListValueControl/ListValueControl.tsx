@@ -3,7 +3,6 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
-import {DashTabItemControlSourceType} from 'shared';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
@@ -11,17 +10,24 @@ import Acceptable from './Acceptable/Acceptable';
 import {MultiselectableCheckbox} from './MultiselectableCheckbox';
 import {DynamicValueSelect} from './ValueSelector/DynamicValueSelect';
 import {StaticValueSelect} from './ValueSelector/StaticValueSelect';
+import type {DynamicValueSelectorCustomProps} from './ValueSelector/types';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-export const ListValueControl = () => {
-    const {sourceType, required, validation} = useSelector(selectSelectorDialog);
+export type ListValueControlProps =
+    | {
+          type: 'dynamic';
+          custom: DynamicValueSelectorCustomProps;
+      }
+    | {type: 'manual'};
+export const ListValueControl: React.FC<ListValueControlProps> = (props: ListValueControlProps) => {
+    const {required, validation} = useSelector(selectSelectorDialog);
 
     return (
         <React.Fragment>
             <MultiselectableCheckbox />
 
-            {sourceType === DashTabItemControlSourceType.Manual && (
+            {props.type === 'manual' && (
                 <React.Fragment>
                     <FormRow label={i18n('field_acceptable-values')}>
                         <Acceptable />
@@ -36,10 +42,11 @@ export const ListValueControl = () => {
                     </FormRow>
                 </React.Fragment>
             )}
-            {sourceType !== DashTabItemControlSourceType.Manual && (
+            {props.type === 'dynamic' && (
                 <FormRow label={i18n('field_default-value')}>
                     <FieldWrapper error={validation.defaultValue}>
                         <DynamicValueSelect
+                            {...props.custom}
                             hasValidationError={Boolean(validation.defaultValue)}
                             hasClear={!required}
                         />
