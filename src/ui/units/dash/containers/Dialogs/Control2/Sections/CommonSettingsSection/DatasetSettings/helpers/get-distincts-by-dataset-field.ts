@@ -72,7 +72,7 @@ export const getDistinctsByDatasetField = async ({
             pagination,
         };
     } catch (error) {
-        logger.logError('Control: getDistincts failed', error);
+        logger.logError('Control: getDistinctsByDatasetField failed', error);
         console.error('SELECT_GET_ITEMS_FAILED', error);
         throw error;
     }

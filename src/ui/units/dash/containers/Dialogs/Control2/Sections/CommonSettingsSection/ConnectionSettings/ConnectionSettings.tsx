@@ -4,18 +4,27 @@ import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 
 import {SectionWrapper} from '../../../../../../../../components/SectionWrapper/SectionWrapper';
-import {selectSelectorDialog} from '../../../../../../store/selectors/dashTypedSelectors';
+import {selectWorkbookId} from '../../../../../../../workbooks/store/selectors';
+import {
+    selectDashGlobalParams,
+    selectSelectorDialog,
+} from '../../../../../../store/selectors/dashTypedSelectors';
 import {ELEMENT_TYPE} from '../../../../Control/constants';
 import {ValueSelector} from '../../ValueSelector/ValueSelector';
+import type {ValueSelectorControlProps} from '../../ValueSelector/types';
 import {InputTypeSelector} from '../InputTypeSelector/InputTypeSelector';
 import {getElementOptions} from '../helpers/input-type-select';
 
 import {ConnectionSelector} from './components/ConnectionSelector/ConnectionSelector';
 import {QueryTypeControl} from './components/QueryTypeControl/QueryTypeControl';
+import {getDistinctsByTypedQuery} from './helpers/get-distincts-by-typed-query';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 export const ConnectionSettings: React.FC = () => {
-    const {connectionQueryTypes} = useSelector(selectSelectorDialog);
+    const {connectionQueryTypes, connectionId, connectionQueryContent, connectionQueryType} =
+        useSelector(selectSelectorDialog);
+    const parameters = useSelector(selectDashGlobalParams);
+    const workbookId = useSelector(selectWorkbookId);
 
     const options = React.useMemo(() => {
         const allowedOptions: Record<string, boolean> = {
@@ -25,6 +34,30 @@ export const ConnectionSettings: React.FC = () => {
         return getElementOptions().filter(({value}) => allowedOptions[value]);
     }, []);
 
+    const fetcher = React.useCallback(
+        () =>
+            getDistinctsByTypedQuery({
+                workbookId,
+                connectionId,
+                connectionQueryContent,
+                connectionQueryType,
+                parameters,
+            }),
+        [connectionId, connectionQueryContent, connectionQueryType, parameters, workbookId],
+    );
+
+    const controlProps: ValueSelectorControlProps = React.useMemo((): ValueSelectorControlProps => {
+        return {
+            select: {
+                type: 'dynamic',
+                custom: {
+                    fetcher,
+                    disabled: !connectionId || !connectionQueryContent || !connectionQueryType,
+                },
+            },
+        };
+    }, [connectionId, connectionQueryContent, connectionQueryType, fetcher]);
+
     return (
         <SectionWrapper title={i18n('label_common-settings')}>
             <ConnectionSelector />
@@ -32,7 +65,7 @@ export const ConnectionSettings: React.FC = () => {
                 <React.Fragment>
                     <QueryTypeControl connectionQueryTypes={connectionQueryTypes} />
                     <InputTypeSelector options={options} />
-                    <ValueSelector />
+                    <ValueSelector controlProps={controlProps} />
                 </React.Fragment>
             ) : null}
         </SectionWrapper>

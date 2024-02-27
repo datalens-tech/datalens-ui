@@ -235,6 +235,21 @@ export const selectDashGlobalDefaultParams = createSelector(
     (settings) => settings.globalParams,
 );
 
+export const selectDashGlobalParams = createSelector(
+    [selectDashGlobalDefaultParams],
+    (defaultParams) => {
+        const preparedDefaultParams = structuredClone(defaultParams || {});
+
+        const urlParams = new URLSearchParams(location.search);
+
+        urlParams.forEach((value, key) => {
+            preparedDefaultParams[key] = value;
+        });
+
+        return preparedDefaultParams;
+    },
+);
+
 export const selectStateMode = createSelector(
     [selectDashMode],
     (dashMode) => dashMode === Mode.SelectState,
