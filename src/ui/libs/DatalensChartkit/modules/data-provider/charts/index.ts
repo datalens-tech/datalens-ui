@@ -97,6 +97,7 @@ type EntitiesType =
     | 'markdown_node'
     | 'markup_node'
     | 'markup_wizard_node'
+    | 'markup_ql_node'
     | 'control_node'
     | 'map_node'
     | 'control_dash';

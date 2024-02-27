@@ -66,12 +66,6 @@ export const selectSelectorValidation = (state: DatalensGlobalState) =>
 export const selectSelectorDialog = (state: DatalensGlobalState) =>
     (state.dash as DashState).selectorDialog;
 
-export const selectSelectorsGroup = (state: DatalensGlobalState) =>
-    (state.dash as DashState).selectorsGroup;
-
-export const selectActiveSelectorIndex = (state: DatalensGlobalState) =>
-    (state.dash as DashState).activeSelectorIndex || 0;
-
 export const selectSkipReload = (state: DatalensGlobalState) =>
     (state.dash as DashState)?.skipReload || false;
 

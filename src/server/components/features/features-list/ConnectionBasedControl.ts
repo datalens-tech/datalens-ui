@@ -2,7 +2,7 @@ import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
-    name: Feature.GenericDatetimeMigration,
+    name: Feature.ConnectionBasedControl,
     state: {
         development: false,
         production: false,

@@ -5,10 +5,11 @@ import {AppContext, AppContextParams} from '@gravity-ui/nodekit';
 
 import {registry} from '../../../../server/registry';
 import {DatalensGatewaySchemas} from '../../../../server/types/gateway';
+import {WizardVisualizationId} from '../../../constants';
 import {DatasetField, WorkbookId} from '../../../types';
 import {GetDataSetFieldsByIdResponse} from '../../bi/types';
 import {simpleSchema} from '../../simple-schema';
-import {GetEntryResponse} from '../../us/types/entries';
+import {GetEntryResponse} from '../../us/types';
 
 export type DatasetDictResponse = {datasetId: string; data: GetEntryResponse | null};
 
@@ -44,8 +45,9 @@ export const prepareDatasetData = (args: {
     type: string | null;
     entryId: string;
     datasetId: string;
+    visualizationType?: WizardVisualizationId;
 }) => {
-    const {entryId, datasetId, type, items} = args;
+    const {entryId, datasetId, type, items, visualizationType} = args;
 
     const emptyValue = {entryId, type: null};
 
@@ -73,6 +75,7 @@ export const prepareDatasetData = (args: {
     return {
         entryId,
         type,
+        visualizationType,
         datasetId,
         datasetName: key.match(/[^/]*$/)?.[0] || '',
         datasetFields: result_schema.map(({title, guid, type: fieldType}) => {

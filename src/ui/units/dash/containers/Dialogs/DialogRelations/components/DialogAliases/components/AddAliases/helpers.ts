@@ -36,7 +36,7 @@ export const isAddingAliasExists = (currentAliasRow: string[], newAlias: string[
  * @param addedAliases
  * @param datasets
  */
-export const isAddingAliasSameDataset = (
+export const hasAliasWithSameDataset = (
     addedAliases: string[][],
     datasets: DatasetsListData | null,
 ) => {
@@ -50,21 +50,41 @@ export const isAddingAliasSameDataset = (
         }, {});
     }
 
-    for (const datasetFields of Object.values(datasetsFields)) {
-        let counter = 0;
-        for (let i = 0; i < addedAliases.length; i++) {
-            // no need to check aliases contains of 2 fields (already checked the, earlier)
-            if (addedAliases[i].length < 3) {
-                continue;
-            }
-            for (let j = 0; j < addedAliases[i].length; j++) {
-                if (addedAliases[i][j] in datasetFields) {
-                    counter++;
+    const datasetEntries = Object.entries(datasetsFields);
+    for (let i = 0; i < addedAliases.length; i++) {
+        // no need to check aliases contains of 2 fields (already checked the, earlier) with addAlias helper
+        if (addedAliases[i].length < 3) {
+            continue;
+        }
+
+        const fieldsByDataset: Record<string, string[]> = {};
+        let hasErrors = false;
+
+        for (let j = 0; j < addedAliases[i].length; j++) {
+            const field = addedAliases[i][j];
+            for (const [id, datasetFields] of datasetEntries) {
+                if (field in datasetFields) {
+                    if (fieldsByDataset[id]) {
+                        fieldsByDataset[id].push(field);
+                        hasErrors = true;
+                    } else {
+                        fieldsByDataset[id] = [field];
+                    }
                 }
-                if (counter > 1) {
-                    return true;
-                }
             }
+        }
+
+        if (hasErrors) {
+            return {
+                alias: addedAliases[i],
+                errors: Object.values(fieldsByDataset).reduce((memo, fields) => {
+                    if (fields.length > 1) {
+                        memo.push(...fields);
+                    }
+
+                    return memo;
+                }, []),
+            };
         }
     }
 

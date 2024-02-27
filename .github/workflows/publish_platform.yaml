@@ -1,8 +1,7 @@
 on:
-  pull_request:
-    types:
-      - closed
-    branches: 
+  workflow_dispatch:
+  push:
+    branches:
       - main
 
 concurrency:
@@ -16,7 +15,8 @@ permissions:
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true
+    permissions:
+      contents: write
     name: datalens-ui
     runs-on: ubuntu-latest
     steps:

@@ -37,7 +37,7 @@ import {PrepareFunctionArgs} from '../types';
 import {
     getBackgroundColorsMapByContinuousColumn,
     getFlatTableBackgroundStyles,
-} from './helpers/backgroundSettings';
+} from './helpers/background-settings';
 import {getFooter} from './helpers/footer';
 import {getColumnValuesByColumnWithBarSettings} from './helpers/misc';
 
@@ -149,7 +149,7 @@ function prepareFlatTable({
 
             if (item.format) {
                 dateHeadCell.format = item.format;
-            } else if (dataType === 'datetime' || dataType === 'genericdatetime') {
+            } else if (dataType === 'genericdatetime') {
                 dateHeadCell.format = DEFAULT_DATETIME_FORMAT;
             } else if (dataType === 'datetimetz') {
                 dateHeadCell.format = DEFAULT_DATETIMETZ_FORMAT;

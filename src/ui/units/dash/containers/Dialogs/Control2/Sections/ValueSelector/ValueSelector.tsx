@@ -51,7 +51,7 @@ const InputValueControl = () => {
             <FieldWrapper error={validation.defaultValue}>
                 <TextInput
                     disabled={isFieldDisabled}
-                    value={defaultValue as string}
+                    value={(defaultValue ?? '') as string}
                     onUpdate={handleUpdate}
                 />
             </FieldWrapper>
@@ -79,7 +79,7 @@ const DateValueControl = () => {
     const handleTimeChange = React.useCallback((value: boolean) => {
         dispatch(
             setSelectorDialogItem({
-                fieldType: value ? DATASET_FIELD_TYPES.DATETIME : undefined,
+                fieldType: value ? DATASET_FIELD_TYPES.GENERICDATETIME : undefined,
                 defaultValue: undefined,
             }),
         );
@@ -99,7 +99,7 @@ const DateValueControl = () => {
                 <Checkbox
                     qa={DialogControlQa.dateRangeCheckbox}
                     className={b('checkbox-option')}
-                    checked={isRange}
+                    checked={isRange ?? false}
                     disabled={isFieldDisabled}
                     onUpdate={handleIsRangeUpdate}
                     size="l"
@@ -111,10 +111,7 @@ const DateValueControl = () => {
                     <Checkbox
                         qa={DialogControlQa.dateTimeCheckbox}
                         className={b('checkbox-option')}
-                        checked={
-                            fieldType === DATASET_FIELD_TYPES.DATETIME ||
-                            fieldType === DATASET_FIELD_TYPES.GENERICDATETIME
-                        }
+                        checked={fieldType === DATASET_FIELD_TYPES.GENERICDATETIME}
                         disabled={isFieldDisabled}
                         onUpdate={handleTimeChange}
                         size="l"

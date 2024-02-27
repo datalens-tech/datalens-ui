@@ -195,7 +195,6 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                     case DATASET_FIELD_TYPES.DATE:
                         item.format = AVAILABLE_DATE_FORMATS[2];
                         break;
-                    case DATASET_FIELD_TYPES.DATETIME:
                     case DATASET_FIELD_TYPES.GENERICDATETIME:
                         item.format = AVAILABLE_DATETIME_FORMATS[5];
                         break;
@@ -585,7 +584,6 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
 
             const isDate =
                 nextValue === DATASET_FIELD_TYPES.DATE ||
-                nextValue === DATASET_FIELD_TYPES.DATETIME ||
                 nextValue === DATASET_FIELD_TYPES.GENERICDATETIME ||
                 nextValue === DATASET_FIELD_TYPES.DATETIMETZ;
 

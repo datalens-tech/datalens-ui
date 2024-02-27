@@ -1,4 +1,4 @@
-import {ElementHandle, Page} from '@playwright/test';
+import {Page} from '@playwright/test';
 import {AddFieldQA, SectionDatasetQA} from '../../../src/shared/constants';
 
 import {getParentByQARole, slct, waitForCondition} from '../../utils';
@@ -147,12 +147,12 @@ export default class SectionVisualization {
         await this.page.click(slct('add-layer'));
     }
 
-    async openLayerList() {
+    async toggleLayerList() {
         await this.page.click(this.layersSelectSelector);
     }
 
     async switchLayer(layerQa: string) {
-        await this.openLayerList();
+        await this.toggleLayerList();
 
         await this.page.click(slct(layerQa));
     }
@@ -185,8 +185,6 @@ export default class SectionVisualization {
     }
 
     async removeGeoLayer(name: string) {
-        await this.page.click(this.layersSelectSelector);
-
         const oldLayerName = await this.page.waitForSelector(slct(name));
 
         const oldLayerItem = (await getParentByQARole(oldLayerName, 'geolayer-select-item'))!;
@@ -208,26 +206,15 @@ export default class SectionVisualization {
     }
 
     async waitForLayers(layers: string[]) {
-        let layersNames: (string | null | undefined)[] = [];
+        const locatorAll = this.page
+            .locator(this.layerPopupItemSelector)
+            .locator('.geolayers-select__popup-item-label');
 
-        try {
-            await waitForCondition(async () => {
-                const layersElements: ElementHandle<HTMLElement>[] =
-                    await this.getLayersSelectItems();
+        await this.expectLayersSelectItemsCount(layers.length);
 
-                layersNames = await Promise.all(
-                    layersElements.map(async (layer) =>
-                        (
-                            await layer.$('.geolayers-select__popup-item-label')
-                        )?.getAttribute('data-qa'),
-                    ),
-                );
-
-                return layersNames.join() === layers.join();
-            });
-        } catch {
-            throw new Error(`waitForLayers error: expected: ${layers}, got: ${layersNames}`);
-        }
+        await Promise.all(
+            layers.map((layer, i) => expect(locatorAll.nth(i)).toHaveAttribute('data-qa', layer)),
+        );
     }
 
     async getAddFieldItemsList(placeholderName: PlaceholderName) {
@@ -277,11 +264,12 @@ export default class SectionVisualization {
         this.page.fill('.visualization-layers-control__range input', opacityValue);
     }
 
-    async getLayersSelectItems(): Promise<ElementHandle<HTMLElement>[]> {
-        await this.page.click(this.layersSelectSelector);
-        const layerSelectItems = await this.page.$$(this.layerPopupItemSelector);
-        await this.page.click(this.layersSelectSelector);
-        return layerSelectItems as ElementHandle<HTMLElement>[];
+    async expectLayersSelectItemsCount(count: number) {
+        await expect(this.page.locator(this.layerPopupItemSelector)).toHaveCount(count);
+    }
+
+    async expectLayersSelectItemsTexts(texts: string[]) {
+        await expect(this.page.locator(this.layerPopupItemSelector)).toHaveText(texts);
     }
 }
 

@@ -24,7 +24,6 @@ import {
     QlConfigPreviewTableData,
     Shared,
     WorkbookId,
-    extractEntryId,
     resolveIntervalDate,
     resolveOperation,
 } from '../../../../../shared';
@@ -649,6 +648,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
             }),
         );
 
+        const {extractEntryId} = registry.common.functions.getAll();
         const urlEntryId = extractEntryId(location.pathname || '');
 
         if (urlEntryId) {

@@ -55,7 +55,7 @@ export type PrepareFunctionResultData = {
 
 export type ChartKitFormatSettings = {
     format?: null;
-    chartKitFormatting: boolean;
+    chartKitFormatting?: boolean;
     chartKitPrecision?: number;
     chartKitPrefix?: string;
     chartKitPostfix?: string;

@@ -9,7 +9,6 @@ import {
 import {GetEntriesDatasetsFieldsResponse} from 'shared/schema';
 import {DatasetsData} from 'ui/components/DashKit/plugins/types';
 import {
-    AcceptFiltersWidgetType,
     CONNECTION_KIND,
     DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES,
     DASH_FILTERING_CHARTS_WIDGET_TYPES,
@@ -125,7 +124,7 @@ export const getMetaDataWithDatasetInfo = ({
             return itemWithDataset;
         }
 
-        const {type, datasetId, datasetName, datasetFields} = entryWithDataset;
+        const {type, datasetId, datasetName, datasetFields, visualizationType} = entryWithDataset;
         const key = datasetId as string;
 
         if (datasetFields) {
@@ -171,6 +170,10 @@ export const getMetaDataWithDatasetInfo = ({
             itemWithDataset.enableFiltering = item.enableFiltering || false;
         }
 
+        if (visualizationType) {
+            itemWithDataset.visualizationType = visualizationType;
+        }
+
         return itemWithDataset;
     });
     return res;
@@ -183,9 +186,9 @@ export const showInRelation = (
     const isItemControl = isControl(rowItem);
 
     const isCurrentChartAcceptFilter =
-        (currentItem.type as AcceptFiltersWidgetType) in DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES;
+        (currentItem.type as string) in DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES;
     const isItemChartAcceptFilter =
-        (rowItem.type as AcceptFiltersWidgetType) in DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES;
+        (rowItem.type as string) in DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES;
 
     const isCurrentFilteringChart =
         (currentItem.type as FilteringWidgetType) in DASH_FILTERING_CHARTS_WIDGET_TYPES &&

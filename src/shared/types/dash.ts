@@ -19,6 +19,7 @@ export enum DashTabItemTitleSize {
 
 export enum DashTabItemControlSourceType {
     Dataset = 'dataset',
+    Connection = 'connection',
     Manual = 'manual',
     External = 'external',
 }
@@ -240,6 +241,7 @@ export interface DashTabItemGroupControl extends DashTabItemBase {
 }
 
 export interface DashTabItemGroupControlData {
+    id: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;

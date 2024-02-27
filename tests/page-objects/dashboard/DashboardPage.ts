@@ -1,4 +1,4 @@
-import {Response, expect} from '@playwright/test';
+import {Page, Response, expect} from '@playwright/test';
 
 import {
     ConnectionsDialogQA,
@@ -11,6 +11,7 @@ import {
     DialogTabsQA,
     EntryDialogQA,
     SelectQA,
+    YfmQa,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
@@ -60,6 +61,8 @@ import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
 import {ChartkitControl} from './ChartkitControl';
 import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
 import {WorkbookIds, WorkbooksUrls} from '../../constants/constants';
+import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
+import {CommonUrls} from '../constants/common-urls';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -89,6 +92,9 @@ export type SelectorSettings = {
 
 export interface DashboardPageProps extends BasePageProps {}
 
+type LocatorOptionsType = Parameters<Page['locator']>[1];
+type LocatorClickOptionsType = Parameters<Locator['click']>[0];
+
 class DashboardPage extends BasePage {
     static selectors = {
         title: 'dashkit-plugin-title',
@@ -114,6 +120,7 @@ class DashboardPage extends BasePage {
         selectItemsMobile: '.g-select-list_mobile',
         selectItemTitle: '.g-select-list__option',
         selectItemTitleDisabled: '.g-select-list__option_disabled',
+        chartkitControlSelect: slct(ControlQA.controlSelectItems),
 
         radioManualControl: DialogControlQa.radioSourceType,
         inputNameControl: 'control-name-input',
@@ -128,6 +135,9 @@ class DashboardPage extends BasePage {
         chartGridItemContainer: `${slct(COMMON_DASH_SELECTORS.DASH_GRID_ITEM)} .chartkit`,
         dashPluginWidgetBody: slct('chart-widget'),
         dashkitGridItem: slct('dashkit-grid-item'),
+
+        chartResetButton: slct(ControlQA.filtersClear),
+        yfmContentWrapper: slct(YfmQa.WrapperHtml),
     };
 
     revisions: Revisions;
@@ -173,6 +183,14 @@ class DashboardPage extends BasePage {
         const makrdownNode = await this.page.waitForSelector('.yfm');
 
         return makrdownNode.innerHTML();
+    }
+
+    async getMarkdownText(gridItemLocator?: Locator) {
+        const yfmLocator = (gridItemLocator || this.page).locator(
+            DashboardPage.selectors.yfmContentWrapper,
+        );
+
+        return yfmLocator.innerText();
     }
 
     async createDashboard({editDash}: {editDash: () => Promise<void>}) {
@@ -696,7 +714,8 @@ class DashboardPage extends BasePage {
 
     async setupIgnoreAllLinks(widgetElem: Locator) {
         await widgetElem.click();
-        await this.page.locator(slct(DashCommonQa.RelationsDisconnectAllButton)).click();
+        await this.page.locator(slct(DashCommonQa.RelationsDisconnectAllSwitcher)).click();
+        await this.page.locator(slct(DashCommonQa.RelationsDisconnectAllWidgets)).click();
         await this.applyRelationsChanges();
     }
 
@@ -1052,6 +1071,17 @@ class DashboardPage extends BasePage {
             .click();
     }
 
+    async setSelectWithTitle(
+        {title, counter}: {title: string; counter?: number},
+        valueTitle: string,
+    ) {
+        await this.clickSelectWithTitle(title, counter);
+        return this.page
+            .locator(DashboardPage.selectors.chartkitControlSelect)
+            .locator(`[data-value] >> text="${valueTitle}"`)
+            .click();
+    }
+
     async waitForSomeItemVisible() {
         await this.page.waitForSelector(slct('dashkit-grid-item'));
     }
@@ -1072,6 +1102,71 @@ class DashboardPage extends BasePage {
             slct(ControlQA.controlSettings),
         );
         await controlSettingsButton.click();
+    }
+
+    /**
+     *  Selector for gridItem
+     *
+     * @param filter
+     * filter.byHeader - search by header text in tabs,
+     * if tab is not shown currently in tabs list then filter will fail
+     *
+     * filter.byEntiryId - filters only currently rendered charts entities
+     * if element is not presented in DOM selector will fail
+     *
+     * Otherwise default Locator options can be used: `has`, `hasNot`, `hasText`, `hasNotText`
+     *
+     * @return {Locator}
+     */
+    async getGridItem(filter: {byHeader?: string; byEntiryId?: string} & LocatorOptionsType) {
+        let gridItemFilter: LocatorOptionsType;
+
+        if (filter.byHeader) {
+            gridItemFilter = {
+                has: this.page.locator(slct('widget-chart-tab', filter.byHeader)),
+            };
+        } else if (filter.byEntiryId) {
+            gridItemFilter = {
+                has: this.page.locator(slct(`chartkit-body-entry-${filter.byEntiryId}`)),
+            };
+        } else {
+            gridItemFilter = filter;
+        }
+
+        return this.page.locator(`.${COMMON_DASH_SELECTORS.DASH_GRID_ITEM}`, gridItemFilter);
+    }
+
+    async waitForChartsRender(gridItemLocators: Locator[]) {
+        return Promise.all(
+            gridItemLocators.map((item) => {
+                return waitForCondition(() =>
+                    item.locator(`.${COMMON_CHARTKIT_SELECTORS.chartkit}`).isVisible(),
+                );
+            }),
+        );
+    }
+
+    async getTableFirstRowTexts(gridItemLocator: Locator) {
+        const firstCellLocator = gridItemLocator.locator('tbody tr td:first-child');
+
+        return firstCellLocator.allInnerTexts();
+    }
+
+    async filterTableByText(
+        gridItemLocator: Locator,
+        text: string,
+        options?: LocatorClickOptionsType,
+    ) {
+        const cellLocator = gridItemLocator.locator('tbody tr td:first-child').getByText(text);
+
+        return Promise.all([
+            this.waitForSuccessfulResponse(CommonUrls.PartialCreateDashState),
+            cellLocator.first().click(options),
+        ]);
+    }
+
+    async resetChartFiltering(gridItemLocator: Locator) {
+        return gridItemLocator.locator(DashboardPage.selectors.chartResetButton).click();
     }
 }
 

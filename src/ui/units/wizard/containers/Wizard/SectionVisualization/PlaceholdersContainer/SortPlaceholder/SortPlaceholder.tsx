@@ -13,6 +13,7 @@ import {
     isMeasureField,
     isMeasureName,
     isMeasureValue,
+    isVisualizationWithLayers,
 } from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {
@@ -21,6 +22,7 @@ import {
     selectSort,
     selectVisualization,
 } from 'units/wizard/selectors/visualization';
+import {getSelectedLayer} from 'units/wizard/utils/helpers';
 
 import {updateSort} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
@@ -146,11 +148,19 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 };
 
 const mapStateToProps = (state: DatalensGlobalState) => {
+    const globalVisualization = selectVisualization(state);
+    let sort = selectSort(state);
+
+    if (isVisualizationWithLayers(globalVisualization)) {
+        const layer = getSelectedLayer(globalVisualization);
+        sort = layer?.commonPlaceholders.sort || [];
+    }
+
     return {
-        sort: selectSort(state),
+        sort,
         colors: selectColors(state),
         segments: selectSegments(state),
-        globalVisualization: selectVisualization(state),
+        globalVisualization,
     };
 };
 

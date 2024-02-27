@@ -204,9 +204,11 @@ const ChartKitError: React.FC<any> = (props) => {
                 const errorCode = source.code || source.status;
 
                 if (
-                    [ErrorCode.UsAccessDenied, ErrorCode.ReferencedEntryAccessDenied].includes(
-                        errorCode,
-                    ) &&
+                    [
+                        ErrorCode.UsAccessDenied,
+                        ErrorCode.ReferencedEntryAccessDenied,
+                        ErrorCode.WorkbookIsolationInterruptionDenied,
+                    ].includes(errorCode) &&
                     source.details &&
                     source.details.scope
                 ) {

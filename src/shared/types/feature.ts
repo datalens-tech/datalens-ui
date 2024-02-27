@@ -26,8 +26,6 @@ export enum Feature {
     ChartEditorDeveloperModeCheck = 'ChartEditorDeveloperModeCheck',
     QLPrometheus = 'QLPrometheus',
     QLMonitoring = 'QLMonitoring',
-    GenericDatetime = 'GenericDatetime',
-    GenericDatetimeMigration = 'GenericDatetimeMigration',
     CollectionsEnabled = 'CollectionsEnabled',
     CollectionsAccessEnabled = 'CollectionsAccessEnabled',
     DashBoardAccessDescription = 'DashBoardAccessDescription',
@@ -75,6 +73,7 @@ export enum Feature {
     SelectorRequiredValue = 'SelectorRequiredValue',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     MarkupMetric = 'MarkupMetric',
+    ConnectionBasedControl = 'ConnectionBasedControl',
 }
 
 export type FeatureConfig = Record<string, boolean>;

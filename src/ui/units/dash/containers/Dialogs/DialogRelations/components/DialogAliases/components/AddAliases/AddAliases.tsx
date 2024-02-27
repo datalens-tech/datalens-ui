@@ -14,8 +14,9 @@ import {isEditorChart} from '../../../../hooks/helpersChart';
 import {isExternalControl} from '../../../../hooks/helpersControls';
 import {AliasesContext} from '../../../../hooks/useRelations';
 import {DashkitMetaDataItem, DatasetsListData} from '../../../../types';
+import {AliasesInvalidList} from '../AliasesList/AliasesInvalidList';
 
-import {getParamsSelectOptions, isAddingAliasExists, isAddingAliasSameDataset} from './helpers';
+import {getParamsSelectOptions, hasAliasWithSameDataset, isAddingAliasExists} from './helpers';
 
 import './AddAliases.scss';
 
@@ -109,6 +110,10 @@ export const AddAliases = ({
 }: AddAliasesProps) => {
     const {datasets} = React.useContext(AliasesContext);
     const [errorMsg, setErrorMgs] = React.useState<string>('');
+    const [errorAliases, setErrorAliases] = React.useState<{
+        alias: string[];
+        errors: string[];
+    } | null>(null);
 
     const [leftAliasSelected, setLeftAliasSelected] = React.useState<string[] | undefined>();
     const [rightAliasSelected, setRightAliasSelected] = React.useState<string[] | undefined>();
@@ -164,10 +169,14 @@ export const AddAliases = ({
         }
 
         const addedAliases = addAlias(newAlias[0], newAlias[1], [...currentAliases]);
+        const sameDatasetAlias = hasAliasWithSameDataset(addedAliases, datasets);
 
-        if (isAddingAliasSameDataset(addedAliases, datasets)) {
+        if (sameDatasetAlias) {
             setErrorMgs(i18n('label_alias-same-dataset'));
+            setErrorAliases(sameDatasetAlias);
             return;
+        } else {
+            setErrorAliases(null);
         }
 
         onAdd(newAlias);
@@ -260,7 +269,7 @@ export const AddAliases = ({
 
                 <Button
                     className={b('button')}
-                    view="normal"
+                    view="action"
                     onClick={handleAddAlias}
                     qa={DashCommonQa.AliasAddBtn}
                 >
@@ -268,6 +277,13 @@ export const AddAliases = ({
                 </Button>
             </div>
             {errorMsg && <div className={b('error')}>{errorMsg}</div>}
+            {errorAliases && (
+                <AliasesInvalidList
+                    aliases={[errorAliases.alias]}
+                    invalidAliases={errorAliases.errors}
+                    datasets={datasets}
+                />
+            )}
         </div>
     );
 };

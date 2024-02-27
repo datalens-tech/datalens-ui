@@ -29,6 +29,7 @@ import {
 import {mapAndShapeGraph} from '../../utils/shape-helpers';
 import {addActionParamValue} from '../helpers/action-params';
 import {getSegmentMap} from '../helpers/segments';
+import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {PrepareFunctionArgs} from '../types';
 
 import {getSegmentsIndexInOrder, getSortedCategories, getXAxisValue, prepareLines} from './helpers';
@@ -61,18 +62,16 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
-    const xPlaceholderSettings = xPlaceholder?.settings;
     const xField = xPlaceholder?.items[0];
     const xDataType = xField ? idToDataType[xField.guid] : null;
     const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
     const xIsNumber = Boolean(xDataType && isNumberField({data_type: xDataType}));
-
     let xAxisMode = AxisMode.Discrete;
     if (xField && xDataType) {
         xAxisMode = getActualAxisModeForField({
             field: {guid: xField.guid, data_type: xDataType} as Field,
-            axisSettings: xPlaceholderSettings,
-            visualizationId: visualizationId as WizardVisualizationId,
+            axisSettings: xPlaceholder?.settings,
+            visualizationIds: getAllVisualizationsIds(shared),
             sort,
         }) as AxisMode;
     }
@@ -529,7 +528,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             if (xIsDate) {
                 const time = new Date(value);
 
-                if (xDataType === 'datetime' || xDataType === 'genericdatetime') {
+                if (xDataType === 'genericdatetime') {
                     time.setTime(getTimezoneOffsettedTime(time));
                 }
 
