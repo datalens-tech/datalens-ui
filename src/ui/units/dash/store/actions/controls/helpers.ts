@@ -90,6 +90,10 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
 
         chartId,
         operation,
+
+        connectionQueryContent,
+        connectionId,
+        connectionQueryType,
     } = selectorDialog;
 
     if (sourceType === DashTabItemControlSourceType.External) {
@@ -106,22 +110,31 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
         required,
     };
 
-    if (sourceType === DashTabItemControlSourceType.Dataset) {
-        source = {
-            ...source,
-            datasetId,
-            datasetFieldId,
-            fieldType,
-            datasetFieldType,
-        };
-    }
-
-    if (sourceType === DashTabItemControlSourceType.Manual) {
-        source = {
-            ...source,
-            fieldName,
-            acceptableValues,
-        };
+    switch (sourceType) {
+        case DashTabItemControlSourceType.Dataset:
+            source = {
+                ...source,
+                datasetId,
+                datasetFieldId,
+                fieldType,
+                datasetFieldType,
+            };
+            break;
+        case DashTabItemControlSourceType.Manual:
+            source = {
+                ...source,
+                fieldName,
+                acceptableValues,
+            };
+            break;
+        case DashTabItemControlSourceType.Connection:
+            source = {
+                ...source,
+                fieldName,
+                connectionId,
+                connectionQueryType,
+                connectionQueryContent,
+            };
     }
 
     if (elementType === ELEMENT_TYPE.DATE) {

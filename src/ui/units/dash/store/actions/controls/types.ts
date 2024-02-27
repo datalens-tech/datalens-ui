@@ -1,5 +1,11 @@
+import {ConnectionQueryTypeValues} from 'shared';
 import type {Operations} from 'shared/modules';
-import {DATASET_FIELD_TYPES, DashTabItemControlSourceType, DatasetFieldType} from 'shared/types';
+import {
+    type ConnectionQueryContent,
+    DATASET_FIELD_TYPES,
+    DashTabItemControlSourceType,
+    DatasetFieldType,
+} from 'shared/types';
 
 import {SelectorDialogState} from '../dashTyped';
 
@@ -42,4 +48,7 @@ export type ItemDataSource = {
     showInnerTitle?: boolean;
     innerTitle?: string;
     required?: boolean;
+    connectionId?: string;
+    connectionQueryType?: ConnectionQueryTypeValues;
+    connectionQueryContent?: ConnectionQueryContent;
 };
