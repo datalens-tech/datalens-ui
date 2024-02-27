@@ -124,7 +124,7 @@ export const getMetaDataWithDatasetInfo = ({
             return itemWithDataset;
         }
 
-        const {type, datasetId, datasetName, datasetFields} = entryWithDataset;
+        const {type, datasetId, datasetName, datasetFields, visualizationType} = entryWithDataset;
         const key = datasetId as string;
 
         if (datasetFields) {
@@ -168,6 +168,10 @@ export const getMetaDataWithDatasetInfo = ({
             ) as Array<DatasetsData>; // TODO for multi-datasets, this did not work, you need to support in API to return a different format
             itemWithDataset.type = item.type || type; // TODO order from US type for graph
             itemWithDataset.enableFiltering = item.enableFiltering || false;
+        }
+
+        if (visualizationType) {
+            itemWithDataset.visualizationType = visualizationType;
         }
 
         return itemWithDataset;
