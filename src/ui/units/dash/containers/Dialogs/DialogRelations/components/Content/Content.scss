@@ -159,7 +159,7 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
         opacity: 0;
         transition: opacity 0.1s ease;
         position: absolute;
-        right: 0;
+        right: 4px;
     }
 
     &__row:hover &__button-alias {
