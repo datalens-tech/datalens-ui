@@ -19,9 +19,8 @@ import {mapV9ConfigToV10} from './v9/mapV9ConfigToV10';
 export const mapChartsConfigToLatestVersion = (
     extendedConfig: ExtendedChartsConfig,
     options: {
-        shouldMigrateDatetime: boolean;
         sharedData?: ServerChartsConfig['sharedData'];
-    },
+    } = {},
 ): ChartsConfig => {
     let config = extendedConfig;
 
@@ -45,10 +44,7 @@ export const mapChartsConfigToLatestVersion = (
     }
 
     if (config.version === ChartsConfigVersion.V4) {
-        if (options.shouldMigrateDatetime) {
-            migrateDatetime(config);
-        }
-
+        migrateDatetime(config);
         config = mapV4ConfigToV5(config, options.sharedData);
     }
 

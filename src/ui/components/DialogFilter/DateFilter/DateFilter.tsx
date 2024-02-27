@@ -32,10 +32,7 @@ const DateFilter: React.FC<DateFilterProps> = (props) => {
             <RelativeDatesPicker
                 range={operation.range}
                 value={values[0]}
-                withTime={
-                    dataType === DATASET_FIELD_TYPES.DATETIME ||
-                    dataType === DATASET_FIELD_TYPES.GENERICDATETIME
-                }
+                withTime={dataType === DATASET_FIELD_TYPES.GENERICDATETIME}
                 onChange={onChange}
             />
         </div>

@@ -6,9 +6,7 @@ describe('mapChartsConfigToLatestVersion', () => {
     it('should cast number version to string', () => {
         const mockedConfigWithNumericVersion = {version: 8} as unknown as ExtendedChartsConfig;
 
-        const result = mapChartsConfigToLatestVersion(mockedConfigWithNumericVersion, {
-            shouldMigrateDatetime: false,
-        });
+        const result = mapChartsConfigToLatestVersion(mockedConfigWithNumericVersion);
 
         expect(result).toEqual({version: '10'});
     });

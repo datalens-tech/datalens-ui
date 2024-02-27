@@ -104,7 +104,6 @@
   "label_date-group": "Группировка",
   "label_date-group-preaggregated": "Группировка (до агрегации)",
   "label_date-mode": "Режим даты",
-  "label_datetime": "Дата и время (устаревший)",
   "label_datetimetz": "Дата и время с часовым поясом",
   "label_day": "День",
   "label_dayofweek": "День недели",

@@ -4,7 +4,7 @@ import {WizardVisualizationId} from '../../../page-objects/common/Visualization'
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage} from '../../../utils';
 
 datalensTest.describe('Wizard - Geo Layers', () => {
     datalensTest('Deleting a geo layer', async ({page}: {page: Page}) => {
@@ -16,6 +16,8 @@ datalensTest.describe('Wizard - Geo Layers', () => {
 
         await wizardPage.sectionVisualization.addLayer();
 
+        await wizardPage.sectionVisualization.toggleLayerList();
+
         await wizardPage.sectionVisualization.waitForLayers([
             'geolayer-select-layer-1',
             'geolayer-select-layer-0',
@@ -23,12 +25,6 @@ datalensTest.describe('Wizard - Geo Layers', () => {
 
         await wizardPage.sectionVisualization.removeGeoLayer('geolayer-select-layer-0');
 
-        await waitForCondition(async () => {
-            const layers = await wizardPage.sectionVisualization.getLayersSelectItems();
-
-            return layers.length === 1;
-        }).catch(() => {
-            throw new Error('After deleting, there is more then one layer in list');
-        });
+        await wizardPage.sectionVisualization.expectLayersSelectItemsCount(1);
     });
 });

@@ -104,7 +104,6 @@
   "label_date-group": "Grouping",
   "label_date-group-preaggregated": "Grouping (before aggregation)",
   "label_date-mode": "Date mode",
-  "label_datetime": "Date and time (deprecated)",
   "label_datetimetz": "Date and time with timezone",
   "label_day": "Day",
   "label_dayofweek": "Day of week",

@@ -12,8 +12,6 @@ import {I18n} from 'i18n';
 import {CommonFieldType, DATASET_FIELD_TYPES} from 'shared';
 import {DataTypeIcon} from 'ui';
 
-import {getDatetimeName} from '../../../../../../../utils/helpers';
-
 const b = block('conn-form-file');
 const i18n = I18n.keyset('common.data-types');
 
@@ -27,7 +25,7 @@ const getOptions = (types: DATASET_FIELD_TYPES[]): SelectOption[] => {
     return types
         .map((type) => ({
             value: type,
-            content: i18n(`label_${getDatetimeName(type) as CommonFieldType}`),
+            content: i18n(`label_${type as CommonFieldType}`),
         }))
         .sort((current, next) => {
             const {content} = current;

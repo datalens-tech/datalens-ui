@@ -30,7 +30,6 @@
   "value_count": "Count",
   "value_countunique": "Count (Distinct)",
   "value_date": "Date",
-  "value_datetime": "Date and time (deprecated)",
   "value_float": "Fractional number",
   "value_formula": "Formula",
   "value_genericdatetime": "Date and time",
