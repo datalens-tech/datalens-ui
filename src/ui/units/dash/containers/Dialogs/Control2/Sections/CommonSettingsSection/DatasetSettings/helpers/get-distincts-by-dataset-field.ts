@@ -4,7 +4,7 @@ import {TIMEOUT_90_SEC, type WorkbookId, getFieldsApiV2RequestSection} from 'sha
 import logger from '../../../../../../../../../libs/logger';
 import {getSdk} from '../../../../../../../../../libs/schematic-sdk';
 
-const DEFAULT_PAGE_SIZE = 100;
+export const DEFAULT_PAGE_SIZE = 100;
 const hasNextPage = (arr: unknown[], pageSize: number) => {
     if (!arr?.length) {
         return false;

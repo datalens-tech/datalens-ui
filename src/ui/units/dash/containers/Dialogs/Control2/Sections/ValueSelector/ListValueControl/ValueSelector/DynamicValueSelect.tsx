@@ -1,20 +1,10 @@
 import React from 'react';
 
-import {SelectOption} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
-import logger from 'libs/logger';
-import {getSdk} from 'libs/schematic-sdk';
 import {useSelector} from 'react-redux';
-import {DialogControlQa, TIMEOUT_90_SEC, WorkbookId, getFieldsApiV2RequestSection} from 'shared';
-import {VIEW_MODES} from 'ui/components/Select/hooks/useSelectRenderFilter/useSelectRenderFilter';
-import {
-    SelectFeaturedAsync,
-    SelectFeaturedAsyncProps,
-} from 'ui/components/Select/wrappers/SelectFeaturedAsync';
-import {
-    selectDashWorkbookId,
-    selectSelectorDialog,
-} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {DialogControlQa} from 'shared';
+import {SelectFeaturedAsync} from 'ui/components/Select/wrappers/SelectFeaturedAsync';
+import {selectSelectorDialog} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import {useSetSelectorDialogItem} from './hooks';
 import type {DynamicValueSelectorProps} from './types';
@@ -29,110 +19,18 @@ export type PaginationType = {
     pageSize: number;
 };
 
-const DEFAULT_PAGE_SIZE = 100;
-const hasNextPage = (arr: unknown[], pageSize: number) => {
-    if (!arr?.length) {
-        return false;
-    }
-
-    return !(arr.length % pageSize);
-};
-
-type GetDistincts = {
-    datasetId?: string;
-    workbookId: WorkbookId;
-    datasetFieldId?: string;
-    searchPattern?: string;
-    nextPageToken?: number | null;
-    pageSize: number;
-};
-
-const getDistincts = async ({
-    datasetId,
-    workbookId,
-    datasetFieldId,
-    searchPattern,
-    nextPageToken,
-    pageSize,
-}: GetDistincts) => {
-    if (!datasetId || !datasetFieldId || !Number.isInteger(nextPageToken)) return {};
-
-    const fields = getFieldsApiV2RequestSection([{guid: datasetFieldId}], 'distinct');
-    const filters = searchPattern
-        ? [
-              {
-                  ref: {type: 'id', id: datasetFieldId} as const,
-                  operation: 'ICONTAINS',
-                  values: [searchPattern],
-              },
-          ]
-        : undefined;
-
-    try {
-        const {
-            result: {
-                data: {Data},
-            },
-        } = await getSdk().bi.getDistinctsApiV2(
-            {
-                datasetId,
-                workbookId,
-                fields,
-                limit: pageSize,
-                offset: pageSize * (nextPageToken as number),
-                filters,
-            },
-            {timeout: TIMEOUT_90_SEC},
-        );
-
-        const response = Data.map(([value]): SelectOption => ({value, content: value}));
-        const pagination = hasNextPage(response, pageSize)
-            ? {
-                  pageNumber: (nextPageToken as number) + 1,
-                  pageSize: DEFAULT_PAGE_SIZE,
-              }
-            : undefined;
-        return {
-            response,
-            pagination,
-        };
-    } catch (error) {
-        logger.logError('Control: getDistincts failed', error);
-        console.error('SELECT_GET_ITEMS_FAILED', error);
-        throw error;
-    }
-};
-
-export const DynamicValueSelect = ({hasValidationError, hasClear}: DynamicValueSelectorProps) => {
-    const [searchPattern, setSearchPattern] = React.useState('');
-
+export const DynamicValueSelect = ({
+    hasValidationError,
+    hasClear,
+    fetcher,
+    disabled,
+    onFilterChange,
+}: DynamicValueSelectorProps) => {
     const selectorDialogState = useSelector(selectSelectorDialog);
-    const workbookId = useSelector(selectDashWorkbookId);
-    const {datasetId, datasetFieldId, multiselectable} = selectorDialogState;
+    const {multiselectable} = selectorDialogState;
     const defaultValue = convertDefaultValue(selectorDialogState.defaultValue);
 
     const {setSelectorDialogItem} = useSetSelectorDialogItem();
-
-    const onFilterChange = React.useCallback<
-        NonNullable<SelectFeaturedAsyncProps['onFilterChange']>
-    >((pattern, mode) => {
-        if (mode === VIEW_MODES.ALL) {
-            setSearchPattern(pattern);
-        }
-    }, []);
-
-    const fetcher = React.useCallback(
-        ({pageNumber, pageSize} = {pageNumber: 0, pageSize: DEFAULT_PAGE_SIZE}) =>
-            getDistincts({
-                datasetId,
-                workbookId,
-                datasetFieldId,
-                nextPageToken: pageNumber,
-                searchPattern,
-                pageSize,
-            }),
-        [datasetId, workbookId, datasetFieldId, searchPattern],
-    );
 
     const handleUpdate = React.useCallback(
         (val) => {
@@ -146,7 +44,7 @@ export const DynamicValueSelect = ({hasValidationError, hasClear}: DynamicValueS
             multiple={multiselectable}
             width="max"
             popupWidth={'fit'}
-            disabled={!datasetId || !datasetFieldId}
+            disabled={disabled}
             value={defaultValue}
             onUpdate={handleUpdate}
             fetcher={fetcher}
