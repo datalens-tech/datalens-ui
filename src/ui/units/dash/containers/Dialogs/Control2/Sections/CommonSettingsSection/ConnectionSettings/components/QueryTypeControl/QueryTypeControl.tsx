@@ -3,7 +3,7 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import {Select} from '@gravity-ui/uikit';
 import {useDispatch, useSelector} from 'react-redux';
-import {type ConnectionQueryType, ConnectionQueryTypeValues} from 'shared';
+import {type ConnectionQueryTypeOptions, ConnectionQueryTypeValues} from 'shared';
 
 import {setSelectorDialogItem} from '../../../../../../../../store/actions/dashTyped';
 import {selectSelectorDialog} from '../../../../../../../../store/selectors/dashTypedSelectors';
@@ -26,7 +26,7 @@ const renderQueryContentControl = (connectionQueryType: ConnectionQueryTypeValue
 };
 
 type QueryTypeControlProps = {
-    connectionQueryTypes: ConnectionQueryType[];
+    connectionQueryTypes: ConnectionQueryTypeOptions[];
 };
 
 export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTypeControlProps) => {
