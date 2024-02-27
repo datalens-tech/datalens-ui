@@ -203,6 +203,12 @@ export const getControlToControlRelations = ({
         if ((relations.byAliases.length && hasWigetParams && hasRowParams) || hasRelation) {
             newRelationType = RELATION_TYPES.both;
             availableRelations = [...FULL_RELATIONS];
+        }
+        // widgets have defaults but not common & widgets don't have aliases
+        else if (hasWigetParams && hasRowParams) {
+            newRelationType = RELATION_TYPES.unknown;
+            availableRelations = [...FULL_RELATIONS];
+            forceAddAlias = true;
         } else if (hasWigetParams) {
             newRelationType = RELATION_TYPES.output;
             availableRelations = [...OUTPUT_RELATIONS];
