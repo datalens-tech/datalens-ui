@@ -15,6 +15,7 @@ import {selectSelectorDialog} from '../../../store/selectors/dashTypedSelectors'
 
 import {QueryEditor} from './QueryEditor/QueryEditor';
 import {QueryError} from './QueryError/QueryError';
+import {validateTypedQueryResponseForSelector} from './helpers/validate-query';
 
 import './DialogEditQuery.scss';
 
@@ -39,8 +40,22 @@ const DialogEditQuery: React.FC = () => {
     const [disabled, setDisabled] = React.useState(connectionQueryContent?.query.length === 0);
     const [loading, setLoading] = React.useState(false);
     const [errorState, setErrorState] = React.useState<
-        {error: GetConnectionTypedQueryErrorResponse; failedQuery: string | undefined} | undefined
+        {reason: string | undefined; failedQuery: string | undefined} | undefined
     >();
+
+    const handleWrongQueryRequest = (
+        reason: string | undefined,
+        failedQuery: string | undefined,
+    ) => {
+        setDisabled(true);
+        setErrorState({reason, failedQuery});
+    };
+
+    const handleSuccessResponse = (queryContent: ConnectionQueryContent) => {
+        setErrorState(undefined);
+        dispatch(setSelectorDialogItem({connectionQueryContent: queryContent}));
+        dispatch(closeDialog());
+    };
 
     const handleClose = React.useCallback(() => dispatch(closeDialog()), []);
     const handleApply = () => {
@@ -59,17 +74,19 @@ const DialogEditQuery: React.FC = () => {
                     parameters: [],
                 },
             })
-            .then(() => {
-                setErrorState(undefined);
-                dispatch(setSelectorDialogItem({connectionQueryContent: queryContent}));
-                dispatch(closeDialog());
+            .then((response) => {
+                setLoading(false);
+                const validation = validateTypedQueryResponseForSelector(response);
+                return validation
+                    ? handleSuccessResponse(queryContent)
+                    : handleWrongQueryRequest(
+                          i18nConnectionBasedControlFake('error_invalid-typed-query-response'),
+                          query,
+                      );
             })
             .catch((e: GetConnectionTypedQueryErrorResponse) => {
-                setDisabled(true);
-                setErrorState({error: e, failedQuery: query});
-            })
-            .finally(() => {
                 setLoading(false);
+                handleWrongQueryRequest(e?.details?.db_message || e?.details?.description, query);
             });
     };
     const handleQueryEditorUpdate = (v: string) => {
@@ -83,7 +100,7 @@ const DialogEditQuery: React.FC = () => {
                 <Flex direction="column" className={b('content')}>
                     <QueryEditor query={query} onQueryEditorUpdate={handleQueryEditorUpdate} />
                     {errorState ? (
-                        <QueryError query={errorState.failedQuery} error={errorState.error} />
+                        <QueryError query={errorState.failedQuery} reason={errorState.reason} />
                     ) : null}
                 </Flex>
             </Dialog.Body>
