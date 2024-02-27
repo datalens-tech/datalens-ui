@@ -1,4 +1,6 @@
 import {
+    type ConnectionQueryContent,
+    ConnectionQueryTypeValues,
     DashTabItemControlElementType,
     DashTabItemControlSourceType,
     DatasetFieldType,
@@ -27,6 +29,9 @@ export type ControlShared = {
               };
         defaultValue: any;
         required?: boolean;
+        connectionId?: string;
+        connectionQueryType?: ConnectionQueryTypeValues;
+        connectionQueryContent?: ConnectionQueryContent;
     };
     sourceType: DashTabItemControlSourceType;
     type: 'control_dash';

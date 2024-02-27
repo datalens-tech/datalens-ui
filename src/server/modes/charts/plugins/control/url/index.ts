@@ -7,9 +7,10 @@ import {ControlShared} from '../types';
 
 import {prepareDistinctsRequest} from './distincts';
 import {prepareFieldsRequest} from './fields';
+import {prepareTypedQueryRequest} from './typed-query';
 import {SourceControlArgs, SourceControlRequests} from './types';
 
-const buildManualSelectorSources = (shared: ControlShared) => {
+const buildManualSelectorSources = (shared: ControlShared): Record<PropertyKey, never> => {
     if (shared.source.elementType === DashTabItemControlElementType.Select) {
         shared.content = shared.source.acceptableValues as {
             value: string;
@@ -26,10 +27,14 @@ const buildSources = ({
     shared,
     params,
     ChartEditor,
-}: SourceControlArgs): SourceControlRequests | Record<string, any> => {
+}: SourceControlArgs): SourceControlRequests | Record<PropertyKey, never> => {
     switch (shared.sourceType) {
         case DashTabItemControlSourceType.Manual:
             return buildManualSelectorSources(shared);
+        case DashTabItemControlSourceType.Connection:
+            return {
+                connectionDistincts: prepareTypedQueryRequest({shared, params, ChartEditor}),
+            };
         case DashTabItemControlSourceType.Dataset:
         default: {
             const datasetId = shared.source.datasetId;

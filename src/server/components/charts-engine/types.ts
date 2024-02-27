@@ -68,7 +68,7 @@ export type TelemetryCallbacks = {
     }) => void;
 };
 
-export type Source = {
+export type Source<T = string | Record<string, string>> = {
     url: string;
     method?: string;
     headers?: OutgoingHttpHeaders;
@@ -76,7 +76,7 @@ export type Source = {
     statFormat?: string;
     format?: 'json' | 'form' | 'text' | string;
     middlewareUrl?: MiddlewareUrl;
-    data?: string | Record<string, string>;
+    data?: T;
     hideInInspector?: boolean;
     ui: boolean;
 };
