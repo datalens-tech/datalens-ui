@@ -17,7 +17,7 @@ import {
 } from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import {useSetSelectorDialogItem} from './hooks';
-import {ValueSelectorProps} from './types';
+import type {DynamicValueSelectorProps} from './types';
 import {convertDefaultValue} from './utils';
 
 import '../../../../Control2.scss';
@@ -104,7 +104,7 @@ const getDistincts = async ({
     }
 };
 
-export const DynamicValueSelect = ({hasValidationError, hasClear}: ValueSelectorProps) => {
+export const DynamicValueSelect = ({hasValidationError, hasClear}: DynamicValueSelectorProps) => {
     const [searchPattern, setSearchPattern] = React.useState('');
 
     const selectorDialogState = useSelector(selectSelectorDialog);
