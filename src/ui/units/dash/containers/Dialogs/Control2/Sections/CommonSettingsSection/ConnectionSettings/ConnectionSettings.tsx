@@ -53,6 +53,7 @@ export const ConnectionSettings: React.FC = () => {
                 custom: {
                     fetcher,
                     disabled: !connectionId || !connectionQueryContent || !connectionQueryType,
+                    filterable: false,
                 },
             },
         };

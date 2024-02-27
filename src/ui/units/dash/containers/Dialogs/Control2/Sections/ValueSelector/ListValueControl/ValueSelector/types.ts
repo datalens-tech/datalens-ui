@@ -19,4 +19,4 @@ export type FetcherProps = {fetcher: Fetcher<any, PaginationType>};
 export type FilterProps = {
     onFilterChange?: NonNullable<SelectFeaturedAsyncProps['onFilterChange']>;
 };
-export type ValueSelectorExtraProps = Pick<SelectProps, 'disabled'>;
+export type ValueSelectorExtraProps = Pick<SelectProps, 'disabled' | 'filterable'>;

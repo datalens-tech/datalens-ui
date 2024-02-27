@@ -25,6 +25,7 @@ export const DynamicValueSelect = ({
     fetcher,
     disabled,
     onFilterChange,
+    filterable,
 }: DynamicValueSelectorProps) => {
     const selectorDialogState = useSelector(selectSelectorDialog);
     const {multiselectable} = selectorDialogState;
@@ -53,6 +54,7 @@ export const DynamicValueSelect = ({
             qa={DialogControlQa.valueSelect}
             hasValidationError={hasValidationError}
             hasClear={hasClear}
+            filterable={filterable}
         />
     );
 };
