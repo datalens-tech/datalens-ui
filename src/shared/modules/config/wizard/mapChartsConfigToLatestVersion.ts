@@ -14,6 +14,7 @@ import {mapV5ConfigToV6} from './v5/mapV5ConfigToV6';
 import {mapV6ConfigToV7} from './v6/mapV6ConfigToV7';
 import {mapV7ConfigToV8} from './v7/mapV7ConfigToV8';
 import {mapV8ConfigToV9} from './v8/mapV8ConfigToV9';
+import {mapV9ConfigToV10} from './v9/mapV9ConfigToV10';
 
 export const mapChartsConfigToLatestVersion = (
     extendedConfig: ExtendedChartsConfig,
@@ -61,6 +62,10 @@ export const mapChartsConfigToLatestVersion = (
 
     if (config.version === ChartsConfigVersion.V8) {
         config = mapV8ConfigToV9(config);
+    }
+
+    if (config.version === ChartsConfigVersion.V9) {
+        config = mapV9ConfigToV10(config);
     }
 
     return config as ChartsConfig;

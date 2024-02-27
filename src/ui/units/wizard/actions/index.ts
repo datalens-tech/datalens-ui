@@ -812,14 +812,14 @@ function _receiveVisualization({
         throw new Error('Unknown visualization');
     }
 
-    const placeholders = [...(visualization.placeholders || [])];
+    const previousPlaceholders = [...(visualization.placeholders || [])];
     const fields = datasets.reduce((result: Field[], dataset: Dataset) => {
         return [...result, ...getResultSchemaFromDataset(dataset)] as Field[];
     }, []);
 
     // We put all the metadata from it into the saved one
-    presetVisualization.placeholders.forEach((presetPlaceholder, i) => {
-        const placeholder = placeholders[i];
+    const placeholders = presetVisualization.placeholders.map((presetPlaceholder) => {
+        const placeholder = previousPlaceholders.find((p) => p.id === presetPlaceholder.id);
 
         if (placeholder) {
             const items = [...placeholder.items];
@@ -852,13 +852,15 @@ function _receiveVisualization({
             placeholder.settings = newSettings;
 
             items.forEach((item) => {
-                mutateAndValidateItem({fields, item, placeholder});
+                mutateAndValidateItem({fields, item, placeholder: presetPlaceholder});
             });
 
             // We record the elements as new arrivals
             placeholder.items = items;
+
+            return placeholder;
         } else {
-            placeholders.push(presetPlaceholder);
+            return presetPlaceholder;
         }
     });
 

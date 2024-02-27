@@ -7,7 +7,6 @@ import {
     PlaceholderId,
     PseudoFieldTitle,
     RGBColor,
-    VISUALIZATIONS_WITH_DIMENSIONS_AS_COLORS,
     VISUALIZATIONS_WITH_SEVERAL_FIELDS_X_PLACEHOLDER,
     WizardVisualizationId,
 } from '../constants';
@@ -91,9 +90,6 @@ export const filterUpdatesByDatasetId = (updates: Update[], datasetId: string) =
 
 export const isPercentVisualization = (visualizationId: string) =>
     PERCENT_VISUALIZATIONS.has(visualizationId);
-
-export const isVisualizationWithDimensionsAsColors = (visualizationId: string) =>
-    VISUALIZATIONS_WITH_DIMENSIONS_AS_COLORS.has(visualizationId);
 
 export const isVisualizationWithSeveralFieldsXPlaceholder = (visualizationId: string) =>
     VISUALIZATIONS_WITH_SEVERAL_FIELDS_X_PLACEHOLDER.has(visualizationId);
