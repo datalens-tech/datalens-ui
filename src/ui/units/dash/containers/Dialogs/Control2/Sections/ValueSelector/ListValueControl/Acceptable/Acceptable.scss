@@ -18,17 +18,17 @@
         }
     }
 
+    &__list-item {
+        padding-left: 10px;
+    }
+
     &__item {
         display: grid;
         grid-template-columns: 94% auto;
         align-items: center;
-        padding: 5px;
+        padding: 5px 0 5px 5px;
         min-height: 34px;
-
-        &:hover {
-            background-color: var(--g-color-base-simple-hover);
-            border-radius: 3px;
-        }
+        width: 100%;
 
         &:not(:last-child) {
             margin-bottom: 5px;
