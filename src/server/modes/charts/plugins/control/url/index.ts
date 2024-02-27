@@ -1,5 +1,8 @@
-import {DatasetFieldType} from '../../../../../../shared';
-import {ELEMENT_TYPE, SOURCE_TYPE} from '../constants/misc';
+import {
+    DashTabItemControlElementType,
+    DashTabItemControlSourceType,
+    DatasetFieldType,
+} from '../../../../../../shared';
 import {ControlShared} from '../types';
 
 import {prepareDistinctsRequest} from './distincts';
@@ -7,7 +10,7 @@ import {prepareFieldsRequest} from './fields';
 import {SourceControlArgs, SourceControlRequests} from './types';
 
 const buildManualSelectorSources = (shared: ControlShared) => {
-    if (shared.source.elementType === ELEMENT_TYPE.SELECT) {
+    if (shared.source.elementType === DashTabItemControlElementType.Select) {
         shared.content = shared.source.acceptableValues as {
             value: string;
             title: string;
@@ -25,9 +28,9 @@ const buildSources = ({
     ChartEditor,
 }: SourceControlArgs): SourceControlRequests | Record<string, any> => {
     switch (shared.sourceType) {
-        case SOURCE_TYPE.MANUAL:
+        case DashTabItemControlSourceType.Manual:
             return buildManualSelectorSources(shared);
-        case SOURCE_TYPE.DATASET:
+        case DashTabItemControlSourceType.Dataset:
         default: {
             const datasetId = shared.source.datasetId;
 
@@ -38,9 +41,9 @@ const buildSources = ({
             };
 
             if (
-                shared.source.elementType !== ELEMENT_TYPE.DATE &&
-                shared.source.elementType !== ELEMENT_TYPE.INPUT &&
-                shared.source.elementType !== ELEMENT_TYPE.CHECKBOX &&
+                shared.source.elementType !== DashTabItemControlElementType.Date &&
+                shared.source.elementType !== DashTabItemControlElementType.Input &&
+                shared.source.elementType !== DashTabItemControlElementType.Checkbox &&
                 shared.source.datasetFieldType !== DatasetFieldType.Measure
             ) {
                 sources.distincts = prepareDistinctsRequest({shared, params, ChartEditor});

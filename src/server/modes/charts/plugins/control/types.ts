@@ -1,4 +1,8 @@
-import {DatasetFieldType} from '../../../../../shared';
+import {
+    DashTabItemControlElementType,
+    DashTabItemControlSourceType,
+    DatasetFieldType,
+} from '../../../../../shared';
 
 export type ControlShared = {
     title: string;
@@ -9,7 +13,7 @@ export type ControlShared = {
         showTitle: boolean;
         isRange: boolean;
         multiselectable: boolean;
-        elementType: string;
+        elementType: DashTabItemControlElementType;
         datasetFieldId: string;
         datasetFieldType: DatasetFieldType;
         acceptableValues:
@@ -24,7 +28,7 @@ export type ControlShared = {
         defaultValue: any;
         required?: boolean;
     };
-    sourceType: 'dataset' | 'manual';
+    sourceType: DashTabItemControlSourceType;
     type: 'control_dash';
     param: string;
     uiControl?: UIControl;

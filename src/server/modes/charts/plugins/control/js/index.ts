@@ -1,11 +1,12 @@
 import {
     ApiV2ResultData,
     ApiV2ResultDataRow,
+    DashTabItemControlElementType,
+    DashTabItemControlSourceType,
     DatasetFieldCalcMode,
     DatasetFieldType,
     IChartEditor,
 } from '../../../../../../shared';
-import {ELEMENT_TYPE, SOURCE_TYPE} from '../constants/misc';
 import {formatIntervalRangeDate, formatRelativeRangeDate, getISOFromToday} from '../helpers/misc';
 import {ControlShared, UIControl} from '../types';
 
@@ -33,8 +34,8 @@ export default ({
     params: Record<string, string | string[]>;
     ChartEditor: IChartEditor;
 }) => {
-    if (shared.sourceType === SOURCE_TYPE.DATASET) {
-        if (data.distincts && shared.source.elementType !== ELEMENT_TYPE.DATE) {
+    if (shared.sourceType === DashTabItemControlSourceType.Dataset) {
+        if (data.distincts && shared.source.elementType !== DashTabItemControlElementType.Date) {
             // https://stackoverflow.com/questions/40107588 numeric collation doesn't work correctly with float type
             const needCollator = shared.source.fieldType !== 'float';
 
@@ -53,7 +54,7 @@ export default ({
                         ? collator.compare(a.title, b.title)
                         : Number(a.title) - Number(b.title);
                 });
-        } else if (shared.source.elementType === ELEMENT_TYPE.INPUT) {
+        } else if (shared.source.elementType === DashTabItemControlElementType.Input) {
             shared.content = shared.source.acceptableValues as {
                 value: string;
                 title: string;
@@ -116,7 +117,7 @@ export default ({
     };
 
     switch (source.elementType) {
-        case ELEMENT_TYPE.DATE:
+        case DashTabItemControlElementType.Date:
             if (source.isRange) {
                 uiControl.type = 'range-datepicker';
 
@@ -162,7 +163,7 @@ export default ({
 
             break;
 
-        case ELEMENT_TYPE.SELECT:
+        case DashTabItemControlElementType.Select:
             uiControl.type = source.elementType;
 
             if (!params[param]) {
@@ -175,7 +176,7 @@ export default ({
 
             break;
 
-        case ELEMENT_TYPE.CHECKBOX:
+        case DashTabItemControlElementType.Checkbox:
             uiControl.type = source.elementType;
 
             if (!params[param]) {
