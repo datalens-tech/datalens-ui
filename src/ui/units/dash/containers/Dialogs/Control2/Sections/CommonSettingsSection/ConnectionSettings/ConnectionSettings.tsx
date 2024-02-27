@@ -13,6 +13,7 @@ import {ELEMENT_TYPE} from '../../../../Control/constants';
 import {ValueSelector} from '../../ValueSelector/ValueSelector';
 import type {ValueSelectorControlProps} from '../../ValueSelector/types';
 import {InputTypeSelector} from '../InputTypeSelector/InputTypeSelector';
+import {ParameterNameInput} from '../ParameterNameInput/ParameterNameInput';
 import {getElementOptions} from '../helpers/input-type-select';
 
 import {ConnectionSelector} from './components/ConnectionSelector/ConnectionSelector';
@@ -20,6 +21,8 @@ import {QueryTypeControl} from './components/QueryTypeControl/QueryTypeControl';
 import {getDistinctsByTypedQuery} from './helpers/get-distincts-by-typed-query';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
+const i18nConnectionBasedControlFake = (str: string) => str;
+
 export const ConnectionSettings: React.FC = () => {
     const {connectionQueryTypes, connectionId, connectionQueryContent, connectionQueryType} =
         useSelector(selectSelectorDialog);
@@ -64,6 +67,9 @@ export const ConnectionSettings: React.FC = () => {
             <ConnectionSelector />
             {connectionQueryTypes?.length ? (
                 <React.Fragment>
+                    <ParameterNameInput
+                        label={i18nConnectionBasedControlFake('field_parameter-name')}
+                    />
                     <QueryTypeControl connectionQueryTypes={connectionQueryTypes} />
                     <InputTypeSelector options={options} />
                     <ValueSelector controlProps={controlProps} />
