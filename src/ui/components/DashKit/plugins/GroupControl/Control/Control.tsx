@@ -7,13 +7,14 @@ import isEqual from 'lodash/isEqual';
 import {
     DATASET_FIELD_TYPES,
     DashTabItemControlData,
+    DashTabItemControlDataset,
+    DashTabItemControlManual,
     DashTabItemControlSingle,
     DashTabItemControlSourceType,
     Feature,
     StringParams,
     WorkbookId,
 } from 'shared';
-import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {
     ControlCheckbox,
     ControlDatepicker,
@@ -40,6 +41,7 @@ import {
     getStatus,
     isValidRequiredValue,
 } from '../../Control/utils';
+import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
 import {ExtendedLoadedData} from '../types';
 import {cancelCurrentRequests, clearLoaderTimer, getControlWidthStyle} from '../utils';
 
@@ -61,17 +63,23 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 type ControlProps = {
     id: string;
     data: DashTabItemControlSingle;
-    actualParams: StringParams;
+    params: StringParams;
     onStatusChanged: (
         controlId: string,
         status: LoadStatus,
         loadedData?: ExtendedLoadedData | null,
     ) => void;
     silentLoading: boolean;
-    initialParams: ChartInitialParams;
     getDistincts?: GetDistincts;
-    onChange: (params: StringParams, callChangeByClick?: boolean) => void;
-    onInitialParamsUpdate: (initialParams: ChartInitialParams) => void;
+    onChange: ({
+        params,
+        callChangeByClick,
+        controlId,
+    }: {
+        params: StringParams;
+        callChangeByClick?: boolean;
+        controlId?: string;
+    }) => void;
     needReload: boolean;
     cancelSource: any;
     workbookId?: WorkbookId;
@@ -80,13 +88,11 @@ type ControlProps = {
 export const Control = ({
     id,
     data,
-    actualParams,
-    initialParams,
+    params,
     silentLoading,
     onStatusChanged,
     getDistincts,
     onChange,
-    onInitialParamsUpdate,
     needReload,
     cancelSource,
     workbookId,
@@ -94,7 +100,16 @@ export const Control = ({
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
 
     const [
-        {status, loadedData, errorData, loadingItems, validationError, isInit, showSilentLoader},
+        {
+            status,
+            loadedData,
+            errorData,
+            loadingItems,
+            validationError,
+            isInit,
+            showSilentLoader,
+            control,
+        },
         dispatch,
     ] = React.useReducer(reducer, getInitialState());
 
@@ -117,14 +132,6 @@ export const Control = ({
         newLoadedData: ResponseSuccessControls,
         loadedStatus: LoadStatus,
     ) => {
-        const newInitialParams = {...initialParams.params, ...newLoadedData?.defaultParams};
-        const initialParamsChanged = !isEqual(newInitialParams, initialParams.params);
-
-        if (initialParamsChanged) {
-            const updatedInitialParams = {params: newInitialParams};
-            onInitialParamsUpdate(updatedInitialParams);
-        }
-
         const statusResponse = getStatus(loadedStatus);
         if (statusResponse) {
             dispatch(setLoadedData({status: statusResponse, loadedData: newLoadedData}));
@@ -154,7 +161,7 @@ export const Control = ({
                             stype: 'control_dash',
                         },
                     },
-                    params: actualParams,
+                    params,
                     ...(workbookId ? {workbookId} : {}),
                 },
             };
@@ -169,10 +176,6 @@ export const Control = ({
             }
 
             const newLoadedData = response.data;
-
-            newLoadedData.uiScheme = Array.isArray(newLoadedData.uiScheme)
-                ? {controls: newLoadedData.uiScheme}
-                : newLoadedData.uiScheme;
 
             if (data.sourceType === DashTabItemControlSourceType.Dataset) {
                 checkDatasetFieldType({
@@ -278,14 +281,10 @@ export const Control = ({
     };
 
     const onChangeParams = ({value, param}: {value: string | string[]; param: string}) => {
-        const newParams = {...actualParams};
+        const newParam = {[param]: value};
 
-        if (param && value !== undefined) {
-            newParams[param] = value;
-        }
-
-        if (!isEqual(newParams, actualParams)) {
-            onChange(newParams);
+        if (!isEqual(param, newParam)) {
+            onChange({params: {[param]: value}, controlId: id});
         }
     };
 
@@ -329,12 +328,39 @@ export const Control = ({
         return typeProps;
     };
 
-    const renderControl = () => {
-        if (!loadedData || !loadedData?.uiScheme || !('controls' in loadedData.uiScheme)) {
-            return null;
+    const renderSilentLoader = () => {
+        if (showSilentLoader) {
+            return (
+                <div className={b('loader', {silent: true})}>
+                    <Loader size="s" />
+                </div>
+            );
         }
-        const control = loadedData.uiScheme.controls[0] as ActiveControl;
 
+        return null;
+    };
+
+    const renderOverlay = () => {
+        const paramId =
+            (data.source as DashTabItemControlDataset['source']).datasetFieldId ||
+            (data.source as DashTabItemControlManual['source']).fieldName ||
+            control?.param ||
+            '';
+
+        const debugData = [
+            {label: 'itemId', value: id},
+            {label: 'paramId', value: paramId},
+        ];
+
+        return (
+            <React.Fragment>
+                <DebugInfoTool data={debugData} modType="top" />
+                {renderSilentLoader()}
+            </React.Fragment>
+        );
+    };
+
+    const renderControl = () => {
         if (!control) {
             return null;
         }
@@ -346,7 +372,7 @@ export const Control = ({
         const {source, placementMode, width, title} = controlData;
         const {required, operation, showTitle} = source;
 
-        const preparedValue = unwrapFromArrayAndSkipOperation(actualParams[param]);
+        const preparedValue = unwrapFromArrayAndSkipOperation(params[param]);
 
         const currentValidationError = getValidationError({
             required,
@@ -386,6 +412,7 @@ export const Control = ({
             required,
             hasValidationError: Boolean(currentValidationError),
             style,
+            renderOverlay,
             ...getTypeProps(control, controlData, currentValidationError),
         };
 
@@ -399,7 +426,7 @@ export const Control = ({
                         status={status}
                         loadedData={loadedData}
                         loadingItems={loadingItems}
-                        actualParams={actualParams}
+                        actualParams={params}
                         onChange={onChangeParams}
                         init={init}
                         showItemsLoader={showItemsLoader}
@@ -409,6 +436,7 @@ export const Control = ({
                         getDistincts={getDistincts}
                         classMixin={b('item')}
                         selectProps={{innerLabel, style}}
+                        renderOverlay={renderOverlay}
                     />
                 );
             case CONTROL_TYPE.INPUT:
@@ -424,29 +452,17 @@ export const Control = ({
         return null;
     };
 
-    const renderSilentLoader = () => {
-        if (showSilentLoader) {
-            return (
-                <div className={b('loader', {silent: true})}>
-                    <Loader size="s" />
-                </div>
-            );
-        }
-
-        return null;
-    };
-
     const handleClickRetry = () => {
         reload();
     };
 
+    const {placementMode, width} = data as unknown as DashTabItemControlData;
+    const style = getControlWidthStyle(placementMode, width);
+
     switch (status) {
         case LOAD_STATUS.INITIAL:
         case LOAD_STATUS.PENDING:
-            if (!loadedData || !loadedData.uiScheme) {
-                const {placementMode, width} = data as unknown as DashTabItemControlData;
-                const style = getControlWidthStyle(placementMode, width);
-
+            if (!control) {
                 return (
                     <div className={b('item-loader')} style={style}>
                         <Loader size="s" />
@@ -459,10 +475,5 @@ export const Control = ({
         }
     }
 
-    return (
-        <React.Fragment>
-            {renderSilentLoader()}
-            {renderControl()}
-        </React.Fragment>
-    );
+    return renderControl();
 };

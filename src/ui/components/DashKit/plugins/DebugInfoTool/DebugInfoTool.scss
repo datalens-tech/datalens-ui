@@ -12,6 +12,10 @@
         border-radius: 3px;
         line-height: 1;
 
+        &_top {
+            top: -8px;
+        }
+
         &_outer {
             margin-top: -11px;
         }
@@ -23,6 +27,11 @@
 
         &_right {
             right: 0;
+        }
+
+        &_bottom-right-corner {
+            right: 0;
+            bottom: 0;
         }
     }
 

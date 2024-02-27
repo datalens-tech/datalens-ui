@@ -56,11 +56,11 @@ export const setActiveSelectorIndex = (payload: SetActiveSelectorIndexAction['pa
 
 export const applyGroupControlDialog = () => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
-        const selectorGroup = getState().dash.selectorsGroup;
+        const {selectorsGroup} = getState().dash;
 
         // check validation for every control
-        for (let i = 0; i < selectorGroup.group.length; i += 1) {
-            const validation = getControlValidation(selectorGroup.group[i]);
+        for (let i = 0; i < selectorsGroup.group.length; i += 1) {
+            const validation = getControlValidation(selectorsGroup.group[i]);
 
             if (!isEmpty(validation)) {
                 dispatch(setActiveSelectorIndex({activeSelectorIndex: i}));
@@ -73,13 +73,13 @@ export const applyGroupControlDialog = () => {
             }
         }
 
-        const isSingleControl = selectorGroup.group.length === 1;
+        const isSingleControl = selectorsGroup.group.length === 1;
 
         const data = {
-            autoHeight: isSingleControl ? false : selectorGroup.autoHeight,
-            buttonApply: isSingleControl ? false : selectorGroup.buttonApply,
-            buttonReset: isSingleControl ? false : selectorGroup.buttonReset,
-            group: selectorGroup.group.map((selector) => {
+            autoHeight: isSingleControl ? false : selectorsGroup.autoHeight,
+            buttonApply: selectorsGroup.buttonApply,
+            buttonReset: selectorsGroup.buttonReset,
+            group: selectorsGroup.group.map((selector) => {
                 return {
                     id: selector.id,
                     title: selector.title,
@@ -88,7 +88,7 @@ export const applyGroupControlDialog = () => {
                     placementMode: isSingleControl ? 'auto' : selector.placementMode,
                     width: isSingleControl ? '' : selector.width,
                     defaults: getControlDefaultsForField({}, selector),
-                    namespace: selector.namespace || 'default',
+                    namespace: selector.namespace,
                 };
             }),
         };
@@ -102,6 +102,12 @@ export const applyGroupControlDialog = () => {
                 type: DashTabItemType.GroupControl,
             }),
         );
+
+        // if (openedItemId) {
+        //     //@ts-ignore
+        //     const configItem = {id: openedItemId, data, type: '', namespace: ''} as ConfigItem;
+        //     dispatch(removeUnusedSubItems({item: configItem}));
+        // }
 
         dispatch(closeDashDialog());
     };

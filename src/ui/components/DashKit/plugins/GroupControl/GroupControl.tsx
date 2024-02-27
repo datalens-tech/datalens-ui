@@ -9,14 +9,7 @@ import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import {connect} from 'react-redux';
-import {
-    DashTabItemControlDataset,
-    DashTabItemControlManual,
-    DashTabItemControlSingle,
-    DashTabItemGroupControlData,
-    Feature,
-    StringParams,
-} from 'shared';
+import {DashTabItemControlSingle, DashTabItemGroupControlData, Feature, StringParams} from 'shared';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
@@ -126,30 +119,24 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         }
         const hasDataChanged = !isEqual(this.props.data, prevProps.data);
         const hasParamsChanged = !isEqual(this.props.params, prevProps.params);
-        const hasParamsUpdatedFromState = isEqual(this.props.params, this.state.stateParams);
 
-        const hasDefaultsChanged = !isEqual(this.props.defaults, prevProps.defaults);
+        const hasChanged = hasDataChanged || hasParamsChanged;
 
-        if (hasDefaultsChanged) {
-            this.initialParams = {
-                params: this.props.defaults,
-            } as ChartInitialParams;
+        // need to check unused ids
+        if (
+            hasDataChanged &&
+            this.props.data.group &&
+            prevProps.data.group &&
+            this.props.data.group?.length < prevProps.data.group?.length
+        ) {
+            this.props.onStateAndParamsChange({}, {action: 'removeGroupItems'});
         }
 
-        const hasChanged = hasDataChanged || hasParamsChanged || hasDefaultsChanged;
-
-        if (hasParamsChanged && !hasParamsUpdatedFromState) {
-            // in case of change defaults of controls we find the different fields in actual params
-            // and update stateParams with them
-            const paramsDiff: StringParams = {};
-            Object.keys(this.props.params).forEach((param) => {
-                if (this.props.params[param] !== prevProps.params[param]) {
-                    paramsDiff[param] = this.props.params[param];
-                }
-            });
-
-            this.setState({stateParams: {...this.state.stateParams, ...paramsDiff}});
-        }
+        // if (!hasParamsUpdatedFromState) {
+        //     this.setState({
+        //         stateParams: this.props.params as unknown as Record<string, StringParams>,
+        //     });
+        // }
 
         if (this.state.forceUpdate && hasChanged) {
             this.setState({
@@ -165,25 +152,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     }
 
     render() {
-        const {data} = this.props;
-        const controlData = data as unknown as DashTabItemGroupControlData;
-
-        const paramIdDebug = controlData.group
-            .filter((item) => 'source' in item)
-            .map(
-                ({source}) =>
-                    (source as DashTabItemControlDataset['source']).datasetFieldId ||
-                    (source as DashTabItemControlManual['source']).fieldName ||
-                    data.param ||
-                    '',
-            )
-            .join(', ');
-
-        const debugData = [
-            {label: 'widgetId', value: this.props.id},
-            {label: 'paramId', value: paramIdDebug},
-        ];
-
         const isLoading =
             (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
             this.applyLoader;
@@ -191,7 +159,11 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return (
             <div ref={this.rootNode} className={b({mobile: isMobileView})}>
                 <div className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}>
-                    <DebugInfoTool data={debugData} modType={'corner'} />
+                    <DebugInfoTool
+                        label="widgetId"
+                        value={this.props.id}
+                        modType="bottom-right-corner"
+                    />
                     {isLoading && (
                         <div className={b('loader', {silent: this.applyLoader})}>
                             <Loader size="s" />
@@ -203,13 +175,28 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         );
     }
 
-    private onChange = (params: StringParams, callChangeByClick?: boolean) => {
+    private onChange = ({
+        params,
+        callChangeByClick,
+        controlId,
+    }: {
+        params: StringParams | Record<string, StringParams>;
+        callChangeByClick?: boolean;
+        controlId?: string;
+    }) => {
         const controlData = this.props.data as unknown as DashTabItemGroupControlData;
 
         if (!controlData.buttonApply || callChangeByClick) {
-            this.props.onStateAndParamsChange({params});
+            this.props.onStateAndParamsChange({params}, {groupItemId: controlId});
         }
-        this.setState({stateParams: params});
+
+        if (controlId) {
+            this.setState({
+                stateParams: {...this.state.stateParams, [controlId]: params as StringParams},
+            });
+            return;
+        }
+        this.setState({stateParams: params as Record<string, StringParams>});
     };
 
     private filterSignificantParams(params: StringParams) {
@@ -217,11 +204,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             return {};
         }
 
-        // @ts-ignore
-        const dependentSelectors = this.props.settings.dependentSelectors;
-
         if (this.controlsProgressCount) {
-            return dependentSelectors ? params : pick(params, Object.keys(this.props.defaults!));
+            return pick(params, Object.keys(this.props.defaults!));
         }
 
         const usedParams = Object.values(this.controlsData).reduce((params, data) => {
@@ -326,10 +310,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         this.resolve(result);
     };
 
-    private handleInitialParamsUpdate = (updatedInitialParams: ChartInitialParams) => {
-        this.initialParams = updatedInitialParams;
-    };
-
     private handleStatusChanged = (
         controlId: string,
         status: LoadStatus,
@@ -388,7 +368,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 status: LOAD_STATUS.SUCCESS,
                 silentLoading: false,
                 isInit: true,
-                stateParams: this.actualParams,
+                stateParams: this.props.params as Record<string, StringParams>,
             });
         }
 
@@ -399,19 +379,21 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const {getDistincts, workbookId} = this.props;
         const {silentLoading} = this.state;
 
+        const loadedData = this.controlsData[item.id];
+        const usedParams = loadedData?.usedParams || item.defaults || {};
+        const significantParams = pick(this.state.stateParams[item.id], Object.keys(usedParams));
+
         return (
             <Control
                 key={item.id}
                 id={item.id}
                 data={item}
-                initialParams={this.initialParams}
-                actualParams={this.state.stateParams}
+                params={significantParams}
                 onStatusChanged={this.handleStatusChanged}
                 silentLoading={silentLoading}
                 getDistincts={getDistincts}
                 onChange={this.onChange}
                 needReload={this.state.needReload}
-                onInitialParamsUpdate={this.handleInitialParamsUpdate}
                 cancelSource={this._cancelSource}
                 workbookId={workbookId}
             />
@@ -427,7 +409,16 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 newParams = this.state.stateParams;
                 break;
             case CLICK_ACTION_TYPE.SET_INITIAL_PARAMS:
-                newParams = this.initialParams?.params;
+                if (this.props.data.group) {
+                    newParams = this.props.data.group.reduce(
+                        (initialParams: Record<string, StringParams>, data) => {
+                            initialParams[data.id] = data.defaults || {};
+                            return initialParams;
+                        },
+                        {},
+                    );
+                }
+
                 // if apply button is enabled, we apply new params only via click on 'Apply'
                 if (this.props.data.buttonApply) {
                     callChangeByClick = false;
@@ -435,14 +426,14 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 break;
         }
 
-        if (!isEqual(newParams, this.actualParams) || !isEqual(newParams, this.state.stateParams)) {
+        if (!isEqual(newParams, this.props.params) || !isEqual(newParams, this.state.stateParams)) {
             if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
                 this.applyLoader = true;
                 setTimeout(() => {
                     this.applyLoader = false;
                 });
             }
-            this.onChange(newParams, callChangeByClick);
+            this.onChange({params: newParams, callChangeByClick});
         }
     }
 
@@ -513,18 +504,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         });
     }
 
-    get actualParams(): StringParams {
-        return this.filterSignificantParams(this.props.params);
-    }
-
     private async init() {
         if (this._isUnmounted) {
             return;
         }
 
         this.setState({
-            initialParams: this.props.defaults,
-            stateParams: this.actualParams,
+            stateParams: this.props.params as unknown as Record<string, StringParams>,
             status: LOAD_STATUS.PENDING,
         });
     }
