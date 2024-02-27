@@ -88,7 +88,6 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
     }
     renderListItem(args: {
         item: ListItemData<string>;
-        //isItemActive: boolean;
         itemIndex: number;
         acceptableValues: string[];
     }) {
@@ -135,16 +134,14 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
                 </div>
                 <div className={b('items', {empty: isEmpty})}>
                     {isEmpty ? (
-                        <span data-qa={ControlQA.selectAcceptableEmptyList}>
-                            {i18n('dash.control-dialog.edit', 'label_empty-list')}
-                        </span>
+                        i18n('dash.control-dialog.edit', 'label_empty-list')
                     ) : (
                         <List
                             filterable={false}
                             virtualized={false}
                             sortable={true}
                             items={acceptableValues}
-                            className={b('list')}
+                            itemClassName={b('list-item')}
                             onSortEnd={(args) => this.handleOnSortEnd({...args, acceptableValues})}
                             renderItem={(
                                 item: ListItemData<string>,

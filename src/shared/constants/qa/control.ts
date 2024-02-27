@@ -16,7 +16,6 @@ export const ControlQA = {
     selectAcceptable: 'select-acceptable',
     selectAcceptableInput: 'select-acceptable-input',
     selectAcceptableButton: 'select-acceptable-button',
-    selectAcceptableEmptyList: 'select-acceptable-empty-list',
     selectAcceptableItem: 'select-acceptable-item',
     selectAcceptableRemoveButton: 'select-acceptable-remove',
     chartkitControl: 'chartkit-control',

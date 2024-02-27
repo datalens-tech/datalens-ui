@@ -18,11 +18,15 @@
         }
     }
 
+    &__list-item {
+        padding-left: 10px;
+    }
+
     &__item {
         display: grid;
         grid-template-columns: 94% auto;
         align-items: center;
-        padding: 5px;
+        padding: 5px 0 5px 5px;
         min-height: 34px;
         width: 100%;
 
