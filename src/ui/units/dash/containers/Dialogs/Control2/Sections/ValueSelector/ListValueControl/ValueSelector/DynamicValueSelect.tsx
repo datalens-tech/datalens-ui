@@ -24,13 +24,12 @@ import '../../../../Control2.scss';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-const DEFAULT_PAGE_SIZE = 100;
-
 export type PaginationType = {
     pageNumber: number;
     pageSize: number;
 };
 
+const DEFAULT_PAGE_SIZE = 100;
 const hasNextPage = (arr: unknown[], pageSize: number) => {
     if (!arr?.length) {
         return false;
