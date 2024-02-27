@@ -1,5 +1,5 @@
 {
-  "button_open-revision-in-new-window": "Открыть в новом окне",
+  "button_open-revision-in-new-window": "Открыть в новом окне ИЗМЕНЕНИЕ В MAIN",
   "toast_fetch-initial-diff-failed": "Не удалось загрузить различия версий",
   "toast_get-revisions-failed": "Не удалось загрузить историю изменений",
   "toast_get-script-failed": "Не удалось загрузить скрипт"
