@@ -41,6 +41,7 @@ export const getControlDefaultsForField = (
     let field;
     switch (sourceType) {
         case DashTabItemControlSourceType.Manual:
+        case DashTabItemControlSourceType.Connection:
             field = fieldName;
             break;
         case DashTabItemControlSourceType.Dataset:
