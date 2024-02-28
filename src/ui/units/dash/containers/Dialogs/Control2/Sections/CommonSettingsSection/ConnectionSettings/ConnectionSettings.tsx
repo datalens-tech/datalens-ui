@@ -65,7 +65,7 @@ export const ConnectionSettings: React.FC = () => {
     return (
         <SectionWrapper title={i18n('label_common-settings')}>
             <ConnectionSelector />
-            {connectionQueryTypes?.length ? (
+            {connectionQueryTypes?.length && connectionQueryTypes.length > 0 && (
                 <React.Fragment>
                     <ParameterNameInput
                         label={i18nConnectionBasedControlFake('field_parameter-name')}
@@ -74,7 +74,7 @@ export const ConnectionSettings: React.FC = () => {
                     <InputTypeSelector options={options} />
                     <ValueSelector controlProps={controlProps} />
                 </React.Fragment>
-            ) : null}
+            )}
         </SectionWrapper>
     );
 };

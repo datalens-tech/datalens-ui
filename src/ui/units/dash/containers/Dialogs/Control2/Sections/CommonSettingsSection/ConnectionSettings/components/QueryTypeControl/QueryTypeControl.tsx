@@ -56,7 +56,7 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
 
     return (
         <React.Fragment>
-            {options.length > 1 ? (
+            {options.length > 1 && (
                 <FormRow label={i18nConnectionBasedControlFake('field_query-type')}>
                     <Select
                         width="max"
@@ -66,7 +66,7 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
                         placeholder={i18nConnectionBasedControlFake('placeholder_not-defined')}
                     />
                 </FormRow>
-            ) : null}
+            )}
             {renderQueryContentControl(connectionQueryType)}
         </React.Fragment>
     );
