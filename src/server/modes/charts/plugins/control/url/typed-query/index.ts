@@ -8,6 +8,8 @@ export const prepareTypedQueryRequest = (
     const {shared, params} = args;
     const {connectionId, connectionQueryType, connectionQueryContent} = shared.source;
 
+    shared.param = shared.source.fieldName;
+
     if (!connectionId || !connectionQueryType || !connectionQueryContent) {
         throw new Error('Missed required fields for TypedQueryApi request');
     }
