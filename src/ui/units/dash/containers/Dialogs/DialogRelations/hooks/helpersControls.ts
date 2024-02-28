@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import intersection from 'lodash/intersection';
 import {StringParams} from 'shared';
 import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
@@ -195,17 +196,38 @@ export const getControlToControlRelations = ({
             row.widgetParams || {},
             widget.widgetParams || {},
         );
-        if (relations.byAliases.length || hasRelation) {
-            newRelationType = RELATION_TYPES.both;
+
+        const hasWigetParams = Object.keys(widget.widgetParams || {}).length;
+        const hasRowParams = Object.keys(row.widgetParams || {}).length;
+
+        // widgets have defaults & defaults have common or there are aliases
+        if ((relations.byAliases.length && hasWigetParams && hasRowParams) || hasRelation) {
+            newRelationType = relationType || RELATION_TYPES.both;
             availableRelations = [...FULL_RELATIONS];
-        } else if (Object.keys(widget.widgetParams || {}).length) {
-            newRelationType = RELATION_TYPES.output;
+        }
+        // widgets have defaults but not common & widgets don't have aliases
+        else if (hasWigetParams && hasRowParams) {
+            newRelationType = RELATION_TYPES.unknown;
+            availableRelations = [...FULL_RELATIONS];
+            forceAddAlias = true;
+        }
+        // widget has defaults but row doesn't, they may have aliases or not
+        else if (hasWigetParams) {
+            newRelationType = OUTPUT_RELATIONS.includes(relationType)
+                ? relationType
+                : RELATION_TYPES.output;
             availableRelations = [...OUTPUT_RELATIONS];
-        } else if (Object.keys(row.widgetParams || {}).length) {
-            newRelationType = RELATION_TYPES.input;
-            availableRelations = [...OUTPUT_RELATIONS];
-        } else {
-            newRelationType = RELATION_TYPES.ignore;
+        }
+        // row has defaults but widget doesn't, they may have aliases or not
+        else if (hasRowParams) {
+            newRelationType = INPUT_RELATIONS.includes(relationType)
+                ? relationType
+                : RELATION_TYPES.input;
+            availableRelations = [...INPUT_RELATIONS];
+        }
+        // widget and row don't have defaults
+        else {
+            newRelationType = relationType || RELATION_TYPES.ignore;
             availableRelations = [...FULL_RELATIONS];
             forceAddAlias = true;
         }
