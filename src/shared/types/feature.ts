@@ -74,7 +74,7 @@ export enum Feature {
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     MarkupMetric = 'MarkupMetric',
     ConnectionBasedControl = 'ConnectionBasedControl',
-    EnableWorkbookTemplates = 'EnableWorkbookTemplates',
+    EnableWorkbookTemplates = 'EnableDefaultTemplateDeployInWorkbooks',
 }
 
 export type FeatureConfig = Record<string, boolean>;
