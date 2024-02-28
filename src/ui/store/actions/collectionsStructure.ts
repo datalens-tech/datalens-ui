@@ -48,6 +48,9 @@ import {
     UPDATE_COLLECTION_FAILED,
     UPDATE_COLLECTION_LOADING,
     UPDATE_COLLECTION_SUCCESS,
+    COPY_TEMPLATE_LOADING,
+    COPY_TEMPLATE_SUCCESS,
+    COPY_TEMPLATE_FAILED,
 } from '../constants/collectionsStructure';
 
 import type {
@@ -65,6 +68,7 @@ import type {
     CreateWorkbookResponse,
     UpdateWorkbookResponse,
     UpdateCollectionResponse,
+    CopyTemplateResponse,
 } from '../../../shared/schema';
 
 type ResetStateAction = {
@@ -406,6 +410,74 @@ export const createCollection = ({
 
                 dispatch({
                     type: CREATE_COLLECTION_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
+type CopyTemplateLoadingAction = {
+    type: typeof COPY_TEMPLATE_LOADING;
+};
+type CopyTemplateSuccessAction = {
+    type: typeof COPY_TEMPLATE_SUCCESS;
+    data: CopyTemplateResponse;
+};
+type CopyTemplateFailedAction = {
+    type: typeof COPY_TEMPLATE_FAILED;
+    error: Error | null;
+};
+type CopyTemplateAction =
+    | CopyTemplateLoadingAction
+    | CopyTemplateSuccessAction
+    | CopyTemplateFailedAction;
+
+export const copyTemplate = ({
+    templateName,
+    productId,
+    workbookId,
+    connectionId,
+}: {
+    templateName: string;
+    workbookId: string;
+    productId: string;
+    connectionId?: string;
+}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: COPY_TEMPLATE_LOADING,
+        });
+        return getSdk()
+            .us.copyTemplate({
+                templateName,
+                workbookId,
+                connectionId,
+                meta: {productId},
+            })
+            .then((data) => {
+                dispatch({
+                    type: COPY_TEMPLATE_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/copyTemplate failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: COPY_TEMPLATE_FAILED,
                     error: isCanceled ? null : error,
                 });
 
@@ -965,6 +1037,7 @@ export type CollectionsStructureAction =
     | GetCollectionsContentAction
     | CreateCollectionAction
     | CreateWorkbookAction
+    | CopyTemplateAction
     | MoveCollectionAction
     | MoveWorkbookAction
     | MoveCollectionsAction

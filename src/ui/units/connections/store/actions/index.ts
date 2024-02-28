@@ -238,21 +238,29 @@ export function createConnection(name: string, dirPath?: string) {
 
         resultForm[FieldKey.Name] = name;
 
+        const workbookId = getWorkbookIdFromPathname();
+
         if (typeof dirPath === 'string') {
             resultForm[FieldKey.DirPath] = dirPath;
         } else {
-            resultForm[FieldKey.WorkbookId] = getWorkbookIdFromPathname();
+            resultForm[FieldKey.WorkbookId] = workbookId;
         }
 
         flow([setSubmitLoading, dispatch])({loading: true});
         const {id: connectionId, error: connError} = await api.createConnection(resultForm);
         let templateFolderId: string | undefined;
+        let templateWorkbookId: string | undefined;
         let templateError: DataLensApiError | undefined;
 
         if (innerForm[InnerFieldKey.isAutoCreateDashboard] && schema.templateName && connectionId) {
-            ({entryId: templateFolderId, error: templateError} = await api.copyTemplate(
+            ({
+                entryId: templateFolderId,
+                workbookId: templateWorkbookId,
+                error: templateError,
+            } = await api.copyTemplate(
                 connectionId,
                 schema.templateName,
+                workbookId === '' ? undefined : workbookId,
             ));
         }
 
@@ -261,13 +269,15 @@ export function createConnection(name: string, dirPath?: string) {
             flow([resetFormsData, dispatch])();
         }
 
-        batch(() => {
-            if (templateFolderId) {
-                history.replace(`/navigation/${templateFolderId}`);
-            } else if (connectionId) {
-                history.replace(`/connections/${connectionId}`);
-            }
+        if (templateFolderId) {
+            history.replace(`/navigation/${templateFolderId}`);
+        } else if (templateWorkbookId) {
+            history.replace(`/workbooks/${templateWorkbookId}`);
+        } else if (connectionId) {
+            history.replace(`/connections/${connectionId}`);
+        }
 
+        batch(() => {
             if (templateError) {
                 flow([showToast, dispatch])({
                     title: i18n('label_error-on-template-apply'),

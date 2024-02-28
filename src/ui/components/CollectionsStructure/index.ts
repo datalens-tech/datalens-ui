@@ -13,4 +13,8 @@ export {
     MigrateEntryToWorkbookDialog,
     DIALOG_MIGRATE_ENTRY_TO_WORKBOOK,
 } from './MigrateEntryToWorkbookDialog';
+export {
+    DeployTemplateToWorkbookDialog,
+    DIALOG_DEPLOY_TEMPLATE_TO_WORKBOOK,
+} from './DeployTemplateToWorkbookDialog';
 export {CopyEntriesDialog, DIALOG_COPY_ENTRIES} from './CopyEntriesDialog';
