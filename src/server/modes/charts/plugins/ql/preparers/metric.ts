@@ -13,6 +13,7 @@ import type {
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
 import {registry} from '../../../../../registry';
+import {prepareMetricObject} from '../../datalens/utils/markup-helpers';
 import {
     QLRenderResultMetric,
     formatUnknownTypeValue,
@@ -123,28 +124,7 @@ export default ({
                 formattedValue = formatNumber(value, {});
             }
 
-            return {
-                value: {
-                    type: 'concat',
-                    className: `markup-metric markup-metric_size_${size}`,
-                    children: [
-                        {
-                            className: 'markup-metric-title',
-                            type: 'text',
-                            content: title,
-                        },
-                        {
-                            type: 'color',
-                            color,
-                            content: {
-                                className: 'markup-metric-value',
-                                type: 'text',
-                                content: formattedValue,
-                            },
-                        },
-                    ],
-                },
-            };
+            return prepareMetricObject({size, title, color, value: formattedValue});
         } else {
             result = [
                 {
