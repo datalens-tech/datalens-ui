@@ -14,18 +14,21 @@ import type {DynamicValueSelectorCustomProps} from './ValueSelector/types';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-export type ListValueControlProps =
+export type ListValueControlProps = {hasMultiselect?: boolean} & (
     | {
           type: 'dynamic';
           custom: DynamicValueSelectorCustomProps;
       }
-    | {type: 'manual'};
+    | {type: 'manual'}
+);
 export const ListValueControl: React.FC<ListValueControlProps> = (props: ListValueControlProps) => {
     const {required, validation} = useSelector(selectSelectorDialog);
 
+    const hasMultiselectValue = props.hasMultiselect ?? true;
+
     return (
         <React.Fragment>
-            <MultiselectableCheckbox />
+            {hasMultiselectValue && <MultiselectableCheckbox />}
 
             {props.type === 'manual' && (
                 <React.Fragment>
