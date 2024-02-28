@@ -24,6 +24,7 @@ export type DashkitMetaDataItemBase = {
     enableFiltering?: boolean;
     isWizard?: boolean;
     isEditor?: boolean;
+    isQL?: boolean;
 };
 
 // Create new temporary type, Because the types of meta information of the plugin of the current implementation and the new one are slightly different.
