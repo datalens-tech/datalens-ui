@@ -1,9 +1,7 @@
 import {Page} from '@playwright/test';
-import {AddFieldQA, SectionDatasetQA} from '../../../src/shared/constants';
-
+import {AddFieldQA, SectionDatasetQA, WizardVisualizationId} from '../../../src/shared';
 import {getParentByQARole, slct, waitForCondition} from '../../utils';
 import {waitForSuccessfulResponse} from '../BasePage';
-import {WizardVisualizationId} from '../common/Visualization';
 
 export enum PlaceholderName {
     X = 'placeholder-x',
@@ -339,6 +337,7 @@ export const VISUALIZATION_PLACEHOLDERS = {
     ],
     pie: [
         'placeholder-dimensions',
+        'placeholder-colors',
         'placeholder-measures',
         'placeholder-sort',
         'placeholder-labels',
@@ -346,6 +345,7 @@ export const VISUALIZATION_PLACEHOLDERS = {
     ],
     donut: [
         'placeholder-dimensions',
+        'placeholder-colors',
         'placeholder-measures',
         'placeholder-sort',
         'placeholder-labels',

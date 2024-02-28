@@ -74,10 +74,7 @@ datalensTest.describe('Wizard - colors section', () => {
 
             await wizardPage.setVisualization(WizardVisualizationId.Pie);
 
-            await wizardPage.sectionVisualization.addFieldByClick(
-                PlaceholderName.Dimensions,
-                'City',
-            );
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Colors, 'City');
 
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Measures, 'Rank');
 

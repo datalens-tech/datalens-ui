@@ -19,7 +19,7 @@ export const colorFieldDimension = {
     type: 'DIMENSION',
     datasetId: datasetId,
     title: 'ColorField',
-    guid: 'cddd9cad-52a2-4232-8898-ade9a972c864',
+    guid: 'colorFieldDimension_guid',
     data_type: DATASET_FIELD_TYPES.STRING,
 };
 
@@ -27,7 +27,7 @@ export const colorFieldDimensionFloat = {
     type: 'DIMENSION',
     datasetId: datasetId,
     title: 'ColorField',
-    guid: 'cddd9cad-52a2-4232-8898-ade9a972c864',
+    guid: 'colorFieldDimensionFloat_guid',
     data_type: DATASET_FIELD_TYPES.FLOAT,
 };
 
@@ -35,7 +35,7 @@ export const colorFieldMeasureNumber = {
     type: 'MEASURE',
     datasetId: datasetId,
     title: 'ColorField',
-    guid: 'cddd9cad-52a2-4232-8898-ade9a972c864',
+    guid: 'colorFieldMeasureNumber_guid',
     data_type: DATASET_FIELD_TYPES.INTEGER,
 };
 
@@ -43,7 +43,7 @@ export const colorFieldMeasureString = {
     type: 'MEASURE',
     datasetId: datasetId,
     title: 'ColorField',
-    guid: 'cddd9cad-52a2-4232-8898-ade9a972c864',
+    guid: 'colorFieldMeasureString_guid',
     data_type: DATASET_FIELD_TYPES.STRING,
 };
 
@@ -58,7 +58,7 @@ export const measureField = {
 export const piePrepareBaseArgs = {
     placeholders: [
         {
-            id: 'dimensions',
+            id: 'colors',
             items: [colorFieldDimension],
         },
         {
@@ -106,7 +106,7 @@ export const piePrepareBaseArgs = {
 export const measureNumberAndMeasure = {
     placeholders: [
         {
-            id: 'dimensions',
+            id: 'colors',
             items: [colorFieldMeasureNumber],
         },
         {
@@ -114,7 +114,6 @@ export const measureNumberAndMeasure = {
             items: [measureField],
         },
     ],
-    colors: [colorFieldMeasureNumber],
     resultData: {
         data: [
             ['1', '1'],
@@ -158,7 +157,7 @@ export const measureNumberAndMeasure = {
 export const measureTextAndMeasure = {
     placeholders: [
         {
-            id: 'dimensions',
+            id: 'colors',
             items: [colorFieldMeasureString],
         },
         {
@@ -236,8 +235,8 @@ export const piePrepareForQLArgs = {
         {
             allowedTypes: {},
             allowedDataTypes: {},
-            id: 'dimensions',
-            type: 'dimensions',
+            id: 'colors',
+            type: 'colors',
             title: 'section_color',
             iconProps: {},
             items: [
@@ -357,7 +356,7 @@ export const piePrepareForQLResult = {
             data: [
                 {
                     name: 'Кирпич',
-                    formattedName: '',
+                    formattedName: 'Кирпич',
                     drillDownFilterValue: 'Кирпич',
                     y: 78,
                     colorGuid: 'wall_material-1',
@@ -366,7 +365,7 @@ export const piePrepareForQLResult = {
                 },
                 {
                     name: 'Не заполнено',
-                    formattedName: '',
+                    formattedName: 'Не заполнено',
                     drillDownFilterValue: 'Не заполнено',
                     y: 72,
                     colorGuid: 'wall_material-1',
@@ -375,7 +374,7 @@ export const piePrepareForQLResult = {
                 },
                 {
                     name: 'Смешанные',
-                    formattedName: '',
+                    formattedName: 'Смешанные',
                     drillDownFilterValue: 'Смешанные',
                     y: 70,
                     colorGuid: 'wall_material-1',
@@ -384,7 +383,7 @@ export const piePrepareForQLResult = {
                 },
                 {
                     name: 'Деревянные',
-                    formattedName: '',
+                    formattedName: 'Деревянные',
                     drillDownFilterValue: 'Деревянные',
                     y: 67,
                     colorGuid: 'wall_material-1',
@@ -394,7 +393,6 @@ export const piePrepareForQLResult = {
             ],
         },
     ],
-    categories: ['Не заполнено', 'Смешанные', 'Деревянные', 'Кирпич'],
 };
 
 export function getPrepareFunctionArgs(options: Partial<PrepareFunctionArgs> = {}) {
