@@ -200,8 +200,9 @@ export const getControlToControlRelations = ({
         const hasWigetParams = Object.keys(widget.widgetParams || {}).length;
         const hasRowParams = Object.keys(row.widgetParams || {}).length;
 
+        // widgets have defaults & defaults have common or there are aliases
         if ((relations.byAliases.length && hasWigetParams && hasRowParams) || hasRelation) {
-            newRelationType = RELATION_TYPES.both;
+            newRelationType = relationType || RELATION_TYPES.both;
             availableRelations = [...FULL_RELATIONS];
         }
         // widgets have defaults but not common & widgets don't have aliases
@@ -209,14 +210,24 @@ export const getControlToControlRelations = ({
             newRelationType = RELATION_TYPES.unknown;
             availableRelations = [...FULL_RELATIONS];
             forceAddAlias = true;
-        } else if (hasWigetParams) {
-            newRelationType = RELATION_TYPES.output;
+        }
+        // widget has defaults but row doesn't, they may have aliases or not
+        else if (hasWigetParams) {
+            newRelationType = OUTPUT_RELATIONS.includes(relationType)
+                ? relationType
+                : RELATION_TYPES.output;
             availableRelations = [...OUTPUT_RELATIONS];
-        } else if (hasRowParams) {
-            newRelationType = RELATION_TYPES.input;
+        }
+        // row has defaults but widget doesn't, they may have aliases or not
+        else if (hasRowParams) {
+            newRelationType = INPUT_RELATIONS.includes(relationType)
+                ? relationType
+                : RELATION_TYPES.input;
             availableRelations = [...INPUT_RELATIONS];
-        } else {
-            newRelationType = RELATION_TYPES.ignore;
+        }
+        // widget and row don't have defaults
+        else {
+            newRelationType = relationType || RELATION_TYPES.ignore;
             availableRelations = [...FULL_RELATIONS];
             forceAddAlias = true;
         }
