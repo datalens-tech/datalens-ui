@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, DashTabItemControlSourceType, DialogControlQa} from 'shared';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
-    selectIsDatasetSelectorAndNoFieldSelected,
+    selectIsControlConfigurationDisabled,
     selectSelectorDialog,
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
@@ -34,7 +34,7 @@ const getHelpPopoverText = (sourceType: SelectorSourceType | undefined): string 
 export const InnerTitleRow = () => {
     const dispatch = useDispatch();
     const {elementType, showInnerTitle, innerTitle, sourceType} = useSelector(selectSelectorDialog);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
 
     const isInnerTitleDisabled = elementType === ELEMENT_TYPE.CHECKBOX || isFieldDisabled;
     const isInnerTitleActive = (elementType !== ELEMENT_TYPE.CHECKBOX && showInnerTitle) ?? false;

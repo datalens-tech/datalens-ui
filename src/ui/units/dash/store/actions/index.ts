@@ -20,6 +20,7 @@ import {
     SetErrorModeAction,
     SetHashStateAction,
     SetInitialPageTabsItemsAction,
+    type SetLastUsedConnectionIdAction,
     SetLastUsedDatasetIdAction,
     SetLoadingEditModeAction,
     SetPageDefaultTabItemsAction,
@@ -74,6 +75,7 @@ export type DashAction<T = unknown> =
     | OpenItemDialogAction
     | CloseDialogAction
     | SaveDashSuccessAction
-    | SaveDashErrorAction;
+    | SaveDashErrorAction
+    | SetLastUsedConnectionIdAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

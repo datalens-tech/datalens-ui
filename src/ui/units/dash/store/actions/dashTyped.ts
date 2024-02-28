@@ -7,7 +7,9 @@ import {i18n} from 'i18n';
 import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
 import {
+    type ConnectionQueryContent,
     type ConnectionQueryType,
+    ConnectionQueryTypeValues,
     DATASET_FIELD_TYPES,
     DashData,
     DashSettings,
@@ -311,9 +313,21 @@ export type SetLastUsedDatasetIdAction = {
     type: typeof SET_LAST_USED_DATASET_ID;
     payload: string;
 };
+
 export const setLastUsedDatasetId = (datasetId: string): SetLastUsedDatasetIdAction => ({
     type: SET_LAST_USED_DATASET_ID,
     payload: datasetId,
+});
+
+export const SET_LAST_USED_CONNECTION_ID = Symbol('dash/SET_LAST_USED_CONNECTION_ID');
+export type SetLastUsedConnectionIdAction = {
+    type: typeof SET_LAST_USED_CONNECTION_ID;
+    payload: string;
+};
+
+export const setLastUsedConnectionId = (connectionId: string): SetLastUsedConnectionIdAction => ({
+    type: SET_LAST_USED_CONNECTION_ID,
+    payload: connectionId,
 });
 
 type SetItemDataBase = {
@@ -354,7 +368,9 @@ export type SelectorDialogState = {
     dataset?: Dataset;
     datasetId?: string;
     connectionId?: string;
+    connectionQueryType?: ConnectionQueryTypeValues;
     connectionQueryTypes?: ConnectionQueryType[];
+    connectionQueryContent?: ConnectionQueryContent;
     datasetFieldId?: string;
     fieldName?: string;
     acceptableValues?: AcceptableValue[];

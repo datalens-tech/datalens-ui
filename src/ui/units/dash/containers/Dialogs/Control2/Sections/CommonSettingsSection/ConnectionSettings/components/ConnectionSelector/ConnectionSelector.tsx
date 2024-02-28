@@ -6,7 +6,10 @@ import type {GetEntryResponse} from 'shared/schema';
 
 import logger from '../../../../../../../../../../libs/logger';
 import {getSdk} from '../../../../../../../../../../libs/schematic-sdk';
-import {setSelectorDialogItem} from '../../../../../../../../store/actions/dashTyped';
+import {
+    setLastUsedConnectionId,
+    setSelectorDialogItem,
+} from '../../../../../../../../store/actions/dashTyped';
 import {
     selectDashWorkbookId,
     selectSelectorDialog,
@@ -40,7 +43,6 @@ export const ConnectionSelector = () => {
 
                     setUnsupportedConnectionError(error);
                     setIsValidConnection(true);
-
                     return queryTypes;
                 })
                 .catch((error) => {
@@ -52,11 +54,20 @@ export const ConnectionSelector = () => {
         [workbookId],
     );
 
+    React.useEffect(() => {
+        if (connectionId) {
+            fetchConnection(connectionId).then((connectionQueryTypes) => {
+                dispatch(setSelectorDialogItem({connectionQueryTypes}));
+            });
+        }
+    }, []);
     const handleEntryChange = (data: {entry: GetEntryResponse}) => {
         const updatedConnectionId = data.entry.entryId;
         if (updatedConnectionId === connectionId) {
             return;
         }
+
+        dispatch(setLastUsedConnectionId(updatedConnectionId));
 
         fetchConnection(updatedConnectionId).then((connectionQueryTypes) => {
             dispatch(
@@ -65,6 +76,8 @@ export const ConnectionSelector = () => {
                     elementType: ELEMENT_TYPE.SELECT,
                     defaultValue: undefined,
                     useDefaultValue: false,
+                    connectionQueryType: undefined,
+                    connectionQueryContent: undefined,
                     connectionQueryTypes,
                 }),
             );

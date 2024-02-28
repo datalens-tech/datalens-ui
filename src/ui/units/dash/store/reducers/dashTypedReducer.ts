@@ -27,6 +27,7 @@ import {
     SET_ERROR_MODE,
     SET_HASH_STATE,
     SET_INITIAL_PAGE_TABS_ITEMS,
+    SET_LAST_USED_CONNECTION_ID,
     SET_LAST_USED_DATASET_ID,
     SET_LOADING_EDIT_MODE,
     SET_PAGE_DEFAULT_TAB_ITEMS,
@@ -62,6 +63,7 @@ export type DashState = {
     openedItemId: string | null;
     showTableOfContent: boolean;
     lastUsedDatasetId: null | string;
+    lastUsedConnectionId: undefined | string;
     entry: DashEntry;
     data: DashData;
     updateStatus: DashUpdateStatus;
@@ -231,6 +233,12 @@ export function dashTypedReducer(
             return {
                 ...state,
                 lastUsedDatasetId: action.payload,
+            };
+
+        case SET_LAST_USED_CONNECTION_ID:
+            return {
+                ...state,
+                lastUsedConnectionId: action.payload,
             };
 
         case SET_SELECTOR_DIALOG_ITEM: {

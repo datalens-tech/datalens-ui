@@ -1,5 +1,9 @@
 import {ConnectorType} from '../../../constants';
-import {ConnectionData} from '../../../types';
+import {
+    ConnectionData,
+    type ConnectionTypedQueryApiRequest,
+    type ConnectionTypedQueryApiResponse,
+} from '../../../types';
 
 import {WorkbookIdArg} from './common';
 
@@ -103,3 +107,20 @@ export type GetConnectionSourceSchemaArgs = BaseArgs &
             id: string;
         };
     };
+
+export type GetConnectionTypedQueryDataArgs = BaseArgs &
+    WorkbookIdArg & {body: ConnectionTypedQueryApiRequest};
+
+export type GetConnectionTypedQueryDataResponse = ConnectionTypedQueryApiResponse;
+
+export type GetConnectionTypedQueryErrorResponse = {
+    status: number;
+    message: string;
+    code: string;
+    details?: {
+        title?: string;
+        description?: string;
+        db_message?: string;
+    };
+    requestId: string;
+};
