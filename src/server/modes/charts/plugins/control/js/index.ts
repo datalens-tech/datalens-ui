@@ -1,14 +1,9 @@
-import {
-    ApiV2ResultData,
-    ApiV2ResultDataRow,
-    DashTabItemControlElementType,
-    DashTabItemControlSourceType,
-    DatasetFieldCalcMode,
-    DatasetFieldType,
-    IChartEditor,
-} from '../../../../../../shared';
+import {DashTabItemControlElementType, type IChartEditor} from '../../../../../../shared';
 import {formatIntervalRangeDate, formatRelativeRangeDate, getISOFromToday} from '../helpers/misc';
-import {ControlShared, UIControl} from '../types';
+import type {ControlShared, UIControl} from '../types';
+
+import {processContent} from './helpers/process-content';
+import type {SourceResponseData} from './types';
 
 // eslint-disable-next-line complexity
 export default ({
@@ -17,96 +12,14 @@ export default ({
     params,
     ChartEditor,
 }: {
-    data: {
-        distincts?: ApiV2ResultData;
-        fields?: {
-            fields: {
-                data_type: string;
-                guid: string;
-                hidden: boolean;
-                type: DatasetFieldType;
-                title: string;
-                calc_mode: DatasetFieldCalcMode;
-            }[];
-        };
-    };
+    data: SourceResponseData;
     shared: ControlShared;
     params: Record<string, string | string[]>;
     ChartEditor: IChartEditor;
 }) => {
-    if (shared.sourceType === DashTabItemControlSourceType.Dataset) {
-        if (data.distincts && shared.source.elementType !== DashTabItemControlElementType.Date) {
-            // https://stackoverflow.com/questions/40107588 numeric collation doesn't work correctly with float type
-            const needCollator = shared.source.fieldType !== 'float';
+    shared.content = processContent({data, shared, ChartEditor});
 
-            const collator = new Intl.Collator(undefined, {
-                numeric: true,
-                sensitivity: 'base',
-            });
-
-            shared.content = data.distincts.result_data[0].rows
-                .map((row: ApiV2ResultDataRow) => {
-                    const value = row.data[0];
-                    return {title: value, value};
-                })
-                .sort((a: {title: string}, b: {title: string}) => {
-                    return needCollator
-                        ? collator.compare(a.title, b.title)
-                        : Number(a.title) - Number(b.title);
-                });
-        } else if (shared.source.elementType === DashTabItemControlElementType.Input) {
-            shared.content = shared.source.acceptableValues as {
-                value: string;
-                title: string;
-            }[];
-        } else {
-            shared.content = [];
-        }
-
-        if (data.fields) {
-            const datasetFields: Record<string, string> = {};
-            const paramsFromDataset: Record<string, string> = {};
-
-            data.fields.fields.forEach(
-                (field: {guid: string; title: string; data_type: string}) => {
-                    datasetFields[field.guid] = field.title;
-                    paramsFromDataset[field.guid] = '';
-                },
-            );
-
-            const datasetFieldsList = data.fields.fields.map(
-                (field: {
-                    guid: string;
-                    title: string;
-                    data_type: string;
-                    calc_mode: string;
-                    type: DatasetFieldType;
-                }) => {
-                    const {guid} = field;
-
-                    return {
-                        title: field.title,
-                        guid,
-                        dataType: field.data_type,
-                        calc_mode: field.calc_mode,
-                        fieldType: field.type,
-                    };
-                },
-            );
-
-            ChartEditor.setExtra('datasets', [
-                {
-                    fields: datasetFields,
-                    fieldsList: datasetFieldsList,
-                    id: shared.source.datasetId,
-                },
-            ]);
-
-            ChartEditor.updateParams(paramsFromDataset);
-        }
-    }
-
-    const {source, param, content = []} = shared;
+    const {source, param, content} = shared;
 
     const uiControl: UIControl = {
         label: source.showTitle ? shared.title : '',
