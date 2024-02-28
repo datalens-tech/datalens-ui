@@ -45,6 +45,7 @@ import type {OpenDialogLabelSettingsArgs} from '../../units/wizard/components/Di
 import type {OpenDialogControlsPlacementArgs} from '../../units/dash/containers/Dialogs/GroupControl/ControlsPlacementDialog/ControlsPlacementDialog';
 import type {OpenDialogCopyEntriesToWorkbookArgs} from '../../components/CopyEntriesToWorkbookDialog/CopyEntriesToWorkbookDialog';
 import type {OpenDialogConnAddYadocArgs} from '../../units/connections/components/custom-forms/Yadocs/components/DialogAddDocument/DialogAddDocument';
+import type {OpenDialogEditQueryArgs} from '../../units/dash/containers/Dialogs/DialogEditQuery/DialogEditQuery';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogMetricSettingsArgs
@@ -91,4 +92,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogMigrateEntryToWorkbookArgs
     | OpenDialogDeployTemplateToWorkbookArgs
     | OpenDialogCopyEntriesToWorkbookArgs
-    | OpenDialogCopyEntriesArgs;
+    | OpenDialogCopyEntriesArgs
+    | OpenDialogEditQueryArgs;

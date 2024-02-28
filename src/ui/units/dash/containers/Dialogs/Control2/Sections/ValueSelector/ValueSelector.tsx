@@ -11,7 +11,7 @@ import {registry} from 'ui/registry';
 import Utils from 'ui/utils/utils';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
-    selectIsDatasetSelectorAndNoFieldSelected,
+    selectIsControlConfigurationDisabled,
     selectSelectorControlType,
     selectSelectorDefaultValue,
     selectSelectorDialog,
@@ -35,7 +35,7 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 const InputValueControl = () => {
     const dispatch = useDispatch();
     const defaultValue = useSelector(selectSelectorDefaultValue);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
     const validation = useSelector(selectSelectorValidation);
 
     const handleUpdate = React.useCallback((value: string) => {
@@ -62,7 +62,7 @@ const InputValueControl = () => {
 const DateValueControl = () => {
     const {isRange, acceptableValues, defaultValue, fieldType, sourceType} =
         useSelector(selectSelectorDialog);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
     const validation = useSelector(selectSelectorValidation);
 
     const dispatch = useDispatch();
@@ -138,7 +138,7 @@ const DateValueControl = () => {
 const CheckboxValueControl = () => {
     const dispatch = useDispatch();
     const defaultValue = useSelector(selectSelectorDefaultValue);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
 
     const handleUpdate = React.useCallback(
         (value: string) => {

@@ -25,3 +25,4 @@ export * from './chartkit/common';
 export * from './chartkit/dl-chartkit';
 export * from './chartkit/table';
 export * from './config/ql';
+export * from './typed-query-api';

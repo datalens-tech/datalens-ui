@@ -9,7 +9,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, DialogControlQa} from 'shared';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
-    selectIsDatasetSelectorAndNoFieldSelected,
+    selectIsControlConfigurationDisabled,
     selectSelectorDialog,
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
@@ -22,7 +22,7 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 export const TitleRow = () => {
     const dispatch = useDispatch();
     const {showTitle, title, validation} = useSelector(selectSelectorDialog);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
 
     const handleTitleUpdate = React.useCallback((title: string) => {
         dispatch(
