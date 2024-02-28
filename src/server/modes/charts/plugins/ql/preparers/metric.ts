@@ -1,10 +1,19 @@
-import {DATALENS_QL_TYPES, IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
+import {
+    DATALENS_QL_TYPES,
+    Feature,
+    IChartEditor,
+    QlConfigPreviewTableData,
+    formatNumber,
+    isEnabledServerFeature,
+} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
     QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
+import {registry} from '../../../../../registry';
+import {prepareMetricObject} from '../../datalens/utils/markup-helpers';
 import {
     QLRenderResultMetric,
     formatUnknownTypeValue,
@@ -89,7 +98,9 @@ export default ({
 
     let result: QLRenderResultMetric[] | {};
 
-    if (columns[measureIndex]) {
+    const measureColumn = columns[measureIndex];
+
+    if (measureColumn) {
         let value: string | number | null = rows[0][measureIndex];
 
         if (columnTypes[measureIndex] === DATALENS_QL_TYPES.UNKNOWN) {
@@ -98,32 +109,40 @@ export default ({
             value = parseNumberValue(value);
         }
 
-        result = [
-            {
-                content: {
-                    current: {
-                        value,
+        const app = registry.getApp();
+
+        const useMarkupMetric = isEnabledServerFeature(app.nodekit.ctx, Feature.MarkupMetric);
+
+        if (useMarkupMetric) {
+            const size = 'm';
+            const color = 'rgb(77, 162, 241)';
+            const title = measureColumn.name;
+
+            let formattedValue = String(value);
+
+            if (typeof value === 'number') {
+                formattedValue = formatNumber(value, {});
+            }
+
+            return prepareMetricObject({size, title, color, value: formattedValue});
+        } else {
+            result = [
+                {
+                    content: {
+                        current: {
+                            value,
+                        },
                     },
+                    title: columns[measureIndex].name,
+                    metadata: {
+                        order,
+                    },
+                    tablePreviewData,
                 },
-                title: columns[measureIndex].name,
-                metadata: {
-                    order,
-                },
-                tablePreviewData,
-            },
-        ];
+            ];
+        }
     } else {
-        result = [
-            {
-                content: {
-                    current: {},
-                },
-                metadata: {
-                    order,
-                },
-                tablePreviewData,
-            },
-        ];
+        result = {};
     }
 
     return result;
