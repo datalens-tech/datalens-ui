@@ -24,11 +24,17 @@ export type Props = {
     open: boolean;
     templateName: string;
     productId: string;
+    needToDeployTemplate: boolean;
     onApply: (workbookId: string) => void;
     onClose: () => void;
 };
 
-export const openDialogDeployTemplateToWorkbook = ({templateName, productId, onApply}: Props) => {
+export const openDialogDeployTemplateToWorkbook = ({
+    templateName,
+    productId,
+    needToDeployTemplate,
+    onApply,
+}: Props) => {
     return function (dispatch: AppDispatch) {
         dispatch(
             openDialog({
@@ -37,6 +43,7 @@ export const openDialogDeployTemplateToWorkbook = ({templateName, productId, onA
                     open: true,
                     templateName,
                     productId,
+                    needToDeployTemplate,
                     onApply,
                     onClose: () => {
                         dispatch(closeDialog());
@@ -51,6 +58,7 @@ export const DeployTemplateToWorkbookDialog: React.FC<Props> = ({
     open,
     templateName,
     productId,
+    needToDeployTemplate,
     onApply,
     onClose,
 }) => {
@@ -66,16 +74,18 @@ export const DeployTemplateToWorkbookDialog: React.FC<Props> = ({
         }) => {
             const workbookId = targetWorkbookId!;
 
-            await dispatch(
-                copyTemplate({
-                    templateName,
-                    workbookId,
-                    productId,
-                }),
-            );
+            if (needToDeployTemplate) {
+                await dispatch(
+                    copyTemplate({
+                        templateName,
+                        workbookId,
+                        productId,
+                    }),
+                );
+            }
             onApply(workbookId);
         },
-        [dispatch, templateName, productId, onApply],
+        [needToDeployTemplate, onApply, dispatch, templateName, productId],
     );
 
     const isLoading = useSelector(selectCopyTemplateIsLoading);
