@@ -42,6 +42,7 @@ export type ScatterGraph = {
     marker?: {
         symbol?: string;
     };
+    custom?: any;
 };
 
 export type PrepareScatterResult = {
