@@ -4,7 +4,7 @@ import {Dialog, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import type {ConnectionQueryContent} from 'shared';
-import {mapStringParameterToTypedQueryApiParameter} from 'shared/modules/typed-query-api';
+import {mapParametersRecordToTypedQueryApiParameters} from 'shared/modules/typed-query-api';
 import type {GetConnectionTypedQueryErrorResponse} from 'shared/schema';
 
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
@@ -81,9 +81,7 @@ const DialogEditQuery: React.FC = () => {
                 body: {
                     query_type: connectionQueryType,
                     query_content: queryContent,
-                    parameters: Object.entries(parameters).map(([key, value]) =>
-                        mapStringParameterToTypedQueryApiParameter(key, value),
-                    ),
+                    parameters: mapParametersRecordToTypedQueryApiParameters(parameters),
                 },
             })
             .then((response) => {
