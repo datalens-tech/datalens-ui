@@ -40,7 +40,7 @@ const getList = (data: DashkitMetaDataItem) => {
 
     let res = [];
 
-    if (dataset?.fieldsList) {
+    if (dataset?.fieldsList && !data.isQL) {
         res = dataset?.fieldsList.map((item) => ({
             content: item.title,
             value: item.guid,
@@ -64,13 +64,13 @@ const getList = (data: DashkitMetaDataItem) => {
 };
 
 const getFieldName = (data: DashkitMetaDataItem, selectedItem?: SelectOption) => {
-    const datasetFileds = data.datasets?.length ? data.datasets[0]?.fieldsList : null;
-    if (!datasetFileds) {
+    const datasetFields = data.datasets?.length && !data.isQL ? data.datasets[0]?.fieldsList : null;
+    if (!datasetFields) {
         return <div>{selectedItem?.value || ''}</div>;
     }
     return (
         <div>
-            {datasetFileds.find((item) => item.guid === selectedItem?.value)?.title ||
+            {datasetFields.find((item) => item.guid === selectedItem?.value)?.title ||
                 selectedItem?.value ||
                 ''}
         </div>
