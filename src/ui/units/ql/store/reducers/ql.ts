@@ -361,7 +361,7 @@ export const getEntryNotChanged = createSelector(
                 chartType,
                 visualization,
                 order: null,
-                version: QlConfigVersions.V3,
+                version: QlConfigVersions.V4,
             };
 
             // Removing possible functions from the structure to compare data
@@ -437,7 +437,7 @@ export const getPreviewData = createSelector(
                 params: params,
                 visualization,
                 order,
-                version: QlConfigVersions.V3,
+                version: QlConfigVersions.V4,
             };
 
             return result;
