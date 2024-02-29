@@ -6,9 +6,9 @@
     }
 
     &__add-dialog-row {
-        display: grid;
-        grid-template-columns: 152px auto;
-        column-gap: 10px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 8px;
     }
 
     &__add-dialog-row-label {
@@ -16,7 +16,11 @@
     }
 
     &__add-dialog-row-input-note {
-        margin-top: 5px;
+        line-height: 16px;
         color: var(--g-color-text-hint);
+    }
+
+    &__add-help-btn {
+        margin-inline-start: 4px;
     }
 }
