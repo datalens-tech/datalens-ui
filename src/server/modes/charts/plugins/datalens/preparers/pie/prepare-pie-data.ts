@@ -182,16 +182,6 @@ export function preparePieData(args: PrepareFunctionArgs) {
         const legendParts: string[] = [];
         const formattedNameParts: string[] = [];
 
-        if (dimensionField) {
-            legendParts.push(String(dimensionValue));
-            formattedNameParts.push(
-                getFormattedValue(dimensionValue, {
-                    ...dimensionField,
-                    data_type: idToDataType[dimensionField.guid],
-                }),
-            );
-        }
-
         if (colorField && typeof colorFieldValue !== 'undefined') {
             if (shouldUseGradient) {
                 colorValue = Number(colorFieldValue);
@@ -205,6 +195,16 @@ export function preparePieData(args: PrepareFunctionArgs) {
                     }),
                 );
             }
+        }
+
+        if (dimensionField) {
+            legendParts.push(String(dimensionValue));
+            formattedNameParts.push(
+                getFormattedValue(dimensionValue, {
+                    ...dimensionField,
+                    data_type: idToDataType[dimensionField.guid],
+                }),
+            );
         }
 
         const pointName = legendParts.join(': ') || getFakeTitleOrTitle(measure);
