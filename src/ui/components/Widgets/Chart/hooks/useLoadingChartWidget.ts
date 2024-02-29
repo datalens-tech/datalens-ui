@@ -171,6 +171,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      * and we need to trigger dashkit changes with merging params & etc only after loaded waiting ds loaded manually
      * that's why we need to remember changed fields to forward it to changed callback function for dashkit re-render later
      */
+    const currentTabId = tabs[tabIndex].id;
     const handleChangeCallback = React.useCallback(
         async (changedProps: OnChangeData) => {
             if (changedProps.type === 'PARAMS_CHANGED') {
@@ -180,9 +181,15 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                     },
                     changedProps.options,
                 );
+
+                // If we resetting filtration we are loosing current open tab
+                // To prevent forcible setting currentTabId
+                if (currentTabId && changedProps.options?.action === 'removeItem') {
+                    onStateAndParamsChange({state: {tabId: currentTabId}});
+                }
             }
         },
-        [onStateAndParamsChange],
+        [currentTabId, onStateAndParamsChange],
     );
 
     /**
