@@ -4,7 +4,6 @@ import {Dialog, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import type {ConnectionQueryContent} from 'shared';
-import {mapParametersRecordToTypedQueryApiParameters} from 'shared/modules/typed-query-api';
 import type {GetConnectionTypedQueryErrorResponse} from 'shared/schema';
 
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
@@ -12,10 +11,7 @@ import {getSdk} from '../../../../../libs/schematic-sdk';
 import {closeDialog} from '../../../../../store/actions/dialog';
 import {selectWorkbookId} from '../../../../workbooks/store/selectors';
 import {setSelectorDialogItem} from '../../../store/actions/dashTyped';
-import {
-    selectDashGlobalParams,
-    selectSelectorDialog,
-} from '../../../store/selectors/dashTypedSelectors';
+import {selectSelectorDialog} from '../../../store/selectors/dashTypedSelectors';
 
 import {QueryEditor} from './QueryEditor/QueryEditor';
 import {QueryError} from './QueryError/QueryError';
@@ -39,7 +35,6 @@ const DialogEditQuery: React.FC = () => {
     const {connectionQueryContent, connectionQueryType, connectionId} =
         useSelector(selectSelectorDialog);
     const workbookId = useSelector(selectWorkbookId);
-    const parameters = useSelector(selectDashGlobalParams);
 
     const [query, setQuery] = React.useState<string | undefined>(connectionQueryContent?.query);
     const [disabled, setDisabled] = React.useState(connectionQueryContent?.query.length === 0);
@@ -81,7 +76,7 @@ const DialogEditQuery: React.FC = () => {
                 body: {
                     query_type: connectionQueryType,
                     query_content: queryContent,
-                    parameters: mapParametersRecordToTypedQueryApiParameters(parameters),
+                    parameters: [],
                 },
             })
             .then((response) => {

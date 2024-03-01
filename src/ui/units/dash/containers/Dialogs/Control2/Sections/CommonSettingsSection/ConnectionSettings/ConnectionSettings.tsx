@@ -5,10 +5,7 @@ import {useSelector} from 'react-redux';
 
 import {SectionWrapper} from '../../../../../../../../components/SectionWrapper/SectionWrapper';
 import {selectWorkbookId} from '../../../../../../../workbooks/store/selectors';
-import {
-    selectDashGlobalParams,
-    selectSelectorDialog,
-} from '../../../../../../store/selectors/dashTypedSelectors';
+import {selectSelectorDialog} from '../../../../../../store/selectors/dashTypedSelectors';
 import {ELEMENT_TYPE} from '../../../../Control/constants';
 import {ValueSelector} from '../../ValueSelector/ValueSelector';
 import type {ValueSelectorControlProps} from '../../ValueSelector/types';
@@ -26,7 +23,6 @@ const i18nConnectionBasedControlFake = (str: string) => str;
 export const ConnectionSettings: React.FC = () => {
     const {connectionQueryTypes, connectionId, connectionQueryContent, connectionQueryType} =
         useSelector(selectSelectorDialog);
-    const parameters = useSelector(selectDashGlobalParams);
     const workbookId = useSelector(selectWorkbookId);
 
     const options = React.useMemo(() => {
@@ -44,9 +40,9 @@ export const ConnectionSettings: React.FC = () => {
                 connectionId,
                 connectionQueryContent,
                 connectionQueryType,
-                parameters,
+                parameters: [],
             }),
-        [connectionId, connectionQueryContent, connectionQueryType, parameters, workbookId],
+        [connectionId, connectionQueryContent, connectionQueryType, workbookId],
     );
 
     const controlProps: ValueSelectorControlProps = React.useMemo((): ValueSelectorControlProps => {

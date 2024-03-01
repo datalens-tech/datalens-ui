@@ -1,7 +1,6 @@
 import type {SelectOption} from '@gravity-ui/uikit';
 import {type ConnectionQueryContent, ConnectionQueryTypeValues, type WorkbookId} from 'shared';
 import {getControlDisticntsFromRows} from 'shared/modules/control/typed-query-helpers';
-import {mapParametersRecordToTypedQueryApiParameters} from 'shared/modules/typed-query-api';
 
 import type {PaginationResponse} from '../../../../../../../../../components/Select/hooks/useSelectInfinityFetch/types';
 import logger from '../../../../../../../../../libs/logger';
@@ -17,8 +16,7 @@ type GetConnectionDistinctsArgs = {
 export const getDistinctsByTypedQuery = async (
     args: GetConnectionDistinctsArgs,
 ): Promise<PaginationResponse<SelectOption[], any>> => {
-    const {connectionId, workbookId, connectionQueryType, connectionQueryContent, parameters} =
-        args;
+    const {connectionId, workbookId, connectionQueryType, connectionQueryContent} = args;
 
     if (!connectionId || !connectionQueryType || !connectionQueryContent) {
         return {response: undefined};
@@ -30,7 +28,7 @@ export const getDistinctsByTypedQuery = async (
             workbookId,
             body: {
                 query_content: connectionQueryContent,
-                parameters: mapParametersRecordToTypedQueryApiParameters(parameters),
+                parameters: [],
                 query_type: connectionQueryType,
             },
         });
