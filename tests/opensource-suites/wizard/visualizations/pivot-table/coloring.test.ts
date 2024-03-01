@@ -26,7 +26,7 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.setVisualization(WizardVisualizationId.PivotTable);
         });
 
-        datalensTest.only('Two colors bar @screenshot', async ({page}) => {
+        datalensTest('Two colors bar @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
