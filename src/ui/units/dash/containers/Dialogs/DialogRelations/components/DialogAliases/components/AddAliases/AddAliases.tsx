@@ -11,7 +11,7 @@ import {DL} from 'ui/constants/common';
 
 import {addAlias} from '../../../../helpers';
 import {isEditorChart} from '../../../../hooks/helpersChart';
-import {isExternalControl} from '../../../../hooks/helpersControls';
+import {isControl, isExternalControl} from '../../../../hooks/helpersControls';
 import {AliasesContext} from '../../../../hooks/useRelations';
 import {DashkitMetaDataItem, DatasetsListData} from '../../../../types';
 import {AliasesInvalidList} from '../AliasesList/AliasesInvalidList';
@@ -41,10 +41,12 @@ const getList = (data: DashkitMetaDataItem) => {
     let res = [];
 
     if (dataset?.fieldsList && !data.isQL) {
-        res = dataset?.fieldsList.map((item) => ({
-            content: item.title,
-            value: item.guid,
-        }));
+        res = dataset?.fieldsList
+            .filter((item) => (isControl(data) ? item.guid in (data.defaultParams || {}) : true))
+            .map((item) => ({
+                content: item.title,
+                value: item.guid,
+            }));
     } else {
         // if there is no defaults in editor chart or in external selector there is no params for list options
         // until user add any param to default
