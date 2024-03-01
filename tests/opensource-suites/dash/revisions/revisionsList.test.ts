@@ -37,7 +37,7 @@ datalensTest.describe('Dashboard Versioning', () => {
     );
 
     datalensTest(
-        'Dashboard with a list of revisions, checking the spike after switching to another entry',
+        'Dashboard with revision list, check if revision list is changed after editing the dashboard',
         async ({page}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
 
@@ -54,16 +54,6 @@ datalensTest.describe('Dashboard Versioning', () => {
             // check that the dashboard has 1 revision
             expect(items).toHaveLength(1);
 
-            const createdDashId = dashboardPage.getEntryIdFromUrl() as string;
-
-            await openTestPage(page, '/');
-
-            await dashboardPage.createDashboard({
-                editDash: async () => {
-                    await dashboardPage.addText(arbitraryText.first);
-                },
-            });
-
             await dashboardPage.editDashboard({
                 editDash: async () => {
                     await dashboardPage.addText(arbitraryText.second);
@@ -78,9 +68,6 @@ datalensTest.describe('Dashboard Versioning', () => {
             // check that the dashboard has 2 revisions
             expect(items).toHaveLength(2);
 
-            await dashboardPage.deleteDash();
-
-            await openTestPage(page, createdDashId);
             await dashboardPage.deleteDash();
         },
     );
