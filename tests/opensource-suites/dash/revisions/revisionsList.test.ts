@@ -36,11 +36,9 @@ datalensTest.describe('Dashboard Versioning', () => {
         },
     );
 
-    // It will always be failed until rewriting the test, dashboard with 100 revisions was created 3 months ago.
-    // 3 months - it's a limit for listing the revisions.
-    datalensTest.skip(
+    datalensTest(
         'Dashboard with a list of revisions, checking the spike after switching to another entry',
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+        async ({page}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
 
             await dashboardPage.createDashboard({
@@ -56,16 +54,31 @@ datalensTest.describe('Dashboard Versioning', () => {
             // check that the dashboard has 1 revision
             expect(items).toHaveLength(1);
 
-            const createdDashId = (await dashboardPage.getEntryIdFromUrl()) as string;
+            const createdDashId = dashboardPage.getEntryIdFromUrl() as string;
 
-            await openTestPage(page, config.dash.urls.DashboardMoreThan100Revisions);
+            await openTestPage(page, '/');
+
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addText(arbitraryText.first);
+                },
+            });
+
+            await dashboardPage.editDashboard({
+                editDash: async () => {
+                    await dashboardPage.addText(arbitraryText.second);
+                },
+            });
+
             await dashboardPage.waitForOpeningRevisionsList();
             await page.waitForSelector(slct(COMMON_SELECTORS.REVISIONS_LIST));
 
             items = await page.$$(slct(COMMON_SELECTORS.REVISIONS_LIST_ROW));
 
-            // check that the dashboard has 100 revisions
-            expect(items).toHaveLength(100);
+            // check that the dashboard has 2 revisions
+            expect(items).toHaveLength(2);
+
+            await dashboardPage.deleteDash();
 
             await openTestPage(page, createdDashId);
             await dashboardPage.deleteDash();
