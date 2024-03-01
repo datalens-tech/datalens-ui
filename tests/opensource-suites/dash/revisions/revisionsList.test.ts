@@ -34,7 +34,9 @@ datalensTest.describe('Dashboard Versioning', () => {
         },
     );
 
-    datalensTest(
+    // It will always be failed until rewriting the test, dashboard with 100 revisions was created 3 months ago.
+    // 3 months - it's a limit for listing the revisions.
+    datalensTest.skip(
         'Dashboard with a list of revisions, checking the spike after switching to another entry',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
