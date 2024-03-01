@@ -8,7 +8,9 @@ import {arbitraryText} from '../constants';
 import {TestParametrizationConfig} from '../../../types/config';
 
 datalensTest.describe('Dashboard Versioning', () => {
-    datalensTest(
+    // It will always be failed until rewriting the test, dashboard with 100 revisions was created 3 months ago.
+    // 3 months - it's a limit for listing the revisions.
+    datalensTest.skip(
         'Dashboard with a long list of revisions, checking the upload and the updated list of revisions',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
