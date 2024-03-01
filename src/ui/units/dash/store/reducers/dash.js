@@ -98,6 +98,7 @@ export function getSelectorDialogFromData(data, defaults) {
         connectionId: data.source.connectionId,
         connectionQueryType: data.source.connectionQueryType,
         connectionQueryTypes: data.source.connectionQueryTypes,
+        connectionQueryContent: data.source.connectionQueryContent,
         elementType: data.source.elementType || ELEMENT_TYPE.SELECT,
         defaultValue: data.source.defaultValue,
         datasetFieldId: data.source.datasetFieldId,

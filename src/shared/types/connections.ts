@@ -9,10 +9,10 @@ export type ConnectionOptions = {
     allow_dashsql_usage: boolean;
     allow_dataset_usage: boolean;
     allow_typed_query_usage: boolean;
-    query_types: ConnectionQueryType[];
+    query_types: ConnectionQueryTypeOptions[];
 };
 
-export type ConnectionQueryType = {
+export type ConnectionQueryTypeOptions = {
     query_type: ConnectionQueryTypeValues;
     query_type_label: string;
     allow_selector: boolean;

@@ -25,6 +25,7 @@ import {CheckboxControlValue} from '../../../Control/constants';
 
 import {ListValueControl} from './ListValueControl/ListValueControl';
 import {RequiredValueCheckbox} from './RequiredValueCheckbox/RequiredValueCheckbox';
+import type {ValueSelectorControlProps} from './types';
 
 import './ValueSelector.scss';
 
@@ -173,7 +174,11 @@ const CheckboxValueControl = () => {
     );
 };
 
-const ValueSelector: React.FC = () => {
+type ValueSelectorProps = {
+    controlProps: ValueSelectorControlProps;
+};
+
+const ValueSelector: React.FC<ValueSelectorProps> = (props: ValueSelectorProps) => {
     const controlType = useSelector(selectSelectorControlType);
 
     const {useExtendedValueSelector} = registry.dash.functions.getAll();
@@ -190,7 +195,7 @@ const ValueSelector: React.FC = () => {
             break;
         }
         case 'select': {
-            inputControl = <ListValueControl />;
+            inputControl = <ListValueControl {...props.controlProps.select} />;
             break;
         }
         case 'input': {

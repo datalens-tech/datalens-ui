@@ -3,7 +3,7 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import {Select} from '@gravity-ui/uikit';
 import {useDispatch, useSelector} from 'react-redux';
-import {type ConnectionQueryType, ConnectionQueryTypeValues} from 'shared';
+import {type ConnectionQueryTypeOptions, ConnectionQueryTypeValues} from 'shared';
 
 import {setSelectorDialogItem} from '../../../../../../../../store/actions/dashTyped';
 import {selectSelectorDialog} from '../../../../../../../../store/selectors/dashTypedSelectors';
@@ -26,7 +26,7 @@ const renderQueryContentControl = (connectionQueryType: ConnectionQueryTypeValue
 };
 
 type QueryTypeControlProps = {
-    connectionQueryTypes: ConnectionQueryType[];
+    connectionQueryTypes: ConnectionQueryTypeOptions[];
 };
 
 export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTypeControlProps) => {
@@ -56,7 +56,7 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
 
     return (
         <React.Fragment>
-            {options.length > 1 ? (
+            {options.length > 1 && (
                 <FormRow label={i18nConnectionBasedControlFake('field_query-type')}>
                     <Select
                         width="max"
@@ -66,7 +66,7 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
                         placeholder={i18nConnectionBasedControlFake('placeholder_not-defined')}
                     />
                 </FormRow>
-            ) : null}
+            )}
             {renderQueryContentControl(connectionQueryType)}
         </React.Fragment>
     );

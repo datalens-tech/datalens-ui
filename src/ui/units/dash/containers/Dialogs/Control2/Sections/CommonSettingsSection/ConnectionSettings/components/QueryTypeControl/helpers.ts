@@ -1,6 +1,8 @@
-import type {ConnectionQueryType} from 'shared';
+import type {ConnectionQueryTypeOptions} from 'shared';
 
-export const prepareQueryTypeSelectorOptions = (connectionQueryTypes: ConnectionQueryType[]) => {
+export const prepareQueryTypeSelectorOptions = (
+    connectionQueryTypes: ConnectionQueryTypeOptions[],
+) => {
     return connectionQueryTypes.map((qt) => {
         return {
             value: qt.query_type,

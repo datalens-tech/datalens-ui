@@ -8,7 +8,9 @@ import {arbitraryText} from '../constants';
 import {TestParametrizationConfig} from '../../../types/config';
 
 datalensTest.describe('Dashboard Versioning', () => {
-    datalensTest(
+    // It will always be failed until rewriting the test, dashboard with 100 revisions was created 3 months ago.
+    // 3 months - it's a limit for listing the revisions.
+    datalensTest.skip(
         'Dashboard with a long list of revisions, checking the upload and the updated list of revisions',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
@@ -35,8 +37,8 @@ datalensTest.describe('Dashboard Versioning', () => {
     );
 
     datalensTest(
-        'Dashboard with a list of revisions, checking the spike after switching to another entry',
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+        'Dashboard with revision list, check if revision list is changed after editing the dashboard',
+        async ({page}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
 
             await dashboardPage.createDashboard({
@@ -52,18 +54,20 @@ datalensTest.describe('Dashboard Versioning', () => {
             // check that the dashboard has 1 revision
             expect(items).toHaveLength(1);
 
-            const createdDashId = (await dashboardPage.getEntryIdFromUrl()) as string;
+            await dashboardPage.editDashboard({
+                editDash: async () => {
+                    await dashboardPage.addText(arbitraryText.second);
+                },
+            });
 
-            await openTestPage(page, config.dash.urls.DashboardMoreThan100Revisions);
             await dashboardPage.waitForOpeningRevisionsList();
             await page.waitForSelector(slct(COMMON_SELECTORS.REVISIONS_LIST));
 
             items = await page.$$(slct(COMMON_SELECTORS.REVISIONS_LIST_ROW));
 
-            // check that the dashboard has 100 revisions
-            expect(items).toHaveLength(100);
+            // check that the dashboard has 2 revisions
+            expect(items).toHaveLength(2);
 
-            await openTestPage(page, createdDashId);
             await dashboardPage.deleteDash();
         },
     );

@@ -48,20 +48,25 @@ const DialogEditQuery: React.FC = () => {
         failedQuery: string | undefined,
     ) => {
         setDisabled(true);
+
         setErrorState({reason, failedQuery});
     };
 
     const handleSuccessResponse = (queryContent: ConnectionQueryContent) => {
         setErrorState(undefined);
+
         dispatch(setSelectorDialogItem({connectionQueryContent: queryContent}));
+
         dispatch(closeDialog());
     };
 
     const handleClose = React.useCallback(() => dispatch(closeDialog()), []);
+
     const handleApply = () => {
         if (!connectionId || !query || !connectionQueryType) {
             return;
         }
+
         const queryContent: ConnectionQueryContent = {query};
         setLoading(true);
         getSdk()
@@ -91,6 +96,7 @@ const DialogEditQuery: React.FC = () => {
     };
     const handleQueryEditorUpdate = (v: string) => {
         setQuery(v);
+
         setDisabled(v.trim().length === 0);
     };
     return (
