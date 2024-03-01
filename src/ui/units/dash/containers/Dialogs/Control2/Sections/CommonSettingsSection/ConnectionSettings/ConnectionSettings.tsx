@@ -40,7 +40,7 @@ export const ConnectionSettings: React.FC = () => {
                 connectionId,
                 connectionQueryContent,
                 connectionQueryType,
-                parameters: [],
+                parameters: {},
             }),
         [connectionId, connectionQueryContent, connectionQueryType, workbookId],
     );
