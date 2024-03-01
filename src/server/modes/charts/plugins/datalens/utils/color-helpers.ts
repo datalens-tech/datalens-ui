@@ -239,7 +239,7 @@ function mapAndColorizePointsByGradient(
         points.forEach((point) => {
             const colorValue = point.colorValue;
 
-            if (colorValue && gradientColors[colorValue]) {
+            if (typeof colorValue === 'number' && gradientColors[colorValue]) {
                 point.color = gradientColors[colorValue];
             }
         });
