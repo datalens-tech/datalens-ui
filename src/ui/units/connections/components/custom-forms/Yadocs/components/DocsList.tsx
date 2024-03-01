@@ -3,13 +3,14 @@ import React from 'react';
 import {Plus} from '@gravity-ui/icons';
 import {Button, Icon, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import type {YadocItem} from 'ui/units/connections/store';
 
 import {YadocListItemView} from '../components';
-import {i18n9247} from '../constants';
 import type {HandleItemClick, YadocListItem} from '../types';
 
 const b = block('conn-form-yadocs');
+const i18n = I18n.keyset('connections.yadocs.view');
 const ITEM_HEIGHT = 52;
 
 type Props = {
@@ -66,7 +67,7 @@ export const DocsList = (props: Props) => {
             <div className={b('add-section')}>
                 <Button view="outlined" onClick={clickAddDocumentButton}>
                     <Icon data={Plus} size={14} />
-                    {i18n9247['label_add-file']}
+                    {i18n('label_add-file')}
                 </Button>
             </div>
         </div>
