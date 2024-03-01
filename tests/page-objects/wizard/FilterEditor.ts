@@ -17,9 +17,13 @@ export default class FilterEditor {
         await this.page.click(slct(operation));
     }
 
-    async selectDate(dateValue: string) {
-        await this.page.fill('.dl-dialog-filter__body .yc-text-input__control', dateValue);
+    async setInputValue(value: string) {
+        const input = this.page.locator('.dl-dialog-filter__body .yc-text-input__control');
+        await input.fill(value);
+    }
 
+    async selectDate(dateValue: string) {
+        await this.setInputValue(dateValue);
         await this.closeDatepickerPopup();
     }
 
