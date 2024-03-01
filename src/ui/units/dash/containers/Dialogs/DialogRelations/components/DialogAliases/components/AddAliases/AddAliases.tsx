@@ -11,7 +11,7 @@ import {DL} from 'ui/constants/common';
 
 import {addAlias} from '../../../../helpers';
 import {isEditorChart} from '../../../../hooks/helpersChart';
-import {isExternalControl} from '../../../../hooks/helpersControls';
+import {isControl, isExternalControl} from '../../../../hooks/helpersControls';
 import {AliasesContext} from '../../../../hooks/useRelations';
 import {DashkitMetaDataItem, DatasetsListData} from '../../../../types';
 import {AliasesInvalidList} from '../AliasesList/AliasesInvalidList';
@@ -40,11 +40,13 @@ const getList = (data: DashkitMetaDataItem) => {
 
     let res = [];
 
-    if (dataset?.fieldsList) {
-        res = dataset?.fieldsList.map((item) => ({
-            content: item.title,
-            value: item.guid,
-        }));
+    if (dataset?.fieldsList && !data.isQL) {
+        res = dataset?.fieldsList
+            .filter((item) => (isControl(data) ? item.guid in (data.defaultParams || {}) : true))
+            .map((item) => ({
+                content: item.title,
+                value: item.guid,
+            }));
     } else {
         // if there is no defaults in editor chart or in external selector there is no params for list options
         // until user add any param to default
@@ -64,13 +66,13 @@ const getList = (data: DashkitMetaDataItem) => {
 };
 
 const getFieldName = (data: DashkitMetaDataItem, selectedItem?: SelectOption) => {
-    const datasetFileds = data.datasets?.length ? data.datasets[0]?.fieldsList : null;
-    if (!datasetFileds) {
+    const datasetFields = data.datasets?.length && !data.isQL ? data.datasets[0]?.fieldsList : null;
+    if (!datasetFields) {
         return <div>{selectedItem?.value || ''}</div>;
     }
     return (
         <div>
-            {datasetFileds.find((item) => item.guid === selectedItem?.value)?.title ||
+            {datasetFields.find((item) => item.guid === selectedItem?.value)?.title ||
                 selectedItem?.value ||
                 ''}
         </div>
