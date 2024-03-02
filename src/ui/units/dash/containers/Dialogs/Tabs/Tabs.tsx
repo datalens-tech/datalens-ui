@@ -13,7 +13,11 @@ import {DatalensGlobalState} from 'ui';
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
 import {setTabs} from '../../../store/actions/dashTyped';
 import {closeDialog} from '../../../store/actions/dialogs/actions';
-import {selectIsDialogVisible, selectTabs} from '../../../store/selectors/dashTypedSelectors';
+import {
+    selectCurrentTabId,
+    selectIsDialogVisible,
+    selectTabs,
+} from '../../../store/selectors/dashTypedSelectors';
 
 import TabItem, {DashTabChanged} from './TabItem';
 
@@ -53,7 +57,7 @@ class Tabs extends React.PureComponent<Props, State> {
     };
 
     render() {
-        const {visible} = this.props;
+        const {visible, selectedDashTabId} = this.props;
         const {tabs, expandedItemIndex} = this.state;
 
         return tabs ? (
@@ -65,7 +69,9 @@ class Tabs extends React.PureComponent<Props, State> {
                         virtualized={false}
                         sortable={true}
                         items={tabs}
-                        itemClassName={b('sortable-item')}
+                        itemClassName={b('sortable-item', {
+                            highlight: tabs.length > 1,
+                        })}
                         activeItemIndex={expandedItemIndex}
                         onSortEnd={({oldIndex, newIndex}) => this.moveItem(oldIndex, newIndex)}
                         renderItem={(tab, isActive) => (
@@ -73,6 +79,7 @@ class Tabs extends React.PureComponent<Props, State> {
                                 id={tab.id || tab.tempId || ''}
                                 tab={tab}
                                 dashTabs={tabs}
+                                selectedDashTabId={selectedDashTabId}
                                 title={tab.title}
                                 isActive={isActive}
                                 noRemoveOption={tabs.length === 1}
@@ -263,6 +270,7 @@ class Tabs extends React.PureComponent<Props, State> {
 const mapStateToProps = (state: DatalensGlobalState) => ({
     tabs: selectTabs(state),
     visible: selectIsDialogVisible(state, DIALOG_TYPE.TABS),
+    selectedDashTabId: selectCurrentTabId(state),
 });
 
 const mapDispatchToProps = {
