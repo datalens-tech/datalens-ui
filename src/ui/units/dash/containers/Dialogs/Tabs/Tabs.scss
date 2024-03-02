@@ -32,6 +32,6 @@
     }
 
     &__sortable-item_highlight:has(.dialog-tab-item__row_selected) {
-        background-color: var(--g-color-base-simple-hover);
+        background-color: var(--g-color-base-selection);
     }
 }
