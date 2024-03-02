@@ -61,7 +61,12 @@ class Tabs extends React.PureComponent<Props, State> {
         const {tabs, expandedItemIndex} = this.state;
 
         return tabs ? (
-            <Dialog open={visible} onClose={this.props.closeDialog} qa={DialogTabsQA.Dialog}>
+            <Dialog
+                open={visible}
+                onClose={this.props.closeDialog}
+                qa={DialogTabsQA.Dialog}
+                disableOutsideClick={true}
+            >
                 <Dialog.Header caption={i18n('dash.tabs-dialog.edit', 'label_tabs')} />
                 <Dialog.Body className={b()}>
                     <List
