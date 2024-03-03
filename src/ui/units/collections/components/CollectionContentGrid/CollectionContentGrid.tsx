@@ -17,8 +17,6 @@ const b = block('dl-collection-content-grid');
 export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
     ({
         contentItems,
-        filters,
-        setFilters,
         getWorkbookActions,
         getCollectionActions,
         onUpdateCheckbox,
@@ -65,9 +63,6 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                         className={b('content-item-link', {
                                             'selection-mode': isOpenSelectionMode,
                                         })}
-                                        onClick={() => {
-                                            setFilters({...filters, filterString: undefined});
-                                        }}
                                     >
                                         <div className={b('content-cell', {title: true})}>
                                             <div className={b('title-col')}>
@@ -136,9 +131,6 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                         className={b('content-item-link', {
                                             'selection-mode': isOpenSelectionMode,
                                         })}
-                                        onClick={() => {
-                                            setFilters({...filters, filterString: undefined});
-                                        }}
                                     >
                                         <div className={b('content-cell', {title: true})}>
                                             <div className={b('title-col')}>

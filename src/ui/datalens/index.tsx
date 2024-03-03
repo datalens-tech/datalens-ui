@@ -27,10 +27,11 @@ const ConnectionsPage = React.lazy(
 );
 // comment till we have main page
 // const MainPage = React.lazy(() => import('./pages/MainPage/MainPage'));
-const CollectionPage = React.lazy(() => import('./pages/CollectionPage/CollectionPage'));
+const CollectionsNavigtaionPage = React.lazy(
+    () => import('./pages/CollectionsNavigationPage/CollectionsNavigationPage'),
+);
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
-const WorkbookPage = React.lazy(() => import('./pages/WorkbookPage/WorkbookPage'));
 
 const DatalensPageView = () => {
     const isLanding = useSelector(selectIsLanding);
@@ -62,12 +63,9 @@ const DatalensPageView = () => {
                 />
 
                 <Route
-                    path={['/collections/:collectionId', '/collections']}
-                    component={CollectionPage}
+                    path={['/collections/:collectionId', '/collections', '/workbooks/:workbookId']}
+                    component={CollectionsNavigtaionPage}
                 />
-
-                <Route exact path="/workbooks/:workbookId" component={WorkbookPage} />
-
                 <Route path="/settings" component={ServiceSettings} />
 
                 <Route exact path={dashAndWizardQLRoutes} component={DashAndWizardQLPages} />

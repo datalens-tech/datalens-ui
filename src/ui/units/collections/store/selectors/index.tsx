@@ -23,7 +23,7 @@ const selectDeleteWorkbook = (state: DatalensGlobalState) => state.collections.d
 // Rights to create collections/workbooks in the root
 export const selectRootPermissionsIsLoading = createSelector(
     [selectGetRootCollectionPermissions],
-    (permissions) => permissions.isLoading,
+    (permissions) => permissions.data === null || permissions.isLoading,
 );
 export const selectRootPermissionsData = createSelector(
     [selectGetRootCollectionPermissions],
@@ -33,7 +33,7 @@ export const selectRootPermissionsData = createSelector(
 // Content loading status
 export const selectContentIsLoading = createSelector(
     [selectGetCollectionContent],
-    (content) => content.isLoading,
+    (content) => content.data === null || content.isLoading,
 );
 
 // Content loading error
@@ -50,8 +50,8 @@ export const selectNextPageTokens = createSelector([selectGetCollectionContent],
 
 // Loading status of collection information
 export const selectCollectionInfoIsLoading = createSelector(
-    [selectGetCollection, selectGetCollectionBreadcrumbs],
-    (collection, breadcumbs) => collection.isLoading || breadcumbs.isLoading,
+    [selectGetCollection],
+    (collection) => collection.data === null || collection.isLoading,
 );
 
 // Page loading error
@@ -66,10 +66,16 @@ export const selectCollection = createSelector(
     (getCollection) => getCollection.data,
 );
 
-// Bread crumbs
+// Breadcrumbs
 export const selectBreadcrumbs = createSelector(
     [selectGetCollectionBreadcrumbs],
     (getCollectionBreadcrumbs) => getCollectionBreadcrumbs.data,
+);
+
+export const selectBreadcrumbsIsLoading = createSelector(
+    [selectGetCollectionBreadcrumbs],
+    (getCollectionBreadcrumbs) =>
+        getCollectionBreadcrumbs.data === null || getCollectionBreadcrumbs.isLoading,
 );
 
 export const selectBreadcrumbsError = createSelector(

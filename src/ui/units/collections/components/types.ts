@@ -20,7 +20,6 @@ export type UpdateCheckbox = (
 export interface ContentProps {
     contentItems: (CollectionWithPermissions | WorkbookWithPermissions)[];
     filters: CollectionContentFilters;
-    setFilters: (filters: CollectionContentFilters) => void;
     onUpdateCheckbox: UpdateCheckbox;
     onSelectAll: (checked: boolean) => void;
     selectedMap: SelectedMap;
@@ -39,8 +38,11 @@ interface CollectionContentProps extends ContentProps {
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
 }
 
-type CollectionContentGridProps = Omit<CollectionContentProps, 'countSelected' | 'canMove'>;
+type CollectionContentGridProps = Omit<
+    CollectionContentProps,
+    'countSelected' | 'canMove' | 'filters'
+>;
 
-type CollectionContentTableProps = Omit<CollectionContentProps, 'isOpenSelectionMode'>;
+type CollectionContentTableProps = Omit<CollectionContentProps, 'isOpenSelectionMode' | 'filters'>;
 
 export {CollectionContentGridProps, CollectionContentTableProps};

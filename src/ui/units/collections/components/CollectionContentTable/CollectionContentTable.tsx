@@ -21,8 +21,6 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
     ({
         contentItems,
         countItemsWithPermissionMove,
-        filters,
-        setFilters,
         getWorkbookActions,
         getCollectionActions,
         onUpdateCheckbox,
@@ -76,9 +74,6 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                 return (
                                     <Link
                                         to={`/workbooks/${item.workbookId}`}
-                                        onClick={() => {
-                                            setFilters({...filters, filterString: undefined});
-                                        }}
                                         key={item.workbookId}
                                         className={b('content-row')}
                                     >
@@ -134,9 +129,6 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                     <Link
                                         to={`/collections/${item.collectionId}`}
                                         key={item.collectionId}
-                                        onClick={() => {
-                                            setFilters({...filters, filterString: undefined});
-                                        }}
                                         className={b('content-row')}
                                     >
                                         <div

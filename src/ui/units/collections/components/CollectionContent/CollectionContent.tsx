@@ -14,7 +14,7 @@ import {
 import {IamAccessDialog} from 'components/IamAccessDialog/IamAccessDialog';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {I18n} from 'i18n';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {Waypoint} from 'react-waypoint';
 import type {
@@ -34,8 +34,13 @@ import {ResourceType} from '../../../../registry/units/common/types/components/I
 import {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
-import {DeleteCollectionDialogContainer} from '../../containers/DeleteCollectionDialogContainer/DeleteCollectionDialogContainer';
-import {DeleteWorkbookDialogContainer} from '../../containers/DeleteWorkbookDialogContainer/DeleteWorkbookDialogContainer';
+import {DeleteCollectionDialog} from '../../components/DeleteCollectionDialog';
+import {DeleteWorkbookDialog} from '../../components/DeleteWorkbookDialog';
+import {
+    selectContentError,
+    selectContentIsLoading,
+    selectNextPageTokens,
+} from '../../store/selectors';
 import {GetCollectionContentArgs} from '../../types';
 import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
@@ -59,14 +64,8 @@ interface Props extends ContentProps {
     pageSize: number;
     collectionPageViewMode: CollectionPageViewMode;
     isDefaultFilters: boolean;
-    isContentLoading: boolean;
     isOpenSelectionMode: boolean;
-    contentLoadingError: Error | null;
     canCreateWorkbook: boolean;
-    nextPageTokens: {
-        collectionsNextPageToken?: string | null;
-        workbooksNextPageToken?: string | null;
-    };
     refreshPage: () => void;
     refreshContent: () => void;
     getCollectionContentRecursively: (
@@ -83,18 +82,14 @@ export const CollectionContent: React.FC<Props> = ({
     pageSize,
     filters,
     collectionPageViewMode,
-    setFilters,
     isDefaultFilters,
     canCreateWorkbook,
-    isContentLoading,
     isOpenSelectionMode,
     canMove,
-    contentLoadingError,
     contentItems,
     countItemsWithPermissionMove,
     selectedMap,
     countSelected,
-    nextPageTokens,
     getCollectionContentRecursively,
     onCreateWorkbookClick,
     onClearFiltersClick,
@@ -108,6 +103,10 @@ export const CollectionContent: React.FC<Props> = ({
     const history = useHistory();
 
     const dispatch: AppDispatch = useDispatch();
+
+    const isContentLoading = useSelector(selectContentIsLoading);
+    const contentLoadingError = useSelector(selectContentError);
+    const nextPageTokens = useSelector(selectNextPageTokens);
 
     const [dialogState, setDialogState] = React.useState(DialogState.None);
     const [dialogEntity, setDialogEntity] = React.useState<
@@ -409,8 +408,6 @@ export const CollectionContent: React.FC<Props> = ({
                 <CollectionContentGrid
                     contentItems={contentItems}
                     countItemsWithPermissionMove={countItemsWithPermissionMove}
-                    filters={filters}
-                    setFilters={setFilters}
                     getWorkbookActions={getWorkbookActions}
                     getCollectionActions={getCollectionActions}
                     onUpdateCheckbox={onUpdateCheckbox}
@@ -422,8 +419,6 @@ export const CollectionContent: React.FC<Props> = ({
                 <CollectionContentTable
                     contentItems={contentItems}
                     countItemsWithPermissionMove={countItemsWithPermissionMove}
-                    filters={filters}
-                    setFilters={setFilters}
                     getWorkbookActions={getWorkbookActions}
                     getCollectionActions={getCollectionActions}
                     onUpdateCheckbox={onUpdateCheckbox}
@@ -449,7 +444,7 @@ export const CollectionContent: React.FC<Props> = ({
                 <React.Fragment>
                     {'workbookId' in dialogEntity ? (
                         <React.Fragment>
-                            <DeleteWorkbookDialogContainer
+                            <DeleteWorkbookDialog
                                 open={dialogState === DialogState.DeleteWorkbook}
                                 workbookId={dialogEntity.workbookId}
                                 workbookTitle={dialogEntity.title}
@@ -470,7 +465,7 @@ export const CollectionContent: React.FC<Props> = ({
                         </React.Fragment>
                     ) : (
                         <React.Fragment>
-                            <DeleteCollectionDialogContainer
+                            <DeleteCollectionDialog
                                 open={dialogState === DialogState.DeleteCollection}
                                 collectionId={dialogEntity.collectionId}
                                 deleteInItems={true}
