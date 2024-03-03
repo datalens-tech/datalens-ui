@@ -1,0 +1,80 @@
+name: Statoscope diff analyze
+
+on:
+  pull_request:
+    branches-ignore:
+      - 'weblate-**'
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18
+      - name: Install
+        run: npm ci
+      - name: Cache results
+        uses: actions/cache@v2
+        id: cache-results
+        with:
+          path: |
+            node_modules
+          key: ${{ github.sha }}
+  statoscope:
+    needs:
+      - install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - name: Restore cache
+        uses: actions/cache@v2
+        id: restore-cache
+        with:
+          path: |
+            node_modules
+          key: ${{ github.sha }}
+      - name: Build
+        run: npm run build:analyze && cp ./dist/public/build/stats.json ./input.json
+      - name: Download reference stats
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: upload-main-stats.yml
+          workflow_conclusion: success
+          name: main-stats
+          path: ./
+        continue-on-error: true
+      - name: Validate
+        run: npm run statoscope:validate-diff
+      - name: Query stats
+        if: "github.event_name == 'pull_request'"
+        run: cat .github/workflows/statoscope-comment.jora | npx --no-install @statoscope/cli query --input input.json --input reference.json > result.json
+      - name: Upload UI report to S3
+        if: "github.event_name == 'pull_request'"
+        id: upload-to-s3
+        run: |
+          aws --endpoint-url=${AWS_ENDPOINT} \
+              s3 cp report/statoscope/index.html s3://${AWS_BUCKET}/${{ github.ref }}/; \
+              echo ::set-output name=DOWNLOAD_LINK::$(aws --endpoint-url=${AWS_ENDPOINT} s3 presign s3://${AWS_BUCKET}/${{ github.ref }}/index.html)
+        env:
+          AWS_BUCKET: ci-reports.statoscope.tech
+          AWS_ENDPOINT: https://storage.yandexcloud.net
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ru-central1
+      - name: Comment PR
+        if: "github.event_name == 'pull_request'"
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const createStatoscopeComment = require('./scripts/ci/createStatoscopeComment');
+            const downloadLink = "${{ steps.upload-to-s3.outputs.DOWNLOAD_LINK }}";
+            await createStatoscopeComment({github, context, core, downloadLink})
