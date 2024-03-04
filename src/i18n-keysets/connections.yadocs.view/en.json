@@ -9,6 +9,7 @@
   "label_403-not-authotized-description": "Log in to your Yandex account or change the file access type and try adding it again",
   "label_access-type": "Access type",
   "label_add-file": "Добавить файл",
+  "label_add-input-private-help": "Путь указывается относительно корневого каталога <code>/disk</code>. Подробнее о том, как узнать путь в <link>документации</link>.",
   "label_add-input-private-note": "Example: /path/to/document",
   "label_add-input-public-help": "Файлы, для которых установлен пароль или включен запрет на скачивание, не поддерживаются. Вместо них используйте приватные файлы, доступные после аутентификации.",
   "label_add-input-public-note": "Example: https://disk.yandex.ru/i/id",
@@ -24,6 +25,5 @@
   "label_public-path": "Ссылка на файл в <link>Яндекс Документах</link>",
   "label_radio-value-private": "Private",
   "label_radio-value-public": "Public",
-  "label_workspace-placeholder": "Чтобы создать подключение, добавьте файлы из Яндекс Документов. Поддерживается только формат XLSX.",
-  "md_label_add-input-private-help": "Путь указывается относительно корневого каталога `/disk`."
+  "label_workspace-placeholder": "Чтобы создать подключение, добавьте файлы из Яндекс Документов. Поддерживается только формат XLSX."
 }

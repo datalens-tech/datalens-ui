@@ -8,10 +8,10 @@ import {I18n} from 'i18n';
 import uniqId from 'lodash/uniqueId';
 import {ConnectorType} from 'shared';
 import {Interpolate} from 'ui/components/Interpolate';
-import {YfmWrapperContent} from 'ui/components/YfmWrapper/YfmWrapperContent';
 import {registry} from 'ui/registry';
 
 import DialogManager from '../../../../../../../components/DialogManager/DialogManager';
+import {DL} from '../../../../../../../constants';
 import {DataLensApiError} from '../../../../../../../typings';
 
 import './DialogAddDocument.scss';
@@ -74,6 +74,7 @@ const PrivateFileAlert = (props: {onLogin: (oauthToken: string) => void; authori
 
 const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
     const {authorized, caption, onApply, onClose, onError, onSuccess, onLogin} = props;
+    const docsEndpoint = DL.ENDPOINTS.docs;
     const mounted = React.useRef(false);
     const [value, setValue] = React.useState('');
     const [mode, setMode] = React.useState(FILE_MODE.PUBLIC);
@@ -83,7 +84,7 @@ const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
     const inputLabel = mode === 'private' ? i18n('label_private-path') : i18n('label_public-path');
     const inputHelp =
         mode === 'private'
-            ? i18n('md_label_add-input-private-help')
+            ? i18n('label_add-input-private-help')
             : i18n('label_add-input-public-help');
     const inputNote =
         mode === 'private'
@@ -160,21 +161,45 @@ const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
                             text={inputLabel}
                             matches={{
                                 link: (match) => (
-                                    <React.Fragment>
-                                        <Link
-                                            href="https://docs.yandex.ru/docs?type=xlsx"
-                                            target="_blank"
-                                        >
-                                            {match}
-                                        </Link>
-                                    </React.Fragment>
+                                    <Link
+                                        href="https://docs.yandex.ru/docs?type=xlsx"
+                                        target="_blank"
+                                    >
+                                        {match}
+                                    </Link>
                                 ),
                             }}
                         />
                         <HelpPopover
                             className={b('add-help-btn')}
                             content={
-                                <YfmWrapperContent content={inputHelp} setByInnerHtml={true} />
+                                <Interpolate
+                                    text={inputHelp}
+                                    matches={{
+                                        code: (match) => (
+                                            <code
+                                                style={{
+                                                    color: 'var(--g-color-text-misc)',
+                                                    backgroundColor:
+                                                        'var(--g-color-base-misc-light)',
+                                                    lineHeight: '16px',
+                                                    borderRadius: '4px',
+                                                    padding: '1px 4px',
+                                                }}
+                                            >
+                                                {match}
+                                            </code>
+                                        ),
+                                        link: (match) => (
+                                            <Link
+                                                href={`${docsEndpoint}/cloud/datalens/operations/connection/create-yadocs`}
+                                                target="_blank"
+                                            >
+                                                {match}
+                                            </Link>
+                                        ),
+                                    }}
+                                />
                             }
                         />
                     </label>
