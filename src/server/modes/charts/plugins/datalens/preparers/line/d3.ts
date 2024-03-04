@@ -49,6 +49,7 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
             data: graph.data.reduce((acc: LineSeriesData[], item: any, index: number) => {
                 const dataItem: LineSeriesData = {
                     y: item?.y || 0,
+                    custom: item.custom,
                 };
 
                 if (isDataLabelsEnabled) {
@@ -77,6 +78,7 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
                 },
             },
             dashStyle: graph.dashStyle,
+            custom: graph.custom,
         };
     });
 
