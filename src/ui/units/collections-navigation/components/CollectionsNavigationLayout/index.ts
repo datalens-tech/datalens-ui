@@ -1,2 +1,2 @@
 export * from './CollectionsNavigationLayout';
-export * from './CollectionsNavigationLayoutContext';
+export * from '../../contexts/LayoutContext';

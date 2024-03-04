@@ -1,8 +1,8 @@
 .dl-collection-content-grid {
     &__grid {
         display: flex;
-        flex-flow: wrap;
-        gap: 29px;
+        gap: 28px;
+        flex-wrap: wrap;
     }
 
     &__content-item {

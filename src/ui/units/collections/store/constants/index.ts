@@ -31,22 +31,7 @@ export const GET_COLLECTION_BREADCRUMBS_FAILED = Symbol(
 );
 
 export const RESET_COLLECTION_CONTENT = Symbol('collections/RESET_COLLECTION_CONTENT');
-
 export const RESET_COLLECTION_INFO = Symbol('collections/RESET_COLLECTION_INFO');
 
-// Deleting a collection
-export const DELETE_COLLECTION_LOADING = Symbol('collections/DELETE_COLLECTION_LOADING');
-export const DELETE_COLLECTION_SUCCESS = Symbol('collections/DELETE_COLLECTION_SUCCESS');
-export const DELETE_COLLECTION_FAILED = Symbol('collections/DELETE_COLLECTION_FAILED');
 export const DELETE_COLLECTION_IN_ITEMS = Symbol('collections/DELETE_COLLECTION_IN_ITEMS');
-
-// Adding a demo workbook
-export const ADD_DEMO_WORKBOOK_LOADING = Symbol('collections/ADD_DEMO_WORKBOOK_LOADING');
-export const ADD_DEMO_WORKBOOK_SUCCESS = Symbol('collections/ADD_DEMO_WORKBOOK_SUCCESS');
-export const ADD_DEMO_WORKBOOK_FAILED = Symbol('collections/ADD_DEMO_WORKBOOK_FAILED');
-
-// Deleting a workbook
-export const DELETE_WORKBOOK_LOADING = Symbol('collections/DELETE_WORKBOOK_LOADING');
-export const DELETE_WORKBOOK_SUCCESS = Symbol('collections/DELETE_WORKBOOK_SUCCESS');
-export const DELETE_WORKBOOK_FAILED = Symbol('collections/DELETE_WORKBOOK_FAILED');
 export const DELETE_WORKBOOK_IN_ITEMS = Symbol('collections/DELETE_WORKBOOK_IN_ITEMS');

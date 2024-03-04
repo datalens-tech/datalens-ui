@@ -6,28 +6,15 @@ import {showToast} from 'store/actions/toaster';
 
 import type {
     CollectionWithPermissions,
-    CopyWorkbookTemplateResponse,
-    DeleteCollectionResponse,
-    DeleteWorkbookResponse,
     GetCollectionBreadcrumbsResponse,
     GetCollectionContentResponse,
     GetRootCollectionPermissionsResponse,
 } from '../../../../../shared/schema';
 import {GetCollectionContentMode} from '../../../../../shared/schema/us/types/collections';
 import {OrderBasicField, OrderDirection} from '../../../../../shared/schema/us/types/sort';
-import {waitOperation} from '../../../../utils/waitOperation';
 import {
-    ADD_DEMO_WORKBOOK_FAILED,
-    ADD_DEMO_WORKBOOK_LOADING,
-    ADD_DEMO_WORKBOOK_SUCCESS,
-    DELETE_COLLECTION_FAILED,
     DELETE_COLLECTION_IN_ITEMS,
-    DELETE_COLLECTION_LOADING,
-    DELETE_COLLECTION_SUCCESS,
-    DELETE_WORKBOOK_FAILED,
     DELETE_WORKBOOK_IN_ITEMS,
-    DELETE_WORKBOOK_LOADING,
-    DELETE_WORKBOOK_SUCCESS,
     GET_COLLECTION_BREADCRUMBS_FAILED,
     GET_COLLECTION_BREADCRUMBS_LOADING,
     GET_COLLECTION_BREADCRUMBS_SUCCESS,
@@ -307,231 +294,35 @@ export const resetCollectionContent = () => {
     };
 };
 
-type DeleteCollectionLoadingAction = {
-    type: typeof DELETE_COLLECTION_LOADING;
-};
-type DeleteCollectionSuccessAction = {
-    type: typeof DELETE_COLLECTION_SUCCESS;
-    data: DeleteCollectionResponse;
-};
-type DeleteCollectionFailedAction = {
-    type: typeof DELETE_COLLECTION_FAILED;
-    error: Error | null;
-};
 type DeleteCollectionInItemsAction = {
     type: typeof DELETE_COLLECTION_IN_ITEMS;
     data: {
         collectionId: string;
     };
 };
-type DeleteCollectionAction =
-    | DeleteCollectionLoadingAction
-    | DeleteCollectionSuccessAction
-    | DeleteCollectionFailedAction
-    | DeleteCollectionInItemsAction;
 
-export const deleteCollection = ({
-    collectionId,
-    deleteInItems = false,
-}: {
-    collectionId: string;
-    deleteInItems?: boolean;
-}) => {
-    return (dispatch: CollectionsDispatch) => {
-        dispatch({
-            type: DELETE_COLLECTION_LOADING,
-        });
-        return getSdk()
-            .us.deleteCollection({
-                collectionId,
-            })
-            .then((data) => {
-                dispatch({
-                    type: DELETE_COLLECTION_SUCCESS,
-                    data,
-                });
-                if (deleteInItems) {
-                    dispatch({
-                        type: DELETE_COLLECTION_IN_ITEMS,
-                        data: {
-                            collectionId,
-                        },
-                    });
-                }
-                return data;
-            })
-            .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
-
-                if (!isCanceled) {
-                    logger.logError('collections/deleteCollection failed', error);
-                    dispatch(
-                        showToast({
-                            title: error.message,
-                            error,
-                        }),
-                    );
-                }
-
-                dispatch({
-                    type: DELETE_COLLECTION_FAILED,
-                    error: isCanceled ? null : error,
-                });
-
-                return null;
-            });
+export const deleteCollectionInItems = (collectionId: string) => {
+    return {
+        type: DELETE_COLLECTION_IN_ITEMS,
+        data: {
+            collectionId,
+        },
     };
 };
 
-type AddDemoWorkbookLoadingAction = {
-    type: typeof ADD_DEMO_WORKBOOK_LOADING;
-};
-type AddDemoWorkbookSuccessAction = {
-    type: typeof ADD_DEMO_WORKBOOK_SUCCESS;
-    data: CopyWorkbookTemplateResponse;
-};
-type AddDemoWorkbookFailedAction = {
-    type: typeof ADD_DEMO_WORKBOOK_FAILED;
-    error: Error | null;
-};
-type AddDemoWorkbookAction =
-    | AddDemoWorkbookLoadingAction
-    | AddDemoWorkbookSuccessAction
-    | AddDemoWorkbookFailedAction;
-
-export const addDemoWorkbook = ({
-    workbookId,
-    collectionId,
-    title,
-}: {
-    workbookId: string;
-    collectionId: string | null;
-    title: string;
-}) => {
-    return (dispatch: CollectionsDispatch) => {
-        dispatch({
-            type: ADD_DEMO_WORKBOOK_LOADING,
-        });
-        return getSdk()
-            .us.copyWorkbookTemplate({
-                workbookId,
-                title,
-                collectionId,
-            })
-            .then(async (result) => {
-                const {operation} = result;
-                if (operation && operation.id) {
-                    await waitOperation({
-                        operation,
-                        loader: ({concurrentId}) =>
-                            getSdk().us.getOperation({operationId: operation.id}, {concurrentId}),
-                    }).promise;
-                }
-                return result;
-            })
-            .then((data) => {
-                dispatch({
-                    type: ADD_DEMO_WORKBOOK_SUCCESS,
-                    data,
-                });
-                return data;
-            })
-            .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
-
-                if (!isCanceled) {
-                    logger.logError('collections/addDemoWorkbook failed', error);
-                    dispatch(
-                        showToast({
-                            title: error.message,
-                            error,
-                        }),
-                    );
-                }
-
-                dispatch({
-                    type: ADD_DEMO_WORKBOOK_FAILED,
-                    error: isCanceled ? null : error,
-                });
-
-                return null;
-            });
-    };
-};
-
-type DeleteWorkbookLoadingAction = {
-    type: typeof DELETE_WORKBOOK_LOADING;
-};
-type DeleteWorkbookSuccessAction = {
-    type: typeof DELETE_WORKBOOK_SUCCESS;
-    data: DeleteWorkbookResponse;
-};
-type DeleteWorkbookFailedAction = {
-    type: typeof DELETE_WORKBOOK_FAILED;
-    error: Error | null;
-};
 type DeleteWorkbookInItemsAction = {
     type: typeof DELETE_WORKBOOK_IN_ITEMS;
     data: {
         workbookId: string;
     };
 };
-type DeleteWorkbookAction =
-    | DeleteWorkbookLoadingAction
-    | DeleteWorkbookSuccessAction
-    | DeleteWorkbookFailedAction
-    | DeleteWorkbookInItemsAction;
 
-export const deleteWorkbook = ({
-    workbookId,
-    deleteInItems = false,
-}: {
-    workbookId: string;
-    deleteInItems?: boolean;
-}) => {
-    return (dispatch: CollectionsDispatch) => {
-        dispatch({
-            type: DELETE_WORKBOOK_LOADING,
-        });
-        return getSdk()
-            .us.deleteWorkbook({
-                workbookId,
-            })
-            .then((data) => {
-                dispatch({
-                    type: DELETE_WORKBOOK_SUCCESS,
-                    data,
-                });
-                if (deleteInItems) {
-                    dispatch({
-                        type: DELETE_WORKBOOK_IN_ITEMS,
-                        data: {
-                            workbookId,
-                        },
-                    });
-                }
-                return data;
-            })
-            .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
-
-                if (!isCanceled) {
-                    logger.logError('collections/deleteWorkbook failed', error);
-                    dispatch(
-                        showToast({
-                            title: error.message,
-                            error,
-                        }),
-                    );
-                }
-
-                dispatch({
-                    type: DELETE_WORKBOOK_FAILED,
-                    error: isCanceled ? null : error,
-                });
-
-                return null;
-            });
+export const deleteWorkbookInItems = (workbookId: string) => {
+    return {
+        type: DELETE_WORKBOOK_IN_ITEMS,
+        data: {
+            workbookId,
+        },
     };
 };
 
@@ -542,8 +333,7 @@ export type CollectionsAction =
     | GetCollectionBreadcrumbsAction
     | ResetCollectionInfoAction
     | ResetCollectionContentAction
-    | DeleteCollectionAction
-    | AddDemoWorkbookAction
-    | DeleteWorkbookAction;
+    | DeleteCollectionInItemsAction
+    | DeleteWorkbookInItemsAction;
 
 export type CollectionsDispatch = ThunkDispatch<DatalensGlobalState, void, CollectionsAction>;

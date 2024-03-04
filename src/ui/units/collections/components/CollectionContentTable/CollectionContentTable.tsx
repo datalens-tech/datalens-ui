@@ -8,6 +8,8 @@ import {Link} from 'react-router-dom';
 import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
+import {LayoutContext} from '../../../collections-navigation/contexts/LayoutContext';
+import {AnimateBlock} from '../AnimateBlock';
 import {CollectionContentTableProps} from '../types';
 import {onClickStopPropagation} from '../utils';
 
@@ -29,6 +31,8 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
         countSelected,
         canMove,
     }) => {
+        const {setTitle, setDescription} = React.useContext(LayoutContext);
+
         const checkboxPropsSelected = React.useMemo(() => {
             if (canMove) {
                 if (countSelected > 0) {
@@ -47,140 +51,164 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
 
         return (
             <div className={b()}>
-                <div className={b('table')}>
-                    <div className={b('header')}>
-                        <div className={b('header-row')}>
-                            <div className={b('header-cell')}>
-                                <Checkbox
-                                    size="l"
-                                    onUpdate={() => {
-                                        onSelectAll(countSelected !== countItemsWithPermissionMove);
-                                    }}
-                                    {...checkboxPropsSelected}
-                                />
+                <AnimateBlock>
+                    <div className={b('table')}>
+                        <div className={b('header')}>
+                            <div className={b('header-row')}>
+                                <div className={b('header-cell')}>
+                                    <Checkbox
+                                        size="l"
+                                        onUpdate={() => {
+                                            onSelectAll(
+                                                countSelected !== countItemsWithPermissionMove,
+                                            );
+                                        }}
+                                        {...checkboxPropsSelected}
+                                    />
+                                </div>
+                                <div className={b('header-cell')}>{i18n('label_title')}</div>
+                                <div className={b('header-cell')}>
+                                    {i18n('label_last-modified')}
+                                </div>
+                                <div className={b('header-cell')} />
                             </div>
-                            <div className={b('header-cell')}>{i18n('label_title')}</div>
-                            <div className={b('header-cell')}>{i18n('label_last-modified')}</div>
-                            <div className={b('header-cell')} />
                         </div>
-                    </div>
-                    <div className={b('content')}>
-                        {contentItems.map((item) => {
-                            const canMoveItem = item.permissions.move;
 
-                            if ('workbookId' in item) {
-                                const actions = getWorkbookActions(item);
+                        <div className={b('content')}>
+                            {contentItems.map((item) => {
+                                const canMoveItem = item.permissions.move;
 
-                                return (
-                                    <Link
-                                        to={`/workbooks/${item.workbookId}`}
-                                        key={item.workbookId}
-                                        className={b('content-row')}
-                                    >
-                                        <div
-                                            className={b('content-cell', {disabled: !canMoveItem})}
-                                            onClick={(e) => e.stopPropagation()}
+                                if ('workbookId' in item) {
+                                    const actions = getWorkbookActions(item);
+
+                                    return (
+                                        <Link
+                                            to={`/workbooks/${item.workbookId}`}
+                                            key={item.workbookId}
+                                            className={b('content-row')}
                                         >
-                                            <Checkbox
-                                                size="l"
-                                                onUpdate={(checked) => {
-                                                    onUpdateCheckbox(
-                                                        checked,
-                                                        'workbook',
-                                                        item.workbookId,
-                                                    );
-                                                }}
-                                                disabled={!canMoveItem}
-                                                checked={Boolean(
-                                                    selectedMap[item.workbookId]?.checked &&
-                                                        canMoveItem,
-                                                )}
-                                            />
-                                        </div>
+                                            <div
+                                                className={b('content-cell', {
+                                                    disabled: !canMoveItem,
+                                                })}
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <Checkbox
+                                                    size="l"
+                                                    onUpdate={(checked) => {
+                                                        onUpdateCheckbox(
+                                                            checked,
+                                                            'workbook',
+                                                            item.workbookId,
+                                                        );
+                                                    }}
+                                                    disabled={!canMoveItem}
+                                                    checked={Boolean(
+                                                        selectedMap[item.workbookId]?.checked &&
+                                                            canMoveItem,
+                                                    )}
+                                                />
+                                            </div>
 
-                                        <div className={b('content-cell', {title: true})}>
-                                            <div className={b('title-col')}>
-                                                <div className={b('title-col-icon')}>
-                                                    <WorkbookIcon title={item.title} />
-                                                </div>
-                                                <div className={b('title-col-text')}>
-                                                    {item.title}
+                                            <div className={b('content-cell', {title: true})}>
+                                                <div className={b('title-col')}>
+                                                    <div className={b('title-col-icon')}>
+                                                        <WorkbookIcon title={item.title} />
+                                                    </div>
+                                                    <div className={b('title-col-text')}>
+                                                        {item.title}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className={b('content-cell')}>
-                                            {dateTime({
-                                                input: item.updatedAt,
-                                            }).fromNow()}
-                                        </div>
-                                        <div className={b('content-cell', {control: true})}>
-                                            {actions.length > 0 && (
-                                                <div onClick={onClickStopPropagation}>
-                                                    <DropdownMenu size="s" items={actions} />
-                                                </div>
-                                            )}
-                                        </div>
-                                    </Link>
-                                );
-                            } else {
-                                const actions = getCollectionActions(item);
-
-                                return (
-                                    <Link
-                                        to={`/collections/${item.collectionId}`}
-                                        key={item.collectionId}
-                                        className={b('content-row')}
-                                    >
-                                        <div
-                                            className={b('content-cell', {disabled: !canMoveItem})}
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <Checkbox
-                                                size="l"
-                                                onUpdate={(checked) => {
-                                                    onUpdateCheckbox(
-                                                        checked,
-                                                        'collection',
-                                                        item.collectionId,
-                                                    );
-                                                }}
-                                                disabled={!canMoveItem}
-                                                checked={Boolean(
-                                                    selectedMap[item.collectionId]?.checked &&
-                                                        canMoveItem,
-                                                )}
-                                            />
-                                        </div>
-                                        <div className={b('content-cell', {title: true})}>
-                                            <div className={b('title-col')}>
-                                                <div className={b('title-col-icon')}>
-                                                    <CollectionIcon />
-                                                </div>
-                                                <div className={b('title-col-text')}>
-                                                    {item.title}
-                                                </div>
+                                            <div className={b('content-cell')}>
+                                                {dateTime({
+                                                    input: item.updatedAt,
+                                                }).fromNow()}
                                             </div>
-                                        </div>
-                                        <div className={b('content-cell')}>
-                                            {dateTime({
-                                                input: item.updatedAt,
-                                            }).fromNow()}
-                                        </div>
-                                        <div className={b('content-cell', {control: true})}>
-                                            <div onClick={onClickStopPropagation}>
-                                                {actions.length > 0 ? (
-                                                    <div>
+                                            <div className={b('content-cell', {control: true})}>
+                                                {actions.length > 0 && (
+                                                    <div onClick={onClickStopPropagation}>
                                                         <DropdownMenu size="s" items={actions} />
                                                     </div>
-                                                ) : null}
+                                                )}
                                             </div>
-                                        </div>
-                                    </Link>
-                                );
-                            }
-                        })}
+                                        </Link>
+                                    );
+                                } else {
+                                    const actions = getCollectionActions(item);
+
+                                    return (
+                                        <Link
+                                            to={`/collections/${item.collectionId}`}
+                                            key={item.collectionId}
+                                            className={b('content-row')}
+                                            onClick={() => {
+                                                setTitle({
+                                                    isLoading: false,
+                                                    content: item.title,
+                                                });
+                                                setDescription({
+                                                    isLoading: false,
+                                                    content: item.description,
+                                                });
+                                            }}
+                                        >
+                                            <div
+                                                className={b('content-cell', {
+                                                    disabled: !canMoveItem,
+                                                })}
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <Checkbox
+                                                    size="l"
+                                                    onUpdate={(checked) => {
+                                                        onUpdateCheckbox(
+                                                            checked,
+                                                            'collection',
+                                                            item.collectionId,
+                                                        );
+                                                    }}
+                                                    disabled={!canMoveItem}
+                                                    checked={Boolean(
+                                                        selectedMap[item.collectionId]?.checked &&
+                                                            canMoveItem,
+                                                    )}
+                                                />
+                                            </div>
+                                            <div className={b('content-cell', {title: true})}>
+                                                <div className={b('title-col')}>
+                                                    <div className={b('title-col-icon')}>
+                                                        <CollectionIcon />
+                                                    </div>
+                                                    <div className={b('title-col-text')}>
+                                                        {item.title}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className={b('content-cell')}>
+                                                {dateTime({
+                                                    input: item.updatedAt,
+                                                }).fromNow()}
+                                            </div>
+                                            <div className={b('content-cell', {control: true})}>
+                                                <div onClick={onClickStopPropagation}>
+                                                    {actions.length > 0 ? (
+                                                        <div>
+                                                            <DropdownMenu
+                                                                size="s"
+                                                                items={actions}
+                                                            />
+                                                        </div>
+                                                    ) : null}
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    );
+                                }
+                            })}
+                        </div>
                     </div>
-                </div>
+                </AnimateBlock>
             </div>
         );
     },

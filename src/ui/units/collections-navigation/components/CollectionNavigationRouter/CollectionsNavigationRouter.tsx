@@ -4,38 +4,36 @@ import {Route, Switch} from 'react-router-dom';
 
 import {CollectionPage} from '../../../collections/components/CollectionPage/CollectionPage';
 import {WorkbookPage} from '../../../workbooks/components/WorkbookPage/WorkbookPage';
-import {
-    CollectionsNavigationLayout,
-    CollectionsNavigationLayoutContext,
-} from '../CollectionsNavigationLayout';
+import {LayoutBlock, LayoutContext} from '../../contexts/LayoutContext';
+import {CollectionsNavigationLayout} from '../CollectionsNavigationLayout';
 
 export const CollectionsNavigationRouter = () => {
-    const [actionsPanelLeftBlock, setActionsPanelLeftBlock] = React.useState({
+    const [actionsPanelLeftBlock, setActionsPanelLeftBlock] = React.useState<LayoutBlock>({
         isLoading: true,
     });
 
-    const [actionsPanelRightBlock, setActionsPanelRightBlock] = React.useState({
+    const [actionsPanelRightBlock, setActionsPanelRightBlock] = React.useState<LayoutBlock>({
         isLoading: true,
     });
 
-    const [title, setTitle] = React.useState({
+    const [title, setTitle] = React.useState<LayoutBlock>({
         isLoading: true,
     });
 
-    const [titleActionsBlock, setTitleActionsBlock] = React.useState({
+    const [titleActionsBlock, setTitleActionsBlock] = React.useState<LayoutBlock>({
         isLoading: true,
     });
 
-    const [titleRightBlock, setTitleRightBlock] = React.useState({
+    const [titleRightBlock, setTitleRightBlock] = React.useState<LayoutBlock>({
         isLoading: true,
     });
 
-    const [description, setDescription] = React.useState({
+    const [description, setDescription] = React.useState<LayoutBlock>({
         isLoading: true,
     });
 
     return (
-        <CollectionsNavigationLayoutContext.Provider
+        <LayoutContext.Provider
             value={{
                 actionsPanelLeftBlock,
                 setActionsPanelLeftBlock,
@@ -71,6 +69,6 @@ export const CollectionsNavigationRouter = () => {
                     <Route exact path="/workbooks/:workbookId" component={WorkbookPage} />
                 </Switch>
             </CollectionsNavigationLayout>
-        </CollectionsNavigationLayoutContext.Provider>
+        </LayoutContext.Provider>
     );
 };

@@ -6,12 +6,14 @@ import {Button, DropdownMenuItem} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {
     DIALOG_COPY_WORKBOOK,
+    DIALOG_DELETE_COLLECTION,
+    DIALOG_DELETE_WORKBOOK,
     DIALOG_EDIT_COLLECTION,
     DIALOG_EDIT_WORKBOOK,
     DIALOG_MOVE_COLLECTION,
     DIALOG_MOVE_WORKBOOK,
 } from 'components/CollectionsStructure';
-import {IamAccessDialog} from 'components/IamAccessDialog/IamAccessDialog';
+import {DIALOG_IAM_ACCESS} from 'components/IamAccessDialog';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -34,8 +36,7 @@ import {ResourceType} from '../../../../registry/units/common/types/components/I
 import {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
-import {DeleteCollectionDialog} from '../../components/DeleteCollectionDialog';
-import {DeleteWorkbookDialog} from '../../components/DeleteWorkbookDialog';
+import {deleteCollectionInItems, deleteWorkbookInItems} from '../../store/actions';
 import {
     selectContentError,
     selectContentIsLoading,
@@ -47,14 +48,6 @@ import {CollectionContentTable} from '../CollectionContentTable/CollectionConten
 import {ContentProps} from '../types';
 
 import './CollectionContent.scss';
-
-export enum DialogState {
-    None = 'none',
-    EditCollectionAccess = 'editCollectionAccess',
-    EditWorkbookAccess = 'editWorkbookAccess',
-    DeleteCollection = 'deleteCollection',
-    DeleteWorkbook = 'deleteWorkbook',
-}
 
 const b = block('dl-collection-content');
 const i18n = I18n.keyset('collections');
@@ -107,16 +100,6 @@ export const CollectionContent: React.FC<Props> = ({
     const isContentLoading = useSelector(selectContentIsLoading);
     const contentLoadingError = useSelector(selectContentError);
     const nextPageTokens = useSelector(selectNextPageTokens);
-
-    const [dialogState, setDialogState] = React.useState(DialogState.None);
-    const [dialogEntity, setDialogEntity] = React.useState<
-        CollectionWithPermissions | WorkbookWithPermissions | null
-    >(null);
-
-    const handleCloseDialog = React.useCallback(() => {
-        setDialogState(DialogState.None);
-        setDialogEntity(null);
-    }, []);
 
     const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
@@ -223,8 +206,6 @@ export const CollectionContent: React.FC<Props> = ({
             actions.push({
                 text: <DropdownAction icon={PencilToLine} text={i18n('action_edit')} />,
                 action: () => {
-                    setDialogEntity(item);
-
                     dispatch(
                         openDialog({
                             id: DIALOG_EDIT_COLLECTION,
@@ -273,8 +254,22 @@ export const CollectionContent: React.FC<Props> = ({
             actions.push({
                 text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
                 action: () => {
-                    setDialogState(DialogState.EditCollectionAccess);
-                    setDialogEntity(item);
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_IAM_ACCESS,
+                            props: {
+                                open: true,
+                                resourceId: item.collectionId,
+                                resourceType: ResourceType.Collection,
+                                resourceTitle: item.title,
+                                parentId: item.parentId,
+                                canUpdate: item.permissions.updateAccessBindings,
+                                onClose: () => {
+                                    dispatch(closeDialog());
+                                },
+                            },
+                        }),
+                    );
                 },
             });
         }
@@ -284,8 +279,22 @@ export const CollectionContent: React.FC<Props> = ({
             otherActions.push({
                 text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
                 action: () => {
-                    setDialogState(DialogState.DeleteCollection);
-                    setDialogEntity(item);
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_DELETE_COLLECTION,
+                            props: {
+                                open: true,
+                                collectionId: item.collectionId,
+                                collectionTitle: item.title,
+                                onSuccessApply: (id) => {
+                                    dispatch(deleteCollectionInItems(id));
+                                },
+                                onClose: () => {
+                                    dispatch(closeDialog());
+                                },
+                            },
+                        }),
+                    );
                 },
                 theme: 'danger',
             });
@@ -325,8 +334,6 @@ export const CollectionContent: React.FC<Props> = ({
                             }),
                         );
                     }
-
-                    setDialogEntity(item);
                 },
             });
         }
@@ -381,8 +388,22 @@ export const CollectionContent: React.FC<Props> = ({
             actions.push({
                 text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
                 action: () => {
-                    setDialogState(DialogState.EditWorkbookAccess);
-                    setDialogEntity(item);
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_IAM_ACCESS,
+                            props: {
+                                open: true,
+                                resourceId: item.workbookId,
+                                resourceType: ResourceType.Workbook,
+                                resourceTitle: item.title,
+                                parentId: item.collectionId,
+                                canUpdate: item.permissions.updateAccessBindings,
+                                onClose: () => {
+                                    dispatch(closeDialog());
+                                },
+                            },
+                        }),
+                    );
                 },
             });
         }
@@ -391,8 +412,22 @@ export const CollectionContent: React.FC<Props> = ({
             otherActions.push({
                 text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
                 action: () => {
-                    setDialogState(DialogState.DeleteWorkbook);
-                    setDialogEntity(item);
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_DELETE_WORKBOOK,
+                            props: {
+                                open: true,
+                                workbookId: item.workbookId,
+                                workbookTitle: item.title,
+                                onSuccessApply: (id) => {
+                                    dispatch(deleteWorkbookInItems(id));
+                                },
+                                onClose: () => {
+                                    dispatch(closeDialog());
+                                },
+                            },
+                        }),
+                    );
                 },
                 theme: 'danger',
             });
@@ -403,7 +438,7 @@ export const CollectionContent: React.FC<Props> = ({
     };
 
     return (
-        <React.Fragment>
+        <div className={b()}>
             {collectionPageViewMode === CollectionPageViewMode.Grid ? (
                 <CollectionContentGrid
                     contentItems={contentItems}
@@ -440,52 +475,6 @@ export const CollectionContent: React.FC<Props> = ({
 
             {isContentLoading && <SmartLoader className={b('loader')} size="m" showAfter={0} />}
             {!isContentLoading && !waypointDisabled && <Waypoint onEnter={onWaypointEnter} />}
-            {dialogEntity && (
-                <React.Fragment>
-                    {'workbookId' in dialogEntity ? (
-                        <React.Fragment>
-                            <DeleteWorkbookDialog
-                                open={dialogState === DialogState.DeleteWorkbook}
-                                workbookId={dialogEntity.workbookId}
-                                workbookTitle={dialogEntity.title}
-                                deleteInItems={true}
-                                onClose={handleCloseDialog}
-                            />
-                            {collectionsAccessEnabled && (
-                                <IamAccessDialog
-                                    open={dialogState === DialogState.EditWorkbookAccess}
-                                    resourceId={dialogEntity.workbookId}
-                                    resourceType={ResourceType.Workbook}
-                                    resourceTitle={dialogEntity.title}
-                                    parentId={dialogEntity.collectionId}
-                                    canUpdate={dialogEntity.permissions.updateAccessBindings}
-                                    onClose={handleCloseDialog}
-                                />
-                            )}
-                        </React.Fragment>
-                    ) : (
-                        <React.Fragment>
-                            <DeleteCollectionDialog
-                                open={dialogState === DialogState.DeleteCollection}
-                                collectionId={dialogEntity.collectionId}
-                                deleteInItems={true}
-                                onClose={handleCloseDialog}
-                            />
-                            {collectionsAccessEnabled && (
-                                <IamAccessDialog
-                                    open={dialogState === DialogState.EditCollectionAccess}
-                                    resourceId={dialogEntity.collectionId}
-                                    resourceType={ResourceType.Collection}
-                                    resourceTitle={dialogEntity.title}
-                                    parentId={dialogEntity.parentId}
-                                    canUpdate={dialogEntity.permissions.updateAccessBindings}
-                                    onClose={handleCloseDialog}
-                                />
-                            )}
-                        </React.Fragment>
-                    )}
-                </React.Fragment>
-            )}
-        </React.Fragment>
+        </div>
     );
 };

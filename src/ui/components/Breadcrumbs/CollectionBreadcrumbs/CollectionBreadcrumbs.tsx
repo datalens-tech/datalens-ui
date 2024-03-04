@@ -9,7 +9,10 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Link, useHistory} from 'react-router-dom';
 
-import type {GetCollectionBreadcrumbsResponse} from '../../../../shared/schema';
+import type {
+    GetCollectionBreadcrumb,
+    GetCollectionBreadcrumbsResponse,
+} from '../../../../shared/schema';
 
 import './CollectionBreadcrumbs.scss';
 
@@ -18,6 +21,7 @@ const i18n = I18n.keyset('component.collection-breadcrumbs');
 const b = block('dl-collection-breadcrumbs');
 
 type BreadcrumbsItem = {
+    id: string | null;
     text: string;
     action: (event: React.MouseEvent<HTMLElement, MouseEvent> | KeyboardEvent) => void;
     path: string;
@@ -37,16 +41,18 @@ export type CollectionBreadcrumbsProps = {
         collectionId: string;
         title: string;
     } | null;
+    onItemClick?: (item: GetCollectionBreadcrumb) => void;
     onCurrentItemClick?: () => void;
 };
 
 export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
-    ({className, collectionBreadcrumbs, workbook, collection, onCurrentItemClick}) => {
+    ({className, collectionBreadcrumbs, workbook, collection, onItemClick, onCurrentItemClick}) => {
         const history = useHistory();
 
         const items = React.useMemo<BreadcrumbsItem[]>(() => {
             const result: BreadcrumbsItem[] = [
                 {
+                    id: null,
                     text: i18n('label_root-title'),
                     action: () => {
                         history.push(collectionsPath);
@@ -58,6 +64,7 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
             if (collectionBreadcrumbs.length > 0) {
                 collectionBreadcrumbs.forEach((item) => {
                     result.push({
+                        id: item.collectionId,
                         text: item.title,
                         action: () => {
                             history.push(`${collectionsPath}/${item.collectionId}`);
@@ -69,6 +76,7 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
 
             if (workbook) {
                 result.push({
+                    id: workbook.workbookId,
                     text: workbook.title,
                     action: () => {
                         history.push(`${workbooksPath}/${workbook.workbookId}`);
@@ -79,6 +87,7 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
 
             if (collection) {
                 result.push({
+                    id: collection.collectionId,
                     text: collection.title,
                     action: () => {
                         history.push(`${collectionsPath}/${collection.collectionId}`);
@@ -106,6 +115,14 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
 
                                     if (isCurrent && onCurrentItemClick) {
                                         onCurrentItemClick();
+                                    } else if (onItemClick) {
+                                        const bredcrumbItem = collectionBreadcrumbs.find(
+                                            (collectionBreadcrumb) =>
+                                                collectionBreadcrumb.collectionId === item.id,
+                                        );
+                                        if (bredcrumbItem) {
+                                            onItemClick(bredcrumbItem);
+                                        }
                                     }
                                 }}
                             >

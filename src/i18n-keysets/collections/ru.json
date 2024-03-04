@@ -1,6 +1,5 @@
 {
   "action_access": "Доступ",
-  "action_add": "Добавить",
   "action_add-demo-workbook": "Добавить пример воркбука",
   "action_add-learning-materials-workbook": "Добавить учебные материалы",
   "action_cancel": "Отменить",
@@ -17,15 +16,11 @@
   "action_select-all": "Выбрать все",
   "label_add-demo-workbook": "Добавить пример воркбука",
   "label_add-learning-materials-workbook": "Добавить учебные материалы",
-  "label_delete-collection": "Удаление коллекции",
-  "label_delete-workbook": "Удаление воркбука",
   "label_empty-list": "Нет коллекций и воркбуков",
   "label_last-modified": "Последнее изменение",
   "label_not-found": "Ничего не найдено",
   "label_root-title": "Коллекции и воркбуки",
   "label_title": "Название",
   "section_create-first": "Начните выстраивать иерархию ресурсов, например, с воркбука",
-  "section_delete-collection": "Вы действительно хотите удалить коллекцию?",
-  "section_delete-workbook": "Вы действительно хотите удалить {{workbook}}?",
   "section_incorrect-filters": "Попробуйте указать другие значения в фильтрах"
 }

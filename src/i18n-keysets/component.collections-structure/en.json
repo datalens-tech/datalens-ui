@@ -1,9 +1,11 @@
 {
+  "action_add": "Add",
   "action_cancel": "Cancel",
   "action_copy": "Copy",
   "action_create": "Create",
   "action_create-collection": "Create collection",
   "action_create-workbook": "Create workbook",
+  "action_delete": "Delete",
   "action_deploy": "Deploy",
   "action_edit-collection": "Edit collection",
   "action_edit-workbook": "Edit workbook",
@@ -11,11 +13,15 @@
   "action_save": "Save",
   "label_copy": "Copy to",
   "label_copy-denied-title": "Insufficient permissions to copy",
+  "label_delete-collection": "Delete collection",
+  "label_delete-workbook": "Delete workbook",
   "label_deploy": "Deploy to",
   "label_deploy-denied-title": "Insufficient permissions to deploy",
   "label_description": "Description",
   "label_empty-collection": "The collection is empty or nothing matching the filter conditions was found",
   "label_move": "Move to",
   "label_move-denied-title": "Insufficient permissions to move object",
-  "label_title": "Name"
+  "label_title": "Name",
+  "section_delete-collection": "Are you sure you want to delete this collection \"{{name}}\"?",
+  "section_delete-workbook": "Are you sure you want to delete workbook \"{{name}}\"?"
 }

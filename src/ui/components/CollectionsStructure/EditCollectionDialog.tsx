@@ -9,7 +9,7 @@ import DialogManager from '../../components/DialogManager/DialogManager';
 import {updateCollection} from '../../store/actions/collectionsStructure';
 import {selectUpdateCollectionIsLoading} from '../../store/selectors/collectionsStructure';
 
-import {CollectionDialog} from './CollectionDialog/CollectionDialog';
+import {CollectionDialog} from './CollectionDialog';
 
 const i18n = I18n.keyset('component.collections-structure');
 

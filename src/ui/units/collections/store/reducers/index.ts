@@ -1,8 +1,5 @@
 import type {
     CollectionWithPermissions,
-    CopyWorkbookTemplateResponse,
-    DeleteCollectionResponse,
-    DeleteWorkbookResponse,
     GetCollectionBreadcrumbsResponse,
     GetCollectionContentResponse,
     GetRootCollectionPermissionsResponse,
@@ -10,17 +7,8 @@ import type {
 } from '../../../../../shared/schema';
 import {CollectionsAction} from '../actions';
 import {
-    ADD_DEMO_WORKBOOK_FAILED,
-    ADD_DEMO_WORKBOOK_LOADING,
-    ADD_DEMO_WORKBOOK_SUCCESS,
-    DELETE_COLLECTION_FAILED,
     DELETE_COLLECTION_IN_ITEMS,
-    DELETE_COLLECTION_LOADING,
-    DELETE_COLLECTION_SUCCESS,
-    DELETE_WORKBOOK_FAILED,
     DELETE_WORKBOOK_IN_ITEMS,
-    DELETE_WORKBOOK_LOADING,
-    DELETE_WORKBOOK_SUCCESS,
     GET_COLLECTION_BREADCRUMBS_FAILED,
     GET_COLLECTION_BREADCRUMBS_LOADING,
     GET_COLLECTION_BREADCRUMBS_SUCCESS,
@@ -59,21 +47,6 @@ export type CollectionsState = {
         data: GetCollectionBreadcrumbsResponse | null;
         error: Error | null;
     };
-    deleteCollection: {
-        isLoading: boolean;
-        data: DeleteCollectionResponse | null;
-        error: Error | null;
-    };
-    addDemoWorkbook: {
-        isLoading: boolean;
-        data: CopyWorkbookTemplateResponse | null;
-        error: Error | null;
-    };
-    deleteWorkbook: {
-        isLoading: boolean;
-        data: DeleteWorkbookResponse | null;
-        error: Error | null;
-    };
 };
 
 const initialState: CollectionsState = {
@@ -94,21 +67,6 @@ const initialState: CollectionsState = {
         error: null,
     },
     getCollectionBreadcrumbs: {
-        isLoading: false,
-        data: null,
-        error: null,
-    },
-    deleteCollection: {
-        isLoading: false,
-        data: null,
-        error: null,
-    },
-    addDemoWorkbook: {
-        isLoading: false,
-        data: null,
-        error: null,
-    },
-    deleteWorkbook: {
         isLoading: false,
         data: null,
         error: null,
@@ -282,37 +240,6 @@ export const collectionsReducer = (
             };
         }
 
-        // Deleting a collection
-        case DELETE_COLLECTION_LOADING: {
-            return {
-                ...state,
-                deleteCollection: {
-                    isLoading: true,
-                    data: null,
-                    error: null,
-                },
-            };
-        }
-        case DELETE_COLLECTION_SUCCESS: {
-            return {
-                ...state,
-                deleteCollection: {
-                    isLoading: false,
-                    data: action.data,
-                    error: null,
-                },
-            };
-        }
-        case DELETE_COLLECTION_FAILED: {
-            return {
-                ...state,
-                deleteCollection: {
-                    ...state.deleteCollection,
-                    isLoading: false,
-                    error: action.error,
-                },
-            };
-        }
         case DELETE_COLLECTION_IN_ITEMS: {
             return {
                 ...state,
@@ -325,69 +252,6 @@ export const collectionsReducer = (
             };
         }
 
-        // Adding a demo workbook
-        case ADD_DEMO_WORKBOOK_LOADING: {
-            return {
-                ...state,
-                addDemoWorkbook: {
-                    isLoading: true,
-                    data: null,
-                    error: null,
-                },
-            };
-        }
-        case ADD_DEMO_WORKBOOK_SUCCESS: {
-            return {
-                ...state,
-                addDemoWorkbook: {
-                    isLoading: false,
-                    data: action.data,
-                    error: null,
-                },
-            };
-        }
-        case ADD_DEMO_WORKBOOK_FAILED: {
-            return {
-                ...state,
-                addDemoWorkbook: {
-                    ...state.addDemoWorkbook,
-                    isLoading: false,
-                    error: action.error,
-                },
-            };
-        }
-
-        // Deleting a workbook
-        case DELETE_WORKBOOK_LOADING: {
-            return {
-                ...state,
-                deleteWorkbook: {
-                    isLoading: true,
-                    data: null,
-                    error: null,
-                },
-            };
-        }
-        case DELETE_WORKBOOK_SUCCESS: {
-            return {
-                ...state,
-                deleteWorkbook: {
-                    isLoading: false,
-                    data: action.data,
-                    error: null,
-                },
-            };
-        }
-        case DELETE_WORKBOOK_FAILED: {
-            return {
-                ...state,
-                deleteWorkbook: {
-                    ...state.deleteWorkbook,
-                    isLoading: false,
-                    error: action.error,
-                },
-            };
-        }
         case DELETE_WORKBOOK_IN_ITEMS: {
             return {
                 ...state,

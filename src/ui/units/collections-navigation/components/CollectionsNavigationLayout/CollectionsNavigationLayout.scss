@@ -4,6 +4,9 @@ $class: 'dl-collections-navigation-layout';
 
 .#{$class} {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
 
     &__actions-panel-placeholder {
         height: $actionPanelHeight;
@@ -86,7 +89,7 @@ $class: 'dl-collections-navigation-layout';
     }
 
     &__header-title-actions-block-skeleton {
-        width: 40px;
+        width: 28px;
         height: 28px;
     }
 
@@ -95,8 +98,8 @@ $class: 'dl-collections-navigation-layout';
         white-space: nowrap;
     }
 
-    &__header-title-actions-block-skeleton {
-        width: 100px;
+    &__header-right-block-skeleton {
+        width: 80px;
         height: 28px;
     }
 
@@ -104,7 +107,13 @@ $class: 'dl-collections-navigation-layout';
         margin-top: 20px;
     }
 
+    &__header-decription-skeleton {
+        width: 100%;
+        height: 28px;
+    }
+
     &__content {
+        flex: 1;
         margin-top: 28px;
     }
 }

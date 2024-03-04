@@ -3,7 +3,7 @@ import React from 'react';
 import {Dialog} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 
-const i18n = I18n.keyset('collections');
+const i18n = I18n.keyset('component.collections-structure');
 
 export type Props = {
     title: string;

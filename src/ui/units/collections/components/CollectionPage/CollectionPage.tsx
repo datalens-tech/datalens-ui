@@ -4,29 +4,18 @@ import {CancellablePromise} from '@gravity-ui/sdk';
 import block from 'bem-cn-lite';
 import {
     DIALOG_CREATE_WORKBOOK,
-    DIALOG_EDIT_COLLECTION,
     DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
 } from 'components/CollectionsStructure';
-import {IamAccessDialog} from 'components/IamAccessDialog/IamAccessDialog';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {ViewError} from 'components/ViewError/ViewError';
-import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useParams} from 'react-router-dom';
-import {Feature} from 'shared';
 import type {GetCollectionContentResponse} from 'shared/schema';
 import {closeDialog, openDialog} from 'store/actions/dialog';
-import {DL} from 'ui/constants';
-import {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 import Utils from 'utils';
 
-import {
-    CollectionContentFilters,
-    CollectionFilters,
-    CollectionPageViewMode,
-} from '../../../../components/CollectionFilters';
+import {CollectionFilters} from '../../../../components/CollectionFilters';
 import {AppDispatch} from '../../../../store';
-import {AddDemoWorkbookDialog} from '../../components/AddDemoWorkbookDialog';
 import {
     getCollection,
     getCollectionBreadcrumbs,
@@ -46,20 +35,15 @@ import {
 import {GetCollectionContentArgs} from '../../types';
 import {CollectionContent} from '../CollectionContent';
 
-import {DEFAULT_FILTERS, DialogState, PAGE_SIZE} from './constants';
-import {useCollectionsNavigationLayout, useSelectionMode} from './hooks';
-import {getUserDefaultCollectionPageViewMode, getUserDefaultFilters} from './utils';
+import {DEFAULT_FILTERS, PAGE_SIZE} from './constants';
+import {useFilters, useLayout, useSelectionMode, useViewMode} from './hooks';
+import {getUserDefaultFilters} from './utils';
 
 import './CollectionPage.scss';
 
-const i18n = I18n.keyset('collections');
-
 const b = block('dl-collection-page');
 
-// eslint-disable-next-line complexity
 export const CollectionPage = () => {
-    const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
-
     const {collectionId} = useParams<{collectionId?: string}>();
     const curCollectionId = collectionId ?? null;
 
@@ -89,33 +73,12 @@ export const CollectionPage = () => {
         selectBtn,
     } = useSelectionMode();
 
-    const [filters, setFilters] = React.useState<CollectionContentFilters>(getUserDefaultFilters());
+    const {filters, updateFilters} = useFilters({setSelectedMap});
 
-    const updateFilters = React.useCallback(
-        (newFilters: CollectionContentFilters) => {
-            setSelectedMap({});
-            setFilters(newFilters);
-        },
-        [setSelectedMap],
-    );
-
-    const [collectionPageViewMode, setCollectionPageViewMode] =
-        React.useState<CollectionPageViewMode>(getUserDefaultCollectionPageViewMode());
-    const onChangeCollectionPageViewMode = React.useCallback(
-        (value: CollectionPageViewMode) => {
-            setCollectionPageViewMode(value);
-
-            if (value === CollectionPageViewMode.Grid && countSelected === 0) {
-                setIsOpenSelectionMode(false);
-            }
-        },
-        [countSelected, setIsOpenSelectionMode],
-    );
-
-    const [dialogState, setDialogState] = React.useState(DialogState.None);
-    const handleCloseDialog = React.useCallback(() => {
-        setDialogState(DialogState.None);
-    }, []);
+    const {collectionPageViewMode, onChangeCollectionPageViewMode} = useViewMode({
+        countSelected,
+        setIsOpenSelectionMode,
+    });
 
     const getCollectionContentRecursively = React.useCallback(
         (
@@ -187,7 +150,7 @@ export const CollectionPage = () => {
         setIsOpenSelectionMode,
     ]);
 
-    const refreshPage = React.useCallback(() => {
+    const refreshCollectionInfo = React.useCallback(() => {
         initLoadCollection();
         refreshContent();
     }, [initLoadCollection, refreshContent]);
@@ -195,11 +158,11 @@ export const CollectionPage = () => {
     const handeCloseMoveDialog = React.useCallback(
         (structureChanged: boolean) => {
             if (structureChanged) {
-                refreshPage();
+                refreshCollectionInfo();
             }
             dispatch(closeDialog());
         },
-        [dispatch, refreshPage],
+        [dispatch, refreshCollectionInfo],
     );
 
     const handleCreateWorkbook = React.useCallback(() => {
@@ -212,14 +175,6 @@ export const CollectionPage = () => {
                     onApply: (result) => {
                         if (result) {
                             history.push(`/workbooks/${result.workbookId}`);
-                            return Promise.resolve();
-                        } else {
-                            updateFilters(getUserDefaultFilters());
-                            dispatch(resetCollectionContent());
-                            return getCollectionContentRecursively({
-                                collectionId: curCollectionId,
-                                ...getUserDefaultFilters(),
-                            });
                         }
                     },
                     onClose: () => {
@@ -228,51 +183,16 @@ export const CollectionPage = () => {
                 },
             }),
         );
-    }, [curCollectionId, dispatch, getCollectionContentRecursively, history, updateFilters]);
+    }, [curCollectionId, dispatch, history]);
 
-    const onEditClick = React.useCallback(() => {
-        if (curCollectionId && collection) {
-            dispatch(
-                openDialog({
-                    id: DIALOG_EDIT_COLLECTION,
-                    props: {
-                        open: true,
-                        collectionId: collection.collectionId,
-                        title: collection.title,
-                        description: collection?.description ?? '',
-                        onApply: () => {
-                            return Promise.all([
-                                dispatch(
-                                    getCollection({
-                                        collectionId: curCollectionId,
-                                    }),
-                                ),
-                                dispatch(
-                                    getCollectionBreadcrumbs({
-                                        collectionId: curCollectionId,
-                                    }),
-                                ),
-                            ]);
-                        },
-                        onClose: () => {
-                            dispatch(closeDialog());
-                        },
-                    },
-                }),
-            );
-        }
-    }, [collection, curCollectionId, dispatch]);
-
-    useCollectionsNavigationLayout({
+    useLayout({
         curCollectionId,
         getCollectionContentRecursively,
-        refreshPage,
+        refreshCollectionInfo,
         filters,
         updateFilters,
-        setDialogState,
         handleCreateWorkbook,
         handeCloseMoveDialog,
-        onEditClick,
         collectionPageViewMode,
         isOpenSelectionMode,
         countSelected,
@@ -374,85 +294,41 @@ export const CollectionPage = () => {
                     onChangeCollectionPageViewMode={onChangeCollectionPageViewMode}
                 />
             </div>
-            {isCollectionInfoLoading && curCollectionId !== null ? (
-                <SmartLoader size="l" />
-            ) : (
-                <CollectionContent
-                    collectionId={curCollectionId}
-                    getCollectionContentRecursively={getCollectionContentRecursively}
-                    collectionPageViewMode={collectionPageViewMode}
-                    filters={filters}
-                    isDefaultFilters={isDefaultFilters}
-                    pageSize={PAGE_SIZE}
-                    refreshPage={refreshPage}
-                    refreshContent={refreshContent}
-                    contentItems={contentItems}
-                    countSelected={countSelected}
-                    selectedMap={selectedMap}
-                    countItemsWithPermissionMove={itemsWithPermissionMove.length}
-                    canCreateWorkbook={
-                        collectionId && collection
-                            ? collection.permissions.createWorkbook
-                            : Boolean(rootPermissions?.createWorkbookInRoot)
-                    }
-                    onCreateWorkbookClick={handleCreateWorkbook}
-                    onClearFiltersClick={() => {
-                        updateFilters(DEFAULT_FILTERS);
-                    }}
-                    isOpenSelectionMode={isOpenSelectionMode}
-                    canMove={canMove}
-                    setBatchAction={setBatchAction}
-                    onUpdateCheckbox={onUpdateCheckbox}
-                    resetSelected={resetSelected}
-                    onSelectAll={onSelectAll}
-                />
-            )}
-
-            {(DL.TEMPLATE_WORKBOOK_ID || DL.LEARNING_MATERIALS_WORKBOOK_ID) && (
-                <AddDemoWorkbookDialog
-                    open={
-                        dialogState === DialogState.AddLearningMaterialWorkbook ||
-                        dialogState === DialogState.AddDemoWorkbook
-                    }
-                    title={
-                        dialogState === DialogState.AddLearningMaterialWorkbook
-                            ? i18n('label_add-learning-materials-workbook')
-                            : i18n('label_add-demo-workbook')
-                    }
-                    collectionId={curCollectionId}
-                    demoWorkbookId={
-                        (dialogState === DialogState.AddLearningMaterialWorkbook
-                            ? DL.LEARNING_MATERIALS_WORKBOOK_ID
-                            : DL.TEMPLATE_WORKBOOK_ID) as string
-                    }
-                    onSuccessApply={(result) => {
-                        if (result) {
-                            history.push(`/workbooks/${result.workbookId}`);
-                            return Promise.resolve();
-                        } else {
-                            updateFilters(getUserDefaultFilters());
-                            dispatch(resetCollectionContent());
-                            return getCollectionContentRecursively({
-                                collectionId: curCollectionId,
-                                ...getUserDefaultFilters(),
-                            });
+            <div className={b('content')}>
+                {isCollectionInfoLoading && curCollectionId !== null ? (
+                    <SmartLoader size="l" showAfter={0} />
+                ) : (
+                    <CollectionContent
+                        collectionId={curCollectionId}
+                        getCollectionContentRecursively={getCollectionContentRecursively}
+                        collectionPageViewMode={collectionPageViewMode}
+                        filters={filters}
+                        isDefaultFilters={isDefaultFilters}
+                        pageSize={PAGE_SIZE}
+                        refreshPage={refreshCollectionInfo}
+                        refreshContent={refreshContent}
+                        contentItems={contentItems}
+                        countSelected={countSelected}
+                        selectedMap={selectedMap}
+                        countItemsWithPermissionMove={itemsWithPermissionMove.length}
+                        canCreateWorkbook={
+                            collectionId && collection
+                                ? collection.permissions.createWorkbook
+                                : Boolean(rootPermissions?.createWorkbookInRoot)
                         }
-                    }}
-                    onClose={handleCloseDialog}
-                />
-            )}
-
-            {collectionsAccessEnabled && curCollectionId && collection && (
-                <IamAccessDialog
-                    open={dialogState === DialogState.EditCollectionAccess}
-                    resourceId={curCollectionId}
-                    resourceType={ResourceType.Collection}
-                    resourceTitle={collection.title}
-                    parentId={collection.parentId}
-                    canUpdate={collection.permissions.updateAccessBindings}
-                    onClose={handleCloseDialog}
-                />
-            )}
+                        onCreateWorkbookClick={handleCreateWorkbook}
+                        onClearFiltersClick={() => {
+                            updateFilters(DEFAULT_FILTERS);
+                        }}
+                        isOpenSelectionMode={isOpenSelectionMode}
+                        canMove={canMove}
+                        setBatchAction={setBatchAction}
+                        onUpdateCheckbox={onUpdateCheckbox}
+                        resetSelected={resetSelected}
+                        onSelectAll={onSelectAll}
+                    />
+                )}
+            </div>
         </div>
     );
 };

@@ -43,7 +43,6 @@ export type Props = {
 };
 
 export const CollectionActions = React.memo<Props>(
-    // eslint-disable-next-line complexity
     ({
         className,
         rootPermissions,

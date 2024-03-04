@@ -14,12 +14,6 @@ const selectGetCollection = (state: DatalensGlobalState) => state.collections.ge
 const selectGetCollectionBreadcrumbs = (state: DatalensGlobalState) =>
     state.collections.getCollectionBreadcrumbs;
 
-const selectDeleteCollection = (state: DatalensGlobalState) => state.collections.deleteCollection;
-
-const selectAddDemoWorkbook = (state: DatalensGlobalState) => state.collections.addDemoWorkbook;
-
-const selectDeleteWorkbook = (state: DatalensGlobalState) => state.collections.deleteWorkbook;
-
 // Rights to create collections/workbooks in the root
 export const selectRootPermissionsIsLoading = createSelector(
     [selectGetRootCollectionPermissions],
@@ -81,22 +75,4 @@ export const selectBreadcrumbsIsLoading = createSelector(
 export const selectBreadcrumbsError = createSelector(
     [selectGetCollectionBreadcrumbs],
     (getCollectionBreadcrumbs) => getCollectionBreadcrumbs.error,
-);
-
-// Indication of the collection deletion process
-export const selectDeleteCollectionIsLoading = createSelector(
-    selectDeleteCollection,
-    (result) => result.isLoading,
-);
-
-// Indication of the process of adding a demo workbook
-export const selectAddDemoWorkbookIsLoading = createSelector(
-    selectAddDemoWorkbook,
-    (result) => result.isLoading,
-);
-
-// Indication of the process of changing the workbook
-export const selectDeleteWorkbookIsLoading = createSelector(
-    selectDeleteWorkbook,
-    (result) => result.isLoading,
 );

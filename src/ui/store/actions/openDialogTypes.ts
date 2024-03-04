@@ -46,6 +46,10 @@ import type {OpenDialogControlsPlacementArgs} from '../../units/dash/containers/
 import type {OpenDialogCopyEntriesToWorkbookArgs} from '../../components/CopyEntriesToWorkbookDialog/CopyEntriesToWorkbookDialog';
 import type {OpenDialogConnAddYadocArgs} from '../../units/connections/components/custom-forms/Yadocs/components/DialogAddDocument/DialogAddDocument';
 import type {OpenDialogEditQueryArgs} from '../../units/dash/containers/Dialogs/DialogEditQuery/DialogEditQuery';
+import type {OpenDialogDeleteCollectionArgs} from '../../components/CollectionsStructure/DeleteCollectionDialog';
+import type {OpenDialogDeleteWorkbookArgs} from '../../components/CollectionsStructure/DeleteWorkbookDialog';
+import type {OpenDialogAddDemoWorkbookArgs} from '../../components/CollectionsStructure/AddDemoWorkbookDialog';
+import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogMetricSettingsArgs
@@ -93,4 +97,8 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogDeployTemplateToWorkbookArgs
     | OpenDialogCopyEntriesToWorkbookArgs
     | OpenDialogCopyEntriesArgs
-    | OpenDialogEditQueryArgs;
+    | OpenDialogEditQueryArgs
+    | OpenDialogDeleteCollectionArgs
+    | OpenDialogDeleteWorkbookArgs
+    | OpenDialogAddDemoWorkbookArgs
+    | OpenDialogIamAccessArgs;

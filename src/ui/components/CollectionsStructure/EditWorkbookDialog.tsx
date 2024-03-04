@@ -9,7 +9,7 @@ import DialogManager from '../../components/DialogManager/DialogManager';
 import {updateWorkbook} from '../../store/actions/collectionsStructure';
 import {selectUpdateWorkbookIsLoading} from '../../store/selectors/collectionsStructure';
 
-import {WorkbookDialog} from './WorkbookDialog/WorkbookDialog';
+import {WorkbookDialog} from './WorkbookDialog';
 
 const i18n = I18n.keyset('component.collections-structure');
 

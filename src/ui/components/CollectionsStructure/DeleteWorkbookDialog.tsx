@@ -3,27 +3,34 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {AppDispatch} from '../../../../store';
-import {deleteWorkbook} from '../../store/actions';
-import {selectDeleteWorkbookIsLoading} from '../../store/selectors';
-import {DeleteDialog} from '../DeleteDialog/DeleteDialog';
+import DialogManager from '../../components/DialogManager/DialogManager';
+import {AppDispatch} from '../../store';
+import {deleteWorkbook} from '../../store/actions/collectionsStructure';
+import {selectDeleteWorkbookIsLoading} from '../../store/selectors/collectionsStructure';
 
-const i18n = I18n.keyset('collections');
+import {DeleteDialog} from './DeleteDialog';
+
+const i18n = I18n.keyset('component.collections-structure');
 
 type Props = {
+    open: boolean;
     workbookId: string;
     workbookTitle: string;
-    open: boolean;
-    deleteInItems?: boolean;
     onClose: () => void;
-    onSuccessApply?: () => Promise<unknown>;
+    onSuccessApply?: (workbookId: string) => void;
+};
+
+export const DIALOG_DELETE_WORKBOOK = Symbol('DIALOG_DELETE_WORKBOOK');
+
+export type OpenDialogDeleteWorkbookArgs = {
+    id: typeof DIALOG_DELETE_WORKBOOK;
+    props: Props;
 };
 
 export const DeleteWorkbookDialog: React.FC<Props> = ({
+    open,
     workbookId,
     workbookTitle,
-    open,
-    deleteInItems,
     onClose,
     onSuccessApply,
 }) => {
@@ -34,22 +41,21 @@ export const DeleteWorkbookDialog: React.FC<Props> = ({
         const result = await dispatch(
             deleteWorkbook({
                 workbookId,
-                deleteInItems,
             }),
         );
 
         if (onSuccessApply) {
-            await onSuccessApply();
+            onSuccessApply(workbookId);
         }
 
         return result;
-    }, [deleteInItems, dispatch, onSuccessApply, workbookId]);
+    }, [dispatch, onSuccessApply, workbookId]);
 
     return (
         <DeleteDialog
             title={i18n('label_delete-workbook')}
             description={i18n('section_delete-workbook', {
-                workbook: workbookTitle,
+                name: workbookTitle,
             })}
             textButtonApply={i18n('action_delete')}
             open={open}
@@ -59,3 +65,5 @@ export const DeleteWorkbookDialog: React.FC<Props> = ({
         />
     );
 };
+
+DialogManager.registerDialog(DIALOG_DELETE_WORKBOOK, DeleteWorkbookDialog);
