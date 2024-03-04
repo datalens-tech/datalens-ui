@@ -14,6 +14,8 @@ import {SelectorTypeSelect} from 'units/dash/containers/Dialogs/Control2/Selecto
 import {applyControl2Dialog, closeControl2Dialog} from 'units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
+import {ParametersSection} from './Sections/ParametersSection/ParametersSection';
+
 import './Control2.scss';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
@@ -59,6 +61,7 @@ class DialogAddControl extends React.Component<Props> {
         const {sourceType, isEdit} = this.props;
         const showTypeSelect =
             !isEdit || !Utils.isEnabledFeature(Feature.GroupControls) || sourceType !== 'external';
+        const showParametersSection = this.isParametersSectionAvailable();
 
         return (
             <div>
@@ -73,6 +76,11 @@ class DialogAddControl extends React.Component<Props> {
                 <div className={b('section')}>
                     <CommonSettingsSection />
                 </div>
+                {showParametersSection && (
+                    <div className={b('section')}>
+                        <ParametersSection />
+                    </div>
+                )}
                 {this.renderAppearanceSection()}
             </div>
         );
@@ -98,6 +106,17 @@ class DialogAddControl extends React.Component<Props> {
 
     private handleApply = () => {
         this.props.actions.applyControl2Dialog();
+    };
+
+    private isParametersSectionAvailable = () => {
+        const {sourceType} = this.props;
+
+        switch (sourceType) {
+            case DashTabItemControlSourceType.Connection:
+                return true;
+            default:
+                return false;
+        }
     };
 }
 
