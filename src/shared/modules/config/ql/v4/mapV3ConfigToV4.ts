@@ -14,23 +14,28 @@ export const mapV3ConfigToV4 = (config: QlConfigV3): QlConfigV4 => {
     let visualization = config.visualization;
 
     if (affectedVisualizations.includes(visualization?.id as WizardVisualizationId)) {
-        let placeholders = visualization.placeholders;
+        const currentPlaceholders = visualization.placeholders || [];
+        let placeholders = currentPlaceholders;
 
-        if (!visualization.placeholders.some((p) => p.id === PlaceholderId.Colors)) {
+        if (!currentPlaceholders.some((p) => p.id === PlaceholderId.Colors)) {
             const dimensionsPlaceholder = {
                 id: PlaceholderId.Dimensions,
                 type: PlaceholderId.Dimensions,
                 items: [],
             };
             const colorsPlaceholder = {
-                ...visualization.placeholders.find((p) => p.id === PlaceholderId.Dimensions),
+                items: [],
+                ...currentPlaceholders.find((p) => p.id === PlaceholderId.Dimensions),
                 id: PlaceholderId.Colors,
                 type: PlaceholderId.Colors,
                 required: false,
             };
-            const measuresPlaceholder = visualization.placeholders.find(
-                (p) => p.id === PlaceholderId.Measures,
-            );
+            const measuresPlaceholder = {
+                items: [],
+                id: PlaceholderId.Measures,
+                type: PlaceholderId.Measures,
+                ...currentPlaceholders.find((p) => p.id === PlaceholderId.Measures),
+            };
             placeholders = [
                 dimensionsPlaceholder,
                 colorsPlaceholder,

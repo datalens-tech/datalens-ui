@@ -81,6 +81,7 @@ const isEntryTypeWithFiltering = (entryType?: WidgetType) => {
     if (wizardFilteringAvailable) {
         widgetTypesWithFilteringAvailable.push(
             WizardType.GraphWizardNode,
+            WizardType.D3WizardNode,
             WizardType.TableWizardNode,
         );
     }

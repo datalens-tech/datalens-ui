@@ -5,7 +5,6 @@ import {
     PlaceholderId,
     getDistinctValue,
     getFakeTitleOrTitle,
-    isMeasureName,
     isMeasureValue,
     isNumberField,
     isPseudoField,
@@ -220,10 +219,8 @@ export function preparePieData(args: PrepareFunctionArgs) {
         };
 
         if (labelField) {
-            if (isMeasureName(labelField)) {
-                point.label = formattedName;
-            } else if (isMeasureValue(labelField)) {
-                point.label = Number(measureValue);
+            if (isPseudoField(labelField)) {
+                point.label = isMeasureValue(labelField) ? Number(measureValue) : formattedName;
             } else if (isNumberField(labelField)) {
                 // The value will be formatted using dataLabels.chartKitFormatting
                 point.label = Number(labelValue);

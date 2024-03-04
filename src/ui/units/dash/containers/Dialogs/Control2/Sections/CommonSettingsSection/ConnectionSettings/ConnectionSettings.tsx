@@ -18,7 +18,6 @@ import {QueryTypeControl} from './components/QueryTypeControl/QueryTypeControl';
 import {getDistinctsByTypedQuery} from './helpers/get-distincts-by-typed-query';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
-const i18nConnectionBasedControlFake = (str: string) => str;
 
 export const ConnectionSettings: React.FC = () => {
     const {connectionQueryTypes, connectionId, connectionQueryContent, connectionQueryType} =
@@ -65,7 +64,8 @@ export const ConnectionSettings: React.FC = () => {
             {connectionQueryTypes?.length && connectionQueryTypes.length > 0 && (
                 <React.Fragment>
                     <ParameterNameInput
-                        label={i18nConnectionBasedControlFake('field_parameter-name')}
+                        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+                        label={i18n('field_parameter-name')}
                     />
                     <QueryTypeControl connectionQueryTypes={connectionQueryTypes} />
                     <InputTypeSelector options={options} />
