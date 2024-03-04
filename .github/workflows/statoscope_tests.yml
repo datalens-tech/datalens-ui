@@ -3,15 +3,13 @@ name: Statoscope diff analyze
 on:
   pull_request:
     branches-ignore:
-      - 'weblate-**'
-
-concurrency:
-  group: ${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+      - 'weblate-**'      
 
 jobs:
-  statoscope:
+  statoscope: 
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
