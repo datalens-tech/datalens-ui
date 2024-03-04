@@ -1,0 +1,37 @@
+// variables
+$after: resolveInputFile();
+$inputCompilation: $after.compilations.pick();
+$before: resolveReferenceFile();
+$referenceCompilation: $before.compilations.pick();
+
+// helpers
+$getSizeByChunks: => files.(getAssetSize($$, true)).reduce(=> size + $$, 0);
+
+// output
+{
+  buildTime: {
+    $after: $inputCompilation.time;
+    $before: $referenceCompilation.time;
+    $after,
+    $before,
+    diff: {
+      value: $after - $before,
+      formatted: { type: 'time', a: $before, b: $after } | formatDiff() + ` (${b.percentFrom(a, 2)}%)`,
+    }
+  },
+  initialSize: {
+    $after: $inputCompilation.chunks.$getSizeByChunks($inputCompilation.hash);
+    $before: $referenceCompilation.chunks.$getSizeByChunks($referenceCompilation.hash);
+    $after,
+    $before,
+    diff: {
+      value: $after - $before,
+      formatted: { type: 'size', a: $before, b: $after } | formatDiff() + ` (${b.percentFrom(a, 2)}%)`,
+    }
+  },
+  validation: {
+    $messages: resolveInputFile().compilations.[hash].(hash.validation_getItems());
+    $messages,
+    total: $messages.size()
+  }
+}

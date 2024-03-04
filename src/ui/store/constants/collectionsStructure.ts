@@ -46,6 +46,11 @@ export const GET_COLLECTION_CONTENT_FAILED = Symbol(
     'collectionsStructure/GET_COLLECTION_CONTENT_FAILED',
 );
 
+// Copy template
+export const COPY_TEMPLATE_LOADING = Symbol('collectionsStructure/COPY_TEMPLATE_LOADING');
+export const COPY_TEMPLATE_SUCCESS = Symbol('collectionsStructure/COPY_TEMPLATE_SUCCESS');
+export const COPY_TEMPLATE_FAILED = Symbol('collectionsStructure/COPY_TEMPLATE_FAILED');
+
 // Creating a collection
 export const CREATE_COLLECTION_LOADING = Symbol('collectionsStructure/CREATE_COLLECTION_LOADING');
 export const CREATE_COLLECTION_SUCCESS = Symbol('collectionsStructure/CREATE_COLLECTION_SUCCESS');

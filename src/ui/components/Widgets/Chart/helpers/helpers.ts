@@ -202,6 +202,7 @@ export const getWidgetMeta = ({
             loadError: loadedWithError,
             isWizard: Boolean(loadedData?.isNewWizard || loadedData?.isOldWizard),
             isEditor: Boolean(loadedData?.isEditor),
+            isQL: Boolean(loadedData?.isQL),
         };
 
         return metaInfo;

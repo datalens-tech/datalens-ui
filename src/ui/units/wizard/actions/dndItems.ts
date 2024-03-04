@@ -88,7 +88,10 @@ const getSectionFields = (
 ) => {
     const visualization = visualizationState.visualization;
     const availableVisualizations = getAvailableVisualizations();
-    const presetVisualization = availableVisualizations.find(({id}) => id === visualization?.id) as
+    const visualizationId = isVisualizationWithLayers(visualization)
+        ? getSelectedLayer(visualization)?.id
+        : visualization?.id;
+    const presetVisualization = availableVisualizations.find(({id}) => id === visualizationId) as
         | Shared['visualization']
         | null;
 

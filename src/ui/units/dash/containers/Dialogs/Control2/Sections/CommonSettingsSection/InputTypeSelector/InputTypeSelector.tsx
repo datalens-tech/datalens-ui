@@ -8,7 +8,7 @@ import {DialogControlQa} from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
 import {SelectorElementType, setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
-    selectIsDatasetSelectorAndNoFieldSelected,
+    selectIsControlConfigurationDisabled,
     selectSelectorControlType,
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
@@ -23,7 +23,7 @@ type InputTypeSelectorProps = {
 const InputTypeSelector: React.FC<InputTypeSelectorProps> = (props: InputTypeSelectorProps) => {
     const dispatch = useDispatch();
     const controlType = useSelector(selectSelectorControlType);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
 
     const {options} = props;
 

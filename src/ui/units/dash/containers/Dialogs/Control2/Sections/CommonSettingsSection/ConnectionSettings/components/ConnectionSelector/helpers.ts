@@ -1,15 +1,17 @@
-import type {ConnectionData, ConnectionOptions, ConnectionQueryType} from 'shared';
+import {I18n} from 'i18n';
+import type {ConnectionData, ConnectionOptions, ConnectionQueryTypeOptions} from 'shared';
 
-const i18nConnectionBasedControlFake = (str: string) => str;
+const i18n = I18n.keyset('dash.control-dialog.edit');
 
 export const prepareConnectionData = (
     connection: ConnectionData,
-): {error?: string; queryTypes: ConnectionQueryType[]} => {
+): {error?: string; queryTypes: ConnectionQueryTypeOptions[]} => {
     const options = (connection.options || {}) as ConnectionOptions;
 
     if (!options.allow_typed_query_usage) {
         return {
-            error: i18nConnectionBasedControlFake('error_unsupported-connection'),
+            // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+            error: i18n('error_unsupported-connection'),
             queryTypes: [],
         };
     }
@@ -19,7 +21,8 @@ export const prepareConnectionData = (
     return {
         error: supportedQueryTypes.length
             ? undefined
-            : i18nConnectionBasedControlFake('error_unsupported-connection'),
+            : // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+              i18n('error_unsupported-connection'),
         queryTypes: supportedQueryTypes,
     };
 };

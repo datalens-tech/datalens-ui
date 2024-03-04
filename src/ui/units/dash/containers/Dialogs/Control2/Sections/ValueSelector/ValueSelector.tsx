@@ -11,7 +11,7 @@ import {registry} from 'ui/registry';
 import Utils from 'ui/utils/utils';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
-    selectIsDatasetSelectorAndNoFieldSelected,
+    selectIsControlConfigurationDisabled,
     selectSelectorControlType,
     selectSelectorDefaultValue,
     selectSelectorDialog,
@@ -25,6 +25,7 @@ import {CheckboxControlValue} from '../../../Control/constants';
 
 import {ListValueControl} from './ListValueControl/ListValueControl';
 import {RequiredValueCheckbox} from './RequiredValueCheckbox/RequiredValueCheckbox';
+import type {ValueSelectorControlProps} from './types';
 
 import './ValueSelector.scss';
 
@@ -35,7 +36,7 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 const InputValueControl = () => {
     const dispatch = useDispatch();
     const defaultValue = useSelector(selectSelectorDefaultValue);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
     const validation = useSelector(selectSelectorValidation);
 
     const handleUpdate = React.useCallback((value: string) => {
@@ -62,7 +63,7 @@ const InputValueControl = () => {
 const DateValueControl = () => {
     const {isRange, acceptableValues, defaultValue, fieldType, sourceType} =
         useSelector(selectSelectorDialog);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
     const validation = useSelector(selectSelectorValidation);
 
     const dispatch = useDispatch();
@@ -138,7 +139,7 @@ const DateValueControl = () => {
 const CheckboxValueControl = () => {
     const dispatch = useDispatch();
     const defaultValue = useSelector(selectSelectorDefaultValue);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
 
     const handleUpdate = React.useCallback(
         (value: string) => {
@@ -173,7 +174,11 @@ const CheckboxValueControl = () => {
     );
 };
 
-const ValueSelector: React.FC = () => {
+type ValueSelectorProps = {
+    controlProps: ValueSelectorControlProps;
+};
+
+const ValueSelector: React.FC<ValueSelectorProps> = (props: ValueSelectorProps) => {
     const controlType = useSelector(selectSelectorControlType);
 
     const {useExtendedValueSelector} = registry.dash.functions.getAll();
@@ -190,7 +195,7 @@ const ValueSelector: React.FC = () => {
             break;
         }
         case 'select': {
-            inputControl = <ListValueControl />;
+            inputControl = <ListValueControl {...props.controlProps.select} />;
             break;
         }
         case 'input': {
