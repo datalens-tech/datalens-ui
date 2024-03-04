@@ -9,7 +9,7 @@
   "label_403-not-authotized-description": "Войдите в свой аккаунт на Яндексе или измените тип доступа к файлу и попробуйте добавить его снова",
   "label_access-type": "Доступ к файлу",
   "label_add-file": "Добавить файл",
-  "label_add-input-private-help": "Путь указывается относительно корневого каталога <code>/disk</code>. Подробнее о том, как узнать путь в <link>документации</link>.",
+  "label_add-input-private-help": "Путь указывается относительно корневого каталога <code>/disk</code>. Подробнее о том, как узнать путь, в <link>документации</link>.",
   "label_add-input-private-note": "Пример: /folder/path/table.xlsx",
   "label_add-input-public-help": "Файлы, для которых установлен пароль или включен запрет на скачивание, не поддерживаются. Вместо них используйте приватные файлы, доступные после аутентификации.",
   "label_add-input-public-note": "Пример: https://disk.yandex.ru/i/QLFNDx7c5*****",
