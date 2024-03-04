@@ -1,10 +1,10 @@
 {
   "button_add": "Add",
   "button_apply": "Add",
-  "button_auth": "Войти в Яндекс Документы",
+  "button_auth": "Log in to Yandex Documents",
   "button_auth-dialog": "Войти",
   "button_cancel": "Cancel",
-  "button_logout": "Log out",
+  "button_logout": "Revoke",
   "button_update": "Update data",
   "label_403-not-authotized-description": "Log in to your Yandex account or change the file access type and try adding it again",
   "label_access-type": "Access type",
