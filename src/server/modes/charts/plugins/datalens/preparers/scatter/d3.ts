@@ -31,6 +31,7 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
                 const pointData: ScatterSeriesData<PointCustomData> = {
                     radius: point.marker?.radius,
                     custom: {
+                        ...item.custom,
                         name: point.name,
                         xLabel: point.xLabel,
                         yLabel: point.yLabel,
@@ -54,6 +55,8 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
 
                 return pointData;
             }) || [],
+        // @ts-ignore
+        custom: graph.custom,
     };
 
     if (graph.marker?.symbol) {

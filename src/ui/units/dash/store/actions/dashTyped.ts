@@ -1,12 +1,15 @@
 import React from 'react';
 
-import {AddConfigItem, Config, ConfigItem, DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
+import {AddConfigItem, Config, DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
 import {PluginTextProps} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
 import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Title';
 import {i18n} from 'i18n';
 import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
 import {
+    type ConnectionQueryContent,
+    type ConnectionQueryTypeOptions,
+    ConnectionQueryTypeValues,
     DATASET_FIELD_TYPES,
     DashData,
     DashSettings,
@@ -311,9 +314,21 @@ export type SetLastUsedDatasetIdAction = {
     type: typeof SET_LAST_USED_DATASET_ID;
     payload: string;
 };
+
 export const setLastUsedDatasetId = (datasetId: string): SetLastUsedDatasetIdAction => ({
     type: SET_LAST_USED_DATASET_ID,
     payload: datasetId,
+});
+
+export const SET_LAST_USED_CONNECTION_ID = Symbol('dash/SET_LAST_USED_CONNECTION_ID');
+export type SetLastUsedConnectionIdAction = {
+    type: typeof SET_LAST_USED_CONNECTION_ID;
+    payload: string;
+};
+
+export const setLastUsedConnectionId = (connectionId: string): SetLastUsedConnectionIdAction => ({
+    type: SET_LAST_USED_CONNECTION_ID,
+    payload: connectionId,
 });
 
 type SetItemDataBase = {
@@ -337,20 +352,6 @@ export const setItemData = (data: SetItemDataArgs) => ({
     payload: data,
 });
 
-export const REMOVE_UNUSED_SUB_ITEMS = Symbol('dash/REMOVE_UNUSED_SUB_ITEMS');
-
-export type RemoveUnusedSubItemsAction = {
-    type: typeof REMOVE_UNUSED_SUB_ITEMS;
-    payload: {item: ConfigItem};
-};
-
-export const removeUnusedSubItems = (
-    data: RemoveUnusedSubItemsAction['payload'],
-): RemoveUnusedSubItemsAction => ({
-    type: REMOVE_UNUSED_SUB_ITEMS,
-    payload: data,
-});
-
 export const SET_SELECTOR_DIALOG_ITEM = Symbol('dash/SET_SELECTOR_DIALOG_ITEM');
 
 export type SelectorElementType = 'select' | 'date' | 'input' | 'checkbox';
@@ -367,6 +368,10 @@ export type SelectorDialogState = {
     defaultValue?: string | string[];
     dataset?: Dataset;
     datasetId?: string;
+    connectionId?: string;
+    connectionQueryType?: ConnectionQueryTypeValues;
+    connectionQueryTypes?: ConnectionQueryTypeOptions[];
+    connectionQueryContent?: ConnectionQueryContent;
     datasetFieldId?: string;
     fieldName?: string;
     acceptableValues?: AcceptableValue[];

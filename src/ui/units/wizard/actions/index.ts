@@ -13,7 +13,6 @@ import {
     DatasetFieldType,
     ENTRY_TYPES,
     ExtendedChartsConfig,
-    Feature,
     Field,
     FilterField,
     HierarchyField,
@@ -45,7 +44,7 @@ import {
     splitParamsToParametersAndFilters,
 } from 'shared';
 import {DataLensApiError} from 'typings';
-import {DatalensGlobalState, Utils} from 'ui';
+import {DatalensGlobalState} from 'ui';
 import {navigateHelper} from 'ui/libs';
 import {
     getAvailableVisualizations,
@@ -93,7 +92,7 @@ import {
 } from './dataset';
 import {actualizeAndSetUpdates, setUpdates, updatePreviewAndClientChartsConfig} from './preview';
 import {setDefaultsSet, setRouteWorkbookId, toggleNavigation} from './settings';
-import {getDatasetUpdates, mutateAndValidateItem} from './utils';
+import {getDatasetUpdates, isSharedPlaceholder, mutateAndValidateItem} from './utils';
 import {
     _setSelectedLayerId,
     _setVisualization,
@@ -431,7 +430,8 @@ export function setVisualizationPlaceholderItems({
                         };
                     }
 
-                    if (stateVisualization.id === 'combined-chart' && placeholder.id === 'x') {
+                    const visualizationId = stateVisualization.id as WizardVisualizationId;
+                    if (isSharedPlaceholder(placeholder.id as PlaceholderId, visualizationId)) {
                         layer.placeholders = layer.placeholders.map((p) => {
                             if (p.id === 'x') {
                                 return {
@@ -812,14 +812,14 @@ function _receiveVisualization({
         throw new Error('Unknown visualization');
     }
 
-    const placeholders = [...(visualization.placeholders || [])];
+    const previousPlaceholders = [...(visualization.placeholders || [])];
     const fields = datasets.reduce((result: Field[], dataset: Dataset) => {
         return [...result, ...getResultSchemaFromDataset(dataset)] as Field[];
     }, []);
 
     // We put all the metadata from it into the saved one
-    presetVisualization.placeholders.forEach((presetPlaceholder, i) => {
-        const placeholder = placeholders[i];
+    const placeholders = presetVisualization.placeholders.map((presetPlaceholder) => {
+        const placeholder = previousPlaceholders.find((p) => p.id === presetPlaceholder.id);
 
         if (placeholder) {
             const items = [...placeholder.items];
@@ -852,13 +852,15 @@ function _receiveVisualization({
             placeholder.settings = newSettings;
 
             items.forEach((item) => {
-                mutateAndValidateItem({fields, item, placeholder});
+                mutateAndValidateItem({fields, item, placeholder: presetPlaceholder});
             });
 
             // We record the elements as new arrivals
             placeholder.items = items;
+
+            return placeholder;
         } else {
-            placeholders.push(presetPlaceholder);
+            return presetPlaceholder;
         }
     });
 
@@ -1387,8 +1389,7 @@ export const createFieldFromVisualization = ({
             let argument = `[${field.originalTitle || field.title}]`;
             // TODO: update this place after caste support for datetimetz
             const isShouldBeCastedToDatetime =
-                (field.data_type !== 'datetime' && field.cast === 'datetime') ||
-                (field.data_type !== 'genericdatetime' && field.cast === 'genericdatetime');
+                field.data_type !== 'genericdatetime' && field.cast === 'genericdatetime';
 
             if (isShouldBeCastedToDatetime) {
                 argument = `DATETIME(${argument})`;
@@ -1409,7 +1410,6 @@ export const createFieldFromVisualization = ({
             fieldNext.originalSource = field.source;
         } else if (
             field.cast === 'date' ||
-            field.cast === 'datetime' ||
             field.cast === 'datetimetz' ||
             field.cast === 'genericdatetime'
         ) {
@@ -1502,7 +1502,6 @@ export const updateFieldFromVisualization = ({
                 field.formula = '';
             } else if (
                 field.cast === 'date' ||
-                field.cast === 'datetime' ||
                 field.cast === 'datetimetz' ||
                 field.cast === 'genericdatetime'
             ) {
@@ -1512,7 +1511,6 @@ export const updateFieldFromVisualization = ({
             }
             if (
                 field.cast === 'date' ||
-                field.cast === 'datetime' ||
                 field.cast === 'datetimetz' ||
                 field.cast === 'genericdatetime'
             ) {
@@ -1544,8 +1542,7 @@ export const updateFieldFromVisualization = ({
             let argument = `[${field.originalTitle || field.title}]`;
             // TODO: update this place after caste support for datetimetz - BI-1478
             const isShouldBeCastedToDatetime =
-                (field.data_type !== 'datetime' && field.originalDateCast === 'datetime') ||
-                (field.data_type !== 'datetimetz' && field.originalDateCast === 'datetimetz');
+                field.data_type !== 'datetimetz' && field.originalDateCast === 'datetimetz';
 
             if (isShouldBeCastedToDatetime) {
                 argument = `DATETIME(${argument})`;
@@ -1770,9 +1767,7 @@ type ProcessWidgetArgs = {
 function processWidget(args: ProcessWidgetArgs) {
     const {widget, dispatch, getState} = args;
     const data = widget.data! as ExtendedChartsConfig;
-    const shouldMigrateDatetime = Utils.isEnabledFeature(Feature.GenericDatetimeMigration);
-
-    const config = mapChartsConfigToLatestVersion(data, {shouldMigrateDatetime});
+    const config = mapChartsConfigToLatestVersion(data);
 
     // Actualize widget data after mapping
     widget.data = config;

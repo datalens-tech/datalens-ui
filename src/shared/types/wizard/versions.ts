@@ -21,4 +21,6 @@ export enum ChartsConfigVersion {
     V8 = '8',
     // shapes in the scatter chart are specified by field in shape section
     V9 = '9',
+    // A new 'dimensions' section has been added to the pie chart, the old section 'dimensions' has been moved to 'colors'.
+    V10 = '10',
 }

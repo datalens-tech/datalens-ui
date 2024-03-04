@@ -15,7 +15,6 @@ import {
 
 import {DataTypeConfig} from '../../../typings/common';
 import Utils from '../../../utils';
-import {getDatetimeName} from '../../../utils/helpers';
 import DataTypeIcon from '../../DataTypeIcon/DataTypeIcon';
 import {EMPTY_SOURCE, INVALID_ID} from '../constants';
 import {FieldEditorErrors, ModifiedDatasetField, ModifyField} from '../typings';
@@ -65,7 +64,7 @@ const getSourceItems = (
 
 const getCastItems = (dataTypes: DataTypeConfig[]) => {
     return dataTypes.map(({name}) => {
-        const text = i18n(`value_${getDatetimeName(name) as AvailableFieldType}`);
+        const text = i18n(`value_${name as AvailableFieldType}`);
         return {
             value: name,
             content: (

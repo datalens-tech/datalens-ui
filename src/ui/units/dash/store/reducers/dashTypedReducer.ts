@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Config, DashKit} from '@gravity-ui/dashkit';
+import {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
 import {DashData, DashEntry, Permissions, WidgetType} from 'shared';
@@ -16,7 +16,6 @@ import {
 import {SelectorsGroupDialogState} from '../actions/controls/types';
 import {
     CHANGE_NAVIGATION_PATH,
-    REMOVE_UNUSED_SUB_ITEMS,
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
     SET_DASH_DESCRIPTION,
@@ -28,6 +27,7 @@ import {
     SET_ERROR_MODE,
     SET_HASH_STATE,
     SET_INITIAL_PAGE_TABS_ITEMS,
+    SET_LAST_USED_CONNECTION_ID,
     SET_LAST_USED_DATASET_ID,
     SET_LOADING_EDIT_MODE,
     SET_PAGE_DEFAULT_TAB_ITEMS,
@@ -63,6 +63,7 @@ export type DashState = {
     openedItemId: string | null;
     showTableOfContent: boolean;
     lastUsedDatasetId: null | string;
+    lastUsedConnectionId: undefined | string;
     entry: DashEntry;
     data: DashData;
     updateStatus: DashUpdateStatus;
@@ -90,7 +91,6 @@ export function dashTypedReducer(
     const {hashStates, tabId, data} = state;
 
     const tabIndex = data ? data.tabs.findIndex(({id}) => id === tabId) : -1;
-    const tab = tabIndex === -1 ? null : data.tabs[tabIndex];
 
     switch (action.type) {
         case SET_STATE:
@@ -232,6 +232,12 @@ export function dashTypedReducer(
             return {
                 ...state,
                 lastUsedDatasetId: action.payload,
+            };
+
+        case SET_LAST_USED_CONNECTION_ID:
+            return {
+                ...state,
+                lastUsedConnectionId: action.payload,
             };
 
         case SET_SELECTOR_DIALOG_ITEM: {
@@ -429,28 +435,6 @@ export function dashTypedReducer(
                     ...state.widgetsCurrentTab,
                     [action.payload.widgetId]: action.payload.tabId,
                 },
-            };
-        }
-
-        case REMOVE_UNUSED_SUB_ITEMS: {
-            const {itemsStateAndParams} = DashKit.removeUnusedSubItems({
-                item: action.payload.item,
-                config: {...tab, salt: data.salt, counter: data.counter} as Config,
-                itemsStateAndParams: tabId && hashStates?.[tabId] ? hashStates?.[tabId].state : {},
-            });
-
-            const tabsHashState = {...hashStates} as TabsHashStates;
-
-            if (tabId && hashStates) {
-                tabsHashState[tabId] = {
-                    hash: hashStates[tabId]?.hash,
-                    state: itemsStateAndParams,
-                };
-            }
-
-            return {
-                ...state,
-                hashStates: tabsHashState,
             };
         }
 

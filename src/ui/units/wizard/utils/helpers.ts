@@ -88,7 +88,6 @@ export function getCommonDataType(dataType: DATASET_FIELD_TYPES): CommonDataType
 
         case DATASET_FIELD_TYPES.DATETIMETZ:
         case DATASET_FIELD_TYPES.GENERICDATETIME:
-        case DATASET_FIELD_TYPES.DATETIME:
         case DATASET_FIELD_TYPES.DATE:
             return CommonDataType.Date;
 
@@ -392,10 +391,16 @@ export function getDialogItem(items: Field[], placeholders: Placeholder[]) {
     return placeholdersItems.length ? placeholdersItems : undefined;
 }
 
+export function getSelectedLayerId(
+    visualization: VisualizationWithLayersShared['visualization'],
+): string | undefined {
+    return visualization.selectedLayerId || visualization.layers[0].layerSettings.id;
+}
+
 export function getSelectedLayer(
     visualization: VisualizationWithLayersShared['visualization'],
 ): VisualizationLayerShared['visualization'] | undefined {
-    const layerId = visualization.selectedLayerId || visualization.layers[0].layerSettings.id;
+    const layerId = getSelectedLayerId(visualization);
     return visualization.layers.find(({layerSettings: {id}}) => id === layerId);
 }
 

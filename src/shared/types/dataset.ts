@@ -6,7 +6,6 @@ import {CommonUpdate} from './common-update';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export enum DATASET_FIELD_TYPES {
     DATE = 'date',
-    DATETIME = 'datetime',
     GENERICDATETIME = 'genericdatetime',
     DATETIMETZ = 'datetimetz',
     INTEGER = 'integer',
@@ -45,7 +44,6 @@ export const AVAILABLE_FIELD_TYPES = [
     DATASET_FIELD_TYPES.FLOAT,
     DATASET_FIELD_TYPES.BOOLEAN,
     DATASET_FIELD_TYPES.DATE,
-    DATASET_FIELD_TYPES.DATETIME,
     DATASET_FIELD_TYPES.GENERICDATETIME,
 ] as const;
 
@@ -54,7 +52,6 @@ export const COMMON_FIELD_TYPES = [
     DATASET_FIELD_TYPES.ARRAY_INT,
     DATASET_FIELD_TYPES.ARRAY_STR,
     DATASET_FIELD_TYPES.DATE,
-    DATASET_FIELD_TYPES.DATETIME,
     DATASET_FIELD_TYPES.FLOAT,
     DATASET_FIELD_TYPES.GENERICDATETIME,
     DATASET_FIELD_TYPES.GEOPOINT,

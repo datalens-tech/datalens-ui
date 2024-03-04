@@ -99,8 +99,9 @@ function getRowCellMetadata(args: GetRowCellMetadataArgs): ChartkitCell {
     } else if (isNumericalDataType(field.data_type)) {
         cell.type = 'number';
 
-        if (isTableBarsSettingsEnabled(field)) {
-            const {columnValues, options} = args.settingsByField[field.guid].barsSettings!;
+        const barSettings = args.settingsByField[field.guid]?.barsSettings;
+        if (isTableBarsSettingsEnabled(field) && barSettings) {
+            const {columnValues, options} = barSettings;
             const barValueOptions = getBarSettingsValue({
                 field,
                 rowValue: value,

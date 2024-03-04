@@ -8,7 +8,7 @@ import {SelectFeatured} from 'ui/components/Select/wrappers/SelectFeatured';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectInputOperations,
-    selectIsDatasetSelectorAndNoFieldSelected,
+    selectIsControlConfigurationDisabled,
     selectSelectorDialog,
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
@@ -20,7 +20,7 @@ const OperationSelector: React.FC = () => {
     const dispatch = useDispatch();
     const {operation} = useSelector(selectSelectorDialog);
     const operations = useSelector(selectInputOperations);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
 
     React.useEffect(() => {
         const currentOperationNotSupported =

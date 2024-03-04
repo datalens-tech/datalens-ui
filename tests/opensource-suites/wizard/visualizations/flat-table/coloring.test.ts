@@ -1,15 +1,15 @@
 import {expect} from '@playwright/test';
 
-import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage, slct} from '../../../utils';
+import datalensTest from '../../../../utils/playwright/globalTestDefinition';
+import {openTestPage, slct} from '../../../../utils';
 import {
     ChartKitQa,
     GradientType,
     WizardPageQa,
     WizardVisualizationId,
-} from '../../../../src/shared';
-import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
+} from '../../../../../src/shared';
+import WizardPage from '../../../../page-objects/wizard/WizardPage';
+import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Flat table', () => {

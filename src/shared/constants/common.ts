@@ -49,6 +49,7 @@ export const WIZARD_CHART_NODE = {
     table_wizard_node: 'table',
     metric_wizard_node: 'statface_metric',
     markup_wizard_node: 'config',
+    d3_wizard_node: 'config',
 };
 
 export const QL_CHART_NODE = {
@@ -57,6 +58,7 @@ export const QL_CHART_NODE = {
     timeseries_ql_node: 'statface_graph',
     table_sql_node: 'table',
     table_ql_node: 'table',
+    markup_ql_node: 'config',
 };
 
 export const EDITOR_CHART_NODE = {

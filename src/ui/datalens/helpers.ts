@@ -6,6 +6,7 @@ export const locationChangeHandler: LocationChangeProps['onLocationChanged'] = (
     prevLocation,
 ) => {
     if (location.pathname !== prevLocation.pathname) {
+        fireMetricaHit(CounterName.Main, location.pathname);
         fireMetricaHit(CounterName.Cross, location.pathname);
     }
 };

@@ -59,6 +59,11 @@ export type ActualConnectorType =
     | ConnectorType.GsheetsV2
     | ConnectorType.File;
 
+export const enum ConnectionQueryTypeValues {
+    GenericQuery = 'generic_query',
+    GenericLabelValues = 'generic_label_values',
+}
+
 export enum DbConnectMethod {
     ServiceName = 'service_name',
     Sid = 'sid',

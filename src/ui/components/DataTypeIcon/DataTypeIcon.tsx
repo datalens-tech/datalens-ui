@@ -47,7 +47,6 @@ const DataTypeIcon: React.FC<DataTypeIconProps> = (props) => {
             data = CopyCheckXmark;
             break;
         case DATASET_FIELD_TYPES.DATE:
-        case DATASET_FIELD_TYPES.DATETIME:
         case DATASET_FIELD_TYPES.GENERICDATETIME:
         case DATASET_FIELD_TYPES.DATETIMETZ:
             data = Calendar;

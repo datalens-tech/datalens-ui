@@ -7,7 +7,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
-    selectIsDatasetSelectorAndNoFieldSelected,
+    selectIsControlConfigurationDisabled,
     selectSelectorControlType,
     selectSelectorRequired,
 } from 'units/dash/store/selectors/dashTypedSelectors';
@@ -25,7 +25,7 @@ export const RequiredValueCheckbox = () => {
     const required = useSelector(selectSelectorRequired);
 
     const elementType = useSelector(selectSelectorControlType);
-    const isNoFieldSelected = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isNoFieldSelected = useSelector(selectIsControlConfigurationDisabled);
     const isFieldDisabled = isNoFieldSelected || elementType === ELEMENT_TYPE.CHECKBOX;
 
     const handleUpdate = (value: boolean) => {

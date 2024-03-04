@@ -1,9 +1,5 @@
 import {cloneDeep, unset} from 'lodash';
 
-import {Feature} from '../../shared';
-
-import Utils from './utils';
-
 /**
  * @param{object} obj object for filter
  * @param {Array<string>} keys paths to object fields to be deleted
@@ -17,12 +13,6 @@ export const getFilteredObject = <T = unknown>(obj: T, keys: string[]) => {
     });
 
     return result;
-};
-
-export const getDatetimeName = (name?: string) => {
-    return name === 'datetime' && !Utils.isEnabledFeature(Feature.GenericDatetime)
-        ? 'genericdatetime'
-        : name;
 };
 
 // TODO: CHARTS-7304

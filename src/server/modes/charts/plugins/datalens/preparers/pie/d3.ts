@@ -30,6 +30,7 @@ function mapPieSeries(args: MapPieSeriesArgs): PieSeries {
                     value: item.y,
                     color: String(item.color),
                     name: item.name,
+                    custom: item.custom,
                 };
 
                 if (isLabelsEnabled) {

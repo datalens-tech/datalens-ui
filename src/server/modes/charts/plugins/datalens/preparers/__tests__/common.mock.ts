@@ -34,5 +34,5 @@ export const DateTimeField = {
     datasetId,
     title: 'DateTimeField_title',
     guid: 'DateTimeField_guid',
-    data_type: DATASET_FIELD_TYPES.DATETIME,
+    data_type: DATASET_FIELD_TYPES.GENERICDATETIME,
 } as ServerField;

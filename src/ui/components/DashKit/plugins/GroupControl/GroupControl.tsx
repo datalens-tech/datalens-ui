@@ -44,12 +44,12 @@ const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 type StateProps = ReturnType<typeof mapStateToProps>;
 
 interface PluginGroupControlProps
-    extends PluginWidgetProps,
+    extends PluginWidgetProps<Record<string, StringParams>>,
         ControlSettings,
         StateProps,
         ContextProps {}
 
-interface PluginGroupControl extends Plugin<PluginGroupControlProps> {
+interface PluginGroupControl extends Plugin<PluginGroupControlProps, Record<string, StringParams>> {
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: GetDistincts;
 }
@@ -123,14 +123,14 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const hasChanged = hasDataChanged || hasParamsChanged;
 
         // need to check unused ids
-        if (
-            hasDataChanged &&
-            this.props.data.group &&
-            prevProps.data.group &&
-            this.props.data.group?.length < prevProps.data.group?.length
-        ) {
-            this.props.onStateAndParamsChange({}, {action: 'removeGroupItems'});
-        }
+        // if (
+        //     hasDataChanged &&
+        //     this.props.data.group &&
+        //     prevProps.data.group &&
+        //     this.props.data.group?.length < prevProps.data.group?.length
+        // ) {
+        //     this.props.onStateAndParamsChange({}, {action: 'removeGroupItems'});
+        // }
 
         // if (!hasParamsUpdatedFromState) {
         //     this.setState({
@@ -368,7 +368,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 status: LOAD_STATUS.SUCCESS,
                 silentLoading: false,
                 isInit: true,
-                stateParams: this.props.params as Record<string, StringParams>,
+                stateParams: this.props.params,
             });
         }
 
@@ -510,7 +510,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         }
 
         this.setState({
-            stateParams: this.props.params as unknown as Record<string, StringParams>,
+            stateParams: this.props.params,
             status: LOAD_STATUS.PENDING,
         });
     }
@@ -547,7 +547,7 @@ const plugin: PluginGroupControl = {
 
         return plugin;
     },
-    renderer(props: PluginWidgetProps, forwardedRef) {
+    renderer(props, forwardedRef) {
         const workbookId = props.context.workbookId;
 
         return (

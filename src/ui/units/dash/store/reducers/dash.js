@@ -75,6 +75,7 @@ export function getSelectorDialogInitialState(args = {}) {
         validation: {},
         defaults: {},
         datasetId: args.lastUsedDatasetId,
+        connectionId: args.lastUsedConnectionId,
         showTitle: true,
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
@@ -92,6 +93,10 @@ export function getSelectorDialogFromData(data) {
         autoHeight: data.autoHeight,
 
         datasetId: data.source.datasetId,
+        connectionId: data.source.connectionId,
+        connectionQueryType: data.source.connectionQueryType,
+        connectionQueryTypes: data.source.connectionQueryTypes,
+        connectionQueryContent: data.source.connectionQueryContent,
         elementType: data.source.elementType || ELEMENT_TYPE.SELECT,
         defaultValue: data.source.defaultValue,
         datasetFieldId: data.source.datasetFieldId,
@@ -138,6 +143,7 @@ export function getSelectorGroupDialogFromData(data) {
             required: item.source.required,
             placementMode: item.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
             width: item.width || '',
+            namespace: item.namespace,
         }))
         .sort((a, b) => a.index - b.index);
 
@@ -145,6 +151,7 @@ export function getSelectorGroupDialogFromData(data) {
         autoHeight: data.autoHeight,
         buttonApply: data.buttonApply,
         buttonReset: data.buttonReset,
+        namespace: data.namespace,
 
         group: items,
     };
@@ -172,6 +179,7 @@ function dash(state = initialState, action) {
                 action.payload?.openedDialog === DashTabItemType.GroupControl
                     ? getSelectorDialogInitialState({
                           lastUsedDatasetId: state.lastUsedDatasetId,
+                          lastUsedConnectionId: state.lastUsedConnectionId,
                       })
                     : state.selectorDialog;
 

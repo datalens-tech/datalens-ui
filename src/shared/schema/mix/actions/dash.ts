@@ -2,6 +2,7 @@ import {DeepNonNullable} from 'utility-types';
 
 import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
+import {getEntryVisualizationType} from '../helpers';
 import {
     DatasetDictResponse,
     DatasetFieldsDictResponse,
@@ -40,6 +41,7 @@ export const dashActions = {
             scope: 'widget',
             ids: entriesIds,
             includeLinks: true,
+            includeData: true,
         });
 
         const allDatasetsIdsSet = new Set([...datasetsIds]);
@@ -83,6 +85,7 @@ export const dashActions = {
                         type: widgetType,
                         datasetId,
                         entryId,
+                        visualizationType: getEntryVisualizationType(entry),
                     }),
                 );
             }

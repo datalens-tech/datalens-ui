@@ -1,3 +1,5 @@
+import {getAvailableVisualizations} from 'ui/units/wizard/utils/visualization';
+
 import {
     ColorsConfig,
     Dataset,
@@ -7,6 +9,7 @@ import {
     HierarchyField,
     PartialBy,
     Placeholder,
+    Shared,
     Sort,
     Update,
     VisualizationLayerShared,
@@ -202,6 +205,11 @@ export function getDatasetUpdates(args: UpdateDatasetArgs) {
     const placeholders: Placeholder[] = visualization?.placeholders || [];
     const wizardVisualizationFields = getVisualizationFields(wizardVisualization);
 
+    const availableVisualizations = getAvailableVisualizations();
+    const presetVisualization = availableVisualizations.find(({id}) => id === visualization?.id) as
+        | Shared['visualization']
+        | null;
+
     // Let's go through the new scheme
     newResultSchema.forEach((datasetField) => {
         const field = datasetField as Field;
@@ -303,6 +311,9 @@ export function getDatasetUpdates(args: UpdateDatasetArgs) {
         });
 
         placeholders.forEach((placeholder) => {
+            const presetPlaceholder = presetVisualization?.placeholders.find(
+                (p) => p.id === placeholder.id,
+            );
             let placeholderUpdateRequired = false;
 
             placeholder.items
@@ -314,7 +325,7 @@ export function getDatasetUpdates(args: UpdateDatasetArgs) {
                         mutateAndValidateItem({
                             fields: newResultSchema as Field[],
                             item,
-                            placeholder,
+                            placeholder: presetPlaceholder,
                         });
 
                         placeholderUpdateRequired = true;

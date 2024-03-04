@@ -8,6 +8,8 @@ import {
     GraphShared,
     HierarchyField,
     Placeholder,
+    PlaceholderId,
+    PlaceholderSettings,
     PointSizeConfig,
     ShapesConfig,
     Shared,
@@ -16,12 +18,14 @@ import {
     VisualizationLayerShared,
     VisualizationWithLayersShared,
     WizardVisualizationId,
+    isDimensionField,
     isFieldHierarchy,
     isMeasureField,
     isMeasureValue,
     isVisualizationWithLayers,
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from 'shared';
+import {isSharedPlaceholder} from 'ui/units/wizard/actions/utils';
 
 import {ResetWizardStoreAction} from '../actions';
 import {SET_HIERARCHIES} from '../actions/dataset';
@@ -48,7 +52,7 @@ import {
     UPDATE_PLACEHOLDER_SETTINGS,
     VisualizationAction,
 } from '../actions/visualization';
-import {getSelectedLayer} from '../utils/helpers';
+import {getSelectedLayer, getSelectedLayerId} from '../utils/helpers';
 import {getPlaceholderAxisModeMap, isPlaceholderWithAxisMode} from '../utils/placeholder';
 
 import {clearUnusedVisualizationItems, getPlaceholdersWithMergedSettings} from './utils';
@@ -207,22 +211,6 @@ export function visualization(
                     case 'bar100p-column':
                     case 'bar100p-column100p':
                     case 'bar100p-bar':
-                    case 'pie-line':
-                    case 'pie-area':
-                    case 'pie-area100p':
-                    case 'pie-column':
-                    case 'pie-column100p':
-                    case 'pie-bar':
-                    case 'pie-bar100p':
-                    case 'pie-donut':
-                    case 'donut-line':
-                    case 'donut-area':
-                    case 'donut-area100p':
-                    case 'donut-column':
-                    case 'donut-column100p':
-                    case 'donut-bar':
-                    case 'donut-bar100p':
-                    case 'donut-pie':
                     case 'treemap-line':
                     case 'treemap-area':
                     case 'treemap-area100p':
@@ -253,26 +241,46 @@ export function visualization(
                         placeholders[1].items = oldPlaceholders[1].items;
                         break;
 
-                    case 'area-treemap':
-                    case 'area100p-treemap':
-                    case 'column-treemap':
-                    case 'column100p-treemap':
-                    case 'bar-treemap':
-                    case 'bar100p-treemap':
+                    case 'pie-line':
+                    case 'pie-area':
+                    case 'pie-area100p':
+                    case 'pie-column':
+                    case 'pie-column100p':
+                    case 'pie-bar':
+                    case 'pie-bar100p':
+                    case 'pie-scatter':
+                    case 'donut-line':
+                    case 'donut-area':
+                    case 'donut-area100p':
+                    case 'donut-column':
+                    case 'donut-column100p':
+                    case 'donut-bar':
+                    case 'donut-bar100p':
+                    case 'donut-scatter':
                     case 'pie-treemap':
-                    case 'donut-treemap':
-                        if (oldPlaceholders[0].items.length) {
-                            placeholders[0].items = [oldPlaceholders[0].items[0]];
-                        }
+                    case 'donut-treemap': {
+                        const dimensions = oldPlaceholders.reduce<Field[]>(
+                            (acc, p) => acc.concat(p.items.filter(isDimensionField)),
+                            [],
+                        );
+                        const measures = oldPlaceholders.reduce<Field[]>(
+                            (acc, p) => acc.concat(p.items.filter(isMeasureField)),
+                            [],
+                        );
 
-                        if (oldPlaceholders[1].items.length) {
-                            placeholders[1].items = [oldPlaceholders[1].items[0]];
-                        }
-
+                        placeholders[0].items = dimensions.slice(0, 1);
+                        placeholders[1].items = measures.slice(0, 1);
                         break;
+                    }
 
-                    // Pie can have only 1 dimension and 1 metric
-                    // There can be only 1 indicator or dimension in a scatter
+                    case 'pie-donut':
+                    case 'donut-pie': {
+                        placeholders.forEach((p) => {
+                            p.items = oldPlaceholders.find((old) => old.id === p.id)?.items || [];
+                        });
+                        break;
+                    }
+
                     case 'line-pie':
                     case 'area-pie':
                     case 'area100p-pie':
@@ -288,7 +296,36 @@ export function visualization(
                     case 'column100p-donut':
                     case 'bar-donut':
                     case 'bar100p-donut':
-                    case 'treemap-donut':
+                    case 'treemap-donut': {
+                        const colorPlaceholder = placeholders.find(
+                            (p) => p.id === PlaceholderId.Colors,
+                        );
+                        if (colorPlaceholder) {
+                            colorPlaceholder.items = oldPlaceholders.reduce<Field[]>(
+                                (acc, p) => acc.concat(p.items.filter(isDimensionField)),
+                                [],
+                            );
+                        }
+
+                        const measurePlaceholder = placeholders.find(
+                            (p) => p.id === PlaceholderId.Measures,
+                        );
+                        if (measurePlaceholder) {
+                            measurePlaceholder.items = oldPlaceholders.reduce<Field[]>(
+                                (acc, p) => acc.concat(p.items.filter(isMeasureField)),
+                                [],
+                            );
+                        }
+
+                        break;
+                    }
+
+                    case 'area-treemap':
+                    case 'area100p-treemap':
+                    case 'column-treemap':
+                    case 'column100p-treemap':
+                    case 'bar-treemap':
+                    case 'bar100p-treemap':
                     case 'line-scatter':
                     case 'area-scatter':
                     case 'area100p-scatter':
@@ -296,8 +333,6 @@ export function visualization(
                     case 'column100p-scatter':
                     case 'bar-scatter':
                     case 'bar100p-scatter':
-                    case 'pie-scatter':
-                    case 'donut-scatter':
                     case 'treemap-scatter':
                         if (oldPlaceholders[0].items.length) {
                             placeholders[0].items = [oldPlaceholders[0].items[0]];
@@ -666,20 +701,13 @@ export function visualization(
         case UPDATE_PLACEHOLDER_SETTINGS: {
             const {settings, placeholderId} = action;
 
-            let updatedVisualization = state.visualization;
-
-            const placeholders = updatedVisualization?.placeholders || [];
-            const placeholderToUpdateIndex = placeholders.findIndex((p) => p.id === placeholderId);
-
-            if (placeholderToUpdateIndex >= 0 && placeholders[placeholderToUpdateIndex].settings) {
-                updatedVisualization = update(updatedVisualization, {
-                    placeholders: {[placeholderToUpdateIndex]: {settings: {$merge: settings}}},
-                });
-            }
-
             return {
                 ...state,
-                visualization: updatedVisualization,
+                visualization: updatePlaceholderSettings(
+                    state.visualization,
+                    placeholderId,
+                    settings,
+                ),
             };
         }
         case SET_HIERARCHIES: {
@@ -1025,4 +1053,69 @@ function updateCommonPlaceholders(
         ...visualization,
         layers,
     } as Shared['visualization'];
+}
+
+function updatePlaceholderSettings(
+    visualization: VisualizationState['visualization'],
+    placeholderId: PlaceholderId,
+    settings: Partial<PlaceholderSettings>,
+) {
+    if (isVisualizationWithLayers(visualization)) {
+        const visualizationId = visualization.id as WizardVisualizationId;
+        const layerId = getSelectedLayerId(visualization);
+        const layers = visualization.layers;
+
+        if (isSharedPlaceholder(placeholderId, visualizationId)) {
+            return update(visualization, {
+                layers: layers.reduce((acc, layer, index) => {
+                    const placeholderIndex = layer.placeholders?.findIndex(
+                        (p) => p.id === placeholderId,
+                    );
+
+                    if (!layer.placeholders[placeholderIndex]?.settings) {
+                        return acc;
+                    }
+
+                    return Object.assign(acc, {
+                        [index]: {
+                            placeholders: {
+                                [placeholderIndex]: {settings: {$merge: settings}},
+                            },
+                        },
+                    });
+                }, {}),
+            });
+        }
+
+        const selectedLayerIndex = layers.findIndex(({layerSettings: {id}}) => id === layerId);
+
+        if (selectedLayerIndex !== -1) {
+            const placeholders = layers[selectedLayerIndex]?.placeholders || [];
+            const placeholderToUpdateIndex = placeholders.findIndex((p) => p.id === placeholderId);
+            const targetPlaceholder = placeholders[placeholderToUpdateIndex];
+
+            if (targetPlaceholder?.settings) {
+                return update(visualization, {
+                    layers: {
+                        [selectedLayerIndex]: {
+                            placeholders: {
+                                [placeholderToUpdateIndex]: {settings: {$merge: settings}},
+                            },
+                        },
+                    },
+                });
+            }
+        }
+    }
+
+    const placeholders = visualization?.placeholders || [];
+    const placeholderToUpdateIndex = placeholders.findIndex((p) => p.id === placeholderId);
+
+    if (placeholders[placeholderToUpdateIndex]?.settings) {
+        return update(visualization, {
+            placeholders: {[placeholderToUpdateIndex]: {settings: {$merge: settings}}},
+        });
+    }
+
+    return visualization;
 }

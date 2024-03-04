@@ -75,7 +75,7 @@ export const getMappedConnectedControlField = ({
     }
 
     // map fields with the name of the field from the dataset
-    if (item?.datasets?.length) {
+    if (item?.datasets?.length && !item.isQL) {
         // if it is dataset selector
         return Object.keys(item.defaultParams)
             .map((paramItem) => {
