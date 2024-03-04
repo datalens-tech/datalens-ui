@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {EntryScope} from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
@@ -19,7 +20,7 @@ import {EntrySelector} from '../../../EntrySelector/EntrySelector';
 
 import {prepareConnectionData} from './helpers';
 
-const i18nConnectionBasedControlFake = (str: string) => str;
+const i18n = I18n.keyset('dash.control-dialog.edit');
 const getConnectionLink = (connectionId: string) => `/connections/${connectionId}`;
 export const ConnectionSelector = () => {
     const dispatch = useDispatch();
@@ -86,7 +87,8 @@ export const ConnectionSelector = () => {
 
     return (
         <EntrySelector
-            label={i18nConnectionBasedControlFake('field_connection')}
+            // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+            label={i18n('field_connection')}
             entryId={connectionId}
             scope={EntryScope.Connection}
             handleEntryChange={handleEntryChange}

@@ -9,7 +9,6 @@ import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
-const i18nConnectionBasedControlFake = (str: string) => str;
 
 const CONTROL_SOURCE_TYPES = [
     {
@@ -17,7 +16,8 @@ const CONTROL_SOURCE_TYPES = [
         value: DashTabItemControlSourceType.Dataset,
     },
     {
-        title: i18nConnectionBasedControlFake('value_source-dataset'),
+        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+        title: i18n('value_source-connection'),
         value: DashTabItemControlSourceType.Connection,
     },
     {
