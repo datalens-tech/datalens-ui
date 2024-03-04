@@ -20,8 +20,13 @@ import {getDistinctsByTypedQuery} from './helpers/get-distincts-by-typed-query';
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
 export const ConnectionSettings: React.FC = () => {
-    const {connectionQueryTypes, connectionId, connectionQueryContent, connectionQueryType} =
-        useSelector(selectSelectorDialog);
+    const {
+        connectionQueryTypes,
+        connectionId,
+        connectionQueryContent,
+        connectionQueryType,
+        selectorParameters,
+    } = useSelector(selectSelectorDialog);
     const workbookId = useSelector(selectWorkbookId);
 
     const options = React.useMemo(() => {
@@ -39,7 +44,7 @@ export const ConnectionSettings: React.FC = () => {
                 connectionId,
                 connectionQueryContent,
                 connectionQueryType,
-                parameters: {},
+                parameters: selectorParameters || {},
             }),
         [connectionId, connectionQueryContent, connectionQueryType, workbookId],
     );
