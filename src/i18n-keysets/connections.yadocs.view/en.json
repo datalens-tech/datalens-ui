@@ -9,7 +9,7 @@
   "label_403-not-authotized-description": "Log in to your Yandex account or change the file access type and try adding it again",
   "label_access-type": "Access to file",
   "label_add-file": "Add file",
-  "label_add-input-private-help": "The path is specified relative to the database root <code>/disk</code>. Read more about finding the path in the <link>documentation</link>.",
+  "label_add-input-private-help": "The path is specified relative to the root directory <code>/disk</code>. Read more about finding the path in the <link>documentation</link>.",
   "label_add-input-private-note": "Example: /folder/path/table.xlsx",
   "label_add-input-public-help": "Files with a password set or a download ban enabled are not supported. Please use private files available after authentication instead.",
   "label_add-input-public-note": "Example: https://disk.yandex.ru/i/QLFNDx7c5*****",
