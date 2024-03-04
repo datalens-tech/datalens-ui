@@ -13,7 +13,7 @@ type ProcessContentArgs = {
 };
 export const processContent = (args: ProcessContentArgs): ControlShared['content'] => {
     const {data, shared, ChartEditor} = args;
-    const {sourceType, source} = shared;
+    const {sourceType, source, content} = shared;
 
     switch (sourceType) {
         case DashTabItemControlSourceType.Dataset: {
@@ -25,7 +25,7 @@ export const processContent = (args: ProcessContentArgs): ControlShared['content
             return processTypedQueryContent(data.connectionDistincts);
         }
         default: {
-            return [];
+            return content || [];
         }
     }
 };
