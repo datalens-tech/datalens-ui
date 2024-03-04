@@ -4,7 +4,7 @@
   "button_auth": "Войти в Яндекс Документы",
   "button_auth-dialog": "Войти",
   "button_cancel": "Отмена",
-  "button_logout": "Выйти",
+  "button_logout": "Отозвать",
   "button_update": "Обновить данные",
   "label_403-not-authotized-description": "Войдите в свой аккаунт на Яндексе или измените тип доступа к файлу и попробуйте добавить его снова",
   "label_access-type": "Доступ к файлу",
