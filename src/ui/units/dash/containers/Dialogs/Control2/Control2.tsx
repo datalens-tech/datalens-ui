@@ -12,7 +12,10 @@ import {CommonSettingsSection} from 'units/dash/containers/Dialogs/Control2/Sect
 import {SelectorPreview} from 'units/dash/containers/Dialogs/Control2/SelectorPreview/SelectorPreview';
 import {SelectorTypeSelect} from 'units/dash/containers/Dialogs/Control2/SelectorTypeSelect/SelectorTypeSelect';
 import {applyControl2Dialog, closeControl2Dialog} from 'units/dash/store/actions/dashTyped';
-import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
+import {
+    selectIsParametersSectionAvailable,
+    selectSelectorDialog,
+} from 'units/dash/store/selectors/dashTypedSelectors';
 
 import {ParametersSection} from './Sections/ParametersSection/ParametersSection';
 
@@ -61,7 +64,7 @@ class DialogAddControl extends React.Component<Props> {
         const {sourceType, isEdit} = this.props;
         const showTypeSelect =
             !isEdit || !Utils.isEnabledFeature(Feature.GroupControls) || sourceType !== 'external';
-        const showParametersSection = this.isParametersSectionAvailable();
+        const showParametersSection = this.props.isParametersSectionAvailable;
 
         return (
             <div>
@@ -107,23 +110,13 @@ class DialogAddControl extends React.Component<Props> {
     private handleApply = () => {
         this.props.actions.applyControl2Dialog();
     };
-
-    private isParametersSectionAvailable = () => {
-        const {sourceType} = this.props;
-
-        switch (sourceType) {
-            case DashTabItemControlSourceType.Connection:
-                return true;
-            default:
-                return false;
-        }
-    };
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         isEdit: Boolean(state.dash.openedItemId),
         sourceType: selectSelectorDialog(state).sourceType,
+        isParametersSectionAvailable: selectIsParametersSectionAvailable(state),
     };
 };
 
