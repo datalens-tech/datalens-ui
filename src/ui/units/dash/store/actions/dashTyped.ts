@@ -1,6 +1,12 @@
 import React from 'react';
 
-import {AddConfigItem, Config, DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
+import {
+    AddConfigItem,
+    Config,
+    DashKit,
+    ItemsStateAndParams,
+    type StringParams,
+} from '@gravity-ui/dashkit';
 import {PluginTextProps} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
 import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Title';
 import {i18n} from 'i18n';
@@ -368,6 +374,7 @@ export type SelectorDialogState = {
     dataset?: Dataset;
     datasetId?: string;
     connectionId?: string;
+    selectorParameters?: StringParams;
     connectionQueryType?: ConnectionQueryTypeValues;
     connectionQueryTypes?: ConnectionQueryTypeOptions[];
     connectionQueryContent?: ConnectionQueryContent;
