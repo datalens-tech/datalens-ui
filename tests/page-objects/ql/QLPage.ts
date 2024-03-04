@@ -17,6 +17,7 @@ import {
     ScreenEditorQA,
 } from '../../../src/shared/constants/qa/ql';
 import SectionVisualization from '../wizard/SectionVisualization';
+import {ColumnSettings} from '../wizard/ColumnSettings';
 
 interface QLPageProps extends BasePageProps {}
 
@@ -26,6 +27,7 @@ class QLPage extends ChartPage {
     chartSettings: ChartSettings;
     visualizationItemDialog: VisualizationItemDialog;
     sectionVisualization: SectionVisualization;
+    columnSettings: ColumnSettings;
     private selectConnectionButtonSelector = slct(TabQueryQA.SelectConnection);
     private navigationMinimal: NavigationMinimal;
 
@@ -37,6 +39,7 @@ class QLPage extends ChartPage {
         this.previewTable = new PreviewTable(page);
         this.visualizationItemDialog = new VisualizationItemDialog(page);
         this.sectionVisualization = new SectionVisualization(page);
+        this.columnSettings = new ColumnSettings(page);
     }
 
     async clickCreate() {

@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import moment from 'moment';
 import path from 'path';
 
-import {ActionPanelQA, EntryDialogQA} from '../../src/shared';
+import {ActionPanelQA, DialogCreateWorkbookEntryQa, EntryDialogQA} from '../../src/shared';
 import {ActionPanelEntryContextMenuQa} from '../../src/shared/constants/qa/action-panel';
 export * from './helpers';
 
@@ -103,14 +103,14 @@ export async function makeLogIn(page: Page, asSuperuser?: boolean) {
 
 // Fill in the input with the name of the entity being created in the EntryDialog (the dialog that appears when saving entities) and click the "Create" button
 export async function entryDialogFillAndSave(page: Page, entryName: string) {
-    // waiting for the save dialog to open
-    const entryDialog = await page.waitForSelector(slct('entry-dialog-content'));
-    const entryDialogInput = await entryDialog!.waitForSelector('[data-qa=path-select] input');
-    // filling in the input
-    await entryDialogInput!.fill(entryName);
-
-    // save
-    await page.click(slct(EntryDialogQA.Apply));
+    const entryDialogInput = page
+        .locator(slct(DialogCreateWorkbookEntryQa.Input))
+        .or(page.locator(slct('entry-dialog-content')).locator('[data-qa=path-select]'));
+    await entryDialogInput.locator('input').fill(entryName);
+    const button = page
+        .locator(slct(EntryDialogQA.Apply))
+        .or(page.locator(slct(DialogCreateWorkbookEntryQa.ApplyButton)));
+    await button.click();
 }
 
 function getFullUrl(url: string) {
