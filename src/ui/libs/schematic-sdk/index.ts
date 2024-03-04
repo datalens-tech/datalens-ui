@@ -51,7 +51,7 @@ const sdkConfig: SdkConfig = {
         return {
             ...options,
             headers: {
-                [REQUEST_ID_HEADER]: `dl.${DL.REQUEST_ID.slice(0, 5)}.${uuid().slice(0, 8)}`,
+                [REQUEST_ID_HEADER]: `dl.${DL.REQUEST_ID.slice(-5)}.${uuid().slice(0, 8)}`,
                 ...options?.headers,
             },
         };

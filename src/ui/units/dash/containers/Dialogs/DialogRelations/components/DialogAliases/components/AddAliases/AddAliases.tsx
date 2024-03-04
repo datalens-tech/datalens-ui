@@ -1,16 +1,22 @@
 import React from 'react';
 
 import {Check, Xmark} from '@gravity-ui/icons';
-import {Button, Icon, Select, SelectOption} from '@gravity-ui/uikit';
+import {Button, Icon, Link, Select, SelectOption} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import isEmpty from 'lodash/isEmpty';
 import {DashCommonQa} from 'shared';
+import {Interpolate} from 'ui/components/Interpolate';
+import {DL} from 'ui/constants/common';
 
 import {addAlias} from '../../../../helpers';
+import {isEditorChart} from '../../../../hooks/helpersChart';
+import {isControl, isExternalControl} from '../../../../hooks/helpersControls';
 import {AliasesContext} from '../../../../hooks/useRelations';
 import {DashkitMetaDataItem, DatasetsListData} from '../../../../types';
+import {AliasesInvalidList} from '../AliasesList/AliasesInvalidList';
 
-import {isAddingAliasExists, isAddingAliasSameDataset} from './helpers';
+import {getParamsSelectOptions, hasAliasWithSameDataset, isAddingAliasExists} from './helpers';
 
 import './AddAliases.scss';
 
@@ -34,26 +40,39 @@ const getList = (data: DashkitMetaDataItem) => {
 
     let res = [];
 
-    if (dataset?.fieldsList) {
-        res = dataset?.fieldsList.map((item) => ({
-            content: item.title,
-            value: item.guid,
-        }));
+    if (dataset?.fieldsList && !data.isQL) {
+        res = dataset?.fieldsList
+            .filter((item) => (isControl(data) ? item.guid in (data.defaultParams || {}) : true))
+            .map((item) => ({
+                content: item.title,
+                value: item.guid,
+            }));
     } else {
-        res = data.usedParams?.map((item) => ({content: item, value: item})) || [];
+        // if there is no defaults in editor chart or in external selector there is no params for list options
+        // until user add any param to default
+        if (isEditorChart(data)) {
+            return !data.params || isEmpty(data.params)
+                ? []
+                : Object.keys(data.params).map(getParamsSelectOptions);
+        } else if (isExternalControl(data)) {
+            return !data.widgetParams || isEmpty(data.widgetParams)
+                ? []
+                : Object.keys(data.widgetParams).map(getParamsSelectOptions);
+        }
+        res = data.usedParams?.map(getParamsSelectOptions) || [];
     }
 
     return res;
 };
 
 const getFieldName = (data: DashkitMetaDataItem, selectedItem?: SelectOption) => {
-    const datasetFileds = data.datasets?.length ? data.datasets[0]?.fieldsList : null;
-    if (!datasetFileds) {
+    const datasetFields = data.datasets?.length && !data.isQL ? data.datasets[0]?.fieldsList : null;
+    if (!datasetFields) {
         return <div>{selectedItem?.value || ''}</div>;
     }
     return (
         <div>
-            {datasetFileds.find((item) => item.guid === selectedItem?.value)?.title ||
+            {datasetFields.find((item) => item.guid === selectedItem?.value)?.title ||
                 selectedItem?.value ||
                 ''}
         </div>
@@ -93,6 +112,10 @@ export const AddAliases = ({
 }: AddAliasesProps) => {
     const {datasets} = React.useContext(AliasesContext);
     const [errorMsg, setErrorMgs] = React.useState<string>('');
+    const [errorAliases, setErrorAliases] = React.useState<{
+        alias: string[];
+        errors: string[];
+    } | null>(null);
 
     const [leftAliasSelected, setLeftAliasSelected] = React.useState<string[] | undefined>();
     const [rightAliasSelected, setRightAliasSelected] = React.useState<string[] | undefined>();
@@ -148,10 +171,14 @@ export const AddAliases = ({
         }
 
         const addedAliases = addAlias(newAlias[0], newAlias[1], [...currentAliases]);
+        const sameDatasetAlias = hasAliasWithSameDataset(addedAliases, datasets);
 
-        if (isAddingAliasSameDataset(addedAliases, datasets)) {
+        if (sameDatasetAlias) {
             setErrorMgs(i18n('label_alias-same-dataset'));
+            setErrorAliases(sameDatasetAlias);
             return;
+        } else {
+            setErrorAliases(null);
         }
 
         onAdd(newAlias);
@@ -165,6 +192,36 @@ export const AddAliases = ({
         }
         setErrorMgs(error);
     }, [error]);
+
+    if (!currentItemOptions.length || !rowItemOptions.length) {
+        const hasExternalControl = isExternalControl(widget) || isExternalControl(currentRow);
+        const keyset = hasExternalControl
+            ? i18n('label_need-default-external-control')
+            : i18n('label_need-default-editor-chart');
+        const linkParam = hasExternalControl
+            ? '/editor/widgets/selector/external'
+            : '/editor/params';
+
+        return (
+            <div className={b()}>
+                <Interpolate
+                    text={keyset}
+                    matches={{
+                        link: (match) => (
+                            <React.Fragment>
+                                <Link
+                                    href={`${DL.ENDPOINTS.datalensDocs}${linkParam}`}
+                                    target="_blank"
+                                >
+                                    {match}
+                                </Link>
+                            </React.Fragment>
+                        ),
+                    }}
+                />
+            </div>
+        );
+    }
 
     return (
         <div className={b()}>
@@ -214,7 +271,7 @@ export const AddAliases = ({
 
                 <Button
                     className={b('button')}
-                    view="normal"
+                    view="action"
                     onClick={handleAddAlias}
                     qa={DashCommonQa.AliasAddBtn}
                 >
@@ -222,6 +279,13 @@ export const AddAliases = ({
                 </Button>
             </div>
             {errorMsg && <div className={b('error')}>{errorMsg}</div>}
+            {errorAliases && (
+                <AliasesInvalidList
+                    aliases={[errorAliases.alias]}
+                    invalidAliases={errorAliases.errors}
+                    datasets={datasets}
+                />
+            )}
         </div>
     );
 };

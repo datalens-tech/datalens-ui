@@ -5,13 +5,14 @@ import {Checkbox, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {ControlQA, DialogControlQa} from 'shared';
+import {ControlQA, DashTabItemControlSourceType, DialogControlQa} from 'shared';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
-    selectIsDatasetSelectorAndNoFieldSelected,
+    selectIsControlConfigurationDisabled,
     selectSelectorDialog,
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
+import type {SelectorSourceType} from '../../../../../../../store/actions/controls/types';
 import {ELEMENT_TYPE} from '../../../../../Control/constants';
 
 import '../../AppearanceSection.scss';
@@ -19,19 +20,24 @@ import '../../AppearanceSection.scss';
 const b = block('control2-appearance-section');
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
+const i18nConnectionBasedControlFake = (str: string) => str;
+
+const getHelpPopoverText = (sourceType: SelectorSourceType | undefined): string => {
+    switch (sourceType) {
+        case DashTabItemControlSourceType.Connection:
+            return i18nConnectionBasedControlFake('field_inner-title-note-connection-selector');
+        default:
+            return i18n('field_inner-title-note');
+    }
+};
 
 export const InnerTitleRow = () => {
     const dispatch = useDispatch();
-    const {elementType, showInnerTitle, innerTitle} = useSelector(selectSelectorDialog);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const {elementType, showInnerTitle, innerTitle, sourceType} = useSelector(selectSelectorDialog);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
 
-    const isInnerTitleDisabled =
-        (elementType !== ELEMENT_TYPE.SELECT && elementType !== ELEMENT_TYPE.INPUT) ||
-        isFieldDisabled;
-    const isInnerTitleActive =
-        ((elementType === ELEMENT_TYPE.SELECT || elementType === ELEMENT_TYPE.INPUT) &&
-            showInnerTitle) ??
-        false;
+    const isInnerTitleDisabled = elementType === ELEMENT_TYPE.CHECKBOX || isFieldDisabled;
+    const isInnerTitleActive = (elementType !== ELEMENT_TYPE.CHECKBOX && showInnerTitle) ?? false;
 
     const handleShowInnerTitleUpdate = React.useCallback((showInnerTitle: boolean) => {
         dispatch(
@@ -53,7 +59,7 @@ export const InnerTitleRow = () => {
         <React.Fragment>
             <span>{i18n('field_inner-title')}</span>
             <HelpPopover
-                htmlContent={i18n('field_inner-title-note')}
+                htmlContent={getHelpPopoverText(sourceType)}
                 placement={['bottom', 'top']}
                 offset={{top: -1, left: 5}}
             />

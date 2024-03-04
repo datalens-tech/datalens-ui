@@ -1,10 +1,13 @@
+import {dateTime} from '@gravity-ui/date-utils';
+
 import {AxisMode} from '../../../../../../../../../shared';
 
 export const expectedResult = {
     timeline: [
-        new Date('2023-03-01T00:00:00').getTime() / 1000,
-        new Date('2023-03-02T00:00:00').getTime() / 1000,
+        dateTime({input: '2023-03-01T00:00:00', timeZone: 'UTC'}).valueOf() / 1000,
+        dateTime({input: '2023-03-02T00:00:00', timeZone: 'UTC'}).valueOf() / 1000,
     ],
+    timeZone: 'UTC',
     graphs: [
         {
             id: 'Query #0',

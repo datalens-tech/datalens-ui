@@ -1,5 +1,12 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
+$widgetIconWidth: 16px;
+$widgetIconMarginLeft: 4px;
+$widgetIconMarginRight: 8px;
+$widgetAliasButtonMarginLeft: 4px;
+$buttonWidth: 28px;
+$textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
+
 .dialog-relations-content {
     $class: &;
 
@@ -7,6 +14,12 @@
     overflow-y: auto;
     margin: 16px 0 0;
     flex-grow: 1;
+
+    &_with-loader {
+        justify-content: center;
+        align-items: center;
+        display: flex;
+    }
 
     &__loader-wrap {
         justify-content: center;
@@ -17,7 +30,7 @@
 
     &__row {
         display: grid;
-        grid-template-columns: auto 176px;
+        grid-template-columns: minmax(0, 1fr) 176px;
         width: 100%;
         transition: background-color 0.2s ease;
         border-bottom: 1px solid var(--g-color-line-generic);
@@ -42,9 +55,17 @@
     }
 
     &__left:not(.top) {
+        position: relative;
+        display: flex;
+        width: 100%;
+    }
+
+    &__left:not(.top) &__left-inner {
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
+        width: 100%;
+        padding-right: $widgetAliasButtonMarginLeft + $buttonWidth;
     }
 
     &__right {
@@ -64,17 +85,14 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 331px;
-
-        &_with-icon {
-            width: 303px;
-        }
+        display: block;
+        width: calc(100% - #{$textWidth});
     }
 
     &__icon-row {
-        min-width: 16px;
-        margin-right: 8px;
-        margin-left: 4px;
+        min-width: $widgetIconWidth;
+        margin-right: $widgetIconMarginRight;
+        margin-left: $widgetIconMarginLeft;
         color: var(--g-color-text-hint);
     }
 
@@ -140,6 +158,8 @@
         margin-left: 4px;
         opacity: 0;
         transition: opacity 0.1s ease;
+        position: absolute;
+        right: 4px;
     }
 
     &__row:hover &__button-alias {
@@ -152,7 +172,7 @@
 
     &__empty-text {
         text-align: center;
-        margin-top: 96px;
+        margin-top: 26px;
         color: var(--g-color-text-secondary);
     }
 

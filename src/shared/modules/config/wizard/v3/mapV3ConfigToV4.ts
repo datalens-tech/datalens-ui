@@ -87,11 +87,11 @@ export const mapV3ConfigToV4 = (config: V3ChartsConfig): V4ChartsConfig => {
 };
 
 const mutateFieldDatetime = (field: any): void => {
-    if (field.data_type === DATASET_FIELD_TYPES.DATETIME) {
+    if (field.data_type === 'datetime') {
         field.data_type = DATASET_FIELD_TYPES.GENERICDATETIME;
     }
 
-    if (field.cast === DATASET_FIELD_TYPES.DATETIME) {
+    if (field.cast === 'datetime') {
         field.cast = DATASET_FIELD_TYPES.GENERICDATETIME;
     }
 };

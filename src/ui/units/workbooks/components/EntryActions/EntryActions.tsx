@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {Copy, CopyArrowRight, FontCursor, TrashBin} from '@gravity-ui/icons';
 import {DropdownMenu, DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
@@ -10,6 +11,7 @@ import {EntryScope} from 'shared/types/common';
 import {S3_BASED_CONNECTORS} from 'ui/constants';
 import Utils from 'ui/utils';
 
+import {DropdownAction} from '../../../../components/DropdownAction/DropdownAction';
 import {registry} from '../../../../registry';
 import type {WorkbookEntry} from '../../types';
 
@@ -44,14 +46,14 @@ export const EntryActions = ({
     const items: DropdownMenuItemMixed<unknown>[] = [
         {
             action: onRenameClick,
-            text: i18n('action_rename'),
+            text: <DropdownAction icon={FontCursor} text={i18n('action_rename')} />,
         },
 
         ...(isFileConnection === false
             ? [
                   {
                       action: onDuplicateEntry,
-                      text: i18n('action_duplicate'),
+                      text: <DropdownAction icon={Copy} text={i18n('action_duplicate')} />,
                       qa: WorkbookPage.MenuItemDuplicate,
                   },
               ]
@@ -60,21 +62,28 @@ export const EntryActions = ({
             ? [
                   {
                       action: onCopyEntry,
-                      text: i18n('action_copy'),
+                      text: <DropdownAction icon={CopyArrowRight} text={i18n('action_copy')} />,
                   },
               ]
             : []),
         ...useAdditionalWorkbookEntryActions(entry, workbook),
+    ];
+
+    const otherActions: DropdownMenuItemMixed<unknown>[] = [];
+
+    otherActions.push([
         {
             action: onDeleteClick,
-            text: i18n('action_delete'),
+            text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
             theme: 'danger',
         },
-    ];
+    ]);
+
+    items.push(...otherActions);
 
     return (
         <DropdownMenu
-            size="s"
+            size="m"
             items={items}
             defaultSwitcherProps={{qa: WorkbookPage.MenuDropDownBtn}}
         />

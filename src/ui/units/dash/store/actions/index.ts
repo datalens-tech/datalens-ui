@@ -5,9 +5,13 @@ import {EntryContentAction} from '../../../../store/actions/entryContent';
 
 import {
     AddSelectorToGroupAction,
+    SetActiveSelectorIndexAction,
+    UpdateSelectorsGroupAction,
+} from './controls/actions';
+import {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
+import {
     ChangeNavigationPathAction,
     SetAccessDescriptionAction,
-    SetActiveSelectorIndexAction,
     SetDashKeyAction,
     SetDashKitRefAction,
     SetDashUpdateStatusAction,
@@ -16,6 +20,7 @@ import {
     SetErrorModeAction,
     SetHashStateAction,
     SetInitialPageTabsItemsAction,
+    type SetLastUsedConnectionIdAction,
     SetLastUsedDatasetIdAction,
     SetLoadingEditModeAction,
     SetPageDefaultTabItemsAction,
@@ -31,8 +36,8 @@ import {
     SetViewModeAction,
     SetWidgetCurrentTabAction,
     ToggleTableOfContentAction,
-    UpdateSelectorsGroupAction,
 } from './dashTyped';
+import {CloseDialogAction, OpenDialogAction, OpenItemDialogAction} from './dialogs/actions';
 import {SetNewRelationsAction} from './relations/actions';
 
 export type DashAction<T = unknown> =
@@ -65,6 +70,12 @@ export type DashAction<T = unknown> =
     | SetRenameWithoutReloadAction
     | SetActiveSelectorIndexAction
     | SetSkipReloadAction
-    | SetWidgetCurrentTabAction;
+    | SetWidgetCurrentTabAction
+    | OpenDialogAction
+    | OpenItemDialogAction
+    | CloseDialogAction
+    | SaveDashSuccessAction
+    | SaveDashErrorAction
+    | SetLastUsedConnectionIdAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

@@ -14,6 +14,7 @@
   "label_alert-unpublish-text-many": "Some objects are publicly available. Are you sure?",
   "label_author-description": "When publishing a {{subject}}, you can specify a link to its source or author. The link will be displayed at the bottom of the {{subject}}.",
   "label_author-link": "Link",
+  "label_author-link-error": "Invalid link format",
   "label_author-subject-dash": "dashboard",
   "label_author-subject-widget": "chart",
   "label_author-text": "Link text",

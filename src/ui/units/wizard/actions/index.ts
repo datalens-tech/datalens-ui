@@ -13,7 +13,6 @@ import {
     DatasetFieldType,
     ENTRY_TYPES,
     ExtendedChartsConfig,
-    Feature,
     Field,
     FilterField,
     HierarchyField,
@@ -31,6 +30,8 @@ import {
     VisualizationLayerShared,
     VisualizationLayerType,
     VisualizationWithLayersShared,
+    WizardVisualizationId,
+    WorkbookId,
     createMeasureNames,
     filterUpdatesByDatasetId,
     getResultSchemaFromDataset,
@@ -43,7 +44,7 @@ import {
     splitParamsToParametersAndFilters,
 } from 'shared';
 import {DataLensApiError} from 'typings';
-import {DatalensGlobalState, Utils} from 'ui';
+import {DatalensGlobalState} from 'ui';
 import {navigateHelper} from 'ui/libs';
 import {
     getAvailableVisualizations,
@@ -62,6 +63,7 @@ import {sdk as oldSdk} from '../../../libs/sdk';
 import {showToast} from '../../../store/actions/toaster';
 import {getFilteredObject} from '../../../utils';
 import {WizardDispatch} from '../reducers';
+import {selectWizardWorkbookId} from '../selectors/settings';
 import {selectVisualization} from '../selectors/visualization';
 import {filterVisualizationColors} from '../utils/colors';
 import {getChartFiltersWithDisabledProp} from '../utils/filters';
@@ -89,8 +91,8 @@ import {
     setOriginalDatasets,
 } from './dataset';
 import {actualizeAndSetUpdates, setUpdates, updatePreviewAndClientChartsConfig} from './preview';
-import {setDefaultsSet, toggleNavigation} from './settings';
-import {getDatasetUpdates, mutateAndValidateItem} from './utils';
+import {setDefaultsSet, setRouteWorkbookId, toggleNavigation} from './settings';
+import {getDatasetUpdates, isSharedPlaceholder, mutateAndValidateItem} from './utils';
 import {
     _setSelectedLayerId,
     _setVisualization,
@@ -155,12 +157,14 @@ export function prepareDataset({dataset, widgetDataset}: PrepareDatasetArgs) {
 
 type GetDatasetArgs = {
     id: string;
+    workbookId: WorkbookId;
 };
 
-function getDataset({id}: GetDatasetArgs) {
+function getDataset({id, workbookId}: GetDatasetArgs) {
     return getSdk()
         .bi.getDatasetByVersion({
             datasetId: id,
+            workbookId,
             version: 'draft',
         })
         .then((dataset) => {
@@ -179,15 +183,16 @@ function getDataset({id}: GetDatasetArgs) {
 
 type GetDatasetsArgs = {
     datasetsIds: string[];
+    workbookId: WorkbookId;
 };
 
-export async function getDatasets({datasetsIds}: GetDatasetsArgs) {
+export async function getDatasets({datasetsIds, workbookId}: GetDatasetsArgs) {
     const errors: DatasetApiError[] = [];
 
     const items = await Promise.all(
         datasetsIds.map(async (datasetId) => {
             try {
-                return await getDataset({id: datasetId});
+                return await getDataset({id: datasetId, workbookId});
             } catch (error) {
                 errors.push({datasetId, error});
                 return null;
@@ -207,7 +212,7 @@ type FetchDatasetArgs = {
 };
 
 export function fetchDataset({id, replacing}: FetchDatasetArgs) {
-    return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
+    return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const datasetState = getState().wizard.dataset;
         const originalDatasets = datasetState.originalDatasets;
         if (!getState().wizard.visualization.visualization) {
@@ -218,7 +223,9 @@ export function fetchDataset({id, replacing}: FetchDatasetArgs) {
 
         dispatch(setDatasetLoading({loading: true}));
 
-        return getDataset({id})
+        const workbookId = selectWizardWorkbookId(getState());
+
+        return getDataset({id, workbookId})
             .then(async (dataset: Dataset) => {
                 dispatch(setDataset({dataset}));
 
@@ -423,7 +430,8 @@ export function setVisualizationPlaceholderItems({
                         };
                     }
 
-                    if (stateVisualization.id === 'combined-chart' && placeholder.id === 'x') {
+                    const visualizationId = stateVisualization.id as WizardVisualizationId;
+                    if (isSharedPlaceholder(placeholder.id as PlaceholderId, visualizationId)) {
                         layer.placeholders = layer.placeholders.map((p) => {
                             if (p.id === 'x') {
                                 return {
@@ -782,6 +790,7 @@ interface PrivateReceiveVisualizationArgs {
     sort?: Sort[];
     shapes?: Field[];
     segments?: Field[];
+    tooltips?: Field[];
 }
 
 function _receiveVisualization({
@@ -792,25 +801,25 @@ function _receiveVisualization({
     sort,
     shapes,
     segments,
+    tooltips,
 }: PrivateReceiveVisualizationArgs) {
     const availableVisualizations = getAvailableVisualizations();
-    const presetVisualization = availableVisualizations.find((presetVisualization) => {
-        return presetVisualization.id === visualization.id;
-    }) as unknown as Shared['visualization'] | null;
+    const presetVisualization = availableVisualizations.find(({id}) => id === visualization.id) as
+        | Shared['visualization']
+        | null;
 
     if (!presetVisualization) {
         throw new Error('Unknown visualization');
     }
 
-    const placeholders = [...(visualization.placeholders || [])];
-
+    const previousPlaceholders = [...(visualization.placeholders || [])];
     const fields = datasets.reduce((result: Field[], dataset: Dataset) => {
         return [...result, ...getResultSchemaFromDataset(dataset)] as Field[];
     }, []);
 
     // We put all the metadata from it into the saved one
-    presetVisualization.placeholders.forEach((presetPlaceholder, i) => {
-        const placeholder = placeholders[i];
+    const placeholders = presetVisualization.placeholders.map((presetPlaceholder) => {
+        const placeholder = previousPlaceholders.find((p) => p.id === presetPlaceholder.id);
 
         if (placeholder) {
             const items = [...placeholder.items];
@@ -843,13 +852,15 @@ function _receiveVisualization({
             placeholder.settings = newSettings;
 
             items.forEach((item) => {
-                mutateAndValidateItem({fields, item, placeholder});
+                mutateAndValidateItem({fields, item, placeholder: presetPlaceholder});
             });
 
             // We record the elements as new arrivals
             placeholder.items = items;
+
+            return placeholder;
         } else {
-            placeholders.push(presetPlaceholder);
+            return presetPlaceholder;
         }
     });
 
@@ -862,11 +873,11 @@ function _receiveVisualization({
             _receiveVisualization({
                 visualization: layer,
                 datasets,
-                filters,
-                colors,
-                sort,
-                shapes,
-                segments,
+                filters: layer.commonPlaceholders.filters,
+                colors: layer.commonPlaceholders.colors,
+                sort: layer.commonPlaceholders.sort,
+                shapes: layer.commonPlaceholders.shapes,
+                tooltips: layer.commonPlaceholders.tooltips,
             });
         });
     } else {
@@ -876,35 +887,12 @@ function _receiveVisualization({
     // Placeholders are recorded as new arrivals
     visualization.placeholders = placeholders;
 
-    if (filters && filters.length) {
-        filters.forEach((item) => {
-            mutateAndValidateItem({fields, item: item as unknown as Field});
-        });
-    }
-
-    if (colors && colors.length) {
-        colors.forEach((item) => {
-            mutateAndValidateItem({fields, item});
-        });
-    }
-
-    if (sort && sort.length) {
-        sort.forEach((item) => {
-            mutateAndValidateItem({fields, item});
-        });
-    }
-
-    if (shapes && shapes.length) {
-        shapes.forEach((item) => {
-            mutateAndValidateItem({fields, item});
-        });
-    }
-
-    if (segments && segments.length) {
-        segments.forEach((item) => {
-            mutateAndValidateItem({fields, item});
-        });
-    }
+    filters?.forEach((item) => mutateAndValidateItem({fields, item: item as unknown as Field}));
+    colors?.forEach((item) => mutateAndValidateItem({fields, item}));
+    sort?.forEach((item) => mutateAndValidateItem({fields, item}));
+    shapes?.forEach((item) => mutateAndValidateItem({fields, item}));
+    segments?.forEach((item) => mutateAndValidateItem({fields, item}));
+    tooltips?.forEach((item) => mutateAndValidateItem({fields, item}));
 }
 
 interface ReceiveVisualizationArgs {
@@ -973,9 +961,10 @@ export function receiveVisualization({
         sort,
         shapes,
         segments,
+        tooltips,
     });
 
-    if (selectedVisualization.id === 'pivotTable') {
+    if (selectedVisualization.id === WizardVisualizationId.PivotTable) {
         const visualizationAndFields = validatedAndUpdatePivotTableFields({
             colors: updatedColors,
             visualization: selectedVisualization,
@@ -1212,7 +1201,7 @@ export function updateDatasetByValidation({
 }
 
 const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[]}) => {
-    return async (dispatch: WizardDispatch) => {
+    return async (dispatch: WizardDispatch, getState: () => DatalensGlobalState) => {
         const preparedUpdates = updates.map((update) => {
             const {field} = update;
             Object.keys(field).forEach((key: string) => {
@@ -1224,11 +1213,14 @@ const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[
             return update;
         });
 
+        const workbookId = selectWizardWorkbookId(getState());
+
         try {
             return await getSdk().bi.validateDataset(
                 {
                     version: 'draft',
                     datasetId: dataset.id,
+                    workbookId,
                     dataset: dataset.dataset,
                     updates: preparedUpdates,
                 },
@@ -1397,8 +1389,7 @@ export const createFieldFromVisualization = ({
             let argument = `[${field.originalTitle || field.title}]`;
             // TODO: update this place after caste support for datetimetz
             const isShouldBeCastedToDatetime =
-                (field.data_type !== 'datetime' && field.cast === 'datetime') ||
-                (field.data_type !== 'genericdatetime' && field.cast === 'genericdatetime');
+                field.data_type !== 'genericdatetime' && field.cast === 'genericdatetime';
 
             if (isShouldBeCastedToDatetime) {
                 argument = `DATETIME(${argument})`;
@@ -1419,7 +1410,6 @@ export const createFieldFromVisualization = ({
             fieldNext.originalSource = field.source;
         } else if (
             field.cast === 'date' ||
-            field.cast === 'datetime' ||
             field.cast === 'datetimetz' ||
             field.cast === 'genericdatetime'
         ) {
@@ -1512,7 +1502,6 @@ export const updateFieldFromVisualization = ({
                 field.formula = '';
             } else if (
                 field.cast === 'date' ||
-                field.cast === 'datetime' ||
                 field.cast === 'datetimetz' ||
                 field.cast === 'genericdatetime'
             ) {
@@ -1522,7 +1511,6 @@ export const updateFieldFromVisualization = ({
             }
             if (
                 field.cast === 'date' ||
-                field.cast === 'datetime' ||
                 field.cast === 'datetimetz' ||
                 field.cast === 'genericdatetime'
             ) {
@@ -1554,8 +1542,7 @@ export const updateFieldFromVisualization = ({
             let argument = `[${field.originalTitle || field.title}]`;
             // TODO: update this place after caste support for datetimetz - BI-1478
             const isShouldBeCastedToDatetime =
-                (field.data_type !== 'datetime' && field.originalDateCast === 'datetime') ||
-                (field.data_type !== 'datetimetz' && field.originalDateCast === 'datetimetz');
+                field.data_type !== 'datetimetz' && field.originalDateCast === 'datetimetz';
 
             if (isShouldBeCastedToDatetime) {
                 argument = `DATETIME(${argument})`;
@@ -1780,9 +1767,7 @@ type ProcessWidgetArgs = {
 function processWidget(args: ProcessWidgetArgs) {
     const {widget, dispatch, getState} = args;
     const data = widget.data! as ExtendedChartsConfig;
-    const shouldMigrateDatetime = Utils.isEnabledFeature(Feature.GenericDatetimeMigration);
-
-    const config = mapChartsConfigToLatestVersion(data, {shouldMigrateDatetime});
+    const config = mapChartsConfigToLatestVersion(data);
 
     // Actualize widget data after mapping
     widget.data = config;
@@ -1816,7 +1801,9 @@ function processWidget(args: ProcessWidgetArgs) {
         }),
     );
 
-    return getDatasets({datasetsIds})
+    const workbookId = selectWizardWorkbookId(getState());
+
+    return getDatasets({datasetsIds, workbookId})
         .then(async (all) => {
             const {datasets: loadedOriginalDatasets, errors: datasetApiErrors} = all;
             for (const loadedDataset of loadedOriginalDatasets) {
@@ -2127,10 +2114,15 @@ export function fetchWidget({entryId, revId, datasetsIds}: FetchWidgetArgs) {
 export type SetDefaultsArgs = {
     entryId: string | null;
     revId?: string;
+    routeWorkbookId?: WorkbookId;
 };
 
-export function setDefaults({entryId, revId}: SetDefaultsArgs) {
+export function setDefaults({entryId, revId, routeWorkbookId}: SetDefaultsArgs) {
     return function (dispatch: WizardDispatch) {
+        if (routeWorkbookId) {
+            dispatch(setRouteWorkbookId(routeWorkbookId));
+        }
+
         if (entryId) {
             dispatch(
                 fetchWidget({

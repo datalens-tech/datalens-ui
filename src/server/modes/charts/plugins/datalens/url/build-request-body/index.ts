@@ -255,7 +255,7 @@ function formatFilters({
 
                     if (isDateField(field)) {
                         const clientFormat =
-                            field.data_type === 'datetime' || field.data_type === 'genericdatetime'
+                            field.data_type === 'genericdatetime'
                                 ? DEFAULT_DATETIME_FORMAT
                                 : DEFAULT_DATE_FORMAT;
 

@@ -10,7 +10,7 @@ import {withRouter} from 'react-router-dom';
 import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ChartsConfig, EntryUpdateMode, Feature, extractEntryId} from 'shared';
+import {ChartsConfig, EntryUpdateMode, Feature} from 'shared';
 import {
     DL,
     DatalensGlobalState,
@@ -25,6 +25,7 @@ import {
     Utils,
     sdk,
 } from 'ui';
+import {registry} from 'ui/registry';
 import {
     selectConfig,
     selectConfigForSaving,
@@ -122,6 +123,7 @@ class Wizard extends React.Component<Props, State> {
         const {isDefaultsSet} = props;
 
         if (!isDefaultsSet) {
+            const {extractEntryId} = registry.common.functions.getAll();
             const entryId = extractEntryId(window.location.pathname);
 
             const revId = getUrlParamFromStr(this.props.location.search, URL_QUERY.REV_ID);
@@ -129,6 +131,10 @@ class Wizard extends React.Component<Props, State> {
             const params: SetDefaultsArgs = {entryId};
             if (revId) {
                 params.revId = revId;
+            }
+
+            if (props.match.params.workbookId) {
+                params.routeWorkbookId = props.match.params.workbookId;
             }
 
             this.props.setDefaults(params);
@@ -168,6 +174,7 @@ class Wizard extends React.Component<Props, State> {
             this.chartKitRef.current.reflow();
         }
 
+        const {extractEntryId} = registry.common.functions.getAll();
         const oldEntryId = extractEntryId(prevProps.match.url);
         const newEntryId = extractEntryId(match.url);
 

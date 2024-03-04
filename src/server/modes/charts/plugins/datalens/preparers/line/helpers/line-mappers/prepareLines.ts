@@ -99,11 +99,8 @@ const mergeLabelDataWithLines = (args: MergeLabelDataWithLinesArgs) => {
     const key = keys.key;
     const lastKey = keys.lastKey as string | number;
 
-    if (!labelItem) {
-        return;
-    }
-
-    if (hideLabel) {
+    if (!labelItem || hideLabel) {
+        lines[key].dataLabels = {enabled: false};
         return;
     }
 

@@ -7,6 +7,7 @@ import {createSelector} from 'reselect';
 import {
     DATASET_FIELD_TYPES,
     DashTabItem,
+    DashTabItemControlSourceType,
     DashTabItemWidget,
     DashTabItemWidgetTab,
     Operations,
@@ -66,22 +67,23 @@ export const selectSelectorValidation = (state: DatalensGlobalState) =>
 export const selectSelectorDialog = (state: DatalensGlobalState) =>
     (state.dash as DashState).selectorDialog;
 
-export const selectSelectorsGroup = (state: DatalensGlobalState) =>
-    (state.dash as DashState).selectorsGroup;
-
-export const selectActiveSelectorIndex = (state: DatalensGlobalState) =>
-    (state.dash as DashState).activeSelectorIndex || 0;
-
 export const selectSkipReload = (state: DatalensGlobalState) =>
     (state.dash as DashState)?.skipReload || false;
 
 export const selectWidgetsCurrentTab = (state: DatalensGlobalState) =>
     (state.dash as DashState).widgetsCurrentTab;
 
-export const selectIsDatasetSelectorAndNoFieldSelected = (state: DatalensGlobalState) => {
+export const selectIsControlConfigurationDisabled = (state: DatalensGlobalState) => {
     const selectorDialog = (state.dash as DashState).selectorDialog;
 
-    return selectorDialog.sourceType === 'dataset' && !selectorDialog.datasetFieldId;
+    switch (selectorDialog.sourceType) {
+        case DashTabItemControlSourceType.Dataset:
+            return !selectorDialog.datasetFieldId;
+        case DashTabItemControlSourceType.Connection:
+            return !selectorDialog.connectionQueryContent;
+        default:
+            return false;
+    }
 };
 
 export const selectAvailableOperationsDict = (

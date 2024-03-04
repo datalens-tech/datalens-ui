@@ -14,6 +14,9 @@ import {
     GET_COLLECTION_CONTENT_LOADING,
     GET_COLLECTION_CONTENT_SUCCESS,
     GET_COLLECTION_CONTENT_FAILED,
+    COPY_TEMPLATE_LOADING,
+    COPY_TEMPLATE_SUCCESS,
+    COPY_TEMPLATE_FAILED,
     CREATE_COLLECTION_LOADING,
     CREATE_COLLECTION_SUCCESS,
     CREATE_COLLECTION_FAILED,
@@ -59,6 +62,7 @@ import type {
     CreateWorkbookResponse,
     UpdateWorkbookResponse,
     UpdateCollectionResponse,
+    CopyTemplateResponse,
 } from '../../../shared/schema';
 
 export type CollectionsStructureState = {
@@ -86,6 +90,11 @@ export type CollectionsStructureState = {
     createCollection: {
         isLoading: boolean;
         data: CreateCollectionResponse | null;
+        error: Error | null;
+    };
+    copyTemplate: {
+        isLoading: boolean;
+        data: CopyTemplateResponse | null;
         error: Error | null;
     };
     createWorkbook: {
@@ -153,6 +162,11 @@ const initialState: CollectionsStructureState = {
     },
     items: [],
     createCollection: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    copyTemplate: {
         isLoading: false,
         data: null,
         error: null,
@@ -363,6 +377,38 @@ export const collectionsStructure = (
                 ...state,
                 getCollectionContent: {
                     ...state.getCollectionContent,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        // copy template
+        case COPY_TEMPLATE_LOADING: {
+            return {
+                ...state,
+                copyTemplate: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case COPY_TEMPLATE_SUCCESS: {
+            return {
+                ...state,
+                copyTemplate: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case COPY_TEMPLATE_FAILED: {
+            return {
+                ...state,
+                copyTemplate: {
+                    ...state.copyTemplate,
                     isLoading: false,
                     error: action.error,
                 },

@@ -1,4 +1,4 @@
-import {DialogAction, OPEN_DIALOG, CLOSE_DIALOG} from '../actions/dialog';
+import {DialogAction, OPEN_DIALOG, CLOSE_DIALOG, UPDATE_DIALOG_PROPS} from '../actions/dialog';
 
 export interface DialogState {
     dialogs: {id: symbol; props: any}[];
@@ -21,6 +21,32 @@ function dialog(state: DialogState = getInitialDialogState(), action: DialogActi
                 ...state,
                 dialogs: state.dialogs.slice(0, -1),
             };
+        }
+
+        case UPDATE_DIALOG_PROPS: {
+            const {id, props} = action;
+            const dialogToUpdateIndex = state.dialogs.findIndex((d) => d.id === id);
+
+            if (dialogToUpdateIndex !== -1) {
+                const dialogToUpdate = state.dialogs[dialogToUpdateIndex];
+                const updatedDialog = Object.assign(
+                    {id: dialogToUpdate.id},
+                    {props: dialogToUpdate.props},
+                    {props},
+                );
+                const nextDialogs = state.dialogs.map((d) => {
+                    if (d.id === id) {
+                        return updatedDialog;
+                    }
+                    return d;
+                });
+                return {
+                    ...state,
+                    dialogs: nextDialogs,
+                };
+            }
+
+            return state;
         }
 
         default:

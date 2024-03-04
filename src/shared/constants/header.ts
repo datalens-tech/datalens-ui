@@ -31,4 +31,5 @@ export const DASH_INFO_HEADER = 'x-dash-info';
 export const DL_COMPONENT_HEADER = 'x-dl-component';
 export const DL_EMBED_TOKEN_HEADER = 'x-dl-embed-token';
 export const TENANT_ID_HEADER = 'x-dl-tenantid';
+export const WORKBOOK_ID_HEADER = 'x-dl-workbookid';
 export const PROJECT_ID_HEADER = 'x-dc-projectid';

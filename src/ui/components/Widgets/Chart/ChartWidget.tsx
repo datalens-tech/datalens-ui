@@ -74,6 +74,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         context,
         config,
         usageType,
+        workbookId,
     } = props;
 
     const skipReload = useSelector(selectSkipReload);
@@ -120,8 +121,9 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 id: chartId,
                 config,
                 params: chartkitParams,
+                workbookId,
             }),
-        [chartId, chartkitParams, config, hasChartTabChanged],
+        [chartId, chartkitParams, config, hasChartTabChanged, workbookId],
     );
 
     const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);
@@ -331,6 +333,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         veil,
         showLoader,
         isFullscreen,
+        isAutoHeightEnabled,
         description,
         hideTabs,
         withShareWidget,
@@ -466,7 +469,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     return (
         <div
             ref={rootNodeRef}
-            className={`${b({...mods, autoheight: Boolean(tabs[tabIndex]?.autoHeight)})}`}
+            className={`${b({...mods, autoheight: isAutoHeightEnabled})}`}
             data-qa="chart-widget"
             data-qa-mod={isFullscreen ? 'fullscreen' : ''}
         >

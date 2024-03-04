@@ -68,6 +68,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         id: chartId,
         config,
         widgetId,
+        workbookId,
     } = props;
 
     const skipReload = useSelector(selectSkipReload);
@@ -88,8 +89,9 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                 id: chartId,
                 config,
                 params: chartkitParams,
+                workbookId,
             }),
-        [chartId, chartkitParams, config],
+        [chartId, chartkitParams, config, workbookId],
     );
 
     const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);
@@ -239,9 +241,11 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         handleChange,
         handleError,
         handleRetry,
+        handleUpdate,
         loadChartData,
         setLoadingProps,
         getControls,
+        isAutoHeightEnabled,
     } = useLoadingChartSelector({
         ...props,
         chartKitRef,
@@ -306,7 +310,10 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
     return (
         <div
             ref={rootNodeRef}
-            className={`${b({...mods, autoheight: Boolean(props.data?.autoHeight)})}`}
+            className={`${b({
+                ...mods,
+                autoheight: isAutoHeightEnabled,
+            })}`}
             data-qa="chart-widget-selectors"
         >
             <DebugInfoTool
@@ -332,6 +339,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                             onLoad={handleRenderChart}
                             onError={handleError}
                             onChange={handleChange}
+                            onUpdate={handleUpdate}
                             getControls={getControls}
                             nonBodyScroll={nonBodyScroll}
                             initialParams={controlInitialParams}

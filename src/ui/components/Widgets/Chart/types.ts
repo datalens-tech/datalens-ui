@@ -160,7 +160,7 @@ export type ChartWrapperWithRefProps =
 
 export type ChartWithProviderWithRefProps = ChartProviderPropsWithRefProps;
 
-export type ChartWrapperWithProviderProps = ChartWrapperWithRefProps;
+export type ChartWrapperWithProviderProps = ChartWrapperWithRefProps & {workbookId?: string | null};
 
 export type ChartWidgetProps = ChartWidgetProviderPropsWithRefProps &
     ChartWidgetWithProviderProps &
@@ -283,6 +283,7 @@ export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChang
         onLoad: ChartKitWrapperParams['onRender'];
         initialParams: ChartInitialParams;
         getControls?: ChartKitWrapperParams['getControls'];
+        onUpdate?: (data: OnChangeData) => void;
     };
 
 export type ResolveWidgetControlDataRefArgs =

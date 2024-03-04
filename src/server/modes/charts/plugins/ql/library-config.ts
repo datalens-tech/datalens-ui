@@ -4,8 +4,8 @@ import {
     ServerVisualization,
     isYAGRVisualization,
 } from '../../../../../shared';
+import type {QlConfig} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
-import type {QlConfig} from '../../../../../shared/types/config/ql';
 import buildHighchartsConfigWizard from '../datalens/highcharts';
 
 import buildHighchartsConfig from './highcharts';
@@ -33,7 +33,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 hierarchies: [],
                 links: [],
                 updates: [],
-                version: ChartsConfigVersion.V9,
+                version: ChartsConfigVersion.V10,
                 datasetsIds: [],
                 datasetsPartialFields: [],
             },

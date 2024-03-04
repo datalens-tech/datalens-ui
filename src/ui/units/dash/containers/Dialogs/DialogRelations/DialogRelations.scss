@@ -17,11 +17,12 @@
 }
 
 .dialog-relations {
-    width: 600px;
+    min-width: 900px;
+    max-width: 90vw;
 
     &__caption {
         word-break: break-word;
-        max-width: 546px;
+        max-width: 100%;
         position: relative;
     }
 
@@ -48,7 +49,8 @@
     }
 
     &__container {
-        height: 283px;
+        min-height: 353px;
+        max-height: 70vh;
         display: flex;
         flex-direction: column;
         padding-bottom: 0;
@@ -71,7 +73,7 @@
 
     &__warn-content {
         padding: 20px 16px;
-        max-width: 500px;
+        max-width: calc(100% - 100px);
     }
 
     &__warn-title {
@@ -80,5 +82,22 @@
 
     &__warn-text {
         margin: 8px 0 4px;
+    }
+
+    &__invalid-list-popup {
+        max-width: 650px;
+
+        & .dialog-aliases-list__invalid-list-items {
+            max-height: 300px;
+            overflow: auto;
+        }
+    }
+
+    &__invalid-list-popup &__warn-content {
+        max-width: 100%;
+    }
+
+    &__disconnect-text {
+        margin-right: 10px;
     }
 }

@@ -1,5 +1,11 @@
 import {ConnectorType} from '../../../constants';
-import {ConnectionData} from '../../../types';
+import {
+    ConnectionData,
+    type ConnectionTypedQueryApiRequest,
+    type ConnectionTypedQueryApiResponse,
+} from '../../../types';
+
+import {WorkbookIdArg} from './common';
 
 type BICounter = {
     id: string;
@@ -56,7 +62,7 @@ export type GetConnectorsResponse = {
 
 export type GetConnectionResponse = ConnectionData;
 
-export type GetConnectionArgs = BaseArgs;
+export type GetConnectionArgs = BaseArgs & WorkbookIdArg;
 
 export type CreateConnectionResponse = {
     id: string;
@@ -76,7 +82,7 @@ export type UpdateConnectionArgs = BaseArgs & ConnectionData;
 
 export type VerifyConnectionResponse = {};
 
-export type VerifyConnectionArgs = BaseArgs & ConnectionData;
+export type VerifyConnectionArgs = BaseArgs & ConnectionData & WorkbookIdArg;
 
 export type VerifyConnectionParamsResponse = {};
 
@@ -87,16 +93,34 @@ export type GetConnectionSourcesResponse = {
     freeform_sources: Record<string, string>[];
 };
 
-export type GetConnectionSourcesArgs = BaseArgs;
+export type GetConnectionSourcesArgs = BaseArgs & WorkbookIdArg;
 
 export type GetConnectionSourceSchemaResponse = {
     raw_schema: Record<string, string>[];
 };
 
-export type GetConnectionSourceSchemaArgs = BaseArgs & {
-    source: {
-        title: string;
-        group: string[];
-        id: string;
+export type GetConnectionSourceSchemaArgs = BaseArgs &
+    WorkbookIdArg & {
+        source: {
+            title: string;
+            group: string[];
+            id: string;
+        };
     };
+
+export type GetConnectionTypedQueryDataArgs = BaseArgs &
+    WorkbookIdArg & {body: ConnectionTypedQueryApiRequest};
+
+export type GetConnectionTypedQueryDataResponse = ConnectionTypedQueryApiResponse;
+
+export type GetConnectionTypedQueryErrorResponse = {
+    status: number;
+    message: string;
+    code: string;
+    details?: {
+        title?: string;
+        description?: string;
+        db_message?: string;
+    };
+    requestId: string;
 };

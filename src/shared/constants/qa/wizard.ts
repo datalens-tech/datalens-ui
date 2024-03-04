@@ -36,6 +36,12 @@ export const enum DialogColumnSettingsQa {
     WidthValueInput = 'dialog-column-settings-width-input',
 }
 
+export const enum DialogFieldBackgroundSettingsQa {
+    EnableButton = 'dialog-field-bg-switcher',
+    FillTypeButtons = 'dialog-field-bg-fill-type',
+    ButtonColorDialog = 'button-color-dialog',
+}
+
 export const enum DialogFieldBarsSettingsQa {
     EnableButton = 'dialog-field-bars-switcher',
     ColorTypeRadioButtons = 'dialog-field-color-type-radio-buttons',
@@ -58,6 +64,7 @@ export const enum DialogFieldMainSectionQa {
     PrecisionInput = 'precision-input',
     PrefixInput = 'prefix-input',
     PostfixInput = 'postfix-input',
+    NumberFormat = 'number-format-radio',
 }
 
 export const enum DialogFieldTypeSelectorValuesQa {
@@ -109,8 +116,9 @@ export const enum DialogFieldSubTotalsQa {
     SubTotalsSwitch = 'sub-totals-switch',
 }
 
-export const enum DialogColor {
+export const enum DialogColorQa {
     PaletteSelect = 'palette-select',
+    GradientType = 'color-dialog-gradient-type-radio',
     ApplyButton = 'color-dialog-apply-button',
 }
 
@@ -128,6 +136,7 @@ export const enum SectionVisualizationAddItemQa {
 export const enum DialogPlaceholderQa {
     TooltipZeroToMaxScale = 'dialog-placeholder-tooltip-zero-to-max-scale',
     TooltipLogarithmicAxis = 'dialog-placeholder-tooltip-logarithmic-axis',
+    AxisFormatMode = 'dialog-placeholder-axis-format-mode',
 }
 
 export const enum DatasetItemActionsQa {

@@ -19,10 +19,7 @@ datalensTest.describe('Wizard - export. Summary table', () => {
         await wizardPage.filterEditor.selectDate('30.12.2017');
         await wizardPage.filterEditor.apply();
 
-        await wizardPage.fieldEditor.open();
-        await wizardPage.fieldEditor.setName('Field');
-        await wizardPage.fieldEditor.setFormula('[Year]/2');
-        await wizardPage.fieldEditor.clickToApplyButton();
+        await wizardPage.createNewFieldWithFormula('Field', '[Year]/2');
 
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'Region'); // string
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'DATE'); // date

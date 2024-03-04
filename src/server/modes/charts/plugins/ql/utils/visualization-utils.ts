@@ -1,6 +1,11 @@
 import cloneDeep from 'lodash/cloneDeep';
 
-import {Field, ServerVisualization, WizardVisualizationId} from '../../../../../../shared';
+import {
+    Field,
+    PlaceholderId,
+    ServerVisualization,
+    WizardVisualizationId,
+} from '../../../../../../shared';
 import type {QlConfigResultEntryMetadataDataColumnOrGroup} from '../../../../../../shared/types/config/ql';
 
 import {
@@ -102,23 +107,30 @@ export const migrateOrAutofillVisualization = ({
         ]).has(visualizationId as WizardVisualizationId)
     ) {
         // Checking if order is set (from older versions of ql charts)
-        if (order && order.length > 0) {
-            // Order is set, so we need to migrate old order to new structure
-            const {colorFields, measureFields} = migratePieVisualization({
-                order: order,
-                fields,
-            });
+        const hasOrder = order && order.length > 0;
+        const {colorFields, measureFields} = hasOrder
+            ? // Order is set, so we need to migrate old order to new structure
+              migratePieVisualization({
+                  order: order,
+                  fields,
+              })
+            : // Old order was not set, so we can do autofill
+              autofillPieVisualization({
+                  fields,
+              });
 
-            newVisualization.placeholders[0].items = colorFields;
-            newVisualization.placeholders[1].items = measureFields;
-        } else {
-            // Old order was not set, so we can do autofill
-            const {colorFields, measureFields} = autofillPieVisualization({
-                fields,
-            });
+        const colorsPlaceholder = newVisualization.placeholders.find(
+            (p) => p.id === PlaceholderId.Colors,
+        );
+        if (colorsPlaceholder) {
+            colorsPlaceholder.items = colorFields;
+        }
 
-            newVisualization.placeholders[0].items = colorFields;
-            newVisualization.placeholders[1].items = measureFields;
+        const measurePlaceholder = newVisualization.placeholders.find(
+            (p) => p.id === PlaceholderId.Measures,
+        );
+        if (measurePlaceholder) {
+            measurePlaceholder.items = measureFields;
         }
     } else if (visualizationId === WizardVisualizationId.Metric) {
         // Checking if order is set (from older versions of ql charts)

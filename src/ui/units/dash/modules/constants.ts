@@ -8,7 +8,7 @@ export const STATUS = {
     FAIL: 'fail',
     DONE: 'done',
 };
-
+/** @deprecated use EntryScope from shared */
 export const ENTRY_SCOPE = {
     WIDGET: 'widget',
     DATASET: 'dataset',
@@ -21,22 +21,6 @@ export const ENTRY_TYPE = {
 export const CONNECTION_KIND = {
     IGNORE: 'ignore',
 };
-
-// chart types that can be filtered by selectors
-export const DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES = {
-    graph: 'graph',
-    table: 'table',
-    timeseries: 'timeseries',
-    map: 'map',
-    metric: 'metric',
-    metric2: 'metric2',
-    ymap: 'ymap',
-    markdown: 'markdown',
-    d3: 'd3',
-};
-
-export type AcceptFiltersWidgetType =
-    typeof DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES[keyof typeof DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES];
 
 // all dash widget detailed types
 export const DASH_WIDGET_TYPES = {
@@ -51,7 +35,25 @@ export const DASH_WIDGET_TYPES = {
     MARKDOWN: 'markdown',
     TIMESERIES: 'timeseries',
     D3: 'd3',
+    MARKUP: 'markup',
 } as const;
+
+// chart types that can be filtered by selectors
+export const DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES = {
+    graph: DASH_WIDGET_TYPES.GRAPH,
+    table: DASH_WIDGET_TYPES.TABLE,
+    timeseries: DASH_WIDGET_TYPES.TIMESERIES,
+    map: DASH_WIDGET_TYPES.MAP,
+    metric: DASH_WIDGET_TYPES.METRIC,
+    metric2: DASH_WIDGET_TYPES.METRIC2,
+    ymap: DASH_WIDGET_TYPES.YMAP,
+    markdown: DASH_WIDGET_TYPES.MARKDOWN,
+    markup: DASH_WIDGET_TYPES.MARKUP,
+    d3: DASH_WIDGET_TYPES.D3,
+};
+
+export type AcceptFiltersWidgetType =
+    typeof DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES[keyof typeof DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES];
 
 export type WidgetType = typeof DASH_WIDGET_TYPES[keyof typeof DASH_WIDGET_TYPES];
 

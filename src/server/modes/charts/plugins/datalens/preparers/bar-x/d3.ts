@@ -8,14 +8,14 @@ import {
     LabelsPositions,
     PlaceholderId,
     ServerField,
-    WizardVisualizationId,
     getFakeTitleOrTitle,
 } from '../../../../../../../shared';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
 import {getAxisType} from '../helpers/axis';
+import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {PrepareFunctionArgs} from '../types';
 
-import {prepareBarX} from './prepareBarX';
+import {prepareBarX} from './prepare-bar-x';
 
 type OldBarXDataItem = {
     y: number;
@@ -24,14 +24,7 @@ type OldBarXDataItem = {
 } | null;
 
 export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
-    const {
-        shared,
-        labels,
-        placeholders,
-        disableDefaultSorting = false,
-        visualizationId,
-        sort,
-    } = args;
+    const {shared, labels, placeholders, disableDefaultSorting = false, sort} = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
@@ -43,7 +36,7 @@ export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
         getAxisType({
             field: xField,
             settings: xPlaceholder?.settings,
-            visualizationId: visualizationId as WizardVisualizationId,
+            visualizationIds: getAllVisualizationsIds(shared),
             sort,
         }) === 'category' ||
         disableDefaultSorting;

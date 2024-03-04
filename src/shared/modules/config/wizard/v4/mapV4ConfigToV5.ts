@@ -10,8 +10,8 @@ import {
     V5ChartsConfig,
     V5Placeholder,
     V5Visualization,
-    isVisualizationWithLayers,
 } from '../../../../types';
+import {isVisualizationWithLayers} from '../../../../utils';
 import {isMeasureField} from '../../../helpers';
 import {isAllAxisModesAvailable, isPlaceholderSupportsAxisMode} from '../../../wizard-helpers';
 

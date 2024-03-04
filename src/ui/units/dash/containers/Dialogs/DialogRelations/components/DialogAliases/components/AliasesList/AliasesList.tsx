@@ -132,8 +132,14 @@ const AliasesListItem = ({
                                 }
                                 qa={DashCommonQa.AliasItem}
                             >
-                                {fieldName}
-                                {datasetId && <span className={b('info')}>{datasetText}</span>}
+                                <span
+                                    className={b('button-text', {
+                                        'with-remove': showRemoveItemIcon,
+                                    })}
+                                >
+                                    {fieldName}
+                                    {datasetId && <span className={b('info')}>{datasetText}</span>}
+                                </span>
                                 {showRemoveItemIcon && (
                                     <span
                                         onClick={() => handleRemoveAliasItemFromRow(index)}

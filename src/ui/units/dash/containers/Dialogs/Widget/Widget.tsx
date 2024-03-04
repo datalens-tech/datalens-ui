@@ -36,8 +36,8 @@ import {
 import TwoColumnDialog from '../../../components/TwoColumnDialog/TwoColumnDialog';
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
 import {DASH_WIDGET_TYPES, ENTRY_TYPE} from '../../../modules/constants';
-import {closeDialog} from '../../../store/actions/dash';
 import {setItemData} from '../../../store/actions/dashTyped';
+import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
     selectCurrentTabId,
     selectDashWorkbookId,
@@ -64,7 +64,8 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
     return (
         widgetType === DASH_WIDGET_TYPES.TABLE ||
         widgetType === DASH_WIDGET_TYPES.MARKDOWN ||
-        widgetType === DASH_WIDGET_TYPES.METRIC
+        widgetType === DASH_WIDGET_TYPES.METRIC ||
+        widgetType === DASH_WIDGET_TYPES.MARKUP
     );
 };
 

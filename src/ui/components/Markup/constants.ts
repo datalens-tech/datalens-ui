@@ -7,4 +7,5 @@ export const MarkupItemTypeDict = {
     Size: 'size',
     Text: 'text',
     Url: 'url',
+    UserInfo: 'user_info',
 } as const;

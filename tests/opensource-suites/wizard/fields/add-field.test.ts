@@ -22,13 +22,7 @@ datalensTest.describe('Wizard', () => {
             await expect(
                 datasetFields.locator(slct(SectionDatasetQA.ItemTitle), {hasText: newField1}),
             ).not.toBeVisible();
-            await wizardPage.fieldEditor.open();
-            await wizardPage.fieldEditor.setName(newField1);
-            await wizardPage.fieldEditor.setFormula('[City]');
-            await wizardPage.fieldEditor.clickToApplyButton();
-            await expect(
-                datasetFields.locator(slct(SectionDatasetQA.ItemTitle), {hasText: newField1}),
-            ).toBeVisible();
+            await wizardPage.createNewFieldWithFormula(newField1, '[City]');
             const newField1Locator = datasetFields.locator(slct(newField1), {
                 hasText: newField1,
             });
@@ -75,12 +69,10 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.parameterEditor.setDefaultValue('1');
             await wizardPage.parameterEditor.apply();
 
-            await wizardPage.fieldEditor.open();
-            await wizardPage.fieldEditor.setName(newField3);
-            await wizardPage.fieldEditor.setFormula(
+            await wizardPage.createNewFieldWithFormula(
+                newField3,
                 'case [City] when [p1] then "param" else [City] end',
             );
-            await wizardPage.fieldEditor.clickToApplyButton();
             const newField3Locator = datasetFields.locator(slct(newField3), {
                 hasText: newField3,
             });

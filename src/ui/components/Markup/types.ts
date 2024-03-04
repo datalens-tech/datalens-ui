@@ -10,4 +10,6 @@ export type MarkupItem = {
     content?: string | MarkupItem;
     size?: string | number;
     url?: string;
+    className?: string;
+    user_info?: 'name' | 'email';
 };

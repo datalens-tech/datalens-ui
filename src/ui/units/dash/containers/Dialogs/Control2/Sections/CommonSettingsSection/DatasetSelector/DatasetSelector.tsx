@@ -1,30 +1,33 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import {Button} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import {useDispatch, useSelector} from 'react-redux';
-import {DATASET_FIELD_TYPES, DATASET_IGNORED_DATA_TYPES, Dataset, DatasetFieldType} from 'shared';
+import {
+    DATASET_FIELD_TYPES,
+    DATASET_IGNORED_DATA_TYPES,
+    Dataset,
+    DatasetFieldType,
+    EntryScope,
+} from 'shared';
 import logger from 'ui/libs/logger';
-import {ENTRY_SCOPE} from 'units/dash/modules/constants';
 import {
     SelectorElementType,
     SetSelectorDialogItemArgs,
     setLastUsedDatasetId,
     setSelectorDialogItem,
 } from 'units/dash/store/actions/dashTyped';
-import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
+import {
+    selectDashWorkbookId,
+    selectSelectorDialog,
+} from 'units/dash/store/selectors/dashTypedSelectors';
 
-import DropdownNavigation from '../../../../../DropdownNavigation/DropdownNavigation';
 import {DatasetField} from '../../../../Control/Switchers/DatasetField/DatasetField';
 import {ELEMENT_TYPE} from '../../../../Control/constants';
+import {EntrySelector} from '../EntrySelector/EntrySelector';
 
-import './DatasetSelector.scss';
-
-const b = block('external-selector-wrapper');
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
 const getDatasetLink = (entryId: string) => `/datasets/${entryId}`;
@@ -33,12 +36,14 @@ function DatasetSelector() {
     const dispatch = useDispatch();
     const {datasetId, datasetFieldId, isManualTitle, title, fieldType, validation} =
         useSelector(selectSelectorDialog);
+    const workbookId = useSelector(selectDashWorkbookId);
     const [isValidDataset, setIsValidDataset] = React.useState(false);
 
     const fetchDataset = React.useCallback((entryId: string) => {
         getSdk()
             .bi.getDatasetByVersion({
                 datasetId: entryId,
+                workbookId,
                 version: 'draft',
             })
             .then((dataset: Dataset) => {
@@ -99,7 +104,6 @@ function DatasetSelector() {
 
             if (
                 data.fieldType === DATASET_FIELD_TYPES.DATE ||
-                data.fieldType === DATASET_FIELD_TYPES.DATETIME ||
                 data.fieldType === DATASET_FIELD_TYPES.GENERICDATETIME
             ) {
                 elementType = ELEMENT_TYPE.DATE;
@@ -131,39 +135,23 @@ function DatasetSelector() {
         [datasetFieldId, isManualTitle, title],
     );
 
-    const showOpenButton = isValidDataset && datasetId;
-
     return (
         <React.Fragment>
-            <FormRow label={i18n('field_dataset')}>
-                <div className={b('droplist')}>
-                    <DropdownNavigation
-                        //@ts-ignore
-                        size="m"
-                        //@ts-ignore
-                        entryId={datasetId}
-                        //@ts-ignore
-                        scope={ENTRY_SCOPE.DATASET}
-                        //@ts-ignore
-                        onClick={handleDatasetChange}
-                    />
-                    {showOpenButton && (
-                        <Button
-                            className={b('button')}
-                            target="_blank"
-                            href={getDatasetLink(datasetId)}
-                        >
-                            {i18n('button_open')}
-                        </Button>
-                    )}
-                </div>
-            </FormRow>
+            <EntrySelector
+                label={i18n('field_dataset')}
+                entryId={datasetId}
+                scope={EntryScope.Dataset}
+                handleEntryChange={handleDatasetChange}
+                isValidEntry={isValidDataset}
+                getEntryLink={getDatasetLink}
+            />
             <FormRow label={i18n('field_field')}>
                 <FieldWrapper error={validation.datasetFieldId}>
                     <DatasetField
                         ignoredFieldTypes={[]}
                         ignoredDataTypes={DATASET_IGNORED_DATA_TYPES}
                         datasetId={datasetId}
+                        workbookId={workbookId}
                         fieldId={datasetFieldId}
                         onChange={handleDatasetFieldChange}
                         hasValidationError={Boolean(validation.datasetFieldId)}

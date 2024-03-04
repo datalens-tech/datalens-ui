@@ -4,6 +4,7 @@ import {I18n} from 'i18n';
 import get from 'lodash/get';
 import {batch, useDispatch, useSelector} from 'react-redux';
 
+import {usePrevious} from '../../../../../../hooks';
 import {
     connectionIdSelector,
     extractYadocItemId,
@@ -38,6 +39,7 @@ export const DocsListContainer = () => {
         openReplaceSourceDialog,
     } = useYadocsDialogs();
     const activeDialog = useSelector(yadocsActiveDialogSelector);
+    const prevActiveDialog = usePrevious(activeDialog);
     const authorized = useSelector(innerAuthorizedSelector);
     const connectionId = useSelector(connectionIdSelector);
     const items = useSelector(yadocsItemsSelector);
@@ -52,13 +54,12 @@ export const DocsListContainer = () => {
             setYadocsActiveDialog({
                 activeDialog: {
                     type: 'dialog-add-document',
-                    authorized,
                     connectionId,
                     oauthToken,
                 },
             }),
         );
-    }, [authorized, connectionId, oauthToken, dispatch]);
+    }, [connectionId, oauthToken, dispatch]);
 
     const clickListItem = React.useCallback<HandleItemClick>(
         (item) => {
@@ -174,30 +175,40 @@ export const DocsListContainer = () => {
                             type: 'dialog-replace',
                             sourceId,
                             connectionId,
-                            authorized,
                         },
                     }),
                 );
             }
         },
-        [connectionId, authorized, dispatch],
+        [connectionId, dispatch],
     );
 
     React.useEffect(() => {
         if (activeDialog) {
+            const alreadyOpened = prevActiveDialog?.type === activeDialog.type;
+
             switch (activeDialog.type) {
                 case 'dialog-sources': {
                     const yadoc = findUploadedYadoc(items, activeDialog.fileId);
 
                     if (yadoc) {
-                        openSourcesDialog({yadoc, batch: activeDialog.batch});
+                        openSourcesDialog({
+                            yadoc,
+                            batch: activeDialog.batch,
+                            update: alreadyOpened,
+                        });
                     }
 
                     break;
                 }
                 case 'dialog-add-document': {
                     const {type: _, ...dialogArgs} = activeDialog;
-                    openAddDocumentDialog(dialogArgs);
+                    openAddDocumentDialog({
+                        ...dialogArgs,
+                        authorized,
+                        oauthToken,
+                        update: alreadyOpened,
+                    });
                     break;
                 }
                 case 'dialog-rename': {
@@ -207,6 +218,7 @@ export const DocsListContainer = () => {
                         ...dialogArgs,
                         type,
                         caption: i18n('label_replace-name'),
+                        update: alreadyOpened,
                     });
 
                     break;
@@ -215,7 +227,10 @@ export const DocsListContainer = () => {
                     const {type: _, ...dialogArgs} = activeDialog;
                     openReplaceSourceDialog({
                         ...dialogArgs,
+                        authorized,
                         caption: i18n('label_replace-source'),
+                        oauthToken,
+                        update: alreadyOpened,
                     });
                 }
             }
@@ -223,6 +238,7 @@ export const DocsListContainer = () => {
     }, [
         items,
         activeDialog,
+        prevActiveDialog,
         authorized,
         oauthToken,
         openSourcesDialog,

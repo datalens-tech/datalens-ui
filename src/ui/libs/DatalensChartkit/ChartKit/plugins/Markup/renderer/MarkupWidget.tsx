@@ -4,8 +4,10 @@ import {CHARTKIT_ERROR_CODE, ChartKitError} from '@gravity-ui/chartkit';
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
 
+import {ChartQa} from '../../../../../../../shared';
 import {Markup} from '../../../../../../components/Markup';
 import Performance from '../../../../modules/perfomance';
+import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../helpers/constants';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import type {MarkupWidgetProps} from '../types';
 
@@ -17,7 +19,7 @@ const MarkupWidget = React.forwardRef<ChartKitWidgetRef | undefined, MarkupWidge
     (props, _ref) => {
         const {
             id,
-            onRender,
+            onLoad,
             data: {data},
         } = props;
 
@@ -26,18 +28,20 @@ const MarkupWidget = React.forwardRef<ChartKitWidgetRef | undefined, MarkupWidge
         Performance.mark(generatedId);
 
         React.useLayoutEffect(() => {
-            onRender?.({renderTime: Performance.getDuration(generatedId)});
-        }, [generatedId, onRender]);
+            onLoad?.({widgetRendering: Performance.getDuration(generatedId)});
+        }, [generatedId, onLoad]);
 
-        if (!data) {
+        if (!data || (typeof data === 'object' && !Object.keys(data).length)) {
             throw new ChartKitError({
                 code: CHARTKIT_ERROR_CODE.NO_DATA,
             });
         }
 
         return (
-            <div className={b()}>
-                <Markup item={data} />
+            <div className={b('content', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}>
+                <div data-qa={ChartQa.Chart} className={b()}>
+                    <Markup item={data.value} />
+                </div>
             </div>
         );
     },

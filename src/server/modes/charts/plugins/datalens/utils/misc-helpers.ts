@@ -72,6 +72,10 @@ function isFloatDataType(dataType: string) {
     return dataType === DATASET_FIELD_TYPES.FLOAT;
 }
 
+function isMarkupDataType(dataType: string) {
+    return dataType === DATASET_FIELD_TYPES.MARKUP;
+}
+
 function getTimezoneOffsettedTime(value: Date) {
     return value.getTime() - value.getTimezoneOffset() * 60 * 1000;
 }
@@ -378,6 +382,7 @@ export {
     isGradientMode,
     isNumericalDataType,
     isFloatDataType,
+    isMarkupDataType,
     getTimezoneOffsettedTime,
     formatDate,
     formatNumber,
