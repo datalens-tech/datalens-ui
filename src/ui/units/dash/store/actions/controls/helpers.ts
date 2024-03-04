@@ -58,7 +58,6 @@ export const getControlDefaultsForField = (
 
     if (field) {
         return {
-            ...defaults,
             [field]: addOperationForValue({
                 operation: selectorDialog.operation,
                 value: defaultValue || '',
