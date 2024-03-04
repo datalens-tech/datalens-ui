@@ -10,7 +10,7 @@
     "i18n:prepare": "tsc src/i18n/prepare-keysets/index.ts --esModuleInterop --outDir dist/i18n && node dist/i18n/prepare-keysets/index.js",
     "dev": "npm run i18n:prepare && SETUP_DEV_ENV_INSTALLATION=opensource node ./scripts/setup-dev-env.js && APP_BUILDER_ENTRY_FILTER=dl-main LOCAL_DEV_PORT=3030 app-builder dev",
     "build": "npm run i18n:prepare && NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 APP_BUILDER_CDN=false app-builder build",
-    "build:analyze": "npm run i18n:prepare && APP_BUILDER_ANALYZE_BUNDLE=true UI_CORE_CDN=false APP_BUILDER_CDN=false NODE_ENV=production NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 app-builder build",
+    "build:analyze": "npm run i18n:prepare && APP_BUILDER_ANALYZE_BUNDLE=statoscope UI_CORE_CDN=false APP_BUILDER_CDN=false NODE_ENV=production NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 app-builder build",
     "cdn": "npm run i18n:prepare && NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 app-builder build",
     "start": "NODE_ENV=production node dist/server",
     "lint:js:main": "eslint --ignore-pattern 'src/ui/*' '**/*.{js,jsx,ts,tsx}' --quiet",
@@ -33,7 +33,9 @@
     "test:e2e:opensource": "cd tests && npm run test:e2e:opensource",
     "test:e2e:us-dump": "bash scripts/e2e/us-dump.sh",
     "test:install:chromium": "cd tests && npm run test:install:chromium",
-    "test:e2e:docker": "bash scripts/e2e/playwright-docker.sh 'npm run test:e2e:opensource'"
+    "test:e2e:docker": "bash scripts/e2e/playwright-docker.sh 'npm run test:e2e:opensource'",
+    "statoscope:validate-diff": "statoscope validate --input input.json --reference reference.json",
+    "statoscope:validate": "statoscope validate --input ./dist/public/build/stats.json"
   },
   "repository": {
     "type": "git",
@@ -115,6 +117,9 @@
     "@gravity-ui/uikit": "^5.19.0",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@playwright/test": "^1.40.0",
+    "@statoscope/cli": "^5.28.2",
+    "@statoscope/stats-validator-plugin-webpack": "^5.28.2",
+    "@statoscope/webpack-ui": "^5.28.2",
     "@stripe/react-stripe-js": "^1.8.1",
     "@stripe/stripe-js": "^1.30.0",
     "@testing-library/jest-dom": "^5.16.2",
@@ -170,6 +175,7 @@
     "mockdate": "^3.0.5",
     "monaco-editor": "^0.36.1",
     "monaco-editor-webpack-plugin": "^7.1.0",
+    "mustache": "^4.2.0",
     "object-hash": "^2.2.0",
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
