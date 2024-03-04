@@ -30,4 +30,8 @@
     &__sortable-item {
         padding: 0 10px;
     }
+
+    &__sortable-item_highlight:has(.dialog-tab-item__row_selected) {
+        background-color: var(--g-color-base-selection);
+    }
 }
