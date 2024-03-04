@@ -398,6 +398,15 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         );
     }, [handleChange, chartkitParams]);
 
+    /**
+     * Clear action params on disable of filtration of widget
+     */
+    React.useEffect(() => {
+        if (hasEnableActionParamsChanged && !enableActionParams) {
+            handleFiltersClear();
+        }
+    }, [hasEnableActionParamsChanged, enableActionParams, handleFiltersClear]);
+
     React.useEffect(() => {
         if (loadedData?.isNewWizard && !isWizardChart) {
             setIsWizardChart(true);

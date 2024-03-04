@@ -498,7 +498,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     };
 
     onChange = ({param, value}: {param: string; value: string | string[]}) => {
-        this.props.onStateAndParamsChange({params: {[param]: value}});
+        this.props.onStateAndParamsChange({params: {[param]: value}}, {action: 'setParams'});
     };
 
     onChangeExternal = ({type, data}: OnChangeData) => {
