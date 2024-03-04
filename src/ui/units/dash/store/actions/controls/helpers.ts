@@ -41,7 +41,8 @@ export const getControlDefaultsForField = (
     defaults: Record<string, string | string[]>,
     selectorDialog: SelectorDialogState,
 ) => {
-    const {sourceType, datasetFieldId, fieldName, defaultValue} = selectorDialog;
+    const {sourceType, datasetFieldId, fieldName, defaultValue, selectorParameters} =
+        selectorDialog;
 
     let field;
     switch (sourceType) {
@@ -58,6 +59,7 @@ export const getControlDefaultsForField = (
 
     if (field) {
         return {
+            ...selectorParameters,
             [field]: addOperationForValue({
                 operation: selectorDialog.operation,
                 value: defaultValue || '',
