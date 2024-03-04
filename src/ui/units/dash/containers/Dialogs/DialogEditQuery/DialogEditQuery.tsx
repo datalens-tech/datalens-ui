@@ -2,6 +2,7 @@ import React from 'react';
 
 import {Dialog, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {ConnectionQueryContent} from 'shared';
 import type {GetConnectionTypedQueryErrorResponse} from 'shared/schema';
@@ -25,8 +26,8 @@ export type OpenDialogEditQueryArgs = {
     id: typeof DIALOG_EDIT_QUERY;
     props: undefined;
 };
-
-const i18nConnectionBasedControlFake = (str: string) => str;
+// @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+const i18n = I18n.keyset('dash.edit-query-dialog');
 
 const b = block('dialog-edit-query');
 
@@ -48,20 +49,25 @@ const DialogEditQuery: React.FC = () => {
         failedQuery: string | undefined,
     ) => {
         setDisabled(true);
+
         setErrorState({reason, failedQuery});
     };
 
     const handleSuccessResponse = (queryContent: ConnectionQueryContent) => {
         setErrorState(undefined);
+
         dispatch(setSelectorDialogItem({connectionQueryContent: queryContent}));
+
         dispatch(closeDialog());
     };
 
     const handleClose = React.useCallback(() => dispatch(closeDialog()), []);
+
     const handleApply = () => {
         if (!connectionId || !query || !connectionQueryType) {
             return;
         }
+
         const queryContent: ConnectionQueryContent = {query};
         setLoading(true);
         getSdk()
@@ -80,7 +86,8 @@ const DialogEditQuery: React.FC = () => {
                 return validation
                     ? handleSuccessResponse(queryContent)
                     : handleWrongQueryRequest(
-                          i18nConnectionBasedControlFake('error_invalid-typed-query-response'),
+                          // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+                          i18n('error_invalid-typed-query-response'),
                           query,
                       );
             })
@@ -91,11 +98,13 @@ const DialogEditQuery: React.FC = () => {
     };
     const handleQueryEditorUpdate = (v: string) => {
         setQuery(v);
+
         setDisabled(v.trim().length === 0);
     };
     return (
         <Dialog className={b()} open={true} hasCloseButton={true} onClose={handleClose}>
-            <Dialog.Header caption={i18nConnectionBasedControlFake('title_edit-query')} />
+            {/* @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653*/}
+            <Dialog.Header caption={i18n('title_edit-query')} />
             <Dialog.Body>
                 <Flex direction="column" className={b('content')}>
                     <QueryEditor query={query} onQueryEditorUpdate={handleQueryEditorUpdate} />
@@ -112,8 +121,10 @@ const DialogEditQuery: React.FC = () => {
                 propsButtonApply={{disabled}}
                 onClickButtonCancel={handleClose}
                 onClickButtonApply={handleApply}
-                textButtonApply={i18nConnectionBasedControlFake('button_apply')}
-                textButtonCancel={i18nConnectionBasedControlFake('button_cancel')}
+                // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+                textButtonApply={i18n('button_apply')}
+                // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+                textButtonCancel={i18n('button_cancel')}
             />
         </Dialog>
     );

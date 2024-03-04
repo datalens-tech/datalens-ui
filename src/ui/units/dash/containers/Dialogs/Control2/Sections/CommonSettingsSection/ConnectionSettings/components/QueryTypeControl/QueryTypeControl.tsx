@@ -2,8 +2,9 @@ import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
 import {Select} from '@gravity-ui/uikit';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {type ConnectionQueryType, ConnectionQueryTypeValues} from 'shared';
+import {type ConnectionQueryTypeOptions, ConnectionQueryTypeValues} from 'shared';
 
 import {setSelectorDialogItem} from '../../../../../../../../store/actions/dashTyped';
 import {selectSelectorDialog} from '../../../../../../../../store/selectors/dashTypedSelectors';
@@ -11,8 +12,8 @@ import {selectSelectorDialog} from '../../../../../../../../store/selectors/dash
 import {EditLabelControl} from './components/EditLabelControl/EditLabelControl';
 import {EditQueryControl} from './components/EditQueryControl/EditQueryControl';
 import {prepareQueryTypeSelectorOptions} from './helpers';
-
-const i18nConnectionBasedControlFake = (str: string) => str;
+// @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+const i18n = I18n.keyset('dash.edit-query-dialog');
 
 const renderQueryContentControl = (connectionQueryType: ConnectionQueryTypeValues | undefined) => {
     switch (connectionQueryType) {
@@ -26,7 +27,7 @@ const renderQueryContentControl = (connectionQueryType: ConnectionQueryTypeValue
 };
 
 type QueryTypeControlProps = {
-    connectionQueryTypes: ConnectionQueryType[];
+    connectionQueryTypes: ConnectionQueryTypeOptions[];
 };
 
 export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTypeControlProps) => {
@@ -56,17 +57,19 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
 
     return (
         <React.Fragment>
-            {options.length > 1 ? (
-                <FormRow label={i18nConnectionBasedControlFake('field_query-type')}>
+            {options.length > 1 && (
+                // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+                <FormRow label={i18n('field_query-type')}>
                     <Select
                         width="max"
                         options={options}
                         value={connectionQueryType ? [connectionQueryType] : []}
                         onUpdate={handleQueryTypeUpdate}
-                        placeholder={i18nConnectionBasedControlFake('placeholder_not-defined')}
+                        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+                        placeholder={i18n('placeholder_not-defined')}
                     />
                 </FormRow>
-            ) : null}
+            )}
             {renderQueryContentControl(connectionQueryType)}
         </React.Fragment>
     );

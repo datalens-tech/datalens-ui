@@ -8,7 +8,7 @@ import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
 import {
     type ConnectionQueryContent,
-    type ConnectionQueryType,
+    type ConnectionQueryTypeOptions,
     ConnectionQueryTypeValues,
     DATASET_FIELD_TYPES,
     DashData,
@@ -369,7 +369,7 @@ export type SelectorDialogState = {
     datasetId?: string;
     connectionId?: string;
     connectionQueryType?: ConnectionQueryTypeValues;
-    connectionQueryTypes?: ConnectionQueryType[];
+    connectionQueryTypes?: ConnectionQueryTypeOptions[];
     connectionQueryContent?: ConnectionQueryContent;
     datasetFieldId?: string;
     fieldName?: string;
