@@ -4,14 +4,14 @@ export interface CreateEditorChartResponse extends EntryFields {
     links: EntryFieldLinks;
 }
 
-export type CreateEditorChartArgs = {
+export interface CreateEditorChartArgs {
     type: string;
     data: EntryFieldData;
     key?: string;
     meta?: EntryFieldMeta;
     workbookId?: string;
     name?: string;
-};
+}
 
 export interface UpdateEditorChartResponse extends EntryFields {
     links?: EntryFieldLinks;

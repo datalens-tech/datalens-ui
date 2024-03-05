@@ -42,7 +42,7 @@ export function copyTextToClipboard(text: string) {
 export function getFullPathName(args: {
     /** Base part of the path that follows immediately after `/workbook` part. It should start with `/`. */
     base: string;
-    /** Adds `/workbook` part to the start of result path name if specified. */
+    /** Workbook id. Adds `/workbook` part to the start of result path name as well if specified. */
     workbookId?: string;
 }) {
     const {base, workbookId} = args;

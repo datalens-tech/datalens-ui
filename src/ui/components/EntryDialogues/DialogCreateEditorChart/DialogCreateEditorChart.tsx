@@ -32,17 +32,17 @@ class DialogCreateEditorChart extends React.Component<Props> {
         if (this.props.workbookId) {
             return (
                 <DialogCreateWorkbookEntry
-                    // name={this.props.initName || i18n('label_widget-name-default')}
-                    // defaultName={i18n('label_widget-name-default')}
                     caption={i18n('section_caption')}
+                    defaultName={i18n('label_default-name')}
+                    name={this.props.initName}
+                    placeholder={i18n('label_placeholder')}
                     textButtonApply={i18n('button_apply')}
                     textButtonCancel={i18n('button_cancel')}
                     visible={this.props.visible}
                     onClose={this.onClose}
-                    onApply={this.onWorkbookApply}
-                    onSuccess={this.onSuccess}
                     onError={this.onError}
-                    placeholder={i18n('label_placeholder')}
+                    onSuccess={this.onSuccess}
+                    onApply={this.onWorkbookApply}
                 />
             );
         }
