@@ -131,13 +131,14 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                         id: DIALOG_COPY_ENTRIES_TO_WORKBOOK,
                         props: {
                             open: true,
+                            initialCollectionId: workbook.collectionId,
                             onClose: () => dispatch(closeDialog()),
                             entryId: entity.entryId,
                         },
                     }),
                 );
             },
-            [dispatch],
+            [dispatch, workbook.collectionId],
         );
 
         const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = []] = chunks;
