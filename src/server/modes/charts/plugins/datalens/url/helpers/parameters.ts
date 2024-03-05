@@ -14,7 +14,7 @@ export const mapItemToPayloadParameter = (
 ): PayloadParameter => {
     return {
         id: field.guid,
-        value: field.default_value || '',
+        value: field.default_value ?? '',
     };
 };
 export const prepareParameterForPayload = (
