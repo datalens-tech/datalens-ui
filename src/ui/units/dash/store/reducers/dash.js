@@ -83,10 +83,12 @@ export function getSelectorDialogInitialState(args = {}) {
     };
 }
 
-export function getSelectorDialogFromData(data) {
+export function getSelectorDialogFromData(data, defaults) {
     return {
         validation: {},
         isManualTitle: true,
+
+        defaults,
 
         title: data.title,
         sourceType: data.sourceType,
@@ -405,7 +407,7 @@ function dash(state = initialState, action) {
         }
         case actionTypes.OPEN_ITEM_DIALOG: {
             const payload = action.payload;
-            const {id: openedItemId, data} = payload;
+            const {id: openedItemId, data, defaults} = payload;
             let {type: openedDialog} = tab.items.find(({id}) => id === openedItemId);
 
             const newState = {
@@ -438,7 +440,7 @@ function dash(state = initialState, action) {
                 newState.selectorsGroup = getSelectorGroupDialogFromData(data);
                 newState.selectorDialog = newState.selectorsGroup.group[0];
             } else if (openedDialog === 'control') {
-                newState.selectorDialog = getSelectorDialogFromData(data);
+                newState.selectorDialog = getSelectorDialogFromData(data, defaults);
             }
 
             newState.openedDialog = openedDialog;

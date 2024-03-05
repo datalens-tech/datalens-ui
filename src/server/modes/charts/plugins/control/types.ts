@@ -1,4 +1,10 @@
-import {DatasetFieldType} from '../../../../../shared';
+import {
+    type ConnectionQueryContent,
+    ConnectionQueryTypeValues,
+    DashTabItemControlElementType,
+    DashTabItemControlSourceType,
+    DatasetFieldType,
+} from '../../../../../shared';
 
 export type ControlShared = {
     title: string;
@@ -9,7 +15,7 @@ export type ControlShared = {
         showTitle: boolean;
         isRange: boolean;
         multiselectable: boolean;
-        elementType: string;
+        elementType: DashTabItemControlElementType;
         datasetFieldId: string;
         datasetFieldType: DatasetFieldType;
         acceptableValues:
@@ -23,8 +29,11 @@ export type ControlShared = {
               };
         defaultValue: any;
         required?: boolean;
+        connectionId?: string;
+        connectionQueryType?: ConnectionQueryTypeValues;
+        connectionQueryContent?: ConnectionQueryContent;
     };
-    sourceType: 'dataset' | 'manual';
+    sourceType: DashTabItemControlSourceType;
     type: 'control_dash';
     param: string;
     uiControl?: UIControl;
