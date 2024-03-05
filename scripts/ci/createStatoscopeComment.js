@@ -4,7 +4,7 @@ const lodashTemplate = require('lodash/template');
 
 const createPRComment = require('./createPRComment');
 
-const template = fs.readFileSync('./statoscope-comment.tmpl', 'utf8');
+const template = fs.readFileSync('./scripts/ci/statoscope-comment.tmpl', 'utf8');
 
 module.exports = async ({github, context, core, downloadLink}) => {
     const data = JSON.parse(fs.readFileSync('result.json', 'utf8'));
