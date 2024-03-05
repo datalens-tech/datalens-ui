@@ -66,7 +66,7 @@ export const ConnectionSettings: React.FC = () => {
     return (
         <SectionWrapper title={i18n('label_common-settings')}>
             <ConnectionSelector />
-            {connectionQueryTypes?.length && connectionQueryTypes.length > 0 && (
+            {connectionQueryTypes && connectionQueryTypes.length > 0 && (
                 <React.Fragment>
                     <ParameterNameInput
                         // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
