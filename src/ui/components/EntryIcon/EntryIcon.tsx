@@ -171,6 +171,7 @@ const getEntityIconType = (
         iconType = entityTypeIcons[type];
     }
     const entityIconType = iconType || getScopeTypeIcon(scope);
+
     if (entityIconType) {
         const iconSize =
             entityIconType === 'folder'

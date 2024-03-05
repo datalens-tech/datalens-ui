@@ -44,6 +44,7 @@ const runners: Runner[] = [
             'markup_node',
             'timeseries_node',
         ]),
+        safeConfig: true,
         handler: runEditor,
     },
     {

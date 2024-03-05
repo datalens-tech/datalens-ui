@@ -50,7 +50,7 @@ const DatalensPageView = () => {
                     path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                     component={DatasetPage}
                 />
-                <Route path="/editor" component={EditorPage} />
+                <Route path={['/editor', '/workbooks/:workbookId/editor']} component={EditorPage} />
                 <Route path="/preview" component={PreviewPage} />
                 <Route
                     path={[

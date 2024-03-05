@@ -1,10 +1,13 @@
-export const snakeToCamel = (s) => s.toLowerCase().replace(/_\w/g, (m) => m[1].toUpperCase());
+import type {GetRevisionsEntry} from 'shared/schema';
 
-export function isEntryLatest(entry) {
+export const snakeToCamel = (s: string) =>
+    s.toLowerCase().replace(/_\w/g, (m) => m[1].toUpperCase());
+
+export function isEntryLatest(entry: GetRevisionsEntry) {
     return entry.savedId === entry.revId;
 }
 
-function fallbackCopyTextToClipboard(text) {
+function fallbackCopyTextToClipboard(text: string) {
     const textArea = document.createElement('textarea');
     textArea.value = text;
     document.body.appendChild(textArea);
@@ -20,7 +23,7 @@ function fallbackCopyTextToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
-export function copyTextToClipboard(text) {
+export function copyTextToClipboard(text: string) {
     if (!navigator.clipboard) {
         fallbackCopyTextToClipboard(text);
         return;
@@ -33,4 +36,16 @@ export function copyTextToClipboard(text) {
             console.error('Async: Could not copy text: ', err);
         },
     );
+}
+
+/** Uses to get path name for page that does not contains a created entry. */
+export function getFullPathName(args: {
+    /** Base part of the path that follows immediately after `/workbook` part. It should start with `/`. */
+    base: string;
+    /** Adds `/workbook` part to the start of result path name if specified. */
+    workbookId?: string;
+}) {
+    const {base, workbookId} = args;
+    const baseWithSearch = `${base}${location.search}`;
+    return workbookId ? `/workbooks/${workbookId}${baseWithSearch}` : baseWithSearch;
 }
