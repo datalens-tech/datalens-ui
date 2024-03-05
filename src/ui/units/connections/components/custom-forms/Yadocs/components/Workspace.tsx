@@ -20,7 +20,6 @@ import {getColumnsWithTypeIcons} from '../../utils/render';
 
 const b = block('conn-form-yadocs');
 const i18n = I18n.keyset('connections.yadocs.view');
-const ACCEPTED_EXTENTIONS = ['XLSX'];
 
 const shouldToShowVeil = (item?: YadocItem) => {
     return Boolean(item && isYadocSourceItem(item) && item.status === 'in_progress');
@@ -51,9 +50,7 @@ const EmptyWorkspace = () => {
     return (
         <PlaceholderIllustration
             name="template"
-            description={i18n('label_workspace-placeholder', {
-                formats: ACCEPTED_EXTENTIONS.join(', '),
-            })}
+            description={i18n('label_workspace-placeholder')}
         />
     );
 };

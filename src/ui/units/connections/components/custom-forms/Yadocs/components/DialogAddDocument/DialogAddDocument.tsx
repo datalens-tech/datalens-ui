@@ -11,8 +11,8 @@ import {Interpolate} from 'ui/components/Interpolate';
 import {registry} from 'ui/registry';
 
 import DialogManager from '../../../../../../../components/DialogManager/DialogManager';
+import {DL} from '../../../../../../../constants';
 import {DataLensApiError} from '../../../../../../../typings';
-import {i18n9247} from '../../constants';
 
 import './DialogAddDocument.scss';
 
@@ -49,8 +49,8 @@ const PrivateFileAlert = (props: {onLogin: (oauthToken: string) => void; authori
     let icon: AlertProps['icon'];
     const theme: AlertProps['theme'] = authorized ? 'info' : 'normal';
     const message = authorized
-        ? i18n9247['label_alert-authorized']
-        : i18n9247['label_alert-not-authorized'];
+        ? i18n('label_alert-authorized')
+        : i18n('label_alert-not-authorized');
 
     if (authorized) {
         // TODO: change to null after https://github.com/gravity-ui/uikit/issues/1384
@@ -59,7 +59,7 @@ const PrivateFileAlert = (props: {onLogin: (oauthToken: string) => void; authori
         action = (
             <OAuthTokenButton
                 application={ConnectorType.Yadocs}
-                text={i18n9247['button_auth-modal']}
+                text={i18n('button_auth-dialog')}
                 view="normal-contrast"
                 style={{margin: 'auto 0'}}
                 onTokenChange={onLogin}
@@ -74,14 +74,18 @@ const PrivateFileAlert = (props: {onLogin: (oauthToken: string) => void; authori
 
 const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
     const {authorized, caption, onApply, onClose, onError, onSuccess, onLogin} = props;
+    const docsEndpoint = DL.ENDPOINTS.docs;
     const mounted = React.useRef(false);
     const [value, setValue] = React.useState('');
     const [mode, setMode] = React.useState(FILE_MODE.PUBLIC);
     const [loading, setLoading] = React.useState(false);
     const propsButtonApply: Partial<ButtonProps> = {disabled: !value, loading};
     const applyDisabled = !value || loading;
-    const inputLabel =
-        mode === 'private' ? i18n9247['label_private-path'] : i18n9247['label_public-path'];
+    const inputLabel = mode === 'private' ? i18n('label_private-path') : i18n('label_public-path');
+    const inputHelp =
+        mode === 'private'
+            ? i18n('label_add-input-private-help')
+            : i18n('label_add-input-public-help');
     const inputNote =
         mode === 'private'
             ? i18n('label_add-input-private-note')
@@ -129,7 +133,7 @@ const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
 
     return (
         <Dialog open={true} onClose={onClose} size="s" onEnterKeyDown={handleApply}>
-            <Dialog.Header caption={caption || i18n9247['label_add-file']} />
+            <Dialog.Header caption={caption || i18n('label_add-file')} />
             <Dialog.Body className={b('add-dialog-body')}>
                 <div className={b('add-dialog-row')}>
                     <label>{i18n('label_access-type')}</label>
@@ -157,17 +161,46 @@ const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
                             text={inputLabel}
                             matches={{
                                 link: (match) => (
-                                    <React.Fragment>
-                                        <Link href="https://docs.yandex.ru" target="_blank">
-                                            {match}
-                                        </Link>
-                                    </React.Fragment>
+                                    <Link
+                                        href="https://docs.yandex.ru/docs?type=xlsx"
+                                        target="_blank"
+                                    >
+                                        {match}
+                                    </Link>
                                 ),
                             }}
                         />
                         <HelpPopover
                             className={b('add-help-btn')}
-                            content={i18n('label_add-input-help')}
+                            content={
+                                <Interpolate
+                                    text={inputHelp}
+                                    matches={{
+                                        code: (match) => (
+                                            <code
+                                                style={{
+                                                    color: 'var(--g-color-text-misc)',
+                                                    backgroundColor:
+                                                        'var(--g-color-base-misc-light)',
+                                                    lineHeight: '16px',
+                                                    borderRadius: '4px',
+                                                    padding: '1px 4px',
+                                                }}
+                                            >
+                                                {match}
+                                            </code>
+                                        ),
+                                        link: (match) => (
+                                            <Link
+                                                href={`${docsEndpoint}/cloud/datalens/operations/connection/create-yadocs`}
+                                                target="_blank"
+                                            >
+                                                {match}
+                                            </Link>
+                                        ),
+                                    }}
+                                />
+                            }
                         />
                     </label>
                     <TextInput

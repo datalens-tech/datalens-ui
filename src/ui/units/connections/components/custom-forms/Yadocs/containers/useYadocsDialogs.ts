@@ -27,7 +27,6 @@ import type {
 import {DIALOG_CONN_CONFIRM, DIALOG_CONN_S3_SOURCES} from '../../../dialogs';
 import {DIALOG_CONN_WITH_INPUT} from '../../components';
 import {DIALOG_CONN_ADD_YADOC} from '../components/DialogAddDocument/DialogAddDocument';
-import {i18n9247} from '../constants';
 
 const i18n = I18n.keyset('connections.yadocs.view');
 
@@ -245,7 +244,7 @@ export const useYadocsDialogs = () => {
                         caption: i18n('label_logout-dialog-title'),
                     },
                     footerProps: {
-                        textButtonApply: i18n9247['button_apply-new'],
+                        textButtonApply: i18n('button_logout'),
                         textButtonCancel: i18n('button_cancel'),
                     },
                     onApply,
