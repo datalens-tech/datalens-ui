@@ -12,14 +12,15 @@ const i18n = I18n.keyset('connections.gsheet.view');
 const ICON_SIZE = 16;
 
 type Props = {
+    children?: React.ReactChild;
     onClick?: () => void;
 };
 
-export const ButtonLogout = ({onClick}: Props) => {
+export const ButtonLogout = ({children, onClick}: Props) => {
     return (
         <div className={b()}>
             <Label size="m">
-                <div className={b('label-content')}>{i18n('label_auth-success')}</div>
+                <div className={b('label-content')}>{children || i18n('label_auth-success')}</div>
             </Label>
             <Button className={b('action')} view="flat" pin="brick-round" onClick={onClick}>
                 <Icon data={ArrowRightFromSquare} size={ICON_SIZE} />
