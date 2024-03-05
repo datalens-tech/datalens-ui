@@ -14,7 +14,15 @@ const fieldNameValidationSourceTypes: Partial<Record<DashTabItemControlSourceTyp
 };
 
 export const getControlValidation = (selectorDialog: SelectorDialogState) => {
-    const {title, sourceType, datasetFieldId, fieldName, defaultValue, required} = selectorDialog;
+    const {
+        title,
+        sourceType,
+        datasetFieldId,
+        fieldName,
+        defaultValue,
+        required,
+        connectionQueryContent,
+    } = selectorDialog;
 
     const validation: SelectorDialogValidation = {};
 
@@ -24,6 +32,10 @@ export const getControlValidation = (selectorDialog: SelectorDialogState) => {
 
     if (sourceType && fieldNameValidationSourceTypes[sourceType] && !fieldName) {
         validation.fieldName = i18n('dash.control-dialog.edit', 'validation_required');
+    }
+
+    if (sourceType === DashTabItemControlSourceType.Connection && !connectionQueryContent) {
+        validation.connectionQueryContent = i18n('dash.control-dialog.edit', 'validation_required');
     }
 
     if (sourceType === DashTabItemControlSourceType.Dataset && !datasetFieldId) {
