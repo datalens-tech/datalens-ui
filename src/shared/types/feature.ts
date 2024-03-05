@@ -9,6 +9,7 @@ export enum Feature {
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',
     EnableChartEditor = 'EnableChartEditor',
+    EnableChartEditorDocs = 'EnableChartEditorDocs',
     EnableCustomMonitoring = 'EnableCustomMonitoring',
     ShowActionPanelTreeSelect = 'ShowActionPanelTreeSelect',
     EnableDashChartStat = 'EnableDashChartStat',
