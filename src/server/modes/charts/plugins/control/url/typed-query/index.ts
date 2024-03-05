@@ -1,4 +1,4 @@
-import {mapParametersRecordToTypedQueryApiParameters} from '../../../../../../../shared/modules/typed-query-api';
+import {mapStringParameterToTypedQueryApiParameter} from '../../../../../../../shared/modules/typed-query-api';
 import {CONNECTIONS_TYPED_QUERY_URL, CONNECTION_ID_PLACEHOLDER} from '../constants';
 import type {SourceControlArgs, SourceControlTypedQueryRequest} from '../types';
 
@@ -14,7 +14,9 @@ export const prepareTypedQueryRequest = (
         throw new Error('Missed required fields for TypedQueryApi request');
     }
 
-    const parameters = mapParametersRecordToTypedQueryApiParameters(params);
+    const parameters = Object.entries(params).map(([key, value]) =>
+        mapStringParameterToTypedQueryApiParameter(key, value),
+    );
 
     return {
         url: CONNECTIONS_TYPED_QUERY_URL.replace(CONNECTION_ID_PLACEHOLDER, connectionId),

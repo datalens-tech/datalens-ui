@@ -17,7 +17,7 @@ export default ({
     params: Record<string, string | string[]>;
     ChartEditor: IChartEditor;
 }) => {
-    shared.content = processContent({data, shared, ChartEditor, params});
+    shared.content = processContent({data, shared, ChartEditor});
 
     const {source, param, content} = shared;
 

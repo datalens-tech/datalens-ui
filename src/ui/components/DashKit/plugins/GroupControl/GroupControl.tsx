@@ -96,7 +96,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             status: LOAD_STATUS.INITIAL,
             silentLoading: false,
             isInit: false,
-            stateParams: {},
+            stateParams: this.props.params,
             needReload: false,
             needMeta: false,
             forceUpdate: true,
@@ -122,27 +122,12 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         const hasChanged = hasDataChanged || hasParamsChanged;
 
-        // need to check unused ids
-        if (
-            hasDataChanged &&
-            this.props.data.group &&
-            prevProps.data.group &&
-            this.props.data.group?.length < prevProps.data.group?.length
-        ) {
-            this.props.onStateAndParamsChange({}, {action: 'removeGroupItems'});
-        }
-
-        // if (!hasParamsUpdatedFromState) {
-        //     this.setState({
-        //         stateParams: this.props.params as unknown as Record<string, StringParams>,
-        //     });
-        // }
-
         if (this.state.forceUpdate && hasChanged) {
             this.setState({
                 status: LOAD_STATUS.PENDING,
                 needReload: true,
                 silentLoading: true,
+                stateParams: this.props.params,
             });
         }
     }
@@ -187,7 +172,14 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const controlData = this.props.data as unknown as DashTabItemGroupControlData;
 
         if (!controlData.buttonApply || callChangeByClick) {
-            this.props.onStateAndParamsChange({params}, {groupItemId: controlId});
+            const groupItemIds = controlId ? [controlId] : controlData.group.map(({id}) => id);
+            this.props.onStateAndParamsChange(
+                {params},
+                {
+                    groupItemIds,
+                    action: 'setParams',
+                },
+            );
         }
 
         if (controlId) {
@@ -199,20 +191,23 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         this.setState({stateParams: params as Record<string, StringParams>});
     };
 
-    private filterSignificantParams(params: StringParams) {
+    private filterSignificantParams(
+        params: StringParams,
+        loadedData?: ExtendedLoadedData | null,
+        defaults?: StringParams,
+    ) {
         if (!params) {
             return {};
         }
 
-        if (this.controlsProgressCount) {
-            return pick(params, Object.keys(this.props.defaults!));
+        // @ts-ignore
+        const dependentSelectors = this.props.settings.dependentSelectors;
+
+        if (loadedData && loadedData.usedParams && dependentSelectors) {
+            return pick(params, Object.keys(loadedData.usedParams));
         }
 
-        const usedParams = Object.values(this.controlsData).reduce((params, data) => {
-            return {...params, ...(data?.usedParams || {})};
-        }, {});
-
-        return pick(params, Object.keys(usedParams));
+        return dependentSelectors || !defaults ? params : pick(params, Object.keys(defaults));
     }
 
     // public
@@ -229,6 +224,18 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         });
     }
 
+    private filterDefaultsBySource(item: DashTabItemControlSingle) {
+        const sourcedFieldId =
+            item.sourceType === 'dataset'
+                ? (item.source as {datasetFieldId: string})?.datasetFieldId
+                : null;
+        if (sourcedFieldId && item.defaults) {
+            return {[sourcedFieldId]: item.defaults[sourcedFieldId]};
+        }
+
+        return item.defaults;
+    }
+
     private getCurrentWidgetResolvedMetaInfo = (loadedData: ExtendedLoadedData | null) => {
         let label = '';
         if (loadedData?.uiScheme && 'controls' in loadedData.uiScheme) {
@@ -236,17 +243,27 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             label = controls[0].label;
         }
 
+        const currentItem = (this.props.data as unknown as DashTabItemGroupControlData).group?.find(
+            (item) => item.id === loadedData?.id,
+        );
+
         const widgetMetaInfo = {
             layoutId: this.props.id,
             widgetId: this.props.id,
             title: label,
             label,
             params: loadedData?.params,
-            defaultParams: loadedData?.defaultParams,
+            defaultParams: currentItem ? this.filterDefaultsBySource(currentItem) : {},
             loaded: Boolean(loadedData),
             itemId: loadedData?.id,
             usedParams: loadedData?.usedParams
-                ? Object.keys(this.filterSignificantParams(loadedData.usedParams))
+                ? Object.keys(
+                      this.filterSignificantParams(
+                          loadedData.usedParams,
+                          loadedData,
+                          currentItem?.defaults,
+                      ),
+                  )
                 : null,
             datasets: loadedData?.extra?.datasets || null,
             datasetId: loadedData?.sources?.fields?.datasetId || '',
@@ -269,7 +286,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             result = {
                 id,
                 usedParams: usedParams
-                    ? Object.keys(this.filterSignificantParams(usedParams))
+                    ? Object.keys(this.filterSignificantParams(usedParams, loadedData))
                     : null,
                 datasets: extra.datasets,
                 // deprecated
@@ -368,7 +385,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 status: LOAD_STATUS.SUCCESS,
                 silentLoading: false,
                 isInit: true,
-                stateParams: this.props.params as Record<string, StringParams>,
             });
         }
 
@@ -380,8 +396,11 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const {silentLoading} = this.state;
 
         const loadedData = this.controlsData[item.id];
-        const usedParams = loadedData?.usedParams || item.defaults || {};
-        const significantParams = pick(this.state.stateParams[item.id], Object.keys(usedParams));
+        const significantParams = this.filterSignificantParams(
+            this.state.stateParams[item.id],
+            loadedData,
+            item.defaults,
+        );
 
         return (
             <Control
@@ -426,7 +445,16 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 break;
         }
 
-        if (!isEqual(newParams, this.props.params) || !isEqual(newParams, this.state.stateParams)) {
+        // changes are applied if:
+        // 1. it's SET_INITIAL_PARAMS. empty values in required selectors are not recorded in the state
+        // button reset need to reset them to the default value
+        // 2. new params are not equal to the actual params in stateParams (e.x. reset params by button)
+        // 3. new params are not equal to the props params (e.x. apply stateParams with apply button)
+        if (
+            action === CLICK_ACTION_TYPE.SET_INITIAL_PARAMS ||
+            !isEqual(newParams, this.state.stateParams) ||
+            !isEqual(newParams, this.props.params)
+        ) {
             if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
                 this.applyLoader = true;
                 setTimeout(() => {
@@ -510,7 +538,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         }
 
         this.setState({
-            stateParams: this.props.params as unknown as Record<string, StringParams>,
             status: LOAD_STATUS.PENDING,
         });
     }
