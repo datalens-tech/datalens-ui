@@ -175,7 +175,6 @@
     "mockdate": "^3.0.5",
     "monaco-editor": "^0.36.1",
     "monaco-editor-webpack-plugin": "^7.1.0",
-    "mustache": "^4.2.0",
     "object-hash": "^2.2.0",
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
