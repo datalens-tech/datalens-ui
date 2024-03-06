@@ -92,6 +92,8 @@ export const selectIsParametersSectionAvailable = (state: DatalensGlobalState): 
     switch (sourceType) {
         case DashTabItemControlSourceType.Connection:
             return Boolean(connectionId && connectionQueryTypes?.length);
+        case DashTabItemControlSourceType.External:
+            return true;
         default:
             return false;
     }
