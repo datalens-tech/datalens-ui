@@ -39,10 +39,10 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
     const chunks = useChunkedEntries(entries);
 
     React.useEffect(() => {
-        dispatch(resetWorkbookEntries());
-
         (async () => {
-            if (workbook) {
+            if (workbook && workbook.workbookId === workbookId) {
+                dispatch(resetWorkbookEntries());
+
                 const scopesForRequest = [EntryScope.Dash, EntryScope.Widget];
 
                 if (workbook.permissions.view) {
