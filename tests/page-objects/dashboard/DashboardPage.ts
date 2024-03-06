@@ -421,6 +421,8 @@ class DashboardPage extends BasePage {
     }
 
     async editSelectorBySettings(setting: SelectorSettings = {}) {
+        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
+
         await this.dialogControl.waitForVisible();
 
         if (setting.sourceType) {
@@ -460,13 +462,14 @@ class DashboardPage extends BasePage {
             await this.dialogControl.appearanceTitle.textInput.fill(setting.appearance.title);
         }
 
-        if (typeof setting.appearance?.innerTitleEnabled === 'boolean') {
+        // for GroupControls innerTitle is deprecated, only title exist and display as innerTitle
+        if (typeof setting.appearance?.innerTitleEnabled === 'boolean' && !isEnabledGroupControls) {
             await this.dialogControl.appearanceInnerTitle.checkbox.toggle(
                 setting.appearance.innerTitleEnabled,
             );
         }
 
-        if (setting.appearance?.innerTitle) {
+        if (setting.appearance?.innerTitle && !isEnabledGroupControls) {
             await this.dialogControl.appearanceInnerTitle.textInput.fill(
                 setting.appearance.innerTitle,
             );
@@ -562,7 +565,7 @@ class DashboardPage extends BasePage {
 
     async deleteSelector(controlTitle: string) {
         const control = this.page.locator(slct('dashkit-grid-item'), {
-            has: this.page.locator(slct('chartkit-control-title', controlTitle)),
+            has: this.page.locator(slct(ControlQA.chartkitControl, controlTitle)),
         });
         const controlSwitcher = control.locator(slct(ControlQA.controlMenu));
 

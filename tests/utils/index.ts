@@ -4,8 +4,15 @@ import dotenv from 'dotenv';
 import moment from 'moment';
 import path from 'path';
 
-import {ActionPanelQA, DialogCreateWorkbookEntryQa, EntryDialogQA} from '../../src/shared';
+import {
+    ActionPanelQA,
+    ControlQA,
+    DialogCreateWorkbookEntryQa,
+    EntryDialogQA,
+    Feature,
+} from '../../src/shared';
 import {ActionPanelEntryContextMenuQa} from '../../src/shared/constants/qa/action-panel';
+import {isEnabledFeature} from './helpers';
 export * from './helpers';
 
 export const ROOT_ENV_PATH = path.resolve(__dirname, '..', '..', '.env');
@@ -203,8 +210,15 @@ export async function getControlByTitle(
     page: Page,
     controlTitle: string,
 ): Promise<ElementHandle<HTMLElement>> {
-    const controlTitleElement = await page.$(slct('chartkit-control-title', controlTitle));
-    const control = await controlTitleElement!.getProperty('parentNode');
+    const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
+    let controlTitleElement = await page.$(slct('chartkit-control-title', controlTitle));
+    let control = await controlTitleElement?.getProperty('parentNode');
+    if (isEnabledGroupControls && !control) {
+        controlTitleElement = await page.waitForSelector(
+            slct(ControlQA.chartkitControl, controlTitle),
+        );
+        control = await controlTitleElement.getProperty('parentNode');
+    }
 
     return control as ElementHandle<HTMLElement>;
 }

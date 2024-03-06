@@ -5,7 +5,6 @@ import {SourceType} from './DialogControlPO/SourceType';
 import {SelectDatasetButton} from './DialogControlPO/SelectDatasetButton';
 import {DatasetFieldSelector} from './DialogControlPO/DatasetFieldSelector';
 import {ElementType} from './DialogControlPO/ElementType';
-import {switchCheckbox} from './utils';
 import {AppearanceTitle} from './DialogControlPO/AppearanceTitle';
 import {AppearanceInnerTitle} from './DialogControlPO/AppearanceInnerTitle';
 import {FieldName} from './DialogControlPO/FieldName';
@@ -49,53 +48,7 @@ export default class DialogControl {
         await dialogControlApplyBtn.click();
     }
 
-    /**
-     * @deprecated use utils.switchCheckbox
-     */
-    async switchSelectorFieldCheckbox(checkboxQa: string, enableCheckbox: boolean) {
-        await switchCheckbox(this.page, checkboxQa, enableCheckbox);
-    }
-
-    /**
-     * @deprecated use DialogControlPO
-     */
-    async enableSelectorFieldAndFill(controlQa: string, checkboxQa: string, text: string) {
-        await this.switchSelectorFieldCheckbox(checkboxQa, true);
-        await this.page.fill(`${slct(controlQa)} input`, text);
-    }
-
     async getControlByTitle(controlTitle: string) {
         return getControlByTitle(this.page, controlTitle);
-    }
-
-    /**
-     * @deprecated use DashboardPage.editSelectorBySettings
-     */
-    async editSelectorTitlesAndSave(labelText: string, innerLabelText: string) {
-        const {
-            inputNameControl,
-            inputInnerLabelControl,
-            showLabelCheckbox,
-            showInnerTitleCheckbox,
-            controlSettings,
-        } = ControlQA;
-
-        // click on the selector settings button
-        const controlSettingsButton = await this.page.waitForSelector(slct(controlSettings));
-        await controlSettingsButton.click();
-
-        // waiting for the selector settings dialog to appear
-        await this.page.waitForSelector(slct(ControlQA.dialogControl));
-
-        // turn on the display of the "title" and "internal title" fields and fill them in
-        await this.enableSelectorFieldAndFill(inputNameControl, showLabelCheckbox, labelText);
-        await this.enableSelectorFieldAndFill(
-            inputInnerLabelControl,
-            showInnerTitleCheckbox,
-            innerLabelText,
-        );
-
-        // saving the settings
-        await this.applyControlSettings();
     }
 }
