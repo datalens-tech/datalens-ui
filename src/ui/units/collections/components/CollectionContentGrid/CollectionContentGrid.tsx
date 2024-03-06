@@ -25,7 +25,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
         selectedMap,
         isOpenSelectionMode,
     }) => {
-        const {setTitle, setDescription} = React.useContext(LayoutContext);
+        const {setLayout} = React.useContext(LayoutContext);
 
         return (
             <div className={b()}>
@@ -37,7 +37,10 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                             const actions = getWorkbookActions(item);
 
                             return (
-                                <AnimateBlock key={item.workbookId} delay={index * 5}>
+                                <AnimateBlock
+                                    key={item.workbookId}
+                                    delay={Math.min(index * 5, 100)}
+                                >
                                     <div
                                         className={b('content-item')}
                                         onClick={
@@ -107,7 +110,10 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                             const actions = getCollectionActions(item);
 
                             return (
-                                <AnimateBlock key={item.collectionId} delay={index * 5}>
+                                <AnimateBlock
+                                    key={item.collectionId}
+                                    delay={Math.min(index * 5, 100)}
+                                >
                                     <div
                                         className={b('content-item')}
                                         onClick={
@@ -139,13 +145,13 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                                 'selection-mode': isOpenSelectionMode,
                                             })}
                                             onClick={() => {
-                                                setTitle({
-                                                    isLoading: false,
-                                                    content: item.title,
-                                                });
-                                                setDescription({
-                                                    isLoading: false,
-                                                    content: item.description,
+                                                setLayout({
+                                                    title: {
+                                                        content: item.title,
+                                                    },
+                                                    description: {
+                                                        content: item.description,
+                                                    },
                                                 });
                                             }}
                                         >

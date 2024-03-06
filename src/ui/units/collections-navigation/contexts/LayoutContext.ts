@@ -5,34 +5,35 @@ export type LayoutBlock = {
     content?: React.ReactNode;
 } | null;
 
-type SetLayoutBlock = (block: LayoutBlock | null) => void;
+export type Layout = {
+    actionsPanelLeftBlock: LayoutBlock;
+    actionsPanelRightBlock: LayoutBlock;
+    title: LayoutBlock;
+    titleActionsBlock: LayoutBlock;
+    titleRightBlock: LayoutBlock;
+    description: LayoutBlock;
+};
+
+export type SkeletonSettings = {
+    width: string;
+    height: string;
+};
+
+export type SkeletonsSettings = {
+    actionsPanelLeftBlock?: SkeletonSettings;
+    actionsPanelRightBlock?: SkeletonSettings;
+    title?: SkeletonSettings;
+    titleActionsBlock?: SkeletonSettings;
+    titleRightBlock?: SkeletonSettings;
+    description?: SkeletonSettings;
+};
 
 export type LayoutContextProps = {
-    actionsPanelLeftBlock: LayoutBlock;
-    setActionsPanelLeftBlock: SetLayoutBlock;
-    actionsPanelRightBlock: LayoutBlock;
-    setActionsPanelRightBlock: SetLayoutBlock;
-    title: LayoutBlock;
-    setTitle: SetLayoutBlock;
-    titleActionsBlock: LayoutBlock;
-    setTitleActionsBlock: SetLayoutBlock;
-    titleRightBlock: LayoutBlock;
-    setTitleRightBlock: SetLayoutBlock;
-    description: LayoutBlock;
-    setDescription: SetLayoutBlock;
+    setLayout: (layoutPatch: Partial<Layout>) => void;
+    setSkeletonsSettings: (skeletons: SkeletonsSettings) => void;
 };
 
 export const LayoutContext = createContext<LayoutContextProps>({
-    actionsPanelLeftBlock: {isLoading: false},
-    setActionsPanelLeftBlock: () => {},
-    actionsPanelRightBlock: {isLoading: false},
-    setActionsPanelRightBlock: () => {},
-    title: {isLoading: false},
-    setTitle: () => {},
-    titleActionsBlock: {isLoading: false},
-    setTitleActionsBlock: () => {},
-    titleRightBlock: {isLoading: false},
-    setTitleRightBlock: () => {},
-    description: {isLoading: false},
-    setDescription: () => {},
+    setLayout: () => {},
+    setSkeletonsSettings: () => {},
 });

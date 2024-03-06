@@ -31,7 +31,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
         countSelected,
         canMove,
     }) => {
-        const {setTitle, setDescription} = React.useContext(LayoutContext);
+        const {setLayout} = React.useContext(LayoutContext);
 
         const checkboxPropsSelected = React.useMemo(() => {
             if (canMove) {
@@ -143,13 +143,9 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                             key={item.collectionId}
                                             className={b('content-row')}
                                             onClick={() => {
-                                                setTitle({
-                                                    isLoading: false,
-                                                    content: item.title,
-                                                });
-                                                setDescription({
-                                                    isLoading: false,
-                                                    content: item.description,
+                                                setLayout({
+                                                    title: {content: item.title},
+                                                    description: {content: item.description},
                                                 });
                                             }}
                                         >

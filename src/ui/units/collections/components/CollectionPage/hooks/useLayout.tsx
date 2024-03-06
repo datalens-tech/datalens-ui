@@ -81,14 +81,7 @@ export const useLayout = ({
 }: UseLayoutArgs) => {
     const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
-    const {
-        setActionsPanelLeftBlock,
-        setActionsPanelRightBlock,
-        setTitle,
-        setTitleActionsBlock,
-        setTitleRightBlock,
-        setDescription,
-    } = React.useContext(LayoutContext);
+    const {setLayout} = React.useContext(LayoutContext);
 
     const dispatch: AppDispatch = useDispatch();
 
@@ -146,28 +139,32 @@ export const useLayout = ({
 
     React.useEffect(() => {
         if (breadcrumbsIsLoading === false || curCollectionId === null) {
-            setActionsPanelLeftBlock({
-                isLoading: false,
-                content: (
-                    <div className={b('action-panel-left-block')}>
-                        <ActionPanelEntrySelect />
-                        <CollectionBreadcrumbs
-                            className={b('breadcrumbs')}
-                            collectionBreadcrumbs={collectionItems}
-                            collection={collection}
-                            onCurrentItemClick={() => {
-                                getCollectionContentRecursively({
-                                    collectionId: curCollectionId,
-                                    pageSize: PAGE_SIZE,
-                                    ...filters,
-                                });
-                            }}
-                            onItemClick={(item) => {
-                                setTitle({isLoading: false, content: item.title});
-                            }}
-                        />
-                    </div>
-                ),
+            setLayout({
+                actionsPanelLeftBlock: {
+                    isLoading: false,
+                    content: (
+                        <div className={b('action-panel-left-block')}>
+                            <ActionPanelEntrySelect />
+                            <CollectionBreadcrumbs
+                                className={b('breadcrumbs')}
+                                collectionBreadcrumbs={collectionItems}
+                                collection={collection}
+                                onCurrentItemClick={() => {
+                                    getCollectionContentRecursively({
+                                        collectionId: curCollectionId,
+                                        pageSize: PAGE_SIZE,
+                                        ...filters,
+                                    });
+                                }}
+                                onItemClick={(item) => {
+                                    setLayout({
+                                        title: {isLoading: false, content: item.title},
+                                    });
+                                }}
+                            />
+                        </div>
+                    ),
+                },
             });
         }
     }, [
@@ -178,8 +175,7 @@ export const useLayout = ({
         curCollectionId,
         filters,
         getCollectionContentRecursively,
-        setActionsPanelLeftBlock,
-        setTitle,
+        setLayout,
     ]);
 
     React.useEffect(() => {
@@ -187,44 +183,25 @@ export const useLayout = ({
             (isCollectionInfoLoading === false || curCollectionId === null) &&
             isRootPermissionsLoading === false
         ) {
-            setActionsPanelRightBlock({
-                isLoading: false,
-                content: (
-                    <CollectionActions
-                        collectionData={collection}
-                        rootPermissions={rootPermissions}
-                        onCreateCollectionClick={() => {
-                            dispatch(
-                                openDialog({
-                                    id: DIALOG_CREATE_COLLECTION,
-                                    props: {
-                                        open: true,
-                                        parentId: curCollectionId,
-                                        onApply: (result: CreateCollectionResponse | null) => {
-                                            if (result) {
-                                                history.push(`/collections/${result.collectionId}`);
-                                            }
-                                        },
-                                        onClose: () => {
-                                            dispatch(closeDialog());
-                                        },
-                                    },
-                                }),
-                            );
-                        }}
-                        onAddDemoWorkbookClick={() => {
-                            if (DL.TEMPLATE_WORKBOOK_ID) {
+            setLayout({
+                actionsPanelRightBlock: {
+                    isLoading: false,
+                    content: (
+                        <CollectionActions
+                            collectionData={collection}
+                            rootPermissions={rootPermissions}
+                            onCreateCollectionClick={() => {
                                 dispatch(
                                     openDialog({
-                                        id: DIALOG_ADD_DEMO_WORKBOOK,
+                                        id: DIALOG_CREATE_COLLECTION,
                                         props: {
                                             open: true,
-                                            title: i18n('label_add-demo-workbook'),
-                                            collectionId: curCollectionId,
-                                            demoWorkbookId: DL.TEMPLATE_WORKBOOK_ID,
-                                            onSuccessApply: (result) => {
+                                            parentId: curCollectionId,
+                                            onApply: (result: CreateCollectionResponse | null) => {
                                                 if (result) {
-                                                    history.push(`/workbooks/${result.workbookId}`);
+                                                    history.push(
+                                                        `/collections/${result.collectionId}`,
+                                                    );
                                                 }
                                             },
                                             onClose: () => {
@@ -233,75 +210,107 @@ export const useLayout = ({
                                         },
                                     }),
                                 );
-                            }
-                        }}
-                        onAddLearningMaterialsWorkbookClick={() => {
-                            if (DL.LEARNING_MATERIALS_WORKBOOK_ID) {
-                                dispatch(
-                                    openDialog({
-                                        id: DIALOG_ADD_DEMO_WORKBOOK,
-                                        props: {
-                                            open: true,
-                                            title: i18n('label_add-learning-materials-workbook'),
-                                            collectionId: curCollectionId,
-                                            demoWorkbookId: DL.LEARNING_MATERIALS_WORKBOOK_ID,
-                                            onSuccessApply: (result) => {
-                                                if (result) {
-                                                    history.push(`/workbooks/${result.workbookId}`);
-                                                }
+                            }}
+                            onAddDemoWorkbookClick={() => {
+                                if (DL.TEMPLATE_WORKBOOK_ID) {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_ADD_DEMO_WORKBOOK,
+                                            props: {
+                                                open: true,
+                                                title: i18n('label_add-demo-workbook'),
+                                                collectionId: curCollectionId,
+                                                demoWorkbookId: DL.TEMPLATE_WORKBOOK_ID,
+                                                onSuccessApply: (result) => {
+                                                    if (result) {
+                                                        history.push(
+                                                            `/workbooks/${result.workbookId}`,
+                                                        );
+                                                    }
+                                                },
+                                                onClose: () => {
+                                                    dispatch(closeDialog());
+                                                },
                                             },
-                                            onClose: () => {
-                                                dispatch(closeDialog());
+                                        }),
+                                    );
+                                }
+                            }}
+                            onAddLearningMaterialsWorkbookClick={() => {
+                                if (DL.LEARNING_MATERIALS_WORKBOOK_ID) {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_ADD_DEMO_WORKBOOK,
+                                            props: {
+                                                open: true,
+                                                title: i18n(
+                                                    'label_add-learning-materials-workbook',
+                                                ),
+                                                collectionId: curCollectionId,
+                                                demoWorkbookId: DL.LEARNING_MATERIALS_WORKBOOK_ID,
+                                                onSuccessApply: (result) => {
+                                                    if (result) {
+                                                        history.push(
+                                                            `/workbooks/${result.workbookId}`,
+                                                        );
+                                                    }
+                                                },
+                                                onClose: () => {
+                                                    dispatch(closeDialog());
+                                                },
                                             },
-                                        },
-                                    }),
-                                );
-                            }
-                        }}
-                        onCreateWorkbookClick={handleCreateWorkbook}
-                        onMoveClick={() => {
-                            if (curCollectionId && collection) {
-                                dispatch(
-                                    openDialog({
-                                        id: DIALOG_MOVE_COLLECTION,
-                                        props: {
-                                            open: true,
-                                            collectionId: collection.collectionId,
-                                            collectionTitle: collection.title,
-                                            initialParentId: collection.parentId,
-                                            onApply: refreshCollectionInfo,
-                                            onClose: handeCloseMoveDialog,
-                                        },
-                                    }),
-                                );
-                            }
-                        }}
-                        onEditAccessClick={() => {
-                            if (collectionsAccessEnabled && curCollectionId && collection) {
-                                dispatch(
-                                    openDialog({
-                                        id: DIALOG_IAM_ACCESS,
-                                        props: {
-                                            open: true,
-                                            resourceId: collection.collectionId,
-                                            resourceType: ResourceType.Collection,
-                                            resourceTitle: collection.title,
-                                            parentId: collection.parentId,
-                                            canUpdate: collection.permissions.updateAccessBindings,
-                                            onClose: () => {
-                                                dispatch(closeDialog());
+                                        }),
+                                    );
+                                }
+                            }}
+                            onCreateWorkbookClick={handleCreateWorkbook}
+                            onMoveClick={() => {
+                                if (curCollectionId && collection) {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_MOVE_COLLECTION,
+                                            props: {
+                                                open: true,
+                                                collectionId: collection.collectionId,
+                                                collectionTitle: collection.title,
+                                                initialParentId: collection.parentId,
+                                                onApply: refreshCollectionInfo,
+                                                onClose: handeCloseMoveDialog,
                                             },
-                                        },
-                                    }),
-                                );
-                            }
-                        }}
-                    />
-                ),
+                                        }),
+                                    );
+                                }
+                            }}
+                            onEditAccessClick={() => {
+                                if (collectionsAccessEnabled && curCollectionId && collection) {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_IAM_ACCESS,
+                                            props: {
+                                                open: true,
+                                                resourceId: collection.collectionId,
+                                                resourceType: ResourceType.Collection,
+                                                resourceTitle: collection.title,
+                                                parentId: collection.parentId,
+                                                canUpdate:
+                                                    collection.permissions.updateAccessBindings,
+                                                onClose: () => {
+                                                    dispatch(closeDialog());
+                                                },
+                                            },
+                                        }),
+                                    );
+                                }
+                            }}
+                        />
+                    ),
+                },
             });
         } else {
-            setActionsPanelRightBlock({
-                isLoading: true,
+            setLayout({
+                actionsPanelRightBlock: {
+                    isLoading: true,
+                },
             });
         }
     }, [
@@ -317,78 +326,85 @@ export const useLayout = ({
         isRootPermissionsLoading,
         refreshCollectionInfo,
         rootPermissions,
-        setActionsPanelRightBlock,
+        setLayout,
         updateFilters,
     ]);
 
     React.useEffect(() => {
         if (curCollectionId === null) {
-            setTitle({
-                content: i18n('label_root-title'),
+            setLayout({
+                title: {
+                    content: i18n('label_root-title'),
+                },
+                description: {
+                    content: null,
+                },
             });
-            setDescription(null);
         } else {
-            setTitle({
-                content: collection ? collection.title : null,
-            });
-            setDescription({
-                content: collection ? collection.description : null,
+            setLayout({
+                title: {
+                    content: collection ? collection.title : null,
+                },
+                description: {
+                    content: collection ? collection.description : null,
+                },
             });
         }
-    }, [curCollectionId, collection, setTitle, setDescription]);
+    }, [curCollectionId, collection, setLayout]);
 
     React.useEffect(() => {
         if (curCollectionId === null || isCollectionInfoLoading === false) {
-            setTitleActionsBlock({
-                isLoading: false,
-                content:
-                    curCollectionId && collection && collection.permissions.update ? (
-                        <Tooltip content={i18n('action_edit')}>
-                            <div>
-                                <Button onClick={onEditClick}>
-                                    <Icon data={PencilToLine} />
-                                </Button>
-                            </div>
-                        </Tooltip>
-                    ) : null,
+            setLayout({
+                titleActionsBlock: {
+                    isLoading: false,
+                    content:
+                        curCollectionId && collection && collection.permissions.update ? (
+                            <Tooltip content={i18n('action_edit')}>
+                                <div>
+                                    <Button onClick={onEditClick}>
+                                        <Icon data={PencilToLine} />
+                                    </Button>
+                                </div>
+                            </Tooltip>
+                        ) : null,
+                },
             });
         } else {
-            setTitleActionsBlock({
-                isLoading: true,
+            setLayout({
+                titleActionsBlock: {
+                    isLoading: true,
+                },
             });
         }
-    }, [
-        curCollectionId,
-        collection,
-        setTitle,
-        onEditClick,
-        setTitleActionsBlock,
-        isCollectionInfoLoading,
-    ]);
+    }, [curCollectionId, collection, onEditClick, isCollectionInfoLoading, setLayout]);
 
     React.useEffect(() => {
         if (curCollectionId === null || isCollectionInfoLoading === false) {
-            setTitleRightBlock({
-                isLoading: false,
-                content:
-                    collectionPageViewMode === CollectionPageViewMode.Grid ? (
-                        <React.Fragment>
-                            {selectBtn}
-                            {(isOpenSelectionMode || Boolean(countSelected)) && (
-                                <Button
-                                    className={b('cancel-btn')}
-                                    view="outlined-danger"
-                                    onClick={onCancelSelectionMode}
-                                >
-                                    {i18n('action_cancel')}
-                                </Button>
-                            )}
-                        </React.Fragment>
-                    ) : null,
+            setLayout({
+                titleRightBlock: {
+                    isLoading: false,
+                    content:
+                        collectionPageViewMode === CollectionPageViewMode.Grid ? (
+                            <React.Fragment>
+                                {selectBtn}
+                                {(isOpenSelectionMode || Boolean(countSelected)) && (
+                                    <Button
+                                        className={b('cancel-btn')}
+                                        view="outlined-danger"
+                                        onClick={onCancelSelectionMode}
+                                    >
+                                        {i18n('action_cancel')}
+                                    </Button>
+                                )}
+                            </React.Fragment>
+                        ) : null,
+                },
             });
         } else {
-            setTitleRightBlock({
-                isLoading: collectionPageViewMode === CollectionPageViewMode.Grid,
+            setLayout({
+                titleRightBlock: {
+                    isLoading: collectionPageViewMode === CollectionPageViewMode.Grid,
+                },
             });
         }
     }, [
@@ -398,18 +414,20 @@ export const useLayout = ({
         isOpenSelectionMode,
         onCancelSelectionMode,
         selectBtn,
-        setTitleRightBlock,
         isCollectionInfoLoading,
+        setLayout,
     ]);
 
     React.useEffect(() => {
         if (curCollectionId !== null) {
-            setActionsPanelLeftBlock({isLoading: true});
-            setActionsPanelRightBlock({isLoading: true});
-            setTitle({isLoading: true});
-            setDescription({isLoading: true});
-            setTitleActionsBlock({isLoading: true});
-            setTitleRightBlock({isLoading: true});
+            setLayout({
+                actionsPanelLeftBlock: {isLoading: true},
+                actionsPanelRightBlock: {isLoading: true},
+                title: {isLoading: true},
+                titleActionsBlock: {isLoading: true},
+                titleRightBlock: {isLoading: true},
+                description: {isLoading: true},
+            });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
