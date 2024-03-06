@@ -4,6 +4,7 @@ import {
     ColumnDef,
     OnChangeFn,
     PaginationState,
+    RowData,
     createColumnHelper,
     flexRender,
     getCoreRowModel,
@@ -17,6 +18,13 @@ import {SortIcon} from './components/SortIcon/SortIcon';
 
 import './Table.scss';
 
+declare module '@tanstack/react-table' {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    interface ColumnMeta<TData extends RowData, TValue> {
+        width?: string;
+    }
+}
+
 const b = block('dl-table');
 
 type TableProps = {
@@ -26,6 +34,8 @@ type TableProps = {
         rows?: any[];
         footer?: any[];
     };
+    width?: number;
+    height?: number;
     emptyDataMsg?: string;
     pagination: {
         enabled: boolean;
@@ -50,6 +60,9 @@ function getTableData(args: TableProps['data']) {
             header: headCell.name,
             enableSorting: true,
             footer: footerData?.[index]?.value,
+            meta: {
+                width: headCell.width,
+            },
         });
     });
 
@@ -58,14 +71,15 @@ function getTableData(args: TableProps['data']) {
     return {columns, data};
 }
 
-export const Table = React.forwardRef<unknown, TableProps>((props) => {
+export const Table = (props: TableProps) => {
     const {title} = props;
-    const {columns, data} = getTableData(props.data);
+    const {columns, data} = React.useMemo(() => getTableData(props.data), [props.data]);
     const shouldShowFooter = columns.some((column) => column.footer);
     const paginationState: PaginationState = {
         pageIndex: props.pagination.pageIndex,
         pageSize: props.pagination.pageSize,
     };
+
     console.log('Table', {props, data, columns, paginationState});
 
     const handlePaginationChange: OnChangeFn<PaginationState> = (updater) => {
@@ -112,25 +126,32 @@ export const Table = React.forwardRef<unknown, TableProps>((props) => {
 
                         return (
                             <tr key={headerGroup.id} className={b('tr')}>
-                                {headerGroup.headers.map((header) => (
-                                    <th
-                                        key={header.id}
-                                        className={b('th', {
-                                            sortable: header.column.getCanSort(),
-                                        })}
-                                        onClick={header.column.getToggleSortingHandler()}
-                                    >
-                                        <div className={b('th-content')}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                      header.column.columnDef.header,
-                                                      header.getContext(),
-                                                  )}
-                                            <SortIcon sorting={header.column.getIsSorted()} />
-                                        </div>
-                                    </th>
-                                ))}
+                                {headerGroup.headers.map((header) => {
+                                    const width = header.column.columnDef.meta?.width;
+                                    const isFixedSize = Boolean(width);
+
+                                    return (
+                                        <th
+                                            key={header.id}
+                                            className={b('th', {
+                                                clickable: header.column.getCanSort(),
+                                                'fixed-size': isFixedSize,
+                                            })}
+                                            onClick={header.column.getToggleSortingHandler()}
+                                            style={{width}}
+                                        >
+                                            <div className={b('th-content')}>
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(
+                                                          header.column.columnDef.header,
+                                                          header.getContext(),
+                                                      )}
+                                                <SortIcon sorting={header.column.getIsSorted()} />
+                                            </div>
+                                        </th>
+                                    );
+                                })}
                             </tr>
                         );
                     })}
@@ -138,11 +159,25 @@ export const Table = React.forwardRef<unknown, TableProps>((props) => {
                 <tbody className={b('body')}>
                     {rows.map((row) => (
                         <tr key={row.id} className={b('tr')}>
-                            {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id} className={b('td')}>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </td>
-                            ))}
+                            {row.getVisibleCells().map((cell) => {
+                                const width = cell.column.columnDef.meta?.width;
+                                const isFixedSize = Boolean(width);
+
+                                return (
+                                    <td key={cell.id} className={b('td')}>
+                                        <div
+                                            className={b('td-content', {
+                                                'fixed-size': isFixedSize,
+                                            })}
+                                        >
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext(),
+                                            )}
+                                        </div>
+                                    </td>
+                                );
+                            })}
                         </tr>
                     ))}
                     {!rows.length && props.emptyDataMsg && (
@@ -182,6 +217,4 @@ export const Table = React.forwardRef<unknown, TableProps>((props) => {
             )}
         </div>
     );
-});
-
-Table.displayName = 'Table';
+};

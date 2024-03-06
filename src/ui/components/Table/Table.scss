@@ -1,10 +1,4 @@
 .dl-table {
-    --chartkit-bg-bar-offset-width: 10px;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: auto;
-
     &__title {
         font-weight: 700;
         padding: 5px 40px 5px 0;
@@ -14,12 +8,29 @@
     &__table {
         border-collapse: collapse;
         table-layout: fixed;
-        width: 100%;
+        min-width: 100%;
+        width: max-content;
     }
 
     &__th, &__td {
         border: 1px solid var(--data-table-border-color);
         font-size: 10pt;
+
+        &_clickable {
+            cursor: pointer;
+        }
+
+        &_fixed-size {
+            white-space: normal;
+            word-break: break-word;
+        }
+    }
+
+    &__td-content {
+        &_fixed-size {
+            white-space: normal;
+            word-break: break-word;
+        }
     }
 
     &__header &__th {
@@ -30,10 +41,6 @@
         vertical-align: var(--data-table-head-align);
         box-sizing: border-box;
         height: 100%;
-
-        &_sortable {
-            cursor: pointer;
-        }
     }
 
     &__tr {
