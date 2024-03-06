@@ -1,4 +1,4 @@
-import {ConnectionQueryTypeValues} from 'shared';
+import {ConnectionQueryTypeValues, type StringParams} from 'shared';
 import type {Operations} from 'shared/modules';
 import {
     type ConnectionQueryContent,
@@ -52,4 +52,5 @@ export type ItemDataSource = {
     connectionId?: string;
     connectionQueryType?: ConnectionQueryTypeValues;
     connectionQueryContent?: ConnectionQueryContent;
+    selectorParameters?: StringParams;
 };

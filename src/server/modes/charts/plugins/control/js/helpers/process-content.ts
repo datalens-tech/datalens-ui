@@ -5,6 +5,7 @@ import type {SourceResponseData} from '../types';
 import {processDatasetSourceTypeContent} from './dataset/process-dataset-content';
 import {processDatasetFields} from './dataset/process-fields';
 import {processTypedQueryContent} from './typed-query/process-typed-query-content';
+import {processTypedQueryParameters} from './typed-query/process-typed-query-parameters';
 
 type ProcessContentArgs = {
     data: SourceResponseData;
@@ -22,6 +23,10 @@ export const processContent = (args: ProcessContentArgs): ControlShared['content
             return processDatasetSourceTypeContent({shared, distincts: data.distincts});
         }
         case DashTabItemControlSourceType.Connection: {
+            processTypedQueryParameters({
+                ChartEditor,
+                parameters: shared.source.selectorParameters,
+            });
             return processTypedQueryContent(data.connectionDistincts);
         }
         default: {

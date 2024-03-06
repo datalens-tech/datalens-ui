@@ -85,7 +85,10 @@ export function getSelectorDialogInitialState(args = {}) {
 }
 
 export function getSelectorDialogFromData(data, defaults) {
-    const selectorParameters = omit(defaults || {}, data.fieldName);
+    const selectorParameters = omit(
+        data.source.selectorParameters || defaults || {},
+        data.fieldName,
+    );
 
     return {
         validation: {},
