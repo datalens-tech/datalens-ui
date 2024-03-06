@@ -87,7 +87,7 @@ export function getSelectorDialogInitialState(args = {}) {
 export function getSelectorDialogFromData(data, defaults) {
     let selectorParameters;
 
-    switch (data.source.sourceType) {
+    switch (data.sourceType) {
         case DashTabItemControlSourceType.Connection:
             selectorParameters = extractTypedQueryParams(defaults, data.source.fieldName);
             break;
