@@ -1,6 +1,7 @@
 export const enum DashboardAddWidgetQa {
     AddWidget = 'add-widget-button',
     AddControl = 'add-control-button',
+    AddGroupControl = 'add-group-control',
     AddText = 'add-text-button',
     AddTitle = 'add-title-button',
 }

@@ -211,13 +211,11 @@ class Body extends React.PureComponent<BodyProps> {
             {
                 id: 'selector',
                 icon: <Icon data={Sliders} />,
-                title: i18n('dash.main.view', 'button_edit-panel-selector'),
+                title: Utils.isEnabledFeature(Feature.GroupControls)
+                    ? i18n('dash.main.view', 'button_edit-panel-editor-selector')
+                    : i18n('dash.main.view', 'button_edit-panel-selector'),
                 className: b('edit-panel-item'),
                 onClick: () => {
-                    if (Utils.isEnabledFeature(Feature.GroupControls)) {
-                        this.props.openDialog(DIALOG_TYPE.GROUP_CONTROL);
-                        return;
-                    }
                     this.props.openDialog(DIALOG_TYPE.CONTROL);
                 },
                 qa: DashboardAddWidgetQa.AddControl,
@@ -254,6 +252,18 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.onPasteItem(copiedData);
                 },
+            });
+        }
+        if (Utils.isEnabledFeature(Feature.GroupControls)) {
+            items.splice(1, 0, {
+                id: 'group-selector',
+                icon: <Icon data={Sliders} />,
+                title: i18n('dash.main.view', 'button_edit-panel-selector'),
+                className: b('edit-panel-item'),
+                onClick: () => {
+                    this.props.openDialog(DIALOG_TYPE.GROUP_CONTROL);
+                },
+                qa: DashboardAddWidgetQa.AddGroupControl,
             });
         }
         return items;
