@@ -21,7 +21,6 @@ type WidgetSize = {
 
 const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, Props>(
     (props, forwardedRef) => {
-        console.log('TableWidget', {props});
         const ref = React.useRef<HTMLDivElement>(null);
         const [widgetSize, setWidgetSize] = React.useState<WidgetSize>();
         const handleResize = React.useCallback(() => {

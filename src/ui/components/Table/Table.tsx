@@ -12,6 +12,9 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import block from 'bem-cn-lite';
+import isUndefined from 'lodash/isUndefined';
+import {Bar} from 'ui/components/Table/components/Bar/Bar';
+import {selectBarSettingValue} from 'ui/libs/DatalensChartkit/ChartKit/components/Widget/components/Table/utils/misc';
 
 import {Paginator} from './components/Paginator/Paginator';
 import {SortIcon} from './components/SortIcon/SortIcon';
@@ -47,7 +50,10 @@ type TableProps = {
 
 type TData = {
     value: any;
+    formattedValue?: string;
     fieldId?: string;
+    css?: React.CSSProperties;
+    barColor?: string;
 }[];
 
 function getTableData(args: TableProps['data']) {
@@ -55,7 +61,7 @@ function getTableData(args: TableProps['data']) {
     const footerData = footer[0]?.cells;
     const columnHelper = createColumnHelper<TData>();
     const columns: ColumnDef<TData>[] = head.map((headCell: any, index: number) => {
-        return columnHelper.accessor((row) => row[index].value, {
+        const options: ColumnDef<TData> = {
             id: headCell.id,
             header: headCell.name,
             enableSorting: true,
@@ -63,7 +69,49 @@ function getTableData(args: TableProps['data']) {
             meta: {
                 width: headCell.width,
             },
-        });
+        };
+
+        const renderBarCell = (cellData: any) => {
+            if (!cellData) {
+                return null;
+            }
+
+            const min = isUndefined(cellData.min) ? headCell.min : cellData.min;
+            const max = isUndefined(cellData.max) ? headCell.max : cellData.max;
+
+            return (
+                <Bar
+                    value={cellData.value}
+                    formattedValue={cellData.formattedValue}
+                    align={headCell.align || cellData.align}
+                    barHeight={headCell.barHeight || cellData.barHeight}
+                    min={min}
+                    max={max}
+                    showLabel={selectBarSettingValue(headCell, cellData, 'showLabel')}
+                    showSeparator={selectBarSettingValue(headCell, cellData, 'showSeparator')}
+                    debug={selectBarSettingValue(headCell, cellData, 'debug')}
+                    color={cellData.barColor}
+                    showBar={cellData.showBar}
+                    offset={cellData.offset}
+                />
+            );
+        };
+
+        if (headCell.view === 'bar') {
+            options.cell = (context) => {
+                const cellData = context.row.original[index] as any;
+                return renderBarCell(cellData);
+            };
+
+            options.footer = () => {
+                return renderBarCell(footerData?.[index]);
+            };
+        }
+
+        return columnHelper.accessor((row) => {
+            const cellData = row[index];
+            return cellData.formattedValue ?? cellData.value;
+        }, options);
     });
 
     const data: TData[] = rows?.map((row: any) => row.cells) || [];
@@ -79,8 +127,6 @@ export const Table = (props: TableProps) => {
         pageIndex: props.pagination.pageIndex,
         pageSize: props.pagination.pageSize,
     };
-
-    console.log('Table', {props, data, columns, paginationState});
 
     const handlePaginationChange: OnChangeFn<PaginationState> = (updater) => {
         const newPaginationState =
@@ -159,12 +205,17 @@ export const Table = (props: TableProps) => {
                 <tbody className={b('body')}>
                     {rows.map((row) => (
                         <tr key={row.id} className={b('tr')}>
-                            {row.getVisibleCells().map((cell) => {
+                            {row.getVisibleCells().map((cell, index) => {
                                 const width = cell.column.columnDef.meta?.width;
                                 const isFixedSize = Boolean(width);
+                                const originalCellData = cell.row.original[index];
 
                                 return (
-                                    <td key={cell.id} className={b('td')}>
+                                    <td
+                                        key={cell.id}
+                                        className={b('td')}
+                                        style={originalCellData?.css}
+                                    >
                                         <div
                                             className={b('td-content', {
                                                 'fixed-size': isFixedSize,
