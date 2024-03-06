@@ -269,7 +269,17 @@ class DashboardPage extends BasePage {
             .click();
     }
 
+    async clickAddExternalSelector() {
+        await this.page.click(slct(DashboardAddWidgetQa.AddControl));
+    }
+
     async clickAddSelector() {
+        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
+
+        if (isEnabledGroupControls) {
+            await this.page.click(slct(DashboardAddWidgetQa.AddGroupControl));
+            return;
+        }
         await this.page.click(slct(DashboardAddWidgetQa.AddControl));
     }
 
