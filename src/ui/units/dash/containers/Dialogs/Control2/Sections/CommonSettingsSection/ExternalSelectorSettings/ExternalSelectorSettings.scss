@@ -9,19 +9,6 @@
         margin-left: -60px;
     }
 
-    &__params-title {
-        @include text-subheader-2();
-        font-weight: 500;
-    }
-
-    &__params {
-        margin-top: 12px;
-    }
-
-    &__params-tag {
-        max-width: 160px;
-    }
-
     &__link {
         grid-auto-rows: 40px;
         --dl-dropdown-navigation-width: initial;

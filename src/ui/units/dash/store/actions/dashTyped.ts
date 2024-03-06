@@ -375,6 +375,7 @@ export type SelectorDialogState = {
     datasetId?: string;
     connectionId?: string;
     selectorParameters?: StringParams;
+    selectorParametersGroup?: number;
     connectionQueryType?: ConnectionQueryTypeValues;
     connectionQueryTypes?: ConnectionQueryTypeOptions[];
     connectionQueryContent?: ConnectionQueryContent;

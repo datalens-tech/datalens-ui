@@ -1,55 +1,64 @@
 import React from 'react';
 
-import {I18n} from 'i18n';
+import block from 'bem-cn-lite';
+import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {ParamsSettingsQA} from 'shared';
 
 import {SectionWrapper} from '../../../../../../../components/SectionWrapper/SectionWrapper';
 import {ParamsSettings} from '../../../../../components/ParamsSettings/ParamsSettings';
 import {
+    clearEmptyParams,
     removeParam,
     updateParamTitle,
     updateParamValue,
+    validateParamTitleOnlyUnderscore,
 } from '../../../../../components/ParamsSettings/helpers';
 import {setSelectorDialogItem} from '../../../../../store/actions/dashTyped';
 import {selectSelectorDialog} from '../../../../../store/selectors/dashTypedSelectors';
 
-const i18n = I18n.keyset('dash.control-dialog.edit');
+const b = block('parameters-section');
 
 export const ParametersSection = () => {
     const dispatch = useDispatch();
-    const {selectorParameters = {}} = useSelector(selectSelectorDialog);
+    const {selectorParameters = {}, selectorParametersGroup} = useSelector(selectSelectorDialog);
+
+    const localParams = React.useMemo(
+        () => clearEmptyParams(selectorParameters),
+        [selectorParameters],
+    );
 
     const handleParamTitleUpdate = React.useCallback(
         (old: string, updated: string) => {
             dispatch(
                 setSelectorDialogItem({
-                    selectorParameters: updateParamTitle(selectorParameters, old, updated),
+                    selectorParameters: updateParamTitle(localParams, old, updated),
                 }),
             );
         },
-        [dispatch, selectorParameters],
+        [dispatch, localParams],
     );
 
     const handleParamValueUpdate = React.useCallback(
         (title: string, value: string[]) => {
             dispatch(
                 setSelectorDialogItem({
-                    selectorParameters: updateParamValue(selectorParameters, title, value),
+                    selectorParameters: updateParamValue(localParams, title, value),
                 }),
             );
         },
-        [dispatch, selectorParameters],
+        [dispatch, localParams],
     );
 
     const handleRemoveParam = React.useCallback(
         (title: string) => {
             dispatch(
                 setSelectorDialogItem({
-                    selectorParameters: removeParam(selectorParameters, title),
+                    selectorParameters: removeParam(localParams, title),
                 }),
             );
         },
-        [dispatch, selectorParameters],
+        [dispatch, localParams],
     );
 
     const handleRemoveAllParams = React.useCallback(() => {
@@ -58,17 +67,40 @@ export const ParametersSection = () => {
                 selectorParameters: {},
             }),
         );
+    }, [dispatch]);
+
+    const handleValidateParamTitle = React.useCallback((paramTitle: string) => {
+        const errorCode = validateParamTitleOnlyUnderscore(paramTitle);
+
+        if (errorCode) {
+            return new Error(i18n('dash.params-button-dialog.view', `context_${errorCode}`));
+        }
+
+        return null;
     }, []);
 
     return (
-        <SectionWrapper withCollapse={true} title={i18n('field_params')}>
-            <ParamsSettings
-                data={selectorParameters}
-                onEditParamTitle={handleParamTitleUpdate}
-                onEditParamValue={handleParamValueUpdate}
-                onRemoveParam={handleRemoveParam}
-                onRemoveAllParams={handleRemoveAllParams}
-            />
+        <SectionWrapper
+            withCollapse={true}
+            arrowPosition="left"
+            defaultIsExpanded={false}
+            arrowQa={ParamsSettingsQA.Open}
+            title={
+                <div className={b('title')}>{i18n('dash.control-dialog.edit', 'field_params')}</div>
+            }
+        >
+            <div className={b()}>
+                <ParamsSettings
+                    data={selectorParameters}
+                    group={selectorParametersGroup}
+                    tagLabelClassName={b('tag')}
+                    onEditParamTitle={handleParamTitleUpdate}
+                    onEditParamValue={handleParamValueUpdate}
+                    onRemoveParam={handleRemoveParam}
+                    onRemoveAllParams={handleRemoveAllParams}
+                    validator={{title: handleValidateParamTitle}}
+                />
+            </div>
         </SectionWrapper>
     );
 };

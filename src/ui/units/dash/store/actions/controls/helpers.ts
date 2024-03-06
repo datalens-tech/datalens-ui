@@ -79,7 +79,9 @@ export const getControlDefaultsForField = (
         };
     }
 
-    return Object.keys(defaults).reduce<Record<string, string | string[]>>((params, paramTitle) => {
+    const merged = Object.assign({}, defaults, selectorParameters);
+
+    return Object.keys(merged).reduce<Record<string, string | string[]>>((params, paramTitle) => {
         if (validateParamTitleOnlyUnderscore(paramTitle) === null) {
             params[paramTitle] = defaults[paramTitle];
         }
