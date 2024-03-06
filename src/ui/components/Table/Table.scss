@@ -1,0 +1,69 @@
+.dl-table {
+    --chartkit-bg-bar-offset-width: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+
+    &__title {
+        font-weight: 700;
+        padding: 5px 40px 5px 0;
+        text-align: right;
+    }
+
+    &__table {
+        border-collapse: collapse;
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    &__th, &__td {
+        border: 1px solid var(--data-table-border-color);
+        font-size: 10pt;
+    }
+
+    &__header &__th {
+        font-weight: 500;
+        padding: var(--data-table-header-vertical-padding) var(--data-table-cell-horizontal-padding);
+        position: relative;
+        text-align: left;
+        vertical-align: var(--data-table-head-align);
+        box-sizing: border-box;
+        height: 100%;
+
+        &_sortable {
+            cursor: pointer;
+        }
+    }
+
+    &__tr {
+        height: var(--data-table-row-height);
+
+        &_no-data {
+            background: var(--data-table-color-stripe);
+        }
+    }
+
+    &__body &__tr:not(&__tr_no-data):hover {
+        background: var(--data-table-color-hover-area);
+    }
+
+    &__body &__td {
+        overflow: hidden;
+        padding: var(--data-table-cell-vertical-padding) var(--data-table-cell-horizontal-padding);
+        text-overflow: ellipsis;
+        vertical-align: var(--data-table-cell-align);
+        white-space: nowrap;
+    }
+
+    &__footer &__th {
+        overflow: hidden;
+        padding: var(--data-table-cell-vertical-padding) var(--data-table-cell-horizontal-padding);
+        text-overflow: ellipsis;
+        vertical-align: var(--data-table-cell-align);
+        white-space: nowrap;
+        font-weight: 500;
+        background-color: var(--g-color-base-generic);
+        text-align: left;
+    }
+}

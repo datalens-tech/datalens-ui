@@ -48,5 +48,9 @@ declare module '@gravity-ui/chartkit' {
             data: MarkupWidgetData;
             widget: never;
         };
+        table: {
+            data: any;
+            widget: never;
+        };
     }
 }

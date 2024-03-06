@@ -74,6 +74,13 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
 
             break;
         }
+
+        case 'table': {
+            // TODO: проверить флаг
+            chartkitType = 'table';
+
+            break;
+        }
     }
 
     return chartkitType;

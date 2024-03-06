@@ -1,0 +1,45 @@
+.chartkit-table-paginator {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 36px;
+    padding-left: 5px;
+    background-color: var(--data-table-color-base);
+    overflow: auto;
+
+    &__arrow-btn {
+        &_reversed {
+            transform: rotate(180deg);
+        }
+    }
+
+    &__range {
+        margin-left: 28px;
+        font-style: italic;
+        color: var(--g-color-text-secondary);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        line-height: 35px;
+        padding-right: 1px; // fix for italic font (cut symbol because of overflow + ellipsis)
+    }
+
+    // workaround: hide native input buttons
+    // https://stackoverflow.com/a/4298216
+    & input::-webkit-outer-spin-button,
+    & input::-webkit-inner-spin-button {
+        /* stylelint-disable-next-line */
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    & input[type='number'] {
+        /* stylelint-disable-next-line */
+        -moz-appearance: textfield; /* Firefox */
+    }
+
+    &__page-input {
+        width: 60px;
+        margin: 0 5px;
+    }
+}

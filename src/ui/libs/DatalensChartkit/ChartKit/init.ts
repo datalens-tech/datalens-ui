@@ -21,12 +21,12 @@ import Error from '../Error/Error';
 import {ChartKitDataProvider} from '../components/ChartKitBase/types';
 import renderControl from '../extensions/control';
 import renderMarkdown from '../extensions/markdown';
-import renderTable from '../extensions/table';
+// import renderTable from '../extensions/table';
 import {chartsDataProvider} from '../index';
 import {getChartkitMenu} from '../modules/menu/menu';
 
 export const initChartKitSettings = () => {
-    ChartKit.registerPlugins(renderTable, renderControl, renderMarkdown);
+    ChartKit.registerPlugins(renderControl, renderMarkdown);
 
     ChartKit.setGeneralSettings({
         lang: DL.USER_LANG,
