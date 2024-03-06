@@ -113,7 +113,6 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
         connectionQueryContent,
         connectionId,
         connectionQueryType,
-        selectorParameters,
     } = selectorDialog;
 
     if (sourceType === DashTabItemControlSourceType.External) {
@@ -154,7 +153,6 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
                 connectionId,
                 connectionQueryType,
                 connectionQueryContent,
-                selectorParameters,
             };
     }
 

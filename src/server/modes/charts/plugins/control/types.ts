@@ -4,7 +4,6 @@ import {
     DashTabItemControlElementType,
     DashTabItemControlSourceType,
     DatasetFieldType,
-    type StringParams,
 } from '../../../../../shared';
 
 export type ControlShared = {
@@ -31,7 +30,6 @@ export type ControlShared = {
         defaultValue: any;
         required?: boolean;
         connectionId?: string;
-        selectorParameters?: StringParams;
         connectionQueryType?: ConnectionQueryTypeValues;
         connectionQueryContent?: ConnectionQueryContent;
     };

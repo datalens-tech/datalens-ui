@@ -1,9 +1,9 @@
 import {DashKit, generateUniqId} from '@gravity-ui/dashkit';
 import {I18n} from 'i18n';
 import update from 'immutability-helper';
-import {omit} from 'lodash';
 import pick from 'lodash/pick';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
+import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
 import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import Utils from 'utils';
@@ -85,10 +85,18 @@ export function getSelectorDialogInitialState(args = {}) {
 }
 
 export function getSelectorDialogFromData(data, defaults) {
-    const selectorParameters = omit(
-        data.source.selectorParameters || defaults || {},
-        data.fieldName,
-    );
+    let selectorParameters;
+
+    switch (data.source.sourceType) {
+        case DashTabItemControlSourceType.Connection:
+            selectorParameters = extractTypedQueryParams(defaults, data.source.fieldName);
+            break;
+        case DashTabItemControlSourceType.External:
+            selectorParameters = defaults;
+            break;
+        default:
+            selectorParameters = {};
+    }
 
     return {
         validation: {},

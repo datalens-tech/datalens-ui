@@ -1,4 +1,9 @@
-import {DashTabItemControlSourceType, type IChartEditor} from '../../../../../../../shared';
+import {
+    DashTabItemControlSourceType,
+    type IChartEditor,
+    type StringParams,
+} from '../../../../../../../shared';
+import {extractTypedQueryParams} from '../../../../../../../shared/modules/typed-query-api/helpers/parameters';
 import type {ControlShared} from '../../types';
 import type {SourceResponseData} from '../types';
 
@@ -11,10 +16,11 @@ type ProcessContentArgs = {
     data: SourceResponseData;
     shared: ControlShared;
     ChartEditor: IChartEditor;
+    params: StringParams;
 };
 export const processContent = (args: ProcessContentArgs): ControlShared['content'] => {
-    const {data, shared, ChartEditor} = args;
-    const {sourceType, source, content} = shared;
+    const {data, shared, ChartEditor, params} = args;
+    const {sourceType, source, content, param} = shared;
 
     switch (sourceType) {
         case DashTabItemControlSourceType.Dataset: {
@@ -25,7 +31,7 @@ export const processContent = (args: ProcessContentArgs): ControlShared['content
         case DashTabItemControlSourceType.Connection: {
             processTypedQueryParameters({
                 ChartEditor,
-                parameters: shared.source.selectorParameters,
+                parameters: extractTypedQueryParams(params, param),
             });
             return processTypedQueryContent(data.connectionDistincts);
         }
