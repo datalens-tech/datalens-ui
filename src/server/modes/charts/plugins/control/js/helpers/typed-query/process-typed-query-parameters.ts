@@ -8,5 +8,10 @@ export type ProcessTypedQueryParametersArgs = {
 export const processTypedQueryParameters = (args: ProcessTypedQueryParametersArgs) => {
     const {parameters, ChartEditor} = args;
 
-    ChartEditor.updateParams(parameters || {});
+    const params = Object.keys(parameters || {}).reduce(
+        (acc, key) => Object.assign(acc, {[key]: ''}),
+        {} as StringParams,
+    );
+
+    ChartEditor.updateParams(params);
 };
