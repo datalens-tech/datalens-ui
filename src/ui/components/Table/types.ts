@@ -30,7 +30,7 @@ export type TData = CellData[];
 export type TFoot = CellData;
 
 export type OnPaginationChange = (pageIndex: number) => void;
-export type OnTableClick = (args: {row?: TData; cell?: CellData}) => void;
+export type OnTableClick = (args: {row?: TData; cell?: CellData; event: React.MouseEvent}) => void;
 
 export type TableProps = {
     title?: {text: string};

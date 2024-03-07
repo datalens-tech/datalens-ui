@@ -149,10 +149,11 @@ export const Table = (props: TableProps) => {
                                               key={cell.id}
                                               className={b('td')}
                                               style={originalCellData?.css}
-                                              onClick={() =>
+                                              onClick={(event) =>
                                                   handleCellClick({
                                                       row: row.original,
                                                       cell: originalCellData,
+                                                      event,
                                                   })
                                               }
                                           >

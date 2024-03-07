@@ -23,7 +23,12 @@ import type {TableWidgetProps} from '../types';
 import {BarCell} from './components/BarCell/BarCell';
 import {MarkupCell} from './components/MarkupCell/MarkupCell';
 import {TreeCell} from './components/TreeCell/TreeCell';
-import {getUpdatesTreeState} from './utils/tree';
+import {
+    getCellActionParams,
+    getCellCss,
+    getCurrentActionParams,
+    getUpdatesTreeState,
+} from './utils';
 
 import './TableWidget.scss';
 
@@ -37,7 +42,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             id,
             onChange,
             onLoad,
-            data: {data, config, params: currentParams},
+            data: {data, config, params: currentParams, unresolvedParams},
         } = props;
 
         const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [data, config, id]);
@@ -63,7 +68,9 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             (currentParams.drillDownFilters as string[]) || new Array(breadcrumbsLength).fill('');
         const canDrillDown = !breadcrumbsLength || drillDownLevel !== breadcrumbsLength - 1;
 
-        const handleTableClick: OnTableClick = ({cell}) => {
+        const actionParams = getCurrentActionParams({config, unresolvedParams});
+
+        const handleTableClick: OnTableClick = ({cell, row, event}) => {
             const tableCommonCell = cell as TableCommonCell;
 
             if (canDrillDown && tableCommonCell.drillDownFilterValue) {
@@ -86,6 +93,21 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                 });
 
                 changeParams(treeState ? {treeState} : {});
+            }
+
+            if (actionParams?.scope) {
+                const cellActionParams = getCellActionParams({
+                    actionParamsData: actionParams,
+                    rows: data.rows || [],
+                    head: data.head,
+                    row,
+                    cell: tableCommonCell,
+                    metaKey: event.metaKey,
+                });
+
+                if (cellActionParams) {
+                    changeParams({...cellActionParams});
+                }
             }
         };
 
@@ -135,11 +157,20 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                     const cell = c as TableCommonCell;
                     const isCellClickable =
                         Boolean(canDrillDown && cell.drillDownFilterValue) ||
-                        Boolean(cell.treeNode);
+                        Boolean(cell.treeNode) ||
+                        Boolean(actionParams?.scope);
+                    const cursor = isCellClickable ? 'pointer' : undefined;
+                    const actionParamsCss = getCellCss({
+                        actionParamsData: actionParams,
+                        row: r,
+                        cell: c,
+                        head: data.head,
+                        rows: data.rows || [],
+                    });
 
                     return {
                         ...cell,
-                        css: {cursor: isCellClickable ? 'pointer' : undefined, ...cell.css},
+                        css: {cursor, ...actionParamsCss, ...cell.css},
                     };
                 });
             }),
