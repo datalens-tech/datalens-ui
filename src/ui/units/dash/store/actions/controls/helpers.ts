@@ -22,6 +22,7 @@ export const getControlValidation = (selectorDialog: SelectorDialogState) => {
         defaultValue,
         required,
         connectionQueryContent,
+        selectorParameters,
     } = selectorDialog;
 
     const validation: SelectorDialogValidation = {};
@@ -36,6 +37,18 @@ export const getControlValidation = (selectorDialog: SelectorDialogState) => {
 
     if (sourceType === DashTabItemControlSourceType.Connection && !connectionQueryContent) {
         validation.connectionQueryContent = i18n('dash.control-dialog.edit', 'validation_required');
+    }
+
+    if (
+        sourceType === DashTabItemControlSourceType.Connection &&
+        fieldName &&
+        Object.hasOwnProperty.call(selectorParameters, fieldName)
+    ) {
+        validation.fieldName = i18n(
+            'dash.control-dialog.edit',
+            // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+            'validation_field-name-in-parameters',
+        );
     }
 
     if (sourceType === DashTabItemControlSourceType.Dataset && !datasetFieldId) {

@@ -17,6 +17,8 @@ import {
 import {setSelectorDialogItem} from '../../../../../store/actions/dashTyped';
 import {selectSelectorDialog} from '../../../../../store/selectors/dashTypedSelectors';
 
+import './ParametersSection.scss';
+
 const b = block('parameters-section');
 
 export const ParametersSection = () => {
