@@ -2,6 +2,7 @@ import React from 'react';
 
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
+import get from 'lodash/get';
 import {
     BarTableCell,
     NumberTableColumn,
@@ -16,6 +17,7 @@ import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 import type {TableWidgetProps} from '../types';
 
 import {BarCell} from './components/BarCell/BarCell';
+import {MarkupCell} from './components/MarkupCell/MarkupCell';
 
 import './TableWidget.scss';
 
@@ -23,7 +25,6 @@ const b = block('chartkit-table-widget');
 
 // TODO: grouping
 // TODO: tree
-// TODO: markdown
 // TODO: sticky header
 // TODO: chart-chart
 // TODO: export
@@ -73,16 +74,31 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                     header: d.name,
                     width: d.width,
                     enableSorting: true,
-                };
+                    renderCell: (cellData) => {
+                        const cell = cellData as TableCommonCell;
+                        const columnView = get(d, 'view');
+                        const cellType = cell.type;
 
-                const tableColumn = d as NumberTableColumn;
-                switch (tableColumn.view) {
-                    case 'bar': {
-                        column.renderCell = (cellData) => (
-                            <BarCell cell={cellData as BarTableCell} column={tableColumn} />
+                        if (columnView === 'bar') {
+                            return (
+                                <BarCell
+                                    cell={cell as BarTableCell}
+                                    column={d as NumberTableColumn}
+                                />
+                            );
+                        }
+
+                        if (cellType === 'markup') {
+                            return <MarkupCell cell={cell} />;
+                        }
+
+                        return (
+                            <React.Fragment>
+                                {cellData.formattedValue ?? cellData.value}
+                            </React.Fragment>
                         );
-                    }
-                }
+                    },
+                };
 
                 return column;
             }),
