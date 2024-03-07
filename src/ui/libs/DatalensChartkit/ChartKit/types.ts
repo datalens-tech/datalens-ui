@@ -1,7 +1,13 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
-import type {CombinedError, LoadedWidgetData, OnChangeData, OnLoadData} from '../types';
+import type {
+    CombinedError,
+    LoadedWidgetData,
+    OnChangeData,
+    OnLoadData,
+    TableWidget,
+} from '../types';
 
 import YandexMap from './modules/yandex-map/yandex-map';
 import type {
@@ -50,7 +56,7 @@ declare module '@gravity-ui/chartkit' {
         };
         table: {
             data: any;
-            widget: never;
+            widget: TableWidget;
         };
     }
 }

@@ -34,8 +34,6 @@ import './TableWidget.scss';
 
 const b = block('chartkit-table-widget');
 
-// TODO: chart-chart
-// TODO: export
 const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetProps>(
     (props, _forwardedRef) => {
         const {
@@ -52,7 +50,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             const widgetRendering = Performance.getDuration(generatedId);
 
             if (onLoad && widgetRendering) {
-                onLoad({widgetRendering});
+                onLoad({widget: props.data, widgetRendering});
             }
         }, [generatedId, onLoad]);
 
