@@ -2,22 +2,26 @@ import React from 'react';
 
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
-import isUndefined from 'lodash/isUndefined';
-import {BarTableCell, NumberTableColumn, TableCellsRow, TableCommonCell} from 'shared';
+import {
+    BarTableCell,
+    NumberTableColumn,
+    StringParams,
+    TableCellsRow,
+    TableCommonCell,
+} from 'shared';
 import {Table} from 'ui/components/Table/Table';
-import type {THead, TableProps} from 'ui/components/Table/types';
-import {Bar} from 'ui/libs/DatalensChartkit/ChartKit/components/Widget/components/Table/Bar/Bar';
-import {selectBarSettingValue} from 'ui/libs/DatalensChartkit/ChartKit/components/Widget/components/Table/utils/misc';
+import type {OnTableClick, THead, TableProps} from 'ui/components/Table/types';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
 import type {TableWidgetProps} from '../types';
+
+import {BarCell} from './components/BarCell/BarCell';
 
 import './TableWidget.scss';
 
 const b = block('chartkit-table-widget');
 
 // TODO: grouping
-// TODO: hierarchy
 // TODO: tree
 // TODO: markdown
 // TODO: sticky header
@@ -28,79 +32,71 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
     (props, _forwardedRef) => {
         const {
             onChange,
-            data: {data, config, params},
+            data: {data, config, params: currentParams},
         } = props;
 
-        const handlePaginationChange = (page: number) => {
+        const changeParams = (params: StringParams) => {
             if (onChange) {
-                onChange(
-                    {type: 'PARAMS_CHANGED', data: {params: {_page: String(page)}}},
-                    {forceUpdate: true},
-                    true,
-                );
+                onChange({type: 'PARAMS_CHANGED', data: {params}}, {forceUpdate: true}, true);
             }
         };
+
+        const drillDownLevel = Number((currentParams.drillDownLevel || ['0'])[0]);
+        const breadcrumbsLength = config?.drillDown?.breadcrumbs.length;
+        const drillDownFilters =
+            (currentParams.drillDownFilters as string[]) || new Array(breadcrumbsLength).fill('');
+        const canDrillDown = !breadcrumbsLength || drillDownLevel !== breadcrumbsLength - 1;
+
+        const handleTableClick: OnTableClick = ({cell}) => {
+            const tableCommonCell = cell as TableCommonCell;
+
+            if (canDrillDown && tableCommonCell.drillDownFilterValue) {
+                changeParams({
+                    drillDownLevel: [String(drillDownLevel + 1)],
+                    drillDownFilters: drillDownFilters.map((filter: string, index: number) => {
+                        if (drillDownLevel === index) {
+                            return String(tableCommonCell.drillDownFilterValue);
+                        }
+
+                        return filter;
+                    }),
+                });
+            }
+        };
+
+        const handlePaginationChange = (page: number) => changeParams({_page: String(page)});
 
         const tableData: TableProps['data'] = {
             head: data.head?.map((d, index) => {
                 const column: THead = {
-                    id: d.id || String(index),
+                    id: `${d.id}_${index}`,
                     header: d.name,
                     width: d.width,
                     enableSorting: true,
                 };
 
-                const columnOptions = d as NumberTableColumn;
-                switch (columnOptions.view) {
+                const tableColumn = d as NumberTableColumn;
+                switch (tableColumn.view) {
                     case 'bar': {
-                        column.renderCell = (cellData) => {
-                            const barCellData = cellData as BarTableCell;
-                            if (!barCellData) {
-                                return null;
-                            }
-
-                            const min = isUndefined(barCellData.min)
-                                ? columnOptions.min
-                                : barCellData.min;
-                            const max = isUndefined(barCellData.max)
-                                ? columnOptions.max
-                                : barCellData.max;
-
-                            return (
-                                <Bar
-                                    value={Number(barCellData.value)}
-                                    formattedValue={barCellData.formattedValue}
-                                    align={columnOptions.align || barCellData.align}
-                                    barHeight={columnOptions.barHeight || barCellData.barHeight}
-                                    min={min}
-                                    max={max}
-                                    showLabel={selectBarSettingValue(
-                                        columnOptions,
-                                        barCellData,
-                                        'showLabel',
-                                    )}
-                                    showSeparator={selectBarSettingValue(
-                                        columnOptions,
-                                        barCellData,
-                                        'showSeparator',
-                                    )}
-                                    debug={selectBarSettingValue(
-                                        columnOptions,
-                                        barCellData,
-                                        'debug',
-                                    )}
-                                    color={barCellData.barColor}
-                                    showBar={barCellData.showBar}
-                                    offset={barCellData.offset}
-                                />
-                            );
-                        };
+                        column.renderCell = (cellData) => (
+                            <BarCell cell={cellData as BarTableCell} column={tableColumn} />
+                        );
                     }
                 }
 
                 return column;
             }),
-            rows: (data.rows as TableCellsRow[])?.map((r) => r.cells) as TableCommonCell[][],
+            rows: (data.rows as TableCellsRow[])?.map<TableCommonCell[]>((r) => {
+                return r.cells.map((c) => {
+                    const cell = c as TableCommonCell;
+                    const isCellClickable = Boolean(canDrillDown && cell.drillDownFilterValue);
+
+                    return {
+                        ...cell,
+                        css: {cursor: isCellClickable ? 'pointer' : undefined, ...cell.css},
+                    };
+                });
+            }),
             footer: ((data.footer?.[0] as TableCellsRow)?.cells || []) as TableCommonCell[],
         };
 
@@ -112,10 +108,11 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                     pagination={{
                         enabled: Boolean(config?.paginator?.enabled),
                         pageSize: config?.paginator?.limit,
-                        pageIndex: Number(params._page) || 0,
+                        pageIndex: Number(currentParams._page) || 0,
+                        onChange: handlePaginationChange,
                     }}
                     noData={{text: i18n('chartkit-table', 'message-no-data')}}
-                    onPaginationChange={handlePaginationChange}
+                    onClick={handleTableClick}
                 />
             </div>
         );

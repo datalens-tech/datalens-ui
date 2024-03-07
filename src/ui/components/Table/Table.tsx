@@ -9,10 +9,11 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import block from 'bem-cn-lite';
+import get from 'lodash/get';
 
 import {Paginator} from './components/Paginator/Paginator';
 import {SortIcon} from './components/SortIcon/SortIcon';
-import type {TData, TableProps} from './types';
+import type {OnTableClick, TData, TableProps} from './types';
 
 import './Table.scss';
 
@@ -53,12 +54,11 @@ function getTableData(args: TableProps['data']) {
 }
 
 export const Table = (props: TableProps) => {
-    const {title, pagination, onPaginationChange, noData} = props;
+    const {title, pagination, noData, onClick} = props;
     const isPaginationEnabled = Boolean(pagination?.enabled && pagination.pageSize);
     const paginationState = {
-        pageIndex: 0,
-        pageSize: Infinity,
-        ...pagination,
+        pageIndex: get(pagination, 'pageIndex', 0),
+        pageSize: get(pagination, 'pageSize', 10),
     };
 
     const {columns, data} = React.useMemo(() => getTableData(props.data), [props.data]);
@@ -74,15 +74,21 @@ export const Table = (props: TableProps) => {
                       pagination: paginationState,
                   },
                   onPaginationChange: (updater) => {
-                      if (onPaginationChange) {
+                      if (pagination?.onChange) {
                           const newPaginationState =
                               typeof updater === 'function' ? updater(paginationState) : updater;
-                          onPaginationChange(newPaginationState.pageIndex);
+                          pagination.onChange(newPaginationState.pageIndex);
                       }
                   },
               }
             : {}),
     });
+
+    const handleCellClick: OnTableClick = (args) => {
+        if (onClick) {
+            onClick(args);
+        }
+    };
 
     const rows = table.getRowModel().rows;
     const shouldShowFooter = columns.some((column) => column.footer);
@@ -143,6 +149,12 @@ export const Table = (props: TableProps) => {
                                               key={cell.id}
                                               className={b('td')}
                                               style={originalCellData?.css}
+                                              onClick={() =>
+                                                  handleCellClick({
+                                                      row: row.original,
+                                                      cell: originalCellData,
+                                                  })
+                                              }
                                           >
                                               <div
                                                   className={b('td-content', {
