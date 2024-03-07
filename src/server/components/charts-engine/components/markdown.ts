@@ -4,6 +4,7 @@ import deflist from '@diplodoc/transform/lib/plugins/deflist';
 import imsize from '@diplodoc/transform/lib/plugins/imsize';
 import notes from '@diplodoc/transform/lib/plugins/notes';
 import table from '@diplodoc/transform/lib/plugins/table';
+import {defaultOptions} from '@doc-tools/transform/lib/sanitize';
 import MarkdownIt from 'markdown-it';
 import katex from 'markdown-it-katex';
 import mila from 'markdown-it-link-attributes';
@@ -42,8 +43,11 @@ export function renderHTML({text = '', lang}: {text: string; lang: string}): {re
         lang,
         vars: {},
         disableLiquid: true,
-        disableStyleSanitizer: true,
         needToSanitizeHtml: true,
+        sanitizeOptions: {
+            ...defaultOptions,
+            disableStyleSanitizer: true,
+        },
     });
     return {result: html};
 }
