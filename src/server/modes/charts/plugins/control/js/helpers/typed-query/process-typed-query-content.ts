@@ -1,4 +1,5 @@
 import type {ConnectionTypedQueryApiResponse} from '../../../../../../../../shared';
+import {getControlDisticntsFromRows} from '../../../../../../../../shared/modules/control/typed-query-helpers';
 import type {ControlShared} from '../../../types';
 
 export const processTypedQueryContent = (
@@ -6,9 +7,5 @@ export const processTypedQueryContent = (
 ): ControlShared['content'] => {
     const rows = distincts?.data?.rows || [];
 
-    return rows.reduce((acc, row) => {
-        const rowData = String(row[0]);
-        acc.push({title: rowData, value: rowData});
-        return acc;
-    }, [] as ControlShared['content']);
+    return getControlDisticntsFromRows(rows).map((v) => ({title: v, value: v}));
 };
