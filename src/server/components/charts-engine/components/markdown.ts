@@ -1,9 +1,9 @@
-import yfmTransform from '@doc-tools/transform';
-import cut from '@doc-tools/transform/lib/plugins/cut';
-import deflist from '@doc-tools/transform/lib/plugins/deflist';
-import imsize from '@doc-tools/transform/lib/plugins/imsize';
-import notes from '@doc-tools/transform/lib/plugins/notes';
-import table from '@doc-tools/transform/lib/plugins/table';
+import yfmTransform from '@diplodoc/transform';
+import cut from '@diplodoc/transform/lib/plugins/cut';
+import deflist from '@diplodoc/transform/lib/plugins/deflist';
+import imsize from '@diplodoc/transform/lib/plugins/imsize';
+import notes from '@diplodoc/transform/lib/plugins/notes';
+import table from '@diplodoc/transform/lib/plugins/table';
 import MarkdownIt from 'markdown-it';
 import katex from 'markdown-it-katex';
 import mila from 'markdown-it-link-attributes';
@@ -42,6 +42,7 @@ export function renderHTML({text = '', lang}: {text: string; lang: string}): {re
         lang,
         vars: {},
         disableLiquid: true,
+        disableStyleSanitizer: true,
         needToSanitizeHtml: true,
     });
     return {result: html};
