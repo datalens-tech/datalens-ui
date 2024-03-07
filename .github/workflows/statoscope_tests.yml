@@ -33,7 +33,7 @@ jobs:
         if: "github.event_name == 'pull_request'"
         run: cat ./scripts/ci/statoscope-comment.jora | npx --no-install @statoscope/cli query --input input.json --input reference.json > result.json
       - name: Upload UI report to S3
-        if: "github.event_name == 'pull_request'"
+        if: "github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository"
         id: upload-to-s3
         run: |
           aws --endpoint-url=${AWS_ENDPOINT} \
