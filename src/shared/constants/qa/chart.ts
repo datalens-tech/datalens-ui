@@ -42,5 +42,6 @@ export const enum ChartKitTreeNodeStateQa {
 export const enum ChartKitTableQa {
     Widget = 'chartkit-table-widget',
     Row = 'chartkit-table-row',
+    Cell = 'chartkit-table-cell',
     CellContent = 'chartkit-cell-content',
 }

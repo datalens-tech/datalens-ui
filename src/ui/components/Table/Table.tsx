@@ -147,6 +147,7 @@ export const Table = (props: TableProps) => {
                                       return (
                                           <td
                                               key={cell.id}
+                                              data-qa={qa?.cell}
                                               className={b('td')}
                                               style={originalCellData?.css}
                                               onClick={(event) =>

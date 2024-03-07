@@ -54,5 +54,6 @@ export type TableProps = {
     onClick?: OnTableClick;
     qa?: {
         row?: string;
+        cell?: string;
     };
 };

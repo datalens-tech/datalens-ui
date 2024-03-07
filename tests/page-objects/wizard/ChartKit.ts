@@ -229,7 +229,7 @@ export default class ChartKit {
     async getRowsTexts() {
         const rows = await this.getRowContent(
             this.tableRowSelector,
-            '.chartkit-table__cell',
+            ['.chartkit-table__cell', slct(ChartKitTableQa.Cell)].join(','),
             'text',
         );
 
@@ -302,7 +302,7 @@ export default class ChartKit {
 
     private async getRowContent(
         rowSelector: string,
-        cellSelector: '.data-table__head-cell' | '.chartkit-table__cell',
+        cellSelector: string,
         contentType: 'text' | 'html',
     ) {
         await this.page.waitForSelector(rowSelector);

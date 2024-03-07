@@ -196,6 +196,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                     }}
                     qa={{
                         row: ChartKitTableQa.Row,
+                        cell: ChartKitTableQa.Cell,
                     }}
                 />
             </div>
