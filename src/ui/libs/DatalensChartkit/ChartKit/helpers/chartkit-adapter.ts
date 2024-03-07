@@ -3,6 +3,8 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import {DL} from '../../../../constants/common';
 import type {GraphWidget, LoadedWidgetData} from '../../types';
+import {TableWidget} from '../../types';
+import {hasGroups} from '../components/Widget/components/Table/utils';
 import type {ChartKitAdapterProps} from '../types';
 
 import {applySetActionParamsEvents, fixPieTotals} from './apply-hc-handlers';
@@ -77,7 +79,10 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
 
         case 'table': {
             // TODO: проверить флаг
-            chartkitType = 'table';
+            const widgetData = data as TableWidget;
+            if (!hasGroups(widgetData?.data.head || [])) {
+                chartkitType = 'table';
+            }
 
             break;
         }
