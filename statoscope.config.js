@@ -33,7 +33,7 @@ module.exports = {
                 {global: {maxInitialDownloadTimeDiff: 500}},
             ],
             // compares usage of specified packages usage between input and reference stats.
-            // '@statoscope/webpack/diff-deprecated-packages': ['error', ['lodash']],
+            '@statoscope/webpack/diff-deprecated-packages': ['error', ['moment']],
         },
     },
 };
