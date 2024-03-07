@@ -13,18 +13,19 @@ import {
 import {Table} from 'ui/components/Table/Table';
 import type {OnTableClick, THead, TableProps} from 'ui/components/Table/types';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
+import {getUpdatesTreeState} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/utils/tree';
 
 import type {TableWidgetProps} from '../types';
 
 import {BarCell} from './components/BarCell/BarCell';
 import {MarkupCell} from './components/MarkupCell/MarkupCell';
+import {TreeCell} from './components/TreeCell/TreeCell';
 
 import './TableWidget.scss';
 
 const b = block('chartkit-table-widget');
 
 // TODO: grouping
-// TODO: tree
 // TODO: chart-chart
 // TODO: export
 // TODO: rendering time
@@ -35,8 +36,8 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             data: {data, config, params: currentParams},
         } = props;
 
-        const changeParams = (params: StringParams) => {
-            if (onChange) {
+        const changeParams = (params: StringParams | null) => {
+            if (onChange && params) {
                 onChange({type: 'PARAMS_CHANGED', data: {params}}, {forceUpdate: true}, true);
             }
         };
@@ -61,6 +62,15 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                         return filter;
                     }),
                 });
+            }
+
+            if (tableCommonCell.treeNode) {
+                const treeState = getUpdatesTreeState({
+                    cell: tableCommonCell,
+                    params: currentParams,
+                });
+
+                changeParams(treeState ? {treeState} : {});
             }
         };
 
@@ -91,6 +101,10 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                             return <MarkupCell cell={cell} />;
                         }
 
+                        if (cell?.treeNodeState) {
+                            return <TreeCell cell={cell} />;
+                        }
+
                         return (
                             <React.Fragment>
                                 {cellData.formattedValue ?? cellData.value}
@@ -104,7 +118,9 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             rows: (data.rows as TableCellsRow[])?.map<TableCommonCell[]>((r) => {
                 return r.cells.map((c) => {
                     const cell = c as TableCommonCell;
-                    const isCellClickable = Boolean(canDrillDown && cell.drillDownFilterValue);
+                    const isCellClickable =
+                        Boolean(canDrillDown && cell.drillDownFilterValue) ||
+                        Boolean(cell.treeNode);
 
                     return {
                         ...cell,

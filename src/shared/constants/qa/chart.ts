@@ -33,3 +33,8 @@ export const enum ChartKitQa {
 export const enum ChartQa {
     Chart = 'chartkit-chart',
 }
+
+export const enum ChartKitTreeNodeStateQa {
+    Opened = 'chartkit-tree-node-state-opened',
+    Closed = 'chartkit-tree-node-state-closed',
+}
