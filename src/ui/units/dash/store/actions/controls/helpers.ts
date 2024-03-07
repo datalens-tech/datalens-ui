@@ -83,7 +83,7 @@ export const getControlDefaultsForField = (
 
     return Object.keys(merged).reduce<Record<string, string | string[]>>((params, paramTitle) => {
         if (validateParamTitleOnlyUnderscore(paramTitle) === null) {
-            params[paramTitle] = defaults[paramTitle];
+            params[paramTitle] = merged[paramTitle];
         }
         return params;
     }, {});
