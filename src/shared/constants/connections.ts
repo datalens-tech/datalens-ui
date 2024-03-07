@@ -28,7 +28,6 @@ export enum ConnectorType {
     Gsheets = 'gsheets',
     GsheetsV2 = 'gsheets_v2',
     KonturMarket = 'kontur_market',
-    MarketCouriers = 'market_couriers',
     MetrikaApi = 'metrika_api',
     Moysklad = 'moysklad',
     Mssql = 'mssql',
@@ -59,6 +58,11 @@ export type ActualConnectorType =
     | ConnectorType.Gsheets
     | ConnectorType.GsheetsV2
     | ConnectorType.File;
+
+export const enum ConnectionQueryTypeValues {
+    GenericQuery = 'generic_query',
+    GenericLabelValues = 'generic_label_values',
+}
 
 export enum DbConnectMethod {
     ServiceName = 'service_name',

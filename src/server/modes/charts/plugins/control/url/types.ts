@@ -1,4 +1,11 @@
-import {ApiV2Request, IChartEditor} from '../../../../../../shared';
+import type {Optional} from 'utility-types';
+
+import {
+    ApiV2Request,
+    type ConnectionTypedQueryApiRequest,
+    IChartEditor,
+} from '../../../../../../shared';
+import type {Source} from '../../../../../components/charts-engine/types';
 import {MiddlewareUrl} from '../../types';
 import {ControlShared} from '../types';
 
@@ -8,10 +15,12 @@ export type SourceControlArgs = {
     ChartEditor: IChartEditor;
 };
 
-export type SourceControlRequests = {
-    distincts?: SourceControlDistinctsRequestWithDataset | SourceControlDistinctsOldRequest;
-    fields: SourceControlFieldsRequest;
-};
+export type SourceControlRequests =
+    | {
+          distincts?: SourceControlDistinctsRequestWithDataset | SourceControlDistinctsOldRequest;
+          fields: SourceControlFieldsRequest;
+      }
+    | {connectionDistincts: SourceControlTypedQueryRequest};
 
 export type SourceControlDistinctsRequestWithDataset = {
     sourceArgs: SourceControlArgs;
@@ -24,3 +33,5 @@ export type SourceControlDistinctsOldRequest = ApiV2Request;
 export type SourceControlFieldsRequest = {
     url: string;
 };
+
+export type SourceControlTypedQueryRequest = Optional<Source<ConnectionTypedQueryApiRequest>, 'ui'>;

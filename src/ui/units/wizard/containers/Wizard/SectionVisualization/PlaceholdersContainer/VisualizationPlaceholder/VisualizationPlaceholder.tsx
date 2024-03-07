@@ -133,7 +133,8 @@ class VisualizationPlaceholder extends React.Component<Props> {
             case WizardVisualizationId.PieD3:
             case 'pie':
             case 'donut': {
-                const hasSettings = placeholder.items.length > 0 && placeholder.id === 'dimensions';
+                const hasSettings =
+                    placeholder.items.length > 0 && placeholder.id === PlaceholderId.Colors;
                 const colorsContainsHierarchies = placeholder.items.some(isFieldHierarchy);
 
                 return {
@@ -286,6 +287,10 @@ class VisualizationPlaceholder extends React.Component<Props> {
                 isLastPlaceholder,
             );
         });
+
+        if (this.props.onUpdate) {
+            this.props.onUpdate();
+        }
     };
 
     private checkAllowedPlaceholderItem = (item: Field) => {

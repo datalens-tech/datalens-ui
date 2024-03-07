@@ -6,7 +6,7 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import {CurrentTab} from 'components/DashKit/plugins/Widget/types';
-import {ChartkitMenuDialogsQA} from 'shared';
+import {ChartkitMenuDialogsQA, ControlQA} from 'shared';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
@@ -134,7 +134,7 @@ export const WidgetHeader = (props: HeaderProps) => {
                 )}
                 {showFiltersClear && (
                     <div className={b('filters-controls')}>
-                        <Button onClick={onFiltersClear}>
+                        <Button qa={ControlQA.filtersClear} onClick={onFiltersClear}>
                             <Icon
                                 data={iconClearActionParams}
                                 size={16}

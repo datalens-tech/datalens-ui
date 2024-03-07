@@ -21,6 +21,7 @@ import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
     selectCurrentTab,
     selectCurrentTabConnectableItems,
+    selectDashWorkbookId,
 } from '../../../store/selectors/dashTypedSelectors';
 import {addAlias, getNormalizedAliases} from '../DialogRelations/helpers';
 
@@ -98,6 +99,7 @@ class Connections extends React.PureComponent {
         ).isRequired,
         aliases: PropTypes.object.isRequired,
         dashKitRef: PropTypes.object.isRequired,
+        workbookId: PropTypes.string,
         closeDialog: PropTypes.func.isRequired,
         updateCurrentTabData: PropTypes.func.isRequired,
     };
@@ -201,6 +203,7 @@ class Connections extends React.PureComponent {
                 entriesDatasetsFields = await getSdk().mix.getEntriesDatasetsFields({
                     entriesIds,
                     datasetsIds,
+                    workbookId: this.props.workbookId,
                 });
             }
         } catch (error) {
@@ -818,6 +821,7 @@ const mapStateToProps = (state) => ({
     connections: selectCurrentTab(state).connections,
     aliases: selectCurrentTab(state).aliases,
     dashKitRef: state.dash.dashKitRef,
+    workbookId: selectDashWorkbookId(state),
 });
 
 const mapDispatchToProps = {

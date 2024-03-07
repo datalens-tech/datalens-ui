@@ -10,6 +10,7 @@ import {
     getFakeTitleOrTitle,
     isDateField,
 } from '../../../../../../../../shared';
+import {prepareMetricObject} from '../../../utils/markup-helpers';
 import {isFloatDataType, isNumericalDataType} from '../../../utils/misc-helpers';
 
 export const prepareMarkupMetricVariant = ({
@@ -44,9 +45,6 @@ export const prepareMarkupMetricVariant = ({
                                 type: 'text',
                                 content: title,
                             },
-                        },
-                        {
-                            type: 'br',
                         },
                         value,
                     ],
@@ -88,30 +86,6 @@ export const prepareMarkupMetricVariant = ({
             formattedValue = dateTime({input: value}).format(measure.format);
         }
 
-        return {
-            value: {
-                type: 'concat',
-                className: `markup-metric markup-metric_size_${size}`,
-                children: [
-                    {
-                        className: 'markup-metric-title',
-                        type: 'text',
-                        content: title,
-                    },
-                    {
-                        type: 'br',
-                    },
-                    {
-                        type: 'color',
-                        color,
-                        content: {
-                            className: 'markup-metric-value',
-                            type: 'text',
-                            content: formattedValue,
-                        },
-                    },
-                ],
-            },
-        };
+        return prepareMetricObject({size, title, color, value: formattedValue});
     }
 };

@@ -1,9 +1,8 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {openTestPage, slct} from '../../../utils';
+import {openTestPage} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {DashCommonQa} from '../../../../src/shared';
 
 import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {TestParametrizationConfig} from '../../../types/config';
@@ -20,7 +19,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         await dashboardPage.deleteDash();
     });
     datalensTest(
-        'Pop-up opening for chart with error and the presence of the inscription "No elements for links"',
+        'Pop-up opening for chart with error (removed dataset) and there is possibility to set ignore link',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const workbookPO = new Workbook(page);
             await workbookPO.openE2EWorkbookPage();
@@ -33,11 +32,11 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
 
             await dashboardPage.openControlRelationsDialog();
 
-            await dashboardPage.waitForSelector(slct(DashCommonQa.RelationsDialogEmptyText));
+            await dashboardPage.waitForSelector(`text=${PARAMS.UNKNOWN}`);
         },
     );
     datalensTest(
-        'Pop-up opening for chart with error and there is possibility to set ignore link',
+        'Pop-up opening for chart with error (removed dataset but old fields) and there is possibility to set ignore link',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const workbookPO = new Workbook(page);
             await workbookPO.openE2EWorkbookPage();

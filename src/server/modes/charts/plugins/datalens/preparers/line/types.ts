@@ -22,7 +22,7 @@ export type LineTemplate = {
     stack: string | number | Date | undefined;
     colorKey: string | undefined;
     tooltip: string;
-    dataLabels: ChartKitFormatSettings;
+    dataLabels: ChartKitFormatSettings & {enabled?: boolean};
     formattedName: string | undefined;
     drillDownFilterValue: string | undefined;
     shapeValue: string | undefined;

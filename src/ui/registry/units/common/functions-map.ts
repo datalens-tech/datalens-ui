@@ -55,7 +55,9 @@ export const commonFunctionsMap = {
         makeFunctionTemplate<
             (items: string[]) => NavigationMinimalProps['placeSelectParameters']
         >(),
-    resolveUsersByIds: makeFunctionTemplate<<T>(ids: string[]) => ResolveUsersByIds<T>>(),
+    resolveUsersByIds: makeFunctionTemplate<<T>(ids: string[]) => ResolveUsersByIds<T>>({
+        isReduxThunkActionTemplate: true,
+    }),
     getLoginById: makeFunctionTemplate<() => GetLoginById>(),
     getEntryName: makeFunctionTemplate<(entry: EntryData) => string>(),
     getInitDestination: makeFunctionTemplate<(path?: string) => string>(),
@@ -86,4 +88,6 @@ export const commonFunctionsMap = {
         makeFunctionTemplate<
             (docsEndpoint: string, path?: string) => Promise<FetchFunctionsDocumentationResponse>
         >(),
+    isEntryId: makeFunctionTemplate<(value: string) => boolean>(),
+    extractEntryId: makeFunctionTemplate<(value?: string) => string | null>(),
 } as const;

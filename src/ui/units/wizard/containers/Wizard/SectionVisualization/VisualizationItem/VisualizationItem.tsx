@@ -65,6 +65,7 @@ import {
     selectFields,
     selectMeasures,
 } from 'units/wizard/selectors/dataset';
+import {selectWizardWorkbookId} from 'units/wizard/selectors/settings';
 import {
     selectColorsConfig,
     selectShapesConfig,
@@ -539,7 +540,7 @@ class VisualizationItem extends React.Component<Props, State> {
     };
 
     private openDialogFieldEditor = (item: Field) => {
-        const {fields, dataset} = this.props;
+        const {fields, dataset, workbookId} = this.props;
 
         let field;
 
@@ -602,6 +603,7 @@ class VisualizationItem extends React.Component<Props, State> {
             props: {
                 datasetContent: dataset?.dataset,
                 datasetId: dataset?.id || '',
+                workbookId,
                 datasetOptions: dataset?.options,
 
                 field,
@@ -828,7 +830,7 @@ class VisualizationItem extends React.Component<Props, State> {
         if (target.cast !== cast) {
             if (cast === 'date') {
                 target.format = AVAILABLE_DATE_FORMATS[2];
-            } else if (cast === 'datetime' || cast === 'genericdatetime') {
+            } else if (cast === 'genericdatetime') {
                 target.format = AVAILABLE_DATETIME_FORMATS[5];
             } else if (cast === 'datetimetz') {
                 target.format = AVAILABLE_DATETIMETZ_FORMATS[7];
@@ -942,7 +944,6 @@ class VisualizationItem extends React.Component<Props, State> {
         let filterValues: string;
         if (
             data_type === DATASET_FIELD_TYPES.DATE ||
-            data_type === DATASET_FIELD_TYPES.DATETIME ||
             data_type === DATASET_FIELD_TYPES.GENERICDATETIME
         ) {
             filterValues = parseFilterDate(item);
@@ -968,6 +969,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         colorsConfig: selectColorsConfig(state),
         shapesConfig: selectShapesConfig(state),
         extraSettings: selectExtraSettings(state),
+        workbookId: selectWizardWorkbookId(state),
     };
 };
 

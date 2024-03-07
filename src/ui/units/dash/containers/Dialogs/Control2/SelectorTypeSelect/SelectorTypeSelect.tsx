@@ -16,6 +16,11 @@ const CONTROL_SOURCE_TYPES = [
         value: DashTabItemControlSourceType.Dataset,
     },
     {
+        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+        title: i18n('value_source-connection'),
+        value: DashTabItemControlSourceType.Connection,
+    },
+    {
         title: i18n('value_source-manual'),
         value: DashTabItemControlSourceType.Manual,
     },
@@ -43,15 +48,19 @@ const SelectorTypeSelect = ({size = 'l', showExternalType = true}: SelectorTypeS
         );
     }, []);
 
-    let options;
+    const options = React.useMemo(() => {
+        const availabilityMap = {
+            [DashTabItemControlSourceType.Dataset]: true,
+            [DashTabItemControlSourceType.Manual]: true,
+            [DashTabItemControlSourceType.External]:
+                Utils.isEnabledFeature(Feature.ExternalSelectors) && showExternalType,
+            [DashTabItemControlSourceType.Connection]: Utils.isEnabledFeature(
+                Feature.ConnectionBasedControl,
+            ),
+        };
 
-    if (Utils.isEnabledFeature(Feature.ExternalSelectors) && showExternalType) {
-        options = CONTROL_SOURCE_TYPES;
-    } else {
-        options = CONTROL_SOURCE_TYPES.filter(
-            (item) => item.value !== DashTabItemControlSourceType.External,
-        );
-    }
+        return CONTROL_SOURCE_TYPES.filter(({value}) => availabilityMap[value]);
+    }, [showExternalType]);
 
     return (
         <RadioButton

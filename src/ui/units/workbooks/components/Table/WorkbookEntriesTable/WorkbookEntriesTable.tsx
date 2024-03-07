@@ -1,29 +1,27 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
-import {dateTime} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
-import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {I18n} from 'i18n';
-import {useInView} from 'react-intersection-observer';
 import {useDispatch} from 'react-redux';
-import {Link} from 'react-router-dom';
-import {WorkbookPage} from 'shared/constants/qa/workbooks';
+import {EntryScope} from 'shared';
+import {getUserId} from 'shared/modules/user';
 import {DIALOG_COPY_ENTRIES_TO_WORKBOOK} from 'ui/components/CopyEntriesToWorkbookDialog';
+import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
+import {CreateEntryActionType} from 'ui/units/workbooks/constants';
 
 import {GetEntryResponse} from '../../../../../../shared/schema';
 import {WorkbookWithPermissions} from '../../../../../../shared/schema/us/types';
-import {registry} from '../../../../../registry';
 import {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
-import {WorkbookEntry} from '../../../types';
+import {ChunkItem, WorkbookEntry} from '../../../types';
+import {CreateEntry} from '../../CreateEntry/CreateEntry';
 import {DIALOG_DELETE_ENTRY_IN_NEW_WORKBOOK} from '../../DeleteEntryDialog/DeleteEntryDialog';
 import {DIALOG_DUPLICATE_ENTRY_IN_WORKBOOK} from '../../DuplicateEntryDialog/DuplicateEntryDialog';
-import {EntryActions} from '../../EntryActions/EntryActions';
 import {DIALOG_RENAME_ENTRY_IN_NEW_WORKBOOK} from '../../RenameEntryDialog/RenameEntryDialog';
 
-import {ChunkItem, useChunkedEntries} from './useChunkedEntries';
+import {ChunkGroup} from './ChunkGroup/ChunkGroup';
+import {MainTabContent} from './MainTabContent/MainTabContent';
+import {defaultRowStyle} from './constants';
 
 import './WorkbookEntriesTable.scss';
 
@@ -31,28 +29,43 @@ const i18n = I18n.keyset('new-workbooks');
 
 const b = block('dl-workbook-entries-table');
 
-const DATETIME_FORMAT = 'DD.MM.YYYY HH:mm:ss';
-const options = {
-    rootMargin: '200% 0px',
-};
-const ROW_HEIGHT = 48;
-const defaultRowStyle: React.CSSProperties = {
-    height: ROW_HEIGHT,
-};
-const onClickStopPropogation: React.MouseEventHandler = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-};
-
 type WorkbookEntriesTableProps = {
     workbook: WorkbookWithPermissions;
     entries: GetEntryResponse[];
-    refreshEntries: () => void;
+    refreshEntries: (scope: EntryScope) => void;
+    loadMoreEntries?: (entryScope: EntryScope) => void;
+    retryLoadEntries?: (entryScope: EntryScope) => void;
+    scope?: EntryScope;
+    mapTokens?: Record<string, string>;
+    mapErrors?: Record<string, boolean>;
+    mapLoaders?: Record<string, boolean>;
+    chunks: ChunkItem[][];
 };
 
 export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
-    ({workbook, entries, refreshEntries}) => {
+    ({
+        workbook,
+        entries,
+        refreshEntries,
+        retryLoadEntries,
+        loadMoreEntries,
+        scope,
+        mapTokens,
+        mapErrors,
+        mapLoaders,
+        chunks,
+    }) => {
         const dispatch: AppDispatch = useDispatch();
+
+        React.useEffect(() => {
+            const resolveUsersByIds = getResolveUsersByIdsAction();
+            const userIds = new Set<string>();
+            entries.forEach((entry) => {
+                userIds.add(getUserId(entry.createdBy));
+            });
+
+            dispatch(resolveUsersByIds(Array.from(userIds)));
+        }, [dispatch, entries]);
 
         const onRenameEntry = React.useCallback(
             (entity: WorkbookEntry) => {
@@ -86,9 +99,12 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             [dispatch],
         );
 
-        const onApplyDuplicate = React.useCallback(() => {
-            refreshEntries();
-        }, [refreshEntries]);
+        const onApplyDuplicate = React.useCallback(
+            (entryScope: EntryScope) => {
+                refreshEntries(entryScope);
+            },
+            [refreshEntries],
+        );
 
         const onDuplicateEntry = React.useCallback(
             (entity: WorkbookEntry) => {
@@ -98,7 +114,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                         props: {
                             open: true,
                             onClose: () => dispatch(closeDialog()),
-                            onApply: onApplyDuplicate,
+                            onApply: () => onApplyDuplicate(entity.scope as EntryScope),
                             initName: entity.name,
                             entryId: entity.entryId,
                         },
@@ -115,173 +131,139 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                         id: DIALOG_COPY_ENTRIES_TO_WORKBOOK,
                         props: {
                             open: true,
+                            initialCollectionId: workbook.collectionId,
                             onClose: () => dispatch(closeDialog()),
                             entryId: entity.entryId,
                         },
                     }),
                 );
             },
-            [dispatch],
+            [dispatch, workbook.collectionId],
         );
 
-        const chunks = useChunkedEntries(entries);
+        const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = []] = chunks;
 
         return (
-            <div className={b()}>
-                <div className={b('table')}>
-                    <div className={b('header')}>
-                        <div className={b('header-row')} style={defaultRowStyle}>
+            <React.Fragment>
+                <div className={b()}>
+                    <div className={b('table')}>
+                        <div className={b('header')} style={defaultRowStyle}>
                             <div className={b('header-cell', {title: true})}>
                                 {i18n('label_title')}
                             </div>
-                            <div className={b('header-cell')}>{i18n('label_last-modified')}</div>
+                            <div className={b('header-cell', {author: true})}>
+                                {i18n('label_author')}
+                            </div>
+                            <div className={b('header-cell', {date: true})}>
+                                {i18n('label_last-modified')}
+                            </div>
+                            <div className={b('header-cell')} />
                             <div className={b('header-cell')} />
                         </div>
+                        {scope &&
+                            chunks.map((chunk) => (
+                                <ChunkGroup
+                                    key={chunk[0].key}
+                                    workbook={workbook}
+                                    chunk={chunk}
+                                    onRenameEntry={onRenameEntry}
+                                    onDeleteEntry={onDeleteEntry}
+                                    onDuplicateEntry={onDuplicateEntry}
+                                    onCopyEntry={onCopyEntry}
+                                />
+                            ))}
                     </div>
-                    {chunks.map((chunk) => {
-                        return (
-                            <ChunkGroup
-                                key={chunk[0].key}
-                                workbook={workbook}
-                                chunk={chunk}
-                                onRenameEntry={onRenameEntry}
-                                onDeleteEntry={onDeleteEntry}
-                                onDuplicateEntry={onDuplicateEntry}
-                                onCopyEntry={onCopyEntry}
-                            />
-                        );
-                    })}
                 </div>
-            </div>
-        );
-    },
-);
 
-WorkbookEntriesTable.displayName = 'WorkbookEntriesTable';
-type ChunkGroupProps = {
-    chunk: ChunkItem[];
-    workbook: WorkbookWithPermissions;
-    onRenameEntry: (data: WorkbookEntry) => void;
-    onDeleteEntry: (data: WorkbookEntry) => void;
-    onDuplicateEntry: (data: WorkbookEntry) => void;
-    onCopyEntry: (data: WorkbookEntry) => void;
-};
-
-function ChunkGroup({
-    chunk,
-    workbook,
-    onRenameEntry,
-    onDeleteEntry,
-    onDuplicateEntry,
-    onCopyEntry,
-}: ChunkGroupProps) {
-    const {ref, inView} = useInView(options);
-
-    const height = chunk.length * ROW_HEIGHT;
-
-    const renderContent = () =>
-        chunk.map((chunkItem) => {
-            switch (chunkItem.type) {
-                case 'entry':
-                    return (
-                        <Row
-                            key={chunkItem.key}
+                {!scope && (
+                    <>
+                        <MainTabContent
+                            chunk={dashChunk}
+                            actionCreateText={i18n('action_create-dashboard')}
+                            title={i18n('title_dashboards')}
+                            actionType={CreateEntryActionType.Dashboard}
+                            isShowMoreBtn={Boolean(
+                                dashChunk?.length > 0 && mapTokens?.[EntryScope.Dash],
+                            )}
+                            loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dash)}
+                            retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dash)}
+                            isErrorMessage={mapErrors?.[EntryScope.Dash]}
+                            isLoading={mapLoaders?.[EntryScope.Dash]}
                             workbook={workbook}
-                            item={chunkItem.item}
                             onRenameEntry={onRenameEntry}
                             onDeleteEntry={onDeleteEntry}
                             onDuplicateEntry={onDuplicateEntry}
                             onCopyEntry={onCopyEntry}
                         />
-                    );
-                case 'empty':
-                    return <EmptyRow key={chunkItem.key} />;
-                default:
-                    return null;
-            }
-        });
 
-    return (
-        <div ref={ref} className={b('chunk-group')}>
-            {inView ? renderContent() : <div className={b('hidden-row')} style={{height}} />}
-        </div>
-    );
-}
+                        <MainTabContent
+                            chunk={widgetChunk}
+                            actionCreateText={i18n('action_create-chart')}
+                            title={i18n('title_charts')}
+                            actionType={CreateEntryActionType.Wizard}
+                            isShowMoreBtn={Boolean(
+                                widgetChunk?.length > 0 && mapTokens?.[EntryScope.Widget],
+                            )}
+                            loadMoreEntries={() => loadMoreEntries?.(EntryScope.Widget)}
+                            retryLoadEntries={() => retryLoadEntries?.(EntryScope.Widget)}
+                            isErrorMessage={mapErrors?.[EntryScope.Widget]}
+                            isLoading={mapLoaders?.[EntryScope.Widget]}
+                            workbook={workbook}
+                            onRenameEntry={onRenameEntry}
+                            onDeleteEntry={onDeleteEntry}
+                            onDuplicateEntry={onDuplicateEntry}
+                            onCopyEntry={onCopyEntry}
+                            createEntryBtn={
+                                <CreateEntry className={b('controls')} scope={EntryScope.Widget} />
+                            }
+                        />
 
-type RowProps = {
-    item: WorkbookEntry;
-    workbook: WorkbookWithPermissions;
-    onRenameEntry: (data: WorkbookEntry) => void;
-    onDeleteEntry: (data: WorkbookEntry) => void;
-    onDuplicateEntry: (data: WorkbookEntry) => void;
-    onCopyEntry: (data: WorkbookEntry) => void;
-};
-
-function Row({
-    item,
-    workbook,
-    onRenameEntry,
-    onDeleteEntry,
-    onDuplicateEntry,
-    onCopyEntry,
-}: RowProps) {
-    const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
-    const url = getWorkbookEntryUrl(item, workbook);
-
-    return (
-        <Link
-            to={url}
-            className={b('content-row')}
-            style={defaultRowStyle}
-            data-qa={WorkbookPage.ListItem}
-        >
-            <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
-                <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>
-                    <EntryIcon entry={item} className={b('icon')} width="24" height="24" />
-                    <div className={b('title-col-text')} title={item.name}>
-                        {item.name}
-                    </div>
-                </div>
-            </div>
-            <div className={b('content-cell')}>
-                {dateTime({
-                    input: item.updatedAt,
-                }).format(DATETIME_FORMAT)}
-            </div>
-            {workbook.permissions.update && (
-                <div className={b('content-cell')} onClick={onClickStopPropogation}>
-                    <div className={b('control-col')}>
-                        <div>
-                            <EntryActions
+                        {workbook.permissions.view && (
+                            <MainTabContent
+                                chunk={datasetChunk}
+                                actionCreateText={i18n('action_create-dataset')}
+                                title={i18n('title_datasets')}
+                                actionType={CreateEntryActionType.Dataset}
+                                isShowMoreBtn={Boolean(
+                                    datasetChunk?.length > 0 && mapTokens?.[EntryScope.Dataset],
+                                )}
+                                loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dataset)}
+                                retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dataset)}
+                                isErrorMessage={mapErrors?.[EntryScope.Dataset]}
+                                isLoading={mapLoaders?.[EntryScope.Dataset]}
                                 workbook={workbook}
-                                entry={item}
-                                onRenameClick={() => {
-                                    onRenameEntry(item);
-                                }}
-                                onDeleteClick={() => {
-                                    onDeleteEntry(item);
-                                }}
-                                onDuplicateEntry={() => {
-                                    onDuplicateEntry(item);
-                                }}
-                                onCopyEntry={() => {
-                                    onCopyEntry(item);
-                                }}
+                                onRenameEntry={onRenameEntry}
+                                onDeleteEntry={onDeleteEntry}
+                                onDuplicateEntry={onDuplicateEntry}
+                                onCopyEntry={onCopyEntry}
                             />
-                        </div>
-                    </div>
-                </div>
-            )}
-        </Link>
-    );
-}
+                        )}
 
-function EmptyRow() {
-    return (
-        <div className={b('empty-row')} style={defaultRowStyle}>
-            <div className={b('empty-cell')}>{i18n('label_no-data')}</div>
-            <div className={b('empty-cell')} />
-            <div className={b('empty-cell')} />
-        </div>
-    );
-}
+                        {workbook.permissions.view && (
+                            <MainTabContent
+                                chunk={connChunk}
+                                actionCreateText={i18n('action_create-connection')}
+                                title={i18n('title_connections')}
+                                actionType={CreateEntryActionType.Connection}
+                                isShowMoreBtn={Boolean(
+                                    connChunk?.length > 0 && mapTokens?.[EntryScope.Connection],
+                                )}
+                                loadMoreEntries={() => loadMoreEntries?.(EntryScope.Connection)}
+                                retryLoadEntries={() => retryLoadEntries?.(EntryScope.Connection)}
+                                isErrorMessage={mapErrors?.[EntryScope.Connection]}
+                                isLoading={mapLoaders?.[EntryScope.Connection]}
+                                workbook={workbook}
+                                onRenameEntry={onRenameEntry}
+                                onDeleteEntry={onDeleteEntry}
+                                onDuplicateEntry={onDuplicateEntry}
+                                onCopyEntry={onCopyEntry}
+                            />
+                        )}
+                    </>
+                )}
+            </React.Fragment>
+        );
+    },
+);
+
+WorkbookEntriesTable.displayName = 'WorkbookEntriesTable';

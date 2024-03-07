@@ -5,25 +5,29 @@ import {AppContext, AppContextParams} from '@gravity-ui/nodekit';
 
 import {registry} from '../../../../server/registry';
 import {DatalensGatewaySchemas} from '../../../../server/types/gateway';
-import {DatasetField} from '../../../types';
+import {WizardVisualizationId} from '../../../constants';
+import {DatasetField, WorkbookId} from '../../../types';
 import {GetDataSetFieldsByIdResponse} from '../../bi/types';
 import {simpleSchema} from '../../simple-schema';
-import {GetEntryResponse} from '../../us/types/entries';
+import {GetEntryResponse} from '../../us/types';
 
 export type DatasetDictResponse = {datasetId: string; data: GetEntryResponse | null};
 
 export const fetchDataset = async ({
     datasetId,
+    workbookId,
     typedApi,
     ctx,
 }: {
     datasetId: string;
+    workbookId: WorkbookId;
     typedApi: ContextApiWithRoot<{root: typeof simpleSchema}>;
     ctx: AppContext;
 }): Promise<DatasetDictResponse> => {
     try {
         const data: GetEntryResponse = await typedApi.us.getEntry({
             entryId: datasetId,
+            workbookId,
         });
 
         return {
@@ -41,8 +45,9 @@ export const prepareDatasetData = (args: {
     type: string | null;
     entryId: string;
     datasetId: string;
+    visualizationType?: WizardVisualizationId;
 }) => {
-    const {entryId, datasetId, type, items} = args;
+    const {entryId, datasetId, type, items, visualizationType} = args;
 
     const emptyValue = {entryId, type: null};
 
@@ -70,6 +75,7 @@ export const prepareDatasetData = (args: {
     return {
         entryId,
         type,
+        visualizationType,
         datasetId,
         datasetName: key.match(/[^/]*$/)?.[0] || '',
         datasetFields: result_schema.map(({title, guid, type: fieldType}) => {
@@ -111,10 +117,12 @@ export const prepareWidgetDatasetData = (args: {
 
 export const fetchDatasetFieldsById = async ({
     datasetId,
+    workbookId,
     ctx,
     headers,
 }: {
     datasetId: string;
+    workbookId: WorkbookId;
     ctx: AppContext;
     headers: IncomingHttpHeaders;
 }): Promise<DatasetFieldsDictResponse> => {
@@ -131,6 +139,7 @@ export const fetchDatasetFieldsById = async ({
             authArgs: {iamToken},
             args: {
                 dataSetId: datasetId,
+                workbookId,
             },
         });
 

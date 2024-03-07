@@ -1,4 +1,5 @@
-import {DashStats} from '../../../types';
+import {WizardVisualizationId} from '../../../constants';
+import {DashStats, WorkbookId} from '../../../types';
 import {GetEntriesEntryResponse} from '../../us/types';
 
 export type CollectDashStatsResponse = {
@@ -17,6 +18,7 @@ export type GetEntriesDatasetsFieldsListItem = {
 export type GetEntriesDatasetsFieldsItem = {
     entryId: string;
     type: GetEntriesEntryResponse['type'] | null;
+    visualizationType?: WizardVisualizationId;
     datasetId?: string;
     datasetName?: string;
     datasetFields?: GetEntriesDatasetsFieldsListItem[];
@@ -27,6 +29,7 @@ export type GetEntriesDatasetsFieldsResponse = GetEntriesDatasetsFieldsItem[];
 export type GetEntriesDatasetsFieldsArgs = {
     entriesIds: string[];
     datasetsIds: string[];
+    workbookId: WorkbookId;
 };
 
 export type GetWidgetsDatasetsFieldsItem = {
@@ -39,4 +42,5 @@ export type GetWidgetsDatasetsFieldsResponse = GetWidgetsDatasetsFieldsItem[];
 
 export type GetWidgetsDatasetsFieldsArgs = {
     entriesIds: string[];
+    workbookId: WorkbookId;
 };

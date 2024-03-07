@@ -7,6 +7,7 @@ import {
     DatasetSource,
     DatasetSourceAvatar,
     Permissions,
+    WorkbookId,
 } from '../../../../../shared';
 import type {ValidateDatasetResponse} from '../../../../../shared/schema';
 import {
@@ -80,6 +81,7 @@ export type ConnectionEntry = {
     entryId: string;
     type: string;
     permissions?: Permissions;
+    workbookId: WorkbookId;
 };
 
 export type BaseSource = {
@@ -252,7 +254,7 @@ export type DatasetReduxState = {
     isDatasetRevisionMismatch: boolean;
     id: string;
     key: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     permissions?: Permissions;
     connection: ConnectionEntry | null;
     content: Partial<Dataset['dataset']>;

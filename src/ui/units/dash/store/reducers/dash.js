@@ -74,6 +74,7 @@ export function getSelectorDialogInitialState(args = {}) {
         validation: {},
         defaults: {},
         datasetId: args.lastUsedDatasetId,
+        connectionId: args.lastUsedConnectionId,
         showTitle: true,
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
@@ -94,6 +95,10 @@ export function getSelectorDialogFromData(data, defaults) {
         autoHeight: data.autoHeight,
 
         datasetId: data.source.datasetId,
+        connectionId: data.source.connectionId,
+        connectionQueryType: data.source.connectionQueryType,
+        connectionQueryTypes: data.source.connectionQueryTypes,
+        connectionQueryContent: data.source.connectionQueryContent,
         elementType: data.source.elementType || ELEMENT_TYPE.SELECT,
         defaultValue: data.source.defaultValue,
         datasetFieldId: data.source.datasetFieldId,
@@ -108,7 +113,7 @@ export function getSelectorDialogFromData(data, defaults) {
         operation: data.source.operation,
         innerTitle: data.source.innerTitle,
         showInnerTitle: data.source.showInnerTitle,
-        id: getRandomKey(),
+        id: data.id || getRandomKey(),
         required: data.source.required,
     };
 }
@@ -137,10 +142,10 @@ export function getSelectorGroupDialogFromData(data, defaults) {
             operation: item.source.operation,
             innerTitle: item.source.innerTitle,
             showInnerTitle: item.source.showInnerTitle,
-            id: getRandomKey(),
+            id: item.id || getRandomKey(),
             required: item.source.required,
-            placementMode: item.placementMode,
-            width: item.width,
+            placementMode: item.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
+            width: item.width || '',
         }))
         .sort((a, b) => a.index - b.index);
 
@@ -150,6 +155,8 @@ export function getSelectorGroupDialogFromData(data, defaults) {
         autoHeight: data.autoHeight,
         buttonApply: data.buttonApply,
         buttonReset: data.buttonReset,
+
+        id: data.id || getRandomKey(),
 
         items,
     };
@@ -177,6 +184,7 @@ function dash(state = initialState, action) {
                 action.payload?.openedDialog === DashTabItemType.GroupControl
                     ? getSelectorDialogInitialState({
                           lastUsedDatasetId: state.lastUsedDatasetId,
+                          lastUsedConnectionId: state.lastUsedConnectionId,
                       })
                     : state.selectorDialog;
 
@@ -402,6 +410,10 @@ function dash(state = initialState, action) {
                 data.sourceType !== 'external'
             ) {
                 const selectorDialog = getSelectorDialogFromData(data, defaults);
+                selectorDialog.title =
+                    data.source.innerTitle && data.source.showInnerTitle
+                        ? `${data.title} ${data.source.innerTitle}`
+                        : data.title;
 
                 // migration forward to group
                 openedDialog = 'group_control';

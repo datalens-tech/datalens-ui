@@ -20,7 +20,6 @@ import {
     PLACE,
     SectionDatasetQA,
     Update,
-    extractEntryId,
     getResultSchemaFromDataset,
 } from 'shared';
 import {closeDialog, openDialog, openDialogParameter} from 'store/actions/dialog';
@@ -297,7 +296,7 @@ class SectionDataset extends React.Component<Props, State> {
     };
 
     openDialogFieldEditor = async (item?: Field) => {
-        const {dataset, fields} = this.props;
+        const {dataset, fields, workbookId} = this.props;
 
         const fieldEditorFields = fields.filter(
             (field) => !field.quickFormula && !field.hidden && !field.virtual,
@@ -340,6 +339,7 @@ class SectionDataset extends React.Component<Props, State> {
             const props: DialogFieldEditorProps<Field> = {
                 datasetContent: dataset.dataset,
                 datasetId: dataset.id,
+                workbookId: workbookId ?? null,
                 datasetOptions: dataset.options,
                 field,
                 fields: fieldEditorFields,
@@ -490,6 +490,7 @@ class SectionDataset extends React.Component<Props, State> {
     };
 
     onButtonDatasetTryAgainClick = () => {
+        const {extractEntryId} = registry.common.functions.getAll();
         const entryId = extractEntryId(window.location.pathname);
 
         if (entryId) {
@@ -1080,7 +1081,7 @@ class SectionDataset extends React.Component<Props, State> {
             // TODO: there are a couple of similar places, probably this good can be carried out in a separate function
             if (cast === 'date') {
                 target.format = AVAILABLE_DATE_FORMATS[2];
-            } else if (cast === 'datetime' || cast === 'genericdatetime') {
+            } else if (cast === 'genericdatetime') {
                 target.format = AVAILABLE_DATETIME_FORMATS[5];
             } else if (cast === 'datetimetz') {
                 target.format = AVAILABLE_DATETIMETZ_FORMATS[7];

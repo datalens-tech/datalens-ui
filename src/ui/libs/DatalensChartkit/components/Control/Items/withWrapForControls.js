@@ -3,6 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 import {ControlQA} from 'shared';
+import {DL} from 'ui/constants';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {CONTROL_TYPE} from '../../../modules/constants/constants';
@@ -11,7 +12,7 @@ const b = block('chartkit-control-item');
 
 function withWrapForControls(WrappedComponent) {
     function WithWrapForControls(props) {
-        const {type, width, hidden, label, labelInside, className} = props;
+        const {type, width, hidden, label, labelInside, className, style} = props;
 
         if (hidden) {
             return null;
@@ -24,10 +25,13 @@ function withWrapForControls(WrappedComponent) {
             type !== CONTROL_TYPE.CHECKBOX &&
             type !== CONTROL_TYPE.TEXTAREA;
 
+        const customStyle = style || {width};
+        const controlStyle = DL.IS_MOBILE ? {width: '100%'} : customStyle;
+
         return (
             <div
                 className={b('control', {mobile: isMobileView}, className)}
-                style={{width}}
+                style={controlStyle}
                 data-qa={ControlQA.chartkitControl}
             >
                 {showLabel && (

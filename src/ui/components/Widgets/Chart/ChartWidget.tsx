@@ -74,6 +74,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         context,
         config,
         usageType,
+        workbookId,
     } = props;
 
     const skipReload = useSelector(selectSkipReload);
@@ -120,8 +121,9 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 id: chartId,
                 config,
                 params: chartkitParams,
+                workbookId,
             }),
-        [chartId, chartkitParams, config, hasChartTabChanged],
+        [chartId, chartkitParams, config, hasChartTabChanged, workbookId],
     );
 
     const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);
@@ -395,6 +397,15 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             true,
         );
     }, [handleChange, chartkitParams]);
+
+    /**
+     * Clear action params on disable of filtration of widget
+     */
+    React.useEffect(() => {
+        if (hasEnableActionParamsChanged && !enableActionParams) {
+            handleFiltersClear();
+        }
+    }, [hasEnableActionParamsChanged, enableActionParams, handleFiltersClear]);
 
     React.useEffect(() => {
         if (loadedData?.isNewWizard && !isWizardChart) {

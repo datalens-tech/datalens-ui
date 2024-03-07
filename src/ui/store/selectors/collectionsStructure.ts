@@ -16,6 +16,9 @@ export const selectGetCollectionContent = (state: DatalensGlobalState) =>
 export const selectCollectionContentItems = (state: DatalensGlobalState) =>
     state.collectionsStructure.items;
 
+export const selectCopyTemplate = (state: DatalensGlobalState) =>
+    state.collectionsStructure.copyTemplate;
+
 export const selectCreateCollection = (state: DatalensGlobalState) =>
     state.collectionsStructure.createCollection;
 
@@ -84,6 +87,11 @@ export const selectNextPageTokens = createSelector([selectGetCollectionContent],
     collectionsNextPageToken: content.data?.collectionsNextPageToken,
     workbooksNextPageToken: content.data?.workbooksNextPageToken,
 }));
+
+export const selectCopyTemplateIsLoading = createSelector(
+    [selectCopyTemplate],
+    (copyTemplate) => copyTemplate.isLoading,
+);
 
 // Status of the collection creation request
 export const selectCreateCollectionIsLoading = createSelector(

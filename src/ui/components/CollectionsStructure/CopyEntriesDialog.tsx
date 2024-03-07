@@ -12,6 +12,7 @@ const i18n = I18n.keyset('component.collections-structure');
 
 export type Props = {
     open: boolean;
+    initialCollectionId?: string | null;
     onApply: (workbookId: string) => void;
     onClose: () => void;
 };
@@ -23,7 +24,12 @@ export type OpenDialogCopyEntriesArgs = {
     props: Props;
 };
 
-export const CopyEntriesDialog: React.FC<Props> = ({open, onApply, onClose}) => {
+export const CopyEntriesDialog: React.FC<Props> = ({
+    open,
+    initialCollectionId = null,
+    onApply,
+    onClose,
+}) => {
     const copyIsLoading = useSelector(selectCopyWorkbookIsLoading);
 
     const handleEntryCopy = React.useCallback(
@@ -39,7 +45,7 @@ export const CopyEntriesDialog: React.FC<Props> = ({open, onApply, onClose}) => 
         <CollectionStructureDialog
             open={open}
             type={ResourceType.Workbook}
-            initialCollectionId={null}
+            initialCollectionId={initialCollectionId}
             caption={i18n('label_copy')}
             textButtonApply={i18n('action_copy')}
             operationDeniedMessage={i18n('label_copy-denied-title')}

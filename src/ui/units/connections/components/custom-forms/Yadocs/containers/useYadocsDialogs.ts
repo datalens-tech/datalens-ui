@@ -4,11 +4,12 @@ import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {batch, useDispatch} from 'react-redux';
 
-import {closeDialog, openDialog} from '../../../../../../store/actions/dialog';
+import {closeDialog, openDialog, updateDialogProps} from '../../../../../../store/actions/dialog';
 import {
     api,
     handleReplacedSourceBeforePolling,
     handleUploadedYadocBeforePolling,
+    oauthLogin,
     oauthLogout,
     setYadocsActiveDialog,
     showGsheetUploadingFailureToast,
@@ -29,22 +30,29 @@ import {DIALOG_CONN_ADD_YADOC} from '../components/DialogAddDocument/DialogAddDo
 
 const i18n = I18n.keyset('connections.yadocs.view');
 
-type OpenAddDocumentDialogArgs = Omit<YadocsActiveAddDocument, 'type'>;
+type BaseDialogArgs = {
+    /** Indicates that dialog should being updated properties only */
+    update?: boolean;
+};
 
-type OpenSourcesDialogArgs = {
+type OpenAddDocumentDialogArgs = BaseDialogArgs & Omit<YadocsActiveAddDocument, 'type'>;
+
+type OpenSourcesDialogArgs = BaseDialogArgs & {
     yadoc: UploadedYadoc;
     batch?: boolean;
 };
 
-type OpenRenameSourceDialogArgs = Omit<YadocsActiveDialogRename, 'type'> & {
-    caption: string;
-    type: YadocItem['type'];
-};
+type OpenRenameSourceDialogArgs = BaseDialogArgs &
+    Omit<YadocsActiveDialogRename, 'type'> & {
+        caption: string;
+        type: YadocItem['type'];
+    };
 
-type OpenReplaceSourceDialogArgs = Omit<YadocsActiveDialogReplace, 'type'> & {
-    caption: string;
-    sourceId: string;
-};
+type OpenReplaceSourceDialogArgs = BaseDialogArgs &
+    Omit<YadocsActiveDialogReplace, 'type'> & {
+        caption: string;
+        sourceId: string;
+    };
 
 export const useYadocsDialogs = () => {
     const dispatch = useDispatch();
@@ -125,8 +133,9 @@ export const useYadocsDialogs = () => {
         (args: OpenSourcesDialogArgs) => {
             const fileId = get(args, ['yadoc', 'data', 'file_id']);
             const sourcesInfo = get(args, ['yadoc', 'data', 'sources']);
+            const action = args.update ? updateDialogProps : openDialog;
             dispatch(
-                openDialog({
+                action({
                     id: DIALOG_CONN_S3_SOURCES,
                     props: {
                         sourcesInfo,
@@ -142,9 +151,10 @@ export const useYadocsDialogs = () => {
 
     const openRenameSourceDialog = React.useCallback(
         (args: OpenRenameSourceDialogArgs) => {
-            const {type, sourceId, caption, value} = args;
+            const {type, sourceId, caption, value, update} = args;
+            const action = update ? updateDialogProps : openDialog;
             dispatch(
-                openDialog({
+                action({
                     id: DIALOG_CONN_WITH_INPUT,
                     props: {
                         caption,
@@ -161,12 +171,18 @@ export const useYadocsDialogs = () => {
 
     const openAddDocumentDialog = React.useCallback(
         (args: OpenAddDocumentDialogArgs) => {
+            const action = args.update ? updateDialogProps : openDialog;
             dispatch(
-                openDialog({
+                action({
                     id: DIALOG_CONN_ADD_YADOC,
                     props: {
+                        authorized: args.authorized,
                         onApply: (pathData) => {
-                            return api.addYandexDocument({...pathData, ...args});
+                            return api.addYandexDocument({
+                                ...pathData,
+                                ...args,
+                                oauthToken: args.oauthToken,
+                            });
                         },
                         onClose: handleCloseDialog,
                         onError: (error) => dispatch(showGsheetUploadingFailureToast(error)),
@@ -178,6 +194,7 @@ export const useYadocsDialogs = () => {
                                 });
                             }
                         },
+                        onLogin: (token) => dispatch(oauthLogin(token)),
                     },
                 }),
             );
@@ -187,11 +204,13 @@ export const useYadocsDialogs = () => {
 
     const openReplaceSourceDialog = React.useCallback(
         (args: OpenReplaceSourceDialogArgs) => {
-            const {sourceId, caption, oauthToken, authorized} = args;
+            const {sourceId, caption, oauthToken, authorized, update} = args;
+            const action = update ? updateDialogProps : openDialog;
             dispatch(
-                openDialog({
+                action({
                     id: DIALOG_CONN_ADD_YADOC,
                     props: {
+                        authorized,
                         caption,
                         onApply: (pathData) => {
                             return api.addYandexDocument({
@@ -203,6 +222,7 @@ export const useYadocsDialogs = () => {
                         onClose: handleCloseDialog,
                         onError: (error) => dispatch(showGsheetUploadingFailureToast(error)),
                         onSuccess: getSuccessReplaceDialog(sourceId),
+                        onLogin: (token) => dispatch(oauthLogin(token)),
                     },
                 }),
             );
@@ -224,7 +244,7 @@ export const useYadocsDialogs = () => {
                         caption: i18n('label_logout-dialog-title'),
                     },
                     footerProps: {
-                        textButtonApply: i18n('button_apply'),
+                        textButtonApply: i18n('button_logout'),
                         textButtonCancel: i18n('button_cancel'),
                     },
                     onApply,

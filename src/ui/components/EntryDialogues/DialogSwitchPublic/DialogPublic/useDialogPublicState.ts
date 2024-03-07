@@ -4,6 +4,7 @@ import {Toaster} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import groupBy from 'lodash/groupBy';
 import {useDispatch} from 'react-redux';
+import {isValidPublishLink} from 'shared/schema/mix/helpers/validation';
 import {showToast} from 'store/actions/toaster';
 import {DataLensApiError} from 'typings';
 import Utils from 'utils';
@@ -169,6 +170,10 @@ function getPublicationEntries(state: State) {
     return entries;
 }
 
+function isValid(state: State) {
+    return Object.entries(state.validationErrors).every(([_, value]) => value === null);
+}
+
 const getInitialState = (data: Partial<State>): State => {
     const entryAuthorData = (data.entry?.unversionedData as EntryUnversionedData)?.publicAuthor || {
         link: '',
@@ -193,6 +198,10 @@ const getInitialState = (data: Partial<State>): State => {
         entryAuthor: {
             link: entryAuthorData?.link || '',
             text: entryAuthorData?.text || '',
+        },
+        validationErrors: {
+            link: null,
+            text: null,
         },
         error: {
             title: '',
@@ -299,8 +308,21 @@ const reducer = (state: State, action: Action) => {
             const entryAuthor = {
                 ...state.entryAuthor,
             };
+            const validationErrors = {
+                ...state.validationErrors,
+            };
+
             if (action.payload.link !== undefined) {
                 entryAuthor.link = action.payload.link;
+
+                if (isValidPublishLink(entryAuthor.link)) {
+                    validationErrors.link = null;
+                } else {
+                    validationErrors.link = i18n(
+                        'component.dialog-switch-public.view',
+                        'label_author-link-error',
+                    );
+                }
             }
             if (action.payload.text !== undefined) {
                 entryAuthor.text = action.payload.text;
@@ -308,6 +330,7 @@ const reducer = (state: State, action: Action) => {
 
             return {
                 ...state,
+                validationErrors,
                 entryAuthor,
             };
         }
@@ -348,6 +371,7 @@ export const useDialogPublicState = ({
                 });
                 const relations = await getSdk().mix.getPublicationPreview({
                     entryId: entry.entryId,
+                    workbookId: entry.workbookId,
                 });
 
                 const extendedEntry: EntryDataExtended = {
@@ -450,6 +474,7 @@ export const useDialogPublicState = ({
                             },
                         },
                     },
+                    workbookId: propsEntry.workbookId,
                 })
                 .then(() => {
                     toaster.add({
@@ -506,7 +531,7 @@ export const useDialogPublicState = ({
 
     return {
         state,
-        disableBtnApply: !hasPublishChanges(state) && !hasAuthorChanges(state),
+        disableBtnApply: (!hasPublishChanges(state) && !hasAuthorChanges(state)) || !isValid(state),
         refetch,
         apply,
         dispatchAction,

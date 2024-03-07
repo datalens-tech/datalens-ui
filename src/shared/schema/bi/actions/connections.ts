@@ -1,3 +1,4 @@
+import {WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {transformConnectionResponseError} from '../helpers';
@@ -16,6 +17,8 @@ import {
     GetConnectionSourceSchemaResponse,
     GetConnectionSourcesArgs,
     GetConnectionSourcesResponse,
+    type GetConnectionTypedQueryDataArgs,
+    type GetConnectionTypedQueryDataResponse,
     GetConnectorSchemaArgs,
     GetConnectorSchemaResponse,
     GetConnectorsResponse,
@@ -28,6 +31,7 @@ import {
 } from '../types';
 
 const PATH_PREFIX = '/api/v1';
+const PATH_DATA_API_PREFIX = '/api/data/v1';
 
 export const actions = {
     ensureUploadRobot: createAction<EnsureUploadRobotResponse, EnsureUploadRobotArgs>({
@@ -52,7 +56,9 @@ export const actions = {
     getConnection: createAction<GetConnectionResponse, GetConnectionArgs>({
         method: 'GET',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}`,
-        params: (_, headers) => ({headers}),
+        params: ({workbookId}, headers) => ({
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
     }),
     createConnection: createAction<CreateConnectionResponse, CreateConnectionArgs>({
         method: 'POST',
@@ -63,7 +69,10 @@ export const actions = {
     verifyConnection: createAction<VerifyConnectionResponse, VerifyConnectionArgs>({
         method: 'POST',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/test_connection/${connectionId}`,
-        params: ({connectionId: _connectionId, ...body}, headers) => ({body, headers}),
+        params: ({connectionId: _connectionId, workbookId, ...body}, headers) => ({
+            body,
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
         transformResponseError: transformConnectionResponseError,
     }),
     verifyConnectionParams: createAction<
@@ -89,7 +98,9 @@ export const actions = {
     getConnectionSources: createAction<GetConnectionSourcesResponse, GetConnectionSourcesArgs>({
         method: 'GET',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}/info/sources`,
-        params: (_, headers) => ({headers}),
+        params: ({workbookId}, headers) => ({
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
     }),
     getConnectionSourceSchema: createAction<
         GetConnectionSourceSchemaResponse,
@@ -97,14 +108,26 @@ export const actions = {
     >({
         method: 'POST',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}/info/source/schema`,
-        params: ({connectionId: _connectionId, ...body}, headers) => ({
+        params: ({connectionId: _connectionId, workbookId, ...body}, headers) => ({
             body: {...body},
-            headers,
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
         }),
     }),
     getConnectorSchema: createAction<GetConnectorSchemaResponse, GetConnectorSchemaArgs>({
         method: 'GET',
         path: ({type, mode}) => `${PATH_PREFIX}/info/connectors/forms/${type}/${mode}`,
         params: (_, headers) => ({headers}),
+    }),
+    getConnectionTypedQueryData: createAction<
+        GetConnectionTypedQueryDataResponse,
+        GetConnectionTypedQueryDataArgs
+    >({
+        method: 'POST',
+        endpoint: 'datasetDataApiEndpoint',
+        path: ({connectionId}) => `${PATH_DATA_API_PREFIX}/connections/${connectionId}/typed_query`,
+        params: ({body, workbookId}, headers) => ({
+            body: {...body},
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
     }),
 };

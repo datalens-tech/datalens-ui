@@ -8,3 +8,16 @@ export type WorkbookEntriesFilters = {
 };
 
 export type WorkbookEntry = GetEntryResponse & {name: string};
+
+export type EntryChunkItem = {
+    type: 'entry';
+    item: WorkbookEntry;
+    key: string;
+};
+
+export type EmptyChunkItem = {
+    type: 'empty';
+    key: 'empty';
+};
+
+export type ChunkItem = EntryChunkItem | EmptyChunkItem;

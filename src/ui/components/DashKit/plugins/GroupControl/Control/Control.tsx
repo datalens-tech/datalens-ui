@@ -7,13 +7,12 @@ import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
 import {
     DATASET_FIELD_TYPES,
-    DATASET_IGNORED_DATA_TYPES,
     DashTabItemControlData,
-    DashTabItemControlDataset,
     DashTabItemControlSingle,
     DashTabItemControlSourceType,
     Feature,
     StringParams,
+    WorkbookId,
 } from 'shared';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {
@@ -33,21 +32,23 @@ import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
 import {ControlItemSelect} from '../../Control/ControlItems/ControlItemSelect';
 import {Error} from '../../Control/Error/Error';
-import {LOAD_STATUS} from '../../Control/constants';
+import {ELEMENT_TYPE, LOAD_STATUS} from '../../Control/constants';
 import {ErrorData, GetDistincts, LoadStatus, ValidationErrorData} from '../../Control/types';
 import {
+    checkDatasetFieldType,
     getDatasetSourceInfo,
-    getLabels,
+    getRequiredLabel,
     getStatus,
     isValidRequiredValue,
 } from '../../Control/utils';
-import {getControlWidth} from '../utils';
+import {cancelCurrentRequests, clearLoaderTimer, getControlWidthStyle} from '../utils';
 
 import {getInitialState, reducer} from './store/reducer';
 import {
     setErrorData,
     setLoadedData,
     setLoadingItems,
+    setSilentLoader,
     setStatus,
     setValidationError,
 } from './store/types';
@@ -56,14 +57,12 @@ import '../GroupControl.scss';
 
 const b = block('dashkit-plugin-group-control');
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
-const i18nError = I18n.keyset('dash.dashkit-control.error');
 
 type ControlProps = {
     id: string;
     data: DashTabItemControlSingle;
     actualParams: StringParams;
-    showSilentLoader: boolean;
-    onStatusChanged: (status: LoadStatus) => void;
+    onStatusChanged: (controlId: string, status: LoadStatus) => void;
     silentLoading: boolean;
     initialParams: ChartInitialParams;
     resolveMeta: (loadedData?: ResponseSuccessControls | null) => void;
@@ -71,7 +70,9 @@ type ControlProps = {
     getDistincts?: GetDistincts;
     onChange: (params: StringParams, callChangeByClick?: boolean) => void;
     onInitialParamsUpdate: (initialParams: ChartInitialParams) => void;
-    skipReload: boolean;
+    needReload: boolean;
+    cancelSource: any;
+    workbookId?: WorkbookId;
 };
 
 export const Control = ({
@@ -79,18 +80,24 @@ export const Control = ({
     data,
     actualParams,
     initialParams,
-    showSilentLoader,
     silentLoading,
     resolveMeta,
     onStatusChanged,
     defaults,
     getDistincts,
     onChange,
-    skipReload,
     onInitialParamsUpdate,
+    needReload,
+    cancelSource,
+    workbookId,
 }: ControlProps) => {
-    const [{status, loadedData, errorData, loadingItems, validationError, isInit}, dispatch] =
-        React.useReducer(reducer, getInitialState());
+    const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
+    const [
+        {status, loadedData, errorData, loadingItems, validationError, isInit, showSilentLoader},
+        dispatch,
+    ] = React.useReducer(reducer, getInitialState());
+
+    let silentLoaderTimer: NodeJS.Timeout | undefined;
 
     const setErrorState = (newErrorData: ErrorData, errorStatus: LoadStatus) => {
         const statusResponse = getStatus(errorStatus);
@@ -101,7 +108,7 @@ export const Control = ({
                     errorData: newErrorData,
                 }),
             );
-            onStatusChanged(statusResponse);
+            onStatusChanged(id, statusResponse);
         }
     };
 
@@ -121,37 +128,11 @@ export const Control = ({
         const statusResponse = getStatus(loadedStatus);
         if (statusResponse) {
             dispatch(setLoadedData({status: statusResponse, loadedData: newLoadedData}));
-            onStatusChanged(statusResponse);
+            onStatusChanged(id, statusResponse);
         }
 
         const resolveDataArg = status === LOAD_STATUS.SUCCESS ? loadedData : null;
         resolveMeta(resolveDataArg);
-    };
-
-    const checkDatasetFieldType = (
-        currentLoadedData: ResponseSuccessControls,
-        datasetData: DashTabItemControlDataset,
-    ) => {
-        const {datasetFieldType} = getDatasetSourceInfo({
-            currentLoadedData: currentLoadedData,
-            data: datasetData,
-            actualLoadedData: loadedData,
-        });
-
-        if (
-            datasetFieldType &&
-            DATASET_IGNORED_DATA_TYPES.includes(datasetFieldType as DATASET_FIELD_TYPES)
-        ) {
-            const datasetErrorData = {
-                data: {
-                    title: i18nError('label_field-error-title'),
-                    message: i18nError('label_field-error-text'),
-                },
-            };
-            setErrorState(datasetErrorData, LOAD_STATUS.FAIL);
-        } else {
-            setLoadedDataState(currentLoadedData, LOAD_STATUS.SUCCESS);
-        }
     };
 
     const init = async () => {
@@ -167,10 +148,12 @@ export const Control = ({
                         },
                     },
                     params: actualParams,
+                    ...(workbookId ? {workbookId} : {}),
                 },
             };
 
             dispatch(setStatus({status: LOAD_STATUS.PENDING}));
+            onStatusChanged(id, LOAD_STATUS.PENDING);
 
             const response = await chartsDataProvider.makeRequest(payload);
 
@@ -185,7 +168,13 @@ export const Control = ({
                 : newLoadedData.uiScheme;
 
             if (data.sourceType === DashTabItemControlSourceType.Dataset) {
-                checkDatasetFieldType(newLoadedData, data);
+                checkDatasetFieldType({
+                    currentLoadedData: newLoadedData,
+                    datasetData: data,
+                    actualLoadedData: loadedData,
+                    onSucces: setLoadedDataState,
+                    onError: setErrorState,
+                });
             } else {
                 setLoadedDataState(newLoadedData, LOAD_STATUS.SUCCESS);
             }
@@ -207,6 +196,40 @@ export const Control = ({
             setErrorState(errorData, LOAD_STATUS.FAIL);
         }
     };
+
+    const reload = () => {
+        if (!isInit) {
+            return;
+        }
+
+        clearLoaderTimer(silentLoaderTimer);
+
+        if (data.source.elementType !== ELEMENT_TYPE.SELECT) {
+            silentLoaderTimer = setTimeout(() => {
+                dispatch(setSilentLoader({silentLoading}));
+            }, 800);
+        }
+
+        init();
+    };
+
+    React.useEffect(() => {
+        return () => {
+            clearLoaderTimer(silentLoaderTimer);
+            cancelCurrentRequests(cancelSource);
+        };
+    }, []);
+
+    if (status !== LOAD_STATUS.PENDING && silentLoaderTimer) {
+        clearLoaderTimer(silentLoaderTimer);
+    }
+
+    if (prevNeedReload !== needReload) {
+        setPrevNeedReload(needReload);
+        if (needReload) {
+            reload();
+        }
+    }
 
     if (!isInit && status === LOAD_STATUS.INITIAL) {
         init();
@@ -258,23 +281,11 @@ export const Control = ({
         }
     };
 
-    const reload = () => {
-        if (skipReload || !isInit) {
-            return;
-        }
-
-        dispatch(setStatus({status: LOAD_STATUS.PENDING}));
-        init();
-    };
-
     const renderControl = () => {
-        if (!loadedData || !loadedData?.uiScheme) {
+        if (!loadedData || !loadedData?.uiScheme || !('controls' in loadedData.uiScheme)) {
             return null;
         }
-        const uiScheme = loadedData.uiScheme;
-        const control = (
-            'controls' in uiScheme ? uiScheme.controls[0] : uiScheme[0]
-        ) as ActiveControl;
+        const control = loadedData.uiScheme.controls[0] as ActiveControl;
 
         if (!control) {
             return null;
@@ -283,8 +294,8 @@ export const Control = ({
         const {param, type} = control;
         const controlData = data as unknown as DashTabItemControlSingle;
 
-        const {source, placementMode, width} = controlData;
-        const {required, operation} = source;
+        const {source, placementMode, width, title} = controlData;
+        const {required, operation, showTitle} = source;
 
         const preparedValue = unwrapFromArrayAndSkipOperation(actualParams[param]);
 
@@ -312,21 +323,20 @@ export const Control = ({
             onChangeParams({value: valueWithOperation, param});
         };
 
-        const {label, innerLabel} = getLabels({controlData});
-        const controlWidth = getControlWidth(placementMode, width);
+        const innerLabel = showTitle ? getRequiredLabel({title, required}) : '';
+        const style = getControlWidthStyle(placementMode, width);
 
         const props: Record<string, unknown> = {
-            ...control,
+            param,
+            type: control.type,
             widgetId: id,
             className: b('item'),
-            key: param,
             value: preparedValue,
             onChange: onChangeControl,
             innerLabel,
-            label,
             required,
             hasValidationError: Boolean(currentValidationError),
-            width: controlWidth,
+            style,
         };
 
         if (type === 'range-datepicker' || type === 'datepicker') {
@@ -338,10 +348,8 @@ export const Control = ({
                 });
                 fieldType = datasetFieldType;
             }
-            if (
-                fieldType === DATASET_FIELD_TYPES.DATETIME ||
-                fieldType === DATASET_FIELD_TYPES.GENERICDATETIME
-            ) {
+            // Check 'datetime' for backward compatibility
+            if (fieldType === 'datetime' || fieldType === DATASET_FIELD_TYPES.GENERICDATETIME) {
                 props.timeFormat = 'HH:mm:ss';
             }
         }
@@ -372,7 +380,7 @@ export const Control = ({
                         validateValue={validateValue}
                         getDistincts={getDistincts}
                         classMixin={b('item')}
-                        width={controlWidth}
+                        selectProps={{innerLabel, style}}
                     />
                 );
             case CONTROL_TYPE.INPUT:
@@ -382,7 +390,7 @@ export const Control = ({
             case CONTROL_TYPE.RANGE_DATEPICKER:
                 return <ControlRangeDatepicker returnInterval={true} {...props} />;
             case CONTROL_TYPE.CHECKBOX:
-                return <ControlCheckbox {...props} />;
+                return <ControlCheckbox {...props} label={innerLabel} />;
         }
 
         return null;
@@ -400,22 +408,26 @@ export const Control = ({
         return null;
     };
 
-    const {placementMode, width} = data as unknown as DashTabItemControlData;
-    const controlWidth = getControlWidth(placementMode, width);
+    const handleClickRetry = () => {
+        reload();
+    };
 
     switch (status) {
         case LOAD_STATUS.INITIAL:
         case LOAD_STATUS.PENDING:
-            if (!silentLoading || !loadedData || !loadedData.uiScheme) {
+            if (!loadedData || !loadedData.uiScheme) {
+                const {placementMode, width} = data as unknown as DashTabItemControlData;
+                const style = getControlWidthStyle(placementMode, width);
+
                 return (
-                    <div className={b('item-loader')} style={{width: controlWidth}}>
+                    <div className={b('item-loader')} style={style}>
                         <Loader size="s" />
                     </div>
                 );
             }
             break;
         case LOAD_STATUS.FAIL: {
-            return <Error errorData={errorData} onClickRetry={() => reload()} />;
+            return <Error errorData={errorData} onClickRetry={handleClickRetry} />;
         }
     }
 

@@ -47,8 +47,10 @@ describe('preparePie', () => {
         }));
 
         expect(items).toEqual([
-            {color: 'rgb(208, 163, 255)', colorValue: '2'},
-            {color: 'rgb(107, 50, 201)', colorValue: '1'},
+            {
+                color: 'rgb(157, 106, 228)',
+                colorValue: 2,
+            },
         ]);
     });
 

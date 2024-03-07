@@ -2,6 +2,7 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
+import type {WorkbookId} from 'shared';
 
 import DialogManager from '../../components/DialogManager/DialogManager';
 import {selectIsLoadingMigrateEntriesToWorkbook} from '../../store/selectors/migrationToWorkbook';
@@ -29,7 +30,7 @@ export const MigrateEntryToWorkbookDialog: React.FC<Props> = ({open, onApply, on
             targetWorkbookId,
         }: {
             targetCollectionId: string | null;
-            targetWorkbookId: string | null;
+            targetWorkbookId: WorkbookId;
             targetTitle?: string;
         }) => {
             if (targetWorkbookId) {

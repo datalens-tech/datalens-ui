@@ -12,7 +12,6 @@ import pick from 'lodash/pick';
 import {connect} from 'react-redux';
 import {
     DATASET_FIELD_TYPES,
-    DATASET_IGNORED_DATA_TYPES,
     DashTabItemControlDataset,
     DashTabItemControlExternal,
     DashTabItemControlManual,
@@ -20,6 +19,7 @@ import {
     DashTabItemControlSourceType,
     Feature,
     StringParams,
+    WorkbookId,
 } from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -64,13 +64,27 @@ import {
     PluginControlState,
     ValidationErrorData,
 } from './types';
-import {getDatasetSourceInfo, getLabels, getStatus, isValidRequiredValue} from './utils';
+import {
+    checkDatasetFieldType,
+    getDatasetSourceInfo,
+    getLabels,
+    getStatus,
+    isValidRequiredValue,
+} from './utils';
 
 import './Control.scss';
 
+type ContextProps = {
+    workbookId?: WorkbookId;
+};
+
 type StateProps = ReturnType<typeof mapStateToProps>;
 
-export interface PluginControlProps extends PluginWidgetProps, ControlSettings, StateProps {}
+export interface PluginControlProps
+    extends PluginWidgetProps,
+        ContextProps,
+        ControlSettings,
+        StateProps {}
 
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
@@ -79,7 +93,6 @@ export interface PluginControl extends Plugin<PluginControlProps> {
 
 const b = block('dashkit-plugin-control');
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
-const i18nError = I18n.keyset('dash.dashkit-control.error');
 
 const CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
@@ -288,6 +301,18 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         });
     }
 
+    filterDefaultsBySource() {
+        const sourcedFieldId =
+            this.props.data?.sourceType === 'dataset'
+                ? (this.props.data?.source as {datasetFieldId: string})?.datasetFieldId
+                : null;
+        if (sourcedFieldId && this.props.defaults) {
+            return {[sourcedFieldId]: this.props.defaults[sourcedFieldId]};
+        }
+
+        return this.props.defaults;
+    }
+
     getCurrentWidgetResolvedMetaInfo(
         data: ResponseSuccessControls | AxiosResponse<ResponseError> | null,
     ) {
@@ -312,7 +337,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             title: this.props.data?.title || '',
             label: firstControlWithLabel?.label || '',
             params: this.props.params,
-            defaultParams: this.props.defaults,
+            defaultParams: this.filterDefaultsBySource(),
             loaded: Boolean(loadedData),
             entryId: this.chartKitRef?.current?.props.id || null, // to do built in widget ?
             usedParams: loadedData?.usedParams
@@ -354,7 +379,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
     }
 
-    setLoadedData(loadedData: ResponseSuccessControls, status: LoadStatus) {
+    setLoadedData = (loadedData: ResponseSuccessControls, status: LoadStatus) => {
         const isNewRelations =
             Utils.isEnabledFeature(Feature.ShowNewRelations) && this.props.isNewRelations;
 
@@ -390,7 +415,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             const resolveDataArg = status === LOAD_STATUS.SUCCESS ? loadedData : null;
             this.resolveMeta(resolveDataArg);
         }
-    }
+    };
 
     init = async () => {
         try {
@@ -398,6 +423,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 | DashTabItemControlDataset
                 | DashTabItemControlManual
                 | DashTabItemControlExternal;
+
+            const {workbookId} = this.props;
 
             const payload = {
                 data: {
@@ -410,6 +437,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         },
                     },
                     params: this.actualParams,
+                    ...(workbookId ? {workbookId} : {}),
                 },
             };
 
@@ -430,7 +458,13 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 : loadedData.uiScheme;
 
             if (data.sourceType === DashTabItemControlSourceType.Dataset) {
-                this.checkDatasetFieldType(loadedData, data);
+                checkDatasetFieldType({
+                    currentLoadedData: loadedData,
+                    datasetData: data,
+                    actualLoadedData: this.state.loadedData,
+                    onError: this.setErrorData,
+                    onSucces: this.setLoadedData,
+                });
             } else {
                 this.setLoadedData(loadedData, LOAD_STATUS.SUCCESS);
             }
@@ -464,7 +498,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     };
 
     onChange = ({param, value}: {param: string; value: string | string[]}) => {
-        this.props.onStateAndParamsChange({params: {[param]: value}});
+        this.props.onStateAndParamsChange({params: {[param]: value}}, {action: 'setParams'});
     };
 
     onChangeExternal = ({type, data}: OnChangeData) => {
@@ -508,6 +542,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const {id, defaults, getDistincts} = this.props;
         const {loadedData, status, loadingItems, errorData, validationError} = this.state;
 
+        const {label, innerLabel} = getLabels(data);
+
         return (
             <ControlItemSelect
                 id={id}
@@ -524,6 +560,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 errorData={errorData}
                 validateValue={this.validateValue}
                 getDistincts={getDistincts}
+                classMixin={b('item')}
+                selectProps={{label, innerLabel}}
             />
         );
     }
@@ -592,7 +630,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 this.onChange({param, value: valueWithOperation});
             };
 
-            const {label, innerLabel} = getLabels({controlData: data});
+            const {label, innerLabel} = getLabels(data);
 
             const props = {
                 ...control,
@@ -616,10 +654,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     });
                     fieldType = datasetFieldType;
                 }
-                if (
-                    fieldType === DATASET_FIELD_TYPES.DATETIME ||
-                    fieldType === DATASET_FIELD_TYPES.GENERICDATETIME
-                ) {
+                // Check 'datetime' for backward compatibility
+                if (fieldType === 'datetime' || fieldType === DATASET_FIELD_TYPES.GENERICDATETIME) {
                     props.timeFormat = 'HH:mm:ss';
                 }
             }
@@ -647,7 +683,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     render() {
-        const {data, editMode, id} = this.props;
+        const {data, editMode, id, workbookId} = this.props;
         const controlData = data as unknown as
             | DashTabItemControlExternal
             | DashTabItemControlManual
@@ -688,6 +724,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         widgetType={sourceType}
                         editMode={editMode}
                         forwardedRef={this.chartKitRef as any}
+                        workbookId={workbookId}
                     />
                 </div>
             );
@@ -709,33 +746,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         );
     }
 
-    private checkDatasetFieldType(
-        loadedData: ResponseSuccessControls,
-        data: DashTabItemControlDataset,
-    ) {
-        const {datasetFieldType} = getDatasetSourceInfo({
-            currentLoadedData: loadedData,
-            data,
-            actualLoadedData: this.state.loadedData,
-        });
-
-        if (
-            datasetFieldType &&
-            DATASET_IGNORED_DATA_TYPES.includes(datasetFieldType as DATASET_FIELD_TYPES)
-        ) {
-            const errorData = {
-                data: {
-                    title: i18nError('label_field-error-title'),
-                    message: i18nError('label_field-error-text'),
-                },
-            };
-            this.setErrorData(errorData, LOAD_STATUS.FAIL);
-        } else {
-            this.setLoadedData(loadedData, LOAD_STATUS.SUCCESS);
-        }
-    }
-
-    private setErrorData(errorData: ErrorData, status: LoadStatus) {
+    private setErrorData = (errorData: ErrorData, status: LoadStatus) => {
         if (this._isUnmounted) {
             return;
         }
@@ -750,7 +761,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 loadingItems: false,
             });
         }
-    }
+    };
 
     private setValidationError(hasError?: boolean) {
         if (hasError) {
@@ -808,8 +819,15 @@ const plugin: PluginControl = {
     },
     prerenderMiddleware,
     renderer(props: PluginWidgetProps, forwardedRef) {
+        const workbookId = props.context.workbookId;
+
         return (
-            <ControlWithStore {...props} getDistincts={plugin.getDistincts} ref={forwardedRef} />
+            <ControlWithStore
+                {...props}
+                workbookId={workbookId}
+                getDistincts={plugin.getDistincts}
+                ref={forwardedRef}
+            />
         );
     },
 };

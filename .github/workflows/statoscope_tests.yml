@@ -1,0 +1,55 @@
+name: Statoscope diff analyze
+
+on:
+  pull_request:
+    branches-ignore:
+      - 'weblate-**'      
+
+jobs:
+  statoscope: 
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install deps
+        run: npm ci
+      - name: Build
+        run: npm run build:analyze && cp ./dist/public/build/stats.json ./input.json
+      - name: Download reference stats
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: statoscope_upload_main_stats.yml
+          workflow_conclusion: success
+          name: main-stats
+          path: ./
+        continue-on-error: true
+      - name: Validate
+        run: npm run statoscope:validate-diff
+      - name: Query stats
+        if: "github.event_name == 'pull_request'"
+        run: cat ./scripts/ci/statoscope-comment.jora | npx --no-install @statoscope/cli query --input input.json --input reference.json > result.json
+      - name: Upload UI report to S3
+        if: "github.event_name == 'pull_request'"
+        id: upload-to-s3
+        run: |
+          aws --endpoint-url=${AWS_ENDPOINT} \
+              s3 cp report/statoscope/index.html s3://${AWS_BUCKET}/${{ github.ref }}/; \
+              echo ::set-output name=DOWNLOAD_LINK::$(aws --endpoint-url=${AWS_ENDPOINT} s3 presign s3://${AWS_BUCKET}/${{ github.ref }}/index.html)
+        env:
+          AWS_BUCKET: datalens-public-actions-reports
+          AWS_ENDPOINT: https://storage.yandexcloud.net
+          AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ru-central1
+      - name: Comment PR
+        if: "github.event_name == 'pull_request'"
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const createStatoscopeComment = require('./scripts/ci/createStatoscopeComment');
+            const downloadLink = "${{ steps.upload-to-s3.outputs.DOWNLOAD_LINK }}";
+            await createStatoscopeComment({github, context, core, downloadLink})

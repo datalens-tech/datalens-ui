@@ -64,7 +64,8 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
     return (
         widgetType === DASH_WIDGET_TYPES.TABLE ||
         widgetType === DASH_WIDGET_TYPES.MARKDOWN ||
-        widgetType === DASH_WIDGET_TYPES.METRIC
+        widgetType === DASH_WIDGET_TYPES.METRIC ||
+        widgetType === DASH_WIDGET_TYPES.MARKUP
     );
 };
 
@@ -80,6 +81,7 @@ const isEntryTypeWithFiltering = (entryType?: WidgetType) => {
     if (wizardFilteringAvailable) {
         widgetTypesWithFilteringAvailable.push(
             WizardType.GraphWizardNode,
+            WizardType.D3WizardNode,
             WizardType.TableWizardNode,
         );
     }

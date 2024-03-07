@@ -23,7 +23,7 @@ import {
     QLChartType,
     QlConfigPreviewTableData,
     Shared,
-    extractEntryId,
+    WorkbookId,
     resolveIntervalDate,
     resolveOperation,
 } from '../../../../../shared';
@@ -538,14 +538,16 @@ type InitializeApplicationArgs = {
 
 type FetchConnectionSourcesArgs = {
     entryId: string;
+    workbookId: WorkbookId;
 };
 
-export const fetchConnectionSources = ({entryId}: FetchConnectionSourcesArgs) => {
+export const fetchConnectionSources = ({entryId, workbookId}: FetchConnectionSourcesArgs) => {
     return async function (dispatch: AppDispatch<QLAction>) {
         // Requesting information about connection sources
         const {sources: connectionSources, freeform_sources: connectionFreeformSources} =
             await getSdk().bi.getConnectionSources({
                 connectionId: entryId,
+                workbookId,
             });
 
         if (!connectionSources) {
@@ -603,6 +605,7 @@ export const fetchConnectionSourceSchema = ({tableName}: FetchConnectionSourceSc
 
             const {raw_schema: schema} = await getSdk().bi.getConnectionSourceSchema({
                 connectionId: connection!.entryId,
+                workbookId: connection!.workbookId ?? null,
                 source: {...targetConnectionSource, id: 'sample'},
             });
 
@@ -645,6 +648,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
             }),
         );
 
+        const {extractEntryId} = registry.common.functions.getAll();
         const urlEntryId = extractEntryId(location.pathname || '');
 
         if (urlEntryId) {
@@ -718,7 +722,10 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                         if (chartType === QLChartType.Sql) {
                             dispatch(
-                                fetchConnectionSources({entryId: loadedConnectionEntry.entryId}),
+                                fetchConnectionSources({
+                                    entryId: loadedConnectionEntry.entryId,
+                                    workbookId: loadedConnectionEntry.workbookId,
+                                }),
                             );
                         }
                     }
@@ -1051,7 +1058,10 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                         if (newChartType === QLChartType.Sql) {
                             dispatch(
-                                fetchConnectionSources({entryId: loadedConnectionEntry.entryId}),
+                                fetchConnectionSources({
+                                    entryId: loadedConnectionEntry.entryId,
+                                    workbookId: loadedConnectionEntry.workbookId,
+                                }),
                             );
                         }
 
@@ -1096,7 +1106,12 @@ export const performManualConfiguration = ({
 }: PerformManualConfigurationArgs) => {
     // eslint-disable-next-line consistent-return
     return async function (dispatch: AppDispatch<QLAction>) {
-        dispatch(fetchConnectionSources({entryId: connection.entryId}));
+        dispatch(
+            fetchConnectionSources({
+                entryId: connection.entryId,
+                workbookId: connection.workbookId,
+            }),
+        );
 
         const keyParts = connection.key.split('/');
         connection.name = keyParts[keyParts.length - 1];

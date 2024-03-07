@@ -11,3 +11,8 @@ export const getIsGridContainsPreview = createSelector([getGrid, getPanes], (gri
     }
     return grid.panes.some((paneId) => panes.byId[paneId].view === PANE_VIEWS.PREVIEW);
 });
+
+const getEntry = (state: DatalensGlobalState) => state.editor.entry;
+export const getWorkbookId = createSelector([getEntry], (entry) => {
+    return entry?.workbookId ?? null;
+});

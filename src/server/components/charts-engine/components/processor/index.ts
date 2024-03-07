@@ -11,6 +11,7 @@ import {
     EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
     Feature,
+    WorkbookId,
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {config as configConstants} from '../../constants';
@@ -127,6 +128,7 @@ export type ProcessorParams = {
     configResolving: number;
     ctx: AppContext;
     cacheToken: string | string[] | null;
+    workbookId?: WorkbookId;
 };
 
 export class Processor {
@@ -148,6 +150,7 @@ export class Processor {
         isEditMode,
         configResolving,
         ctx,
+        workbookId,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -295,6 +298,7 @@ export class Processor {
                         key: configName,
                         headers: {...subrequestHeaders},
                         requestId: req.id,
+                        workbookId,
                     }));
             } catch (e) {
                 return {
@@ -355,6 +359,7 @@ export class Processor {
                     subrequestHeaders,
                     req,
                     ctx,
+                    workbookId,
                 });
             } catch (error) {
                 ctx.logError('DEPS_RESOLVE_ERROR', error);
@@ -559,8 +564,6 @@ export class Processor {
                     sources = filteredSources;
                 }
 
-                const xChartsHeaders = {};
-
                 if (configOverride?.entryId || configId) {
                     let dlContext: Record<string, string> = {};
                     if (subrequestHeaders[DL_CONTEXT_HEADER]) {
@@ -586,11 +589,9 @@ export class Processor {
                     sources,
                     req,
                     iamToken,
-                    subrequestHeaders: {
-                        ...subrequestHeaders,
-                        ...xChartsHeaders,
-                    },
+                    subrequestHeaders,
                     userId,
+                    workbookId,
                 });
 
                 if (Object.keys(resolvedSources).length) {
@@ -1097,12 +1098,14 @@ export class Processor {
         subrequestHeaders,
         req,
         ctx,
+        workbookId,
     }: {
         chartsEngine: ChartsEngine;
         subrequestHeaders: Record<string, string>;
         config: {data: Record<string, string>; key: string};
         req: Request;
         ctx: AppContext;
+        workbookId?: WorkbookId;
     }): Promise<ResolvedConfig[]> {
         const code = Object.keys(config.data).reduce((acc, tabName) => {
             return `${acc}\n${config.data[tabName]}`;
@@ -1134,6 +1137,7 @@ export class Processor {
                     headers: {...subrequestHeaders},
                     key: path,
                     requestId: req.id,
+                    workbookId, // for the future, when we will resolve deps by entryId
                 })) as unknown as ResolvedConfig;
 
                 resolvedConfig.key = name;

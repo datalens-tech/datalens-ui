@@ -15,6 +15,8 @@ const plugin = {
         props: WidgetPluginProps,
         forwardedRef: React.RefObject<ChartsChartKit>,
     ) {
+        const workbookId = props.context.workbookId;
+
         return (
             <RendererWrapper type="widget">
                 <ChartWrapper
@@ -22,6 +24,7 @@ const plugin = {
                     usageType="widget"
                     forwardedRef={forwardedRef as any}
                     getMarkdown={MarkdownProvider.getMarkdown}
+                    workbookId={workbookId}
                 />
             </RendererWrapper>
         );

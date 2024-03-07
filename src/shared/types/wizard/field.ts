@@ -68,11 +68,6 @@ export interface DateField extends WizardDatasetField {
     format: string;
 }
 
-export interface DatetimeField extends WizardDatasetField {
-    data_type: DATASET_FIELD_TYPES.DATETIME;
-    format: string;
-}
-
 export interface GenericDatetimeField extends WizardDatasetField {
     data_type: DATASET_FIELD_TYPES.GENERICDATETIME;
     format: string;
@@ -97,7 +92,6 @@ export type Field =
     | IntegerField
     | FloatField
     | DateField
-    | DatetimeField
     | GenericDatetimeField
     | WizardDatasetField;
 
@@ -137,7 +131,7 @@ export function isUnsupportedField(field?: {data_type: string}): field is Unsupp
 export function isDateType(dataType: string) {
     return Boolean(
         dataType === DATASET_FIELD_TYPES.DATE ||
-            dataType === DATASET_FIELD_TYPES.DATETIME ||
+            dataType === 'datetime' ||
             dataType === DATASET_FIELD_TYPES.GENERICDATETIME ||
             dataType === DATASET_FIELD_TYPES.DATETIMETZ,
     );
@@ -145,7 +139,7 @@ export function isDateType(dataType: string) {
 
 export function isDateField(field?: {
     data_type: string;
-}): field is DateField | DatetimeField | GenericDatetimeField {
+}): field is DateField | GenericDatetimeField {
     return Boolean(field && isDateType(field?.data_type));
 }
 

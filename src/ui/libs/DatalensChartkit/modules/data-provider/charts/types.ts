@@ -10,6 +10,7 @@ import type {
     DatasetFieldType,
     EntryPublicAuthor,
     StringParams,
+    WorkbookId,
 } from 'shared';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 
@@ -111,7 +112,7 @@ interface ConfigNodeMarkdown extends ConfigNodeBase {
 }
 
 interface ConfigNodeMarkup extends ConfigNodeBase {
-    type: 'markup_node' | 'markup_wizard_node';
+    type: 'markup_node' | 'markup_wizard_node' | 'markup_ql_node';
     data: {[key in 'js' | 'params' | 'url' | 'shared' | 'config']: string};
 }
 
@@ -169,6 +170,7 @@ export interface ChartsProps {
         };
     };
     ignoreUsedParams?: boolean;
+    workbookId?: WorkbookId;
 }
 
 export interface ChartsData {

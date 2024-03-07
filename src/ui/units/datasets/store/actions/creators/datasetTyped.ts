@@ -12,6 +12,7 @@ import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {TOASTERS_NAMES} from '../../../../../units/datasets/constants';
 import {getFilteredObject} from '../../../../../utils';
+import {workbookIdSelector} from '../../selectors';
 import type {
     BaseSource,
     ConnectionEntry,
@@ -529,9 +530,12 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
 
             returnUpdates = updates;
 
+            const workbookId = workbookIdSelector(getState());
+
             const validation = await getSdk().bi.validateDataset(
                 {
                     datasetId,
+                    workbookId,
                     version: 'draft',
                     dataset: prevContent,
                     updates: prepareUpdates(updates),

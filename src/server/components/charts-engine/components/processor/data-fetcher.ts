@@ -13,6 +13,8 @@ import {
     DL_EMBED_TOKEN_HEADER,
     Feature,
     SuperuserHeader,
+    WORKBOOK_ID_HEADER,
+    WorkbookId,
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
@@ -65,6 +67,7 @@ type DataFetcherOptions = {
     subrequestHeaders: Record<string, string>;
     userId?: string | null;
     iamToken?: string | null;
+    workbookId?: WorkbookId;
 };
 
 type DataFetcherRequestOptions = {
@@ -144,6 +147,7 @@ export class DataFetcher {
         subrequestHeaders,
         userId,
         iamToken,
+        workbookId,
     }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
         const fetchingTimeout = chartsEngine.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
 
@@ -181,6 +185,7 @@ export class DataFetcher {
                               rejectFetchingSource: reject,
                               userId,
                               iamToken,
+                              workbookId,
                           })
                         : {
                               sourceId: sourceName,
@@ -393,6 +398,7 @@ export class DataFetcher {
         rejectFetchingSource,
         userId,
         iamToken,
+        workbookId,
     }: {
         sourceName: string;
         source: Source;
@@ -404,6 +410,7 @@ export class DataFetcher {
         rejectFetchingSource: () => void;
         userId?: string | null;
         iamToken?: string | null;
+        workbookId?: WorkbookId;
     }) {
         const ctx = req.ctx;
         const singleFetchingTimeout =
@@ -624,29 +631,24 @@ export class DataFetcher {
             headers.referer = req.ctx.utils.redactSensitiveQueryParams(req.headers.referer);
         }
 
-        if (subrequestHeaders['x-chart-id']) {
-            headers['x-chart-id'] = subrequestHeaders['x-chart-id'];
+        const proxyHeaders = ctx.config.chartsEngineConfig.dataFetcherProxiedHeaders || [
+            // fallback will be removed soon
+            SuperuserHeader.XDlAllowSuperuser,
+            SuperuserHeader.XDlSudo,
+            DL_CONTEXT_HEADER,
+            'x-dl-debug-mode',
+            DL_EMBED_TOKEN_HEADER,
+        ];
+        if (Array.isArray(proxyHeaders)) {
+            proxyHeaders.forEach((headerName) => {
+                if (subrequestHeaders[headerName]) {
+                    headers[headerName] = subrequestHeaders[headerName];
+                }
+            });
         }
 
-        if (subrequestHeaders[SuperuserHeader.XDlAllowSuperuser]) {
-            headers[SuperuserHeader.XDlAllowSuperuser] =
-                subrequestHeaders[SuperuserHeader.XDlAllowSuperuser];
-        }
-
-        if (subrequestHeaders[SuperuserHeader.XDlSudo]) {
-            headers[SuperuserHeader.XDlSudo] = subrequestHeaders[SuperuserHeader.XDlSudo];
-        }
-
-        if (subrequestHeaders[DL_CONTEXT_HEADER]) {
-            headers[DL_CONTEXT_HEADER] = subrequestHeaders[DL_CONTEXT_HEADER];
-        }
-
-        if (subrequestHeaders['x-dl-debug-mode']) {
-            headers['x-dl-debug-mode'] = subrequestHeaders['x-dl-debug-mode'];
-        }
-
-        if (subrequestHeaders[DL_EMBED_TOKEN_HEADER]) {
-            headers[DL_EMBED_TOKEN_HEADER] = subrequestHeaders[DL_EMBED_TOKEN_HEADER];
+        if (workbookId) {
+            headers[WORKBOOK_ID_HEADER] = workbookId;
         }
 
         if (passedCredentials) {
@@ -729,6 +731,7 @@ export class DataFetcher {
                     sourceName,
                     req,
                     iamToken: iamToken ?? undefined,
+                    workbookId,
                     ChartsEngine: chartsEngine,
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,
