@@ -9,6 +9,8 @@ jobs:
   statoscope: 
     runs-on: ubuntu-latest
     permissions:
+      contents: write
+      pages: write
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
