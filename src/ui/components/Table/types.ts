@@ -48,5 +48,8 @@ export type TableProps = {
         pageSize?: number;
         onChange?: OnPaginationChange;
     };
+    header?: {
+        sticky?: boolean;
+    };
     onClick?: OnTableClick;
 };

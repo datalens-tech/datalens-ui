@@ -25,7 +25,6 @@ const b = block('chartkit-table-widget');
 
 // TODO: grouping
 // TODO: tree
-// TODO: sticky header
 // TODO: chart-chart
 // TODO: export
 // TODO: rendering time
@@ -129,6 +128,9 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                     }}
                     noData={{text: i18n('chartkit-table', 'message-no-data')}}
                     onClick={handleTableClick}
+                    header={{
+                        sticky: true,
+                    }}
                 />
             </div>
         );

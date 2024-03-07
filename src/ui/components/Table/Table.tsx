@@ -54,7 +54,7 @@ function getTableData(args: TableProps['data']) {
 }
 
 export const Table = (props: TableProps) => {
-    const {title, pagination, noData, onClick} = props;
+    const {title, pagination, noData, onClick, header: headerOptions} = props;
     const isPaginationEnabled = Boolean(pagination?.enabled && pagination.pageSize);
     const paginationState = {
         pageIndex: get(pagination, 'pageIndex', 0),
@@ -97,7 +97,7 @@ export const Table = (props: TableProps) => {
         <div className={b()}>
             {title && <div className={b('title')}>{title.text}</div>}
             <table className={b('table')}>
-                <thead className={b('header')}>
+                <thead className={b('header', {sticky: headerOptions?.sticky})}>
                     {table.getHeaderGroups().map((headerGroup) => {
                         if (!headerGroup.headers.length) {
                             return null;

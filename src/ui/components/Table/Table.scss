@@ -12,7 +12,8 @@
         width: max-content;
     }
 
-    &__th, &__td {
+    &__th,
+    &__td {
         border: 1px solid var(--data-table-border-color);
         font-size: 10pt;
 
@@ -30,6 +31,25 @@
         &_fixed-size {
             white-space: normal;
             word-break: break-word;
+        }
+    }
+
+    &__header {
+        &_sticky {
+            top: 0;
+            position: sticky;
+            background: var(--g-color-base-background);
+
+            &:before {
+                content: '';
+                display: inline-block;
+                width: calc(100% + 1px);
+                height: 100%;
+                border: 1px solid var(--data-table-border-color);
+                position: absolute;
+                top: 0;
+                left: -1px;
+            }
         }
     }
 
