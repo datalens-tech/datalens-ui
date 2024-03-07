@@ -46,7 +46,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ru-central1
       - name: Comment PR
-        if: "github.event_name == 'pull_request'"
+        if: "github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository"
         uses: actions/github-script@v5
         with:
           script: |
