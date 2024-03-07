@@ -3,7 +3,6 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 
-import {SectionWrapper} from '../../../../../../../../components/SectionWrapper/SectionWrapper';
 import {selectWorkbookId} from '../../../../../../../workbooks/store/selectors';
 import {selectSelectorDialog} from '../../../../../../store/selectors/dashTypedSelectors';
 import {ELEMENT_TYPE} from '../../../../Control/constants';
@@ -59,7 +58,7 @@ export const ConnectionSettings: React.FC = () => {
     }, [connectionId, connectionQueryContent, connectionQueryType, fetcher]);
 
     return (
-        <SectionWrapper title={i18n('label_common-settings')}>
+        <React.Fragment>
             <ConnectionSelector />
             {connectionQueryTypes?.length && connectionQueryTypes.length > 0 && (
                 <React.Fragment>
@@ -72,6 +71,6 @@ export const ConnectionSettings: React.FC = () => {
                     <ValueSelector controlProps={controlProps} />
                 </React.Fragment>
             )}
-        </SectionWrapper>
+        </React.Fragment>
     );
 };

@@ -1,0 +1,16 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.selector-params-section {
+    &__params-title {
+        @include text-subheader-2();
+        font-weight: 500;
+    }
+
+    &__params {
+        margin-top: 12px;
+    }
+
+    &__params-tag {
+        max-width: 160px;
+    }
+}

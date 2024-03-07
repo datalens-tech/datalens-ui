@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {RadioButton, RadioButtonSize} from '@gravity-ui/uikit';
+import {RadioButton, Select} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DashTabItemControlSourceType, DialogControlQa, Feature} from 'shared';
@@ -31,22 +31,31 @@ const CONTROL_SOURCE_TYPES = [
 ];
 
 type SelectorTypeSelectProps = {
-    size?: RadioButtonSize;
     showExternalType?: boolean;
+    mode?: 'radio-button' | 'select';
 };
 
-const SelectorTypeSelect = ({size = 'l', showExternalType = true}: SelectorTypeSelectProps) => {
+const SelectorTypeSelect = ({
+    mode = 'radio-button',
+    showExternalType = true,
+}: SelectorTypeSelectProps) => {
     const dispatch = useDispatch();
     const {sourceType} = useSelector(selectSelectorDialog);
 
-    const handleSourceTypeChange = React.useCallback((value: string) => {
-        dispatch(
-            setSelectorDialogItem({
-                sourceType: value as DashTabItemControlSourceType,
-                fieldType: undefined,
-            }),
-        );
-    }, []);
+    const handleSourceTypeChange = React.useCallback(
+        (value: string[] | string) => {
+            const sourceTypeValue = (
+                typeof value === 'string' ? value : value[0]
+            ) as DashTabItemControlSourceType;
+            dispatch(
+                setSelectorDialogItem({
+                    sourceType: sourceTypeValue,
+                    fieldType: undefined,
+                }),
+            );
+        },
+        [dispatch],
+    );
 
     const options = React.useMemo(() => {
         const availabilityMap = {
@@ -63,19 +72,31 @@ const SelectorTypeSelect = ({size = 'l', showExternalType = true}: SelectorTypeS
     }, [showExternalType]);
 
     return (
-        <RadioButton
-            value={sourceType}
-            onUpdate={handleSourceTypeChange}
-            size={size}
-            width="max"
-            qa={DialogControlQa.radioSourceType}
-        >
-            {options.map((item) => (
-                <RadioButton.Option key={item.value} value={item.value}>
-                    {item.title}
-                </RadioButton.Option>
-            ))}
-        </RadioButton>
+        <React.Fragment>
+            {mode === 'select' ? (
+                <Select
+                    value={[sourceType || DashTabItemControlSourceType.Dataset]}
+                    onUpdate={handleSourceTypeChange}
+                    width="max"
+                    options={options.map((item) => ({value: item.value, content: item.title}))}
+                    qa={DialogControlQa.radioSourceType}
+                />
+            ) : (
+                <RadioButton
+                    value={sourceType}
+                    onUpdate={handleSourceTypeChange}
+                    size="l"
+                    width="max"
+                    qa={DialogControlQa.radioSourceType}
+                >
+                    {options.map((item) => (
+                        <RadioButton.Option key={item.value} value={item.value}>
+                            {item.title}
+                        </RadioButton.Option>
+                    ))}
+                </RadioButton>
+            )}
+        </React.Fragment>
     );
 };
 

@@ -7,12 +7,15 @@ import {DatalensGlobalState, Utils} from 'index';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
 import {ControlQA, DashTabItemControlSourceType, Feature} from 'shared';
+import {SectionWrapper} from 'ui/components/SectionWrapper/SectionWrapper';
 import {AppearanceSection} from 'units/dash/containers/Dialogs/Control2/Sections/AppearanceSection/AppearanceSection';
 import {CommonSettingsSection} from 'units/dash/containers/Dialogs/Control2/Sections/CommonSettingsSection/CommonSettingsSection';
 import {SelectorPreview} from 'units/dash/containers/Dialogs/Control2/SelectorPreview/SelectorPreview';
 import {SelectorTypeSelect} from 'units/dash/containers/Dialogs/Control2/SelectorTypeSelect/SelectorTypeSelect';
 import {applyControl2Dialog, closeControl2Dialog} from 'units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
+
+import {ParamsSection} from './Sections/ParamsSection/ParamsSection';
 
 import './Control2.scss';
 
@@ -59,9 +62,10 @@ class DialogAddControl extends React.Component<Props> {
         const {sourceType, isEdit} = this.props;
         const showTypeSelect =
             !isEdit || !Utils.isEnabledFeature(Feature.GroupControls) || sourceType !== 'external';
+        const isExternal = sourceType === DashTabItemControlSourceType.External;
 
         return (
-            <div>
+            <React.Fragment>
                 <div className={b('section')}>
                     <SelectorPreview />
                 </div>
@@ -71,10 +75,13 @@ class DialogAddControl extends React.Component<Props> {
                     </div>
                 )}
                 <div className={b('section')}>
-                    <CommonSettingsSection />
+                    <SectionWrapper title={i18n('label_common-settings')}>
+                        <CommonSettingsSection />
+                    </SectionWrapper>
+                    {isExternal && <ParamsSection />}
                 </div>
                 {this.renderAppearanceSection()}
-            </div>
+            </React.Fragment>
         );
     }
 
