@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {
     BarTableCell,
+    ChartKitTableQa,
     NumberTableColumn,
     StringParams,
     TableCellsRow,
@@ -14,6 +15,7 @@ import {Table} from 'ui/components/Table/Table';
 import type {OnTableClick, THead, TableProps} from 'ui/components/Table/types';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
+import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../helpers/constants';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import Performance from '../../../modules/perfomance';
 import type {TableWidgetProps} from '../types';
@@ -119,9 +121,9 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                         }
 
                         return (
-                            <React.Fragment>
+                            <span data-qa={ChartKitTableQa.CellContent}>
                                 {cellData.formattedValue ?? cellData.value}
-                            </React.Fragment>
+                            </span>
                         );
                     },
                 };
@@ -145,7 +147,10 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
         };
 
         return (
-            <div className={b()}>
+            <div
+                className={[b(), CHARTKIT_SCROLLABLE_NODE_CLASSNAME].join(' ')}
+                data-qa={ChartKitTableQa.Widget}
+            >
                 <Table
                     data={tableData}
                     title={config?.title}
@@ -159,6 +164,9 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                     onClick={handleTableClick}
                     header={{
                         sticky: true,
+                    }}
+                    qa={{
+                        row: ChartKitTableQa.Row,
                     }}
                 />
             </div>

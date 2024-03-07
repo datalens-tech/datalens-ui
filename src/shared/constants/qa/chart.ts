@@ -38,3 +38,9 @@ export const enum ChartKitTreeNodeStateQa {
     Opened = 'chartkit-tree-node-state-opened',
     Closed = 'chartkit-tree-node-state-closed',
 }
+
+export const enum ChartKitTableQa {
+    Widget = 'chartkit-table-widget',
+    Row = 'chartkit-table-row',
+    CellContent = 'chartkit-cell-content',
+}

@@ -22,18 +22,11 @@ export function getUpdatesTreeState(args: {cell: TableCommonCell; params: String
     if (treeState.some((state) => state === treeNode)) {
         const cellTreeNode: string[] = JSON.parse(treeNode);
         const treeStateNodes = treeState.map((jsonArray) => JSON.parse(jsonArray));
-        // const subarrayIndexes: number[] = [];
-
-        treeStateNodes.forEach((item: string[], index) => {
+        treeStateNodes.forEach((item, index) => {
             if (isSubarray(item, cellTreeNode)) {
                 treeState.splice(index, 1, '');
-                // subarrayIndexes.unshift(index);
             }
         });
-
-        // subarrayIndexes.forEach((index) => {
-        //     treeState.splice(index, 1);
-        // });
     } else {
         treeState.push(treeNode);
     }

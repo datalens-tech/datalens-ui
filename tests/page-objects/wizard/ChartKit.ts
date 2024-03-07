@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {ChartkitMenuDialogsQA, MenuItemsQA} from '../../../src/shared/constants';
+import {ChartkitMenuDialogsQA, ChartKitTableQa, MenuItemsQA} from '../../../src/shared';
 import {slct, waitForCondition} from '../../utils';
 import {readDownload} from '../../utils/playwright/utils';
 
@@ -39,7 +39,7 @@ export default class ChartKit {
     private drillArrowsSelector = '.chartkit-drill__drill-action';
     private breadcrumbsSelector = '.chartkit-drill .yc-breadcrumbs__item';
     private paginatorSelector = '.chartkit-table-paginator';
-    private tableRowSelector = '.chartkit .data-table__row';
+    private tableRowSelector = `.chartkit .data-table__row, ${slct(ChartKitTableQa.Row)}`;
     private tableHeadRowSelector = '.chartkit .data-table__sticky_head .data-table__head-row';
     private tableColgroupSelector = '.chartkit-table colgroup';
     private layerLegendSelector = '.chartkit .chartkit-ymap-legend-layer';
@@ -110,8 +110,15 @@ export default class ChartKit {
         await this.page.waitForSelector(slct(errorQa));
     }
 
+    getTableLocator() {
+        return this.page
+            .locator('.chartkit-table')
+            .or(this.page.locator(slct(ChartKitTableQa.Widget)));
+    }
+
     async waitForSuccessfulRender() {
-        await this.page.waitForSelector('.chartkit-graph,.chartkit-table');
+        const locator = this.page.locator('.chartkit-graph').or(this.getTableLocator());
+        await locator.waitFor();
     }
 
     async openExportMenuAndClickSubItem(subItemSelector: string) {

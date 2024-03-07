@@ -52,4 +52,7 @@ export type TableProps = {
         sticky?: boolean;
     };
     onClick?: OnTableClick;
+    qa?: {
+        row?: string;
+    };
 };

@@ -54,7 +54,7 @@ function getTableData(args: TableProps['data']) {
 }
 
 export const Table = (props: TableProps) => {
-    const {title, pagination, noData, onClick, header: headerOptions} = props;
+    const {title, pagination, noData, onClick, header: headerOptions, qa} = props;
     const isPaginationEnabled = Boolean(pagination?.enabled && pagination.pageSize);
     const paginationState = {
         pageIndex: get(pagination, 'pageIndex', 0),
@@ -138,7 +138,7 @@ export const Table = (props: TableProps) => {
                 <tbody className={b('body')}>
                     {rows.length
                         ? rows.map((row) => (
-                              <tr key={row.id} className={b('tr')}>
+                              <tr key={row.id} className={b('tr')} data-qa={qa?.row}>
                                   {row.getVisibleCells().map((cell, index) => {
                                       const width = cell.column.columnDef.meta?.width;
                                       const isFixedSize = Boolean(width);
