@@ -13,28 +13,41 @@ import {
 import {Table} from 'ui/components/Table/Table';
 import type {OnTableClick, THead, TableProps} from 'ui/components/Table/types';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
-import {getUpdatesTreeState} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/utils/tree';
 
+import {getRandomCKId} from '../../../helpers/getRandomCKId';
+import Performance from '../../../modules/perfomance';
 import type {TableWidgetProps} from '../types';
 
 import {BarCell} from './components/BarCell/BarCell';
 import {MarkupCell} from './components/MarkupCell/MarkupCell';
 import {TreeCell} from './components/TreeCell/TreeCell';
+import {getUpdatesTreeState} from './utils/tree';
 
 import './TableWidget.scss';
 
 const b = block('chartkit-table-widget');
 
-// TODO: grouping
 // TODO: chart-chart
 // TODO: export
-// TODO: rendering time
 const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetProps>(
     (props, _forwardedRef) => {
         const {
+            id,
             onChange,
+            onLoad,
             data: {data, config, params: currentParams},
         } = props;
+
+        const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [data, config, id]);
+        Performance.mark(generatedId);
+
+        React.useLayoutEffect(() => {
+            const widgetRendering = Performance.getDuration(generatedId);
+
+            if (onLoad && widgetRendering) {
+                onLoad({widgetRendering});
+            }
+        }, [generatedId, onLoad]);
 
         const changeParams = (params: StringParams | null) => {
             if (onChange && params) {
