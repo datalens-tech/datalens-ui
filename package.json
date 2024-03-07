@@ -123,7 +123,7 @@
     "@statoscope/webpack-ui": "^5.28.2",
     "@stripe/react-stripe-js": "^1.8.1",
     "@stripe/stripe-js": "^1.30.0",
-    "@tanstack/react-table": "^8.13.2",
+    "@tanstack/react-table": "^8.12.0",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@types/aws4": "^1.11.2",
