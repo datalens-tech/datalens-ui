@@ -32,7 +32,12 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
 
                     await page.click(slct(TabMenuQA.Add));
 
-                    await dashboardPage.addChart(config.dash.charts.ChartCityTable);
+                    await dashboardPage.addChart({
+                        name: config.dash.charts.ChartCityTable.name,
+                        url: config.dash.charts.ChartCityTable.url,
+                        enableAutoHeight: true,
+                        addChartTab: true,
+                    });
                 },
             });
         },

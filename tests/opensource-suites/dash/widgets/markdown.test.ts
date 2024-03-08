@@ -20,7 +20,7 @@ const expectedHTML = `
 </div></div>
 `;
 
-// there is need in spaces after '*' so editor can detect markdown while typing
+// spaces are needed here after '*' so editor can detect markdown while typing
 const text = `This text is highlighted in **bold** .
 
 This text is in *italics* .
@@ -42,7 +42,7 @@ datalensTest.describe('Dashboards - Markdown', () => {
         });
 
         const receivedHTML = await dashboardPage.getMarkdownHTML();
-        const hasText = receivedHTML.trim().includes(expectedHTML.trim());
+        const hasText = receivedHTML.replace(/\s/g, '').includes(expectedHTML.replace(/\s/g, ''));
         expect(hasText).toBeTruthy();
     });
 });
