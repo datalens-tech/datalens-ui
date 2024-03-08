@@ -20,10 +20,10 @@ datalensTest.describe(`Dashboards - switch tabs`, () => {
 
         await dashboardPage.createDashboard({
             editDash: async () => {
-                await dashboardPage.addText(arbitraryText.first);
+                await dashboardPage.addTitle(arbitraryText.first);
                 await dashboardPage.addTab();
                 await dashboardPage.dashTabs.switchTabByIdx(1);
-                await dashboardPage.addText(arbitraryText.second);
+                await dashboardPage.addTitle(arbitraryText.second);
             },
         });
     });

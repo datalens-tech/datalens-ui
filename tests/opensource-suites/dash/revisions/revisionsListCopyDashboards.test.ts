@@ -14,7 +14,7 @@ datalensTest.describe('Dashboard Versioning', () => {
 
         await dashboardPage.createDashboard({
             editDash: async () => {
-                await dashboardPage.addText(arbitraryText.first);
+                await dashboardPage.addTitle(arbitraryText.first);
             },
         });
 

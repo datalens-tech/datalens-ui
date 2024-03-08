@@ -1,5 +1,10 @@
+type ChartConfig = {
+    name: string;
+    url: string;
+};
+
 export type DashParametrizationConfig = {
-    urls: {
+    dashUrls: {
         DashboardWithLongContentBeforeChart: string;
         DashboardLoadPriorityCharts: string;
         DashboardLoadPrioritySelectors: string;
@@ -7,5 +12,9 @@ export type DashParametrizationConfig = {
         DashboardMoreThan100Revisions: string;
         DashboardWithErrorChart: string;
         DashboardWithAPIErrorChart: string;
+    };
+    charts: {
+        ChartCityPie: ChartConfig;
+        ChartCityTable: ChartConfig;
     };
 };

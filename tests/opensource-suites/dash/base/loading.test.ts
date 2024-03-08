@@ -57,7 +57,7 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const firstRequestData = await waitForDashFirstResponseSentData({
                 page,
-                url: config.dash.urls.DashboardLoadPrioritySelectors,
+                url: config.dash.dashUrls.DashboardLoadPrioritySelectors,
             });
 
             if (!firstRequestData) {
@@ -73,7 +73,7 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const firstRequestData = await waitForDashFirstResponseSentData({
                 page,
-                url: config.dash.urls.DashboardLoadPriorityCharts,
+                url: config.dash.dashUrls.DashboardLoadPriorityCharts,
             });
 
             if (!firstRequestData) {
@@ -93,7 +93,7 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
 
             const initPromise = page.waitForRequest('/api/run');
 
-            await openTestPage(page, config.dash.urls.DashboardWithLongContentBeforeChart);
+            await openTestPage(page, config.dash.dashUrls.DashboardWithLongContentBeforeChart);
 
             // waiting for the widget container to be rendered
             await page.waitForSelector(DashboardPage.selectors.dashPluginWidgetBody);
@@ -120,9 +120,9 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
             // copy the original dashboard with delayed widget loading,
             // so that the tests do not collapse due to the transition to editing and locks
             const dashboardPage = new DashboardPage({page});
-            await openTestPage(page, config.dash.urls.DashboardWithLongContentBeforeChart);
+            await openTestPage(page, config.dash.dashUrls.DashboardWithLongContentBeforeChart);
             await dashboardPage.duplicateDashboard(
-                config.dash.urls.DashboardWithLongContentBeforeChart,
+                config.dash.dashUrls.DashboardWithLongContentBeforeChart,
             );
 
             // we set small viewport sizes for a more stable check
@@ -168,7 +168,7 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
         'Loading charts when switching to another tab',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
-            await openTestPage(page, config.dash.urls.DashboardWithTabsAndSelectors);
+            await openTestPage(page, config.dash.dashUrls.DashboardWithTabsAndSelectors);
 
             // waiting for the drawing of the graph on the first tab
             await page.waitForSelector(DashboardPage.selectors.dashPluginWidgetBody);

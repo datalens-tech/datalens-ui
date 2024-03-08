@@ -14,7 +14,7 @@ datalensTest.describe('Dashboard Versioning', () => {
         'Dashboard with a long list of revisions, checking the upload and the updated list of revisions',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
-            await openTestPage(page, config.dash.urls.DashboardMoreThan100Revisions);
+            await openTestPage(page, config.dash.dashUrls.DashboardMoreThan100Revisions);
             await dashboardPage.waitForOpeningRevisionsList();
 
             let items = await page.$$(slct(COMMON_SELECTORS.REVISIONS_LIST_ROW));
@@ -43,7 +43,7 @@ datalensTest.describe('Dashboard Versioning', () => {
 
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.addText(arbitraryText.first);
+                    await dashboardPage.addTitle(arbitraryText.first);
                 },
             });
 
@@ -56,7 +56,7 @@ datalensTest.describe('Dashboard Versioning', () => {
 
             await dashboardPage.editDashboard({
                 editDash: async () => {
-                    await dashboardPage.addText(arbitraryText.second);
+                    await dashboardPage.addTitle(arbitraryText.second);
                 },
             });
 

@@ -20,8 +20,8 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
 
         await dashboardPage.createDashboard({
             editDash: async () => {
-                await dashboardPage.addText(arbitraryText.first);
-                await dashboardPage.addText(arbitraryText.second);
+                await dashboardPage.addTitle(arbitraryText.first);
+                await dashboardPage.addTitle(arbitraryText.second);
             },
         });
     });

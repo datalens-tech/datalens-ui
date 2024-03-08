@@ -48,8 +48,8 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
                     });
 
                     await dashboardPage.addChart({
-                        chartName: PARAMS.CHART_NAME,
-                        chartUrl: PARAMS.CHART_URL,
+                        name: PARAMS.CHART_NAME,
+                        url: PARAMS.CHART_URL,
                     });
                     await dashboardPage.setupLinks({
                         linkType: ConnectionsDialogQA.TypeSelectOutputOption,

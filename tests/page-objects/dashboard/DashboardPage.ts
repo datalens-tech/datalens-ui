@@ -483,14 +483,14 @@ class DashboardPage extends BasePage {
     }
 
     async addChart({
-        chartUrl,
-        chartName,
+        url,
+        name,
         hideTitle,
         enableAutoHeight,
         addChartTab,
     }: {
-        chartUrl: string;
-        chartName: string;
+        url: string;
+        name: string;
         hideTitle?: boolean;
         enableAutoHeight?: boolean;
         addChartTab?: boolean;
@@ -503,12 +503,12 @@ class DashboardPage extends BasePage {
         await this.page.click(slct('navigation-input-use-link-button'));
 
         // specify the link
-        await this.page.fill('[data-qa=navigation-input] input', getAddress(chartUrl));
+        await this.page.fill('[data-qa=navigation-input] input', getAddress(url));
 
         // adding
         await this.page.click(slct('navigation-input-ok-button'));
         // making sure that the necessary chart is selected
-        await this.page.waitForSelector(`[data-qa=entry-title] * >> text=${chartName}`);
+        await this.page.waitForSelector(`[data-qa=entry-title] * >> text=${name}`);
 
         if (hideTitle) {
             await this.page.locator(slct(DashCommonQa.WidgetShowTitleCheckbox)).click();
@@ -526,10 +526,19 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddText));
     }
 
-    async addText(text: string) {
+    async addText(text: string, delay?: number) {
         await this.clickAddText();
+        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
-        await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+        if (isEnabledCollections) {
+            await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+        } else {
+            await this.page.type(
+                `${slct(DialogDashWidgetItemQA.Text)} [contenteditable=true]`,
+                text,
+                {delay},
+            );
+        }
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
 

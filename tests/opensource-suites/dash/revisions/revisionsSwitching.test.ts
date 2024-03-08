@@ -21,7 +21,7 @@ datalensTest.describe('Dashboard Versioning', () => {
 
         await dashboardPage.createDashboard({
             editDash: async () => {
-                await dashboardPage.addText(arbitraryText.first);
+                await dashboardPage.addTitle(arbitraryText.first);
             },
         });
 
@@ -31,7 +31,7 @@ datalensTest.describe('Dashboard Versioning', () => {
             expect(controlSwitcher).toBeVisible();
             await controlSwitcher.click();
             await page.click(slct(DashKitOverlayMenuQa.RemoveButton));
-            await dashboardPage.addText(text);
+            await dashboardPage.addTitle(text);
             await dashboardPage.clickSaveButton();
             await workbookPO.editEntityButton.waitForVisible();
         }
