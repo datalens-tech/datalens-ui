@@ -6,7 +6,6 @@ import {PencilToLine} from '@gravity-ui/icons';
 import {ActionBar} from '@gravity-ui/navigation';
 import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {CollectionBreadcrumbs} from 'components/Breadcrumbs/CollectionBreadcrumbs/CollectionBreadcrumbs';
 import {DIALOG_EDIT_WORKBOOK} from 'components/CollectionsStructure';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {ViewError} from 'components/ViewError/ViewError';
@@ -18,6 +17,7 @@ import {AppDispatch} from 'ui/store';
 
 import {registry} from '../../../../registry';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
+import {CollectionBreadcrumbs} from '../../../collections-navigation/components/CollectionBreadcrumbs/CollectionBreadcrumbs';
 import {
     changeFilters,
     getWorkbook,
@@ -43,6 +43,8 @@ import {WorkbookTabContent} from '../WorkbookTabContent/WorkbookTabContent';
 import {WorkbookTabs} from '../WorkbookTabs/WorkbookTabs';
 import {TAB_ALL} from '../WorkbookTabs/constants';
 import {TabId} from '../WorkbookTabs/types';
+
+import {useLayout} from './hooks/useLayout';
 
 import './WorkbookPage.scss';
 
@@ -107,6 +109,8 @@ export const WorkbookPage = () => {
             dispatch(getWorkbookBreadcrumbs({collectionId}));
         }
     }, [dispatch, collectionId]);
+
+    useLayout({workbookId, scope, refreshWorkbookInfo});
 
     if (
         pageError ||

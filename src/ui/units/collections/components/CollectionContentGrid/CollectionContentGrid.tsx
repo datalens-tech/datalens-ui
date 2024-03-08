@@ -3,12 +3,14 @@ import React from 'react';
 import {dateTime} from '@gravity-ui/date-utils';
 import {Checkbox, DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
-import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 
+import {CollectionIcon} from '../../../../components/CollectionIcon/CollectionIcon';
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
-import {LayoutContext} from '../../../collections-navigation/contexts/LayoutContext';
-import {AnimateBlock} from '../AnimateBlock';
+import {AnimateBlock} from '../../../collections-navigation/components/AnimateBlock';
+import {setCollection, setCollectionBreadcrumbs} from '../../store/actions';
+import {selectBreadcrumbs} from '../../store/selectors';
 import {CollectionContentGridProps} from '../types';
 import {onClickStopPropagation} from '../utils';
 
@@ -25,7 +27,9 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
         selectedMap,
         isOpenSelectionMode,
     }) => {
-        const {setLayout} = React.useContext(LayoutContext);
+        const dispatch = useDispatch();
+
+        const breadcrumbs = useSelector(selectBreadcrumbs) ?? [];
 
         return (
             <div className={b()}>
@@ -33,162 +37,110 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                     {contentItems.map((item, index) => {
                         const canMove = item.permissions.move;
 
-                        if ('workbookId' in item) {
-                            const actions = getWorkbookActions(item);
+                        const actions =
+                            'workbookId' in item
+                                ? getWorkbookActions(item)
+                                : getCollectionActions(item);
 
-                            return (
-                                <AnimateBlock
-                                    key={item.workbookId}
-                                    delay={Math.min(index * 5, 100)}
-                                >
-                                    <div
-                                        className={b('content-item')}
-                                        onClick={
-                                            isOpenSelectionMode && canMove
-                                                ? () => {
+                        return (
+                            <AnimateBlock
+                                key={'workbookId' in item ? item.workbookId : item.collectionId}
+                                delay={Math.min(index * 5, 100)}
+                            >
+                                <div
+                                    className={b('item')}
+                                    onClick={
+                                        isOpenSelectionMode && canMove
+                                            ? () => {
+                                                  if ('workbookId' in item) {
                                                       onUpdateCheckbox(
                                                           !selectedMap[item.workbookId]?.checked,
                                                           'workbook',
                                                           item.workbookId,
                                                       );
-                                                  }
-                                                : undefined
-                                        }
-                                    >
-                                        {isOpenSelectionMode && (
-                                            <Checkbox
-                                                size="l"
-                                                className={b('content-item-checkbox')}
-                                                disabled={!canMove}
-                                                checked={Boolean(
-                                                    selectedMap[item.workbookId]?.checked &&
-                                                        canMove,
-                                                )}
-                                            />
-                                        )}
-                                        <Link
-                                            to={`/workbooks/${item.workbookId}`}
-                                            className={b('content-item-link', {
-                                                'selection-mode': isOpenSelectionMode,
-                                            })}
-                                        >
-                                            <div className={b('content-cell', {title: true})}>
-                                                <div className={b('title-col')}>
-                                                    <div
-                                                        className={b('title-col-icon', {
-                                                            'selection-mode': isOpenSelectionMode,
-                                                        })}
-                                                    >
-                                                        <WorkbookIcon title={item.title} size="l" />
-                                                    </div>
-                                                    <div className={b('title-col-text')}>
-                                                        {item.title}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className={b('content-footer')}>
-                                                <div className={b('content-date')}>
-                                                    {dateTime({
-                                                        input: item.updatedAt,
-                                                    }).fromNow()}
-                                                </div>
-
-                                                {actions.length > 0 && (
-                                                    <div
-                                                        className={b('content-actions')}
-                                                        onClick={onClickStopPropagation}
-                                                    >
-                                                        <DropdownMenu size="s" items={actions} />
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </Link>
-                                    </div>
-                                </AnimateBlock>
-                            );
-                        } else {
-                            const actions = getCollectionActions(item);
-
-                            return (
-                                <AnimateBlock
-                                    key={item.collectionId}
-                                    delay={Math.min(index * 5, 100)}
-                                >
-                                    <div
-                                        className={b('content-item')}
-                                        onClick={
-                                            isOpenSelectionMode && canMove
-                                                ? () => {
+                                                  } else {
                                                       onUpdateCheckbox(
                                                           !selectedMap[item.collectionId]?.checked,
                                                           'collection',
                                                           item.collectionId,
                                                       );
                                                   }
-                                                : undefined
+                                              }
+                                            : undefined
+                                    }
+                                >
+                                    {isOpenSelectionMode && (
+                                        <Checkbox
+                                            size="l"
+                                            className={b('checkbox')}
+                                            disabled={!canMove}
+                                            checked={Boolean(
+                                                selectedMap[
+                                                    'workbookId' in item
+                                                        ? item.workbookId
+                                                        : item.collectionId
+                                                ]?.checked && canMove,
+                                            )}
+                                        />
+                                    )}
+                                    <Link
+                                        to={
+                                            'workbookId' in item
+                                                ? `/workbooks/${item.workbookId}`
+                                                : `/collections/${item.collectionId}`
                                         }
+                                        className={b('link', {
+                                            'selection-mode': isOpenSelectionMode,
+                                        })}
+                                        onClick={(e) => {
+                                            if (!e.metaKey && !('workbookId' in item)) {
+                                                dispatch(setCollection(item));
+                                                dispatch(
+                                                    setCollectionBreadcrumbs([
+                                                        ...breadcrumbs,
+                                                        {
+                                                            collectionId: item.collectionId,
+                                                            title: item.title,
+                                                        },
+                                                    ]),
+                                                );
+                                            }
+                                        }}
                                     >
-                                        {isOpenSelectionMode && (
-                                            <Checkbox
-                                                size="l"
-                                                className={b('content-item-checkbox')}
-                                                disabled={!canMove}
-                                                checked={Boolean(
-                                                    selectedMap[item.collectionId]?.checked &&
-                                                        canMove,
-                                                )}
-                                            />
-                                        )}
-                                        <Link
-                                            to={`/collections/${item.collectionId}`}
-                                            className={b('content-item-link', {
+                                        <div
+                                            className={b('icon', {
                                                 'selection-mode': isOpenSelectionMode,
                                             })}
-                                            onClick={() => {
-                                                setLayout({
-                                                    title: {
-                                                        content: item.title,
-                                                    },
-                                                    description: {
-                                                        content: item.description,
-                                                    },
-                                                });
-                                            }}
                                         >
-                                            <div className={b('content-cell', {title: true})}>
-                                                <div className={b('title-col')}>
-                                                    <div
-                                                        className={b('title-col-icon', {
-                                                            'selection-mode': isOpenSelectionMode,
-                                                        })}
-                                                    >
-                                                        <CollectionIcon isIconBig size={125} />
-                                                    </div>
-                                                    <div className={b('title-col-text')}>
-                                                        {item.title}
-                                                    </div>
-                                                </div>
+                                            {'workbookId' in item ? (
+                                                <WorkbookIcon title={item.title} size="l" />
+                                            ) : (
+                                                <CollectionIcon isIconBig size={125} />
+                                            )}
+                                        </div>
+                                        <div className={b('title')} title={item.title}>
+                                            {item.title}
+                                        </div>
+                                        <div className={b('info')}>
+                                            <div className={b('date')}>
+                                                {dateTime({
+                                                    input: item.updatedAt,
+                                                }).fromNow()}
                                             </div>
-                                            <div className={b('content-footer')}>
-                                                <div className={b('content-date')}>
-                                                    {dateTime({
-                                                        input: item.updatedAt,
-                                                    }).fromNow()}
+
+                                            {actions.length > 0 && (
+                                                <div
+                                                    className={b('actions')}
+                                                    onClick={onClickStopPropagation}
+                                                >
+                                                    <DropdownMenu size="s" items={actions} />
                                                 </div>
-                                                {actions.length > 0 ? (
-                                                    <div
-                                                        className={b('content-actions')}
-                                                        onClick={onClickStopPropagation}
-                                                    >
-                                                        <DropdownMenu size="s" items={actions} />
-                                                    </div>
-                                                ) : null}
-                                            </div>
-                                        </Link>
-                                    </div>
-                                </AnimateBlock>
-                            );
-                        }
+                                            )}
+                                        </div>
+                                    </Link>
+                                </div>
+                            </AnimateBlock>
+                        );
                     })}
                 </div>
             </div>

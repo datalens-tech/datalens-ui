@@ -1,6 +1,10 @@
 import React from 'react';
 
-import {CollectionPageViewMode} from '../../../../../components/CollectionFilters';
+import {
+    CollectionPageViewMode,
+    collectionPageViewModeStore,
+} from '../../../../../components/CollectionFilters';
+import Utils from '../../../../../utils';
 import {getUserDefaultCollectionPageViewMode} from '../utils';
 
 type UseViewModeArgs = {
@@ -14,6 +18,7 @@ export const useViewMode = ({countSelected, setIsOpenSelectionMode}: UseViewMode
 
     const onChangeCollectionPageViewMode = React.useCallback(
         (value: CollectionPageViewMode) => {
+            Utils.store(collectionPageViewModeStore, value);
             setCollectionPageViewMode(value);
 
             if (value === CollectionPageViewMode.Grid && countSelected === 0) {

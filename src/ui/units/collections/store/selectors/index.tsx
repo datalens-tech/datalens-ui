@@ -43,7 +43,7 @@ export const selectNextPageTokens = createSelector([selectGetCollectionContent],
 }));
 
 // Loading status of collection information
-export const selectCollectionInfoIsLoading = createSelector(
+export const selectCollectionIsLoading = createSelector(
     [selectGetCollection],
     (collection) => collection.data === null || collection.isLoading,
 );

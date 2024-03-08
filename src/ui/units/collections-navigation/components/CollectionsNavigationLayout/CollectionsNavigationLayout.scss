@@ -34,25 +34,23 @@ $class: 'dl-collections-navigation-layout';
         max-width: 50%;
     }
 
-    &__actions-panel-left-block-skeleton {
-        width: 250px;
-        height: 26px;
-    }
-
     &__actions-panel-right-block {
         display: flex;
         margin-left: auto;
-    }
-
-    &__actions-panel-right-block-skeleton {
-        width: 170px;
-        height: 26px;
     }
 
     &__page-wrapper {
         display: flex;
         flex: 1;
         justify-content: center;
+        position: absolute;
+        top: $actionPanelHeight;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+        padding-top: 28px;
     }
 
     &__page {
@@ -61,7 +59,6 @@ $class: 'dl-collections-navigation-layout';
         flex-direction: column;
         max-width: 936px;
         padding: 0 20px;
-        margin-top: 28px;
     }
 
     &__header {
@@ -74,33 +71,22 @@ $class: 'dl-collections-navigation-layout';
     }
 
     &__header-title {
+        display: flex;
         margin: 0;
         font-size: 24px;
         line-height: 28px;
-    }
-
-    &__header-title-skeleton {
-        width: 150px;
-        height: 28px;
+        margin-right: 8px;
     }
 
     &__header-title-actions-block {
-        margin-left: 8px;
-    }
-
-    &__header-title-actions-block-skeleton {
-        width: 28px;
-        height: 28px;
-    }
-
-    &__header-right-block {
-        margin-left: 8px;
+        display: flex;
+        margin-right: 8px;
         white-space: nowrap;
     }
 
-    &__header-right-block-skeleton {
-        width: 80px;
-        height: 28px;
+    &__header-right-block {
+        display: flex;
+        white-space: nowrap;
     }
 
     &__header-description {
@@ -113,6 +99,7 @@ $class: 'dl-collections-navigation-layout';
     }
 
     &__content {
+        display: flex;
         flex: 1;
         margin-top: 28px;
     }

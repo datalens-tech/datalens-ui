@@ -35,3 +35,6 @@ export const RESET_COLLECTION_INFO = Symbol('collections/RESET_COLLECTION_INFO')
 
 export const DELETE_COLLECTION_IN_ITEMS = Symbol('collections/DELETE_COLLECTION_IN_ITEMS');
 export const DELETE_WORKBOOK_IN_ITEMS = Symbol('collections/DELETE_WORKBOOK_IN_ITEMS');
+
+export const SET_COLLECTION = Symbol('collections/SET_COLLECTION');
+export const SET_COLLECTION_BREDCRUMBS = Symbol('collections/SET_COLLECTION_BREDCRUMBS');

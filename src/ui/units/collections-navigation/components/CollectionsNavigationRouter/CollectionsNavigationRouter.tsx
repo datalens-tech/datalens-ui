@@ -8,48 +8,30 @@ import {Layout, LayoutBlock, LayoutContext, SkeletonsSettings} from '../../conte
 import {CollectionsNavigationLayout} from '../CollectionsNavigationLayout';
 
 export const CollectionsNavigationRouter = () => {
-    const [actionsPanelLeftBlock, setActionsPanelLeftBlock] = React.useState<LayoutBlock>({
-        isLoading: false,
-        content: null,
-    });
-    const [actionsPanelRightBlock, setActionsPanelRightBlock] = React.useState<LayoutBlock>({
-        isLoading: true,
-        content: null,
-    });
-    const [title, setTitle] = React.useState<LayoutBlock>({
-        isLoading: true,
-        content: null,
-    });
-    const [titleActionsBlock, setTitleActionsBlock] = React.useState<LayoutBlock>({
-        isLoading: true,
-        content: null,
-    });
-    const [titleRightBlock, setTitleRightBlock] = React.useState<LayoutBlock>({
-        isLoading: true,
-        content: null,
-    });
-    const [description, setDescription] = React.useState<LayoutBlock>({
-        isLoading: true,
-        content: null,
-    });
+    const [actionsPanelLeftBlock, setActionsPanelLeftBlock] = React.useState<LayoutBlock>(null);
+    const [actionsPanelRightBlock, setActionsPanelRightBlock] = React.useState<LayoutBlock>(null);
+    const [title, setTitle] = React.useState<LayoutBlock>(null);
+    const [titleActionsBlock, setTitleActionsBlock] = React.useState<LayoutBlock>(null);
+    const [titleRightBlock, setTitleRightBlock] = React.useState<LayoutBlock>(null);
+    const [description, setDescription] = React.useState<LayoutBlock>(null);
 
     const setLayout = React.useCallback((layout: Partial<Layout>) => {
-        if (layout.actionsPanelLeftBlock) {
+        if (layout.actionsPanelLeftBlock !== undefined) {
             setActionsPanelLeftBlock(layout.actionsPanelLeftBlock);
         }
-        if (layout.actionsPanelRightBlock) {
+        if (layout.actionsPanelRightBlock !== undefined) {
             setActionsPanelRightBlock(layout.actionsPanelRightBlock);
         }
-        if (layout.title) {
+        if (layout.title !== undefined) {
             setTitle(layout.title);
         }
-        if (layout.titleActionsBlock) {
+        if (layout.titleActionsBlock !== undefined) {
             setTitleActionsBlock(layout.titleActionsBlock);
         }
-        if (layout.titleRightBlock) {
+        if (layout.titleRightBlock !== undefined) {
             setTitleRightBlock(layout.titleRightBlock);
         }
-        if (layout.description) {
+        if (layout.description !== undefined) {
             setDescription(layout.description);
         }
     }, []);

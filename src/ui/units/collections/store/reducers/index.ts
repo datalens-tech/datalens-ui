@@ -23,6 +23,8 @@ import {
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
     RESET_COLLECTION_CONTENT,
     RESET_COLLECTION_INFO,
+    SET_COLLECTION,
+    SET_COLLECTION_BREDCRUMBS,
 } from '../constants';
 
 export type CollectionsState = {
@@ -182,10 +184,20 @@ export const collectionsReducer = (
         case GET_COLLECTION_FAILED: {
             return {
                 ...state,
-                getCollectionContent: {
+                getCollection: {
                     ...state.getCollection,
                     isLoading: false,
                     error: action.error,
+                },
+            };
+        }
+        case SET_COLLECTION: {
+            return {
+                ...state,
+                getCollection: {
+                    isLoading: false,
+                    data: action.data.collection,
+                    error: null,
                 },
             };
         }
@@ -218,6 +230,16 @@ export const collectionsReducer = (
                     ...state.getCollectionBreadcrumbs,
                     isLoading: false,
                     error: action.error,
+                },
+            };
+        }
+        case SET_COLLECTION_BREDCRUMBS: {
+            return {
+                ...state,
+                getCollectionBreadcrumbs: {
+                    isLoading: false,
+                    data: action.data.collectionBreadcrumbs,
+                    error: null,
                 },
             };
         }

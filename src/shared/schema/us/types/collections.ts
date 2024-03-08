@@ -66,15 +66,15 @@ export type GetCollectionResponse = Collection | CollectionWithPermissions;
 
 export type GetCollectionContentArgs = {
     collectionId: string | null;
-    includePermissionsInfo?: boolean;
-    filterString?: string;
     collectionsPage?: string | null;
     workbooksPage?: string | null;
-    pageSize?: number;
+    filterString?: string;
     orderField?: OrderBasicField;
     orderDirection?: OrderDirection;
     onlyMy?: boolean;
     mode?: GetCollectionContentMode;
+    pageSize?: number;
+    includePermissionsInfo?: boolean;
 };
 
 export type GetCollectionContentResponse = {

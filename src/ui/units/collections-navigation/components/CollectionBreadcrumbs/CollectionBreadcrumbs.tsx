@@ -3,6 +3,7 @@ import React from 'react';
 import {
     FirstDisplayedItemsCount,
     LastDisplayedItemsCount,
+    Skeleton,
     Breadcrumbs as UIKitBreadcrumbs,
 } from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -12,7 +13,7 @@ import {Link, useHistory} from 'react-router-dom';
 import type {
     GetCollectionBreadcrumb,
     GetCollectionBreadcrumbsResponse,
-} from '../../../../shared/schema';
+} from '../../../../../shared/schema';
 
 import './CollectionBreadcrumbs.scss';
 
@@ -27,26 +28,32 @@ type BreadcrumbsItem = {
     path: string;
 };
 
+const LOADING_ITEM_ID = '__loading';
+
 const collectionsPath = '/collections';
 const workbooksPath = '/workbooks';
 
 export type CollectionBreadcrumbsProps = {
     className?: string;
+    isLoading?: boolean;
     collectionBreadcrumbs: GetCollectionBreadcrumbsResponse;
     workbook?: {
         workbookId: string;
         title: string;
     };
-    collection?: {
-        collectionId: string;
-        title: string;
-    } | null;
     onItemClick?: (item: GetCollectionBreadcrumb) => void;
     onCurrentItemClick?: () => void;
 };
 
 export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
-    ({className, collectionBreadcrumbs, workbook, collection, onItemClick, onCurrentItemClick}) => {
+    ({
+        className,
+        isLoading = false,
+        collectionBreadcrumbs,
+        workbook,
+        onItemClick,
+        onCurrentItemClick,
+    }) => {
         const history = useHistory();
 
         const items = React.useMemo<BreadcrumbsItem[]>(() => {
@@ -61,43 +68,41 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
                 },
             ];
 
-            if (collectionBreadcrumbs.length > 0) {
-                collectionBreadcrumbs.forEach((item) => {
-                    result.push({
-                        id: item.collectionId,
-                        text: item.title,
-                        action: () => {
-                            history.push(`${collectionsPath}/${item.collectionId}`);
-                        },
-                        path: `${collectionsPath}/${item.collectionId}`,
+            if (isLoading) {
+                result.push({
+                    id: LOADING_ITEM_ID,
+                    text: '',
+                    action: () => {},
+                    path: '',
+                });
+            } else {
+                if (collectionBreadcrumbs.length > 0) {
+                    collectionBreadcrumbs.forEach((item) => {
+                        result.push({
+                            id: item.collectionId,
+                            text: item.title,
+                            action: () => {
+                                history.push(`${collectionsPath}/${item.collectionId}`);
+                            },
+                            path: `${collectionsPath}/${item.collectionId}`,
+                        });
                     });
-                });
-            }
+                }
 
-            if (workbook) {
-                result.push({
-                    id: workbook.workbookId,
-                    text: workbook.title,
-                    action: () => {
-                        history.push(`${workbooksPath}/${workbook.workbookId}`);
-                    },
-                    path: `${workbooksPath}/${workbook.workbookId}`,
-                });
-            }
-
-            if (collection) {
-                result.push({
-                    id: collection.collectionId,
-                    text: collection.title,
-                    action: () => {
-                        history.push(`${collectionsPath}/${collection.collectionId}`);
-                    },
-                    path: `${collectionsPath}/${collection.collectionId}`,
-                });
+                if (workbook) {
+                    result.push({
+                        id: workbook.workbookId,
+                        text: workbook.title,
+                        action: () => {
+                            history.push(`${workbooksPath}/${workbook.workbookId}`);
+                        },
+                        path: `${workbooksPath}/${workbook.workbookId}`,
+                    });
+                }
             }
 
             return result;
-        }, [collectionBreadcrumbs, workbook, collection, history]);
+        }, [isLoading, history, collectionBreadcrumbs, workbook]);
 
         return (
             <div className={b(null, className)}>
@@ -106,6 +111,9 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
                     firstDisplayedItemsCount={FirstDisplayedItemsCount.One}
                     lastDisplayedItemsCount={LastDisplayedItemsCount.One}
                     renderItemContent={(item: BreadcrumbsItem, isCurrent: boolean) => {
+                        if (item.id === LOADING_ITEM_ID) {
+                            return <Skeleton className={b('skeleton')} />;
+                        }
                         return (
                             <Link
                                 className={b('item', {last: isCurrent})}
@@ -113,15 +121,14 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
                                 onClick={(e) => {
                                     e.stopPropagation();
 
-                                    if (isCurrent && onCurrentItemClick) {
-                                        onCurrentItemClick();
-                                    } else if (onItemClick) {
-                                        const bredcrumbItem = collectionBreadcrumbs.find(
-                                            (collectionBreadcrumb) =>
-                                                collectionBreadcrumb.collectionId === item.id,
-                                        );
-                                        if (bredcrumbItem) {
-                                            onItemClick(bredcrumbItem);
+                                    if (!e.metaKey) {
+                                        if (isCurrent && onCurrentItemClick) {
+                                            onCurrentItemClick();
+                                        } else if (onItemClick && item.id) {
+                                            onItemClick({
+                                                collectionId: item.id,
+                                                title: item.text,
+                                            });
                                         }
                                     }
                                 }}

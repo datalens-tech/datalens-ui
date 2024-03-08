@@ -13,7 +13,11 @@ import {SelectedMap} from '../../types';
 
 const i18n = I18n.keyset('collections');
 
-export const useSelectionMode = () => {
+type UseSelectionModeArgs = {
+    curCollectionId: string | null;
+};
+
+export const useSelectionMode = ({curCollectionId}: UseSelectionModeArgs) => {
     const [selectedMap, setSelectedMap] = React.useState<SelectedMap>({});
     const [isOpenSelectionMode, setIsOpenSelectionMode] = React.useState(false);
 
@@ -125,6 +129,11 @@ export const useSelectionMode = () => {
             );
         }
     }, [countSelected, isOpenSelectionMode, canMove, onOpenSelectionMode, onSelectAll]);
+
+    React.useEffect(() => {
+        setIsOpenSelectionMode(false);
+        resetSelected();
+    }, [curCollectionId, resetSelected]);
 
     return {
         isOpenSelectionMode,

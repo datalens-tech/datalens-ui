@@ -1,43 +1,31 @@
 import React from 'react';
 
-import {CancellablePromise} from '@gravity-ui/sdk';
 import block from 'bem-cn-lite';
+import {useDispatch, useSelector} from 'react-redux';
+import {useHistory, useParams} from 'react-router-dom';
+
+import {CollectionFilters} from '../../../../components/CollectionFilters';
 import {
     DIALOG_CREATE_WORKBOOK,
     DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
-} from 'components/CollectionsStructure';
-import {SmartLoader} from 'components/SmartLoader/SmartLoader';
-import {ViewError} from 'components/ViewError/ViewError';
-import {useDispatch, useSelector} from 'react-redux';
-import {useHistory, useParams} from 'react-router-dom';
-import type {GetCollectionContentResponse} from 'shared/schema';
-import {closeDialog, openDialog} from 'store/actions/dialog';
-import Utils from 'utils';
-
-import {CollectionFilters} from '../../../../components/CollectionFilters';
+} from '../../../../components/CollectionsStructure';
+import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';
+import {ViewError} from '../../../../components/ViewError/ViewError';
 import {AppDispatch} from '../../../../store';
-import {
-    getCollection,
-    getCollectionBreadcrumbs,
-    getCollectionContent,
-    getRootCollectionPermissions,
-    resetCollectionContent,
-    resetCollectionInfo,
-} from '../../store/actions';
+import {closeDialog, openDialog} from '../../../../store/actions/dialog';
+import Utils from '../../../../utils';
 import {
     selectBreadcrumbsError,
     selectCollection,
     selectCollectionContentItems,
-    selectCollectionInfoIsLoading,
+    selectCollectionIsLoading,
     selectPageError,
     selectRootPermissionsData,
 } from '../../store/selectors';
-import {GetCollectionContentArgs} from '../../types';
 import {CollectionContent} from '../CollectionContent';
 
 import {DEFAULT_FILTERS, PAGE_SIZE} from './constants';
-import {useFilters, useLayout, useSelectionMode, useViewMode} from './hooks';
-import {getUserDefaultFilters} from './utils';
+import {useData, useFilters, useLayout, useSelectionMode, useViewMode} from './hooks';
 
 import './CollectionPage.scss';
 
@@ -54,7 +42,7 @@ export const CollectionPage = () => {
     const contentItems = useSelector(selectCollectionContentItems);
     const breadcrumbsError = useSelector(selectBreadcrumbsError);
     const rootPermissions = useSelector(selectRootPermissionsData);
-    const isCollectionInfoLoading = useSelector(selectCollectionInfoIsLoading);
+    const isCollectionInfoLoading = useSelector(selectCollectionIsLoading);
     const collection = useSelector(selectCollection);
     const pageError = useSelector(selectPageError);
 
@@ -71,98 +59,33 @@ export const CollectionPage = () => {
         onSelectAll,
         onCancelSelectionMode,
         selectBtn,
-    } = useSelectionMode();
+    } = useSelectionMode({curCollectionId});
 
-    const {filters, updateFilters} = useFilters({setSelectedMap});
+    const {filters, updateFilters} = useFilters({curCollectionId, setSelectedMap});
 
     const {collectionPageViewMode, onChangeCollectionPageViewMode} = useViewMode({
         countSelected,
         setIsOpenSelectionMode,
     });
 
-    const getCollectionContentRecursively = React.useCallback(
-        (
-            args: GetCollectionContentArgs,
-        ): CancellablePromise<GetCollectionContentResponse | null> => {
-            let curCollectionsPage = args.collectionsPage;
-            let curWorkbooksPage = args.workbooksPage;
-
-            return dispatch(getCollectionContent(args)).then((result) => {
-                if (
-                    (result?.collections.length === 0 &&
-                        result.collectionsNextPageToken !== null) ||
-                    (result?.workbooks.length === 0 && result.workbooksNextPageToken !== null)
-                ) {
-                    curCollectionsPage = result.collectionsNextPageToken;
-                    curWorkbooksPage = result.workbooksNextPageToken;
-
-                    return getCollectionContentRecursively({
-                        ...args,
-                        collectionsPage: curCollectionsPage,
-                        workbooksPage: curWorkbooksPage,
-                    });
-                } else {
-                    return result;
-                }
-            });
-        },
-        [dispatch],
-    );
-
-    const initLoadCollection = React.useCallback(() => {
-        let collectionPromise: CancellablePromise<unknown>;
-        let breadcrumbsPromise: CancellablePromise<unknown>;
-
-        if (collectionId) {
-            collectionPromise = dispatch(getCollection({collectionId}));
-
-            breadcrumbsPromise = dispatch(getCollectionBreadcrumbs({collectionId}));
-        } else {
-            dispatch(resetCollectionInfo());
-        }
-
-        updateFilters(getUserDefaultFilters());
-
-        return () => {
-            if (collectionId) {
-                collectionPromise.cancel();
-                breadcrumbsPromise.cancel();
-            }
-        };
-    }, [collectionId, dispatch, updateFilters]);
-
-    const refreshContent = React.useCallback(() => {
-        dispatch(resetCollectionContent());
-        getCollectionContentRecursively({
-            collectionId: curCollectionId,
-            pageSize: PAGE_SIZE,
-            ...filters,
-        });
-
-        setIsOpenSelectionMode(false);
-        resetSelected();
-    }, [
-        curCollectionId,
-        dispatch,
-        filters,
+    const {
         getCollectionContentRecursively,
-        resetSelected,
-        setIsOpenSelectionMode,
-    ]);
-
-    const refreshCollectionInfo = React.useCallback(() => {
-        initLoadCollection();
-        refreshContent();
-    }, [initLoadCollection, refreshContent]);
+        fetchCollectionInfo,
+        fetchCollectionContent,
+        refreshPage,
+    } = useData({
+        curCollectionId,
+        filters,
+    });
 
     const handeCloseMoveDialog = React.useCallback(
         (structureChanged: boolean) => {
             if (structureChanged) {
-                refreshCollectionInfo();
+                refreshPage();
             }
             dispatch(closeDialog());
         },
-        [dispatch, refreshCollectionInfo],
+        [dispatch, refreshPage],
     );
 
     const handleCreateWorkbook = React.useCallback(() => {
@@ -185,21 +108,6 @@ export const CollectionPage = () => {
         );
     }, [curCollectionId, dispatch, history]);
 
-    useLayout({
-        curCollectionId,
-        getCollectionContentRecursively,
-        refreshCollectionInfo,
-        filters,
-        updateFilters,
-        handleCreateWorkbook,
-        handeCloseMoveDialog,
-        collectionPageViewMode,
-        isOpenSelectionMode,
-        countSelected,
-        onCancelSelectionMode,
-        selectBtn,
-    });
-
     const setBatchAction = React.useCallback(() => {
         const workbookIds: string[] = [];
         const collectionIds: string[] = [];
@@ -220,7 +128,7 @@ export const CollectionPage = () => {
                 id: DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
                 props: {
                     open: true,
-                    onApply: refreshContent,
+                    onApply: fetchCollectionContent,
                     onClose: handeCloseMoveDialog,
                     initialParentId: collection?.collectionId,
                     workbookIds,
@@ -228,44 +136,27 @@ export const CollectionPage = () => {
                 },
             }),
         );
-    }, [collection?.collectionId, dispatch, handeCloseMoveDialog, refreshContent, selectedMap]);
+    }, [
+        collection?.collectionId,
+        dispatch,
+        handeCloseMoveDialog,
+        fetchCollectionContent,
+        selectedMap,
+    ]);
 
-    // Rights to create collections/workbooks in the root
-    React.useEffect(() => {
-        let rootPermissionsPromise: CancellablePromise<unknown>;
-
-        if (!rootPermissions) {
-            rootPermissionsPromise = dispatch(getRootCollectionPermissions());
-        }
-
-        return () => {
-            if (rootPermissionsPromise) {
-                rootPermissionsPromise.cancel();
-            }
-        };
-    }, [collectionId, rootPermissions, dispatch]);
-
-    // Information for the current collection
-    React.useEffect(() => {
-        return initLoadCollection();
-    }, [initLoadCollection]);
-
-    // The first page of the collection content
-    React.useEffect(() => {
-        dispatch(resetCollectionContent());
-
-        resetSelected();
-
-        const contentItemsPromise = getCollectionContentRecursively({
-            collectionId: curCollectionId,
-            pageSize: PAGE_SIZE,
-            ...filters,
-        });
-
-        return () => {
-            contentItemsPromise.cancel();
-        };
-    }, [curCollectionId, dispatch, filters, getCollectionContentRecursively, resetSelected]);
+    useLayout({
+        curCollectionId,
+        fetchCollectionContent,
+        refreshCollectionInfo: refreshPage,
+        filters,
+        handleCreateWorkbook,
+        handeCloseMoveDialog,
+        collectionPageViewMode,
+        isOpenSelectionMode,
+        countSelected,
+        onCancelSelectionMode,
+        selectBtn,
+    });
 
     const isDefaultFilters =
         filters.filterString === DEFAULT_FILTERS.filterString &&
@@ -278,7 +169,7 @@ export const CollectionPage = () => {
     ) {
         return (
             <div className={b()}>
-                <ViewError retry={initLoadCollection} error={pageError} />
+                <ViewError retry={fetchCollectionInfo} error={pageError} />
             </div>
         );
     }
@@ -305,8 +196,8 @@ export const CollectionPage = () => {
                         filters={filters}
                         isDefaultFilters={isDefaultFilters}
                         pageSize={PAGE_SIZE}
-                        refreshPage={refreshCollectionInfo}
-                        refreshContent={refreshContent}
+                        refreshPage={refreshPage}
+                        refreshContent={fetchCollectionContent}
                         contentItems={contentItems}
                         countSelected={countSelected}
                         selectedMap={selectedMap}
@@ -318,7 +209,11 @@ export const CollectionPage = () => {
                         }
                         onCreateWorkbookClick={handleCreateWorkbook}
                         onClearFiltersClick={() => {
-                            updateFilters(DEFAULT_FILTERS);
+                            updateFilters({
+                                ...DEFAULT_FILTERS,
+                                orderField: filters.orderField,
+                                orderDirection: filters.orderDirection,
+                            });
                         }}
                         isOpenSelectionMode={isOpenSelectionMode}
                         canMove={canMove}

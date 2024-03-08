@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {PencilToLine} from '@gravity-ui/icons';
-import {CancellablePromise} from '@gravity-ui/sdk';
 import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -9,14 +8,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {Feature} from 'shared';
 import {DL} from 'ui/constants';
-import {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 import Utils from 'utils';
 
 import type {
     CreateCollectionResponse,
-    GetCollectionContentResponse,
+    GetCollectionBreadcrumb,
 } from '../../../../../../shared/schema';
-import {CollectionBreadcrumbs} from '../../../../../components/Breadcrumbs/CollectionBreadcrumbs/CollectionBreadcrumbs';
 import {
     CollectionContentFilters,
     CollectionPageViewMode,
@@ -29,33 +26,33 @@ import {
 } from '../../../../../components/CollectionsStructure';
 import {DIALOG_IAM_ACCESS} from '../../../../../components/IamAccessDialog';
 import {registry} from '../../../../../registry';
+import {ResourceType} from '../../../../../registry/units/common/types/components/IamAccessDialog';
 import {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
+import {CollectionBreadcrumbs} from '../../../../collections-navigation/components/CollectionBreadcrumbs/CollectionBreadcrumbs';
 import {LayoutContext} from '../../../../collections-navigation/contexts/LayoutContext';
-import {getCollection, getCollectionBreadcrumbs} from '../../../store/actions';
+import {
+    getCollection,
+    getCollectionBreadcrumbs,
+    setCollectionBreadcrumbs,
+} from '../../../store/actions';
 import {
     selectBreadcrumbs,
-    selectBreadcrumbsIsLoading,
     selectCollection,
-    selectCollectionInfoIsLoading,
     selectRootPermissionsData,
     selectRootPermissionsIsLoading,
 } from '../../../store/selectors';
-import {GetCollectionContentArgs} from '../../../types';
 import {CollectionActions} from '../../CollectionActions/CollectionActions';
-import {PAGE_SIZE} from '../constants';
+
 const b = block('dl-collection-page');
 
 const i18n = I18n.keyset('collections');
 
 type UseLayoutArgs = {
     curCollectionId: string | null;
-    getCollectionContentRecursively: (
-        args: GetCollectionContentArgs,
-    ) => CancellablePromise<GetCollectionContentResponse | null>;
+    fetchCollectionContent: () => void;
     refreshCollectionInfo: () => void;
     filters: CollectionContentFilters;
-    updateFilters: (filters: CollectionContentFilters) => void;
     handleCreateWorkbook: () => void;
     handeCloseMoveDialog: (structureChanged: boolean) => void;
     collectionPageViewMode: CollectionPageViewMode;
@@ -67,10 +64,9 @@ type UseLayoutArgs = {
 
 export const useLayout = ({
     curCollectionId,
-    getCollectionContentRecursively,
+    fetchCollectionContent,
     refreshCollectionInfo,
     filters,
-    updateFilters,
     handleCreateWorkbook,
     handeCloseMoveDialog,
     collectionPageViewMode,
@@ -81,16 +77,22 @@ export const useLayout = ({
 }: UseLayoutArgs) => {
     const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
+    const {ActionPanelEntrySelect} = registry.common.components.getAll();
+
     const {setLayout} = React.useContext(LayoutContext);
+
+    const history = useHistory();
 
     const dispatch: AppDispatch = useDispatch();
 
-    const breadcrumbsIsLoading = useSelector(selectBreadcrumbsIsLoading);
+    // const breadcrumbsIsLoading = useSelector(selectBreadcrumbsIsLoading);
     const isRootPermissionsLoading = useSelector(selectRootPermissionsIsLoading);
     const rootPermissions = useSelector(selectRootPermissionsData);
-    const isCollectionInfoLoading = useSelector(selectCollectionInfoIsLoading);
     const collection = useSelector(selectCollection);
-    const breadcrumbs = useSelector(selectBreadcrumbs);
+    const isCollectionLoading = !collection || curCollectionId !== collection.collectionId;
+    const collectionBreadcrumbs = useSelector(selectBreadcrumbs);
+
+    const isIncorrectCollection = !collection || collection.collectionId !== curCollectionId;
 
     const onEditClick = React.useCallback(() => {
         if (curCollectionId && collection) {
@@ -125,67 +127,58 @@ export const useLayout = ({
         }
     }, [collection, curCollectionId, dispatch]);
 
-    const collectionItems = React.useMemo(
-        () =>
-            breadcrumbs
-                ? breadcrumbs.filter((item) => item.collectionId !== collection?.collectionId)
-                : [],
-        [breadcrumbs, collection?.collectionId],
-    );
-
-    const history = useHistory();
-
-    const {ActionPanelEntrySelect} = registry.common.components.getAll();
-
     React.useEffect(() => {
-        if (breadcrumbsIsLoading === false || curCollectionId === null) {
-            setLayout({
-                actionsPanelLeftBlock: {
-                    isLoading: false,
-                    content: (
-                        <div className={b('action-panel-left-block')}>
-                            <ActionPanelEntrySelect />
-                            <CollectionBreadcrumbs
-                                className={b('breadcrumbs')}
-                                collectionBreadcrumbs={collectionItems}
-                                collection={collection}
-                                onCurrentItemClick={() => {
-                                    getCollectionContentRecursively({
-                                        collectionId: curCollectionId,
-                                        pageSize: PAGE_SIZE,
-                                        ...filters,
-                                    });
-                                }}
-                                onItemClick={(item) => {
-                                    setLayout({
-                                        title: {isLoading: false, content: item.title},
-                                    });
-                                }}
-                            />
-                        </div>
-                    ),
-                },
-            });
-        }
+        setLayout({
+            actionsPanelLeftBlock: {
+                content: (
+                    <div className={b('action-panel-left-block')}>
+                        <ActionPanelEntrySelect />
+                        <CollectionBreadcrumbs
+                            className={b('breadcrumbs')}
+                            isLoading={curCollectionId !== null && !collectionBreadcrumbs}
+                            collectionBreadcrumbs={collectionBreadcrumbs ?? []}
+                            onItemClick={(bredcrumbItem) => {
+                                if (collectionBreadcrumbs) {
+                                    let isFound = false;
+
+                                    const newBreadcrumbs = collectionBreadcrumbs.reduce<
+                                        GetCollectionBreadcrumb[]
+                                    >((acc, item) => {
+                                        if (!isFound) {
+                                            acc.push(item);
+                                        }
+                                        if (bredcrumbItem.collectionId === item.collectionId) {
+                                            isFound = true;
+                                        }
+                                        return acc;
+                                    }, []);
+
+                                    dispatch(setCollectionBreadcrumbs(newBreadcrumbs));
+                                }
+                            }}
+                            onCurrentItemClick={() => {
+                                fetchCollectionContent();
+                            }}
+                        />
+                    </div>
+                ),
+            },
+        });
     }, [
         ActionPanelEntrySelect,
-        breadcrumbsIsLoading,
         collection,
-        collectionItems,
+        collectionBreadcrumbs,
         curCollectionId,
+        dispatch,
+        fetchCollectionContent,
         filters,
-        getCollectionContentRecursively,
         setLayout,
     ]);
 
     React.useEffect(() => {
-        if (
-            (isCollectionInfoLoading === false || curCollectionId === null) &&
-            isRootPermissionsLoading === false
-        ) {
+        if ((curCollectionId === null && !isRootPermissionsLoading) || !isIncorrectCollection) {
             setLayout({
                 actionsPanelRightBlock: {
-                    isLoading: false,
                     content: (
                         <CollectionActions
                             collectionData={collection}
@@ -318,16 +311,15 @@ export const useLayout = ({
         collectionsAccessEnabled,
         curCollectionId,
         dispatch,
-        getCollectionContentRecursively,
         handeCloseMoveDialog,
         handleCreateWorkbook,
         history,
-        isCollectionInfoLoading,
+        isCollectionLoading,
+        isIncorrectCollection,
         isRootPermissionsLoading,
         refreshCollectionInfo,
         rootPermissions,
         setLayout,
-        updateFilters,
     ]);
 
     React.useEffect(() => {
@@ -336,27 +328,42 @@ export const useLayout = ({
                 title: {
                     content: i18n('label_root-title'),
                 },
-                description: {
-                    content: null,
+                description: null,
+            });
+        } else if (collection) {
+            setLayout({
+                title: {
+                    content: collection.title,
                 },
+                description: collection.description
+                    ? {
+                          content: collection.description,
+                      }
+                    : null,
             });
         } else {
             setLayout({
                 title: {
-                    content: collection ? collection.title : null,
-                },
-                description: {
-                    content: collection ? collection.description : null,
+                    isLoading: true,
                 },
             });
         }
-    }, [curCollectionId, collection, setLayout]);
+    }, [curCollectionId, collection, setLayout, isIncorrectCollection]);
 
     React.useEffect(() => {
-        if (curCollectionId === null || isCollectionInfoLoading === false) {
+        if (curCollectionId === null) {
+            setLayout({
+                titleActionsBlock: null,
+            });
+        } else if (isIncorrectCollection) {
             setLayout({
                 titleActionsBlock: {
-                    isLoading: false,
+                    isLoading: true,
+                },
+            });
+        } else {
+            setLayout({
+                titleActionsBlock: {
                     content:
                         curCollectionId && collection && collection.permissions.update ? (
                             <Tooltip content={i18n('action_edit')}>
@@ -369,66 +376,35 @@ export const useLayout = ({
                         ) : null,
                 },
             });
-        } else {
-            setLayout({
-                titleActionsBlock: {
-                    isLoading: true,
-                },
-            });
         }
-    }, [curCollectionId, collection, onEditClick, isCollectionInfoLoading, setLayout]);
+    }, [curCollectionId, collection, onEditClick, setLayout, isIncorrectCollection]);
 
     React.useEffect(() => {
-        if (curCollectionId === null || isCollectionInfoLoading === false) {
-            setLayout({
-                titleRightBlock: {
-                    isLoading: false,
-                    content:
-                        collectionPageViewMode === CollectionPageViewMode.Grid ? (
-                            <React.Fragment>
-                                {selectBtn}
-                                {(isOpenSelectionMode || Boolean(countSelected)) && (
-                                    <Button
-                                        className={b('cancel-btn')}
-                                        view="outlined-danger"
-                                        onClick={onCancelSelectionMode}
-                                    >
-                                        {i18n('action_cancel')}
-                                    </Button>
-                                )}
-                            </React.Fragment>
-                        ) : null,
-                },
-            });
-        } else {
-            setLayout({
-                titleRightBlock: {
-                    isLoading: collectionPageViewMode === CollectionPageViewMode.Grid,
-                },
-            });
-        }
+        setLayout({
+            titleRightBlock: {
+                content:
+                    collectionPageViewMode === CollectionPageViewMode.Grid ? (
+                        <React.Fragment>
+                            {selectBtn}
+                            {(isOpenSelectionMode || Boolean(countSelected)) && (
+                                <Button
+                                    className={b('cancel-btn')}
+                                    view="outlined-danger"
+                                    onClick={onCancelSelectionMode}
+                                >
+                                    {i18n('action_cancel')}
+                                </Button>
+                            )}
+                        </React.Fragment>
+                    ) : null,
+            },
+        });
     }, [
-        curCollectionId,
         collectionPageViewMode,
         countSelected,
         isOpenSelectionMode,
         onCancelSelectionMode,
         selectBtn,
-        isCollectionInfoLoading,
         setLayout,
     ]);
-
-    React.useEffect(() => {
-        if (curCollectionId !== null) {
-            setLayout({
-                actionsPanelLeftBlock: {isLoading: true},
-                actionsPanelRightBlock: {isLoading: true},
-                title: {isLoading: true},
-                titleActionsBlock: {isLoading: true},
-                titleRightBlock: {isLoading: true},
-                description: {isLoading: true},
-            });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 };

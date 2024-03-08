@@ -29,6 +29,8 @@ import {
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
     RESET_COLLECTION_CONTENT,
     RESET_COLLECTION_INFO,
+    SET_COLLECTION,
+    SET_COLLECTION_BREDCRUMBS,
 } from '../constants';
 
 type GetRootCollectionPermissionsLoadingAction = {
@@ -224,6 +226,22 @@ export const getCollection = ({collectionId}: {collectionId: string}) => {
     };
 };
 
+type SetCollectionAction = {
+    type: typeof SET_COLLECTION;
+    data: {
+        collection: CollectionWithPermissions;
+    };
+};
+
+export const setCollection = (collection: CollectionWithPermissions) => {
+    return {
+        type: SET_COLLECTION,
+        data: {
+            collection,
+        },
+    };
+};
+
 type GetCollectionBreadcrumbsLoadingAction = {
     type: typeof GET_COLLECTION_BREADCRUMBS_LOADING;
 };
@@ -267,6 +285,24 @@ export const getCollectionBreadcrumbs = ({collectionId}: {collectionId: string})
 
                 return null;
             });
+    };
+};
+
+type SetCollectionBreadcrumbsAction = {
+    type: typeof SET_COLLECTION_BREDCRUMBS;
+    data: {
+        collectionBreadcrumbs: GetCollectionBreadcrumbsResponse;
+    };
+};
+
+export const setCollectionBreadcrumbs = (
+    collectionBreadcrumbs: GetCollectionBreadcrumbsResponse,
+) => {
+    return {
+        type: SET_COLLECTION_BREDCRUMBS,
+        data: {
+            collectionBreadcrumbs,
+        },
     };
 };
 
@@ -330,7 +366,9 @@ export type CollectionsAction =
     | GetRootCollectionPemissionsAction
     | GetCollectionsContentAction
     | GetCollectionAction
+    | SetCollectionAction
     | GetCollectionBreadcrumbsAction
+    | SetCollectionBreadcrumbsAction
     | ResetCollectionInfoAction
     | ResetCollectionContentAction
     | DeleteCollectionInItemsAction
