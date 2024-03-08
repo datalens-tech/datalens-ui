@@ -17,7 +17,7 @@ const PARAMS = {
     SELECTOR_TITLE: 'Step',
 };
 
-datalensTest.describe(`Dashboards - switch tabs`, () => {
+datalensTest.describe(`Dashboards - Switch tabs`, () => {
     datalensTest(
         'Dashboard tabs are successfully switched by clicking on the tab and using the browser\'s "Back"/"Forward" buttons',
         async ({page}: {page: Page}) => {

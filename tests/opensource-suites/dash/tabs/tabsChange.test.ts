@@ -14,7 +14,7 @@ const secondTabIsVisible = async (dashboardPage: DashboardPage) => {
     await expect(dashboardPage.getDashKitTextItem(arbitraryText.second)).toBeVisible();
 };
 
-datalensTest.describe(`Dashboards - switch tabs`, () => {
+datalensTest.describe(`Dashboards - Switch tabs`, () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 

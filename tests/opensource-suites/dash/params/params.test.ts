@@ -157,7 +157,7 @@ const removeParam = async (page: Page, paramTitle: string) => {
     await removeButton?.click();
 };
 
-datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters`, () => {
+datalensTest.describe(`Dashboards - Chart/external selector/dashboard parameters`, () => {
     datalensTest.beforeEach(
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});

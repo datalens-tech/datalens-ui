@@ -80,7 +80,7 @@ const waitBackGetUrlStateParam = async (page: Page): Promise<string | null> => {
     return new Promise((resolve) => resolve(stateParam));
 };
 
-datalensTest.describe('Dashboard States with tabs', () => {
+datalensTest.describe('Dashboards - States with tabs', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         await openTestPage(page, RobotChartsDashboardUrls.DashboardWithTabsAndSelectors);
 

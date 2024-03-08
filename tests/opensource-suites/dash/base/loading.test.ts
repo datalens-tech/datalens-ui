@@ -51,7 +51,7 @@ const isChartRequestSent = (reqData: string | null) => {
     return isChartData;
 };
 
-datalensTest.describe('Dashboards - Widget Downloads', () => {
+datalensTest.describe('Dashboards - Widgets loading', () => {
     datalensTest(
         'When loading a dashboard, the selectors have priority for loading api/run',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {

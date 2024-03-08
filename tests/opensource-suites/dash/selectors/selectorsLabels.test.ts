@@ -34,7 +34,7 @@ const createDashWithSelector = async ({
     });
 };
 
-datalensTest.describe('Dashboards are the internal header of selectors', () => {
+datalensTest.describe('Dashboards - The internal header of selectors', () => {
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 

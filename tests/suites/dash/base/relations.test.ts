@@ -27,7 +27,7 @@ const PARAMS = {
     CHART_FIELD: 'Population String',
 };
 
-datalensTest.describe('Dashboards are Basic functionality', () => {
+datalensTest.describe('Dashboards - Basic functionality', () => {
     datalensTest(
         'Adding a chart and selector with manual input of values, creating a link',
         async ({page}: {page: Page}) => {

@@ -10,7 +10,7 @@ const PARAMS = {
     ORIGINAL_VALUES_COUNT: 2,
 };
 
-datalensTest.describe('Dashboards are Possible selector values', () => {
+datalensTest.describe('Dashboards - Possible selector values', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashName = `e2e-test-dash-acceptable-values-${getUniqueTimestamp()}`;
         const dashboardPage = new DashboardPage({page});
@@ -24,7 +24,7 @@ datalensTest.describe('Dashboards are Possible selector values', () => {
     });
 
     datalensTest(
-        'Possible values of the selector-selector with manual input can be deleted',
+        'Possible values of the select-selector with manual input can be deleted',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 

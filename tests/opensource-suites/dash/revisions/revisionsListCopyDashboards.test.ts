@@ -8,7 +8,7 @@ import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
 
-datalensTest.describe('Dashboard Versioning', () => {
+datalensTest.describe('Dashboards - Versioning', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 

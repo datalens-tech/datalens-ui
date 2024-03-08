@@ -4,7 +4,7 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {TestParametrizationConfig} from '../../../types/config';
 
-datalensTest.describe(`Dashboards - tabs`, () => {
+datalensTest.describe(`Dashboards - Tabs`, () => {
     datalensTest.beforeEach(
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});

@@ -14,7 +14,7 @@ const SELECTORS = {
     SELECTOR_LIST_ITEMS: '.yc-list__item',
 };
 
-datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
+datalensTest.describe(`Dashboards - Change widgets order on tab`, () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 

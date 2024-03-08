@@ -10,7 +10,7 @@ const PARAM_VALUE = ['eventmonth'];
 const API_RUN_TIMEOUT = 3000;
 const SELECTOR_KEY = 'chartkit-control-select';
 
-datalensTest.describe('Dashboard States', () => {
+datalensTest.describe('Dashboards - States', () => {
     datalensTest(
         'Checking the sending of correct data and the correct number of requests when changing the state for an external selector',
         async ({page}: {page: Page}) => {
