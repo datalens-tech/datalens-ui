@@ -4,10 +4,18 @@ import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {DashEntryQa} from '../../../../src/shared/constants';
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage, {RENDER_TIMEOUT} from '../../../page-objects/dashboard/DashboardPage';
-import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../../utils';
+import {
+    entryDialogFillAndSave,
+    getUniqueTimestamp,
+    isEnabledFeature,
+    openTestPage,
+    slct,
+    waitForCondition,
+} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
+import {Feature} from '../../../../src/shared/types';
 
 const waitCheckActualizeRevisionList = async ({
     page,
@@ -72,9 +80,20 @@ datalensTest.describe('Dashboards - Versioning', () => {
             await dashboardPage.editDashWithoutSaving();
 
             await dashboardPage.clickSaveChangesAsNewDash();
-            await workbookPO.dialogCreateEntry.createEntryWithName(
-                `e2e-test-dash-revisions-copy-${getUniqueTimestamp()}`,
-            );
+
+            const isEnabledCollections = await isEnabledFeature(page, Feature.CollectionsEnabled);
+
+            if (isEnabledCollections) {
+                await workbookPO.dialogCreateEntry.createEntryWithName(
+                    `e2e-test-dash-revisions-copy-${getUniqueTimestamp()}`,
+                );
+            } else {
+                await entryDialogFillAndSave(
+                    page,
+                    `e2e-test-dash-revisions-copy-${getUniqueTimestamp()}`,
+                );
+            }
+
             await page.waitForNavigation();
 
             await dashboardPage.waitForOpeningRevisionsList();

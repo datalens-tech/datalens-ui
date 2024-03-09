@@ -4,6 +4,10 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {TestParametrizationConfig} from '../../../types/config';
 
+const PARAMS = {
+    NEW_TAB_NAME: 'Tab 2',
+};
+
 datalensTest.describe(`Dashboards - Tabs`, () => {
     datalensTest.beforeEach(
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
@@ -30,15 +34,15 @@ datalensTest.describe(`Dashboards - Tabs`, () => {
 
             await dashboardPage.enterEditMode();
 
-            // Adding another tab with the default name (Tab 2)
-            await dashboardPage.addTab();
+            // Adding another tab with the name from params
+            await dashboardPage.addTab(PARAMS.NEW_TAB_NAME);
 
             // Waiting for the first tab to load correctly
             await dashboardPage.waitForSomeItemVisible();
 
             // switch to the second tab
 
-            await dashboardPage.changeTab({tabName: 'Tab 2'});
+            await dashboardPage.changeTab({tabName: PARAMS.NEW_TAB_NAME});
 
             // Cancel editing the dashboard without saving
             await dashboardPage.exitEditMode();

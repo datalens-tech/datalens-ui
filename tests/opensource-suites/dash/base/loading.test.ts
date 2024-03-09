@@ -158,7 +158,10 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
             }
 
             // check that the widget content has appeared
-            await page.waitForSelector(SELECTORS.CHART_LINE_ITEM);
+            await page
+                .locator(SELECTORS.CHART_LINE_ITEM)
+                .or(page.locator(`.${COMMON_CHARTKIT_SELECTORS.graph}`))
+                .waitFor({state: 'visible'});
 
             await dashboardPage.exitEditMode();
             await dashboardPage.deleteDash();

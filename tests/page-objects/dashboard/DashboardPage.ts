@@ -6,6 +6,7 @@ import {
     DashCommonQa,
     DashEntryQa,
     DashRelationTypes,
+    DialogControlDateQa,
     DialogDashWidgetQA,
     DialogQLParameterQA,
     DialogTabsQA,
@@ -193,6 +194,18 @@ class DashboardPage extends BasePage {
         return yfmLocator.innerText();
     }
 
+    // Fill in the input with the name of the entity being created in the EntryDialog (the dialog that appears when saving entities) and click the "Create" button
+    async entryNavigationDialogFillAndSave(page: Page, entryName: string) {
+        // waiting for the save dialog to open
+        const entryDialog = await page.waitForSelector(slct('entry-dialog-content'));
+        const entryDialogInput = await entryDialog!.waitForSelector('[data-qa=path-select] input');
+        // filling in the input
+        await entryDialogInput!.fill(entryName);
+
+        // save
+        await page.click(slct(EntryDialogQA.Apply));
+    }
+
     async createDashboard({editDash}: {editDash: () => Promise<void>}) {
         // some page need to be loaded so we can get data of feature flag from DL var
         await openTestPage(this.page, '/');
@@ -209,6 +222,7 @@ class DashboardPage extends BasePage {
 
         const dashName = `e2e-entry-${getUniqueTimestamp()}`;
 
+        console.log(isEnabledCollections, 'isEnabledCollections');
         // waiting for the dialog to open, specify the name, save
         if (isEnabledCollections) {
             await this.dialogCreateEntry.createEntryWithName(dashName);
@@ -330,7 +344,9 @@ class DashboardPage extends BasePage {
         await this.fillSelectorSettingsDialogFields({controlTitle, controlFieldName});
 
         await this.dialogControl.elementType.click();
-        await this.dialogControl.datasetFieldSelector.selectListItem({innerText: 'Calendar'});
+        await this.dialogControl.datasetFieldSelector.selectListItemByQa(
+            slct(DialogControlQa.typeControlCalendar),
+        );
 
         await this.page.click(slct(DialogControlQa.dateRangeCheckbox));
         await this.page.click(slct(DialogControlQa.dateTimeCheckbox));
@@ -338,7 +354,7 @@ class DashboardPage extends BasePage {
         // click on the button for setting possible values
         await this.page.click(slct(DashboardPage.selectors.acceptableValuesBtn));
 
-        await this.page.getByText('Selecting a value').click();
+        await this.page.locator(`${slct(DialogControlDateQa.defaultSelectValue)} label`).click();
 
         await this.page.fill(`${slct(DialogQLParameterQA.DatepickerStart)} input`, range[0]);
 
@@ -929,10 +945,14 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_TABS));
     }
 
-    async addTab() {
+    async addTab(name?: string) {
         // adding tab (by default: Tab 2)
         await this.clickTabs();
         await this.page.click(slct(DialogTabsQA.RowAdd));
+        if (name) {
+            await this.page.getByRole('listitem').last().dblclick();
+            await this.page.locator(`${slct(DialogTabsQA.EditTabItem)} input`).fill(name);
+        }
         await this.page.click(slct(DialogTabsQA.Save));
     }
 
