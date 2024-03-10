@@ -8,16 +8,17 @@ import './AnimateBlock.scss';
 const b = block('dl-animate-block');
 
 export interface AnimateBlockProps {
+    className?: string;
     delay?: number;
     offset?: number;
     children?: React.ReactNode;
 }
 
-export const AnimateBlock = ({delay = 0, offset = 100, children}: AnimateBlockProps) => {
+export const AnimateBlock = ({className, delay = 0, offset = 100, children}: AnimateBlockProps) => {
     const [playAnimation, setPlayAnimation] = React.useState<boolean>(false);
 
     return (
-        <div className={b({animate: playAnimation})}>
+        <div className={b({animate: playAnimation}, className)}>
             <Waypoint
                 // trigger animation if element is above screen
                 topOffset={'-100000%'}

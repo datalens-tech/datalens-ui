@@ -9,16 +9,15 @@ import {
     DIALOG_CREATE_WORKBOOK,
     DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
 } from '../../../../components/CollectionsStructure';
-import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';
 import {ViewError} from '../../../../components/ViewError/ViewError';
 import {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
+import {AnimateBlock} from '../../../collections-navigation/components/AnimateBlock';
+import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
 import {
-    selectBreadcrumbsError,
     selectCollection,
     selectCollectionContentItems,
-    selectCollectionIsLoading,
     selectPageError,
     selectRootPermissionsData,
 } from '../../store/selectors';
@@ -40,9 +39,8 @@ export const CollectionPage = () => {
     const dispatch: AppDispatch = useDispatch();
 
     const contentItems = useSelector(selectCollectionContentItems);
-    const breadcrumbsError = useSelector(selectBreadcrumbsError);
+    const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
     const rootPermissions = useSelector(selectRootPermissionsData);
-    const isCollectionInfoLoading = useSelector(selectCollectionIsLoading);
     const collection = useSelector(selectCollection);
     const pageError = useSelector(selectPageError);
 
@@ -169,7 +167,15 @@ export const CollectionPage = () => {
     ) {
         return (
             <div className={b()}>
-                <ViewError retry={fetchCollectionInfo} error={pageError} />
+                <AnimateBlock className={b('error-block')}>
+                    <ViewError
+                        retry={() => {
+                            fetchCollectionInfo();
+                            fetchCollectionContent();
+                        }}
+                        error={pageError}
+                    />
+                </AnimateBlock>
             </div>
         );
     }
@@ -186,43 +192,39 @@ export const CollectionPage = () => {
                 />
             </div>
             <div className={b('content')}>
-                {isCollectionInfoLoading && curCollectionId !== null ? (
-                    <SmartLoader size="l" showAfter={0} />
-                ) : (
-                    <CollectionContent
-                        collectionId={curCollectionId}
-                        getCollectionContentRecursively={getCollectionContentRecursively}
-                        collectionPageViewMode={collectionPageViewMode}
-                        filters={filters}
-                        isDefaultFilters={isDefaultFilters}
-                        pageSize={PAGE_SIZE}
-                        refreshPage={refreshPage}
-                        refreshContent={fetchCollectionContent}
-                        contentItems={contentItems}
-                        countSelected={countSelected}
-                        selectedMap={selectedMap}
-                        countItemsWithPermissionMove={itemsWithPermissionMove.length}
-                        canCreateWorkbook={
-                            collectionId && collection
-                                ? collection.permissions.createWorkbook
-                                : Boolean(rootPermissions?.createWorkbookInRoot)
-                        }
-                        onCreateWorkbookClick={handleCreateWorkbook}
-                        onClearFiltersClick={() => {
-                            updateFilters({
-                                ...DEFAULT_FILTERS,
-                                orderField: filters.orderField,
-                                orderDirection: filters.orderDirection,
-                            });
-                        }}
-                        isOpenSelectionMode={isOpenSelectionMode}
-                        canMove={canMove}
-                        setBatchAction={setBatchAction}
-                        onUpdateCheckbox={onUpdateCheckbox}
-                        resetSelected={resetSelected}
-                        onSelectAll={onSelectAll}
-                    />
-                )}
+                <CollectionContent
+                    collectionId={curCollectionId}
+                    getCollectionContentRecursively={getCollectionContentRecursively}
+                    collectionPageViewMode={collectionPageViewMode}
+                    filters={filters}
+                    isDefaultFilters={isDefaultFilters}
+                    pageSize={PAGE_SIZE}
+                    refreshPage={refreshPage}
+                    refreshContent={fetchCollectionContent}
+                    contentItems={contentItems}
+                    countSelected={countSelected}
+                    selectedMap={selectedMap}
+                    countItemsWithPermissionMove={itemsWithPermissionMove.length}
+                    canCreateWorkbook={
+                        collectionId && collection
+                            ? collection.permissions.createWorkbook
+                            : Boolean(rootPermissions?.createWorkbookInRoot)
+                    }
+                    onCreateWorkbookClick={handleCreateWorkbook}
+                    onClearFiltersClick={() => {
+                        updateFilters({
+                            ...DEFAULT_FILTERS,
+                            orderField: filters.orderField,
+                            orderDirection: filters.orderDirection,
+                        });
+                    }}
+                    isOpenSelectionMode={isOpenSelectionMode}
+                    canMove={canMove}
+                    setBatchAction={setBatchAction}
+                    onUpdateCheckbox={onUpdateCheckbox}
+                    resetSelected={resetSelected}
+                    onSelectAll={onSelectAll}
+                />
             </div>
         </div>
     );

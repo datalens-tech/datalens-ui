@@ -1,22 +1,32 @@
 import React from 'react';
 
+import {PencilToLine} from '@gravity-ui/icons';
+import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-// import {I18N} from 'i18n';
+import {I18N} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {GetCollectionBreadcrumbsResponse} from '../../../../../../shared/schema';
 import {EntryScope} from '../../../../../../shared/types';
+import {DIALOG_EDIT_WORKBOOK} from '../../../../../components/CollectionsStructure';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
 import {AppDispatch} from '../../../../../store';
+import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {CollectionBreadcrumbs} from '../../../../collections-navigation/components/CollectionBreadcrumbs/CollectionBreadcrumbs';
 import {LayoutContext} from '../../../../collections-navigation/contexts/LayoutContext';
+import {setCollectionBreadcrumbs} from '../../../../collections-navigation/store/actions';
+import {
+    selectCollectionBreadcrumbs,
+    selectCollectionBreadcrumbsError,
+} from '../../../../collections-navigation/store/selectors';
 import {getWorkbookEntries, resetWorkbookEntries} from '../../../store/actions';
-import {selectBreadcrumbs, selectWorkbook, selectWorkbookFilters} from '../../../store/selectors';
+import {selectPageError, selectWorkbook, selectWorkbookFilters} from '../../../store/selectors';
 import {WorkbookActions} from '../../WorkbookActions/WorkbookActions';
 
 const b = block('dl-workbook-page');
 
-// const i18n = I18N.keyset('new-workbooks');
+const i18n = I18N.keyset('new-workbooks');
 
 type UseLayoutArgs = {
     workbookId: string;
@@ -32,21 +42,26 @@ export const useLayout = ({workbookId, scope, refreshWorkbookInfo}: UseLayoutArg
     const dispatch = useDispatch<AppDispatch>();
 
     const workbook = useSelector(selectWorkbook);
-    const breadcrumbs = useSelector(selectBreadcrumbs);
+    const collectionBreadcrumbs = useSelector(selectCollectionBreadcrumbs);
+    const collectionBreadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
     const filters = useSelector(selectWorkbookFilters);
+    const pageError = useSelector(selectPageError);
+
+    const isCorrectWorkbook = workbook && workbook.workbookId === workbookId;
 
     React.useEffect(() => {
         setLayout({
             actionsPanelLeftBlock: {
                 content: (
-                    <div className={b('action-panel-left-block')}>
+                    <React.Fragment>
                         <ActionPanelEntrySelect />
-                        {workbook && (
-                            <CollectionBreadcrumbs
-                                className={b('breadcrumbs', {'is-mobile': DL.IS_MOBILE})}
-                                collectionBreadcrumbs={breadcrumbs ?? []}
-                                workbook={workbook}
-                                onCurrentItemClick={() => {
+                        <CollectionBreadcrumbs
+                            className={b('breadcrumbs', {'is-mobile': DL.IS_MOBILE})}
+                            isLoading={!(collectionBreadcrumbs || collectionBreadcrumbsError)}
+                            collections={collectionBreadcrumbs ?? []}
+                            workbook={workbook}
+                            onItemClick={({isCurrent, id}) => {
+                                if (isCurrent) {
                                     dispatch(resetWorkbookEntries());
                                     dispatch(
                                         getWorkbookEntries({
@@ -55,18 +70,38 @@ export const useLayout = ({workbookId, scope, refreshWorkbookInfo}: UseLayoutArg
                                             scope,
                                         }),
                                     );
-                                }}
-                            />
-                        )}
-                    </div>
+                                } else if (id === null) {
+                                    dispatch(setCollectionBreadcrumbs([]));
+                                } else {
+                                    let isFound = false;
+
+                                    const newBreadcrumbs = (
+                                        collectionBreadcrumbs ?? []
+                                    ).reduce<GetCollectionBreadcrumbsResponse>((acc, item) => {
+                                        if (!isFound) {
+                                            acc.push(item);
+                                        }
+                                        if (id === item.collectionId) {
+                                            isFound = true;
+                                        }
+                                        return acc;
+                                    }, []);
+
+                                    dispatch(setCollectionBreadcrumbs(newBreadcrumbs));
+                                }
+                            }}
+                        />
+                    </React.Fragment>
                 ),
             },
         });
     }, [
         ActionPanelEntrySelect,
-        breadcrumbs,
+        collectionBreadcrumbs,
+        collectionBreadcrumbsError,
         dispatch,
         filters,
+        isCorrectWorkbook,
         scope,
         setLayout,
         workbook,
@@ -74,7 +109,7 @@ export const useLayout = ({workbookId, scope, refreshWorkbookInfo}: UseLayoutArg
     ]);
 
     React.useEffect(() => {
-        if (workbook) {
+        if (isCorrectWorkbook && workbook) {
             setLayout({
                 actionsPanelRightBlock: {
                     content: (
@@ -92,5 +127,78 @@ export const useLayout = ({workbookId, scope, refreshWorkbookInfo}: UseLayoutArg
                 },
             });
         }
-    }, [dispatch, refreshWorkbookInfo, setLayout, workbook]);
+    }, [dispatch, isCorrectWorkbook, refreshWorkbookInfo, setLayout, workbook]);
+
+    React.useEffect(() => {
+        if (isCorrectWorkbook && workbook) {
+            setLayout({
+                titleActionsBlock: {
+                    content: workbook?.permissions.update ? (
+                        <Tooltip content={i18n('action_edit')}>
+                            <div>
+                                <Button
+                                    onClick={() => {
+                                        dispatch(
+                                            openDialog({
+                                                id: DIALOG_EDIT_WORKBOOK,
+                                                props: {
+                                                    open: true,
+                                                    workbookId: workbook.workbookId,
+                                                    title: workbook.title,
+                                                    description: workbook?.description ?? '',
+                                                    onApply: refreshWorkbookInfo,
+                                                    onClose: () => {
+                                                        dispatch(closeDialog());
+                                                    },
+                                                },
+                                            }),
+                                        );
+                                    }}
+                                >
+                                    <Icon data={PencilToLine} />
+                                </Button>
+                            </div>
+                        </Tooltip>
+                    ) : null,
+                },
+                title: {
+                    content: workbook.title,
+                },
+                description: workbook.description
+                    ? {
+                          content: workbook.description,
+                      }
+                    : null,
+            });
+        } else {
+            setLayout({
+                titleActionsBlock: {
+                    isLoading: true,
+                },
+                title: {
+                    isLoading: true,
+                },
+                description: null,
+            });
+        }
+    }, [dispatch, isCorrectWorkbook, refreshWorkbookInfo, setLayout, workbook]);
+
+    React.useEffect(() => {
+        setLayout({
+            titleRightBlock: null,
+        });
+    }, [dispatch, setLayout]);
+
+    React.useEffect(() => {
+        if (pageError) {
+            setLayout({
+                actionsPanelLeftBlock: null,
+                actionsPanelRightBlock: null,
+                title: null,
+                titleActionsBlock: null,
+                titleRightBlock: null,
+                description: null,
+            });
+        }
+    }, [pageError, setLayout]);
 };

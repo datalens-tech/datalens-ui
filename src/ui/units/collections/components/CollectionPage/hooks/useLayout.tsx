@@ -12,7 +12,7 @@ import Utils from 'utils';
 
 import type {
     CreateCollectionResponse,
-    GetCollectionBreadcrumb,
+    GetCollectionBreadcrumbsResponse,
 } from '../../../../../../shared/schema';
 import {
     CollectionContentFilters,
@@ -32,13 +32,17 @@ import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {CollectionBreadcrumbs} from '../../../../collections-navigation/components/CollectionBreadcrumbs/CollectionBreadcrumbs';
 import {LayoutContext} from '../../../../collections-navigation/contexts/LayoutContext';
 import {
-    getCollection,
     getCollectionBreadcrumbs,
     setCollectionBreadcrumbs,
-} from '../../../store/actions';
+} from '../../../../collections-navigation/store/actions';
 import {
-    selectBreadcrumbs,
+    selectCollectionBreadcrumbs,
+    selectCollectionBreadcrumbsError,
+} from '../../../../collections-navigation/store/selectors';
+import {getCollection} from '../../../store/actions';
+import {
     selectCollection,
+    selectPageError,
     selectRootPermissionsData,
     selectRootPermissionsIsLoading,
 } from '../../../store/selectors';
@@ -85,14 +89,23 @@ export const useLayout = ({
 
     const dispatch: AppDispatch = useDispatch();
 
-    // const breadcrumbsIsLoading = useSelector(selectBreadcrumbsIsLoading);
     const isRootPermissionsLoading = useSelector(selectRootPermissionsIsLoading);
     const rootPermissions = useSelector(selectRootPermissionsData);
     const collection = useSelector(selectCollection);
     const isCollectionLoading = !collection || curCollectionId !== collection.collectionId;
-    const collectionBreadcrumbs = useSelector(selectBreadcrumbs);
+    const collectionBreadcrumbs = useSelector(selectCollectionBreadcrumbs);
+    const collectionBreadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
+    const pageError = useSelector(selectPageError);
 
-    const isIncorrectCollection = !collection || collection.collectionId !== curCollectionId;
+    const isRootCollection = curCollectionId === null;
+
+    const isCorrectCollection = Boolean(collection && collection.collectionId === curCollectionId);
+
+    const isCorrectCollectionBreadcrumbs = Boolean(
+        collectionBreadcrumbs &&
+            collectionBreadcrumbs[collectionBreadcrumbs.length - 1]?.collectionId ===
+                curCollectionId,
+    );
 
     const onEditClick = React.useCallback(() => {
         if (curCollectionId && collection) {
@@ -135,19 +148,29 @@ export const useLayout = ({
                         <ActionPanelEntrySelect />
                         <CollectionBreadcrumbs
                             className={b('breadcrumbs')}
-                            isLoading={curCollectionId !== null && !collectionBreadcrumbs}
-                            collectionBreadcrumbs={collectionBreadcrumbs ?? []}
-                            onItemClick={(bredcrumbItem) => {
-                                if (collectionBreadcrumbs) {
+                            isLoading={
+                                !(
+                                    isRootCollection ||
+                                    isCorrectCollectionBreadcrumbs ||
+                                    collectionBreadcrumbsError
+                                )
+                            }
+                            collections={collectionBreadcrumbs ?? []}
+                            onItemClick={({isCurrent, id}) => {
+                                if (isCurrent) {
+                                    fetchCollectionContent();
+                                } else if (id === null) {
+                                    dispatch(setCollectionBreadcrumbs([]));
+                                } else {
                                     let isFound = false;
 
-                                    const newBreadcrumbs = collectionBreadcrumbs.reduce<
-                                        GetCollectionBreadcrumb[]
-                                    >((acc, item) => {
+                                    const newBreadcrumbs = (
+                                        collectionBreadcrumbs ?? []
+                                    ).reduce<GetCollectionBreadcrumbsResponse>((acc, item) => {
                                         if (!isFound) {
                                             acc.push(item);
                                         }
-                                        if (bredcrumbItem.collectionId === item.collectionId) {
+                                        if (id === item.collectionId) {
                                             isFound = true;
                                         }
                                         return acc;
@@ -155,9 +178,6 @@ export const useLayout = ({
 
                                     dispatch(setCollectionBreadcrumbs(newBreadcrumbs));
                                 }
-                            }}
-                            onCurrentItemClick={() => {
-                                fetchCollectionContent();
                             }}
                         />
                     </div>
@@ -172,11 +192,16 @@ export const useLayout = ({
         dispatch,
         fetchCollectionContent,
         filters,
+        isCorrectCollectionBreadcrumbs,
+        isRootCollection,
         setLayout,
     ]);
 
     React.useEffect(() => {
-        if ((curCollectionId === null && !isRootPermissionsLoading) || !isIncorrectCollection) {
+        if (
+            (isRootCollection && !isRootPermissionsLoading) ||
+            (isCorrectCollection && collection)
+        ) {
             setLayout({
                 actionsPanelRightBlock: {
                     content: (
@@ -309,21 +334,22 @@ export const useLayout = ({
     }, [
         collection,
         collectionsAccessEnabled,
-        curCollectionId,
+        isRootCollection,
         dispatch,
         handeCloseMoveDialog,
         handleCreateWorkbook,
         history,
         isCollectionLoading,
-        isIncorrectCollection,
+        isCorrectCollection,
         isRootPermissionsLoading,
         refreshCollectionInfo,
         rootPermissions,
         setLayout,
+        curCollectionId,
     ]);
 
     React.useEffect(() => {
-        if (curCollectionId === null) {
+        if (isRootCollection) {
             setLayout({
                 title: {
                     content: i18n('label_root-title'),
@@ -348,20 +374,14 @@ export const useLayout = ({
                 },
             });
         }
-    }, [curCollectionId, collection, setLayout, isIncorrectCollection]);
+    }, [curCollectionId, collection, setLayout, isRootCollection]);
 
     React.useEffect(() => {
-        if (curCollectionId === null) {
+        if (isRootCollection) {
             setLayout({
                 titleActionsBlock: null,
             });
-        } else if (isIncorrectCollection) {
-            setLayout({
-                titleActionsBlock: {
-                    isLoading: true,
-                },
-            });
-        } else {
+        } else if (isCorrectCollection && collection) {
             setLayout({
                 titleActionsBlock: {
                     content:
@@ -376,8 +396,21 @@ export const useLayout = ({
                         ) : null,
                 },
             });
+        } else {
+            setLayout({
+                titleActionsBlock: {
+                    isLoading: true,
+                },
+            });
         }
-    }, [curCollectionId, collection, onEditClick, setLayout, isIncorrectCollection]);
+    }, [
+        curCollectionId,
+        collection,
+        onEditClick,
+        setLayout,
+        isCorrectCollection,
+        isRootCollection,
+    ]);
 
     React.useEffect(() => {
         setLayout({
@@ -407,4 +440,17 @@ export const useLayout = ({
         selectBtn,
         setLayout,
     ]);
+
+    React.useEffect(() => {
+        if (pageError) {
+            setLayout({
+                actionsPanelLeftBlock: null,
+                actionsPanelRightBlock: null,
+                title: null,
+                titleActionsBlock: null,
+                titleRightBlock: null,
+                description: null,
+            });
+        }
+    }, [pageError, setLayout]);
 };

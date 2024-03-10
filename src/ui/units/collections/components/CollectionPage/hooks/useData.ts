@@ -7,9 +7,9 @@ import type {GetCollectionContentResponse} from '../../../../../../shared/schema
 import {GetCollectionContentArgs} from '../../../../../../shared/schema';
 import {CollectionContentFilters} from '../../../../../components/CollectionFilters';
 import {AppDispatch} from '../../../../../store';
+import {getCollectionBreadcrumbs} from '../../../../collections-navigation/store/actions';
 import {
     getCollection,
-    getCollectionBreadcrumbs,
     getCollectionContent,
     getRootCollectionPermissions,
     resetCollectionContent,

@@ -6,7 +6,6 @@ import {showToast} from 'store/actions/toaster';
 
 import type {
     CollectionWithPermissions,
-    GetCollectionBreadcrumbsResponse,
     GetCollectionContentResponse,
     GetRootCollectionPermissionsResponse,
 } from '../../../../../shared/schema';
@@ -15,9 +14,6 @@ import {OrderBasicField, OrderDirection} from '../../../../../shared/schema/us/t
 import {
     DELETE_COLLECTION_IN_ITEMS,
     DELETE_WORKBOOK_IN_ITEMS,
-    GET_COLLECTION_BREADCRUMBS_FAILED,
-    GET_COLLECTION_BREADCRUMBS_LOADING,
-    GET_COLLECTION_BREADCRUMBS_SUCCESS,
     GET_COLLECTION_CONTENT_FAILED,
     GET_COLLECTION_CONTENT_LOADING,
     GET_COLLECTION_CONTENT_SUCCESS,
@@ -29,9 +25,19 @@ import {
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
     RESET_COLLECTION_CONTENT,
     RESET_COLLECTION_INFO,
+    RESET_STATE,
     SET_COLLECTION,
-    SET_COLLECTION_BREDCRUMBS,
 } from '../constants';
+
+type ResetStateAction = {
+    type: typeof RESET_STATE;
+};
+
+export const resetState = () => {
+    return {
+        type: RESET_STATE,
+    };
+};
 
 type GetRootCollectionPermissionsLoadingAction = {
     type: typeof GET_ROOT_COLLECTION_PERMISSIONS_LOADING;
@@ -208,12 +214,6 @@ export const getCollection = ({collectionId}: {collectionId: string}) => {
 
                 if (!isCanceled) {
                     logger.logError('collections/getCollection failed', error);
-                    dispatch(
-                        showToast({
-                            title: error.message,
-                            error,
-                        }),
-                    );
                 }
 
                 dispatch({
@@ -238,70 +238,6 @@ export const setCollection = (collection: CollectionWithPermissions) => {
         type: SET_COLLECTION,
         data: {
             collection,
-        },
-    };
-};
-
-type GetCollectionBreadcrumbsLoadingAction = {
-    type: typeof GET_COLLECTION_BREADCRUMBS_LOADING;
-};
-type GetCollectionBreadcrumbsSuccessAction = {
-    type: typeof GET_COLLECTION_BREADCRUMBS_SUCCESS;
-    data: GetCollectionBreadcrumbsResponse;
-};
-type GetCollectionBreadcrumbsFailedAction = {
-    type: typeof GET_COLLECTION_BREADCRUMBS_FAILED;
-    error: Error | null;
-};
-
-type GetCollectionBreadcrumbsAction =
-    | GetCollectionBreadcrumbsLoadingAction
-    | GetCollectionBreadcrumbsSuccessAction
-    | GetCollectionBreadcrumbsFailedAction;
-
-export const getCollectionBreadcrumbs = ({collectionId}: {collectionId: string}) => {
-    return (dispatch: CollectionsDispatch) => {
-        dispatch({
-            type: GET_COLLECTION_BREADCRUMBS_LOADING,
-        });
-        return getSdk()
-            .us.getCollectionBreadcrumbs({
-                collectionId,
-            })
-            .then((data) => {
-                dispatch({
-                    type: GET_COLLECTION_BREADCRUMBS_SUCCESS,
-                    data,
-                });
-                return data;
-            })
-            .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
-
-                dispatch({
-                    type: GET_COLLECTION_BREADCRUMBS_FAILED,
-                    error: isCanceled ? null : error,
-                });
-
-                return null;
-            });
-    };
-};
-
-type SetCollectionBreadcrumbsAction = {
-    type: typeof SET_COLLECTION_BREDCRUMBS;
-    data: {
-        collectionBreadcrumbs: GetCollectionBreadcrumbsResponse;
-    };
-};
-
-export const setCollectionBreadcrumbs = (
-    collectionBreadcrumbs: GetCollectionBreadcrumbsResponse,
-) => {
-    return {
-        type: SET_COLLECTION_BREDCRUMBS,
-        data: {
-            collectionBreadcrumbs,
         },
     };
 };
@@ -363,12 +299,11 @@ export const deleteWorkbookInItems = (workbookId: string) => {
 };
 
 export type CollectionsAction =
+    | ResetStateAction
     | GetRootCollectionPemissionsAction
     | GetCollectionsContentAction
     | GetCollectionAction
     | SetCollectionAction
-    | GetCollectionBreadcrumbsAction
-    | SetCollectionBreadcrumbsAction
     | ResetCollectionInfoAction
     | ResetCollectionContentAction
     | DeleteCollectionInItemsAction

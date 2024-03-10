@@ -11,9 +11,6 @@ export const selectCollectionContentItems = (state: DatalensGlobalState) => stat
 
 const selectGetCollection = (state: DatalensGlobalState) => state.collections.getCollection;
 
-const selectGetCollectionBreadcrumbs = (state: DatalensGlobalState) =>
-    state.collections.getCollectionBreadcrumbs;
-
 // Rights to create collections/workbooks in the root
 export const selectRootPermissionsIsLoading = createSelector(
     [selectGetRootCollectionPermissions],
@@ -58,21 +55,4 @@ export const selectPageError = createSelector(
 export const selectCollection = createSelector(
     [selectGetCollection],
     (getCollection) => getCollection.data,
-);
-
-// Breadcrumbs
-export const selectBreadcrumbs = createSelector(
-    [selectGetCollectionBreadcrumbs],
-    (getCollectionBreadcrumbs) => getCollectionBreadcrumbs.data,
-);
-
-export const selectBreadcrumbsIsLoading = createSelector(
-    [selectGetCollectionBreadcrumbs],
-    (getCollectionBreadcrumbs) =>
-        getCollectionBreadcrumbs.data === null || getCollectionBreadcrumbs.isLoading,
-);
-
-export const selectBreadcrumbsError = createSelector(
-    [selectGetCollectionBreadcrumbs],
-    (getCollectionBreadcrumbs) => getCollectionBreadcrumbs.error,
 );

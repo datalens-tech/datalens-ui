@@ -10,16 +10,18 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Link, useHistory} from 'react-router-dom';
 
-import type {
-    GetCollectionBreadcrumb,
-    GetCollectionBreadcrumbsResponse,
-} from '../../../../../shared/schema';
+import type {GetCollectionBreadcrumbsResponse} from '../../../../../shared/schema';
 
 import './CollectionBreadcrumbs.scss';
 
 const i18n = I18n.keyset('component.collection-breadcrumbs');
 
 const b = block('dl-collection-breadcrumbs');
+
+const LOADING_ITEM_ID = '__loading';
+
+const COLLECTIONS_PATH = '/collections';
+const WORKBOOKS_PATH = '/workbooks';
 
 type BreadcrumbsItem = {
     id: string | null;
@@ -28,32 +30,19 @@ type BreadcrumbsItem = {
     path: string;
 };
 
-const LOADING_ITEM_ID = '__loading';
-
-const collectionsPath = '/collections';
-const workbooksPath = '/workbooks';
-
 export type CollectionBreadcrumbsProps = {
     className?: string;
     isLoading?: boolean;
-    collectionBreadcrumbs: GetCollectionBreadcrumbsResponse;
+    collections: GetCollectionBreadcrumbsResponse;
     workbook?: {
         workbookId: string;
         title: string;
-    };
-    onItemClick?: (item: GetCollectionBreadcrumb) => void;
-    onCurrentItemClick?: () => void;
+    } | null;
+    onItemClick?: (args: {id: string | null; text: string; isCurrent: boolean}) => void;
 };
 
 export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
-    ({
-        className,
-        isLoading = false,
-        collectionBreadcrumbs,
-        workbook,
-        onItemClick,
-        onCurrentItemClick,
-    }) => {
+    ({className, isLoading = false, collections, workbook, onItemClick}) => {
         const history = useHistory();
 
         const items = React.useMemo<BreadcrumbsItem[]>(() => {
@@ -62,9 +51,9 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
                     id: null,
                     text: i18n('label_root-title'),
                     action: () => {
-                        history.push(collectionsPath);
+                        history.push(COLLECTIONS_PATH);
                     },
-                    path: collectionsPath,
+                    path: COLLECTIONS_PATH,
                 },
             ];
 
@@ -76,15 +65,15 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
                     path: '',
                 });
             } else {
-                if (collectionBreadcrumbs.length > 0) {
-                    collectionBreadcrumbs.forEach((item) => {
+                if (collections.length > 0) {
+                    collections.forEach((item) => {
                         result.push({
                             id: item.collectionId,
                             text: item.title,
                             action: () => {
-                                history.push(`${collectionsPath}/${item.collectionId}`);
+                                history.push(`${COLLECTIONS_PATH}/${item.collectionId}`);
                             },
-                            path: `${collectionsPath}/${item.collectionId}`,
+                            path: `${COLLECTIONS_PATH}/${item.collectionId}`,
                         });
                     });
                 }
@@ -94,15 +83,15 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
                         id: workbook.workbookId,
                         text: workbook.title,
                         action: () => {
-                            history.push(`${workbooksPath}/${workbook.workbookId}`);
+                            history.push(`${WORKBOOKS_PATH}/${workbook.workbookId}`);
                         },
-                        path: `${workbooksPath}/${workbook.workbookId}`,
+                        path: `${WORKBOOKS_PATH}/${workbook.workbookId}`,
                     });
                 }
             }
 
             return result;
-        }, [isLoading, history, collectionBreadcrumbs, workbook]);
+        }, [isLoading, history, collections, workbook]);
 
         return (
             <div className={b(null, className)}>
@@ -114,6 +103,7 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
                         if (item.id === LOADING_ITEM_ID) {
                             return <Skeleton className={b('skeleton')} />;
                         }
+
                         return (
                             <Link
                                 className={b('item', {last: isCurrent})}
@@ -121,15 +111,8 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
                                 onClick={(e) => {
                                     e.stopPropagation();
 
-                                    if (!e.metaKey) {
-                                        if (isCurrent && onCurrentItemClick) {
-                                            onCurrentItemClick();
-                                        } else if (onItemClick && item.id) {
-                                            onItemClick({
-                                                collectionId: item.id,
-                                                title: item.text,
-                                            });
-                                        }
+                                    if (!e.metaKey && onItemClick) {
+                                        onItemClick({id: item.id, text: item.text, isCurrent});
                                     }
                                 }}
                             >

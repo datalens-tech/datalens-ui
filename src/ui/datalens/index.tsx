@@ -62,13 +62,17 @@ const DatalensPageView = () => {
                     component={ConnectionsPage}
                 />
 
-                <Route
-                    path={['/collections/:collectionId', '/collections', '/workbooks/:workbookId']}
-                    component={CollectionsNavigtaionPage}
-                />
                 <Route path="/settings" component={ServiceSettings} />
 
+                <Route path={['/collections']} component={CollectionsNavigtaionPage} />
+
                 <Route exact path={dashAndWizardQLRoutes} component={DashAndWizardQLPages} />
+
+                <Route
+                    path={['/collections/:collectionId', '/workbooks/:workbookId']}
+                    component={CollectionsNavigtaionPage}
+                />
+
                 <Route path="/">
                     <Redirect to={`/collections${location.search}`} />
                 </Route>

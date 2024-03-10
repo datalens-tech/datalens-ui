@@ -9,8 +9,10 @@ import {Link} from 'react-router-dom';
 import {CollectionIcon} from '../../../../components/CollectionIcon/CollectionIcon';
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
 import {AnimateBlock} from '../../../collections-navigation/components/AnimateBlock';
-import {setCollection, setCollectionBreadcrumbs} from '../../store/actions';
-import {selectBreadcrumbs} from '../../store/selectors';
+import {setCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
+import {selectCollectionBreadcrumbs} from '../../../collections-navigation/store/selectors';
+import {setWorkbook} from '../../../workbooks/store/actions';
+import {setCollection} from '../../store/actions';
 import {CollectionContentGridProps} from '../types';
 import {onClickStopPropagation} from '../utils';
 
@@ -29,7 +31,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
     }) => {
         const dispatch = useDispatch();
 
-        const breadcrumbs = useSelector(selectBreadcrumbs) ?? [];
+        const breadcrumbs = useSelector(selectCollectionBreadcrumbs) ?? [];
 
         return (
             <div className={b()}>
@@ -93,17 +95,21 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                             'selection-mode': isOpenSelectionMode,
                                         })}
                                         onClick={(e) => {
-                                            if (!e.metaKey && !('workbookId' in item)) {
-                                                dispatch(setCollection(item));
-                                                dispatch(
-                                                    setCollectionBreadcrumbs([
-                                                        ...breadcrumbs,
-                                                        {
-                                                            collectionId: item.collectionId,
-                                                            title: item.title,
-                                                        },
-                                                    ]),
-                                                );
+                                            if (!e.metaKey) {
+                                                if ('workbookId' in item) {
+                                                    dispatch(setWorkbook(item));
+                                                } else {
+                                                    dispatch(setCollection(item));
+                                                    dispatch(
+                                                        setCollectionBreadcrumbs([
+                                                            ...breadcrumbs,
+                                                            {
+                                                                collectionId: item.collectionId,
+                                                                title: item.title,
+                                                            },
+                                                        ]),
+                                                    );
+                                                }
                                             }
                                         }}
                                     >

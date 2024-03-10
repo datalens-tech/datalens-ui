@@ -26,4 +26,11 @@
     &__cancel-btn {
         margin-left: 8px;
     }
+
+    &__error-block {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+    }
 }

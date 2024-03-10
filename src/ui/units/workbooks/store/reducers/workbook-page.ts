@@ -45,6 +45,7 @@ import {
     RESET_WORKBOOK_ENTRIES_BY_SCOPE,
     RESET_WORKBOOK_PERMISSIONS,
     SET_CREATE_WORKBOOK_ENTRY_TYPE,
+    SET_WORKBOOK,
 } from '../constants';
 
 export type WorkbooksState = {
@@ -473,6 +474,17 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
             return {
                 ...state,
                 workbookPermissions: null,
+            };
+        }
+
+        case SET_WORKBOOK: {
+            return {
+                ...state,
+                getWorkbook: {
+                    isLoading: false,
+                    data: action.data.workbook,
+                    error: null,
+                },
             };
         }
 

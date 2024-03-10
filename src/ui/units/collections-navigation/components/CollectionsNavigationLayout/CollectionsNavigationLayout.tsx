@@ -1,9 +1,8 @@
 import React from 'react';
 
+import {ActionBar} from '@gravity-ui/navigation';
 import {Skeleton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {useSelector} from 'react-redux';
-import {selectAsideHeaderData} from 'ui/store/selectors/asideHeader';
 
 import {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
 
@@ -47,119 +46,121 @@ type Props = {
 export const CollectionsNavigationLayout = React.memo<Props>(
     // eslint-disable-next-line complexity
     ({layout, skeletonsSettings, children}) => {
-        const asideHeaderData = useSelector(selectAsideHeaderData);
-        const asideHeaderSize = asideHeaderData.size || 0;
-
         return (
             <div className={b()}>
-                <React.Fragment>
-                    <div className={b('actions-panel-placeholder')} />
-                    <div className={b('actions-panel')} style={{left: asideHeaderSize}}>
-                        {layout.actionsPanelLeftBlock && (
-                            <div className={b('actions-panel-left-block')}>
-                                {layout.actionsPanelLeftBlock.isLoading ? (
-                                    <Skeleton
-                                        style={
-                                            skeletonsSettings.actionsPanelLeftBlock
-                                                ? skeletonsSettings.actionsPanelLeftBlock
-                                                : DEFAULT_SKELETONS_SETTINGS.actionsPanelLeftBlock
-                                        }
-                                    />
-                                ) : (
-                                    layout.actionsPanelLeftBlock.content
-                                )}
-                            </div>
-                        )}
-                        {layout.actionsPanelRightBlock && (
-                            <div className={b('actions-panel-right-block')}>
-                                {layout.actionsPanelRightBlock.isLoading ? (
-                                    <Skeleton
-                                        style={
-                                            skeletonsSettings.actionsPanelRightBlock
-                                                ? skeletonsSettings.actionsPanelRightBlock
-                                                : DEFAULT_SKELETONS_SETTINGS.actionsPanelRightBlock
-                                        }
-                                    />
-                                ) : (
-                                    layout.actionsPanelRightBlock.content
-                                )}
-                            </div>
-                        )}
-                    </div>
-                </React.Fragment>
-
-                <div className={b('page-wrapper')}>
-                    <div className={b('page')}>
-                        <React.Fragment>
-                            <div className={b('header')}>
-                                {layout.title || layout.titleActionsBlock ? (
-                                    <div className={b('header-title-wrapper')}>
-                                        {layout.title && (
-                                            <h1 className={b('header-title')}>
-                                                {layout.title.isLoading ? (
-                                                    <Skeleton
-                                                        style={
-                                                            skeletonsSettings.title
-                                                                ? skeletonsSettings.title
-                                                                : DEFAULT_SKELETONS_SETTINGS.title
-                                                        }
-                                                    />
-                                                ) : (
-                                                    layout.title.content
-                                                )}
-                                            </h1>
-                                        )}
-                                        {layout.titleActionsBlock && (
-                                            <div className={b('header-title-actions-block')}>
-                                                {layout.titleActionsBlock.isLoading ? (
-                                                    <Skeleton
-                                                        style={
-                                                            skeletonsSettings.titleActionsBlock
-                                                                ? skeletonsSettings.titleActionsBlock
-                                                                : DEFAULT_SKELETONS_SETTINGS.titleActionsBlock
-                                                        }
-                                                    />
-                                                ) : (
-                                                    layout.titleActionsBlock.content
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                ) : null}
-
-                                {layout.titleRightBlock && (
-                                    <div className={b('header-right-block')}>
-                                        {layout.titleRightBlock.isLoading ? (
+                {(layout.actionsPanelLeftBlock || layout.actionsPanelRightBlock) && (
+                    <ActionBar>
+                        <ActionBar.Section type="primary">
+                            <ActionBar.Group pull="left">
+                                {layout.actionsPanelLeftBlock && (
+                                    <ActionBar.Item>
+                                        {layout.actionsPanelLeftBlock.isLoading ? (
                                             <Skeleton
                                                 style={
-                                                    skeletonsSettings.titleRightBlock
-                                                        ? skeletonsSettings.titleRightBlock
-                                                        : DEFAULT_SKELETONS_SETTINGS.titleRightBlock
+                                                    skeletonsSettings.actionsPanelLeftBlock
+                                                        ? skeletonsSettings.actionsPanelLeftBlock
+                                                        : DEFAULT_SKELETONS_SETTINGS.actionsPanelLeftBlock
                                                 }
                                             />
                                         ) : (
-                                            layout.titleRightBlock.content
+                                            layout.actionsPanelLeftBlock.content
                                         )}
-                                    </div>
+                                    </ActionBar.Item>
                                 )}
-                            </div>
+                            </ActionBar.Group>
+                            <ActionBar.Group pull="right">
+                                <ActionBar.Item>
+                                    {layout.actionsPanelRightBlock && (
+                                        <div>
+                                            {layout.actionsPanelRightBlock.isLoading ? (
+                                                <Skeleton
+                                                    style={
+                                                        skeletonsSettings.actionsPanelRightBlock
+                                                            ? skeletonsSettings.actionsPanelRightBlock
+                                                            : DEFAULT_SKELETONS_SETTINGS.actionsPanelRightBlock
+                                                    }
+                                                />
+                                            ) : (
+                                                layout.actionsPanelRightBlock.content
+                                            )}
+                                        </div>
+                                    )}
+                                </ActionBar.Item>
+                            </ActionBar.Group>
+                        </ActionBar.Section>
+                    </ActionBar>
+                )}
 
-                            {layout.description && (
-                                <div className={b('header-description')}>
-                                    {layout.description.isLoading ? (
+                <div className={b('page-wrapper')}>
+                    <div className={b('page')}>
+                        <div className={b('header')}>
+                            {layout.title || layout.titleActionsBlock ? (
+                                <div className={b('header-title-wrapper')}>
+                                    {layout.title && (
+                                        <h1 className={b('header-title')}>
+                                            {layout.title.isLoading ? (
+                                                <Skeleton
+                                                    style={
+                                                        skeletonsSettings.title
+                                                            ? skeletonsSettings.title
+                                                            : DEFAULT_SKELETONS_SETTINGS.title
+                                                    }
+                                                />
+                                            ) : (
+                                                layout.title.content
+                                            )}
+                                        </h1>
+                                    )}
+                                    {layout.titleActionsBlock && (
+                                        <div className={b('header-title-actions-block')}>
+                                            {layout.titleActionsBlock.isLoading ? (
+                                                <Skeleton
+                                                    style={
+                                                        skeletonsSettings.titleActionsBlock
+                                                            ? skeletonsSettings.titleActionsBlock
+                                                            : DEFAULT_SKELETONS_SETTINGS.titleActionsBlock
+                                                    }
+                                                />
+                                            ) : (
+                                                layout.titleActionsBlock.content
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            ) : null}
+
+                            {layout.titleRightBlock && (
+                                <div className={b('header-right-block')}>
+                                    {layout.titleRightBlock.isLoading ? (
                                         <Skeleton
                                             style={
-                                                skeletonsSettings.description
-                                                    ? skeletonsSettings.description
-                                                    : DEFAULT_SKELETONS_SETTINGS.description
+                                                skeletonsSettings.titleRightBlock
+                                                    ? skeletonsSettings.titleRightBlock
+                                                    : DEFAULT_SKELETONS_SETTINGS.titleRightBlock
                                             }
                                         />
                                     ) : (
-                                        layout.description.content
+                                        layout.titleRightBlock.content
                                     )}
                                 </div>
                             )}
-                        </React.Fragment>
+                        </div>
+
+                        {layout.description && (
+                            <div className={b('header-description')}>
+                                {layout.description.isLoading ? (
+                                    <Skeleton
+                                        style={
+                                            skeletonsSettings.description
+                                                ? skeletonsSettings.description
+                                                : DEFAULT_SKELETONS_SETTINGS.description
+                                        }
+                                    />
+                                ) : (
+                                    layout.description.content
+                                )}
+                            </div>
+                        )}
 
                         {children && <div className={b('content')}>{children}</div>}
                     </div>

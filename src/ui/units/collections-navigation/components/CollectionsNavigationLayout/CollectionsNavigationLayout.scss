@@ -8,37 +8,6 @@ $class: 'dl-collections-navigation-layout';
     flex-direction: column;
     min-height: 100%;
 
-    &__actions-panel-placeholder {
-        height: $actionPanelHeight;
-        min-height: $actionPanelHeight;
-    }
-
-    &__actions-panel {
-        position: fixed;
-        z-index: 10;
-        right: 0;
-        top: 0;
-        box-sizing: border-box;
-        height: $actionPanelHeight;
-        display: flex;
-        align-items: center;
-        padding: 0 20px;
-        border-bottom: 1px solid var(--g-color-line-generic);
-        background: var(--g-color-base-background);
-    }
-
-    &__actions-panel-left-block {
-        display: flex;
-        margin-right: auto;
-        flex-basis: 50%;
-        max-width: 50%;
-    }
-
-    &__actions-panel-right-block {
-        display: flex;
-        margin-left: auto;
-    }
-
     &__page-wrapper {
         display: flex;
         flex: 1;

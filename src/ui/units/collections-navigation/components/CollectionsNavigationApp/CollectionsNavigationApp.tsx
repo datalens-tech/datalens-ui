@@ -1,13 +1,20 @@
 import React from 'react';
 
+import {useDispatch} from 'react-redux';
 import {Route, Switch} from 'react-router-dom';
+import {AppDispatch} from 'ui/store';
 
 import {CollectionPage} from '../../../collections/components/CollectionPage/CollectionPage';
+import {resetState as resetCollectionsState} from '../../../collections/store/actions';
 import {WorkbookPage} from '../../../workbooks/components/WorkbookPage/WorkbookPage';
+import {resetWorkbookState as resetWorkbooksState} from '../../../workbooks/store/actions';
 import {Layout, LayoutBlock, LayoutContext, SkeletonsSettings} from '../../contexts/LayoutContext';
+import {resetState as resetCollectionsNavigationState} from '../../store/actions';
 import {CollectionsNavigationLayout} from '../CollectionsNavigationLayout';
 
-export const CollectionsNavigationRouter = () => {
+export const CollectionsNavigationApp = () => {
+    const dispatch: AppDispatch = useDispatch();
+
     const [actionsPanelLeftBlock, setActionsPanelLeftBlock] = React.useState<LayoutBlock>(null);
     const [actionsPanelRightBlock, setActionsPanelRightBlock] = React.useState<LayoutBlock>(null);
     const [title, setTitle] = React.useState<LayoutBlock>(null);
@@ -37,6 +44,14 @@ export const CollectionsNavigationRouter = () => {
     }, []);
 
     const [skeletonsSettings, setSkeletonsSettings] = React.useState<SkeletonsSettings>({});
+
+    React.useEffect(() => {
+        return () => {
+            dispatch(resetCollectionsNavigationState());
+            dispatch(resetCollectionsState());
+            dispatch(resetWorkbooksState());
+        };
+    }, [dispatch]);
 
     return (
         <LayoutContext.Provider

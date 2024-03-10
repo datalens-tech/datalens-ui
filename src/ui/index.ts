@@ -17,6 +17,8 @@ import type {QLState} from 'units/ql/store/typings';
 import type {WizardGlobalState} from 'units/wizard/reducers';
 import type {WorkbooksState} from 'units/workbooks/store/reducers';
 
+import {CollectionsNavigationState} from './units/collections-navigation/store/reducers';
+
 export {default as ActionPanel} from './components/ActionPanel/ActionPanel';
 export {default as Utils} from './utils';
 export {default as PathSelect} from './components/PathSelect/PathSelect';
@@ -57,6 +59,7 @@ export type DatalensGlobalState = {
     collections: CollectionsState;
     collectionsStructure: CollectionsStructureState;
     workbooks: WorkbooksState;
+    collectionsNavigation: CollectionsNavigationState;
     dialog: DialogState;
     landing: LandingState;
     components: ComponentsState;

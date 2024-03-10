@@ -9,9 +9,6 @@ import {CollectionsAction} from '../actions';
 import {
     DELETE_COLLECTION_IN_ITEMS,
     DELETE_WORKBOOK_IN_ITEMS,
-    GET_COLLECTION_BREADCRUMBS_FAILED,
-    GET_COLLECTION_BREADCRUMBS_LOADING,
-    GET_COLLECTION_BREADCRUMBS_SUCCESS,
     GET_COLLECTION_CONTENT_FAILED,
     GET_COLLECTION_CONTENT_LOADING,
     GET_COLLECTION_CONTENT_SUCCESS,
@@ -23,8 +20,8 @@ import {
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
     RESET_COLLECTION_CONTENT,
     RESET_COLLECTION_INFO,
+    RESET_STATE,
     SET_COLLECTION,
-    SET_COLLECTION_BREDCRUMBS,
 } from '../constants';
 
 export type CollectionsState = {
@@ -81,6 +78,12 @@ export const collectionsReducer = (
     action: CollectionsAction,
 ) => {
     switch (action.type) {
+        case RESET_STATE: {
+            return {
+                ...initialState,
+            };
+        }
+
         // Getting the rights to create collections/workbooks in the root
         case GET_ROOT_COLLECTION_PERMISSIONS_LOADING: {
             return {
@@ -197,48 +200,6 @@ export const collectionsReducer = (
                 getCollection: {
                     isLoading: false,
                     data: action.data.collection,
-                    error: null,
-                },
-            };
-        }
-
-        // Bread Crumbs collections
-        case GET_COLLECTION_BREADCRUMBS_LOADING: {
-            return {
-                ...state,
-                getCollectionBreadcrumbs: {
-                    ...state.getCollectionBreadcrumbs,
-                    isLoading: true,
-                    error: null,
-                },
-            };
-        }
-        case GET_COLLECTION_BREADCRUMBS_SUCCESS: {
-            return {
-                ...state,
-                getCollectionBreadcrumbs: {
-                    isLoading: false,
-                    data: action.data,
-                    error: null,
-                },
-            };
-        }
-        case GET_COLLECTION_BREADCRUMBS_FAILED: {
-            return {
-                ...state,
-                getCollectionBreadcrumbs: {
-                    ...state.getCollectionBreadcrumbs,
-                    isLoading: false,
-                    error: action.error,
-                },
-            };
-        }
-        case SET_COLLECTION_BREDCRUMBS: {
-            return {
-                ...state,
-                getCollectionBreadcrumbs: {
-                    isLoading: false,
-                    data: action.data.collectionBreadcrumbs,
                     error: null,
                 },
             };
