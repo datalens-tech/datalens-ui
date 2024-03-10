@@ -160,6 +160,7 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
             // check that the widget content has appeared
             await page
                 .locator(SELECTORS.CHART_LINE_ITEM)
+                .first()
                 .or(page.locator(`.${COMMON_CHARTKIT_SELECTORS.graph}`))
                 .waitFor({state: 'visible'});
 

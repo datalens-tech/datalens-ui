@@ -222,7 +222,6 @@ class DashboardPage extends BasePage {
 
         const dashName = `e2e-entry-${getUniqueTimestamp()}`;
 
-        console.log(isEnabledCollections, 'isEnabledCollections');
         // waiting for the dialog to open, specify the name, save
         if (isEnabledCollections) {
             await this.dialogCreateEntry.createEntryWithName(dashName);
