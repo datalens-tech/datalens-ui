@@ -8,4 +8,5 @@ import {GetMockedFormArgs} from './types/getMockedForm';
 export const connectionsFunctionsMap = {
     [EXAMPLE_FUNCTION]: makeFunctionTemplate<(arg: number) => string>(),
     getMockedForm: makeFunctionTemplate<(args: GetMockedFormArgs) => FormSchema | undefined>(),
+    getConnectionsWithForceSkippedCopyTemplateInWorkbooks: makeFunctionTemplate<() => string[]>(),
 } as const;

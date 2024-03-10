@@ -40,6 +40,7 @@ const i18n = I18n.keyset('component.copy-entry-to-workbook-dialog');
 export interface Props {
     open: boolean;
     entryId: string;
+    initialCollectionId?: string | null;
     onClose: () => void;
 }
 
@@ -50,7 +51,12 @@ export interface OpenDialogCopyEntriesToWorkbookArgs {
 
 export const DIALOG_COPY_ENTRIES_TO_WORKBOOK = Symbol('DIALOG_COPY_ENTRIES_TO_WORKBOOK');
 
-export const CopyEntriesToWorkbookDialog: React.FC<Props> = ({open, entryId, onClose}) => {
+export const CopyEntriesToWorkbookDialog: React.FC<Props> = ({
+    open,
+    entryId,
+    initialCollectionId = null,
+    onClose,
+}) => {
     const [isLoadingInited, setIsLoadingInited] = React.useState(false);
 
     const history = useHistory();
@@ -101,6 +107,7 @@ export const CopyEntriesToWorkbookDialog: React.FC<Props> = ({open, entryId, onC
                 id: DIALOG_COPY_ENTRIES,
                 props: {
                     open: true,
+                    initialCollectionId,
                     onApply: async (workbookId: string) => {
                         if (targetEntry && relations) {
                             await dispatch(
@@ -128,7 +135,7 @@ export const CopyEntriesToWorkbookDialog: React.FC<Props> = ({open, entryId, onC
                 },
             }),
         );
-    }, [dispatch, relations, targetEntry]);
+    }, [dispatch, history, initialCollectionId, relations, targetEntry]);
 
     if (!isLoadingInited) {
         return null;

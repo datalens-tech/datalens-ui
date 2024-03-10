@@ -21,6 +21,7 @@ type OldBarXDataItem = {
     y: number;
     x?: number;
     label?: string | number;
+    custom?: any;
 } | null;
 
 export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
@@ -67,6 +68,7 @@ export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
                 (acc: BarXSeriesData[], item: OldBarXDataItem, index: number) => {
                     const dataItem: BarXSeriesData = {
                         y: item?.y || 0,
+                        custom: item?.custom,
                     };
 
                     if (isDataLabelsEnabled) {
@@ -88,7 +90,7 @@ export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
                 },
                 [],
             ),
-            custom: {},
+            custom: graph.custom,
             dataLabels: {
                 enabled: isDataLabelsEnabled,
                 inside: shared.extraSettings?.labelsPosition !== LabelsPositions.Outside,

@@ -253,15 +253,30 @@ export function createConnection(name: string, dirPath?: string) {
         let templateError: DataLensApiError | undefined;
 
         if (innerForm[InnerFieldKey.isAutoCreateDashboard] && schema.templateName && connectionId) {
-            ({
-                entryId: templateFolderId,
-                workbookId: templateWorkbookId,
-                error: templateError,
-            } = await api.copyTemplate(
-                connectionId,
-                schema.templateName,
-                workbookId === '' ? undefined : workbookId,
-            ));
+            const getConnectionsWithForceSkippedCopyTemplateInWorkbooks =
+                registry.connections.functions.get(
+                    'getConnectionsWithForceSkippedCopyTemplateInWorkbooks',
+                );
+
+            const connectionsWithForceSkippedCopyTemplateInWorkbooks =
+                getConnectionsWithForceSkippedCopyTemplateInWorkbooks() ?? [];
+
+            const forceSkipCopyTemplate = Boolean(
+                connectionsWithForceSkippedCopyTemplateInWorkbooks.includes(schema.templateName) &&
+                    workbookId,
+            );
+
+            if (forceSkipCopyTemplate === false) {
+                ({
+                    entryId: templateFolderId,
+                    workbookId: templateWorkbookId,
+                    error: templateError,
+                } = await api.copyTemplate(
+                    connectionId,
+                    schema.templateName,
+                    workbookId === '' ? undefined : workbookId,
+                ));
+            }
         }
 
         if (connectionId) {

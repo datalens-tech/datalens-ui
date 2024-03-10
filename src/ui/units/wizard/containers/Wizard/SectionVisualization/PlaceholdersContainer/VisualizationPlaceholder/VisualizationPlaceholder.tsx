@@ -287,6 +287,10 @@ class VisualizationPlaceholder extends React.Component<Props> {
                 isLastPlaceholder,
             );
         });
+
+        if (this.props.onUpdate) {
+            this.props.onUpdate();
+        }
     };
 
     private checkAllowedPlaceholderItem = (item: Field) => {
