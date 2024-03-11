@@ -14,6 +14,7 @@ export type SelectorDialogValidation = {
     fieldName?: string;
     datasetFieldId?: string;
     defaultValue?: string;
+    connectionQueryContent?: string;
 };
 
 export type SelectorsGroupDialogState = {

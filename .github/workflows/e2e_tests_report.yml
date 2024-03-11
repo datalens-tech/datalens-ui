@@ -67,5 +67,6 @@ jobs:
       - name: Create Comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
+          header: e2e-report
           number: ${{ env.REPORT_PR_NUMBER }}
           message: '[E2E Report](https://datalens-tech.github.io/datalens-ui/${{ env.HTML_REPORT_URL_PATH }}/report) is ready.'
