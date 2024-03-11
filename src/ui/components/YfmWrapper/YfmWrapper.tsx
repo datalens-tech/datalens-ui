@@ -1,9 +1,6 @@
 import React from 'react';
 
 import {useLatex} from '@diplodoc/latex-extension/react';
-// TODO: https://github.com/datalens-tech/datalens-ui/issues/753
-import '@diplodoc/latex-extension/runtime';
-import '@diplodoc/latex-extension/runtime/styles';
 import {registry} from 'ui/registry';
 
 import {YfmWrapperProps} from '../../registry/units/common/types/components/YfmWrapper';
@@ -16,6 +13,11 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
         React.useLayoutEffect(() => {
             renderLatex();
         });
+
+        React.useEffect(() => {
+            // TODO: https://github.com/datalens-tech/datalens-ui/issues/753
+            import('@diplodoc/latex-extension/runtime');
+        }, []);
 
         return (
             <YfmWrapperContent
