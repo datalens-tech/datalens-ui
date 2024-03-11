@@ -552,13 +552,13 @@ class Dataset extends React.Component {
     }
 
     renderLoader() {
+        const text = this.state.isAuto
+            ? i18n('label_dataset-auto-creation-process')
+            : i18n('label_loading-dataset');
+
         return (
             <div className={b('loader')}>
-                {this.state.isAuto ? (
-                    <ContainerLoader text={i18n('label_dataset-auto-creation-process')} />
-                ) : (
-                    <ContainerLoader text={i18n('label_loading-dataset')} textSize="m" />
-                )}
+                <ContainerLoader text={text} textSize="m" />
             </div>
         );
     }
