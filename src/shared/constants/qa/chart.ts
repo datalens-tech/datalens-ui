@@ -42,6 +42,10 @@ export const enum ChartKitTreeNodeStateQa {
 export const enum ChartKitTableQa {
     Widget = 'chartkit-table-widget',
     Row = 'chartkit-table-row',
+    Header = 'chartkit-table-header',
     Cell = 'chartkit-table-cell',
     CellContent = 'chartkit-cell-content',
+    Paginator = 'chartkit-table-paginator',
+    PaginatorPageInput = 'chartkit-table-paginator-page-input',
+    PaginatorRange = 'chartkit-table-paginator-range',
 }

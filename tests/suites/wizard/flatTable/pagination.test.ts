@@ -1,20 +1,23 @@
 import {Page} from '@playwright/test';
 
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {ChartKitTableQa} from '../../../../src/shared';
 
 const rowLimit = 5;
 
 const TIMEOUT = 4000;
 
 const SELECTORS = {
-    COLUMN_SELECTOR_TEXT: '.chartkit-table__content_text',
-    PAGINATOR_INPUT: '.chartkit-table-paginator__page-input .yc-text-input__control_type_input',
-    PAGINATOR_PREV_BUTTON: '.chartkit-table-paginator > button.yc-button:first-child',
-    PAGINATOR_NEXT_BUTTON: '.chartkit-table-paginator > .yc-text-input + button.yc-button',
-    PAGINATOR_TEXT: '.chartkit-table-paginator__range',
+    COLUMN_SELECTOR_TEXT: slct(ChartKitTableQa.CellContent),
+    PAGINATOR_INPUT: `${slct(
+        ChartKitTableQa.PaginatorPageInput,
+    )} .yc-text-input__control_type_input`,
+    PAGINATOR_PREV_BUTTON: `${slct(ChartKitTableQa.Paginator)} > button.yc-button:first-child`,
+    PAGINATOR_NEXT_BUTTON: `${slct(ChartKitTableQa.Paginator)} > .yc-text-input + button.yc-button`,
+    PAGINATOR_TEXT: slct(ChartKitTableQa.PaginatorRange),
 };
 
 const VALUES = {

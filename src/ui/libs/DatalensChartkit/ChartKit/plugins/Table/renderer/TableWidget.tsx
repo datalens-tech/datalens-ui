@@ -1,35 +1,26 @@
 import React from 'react';
 
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
-import {dateTime} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
-import {
-    BarTableCell,
-    ChartKitTableQa,
-    NumberTableColumn,
-    StringParams,
-    TableCellsRow,
-    TableCommonCell,
-} from 'shared';
+import {ChartKitTableQa, StringParams, TableCellsRow, TableCommonCell} from 'shared';
 import {Table} from 'ui/components/Table/Table';
 import type {OnTableClick, TData, THead, TableProps} from 'ui/components/Table/types';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
+import Paginator from '../../../components/Widget/components/Table/Paginator/Paginator';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../helpers/constants';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import Performance from '../../../modules/perfomance';
 import type {TableWidgetProps} from '../types';
 
-import {BarCell} from './components/BarCell/BarCell';
-import {MarkupCell} from './components/MarkupCell/MarkupCell';
-import {TreeCell} from './components/TreeCell/TreeCell';
 import {
     getCellActionParams,
     getCellCss,
     getCurrentActionParams,
     getUpdatesTreeState,
 } from './utils';
+import {getCellContentStyles, renderCellContent} from './utils/renderer';
 
 import './TableWidget.scss';
 
@@ -121,51 +112,14 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                     enableSorting: true,
                     renderCell: (cellData) => {
                         const cell = cellData as TableCommonCell;
-                        const columnView = get(d, 'view');
-                        const cellType = cell.type ?? get(d, 'type');
-
-                        if (columnView === 'bar') {
-                            return (
-                                <BarCell
-                                    cell={cell as BarTableCell}
-                                    column={d as NumberTableColumn}
-                                />
-                            );
-                        }
-
-                        if (cellType === 'markup') {
-                            return <MarkupCell cell={cell} />;
-                        }
-
-                        if (cell?.treeNodeState) {
-                            return <TreeCell cell={cell} />;
-                        }
-
-                        let formattedValue: string | undefined = cellData.formattedValue;
-                        if (typeof formattedValue === 'undefined') {
-                            if (cellType === 'date') {
-                                const dateTimeValue = dateTime({
-                                    input: cell.value as number,
-                                    timeZone: 'UTC',
-                                });
-                                const dateTimeFormat = get(d, 'format');
-                                formattedValue = dateTimeValue?.isValid()
-                                    ? dateTimeValue.format(dateTimeFormat)
-                                    : String(cellData.value);
-                            } else {
-                                formattedValue = String(cellData.value);
-                            }
-                        }
-
-                        const contentStyles: React.CSSProperties = {};
-                        if (cellType === 'number') {
-                            contentStyles.textAlign = 'left';
-                        }
-
+                        const contentStyles = getCellContentStyles({
+                            cell,
+                            column: d,
+                        });
                         return (
-                            <span data-qa={ChartKitTableQa.CellContent} style={{...contentStyles}}>
-                                {formattedValue}
-                            </span>
+                            <div data-qa={ChartKitTableQa.CellContent} style={{...contentStyles}}>
+                                {renderCellContent({cell, column: d})}
+                            </div>
                         );
                     },
                 };
@@ -205,6 +159,8 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             footer: ((data.footer?.[0] as TableCellsRow)?.cells || []) as TableCommonCell[],
         };
 
+        const isPaginationEnabled = Boolean(config?.paginator?.enabled);
+
         return (
             <div
                 className={[b(), CHARTKIT_SCROLLABLE_NODE_CLASSNAME].join(' ')}
@@ -213,22 +169,25 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                 <Table
                     data={tableData}
                     title={config?.title}
-                    pagination={{
-                        enabled: Boolean(config?.paginator?.enabled),
-                        pageSize: config?.paginator?.limit,
-                        pageIndex: Number(currentParams._page) || 0,
-                        onChange: handlePaginationChange,
-                    }}
                     noData={{text: i18n('chartkit-table', 'message-no-data')}}
                     onClick={handleTableClick}
                     header={{
                         sticky: true,
                     }}
                     qa={{
+                        header: ChartKitTableQa.Header,
                         row: ChartKitTableQa.Row,
                         cell: ChartKitTableQa.Cell,
                     }}
                 />
+                {isPaginationEnabled && (
+                    <Paginator
+                        page={Number(currentParams._page) || 0}
+                        rowsCount={tableData.rows?.length}
+                        limit={config?.paginator?.limit}
+                        onChange={handlePaginationChange}
+                    />
+                )}
             </div>
         );
     },

@@ -9,9 +9,7 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import block from 'bem-cn-lite';
-import get from 'lodash/get';
 
-import {Paginator} from './components/Paginator/Paginator';
 import {SortIcon} from './components/SortIcon/SortIcon';
 import type {OnTableClick, TData, TableProps} from './types';
 
@@ -54,34 +52,13 @@ function getTableData(args: TableProps['data']) {
 }
 
 export const Table = (props: TableProps) => {
-    const {title, pagination, noData, onClick, header: headerOptions, qa} = props;
-    const isPaginationEnabled = Boolean(pagination?.enabled && pagination.pageSize);
-    const paginationState = {
-        pageIndex: get(pagination, 'pageIndex', 0),
-        pageSize: get(pagination, 'pageSize', 10),
-    };
-
+    const {title, noData, onClick, header: headerOptions, qa} = props;
     const {columns, data} = React.useMemo(() => getTableData(props.data), [props.data]);
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        ...(isPaginationEnabled
-            ? {
-                  manualPagination: true,
-                  state: {
-                      pagination: paginationState,
-                  },
-                  onPaginationChange: (updater) => {
-                      if (pagination?.onChange) {
-                          const newPaginationState =
-                              typeof updater === 'function' ? updater(paginationState) : updater;
-                          pagination.onChange(newPaginationState.pageIndex);
-                      }
-                  },
-              }
-            : {}),
     });
 
     const handleCellClick: OnTableClick = (args) => {
@@ -97,14 +74,17 @@ export const Table = (props: TableProps) => {
         <div className={b()}>
             {title && <div className={b('title')}>{title.text}</div>}
             <table className={b('table')}>
-                <thead className={b('header', {sticky: headerOptions?.sticky})}>
+                <thead
+                    className={b('header', {sticky: headerOptions?.sticky})}
+                    data-qa={qa?.header}
+                >
                     {table.getHeaderGroups().map((headerGroup) => {
                         if (!headerGroup.headers.length) {
                             return null;
                         }
 
                         return (
-                            <tr key={headerGroup.id} className={b('tr')}>
+                            <tr key={headerGroup.id} className={b('tr')} data-qa={qa?.row}>
                                 {headerGroup.headers.map((header) => {
                                     const width = header.column.columnDef.meta?.width;
                                     const isFixedSize = Boolean(width);
@@ -135,7 +115,7 @@ export const Table = (props: TableProps) => {
                         );
                     })}
                 </thead>
-                <tbody className={b('body')}>
+                <tbody className={b('body')} data-qa={qa?.body}>
                     {rows.length
                         ? rows.map((row) => (
                               <tr key={row.id} className={b('tr')} data-qa={qa?.row}>
@@ -165,7 +145,6 @@ export const Table = (props: TableProps) => {
                                                   className={b('td-content', {
                                                       'fixed-size': isFixedSize,
                                                   })}
-                                                  style={{width}}
                                               >
                                                   {flexRender(
                                                       cell.column.columnDef.cell,
@@ -186,9 +165,9 @@ export const Table = (props: TableProps) => {
                           )}
                 </tbody>
                 {shouldShowFooter && (
-                    <tfoot className={b('footer')}>
+                    <tfoot className={b('footer')} data-qa={qa?.footer}>
                         {table.getFooterGroups().map((footerGroup) => (
-                            <tr key={footerGroup.id}>
+                            <tr key={footerGroup.id} data-qa={qa?.row}>
                                 {footerGroup.headers.map((header) => (
                                     <th key={header.id} className={b('th')}>
                                         {header.isPlaceholder
@@ -204,14 +183,6 @@ export const Table = (props: TableProps) => {
                     </tfoot>
                 )}
             </table>
-            {isPaginationEnabled && (
-                <Paginator
-                    page={table.getState().pagination.pageIndex}
-                    rowsCount={rows.length}
-                    limit={table.getState().pagination.pageSize}
-                    onChange={table.setPageIndex}
-                />
-            )}
         </div>
     );
 };

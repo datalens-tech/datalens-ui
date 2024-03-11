@@ -4,6 +4,7 @@ import {ChevronRight} from '@gravity-ui/icons';
 import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
+import {ChartKitTableQa} from '../../../../../../../../../shared';
 import {i18n} from '../../../../../modules/i18n/i18n';
 
 import './Paginator.scss';
@@ -92,7 +93,7 @@ const Paginator: React.FC<PaginatorProps> = ({page, rowsCount, limit, onChange})
     }, [page]);
 
     return (
-        <div className={b()}>
+        <div className={b()} data-qa={ChartKitTableQa.Paginator}>
             <ArrowButton
                 page={currentPage}
                 qa={PaginatorQa.PREV}
@@ -106,10 +107,11 @@ const Paginator: React.FC<PaginatorProps> = ({page, rowsCount, limit, onChange})
                 onBlur={onInputBlur}
                 onUpdate={setInputValue}
                 onKeyPress={onInputPressEnter}
+                qa={ChartKitTableQa.PaginatorPageInput}
             />
             <ArrowButton page={currentPage} qa={PaginatorQa.NEXT} onChange={onChange} />
             {Boolean(limit && rowsCount) && (
-                <span className={b('range')}>
+                <span className={b('range')} data-qa={ChartKitTableQa.PaginatorRange}>
                     {getRange(currentPage, limit as number, rowsCount as number)}
                 </span>
             )}

@@ -40,10 +40,14 @@ export default class ChartKit {
     private breadcrumbsSelector = '.chartkit-drill .yc-breadcrumbs__item';
     private paginatorSelector = '.chartkit-table-paginator';
     private tableRowSelector = `.chartkit .data-table__row, ${slct(ChartKitTableQa.Row)}`;
-    private tableHeadRowSelector = '.chartkit .data-table__sticky_head .data-table__head-row';
+    private tableHeadRowSelector = [
+        '.chartkit .data-table__sticky_head .data-table__head-row', // delete after replacing the table rendering plugin
+        `.chartkit ${slct(ChartKitTableQa.Header)} ${slct(ChartKitTableQa.Row)}`,
+    ].join(', ');
+    private tableHeadCellSelector = '.data-table__head-cell, th';
     private tableColgroupSelector = '.chartkit-table colgroup';
     private layerLegendSelector = '.chartkit .chartkit-ymap-legend-layer';
-    private chartkitTableCellSelector = '.chartkit-table__cell';
+    private chartkitTableCellSelector = `.chartkit-table__cell, ${slct(ChartKitTableQa.Cell)}`;
     private labelsSelector = '.highcharts-data-labels .highcharts-data-label';
     private chartkitSeriesRect = '.chartkit-highcharts rect.highcharts-point';
 
@@ -215,7 +219,7 @@ export default class ChartKit {
     }
 
     getHeadRowsHtml() {
-        return this.getRowContent(this.tableHeadRowSelector, '.data-table__head-cell', 'html');
+        return this.getRowContent(this.tableHeadRowSelector, this.tableHeadCellSelector, 'html');
     }
 
     getRowsHtml() {
@@ -223,7 +227,7 @@ export default class ChartKit {
     }
 
     getHeadRowsTexts() {
-        return this.getRowContent(this.tableHeadRowSelector, '.data-table__head-cell', 'text');
+        return this.getRowContent(this.tableHeadRowSelector, this.tableHeadCellSelector, 'text');
     }
 
     async getRowsTexts() {
