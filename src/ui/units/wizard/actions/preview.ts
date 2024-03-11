@@ -31,6 +31,8 @@ import {
     getAllCommonPlaceholdersFields,
 } from '../utils/helpers';
 
+import {addHistoryPoint} from './history';
+
 export const UPDATE_PREVIEW = Symbol('wizard/preview/UPDATE_PREVIEW');
 export const SET_HIGHCHARTS_WIDGET = Symbol('wizard/preview/SET_HIGHCHARTS_WIDGET');
 export const SET_UPDATES = Symbol('wizard/SET_UPDATES');
@@ -203,6 +205,8 @@ export function updatePreviewAndClientChartsConfig(
 
             if (isRedrawDone && !preview.previewEntryId) {
                 dispatch(updateClientChartsConfig(updateClientChartsConfigArgs));
+
+                dispatch(addHistoryPoint());
             }
         });
     };

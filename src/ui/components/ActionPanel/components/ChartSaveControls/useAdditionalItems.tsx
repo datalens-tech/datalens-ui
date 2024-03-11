@@ -22,6 +22,7 @@ export const useAdditionalItems = (args: UseAdditionalItemsArgs) => {
             }
             return (
                 <Button
+                    disabled={itemProps.disabled || false}
                     key={itemProps.key}
                     className={itemProps.className}
                     view={itemProps.view || 'flat'}

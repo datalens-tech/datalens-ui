@@ -13,6 +13,7 @@ import {registry} from '../../../../../registry';
 import {setEditMode} from '../../../../dash/store/actions/base/actions';
 import {toggleViewOnlyMode} from '../../../actions/settings';
 import {WidgetData} from '../../../actions/widget';
+import {selectCanGoBack, selectCanGoForward} from '../../../selectors/history';
 import {selectIsFullscreen, selectViewOnlyMode} from '../../../selectors/settings';
 
 import {useWizardActionPanel} from './useWizardActionPanel';
@@ -88,12 +89,17 @@ export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
         }
     }, [isCurrentRevisionActual, onSaveCallback]);
 
+    const canGoBack = useSelector(selectCanGoBack);
+    const canGoForward = useSelector(selectCanGoForward);
+
     const additionalButtons = useWizardActionPanel({
         editButtonLoading,
         handleEditButtonClick,
         isViewOnlyMode,
         chartKitRef,
         isFullscreen,
+        canGoBack,
+        canGoForward,
     });
 
     const {WizardActionPanelExtension} = registry.wizard.components.getAll();

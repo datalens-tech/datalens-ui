@@ -14,4 +14,5 @@ export type AdditionalButtonTemplate = {
     hidden?: boolean;
     loading?: boolean;
     view?: ButtonView;
+    disabled?: boolean;
 };

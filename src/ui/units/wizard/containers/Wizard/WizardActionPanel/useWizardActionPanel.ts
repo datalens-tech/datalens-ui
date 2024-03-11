@@ -7,7 +7,11 @@ import {useDispatch} from 'react-redux';
 
 import {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
+import {goBack, goForward} from '../../../actions/history';
 import {toggleFullscreen} from '../../../actions/settings';
+
+import RedoIcon from '../../../../../assets/icons/redo.svg';
+import UndoIcon from '../../../../../assets/icons/undo.svg';
 
 const b = block('wizard-action-panel');
 
@@ -17,6 +21,8 @@ export type UseWizardActionPanelArgs = {
     isViewOnlyMode: boolean;
     chartKitRef: React.RefObject<ChartKit>;
     isFullscreen: boolean;
+    canGoBack: boolean;
+    canGoForward: boolean;
 };
 
 export const useWizardActionPanel = (
@@ -24,8 +30,15 @@ export const useWizardActionPanel = (
 ): AdditionalButtonTemplate[] => {
     const dispatch = useDispatch();
 
-    const {editButtonLoading, handleEditButtonClick, isViewOnlyMode, chartKitRef, isFullscreen} =
-        args;
+    const {
+        editButtonLoading,
+        handleEditButtonClick,
+        isViewOnlyMode,
+        chartKitRef,
+        isFullscreen,
+        canGoBack,
+        canGoForward,
+    } = args;
 
     const defaultButtons: AdditionalButtonTemplate[] = React.useMemo<
         AdditionalButtonTemplate[]
@@ -36,6 +49,26 @@ export const useWizardActionPanel = (
         };
 
         return [
+            {
+                key: 'undo',
+                action: () => {
+                    dispatch(goBack());
+                },
+                className: b('undo-btn'),
+                icon: {data: UndoIcon, size: 16},
+                view: 'flat',
+                disabled: !canGoBack,
+            },
+            {
+                key: 'redo',
+                action: () => {
+                    dispatch(goForward());
+                },
+                className: b('redo-btn'),
+                icon: {data: RedoIcon, size: 16},
+                view: 'flat',
+                disabled: !canGoForward,
+            },
             {
                 key: 'fullscreen',
                 action: () => {
@@ -48,7 +81,7 @@ export const useWizardActionPanel = (
                 view: 'flat',
             },
         ];
-    }, [dispatch, chartKitRef.current, isFullscreen]);
+    }, [dispatch, chartKitRef.current, isFullscreen, canGoBack, canGoForward]);
 
     const editButton: AdditionalButtonTemplate[] = React.useMemo<AdditionalButtonTemplate[]>(() => {
         return [
