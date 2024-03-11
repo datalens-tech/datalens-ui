@@ -1,6 +1,11 @@
 import React from 'react';
 
-import {ChevronsCollapseUpRight, ChevronsExpandUpRight} from '@gravity-ui/icons';
+import {
+    ArrowUturnCcwLeft,
+    ArrowUturnCwRight,
+    ChevronsCollapseUpRight,
+    ChevronsExpandUpRight,
+} from '@gravity-ui/icons';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
@@ -9,9 +14,6 @@ import {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/co
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {goBack, goForward} from '../../../actions/history';
 import {toggleFullscreen} from '../../../actions/settings';
-
-import RedoIcon from '../../../../../assets/icons/redo.svg';
-import UndoIcon from '../../../../../assets/icons/undo.svg';
 
 const b = block('wizard-action-panel');
 
@@ -55,7 +57,7 @@ export const useWizardActionPanel = (
                     dispatch(goBack());
                 },
                 className: b('undo-btn'),
-                icon: {data: UndoIcon, size: 16},
+                icon: {data: ArrowUturnCcwLeft, size: 16},
                 view: 'flat',
                 disabled: !canGoBack,
             },
@@ -65,7 +67,7 @@ export const useWizardActionPanel = (
                     dispatch(goForward());
                 },
                 className: b('redo-btn'),
-                icon: {data: RedoIcon, size: 16},
+                icon: {data: ArrowUturnCwRight, size: 16},
                 view: 'flat',
                 disabled: !canGoForward,
             },
