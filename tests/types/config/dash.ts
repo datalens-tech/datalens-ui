@@ -4,7 +4,7 @@ type ChartConfig = {
 };
 
 export type DashParametrizationConfig = {
-    dashUrls: {
+    urls: {
         DashboardWithLongContentBeforeChart: string;
         DashboardLoadPriorityCharts: string;
         DashboardLoadPrioritySelectors: string;

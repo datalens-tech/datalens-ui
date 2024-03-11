@@ -35,7 +35,7 @@ datalensTest.describe('Dashboards - Possible selector values', () => {
     });
 
     datalensTest(
-        'Possible values of the selec-selector with manual input can be deleted',
+        'Possible values of the select-selector with manual input can be deleted',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 

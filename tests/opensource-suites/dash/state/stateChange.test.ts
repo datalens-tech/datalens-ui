@@ -71,7 +71,7 @@ const waitBackGetUrlStateParam = async (page: Page): Promise<string | null> => {
 datalensTest.describe('Dashboards - States with tabs', () => {
     datalensTest.beforeEach(
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
-            await openTestPage(page, config.dash.dashUrls.DashboardWithTabsAndSelectors);
+            await openTestPage(page, config.dash.urls.DashboardWithTabsAndSelectors);
 
             // We are waiting for the drawing of the chart on the first tab and the passage of all initial requests for rendering, respectively
             await page.waitForSelector(`${slct(SELECTORS.CHART_KEY)}`);

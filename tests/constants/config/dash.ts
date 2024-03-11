@@ -3,7 +3,7 @@ import {DashParametrizationConfig} from '../../types/config/dash';
 import {ChartsParams} from '../test-entities/charts';
 
 export const dash: DashParametrizationConfig = {
-    dashUrls: {
+    urls: {
         DashboardWithLongContentBeforeChart: DashUrls.DashboardWithLongContentBeforeChart,
         DashboardLoadPriorityCharts: DashUrls.DashboardLoadPriorityCharts,
         DashboardLoadPrioritySelectors: DashUrls.DashboardLoadPrioritySelectors,
