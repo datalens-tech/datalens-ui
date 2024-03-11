@@ -40,7 +40,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
 
     React.useEffect(() => {
         (async () => {
-            if (workbook && workbook.workbookId === workbookId && entries.length === 0) {
+            if (workbook && workbook.workbookId === workbookId) {
                 dispatch(resetWorkbookEntries());
 
                 const scopesForRequest = [EntryScope.Dash, EntryScope.Widget];
@@ -94,7 +94,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                 setIsLoading(false);
             }
         })();
-    }, [dispatch, entries, filters, workbook, workbookId]);
+    }, [dispatch, filters, workbook, workbookId]);
 
     const loadMoreEntries = React.useCallback(
         (entryScope: EntryScope) => {

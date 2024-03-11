@@ -73,8 +73,7 @@ export const WorkbookPage = () => {
 
     const filters = useSelector(selectWorkbookFilters);
 
-    const showContentLoader =
-        isWorkbookInfoLoading || !workbook || (collectionId && !breadcrumbs && !breadcrumbsError);
+    const showContentLoader = isWorkbookInfoLoading || !workbook || (collectionId && !breadcrumbs);
 
     const isMainTab = activeTab === TAB_ALL;
     const scope = isMainTab ? undefined : activeTab;
