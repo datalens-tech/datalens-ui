@@ -2,24 +2,24 @@ import React from 'react';
 
 import {Button, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
-import './MoveSuccess.scss';
+import './DialogSuccessWithAction.scss';
 
-const b = block('dl-nav-move-success');
-const i18n = I18n.keyset('component.navigation.view');
+const b = block('dialog-success-with-action');
 
 type Props = {
-    onOpenFolder: () => void;
     onClose: () => void;
+    onClick: () => void;
+    title: string;
+    buttonText: string;
 };
 
-export const MoveSuccess = ({onClose, onOpenFolder}: Props) => {
+export const DialogSuccessWithAction = ({onClose, onClick, title, buttonText}: Props) => {
     const renderAction = () => {
         return (
-            <Button className={b('action')} size="l" view="action" onClick={onOpenFolder}>
-                {i18n('button_goto-folder')}
+            <Button className={b('action')} size="l" view="action" onClick={onClick}>
+                {buttonText}
             </Button>
         );
     };
@@ -29,9 +29,10 @@ export const MoveSuccess = ({onClose, onOpenFolder}: Props) => {
             <Dialog.Body>
                 <PlaceholderIllustration
                     name="successOperation"
-                    description={i18n('label_batch-move-success-description')}
+                    title={title}
                     direction="column"
                     renderAction={renderAction}
+                    className={b('illustration')}
                 />
             </Dialog.Body>
         </Dialog>
