@@ -103,12 +103,6 @@ export const applyGroupControlDialog = () => {
             }),
         );
 
-        // if (openedItemId) {
-        //     //@ts-ignore
-        //     const configItem = {id: openedItemId, data, type: '', namespace: ''} as ConfigItem;
-        //     dispatch(removeUnusedSubItems({item: configItem}));
-        // }
-
         dispatch(closeDashDialog());
     };
 };
