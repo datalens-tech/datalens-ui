@@ -34,7 +34,6 @@ import {
     selectWorkbook,
     selectWorkbookFilters,
     selectWorkbookInfoIsLoading,
-    selectWorkbookItems,
 } from '../../store/selectors';
 import {CreateEntryDialog} from '../CreateEntryDialog/CreateEntryDialog';
 import {WorkbookActions} from '../WorkbookActions/WorkbookActions';
@@ -68,14 +67,14 @@ export const WorkbookPage = () => {
     const collectionId = useSelector(selectCollectionId);
     const breadcrumbs = useSelector(selectBreadcrumbs);
     const workbook = useSelector(selectWorkbook);
-    const entries = useSelector(selectWorkbookItems);
     const pageError = useSelector(selectPageError);
     const breadcrumbsError = useSelector(selectBreadcrumbsError);
     const isWorkbookInfoLoading = useSelector(selectWorkbookInfoIsLoading);
 
     const filters = useSelector(selectWorkbookFilters);
 
-    const showContentLoader = isWorkbookInfoLoading || !workbook || (collectionId && !breadcrumbs);
+    const showContentLoader =
+        isWorkbookInfoLoading || !workbook || (collectionId && !breadcrumbs && !breadcrumbsError);
 
     const isMainTab = activeTab === TAB_ALL;
     const scope = isMainTab ? undefined : activeTab;
@@ -210,7 +209,6 @@ export const WorkbookPage = () => {
                                     workbook={workbook}
                                     filters={filters}
                                     workbookId={workbookId}
-                                    entries={entries}
                                 />
                             ) : (
                                 <WorkbookTabContent
@@ -218,7 +216,6 @@ export const WorkbookPage = () => {
                                     scope={scope}
                                     workbookId={workbookId}
                                     workbook={workbook}
-                                    entries={entries}
                                 />
                             )}
                         </div>

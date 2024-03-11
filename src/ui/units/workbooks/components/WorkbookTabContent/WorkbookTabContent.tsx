@@ -7,7 +7,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
 import {EntryScope} from 'shared';
-import {GetEntryResponse, WorkbookWithPermissions} from 'shared/schema';
+import {WorkbookWithPermissions} from 'shared/schema';
 import {AppDispatch} from 'ui/store';
 
 import {getWorkbookEntries, resetWorkbookEntries} from '../../store/actions';
@@ -15,6 +15,7 @@ import {
     selectNextPageToken,
     selectWorkbookEntriesError,
     selectWorkbookEntriesIsLoading,
+    selectWorkbookItems,
 } from '../../store/selectors';
 import {WorkbookEntriesFilters} from '../../types';
 import {EmptyWorkbookContainer} from '../EmptyWorkbook/EmptyWorkbookContainer';
@@ -32,35 +33,46 @@ type Props = {
     filters: WorkbookEntriesFilters;
     workbookId: string;
     workbook: WorkbookWithPermissions | null;
-    entries: GetEntryResponse[];
 };
 
-export const WorkbookTabContent = React.memo<Props>(
-    ({entries, workbookId, workbook, filters, scope}) => {
-        const isEntriesLoading = useSelector(selectWorkbookEntriesIsLoading);
-        const workbookEntriesError = useSelector(selectWorkbookEntriesError);
-        const nextPageToken = useSelector(selectNextPageToken);
+export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filters, scope}) => {
+    const entries = useSelector(selectWorkbookItems);
+    const isEntriesLoading = useSelector(selectWorkbookEntriesIsLoading);
+    const workbookEntriesError = useSelector(selectWorkbookEntriesError);
+    const nextPageToken = useSelector(selectNextPageToken);
 
-        const chunks = useChunkedEntries(entries);
+    const chunks = useChunkedEntries(entries);
 
-        const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useDispatch<AppDispatch>();
 
-        React.useEffect(() => {
+    React.useEffect(() => {
+        dispatch(resetWorkbookEntries());
+
+        dispatch(getWorkbookEntries({workbookId, filters, scope}));
+    }, [dispatch, filters, scope, workbook, workbookId]);
+
+    const refreshEntries = React.useCallback(
+        (entryScope: EntryScope) => {
             dispatch(resetWorkbookEntries());
 
-            dispatch(getWorkbookEntries({workbookId, filters, scope}));
-        }, [dispatch, filters, scope, workbook, workbookId]);
+            dispatch(getWorkbookEntries({workbookId, filters, scope: entryScope}));
+        },
+        [dispatch, workbookId, filters],
+    );
 
-        const refreshEntries = React.useCallback(
-            (entryScope: EntryScope) => {
-                dispatch(resetWorkbookEntries());
-
-                dispatch(getWorkbookEntries({workbookId, filters, scope: entryScope}));
-            },
-            [dispatch, workbookId, filters],
+    const retryLoadEntries = React.useCallback(() => {
+        dispatch(
+            getWorkbookEntries({
+                workbookId,
+                filters,
+                scope,
+                nextPageToken,
+            }),
         );
+    }, [dispatch, workbookId, filters, scope, nextPageToken]);
 
-        const retryLoadEntries = React.useCallback(() => {
+    const loadMoreEntries = React.useCallback(() => {
+        if (nextPageToken) {
             dispatch(
                 getWorkbookEntries({
                     workbookId,
@@ -69,72 +81,59 @@ export const WorkbookTabContent = React.memo<Props>(
                     nextPageToken,
                 }),
             );
-        }, [dispatch, workbookId, filters, scope, nextPageToken]);
-
-        const loadMoreEntries = React.useCallback(() => {
-            if (nextPageToken) {
-                dispatch(
-                    getWorkbookEntries({
-                        workbookId,
-                        filters,
-                        scope,
-                        nextPageToken,
-                    }),
-                );
-            }
-        }, [nextPageToken, dispatch, workbookId, filters, scope]);
-
-        if (isEntriesLoading && entries.length === 0) {
-            return <SmartLoader size="l" />;
         }
+    }, [nextPageToken, dispatch, workbookId, filters, scope]);
 
-        const firstPageError = workbookEntriesError && entries.length === 0;
+    if (isEntriesLoading && entries.length === 0) {
+        return <SmartLoader size="l" />;
+    }
 
-        const buttonRetry = (
-            <div className={b('btn-retry')}>
-                <Button view="action" size="m" onClick={retryLoadEntries}>
-                    {i18n(
-                        firstPageError
-                            ? 'button_workbook-table-retry'
-                            : 'button_workbook-table-load-more',
-                    )}
-                </Button>
-            </div>
-        );
+    const firstPageError = workbookEntriesError && entries.length === 0;
 
-        if (firstPageError) {
-            return buttonRetry;
+    const buttonRetry = (
+        <div className={b('btn-retry')}>
+            <Button view="action" size="m" onClick={retryLoadEntries}>
+                {i18n(
+                    firstPageError
+                        ? 'button_workbook-table-retry'
+                        : 'button_workbook-table-load-more',
+                )}
+            </Button>
+        </div>
+    );
+
+    if (firstPageError) {
+        return buttonRetry;
+    }
+
+    if (!workbook || entries.length === 0) {
+        return <EmptyWorkbookContainer scope={scope} />;
+    }
+
+    let footer: React.ReactNode = null;
+
+    if (scope) {
+        if (isEntriesLoading) {
+            footer = <SmartLoader size="m" showAfter={0} />;
+        } else if (workbookEntriesError) {
+            footer = buttonRetry;
+        } else {
+            footer = <Waypoint onEnter={loadMoreEntries} />;
         }
+    }
 
-        if (!workbook || entries.length === 0) {
-            return <EmptyWorkbookContainer scope={scope} />;
-        }
-
-        let footer: React.ReactNode = null;
-
-        if (scope) {
-            if (isEntriesLoading) {
-                footer = <SmartLoader size="m" showAfter={0} />;
-            } else if (workbookEntriesError) {
-                footer = buttonRetry;
-            } else {
-                footer = <Waypoint onEnter={loadMoreEntries} />;
-            }
-        }
-
-        return (
-            <React.Fragment>
-                <WorkbookEntriesTable
-                    refreshEntries={refreshEntries}
-                    workbook={workbook}
-                    entries={entries}
-                    scope={scope}
-                    chunks={chunks}
-                />
-                {footer}
-            </React.Fragment>
-        );
-    },
-);
+    return (
+        <React.Fragment>
+            <WorkbookEntriesTable
+                refreshEntries={refreshEntries}
+                workbook={workbook}
+                entries={entries}
+                scope={scope}
+                chunks={chunks}
+            />
+            {footer}
+        </React.Fragment>
+    );
+});
 
 WorkbookTabContent.displayName = 'WorkbookTabContent';
