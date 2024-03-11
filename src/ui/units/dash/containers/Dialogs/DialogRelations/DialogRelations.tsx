@@ -1,8 +1,9 @@
+/* eslint-disable complexity */
 import React from 'react';
 
 import {Config, DashKit} from '@gravity-ui/dashkit';
 import {ChevronDown, TriangleExclamationFill} from '@gravity-ui/icons';
-import {Button, Dialog, DropdownMenu, Icon, Popup} from '@gravity-ui/uikit';
+import {Button, Dialog, DropdownMenu, Icon, Popup, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -10,8 +11,10 @@ import intersection from 'lodash/intersection';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashCommonQa, DashTab, DashTabItem, DashTabItemType, DatasetField} from 'shared';
+import {DashCommonQa, DashTab, DashTabItem, DashTabItemType, DatasetField, Feature} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
+import {BetaMark} from 'ui/components/BetaMark/BetaMark';
+import Utils from 'ui/utils/utils';
 
 import {updateCurrentTabData} from '../../../store/actions/dashTyped';
 import {openDialogAliases} from '../../../store/actions/relations/actions';
@@ -77,12 +80,25 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const [preparedRelations, setPreparedRelations] = React.useState<DashMetaData>([]);
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
 
+    const isMultipleControls =
+        widget.type === DashTabItemType.GroupControl && widget.data.items.length > 1;
+    const [itemId, setItemId] = React.useState(isMultipleControls ? widget.data.items[0].id : null);
+
+    const handleItemChange = (value: string[]) => {
+        setItemId(value[0]);
+        setPreparedRelations([]);
+    };
+    const controlItems = isMultipleControls
+        ? widget.data.items.map((item) => ({value: item.id, content: item.title}))
+        : [];
+
     const {isLoading, currentWidgetMeta, relations, datasets, dashWidgetsMeta, invalidAliases} =
         useRelations({
             dashKitRef,
             widget,
             dialogAliases: aliases,
             workbookId,
+            itemId,
         });
 
     const [shownInvalidAliases, setShownInvalidAliases] = React.useState<string[] | null>(null);
@@ -244,20 +260,29 @@ const DialogRelations = (props: DialogRelationsProps) => {
      */
     const handleRelationTypeChange = React.useCallback(
         (changedData: RelationTypeChangeProps) => {
-            const {type, widgetId, forceAddAlias, ...rest} = changedData;
+            const {type, widgetId, forceAddAlias, itemId, ...rest} = changedData;
 
             const newChanged = {...changedWidgets};
-            const currentRelations = preparedRelations.find(
-                (item) => item.widgetId === widgetId,
-            )?.relations;
+            let currentRelations;
+            if (itemId) {
+                currentRelations = preparedRelations.find(
+                    (item) => item.itemId === itemId,
+                )?.relations;
+            } else {
+                currentRelations = preparedRelations.find(
+                    (item) => item.widgetId === widgetId,
+                )?.relations;
+            }
+
+            const relationSubjectId = itemId || widgetId;
             const currentRelationType = currentRelations?.type;
             if (currentRelationType === type) {
-                if (newChanged[widgetId]) {
+                if (newChanged[relationSubjectId]) {
                     setChangedWidgets(newChanged);
-                    delete newChanged[widgetId];
+                    delete newChanged[relationSubjectId];
                 }
             } else {
-                newChanged[widgetId] = type;
+                newChanged[relationSubjectId] = type;
             }
             const changeFromUnknown = currentRelationType === RELATION_TYPES.unknown;
 
@@ -270,7 +295,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     forceAddAlias);
 
             if (showAddAliasForm) {
-                if (!isEmpty(newChanged[widgetId])) {
+                if (!isEmpty(newChanged[relationSubjectId])) {
                     const hasRelationBy = hasConnectionsBy(currentRelations);
 
                     if (hasRelationBy && !forceAddAlias) {
@@ -283,6 +308,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                             forceAddAlias: true,
                             changedWidgetsData: newChanged,
                             changedWidgetId: widgetId,
+                            changedItemId: itemId,
                         });
                     }
                 }
@@ -347,6 +373,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
         if (changedWidgets) {
             const connections = getRelationsForSave({
                 currentWidgetId: currentWidgetMeta?.widgetId || '',
+                currentItemId: currentWidgetMeta?.itemId,
                 changed: changedWidgets,
                 dashkitData: dashKitRef.current || null,
             });
@@ -373,13 +400,14 @@ const DialogRelations = (props: DialogRelationsProps) => {
             ? `${currentWidgetMeta?.label} ${currentWidgetMeta?.title ? ' — ' : ''}`
             : '';
     const titleName = isLoading ? '' : `: ${label}${currentWidgetMeta?.title}`;
+    const titleId =
+        currentWidgetMeta?.widgetId && currentWidgetMeta?.itemId
+            ? `${currentWidgetMeta.widgetId} ${currentWidgetMeta.itemId}`
+            : currentWidgetMeta?.widgetId;
     const title = (
         <div>
-            {i18n('title_links') +
-                titleName +
-                (showDebugInfo && currentWidgetMeta?.widgetId
-                    ? ` (${currentWidgetMeta.widgetId})`
-                    : '')}
+            {i18n('title_links') + titleName + (showDebugInfo && titleId ? ` (${titleId})` : '')}
+            {Utils.isEnabledFeature(Feature.HideOldRelations) && <BetaMark className={b('beta')} />}
         </div>
     );
 
@@ -420,6 +448,15 @@ const DialogRelations = (props: DialogRelationsProps) => {
         <Dialog onClose={onClose} open={true} className={b()} onEnterKeyDown={handleSaveRelations}>
             <Dialog.Header caption={title} insertBefore={titleIcon} className={b('caption')} />
             <Dialog.Body className={b('container')}>
+                {isMultipleControls && (
+                    <Select
+                        className={b('item-select')}
+                        value={[itemId || '']}
+                        options={controlItems}
+                        onUpdate={handleItemChange}
+                        label="Селектор: "
+                    />
+                )}
                 <Filters
                     onChangeInput={handleFilterInputChange}
                     onChangeButtons={handleFilterTypesChange}

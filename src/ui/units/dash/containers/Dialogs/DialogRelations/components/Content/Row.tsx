@@ -30,6 +30,7 @@ const ICON_SIZE = 16;
 type ChangedRelationType = {
     type: RelationType;
     widgetId: DashkitMetaDataItem['widgetId'];
+    itemId: DashkitMetaDataItem['itemId'];
 };
 
 type RowParams = {
@@ -294,7 +295,7 @@ const getDropdownItems = ({
 }) =>
     items.map((item) => ({
         action: () => {
-            onChange({type: item, widgetId: currentRow.widgetId});
+            onChange({type: item, widgetId: currentRow.widgetId, itemId: currentRow.itemId});
         },
         icon: <Icon data={getLinkIcon(item)} size={ICON_SIZE} className={b('icon-link', item)} />,
         text: (
@@ -395,9 +396,11 @@ export const Row = ({
 
     const showAliasIcon = Boolean(data.loaded);
 
-    const debugInfo = showDebugInfo ? <span className={b('info')}> ({data.widgetId})</span> : null;
+    const id = data.itemId ? `${data.widgetId} ${data.itemId}` : data.widgetId;
+
+    const debugInfo = showDebugInfo ? <span className={b('info')}> ({id})</span> : null;
     const rowTitle = getRowTitle(data.title, data.label);
-    const title = (showDebugInfo ? `(${data.widgetId}) ` : '') + rowTitle;
+    const title = (showDebugInfo ? `(${id}) ` : '') + rowTitle;
 
     return (
         <div className={b('row')} data-qa={DashCommonQa.RelationsListRow}>

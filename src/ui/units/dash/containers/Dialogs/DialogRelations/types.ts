@@ -72,6 +72,7 @@ export type AliasBase = {
     relationType: RelationType;
     changedWidgetsData?: WidgetsTypes;
     changedWidgetId?: string;
+    changedItemId?: string;
 };
 
 export type AliasClickHandlerData = AliasBase & {
@@ -105,4 +106,5 @@ export type RelationChartType = keyof typeof RELATIONS_CHARTS_ICONS_DICT;
 export type RelationTypeChangeProps = {
     type: RelationType;
     widgetId: DashkitMetaDataItem['widgetId'];
+    itemId: DashkitMetaDataItem['itemId'];
 } & AliasClickHandlerData;

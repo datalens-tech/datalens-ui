@@ -758,8 +758,15 @@ export function purgeData(data: DashData) {
                     allItemsIds.add(itemId);
                     currentItemsIds.add(itemId);
 
-                    if (type === ITEM_TYPE.CONTROL) {
-                        currentControlsIds.add(itemId);
+                    if (type === ITEM_TYPE.CONTROL || type === ITEM_TYPE.GROUP_CONTROL) {
+                        // if it is group control all connections set on its items
+                        if ('items' in data) {
+                            data.items.forEach((widgetItem) => {
+                                currentControlsIds.add(widgetItem.id);
+                            });
+                        } else {
+                            currentControlsIds.add(itemId);
+                        }
                     } else if (type === ITEM_TYPE.WIDGET) {
                         (data as DashTabItemWidget['data']).tabs.forEach(({id: widgetTabId}) => {
                             allWidgetTabsIds.add(widgetTabId);

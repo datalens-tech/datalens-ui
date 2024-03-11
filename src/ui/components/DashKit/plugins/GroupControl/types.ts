@@ -1,6 +1,5 @@
 import type {DashTabItemControlSourceType, StringParams, WorkbookId} from 'shared';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
-import {Control} from 'ui/libs/DatalensChartkit/types';
 
 import {LoadStatus} from '../Control/types';
 
@@ -9,7 +8,6 @@ export type ContextProps = {
 };
 
 export type ExtendedLoadedData = ResponseSuccessControls & {
-    uiScheme: {controls: Control[]};
     id: string;
     sourceType: DashTabItemControlSourceType;
 };

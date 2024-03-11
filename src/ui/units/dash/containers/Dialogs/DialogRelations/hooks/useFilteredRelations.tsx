@@ -34,7 +34,7 @@ export const useFilteredRelations = ({
                 const newItem = {
                     ...item,
                 };
-                if (changedWidgets[item.widgetId]) {
+                if (changedWidgets[item.itemId || item.widgetId]) {
                     newItem.relations = {
                         ...item.relations,
                         type: changedWidgets[item.widgetId],

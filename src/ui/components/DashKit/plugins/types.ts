@@ -7,6 +7,7 @@ export type DashkitMetaDataItemBase = {
     widgetId: string;
     chartId: string | null;
     entryId: string | null; // used for built in widget charts
+    itemId?: string; // for widgets with multiple entities
     title: string;
     label?: string;
     params: Array<StringParams> | StringParams;
