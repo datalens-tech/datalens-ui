@@ -2,6 +2,8 @@ import {createAction} from '../../gateway-utils';
 import {
     AddGoogleSheetArgs,
     AddGoogleSheetResponse,
+    AddYandexDocumentArgs,
+    AddYandexDocumentResponse,
     ApplySourceSettingsArgs,
     ApplySourceSettingsResponse,
     GetFileSourceStatusArgs,
@@ -57,6 +59,11 @@ export const actions = {
     >({
         method: 'POST',
         path: () => `${PATH_PREFIX_V2}/update_connection_data`,
+        params: (body, headers) => ({body, headers}),
+    }),
+    addYandexDocument: createAction<AddYandexDocumentResponse, AddYandexDocumentArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX_V2}/documents`,
         params: (body, headers) => ({body, headers}),
     }),
 };

@@ -10,8 +10,20 @@ export interface AddFavoriteResponse {
     tenantId: string;
 }
 
+export interface RenameFavoriteResponse {
+    entryId: string;
+    createdAt: string;
+    login: string;
+    tenantId: string;
+}
+
 export interface AddFavoriteArgs {
     entryId: string;
+}
+
+export interface RenameFavoriteArgs {
+    entryId: string;
+    name: string | null;
 }
 
 export type DeleteFavoriteResponse = AddFavoriteResponse[];
@@ -33,6 +45,7 @@ export interface GetFavoritesEntryResponse extends GetFavoritesEntryOutput {
 export interface GetFavoritesEntryWithPermissions
     extends Omit<GetFavoritesEntryResponse, 'permissions'> {
     permissions: Permissions;
+    displayAlias: string | null;
 }
 
 export interface GetFavoritesOutput {

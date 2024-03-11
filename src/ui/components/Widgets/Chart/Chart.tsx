@@ -72,6 +72,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         actionParamsEnabled,
         isPageHidden,
         autoupdateInterval,
+        workbookId,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -88,8 +89,9 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 id: chartId,
                 config,
                 params: chartkitParams,
+                workbookId,
             }),
-        [config, chartId, chartkitParams],
+        [config, chartId, chartkitParams, workbookId],
     );
 
     const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);
@@ -121,8 +123,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
 
     const [initialParams, setInitialParams] = React.useState<StringParams>({});
 
-    // TODO: replace the expression for hiding loader after CHARTS-7922
-    const renderPluginLoader = disableChartLoader ? () => <div></div> : undefined;
+    const renderPluginLoader = disableChartLoader ? () => null : undefined;
 
     /**
      * for correct cancellation on rerender & changed request params & data props

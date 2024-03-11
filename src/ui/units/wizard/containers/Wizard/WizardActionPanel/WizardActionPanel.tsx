@@ -10,7 +10,7 @@ import {selectIsChartSaved} from 'units/wizard/selectors/preview';
 import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {registry} from '../../../../../registry';
-import {setEditMode} from '../../../../dash/store/actions/dash';
+import {setEditMode} from '../../../../dash/store/actions/base/actions';
 import {toggleViewOnlyMode} from '../../../actions/settings';
 import {WidgetData} from '../../../actions/widget';
 import {selectIsFullscreen, selectViewOnlyMode} from '../../../selectors/settings';

@@ -35,6 +35,9 @@ const reporter: ReporterDescription[] = [
     ['list'],
 ];
 
+const updateSnapshots = process.env.E2E_UPDATE_SNAPSHOTS === '1' ? 'all' : undefined;
+const forbidOnly = process.env.E2E_FORBID_ONLY !== '0';
+
 // While we are too lazy to add expect to each file.
 Object.defineProperty(global, 'expect', {
     writable: false,
@@ -57,7 +60,9 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     fullyParallel: true,
     globalSetup: require.resolve(globalSetupPath),
     timeout: testTimeout,
-    forbidOnly: true,
+    forbidOnly,
+    snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
+    updateSnapshots,
     expect: {
         timeout: testTimeout,
     },

@@ -3,6 +3,7 @@ export enum WizardType {
     TableWizardNode = 'table_wizard_node',
     YmapWizardNode = 'ymap_wizard_node',
     MetricWizardNode = 'metric_wizard_node',
+    MarkupWizardNode = 'markup_wizard_node',
     TimeseriesWizardNode = 'timeseries_wizard_node',
     D3WizardNode = 'd3_wizard_node',
 }
@@ -26,6 +27,7 @@ export enum EditorType {
     YmapNode = 'ymap_node',
     ControlNode = 'control_node',
     MarkdownNode = 'markdown_node',
+    MarkupNode = 'markup_node',
 }
 
 export enum WidgetKind {
@@ -38,6 +40,7 @@ export enum WidgetKind {
     Ymap = 'ymap',
     Control = 'control',
     Markdown = 'markdown',
+    Markup = 'markup',
 }
 
 export type WidgetType = LegacyEditorType | EditorType | WizardType;

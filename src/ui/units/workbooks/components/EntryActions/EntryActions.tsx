@@ -1,14 +1,19 @@
 import React from 'react';
 
+import {Copy, CopyArrowRight, FontCursor, TrashBin} from '@gravity-ui/icons';
 import {DropdownMenu, DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
+import {ConnectorType} from 'shared/constants/connections';
+import {WorkbookPage} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types';
 import {EntryScope} from 'shared/types/common';
+import {S3_BASED_CONNECTORS} from 'ui/constants';
 import Utils from 'ui/utils';
 
+import {DropdownAction} from '../../../../components/DropdownAction/DropdownAction';
 import {registry} from '../../../../registry';
-import {WorkbookEntry} from '../../types';
+import type {WorkbookEntry} from '../../types';
 
 const i18n = I18n.keyset('new-workbooks');
 
@@ -33,20 +38,23 @@ export const EntryActions = ({
 }: EntryActionsProps) => {
     const {useAdditionalWorkbookEntryActions} = registry.workbooks.functions.getAll();
 
-    const isFileConnection =
-        entry.scope === EntryScope.Connection &&
-        (entry.type === 'file' || entry.type === 'gsheets_v2');
+    const isConnection = entry.scope === EntryScope.Connection;
+    const isS3BasedConnector = S3_BASED_CONNECTORS.includes(entry.type as ConnectorType);
+
+    const isFileConnection = isConnection && isS3BasedConnector;
 
     const items: DropdownMenuItemMixed<unknown>[] = [
         {
             action: onRenameClick,
-            text: i18n('action_rename'),
+            text: <DropdownAction icon={FontCursor} text={i18n('action_rename')} />,
         },
-        ...(entry.scope !== EntryScope.Connection && entry.scope !== EntryScope.Dataset
+
+        ...(isFileConnection === false
             ? [
                   {
                       action: onDuplicateEntry,
-                      text: i18n('action_duplicate'),
+                      text: <DropdownAction icon={Copy} text={i18n('action_duplicate')} />,
+                      qa: WorkbookPage.MenuItemDuplicate,
                   },
               ]
             : []),
@@ -54,17 +62,30 @@ export const EntryActions = ({
             ? [
                   {
                       action: onCopyEntry,
-                      text: i18n('action_copy'),
+                      text: <DropdownAction icon={CopyArrowRight} text={i18n('action_copy')} />,
                   },
               ]
             : []),
         ...useAdditionalWorkbookEntryActions(entry, workbook),
-        {
-            action: onDeleteClick,
-            text: i18n('action_delete'),
-            theme: 'danger',
-        },
     ];
 
-    return <DropdownMenu size="s" items={items} />;
+    const otherActions: DropdownMenuItemMixed<unknown>[] = [];
+
+    otherActions.push([
+        {
+            action: onDeleteClick,
+            text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+            theme: 'danger',
+        },
+    ]);
+
+    items.push(...otherActions);
+
+    return (
+        <DropdownMenu
+            size="m"
+            items={items}
+            defaultSwitcherProps={{qa: WorkbookPage.MenuDropDownBtn}}
+        />
+    );
 };

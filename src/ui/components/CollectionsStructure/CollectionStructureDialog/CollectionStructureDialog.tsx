@@ -5,6 +5,7 @@ import {Button, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import type {WorkbookId} from 'shared';
 import {
     GetCollectionContentArgs,
     GetCollectionContentMode,
@@ -75,13 +76,14 @@ export type Props = {
     textButtonApply: string;
     applyIsLoading: boolean;
     workbookSelectionMode: boolean;
+    massMoveMode?: boolean;
     onApply: ({
         targetCollectionId,
         targetWorkbookId,
         targetTitle,
     }: {
         targetCollectionId: string | null;
-        targetWorkbookId: string | null;
+        targetWorkbookId: WorkbookId;
         targetTitle?: string;
     }) => Promise<unknown>;
     onClose: (structureChanged: boolean) => void;
@@ -99,6 +101,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         textButtonApply,
         applyIsLoading,
         workbookSelectionMode,
+        massMoveMode,
         onApply,
         onClose,
     }) => {
@@ -238,7 +241,11 @@ export const CollectionStructureDialog = React.memo<Props>(
         const handleClickApplyButton = React.useCallback(() => {
             if (!applyButtonDisabled) {
                 if (workbookSelectionMode) {
-                    onApply({targetCollectionId, targetWorkbookId}).then(() => {
+                    onApply({targetCollectionId: null, targetWorkbookId}).then(() => {
+                        handleClose();
+                    });
+                } else if (massMoveMode) {
+                    onApply({targetCollectionId, targetWorkbookId: null}).then(() => {
                         handleClose();
                     });
                 } else {
@@ -246,6 +253,7 @@ export const CollectionStructureDialog = React.memo<Props>(
                 }
             }
         }, [
+            massMoveMode,
             applyButtonDisabled,
             workbookSelectionMode,
             onApply,

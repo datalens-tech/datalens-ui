@@ -1,5 +1,9 @@
 import _ from 'lodash';
 
+import type {Field} from '../../../../../../shared';
+
+import {QUERY_ALIAS_TITLE, QUERY_TITLE} from './constants';
+
 interface RGB {
     r: number;
     g: number;
@@ -564,4 +568,52 @@ export function getColorsForNames(names: string[], colorSchemeParams?: ColorSche
     } catch (e) {
         return getAlexPetrovColorsForN(namesForColors.length);
     }
+}
+
+export function getColorFieldsFromDistincts(
+    distinctsMap: Record<string, string[]> | undefined,
+    fields: Field[],
+    usedAxisFields: Field[],
+): Field[] | undefined {
+    let colors: Field[] | undefined;
+    let colorIndex = fields.findIndex((column) => column.title === QUERY_ALIAS_TITLE);
+
+    if (colorIndex === -1) {
+        colorIndex = fields.findIndex((column) => column.title === QUERY_TITLE);
+    }
+    // setup mandatory color fields
+    if (colorIndex > -1) {
+        colors = [fields[colorIndex]];
+    }
+
+    // distincts colorizing is optional and only supported for visualization with multiple color fields in section.
+    if (!distinctsMap) {
+        return colors;
+    }
+
+    const usedFields = colors ? [...usedAxisFields, ...colors] : usedAxisFields;
+
+    const generateGuidToFieldMap = (acc: Partial<Record<string, Field>>, f: Field) =>
+        Object.assign(acc, {[f.guid]: f});
+
+    const fieldByGuidMap = fields.reduce(
+        generateGuidToFieldMap,
+        {} as Partial<Record<string, Field>>,
+    );
+
+    const usedFieldsByGuidMap = usedFields.reduce(
+        generateGuidToFieldMap,
+        {} as Partial<Record<string, Field>>,
+    );
+
+    const optionalColors = Object.entries(distinctsMap)
+        // filter already used fields from colors array
+        // filter fields from sections Y and X since by default they are not participated in colorizing.
+        .filter(([fieldId]) => !usedFieldsByGuidMap[fieldId])
+        .reduce((acc, [fieldId, distincts]) => {
+            const field = fieldByGuidMap[fieldId];
+            return field && distincts.length > 1 ? Object.assign(acc, {[acc.length]: field}) : acc;
+        }, [] as Field[]);
+
+    return colors ? colors.concat(optionalColors) : optionalColors;
 }

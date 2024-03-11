@@ -138,6 +138,7 @@ function DialogPublic({onClose, visible, entry: propsEntry}: Props) {
                     tooltip={state.currentEntryTooltip}
                 />
                 <AuthorSection
+                    validationErrors={state.validationErrors}
                     className={b('author-section')}
                     authorData={state.entryAuthor}
                     onChange={onChangeEntryAuthor}

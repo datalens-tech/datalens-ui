@@ -1,11 +1,13 @@
+import {DashTabItemType} from 'shared';
+
 import {SelectorDialogState} from '../../store/actions/dashTyped';
 
 export const ITEM_TYPE = {
-    TITLE: 'title',
-    TEXT: 'text',
-    WIDGET: 'widget',
-    CONTROL: 'control',
-    GROUP_CONTROL: 'group_control',
+    TITLE: DashTabItemType.Title,
+    TEXT: DashTabItemType.Text,
+    WIDGET: DashTabItemType.Widget,
+    CONTROL: DashTabItemType.Control,
+    GROUP_CONTROL: DashTabItemType.GroupControl,
 };
 
 export const DIALOG_TYPE = Object.assign(
@@ -15,6 +17,12 @@ export const DIALOG_TYPE = Object.assign(
         SETTINGS: 'settings',
         SELECT_STATE: 'selectState',
         EDIT: 'edit',
+    } as {
+        TABS: 'tabs';
+        CONNECTIONS: 'connections';
+        SETTINGS: 'settings';
+        SELECT_STATE: 'selectState';
+        EDIT: 'edit';
     },
     ITEM_TYPE,
 );

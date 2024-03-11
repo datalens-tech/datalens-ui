@@ -1,4 +1,4 @@
-import {Page} from '@playwright/test';
+import {expect, Page} from '@playwright/test';
 
 import {slct, waitForCondition} from '../../utils';
 import {CommonSelectors} from '../constants/common-selectors';
@@ -66,8 +66,9 @@ export default class PlaceholderDialog {
         );
     }
 
-    async toggleRadioButton(radioButton: RadioButtons, value: RadioButtonsValues) {
-        await this.page.click(`${slct(radioButton)} [value="${value}"]`);
+    async toggleRadioButton(radioButton: string, value: string) {
+        const radioGroupLocator = this.page.locator(slct(radioButton));
+        await radioGroupLocator.locator(`[value="${value}"]`).click();
     }
 
     async getDialogTooltip() {
@@ -91,6 +92,11 @@ export default class PlaceholderDialog {
         const button = await this.page.$(`${slct(radioButton)} .yc-radio-button__option [checked]`);
 
         return button?.getAttribute('value');
+    }
+
+    async checkRadioButtonsSelectedValue(radioButton: RadioButtons, value: string) {
+        const button = this.page.locator(`${slct(radioButton)} .yc-radio-button__option [checked]`);
+        await expect(button).toHaveValue(value);
     }
 
     async getInputValue(qa: Inputs) {

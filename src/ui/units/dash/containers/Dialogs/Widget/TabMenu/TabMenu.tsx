@@ -22,6 +22,7 @@ type TabMenuProps<T> = {
     enableActionMenu?: boolean;
     addButtonText?: string;
     defaultTabText?: () => string;
+    tabIconMixin?: string;
 };
 
 export type ListState<T> = {
@@ -34,7 +35,8 @@ export type TabActionType = 'add' | 'delete' | 'changeChosen' | 'changeDefault';
 
 export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
     render() {
-        const {enableActionMenu, addButtonText, items, selectedItemIndex} = this.props;
+        const {enableActionMenu, addButtonText, items, selectedItemIndex, tabIconMixin} =
+            this.props;
 
         return (
             <div className={b()}>
@@ -46,7 +48,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                     onClick={this.onAction({action: 'add'})}
                     data-qa={TabMenuQA.Add}
                 >
-                    <Icon data={Plus} className={b('add-tab-icon')} width={16} />
+                    <Icon data={Plus} className={b('add-tab-icon', tabIconMixin)} width={16} />
                     <span>
                         {addButtonText || i18n('dash.widget-dialog.edit', 'button_add', {index: 1})}
                     </span>
@@ -201,6 +203,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                     selectedItemIndex,
                     className: b('list'),
                     onSortEnd: ({oldIndex, newIndex}) => this.moveItem(oldIndex, newIndex),
+                    itemClassName: b('list-item'),
                 }}
                 onRemove={this.onRemove}
                 onAction={this.onAction}
@@ -221,6 +224,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                     className: b('list'),
                     onSortEnd: ({oldIndex, newIndex}) => this.moveItem(oldIndex, newIndex),
                     renderItem: this.starListRenderer,
+                    itemClassName: b('list-item'),
                 }}
                 onRemove={this.onRemove}
                 iconOnHover={true}

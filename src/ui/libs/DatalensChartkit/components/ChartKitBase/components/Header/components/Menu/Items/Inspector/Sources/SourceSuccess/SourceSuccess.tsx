@@ -6,13 +6,14 @@ import {get, isEmpty, omit} from 'lodash';
 import {Feature} from 'shared';
 import {formatBytes, formatDuration} from 'shared/modules/format-units/formatUnit';
 
+import {TemplateTextPaper} from '../../../../../../../../../../../../components/TemplateTextPaper/TemplateTextPaper';
 import {DL} from '../../../../../../../../../../../../constants/common';
 import Utils from '../../../../../../../../../../../../utils';
 import {
     SourcesConfig,
     SourceSuccess as TSourceSuccess,
 } from '../../../../../../../../../../modules/data-provider/charts';
-import {DetailsContent, Source, SourceDetails, getParams} from '../Source/Source';
+import {Source, getParams} from '../Source/Source';
 
 const b = block('chartkit-inspector-sources');
 
@@ -20,21 +21,21 @@ const BASELINE = {
     LATENCY: {
         WARNING: {
             limit: 5000,
-            message: () => i18n('chartkit.menu.inspector', 'label_source-latency-warning'),
+            message: () => '',
         },
         DANGER: {
             limit: 10000,
-            message: () => i18n('chartkit.menu.inspector', 'label_source-latency-danger'),
+            message: () => '',
         },
     },
     SIZE: {
         WARNING: {
             limit: 5242880, // 5 MB
-            message: () => i18n('chartkit.menu.inspector', 'label_source-size-warning'),
+            message: () => '',
         },
         DANGER: {
             limit: 10485760, // 10 MB
-            message: () => i18n('chartkit.menu.inspector', 'label_source-size-danger'),
+            message: () => '',
         },
     },
 };
@@ -64,6 +65,14 @@ export const SourceSuccess: React.FC<SourceSuccessProps> = ({source, config, isC
     const showRequestQuery = dataUrlParams && Boolean(Object.keys(dataUrlParams).length);
     const lang = DL.USER_LANG;
 
+    const sourceInfoPaperValues = React.useMemo(
+        () => [
+            queryInfo ? queryInfo : undefined,
+            isEmpty(withoutQueryInfo) ? undefined : JSON.stringify(withoutQueryInfo, null, 2),
+        ],
+        [queryInfo, withoutQueryInfo],
+    );
+
     if (hideInInspector) {
         return null;
     }
@@ -87,32 +96,27 @@ export const SourceSuccess: React.FC<SourceSuccessProps> = ({source, config, isC
             content={
                 <React.Fragment>
                     {hasInfo && (
-                        <div className={b('source-details')}>
-                            <div className={b('details-title')}>
-                                {i18n('chartkit.menu.inspector', 'label_source-info')}
-                            </div>
-                            {queryInfo && <DetailsContent value={queryInfo} />}
-                            {!isEmpty(withoutQueryInfo) && (
-                                <DetailsContent value={JSON.stringify(withoutQueryInfo, null, 2)} />
-                            )}
-                        </div>
+                        <TemplateTextPaper
+                            title={i18n('chartkit.menu.inspector', 'label_source-info')}
+                            content={sourceInfoPaperValues}
+                        />
                     )}
                     {showRequestQuery && (
-                        <SourceDetails
+                        <TemplateTextPaper
                             title={i18n('chartkit.menu.inspector', 'label_source-request-query')}
-                            value={JSON.stringify(dataUrlParams, null, 2)}
+                            content={JSON.stringify(dataUrlParams, null, 2)}
                         />
                     )}
                     {showData && (
-                        <SourceDetails
+                        <TemplateTextPaper
                             title={i18n('chartkit.menu.inspector', 'label_source-request-data')}
-                            value={JSON.stringify(data, null, 2)}
+                            content={JSON.stringify(data, null, 2)}
                         />
                     )}
                     {dataUrlObj && (
-                        <SourceDetails
+                        <TemplateTextPaper
                             title={i18n('chartkit.menu.inspector', 'label_source-request-result')}
-                            value={`${dataUrlObj.origin}${dataUrlObj.pathname}`}
+                            content={`${dataUrlObj.origin}${dataUrlObj.pathname}`}
                         />
                     )}
                 </React.Fragment>

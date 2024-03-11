@@ -43,10 +43,10 @@ export type GSheetReadonlySource = {
         id: string;
         status: StateStatus;
         title: string;
-        spreadsheet_id: string;
-        sheet_id: number;
+        sheet_id: string | number;
         raw_schema: UpdateFileSourceResponse['source']['raw_schema'];
         preview: UpdateFileSourceResponse['source']['preview'];
+        spreadsheet_id?: string;
     };
     error?: DataLensApiError | null;
 };

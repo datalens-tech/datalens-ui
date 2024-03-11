@@ -1,12 +1,45 @@
 import {Page} from '@playwright/test';
 import {ControlQA} from '../../../src/shared/constants';
 import {getControlByTitle, slct} from '../../utils';
+import {SourceType} from './DialogControlPO/SourceType';
+import {SelectDatasetButton} from './DialogControlPO/SelectDatasetButton';
+import {DatasetFieldSelector} from './DialogControlPO/DatasetFieldSelector';
+import {ElementType} from './DialogControlPO/ElementType';
+import {switchCheckbox} from './utils';
+import {AppearanceTitle} from './DialogControlPO/AppearanceTitle';
+import {AppearanceInnerTitle} from './DialogControlPO/AppearanceInnerTitle';
+import {FieldName} from './DialogControlPO/FieldName';
 
 export default class DialogControl {
+    static selectors = {
+        qa: {
+            root: slct(ControlQA.dialogControl),
+        },
+    };
+
+    sourceType: SourceType;
+    selectDatasetButton: SelectDatasetButton;
+    datasetFieldSelector: DatasetFieldSelector;
+    elementType: ElementType;
+    appearanceTitle: AppearanceTitle;
+    appearanceInnerTitle: AppearanceInnerTitle;
+    fieldName: FieldName;
+
     protected page: Page;
 
     constructor(page: Page) {
         this.page = page;
+        this.sourceType = new SourceType(page);
+        this.selectDatasetButton = new SelectDatasetButton(page);
+        this.datasetFieldSelector = new DatasetFieldSelector(page);
+        this.elementType = new ElementType(page);
+        this.appearanceTitle = new AppearanceTitle(page);
+        this.appearanceInnerTitle = new AppearanceInnerTitle(page);
+        this.fieldName = new FieldName(page);
+    }
+
+    async waitForVisible() {
+        await this.page.waitForSelector(DialogControl.selectors.qa.root);
     }
 
     async applyControlSettings() {
@@ -16,14 +49,16 @@ export default class DialogControl {
         await dialogControlApplyBtn.click();
     }
 
+    /**
+     * @deprecated use utils.switchCheckbox
+     */
     async switchSelectorFieldCheckbox(checkboxQa: string, enableCheckbox: boolean) {
-        const showFieldCheckbox = await this.page.waitForSelector(`${slct(checkboxQa)} input`);
-        const showFieldCheckboxChecked = await showFieldCheckbox.isChecked();
-        if (showFieldCheckboxChecked !== enableCheckbox) {
-            await showFieldCheckbox.click();
-        }
+        await switchCheckbox(this.page, checkboxQa, enableCheckbox);
     }
 
+    /**
+     * @deprecated use DialogControlPO
+     */
     async enableSelectorFieldAndFill(controlQa: string, checkboxQa: string, text: string) {
         await this.switchSelectorFieldCheckbox(checkboxQa, true);
         await this.page.fill(`${slct(controlQa)} input`, text);
@@ -33,6 +68,9 @@ export default class DialogControl {
         return getControlByTitle(this.page, controlTitle);
     }
 
+    /**
+     * @deprecated use DashboardPage.editSelectorBySettings
+     */
     async editSelectorTitlesAndSave(labelText: string, innerLabelText: string) {
         const {
             inputNameControl,

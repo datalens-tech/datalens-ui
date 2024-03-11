@@ -12,14 +12,15 @@ import {EntryScope, PLACE} from 'shared';
 import {DL, DatalensGlobalState, EntryDialogues, MonacoTypes, NavigationMinimal, sdk} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
+import {ConnectionStatus} from 'ui/units/ql/constants';
 
 import {ScreenEditorQA, TabQueryQA} from '../../../../../../shared';
 import {registry} from '../../../../../registry';
-import {AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE} from '../../../constants';
 import {drawPreview, performManualConfiguration} from '../../../store/actions/ql';
 import {
     getChartType,
     getConnection,
+    getConnectionStatus,
     getDefaultPath,
     getEntry,
     getParams,
@@ -85,12 +86,12 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
     }
 
     render() {
-        const {chartType, connection, defaultPath, paneSize, entryDialoguesRef, valid, entry} =
-            this.props;
+        const {chartType, defaultPath, paneSize, entryDialoguesRef, valid, entry} = this.props;
 
         const workbookId = entry?.workbookId || null;
 
         const {getPlaceSelectParameters} = registry.common.functions.getAll();
+        const {getConnectionsByChartType} = registry.ql.functions.getAll();
 
         return (
             chartType && (
@@ -103,62 +104,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                             onSelectTab={this.setActiveTab}
                             activeTab={this.state.activeTab}
                         />
-                        {connection ? (
-                            <DropdownMenu
-                                size="s"
-                                switcherWrapperClassName={b(
-                                    'action-bar-top_connection-select-btn_more',
-                                )}
-                                switcher={
-                                    <Button
-                                        className={b('action-bar-top_connection-select-btn')}
-                                        view="flat"
-                                        pin="brick-brick"
-                                        size="l"
-                                        qa={TabQueryQA.SelectConnection}
-                                    >
-                                        <EntryIcon
-                                            entry={connection}
-                                            size={24}
-                                            className={b('entry-icon')}
-                                        />
-                                        {connection.name}
-                                    </Button>
-                                }
-                                items={[
-                                    {
-                                        action: () => {
-                                            this.toggleNavigation();
-                                        },
-                                        text: i18n('sql', 'button_change-connection'),
-                                    },
-                                    {
-                                        action: () => {
-                                            window.open(
-                                                `${DL.ENDPOINTS.connections}/${connection?.entryId}`,
-                                            );
-                                        },
-                                        text: i18n('sql', 'button_to-connection'),
-                                    },
-                                ]}
-                            />
-                        ) : (
-                            <div className={b('action-bar-top_connection-select-btn-wrapper')}>
-                                <span>{i18n('sql', 'label_new-connection-text')}</span>
-                                <Button
-                                    className={b('action-bar-top_connection-select-btn')}
-                                    view="flat"
-                                    pin="brick-brick"
-                                    size="l"
-                                    qa={TabQueryQA.SelectConnection}
-                                    onClick={() => {
-                                        this.toggleNavigation();
-                                    }}
-                                >
-                                    {i18n('sql', 'label_select-connection')}
-                                </Button>
-                            </div>
-                        )}
+                        {this.renderConnectionBlock()}
                         {workbookId ? (
                             <WorkbookNavigationMinimal
                                 anchor={this.navigationButtonRef}
@@ -167,9 +113,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                                 onEntryClick={this.onNavigationEntryClick}
                                 workbookId={workbookId}
                                 scope={EntryScope.Connection}
-                                includeClickableType={
-                                    AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE[chartType]
-                                }
+                                includeClickableType={getConnectionsByChartType(chartType)}
                             />
                         ) : (
                             <NavigationMinimal
@@ -186,9 +130,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                                     PLACE.FAVORITES,
                                     PLACE.CONNECTIONS,
                                 ])}
-                                includeClickableType={
-                                    AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE[chartType]
-                                }
+                                includeClickableType={getConnectionsByChartType(chartType)}
                             />
                         )}
                     </div>
@@ -215,6 +157,82 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                 </div>
             )
         );
+    }
+
+    private renderConnectionBlock() {
+        const {connection, connectionStatus} = this.props;
+
+        if (connection) {
+            return (
+                <DropdownMenu
+                    size="s"
+                    switcherWrapperClassName={b('action-bar-top_connection-select-btn_more')}
+                    switcher={
+                        <Button
+                            className={b('action-bar-top_connection-select-btn')}
+                            view="flat"
+                            pin="brick-brick"
+                            size="l"
+                            qa={TabQueryQA.SelectConnection}
+                        >
+                            <EntryIcon entry={connection} size={24} className={b('entry-icon')} />
+                            {connection.name}
+                        </Button>
+                    }
+                    items={[
+                        {
+                            action: () => {
+                                this.toggleNavigation();
+                            },
+                            text: i18n('sql', 'button_change-connection'),
+                        },
+                        {
+                            action: () => {
+                                window.open(`${DL.ENDPOINTS.connections}/${connection?.entryId}`);
+                            },
+                            text: i18n('sql', 'button_to-connection'),
+                        },
+                    ]}
+                />
+            );
+        } else if (connectionStatus === ConnectionStatus.Empty) {
+            return (
+                <div className={b('action-bar-top_connection-select-btn-wrapper')}>
+                    <span>{i18n('sql', 'label_new-connection-text')}</span>
+                    <Button
+                        className={b('action-bar-top_connection-select-btn')}
+                        view="flat"
+                        pin="brick-brick"
+                        size="l"
+                        qa={TabQueryQA.SelectConnection}
+                        onClick={() => {
+                            this.toggleNavigation();
+                        }}
+                    >
+                        {i18n('sql', 'label_select-connection')}
+                    </Button>
+                </div>
+            );
+        } else {
+            // This means that connectionStatus === ConnectionStatus.Failed
+            return (
+                <div className={b('action-bar-top_connection-select-btn-wrapper')}>
+                    <span>{i18n('sql', 'label_failed-connection-text')}</span>
+                    <Button
+                        className={b('action-bar-top_connection-select-btn')}
+                        view="flat"
+                        pin="brick-brick"
+                        size="l"
+                        qa={TabQueryQA.SelectConnection}
+                        onClick={() => {
+                            this.toggleNavigation();
+                        }}
+                    >
+                        {i18n('sql', 'label_select-connection')}
+                    </Button>
+                </div>
+            );
+        }
     }
 
     private onClickButtonRun = () => {
@@ -265,6 +283,7 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
     return {
         chartType: getChartType(state),
         connection: getConnection(state),
+        connectionStatus: getConnectionStatus(state),
         defaultPath: getDefaultPath(state),
         params: getParams(state),
         valid: getValid(state),

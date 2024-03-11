@@ -30,10 +30,10 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         font-size: 13px;
         font-weight: 500;
         white-space: nowrap;
-        //line-height: 1.2;
     }
 
-    &__component {
+    &__component,
+    &__yc-select {
         flex-grow: 1;
         overflow: hidden;
     }

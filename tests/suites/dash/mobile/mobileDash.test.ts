@@ -134,6 +134,10 @@ datalensTest.describe(`Dashboards - mobile version on ${DEVICE_NAME}`, () => {
             // checking the selector opening with a pop-up window
             await controlSelect.click();
             const controlModal = await page.waitForSelector(SELECTORS.SHEET);
+
+            // waiting for content load
+            await page.waitForSelector(SELECTORS.SELECTOR_ITEMS);
+
             const controlBox = await controlModal.boundingBox();
 
             // check that the selector has opened from below

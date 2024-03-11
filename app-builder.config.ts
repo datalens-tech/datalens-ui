@@ -19,6 +19,10 @@ const getFileCacheConfig = () => {
     }
 };
 
+const vendors = (vendorsList: string[]) => {
+    return vendorsList.concat(['react-split-pane', 'react-dnd', 'react-grid-layout']);
+};
+
 const config: ServiceConfig = {
     client: {
         alias: {
@@ -34,7 +38,7 @@ const config: ServiceConfig = {
         ],
         includes: ['src/shared', 'src/i18n', 'node_modules/monaco-editor/esm/vs'],
         excludeFromClean: ['!i18n', '!i18n/**/*'],
-        vendors: ['react-split-pane', 'react-dnd', 'react-grid-layout'],
+        vendors,
         icons: ['src/ui/assets/icons', 'node_modules/@gravity-ui/icons'],
         monaco: {
             languages: ['typescript', 'javascript', 'json', 'sql', 'mysql'],

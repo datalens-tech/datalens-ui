@@ -2,7 +2,7 @@ import type {Page} from '@playwright/test';
 
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
@@ -10,10 +10,19 @@ const DASH_STATE = {
     markdownAutoHeightTabActive: 'cd80ae4f86',
 };
 
-const TEXTS = {
+const TABS = {
+    CHARTS: 'Charts',
+    SELECTORS: 'Selectors',
+};
+
+const WIDGET_TABS = {
     TAB_CHART: 'columnchart',
     TAB_MD_AUTO: 'md-autoheight',
+    TAB_INDICATOR: 'metric-autoheight',
+    TAB_TABLE_AUTO: 'table-autoheight',
 };
+
+const CONTROL_SELECT_ITEM = 'chartkit-control';
 
 const hasNoScroll = async (page: Page, selector: string) => {
     return await page.evaluate((selector) => {
@@ -60,26 +69,59 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
             // waiting for the widget content to load
             await page.waitForSelector(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
 
-            await dashboard.changeWidgetTab(TEXTS.TAB_MD_AUTO);
+            await dashboard.changeWidgetTab(WIDGET_TABS.TAB_MD_AUTO);
 
             // waiting for the widget content to load
-            const selector = `.${COMMON_CHARTKIT_SELECTORS.scrollableNode}`;
-            await page.waitForSelector(selector);
+            const scrollableSelector = `.${COMMON_CHARTKIT_SELECTORS.scrollableNode}`;
+            await page.waitForSelector(scrollableSelector);
 
             // check that there is no scroll
             await waitForCondition(async () => {
-                const noScroll = await hasNoScroll(page, selector);
+                const noScroll = await hasNoScroll(page, scrollableSelector);
+                return noScroll === true;
+            });
+
+            // go to auto-height indicator tab
+            await dashboard.changeWidgetTab(WIDGET_TABS.TAB_INDICATOR);
+
+            // waiting for the widget content to load
+            await page.waitForSelector(scrollableSelector);
+
+            // check that there is no scroll
+            await waitForCondition(async () => {
+                const noScroll = await hasNoScroll(page, scrollableSelector);
+                return noScroll === true;
+            });
+
+            // go to auto-height table tab
+            await dashboard.changeWidgetTab(WIDGET_TABS.TAB_TABLE_AUTO);
+
+            // waiting for the widget content to load
+            await page.waitForSelector(scrollableSelector);
+
+            // check that there is no scroll
+            await waitForCondition(async () => {
+                const noScroll = await hasNoScroll(page, scrollableSelector);
                 return noScroll === true;
             });
 
             // go back to the first tab
-            await dashboard.changeWidgetTab(TEXTS.TAB_CHART);
+            await dashboard.changeWidgetTab(WIDGET_TABS.TAB_CHART);
             // waiting for the widget content to load
-            await page.waitForSelector(selector);
+            await page.waitForSelector(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+
+            // Switching dashboart to selectors tab
+            await dashboard.changeTab({tabName: TABS.SELECTORS});
+
+            // waiting for the selector content to load
+            await page.waitForSelector(slct(CONTROL_SELECT_ITEM));
+
+            // checking scrollable block
+            await page.waitForSelector(scrollableSelector);
 
             // check that there is no scroll
             await waitForCondition(async () => {
-                const noScroll = await hasNoScroll(page, selector);
+                const noScroll = await hasNoScroll(page, scrollableSelector);
                 return noScroll === true;
             });
         },

@@ -1,5 +1,5 @@
-import {BucketPaint, ChartPie} from '@gravity-ui/icons';
-import {Field, GraphShared, Placeholder, WizardVisualizationId} from 'shared';
+import {BucketPaint, ChartPie, LayoutColumns3} from '@gravity-ui/icons';
+import {Field, GraphShared, Placeholder, PlaceholderId, WizardVisualizationId} from 'shared';
 import {
     prepareFieldToDimensionTransformation,
     prepareFieldToMeasureTransformation,
@@ -8,7 +8,7 @@ import {
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES, PRIMITIVE_DATA_TYPES_AND_HIERARCHY} from '../misc';
 
 export const PIE_VISUALIZATION: GraphShared['visualization'] = {
-    id: 'pie',
+    id: WizardVisualizationId.Pie,
     type: 'pie',
     name: 'label_visualization-pie',
     iconProps: {id: 'visPie', width: '24'},
@@ -31,16 +31,28 @@ export const PIE_VISUALIZATION: GraphShared['visualization'] = {
     availableLabelModes: ['absolute', 'percent'],
     placeholders: [
         {
+            allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
+            allowedFinalTypes: ITEM_TYPES.DIMENSIONS,
+            allowedDataTypes: PRIMITIVE_DATA_TYPES,
+            id: PlaceholderId.Dimensions,
+            type: PlaceholderId.Dimensions,
+            title: 'section_categories',
+            iconProps: {data: LayoutColumns3},
+            items: [],
+            required: false,
+            capacity: 1,
+            transform: prepareFieldToDimensionTransformation,
+        },
+        {
             allowedTypes: ITEM_TYPES.ALL,
             allowedDataTypes: PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
-            id: 'dimensions',
-            type: 'dimensions',
+            id: PlaceholderId.Colors,
+            type: PlaceholderId.Colors,
             title: 'section_color',
             iconProps: {data: BucketPaint},
             items: [],
-            required: true,
+            required: false,
             capacity: 1,
-            transform: prepareFieldToDimensionTransformation,
         },
         {
             allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,

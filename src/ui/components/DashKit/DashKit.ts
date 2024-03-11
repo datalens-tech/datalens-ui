@@ -8,6 +8,7 @@ import Utils from '../../utils/utils';
 
 import {getDashKitMenu} from './helpers';
 import pluginControl from './plugins/Control/Control';
+import pluginGroupControl from './plugins/GroupControl/GroupControl';
 import textPlugin from './plugins/Text/Text';
 import pluginTitle from './plugins/Title/Title';
 import widgetPlugin from './plugins/Widget/WidgetPlugin';
@@ -19,6 +20,12 @@ export const getConfiguredDashKit = () => {
         return DashKit;
     }
 
+    const controlSettings = {
+        getDistincts: Utils.isEnabledFeature(Feature.UsePublicDistincts)
+            ? getSdk().bi.getPublicDistinctsApiV2
+            : getSdk().bi.getDistinctsApiV2,
+    };
+
     isConfigured = true;
 
     DashKit.registerPlugins(
@@ -26,11 +33,8 @@ export const getConfiguredDashKit = () => {
         textPlugin.setSettings({
             apiHandler: MarkdownProvider.getMarkdown,
         }),
-        pluginControl.setSettings({
-            getDistincts: Utils.isEnabledFeature(Feature.UsePublicDistincts)
-                ? getSdk().bi.getPublicDistinctsApiV2
-                : getSdk().bi.getDistinctsApiV2,
-        }),
+        pluginControl.setSettings(controlSettings),
+        pluginGroupControl.setSettings(controlSettings),
         widgetPlugin,
     );
 

@@ -2,9 +2,9 @@ import {ConnectorType, QLChartType} from '../../../../shared';
 import {VISUALIZATION_IDS} from '../../../constants/visualizations';
 
 export enum AppStatus {
+    Unconfigured = 'unconfigured',
     Loading = 'loading',
     Failed = 'failed',
-    Unconfigured = 'unconfigured',
     Ready = 'ready',
 }
 
@@ -12,6 +12,12 @@ export enum VisualizationStatus {
     Empty = 'empty',
     LoadingChart = 'loadingChart',
     LoadingEverything = 'loadingEverything',
+    Ready = 'ready',
+}
+
+export enum ConnectionStatus {
+    Empty = 'empty',
+    Failed = 'failed',
     Ready = 'ready',
 }
 
@@ -39,6 +45,12 @@ export const DEFAULT_TIMEZONE = 'UTC';
 
 export const DEFAULT_SALT = '0.5976424500695929';
 
+export const AVAILABLE_CHART_TYPES: QLChartType[] = [
+    QLChartType.Sql,
+    QLChartType.Promql,
+    QLChartType.Monitoringql,
+];
+
 // Connection types available for QL charts
 export const AVAILABLE_SQL_CONNECTION_TYPES = [
     ConnectorType.ChFrozenDemo,
@@ -53,6 +65,7 @@ export const AVAILABLE_SQL_CONNECTION_TYPES = [
     ConnectorType.Postgres,
     ConnectorType.Ydb,
     ConnectorType.Chyt,
+    ConnectorType.ChytNb,
 ];
 
 export const AVAILABLE_PROMQL_CONNECTION_TYPES = ['promql'];
@@ -64,12 +77,6 @@ export const AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE = {
     [QLChartType.Promql]: AVAILABLE_PROMQL_CONNECTION_TYPES,
     [QLChartType.Monitoringql]: AVAILABLE_MONITORINGQL_CONNECTION_TYPES,
 };
-
-export const AVAILABLE_CHART_TYPES: QLChartType[] = [
-    QLChartType.Sql,
-    QLChartType.Promql,
-    QLChartType.Monitoringql,
-];
 
 export const QL_MOCKED_DATASET_ID = 'ql-mocked-dataset';
 

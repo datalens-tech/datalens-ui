@@ -7,6 +7,7 @@ export enum DashTabItemType {
     Text = 'text',
     Widget = 'widget',
     Control = 'control',
+    GroupControl = 'group_control',
 }
 
 export enum DashTabItemTitleSize {
@@ -18,6 +19,7 @@ export enum DashTabItemTitleSize {
 
 export enum DashTabItemControlSourceType {
     Dataset = 'dataset',
+    Connection = 'connection',
     Manual = 'manual',
     External = 'external',
 }
@@ -76,6 +78,12 @@ export interface DashData {
     supportDescription?: string;
 }
 
+// config with strict requirements of settings for new dash
+// schemeVersion comes from server
+export type FakeDashData = Omit<DashData, 'schemeVersion'> & {
+    settings: Required<DashSettings>;
+};
+
 export interface DashTab {
     id: string;
     title: string;
@@ -92,7 +100,8 @@ export type DashTabItem =
     | DashTabItemText
     | DashTabItemTitle
     | DashTabItemWidget
-    | DashTabItemControl;
+    | DashTabItemControl
+    | DashTabItemGroupControl;
 
 export interface DashTabItemBase {
     id: string;
@@ -141,17 +150,23 @@ export interface DashTabItemWidgetTab {
 export interface DashTabItemControl extends DashTabItemBase {
     type: DashTabItemType.Control;
     data: DashTabItemControlData;
-    defaults: Params;
+    defaults: StringParams;
 }
 
 export interface DashTabItemControlData {
+    id: string;
     title: string;
     sourceType: DashTabItemControlSourceType;
     source:
         | DashTabItemControlDataset['source']
         | DashTabItemControlManual['source']
         | DashTabItemControlExternal['source'];
+    placementMode?: string;
+    width?: string;
+    index?: number;
 }
+
+export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
 
 export interface DashTabItemControlDataset extends DashTabItemControlData {
     sourceType: DashTabItemControlSourceType.Dataset;
@@ -190,8 +205,9 @@ export interface DashTabItemControlElementBase {
     elementType: DashTabItemControlElementType;
     operation?: Operations;
     showInnerTitle?: boolean;
-    innerTitle?: boolean;
+    innerTitle?: string;
     fieldType?: string;
+    required?: boolean;
 }
 
 export interface DashTabItemControlElementSelect extends DashTabItemControlElementBase {
@@ -216,6 +232,20 @@ export interface DashTabItemControlExternal extends DashTabItemControlData {
     source: {
         chartId: string;
     };
+}
+
+export interface DashTabItemGroupControl extends DashTabItemBase {
+    type: DashTabItemType.GroupControl;
+    data: DashTabItemGroupControlData;
+    defaults: StringParams;
+}
+
+export interface DashTabItemGroupControlData {
+    id: string;
+    autoHeight: boolean;
+    buttonApply: boolean;
+    buttonReset: boolean;
+    items: DashTabItemControlSingle[];
 }
 
 export interface DashTabLayout {

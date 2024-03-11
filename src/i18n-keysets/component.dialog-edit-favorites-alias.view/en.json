@@ -1,0 +1,9 @@
+{
+  "button_apply": "Done",
+  "button_cancel": "Cancel",
+  "button_delete": "Delete label",
+  "caption_add": "Add label",
+  "caption_rename": "Rename label",
+  "label_placeholder": "New name",
+  "toast_rename-favorites-alias-failed": "Failed to rename label"
+}

@@ -1,9 +1,10 @@
 import {Page, expect} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {getUniqueTimestamp, openTestPage, slct} from '../../../utils';
-import {COMMON_SELECTORS} from '../../../utils/constants';
+import {openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {CreateEntityButton} from '../../../../src/shared/constants/qa/components';
+import {ActionPanelDashSaveControlsQa} from '../../../../src/shared/constants/qa/action-panel';
 
 const PARAMS = {
     DASH_NAME_PREFIX: 'e2e-test-dash',
@@ -15,13 +16,11 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
     datalensTest('Adding a selector, the save button is active', async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 
-        const dashName = `${PARAMS.DASH_NAME_PREFIX}-${getUniqueTimestamp()}`;
-
         await openTestPage(page, '/dashboards');
 
-        await dashboardPage.createDashboard(dashName);
+        await page.click(slct(CreateEntityButton.Button));
 
-        const saveButton = dashboardPage.page.locator(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+        const saveButton = dashboardPage.page.locator(slct(ActionPanelDashSaveControlsQa.Save));
 
         await expect(saveButton, 'Save button is active').toBeDisabled();
 
@@ -31,8 +30,6 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
         });
 
         await expect(saveButton, 'Save button is not active').not.toBeDisabled();
-
-        await dashboardPage.deleteDashFromEditMode();
     });
 
     datalensTest(
@@ -40,15 +37,11 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
-            const dashName = `${PARAMS.DASH_NAME_PREFIX}-${getUniqueTimestamp()}`;
-
             await openTestPage(page, '/dashboards');
 
-            await dashboardPage.createDashboard(dashName);
+            await page.click(slct(CreateEntityButton.Button));
 
-            const saveButton = dashboardPage.page.locator(
-                slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN),
-            );
+            const saveButton = dashboardPage.page.locator(slct(ActionPanelDashSaveControlsQa.Save));
 
             await expect(saveButton, 'Save button is active').toBeDisabled();
 
@@ -60,8 +53,6 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
             await dashboardPage.deleteSelector(PARAMS.CONTROL_TITLE);
 
             await expect(saveButton, 'Save button is active').toBeDisabled();
-
-            await dashboardPage.deleteDashFromEditMode();
         },
     );
 });

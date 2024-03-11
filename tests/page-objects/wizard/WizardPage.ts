@@ -1,5 +1,11 @@
-import {ElementHandle} from '@playwright/test';
+import {expect} from '@playwright/test';
 
+import {
+    ChartkitMenuDialogsQA,
+    DatasetItemActionsQa,
+    MenuItemsQA,
+    SectionDatasetQA,
+} from '../../../src/shared';
 import {slct, waitForCondition} from '../../utils';
 import {RobotChartsDatasets} from '../../utils/constants';
 import {BasePageProps} from '../BasePage';
@@ -22,7 +28,6 @@ import ShapeDialog from './ShapeDialog';
 import VisualizationItemDialog from './VisualizationItemDialog';
 import MetricSettingsDialog from './MetricSettingsDialog';
 import LabelsSettingsDialog from './LabelsSettingsDialog';
-import {DatasetItemActionsQa, SectionDatasetQA} from '../../../src/shared';
 
 export interface WizardPageProps extends BasePageProps {}
 
@@ -154,24 +159,18 @@ class WizardPage extends ChartPage {
     }
 
     async callDatasetFieldAction(field: string, action: DatasetItemActionsQa) {
-        const cityField = await getFieldByName(await this.getFields(), field);
-
-        await cityField.hover();
-
-        await (await cityField!.$(slct('field-actions')))!.click();
-
-        let promise = Promise.resolve();
+        const datasetFields = this.page.locator(slct(SectionDatasetQA.DatasetFields));
+        const fieldLocator = datasetFields.locator(slct(field), {
+            hasText: field,
+        });
+        await fieldLocator.hover();
+        await fieldLocator.locator(slct(SectionDatasetQA.FieldActions)).click();
 
         if (action === DatasetItemActionsQa.RemoveField) {
-            promise = new Promise<void>((resolve) => {
-                this.page.on('dialog', (dialog) => {
-                    dialog.accept();
-                    resolve();
-                });
-            });
+            this.page.on('dialog', (dialog) => dialog.accept());
         }
 
-        await Promise.all([this.page.click(slct(action)), promise]);
+        await this.page.click(slct(action));
     }
 
     isMeasureNamesAndValuesExists() {
@@ -207,24 +206,41 @@ class WizardPage extends ChartPage {
     async saveWizardAsNew(entryName: string) {
         await this.saveAsNewChart(entryName);
     }
-}
 
-async function getFieldByName(
-    fields: ElementHandle<HTMLElement | SVGElement>[],
-    fieldName: string,
-): Promise<ElementHandle<HTMLElement>> {
-    let cityField;
+    async createNewFieldWithFormula(fieldName: string, formula: string) {
+        const datasetFields = this.page.locator(slct(SectionDatasetQA.DatasetFields));
 
-    for (const field of fields) {
-        const title = await field.getAttribute('title');
+        await this.fieldEditor.open();
+        await this.fieldEditor.setName(fieldName);
+        await this.fieldEditor.setFormula(formula);
+        await this.fieldEditor.clickToApplyButton();
 
-        if (title === fieldName) {
-            cityField = field as ElementHandle<HTMLElement>;
-            break;
-        }
+        await expect(
+            datasetFields.locator(slct(SectionDatasetQA.ItemTitle), {
+                hasText: fieldName,
+            }),
+        ).toBeVisible();
     }
 
-    return cityField as ElementHandle<HTMLElement>;
+    async openAsPreview(params: Record<string, string | undefined> = {}) {
+        await this.page.locator(slct(ChartkitMenuDialogsQA.chartMenuDropDownSwitcher)).click();
+
+        const newPagePromise = this.page.context().waitForEvent('page');
+        await this.page.locator(slct(MenuItemsQA.NEW_WINDOW)).click();
+        const previewPage = await newPagePromise;
+
+        const url = new URL(previewPage.url());
+        Object.entries(params).forEach(([key, value]) => {
+            if (typeof value === 'undefined') {
+                url.searchParams.delete(key);
+            } else {
+                url.searchParams.set(key, value);
+            }
+        });
+
+        await previewPage.goto(url.toString());
+        return previewPage;
+    }
 }
 
 export default WizardPage;

@@ -1,16 +1,14 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, slct} from '../../../utils';
-import {COMMON_SELECTORS} from '../../../utils/constants';
+import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
-import {WorkbooksUrls} from 'constants/constants';
-import {Workbook} from 'page-objects/workbook/Workbook';
-import {COMMON_DASH_SELECTORS} from 'suites/dash/constants';
+import {COMMON_DASH_SELECTORS} from '../../../suites/dash/constants';
 import {DialogTabsQA, EntryDialogQA} from '../../../../src/shared/constants';
 import {dragAndDropListItem, openTabPopupWidgetOrder} from '../../../suites/dash/helpers';
 import {arbitraryText} from '../constants';
+import {ActionPanelDashSaveControlsQa} from '../../../../src/shared/constants/qa/action-panel';
 
 const SELECTORS = {
     SELECTOR_LIST_ITEMS: '.yc-list__item',
@@ -19,11 +17,8 @@ const SELECTORS = {
 datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const workbookPO = new Workbook(page);
 
-        await workbookPO.openE2EWorkbookPage();
-
-        await workbookPO.createDashboard({
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addText(arbitraryText.first);
                 await dashboardPage.addText(arbitraryText.second);
@@ -32,7 +27,8 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
     });
 
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(
@@ -69,7 +65,7 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
             await page.click(slct(DialogTabsQA.Cancel));
 
             await dashboardPage.waitForSelector(
-                `${slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN)}[disabled]`,
+                `${slct(ActionPanelDashSaveControlsQa.Save)}[disabled]`,
             );
 
             await dashboardPage.exitEditMode();
@@ -103,7 +99,7 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
             await page.click(slct(DialogTabsQA.Save));
 
             await dashboardPage.waitForSelector(
-                `${slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN)}:not([disabled])`,
+                `${slct(ActionPanelDashSaveControlsQa.Save)}:not([disabled])`,
             );
             await dashboardPage.exitEditMode();
 

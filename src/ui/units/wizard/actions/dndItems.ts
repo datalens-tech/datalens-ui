@@ -2,6 +2,7 @@ import update from 'immutability-helper';
 import {batch} from 'react-redux';
 import {Field, Placeholder, PlaceholderId, Shared, isVisualizationWithLayers} from 'shared';
 import {DatalensGlobalState} from 'ui';
+import {getAvailableVisualizations} from 'ui/units/wizard/utils/visualization';
 
 import {AppDispatch} from '../../../store';
 import {FILTER_SECTIONS} from '../constants';
@@ -30,48 +31,6 @@ export const enum PlaceholderAction {
     Move = 'move',
 }
 
-export type ReduxStateKeys = keyof Pick<
-    VisualizationState,
-    | 'visualization'
-    | 'shapes'
-    | 'segments'
-    | 'colors'
-    | 'labels'
-    | 'available'
-    | 'sort'
-    | 'tooltips'
-    | 'filters'
-    | 'dashboardParameters'
->;
-
-export const placeholderIdToReduxStateKeyMap: Record<PlaceholderId, ReduxStateKeys> = {
-    [PlaceholderId.X]: 'visualization',
-    [PlaceholderId.Y]: 'visualization',
-    [PlaceholderId.Y2]: 'visualization',
-    [PlaceholderId.PivotTableRows]: 'visualization',
-    [PlaceholderId.PivotTableColumns]: 'visualization',
-    [PlaceholderId.FlatTableColumns]: 'visualization',
-    [PlaceholderId.Dimensions]: 'visualization',
-    [PlaceholderId.Geopoint]: 'visualization',
-    [PlaceholderId.Geopoligon]: 'visualization',
-    [PlaceholderId.Measures]: 'visualization',
-    [PlaceholderId.Grouping]: 'visualization',
-    [PlaceholderId.Heatmap]: 'visualization',
-    [PlaceholderId.Size]: 'visualization',
-    [PlaceholderId.Polyline]: 'visualization',
-    [PlaceholderId.Points]: 'visualization',
-    [PlaceholderId.LayerFilters]: 'visualization',
-    [PlaceholderId.Segments]: 'segments',
-    [PlaceholderId.Colors]: 'colors',
-    [PlaceholderId.Shapes]: 'shapes',
-    [PlaceholderId.Labels]: 'labels',
-    [PlaceholderId.Sort]: 'sort',
-    [PlaceholderId.Tooltips]: 'tooltips',
-    [PlaceholderId.Available]: 'available',
-    [PlaceholderId.Filters]: 'filters',
-    [PlaceholderId.DashboardFilters]: 'filters',
-    [PlaceholderId.DashboardParameters]: 'dashboardParameters',
-};
 export const placeholderIdToReduxActionMap = {
     [PlaceholderId.Segments]: updateSegments,
     [PlaceholderId.Colors]: updateColors,
@@ -102,11 +61,6 @@ export const placeholderIdToReduxActionMap = {
     [PlaceholderId.LayerFilters]: updateVisualizationPlaceholderItems,
 };
 
-export const UPDATE_PREVIEW_WITHOUT_ARGS_KEYS: Record<string, boolean> = {
-    dashboardParameters: true,
-    available: true,
-};
-
 export const getFieldsFromVisualization = (
     visualization: Shared['visualization'] | undefined,
     placeholderId: PlaceholderId | undefined,
@@ -128,35 +82,57 @@ export const getFieldsFromVisualization = (
     return placeholder?.items || [];
 };
 
-export const getSectionFields = (
-    key: ReduxStateKeys | null,
+const getSectionFields = (
     placeholderId: PlaceholderId | undefined,
     visualizationState: VisualizationState,
 ) => {
-    switch (key) {
-        case null: {
-            return null;
-        }
-        case 'visualization': {
-            const visualization = visualizationState[key];
-            return getFieldsFromVisualization(visualization, placeholderId);
-        }
-        default: {
-            const items = [...visualizationState[key]];
+    const visualization = visualizationState.visualization;
+    const availableVisualizations = getAvailableVisualizations();
+    const visualizationId = isVisualizationWithLayers(visualization)
+        ? getSelectedLayer(visualization)?.id
+        : visualization?.id;
+    const presetVisualization = availableVisualizations.find(({id}) => id === visualizationId) as
+        | Shared['visualization']
+        | null;
 
-            switch (placeholderId) {
-                case PlaceholderId.Filters: {
-                    return items.filter((item) => !item.unsaved);
-                }
-                case PlaceholderId.DashboardFilters: {
-                    return items.filter((item) => item.unsaved);
-                }
-                default: {
-                    return items;
-                }
-            }
+    if (presetVisualization?.placeholders.some((p) => p.id === placeholderId)) {
+        return getFieldsFromVisualization(visualization, placeholderId);
+    }
+
+    switch (placeholderId) {
+        case PlaceholderId.Segments: {
+            return visualizationState.segments;
+        }
+        case PlaceholderId.Colors: {
+            return visualizationState.colors;
+        }
+        case PlaceholderId.Shapes: {
+            return visualizationState.shapes;
+        }
+        case PlaceholderId.Labels: {
+            return visualizationState.labels;
+        }
+        case PlaceholderId.Sort: {
+            return visualizationState.sort;
+        }
+        case PlaceholderId.Tooltips: {
+            return visualizationState.tooltips;
+        }
+        case PlaceholderId.Available: {
+            return visualizationState.available;
+        }
+        case PlaceholderId.Filters: {
+            return visualizationState.filters.filter((item) => !item.unsaved);
+        }
+        case PlaceholderId.DashboardFilters: {
+            return visualizationState.filters.filter((item) => item.unsaved);
+        }
+        case PlaceholderId.DashboardParameters: {
+            return visualizationState.dashboardParameters;
         }
     }
+
+    return null;
 };
 
 export const removeFieldFromPlaceholder = ({
@@ -328,26 +304,8 @@ export const handleDnDItemUpdate = (args: HandleDnDItemUpdateArgs) => {
         const state = getState();
         const visualizationState = state.wizard.visualization;
 
-        const currentSectionKey = placeholderIdToReduxStateKeyMap[currentSectionId]
-            ? placeholderIdToReduxStateKeyMap[currentSectionId]
-            : null;
-
-        const nextSectionKey =
-            nextSectionId && placeholderIdToReduxStateKeyMap[nextSectionId]
-                ? placeholderIdToReduxStateKeyMap[nextSectionId]
-                : null;
-
-        const currentSectionFields = getSectionFields(
-            currentSectionKey,
-            currentSectionId,
-            visualizationState,
-        );
-
-        const nextSectionFields = getSectionFields(
-            nextSectionKey,
-            nextSectionId,
-            visualizationState,
-        );
+        const currentSectionFields = getSectionFields(currentSectionId, visualizationState);
+        const nextSectionFields = getSectionFields(nextSectionId, visualizationState);
 
         let updatedCurrentSectionFields: Field[] | null;
         let updatedNextSectionFields: Field[] | null;

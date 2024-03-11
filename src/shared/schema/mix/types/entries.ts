@@ -1,7 +1,7 @@
 import {AppContext} from '@gravity-ui/nodekit';
 import {Required} from 'utility-types';
 
-import {StringParams} from '../../../types';
+import {StringParams, WorkbookId} from '../../../types';
 import {DeleteConnectionResponse, DeleteDatasetResponse} from '../../bi/types';
 import {CheckStatReportExistsArgs, CheckStatReportExistsResponse} from '../../stat-api/types';
 import {
@@ -22,6 +22,7 @@ export type DeleteEntryResponse =
 export interface DeleteEntryArgs {
     entryId: string;
     scope: string;
+    lockToken?: string;
 }
 
 export interface GetPublicationPreviewEntry extends Required<GetRelationsEntry, 'permissions'> {
@@ -33,7 +34,15 @@ export type GetPublicationPreviewResponse = GetPublicationPreviewEntry[];
 
 export interface GetPublicationPreviewArgs {
     entryId: string;
+    workbookId: WorkbookId;
 }
+
+export type MixedSwitchPublicationStatusArgsUnversionedData = {
+    publicAuthor?: {
+        text?: string;
+        link?: string;
+    };
+};
 
 export interface MixedSwitchPublicationStatusArgs {
     entries: {
@@ -43,8 +52,9 @@ export interface MixedSwitchPublicationStatusArgs {
     }[];
     mainEntry?: {
         entryId: string;
-        unversionedData: unknown;
+        unversionedData: MixedSwitchPublicationStatusArgsUnversionedData;
     };
+    workbookId: WorkbookId;
 }
 
 export type ResolveEntryByLinkComponentResponse = {

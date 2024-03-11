@@ -6,10 +6,10 @@ import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {ControlQA} from 'shared';
+import {ControlQA, DialogControlQa} from 'shared';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
-    selectIsDatasetSelectorAndNoFieldSelected,
+    selectIsControlConfigurationDisabled,
     selectSelectorDialog,
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
@@ -22,7 +22,7 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 export const TitleRow = () => {
     const dispatch = useDispatch();
     const {showTitle, title, validation} = useSelector(selectSelectorDialog);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
 
     const handleTitleUpdate = React.useCallback((title: string) => {
         dispatch(
@@ -43,7 +43,7 @@ export const TitleRow = () => {
 
     return (
         <FormRow label={i18n('field_title')}>
-            <div className={b('operation-container')}>
+            <div className={b('operation-container')} data-qa={DialogControlQa.appearanceTitle}>
                 <Checkbox
                     disabled={isFieldDisabled}
                     className={b('operation-checkbox')}

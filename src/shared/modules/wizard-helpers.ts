@@ -7,7 +7,6 @@ import {
     PlaceholderId,
     PseudoFieldTitle,
     RGBColor,
-    VISUALIZATIONS_WITH_DIMENSIONS_AS_COLORS,
     VISUALIZATIONS_WITH_SEVERAL_FIELDS_X_PLACEHOLDER,
     WizardVisualizationId,
 } from '../constants';
@@ -17,12 +16,15 @@ import {
     Field,
     MarkupItem,
     ServerFieldFormatting,
+    ServerSort,
     Update,
     V3Label,
     isDateField,
     isFloatField,
     isNumberField,
 } from '../types';
+
+import {isMeasureField} from './helpers';
 
 export const isMeasureName = (field: {type: string; title: string}) =>
     field.type === 'PSEUDO' && field.title === PseudoFieldTitle.MeasureNames;
@@ -88,9 +90,6 @@ export const filterUpdatesByDatasetId = (updates: Update[], datasetId: string) =
 
 export const isPercentVisualization = (visualizationId: string) =>
     PERCENT_VISUALIZATIONS.has(visualizationId);
-
-export const isVisualizationWithDimensionsAsColors = (visualizationId: string) =>
-    VISUALIZATIONS_WITH_DIMENSIONS_AS_COLORS.has(visualizationId);
 
 export const isVisualizationWithSeveralFieldsXPlaceholder = (visualizationId: string) =>
     VISUALIZATIONS_WITH_SEVERAL_FIELDS_X_PLACEHOLDER.has(visualizationId);
@@ -197,3 +196,43 @@ export const isPlaceholderSupportsAxisMode = (
 export const isAllAxisModesAvailable = (field?: {data_type: string}) => {
     return isNumberField(field) || isDateField(field);
 };
+
+export function doesSortingAffectAxisMode(visualizationId: WizardVisualizationId) {
+    return ![
+        WizardVisualizationId.Area,
+        WizardVisualizationId.Area100p,
+        WizardVisualizationId.Column100p,
+        WizardVisualizationId.Bar100p,
+    ].includes(visualizationId);
+}
+
+export enum AxisModeDisabledReason {
+    FieldType = 'fieldType',
+    HasSortingField = 'sorting',
+    Unknown = 'unknown',
+}
+
+export function isContinuousAxisModeDisabled(args: {
+    field: {guid: string; data_type: string};
+    axisSettings: {disableAxisMode?: boolean} | undefined;
+    visualizationId: WizardVisualizationId;
+    sort: ServerSort[];
+}) {
+    const {field, axisSettings, visualizationId, sort} = args;
+
+    if (!isAllAxisModesAvailable(field)) {
+        return AxisModeDisabledReason.FieldType;
+    }
+
+    const disableDueToSorting =
+        doesSortingAffectAxisMode(visualizationId) && sort.some(isMeasureField);
+    if (disableDueToSorting) {
+        return AxisModeDisabledReason.HasSortingField;
+    }
+
+    if (axisSettings?.disableAxisMode) {
+        return AxisModeDisabledReason.Unknown;
+    }
+
+    return null;
+}

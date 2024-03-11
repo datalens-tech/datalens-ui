@@ -33,7 +33,7 @@ export type Placeholder = {
     capacity?: number;
     transform?: (item: Field) => Field;
     allowedTypes?: Set<string>;
-    checkAllowed?: Set<string>;
+    checkAllowed?: (item: Field) => boolean;
     items: Field[];
     settings?: Record<string, any>;
     required?: boolean;
@@ -54,5 +54,3 @@ export type Placeholder = {
     allowedDataTypes?: Set<string>;
     allowedFinalTypes?: Set<string>;
 };
-
-export type AxisMode = 'discrete' | 'continuous';

@@ -17,6 +17,8 @@ import {
     TENANT_ID_HEADER,
     TRACE_ID_HEADER,
     US_PUBLIC_API_TOKEN_HEADER,
+    WORKBOOK_ID_HEADER,
+    WorkbookId,
 } from '../../../../../../shared';
 import {createErrorHandler} from '../../error-handler';
 import {getDuration} from '../../utils';
@@ -86,7 +88,7 @@ export type Entry = {
     };
     updatedAt?: string;
     updatedBy?: string;
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
 };
 
 export type EmbeddingInfo = {
@@ -174,6 +176,7 @@ function formatPassedHeaders(
 function formatPassedProperties(entry: Entry = {}) {
     // These fallbacks are needed to work with some old entities migrated to the US from the conf repository
     const entryId: string | undefined = (entry.meta || {}).entryId || entry.entryId;
+    const workbookId: string | null | undefined = entry.workbookId;
     const key: string | undefined = entry.key || (entry.meta || {}).key;
     const type: string | undefined = (entry.meta || {}).stype || entry.type;
     const publicAuthor = entry.unversionedData?.publicAuthor;
@@ -191,6 +194,7 @@ function formatPassedProperties(entry: Entry = {}) {
     };
 
     formattedData.entryId = entryId;
+    formattedData.workbookId = workbookId;
     formattedData.key = key;
     formattedData.type = type;
     formattedData.meta = meta;
@@ -258,6 +262,7 @@ export class USProvider {
             headers,
             storageApiPath,
             extraAllowedHeaders,
+            workbookId,
         }: {
             id: string;
             storageApiPath?: string;
@@ -267,6 +272,7 @@ export class USProvider {
             includePermissionsInfo?: boolean | string;
             revId?: string;
             headers: Request['headers'];
+            workbookId?: WorkbookId;
         },
     ) {
         const hrStart = process.hrtime();
@@ -292,6 +298,11 @@ export class USProvider {
             params.revId = revId;
         }
         const formattedHeaders = formatPassedHeaders(headers, ctx, extraAllowedHeaders);
+
+        if (workbookId) {
+            formattedHeaders[WORKBOOK_ID_HEADER] = workbookId;
+        }
+
         const axiosArgs: AxiosRequestConfig = {
             url: storageApiPath
                 ? `${storageEndpoint}${storageApiPath}/${id}`

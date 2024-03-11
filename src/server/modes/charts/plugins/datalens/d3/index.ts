@@ -1,24 +1,28 @@
-import type {ChartKitWidgetData} from '@gravity-ui/chartkit';
+import type {ChartKitWidgetAxisType, ChartKitWidgetData} from '@gravity-ui/chartkit';
 
 import {
     PlaceholderId,
     ServerChartsConfig,
     ServerCommonSharedExtraSettings,
+    ServerSort,
     ServerVisualization,
     isDateField,
 } from '../../../../../../shared';
+import {getAxisType} from '../preparers/helpers/axis';
+import {getAllVisualizationsIds} from '../preparers/helpers/visualizations';
 import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../utils/axis-helpers';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 
-import {getAxisType, getChartTitle} from './utils';
+import {getChartTitle} from './utils';
 
 type BuildD3ConfigArgs = {
     extraSettings?: ServerCommonSharedExtraSettings;
     visualization: ServerVisualization;
+    sort?: ServerSort[];
 };
 
 export function buildD3Config(args: BuildD3ConfigArgs) {
-    const {extraSettings, visualization} = args;
+    const {extraSettings, visualization, sort = []} = args;
     const isLegendEnabled = extraSettings?.legendMode !== 'hide';
 
     const xPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.X);
@@ -34,7 +38,12 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
         tooltip: {enabled: true},
         legend: {enabled: isLegendEnabled},
         xAxis: {
-            type: getAxisType(xItem, xPlaceholderSettings),
+            type: getAxisType({
+                field: xItem,
+                settings: xPlaceholderSettings,
+                visualizationIds: getAllVisualizationsIds(args),
+                sort,
+            }) as ChartKitWidgetAxisType | undefined,
             labels: {
                 enabled: xPlaceholderSettings?.hideLabels !== 'yes',
             },
@@ -79,11 +88,17 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
                         key: 'name',
                     },
                 },
+                line: {
+                    lineWidth: 2,
+                },
             },
         },
         chart: {
             margin: {
-                bottom: 10,
+                top: 10,
+                left: 10,
+                right: 10,
+                bottom: 15,
             },
         },
     };

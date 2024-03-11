@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {ChevronDown} from '@gravity-ui/icons';
-import {ClipboardButton, Icon, Link, Loader} from '@gravity-ui/uikit';
+import {Icon, Link, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {StringParams} from 'shared';
 import {registry} from 'ui/registry';
@@ -33,39 +33,6 @@ export function getParams(searchParams: URLSearchParams) {
 
     return params;
 }
-
-type DetailsContentProps = {
-    value?: string;
-};
-
-type SourceDetailsProps = {
-    title: string;
-    value: string;
-};
-
-export const DetailsContent = ({value}: DetailsContentProps) => {
-    if (!value) {
-        return null;
-    }
-
-    return (
-        <div className={b('details-content')}>
-            {value}
-            <span className={b('clipboard-button')}>
-                <ClipboardButton text={value} size={14} />
-            </span>
-        </div>
-    );
-};
-
-export const SourceDetails = ({title, value}: SourceDetailsProps) => {
-    return (
-        <div className={b('source-details')}>
-            <div className={b('details-title')}>{title}</div>
-            <DetailsContent value={value} />
-        </div>
-    );
-};
 
 export interface SourceMetaProps {
     dataUrl: string;

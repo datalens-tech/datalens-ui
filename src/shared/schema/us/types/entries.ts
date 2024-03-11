@@ -1,3 +1,4 @@
+import type {WorkbookId} from '../../../../shared';
 import {InitialPermissions, Permissions} from '../../../types';
 
 import {EntriesCommonArgs} from './common';
@@ -13,12 +14,14 @@ import {
 export interface GetEntryResponse extends EntryFields {
     isFavorite: boolean;
     permissions?: Permissions;
+    isLocked?: boolean;
     links?: EntryFieldLinks;
     parentDashEntryId?: string;
     parentDashName?: string;
 }
 export interface GetEntryArgs {
     entryId: string;
+    workbookId?: WorkbookId;
     revId?: string;
     branch?: string;
     includePermissionsInfo?: boolean;
@@ -178,6 +181,7 @@ export interface DeleteUSEntryResponse extends EntryFields {
 
 export interface DeleteUSEntryArgs {
     entryId: string;
+    lockToken?: string;
 }
 
 interface GetRelationsEntryOutput extends EntryRelationFields {

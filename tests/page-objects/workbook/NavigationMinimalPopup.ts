@@ -1,6 +1,7 @@
 import {Page} from '@playwright/test';
 import {slct} from '../../utils';
 import {WorkbookNavigationMinimalQa} from '../../../src/shared';
+import {ListItemByParams} from '../../page-objects/types';
 
 export class NavigationMinimalPopup {
     slctPopup = slct(WorkbookNavigationMinimalQa.Popup);
@@ -29,10 +30,24 @@ export class NavigationMinimalPopup {
         await this.page.fill(`${this.slctPopup} ${this.slctInput} input`, value);
     }
 
-    async selectListItem(name: string) {
+    async selectListItem({innerText, idx}: ListItemByParams) {
         await this.waitForOpen();
-        await this.fillInput(name);
-        await this.page.waitForSelector(`${this.slctPopup} ${this.slctList} ${slct(name)}`);
-        await this.page.click(`${this.slctPopup} ${this.slctList} ${slct(name)}`);
+        if (innerText) {
+            await this.fillInput(innerText);
+            await this.page.waitForSelector(
+                `${this.slctPopup} ${this.slctList} ${slct(innerText)}`,
+            );
+            await this.page.click(`${this.slctPopup} ${this.slctList} ${slct(innerText)}`);
+        } else if (typeof idx === 'number') {
+            await this.selectListItemByIdx(idx);
+        }
+    }
+
+    async selectListItemByIdx(idx: number) {
+        await this.page
+            .locator(`${this.slctPopup} ${this.slctList}`)
+            .getByRole('listitem')
+            .nth(idx)
+            .click();
     }
 }

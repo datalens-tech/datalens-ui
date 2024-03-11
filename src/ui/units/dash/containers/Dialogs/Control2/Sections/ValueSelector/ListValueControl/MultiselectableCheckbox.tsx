@@ -7,7 +7,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
-    selectIsDatasetSelectorAndNoFieldSelected,
+    selectIsControlConfigurationDisabled,
     selectSelectorDialog,
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
@@ -20,7 +20,7 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 export const MultiselectableCheckbox = () => {
     const dispatch = useDispatch();
     const {multiselectable} = useSelector(selectSelectorDialog);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
 
     const handleUpdate = React.useCallback(
         (value: boolean) => {
@@ -38,7 +38,7 @@ export const MultiselectableCheckbox = () => {
             <Checkbox
                 className={b('checkbox-option')}
                 disabled={isFieldDisabled}
-                checked={multiselectable}
+                checked={multiselectable ?? false}
                 onUpdate={handleUpdate}
                 size="l"
             />

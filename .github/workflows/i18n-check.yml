@@ -1,0 +1,36 @@
+name: i18n-check
+
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - 'src/i18n-keysets/**'
+    workflow_dispatch:
+    # pull_request_target is needed instead of just pull_request
+    # because secret is needed to sync with weblate
+    # Attention! Read more at https://nathandavison.com/blog/github-actions-and-the-threat-of-malicious-pull-requests
+    pull_request_target:
+        types: ['opened', 'reopened', 'synchronize', 'closed']
+        branches:
+            - main
+        paths:
+            - 'src/i18n-keysets/**'
+
+jobs:
+    i18n_check:
+        runs-on: ubuntu-latest
+        if: github.actor != 'WeblateGravity' && github.event.pull_request.draft == false
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.pull_request.head.sha }}
+
+            - name: Verifying changes with Weblate
+              uses: dgaponov/weblate-action@v1.43.0
+              with:
+                  SERVER_URL: "https://weblate.gravity-ui.com"
+                  TOKEN: ${{ secrets.WEBLATE_TOKEN }}
+                  PROJECT: "datalens"
+                  MAIN_LANGUAGE: "ru"
+                  GITHUB_TOKEN: ${{ secrets.WEBLATE_BOT_GITHUB_TOKEN }}

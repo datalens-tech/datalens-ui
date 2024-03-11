@@ -1,5 +1,6 @@
 export enum WizardVisualizationId {
     Line = 'line',
+    LineD3 = 'line-d3',
     Area = 'area',
     Area100p = 'area100p',
     Column = 'column',
@@ -36,11 +37,6 @@ export const PERCENT_VISUALIZATIONS = new Set<string>([
     WizardVisualizationId.Bar100p,
     WizardVisualizationId.Column100p,
     WizardVisualizationId.Area100p,
-]);
-
-export const VISUALIZATIONS_WITH_DIMENSIONS_AS_COLORS = new Set<string>([
-    WizardVisualizationId.Pie,
-    WizardVisualizationId.Donut,
 ]);
 
 export const VISUALIZATIONS_WITH_SEVERAL_FIELDS_X_PLACEHOLDER = new Set<string>([

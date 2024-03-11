@@ -18,6 +18,7 @@ export const plugin: Plugin = {
                 QL_TYPE.TABLE_QL_NODE,
                 QL_TYPE.YMAP_QL_NODE,
                 QL_TYPE.METRIC_QL_NODE,
+                QL_TYPE.MARKUP_QL_NODE,
 
                 QL_TYPE.LEGACY_GRAPH_QL_NODE,
                 QL_TYPE.LEGACY_TABLE_QL_NODE,

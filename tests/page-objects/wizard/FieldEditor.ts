@@ -1,11 +1,11 @@
-import {Page} from '@playwright/test';
+import {expect, Page} from '@playwright/test';
 
 import {slct} from '../../utils';
-import {DialogFieldEditorQA, SectionDatasetQA} from '../../../src/shared';
+import {DialogFieldEditorQA, FieldEditorQa, SectionDatasetQA} from '../../../src/shared';
 
 export default class FieldEditor {
     static slct(childSelector: string) {
-        return `${slct('dl-field-editor')} ${childSelector}`;
+        return `${slct(FieldEditorQa.Dialog)} ${childSelector}`;
     }
     private fieldNameSelector = FieldEditor.slct(`${slct('field-name')} input`);
     private applyButtonSelector = slct(DialogFieldEditorQA.ApplyButton);
@@ -43,9 +43,8 @@ export default class FieldEditor {
         await this.page.click(`${this.fieldItemSelector} >> text=${field}`);
     }
 
-    async getFormula() {
+    async checkFormula(formula: string) {
         const item = this.page.locator(`${this.fieldEditorSelector} .lines-content`);
-
-        return item.textContent();
+        await expect(item).toHaveText(formula);
     }
 }

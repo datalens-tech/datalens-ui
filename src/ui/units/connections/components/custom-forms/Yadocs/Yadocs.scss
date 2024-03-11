@@ -4,6 +4,7 @@ $titleHeight: 57px;
 
 .conn-form-yadocs {
     --container-height-offset: #{$titleHeight} - #{$actionPanelHeight};
+    --settings-height: 60px;
 
     &__title {
         width: 100%;
@@ -48,6 +49,14 @@ $titleHeight: 57px;
         background-color: var(--g-color-base-generic-ultralight);
     }
 
+    &__list-container {
+        flex-grow: 0;
+    }
+
+    &__list-item-wrap {
+        cursor: pointer;
+    }
+
     &__add-section {
         padding: 12px 16px 0;
     }
@@ -89,5 +98,71 @@ $titleHeight: 57px;
             height: 100%;
             color: var(--g-color-text-hint);
         }
+
+        &_readonly .data-table {
+            height: calc(100vh - var(--container-height-offset) - var(--conn-column-filter-height));
+        }
+    }
+
+    &__workspace-error {
+        height: calc(100vh - var(--container-height-offset));
+        min-height: unset;
+    }
+
+    &__workspace-loader {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translateX(-50%) translateY(-50%);
+    }
+
+    &__settings {
+        display: flex;
+        align-items: center;
+        height: var(--settings-height);
+        padding: 0 20px;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    // the normal api for working with data-table styles has not yet been delivered
+    & .data-table {
+        height: calc(
+            100vh - var(--container-height-offset) - var(--settings-height) -
+                var(--conn-column-filter-height)
+        );
+
+        &__table {
+            min-width: 100%;
+        }
+
+        &__head-cell {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        &__th {
+            border-top: none;
+        }
+
+        &__th,
+        &__td {
+            height: 38px;
+            vertical-align: middle;
+            border-left: none;
+            border-right: none;
+            border-color: var(--g-color-line-generic);
+
+            &:first-child {
+                padding-left: 20px;
+            }
+        }
+
+        &__td {
+            border-bottom: none;
+        }
+    }
+
+    &__workspace_readonly .data-table {
+        height: calc(100vh - var(--container-height-offset) - var(--conn-column-filter-height));
     }
 }

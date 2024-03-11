@@ -18,6 +18,7 @@ import {
     ServerVisualization,
     ServerVisualizationLayer,
     Shared,
+    WizardVisualizationId,
     isDateType,
     isMarkupField,
 } from '../../../../../../shared';
@@ -25,12 +26,13 @@ import {getDatasetIdAndLayerIdFromKey, getFieldList} from '../../helpers/misc';
 import prepareBackendPivotTableData from '../preparers/backend-pivot-table';
 import {PivotData} from '../preparers/backend-pivot-table/types';
 import {prepareD3BarX, prepareHighchartsBarX} from '../preparers/bar-x';
+import {prepareHighchartsBarY} from '../preparers/bar-y';
 import prepareFlatTableData from '../preparers/flat-table';
 import prepareGeopointData from '../preparers/geopoint';
 import prepareGeopointWithClusterData from '../preparers/geopoint-with-cluster';
 import prepareGeopolygonData from '../preparers/geopolygon';
 import prepareHeatmapData from '../preparers/heatmap';
-import prepareLineData from '../preparers/line';
+import {prepareD3Line, prepareHighchartsLine} from '../preparers/line';
 import prepareMetricData from '../preparers/metric';
 import preparePivotTableData from '../preparers/old-pivot-table/old-pivot-table';
 import {prepareD3Pie, prepareHighchartsPie} from '../preparers/pie';
@@ -485,15 +487,28 @@ function prepareSingleResult({
     switch (visualization.id) {
         case 'line':
         case 'area':
-        case 'area100p':
-        case 'bar':
-        case 'bar100p': {
+        case 'area100p': {
             if (visualization.id === 'line') {
                 shapes = shared.shapes || [];
                 shapesConfig = shared.shapesConfig;
             }
 
-            prepare = prepareLineData;
+            prepare = prepareHighchartsLine;
+            rowsLimit = 75000;
+            break;
+        }
+
+        case 'bar':
+        case 'bar100p': {
+            prepare = prepareHighchartsBarY;
+            rowsLimit = 75000;
+            break;
+        }
+
+        case WizardVisualizationId.LineD3: {
+            shapes = shared.shapes || [];
+            shapesConfig = shared.shapesConfig;
+            prepare = prepareD3Line;
             rowsLimit = 75000;
             break;
         }
@@ -754,7 +769,7 @@ module.exports = (...options: JSTabOptions) => {
 
         if (value.data_export_forbidden) {
             // Hiding the data export button in the ChartKit menu
-            ChartEditor.setExtra('dataExportForbidden', true);
+            ChartEditor.setExtra?.('dataExportForbidden', true);
         }
     });
 

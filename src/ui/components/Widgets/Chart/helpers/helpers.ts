@@ -2,6 +2,7 @@ import {DL, URL_OPTIONS} from 'constants/common';
 
 import {AxiosResponse} from 'axios';
 import {History} from 'history';
+import isEmpty from 'lodash/isEmpty';
 import {DashTabItemType, FOCUSED_WIDGET_PARAM_NAME, Feature, StringParams, isTrueArg} from 'shared';
 import DatalensChartkitCustomError, {
     ERROR_CODE,
@@ -20,7 +21,12 @@ import {CombinedError, LoadedWidgetData, Widget} from '../../../../libs/Datalens
 import Utils from '../../../../utils';
 import {isWidgetTypeDoNotNeedOverlay} from '../../../DashKit/plugins/Widget/components/helpers';
 import {CurrentTab, WidgetPluginDataWithTabs} from '../../../DashKit/plugins/Widget/types';
-import {DashkitMetaDataItemBase, DashkitOldMetaDataItemBase} from '../../../DashKit/plugins/types';
+import {
+    DashkitMetaDataItemBase,
+    DashkitOldMetaDataItemBase,
+    DatasetsData,
+    DatasetsFieldsListData,
+} from '../../../DashKit/plugins/types';
 import {AdjustWidgetLayoutProps, adjustWidgetLayout} from '../../../DashKit/utils';
 import {State as ChartState} from '../store/types';
 import {ChartContentProps, ChartWithProviderProps, ResolveWidgetControlDataRefArgs} from '../types';
@@ -104,6 +110,30 @@ export const getWidgetMetaOld = ({
 };
 
 /**
+ * We get duplicated from api, need to clear it to prevent problems with doubles
+ * (in ex. in dash relations)
+ * @param datasets
+ */
+const getUniqDatasetsFields = (datasets?: Array<DatasetsData>) => {
+    datasets?.forEach((dataset) => {
+        if (!dataset.fieldsList) {
+            return;
+        }
+        const guids: Record<string, string> = {};
+        const newFieldList: DatasetsFieldsListData[] = [];
+
+        dataset.fieldsList.forEach((fieldItem) => {
+            if (!(fieldItem.guid in guids)) {
+                guids[fieldItem.guid] = '';
+                newFieldList.push(fieldItem);
+            }
+        });
+        dataset.fieldsList = newFieldList;
+    });
+    return datasets;
+};
+
+/**
  * For new (by flag relations) for charts only
  * @param tabs
  * @param id
@@ -161,11 +191,18 @@ export const getWidgetMeta = ({
             usedParams: loadedData?.usedParams
                 ? Object.keys(loadedData?.usedParams || {}) || null
                 : null,
-            datasets: loadedData?.datasets || null,
-            datasetId: (loadedData?.sources as ResponseSourcesSuccess)?.fields?.datasetId || '',
+            datasets:
+                getUniqDatasetsFields(loadedData?.datasets || loadedData?.extra?.datasets) || null,
+            datasetId:
+                (loadedData?.sources as ResponseSourcesSuccess)?.fields?.datasetId ||
+                loadedData?.extra?.datasets?.[0]?.id ||
+                '',
             type: (loadedData?.type as DashTabItemType) || null,
             visualizationType: loadedData?.libraryConfig?.chart?.type || null,
             loadError: loadedWithError,
+            isWizard: Boolean(loadedData?.isNewWizard || loadedData?.isOldWizard),
+            isEditor: Boolean(loadedData?.isEditor),
+            isQL: Boolean(loadedData?.isQL),
         };
 
         return metaInfo;
@@ -280,7 +317,7 @@ export const getPreparedConstants = (props: {
         noControls = isTrueArg(searchParams.get(URL_OPTIONS.NO_CONTROLS));
     }
 
-    const hideTabs = isFullscreen ? false : Boolean(tabsLength === 1 && hideTitle);
+    const hideTabs = isFullscreen ? true : Boolean(tabsLength === 1 && hideTitle);
     const withShareWidget = Utils.isEnabledFeature(Feature.EnableShareWidget) && isFullscreen;
 
     const isFirstLoadOrAfterError = loadedData === null;
@@ -291,9 +328,8 @@ export const getPreparedConstants = (props: {
         ((!isSilentReload && !noLoader) || isFirstLoadOrAfterError);
 
     const mods = {
-        'no-tabs': hideTabs,
-        fullscreen: Boolean(isFullscreen),
-        'with-shares': Boolean(withShareWidget),
+        'no-tabs': !isFullscreen && hideTabs,
+        fullscreen: isFullscreen,
         [String(widgetType)]: Boolean(widgetType),
     };
     const hasVeil = Boolean(loadedData && !error && !noVeil && !isReloadWithNoVeil);
@@ -381,7 +417,8 @@ export const isWidgetTypeWithAutoHeight = (widgetType: string) => {
         widgetType === DASH_WIDGET_TYPES.TABLE ||
         widgetType === DASH_WIDGET_TYPES.MARKDOWN ||
         widgetType === DASH_WIDGET_TYPES.METRIC ||
-        widgetType === DASH_WIDGET_TYPES.METRIC2
+        widgetType === DASH_WIDGET_TYPES.METRIC2 ||
+        widgetType === DASH_WIDGET_TYPES.MARKUP
     );
 };
 
@@ -419,4 +456,15 @@ export const updateImmediateLayout = ({
         layout,
         cb,
     });
+};
+
+export const isAllParamsEmpty = (params?: StringParams | null) => {
+    const res = Object.values(params || {}).every((item) => {
+        if (typeof item === 'string') {
+            return isEmpty(item.trim());
+        } else {
+            return isEmpty(item.filter((val) => !isEmpty(val.trim())));
+        }
+    });
+    return Boolean(res);
 };

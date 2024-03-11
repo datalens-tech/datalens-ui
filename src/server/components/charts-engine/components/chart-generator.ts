@@ -203,12 +203,16 @@ export const chartGenerator = {
             chart.params = chart.params.replace('#module', chartTemplate.module);
         }
 
+        const isD3Graph = type.indexOf('d3') > -1;
         if (type.indexOf('table') > -1) {
             chart.table = chart.config.replace('#module', chartTemplate.module);
         } else if (type.indexOf('metric') > -1) {
             chart.statface_metric = chart.config.replace('#module', chartTemplate.module);
-        } else if (type.indexOf('d3') > -1) {
+        } else if (type.indexOf('markup') > -1) {
+            chart.config = chart.config.replace('#module', chartTemplate.module);
+        } else if (isD3Graph) {
             chart.graph = commonTemplateD3Graph.replace('#module', chartTemplate.module);
+            chart.config = chart.config.replace('#module', chartTemplate.module);
         } else {
             chart.graph = commonTemplateGraph.replace('#module', chartTemplate.module);
 
@@ -226,6 +230,6 @@ export const chartGenerator = {
 
         const {config: _, ...chartWithoutCOnfig} = chart;
 
-        return {chart: chartWithoutCOnfig, links, type};
+        return {chart: isD3Graph ? chart : chartWithoutCOnfig, links, type};
     },
 };

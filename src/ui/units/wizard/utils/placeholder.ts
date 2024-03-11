@@ -2,15 +2,16 @@ import {
     Field,
     Placeholder,
     PlaceholderSettings,
+    ServerSort,
     Shared,
     WizardVisualizationId,
-    isAllAxisModesAvailable,
+    getActualAxisModeForField,
     isFieldHierarchy,
 } from 'shared';
 import {SETTINGS} from 'ui/constants/visualizations';
 
 type GetAxisModePlaceholderSettings = {
-    sort: Field[];
+    sort: ServerSort[];
     visualization: Shared['visualization'];
     placeholder: Placeholder;
     firstField: Field;
@@ -22,9 +23,6 @@ export const getAxisModePlaceholderSettings = ({
     firstField,
 }: GetAxisModePlaceholderSettings) => {
     const settings: PlaceholderSettings & {axisModeMap: Record<string, string>} = {axisModeMap: {}};
-    const isSortItemExists = sort.length;
-    const isAreaChart = visualization.id === WizardVisualizationId.Area;
-    const isContinuousModeRestricted = isSortItemExists && !isAreaChart;
 
     let fields: Field[];
     let currentField: Field;
@@ -38,13 +36,12 @@ export const getAxisModePlaceholderSettings = ({
 
     if (currentField) {
         fields.forEach((field) => {
-            if (placeholder.settings?.axisModeMap?.[field.guid]) {
-                settings.axisModeMap[field.guid] = placeholder.settings.axisModeMap[field.guid];
-            } else if (isAllAxisModesAvailable(field) && !isContinuousModeRestricted) {
-                settings.axisModeMap[field.guid] = SETTINGS.AXIS_MODE.CONTINUOUS;
-            } else {
-                settings.axisModeMap[field.guid] = SETTINGS.AXIS_MODE.DISCRETE;
-            }
+            settings.axisModeMap[field.guid] = getActualAxisModeForField({
+                field,
+                axisSettings: placeholder.settings,
+                sort,
+                visualizationIds: [visualization.id as WizardVisualizationId],
+            });
         });
 
         const currentAxisMode = settings.axisModeMap[currentField.guid];
@@ -66,3 +63,34 @@ export const getFirstFieldInPlaceholder = (placeholder: Placeholder, drillDownLe
         ? placeholder.items[0].fields[drillDownLevel]
         : placeholder.items[0];
 };
+
+export function isPlaceholderWithAxisMode(placeholder: Placeholder | undefined) {
+    const placeholderSettings = (placeholder?.settings || {}) as PlaceholderSettings;
+    return Boolean(placeholderSettings?.axisModeMap);
+}
+
+export function getPlaceholderAxisModeMap(args: {
+    placeholder: Placeholder;
+    visualizationId: WizardVisualizationId;
+    sort: ServerSort[];
+}) {
+    const {placeholder, visualizationId, sort} = args;
+    const placeholderSettings = (placeholder.settings || {}) as PlaceholderSettings;
+    const axisModeMap = placeholderSettings.axisModeMap || {};
+    const firstField = placeholder.items[0];
+
+    if (!firstField) {
+        return axisModeMap;
+    }
+
+    const fields = isFieldHierarchy(firstField) ? firstField.fields : [firstField];
+    return fields.reduce((acc, field) => {
+        const itemAxisMode = getActualAxisModeForField({
+            field,
+            visualizationIds: [visualizationId],
+            sort,
+            axisSettings: placeholderSettings,
+        });
+        return Object.assign({}, acc, {[field.guid]: itemAxisMode});
+    }, axisModeMap);
+}

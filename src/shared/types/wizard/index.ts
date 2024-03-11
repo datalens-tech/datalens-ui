@@ -1,17 +1,15 @@
 import {IconProps} from '@gravity-ui/uikit';
 
-import {
-    ChartsConfig,
-    Dataset,
-    ExtendedChartsConfig,
-    FilterField,
-    HierarchyField,
-    Link,
-    ServerDatasetField,
-} from '../';
-import {ColorMode, GradientType, NavigatorLinesMode, NavigatorPeriod} from '../../constants';
-import {IconId} from '../../types';
+import {ChartsConfig, Dataset, FilterField, HierarchyField, Link, ServerDatasetField} from '../';
+import type {
+    ColorMode,
+    GradientType,
+    NavigatorLinesMode,
+    NavigatorPeriod,
+    WizardVisualizationId,
+} from '../../constants';
 import {CommonUpdate, CommonUpdateField} from '../common-update';
+import {IconId} from '../configs';
 import {DatasetField} from '../dataset';
 
 import {Field} from './field';
@@ -73,10 +71,15 @@ export enum LabelsPositions {
     Inside = 'inside',
 }
 
+export const enum LegendDisplayMode {
+    Show = 'show',
+    Hide = 'hide',
+}
+
 export interface CommonSharedExtraSettings {
     title?: string;
     titleMode?: 'show' | 'hide';
-    legendMode?: 'show' | 'hide';
+    legendMode?: LegendDisplayMode;
     overlap?: 'on' | 'off';
     metricFontSize?: string;
     metricFontColor?: string;
@@ -164,20 +167,21 @@ interface CommonSharedLayer extends CommonShared {
 export interface GraphShared extends CommonShared {
     visualization: {
         id:
-            | 'line'
-            | 'area'
-            | 'area100p'
-            | 'column'
-            | 'column100p'
-            | 'bar'
-            | 'bar100p'
-            | 'bar-x-d3'
-            | 'pie'
-            | 'pie-d3'
-            | 'donut'
-            | 'scatter'
-            | 'scatter-d3'
-            | 'treemap';
+            | WizardVisualizationId.Line
+            | WizardVisualizationId.LineD3
+            | WizardVisualizationId.Area
+            | WizardVisualizationId.Area100p
+            | WizardVisualizationId.Column
+            | WizardVisualizationId.BarXD3
+            | WizardVisualizationId.Column100p
+            | WizardVisualizationId.Bar
+            | WizardVisualizationId.Bar100p
+            | WizardVisualizationId.Pie
+            | WizardVisualizationId.PieD3
+            | WizardVisualizationId.Donut
+            | WizardVisualizationId.Scatter
+            | WizardVisualizationId.ScatterD3
+            | WizardVisualizationId.Treemap;
         iconProps: VisualizationIconProps;
         name: string;
         hidden?: boolean;
@@ -188,6 +192,7 @@ export interface GraphShared extends CommonShared {
             shapes?: Field[];
             colors?: Field[];
             prevColors?: Field[];
+            isMultipleColorsSupported?: boolean;
             visualization: GraphShared['visualization'];
         }) => {shapes: Field[]; colors: Field[]};
         allowAvailable?: boolean;
@@ -204,6 +209,7 @@ export interface GraphShared extends CommonShared {
             item: Field;
             visualization?: Shared['visualization'];
             designItems: Field[];
+            isMultipleColorsSupported?: boolean;
         }) => boolean;
         checkAllowedLabels?: (item: Field) => boolean;
         checkAllowedShapes?: (args: {
@@ -281,6 +287,7 @@ interface MetricShared extends CommonShared {
         allowSort?: boolean;
         allowLabels?: boolean;
         allowToltips?: boolean;
+        allowFilters?: boolean;
         availableLabelModes?: string[];
         colorsCapacity?: number;
         shapesCapacity?: number;
@@ -431,12 +438,6 @@ export const isTableShared = (shared: Shared): shared is TableShared =>
 
 export const isMetricShared = (shared: Shared): shared is MetricShared =>
     shared.visualization.id === 'metric';
-
-export function isVisualizationWithLayers(
-    visualization: ExtendedChartsConfig['visualization'] | undefined,
-): visualization is VisualizationWithLayersShared['visualization'] {
-    return visualization?.id === 'geolayer' || visualization?.id === 'combined-chart';
-}
 
 export type Update = CommonUpdate<Field>;
 export type UpdateField = CommonUpdateField<Field>;

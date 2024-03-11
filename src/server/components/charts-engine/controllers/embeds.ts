@@ -90,7 +90,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                         debug: {
                             message: error.message,
                         },
-                        extra: {hideRetry: true},
+                        extra: {hideRetry: false},
                     },
                 };
 

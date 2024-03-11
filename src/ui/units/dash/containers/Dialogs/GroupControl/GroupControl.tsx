@@ -3,9 +3,10 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
+import {applyGroupControlDialog} from 'units/dash/store/actions/controls/actions';
 
 import TwoColumnDialog from '../../../components/TwoColumnDialog/TwoColumnDialog';
-import {closeDialog} from '../../../store/actions/dash';
+import {closeDialog} from '../../../store/actions/dialogs/actions';
 
 import {GroupControlBody} from './GroupControlBody/GroupControlBody';
 import {GroupControlFooter} from './GroupControlFooter/GroupControlFooter';
@@ -23,6 +24,10 @@ export const GroupControl = () => {
         dispatch(closeDialog());
     };
 
+    const handleApply = () => {
+        dispatch(applyGroupControlDialog());
+    };
+
     return (
         <TwoColumnDialog
             className={b()}
@@ -32,10 +37,9 @@ export const GroupControl = () => {
             sidebar={<GroupControlSidebar />}
             bodyHeader={i18n('label_selector-settings')}
             body={<GroupControlBody />}
-            footer={<GroupControlFooter handleClose={handleClose} />}
+            footer={<GroupControlFooter handleClose={handleClose} handleApply={handleApply} />}
             contentClassMixin={b('content')}
             sidebarClassMixin={b('sidebar-content')}
-            hideSideBar={false}
         />
     );
 };

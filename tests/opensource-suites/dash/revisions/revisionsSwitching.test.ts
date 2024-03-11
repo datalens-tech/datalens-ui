@@ -1,12 +1,11 @@
 import {Browser, Page} from '@playwright/test';
 
-import {WorkbooksUrls} from '../../../constants/constants';
 import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {ControlQA} from '../../../../src/shared/constants/qa/control';
 import {DashKitOverlayMenuQa} from '../../../../src/shared/constants/qa/dash';
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity, slct} from '../../../utils';
+import {slct} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
@@ -17,13 +16,10 @@ let page: Page;
 datalensTest.describe('Dashboard Versioning', () => {
     datalensTest.beforeAll(async ({browser}: {browser: Browser}) => {
         page = await browser.newPage();
-
         const workbookPO = new Workbook(page);
         const dashboardPage = new DashboardPage({page});
 
-        await workbookPO.openE2EWorkbookPage();
-
-        await workbookPO.createDashboard({
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addText(arbitraryText.first);
             },
@@ -42,7 +38,8 @@ datalensTest.describe('Dashboard Versioning', () => {
     });
 
     datalensTest.afterAll(async () => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.deleteDash();
         await page.close();
     });
 

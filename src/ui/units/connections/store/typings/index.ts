@@ -42,13 +42,15 @@ import {
     SET_UPLOADED_FILES,
     SET_VALIDATION_ERRORS,
     SET_YADOCS_ACTIVE_DIALOG,
-    SET_YADOCS_ADD_SECTION_STATE,
+    SET_YADOCS_COLUMN_FILTER,
+    SET_YADOCS_ITEMS,
+    SET_YADOCS_SELECTED_ITEM_ID,
 } from '../actions';
 
 import type {FileSource, ReplaceSourceActionData, UploadedFile} from './file';
 import type {GSheetActiveDialog, GSheetAddSectionState, GSheetItem} from './gsheet';
 import type {ReplaceSource} from './s3-based';
-import {YadocsActiveDialog, YadocsAddSectionState} from './yadocs';
+import {YadocItem, YadocsActiveDialog} from './yadocs';
 
 export * from './file';
 export * from './gsheet';
@@ -109,7 +111,9 @@ export type ConnectionsReduxState = {
         activeDialog?: GSheetActiveDialog;
     };
     yadocs: {
-        addSectionState: YadocsAddSectionState;
+        items: YadocItem[];
+        columnFilter: string;
+        selectedItemId: string;
         activeDialog?: YadocsActiveDialog;
     };
     currentTenantId?: string;
@@ -319,15 +323,31 @@ export type SetGSheetActiveDialog = {
     };
 };
 
-export type SetYadocsAddSectionState = {
-    type: typeof SET_YADOCS_ADD_SECTION_STATE;
-    payload: Partial<GSheetAddSectionState>;
+export type SetYadocsItems = {
+    type: typeof SET_YADOCS_ITEMS;
+    payload: {
+        items: YadocItem[];
+    };
+};
+
+export type SetYadocsSelectedItemId = {
+    type: typeof SET_YADOCS_SELECTED_ITEM_ID;
+    payload: {
+        selectedItemId: string;
+    };
 };
 
 export type SetYadocsActiveDialog = {
     type: typeof SET_YADOCS_ACTIVE_DIALOG;
     payload: {
         activeDialog?: YadocsActiveDialog;
+    };
+};
+
+export type SetYadocsColumnFilter = {
+    type: typeof SET_YADOCS_COLUMN_FILTER;
+    payload: {
+        columnFilter: string;
     };
 };
 
@@ -364,7 +384,9 @@ export type ConnectionsReduxAction =
     | SetGSheetActiveDialog
     | OpenDialogAction
     | CloseDialogAction
-    | SetYadocsAddSectionState
-    | SetYadocsActiveDialog;
+    | SetYadocsItems
+    | SetYadocsSelectedItemId
+    | SetYadocsActiveDialog
+    | SetYadocsColumnFilter;
 
 export type ConnectionsReduxDispatch = AppDispatch<ConnectionsReduxAction>;

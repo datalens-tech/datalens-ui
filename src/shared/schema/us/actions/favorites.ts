@@ -9,6 +9,8 @@ import {
     GetFavoritesArgs,
     GetFavoritesOutput,
     GetFavoritesResponse,
+    RenameFavoriteArgs,
+    RenameFavoriteResponse,
 } from '../types';
 
 const PATH_PREFIX = '/v1';
@@ -24,6 +26,11 @@ export const favoritesActions = {
         path: ({entryId}) => `${PATH_PREFIX}/favorites/${filterUrlFragment(entryId)}`,
         params: (_, headers) => ({headers}),
     }),
+    renameFavorite: createAction<RenameFavoriteResponse, RenameFavoriteArgs>({
+        method: 'POST',
+        path: ({entryId}) => `${PATH_PREFIX}/favorites/${entryId}/rename`,
+        params: ({name}, headers) => ({body: {name}, headers}),
+    }),
     getFavorites: createAction<GetFavoritesOutput, GetFavoritesArgs, GetFavoritesResponse>({
         method: 'GET',
         path: () => `${PATH_PREFIX}/favorites`,
@@ -34,6 +41,7 @@ export const favoritesActions = {
                 ...entry,
                 isFavorite: true,
                 name: getEntryNameByKey({key: entry.key, index: -1}),
+                displayAlias: entry.displayAlias ?? entry.alias,
             })),
         }),
         paramsSerializer: defaultParamsSerializer,

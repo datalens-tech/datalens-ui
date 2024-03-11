@@ -123,6 +123,7 @@ export type ChartkitCell = {
           } & CommonTableColumn['css'])
         | CommonTableColumn['css'];
     isTotalCell?: boolean;
+    header?: boolean;
     type?: CommonTableColumn['type'];
 } & Omit<Partial<BarTableCell>, 'type'>;
 

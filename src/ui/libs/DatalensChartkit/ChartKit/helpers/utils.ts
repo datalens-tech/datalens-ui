@@ -1,8 +1,10 @@
 import type {Point} from 'highcharts';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 
 import type {StringParams} from '../../../../../shared';
 import {GraphWidget} from '../../types';
+import {ChartKitCustomError} from '../modules/chartkit-custom-error/chartkit-custom-error';
 
 export type PointActionParams = Record<string, string>;
 
@@ -46,5 +48,35 @@ export const extractHcTypeFromData = (data?: GraphWidget) => {
 };
 
 export function extractHcTypeFromSeries(series?: Highcharts.Series) {
-    return series?.chart.options.chart?.type;
+    return series?.options?.type || series?.chart.options.chart?.type;
+}
+
+export function getNormalizedClickActions(data: GraphWidget) {
+    if (data.config && 'seriesActions' in data.config) {
+        throw new ChartKitCustomError(null, {
+            details: `
+    Seems you are trying to use unsupported property "config.seriesActions". This property sets according to this type:
+
+    {
+        config: {
+            events?: {
+                click?: {
+                    handler: {
+                        type: 'setActionParams'
+                    };
+                    scope: 'point' | 'series';
+                };
+            };
+        };
+    }`,
+        });
+    }
+
+    const actions = data.config?.events?.click;
+
+    if (!actions || isEmpty(actions)) {
+        return [];
+    }
+
+    return Array.isArray(actions) ? actions : [actions];
 }

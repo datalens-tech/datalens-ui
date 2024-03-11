@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
-import {MenuItemsIds, StringParams} from 'shared';
+import {MenuItemsIds, StringParams, WizardPageQa} from 'shared';
 import {DatalensGlobalState, Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {setDrillDownLevel} from 'units/wizard/actions/visualization';
@@ -34,6 +34,7 @@ import {openDialogSaveChartConfirm} from '../../../../../store/actions/dialog';
 import {reloadRevisionsOnSave} from '../../../../../store/actions/entryContent';
 import {HighchartsWidget, setHighchartsWidget} from '../../../actions/preview';
 import {updateWizardWidgetAndDoAction} from '../../../actions/widget';
+import {selectWizardWorkbookId} from '../../../selectors/settings';
 import {selectWidget} from '../../../selectors/widget';
 import {shouldComponentUpdateWithDeepComparison} from '../../../utils/helpers';
 
@@ -138,7 +139,8 @@ class SectionPreview extends Component<Props> {
     };
 
     renderChartkit() {
-        const {configType, config, widget, previewEntryId, datasetError, chartKitRef} = this.props;
+        const {configType, config, widget, previewEntryId, datasetError, chartKitRef, workbookId} =
+            this.props;
 
         if (datasetError) {
             return (
@@ -175,6 +177,7 @@ class SectionPreview extends Component<Props> {
                     customMenuOptions={this.getCustomMenuOptions()}
                     forwardedRef={chartKitRef}
                     onInnerParamsChanged={this.handleInnerParamsChanged}
+                    workbookId={workbookId}
                 />
             );
         }
@@ -193,7 +196,9 @@ class SectionPreview extends Component<Props> {
     render() {
         return (
             <div className={'container preview-container'}>
-                <div className="preview-chartkit">{this.renderChartkit()}</div>
+                <div className="preview-chartkit" data-qa={WizardPageQa.SectionPreview}>
+                    {this.renderChartkit()}
+                </div>
             </div>
         );
     }
@@ -208,6 +213,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         widget: selectWidget(state),
         previewEntryId: selectPreviewEntryId(state),
         isChartSaved: selectIsChartSaved(state),
+        workbookId: selectWizardWorkbookId(state),
     };
 };
 

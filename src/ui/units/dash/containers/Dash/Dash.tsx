@@ -7,7 +7,7 @@ import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
 import {ResolveThunks, connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router-dom';
-import {Feature, extractEntryId} from 'shared';
+import {Feature} from 'shared';
 import {EntryDialogName, EntryDialogues} from 'ui/components/EntryDialogues';
 import {PageTitle} from 'ui/components/PageTitle';
 import {SlugifyUrl} from 'ui/components/SlugifyUrl';
@@ -15,6 +15,7 @@ import {DL, URL_QUERY} from 'ui/constants';
 import {DatalensGlobalState} from 'ui/index';
 import {axiosInstance} from 'ui/libs';
 import {NULL_HEADER} from 'ui/libs/axios/axios';
+import {registry} from 'ui/registry';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'ui/units/workbooks/store/actions';
 import Utils from 'ui/utils';
 
@@ -28,15 +29,15 @@ import {RevisionsListMode, RevisionsMode} from '../../../../store/typings/entryC
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, LOCK_EXTEND_TIMEOUT} from '../../modules/constants';
 import {CopiedConfigData, getTabTitleById} from '../../modules/helpers';
+import {load as loadDash, setEditMode} from '../../store/actions/base/actions';
 import {
     cleanLock,
     deleteLock,
-    load as loadDash,
     setCopiedItemData,
-    setEditMode,
+    setErrorMode,
     setLock,
-} from '../../store/actions/dash';
-import {setErrorMode, setPageTab} from '../../store/actions/dashTyped';
+    setPageTab,
+} from '../../store/actions/dashTyped';
 import {
     canEdit,
     isDraft,
@@ -72,6 +73,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
     private entryDialoguesRef = React.createRef<EntryDialogues>();
 
     componentDidMount() {
+        const {extractEntryId} = registry.common.functions.getAll();
         const entryId = extractEntryId(this.props.location.pathname);
         const {entry, lockToken, history, location, match} = this.props;
 
@@ -89,7 +91,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
 
         // Fix case when open dash in edit mode then open dataset via navigation then click browser's back button.
         // We set lockToken again
-        if (!entry?.fake && this.props.isEditMode && lockToken === null) {
+        if (entryId && !entry?.fake && this.props.isEditMode && lockToken === null) {
             this.props.setLock(entryId, false, false);
         }
 
@@ -100,6 +102,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const currentLocation = this.props.location;
         const prevLocation = prevProps.location;
 
+        const {extractEntryId} = registry.common.functions.getAll();
         const entryId = extractEntryId(currentLocation.pathname);
         const prevEntryId = extractEntryId(prevLocation.pathname);
 

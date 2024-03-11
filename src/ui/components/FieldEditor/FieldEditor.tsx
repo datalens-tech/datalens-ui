@@ -14,6 +14,8 @@ import {
     DatasetSourceAvatar,
     DialogFieldEditorQA,
     Feature,
+    FieldEditorQa,
+    WorkbookId,
 } from 'shared';
 import {updateUserSettings} from 'store/actions/user';
 import {selectFieldEditorDocShown} from 'store/selectors/user';
@@ -55,6 +57,7 @@ export type FieldEditorProps = {
     fields: DatasetField[];
     sources: DatasetSource[];
     datasetId: string;
+    workbookId: WorkbookId;
     dataset?: Dataset['dataset'];
     sourceAvatars: DatasetSourceAvatar[];
     options?: DatasetOptions;
@@ -123,7 +126,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
 
         return (
             <Dialog open={true} disableFocusTrap={true} onClose={this.onClose}>
-                <div className={b()} data-qa={b()}>
+                <div className={b()} data-qa={FieldEditorQa.Dialog}>
                     <Dialog.Header caption={i18n('label_title')} />
                     <Settings
                         field={field}
@@ -275,7 +278,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
     };
 
     validateFormula = async () => {
-        const {datasetId, dataset} = this.props;
+        const {datasetId, workbookId, dataset} = this.props;
         const {field} = this.state;
 
         if (!dataset) {
@@ -288,6 +291,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
             await getSdk().bi.validateDatasetFormula(
                 {
                     datasetId,
+                    workbookId,
                     dataset,
                     field,
                 },

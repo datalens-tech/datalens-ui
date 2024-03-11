@@ -3,9 +3,9 @@ import React from 'react';
 import {RadioButton, RadioButtonSize} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashTabItemControlSourceType, Feature} from 'shared';
+import {DashTabItemControlSourceType, DialogControlQa, Feature} from 'shared';
 import Utils from 'ui/utils';
-import {SelectorSourceType, setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
+import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
@@ -14,6 +14,11 @@ const CONTROL_SOURCE_TYPES = [
     {
         title: i18n('value_source-dataset'),
         value: DashTabItemControlSourceType.Dataset,
+    },
+    {
+        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+        title: i18n('value_source-connection'),
+        value: DashTabItemControlSourceType.Connection,
     },
     {
         title: i18n('value_source-manual'),
@@ -37,21 +42,25 @@ const SelectorTypeSelect = ({size = 'l', showExternalType = true}: SelectorTypeS
     const handleSourceTypeChange = React.useCallback((value: string) => {
         dispatch(
             setSelectorDialogItem({
-                sourceType: value as SelectorSourceType,
+                sourceType: value as DashTabItemControlSourceType,
                 fieldType: undefined,
             }),
         );
     }, []);
 
-    let options;
+    const options = React.useMemo(() => {
+        const availabilityMap = {
+            [DashTabItemControlSourceType.Dataset]: true,
+            [DashTabItemControlSourceType.Manual]: true,
+            [DashTabItemControlSourceType.External]:
+                Utils.isEnabledFeature(Feature.ExternalSelectors) && showExternalType,
+            [DashTabItemControlSourceType.Connection]: Utils.isEnabledFeature(
+                Feature.ConnectionBasedControl,
+            ),
+        };
 
-    if (Utils.isEnabledFeature(Feature.ExternalSelectors) && showExternalType) {
-        options = CONTROL_SOURCE_TYPES;
-    } else {
-        options = CONTROL_SOURCE_TYPES.filter(
-            (item) => item.value !== DashTabItemControlSourceType.External,
-        );
-    }
+        return CONTROL_SOURCE_TYPES.filter(({value}) => availabilityMap[value]);
+    }, [showExternalType]);
 
     return (
         <RadioButton
@@ -59,7 +68,7 @@ const SelectorTypeSelect = ({size = 'l', showExternalType = true}: SelectorTypeS
             onUpdate={handleSourceTypeChange}
             size={size}
             width="max"
-            qa="radio-source-type"
+            qa={DialogControlQa.radioSourceType}
         >
             {options.map((item) => (
                 <RadioButton.Option key={item.value} value={item.value}>

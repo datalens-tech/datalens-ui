@@ -52,3 +52,34 @@ export enum DashMetaQa {
     SaveButton = 'dash-meta-save-button',
     EditButton = 'dash-meta-edit-button',
 }
+
+export enum DashCommonQa {
+    RelationTypeButton = 'relation-type-btn',
+    AliasSelectLeft = 'alias-first-select',
+    AliasSelectRight = 'alias-second-select',
+    AliasAddBtn = 'alias-add-new-btn',
+    AliasAddApplyBtn = 'alias-add-new-apply-btn',
+    AliasesCancelBtn = 'aliases-dialog-cancel-btn',
+    AliasShowBtn = 'alias-show-btn',
+    AliasesListCollapse = 'aliases-list-collapse-btn',
+    AliasRemoveBtn = 'alias-remove-btn',
+    AliasItem = 'alias-row-item',
+    RelationsApplyBtn = 'relations-apply-btn',
+    RelationsCancelBtn = 'relations-cancel-btn',
+    WidgetShowTitleCheckbox = 'dialog-widget-settings-show-title',
+    WidgetEnableAutoHeightCheckbox = 'dialog-widget-settings-enable-autoheight',
+    RelationsDialogEmptyText = 'dialog-relations-empty-text',
+    RelationsDisconnectAllSwitcher = 'dialog-relations-disconnect-all-switcher',
+    RelationsDisconnectAllSelectors = 'dialog-relations-disconnect-all-selectors',
+    RelationsDisconnectAllWidgets = 'dialog-relations-disconnect-all-widgets',
+    RelationsListRow = 'dialog-relations-list-row',
+    RelationsRowPopover = 'dialog-relations-row-popover',
+}
+
+export enum DashRelationTypes {
+    output = 'relation-type-option-output',
+    input = 'relation-type-option-input',
+    ignore = 'relation-type-option-ignore',
+    both = 'relation-type-option-both',
+    unknown = 'relation-type-option-unknown',
+}

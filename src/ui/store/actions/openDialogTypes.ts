@@ -27,10 +27,12 @@ import type {OpenDialogDuplicateEntryInWorkbookArgs} from '../../units/workbooks
 import type {OpenDialogConnS3Sources} from '../../units/connections/components/dialogs';
 import type {OpenDialogConnWithInputArgs} from '../../units/connections/components/custom-forms/components/DialogWithInput';
 import type {OpenDialogConnConfirmArgs} from '../../units/connections/components/dialogs/Confirm';
+import type {OpenDialogMoveCollectionsWorkbooksArgs} from '../../components/CollectionsStructure/MoveCollectionsWorkbooksDialog';
 import type {OpenDialogMoveCollectionArgs} from '../../components/CollectionsStructure/MoveCollectionDialog';
 import type {OpenDialogMoveWorkbookArgs} from '../../components/CollectionsStructure/MoveWorkbookDialog';
 import type {OpenDialogCopyWorkbookArgs} from '../../components/CollectionsStructure/CopyWorkbookDialog';
 import type {OpenDialogMigrateEntryToWorkbookArgs} from '../../components/CollectionsStructure/MigrateEntryToWorkbookDialog';
+import type {OpenDialogDeployTemplateToWorkbookArgs} from '../../components/CollectionsStructure/DeployTemplateToWorkbookDialog';
 import type {OpenDialogEditWorkbookArgs} from '../../components/CollectionsStructure/EditWorkbookDialog';
 import type {OpenDialogCreateWorkbookArgs} from '../../components/CollectionsStructure/CreateWorkbookDialog';
 import type {OpenDialogEditCollectionArgs} from '../../components/CollectionsStructure/EditCollectionDialog';
@@ -42,6 +44,8 @@ import type {OpenDialogMigrateToWorkbookArgs} from '../../components/MigrateToWo
 import type {OpenDialogLabelSettingsArgs} from '../../units/wizard/components/Dialogs/DialogLabelSettings/DialogLabelSettings';
 import type {OpenDialogControlsPlacementArgs} from '../../units/dash/containers/Dialogs/GroupControl/ControlsPlacementDialog/ControlsPlacementDialog';
 import type {OpenDialogCopyEntriesToWorkbookArgs} from '../../components/CopyEntriesToWorkbookDialog/CopyEntriesToWorkbookDialog';
+import type {OpenDialogConnAddYadocArgs} from '../../units/connections/components/custom-forms/Yadocs/components/DialogAddDocument/DialogAddDocument';
+import type {OpenDialogEditQueryArgs} from '../../units/dash/containers/Dialogs/DialogEditQuery/DialogEditQuery';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogMetricSettingsArgs
@@ -69,9 +73,11 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogRenameEntryInNewWorkbookArgs
     | OpenDialogDeleteEntryInNewWorkbookArgs
     | OpenDialogDuplicateEntryInWorkbookArgs
+    | OpenDialogConnAddYadocArgs<T>
     | OpenDialogConnWithInputArgs<T>
     | OpenDialogConnConfirmArgs
     | OpenDialogConnS3Sources
+    | OpenDialogMoveCollectionsWorkbooksArgs
     | OpenDialogMoveCollectionArgs
     | OpenDialogMoveWorkbookArgs
     | OpenDialogCopyWorkbookArgs
@@ -84,5 +90,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogMigrateToWorkbookArgs
     | OpenDialogSelectMigrationToWorkbookArgs
     | OpenDialogMigrateEntryToWorkbookArgs
+    | OpenDialogDeployTemplateToWorkbookArgs
     | OpenDialogCopyEntriesToWorkbookArgs
-    | OpenDialogCopyEntriesArgs;
+    | OpenDialogCopyEntriesArgs
+    | OpenDialogEditQueryArgs;

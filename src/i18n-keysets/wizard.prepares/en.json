@@ -6,5 +6,6 @@
   "label_segment": "Segment: {{value}}",
   "label_total": "Total",
   "label_total-value": "Total: {{value}}",
-  "label_new-layer": "Layer 1"
+  "label_new-layer": "Layer 1",
+  "label_null-sorting-disabled-info": "Sorting for null values is not supported"
 }

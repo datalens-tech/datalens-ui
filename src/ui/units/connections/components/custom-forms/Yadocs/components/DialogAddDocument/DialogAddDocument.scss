@@ -1,0 +1,26 @@
+.conn-form-yadocs {
+    &__add-dialog-body {
+        display: flex;
+        flex-direction: column;
+        row-gap: 16px;
+    }
+
+    &__add-dialog-row {
+        display: flex;
+        flex-direction: column;
+        row-gap: 8px;
+    }
+
+    &__add-dialog-row-label {
+        line-height: 28px;
+    }
+
+    &__add-dialog-row-input-note {
+        line-height: 16px;
+        color: var(--g-color-text-hint);
+    }
+
+    &__add-help-btn {
+        margin-inline-start: 4px;
+    }
+}

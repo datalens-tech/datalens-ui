@@ -1,41 +1,34 @@
 import React from 'react';
 
 import {sanitizeUrl} from '@braintree/sanitize-url';
-import {transformParamsToActionParams} from '@gravity-ui/dashkit';
-import {Column, Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
-import get from 'lodash/get';
+import {Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
 import isEqual from 'lodash/isEqual';
 import isPlainObject from 'lodash/isPlainObject';
+import memoize from 'lodash/memoize';
 import {
     BarTableCell,
     BarViewOptions,
     ChartKitCss,
     NumberViewOptions,
-    StringParams,
     TableCell,
     TableCellsRow,
     TableCommonCell,
     TableHead,
     TableRow,
-    TableWidgetEventScope,
 } from 'shared';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
 
-import {MarkupItem, MarkupItemType} from '../../../../../../../../components/Markup';
-import {DataTableData, TableWidget} from '../../../../../../types';
-import {hasMatchedActionParams} from '../../../../../helpers/utils';
-import {CLICK_ACTION_TYPE} from '../../constants';
+import {MarkupItem, MarkupItemTypeDict} from '../../../../../../../../components/Markup';
+import {DataTableData} from '../../../../../../types';
 
-import type {ActionParamsData} from './types';
-
-const MARKUP_ITEM_TYPES: MarkupItemType[] = ['bold', 'concat', 'italics', 'text', 'url'];
+const getMarkupItemTypes = memoize(() => Object.values(MarkupItemTypeDict));
 
 const decodeURISafe = (uri: string) => {
     return decodeURI(uri.replace(/%(?![0-9a-fA-F][0-9a-fA-F]+)/g, '%25'));
 };
 
 const isMarkupObject = (obj: MarkupItem | Object) => {
-    const hasRequiredType = 'type' in obj && MARKUP_ITEM_TYPES.includes(obj.type);
+    const hasRequiredType = 'type' in obj && getMarkupItemTypes().includes(obj.type);
     const hasAnyContent = 'children' in obj || 'content' in obj;
 
     return hasRequiredType && hasAnyContent;
@@ -134,15 +127,6 @@ export const getCellOnClick = (row: DataTableData | undefined, columnName: strin
         typeof column === 'object' && column && 'onClick' in column ? column.onClick : undefined;
 
     return onClick;
-};
-
-export const getCellClickArgs = (row: DataTableData | undefined, columnName: string) => {
-    const onClick = getCellOnClick(row, columnName);
-    if (onClick && onClick.action === CLICK_ACTION_TYPE.SET_PARAMS && onClick.args) {
-        return onClick.args;
-    }
-
-    return undefined;
 };
 
 export const hasGroups = (head: TableHead[]): boolean => {
@@ -332,138 +316,4 @@ export function getTreeSetColumnSortAscending(
 
         return sortComparisonValue;
     };
-}
-
-export function getActionParamsEventScope(
-    events?: NonNullable<TableWidget['config']>['events'],
-): TableWidgetEventScope | undefined {
-    if (!events?.click) {
-        return undefined;
-    }
-
-    const normalizedEvents = Array.isArray(events.click) ? events.click : [events.click];
-
-    return normalizedEvents.reduce<TableWidgetEventScope | undefined>((_, e) => {
-        return e.scope;
-    }, undefined);
-}
-
-function extractCellActionParams(args: {cell: TableCell; head?: TableHead}) {
-    const {cell, head} = args;
-    const cellCustomData = get(cell, 'custom');
-
-    if (cellCustomData && 'actionParams' in cellCustomData) {
-        return cellCustomData.actionParams;
-    }
-
-    if (head?.id) {
-        const key = head?.id;
-        const value = typeof cell === 'string' ? cell : String(cell.value);
-
-        return {[key]: [value]};
-    }
-
-    return {};
-}
-
-export function getRowActionParams(args: {row?: DataTableData; head?: TableHead[]}): StringParams {
-    const {row, head} = args;
-
-    if (!row) {
-        return {};
-    }
-
-    const canAutoGenerateParams = head && !hasGroups(head);
-    return Object.keys(row).reduce<StringParams>((acc, columnName, index) => {
-        const cell = row[columnName];
-        const headColumn = canAutoGenerateParams ? head?.[index] : undefined;
-
-        return Object.assign(acc, extractCellActionParams({cell, head: headColumn}));
-    }, {});
-}
-
-function getActionParamsByRow(args: {
-    actionParams: StringParams;
-    row?: DataTableData;
-    head?: TableHead[];
-}): StringParams {
-    const {actionParams, row, head} = args;
-
-    if (!row) {
-        return {};
-    }
-
-    const rowActionParams = getRowActionParams({row, head});
-    const isRowAlreadySelected = hasMatchedActionParams(rowActionParams, actionParams);
-
-    if (isRowAlreadySelected) {
-        Object.keys(rowActionParams).forEach((key) => {
-            rowActionParams[key] = [''];
-        });
-    }
-
-    return transformParamsToActionParams(rowActionParams);
-}
-
-export function getActionParams(args: {
-    actionParamsData: ActionParamsData;
-    row?: DataTableData;
-    column?: Column<DataTableData>;
-    head?: TableHead[];
-}): StringParams {
-    const {actionParamsData, row, head} = args;
-
-    switch (actionParamsData.scope) {
-        case 'row': {
-            return getActionParamsByRow({actionParams: actionParamsData.params, row, head});
-        }
-        // There is no way to reach this code. Just satisfies ts
-        default: {
-            return actionParamsData.params;
-        }
-    }
-}
-
-function getAdditionalStylesByRow(args: {
-    actionParams: StringParams;
-    row?: DataTableData;
-    head?: TableHead[];
-}): React.CSSProperties | undefined {
-    const {actionParams, row, head} = args;
-    const rowActionParams = getRowActionParams({row, head});
-    const rowSelected = hasMatchedActionParams(rowActionParams, actionParams);
-    const actionParamsKeys = Object.keys(actionParams);
-    const hasAtLeastOneActionParam =
-        actionParamsKeys.length &&
-        actionParamsKeys.some((key) => {
-            const param = actionParams[key];
-            const normalizedParamValue = Array.isArray(param) ? param : [param];
-            return Boolean(normalizedParamValue.filter(Boolean).length);
-        });
-
-    if (hasAtLeastOneActionParam && !rowSelected) {
-        return {
-            color: 'var(--g-color-text-hint)',
-        };
-    }
-
-    return undefined;
-}
-
-export function getAdditionalStyles(args: {
-    actionParamsData: ActionParamsData;
-    row?: DataTableData;
-    head?: TableHead[];
-}): React.CSSProperties | undefined {
-    const {actionParamsData, row, head} = args;
-
-    switch (actionParamsData.scope) {
-        case 'row': {
-            return getAdditionalStylesByRow({actionParams: actionParamsData.params, row, head});
-        }
-        // There is no way to reach this code. Just satisfies ts
-        default: {
-            return undefined;
-        }
-    }
 }

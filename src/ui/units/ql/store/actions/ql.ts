@@ -23,7 +23,7 @@ import {
     QLChartType,
     QlConfigPreviewTableData,
     Shared,
-    extractEntryId,
+    WorkbookId,
     resolveIntervalDate,
     resolveOperation,
 } from '../../../../../shared';
@@ -55,13 +55,13 @@ import {
 import {setExtraSettings as setWizardExtraSettings} from '../../../wizard/actions/widget';
 import {
     AVAILABLE_CHART_TYPES,
-    AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE,
     AppStatus,
+    ConnectionStatus,
     QL_MOCKED_DATASET_ID,
     VisualizationStatus,
 } from '../../constants';
 import {prepareChartDataBeforeSave} from '../../modules/helpers';
-import {getAvailableQlVisualizations, getDefaultQlVisualization} from '../../utils/visualization';
+import {getDefaultQlVisualization, getQlVisualization} from '../../utils/visualization';
 import {
     getEntry,
     getGridSchemes,
@@ -92,6 +92,7 @@ export const SET_EXTRA_SETTINGS = Symbol('ql/SET_EXTRA_SETTINGS');
 export const SET_QUERY_METADATA = Symbol('ql/SET_QUERY_METADATA');
 export const SET_TABLE_PREVIEW_DATA = Symbol('ql/SET_TABLE_PREVIEW_DATA');
 export const SET_VISUALIZATION_STATUS = Symbol('ql/SET_VISUALIZATION_STATUS');
+export const SET_CONNECTION_STATUS = Symbol('ql/SET_CONNECTION_STATUS');
 export const SET_COLUMNS_ORDER = Symbol('ql/SET_COLUMNS_ORDER');
 export const SET_CONNECTION_SOURCES = Symbol('ql/SET_CONNECTION_SOURCES');
 export const SET_CONNECTION_SOURCE_SCHEMA = Symbol('ql/SET_CONNECTION_SOURCE_SCHEMA');
@@ -376,6 +377,13 @@ export const setVisualizationStatus = (visualizationStatus: VisualizationStatus)
     };
 };
 
+export const setConnectionStatus = (connectionStatus: ConnectionStatus) => {
+    return {
+        type: SET_CONNECTION_STATUS,
+        connectionStatus,
+    };
+};
+
 export const toggleTablePreview = () => {
     return {
         type: TOGGLE_TABLE_PREVIEW,
@@ -454,6 +462,16 @@ export const drawPreview = ({withoutTable}: {withoutTable?: boolean} = {}) => {
     };
 };
 
+export const drawPreviewIfValid = ({withoutTable}: {withoutTable?: boolean} = {}) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
+        const valid = getValid(getState());
+
+        if (valid) {
+            dispatch(drawPreview({withoutTable}));
+        }
+    };
+};
+
 const applyUrlParams = (params: QlConfigParam[]) => {
     // If there are no parameters, then exit immediately
     if (params.length === 0) {
@@ -520,30 +538,28 @@ type InitializeApplicationArgs = {
 
 type FetchConnectionSourcesArgs = {
     entryId: string;
+    workbookId: WorkbookId;
 };
 
-export const fetchConnectionSources = ({entryId}: FetchConnectionSourcesArgs) => {
+export const fetchConnectionSources = ({entryId, workbookId}: FetchConnectionSourcesArgs) => {
     return async function (dispatch: AppDispatch<QLAction>) {
-        try {
-            // Requesting information about connection sources
-            const {sources: connectionSources, freeform_sources: connectionFreeformSources} =
-                await getSdk().bi.getConnectionSources({
-                    connectionId: entryId,
-                });
+        // Requesting information about connection sources
+        const {sources: connectionSources, freeform_sources: connectionFreeformSources} =
+            await getSdk().bi.getConnectionSources({
+                connectionId: entryId,
+                workbookId,
+            });
 
-            if (!connectionSources) {
-                throw new Error(i18n('sql', 'error_failed-to-load-connection'));
-            }
-
-            dispatch(
-                setConnectionSources({
-                    connectionSources,
-                    connectionFreeformSources,
-                }),
-            );
-        } catch (error) {
-            logger.logError('ql: getConnectionSources failed', error);
+        if (!connectionSources) {
+            throw new Error(i18n('sql', 'error_failed-to-load-connection'));
         }
+
+        dispatch(
+            setConnectionSources({
+                connectionSources,
+                connectionFreeformSources,
+            }),
+        );
     };
 };
 
@@ -589,6 +605,7 @@ export const fetchConnectionSourceSchema = ({tableName}: FetchConnectionSourceSc
 
             const {raw_schema: schema} = await getSdk().bi.getConnectionSourceSchema({
                 connectionId: connection!.entryId,
+                workbookId: connection!.workbookId ?? null,
                 source: {...targetConnectionSource, id: 'sample'},
             });
 
@@ -631,6 +648,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
             }),
         );
 
+        const {extractEntryId} = registry.common.functions.getAll();
         const urlEntryId = extractEntryId(location.pathname || '');
 
         if (urlEntryId) {
@@ -677,33 +695,42 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                     }),
                 );
 
+                // By default ChartType === 'sql', since there were only sql charts before
+                const chartType = entry?.data.shared.chartType || 'sql';
+
                 const {
                     connection: {entryId: connectionEntryId},
                 } = entry.data.shared;
 
-                // We request the connection for which the chart is built
-                const loadedConnectionEntry = await getSdk().us.getEntry({
-                    entryId: connectionEntryId,
-                });
+                let connection: QLConnectionEntry | null = null;
 
-                if (!loadedConnectionEntry) {
-                    throw new Error(i18n('sql', 'error_failed-to-load-connection'));
-                }
+                try {
+                    // We request the connection for which the chart is built
+                    const loadedConnectionEntry = await getSdk().us.getEntry({
+                        entryId: connectionEntryId,
+                    });
 
-                const connection: QLConnectionEntry = loadedConnectionEntry as QLConnectionEntry;
-                const keyParts = connection.key.split('/');
-                connection.name = keyParts[keyParts.length - 1];
+                    if (loadedConnectionEntry) {
+                        connection = loadedConnectionEntry as QLConnectionEntry;
 
-                dispatch(setConnection(connection));
+                        const keyParts = connection.key.split('/');
+                        connection.name = keyParts[keyParts.length - 1];
 
-                if (
-                    ![
-                        ConnectorType.Monitoring,
-                        ConnectorType.MonitoringExt,
-                        ConnectorType.Promql,
-                    ].includes(connection.type as ConnectorType)
-                ) {
-                    dispatch(fetchConnectionSources({entryId: loadedConnectionEntry.entryId}));
+                        dispatch(setConnection(connection));
+
+                        dispatch(setConnectionStatus(ConnectionStatus.Ready));
+
+                        if (chartType === QLChartType.Sql) {
+                            dispatch(
+                                fetchConnectionSources({
+                                    entryId: loadedConnectionEntry.entryId,
+                                    workbookId: loadedConnectionEntry.workbookId,
+                                }),
+                            );
+                        }
+                    }
+                } catch (e) {
+                    dispatch(setConnectionStatus(ConnectionStatus.Failed));
                 }
 
                 const {
@@ -721,8 +748,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 const loadedVisualization = entry.data.shared
                     .visualization as Shared['visualization'];
 
-                const {id: loadedVisualizationId, placeholders: loadedVisualizationPlaceholders} =
-                    loadedVisualization;
+                const {placeholders: loadedVisualizationPlaceholders} = loadedVisualization;
 
                 // Clone the parameters so as not to transform them into entry
                 const params = entry.data.shared.params
@@ -750,9 +776,6 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                 applyUrlParams(params);
 
-                // By default ChartType === 'sql', since there were only sql charts before
-                const chartType = entry?.data.shared.chartType || 'sql';
-
                 dispatch(
                     setSettings({
                         tabs,
@@ -769,13 +792,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                 dispatch(setWizardExtraSettings(extraSettings));
 
-                const fixedVisualizationId =
-                    loadedVisualizationId === 'table' ? 'flatTable' : loadedVisualizationId;
-
-                const availableVisualizations = getAvailableQlVisualizations();
-                const visualization = (availableVisualizations.find((someVisualization) => {
-                    return someVisualization.id === fixedVisualizationId;
-                }) || getDefaultQlVisualization()) as Shared['visualization'];
+                const visualization = getQlVisualization(loadedVisualization);
 
                 dispatch(
                     setVisualizationWizard({
@@ -837,7 +854,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 datalensGlobalState = getState();
 
                 dispatch(
-                    drawPreview({
+                    drawPreviewIfValid({
                         withoutTable: false,
                     }),
                 );
@@ -1020,12 +1037,14 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                         dispatch(setConnection(connection));
 
+                        const {getConnectionsByChartType} = registry.ql.functions.getAll();
+
                         let newChartType;
                         AVAILABLE_CHART_TYPES.some((possibleChartType) => {
                             if (
-                                AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE[
-                                    possibleChartType
-                                ].includes(connection.type as ConnectorType)
+                                getConnectionsByChartType(possibleChartType).includes(
+                                    connection.type as ConnectorType,
+                                )
                             ) {
                                 dispatch(setChartType(possibleChartType));
 
@@ -1039,7 +1058,10 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                         if (newChartType === QLChartType.Sql) {
                             dispatch(
-                                fetchConnectionSources({entryId: loadedConnectionEntry.entryId}),
+                                fetchConnectionSources({
+                                    entryId: loadedConnectionEntry.entryId,
+                                    workbookId: loadedConnectionEntry.workbookId,
+                                }),
                             );
                         }
 
@@ -1084,7 +1106,12 @@ export const performManualConfiguration = ({
 }: PerformManualConfigurationArgs) => {
     // eslint-disable-next-line consistent-return
     return async function (dispatch: AppDispatch<QLAction>) {
-        dispatch(fetchConnectionSources({entryId: connection.entryId}));
+        dispatch(
+            fetchConnectionSources({
+                entryId: connection.entryId,
+                workbookId: connection.workbookId,
+            }),
+        );
 
         const keyParts = connection.key.split('/');
         connection.name = keyParts[keyParts.length - 1];
@@ -1173,16 +1200,6 @@ export const setQlChartActualRevision = (isDraft?: boolean) => {
                 onSetActualError: (error) => dispatch(onErrorSetActualChartRevision(error)),
             }),
         );
-    };
-};
-
-const drawPreviewIfValid = () => {
-    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
-        const valid = getValid(getState());
-
-        if (valid) {
-            dispatch(drawPreview());
-        }
     };
 };
 

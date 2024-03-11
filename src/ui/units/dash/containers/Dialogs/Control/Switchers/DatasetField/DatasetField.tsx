@@ -11,6 +11,8 @@ import {
     DATASET_FIELD_TYPES,
     DatasetFieldCalcMode,
     DatasetFieldType,
+    DialogControlQa,
+    WorkbookId,
     isParameter,
 } from '../../../../../../../../shared';
 import logger from '../../../../../../../libs/logger';
@@ -23,6 +25,7 @@ const b = block('control-switcher-dataset-field');
 type Props = {
     title?: string;
     datasetId?: string;
+    workbookId: WorkbookId;
     fieldId?: string;
     ignoredFieldTypes?: DatasetFieldType[];
     ignoredDataTypes?: DATASET_FIELD_TYPES[];
@@ -32,6 +35,7 @@ type Props = {
         fieldName: string;
         datasetFieldType: DatasetFieldType;
     }) => void;
+    hasValidationError: boolean;
 };
 
 type State = {
@@ -76,10 +80,17 @@ export class DatasetField extends React.PureComponent<Props, State> {
     }
 
     getDatasetFields() {
-        const {ignoredFieldTypes = [DatasetFieldType.Measure], ignoredDataTypes = []} = this.props;
+        const {
+            ignoredFieldTypes = [DatasetFieldType.Measure],
+            ignoredDataTypes = [],
+            workbookId,
+        } = this.props;
 
         getSdk()
-            .bi.getDataSetFieldsById({dataSetId: this.props.datasetId!})
+            .bi.getDataSetFieldsById({
+                dataSetId: this.props.datasetId!,
+                workbookId,
+            })
             .then(({fields}) =>
                 this.setState(
                     {
@@ -155,7 +166,7 @@ export class DatasetField extends React.PureComponent<Props, State> {
     renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
     render() {
-        const {fieldId} = this.props;
+        const {fieldId, hasValidationError} = this.props;
         const {items} = this.state;
 
         return (
@@ -171,6 +182,8 @@ export class DatasetField extends React.PureComponent<Props, State> {
                 renderOption={this.renderOptions}
                 popupClassName={b('dataset-popup')}
                 filterPlaceholder={i18n('dash.control-dialog.edit', 'placeholder_search')}
+                qa={DialogControlQa.fieldSelect}
+                error={hasValidationError}
             />
         );
     }

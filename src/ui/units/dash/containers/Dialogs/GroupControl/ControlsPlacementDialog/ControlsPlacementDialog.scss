@@ -16,18 +16,6 @@
         height: 280px;
     }
 
-    &__header div {
-        padding-left: 30px;
-    }
-
-    &__back-button {
-        position: absolute;
-        // TODO: this is an private api and may silently changed. We should use local styles
-        top: calc(var(--yc-dialog-header-padding-top) - 6px);
-        left: calc(var(--yc-dialog-side-padding) - 12px);
-        z-index: 1;
-    }
-
     &__note {
         @include text-body-1();
         color: var(--g-color-text-secondary);

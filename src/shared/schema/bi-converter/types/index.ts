@@ -59,6 +59,16 @@ export type FileSourceDataSettings = {
     first_line_is_header: boolean;
 };
 
+export type FileSourceSchema =
+    | {
+          user_type: DATASET_FIELD_TYPES;
+          title: string;
+          name: string;
+      }[]
+    | null;
+
+export type FileSourcePreview = (string | number)[][];
+
 export type UpdateFileSourceResponse = {
     data_settings: FileSourceDataSettings;
     file_id: string;
@@ -74,17 +84,10 @@ export type UpdateFileSourceResponse = {
     } | null;
     source: {
         is_valid: boolean;
-        preview: (string | number)[][];
-        raw_schema:
-            | {
-                  user_type: DATASET_FIELD_TYPES;
-                  title: string;
-                  name: string;
-              }[]
-            | null;
-        sheet_id: number;
+        preview: FileSourcePreview;
+        raw_schema: FileSourceSchema;
+        sheet_id: S3BasedConnectionSheetId;
         source_id: string;
-        spreadsheet_id: string;
         title: string;
         error?: {
             code: string;
@@ -92,6 +95,9 @@ export type UpdateFileSourceResponse = {
             level: string;
             message: string;
         };
+        private_path?: string;
+        public_link?: string;
+        spreadsheet_id?: string;
     };
 };
 
@@ -139,17 +145,54 @@ export type UpdateS3BasedConnectionDataResponse = {
     }[];
 };
 
-export type GSheetUpdatedSource = {
+type BaseUpdatedSource = {
     id: string;
     title: string;
-    spreadsheet_id: string;
-    sheet_id: number;
     first_line_is_header: boolean;
 };
 
-export type UpdateS3BasedConnectionDataArgs = {
-    sources: GSheetUpdatedSource[];
+type S3BasedConnectionSheetId = string | number;
+
+export type GoogleSheetUpdatedSource = BaseUpdatedSource & {
+    sheet_id: S3BasedConnectionSheetId;
+    spreadsheet_id?: string;
+};
+
+export type YandexDocumentUpdatedSource = BaseUpdatedSource & {
+    public_link?: string;
+    private_path?: string;
+    sheet_id?: S3BasedConnectionSheetId;
+};
+
+type UpdateGoogleSheetDataArgs = {
+    type: 'gsheets';
+    sources: GoogleSheetUpdatedSource[];
+    refresh_token?: GoogleRefreshToken;
+};
+
+type UpdateYandexDocumentDataArgs = {
+    type: 'yadocs';
+    sources: YandexDocumentUpdatedSource[];
+    oauth_token?: string;
+};
+
+export type UpdateS3BasedConnectionDataArgs = (
+    | UpdateGoogleSheetDataArgs
+    | UpdateYandexDocumentDataArgs
+) & {
     authorized: boolean;
     connection_id?: string;
-    refresh_token?: GoogleRefreshToken;
+};
+
+export type AddYandexDocumentResponse = {
+    file_id: string;
+    title: string;
+};
+
+export type AddYandexDocumentArgs = {
+    authorized: boolean;
+    type: 'yadocs';
+    private_path?: string;
+    public_link?: string;
+    oauth_token?: GoogleRefreshToken;
 };

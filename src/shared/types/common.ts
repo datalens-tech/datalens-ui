@@ -104,6 +104,8 @@ export interface DLUserSettings {
         token: string;
         createdAt: string;
     };
+
+    new_year?: boolean;
 }
 
 export interface DLUserAccount {
@@ -113,6 +115,7 @@ export interface DLUserAccount {
     federationId: string;
     lang: Lang;
     login: string;
+    id: string;
     uid: string;
     avatarHost: string;
     formattedLogin: string;

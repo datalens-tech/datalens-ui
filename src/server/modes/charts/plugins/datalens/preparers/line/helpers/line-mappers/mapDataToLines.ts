@@ -1,4 +1,5 @@
-import {getColorsConfigKey, isMeasureNameOrValue} from '../../../../../../../../../shared';
+import {isMeasureNameOrValue} from '../../../../../../../../../shared';
+import {getColorsConfigKey} from '../../../../../../../../../shared/modules/colors/common-helpers';
 import {getFormattedValue} from '../../../helpers/get-formatted-value';
 import {getLineKey} from '../utils';
 
@@ -32,7 +33,7 @@ export const mapDataToLines = ({
         segmentName,
     });
 
-    if (!lines[key]) {
+    if (!Object.hasOwnProperty.call(lines, key)) {
         lines[key] = {
             data: {},
             ...seriesOptions,

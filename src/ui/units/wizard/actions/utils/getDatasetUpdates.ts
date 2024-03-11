@@ -1,3 +1,5 @@
+import {getAvailableVisualizations} from 'ui/units/wizard/utils/visualization';
+
 import {
     ColorsConfig,
     Dataset,
@@ -7,6 +9,7 @@ import {
     HierarchyField,
     PartialBy,
     Placeholder,
+    Shared,
     Sort,
     Update,
     VisualizationLayerShared,
@@ -113,9 +116,34 @@ function mergeUpdates(prevUpdates: Update[], updates: Update[], datasetId: strin
         return acc;
     }, []);
 
+    const fieldsWithRenamedGuides = updates.reduce((acc, update) => {
+        if (
+            update.field.new_id &&
+            update.field.new_id !== update.field.guid &&
+            !isDeleteUpdate(update)
+        ) {
+            acc.set(update.field.new_id, update);
+        }
+        return acc;
+    }, new Map<Update['field']['new_id'], Update>());
+
+    updates.forEach((update: Update) => {
+        if (fieldsWithRenamedGuides.has(update.field.guid) && update.action === 'update_field') {
+            update.field = {
+                ...fieldsWithRenamedGuides.get(update.field.guid)?.field,
+                ...update.field,
+            };
+            delete update.field['new_id'];
+            update.action = 'add_field';
+        }
+    });
+
     const filteredNewUpdates = updates.filter((update: Update) => {
-        const isDeleteUpdateAfterValidation = Boolean(update.deleteUpdateAfterValidation);
-        return !isDeleteUpdate(update) && !isDeleteUpdateAfterValidation;
+        return (
+            !isDeleteUpdate(update) &&
+            !update.deleteUpdateAfterValidation &&
+            !fieldsWithRenamedGuides.has(update.field.new_id)
+        );
     });
 
     return filteredOldUpdates.concat(filteredNewUpdates);
@@ -176,6 +204,11 @@ export function getDatasetUpdates(args: UpdateDatasetArgs) {
     const visualization = getVisualization(wizardVisualization.visualization);
     const placeholders: Placeholder[] = visualization?.placeholders || [];
     const wizardVisualizationFields = getVisualizationFields(wizardVisualization);
+
+    const availableVisualizations = getAvailableVisualizations();
+    const presetVisualization = availableVisualizations.find(({id}) => id === visualization?.id) as
+        | Shared['visualization']
+        | null;
 
     // Let's go through the new scheme
     newResultSchema.forEach((datasetField) => {
@@ -278,6 +311,9 @@ export function getDatasetUpdates(args: UpdateDatasetArgs) {
         });
 
         placeholders.forEach((placeholder) => {
+            const presetPlaceholder = presetVisualization?.placeholders.find(
+                (p) => p.id === placeholder.id,
+            );
             let placeholderUpdateRequired = false;
 
             placeholder.items
@@ -289,7 +325,7 @@ export function getDatasetUpdates(args: UpdateDatasetArgs) {
                         mutateAndValidateItem({
                             fields: newResultSchema as Field[],
                             item,
-                            placeholder,
+                            placeholder: presetPlaceholder,
                         });
 
                         placeholderUpdateRequired = true;

@@ -1,16 +1,21 @@
 import {
+    AxisMode,
     DATASET_FIELD_TYPES,
     DatasetFieldType,
+    Feature,
     Field,
     IChartEditor,
     PlaceholderId,
+    QlConfig,
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
+    isEnabledServerFeature,
     isMonitoringOrPrometheusChart,
 } from '../../../../../shared';
+import {isChartSupportMultipleColors} from '../../../../../shared/modules/colors/common-helpers';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
-import type {QlConfig} from '../../../../../shared/types/config/ql';
+import {registry} from '../../../../registry';
 import prepareSingleResult from '../datalens/js/helpers/misc/prepare-single-result';
 import {getFieldList} from '../helpers/misc';
 
@@ -22,9 +27,9 @@ import preparePreviewTable from './preparers/preview-table';
 import prepareTable from './preparers/table';
 import {LINEAR_VISUALIZATIONS, PIE_VISUALIZATIONS} from './utils/constants';
 import {
+    doesQueryContainOrderBy,
     getColumnsAndRows,
     log,
-    prepareQuery,
     visualizationCanHaveContinuousAxis,
 } from './utils/misc-helpers';
 import {
@@ -35,6 +40,7 @@ import {
 
 // eslint-disable-next-line complexity
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
+    const app = registry.getApp();
     const data = ChartEditor.getLoadedData();
 
     log('LOADED DATA:', data);
@@ -183,6 +189,9 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
         );
 
         if (visualizationIsEmpty) {
+            const isMultipleDistinctsAvailable =
+                isEnabledServerFeature(app.nodekit.ctx, Feature.MultipleColorsInVisualization) &&
+                isChartSupportMultipleColors(config.chartType, sharedVisualization.id);
             // Visualization is empty, so we need to autofill it
             const {colors, visualization} = migrateOrAutofillVisualization({
                 visualization: sharedVisualization,
@@ -190,6 +199,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 rows,
                 order: sharedOrder,
                 colors: sharedColors,
+                distinctsMap: isMultipleDistinctsAvailable ? resultDistincts : undefined,
             });
 
             if (colors) {
@@ -223,9 +233,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
         const available = [...(fields as unknown as Field[])];
 
-        const preparedQuery = prepareQuery(shared.queryValue);
-
-        const disableDefaultSorting = /order by/gi.test(preparedQuery);
+        const disableDefaultSorting = doesQueryContainOrderBy(shared.queryValue);
 
         const prepareSingleResultArgs = {
             resultData,
@@ -273,7 +281,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 if (disableDefaultSorting) {
                     targetPlaceholder.settings = {
                         axisModeMap: {
-                            [targetPlaceholder.items[0].guid]: 'discrete',
+                            [targetPlaceholder.items[0].guid]: AxisMode.Discrete,
                         },
                         disableAxisMode: true,
                     };

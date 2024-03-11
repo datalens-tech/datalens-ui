@@ -7,7 +7,6 @@ import ViewLoader from 'components/ViewLoader/ViewLoader';
 import {connect} from 'react-redux';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {extractEntryId} from 'shared';
 import {cleanRevisions, setRevisionsMode} from 'store/actions/entryContent';
 import {RevisionsMode} from 'store/typings/entryContent';
 import {DatalensGlobalState, EntryDialogues, URL_QUERY} from 'ui';
@@ -20,7 +19,7 @@ import {QLConnectionEntry, QLEntry} from 'units/ql/store/typings/ql';
 import {resetWizardStore} from 'units/wizard/actions';
 import {getUrlParamFromStr} from 'utils';
 
-import ViewSetup from './ViewSetup/ViewSetup';
+import {registry} from '../../../../registry';
 
 import './QL.scss';
 
@@ -58,6 +57,7 @@ class QL extends React.PureComponent<QLInnerProps> {
     componentDidUpdate(prevProps: QLInnerProps) {
         const {history, location, match} = this.props;
 
+        const {extractEntryId} = registry.common.functions.getAll();
         const prevEntryId = extractEntryId(prevProps.match.params.qlEntryId);
         const currentEntryId = extractEntryId(match.params.qlEntryId);
 
@@ -117,6 +117,8 @@ class QL extends React.PureComponent<QLInnerProps> {
 
     private renderContent() {
         const {appStatus, history, location, match} = this.props;
+
+        const ViewSetup = registry.ql.components.get('QlUnconfiguredChartView');
 
         switch (appStatus) {
             case AppStatus.Loading:

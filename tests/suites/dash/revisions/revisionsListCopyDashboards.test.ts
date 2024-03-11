@@ -5,7 +5,7 @@ import DashboardPage, {RENDER_TIMEOUT} from '../../../page-objects/dashboard/Das
 import {cssSlct, getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {COMMON_SELECTORS, RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ActionPanelDashSaveControls} from '../../../../src/shared/constants/qa/action-panel';
+import {ActionPanelDashSaveControlsQa} from '../../../../src/shared/constants/qa/action-panel';
 
 datalensTest.describe('Dashboard Versioning', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
@@ -38,14 +38,14 @@ datalensTest.describe('Dashboard Versioning', () => {
             await dashboardPage.editDashWithoutSaving();
 
             // check the corresponding button
-            await page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_BTN));
+            await page.waitForSelector(slct(ActionPanelDashSaveControlsQa.Save));
             //click on the dropdown arrow
             await page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
 
             // check the corresponding dropdown menu items
             await page.waitForSelector(cssSlct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_MENU));
-            await page.waitForSelector(slct(ActionPanelDashSaveControls.SaveAsDraftDropdownItem));
-            await page.waitForSelector(slct(ActionPanelDashSaveControls.SaveAsNewDropdownItem));
+            await page.waitForSelector(slct(ActionPanelDashSaveControlsQa.SaveAsDraftDropdownItem));
+            await page.waitForSelector(slct(ActionPanelDashSaveControlsQa.SaveAsNewDropdownItem));
         },
     );
 
@@ -64,15 +64,15 @@ datalensTest.describe('Dashboard Versioning', () => {
             await dashboardPage.enterEditMode();
             await dashboardPage.editDashWithoutSaving();
             // check the corresponding button
-            await page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_DRAFT_BTN));
+            await page.waitForSelector(slct(ActionPanelDashSaveControlsQa.SaveAsDraft));
             //click on the dropdown arrow
             await page.click(slct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_BTN));
             // check the corresponding dropdown menu items
             await page.waitForSelector(cssSlct(COMMON_SELECTORS.ACTION_PANEL_SAVE_AS_MENU));
             await page.waitForSelector(
-                slct(ActionPanelDashSaveControls.SaveAndPublishDropdownItem),
+                slct(ActionPanelDashSaveControlsQa.SaveAndPublishDropdownItem),
             );
-            await page.waitForSelector(slct(ActionPanelDashSaveControls.SaveAsNewDropdownItem));
+            await page.waitForSelector(slct(ActionPanelDashSaveControlsQa.SaveAsNewDropdownItem));
         },
     );
 });

@@ -5,12 +5,17 @@ import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
 import {DashData, DashEntry, Permissions, WidgetType} from 'shared';
 
+import {ELEMENT_TYPE} from '../../containers/Dialogs/Control/constants';
 import {Mode} from '../../modules/constants';
 import {DashUpdateStatus} from '../../typings/dash';
 import {
     ADD_SELECTOR_TO_GROUP,
-    CHANGE_NAVIGATION_PATH,
     SET_ACTIVE_SELECTOR_INDEX,
+    UPDATE_SELECTORS_GROUP,
+} from '../actions/controls/actions';
+import {SelectorsGroupDialogState} from '../actions/controls/types';
+import {
+    CHANGE_NAVIGATION_PATH,
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
     SET_DASH_DESCRIPTION,
@@ -22,6 +27,7 @@ import {
     SET_ERROR_MODE,
     SET_HASH_STATE,
     SET_INITIAL_PAGE_TABS_ITEMS,
+    SET_LAST_USED_CONNECTION_ID,
     SET_LAST_USED_DATASET_ID,
     SET_LOADING_EDIT_MODE,
     SET_PAGE_DEFAULT_TAB_ITEMS,
@@ -32,13 +38,14 @@ import {
     SET_STATE,
     SET_STATE_HASH_ID,
     SET_TAB_HASH_STATE,
+    SET_WIDGET_CURRENT_TAB,
     SelectorDialogState,
     TOGGLE_TABLE_OF_CONTENT,
     TabsHashStates,
-    UPDATE_SELECTORS_GROUP,
 } from '../actions/dashTyped';
 import {DashAction} from '../actions/index';
 import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
+import {getInitialDefaultValue} from '../utils';
 
 import {TAB_PROPERTIES, getSelectorDialogInitialState} from './dash';
 
@@ -53,9 +60,10 @@ export type DashState = {
     dashKitRef: null | React.RefObject<DashKit>;
     error: null | Error;
     openedDialog: null; // TODO: clarify types
-    openedItemId: null; // TODO: clarify types
+    openedItemId: string | null;
     showTableOfContent: boolean;
     lastUsedDatasetId: null | string;
+    lastUsedConnectionId: undefined | string;
     entry: DashEntry;
     data: DashData;
     updateStatus: DashUpdateStatus;
@@ -64,13 +72,15 @@ export type DashState = {
     lockToken: string | null;
     isFullscreenMode?: boolean;
     selectorDialog: SelectorDialogState;
-    selectorsGroup: SelectorDialogState[];
+    selectorsGroup: SelectorsGroupDialogState;
     activeSelectorIndex: number;
     isLoadingEditMode: boolean;
     isNewRelationsOpened?: boolean;
     isRenameWithoutReload?: boolean;
     skipReload?: boolean;
     openedItemWidgetType?: WidgetType;
+    // contains widgetId: curentTabId to open widget dialog with current tab
+    widgetsCurrentTab: {[key: string]: string};
 };
 
 // eslint-disable-next-line complexity
@@ -225,13 +235,24 @@ export function dashTypedReducer(
                 lastUsedDatasetId: action.payload,
             };
 
+        case SET_LAST_USED_CONNECTION_ID:
+            return {
+                ...state,
+                lastUsedConnectionId: action.payload,
+            };
+
         case SET_SELECTOR_DIALOG_ITEM: {
-            const {selectorDialog, activeSelectorIndex} = state;
+            const {selectorDialog, selectorsGroup, activeSelectorIndex} = state;
             const {payload} = action;
 
             const elementTypeChanged =
                 payload.elementType && selectorDialog.elementType !== payload.elementType;
-            const defaultValue = elementTypeChanged ? undefined : selectorDialog.defaultValue;
+            const defaultValue = elementTypeChanged
+                ? getInitialDefaultValue(payload.elementType!)
+                : selectorDialog.defaultValue;
+            const isElementTypeWithoutRequired =
+                elementTypeChanged && payload.elementType === ELEMENT_TYPE.CHECKBOX;
+            const required = isElementTypeWithoutRequired ? false : selectorDialog.required;
 
             const validation: SelectorDialogState['validation'] = {
                 title:
@@ -246,20 +267,28 @@ export function dashTypedReducer(
                     selectorDialog.datasetFieldId === payload.datasetFieldId
                         ? selectorDialog.validation.datasetFieldId
                         : undefined,
+                defaultValue:
+                    !isElementTypeWithoutRequired &&
+                    selectorDialog.defaultValue === payload.defaultValue
+                        ? selectorDialog.validation.defaultValue
+                        : undefined,
             };
 
             const newSelectorState = {
                 ...state.selectorDialog,
                 defaultValue,
                 validation,
+                required,
                 ...payload,
             };
 
-            let newSelectorsGroupState = [newSelectorState] as SelectorDialogState[];
+            const newSelectorsGroupState = {
+                ...selectorsGroup,
+            };
 
-            if (state.selectorsGroup.length) {
-                newSelectorsGroupState = [...state.selectorsGroup];
-                newSelectorsGroupState[activeSelectorIndex] = newSelectorState;
+            if (state.selectorsGroup.items.length) {
+                newSelectorsGroupState.items = [...selectorsGroup.items];
+                newSelectorsGroupState.items[activeSelectorIndex] = newSelectorState;
             }
 
             return {
@@ -271,29 +300,45 @@ export function dashTypedReducer(
 
         case ADD_SELECTOR_TO_GROUP: {
             const {payload} = action;
-            const newSelector = getSelectorDialogInitialState();
+            const newSelector = getSelectorDialogInitialState({
+                lastUsedDatasetId: state.lastUsedDatasetId,
+            });
+
+            // if current length is 1, the added selector will be the second so we enable autoHeight
+            const autoHeight =
+                state.selectorsGroup.items.length === 1 ? true : state.selectorsGroup.autoHeight;
 
             return {
                 ...state,
-                selectorsGroup: [...state.selectorsGroup, {...newSelector, title: payload.title}],
-                selectorDialog: {...newSelector, title: payload.title},
+                selectorsGroup: {
+                    ...state.selectorsGroup,
+                    items: [...state.selectorsGroup.items, {...newSelector, title: payload.title}],
+                    autoHeight,
+                },
             };
         }
 
         case UPDATE_SELECTORS_GROUP: {
-            const {activeSelectorIndex} = state;
-            const selectors = action.payload;
+            const {selectorsGroup} = state;
+            const {items, autoHeight, buttonApply, buttonReset} = action.payload;
+
             return {
                 ...state,
-                selectorsGroup: selectors,
-                selectorDialog: selectors[activeSelectorIndex],
+                selectorsGroup: {
+                    ...selectorsGroup,
+                    items,
+                    autoHeight,
+                    buttonApply,
+                    buttonReset,
+                },
             };
         }
 
         case SET_ACTIVE_SELECTOR_INDEX: {
             return {
                 ...state,
-                activeSelectorIndex: action.payload,
+                activeSelectorIndex: action.payload.activeSelectorIndex,
+                selectorDialog: state.selectorsGroup.items[action.payload.activeSelectorIndex],
             };
         }
 
@@ -384,6 +429,16 @@ export function dashTypedReducer(
             return {
                 ...state,
                 isRenameWithoutReload: action.payload || false,
+            };
+        }
+
+        case SET_WIDGET_CURRENT_TAB: {
+            return {
+                ...state,
+                widgetsCurrentTab: {
+                    ...state.widgetsCurrentTab,
+                    [action.payload.widgetId]: action.payload.tabId,
+                },
             };
         }
 

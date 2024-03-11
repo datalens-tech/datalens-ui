@@ -1,8 +1,13 @@
 import type {ChartType, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 
-import {IChartEditor, QlVisualizationId, ServerVisualization} from '../../../../../shared';
+import {
+    IChartEditor,
+    LegendDisplayMode,
+    QlVisualizationId,
+    ServerVisualization,
+} from '../../../../../shared';
+import type {QlConfig} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
-import type {QlConfig} from '../../../../../shared/types/config/ql';
 
 const applyPlaceholderSettingsToYAxis = ({
     visualization,
@@ -69,8 +74,11 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
     });
 
     const isLegendEnabled = Boolean(
-        config.colors?.length && config.extraSettings?.legendMode !== 'hide',
+        config.colors?.length && config.extraSettings?.legendMode !== LegendDisplayMode.Hide,
     );
+
+    const tooltipSum = config.extraSettings?.tooltipSum;
+    const isTooltipSumEnabled = typeof tooltipSum === 'undefined' || tooltipSum === 'on';
 
     const widgetData: YagrWidgetData['libraryConfig'] = {
         title,
@@ -130,7 +138,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             maxLines: 15,
             percent,
             precision: 2,
-            sum: true,
+            sum: isTooltipSumEnabled,
             tracking,
         },
     };

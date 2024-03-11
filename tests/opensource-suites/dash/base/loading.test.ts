@@ -1,13 +1,20 @@
 import {Page} from '@playwright/test';
 
-import {TestParametrizationConfig} from 'types/config';
+import {TestParametrizationConfig} from '../../../types/config';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {openTestPage} from '../../../utils';
+import {isEnabledFeature, openTestPage, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {COMMON_DASH_SELECTORS} from '../../../suites/dash/constants';
+import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
+import {ConnectionsDialogQA, DashCommonQa, Feature} from '../../../../src/shared';
 
 const TEXTS = {
     TAB2: 'Tab 2',
     TAB4: 'Tab 4',
+};
+
+const SELECTORS = {
+    CHART_LINE_ITEM: '.chartkit-d3-axis',
 };
 
 const waitForDashFirstResponseSentData = async ({
@@ -45,11 +52,6 @@ const isChartRequestSent = (reqData: string | null) => {
 };
 
 datalensTest.describe('Dashboards - Widget Downloads', () => {
-    /**
-     * Tests is not included in the set:
-     * 1. Loading charts that didn't get into the viewport when opening links
-     */
-
     datalensTest(
         'When loading a dashboard, the selectors have priority for loading api/run',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
@@ -112,7 +114,56 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
             await dashboardPage.waitForSomeChartItemVisible();
         },
     );
+    datalensTest(
+        "Loading charts that didn't get into the viewport when opening links",
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            // copy the original dashboard with delayed widget loading,
+            // so that the tests do not collapse due to the transition to editing and locks
+            const dashboardPage = new DashboardPage({page});
+            await openTestPage(page, config.dash.urls.DashboardWithLongContentBeforeChart);
+            await dashboardPage.duplicateDashboard(
+                config.dash.urls.DashboardWithLongContentBeforeChart,
+            );
 
+            // we set small viewport sizes for a more stable check
+            page.setViewportSize({width: 1000, height: 300});
+
+            const initPromise = page.waitForRequest('/api/run');
+
+            // waiting for the widget container to be rendered
+            await page.waitForSelector(`${slct(COMMON_DASH_SELECTORS.DASH_PLUGIN_WIDGET_BODY)}`);
+
+            // check that the widget content is not loaded
+            await waitForCondition(async () => {
+                const elems = await page.$$(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+                return elems.length === 0;
+            });
+
+            const isEnabledNewRelations = await isEnabledFeature(page, Feature.ShowNewRelations);
+            if (isEnabledNewRelations) {
+                await dashboardPage.openControlRelationsDialog();
+            } else {
+                await dashboardPage.openDashConnections();
+            }
+
+            // waiting for the chart to load
+            await initPromise;
+
+            if (isEnabledNewRelations) {
+                await page
+                    .locator(`${slct(DashCommonQa.RelationsCancelBtn)}:not([disabled])`)
+                    .click();
+            } else {
+                await page.locator(slct(ConnectionsDialogQA.Cancel)).click();
+            }
+
+            // check that the widget content has appeared
+            await page.waitForSelector(SELECTORS.CHART_LINE_ITEM);
+
+            await dashboardPage.exitEditMode();
+            await dashboardPage.deleteDash();
+        },
+    );
     datalensTest(
         'Loading charts when switching to another tab',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {

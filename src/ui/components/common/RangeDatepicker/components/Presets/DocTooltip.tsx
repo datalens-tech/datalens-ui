@@ -9,6 +9,7 @@ import {I18n} from 'i18n';
 const i18n = I18n.keyset('components.common.RangeDatepicker');
 const b = block('yc-range-datepicker');
 const MOBILE_ICON_SIZE = 24;
+const EMPTY_CELL_KEY = '__empty__';
 
 type Cell = {
     titleKey: string;
@@ -53,7 +54,7 @@ const MOBILE_ROWS: Cell[][] = CELLS
             // Adding an empty cell to get a grid of the form
             // | <description>      |                 |
             // | <value 'from'> | <value 'to'> |
-            rows[rowIndex].push({titleKey: 'label_empty'});
+            rows[rowIndex].push({titleKey: EMPTY_CELL_KEY});
         }
 
         rows[rowIndex].push(cell);
@@ -79,7 +80,7 @@ const renderMobileTooltipContentRow = (cells: Cell[], rowIndex: number) => (
                     key={`${titleKey}-${cellIndex}`}
                     className={b('doc-tooltip-table-mobile-row-cell', {desc: !value})}
                 >
-                    {i18n(titleKey)}
+                    {titleKey === EMPTY_CELL_KEY ? '' : i18n(titleKey)}
                 </div>
             ))}
         </div>

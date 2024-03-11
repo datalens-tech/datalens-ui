@@ -1,9 +1,13 @@
 import {generateUniqId} from '@gravity-ui/dashkit';
 import {I18n} from 'i18n';
+import {DashLoadPriority, FakeDashData} from 'shared/types/dash';
 import {DL, URL_QUERY} from 'ui/constants';
 import Utils from 'ui/utils';
 
+import {CheckboxControlValue, ELEMENT_TYPE} from '../containers/Dialogs/Control/constants';
 import {Mode} from '../modules/constants';
+
+import {SelectorElementType} from './actions/dashTyped';
 
 const storeI18n = I18n.keyset('dash.store.view');
 const dashCreateI18n = I18n.keyset('component.dialog-create-dashboard.view');
@@ -20,7 +24,7 @@ export const getFakeDashEntry = (workbookId?: string) => {
 
     const initialKey = `${path}${dashCreateI18n('label_default-name')}`;
 
-    const data = {
+    const data: FakeDashData = {
         tabs: [
             {
                 id: newTabId,
@@ -33,6 +37,18 @@ export const getFakeDashEntry = (workbookId?: string) => {
         ],
         counter,
         salt,
+        settings: {
+            hideTabs: false,
+            expandTOC: false,
+            hideDashTitle: false,
+            silentLoading: false,
+            autoupdateInterval: null,
+            dependentSelectors: true,
+            maxConcurrentRequests: null,
+            loadOnlyVisibleCharts: true,
+            loadPriority: DashLoadPriority.Charts,
+            globalParams: {},
+        },
     };
 
     return {
@@ -55,4 +71,13 @@ export const getFakeDashEntry = (workbookId?: string) => {
         },
         navigationPath: Utils.getNavigationPathFromKey(initialKey),
     };
+};
+
+export const getInitialDefaultValue = (elementType: SelectorElementType) => {
+    switch (elementType) {
+        case ELEMENT_TYPE.CHECKBOX:
+            return CheckboxControlValue.FALSE;
+        default:
+            return undefined;
+    }
 };

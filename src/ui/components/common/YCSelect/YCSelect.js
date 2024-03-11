@@ -331,6 +331,7 @@ export class YCSelect extends React.PureComponent {
         errorContent: PropTypes.node,
         onFetchErrorDetails: PropTypes.func,
         fetchErrorDetailsTitle: PropTypes.string,
+        hasValidationError: PropTypes.bool,
     };
 
     constructor(props) {
@@ -1329,6 +1330,7 @@ export class YCSelect extends React.PureComponent {
             switcherClassName,
             controlTestAnchor,
             errorContent,
+            hasValidationError,
         } = this.props;
 
         const {
@@ -1360,7 +1362,7 @@ export class YCSelect extends React.PureComponent {
             disabled: disabled || isInitPending || loading,
             'without-animation':
                 (controlWidth || this.state.controlWidth) > MAX_CONTROL_WIDTH_WITH_ANIMATION,
-            error: Boolean(errorContent),
+            error: Boolean(errorContent) || hasValidationError,
         };
 
         const badgeMods = {

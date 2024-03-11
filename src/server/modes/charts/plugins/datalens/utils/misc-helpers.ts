@@ -5,8 +5,10 @@ import {
     ColorMode,
     CommonNumberFormattingOptions,
     DATASET_FIELD_TYPES,
+    LegendDisplayMode,
     MINIMUM_FRACTION_DIGITS,
     ServerColor,
+    ServerCommonSharedExtraSettings,
     ServerField,
     ServerPlaceholder,
     ServerPointSizeConfig,
@@ -16,6 +18,7 @@ import {
     formatNumber as chartKitFormatNumber,
     isDateField,
     isMeasureField,
+    isMeasureValue,
 } from '../../../../../../shared';
 import type {ChartColorsConfig} from '../js/helpers/colors';
 import {ChartKitFormatSettings, ResultDataOrder} from '../preparers/types';
@@ -67,6 +70,10 @@ function isNumericalDataType(dataType: string) {
 
 function isFloatDataType(dataType: string) {
     return dataType === DATASET_FIELD_TYPES.FLOAT;
+}
+
+function isMarkupDataType(dataType: string) {
+    return dataType === DATASET_FIELD_TYPES.MARKUP;
 }
 
 function getTimezoneOffsettedTime(value: Date) {
@@ -357,8 +364,13 @@ function isGradientMode({
 }) {
     return (
         isMeasureField(colorField) ||
+        isMeasureValue(colorField) ||
         (isNumericalDataType(colorFieldDataType) && colorsConfig.colorMode === ColorMode.GRADIENT)
     );
+}
+
+export function isLegendEnabled(chartSetting?: ServerCommonSharedExtraSettings) {
+    return chartSetting?.legendMode !== LegendDisplayMode.Hide;
 }
 
 export {
@@ -370,6 +382,7 @@ export {
     isGradientMode,
     isNumericalDataType,
     isFloatDataType,
+    isMarkupDataType,
     getTimezoneOffsettedTime,
     formatDate,
     formatNumber,

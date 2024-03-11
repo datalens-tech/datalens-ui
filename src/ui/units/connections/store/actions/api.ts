@@ -1,10 +1,11 @@
 import {ConnectionData, TIMEOUT_65_SEC} from 'shared';
-import type {FormSchema} from 'shared/schema/types';
 import {DL} from 'ui';
 
 import {
     AddGoogleSheetResponse,
+    AddYandexDocumentResponse,
     ApplySourceSettingsArgs,
+    FormSchema,
     GetAuthorizationUrlResponse,
     GetConnectorSchemaArgs,
     GetConnectorsResponse,
@@ -48,12 +49,13 @@ const fetchEntry = async (
 
 const fetchConnectionData = async (
     connectionId: string,
+    workbookId: string | null,
 ): Promise<{
     connectionData: ConnectionData;
     error?: DataLensApiError;
 }> => {
     try {
-        const connectionData = await getSdk().bi.getConnection({connectionId});
+        const connectionData = await getSdk().bi.getConnection({connectionId, workbookId});
         return {connectionData};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchConnectionData failed', error);
@@ -139,9 +141,13 @@ const checkConnectionParams = async (params: FormDict): Promise<CheckData> => {
     }
 };
 
-const checkConnection = async (params: FormDict, connectionId: string): Promise<CheckData> => {
+const checkConnection = async (
+    params: FormDict,
+    connectionId: string,
+    workbookId: string | null,
+): Promise<CheckData> => {
     try {
-        await getSdk().bi.verifyConnection({...params, connectionId});
+        await getSdk().bi.verifyConnection({...params, connectionId, workbookId});
         return {status: 'success', error: undefined};
     } catch (error) {
         logger.logError('Redux actions (conn): checkConnection failed', error);
@@ -152,16 +158,18 @@ const checkConnection = async (params: FormDict, connectionId: string): Promise<
 const copyTemplate = async (
     connectionId: string,
     templateName: string,
+    workbookId?: string,
 ): Promise<{
     entryId?: string;
     error?: DataLensApiError;
+    workbookId?: string;
 }> => {
     try {
-        const {entryId} = await getSdk().us.copyTemplate(
-            {connectionId, templateName},
+        const {entryId, workbookId: templateWorkbookId} = await getSdk().us.copyTemplate(
+            {connectionId, templateName, workbookId},
             {timeout: TIMEOUT_65_SEC},
         );
-        return {entryId, error: undefined};
+        return {entryId, workbookId: templateWorkbookId, error: undefined};
     } catch (error) {
         logger.logError('Redux actions (conn): copyTemplate failed', error);
         return {entryId: undefined, error};
@@ -346,6 +354,32 @@ const getGoogleCredentials = async (
     }
 };
 
+const addYandexDocument = async ({
+    authorized = false,
+    privatePath,
+    publicLink,
+    oauthToken,
+}: {
+    authorized?: boolean;
+    privatePath?: string;
+    publicLink?: string;
+    oauthToken?: string;
+}): Promise<{document?: AddYandexDocumentResponse; error?: DataLensApiError}> => {
+    try {
+        const document = await getSdk().biConverter.addYandexDocument({
+            authorized,
+            type: 'yadocs',
+            private_path: privatePath,
+            public_link: publicLink,
+            oauth_token: oauthToken,
+        });
+        return {document};
+    } catch (error) {
+        logger.logError('Redux actions (conn): addYadoc failed', error);
+        return {error};
+    }
+};
+
 export const api = {
     fetchEntry,
     fetchConnectionData,
@@ -367,4 +401,5 @@ export const api = {
     updateS3BasedConnectionData,
     getGoogleAuthorizationUrl,
     getGoogleCredentials,
+    addYandexDocument,
 };

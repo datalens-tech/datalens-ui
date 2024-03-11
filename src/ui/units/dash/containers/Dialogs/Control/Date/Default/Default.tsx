@@ -1,10 +1,11 @@
 import React from 'react';
 
-import {RadioGroup} from '@gravity-ui/uikit';
+import {Button, RadioGroup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import moment from 'moment';
 import {
+    ControlQA,
     DATASET_FIELD_TYPES,
     FilterValue,
     getParsedIntervalDates,
@@ -13,7 +14,6 @@ import {
 import {RelativeDatesPicker} from 'ui';
 
 import Dialog from '../../Dialog/Dialog';
-import Button from '../../Switchers/Button/Button';
 import {DATETIME_FORMAT, DATE_FORMAT} from '../../constants';
 
 import './Default.scss';
@@ -61,6 +61,7 @@ interface Props {
     fieldType?: DATASET_FIELD_TYPES;
     withTime?: boolean;
     disabled?: boolean;
+    hasValidationError: boolean;
 }
 
 interface State {
@@ -203,12 +204,15 @@ class Default extends React.PureComponent<Props, State> {
         return (
             <React.Fragment>
                 <Button
-                    wrapButton={false}
-                    text={this.getText()}
                     onClick={() => this.setState({showDialog: !this.state.showDialog})}
-                    overflow={false}
                     disabled={this.props.disabled}
-                />
+                    className={b('default-btn', {error: this.props.hasValidationError})}
+                    view="outlined"
+                    width="max"
+                    qa={ControlQA.acceptableDialogButton}
+                >
+                    {this.getText()}
+                </Button>
                 {this.renderDialog()}
             </React.Fragment>
         );
@@ -218,10 +222,7 @@ class Default extends React.PureComponent<Props, State> {
         const {fieldType, withTime} = this.props;
 
         return Boolean(
-            (fieldType &&
-                (fieldType === DATASET_FIELD_TYPES.DATETIME ||
-                    fieldType === DATASET_FIELD_TYPES.GENERICDATETIME)) ||
-                withTime,
+            (fieldType && fieldType === DATASET_FIELD_TYPES.GENERICDATETIME) || withTime,
         );
     }
 }

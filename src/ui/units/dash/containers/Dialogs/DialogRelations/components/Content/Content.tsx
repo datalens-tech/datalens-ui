@@ -3,6 +3,7 @@ import React from 'react';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {DashCommonQa} from 'shared';
 
 import {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
 
@@ -39,7 +40,7 @@ export const Content = ({
 }: ContentProps) => {
     if (isLoading) {
         return (
-            <div className={b()}>
+            <div className={b({'with-loader': true})}>
                 <div className={b('loader-wrap')}>
                     <Loader className={b('loader')} />
                 </div>
@@ -48,7 +49,11 @@ export const Content = ({
     }
 
     if (!relations.length) {
-        return <div className={b('empty-text')}>{i18n('label_no-connections')}</div>;
+        return (
+            <div className={b('empty-text')} data-qa={DashCommonQa.RelationsDialogEmptyText}>
+                {i18n('label_no-connections')}
+            </div>
+        );
     }
 
     if (!widgetMeta) {

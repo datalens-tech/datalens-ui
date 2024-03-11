@@ -11,8 +11,8 @@ import {DashEntry} from 'ui/units/dash/typings/entry';
 import {DashActionPanelMobile} from 'units/dash/components/DashActionPanel/DashActionPanelMobile';
 
 import DashActionPanel from '../../components/DashActionPanel/DashActionPanel';
-import {openDialog, toggleFullscreenMode} from '../../store/actions/dash';
 import {toggleTableOfContent} from '../../store/actions/dashTyped';
+import {openDialog} from '../../store/actions/dialogs/actions';
 import {
     canEdit,
     hasTableOfContent,
@@ -86,7 +86,6 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
 const mapDispatchToProps = {
     openDialog,
     toggleTableOfContent,
-    toggleFullscreenMode,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

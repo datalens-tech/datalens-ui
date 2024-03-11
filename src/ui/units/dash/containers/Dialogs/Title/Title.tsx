@@ -14,8 +14,8 @@ import {
 import {DatalensGlobalState} from 'ui';
 
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
-import {closeDialog} from '../../../store/actions/dash';
 import {setItemData} from '../../../store/actions/dashTyped';
+import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
     selectIsDialogVisible,
     selectOpenedItemData,
@@ -77,6 +77,7 @@ class Title extends React.PureComponent<Props, State> {
             <Dialog
                 open={visible}
                 onClose={this.props.closeDialog}
+                onEnterKeyDown={this.onApply}
                 qa={DialogDashWidgetItemQA.Title}
             >
                 <Dialog.Header caption={i18n('dash.title-dialog.edit', 'label_title')} />

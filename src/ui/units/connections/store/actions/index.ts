@@ -1,5 +1,5 @@
 import {I18n} from 'i18n';
-import {pipe} from 'lodash/fp';
+import {flow} from 'lodash';
 import {batch} from 'react-redux';
 import {ConnectionData, ConnectorType} from 'shared';
 import type {FormSchema, GetEntryResponse} from 'shared/schema/types';
@@ -50,6 +50,7 @@ export * from './base';
 export * from './file';
 export * from './gsheet';
 export * from './s3-based';
+export * from './yadoc';
 
 const i18n = I18n.keyset('connections.form');
 
@@ -66,7 +67,10 @@ export function setPageData({entryId, workbookId}: {entryId?: string | null; wor
 
         if (entryId) {
             ({entry, error: entryError} = await api.fetchEntry(entryId));
-            ({connectionData, error: connectionError} = await api.fetchConnectionData(entryId));
+            ({connectionData, error: connectionError} = await api.fetchConnectionData(
+                entryId,
+                entry?.workbookId ?? null,
+            ));
         }
 
         if (!entry) {
@@ -128,13 +132,13 @@ function setDefaultFormData(args: {type: ConnectorType; schema: FormSchema}) {
 
         if (Object.keys(defaults.form).length) {
             batch(() => {
-                pipe([setInitialForm, dispatch])({updates: defaults.form});
-                pipe([setForm, dispatch])({updates: defaults.form});
+                flow([setInitialForm, dispatch])({updates: defaults.form});
+                flow([setForm, dispatch])({updates: defaults.form});
             });
         }
 
         if (Object.keys(defaults.innerForm).length) {
-            pipe([setInnerForm, dispatch])({updates: defaults.innerForm});
+            flow([setInnerForm, dispatch])({updates: defaults.innerForm});
         }
     };
 }
@@ -148,8 +152,8 @@ function setFetchedFormData(schema: FormSchema) {
 
         if (Object.keys(fetchedFormData).length) {
             batch(() => {
-                pipe([setInitialForm, dispatch])({updates: fetchedFormData});
-                pipe([setForm, dispatch])({updates: fetchedFormData});
+                flow([setInitialForm, dispatch])({updates: fetchedFormData});
+                flow([setForm, dispatch])({updates: fetchedFormData});
             });
         }
     };
@@ -204,13 +208,13 @@ export function getConnectorSchema(type: ConnectorType) {
 
 export function changeForm(formUpdates: ConnectionsReduxState['form']) {
     return (dispatch: ConnectionsReduxDispatch) => {
-        pipe([setForm, dispatch])({updates: formUpdates});
+        flow([setForm, dispatch])({updates: formUpdates});
     };
 }
 
 export function changeInnerForm(innerFormUpdates: ConnectionsReduxState['innerForm']) {
     return (dispatch: ConnectionsReduxDispatch) => {
-        pipe([setInnerForm, dispatch])({updates: innerFormUpdates});
+        flow([setInnerForm, dispatch])({updates: innerFormUpdates});
     };
 }
 
@@ -234,43 +238,68 @@ export function createConnection(name: string, dirPath?: string) {
 
         resultForm[FieldKey.Name] = name;
 
+        const workbookId = getWorkbookIdFromPathname();
+
         if (typeof dirPath === 'string') {
             resultForm[FieldKey.DirPath] = dirPath;
         } else {
-            resultForm[FieldKey.WorkbookId] = getWorkbookIdFromPathname();
+            resultForm[FieldKey.WorkbookId] = workbookId;
         }
 
-        pipe([setSubmitLoading, dispatch])({loading: true});
+        flow([setSubmitLoading, dispatch])({loading: true});
         const {id: connectionId, error: connError} = await api.createConnection(resultForm);
         let templateFolderId: string | undefined;
+        let templateWorkbookId: string | undefined;
         let templateError: DataLensApiError | undefined;
 
         if (innerForm[InnerFieldKey.isAutoCreateDashboard] && schema.templateName && connectionId) {
-            ({entryId: templateFolderId, error: templateError} = await api.copyTemplate(
-                connectionId,
-                schema.templateName,
-            ));
+            const getConnectionsWithForceSkippedCopyTemplateInWorkbooks =
+                registry.connections.functions.get(
+                    'getConnectionsWithForceSkippedCopyTemplateInWorkbooks',
+                );
+
+            const connectionsWithForceSkippedCopyTemplateInWorkbooks =
+                getConnectionsWithForceSkippedCopyTemplateInWorkbooks() ?? [];
+
+            const forceSkipCopyTemplate = Boolean(
+                connectionsWithForceSkippedCopyTemplateInWorkbooks.includes(schema.templateName) &&
+                    workbookId,
+            );
+
+            if (forceSkipCopyTemplate === false) {
+                ({
+                    entryId: templateFolderId,
+                    workbookId: templateWorkbookId,
+                    error: templateError,
+                } = await api.copyTemplate(
+                    connectionId,
+                    schema.templateName,
+                    workbookId === '' ? undefined : workbookId,
+                ));
+            }
         }
 
         if (connectionId) {
             // technotes [2]
-            pipe([resetFormsData, dispatch])();
+            flow([resetFormsData, dispatch])();
+        }
+
+        if (templateFolderId) {
+            history.replace(`/navigation/${templateFolderId}`);
+        } else if (templateWorkbookId) {
+            history.replace(`/workbooks/${templateWorkbookId}`);
+        } else if (connectionId) {
+            history.replace(`/connections/${connectionId}`);
         }
 
         batch(() => {
-            if (templateFolderId) {
-                history.replace(`/navigation/${templateFolderId}`);
-            } else if (connectionId) {
-                history.replace(`/connections/${connectionId}`);
-            }
-
             if (templateError) {
-                pipe([showToast, dispatch])({
+                flow([showToast, dispatch])({
                     title: i18n('label_error-on-template-apply'),
                     error: templateError,
                 });
             } else if (connError) {
-                pipe([showToast, dispatch])({
+                flow([showToast, dispatch])({
                     title: isEntryAlreadyExists(connError)
                         ? i18n('label_entry-name-already-exists')
                         : i18n('toast_create-connection-error'),
@@ -278,7 +307,7 @@ export function createConnection(name: string, dirPath?: string) {
                 });
             }
 
-            pipe([setSubmitLoading, dispatch])({loading: false});
+            flow([setSubmitLoading, dispatch])({loading: false});
         });
     };
 }
@@ -309,22 +338,22 @@ export function updateConnection() {
             form: resultForm,
             innerForm,
         });
-        pipe([setValidationErrors, dispatch])({errors: validationErrors});
+        flow([setValidationErrors, dispatch])({errors: validationErrors});
 
         if (validationErrors.length) {
             return;
         }
 
-        pipe([setSubmitLoading, dispatch])({loading: true});
+        flow([setSubmitLoading, dispatch])({loading: true});
         const {error} = await api.updateConnection(resultForm, connectionData.id as string);
         batch(() => {
             if (error) {
-                pipe([showToast, dispatch])({title: i18n('toast_modify-connection-error'), error});
+                flow([showToast, dispatch])({title: i18n('toast_modify-connection-error'), error});
             } else {
-                pipe([setInitialForm, dispatch])({updates: form});
+                flow([setInitialForm, dispatch])({updates: form});
             }
 
-            pipe([setSubmitLoading, dispatch])({loading: false});
+            flow([setSubmitLoading, dispatch])({loading: false});
         });
     };
 }
@@ -356,22 +385,22 @@ export function checkConnection() {
 
         const connectionId = connectionData.id && (connectionData.id as string);
 
-        pipe([setCheckLoading, dispatch])({loading: true});
+        flow([setCheckLoading, dispatch])({loading: true});
         const checkData = await (connectionId
-            ? api.checkConnection(params, connectionId)
+            ? api.checkConnection(params, connectionId, entry?.workbookId ?? null)
             : api.checkConnectionParams(params));
 
         batch(() => {
-            pipe([setCheckData, dispatch])({...checkData});
+            flow([setCheckData, dispatch])({...checkData});
 
             if (checkData.error) {
-                pipe([showToast, dispatch])({
+                flow([showToast, dispatch])({
                     title: i18n('toast_verify-error'),
                     error: checkData.error,
                 });
             }
 
-            pipe([setCheckLoading, dispatch])({loading: false});
+            flow([setCheckLoading, dispatch])({loading: false});
         });
     };
 }

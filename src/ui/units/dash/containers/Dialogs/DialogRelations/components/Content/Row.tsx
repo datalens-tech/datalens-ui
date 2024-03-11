@@ -3,6 +3,7 @@ import React from 'react';
 import {Button, DropdownMenu, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {DashCommonQa, DashRelationTypes} from 'shared';
 
 import {DEFAULT_ICON_SIZE, RELATION_TYPES, TEXT_LIMIT} from '../../constants';
 import {getDialogRowIcon} from '../../helpers';
@@ -39,6 +40,16 @@ type RowParams = {
     showDebugInfo: boolean;
     widgetIcon: React.ReactNode;
 };
+
+type ConnectionByFieldsProp = string[] | string;
+type ConnectionByUsedParamsProp = string[] | string;
+type ConnectionByAliasesProp = string[][] | string;
+
+type ConnectionField =
+    | ConnectionByFieldsProp
+    | ConnectionByUsedParamsProp
+    | ConnectionByAliasesProp;
+type ConnectionType = 'alias' | 'field' | 'param';
 
 const getRelationDetailsText = ({
     text,
@@ -82,24 +93,38 @@ const getRelationDetailsText = ({
     return text;
 };
 
+const labelsMap = {
+    field: {
+        singleLabel: i18n('label_by-field'),
+        multiLabel: i18n('label_by-fields'),
+    },
+    alias: {
+        singleLabel: i18n('label_by-alias'),
+        multiLabel: i18n('label_by-aliases'),
+    },
+    param: {
+        singleLabel: i18n('label_by-parameter'),
+        multiLabel: i18n('label_by-parameters'),
+    },
+};
+
 const getFieldText = ({
     field,
     type,
+    hasDataset,
 }: {
-    field: string[][] | string[] | string;
-    type: 'field' | 'alias';
+    field: ConnectionField;
+    type: ConnectionType;
+    hasDataset: boolean;
 }) => {
     let fieldText = '';
     let fieldTextWithStrong = null;
 
-    const byField = type === 'field';
-
-    const singleLabel = byField ? i18n('label_by-field') : i18n('label_by-alias');
-    const multiLabel = byField ? i18n('label_by-fields') : i18n('label_by-aliases');
-
+    const byField = type === 'field' || type === 'param';
+    const {singleLabel, multiLabel} = labelsMap[type];
     if (Array.isArray(field) && field.length) {
         const fieldLabel = field.length === 1 ? singleLabel : multiLabel;
-        const fieldName = byField ? field.join(', ') : '';
+        const fieldName = byField ? (Array.isArray(field) && field?.join(', ')) || '' : '';
         fieldText = ` ${fieldLabel} ${fieldName}`;
 
         const fieldNameWithStrong = byField ? <strong>{fieldName}</strong> : null;
@@ -110,6 +135,9 @@ const getFieldText = ({
                 {fieldLabel} {fieldNameWithStrong}
             </React.Fragment>
         );
+    } else if (type === 'field' && hasDataset && !field.length) {
+        fieldText = ` ${i18n('label_by-dataset-fields')}`;
+        fieldTextWithStrong = <React.Fragment>{fieldText}</React.Fragment>;
     }
 
     return {
@@ -120,28 +148,51 @@ const getFieldText = ({
 
 const getConnectionByInfo = ({
     byFields,
+    byUsedParams,
     byAliases,
     relationType,
+    hasDataset,
 }: {
     relationType: RelationType;
-    byFields: string[] | string;
-    byAliases: string[][] | string;
+    byFields: ConnectionByFieldsProp;
+    byUsedParams: ConnectionByUsedParamsProp;
+    byAliases: ConnectionByAliasesProp;
+    hasDataset: boolean;
 }) => {
     const availableLink =
         relationType !== RELATION_TYPES.ignore && relationType !== RELATION_TYPES.unknown;
 
+    const hasUsedParams = Array.isArray(byUsedParams)
+        ? Boolean(byUsedParams.length)
+        : Boolean(byUsedParams);
+    const showByUsedParams = hasUsedParams && availableLink;
     const hasFields = Array.isArray(byFields) ? Boolean(byFields.length) : Boolean(byFields);
     const showByField = hasFields && availableLink;
     const hasAliases = Array.isArray(byAliases) ? Boolean(byAliases.length) : Boolean(byAliases);
     const showByAlias = hasAliases && availableLink;
 
+    let field: ConnectionField = [];
+    let type: ConnectionType = 'field';
+
+    if (showByAlias) {
+        field = byAliases;
+        type = 'alias';
+    } else if (showByField || (hasDataset && availableLink)) {
+        field = byFields;
+        type = 'field';
+    } else if (showByUsedParams) {
+        field = byUsedParams;
+        type = 'param';
+    }
+
     const {fieldText, fieldTextWithStrong} = getFieldText({
-        field: hasFields ? byFields : byAliases,
-        type: hasFields ? 'field' : 'alias',
+        field,
+        type,
+        hasDataset,
     });
 
     return {
-        showByField: showByField || showByAlias,
+        showByField: showByField || hasDataset || showByAlias || showByUsedParams,
         fieldText,
         fieldTextWithStrong,
     };
@@ -153,17 +204,23 @@ export const getTooltipInfo = ({
     relationType,
     byFields,
     byAliases,
+    byUsedParams,
+    hasDataset,
 }: {
     widget: DashkitMetaDataItem;
     row: DashkitMetaDataItem;
     relationType: RelationType;
-    byFields: string[] | string;
-    byAliases: string[][] | string;
+    byFields: ConnectionByFieldsProp;
+    byAliases: ConnectionByAliasesProp;
+    byUsedParams: ConnectionByUsedParamsProp;
+    hasDataset: boolean;
 }) => {
     const {fieldText, fieldTextWithStrong, showByField} = getConnectionByInfo({
         byFields,
         byAliases,
         relationType,
+        byUsedParams,
+        hasDataset,
     });
 
     const widgetLabel = widget?.label && widget?.title !== widget?.label ? `${widget?.label}` : '';
@@ -241,7 +298,7 @@ const getDropdownItems = ({
         },
         icon: <Icon data={getLinkIcon(item)} size={ICON_SIZE} className={b('icon-link', item)} />,
         text: (
-            <div className={b('list-link')}>
+            <div className={b('list-link')} data-qa={DashRelationTypes[item as RelationType]}>
                 <span>{i18n(`label_${item}`)}</span>
                 <div className={b('info-text')}>
                     {getRelationDetailsText({
@@ -265,7 +322,15 @@ export const Row = ({
     widgetIcon,
 }: RowParams) => {
     const relations = data?.relations;
-    const {type: relationType, available: availableRelations, byFields, byAliases} = relations;
+    const {
+        type: relationType,
+        available: availableRelations,
+        byFields,
+        byAliases,
+        byUsedParams,
+        hasDataset,
+        forceAddAlias,
+    } = relations;
 
     const {tooltipContent, tooltipTitle, aliasDetailTitle} = getTooltipInfo({
         widget: widgetMeta,
@@ -273,6 +338,8 @@ export const Row = ({
         relationType,
         byFields,
         byAliases,
+        byUsedParams,
+        hasDataset,
     });
 
     const icon = getDialogRowIcon(data, b('icon-row'), DEFAULT_ICON_SIZE);
@@ -298,9 +365,19 @@ export const Row = ({
                 relationType,
                 widgetIcon,
                 rowIcon: icon,
+                forceAddAlias,
             });
         },
-        [aliasDetailTitle, data, icon, onChange, relationType, showDebugInfo, widgetIcon],
+        [
+            aliasDetailTitle,
+            data,
+            icon,
+            onChange,
+            relationType,
+            showDebugInfo,
+            widgetIcon,
+            forceAddAlias,
+        ],
     );
 
     if (!data || !widgetMeta) {
@@ -323,24 +400,27 @@ export const Row = ({
     const title = (showDebugInfo ? `(${data.widgetId}) ` : '') + rowTitle;
 
     return (
-        <div className={b('row')}>
+        <div className={b('row')} data-qa={DashCommonQa.RelationsListRow}>
             <div className={b('left')}>
-                {icon}
-                <span className={b('text', {'with-icon': showAliasIcon})} title={title}>
-                    {debugInfo}
-                    {rowTitle}
-                </span>
-                {showAliasIcon && (
-                    <Button
-                        view="outlined"
-                        size="s"
-                        title={i18n('label_add-alias')}
-                        className={b('button-alias')}
-                        onClick={handleAliasCLick}
-                    >
-                        <Icon data={iconAlias} className={b('icon-alias')} />
-                    </Button>
-                )}
+                <div className={b('left-inner')}>
+                    {icon}
+                    <span className={b('text')} title={title}>
+                        {debugInfo}
+                        {rowTitle}
+                    </span>
+                    {showAliasIcon && (
+                        <Button
+                            view="outlined"
+                            size="s"
+                            title={i18n('label_add-alias')}
+                            className={b('button-alias')}
+                            onClick={handleAliasCLick}
+                            qa={DashCommonQa.AliasShowBtn}
+                        >
+                            <Icon data={iconAlias} className={b('icon-alias')} />
+                        </Button>
+                    )}
+                </div>
             </div>
             <div className={b('right')}>
                 {relationType && (
@@ -349,7 +429,11 @@ export const Row = ({
                             size="l"
                             items={items}
                             switcher={
-                                <Button view="flat" className={b('button-link')}>
+                                <Button
+                                    view="flat"
+                                    className={b('button-link')}
+                                    qa={DashCommonQa.RelationTypeButton}
+                                >
                                     <span className={b('button-link-icon-wrap')}>
                                         <Icon
                                             data={getLinkIcon(relationType)}
@@ -365,6 +449,7 @@ export const Row = ({
                             content={<div title={tooltipTitle}>{tooltipContent}</div>}
                             placement="bottom"
                             hasArrow={false}
+                            qa={DashCommonQa.RelationsRowPopover}
                         >
                             <Icon data={iconInfo} size={ICON_SIZE} className={b('icon-info')} />
                         </Popover>

@@ -1,13 +1,14 @@
 import React from 'react';
 
-import {ArrowLeft} from '@gravity-ui/icons';
-import {Button, Dialog, Icon, List} from '@gravity-ui/uikit';
+import {Dialog, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {SelectorDialogState, updateSelectorsGroup} from 'ui/units/dash/store/actions/dashTyped';
-import {selectSelectorsGroup} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {BackButton} from 'ui/units/dash/components/BackButton/BackButton';
+import {updateSelectorsGroup} from 'ui/units/dash/store/actions/controls/actions';
+import {SelectorDialogState} from 'ui/units/dash/store/actions/dashTyped';
+import {selectSelectorsGroup} from 'ui/units/dash/store/selectors/controls/selectors';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../constants';
 
@@ -19,10 +20,6 @@ export const DIALOG_SELECTORS_PLACEMENT = Symbol('DIALOG_SELECTORS_PLACEMENT');
 
 export type ControlsPlacementDialogProps = {
     onClose: () => void;
-};
-
-export type ReturnButtonProps = {
-    onClose: ControlsPlacementDialogProps['onClose'];
 };
 
 export type OpenDialogControlsPlacementArgs = {
@@ -39,23 +36,9 @@ const resetAutoValues = (items: SelectorDialogState[]) =>
         item.placementMode === CONTROLS_PLACEMENT_MODE.AUTO ? {...item, width: ''} : item,
     );
 
-const ReturnButton = ({onClose}: ReturnButtonProps) => {
-    return (
-        <Button
-            view="flat"
-            size="l"
-            title={i18n('button_back')}
-            className={b('back-button')}
-            onClick={onClose}
-        >
-            <Icon data={ArrowLeft} size={18} />
-        </Button>
-    );
-};
-
 const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
-    const items = useSelector(selectSelectorsGroup);
-    const [itemsState, setItemsState] = React.useState(items);
+    const selectorsGroup = useSelector(selectSelectorsGroup);
+    const [itemsState, setItemsState] = React.useState(selectorsGroup.items);
     const [errorsIndexes, setErrorsIndexes] = React.useState<number[]>([]);
     const [showErrors, setShowErrors] = React.useState(false);
     const dispatch = useDispatch();
@@ -81,9 +64,14 @@ const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
             return;
         }
         const updatedItemsState = resetAutoValues(itemsState);
-        dispatch(updateSelectorsGroup(updatedItemsState));
+        dispatch(
+            updateSelectorsGroup({
+                ...selectorsGroup,
+                items: updatedItemsState,
+            }),
+        );
         onClose();
-    }, [itemsState, dispatch, onClose, errorsIndexes.length]);
+    }, [selectorsGroup, itemsState, dispatch, onClose, errorsIndexes.length]);
 
     const handlePlacementModeUpdate = React.useCallback(
         (targetIndex: number, newType: SelectorDialogState['placementMode']) => {
@@ -151,7 +139,7 @@ const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
             <Dialog.Header
                 className={b('header')}
                 caption={i18n('label_title')}
-                insertBefore={<ReturnButton onClose={onClose} />}
+                insertBefore={<BackButton onClose={onClose} />}
             />
             <Dialog.Body className={b('body')}>
                 <div className={b('note')}>{i18n('label_note')}</div>

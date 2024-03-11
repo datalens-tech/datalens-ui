@@ -3,13 +3,14 @@ import {Page} from '@playwright/test';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {
     getControlByTitle,
-    getUniqueTimestamp,
+    isEnabledFeature,
     openTestPage,
     slct,
     waitForCondition,
 } from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ConnectionsDialogQA} from '../../../../src/shared';
+import {ConnectionsDialogQA, Feature} from '../../../../src/shared';
+import {RobotChartsDashboardUrls} from '../../../utils/constants';
 
 const SELECTORS = {
     CHART_LEGEND_ITEM: '.highcharts-legend-item',
@@ -32,30 +33,31 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
-            const dashName = `${PARAMS.DASH_NAME_PREFIX}-${getUniqueTimestamp()}`;
+            await openTestPage(page, RobotChartsDashboardUrls.DashboardWithLongContentBeforeChart);
+            const hideOldRelations = await isEnabledFeature(page, Feature.HideOldRelations);
+            if (hideOldRelations) {
+                return;
+            }
 
-            await openTestPage(page, '/dashboards');
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addSelector({
+                        controlTitle: PARAMS.CONTROL_TITLE,
+                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+                        controlItems: PARAMS.CONTROL_ITEMS,
+                    });
 
-            await dashboardPage.createDashboard(dashName);
-
-            await dashboardPage.addSelector({
-                controlTitle: PARAMS.CONTROL_TITLE,
-                controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                controlItems: PARAMS.CONTROL_ITEMS,
+                    await dashboardPage.addChart({
+                        chartName: PARAMS.CHART_NAME,
+                        chartUrl: PARAMS.CHART_URL,
+                    });
+                    await dashboardPage.setupLinks({
+                        linkType: ConnectionsDialogQA.TypeSelectOutputOption,
+                        chartField: PARAMS.CHART_FIELD,
+                        selectorName: PARAMS.CONTROL_TITLE,
+                    });
+                },
             });
-
-            await dashboardPage.addChart({
-                chartName: PARAMS.CHART_NAME,
-                chartUrl: PARAMS.CHART_URL,
-            });
-
-            await dashboardPage.setupLinks({
-                linkType: ConnectionsDialogQA.TypeSelectOutputOption,
-                chartField: PARAMS.CHART_FIELD,
-                selectorName: PARAMS.CONTROL_TITLE,
-            });
-
-            await dashboardPage.clickSaveButton();
 
             await waitForCondition(async () => {
                 const elems = await page.$$(SELECTORS.CHART_LEGEND_ITEM);

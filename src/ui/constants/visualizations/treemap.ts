@@ -1,5 +1,13 @@
 import {ChevronsExpandUpRight, GeoPolygons} from '@gravity-ui/icons';
-import {Field, Placeholder, Shared, createMeasureNames, isMeasureNameOrValue} from 'shared';
+import {
+    Field,
+    GraphShared,
+    Placeholder,
+    Shared,
+    WizardVisualizationId,
+    createMeasureNames,
+    isMeasureNameOrValue,
+} from 'shared';
 import {
     prepareFieldToDimensionTransformation,
     prepareFieldToMeasureTransformation,
@@ -58,8 +66,8 @@ export function onTreemapMeasuresChange({placeholder, visualization}: OnTreemapM
     }
 }
 
-export const TREEMAP_VISUALIZATION: Shared['visualization'] = {
-    id: 'treemap',
+export const TREEMAP_VISUALIZATION: GraphShared['visualization'] = {
+    id: WizardVisualizationId.Treemap,
     type: 'treemap',
     name: 'label_visualization-treemap',
     allowFilters: true,

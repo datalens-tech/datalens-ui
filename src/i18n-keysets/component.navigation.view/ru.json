@@ -30,6 +30,7 @@
   "label_table-column-author": "Автор",
   "label_table-column-date": "Дата",
   "label_table-column-entry-name": "Название",
+  "label_original-name": "Оригинальное имя",
   "section_batch-move-access-error": "Ошибка доступа",
   "section_batch-move-error": "Ошибка перемещения",
   "section_batch-move-progress": "Перемещение файлов ...",

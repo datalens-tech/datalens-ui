@@ -1,3 +1,5 @@
+import type {WorkbookId} from '../../../types';
+
 export type EntryFieldData<T = Record<string, unknown>> = null | T;
 export type EntryFieldLinks = null | Record<string, string>;
 export type EntryFieldMeta<T = Record<string, unknown>> = null | T;
@@ -5,11 +7,13 @@ type EntryFieldPublishedId = null | string;
 
 // corresponds to RETURN_COLUMNS from US
 export interface EntryFields {
+    displayAlias?: string | null;
     createdAt: string;
     createdBy: string;
     data: EntryFieldData;
     entryId: string;
     hidden: boolean;
+    mirrored?: boolean;
     key: string;
     meta: EntryFieldMeta;
     public: boolean;
@@ -22,7 +26,7 @@ export interface EntryFields {
     updatedAt: string;
     updatedBy: string;
     unversionedData?: unknown;
-    workbookId: string | null;
+    workbookId: WorkbookId;
 }
 
 // corresponds to RETURN_META_COLUMNS from US
@@ -35,7 +39,7 @@ export interface EntryMetaFields {
     savedId: string;
     publishedId: EntryFieldPublishedId;
     tenantId: string;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     accessDescription?: string;
     supportDescription?: string;
 }
@@ -46,6 +50,8 @@ export interface EntryNavigationFields {
     scope: string;
     type: string;
     key: string;
+    alias?: string | null;
+    displayAlias?: string | null;
     meta: EntryFieldMeta;
     createdBy: string;
     createdAt: string;
@@ -54,7 +60,7 @@ export interface EntryNavigationFields {
     savedId: string;
     publishedId: EntryFieldPublishedId;
     hidden: boolean;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     workbookTitle?: string | null;
 }
 
@@ -64,11 +70,13 @@ export interface EntryFavoriteFields {
     scope: string;
     type: string;
     key: string;
+    alias?: string | null;
+    displayAlias?: string | null;
     createdBy: string;
     updatedAt: string;
     createdAt: string;
     hidden: boolean;
-    workbookId: string | null;
+    workbookId: WorkbookId;
     workbookTitle?: string | null;
 }
 
@@ -82,5 +90,5 @@ export interface EntryRelationFields {
     depth: number;
     tenantId: string;
     public: boolean;
-    workbookId: string | null;
+    workbookId: WorkbookId;
 }

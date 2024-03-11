@@ -34,6 +34,8 @@ datalensTest.describe('Wizard - Geo Layers', () => {
                 'geopoint',
             );
 
+            await wizardPage.sectionVisualization.toggleLayerList();
+
             await wizardPage.sectionVisualization.waitForLayers([
                 'geolayer-select-layer-1',
                 'geolayer-select-layer-0',

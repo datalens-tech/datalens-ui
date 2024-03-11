@@ -1,8 +1,11 @@
+import {dateTime} from '@gravity-ui/date-utils';
+
 import {
     DATALENS_QL_TYPES,
     ExtendedSeriesLineOptions,
     isDateField,
 } from '../../../../../../../shared';
+import {getLineTimeDistinctValue} from '../../../../../../../shared/modules/colors/distincts-helpers';
 import {getColorsForNames} from '../../../ql/utils/colors';
 import {
     QLRenderResultYagr,
@@ -13,7 +16,7 @@ import {
     renderValue,
 } from '../../../ql/utils/misc-helpers';
 import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
-import {findIndexInOrder} from '../../utils/misc-helpers';
+import {findIndexInOrder, isLegendEnabled} from '../../utils/misc-helpers';
 import {PrepareFunctionArgs} from '../types';
 
 const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
@@ -46,7 +49,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
         findIndexInOrder(order, color, idToTitle[color.guid] || color.title),
     );
 
-    const result: QLRenderResultYagr = {timeline: []};
+    const result: QLRenderResultYagr = {timeline: [], timeZone: 'UTC'};
 
     if (yFields.length > 0 && xField) {
         let xValues: QLValue[] = [];
@@ -60,7 +63,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
 
             if (typeof xValue !== 'undefined' && xValue !== null && xFieldIsDate) {
                 // CHARTS-6632 - revision/study of yagr is necessary, after that moment.utc(xValue) is possible.valueOf();
-                xValue = Number(new Date(xValue)) / 1000;
+                xValue = dateTime({input: xValue, timeZone: 'UTC'}).valueOf() / 1000;
             } else if (xFieldDataType === DATALENS_QL_TYPES.UNKNOWN) {
                 xValue = formatUnknownTypeValue(xValue);
             }
@@ -76,14 +79,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                         const colorValuePart: QLValue =
                             colors[j].type === 'PSEUDO' ? yFields[i].title : row[colorIndex];
 
-                        if (colorValuePart === 'null') {
-                            return;
-                        }
-
-                        colorValue =
-                            colorValue.length > 0
-                                ? `${colorValue}; ${String(colorValuePart)}`
-                                : String(colorValuePart);
+                        colorValue = getLineTimeDistinctValue(colorValuePart, colorValue);
                     });
 
                     let dataCell = dataMatrix[String(xValue)] as Record<
@@ -164,7 +160,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
 
             if (typeof xValue !== 'undefined' && xValue !== null && xFieldIsDate) {
                 // CHARTS-6632 - revision/study of yagr is necessary, after that moment.utc(xValue) is possible.valueOf();
-                xValue = Number(new Date(xValue)) / 1000;
+                xValue = dateTime({input: xValue, timeZone: 'UTC'}).valueOf() / 1000;
             } else if (xFieldDataType === DATALENS_QL_TYPES.UNKNOWN) {
                 xValue = formatUnknownTypeValue(xValue);
             }
@@ -226,7 +222,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
             graph.spanGaps = yPlaceholderSettings.nulls === 'connect';
         });
 
-        if (result.graphs.length > 1 && shared.extraSettings?.legendMode !== 'hide') {
+        if (result.graphs.length > 1 && isLegendEnabled(shared.extraSettings)) {
             ChartEditor.updateLibraryConfig({
                 legend: {
                     show: true,

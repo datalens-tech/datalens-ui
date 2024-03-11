@@ -3,7 +3,6 @@ import React from 'react';
 import {HelpPopover} from '@gravity-ui/components';
 import {Select, SelectOption, SelectProps, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
 import {
     AvailableFieldType,
@@ -16,7 +15,6 @@ import {
 
 import {DataTypeConfig} from '../../../typings/common';
 import Utils from '../../../utils';
-import {getDatetimeName} from '../../../utils/helpers';
 import DataTypeIcon from '../../DataTypeIcon/DataTypeIcon';
 import {EMPTY_SOURCE, INVALID_ID} from '../constants';
 import {FieldEditorErrors, ModifiedDatasetField, ModifyField} from '../typings';
@@ -66,7 +64,7 @@ const getSourceItems = (
 
 const getCastItems = (dataTypes: DataTypeConfig[]) => {
     return dataTypes.map(({name}) => {
-        const text = i18n(`value_${getDatetimeName(name) as AvailableFieldType}`);
+        const text = i18n(`value_${name as AvailableFieldType}`);
         return {
             value: name,
             content: (
@@ -183,16 +181,15 @@ const SourceSection: React.FC<SourceSectionProps> = (props) => {
                 <div className={b('label')}>
                     <span>{i18n('label_field-source')}</span>
                 </div>
-                <FieldWrapper error={sourceErrorMessageKey && i18n(sourceErrorMessageKey)}>
-                    <Select
-                        className={b('source-section-control')}
-                        filterable={true}
-                        options={sourceItems}
-                        value={source ? [source] : []}
-                        disabled={!sourceItems.length}
-                        onUpdate={handleSourceChange}
-                    />
-                </FieldWrapper>
+                <Select
+                    error={sourceErrorMessageKey && i18n(sourceErrorMessageKey)}
+                    className={b('source-section-control')}
+                    filterable={true}
+                    options={sourceItems}
+                    value={source ? [source] : []}
+                    disabled={!sourceItems.length}
+                    onUpdate={handleSourceChange}
+                />
             </div>
             <div className={b('row')}>
                 <div className={b('label')}>

@@ -1,8 +1,8 @@
 import React from 'react';
 
 import {Config, DashKit} from '@gravity-ui/dashkit';
-import {TriangleExclamationFill} from '@gravity-ui/icons';
-import {Button, Dialog, Icon, Popup} from '@gravity-ui/uikit';
+import {ChevronDown, TriangleExclamationFill} from '@gravity-ui/icons';
+import {Button, Dialog, DropdownMenu, Icon, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -10,13 +10,15 @@ import intersection from 'lodash/intersection';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashTab, DashTabItem, DatasetField} from 'shared';
+import {DashCommonQa, DashTab, DashTabItem, DashTabItemType, DatasetField} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
-import {BetaMark} from 'ui/components/BetaMark/BetaMark';
 
-import {updateCurrentTabData} from '../../../store/actions/dash';
+import {updateCurrentTabData} from '../../../store/actions/dashTyped';
 import {openDialogAliases} from '../../../store/actions/relations/actions';
-import {selectCurrentTabAliases} from '../../../store/selectors/dashTypedSelectors';
+import {
+    selectCurrentTabAliases,
+    selectDashWorkbookId,
+} from '../../../store/selectors/dashTypedSelectors';
 
 import {Content} from './components/Content/Content';
 import {AliasesInvalidList} from './components/DialogAliases/components/AliasesList/AliasesInvalidList';
@@ -43,6 +45,8 @@ import './DialogRelations.scss';
 const b = block('dialog-relations');
 const i18n = I18n.keyset('component.dialog-relations.view');
 
+const ICON_SIZE = 16;
+
 export const DIALOG_RELATIONS = Symbol('dash/DIALOG_RELATIONS');
 
 export type DialogRelationsProps = {
@@ -62,6 +66,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
     const dashTabAliases = useSelector(selectCurrentTabAliases);
+    const workbookId = useSelector(selectDashWorkbookId);
 
     const aliasWarnButtonRef = React.useRef<HTMLElement | null>(null);
 
@@ -77,6 +82,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             dashKitRef,
             widget,
             dialogAliases: aliases,
+            workbookId,
         });
 
     const [shownInvalidAliases, setShownInvalidAliases] = React.useState<string[] | null>(null);
@@ -238,7 +244,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
      */
     const handleRelationTypeChange = React.useCallback(
         (changedData: RelationTypeChangeProps) => {
-            const {type, widgetId, ...rest} = changedData;
+            const {type, widgetId, forceAddAlias, ...rest} = changedData;
 
             const newChanged = {...changedWidgets};
             const currentRelations = preparedRelations.find(
@@ -247,17 +253,27 @@ const DialogRelations = (props: DialogRelationsProps) => {
             const currentRelationType = currentRelations?.type;
             if (currentRelationType === type) {
                 if (newChanged[widgetId]) {
+                    setChangedWidgets(newChanged);
                     delete newChanged[widgetId];
                 }
             } else {
                 newChanged[widgetId] = type;
             }
+            const changeFromUnknown = currentRelationType === RELATION_TYPES.unknown;
 
-            if (currentRelationType === RELATION_TYPES.ignore && type !== RELATION_TYPES.unknown) {
+            const showAddAliasForm =
+                type !== RELATION_TYPES.ignore &&
+                ((changeFromUnknown && forceAddAlias) ||
+                    (!changeFromUnknown &&
+                        currentRelationType === RELATION_TYPES.ignore &&
+                        type !== RELATION_TYPES.unknown) ||
+                    forceAddAlias);
+
+            if (showAddAliasForm) {
                 if (!isEmpty(newChanged[widgetId])) {
                     const hasRelationBy = hasConnectionsBy(currentRelations);
 
-                    if (hasRelationBy) {
+                    if (hasRelationBy && !forceAddAlias) {
                         setChangedWidgets(newChanged);
                     } else {
                         // if there is no native relation then open aliases popup
@@ -289,24 +305,33 @@ const DialogRelations = (props: DialogRelationsProps) => {
         setShownInvalidAliases([]);
     }, [aliases, handleUpdateAliases, shownInvalidAliases]);
 
-    const handleDisconnectAll = React.useCallback(() => {
-        const newChangedWidgets: WidgetsTypes = {};
+    const handleDisconnectAll = React.useCallback(
+        (disconnectType: 'widgets' | 'selectors') => {
+            const newChangedWidgets: WidgetsTypes = {};
+            const filteredIds = filteredRelations.reduce((res: Record<string, string>, item) => {
+                if (!item.widgetId) {
+                    return res;
+                }
+                if (
+                    disconnectType === 'widgets' ||
+                    (disconnectType === 'selectors' && item.type === DashTabItemType.Control)
+                ) {
+                    res[item.widgetId] = item.widgetId;
+                }
 
-        const filteredIds = filteredRelations.reduce((res: Record<string, string>, item) => {
-            if (item.widgetId) {
-                res[item.widgetId] = item.widgetId;
-            }
-            return res;
-        }, {});
+                return res;
+            }, {});
 
-        preparedRelations.forEach((item) => {
-            if (filteredIds[item.widgetId]) {
-                newChangedWidgets[item.widgetId] = RELATION_TYPES.ignore as RelationType;
-            }
-        });
+            preparedRelations.forEach((item) => {
+                if (filteredIds[item.widgetId]) {
+                    newChangedWidgets[item.widgetId] = RELATION_TYPES.ignore as RelationType;
+                }
+            });
 
-        setChangedWidgets(newChangedWidgets);
-    }, [preparedRelations, filteredRelations]);
+            setChangedWidgets(newChangedWidgets);
+        },
+        [preparedRelations, filteredRelations],
+    );
 
     /**
      * Triggers when click Apply button in relations dialog (saves in store and closes popup)
@@ -314,6 +339,9 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const handleSaveRelations = React.useCallback(() => {
         if (!dashKitRef.current) {
             return;
+        }
+        if (isLoading) {
+            onClose();
         }
         const newData: {aliases?: DashTab['aliases']; connections?: Config['connections']} = {};
         if (changedWidgets) {
@@ -333,15 +361,16 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
         if (!isEmpty(newData)) {
             dispatch(updateCurrentTabData(newData));
-            onClose();
         }
+        onClose();
     }, [dashKitRef, aliases, dashTabAliases, changedWidgets, currentWidgetMeta, dispatch, onClose]);
 
     const handleAliasesWarnClick = () => setAliasWarnPopupOpen(!aliasWarnPopupOpen);
 
+    // todo add chart name (need to fetch getEntryMeta for title displaying cherteditor widgets)
     const label =
         currentWidgetMeta?.label && currentWidgetMeta?.title !== currentWidgetMeta?.label
-            ? `${currentWidgetMeta?.label} — `
+            ? `${currentWidgetMeta?.label} ${currentWidgetMeta?.title ? ' — ' : ''}`
             : '';
     const titleName = isLoading ? '' : `: ${label}${currentWidgetMeta?.title}`;
     const title = (
@@ -351,7 +380,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 (showDebugInfo && currentWidgetMeta?.widgetId
                     ? ` (${currentWidgetMeta.widgetId})`
                     : '')}
-            <BetaMark className={b('beta')} />
         </div>
     );
 
@@ -370,14 +398,10 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
     // disable disconnect button when loading
     // when selected only 'none' filter
-    // when selected filter and none of widgets is showed in list
     const isDisconnectDisabled = Boolean(
         isLoading ||
             (typeValues.length === 1 && typeValues[0] === 'none') ||
-            !filteredRelations.length ||
-            filteredRelations.every(
-                (filteredRealtion) => filteredRealtion?.relations.type === 'ignore',
-            ),
+            !filteredRelations.length,
     );
 
     React.useEffect(() => {
@@ -415,22 +439,44 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 showError={false}
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={i18n('button_apply')}
-                propsButtonCancel={{view: 'outlined'}}
+                propsButtonCancel={{view: 'outlined', qa: DashCommonQa.RelationsCancelBtn}}
                 onClickButtonApply={handleSaveRelations}
                 onClickButtonCancel={onClose}
                 propsButtonApply={{
-                    disabled: isLoading,
+                    qa: DashCommonQa.RelationsApplyBtn,
                 }}
             >
-                <Button
-                    view="outlined"
-                    className={b('button')}
-                    size="l"
-                    onClick={handleDisconnectAll}
+                <span className={b('disconnect-text')}>{i18n('button_disconnect')}</span>
+                <DropdownMenu
                     disabled={isDisconnectDisabled}
-                >
-                    {i18n('button_disconnect')}
-                </Button>
+                    size="l"
+                    items={[
+                        {
+                            action: () => handleDisconnectAll('widgets'),
+                            text: i18n('label_widgets'),
+                            qa: DashCommonQa.RelationsDisconnectAllWidgets,
+                        },
+                        {
+                            action: () => handleDisconnectAll('selectors'),
+                            text: i18n('label_selectors'),
+                            qa: DashCommonQa.RelationsDisconnectAllSelectors,
+                        },
+                    ]}
+                    switcher={
+                        <Button
+                            className={b('switcher-button')}
+                            view="normal"
+                            qa={DashCommonQa.RelationsDisconnectAllSwitcher}
+                            disabled={isDisconnectDisabled}
+                        >
+                            <Icon
+                                className={b('switcher-button-icon')}
+                                data={ChevronDown}
+                                size={ICON_SIZE}
+                            />
+                        </Button>
+                    }
+                />
                 {Boolean(shownInvalidAliases?.length) && (
                     <React.Fragment>
                         <Button
@@ -446,6 +492,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                             anchorRef={aliasWarnButtonRef}
                             open={aliasWarnPopupOpen}
                             placement="right"
+                            className={b('invalid-list-popup')}
                         >
                             <div className={b('warn-content')}>
                                 <div className={b('warn-title')}>

@@ -16,6 +16,7 @@ import {
     WizardVisualizationId,
     getIsNavigatorEnabled,
     isEnabledServerFeature,
+    isTreeField,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
 
@@ -101,15 +102,25 @@ function getActionParamsEvents(
                 click: [{handler: {type: 'setActionParams'}, scope: 'row'}],
             };
         }
+        case WizardVisualizationId.PivotTable: {
+            return {
+                click: [{handler: {type: 'setActionParams'}, scope: 'cell'}],
+            };
+        }
         case WizardVisualizationId.Line:
+        case WizardVisualizationId.LineD3:
         case WizardVisualizationId.Area:
         case WizardVisualizationId.Column:
         case WizardVisualizationId.Column100p:
+        case WizardVisualizationId.BarXD3:
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p:
         case WizardVisualizationId.Scatter:
+        case WizardVisualizationId.ScatterD3:
         case WizardVisualizationId.Pie:
-        case WizardVisualizationId.Donut: {
+        case WizardVisualizationId.PieD3:
+        case WizardVisualizationId.Donut:
+        case WizardVisualizationId.CombinedChart: {
             return {
                 click: [{handler: {type: 'setActionParams'}, scope: 'point'}],
             };
@@ -117,6 +128,18 @@ function getActionParamsEvents(
     }
 
     return undefined;
+}
+
+function canUseActionParams(shared: ServerChartsConfig) {
+    const hasDrillDownEvents = Boolean(shared.sharedData?.drillDownData);
+    const tableVisualization = shared.visualization.id === WizardVisualizationId.FlatTable;
+    const hasTreeFields =
+        tableVisualization &&
+        shared.visualization.placeholders.find(
+            (p) => p.id === PlaceholderId.FlatTableColumns && p.items.some(isTreeField),
+        );
+
+    return !hasDrillDownEvents && !hasTreeFields;
 }
 
 // eslint-disable-next-line complexity
@@ -265,7 +288,7 @@ export default (
         config.calcClosestPointManually = true;
     }
 
-    if (widgetConfig?.actionParams?.enable) {
+    if (widgetConfig?.actionParams?.enable && canUseActionParams(shared)) {
         (config as ConfigWithActionParams).events = getActionParamsEvents(
             visualizationId as WizardVisualizationId,
         );

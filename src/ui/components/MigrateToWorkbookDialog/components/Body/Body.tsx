@@ -1,3 +1,5 @@
+import {DL} from 'constants/common';
+
 import React from 'react';
 
 import {Alert, Button, Text} from '@gravity-ui/uikit';
@@ -77,7 +79,12 @@ export const Body: React.FC<BodyProps> = ({
                     <Alert
                         theme="info"
                         message={
-                            <YfmWrapper content={i18n('md_label_copy-warning')} setByInnerHtml />
+                            <YfmWrapper
+                                content={i18n('md_label_copy-warning', {
+                                    datalensDocs: DL.ENDPOINTS.datalensDocs,
+                                })}
+                                setByInnerHtml
+                            />
                         }
                     />
                 </div>

@@ -9,7 +9,7 @@ import {i18n} from 'i18n';
 import {DatalensGlobalState} from 'index';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
-import {Field, GradientPalettes, GradientType, isMeasureValue} from 'shared';
+import {DialogColorQa, Field, GradientPalettes, GradientType, isMeasureValue} from 'shared';
 import {selectAvailableClientGradients, selectDefaultClientGradient} from 'ui';
 import {GradientState, setDialogColorGradientState} from 'units/wizard/actions/dialogColor';
 import {GradientPalettePreview} from 'units/wizard/components/GradientPalettePreview/GradientPalettePreview';
@@ -101,6 +101,7 @@ class DialogColorGradientBody extends React.Component<Props> {
                                 gradientPalette: selectDefaultClientGradient(gradientType),
                             });
                         }}
+                        qa={DialogColorQa.GradientType}
                     >
                         <RadioButton.Option value={GradientType.TWO_POINT}>
                             {i18n('wizard', 'label_2-point')}

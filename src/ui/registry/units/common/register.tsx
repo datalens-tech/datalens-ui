@@ -1,3 +1,4 @@
+import {extractEntryId, isEntryId} from 'shared';
 import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
@@ -15,6 +16,7 @@ import {getInitDestination} from '../../../components/Navigation/Base/utils';
 import {getPlaceSelectParameters} from '../../../components/Navigation/util';
 import {UserAvatarById} from '../../../components/UserAvatar/UserAvatarById';
 import {YfmWrapperContent} from '../../../components/YfmWrapper/YfmWrapperContent';
+import {DatepickerControl} from '../../../components/common/DatepickerControl/DatepickerControl';
 import {getUpdatedUserSettings} from '../../../store/utils/user';
 import {getIconDataById} from '../../../utils/icons';
 import {getUIEntryRoute} from '../../../utils/urlUtils';
@@ -30,6 +32,7 @@ export const registerCommonPlugins = () => {
         UserAvatarById,
         EntryBreadcrumbs,
         YfmWrapperContent,
+        DatepickerControl,
     });
 
     registry.common.functions.register({
@@ -50,5 +53,7 @@ export const registerCommonPlugins = () => {
         getFormatNumber: formatNumber,
         getAdditionalEntryDialoguesMap,
         getAdditionalEntryContextMenuItems,
+        isEntryId,
+        extractEntryId,
     });
 };

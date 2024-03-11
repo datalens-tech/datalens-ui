@@ -10,16 +10,24 @@ export type LocationChangeProps = {
 function LocationChange({onLocationChanged}: LocationChangeProps) {
     const history = useHistory();
     const [prevLocation, setPrevLocation] = React.useState<Location>(history.location);
+    // https://reactjs.org/docs/hooks-faq.html#how-to-read-an-often-changing-value-from-usecallback
+    // For reducing the useEffect cleanup calls from onLocationChanged changing every render
+    // Frequent rerenders caused unstable dispatch of postMessage events for embedded dashboards
+    const callbackRef = React.useRef<LocationChangeProps['onLocationChanged']>(onLocationChanged);
+
+    React.useLayoutEffect(() => {
+        callbackRef.current = onLocationChanged;
+    });
 
     React.useEffect(() => {
         const unregisterCallback = history.listen((location) => {
-            onLocationChanged(location, prevLocation);
+            callbackRef.current(location, prevLocation);
             setPrevLocation(location);
         });
         return () => {
             unregisterCallback();
         };
-    }, [history, prevLocation, onLocationChanged]);
+    }, [history, prevLocation]);
 
     return null;
 }

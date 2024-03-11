@@ -14,6 +14,7 @@ import {I18N} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
 import {Utils} from 'ui';
+import {AppDispatch} from 'ui/store';
 
 import {registry} from '../../../../registry';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
@@ -29,7 +30,6 @@ import {
     selectBreadcrumbs,
     selectBreadcrumbsError,
     selectCollectionId,
-    selectNextPageToken,
     selectPageError,
     selectWorkbook,
     selectWorkbookFilters,
@@ -37,8 +37,9 @@ import {
 } from '../../store/selectors';
 import {CreateEntryDialog} from '../CreateEntryDialog/CreateEntryDialog';
 import {WorkbookActions} from '../WorkbookActions/WorkbookActions';
-import {WorkbookContent} from '../WorkbookContent/WorkbookContent';
 import {WorkbookFilters} from '../WorkbookFilters/WorkbookFilters';
+import {WorkbookMainTabContent} from '../WorkbookMainTabContent/WorkbookMainTabContent';
+import {WorkbookTabContent} from '../WorkbookTabContent/WorkbookTabContent';
 import {WorkbookTabs} from '../WorkbookTabs/WorkbookTabs';
 import {TAB_ALL} from '../WorkbookTabs/constants';
 import {TabId} from '../WorkbookTabs/types';
@@ -49,26 +50,33 @@ const b = block('dl-workbook-page');
 
 const i18n = I18N.keyset('new-workbooks');
 
+const AVAILABLE_TABS = [TAB_ALL, 'dash', 'widget', 'dataset', 'connection'];
+
 export const WorkbookPage = () => {
     const {search} = useLocation();
     const {workbookId} = useParams<{workbookId: string}>();
 
     const activeTab = React.useMemo<TabId | undefined>(() => {
         const queryTab = new URLSearchParams(search).get('tab');
-        return queryTab ? (queryTab as TabId) : undefined;
+
+        return queryTab && AVAILABLE_TABS.includes(queryTab) ? (queryTab as TabId) : TAB_ALL;
     }, [search]);
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
+
     const collectionId = useSelector(selectCollectionId);
     const breadcrumbs = useSelector(selectBreadcrumbs);
     const workbook = useSelector(selectWorkbook);
     const pageError = useSelector(selectPageError);
     const breadcrumbsError = useSelector(selectBreadcrumbsError);
     const isWorkbookInfoLoading = useSelector(selectWorkbookInfoIsLoading);
-    const nextPageToken = useSelector(selectNextPageToken);
+
     const filters = useSelector(selectWorkbookFilters);
 
-    const scope = activeTab === TAB_ALL ? undefined : activeTab;
+    const showContentLoader = isWorkbookInfoLoading || !workbook || (collectionId && !breadcrumbs);
+
+    const isMainTab = activeTab === TAB_ALL;
+    const scope = isMainTab ? undefined : activeTab;
 
     const initLoadWorkbook = React.useCallback(() => {
         dispatch(resetWorkbookState());
@@ -78,21 +86,6 @@ export const WorkbookPage = () => {
     const refreshWorkbookInfo = React.useCallback(() => {
         dispatch(getWorkbook({workbookId}));
     }, [dispatch, workbookId]);
-
-    const loadMoreEntries = React.useCallback(() => {
-        if (nextPageToken) {
-            dispatch(getWorkbookEntries({workbookId, filters, scope, nextPageToken}));
-        }
-    }, [nextPageToken, dispatch, filters, workbookId, scope]);
-
-    const retryLoadEntries = React.useCallback(() => {
-        dispatch(getWorkbookEntries({workbookId, filters, scope, nextPageToken}));
-    }, [dispatch, workbookId, filters, scope, nextPageToken]);
-
-    const refreshEntries = React.useCallback(() => {
-        dispatch(resetWorkbookEntries());
-        dispatch(getWorkbookEntries({workbookId, filters, scope}));
-    }, [dispatch, workbookId, filters, scope]);
 
     const handleChangeFilters = React.useCallback(
         (newFilters) => {
@@ -114,15 +107,6 @@ export const WorkbookPage = () => {
             dispatch(getWorkbookBreadcrumbs({collectionId}));
         }
     }, [dispatch, collectionId]);
-
-    React.useEffect(() => {
-        dispatch(resetWorkbookEntries());
-
-        // Get entries only if active tab selected
-        if (activeTab) {
-            dispatch(getWorkbookEntries({workbookId, filters, scope}));
-        }
-    }, [dispatch, workbookId, filters, activeTab, scope]);
 
     if (
         pageError ||
@@ -175,7 +159,7 @@ export const WorkbookPage = () => {
                     </ActionBar.Group>
                 </ActionBar.Section>
             </ActionBar>
-            {isWorkbookInfoLoading ? (
+            {showContentLoader ? (
                 <SmartLoader size="l" />
             ) : (
                 <div className={b('layout')}>
@@ -219,12 +203,20 @@ export const WorkbookPage = () => {
                             {workbook && <WorkbookTabs workbook={workbook} />}
                         </div>
                         <div className={b('content')}>
-                            <WorkbookContent
-                                loadMoreEntries={loadMoreEntries}
-                                retryLoadEntries={retryLoadEntries}
-                                refreshEntries={refreshEntries}
-                                scope={scope}
-                            />
+                            {isMainTab ? (
+                                <WorkbookMainTabContent
+                                    workbook={workbook}
+                                    filters={filters}
+                                    workbookId={workbookId}
+                                />
+                            ) : (
+                                <WorkbookTabContent
+                                    filters={filters}
+                                    scope={scope}
+                                    workbookId={workbookId}
+                                    workbook={workbook}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>

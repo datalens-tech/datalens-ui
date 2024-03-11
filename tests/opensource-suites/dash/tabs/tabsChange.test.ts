@@ -1,9 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {WorkbooksUrls} from 'constants/constants';
-import {Workbook} from 'page-objects/workbook/Workbook';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {deleteEntity} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
 
@@ -20,11 +17,8 @@ const secondTabIsVisible = async (dashboardPage: DashboardPage) => {
 datalensTest.describe(`Dashboards - switch tabs`, () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const workbookPO = new Workbook(page);
 
-        await workbookPO.openE2EWorkbookPage();
-
-        await workbookPO.createDashboard({
+        await dashboardPage.createDashboard({
             editDash: async () => {
                 await dashboardPage.addText(arbitraryText.first);
                 await dashboardPage.addTab();
@@ -35,7 +29,8 @@ datalensTest.describe(`Dashboards - switch tabs`, () => {
     });
 
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        await deleteEntity(page, WorkbooksUrls.E2EWorkbook);
+        const dashboardPage = new DashboardPage({page});
+        await dashboardPage.deleteDash();
     });
 
     datalensTest(

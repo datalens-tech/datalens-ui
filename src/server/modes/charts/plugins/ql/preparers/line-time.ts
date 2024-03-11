@@ -1,10 +1,13 @@
+import {dateTime} from '@gravity-ui/date-utils';
+
 import {DATALENS_QL_TYPES, IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
     QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
-} from '../../../../../../shared/types/config/ql';
+} from '../../../../../../shared';
+import {isLegendEnabled} from '../../datalens/utils/misc-helpers';
 import {
     QLRenderResultYagr,
     QLRenderResultYagrGraph,
@@ -258,7 +261,7 @@ export default ({
             ++colorGroup.size;
         });
 
-        if (shared.extraSettings?.legendMode !== 'hide') {
+        if (isLegendEnabled(shared.extraSettings)) {
             ChartEditor.updateLibraryConfig({
                 legend: {
                     show: true,
@@ -274,6 +277,7 @@ export default ({
     });
 
     const result: QLRenderResultYagr = {
+        timeZone: 'UTC',
         metadata: {
             order,
         },
@@ -296,7 +300,7 @@ export default ({
 
             if (xIsDate) {
                 // CHARTS-6632 - revision/study of yagr is necessary, after that moment.utc(xValue) is possible.valueOf();
-                xValue = Number(new Date(xValue)) / 1000;
+                xValue = dateTime({input: xValue, timeZone: 'UTC'}).valueOf() / 1000;
             } else if (columnTypes[xIndex] === DATALENS_QL_TYPES.UNKNOWN) {
                 xValue = formatUnknownTypeValue(xValue);
             }

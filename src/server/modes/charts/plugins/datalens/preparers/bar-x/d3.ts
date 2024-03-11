@@ -10,20 +10,22 @@ import {
     ServerField,
     getFakeTitleOrTitle,
 } from '../../../../../../../shared';
-import {getAxisType} from '../../d3/utils';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
+import {getAxisType} from '../helpers/axis';
+import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {PrepareFunctionArgs} from '../types';
 
-import {prepareBarX} from './prepareBarX';
+import {prepareBarX} from './prepare-bar-x';
 
 type OldBarXDataItem = {
     y: number;
     x?: number;
     label?: string | number;
+    custom?: any;
 } | null;
 
 export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
-    const {shared, labels, placeholders, disableDefaultSorting = false} = args;
+    const {shared, labels, placeholders, disableDefaultSorting = false, sort} = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
@@ -32,7 +34,12 @@ export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
     const isDataLabelsEnabled = Boolean(labelField);
     const isCategoriesXAxis =
         !xField ||
-        getAxisType(xField, xPlaceholder?.settings) === 'category' ||
+        getAxisType({
+            field: xField,
+            settings: xPlaceholder?.settings,
+            visualizationIds: getAllVisualizationsIds(shared),
+            sort,
+        }) === 'category' ||
         disableDefaultSorting;
 
     if (!xField && !yField) {
@@ -61,6 +68,7 @@ export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
                 (acc: BarXSeriesData[], item: OldBarXDataItem, index: number) => {
                     const dataItem: BarXSeriesData = {
                         y: item?.y || 0,
+                        custom: item?.custom,
                     };
 
                     if (isDataLabelsEnabled) {
@@ -82,7 +90,7 @@ export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
                 },
                 [],
             ),
-            custom: {},
+            custom: graph.custom,
             dataLabels: {
                 enabled: isDataLabelsEnabled,
                 inside: shared.extraSettings?.labelsPosition !== LabelsPositions.Outside,

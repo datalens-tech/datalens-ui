@@ -64,6 +64,7 @@ export {
 
 const i18n = I18n.keyset('connections.gsheet.view');
 
+// TODO: https://github.com/datalens-tech/datalens-ui/issues/375
 export const showGsheetUploadingFailureToast = (error: DataLensApiError) => {
     return async (dispatch: ConnectionsReduxDispatch) => {
         const {title} = getGSheetErrorData({error, type: 'uploadedGSheet'});
@@ -238,6 +239,7 @@ export const updateConnectionData = () => {
         const sources = mapGSheetItemsToUpdateAPIFormat(items);
 
         const {files, error} = await api.updateS3BasedConnectionData({
+            type: 'gsheets',
             connection_id,
             refresh_token,
             sources,

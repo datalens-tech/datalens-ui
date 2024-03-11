@@ -43,6 +43,7 @@ export const QL_TYPE = {
     TABLE_QL_NODE: 'table_ql_node',
     YMAP_QL_NODE: 'ymap_ql_node',
     METRIC_QL_NODE: 'metric2_ql_node',
+    MARKUP_QL_NODE: 'markup_ql_node',
     LEGACY_GRAPH_QL_NODE: 'graph_sql_node',
     LEGACY_TABLE_QL_NODE: 'table_sql_node',
     LEGACY_YMAP_QL_NODE: 'ymap_sql_node',
@@ -66,6 +67,7 @@ export const EDITOR_TYPE = {
     YMAP_NODE: 'ymap_node',
     CONTROL_NODE: 'control_node',
     MARKDOWN_NODE: 'markdown_node',
+    MARKUP_NODE: 'markup_node',
     TIMESERIES_NODE: 'timeseries_node',
 };
 

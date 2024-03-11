@@ -9,8 +9,9 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {StringParams} from 'shared';
+import {setWidgetCurrentTab} from 'ui/units/dash/store/actions/dashTyped';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
@@ -73,9 +74,12 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         context,
         config,
         usageType,
+        workbookId,
     } = props;
 
     const skipReload = useSelector(selectSkipReload);
+
+    const dispatch = useDispatch();
 
     const [isWizardChart, setIsWizardChart] = React.useState(false);
 
@@ -105,14 +109,21 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     const hasHideTitleChanged =
         prevHideTitle !== undefined && !isEqual(data.hideTitle, prevHideTitle);
 
+    const prevEnableActionParams = usePrevious(currentTab.enableActionParams);
+    const hasEnableActionParamsChanged = Boolean(
+        prevEnableActionParams !== undefined &&
+            prevEnableActionParams !== currentTab.enableActionParams,
+    );
+
     const initialData: DataProps = React.useMemo(
         () =>
             getDataProviderData({
                 id: chartId,
                 config,
                 params: chartkitParams,
+                workbookId,
             }),
-        [chartId, chartkitParams, config, hasChartTabChanged],
+        [chartId, chartkitParams, config, hasChartTabChanged, workbookId],
     );
 
     const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);
@@ -127,7 +138,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     const hasChangedOuterProps =
         !prevSavedProps ||
         !isEqual(omit(prevSavedProps, 'params'), omit(pick(props, influencingProps), 'params')) ||
-        Boolean(prevSavedChartId && prevSavedChartId !== chartId);
+        Boolean(prevSavedChartId && prevSavedChartId !== chartId) ||
+        hasEnableActionParamsChanged;
 
     let hasChangedActionParams = false;
 
@@ -222,6 +234,35 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         return changedParams;
     }, [prevSavedProps?.params, props.params, usedParamsRef, innerParamsRef, isWizardChart]);
 
+    const clearedOuterParams = React.useMemo(() => {
+        let clearedParams;
+        const propsParams = props.params;
+        const prevSavedPropsParams = prevSavedProps?.params;
+        const isEqualParamsWithPrev = prevSavedProps && isEqual(prevSavedPropsParams, propsParams);
+
+        const hasParamsChanged = !prevSavedProps || !isEqualParamsWithPrev;
+
+        const isOuterAndInnerParamsEqual =
+            hasParamsChanged && innerParamsRef?.current
+                ? isEqual(innerParamsRef?.current, propsParams)
+                : false;
+
+        if (!hasChangedActionParams && !isOuterAndInnerParamsEqual) {
+            clearedParams = prevSavedProps
+                ? Object.keys(omit(prevSavedProps.params, Object.keys(props?.params || {})))
+                : [];
+        }
+
+        return clearedParams;
+    }, [
+        hasChangedActionParams,
+        prevSavedProps?.params,
+        props.params,
+        usedParamsRef,
+        innerParamsRef,
+        isWizardChart,
+    ]);
+
     const hasChangedInnerParamsFromInside = React.useMemo(() => {
         return prevInnerParams && !isEqual(innerParamsRef?.current, prevInnerParams);
     }, [prevInnerParams, innerParamsRef?.current]);
@@ -292,6 +333,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         veil,
         showLoader,
         isFullscreen,
+        isAutoHeightEnabled,
         description,
         hideTabs,
         withShareWidget,
@@ -336,6 +378,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetRenderTimeRef,
         usageType,
         enableActionParams,
+        clearedOuterParams,
     });
 
     const handleFiltersClear = React.useCallback(() => {
@@ -355,6 +398,15 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         );
     }, [handleChange, chartkitParams]);
 
+    /**
+     * Clear action params on disable of filtration of widget
+     */
+    React.useEffect(() => {
+        if (hasEnableActionParamsChanged && !enableActionParams) {
+            handleFiltersClear();
+        }
+    }, [hasEnableActionParamsChanged, enableActionParams, handleFiltersClear]);
+
     React.useEffect(() => {
         if (loadedData?.isNewWizard && !isWizardChart) {
             setIsWizardChart(true);
@@ -370,6 +422,11 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         }
         setInitialParams({...loadedData?.defaultParams, ...currentTab.params});
     }, [hasCurrentTabDefaultsChanged, currentTab.params, loadedData, loadedData?.defaultParams]);
+
+    // Update currentTab in dash state after dashkit item state update
+    React.useEffect(() => {
+        dispatch(setWidgetCurrentTab({widgetId, tabId: currentTab.id}));
+    }, [currentTab, widgetId, dispatch]);
 
     const adaptiveTabsItems = React.useMemo(
         () =>
@@ -421,7 +478,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     return (
         <div
             ref={rootNodeRef}
-            className={`${b(mods)}`}
+            className={`${b({...mods, autoheight: isAutoHeightEnabled})}`}
             data-qa="chart-widget"
             data-qa-mod={isFullscreen ? 'fullscreen' : ''}
         >

@@ -1,7 +1,9 @@
-import {Clock, Copy, FolderArrowDown, FontCursor, Link, TrashBin} from '@gravity-ui/icons';
+import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin} from '@gravity-ui/icons';
+import {ConnectorType} from 'shared/constants/connections';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
+import {S3_BASED_CONNECTORS} from 'ui/constants/connections';
 
-import {EntryScope, Feature, isUsersFolder} from '../../../shared';
+import {EntryScope, Feature, PLACE, isUsersFolder} from '../../../shared';
 import {ALL_SCOPES, URL_QUERY} from '../../constants';
 import {registry} from '../../registry';
 import Utils from '../../utils/utils';
@@ -11,6 +13,8 @@ import {ContextMenuItem, ContextMenuParams} from './types';
 
 export const ENTRY_CONTEXT_MENU_ACTION = {
     RENAME: 'rename',
+    ADD_FAVORITES_ALIAS: 'add-favorites-alias',
+    EDIT_FAVORITES_ALIAS: 'edit-favorites-alias',
     DELETE: 'delete',
     MOVE: 'move',
     COPY: 'copy',
@@ -92,6 +96,30 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         },
     },
     {
+        id: ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS,
+        action: ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS,
+        icon: Tag,
+        text: 'value_add-favorites-alias',
+        place: PLACE.FAVORITES,
+        enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
+        scopes: ALL_SCOPES,
+        isVisible({entry}: ContextMenuParams) {
+            return !entry?.displayAlias;
+        },
+    },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS,
+        action: ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS,
+        icon: Tag,
+        text: 'value_edit-favorites-alias',
+        place: PLACE.FAVORITES,
+        enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
+        scopes: ALL_SCOPES,
+        isVisible({entry}: ContextMenuParams) {
+            return Boolean(entry?.displayAlias);
+        },
+    },
+    {
         id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
         action: ENTRY_CONTEXT_MENU_ACTION.DELETE,
         icon: TrashBin,
@@ -129,16 +157,26 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
     },
     {
         ...CONTEXT_MENU_COPY,
-        scopes: [EntryScope.Dataset],
+        scopes: [EntryScope.Connection],
         permissions: {admin: true, edit: true, read: false, execute: false},
         isStrictPermissions: true, // strict check with disallow when there are no permissions object
         isVisible(args) {
-            if (args.entry?.workbookId) {
+            const entry = args.entry;
+            const isS3BasedConnector = S3_BASED_CONNECTORS.includes(entry?.type as ConnectorType);
+            const isFileConnection = entry?.scope === EntryScope.Connection && isS3BasedConnector;
+
+            if (!args.entry?.workbookId || isFileConnection) {
                 return false;
             }
 
             return CONTEXT_MENU_COPY.isVisible(args);
         },
+    },
+    {
+        ...CONTEXT_MENU_COPY,
+        scopes: [EntryScope.Dataset],
+        permissions: {admin: true, edit: true, read: false, execute: false},
+        isStrictPermissions: true, // strict check with disallow when there are no permissions object
     },
     getContextMenuAccess(),
     {

@@ -51,15 +51,15 @@ import {
     sortByOrderIdOrLayoutComparator,
     stringifyMemoize,
 } from '../../modules/helpers';
-import PostMessage, {PostMessageCode} from '../../modules/postMessage';
-import {openDialog, openItemDialog, setCurrentTabData} from '../../store/actions/dash';
 import {
     TabsHashStates,
+    setCurrentTabData,
     setDashKitRef,
     setErrorMode,
     setHashState,
     setStateHashId,
 } from '../../store/actions/dashTyped';
+import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
 import {
     closeDialogRelations,
     openDialogRelations,
@@ -69,6 +69,7 @@ import {
     canEdit,
     selectCurrentTab,
     selectCurrentTabId,
+    selectDashWorkbookId,
     selectEntryId,
     selectSettings,
     selectShowTableOfContent,
@@ -137,12 +138,6 @@ class Body extends React.PureComponent<BodyProps> {
             ...location,
             search: `?${searchParams.toString()}`,
         });
-
-        // TODO: CHARTS-8789
-        PostMessage.send({
-            code: PostMessageCode.UrlChanged,
-            data: {pathname: location.pathname, search: `?${searchParams.toString()}`},
-        });
     }, 1000);
 
     getUrlGlobalParams = stringifyMemoize((search, globalParams) => {
@@ -162,6 +157,9 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     componentDidMount() {
+        // if localStorage already have a dash item, we need to set it to state
+        this.storageHandler();
+
         window.addEventListener('storage', this.storageHandler);
     }
 
@@ -216,6 +214,10 @@ class Body extends React.PureComponent<BodyProps> {
                 title: i18n('dash.main.view', 'button_edit-panel-selector'),
                 className: b('edit-panel-item'),
                 onClick: () => {
+                    if (Utils.isEnabledFeature(Feature.GroupControls)) {
+                        this.props.openDialog(DIALOG_TYPE.GROUP_CONTROL);
+                        return;
+                    }
                     this.props.openDialog(DIALOG_TYPE.CONTROL);
                 },
                 qa: DashboardAddWidgetQa.AddControl,
@@ -347,7 +349,6 @@ class Body extends React.PureComponent<BodyProps> {
 
         return isEmptyTab ? (
             <EmptyState
-                openDialog={this.props.openDialog}
                 canEdit={this.props.canEdit}
                 isEditMode={mode === Mode.Edit}
                 isTabView={!settings.hideTabs && tabs.length > 1}
@@ -364,8 +365,9 @@ class Body extends React.PureComponent<BodyProps> {
                     getPreparedCopyItemOptions: (itemToCopy: PreparedCopyItemOptions) => {
                         return this.getPreparedCopyItemOptions(itemToCopy, tabData);
                     },
+                    workbookId: this.props.workbookId,
                 }}
-                onItemEdit={this.props.openItemDialog}
+                onItemEdit={this.props.openItemDialogAndSetData}
                 onChange={this.onChange}
                 settings={dashkitSettings}
                 defaultGlobalParams={settings.globalParams}
@@ -423,14 +425,14 @@ class Body extends React.PureComponent<BodyProps> {
                         )}
                         {!settings.hideTabs && <Tabs />}
                         {this.renderDashkit()}
-                        {showEditActionPanel && (
-                            <DashkitActionPanel
-                                items={this.getActionPanelItems()}
-                                className={b('edit-panel', {
-                                    'aside-opened': isSidebarOpened,
-                                })}
-                            />
-                        )}
+                        <DashkitActionPanel
+                            toggleAnimation={true}
+                            disable={!showEditActionPanel}
+                            items={this.getActionPanelItems()}
+                            className={b('edit-panel', {
+                                'aside-opened': isSidebarOpened,
+                            })}
+                        />
                     </div>
                 </div>
             </div>
@@ -486,12 +488,13 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     tabs: selectTabs(state),
     tabId: selectCurrentTabId(state),
     isSidebarOpened: !selectAsideHeaderIsCompact(state),
+    workbookId: selectDashWorkbookId(state),
 });
 
 const mapDispatchToProps = {
     setErrorMode,
     setCurrentTabData,
-    openItemDialog,
+    openItemDialogAndSetData,
     setHashState,
     setStateHashId,
     setDashKitRef,

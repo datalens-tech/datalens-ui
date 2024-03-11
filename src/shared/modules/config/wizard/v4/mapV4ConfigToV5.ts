@@ -1,5 +1,6 @@
 import {PlaceholderId, WizardVisualizationId} from '../../../../constants';
 import {
+    AxisMode,
     ChartsConfigVersion,
     DATASET_FIELD_TYPES,
     ServerChartsConfig,
@@ -9,8 +10,8 @@ import {
     V5ChartsConfig,
     V5Placeholder,
     V5Visualization,
-    isVisualizationWithLayers,
 } from '../../../../types';
+import {isVisualizationWithLayers} from '../../../../utils';
 import {isMeasureField} from '../../../helpers';
 import {isAllAxisModesAvailable, isPlaceholderSupportsAxisMode} from '../../../wizard-helpers';
 
@@ -53,9 +54,7 @@ const mapV4PlaceholderToV5Placeholder = ({
             ) {
                 v5Placeholder.settings = {
                     ...v5Placeholder.settings,
-                    axisMode: sortHasMeasure
-                        ? 'discrete'
-                        : (field.dateMode as 'continuous' | 'discrete'),
+                    axisMode: sortHasMeasure ? AxisMode.Discrete : (field.dateMode as AxisMode),
                 };
             }
 
@@ -71,12 +70,12 @@ const mapV4PlaceholderToV5Placeholder = ({
         if (isAllAxisModesAvailable(firstPlaceholderItem) && !sortHasMeasure) {
             v5Placeholder.settings = {
                 ...v5Placeholder.settings,
-                axisMode: 'continuous',
+                axisMode: AxisMode.Continuous,
             };
         } else {
             v5Placeholder.settings = {
                 ...v5Placeholder.settings,
-                axisMode: 'discrete',
+                axisMode: AxisMode.Discrete,
             };
         }
     }

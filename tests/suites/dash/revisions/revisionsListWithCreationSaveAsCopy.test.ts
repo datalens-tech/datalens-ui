@@ -7,6 +7,10 @@ import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../..
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
+const PARAMS = {
+    INITIAL_TITLE: 'New dash',
+};
+
 const waitCheckActualizeRevisionList = async ({
     page,
     actualItemIndex,
@@ -41,11 +45,13 @@ const waitCheckActualizeRevisionList = async ({
 datalensTest.describe('Dashboard Versioning', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const dashName = `e2e-test-dash-revisions-${getUniqueTimestamp()}`;
 
-        await openTestPage(page, '/dashboards');
-        await dashboardPage.createDashboard(dashName);
-        await page.waitForTimeout(RENDER_TIMEOUT);
+        await dashboardPage.createDashboard({
+            editDash: async () => {
+                await dashboardPage.addTitle(PARAMS.INITIAL_TITLE);
+            },
+        });
+        await dashboardPage.enterEditMode();
     });
     datalensTest(
         'Creating a dashboard, editing, save as a new dashboard',
@@ -100,7 +106,7 @@ datalensTest.describe('Dashboard Versioning', () => {
             // wait for page load to be able to remove
             await page.waitForTimeout(RENDER_TIMEOUT);
 
-            await dashboardPage.deleteDashFromEditMode();
+            await dashboardPage.deleteDashFromViewMode();
         },
     );
 });

@@ -1,6 +1,7 @@
 import {Request} from '@gravity-ui/expresskit';
 import {AppConfig, AppContext} from '@gravity-ui/nodekit';
 
+import type {WorkbookId} from '../../../../../shared';
 import {TelemetryCallbacks} from '../../types';
 
 import {ResolvedConfig} from './types';
@@ -20,6 +21,7 @@ export type ResolveConfigProps = {
     requestId?: string;
     storageApiPath?: string;
     extraAllowedHeaders?: string[];
+    workbookId?: WorkbookId;
 };
 
 export type BaseStorageInitParams = {
@@ -114,9 +116,11 @@ export class BaseStorage {
             requestId?: string;
             storageApiPath?: string;
             extraAllowedHeaders?: string[];
+            workbookId?: WorkbookId;
         },
     ): Promise<ResolvedConfig | EmbeddingInfo> {
-        const {headers, unreleased, requestId, storageApiPath, extraAllowedHeaders} = params;
+        const {headers, unreleased, requestId, storageApiPath, extraAllowedHeaders, workbookId} =
+            params;
         if (requestId) {
             headers[this.requestIdHeaderName] = requestId;
         }
@@ -138,7 +142,11 @@ export class BaseStorage {
         let id: string;
 
         if (params.id) {
-            retrieve = this.provider.retrieveById(ctx, {id: params.id, ...storageRetrieveArgs});
+            retrieve = this.provider.retrieveById(ctx, {
+                id: params.id,
+                workbookId,
+                ...storageRetrieveArgs,
+            });
             id = params.id;
         } else if (params.embedToken) {
             retrieve = this.provider.retrieveByToken(ctx, {
@@ -189,6 +197,7 @@ export class BaseStorage {
             requestId,
             storageApiPath,
             extraAllowedHeaders,
+            workbookId,
         } = props;
         if (!noCache && !unreleased && this.cachedConfigs[key]) {
             ctx.log('STORAGE_CONF_PRELOAD_HIT', {key});
@@ -204,6 +213,7 @@ export class BaseStorage {
             requestId,
             storageApiPath,
             extraAllowedHeaders,
+            workbookId,
         });
     }
 

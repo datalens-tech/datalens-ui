@@ -2,6 +2,7 @@ import {
     ApiV2Annotations,
     BarViewOptions,
     ColorPalette,
+    IChartEditor,
     ServerColor,
     ServerField,
     getFormatOptions,
@@ -98,8 +99,9 @@ function getRowCellMetadata(args: GetRowCellMetadataArgs): ChartkitCell {
     } else if (isNumericalDataType(field.data_type)) {
         cell.type = 'number';
 
-        if (isTableBarsSettingsEnabled(field)) {
-            const {columnValues, options} = args.settingsByField[field.guid].barsSettings!;
+        const barSettings = args.settingsByField[field.guid]?.barsSettings;
+        if (isTableBarsSettingsEnabled(field) && barSettings) {
+            const {columnValues, options} = barSettings;
             const barValueOptions = getBarSettingsValue({
                 field,
                 rowValue: value,
@@ -146,6 +148,7 @@ type GenerateTableRowsArgs = {
     pivotStructure: PivotDataStructure[];
     sortSettings: PivotTableSortSettings;
     headerTotalsIndexMap: Record<number, boolean>;
+    ChartEditor: IChartEditor;
 };
 
 export const generateTableRows = ({
@@ -159,6 +162,7 @@ export const generateTableRows = ({
     pivotStructure,
     sortSettings,
     headerTotalsIndexMap,
+    ChartEditor,
 }: GenerateTableRowsArgs): ChartkitTableRows => {
     const {rowsMeta, isSortByRowAllowed} = sortSettings;
     const cellId = {current: 0};
@@ -232,21 +236,37 @@ export const generateTableRows = ({
                 headerParentByIndex[headerIndex] = getCellValueForHeader(value, {datasetField});
 
                 const isLastHeader = headerIndex === pivotDataRow.header.length - 1;
+                const isSortingAllowed =
+                    isSortByRowAllowed && rowsMeta[rowIndex] && datasetField && isLastHeader;
 
-                if (isSortByRowAllowed && rowsMeta[rowIndex] && datasetField && isLastHeader) {
-                    const sortMeta = getSortMeta({
-                        meta: rowsMeta[rowIndex],
-                        path: [...path, value],
-                        measureGuid,
-                        fieldOrder,
-                    });
-                    cell.sortDirection = sortMeta.currentSortDirection;
-                    cell.onClick = {
-                        action: 'setParams',
-                        args: {
-                            _sortRowMeta: JSON.stringify(sortMeta),
-                        },
-                    };
+                if (isSortingAllowed) {
+                    if (cell.value === null) {
+                        // DLFR-1767 sorting for null values is not supported on the backend yet
+                        cell.onClick = {
+                            action: 'showMsg',
+                            args: {
+                                message: ChartEditor.getTranslation(
+                                    'wizard.prepares',
+                                    'label_null-sorting-disabled-info',
+                                ),
+                            },
+                        };
+                    } else {
+                        const sortMeta = getSortMeta({
+                            meta: rowsMeta[rowIndex],
+                            path: [...path, value],
+                            measureGuid,
+                            fieldOrder,
+                        });
+                        cell.sortDirection = sortMeta.currentSortDirection;
+                        cell.onClick = {
+                            action: 'setParams',
+                            args: {
+                                _sortRowMeta: JSON.stringify(sortMeta),
+                            },
+                        };
+                    }
+
                     cell.css = {
                         ...(cell.css || {}),
                         cursor: 'pointer',

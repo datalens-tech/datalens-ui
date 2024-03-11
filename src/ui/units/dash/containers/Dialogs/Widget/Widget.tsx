@@ -7,6 +7,7 @@ import {i18n} from 'i18n';
 import update, {Context, CustomCommands, Spec} from 'immutability-helper';
 import {ResolveThunks, connect} from 'react-redux';
 import {
+    DashCommonQa,
     DashTabItemWidget,
     DashTabItemWidgetTab,
     DialogDashWidgetQA,
@@ -35,13 +36,14 @@ import {
 import TwoColumnDialog from '../../../components/TwoColumnDialog/TwoColumnDialog';
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
 import {DASH_WIDGET_TYPES, ENTRY_TYPE} from '../../../modules/constants';
-import {closeDialog} from '../../../store/actions/dash';
 import {setItemData} from '../../../store/actions/dashTyped';
+import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
     selectCurrentTabId,
     selectDashWorkbookId,
     selectIsDialogVisible,
     selectOpenedItemData,
+    selectWidgetsCurrentTab,
 } from '../../../store/selectors/dashTypedSelectors';
 
 import {ListState, TabMenu} from './TabMenu/TabMenu';
@@ -62,7 +64,8 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
     return (
         widgetType === DASH_WIDGET_TYPES.TABLE ||
         widgetType === DASH_WIDGET_TYPES.MARKDOWN ||
-        widgetType === DASH_WIDGET_TYPES.METRIC
+        widgetType === DASH_WIDGET_TYPES.METRIC ||
+        widgetType === DASH_WIDGET_TYPES.MARKUP
     );
 };
 
@@ -78,6 +81,7 @@ const isEntryTypeWithFiltering = (entryType?: WidgetType) => {
     if (wizardFilteringAvailable) {
         widgetTypesWithFilteringAvailable.push(
             WizardType.GraphWizardNode,
+            WizardType.D3WizardNode,
             WizardType.TableWizardNode,
         );
     }
@@ -111,7 +115,6 @@ type State = {
     error: boolean;
     data: DashTabItemWidget['data'];
     tabIndex: number;
-    tabDefault: number;
     isManualTitle: boolean;
     selectedWidgetType?: WidgetKind;
     selectedEntryType?: WidgetType;
@@ -144,18 +147,25 @@ class Widget extends React.PureComponent<Props, State> {
             return null;
         }
 
+        let currentTab: string;
+        let tabIndex = 0;
+        if (nextProps.id) {
+            currentTab = nextProps.widgetsCurrentTab[nextProps.id];
+            tabIndex = nextProps.data.tabs.findIndex(({id}) => id === currentTab);
+        }
+        tabIndex = tabIndex === -1 ? 0 : tabIndex;
+
         return {
             hideTitle: nextProps.data.tabs.length === 1 && nextProps.data.hideTitle,
             prevVisible: nextProps.visible,
             error: false,
             data: nextProps.data,
-            tabIndex: 0,
-            tabDefault: 0,
+            tabIndex,
             isManualTitle: Boolean(nextProps.id),
             selectedWidgetType: null,
             selectedEntryType: null,
             // new params logic, local state for current tab params
-            tabParams: nextProps.data.tabs[0]?.params || {},
+            tabParams: nextProps.data.tabs[tabIndex]?.params || {},
             legacyChanged: 0,
         };
     }
@@ -165,7 +175,6 @@ class Widget extends React.PureComponent<Props, State> {
         prevVisible: false,
         error: false,
         tabIndex: 0,
-        tabDefault: 0,
         data: Widget.defaultProps.data,
         isManualTitle: false,
         tabParams: {},
@@ -185,8 +194,8 @@ class Widget extends React.PureComponent<Props, State> {
         );
 
         const {tabs} = this.state.data;
-        // We don't support tabs in dc yet
         const tabIndex = tabs.findIndex(({chartId}) => !chartId);
+
         if (tabIndex === -1) {
             const newData = {
                 hideTitle: tabs.length === 1 && this.state.hideTitle,
@@ -400,6 +409,7 @@ class Widget extends React.PureComponent<Props, State> {
                         items={data.tabs}
                         selectedItemIndex={tabIndex}
                         update={this.updateTabMenu}
+                        tabIconMixin={b('add-icon')}
                     />
                 </div>
             </div>
@@ -413,11 +423,7 @@ class Widget extends React.PureComponent<Props, State> {
         }
         const {data, tabIndex, selectedEntryType} = this.state;
         const caption = (
-            <div
-                className={b('caption', {
-                    inactive: !isEntryTypeWithFiltering(selectedEntryType),
-                })}
-            >
+            <div className={b('caption')}>
                 <span className={b('caption-text')}>
                     {i18n('dash.widget-dialog.edit', 'label_filtering-other-charts')}
                 </span>
@@ -448,11 +454,7 @@ class Widget extends React.PureComponent<Props, State> {
         const {workbookId} = this.props;
 
         const autoHeightCheckboxCaption = (
-            <div
-                className={b('caption', {
-                    inactive: !isWidgetTypeWithAutoHeight(selectedWidgetType),
-                })}
-            >
+            <div className={b('caption')}>
                 <span className={b('caption-text')}>
                     {i18n('dash.widget-dialog.edit', 'field_autoheight')}
                 </span>
@@ -495,6 +497,7 @@ class Widget extends React.PureComponent<Props, State> {
                                 size="m"
                                 onChange={this.onVisibilityCheckboxToggle}
                                 checked={!this.state.hideTitle}
+                                qa={DashCommonQa.WidgetShowTitleCheckbox}
                             >
                                 {i18n('dash.widget-dialog.edit', 'field_show-title')}
                             </Checkbox>
@@ -557,6 +560,7 @@ class Widget extends React.PureComponent<Props, State> {
                         onChange={this.onAutoHeightRadioButtonChange}
                         disabled={!isWidgetTypeWithAutoHeight(selectedWidgetType)}
                         checked={Boolean(autoHeight)}
+                        qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
                     >
                         {i18n('dash.widget-dialog.edit', 'label_autoheight-enable')}
                     </Checkbox>
@@ -638,8 +642,6 @@ class Widget extends React.PureComponent<Props, State> {
         const sidebar = this.renderDialogSidebar();
         const footer = this.renderDialogFooter();
         const content = this.renderDialogBody();
-        const bodyHeaderKey = 'label_tab-settings';
-        const bodyHeader = i18n('dash.widget-dialog.edit', bodyHeaderKey);
 
         const showFilteringChartSetting = Utils.isEnabledFeature(Feature.ShowFilteringChartSetting);
 
@@ -650,10 +652,11 @@ class Widget extends React.PureComponent<Props, State> {
                 onClose={closeDialog}
                 sidebarHeader={i18n('dash.widget-dialog.edit', 'label_widget')}
                 sidebar={sidebar}
-                bodyHeader={bodyHeader}
                 body={content}
                 footer={footer}
                 sidebarClassMixin={b('dialog-sidebar')}
+                contentClassMixin={b('content')}
+                bodyClassMixin={b('content-body')}
                 disableFocusTrap={true}
             />
         );
@@ -667,6 +670,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     visible: selectIsDialogVisible(state, DIALOG_TYPE.WIDGET),
     currentTabId: selectCurrentTabId(state),
     workbookId: selectDashWorkbookId(state),
+    widgetsCurrentTab: selectWidgetsCurrentTab(state),
 });
 
 const mapDispatchToProps = {

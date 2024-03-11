@@ -2,9 +2,10 @@ import React from 'react';
 
 import {Minus, Plus} from '@gravity-ui/icons';
 import DataTable, {Column, SortOrder} from '@gravity-ui/react-data-table';
-import {Button, Icon, Link} from '@gravity-ui/uikit';
+import {Button, Icon, Link, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {isUndefined} from 'lodash';
+import get from 'lodash/get';
 import moment from 'moment';
 import {
     BarTableCell,
@@ -17,6 +18,7 @@ import {
     StringParams,
     TableCell,
     TableColumn,
+    TableCommonCell,
     TableHead,
     TableRow,
 } from 'shared';
@@ -27,14 +29,12 @@ import {ChartKitDataTable, DataTableData} from '../../../../../../types';
 import {Bar} from '../Bar/Bar';
 import {TableProps} from '../types';
 
+import {getAdditionalStyles, getRowActionParams} from './action-params';
+import {getCellClickArgs, getCellOnClickHandler} from './event-handlers';
 import {
     camelCaseCss,
     generateName,
-    getActionParams,
-    getAdditionalStyles,
-    getCellClickArgs,
     getCellWidth,
-    getRowActionParams,
     getTreeSetColumnSortAscending,
     hasTreeSetColumn,
     isCellValueNullable,
@@ -251,6 +251,9 @@ export function valueFormatter(
         );
     }
 
+    const cellOnClickEvent: TableCommonCell['onClick'] | undefined = get(cell, 'onClick');
+    const shouldShowTooltip = cellOnClickEvent?.action === 'showMsg';
+
     return (
         <div
             className={b('content', {
@@ -267,7 +270,13 @@ export function valueFormatter(
             key={Math.random()}
         >
             {button}
-            {resultValue}
+            {shouldShowTooltip ? (
+                <Popover content={cellOnClickEvent?.args?.message} openOnHover={false}>
+                    {resultValue}
+                </Popover>
+            ) : (
+                resultValue
+            )}
             {sortIcon}
         </div>
     );
@@ -349,8 +358,15 @@ export const getColumnsAndNames = ({
                         if (header) {
                             return camelCaseCss(column.css);
                         }
+
+                        const style = {};
                         const cell = row && row[name];
-                        return camelCaseCss((typeof cell === 'object' && cell?.css) || undefined);
+
+                        if (typeof cell === 'object' && cell?.css) {
+                            Object.assign(style, cell.css);
+                        }
+
+                        return camelCaseCss(style);
                     },
                     align: DataTable.CENTER,
                     sub: columns,
@@ -394,6 +410,9 @@ export const getColumnsAndNames = ({
                     };
                 }
 
+                const isHeadColumn = get(column, 'header');
+                const isSelectable =
+                    context.isHasGroups && !isHeadColumn && actionParamsData?.scope === 'cell';
                 const columnData: Column<DataTableData> = {
                     name: columnName,
                     header: (
@@ -408,6 +427,7 @@ export const getColumnsAndNames = ({
                     className: b('cell', {
                         type,
                         'with-fixed-width': Boolean(columnWidth),
+                        selectable: isSelectable,
                     }),
                     accessor: (row) => {
                         const column = row[columnName];
@@ -442,9 +462,15 @@ export const getColumnsAndNames = ({
                         let rowActionParams: StringParams | undefined;
                         let additionalStyles: React.CSSProperties | undefined;
 
-                        if (actionParamsData) {
+                        if (!isHeadColumn && actionParamsData) {
                             rowActionParams = getRowActionParams({row, head});
-                            additionalStyles = getAdditionalStyles({actionParamsData, row, head});
+                            additionalStyles = getAdditionalStyles({
+                                actionParamsData,
+                                row,
+                                rows,
+                                head,
+                                cell,
+                            });
                         }
 
                         if (cellClickArgs || rowActionParams) {
@@ -455,9 +481,11 @@ export const getColumnsAndNames = ({
                             Object.assign(defaultStyles, additionalStyles);
                         }
 
-                        return camelCaseCss(
-                            (typeof cell === 'object' && cell?.css) || defaultStyles,
-                        );
+                        if (typeof cell === 'object' && cell?.css) {
+                            Object.assign(defaultStyles, cell.css);
+                        }
+
+                        return camelCaseCss(defaultStyles);
                     },
                     sortAccessor: (row) => {
                         const column = row[columnName];
@@ -475,31 +503,12 @@ export const getColumnsAndNames = ({
                     sortAscending: hasTreeSetColumn(rows[0])
                         ? getTreeSetColumnSortAscending(columnName, rows)
                         : undefined,
-                    onClick: ({row}, col) => {
-                        const cellClickArgs = getCellClickArgs(row, col.name);
-                        const cellActionParams = actionParamsData
-                            ? getActionParams({
-                                  actionParamsData,
-                                  row,
-                                  column: col,
-                                  head,
-                              })
-                            : undefined;
-
-                        if ((cellClickArgs || cellActionParams) && onChange) {
-                            const extractedParams = cellClickArgs || {};
-                            const extractedActionParams = cellActionParams || {};
-                            onChange(
-                                {
-                                    type: 'PARAMS_CHANGED',
-                                    data: {params: {...extractedParams, ...extractedActionParams}},
-                                },
-                                {forceUpdate: true},
-                                true,
-                                true,
-                            );
-                        }
-                    },
+                    onClick: getCellOnClickHandler({
+                        actionParamsData: isHeadColumn ? undefined : actionParamsData,
+                        head,
+                        rows,
+                        onChange,
+                    }),
                     sortable: isGroupSortAvailable && isColumnSortable,
                     width: columnWidth,
                     group,

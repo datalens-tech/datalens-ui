@@ -4,7 +4,7 @@ import {AxiosResponse} from 'axios';
 import debounce from 'lodash/debounce';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {DashTabItemControl, DashTabItemControlSourceType, Feature} from 'shared';
+import {DashSettings, DashTabItemControl, Feature} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
 import {
@@ -31,6 +31,7 @@ import {
     ResolveWidgetControlDataRefArgs,
 } from '../types';
 
+import {useResizeObserver} from './useAutoHeightResizeObserver';
 import {LoadingChartHookProps, useLoadingChart} from './useLoadingChart';
 
 type LoadingChartSelectorHookProps = Pick<
@@ -56,7 +57,6 @@ type LoadingChartSelectorHookProps = Pick<
         chartId: string;
     };
 
-const WIDGET_DEBOUNCE_TIMEOUT = 300;
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 600;
 export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) => {
     const {
@@ -85,6 +85,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         usageType,
         chartId,
         widgetType,
+        settings,
     } = props;
 
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
@@ -93,6 +94,8 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     const isNewRelations = useSelector(selectIsNewRelations);
 
     const history = useHistory();
+
+    const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts ?? true;
 
     /**
      * debounced call of recalculate widget layout after rerender
@@ -119,8 +122,11 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
             if (renderedData?.status === 'success') {
                 pushStats(renderedData, 'dash', dataProvider);
             }
+
+            const newAutoHeight = Boolean(props.data.autoHeight);
+            adjustLayout(!newAutoHeight);
         },
-        [dataProvider],
+        [adjustLayout, dataProvider, props.data.autoHeight],
     );
 
     /**
@@ -148,17 +154,11 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
                 adjustLayout(false);
                 return;
             }
+
             const newAutoHeight = Boolean(props.data.autoHeight);
-            // fix same as for table at CHARTS-7640
-            if (widgetType === DashTabItemControlSourceType.External) {
-                setTimeout(() => {
-                    adjustLayout(!newAutoHeight);
-                }, WIDGET_DEBOUNCE_TIMEOUT);
-            } else {
-                adjustLayout(!newAutoHeight);
-            }
+            adjustLayout(!newAutoHeight);
         },
-        [adjustLayout, widgetType, props.data.autoHeight],
+        [adjustLayout, props.data.autoHeight],
     );
 
     const {
@@ -333,22 +333,54 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     );
 
     /**
+     * Resize observer adjustLayout
+     *
+     * For selector if autoHeight prop enabled or when an error occurred
+     */
+    const isAutoHeightEnabled = Boolean(props.data.autoHeight) || Boolean(error);
+    const autoHeightEnabled = isInit && isAutoHeightEnabled;
+
+    const debounceResizeAdjustLayot = React.useCallback(
+        debounce(() => {
+            adjustLayout(!isAutoHeightEnabled);
+        }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
+        [adjustLayout, isAutoHeightEnabled],
+    );
+
+    useResizeObserver({
+        onResize: debounceResizeAdjustLayot,
+        rootNodeRef,
+        enable: autoHeightEnabled,
+    });
+
+    /**
      * changed widget content size
      */
     React.useEffect(() => {
         debouncedChartReflow();
     }, [width, height, debouncedChartReflow]);
 
+    /**
+     * Load selector if load only visible setting disabled
+     */
+    React.useEffect(() => {
+        if (loadOnlyVisibleCharts === false) {
+            setCanBeLoaded(true);
+        }
+    }, [setCanBeLoaded, loadOnlyVisibleCharts]);
+
     return {
         loadedData,
         isLoading,
         isSilentReload,
         isReloadWithNoVeil,
+        isAutoHeightEnabled,
         error,
         handleChartkitReflow,
         handleChange,
         handleError,
         handleRetry,
+        handleUpdate: debounceResizeAdjustLayot,
         handleGetWidgetMeta,
         mods,
         widgetBodyClassName,

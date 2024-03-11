@@ -54,6 +54,7 @@ const getErrorDescription = ({code}: {code?: string}) => {
     }
 };
 
+// TODO: https://github.com/datalens-tech/datalens-ui/issues/375
 export const getGSheetErrorData = ({
     type,
     error,

@@ -1,7 +1,7 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {getControlByTitle, getUniqueTimestamp, openTestPage} from '../../../utils';
+import {getControlByTitle} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
 const PARAMS = {
@@ -29,22 +29,18 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
             }
             const controlDefaultValue = controlItems[controlItems.length - 1];
 
-            // creating an empty dashboard
-            const dashName = `${PARAMS.DASH_NAME_PREFIX}-${getUniqueTimestamp()}`;
-
-            await openTestPage(page, '/dashboards');
-
-            await dashboardPage.createDashboard(dashName);
-
-            // adding a selector with a default value
-            await dashboardPage.addSelector({
-                controlTitle: PARAMS.CONTROL_TITLE,
-                controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                controlItems,
-                defaultValue: controlDefaultValue,
+            // creating a new dashboard
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    // adding a selector with a default value
+                    await dashboardPage.addSelector({
+                        controlTitle: PARAMS.CONTROL_TITLE,
+                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+                        controlItems,
+                        defaultValue: controlDefaultValue,
+                    });
+                },
             });
-
-            await dashboardPage.clickSaveButton();
 
             // get the control by name
             const control = await getControlByTitle(page, PARAMS.CONTROL_TITLE);

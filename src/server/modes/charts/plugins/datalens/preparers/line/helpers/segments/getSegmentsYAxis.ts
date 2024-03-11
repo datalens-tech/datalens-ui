@@ -1,6 +1,7 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import sortBy from 'lodash/sortBy';
 
-import {ServerPlaceholder} from '../../../../../../../../../shared';
+import {AxisLabelFormatMode, ServerPlaceholder} from '../../../../../../../../../shared';
 import {applyPlaceholderSettingsToAxis} from '../../../../utils/axis-helpers';
 import {getAxisFormattingByField} from '../axis/getAxisFormattingByField';
 
@@ -10,14 +11,12 @@ const DEFAULT_SPACE_BETWEEN_SEGMENTS = 4;
 
 export const getSegmentsYAxis = (
     segmentsMap: SegmentsMap,
-    placeholders: {y: ServerPlaceholder; y2: ServerPlaceholder},
+    placeholders: {y?: ServerPlaceholder; y2?: ServerPlaceholder},
     visualizationId: string,
 ): {yAxisSettings: Highcharts.AxisOptions[]; yAxisFormattings: any[]} => {
-    const segments = Object.keys(segmentsMap);
+    const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
 
-    const segmentsNumber = segments.filter(
-        (segmentKey) => !segmentsMap[segmentKey].isOpposite,
-    ).length;
+    const segmentsNumber = segments.filter((s) => !s.isOpposite).length;
     const takenSpaceBetweenSegments = DEFAULT_SPACE_BETWEEN_SEGMENTS * (segmentsNumber - 1);
     const freeSpaceForSegments = 100 - takenSpaceBetweenSegments;
     const segmentsSpace = Math.floor(freeSpaceForSegments / segmentsNumber);
@@ -28,11 +27,8 @@ export const getSegmentsYAxis = (
     const yAxis = new Array(segments.length);
     const yAxisFormattings = new Array(segments.length);
 
-    segments.forEach((segmentKey: string) => {
-        const segment = segmentsMap[segmentKey];
-
+    segments.forEach((segment) => {
         const isY2Axis = segment.isOpposite;
-
         const yAxisIndex = segment.index;
 
         let segmentIndex;
@@ -75,7 +71,7 @@ export const getSegmentsYAxis = (
         applyPlaceholderSettingsToAxis(placeholder, axis, {title: true});
 
         yAxis[yAxisIndex] = axis;
-        if (placeholder && placeholder.settings?.axisFormatMode === 'by-field') {
+        if (placeholder && placeholder.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
             yAxisFormattings[yAxisIndex] = getAxisFormattingByField(placeholder, visualizationId);
         }
     });

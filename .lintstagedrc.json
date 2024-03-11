@@ -10,5 +10,11 @@
     "*.{css,scss}": [
       "stylelint --fix --quiet",
       "prettier --write"
+    ],
+    "src/i18n-keysets/**/!({keyset,context}).json": [
+      "node scripts/i18n-keysets-check.js"
+    ],
+    "src/i18n-keysets/**/({keyset,context}).json": [
+      "node scripts/i18n-keysets-clear.js"
     ]
 }

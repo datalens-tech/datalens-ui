@@ -5,6 +5,7 @@ import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import {GetRelationsEntry, SwitchPublicationStatusResponse} from '../../us/types';
 import {escapeStringForLike, filterDatasetsIdsForCheck} from '../helpers';
+import {isValidPublishLink} from '../helpers/validation';
 import {
     DeleteEntryArgs,
     DeleteEntryResponse,
@@ -22,7 +23,7 @@ import {
 export const entriesActions = {
     deleteEntry: createAction<DeleteEntryResponse, DeleteEntryArgs>(async (api, args) => {
         const typedApi = getTypedApi(api);
-        const {entryId, scope} = args;
+        const {entryId, lockToken, scope} = args;
         switch (scope) {
             case 'dataset': {
                 const data = await typedApi.bi.deleteDataset({datasetId: entryId});
@@ -33,13 +34,13 @@ export const entriesActions = {
                 return data;
             }
             default: {
-                const data = await typedApi.us._deleteUSEntry({entryId});
+                const data = await typedApi.us._deleteUSEntry({entryId, lockToken});
                 return data;
             }
         }
     }),
     getPublicationPreview: createAction<GetPublicationPreviewResponse, GetPublicationPreviewArgs>(
-        async (api, {entryId}) => {
+        async (api, {entryId, workbookId}) => {
             const typedApi = getTypedApi(api);
             const relations = (await typedApi.us.getRelations({
                 entryId,
@@ -49,6 +50,7 @@ export const entriesActions = {
             if (filteredDatasetsIds.length) {
                 const {result: datasets} = await typedApi.bi.checkDatasetsForPublication({
                     datasetsIds: filteredDatasetsIds,
+                    workbookId,
                 });
                 const normalizedDatasets = keyBy(datasets, (dataset) => dataset.dataset_id);
                 return relations.map((entry) => {
@@ -71,12 +73,17 @@ export const entriesActions = {
     switchPublicationStatus: createAction<
         SwitchPublicationStatusResponse,
         MixedSwitchPublicationStatusArgs
-    >(async (api, {entries, mainEntry}) => {
+    >(async (api, {entries, mainEntry, workbookId}) => {
+        if (!isValidPublishLink(mainEntry?.unversionedData?.publicAuthor?.link)) {
+            throw new Error('Failed to publish dashboard - invalid publish link.');
+        }
+
         const typedApi = getTypedApi(api);
         const filteredDatasetsIds = filterDatasetsIdsForCheck(entries);
         if (filteredDatasetsIds.length) {
             const {result: datasets} = await typedApi.bi.checkDatasetsForPublication({
                 datasetsIds: filteredDatasetsIds,
+                workbookId,
             });
             if (datasets.some((datasetEntry) => !datasetEntry.allowed)) {
                 const errorMessage = JSON.stringify(

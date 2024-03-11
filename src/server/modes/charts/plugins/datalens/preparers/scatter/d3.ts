@@ -4,23 +4,24 @@ import type {
     ScatterSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import {ServerField, getFakeTitleOrTitle} from '../../../../../../../shared';
+import {getFakeTitleOrTitle} from '../../../../../../../shared';
 import {PointCustomData, ScatterSeriesCustomData} from '../../../../../../../shared/types/chartkit';
-import {getAxisType} from '../../d3/utils';
+import {getAxisType} from '../helpers/axis';
+import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {PrepareFunctionArgs} from '../types';
 
 import {ScatterGraph, prepareScatter} from './prepareScatter';
 
 type MapScatterSeriesArgs = {
-    x?: ServerField;
-    y?: ServerField;
+    xAxisType?: string;
+    yAxisType?: string;
     graph: ScatterGraph;
 };
 
 function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustomData> {
-    const {x, y, graph} = args;
+    const {xAxisType, yAxisType, graph} = args;
 
-    return {
+    const series: ScatterSeries<PointCustomData> = {
         type: 'scatter',
         name: graph.name || '',
         color: typeof graph.color === 'string' ? graph.color : undefined,
@@ -30,6 +31,7 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
                 const pointData: ScatterSeriesData<PointCustomData> = {
                     radius: point.marker?.radius,
                     custom: {
+                        ...item.custom,
                         name: point.name,
                         xLabel: point.xLabel,
                         yLabel: point.yLabel,
@@ -39,13 +41,13 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
                     },
                 };
 
-                if (getAxisType(x) === 'category') {
+                if (xAxisType === 'category') {
                     pointData.x = typeof item.x === 'number' ? item.x : index;
                 } else {
                     pointData.x = item.x;
                 }
 
-                if (getAxisType(y) === 'category') {
+                if (yAxisType === 'category') {
                     pointData.y = typeof item.y === 'number' ? item.y : index;
                 } else {
                     pointData.y = item.y;
@@ -53,13 +55,20 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
 
                 return pointData;
             }) || [],
+        // @ts-ignore
+        custom: graph.custom,
     };
+
+    if (graph.marker?.symbol) {
+        series.symbolType = graph.marker?.symbol as ScatterSeries['symbolType'];
+    }
+
+    return series;
 }
 
-export function prepareD3Scatter(
-    options: PrepareFunctionArgs,
-): ChartKitWidgetData<PointCustomData> {
-    const {categories: preparedXCategories, graphs, x, y, z, color, size} = prepareScatter(options);
+export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<PointCustomData> {
+    const {shared, sort} = args;
+    const {categories: preparedXCategories, graphs, x, y, z, color, size} = prepareScatter(args);
     const xCategories = (preparedXCategories || []).map(String);
     const seriesCustomData: ScatterSeriesCustomData = {
         xTitle: getFakeTitleOrTitle(x),
@@ -69,16 +78,27 @@ export function prepareD3Scatter(
         sizeTitle: getFakeTitleOrTitle(size),
     };
 
+    const visualizationIds = getAllVisualizationsIds(shared);
+    const xAxisType = getAxisType({
+        field: x,
+        visualizationIds,
+        sort,
+    });
+    const yAxisType = getAxisType({
+        field: y,
+        visualizationIds,
+        sort,
+    });
     const config: ChartKitWidgetData = {
         series: {
             data: graphs.map((graph) => ({
-                ...mapScatterSeries({graph, x, y}),
+                ...mapScatterSeries({graph, xAxisType, yAxisType}),
                 custom: seriesCustomData,
             })),
         },
     };
 
-    if (getAxisType(x) === 'category') {
+    if (xAxisType === 'category') {
         config.xAxis = {
             categories: xCategories,
         };

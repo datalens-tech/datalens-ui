@@ -4,6 +4,7 @@ import {Loader, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _ from 'lodash';
+import {connect} from 'react-redux';
 import {
     ApiV2Filter,
     ApiV2Parameter,
@@ -21,12 +22,15 @@ import {
     isMeasureName,
     markupToRawString,
 } from 'shared';
-import {getColorsConfigKey} from 'shared/modules/colors-helpers';
+import {getColorsConfigKey} from 'shared/modules/colors/common-helpers';
+import {getDistinctValue, getLineTimeDistinctValue} from 'shared/modules/colors/distincts-helpers';
 import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
+import {DatalensGlobalState} from 'ui';
 
 import {getWhereOperation} from '../../../../libs/datasetHelper';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
+import {selectWizardWorkbookId} from '../../selectors/settings';
 import {ExtraSettings} from '../Dialogs/DialogColor/DialogColor';
 
 import './ValuesList.scss';
@@ -49,7 +53,7 @@ const getShownValues = ({searchValue, values}: {searchValue: string; values: str
 
     return shownValues.slice(0, MAX_VALUES_COUNT);
 };
-export interface Props {
+interface OwnProps {
     item: Field;
     items?: Field[];
     filters: FilterField[];
@@ -63,7 +67,13 @@ export interface Props {
     onChangeSelectedValue: (selectedValue: string | null, shouldClearPalette?: boolean) => void;
     extra?: ExtraSettings;
     distincts?: Record<string, string[]>;
+    // this prop is only used when section supports handling of multiple fields; otherwise it must be only undefined.
+    sectionFields?: Field[];
 }
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+
+export interface Props extends OwnProps, StateProps {}
 
 interface State {
     values: string[];
@@ -100,12 +110,12 @@ class ValuesList extends React.Component<Props, State> {
 
     componentDidMount() {
         const {items} = this.props;
-
         if (items?.length) {
             this.composeData();
-        } else {
-            this.fetchInitialData();
+            return;
         }
+
+        this.fetchInitialData();
     }
 
     componentDidUpdate(prevProps: Readonly<Props>) {
@@ -202,7 +212,7 @@ class ValuesList extends React.Component<Props, State> {
     };
 
     async fetchInitialData() {
-        const {item, distincts: externalDistincts} = this.props;
+        const {item, distincts: externalDistincts, sectionFields} = this.props;
         const {isRetry} = this.state;
 
         this.setState({
@@ -210,14 +220,17 @@ class ValuesList extends React.Component<Props, State> {
         });
 
         try {
-            let distincts;
             let values: string[] = [];
-
             if (externalDistincts) {
-                values = externalDistincts[item.guid];
+                const placeholderFields = sectionFields || [item];
+
+                const distincts = placeholderFields.map((v) => {
+                    return externalDistincts[v.guid];
+                });
+
+                values = this.buildMultipleColorsDistincts(distincts, 0);
             } else {
-                distincts = await this.getDistincts();
-                values = this.getValuesFromDistincts(distincts);
+                values = this.getValuesFromDistincts(await this.getDistincts());
             }
 
             const useSuggest = values.length === VALUES_LOAD_LIMIT;
@@ -270,7 +283,7 @@ class ValuesList extends React.Component<Props, State> {
             if (item.data_type === DATASET_FIELD_TYPES.MARKUP && rawDistinctValue) {
                 distinctValue = markupToRawString(rawDistinctValue as MarkupItem);
             } else {
-                distinctValue = (rawDistinctValue as string) || 'Null';
+                distinctValue = getDistinctValue(rawDistinctValue);
             }
 
             return acc.concat(distinctValue);
@@ -280,7 +293,7 @@ class ValuesList extends React.Component<Props, State> {
     };
 
     getDistincts = (): Promise<GetDistinctsApiV2TransformedResponse> => {
-        const {datasetId, updates, item} = this.props;
+        const {datasetId, updates, item, workbookId} = this.props;
 
         if (isMeasureName(item)) {
             return Promise.resolve({result: {data: {Data: []}}});
@@ -296,6 +309,7 @@ class ValuesList extends React.Component<Props, State> {
             {
                 updates,
                 datasetId,
+                workbookId,
                 limit: VALUES_LOAD_LIMIT,
                 fields,
                 filters,
@@ -388,6 +402,26 @@ class ValuesList extends React.Component<Props, State> {
 
         this.props.onChangeSelectedValue(values[0] || null);
     };
+
+    private buildMultipleColorsDistincts(distincts: string[][], index: number): string[] {
+        const root = distincts[index];
+        if (distincts.length - 1 === index) {
+            return root;
+        }
+
+        return root.reduce((acc, rootDistinct) => {
+            return [
+                ...acc,
+                ...this.buildMultipleColorsDistincts(distincts, index + 1).map((subDistinct) =>
+                    getLineTimeDistinctValue(subDistinct, rootDistinct),
+                ),
+            ];
+        }, [] as string[]);
+    }
 }
 
-export default ValuesList;
+const mapStateToProps = (state: DatalensGlobalState) => ({
+    workbookId: selectWizardWorkbookId(state),
+});
+
+export default connect(mapStateToProps)(ValuesList);

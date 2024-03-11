@@ -14,6 +14,7 @@ import {
     Field,
     HierarchyField,
     Link,
+    SectionDatasetQA,
     Update,
     isParameter,
 } from 'shared';
@@ -29,7 +30,6 @@ import {selectUpdates, selectUpdatesByFieldId} from 'units/wizard/selectors/prev
 import {getIconForDataType} from 'units/wizard/utils/helpers';
 import Utils from 'utils';
 
-import {SectionDatasetQA} from '../../../../../../../shared/constants/qa/wizard';
 import {updateDatasetByValidation} from '../../../../actions';
 import {setUpdates} from '../../../../actions/preview';
 import {WizardDispatch} from '../../../../reducers';
@@ -147,6 +147,7 @@ class DatasetItem extends React.Component<DatasetItemInnerProps> {
                             onClick={() => {
                                 this.props.onClickEditDatasetItem(item);
                             }}
+                            data-qa={SectionDatasetQA.ItemFunction}
                         >
                             <Icon data={Function} size={14} />
                         </div>
@@ -182,7 +183,7 @@ class DatasetItem extends React.Component<DatasetItemInnerProps> {
                             <DropdownMenu
                                 size="s"
                                 defaultSwitcherProps={{
-                                    qa: 'field-actions',
+                                    qa: SectionDatasetQA.FieldActions,
                                     size: 's',
                                     width: 'max',
                                 }}
@@ -345,7 +346,7 @@ class DatasetItem extends React.Component<DatasetItemInnerProps> {
                 },
             ];
         } else {
-            // We need to update both guid and title at once. Since tilte === guid, and the backend can't do that.
+            // We need to update both guid and title at once. Since title === guid, and the backend can't do that.
             // Therefore, we first update the guid and the title and the rest of the field with a separate update
             updates = [
                 // Updating the guid first

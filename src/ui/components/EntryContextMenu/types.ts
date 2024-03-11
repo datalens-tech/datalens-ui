@@ -7,6 +7,7 @@ export type ContextMenuParams = {
     showSpecificItems: boolean;
     isEditMode: boolean | string;
     isLimitedView: boolean;
+    place?: string;
 };
 
 export type ContextMenuItem = {
@@ -22,6 +23,7 @@ export type ContextMenuItem = {
     scopes: Array<string>;
     isSpecific?: boolean;
     isOnEditMode?: boolean;
+    place?: string;
     isStrictPermissions?: boolean;
     isVisible?: (params: ContextMenuParams) => boolean;
     qa?: string;

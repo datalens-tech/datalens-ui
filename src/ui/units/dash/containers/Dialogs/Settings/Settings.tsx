@@ -14,12 +14,13 @@ import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialog
 import Utils from '../../../../../utils';
 import {validateParamTitle} from '../../../components/ParamsSettings/helpers';
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
-import {closeDialog, setSettings} from '../../../store/actions/dash';
 import {
     setDashAccessDescription,
     setDashSupportDescription,
+    setSettings,
     toggleTableOfContent,
 } from '../../../store/actions/dashTyped';
+import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
     selectDashAccessDescription,
     selectDashSupportDescription,
@@ -64,7 +65,7 @@ const Settings = () => {
         settings.dependentSelectors || false,
     );
     const [loadOnlyVisibleCharts, setLoadOnlyVisibleCharts] = React.useState(
-        settings.loadOnlyVisibleCharts === undefined ? true : settings.loadOnlyVisibleCharts,
+        settings.loadOnlyVisibleCharts ?? true,
     );
     const [globalParams, setGlobalParams] = React.useState(settings.globalParams || {});
     const [isGlobalParamsError, setIsGlobalParamsError] = React.useState(false);
@@ -121,7 +122,10 @@ const Settings = () => {
             dispatch(
                 setSettings({
                     ...settings,
-                    autoupdateInterval: autoupdateInterval || null,
+                    autoupdateInterval:
+                        (typeof autoupdateInterval === 'string'
+                            ? parseInt(autoupdateInterval)
+                            : autoupdateInterval) || null,
                     maxConcurrentRequests: maxConcurrentRequests > 0 ? maxConcurrentRequests : null,
                     loadOnlyVisibleCharts,
                     silentLoading,
@@ -229,12 +233,7 @@ const Settings = () => {
                     loadOnlyVisibleCharts={loadOnlyVisibleCharts}
                     onUpdateLoadOnlyVisibleCharts={handleUpdateLoadOnlyVisibleCharts}
                 />
-                {Utils.isEnabledFeature(Feature.DashBoardGlobalParams) && (
-                    <Params
-                        paramsValue={globalParams}
-                        onChangeParamsValue={handleChangeGlobalParams}
-                    />
-                )}
+                <Params paramsValue={globalParams} onChangeParamsValue={handleChangeGlobalParams} />
                 <EntryDialogues ref={entryDialoguesRef} />
             </Dialog.Body>
             <Dialog.Footer

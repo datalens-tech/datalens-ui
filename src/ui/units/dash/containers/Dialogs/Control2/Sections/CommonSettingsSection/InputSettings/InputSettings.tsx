@@ -1,17 +1,14 @@
 import React from 'react';
 
-import {FormRow} from '@gravity-ui/components';
-import {TextInput} from '@gravity-ui/uikit';
-import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
-import {useDispatch, useSelector} from 'react-redux';
-import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
-import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
 import {SectionWrapper} from '../../../../../../../../components/SectionWrapper/SectionWrapper';
 import {OperationSelector} from '../../OperationSelector/OperationSelector';
 import {ValueSelector} from '../../ValueSelector/ValueSelector';
+import type {ValueSelectorControlProps} from '../../ValueSelector/types';
 import {InputTypeSelector} from '../InputTypeSelector/InputTypeSelector';
+import {ParameterNameInput} from '../ParameterNameInput/ParameterNameInput';
+import {getElementOptions} from '../helpers/input-type-select';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
@@ -20,16 +17,14 @@ type InputSettingsProps = {
 };
 
 const InputSettings = ({isSectionHidden}: InputSettingsProps) => {
-    const dispatch = useDispatch();
-    const {fieldName, validation} = useSelector(selectSelectorDialog);
-
-    const handleFieldNameUpdate = React.useCallback((value: string) => {
-        dispatch(
-            setSelectorDialogItem({
-                fieldName: value,
-            }),
-        );
+    const options = React.useMemo(() => {
+        return getElementOptions();
     }, []);
+
+    const controlProps: ValueSelectorControlProps = React.useMemo(
+        () => ({select: {type: 'manual'}}),
+        [],
+    );
 
     return (
         <React.Fragment>
@@ -37,18 +32,10 @@ const InputSettings = ({isSectionHidden}: InputSettingsProps) => {
                 isStylesHidden={isSectionHidden}
                 title={isSectionHidden ? '' : i18n('label_common-settings')}
             >
-                <FormRow label={i18n('field_field-name')}>
-                    <FieldWrapper error={validation.fieldName}>
-                        <TextInput
-                            qa="field-name-input"
-                            value={fieldName}
-                            onUpdate={handleFieldNameUpdate}
-                        />
-                    </FieldWrapper>
-                </FormRow>
-                <InputTypeSelector />
+                <ParameterNameInput label={i18n('field_field-name')} />
+                <InputTypeSelector options={options} />
                 <OperationSelector />
-                <ValueSelector />
+                <ValueSelector controlProps={controlProps} />
             </SectionWrapper>
         </React.Fragment>
     );

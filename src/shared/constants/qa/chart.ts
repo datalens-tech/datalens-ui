@@ -23,4 +23,13 @@ export const ChartkitMenuDialogsQA = {
     chartPreview: 'chart-preview',
     errorButtonRetry: 'chartkit-error-actions',
     widgetTab: 'widget-chart-tab',
+    chartWidget: 'chart-widget',
 };
+
+export const enum ChartKitQa {
+    Loader = 'chartkit-loader',
+}
+
+export const enum ChartQa {
+    Chart = 'chartkit-chart',
+}

@@ -1,7 +1,7 @@
 import type {Page} from '@playwright/test';
 import ConnectionsPage from '../../page-objects/connections/ConnectionsPage';
 import {openTestPage} from '../../utils';
-import {WorkbooksUrls} from 'constants/constants';
+import {WorkbooksUrls} from '../../constants/constants';
 
 import datalensTest from '../../utils/playwright/globalTestDefinition';
 

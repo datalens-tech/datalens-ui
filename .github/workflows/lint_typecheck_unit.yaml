@@ -1,15 +1,17 @@
+name: Lint
+
 on:
   pull_request:
+    branches-ignore:
+      - 'weblate-**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-name: Lint, Typecheck, Unit tests
-
 jobs:
   build:
-    name: ui
+    name: Lint, Typecheck, Unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

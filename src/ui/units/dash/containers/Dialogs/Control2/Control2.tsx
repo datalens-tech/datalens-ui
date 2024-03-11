@@ -11,10 +11,13 @@ import {AppearanceSection} from 'units/dash/containers/Dialogs/Control2/Sections
 import {CommonSettingsSection} from 'units/dash/containers/Dialogs/Control2/Sections/CommonSettingsSection/CommonSettingsSection';
 import {SelectorPreview} from 'units/dash/containers/Dialogs/Control2/SelectorPreview/SelectorPreview';
 import {SelectorTypeSelect} from 'units/dash/containers/Dialogs/Control2/SelectorTypeSelect/SelectorTypeSelect';
-import {applyControl2Dialog} from 'units/dash/store/actions/dashTyped';
-import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
+import {applyControl2Dialog, closeControl2Dialog} from 'units/dash/store/actions/dashTyped';
+import {
+    selectIsParametersSectionAvailable,
+    selectSelectorDialog,
+} from 'units/dash/store/selectors/dashTypedSelectors';
 
-import {closeDialog as closeDashDialog} from '../../../store/actions/dash';
+import {ParametersSection} from './Sections/ParametersSection/ParametersSection';
 
 import './Control2.scss';
 
@@ -61,6 +64,7 @@ class DialogAddControl extends React.Component<Props> {
         const {sourceType, isEdit} = this.props;
         const showTypeSelect =
             !isEdit || !Utils.isEnabledFeature(Feature.GroupControls) || sourceType !== 'external';
+        const showParametersSection = this.props.isParametersSectionAvailable;
 
         return (
             <div>
@@ -75,6 +79,11 @@ class DialogAddControl extends React.Component<Props> {
                 <div className={b('section')}>
                     <CommonSettingsSection />
                 </div>
+                {showParametersSection && (
+                    <div className={b('section')}>
+                        <ParametersSection />
+                    </div>
+                )}
                 {this.renderAppearanceSection()}
             </div>
         );
@@ -95,7 +104,7 @@ class DialogAddControl extends React.Component<Props> {
     }
 
     private handleClose = () => {
-        this.props.actions.closeDashDialog();
+        this.props.actions.closeControl2Dialog();
     };
 
     private handleApply = () => {
@@ -107,6 +116,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         isEdit: Boolean(state.dash.openedItemId),
         sourceType: selectSelectorDialog(state).sourceType,
+        isParametersSectionAvailable: selectIsParametersSectionAvailable(state),
     };
 };
 
@@ -115,7 +125,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
         actions: bindActionCreators(
             {
                 applyControl2Dialog,
-                closeDashDialog,
+                closeControl2Dialog,
             },
             dispatch,
         ),

@@ -1,10 +1,12 @@
 import {
+    Feature,
     Field,
     FilterField,
     GraphShared,
     Placeholder,
     PlaceholderId,
     PlaceholderSettings,
+    ServerSort,
     Shared,
     SortDirection,
     VisualizationLayerShared,
@@ -13,9 +15,9 @@ import {
     isNumberField,
     isPercentVisualization,
     isTreeField,
-    isVisualizationWithDimensionsAsColors,
     isVisualizationWithLayers,
 } from 'shared';
+import {isChartSupportMultipleColors} from 'shared/modules/colors/common-helpers';
 import {ApplyData, DatalensGlobalState} from 'ui';
 import {
     getAxisModePlaceholderSettings,
@@ -24,6 +26,8 @@ import {
 
 import {SETTINGS} from '../../../constants/visualizations';
 import {AppDispatch} from '../../../store';
+import Utils from '../../../utils';
+import {getChartType} from '../../ql/store/reducers/ql';
 import {
     selectDashboardParameters,
     selectDrillDownLevel,
@@ -76,7 +80,7 @@ export const updatePlaceholderSettingsAction = (
     options: {
         placeholder: Placeholder;
         visualization: Shared['visualization'];
-        sort: Field[];
+        sort: ServerSort[];
     },
 ) => {
     return function (dispatch: AppDispatch) {
@@ -124,38 +128,42 @@ export function updateAvailable(args: CommonUpdatePlaceholderArgs) {
 }
 export function updateColors(args: CommonUpdatePlaceholderArgs) {
     return function (dispatch: AppDispatch, getState: () => DatalensGlobalState) {
-        const {items} = args;
-        const visualizationState = getState().wizard.visualization;
-        const {visualization} = visualizationState;
+        const {visualization: currentVisualization} = getState().wizard.visualization;
 
-        const previewState = getState().wizard.preview;
-        const prevColors = previewState.colors;
-
-        const onDesignItemsChange = (visualization as GraphShared['visualization'])
-            ?.onDesignItemsChange;
-
-        const visualizationCopy = {...visualization} as Shared['visualization'];
-
-        let updatedColors;
-        if (onDesignItemsChange) {
-            updatedColors = onDesignItemsChange({
-                colors: items,
-                prevColors: prevColors,
-                // onDesignItemsChange is mutating visualization
-                // That's why we are setting new visualization below
-                visualization: visualizationCopy as GraphShared['visualization'],
-            }).colors;
+        if (currentVisualization?.placeholders.some((p) => p.id === PlaceholderId.Colors)) {
+            dispatch(updateVisualizationPlaceholderItems(args));
         } else {
-            updatedColors = items;
+            const newVisualization = {...currentVisualization} as GraphShared['visualization'];
+            const onDesignItemsChange = newVisualization.onDesignItemsChange;
+            const {items} = args;
+
+            let updatedColors;
+            if (onDesignItemsChange) {
+                const chartType = getChartType(getState()) ?? '';
+                const isMultipleColorsSupported =
+                    Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+                    isChartSupportMultipleColors(chartType, newVisualization.id);
+                const prevColors = getState().wizard.preview.colors;
+                updatedColors = onDesignItemsChange({
+                    colors: items,
+                    prevColors: prevColors,
+                    isMultipleColorsSupported,
+                    // onDesignItemsChange is mutating visualization
+                    // That's why we are setting new visualization below
+                    visualization: newVisualization,
+                }).colors;
+            } else {
+                updatedColors = items;
+            }
+
+            dispatch(setVisualization({visualization: newVisualization}));
+
+            dispatch(
+                setColors({
+                    colors: updatedColors,
+                }),
+            );
         }
-
-        dispatch(setVisualization({visualization: visualizationCopy}));
-
-        dispatch(
-            setColors({
-                colors: updatedColors,
-            }),
-        );
 
         dispatch(
             setColorsConfig({
@@ -543,13 +551,6 @@ export function updateVisualizationPlaceholderItems(args: CommonUpdatePlaceholde
 
         if (updatedVisualization.id === 'flatTable' && items.some((field) => isTreeField(field))) {
             dispatch(forceDisableTotalsAndPagination());
-        }
-
-        if (
-            isVisualizationWithDimensionsAsColors(visualization.id) &&
-            updatedPlaceholder.id === PlaceholderId.Dimensions
-        ) {
-            dispatch(setColorsConfig({colorsConfig: {}}));
         }
 
         dispatch(

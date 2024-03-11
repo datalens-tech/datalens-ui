@@ -1,3 +1,8 @@
+export const enum WizardPageQa {
+    SectionPreview = 'preview-chartkit',
+    VisualizationSelectPopup = 'visualization-select-popup',
+}
+
 export const enum SectionDatasetQA {
     DatasetContainer = 'datasets-container',
     DatasetEmptyMessage = 'datasets-blank',
@@ -7,6 +12,7 @@ export const enum SectionDatasetQA {
     SectionParameters = 'section-parameters',
     ItemIcon = 'item-icon',
     ItemTitle = 'section-dataset-draggable-item-title',
+    ItemFunction = 'section-dataset-item-function',
     AddDatasetButton = 'add-dataset-button',
     CreateFieldButton = 'create-field-button',
     CreateHierarchyButton = 'create-hierarchy-button',
@@ -18,6 +24,7 @@ export const enum SectionDatasetQA {
     DatasetSelectMoreMenu = 'dataset-select-more-menu',
     RequestDatasetAccess = 'request-rights-button',
     DatasetSelectMore = 'dataset-select-more',
+    FieldActions = 'field-actions',
 }
 
 export const enum DialogColumnSettingsQa {
@@ -27,6 +34,12 @@ export const enum DialogColumnSettingsQa {
     CancelButton = 'dialog-column-settings-cancel-button',
     UnitRadioButtons = 'dialog-column-settings-unit-radio-buttons',
     WidthValueInput = 'dialog-column-settings-width-input',
+}
+
+export const enum DialogFieldBackgroundSettingsQa {
+    EnableButton = 'dialog-field-bg-switcher',
+    FillTypeButtons = 'dialog-field-bg-fill-type',
+    ButtonColorDialog = 'button-color-dialog',
 }
 
 export const enum DialogFieldBarsSettingsQa {
@@ -51,6 +64,7 @@ export const enum DialogFieldMainSectionQa {
     PrecisionInput = 'precision-input',
     PrefixInput = 'prefix-input',
     PostfixInput = 'postfix-input',
+    NumberFormat = 'number-format-radio',
 }
 
 export const enum DialogFieldTypeSelectorValuesQa {
@@ -102,8 +116,9 @@ export const enum DialogFieldSubTotalsQa {
     SubTotalsSwitch = 'sub-totals-switch',
 }
 
-export const enum DialogColor {
+export const enum DialogColorQa {
     PaletteSelect = 'palette-select',
+    GradientType = 'color-dialog-gradient-type-radio',
     ApplyButton = 'color-dialog-apply-button',
 }
 
@@ -121,6 +136,7 @@ export const enum SectionVisualizationAddItemQa {
 export const enum DialogPlaceholderQa {
     TooltipZeroToMaxScale = 'dialog-placeholder-tooltip-zero-to-max-scale',
     TooltipLogarithmicAxis = 'dialog-placeholder-tooltip-logarithmic-axis',
+    AxisFormatMode = 'dialog-placeholder-axis-format-mode',
 }
 
 export const enum DatasetItemActionsQa {
@@ -144,4 +160,13 @@ export const enum DialogMultiDatasetQa {
 
 export const enum PlaceholderActionQa {
     OpenColorDialogIcon = 'placeholder-action-open-color-dialog',
+}
+
+export const enum HierarchyEditorQa {
+    Dialog = 'hierarchy-editor',
+    ApplyButton = 'dialog-apply-button',
+}
+
+export const enum VisualizationItemQa {
+    FormulaIcon = 'formula-icon',
 }

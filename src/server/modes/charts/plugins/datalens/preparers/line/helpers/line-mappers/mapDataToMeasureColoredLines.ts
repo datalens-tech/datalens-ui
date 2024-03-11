@@ -52,7 +52,7 @@ export const mapDataToMeasureColoredLines = (args: MapDataToMeasureColoredLinesA
         segmentName,
     });
 
-    if (!lines[key]) {
+    if (!Object.hasOwnProperty.call(lines, key)) {
         lines[key] = {
             data: {},
             ...seriesOptions,

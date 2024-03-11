@@ -1,11 +1,14 @@
-import {getFakeTitleOrTitle, isNumberField} from '../../../../../../../shared';
+import {PlaceholderId, getFakeTitleOrTitle} from '../../../../../../../shared';
 import {getGradientStops} from '../../utils/color-helpers';
+import {isLegendEnabled} from '../../utils/misc-helpers';
+import {PrepareFunctionArgs} from '../types';
 
-import preparePie from './preparePie';
+import preparePieData from './prepare-pie-data';
+import {isColoringByMeasure} from './utils';
 
-export function prepareHighchartsPie(args: any) {
+export function prepareHighchartsPie(args: PrepareFunctionArgs) {
     const {ChartEditor, colorsConfig, labels, shared, placeholders} = args;
-    const {graphs, categories, totals, measure, label} = preparePie(args);
+    const {graphs, totals, measure, label} = preparePieData(args);
 
     const labelsLength = labels && labels.length;
     const isHideLabel = measure?.hideLabelMode === 'hide';
@@ -23,13 +26,9 @@ export function prepareHighchartsPie(args: any) {
     const pie = graphs[0];
 
     if (pie && pie.data) {
-        const color = placeholders[0].items[0];
+        const colorField = placeholders.find((p) => p.id === PlaceholderId.Colors)?.items[0];
 
-        const isColoringByMeasure = color.type === 'MEASURE' && isNumberField(color);
-
-        const isLegendEnabled = shared.extraSettings?.legendMode !== 'hide';
-
-        if (isColoringByMeasure) {
+        if (isColoringByMeasure(args)) {
             pie.showInLegend = false;
 
             const colorValues = pie.data.map((point) => Number(point.colorValue));
@@ -48,9 +47,9 @@ export function prepareHighchartsPie(args: any) {
 
             customConfig.legend = {
                 title: {
-                    text: getFakeTitleOrTitle(color),
+                    text: getFakeTitleOrTitle(colorField),
                 },
-                enabled: isLegendEnabled,
+                enabled: isLegendEnabled(shared.extraSettings),
                 symbolWidth: null,
             };
         }
@@ -58,5 +57,5 @@ export function prepareHighchartsPie(args: any) {
 
     ChartEditor.updateHighchartsConfig(customConfig);
 
-    return {graphs, categories, totals};
+    return {graphs, totals};
 }

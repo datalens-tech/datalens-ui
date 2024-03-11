@@ -3,6 +3,7 @@ import React from 'react';
 import {List, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import SplitPane from 'react-split-pane';
+import {DocSectionQa} from 'shared';
 import type {
     DataLensFunctionsDocGroupTocItem,
     DocsTocItemLastLevel,
@@ -128,7 +129,12 @@ class DocSection extends React.Component<DocSectionProps, DocSectionState> {
                                 </div>
                             ) : (
                                 <React.Fragment>
-                                    <div className={b('doc-item-title')}>{selectedItem?.name}</div>
+                                    <div
+                                        className={b('doc-item-title')}
+                                        data-qa={DocSectionQa.Title}
+                                    >
+                                        {selectedItem?.name}
+                                    </div>
                                     <YfmWrapper
                                         className={b('doc-item')}
                                         setByInnerHtml={true}
@@ -153,8 +159,10 @@ class DocSection extends React.Component<DocSectionProps, DocSectionState> {
             selected: Boolean((item as FunctionDocListItem).selected),
         };
 
+        const qa = isGroup ? DocSectionQa.Group : DocSectionQa.Item;
+
         return (
-            <div id={item.id} className={b('doc-list-item', mods)}>
+            <div id={item.id} className={b('doc-list-item', mods)} data-qa={qa}>
                 {item.name}
             </div>
         );
@@ -181,8 +189,7 @@ class DocSection extends React.Component<DocSectionProps, DocSectionState> {
     };
 
     fetchFunctionDoc = async (item: FunctionDocListItem) => {
-        const {datalensDocsRu, datalensDocsEn} = DL.ENDPOINTS;
-        const docsEndpoint = DL.USER_LANG === 'ru' ? datalensDocsRu : datalensDocsEn;
+        const {datalensDocs} = DL.ENDPOINTS;
 
         this.setState({functionLoading: true});
 
@@ -192,7 +199,7 @@ class DocSection extends React.Component<DocSectionProps, DocSectionState> {
             const {getFieldEditorDocPath} = registry.docs.functions.getAll();
             const path = getFieldEditorDocPath(href);
 
-            const functionDoc = await fetchFunctionsDocumentation(docsEndpoint, path);
+            const functionDoc = await fetchFunctionsDocumentation(datalensDocs, path);
 
             this.setState({
                 functionDoc,

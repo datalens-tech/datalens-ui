@@ -24,6 +24,7 @@ import type {
     QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
+import {registry} from '../../../../../registry';
 
 import {LINEAR_VISUALIZATIONS, LOG_INFO, LOG_TIMING, QUERY_TITLE} from './constants';
 
@@ -166,6 +167,7 @@ export interface QLRenderResultYagr {
     graphs?: QLRenderResultYagrGraph[];
     axes?: any[];
     tablePreviewData?: QlConfigPreviewTableData;
+    timeZone?: string;
 }
 
 const clickhouseQuotemap: Record<string, string> = {
@@ -332,8 +334,8 @@ function dumpReqParamValue(input: string, type: string, datalensQLConnectionType
         case QLParamType.Date:
         case QLParamType.DateInterval:
             if (
-                datalensQLConnectionType === ConnectorType.Monitoring ||
-                datalensQLConnectionType === ConnectorType.Promql
+                datalensQLConnectionType === DATALENS_QL_CONNECTION_TYPES.MONITORING ||
+                datalensQLConnectionType === DATALENS_QL_CONNECTION_TYPES.PROMQL
             ) {
                 newValue = dateTimeParse(input, {timeZone: 'UTC'})?.toISOString();
 
@@ -405,38 +407,6 @@ function dumpReqParam(
     return {type_name: bi_type, value: dumped};
 }
 
-function convertConnectionType(connectionType: string) {
-    if (connectionType === ConnectorType.Postgres || connectionType === ConnectorType.Greenplum) {
-        return DATALENS_QL_CONNECTION_TYPES.POSTGRESQL;
-    } else if (
-        connectionType === ConnectorType.Clickhouse ||
-        connectionType === ConnectorType.ChOverYt ||
-        connectionType === ConnectorType.ChOverYtUserAuth ||
-        connectionType === ConnectorType.Chydb ||
-        connectionType === ConnectorType.ChFrozenDemo ||
-        connectionType === ConnectorType.Chyt
-    ) {
-        return DATALENS_QL_CONNECTION_TYPES.CLICKHOUSE;
-    } else if (connectionType === ConnectorType.Mssql) {
-        return DATALENS_QL_CONNECTION_TYPES.MSSQL;
-    } else if (connectionType === ConnectorType.Mysql) {
-        return DATALENS_QL_CONNECTION_TYPES.MYSQL;
-    } else if (connectionType === ConnectorType.Oracle) {
-        return DATALENS_QL_CONNECTION_TYPES.ORACLE;
-    } else if (connectionType === ConnectorType.Ydb || connectionType === ConnectorType.Yq) {
-        return DATALENS_QL_CONNECTION_TYPES.YQL;
-    } else if (connectionType === ConnectorType.Promql) {
-        return DATALENS_QL_CONNECTION_TYPES.PROMQL;
-    } else if (
-        connectionType === ConnectorType.Monitoring ||
-        connectionType === ConnectorType.MonitoringExt
-    ) {
-        return DATALENS_QL_CONNECTION_TYPES.MONITORING;
-    } else {
-        throw new Error('Unsupported connection type');
-    }
-}
-
 export function buildSource({
     id,
     connectionType,
@@ -450,6 +420,7 @@ export function buildSource({
     params: StringParams;
     paramsDescription: QlConfigParam[];
 }) {
+    const convertConnectionType = registry.getConvertConnectorTypeToQLConnectionType();
     let sqlQuery = query;
 
     const datalensQLConnectionType = convertConnectionType(connectionType);
@@ -497,7 +468,7 @@ export function buildSource({
         // For the rest - we leave the text as it is, we pass the parameters to the back.
         Object.keys(params).forEach((key) => {
             const paramDescription = paramsDescription.find((param) => param.name === key);
-            if (paramDescription && paramDescription.defaultValue) {
+            if (paramDescription?.defaultValue !== undefined) {
                 if (
                     paramDescription.type === QLParamType.DateInterval ||
                     paramDescription.type === QLParamType.DatetimeInterval
@@ -565,6 +536,8 @@ export function getColumns(
     field = 'sql',
 ): QlConfigResultEntryMetadataDataColumn[] | null {
     const row = data[field].find((entry: QLResultEntry) => entry.event === 'metadata');
+
+    const convertConnectionType = registry.getConvertConnectorTypeToQLConnectionType();
 
     const datalensQLConnectionType = convertConnectionType(connectionType);
 
@@ -767,10 +740,30 @@ export function iterateThroughVisibleQueries(
 }
 
 export const prepareQuery = (query: string) => {
-    return query
-        .replace(/--[^\n]*\n/g, '')
-        .trim()
-        .replace(/;+$/g, '');
+    return query.trim().replace(/;+$/g, '');
+};
+
+const removeComments = (query: string) => {
+    const result = query.replace(
+        /("(""|[^"])*")|('(''|[^'])*')|(--[^\n\r]*)|(\/\*[\w\W]*?(?=\*\/)\*\/)/gm,
+        (match) => {
+            if (
+                (match[0] === '"' && match[match.length - 1] === '"') ||
+                (match[0] === "'" && match[match.length - 1] === "'")
+            )
+                return match;
+
+            return '';
+        },
+    );
+
+    return result;
+};
+
+export const doesQueryContainOrderBy = (query: string) => {
+    const queryWithoutComments = removeComments(query);
+
+    return /order by/gim.test(queryWithoutComments);
 };
 
 export const visualizationCanHaveContinuousAxis = (visualization: ServerVisualization) => {

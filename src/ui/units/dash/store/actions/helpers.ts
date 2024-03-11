@@ -1,6 +1,10 @@
 import {History} from 'history';
 import {DashEntry, DashTabItemType} from 'shared';
 
+import {registry} from '../../../../registry';
+
+import type {SetItemDataArgs} from './dashTyped';
+
 export const NOT_FOUND_ERROR_TEXT = 'No entry found';
 export const DOES_NOT_EXIST_ERROR_TEXT = "The entity doesn't exist";
 
@@ -31,3 +35,20 @@ export const removeParamAndUpdate = (
         hash: '',
     });
 };
+
+export const getExtendedItemDataAction = () => {
+    const {getExtendedItemData} = registry.dash.functions.getAll();
+    return getExtendedItemData;
+};
+
+export const getBeforeOpenDialogItemAction = () => {
+    const {beforeOpenDialogItem} = registry.dash.functions.getAll();
+    return beforeOpenDialogItem;
+};
+
+export const getBeforeCloseDialogItemAction = () => {
+    const {beforeCloseDialogItem} = registry.dash.functions.getAll();
+    return beforeCloseDialogItem;
+};
+
+export const getExtendedItemData = (args: SetItemDataArgs) => () => args;
