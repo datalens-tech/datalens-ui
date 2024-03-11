@@ -44,16 +44,15 @@ const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 type StateProps = ReturnType<typeof mapStateToProps>;
 
 interface PluginGroupControlProps
-    extends PluginWidgetProps,
+    extends PluginWidgetProps<Record<string, StringParams>>,
         ControlSettings,
         StateProps,
         ContextProps {}
 
-interface PluginGroupControl extends Plugin<PluginGroupControlProps> {
+interface PluginGroupControl extends Plugin<PluginGroupControlProps, Record<string, StringParams>> {
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: GetDistincts;
 }
-
 const b = block('dashkit-plugin-group-control');
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 
@@ -98,7 +97,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             isInit: false,
             stateParams: this.props.params,
             needReload: false,
-            needMeta: false,
             forceUpdate: true,
         };
     }
@@ -173,13 +171,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         if (!controlData.buttonApply || callChangeByClick) {
             const groupItemIds = controlId ? [controlId] : controlData.group.map(({id}) => id);
-            this.props.onStateAndParamsChange(
-                {params},
-                {
-                    groupItemIds,
-                    action: 'setParams',
-                },
-            );
+            this.props.onStateAndParamsChange({params}, {groupItemIds});
         }
 
         if (controlId) {
@@ -213,8 +205,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     // public
     // @ts-ignore
     private getMeta() {
-        this.setState({needMeta: true});
-
         return new Promise((resolve) => {
             this.resolve = resolve;
 
@@ -574,7 +564,7 @@ const plugin: PluginGroupControl = {
 
         return plugin;
     },
-    renderer(props: PluginWidgetProps, forwardedRef) {
+    renderer(props, forwardedRef) {
         const workbookId = props.context.workbookId;
 
         return (

@@ -1,4 +1,4 @@
-import React, {CSSProperties} from 'react';
+import React from 'react';
 
 import type {StringParams} from '@gravity-ui/dashkit';
 import type {schema} from 'shared';
@@ -105,7 +105,7 @@ export interface SelectControlProps {
     required?: boolean;
     hasValidationError: boolean;
     renderOverlay?: () => React.ReactNode;
-    style?: CSSProperties;
+    style?: React.CSSProperties;
 }
 
 export type ChartControlRef =

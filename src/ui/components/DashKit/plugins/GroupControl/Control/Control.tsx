@@ -310,10 +310,8 @@ export const Control = ({
                 });
                 fieldType = datasetFieldType;
             }
-            if (
-                fieldType === DATASET_FIELD_TYPES.DATETIME ||
-                fieldType === DATASET_FIELD_TYPES.GENERICDATETIME
-            ) {
+            // Check 'datetime' for backward compatibility
+            if (fieldType === 'datetime' || fieldType === DATASET_FIELD_TYPES.GENERICDATETIME) {
                 typeProps.timeFormat = 'HH:mm:ss';
             }
         }
@@ -365,10 +363,9 @@ export const Control = ({
             return null;
         }
 
-        const {type, param} = control;
-
         const controlData = data as unknown as DashTabItemControlSingle;
 
+        const {param} = control;
         const {source, placementMode, width, title} = controlData;
         const {required, operation, showTitle} = source;
 
@@ -416,28 +413,6 @@ export const Control = ({
             ...getTypeProps(control, controlData, currentValidationError),
         };
 
-        if (type === 'range-datepicker' || type === 'datepicker') {
-            let fieldType = source?.fieldType || null;
-            if (controlData.sourceType === DashTabItemControlSourceType.Dataset) {
-                const {datasetFieldType} = getDatasetSourceInfo({
-                    data: controlData,
-                    actualLoadedData: loadedData,
-                });
-                fieldType = datasetFieldType;
-            }
-            // Check 'datetime' for backward compatibility
-            if (fieldType === 'datetime' || fieldType === DATASET_FIELD_TYPES.GENERICDATETIME) {
-                props.timeFormat = 'HH:mm:ss';
-            }
-        }
-
-        if (type === 'input') {
-            props.placeholder =
-                Utils.isEnabledFeature(Feature.SelectorRequiredValue) && currentValidationError
-                    ? currentValidationError
-                    : control.placeholder;
-        }
-
         switch (control.type) {
             case CONTROL_TYPE.SELECT:
                 return (
@@ -478,13 +453,13 @@ export const Control = ({
         reload();
     };
 
-    const {placementMode, width} = data as unknown as DashTabItemControlData;
-    const style = getControlWidthStyle(placementMode, width);
-
     switch (status) {
         case LOAD_STATUS.INITIAL:
         case LOAD_STATUS.PENDING:
             if (!control) {
+                const {placementMode, width} = data as unknown as DashTabItemControlData;
+                const style = getControlWidthStyle(placementMode, width);
+
                 return (
                     <div className={b('item-loader')} style={style}>
                         <Loader size="s" />

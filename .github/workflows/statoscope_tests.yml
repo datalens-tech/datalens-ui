@@ -8,8 +8,6 @@ on:
 jobs:
   statoscope:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -32,9 +30,8 @@ jobs:
       - name: Query stats
         if: "github.event_name == 'pull_request'"
         run: cat ./scripts/ci/statoscope-comment.jora | npx --no-install @statoscope/cli query --input input.json --input reference.json > result.json
-      - name: Upload UI report to S3
-        if: "github.event_name == 'pull_request'"
-        id: upload-to-s3
+      - name: Save result.json and pr
+        if: always()
         run: |
           cp result.json ./report/statoscope
           echo "${{ github.event.pull_request.number }}" > ./report/statoscope/report-pr

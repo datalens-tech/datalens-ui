@@ -11,7 +11,6 @@ import {
 import {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
 import {
     ChangeNavigationPathAction,
-    RemoveUnusedSubItemsAction,
     SetAccessDescriptionAction,
     SetDashKeyAction,
     SetDashKitRefAction,
@@ -21,6 +20,7 @@ import {
     SetErrorModeAction,
     SetHashStateAction,
     SetInitialPageTabsItemsAction,
+    type SetLastUsedConnectionIdAction,
     SetLastUsedDatasetIdAction,
     SetLoadingEditModeAction,
     SetPageDefaultTabItemsAction,
@@ -76,6 +76,6 @@ export type DashAction<T = unknown> =
     | CloseDialogAction
     | SaveDashSuccessAction
     | SaveDashErrorAction
-    | RemoveUnusedSubItemsAction;
+    | SetLastUsedConnectionIdAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

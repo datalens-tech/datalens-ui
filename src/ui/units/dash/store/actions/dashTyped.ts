@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {AddConfigItem, Config, ConfigItem, DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
+import {AddConfigItem, Config, DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
 import {PluginTextProps} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
 import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Title';
 import {i18n} from 'i18n';
@@ -350,20 +350,6 @@ export type SetItemDataArgs = {
 
 export const setItemData = (data: SetItemDataArgs) => ({
     type: actionTypes.SET_ITEM_DATA,
-    payload: data,
-});
-
-export const REMOVE_UNUSED_SUB_ITEMS = Symbol('dash/REMOVE_UNUSED_SUB_ITEMS');
-
-export type RemoveUnusedSubItemsAction = {
-    type: typeof REMOVE_UNUSED_SUB_ITEMS;
-    payload: {item: ConfigItem};
-};
-
-export const removeUnusedSubItems = (
-    data: RemoveUnusedSubItemsAction['payload'],
-): RemoveUnusedSubItemsAction => ({
-    type: REMOVE_UNUSED_SUB_ITEMS,
     payload: data,
 });
 
