@@ -1,4 +1,4 @@
-import {MarkdownItPluginCb} from '@doc-tools/transform/lib/plugins/typings';
+import {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import {ExpressKit, Request, Response} from '@gravity-ui/expresskit';
 import getGatewayControllers, {
     ApiWithRoot,
