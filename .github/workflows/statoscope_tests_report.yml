@@ -62,6 +62,7 @@ jobs:
       - name: Create Comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
+          header: statoscope-report
           number: ${{ steps.extract-data.outputs.REPORT_PR_NUMBER }}
           message: "${{steps.create-comment-text.outputs.result}}"
     
