@@ -15,7 +15,6 @@ export type SectionWrapperProps = {
     titleMods?: string;
     subTitle?: string;
     withCollapse?: boolean;
-    isStylesHidden?: boolean;
     arrowPosition?: CollapseProps['arrowPosition'];
     arrowQa?: CollapseProps['arrowQa'];
     defaultIsExpanded?: boolean;
@@ -26,14 +25,13 @@ type SectionBodyProps = {
     subTitle?: string;
     className?: string;
     titleModsVal: Record<string, boolean> | null;
-    isStylesHidden?: boolean;
 };
 
 const SectionBody: React.FC<SectionBodyProps> = (
     props: React.PropsWithChildren<SectionBodyProps>,
 ) => {
     return (
-        <div className={b({hidden: props.isStylesHidden}, props.className)}>
+        <div className={b(null, props.className)}>
             {props.title && <div className={b('title', props.titleModsVal)}>{props.title}</div>}
             {props.subTitle && <div className={b('subtitle')}>{props.subTitle}</div>}
             <div className={b('content')}>{props.children}</div>
@@ -54,7 +52,6 @@ const SectionWrapper: React.FC<SectionWrapperProps> = (props) => {
                 titleModsVal={titleModsVal}
                 subTitle={props.subTitle}
                 className={props.className}
-                isStylesHidden={props.isStylesHidden}
             >
                 <Collapse
                     defaultIsExpand={props.defaultIsExpanded ?? true}
@@ -75,7 +72,6 @@ const SectionWrapper: React.FC<SectionWrapperProps> = (props) => {
             subTitle={props.subTitle}
             title={props.title}
             className={props.className}
-            isStylesHidden={props.isStylesHidden}
         >
             {props.children}
         </SectionBody>
