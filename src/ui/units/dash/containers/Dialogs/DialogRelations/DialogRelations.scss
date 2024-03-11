@@ -1,6 +1,7 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
-.yc-root_theme_dark {
+.yc-root_theme_dark,
+.yc-root_theme_dark-hc {
     .dialog-relations {
         &__icon-visualization {
             filter: contrast(0) brightness(0.85);
@@ -8,7 +9,8 @@
     }
 }
 
-.yc-root_theme_light {
+.yc-root_theme_light,
+.yc-root_theme_light-hc {
     .dialog-relations {
         &__icon-visualization {
             filter: contrast(0) brightness(1.3);

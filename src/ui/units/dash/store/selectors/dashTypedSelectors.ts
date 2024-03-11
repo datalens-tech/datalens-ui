@@ -86,6 +86,19 @@ export const selectIsControlConfigurationDisabled = (state: DatalensGlobalState)
     }
 };
 
+export const selectIsParametersSectionAvailable = (state: DatalensGlobalState): boolean => {
+    const {sourceType, connectionId, connectionQueryTypes} = state.dash.selectorDialog;
+
+    switch (sourceType) {
+        case DashTabItemControlSourceType.Connection:
+            return Boolean(connectionId && connectionQueryTypes?.length);
+        case DashTabItemControlSourceType.External:
+            return true;
+        default:
+            return false;
+    }
+};
+
 export const selectAvailableOperationsDict = (
     state: DatalensGlobalState,
 ): Record<Operations, boolean> | undefined => {
