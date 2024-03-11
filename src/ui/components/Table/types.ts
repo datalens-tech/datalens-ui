@@ -13,6 +13,7 @@ interface CellData {
     value: unknown;
     formattedValue?: string;
     css?: React.CSSProperties;
+    className?: string | (() => string);
 }
 
 export type RenderCellFn<T extends CellData> = (cellData: T) => React.ReactElement | null;

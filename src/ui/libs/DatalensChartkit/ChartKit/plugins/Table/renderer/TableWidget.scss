@@ -4,4 +4,8 @@
     flex-direction: column;
     height: 100%;
     overflow: auto;
+
+    &__number-column {
+        text-align: right;
+    }
 }

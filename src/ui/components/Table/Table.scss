@@ -64,7 +64,7 @@
         height: 100%;
     }
 
-    &__tr {
+    &__body &__tr {
         height: var(--data-table-row-height);
 
         &_no-data {

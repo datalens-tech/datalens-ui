@@ -143,12 +143,15 @@ export const Table = (props: TableProps) => {
                                       const width = cell.column.columnDef.meta?.width;
                                       const isFixedSize = Boolean(width);
                                       const originalCellData = cell.row.original[index];
+                                      const cellClassName = [b('td'), originalCellData?.className]
+                                          .filter(Boolean)
+                                          .join(' ');
 
                                       return (
                                           <td
                                               key={cell.id}
                                               data-qa={qa?.cell}
-                                              className={b('td')}
+                                              className={cellClassName}
                                               style={originalCellData?.css}
                                               onClick={(event) =>
                                                   handleCellClick({
@@ -162,6 +165,7 @@ export const Table = (props: TableProps) => {
                                                   className={b('td-content', {
                                                       'fixed-size': isFixedSize,
                                                   })}
+                                                  style={{width}}
                                               >
                                                   {flexRender(
                                                       cell.column.columnDef.cell,

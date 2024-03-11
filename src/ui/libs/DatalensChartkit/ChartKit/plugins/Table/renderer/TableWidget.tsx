@@ -1,6 +1,7 @@
 import React from 'react';
 
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
+import {dateTime} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {
@@ -12,7 +13,7 @@ import {
     TableCommonCell,
 } from 'shared';
 import {Table} from 'ui/components/Table/Table';
-import type {OnTableClick, THead, TableProps} from 'ui/components/Table/types';
+import type {OnTableClick, TData, THead, TableProps} from 'ui/components/Table/types';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../helpers/constants';
@@ -121,7 +122,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                     renderCell: (cellData) => {
                         const cell = cellData as TableCommonCell;
                         const columnView = get(d, 'view');
-                        const cellType = cell.type;
+                        const cellType = cell.type ?? get(d, 'type');
 
                         if (columnView === 'bar') {
                             return (
@@ -140,9 +141,30 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                             return <TreeCell cell={cell} />;
                         }
 
+                        let formattedValue: string | undefined = cellData.formattedValue;
+                        if (typeof formattedValue === 'undefined') {
+                            if (cellType === 'date') {
+                                const dateTimeValue = dateTime({
+                                    input: cell.value as number,
+                                    timeZone: 'UTC',
+                                });
+                                const dateTimeFormat = get(d, 'format');
+                                formattedValue = dateTimeValue?.isValid()
+                                    ? dateTimeValue.format(dateTimeFormat)
+                                    : String(cellData.value);
+                            } else {
+                                formattedValue = String(cellData.value);
+                            }
+                        }
+
+                        const contentStyles: React.CSSProperties = {};
+                        if (cellType === 'number') {
+                            contentStyles.textAlign = 'left';
+                        }
+
                         return (
-                            <span data-qa={ChartKitTableQa.CellContent}>
-                                {cellData.formattedValue ?? cellData.value}
+                            <span data-qa={ChartKitTableQa.CellContent} style={{...contentStyles}}>
+                                {formattedValue}
                             </span>
                         );
                     },
@@ -150,8 +172,8 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
 
                 return column;
             }),
-            rows: (data.rows as TableCellsRow[])?.map<TableCommonCell[]>((r) => {
-                return r.cells.map((c) => {
+            rows: (data.rows as TableCellsRow[])?.map<TData>((r) => {
+                return r.cells.map((c, cellIndex) => {
                     const cell = c as TableCommonCell;
                     const isCellClickable =
                         Boolean(canDrillDown && cell.drillDownFilterValue) ||
@@ -166,9 +188,17 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                         rows: data.rows || [],
                     });
 
+                    const column = data.head?.[cellIndex];
+                    const cellType = cell.type ?? get(column, 'type');
+                    let cellClassName: string | undefined;
+                    if (cellType === 'number') {
+                        cellClassName = b('number-column');
+                    }
+
                     return {
                         ...cell,
                         css: {cursor, ...actionParamsCss, ...cell.css},
+                        className: cellClassName,
                     };
                 });
             }),
