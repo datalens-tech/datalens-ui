@@ -27,8 +27,12 @@ imm.extend('$auto', (value, object) => {
 
 const ExternalSelectorSettings = () => {
     const dispatch = useDispatch();
-    const {autoHeight, chartId, title, defaults, validation} = useSelector(selectSelectorDialog);
-    const [externalChangedId, setExternalChangedId] = React.useState(0);
+    const {autoHeight, chartId, title, selectorParameters, validation, selectorParametersGroup} =
+        useSelector(selectSelectorDialog);
+
+    React.useEffect(() => {
+        dispatch(setSelectorDialogItem({selectorParametersGroup: 0}));
+    }, []);
 
     const handleAutoHeightUpdate = React.useCallback((value: boolean) => {
         dispatch(
@@ -42,21 +46,28 @@ const ExternalSelectorSettings = () => {
         (value: {entryId: string; name: string; params?: StringParams}) => {
             const parsedParams = value.params || {};
 
-            const {defaults: mergedDefaults} = imm.update<
-                {defaults: StringParams},
+            const {selectorParameters: mergedSelectorParameters} = imm.update<
+                {selectorParameters: StringParams},
                 AutoExtendCommand<StringParams>
-            >({defaults}, {defaults: {$auto: {$merge: parsedParams}}});
+            >(
+                {selectorParameters: selectorParameters || {}},
+                {selectorParameters: {$auto: {$merge: parsedParams}}},
+            );
 
             dispatch(
                 setSelectorDialogItem({
                     chartId: value.entryId,
                     title: title || value.name,
-                    defaults: mergedDefaults,
+                    selectorParameters: mergedSelectorParameters,
                 }),
             );
-            setExternalChangedId(externalChangedId + 1);
+            dispatch(
+                setSelectorDialogItem({
+                    selectorParametersGroup: (selectorParametersGroup ?? 0) + 1,
+                }),
+            );
         },
-        [title, defaults, externalChangedId],
+        [selectorParameters, dispatch, title, selectorParametersGroup],
     );
 
     const handleTitleUpdate = React.useCallback((newTitle: string) => {

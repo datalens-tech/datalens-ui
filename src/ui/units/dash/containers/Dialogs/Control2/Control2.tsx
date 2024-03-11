@@ -13,9 +13,12 @@ import {CommonSettingsSection} from 'units/dash/containers/Dialogs/Control2/Sect
 import {SelectorPreview} from 'units/dash/containers/Dialogs/Control2/SelectorPreview/SelectorPreview';
 import {SelectorTypeSelect} from 'units/dash/containers/Dialogs/Control2/SelectorTypeSelect/SelectorTypeSelect';
 import {applyControl2Dialog, closeControl2Dialog} from 'units/dash/store/actions/dashTyped';
-import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
+import {
+    selectIsParametersSectionAvailable,
+    selectSelectorDialog,
+} from 'units/dash/store/selectors/dashTypedSelectors';
 
-import {ParamsSection} from './Sections/ParamsSection/ParamsSection';
+import {ParametersSection} from './Sections/ParametersSection/ParametersSection';
 
 import './Control2.scss';
 
@@ -62,7 +65,7 @@ class DialogAddControl extends React.Component<Props> {
         const {sourceType, isEdit} = this.props;
         const showTypeSelect =
             !isEdit || !Utils.isEnabledFeature(Feature.GroupControls) || sourceType !== 'external';
-        const isExternal = sourceType === DashTabItemControlSourceType.External;
+        const showParametersSection = this.props.isParametersSectionAvailable;
 
         return (
             <React.Fragment>
@@ -78,8 +81,12 @@ class DialogAddControl extends React.Component<Props> {
                     <SectionWrapper title={i18n('label_common-settings')}>
                         <CommonSettingsSection />
                     </SectionWrapper>
-                    {isExternal && <ParamsSection />}
                 </div>
+                {showParametersSection && (
+                    <div className={b('section')}>
+                        <ParametersSection />
+                    </div>
+                )}
                 {this.renderAppearanceSection()}
             </React.Fragment>
         );
@@ -112,6 +119,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         isEdit: Boolean(state.dash.openedItemId),
         sourceType: selectSelectorDialog(state).sourceType,
+        isParametersSectionAvailable: selectIsParametersSectionAvailable(state),
     };
 };
 
