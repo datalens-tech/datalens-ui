@@ -30,6 +30,11 @@ export class SelectElementPO extends ElementPO {
         }
     }
 
+    async selectListItemByQa(qaSelector: string) {
+        await this.expectListVisible();
+        await this.getListLocator().locator(qaSelector).click();
+    }
+
     async selectListItemByIdx(idx: number) {
         await this.expectListVisible();
         await this.getListLocator().getByRole('option').nth(idx).click();

@@ -34,7 +34,7 @@ class ConnectionsPage extends BasePage {
         );
         // open creation dialog
         await formSubmit.click();
-        const textInput = await this.page.waitForSelector(slct('path-select'));
+        const textInput = await this.page.waitForSelector(slct(EntryDialogQA.PathSelect));
         // type connection name
         await textInput.type(name);
         const dialogApplyButton = await this.page.waitForSelector(slct(EntryDialogQA.Apply));

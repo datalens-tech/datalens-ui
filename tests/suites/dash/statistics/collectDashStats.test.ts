@@ -8,7 +8,7 @@ const URLS = {
     collectDashStats: '/gateway/root/mix/collectDashStats',
 };
 
-datalensTest.describe('Dashboard Statistics', () => {
+datalensTest.describe('Dashboards - Statistics', () => {
     datalensTest('Dashboard statistics collection request sent', async ({page}: {page: Page}) => {
         const responsePromise = page.waitForResponse((response) => {
             const responseUrl = new URL(response.url());

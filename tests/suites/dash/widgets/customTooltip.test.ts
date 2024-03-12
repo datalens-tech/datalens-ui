@@ -8,7 +8,7 @@ const SELECTORS = {
     TOOLTIP: 'chart-custom-tooltip',
 };
 
-datalensTest.describe('Dashboards are a custom tooltip', () => {
+datalensTest.describe('Dashboards - Custom tooltip', () => {
     datalensTest(
         'The custom tooltip specified via Config in the editor is displayed',
         async ({page}: {page: Page}) => {

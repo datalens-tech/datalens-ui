@@ -84,7 +84,7 @@ class PathSelect extends React.PureComponent<PathSelectProps> {
                         <TextInput
                             className={this.props.inputClassName}
                             error={this.props.inputError}
-                            qa="path-select"
+                            qa={EntryDialogQA.PathSelect}
                             size={this.props.size}
                             controlRef={this.props.inputRef}
                             onUpdate={this.props.onChangeInput}

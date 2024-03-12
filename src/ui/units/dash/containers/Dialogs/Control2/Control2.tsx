@@ -7,6 +7,7 @@ import {DatalensGlobalState, Utils} from 'index';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
 import {ControlQA, DashTabItemControlSourceType, Feature} from 'shared';
+import {SectionWrapper} from 'ui/components/SectionWrapper/SectionWrapper';
 import {AppearanceSection} from 'units/dash/containers/Dialogs/Control2/Sections/AppearanceSection/AppearanceSection';
 import {CommonSettingsSection} from 'units/dash/containers/Dialogs/Control2/Sections/CommonSettingsSection/CommonSettingsSection';
 import {SelectorPreview} from 'units/dash/containers/Dialogs/Control2/SelectorPreview/SelectorPreview';
@@ -67,7 +68,7 @@ class DialogAddControl extends React.Component<Props> {
         const showParametersSection = this.props.isParametersSectionAvailable;
 
         return (
-            <div>
+            <React.Fragment>
                 <div className={b('section')}>
                     <SelectorPreview />
                 </div>
@@ -77,7 +78,9 @@ class DialogAddControl extends React.Component<Props> {
                     </div>
                 )}
                 <div className={b('section')}>
-                    <CommonSettingsSection />
+                    <SectionWrapper title={i18n('label_common-settings')}>
+                        <CommonSettingsSection />
+                    </SectionWrapper>
                 </div>
                 {showParametersSection && (
                     <div className={b('section')}>
@@ -85,7 +88,7 @@ class DialogAddControl extends React.Component<Props> {
                     </div>
                 )}
                 {this.renderAppearanceSection()}
-            </div>
+            </React.Fragment>
         );
     }
 
