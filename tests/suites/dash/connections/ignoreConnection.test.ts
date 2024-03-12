@@ -14,7 +14,7 @@ const PARAMS = {
 
 const chartkitControlInput = `${slct(ControlQA.chartkitControl)} input`;
 
-datalensTest.describe('Dashboards are the work of links', () => {
+datalensTest.describe('Dashboards - Links', () => {
     datalensTest(
         'The influencing parameters of one chart tab do not affect the chart tab with ignoring these parameters',
         async ({page}: {page: Page}) => {

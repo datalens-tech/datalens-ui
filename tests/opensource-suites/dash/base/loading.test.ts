@@ -51,7 +51,7 @@ const isChartRequestSent = (reqData: string | null) => {
     return isChartData;
 };
 
-datalensTest.describe('Dashboards - Widget Downloads', () => {
+datalensTest.describe('Dashboards - Widgets loading', () => {
     datalensTest(
         'When loading a dashboard, the selectors have priority for loading api/run',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
@@ -158,7 +158,11 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
             }
 
             // check that the widget content has appeared
-            await page.waitForSelector(SELECTORS.CHART_LINE_ITEM);
+            await page
+                .locator(SELECTORS.CHART_LINE_ITEM)
+                .first()
+                .or(page.locator(`.${COMMON_CHARTKIT_SELECTORS.graph}`))
+                .waitFor({state: 'visible'});
 
             await dashboardPage.exitEditMode();
             await dashboardPage.deleteDash();

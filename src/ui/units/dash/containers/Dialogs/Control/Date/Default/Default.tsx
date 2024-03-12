@@ -7,6 +7,7 @@ import moment from 'moment';
 import {
     ControlQA,
     DATASET_FIELD_TYPES,
+    DialogControlDateQa,
     FilterValue,
     getParsedIntervalDates,
     getParsedRelativeDate,
@@ -37,8 +38,16 @@ function getTextForRelativeDate(dateString: string, withTime: boolean) {
 }
 
 const radioButtonItems = [
-    {value: 'notDefined', text: i18n('dash.control-dialog.edit', 'value_undefined')},
-    {value: 'defined', text: i18n('dash.control-dialog.edit', 'value_date-manual')},
+    {
+        value: 'notDefined',
+        text: i18n('dash.control-dialog.edit', 'value_undefined'),
+        qa: DialogControlDateQa.defaultNotDefined,
+    },
+    {
+        value: 'defined',
+        text: i18n('dash.control-dialog.edit', 'value_date-manual'),
+        qa: DialogControlDateQa.defaultSelectValue,
+    },
 ];
 
 const b = block('date-manual-default-value');
@@ -165,6 +174,7 @@ class Default extends React.PureComponent<Props, State> {
                         value={type}
                         onChange={this.onChangeRadioBox}
                         className={mixRadioBox}
+                        qa={item.qa}
                     >
                         <RadioGroup.Option value={item.value}>{item.text}</RadioGroup.Option>
                     </RadioGroup>

@@ -3,7 +3,6 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 
-import {SectionWrapper} from '../../../../../../../../components/SectionWrapper/SectionWrapper';
 import {selectWorkbookId} from '../../../../../../../workbooks/store/selectors';
 import {selectSelectorDialog} from '../../../../../../store/selectors/dashTypedSelectors';
 import {ELEMENT_TYPE} from '../../../../Control/constants';
@@ -20,8 +19,13 @@ import {getDistinctsByTypedQuery} from './helpers/get-distincts-by-typed-query';
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
 export const ConnectionSettings: React.FC = () => {
-    const {connectionQueryTypes, connectionId, connectionQueryContent, connectionQueryType} =
-        useSelector(selectSelectorDialog);
+    const {
+        connectionQueryTypes,
+        connectionId,
+        connectionQueryContent,
+        connectionQueryType,
+        selectorParameters,
+    } = useSelector(selectSelectorDialog);
     const workbookId = useSelector(selectWorkbookId);
 
     const options = React.useMemo(() => {
@@ -39,7 +43,7 @@ export const ConnectionSettings: React.FC = () => {
                 connectionId,
                 connectionQueryContent,
                 connectionQueryType,
-                parameters: {},
+                parameters: selectorParameters || {},
             }),
         [connectionId, connectionQueryContent, connectionQueryType, workbookId],
     );
@@ -59,9 +63,9 @@ export const ConnectionSettings: React.FC = () => {
     }, [connectionId, connectionQueryContent, connectionQueryType, fetcher]);
 
     return (
-        <SectionWrapper title={i18n('label_common-settings')}>
+        <React.Fragment>
             <ConnectionSelector />
-            {connectionQueryTypes?.length && connectionQueryTypes.length > 0 && (
+            {connectionQueryTypes && connectionQueryTypes.length > 0 && (
                 <React.Fragment>
                     <ParameterNameInput
                         // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
@@ -72,6 +76,6 @@ export const ConnectionSettings: React.FC = () => {
                     <ValueSelector controlProps={controlProps} />
                 </React.Fragment>
             )}
-        </SectionWrapper>
+        </React.Fragment>
     );
 };

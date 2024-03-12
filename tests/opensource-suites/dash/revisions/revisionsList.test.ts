@@ -7,7 +7,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
 import {TestParametrizationConfig} from '../../../types/config';
 
-datalensTest.describe('Dashboard Versioning', () => {
+datalensTest.describe('Dashboards - Versioning', () => {
     // It will always be failed until rewriting the test, dashboard with 100 revisions was created 3 months ago.
     // 3 months - it's a limit for listing the revisions.
     datalensTest.skip(
@@ -43,7 +43,7 @@ datalensTest.describe('Dashboard Versioning', () => {
 
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.addText(arbitraryText.first);
+                    await dashboardPage.addTitle(arbitraryText.first);
                 },
             });
 
@@ -56,7 +56,7 @@ datalensTest.describe('Dashboard Versioning', () => {
 
             await dashboardPage.editDashboard({
                 editDash: async () => {
-                    await dashboardPage.addText(arbitraryText.second);
+                    await dashboardPage.addTitle(arbitraryText.second);
                 },
             });
 

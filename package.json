@@ -47,7 +47,9 @@
     "@aws-sdk/client-sts": "^3.168.0",
     "@braintree/sanitize-url": "^6.0.0",
     "@datalens-tech/xlsx": "^0.20.1",
-    "@doc-tools/transform": "^2.18.3",
+    "@diplodoc/latex-extension": "^1.1.0",
+    "@diplodoc/transform": "^4.10.8",
+    "@doc-tools/transform": "^3.11.0",
     "@gravity-ui/app-layout": "^1.7.0",
     "@gravity-ui/browserslist-config": "^4.3.0",
     "@gravity-ui/chartkit": "^4.22.0",
@@ -83,7 +85,6 @@
     "lodash": "^4.17.21",
     "lru-cache": "^6.0.0",
     "luxon": "^1.28.0",
-    "markdown-it-katex": "^2.0.3",
     "markdown-it-link-attributes": "^4.0.1",
     "mime": "^1.6.0",
     "moment": "^2.29.4",
@@ -104,10 +105,10 @@
   },
   "devDependencies": {
     "@gravity-ui/app-builder": "^0.7.1",
-    "@gravity-ui/components": "^2.10.0",
+    "@gravity-ui/components": "^2.12.1",
     "@gravity-ui/eslint-config": "^2.2.0",
     "@gravity-ui/icons": "^2.2.0",
-    "@gravity-ui/navigation": "^1.8.2",
+    "@gravity-ui/navigation": "^1.10.3",
     "@gravity-ui/prettier-config": "^1.0.1",
     "@gravity-ui/react-data-table": "^1.2.0",
     "@gravity-ui/sdk": "^1.2.1",
@@ -175,7 +176,6 @@
     "mockdate": "^3.0.5",
     "monaco-editor": "^0.36.1",
     "monaco-editor-webpack-plugin": "^7.1.0",
-    "mustache": "^4.2.0",
     "object-hash": "^2.2.0",
     "pixelmatch": "^5.2.1",
     "pngjs": "^6.0.0",
@@ -216,8 +216,7 @@
   },
   "overrides": {
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "@doc-tools/transform": "^2.18.3"
+    "react-dom": "^17.0.2"
   },
   "deploy": {
     "project": "stat",
