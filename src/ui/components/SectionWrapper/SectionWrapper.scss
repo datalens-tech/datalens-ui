@@ -9,11 +9,6 @@
         margin-top: 20px;
     }
 
-    &_hidden {
-        border: none;
-        padding: 0;
-    }
-
     &__title {
         @include text-subheader-2();
         font-weight: 500; // Temporary redefinition until the style unification is not implemented in the uikit

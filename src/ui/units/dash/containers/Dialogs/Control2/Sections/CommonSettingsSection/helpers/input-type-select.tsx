@@ -3,6 +3,7 @@ import React from 'react';
 import {Calendar, FontCursor, ListUl, SquareCheck} from '@gravity-ui/icons';
 import {Icon, SelectOption} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import {DialogControlQa} from 'shared/constants/qa';
 
 import {ELEMENT_TYPE} from '../../../../Control/constants';
 
@@ -15,6 +16,7 @@ export const getElementOptions = (): SelectOption[] => [
         data: {
             icon: <Icon data={ListUl} />,
         },
+        qa: DialogControlQa.typeControlSelect,
     },
     {
         value: ELEMENT_TYPE.INPUT,
@@ -22,6 +24,7 @@ export const getElementOptions = (): SelectOption[] => [
         data: {
             icon: <Icon data={FontCursor} />,
         },
+        qa: DialogControlQa.typeControlInput,
     },
     {
         value: ELEMENT_TYPE.DATE,
@@ -29,6 +32,7 @@ export const getElementOptions = (): SelectOption[] => [
         data: {
             icon: <Icon data={Calendar} />,
         },
+        qa: DialogControlQa.typeControlCalendar,
     },
     {
         value: ELEMENT_TYPE.CHECKBOX,
@@ -36,5 +40,6 @@ export const getElementOptions = (): SelectOption[] => [
         data: {
             icon: <Icon data={SquareCheck} />,
         },
+        qa: DialogControlQa.typeControlCheckbox,
     },
 ];

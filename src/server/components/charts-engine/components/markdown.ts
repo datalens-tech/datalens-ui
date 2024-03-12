@@ -1,3 +1,4 @@
+import {transform as latex} from '@diplodoc/latex-extension/plugin';
 import yfmTransform from '@diplodoc/transform';
 import cut from '@diplodoc/transform/lib/plugins/cut';
 import deflist from '@diplodoc/transform/lib/plugins/deflist';
@@ -6,7 +7,6 @@ import notes from '@diplodoc/transform/lib/plugins/notes';
 import table from '@diplodoc/transform/lib/plugins/table';
 import {defaultOptions} from '@doc-tools/transform/lib/sanitize';
 import MarkdownIt from 'markdown-it';
-import katex from 'markdown-it-katex';
 import mila from 'markdown-it-link-attributes';
 
 import {registry} from '../../../registry';
@@ -28,7 +28,10 @@ export function renderHTML({text = '', lang}: {text: string; lang: string}): {re
             }),
         imsize,
         table,
-        katex,
+        latex({
+            bundle: false,
+            runtime: 'extension:latex',
+        }),
     ];
 
     const yfmPlugins = registry.getYfmPlugins();

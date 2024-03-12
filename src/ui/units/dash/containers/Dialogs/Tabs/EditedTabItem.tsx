@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {TextInput} from '@gravity-ui/uikit';
+import {DialogTabsQA} from 'shared/constants/qa';
 
 type EditTabItemProps = {
     onCommit: (test: string) => void;
@@ -29,6 +30,7 @@ function EditedTabItem({onCommit, id, title, className}: EditTabItemProps) {
                 }}
                 onBlur={() => onCommit(text)}
                 onKeyPress={(event) => event.charCode === 13 && onCommit(text)}
+                qa={DialogTabsQA.EditTabItem}
             />
         </div>
     );
