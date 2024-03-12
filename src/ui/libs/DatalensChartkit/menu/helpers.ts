@@ -112,10 +112,10 @@ export const getDefaultChartMenu = ({
             extraOptions,
         }),
         getInspectorMenuItem(),
-        // getEditMenuItem({
-        //     chartsDataProvider,
-        //     customConfig: customOptions[MenuItemsIds.EDIT],
-        // }),
+        getEditMenuItem({
+            chartsDataProvider,
+            customConfig: customOptions[MenuItemsIds.EDIT],
+        }),
         getOpenAsTableMenuItem({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.OPEN_AS_TABLE],
