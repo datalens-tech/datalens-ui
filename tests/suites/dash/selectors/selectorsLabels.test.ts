@@ -35,7 +35,6 @@ const PARAMS = {
 };
 
 async function checkLabels(
-    page: Page,
     dashboardPage: DashboardPage,
     tab: string,
     title: string,
@@ -44,7 +43,10 @@ async function checkLabels(
 ) {
     const {dialogControl} = dashboardPage;
 
-    const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
+    const isEnabledGroupControls = await isEnabledFeature(
+        dashboardPage.page,
+        Feature.GroupControls,
+    );
 
     await dashboardPage.changeTab({tabName: tab});
     await dashboardPage.enterEditMode();
@@ -89,7 +91,6 @@ datalensTest.describe('Dashboards - the internal header of selectors', () => {
             const dashboardPage = new DashboardPage({page});
 
             await checkLabels(
-                page,
                 dashboardPage,
                 PARAMS.DATASET.SELECT_TAB,
                 PARAMS.DATASET.SELECT_TITLE,
@@ -98,7 +99,6 @@ datalensTest.describe('Dashboards - the internal header of selectors', () => {
             );
 
             await checkLabels(
-                page,
                 dashboardPage,
                 PARAMS.DATASET.INPUT_TAB,
                 PARAMS.DATASET.INPUT_TITLE,
@@ -113,7 +113,6 @@ datalensTest.describe('Dashboards - the internal header of selectors', () => {
             const dashboardPage = new DashboardPage({page});
 
             await checkLabels(
-                page,
                 dashboardPage,
                 PARAMS.MANUAL.SELECT_TAB,
                 PARAMS.MANUAL.SELECT_TITLE,
@@ -122,7 +121,6 @@ datalensTest.describe('Dashboards - the internal header of selectors', () => {
             );
 
             await checkLabels(
-                page,
                 dashboardPage,
                 PARAMS.MANUAL.INPUT_TAB,
                 PARAMS.MANUAL.INPUT_TITLE,

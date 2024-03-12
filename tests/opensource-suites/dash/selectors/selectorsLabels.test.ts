@@ -3,6 +3,8 @@ import {Page} from '@playwright/test';
 import DashboardPage, {SelectorSettings} from '../../../page-objects/dashboard/DashboardPage';
 
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {DashTabItemControlSourceType, Feature} from '../../../../src/shared';
+import {isEnabledFeature} from '../../../utils';
 
 const TITLE = 'City';
 const INNER_TITLE = 'innerCity';
@@ -34,6 +36,26 @@ const createDashWithSelector = async ({
     });
 };
 
+const checkLabels = async (dashboardPage: DashboardPage, type: 'select' | 'input') => {
+    const isEnabledGroupControls = await isEnabledFeature(
+        dashboardPage.page,
+        Feature.GroupControls,
+    );
+
+    // for GroupControls innerTitle is deprecated, only field title exists and is displayed as innerTitle
+    const innerTitle = isEnabledGroupControls ? TITLE : INNER_TITLE;
+    if (type === 'select') {
+        await dashboardPage.chartkitControl.expectSelectInnerTitleVisible(innerTitle);
+    } else {
+        await dashboardPage.chartkitControl.expectInputInnerTitleVisible(innerTitle);
+    }
+
+    if (isEnabledGroupControls) {
+        return;
+    }
+    await dashboardPage.chartkitControl.expectTitleVisible(TITLE);
+};
+
 datalensTest.describe('Dashboards - The internal header of selectors', () => {
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
@@ -51,8 +73,7 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
                 settings: {elementType: {innerText: 'List'}},
             });
 
-            await dashboardPage.chartkitControl.expectTitleVisible(TITLE);
-            await dashboardPage.chartkitControl.expectSelectInnerTitleVisible(INNER_TITLE);
+            await checkLabels(dashboardPage, 'select');
         },
     );
 
@@ -66,8 +87,7 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
                 settings: {elementType: {innerText: 'Input field'}},
             });
 
-            await dashboardPage.chartkitControl.expectTitleVisible(TITLE);
-            await dashboardPage.chartkitControl.expectInputInnerTitleVisible(INNER_TITLE);
+            await checkLabels(dashboardPage, 'input');
         },
     );
 
@@ -79,14 +99,13 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
             await createDashWithSelector({
                 page,
                 settings: {
-                    sourceType: 'manual',
+                    sourceType: DashTabItemControlSourceType.Manual,
                     fieldName: 'Some name',
                     elementType: {innerText: 'List'},
                 },
             });
 
-            await dashboardPage.chartkitControl.expectTitleVisible(TITLE);
-            await dashboardPage.chartkitControl.expectSelectInnerTitleVisible(INNER_TITLE);
+            await checkLabels(dashboardPage, 'select');
         },
     );
 
@@ -98,14 +117,13 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
             await createDashWithSelector({
                 page,
                 settings: {
-                    sourceType: 'manual',
+                    sourceType: DashTabItemControlSourceType.Manual,
                     fieldName: 'Some name',
                     elementType: {innerText: 'Input field'},
                 },
             });
 
-            await dashboardPage.chartkitControl.expectTitleVisible(TITLE);
-            await dashboardPage.chartkitControl.expectInputInnerTitleVisible(INNER_TITLE);
+            await checkLabels(dashboardPage, 'input');
         },
     );
 });
