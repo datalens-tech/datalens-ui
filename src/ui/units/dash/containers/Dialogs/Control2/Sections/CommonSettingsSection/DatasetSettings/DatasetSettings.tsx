@@ -1,10 +1,8 @@
 import React from 'react';
 
-import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {DATASET_FIELD_TYPES, DashTabItemControlSourceType, DatasetFieldType} from 'shared';
 
-import {SectionWrapper} from '../../../../../../../../components/SectionWrapper/SectionWrapper';
 import {VIEW_MODES} from '../../../../../../../../components/Select/hooks/useSelectRenderFilter/useSelectRenderFilter';
 import {SelectFeaturedAsyncProps} from '../../../../../../../../components/Select/wrappers/SelectFeaturedAsync';
 import {selectWorkbookId} from '../../../../../../../workbooks/store/selectors';
@@ -25,13 +23,7 @@ import {
     getDistinctsByDatasetField,
 } from './helpers/get-distincts-by-dataset-field';
 
-const i18n = I18n.keyset('dash.control-dialog.edit');
-
-type DatasetSettingsProps = {
-    isSectionHidden?: boolean;
-};
-
-const DatasetSettings = ({isSectionHidden}: DatasetSettingsProps) => {
+const DatasetSettings = () => {
     const {datasetFieldType, datasetId, datasetFieldId, sourceType, fieldType} =
         useSelector(selectSelectorDialog);
     const controlType = useSelector(selectSelectorControlType);
@@ -90,15 +82,10 @@ const DatasetSettings = ({isSectionHidden}: DatasetSettingsProps) => {
 
     return (
         <React.Fragment>
-            <SectionWrapper
-                isStylesHidden={isSectionHidden}
-                title={isSectionHidden ? '' : i18n('label_common-settings')}
-            >
-                <DatasetSelector />
-                <InputTypeSelector options={options} />
-                <OperationSelector />
-                <ValueSelector controlProps={controlProps} />
-            </SectionWrapper>
+            <DatasetSelector />
+            <InputTypeSelector options={options} />
+            <OperationSelector />
+            <ValueSelector controlProps={controlProps} />
         </React.Fragment>
     );
 };

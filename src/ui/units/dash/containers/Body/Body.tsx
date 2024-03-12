@@ -9,7 +9,15 @@ import {
     MenuItems,
     type PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
-import {ChartColumn, CopyPlus, Gear, Heading, Sliders, TextAlignLeft} from '@gravity-ui/icons';
+import {
+    ChartColumn,
+    Code,
+    CopyPlus,
+    Gear,
+    Heading,
+    Sliders,
+    TextAlignLeft,
+} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
@@ -210,7 +218,9 @@ class Body extends React.PureComponent<BodyProps> {
             },
             {
                 id: 'selector',
-                icon: <Icon data={Sliders} />,
+                icon: (
+                    <Icon data={Utils.isEnabledFeature(Feature.GroupControls) ? Code : Sliders} />
+                ),
                 title: Utils.isEnabledFeature(Feature.GroupControls)
                     ? i18n('dash.main.view', 'button_edit-panel-editor-selector')
                     : i18n('dash.main.view', 'button_edit-panel-selector'),
