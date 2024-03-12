@@ -168,7 +168,7 @@ class SDK {
                 ...this.getHeaders(),
                 'Content-Type': 'multipart/form-data',
                 'x-request-id': `dl.${(DL.REQUEST_ID || '').slice(0, 6)}_conn`,
-                'x-rpc-authorization': Utils.getRpcAuthorization()
+                'authorization': Utils.getRpcAuthorization()
             },
             data: formData,
         };

@@ -38,6 +38,6 @@ export const CLICK_ACTION_TYPE = {
 };
 
 export const REQUEST_ID_HEADER = 'x-request-id';
-export const RPC_AUTHORIZATION = 'x-rpc-authorization';
+export const RPC_AUTHORIZATION = 'authorization';
 export const TRACE_ID_HEADER = 'x-trace-id';
 export const SERVER_TRACE_ID_HEADER = 'x-server-trace-id';
