@@ -70,7 +70,7 @@ async function checkLabels(
     await selectorControl.waitForSelector(`${innerSelector} >> text=${innerTitle}`);
 }
 
-datalensTest.describe('Dashboards are the internal header of selectors', () => {
+datalensTest.describe('Dashboards - the internal header of selectors', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashName = `e2e-test-dash-selectors-labels-${getUniqueTimestamp()}`;
         const dashboardPage = new DashboardPage({page});

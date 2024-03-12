@@ -5,7 +5,7 @@ import {openTestPage, waitForCondition} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
-datalensTest.describe('Dashboards - Auto-Update', () => {
+datalensTest.describe('Dashboards - Autoupdate', () => {
     datalensTest(
         'After updating, previously hidden comments are still hidden',
         async ({page}: {page: Page}) => {

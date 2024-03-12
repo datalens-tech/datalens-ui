@@ -7,7 +7,7 @@ import {COMMON_SELECTORS, RobotChartsDashboardUrls} from '../../../utils/constan
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ActionPanelDashSaveControlsQa} from '../../../../src/shared/constants/qa/action-panel';
 
-datalensTest.describe('Dashboard Versioning', () => {
+datalensTest.describe('Dashboards - Versioning', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashName = `e2e-test-dash-revisions-copy-${getUniqueTimestamp()}`;
         const dashboardPage = new DashboardPage({page});

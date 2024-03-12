@@ -454,7 +454,7 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
     );
 
     datalensTest(
-        'The unreleased=1 parameter shows the unpublished version of the editorial chart',
+        'The unreleased=1 parameter shows the unpublished version of the editor chart',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 

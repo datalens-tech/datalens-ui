@@ -6,7 +6,7 @@ import {arbitraryText} from '../constants';
 
 import {TestParametrizationConfig} from '../../../types/config';
 
-datalensTest.describe('Dashboard - Table of Contents', () => {
+datalensTest.describe('Dashboards - Table of Contents', () => {
     datalensTest.beforeEach(async ({page}: {page: Page; config: TestParametrizationConfig}) => {
         const dashboardPage = new DashboardPage({page});
 

@@ -49,7 +49,7 @@ const OUTER_VALS = {
 
 datalensTest.describe('Dashboards - internal chart controls', () => {
     datalensTest(
-        'We check the work at the shift order: indoor -> outdoor -> outdoor',
+        'We check the work at the shift order: inner -> outer -> outer',
         async ({page}: {page: Page}) => {
             await openTestPage(page, RobotChartsDashboardUrls.DashboardWithChartInnerControl);
 
@@ -68,7 +68,7 @@ datalensTest.describe('Dashboards - internal chart controls', () => {
     );
 
     datalensTest(
-        'We check the work at the shift order: external -> internal -> internal',
+        'We check the work at the shift order: outer -> inner -> inner',
         async ({page}: {page: Page}) => {
             await openTestPage(page, RobotChartsDashboardUrls.DashboardWithChartInnerControl);
 
@@ -87,7 +87,7 @@ datalensTest.describe('Dashboards - internal chart controls', () => {
     );
 
     datalensTest(
-        'We check the work at the shift order: outdoor -> indoor -> outdoor',
+        'We check the work at the shift order: outer -> inner -> outer',
         async ({page}: {page: Page}) => {
             await openTestPage(page, RobotChartsDashboardUrls.DashboardWithChartInnerControl);
 
@@ -106,7 +106,7 @@ datalensTest.describe('Dashboards - internal chart controls', () => {
     );
 
     datalensTest(
-        'We check the work at the shift order: internal -> external -> internal',
+        'We check the work at the shift order: inner -> outer -> inner',
         async ({page}: {page: Page}) => {
             await openTestPage(page, RobotChartsDashboardUrls.DashboardWithChartInnerControl);
 
