@@ -40,5 +40,5 @@
   "title_connections": "Connections",
   "title_dashboards": "Dashboards",
   "title_datasets": "Datasets",
-  "toast_duplicate-failed": "Failed to duplicate"
+  "toast_duplicate-failed": "An error occurred while duplicating"
 }
