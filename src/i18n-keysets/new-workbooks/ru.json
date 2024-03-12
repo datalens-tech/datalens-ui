@@ -40,5 +40,5 @@
   "title_connections": "Подключения",
   "title_dashboards": "Дашборды",
   "title_datasets": "Датасеты",
-  "toast_duplicate-failed": "Не удалось дублировать"
+  "toast_duplicate-failed": "При дублировании произошла ошибка"
 }
