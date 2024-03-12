@@ -347,6 +347,7 @@ const getItemsRelations = ({
     return {
         byUsedParams,
         byAliases: relations.byAliases,
+        indirectAliases: relations.indirectAliases,
         isIgnoring: relations.isIgnoring,
         isIgnored: relations.isIgnored,
         type: relationType as RelationType,
@@ -389,19 +390,7 @@ export const getRelationsInfo = (args: {
     const {aliases, connections, datasets, widget, row} = args;
     const byUsedParams = getByUsedParams({widget, row});
     let byAliases: Array<Array<string>> = [];
-    if (aliases[DEFAULT_ALIAS_NAMESPACE]?.length) {
-        byAliases = aliases[DEFAULT_ALIAS_NAMESPACE].filter((aliasArr) => {
-            if (!row.usedParams?.length) {
-                return false;
-            }
-            const rowInAlias = intersection(row.usedParams, aliasArr);
-            const widgetInAlias = intersection(widget.usedParams, aliasArr);
-            if (!rowInAlias.length || !widgetInAlias.length) {
-                return false;
-            }
-            return rowInAlias;
-        });
-    }
+    const indirectAliases: Array<Array<string>> = [];
 
     const isIgnored = connections
         .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
@@ -411,10 +400,33 @@ export const getRelationsInfo = (args: {
         .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
         .some(({from, to}) => from === row.widgetId && to === widget.widgetId);
 
+    const indirectRelation = !isIgnored && !isIgnoring;
+
+    if (aliases[DEFAULT_ALIAS_NAMESPACE]?.length) {
+        byAliases = aliases[DEFAULT_ALIAS_NAMESPACE].filter((aliasArr) => {
+            if (!row.usedParams?.length && !indirectRelation) {
+                return false;
+            }
+            const rowInAlias = intersection(row.usedParams, aliasArr);
+            const widgetInAlias = intersection(widget.usedParams, aliasArr);
+
+            if (rowInAlias.length || widgetInAlias.length) {
+                indirectAliases.push(aliasArr);
+            }
+
+            if (!rowInAlias.length || !widgetInAlias.length) {
+                return false;
+            }
+
+            return rowInAlias;
+        });
+    }
+
     return getItemsRelations({
         relations: {
             byUsedParams,
             byAliases,
+            indirectAliases,
             isIgnoring,
             isIgnored,
             hasDataset: false,
