@@ -27,6 +27,8 @@ import './TableWidget.scss';
 
 const b = block('chartkit-table-widget');
 
+type HeadCell = THead & {fieldId?: string; custom?: unknown};
+
 const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetProps>(
     (props, _forwardedRef) => {
         const {
@@ -35,6 +37,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             onLoad,
             data: {data, config, params: currentParams, unresolvedParams},
         } = props;
+        const isPaginationEnabled = Boolean(config?.paginator?.enabled);
 
         const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [data, config, id]);
         Performance.mark(generatedId);
@@ -104,10 +107,32 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
 
         const handlePaginationChange = (page: number) => changeParams({_page: String(page)});
 
+        const handleSortingChange: TableProps['onSortingChange'] = (args) => {
+            if (!isPaginationEnabled) {
+                return;
+            }
+
+            const {cell, sortOrder} = args;
+            const headCell = cell as HeadCell;
+            const params = {
+                _columnId: '',
+                _sortOrder: '',
+                _sortColumnMeta: JSON.stringify(headCell?.custom || {}),
+            };
+
+            if (cell) {
+                params._columnId = `_id=${headCell.fieldId}_name=${headCell.header}`;
+                params._sortOrder = String(sortOrder === 'asc' ? -1 : 1);
+            }
+
+            changeParams(params);
+        };
+
         const tableData: TableProps['data'] = {
             head: data.head?.map((d, index) => {
-                const column: THead = {
+                const column: HeadCell = {
                     id: `${d.id}_${index}`,
+                    fieldId: d.id,
                     header: d.name,
                     width: d.width,
                     enableSorting: true,
@@ -164,8 +189,6 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             }),
         };
 
-        const isPaginationEnabled = Boolean(config?.paginator?.enabled);
-
         return (
             <div
                 className={[b(), CHARTKIT_SCROLLABLE_NODE_CLASSNAME].join(' ')}
@@ -184,6 +207,8 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                         row: ChartKitTableQa.Row,
                         cell: ChartKitTableQa.Cell,
                     }}
+                    manualSorting={isPaginationEnabled}
+                    onSortingChange={handleSortingChange}
                 />
                 {isPaginationEnabled && (
                     <Paginator

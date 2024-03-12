@@ -13,7 +13,7 @@ const VALUES = {
 };
 
 datalensTest.describe('Wizard :: Flat table :: Sorting', () => {
-    datalensTest.only(
+    datalensTest(
         'Sorting is enabled by clicking on the column header of the table, the data is redrawn',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});

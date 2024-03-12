@@ -2,6 +2,7 @@ import React from 'react';
 
 import {
     ColumnDef,
+    SortingState,
     createColumnHelper,
     flexRender,
     getCoreRowModel,
@@ -28,6 +29,7 @@ function getTableData(args: TableProps['data']) {
             meta: {
                 width,
                 footer: footerCell,
+                head: headCell,
             },
         };
 
@@ -53,14 +55,38 @@ function getTableData(args: TableProps['data']) {
 }
 
 export const Table = (props: TableProps) => {
-    const {title, noData, onClick, header: headerOptions, qa} = props;
+    const {
+        title,
+        noData,
+        onClick,
+        header: headerOptions,
+        qa,
+        manualSorting,
+        onSortingChange,
+    } = props;
     const {columns, data} = React.useMemo(() => getTableData(props.data), [props.data]);
+    const [sorting, setSorting] = React.useState<SortingState>([]);
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         sortDescFirst: false,
+        manualSorting,
+        state: {
+            sorting,
+        },
+        onSortingChange: (updater) => {
+            setSorting(updater);
+
+            if (onSortingChange) {
+                const updates = typeof updater === 'function' ? updater(sorting) : updater;
+                const id = updates[0]?.id;
+                const desc = updates[0]?.desc;
+                const headCellData = columns.find((c) => c.id === id)?.meta?.head;
+                onSortingChange({cell: headCellData, sortOrder: desc ? 'desc' : 'asc'});
+            }
+        },
     });
 
     const handleCellClick: OnTableClick = (args) => {
@@ -108,7 +134,10 @@ export const Table = (props: TableProps) => {
                                                           header.column.columnDef.header,
                                                           header.getContext(),
                                                       )}
-                                                <SortIcon sorting={header.column.getIsSorted()} />
+                                                <SortIcon
+                                                    className={b('sort-icon')}
+                                                    sorting={header.column.getIsSorted()}
+                                                />
                                             </div>
                                         </th>
                                     );

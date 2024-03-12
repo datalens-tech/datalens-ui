@@ -54,6 +54,11 @@
         }
     }
 
+    &__header &__sort-icon {
+        position: absolute;
+        vertical-align: middle;
+    }
+
     &__header &__th {
         font-weight: 500;
         padding: var(--data-table-header-vertical-padding) var(--data-table-cell-horizontal-padding);

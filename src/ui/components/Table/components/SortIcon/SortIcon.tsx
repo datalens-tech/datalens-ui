@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {CaretDown, CaretUp} from '@gravity-ui/icons';
+import {Icon} from '@gravity-ui/uikit';
 
 function getSortingIcon(sorting: 'asc' | 'desc' | false) {
     switch (sorting) {
@@ -13,14 +14,15 @@ function getSortingIcon(sorting: 'asc' | 'desc' | false) {
     }
 }
 
-export const SortIcon = (props: {sorting: 'asc' | 'desc' | false}) => {
-    const Icon = getSortingIcon(props.sorting);
+export const SortIcon = (props: {sorting: 'asc' | 'desc' | false; className?: string}) => {
+    const sortingIcon = getSortingIcon(props.sorting);
 
-    if (Icon) {
+    if (sortingIcon) {
         return (
             <React.Fragment>
                 {' '}
-                <Icon style={{verticalAlign: 'middle'}} />
+                <Icon className={props.className} data={sortingIcon} />
+                {/*<Icon style={{verticalAlign: 'middle'}} />*/}
             </React.Fragment>
         );
     }

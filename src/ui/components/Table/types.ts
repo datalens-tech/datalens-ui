@@ -9,6 +9,7 @@ declare module '@tanstack/react-table' {
         footer?: {
             css?: React.CSSProperties;
         };
+        head?: THead;
     }
 }
 
@@ -56,4 +57,6 @@ export type TableProps = {
         row?: string;
         cell?: string;
     };
+    manualSorting?: boolean;
+    onSortingChange?: (args: {cell?: THead; sortOrder?: 'asc' | 'desc'}) => void;
 };
