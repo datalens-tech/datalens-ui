@@ -66,7 +66,7 @@ export const getControlToControlRelations = ({
     let hasDataset = false;
     let forceAddAlias = false;
     let hasRelation = false;
-    const indirectRelation = !relations.isIgnored && !relations.isIgnoring;
+    const isIndirectRelation = !relations.isIgnored && !relations.isIgnoring;
 
     if (isManualControl(widget) && isManualControl(row)) {
         if (relations.byAliases.length || byUsedParams.length) {
@@ -82,7 +82,7 @@ export const getControlToControlRelations = ({
     ) {
         if (relations.byAliases.length || byUsedParams.length) {
             newRelationType = relationType || RELATION_TYPES.both;
-        } else if (indirectRelation && relations.indirectAliases.length) {
+        } else if (isIndirectRelation && relations.indirectAliases.length) {
             newRelationType = RELATION_TYPES.unknown;
         } else {
             newRelationType = RELATION_TYPES.ignore;

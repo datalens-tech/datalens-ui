@@ -402,11 +402,11 @@ export const getRelationsInfo = (args: {
         ({from, to}) => from === row.widgetId && to === widget.widgetId,
     );
 
-    const indirectRelation = !isIgnored && !isIgnoring;
+    const isIndirectRelation = !isIgnored && !isIgnoring;
 
     if (aliases[DEFAULT_ALIAS_NAMESPACE]?.length) {
         byAliases = aliases[DEFAULT_ALIAS_NAMESPACE].filter((aliasArr) => {
-            if (!row.usedParams?.length && !indirectRelation) {
+            if (!row.usedParams?.length && !isIndirectRelation) {
                 return false;
             }
             const rowInAlias = intersection(row.usedParams, aliasArr);
