@@ -6,6 +6,7 @@ import get from 'lodash/get';
 import {ChartKitTableQa, StringParams, TableCellsRow, TableCommonCell} from 'shared';
 import {Table} from 'ui/components/Table/Table';
 import type {OnTableClick, TData, THead, TableProps} from 'ui/components/Table/types';
+import {camelCaseCss} from 'ui/libs/DatalensChartkit/ChartKit/components/Widget/components/Table/utils';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
 import Paginator from '../../../components/Widget/components/Table/Paginator/Paginator';
@@ -151,12 +152,16 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
 
                     return {
                         ...cell,
-                        css: {cursor, ...actionParamsCss, ...cell.css},
+                        css: {cursor, ...actionParamsCss, ...camelCaseCss(cell.css)},
                         className: cellClassName,
                     };
                 });
             }),
-            footer: ((data.footer?.[0] as TableCellsRow)?.cells || []) as TableCommonCell[],
+            footer: ((data.footer?.[0] as TableCellsRow)?.cells || []).map((td) => {
+                const cell = td as TableCommonCell;
+
+                return {...cell, css: cell.css ? camelCaseCss(cell.css) : undefined};
+            }),
         };
 
         const isPaginationEnabled = Boolean(config?.paginator?.enabled);

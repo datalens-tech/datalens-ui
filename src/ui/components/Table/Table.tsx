@@ -27,6 +27,7 @@ function getTableData(args: TableProps['data']) {
             ...columnOptions,
             meta: {
                 width,
+                footer: footerCell,
             },
         };
 
@@ -167,17 +168,19 @@ export const Table = (props: TableProps) => {
                 {shouldShowFooter && (
                     <tfoot className={b('footer')} data-qa={qa?.footer}>
                         {table.getFooterGroups().map((footerGroup) => (
-                            <tr key={footerGroup.id} data-qa={qa?.row}>
-                                {footerGroup.headers.map((header) => (
-                                    <th key={header.id} className={b('th')}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                  header.column.columnDef.footer,
-                                                  header.getContext(),
-                                              )}
-                                    </th>
-                                ))}
+                            <tr key={footerGroup.id} className={b('tr')} data-qa={qa?.row}>
+                                {footerGroup.headers.map((header) => {
+                                    const columnDef = header.column.columnDef;
+                                    const style = columnDef?.meta?.footer?.css;
+
+                                    return (
+                                        <td key={header.id} className={b('td')} style={style}>
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(columnDef.footer, header.getContext())}
+                                        </td>
+                                    );
+                                })}
                             </tr>
                         ))}
                     </tfoot>

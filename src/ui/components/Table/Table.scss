@@ -84,7 +84,11 @@
         white-space: nowrap;
     }
 
-    &__footer &__th {
+    &__footer &__tr {
+        height: var(--data-table-row-height);
+    }
+
+    &__footer &__td {
         overflow: hidden;
         padding: var(--data-table-cell-vertical-padding) var(--data-table-cell-horizontal-padding);
         text-overflow: ellipsis;

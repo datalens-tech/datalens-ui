@@ -39,7 +39,7 @@ export default class ChartKit {
     private drillArrowsSelector = '.chartkit-drill__drill-action';
     private breadcrumbsSelector = '.chartkit-drill .yc-breadcrumbs__item';
     private paginatorSelector = '.chartkit-table-paginator';
-    private tableRowSelector = `.chartkit .data-table__row, ${slct(ChartKitTableQa.Row)}`;
+    private tableRowSelector = `.chartkit .data-table__row, tbody ${slct(ChartKitTableQa.Row)}`;
     private tableHeadRowSelector = [
         '.chartkit .data-table__sticky_head .data-table__head-row', // delete after replacing the table rendering plugin
         `.chartkit ${slct(ChartKitTableQa.Header)} ${slct(ChartKitTableQa.Row)}`,
