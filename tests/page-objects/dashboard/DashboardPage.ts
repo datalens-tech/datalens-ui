@@ -33,8 +33,8 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
-import {SourceTypes} from '../../page-objects/common/DialogControlPO/SourceType';
 import {
+    DashTabItemControlSourceType,
     DashboardDialogSettingsQa,
     DialogControlQa,
     DialogDashTitleQA,
@@ -78,7 +78,7 @@ export const URLS = {
 };
 
 export type SelectorSettings = {
-    sourceType?: SourceTypes;
+    sourceType?: DashTabItemControlSourceType;
     fieldName?: string;
     dataset?: ListItemByParams;
     datasetField?: ListItemByParams;
@@ -441,10 +441,17 @@ class DashboardPage extends BasePage {
         await this.dialogControl.waitForVisible();
 
         if (setting.sourceType) {
-            await this.dialogControl.sourceType.selectByName(setting.sourceType);
+            if (isEnabledGroupControls) {
+                await this.dialogControl.sourceTypeSelect.selectListItemByQa(
+                    slct(setting.sourceType),
+                );
+            } else {
+                // will be removed after enabling of GroupControls
+                await this.dialogControl.sourceType.selectByName(setting.sourceType);
+            }
         }
 
-        if (setting.sourceType === 'manual') {
+        if (setting.sourceType === DashTabItemControlSourceType.Manual) {
             if (setting.fieldName) {
                 await this.dialogControl.fieldName.fill(setting.fieldName);
             }
@@ -495,7 +502,7 @@ class DashboardPage extends BasePage {
 
     async addSelectorBySettings(setting: SelectorSettings = {}) {
         const defaultSettings: SelectorSettings = {
-            sourceType: 'dataset',
+            sourceType: DashTabItemControlSourceType.Dataset,
             elementType: {innerText: 'List'},
             appearance: {titleEnabled: true},
             dataset: {idx: 0},

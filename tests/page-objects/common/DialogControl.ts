@@ -2,6 +2,7 @@ import {Page} from '@playwright/test';
 import {ControlQA} from '../../../src/shared/constants';
 import {getControlByTitle, slct} from '../../utils';
 import {SourceType} from './DialogControlPO/SourceType';
+import {SourceTypeSelect} from './DialogControlPO/SourceTypeSelect';
 import {SelectDatasetButton} from './DialogControlPO/SelectDatasetButton';
 import {DatasetFieldSelector} from './DialogControlPO/DatasetFieldSelector';
 import {ElementType} from './DialogControlPO/ElementType';
@@ -16,7 +17,9 @@ export default class DialogControl {
         },
     };
 
+    // will be removed after enabling of GroupControls
     sourceType: SourceType;
+    sourceTypeSelect: SourceTypeSelect;
     selectDatasetButton: SelectDatasetButton;
     datasetFieldSelector: DatasetFieldSelector;
     elementType: ElementType;
@@ -29,6 +32,7 @@ export default class DialogControl {
     constructor(page: Page) {
         this.page = page;
         this.sourceType = new SourceType(page);
+        this.sourceTypeSelect = new SourceTypeSelect(page);
         this.selectDatasetButton = new SelectDatasetButton(page);
         this.datasetFieldSelector = new DatasetFieldSelector(page);
         this.elementType = new ElementType(page);

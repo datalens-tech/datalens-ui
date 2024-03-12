@@ -30,6 +30,7 @@ export const DialogControlQa = {
     fieldSelect: 'dialog-control-field-select',
     valueSelect: 'dialog-control-value-select',
     radioSourceType: 'radio-source-type',
+    seletSourceType: 'select-source-type',
     appearanceTitle: 'dialog-control-appearance-title',
     appearanceInnerTitle: 'dialog-control-appearance-inner-title',
     fieldNameInput: 'field-name-input',
