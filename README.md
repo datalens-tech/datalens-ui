@@ -107,3 +107,10 @@ APP_DEV_MODE=1
 Under WSL2 you may find your home or working directory mapped to something like /mnt/c/Users/username, which is a Windows filesystem not a linux filesystem. Windows filesystems dont support AF_UNIX sockets and consequently if you try to create one it fails.
 
 The solution is to move you working development directory in to the linux filesystem, such as under /home. After doing the you can create AF_UNIX sockets. However, this fs is not mappable to Windows and so cant directly be accessed by Windows hosted IDEs such as VSCode which renders the whole WSL2 as a dev environment for this kind of thing a bit useless.
+
+## Получение последних изменений
+
+<pre>
+git remote add upstream https://github.com/datalens-tech/datalens-ui.git
+git pull upstream main
+</pre>
