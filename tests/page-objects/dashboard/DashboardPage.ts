@@ -311,18 +311,27 @@ class DashboardPage extends BasePage {
         controlTitle: string;
         controlFieldName: string;
     }) {
+        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
+
         // waiting for the selector settings dialog to appear
         await this.page.waitForSelector(slct(ControlQA.dialogControl));
 
         // select "manual input"
-        await this.page.click(
-            `${slct(DashboardPage.selectors.radioManualControl)} ${
-                CommonSelectors.RadioButtonOptionControl
-            }[value="manual"]`,
-            {
-                force: true,
-            },
-        );
+        if (isEnabledGroupControls) {
+            await this.dialogControl.sourceTypeSelect.click();
+            await this.dialogControl.sourceTypeSelect.selectListItemByQa(
+                slct(DashTabItemControlSourceType.Manual),
+            );
+        } else {
+            await this.page.click(
+                `${slct(DashboardPage.selectors.radioManualControl)} ${
+                    CommonSelectors.RadioButtonOptionControl
+                }[value="manual"]`,
+                {
+                    force: true,
+                },
+            );
+        }
 
         // fill in the fields in the selector settings dialog:
         // "name"
@@ -442,6 +451,7 @@ class DashboardPage extends BasePage {
 
         if (setting.sourceType) {
             if (isEnabledGroupControls) {
+                await this.dialogControl.sourceTypeSelect.click();
                 await this.dialogControl.sourceTypeSelect.selectListItemByQa(
                     slct(setting.sourceType),
                 );
