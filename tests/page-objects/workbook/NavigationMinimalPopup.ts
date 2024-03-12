@@ -1,53 +1,62 @@
 import {Page} from '@playwright/test';
 import {slct} from '../../utils';
-import {WorkbookNavigationMinimalQa} from '../../../src/shared';
+import {DlNavigationQA, WorkbookNavigationMinimalQa} from '../../../src/shared';
 import {ListItemByParams} from '../../page-objects/types';
 
 export class NavigationMinimalPopup {
-    slctPopup = slct(WorkbookNavigationMinimalQa.Popup);
-    slctInput = slct(WorkbookNavigationMinimalQa.Input);
-    slctList = slct(WorkbookNavigationMinimalQa.List);
+    workbookSlctPopup = slct(WorkbookNavigationMinimalQa.Popup);
+    workbookSlctInput = slct(WorkbookNavigationMinimalQa.Input);
+    workbookSlctList = slct(WorkbookNavigationMinimalQa.List);
+    navigationSlctPopup = slct(DlNavigationQA.NavigationMinimal);
+    navigationSlctInput = slct(DlNavigationQA.SearchInput);
+    navigationSlctList = slct(DlNavigationQA.List);
+
+    popupLocator;
+    listLocator;
 
     protected page: Page;
 
     constructor(page: Page) {
         this.page = page;
+
+        this.popupLocator = this.page
+            .locator(this.workbookSlctPopup)
+            .or(this.page.locator(this.navigationSlctPopup));
+
+        this.listLocator = this.popupLocator
+            .locator(this.workbookSlctList)
+            .or(this.popupLocator.locator(this.navigationSlctList));
     }
 
     async waitForOpen() {
-        await this.page.waitForSelector(this.slctPopup);
+        await this.popupLocator.waitFor({state: 'visible'});
     }
 
     async isVisible() {
-        await this.page.isVisible(this.slctPopup);
-    }
-
-    async clickInput() {
-        await this.page.click(`${this.slctPopup} ${this.slctInput} input`);
+        await this.popupLocator.isVisible();
     }
 
     async fillInput(value: string) {
-        await this.page.fill(`${this.slctPopup} ${this.slctInput} input`, value);
+        const input = this.popupLocator
+            .locator(`${this.workbookSlctInput} input`)
+            .or(this.popupLocator.locator(`${this.navigationSlctInput} input`));
+
+        await input.fill(value);
     }
 
     async selectListItem({innerText, idx}: ListItemByParams) {
         await this.waitForOpen();
         if (innerText) {
             await this.fillInput(innerText);
-            await this.page.waitForSelector(
-                `${this.slctPopup} ${this.slctList} ${slct(innerText)}`,
-            );
-            await this.page.click(`${this.slctPopup} ${this.slctList} ${slct(innerText)}`);
+            const listItem = this.listLocator.locator(slct(innerText));
+            await listItem.waitFor({state: 'visible'});
+            await listItem.click();
         } else if (typeof idx === 'number') {
             await this.selectListItemByIdx(idx);
         }
     }
 
     async selectListItemByIdx(idx: number) {
-        await this.page
-            .locator(`${this.slctPopup} ${this.slctList}`)
-            .getByRole('listitem')
-            .nth(idx)
-            .click();
+        await this.listLocator.getByRole('listitem').nth(idx).click();
     }
 }

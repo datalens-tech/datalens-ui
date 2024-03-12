@@ -8,7 +8,7 @@ import {openTestPage} from '../../../utils';
 const SELECTORS = {
     TAB_ITEM_LINK: '.dl-tabs__tab',
 };
-datalensTest.describe('Dashboard - Table of Contents', () => {
+datalensTest.describe('Dashboards - Table of Contents', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         await openTestPage(page, RobotChartsDashboardUrls.DashboardWithTOC);
         // Waiting for rendering of dashboard tabs

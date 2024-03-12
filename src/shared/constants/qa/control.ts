@@ -35,4 +35,14 @@ export const DialogControlQa = {
     fieldNameInput: 'field-name-input',
     dateRangeCheckbox: 'date-range-checkbox',
     dateTimeCheckbox: 'date-time-checkbox',
+
+    typeControlCalendar: 'type-control-calendar',
+    typeControlSelect: 'type-control-select',
+    typeControlInput: 'type-control-input',
+    typeControlCheckbox: 'type-control-checkbox',
+};
+
+export const DialogControlDateQa = {
+    defaultNotDefined: 'default-date-not-defined',
+    defaultSelectValue: 'default-date-select-value',
 };

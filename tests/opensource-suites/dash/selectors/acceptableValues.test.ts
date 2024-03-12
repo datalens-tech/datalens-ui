@@ -12,7 +12,7 @@ const PARAMS = {
     CONTROL_FIELD_NAME: 'test-control-field',
 };
 
-datalensTest.describe('Dashboards are Possible selector values', () => {
+datalensTest.describe('Dashboards - Possible selector values', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 
@@ -35,7 +35,7 @@ datalensTest.describe('Dashboards are Possible selector values', () => {
     });
 
     datalensTest(
-        'Possible values of the selector-selector with manual input can be deleted',
+        'Possible values of the select-selector with manual input can be deleted',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
