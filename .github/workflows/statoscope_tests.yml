@@ -3,10 +3,10 @@ name: Statoscope diff analyze
 on:
   pull_request:
     branches-ignore:
-      - 'weblate-**'
+      - 'weblate-**'      
 
 jobs:
-  statoscope:
+  statoscope: 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
