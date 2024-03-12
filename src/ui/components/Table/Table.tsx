@@ -60,6 +60,7 @@ export const Table = (props: TableProps) => {
         columns,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
+        sortDescFirst: false,
     });
 
     const handleCellClick: OnTableClick = (args) => {

@@ -3,9 +3,10 @@ import {Page} from '@playwright/test';
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {ChartKitTableQa} from '../../../../src/shared';
 
 async function createHierarchy(wizardPage: WizardPage, hierarchyName: string, fields: string[]) {
     await wizardPage.openHierarchyEditor();
@@ -50,7 +51,8 @@ datalensTest.describe('Wizard Hierarchy', () => {
                 firstHierarchy.name,
             );
 
-            await page.click('td.chartkit-table__cell_type_text >> text=100100');
+            const cell = page.locator(slct(ChartKitTableQa.Widget)).getByText('100100');
+            await cell.click();
 
             await waitForCondition(async () => {
                 const breadcrumbs = await wizardPage.chartkit.getBreadcrumbs();
