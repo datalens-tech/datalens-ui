@@ -42,7 +42,7 @@ const waitCheckActualizeRevisionList = async ({
     };
 };
 
-datalensTest.describe('Dashboard Versioning', () => {
+datalensTest.describe('Dashboards - Versioning', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 

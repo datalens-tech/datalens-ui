@@ -8,7 +8,7 @@ const URLS = {
     collectChartStats: '/api/private/stats',
 };
 
-datalensTest.describe('Dashboard Statistics', () => {
+datalensTest.describe('Dashboards - Statistics', () => {
     datalensTest('A request is sent to collect chart statistics', async ({page}: {page: Page}) => {
         const responsePromise = page.waitForResponse((response) => {
             const responseUrl = new URL(response.url());

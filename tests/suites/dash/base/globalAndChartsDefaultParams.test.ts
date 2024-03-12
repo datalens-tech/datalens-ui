@@ -24,7 +24,7 @@ const VALS = {
     val22: '22',
 };
 
-datalensTest.describe('Dashboards are parameters on the dashboard', () => {
+datalensTest.describe('Dashboards - Parameters on the dashboard', () => {
     datalensTest(
         'Charts with defaults and without global parameters',
         async ({page}: {page: Page}) => {

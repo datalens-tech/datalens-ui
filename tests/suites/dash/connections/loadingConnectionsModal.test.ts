@@ -7,7 +7,7 @@ import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {Feature} from '../../../../src/shared';
 
-datalensTest.describe('Dashboards - Loading the links window', () => {
+datalensTest.describe('Dashboards - Links', () => {
     datalensTest(
         'On a dashboard with a delayed loading and a broken chart, the connections window is loading',
         async ({page}: {page: Page}) => {

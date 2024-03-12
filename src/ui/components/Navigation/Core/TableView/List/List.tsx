@@ -3,6 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import {VariableSizeList, VariableSizeListProps} from 'react-window';
+import {DlNavigationQA} from 'shared';
 
 import type {NavigationEntry} from '../../../../../../shared/schema';
 import {Row, RowLoaderMore} from '../Row/Row';
@@ -141,7 +142,7 @@ export class List extends React.PureComponent<ListProps> {
         const entry = entries[entryIndex];
 
         return (
-            <div style={style} className={b('row-container')}>
+            <div style={style} className={b('row-container')} data-qa={DlNavigationQA.List}>
                 {hasNextPage && isLastRow ? (
                     <RowLoaderMore />
                 ) : (

@@ -27,7 +27,7 @@ const PARAMS = {
     CHART_FIELD: 'Population String',
 };
 
-datalensTest.describe('Dashboards are Basic functionality', () => {
+datalensTest.describe('Dashboards - Basic functionality', () => {
     datalensTest(
         'Adding a chart and selector with manual input of values, creating a link',
         async ({page}: {page: Page}) => {
@@ -48,8 +48,8 @@ datalensTest.describe('Dashboards are Basic functionality', () => {
                     });
 
                     await dashboardPage.addChart({
-                        chartName: PARAMS.CHART_NAME,
-                        chartUrl: PARAMS.CHART_URL,
+                        name: PARAMS.CHART_NAME,
+                        url: PARAMS.CHART_URL,
                     });
                     await dashboardPage.setupLinks({
                         linkType: ConnectionsDialogQA.TypeSelectOutputOption,
