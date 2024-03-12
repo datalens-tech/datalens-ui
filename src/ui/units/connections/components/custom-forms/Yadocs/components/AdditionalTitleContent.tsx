@@ -41,7 +41,7 @@ export const AdditionalTitleContent = (props: Props) => {
         <div className={b('title-add')}>
             <div className={b('title-add-content')}>
                 {authorized ? (
-                    <ButtonLogout onClick={clickLogoutButton} />
+                    <ButtonLogout onClick={clickLogoutButton}>{i18n('label_logout')}</ButtonLogout>
                 ) : (
                     <OAuthTokenButton
                         application={ConnectorType.Yadocs}

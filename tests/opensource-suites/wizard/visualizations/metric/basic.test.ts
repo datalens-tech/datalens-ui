@@ -1,10 +1,10 @@
 import {expect} from '@playwright/test';
 
-import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage, slct} from '../../../utils';
-import {WizardPageQa, ChartQa, WizardVisualizationId} from '../../../../src/shared';
-import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
+import datalensTest from '../../../../utils/playwright/globalTestDefinition';
+import {openTestPage, slct} from '../../../../utils';
+import {WizardPageQa, ChartQa, WizardVisualizationId} from '../../../../../src/shared';
+import WizardPage from '../../../../page-objects/wizard/WizardPage';
+import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Metric chart', () => {

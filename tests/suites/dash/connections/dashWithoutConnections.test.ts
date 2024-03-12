@@ -17,9 +17,9 @@ const PARAMS = {
     ELEMENT_NO_CONNECTIONS: 'e2e-test-external-selector-chart-work',
 };
 
-datalensTest.describe('Dashboard without links', () => {
+datalensTest.describe('Dashboards - Links', () => {
     datalensTest(
-        'Pop-up opening and the presence of the inscription "No elements for links"',
+        'Without links: Pop-up opening and the presence of the inscription "No elements for links"',
         async ({page}: {page: Page}) => {
             const dashName = `e2e-test-dash-with-external-selector-${getUniqueTimestamp()}`;
             const dashboardPage = new DashboardPage({page});

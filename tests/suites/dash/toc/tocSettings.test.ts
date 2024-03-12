@@ -8,7 +8,7 @@ import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {DashboardDialogSettingsQa} from '../../../../src/shared';
 
-datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
+datalensTest.describe('Dashboards - Settings of Table of Contents', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashWithTocName = `e2e-test-dash-with-toc-copy-${getUniqueTimestamp()}`;
 

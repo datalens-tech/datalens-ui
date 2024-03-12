@@ -13,7 +13,7 @@ import {arbitraryText} from '../constants';
 const revTexts = ['Revision 1', 'Revision 2', 'Revision 3'];
 
 let page: Page;
-datalensTest.describe('Dashboard Versioning', () => {
+datalensTest.describe('Dashboards - Versioning', () => {
     datalensTest.beforeAll(async ({browser}: {browser: Browser}) => {
         page = await browser.newPage();
         const workbookPO = new Workbook(page);

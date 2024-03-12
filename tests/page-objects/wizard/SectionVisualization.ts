@@ -109,12 +109,7 @@ export default class SectionVisualization {
             ? waitForSuccessfulResponse('/api/run', this.page)
             : Promise.resolve();
 
-        await Promise.all([
-            this.page.waitForSelector('.dimensions-subcontainer'),
-            this.page.waitForSelector('.dimensions-subheader'),
-        ]);
-
-        await this.page.hover(slct(placeholder), {force: true});
+        await this.page.hover(slct(placeholder));
 
         await this.page.click(`${slct(placeholder)} ${slct(AddFieldQA.AddFieldButton)}`, {
             force: true,

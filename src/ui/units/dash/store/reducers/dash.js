@@ -3,6 +3,7 @@ import {I18n} from 'i18n';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
+import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
 import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import Utils from 'utils';
@@ -84,6 +85,19 @@ export function getSelectorDialogInitialState(args = {}) {
 }
 
 export function getSelectorDialogFromData(data, defaults) {
+    let selectorParameters;
+
+    switch (data.sourceType) {
+        case DashTabItemControlSourceType.Connection:
+            selectorParameters = extractTypedQueryParams(defaults, data.source.fieldName);
+            break;
+        case DashTabItemControlSourceType.External:
+            selectorParameters = defaults;
+            break;
+        default:
+            selectorParameters = {};
+    }
+
     return {
         validation: {},
         isManualTitle: true,
@@ -96,6 +110,7 @@ export function getSelectorDialogFromData(data, defaults) {
 
         datasetId: data.source.datasetId,
         connectionId: data.source.connectionId,
+        selectorParameters,
         connectionQueryType: data.source.connectionQueryType,
         connectionQueryTypes: data.source.connectionQueryTypes,
         connectionQueryContent: data.source.connectionQueryContent,

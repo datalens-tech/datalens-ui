@@ -70,14 +70,12 @@ ChartKit.setDataProviderSettings({
         }
 
         const {entryContent, dash} = getStore().getState();
-        if (entryContent.scope === Scope.Dash) {
+        if (entryContent.scope === Scope.Dash && dash) {
             const dashInfo = {
-                dashId: entryContent.entryId,
+                ...(dash.entry?.entryId ? {dashId: dash?.entry?.entryId} : {}),
+                ...(dash.tabId ? {dashTabId: dash.tabId} : {}),
             };
 
-            if (dash && dash.tabId) {
-                dashInfo.dashTabId = dash.tabId;
-            }
             request.headers[DASH_INFO_HEADER] = new URLSearchParams(dashInfo).toString();
         }
 

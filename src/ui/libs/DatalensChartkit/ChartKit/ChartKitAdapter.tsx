@@ -13,7 +13,7 @@ import {ChartkitError} from '../components/ChartKitBase/components/ChartkitError
 import DatalensChartkitCustomError from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
 import {ChartKit} from './ChartKit';
-import {getAdditionalProps, getOpensourceChartKitData} from './helpers/chartkitAdapter';
+import {getAdditionalProps, getOpensourceChartKitData} from './helpers/chartkit-adapter';
 import {I18N as modulesI18n} from './modules/i18n/i18n';
 import type {ChartKitAdapterProps} from './types';
 

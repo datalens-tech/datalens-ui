@@ -4,7 +4,7 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ControlQA, DashCommonQa, DashRelationTypes} from '../../../../src/shared';
-import {ChartsParams} from '../../../constants/test-entities/charts';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
     YC_POPUP: '.yc-popup',
@@ -28,54 +28,57 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
 
         await dashboardPage.deleteDash();
     });
-    datalensTest('Relation by alias', async ({page}: {page: Page}) => {
-        const dashboardPage = new DashboardPage({page});
+    datalensTest(
+        'Relation by alias',
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            const dashboardPage = new DashboardPage({page});
 
-        await dashboardPage.createDashboard({
-            editDash: async () => {
-                await dashboardPage.addSelector({
-                    controlTitle: PARAMS.CONTROL_TITLE,
-                    controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                    controlItems: PARAMS.CONTROL_ITEMS,
-                });
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addSelector({
+                        controlTitle: PARAMS.CONTROL_TITLE,
+                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+                        controlItems: PARAMS.CONTROL_ITEMS,
+                    });
 
-                await dashboardPage.addChart({
-                    chartName: ChartsParams.citySalesPieChart.name,
-                    chartUrl: ChartsParams.citySalesPieChart.url,
-                    hideTitle: true,
-                });
-            },
-        });
-        await dashboardPage.enterEditMode();
+                    await dashboardPage.addChart({
+                        name: config.dash.charts.ChartCityPie.name,
+                        url: config.dash.charts.ChartCityPie.url,
+                        hideTitle: true,
+                    });
+                },
+            });
+            await dashboardPage.enterEditMode();
 
-        // adding links to controls
+            // adding links to controls
 
-        const selectorElem = await dashboardPage.getDashControlLinksIconElem(
-            ControlQA.controlLinks,
-        );
+            const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+                ControlQA.controlLinks,
+            );
 
-        await dashboardPage.setupNewLinks({
-            linkType: DashRelationTypes.output,
-            firstParamName: PARAMS.CONTROL_FIELD_NAME,
-            secondParamName: PARAMS.CHART_FIELD,
-            widgetElem: selectorElem,
-        });
+            await dashboardPage.setupNewLinks({
+                linkType: DashRelationTypes.output,
+                firstParamName: PARAMS.CONTROL_FIELD_NAME,
+                secondParamName: PARAMS.CHART_FIELD,
+                widgetElem: selectorElem,
+            });
 
-        await selectorElem.click();
+            await selectorElem.click();
 
-        await page.hover(slct(DashCommonQa.RelationsListRow));
-        await page.hover(slct(DashCommonQa.RelationsRowPopover));
+            await page.hover(slct(DashCommonQa.RelationsListRow));
+            await page.hover(slct(DashCommonQa.RelationsRowPopover));
 
-        await dashboardPage.waitForSelector(
-            `${SELECTORS.YC_POPUP} >> text=${PARAMS.RELATION_TYPE_BY_ALIAS}`,
-        );
+            await dashboardPage.waitForSelector(
+                `${SELECTORS.YC_POPUP} >> text=${PARAMS.RELATION_TYPE_BY_ALIAS}`,
+            );
 
-        await dashboardPage.cancelRelationsChanges();
-        await dashboardPage.exitEditMode();
-    });
+            await dashboardPage.cancelRelationsChanges();
+            await dashboardPage.exitEditMode();
+        },
+    );
     datalensTest(
         'Relation for manual control with same param as in chart',
-        async ({page}: {page: Page}) => {
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
 
             await dashboardPage.createDashboard({
@@ -87,8 +90,8 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
                     });
 
                     await dashboardPage.addChart({
-                        chartName: ChartsParams.citySalesPieChart.name,
-                        chartUrl: ChartsParams.citySalesPieChart.url,
+                        name: config.dash.charts.ChartCityPie.name,
+                        url: config.dash.charts.ChartCityPie.url,
                         hideTitle: true,
                     });
                 },
@@ -112,36 +115,39 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
             await dashboardPage.exitEditMode();
         },
     );
-    datalensTest('Relation for dataset control', async ({page}: {page: Page}) => {
-        const dashboardPage = new DashboardPage({page});
+    datalensTest(
+        'Relation for dataset control',
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            const dashboardPage = new DashboardPage({page});
 
-        await dashboardPage.createDashboard({
-            editDash: async () => {
-                await dashboardPage.addSelectorBySettings({});
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addSelectorBySettings({});
 
-                await dashboardPage.addChart({
-                    chartName: ChartsParams.citySalesPieChart.name,
-                    chartUrl: ChartsParams.citySalesPieChart.url,
-                    hideTitle: true,
-                });
-            },
-        });
-        await dashboardPage.enterEditMode();
+                    await dashboardPage.addChart({
+                        name: config.dash.charts.ChartCityPie.name,
+                        url: config.dash.charts.ChartCityPie.url,
+                        hideTitle: true,
+                    });
+                },
+            });
+            await dashboardPage.enterEditMode();
 
-        const selectorElem = await dashboardPage.getDashControlLinksIconElem(
-            ControlQA.controlLinks,
-        );
+            const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+                ControlQA.controlLinks,
+            );
 
-        await selectorElem.click();
+            await selectorElem.click();
 
-        await page.hover(slct(DashCommonQa.RelationsListRow));
-        await page.hover(slct(DashCommonQa.RelationsRowPopover));
+            await page.hover(slct(DashCommonQa.RelationsListRow));
+            await page.hover(slct(DashCommonQa.RelationsRowPopover));
 
-        await dashboardPage.waitForSelector(
-            `${SELECTORS.YC_POPUP} >> text=${PARAMS.RELATION_TYPE_BY_FIELD}`,
-        );
+            await dashboardPage.waitForSelector(
+                `${SELECTORS.YC_POPUP} >> text=${PARAMS.RELATION_TYPE_BY_FIELD}`,
+            );
 
-        await dashboardPage.cancelRelationsChanges();
-        await dashboardPage.exitEditMode();
-    });
+            await dashboardPage.cancelRelationsChanges();
+            await dashboardPage.exitEditMode();
+        },
+    );
 });

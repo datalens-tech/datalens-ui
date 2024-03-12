@@ -12,7 +12,7 @@ const PARAMS = {
     CONTROL_FIELD_NAME: 'test-control-field',
 };
 
-datalensTest.describe('Dashboards are Basic functionality', () => {
+datalensTest.describe('Dashboards - Basic functionality', () => {
     datalensTest('Adding a selector, the save button is active', async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 

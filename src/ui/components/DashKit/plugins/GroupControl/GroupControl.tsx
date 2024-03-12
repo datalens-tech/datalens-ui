@@ -210,7 +210,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     private onChange = (params: StringParams, callChangeByClick?: boolean) => {
         const controlData = this.props.data as unknown as DashTabItemGroupControlData;
         if (!controlData.buttonApply || callChangeByClick) {
-            this.props.onStateAndParamsChange({params});
+            this.props.onStateAndParamsChange({params}, {action: 'setParams'});
         }
         this.applyLoader = false;
         this.setState({stateParams: params});

@@ -152,7 +152,7 @@ class NavigationMinimal extends React.Component {
                 contentClassName={b('popup')}
             >
                 {visible && (
-                    <div className={b(null, className)} data-qa="navigation-minimal">
+                    <div className={b(null, className)} data-qa={DlNavigationQA.NavigationMinimal}>
                         {this.props.place === PLACE.ROOT && (
                             <div className={b('header')}>
                                 <div className={b('controls')}>

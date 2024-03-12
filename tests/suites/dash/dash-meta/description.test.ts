@@ -5,7 +5,7 @@ import {getUniqueTimestamp, openTestPage} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
-datalensTest.describe('Dashboard description', () => {
+datalensTest.describe('Dashboards - description', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashName = `e2e-test-dash-with-description-no-tabs-copy-${getUniqueTimestamp()}`;
         const dashboardPage = new DashboardPage({page});

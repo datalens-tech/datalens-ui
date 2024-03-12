@@ -14,16 +14,16 @@ const secondTabIsVisible = async (dashboardPage: DashboardPage) => {
     await expect(dashboardPage.getDashKitTextItem(arbitraryText.second)).toBeVisible();
 };
 
-datalensTest.describe(`Dashboards - switch tabs`, () => {
+datalensTest.describe(`Dashboards - Switch tabs`, () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.createDashboard({
             editDash: async () => {
-                await dashboardPage.addText(arbitraryText.first);
+                await dashboardPage.addTitle(arbitraryText.first);
                 await dashboardPage.addTab();
                 await dashboardPage.dashTabs.switchTabByIdx(1);
-                await dashboardPage.addText(arbitraryText.second);
+                await dashboardPage.addTitle(arbitraryText.second);
             },
         });
     });

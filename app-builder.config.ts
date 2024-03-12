@@ -61,6 +61,8 @@ const config: ServiceConfig = {
         fallback: {
             url: require.resolve('url'),
             'react/jsx-runtime': require.resolve('react/jsx-runtime'),
+            path: false,
+            fs: false,
         },
     },
     server: {

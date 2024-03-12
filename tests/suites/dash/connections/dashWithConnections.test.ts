@@ -19,8 +19,8 @@ const PARAMS = {
     ELEMENT_WITH_CONNECTIONS: 'e2e-test-dash-state-chart-on-dataset-sample',
 };
 
-datalensTest.describe('Dashboard with links', () => {
-    datalensTest('Opening a pop-up and having a list', async ({page}: {page: Page}) => {
+datalensTest.describe('Dashboards - Links', () => {
+    datalensTest('With links: Opening a pop-up and having a list', async ({page}: {page: Page}) => {
         const dashName = `e2e-test-dash-with-dash-connections-${getUniqueTimestamp()}`;
         const dashboardPage = new DashboardPage({page});
         await openTestPage(page, RobotChartsDashboardUrls.DashboardWithDashConnections);
