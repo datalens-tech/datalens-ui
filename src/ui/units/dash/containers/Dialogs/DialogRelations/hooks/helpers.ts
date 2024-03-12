@@ -392,13 +392,15 @@ export const getRelationsInfo = (args: {
     let byAliases: Array<Array<string>> = [];
     const indirectAliases: Array<Array<string>> = [];
 
-    const isIgnored = connections
-        .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
-        .some(({from, to}) => from === widget.widgetId && to === row.widgetId);
+    const ignoreConntections = connections.filter(({kind}) => kind === CONNECTION_KIND.IGNORE);
 
-    const isIgnoring = connections
-        .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
-        .some(({from, to}) => from === row.widgetId && to === widget.widgetId);
+    const isIgnored = ignoreConntections.some(
+        ({from, to}) => from === widget.widgetId && to === row.widgetId,
+    );
+
+    const isIgnoring = ignoreConntections.some(
+        ({from, to}) => from === row.widgetId && to === widget.widgetId,
+    );
 
     const indirectRelation = !isIgnored && !isIgnoring;
 
