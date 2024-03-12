@@ -1,10 +1,10 @@
 import React from 'react';
 
-import '@doc-tools/transform/dist/js/yfm';
+import '@diplodoc/transform/dist/js/yfm';
 
 import {YFM_MARKDOWN_CLASSNAME} from '../../constants/yfm';
 
-import '@doc-tools/transform/dist/css/yfm.css';
+import '@diplodoc/transform/dist/css/yfm.css';
 // eslint-disable-next-line import/order
 import './YfmWrapperContent.scss';
 

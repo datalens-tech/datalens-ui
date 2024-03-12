@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {ConnectionQueryContent} from 'shared';
+import {mapParametersRecordToTypedQueryApiParameters} from 'shared/modules/typed-query-api';
 import type {GetConnectionTypedQueryErrorResponse} from 'shared/schema';
 
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
@@ -33,7 +34,7 @@ const b = block('dialog-edit-query');
 
 const DialogEditQuery: React.FC = () => {
     const dispatch = useDispatch();
-    const {connectionQueryContent, connectionQueryType, connectionId} =
+    const {connectionQueryContent, connectionQueryType, connectionId, selectorParameters} =
         useSelector(selectSelectorDialog);
     const workbookId = useSelector(selectWorkbookId);
 
@@ -77,7 +78,9 @@ const DialogEditQuery: React.FC = () => {
                 body: {
                     query_type: connectionQueryType,
                     query_content: queryContent,
-                    parameters: [],
+                    parameters: mapParametersRecordToTypedQueryApiParameters(
+                        selectorParameters || {},
+                    ),
                 },
             })
             .then((response) => {

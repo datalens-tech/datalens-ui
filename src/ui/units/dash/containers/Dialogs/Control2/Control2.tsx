@@ -12,7 +12,12 @@ import {CommonSettingsSection} from 'units/dash/containers/Dialogs/Control2/Sect
 import {SelectorPreview} from 'units/dash/containers/Dialogs/Control2/SelectorPreview/SelectorPreview';
 import {SelectorTypeSelect} from 'units/dash/containers/Dialogs/Control2/SelectorTypeSelect/SelectorTypeSelect';
 import {applyControl2Dialog, closeControl2Dialog} from 'units/dash/store/actions/dashTyped';
-import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
+import {
+    selectIsParametersSectionAvailable,
+    selectSelectorDialog,
+} from 'units/dash/store/selectors/dashTypedSelectors';
+
+import {ParametersSection} from './Sections/ParametersSection/ParametersSection';
 
 import './Control2.scss';
 
@@ -62,6 +67,7 @@ class DialogAddControl extends React.Component<Props> {
 
     private renderBody() {
         const showTypeSelect = !Utils.isEnabledFeature(Feature.GroupControls);
+        const showParametersSection = this.props.isParametersSectionAvailable;
 
         return (
             <div>
@@ -76,6 +82,11 @@ class DialogAddControl extends React.Component<Props> {
                 <div className={b('section')}>
                     <CommonSettingsSection />
                 </div>
+                {showParametersSection && (
+                    <div className={b('section')}>
+                        <ParametersSection />
+                    </div>
+                )}
                 {this.renderAppearanceSection()}
             </div>
         );
@@ -108,6 +119,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         isEdit: Boolean(state.dash.openedItemId),
         sourceType: selectSelectorDialog(state).sourceType,
+        isParametersSectionAvailable: selectIsParametersSectionAvailable(state),
     };
 };
 
