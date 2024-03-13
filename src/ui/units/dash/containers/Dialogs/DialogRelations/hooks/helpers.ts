@@ -245,6 +245,16 @@ const getCurrentNamespaceItems = ({
     );
 };
 
+export const getDefaultTypeByIgnore = (
+    relations: Omit<RelationsData, 'type' | 'available' | 'byFields' | 'forceAddAlias'>,
+) => {
+    let relationType = RELATION_TYPES.both;
+    if (relations.isIgnored || relations.isIgnoring) {
+        relationType = relations.isIgnored ? RELATION_TYPES.output : RELATION_TYPES.input;
+    }
+    return relationType;
+};
+
 const getRelationTypeByIgnores = ({
     relations,
     loadError,
@@ -260,11 +270,7 @@ const getRelationTypeByIgnores = ({
     } else if (loadError) {
         relationType = RELATION_TYPES.unknown;
     } else if (hasRelation) {
-        if (relations.isIgnored || relations.isIgnoring) {
-            relationType = relations.isIgnored ? RELATION_TYPES.output : RELATION_TYPES.input;
-        } else {
-            relationType = RELATION_TYPES.both;
-        }
+        relationType = getDefaultTypeByIgnore(relations);
     }
 
     return relationType;
@@ -319,6 +325,7 @@ const getItemsRelations = ({
             widget: widgetMeta,
             row,
             relationType,
+            relations,
         });
         relationType = resultRelations.relationType;
         availableRelations = resultRelations.availableRelations;
