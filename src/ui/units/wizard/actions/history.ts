@@ -54,7 +54,7 @@ export function goBack() {
             return;
         }
 
-        const targetState = states[targetIndex];
+        const targetState = cloneDeep(states[targetIndex]);
 
         dispatch(setWizardStore({store: targetState}));
 
@@ -81,7 +81,7 @@ export function goForward() {
             return;
         }
 
-        const targetState = states[targetIndex];
+        const targetState = cloneDeep(states[targetIndex]);
 
         dispatch(setWizardStore({store: targetState}));
 
