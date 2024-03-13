@@ -34,9 +34,27 @@
         border-bottom: 1px solid var(--g-color-line-generic);
     }
 
-    &__content-cell &__title-col,
-    &__content-cell &__control-col {
+    &__content-cell {
         padding: 0 10px;
+
+        &_title {
+            max-width: 505px;
+        }
+
+        &_author {
+            width: 165px;
+            max-width: 165px;
+        }
+
+        &_date {
+            width: 150px;
+            max-width: 150px;
+        }
+
+        &_controls {
+            width: 100px;
+            max-width: 100px;
+        }
     }
 
     &__empty-cell {
@@ -46,7 +64,6 @@
     &__title-col {
         display: flex;
         align-items: center;
-        max-width: 500px;
 
         &_is-mobile {
             max-width: 200px;
@@ -71,21 +88,23 @@
 
     &__btn-favorite {
         color: var(--g-color-base-misc-heavy-hover);
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
         border-radius: 4px;
         visibility: hidden;
 
         &_is-favorite {
             visibility: visible;
+
+            svg {
+                color: var(--g-color-base-misc-heavy-hover);
+            }
         }
 
         &:hover {
-            background: var(--g-color-base-simple-hover);
+            color: var(--g-color-base-misc-heavy-hover);
         }
+    }
+
+    &__btn-actions {
+        margin-left: 8px;
     }
 }
