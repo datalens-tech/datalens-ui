@@ -3,8 +3,6 @@ import {DL} from 'constants/common';
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {Star, StarFill} from '@gravity-ui/icons';
-import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {I18n} from 'i18n';
@@ -60,10 +58,7 @@ const Row: React.FC<RowProps> = ({
 
     const isShowLogin = LoginById && item.createdBy;
 
-    const onChangeFavorite = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        event.preventDefault();
-        event.stopPropagation();
-
+    const onChangeFavorite = () => {
         const {entryId, isFavorite} = item;
 
         dispatch(
@@ -75,11 +70,7 @@ const Row: React.FC<RowProps> = ({
         );
     };
 
-    const getFavoriteIcon = () => {
-        if (item.isFavorite) return <Icon data={StarFill} />;
-
-        return <Icon data={Star} />;
-    };
+    const {ButtonFavorite} = registry.common.components.getAll();
 
     return (
         <Link to={url} className={b()} style={defaultRowStyle} data-qa={WorkbookPage.ListItem}>
@@ -105,18 +96,16 @@ const Row: React.FC<RowProps> = ({
                     input: item.updatedAt,
                 }).fromNow()}
             </div>
-            <div className={b('content-cell')}>
-                <div
-                    className={b('btn-favorite', {'is-favorite': item.isFavorite})}
-                    onClick={onChangeFavorite}
-                >
-                    {getFavoriteIcon()}
-                </div>
-            </div>
-            {workbook.permissions.update && (
-                <div className={b('content-cell')} onClick={onClickStopPropogation}>
-                    <div className={b('control-col')}>
-                        <div>
+
+            <div className={b('content-cell')} onClick={onClickStopPropogation}>
+                <div className={b('control-col')}>
+                    <ButtonFavorite
+                        className={b('btn-favorite', {'is-favorite': item.isFavorite})}
+                        onClick={onChangeFavorite}
+                        isFavorite={item.isFavorite}
+                    />
+                    {workbook.permissions.update && (
+                        <div className={b('btn-actions')}>
                             <EntryActions
                                 workbook={workbook}
                                 entry={item}
@@ -134,9 +123,9 @@ const Row: React.FC<RowProps> = ({
                                 }}
                             />
                         </div>
-                    </div>
+                    )}
                 </div>
-            )}
+            </div>
         </Link>
     );
 };
