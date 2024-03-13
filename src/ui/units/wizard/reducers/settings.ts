@@ -1,4 +1,3 @@
-import {ResetWizardStoreAction} from '../actions';
 import {
     SET_DEFAULTS_SET,
     SET_ROUTE_WORKBOOK_ID,
@@ -23,10 +22,7 @@ const initialState: SettingsState = {
     isViewOnlyMode: false,
 };
 
-export function settings(
-    state = initialState,
-    action: SettingsAction | ResetWizardStoreAction,
-): SettingsState {
+export function settings(state = initialState, action: SettingsAction): SettingsState {
     switch (action.type) {
         case TOGGLE_NAVIGATION: {
             let {visible} = action;

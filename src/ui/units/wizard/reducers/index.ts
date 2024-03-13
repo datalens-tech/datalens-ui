@@ -19,7 +19,6 @@ import {WidgetAction} from '../actions/widget';
 import {DatasetState, dataset} from './dataset';
 import {DialogColorState, dialogColor} from './dialogColor';
 import {HierarchyEditorState, hierarchyEditor} from './hierarchyEditor';
-import {HistoryState, history} from './history';
 import {PreviewState, preview} from './preview';
 import {SettingsState, settings} from './settings';
 import {VisualizationState, visualization} from './visualization';
@@ -33,19 +32,18 @@ export type WizardGlobalState = {
     preview: PreviewState;
     visualization: VisualizationState;
     dialogColor: DialogColorState;
-    history: HistoryState;
 };
 
 type WizardAction =
+    | ResetWizardStoreAction
+    | SetWizardStoreAction
     | DatasetAction
     | VisualizationAction
     | PreviewAction
     | WidgetAction
     | SettingsAction
     | HierarchyEditorAction
-    | DialogColorAction
-    | ResetWizardStoreAction
-    | SetWizardStoreAction;
+    | DialogColorAction;
 
 const reducers = combineReducers({
     dataset,
@@ -55,16 +53,15 @@ const reducers = combineReducers({
     settings,
     hierarchyEditor,
     dialogColor,
-    history,
 });
 
 const wizardReducer = (state: WizardGlobalState, action: WizardAction) => {
     if (action.type === RESET_WIZARD_STORE) {
-        return reducers(undefined, action);
+        return undefined;
     }
 
     if (action.type === SET_WIZARD_STORE) {
-        return reducers(action.store, action);
+        return action.store;
     }
 
     return reducers(state, action);

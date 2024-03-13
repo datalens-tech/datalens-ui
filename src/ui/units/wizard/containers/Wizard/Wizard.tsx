@@ -56,6 +56,7 @@ import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import {RevisionEntry} from '../../../../components/Revisions/types';
 import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../store/actions/dialog';
+import {initEditHistoryUnit} from '../../../../store/actions/editHistory';
 import {
     cleanRevisions,
     reloadRevisionsOnSave,
@@ -65,11 +66,12 @@ import {RevisionsMode} from '../../../../store/typings/entryContent';
 import {getUrlParamFromStr} from '../../../../utils';
 import history from '../../../../utils/history';
 import {isDraft, isEditMode} from '../../../dash/store/selectors/dashTypedSelectors';
-import {SetDefaultsArgs, resetWizardStore, setDefaults} from '../../actions';
+import {SetDefaultsArgs, resetWizardStore, setDefaults, setWizardStore} from '../../actions';
 import {updateClientChartsConfig} from '../../actions/preview';
 import {toggleViewOnlyMode} from '../../actions/settings';
 import {receiveWidgetAndPrepareMetadata, updateWizardWidget} from '../../actions/widget';
 import DialogNoRights from '../../components/Dialogs/DialogNoRights';
+import {WizardGlobalState} from '../../reducers';
 import {reloadWizardEntryByRevision, setActualWizardChart} from '../../reducers/revisions/reducers';
 import {selectDataset} from '../../selectors/dataset';
 import {getDefaultChartName, shouldComponentUpdateWithDeepComparison} from '../../utils/helpers';
@@ -148,6 +150,15 @@ class Wizard extends React.Component<Props, State> {
             dialogNoRightsVisible: false,
             dialogSettingsVisible: false,
         };
+
+        this.props.initEditHistoryUnit({
+            unitId: 'wizard',
+            setState: ({state}) => {
+                return this.props.setWizardStore({
+                    store: state as unknown as WizardGlobalState,
+                });
+            },
+        });
     }
 
     componentDidMount() {
@@ -548,6 +559,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     return bindActionCreators(
         {
             resetWizardStore,
+            setWizardStore,
             setDefaults,
             receiveWidgetAndPrepareMetadata,
             toggleViewOnlyMode,
@@ -559,6 +571,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
             reloadRevisionsOnSave,
             reloadWizardEntryByRevision,
             openDialogSaveDraftChartAsActualConfirm,
+            initEditHistoryUnit,
         },
         dispatch,
     );

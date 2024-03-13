@@ -12,7 +12,7 @@ import {useDispatch} from 'react-redux';
 
 import {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
-import {goBack, goForward} from '../../../actions/history';
+import {goBack, goForward} from '../../../../../store/actions/editHistory';
 import {toggleFullscreen} from '../../../actions/settings';
 
 const b = block('wizard-action-panel');
@@ -54,7 +54,7 @@ export const useWizardActionPanel = (
             {
                 key: 'undo',
                 action: () => {
-                    dispatch(goBack());
+                    dispatch(goBack({unitId: 'wizard'}));
                 },
                 className: b('undo-btn'),
                 icon: {data: ArrowUturnCcwLeft, size: 16},
@@ -64,7 +64,7 @@ export const useWizardActionPanel = (
             {
                 key: 'redo',
                 action: () => {
-                    dispatch(goForward());
+                    dispatch(goForward({unitId: 'wizard'}));
                 },
                 className: b('redo-btn'),
                 icon: {data: ArrowUturnCwRight, size: 16},

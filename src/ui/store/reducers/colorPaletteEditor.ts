@@ -3,7 +3,6 @@ import {
     SET_COLOR_PALETTES,
     SET_CURRENT_COLOR_PALETTE,
 } from '../actions/colorPaletteEditor';
-import {ResetWizardStoreAction} from '../../units/wizard/actions';
 import type {ColorPalette} from 'shared';
 
 export interface ColorPaletteEditorState {
@@ -18,7 +17,7 @@ const getInitialState = (): ColorPaletteEditorState => ({
 
 export default function colorPaletteEditor(
     state: ColorPaletteEditorState = getInitialState(),
-    action: ColorPaletteEditorAction | ResetWizardStoreAction,
+    action: ColorPaletteEditorAction,
 ): ColorPaletteEditorState {
     switch (action.type) {
         case SET_CURRENT_COLOR_PALETTE: {

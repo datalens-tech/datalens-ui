@@ -24,14 +24,13 @@ import {DatasetState} from 'ui/units/wizard/reducers/dataset';
 import {VisualizationState} from 'ui/units/wizard/reducers/visualization';
 import {WidgetState} from 'ui/units/wizard/reducers/widget';
 
+import {addEditHistoryPoint} from '../../../store/actions/editHistory';
 import {WizardDispatch} from '../reducers';
 import {
     actualizeUpdates,
     extractFieldsFromDatasets,
     getAllCommonPlaceholdersFields,
 } from '../utils/helpers';
-
-import {addHistoryPoint} from './history';
 
 export const UPDATE_PREVIEW = Symbol('wizard/preview/UPDATE_PREVIEW');
 export const SET_HIGHCHARTS_WIDGET = Symbol('wizard/preview/SET_HIGHCHARTS_WIDGET');
@@ -206,7 +205,7 @@ export function updatePreviewAndClientChartsConfig(
             if (isRedrawDone && !preview.previewEntryId) {
                 dispatch(updateClientChartsConfig(updateClientChartsConfigArgs));
 
-                dispatch(addHistoryPoint());
+                dispatch(addEditHistoryPoint({unitId: 'wizard'}));
             }
         });
     };

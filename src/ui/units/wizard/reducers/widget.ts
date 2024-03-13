@@ -3,7 +3,6 @@ import {AxiosError} from 'axios';
 import sha1 from 'js-sha1';
 import {LabelsPositions, Shared, getSortedData} from 'shared';
 
-import {ResetWizardStoreAction} from '../actions';
 import {
     RECEIVE_WIDGET,
     SET_EXTRA_SETTINGS,
@@ -33,10 +32,7 @@ const initialState: WidgetState = {
     error: undefined,
 };
 
-export function widget(
-    state = initialState,
-    action: WidgetAction | ResetWizardStoreAction,
-): WidgetState {
+export function widget(state = initialState, action: WidgetAction): WidgetState {
     switch (action.type) {
         case SET_WIDGET_LOAD_STATUS: {
             const {isLoading} = action;

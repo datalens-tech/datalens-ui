@@ -1,5 +1,4 @@
 import {HierarchyField} from '../../../../shared/types/wizard';
-import {ResetWizardStoreAction} from '../actions';
 import {
     CLOSE_HIERARCHY_EDITOR,
     HierarchyEditorAction,
@@ -18,7 +17,7 @@ const initialState: HierarchyEditorState = {
 
 export function hierarchyEditor(
     state: HierarchyEditorState = initialState,
-    action: HierarchyEditorAction | ResetWizardStoreAction,
+    action: HierarchyEditorAction,
 ): HierarchyEditorState {
     switch (action.type) {
         case OPEN_HIERARCHY_EDITOR: {
