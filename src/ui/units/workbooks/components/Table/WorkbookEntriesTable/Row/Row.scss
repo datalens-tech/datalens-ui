@@ -88,20 +88,19 @@
 
     &__btn-favorite {
         color: var(--g-color-base-misc-heavy-hover);
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
         border-radius: 4px;
         visibility: hidden;
 
         &_is-favorite {
             visibility: visible;
+
+            svg {
+                color: var(--g-color-base-misc-heavy-hover);
+            }
         }
 
         &:hover {
+            color: var(--g-color-base-misc-heavy-hover);
             background: var(--g-color-base-simple-hover);
         }
     }
