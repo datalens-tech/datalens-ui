@@ -25,6 +25,14 @@
             white-space: normal;
             word-break: break-word;
         }
+
+        &_align_left {
+            text-align: left;
+        }
+
+        &_align_center {
+            text-align: center;
+        }
     }
 
     &__td-content {
@@ -41,15 +49,17 @@
             z-index: 1;
             background: var(--g-color-base-background);
 
-            &:before {
+            th:before {
                 content: '';
                 display: inline-block;
                 width: calc(100% + 1px);
-                height: 100%;
+                height: calc(100% + 1.5px);
                 border: 1px solid var(--data-table-border-color);
                 position: absolute;
-                top: 0;
+                top: -1px;
                 left: -1px;
+                border-left: 0;
+                border-right: 0;
             }
         }
     }
@@ -63,7 +73,6 @@
         font-weight: 500;
         padding: var(--data-table-header-vertical-padding) var(--data-table-cell-horizontal-padding);
         position: relative;
-        text-align: left;
         vertical-align: var(--data-table-head-align);
         box-sizing: border-box;
         height: 100%;

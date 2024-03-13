@@ -3,7 +3,7 @@ import React from 'react';
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
-import {ChartKitTableQa, StringParams, TableCellsRow, TableCommonCell} from 'shared';
+import {ChartKitTableQa, StringParams, TableCellsRow, TableCommonCell, TableHead} from 'shared';
 import {Table} from 'ui/components/Table/Table';
 import type {OnTableClick, TData, THead, TableProps} from 'ui/components/Table/types';
 import {camelCaseCss} from 'ui/libs/DatalensChartkit/ChartKit/components/Widget/components/Table/utils';
@@ -28,6 +28,28 @@ import './TableWidget.scss';
 const b = block('chartkit-table-widget');
 
 type HeadCell = THead & {fieldId?: string; custom?: unknown};
+
+function mapHeadCell(th: TableHead): HeadCell {
+    return {
+        id: String(th.id),
+        header: th.name,
+        width: th.width,
+        enableSorting: get(th, 'sortable', true),
+        renderCell: (cellData) => {
+            const cell = cellData as TableCommonCell;
+            const contentStyles = getCellContentStyles({
+                cell,
+                column: th,
+            });
+            return (
+                <div data-qa={ChartKitTableQa.CellContent} style={{...contentStyles}}>
+                    {renderCellContent({cell, column: th})}
+                </div>
+            );
+        },
+        columns: get(th, 'sub', []).map(mapHeadCell),
+    };
+}
 
 const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetProps>(
     (props, _forwardedRef) => {
@@ -129,29 +151,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
         };
 
         const tableData: TableProps['data'] = {
-            head: data.head?.map((d, index) => {
-                const column: HeadCell = {
-                    id: `${d.id}_${index}`,
-                    fieldId: d.id,
-                    header: d.name,
-                    width: d.width,
-                    enableSorting: true,
-                    renderCell: (cellData) => {
-                        const cell = cellData as TableCommonCell;
-                        const contentStyles = getCellContentStyles({
-                            cell,
-                            column: d,
-                        });
-                        return (
-                            <div data-qa={ChartKitTableQa.CellContent} style={{...contentStyles}}>
-                                {renderCellContent({cell, column: d})}
-                            </div>
-                        );
-                    },
-                };
-
-                return column;
-            }),
+            head: data.head?.map(mapHeadCell),
             rows: (data.rows as TableCellsRow[])?.map<TData>((r) => {
                 return r.cells.map((c, cellIndex) => {
                     const cell = c as TableCommonCell;

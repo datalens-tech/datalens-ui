@@ -78,12 +78,12 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
 
         case 'table': {
             // TODO: проверить флаг
-            const tableWithSubColumns = get(data, 'data.head', []).some(
+            const isPivotTable = get(data, 'data.head', []).some(
                 (headCell: unknown) => get(headCell, 'sub', []).length,
             );
             // for wizard and ql flat tables only
-            const shouldRenderNewTable =
-                (get(data, 'isNewWizard') || get(data, 'isQL')) && !tableWithSubColumns;
+            const isWizardOrQl = get(data, 'isNewWizard') || get(data, 'isQL');
+            const shouldRenderNewTable = isWizardOrQl && !isPivotTable;
 
             if (shouldRenderNewTable) {
                 chartkitType = 'table';

@@ -28,6 +28,7 @@ export type THead = {
     enableSorting?: boolean;
     width?: string | number;
     renderCell?: RenderCellFn<CellData>;
+    columns?: THead[];
 };
 
 export type TData = CellData[];

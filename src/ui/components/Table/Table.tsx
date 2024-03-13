@@ -12,46 +12,79 @@ import {
 import block from 'bem-cn-lite';
 
 import {SortIcon} from './components/SortIcon/SortIcon';
-import type {OnTableClick, TData, TableProps} from './types';
+import type {OnTableClick, TData, TFoot, THead, TableProps} from './types';
 
 import './Table.scss';
 
 const b = block('dl-table');
 
+function createColumn(args: {headCell: THead; footerCell?: TFoot; index: number}) {
+    const {headCell, footerCell, index} = args;
+    const {id, width, renderCell, ...columnOptions} = headCell;
+    const options: ColumnDef<TData> = {
+        ...columnOptions,
+        id: `${id}__${index}`,
+        meta: {
+            width,
+            footer: footerCell,
+            head: headCell,
+        },
+    };
+
+    if (renderCell) {
+        options.cell = (context) => {
+            return renderCell(context.row.getValue(context.column.id));
+        };
+    }
+
+    if (footerCell) {
+        if (renderCell) {
+            options.footer = () => renderCell(footerCell);
+        } else {
+            options.footer = footerCell.formattedValue ?? (footerCell.value as string);
+        }
+    }
+
+    return options;
+}
+
 function getTableData(args: TableProps['data']) {
     const {head = [], footer = [], rows = []} = args;
     const columnHelper = createColumnHelper<TData>();
-    const columns: ColumnDef<TData>[] = head.map((headCell, index) => {
-        const {width, renderCell, ...columnOptions} = headCell;
-        const footerCell = footer?.[index];
-        const options: ColumnDef<TData> = {
-            ...columnOptions,
-            meta: {
-                width,
-                footer: footerCell,
-                head: headCell,
-            },
-        };
 
-        if (renderCell) {
-            options.cell = (context) => renderCell(context.row.original[index]);
-        }
+    let lastColumnIndex = 0;
+    const createHeadColumns = (cells: THead[]): ColumnDef<TData>[] => {
+        return cells.map((headCell, index) => {
+            const hasChildren = Boolean(headCell.columns?.length);
+            const cellIndex = hasChildren ? -1 : lastColumnIndex;
+            const footerCell = footer?.[cellIndex];
+            const options: ColumnDef<TData> = createColumn({
+                headCell,
+                footerCell,
+                index,
+            });
 
-        if (footerCell) {
-            if (renderCell) {
-                options.footer = () => renderCell(footerCell);
+            if (hasChildren) {
+                return columnHelper.group({
+                    ...options,
+                    columns: createHeadColumns(headCell.columns || []),
+                });
             } else {
-                options.footer = footerCell.formattedValue ?? (footerCell.value as string);
+                lastColumnIndex++;
             }
-        }
 
-        return columnHelper.accessor((row) => {
-            const cellData = row[index];
-            return cellData.formattedValue ?? cellData.value;
-        }, options);
-    });
+            return columnHelper.accessor((row) => {
+                const cellData = row[cellIndex];
+                if (headCell.renderCell) {
+                    return cellData;
+                }
 
-    return {columns, data: rows};
+                return cellData.formattedValue ?? cellData.value;
+            }, options);
+        });
+    };
+
+    return {columns: createHeadColumns(head), data: rows};
 }
 
 export const Table = (props: TableProps) => {
@@ -96,6 +129,7 @@ export const Table = (props: TableProps) => {
     };
 
     const rows = table.getRowModel().rows;
+    const tableHeaders = table.getHeaderGroups();
     const shouldShowFooter = columns.some((column) => column.footer);
 
     return (
@@ -106,7 +140,7 @@ export const Table = (props: TableProps) => {
                     className={b('header', {sticky: headerOptions?.sticky})}
                     data-qa={qa?.header}
                 >
-                    {table.getHeaderGroups().map((headerGroup) => {
+                    {tableHeaders.map((headerGroup) => {
                         if (!headerGroup.headers.length) {
                             return null;
                         }
@@ -114,8 +148,17 @@ export const Table = (props: TableProps) => {
                         return (
                             <tr key={headerGroup.id} className={b('tr')} data-qa={qa?.row}>
                                 {headerGroup.headers.map((header) => {
+                                    if (header.column.depth !== headerGroup.depth) {
+                                        return null;
+                                    }
+
                                     const width = header.column.columnDef.meta?.width;
                                     const isFixedSize = Boolean(width);
+                                    const rowSpan = header.isPlaceholder
+                                        ? tableHeaders.length - headerGroup.depth
+                                        : undefined;
+                                    const colSpan = header.colSpan > 1 ? header.colSpan : undefined;
+                                    const align = colSpan ? 'center' : 'left';
 
                                     return (
                                         <th
@@ -123,17 +166,18 @@ export const Table = (props: TableProps) => {
                                             className={b('th', {
                                                 clickable: header.column.getCanSort(),
                                                 'fixed-size': isFixedSize,
+                                                align,
                                             })}
                                             onClick={header.column.getToggleSortingHandler()}
                                             style={{width}}
+                                            colSpan={colSpan}
+                                            rowSpan={rowSpan}
                                         >
                                             <div className={b('th-content')}>
-                                                {header.isPlaceholder
-                                                    ? null
-                                                    : flexRender(
-                                                          header.column.columnDef.header,
-                                                          header.getContext(),
-                                                      )}
+                                                {flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext(),
+                                                )}
                                                 <SortIcon
                                                     className={b('sort-icon')}
                                                     sorting={header.column.getIsSorted()}
@@ -148,45 +192,51 @@ export const Table = (props: TableProps) => {
                 </thead>
                 <tbody className={b('body')} data-qa={qa?.body}>
                     {rows.length
-                        ? rows.map((row) => (
-                              <tr key={row.id} className={b('tr')} data-qa={qa?.row}>
-                                  {row.getVisibleCells().map((cell, index) => {
-                                      const width = cell.column.columnDef.meta?.width;
-                                      const isFixedSize = Boolean(width);
-                                      const originalCellData = cell.row.original[index];
-                                      const cellClassName = [b('td'), originalCellData?.className]
-                                          .filter(Boolean)
-                                          .join(' ');
+                        ? rows.map((row) => {
+                              const visibleCells = row.getVisibleCells();
+                              return (
+                                  <tr key={row.id} className={b('tr')} data-qa={qa?.row}>
+                                      {visibleCells.map((cell, index) => {
+                                          const width = cell.column.columnDef.meta?.width;
+                                          const isFixedSize = Boolean(width);
+                                          const originalCellData = cell.row.original[index];
+                                          const cellClassName = [
+                                              b('td'),
+                                              originalCellData?.className,
+                                          ]
+                                              .filter(Boolean)
+                                              .join(' ');
 
-                                      return (
-                                          <td
-                                              key={cell.id}
-                                              data-qa={qa?.cell}
-                                              className={cellClassName}
-                                              style={originalCellData?.css}
-                                              onClick={(event) =>
-                                                  handleCellClick({
-                                                      row: row.original,
-                                                      cell: originalCellData,
-                                                      event,
-                                                  })
-                                              }
-                                          >
-                                              <div
-                                                  className={b('td-content', {
-                                                      'fixed-size': isFixedSize,
-                                                  })}
+                                          return (
+                                              <td
+                                                  key={cell.id}
+                                                  data-qa={qa?.cell}
+                                                  className={cellClassName}
+                                                  style={originalCellData?.css}
+                                                  onClick={(event) =>
+                                                      handleCellClick({
+                                                          row: row.original,
+                                                          cell: originalCellData,
+                                                          event,
+                                                      })
+                                                  }
                                               >
-                                                  {flexRender(
-                                                      cell.column.columnDef.cell,
-                                                      cell.getContext(),
-                                                  )}
-                                              </div>
-                                          </td>
-                                      );
-                                  })}
-                              </tr>
-                          ))
+                                                  <div
+                                                      className={b('td-content', {
+                                                          'fixed-size': isFixedSize,
+                                                      })}
+                                                  >
+                                                      {flexRender(
+                                                          cell.column.columnDef.cell,
+                                                          cell.getContext(),
+                                                      )}
+                                                  </div>
+                                              </td>
+                                          );
+                                      })}
+                                  </tr>
+                              );
+                          })
                         : noData?.text && (
                               <tr className={b('tr', {'no-data': true})}>
                                   <td className={b('td')} colSpan={columns.length}>
