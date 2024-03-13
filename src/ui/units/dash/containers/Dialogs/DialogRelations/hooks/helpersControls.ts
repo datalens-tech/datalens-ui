@@ -81,23 +81,24 @@ export const getControlToControlRelations = ({
         (isDatasetControl(widget) && isManualControl(row)) ||
         (isDatasetControl(row) && isManualControl(widget))
     ) {
+        hasDataset = true;
+        byFields =
+            getMappedConnectedControlField({
+                item: isDatasetControl(widget) ? widget : row,
+                itemDefaults: isDatasetControl(widget) ? row.defaultParams : widget.defaultParams,
+                datasets,
+            }) || byUsedParams;
+
         if (relations.byAliases.length || byUsedParams.length) {
             newRelationType = relationType || getDefaultTypeByIgnore(relations);
         } else if (isIndirectRelation && relations.indirectAliases.length) {
             newRelationType = RELATION_TYPES.unknown;
+            forceAddAlias = true;
         } else {
             newRelationType = RELATION_TYPES.ignore;
             forceAddAlias = true;
         }
         availableRelations = [...FULL_RELATIONS];
-
-        hasDataset = true;
-        const fields =
-            getMappedConnectedControlField({
-                item: isDatasetControl(widget) ? widget : row,
-                datasets,
-            }) || [];
-        byFields = fields || byUsedParams;
     } else if (
         (isManualControl(widget) && isExternalControl(row)) ||
         (isManualControl(row) && isExternalControl(widget))

@@ -171,7 +171,7 @@ const getConnectionByInfo = ({
     indirectAliases: ConnectionIndirectAliasesProp;
     hasDataset: boolean;
 }) => {
-    const isUnknownRelation = relationType !== RELATION_TYPES.unknown;
+    const isUnknownRelation = relationType === RELATION_TYPES.unknown;
     const availableLink =
         relationType !== RELATION_TYPES.ignore && relationType !== RELATION_TYPES.unknown;
 
