@@ -417,7 +417,14 @@ const DialogRelations = (props: DialogRelationsProps) => {
     }, [shownInvalidAliases, invalidAliases]);
 
     return (
-        <Dialog onClose={onClose} open={true} className={b()} onEnterKeyDown={handleSaveRelations}>
+        <Dialog
+            onClose={onClose}
+            open={true}
+            className={b()}
+            onEnterKeyDown={handleSaveRelations}
+            disableOutsideClick={true}
+            disableEscapeKeyDown={true}
+        >
             <Dialog.Header caption={title} insertBefore={titleIcon} className={b('caption')} />
             <Dialog.Body className={b('container')}>
                 <Filters
