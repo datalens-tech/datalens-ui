@@ -44,12 +44,13 @@ type RowParams = {
 type ConnectionByFieldsProp = string[] | string;
 type ConnectionByUsedParamsProp = string[] | string;
 type ConnectionByAliasesProp = string[][] | string;
+type ConnectionIndirectAliasesProp = string[][];
 
 type ConnectionField =
     | ConnectionByFieldsProp
     | ConnectionByUsedParamsProp
     | ConnectionByAliasesProp;
-type ConnectionType = 'alias' | 'field' | 'param';
+type ConnectionType = 'alias' | 'field' | 'param' | 'indirect';
 
 const getRelationDetailsText = ({
     text,
@@ -120,8 +121,16 @@ const getFieldText = ({
     let fieldText = '';
     let fieldTextWithStrong = null;
 
+    if (type === 'indirect') {
+        return {
+            fieldText,
+            fieldTextWithStrong,
+        };
+    }
+
     const byField = type === 'field' || type === 'param';
     const {singleLabel, multiLabel} = labelsMap[type];
+
     if (Array.isArray(field) && field.length) {
         const fieldLabel = field.length === 1 ? singleLabel : multiLabel;
         const fieldName = byField ? (Array.isArray(field) && field?.join(', ')) || '' : '';
@@ -151,17 +160,21 @@ const getConnectionByInfo = ({
     byUsedParams,
     byAliases,
     relationType,
+    indirectAliases,
     hasDataset,
 }: {
     relationType: RelationType;
     byFields: ConnectionByFieldsProp;
     byUsedParams: ConnectionByUsedParamsProp;
     byAliases: ConnectionByAliasesProp;
+    indirectAliases: ConnectionIndirectAliasesProp;
     hasDataset: boolean;
 }) => {
+    const isUnknownRelation = relationType !== RELATION_TYPES.unknown;
     const availableLink =
         relationType !== RELATION_TYPES.ignore && relationType !== RELATION_TYPES.unknown;
 
+    const hasIndirectAliases = Boolean(indirectAliases.length);
     const hasUsedParams = Array.isArray(byUsedParams)
         ? Boolean(byUsedParams.length)
         : Boolean(byUsedParams);
@@ -171,18 +184,38 @@ const getConnectionByInfo = ({
     const hasAliases = Array.isArray(byAliases) ? Boolean(byAliases.length) : Boolean(byAliases);
     const showByAlias = hasAliases && availableLink;
 
-    let field: ConnectionField = [];
-    let type: ConnectionType = 'field';
+    let field: ConnectionField;
+    let type: ConnectionType;
 
-    if (showByAlias) {
-        field = byAliases;
-        type = 'alias';
-    } else if (showByField || (hasDataset && availableLink)) {
-        field = byFields;
-        type = 'field';
-    } else if (showByUsedParams) {
-        field = byUsedParams;
-        type = 'param';
+    switch (true) {
+        case showByAlias: {
+            field = byAliases;
+            type = 'alias';
+            break;
+        }
+
+        case showByField || (hasDataset && availableLink): {
+            field = byFields;
+            type = 'field';
+            break;
+        }
+
+        case showByUsedParams: {
+            field = byUsedParams;
+            type = 'param';
+            break;
+        }
+
+        case isUnknownRelation && hasIndirectAliases: {
+            field = indirectAliases;
+            type = 'indirect';
+            break;
+        }
+
+        default: {
+            field = byFields;
+            type = 'field';
+        }
     }
 
     const {fieldText, fieldTextWithStrong} = getFieldText({
@@ -205,6 +238,7 @@ export const getTooltipInfo = ({
     byFields,
     byAliases,
     byUsedParams,
+    indirectAliases,
     hasDataset,
 }: {
     widget: DashkitMetaDataItem;
@@ -213,6 +247,7 @@ export const getTooltipInfo = ({
     byFields: ConnectionByFieldsProp;
     byAliases: ConnectionByAliasesProp;
     byUsedParams: ConnectionByUsedParamsProp;
+    indirectAliases: ConnectionIndirectAliasesProp;
     hasDataset: boolean;
 }) => {
     const {fieldText, fieldTextWithStrong, showByField} = getConnectionByInfo({
@@ -220,6 +255,7 @@ export const getTooltipInfo = ({
         byAliases,
         relationType,
         byUsedParams,
+        indirectAliases,
         hasDataset,
     });
 
@@ -325,6 +361,7 @@ export const Row = ({
     const {
         type: relationType,
         available: availableRelations,
+        indirectAliases,
         byFields,
         byAliases,
         byUsedParams,
@@ -339,6 +376,7 @@ export const Row = ({
         byFields,
         byAliases,
         byUsedParams,
+        indirectAliases,
         hasDataset,
     });
 
