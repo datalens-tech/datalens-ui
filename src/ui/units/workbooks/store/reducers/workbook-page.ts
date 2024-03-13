@@ -232,11 +232,19 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
         }
 
         case GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS: {
+            const loadedIds = new Set(
+                state.items.map((item) => {
+                    return item.entryId;
+                }),
+            );
+
             const newEntries: GetEntryResponse[] = [];
 
             action.data.forEach((workbookEntries) => {
                 return workbookEntries?.entries.forEach((entry) => {
-                    newEntries.push(entry);
+                    if (!loadedIds.has(entry.entryId)) {
+                        newEntries.push(entry);
+                    }
                 });
             });
 
