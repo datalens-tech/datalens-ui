@@ -25,16 +25,20 @@
         display: table-cell;
     }
 
-    &__table-header-cell_title {
-        width: 58%;
-    }
+    &__table-header-cell {
+        padding: 0 10px;
 
-    &__table-header-cell_author {
-        width: 165px;
-    }
+        &_author {
+            width: 165px;
+        }
 
-    &__table-header-cell_date {
-        width: 145px;
+        &_date {
+            width: 150px;
+        }
+
+        &_controls {
+            width: 100px;
+        }
     }
 
     &__content {

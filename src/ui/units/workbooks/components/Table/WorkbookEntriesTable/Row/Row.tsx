@@ -82,7 +82,7 @@ const Row: React.FC<RowProps> = ({
                     </div>
                 </div>
             </div>
-            <div className={b('content-cell')}>
+            <div className={b('content-cell', {author: true})}>
                 {isShowLogin && (
                     <LoginById
                         className={b('author-text')}
@@ -91,13 +91,13 @@ const Row: React.FC<RowProps> = ({
                     />
                 )}
             </div>
-            <div className={b('content-cell')}>
+            <div className={b('content-cell', {date: true})}>
                 {dateTime({
                     input: item.updatedAt,
                 }).fromNow()}
             </div>
 
-            <div className={b('content-cell')} onClick={onClickStopPropogation}>
+            <div className={b('content-cell', {controls: true})} onClick={onClickStopPropogation}>
                 <div className={b('control-col')}>
                     <ButtonFavorite
                         className={b('btn-favorite', {'is-favorite': item.isFavorite})}
@@ -135,7 +135,6 @@ const EmptyRow = ({label}: {label?: React.ReactNode}) => {
         <div className={b('empty-row')} style={defaultRowStyle}>
             <div className={b('empty-cell')}>{label || i18n('label_no-data')}</div>
 
-            <div className={b('empty-cell')} />
             <div className={b('empty-cell')} />
             <div className={b('empty-cell')} />
             <div className={b('empty-cell')} />
