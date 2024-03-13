@@ -1,4 +1,7 @@
+import {I18n} from 'i18n';
 import {registry} from 'ui/registry';
+
+const i18n = I18n.keyset('editor.templates.view');
 
 export type ChartEditorTypeKey =
     | 'graph_node'
@@ -26,6 +29,7 @@ export type ChartEditorType = {
     }[];
 };
 
+// TODO: https://github.com/datalens-tech/datalens-ui/issues/762
 export function getChartEditorTypes(type: ChartEditorTypeKey) {
     const getDocPathPrefix = registry.common.functions.get('getDocPathPrefix');
     const prefix = getDocPathPrefix();
@@ -84,7 +88,9 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
 
     const chartEditorTypes = {
         graph_node: {
-            name: 'График',
+            get name() {
+                return i18n('label_graph');
+            },
             tabs: [
                 {
                     name: 'Urls',
@@ -207,7 +213,9 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
             ],
         },
         table_node: {
-            name: 'Таблица',
+            get name() {
+                return i18n('label_table');
+            },
             tabs: [
                 {
                     name: 'Urls',
@@ -293,7 +301,9 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
             ],
         },
         markdown_node: {
-            name: 'Markdown',
+            get name() {
+                return i18n('label_markdown');
+            },
             tabs: [
                 {
                     name: 'Urls',
@@ -474,7 +484,9 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
             ],
         },
         control_node: {
-            name: 'Селектор',
+            get name() {
+                return i18n('label_control');
+            },
             tabs: [
                 {
                     name: 'Urls',
@@ -509,7 +521,9 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
             ],
         },
         module: {
-            name: 'Модуль',
+            get name() {
+                return i18n('label_module');
+            },
             tabs: [
                 {
                     name: 'JavaScript',
