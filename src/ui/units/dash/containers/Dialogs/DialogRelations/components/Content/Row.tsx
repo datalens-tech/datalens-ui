@@ -49,7 +49,8 @@ type ConnectionIndirectAliasesProp = string[][];
 type ConnectionField =
     | ConnectionByFieldsProp
     | ConnectionByUsedParamsProp
-    | ConnectionByAliasesProp;
+    | ConnectionByAliasesProp
+    | ConnectionIndirectAliasesProp;
 type ConnectionType = 'alias' | 'field' | 'param' | 'indirect';
 
 const getRelationDetailsText = ({
