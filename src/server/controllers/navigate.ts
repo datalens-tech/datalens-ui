@@ -1,6 +1,6 @@
 import {Request, Response} from '@gravity-ui/expresskit';
 
-import {TENANT_ID_HEADER, isEntryId} from '../../shared';
+import {ENTRY_TYPES, TENANT_ID_HEADER, isEntryId} from '../../shared';
 import {registry} from '../registry';
 import {DatalensGatewaySchemas} from '../types/gateway';
 import {GatewayApiErrorResponse} from '../utils/gateway';
@@ -53,6 +53,12 @@ export default async (req: Request, res: Response) => {
                 req.ctx.log('Navigate to wizard', {wizardUrl});
 
                 return res.redirect(302, wizardUrl);
+            } else if (ENTRY_TYPES.editor.includes(type)) {
+                const editorUrl = reqUrl.replace('navigate', 'ql');
+
+                req.ctx.log('Navigate to editor', {editorUrl});
+
+                return res.redirect(302, editorUrl);
             } else {
                 req.ctx.log('Unknown widget type, navigate default', {reqUrl});
 

@@ -738,7 +738,13 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         return (
             <div ref={this.rootNode} className={b({mobile: isMobileView})}>
                 {this.renderSilentLoader()}
-                <DebugInfoTool label={'paramId'} value={paramIdDebug} modType={'corner'} />
+                <DebugInfoTool
+                    modType={'corner'}
+                    data={[
+                        {label: 'widgetId', value: id},
+                        {label: 'paramId', value: paramIdDebug},
+                    ]}
+                />
                 {source.elementType === TYPE.SELECT
                     ? this.renderSelectControl()
                     : this.renderControls()}
