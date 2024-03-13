@@ -214,7 +214,7 @@ const getConnectionByInfo = ({
         }
 
         default: {
-            field = byFields;
+            field = [];
             type = 'field';
         }
     }
