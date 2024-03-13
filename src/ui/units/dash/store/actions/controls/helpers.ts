@@ -92,11 +92,11 @@ export const getControlDefaultsForField = (
         };
     }
 
-    const merged = Object.assign({}, defaults, selectorParameters);
+    const clone = Object.assign({}, selectorParameters);
 
-    return Object.keys(merged).reduce<Record<string, string | string[]>>((params, paramTitle) => {
+    return Object.keys(clone).reduce<Record<string, string | string[]>>((params, paramTitle) => {
         if (validateParamTitleOnlyUnderscore(paramTitle) === null) {
-            params[paramTitle] = merged[paramTitle];
+            params[paramTitle] = clone[paramTitle] || defaults[paramTitle];
         }
         return params;
     }, {});
