@@ -1,4 +1,5 @@
 import intersection from 'lodash/intersection';
+import {getDefaultTypeByIgnore} from 'ui/units/dash/containers/Dialogs/DialogRelations/hooks/helpers';
 import {
     DASH_FILTERING_CHARTS_WIDGET_TYPES,
     FilteringWidgetType,
@@ -46,7 +47,7 @@ const getControlToChartRelations = ({
 
     if (relations.byAliases.length) {
         if (isItemFilteringChart) {
-            newRelationType = relationType || RELATION_TYPES.both;
+            newRelationType = relationType || getDefaultTypeByIgnore(relations);
             availableRelations = [...FULL_RELATIONS];
         } else {
             newRelationType = relationType || RELATION_TYPES.output;
@@ -138,7 +139,7 @@ const getChartToControlRelations = ({
 
     if (relations.byAliases.length) {
         if (isCurrentFilteringChart) {
-            newRelationType = relationType || RELATION_TYPES.both;
+            newRelationType = relationType || getDefaultTypeByIgnore(relations);
             availableRelations = [...FULL_RELATIONS];
         } else {
             newRelationType = relationType || RELATION_TYPES.input;
@@ -256,10 +257,12 @@ export const getChartToChartRelations = ({
     widget,
     row,
     relationType,
+    relations,
 }: {
     widget: DashkitMetaDataItemNoRelations;
     row: DashkitMetaDataItemNoRelations;
     relationType: string;
+    relations: Omit<RelationsData, 'type' | 'available' | 'byFields' | 'forceAddAlias'>;
 }) => {
     const isCurrentFilteringChart = Boolean(
         (widget.type as FilteringWidgetType) in DASH_FILTERING_CHARTS_WIDGET_TYPES &&
@@ -295,7 +298,7 @@ export const getChartToChartRelations = ({
             byFields = [];
         }
     } else if (isCurrentFilteringChart && isItemFilteringChart) {
-        newRelationType = relationType || RELATION_TYPES.both;
+        newRelationType = relationType || getDefaultTypeByIgnore(relations);
         availableRelations = [...FULL_RELATIONS];
         if (widget.isWizard || row.isWizard) {
             hasDataset = true;
