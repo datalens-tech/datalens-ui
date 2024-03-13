@@ -215,8 +215,7 @@ export default class ChartKit {
     }
 
     async getHeadRowsHtml() {
-        const table = this.page.locator(slct(ChartKitTableQa.Widget));
-        const headerRows = table.locator('thead').first().locator('tr');
+        const headerRows = this.getTableLocator().locator('thead').first().locator('tr');
         const headCellContent = this.page
             .locator(this.tableHeadCellSelector)
             .or(this.page.locator(slct(ChartKitTableQa.HeadCellContent)));
@@ -232,13 +231,21 @@ export default class ChartKit {
         );
     }
 
-    getRowsHtml() {
-        return this.getRowContent(this.tableRowSelector, '.chartkit-table__cell', 'html');
+    async getRowsHtml() {
+        const rowLocator = this.getTableLocator().locator('tbody').first().locator('tr');
+        const cellContent = this.page.locator(this.chartkitTableCellSelector);
+
+        await rowLocator.first().waitFor();
+        const rows = await rowLocator.all();
+        return await Promise.all(
+            rows.map(async (row) =>
+                Promise.all((await row.locator(cellContent).all()).map((cell) => cell.innerHTML())),
+            ),
+        );
     }
 
     async getHeadRowsTexts() {
-        const table = this.page.locator(slct(ChartKitTableQa.Widget));
-        const headerRows = table.locator('thead').first().locator('tr');
+        const headerRows = this.getTableLocator().locator('thead').first().locator('tr');
         await headerRows.first().waitFor();
 
         const rows = await headerRows.all();

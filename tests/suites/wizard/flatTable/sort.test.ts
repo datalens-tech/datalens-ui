@@ -3,8 +3,7 @@ import {Page, expect} from '@playwright/test';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage, slct} from '../../../utils';
-import {ChartKitTableQa} from '../../../../src/shared';
+import {openTestPage} from '../../../utils';
 
 const VALUES = {
     DEFAULT_CELL_VALUE: 'Consumer OFF-PA-10000174 DP-13000',
@@ -20,15 +19,10 @@ datalensTest.describe('Wizard :: Flat table :: Sorting', () => {
             await openTestPage(page, RobotChartsWizardUrls.WizardFlatTable);
             await wizardPage.chartkit.waitForPaginationExist();
 
-            const firstColumnCell = page
-                .locator(slct(ChartKitTableQa.Widget))
-                .locator('tbody td:nth-child(2)')
-                .first();
+            const table = wizardPage.chartkit.getTableLocator();
+            const firstColumnCell = table.locator('tbody td:nth-child(2)').first();
             const columnHeaderText = 'Unique Segment Field';
-            const columnHeader = page
-                .locator(slct(ChartKitTableQa.Widget))
-                .locator('thead')
-                .getByText(columnHeaderText);
+            const columnHeader = table.locator('thead').first().getByText(columnHeaderText);
 
             // Check the default state of the first cell of the table
             await expect(firstColumnCell.getByText(VALUES.DEFAULT_CELL_VALUE)).toBeVisible();

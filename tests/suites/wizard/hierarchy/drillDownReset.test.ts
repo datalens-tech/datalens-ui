@@ -3,10 +3,9 @@ import {Page} from '@playwright/test';
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, slct, waitForCondition} from '../../../utils';
+import {openTestPage, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ChartKitTableQa} from '../../../../src/shared';
 
 async function createHierarchy(wizardPage: WizardPage, hierarchyName: string, fields: string[]) {
     await wizardPage.openHierarchyEditor();
@@ -51,7 +50,7 @@ datalensTest.describe('Wizard Hierarchy', () => {
                 firstHierarchy.name,
             );
 
-            const cell = page.locator(slct(ChartKitTableQa.Widget)).getByText('100100');
+            const cell = wizardPage.chartkit.getTableLocator().getByText('100100');
             await cell.click();
 
             await waitForCondition(async () => {
