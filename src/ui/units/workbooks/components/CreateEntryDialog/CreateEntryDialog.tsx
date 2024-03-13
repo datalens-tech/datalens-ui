@@ -48,6 +48,10 @@ export const CreateEntryDialog = React.memo(() => {
                         history.push(`/workbooks/${workbookId}/wizard`);
                         break;
                     }
+                    case CreateEntryActionType.Editor: {
+                        history.push(`/workbooks/${workbookId}/editor`);
+                        break;
+                    }
                 }
             }
         }

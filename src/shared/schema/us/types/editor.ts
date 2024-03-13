@@ -6,9 +6,11 @@ export interface CreateEditorChartResponse extends EntryFields {
 
 export interface CreateEditorChartArgs {
     type: string;
-    key: string;
     data: EntryFieldData;
+    key?: string;
     meta?: EntryFieldMeta;
+    workbookId?: string;
+    name?: string;
 }
 
 export interface UpdateEditorChartResponse extends EntryFields {
