@@ -354,6 +354,7 @@ const getItemsRelations = ({
     return {
         byUsedParams,
         byAliases: relations.byAliases,
+        indirectAliases: relations.indirectAliases,
         isIgnoring: relations.isIgnoring,
         isIgnored: relations.isIgnored,
         type: relationType as RelationType,
@@ -396,32 +397,45 @@ export const getRelationsInfo = (args: {
     const {aliases, connections, datasets, widget, row} = args;
     const byUsedParams = getByUsedParams({widget, row});
     let byAliases: Array<Array<string>> = [];
+    const indirectAliases: Array<Array<string>> = [];
+
+    const ignoreConntections = connections.filter(({kind}) => kind === CONNECTION_KIND.IGNORE);
+
+    const isIgnored = ignoreConntections.some(
+        ({from, to}) => from === widget.widgetId && to === row.widgetId,
+    );
+
+    const isIgnoring = ignoreConntections.some(
+        ({from, to}) => from === row.widgetId && to === widget.widgetId,
+    );
+
+    const isIndirectRelation = !isIgnored && !isIgnoring;
+
     if (aliases[DEFAULT_ALIAS_NAMESPACE]?.length) {
         byAliases = aliases[DEFAULT_ALIAS_NAMESPACE].filter((aliasArr) => {
-            if (!row.usedParams?.length) {
+            if (!row.usedParams?.length && !isIndirectRelation) {
                 return false;
             }
             const rowInAlias = intersection(row.usedParams, aliasArr);
             const widgetInAlias = intersection(widget.usedParams, aliasArr);
+
+            if (rowInAlias.length || widgetInAlias.length) {
+                indirectAliases.push(aliasArr);
+            }
+
             if (!rowInAlias.length || !widgetInAlias.length) {
                 return false;
             }
+
             return rowInAlias;
         });
     }
-
-    const isIgnored = connections
-        .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
-        .some(({from, to}) => from === widget.widgetId && to === row.widgetId);
-
-    const isIgnoring = connections
-        .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
-        .some(({from, to}) => from === row.widgetId && to === widget.widgetId);
 
     return getItemsRelations({
         relations: {
             byUsedParams,
             byAliases,
+            indirectAliases,
             isIgnoring,
             isIgnored,
             hasDataset: false,
