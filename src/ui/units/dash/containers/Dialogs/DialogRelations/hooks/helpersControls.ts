@@ -1,6 +1,7 @@
 /* eslint-disable complexity */
 import intersection from 'lodash/intersection';
 import {StringParams} from 'shared';
+import {getDefaultTypeByIgnore} from 'ui/units/dash/containers/Dialogs/DialogRelations/hooks/helpers';
 import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
 
 import {FULL_RELATIONS, INPUT_RELATIONS, OUTPUT_RELATIONS, RELATION_TYPES} from '../constants';
@@ -69,7 +70,7 @@ export const getControlToControlRelations = ({
 
     if (isManualControl(widget) && isManualControl(row)) {
         if (relations.byAliases.length || byUsedParams.length) {
-            newRelationType = relationType || RELATION_TYPES.both;
+            newRelationType = relationType || getDefaultTypeByIgnore(relations);
         } else {
             newRelationType = RELATION_TYPES.ignore;
             forceAddAlias = true;
@@ -80,7 +81,7 @@ export const getControlToControlRelations = ({
         (isDatasetControl(row) && isManualControl(widget))
     ) {
         if (relations.byAliases.length || byUsedParams.length) {
-            newRelationType = relationType || RELATION_TYPES.both;
+            newRelationType = relationType || getDefaultTypeByIgnore(relations);
         } else {
             newRelationType = RELATION_TYPES.ignore;
             forceAddAlias = true;
@@ -99,7 +100,7 @@ export const getControlToControlRelations = ({
         (isManualControl(row) && isExternalControl(widget))
     ) {
         if (relations.byAliases.length) {
-            newRelationType = relationType || RELATION_TYPES.both;
+            newRelationType = relationType || getDefaultTypeByIgnore(relations);
             availableRelations = [...FULL_RELATIONS];
         } else if (isExternalControl(widget)) {
             hasRelation = hasCommonUsedParamsWithDefaults(
@@ -107,7 +108,7 @@ export const getControlToControlRelations = ({
                 row.usedParams || [],
             );
             if (hasRelation) {
-                newRelationType = relationType || RELATION_TYPES.both;
+                newRelationType = relationType || getDefaultTypeByIgnore(relations);
                 availableRelations = [...FULL_RELATIONS];
             } else {
                 newRelationType = relationType || RELATION_TYPES.input;
@@ -119,7 +120,7 @@ export const getControlToControlRelations = ({
                 widget.usedParams || [],
             );
             if (hasRelation) {
-                newRelationType = relationType || RELATION_TYPES.both;
+                newRelationType = relationType || getDefaultTypeByIgnore(relations);
                 availableRelations = [...FULL_RELATIONS];
             } else {
                 newRelationType = relationType || RELATION_TYPES.output;
@@ -128,9 +129,9 @@ export const getControlToControlRelations = ({
         }
     } else if (isDatasetControl(widget) && isDatasetControl(row)) {
         if (relations.byAliases.length) {
-            newRelationType = relationType || RELATION_TYPES.both;
+            newRelationType = relationType || getDefaultTypeByIgnore(relations);
         } else if (widget.datasetId === row.datasetId) {
-            newRelationType = relationType || RELATION_TYPES.both;
+            newRelationType = relationType || getDefaultTypeByIgnore(relations);
             byFields = [];
             hasDataset = true;
         } else {
@@ -139,7 +140,7 @@ export const getControlToControlRelations = ({
                 row.usedParams || [],
             );
             if (commonUsedParamsFields.length) {
-                newRelationType = relationType || RELATION_TYPES.both;
+                newRelationType = relationType || getDefaultTypeByIgnore(relations);
                 byFields = [];
             } else {
                 newRelationType = RELATION_TYPES.ignore;
@@ -152,7 +153,7 @@ export const getControlToControlRelations = ({
         (isDatasetControl(row) && isExternalControl(widget))
     ) {
         if (relations.byAliases.length) {
-            newRelationType = relationType || RELATION_TYPES.both;
+            newRelationType = relationType || getDefaultTypeByIgnore(relations);
             availableRelations = [...FULL_RELATIONS];
         } else if (isExternalControl(widget)) {
             hasRelation = hasCommonUsedParamsWithDefaults(
@@ -160,7 +161,7 @@ export const getControlToControlRelations = ({
                 row.usedParams || [],
             );
             if (hasRelation) {
-                newRelationType = relationType || RELATION_TYPES.both;
+                newRelationType = relationType || getDefaultTypeByIgnore(relations);
                 availableRelations = [...FULL_RELATIONS];
                 hasDataset = true;
                 byFields =
@@ -178,7 +179,7 @@ export const getControlToControlRelations = ({
                 widget.usedParams || [],
             );
             if (hasRelation) {
-                newRelationType = relationType || RELATION_TYPES.both;
+                newRelationType = relationType || getDefaultTypeByIgnore(relations);
                 availableRelations = [...FULL_RELATIONS];
                 hasDataset = true;
                 byFields =
@@ -202,7 +203,7 @@ export const getControlToControlRelations = ({
 
         // widgets have defaults & defaults have common or there are aliases
         if ((relations.byAliases.length && hasWigetParams && hasRowParams) || hasRelation) {
-            newRelationType = relationType || RELATION_TYPES.both;
+            newRelationType = relationType || getDefaultTypeByIgnore(relations);
             availableRelations = [...FULL_RELATIONS];
         }
         // widgets have defaults but not common & widgets don't have aliases
