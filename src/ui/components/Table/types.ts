@@ -18,16 +18,21 @@ interface CellData {
     formattedValue?: string;
     css?: React.CSSProperties;
     className?: string | (() => string);
+
+    rowSpan?: number;
+    isVisible?: boolean;
 }
 
 export type RenderCellFn<T extends CellData> = (cellData: T) => React.ReactElement | null;
+export type RenderHeaderFn = () => React.ReactElement | null;
 
 export type THead = {
     id: string;
-    header?: string;
+    header?: string | RenderHeaderFn;
     enableSorting?: boolean;
+    enableRowGrouping?: boolean;
     width?: string | number;
-    renderCell?: RenderCellFn<CellData>;
+    cell?: RenderCellFn<CellData>;
     columns?: THead[];
 };
 

@@ -6,6 +6,7 @@ import {
     createColumnHelper,
     flexRender,
     getCoreRowModel,
+    getGroupedRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
@@ -20,7 +21,7 @@ const b = block('dl-table');
 
 function createColumn(args: {headCell: THead; footerCell?: TFoot; index: number}) {
     const {headCell, footerCell, index} = args;
-    const {id, width, renderCell, ...columnOptions} = headCell;
+    const {id, width, cell, ...columnOptions} = headCell;
     const options: ColumnDef<TData> = {
         ...columnOptions,
         id: `${id}__${index}`,
@@ -31,15 +32,15 @@ function createColumn(args: {headCell: THead; footerCell?: TFoot; index: number}
         },
     };
 
-    if (renderCell) {
+    if (cell) {
         options.cell = (context) => {
-            return renderCell(context.row.getValue(context.column.id));
+            return cell(context.row.getValue(context.column.id));
         };
     }
 
     if (footerCell) {
-        if (renderCell) {
-            options.footer = () => renderCell(footerCell);
+        if (cell) {
+            options.footer = () => cell(footerCell);
         } else {
             options.footer = footerCell.formattedValue ?? (footerCell.value as string);
         }
@@ -48,8 +49,8 @@ function createColumn(args: {headCell: THead; footerCell?: TFoot; index: number}
     return options;
 }
 
-function getTableData(args: TableProps['data']) {
-    const {head = [], footer = [], rows = []} = args;
+function getTableColumns(args: {head?: THead[]; footer?: TFoot[]}) {
+    const {head = [], footer = []} = args;
     const columnHelper = createColumnHelper<TData>();
 
     let lastColumnIndex = 0;
@@ -75,7 +76,7 @@ function getTableData(args: TableProps['data']) {
 
             return columnHelper.accessor((row) => {
                 const cellData = row[cellIndex];
-                if (headCell.renderCell) {
+                if (headCell.cell) {
                     return cellData;
                 }
 
@@ -84,7 +85,48 @@ function getTableData(args: TableProps['data']) {
         });
     };
 
-    return {columns: createHeadColumns(head), data: rows};
+    return createHeadColumns(head);
+}
+
+function getTableData(args: {head?: THead[]; rows: TData[]}) {
+    const {head = [], rows = []} = args;
+    const groupedCells = new Map();
+
+    let cellIndex = 0;
+    const setGrouping = (col: THead) => {
+        if (col.columns?.length) {
+            col.columns.forEach(setGrouping);
+        } else {
+            if (col.enableRowGrouping) {
+                groupedCells.set(cellIndex, {rowIndex: -1});
+            }
+            cellIndex++;
+        }
+    };
+
+    head.forEach(setGrouping);
+
+    if (groupedCells.size) {
+        return rows.map((row, rowIndex) => {
+            return row.map((currentCell, index) => {
+                if (groupedCells.has(index)) {
+                    const prevCellData = groupedCells.get(index);
+                    const prevCell = rows[prevCellData.rowIndex]?.[index];
+
+                    if (prevCell && currentCell.value === prevCell?.value) {
+                        prevCell.rowSpan = (prevCell.rowSpan || 1) + 1;
+                        return {...currentCell, isVisible: false};
+                    } else {
+                        groupedCells.set(index, {rowIndex});
+                    }
+                }
+
+                return currentCell;
+            });
+        });
+    }
+
+    return rows;
 }
 
 export const Table = (props: TableProps) => {
@@ -97,13 +139,16 @@ export const Table = (props: TableProps) => {
         manualSorting,
         onSortingChange,
     } = props;
-    const {columns, data} = React.useMemo(() => getTableData(props.data), [props.data]);
+    const {head = [], footer = [], rows = []} = props.data;
+    const columns = React.useMemo(() => getTableColumns({head, footer}), [head, footer]);
+    const data = React.useMemo(() => getTableData({head, rows}), [head, rows]);
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
+        getGroupedRowModel: getGroupedRowModel(),
         sortDescFirst: false,
         manualSorting,
         state: {
@@ -128,7 +173,7 @@ export const Table = (props: TableProps) => {
         }
     };
 
-    const rows = table.getRowModel().rows;
+    const tableRows = table.getRowModel().rows;
     const tableHeaders = table.getHeaderGroups();
     const shouldShowFooter = columns.some((column) => column.footer);
 
@@ -191,8 +236,8 @@ export const Table = (props: TableProps) => {
                     })}
                 </thead>
                 <tbody className={b('body')} data-qa={qa?.body}>
-                    {rows.length
-                        ? rows.map((row) => {
+                    {tableRows.length
+                        ? tableRows.map((row) => {
                               const visibleCells = row.getVisibleCells();
                               return (
                                   <tr key={row.id} className={b('tr')} data-qa={qa?.row}>
@@ -207,6 +252,10 @@ export const Table = (props: TableProps) => {
                                               .filter(Boolean)
                                               .join(' ');
 
+                                          if (originalCellData?.isVisible === false) {
+                                              return null;
+                                          }
+
                                           return (
                                               <td
                                                   key={cell.id}
@@ -220,6 +269,7 @@ export const Table = (props: TableProps) => {
                                                           event,
                                                       })
                                                   }
+                                                  rowSpan={originalCellData?.rowSpan}
                                               >
                                                   <div
                                                       className={b('td-content', {

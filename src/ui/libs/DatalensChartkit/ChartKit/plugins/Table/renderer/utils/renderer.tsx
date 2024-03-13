@@ -4,6 +4,7 @@ import {dateTime} from '@gravity-ui/date-utils';
 import get from 'lodash/get';
 import {BarTableCell, BarViewOptions, NumberViewOptions, TableCommonCell, TableHead} from 'shared';
 
+import {isMarkupItem} from '../../../../../modules/table';
 import {numberFormatter} from '../../../../components/Widget/components/Table/utils/misc';
 import {BarCell} from '../components/BarCell/BarCell';
 import {MarkupCell} from '../components/MarkupCell/MarkupCell';
@@ -35,7 +36,7 @@ export function renderCellContent(args: {cell: TableCommonCell; column: TableHea
         return <BarCell cell={cell as BarTableCell} column={column as BarViewOptions} />;
     }
 
-    if (cellType === 'markup') {
+    if (cellType === 'markup' || isMarkupItem(cell.value)) {
         return <MarkupCell cell={cell} />;
     }
 

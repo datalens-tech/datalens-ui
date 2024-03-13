@@ -20,8 +20,8 @@ export function markupToRawString(obj: MarkupItem, str = ''): string {
     return text;
 }
 
-export function isMarkupItem(obj: object): boolean {
-    return isPlainObject(obj) && isMarkupObject(obj);
+export function isMarkupItem(obj: unknown): boolean {
+    return isPlainObject(obj) && isMarkupObject(obj as object);
 }
 
 function isMarkupObject(obj: {type?: string}): boolean {

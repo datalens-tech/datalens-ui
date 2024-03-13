@@ -32,10 +32,21 @@ type HeadCell = THead & {fieldId?: string; custom?: unknown};
 function mapHeadCell(th: TableHead): HeadCell {
     return {
         id: String(th.id),
-        header: th.name,
+        header: () => {
+            const cell = {
+                value: th.markup ?? th.name,
+                type: th.markup ? 'markup' : get(th, 'type'),
+            };
+            return (
+                <div data-qa={ChartKitTableQa.HeadCellContent}>
+                    {renderCellContent({cell, column: th})}
+                </div>
+            );
+        },
         width: th.width,
         enableSorting: get(th, 'sortable', true),
-        renderCell: (cellData) => {
+        enableRowGrouping: get(th, 'group', false),
+        cell: (cellData) => {
             const cell = cellData as TableCommonCell;
             const contentStyles = getCellContentStyles({
                 cell,

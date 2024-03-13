@@ -43,6 +43,7 @@ export const enum ChartKitTableQa {
     Widget = 'chartkit-table-widget',
     Row = 'chartkit-table-row',
     Header = 'chartkit-table-header',
+    HeadCellContent = 'chartkit-table-header-cell',
     Cell = 'chartkit-table-cell',
     CellContent = 'chartkit-cell-content',
     Paginator = 'chartkit-table-paginator',

@@ -10,13 +10,9 @@ type MarkupCellProps = {
 export const MarkupCell = (props: MarkupCellProps) => {
     const {cell} = props;
 
-    if (cell?.type !== 'markup') {
-        return null;
-    }
-
     return (
         <Markup
-            item={cell.value as MarkupItem}
+            item={cell?.value as MarkupItem}
             externalProps={{
                 url: {
                     onClick: (event: React.SyntheticEvent) => {
