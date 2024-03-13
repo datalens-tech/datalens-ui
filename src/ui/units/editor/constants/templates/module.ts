@@ -32,7 +32,5 @@ module.exports = {
     getRandomNumber
 };
 `,
-        documentation_en: '',
-        documentation_ru: '',
     },
 };

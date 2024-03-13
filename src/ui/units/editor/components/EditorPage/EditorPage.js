@@ -13,6 +13,7 @@ import {EditorUrlParams, EditorUrls, Status} from '../../constants/common';
 import ActionPanel from '../../containers/ActionPanel/ActionPanel';
 import Grid from '../../containers/Grid/Grid';
 import UnloadConfirmation from '../../containers/UnloadConfirmation/UnloadConfirmation';
+import {getFullPathName} from '../../utils';
 import EditorPageError from '../EditorPageError/EditorPageError';
 import NewChart from '../NewChart/NewChart';
 import {ViewLoader} from '../ViewLoader/ViewLoader';
@@ -41,8 +42,8 @@ const EditorPage = ({
         return entryId ? entryId : match.params.path;
     }, [match.params.path]);
     const prevEditorPath = usePrevious(editorPath);
-
     const templatePath = React.useMemo(() => match.params.template, [match.params.template]);
+    const {workbookId} = match.params;
 
     const loadAndSetTemplate = React.useCallback(
         (item) => {
@@ -106,7 +107,7 @@ const EditorPage = ({
 
     function onClickNodeTemplate(item) {
         const urlPath = item.empty ? '' : `/${item.name}`;
-        history.push(`${EditorUrls.EntryDraft}${urlPath}${location.search}`);
+        history.push(getFullPathName({base: `${EditorUrls.EntryDraft}${urlPath}`, workbookId}));
     }
 
     const renderEditor = (size) => {
@@ -125,7 +126,7 @@ const EditorPage = ({
         return (
             <React.Fragment>
                 <UnloadConfirmation />
-                <ActionPanel history={history} />
+                <ActionPanel history={history} workbookId={workbookId} />
                 <div className={b('content')}>
                     <Grid size={size} />
                 </div>
