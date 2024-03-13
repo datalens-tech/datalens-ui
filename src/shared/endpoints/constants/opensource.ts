@@ -21,6 +21,7 @@ export const opensourceEndpoints = {
             widgets: process.env.UI_WIDGETS_ENDPOINT || '/widgets',
             preview: process.env.UI_PREVIEW_ENDPOINT || '/preview',
             serviceSettings: '/settings',
+            editor: '/editor',
         },
     },
     production: {
@@ -45,6 +46,7 @@ export const opensourceEndpoints = {
             widgets: process.env.UI_WIDGETS_ENDPOINT || '/widgets',
             preview: process.env.UI_PREVIEW_ENDPOINT || '/preview',
             serviceSettings: '/settings',
+            editor: '/editor',
         },
     },
 } as const;
