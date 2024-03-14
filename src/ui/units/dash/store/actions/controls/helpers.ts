@@ -63,8 +63,8 @@ export const getControlValidation = (selectorDialog: SelectorDialogState) => {
 };
 
 export const getControlDefaultsForField = (
-    defaults: Record<string, string | string[]>,
     selectorDialog: SelectorDialogState,
+    hasChangedSourceType?: boolean,
 ) => {
     const {sourceType, datasetFieldId, fieldName, defaultValue, selectorParameters} =
         selectorDialog;
@@ -82,9 +82,11 @@ export const getControlDefaultsForField = (
             break;
     }
 
+    const clone = Object.assign({}, selectorParameters);
+
     if (field) {
         return {
-            ...selectorParameters,
+            ...(hasChangedSourceType ? {} : clone),
             [field]: addOperationForValue({
                 operation: selectorDialog.operation,
                 value: defaultValue || '',
@@ -92,12 +94,11 @@ export const getControlDefaultsForField = (
         };
     }
 
-    const clone = Object.assign({}, selectorParameters);
-
     return Object.keys(clone).reduce<Record<string, string | string[]>>((params, paramTitle) => {
         if (validateParamTitleOnlyUnderscore(paramTitle) === null) {
-            params[paramTitle] = clone[paramTitle] || defaults[paramTitle];
+            params[paramTitle] = clone[paramTitle];
         }
+
         return params;
     }, {});
 };
