@@ -56,7 +56,8 @@ export const setActiveSelectorIndex = (payload: SetActiveSelectorIndexAction['pa
 
 export const applyGroupControlDialog = () => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
-        const {selectorsGroup} = getState().dash;
+        const state = getState();
+        const {selectorsGroup} = state.dash;
 
         // check validation for every control
         for (let i = 0; i < selectorsGroup.group.length; i += 1) {
@@ -87,7 +88,7 @@ export const applyGroupControlDialog = () => {
                     source: getItemDataSource(selector) as DashTabItemControlData['source'],
                     placementMode: isSingleControl ? 'auto' : selector.placementMode,
                     width: isSingleControl ? '' : selector.width,
-                    defaults: getControlDefaultsForField({}, selector),
+                    defaults: getControlDefaultsForField(selector),
                     namespace: selector.namespace,
                 };
             }),
