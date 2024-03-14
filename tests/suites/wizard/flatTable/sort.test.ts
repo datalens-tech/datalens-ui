@@ -22,7 +22,10 @@ datalensTest.describe('Wizard :: Flat table :: Sorting', () => {
             const table = wizardPage.chartkit.getTableLocator();
             const firstColumnCell = table.locator('tbody td:nth-child(2)').first();
             const columnHeaderText = 'Unique Segment Field';
-            const columnHeader = table.locator('thead').first().getByText(columnHeaderText);
+            const columnHeader = table
+                .locator('thead')
+                .first()
+                .locator('th', {has: page.getByText(columnHeaderText)});
 
             // Check the default state of the first cell of the table
             await expect(firstColumnCell.getByText(VALUES.DEFAULT_CELL_VALUE)).toBeVisible();

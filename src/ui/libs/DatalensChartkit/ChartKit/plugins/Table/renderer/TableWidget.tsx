@@ -27,10 +27,11 @@ import './TableWidget.scss';
 
 const b = block('chartkit-table-widget');
 
-type HeadCell = THead & {fieldId?: string; custom?: unknown};
+type HeadCell = THead & {name: string; fieldId?: string; custom?: unknown};
 
 function mapHeadCell(th: TableHead): HeadCell {
     return {
+        ...th,
         id: String(th.id),
         header: () => {
             const cell = {
@@ -38,12 +39,11 @@ function mapHeadCell(th: TableHead): HeadCell {
                 type: th.markup ? 'markup' : get(th, 'type'),
             };
             return (
-                <div data-qa={ChartKitTableQa.HeadCellContent}>
+                <span data-qa={ChartKitTableQa.HeadCellContent}>
                     {renderCellContent({cell, column: th})}
-                </div>
+                </span>
             );
         },
-        width: th.width,
         enableSorting: get(th, 'sortable', true),
         enableRowGrouping: get(th, 'group', false),
         cell: (cellData) => {
@@ -154,7 +154,8 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             };
 
             if (cell) {
-                params._columnId = `_id=${headCell.fieldId}_name=${headCell.header}`;
+                const columnId = headCell.fieldId ?? headCell.id;
+                params._columnId = `_id=${columnId}_name=${headCell.name}`;
                 params._sortOrder = String(sortOrder === 'asc' ? -1 : 1);
             }
 
