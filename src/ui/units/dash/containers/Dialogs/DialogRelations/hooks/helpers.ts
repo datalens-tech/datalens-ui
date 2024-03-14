@@ -399,19 +399,15 @@ export const getRelationsInfo = (args: {
     const byUsedParams = getByUsedParams({widget, row});
     let byAliases: Array<Array<string>> = [];
     const indirectAliases: Array<Array<string>> = [];
-  
+
     const rowId = row.itemId || row.widgetId;
     const currentId = widget.itemId || widget.widgetId;
 
     const ignoreConntections = connections.filter(({kind}) => kind === CONNECTION_KIND.IGNORE);
 
-    const isIgnored = ignoreConntections.some(
-        ({from, to}) => from === currentId && to === rowId,
-    );
+    const isIgnored = ignoreConntections.some(({from, to}) => from === currentId && to === rowId);
 
-    const isIgnoring = ignoreConntections.some(
-        ({from, to}) => from === rowId && to === currentId,
-    );
+    const isIgnoring = ignoreConntections.some(({from, to}) => from === rowId && to === currentId);
 
     const isIndirectRelation = !isIgnored && !isIgnoring;
 
