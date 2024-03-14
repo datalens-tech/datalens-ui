@@ -20,6 +20,7 @@ const b = block('editor-action-panel');
 function ActionPanelService({
     entry,
     schemeId,
+    workbookId,
     onDrawPreview,
     onSelectGridScheme,
     isGridContainsPreview,
@@ -45,7 +46,7 @@ function ActionPanelService({
                     disabled={!isGridContainsPreview}
                 />
             )}
-            <ButtonSave />
+            <ButtonSave workbookId={workbookId} />
         </React.Fragment>,
     ];
 
@@ -100,6 +101,7 @@ ActionPanelService.propTypes = {
         }),
     }),
     schemeId: PropTypes.string,
+    workbookId: PropTypes.string,
     onDrawPreview: PropTypes.func.isRequired,
     onSelectGridScheme: PropTypes.func.isRequired,
     isGridContainsPreview: PropTypes.bool.isRequired,

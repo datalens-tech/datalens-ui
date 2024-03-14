@@ -148,17 +148,14 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                 <div className={b()}>
                     <div className={b('table')}>
                         <div className={b('header')} style={defaultRowStyle}>
-                            <div className={b('header-cell', {title: true})}>
-                                {i18n('label_title')}
-                            </div>
+                            <div className={b('header-cell')}>{i18n('label_title')}</div>
                             <div className={b('header-cell', {author: true})}>
                                 {i18n('label_author')}
                             </div>
                             <div className={b('header-cell', {date: true})}>
                                 {i18n('label_last-modified')}
                             </div>
-                            <div className={b('header-cell')} />
-                            <div className={b('header-cell')} />
+                            <div className={b('header-cell', {controls: true})} />
                         </div>
                         {scope &&
                             chunks.map((chunk) => (

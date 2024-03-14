@@ -7,57 +7,53 @@ export default {
     data: {
         ui: `module.exports = [
     {
-        type: 'select' ,
+        type: 'select',
         param: 'scale',
         content: [
             {title: 'Daily', value: 'd'},
             {title: 'Weekly', value: 'w'},
             {title: 'Monthly', value: 'm'}
         ],
-        updateControlsOnChange: true
+        // updateOnChange: true,
+        // updateControlsOnChange: true,
     },
     {
         type: 'input',
         param: 'input',
-        
         label: 'Search',
-        
         // Placeholder text, when nothing is selected
         // Default: ''
         placeholder: 'Query',
-        
         // updateOnChange: true,
-        // updateControlsOnChange: true
+        // updateControlsOnChange: true,
     }, 
     {
         type: 'datepicker',
         param: 'datepicker',
-        
         label: 'Date',
-        
         // updateOnChange: true,
-        // updateControlsOnChange: true
+        // updateControlsOnChange: true,
     },
     {
         type: 'range-datepicker',
-
         paramFrom: 'rangeDatepickerFrom',
         paramTo: 'rangeDatepickerTo',
-        
         label: 'Calendar',
+        // updateOnChange: true,
+        // updateControlsOnChange: true,
     },
     {
         type: 'checkbox',
         param: 'checkbox',
-        
-        label: 'Verify'
+        label: 'Verify',
+        // updateOnChange: true,
+        // updateControlsOnChange: true,
     },
     {
         type: 'button',
-        
         label: 'Go',
-        
-        theme: 'action'
+        theme: 'action',
+        updateOnChange: true,
     }
 ];
 `,

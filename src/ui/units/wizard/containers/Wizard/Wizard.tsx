@@ -394,7 +394,7 @@ class Wizard extends React.Component<Props, State> {
             {
                 action: () => this.openSaveAsWidgetDialog(true),
                 text: i18n('wizard', 'button_save-as-editor-script'),
-                hidden: !Utils.isEnabledFeature(Feature.EnableChartEditor),
+                hidden: !Utils.isEnabledFeature(Feature.EnableSaveAsEditorScript),
             },
         ];
     };
