@@ -41,7 +41,6 @@ export default class ChartKit {
     private paginatorSelector = '.chartkit-table-paginator';
     private tableRowSelector = `.chartkit .data-table__row, tbody ${slct(ChartKitTableQa.Row)}`;
     private tableHeadCellSelector = '.data-table__head-cell';
-    private tableColgroupSelector = '.chartkit-table colgroup';
     private layerLegendSelector = '.chartkit .chartkit-ymap-legend-layer';
     private chartkitTableCellSelector = `.chartkit-table__cell, ${slct(ChartKitTableQa.Cell)}`;
     private labelsSelector = '.highcharts-data-labels .highcharts-data-label';
@@ -201,13 +200,6 @@ export default class ChartKit {
 
     async getTableRowsCount() {
         return (await this.page.$$(this.tableRowSelector)).length;
-    }
-
-    async getColumnsWidth() {
-        const colGroup = await this.page.locator(this.tableColgroupSelector).first();
-        return await colGroup
-            .locator('col')
-            .evaluateAll((cols) => cols.map((col) => col.style?.width));
     }
 
     getLayerLegend() {
