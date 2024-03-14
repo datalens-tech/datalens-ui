@@ -7,7 +7,10 @@ import type {GetCollectionContentResponse} from '../../../../../../shared/schema
 import {GetCollectionContentArgs} from '../../../../../../shared/schema';
 import {CollectionContentFilters} from '../../../../../components/CollectionFilters';
 import {AppDispatch} from '../../../../../store';
-import {getCollectionBreadcrumbs} from '../../../../collections-navigation/store/actions';
+import {
+    getCollectionBreadcrumbs,
+    setCollectionBreadcrumbs,
+} from '../../../../collections-navigation/store/actions';
 import {
     getCollection,
     getCollectionContent,
@@ -81,6 +84,7 @@ export const useData = ({curCollectionId, filters}: UseDataArgs) => {
 
         if (curCollectionId === null) {
             dispatch(resetCollectionInfo());
+            dispatch(setCollectionBreadcrumbs([]));
         } else {
             getCollectionPromise = dispatch(getCollection({collectionId: curCollectionId}));
             getCollectionBreadcrumbsPromise = dispatch(

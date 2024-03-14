@@ -58,7 +58,13 @@ export const useLayout = ({workbookId, scope, refreshWorkbookInfo}: UseLayoutArg
                         <ActionPanelEntrySelect />
                         <CollectionBreadcrumbs
                             className={b('breadcrumbs', {'is-mobile': DL.IS_MOBILE})}
-                            isLoading={!(collectionBreadcrumbs || collectionBreadcrumbsError)}
+                            isLoading={
+                                !(
+                                    collectionBreadcrumbs ||
+                                    collectionBreadcrumbsError ||
+                                    workbook?.collectionId === null
+                                )
+                            }
                             collections={collectionBreadcrumbs ?? []}
                             workbook={workbook}
                             onItemClick={({isCurrent, id}) => {

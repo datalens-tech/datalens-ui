@@ -1,6 +1,5 @@
 import type {
     CollectionWithPermissions,
-    GetCollectionBreadcrumbsResponse,
     GetCollectionContentResponse,
     GetRootCollectionPermissionsResponse,
     WorkbookWithPermissions,
@@ -41,11 +40,6 @@ export type CollectionsState = {
         data: CollectionWithPermissions | null;
         error: Error | null;
     };
-    getCollectionBreadcrumbs: {
-        isLoading: boolean;
-        data: GetCollectionBreadcrumbsResponse | null;
-        error: Error | null;
-    };
 };
 
 const initialState: CollectionsState = {
@@ -61,11 +55,6 @@ const initialState: CollectionsState = {
     },
     items: [],
     getCollection: {
-        isLoading: false,
-        data: null,
-        error: null,
-    },
-    getCollectionBreadcrumbs: {
         isLoading: false,
         data: null,
         error: null,
@@ -210,7 +199,6 @@ export const collectionsReducer = (
             return {
                 ...state,
                 getCollection: initialState.getCollection,
-                getCollectionBreadcrumbs: initialState.getCollectionBreadcrumbs,
             };
         }
 

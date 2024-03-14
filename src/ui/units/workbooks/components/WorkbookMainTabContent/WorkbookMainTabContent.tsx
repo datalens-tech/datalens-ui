@@ -6,6 +6,7 @@ import {EntryScope} from 'shared';
 import {WorkbookWithPermissions} from 'shared/schema';
 import {AppDispatch} from 'ui/store';
 
+import {AnimateBlock} from '../../../collections-navigation/components/AnimateBlock';
 import {
     getAllWorkbookEntriesSeparately,
     getWorkbookEntries,
@@ -197,17 +198,19 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
     }
 
     return (
-        <WorkbookEntriesTable
-            refreshEntries={refreshEntries}
-            workbook={workbook}
-            entries={entries}
-            loadMoreEntries={loadMoreEntries}
-            retryLoadEntries={retryLoadEntries}
-            mapTokens={mapTokens}
-            mapErrors={mapErrors}
-            mapLoaders={mapLoaders}
-            chunks={chunks}
-        />
+        <AnimateBlock>
+            <WorkbookEntriesTable
+                refreshEntries={refreshEntries}
+                workbook={workbook}
+                entries={entries}
+                loadMoreEntries={loadMoreEntries}
+                retryLoadEntries={retryLoadEntries}
+                mapTokens={mapTokens}
+                mapErrors={mapErrors}
+                mapLoaders={mapLoaders}
+                chunks={chunks}
+            />
+        </AnimateBlock>
     );
 });
 
