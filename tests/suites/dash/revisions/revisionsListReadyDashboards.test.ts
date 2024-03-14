@@ -53,7 +53,7 @@ const waitCheckRevisionListStatuses = async ({
     };
 };
 
-datalensTest.describe('Dashboard Versioning', () => {
+datalensTest.describe('Dashboards - Versioning', () => {
     datalensTest(
         'Dashboard with a long list of revisions, checking the upload and the updated list of revisions',
         async ({page}: {page: Page}) => {

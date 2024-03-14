@@ -19,6 +19,7 @@ export type RelationType = keyof typeof RELATION_TYPES;
 export type RelationsData = {
     byUsedParams: Array<string>;
     byAliases: Array<Array<string>>;
+    indirectAliases: Array<Array<string>>;
     isIgnoring: boolean;
     isIgnored: boolean;
     type: RelationType;

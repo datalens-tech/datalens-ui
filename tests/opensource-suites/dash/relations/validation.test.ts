@@ -4,7 +4,7 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ControlQA, DashCommonQa} from '../../../../src/shared';
-import {ChartsParams} from '../../../constants/test-entities/charts';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const PARAMS = {
     WARNING_SAME_DATASET_FIELDS:
@@ -18,15 +18,15 @@ datalensTest.describe('Dashboards - Relations (new), validation', () => {
     });
     datalensTest(
         'Check for unable adding new alias for widget on same dataset',
-        async ({page}: {page: Page}) => {
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
             await dashboardPage.createDashboard({
                 editDash: async () => {
                     await dashboardPage.addSelectorBySettings({});
 
                     await dashboardPage.addChart({
-                        chartName: ChartsParams.citySalesPieChart.name,
-                        chartUrl: ChartsParams.citySalesPieChart.url,
+                        name: config.dash.charts.ChartCityPie.name,
+                        url: config.dash.charts.ChartCityPie.url,
                         hideTitle: true,
                     });
                 },

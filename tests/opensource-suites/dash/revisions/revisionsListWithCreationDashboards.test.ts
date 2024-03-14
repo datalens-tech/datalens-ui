@@ -40,13 +40,13 @@ const waitCheckActualizeRevisionList = async ({
     };
 };
 
-datalensTest.describe('Dashboard Versioning', () => {
+datalensTest.describe('Dashboards - Versioning', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.createDashboard({
             editDash: async () => {
-                await dashboardPage.addText(arbitraryText.first);
+                await dashboardPage.addTitle(arbitraryText.first);
             },
         });
     });

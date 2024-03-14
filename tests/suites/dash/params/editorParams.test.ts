@@ -36,7 +36,7 @@ const checkWidgetParam = async (page: Page, dashboardPage: DashboardPage) => {
     await dashboardPage.exitEditMode();
 };
 
-datalensTest.describe(`Dashboards - parameters in editor widget`, () => {
+datalensTest.describe(`Dashboards - Parameters in editor widget`, () => {
     datalensTest(
         'Changes in the influencing selector do not affect the params in the editor chart widget',
         async ({page}: {page: Page}) => {

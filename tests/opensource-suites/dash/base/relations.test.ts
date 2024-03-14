@@ -4,7 +4,7 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {isEnabledFeature, openTestPage, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ConnectionsDialogQA, Feature} from '../../../../src/shared';
-import {ChartsParams} from '../../../constants/test-entities/charts';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
     CHART_LEGEND_ITEM: '.chartkit-d3-legend__item',
@@ -20,7 +20,7 @@ const PARAMS = {
 datalensTest.describe('Dashboards - Basic functionality', () => {
     datalensTest(
         'Adding a chart and selector with manual input of values, creating a link',
-        async ({page}: {page: Page}) => {
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
             // some page need to be loaded so we can get data of feature flag from DL var
             await openTestPage(page, '/');
@@ -41,10 +41,7 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
                         controlItems: PARAMS.CONTROL_ITEMS,
                     });
 
-                    await dashboardPage.addChart({
-                        chartName: ChartsParams.citySalesPieChart.name,
-                        chartUrl: ChartsParams.citySalesPieChart.url,
-                    });
+                    await dashboardPage.addChart(config.dash.charts.ChartCityPie);
 
                     await dashboardPage.setupLinks({
                         linkType: ConnectionsDialogQA.TypeSelectOutputOption,

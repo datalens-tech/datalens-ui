@@ -24,9 +24,19 @@ export function getUIEntryRoute({entry, origin, endpoints}: GetUIEntryRouteArgs)
             case EntryScope.Dash:
                 return `/${slugName}`;
             case EntryScope.Widget:
-                return ENTRY_TYPES.ql.includes(type)
-                    ? `${endpoints.ql}/${slugName}`
-                    : `${endpoints.wizard}/${slugName}`;
+                if (ENTRY_TYPES.editor.includes(type)) {
+                    return `${endpoints.editor}/${slugName}`;
+                }
+
+                if (ENTRY_TYPES.ql.includes(type)) {
+                    return `${endpoints.ql}/${slugName}`;
+                }
+
+                if (ENTRY_TYPES.wizard.includes(type)) {
+                    return `${endpoints.wizard}/${slugName}`;
+                }
+
+                return defaultUrl;
             default:
                 return defaultUrl;
         }

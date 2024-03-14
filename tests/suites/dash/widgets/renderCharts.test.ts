@@ -5,7 +5,7 @@ import {openTestPage, slct} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
-datalensTest.describe('Dashboards are renderers of various types of charts', () => {
+datalensTest.describe('Dashboards - renderers of various types of charts', () => {
     datalensTest(
         'In a dashboard with a yagr chart, the page is loaded and the chart is displayed',
         async ({page}: {page: Page}) => {
