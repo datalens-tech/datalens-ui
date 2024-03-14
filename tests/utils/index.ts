@@ -105,7 +105,7 @@ export async function makeLogIn(page: Page, asSuperuser?: boolean) {
 export async function entryDialogFillAndSave(page: Page, entryName: string) {
     const entryDialogInput = page
         .locator(slct(DialogCreateWorkbookEntryQa.Input))
-        .or(page.locator(slct('entry-dialog-content')).locator('[data-qa=path-select]'));
+        .or(page.locator(slct(EntryDialogQA.Content)).locator(slct(EntryDialogQA.PathSelect)));
     await entryDialogInput.locator('input').fill(entryName);
     const button = page
         .locator(slct(EntryDialogQA.Apply))

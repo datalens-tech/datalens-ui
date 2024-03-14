@@ -54,7 +54,7 @@ const isChartRequestSent = (reqData: string | null) => {
     return isChartData;
 };
 
-datalensTest.describe('Dashboards - Widget Downloads', () => {
+datalensTest.describe('Dashboards - Widget loading', () => {
     datalensTest(
         'When loading a dashboard, the selectors have priority for loading api/run',
         async ({page}: {page: Page}) => {
@@ -88,7 +88,7 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
         },
     );
     datalensTest(
-        'Dashboard with delayed loading of widgets (do not fall into viewport)',
+        "Dashboard with delayed loading of widgets (doesn't get into viewport)",
         async ({page}: {page: Page}) => {
             // we set small viewport sizes for a more stable check
             page.setViewportSize({width: 1000, height: 300});

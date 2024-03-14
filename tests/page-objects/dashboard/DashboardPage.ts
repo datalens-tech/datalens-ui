@@ -6,6 +6,7 @@ import {
     DashCommonQa,
     DashEntryQa,
     DashRelationTypes,
+    DialogControlDateQa,
     DialogDashWidgetQA,
     DialogQLParameterQA,
     DialogTabsQA,
@@ -193,6 +194,18 @@ class DashboardPage extends BasePage {
         return yfmLocator.innerText();
     }
 
+    // Fill in the input with the name of the entity being created in the EntryDialog (the dialog that appears when saving entities) and click the "Create" button
+    async entryNavigationDialogFillAndSave(page: Page, entryName: string) {
+        // waiting for the save dialog to open
+        const entryDialog = await page.waitForSelector(slct('entry-dialog-content'));
+        const entryDialogInput = await entryDialog!.waitForSelector('[data-qa=path-select] input');
+        // filling in the input
+        await entryDialogInput!.fill(entryName);
+
+        // save
+        await page.click(slct(EntryDialogQA.Apply));
+    }
+
     async createDashboard({editDash}: {editDash: () => Promise<void>}) {
         // some page need to be loaded so we can get data of feature flag from DL var
         await openTestPage(this.page, '/');
@@ -330,7 +343,9 @@ class DashboardPage extends BasePage {
         await this.fillSelectorSettingsDialogFields({controlTitle, controlFieldName});
 
         await this.dialogControl.elementType.click();
-        await this.dialogControl.datasetFieldSelector.selectListItem({innerText: 'Calendar'});
+        await this.dialogControl.datasetFieldSelector.selectListItemByQa(
+            slct(DialogControlQa.typeControlCalendar),
+        );
 
         await this.page.click(slct(DialogControlQa.dateRangeCheckbox));
         await this.page.click(slct(DialogControlQa.dateTimeCheckbox));
@@ -338,7 +353,7 @@ class DashboardPage extends BasePage {
         // click on the button for setting possible values
         await this.page.click(slct(DashboardPage.selectors.acceptableValuesBtn));
 
-        await this.page.getByText('Selecting a value').click();
+        await this.page.locator(`${slct(DialogControlDateQa.defaultSelectValue)} label`).click();
 
         await this.page.fill(`${slct(DialogQLParameterQA.DatepickerStart)} input`, range[0]);
 
@@ -483,14 +498,14 @@ class DashboardPage extends BasePage {
     }
 
     async addChart({
-        chartUrl,
-        chartName,
+        url,
+        name,
         hideTitle,
         enableAutoHeight,
         addChartTab,
     }: {
-        chartUrl: string;
-        chartName: string;
+        url: string;
+        name: string;
         hideTitle?: boolean;
         enableAutoHeight?: boolean;
         addChartTab?: boolean;
@@ -503,12 +518,12 @@ class DashboardPage extends BasePage {
         await this.page.click(slct('navigation-input-use-link-button'));
 
         // specify the link
-        await this.page.fill('[data-qa=navigation-input] input', getAddress(chartUrl));
+        await this.page.fill('[data-qa=navigation-input] input', getAddress(url));
 
         // adding
         await this.page.click(slct('navigation-input-ok-button'));
         // making sure that the necessary chart is selected
-        await this.page.waitForSelector(`[data-qa=entry-title] * >> text=${chartName}`);
+        await this.page.waitForSelector(`[data-qa=entry-title] * >> text=${name}`);
 
         if (hideTitle) {
             await this.page.locator(slct(DashCommonQa.WidgetShowTitleCheckbox)).click();
@@ -526,10 +541,19 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddText));
     }
 
-    async addText(text: string) {
+    async addText(text: string, delay?: number) {
         await this.clickAddText();
+        const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
-        await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+        if (isEnabledCollections) {
+            await this.page.fill(`${slct(DialogDashWidgetItemQA.Text)} textarea`, text);
+        } else {
+            await this.page.type(
+                `${slct(DialogDashWidgetItemQA.Text)} [contenteditable=true]`,
+                text,
+                {delay},
+            );
+        }
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
 
@@ -920,10 +944,14 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(COMMON_SELECTORS.ACTION_BTN_TABS));
     }
 
-    async addTab() {
+    async addTab(name?: string) {
         // adding tab (by default: Tab 2)
         await this.clickTabs();
         await this.page.click(slct(DialogTabsQA.RowAdd));
+        if (name) {
+            await this.page.getByRole('listitem').last().dblclick();
+            await this.page.locator(`${slct(DialogTabsQA.EditTabItem)} input`).fill(name);
+        }
         await this.page.click(slct(DialogTabsQA.Save));
     }
 

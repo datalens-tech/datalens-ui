@@ -246,6 +246,16 @@ const getCurrentNamespaceItems = ({
     });
 };
 
+export const getDefaultTypeByIgnore = (
+    relations: Omit<RelationsData, 'type' | 'available' | 'byFields' | 'forceAddAlias'>,
+) => {
+    let relationType = RELATION_TYPES.both;
+    if (relations.isIgnored || relations.isIgnoring) {
+        relationType = relations.isIgnored ? RELATION_TYPES.output : RELATION_TYPES.input;
+    }
+    return relationType;
+};
+
 const getRelationTypeByIgnores = ({
     relations,
     loadError,
@@ -261,11 +271,7 @@ const getRelationTypeByIgnores = ({
     } else if (loadError) {
         relationType = RELATION_TYPES.unknown;
     } else if (hasRelation) {
-        if (relations.isIgnored || relations.isIgnoring) {
-            relationType = relations.isIgnored ? RELATION_TYPES.output : RELATION_TYPES.input;
-        } else {
-            relationType = RELATION_TYPES.both;
-        }
+        relationType = getDefaultTypeByIgnore(relations);
     }
 
     return relationType;
@@ -320,6 +326,7 @@ const getItemsRelations = ({
             widget: widgetMeta,
             row,
             relationType,
+            relations,
         });
         relationType = resultRelations.relationType;
         availableRelations = resultRelations.availableRelations;
@@ -348,6 +355,7 @@ const getItemsRelations = ({
     return {
         byUsedParams,
         byAliases: relations.byAliases,
+        indirectAliases: relations.indirectAliases,
         isIgnoring: relations.isIgnoring,
         isIgnored: relations.isIgnored,
         type: relationType as RelationType,
@@ -390,35 +398,48 @@ export const getRelationsInfo = (args: {
     const {aliases, connections, datasets, widget, row} = args;
     const byUsedParams = getByUsedParams({widget, row});
     let byAliases: Array<Array<string>> = [];
+    const indirectAliases: Array<Array<string>> = [];
+  
+    const rowId = row.itemId || row.widgetId;
+    const currentId = widget.itemId || widget.widgetId;
+
+    const ignoreConntections = connections.filter(({kind}) => kind === CONNECTION_KIND.IGNORE);
+
+    const isIgnored = ignoreConntections.some(
+        ({from, to}) => from === currentId && to === rowId,
+    );
+
+    const isIgnoring = ignoreConntections.some(
+        ({from, to}) => from === rowId && to === currentId,
+    );
+
+    const isIndirectRelation = !isIgnored && !isIgnoring;
+
     if (aliases[DEFAULT_ALIAS_NAMESPACE]?.length) {
         byAliases = aliases[DEFAULT_ALIAS_NAMESPACE].filter((aliasArr) => {
-            if (!row.usedParams?.length) {
+            if (!row.usedParams?.length && !isIndirectRelation) {
                 return false;
             }
             const rowInAlias = intersection(row.usedParams, aliasArr);
             const widgetInAlias = intersection(widget.usedParams, aliasArr);
+
+            if (rowInAlias.length || widgetInAlias.length) {
+                indirectAliases.push(aliasArr);
+            }
+
             if (!rowInAlias.length || !widgetInAlias.length) {
                 return false;
             }
+
             return rowInAlias;
         });
     }
-
-    const rowItemId = row.itemId || row.widgetId;
-    const currentItemId = widget.itemId || widget.widgetId;
-
-    const isIgnored = connections
-        .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
-        .some(({from, to}) => from === currentItemId && to === rowItemId);
-
-    const isIgnoring = connections
-        .filter(({kind}) => kind === CONNECTION_KIND.IGNORE)
-        .some(({from, to}) => from === rowItemId && to === currentItemId);
 
     return getItemsRelations({
         relations: {
             byUsedParams,
             byAliases,
+            indirectAliases,
             isIgnoring,
             isIgnored,
             hasDataset: false,

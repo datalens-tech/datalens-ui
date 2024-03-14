@@ -332,15 +332,16 @@ const DialogRelations = (props: DialogRelationsProps) => {
     }, [aliases, handleUpdateAliases, shownInvalidAliases]);
 
     const handleDisconnectAll = React.useCallback(
-        (disconnectType: 'widgets' | 'selectors') => {
+        (disconnectType: 'all' | 'charts' | 'selectors') => {
             const newChangedWidgets: WidgetsTypes = {};
             const filteredIds = filteredRelations.reduce((res: Record<string, string>, item) => {
                 if (!item.widgetId) {
                     return res;
                 }
                 if (
-                    disconnectType === 'widgets' ||
-                    (disconnectType === 'selectors' && item.type === DashTabItemType.Control)
+                    disconnectType === 'all' ||
+                    (disconnectType === 'selectors' && item.type === DashTabItemType.Control) ||
+                    (disconnectType === 'charts' && item.type !== DashTabItemType.Control)
                 ) {
                     res[item.widgetId] = item.widgetId;
                 }
@@ -445,7 +446,14 @@ const DialogRelations = (props: DialogRelationsProps) => {
     }, [shownInvalidAliases, invalidAliases]);
 
     return (
-        <Dialog onClose={onClose} open={true} className={b()} onEnterKeyDown={handleSaveRelations}>
+        <Dialog
+            onClose={onClose}
+            open={true}
+            className={b()}
+            onEnterKeyDown={handleSaveRelations}
+            disableOutsideClick={true}
+            disableEscapeKeyDown={true}
+        >
             <Dialog.Header caption={title} insertBefore={titleIcon} className={b('caption')} />
             <Dialog.Body className={b('container')}>
                 {isMultipleControls && (
@@ -489,9 +497,14 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     size="l"
                     items={[
                         {
-                            action: () => handleDisconnectAll('widgets'),
-                            text: i18n('label_widgets'),
+                            action: () => handleDisconnectAll('all'),
+                            text: i18n('label_all'),
                             qa: DashCommonQa.RelationsDisconnectAllWidgets,
+                        },
+                        {
+                            action: () => handleDisconnectAll('charts'),
+                            text: i18n('label_charts'),
+                            qa: DashCommonQa.RelationsDisconnectAllCharts,
                         },
                         {
                             action: () => handleDisconnectAll('selectors'),

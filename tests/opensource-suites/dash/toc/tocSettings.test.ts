@@ -8,7 +8,7 @@ import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
 
-datalensTest.describe('Dashboard - Table of Contents - Settings', () => {
+datalensTest.describe('Dashboards - Settings of Table of Contents', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 

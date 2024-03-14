@@ -15,6 +15,7 @@
                 "props": true,
                 "ignorePropertyModificationsFor": ["acc"]
             }
-        ]
+        ],
+        "no-console": ["error", {"allow": ["warn", "error"]}]
     }
 }

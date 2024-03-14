@@ -38,7 +38,7 @@ export type OpenDialogAliasesArgs = {
 const b = block('dialog-aliases');
 const i18n = I18n.keyset('component.dialog-aliases.view');
 
-/* eslint-disable complexity */
+// eslint-disable-next-line complexity
 const DialogAliases = (props: DialogAliasesProps) => {
     const {
         onClose,
@@ -188,19 +188,19 @@ const DialogAliases = (props: DialogAliasesProps) => {
             rowWithPartlyRemoved?: string[];
         }) => {
             const aliasesForRemoveSorted = [...aliasesForRemove].sort();
-            const filteredAliases = dashTabAliasesByNamespace.reduce(
-                (list: string[][], item: string[]) => {
-                    if (isEqual([...item].sort(), aliasesForRemoveSorted)) {
-                        if (rowWithPartlyRemoved?.length) {
-                            list.push(rowWithPartlyRemoved);
-                        }
-                    } else {
-                        list.push(item);
+            const filterAliases = (list: string[][], item: string[]) => {
+                if (isEqual([...item].sort(), aliasesForRemoveSorted)) {
+                    if (rowWithPartlyRemoved?.length) {
+                        list.push(rowWithPartlyRemoved);
                     }
-                    return list;
-                },
-                [],
-            );
+                } else {
+                    list.push(item);
+                }
+                return list;
+            };
+
+            const filteredAliases = aliases.reduce(filterAliases, []);
+            const dashTabFilteredAliases = dashTabAliasesByNamespace.reduce(filterAliases, []);
 
             let count = 0;
 
@@ -214,11 +214,11 @@ const DialogAliases = (props: DialogAliasesProps) => {
             }
 
             setAliases(filteredAliases.sort());
-            setAliasesByNamespace(filteredAliases);
+            setAliasesByNamespace(dashTabFilteredAliases);
 
             resetSelectedAliasRow();
         },
-        [dashTabAliasesByNamespace, resetSelectedAliasRow, aliasAdded],
+        [dashTabAliasesByNamespace, aliasAdded, aliases, resetSelectedAliasRow],
     );
 
     /**
@@ -226,14 +226,12 @@ const DialogAliases = (props: DialogAliasesProps) => {
      */
     const handleAddNewAliases = React.useCallback(
         (alias: string[]) => {
-            const res = getNormalizedAliases([...dashTabAliasesByNamespace, alias]);
-
             setShowAddAlias(false);
-            setAliases(res);
-            setAliasesByNamespace(res);
+            setAliases(getNormalizedAliases([...aliases, alias]));
+            setAliasesByNamespace(getNormalizedAliases([...dashTabAliasesByNamespace, alias]));
             setAliasAdded(alias);
         },
-        [dashTabAliasesByNamespace],
+        [aliases, dashTabAliasesByNamespace],
     );
 
     const handleApplyChanges = React.useCallback(() => {
@@ -242,18 +240,18 @@ const DialogAliases = (props: DialogAliasesProps) => {
             setShowAddAlias(true);
             return;
         }
-        updateAliases(getNormalizedAliases(aliases));
+        updateAliases(getNormalizedAliases(dashTabAliasesByNamespace));
         onClose({
             ...(changedWidgetsData ? {changedWidgetsData} : {}),
             ...(changedWidgetId ? {changedWidgetId} : {}),
             ...(changedItemId ? {changedItemId} : {}),
-            ...(aliases ? {aliases} : {}),
+            ...(dashTabAliasesByNamespace ? {aliases: dashTabAliasesByNamespace} : {}),
         });
     }, [
         forceAddAlias,
         aliasAdded,
         updateAliases,
-        aliases,
+        dashTabAliasesByNamespace,
         onClose,
         changedWidgetsData,
         changedWidgetId,
