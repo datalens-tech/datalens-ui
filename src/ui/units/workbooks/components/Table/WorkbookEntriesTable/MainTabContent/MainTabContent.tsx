@@ -133,8 +133,7 @@ const MainTabContent = ({
                     <div className={b('table-header-cell', {title: true})} />
                     <div className={b('table-header-cell', {author: true})} />
                     <div className={b('table-header-cell', {date: true})} />
-                    <div className={b('table-header-cell')} />
-                    <div className={b('table-header-cell')} />
+                    <div className={b('table-header-cell', {controls: true})} />
                 </div>
                 {!isLoading && getContentTab()}
             </div>
