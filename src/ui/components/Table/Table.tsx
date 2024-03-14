@@ -88,7 +88,7 @@ function getTableColumns(args: {head?: THead[]; footer?: TFoot[]}) {
     return createHeadColumns(head);
 }
 
-function getTableData(args: {head?: THead[]; rows: TData[]}) {
+function getTableData(args: {head?: THead[]; rows?: TData[]}) {
     const {head = [], rows = []} = args;
     const groupedCells = new Map();
 
@@ -139,7 +139,7 @@ export const Table = (props: TableProps) => {
         manualSorting,
         onSortingChange,
     } = props;
-    const {head = [], footer = [], rows = []} = props.data;
+    const {head, footer, rows} = props.data;
     const columns = React.useMemo(() => getTableColumns({head, footer}), [head, footer]);
     const data = React.useMemo(() => getTableData({head, rows}), [head, rows]);
     const [sorting, setSorting] = React.useState<SortingState>([]);

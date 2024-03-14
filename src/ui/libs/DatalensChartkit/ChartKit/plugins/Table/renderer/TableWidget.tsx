@@ -27,7 +27,7 @@ import './TableWidget.scss';
 
 const b = block('chartkit-table-widget');
 
-type HeadCell = THead & {name: string; fieldId?: string; custom?: unknown};
+type HeadCell = THead & {name: string; formattedName?: string; fieldId?: string; custom?: unknown};
 
 function mapHeadCell(th: TableHead): HeadCell {
     return {
@@ -36,6 +36,7 @@ function mapHeadCell(th: TableHead): HeadCell {
         header: () => {
             const cell = {
                 value: th.markup ?? th.name,
+                formattedValue: th.formattedName,
                 type: th.markup ? 'markup' : get(th, 'type'),
             };
             return (
@@ -162,44 +163,46 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             changeParams(params);
         };
 
-        const tableData: TableProps['data'] = {
-            head: data.head?.map(mapHeadCell),
-            rows: (data.rows as TableCellsRow[])?.map<TData>((r) => {
-                return r.cells.map((c, cellIndex) => {
-                    const cell = c as TableCommonCell;
-                    const isCellClickable =
-                        Boolean(canDrillDown && cell.drillDownFilterValue) ||
-                        Boolean(cell.treeNode) ||
-                        Boolean(actionParams?.scope);
-                    const cursor = isCellClickable ? 'pointer' : undefined;
-                    const actionParamsCss = getCellCss({
-                        actionParamsData: actionParams,
-                        row: r,
-                        cell: c,
-                        head: data.head,
-                        rows: data.rows || [],
+        const tableData: TableProps['data'] = React.useMemo(() => {
+            return {
+                head: data.head?.map(mapHeadCell),
+                rows: (data.rows as TableCellsRow[])?.map<TData>((r) => {
+                    return r.cells.map((c, cellIndex) => {
+                        const cell = c as TableCommonCell;
+                        const isCellClickable =
+                            Boolean(canDrillDown && cell.drillDownFilterValue) ||
+                            Boolean(cell.treeNode) ||
+                            Boolean(actionParams?.scope);
+                        const cursor = isCellClickable ? 'pointer' : undefined;
+                        const actionParamsCss = getCellCss({
+                            actionParamsData: actionParams,
+                            row: r,
+                            cell: c,
+                            head: data.head,
+                            rows: data.rows || [],
+                        });
+
+                        const column = data.head?.[cellIndex];
+                        const cellType = cell.type ?? get(column, 'type');
+                        let cellClassName: string | undefined;
+                        if (cellType === 'number') {
+                            cellClassName = b('number-column');
+                        }
+
+                        return {
+                            ...cell,
+                            css: {cursor, ...actionParamsCss, ...camelCaseCss(cell.css)},
+                            className: cellClassName,
+                        };
                     });
+                }),
+                footer: ((data.footer?.[0] as TableCellsRow)?.cells || []).map((td) => {
+                    const cell = td as TableCommonCell;
 
-                    const column = data.head?.[cellIndex];
-                    const cellType = cell.type ?? get(column, 'type');
-                    let cellClassName: string | undefined;
-                    if (cellType === 'number') {
-                        cellClassName = b('number-column');
-                    }
-
-                    return {
-                        ...cell,
-                        css: {cursor, ...actionParamsCss, ...camelCaseCss(cell.css)},
-                        className: cellClassName,
-                    };
-                });
-            }),
-            footer: ((data.footer?.[0] as TableCellsRow)?.cells || []).map((td) => {
-                const cell = td as TableCommonCell;
-
-                return {...cell, css: cell.css ? camelCaseCss(cell.css) : undefined};
-            }),
-        };
+                    return {...cell, css: cell.css ? camelCaseCss(cell.css) : undefined};
+                }),
+            };
+        }, [actionParams, canDrillDown, data.footer, data.head, data.rows]);
 
         return (
             <div
