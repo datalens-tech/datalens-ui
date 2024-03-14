@@ -5,6 +5,7 @@ import {ThunkDispatch} from 'redux-thunk';
 import {showToast} from 'store/actions/toaster';
 
 import type {
+    Collection,
     CollectionWithPermissions,
     GetCollectionContentResponse,
     GetRootCollectionPermissionsResponse,
@@ -233,7 +234,7 @@ type SetCollectionAction = {
     };
 };
 
-export const setCollection = (collection: CollectionWithPermissions) => {
+export const setCollection = (collection: CollectionWithPermissions | Collection) => {
     return {
         type: SET_COLLECTION,
         data: {

@@ -8,11 +8,6 @@ export enum GetCollectionContentMode {
     OnlyWorkbooks = 'onlyWorkbooks',
 }
 
-export type GetCollectionBreadcrumb = {
-    collectionId: string;
-    title: string;
-};
-
 export type CollectionPermissions = {
     listAccessBindings: boolean;
     updateAccessBindings: boolean;
@@ -86,9 +81,10 @@ export type GetCollectionContentResponse = {
 
 export type GetCollectionBreadcrumbsArgs = {
     collectionId: string;
+    includePermissionsInfo?: boolean;
 };
 
-export type GetCollectionBreadcrumbsResponse = GetCollectionBreadcrumb[];
+export type GetCollectionBreadcrumbsResponse = (Collection | CollectionWithPermissions)[];
 
 export type DeleteCollectionArgs = {
     collectionId: string;

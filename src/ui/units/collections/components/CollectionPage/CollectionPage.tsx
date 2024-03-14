@@ -207,7 +207,7 @@ export const CollectionPage = () => {
                     countItemsWithPermissionMove={itemsWithPermissionMove.length}
                     canCreateWorkbook={
                         collectionId && collection
-                            ? collection.permissions.createWorkbook
+                            ? Boolean(collection.permissions?.createWorkbook)
                             : Boolean(rootPermissions?.createWorkbookInRoot)
                     }
                     onCreateWorkbookClick={handleCreateWorkbook}

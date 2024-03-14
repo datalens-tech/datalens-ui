@@ -103,10 +103,7 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                                     dispatch(
                                                         setCollectionBreadcrumbs([
                                                             ...breadcrumbs,
-                                                            {
-                                                                collectionId: item.collectionId,
-                                                                title: item.title,
-                                                            },
+                                                            item,
                                                         ]),
                                                     );
                                                 }

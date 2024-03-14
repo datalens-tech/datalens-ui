@@ -39,13 +39,13 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
     const chunks = useChunkedEntries(entries);
 
     React.useEffect(() => {
-        (async () => {
-            if (workbook && workbook.workbookId === workbookId) {
+        if (workbook?.workbookId === workbookId) {
+            (async () => {
                 dispatch(resetWorkbookEntries());
 
                 const scopesForRequest = [EntryScope.Dash, EntryScope.Widget];
 
-                if (workbook.permissions.view) {
+                if (workbook?.permissions.view) {
                     scopesForRequest.push(EntryScope.Dataset, EntryScope.Connection);
                 }
 
@@ -92,9 +92,9 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                 setMapErrors(errors);
 
                 setIsLoading(false);
-            }
-        })();
-    }, [dispatch, filters, workbook, workbookId]);
+            })();
+        }
+    }, [dispatch, filters, workbook?.workbookId, workbook?.permissions.view, workbookId]);
 
     const loadMoreEntries = React.useCallback(
         (entryScope: EntryScope) => {

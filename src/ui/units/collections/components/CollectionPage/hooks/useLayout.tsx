@@ -39,7 +39,7 @@ import {
     selectCollectionBreadcrumbs,
     selectCollectionBreadcrumbsError,
 } from '../../../../collections-navigation/store/selectors';
-import {getCollection} from '../../../store/actions';
+import {getCollection, setCollection} from '../../../store/actions';
 import {
     selectCollection,
     selectPageError,
@@ -156,6 +156,7 @@ export const useLayout = ({
                                 )
                             }
                             collections={collectionBreadcrumbs ?? []}
+                            workbook={null}
                             onItemClick={({isCurrent, id}) => {
                                 if (isCurrent) {
                                     fetchCollectionContent();
@@ -177,6 +178,11 @@ export const useLayout = ({
                                     }, []);
 
                                     dispatch(setCollectionBreadcrumbs(newBreadcrumbs));
+
+                                    const curBreadcrumb = newBreadcrumbs[newBreadcrumbs.length - 1];
+                                    if (newBreadcrumbs[newBreadcrumbs.length - 1]) {
+                                        dispatch(setCollection(curBreadcrumb));
+                                    }
                                 }
                             }}
                         />
@@ -188,6 +194,7 @@ export const useLayout = ({
         ActionPanelEntrySelect,
         collection,
         collectionBreadcrumbs,
+        collectionBreadcrumbsError,
         curCollectionId,
         dispatch,
         fetchCollectionContent,
@@ -200,7 +207,7 @@ export const useLayout = ({
     React.useEffect(() => {
         if (
             (isRootCollection && !isRootPermissionsLoading) ||
-            (isCorrectCollection && collection)
+            (isCorrectCollection && collection && collection.permissions)
         ) {
             setLayout({
                 actionsPanelRightBlock: {
@@ -356,7 +363,7 @@ export const useLayout = ({
                 },
                 description: null,
             });
-        } else if (collection) {
+        } else if (isCorrectCollection && collection) {
             setLayout({
                 title: {
                     content: collection.title,
@@ -374,14 +381,14 @@ export const useLayout = ({
                 },
             });
         }
-    }, [curCollectionId, collection, setLayout, isRootCollection]);
+    }, [curCollectionId, collection, setLayout, isRootCollection, isCorrectCollection]);
 
     React.useEffect(() => {
         if (isRootCollection) {
             setLayout({
                 titleActionsBlock: null,
             });
-        } else if (isCorrectCollection && collection) {
+        } else if (isCorrectCollection && collection && collection.permissions) {
             setLayout({
                 titleActionsBlock: {
                     content:

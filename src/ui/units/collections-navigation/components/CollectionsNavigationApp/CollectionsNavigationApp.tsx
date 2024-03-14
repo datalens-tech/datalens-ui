@@ -2,8 +2,8 @@ import React from 'react';
 
 import {useDispatch} from 'react-redux';
 import {Route, Switch} from 'react-router-dom';
-import {AppDispatch} from 'ui/store';
 
+import {AppDispatch} from '../../../../store';
 import {CollectionPage} from '../../../collections/components/CollectionPage/CollectionPage';
 import {resetState as resetCollectionsState} from '../../../collections/store/actions';
 import {WorkbookPage} from '../../../workbooks/components/WorkbookPage/WorkbookPage';

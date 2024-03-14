@@ -111,10 +111,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                     dispatch(
                                                         setCollectionBreadcrumbs([
                                                             ...breadcrumbs,
-                                                            {
-                                                                collectionId: item.collectionId,
-                                                                title: item.title,
-                                                            },
+                                                            item,
                                                         ]),
                                                     );
                                                 }
@@ -174,7 +171,10 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                 input: item.updatedAt,
                                             }).fromNow()}
                                         </div>
-                                        <div className={b('content-cell', {control: true})}>
+                                        <div
+                                            className={b('content-cell', {control: true})}
+                                            onClick={onClickStopPropagation}
+                                        >
                                             {actions.length > 0 && (
                                                 <div onClick={onClickStopPropagation}>
                                                     <DropdownMenu size="s" items={actions} />

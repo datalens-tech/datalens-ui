@@ -20,6 +20,7 @@ import {
     selectCollectionBreadcrumbs,
     selectCollectionBreadcrumbsError,
 } from '../../../../collections-navigation/store/selectors';
+import {setCollection} from '../../../../collections/store/actions';
 import {getWorkbookEntries, resetWorkbookEntries} from '../../../store/actions';
 import {selectPageError, selectWorkbook, selectWorkbookFilters} from '../../../store/selectors';
 import {WorkbookActions} from '../../WorkbookActions/WorkbookActions';
@@ -88,6 +89,11 @@ export const useLayout = ({workbookId, scope, refreshWorkbookInfo}: UseLayoutArg
                                     }, []);
 
                                     dispatch(setCollectionBreadcrumbs(newBreadcrumbs));
+
+                                    const curBreadcrumb = newBreadcrumbs[newBreadcrumbs.length - 1];
+                                    if (newBreadcrumbs[newBreadcrumbs.length - 1]) {
+                                        dispatch(setCollection(curBreadcrumb));
+                                    }
                                 }
                             }}
                         />

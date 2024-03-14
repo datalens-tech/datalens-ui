@@ -34,7 +34,7 @@ export type CollectionBreadcrumbsProps = {
     className?: string;
     isLoading?: boolean;
     collections: GetCollectionBreadcrumbsResponse;
-    workbook?: {
+    workbook: {
         workbookId: string;
         title: string;
     } | null;
