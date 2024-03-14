@@ -1,6 +1,8 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import {Feature} from 'shared';
+import Utils from 'ui/utils';
 
 import {DL} from '../../../../constants/common';
 import type {GraphWidget, LoadedWidgetData} from '../../types';
@@ -77,13 +79,11 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
         }
 
         case 'table': {
-            // TODO: проверить флаг
-            const isPivotTable = get(data, 'data.head', []).some(
-                (headCell: unknown) => get(headCell, 'sub', []).length,
-            );
-            // for wizard and ql flat tables only
-            const isWizardOrQl = get(data, 'isNewWizard') || get(data, 'isQL');
-            const shouldRenderNewTable = isWizardOrQl && !isPivotTable;
+            const shouldRenderNewTable =
+                (get(data, 'isNewWizard') &&
+                    Utils.isEnabledFeature(Feature.NewTablePluginForWizard)) ||
+                (get(data, 'isQL') && Utils.isEnabledFeature(Feature.NewTablePluginForQL)) ||
+                (get(data, 'isEditor') && Utils.isEnabledFeature(Feature.NewTablePluginForEditor));
 
             if (shouldRenderNewTable) {
                 chartkitType = 'table';

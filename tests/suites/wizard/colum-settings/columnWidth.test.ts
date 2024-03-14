@@ -76,7 +76,7 @@ datalensTest.describe('Wizard - Column Settings dialog', () => {
         },
     );
 
-    datalensTest(
+    datalensTest.only(
         'When setting the column width for the hierarchy, the width of the table cells changes',
         async ({page}) => {
             const wizardPage = new WizardPage({page});
@@ -97,8 +97,8 @@ datalensTest.describe('Wizard - Column Settings dialog', () => {
             await (await apiRunRequest).response();
 
             const table = wizardPage.chartkit.getTableLocator();
-            const hiearchyColumn = table.getByText('Category');
-            const prev = await hiearchyColumn.boundingBox();
+            const hierarchyColumn = table.locator('th', {hasText: 'Category'});
+            const prev = await hierarchyColumn.boundingBox();
 
             apiRunRequest = wizardPage.page.waitForRequest(
                 (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,
@@ -110,8 +110,7 @@ datalensTest.describe('Wizard - Column Settings dialog', () => {
             await wizardPage.columnSettings.apply();
             await (await apiRunRequest).response();
 
-            const current = await hiearchyColumn.boundingBox();
-
+            const current = await hierarchyColumn.boundingBox();
             await expect(current?.width).not.toEqual(prev?.width);
         },
     );

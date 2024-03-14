@@ -76,6 +76,9 @@ export enum Feature {
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     MarkupMetric = 'MarkupMetric',
     ConnectionBasedControl = 'ConnectionBasedControl',
+    NewTablePluginForWizard = 'NewTablePluginForWizard',
+    NewTablePluginForQL = 'NewTablePluginForQL',
+    NewTablePluginForEditor = 'NewTablePluginForEditor',
 }
 
 export type FeatureConfig = Record<string, boolean>;
