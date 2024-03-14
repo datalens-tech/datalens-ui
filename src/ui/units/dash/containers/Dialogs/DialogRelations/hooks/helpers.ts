@@ -472,7 +472,6 @@ export const getRelationsData = ({
 
     const relationsItems: Array<DashkitMetaDataItem> = [];
 
-    // filtering logic is reproduced from old links
     metaItems
         .filter((item) => {
             const id = item.itemId || item.widgetId;

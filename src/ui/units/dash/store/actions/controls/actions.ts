@@ -1,8 +1,9 @@
 import isEmpty from 'lodash/isEmpty';
-import {DashTabItemControlData, DashTabItemType} from 'shared/types';
+import {DashTabItemControlData, DashTabItemGroupControlData, DashTabItemType} from 'shared/types';
 import {DatalensGlobalState} from 'ui/index';
 import {AppDispatch} from 'ui/store';
 
+import {selectOpenedItemData} from '../../selectors/dashTypedSelectors';
 import {SetSelectorDialogItemArgs, setItemData, setSelectorDialogItem} from '../dashTyped';
 import {closeDialog as closeDashDialog} from '../dialogs/actions';
 import {getExtendedItemDataAction} from '../helpers';
@@ -57,7 +58,7 @@ export const setActiveSelectorIndex = (payload: SetActiveSelectorIndexAction['pa
 export const applyGroupControlDialog = () => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
-        const {selectorsGroup} = state.dash;
+        const {selectorsGroup, openedItemId} = state.dash;
 
         // check validation for every control
         for (let i = 0; i < selectorsGroup.group.length; i += 1) {
@@ -75,12 +76,32 @@ export const applyGroupControlDialog = () => {
         }
 
         const isSingleControl = selectorsGroup.group.length === 1;
+        const autoHeight =
+            !isSingleControl || selectorsGroup.buttonApply || selectorsGroup.buttonReset
+                ? selectorsGroup.autoHeight
+                : false;
 
         const data = {
-            autoHeight: isSingleControl ? false : selectorsGroup.autoHeight,
+            autoHeight,
             buttonApply: selectorsGroup.buttonApply,
             buttonReset: selectorsGroup.buttonReset,
             group: selectorsGroup.group.map((selector) => {
+                let hasChangedSourceType = false;
+                if (openedItemId) {
+                    const openedItemData = selectOpenedItemData(
+                        state,
+                    ) as DashTabItemGroupControlData;
+
+                    const configSelectorItem = openedItemData.group.find(
+                        ({id}) => id === selector.id,
+                    );
+
+                    // if configSelectorItem is not found in config, it is a new one
+                    hasChangedSourceType = configSelectorItem
+                        ? configSelectorItem.sourceType !== selector.sourceType
+                        : false;
+                }
+
                 return {
                     id: selector.id,
                     title: selector.title,
@@ -88,7 +109,7 @@ export const applyGroupControlDialog = () => {
                     source: getItemDataSource(selector) as DashTabItemControlData['source'],
                     placementMode: isSingleControl ? 'auto' : selector.placementMode,
                     width: isSingleControl ? '' : selector.width,
-                    defaults: getControlDefaultsForField(selector),
+                    defaults: getControlDefaultsForField(selector, hasChangedSourceType),
                     namespace: selector.namespace,
                 };
             }),

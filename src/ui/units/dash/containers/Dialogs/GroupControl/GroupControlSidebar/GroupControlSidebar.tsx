@@ -124,6 +124,9 @@ export const GroupControlSidebar = () => {
         [dispatch, selectorsGroup],
     );
 
+    const showAutoHeight =
+        isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
+
     return (
         <div className={b('sidebar')}>
             <div className={b('selectors-list')}>
@@ -137,7 +140,7 @@ export const GroupControlSidebar = () => {
                 />
             </div>
             <div className={b('settings')}>
-                {isMultipleSelectors && (
+                {showAutoHeight && (
                     <div className={b('settings-container')}>
                         <div>
                             <span>{i18n('label_autoheight-checkbox')}</span>
@@ -163,7 +166,6 @@ export const GroupControlSidebar = () => {
                         size="l"
                     />
                 </div>
-
                 <div className={b('settings-container')}>
                     <div>
                         <span>{i18n('label_reset-button-checkbox')}</span>
