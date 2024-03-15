@@ -84,3 +84,13 @@ export const validateParamTitle = (paramTitle: string) => {
 
     return null;
 };
+
+export const validateEmptyParamValue = (paramValue: string) => {
+    const valueTrimmed = paramValue.trim();
+
+    if (valueTrimmed.length) {
+        return 'empty-param';
+    }
+
+    return null;
+};
