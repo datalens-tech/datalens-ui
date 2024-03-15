@@ -64,7 +64,7 @@ export type ClickCallbackArgs = {
     aliases?: string[][];
 };
 
-export type WidgetsTypes = Record<string, RelationType>;
+export type WidgetsTypes = Record<string, Record<string, RelationType>>;
 
 export type AliasBase = {
     onCloseCallback?: (args?: ClickCallbackArgs) => void;

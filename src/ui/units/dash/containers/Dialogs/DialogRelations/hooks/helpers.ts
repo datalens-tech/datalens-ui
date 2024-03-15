@@ -29,6 +29,7 @@ import {
     DatasetsListData,
     RelationType,
     RelationsData,
+    WidgetsTypes,
 } from '../types';
 
 import {getChartAndControlRelations, getChartToChartRelations} from './helpersChart';
@@ -570,17 +571,18 @@ export const getMappedFilters = (items: Array<FiltersTypes>) => {
 
 export const getChangedRelations = (
     items: DashMetaData,
-    changed: Record<string, RelationType> | undefined,
+    changed: WidgetsTypes | undefined,
+    currentWidgetId: string,
 ) => {
     return items.map((item) => {
         const newItem = {
             ...item,
         };
         const id = item.itemId || item.widgetId;
-        if (changed && changed[id]) {
+        if (changed && changed[currentWidgetId] && changed[currentWidgetId][id]) {
             newItem.relations = {
                 ...item.relations,
-                type: changed[id],
+                type: changed[currentWidgetId][id],
             };
         }
         return newItem;

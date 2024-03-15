@@ -453,22 +453,26 @@ export const Control = ({
         reload();
     };
 
+    const {placementMode, width} = data as unknown as DashTabItemControlData;
+    const style = getControlWidthStyle(placementMode, width);
+
     switch (status) {
         case LOAD_STATUS.INITIAL:
         case LOAD_STATUS.PENDING:
             if (!control) {
-                const {placementMode, width} = data as unknown as DashTabItemControlData;
-                const style = getControlWidthStyle(placementMode, width);
-
                 return (
-                    <div className={b('item-loader')} style={style}>
+                    <div className={b('item-stub')} style={style}>
                         <Loader size="s" />
                     </div>
                 );
             }
             break;
         case LOAD_STATUS.FAIL: {
-            return <Error errorData={errorData} onClickRetry={handleClickRetry} />;
+            return (
+                <div className={b('item-stub', {error: true})} style={style}>
+                    <Error errorData={errorData} onClickRetry={handleClickRetry} />
+                </div>
+            );
         }
     }
 

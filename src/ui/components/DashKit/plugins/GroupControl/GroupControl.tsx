@@ -342,7 +342,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             return;
         }
 
-        const isLoaded = status === LOAD_STATUS.SUCCESS || status === LOAD_STATUS.ERROR;
+        const isLoaded = status === LOAD_STATUS.SUCCESS || status === LOAD_STATUS.FAIL;
         // for adding new control to existing group control
         const isInitialPending = !this.controlsStatus[controlId] && status === LOAD_STATUS.PENDING;
         const isReloadPending =
