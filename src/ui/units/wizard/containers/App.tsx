@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import {DatalensGlobalState} from 'ui';
-import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../components/AsideHeaderAdapter';
 import withInaccessibleOnMobile from '../../../hoc/withInaccessibleOnMobile';
@@ -42,11 +41,11 @@ const App = ({widget, setCurrentPageEntry, asideHeaderData, ...routeProps}: Prop
 
     return (
         <div className={b()}>
-            {!isAsideHeaderEnabled && (
+            {/* {!isAsideHeaderEnabled && (
                 <div className={b('header')}>
                     <MobileHeader />
                 </div>
-            )}
+            )} */}
             <div className={b('main', {aside: isAsideHeaderEnabled})}>
                 <Wizard
                     {...routeProps}

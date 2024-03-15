@@ -15,6 +15,8 @@ import {isEmbeddedMode, isTvMode} from '../utils/embedded';
 import Utils from '../utils';
 import {reducerRegistry} from '../store';
 import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAdapter';
+import {MobileHeaderComponent} from 'ui/components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
+import {DL} from 'ui/constants';
 
 reducerRegistry.register(coreReducers);
 
@@ -92,6 +94,10 @@ const DatalensPageView = () => {
 
 const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
+
+    if (DL.IS_MOBILE) {
+        return <MobileHeaderComponent renderContent={() => <DatalensPageView />} />;
+    }
 
     if (showAsideHeaderAdapter) {
         return <AsideHeaderAdapter renderContent={() => <DatalensPageView />} />;

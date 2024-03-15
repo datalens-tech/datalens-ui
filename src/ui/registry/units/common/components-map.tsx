@@ -20,6 +20,7 @@ import type {EntryBreadcrumbsProps} from './types/components/EntryBreadcrumbs';
 import type {IamAccessDialogProps} from './types/components/IamAccessDialog';
 import type {MarkupShareLinkProps} from './types/components/MarkupShareLink';
 import type {MarkupUserInfoProps} from './types/components/MarkupUserInfo';
+import type {MobileHeaderComponentProps} from './types/components/MobileHeaderComponent';
 import type {OAuthTokenButtonProps} from './types/components/OAuthTokenButton';
 import type {PlaceholderIllustrationImageProps} from './types/components/PlaceholderIllustrationImage';
 import type {ReportButtonProps} from './types/components/ReportButton';
@@ -33,7 +34,7 @@ export const commonComponentsMap = {
     YfmWrapperContent: makeDefaultEmpty<YfmWrapperProps>(),
     ActionPanelEntrySelect: makeDefaultEmpty<ActionPanelEntrySelectProps>(),
     EntryBreadcrumbs: makeDefaultEmpty<EntryBreadcrumbsProps>(),
-    MobileHeaderComponent: makeDefaultEmpty<{}>(),
+    MobileHeaderComponent: makeDefaultEmpty<MobileHeaderComponentProps>(),
     PlaceholderIllustrationImage: makeDefaultEmpty<PlaceholderIllustrationImageProps>(),
     ReportButton: makeDefaultEmpty<ReportButtonProps>(),
     AccessRights: makeDefaultEmpty<AccessRightsProps>(),

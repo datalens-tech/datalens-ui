@@ -12,6 +12,6 @@
     border-bottom: 1px solid var(--g-color-line-generic);
     background: var(--g-color-base-background);
     position: sticky;
-    top: 0;
+    top: var(--nv-mobile-header-size);
     z-index: 101;
 }
