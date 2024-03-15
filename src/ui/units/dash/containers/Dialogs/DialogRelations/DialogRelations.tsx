@@ -96,7 +96,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             itemId,
         });
 
-    const currentWidgetId = itemId || currentWidgetMeta?.widgetId || '';
+    const currentWidgetId = itemId || widget.id || '';
     const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>({
         [currentWidgetId]: {},
     });
@@ -484,7 +484,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                         value={[itemId || '']}
                         options={controlItems}
                         onUpdate={handleItemChange}
-                        label="Селектор: "
+                        label={i18n('label_current-selector')}
                     />
                 )}
                 <Filters

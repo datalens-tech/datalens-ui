@@ -8,6 +8,7 @@ import {
     DATASET_FIELD_TYPES,
     DashTabItemControlData,
     DashTabItemControlDataset,
+    DashTabItemControlElementType,
     DashTabItemControlManual,
     DashTabItemControlSingle,
     DashTabItemControlSourceType,
@@ -64,11 +65,15 @@ type ControlProps = {
     id: string;
     data: DashTabItemControlSingle;
     params: StringParams;
-    onStatusChanged: (
-        controlId: string,
-        status: LoadStatus,
-        loadedData?: ExtendedLoadedData | null,
-    ) => void;
+    onStatusChanged: ({
+        controlId,
+        status,
+        loadedData,
+    }: {
+        controlId: string;
+        status: LoadStatus;
+        loadedData?: ExtendedLoadedData | null;
+    }) => void;
     silentLoading: boolean;
     getDistincts?: GetDistincts;
     onChange: ({
@@ -124,7 +129,7 @@ export const Control = ({
                     errorData: newErrorData,
                 }),
             );
-            onStatusChanged(id, statusResponse, null);
+            onStatusChanged({controlId: id, status: statusResponse});
         }
     };
 
@@ -135,17 +140,17 @@ export const Control = ({
         const statusResponse = getStatus(loadedStatus);
         if (statusResponse) {
             dispatch(setLoadedData({status: statusResponse, loadedData: newLoadedData}));
-            onStatusChanged(
-                id,
-                statusResponse,
-                newLoadedData
+            onStatusChanged({
+                controlId: id,
+                status: statusResponse,
+                loadedData: newLoadedData
                     ? {
                           ...newLoadedData,
                           sourceType: data.sourceType,
                           id: data.id,
                       }
                     : null,
-            );
+            });
         }
     };
 
@@ -167,7 +172,7 @@ export const Control = ({
             };
 
             dispatch(setStatus({status: LOAD_STATUS.PENDING}));
-            onStatusChanged(id, LOAD_STATUS.PENDING);
+            onStatusChanged({controlId: id, status: LOAD_STATUS.PENDING});
 
             const response = await chartsDataProvider.makeRequest(payload);
 
@@ -227,7 +232,7 @@ export const Control = ({
         return () => {
             clearLoaderTimer(silentLoaderTimer);
             cancelCurrentRequests(cancelSource);
-            onStatusChanged(id, LOAD_STATUS.DESTROYED);
+            onStatusChanged({controlId: id, status: LOAD_STATUS.DESTROYED});
         };
     }, []);
 
@@ -359,15 +364,46 @@ export const Control = ({
     };
 
     const renderControl = () => {
-        if (!control) {
-            return null;
-        }
-
         const controlData = data as unknown as DashTabItemControlSingle;
-
-        const {param} = control;
         const {source, placementMode, width, title} = controlData;
         const {required, operation, showTitle} = source;
+
+        const innerLabel = showTitle ? getRequiredLabel({title, required}) : '';
+        const style = getControlWidthStyle(placementMode, width);
+
+        if (controlData.source.elementType === DashTabItemControlElementType.Select) {
+            return (
+                <ControlItemSelect
+                    id={id}
+                    data={data}
+                    defaults={data.defaults || {}}
+                    status={status}
+                    loadedData={loadedData}
+                    loadingItems={loadingItems}
+                    actualParams={params}
+                    onChange={onChangeParams}
+                    init={init}
+                    showItemsLoader={showItemsLoader}
+                    validationError={validationError}
+                    errorData={errorData}
+                    validateValue={validateValue}
+                    getDistincts={getDistincts}
+                    classMixin={b('item')}
+                    selectProps={{innerLabel, style}}
+                    renderOverlay={renderOverlay}
+                />
+            );
+        }
+
+        if (status === LOAD_STATUS.FAIL || !control) {
+            return (
+                <div className={b('item-stub', {error: true})} style={style}>
+                    <Error errorData={errorData} onClickRetry={handleClickRetry} />
+                </div>
+            );
+        }
+
+        const {param} = control;
 
         const preparedValue = unwrapFromArrayAndSkipOperation(params[param]);
 
@@ -395,9 +431,6 @@ export const Control = ({
             onChangeParams({value: valueWithOperation, param});
         };
 
-        const innerLabel = showTitle ? getRequiredLabel({title, required}) : '';
-        const style = getControlWidthStyle(placementMode, width);
-
         const props: Record<string, unknown> = {
             param,
             type: control.type,
@@ -414,28 +447,6 @@ export const Control = ({
         };
 
         switch (control.type) {
-            case CONTROL_TYPE.SELECT:
-                return (
-                    <ControlItemSelect
-                        id={id}
-                        data={data}
-                        defaults={data.defaults || {}}
-                        status={status}
-                        loadedData={loadedData}
-                        loadingItems={loadingItems}
-                        actualParams={params}
-                        onChange={onChangeParams}
-                        init={init}
-                        showItemsLoader={showItemsLoader}
-                        validationError={validationError}
-                        errorData={errorData}
-                        validateValue={validateValue}
-                        getDistincts={getDistincts}
-                        classMixin={b('item')}
-                        selectProps={{innerLabel, style}}
-                        renderOverlay={renderOverlay}
-                    />
-                );
             case CONTROL_TYPE.INPUT:
                 return <ControlInput {...props} />;
             case CONTROL_TYPE.DATEPICKER:
@@ -456,24 +467,12 @@ export const Control = ({
     const {placementMode, width} = data as unknown as DashTabItemControlData;
     const style = getControlWidthStyle(placementMode, width);
 
-    switch (status) {
-        case LOAD_STATUS.INITIAL:
-        case LOAD_STATUS.PENDING:
-            if (!control) {
-                return (
-                    <div className={b('item-stub')} style={style}>
-                        <Loader size="s" />
-                    </div>
-                );
-            }
-            break;
-        case LOAD_STATUS.FAIL: {
-            return (
-                <div className={b('item-stub', {error: true})} style={style}>
-                    <Error errorData={errorData} onClickRetry={handleClickRetry} />
-                </div>
-            );
-        }
+    if ((status === LOAD_STATUS.INITIAL || status === LOAD_STATUS.PENDING) && !control) {
+        return (
+            <div className={b('item-stub')} style={style}>
+                <Loader size="s" />
+            </div>
+        );
     }
 
     return renderControl();

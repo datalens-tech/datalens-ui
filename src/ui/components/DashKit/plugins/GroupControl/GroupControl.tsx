@@ -89,6 +89,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         this.controlsProgressCount = controlData?.group?.length || 0;
         controlData.group?.forEach((item) => {
             this.controlsStatus[item.id] = LOAD_STATUS.INITIAL;
+            this.controlsData[item.id] = null;
         });
 
         this.state = {
@@ -209,7 +210,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.resolve = resolve;
 
             if (this.state.status === LOAD_STATUS.SUCCESS) {
-                this.resolveMetaInControl(Object.values(this.controlsData));
+                this.resolveMetaInControl();
             }
         });
     }
@@ -226,7 +227,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return item.defaults;
     }
 
-    private getCurrentWidgetResolvedMetaInfo = (loadedData: ExtendedLoadedData | null) => {
+    private getCurrentWidgetResolvedMetaInfo = (
+        id: string,
+        loadedData: ExtendedLoadedData | null,
+    ) => {
         let label = '';
         if (loadedData?.uiScheme && 'controls' in loadedData.uiScheme) {
             const controls = loadedData.uiScheme.controls as ActiveControl[];
@@ -234,18 +238,18 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         }
 
         const currentItem = (this.props.data as unknown as DashTabItemGroupControlData).group?.find(
-            (item) => item.id === loadedData?.id,
+            (item) => item.id === id,
         );
 
         const widgetMetaInfo = {
             layoutId: this.props.id,
             widgetId: this.props.id,
-            title: label,
+            title: currentItem?.title,
             label,
             params: loadedData?.params,
             defaultParams: currentItem ? this.filterDefaultsBySource(currentItem) : {},
             loaded: Boolean(loadedData),
-            itemId: loadedData?.id,
+            itemId: id,
             usedParams: loadedData?.usedParams
                 ? Object.keys(
                       this.filterSignificantParams(
@@ -290,38 +294,33 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return result;
     };
 
-    private resolveMetaInControl = (loadedData: (ExtendedLoadedData | null)[]) => {
+    private resolveMetaInControl = () => {
         if (!this.resolve) {
             return;
         }
 
-        const result = loadedData.reduce(
-            (
-                acc: (
-                    | ReturnType<typeof this.getCurrentWidgetResolvedMetaInfo>
-                    | ResolveMetaResult
-                    | null
-                )[],
-                dataItem,
-            ) => {
-                if (Utils.isEnabledFeature(Feature.ShowNewRelations) && this.props.isNewRelations) {
-                    acc.push(this.getCurrentWidgetResolvedMetaInfo(dataItem));
-                } else {
-                    acc.push(this.resolveMeta(dataItem));
-                }
-                return acc;
-            },
-            [],
-        );
+        const result = [];
+
+        for (const [id, data] of Object.entries(this.controlsData)) {
+            if (Utils.isEnabledFeature(Feature.ShowNewRelations) && this.props.isNewRelations) {
+                result.push(this.getCurrentWidgetResolvedMetaInfo(id, data));
+            } else {
+                result.push(this.resolveMeta(data));
+            }
+        }
 
         this.resolve(result);
     };
 
-    private handleStatusChanged = (
-        controlId: string,
-        status: LoadStatus,
-        loadedData?: ExtendedLoadedData | null,
-    ) => {
+    private handleStatusChanged = ({
+        controlId,
+        status,
+        loadedData,
+    }: {
+        controlId: string;
+        status: LoadStatus;
+        loadedData?: ExtendedLoadedData | null;
+    }) => {
         if (this._isUnmounted) {
             return;
         }
@@ -352,7 +351,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         if (isLoaded) {
             this.controlsLoadedCount++;
             this.controlsProgressCount--;
-            if (loadedData) {
+            if (loadedData || loadedData === null) {
                 this.controlsData[controlId] = loadedData;
             }
         } else if (isInitialPending) {
@@ -368,7 +367,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 this.adjustWidgetLayout(false);
             }
 
-            this.resolveMetaInControl(Object.values(this.controlsData));
+            this.resolveMetaInControl();
 
             this.setState({
                 needReload: false,
