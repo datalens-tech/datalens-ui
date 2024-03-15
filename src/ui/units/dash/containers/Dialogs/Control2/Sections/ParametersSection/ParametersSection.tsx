@@ -12,7 +12,6 @@ import {
     removeParam,
     updateParamTitle,
     updateParamValue,
-    validateEmptyParamValue,
     validateParamTitleOnlyUnderscore,
 } from '../../../../../components/ParamsSettings/helpers';
 import {setSelectorDialogItem} from '../../../../../store/actions/dashTyped';
@@ -82,17 +81,6 @@ export const ParametersSection = () => {
         return null;
     }, []);
 
-    const handleValidateParamValue = React.useCallback((paramValue: string) => {
-        const errorCode = validateEmptyParamValue(paramValue);
-
-        if (errorCode) {
-            // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
-            return new Error(i18n('dash.params-button-dialog.view', `context_${errorCode}`));
-        }
-
-        return null;
-    }, []);
-
     return (
         <SectionWrapper
             withCollapse={true}
@@ -112,7 +100,7 @@ export const ParametersSection = () => {
                     onEditParamValue={handleParamValueUpdate}
                     onRemoveParam={handleRemoveParam}
                     onRemoveAllParams={handleRemoveAllParams}
-                    validator={{title: handleValidateParamTitle, value: handleValidateParamValue}}
+                    validator={{title: handleValidateParamTitle}}
                 />
             </div>
         </SectionWrapper>
