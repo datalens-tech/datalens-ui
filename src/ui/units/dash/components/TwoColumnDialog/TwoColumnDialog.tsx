@@ -17,6 +17,7 @@ type TwoColumnDialogOwnProps = {
     sidebarClassMixin?: string;
     bodyClassMixin?: string;
     headerClassMixin?: string;
+    qa?: string;
 };
 
 type TwoColumnDialogProps = TwoColumnDialogOwnProps & Omit<DialogProps, 'children'>;

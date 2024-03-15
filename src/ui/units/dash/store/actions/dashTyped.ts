@@ -45,6 +45,7 @@ import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
 import type {DashState} from '../reducers/dashTypedReducer';
+import {selectIsControlSourceTypeHasChanged} from '../selectors/dashTypedSelectors';
 
 import {save} from './base/actions';
 import {
@@ -419,7 +420,8 @@ export type SetSelectorDialogItemAction = {
 
 export const applyControl2Dialog = () => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
-        const selectorDialog = getState().dash.selectorDialog as SelectorDialogState;
+        const state = getState();
+        const selectorDialog = state.dash.selectorDialog as SelectorDialogState;
         const {title, sourceType, autoHeight} = selectorDialog;
 
         const validation = getControlValidation(selectorDialog);
@@ -433,7 +435,8 @@ export const applyControl2Dialog = () => {
             return;
         }
 
-        const defaults = getControlDefaultsForField(selectorDialog.defaults, selectorDialog);
+        const hasChangedSourceType = selectIsControlSourceTypeHasChanged(state);
+        const defaults = getControlDefaultsForField(selectorDialog, hasChangedSourceType);
 
         const data = {
             title,

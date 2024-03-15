@@ -7,6 +7,7 @@ import {createSelector} from 'reselect';
 import {
     DATASET_FIELD_TYPES,
     DashTabItem,
+    DashTabItemControlData,
     DashTabItemControlSourceType,
     DashTabItemWidget,
     DashTabItemWidgetTab,
@@ -51,6 +52,9 @@ export const selectSettings = (state: DatalensGlobalState) => state.dash.data?.s
 
 export const selectIsDialogVisible = (state: DatalensGlobalState, dialogType: string) =>
     state.dash.openedDialog === dialogType;
+
+export const selectSelectorSourceType = (state: DatalensGlobalState) =>
+    (state.dash as DashState).selectorDialog.sourceType;
 
 export const selectSelectorControlType = (state: DatalensGlobalState) =>
     (state.dash as DashState).selectorDialog.elementType;
@@ -321,6 +325,18 @@ export const selectOpenedItemData = createSelector(
             return item?.data;
         }
         return undefined;
+    },
+);
+
+export const selectIsControlSourceTypeHasChanged = createSelector(
+    [selectOpenedItemData, selectSelectorSourceType],
+    (openedItemData, sourceType) => {
+        // New item
+        if (!openedItemData) {
+            return false;
+        }
+
+        return (openedItemData as DashTabItemControlData).sourceType !== sourceType;
     },
 );
 
