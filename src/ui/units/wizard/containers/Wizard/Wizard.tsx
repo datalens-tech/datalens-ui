@@ -56,7 +56,11 @@ import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import {RevisionEntry} from '../../../../components/Revisions/types';
 import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../store/actions/dialog';
-import {initEditHistoryUnit} from '../../../../store/actions/editHistory';
+import {
+    addEditHistoryPoint,
+    initEditHistoryUnit,
+    resetEditHistoryUnit,
+} from '../../../../store/actions/editHistory';
 import {
     cleanRevisions,
     reloadRevisionsOnSave,
@@ -71,6 +75,7 @@ import {updateClientChartsConfig} from '../../actions/preview';
 import {toggleViewOnlyMode} from '../../actions/settings';
 import {receiveWidgetAndPrepareMetadata, updateWizardWidget} from '../../actions/widget';
 import DialogNoRights from '../../components/Dialogs/DialogNoRights';
+import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../constants';
 import {WizardGlobalState} from '../../reducers';
 import {reloadWizardEntryByRevision, setActualWizardChart} from '../../reducers/revisions/reducers';
 import {selectDataset} from '../../selectors/dataset';
@@ -152,7 +157,7 @@ class Wizard extends React.Component<Props, State> {
         };
 
         this.props.initEditHistoryUnit({
-            unitId: 'wizard',
+            unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
             setState: ({state}) => {
                 return this.props.setWizardStore({
                     store: state as unknown as WizardGlobalState,
@@ -227,7 +232,22 @@ class Wizard extends React.Component<Props, State> {
 
     componentWillUnmount() {
         window.removeEventListener('beforeunload', this.unloadConfirmation);
+
+        this.props.resetEditHistoryUnit({
+            unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+        });
+
         this.props.resetWizardStore();
+    }
+
+    render() {
+        const {widgetError} = this.props;
+
+        if (widgetError) {
+            return this.renderError();
+        }
+
+        return this.renderApp();
     }
 
     unloadConfirmation = (event: BeforeUnloadEvent) => {
@@ -286,6 +306,10 @@ class Wizard extends React.Component<Props, State> {
             ...result,
             isWidgetWasSaved: true,
         });
+
+        this.props.resetEditHistoryUnit({
+            unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+        });
     };
 
     openSaveWidgetDialog = async (mode?: EntryUpdateMode) => {
@@ -302,6 +326,14 @@ class Wizard extends React.Component<Props, State> {
             });
 
             await this.props.reloadRevisionsOnSave(true);
+
+            this.props.resetEditHistoryUnit({
+                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+            });
+
+            this.props.addEditHistoryPoint({
+                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+            });
         } else {
             // Saving a new one
             this.openSaveAsWidgetDialog();
@@ -509,16 +541,6 @@ class Wizard extends React.Component<Props, State> {
             </div>
         );
     }
-
-    render() {
-        const {widgetError} = this.props;
-
-        if (widgetError) {
-            return this.renderError();
-        }
-
-        return this.renderApp();
-    }
 }
 
 const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
@@ -572,6 +594,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
             reloadWizardEntryByRevision,
             openDialogSaveDraftChartAsActualConfirm,
             initEditHistoryUnit,
+            resetEditHistoryUnit,
+            addEditHistoryPoint,
         },
         dispatch,
     );

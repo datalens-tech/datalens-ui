@@ -2,6 +2,7 @@ import {AnyAction} from 'redux';
 
 import {
     INIT_EDIT_HISTORY_UNIT,
+    RESET_EDIT_HISTORY_UNIT,
     ADD_EDIT_HISTORY_POINT,
     SET_EDIT_HISTORY_POINT_INDEX,
     EditHistoryAction,
@@ -35,6 +36,22 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                         historyPointIndex: -1,
                         states: [],
                         setState,
+                    },
+                },
+            };
+        }
+        case RESET_EDIT_HISTORY_UNIT: {
+            const {unitId} = action;
+
+            return {
+                ...state,
+                units: {
+                    ...state.units,
+
+                    [unitId]: {
+                        historyPointIndex: -1,
+                        states: [],
+                        setState: state.units[unitId].setState,
                     },
                 },
             };

@@ -1,6 +1,7 @@
 import {Dataset, DatasetApiError, DatasetOptions, Field, Link} from 'shared';
 import {DataLensApiError} from 'typings';
 
+import {ResetWizardStoreAction} from '../actions';
 import {
     DatasetAction,
     SET_DATASET,
@@ -60,7 +61,10 @@ const initialState: DatasetState = {
     originalDatasets: {},
 };
 
-export function dataset(state = initialState, action: DatasetAction): DatasetState {
+export function dataset(
+    state = initialState,
+    action: DatasetAction | ResetWizardStoreAction,
+): DatasetState {
     switch (action.type) {
         case SET_DATASET_LOADING: {
             const {loading} = action;

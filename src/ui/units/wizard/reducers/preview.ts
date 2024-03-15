@@ -26,6 +26,7 @@ import {
     isVisualizationWithLayers,
 } from 'shared';
 
+import {ResetWizardStoreAction} from '../actions';
 import {
     HighchartsWidget,
     PreviewAction,
@@ -295,7 +296,10 @@ const getChartTypeByVisualizationId = (visualizationId: string): WizardType => {
 };
 
 // eslint-disable-next-line complexity
-export function preview(state = getInitialState(), action: PreviewAction): PreviewState {
+export function preview(
+    state = getInitialState(),
+    action: PreviewAction | ResetWizardStoreAction,
+): PreviewState {
     switch (action.type) {
         case SET_UPDATES: {
             return {

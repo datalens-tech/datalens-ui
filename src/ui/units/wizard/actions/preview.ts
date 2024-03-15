@@ -25,6 +25,7 @@ import {VisualizationState} from 'ui/units/wizard/reducers/visualization';
 import {WidgetState} from 'ui/units/wizard/reducers/widget';
 
 import {addEditHistoryPoint} from '../../../store/actions/editHistory';
+import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../constants';
 import {WizardDispatch} from '../reducers';
 import {
     actualizeUpdates,
@@ -205,7 +206,7 @@ export function updatePreviewAndClientChartsConfig(
             if (isRedrawDone && !preview.previewEntryId) {
                 dispatch(updateClientChartsConfig(updateClientChartsConfigArgs));
 
-                dispatch(addEditHistoryPoint({unitId: 'wizard'}));
+                dispatch(addEditHistoryPoint({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
             }
         });
     };

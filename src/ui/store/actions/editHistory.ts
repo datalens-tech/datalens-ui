@@ -5,6 +5,7 @@ import {DatalensGlobalState} from 'ui';
 import type {EditHistoryUnit, EditHistoryState} from '../reducers/editHistory';
 
 export const INIT_EDIT_HISTORY_UNIT = Symbol('editHistory/INIT_EDIT_HISTORY_UNIT');
+export const RESET_EDIT_HISTORY_UNIT = Symbol('editHistory/RESET_EDIT_HISTORY_UNIT');
 export const ADD_EDIT_HISTORY_POINT = Symbol('editHistory/ADD_EDIT_HISTORY_POINT');
 export const SET_EDIT_HISTORY_POINT_INDEX = Symbol('editHistory/SET_EDIT_HISTORY_POINT_INDEX');
 
@@ -36,6 +37,18 @@ export function initEditHistoryUnit({unitId, setState}: Omit<InitEditHistoryUnit
         type: INIT_EDIT_HISTORY_UNIT,
         unitId,
         setState,
+    };
+}
+
+interface ResetEditHistoryUnitAction {
+    type: typeof RESET_EDIT_HISTORY_UNIT;
+    unitId: string;
+}
+
+export function resetEditHistoryUnit({unitId}: Omit<ResetEditHistoryUnitAction, 'type'>) {
+    return {
+        type: RESET_EDIT_HISTORY_UNIT,
+        unitId,
     };
 }
 
@@ -137,5 +150,6 @@ export function goForward({unitId}: {unitId: string}) {
 
 export type EditHistoryAction =
     | InitEditHistoryUnitAction
+    | ResetEditHistoryUnitAction
     | AddEditHistoryPointAction
     | SetEditHistoryPointIndexAction;

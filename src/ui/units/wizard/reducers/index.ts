@@ -57,7 +57,7 @@ const reducers = combineReducers({
 
 const wizardReducer = (state: WizardGlobalState, action: WizardAction) => {
     if (action.type === RESET_WIZARD_STORE) {
-        return undefined;
+        return reducers(undefined, action);
     }
 
     if (action.type === SET_WIZARD_STORE) {

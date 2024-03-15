@@ -14,6 +14,7 @@ import {selectCanGoBack, selectCanGoForward} from '../../../../../store/selector
 import {setEditMode} from '../../../../dash/store/actions/base/actions';
 import {toggleViewOnlyMode} from '../../../actions/settings';
 import {WidgetData} from '../../../actions/widget';
+import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../../constants';
 import {selectIsFullscreen, selectViewOnlyMode} from '../../../selectors/settings';
 
 import {useWizardActionPanel} from './useWizardActionPanel';
@@ -90,11 +91,11 @@ export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
     }, [isCurrentRevisionActual, onSaveCallback]);
 
     const canGoBack = useSelector<DatalensGlobalState, ReturnType<typeof selectCanGoBack>>(
-        (state) => selectCanGoBack(state, {unitId: 'wizard'}),
+        (state) => selectCanGoBack(state, {unitId: WIZARD_EDIT_HISTORY_UNIT_ID}),
     );
 
     const canGoForward = useSelector<DatalensGlobalState, ReturnType<typeof selectCanGoForward>>(
-        (state) => selectCanGoForward(state, {unitId: 'wizard'}),
+        (state) => selectCanGoForward(state, {unitId: WIZARD_EDIT_HISTORY_UNIT_ID}),
     );
 
     const additionalButtons = useWizardActionPanel({
