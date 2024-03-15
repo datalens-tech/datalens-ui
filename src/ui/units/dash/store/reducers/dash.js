@@ -150,6 +150,7 @@ export function getSelectorGroupDialogFromData(data) {
             required: item.source.required,
             placementMode: item.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
             width: item.width || '',
+            namespace: item.namespace,
         }))
         .sort((a, b) => a.index - b.index);
 
