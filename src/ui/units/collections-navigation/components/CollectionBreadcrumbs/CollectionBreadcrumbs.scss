@@ -9,12 +9,10 @@
         color: var(--g-color-text-primary);
         text-decoration: none;
 
-        &:hover {
+        &:hover,
+        &:visited,
+        &:active {
             color: var(--g-color-text-secondary);
-        }
-
-        &:visited {
-            color: var(--g-color-text-primary);
         }
     }
 }

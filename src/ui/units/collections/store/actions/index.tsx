@@ -1,8 +1,5 @@
 import {DatalensGlobalState} from 'index';
-import logger from 'libs/logger';
-import {getSdk} from 'libs/schematic-sdk';
 import {ThunkDispatch} from 'redux-thunk';
-import {showToast} from 'store/actions/toaster';
 
 import type {
     Collection,
@@ -12,6 +9,9 @@ import type {
 } from '../../../../../shared/schema';
 import {GetCollectionContentMode} from '../../../../../shared/schema/us/types/collections';
 import {OrderBasicField, OrderDirection} from '../../../../../shared/schema/us/types/sort';
+import logger from '../../../../libs/logger';
+import {getSdk} from '../../../../libs/schematic-sdk';
+import {showToast} from '../../../../store/actions/toaster';
 import {
     DELETE_COLLECTION_IN_ITEMS,
     DELETE_WORKBOOK_IN_ITEMS,
@@ -24,8 +24,8 @@ import {
     GET_ROOT_COLLECTION_PERMISSIONS_FAILED,
     GET_ROOT_COLLECTION_PERMISSIONS_LOADING,
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
+    RESET_COLLECTION,
     RESET_COLLECTION_CONTENT,
-    RESET_COLLECTION_INFO,
     RESET_STATE,
     SET_COLLECTION,
 } from '../constants';
@@ -40,56 +40,81 @@ export const resetState = () => {
     };
 };
 
-type GetRootCollectionPermissionsLoadingAction = {
-    type: typeof GET_ROOT_COLLECTION_PERMISSIONS_LOADING;
+type GetCollectionLoadingAction = {
+    type: typeof GET_COLLECTION_LOADING;
 };
-type GetRootCollectionPermissionsSuccessAction = {
-    type: typeof GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS;
-    data: GetRootCollectionPermissionsResponse;
+type GetCollectionSuccessAction = {
+    type: typeof GET_COLLECTION_SUCCESS;
+    data: CollectionWithPermissions;
 };
-type GetRootCollectionPermissionsFailedAction = {
-    type: typeof GET_ROOT_COLLECTION_PERMISSIONS_FAILED;
+type GetCollectionFailedAction = {
+    type: typeof GET_COLLECTION_FAILED;
     error: Error | null;
 };
-type GetRootCollectionPemissionsAction =
-    | GetRootCollectionPermissionsLoadingAction
-    | GetRootCollectionPermissionsSuccessAction
-    | GetRootCollectionPermissionsFailedAction;
+type GetCollectionAction =
+    | GetCollectionLoadingAction
+    | GetCollectionSuccessAction
+    | GetCollectionFailedAction;
 
-export const getRootCollectionPermissions = () => {
+export const getCollection = ({collectionId}: {collectionId: string}) => {
     return (dispatch: CollectionsDispatch) => {
         dispatch({
-            type: GET_ROOT_COLLECTION_PERMISSIONS_LOADING,
+            type: GET_COLLECTION_LOADING,
         });
         return getSdk()
-            .us.getRootCollectionPermissions()
+            .us.getCollection({
+                collectionId,
+                includePermissionsInfo: true,
+            })
             .then((data) => {
                 dispatch({
-                    type: GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
-                    data: data,
+                    type: GET_COLLECTION_SUCCESS,
+                    data: data as CollectionWithPermissions,
                 });
-                return data;
+                return data as CollectionWithPermissions;
             })
             .catch((error: Error) => {
                 const isCanceled = getSdk().isCancel(error);
 
                 if (!isCanceled) {
-                    logger.logError('collections/getRootCollectionPermissions failed', error);
-                    dispatch(
-                        showToast({
-                            title: error.message,
-                            error,
-                        }),
-                    );
+                    logger.logError('collections/getCollection failed', error);
                 }
 
                 dispatch({
-                    type: GET_ROOT_COLLECTION_PERMISSIONS_FAILED,
+                    type: GET_COLLECTION_FAILED,
                     error: isCanceled ? null : error,
                 });
 
                 return null;
             });
+    };
+};
+
+type SetCollectionAction = {
+    type: typeof SET_COLLECTION;
+    data: {
+        collection: CollectionWithPermissions;
+    };
+};
+
+export const setCollection = (collection: CollectionWithPermissions | Collection) => {
+    return {
+        type: SET_COLLECTION,
+        data: {
+            collection,
+        },
+    };
+};
+
+type ResetCollectionAction = {
+    type: typeof RESET_COLLECTION;
+};
+
+export const resetCollection = () => {
+    return (dispatch: CollectionsDispatch) => {
+        dispatch({
+            type: RESET_COLLECTION,
+        });
     };
 };
 
@@ -177,84 +202,6 @@ export const getCollectionContent = ({
     };
 };
 
-type GetCollectionLoadingAction = {
-    type: typeof GET_COLLECTION_LOADING;
-};
-type GetCollectionSuccessAction = {
-    type: typeof GET_COLLECTION_SUCCESS;
-    data: CollectionWithPermissions;
-};
-type GetCollectionFailedAction = {
-    type: typeof GET_COLLECTION_FAILED;
-    error: Error | null;
-};
-type GetCollectionAction =
-    | GetCollectionLoadingAction
-    | GetCollectionSuccessAction
-    | GetCollectionFailedAction;
-
-export const getCollection = ({collectionId}: {collectionId: string}) => {
-    return (dispatch: CollectionsDispatch) => {
-        dispatch({
-            type: GET_COLLECTION_LOADING,
-        });
-        return getSdk()
-            .us.getCollection({
-                collectionId,
-                includePermissionsInfo: true,
-            })
-            .then((data) => {
-                dispatch({
-                    type: GET_COLLECTION_SUCCESS,
-                    data: data as CollectionWithPermissions,
-                });
-                return data as CollectionWithPermissions;
-            })
-            .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
-
-                if (!isCanceled) {
-                    logger.logError('collections/getCollection failed', error);
-                }
-
-                dispatch({
-                    type: GET_COLLECTION_FAILED,
-                    error: isCanceled ? null : error,
-                });
-
-                return null;
-            });
-    };
-};
-
-type SetCollectionAction = {
-    type: typeof SET_COLLECTION;
-    data: {
-        collection: CollectionWithPermissions;
-    };
-};
-
-export const setCollection = (collection: CollectionWithPermissions | Collection) => {
-    return {
-        type: SET_COLLECTION,
-        data: {
-            collection,
-        },
-    };
-};
-
-type ResetCollectionInfoAction = {
-    type: typeof RESET_COLLECTION_INFO;
-};
-
-export const resetCollectionInfo = () => {
-    return (dispatch: CollectionsDispatch) => {
-        dispatch({
-            type: RESET_COLLECTION_INFO,
-        });
-    };
-};
-
 type ResetCollectionContentAction = {
     type: typeof RESET_COLLECTION_CONTENT;
 };
@@ -264,6 +211,59 @@ export const resetCollectionContent = () => {
         dispatch({
             type: RESET_COLLECTION_CONTENT,
         });
+    };
+};
+
+type GetRootCollectionPermissionsLoadingAction = {
+    type: typeof GET_ROOT_COLLECTION_PERMISSIONS_LOADING;
+};
+type GetRootCollectionPermissionsSuccessAction = {
+    type: typeof GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS;
+    data: GetRootCollectionPermissionsResponse;
+};
+type GetRootCollectionPermissionsFailedAction = {
+    type: typeof GET_ROOT_COLLECTION_PERMISSIONS_FAILED;
+    error: Error | null;
+};
+type GetRootCollectionPemissionsAction =
+    | GetRootCollectionPermissionsLoadingAction
+    | GetRootCollectionPermissionsSuccessAction
+    | GetRootCollectionPermissionsFailedAction;
+
+export const getRootCollectionPermissions = () => {
+    return (dispatch: CollectionsDispatch) => {
+        dispatch({
+            type: GET_ROOT_COLLECTION_PERMISSIONS_LOADING,
+        });
+        return getSdk()
+            .us.getRootCollectionPermissions()
+            .then((data) => {
+                dispatch({
+                    type: GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
+                    data: data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collections/getRootCollectionPermissions failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: GET_ROOT_COLLECTION_PERMISSIONS_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
     };
 };
 
@@ -301,12 +301,12 @@ export const deleteWorkbookInItems = (workbookId: string) => {
 
 export type CollectionsAction =
     | ResetStateAction
-    | GetRootCollectionPemissionsAction
-    | GetCollectionsContentAction
     | GetCollectionAction
     | SetCollectionAction
-    | ResetCollectionInfoAction
+    | ResetCollectionAction
+    | GetCollectionsContentAction
     | ResetCollectionContentAction
+    | GetRootCollectionPemissionsAction
     | DeleteCollectionInItemsAction
     | DeleteWorkbookInItemsAction;
 

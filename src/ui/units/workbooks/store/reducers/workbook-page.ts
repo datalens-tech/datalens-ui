@@ -10,7 +10,6 @@ import {
     WorkbookPermission,
     WorkbookWithPermissions,
 } from 'shared/schema';
-import {OrderDirection, OrderWorkbookEntriesField} from 'shared/schema/us/types/sort';
 
 import {CreateEntryActionType} from '../../constants';
 import {WorkbookEntriesFilters} from '../../types';
@@ -126,8 +125,8 @@ const initialState: WorkbooksState = {
     },
     filters: {
         filterString: undefined,
-        orderField: OrderWorkbookEntriesField.Name,
-        orderDirection: OrderDirection.Asc,
+        orderField: 'name',
+        orderDirection: 'asc',
     },
     workbooksNames: {},
     workbookPermissions: null,

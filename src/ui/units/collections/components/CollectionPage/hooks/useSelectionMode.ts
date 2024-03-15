@@ -1,7 +1,5 @@
 import React from 'react';
 
-import {Button} from '@gravity-ui/uikit';
-import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 
 import type {
@@ -10,8 +8,6 @@ import type {
 } from '../../../../../../shared/schema';
 import {selectCollectionContentItems} from '../../../store/selectors';
 import {SelectedMap} from '../../types';
-
-const i18n = I18n.keyset('collections');
 
 type UseSelectionModeArgs = {
     curCollectionId: string | null;
@@ -33,29 +29,26 @@ export const useSelectionMode = ({curCollectionId}: UseSelectionModeArgs) => {
         () => contentItems.filter((item) => item.permissions.move),
         [contentItems],
     );
+
     const canMove = itemsWithPermissionMove.length > 0;
 
     const resetSelected = React.useCallback(() => {
         setSelectedMap({});
     }, []);
 
-    const onUpdateCheckbox = React.useCallback(
-        (checked: boolean, type: 'workbook' | 'collection', entityId: string) => {
+    const updateCheckbox = React.useCallback(
+        (entityId: string, type: 'workbook' | 'collection', checked: boolean) => {
             if (checked) {
                 setSelectedMap({
                     ...selectedMap,
-                    [entityId]: {
-                        type,
-                        checked,
-                    },
+                    [entityId]: type,
                 });
             } else {
-                const mapSelected = {...selectedMap};
-
-                delete mapSelected[entityId];
+                const newSelectedMap = {...selectedMap};
+                delete newSelectedMap[entityId];
 
                 setSelectedMap({
-                    ...mapSelected,
+                    ...newSelectedMap,
                 });
             }
 
@@ -66,24 +59,21 @@ export const useSelectionMode = ({curCollectionId}: UseSelectionModeArgs) => {
         [isOpenSelectionMode, selectedMap],
     );
 
-    const onSelectAll = React.useCallback(
+    const updateAllCheckboxes = React.useCallback(
         (checked: boolean) => {
             if (checked) {
-                const selected: SelectedMap = {};
+                const newSelectedMap: SelectedMap = {};
 
                 itemsWithPermissionMove.forEach((item) => {
                     const isWorkbook = 'workbookId' in item;
                     const id = isWorkbook ? item.workbookId : item.collectionId;
                     const type = isWorkbook ? 'workbook' : 'collection';
 
-                    selected[id] = {
-                        type,
-                        checked,
-                    };
+                    newSelectedMap[id] = type;
                 });
 
                 setSelectedMap({
-                    ...selected,
+                    ...newSelectedMap,
                 });
             } else {
                 resetSelected();
@@ -96,44 +86,18 @@ export const useSelectionMode = ({curCollectionId}: UseSelectionModeArgs) => {
         [isOpenSelectionMode, itemsWithPermissionMove, resetSelected],
     );
 
-    const onOpenSelectionMode = React.useCallback(() => {
+    const openSelectionMode = React.useCallback(() => {
         setIsOpenSelectionMode(true);
     }, []);
 
-    const onCancelSelectionMode = React.useCallback(() => {
-        setIsOpenSelectionMode(false);
-
+    const closeSelectionMode = React.useCallback(() => {
         resetSelected();
+        setIsOpenSelectionMode(false);
     }, [resetSelected]);
 
-    const selectBtn = React.useMemo(() => {
-        if (countSelected === 0 && !isOpenSelectionMode) {
-            return (
-                <Button disabled={!canMove} view="outlined" onClick={onOpenSelectionMode}>
-                    {i18n('action_select')}
-                </Button>
-            );
-        }
-
-        if (countSelected > 0) {
-            return (
-                <Button view="outlined" onClick={() => onSelectAll(false)}>
-                    {i18n('action_reset-all')}
-                </Button>
-            );
-        } else {
-            return (
-                <Button view="outlined" onClick={() => onSelectAll(true)}>
-                    {i18n('action_select-all')}
-                </Button>
-            );
-        }
-    }, [countSelected, isOpenSelectionMode, canMove, onOpenSelectionMode, onSelectAll]);
-
     React.useEffect(() => {
-        setIsOpenSelectionMode(false);
-        resetSelected();
-    }, [curCollectionId, resetSelected]);
+        closeSelectionMode();
+    }, [curCollectionId, closeSelectionMode]);
 
     return {
         isOpenSelectionMode,
@@ -142,12 +106,11 @@ export const useSelectionMode = ({curCollectionId}: UseSelectionModeArgs) => {
         countSelected,
         itemsWithPermissionMove,
         canMove,
-        setIsOpenSelectionMode,
+        openSelectionMode,
         resetSelected,
-        onUpdateCheckbox,
-        onSelectAll,
-        onOpenSelectionMode,
-        onCancelSelectionMode,
-        selectBtn,
+        updateCheckbox,
+        closeSelectionMode,
+        setIsOpenSelectionMode,
+        updateAllCheckboxes,
     };
 };

@@ -10,7 +10,11 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Link, useHistory} from 'react-router-dom';
 
-import type {GetCollectionBreadcrumbsResponse} from '../../../../../shared/schema';
+import type {
+    GetCollectionBreadcrumbsResponse,
+    GetWorkbookResponse,
+} from '../../../../../shared/schema';
+import {COLLECTIONS_PATH, WORKBOOKS_PATH} from '../../constants';
 
 import './CollectionBreadcrumbs.scss';
 
@@ -20,9 +24,6 @@ const b = block('dl-collection-breadcrumbs');
 
 const LOADING_ITEM_ID = '__loading';
 
-const COLLECTIONS_PATH = '/collections';
-const WORKBOOKS_PATH = '/workbooks';
-
 type BreadcrumbsItem = {
     id: string | null;
     text: string;
@@ -30,18 +31,15 @@ type BreadcrumbsItem = {
     path: string;
 };
 
-export type CollectionBreadcrumbsProps = {
+type Props = {
     className?: string;
     isLoading?: boolean;
     collections: GetCollectionBreadcrumbsResponse;
-    workbook: {
-        workbookId: string;
-        title: string;
-    } | null;
-    onItemClick?: (args: {id: string | null; text: string; isCurrent: boolean}) => void;
+    workbook: GetWorkbookResponse | null;
+    onItemClick?: (args: {id: string | null; isCurrent: boolean}) => void;
 };
 
-export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
+export const CollectionBreadcrumbs = React.memo<Props>(
     ({className, isLoading = false, collections, workbook, onItemClick}) => {
         const history = useHistory();
 
@@ -112,7 +110,7 @@ export const CollectionBreadcrumbs = React.memo<CollectionBreadcrumbsProps>(
                                     e.stopPropagation();
 
                                     if (!e.metaKey && onItemClick) {
-                                        onItemClick({id: item.id, text: item.text, isCurrent});
+                                        onItemClick({id: item.id, isCurrent});
                                     }
                                 }}
                             >

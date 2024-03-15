@@ -1,12 +1,21 @@
-import {GetCollectionContentMode} from '../../../../../shared/schema/us/types/collections';
-import {OrderBasicField, OrderDirection} from '../../../../../shared/schema/us/types/sort';
+import {
+    GetCollectionContentMode,
+    OrderBasicField,
+    OrderDirection,
+} from '../../../../../shared/schema';
 
 export const PAGE_SIZE = 50;
 
-export const DEFAULT_FILTERS = {
+export const DEFAULT_FILTERS: {
+    filterString?: string;
+    orderField: OrderBasicField;
+    orderDirection: OrderDirection;
+    mode: GetCollectionContentMode;
+    onlyMy: boolean;
+} = {
     filterString: undefined,
-    orderField: OrderBasicField.CreatedAt,
-    orderDirection: OrderDirection.Desc,
-    mode: GetCollectionContentMode.All,
+    orderField: 'createdAt',
+    orderDirection: 'desc',
+    mode: 'all',
     onlyMy: false,
 };

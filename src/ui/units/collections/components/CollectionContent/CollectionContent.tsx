@@ -9,15 +9,15 @@ import {Waypoint} from 'react-waypoint';
 
 import type {GetCollectionContentResponse} from '../../../../../shared/schema';
 import {GetCollectionContentArgs} from '../../../../../shared/schema';
+import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {CollectionPageViewMode} from '../../../../components/CollectionFilters/CollectionFilters';
 import {BatchPanel} from '../../../../components/Navigation/components/BatchPanel/BatchPanel';
 import {PlaceholderIllustration} from '../../../../components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';
-import {AnimateBlock} from '../../../collections-navigation/components/AnimateBlock';
 import {
-    selectContentError,
-    selectContentIsLoading,
-    selectNextPageTokens,
+    selectCollectionContentError,
+    selectCollectionContentIsLoading,
+    selectCollectionContentNextPageTokens,
 } from '../../store/selectors';
 import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
@@ -70,9 +70,9 @@ export const CollectionContent: React.FC<Props> = ({
     onSelectAll,
     onUpdateCheckbox,
 }) => {
-    const isContentLoading = useSelector(selectContentIsLoading);
-    const contentLoadingError = useSelector(selectContentError);
-    const nextPageTokens = useSelector(selectNextPageTokens);
+    const isContentLoading = useSelector(selectCollectionContentIsLoading);
+    const contentLoadingError = useSelector(selectCollectionContentError);
+    const nextPageTokens = useSelector(selectCollectionContentNextPageTokens);
 
     const [waypointDisabled, setWaypointDisabled] = React.useState(false);
 

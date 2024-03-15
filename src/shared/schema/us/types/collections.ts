@@ -2,11 +2,7 @@ import {GetDatalensOperationResponse} from './operations';
 import {OrderBasicField, OrderDirection} from './sort';
 import {Workbook, WorkbookWithPermissions} from './workbooks';
 
-export enum GetCollectionContentMode {
-    All = 'all',
-    OnlyCollections = 'onlyCollections',
-    OnlyWorkbooks = 'onlyWorkbooks',
-}
+export type GetCollectionContentMode = 'all' | 'onlyCollections' | 'onlyWorkbooks';
 
 export type CollectionPermissions = {
     listAccessBindings: boolean;

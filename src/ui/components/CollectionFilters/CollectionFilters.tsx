@@ -37,20 +37,20 @@ export const SORT_TYPE_VALUES: Record<
     {orderField: OrderBasicField; orderDirection: OrderDirection}
 > = {
     [SortType.FirstNew]: {
-        orderField: OrderBasicField.CreatedAt,
-        orderDirection: OrderDirection.Desc,
+        orderField: 'createdAt',
+        orderDirection: 'desc',
     },
     [SortType.FirstOld]: {
-        orderField: OrderBasicField.CreatedAt,
-        orderDirection: OrderDirection.Asc,
+        orderField: 'createdAt',
+        orderDirection: 'asc',
     },
     [SortType.AlphabetAsc]: {
-        orderField: OrderBasicField.Title,
-        orderDirection: OrderDirection.Asc,
+        orderField: 'title',
+        orderDirection: 'asc',
     },
     [SortType.AlphabetDesc]: {
-        orderField: OrderBasicField.Title,
-        orderDirection: OrderDirection.Desc,
+        orderField: 'title',
+        orderDirection: 'desc',
     },
 };
 
@@ -188,13 +188,13 @@ export const CollectionFilters = React.memo<Props>(
                         size={controlSize}
                         onUpdate={handleChangeMode}
                     >
-                        <Select.Option value={GetCollectionContentMode.All}>
+                        <Select.Option value="all">
                             {i18n('label_filter-by-type-all')}
                         </Select.Option>
-                        <Select.Option value={GetCollectionContentMode.OnlyWorkbooks}>
+                        <Select.Option value="onlyWorkbooks">
                             {i18n('label_filter-by-type-only-workbooks')}
                         </Select.Option>
-                        <Select.Option value={GetCollectionContentMode.OnlyCollections}>
+                        <Select.Option value="onlyCollections">
                             {i18n('label_filter-by-type-only-collections')}
                         </Select.Option>
                     </Select>

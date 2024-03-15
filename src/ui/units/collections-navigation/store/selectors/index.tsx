@@ -1,5 +1,6 @@
-import {DatalensGlobalState} from 'index';
 import {createSelector} from 'reselect';
+
+import {DatalensGlobalState} from '../../../../';
 
 const selectGetCollectionBreadcrumbs = (state: DatalensGlobalState) =>
     state.collectionsNavigation.getCollectionBreadcrumbs;

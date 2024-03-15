@@ -6,15 +6,14 @@ import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 
+import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {CollectionIcon} from '../../../../components/CollectionIcon/CollectionIcon';
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
-import {AnimateBlock} from '../../../collections-navigation/components/AnimateBlock';
 import {setCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
 import {selectCollectionBreadcrumbs} from '../../../collections-navigation/store/selectors';
 import {setWorkbook} from '../../../workbooks/store/actions';
 import {setCollection} from '../../store/actions';
 import {CollectionContentGridProps} from '../types';
-import {onClickStopPropagation} from '../utils';
 
 import './CollectionContentGrid.scss';
 
@@ -56,15 +55,15 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                             ? () => {
                                                   if ('workbookId' in item) {
                                                       onUpdateCheckbox(
-                                                          !selectedMap[item.workbookId]?.checked,
-                                                          'workbook',
                                                           item.workbookId,
+                                                          'workbook',
+                                                          !selectedMap[item.workbookId],
                                                       );
                                                   } else {
                                                       onUpdateCheckbox(
-                                                          !selectedMap[item.collectionId]?.checked,
-                                                          'collection',
                                                           item.collectionId,
+                                                          'collection',
+                                                          !selectedMap[item.collectionId],
                                                       );
                                                   }
                                               }
@@ -76,13 +75,15 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                             size="l"
                                             className={b('checkbox')}
                                             disabled={!canMove}
-                                            checked={Boolean(
-                                                selectedMap[
-                                                    'workbookId' in item
-                                                        ? item.workbookId
-                                                        : item.collectionId
-                                                ]?.checked && canMove,
-                                            )}
+                                            checked={
+                                                Boolean(
+                                                    selectedMap[
+                                                        'workbookId' in item
+                                                            ? item.workbookId
+                                                            : item.collectionId
+                                                    ],
+                                                ) && canMove
+                                            }
                                         />
                                     )}
                                     <Link
@@ -134,7 +135,10 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                             {actions.length > 0 && (
                                                 <div
                                                     className={b('actions')}
-                                                    onClick={onClickStopPropagation}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        e.preventDefault();
+                                                    }}
                                                 >
                                                     <DropdownMenu size="s" items={actions} />
                                                 </div>

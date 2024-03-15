@@ -42,9 +42,9 @@ import {
 import {getCollection, setCollection} from '../../../store/actions';
 import {
     selectCollection,
-    selectPageError,
-    selectRootPermissionsData,
-    selectRootPermissionsIsLoading,
+    selectCollectionError,
+    selectRootCollectionPermissionsData,
+    selectRootCollectionPermissionsIsLoading,
 } from '../../../store/selectors';
 import {CollectionActions} from '../../CollectionActions/CollectionActions';
 
@@ -63,7 +63,9 @@ type UseLayoutArgs = {
     isOpenSelectionMode: boolean;
     countSelected: number;
     onCancelSelectionMode: () => void;
-    selectBtn: React.ReactNode;
+    canMove: boolean;
+    openSelectionMode: () => void;
+    updateAllCheckboxes: (checked: boolean) => void;
 };
 
 export const useLayout = ({
@@ -77,7 +79,9 @@ export const useLayout = ({
     isOpenSelectionMode,
     countSelected,
     onCancelSelectionMode,
-    selectBtn,
+    canMove,
+    openSelectionMode,
+    updateAllCheckboxes,
 }: UseLayoutArgs) => {
     const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
@@ -89,13 +93,13 @@ export const useLayout = ({
 
     const dispatch: AppDispatch = useDispatch();
 
-    const isRootPermissionsLoading = useSelector(selectRootPermissionsIsLoading);
-    const rootPermissions = useSelector(selectRootPermissionsData);
+    const isRootPermissionsLoading = useSelector(selectRootCollectionPermissionsIsLoading);
+    const rootPermissions = useSelector(selectRootCollectionPermissionsData);
     const collection = useSelector(selectCollection);
     const isCollectionLoading = !collection || curCollectionId !== collection.collectionId;
     const collectionBreadcrumbs = useSelector(selectCollectionBreadcrumbs);
     const collectionBreadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
-    const pageError = useSelector(selectPageError);
+    const pageError = useSelector(selectCollectionError);
 
     const isRootCollection = curCollectionId === null;
 
@@ -418,6 +422,30 @@ export const useLayout = ({
         isCorrectCollection,
         isRootCollection,
     ]);
+
+    const selectBtn = React.useMemo(() => {
+        if (countSelected === 0 && !isOpenSelectionMode) {
+            return (
+                <Button disabled={!canMove} view="outlined" onClick={openSelectionMode}>
+                    {i18n('action_select')}
+                </Button>
+            );
+        }
+
+        if (countSelected > 0) {
+            return (
+                <Button view="outlined" onClick={() => updateAllCheckboxes(false)}>
+                    {i18n('action_reset-all')}
+                </Button>
+            );
+        } else {
+            return (
+                <Button view="outlined" onClick={() => updateAllCheckboxes(true)}>
+                    {i18n('action_select-all')}
+                </Button>
+            );
+        }
+    }, [countSelected, isOpenSelectionMode, canMove, openSelectionMode, updateAllCheckboxes]);
 
     React.useEffect(() => {
         setLayout({

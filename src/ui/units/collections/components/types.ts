@@ -3,18 +3,12 @@ import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/sc
 
 import {CollectionContentFilters} from '../../../components/CollectionFilters/CollectionFilters';
 
-export type SelectedMap = Record<
-    string,
-    {
-        type: 'workbook' | 'collection';
-        checked: boolean;
-    }
->;
+export type SelectedMap = Record<string, 'workbook' | 'collection'>;
 
 export type UpdateCheckbox = (
-    checked: boolean,
-    type: 'workbook' | 'collection',
     entityId: string,
+    type: 'workbook' | 'collection',
+    checked: boolean,
 ) => void;
 
 export interface ContentProps {

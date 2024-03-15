@@ -7,15 +7,14 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 
+import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {CollectionIcon} from '../../../../components/CollectionIcon/CollectionIcon';
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
-import {AnimateBlock} from '../../../collections-navigation/components/AnimateBlock';
 import {setCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
 import {selectCollectionBreadcrumbs} from '../../../collections-navigation/store/selectors';
 import {setWorkbook} from '../../../workbooks/store/actions';
 import {setCollection} from '../../store/actions';
 import {CollectionContentTableProps} from '../types';
-import {onClickStopPropagation} from '../utils';
 
 import './CollectionContentTable.scss';
 
@@ -129,26 +128,28 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                 onUpdate={(checked) => {
                                                     if ('workbookId' in item) {
                                                         onUpdateCheckbox(
-                                                            checked,
-                                                            'workbook',
                                                             item.workbookId,
+                                                            'workbook',
+                                                            checked,
                                                         );
                                                     } else {
                                                         onUpdateCheckbox(
-                                                            checked,
-                                                            'collection',
                                                             item.collectionId,
+                                                            'collection',
+                                                            checked,
                                                         );
                                                     }
                                                 }}
                                                 disabled={!canMoveItem}
-                                                checked={Boolean(
-                                                    selectedMap[
-                                                        'workbookId' in item
-                                                            ? item.workbookId
-                                                            : item.collectionId
-                                                    ]?.checked && canMoveItem,
-                                                )}
+                                                checked={
+                                                    Boolean(
+                                                        selectedMap[
+                                                            'workbookId' in item
+                                                                ? item.workbookId
+                                                                : item.collectionId
+                                                        ],
+                                                    ) && canMoveItem
+                                                }
                                             />
                                         </div>
 
@@ -173,12 +174,15 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                         </div>
                                         <div
                                             className={b('content-cell', {control: true})}
-                                            onClick={onClickStopPropagation}
+                                            onClick={(e) => {
+                                                if (actions.length > 0) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
+                                            }}
                                         >
                                             {actions.length > 0 && (
-                                                <div onClick={onClickStopPropagation}>
-                                                    <DropdownMenu size="s" items={actions} />
-                                                </div>
+                                                <DropdownMenu size="s" items={actions} />
                                             )}
                                         </div>
                                     </Link>

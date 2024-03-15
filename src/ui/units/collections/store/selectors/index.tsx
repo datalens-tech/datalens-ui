@@ -1,58 +1,57 @@
-import {DatalensGlobalState} from 'index';
 import {createSelector} from 'reselect';
 
-const selectGetRootCollectionPermissions = (state: DatalensGlobalState) =>
-    state.collections.getRootCollectionPermissions;
+import {DatalensGlobalState} from '../../../../';
+
+const selectGetCollection = (state: DatalensGlobalState) => state.collections.getCollection;
 
 const selectGetCollectionContent = (state: DatalensGlobalState) =>
     state.collections.getCollectionContent;
 
+const selectGetRootCollectionPermissions = (state: DatalensGlobalState) =>
+    state.collections.getRootCollectionPermissions;
+
 export const selectCollectionContentItems = (state: DatalensGlobalState) => state.collections.items;
 
-const selectGetCollection = (state: DatalensGlobalState) => state.collections.getCollection;
-
-// Rights to create collections/workbooks in the root
-export const selectRootPermissionsIsLoading = createSelector(
-    [selectGetRootCollectionPermissions],
-    (permissions) => permissions.data === null || permissions.isLoading,
-);
-export const selectRootPermissionsData = createSelector(
-    [selectGetRootCollectionPermissions],
-    (permissions) => permissions.data,
-);
-
-// Content loading status
-export const selectContentIsLoading = createSelector(
-    [selectGetCollectionContent],
-    (content) => content.data === null || content.isLoading,
-);
-
-// Content loading error
-export const selectContentError = createSelector(
-    [selectGetCollectionContent],
-    (content) => content.error,
-);
-
-// Tokens for reloading subsequent content pages
-export const selectNextPageTokens = createSelector([selectGetCollectionContent], (content) => ({
-    collectionsNextPageToken: content.data?.collectionsNextPageToken,
-    workbooksNextPageToken: content.data?.workbooksNextPageToken,
-}));
-
-// Loading status of collection information
 export const selectCollectionIsLoading = createSelector(
     [selectGetCollection],
-    (collection) => collection.data === null || collection.isLoading,
+    (getCollection) => getCollection.data === null || getCollection.isLoading,
 );
 
-// Page loading error
-export const selectPageError = createSelector(
-    [selectGetCollection],
-    (collection) => collection.error,
-);
-
-// Information about the collection
 export const selectCollection = createSelector(
     [selectGetCollection],
     (getCollection) => getCollection.data,
+);
+
+export const selectCollectionError = createSelector(
+    [selectGetCollection],
+    (getCollection) => getCollection.error,
+);
+
+export const selectCollectionContentIsLoading = createSelector(
+    [selectGetCollectionContent],
+    (getCollectionContent) => getCollectionContent.data === null || getCollectionContent.isLoading,
+);
+
+export const selectCollectionContentError = createSelector(
+    [selectGetCollectionContent],
+    (getCollectionContent) => getCollectionContent.error,
+);
+
+export const selectCollectionContentNextPageTokens = createSelector(
+    [selectGetCollectionContent],
+    (getCollectionContent) => ({
+        collectionsNextPageToken: getCollectionContent.data?.collectionsNextPageToken,
+        workbooksNextPageToken: getCollectionContent.data?.workbooksNextPageToken,
+    }),
+);
+
+export const selectRootCollectionPermissionsIsLoading = createSelector(
+    [selectGetRootCollectionPermissions],
+    (getRootCollectionPermissions) =>
+        getRootCollectionPermissions.data === null || getRootCollectionPermissions.isLoading,
+);
+
+export const selectRootCollectionPermissionsData = createSelector(
+    [selectGetRootCollectionPermissions],
+    (getRootCollectionPermissions) => getRootCollectionPermissions.data,
 );

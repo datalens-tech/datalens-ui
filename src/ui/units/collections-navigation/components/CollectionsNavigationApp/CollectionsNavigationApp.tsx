@@ -8,6 +8,7 @@ import {CollectionPage} from '../../../collections/components/CollectionPage/Col
 import {resetState as resetCollectionsState} from '../../../collections/store/actions';
 import {WorkbookPage} from '../../../workbooks/components/WorkbookPage/WorkbookPage';
 import {resetWorkbookState as resetWorkbooksState} from '../../../workbooks/store/actions';
+import {COLLECTIONS_PATH, WORKBOOKS_PATH} from '../../constants';
 import {Layout, LayoutBlock, LayoutContext, SkeletonsSettings} from '../../contexts/LayoutContext';
 import {resetState as resetCollectionsNavigationState} from '../../store/actions';
 import {CollectionsNavigationLayout} from '../CollectionsNavigationLayout';
@@ -73,10 +74,10 @@ export const CollectionsNavigationApp = () => {
             >
                 <Switch>
                     <Route
-                        path={['/collections/:collectionId', '/collections']}
+                        path={[`${COLLECTIONS_PATH}/:collectionId`, COLLECTIONS_PATH]}
                         component={CollectionPage}
                     />
-                    <Route exact path="/workbooks/:workbookId" component={WorkbookPage} />
+                    <Route exact path={`${WORKBOOKS_PATH}/:workbookId`} component={WorkbookPage} />
                 </Switch>
             </CollectionsNavigationLayout>
         </LayoutContext.Provider>

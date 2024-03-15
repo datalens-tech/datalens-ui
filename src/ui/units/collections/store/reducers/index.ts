@@ -17,16 +17,16 @@ import {
     GET_ROOT_COLLECTION_PERMISSIONS_FAILED,
     GET_ROOT_COLLECTION_PERMISSIONS_LOADING,
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
+    RESET_COLLECTION,
     RESET_COLLECTION_CONTENT,
-    RESET_COLLECTION_INFO,
     RESET_STATE,
     SET_COLLECTION,
 } from '../constants';
 
 export type CollectionsState = {
-    getRootCollectionPermissions: {
+    getCollection: {
         isLoading: boolean;
-        data: GetRootCollectionPermissionsResponse | null;
+        data: CollectionWithPermissions | null;
         error: Error | null;
     };
     getCollectionContent: {
@@ -35,15 +35,15 @@ export type CollectionsState = {
         error: Error | null;
     };
     items: (CollectionWithPermissions | WorkbookWithPermissions)[];
-    getCollection: {
+    getRootCollectionPermissions: {
         isLoading: boolean;
-        data: CollectionWithPermissions | null;
+        data: GetRootCollectionPermissionsResponse | null;
         error: Error | null;
     };
 };
 
 const initialState: CollectionsState = {
-    getRootCollectionPermissions: {
+    getCollection: {
         isLoading: false,
         data: null,
         error: null,
@@ -54,7 +54,7 @@ const initialState: CollectionsState = {
         error: null,
     },
     items: [],
-    getCollection: {
+    getRootCollectionPermissions: {
         isLoading: false,
         data: null,
         error: null,
@@ -73,39 +73,54 @@ export const collectionsReducer = (
             };
         }
 
-        // Getting the rights to create collections/workbooks in the root
-        case GET_ROOT_COLLECTION_PERMISSIONS_LOADING: {
+        case GET_COLLECTION_LOADING: {
             return {
                 ...state,
-                getRootCollectionPermissions: {
-                    ...state.getRootCollectionPermissions,
+                getCollection: {
+                    ...state.getCollection,
                     isLoading: true,
                     error: null,
                 },
             };
         }
-        case GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS: {
+        case GET_COLLECTION_SUCCESS: {
             return {
                 ...state,
-                getRootCollectionPermissions: {
+                getCollection: {
                     isLoading: false,
                     data: action.data,
                     error: null,
                 },
             };
         }
-        case GET_ROOT_COLLECTION_PERMISSIONS_FAILED: {
+        case GET_COLLECTION_FAILED: {
             return {
                 ...state,
-                getRootCollectionPermissions: {
-                    ...state.getRootCollectionPermissions,
+                getCollection: {
+                    ...state.getCollection,
                     isLoading: false,
                     error: action.error,
                 },
             };
         }
 
-        // The start page of the collection content
+        case SET_COLLECTION: {
+            return {
+                ...state,
+                getCollection: {
+                    isLoading: false,
+                    data: action.data.collection,
+                    error: null,
+                },
+            };
+        }
+        case RESET_COLLECTION: {
+            return {
+                ...state,
+                getCollection: initialState.getCollection,
+            };
+        }
+
         case GET_COLLECTION_CONTENT_LOADING: {
             return {
                 ...state,
@@ -152,62 +167,42 @@ export const collectionsReducer = (
             };
         }
 
-        // Information about the collection
-        case GET_COLLECTION_LOADING: {
+        case RESET_COLLECTION_CONTENT: {
             return {
                 ...state,
-                getCollection: {
-                    ...state.getCollection,
+                getCollectionContent: initialState.getCollectionContent,
+                items: initialState.items,
+            };
+        }
+
+        case GET_ROOT_COLLECTION_PERMISSIONS_LOADING: {
+            return {
+                ...state,
+                getRootCollectionPermissions: {
+                    ...state.getRootCollectionPermissions,
                     isLoading: true,
                     error: null,
                 },
             };
         }
-        case GET_COLLECTION_SUCCESS: {
+        case GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS: {
             return {
                 ...state,
-                getCollection: {
+                getRootCollectionPermissions: {
                     isLoading: false,
                     data: action.data,
                     error: null,
                 },
             };
         }
-        case GET_COLLECTION_FAILED: {
+        case GET_ROOT_COLLECTION_PERMISSIONS_FAILED: {
             return {
                 ...state,
-                getCollection: {
-                    ...state.getCollection,
+                getRootCollectionPermissions: {
+                    ...state.getRootCollectionPermissions,
                     isLoading: false,
                     error: action.error,
                 },
-            };
-        }
-        case SET_COLLECTION: {
-            return {
-                ...state,
-                getCollection: {
-                    isLoading: false,
-                    data: action.data.collection,
-                    error: null,
-                },
-            };
-        }
-
-        // Resetting Collection information
-        case RESET_COLLECTION_INFO: {
-            return {
-                ...state,
-                getCollection: initialState.getCollection,
-            };
-        }
-
-        // Resetting information about the contents of the collection
-        case RESET_COLLECTION_CONTENT: {
-            return {
-                ...state,
-                getCollectionContent: initialState.getCollectionContent,
-                items: initialState.items,
             };
         }
 
@@ -222,7 +217,6 @@ export const collectionsReducer = (
                 }),
             };
         }
-
         case DELETE_WORKBOOK_IN_ITEMS: {
             return {
                 ...state,

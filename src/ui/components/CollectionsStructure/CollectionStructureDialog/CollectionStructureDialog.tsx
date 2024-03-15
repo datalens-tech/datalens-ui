@@ -10,8 +10,9 @@ import {
     GetCollectionContentArgs,
     GetCollectionContentMode,
     GetCollectionContentResponse,
-} from 'shared/schema/us/types/collections';
-import {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
+    OrderBasicField,
+    OrderDirection,
+} from 'shared/schema';
 import {
     CollectionsStructureDispatch,
     createCollection,
@@ -52,11 +53,17 @@ const b = block('dl-collection-structure-dialog');
 
 const PAGE_SIZE = 50;
 
-const DEFAULT_FILTERS = {
+const DEFAULT_FILTERS: {
+    filterString?: string;
+    orderField: OrderBasicField;
+    orderDirection: OrderDirection;
+    mode: GetCollectionContentMode;
+    onlyMy: boolean;
+} = {
     filterString: undefined,
-    orderField: OrderBasicField.CreatedAt,
-    orderDirection: OrderDirection.Desc,
-    mode: GetCollectionContentMode.All,
+    orderField: 'createdAt',
+    orderDirection: 'desc',
+    mode: 'all',
     onlyMy: false,
 };
 

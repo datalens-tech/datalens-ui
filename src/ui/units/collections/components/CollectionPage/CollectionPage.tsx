@@ -4,6 +4,7 @@ import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useParams} from 'react-router-dom';
 
+import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {CollectionFilters} from '../../../../components/CollectionFilters';
 import {
     DIALOG_CREATE_WORKBOOK,
@@ -13,13 +14,12 @@ import {ViewError} from '../../../../components/ViewError/ViewError';
 import {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
-import {AnimateBlock} from '../../../collections-navigation/components/AnimateBlock';
 import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
 import {
     selectCollection,
     selectCollectionContentItems,
-    selectPageError,
-    selectRootPermissionsData,
+    selectCollectionError,
+    selectRootCollectionPermissionsData,
 } from '../../store/selectors';
 import {CollectionContent} from '../CollectionContent';
 
@@ -40,9 +40,9 @@ export const CollectionPage = () => {
 
     const contentItems = useSelector(selectCollectionContentItems);
     const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
-    const rootPermissions = useSelector(selectRootPermissionsData);
+    const rootPermissions = useSelector(selectRootCollectionPermissionsData);
     const collection = useSelector(selectCollection);
-    const pageError = useSelector(selectPageError);
+    const pageError = useSelector(selectCollectionError);
 
     const {
         isOpenSelectionMode,
@@ -52,11 +52,11 @@ export const CollectionPage = () => {
         itemsWithPermissionMove,
         canMove,
         setIsOpenSelectionMode,
+        openSelectionMode,
         resetSelected,
-        onUpdateCheckbox,
-        onSelectAll,
-        onCancelSelectionMode,
-        selectBtn,
+        updateCheckbox,
+        closeSelectionMode,
+        updateAllCheckboxes,
     } = useSelectionMode({curCollectionId});
 
     const {filters, updateFilters} = useFilters({curCollectionId, setSelectedMap});
@@ -106,18 +106,16 @@ export const CollectionPage = () => {
         );
     }, [curCollectionId, dispatch, history]);
 
-    const setBatchAction = React.useCallback(() => {
+    const moveSelectedEntities = React.useCallback(() => {
         const workbookIds: string[] = [];
         const collectionIds: string[] = [];
 
         Object.keys(selectedMap).forEach((key) => {
-            const item = selectedMap[key];
-            if (item.checked) {
-                if (item.type === 'workbook') {
-                    workbookIds.push(key);
-                } else {
-                    collectionIds.push(key);
-                }
+            const type = selectedMap[key];
+            if (type === 'workbook') {
+                workbookIds.push(key);
+            } else {
+                collectionIds.push(key);
             }
         });
 
@@ -126,7 +124,11 @@ export const CollectionPage = () => {
                 id: DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
                 props: {
                     open: true,
-                    onApply: fetchCollectionContent,
+                    onApply: () => {
+                        closeSelectionMode();
+                        resetSelected();
+                        fetchCollectionContent();
+                    },
                     onClose: handeCloseMoveDialog,
                     initialParentId: collection?.collectionId,
                     workbookIds,
@@ -138,6 +140,8 @@ export const CollectionPage = () => {
         collection?.collectionId,
         dispatch,
         handeCloseMoveDialog,
+        closeSelectionMode,
+        resetSelected,
         fetchCollectionContent,
         selectedMap,
     ]);
@@ -151,9 +155,11 @@ export const CollectionPage = () => {
         handeCloseMoveDialog,
         collectionPageViewMode,
         isOpenSelectionMode,
+        openSelectionMode,
         countSelected,
-        onCancelSelectionMode,
-        selectBtn,
+        onCancelSelectionMode: closeSelectionMode,
+        canMove,
+        updateAllCheckboxes,
     });
 
     const isDefaultFilters =
@@ -220,10 +226,10 @@ export const CollectionPage = () => {
                     }}
                     isOpenSelectionMode={isOpenSelectionMode}
                     canMove={canMove}
-                    setBatchAction={setBatchAction}
-                    onUpdateCheckbox={onUpdateCheckbox}
+                    setBatchAction={moveSelectedEntities}
+                    onUpdateCheckbox={updateCheckbox}
                     resetSelected={resetSelected}
-                    onSelectAll={onSelectAll}
+                    onSelectAll={updateAllCheckboxes}
                 />
             </div>
         </div>

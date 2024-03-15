@@ -10,7 +10,7 @@ import {EntryScope} from 'shared';
 import {WorkbookWithPermissions} from 'shared/schema';
 import {AppDispatch} from 'ui/store';
 
-import {AnimateBlock} from '../../../collections-navigation/components/AnimateBlock';
+import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {getWorkbookEntries, resetWorkbookEntries} from '../../store/actions';
 import {
     selectNextPageToken,
