@@ -8,6 +8,9 @@ import {getDuration} from '../components/utils';
 
 import {RunnerHandlerProps} from '.';
 
+const YANDEX_FUNCTIONS_URL = process.env.YANDEX_FUNCTIONS_URL;
+const YANDEX_FUNCTIONS_API_KEY = process.env.YANDEX_FUNCTIONS_API_KEY;
+
 export const runServerlessEditor = (
     parentContext: AppContext,
     {chartsEngine, req, res, config, configResolving, workbookId}: RunnerHandlerProps,
@@ -63,10 +66,7 @@ export const runServerlessEditor = (
 
     ctx.log('ServerlessEditorRunner::PreRun', {duration: getDuration(hrStart)});
 
-    const yandexFunctionsUrl = process.env.YANDEX_FUNCTIONS_URL;
-    const yandexFunctionsApiKey = process.env.YANDEX_FUNCTIONS_API_KEY;
-
-    if (!yandexFunctionsUrl || !yandexFunctionsApiKey) {
+    if (!YANDEX_FUNCTIONS_URL || !YANDEX_FUNCTIONS_API_KEY) {
         ctx.logError('No Yandex functions url or api key');
         ctx.end();
         res.status(500).send('Internal error');
@@ -76,9 +76,9 @@ export const runServerlessEditor = (
     ctx.call('engineProcessing', (cx) => {
         const json = JSON.stringify(req.body);
         return axios
-            .post(yandexFunctionsUrl, json, {
+            .post(YANDEX_FUNCTIONS_URL, json, {
                 headers: {
-                    Authorization: `Api-Key ${yandexFunctionsApiKey}`,
+                    Authorization: `Api-Key ${YANDEX_FUNCTIONS_API_KEY}`,
                     'Content-Type': 'application/json',
                 },
             })
