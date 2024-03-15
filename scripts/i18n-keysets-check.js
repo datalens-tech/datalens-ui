@@ -62,7 +62,7 @@ keysetFiles.forEach((filePath) => {
             }
         });
 
-        writeFileSync(filePath, JSON.stringify(res, null, 2));
+        writeFileSync(filePath, `${JSON.stringify(res, null, 2)}\n`);
 
         spawnSync('git', ['add', filePath]);
         process.exitCode = 0;

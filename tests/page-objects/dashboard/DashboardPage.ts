@@ -33,8 +33,8 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
-import {SourceTypes} from '../../page-objects/common/DialogControlPO/SourceType';
 import {
+    DashTabItemControlSourceType,
     DashboardDialogSettingsQa,
     DialogControlQa,
     DialogDashTitleQA,
@@ -78,7 +78,7 @@ export const URLS = {
 };
 
 export type SelectorSettings = {
-    sourceType?: SourceTypes;
+    sourceType?: DashTabItemControlSourceType;
     fieldName?: string;
     dataset?: ListItemByParams;
     datasetField?: ListItemByParams;
@@ -282,7 +282,17 @@ class DashboardPage extends BasePage {
             .click();
     }
 
+    async clickAddExternalSelector() {
+        await this.page.click(slct(DashboardAddWidgetQa.AddControl));
+    }
+
     async clickAddSelector() {
+        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
+
+        if (isEnabledGroupControls) {
+            await this.page.click(slct(DashboardAddWidgetQa.AddGroupControl));
+            return;
+        }
         await this.page.click(slct(DashboardAddWidgetQa.AddControl));
     }
 
@@ -301,18 +311,27 @@ class DashboardPage extends BasePage {
         controlTitle: string;
         controlFieldName: string;
     }) {
+        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
+
         // waiting for the selector settings dialog to appear
         await this.page.waitForSelector(slct(ControlQA.dialogControl));
 
         // select "manual input"
-        await this.page.click(
-            `${slct(DashboardPage.selectors.radioManualControl)} ${
-                CommonSelectors.RadioButtonOptionControl
-            }[value="manual"]`,
-            {
-                force: true,
-            },
-        );
+        if (isEnabledGroupControls) {
+            await this.dialogControl.sourceTypeSelect.click();
+            await this.dialogControl.sourceTypeSelect.selectListItemByQa(
+                slct(DashTabItemControlSourceType.Manual),
+            );
+        } else {
+            await this.page.click(
+                `${slct(DashboardPage.selectors.radioManualControl)} ${
+                    CommonSelectors.RadioButtonOptionControl
+                }[value="manual"]`,
+                {
+                    force: true,
+                },
+            );
+        }
 
         // fill in the fields in the selector settings dialog:
         // "name"
@@ -426,13 +445,23 @@ class DashboardPage extends BasePage {
     }
 
     async editSelectorBySettings(setting: SelectorSettings = {}) {
+        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
+
         await this.dialogControl.waitForVisible();
 
         if (setting.sourceType) {
-            await this.dialogControl.sourceType.selectByName(setting.sourceType);
+            if (isEnabledGroupControls) {
+                await this.dialogControl.sourceTypeSelect.click();
+                await this.dialogControl.sourceTypeSelect.selectListItemByQa(
+                    slct(setting.sourceType),
+                );
+            } else {
+                // will be removed after enabling of GroupControls
+                await this.dialogControl.sourceType.selectByName(setting.sourceType);
+            }
         }
 
-        if (setting.sourceType === 'manual') {
+        if (setting.sourceType === DashTabItemControlSourceType.Manual) {
             if (setting.fieldName) {
                 await this.dialogControl.fieldName.fill(setting.fieldName);
             }
@@ -465,13 +494,14 @@ class DashboardPage extends BasePage {
             await this.dialogControl.appearanceTitle.textInput.fill(setting.appearance.title);
         }
 
-        if (typeof setting.appearance?.innerTitleEnabled === 'boolean') {
+        // for GroupControls innerTitle is deprecated, only title exists and is displayed as innerTitle
+        if (typeof setting.appearance?.innerTitleEnabled === 'boolean' && !isEnabledGroupControls) {
             await this.dialogControl.appearanceInnerTitle.checkbox.toggle(
                 setting.appearance.innerTitleEnabled,
             );
         }
 
-        if (setting.appearance?.innerTitle) {
+        if (setting.appearance?.innerTitle && !isEnabledGroupControls) {
             await this.dialogControl.appearanceInnerTitle.textInput.fill(
                 setting.appearance.innerTitle,
             );
@@ -482,7 +512,7 @@ class DashboardPage extends BasePage {
 
     async addSelectorBySettings(setting: SelectorSettings = {}) {
         const defaultSettings: SelectorSettings = {
-            sourceType: 'dataset',
+            sourceType: DashTabItemControlSourceType.Dataset,
             elementType: {innerText: 'List'},
             appearance: {titleEnabled: true},
             dataset: {idx: 0},
@@ -576,7 +606,7 @@ class DashboardPage extends BasePage {
 
     async deleteSelector(controlTitle: string) {
         const control = this.page.locator(slct('dashkit-grid-item'), {
-            has: this.page.locator(slct('chartkit-control-title', controlTitle)),
+            has: this.page.locator(slct(ControlQA.chartkitControl, controlTitle)),
         });
         const controlSwitcher = control.locator(slct(ControlQA.controlMenu));
 

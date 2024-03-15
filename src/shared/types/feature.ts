@@ -79,6 +79,7 @@ export enum Feature {
     NewTablePluginForWizard = 'NewTablePluginForWizard',
     NewTablePluginForQL = 'NewTablePluginForQL',
     NewTablePluginForEditor = 'NewTablePluginForEditor',
+    EnableServerlessEditor = 'EnableServerlessEditor',
 }
 
 export type FeatureConfig = Record<string, boolean>;

@@ -99,4 +99,8 @@ $contentMobilePadding: 16px;
     &__edit-panel {
         z-index: 10;
     }
+
+    & #{$bodyClass}__edit-panel-item {
+        width: 108px;
+    }
 }
