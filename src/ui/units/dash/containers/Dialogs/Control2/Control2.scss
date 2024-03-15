@@ -11,4 +11,10 @@
         min-height: 580px;
         @include dialog-max-height-scroll();
     }
+
+    &__footer-error {
+        color: var(--g-color-text-danger);
+        font-size: var(--g-text-body-2-font-size);
+        line-height: var(--g-text-body-2-line-height);
+    }
 }

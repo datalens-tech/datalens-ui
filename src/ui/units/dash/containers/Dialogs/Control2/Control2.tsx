@@ -55,15 +55,17 @@ class DialogAddControl extends React.Component<Props> {
                 <Dialog.Header caption={caption} />
                 <Dialog.Body className={b('body')}>{this.renderBody()}</Dialog.Body>
                 <Dialog.Footer
-                    showError={Boolean(validation.selectorParameters)}
-                    errorText={validation.selectorParameters}
                     onClickButtonCancel={this.handleClose}
                     onClickButtonApply={this.handleApply}
                     textButtonApply={textButtonApply}
                     textButtonCancel={controlI18n('button_cancel')}
                     propsButtonApply={{qa: ControlQA.dialogControlApplyBtn}}
                     propsButtonCancel={{qa: ControlQA.dialogControlCancelBtn}}
-                />
+                >
+                    {validation.selectorParameters && (
+                        <div className={b('footer-error')}>{validation.selectorParameters}</div>
+                    )}
+                </Dialog.Footer>
             </Dialog>
         );
     }
