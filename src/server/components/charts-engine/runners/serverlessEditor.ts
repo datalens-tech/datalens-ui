@@ -63,12 +63,22 @@ export const runServerlessEditor = (
 
     ctx.log('ServerlessEditorRunner::PreRun', {duration: getDuration(hrStart)});
 
+    const yandexFunctionsUrl = process.env.YANDEX_FUNCTIONS_URL;
+    const yandexFunctionsApiKey = process.env.YANDEX_FUNCTIONS_API_KEY;
+
+    if (!yandexFunctionsUrl || !yandexFunctionsApiKey) {
+        ctx.logError('No Yandex functions url or api key');
+        ctx.end();
+        res.status(500).send('Internal error');
+        return;
+    }
+
     ctx.call('engineProcessing', (cx) => {
         const json = JSON.stringify(req.body);
         return axios
-            .post('https://functions.cloud-preprod.yandex.net/b09ofmog7452cvk6tjdt', json, {
+            .post(yandexFunctionsUrl, json, {
                 headers: {
-                    Authorization: `Api-Key ${process.env.YANDEX_FUNCTIONS_API_KEY}`,
+                    Authorization: `Api-Key ${yandexFunctionsApiKey}`,
                     'Content-Type': 'application/json',
                 },
             })
