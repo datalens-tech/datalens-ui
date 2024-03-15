@@ -68,10 +68,15 @@ export function getGroupSelectorDialogInitialState() {
 
 export function getSelectorDialogInitialState(args = {}) {
     const required = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? {required: false} : {};
+    const sourceType =
+        Utils.isEnabledFeature(Feature.GroupControls) &&
+        args.openedDialog === DashTabItemType.Control
+            ? DashTabItemControlSourceType.External
+            : DashTabItemControlSourceType.Dataset;
 
     return {
         elementType: ELEMENT_TYPE.SELECT,
-        sourceType: DashTabItemControlSourceType.Dataset,
+        sourceType,
         validation: {},
         defaults: {},
         datasetId: args.lastUsedDatasetId,
@@ -200,6 +205,7 @@ function dash(state = initialState, action) {
                     ? getSelectorDialogInitialState({
                           lastUsedDatasetId: state.lastUsedDatasetId,
                           lastUsedConnectionId: state.lastUsedConnectionId,
+                          openedDialog: action.payload?.openedDialog,
                       })
                     : state.selectorDialog;
 

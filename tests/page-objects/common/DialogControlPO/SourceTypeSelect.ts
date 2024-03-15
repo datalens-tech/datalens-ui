@@ -2,14 +2,14 @@ import {Page} from '@playwright/test';
 import {slct} from '../../../utils';
 
 import {DialogControlQa} from '../../../../src/shared/constants/qa/control';
-import {RadioGroupElementPO} from '../abstract/RadioGroupElementPO';
+import {SelectElementPO} from '../abstract/SelectElementPO';
 
-export class SourceType extends RadioGroupElementPO {
+export class SourceTypeSelect extends SelectElementPO {
     constructor(page: Page) {
         super({
             page,
             selectors: {
-                root: slct(DialogControlQa.radioSourceType),
+                root: slct(DialogControlQa.seletSourceType),
             },
         });
     }
