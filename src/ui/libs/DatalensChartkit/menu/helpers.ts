@@ -13,6 +13,8 @@ import {
     getInspectorMenuItem,
     getNewWindowMenuItem,
     getOpenAsTableMenuItem,
+    getLinkMenuItem,
+    //getEmbeddedMenuItem
 } from './MenuItems';
 
 /**
@@ -120,6 +122,9 @@ export const getDefaultChartMenu = ({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.OPEN_AS_TABLE],
         }),
+        getLinkMenuItem(
+            customOptions[MenuItemsIds.GET_LINK]
+        )
     ];
     return menuItemsGroups;
 };

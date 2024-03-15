@@ -1,4 +1,4 @@
-import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin} from '@gravity-ui/icons';
+import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin } from '@gravity-ui/icons';
 import {ConnectorType} from 'shared/constants/connections';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {S3_BASED_CONNECTORS} from 'ui/constants/connections';
@@ -74,7 +74,6 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         isOnEditMode: false,
         isVisible({entry, isLimitedView}: ContextMenuParams) {
             if (!entry || !entry.scope || isLimitedView) return false;
-
             return getAvailableScopes().includes(entry.scope as EntryScope);
         },
     },
@@ -188,5 +187,5 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         scopes: ALL_SCOPES,
     },
     ...getAdditionalEntryContextMenuItems(),
-    getContextMenuMoveToWorkbooks(),
+    getContextMenuMoveToWorkbooks()
 ];

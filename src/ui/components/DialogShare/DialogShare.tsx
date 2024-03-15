@@ -19,6 +19,7 @@ import DialogManager from '../DialogManager/DialogManager';
 import {ShareLink} from './ShareLink/ShareLink';
 
 import './DialogShare.scss';
+import Utils from '../../utils/utils';
 
 const i18n = I18n.keyset('component.dialog-share.view');
 export const DIALOG_SHARE = Symbol('DIALOG_SHARE');
@@ -79,6 +80,17 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     const [currentUrl, setCurrentUrl] = React.useState(
         getInitialLink(loadedData, propsData, urlIdPrefix, initialParams),
     );
+
+    var p: any = currentUrl._params;
+    for(var i in currentUrl._params) {
+        
+        if(i.startsWith('__')) {
+            delete p[i];
+        }
+    }
+
+    p['__token'] = Utils.getRpcAuthorization();
+
     const [selectedTheme, setSelectedTheme] = React.useState('');
     const [selectedLang, setSelectedLang] = React.useState('');
     const [hideMenu, setHideMenu] = React.useState(
