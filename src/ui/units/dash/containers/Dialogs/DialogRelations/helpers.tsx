@@ -177,7 +177,10 @@ const getChangedConnections = ({
             result = connectionsWithoutCurrentLink.concat([relationFromWidgetToRow]);
             break;
         }
+        default:
+            result = connectionsWithoutCurrentLink;
     }
+
     return result;
 };
 
