@@ -106,5 +106,6 @@ export const runChart: RunnerHandler = async (
         config: generatedConfig as ResolvedConfig,
         configResolving,
         workbookId: workbookId ?? config.workbookId,
+        isWizard: true,
     });
 };

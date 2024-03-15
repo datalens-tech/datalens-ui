@@ -5,12 +5,20 @@ import {Feature, isEnabledServerFeature} from '../../../../shared';
 import {Processor, ProcessorParams} from '../components/processor';
 import {getDuration} from '../components/utils';
 
+import {runServerlessEditor} from './serverlessEditor';
+
 import {RunnerHandlerProps} from '.';
 
-export const runEditor = (
-    parentContext: AppContext,
-    {chartsEngine, req, res, config, configResolving, workbookId}: RunnerHandlerProps,
-) => {
+export const runEditor = (parentContext: AppContext, runnerHandlerProps: RunnerHandlerProps) => {
+    const enableServerlessEditor = Boolean(
+        isEnabledServerFeature(parentContext, Feature.EnableServerlessEditor),
+    );
+
+    if (!runnerHandlerProps.isWizard && enableServerlessEditor) {
+        return runServerlessEditor(parentContext, runnerHandlerProps);
+    }
+
+    const {chartsEngine, req, res, config, configResolving, workbookId} = runnerHandlerProps;
     const ctx = parentContext.create('editorChartRunner');
 
     const hrStart = process.hrtime();

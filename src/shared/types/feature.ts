@@ -76,6 +76,7 @@ export enum Feature {
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     MarkupMetric = 'MarkupMetric',
     ConnectionBasedControl = 'ConnectionBasedControl',
+    EnableServerlessEditor = 'EnableServerlessEditor',
 }
 
 export type FeatureConfig = Record<string, boolean>;
