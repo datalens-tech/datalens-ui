@@ -13,6 +13,8 @@
     }
 
     &__footer-error {
+        position: absolute;
+        top: -20px;
         color: var(--g-color-text-danger);
         font-size: var(--g-text-body-2-font-size);
         line-height: var(--g-text-body-2-line-height);
