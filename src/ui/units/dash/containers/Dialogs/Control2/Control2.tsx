@@ -36,7 +36,7 @@ const b = block('dl-dialog-add-control');
 
 class DialogAddControl extends React.Component<Props> {
     render() {
-        const {isEdit} = this.props;
+        const {isEdit, validation} = this.props;
         const textButtonApply = isEdit ? controlI18n('button_save') : controlI18n('button_add');
         //TODO: raname 'label_control' after enabling feature flag
         const caption = Utils.isEnabledFeature(Feature.GroupControls)
@@ -55,6 +55,8 @@ class DialogAddControl extends React.Component<Props> {
                 <Dialog.Header caption={caption} />
                 <Dialog.Body className={b('body')}>{this.renderBody()}</Dialog.Body>
                 <Dialog.Footer
+                    showError={Boolean(validation.selectorParameters)}
+                    errorText={validation.selectorParameters}
                     onClickButtonCancel={this.handleClose}
                     onClickButtonApply={this.handleApply}
                     textButtonApply={textButtonApply}
@@ -119,10 +121,12 @@ class DialogAddControl extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => {
+    const {sourceType, validation} = selectSelectorDialog(state);
     return {
         isEdit: Boolean(state.dash.openedItemId),
-        sourceType: selectSelectorDialog(state).sourceType,
+        sourceType,
         isParametersSectionAvailable: selectIsParametersSectionAvailable(state),
+        validation,
     };
 };
 
