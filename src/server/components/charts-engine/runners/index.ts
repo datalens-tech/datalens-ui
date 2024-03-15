@@ -27,6 +27,7 @@ export type RunnerHandlerProps = {
     config: ResolvedConfig;
     configResolving: number;
     workbookId?: WorkbookId;
+    isWizard?: boolean;
 };
 
 const runners: Runner[] = [
@@ -46,6 +47,7 @@ const runners: Runner[] = [
         ]),
         handler: runEditor,
     },
+
     {
         name: 'wizard',
         trigger: new Set([
