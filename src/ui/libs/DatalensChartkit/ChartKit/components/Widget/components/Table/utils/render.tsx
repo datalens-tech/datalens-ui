@@ -21,6 +21,7 @@ import {
     TableCommonCell,
     TableHead,
     TableRow,
+    isMarkupItem,
 } from 'shared';
 
 import {Markup} from '../../../../../../../../components/Markup';
@@ -38,7 +39,6 @@ import {
     getTreeSetColumnSortAscending,
     hasTreeSetColumn,
     isCellValueNullable,
-    isMarkupItem,
     numberFormatter,
     prepareLinkHref,
     selectBarSettingValue,

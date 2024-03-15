@@ -10,8 +10,11 @@ export type CommonPlaceholdersKeysWithoutConfigs = Exclude<
 export interface MarkupItem {
     type: 'bold' | 'concat' | 'italics' | 'url' | 'text';
     url?: string;
-    children?: MarkupItem[];
+    children?: (MarkupItem | string)[];
     content?: string | MarkupItem;
+    color?: string;
+    size?: string | number;
+    user_info?: 'name' | 'email';
 }
 
 export type HighchartsSeriesCustomObject = {

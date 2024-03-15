@@ -1,5 +1,3 @@
-import isPlainObject from 'lodash/isPlainObject';
-
 import type {MarkupItem} from '../../../components/Markup';
 
 export function markupToRawString(obj: MarkupItem, str = ''): string {
@@ -18,23 +16,4 @@ export function markupToRawString(obj: MarkupItem, str = ''): string {
     }
 
     return text;
-}
-
-export function isMarkupItem(obj: object): boolean {
-    return isPlainObject(obj) && isMarkupObject(obj);
-}
-
-function isMarkupObject(obj: {type?: string}): boolean {
-    if (
-        (obj.type === 'concat' ||
-            obj.type === 'italics' ||
-            obj.type === 'url' ||
-            obj.type === 'bold') &&
-        ('children' in obj || 'content' in obj)
-    ) {
-        return true;
-    }
-    {
-        return false;
-    }
 }
