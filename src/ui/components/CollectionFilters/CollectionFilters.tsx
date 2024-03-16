@@ -65,22 +65,22 @@ export type CollectionContentFilters = {
 type Props = {
     className?: string;
     filters: CollectionContentFilters;
-    onChange: (value: CollectionContentFilters) => void;
-    onChangeCollectionPageViewMode?: (value: CollectionPageViewMode) => void;
-    collectionPageViewMode?: CollectionPageViewMode;
     compactMode?: boolean;
     controlSize?: RadioButtonSize;
+    viewMode?: CollectionPageViewMode;
+    onChange: (value: CollectionContentFilters) => void;
+    changeViewMode?: (value: CollectionPageViewMode) => void;
 };
 
 export const CollectionFilters = React.memo<Props>(
     ({
         className,
         filters,
-        onChange,
         compactMode = false,
         controlSize = 'm',
-        collectionPageViewMode,
-        onChangeCollectionPageViewMode,
+        viewMode,
+        changeViewMode,
+        onChange,
     }) => {
         const {filterString, onlyMy, mode, orderField, orderDirection} = filters;
 
@@ -130,11 +130,11 @@ export const CollectionFilters = React.memo<Props>(
             [handleChangeFilters],
         );
 
-        const handleChangeView = React.useCallback(
+        const handleChangeViewMode = React.useCallback(
             (value) => {
-                onChangeCollectionPageViewMode?.(value);
+                changeViewMode?.(value);
             },
-            [onChangeCollectionPageViewMode],
+            [changeViewMode],
         );
 
         const handleChangeSort = React.useCallback(
@@ -238,9 +238,9 @@ export const CollectionFilters = React.memo<Props>(
                     {!compactMode && (
                         <RadioButton
                             className={b('radio-button')}
-                            value={collectionPageViewMode}
+                            value={viewMode}
                             size={controlSize}
-                            onUpdate={handleChangeView}
+                            onUpdate={handleChangeViewMode}
                         >
                             <Select.Option value={CollectionPageViewMode.Grid}>
                                 <Icon data={GridIcon} />

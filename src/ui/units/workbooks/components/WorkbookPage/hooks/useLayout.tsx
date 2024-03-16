@@ -6,14 +6,15 @@ import block from 'bem-cn-lite';
 import {I18N} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {GetCollectionBreadcrumbsResponse} from '../../../../../../shared/schema';
-import {EntryScope} from '../../../../../../shared/types';
 import {DIALOG_EDIT_WORKBOOK} from '../../../../../components/CollectionsStructure';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
 import {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
-import {CollectionBreadcrumbs} from '../../../../collections-navigation/components/CollectionBreadcrumbs/CollectionBreadcrumbs';
+import {
+    CollectionBreadcrumbs,
+    cutBreadcrumbs,
+} from '../../../../collections-navigation/components/CollectionBreadcrumbs';
 import {LayoutContext} from '../../../../collections-navigation/contexts/LayoutContext';
 import {setCollectionBreadcrumbs} from '../../../../collections-navigation/store/actions';
 import {
@@ -21,7 +22,6 @@ import {
     selectCollectionBreadcrumbsError,
 } from '../../../../collections-navigation/store/selectors';
 import {setCollection} from '../../../../collections/store/actions';
-import {getWorkbookEntries, resetWorkbookEntries} from '../../../store/actions';
 import {selectPageError, selectWorkbook, selectWorkbookFilters} from '../../../store/selectors';
 import {WorkbookActions} from '../../WorkbookActions/WorkbookActions';
 
@@ -31,11 +31,10 @@ const i18n = I18N.keyset('new-workbooks');
 
 type UseLayoutArgs = {
     workbookId: string;
-    scope?: EntryScope;
     refreshWorkbookInfo: () => void;
 };
 
-export const useLayout = ({workbookId, scope, refreshWorkbookInfo}: UseLayoutArgs) => {
+export const useLayout = ({workbookId, refreshWorkbookInfo}: UseLayoutArgs) => {
     const {ActionPanelEntrySelect} = registry.common.components.getAll();
 
     const {setLayout} = React.useContext(LayoutContext);
@@ -43,12 +42,18 @@ export const useLayout = ({workbookId, scope, refreshWorkbookInfo}: UseLayoutArg
     const dispatch = useDispatch<AppDispatch>();
 
     const workbook = useSelector(selectWorkbook);
-    const collectionBreadcrumbs = useSelector(selectCollectionBreadcrumbs);
-    const collectionBreadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
     const filters = useSelector(selectWorkbookFilters);
+    const breadcrumbs = useSelector(selectCollectionBreadcrumbs);
+    const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
     const pageError = useSelector(selectPageError);
 
     const isCorrectWorkbook = workbook && workbook.workbookId === workbookId;
+    const isCorrectBreadcrumbs = Boolean(
+        workbook &&
+            (workbook.collectionId === null ||
+                (breadcrumbs &&
+                    breadcrumbs[breadcrumbs.length - 1]?.collectionId === workbook.collectionId)),
+    );
 
     React.useEffect(() => {
         setLayout({
@@ -58,42 +63,12 @@ export const useLayout = ({workbookId, scope, refreshWorkbookInfo}: UseLayoutArg
                         <ActionPanelEntrySelect />
                         <CollectionBreadcrumbs
                             className={b('breadcrumbs', {'is-mobile': DL.IS_MOBILE})}
-                            isLoading={
-                                !(
-                                    collectionBreadcrumbs ||
-                                    collectionBreadcrumbsError ||
-                                    workbook?.collectionId === null
-                                )
-                            }
-                            collections={collectionBreadcrumbs ?? []}
+                            isLoading={!(isCorrectBreadcrumbs || breadcrumbsError)}
+                            collections={breadcrumbs ?? []}
                             workbook={workbook}
                             onItemClick={({isCurrent, id}) => {
-                                if (isCurrent) {
-                                    dispatch(resetWorkbookEntries());
-                                    dispatch(
-                                        getWorkbookEntries({
-                                            workbookId,
-                                            filters,
-                                            scope,
-                                        }),
-                                    );
-                                } else if (id === null) {
-                                    dispatch(setCollectionBreadcrumbs([]));
-                                } else {
-                                    let isFound = false;
-
-                                    const newBreadcrumbs = (
-                                        collectionBreadcrumbs ?? []
-                                    ).reduce<GetCollectionBreadcrumbsResponse>((acc, item) => {
-                                        if (!isFound) {
-                                            acc.push(item);
-                                        }
-                                        if (id === item.collectionId) {
-                                            isFound = true;
-                                        }
-                                        return acc;
-                                    }, []);
-
+                                if (!isCurrent && id !== null) {
+                                    const newBreadcrumbs = cutBreadcrumbs(id, breadcrumbs ?? []);
                                     dispatch(setCollectionBreadcrumbs(newBreadcrumbs));
 
                                     const curBreadcrumb = newBreadcrumbs[newBreadcrumbs.length - 1];
@@ -109,12 +84,12 @@ export const useLayout = ({workbookId, scope, refreshWorkbookInfo}: UseLayoutArg
         });
     }, [
         ActionPanelEntrySelect,
-        collectionBreadcrumbs,
-        collectionBreadcrumbsError,
+        breadcrumbs,
+        breadcrumbsError,
         dispatch,
         filters,
+        isCorrectBreadcrumbs,
         isCorrectWorkbook,
-        scope,
         setLayout,
         workbook,
         workbookId,

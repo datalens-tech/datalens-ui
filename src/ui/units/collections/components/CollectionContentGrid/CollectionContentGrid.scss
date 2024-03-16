@@ -2,7 +2,7 @@
     &__grid {
         display: flex;
         flex-flow: wrap;
-        gap: 29px;
+        gap: 10px;
         width: 896px;
     }
 
@@ -10,11 +10,13 @@
         position: relative;
         height: auto;
         cursor: pointer;
-        max-width: 125px;
-        transition: transform 0.2s ease;
+        max-width: 141px;
+        padding: 8px;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
 
         &:hover {
-            transform: translateY(-2px);
+            background-color: var(--g-color-base-simple-hover-solid);
         }
     }
 

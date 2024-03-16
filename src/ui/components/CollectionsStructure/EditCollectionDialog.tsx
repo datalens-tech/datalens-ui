@@ -64,6 +64,7 @@ export const EditCollectionDialog: React.FC<Props> = (props) => {
             descriptionValue={description}
             textButtonApply={i18n('action_save')}
             open={open}
+            titleAutoFocus
             isLoading={isLoading}
             onApply={handleApply}
             onClose={onClose}

@@ -35,6 +35,10 @@ export type CollectionWithPermissions = Collection & {
     permissions: CollectionPermissions;
 };
 
+export type CollectionWithOptionalPermissions = Collection & {
+    permissions?: CollectionPermissions;
+};
+
 export type GetRootCollectionPermissionsResponse = {
     createCollectionInRoot: boolean;
     createWorkbookInRoot: boolean;

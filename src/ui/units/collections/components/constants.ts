@@ -1,8 +1,8 @@
-import {
+import type {
     GetCollectionContentMode,
     OrderBasicField,
     OrderDirection,
-} from '../../../../../shared/schema';
+} from '../../../../shared/schema';
 
 export const PAGE_SIZE = 50;
 

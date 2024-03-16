@@ -14,17 +14,17 @@ import {ViewError} from '../../../../components/ViewError/ViewError';
 import {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
+import {WORKBOOKS_PATH} from '../../../collections-navigation/constants';
 import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
 import {
     selectCollection,
-    selectCollectionContentItems,
     selectCollectionError,
-    selectRootCollectionPermissionsData,
+    selectRootCollectionPermissions,
 } from '../../store/selectors';
 import {CollectionContent} from '../CollectionContent';
+import {DEFAULT_FILTERS} from '../constants';
 
-import {DEFAULT_FILTERS, PAGE_SIZE} from './constants';
-import {useData, useFilters, useLayout, useSelectionMode, useViewMode} from './hooks';
+import {useData, useFilters, useLayout, useSelection, useViewMode} from './hooks';
 
 import './CollectionPage.scss';
 
@@ -38,32 +38,33 @@ export const CollectionPage = () => {
 
     const dispatch: AppDispatch = useDispatch();
 
-    const contentItems = useSelector(selectCollectionContentItems);
-    const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
-    const rootPermissions = useSelector(selectRootCollectionPermissionsData);
     const collection = useSelector(selectCollection);
-    const pageError = useSelector(selectCollectionError);
+    const collectionError = useSelector(selectCollectionError);
+    const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
+    const rootCollectionPermissions = useSelector(selectRootCollectionPermissions);
 
     const {
-        isOpenSelectionMode,
         selectedMap,
-        setSelectedMap,
-        countSelected,
-        itemsWithPermissionMove,
-        canMove,
-        setIsOpenSelectionMode,
+        selectedMapWithMovePermission,
+        itemsAvailableForSelection,
+        isOpenSelectionMode,
         openSelectionMode,
+        closeSelectionMode,
         resetSelected,
         updateCheckbox,
-        closeSelectionMode,
         updateAllCheckboxes,
-    } = useSelectionMode({curCollectionId});
+    } = useSelection({curCollectionId});
 
-    const {filters, updateFilters} = useFilters({curCollectionId, setSelectedMap});
+    const {filters, updateFilters} = useFilters({
+        curCollectionId,
+        closeSelectionMode,
+        resetSelected,
+    });
 
-    const {collectionPageViewMode, onChangeCollectionPageViewMode} = useViewMode({
-        countSelected,
-        setIsOpenSelectionMode,
+    const {viewMode, changeViewMode} = useViewMode({
+        selectedMap,
+        openSelectionMode,
+        closeSelectionMode,
     });
 
     const {
@@ -95,7 +96,7 @@ export const CollectionPage = () => {
                     collectionId: curCollectionId,
                     onApply: (result) => {
                         if (result) {
-                            history.push(`/workbooks/${result.workbookId}`);
+                            history.push(`${WORKBOOKS_PATH}/${result.workbookId}`);
                         }
                     },
                     onClose: () => {
@@ -106,11 +107,11 @@ export const CollectionPage = () => {
         );
     }, [curCollectionId, dispatch, history]);
 
-    const moveSelectedEntities = React.useCallback(() => {
+    const handleMoveSelectedEntities = React.useCallback(() => {
         const workbookIds: string[] = [];
         const collectionIds: string[] = [];
 
-        Object.keys(selectedMap).forEach((key) => {
+        Object.keys(selectedMapWithMovePermission).forEach((key) => {
             const type = selectedMap[key];
             if (type === 'workbook') {
                 workbookIds.push(key);
@@ -137,39 +138,37 @@ export const CollectionPage = () => {
             }),
         );
     }, [
-        collection?.collectionId,
+        selectedMapWithMovePermission,
         dispatch,
         handeCloseMoveDialog,
+        collection?.collectionId,
+        selectedMap,
         closeSelectionMode,
         resetSelected,
         fetchCollectionContent,
-        selectedMap,
     ]);
 
     useLayout({
         curCollectionId,
-        fetchCollectionContent,
-        refreshCollectionInfo: refreshPage,
         filters,
-        handleCreateWorkbook,
-        handeCloseMoveDialog,
-        collectionPageViewMode,
+        selectedMap,
+        itemsAvailableForSelection,
+        viewMode,
         isOpenSelectionMode,
         openSelectionMode,
-        countSelected,
-        onCancelSelectionMode: closeSelectionMode,
-        canMove,
+        closeSelectionMode,
+        resetSelected,
+        fetchCollectionInfo,
+        fetchCollectionContent,
+        handleCreateWorkbook,
+        handeCloseMoveDialog,
         updateAllCheckboxes,
     });
 
-    const isDefaultFilters =
-        filters.filterString === DEFAULT_FILTERS.filterString &&
-        filters.onlyMy === DEFAULT_FILTERS.onlyMy &&
-        filters.mode === DEFAULT_FILTERS.mode;
-
     if (
-        pageError ||
-        (breadcrumbsError && Utils.parseErrorResponse(breadcrumbsError).status !== 403)
+        curCollectionId !== null &&
+        (collectionError ||
+            (breadcrumbsError && Utils.parseErrorResponse(breadcrumbsError).status !== 403))
     ) {
         return (
             <div className={b()}>
@@ -179,7 +178,7 @@ export const CollectionPage = () => {
                             fetchCollectionInfo();
                             fetchCollectionContent();
                         }}
-                        error={pageError}
+                        error={collectionError}
                     />
                 </AnimateBlock>
             </div>
@@ -193,29 +192,26 @@ export const CollectionPage = () => {
                     filters={filters}
                     controlSize="l"
                     onChange={updateFilters}
-                    collectionPageViewMode={collectionPageViewMode}
-                    onChangeCollectionPageViewMode={onChangeCollectionPageViewMode}
+                    viewMode={viewMode}
+                    changeViewMode={changeViewMode}
                 />
             </div>
             <div className={b('content')}>
                 <CollectionContent
-                    collectionId={curCollectionId}
-                    getCollectionContentRecursively={getCollectionContentRecursively}
-                    collectionPageViewMode={collectionPageViewMode}
+                    curCollectionId={curCollectionId}
                     filters={filters}
-                    isDefaultFilters={isDefaultFilters}
-                    pageSize={PAGE_SIZE}
-                    refreshPage={refreshPage}
-                    refreshContent={fetchCollectionContent}
-                    contentItems={contentItems}
-                    countSelected={countSelected}
+                    viewMode={viewMode}
                     selectedMap={selectedMap}
-                    countItemsWithPermissionMove={itemsWithPermissionMove.length}
+                    itemsAvailableForSelection={itemsAvailableForSelection}
+                    isOpenSelectionMode={isOpenSelectionMode}
                     canCreateWorkbook={
-                        collectionId && collection
+                        curCollectionId && collection
                             ? Boolean(collection.permissions?.createWorkbook)
-                            : Boolean(rootPermissions?.createWorkbookInRoot)
+                            : Boolean(rootCollectionPermissions?.createWorkbookInRoot)
                     }
+                    getCollectionContentRecursively={getCollectionContentRecursively}
+                    fetchCollectionContent={fetchCollectionContent}
+                    onCloseMoveDialog={handeCloseMoveDialog}
                     onCreateWorkbookClick={handleCreateWorkbook}
                     onClearFiltersClick={() => {
                         updateFilters({
@@ -224,12 +220,10 @@ export const CollectionPage = () => {
                             orderDirection: filters.orderDirection,
                         });
                     }}
-                    isOpenSelectionMode={isOpenSelectionMode}
-                    canMove={canMove}
-                    setBatchAction={moveSelectedEntities}
-                    onUpdateCheckbox={updateCheckbox}
+                    onMoveSelectedEntitiesClick={handleMoveSelectedEntities}
                     resetSelected={resetSelected}
-                    onSelectAll={updateAllCheckboxes}
+                    onUpdateCheckboxClick={updateCheckbox}
+                    onUpdateAllCheckboxesClick={updateAllCheckboxes}
                 />
             </div>
         </div>

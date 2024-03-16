@@ -51,7 +51,7 @@ export const selectRootCollectionPermissionsIsLoading = createSelector(
         getRootCollectionPermissions.data === null || getRootCollectionPermissions.isLoading,
 );
 
-export const selectRootCollectionPermissionsData = createSelector(
+export const selectRootCollectionPermissions = createSelector(
     [selectGetRootCollectionPermissions],
     (getRootCollectionPermissions) => getRootCollectionPermissions.data,
 );

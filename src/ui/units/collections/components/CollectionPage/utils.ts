@@ -3,8 +3,7 @@ import {
     collectionPageViewModeStore,
 } from '../../../../components/CollectionFilters';
 import Utils, {CollectionFiltersStorage} from '../../../../utils';
-
-import {DEFAULT_FILTERS} from './constants';
+import {DEFAULT_FILTERS} from '../constants';
 
 export const getUserDefaultFilters = () => ({
     filterString: undefined,

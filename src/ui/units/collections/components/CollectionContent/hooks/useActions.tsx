@@ -28,30 +28,22 @@ import {ResourceType} from '../../../../../registry/units/common/types/component
 import {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import Utils from '../../../../../utils';
+import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
 import {deleteCollectionInItems, deleteWorkbookInItems} from '../../../store/actions';
 
 const i18n = I18n.keyset('collections');
 
 type UseActionsArgs = {
-    refreshContent: () => void;
+    fetchCollectionContent: () => void;
+    onCloseMoveDialog: (structureChanged: boolean) => void;
 };
 
-export const useActions = ({refreshContent}: UseActionsArgs) => {
+export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActionsArgs) => {
     const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
     const history = useHistory();
 
     const dispatch: AppDispatch = useDispatch();
-
-    const handeCloseMoveDialog = React.useCallback(
-        (structureChanged: boolean) => {
-            if (structureChanged) {
-                refreshContent();
-            }
-            dispatch(closeDialog());
-        },
-        [dispatch, refreshContent],
-    );
 
     const getCollectionActions = React.useCallback(
         (item: CollectionWithPermissions): (DropdownMenuItem[] | DropdownMenuItem)[] => {
@@ -71,7 +63,7 @@ export const useActions = ({refreshContent}: UseActionsArgs) => {
                                     description: item?.description ?? '',
                                     onApply: (collection: UpdateCollectionResponse | null) => {
                                         if (collection) {
-                                            refreshContent();
+                                            fetchCollectionContent();
                                         }
                                     },
                                     onClose: () => {
@@ -96,8 +88,8 @@ export const useActions = ({refreshContent}: UseActionsArgs) => {
                                     collectionId: item.collectionId,
                                     collectionTitle: item.title,
                                     initialParentId: item.parentId,
-                                    onApply: refreshContent,
-                                    onClose: handeCloseMoveDialog,
+                                    onApply: fetchCollectionContent,
+                                    onClose: onCloseMoveDialog,
                                 },
                             }),
                         );
@@ -160,7 +152,7 @@ export const useActions = ({refreshContent}: UseActionsArgs) => {
 
             return actions;
         },
-        [collectionsAccessEnabled, dispatch, handeCloseMoveDialog, refreshContent],
+        [collectionsAccessEnabled, dispatch, onCloseMoveDialog, fetchCollectionContent],
     );
 
     const getWorkbookActions = React.useCallback(
@@ -182,7 +174,7 @@ export const useActions = ({refreshContent}: UseActionsArgs) => {
                                         description: item?.description ?? '',
                                         onApply: (workbook: UpdateWorkbookResponse | null) => {
                                             if (workbook) {
-                                                refreshContent();
+                                                fetchCollectionContent();
                                             }
                                         },
                                         onClose: () => {
@@ -208,8 +200,8 @@ export const useActions = ({refreshContent}: UseActionsArgs) => {
                                     workbookId: item.workbookId,
                                     workbookTitle: item.title,
                                     initialCollectionId: item.collectionId,
-                                    onApply: refreshContent,
-                                    onClose: handeCloseMoveDialog,
+                                    onApply: fetchCollectionContent,
+                                    onClose: onCloseMoveDialog,
                                 },
                             }),
                         );
@@ -231,10 +223,10 @@ export const useActions = ({refreshContent}: UseActionsArgs) => {
                                     initialCollectionId: item.collectionId,
                                     onApply: (workbookId) => {
                                         if (workbookId) {
-                                            history.push(`/workbooks/${workbookId}`);
+                                            history.push(`${WORKBOOKS_PATH}/${workbookId}`);
                                         }
                                     },
-                                    onClose: handeCloseMoveDialog,
+                                    onClose: onCloseMoveDialog,
                                 },
                             }),
                         );
@@ -297,7 +289,7 @@ export const useActions = ({refreshContent}: UseActionsArgs) => {
 
             return actions;
         },
-        [collectionsAccessEnabled, dispatch, handeCloseMoveDialog, history, refreshContent],
+        [collectionsAccessEnabled, dispatch, onCloseMoveDialog, history, fetchCollectionContent],
     );
 
     return {

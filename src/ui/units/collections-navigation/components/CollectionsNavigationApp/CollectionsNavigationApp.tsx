@@ -4,7 +4,7 @@ import {useDispatch} from 'react-redux';
 import {Route, Switch} from 'react-router-dom';
 
 import {AppDispatch} from '../../../../store';
-import {CollectionPage} from '../../../collections/components/CollectionPage/CollectionPage';
+import {CollectionPage} from '../../../collections/components/CollectionPage';
 import {resetState as resetCollectionsState} from '../../../collections/store/actions';
 import {WorkbookPage} from '../../../workbooks/components/WorkbookPage/WorkbookPage';
 import {resetWorkbookState as resetWorkbooksState} from '../../../workbooks/store/actions';

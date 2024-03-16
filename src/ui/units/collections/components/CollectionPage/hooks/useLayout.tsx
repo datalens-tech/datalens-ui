@@ -6,13 +6,12 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {Feature} from 'shared';
-import {DL} from 'ui/constants';
-import Utils from 'utils';
 
+import {Feature} from '../../../../../../shared';
 import type {
+    CollectionWithPermissions,
     CreateCollectionResponse,
-    GetCollectionBreadcrumbsResponse,
+    WorkbookWithPermissions,
 } from '../../../../../../shared/schema';
 import {
     CollectionContentFilters,
@@ -25,28 +24,32 @@ import {
     DIALOG_MOVE_COLLECTION,
 } from '../../../../../components/CollectionsStructure';
 import {DIALOG_IAM_ACCESS} from '../../../../../components/IamAccessDialog';
+import {DL} from '../../../../../constants';
 import {registry} from '../../../../../registry';
 import {ResourceType} from '../../../../../registry/units/common/types/components/IamAccessDialog';
 import {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
-import {CollectionBreadcrumbs} from '../../../../collections-navigation/components/CollectionBreadcrumbs/CollectionBreadcrumbs';
-import {LayoutContext} from '../../../../collections-navigation/contexts/LayoutContext';
+import Utils from '../../../../../utils';
 import {
-    getCollectionBreadcrumbs,
-    setCollectionBreadcrumbs,
-} from '../../../../collections-navigation/store/actions';
+    CollectionBreadcrumbs,
+    cutBreadcrumbs,
+} from '../../../../collections-navigation/components/CollectionBreadcrumbs';
+import {COLLECTIONS_PATH, WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
+import {LayoutContext} from '../../../../collections-navigation/contexts/LayoutContext';
+import {setCollectionBreadcrumbs} from '../../../../collections-navigation/store/actions';
 import {
     selectCollectionBreadcrumbs,
     selectCollectionBreadcrumbsError,
 } from '../../../../collections-navigation/store/selectors';
-import {getCollection, setCollection} from '../../../store/actions';
+import {setCollection} from '../../../store/actions';
 import {
     selectCollection,
     selectCollectionError,
-    selectRootCollectionPermissionsData,
-    selectRootCollectionPermissionsIsLoading,
+    selectRootCollectionPermissions,
 } from '../../../store/selectors';
-import {CollectionActions} from '../../CollectionActions/CollectionActions';
+import {CollectionActions} from '../../CollectionActions';
+
+import {SelectedMap} from './useSelection';
 
 const b = block('dl-collection-page');
 
@@ -54,33 +57,35 @@ const i18n = I18n.keyset('collections');
 
 type UseLayoutArgs = {
     curCollectionId: string | null;
-    fetchCollectionContent: () => void;
-    refreshCollectionInfo: () => void;
     filters: CollectionContentFilters;
+    selectedMap: SelectedMap;
+    itemsAvailableForSelection: (CollectionWithPermissions | WorkbookWithPermissions)[];
+    viewMode: CollectionPageViewMode;
+    isOpenSelectionMode: boolean;
+    openSelectionMode: () => void;
+    closeSelectionMode: () => void;
+    resetSelected: () => void;
+    fetchCollectionInfo: () => void;
+    fetchCollectionContent: () => void;
     handleCreateWorkbook: () => void;
     handeCloseMoveDialog: (structureChanged: boolean) => void;
-    collectionPageViewMode: CollectionPageViewMode;
-    isOpenSelectionMode: boolean;
-    countSelected: number;
-    onCancelSelectionMode: () => void;
-    canMove: boolean;
-    openSelectionMode: () => void;
     updateAllCheckboxes: (checked: boolean) => void;
 };
 
 export const useLayout = ({
     curCollectionId,
-    fetchCollectionContent,
-    refreshCollectionInfo,
     filters,
+    selectedMap,
+    itemsAvailableForSelection,
+    viewMode,
+    isOpenSelectionMode,
+    openSelectionMode,
+    closeSelectionMode,
+    resetSelected,
+    fetchCollectionInfo,
+    fetchCollectionContent,
     handleCreateWorkbook,
     handeCloseMoveDialog,
-    collectionPageViewMode,
-    isOpenSelectionMode,
-    countSelected,
-    onCancelSelectionMode,
-    canMove,
-    openSelectionMode,
     updateAllCheckboxes,
 }: UseLayoutArgs) => {
     const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
@@ -93,58 +98,25 @@ export const useLayout = ({
 
     const dispatch: AppDispatch = useDispatch();
 
-    const isRootPermissionsLoading = useSelector(selectRootCollectionPermissionsIsLoading);
-    const rootPermissions = useSelector(selectRootCollectionPermissionsData);
     const collection = useSelector(selectCollection);
-    const isCollectionLoading = !collection || curCollectionId !== collection.collectionId;
-    const collectionBreadcrumbs = useSelector(selectCollectionBreadcrumbs);
-    const collectionBreadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
-    const pageError = useSelector(selectCollectionError);
+    const collectionError = useSelector(selectCollectionError);
+    const breadcrumbs = useSelector(selectCollectionBreadcrumbs);
+    const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
+    const rootCollectionPermissions = useSelector(selectRootCollectionPermissions);
 
     const isRootCollection = curCollectionId === null;
-
     const isCorrectCollection = Boolean(collection && collection.collectionId === curCollectionId);
-
-    const isCorrectCollectionBreadcrumbs = Boolean(
-        collectionBreadcrumbs &&
-            collectionBreadcrumbs[collectionBreadcrumbs.length - 1]?.collectionId ===
-                curCollectionId,
+    const isCorrectBreadcrumbs = Boolean(
+        isRootCollection ||
+            (breadcrumbs && breadcrumbs[breadcrumbs.length - 1]?.collectionId === curCollectionId),
     );
 
-    const onEditClick = React.useCallback(() => {
-        if (curCollectionId && collection) {
-            dispatch(
-                openDialog({
-                    id: DIALOG_EDIT_COLLECTION,
-                    props: {
-                        open: true,
-                        collectionId: collection.collectionId,
-                        title: collection.title,
-                        description: collection?.description ?? '',
-                        onApply: () => {
-                            return Promise.all([
-                                dispatch(
-                                    getCollection({
-                                        collectionId: curCollectionId,
-                                    }),
-                                ),
-                                dispatch(
-                                    getCollectionBreadcrumbs({
-                                        collectionId: curCollectionId,
-                                    }),
-                                ),
-                            ]);
-                        },
-                        onClose: () => {
-                            dispatch(closeDialog());
-                        },
-                    },
-                }),
-            );
-        }
-    }, [collection, curCollectionId, dispatch]);
-
     React.useEffect(() => {
+        let preparedBreadcrumbs = breadcrumbs ?? [];
+        if (breadcrumbsError && collection) {
+            preparedBreadcrumbs = [collection];
+        }
+
         setLayout({
             actionsPanelLeftBlock: {
                 content: (
@@ -152,39 +124,18 @@ export const useLayout = ({
                         <ActionPanelEntrySelect />
                         <CollectionBreadcrumbs
                             className={b('breadcrumbs')}
-                            isLoading={
-                                !(
-                                    isRootCollection ||
-                                    isCorrectCollectionBreadcrumbs ||
-                                    collectionBreadcrumbsError
-                                )
-                            }
-                            collections={collectionBreadcrumbs ?? []}
+                            isLoading={!(isCorrectBreadcrumbs || breadcrumbsError)}
+                            collections={preparedBreadcrumbs}
                             workbook={null}
                             onItemClick={({isCurrent, id}) => {
                                 if (isCurrent) {
                                     fetchCollectionContent();
-                                } else if (id === null) {
-                                    dispatch(setCollectionBreadcrumbs([]));
-                                } else {
-                                    let isFound = false;
-
-                                    const newBreadcrumbs = (
-                                        collectionBreadcrumbs ?? []
-                                    ).reduce<GetCollectionBreadcrumbsResponse>((acc, item) => {
-                                        if (!isFound) {
-                                            acc.push(item);
-                                        }
-                                        if (id === item.collectionId) {
-                                            isFound = true;
-                                        }
-                                        return acc;
-                                    }, []);
-
+                                } else if (id !== null) {
+                                    const newBreadcrumbs = cutBreadcrumbs(id, preparedBreadcrumbs);
                                     dispatch(setCollectionBreadcrumbs(newBreadcrumbs));
 
                                     const curBreadcrumb = newBreadcrumbs[newBreadcrumbs.length - 1];
-                                    if (newBreadcrumbs[newBreadcrumbs.length - 1]) {
+                                    if (curBreadcrumb) {
                                         dispatch(setCollection(curBreadcrumb));
                                     }
                                 }
@@ -196,29 +147,27 @@ export const useLayout = ({
         });
     }, [
         ActionPanelEntrySelect,
+        breadcrumbs,
+        breadcrumbsError,
         collection,
-        collectionBreadcrumbs,
-        collectionBreadcrumbsError,
         curCollectionId,
         dispatch,
         fetchCollectionContent,
         filters,
-        isCorrectCollectionBreadcrumbs,
+        isCorrectBreadcrumbs,
         isRootCollection,
         setLayout,
     ]);
 
     React.useEffect(() => {
         if (
-            (isRootCollection && !isRootPermissionsLoading) ||
+            (isRootCollection && rootCollectionPermissions) ||
             (isCorrectCollection && collection && collection.permissions)
         ) {
             setLayout({
                 actionsPanelRightBlock: {
                     content: (
                         <CollectionActions
-                            collectionData={collection}
-                            rootPermissions={rootPermissions}
                             onCreateCollectionClick={() => {
                                 dispatch(
                                     openDialog({
@@ -229,7 +178,7 @@ export const useLayout = ({
                                             onApply: (result: CreateCollectionResponse | null) => {
                                                 if (result) {
                                                     history.push(
-                                                        `/collections/${result.collectionId}`,
+                                                        `${COLLECTIONS_PATH}/${result.collectionId}`,
                                                     );
                                                 }
                                             },
@@ -253,7 +202,7 @@ export const useLayout = ({
                                                 onSuccessApply: (result) => {
                                                     if (result) {
                                                         history.push(
-                                                            `/workbooks/${result.workbookId}`,
+                                                            `${WORKBOOKS_PATH}/${result.workbookId}`,
                                                         );
                                                     }
                                                 },
@@ -280,7 +229,7 @@ export const useLayout = ({
                                                 onSuccessApply: (result) => {
                                                     if (result) {
                                                         history.push(
-                                                            `/workbooks/${result.workbookId}`,
+                                                            `${WORKBOOKS_PATH}/${result.workbookId}`,
                                                         );
                                                     }
                                                 },
@@ -303,7 +252,7 @@ export const useLayout = ({
                                                 collectionId: collection.collectionId,
                                                 collectionTitle: collection.title,
                                                 initialParentId: collection.parentId,
-                                                onApply: refreshCollectionInfo,
+                                                onApply: fetchCollectionInfo,
                                                 onClose: handeCloseMoveDialog,
                                             },
                                         }),
@@ -321,8 +270,9 @@ export const useLayout = ({
                                                 resourceType: ResourceType.Collection,
                                                 resourceTitle: collection.title,
                                                 parentId: collection.parentId,
-                                                canUpdate:
-                                                    collection.permissions.updateAccessBindings,
+                                                canUpdate: Boolean(
+                                                    collection.permissions?.updateAccessBindings,
+                                                ),
                                                 onClose: () => {
                                                     dispatch(closeDialog());
                                                 },
@@ -350,13 +300,11 @@ export const useLayout = ({
         handeCloseMoveDialog,
         handleCreateWorkbook,
         history,
-        isCollectionLoading,
         isCorrectCollection,
-        isRootPermissionsLoading,
-        refreshCollectionInfo,
-        rootPermissions,
         setLayout,
         curCollectionId,
+        rootCollectionPermissions,
+        fetchCollectionInfo,
     ]);
 
     React.useEffect(() => {
@@ -396,10 +344,35 @@ export const useLayout = ({
             setLayout({
                 titleActionsBlock: {
                     content:
-                        curCollectionId && collection && collection.permissions.update ? (
+                        curCollectionId && collection && collection.permissions?.update ? (
                             <Tooltip content={i18n('action_edit')}>
                                 <div>
-                                    <Button onClick={onEditClick}>
+                                    <Button
+                                        onClick={() => {
+                                            if (
+                                                curCollectionId &&
+                                                isCorrectCollection &&
+                                                collection
+                                            ) {
+                                                dispatch(
+                                                    openDialog({
+                                                        id: DIALOG_EDIT_COLLECTION,
+                                                        props: {
+                                                            open: true,
+                                                            collectionId: collection.collectionId,
+                                                            title: collection.title,
+                                                            description:
+                                                                collection?.description ?? '',
+                                                            onApply: fetchCollectionInfo,
+                                                            onClose: () => {
+                                                                dispatch(closeDialog());
+                                                            },
+                                                        },
+                                                    }),
+                                                );
+                                            }
+                                        }}
+                                    >
                                         <Icon data={PencilToLine} />
                                     </Button>
                                 </div>
@@ -417,50 +390,54 @@ export const useLayout = ({
     }, [
         curCollectionId,
         collection,
-        onEditClick,
         setLayout,
         isCorrectCollection,
         isRootCollection,
+        dispatch,
+        fetchCollectionInfo,
     ]);
-
-    const selectBtn = React.useMemo(() => {
-        if (countSelected === 0 && !isOpenSelectionMode) {
-            return (
-                <Button disabled={!canMove} view="outlined" onClick={openSelectionMode}>
-                    {i18n('action_select')}
-                </Button>
-            );
-        }
-
-        if (countSelected > 0) {
-            return (
-                <Button view="outlined" onClick={() => updateAllCheckboxes(false)}>
-                    {i18n('action_reset-all')}
-                </Button>
-            );
-        } else {
-            return (
-                <Button view="outlined" onClick={() => updateAllCheckboxes(true)}>
-                    {i18n('action_select-all')}
-                </Button>
-            );
-        }
-    }, [countSelected, isOpenSelectionMode, canMove, openSelectionMode, updateAllCheckboxes]);
 
     React.useEffect(() => {
         setLayout({
             titleRightBlock: {
                 content:
-                    collectionPageViewMode === CollectionPageViewMode.Grid ? (
+                    viewMode === CollectionPageViewMode.Grid ? (
                         <React.Fragment>
-                            {selectBtn}
-                            {(isOpenSelectionMode || Boolean(countSelected)) && (
+                            {isOpenSelectionMode ? (
+                                <React.Fragment>
+                                    {Object.keys(selectedMap).length > 0 ? (
+                                        <Button
+                                            view="outlined"
+                                            onClick={() => updateAllCheckboxes(false)}
+                                        >
+                                            {i18n('action_reset-all')}
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            view="outlined"
+                                            onClick={() => updateAllCheckboxes(true)}
+                                        >
+                                            {i18n('action_select-all')}
+                                        </Button>
+                                    )}
+                                    <Button
+                                        className={b('cancel-selection-button')}
+                                        view="outlined-danger"
+                                        onClick={() => {
+                                            closeSelectionMode();
+                                            resetSelected();
+                                        }}
+                                    >
+                                        {i18n('action_cancel')}
+                                    </Button>
+                                </React.Fragment>
+                            ) : (
                                 <Button
-                                    className={b('cancel-btn')}
-                                    view="outlined-danger"
-                                    onClick={onCancelSelectionMode}
+                                    disabled={itemsAvailableForSelection.length === 0}
+                                    view="outlined"
+                                    onClick={openSelectionMode}
                                 >
-                                    {i18n('action_cancel')}
+                                    {i18n('action_select')}
                                 </Button>
                             )}
                         </React.Fragment>
@@ -468,16 +445,19 @@ export const useLayout = ({
             },
         });
     }, [
-        collectionPageViewMode,
-        countSelected,
         isOpenSelectionMode,
-        onCancelSelectionMode,
-        selectBtn,
         setLayout,
+        viewMode,
+        selectedMap,
+        itemsAvailableForSelection.length,
+        openSelectionMode,
+        closeSelectionMode,
+        updateAllCheckboxes,
+        resetSelected,
     ]);
 
     React.useEffect(() => {
-        if (pageError) {
+        if (collectionError) {
             setLayout({
                 actionsPanelLeftBlock: null,
                 actionsPanelRightBlock: null,
@@ -487,5 +467,5 @@ export const useLayout = ({
                 description: null,
             });
         }
-    }, [pageError, setLayout]);
+    }, [collectionError, setLayout]);
 };

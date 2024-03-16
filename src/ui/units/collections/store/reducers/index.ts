@@ -1,4 +1,5 @@
 import type {
+    CollectionWithOptionalPermissions,
     CollectionWithPermissions,
     GetCollectionContentResponse,
     GetRootCollectionPermissionsResponse,
@@ -26,7 +27,7 @@ import {
 export type CollectionsState = {
     getCollection: {
         isLoading: boolean;
-        data: CollectionWithPermissions | null;
+        data: CollectionWithOptionalPermissions | null;
         error: Error | null;
     };
     getCollectionContent: {

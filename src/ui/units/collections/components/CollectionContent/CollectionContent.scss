@@ -1,4 +1,8 @@
 .dl-collection-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
     &__empty-state {
         display: flex;
         flex: 1;
@@ -6,7 +10,7 @@
         justify-content: center;
     }
 
-    &__controls {
+    &__placeholder-controls {
         margin-top: 16px;
     }
 
@@ -20,8 +24,7 @@
 
     &__batch-panel {
         position: fixed;
-        width: 100%;
-        max-width: 896px;
+        width: 896px;
         bottom: 8px;
     }
 }

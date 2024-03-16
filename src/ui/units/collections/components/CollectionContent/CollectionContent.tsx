@@ -7,21 +7,30 @@ import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
 
-import type {GetCollectionContentResponse} from '../../../../../shared/schema';
-import {GetCollectionContentArgs} from '../../../../../shared/schema';
+import type {
+    CollectionWithPermissions,
+    GetCollectionContentArgs,
+    GetCollectionContentResponse,
+    WorkbookWithPermissions,
+} from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
-import {CollectionPageViewMode} from '../../../../components/CollectionFilters/CollectionFilters';
+import {
+    CollectionContentFilters,
+    CollectionPageViewMode,
+} from '../../../../components/CollectionFilters';
 import {BatchPanel} from '../../../../components/Navigation/components/BatchPanel/BatchPanel';
 import {PlaceholderIllustration} from '../../../../components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';
 import {
     selectCollectionContentError,
     selectCollectionContentIsLoading,
+    selectCollectionContentItems,
     selectCollectionContentNextPageTokens,
 } from '../../store/selectors';
-import {CollectionContentGrid} from '../CollectionContentGrid/CollectionContentGrid';
-import {CollectionContentTable} from '../CollectionContentTable/CollectionContentTable';
-import {ContentProps} from '../types';
+import {CollectionContentGrid} from '../CollectionContentGrid';
+import {CollectionContentTable} from '../CollectionContentTable';
+import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
+import {DEFAULT_FILTERS, PAGE_SIZE} from '../constants';
 
 import {useActions} from './hooks';
 
@@ -30,65 +39,73 @@ import './CollectionContent.scss';
 const b = block('dl-collection-content');
 const i18n = I18n.keyset('collections');
 
-interface Props extends ContentProps {
-    collectionId: string | null;
-    pageSize: number;
-    collectionPageViewMode: CollectionPageViewMode;
-    isDefaultFilters: boolean;
+interface Props {
+    curCollectionId: string | null;
+    filters: CollectionContentFilters;
+    viewMode: CollectionPageViewMode;
+    selectedMap: SelectedMap;
+    itemsAvailableForSelection: (CollectionWithPermissions | WorkbookWithPermissions)[];
     isOpenSelectionMode: boolean;
     canCreateWorkbook: boolean;
-    refreshPage: () => void;
-    refreshContent: () => void;
     getCollectionContentRecursively: (
         args: GetCollectionContentArgs,
     ) => CancellablePromise<GetCollectionContentResponse | null>;
+    fetchCollectionContent: () => void;
+    onCloseMoveDialog: (structureChanged: boolean) => void;
     onCreateWorkbookClick: () => void;
     onClearFiltersClick: () => void;
-    setBatchAction: () => void;
+    onMoveSelectedEntitiesClick: () => void;
+    onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
+    onUpdateAllCheckboxesClick: (checked: boolean) => void;
     resetSelected: () => void;
 }
 
 export const CollectionContent: React.FC<Props> = ({
-    collectionId,
-    pageSize,
+    curCollectionId,
     filters,
-    collectionPageViewMode,
-    isDefaultFilters,
-    canCreateWorkbook,
-    isOpenSelectionMode,
-    canMove,
-    contentItems,
-    countItemsWithPermissionMove,
+    viewMode,
     selectedMap,
-    countSelected,
+    itemsAvailableForSelection,
+    isOpenSelectionMode,
+    canCreateWorkbook,
     getCollectionContentRecursively,
+    fetchCollectionContent,
+    onCloseMoveDialog,
     onCreateWorkbookClick,
     onClearFiltersClick,
-    refreshContent,
-    setBatchAction,
+    onMoveSelectedEntitiesClick,
+    onUpdateCheckboxClick,
+    onUpdateAllCheckboxesClick,
     resetSelected,
-    onSelectAll,
-    onUpdateCheckbox,
 }) => {
-    const isContentLoading = useSelector(selectCollectionContentIsLoading);
-    const contentLoadingError = useSelector(selectCollectionContentError);
-    const nextPageTokens = useSelector(selectCollectionContentNextPageTokens);
+    const items = useSelector(selectCollectionContentItems);
+    const isCollectionContentLoading = useSelector(selectCollectionContentIsLoading);
+    const collectionContentError = useSelector(selectCollectionContentError);
+    const collectionContentNextPageTokens = useSelector(selectCollectionContentNextPageTokens);
+
+    const isDefaultFilters =
+        filters.filterString === DEFAULT_FILTERS.filterString &&
+        filters.onlyMy === DEFAULT_FILTERS.onlyMy &&
+        filters.mode === DEFAULT_FILTERS.mode;
 
     const [waypointDisabled, setWaypointDisabled] = React.useState(false);
 
     React.useEffect(() => {
-        if (contentLoadingError) {
+        if (collectionContentError) {
             setWaypointDisabled(true);
         }
-    }, [contentLoadingError]);
+    }, [collectionContentError]);
 
     const onWaypointEnter = React.useCallback(() => {
-        if (nextPageTokens.collectionsNextPageToken || nextPageTokens.workbooksNextPageToken) {
+        if (
+            collectionContentNextPageTokens.collectionsNextPageToken ||
+            collectionContentNextPageTokens.workbooksNextPageToken
+        ) {
             getCollectionContentRecursively({
-                collectionId,
-                collectionsPage: nextPageTokens.collectionsNextPageToken,
-                workbooksPage: nextPageTokens.workbooksNextPageToken,
-                pageSize,
+                collectionId: curCollectionId,
+                collectionsPage: collectionContentNextPageTokens.collectionsNextPageToken,
+                workbooksPage: collectionContentNextPageTokens.workbooksNextPageToken,
+                pageSize: PAGE_SIZE,
                 filterString: filters.filterString,
                 orderField: filters.orderField,
                 orderDirection: filters.orderDirection,
@@ -98,9 +115,10 @@ export const CollectionContent: React.FC<Props> = ({
                 if (
                     (res?.collectionsNextPageToken &&
                         res?.collectionsNextPageToken ===
-                            nextPageTokens.collectionsNextPageToken) ||
+                            collectionContentNextPageTokens.collectionsNextPageToken) ||
                     (res?.workbooksNextPageToken &&
-                        res?.workbooksNextPageToken === nextPageTokens.workbooksNextPageToken)
+                        res?.workbooksNextPageToken ===
+                            collectionContentNextPageTokens.workbooksNextPageToken)
                 ) {
                     setWaypointDisabled(true);
                 }
@@ -108,25 +126,27 @@ export const CollectionContent: React.FC<Props> = ({
             });
         }
     }, [
-        collectionId,
+        curCollectionId,
         filters.filterString,
         filters.mode,
         filters.onlyMy,
         filters.orderDirection,
         filters.orderField,
         getCollectionContentRecursively,
-        nextPageTokens.collectionsNextPageToken,
-        nextPageTokens.workbooksNextPageToken,
-        pageSize,
+        collectionContentNextPageTokens.collectionsNextPageToken,
+        collectionContentNextPageTokens.workbooksNextPageToken,
     ]);
 
-    const {getCollectionActions, getWorkbookActions} = useActions({refreshContent});
+    const {getCollectionActions, getWorkbookActions} = useActions({
+        fetchCollectionContent,
+        onCloseMoveDialog,
+    });
 
-    if (isContentLoading && contentItems.length === 0) {
+    if (isCollectionContentLoading && items.length === 0) {
         return <SmartLoader size="l" />;
     }
 
-    if (contentItems.length === 0) {
+    if (items.length === 0) {
         if (isDefaultFilters) {
             return (
                 <AnimateBlock className={b('empty-state')}>
@@ -138,7 +158,7 @@ export const CollectionContent: React.FC<Props> = ({
                             if (canCreateWorkbook) {
                                 return (
                                     <Button
-                                        className={b('controls')}
+                                        className={b('placeholder-controls')}
                                         onClick={onCreateWorkbookClick}
                                     >
                                         {i18n('action_create-workbook')}
@@ -159,7 +179,10 @@ export const CollectionContent: React.FC<Props> = ({
                     description={i18n('section_incorrect-filters')}
                     renderAction={() => {
                         return (
-                            <Button className={b('controls')} onClick={onClearFiltersClick}>
+                            <Button
+                                className={b('placeholder-controls')}
+                                onClick={onClearFiltersClick}
+                            >
                                 {i18n('action_clear-filters')}
                             </Button>
                         );
@@ -171,44 +194,42 @@ export const CollectionContent: React.FC<Props> = ({
 
     return (
         <div className={b()}>
-            {collectionPageViewMode === CollectionPageViewMode.Grid ? (
+            {viewMode === CollectionPageViewMode.Grid ? (
                 <CollectionContentGrid
-                    contentItems={contentItems}
-                    countItemsWithPermissionMove={countItemsWithPermissionMove}
-                    getWorkbookActions={getWorkbookActions}
-                    getCollectionActions={getCollectionActions}
-                    onUpdateCheckbox={onUpdateCheckbox}
-                    onSelectAll={onSelectAll}
                     selectedMap={selectedMap}
                     isOpenSelectionMode={isOpenSelectionMode}
+                    getWorkbookActions={getWorkbookActions}
+                    getCollectionActions={getCollectionActions}
+                    onUpdateCheckboxClick={onUpdateCheckboxClick}
                 />
             ) : (
                 <CollectionContentTable
-                    contentItems={contentItems}
-                    countItemsWithPermissionMove={countItemsWithPermissionMove}
+                    selectedMap={selectedMap}
+                    itemsAvailableForSelectionCount={itemsAvailableForSelection.length}
                     getWorkbookActions={getWorkbookActions}
                     getCollectionActions={getCollectionActions}
-                    onUpdateCheckbox={onUpdateCheckbox}
-                    onSelectAll={onSelectAll}
-                    selectedMap={selectedMap}
-                    countSelected={countSelected}
-                    canMove={canMove}
+                    onUpdateCheckboxClick={onUpdateCheckboxClick}
+                    onUpdateAllCheckboxesClick={onUpdateAllCheckboxesClick}
                 />
             )}
 
-            {Boolean(countSelected) && (
+            {Object.keys(selectedMap).length > 0 && (
                 <div className={b('batch-panel-placeholder')}>
                     <BatchPanel
-                        count={countSelected}
-                        onAction={setBatchAction}
+                        count={Object.keys(selectedMap).length}
+                        onAction={onMoveSelectedEntitiesClick}
                         className={b('batch-panel')}
                         onClose={resetSelected}
                     />
                 </div>
             )}
 
-            {isContentLoading && <SmartLoader className={b('loader')} size="m" showAfter={0} />}
-            {!isContentLoading && !waypointDisabled && <Waypoint onEnter={onWaypointEnter} />}
+            {isCollectionContentLoading && (
+                <SmartLoader className={b('loader')} size="m" showAfter={0} />
+            )}
+            {!isCollectionContentLoading && !waypointDisabled && (
+                <Waypoint onEnter={onWaypointEnter} />
+            )}
         </div>
     );
 };

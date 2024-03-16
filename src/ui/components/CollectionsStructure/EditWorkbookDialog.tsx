@@ -65,6 +65,7 @@ export const EditWorkbookDialog: React.FC<Props> = (props) => {
             textButtonApply={i18n('action_save')}
             open={open}
             isLoading={isLoading}
+            titleAutoFocus
             onApply={handleApply}
             onClose={onClose}
         />

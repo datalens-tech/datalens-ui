@@ -1,20 +1,26 @@
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {Checkbox, DropdownMenu} from '@gravity-ui/uikit';
+import {Checkbox, DropdownMenu, DropdownMenuItem} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 
+import type {
+    CollectionWithPermissions,
+    WorkbookWithPermissions,
+} from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {CollectionIcon} from '../../../../components/CollectionIcon/CollectionIcon';
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
+import {COLLECTIONS_PATH, WORKBOOKS_PATH} from '../../../collections-navigation/constants';
 import {setCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
 import {selectCollectionBreadcrumbs} from '../../../collections-navigation/store/selectors';
 import {setWorkbook} from '../../../workbooks/store/actions';
 import {setCollection} from '../../store/actions';
-import {CollectionContentTableProps} from '../types';
+import {selectCollectionContentItems} from '../../store/selectors';
+import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
 
 import './CollectionContentTable.scss';
 
@@ -22,26 +28,39 @@ const i18n = I18n.keyset('collections');
 
 const b = block('dl-collection-content-table');
 
-export const CollectionContentTable = React.memo<CollectionContentTableProps>(
+type Props = {
+    selectedMap: SelectedMap;
+    itemsAvailableForSelectionCount: number;
+    getWorkbookActions: (
+        item: WorkbookWithPermissions,
+    ) => (DropdownMenuItem[] | DropdownMenuItem)[];
+    getCollectionActions: (
+        item: CollectionWithPermissions,
+    ) => (DropdownMenuItem[] | DropdownMenuItem)[];
+    onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
+    onUpdateAllCheckboxesClick: (checked: boolean) => void;
+};
+
+export const CollectionContentTable = React.memo<Props>(
     ({
-        contentItems,
-        countItemsWithPermissionMove,
+        selectedMap,
+        itemsAvailableForSelectionCount,
         getWorkbookActions,
         getCollectionActions,
-        onUpdateCheckbox,
-        onSelectAll,
-        selectedMap,
-        countSelected,
-        canMove,
+        onUpdateCheckboxClick,
+        onUpdateAllCheckboxesClick,
     }) => {
         const dispatch = useDispatch();
 
+        const items = useSelector(selectCollectionContentItems);
         const breadcrumbs = useSelector(selectCollectionBreadcrumbs) ?? [];
 
+        const selectedCount = Object.keys(selectedMap).length;
+
         const checkboxPropsSelected = React.useMemo(() => {
-            if (canMove) {
-                if (countSelected > 0) {
-                    if (countSelected === countItemsWithPermissionMove) {
+            if (itemsAvailableForSelectionCount > 0) {
+                if (selectedCount > 0) {
+                    if (selectedCount === itemsAvailableForSelectionCount) {
                         return {checked: true};
                     } else {
                         return {indeterminate: true};
@@ -52,7 +71,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
             } else {
                 return {disabled: true};
             }
-        }, [countSelected, canMove, countItemsWithPermissionMove]);
+        }, [selectedCount, itemsAvailableForSelectionCount]);
 
         return (
             <div className={b()}>
@@ -64,8 +83,8 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                     <Checkbox
                                         size="l"
                                         onUpdate={() => {
-                                            onSelectAll(
-                                                countSelected !== countItemsWithPermissionMove,
+                                            onUpdateAllCheckboxesClick(
+                                                selectedCount !== itemsAvailableForSelectionCount,
                                             );
                                         }}
                                         {...checkboxPropsSelected}
@@ -80,7 +99,7 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                         </div>
 
                         <div className={b('content')}>
-                            {contentItems.map((item) => {
+                            {items.map((item) => {
                                 const canMoveItem = item.permissions.move;
 
                                 const actions =
@@ -92,8 +111,8 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                     <Link
                                         to={
                                             'workbookId' in item
-                                                ? `/workbooks/${item.workbookId}`
-                                                : `/collections/${item.collectionId}`
+                                                ? `${WORKBOOKS_PATH}/${item.workbookId}`
+                                                : `${COLLECTIONS_PATH}/${item.collectionId}`
                                         }
                                         key={
                                             'workbookId' in item
@@ -127,17 +146,17 @@ export const CollectionContentTable = React.memo<CollectionContentTableProps>(
                                                 size="l"
                                                 onUpdate={(checked) => {
                                                     if ('workbookId' in item) {
-                                                        onUpdateCheckbox(
-                                                            item.workbookId,
-                                                            'workbook',
+                                                        onUpdateCheckboxClick({
+                                                            entityId: item.workbookId,
+                                                            type: 'workbook',
                                                             checked,
-                                                        );
+                                                        });
                                                     } else {
-                                                        onUpdateCheckbox(
-                                                            item.collectionId,
-                                                            'collection',
+                                                        onUpdateCheckboxClick({
+                                                            entityId: item.collectionId,
+                                                            type: 'collection',
                                                             checked,
-                                                        );
+                                                        });
                                                     }
                                                 }}
                                                 disabled={!canMoveItem}

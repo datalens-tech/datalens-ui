@@ -82,7 +82,7 @@ export const WorkbookPage = () => {
         }
     }, [dispatch, collectionId]);
 
-    useLayout({workbookId, scope, refreshWorkbookInfo});
+    useLayout({workbookId, refreshWorkbookInfo});
 
     if (
         pageError ||

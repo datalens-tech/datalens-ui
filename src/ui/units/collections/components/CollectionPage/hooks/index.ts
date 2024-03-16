@@ -1,5 +1,5 @@
 export * from './useLayout';
-export * from './useSelectionMode';
+export * from './useSelection';
 export * from './useViewMode';
 export * from './useFilters';
 export * from './useData';

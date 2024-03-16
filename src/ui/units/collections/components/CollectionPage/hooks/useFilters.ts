@@ -2,24 +2,30 @@ import React from 'react';
 
 import {CollectionContentFilters} from '../../../../../components/CollectionFilters';
 import {CollectionFiltersStorage} from '../../../../../utils';
-import {SelectedMap} from '../../types';
 import {getUserDefaultFilters} from '../utils';
 
 type UseViewModeArgs = {
     curCollectionId: string | null;
-    setSelectedMap: (value: SelectedMap) => void;
+    closeSelectionMode: () => void;
+    resetSelected: () => void;
 };
 
-export const useFilters = ({curCollectionId, setSelectedMap}: UseViewModeArgs) => {
+export const useFilters = ({
+    curCollectionId,
+    closeSelectionMode,
+    resetSelected,
+}: UseViewModeArgs) => {
     const [filters, setFilters] = React.useState<CollectionContentFilters>(getUserDefaultFilters());
 
     const updateFilters = React.useCallback(
         (newFilters: CollectionContentFilters) => {
-            setSelectedMap({});
+            closeSelectionMode();
+            resetSelected();
+
             CollectionFiltersStorage.store(newFilters);
             setFilters(newFilters);
         },
-        [setSelectedMap],
+        [closeSelectionMode, resetSelected],
     );
 
     React.useEffect(() => {

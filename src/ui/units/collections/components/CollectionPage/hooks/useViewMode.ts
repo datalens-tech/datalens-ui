@@ -7,29 +7,43 @@ import {
 import Utils from '../../../../../utils';
 import {getUserDefaultCollectionPageViewMode} from '../utils';
 
+import {SelectedMap} from './useSelection';
+
 type UseViewModeArgs = {
-    countSelected: number;
-    setIsOpenSelectionMode: (value: boolean) => void;
+    selectedMap: SelectedMap;
+    openSelectionMode: () => void;
+    closeSelectionMode: () => void;
 };
 
-export const useViewMode = ({countSelected, setIsOpenSelectionMode}: UseViewModeArgs) => {
-    const [collectionPageViewMode, setCollectionPageViewMode] =
-        React.useState<CollectionPageViewMode>(getUserDefaultCollectionPageViewMode());
+export const useViewMode = ({
+    selectedMap,
+    openSelectionMode,
+    closeSelectionMode,
+}: UseViewModeArgs) => {
+    const [viewMode, setViewMode] = React.useState<CollectionPageViewMode>(
+        getUserDefaultCollectionPageViewMode(),
+    );
 
-    const onChangeCollectionPageViewMode = React.useCallback(
+    const changeViewMode = React.useCallback(
         (value: CollectionPageViewMode) => {
-            Utils.store(collectionPageViewModeStore, value);
-            setCollectionPageViewMode(value);
-
-            if (value === CollectionPageViewMode.Grid && countSelected === 0) {
-                setIsOpenSelectionMode(false);
+            if (value === CollectionPageViewMode.Grid) {
+                if (Object.keys(selectedMap).length > 0) {
+                    openSelectionMode();
+                } else {
+                    closeSelectionMode();
+                }
+            } else {
+                closeSelectionMode();
             }
+
+            Utils.store(collectionPageViewModeStore, value);
+            setViewMode(value);
         },
-        [countSelected, setIsOpenSelectionMode],
+        [closeSelectionMode, openSelectionMode, selectedMap],
     );
 
     return {
-        collectionPageViewMode,
-        onChangeCollectionPageViewMode,
+        viewMode,
+        changeViewMode,
     };
 };

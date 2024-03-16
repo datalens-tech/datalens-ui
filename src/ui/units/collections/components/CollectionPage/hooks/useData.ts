@@ -18,8 +18,8 @@ import {
     resetCollection,
     resetCollectionContent,
 } from '../../../store/actions';
-import {selectRootCollectionPermissionsData} from '../../../store/selectors';
-import {PAGE_SIZE} from '../constants';
+import {selectRootCollectionPermissions} from '../../../store/selectors';
+import {PAGE_SIZE} from '../../constants';
 
 type UseDataArgs = {
     curCollectionId: string | null;
@@ -29,7 +29,7 @@ type UseDataArgs = {
 export const useData = ({curCollectionId, filters}: UseDataArgs) => {
     const dispatch: AppDispatch = useDispatch();
 
-    const rootPermissions = useSelector(selectRootCollectionPermissionsData);
+    const rootPermissions = useSelector(selectRootCollectionPermissions);
 
     const getCollectionContentRecursively = React.useCallback(
         (
