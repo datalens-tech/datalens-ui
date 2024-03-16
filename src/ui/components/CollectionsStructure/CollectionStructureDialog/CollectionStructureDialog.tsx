@@ -77,11 +77,11 @@ export type Props = {
     type: ResourceType;
     initialCollectionId: string | null;
     defaultTitle?: string;
-    operationDeniedMessage: string;
+    operationDeniedMessage?: string;
     canSelectInitialCollectionId?: boolean;
     caption: string;
     textButtonApply: string;
-    applyIsLoading: boolean;
+    applyIsLoading?: boolean;
     workbookSelectionMode: boolean;
     massMoveMode?: boolean;
     onApply: ({
@@ -106,7 +106,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         canSelectInitialCollectionId = true,
         caption,
         textButtonApply,
-        applyIsLoading,
+        applyIsLoading = false,
         workbookSelectionMode,
         massMoveMode,
         onApply,

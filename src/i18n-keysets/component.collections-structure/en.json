@@ -11,8 +11,12 @@
   "action_edit-workbook": "Edit workbook",
   "action_move": "Move",
   "action_save": "Save",
+  "label_connection": "connection",
   "label_copy": "Copy to",
   "label_copy-denied-title": "Insufficient permissions to copy",
+  "label_create-entry-in-workbook": "Choose a workbook to create a",
+  "label_dashboard": "dashboard",
+  "label_dataset": "dataset",
   "label_delete-collection": "Delete collection",
   "label_delete-workbook": "Delete workbook",
   "label_deploy": "Deploy to",
@@ -21,7 +25,9 @@
   "label_empty-collection": "The collection is empty or nothing matching the filter conditions was found",
   "label_move": "Move to",
   "label_move-denied-title": "Insufficient permissions to move object",
+  "label_ql": "ql chart",
   "label_title": "Name",
+  "label_wizard": "chart",
   "section_delete-collection": "Are you sure you want to delete this collection \"{{name}}\"?",
   "section_delete-workbook": "Are you sure you want to delete workbook \"{{name}}\"?"
 }

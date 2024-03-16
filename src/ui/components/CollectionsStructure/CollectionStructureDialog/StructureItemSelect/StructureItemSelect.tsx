@@ -41,7 +41,7 @@ export type Props = {
     };
     pageSize: number;
     isSelectionAllowed: boolean;
-    operationDeniedMessage: string;
+    operationDeniedMessage?: string;
     canSelectWorkbook: boolean;
     disabled?: boolean;
     getCollectionContentRecursively: (
