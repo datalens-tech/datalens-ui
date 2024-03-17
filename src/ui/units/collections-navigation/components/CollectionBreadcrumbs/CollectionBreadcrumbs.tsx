@@ -93,7 +93,7 @@ export const CollectionBreadcrumbs = React.memo<Props>(
 
         return (
             <div className={b(null, className)}>
-                <UIKitBreadcrumbs<BreadcrumbsItem>
+                <UIKitBreadcrumbs
                     items={items}
                     firstDisplayedItemsCount={FirstDisplayedItemsCount.One}
                     lastDisplayedItemsCount={LastDisplayedItemsCount.One}
