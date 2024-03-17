@@ -160,17 +160,12 @@ export const CollectionActions = React.memo<Props>(
                         size="s"
                         items={createActionItems}
                         switcherWrapperClassName={b('create-wrapper')}
-                        renderSwitcher={(props) => {
-                            if (createActionItems.length > 0) {
-                                return (
-                                    <Button {...props} view="action" className={b('create')}>
-                                        {i18n('action_create')}
-                                        <Icon data={ChevronDown} />
-                                    </Button>
-                                );
-                            }
-                            return null;
-                        }}
+                        switcher={
+                            <Button view="action" className={b('create')}>
+                                {i18n('action_create')}
+                                <Icon data={ChevronDown} />
+                            </Button>
+                        }
                     />
                 )}
             </div>

@@ -1,12 +1,12 @@
 import React, {Fragment} from 'react';
 
-import {DIALOG_CREATE_ENTRY_IN_WORKBOOK} from 'platform/src/ui/components/CollectionsStructure';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {Link, withRouter} from 'react-router-dom';
 import {ENTRY_TYPES, EntryScope, Feature} from 'shared';
 import {closeNavigation} from 'store/actions/asideHeader/navigation';
 
+import {DIALOG_CREATE_ENTRY_IN_WORKBOOK} from '../../../components/CollectionsStructure';
 import {URL_QUERY} from '../../../constants/common';
 import navigateHelper from '../../../libs/navigateHelper';
 import {registry} from '../../../registry';
