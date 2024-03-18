@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux';
-import * as jsondiffpatch from 'jsondiffpatch';
+import jsondiffpatch from 'jsondiffpatch';
 
 import {
     INIT_EDIT_HISTORY_UNIT,

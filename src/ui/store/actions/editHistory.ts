@@ -1,6 +1,6 @@
 import {cloneDeep} from 'lodash';
 import {Dispatch} from 'redux';
-import * as jsondiffpatch from 'jsondiffpatch';
+import jsondiffpatch from 'jsondiffpatch';
 
 import {DatalensGlobalState} from 'ui';
 
