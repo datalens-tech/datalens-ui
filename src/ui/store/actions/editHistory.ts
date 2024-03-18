@@ -1,28 +1,42 @@
 import {cloneDeep} from 'lodash';
 import {Dispatch} from 'redux';
+import * as jsondiffpatch from 'jsondiffpatch';
+
 import {DatalensGlobalState} from 'ui';
 
-import type {EditHistoryUnit, EditHistoryState} from '../reducers/editHistory';
+import type {EditHistoryUnit, EditHistoryState, Diff} from '../reducers/editHistory';
+
+const PROPERTY_IGNORE_LIST = ['highchartsWidget'];
+
+const jdp = jsondiffpatch.create({
+    propertyFilter: function (name) {
+        return !PROPERTY_IGNORE_LIST.includes(name);
+    },
+});
 
 export const INIT_EDIT_HISTORY_UNIT = Symbol('editHistory/INIT_EDIT_HISTORY_UNIT');
 export const RESET_EDIT_HISTORY_UNIT = Symbol('editHistory/RESET_EDIT_HISTORY_UNIT');
 export const ADD_EDIT_HISTORY_POINT = Symbol('editHistory/ADD_EDIT_HISTORY_POINT');
 export const SET_EDIT_HISTORY_POINT_INDEX = Symbol('editHistory/SET_EDIT_HISTORY_POINT_INDEX');
+export const SET_EDIT_HISTORY_CURRENT_STATE = Symbol('editHistory/SET_EDIT_HISTORY_CURRENT_STATE');
 
 interface AddEditHistoryPointAction {
     type: typeof ADD_EDIT_HISTORY_POINT;
     unitId: string;
-    pointState: unknown;
+    diff: Diff | null;
+    state: unknown;
 }
 
 function _addEditHistoryPoint({
     unitId,
-    pointState,
+    diff,
+    state,
 }: Omit<AddEditHistoryPointAction, 'type'>): AddEditHistoryPointAction {
     return {
         type: ADD_EDIT_HISTORY_POINT,
         unitId,
-        pointState,
+        diff,
+        state,
     };
 }
 
@@ -55,26 +69,60 @@ export function resetEditHistoryUnit({unitId}: Omit<ResetEditHistoryUnitAction, 
 interface SetEditHistoryPointIndexAction {
     type: typeof SET_EDIT_HISTORY_POINT_INDEX;
     unitId: string;
-    historyPointIndex: number;
+    pointIndex: number;
 }
 
 function _setEditHistoryPointIndex({
     unitId,
-    historyPointIndex,
+    pointIndex,
 }: Omit<SetEditHistoryPointIndexAction, 'type'>): SetEditHistoryPointIndexAction {
     return {
         type: SET_EDIT_HISTORY_POINT_INDEX,
         unitId,
-        historyPointIndex,
+        pointIndex,
+    };
+}
+
+interface SetEditHistoryPointStateAction {
+    type: typeof SET_EDIT_HISTORY_CURRENT_STATE;
+    unitId: string;
+    pointState: unknown;
+}
+
+function _setEditHistoryCurrentState({
+    unitId,
+    pointState,
+}: Omit<SetEditHistoryPointStateAction, 'type'>): SetEditHistoryPointStateAction {
+    return {
+        type: SET_EDIT_HISTORY_CURRENT_STATE,
+        unitId,
+        pointState,
     };
 }
 
 export function addEditHistoryPoint({unitId}: {unitId: string}) {
     return function (dispatch: Dispatch, getState: () => DatalensGlobalState) {
         const globalState = getState();
-        const {wizard: wizardState} = globalState;
+        const {
+            wizard: wizardState,
+            editHistory: {units},
+        } = globalState;
 
-        dispatch(_addEditHistoryPoint({unitId, pointState: cloneDeep(wizardState)}));
+        const newState = cloneDeep(wizardState);
+
+        const unit = units[unitId];
+
+        let diff = null;
+
+        // If unit.pointState is not initialized yet, then this is first state
+        // First state does not have any diffs, because it is first and initial
+        if (unit.pointState) {
+            const oldState = unit.pointState;
+
+            diff = jdp.diff(oldState, newState);
+        }
+
+        dispatch(_addEditHistoryPoint({unitId, diff, state: newState}));
     };
 }
 
@@ -88,38 +136,33 @@ function _getTargetUnit({units, unitId}: {units: EditHistoryState['units']; unit
     return targetUnit;
 }
 
-function _getTargetState({
-    states,
-    historyPointIndex,
-}: {
-    states: unknown[];
-    historyPointIndex: number;
-}) {
-    if (historyPointIndex < 0 || states.length - 1 < historyPointIndex) {
-        throw new Error('History point index is out of borders');
-    }
-
-    return cloneDeep(states[historyPointIndex]);
-}
-
 export function goBack({unitId}: {unitId: string}) {
     return function (dispatch: Dispatch, getState: () => DatalensGlobalState) {
         const globalState = getState();
 
         const {units} = globalState.editHistory;
 
-        const {states, historyPointIndex, setState} = _getTargetUnit({units, unitId});
+        const {diffs, pointIndex, pointState, setState} = _getTargetUnit({units, unitId});
 
-        const targetIndex = historyPointIndex - 1;
+        const targetIndex = pointIndex;
 
-        const targetState = _getTargetState({states, historyPointIndex: targetIndex});
+        const targetDiff = diffs[targetIndex];
+
+        if (!targetDiff) {
+            throw new Error('History point index out of bounds');
+        }
+
+        // Unapply last diff
+        const targetState = jdp.unpatch(cloneDeep(pointState), targetDiff);
 
         dispatch(
             _setEditHistoryPointIndex({
                 unitId,
-                historyPointIndex: targetIndex,
+                pointIndex: targetIndex - 1,
             }),
         );
+
+        dispatch(_setEditHistoryCurrentState({unitId, pointState: targetState}));
 
         dispatch(setState({state: targetState}));
     };
@@ -131,18 +174,28 @@ export function goForward({unitId}: {unitId: string}) {
 
         const {units} = globalState.editHistory;
 
-        const {states, historyPointIndex, setState} = _getTargetUnit({units, unitId});
+        const {diffs, pointIndex, pointState, setState} = _getTargetUnit({units, unitId});
 
-        const targetIndex = historyPointIndex + 1;
+        // New point index will be at next index
+        const targetIndex = pointIndex + 1;
 
-        const targetState = _getTargetState({states, historyPointIndex: targetIndex});
+        const targetDiff = diffs[targetIndex];
+
+        if (!targetDiff) {
+            throw new Error('History point index out of bounds');
+        }
+
+        // Apply next diff
+        const targetState = jdp.patch(cloneDeep(pointState), targetDiff);
 
         dispatch(
             _setEditHistoryPointIndex({
                 unitId,
-                historyPointIndex: targetIndex,
+                pointIndex: targetIndex,
             }),
         );
+
+        dispatch(_setEditHistoryCurrentState({unitId, pointState: targetState}));
 
         dispatch(setState({state: targetState}));
     };
@@ -152,4 +205,5 @@ export type EditHistoryAction =
     | InitEditHistoryUnitAction
     | ResetEditHistoryUnitAction
     | AddEditHistoryPointAction
-    | SetEditHistoryPointIndexAction;
+    | SetEditHistoryPointIndexAction
+    | SetEditHistoryPointStateAction;

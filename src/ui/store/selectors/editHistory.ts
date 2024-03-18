@@ -13,11 +13,13 @@ const _selectUnit = (state: DatalensGlobalState, {unitId}: {unitId: string}) => 
 export const selectCanGoBack = (state: DatalensGlobalState, {unitId}: {unitId: string}) => {
     const unit = _selectUnit(state, {unitId});
 
-    return unit.historyPointIndex > 0;
+    // Actual point index should not be initial
+    return unit.pointIndex > 0;
 };
 
 export const selectCanGoForward = (state: DatalensGlobalState, {unitId}: {unitId: string}) => {
     const unit = _selectUnit(state, {unitId});
 
-    return unit.historyPointIndex < unit.states.length - 1;
+    // Actual point index should not be last
+    return unit.pointIndex < unit.diffs.length - 1;
 };

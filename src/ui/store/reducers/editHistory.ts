@@ -1,4 +1,5 @@
 import {AnyAction} from 'redux';
+import * as jsondiffpatch from 'jsondiffpatch';
 
 import {
     INIT_EDIT_HISTORY_UNIT,
@@ -6,11 +7,15 @@ import {
     ADD_EDIT_HISTORY_POINT,
     SET_EDIT_HISTORY_POINT_INDEX,
     EditHistoryAction,
+    SET_EDIT_HISTORY_CURRENT_STATE,
 } from '../actions/editHistory';
 
+export type Diff = jsondiffpatch.Delta;
+
 export type EditHistoryUnit = {
-    states: unknown[];
-    historyPointIndex: number;
+    diffs: (Diff | null)[];
+    pointIndex: number;
+    pointState: unknown;
     setState: ({state}: {state: unknown}) => AnyAction;
 };
 
@@ -33,8 +38,9 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                     ...state.units,
 
                     [unitId]: {
-                        historyPointIndex: -1,
-                        states: [],
+                        pointIndex: -1,
+                        diffs: [],
+                        pointState: null,
                         setState,
                     },
                 },
@@ -49,21 +55,22 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                     ...state.units,
 
                     [unitId]: {
-                        historyPointIndex: -1,
-                        states: [],
+                        pointIndex: -1,
+                        diffs: [],
+                        pointState: null,
                         setState: state.units[unitId].setState,
                     },
                 },
             };
         }
         case ADD_EDIT_HISTORY_POINT: {
-            const {unitId, pointState} = action;
+            const {unitId, diff, state: newState} = action;
 
             const editHistoryUnit = state.units[unitId];
 
-            const {states, historyPointIndex, setState} = editHistoryUnit;
+            const {diffs, pointIndex, setState} = editHistoryUnit;
 
-            const prevStates = states.slice(0, historyPointIndex + 1);
+            const prevDiffs = diffs.slice(0, pointIndex + 1);
 
             return {
                 ...state,
@@ -72,9 +79,11 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                     ...state.units,
                     [unitId]: {
                         // Force current history point index to latest state
-                        historyPointIndex: historyPointIndex + 1,
+                        pointIndex: pointIndex + 1,
 
-                        states: [...prevStates, pointState],
+                        diffs: [...prevDiffs, diff],
+
+                        pointState: newState,
 
                         setState,
                     },
@@ -82,7 +91,7 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
             };
         }
         case SET_EDIT_HISTORY_POINT_INDEX: {
-            const {unitId, historyPointIndex} = action;
+            const {unitId, pointIndex} = action;
 
             const editHistoryUnit = state.units[unitId];
 
@@ -93,7 +102,24 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                     ...state.units,
                     [unitId]: {
                         ...editHistoryUnit,
-                        historyPointIndex,
+                        pointIndex,
+                    },
+                },
+            };
+        }
+        case SET_EDIT_HISTORY_CURRENT_STATE: {
+            const {unitId, pointState} = action;
+
+            const editHistoryUnit = state.units[unitId];
+
+            return {
+                ...state,
+
+                units: {
+                    ...state.units,
+                    [unitId]: {
+                        ...editHistoryUnit,
+                        pointState,
                     },
                 },
             };
