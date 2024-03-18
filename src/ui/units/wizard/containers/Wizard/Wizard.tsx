@@ -218,6 +218,12 @@ class Wizard extends React.Component<Props, State> {
 
             this.props.resetWizardStore();
 
+            if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+                this.props.resetEditHistoryUnit({
+                    unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+                });
+            }
+
             const entryId = newEntryId;
             const params: SetDefaultsArgs = {entryId};
             if (revId) {
@@ -235,13 +241,13 @@ class Wizard extends React.Component<Props, State> {
     componentWillUnmount() {
         window.removeEventListener('beforeunload', this.unloadConfirmation);
 
+        this.props.resetWizardStore();
+
         if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
             this.props.resetEditHistoryUnit({
                 unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
             });
         }
-
-        this.props.resetWizardStore();
     }
 
     render() {
