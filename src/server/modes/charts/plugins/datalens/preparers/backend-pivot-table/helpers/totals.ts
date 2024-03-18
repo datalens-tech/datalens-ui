@@ -29,7 +29,9 @@ export const setTotalsHeadersToRows = (rows: ChartkitTableRows, i18n: (key: stri
 
                 if (prevCell) {
                     const isParentMarkup =
-                        typeof prevCell.value === 'object' && 'content' in prevCell.value;
+                        prevCell.value &&
+                        typeof prevCell.value === 'object' &&
+                        'content' in prevCell.value;
 
                     const parentCellValue = isParentMarkup
                         ? markupToRawString(prevCell.value)
