@@ -578,6 +578,49 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
                 },
             ],
         },
+        d3_node: {
+            get name() {
+                return i18n('label_graph');
+            },
+            tabs: [
+                {
+                    name: 'Urls',
+                    id: 'url',
+                    language: 'javascript',
+                    docs: docsUrls,
+                },
+                {
+                    name: 'Params',
+                    id: 'params',
+                    language: 'javascript',
+                    docs: docsParams,
+                },
+                {
+                    name: 'JavaScript',
+                    id: 'js',
+                    language: 'javascript',
+                    docs: [
+                        {
+                            title: 'section_common-information',
+                            path: DOCS_PATH.CHART,
+                        },
+                        docsVendor,
+                    ],
+                },
+                {
+                    name: 'Controls',
+                    id: 'ui',
+                    language: 'javascript',
+                    docs: docsControls,
+                },
+                {
+                    name: 'Shared',
+                    id: 'shared',
+                    language: 'json',
+                    docs: docsShare,
+                },
+            ],
+        },
     } as Record<ChartEditorTypeKey, ChartEditorType>;
     return chartEditorTypes[type];
 }

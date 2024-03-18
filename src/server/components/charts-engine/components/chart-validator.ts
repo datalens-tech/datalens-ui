@@ -25,6 +25,8 @@ const MODEL_TABS = {
         'documentation_en,js',
         'js',
     ]),
+
+    d3_node: new Set(['js,params,shared,ui,url', 'js,params,secrets,shared,ui,url']),
 };
 
 export const chartValidator = {
