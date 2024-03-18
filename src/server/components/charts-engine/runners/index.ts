@@ -44,6 +44,7 @@ const runners: Runner[] = [
             'markdown_node',
             'markup_node',
             'timeseries_node',
+            'd3_node',
         ]),
         handler: runEditor,
     },
