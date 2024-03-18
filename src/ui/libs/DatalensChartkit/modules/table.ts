@@ -1,4 +1,4 @@
-import type {MarkupItem} from '../../../components/Markup';
+import type {MarkupItem} from '../../../../shared';
 
 export function markupToRawString(obj: MarkupItem, str = ''): string {
     let text = str;
