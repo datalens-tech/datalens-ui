@@ -62,7 +62,7 @@ function prepareChartData(
     let chart, links;
 
     try {
-        if (template) {
+        if (typeof template !== 'undefined') {
             ({chart, type, links} = generator.generateChart({data, template, req, ctx}));
 
             // Convert from wizard to editor script
