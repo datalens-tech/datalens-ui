@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux';
-import jsondiffpatch from 'jsondiffpatch';
+import {Delta as JDPDelta} from 'jsondiffpatch';
 
 import {
     INIT_EDIT_HISTORY_UNIT,
@@ -10,7 +10,7 @@ import {
     SET_EDIT_HISTORY_CURRENT_STATE,
 } from '../actions/editHistory';
 
-export type Diff = jsondiffpatch.Delta;
+export type Diff = JDPDelta;
 
 export type EditHistoryUnit = {
     diffs: (Diff | null)[];

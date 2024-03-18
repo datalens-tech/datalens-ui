@@ -1,6 +1,6 @@
 import {cloneDeep} from 'lodash';
 import {Dispatch} from 'redux';
-import jsondiffpatch from 'jsondiffpatch';
+import {create as jdpCreate} from 'jsondiffpatch';
 
 import {DatalensGlobalState} from 'ui';
 
@@ -8,7 +8,7 @@ import type {EditHistoryUnit, EditHistoryState, Diff} from '../reducers/editHist
 
 const PROPERTY_IGNORE_LIST = ['highchartsWidget'];
 
-const jdp = jsondiffpatch.create({
+const jdp = jdpCreate({
     propertyFilter: function (name) {
         return !PROPERTY_IGNORE_LIST.includes(name);
     },
