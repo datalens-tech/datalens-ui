@@ -614,6 +614,11 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
                     docs: docsControls,
                 },
                 {
+                    name: 'Config',
+                    id: 'config',
+                    language: 'javascript',
+                },
+                {
                     name: 'Shared',
                     id: 'shared',
                     language: 'json',
