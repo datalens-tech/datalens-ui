@@ -14,17 +14,15 @@
 }
 
 .dl-table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    min-width: 100%;
+    width: max-content;
+
     &__title {
         font-weight: 700;
         padding: 5px 40px 5px 0;
         text-align: right;
-    }
-
-    &__table {
-        border-collapse: collapse;
-        table-layout: fixed;
-        min-width: 100%;
-        width: max-content;
     }
 
     &__th,

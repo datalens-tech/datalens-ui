@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {RowData} from '@tanstack/react-table';
+import type {RowData} from '@tanstack/react-table';
 
 declare module '@tanstack/react-table' {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -40,7 +40,7 @@ export type TData = CellData[];
 
 export type TFoot = CellData;
 
-export type OnTableClick = (args: {row?: TData; cell?: CellData; event: React.MouseEvent}) => void;
+export type OnCellClickFn = (args: {row?: TData; cell?: CellData; event: React.MouseEvent}) => void;
 
 export type TableProps = {
     title?: {text: string};
@@ -55,14 +55,8 @@ export type TableProps = {
     header?: {
         sticky?: boolean;
     };
-    onClick?: OnTableClick;
-    qa?: {
-        header?: string;
-        body?: string;
-        footer?: string;
-        row?: string;
-        cell?: string;
-    };
+    onCellClick?: OnCellClickFn;
+    qa?: string;
     manualSorting?: boolean;
     onSortingChange?: (args: {cell?: THead; sortOrder?: 'asc' | 'desc'}) => void;
 };
