@@ -1,4 +1,4 @@
-import {MarkupItem} from '../../../../../components/Markup/types';
+import type {MarkupItem} from '../../../../../../shared';
 
 export type MarkupUserInfoProps = {
     userId: string;

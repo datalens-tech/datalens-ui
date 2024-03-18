@@ -14,6 +14,7 @@ import {
     ChartsInsightsItem,
     GraphTooltipLine,
     GraphWidgetEventScope,
+    MarkupItem,
     StringParams,
     TableCell,
     TableHead,
@@ -22,7 +23,6 @@ import {
     TableWidgetEventScope,
     WidgetEvent,
 } from '../../../../shared';
-import {MarkupItem} from '../../../components/Markup';
 import {ChartsData} from '../modules/data-provider/charts';
 
 import {CombinedError} from './common';
