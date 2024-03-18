@@ -1,5 +1,5 @@
-import React from 'react';
-import {Route, Switch, Redirect} from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {Route, Switch, Redirect, useLocation} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import {reducerRegistry} from '../store';
 import coreReducers from 'store/reducers';
@@ -13,6 +13,8 @@ import DashAndWizardQLPages, {
 import {locationChangeHandler} from './helpers';
 import {isEmbeddedMode, isTvMode} from '../utils/embedded';
 import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAdapter';
+
+import AuthPage from './pages/AuthPage/AuthPage';
 
 reducerRegistry.register(coreReducers);
 
@@ -32,8 +34,14 @@ const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/Ser
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
 const WorkbookPage = React.lazy(() => import('./pages/WorkbookPage/WorkbookPage'));
 
-const DatalensPageView = () => {
+const AuthContext = React.createContext("");
+
+const DatalensPageView = (props: any) => {
+    var token = props.token;
+    //var setToken = props.setToken;
+
     const isLanding = useSelector(selectIsLanding);
+    const location = useLocation()
 
     if (isLanding) {
         return (
@@ -42,55 +50,69 @@ const DatalensPageView = () => {
             </React.Suspense>
         );
     }
-
     return (
-        <React.Suspense fallback={<FallbackPage />}>
-            <Switch>
-                <Route
-                    path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
-                    component={DatasetPage}
-                />
-                <Route path="/editor" component={EditorPage} />
-                <Route path="/preview" component={PreviewPage} />
-                <Route
-                    path={[
-                        '/connections/:id',
-                        '/workbooks/:workbookId/connections/new/:type',
-                        '/workbooks/:workbookId/connections/new',
-                    ]}
-                    component={ConnectionsPage}
-                />
+        <AuthContext.Provider value={token}>
+            <React.Suspense fallback={<FallbackPage />}>
+                <Switch>
+                    {!token && location?.pathname !== "/auth" && <Redirect from="*" to="/auth"/>}
+                    {token && <Redirect from="/auth" to="/"/>}
+                    <Route
+                        path={'/auth'}
+                        component={AuthPage}
+                    />
+                    <Route
+                        path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
+                        component={DatasetPage}
+                    />
+                    <Route path="/editor" component={EditorPage} />
+                    <Route path="/preview" component={PreviewPage} />
+                    <Route
+                        path={[
+                            '/connections/:id',
+                            '/workbooks/:workbookId/connections/new/:type',
+                            '/workbooks/:workbookId/connections/new',
+                        ]}
+                        component={ConnectionsPage}
+                    />
 
-                <Route
-                    path={['/collections/:collectionId', '/collections']}
-                    component={CollectionPage}
-                />
+                    <Route
+                        path={['/collections/:collectionId', '/collections']}
+                        component={CollectionPage}
+                    />
 
-                <Route exact path="/workbooks/:workbookId" component={WorkbookPage} />
+                    <Route exact path="/workbooks/:workbookId" component={WorkbookPage} />
 
-                <Route path="/settings" component={ServiceSettings} />
+                    <Route path="/settings" component={ServiceSettings} />
 
-                <Route exact path={dashAndWizardQLRoutes} component={DashAndWizardQLPages} />
-                <Route path="/">
-                    <Redirect to={`/collections${location.search}`} />
-                </Route>
+                    <Route exact path={dashAndWizardQLRoutes} component={DashAndWizardQLPages} />
+                    <Route path="/">
+                        <Redirect to={`/collections${location.search}`} />
+                    </Route>
 
-                {/* comment till we have main page */}
-                {/*<Route path="/" component={MainPage} />*/}
-            </Switch>
-            <LocationChange onLocationChanged={locationChangeHandler} />
-        </React.Suspense>
+                    {/* comment till we have main page */}
+                    {/*<Route path="/" component={MainPage} />*/}
+                </Switch>
+                <LocationChange onLocationChanged={locationChangeHandler} />
+            </React.Suspense>
+        </AuthContext.Provider>
     );
 };
 
 const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
-
-    if (showAsideHeaderAdapter) {
-        return <AsideHeaderAdapter renderContent={() => <DatalensPageView />} />;
+    const [token, setToken] = React.useState("");
+    
+    useEffect(()=>{
+        setTimeout(()=>{
+            setToken("adasd")
+        }, 1000)
+    }, []);
+    
+    if (token && showAsideHeaderAdapter) {
+        return <AsideHeaderAdapter renderContent={() => <DatalensPageView token={token} setToken={setToken} />} />;
     }
 
-    return <DatalensPageView />;
+    return <DatalensPageView token={token} setToken={setToken} />;
 };
 
 export default DatalensPage;
