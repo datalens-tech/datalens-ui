@@ -3,10 +3,13 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {batch} from 'react-redux';
 import {Dispatch} from 'redux';
+
+import {DatalensGlobalState} from '../../..';
 import {
     ColorsConfig,
     CommonPlaceholders,
     Dataset,
+    Feature,
     Field,
     FilterField,
     HierarchyField,
@@ -18,15 +21,14 @@ import {
     Update,
     VisualizationWithLayersShared,
     isVisualizationWithLayers,
-} from 'shared';
-import {DatalensGlobalState} from 'ui';
-import {DatasetState} from 'ui/units/wizard/reducers/dataset';
-import {VisualizationState} from 'ui/units/wizard/reducers/visualization';
-import {WidgetState} from 'ui/units/wizard/reducers/widget';
-
+} from '../../../../shared';
 import {addEditHistoryPoint} from '../../../store/actions/editHistory';
+import Utils from '../../../utils';
 import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../constants';
 import {WizardDispatch} from '../reducers';
+import {DatasetState} from '../reducers/dataset';
+import {VisualizationState} from '../reducers/visualization';
+import {WidgetState} from '../reducers/widget';
 import {
     actualizeUpdates,
     extractFieldsFromDatasets,
@@ -206,7 +208,9 @@ export function updatePreviewAndClientChartsConfig(
             if (isRedrawDone && !preview.previewEntryId) {
                 dispatch(updateClientChartsConfig(updateClientChartsConfigArgs));
 
-                dispatch(addEditHistoryPoint({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+                if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+                    dispatch(addEditHistoryPoint({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+                }
             }
         });
     };

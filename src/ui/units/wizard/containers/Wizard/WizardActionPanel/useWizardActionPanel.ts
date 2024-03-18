@@ -10,10 +10,13 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 
+import {Feature} from '../../../../../../shared';
 import {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
+import Utils from '../../../../../utils';
 import {toggleFullscreen} from '../../../actions/settings';
+import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../../constants';
 
 const b = block('wizard-action-panel');
 
@@ -23,8 +26,8 @@ export type UseWizardActionPanelArgs = {
     isViewOnlyMode: boolean;
     chartKitRef: React.RefObject<ChartKit>;
     isFullscreen: boolean;
-    canGoBack: boolean;
-    canGoForward: boolean;
+    canGoBack: boolean | null;
+    canGoForward: boolean | null;
 };
 
 export const useWizardActionPanel = (
@@ -42,6 +45,8 @@ export const useWizardActionPanel = (
         canGoForward,
     } = args;
 
+    const enableEditHistory = Utils.isEnabledFeature(Feature.EnableEditHistory);
+
     const defaultButtons: AdditionalButtonTemplate[] = React.useMemo<
         AdditionalButtonTemplate[]
     >(() => {
@@ -50,27 +55,35 @@ export const useWizardActionPanel = (
             size: 16,
         };
 
+        let items: AdditionalButtonTemplate[] = [];
+
+        if (enableEditHistory) {
+            items = [
+                {
+                    key: 'undo',
+                    action: () => {
+                        dispatch(goBack({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+                    },
+                    className: b('undo-btn'),
+                    icon: {data: ArrowUturnCcwLeft, size: 16},
+                    view: 'flat',
+                    disabled: !canGoBack,
+                },
+                {
+                    key: 'redo',
+                    action: () => {
+                        dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+                    },
+                    className: b('redo-btn'),
+                    icon: {data: ArrowUturnCwRight, size: 16},
+                    view: 'flat',
+                    disabled: !canGoForward,
+                },
+            ];
+        }
+
         return [
-            {
-                key: 'undo',
-                action: () => {
-                    dispatch(goBack({unitId: 'wizard'}));
-                },
-                className: b('undo-btn'),
-                icon: {data: ArrowUturnCcwLeft, size: 16},
-                view: 'flat',
-                disabled: !canGoBack,
-            },
-            {
-                key: 'redo',
-                action: () => {
-                    dispatch(goForward({unitId: 'wizard'}));
-                },
-                className: b('redo-btn'),
-                icon: {data: ArrowUturnCwRight, size: 16},
-                view: 'flat',
-                disabled: !canGoForward,
-            },
+            ...items,
             {
                 key: 'fullscreen',
                 action: () => {

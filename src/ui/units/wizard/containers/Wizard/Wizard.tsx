@@ -156,14 +156,16 @@ class Wizard extends React.Component<Props, State> {
             dialogSettingsVisible: false,
         };
 
-        this.props.initEditHistoryUnit({
-            unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-            setState: ({state}) => {
-                return this.props.setWizardStore({
-                    store: state as unknown as WizardGlobalState,
-                });
-            },
-        });
+        if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+            this.props.initEditHistoryUnit({
+                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+                setState: ({state}) => {
+                    return this.props.setWizardStore({
+                        store: state as unknown as WizardGlobalState,
+                    });
+                },
+            });
+        }
     }
 
     componentDidMount() {
@@ -233,9 +235,11 @@ class Wizard extends React.Component<Props, State> {
     componentWillUnmount() {
         window.removeEventListener('beforeunload', this.unloadConfirmation);
 
-        this.props.resetEditHistoryUnit({
-            unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-        });
+        if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+            this.props.resetEditHistoryUnit({
+                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+            });
+        }
 
         this.props.resetWizardStore();
     }
@@ -307,9 +311,11 @@ class Wizard extends React.Component<Props, State> {
             isWidgetWasSaved: true,
         });
 
-        this.props.resetEditHistoryUnit({
-            unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-        });
+        if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+            this.props.resetEditHistoryUnit({
+                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+            });
+        }
     };
 
     openSaveWidgetDialog = async (mode?: EntryUpdateMode) => {
@@ -327,13 +333,15 @@ class Wizard extends React.Component<Props, State> {
 
             await this.props.reloadRevisionsOnSave(true);
 
-            this.props.resetEditHistoryUnit({
-                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-            });
+            if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+                this.props.resetEditHistoryUnit({
+                    unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+                });
 
-            this.props.addEditHistoryPoint({
-                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-            });
+                this.props.addEditHistoryPoint({
+                    unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+                });
+            }
         } else {
             // Saving a new one
             this.openSaveAsWidgetDialog();

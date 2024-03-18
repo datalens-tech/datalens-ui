@@ -1,4 +1,5 @@
-import {DatalensGlobalState} from 'ui';
+import {Feature} from 'shared';
+import {DatalensGlobalState, Utils} from 'ui';
 
 const _selectUnit = (state: DatalensGlobalState, {unitId}: {unitId: string}) => {
     const unit = state.editHistory.units[unitId];
@@ -11,6 +12,10 @@ const _selectUnit = (state: DatalensGlobalState, {unitId}: {unitId: string}) => 
 };
 
 export const selectCanGoBack = (state: DatalensGlobalState, {unitId}: {unitId: string}) => {
+    if (!Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+        return null;
+    }
+
     const unit = _selectUnit(state, {unitId});
 
     // Actual point index should not be initial
@@ -18,6 +23,10 @@ export const selectCanGoBack = (state: DatalensGlobalState, {unitId}: {unitId: s
 };
 
 export const selectCanGoForward = (state: DatalensGlobalState, {unitId}: {unitId: string}) => {
+    if (!Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+        return null;
+    }
+
     const unit = _selectUnit(state, {unitId});
 
     // Actual point index should not be last
