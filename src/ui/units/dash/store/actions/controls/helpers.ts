@@ -55,6 +55,18 @@ export const getControlValidation = (selectorDialog: SelectorDialogState) => {
         validation.datasetFieldId = i18n('dash.control-dialog.edit', 'validation_required');
     }
 
+    if (
+        sourceType === DashTabItemControlSourceType.Connection &&
+        selectorParameters &&
+        Object.values(selectorParameters).some((v) => v.length === 0)
+    ) {
+        validation.selectorParameters = i18n(
+            'dash.control-dialog.edit',
+            // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+            'validation_empty-parameters-values',
+        );
+    }
+
     if (required && (!defaultValue || !defaultValue?.length)) {
         validation.defaultValue = i18n('dash.control-dialog.edit', 'validation_required');
     }
