@@ -3,6 +3,7 @@ import {AppContext} from '@gravity-ui/nodekit';
 
 import {ChartsEngine} from '..';
 import type {WorkbookId} from '../../../../shared';
+import {EDITOR_TYPE} from '../../../../shared/constants';
 import {ResolvedConfig} from '../components/storage/types';
 
 import {runChart} from './chart';
@@ -44,7 +45,7 @@ const runners: Runner[] = [
             'markdown_node',
             'markup_node',
             'timeseries_node',
-            'd3_node',
+            EDITOR_TYPE.D3_NODE,
         ]),
         handler: runEditor,
     },

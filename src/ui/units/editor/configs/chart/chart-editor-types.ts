@@ -1,20 +1,8 @@
 import {I18n} from 'i18n';
+import {EDITOR_TYPE} from 'shared/constants';
 import {registry} from 'ui/registry';
 
 const i18n = I18n.keyset('editor.templates.view');
-
-export type ChartEditorTypeKey =
-    | 'graph_node'
-    | 'timeseries_node'
-    | 'table_node'
-    | 'text_node'
-    | 'markdown_node'
-    | 'markup_node'
-    | 'metric_node'
-    | 'map_node'
-    | 'ymap_node'
-    | 'control_node'
-    | 'module';
 
 export type ChartEditorType = {
     name: string;
@@ -30,7 +18,7 @@ export type ChartEditorType = {
 };
 
 // TODO: https://github.com/datalens-tech/datalens-ui/issues/762
-export function getChartEditorTypes(type: ChartEditorTypeKey) {
+export function getChartEditorTypes(type: string) {
     const getDocPathPrefix = registry.common.functions.get('getDocPathPrefix');
     const prefix = getDocPathPrefix();
 
@@ -578,7 +566,7 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
                 },
             ],
         },
-        d3_node: {
+        [EDITOR_TYPE.D3_NODE]: {
             get name() {
                 return i18n('label_graph');
             },
@@ -626,6 +614,6 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
                 },
             ],
         },
-    } as Record<ChartEditorTypeKey, ChartEditorType>;
+    } as Record<string, ChartEditorType>;
     return chartEditorTypes[type];
 }
