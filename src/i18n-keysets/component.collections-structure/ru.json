@@ -25,7 +25,7 @@
   "label_empty-collection": "В коллекции пусто или не удалось ничего найти по условиям в фильтрах",
   "label_move": "Куда переместить",
   "label_move-denied-title": "Недостаточно прав для перемещения",
-  "label_ql": "ql чарта",
+  "label_ql": "QL-чарта",
   "label_title": "Название",
   "label_wizard": "чарта",
   "section_delete-collection": "Вы действительно хотите удалить коллекцию \"{{name}}\"?",
