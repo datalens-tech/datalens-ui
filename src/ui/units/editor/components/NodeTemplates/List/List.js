@@ -3,7 +3,6 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
-import {EditorTemplatesQA} from 'shared/constants/qa/editor';
 
 import './List.scss';
 
@@ -28,13 +27,6 @@ function List({items, onClick}) {
         <div className={b()} data-qa="node-templates-list">
             <div className={b('title')}>
                 {i18n('editor.common.view', 'section_choose-template')}
-            </div>
-            <div
-                className={b('item')}
-                onClick={() => onClick({empty: true})}
-                data-qa={EditorTemplatesQA.NoTemplate}
-            >
-                {i18n('editor.common.view', 'label_without-template')}
             </div>
             {items.map((item) => {
                 return <Item key={item.name} item={item} onClick={onClick} />;

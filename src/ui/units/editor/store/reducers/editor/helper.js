@@ -1,5 +1,6 @@
 import Hashids from 'hashids';
 import moment from 'moment';
+import {registry} from 'ui/registry';
 
 import {getChartEditorTypes} from '../../../configs/chart/chart-editor-types';
 import {DEFAULT_TAB_ID, DEFAULT_TYPE, PANE_VIEWS} from '../../../constants/common';
@@ -82,8 +83,10 @@ export class Helper {
     }
 
     static getEmptyTemplate() {
+        const getEmptyTemplateType = registry.editor.functions.get('getEmptyTemplateType');
         return {
-            type: DEFAULT_TYPE,
+            // type: DEFAULT_TYPE,
+            type: getEmptyTemplateType(),
             scope: 'widget',
             savedId: '1',
             revId: '1',

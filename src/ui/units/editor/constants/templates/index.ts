@@ -5,5 +5,5 @@ import module from './module';
 import table from './table';
 
 export const getEditorTemplates = () => {
-    return [control, markdown, module, table, d3];
+    return [d3, table, markdown, control, module];
 };
