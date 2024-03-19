@@ -5,7 +5,7 @@ import deflist from '@diplodoc/transform/lib/plugins/deflist';
 import imsize from '@diplodoc/transform/lib/plugins/imsize';
 import notes from '@diplodoc/transform/lib/plugins/notes';
 import table from '@diplodoc/transform/lib/plugins/table';
-import {defaultOptions} from '@doc-tools/transform/lib/sanitize';
+import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
 import MarkdownIt from 'markdown-it';
 import mila from 'markdown-it-link-attributes';
 
