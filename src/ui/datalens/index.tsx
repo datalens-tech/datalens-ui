@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Route, Switch, Redirect, useLocation} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import {reducerRegistry} from '../store';
@@ -38,7 +38,7 @@ const AuthContext = React.createContext("");
 
 const DatalensPageView = (props: any) => {
     var token = props.token;
-    //var setToken = props.setToken;
+    var setToken = props.setToken;
 
     const isLanding = useSelector(selectIsLanding);
     const location = useLocation()
@@ -58,7 +58,7 @@ const DatalensPageView = (props: any) => {
                     {token && <Redirect from="/auth" to="/"/>}
                     <Route
                         path={'/auth'}
-                        component={AuthPage}
+                        component={()=><AuthPage setToken={setToken}/>}
                     />
                     <Route
                         path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
@@ -101,12 +101,6 @@ const DatalensPageView = (props: any) => {
 const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
     const [token, setToken] = React.useState("");
-    
-    useEffect(()=>{
-        setTimeout(()=>{
-            setToken("adasd")
-        }, 1000)
-    }, []);
     
     if (token && showAsideHeaderAdapter) {
         return <AsideHeaderAdapter renderContent={() => <DatalensPageView token={token} setToken={setToken} />} />;
