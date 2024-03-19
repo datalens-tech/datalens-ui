@@ -42,4 +42,5 @@ export const chartFunctionsMap = {
         makeFunctionTemplate<(sourceType: string) => SourceMeta | null>(),
     postProcessRunResult:
         makeFunctionTemplate<(loaded: ResponseSuccessNode | ResponseSuccessControls) => Object>(),
+    getChartkitSecureEmbeddingToken: makeFunctionTemplate<() => string>(),
 } as const;
