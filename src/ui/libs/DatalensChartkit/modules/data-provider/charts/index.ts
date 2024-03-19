@@ -742,10 +742,8 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             [REQUEST_ID_HEADER]: requestId,
         };
         if (isEmbeddedChart()) {
-            const getChartkitSecureEmbeddingToken = registry.chart.functions.get(
-                'getChartkitSecureEmbeddingToken',
-            );
-            headers[DL_EMBED_TOKEN_HEADER] = getChartkitSecureEmbeddingToken();
+            const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
+            headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
         }
         if (Utils.isEnabledFeature(Feature.UseComponentHeader)) {
             headers[DL_COMPONENT_HEADER] = DlComponentHeader.UI;
