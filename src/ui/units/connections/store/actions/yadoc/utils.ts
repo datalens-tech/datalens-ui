@@ -82,6 +82,8 @@ export const shapeYadocReadonlySourceItemAfterUpdate = (
     const sheet_id = get(data, ['source', 'sheet_id']);
     const raw_schema = get(data, ['source', 'raw_schema']);
     const preview = get(data, ['source', 'preview']);
+    const private_path = get(data, ['source', 'private_path']);
+    const public_link = get(data, ['source', 'public_link']);
     const sourceError = get(data, ['source', 'error']);
     const error = shapeError(sourceError);
 
@@ -97,6 +99,8 @@ export const shapeYadocReadonlySourceItemAfterUpdate = (
             sheet_id,
             raw_schema,
             preview,
+            private_path,
+            public_link,
         },
         error,
     };
