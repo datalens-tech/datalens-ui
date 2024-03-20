@@ -72,31 +72,12 @@
         }
 
         &_tabs {
-            width: 145px;
+            width: 175px;
             height: 40px;
             float: left;
 
-            display: flex;
-            align-items: center;
-            flex: 1 1 0%;
-            overflow: hidden;
-            margin-right: 4px;
             margin-left: 20px;
             box-shadow: none;
-
-            .gc-adaptive-tabs {
-                &__tabs-list {
-                    height: 40px;
-                }
-
-                &__tab-container {
-                    height: 40px;
-                }
-
-                &__tab {
-                    height: 33px;
-                }
-            }
         }
     }
 
