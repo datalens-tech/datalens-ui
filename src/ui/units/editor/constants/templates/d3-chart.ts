@@ -17,20 +17,21 @@ export default {
     series: {
         data: [
             {
-                type: "bar-x",
-                name: "Fruits",
+                type: 'bar-x',
+                name: 'Fruits',
                 data: [
-                    { x: "Apples", y: 3 },
-                    { x: "Oranges", y: 1 },
-                    { x: "Grapes", y: 2 },
+                    // x - index for value from xAxis.categories array, y - point value
+                    {x: 0, y: 3},
+                    {x: 1, y: 1},
+                    {x: 2, y: 2},
                 ],
             },
         ],
     },
     title: {text: 'Chart title'},
     xAxis: {
-        type: "category",
-        categories: ["Apples", "Oranges", "Grapes"],
+        type: 'category',
+        categories: ['Apples', 'Oranges', 'Grapes'],
         title: {text: 'X axis title'},
     },
     yAxis: [{

@@ -23,8 +23,6 @@ export const PANE_VIEWS = {
     CONSOLE: 'Console',
 };
 
-export const DEFAULT_TYPE = 'graph_node';
-
 export const MODULE_TYPE = 'module';
 
 export const DEFAULT_TAB_ID = 'js';
