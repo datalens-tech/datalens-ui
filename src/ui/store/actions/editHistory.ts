@@ -63,7 +63,7 @@ export const SET_EDIT_HISTORY_CURRENT_STATE = Symbol('editHistory/SET_EDIT_HISTO
 interface AddEditHistoryPointAction {
     type: typeof ADD_EDIT_HISTORY_POINT;
     unitId: string;
-    diff: Diff | null;
+    diff: Diff;
     state: unknown;
 }
 
@@ -155,7 +155,7 @@ export function addEditHistoryPoint({unitId, newState}: {unitId: string; newStat
 
         const unit = _getTargetUnit({units, unitId});
 
-        let diff = null;
+        let diff;
 
         const jdp = createJDP(unit.options);
 

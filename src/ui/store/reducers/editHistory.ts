@@ -14,7 +14,7 @@ import {
 export type Diff = JDPDelta;
 
 export type EditHistoryUnit = {
-    diffs: (Diff | null)[];
+    diffs: Diff[];
     pointIndex: number;
     pointState?: unknown;
     setState: ({state}: {state: unknown}) => AnyAction;
@@ -37,11 +37,9 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
             return {
                 units: {
                     ...state.units,
-
                     [unitId]: {
                         pointIndex: -1,
                         diffs: [],
-                        pointState: null,
                         setState,
                         options,
                     },
@@ -54,16 +52,13 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
             const unit = state.units[unitId];
 
             return {
-                ...state,
                 units: {
                     ...state.units,
-
                     [unitId]: {
                         ...unit,
 
                         pointIndex: -1,
                         diffs: [],
-                        pointState: null,
                     },
                 },
             };
@@ -78,8 +73,6 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
             const prevDiffs = diffs.slice(0, pointIndex + 1);
 
             return {
-                ...state,
-
                 units: {
                     ...state.units,
                     [unitId]: {
@@ -102,8 +95,6 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
             const editHistoryUnit = state.units[unitId];
 
             return {
-                ...state,
-
                 units: {
                     ...state.units,
                     [unitId]: {
@@ -119,8 +110,6 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
             const editHistoryUnit = state.units[unitId];
 
             return {
-                ...state,
-
                 units: {
                     ...state.units,
                     [unitId]: {
