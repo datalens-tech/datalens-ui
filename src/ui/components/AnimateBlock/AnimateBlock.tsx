@@ -23,7 +23,7 @@ export const AnimateBlock = ({className, delay = 0, offset = 100, children}: Ani
                 // trigger animation if element is above screen
                 topOffset={'-100000%'}
                 bottomOffset={offset}
-                onEnter={async () => {
+                onEnter={() => {
                     setTimeout(() => {
                         setPlayAnimation(true);
                     }, delay);

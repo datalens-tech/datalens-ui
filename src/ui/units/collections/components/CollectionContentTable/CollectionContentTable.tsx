@@ -121,7 +121,7 @@ export const CollectionContentTable = React.memo<Props>(
                                         }
                                         className={b('content-row')}
                                         onClick={(e) => {
-                                            if (!e.metaKey) {
+                                            if (!e.metaKey && !e.ctrlKey) {
                                                 if ('workbookId' in item) {
                                                     dispatch(setWorkbook(item));
                                                 } else {

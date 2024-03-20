@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {CancellablePromise} from '@gravity-ui/sdk';
-import {useDispatch, useSelector} from 'react-redux';
+import {batch, useDispatch, useSelector} from 'react-redux';
 
 import type {GetCollectionContentResponse} from '../../../../../../shared/schema';
 import {GetCollectionContentArgs} from '../../../../../../shared/schema';
@@ -83,8 +83,10 @@ export const useData = ({curCollectionId, filters}: UseDataArgs) => {
         );
 
         if (curCollectionId === null) {
-            dispatch(resetCollection());
-            dispatch(setCollectionBreadcrumbs([]));
+            batch(() => {
+                dispatch(resetCollection());
+                dispatch(setCollectionBreadcrumbs([]));
+            });
         } else {
             getCollectionPromise = dispatch(getCollection({collectionId: curCollectionId}));
             getCollectionBreadcrumbsPromise = dispatch(

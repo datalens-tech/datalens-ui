@@ -114,7 +114,7 @@ export const CollectionContentGrid = React.memo<Props>(
                                             'selection-mode': isOpenSelectionMode,
                                         })}
                                         onClick={(e) => {
-                                            if (!e.metaKey) {
+                                            if (!e.metaKey && !e.ctrlKey) {
                                                 if ('workbookId' in item) {
                                                     dispatch(setWorkbook(item));
                                                 } else {

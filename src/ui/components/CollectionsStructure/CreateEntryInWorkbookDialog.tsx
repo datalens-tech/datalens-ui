@@ -34,7 +34,7 @@ export const CreateEntryInWorkbookDialog: React.FC<Props> = ({
     const history = useHistory();
 
     const handleCreateEntry = React.useCallback(
-        async ({targetWorkbookId}: {targetWorkbookId: string | null}) => {
+        ({targetWorkbookId}: {targetWorkbookId: string | null}) => {
             if (targetWorkbookId) {
                 switch (entryType) {
                     case 'connection':
@@ -58,6 +58,7 @@ export const CreateEntryInWorkbookDialog: React.FC<Props> = ({
                     onApply(targetWorkbookId);
                 }
             }
+            return Promise.resolve();
         },
         [entryType, history, onApply],
     );
