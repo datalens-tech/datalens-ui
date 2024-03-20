@@ -1,14 +1,14 @@
 {
-    "title_add-alias": "Alias setup",
-    "button_cancel": "Cancel",
-    "button_apply": "Apply",
-    "label_info_1": "Aliases allow you to use matching fields to link widgets based on different datasets, as well as manual selectors.",
-    "label_info_2": "Aliases’ field types must match.",
-    "label_card": "You cannot create aliases between fields of the same dataset or between fields with the same ID in different datasets.",
-    "label_card-used-params": "You cannot add an alias to a widget without the set parameters",
-    "label_collapse-label": "List of all aliases added",
-    "label_empty": "No aliases configured",
-    "label_link-type": "Current link type",
-    "label_required-add-alias": "Add an alias to change the link type",
-    "button_add-alias": "Add alias"
+  "button_add-alias": "Add alias",
+  "button_apply": "Apply",
+  "button_cancel": "Cancel",
+  "label_card": "You cannot create aliases between fields of the same dataset or between fields with the same ID in different datasets.",
+  "label_card-used-params": "You cannot add an alias to a widget without the set parameters",
+  "label_collapse-label": "List of all aliases added",
+  "label_empty": "No aliases configured",
+  "label_info_1": "Aliases allow you to use matching fields to link widgets based on different datasets, as well as manual selectors.",
+  "label_info_2": "Aliases’ field types must match.",
+  "label_link-type": "Current link type",
+  "label_required-add-alias": "Add an alias to change the link type",
+  "title_add-alias": "Alias setup"
 }

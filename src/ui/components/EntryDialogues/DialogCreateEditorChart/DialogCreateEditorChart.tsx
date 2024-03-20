@@ -8,6 +8,7 @@ import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import type {CreateEditorChartResponse} from '../../../../shared/schema';
 import {getSdk} from '../../../libs/schematic-sdk';
+import {DialogCreateWorkbookEntry} from '../DialogCreateWorkbookEntry/DialogCreateWorkbookEntry';
 import {EntryDialogBase} from '../EntryDialogBase/EntryDialogBase';
 import {EntryDialogResolveStatus} from '../constants';
 import {EntryDialogProps} from '../types';
@@ -17,6 +18,7 @@ export interface DialogCreateEditorChartProps extends EntryDialogProps {
     type: string;
     data?: Record<string, any>;
     initName?: string;
+    workbookId?: string;
 }
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -27,6 +29,24 @@ const i18n = I18n.keyset('component.dialog-create-editor-chart.view');
 
 class DialogCreateEditorChart extends React.Component<Props> {
     render() {
+        if (this.props.workbookId) {
+            return (
+                <DialogCreateWorkbookEntry
+                    caption={i18n('section_caption')}
+                    defaultName={i18n('label_default-name')}
+                    name={this.props.initName}
+                    placeholder={i18n('label_placeholder')}
+                    textButtonApply={i18n('button_apply')}
+                    textButtonCancel={i18n('button_cancel')}
+                    visible={this.props.visible}
+                    onClose={this.onClose}
+                    onError={this.onError}
+                    onSuccess={this.onSuccess}
+                    onApply={this.onWorkbookApply}
+                />
+            );
+        }
+
         return (
             <EntryDialogBase
                 withInput
@@ -53,6 +73,16 @@ class DialogCreateEditorChart extends React.Component<Props> {
             type: this.props.type,
         });
         return data;
+    };
+
+    private onWorkbookApply = ({name}: {name: string}) => {
+        const {workbookId} = this.props;
+        return getSdk().mix.createEditorChart({
+            name,
+            workbookId: workbookId as string,
+            data: this.props.data || {},
+            type: this.props.type,
+        });
     };
 
     private onError = (error: DataLensApiError) => {

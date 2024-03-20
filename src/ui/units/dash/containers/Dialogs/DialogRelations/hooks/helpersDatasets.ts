@@ -66,9 +66,11 @@ const getDatasetsListWithFlatFields = (datasets: Datasets) => {
 export const getMappedConnectedControlField = ({
     item,
     datasets,
+    itemDefaults,
 }: {
     item: DashkitMetaDataItemNoRelations;
     datasets: Datasets;
+    itemDefaults?: DashkitMetaDataItemNoRelations['defaultParams'];
 }) => {
     if (!isControl(item)) {
         return null;
@@ -77,7 +79,7 @@ export const getMappedConnectedControlField = ({
     // map fields with the name of the field from the dataset
     if (item?.datasets?.length && !item.isQL) {
         // if it is dataset selector
-        return Object.keys(item.defaultParams)
+        return Object.keys(itemDefaults || item.defaultParams)
             .map((paramItem) => {
                 const allFields = getDatasetsFlatItems(item.datasets);
                 return allFields[paramItem] || '';
@@ -87,7 +89,7 @@ export const getMappedConnectedControlField = ({
         // if it is dataset selector (other format)
         const datasetFlatFields = getDatasetsListWithFlatFields(datasets);
         if (datasetFlatFields && item?.datasetId && datasetFlatFields[item?.datasetId]) {
-            return Object.keys(item.defaultParams)
+            return Object.keys(itemDefaults || item.defaultParams)
                 .map(
                     (paramItem) =>
                         datasetFlatFields[item.datasetId!] &&
