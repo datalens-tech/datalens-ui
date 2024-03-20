@@ -16,7 +16,7 @@ export type Diff = JDPDelta;
 export type EditHistoryUnit = {
     diffs: (Diff | null)[];
     pointIndex: number;
-    pointState: unknown;
+    pointState?: unknown;
     setState: ({state}: {state: unknown}) => AnyAction;
     options: CreateJDPOptions;
 };
@@ -35,7 +35,6 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
             const {unitId, setState, options} = action;
 
             return {
-                ...state,
                 units: {
                     ...state.units,
 

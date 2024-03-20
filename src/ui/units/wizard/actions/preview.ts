@@ -4,7 +4,7 @@ import pick from 'lodash/pick';
 import {batch} from 'react-redux';
 import {Dispatch} from 'redux';
 
-import {DatalensGlobalState} from '../../..';
+import type {DatalensGlobalState} from '../../..';
 import {
     ColorsConfig,
     CommonPlaceholders,

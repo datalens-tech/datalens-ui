@@ -1,5 +1,8 @@
 import {Feature} from 'shared';
-import {DatalensGlobalState, Utils} from 'ui';
+
+import type {DatalensGlobalState} from '../../';
+
+import {Utils} from '../../';
 
 const _selectUnit = (state: DatalensGlobalState, {unitId}: {unitId: string}) => {
     const unit = state.editHistory.units[unitId];

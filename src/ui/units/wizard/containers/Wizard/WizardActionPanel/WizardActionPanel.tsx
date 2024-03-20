@@ -4,9 +4,10 @@ import {DropdownMenuProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {ClientChartsConfigWithDataset, EntryUpdateMode, Feature, WizardType} from 'shared';
-import {ActionPanel, DatalensGlobalState, Utils} from 'ui';
 import {selectIsChartSaved} from 'units/wizard/selectors/preview';
 
+import type {DatalensGlobalState} from '../../../../../';
+import {ActionPanel, Utils} from '../../../../../';
 import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {registry} from '../../../../../registry';

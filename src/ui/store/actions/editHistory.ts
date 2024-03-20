@@ -1,22 +1,11 @@
 import {cloneDeep} from 'lodash';
 import {Dispatch} from 'redux';
+import {batch} from 'react-redux';
 import {create as jdpCreate, DiffContext as JDPDiffContext} from 'jsondiffpatch';
 
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from '../../';
 
 import type {EditHistoryUnit, EditHistoryState, Diff} from '../reducers/editHistory';
-
-const getPath = (ctx: JDPDiffContext): string => {
-    if (ctx && ctx.parent) {
-        return `${getPath(ctx.parent)}/${ctx.childName}`;
-    } else {
-        return `${ctx.childName || ''}`;
-    }
-};
-
-export interface CreateJDPOptions {
-    pathIgnoreList: string[];
-}
 
 // Plugin for jsondiffpatch to diff functions by its' references
 const functionDiffFilter = (context: any) => {
@@ -38,6 +27,18 @@ const functionDiffFilter = (context: any) => {
 };
 
 functionDiffFilter.filterName = 'function';
+
+const getPath = (ctx: JDPDiffContext): string => {
+    if (ctx && ctx.parent) {
+        return `${getPath(ctx.parent)}/${ctx.childName}`;
+    } else {
+        return `${ctx.childName || ''}`;
+    }
+};
+
+export interface CreateJDPOptions {
+    pathIgnoreList: string[];
+}
 
 const createJDP = ({pathIgnoreList}: CreateJDPOptions) => {
     const jdp = jdpCreate({
@@ -206,16 +207,18 @@ export function goBack({unitId}: {unitId: string}) {
         // Unapply last diff
         const targetState = jdp.unpatch(cloneDeep(pointState), targetDiff);
 
-        dispatch(
-            _setEditHistoryPointIndex({
-                unitId,
-                pointIndex: targetIndex - 1,
-            }),
-        );
+        batch(() => {
+            dispatch(
+                _setEditHistoryPointIndex({
+                    unitId,
+                    pointIndex: targetIndex - 1,
+                }),
+            );
 
-        dispatch(_setEditHistoryCurrentState({unitId, pointState: targetState}));
+            dispatch(_setEditHistoryCurrentState({unitId, pointState: targetState}));
 
-        dispatch(setState({state: targetState}));
+            dispatch(setState({state: targetState}));
+        });
     };
 }
 
@@ -243,16 +246,18 @@ export function goForward({unitId}: {unitId: string}) {
         // Apply next diff
         const targetState = jdp.patch(cloneDeep(pointState), targetDiff);
 
-        dispatch(
-            _setEditHistoryPointIndex({
-                unitId,
-                pointIndex: targetIndex,
-            }),
-        );
+        batch(() => {
+            dispatch(
+                _setEditHistoryPointIndex({
+                    unitId,
+                    pointIndex: targetIndex,
+                }),
+            );
 
-        dispatch(_setEditHistoryCurrentState({unitId, pointState: targetState}));
+            dispatch(_setEditHistoryCurrentState({unitId, pointState: targetState}));
 
-        dispatch(setState({state: targetState}));
+            dispatch(setState({state: targetState}));
+        });
     };
 }
 
