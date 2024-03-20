@@ -97,10 +97,12 @@ class ShapesPlaceholder extends React.Component<Props> {
 
     private onUpdate = (items: Field[]) => {
         this.props.updateShapes({items});
-        this.props.updatePreviewAndClientChartsConfig({});
 
         if (this.props.onUpdate) {
             this.props.onUpdate();
+        } else {
+            // Else call default onUpdate action
+            this.props.updatePreviewAndClientChartsConfig({});
         }
     };
 

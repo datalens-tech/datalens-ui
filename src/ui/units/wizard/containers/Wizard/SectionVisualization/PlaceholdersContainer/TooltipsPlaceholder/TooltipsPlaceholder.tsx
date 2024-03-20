@@ -42,10 +42,12 @@ class TooltipsPlaceholder extends React.Component<Props> {
 
     private onUpdate = (items: Field[]) => {
         this.props.updateTooltips({items});
-        this.props.updatePreviewAndClientChartsConfig({});
 
         if (this.props.onUpdate) {
             this.props.onUpdate();
+        } else {
+            // Else call default onUpdate action
+            this.props.updatePreviewAndClientChartsConfig({});
         }
     };
 

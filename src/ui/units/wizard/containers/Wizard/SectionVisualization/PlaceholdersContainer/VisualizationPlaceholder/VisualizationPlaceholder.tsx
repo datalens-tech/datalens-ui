@@ -341,10 +341,11 @@ class VisualizationPlaceholder extends React.Component<Props> {
             options: {item, placeholderId: this.props.placeholder.id as PlaceholderId},
         });
 
-        this.onUpdateDone();
-
         if (this.props.onUpdate) {
             this.props.onUpdate();
+        } else {
+            // Else call default onUpdate action
+            this.onUpdateDone();
         }
     };
 
