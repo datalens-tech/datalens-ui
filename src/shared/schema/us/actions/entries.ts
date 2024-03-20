@@ -60,6 +60,15 @@ const PATH_PREFIX_V2 = '/v2';
 const PRIVATE_PATH_PREFIX = '/private';
 
 export const entriesActions = {
+    getEmbed: createAction<any, any>({
+        method: 'GET',
+        path: ({}) => `/embed`,
+        params: ({}, headers) => ({
+            headers: {
+                ...headers
+            },
+        }),
+    }),
     getEntry: createAction<GetEntryResponse, GetEntryArgs>({
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,

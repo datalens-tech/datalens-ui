@@ -19,6 +19,28 @@ import {
 import {getAxios} from '../axios';
 
 class US {
+    static async createEmbed(
+        headers: IncomingHttpHeaders,
+        ctx: AppContext,
+    ): Promise<Entry> {
+        try {
+            const {data: result} = await getAxios(ctx.config)({
+                method: 'GET',
+                url: `${ctx.config.endpoints.api.us}/embed`,
+                headers,
+                'axios-retry': {retries: 1},
+            });
+
+            ctx.log('SDK_US_CREATE_ENTRY_SUCCESS', US.getLoggedEntry(result));
+
+            return result;
+        } catch (error) {
+            ctx.logError('SDK_US_CREATE_ENTRY_FAILED', error, {});
+
+            throw error;
+        }
+    }
+
     static async createEntry(
         data: CreateEntryRequest,
         headers: IncomingHttpHeaders,

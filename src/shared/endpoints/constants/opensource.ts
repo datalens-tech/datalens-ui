@@ -21,6 +21,7 @@ export const opensourceEndpoints = {
             widgets: process.env.UI_WIDGETS_ENDPOINT || '/widgets',
             preview: process.env.UI_PREVIEW_ENDPOINT || '/preview',
             serviceSettings: '/settings',
+            rpcUrl: process.env.NODE_RPC_URL || ''
         },
     },
     production: {
@@ -45,6 +46,7 @@ export const opensourceEndpoints = {
             widgets: process.env.UI_WIDGETS_ENDPOINT || '/widgets',
             preview: process.env.UI_PREVIEW_ENDPOINT || '/preview',
             serviceSettings: '/settings',
+            rpcUrl: process.env.NODE_RPC_URL || ''
         },
     },
 } as const;
