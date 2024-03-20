@@ -217,11 +217,7 @@ class VisualizationPlaceholder extends React.Component<Props> {
 
         this.props.openDialogColors({
             item,
-            onApply: () => {
-                if (this.props.onUpdate) {
-                    this.props.onUpdate();
-                }
-            },
+            onApply: this.props.onUpdate,
         });
     };
 

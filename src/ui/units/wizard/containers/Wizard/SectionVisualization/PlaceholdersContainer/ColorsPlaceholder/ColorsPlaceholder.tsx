@@ -140,11 +140,7 @@ class ColorsPlaceholder extends React.Component<Props> {
         this.props.openDialogColors({
             item,
             colorSectionFields: isMultipleColorsSupported ? colors : undefined,
-            onApply: () => {
-                if (this.props.onUpdate) {
-                    this.props.onUpdate();
-                }
-            },
+            onApply: this.props.onUpdate,
         });
     };
 
