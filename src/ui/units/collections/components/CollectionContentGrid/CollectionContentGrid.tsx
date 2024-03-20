@@ -3,7 +3,7 @@ import React from 'react';
 import {dateTime} from '@gravity-ui/date-utils';
 import {Checkbox, DropdownMenu, DropdownMenuItem} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {useDispatch, useSelector} from 'react-redux';
+import {batch, useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 
 import type {
@@ -118,13 +118,23 @@ export const CollectionContentGrid = React.memo<Props>(
                                                 if ('workbookId' in item) {
                                                     dispatch(setWorkbook(item));
                                                 } else {
-                                                    dispatch(setCollection(item));
-                                                    dispatch(
-                                                        setCollectionBreadcrumbs([
-                                                            ...breadcrumbs,
-                                                            item,
-                                                        ]),
-                                                    );
+                                                    batch(() => {
+                                                        dispatch(setCollection(item));
+                                                        if (
+                                                            !breadcrumbs.find(
+                                                                (breadcrumb) =>
+                                                                    breadcrumb.collectionId ===
+                                                                    item.collectionId,
+                                                            )
+                                                        ) {
+                                                            dispatch(
+                                                                setCollectionBreadcrumbs([
+                                                                    ...breadcrumbs,
+                                                                    item,
+                                                                ]),
+                                                            );
+                                                        }
+                                                    });
                                                 }
                                             }
                                         }}

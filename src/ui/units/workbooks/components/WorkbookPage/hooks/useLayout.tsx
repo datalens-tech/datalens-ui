@@ -4,7 +4,7 @@ import {PencilToLine} from '@gravity-ui/icons';
 import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18N} from 'i18n';
-import {useDispatch, useSelector} from 'react-redux';
+import {batch, useDispatch, useSelector} from 'react-redux';
 
 import {DIALOG_EDIT_WORKBOOK} from '../../../../../components/CollectionsStructure';
 import {DL} from '../../../../../constants/common';
@@ -68,13 +68,19 @@ export const useLayout = ({workbookId, refreshWorkbookInfo}: UseLayoutArgs) => {
                             workbook={workbook}
                             onItemClick={({isCurrent, id}) => {
                                 if (!isCurrent && id !== null) {
-                                    const newBreadcrumbs = cutBreadcrumbs(id, breadcrumbs ?? []);
-                                    dispatch(setCollectionBreadcrumbs(newBreadcrumbs));
+                                    batch(() => {
+                                        const newBreadcrumbs = cutBreadcrumbs(
+                                            id,
+                                            breadcrumbs ?? [],
+                                        );
+                                        dispatch(setCollectionBreadcrumbs(newBreadcrumbs));
 
-                                    const curBreadcrumb = newBreadcrumbs[newBreadcrumbs.length - 1];
-                                    if (newBreadcrumbs[newBreadcrumbs.length - 1]) {
-                                        dispatch(setCollection(curBreadcrumb));
-                                    }
+                                        const curBreadcrumb =
+                                            newBreadcrumbs[newBreadcrumbs.length - 1];
+                                        if (newBreadcrumbs[newBreadcrumbs.length - 1]) {
+                                            dispatch(setCollection(curBreadcrumb));
+                                        }
+                                    });
                                 }
                             }}
                         />

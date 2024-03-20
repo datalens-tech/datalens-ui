@@ -202,6 +202,7 @@ class NavigationBase extends React.Component {
             dialog: EntryDialogName.Copy,
             dialogProps: {
                 entryId: entry.entryId,
+                workbookId: entry.workbookId,
                 scope: entry.scope,
                 initDestination: this.getOnActionDestination(entry),
                 initName: Utils.getEntryNameFromKey(entry.key, true),

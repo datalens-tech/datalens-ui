@@ -4,7 +4,7 @@ import {PencilToLine} from '@gravity-ui/icons';
 import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {useDispatch, useSelector} from 'react-redux';
+import {batch, useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 
 import {Feature} from '../../../../../../shared';
@@ -131,13 +131,19 @@ export const useLayout = ({
                                 if (isCurrent) {
                                     fetchCollectionContent();
                                 } else if (id !== null) {
-                                    const newBreadcrumbs = cutBreadcrumbs(id, preparedBreadcrumbs);
-                                    dispatch(setCollectionBreadcrumbs(newBreadcrumbs));
+                                    batch(() => {
+                                        const newBreadcrumbs = cutBreadcrumbs(
+                                            id,
+                                            preparedBreadcrumbs,
+                                        );
+                                        dispatch(setCollectionBreadcrumbs(newBreadcrumbs));
 
-                                    const curBreadcrumb = newBreadcrumbs[newBreadcrumbs.length - 1];
-                                    if (curBreadcrumb) {
-                                        dispatch(setCollection(curBreadcrumb));
-                                    }
+                                        const curBreadcrumb =
+                                            newBreadcrumbs[newBreadcrumbs.length - 1];
+                                        if (curBreadcrumb) {
+                                            dispatch(setCollection(curBreadcrumb));
+                                        }
+                                    });
                                 }
                             }}
                         />
