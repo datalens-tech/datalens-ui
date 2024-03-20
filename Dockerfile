@@ -60,4 +60,6 @@ RUN update-ca-certificates
 
 USER app
 
+EXPOSE 8080
+
 ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
