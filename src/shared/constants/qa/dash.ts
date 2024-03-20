@@ -1,6 +1,7 @@
 export const enum DashboardAddWidgetQa {
     AddWidget = 'add-widget-button',
     AddControl = 'add-control-button',
+    AddGroupControl = 'add-group-control',
     AddText = 'add-text-button',
     AddTitle = 'add-title-button',
 }
@@ -72,6 +73,7 @@ export enum DashCommonQa {
     RelationsDisconnectAllSwitcher = 'dialog-relations-disconnect-all-switcher',
     RelationsDisconnectAllSelectors = 'dialog-relations-disconnect-all-selectors',
     RelationsDisconnectAllWidgets = 'dialog-relations-disconnect-all-widgets',
+    RelationsDisconnectAllCharts = 'dialog-relations-disconnect-all-charts',
     RelationsListRow = 'dialog-relations-list-row',
     RelationsRowPopover = 'dialog-relations-row-popover',
 }

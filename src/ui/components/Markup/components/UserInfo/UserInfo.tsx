@@ -1,7 +1,7 @@
 import React from 'react';
 
+import type {MarkupItem} from '../../../../../shared';
 import {registry} from '../../../../registry';
-import {MarkupItem} from '../../types';
 
 interface UserInfoProps {
     userId?: string;

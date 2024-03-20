@@ -5,6 +5,7 @@ import {
     PlaceholderId,
     getDistinctValue,
     getFakeTitleOrTitle,
+    isFieldHierarchy,
     isMeasureValue,
     isNumberField,
     isPseudoField,
@@ -88,14 +89,19 @@ export function preparePieData(args: PrepareFunctionArgs) {
         idToDataType,
         ChartEditor,
         disableDefaultSorting = false,
+        shared,
     } = args;
     const {data, order, totals} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
 
     const measure = placeholders.find((p) => p.id === PlaceholderId.Measures)?.items[0];
-    const colorField = placeholders.find((p) => p.id === PlaceholderId.Colors)?.items[0];
-    const dimensionField = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items[0];
+    let colorField = placeholders.find((p) => p.id === PlaceholderId.Colors)?.items[0];
+    if (isFieldHierarchy(colorField)) {
+        const drillDownLevel = shared.sharedData?.drillDownData?.level || 0;
+        colorField = colorField.fields[Math.min(drillDownLevel, colorField.fields.length - 1)];
+    }
 
+    const dimensionField = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items[0];
     if (!measure) {
         return {graphs: []};
     }

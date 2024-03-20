@@ -16,7 +16,7 @@ import {
     selectPaletteById,
     selectShapes,
 } from '../../shared';
-import {EMBED_TOKEN_QUERY_PARAM, Gradient, GradientPalettes} from '../../shared/constants';
+import {Gradient, GradientPalettes} from '../../shared/constants';
 import {ColorPalette} from '../../shared/types/color-palettes';
 import {DatalensGlobalState} from '../index';
 
@@ -310,7 +310,6 @@ export const URL_QUERY = {
     TAB_ID: 'tab',
     CONNECTION_FORM: '_form',
     DEBUG: '_debug',
-    EMBED_TOKEN: EMBED_TOKEN_QUERY_PARAM,
 };
 
 const GRADIENT_ICONS = {

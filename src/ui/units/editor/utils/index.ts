@@ -1,3 +1,5 @@
+export * from './utils';
+
 export function swapArrayElements<T>(arr: T[], x: number, y: number): T[] {
     // x, y - indexes to swap
     if (arr[x] === undefined || arr[y] === undefined) {

@@ -78,8 +78,12 @@ const SelectorTypeSelect = ({
                     value={[sourceType || DashTabItemControlSourceType.Dataset]}
                     onUpdate={handleSourceTypeChange}
                     width="max"
-                    options={options.map((item) => ({value: item.value, content: item.title}))}
-                    qa={DialogControlQa.radioSourceType}
+                    options={options.map((item) => ({
+                        value: item.value,
+                        content: item.title,
+                        qa: item.value,
+                    }))}
+                    qa={DialogControlQa.seletSourceType}
                 />
             ) : (
                 <RadioButton

@@ -97,6 +97,8 @@ function getDataLensRoutes({
         getWidget: getConfiguredRoute('dl-main', {...ui, route: 'GET  /:entryId/:widgetId'}),
 
         getRoot: getConfiguredRoute('dl-main', {...ui, route: 'GET /'}),
+
+        getEditorAll: getConfiguredRoute('dl-main', {...ui, route: 'GET /editor*'}),
     };
 
     if (isEnabledServerFeature(ctx, Feature.Ql)) {

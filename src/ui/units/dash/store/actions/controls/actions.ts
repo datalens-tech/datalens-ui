@@ -74,7 +74,7 @@ export const applyGroupControlDialog = () => {
                 return;
             }
 
-            defaults = getControlDefaultsForField(defaults, selectorGroup.items[i]);
+            defaults = getControlDefaultsForField(selectorGroup.items[i]);
         }
 
         const isSingleControl = selectorGroup.items.length === 1;

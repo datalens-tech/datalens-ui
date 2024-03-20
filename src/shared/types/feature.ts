@@ -9,6 +9,8 @@ export enum Feature {
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',
     EnableChartEditor = 'EnableChartEditor',
+    EnableChartEditorDocs = 'EnableChartEditorDocs',
+    EnableSaveAsEditorScript = 'EnableSaveAsEditorScript',
     EnableCustomMonitoring = 'EnableCustomMonitoring',
     ShowActionPanelTreeSelect = 'ShowActionPanelTreeSelect',
     EnableDashChartStat = 'EnableDashChartStat',
@@ -74,6 +76,7 @@ export enum Feature {
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     MarkupMetric = 'MarkupMetric',
     ConnectionBasedControl = 'ConnectionBasedControl',
+    EnableServerlessEditor = 'EnableServerlessEditor',
 }
 
 export type FeatureConfig = Record<string, boolean>;

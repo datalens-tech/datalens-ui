@@ -222,6 +222,20 @@ class WizardPage extends ChartPage {
         ).toBeVisible();
     }
 
+    async createParameter(parameterName: string, defaultValue: string) {
+        await this.parameterEditor.openCreateParameter();
+        await this.parameterEditor.setName(parameterName);
+        await this.parameterEditor.setDefaultValue(defaultValue);
+        await this.parameterEditor.apply();
+    }
+
+    async createHierarchy(name: string, fields: string[]) {
+        await this.openHierarchyEditor();
+        await this.hierarchyEditor.setName(name);
+        await this.hierarchyEditor.selectFields(fields);
+        await this.hierarchyEditor.clickSave();
+    }
+
     async openAsPreview(params: Record<string, string | undefined> = {}) {
         await this.page.locator(slct(ChartkitMenuDialogsQA.chartMenuDropDownSwitcher)).click();
 
