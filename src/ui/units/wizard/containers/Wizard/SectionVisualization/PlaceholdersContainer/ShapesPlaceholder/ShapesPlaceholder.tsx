@@ -116,11 +116,7 @@ class ShapesPlaceholder extends React.Component<Props> {
         this.props.openDialogShapes({
             item,
             paletteType,
-            onApply: () => {
-                if (this.props.onUpdate) {
-                    this.props.onUpdate();
-                }
-            },
+            onApply: this.props.onUpdate,
         });
     };
 }
