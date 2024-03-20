@@ -348,6 +348,7 @@ class Wizard extends React.Component<Props, State> {
                 });
 
                 this.props.addEditHistoryPoint({
+                    newState: this.props.wizardState,
                     unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
                 });
             }
@@ -591,6 +592,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
         previewEntryId: selectPreviewEntryId(state),
         isParentDashWasChanged: isDraft(state) && isEditMode(state),
         initialPreviewHash: selectInitialPreviewHash(state),
+        wizardState: state.wizard,
     };
 };
 

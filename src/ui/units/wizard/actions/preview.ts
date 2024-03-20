@@ -162,9 +162,9 @@ export function updatePreviewAndClientChartsConfig(
     preview: UpdatePreviewAndClientChartsConfigArgs,
 ) {
     return (dispatch: WizardDispatch, getState: () => DatalensGlobalState) => {
-        const visualizationState = getState().wizard.visualization;
-        const datasetState = getState().wizard.dataset;
-        const widgetState = getState().wizard.widget;
+        const {
+            wizard: {visualization: visualizationState, dataset: datasetState, widget: widgetState},
+        } = getState();
 
         const visualizationKeys: Array<keyof VisualizationState> = [
             'colors',
@@ -209,7 +209,12 @@ export function updatePreviewAndClientChartsConfig(
                 dispatch(updateClientChartsConfig(updateClientChartsConfigArgs));
 
                 if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
-                    dispatch(addEditHistoryPoint({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+                    dispatch(
+                        addEditHistoryPoint({
+                            unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+                            newState: getState().wizard,
+                        }),
+                    );
                 }
             }
         });

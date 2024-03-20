@@ -146,15 +146,12 @@ function _setEditHistoryCurrentState({
     };
 }
 
-export function addEditHistoryPoint({unitId}: {unitId: string}) {
+export function addEditHistoryPoint({unitId, newState}: {unitId: string; newState: unknown}) {
     return function (dispatch: Dispatch, getState: () => DatalensGlobalState) {
         const globalState = getState();
         const {
-            wizard: wizardState,
             editHistory: {units},
         } = globalState;
-
-        const newState = cloneDeep(wizardState);
 
         const unit = _getTargetUnit({units, unitId});
 
