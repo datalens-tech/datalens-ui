@@ -75,7 +75,7 @@ services:
 
   us:
     container_name: e2e-datalens-us
-    image: ghcr.io/datalens-tech/datalens-us:${US_VERSION:-0.168.0}
+    image: ghcr.io/datalens-tech/datalens-us:${US_VERSION:-0.179.0}
     depends_on:
       - pg-us
     environment:
@@ -89,7 +89,7 @@ services:
       HC: ${HC:-0}
       NODE_EXTRA_CA_CERTS: /certs/root.crt
     ports:
-      - "8083:80"
+      - "8083:8083"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
