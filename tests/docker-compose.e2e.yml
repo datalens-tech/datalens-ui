@@ -19,7 +19,7 @@ services:
       DL_CRY_ACTUAL_KEY_ID: key_1
       DL_CRY_KEY_VAL_ID_key_1: "h1ZpilcYLYRdWp7Nk8X1M1kBPiUi8rdjz9oBfHyUKIk="
       RQE_SECRET_KEY: ""
-      US_HOST: "http://us"
+      US_HOST: "http://us:8083"
       US_MASTER_TOKEN: "fake-us-master-token"
       CONFIG_PATH: "/etc/backend-configs/api.yaml"
     ports:
@@ -42,7 +42,7 @@ services:
       DL_CRY_KEY_VAL_ID_key_1: "h1ZpilcYLYRdWp7Nk8X1M1kBPiUi8rdjz9oBfHyUKIk="
       BI_COMPENG_PG_ON: 1
       BI_COMPENG_PG_URL: "postgresql://postgres:postgres@pg-compeng:5432/postgres"
-      US_HOST: "http://us"
+      US_HOST: "http://us:8083"
       US_MASTER_TOKEN: "fake-us-master-token"
       CONFIG_PATH: "/etc/backend-configs/api.yaml"
     ports:
