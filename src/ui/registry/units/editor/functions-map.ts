@@ -13,4 +13,5 @@ export const editorFunctionsMap = {
             (activeTab: string) => CancellablePromise<FetchEditorDocumentationResponse>
         >(),
     getEditorTemplates: makeFunctionTemplate<() => GetEditorTemplatesResponse>(),
+    getEmptyTemplateType: makeFunctionTemplate<() => string>(),
 } as const;
