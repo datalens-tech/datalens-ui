@@ -91,12 +91,12 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     }
 
     React.useEffect(()=>{
-        Utils.getEmbedToken().then((response)=> {
+        Utils.getEmbedToken(propsData).then((response)=> {
             setEmbedToken(response);
         });
     }, []);
 
-    p['__embed_token'] = embedToken; // embedTokenResult[0]['embed'];
+    p['x-rpc-authorization'] = embedToken; // embedTokenResult[0]['embed'];
 
     const [selectedTheme, setSelectedTheme] = React.useState('');
     const [selectedLang, setSelectedLang] = React.useState('');
