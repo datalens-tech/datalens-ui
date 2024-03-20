@@ -8,6 +8,8 @@
     cursor: pointer;
     width: 100%;
     height: 100%;
+    border-radius: var(--g-border-radius-m);
+    padding: 0 6px;
 
     &__label {
         text-align: right;
@@ -19,5 +21,9 @@
 
     &_mobile {
         @include text-body-2;
+    }
+
+    &:hover {
+        background-color: var(--g-color-base-simple-hover);
     }
 }

@@ -64,7 +64,7 @@ export type ClickCallbackArgs = {
     aliases?: string[][];
 };
 
-export type WidgetsTypes = Record<string, RelationType>;
+export type WidgetsTypes = Record<string, Record<string, RelationType>>;
 
 export type AliasBase = {
     onCloseCallback?: (args?: ClickCallbackArgs) => void;
@@ -73,6 +73,7 @@ export type AliasBase = {
     relationType: RelationType;
     changedWidgetsData?: WidgetsTypes;
     changedWidgetId?: string;
+    changedItemId?: string;
 };
 
 export type AliasClickHandlerData = AliasBase & {
@@ -106,4 +107,5 @@ export type RelationChartType = keyof typeof RELATIONS_CHARTS_ICONS_DICT;
 export type RelationTypeChangeProps = {
     type: RelationType;
     widgetId: DashkitMetaDataItem['widgetId'];
+    itemId: DashkitMetaDataItem['itemId'];
 } & AliasClickHandlerData;

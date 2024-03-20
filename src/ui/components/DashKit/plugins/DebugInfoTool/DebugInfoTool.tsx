@@ -18,7 +18,7 @@ type DebugMultiInfoProps = {
 };
 
 type DebugInfoToolProps = (DataInfoProps | DebugMultiInfoProps) & {
-    modType?: 'corner' | 'right' | 'outer';
+    modType?: 'corner' | 'right' | 'outer' | 'bottom-right-corner' | 'top';
 };
 
 function getDebugText({label, value}: DataInfoProps, index?: number) {

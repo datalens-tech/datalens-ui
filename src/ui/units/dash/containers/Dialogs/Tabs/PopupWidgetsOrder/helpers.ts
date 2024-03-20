@@ -34,7 +34,7 @@ export const getWidgetRowText = (item: DashTabItem) => {
             break;
         case DashTabItemType.GroupControl:
             // TODO fix only one element widget order
-            item.data.items.forEach((controlItem) => {
+            item.data.group.forEach((controlItem) => {
                 widgetTabs.push(controlItem.title);
             });
             break;

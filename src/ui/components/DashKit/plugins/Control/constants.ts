@@ -18,6 +18,7 @@ export const LOAD_STATUS: Record<string, LoadStatus> = {
     PENDING: 'pending',
     SUCCESS: 'success',
     FAIL: 'fail',
+    DESTROYED: 'destroyed',
 };
 
 // This value is also used in charts

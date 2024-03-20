@@ -61,6 +61,7 @@ const formatDefaultToString = (defaultValue, source) => {
 export function prerenderMiddleware(item) {
     const {defaults = {}, data = {}} = item;
     const defaultsKeys = Object.keys(defaults);
+
     if (defaultsKeys.some((key) => isPlainObject(defaults[key]))) {
         const {source} = data;
         return {

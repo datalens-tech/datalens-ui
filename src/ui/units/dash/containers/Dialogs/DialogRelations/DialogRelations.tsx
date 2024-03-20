@@ -1,8 +1,9 @@
+/* eslint-disable complexity */
 import React from 'react';
 
 import {Config, DashKit} from '@gravity-ui/dashkit';
 import {ChevronDown, TriangleExclamationFill} from '@gravity-ui/icons';
-import {Button, Dialog, DropdownMenu, Icon, Popup} from '@gravity-ui/uikit';
+import {Button, Dialog, DropdownMenu, Icon, Popup, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -26,6 +27,7 @@ import {Filters, FiltersTypes} from './components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, DEFAULT_ICON_SIZE, RELATION_TYPES} from './constants';
 import {
     getDialogCaptionIcon,
+    getPairedRelationType,
     getRelationsForSave,
     getUpdatedPreparedRelations,
     hasConnectionsBy,
@@ -73,9 +75,17 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const [aliasWarnPopupOpen, setAliasWarnPopupOpen] = React.useState(false);
     const [searchValue, setSearchValue] = React.useState('');
     const [typeValues, setTypeValues] = React.useState<Array<FiltersTypes>>([]);
-    const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>();
+
     const [preparedRelations, setPreparedRelations] = React.useState<DashMetaData>([]);
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
+
+    const isMultipleControls =
+        widget.type === DashTabItemType.GroupControl && widget.data.group.length > 1;
+    const [itemId, setItemId] = React.useState(isMultipleControls ? widget.data.group[0].id : null);
+
+    const controlItems = isMultipleControls
+        ? widget.data.group.map((item) => ({value: item.id, content: item.title}))
+        : [];
 
     const {isLoading, currentWidgetMeta, relations, datasets, dashWidgetsMeta, invalidAliases} =
         useRelations({
@@ -83,7 +93,13 @@ const DialogRelations = (props: DialogRelationsProps) => {
             widget,
             dialogAliases: aliases,
             workbookId,
+            itemId,
         });
+
+    const currentWidgetId = itemId || widget.id || '';
+    const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>({
+        [currentWidgetId]: {},
+    });
 
     const [shownInvalidAliases, setShownInvalidAliases] = React.useState<string[] | null>(null);
 
@@ -92,7 +108,18 @@ const DialogRelations = (props: DialogRelationsProps) => {
         searchValue,
         typeValues,
         changedWidgets,
+        currentWidgetId,
     });
+
+    const handleItemChange = (value: string[]) => {
+        setItemId(value[0]);
+        setPreparedRelations([]);
+        if (!changedWidgets[value[0]]) {
+            const updatedChangedWidgets = {...changedWidgets};
+            updatedChangedWidgets[value[0]] = {};
+            setChangedWidgets(updatedChangedWidgets);
+        }
+    };
 
     const handleFilterInputChange = React.useCallback((data: string) => {
         setSearchValue(data);
@@ -161,6 +188,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 changedWidgetId: currentWidgetMeta?.widgetId || '',
                 preparedRelations,
                 datasets,
+                currentWidgetId,
                 type: 'aliases',
             });
             if (!newPreparedRelations) {
@@ -168,11 +196,13 @@ const DialogRelations = (props: DialogRelationsProps) => {
             }
 
             const newChangedWidgets = {...changedWidgets};
+            const currentId = itemId || currentWidgetMeta?.widgetId || '';
             newPreparedRelations.forEach((item) => {
                 if (
                     changedWidgets &&
-                    item.widgetId in changedWidgets &&
-                    item.relations.type !== changedWidgets[item.widgetId]
+                    changedWidgets[currentId] &&
+                    item.widgetId in changedWidgets[currentId] &&
+                    item.relations.type !== changedWidgets[currentId][item.widgetId]
                 ) {
                     delete newChangedWidgets[item.widgetId];
                 }
@@ -244,20 +274,39 @@ const DialogRelations = (props: DialogRelationsProps) => {
      */
     const handleRelationTypeChange = React.useCallback(
         (changedData: RelationTypeChangeProps) => {
-            const {type, widgetId, forceAddAlias, ...rest} = changedData;
+            const {type, widgetId, forceAddAlias, itemId: rowItemId, ...rest} = changedData;
 
             const newChanged = {...changedWidgets};
-            const currentRelations = preparedRelations.find(
-                (item) => item.widgetId === widgetId,
-            )?.relations;
+            let currentRelations;
+            if (rowItemId) {
+                currentRelations = preparedRelations.find(
+                    (item) => item.itemId === rowItemId,
+                )?.relations;
+            } else {
+                currentRelations = preparedRelations.find(
+                    (item) => item.widgetId === widgetId,
+                )?.relations;
+            }
+
+            const relationSubjectId = rowItemId || widgetId;
             const currentRelationType = currentRelations?.type;
             if (currentRelationType === type) {
-                if (newChanged[widgetId]) {
+                if (
+                    newChanged[currentWidgetId][relationSubjectId] ||
+                    newChanged[relationSubjectId][currentWidgetId]
+                ) {
                     setChangedWidgets(newChanged);
-                    delete newChanged[widgetId];
                 }
+                delete newChanged[currentWidgetId][relationSubjectId];
+                delete newChanged[relationSubjectId][currentWidgetId];
             } else {
-                newChanged[widgetId] = type;
+                newChanged[currentWidgetId][relationSubjectId] = type;
+                const pairedType = getPairedRelationType(type);
+                if (pairedType !== RELATION_TYPES.unknown) {
+                    newChanged[relationSubjectId] = newChanged[relationSubjectId]
+                        ? {...newChanged[relationSubjectId], [currentWidgetId]: type}
+                        : {[currentWidgetId]: type};
+                }
             }
             const changeFromUnknown = currentRelationType === RELATION_TYPES.unknown;
 
@@ -270,7 +319,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     forceAddAlias);
 
             if (showAddAliasForm) {
-                if (!isEmpty(newChanged[widgetId])) {
+                if (!isEmpty(newChanged[currentWidgetId][relationSubjectId])) {
                     const hasRelationBy = hasConnectionsBy(currentRelations);
 
                     if (hasRelationBy && !forceAddAlias) {
@@ -283,6 +332,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                             forceAddAlias: true,
                             changedWidgetsData: newChanged,
                             changedWidgetId: widgetId,
+                            changedItemId: rowItemId,
                         });
                     }
                 }
@@ -325,13 +375,14 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
             preparedRelations.forEach((item) => {
                 if (filteredIds[item.widgetId]) {
-                    newChangedWidgets[item.widgetId] = RELATION_TYPES.ignore as RelationType;
+                    newChangedWidgets[currentWidgetId][item.widgetId] =
+                        RELATION_TYPES.ignore as RelationType;
                 }
             });
 
             setChangedWidgets(newChangedWidgets);
         },
-        [preparedRelations, filteredRelations],
+        [preparedRelations, filteredRelations, currentWidgetId],
     );
 
     /**
@@ -347,7 +398,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
         const newData: {aliases?: DashTab['aliases']; connections?: Config['connections']} = {};
         if (changedWidgets) {
             const connections = getRelationsForSave({
-                currentWidgetId: currentWidgetMeta?.widgetId || '',
                 changed: changedWidgets,
                 dashkitData: dashKitRef.current || null,
             });
@@ -374,13 +424,13 @@ const DialogRelations = (props: DialogRelationsProps) => {
             ? `${currentWidgetMeta?.label} ${currentWidgetMeta?.title ? ' — ' : ''}`
             : '';
     const titleName = isLoading ? '' : `: ${label}${currentWidgetMeta?.title}`;
+    const titleId =
+        currentWidgetMeta?.widgetId && currentWidgetMeta?.itemId
+            ? `${currentWidgetMeta.widgetId} ${currentWidgetMeta.itemId}`
+            : currentWidgetMeta?.widgetId;
     const title = (
         <div>
-            {i18n('title_links') +
-                titleName +
-                (showDebugInfo && currentWidgetMeta?.widgetId
-                    ? ` (${currentWidgetMeta.widgetId})`
-                    : '')}
+            {i18n('title_links') + titleName + (showDebugInfo && titleId ? ` (${titleId})` : '')}
         </div>
     );
 
@@ -428,6 +478,15 @@ const DialogRelations = (props: DialogRelationsProps) => {
         >
             <Dialog.Header caption={title} insertBefore={titleIcon} className={b('caption')} />
             <Dialog.Body className={b('container')}>
+                {isMultipleControls && (
+                    <Select
+                        className={b('item-select')}
+                        value={[itemId || '']}
+                        options={controlItems}
+                        onUpdate={handleItemChange}
+                        label={i18n('label_current-selector')}
+                    />
+                )}
                 <Filters
                     onChangeInput={handleFilterInputChange}
                     onChangeButtons={handleFilterTypesChange}

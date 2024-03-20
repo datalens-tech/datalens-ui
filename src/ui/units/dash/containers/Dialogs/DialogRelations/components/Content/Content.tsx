@@ -22,6 +22,7 @@ type ContentProps = {
         props: {
             type: RelationType;
             widgetId: DashkitMetaDataItem['widgetId'];
+            itemId: DashkitMetaDataItem['itemId'];
         } & AliasClickHandlerData,
     ) => void;
     onAliasClick: (props: AliasClickHandlerData) => void;

@@ -39,10 +39,10 @@ export const GroupControlSidebar = () => {
     const dispatch = useDispatch();
 
     const initialTabIndex =
-        selectorsGroup.items[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
+        selectorsGroup.group?.[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
     const [defaultTabIndex, setDefaultTabIndex] = React.useState(initialTabIndex);
 
-    const isMultipleSelectors = selectorsGroup.items.length > 1;
+    const isMultipleSelectors = selectorsGroup.group?.length > 1;
 
     const updateSelectorsList = React.useCallback(
         ({items, selectedItemIndex, action}: ListState<SelectorDialogState>) => {
@@ -53,7 +53,7 @@ export const GroupControlSidebar = () => {
                 dispatch(
                     updateSelectorsGroup({
                         ...selectorsGroup,
-                        items,
+                        group: items,
                         ...(items.length === 1 ? SINGLE_SELECTOR_SETTINGS : {}),
                     }),
                 );
@@ -124,11 +124,14 @@ export const GroupControlSidebar = () => {
         [dispatch, selectorsGroup],
     );
 
+    const showAutoHeight =
+        isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
+
     return (
         <div className={b('sidebar')}>
             <div className={b('selectors-list')}>
                 <TabMenu
-                    items={selectorsGroup.items}
+                    items={selectorsGroup.group}
                     selectedItemIndex={activeSelectorIndex}
                     update={updateSelectorsList}
                     addButtonText={i18n('button_add-selector')}
@@ -136,8 +139,8 @@ export const GroupControlSidebar = () => {
                     enableActionMenu={true}
                 />
             </div>
-            {isMultipleSelectors && (
-                <div className={b('settings')}>
+            <div className={b('settings')}>
+                {showAutoHeight && (
                     <div className={b('settings-container')}>
                         <div>
                             <span>{i18n('label_autoheight-checkbox')}</span>
@@ -148,47 +151,46 @@ export const GroupControlSidebar = () => {
                             size="l"
                         />
                     </div>
-                    <div className={b('settings-container')}>
-                        <div>
-                            <span>{i18n('label_apply-button-checkbox')}</span>
-                            <HelpPopover
-                                className={b('help-icon')}
-                                htmlContent={i18n('context_apply-button')}
-                            />
-                        </div>
-                        <Checkbox
-                            checked={selectorsGroup.buttonApply}
-                            onUpdate={handleChangeButtonApply}
-                            size="l"
+                )}
+                <div className={b('settings-container')}>
+                    <div>
+                        <span>{i18n('label_apply-button-checkbox')}</span>
+                        <HelpPopover
+                            className={b('help-icon')}
+                            htmlContent={i18n('context_apply-button')}
                         />
                     </div>
-
-                    <div className={b('settings-container')}>
-                        <div>
-                            <span>{i18n('label_reset-button-checkbox')}</span>
-                            <HelpPopover
-                                className={b('help-icon')}
-                                htmlContent={i18n('context_reset-button')}
-                            />
-                        </div>
-                        <Checkbox
-                            checked={selectorsGroup.buttonReset}
-                            onUpdate={handleChangeButtonReset}
-                            size="l"
-                        />
-                    </div>
-
-                    <Button
-                        view="outlined"
-                        width="max"
-                        className={b('order-selectors-button')}
-                        onClick={handleSelectorsPlacementClick}
-                    >
-                        <Icon data={Gear} height={16} width={16} />
-                        {i18n('button_selectors-placement')}
-                    </Button>
+                    <Checkbox
+                        checked={selectorsGroup.buttonApply}
+                        onUpdate={handleChangeButtonApply}
+                        size="l"
+                    />
                 </div>
-            )}
+                <div className={b('settings-container')}>
+                    <div>
+                        <span>{i18n('label_reset-button-checkbox')}</span>
+                        <HelpPopover
+                            className={b('help-icon')}
+                            htmlContent={i18n('context_reset-button')}
+                        />
+                    </div>
+                    <Checkbox
+                        checked={selectorsGroup.buttonReset}
+                        onUpdate={handleChangeButtonReset}
+                        size="l"
+                    />
+                </div>
+
+                <Button
+                    view="outlined"
+                    width="max"
+                    className={b('order-selectors-button')}
+                    onClick={handleSelectorsPlacementClick}
+                >
+                    <Icon data={Gear} height={16} width={16} />
+                    {i18n('button_selectors-placement')}
+                </Button>
+            </div>
         </div>
     );
 };
