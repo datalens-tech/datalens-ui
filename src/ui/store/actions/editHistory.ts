@@ -1,18 +1,22 @@
 import {cloneDeep} from 'lodash';
 import {Dispatch} from 'redux';
-import {create as jdpCreate} from 'jsondiffpatch';
+import {create as jdpCreate, DiffContext as JDPDiffContext} from 'jsondiffpatch';
 
 import {DatalensGlobalState} from 'ui';
 
 import type {EditHistoryUnit, EditHistoryState, Diff} from '../reducers/editHistory';
 
-const PROPERTY_IGNORE_LIST = ['highchartsWidget'];
+const getPath = (ctx: JDPDiffContext): string => {
+    if (ctx && ctx.parent) {
+        return `${getPath(ctx.parent)}/${ctx.childName}`;
+    } else {
+        return `${ctx.childName || ''}`;
+    }
+};
 
-const jdp = jdpCreate({
-    propertyFilter: function (name: string) {
-        return !PROPERTY_IGNORE_LIST.includes(name);
-    },
-});
+export interface CreateJDPOptions {
+    pathIgnoreList: string[];
+}
 
 // Plugin for jsondiffpatch to diff functions by its' references
 const functionDiffFilter = (context: any) => {
@@ -35,7 +39,19 @@ const functionDiffFilter = (context: any) => {
 
 functionDiffFilter.filterName = 'function';
 
-jdp.processor.pipes.diff.before('trivial', functionDiffFilter);
+const createJDP = ({pathIgnoreList}: CreateJDPOptions) => {
+    const jdp = jdpCreate({
+        propertyFilter: function (name: string, ctx: JDPDiffContext) {
+            const propertyPath = `${getPath(ctx)}/${name}`;
+
+            return !pathIgnoreList.includes(propertyPath);
+        },
+    });
+
+    jdp.processor.pipes.diff.before('trivial', functionDiffFilter);
+
+    return jdp;
+};
 
 export const INIT_EDIT_HISTORY_UNIT = Symbol('editHistory/INIT_EDIT_HISTORY_UNIT');
 export const RESET_EDIT_HISTORY_UNIT = Symbol('editHistory/RESET_EDIT_HISTORY_UNIT');
@@ -67,13 +83,19 @@ interface InitEditHistoryUnitAction {
     type: typeof INIT_EDIT_HISTORY_UNIT;
     unitId: string;
     setState: EditHistoryUnit['setState'];
+    options: CreateJDPOptions;
 }
 
-export function initEditHistoryUnit({unitId, setState}: Omit<InitEditHistoryUnitAction, 'type'>) {
+export function initEditHistoryUnit({
+    unitId,
+    setState,
+    options,
+}: Omit<InitEditHistoryUnitAction, 'type'>) {
     return {
         type: INIT_EDIT_HISTORY_UNIT,
         unitId,
         setState,
+        options,
     };
 }
 
@@ -133,9 +155,11 @@ export function addEditHistoryPoint({unitId}: {unitId: string}) {
 
         const newState = cloneDeep(wizardState);
 
-        const unit = units[unitId];
+        const unit = _getTargetUnit({units, unitId});
 
         let diff = null;
+
+        const jdp = createJDP(unit.options);
 
         // If unit.pointState is not initialized yet, then this is first state
         // First state does not have any diffs, because it is first and initial
@@ -165,7 +189,9 @@ export function goBack({unitId}: {unitId: string}) {
 
         const {units} = globalState.editHistory;
 
-        const {diffs, pointIndex, pointState, setState} = _getTargetUnit({units, unitId});
+        const unit = _getTargetUnit({units, unitId});
+
+        const {diffs, pointIndex, pointState, setState} = unit;
 
         const targetIndex = pointIndex;
 
@@ -174,6 +200,8 @@ export function goBack({unitId}: {unitId: string}) {
         if (!targetDiff) {
             throw new Error('History point index out of bounds');
         }
+
+        const jdp = createJDP(unit.options);
 
         // Unapply last diff
         const targetState = jdp.unpatch(cloneDeep(pointState), targetDiff);
@@ -197,7 +225,9 @@ export function goForward({unitId}: {unitId: string}) {
 
         const {units} = globalState.editHistory;
 
-        const {diffs, pointIndex, pointState, setState} = _getTargetUnit({units, unitId});
+        const unit = _getTargetUnit({units, unitId});
+
+        const {diffs, pointIndex, pointState, setState} = unit;
 
         // New point index will be at next index
         const targetIndex = pointIndex + 1;
@@ -207,6 +237,8 @@ export function goForward({unitId}: {unitId: string}) {
         if (!targetDiff) {
             throw new Error('History point index out of bounds');
         }
+
+        const jdp = createJDP(unit.options);
 
         // Apply next diff
         const targetState = jdp.patch(cloneDeep(pointState), targetDiff);

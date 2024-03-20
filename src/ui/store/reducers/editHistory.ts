@@ -6,8 +6,9 @@ import {
     RESET_EDIT_HISTORY_UNIT,
     ADD_EDIT_HISTORY_POINT,
     SET_EDIT_HISTORY_POINT_INDEX,
-    EditHistoryAction,
     SET_EDIT_HISTORY_CURRENT_STATE,
+    EditHistoryAction,
+    CreateJDPOptions,
 } from '../actions/editHistory';
 
 export type Diff = JDPDelta;
@@ -17,6 +18,7 @@ export type EditHistoryUnit = {
     pointIndex: number;
     pointState: unknown;
     setState: ({state}: {state: unknown}) => AnyAction;
+    options: CreateJDPOptions;
 };
 
 export interface EditHistoryState {
@@ -30,7 +32,7 @@ const initialState: EditHistoryState = {
 export function editHistory(state = initialState, action: EditHistoryAction): EditHistoryState {
     switch (action.type) {
         case INIT_EDIT_HISTORY_UNIT: {
-            const {unitId, setState} = action;
+            const {unitId, setState, options} = action;
 
             return {
                 ...state,
@@ -42,6 +44,7 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                         diffs: [],
                         pointState: null,
                         setState,
+                        options,
                     },
                 },
             };
@@ -49,16 +52,19 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
         case RESET_EDIT_HISTORY_UNIT: {
             const {unitId} = action;
 
+            const unit = state.units[unitId];
+
             return {
                 ...state,
                 units: {
                     ...state.units,
 
                     [unitId]: {
+                        ...unit,
+
                         pointIndex: -1,
                         diffs: [],
                         pointState: null,
-                        setState: state.units[unitId].setState,
                     },
                 },
             };
@@ -68,7 +74,7 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
 
             const editHistoryUnit = state.units[unitId];
 
-            const {diffs, pointIndex, setState} = editHistoryUnit;
+            const {diffs, pointIndex} = editHistoryUnit;
 
             const prevDiffs = diffs.slice(0, pointIndex + 1);
 
@@ -78,14 +84,15 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                 units: {
                     ...state.units,
                     [unitId]: {
+                        ...editHistoryUnit,
+
                         // Force current history point index to latest state
                         pointIndex: pointIndex + 1,
 
+                        // Remove all missed diffs
                         diffs: [...prevDiffs, diff],
 
                         pointState: newState,
-
-                        setState,
                     },
                 },
             };

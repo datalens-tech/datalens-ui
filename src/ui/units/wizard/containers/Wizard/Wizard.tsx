@@ -164,6 +164,9 @@ class Wizard extends React.Component<Props, State> {
                         store: state as unknown as WizardGlobalState,
                     });
                 },
+                options: {
+                    pathIgnoreList: ['/preview/highchartsWidget'],
+                },
             });
         }
     }
