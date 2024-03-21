@@ -15,18 +15,33 @@ export interface AnimateBlockProps {
 }
 
 export const AnimateBlock = ({className, delay = 0, offset = 100, children}: AnimateBlockProps) => {
-    const [playAnimation, setPlayAnimation] = React.useState<boolean>(false);
+    const [isScheduledAnimation, setIsScheduledAnimation] = React.useState(false);
+    const [isPlayedAnimation, setIsPlayedAnimation] = React.useState(false);
+
+    React.useEffect(() => {
+        let timer: NodeJS.Timeout;
+
+        if (isScheduledAnimation) {
+            timer = setTimeout(() => {
+                setIsPlayedAnimation(true);
+            }, delay);
+        }
+
+        return () => {
+            if (isScheduledAnimation && timer) {
+                clearTimeout(timer);
+            }
+        };
+    }, [delay, isScheduledAnimation]);
 
     return (
-        <div className={b({animate: playAnimation}, className)}>
+        <div className={b({animate: isPlayedAnimation}, className)}>
             <Waypoint
                 // trigger animation if element is above screen
                 topOffset={'-100000%'}
                 bottomOffset={offset}
                 onEnter={() => {
-                    setTimeout(() => {
-                        setPlayAnimation(true);
-                    }, delay);
+                    setIsScheduledAnimation(true);
                 }}
             />
             {children}
