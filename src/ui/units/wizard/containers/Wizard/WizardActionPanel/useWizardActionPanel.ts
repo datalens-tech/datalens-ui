@@ -68,6 +68,7 @@ export const useWizardActionPanel = (
                     icon: {data: ArrowUturnCcwLeft, size: 16},
                     view: 'flat',
                     disabled: !canGoBack,
+                    qa: 'undo-btn',
                 },
                 {
                     key: 'redo',
@@ -78,6 +79,7 @@ export const useWizardActionPanel = (
                     icon: {data: ArrowUturnCwRight, size: 16},
                     view: 'flat',
                     disabled: !canGoForward,
+                    qa: 'redo-btn',
                 },
             ];
         }
