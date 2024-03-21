@@ -1,58 +1,12 @@
 import {cloneDeep} from 'lodash';
 import {Dispatch} from 'redux';
 import {batch} from 'react-redux';
-import {create as jdpCreate, DiffContext as JDPDiffContext} from 'jsondiffpatch';
 
 import type {DatalensGlobalState} from '../../';
 
 import type {EditHistoryUnit, EditHistoryState, Diff} from '../reducers/editHistory';
 
-// Plugin for jsondiffpatch to diff functions by its' references
-const functionDiffFilter = (context: any) => {
-    if (typeof context.left === 'function') {
-        if (typeof context.right === 'function') {
-            if (context.left === context.right) {
-                context.setResult(undefined);
-            } else {
-                context.setResult([context.left, context.right]);
-            }
-        } else {
-            context.setResult([context.left, context.right]);
-        }
-
-        context.exit();
-    } else if (typeof context.right === 'function') {
-        context.setResult([context.left, context.right]).exit();
-    }
-};
-
-functionDiffFilter.filterName = 'function';
-
-const getPath = (ctx: JDPDiffContext): string => {
-    if (ctx && ctx.parent) {
-        return `${getPath(ctx.parent)}/${ctx.childName}`;
-    } else {
-        return `${ctx.childName || ''}`;
-    }
-};
-
-export interface CreateJDPOptions {
-    pathIgnoreList: string[];
-}
-
-const createJDP = ({pathIgnoreList}: CreateJDPOptions) => {
-    const jdp = jdpCreate({
-        propertyFilter: function (name: string, ctx: JDPDiffContext) {
-            const propertyPath = `${getPath(ctx)}/${name}`;
-
-            return !pathIgnoreList.includes(propertyPath);
-        },
-    });
-
-    jdp.processor.pipes.diff.before('trivial', functionDiffFilter);
-
-    return jdp;
-};
+import {createJDP, CreateJDPOptions} from '../utils/jdp';
 
 export const INIT_EDIT_HISTORY_UNIT = Symbol('editHistory/INIT_EDIT_HISTORY_UNIT');
 export const RESET_EDIT_HISTORY_UNIT = Symbol('editHistory/RESET_EDIT_HISTORY_UNIT');

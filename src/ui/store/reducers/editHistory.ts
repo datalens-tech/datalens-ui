@@ -8,8 +8,9 @@ import {
     SET_EDIT_HISTORY_POINT_INDEX,
     SET_EDIT_HISTORY_CURRENT_STATE,
     EditHistoryAction,
-    CreateJDPOptions,
 } from '../actions/editHistory';
+
+import {CreateJDPOptions} from '../utils/jdp';
 
 export type Diff = JDPDelta;
 
