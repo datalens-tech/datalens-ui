@@ -90,7 +90,7 @@ class DropdownNavigation extends React.PureComponent {
         if (this.loading) {
             try {
                 const entryMeta = await getSdk()
-                    .us.getEntryMeta({entryId})
+                    .us.getEntry({entryId})
                     .then((metaData) => {
                         isValidEntry = true;
                         return metaData;
