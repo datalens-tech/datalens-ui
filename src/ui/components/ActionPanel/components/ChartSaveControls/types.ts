@@ -16,4 +16,5 @@ export type AdditionalButtonTemplate = {
     view?: ButtonView;
     disabled?: boolean;
     qa?: string;
+    title?: string;
 };

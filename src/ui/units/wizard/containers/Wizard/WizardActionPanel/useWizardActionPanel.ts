@@ -69,6 +69,7 @@ export const useWizardActionPanel = (
                     view: 'flat',
                     disabled: !canGoBack,
                     qa: WizardPageQa.UndoButton,
+                    title: i18n('wizard', 'button_undo'),
                 },
                 {
                     key: 'redo',
@@ -80,6 +81,7 @@ export const useWizardActionPanel = (
                     view: 'flat',
                     disabled: !canGoForward,
                     qa: WizardPageQa.RedoButton,
+                    title: i18n('wizard', 'button_redo'),
                 },
             ];
         }
