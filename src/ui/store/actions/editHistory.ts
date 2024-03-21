@@ -107,21 +107,26 @@ export function addEditHistoryPoint({unitId, newState}: {unitId: string; newStat
             editHistory: {units},
         } = globalState;
 
-        const unit = _getTargetUnit({units, unitId});
+        // TODO: remove try check, use correct actions for each unit
+        try {
+            let diff;
 
-        let diff;
+            const unit = _getTargetUnit({units, unitId});
 
-        const jdp = createJDP(unit.options);
+            const jdp = createJDP(unit.options);
 
-        // If unit.pointState is not initialized yet, then this is first state
-        // First state does not have any diffs, because it is first and initial
-        if (unit.pointState) {
-            const oldState = unit.pointState;
+            // If unit.pointState is not initialized yet, then this is first state
+            // First state does not have any diffs, because it is first and initial
+            if (unit.pointState) {
+                const oldState = unit.pointState;
 
-            diff = jdp.diff(oldState, newState);
+                diff = jdp.diff(oldState, newState);
+            }
+
+            dispatch(_addEditHistoryPoint({unitId, diff, state: newState}));
+        } catch (error) {
+            console.warn(error);
         }
-
-        dispatch(_addEditHistoryPoint({unitId, diff, state: newState}));
     };
 }
 
