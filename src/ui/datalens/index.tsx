@@ -1,7 +1,7 @@
 import React from 'react';
 import {Route, Switch, Redirect, useLocation} from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import {reducerRegistry} from '../store';
+import {Feature} from 'shared';
 import coreReducers from 'store/reducers';
 import {getIsAsideHeaderEnabled} from 'components/AsideHeaderAdapter';
 import LocationChange from '../components/LocationChange/LocationChange';
@@ -12,6 +12,8 @@ import DashAndWizardQLPages, {
 } from './pages/DashAndWizardQLPages/DashAndWizardQLPages';
 import {locationChangeHandler} from './helpers';
 import {isEmbeddedMode, isTvMode} from '../utils/embedded';
+import Utils from '../utils';
+import {reducerRegistry} from '../store';
 import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAdapter';
 
 import AuthPage from './pages/AuthPage/AuthPage';
@@ -64,7 +66,12 @@ const DatalensPageView = (props: any) => {
                         path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                         component={DatasetPage}
                     />
-                    <Route path="/editor" component={EditorPage} />
+                    {Utils.isEnabledFeature(Feature.EnableChartEditor) && (
+                        <Route
+                            path={['/editor', '/workbooks/:workbookId/editor']}
+                            component={EditorPage}
+                        />
+                    )}
                     <Route path="/preview" component={PreviewPage} />
                     <Route
                         path={[

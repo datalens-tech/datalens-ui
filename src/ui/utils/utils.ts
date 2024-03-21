@@ -294,4 +294,10 @@ export default class Utils {
     static convertToSnakeCase(data: {[key: string]: unknown}) {
         return _mapKeys(data, (_value, key) => _snakeCase(key));
     }
+
+    static getEmbedToken = async (propsData: any) => {
+        var result = await getSdk().us.getEmbed({workbookId: propsData.workbookId, entryId: propsData.id});
+
+        return result.data && result.data.length > 0 ? result.data[0].embed : '';
+    }
 }

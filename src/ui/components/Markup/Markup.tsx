@@ -3,9 +3,9 @@ import React from 'react';
 import {Link} from '@gravity-ui/uikit';
 import merge from 'lodash/merge';
 
+import {MarkupItem, MarkupItemType, MarkupItemTypes} from '../../../shared';
+
 import {UserInfo} from './components/UserInfo/UserInfo';
-import {MarkupItemTypeDict} from './constants';
-import {MarkupItem, MarkupItemType} from './types';
 import {isNumericCSSValueValid} from './utils';
 
 type TemplateItem = {
@@ -43,7 +43,7 @@ const getConfig = (
         });
     }
 
-    if (markupItem.type === MarkupItemTypeDict.Text) {
+    if (markupItem.type === MarkupItemTypes.Text) {
         iteratedConfigItem.children.push(markupItem.content as TemplateItem);
 
         if (!config) {
@@ -54,21 +54,21 @@ const getConfig = (
     }
 
     switch (markupItem.type) {
-        case MarkupItemTypeDict.Bold: {
+        case MarkupItemTypes.Bold: {
             iteratedConfigItem.element = 'b';
             break;
         }
-        case MarkupItemTypeDict.Br: {
+        case MarkupItemTypes.Br: {
             iteratedConfigItem.element = 'br';
             break;
         }
-        case MarkupItemTypeDict.Color: {
+        case MarkupItemTypes.Color: {
             iteratedConfigItem.props = merge(iteratedConfigItem.props, {
                 style: {color: markupItem.color},
             });
             break;
         }
-        case MarkupItemTypeDict.Concat: {
+        case MarkupItemTypes.Concat: {
             iteratedConfigItem.element = 'span';
 
             if (markupItem.children) {
@@ -81,11 +81,11 @@ const getConfig = (
 
             break;
         }
-        case MarkupItemTypeDict.Italics: {
+        case MarkupItemTypes.Italics: {
             iteratedConfigItem.element = 'i';
             break;
         }
-        case MarkupItemTypeDict.Size: {
+        case MarkupItemTypes.Size: {
             const fontSize = isNumericCSSValueValid(markupItem.size) ? markupItem.size : undefined;
 
             if (fontSize) {
@@ -95,7 +95,7 @@ const getConfig = (
             }
             break;
         }
-        case MarkupItemTypeDict.Url: {
+        case MarkupItemTypes.Url: {
             iteratedConfigItem.element = Link;
             iteratedConfigItem.props = merge(iteratedConfigItem.props, {
                 view: 'normal',
@@ -104,7 +104,7 @@ const getConfig = (
             });
             break;
         }
-        case MarkupItemTypeDict.UserInfo: {
+        case MarkupItemTypes.UserInfo: {
             const {content: userId, user_info: fieldName} = markupItem;
             iteratedConfigItem.element = UserInfo;
             iteratedConfigItem.props = {
@@ -122,7 +122,7 @@ const getConfig = (
     const content = markupItem.content as MarkupItem;
     let nextConfigItem: TemplateItem = {children: []};
 
-    if (content?.type && content.type !== MarkupItemTypeDict.Text) {
+    if (content?.type && content.type !== MarkupItemTypes.Text) {
         iteratedConfigItem.children.push(nextConfigItem);
     } else {
         nextConfigItem = iteratedConfigItem;

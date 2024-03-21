@@ -110,9 +110,12 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         prevHideTitle !== undefined && !isEqual(data.hideTitle, prevHideTitle);
 
     const prevEnableActionParams = usePrevious(currentTab.enableActionParams);
+    // if there was no param in config it will be undefined too (not only when we first render with undefined initializing)
+    // so we check two cases: when prev val is true and new val is not true or current val is true and prev is not true
     const hasEnableActionParamsChanged = Boolean(
-        prevEnableActionParams !== undefined &&
-            prevEnableActionParams !== currentTab.enableActionParams,
+        (prevEnableActionParams !== undefined &&
+            prevEnableActionParams !== currentTab.enableActionParams) ||
+            (prevEnableActionParams === undefined && currentTab.enableActionParams),
     );
 
     const initialData: DataProps = React.useMemo(

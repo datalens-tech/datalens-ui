@@ -3,8 +3,6 @@ import {DL} from 'constants/common';
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {Star, StarFill} from '@gravity-ui/icons';
-import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {I18n} from 'i18n';
@@ -60,10 +58,7 @@ const Row: React.FC<RowProps> = ({
 
     const isShowLogin = LoginById && item.createdBy;
 
-    const onChangeFavorite = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        event.preventDefault();
-        event.stopPropagation();
-
+    const onChangeFavorite = () => {
         const {entryId, isFavorite} = item;
 
         dispatch(
@@ -75,23 +70,21 @@ const Row: React.FC<RowProps> = ({
         );
     };
 
-    const getFavoriteIcon = () => {
-        if (item.isFavorite) return <Icon data={StarFill} />;
-
-        return <Icon data={Star} />;
-    };
+    const {ButtonFavorite} = registry.common.components.getAll();
 
     return (
         <Link to={url} className={b()} style={defaultRowStyle} data-qa={WorkbookPage.ListItem}>
             <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
                 <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>
-                    <EntryIcon entry={item} className={b('icon')} width="24" height="24" />
+                    <div className={b('icon')}>
+                        <EntryIcon entry={item} width={24} height={24} />
+                    </div>
                     <div className={b('title-col-text')} title={item.name}>
                         {item.name}
                     </div>
                 </div>
             </div>
-            <div className={b('content-cell')}>
+            <div className={b('content-cell', {author: true})}>
                 {isShowLogin && (
                     <LoginById
                         className={b('author-text')}
@@ -100,23 +93,21 @@ const Row: React.FC<RowProps> = ({
                     />
                 )}
             </div>
-            <div className={b('content-cell')}>
+            <div className={b('content-cell', {date: true})}>
                 {dateTime({
                     input: item.updatedAt,
                 }).fromNow()}
             </div>
-            <div className={b('content-cell')}>
-                <div
-                    className={b('btn-favorite', {'is-favorite': item.isFavorite})}
-                    onClick={onChangeFavorite}
-                >
-                    {getFavoriteIcon()}
-                </div>
-            </div>
-            {workbook.permissions.update && (
-                <div className={b('content-cell')} onClick={onClickStopPropogation}>
-                    <div className={b('control-col')}>
-                        <div>
+
+            <div className={b('content-cell', {controls: true})} onClick={onClickStopPropogation}>
+                <div className={b('control-col')}>
+                    <ButtonFavorite
+                        className={b('btn-favorite', {'is-favorite': item.isFavorite})}
+                        onClick={onChangeFavorite}
+                        isFavorite={item.isFavorite}
+                    />
+                    {workbook.permissions.update && (
+                        <div className={b('btn-actions')}>
                             <EntryActions
                                 workbook={workbook}
                                 entry={item}
@@ -134,9 +125,9 @@ const Row: React.FC<RowProps> = ({
                                 }}
                             />
                         </div>
-                    </div>
+                    )}
                 </div>
-            )}
+            </div>
         </Link>
     );
 };
@@ -146,7 +137,6 @@ const EmptyRow = ({label}: {label?: React.ReactNode}) => {
         <div className={b('empty-row')} style={defaultRowStyle}>
             <div className={b('empty-cell')}>{label || i18n('label_no-data')}</div>
 
-            <div className={b('empty-cell')} />
             <div className={b('empty-cell')} />
             <div className={b('empty-cell')} />
             <div className={b('empty-cell')} />

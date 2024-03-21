@@ -55,6 +55,18 @@ export const getControlValidation = (selectorDialog: SelectorDialogState) => {
         validation.datasetFieldId = i18n('dash.control-dialog.edit', 'validation_required');
     }
 
+    if (
+        sourceType === DashTabItemControlSourceType.Connection &&
+        selectorParameters &&
+        Object.values(selectorParameters).some((v) => v.length === 0)
+    ) {
+        validation.selectorParameters = i18n(
+            'dash.control-dialog.edit',
+            // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
+            'validation_empty-parameters-values',
+        );
+    }
+
     if (required && (!defaultValue || !defaultValue?.length)) {
         validation.defaultValue = i18n('dash.control-dialog.edit', 'validation_required');
     }
@@ -63,8 +75,8 @@ export const getControlValidation = (selectorDialog: SelectorDialogState) => {
 };
 
 export const getControlDefaultsForField = (
-    defaults: Record<string, string | string[]>,
     selectorDialog: SelectorDialogState,
+    hasChangedSourceType?: boolean,
 ) => {
     const {sourceType, datasetFieldId, fieldName, defaultValue, selectorParameters} =
         selectorDialog;
@@ -82,9 +94,11 @@ export const getControlDefaultsForField = (
             break;
     }
 
+    const clone = Object.assign({}, selectorParameters);
+
     if (field) {
         return {
-            ...selectorParameters,
+            ...(hasChangedSourceType ? {} : clone),
             [field]: addOperationForValue({
                 operation: selectorDialog.operation,
                 value: defaultValue || '',
@@ -92,12 +106,11 @@ export const getControlDefaultsForField = (
         };
     }
 
-    const merged = Object.assign({}, defaults, selectorParameters);
-
-    return Object.keys(merged).reduce<Record<string, string | string[]>>((params, paramTitle) => {
+    return Object.keys(clone).reduce<Record<string, string | string[]>>((params, paramTitle) => {
         if (validateParamTitleOnlyUnderscore(paramTitle) === null) {
-            params[paramTitle] = merged[paramTitle];
+            params[paramTitle] = clone[paramTitle];
         }
+
         return params;
     }, {});
 };
