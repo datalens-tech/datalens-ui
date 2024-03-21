@@ -10,7 +10,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 
-import {Feature} from '../../../../../../shared';
+import {Feature, WizardPageQa} from '../../../../../../shared';
 import {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
@@ -68,7 +68,7 @@ export const useWizardActionPanel = (
                     icon: {data: ArrowUturnCcwLeft, size: 16},
                     view: 'flat',
                     disabled: !canGoBack,
-                    qa: 'undo-btn',
+                    qa: WizardPageQa.UndoButton,
                 },
                 {
                     key: 'redo',
@@ -79,7 +79,7 @@ export const useWizardActionPanel = (
                     icon: {data: ArrowUturnCwRight, size: 16},
                     view: 'flat',
                     disabled: !canGoForward,
-                    qa: 'redo-btn',
+                    qa: WizardPageQa.RedoButton,
                 },
             ];
         }

@@ -1,6 +1,7 @@
 import {expect} from '@playwright/test';
 
 import {
+    WizardPageQa,
     ChartkitMenuDialogsQA,
     DatasetItemActionsQa,
     MenuItemsQA,
@@ -254,6 +255,14 @@ class WizardPage extends ChartPage {
 
         await previewPage.goto(url.toString());
         return previewPage;
+    }
+
+    async clickUndo() {
+        await this.page.locator(slct(WizardPageQa.UndoButton)).click();
+    }
+
+    async clickRedo() {
+        await this.page.locator(slct(WizardPageQa.RedoButton)).click();
     }
 }
 
