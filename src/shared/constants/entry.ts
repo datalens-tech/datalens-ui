@@ -69,6 +69,7 @@ export const EDITOR_TYPE = {
     MARKDOWN_NODE: 'markdown_node',
     MARKUP_NODE: 'markup_node',
     TIMESERIES_NODE: 'timeseries_node',
+    D3_NODE: 'd3_node',
 };
 
 export const ENTRY_TYPES = {
