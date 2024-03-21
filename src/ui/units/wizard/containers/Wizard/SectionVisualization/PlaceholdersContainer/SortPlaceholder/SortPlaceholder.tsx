@@ -129,12 +129,10 @@ class SortPlaceholder extends React.Component<Props> {
 
     private onSortUpdate = (items: Field[]) => {
         this.props.updateSort({items});
+        this.props.updatePreviewAndClientChartsConfig({});
 
         if (this.props.onUpdate) {
             this.props.onUpdate();
-        } else {
-            // Else call default onUpdate action
-            this.props.updatePreviewAndClientChartsConfig({});
         }
     };
 }

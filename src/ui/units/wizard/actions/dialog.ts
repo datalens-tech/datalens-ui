@@ -122,11 +122,10 @@ export function openDialogPlaceholder({placeholder, onApply}: OpenDialogPlacehol
 
                             dispatch(closeDialog());
 
+                            dispatch(updatePreviewAndClientChartsConfig({}));
+
                             if (onApply) {
                                 onApply();
-                            } else {
-                                // Else call default onUpdate action
-                                dispatch(updatePreviewAndClientChartsConfig({}));
                             }
                         },
                     },
@@ -276,11 +275,10 @@ export function openDialogColors({item, onApply, colorSectionFields}: OpenDialog
 
                         dispatch(closeDialog());
 
+                        dispatch(updatePreviewAndClientChartsConfig({}));
+
                         if (onApply) {
                             onApply();
-                        } else {
-                            // Else call default onApply action
-                            dispatch(updatePreviewAndClientChartsConfig({}));
                         }
                     },
                     colorsConfig,
@@ -335,11 +333,10 @@ export function openDialogShapes({
 
                             dispatch(closeDialog());
 
+                            dispatch(updatePreviewAndClientChartsConfig({}));
+
                             if (onApply) {
                                 onApply();
-                            } else {
-                                // Else call default onApply action
-                                dispatch(updatePreviewAndClientChartsConfig({}));
                             }
                         },
                         onCancel: () => dispatch(closeDialog()),
@@ -381,18 +378,17 @@ export function openDialogChartSettings({
                         dispatch(setExtraSettings(extraSettings));
                         dispatch(setVisualization({visualization}));
 
-                        if (onUpdate) {
-                            onUpdate();
-                        } else {
-                            // Else call default onUpdate action
-                            dispatch(
-                                updatePreviewAndClientChartsConfig({
-                                    withoutRerender: isSettingsEqual,
-                                }),
-                            );
-                        }
+                        dispatch(
+                            updatePreviewAndClientChartsConfig({
+                                withoutRerender: isSettingsEqual,
+                            }),
+                        );
 
                         dispatch(closeDialog());
+
+                        if (onUpdate) {
+                            onUpdate();
+                        }
                     },
                 },
             }),
@@ -539,15 +535,14 @@ export function openDialogLabelSettings({
                         if (!isSettingsEqual) {
                             dispatch(setExtraSettings(newSettings));
 
+                            dispatch(
+                                updatePreviewAndClientChartsConfig({
+                                    withoutRerender: false,
+                                }),
+                            );
+
                             if (onUpdate) {
                                 onUpdate();
-                            } else {
-                                // Else call default onUpdate action
-                                dispatch(
-                                    updatePreviewAndClientChartsConfig({
-                                        withoutRerender: false,
-                                    }),
-                                );
                             }
                         }
 

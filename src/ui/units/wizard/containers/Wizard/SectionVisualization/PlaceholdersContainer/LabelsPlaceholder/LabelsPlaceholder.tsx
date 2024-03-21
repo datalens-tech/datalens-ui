@@ -64,7 +64,6 @@ class LabelsPlaceholder extends React.Component<Props> {
         const {visualization} = this.props;
         this.props.openDialogLabelSettings({
             visualizationId: visualization.id as WizardVisualizationId,
-            onUpdate: this.props.onUpdate,
         });
     };
 
@@ -84,12 +83,10 @@ class LabelsPlaceholder extends React.Component<Props> {
 
     private onLabelsUpdate = (items: Field[]) => {
         this.props.updateLabels({items});
+        this.props.updatePreviewAndClientChartsConfig({});
 
         if (this.props.onUpdate) {
             this.props.onUpdate();
-        } else {
-            // Else call default onUpdate action
-            this.props.updatePreviewAndClientChartsConfig({});
         }
     };
 

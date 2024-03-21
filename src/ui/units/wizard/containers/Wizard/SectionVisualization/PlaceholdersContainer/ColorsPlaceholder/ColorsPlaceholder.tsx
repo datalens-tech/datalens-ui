@@ -94,12 +94,10 @@ class ColorsPlaceholder extends React.Component<Props> {
 
     private onColorsUpdate = (items: Field[]) => {
         this.props.updateColors({items});
+        this.props.updatePreviewAndClientChartsConfig({});
 
         if (this.props.onUpdate) {
             this.props.onUpdate();
-        } else {
-            // Else call default onUpdate action
-            this.props.updatePreviewAndClientChartsConfig({});
         }
     };
 
@@ -140,7 +138,11 @@ class ColorsPlaceholder extends React.Component<Props> {
         this.props.openDialogColors({
             item,
             colorSectionFields: isMultipleColorsSupported ? colors : undefined,
-            onApply: this.props.onUpdate,
+            onApply: () => {
+                if (this.props.onUpdate) {
+                    this.props.onUpdate();
+                }
+            },
         });
     };
 

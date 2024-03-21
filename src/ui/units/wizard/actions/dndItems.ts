@@ -447,11 +447,10 @@ export const handleDnDItemUpdate = (args: HandleDnDItemUpdateArgs) => {
                 );
             }
 
+            dispatch(updatePreviewAndClientChartsConfig({}));
+
             if (onAfterUpdate) {
                 onAfterUpdate();
-            } else {
-                // Else call default onAfterUpdate action
-                dispatch(updatePreviewAndClientChartsConfig({}));
             }
         });
     };
