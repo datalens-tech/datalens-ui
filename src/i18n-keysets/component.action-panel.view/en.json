@@ -1,6 +1,8 @@
 {
   "button_open-navigation": "Open navigation",
+  "button_redo": "Redo",
   "button_switch-public": "Public access",
+  "button_undo": "Undo",
   "label_breadcrumb-new": "new {{scope}}",
   "label_history-changes": "History changes",
   "label_history-changes-date-limit": "You can view history for the past three months"
