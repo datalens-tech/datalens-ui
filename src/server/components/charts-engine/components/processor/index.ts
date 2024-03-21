@@ -98,6 +98,19 @@ function logSandboxDuration(duration: [number, number], filename: string, ctx: A
     );
 }
 
+function logFetchingError(ctx: AppContext, error: unknown) {
+    const errMessage = 'Error fetching sources';
+    if (error instanceof Error) {
+        ctx.logError(errMessage, error);
+    } else if (isString(error)) {
+        ctx.logError(errMessage, Error(error));
+    } else if (isObject(error) && 'code' in error && isString(error.code)) {
+        ctx.logError(errMessage, Error(error.code));
+    } else {
+        ctx.logError(errMessage);
+    }
+}
+
 class DepsResolveError extends Error {
     description?: string;
 }
@@ -600,7 +613,7 @@ export class Processor {
 
                 ctx.log('EditorEngine::DataFetched', {duration: getDuration(hrStart)});
             } catch (error) {
-                ctx.logError('Error fetching sources', error);
+                logFetchingError(ctx, error);
 
                 if (!modulesLogsCollected) {
                     collectModulesLogs({logsStorage: logs, processedModules});
