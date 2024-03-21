@@ -18,7 +18,9 @@ import {
     WidgetKind,
     WidgetType,
     WizardType,
+    WizardVisualizationId,
 } from 'shared';
+import {getEntryVisualizationType} from 'shared/schema/mix/helpers';
 import {DatalensGlobalState} from 'ui';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
 import {Collapse} from 'ui/components/Collapse/Collapse';
@@ -69,7 +71,10 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
     );
 };
 
-const isEntryTypeWithFiltering = (entryType?: WidgetType) => {
+const isEntryTypeWithFiltering = (
+    entryType?: WidgetType,
+    visualizationType?: WizardVisualizationId,
+) => {
     const wizardFilteringAvailable = Utils.isEnabledFeature(
         Feature.WizardChartChartFilteringAvailable,
     );
@@ -79,10 +84,15 @@ const isEntryTypeWithFiltering = (entryType?: WidgetType) => {
     ];
 
     if (wizardFilteringAvailable) {
-        widgetTypesWithFilteringAvailable.push(
+        const wizardEntryTypes = [
             WizardType.GraphWizardNode,
             WizardType.D3WizardNode,
             WizardType.TableWizardNode,
+        ];
+        const visualizationWithoutFiltering = [WizardVisualizationId.Treemap];
+        return (
+            wizardEntryTypes.includes(entryType as WizardType) &&
+            !visualizationWithoutFiltering.includes(visualizationType as WizardVisualizationId)
         );
     }
 
@@ -121,6 +131,7 @@ type State = {
     // new params logic, local state for current tab params
     tabParams: StringParams;
     legacyChanged: number;
+    visualizationType?: WizardVisualizationId;
 };
 
 type Props = StateProps & DispatchProps;
@@ -391,7 +402,8 @@ class Widget extends React.PureComponent<Props, State> {
         selectedWidgetType: WidgetKind;
         entryMeta: {type: WidgetType};
     }) => {
-        this.setState({selectedWidgetType, selectedEntryType: entryMeta.type});
+        const visualizationType = getEntryVisualizationType(entryMeta);
+        this.setState({selectedWidgetType, selectedEntryType: entryMeta.type, visualizationType});
 
         if (this.afterSettingSelectedWidgetTypeCallback) {
             this.afterSettingSelectedWidgetTypeCallback(selectedWidgetType);
@@ -421,7 +433,12 @@ class Widget extends React.PureComponent<Props, State> {
         if (!showFilteringChartSetting) {
             return null;
         }
-        const {data, tabIndex, selectedEntryType} = this.state;
+        const {data, tabIndex, selectedEntryType, visualizationType} = this.state;
+        const canUseFiltration = isEntryTypeWithFiltering(selectedEntryType, visualizationType);
+        const enableActionParams = Boolean(
+            canUseFiltration && data.tabs[tabIndex].enableActionParams,
+        );
+
         const caption = (
             <div className={b('caption')}>
                 <span className={b('caption-text')}>
@@ -440,8 +457,8 @@ class Widget extends React.PureComponent<Props, State> {
                 <Checkbox
                     size="m"
                     onChange={this.handleChangeFiltering}
-                    checked={data.tabs[tabIndex].enableActionParams || false}
-                    disabled={!isEntryTypeWithFiltering(selectedEntryType)}
+                    checked={enableActionParams}
+                    disabled={!canUseFiltration}
                 >
                     {i18n('dash.widget-dialog.edit', 'field_enable-filtering-other-charts')}
                 </Checkbox>
