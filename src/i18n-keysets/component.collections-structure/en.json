@@ -22,12 +22,12 @@
   "label_deploy": "Deploy to",
   "label_deploy-denied-title": "Insufficient permissions to deploy",
   "label_description": "Description",
-  "label_empty-collection": "The collection is empty or nothing matching the filter conditions was found",
+  "label_empty-collection": "This collection is empty or nothing matching the filter conditions was found",
   "label_move": "Move to",
   "label_move-denied-title": "Insufficient permissions to move object",
-  "label_ql": "ql chart",
+  "label_ql": "QL chart",
   "label_title": "Name",
   "label_wizard": "chart",
-  "section_delete-collection": "Are you sure you want to delete this collection \"{{name}}\"?",
-  "section_delete-workbook": "Are you sure you want to delete workbook \"{{name}}\"?"
+  "section_delete-collection": "Are you sure you want to delete the collection \"{{name}}\"?",
+  "section_delete-workbook": "Are you sure you want to delete the workbook \"{{name}}\"?"
 }
