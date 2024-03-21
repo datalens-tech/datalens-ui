@@ -53,7 +53,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --w-dataset-item-border-hover: rgba(0, 0, 0, 0.15);
         --w-disabled-item-background: rgba(0, 0, 0, 0.07);
         --dl-color-contrast-4: rgba(0, 0, 0, 0.04);
-        --dl-color-base-workbook-icon: rgb(255, 225, 212);
+        --dl-color-base-workbook-icon: rgba(238, 243, 254, 1);
     }
 
     &_theme_light-hc {
@@ -63,7 +63,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --w-dataset-item-border-hover: rgba(0, 0, 0, 0.15);
         --w-disabled-item-background: rgba(0, 0, 0, 0.07);
         --dl-color-contrast-4: rgba(0, 0, 0, 0.04);
-        --dl-color-base-workbook-icon: rgb(255, 225, 212);
+        --dl-color-base-workbook-icon: rgba(238, 243, 254, 1);
     }
 
     &_theme_dark {
@@ -73,7 +73,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --w-dataset-item-border-hover: rgba(255, 255, 255, 0.15);
         --w-disabled-item-background: rgba(255, 255, 255, 0.07);
         --dl-color-contrast-4: rgba(255, 255, 255, 0.04);
-        --dl-color-base-workbook-icon: rgb(97, 59, 46);
+        --dl-color-base-workbook-icon: rgba(82, 130, 255, 0.1);
     }
 
     &_theme_dark-hc {
@@ -83,6 +83,6 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --w-dataset-item-border-hover: rgba(255, 255, 255, 0.15);
         --w-disabled-item-background: rgba(255, 255, 255, 0.07);
         --dl-color-contrast-4: rgba(255, 255, 255, 0.04);
-        --dl-color-base-workbook-icon: rgb(97, 59, 46);
+        --dl-color-base-workbook-icon: rgba(82, 130, 255, 0.1);
     }
 }
