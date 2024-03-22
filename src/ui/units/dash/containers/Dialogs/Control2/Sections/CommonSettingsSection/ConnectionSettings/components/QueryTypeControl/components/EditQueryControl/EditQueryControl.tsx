@@ -19,7 +19,6 @@ export const EditQueryControl: React.FC = () => {
         dispatch(openDialogEditQuery());
     };
     return (
-        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
         <FormRow label={i18n('field_query')}>
             <FieldWrapper error={validation.connectionQueryContent}>
                 <Button
@@ -28,10 +27,7 @@ export const EditQueryControl: React.FC = () => {
                 >
                     <Icon data={PencilToLine} />
 
-                    {
-                        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
-                        i18n('button_edit-query')
-                    }
+                    {i18n('button_edit-query')}
                 </Button>
             </FieldWrapper>
         </FormRow>
