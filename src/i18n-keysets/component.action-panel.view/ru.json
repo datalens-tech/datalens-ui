@@ -1,6 +1,6 @@
 {
   "button_open-navigation": "Открыть навигацию",
-  "button_redo": "Вернуть",
+  "button_redo": "Восстановить",
   "button_switch-public": "Публичный доступ",
   "button_undo": "Отменить",
   "label_breadcrumb-new": "new {{scope}}",
