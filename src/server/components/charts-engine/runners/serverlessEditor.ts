@@ -1,5 +1,5 @@
 import {AppContext} from '@gravity-ui/nodekit';
-import axios from 'axios';
+import {Axios} from 'axios';
 import {isObject} from 'lodash';
 
 import Utils from '../../../utils';
@@ -10,6 +10,8 @@ import {RunnerHandlerProps} from '.';
 
 const YANDEX_FUNCTIONS_URL = process.env.YANDEX_FUNCTIONS_URL;
 const YANDEX_FUNCTIONS_API_KEY = process.env.YANDEX_FUNCTIONS_API_KEY;
+
+const axios = new Axios({family: 4});
 
 export const runServerlessEditor = (
     parentContext: AppContext,
