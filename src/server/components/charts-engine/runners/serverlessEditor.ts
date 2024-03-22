@@ -1,5 +1,8 @@
+import http from 'http';
+
 import {AppContext} from '@gravity-ui/nodekit';
-import {Axios} from 'axios';
+import axios from 'axios';
+const agent = new http.Agent({family: 4});
 import {isObject} from 'lodash';
 
 import Utils from '../../../utils';
@@ -11,7 +14,7 @@ import {RunnerHandlerProps} from '.';
 const YANDEX_FUNCTIONS_URL = process.env.YANDEX_FUNCTIONS_URL;
 const YANDEX_FUNCTIONS_API_KEY = process.env.YANDEX_FUNCTIONS_API_KEY;
 
-const axios = new Axios({family: 4});
+const axiosInstance = axios.create({httpAgent: agent});
 
 export const runServerlessEditor = (
     parentContext: AppContext,
@@ -77,7 +80,7 @@ export const runServerlessEditor = (
 
     ctx.call('engineProcessing', (cx) => {
         const json = JSON.stringify(req.body);
-        return axios
+        return axiosInstance
             .post(YANDEX_FUNCTIONS_URL, json, {
                 headers: {
                     Authorization: `Api-Key ${YANDEX_FUNCTIONS_API_KEY}`,
