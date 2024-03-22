@@ -13,6 +13,7 @@
   "context_date-from-days-ago": "Start, days ago",
   "context_date-to-days-ago": "End, days ago",
   "context_title": "Title",
+  "error_unsupported-connection": "Unsupported connection type",
   "field_acceptable-values": "Possible values",
   "field_autoheight": "Auto height",
   "field_connection": "Connection",
