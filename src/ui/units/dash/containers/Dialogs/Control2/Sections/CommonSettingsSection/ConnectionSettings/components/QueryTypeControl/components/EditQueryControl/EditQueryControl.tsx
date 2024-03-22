@@ -9,7 +9,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {FieldWrapper} from '../../../../../../../../../../../../components/FieldWrapper/FieldWrapper';
 import {openDialogEditQuery} from '../../../../../../../../../../store/actions/dialogs/dialog-edit-query';
 import {selectSelectorDialog} from '../../../../../../../../../../store/selectors/dashTypedSelectors';
-// @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
 const i18n = I18n.keyset('dash.edit-query-dialog');
 export const EditQueryControl: React.FC = () => {
     const {validation} = useSelector(selectSelectorDialog);
