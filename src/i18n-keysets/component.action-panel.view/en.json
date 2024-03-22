@@ -3,7 +3,6 @@
   "button_redo": "Restore",
   "button_switch-public": "Public access",
   "button_undo": "Undo",
-  "label_breadcrumb-new": "new {{scope}}",
   "label_history-changes": "Change history",
   "label_history-changes-date-limit": "You can view the history for the past three months"
 }
