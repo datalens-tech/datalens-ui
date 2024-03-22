@@ -89,7 +89,7 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
                         options={options}
                         value={connectionQueryType ? [connectionQueryType] : []}
                         onUpdate={handleQueryTypeUpdate}
-                        placeholder={i18n('value_not-chosen')}
+                        placeholder={i18n('value_undefined')}
                     />
                 </FormRow>
             )}

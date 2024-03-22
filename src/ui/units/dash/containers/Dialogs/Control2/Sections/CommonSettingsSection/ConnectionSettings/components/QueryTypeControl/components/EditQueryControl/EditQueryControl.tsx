@@ -9,7 +9,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {FieldWrapper} from '../../../../../../../../../../../../components/FieldWrapper/FieldWrapper';
 import {openDialogEditQuery} from '../../../../../../../../../../store/actions/dialogs/dialog-edit-query';
 import {selectSelectorDialog} from '../../../../../../../../../../store/selectors/dashTypedSelectors';
-const i18n = I18n.keyset('dash.edit-query-dialog');
+const i18n = I18n.keyset('dash.control-dialog.edit');
 export const EditQueryControl: React.FC = () => {
     const {validation} = useSelector(selectSelectorDialog);
     const dispatch = useDispatch();

@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {FieldWrapper} from '../../../../../../../../../../../../components/FieldWrapper/FieldWrapper';
 import {setSelectorDialogItem} from '../../../../../../../../../../store/actions/dashTyped';
 import {selectSelectorDialog} from '../../../../../../../../../../store/selectors/dashTypedSelectors';
-const i18n = I18n.keyset('dash.edit-query-dialog');
+const i18n = I18n.keyset('dash.control-dialog.edit');
 export const EditLabelControl = () => {
     const dispatch = useDispatch();
     const {connectionQueryContent, validation} = useSelector(selectSelectorDialog);
