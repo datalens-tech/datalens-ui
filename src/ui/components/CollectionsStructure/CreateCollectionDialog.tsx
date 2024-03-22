@@ -9,7 +9,7 @@ import DialogManager from '../../components/DialogManager/DialogManager';
 import {createCollection} from '../../store/actions/collectionsStructure';
 import {selectCreateCollectionIsLoading} from '../../store/selectors/collectionsStructure';
 
-import {CollectionDialog} from './CollectionDialog/CollectionDialog';
+import {CollectionDialog} from './CollectionDialog';
 
 const i18n = I18n.keyset('component.collections-structure');
 
@@ -24,7 +24,7 @@ type Props = {
     parentId: string | null;
     open: boolean;
     onClose: () => void;
-    onApply?: (result: CreateCollectionResponse | null) => Promise<unknown>;
+    onApply?: (result: CreateCollectionResponse | null) => void;
 };
 
 export const CreateCollectionDialog: React.FC<Props> = (props) => {
@@ -43,7 +43,7 @@ export const CreateCollectionDialog: React.FC<Props> = (props) => {
         );
 
         if (onApply) {
-            await onApply(result);
+            onApply(result);
         }
 
         return result;

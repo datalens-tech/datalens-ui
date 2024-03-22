@@ -46,7 +46,7 @@ export const CreateEntityDialog = React.memo<Props>(
                 <Dialog.Body>
                     <div className={b('field')}>
                         <div className={b('title')}>{i18n('label_title')}</div>
-                        <TextInput value={titleValue} onUpdate={setTitleValue} />
+                        <TextInput value={titleValue} onUpdate={setTitleValue} autoFocus />
                     </div>
                 </Dialog.Body>
                 <Dialog.Footer
