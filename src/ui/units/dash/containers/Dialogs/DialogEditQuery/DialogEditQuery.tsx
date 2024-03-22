@@ -87,11 +87,7 @@ const DialogEditQuery: React.FC = () => {
                 const validation = validateTypedQueryResponseForSelector(response);
                 return validation
                     ? handleSuccessResponse(queryContent)
-                    : handleWrongQueryRequest(
-                          // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
-                          i18n('error_invalid-typed-query-response'),
-                          query,
-                      );
+                    : handleWrongQueryRequest(i18n('error_invalid-typed-query-response'), query);
             })
             .catch((e: GetConnectionTypedQueryErrorResponse) => {
                 setLoading(false);

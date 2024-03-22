@@ -2,6 +2,7 @@
   "button_apply": "Apply",
   "button_cancel": "Cancel",
   "button_edit-query": "Edit query",
+  "error_invalid-typed-query-response": "Connection based control doesn't support response with 2 or more columns from database.",
   "field_query": "Query",
   "title_database-response": "Database response",
   "title_edit-query": "Edit Query",
