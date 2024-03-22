@@ -33,12 +33,16 @@ export function getCellContentStyles(args: {cell: TableCommonCell; column: Table
     return contentStyles;
 }
 
-export function renderCellContent(args: {cell: TableCommonCell; column: TableHead}) {
-    const {cell, column} = args;
+export function renderCellContent(args: {
+    cell: TableCommonCell;
+    column: TableHead;
+    header?: boolean;
+}) {
+    const {cell, column, header} = args;
     const cellView = get(cell, 'view', get(column, 'view'));
     const cellType = cell.type ?? get(column, 'type');
 
-    if (cellView === 'bar') {
+    if (cellView === 'bar' && !header) {
         return <BarCell cell={cell as BarTableCell} column={column as BarViewOptions} />;
     }
 
@@ -46,7 +50,7 @@ export function renderCellContent(args: {cell: TableCommonCell; column: TableHea
         return <MarkupCell cell={cell} />;
     }
 
-    if (cell?.treeNodeState) {
+    if (cell?.treeNodeState && !header) {
         return <TreeCell cell={cell} />;
     }
 

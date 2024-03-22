@@ -46,7 +46,7 @@ function mapHeadCell(th: TableHead): HeadCell {
             };
             return (
                 <span data-qa={ChartKitTableQa.HeadCellContent}>
-                    {renderCellContent({cell, column: th})}
+                    {renderCellContent({cell, column: th, header: true})}
                 </span>
             );
         },
@@ -208,6 +208,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                 }),
             };
         }, [actionParams, canDrillDown, data.footer, data.head, data.rows]);
+        const titleText = typeof config?.title === 'string' ? config.title : config?.title?.text;
 
         return (
             <div
@@ -216,7 +217,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             >
                 <Table
                     data={tableData}
-                    title={config?.title}
+                    title={titleText ? {text: titleText} : undefined}
                     noData={{text: i18n('chartkit-table', 'message-no-data')}}
                     onCellClick={handleTableClick}
                     header={{
