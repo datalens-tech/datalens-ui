@@ -56,7 +56,9 @@ export const ConnectionSettings: React.FC = () => {
                     fetcher,
                     disabled: !connectionId || !connectionQueryContent || !connectionQueryType,
                     filterable: false,
-                    onRetry: fetcher,
+                    onRetry: async () => {
+                        await fetcher();
+                    },
                 },
                 hasMultiselect: false,
             },
