@@ -143,7 +143,7 @@ export const DL = {
         return window.DL.userSettings;
     },
     get USER_LANG() {
-        return window.DL.user.lang || 'en';
+        return window.DL.user.lang || 'ru';
     },
     get REGION_LANG() {
         return window.DL.langRegion;
