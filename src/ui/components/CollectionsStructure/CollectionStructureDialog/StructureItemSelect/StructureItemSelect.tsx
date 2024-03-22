@@ -10,7 +10,7 @@ import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/Pla
 
 import {
     Collection,
-    GetCollectionBreadcrumb,
+    GetCollectionBreadcrumbsResponse,
     GetCollectionContentArgs,
     GetCollectionContentResponse,
 } from '../../../../../shared/schema/us/types/collections';
@@ -33,7 +33,7 @@ export type Props = {
     workbookId: WorkbookId;
     contentIsLoading: boolean;
     contentError: Error | null;
-    breadcrumbs: GetCollectionBreadcrumb[];
+    breadcrumbs: GetCollectionBreadcrumbsResponse;
     items: (Collection | Workbook)[];
     nextPageTokens: {
         collectionsNextPageToken?: string | null;
@@ -41,7 +41,7 @@ export type Props = {
     };
     pageSize: number;
     isSelectionAllowed: boolean;
-    operationDeniedMessage: string;
+    operationDeniedMessage?: string;
     canSelectWorkbook: boolean;
     disabled?: boolean;
     getCollectionContentRecursively: (

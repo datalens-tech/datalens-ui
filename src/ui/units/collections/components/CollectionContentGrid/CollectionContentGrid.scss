@@ -2,16 +2,25 @@
     &__grid {
         display: flex;
         flex-flow: wrap;
-        gap: 29px;
+        gap: 10px;
+        width: 896px;
     }
 
-    &__content-item {
+    &__item {
         position: relative;
         height: auto;
         cursor: pointer;
+        max-width: 141px;
+        padding: 8px;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+            background-color: var(--g-color-base-simple-hover-solid);
+        }
     }
 
-    &__content-item-link {
+    &__link {
         text-decoration: none;
         color: inherit;
 
@@ -20,37 +29,43 @@
         }
     }
 
-    &__content-item-checkbox {
+    &__checkbox {
         position: absolute;
-        left: 14px;
-        top: 14px;
+        left: 22px;
+        top: 22px;
         z-index: 9;
     }
 
-    &__title-col-text {
-        font-size: 13px;
-        font-weight: 400;
-        height: 16px;
-        margin: 4px 0;
-        text-overflow: ellipsis;
-        max-width: 125px;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-
-    &__title-col-icon {
+    &__icon {
         &_selection-mode {
             opacity: 0.5;
         }
     }
 
-    &__content-footer {
-        display: flex;
-        justify-content: space-between;
-        max-width: 125px;
+    &__title {
+        height: 16px;
+        margin-top: 8px;
+        font-size: 13px;
+        font-weight: 400;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
-    &__content-actions {
-        margin-top: -2px;
+    &__info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 4px;
+    }
+
+    &__date {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    &__actions {
+        margin-left: 2px;
     }
 }

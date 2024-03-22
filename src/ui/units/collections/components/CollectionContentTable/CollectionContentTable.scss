@@ -82,6 +82,9 @@
     }
 
     &__title-col-text {
+        display: flex;
+        align-items: center;
         margin-left: 12px;
+        min-height: 32px;
     }
 }

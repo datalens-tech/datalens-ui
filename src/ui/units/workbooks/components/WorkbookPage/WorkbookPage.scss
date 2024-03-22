@@ -16,8 +16,6 @@
         display: flex;
         flex: 1;
         flex-direction: column;
-        max-width: 1040px;
-        padding: 0 20px;
     }
 
     &__title-content {
@@ -28,10 +26,6 @@
     &__title {
         @include text-header-2();
         margin: 0 8px 0 0;
-    }
-
-    &__controls {
-        margin-top: 28px;
     }
 
     &__description {
