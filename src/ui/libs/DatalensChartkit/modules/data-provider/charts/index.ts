@@ -704,7 +704,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                         Array.isArray(paramValue) && paramValue.length < 1 ? [''] : paramValue;
                 }
             });
-            debugger;
+
             if(Utils.getRpcAuthorization()) {
                 var decodedString = atob(Utils.getRpcAuthorization());
                 requestOptions.data.params['__f_user'] = decodedString.split(':')[0];

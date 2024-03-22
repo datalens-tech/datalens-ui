@@ -182,8 +182,9 @@ export default class Utils {
     static setRpcAuthorization() {
         var loc:any = document.location;
         let params = (new URL(loc)).searchParams;
+
         let token:any = params.get("x-rpc-authorization");
-        if(token) {
+        if(token && loc.pathname.indexOf('/preview/') == -1) {
             window.localStorage.setItem('x-rpc-authorization', token);
         }
     }

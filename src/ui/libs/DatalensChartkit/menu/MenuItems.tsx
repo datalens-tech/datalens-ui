@@ -137,7 +137,7 @@ export const getNewWindowMenuItem = ({
             className={ICONS_MENU_DEFAULT_CLASSNAME}
         />
     ),
-    isVisible: () => true,
+    isVisible: () => { return customConfig?.isVisible ? customConfig.isVisible() : true },
     action:
         customConfig?.action ||
         (({loadedData, propsData, chartsDataProvider: dataProvider}) => {
@@ -235,7 +235,7 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
             className={ICONS_MENU_DEFAULT_CLASSNAME}
         />
     ),
-    isVisible: ({loadedData}: MenuItemArgs) => Boolean(loadedData?.type),
+    isVisible: ({loadedData}: MenuItemArgs) => { return customConfig?.isVisible ? customConfig?.isVisible() : Boolean(loadedData?.type) },
     action:
         customConfig?.action ||
         function action({loadedData, propsData}) {

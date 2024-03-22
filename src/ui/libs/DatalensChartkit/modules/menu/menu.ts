@@ -47,6 +47,7 @@ export const getChartkitMenuByType = (props?: GetChartkitMenuByType) => {
                 action: ({propsData: {id, params}}) => {
                     window.open(`/preview/${id}?${stringify(params)}`);
                 },
+                isVisible: () => type != 'preview'
             },
             [MenuItemsIds.OPEN_AS_TABLE]: {
                 action: ({propsData: {id, params}}) => {
@@ -68,6 +69,9 @@ export const getChartkitMenuByType = (props?: GetChartkitMenuByType) => {
             },
             [MenuItemsIds.FULLSCREEEN]: {
                 onFullscreenClick,
+            },
+            [MenuItemsIds.GET_LINK]: {
+                isVisible: () => type != 'preview'
             },
             ...customOptions,
         } as GetChartkitMenuByType['customOptions'],
