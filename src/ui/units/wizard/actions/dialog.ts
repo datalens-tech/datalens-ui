@@ -511,9 +511,13 @@ export function openDialogColumnSettings({
 
 type OpenDialogLabelSettingsArguments = {
     visualizationId: WizardVisualizationId;
+    onUpdate?: () => void;
 };
 
-export function openDialogLabelSettings({visualizationId}: OpenDialogLabelSettingsArguments) {
+export function openDialogLabelSettings({
+    visualizationId,
+    onUpdate,
+}: OpenDialogLabelSettingsArguments) {
     return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         dispatch(
             openDialog({
@@ -536,6 +540,10 @@ export function openDialogLabelSettings({visualizationId}: OpenDialogLabelSettin
                                     withoutRerender: false,
                                 }),
                             );
+
+                            if (onUpdate) {
+                                onUpdate();
+                            }
                         }
 
                         dispatch(closeDialog());

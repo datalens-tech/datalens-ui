@@ -16,7 +16,6 @@ import {
     updateDashboardParameters,
     updateFilters,
     updateLabels,
-    updateLayerFilters,
     updateSegments,
     updateShapes,
     updateSort,
@@ -40,7 +39,6 @@ export const placeholderIdToReduxActionMap = {
     [PlaceholderId.Tooltips]: updateTooltips,
     [PlaceholderId.Available]: updateAvailable,
     [PlaceholderId.Filters]: updateFilters,
-    [PlaceholderId.LayerFilters]: updateLayerFilters,
     [PlaceholderId.DashboardFilters]: updateDashboardFilters,
     [PlaceholderId.DashboardParameters]: updateDashboardParameters,
     [PlaceholderId.X]: updateVisualizationPlaceholderItems,
@@ -283,6 +281,7 @@ type HandleDnDItemUpdateArgs = {
     };
 };
 export const handleDnDItemUpdate = (args: HandleDnDItemUpdateArgs) => {
+    // eslint-disable-next-line complexity
     return async function (dispatch: AppDispatch, getState: () => DatalensGlobalState) {
         const {
             field,
