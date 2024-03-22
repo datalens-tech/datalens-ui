@@ -39,10 +39,8 @@ export default class ChartKit {
     private drillArrowsSelector = '.chartkit-drill__drill-action';
     private breadcrumbsSelector = '.chartkit-drill .yc-breadcrumbs__item';
     private paginatorSelector = '.chartkit-table-paginator';
-    private tableRowSelector = `.chartkit .data-table__row, tbody ${slct(ChartKitTableQa.Row)}`;
     private tableHeadCellSelector = '.data-table__head-cell';
     private layerLegendSelector = '.chartkit .chartkit-ymap-legend-layer';
-    private chartkitTableCellSelector = `.chartkit-table__cell, ${slct(ChartKitTableQa.Cell)}`;
     private labelsSelector = '.highcharts-data-labels .highcharts-data-label';
     private chartkitSeriesRect = '.chartkit-highcharts rect.highcharts-point';
 
@@ -199,7 +197,7 @@ export default class ChartKit {
     }
 
     async getTableRowsCount() {
-        return (await this.page.$$(this.tableRowSelector)).length;
+        return await this.getTableLocator().locator('tbody tr').count();
     }
 
     getLayerLegend() {
@@ -223,19 +221,6 @@ export default class ChartKit {
         );
     }
 
-    async getRowsHtml() {
-        const rowLocator = this.getTableLocator().locator('tbody').first().locator('tr');
-        const cellContent = this.page.locator(this.chartkitTableCellSelector);
-
-        await rowLocator.first().waitFor();
-        const rows = await rowLocator.all();
-        return await Promise.all(
-            rows.map(async (row) =>
-                Promise.all((await row.locator(cellContent).all()).map((cell) => cell.innerHTML())),
-            ),
-        );
-    }
-
     async getHeadRowsTexts() {
         const headerRows = this.getTableLocator().locator('thead').first().locator('tr');
         await headerRows.first().waitFor();
@@ -245,13 +230,13 @@ export default class ChartKit {
     }
 
     async getRowsTexts() {
-        const rows = await this.getRowContent(
-            this.tableRowSelector,
-            ['.chartkit-table__cell', slct(ChartKitTableQa.Cell)].join(','),
-            'text',
-        );
+        const rowLocator = this.getTableLocator().locator('tbody tr');
+        await rowLocator.first().waitFor();
 
-        return rows.map((row) => {
+        const rows = await rowLocator.all();
+        const content = await Promise.all(rows.map((row) => row.locator('td').allTextContents()));
+
+        return content.map((row) => {
             return row.map((rowValue) => rowValue.replace(/\u00a0/g, ' '));
         });
     }
@@ -283,10 +268,6 @@ export default class ChartKit {
         return lines;
     }
 
-    async clickToCellWithText(text: string) {
-        await this.page.click(`${this.chartkitTableCellSelector} >> text=${text}`);
-    }
-
     async navigateToNextTablePage(times: number) {
         for (let i = 0; i < times; i++) {
             await this.page.click(slct('chartkit-table-paginator-next-btn'));
@@ -316,33 +297,5 @@ export default class ChartKit {
         const labels = await locator.allTextContents();
 
         return labels.map((rowValue) => rowValue.replace(/\u00a0/g, ' '));
-    }
-
-    private async getRowContent(
-        rowSelector: string,
-        cellSelector: string,
-        contentType: 'text' | 'html',
-    ) {
-        await this.page.waitForSelector(rowSelector);
-
-        const rowElements = await this.page.$$(rowSelector);
-
-        return Promise.all(
-            rowElements.map(async (row) => {
-                const cells = await row.$$(cellSelector)!;
-
-                const cellsTexts = await Promise.all(
-                    cells.map((cell) => {
-                        if (contentType === 'text') {
-                            return cell.innerText();
-                        }
-
-                        return cell.innerHTML();
-                    }),
-                );
-
-                return cellsTexts.map((cellText: string) => cellText.trim());
-            }),
-        );
     }
 }
