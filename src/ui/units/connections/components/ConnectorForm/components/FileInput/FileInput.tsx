@@ -74,7 +74,7 @@ export const FileInputComponent = (props: FileInputProps) => {
     }, [setFormValue]);
 
     return fileName ? (
-        <Label size="m" type="close" onClose={handleLabelCloseBtnClick}>
+        <Label size="m" type="close" onCloseClick={handleLabelCloseBtnClick}>
             {i18n('label_file-input-label', {fileName})}
         </Label>
     ) : (
