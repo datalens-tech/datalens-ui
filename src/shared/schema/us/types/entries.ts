@@ -203,19 +203,6 @@ export interface GetRelationsArgs {
     excludeUnregistredDlsEntries?: boolean;
 }
 
-export interface SearchEntry extends EntryNavigationFields {
-    isFavorite: boolean;
-    isLocked: boolean;
-    rank: number;
-    keyHeadline: string;
-}
-
-export type SearchEntriesResponse = SearchEntry[];
-
-export interface SearchEntriesArgs {
-    text: string;
-}
-
 export interface SwitchPublicationStatusEntry extends EntryMetaFields {
     public: boolean;
     isLocked: boolean;
