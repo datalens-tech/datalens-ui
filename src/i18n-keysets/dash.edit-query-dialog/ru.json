@@ -3,6 +3,7 @@
   "button_cancel": "Отмена",
   "button_edit-query": "Редактировать запрос",
   "error_invalid-typed-query-response": "Селектор не поддерживает ответ из базы данных, в котором 2 и более колонок.",
+  "field_label": "Лейбл",
   "field_query": "Запрос",
   "title_database-response": "Ответ базы данных",
   "title_edit-query": "Редактирование запроса",
