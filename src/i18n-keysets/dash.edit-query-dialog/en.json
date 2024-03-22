@@ -1,4 +1,7 @@
 {
+  "button_apply": "Apply",
+  "button_cancel": "Cancel",
   "button_edit-query": "Edit query",
-  "field_query": "Query"
+  "field_query": "Query",
+  "title_edit-query": "Edit Query"
 }

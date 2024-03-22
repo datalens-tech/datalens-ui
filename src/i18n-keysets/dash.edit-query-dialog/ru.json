@@ -1,4 +1,7 @@
 {
+  "button_apply": "Применить",
+  "button_cancel": "Отмена",
   "button_edit-query": "Редактировать запрос",
-  "field_query": "Запрос"
+  "field_query": "Запрос",
+  "title_edit-query": "Редактирование запроса"
 }
