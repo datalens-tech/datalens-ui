@@ -72,6 +72,7 @@
   "value_not-chosen": "Не выбрано",
   "value_relative-date": "Смещение от текущей даты",
   "value_select-values": "Значений: {{count}}",
+  "value_source-connection": "На основе подключения",
   "value_source-dataset": "На основе датасета",
   "value_source-external": "Внешний селектор",
   "value_source-manual": "Ручной ввод",
