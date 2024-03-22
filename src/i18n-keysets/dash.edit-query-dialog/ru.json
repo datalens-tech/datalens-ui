@@ -3,5 +3,8 @@
   "button_cancel": "Отмена",
   "button_edit-query": "Редактировать запрос",
   "field_query": "Запрос",
-  "title_edit-query": "Редактирование запроса"
+  "title_database-response": "Ответ базы данных",
+  "title_edit-query": "Редактирование запроса",
+  "title_invalid-sql-query": "Невалидный SQL запрос в базу данных",
+  "title_sent-query": "Отправленный запрос"
 }

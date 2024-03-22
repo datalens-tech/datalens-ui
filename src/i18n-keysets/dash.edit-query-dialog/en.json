@@ -3,5 +3,8 @@
   "button_cancel": "Cancel",
   "button_edit-query": "Edit query",
   "field_query": "Query",
-  "title_edit-query": "Edit Query"
+  "title_database-response": "Database response",
+  "title_edit-query": "Edit Query",
+  "title_invalid-sql-query": "Invalid SQL query to database",
+  "title_sent-query": "Sent query"
 }
