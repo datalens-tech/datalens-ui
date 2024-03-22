@@ -1,6 +1,9 @@
-import {DialogFieldSubTotalsQa} from '../../../../src/shared/constants';
-import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
-
+import {expect} from '@playwright/test';
+import {
+    ChartKitTableQa,
+    DialogFieldSubTotalsQa,
+    WizardVisualizationId,
+} from '../../../../src/shared';
 import {ChartSettingsItems} from '../../../page-objects/wizard/ChartSettings';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
@@ -95,13 +98,10 @@ datalensTest.describe('Wizard pagination in the pivot table', () => {
 
             await wizardPage.chartkit.navigateToNextTablePage(1);
 
-            await waitForCondition(async () => {
-                const rowsCount = await wizardPage.chartkit.getTableRowsCount();
+            const table = wizardPage.page.locator(slct(ChartKitTableQa.Widget));
+            const rows = table.locator('tbody tr');
 
-                return rowsCount === 1;
-            }).catch(() => {
-                throw new Error('More than one line was drawn');
-            });
+            await expect(rows).toHaveCount(1);
         },
     );
 

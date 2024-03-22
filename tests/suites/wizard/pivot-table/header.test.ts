@@ -18,11 +18,9 @@ datalensTest.describe('Wizard - Summary table, formation of columns and rows', (
             await openTestPage(page, RobotChartsWizardUrls.PivotTableWithBigHeader);
 
             const headRows = await wizardPage.chartkit.getHeadRowsTexts();
-
-            const rows = await wizardPage.chartkit.getRowsTexts();
-
             expect(headRows).toEqual(pivotTableWithBigHeaderMock.headRows);
 
+            const rows = await wizardPage.chartkit.getRowsTexts();
             expect(rows).toEqual(pivotTableWithBigHeaderMock.rows);
         },
     );
@@ -35,11 +33,9 @@ datalensTest.describe('Wizard - Summary table, formation of columns and rows', (
             await openTestPage(page, RobotChartsWizardUrls.PivotTableWithBigRowHeader);
 
             const headRows = await wizardPage.chartkit.getHeadRowsTexts();
-
-            const rows = await wizardPage.chartkit.getRowsTexts();
-
             expect(headRows).toEqual(pivotTableWithBigRowHeaderMock.headRows);
 
+            const rows = await wizardPage.chartkit.getRowsTexts();
             expect(rows).toEqual(pivotTableWithBigRowHeaderMock.rows);
         },
     );

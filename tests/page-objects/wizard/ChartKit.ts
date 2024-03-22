@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {ChartkitMenuDialogsQA, MenuItemsQA} from '../../../src/shared/constants';
+import {ChartkitMenuDialogsQA, ChartKitTableQa, MenuItemsQA} from '../../../src/shared';
 import {slct, waitForCondition} from '../../utils';
 import {readDownload} from '../../utils/playwright/utils';
 
@@ -39,11 +39,10 @@ export default class ChartKit {
     private drillArrowsSelector = '.chartkit-drill__drill-action';
     private breadcrumbsSelector = '.chartkit-drill .yc-breadcrumbs__item';
     private paginatorSelector = '.chartkit-table-paginator';
-    private tableRowSelector = '.chartkit .data-table__row';
-    private tableHeadRowSelector = '.chartkit .data-table__sticky_head .data-table__head-row';
-    private tableColgroupSelector = '.chartkit-table colgroup';
+    private tableRowSelector = `.chartkit .data-table__row, tbody ${slct(ChartKitTableQa.Row)}`;
+    private tableHeadCellSelector = '.data-table__head-cell';
     private layerLegendSelector = '.chartkit .chartkit-ymap-legend-layer';
-    private chartkitTableCellSelector = '.chartkit-table__cell';
+    private chartkitTableCellSelector = `.chartkit-table__cell, ${slct(ChartKitTableQa.Cell)}`;
     private labelsSelector = '.highcharts-data-labels .highcharts-data-label';
     private chartkitSeriesRect = '.chartkit-highcharts rect.highcharts-point';
 
@@ -110,8 +109,15 @@ export default class ChartKit {
         await this.page.waitForSelector(slct(errorQa));
     }
 
+    getTableLocator() {
+        return this.page
+            .locator('.chartkit-table')
+            .or(this.page.locator(slct(ChartKitTableQa.Widget)));
+    }
+
     async waitForSuccessfulRender() {
-        await this.page.waitForSelector('.chartkit-graph,.chartkit-table');
+        const locator = this.page.locator('.chartkit-graph').or(this.getTableLocator());
+        await locator.waitFor();
     }
 
     async openExportMenuAndClickSubItem(subItemSelector: string) {
@@ -196,33 +202,52 @@ export default class ChartKit {
         return (await this.page.$$(this.tableRowSelector)).length;
     }
 
-    async getColumnsWidth() {
-        const colGroup = await this.page.locator(this.tableColgroupSelector).first();
-        return await colGroup
-            .locator('col')
-            .evaluateAll((cols) => cols.map((col) => col.style?.width));
-    }
-
     getLayerLegend() {
         return this.page.$(this.layerLegendSelector);
     }
 
-    getHeadRowsHtml() {
-        return this.getRowContent(this.tableHeadRowSelector, '.data-table__head-cell', 'html');
+    async getHeadRowsHtml() {
+        const headerRows = this.getTableLocator().locator('thead').first().locator('tr');
+        const headCellContent = this.page
+            .locator(this.tableHeadCellSelector)
+            .or(this.page.locator(slct(ChartKitTableQa.HeadCellContent)));
+        await headerRows.first().waitFor();
+
+        const rows = await headerRows.all();
+        return await Promise.all(
+            rows.map(async (row) =>
+                Promise.all(
+                    (await row.locator(headCellContent).all()).map((cell) => cell.innerHTML()),
+                ),
+            ),
+        );
     }
 
-    getRowsHtml() {
-        return this.getRowContent(this.tableRowSelector, '.chartkit-table__cell', 'html');
+    async getRowsHtml() {
+        const rowLocator = this.getTableLocator().locator('tbody').first().locator('tr');
+        const cellContent = this.page.locator(this.chartkitTableCellSelector);
+
+        await rowLocator.first().waitFor();
+        const rows = await rowLocator.all();
+        return await Promise.all(
+            rows.map(async (row) =>
+                Promise.all((await row.locator(cellContent).all()).map((cell) => cell.innerHTML())),
+            ),
+        );
     }
 
-    getHeadRowsTexts() {
-        return this.getRowContent(this.tableHeadRowSelector, '.data-table__head-cell', 'text');
+    async getHeadRowsTexts() {
+        const headerRows = this.getTableLocator().locator('thead').first().locator('tr');
+        await headerRows.first().waitFor();
+
+        const rows = await headerRows.all();
+        return await Promise.all(rows.map((row) => row.locator('th').allTextContents()));
     }
 
     async getRowsTexts() {
         const rows = await this.getRowContent(
             this.tableRowSelector,
-            '.chartkit-table__cell',
+            ['.chartkit-table__cell', slct(ChartKitTableQa.Cell)].join(','),
             'text',
         );
 
@@ -295,7 +320,7 @@ export default class ChartKit {
 
     private async getRowContent(
         rowSelector: string,
-        cellSelector: '.data-table__head-cell' | '.chartkit-table__cell',
+        cellSelector: string,
         contentType: 'text' | 'html',
     ) {
         await this.page.waitForSelector(rowSelector);

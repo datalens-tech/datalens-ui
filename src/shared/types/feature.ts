@@ -77,6 +77,8 @@ export enum Feature {
     MarkupMetric = 'MarkupMetric',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
+    NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
+    NewTablePluginForEditor = 'NewTablePluginForEditor',
 }
 
 export type FeatureConfig = Record<string, boolean>;
