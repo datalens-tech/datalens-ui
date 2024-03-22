@@ -46,7 +46,6 @@ export const getControlValidation = (selectorDialog: SelectorDialogState) => {
     ) {
         validation.fieldName = i18n(
             'dash.control-dialog.edit',
-            // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
             'validation_field-name-in-parameters',
         );
     }

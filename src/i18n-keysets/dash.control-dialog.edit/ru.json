@@ -61,6 +61,7 @@
   "radio-button_all": "Все",
   "radio-button_selected": "Выбранные",
   "text_empty-items": "Нет значений",
+  "validation_field-name-in-parameters": "Имя параметра не должно совпадать с параметрами из раздела ниже",
   "validation_required": "Поле должно быть заполнено",
   "value_absolute-date": "Точная дата",
   "value_checkbox-default-value-false": "False",

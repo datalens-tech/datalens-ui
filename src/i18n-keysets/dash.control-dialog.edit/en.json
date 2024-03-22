@@ -61,6 +61,7 @@
   "radio-button_all": "All",
   "radio-button_selected": "Selected",
   "text_empty-items": "Not found",
+  "validation_field-name-in-parameters": "The parameter name must not be the same as the parameters in the section below",
   "validation_required": "Field must be filled",
   "value_absolute-date": "Exact date",
   "value_checkbox-default-value-false": "False",
