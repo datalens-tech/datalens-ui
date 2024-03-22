@@ -18,7 +18,8 @@ function createColumn(args: {headCell: THead; footerCell?: TFoot; index: number}
 
     if (cell) {
         options.cell = (context) => {
-            return cell(context.row.getValue(context.column.id));
+            const originalCellData = context.row.original[index];
+            return cell(originalCellData);
         };
     }
 
@@ -39,14 +40,14 @@ export function getTableColumns(args: {head?: THead[]; footer?: TFoot[]}) {
 
     let lastColumnIndex = 0;
     const createHeadColumns = (cells: THead[]): ColumnDef<TData>[] => {
-        return cells.map((headCell, index) => {
+        return cells.map((headCell) => {
             const hasChildren = Boolean(headCell.columns?.length);
             const cellIndex = hasChildren ? -1 : lastColumnIndex;
             const footerCell = footer?.[cellIndex];
             const options: ColumnDef<TData> = createColumn({
                 headCell,
                 footerCell,
-                index,
+                index: cellIndex,
             });
 
             if (hasChildren) {
@@ -60,9 +61,6 @@ export function getTableColumns(args: {head?: THead[]; footer?: TFoot[]}) {
 
             return columnHelper.accessor((row) => {
                 const cellData = row[cellIndex];
-                if (headCell.cell) {
-                    return cellData;
-                }
 
                 return cellData.formattedValue ?? cellData.value;
             }, options);

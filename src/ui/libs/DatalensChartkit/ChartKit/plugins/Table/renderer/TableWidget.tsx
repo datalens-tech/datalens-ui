@@ -35,6 +35,8 @@ const b = block('chartkit-table-widget');
 type HeadCell = THead & {name: string; formattedName?: string; fieldId?: string; custom?: unknown};
 
 function mapHeadCell(th: TableHead): HeadCell {
+    const columnType: TableCommonCell['type'] = get(th, 'type');
+
     return {
         ...th,
         id: String(th.id),
@@ -42,7 +44,7 @@ function mapHeadCell(th: TableHead): HeadCell {
             const cell = {
                 value: th.markup ?? th.name,
                 formattedValue: th.formattedName,
-                type: th.markup ? 'markup' : get(th, 'type'),
+                type: th.markup ? 'markup' : columnType,
             };
             return (
                 <span data-qa={ChartKitTableQa.HeadCellContent}>
@@ -51,6 +53,7 @@ function mapHeadCell(th: TableHead): HeadCell {
             );
         },
         enableSorting: get(th, 'sortable', true),
+        sortingFn: columnType === 'number' ? 'alphanumeric' : undefined,
         enableRowGrouping: get(th, 'group', false),
         cell: (cellData) => {
             const cell = cellData as TableCommonCell;
