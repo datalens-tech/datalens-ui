@@ -33,6 +33,7 @@
   "field_multiselectable": "Multiple choice",
   "field_operation": "Operation",
   "field_operation-note": "The type of operation has no effect on QL Charts and parameters",
+  "field_parameter-name": "Parameter",
   "field_params": "Parameters",
   "field_preset": "Type",
   "field_required-value": "Required field",

@@ -33,6 +33,7 @@
   "field_multiselectable": "Множественный выбор",
   "field_operation": "Операция",
   "field_operation-note": "Тип операции не влияет на QL-чарты и параметры",
+  "field_parameter-name": "Параметр",
   "field_params": "Параметры",
   "field_preset": "Пресет",
   "field_required-value": "Обязательное поле",

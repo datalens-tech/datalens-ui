@@ -68,10 +68,7 @@ export const ConnectionSettings: React.FC = () => {
             <ConnectionSelector />
             {connectionQueryTypes && connectionQueryTypes.length > 0 && (
                 <React.Fragment>
-                    <ParameterNameInput
-                        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
-                        label={i18n('field_parameter-name')}
-                    />
+                    <ParameterNameInput label={i18n('field_parameter-name')} />
                     <QueryTypeControl connectionQueryTypes={connectionQueryTypes} />
                     <InputTypeSelector options={options} />
                     <ValueSelector controlProps={controlProps} />
