@@ -76,7 +76,7 @@ datalensTest.describe('Wizard - Column Settings dialog', () => {
         },
     );
 
-    datalensTest.only(
+    datalensTest(
         'When setting the column width for the hierarchy, the width of the table cells changes',
         async ({page}) => {
             const wizardPage = new WizardPage({page});
