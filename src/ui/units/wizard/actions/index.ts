@@ -62,7 +62,7 @@ import {getSdk} from '../../../libs/schematic-sdk';
 import {sdk as oldSdk} from '../../../libs/sdk';
 import {showToast} from '../../../store/actions/toaster';
 import {getFilteredObject} from '../../../utils';
-import {WizardDispatch} from '../reducers';
+import {WizardDispatch, WizardGlobalState} from '../reducers';
 import {selectWizardWorkbookId} from '../selectors/settings';
 import {selectVisualization} from '../selectors/visualization';
 import {filterVisualizationColors} from '../utils/colors';
@@ -121,6 +121,7 @@ import {
 const i18n = I18n.keyset('wizard');
 
 export const RESET_WIZARD_STORE = Symbol('wizard/RESET_WIZARD_STORE');
+export const SET_WIZARD_STORE = Symbol('wizard/SET_WIZARD_STORE');
 
 type ApplyLocalFieldsArgs = {
     dataset: Dataset;
@@ -1755,6 +1756,18 @@ export function resetWizardStore() {
 
 export interface ResetWizardStoreAction {
     type: typeof RESET_WIZARD_STORE;
+}
+
+export function setWizardStore({store}: {store: WizardGlobalState}) {
+    return {
+        type: SET_WIZARD_STORE,
+        store,
+    };
+}
+
+export interface SetWizardStoreAction {
+    type: typeof SET_WIZARD_STORE;
+    store: WizardGlobalState;
 }
 
 type ProcessWidgetArgs = {

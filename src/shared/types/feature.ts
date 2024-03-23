@@ -14,6 +14,7 @@ export enum Feature {
     EnableCustomMonitoring = 'EnableCustomMonitoring',
     ShowActionPanelTreeSelect = 'ShowActionPanelTreeSelect',
     EnableDashChartStat = 'EnableDashChartStat',
+    EnableEditHistory = 'EnableEditHistory',
     EnableShareWidget = 'EnableShareWidget',
     EnableAutocreateDataset = 'EnableAutocreateDataset',
     ShowCreateEntryWithMenu = 'ShowCreateEntryWithMenu',
