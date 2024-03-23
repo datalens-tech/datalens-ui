@@ -31,7 +31,7 @@ jobs:
               with:
                   SERVER_URL: "https://weblate.gravity-ui.com"
                   TOKEN: ${{ secrets.WEBLATE_TOKEN }}
-                  PROJECT: "datalens"
+                  PROJECT: "datalens-fork"
                   MAIN_LANGUAGE: "ru"
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
