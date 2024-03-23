@@ -30,7 +30,10 @@ export const Table = (props: TableProps) => {
         onSortingChange,
     } = props;
     const {head, footer, rows} = props.data;
-    const columns = React.useMemo(() => getTableColumns({head, footer}), [head, footer]);
+    const columns = React.useMemo(
+        () => getTableColumns({head, rows, footer}),
+        [head, rows, footer],
+    );
     const data = React.useMemo(() => getTableData({head, rows}), [head, rows]);
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const table = useReactTable({

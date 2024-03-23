@@ -1,6 +1,8 @@
 import React from 'react';
 
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
+import {CaretLeft, CaretRight} from '@gravity-ui/icons';
+import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {ChartKitTableQa, StringParams, TableCellsRow, TableCommonCell, TableHead} from 'shared';
@@ -64,6 +66,12 @@ function mapHeadCell(th: TableHead): HeadCell {
             return (
                 <div data-qa={ChartKitTableQa.CellContent} style={{...contentStyles}}>
                     {renderCellContent({cell, column: th})}
+                    {cell.sortDirection && (
+                        <Icon
+                            className={b('sort-icon')}
+                            data={cell.sortDirection === 'asc' ? CaretLeft : CaretRight}
+                        />
+                    )}
                 </div>
             );
         },
@@ -108,6 +116,12 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
 
         const handleTableClick: OnCellClickFn = ({cell, row, event}) => {
             const tableCommonCell = cell as TableCommonCell;
+
+            if (tableCommonCell.onClick) {
+                if (tableCommonCell.onClick.action === 'setParams') {
+                    changeParams(tableCommonCell.onClick.args);
+                }
+            }
 
             if (canDrillDown && tableCommonCell.drillDownFilterValue) {
                 changeParams({
@@ -180,6 +194,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                         const isCellClickable =
                             Boolean(canDrillDown && cell.drillDownFilterValue) ||
                             Boolean(cell.treeNode) ||
+                            Boolean(cell.onClick) ||
                             Boolean(actionParams?.scope);
                         const cursor = isCellClickable ? 'pointer' : undefined;
                         const actionParamsCss = getCellCss({

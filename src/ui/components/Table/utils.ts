@@ -34,8 +34,8 @@ function createColumn(args: {headCell: THead; footerCell?: TFoot; index: number}
     return options;
 }
 
-export function getTableColumns(args: {head?: THead[]; footer?: TFoot[]}) {
-    const {head = [], footer = []} = args;
+export function getTableColumns(args: {head?: THead[]; rows?: TData[]; footer?: TFoot[]}) {
+    const {head = [], rows = [], footer = []} = args;
     const columnHelper = createColumnHelper<TData>();
 
     let lastColumnIndex = 0;
@@ -45,7 +45,7 @@ export function getTableColumns(args: {head?: THead[]; footer?: TFoot[]}) {
             const cellIndex = hasChildren ? -1 : lastColumnIndex;
             const footerCell = footer?.[cellIndex];
             const options: ColumnDef<TData> = createColumn({
-                headCell,
+                headCell: {...headCell, enableSorting: headCell.enableSorting && rows.length > 1},
                 footerCell,
                 index: cellIndex,
             });

@@ -62,17 +62,24 @@
             position: sticky;
             z-index: 1;
 
-            th:before {
+            th:before,
+            th:after {
                 content: '';
                 display: inline-block;
                 width: calc(100% + 1px);
-                height: calc(100% + 1.5px);
-                border: 1px solid var(--dl-table-border-color);
+                height: 1px;
                 position: absolute;
-                top: -1px;
                 left: -1px;
-                border-left: 0;
-                border-right: 0;
+            }
+
+            th:before {
+                top: -1px;
+                border-top: 1px solid var(--dl-table-border-color);
+            }
+
+            th:after {
+                bottom: -1px;
+                border-bottom: 1px solid var(--dl-table-border-color);
             }
         }
     }
