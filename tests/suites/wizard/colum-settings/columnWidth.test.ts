@@ -97,7 +97,7 @@ datalensTest.describe('Wizard - Column Settings dialog', () => {
             await (await apiRunRequest).response();
 
             const table = wizardPage.chartkit.getTableLocator();
-            const hierarchyColumn = table.locator('th', {hasText: 'Category'});
+            const hierarchyColumn = table.locator('th', {hasText: 'Category'}).first();
             const prev = await hierarchyColumn.boundingBox();
 
             apiRunRequest = wizardPage.page.waitForRequest(

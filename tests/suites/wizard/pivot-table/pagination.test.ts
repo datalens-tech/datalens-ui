@@ -1,9 +1,5 @@
 import {expect} from '@playwright/test';
-import {
-    ChartKitTableQa,
-    DialogFieldSubTotalsQa,
-    WizardVisualizationId,
-} from '../../../../src/shared';
+import {DialogFieldSubTotalsQa, WizardVisualizationId} from '../../../../src/shared';
 import {ChartSettingsItems} from '../../../page-objects/wizard/ChartSettings';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
@@ -98,9 +94,7 @@ datalensTest.describe('Wizard pagination in the pivot table', () => {
 
             await wizardPage.chartkit.navigateToNextTablePage(1);
 
-            const table = wizardPage.page.locator(slct(ChartKitTableQa.Widget));
-            const rows = table.locator('tbody tr');
-
+            const rows = wizardPage.chartkit.getTableLocator().locator('tbody tr');
             await expect(rows).toHaveCount(1);
         },
     );

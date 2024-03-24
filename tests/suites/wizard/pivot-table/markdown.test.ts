@@ -27,8 +27,8 @@ datalensTest.describe('Wizard - Pivot table, markdown', () => {
 
             await openTestPage(page, RobotChartsWizardUrls.PivotTableWithMarkdown);
 
-            const cellContent = wizardPage.page
-                .locator(slct(ChartKitTableQa.Widget))
+            const cellContent = wizardPage.chartkit
+                .getTableLocator()
                 .locator('tbody')
                 .locator(slct(ChartKitTableQa.CellContent))
                 .first();

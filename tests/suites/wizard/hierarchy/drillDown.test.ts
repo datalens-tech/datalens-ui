@@ -59,10 +59,9 @@ datalensTest.describe('Wizard Hierarchy', () => {
                 'Krymsk',
             ];
 
-            const table = page.locator(slct(ChartKitTableQa.Widget));
-            const cell = table
-                .locator(slct(ChartKitTableQa.CellContent))
-                .or(table.locator('.chartkit-table__content'));
+            const cell = wizardPage.chartkit
+                .getTableLocator()
+                .locator(slct(ChartKitTableQa.CellContent));
             await expect(cell).toHaveText(firstLevelValues);
 
             await wizardPage.chartkit.drillDown();
@@ -76,10 +75,10 @@ datalensTest.describe('Wizard Hierarchy', () => {
     datalensTest(
         'The user clicks on the line and falls into the cities, filtered by population',
         async ({page}: {page: Page}) => {
-            const table = page.locator(slct(ChartKitTableQa.Widget));
-            const cell = table
-                .locator(slct(ChartKitTableQa.CellContent))
-                .or(table.locator('.chartkit-table__content'));
+            const wizardPage = new WizardPage({page});
+            const cell = wizardPage.chartkit
+                .getTableLocator()
+                .locator(slct(ChartKitTableQa.CellContent));
             await expect(cell).toHaveText(['56 100', '87 600', '96 400', '159 500', '610 800']);
 
             await cell.getByText('56 100').click();
