@@ -1,7 +1,7 @@
 .widgets-order-popup {
     &__body {
-        // TODO: this is an private api and may silently changed. We should use local styles
-        padding: var(--yc-dialog-body-padding);
+        // TODO: check uikit6
+        padding: 10px 32px;
         box-sizing: border-box;
         min-width: 350px;
     }

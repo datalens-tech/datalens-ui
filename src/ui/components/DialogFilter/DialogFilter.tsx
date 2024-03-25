@@ -213,7 +213,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
                 <div className={b()}>
                     {this.renderHeader()}
                     {this.renderBody()}
-                    <Dialog.Divider />
+                    <Dialog.Divider className={b('divider')} />
                     {this.renderFooter()}
                 </div>
             </Dialog>

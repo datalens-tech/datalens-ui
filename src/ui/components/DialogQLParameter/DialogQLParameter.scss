@@ -1,12 +1,15 @@
 .dl-dialog-ql-parameter {
-    --yc-dialog-divider-margin: 0;
-
     display: flex;
     flex-direction: column;
     width: 595px;
     height: 370px;
     max-height: 80vh;
     min-height: 370px;
+
+    &__divider {
+        // TODO: check uikit6
+        margin: 0;
+    }
 
     &__body {
         &_without-paddings {
