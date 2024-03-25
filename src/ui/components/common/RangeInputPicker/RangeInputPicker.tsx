@@ -19,7 +19,7 @@ import {
 
 import './RangeInputPicker.scss';
 
-const b = block('yc-range-input-picker');
+const b = block('dl-range-input-picker');
 
 interface RangeInputPickerState {
     prevProps: RangeInputPickerProps;

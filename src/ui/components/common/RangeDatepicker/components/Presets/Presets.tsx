@@ -11,7 +11,7 @@ import type {Preset} from '../../types';
 import {DocTooltip} from './DocTooltip';
 import {TabsContent} from './TabsContent';
 
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 
 interface PresetsProps {
     dispatch: React.Dispatch<Action>;

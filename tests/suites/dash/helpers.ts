@@ -6,7 +6,7 @@ import type DashboardPage from '../../page-objects/dashboard/DashboardPage';
 
 const SELECTORS = {
     TABLE_CELL_CONTENT: '.chartkit-table__content_text',
-    LIST_ITEM: '.yc-list__item',
+    LIST_ITEM: '.g-list__item',
     TAB_ROW: '.dialog-tab-item__row',
 };
 

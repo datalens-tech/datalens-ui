@@ -7,7 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
 const i18n = I18n.keyset('components.common.RangeDatepicker');
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 const MOBILE_ICON_SIZE = 24;
 const EMPTY_CELL_KEY = '__empty__';
 
@@ -116,7 +116,7 @@ const MobileTooltip = () => {
         <div className={b('doc-tooltip-wrap', {mobile: true})} onClick={showSheet}>
             <Icon data={CircleQuestion} size={MOBILE_ICON_SIZE} />
             <Sheet
-                id="yc-range-datepicker-doc-sheet"
+                id="dl-range-datepicker-doc-sheet"
                 className={b('sheet', {doc: true})}
                 visible={sheetVisible}
                 onClose={hideSheet}

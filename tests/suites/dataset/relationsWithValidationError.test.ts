@@ -7,13 +7,13 @@ import {openTestPage, slct} from '../../utils';
 import {RobotChartsDatasetUrls} from '../../utils/constants';
 
 const SELECTORS = {
-    TOAST_VALIDATION_ERROR: '.yc-toaster .yc-toast__icon_error',
+    TOAST_VALIDATION_ERROR: '.g-toaster .g-toast__icon_error',
     RELATION_JOIN_ICON: 'g.relations-map__join.relations-map__join_error',
     RELATION_DIALOG_TITLE: slct(DatasetDialogRelationQA.DialogTitle),
     RELATION_CONDITION_LIST_ITEM: '.relation-dialog .relation-dialog__join-condition',
     ADD_RELATION_BUTTON: slct(DatasetDialogRelationQA.AddRelation),
     SELECT_CONTROL: '.g-select',
-    SELECT_CONTROL_ITEM: '.yc-list__items .g-select-list__item',
+    SELECT_CONTROL_ITEM: '.g-list__items .g-select-list__item',
     RELATION_APPLY_BUTTON: slct(DatasetDialogRelationQA.Apply),
     SAVE_DATASET_ACTIVE_BUTTON: slct(DatasetActionQA.CreateButton),
 };

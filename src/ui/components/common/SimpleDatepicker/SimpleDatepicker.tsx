@@ -43,7 +43,7 @@ import './SimpleDatepicker.scss';
 
 const i18n = I18n.keyset('components.common.SimpleDatepicker');
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 
 export const SimpleDatepicker: React.FC<SimpleDatepickerProps> = (props) => {
     const {

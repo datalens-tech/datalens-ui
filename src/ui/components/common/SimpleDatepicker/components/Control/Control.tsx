@@ -14,7 +14,7 @@ import {Input} from './Input';
 
 import relativeModeIcon from '../../../../../assets/icons/relative-mode.svg';
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 
 interface ControlProps {
     dispatch: React.Dispatch<Action>;

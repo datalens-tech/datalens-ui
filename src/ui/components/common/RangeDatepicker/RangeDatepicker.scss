@@ -1,6 +1,6 @@
 @import '../styles/mixins';
 
-$baseClass: '.yc-range-datepicker';
+$baseClass: '.dl-range-datepicker';
 $minWidthWithoutTime: 245px;
 $minWidthWithTime: 300px;
 $minWidthLabelWithoutTime: 147px;
@@ -226,7 +226,7 @@ $mobileMargin: 20px;
         display: flex;
 
         // Align the width of the labels 'from:'/'to:'
-        & .yc-simple-datepicker__control-label {
+        & .dl-simple-datepicker__control-label {
             width: 35px;
         }
     }
@@ -260,11 +260,11 @@ $mobileMargin: 20px;
 
         padding-left: $desktopMargin;
 
-        & .yc-tab-item:not(.yc-tab-item_active) .yc-tab-item__title {
+        & .g-tab-item:not(.g-tab-item_active) .g-tab-item__title {
             color: var(--g-color-text-secondary);
         }
 
-        & .yc-tab-item.yc-tab-item_active .yc-tab-item__title {
+        & .g-tab-item.g-tab-item_active .g-tab-item__title {
             color: var(--g-color-text-primary);
         }
     }

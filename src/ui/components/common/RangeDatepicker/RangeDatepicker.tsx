@@ -23,7 +23,7 @@ import {
 
 import './RangeDatepicker.scss';
 
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 
 export const RangeDatepicker: React.FC<RangeDatepickerProps> = (props) => {
     const {

@@ -1,4 +1,4 @@
-.yc-datepicker-popup-content {
+.dl-datepicker-popup-content {
     --g-tabs-item-gap: 16px;
     --g-tabs-item-border-width: 2px;
 
@@ -11,14 +11,14 @@
         flex: 0 0 40px;
         padding-left: 16px;
 
-        & .yc-tabs {
+        & .g-tabs {
             box-shadow: none;
         }
 
-        .yc-datepicker_mobile & {
+        .dl-datepicker_mobile & {
             padding-left: 0;
 
-            & .yc-tabs {
+            & .g-tabs {
                 justify-content: center;
             }
         }

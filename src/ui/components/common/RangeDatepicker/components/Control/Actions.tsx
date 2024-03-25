@@ -8,7 +8,7 @@ import {Action} from '../../store';
 
 import alarmIcon from '../../../../../assets/icons/toast-attention.svg';
 
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 
 interface ActionsProps {
     dispatch: React.Dispatch<Action>;
