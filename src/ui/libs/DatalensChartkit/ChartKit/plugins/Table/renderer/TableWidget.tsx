@@ -233,10 +233,10 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                 className={[b(), CHARTKIT_SCROLLABLE_NODE_CLASSNAME].join(' ')}
                 data-qa={ChartKitTableQa.Widget}
             >
+                {titleText && <div className={b('title')}>{titleText}</div>}
                 <div className={b('table-wrapper')}>
                     <Table
                         data={tableData}
-                        title={titleText ? {text: titleText} : undefined}
                         noData={{text: i18n('chartkit-table', 'message-no-data')}}
                         onCellClick={handleTableClick}
                         header={{
