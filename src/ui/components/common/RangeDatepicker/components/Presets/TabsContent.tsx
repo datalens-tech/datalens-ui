@@ -16,7 +16,7 @@ interface TabsContentProps {
 }
 
 export const TabsContent: React.FC<TabsContentProps> = ({tab, selectPreset}) => {
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     const {withTime, selectedPresetIndex, selectedTabIndex, presetTabs} =
         useRangeDatepickerPreset();
     const selectedTab = presetTabs[selectedTabIndex];

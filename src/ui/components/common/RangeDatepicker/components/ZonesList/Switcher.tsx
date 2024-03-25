@@ -18,7 +18,7 @@ interface SwitcherProps {
 }
 
 export const Switcher: React.FC<SwitcherProps> = ({timeZone}) => {
-    const [mobile] = useMobile();
+    const mobile = useMobile();
 
     return (
         <div className={b('zones-list-switcher', {mobile})}>

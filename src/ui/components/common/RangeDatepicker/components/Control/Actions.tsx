@@ -17,7 +17,7 @@ interface ActionsProps {
 }
 
 export const Actions: React.FC<ActionsProps> = ({errorMessage, showClear, dispatch}) => {
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     const alarmIconRef = React.useRef<HTMLSpanElement>(null);
     const tooltipRef = React.useRef<PopoverInstanceProps>(null);
 

@@ -55,7 +55,7 @@ export const RangeDatepicker: React.FC<RangeDatepickerProps> = (props) => {
         onOpenChange,
         timeZone = guessUserTimeZone(),
     } = props;
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     // Default does not work for empty lines
     const size: DatepickerControlSize = props.size || 'm';
     const dateFormat = props.dateFormat || getDefaultDateFormat();

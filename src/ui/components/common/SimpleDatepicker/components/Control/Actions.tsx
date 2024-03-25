@@ -25,7 +25,7 @@ export const Actions: React.FC<ActionsProps> = ({
     dispatch,
     onClick,
 }) => {
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     const alarmIconRef = React.useRef<HTMLSpanElement>(null);
     const tooltipRef = React.useRef<PopoverInstanceProps>(null);
 

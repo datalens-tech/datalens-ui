@@ -18,7 +18,7 @@ interface PresetsProps {
 }
 
 export const Presets: React.FC<PresetsProps> = ({dispatch}) => {
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     const {presetTabs, selectedTabIndex} = useRangeDatepickerPreset();
     const [activeTabIndex, setActiveTabIndex] = useState(
         selectedTabIndex === -1 ? 0 : selectedTabIndex,

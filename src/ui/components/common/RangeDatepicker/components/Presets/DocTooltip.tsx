@@ -128,6 +128,6 @@ const MobileTooltip = () => {
 };
 
 export const DocTooltip = () => {
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     return mobile ? <MobileTooltip /> : <DesktopTooltip />;
 };

@@ -19,7 +19,7 @@ interface ContainerProps {
 
 export function Container(props: ContainerProps) {
     const {popupClassName, active = false, withTime, controlRef, dispatch} = props;
-    const [mobile] = useMobile();
+    const mobile = useMobile();
 
     const onClose = () => dispatch({type: 'SET_UPDATE', payload: {callOnUpdate: true}});
 

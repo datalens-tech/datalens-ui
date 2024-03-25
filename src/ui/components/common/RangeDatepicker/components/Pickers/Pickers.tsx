@@ -42,7 +42,7 @@ export const Pickers: React.FC<PickersProps> = (props) => {
         dispatch,
     } = props;
     const toPickerRef = React.useRef<HTMLDivElement>(null);
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     const size: DatepickerControlSize = mobile ? 'xl' : 'm';
 
     const selectFrom = React.useCallback(
