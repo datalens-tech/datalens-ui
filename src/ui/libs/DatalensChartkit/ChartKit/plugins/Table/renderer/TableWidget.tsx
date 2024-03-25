@@ -179,7 +179,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             if (cell) {
                 const columnId = headCell.fieldId ?? headCell.id;
                 params._columnId = `_id=${columnId}_name=${headCell.name}`;
-                params._sortOrder = String(sortOrder === 'asc' ? -1 : 1);
+                params._sortOrder = String(sortOrder === 'desc' ? -1 : 1);
             }
 
             changeParams(params);
