@@ -479,7 +479,7 @@ export const useDialogPublicState = ({
                 .then(() => {
                     toaster.add({
                         name: 'successSwitchPublicationStatus',
-                        type: 'success',
+                        theme: 'success',
                         title: i18n(
                             'component.dialog-switch-public.view',
                             'toast_switch-publication-status-success',

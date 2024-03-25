@@ -50,7 +50,7 @@ export const DIALOG_RESOLVE_STATUS = {
 
 export const TOASTER_TYPE = {
     SUCCESS: 'success',
-    ERROR: 'error',
+    ERROR: 'danger',
 };
 
 export const UNRELEASED_MODULE_MARK = '@saved';

@@ -104,7 +104,7 @@ export const setErrorToast = async (exportResult: ExportResultType) => {
     }
     const failTitle = `${i18n('export_failed')}. ${errorStatusText ? `${errorStatusText}` : ''}`;
     toaster.add({
-        type: 'error',
+        theme: 'danger',
         name: 'toastAfterExport',
         title: failTitle,
     });
@@ -112,7 +112,7 @@ export const setErrorToast = async (exportResult: ExportResultType) => {
 
 export const setSuccessToast = () => {
     toaster.add({
-        type: 'success',
+        theme: 'success',
         name: 'toastAfterExport',
         title: i18n('export_success'),
     });

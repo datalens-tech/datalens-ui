@@ -290,7 +290,7 @@ class SectionDataset extends React.Component<Props, State> {
             this.props.toaster.add({
                 title: i18n('wizard', 'label_error-remove-field'),
                 name: 'WIZARD',
-                type: 'error',
+                theme: 'danger',
             });
         }
     };

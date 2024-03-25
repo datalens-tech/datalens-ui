@@ -29,7 +29,7 @@ function SharedLink({className, entry, disabled}: Props) {
     const onCopyLink = () => {
         toaster.add({
             name: 'successSharedLinkCopied',
-            type: 'success',
+            theme: 'success',
             title: i18n('toast_link-copied'),
         });
     };
@@ -38,7 +38,6 @@ function SharedLink({className, entry, disabled}: Props) {
         <div className={b(null, className)}>
             <div className={b('input-place')}>
                 <TextInput
-                    type={''}
                     className={b('input-link', {active: !disabled})}
                     disabled={true}
                     value={text}
