@@ -22,5 +22,9 @@
     &__table-wrapper {
         width: 100%;
         overflow: auto;
+
+        &_highlightRows {
+            --dl-table-row-hover-bg-color: var(--g-color-base-simple-hover);
+        }
     }
 }

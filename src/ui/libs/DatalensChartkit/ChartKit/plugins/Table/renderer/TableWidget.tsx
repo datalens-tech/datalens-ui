@@ -227,6 +227,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             };
         }, [actionParams, canDrillDown, data.footer, data.head, data.rows]);
         const titleText = typeof config?.title === 'string' ? config.title : config?.title?.text;
+        const shouldHighlightRows = get(config, 'settings.highlightRows', true);
 
         return (
             <div
@@ -234,7 +235,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                 data-qa={ChartKitTableQa.Widget}
             >
                 {titleText && <div className={b('title')}>{titleText}</div>}
-                <div className={b('table-wrapper')}>
+                <div className={b('table-wrapper', {highlightRows: shouldHighlightRows})}>
                     <Table
                         data={tableData}
                         noData={{text: i18n('chartkit-table', 'message-no-data')}}
