@@ -643,7 +643,7 @@ class SourceRelationDialog extends React.Component<Props, State> {
                                 <Checkbox checked={this.isRequired} onUpdate={this.changeRequired}>
                                     {i18n('label_optimize-join')}
                                     <HelpPopover
-                                        className={b('optimize-hint')}
+                                        className={b('hint-optimize-join')}
                                         content={i18n('hint_optimize-join')}
                                     />
                                 </Checkbox>
