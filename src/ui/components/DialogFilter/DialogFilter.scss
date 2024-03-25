@@ -1,13 +1,15 @@
 .dl-dialog-filter {
-    // TODO: this is an private api and may silently changed. We should use local styles
-    --yc-dialog-divider-margin: 0;
-
     display: flex;
     flex-direction: column;
     width: 680px;
     height: 560px;
     max-height: 80vh;
     min-height: 300px;
+
+    &__divider {
+        // TODO: check uikit6
+        margin: 0;
+    }
 
     &__body {
         &_without-paddings {
