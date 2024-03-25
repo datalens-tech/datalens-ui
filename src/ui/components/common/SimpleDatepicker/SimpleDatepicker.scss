@@ -222,10 +222,10 @@ $widthActions: 38px;
     }
 
     &__control-action-tooltip {
-        --yc-popover-max-width: none;
+        --g-popover-max-width: none;
 
         &_mobile {
-            --yc-popover-max-width: 50%;
+            --g-popover-max-width: 50%;
         }
     }
 
