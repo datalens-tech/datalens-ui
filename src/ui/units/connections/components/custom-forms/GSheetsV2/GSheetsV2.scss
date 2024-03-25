@@ -40,9 +40,8 @@ $titleHeight: 57px;
     }
 
     &__gauth-popover {
-        // TODO: this is an private api and may silently changed. We should use local styles
-        --yc-popover-max-width: 330px;
-        --yc-popup-border-color: var(--g-color-base-brand);
+        --g-popover-max-width: 330px;
+        --g-popup-border-color: var(--g-color-base-brand);
 
         padding-top: 15px;
         // So that the popover does not block navigation, it has 98
