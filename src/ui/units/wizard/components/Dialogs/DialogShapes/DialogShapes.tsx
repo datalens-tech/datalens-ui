@@ -5,9 +5,7 @@ import {Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
-import {DatasetOptions, Field, FilterField, ShapesConfig, Update} from 'shared';
-
-import {PaletteTypes} from '../../../constants';
+import {DatasetOptions, Field, FilterField, PaletteTypes, ShapesConfig, Update} from 'shared';
 
 import DialogShapesPalette from './DialogShapesPalette/DialogShapesPalette';
 
@@ -41,6 +39,7 @@ export type OpenDialogShapesArgs = {
 export type ShapesState = {
     mountedShapes: Record<string, string>;
     selectedValue: string | null;
+    paletteType: PaletteTypes;
 };
 
 const DialogShapes: React.FC<Props> = ({
@@ -59,9 +58,13 @@ const DialogShapes: React.FC<Props> = ({
     paletteType,
 }: Props) => {
     const [shapesState, setShapesState] = React.useState<ShapesState>({
+        paletteType,
         selectedValue: null,
         mountedShapes:
-            shapesConfig.mountedShapes && Object.keys(shapesConfig.mountedShapes)
+            shapesConfig.mountedShapes &&
+            Object.keys(shapesConfig.mountedShapes) &&
+            (typeof shapesConfig.paletteType === 'undefined' ||
+                shapesConfig.paletteType === paletteType)
                 ? shapesConfig.mountedShapes
                 : {},
     });
@@ -96,11 +99,12 @@ const DialogShapes: React.FC<Props> = ({
     }, [onClose]);
 
     const onApplyButtonClick = React.useCallback(() => {
-        const shapesConfig: ShapesConfig = {
+        onApply({
             mountedShapes: shapesState.mountedShapes,
             fieldGuid: item.guid,
-        };
-        onApply(shapesConfig);
+            paletteType: shapesState.paletteType,
+        });
+
         onClose();
     }, [item.guid, onApply, onClose, shapesState.mountedShapes]);
 

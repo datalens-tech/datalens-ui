@@ -9,6 +9,7 @@ import {
     Feature,
     Field,
     Link,
+    PaletteTypes,
     Placeholder,
     PointSizeConfig,
     ShapesConfig,
@@ -37,7 +38,7 @@ import {DIALOG_PLACEHOLDER} from '../components/Dialogs/DialogPlaceholder/Dialog
 import {DIALOG_POINTS_SIZE} from '../components/Dialogs/DialogPointsSize';
 import {DIALOG_SHAPES} from '../components/Dialogs/DialogShapes/DialogShapes';
 import {DIALOG_CHART_SETTINGS} from '../components/Dialogs/Settings/Settings';
-import {PaletteTypes, VISUALIZATION_IDS} from '../constants';
+import {VISUALIZATION_IDS} from '../constants';
 import {WizardDispatch} from '../reducers';
 import {getChangedPlaceholderSettings} from '../reducers/utils/getPlaceholdersWithMergedSettings';
 import {selectParameters} from '../selectors/dataset';

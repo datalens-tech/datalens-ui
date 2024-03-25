@@ -7,6 +7,7 @@ import {
     FilterField,
     LineShapeType,
     POINT_SHAPES_IN_ORDER,
+    PaletteTypes,
     PointsShapeType,
     SHAPES_PALETTE_ORDER,
     Update,
@@ -14,7 +15,6 @@ import {
 import {selectClientAvailableLineShapes} from 'ui';
 
 import IconRenderer from '../../../../../../libs/DatalensChartkit/ChartKit/components/IconRenderer/IconRenderer';
-import {PaletteTypes} from '../../../../constants';
 import Palette from '../../../Palette/Palette';
 import ValuesList from '../../../ValuesList/ValuesList';
 import {ShapesState} from '../DialogShapes';

@@ -2,10 +2,9 @@ import React, {useCallback, useRef} from 'react';
 
 import {Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {ColorPalette, DialogFieldBarsSettingsQa} from 'shared';
+import {ColorPalette, DialogFieldBarsSettingsQa, PaletteTypes} from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
 import {useEnterClick} from 'ui/hooks/useEnterClick';
-import {PaletteTypes} from 'ui/units/wizard/constants';
 import {getPaletteSelectorItems} from 'ui/units/wizard/utils/palette';
 import {getPaletteColors} from 'ui/utils';
 

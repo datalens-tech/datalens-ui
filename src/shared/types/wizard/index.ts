@@ -450,9 +450,16 @@ export type Sort = Field & {
     direction: string;
 };
 
+export enum PaletteTypes {
+    Lines = 'lines',
+    Colors = 'colors',
+    Points = 'points',
+}
+
 export interface ShapesConfig {
     mountedShapes?: Record<string, string>;
     fieldGuid?: string;
+    paletteType?: PaletteTypes;
 }
 
 export type ClientChartsConfig = {

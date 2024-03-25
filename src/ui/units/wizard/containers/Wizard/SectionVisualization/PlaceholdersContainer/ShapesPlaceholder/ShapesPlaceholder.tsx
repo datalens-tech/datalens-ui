@@ -6,13 +6,13 @@ import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
 import {
     Field,
+    PaletteTypes,
     PlaceholderId,
     SectionVisualizationAddItemQa,
     WizardVisualizationId,
     isFieldHierarchy,
 } from 'shared';
 import {DatalensGlobalState} from 'ui';
-import {PaletteTypes} from 'ui/units/wizard/constants';
 import {selectDataset} from 'units/wizard/selectors/dataset';
 import {
     selectFilters,
