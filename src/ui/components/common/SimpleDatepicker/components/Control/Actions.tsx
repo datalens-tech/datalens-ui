@@ -8,7 +8,7 @@ import {Action} from '../../store';
 
 import alarmIcon from '../../../../../assets/icons/toast-attention.svg';
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 
 interface ActionsProps {
     clear: () => void;

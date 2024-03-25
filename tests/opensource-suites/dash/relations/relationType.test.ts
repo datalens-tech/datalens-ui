@@ -7,7 +7,7 @@ import {ControlQA, DashCommonQa, DashRelationTypes} from '../../../../src/shared
 import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
-    YC_POPUP: '.yc-popup',
+    YC_POPUP: '.g-popup',
 };
 
 const PARAMS = {

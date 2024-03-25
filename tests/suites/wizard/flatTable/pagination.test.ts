@@ -11,9 +11,9 @@ const TIMEOUT = 4000;
 
 const SELECTORS = {
     COLUMN_SELECTOR_TEXT: '.chartkit-table__content_text',
-    PAGINATOR_INPUT: '.chartkit-table-paginator__page-input .yc-text-input__control_type_input',
-    PAGINATOR_PREV_BUTTON: '.chartkit-table-paginator > button.yc-button:first-child',
-    PAGINATOR_NEXT_BUTTON: '.chartkit-table-paginator > .yc-text-input + button.yc-button',
+    PAGINATOR_INPUT: '.chartkit-table-paginator__page-input .g-text-input__control_type_input',
+    PAGINATOR_PREV_BUTTON: '.chartkit-table-paginator > button.g-button:first-child',
+    PAGINATOR_NEXT_BUTTON: '.chartkit-table-paginator > .g-text-input + button.g-button',
     PAGINATOR_TEXT: '.chartkit-table-paginator__range',
 };
 

@@ -9,7 +9,7 @@ import {getTimeZoneOffset} from '../../utils';
 
 const i18n = I18n.keyset('components.common.RangeDatepicker');
 
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 const DESKTOP_ICON_SIZE = 16;
 const MOBILE_ICON_SIZE = 20;
 

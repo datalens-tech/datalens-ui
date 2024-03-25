@@ -6,7 +6,7 @@ import {DayItem, getDataForMonthCalendar} from '../../utils';
 
 import {MonthProps} from './types';
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 
 export const Month: React.FC<MonthProps> = ({
     month,

@@ -13,7 +13,7 @@ import {Label} from './Label';
 
 import calendarIcon from '../../../../../assets/icons/calendar-2.svg';
 
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 
 interface ControlProps {
     dispatch: React.Dispatch<Action>;

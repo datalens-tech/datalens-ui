@@ -37,7 +37,7 @@ export default class ChartKit {
     metricItemValueSelector = '.chartkit-indicator__item-value,.markup-metric-value';
 
     private drillArrowsSelector = '.chartkit-drill__drill-action';
-    private breadcrumbsSelector = '.chartkit-drill .yc-breadcrumbs__item';
+    private breadcrumbsSelector = '.chartkit-drill .g-breadcrumbs__item';
     private paginatorSelector = '.chartkit-table-paginator';
     private tableRowSelector = '.chartkit .data-table__row';
     private tableHeadRowSelector = '.chartkit .data-table__sticky_head .data-table__head-row';

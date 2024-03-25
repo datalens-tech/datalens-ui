@@ -16,7 +16,7 @@
 .dialog-label {
     width: 480px;
 
-    .yc-dialog-header__caption {
+    .g-dialog-header__caption {
         margin-left: 7px;
     }
 
@@ -42,7 +42,7 @@
 
     &.dialog-field-dimension,
     &.dialog-label-dimension {
-        .yc-dialog-header {
+        .g-dialog-header {
             svg {
                 color: var(--g-color-text-positive);
             }
@@ -51,7 +51,7 @@
 
     &.dialog-field-measure,
     &.dialog-label-measure {
-        .yc-dialog-header {
+        .g-dialog-header {
             svg {
                 color: var(--g-color-text-info);
             }

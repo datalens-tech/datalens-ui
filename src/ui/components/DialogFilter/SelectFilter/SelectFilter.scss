@@ -49,11 +49,11 @@ $baseClass: '.dl-dialog-filter';
         display: flex;
         height: calc(100% - 48px);
 
-        & .yc-list .yc-list__filter {
+        & .g-list .g-list__filter {
             margin: 0 30px 10px;
         }
 
-        &_disabled .yc-list__items::after {
+        &_disabled .g-list__items::after {
             @include veil(1);
         }
     }

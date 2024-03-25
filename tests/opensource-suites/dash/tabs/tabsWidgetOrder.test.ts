@@ -11,7 +11,7 @@ import {arbitraryText} from '../constants';
 import {ActionPanelDashSaveControlsQa} from '../../../../src/shared/constants/qa/action-panel';
 
 const SELECTORS = {
-    SELECTOR_LIST_ITEMS: '.yc-list__item',
+    SELECTOR_LIST_ITEMS: '.g-list__item',
 };
 
 datalensTest.describe(`Dashboards - Change widgets order on tab`, () => {

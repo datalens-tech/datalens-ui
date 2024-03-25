@@ -43,12 +43,12 @@ export default class HierarchyEditor {
             await this.page.fill(
                 `${slct(
                     'hierarchy-editor',
-                )} .gc-item-selector__list:first-child .yc-list__filter input`,
+                )} .gc-item-selector__list:first-child .g-list__filter input`,
                 field,
             );
             await this.page.hover(slct('hierarchy-editor', field));
             await this.page.click(
-                `${slct('hierarchy-editor')} .yc-button:visible.gc-item-selector__item-select`,
+                `${slct('hierarchy-editor')} .g-button:visible.gc-item-selector__item-select`,
             );
         }
     }

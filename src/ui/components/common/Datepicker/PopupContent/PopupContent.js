@@ -12,7 +12,7 @@ import {getTabs} from '../constants';
 import './PopupContent.scss';
 
 const i18n = I18n.keyset('components.common.Datepicker');
-const b = block('yc-datepicker-popup-content');
+const b = block('dl-datepicker-popup-content');
 
 export class PopupContent extends React.PureComponent {
     static propTypes = {

@@ -30,7 +30,7 @@ datalensTest.describe('SQL validation of visualizations', () => {
 
                 await qlPage.page.click(`${slct('visualization-select-btn')}`);
                 await qlPage.page
-                    .locator('.yc-menu__list-item')
+                    .locator('.g-menu__list-item')
                     .getByTestId(visualizationName)
                     .click();
 

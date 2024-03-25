@@ -39,7 +39,7 @@ const BASE_VISUALIZATIONS_TESTS = expectedSQLVisualizations.map((visualization) 
             await openTestPage(page, RobotChartsSQLEditorUrls.NewQLChartForPostgresDemo);
 
             await qlPage.page.click(`${slct('visualization-select-btn')}`);
-            await qlPage.page.locator('.yc-menu__list-item').getByTestId(visualization).click();
+            await qlPage.page.locator('.g-menu__list-item').getByTestId(visualization).click();
 
             const apiRunRequest = qlPage.page.waitForRequest(
                 (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,

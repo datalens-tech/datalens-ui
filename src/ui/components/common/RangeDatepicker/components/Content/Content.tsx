@@ -12,7 +12,7 @@ import {Container} from './Container';
 
 const i18n = I18n.keyset('components.common.RangeDatepicker');
 
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 
 interface ContentProps {
     dispatch: React.Dispatch<Action>;

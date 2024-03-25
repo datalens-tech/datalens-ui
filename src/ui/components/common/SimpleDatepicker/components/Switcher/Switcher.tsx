@@ -8,7 +8,7 @@ import {FlipDirection, getSwitcherTitle, getUpdatedCalendarConfigByFlip} from '.
 
 import {SwitcherButton} from './SwitcherButton';
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 
 type SwitcherProps = {
     dispatch: React.Dispatch<Action>;

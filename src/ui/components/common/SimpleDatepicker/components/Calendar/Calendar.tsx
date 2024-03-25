@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {Content} from './Content';
 import {CalendarProps} from './types';
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 
 export const Calendar: React.FC<CalendarProps> = (props) => {
     const {

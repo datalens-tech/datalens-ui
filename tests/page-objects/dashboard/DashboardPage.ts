@@ -104,7 +104,7 @@ class DashboardPage extends BasePage {
         dialogWarningEditBtn: 'dialog-draft-warning-edit-btn',
         dialogConfirm: 'dialog-confirm',
         dialogConfirmApplyBtn: 'dialog-confirm-apply-button',
-        mobileModal: '.yc-mobile-modal',
+        mobileModal: '.g-mobile-modal',
         tabsContainer: '.gc-adaptive-tabs',
         tabsList: '.gc-adaptive-tabs__tabs-list',
         tabItem: '.gc-adaptive-tabs__tab',

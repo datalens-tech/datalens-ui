@@ -78,13 +78,11 @@ export class ChartPage extends BasePage {
         await this.page.click(slct('visualization-select-btn'));
 
         await this.page.waitForSelector(
-            `${slct(WizardPageQa.VisualizationSelectPopup)} .yc-menu__list-item`,
+            `${slct(WizardPageQa.VisualizationSelectPopup)} .g-menu__list-item`,
         );
 
         const visualizationsNodes = await this.page.$$(
-            `${slct(
-                WizardPageQa.VisualizationSelectPopup,
-            )} .yc-menu__list-item .visualization-item`,
+            `${slct(WizardPageQa.VisualizationSelectPopup)} .g-menu__list-item .visualization-item`,
         );
 
         const visualizations = await Promise.all(

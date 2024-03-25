@@ -35,17 +35,17 @@
         line-height: 28px;
     }
 
-    & .yc-dialog-header__caption {
+    & .g-dialog-header__caption {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
 
-    & .yc-dialog-body {
+    & .g-dialog-body {
         overflow-y: auto;
     }
 
-    & .yc-dialog-footer__children {
+    & .g-dialog-footer__children {
         position: relative;
     }
 }

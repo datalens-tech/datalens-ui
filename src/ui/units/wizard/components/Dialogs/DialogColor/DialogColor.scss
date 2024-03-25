@@ -24,17 +24,17 @@
         }
     }
 
-    & .yc-dialog-header {
+    & .g-dialog-header {
         padding-bottom: 15px;
     }
 
-    &_palette-mode .yc-dialog-body {
+    &_palette-mode .g-dialog-body {
         height: calc(80vh);
         padding: 0;
         overflow-y: auto;
     }
 
-    &_palette-mode .yc-dialog-footer {
+    &_palette-mode .g-dialog-footer {
         border-top: 1px solid var(--g-color-line-generic);
     }
 

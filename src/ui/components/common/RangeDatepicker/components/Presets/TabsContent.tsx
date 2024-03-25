@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {useRangeDatepickerPreset} from '../../RangeDatepickerProvider';
 import {Preset, RangeDatepickerPresetTab} from '../../types';
 
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 
 const renderPresetItem = ({title}: Preset) => title;
 

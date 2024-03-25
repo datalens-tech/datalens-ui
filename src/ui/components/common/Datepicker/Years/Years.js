@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import './Years.scss';
 
-const b = block('yc-datepicker-years');
+const b = block('dl-datepicker-years');
 const COLUMNS = {
     LEFT: 1,
     RIGHT: 4,

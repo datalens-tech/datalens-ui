@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 
 import {DatepickerControlSize} from '../../types';
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 
 interface InputProps {
     onChange: TextInputProps['onChange'];

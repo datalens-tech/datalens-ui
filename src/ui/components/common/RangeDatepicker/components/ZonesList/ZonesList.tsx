@@ -11,7 +11,7 @@ import {getTimeZoneOffset} from '../../utils';
 
 import {Switcher} from './Switcher';
 
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 const WITH_BRACKETS = false;
 
 const getZonesItems = () => {

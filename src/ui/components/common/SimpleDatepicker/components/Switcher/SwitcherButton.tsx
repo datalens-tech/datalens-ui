@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 
 import {FlipDirection} from '../../utils';
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 const ICON_SIZE = 16;
 
 type SwitcherButtonProps = {

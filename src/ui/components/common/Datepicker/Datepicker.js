@@ -6,7 +6,7 @@ import {I18n} from 'i18n';
 import {DateTime} from 'luxon';
 import PropTypes from 'prop-types';
 
-import {FieldWrapper} from '../FieldWrapper/FieldWrapper';
+import {FieldWrapper} from '../../FieldWrapper/FieldWrapper';
 
 import {PopupContent} from './PopupContent/PopupContent';
 import {AVAILABLE_POPUP_PLACEMENT, DISPLAY_FORMAT, OUTPUT_FORMAT, TABS} from './constants';
@@ -26,7 +26,7 @@ import {
 import './Datepicker.scss';
 
 const i18n = I18n.keyset('components.common.Datepicker');
-const b = block('yc-datepicker');
+const b = block('dl-datepicker');
 const dateType = PropTypes.oneOfType([PropTypes.string, PropTypes.number]);
 const getModifier = (name) => b({[name]: true}).split(' ')[1];
 

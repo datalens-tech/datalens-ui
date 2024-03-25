@@ -7,7 +7,7 @@ import {CollapseProps} from './types';
 
 import './Collapse.scss';
 
-const b = block('yc-collapse');
+const b = block('dl-collapse');
 
 export function Collapse({
     className,
