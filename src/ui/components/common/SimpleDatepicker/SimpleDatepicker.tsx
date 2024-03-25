@@ -67,7 +67,7 @@ export const SimpleDatepicker: React.FC<SimpleDatepickerProps> = (props) => {
         onError,
     } = props;
     const prevProps = usePreviousValue(props);
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     // In native time inputs, the time is set only in the format 'HH:mm'.
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/time#chrome_and_opera
     const timeFormat: SimpleDatepickerProps['timeFormat'] =

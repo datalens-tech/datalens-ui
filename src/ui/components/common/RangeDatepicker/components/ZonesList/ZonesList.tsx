@@ -34,7 +34,7 @@ interface ZonesListProps {
 }
 
 export const ZonesList: React.FC<ZonesListProps> = ({timeZone, dispatch}) => {
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     const zones = React.useMemo(() => getZonesItems(), []);
 
     const selectZone = (nextZone: string) => {
