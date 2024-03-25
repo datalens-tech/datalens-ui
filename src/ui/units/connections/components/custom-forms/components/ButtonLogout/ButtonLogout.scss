@@ -9,10 +9,9 @@
         position: absolute;
         right: 0;
 
-        // TODO: use public css api. It will be available in 6 uikit
-        --yc-button-background-color: transparent;
-        --yc-button-background-color-hover: var(--g-color-base-misc-heavy-hover);
-        --yc-button-border-radius: 4px;
+        --g-button-background-color: transparent;
+        --g-button-background-color-hover: var(--g-color-base-misc-heavy-hover);
+        --g-button-border-radius: 4px;
 
         color: var(--g-color-text-misc);
 
