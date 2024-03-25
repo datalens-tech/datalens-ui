@@ -23,7 +23,7 @@ export const DebugInfo = ({id, noControls, name}: DebugInfoProps) => {
         if (isMobileView) {
             toaster.add({
                 name: 'successCopyDebugInfo',
-                type: 'success',
+                theme: 'success',
                 title: i18n('toast_copied'),
             });
         }
