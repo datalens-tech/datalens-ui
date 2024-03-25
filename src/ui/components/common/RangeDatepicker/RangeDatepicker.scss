@@ -26,7 +26,7 @@ $mobileMargin: 20px;
 }
 
 #{$baseClass} {
-    --yc-range-datepicker-preset-label-color: var(--g-color-text-misc);
+    --dl-range-datepicker-preset-label-color: var(--g-color-text-misc);
 
     display: inline-flex;
     max-width: 100%;
@@ -134,7 +134,7 @@ $mobileMargin: 20px;
         flex: 1 0 auto;
 
         &_preset {
-            color: var(--yc-range-datepicker-preset-label-color);
+            color: var(--dl-range-datepicker-preset-label-color);
         }
     }
 
@@ -256,7 +256,7 @@ $mobileMargin: 20px;
     }
 
     &__presets-tabs {
-        --yc-tabs-space-between: 24px;
+        --g-tabs-item-gap: 24px;
 
         padding-left: $desktopMargin;
 
@@ -466,7 +466,7 @@ $mobileMargin: 20px;
     }
 
     &__popup {
-        --yc-tabs-space-between: 16px;
+        --g-tabs-item-gap: 16px;
 
         box-sizing: border-box;
         width: $minWidthWithoutTime;

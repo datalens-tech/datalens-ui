@@ -1,7 +1,6 @@
 .yc-datepicker-popup-content {
-    --yc-tabs-color-border-active: var(--g-color-text-danger);
-    --yc-tabs-space-between: 16px;
-    --yc-tabs-border-width: 2px;
+    --g-tabs-item-gap: 16px;
+    --g-tabs-item-border-width: 2px;
 
     display: flex;
     flex-direction: column;
