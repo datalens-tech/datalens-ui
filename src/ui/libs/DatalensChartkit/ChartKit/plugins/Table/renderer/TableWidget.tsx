@@ -233,17 +233,19 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                 className={[b(), CHARTKIT_SCROLLABLE_NODE_CLASSNAME].join(' ')}
                 data-qa={ChartKitTableQa.Widget}
             >
-                <Table
-                    data={tableData}
-                    title={titleText ? {text: titleText} : undefined}
-                    noData={{text: i18n('chartkit-table', 'message-no-data')}}
-                    onCellClick={handleTableClick}
-                    header={{
-                        sticky: true,
-                    }}
-                    manualSorting={isPaginationEnabled}
-                    onSortingChange={handleSortingChange}
-                />
+                <div className={b('table-wrapper')}>
+                    <Table
+                        data={tableData}
+                        title={titleText ? {text: titleText} : undefined}
+                        noData={{text: i18n('chartkit-table', 'message-no-data')}}
+                        onCellClick={handleTableClick}
+                        header={{
+                            sticky: true,
+                        }}
+                        manualSorting={isPaginationEnabled}
+                        onSortingChange={handleSortingChange}
+                    />
+                </div>
                 {isPaginationEnabled && (
                     <Paginator
                         page={Number(currentParams._page) || 0}

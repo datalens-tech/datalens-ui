@@ -12,4 +12,9 @@
     &__number-column {
         text-align: right;
     }
+
+    &__table-wrapper {
+        width: 100%;
+        overflow: auto;
+    }
 }

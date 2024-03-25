@@ -80,9 +80,8 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
 
         case 'table': {
             const shouldRenderNewTable =
-                ((get(data, 'isNewWizard') || get(data, 'isQL')) &&
-                    Utils.isEnabledFeature(Feature.NewTablePluginForWizardAndQl)) ||
-                (get(data, 'isEditor') && Utils.isEnabledFeature(Feature.NewTablePluginForEditor));
+                (get(data, 'isNewWizard') || get(data, 'isQL')) &&
+                Utils.isEnabledFeature(Feature.NewTablePluginForWizardAndQl);
 
             if (shouldRenderNewTable) {
                 chartkitType = 'table';
