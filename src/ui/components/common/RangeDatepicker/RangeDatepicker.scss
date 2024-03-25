@@ -479,10 +479,10 @@ $mobileMargin: 20px;
     }
 
     &__sheet {
-        --yc-sheet-content-paddings: 0;
+        --g-sheet-content-padding: 0;
 
         &_doc {
-            --yc-sheet-content-paddings: 0 20px;
+            --g-sheet-content-padding: 0 20px;
         }
     }
 }
