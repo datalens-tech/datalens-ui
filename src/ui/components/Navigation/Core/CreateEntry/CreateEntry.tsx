@@ -146,17 +146,19 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
                 },
             ]);
 
-            menuItems = [
-                [
-                    {
-                        action: () => onClick(CreateMenuValue.Folder),
-                        icon: <EntityIcon type="folder" iconSize={18} />,
-                        text: <Title title={i18n('value_create-folder')} />,
-                    },
-                ],
-                menuChartItems,
-                menuOtherItems,
-            ];
+            if (onlyWorkbooksMode === false) {
+                menuItems = [
+                    [
+                        {
+                            action: () => onClick(CreateMenuValue.Folder),
+                            icon: <EntityIcon type="folder" iconSize={18} />,
+                            text: <Title title={i18n('value_create-folder')} />,
+                        },
+                    ],
+                ];
+            }
+
+            menuItems.push(menuChartItems, menuOtherItems);
 
             return menuItems;
         } else {

@@ -290,8 +290,8 @@ class NavigationBase extends React.Component {
                     });
                 } else {
                     history.push(`/dashboards/new${query}`);
+                    this.closeNavigation();
                 }
-                this.closeNavigation();
                 break;
             }
             case CreateMenuValue.Connection: {
@@ -302,6 +302,9 @@ class NavigationBase extends React.Component {
                             open: true,
                             initialCollectionId: null,
                             entryType: 'connection',
+                            onApply: () => {
+                                this.closeNavigation();
+                            },
                             onClose: () => {
                                 this.props.closeDialog();
                             },
@@ -309,8 +312,8 @@ class NavigationBase extends React.Component {
                     });
                 } else {
                     history.push(`/connections/new${query}`);
+                    this.closeNavigation();
                 }
-                this.closeNavigation();
                 break;
             }
             case CreateMenuValue.Dataset: {
@@ -321,6 +324,9 @@ class NavigationBase extends React.Component {
                             open: true,
                             initialCollectionId: null,
                             entryType: 'dataset',
+                            onApply: () => {
+                                this.closeNavigation();
+                            },
                             onClose: () => {
                                 this.props.closeDialog();
                             },
@@ -328,8 +334,8 @@ class NavigationBase extends React.Component {
                     });
                 } else {
                     history.push(`/datasets/new${query}`);
+                    this.closeNavigation();
                 }
-                this.closeNavigation();
                 break;
             }
             case CreateMenuValue.Widget: {
@@ -340,6 +346,9 @@ class NavigationBase extends React.Component {
                             open: true,
                             initialCollectionId: null,
                             entryType: 'wizard',
+                            onApply: () => {
+                                this.closeNavigation();
+                            },
                             onClose: () => {
                                 this.props.closeDialog();
                             },
@@ -347,8 +356,8 @@ class NavigationBase extends React.Component {
                     });
                 } else {
                     history.push(`/wizard${query}`);
+                    this.closeNavigation();
                 }
-                this.closeNavigation();
                 break;
             }
             case CreateMenuValue.QL: {
@@ -359,6 +368,9 @@ class NavigationBase extends React.Component {
                             open: true,
                             initialCollectionId: null,
                             entryType: 'ql',
+                            onApply: () => {
+                                this.closeNavigation();
+                            },
                             onClose: () => {
                                 this.props.closeDialog();
                             },
@@ -366,8 +378,8 @@ class NavigationBase extends React.Component {
                     });
                 } else {
                     history.push(`/ql${query}`);
+                    this.closeNavigation();
                 }
-                this.closeNavigation();
                 break;
             }
             case CreateMenuValue.SQL: {
@@ -378,6 +390,9 @@ class NavigationBase extends React.Component {
                             open: true,
                             initialCollectionId: null,
                             entryType: 'ql',
+                            onApply: () => {
+                                this.closeNavigation();
+                            },
                             onClose: () => {
                                 this.props.closeDialog();
                             },
@@ -385,8 +400,8 @@ class NavigationBase extends React.Component {
                     });
                 } else {
                     history.push(`/ql/new/sql${query}`);
+                    this.closeNavigation();
                 }
-                this.closeNavigation();
                 break;
             }
             case CreateMenuValue.PromQL: {
