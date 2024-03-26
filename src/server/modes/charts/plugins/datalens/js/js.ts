@@ -48,7 +48,7 @@ import {
 } from '../preparers/types';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 import {LAT, LONG} from '../utils/constants';
-import {log} from '../utils/misc-helpers';
+import {getServerDateFormat, log} from '../utils/misc-helpers';
 
 import {OversizeErrorType} from './constants/errors';
 import {getChartColorsConfig} from './helpers/colors';
@@ -456,9 +456,11 @@ function prepareSingleResult({
     }
 
     if (drillDownData) {
+        const currentDrillDownField = drillDownData.fields[drillDownData.level];
         ChartEditor.updateConfig({
             drillDown: {
                 breadcrumbs: drillDownData.breadcrumbs,
+                dateFormat: getServerDateFormat(currentDrillDownField?.data_type),
             },
         });
 
