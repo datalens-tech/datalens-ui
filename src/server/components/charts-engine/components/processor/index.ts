@@ -59,6 +59,7 @@ const {
 
 const TEN_SECONDS = 10000;
 const ONE_SECOND = 1000;
+const JS_EXECUTION_TIMEOUT = TEN_SECONDS;
 
 const getMessageFromUnknownError = (e: unknown) =>
     isObject(e) && 'message' in e && isString(e.message) ? e.message : '';
@@ -192,6 +193,8 @@ export class Processor {
         };
 
         const onCodeExecuted = chartsEngine.telemetryCallbacks.onCodeExecuted || (() => {});
+        const onCodeExecutedTimeout =
+            chartsEngine.telemetryCallbacks.onCodeExecutedTimeout || (() => {});
 
         function injectConfigAndParams({target}: {target: Record<string, any>}) {
             let responseConfig;
@@ -815,7 +818,7 @@ export class Processor {
                 jsTabResults = Sandbox.processTab({
                     name: 'JavaScript',
                     code: config.data.js || 'module.exports = {};',
-                    timeout: TEN_SECONDS,
+                    timeout: JS_EXECUTION_TIMEOUT,
                     nativeModules: chartsEngine.nativeModules,
                     shared,
                     modules,
@@ -1083,6 +1086,12 @@ export class Processor {
                         code: RUNTIME_TIMEOUT_ERROR,
                         statusCode: DEFAULT_RUNTIME_TIMEOUT_STATUS,
                     };
+
+                    onCodeExecutedTimeout({
+                        id: `${configId}:${configName}`,
+                        requestId: req.id,
+                        latency: JS_EXECUTION_TIMEOUT,
+                    });
 
                     break;
                 default:

@@ -82,6 +82,14 @@ export function initChartsEngine({
                 jsTabExecDuration: Math.ceil(latency),
             });
         },
+        onCodeExecutedTimeout: ({id, requestId, latency}) => {
+            ctx.stats('executions', {
+                datetime: getTime(),
+                requestId,
+                entryId: id,
+                jsTabExecDuration: Math.ceil(latency),
+            });
+        },
     };
 
     const {appEnv, endpoints, chartsEngineConfig} = config;
