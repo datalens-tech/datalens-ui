@@ -1,4 +1,4 @@
-import {transformParamsToActionParams} from '@gravity-ui/dashkit';
+import {transformParamsToActionParams} from '@gravity-ui/dashkit/build/cjs/shared/modules/helpers';
 import {Request} from '@gravity-ui/expresskit';
 import {AppContext} from '@gravity-ui/nodekit';
 import JSONfn from 'json-fn';

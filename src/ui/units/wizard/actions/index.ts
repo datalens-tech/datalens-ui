@@ -1252,7 +1252,7 @@ const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[
             dispatch(
                 showToast({
                     title: i18n('toast_wizard-dataset-validation-failure'),
-                    type: 'error',
+                    type: 'danger',
                     error: customError,
                 }),
             );

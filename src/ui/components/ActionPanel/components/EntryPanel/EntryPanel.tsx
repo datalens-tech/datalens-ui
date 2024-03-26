@@ -315,7 +315,7 @@ class EntryPanel extends React.Component<Props, State> {
             <Link
                 key={rootItem.text}
                 view="secondary"
-                href={rootItem.href}
+                href={rootItem.href || '#'}
                 title={rootItem.text}
                 onClick={rootItem.action}
                 className={b('item')}

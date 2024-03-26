@@ -1,4 +1,4 @@
-import {ACTION_PARAM_PREFIX} from '@gravity-ui/dashkit';
+import {ACTION_PARAM_PREFIX} from '@gravity-ui/dashkit/build/cjs/shared/constants/common';
 
 export enum AppInstallation {
     Opensource = 'opensource',
