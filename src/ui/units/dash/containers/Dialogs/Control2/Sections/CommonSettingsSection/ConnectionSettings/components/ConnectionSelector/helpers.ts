@@ -10,7 +10,6 @@ export const prepareConnectionData = (
 
     if (!options.allow_typed_query_usage) {
         return {
-            // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
             error: i18n('error_unsupported-connection'),
             queryTypes: [],
         };
