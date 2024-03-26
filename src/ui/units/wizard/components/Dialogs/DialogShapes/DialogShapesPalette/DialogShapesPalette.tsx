@@ -89,7 +89,9 @@ const DialogShapesPalette: React.FC<Props> = ({
     const renderValueIcon = React.useCallback(
         (value) => {
             const currentShape = mountedShapes[value];
-            const isDefault = currentShape === 'auto' || !currentShape;
+
+            const isDefault =
+                currentShape === 'auto' || !currentShape || !palette.includes(currentShape);
             let content;
             if (isDefault) {
                 content = 'A';
