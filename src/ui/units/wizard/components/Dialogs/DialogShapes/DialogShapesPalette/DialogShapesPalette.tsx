@@ -90,8 +90,7 @@ const DialogShapesPalette: React.FC<Props> = ({
         (value) => {
             const currentShape = mountedShapes[value];
 
-            const isDefault =
-                currentShape === 'auto' || !currentShape || !palette.includes(currentShape);
+            const isDefault = !palette.includes(currentShape);
             let content;
             if (isDefault) {
                 content = 'A';
