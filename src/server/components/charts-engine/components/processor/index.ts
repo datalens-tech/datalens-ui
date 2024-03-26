@@ -840,7 +840,7 @@ export class Processor {
                 const hrDuration = [hrEnd[0] - hrStart[0], hrEnd[1] - hrStart[1]];
 
                 onCodeExecuted({
-                    id: `${config.entryId}:${config.key}`,
+                    id: `${config.entryId || configId}:${config.key || configName}`,
                     requestId: req.id,
                     latency: (hrDuration[0] * 1e9 + hrDuration[1]) / 1e6,
                 });
