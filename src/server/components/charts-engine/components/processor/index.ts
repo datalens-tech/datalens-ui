@@ -193,8 +193,6 @@ export class Processor {
         };
 
         const onCodeExecuted = chartsEngine.telemetryCallbacks.onCodeExecuted || (() => {});
-        const onCodeExecutedTimeout =
-            chartsEngine.telemetryCallbacks.onCodeExecutedTimeout || (() => {});
 
         function injectConfigAndParams({target}: {target: Record<string, any>}) {
             let responseConfig;
@@ -1087,7 +1085,7 @@ export class Processor {
                         statusCode: DEFAULT_RUNTIME_TIMEOUT_STATUS,
                     };
 
-                    onCodeExecutedTimeout({
+                    onCodeExecuted({
                         id: `${configId}:${configName}`,
                         requestId: req.id,
                         latency: JS_EXECUTION_TIMEOUT,

@@ -66,15 +66,6 @@ export type TelemetryCallbacks = {
         requestId: string;
         latency: number;
     }) => void;
-    onCodeExecutedTimeout?: ({
-        id,
-        requestId,
-        latency,
-    }: {
-        id: string;
-        requestId: string;
-        latency: number;
-    }) => void;
 };
 
 export type Source<T = string | Record<string, string>> = {
