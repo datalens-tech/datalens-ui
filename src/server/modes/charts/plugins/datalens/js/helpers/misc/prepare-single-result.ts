@@ -26,6 +26,7 @@ import preparePolylineData from '../../../preparers/polyline';
 import {prepareD3Scatter, prepareHighchartsScatter} from '../../../preparers/scatter';
 import prepareTreemapData from '../../../preparers/treemap';
 import {PrepareFunction, PrepareFunctionResultData} from '../../../preparers/types';
+import {getServerDateFormat} from '../../../utils/misc-helpers';
 import {OversizeErrorType} from '../../constants/errors';
 import {getChartColorsConfig} from '../colors';
 import {getOversizeError} from '../errors/oversize-error';
@@ -84,9 +85,11 @@ export default ({
     }
 
     if (drillDownData) {
+        const currentDrillDownField = drillDownData.fields[drillDownData.level];
         ChartEditor.updateConfig({
             drillDown: {
                 breadcrumbs: drillDownData.breadcrumbs,
+                dateFormat: getServerDateFormat(currentDrillDownField?.data_type),
             },
         });
 
