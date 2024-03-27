@@ -848,26 +848,17 @@ export function purgeData(data: DashData) {
 export type SaveAsNewDashArgs = Omit<CopyDashArgs, 'dataProcess'>;
 
 export function saveDashAsNewDash({key, workbookId, name}: SaveAsNewDashArgs) {
-    return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
-        try {
-            const res = await dispatch(
-                copyDash({
-                    key,
-                    workbookId,
-                    name,
-                    dataProcess: (state) => purgeData(selectDashData(state)),
-                }),
-            );
-            dispatch(setDashViewMode({mode: Mode.View}));
-            return res;
-        } catch (error) {
-            saveFailedCallback({
-                error,
-                dispatch,
-                getState,
-            });
-        }
-        return null;
+    return async (dispatch: DashDispatch) => {
+        const res = await dispatch(
+            copyDash({
+                key,
+                workbookId,
+                name,
+                dataProcess: (state) => purgeData(selectDashData(state)),
+            }),
+        );
+        dispatch(setDashViewMode({mode: Mode.View}));
+        return res;
     };
 }
 
