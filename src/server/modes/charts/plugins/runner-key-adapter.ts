@@ -32,7 +32,9 @@ export const plugin = {
 
                             // Otherwise, the request with a space will be encoded, and the request in US will encode the encoded space
                             // Datalens%20Charts/Errors/no-data -> Datalens%2520Charts%2FErrors%2Fno-data
-                            const decodedPathname = decodeURIComponent(parsedKey.pathname!);
+                            const decodedPathname = decodeURIComponent(
+                                parsedKey.pathname!.replace(/%(?![0-9][0-9a-fA-F]+)/g, '%25'),
+                            );
 
                             const pathname = decodedPathname.replace(
                                 /\/?(?:ChartPreview|preview)/,
