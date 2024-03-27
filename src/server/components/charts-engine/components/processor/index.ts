@@ -59,6 +59,7 @@ const {
 
 const TEN_SECONDS = 10000;
 const ONE_SECOND = 1000;
+const JS_EXECUTION_TIMEOUT = TEN_SECONDS;
 
 const getMessageFromUnknownError = (e: unknown) =>
     isObject(e) && 'message' in e && isString(e.message) ? e.message : '';
@@ -815,7 +816,7 @@ export class Processor {
                 jsTabResults = Sandbox.processTab({
                     name: 'JavaScript',
                     code: config.data.js || 'module.exports = {};',
-                    timeout: TEN_SECONDS,
+                    timeout: JS_EXECUTION_TIMEOUT,
                     nativeModules: chartsEngine.nativeModules,
                     shared,
                     modules,
@@ -837,7 +838,7 @@ export class Processor {
                 const hrDuration = [hrEnd[0] - hrStart[0], hrEnd[1] - hrStart[1]];
 
                 onCodeExecuted({
-                    id: `${config.entryId}:${config.key}`,
+                    id: `${config.entryId || configId}:${config.key || configName}`,
                     requestId: req.id,
                     latency: (hrDuration[0] * 1e9 + hrDuration[1]) / 1e6,
                 });
@@ -1027,6 +1028,7 @@ export class Processor {
                 logs?: {type: string; value: string}[][];
                 stackTrace?: string;
                 stack?: string;
+                executionTiming?: [number, number];
             } = error.executionResult || {};
             if (!modulesLogsCollected) {
                 collectModulesLogs({logsStorage: logs, processedModules});
@@ -1083,6 +1085,16 @@ export class Processor {
                         code: RUNTIME_TIMEOUT_ERROR,
                         statusCode: DEFAULT_RUNTIME_TIMEOUT_STATUS,
                     };
+
+                    onCodeExecuted({
+                        id: `${configId}:${configName}`,
+                        requestId: req.id,
+                        latency: executionResult.executionTiming
+                            ? (executionResult.executionTiming[0] * 1e9 +
+                                  executionResult.executionTiming[1]) /
+                              1e6
+                            : 0,
+                    });
 
                     break;
                 default:
