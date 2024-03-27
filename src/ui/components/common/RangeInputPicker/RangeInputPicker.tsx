@@ -4,7 +4,8 @@ import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {debounce} from 'lodash';
 import type {DebouncedFunc} from 'lodash';
-import Slider, {Marks} from 'rc-slider';
+import Slider, {SliderProps, SliderRef} from 'rc-slider';
+import {MarkObj} from 'rc-slider/lib/Marks';
 
 import {LEFT_INFO_POINT_STYLE, RIGHT_INFO_POINT_STYLE} from './constants';
 import {RangeInputPickerDefaultProps, RangeInputPickerProps} from './types';
@@ -84,7 +85,8 @@ export class RangeInputPicker extends Component<RangeInputPickerProps, RangeInpu
     }
 
     private wrapperRef = React.createRef<HTMLDivElement>();
-    private sliderRef = React.createRef<Slider>();
+    // private sliderRef = React.createRef<typeof Slider>();
+    private sliderRef = React.createRef<SliderRef>();
     private textInputInnerRef = React.createRef<HTMLInputElement>();
     private debouncedCallOnUpdate: DebouncedFunc<() => void>;
     private debouncedHandleOnAfterUpdate: DebouncedFunc<() => void>;
@@ -302,9 +304,10 @@ export class RangeInputPicker extends Component<RangeInputPickerProps, RangeInpu
         );
     };
 
-    private handleSliderChange = (newValue: number) => {
+    private handleSliderChange = (sliderValue: number | number[]) => {
         const {min, max, values} = this.state;
-        const value = getClosestValue(prepareValue({min, max, value: newValue}), values);
+        const nextValue = Array.isArray(sliderValue) ? sliderValue[0] : sliderValue;
+        const value = getClosestValue(prepareValue({min, max, value: nextValue}), values);
 
         this.setState(
             {
@@ -445,18 +448,18 @@ export class RangeInputPicker extends Component<RangeInputPickerProps, RangeInpu
 
         const points = getInfoPoints({infoPointsCount, min, max, values});
 
-        const infoItems: Marks = points.reduce((acc: Marks, point: number): Marks => {
+        const infoItems = points.reduce((acc, point: number) => {
             acc[point] = {label: this.renderItem(point), style: {}};
 
             return acc;
-        }, {});
+        }, {} as NonNullable<SliderProps['marks']>);
 
         if (infoItems[min]) {
-            (infoItems[min] as {style: {}; label: string}).style = LEFT_INFO_POINT_STYLE;
+            (infoItems[min] as MarkObj).style = LEFT_INFO_POINT_STYLE;
         }
 
         if (infoItems[max]) {
-            (infoItems[max] as {style: {}; label: string}).style = RIGHT_INFO_POINT_STYLE;
+            (infoItems[max] as MarkObj).style = RIGHT_INFO_POINT_STYLE;
         }
 
         return infoItems;
