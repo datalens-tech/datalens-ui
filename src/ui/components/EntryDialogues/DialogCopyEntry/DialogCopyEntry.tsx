@@ -46,15 +46,7 @@ const getCaption = (scope: string) => {
     }
 };
 
-class DialogCopyEntry extends React.Component<
-    Props & {
-        copyDash: (props: {
-            name?: string;
-            key?: string;
-            workbookId?: string;
-        }) => Promise<{entryId: string; type?: string; key: string}>;
-    }
-> {
+class DialogCopyEntry extends React.Component<Props> {
     render() {
         const {workbookId, scope} = this.props;
 
