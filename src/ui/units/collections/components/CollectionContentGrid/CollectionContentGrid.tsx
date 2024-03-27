@@ -1,51 +1,89 @@
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {Checkbox, DropdownMenu} from '@gravity-ui/uikit';
+import {Checkbox, DropdownMenu, DropdownMenuItem} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {batch, useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
-import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 
+import type {
+    CollectionWithPermissions,
+    WorkbookWithPermissions,
+} from '../../../../../shared/schema';
+import {AnimateBlock} from '../../../../components/AnimateBlock';
+import {CollectionIcon} from '../../../../components/CollectionIcon/CollectionIcon';
 import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
-import {CollectionContentGridProps} from '../types';
-import {onClickStopPropagation} from '../utils';
+import {COLLECTIONS_PATH, WORKBOOKS_PATH} from '../../../collections-navigation/constants';
+import {setCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
+import {selectCollectionBreadcrumbs} from '../../../collections-navigation/store/selectors';
+import {setWorkbook} from '../../../workbooks/store/actions';
+import {setCollection} from '../../store/actions';
+import {selectCollectionContentItems} from '../../store/selectors';
+import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
 
 import './CollectionContentGrid.scss';
 
 const b = block('dl-collection-content-grid');
 
-export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
+type Props = {
+    selectedMap: SelectedMap;
+    isOpenSelectionMode: boolean;
+    getWorkbookActions: (
+        item: WorkbookWithPermissions,
+    ) => (DropdownMenuItem[] | DropdownMenuItem)[];
+    getCollectionActions: (
+        item: CollectionWithPermissions,
+    ) => (DropdownMenuItem[] | DropdownMenuItem)[];
+    onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
+};
+
+export const CollectionContentGrid = React.memo<Props>(
     ({
-        contentItems,
-        filters,
-        setFilters,
-        getWorkbookActions,
-        getCollectionActions,
-        onUpdateCheckbox,
         selectedMap,
         isOpenSelectionMode,
+        getWorkbookActions,
+        getCollectionActions,
+        onUpdateCheckboxClick,
     }) => {
+        const dispatch = useDispatch();
+
+        const items = useSelector(selectCollectionContentItems);
+        const breadcrumbs = useSelector(selectCollectionBreadcrumbs) ?? [];
+
         return (
             <div className={b()}>
                 <div className={b('grid')}>
-                    {contentItems.map((item) => {
+                    {items.map((item, index) => {
                         const canMove = item.permissions.move;
 
-                        if ('workbookId' in item) {
-                            const actions = getWorkbookActions(item);
+                        const actions =
+                            'workbookId' in item
+                                ? getWorkbookActions(item)
+                                : getCollectionActions(item);
 
-                            return (
+                        return (
+                            <AnimateBlock
+                                key={'workbookId' in item ? item.workbookId : item.collectionId}
+                                delay={Math.min(index * 5, 100)}
+                            >
                                 <div
-                                    key={item.workbookId}
-                                    className={b('content-item')}
+                                    className={b('item')}
                                     onClick={
                                         isOpenSelectionMode && canMove
                                             ? () => {
-                                                  onUpdateCheckbox(
-                                                      !selectedMap[item.workbookId]?.checked,
-                                                      'workbook',
-                                                      item.workbookId,
-                                                  );
+                                                  if ('workbookId' in item) {
+                                                      onUpdateCheckboxClick({
+                                                          entityId: item.workbookId,
+                                                          type: 'workbook',
+                                                          checked: !selectedMap[item.workbookId],
+                                                      });
+                                                  } else {
+                                                      onUpdateCheckboxClick({
+                                                          entityId: item.collectionId,
+                                                          type: 'collection',
+                                                          checked: !selectedMap[item.collectionId],
+                                                      });
+                                                  }
                                               }
                                             : undefined
                                     }
@@ -53,38 +91,70 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                     {isOpenSelectionMode && (
                                         <Checkbox
                                             size="l"
-                                            className={b('content-item-checkbox')}
+                                            className={b('checkbox')}
                                             disabled={!canMove}
-                                            checked={Boolean(
-                                                selectedMap[item.workbookId]?.checked && canMove,
-                                            )}
+                                            checked={
+                                                Boolean(
+                                                    selectedMap[
+                                                        'workbookId' in item
+                                                            ? item.workbookId
+                                                            : item.collectionId
+                                                    ],
+                                                ) && canMove
+                                            }
                                         />
                                     )}
                                     <Link
-                                        to={`/workbooks/${item.workbookId}`}
-                                        className={b('content-item-link', {
+                                        to={
+                                            'workbookId' in item
+                                                ? `${WORKBOOKS_PATH}/${item.workbookId}`
+                                                : `${COLLECTIONS_PATH}/${item.collectionId}`
+                                        }
+                                        className={b('link', {
                                             'selection-mode': isOpenSelectionMode,
                                         })}
-                                        onClick={() => {
-                                            setFilters({...filters, filterString: undefined});
+                                        onClick={(e) => {
+                                            if (!e.metaKey && !e.ctrlKey) {
+                                                if ('workbookId' in item) {
+                                                    dispatch(setWorkbook(item));
+                                                } else {
+                                                    batch(() => {
+                                                        dispatch(setCollection(item));
+                                                        if (
+                                                            !breadcrumbs.find(
+                                                                (breadcrumb) =>
+                                                                    breadcrumb.collectionId ===
+                                                                    item.collectionId,
+                                                            )
+                                                        ) {
+                                                            dispatch(
+                                                                setCollectionBreadcrumbs([
+                                                                    ...breadcrumbs,
+                                                                    item,
+                                                                ]),
+                                                            );
+                                                        }
+                                                    });
+                                                }
+                                            }
                                         }}
                                     >
-                                        <div className={b('content-cell', {title: true})}>
-                                            <div className={b('title-col')}>
-                                                <div
-                                                    className={b('title-col-icon', {
-                                                        'selection-mode': isOpenSelectionMode,
-                                                    })}
-                                                >
-                                                    <WorkbookIcon title={item.title} size="l" />
-                                                </div>
-                                                <div className={b('title-col-text')}>
-                                                    {item.title}
-                                                </div>
-                                            </div>
+                                        <div
+                                            className={b('icon', {
+                                                'selection-mode': isOpenSelectionMode,
+                                            })}
+                                        >
+                                            {'workbookId' in item ? (
+                                                <WorkbookIcon title={item.title} size="l" />
+                                            ) : (
+                                                <CollectionIcon isIconBig size={125} />
+                                            )}
                                         </div>
-                                        <div className={b('content-footer')}>
-                                            <div className={b('content-date')}>
+                                        <div className={b('title')} title={item.title}>
+                                            {item.title}
+                                        </div>
+                                        <div className={b('info')}>
+                                            <div className={b('date')}>
                                                 {dateTime({
                                                     input: item.updatedAt,
                                                 }).fromNow()}
@@ -92,8 +162,11 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
 
                                             {actions.length > 0 && (
                                                 <div
-                                                    className={b('content-actions')}
-                                                    onClick={onClickStopPropagation}
+                                                    className={b('actions')}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        e.preventDefault();
+                                                    }}
                                                 >
                                                     <DropdownMenu size="s" items={actions} />
                                                 </div>
@@ -101,78 +174,8 @@ export const CollectionContentGrid = React.memo<CollectionContentGridProps>(
                                         </div>
                                     </Link>
                                 </div>
-                            );
-                        } else {
-                            const actions = getCollectionActions(item);
-
-                            return (
-                                <div
-                                    key={item.collectionId}
-                                    className={b('content-item')}
-                                    onClick={
-                                        isOpenSelectionMode && canMove
-                                            ? () => {
-                                                  onUpdateCheckbox(
-                                                      !selectedMap[item.collectionId]?.checked,
-                                                      'collection',
-                                                      item.collectionId,
-                                                  );
-                                              }
-                                            : undefined
-                                    }
-                                >
-                                    {isOpenSelectionMode && (
-                                        <Checkbox
-                                            size="l"
-                                            className={b('content-item-checkbox')}
-                                            disabled={!canMove}
-                                            checked={Boolean(
-                                                selectedMap[item.collectionId]?.checked && canMove,
-                                            )}
-                                        />
-                                    )}
-                                    <Link
-                                        to={`/collections/${item.collectionId}`}
-                                        className={b('content-item-link', {
-                                            'selection-mode': isOpenSelectionMode,
-                                        })}
-                                        onClick={() => {
-                                            setFilters({...filters, filterString: undefined});
-                                        }}
-                                    >
-                                        <div className={b('content-cell', {title: true})}>
-                                            <div className={b('title-col')}>
-                                                <div
-                                                    className={b('title-col-icon', {
-                                                        'selection-mode': isOpenSelectionMode,
-                                                    })}
-                                                >
-                                                    <CollectionIcon isIconBig size={125} />
-                                                </div>
-                                                <div className={b('title-col-text')}>
-                                                    {item.title}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className={b('content-footer')}>
-                                            <div className={b('content-date')}>
-                                                {dateTime({
-                                                    input: item.updatedAt,
-                                                }).fromNow()}
-                                            </div>
-                                            {actions.length > 0 ? (
-                                                <div
-                                                    className={b('content-actions')}
-                                                    onClick={onClickStopPropagation}
-                                                >
-                                                    <DropdownMenu size="s" items={actions} />
-                                                </div>
-                                            ) : null}
-                                        </div>
-                                    </Link>
-                                </div>
-                            );
-                        }
+                            </AnimateBlock>
+                        );
                     })}
                 </div>
             </div>

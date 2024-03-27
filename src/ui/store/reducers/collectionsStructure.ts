@@ -44,6 +44,15 @@ import {
     UPDATE_COLLECTION_FAILED,
     UPDATE_COLLECTION_LOADING,
     UPDATE_COLLECTION_SUCCESS,
+    DELETE_COLLECTION_FAILED,
+    DELETE_COLLECTION_LOADING,
+    DELETE_COLLECTION_SUCCESS,
+    DELETE_WORKBOOK_FAILED,
+    DELETE_WORKBOOK_LOADING,
+    DELETE_WORKBOOK_SUCCESS,
+    ADD_DEMO_WORKBOOK_LOADING,
+    ADD_DEMO_WORKBOOK_SUCCESS,
+    ADD_DEMO_WORKBOOK_FAILED,
 } from '../constants/collectionsStructure';
 import {CollectionsStructureAction} from '../actions/collectionsStructure';
 import type {
@@ -63,6 +72,9 @@ import type {
     UpdateWorkbookResponse,
     UpdateCollectionResponse,
     CopyTemplateResponse,
+    DeleteCollectionResponse,
+    DeleteWorkbookResponse,
+    CopyWorkbookTemplateResponse,
 } from '../../../shared/schema';
 
 export type CollectionsStructureState = {
@@ -137,6 +149,21 @@ export type CollectionsStructureState = {
         data: UpdateCollectionResponse | null;
         error: Error | null;
     };
+    deleteCollection: {
+        isLoading: boolean;
+        data: DeleteCollectionResponse | null;
+        error: Error | null;
+    };
+    deleteWorkbook: {
+        isLoading: boolean;
+        data: DeleteWorkbookResponse | null;
+        error: Error | null;
+    };
+    addDemoWorkbook: {
+        isLoading: boolean;
+        data: CopyWorkbookTemplateResponse | null;
+        error: Error | null;
+    };
 };
 
 const initialState: CollectionsStructureState = {
@@ -207,6 +234,21 @@ const initialState: CollectionsStructureState = {
         error: null,
     },
     updateCollection: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    deleteCollection: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    deleteWorkbook: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    addDemoWorkbook: {
         isLoading: false,
         data: null,
         error: null,
@@ -696,6 +738,102 @@ export const collectionsStructure = (
                 ...state,
                 updateCollection: {
                     ...state.updateCollection,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        // Deleting a collection
+        case DELETE_COLLECTION_LOADING: {
+            return {
+                ...state,
+                deleteCollection: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case DELETE_COLLECTION_SUCCESS: {
+            return {
+                ...state,
+                deleteCollection: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case DELETE_COLLECTION_FAILED: {
+            return {
+                ...state,
+                deleteCollection: {
+                    ...state.deleteCollection,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        // Deleting a workbook
+        case DELETE_WORKBOOK_LOADING: {
+            return {
+                ...state,
+                deleteWorkbook: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case DELETE_WORKBOOK_SUCCESS: {
+            return {
+                ...state,
+                deleteWorkbook: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case DELETE_WORKBOOK_FAILED: {
+            return {
+                ...state,
+                deleteWorkbook: {
+                    ...state.deleteWorkbook,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        // Adding a demo workbook
+        case ADD_DEMO_WORKBOOK_LOADING: {
+            return {
+                ...state,
+                addDemoWorkbook: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case ADD_DEMO_WORKBOOK_SUCCESS: {
+            return {
+                ...state,
+                addDemoWorkbook: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case ADD_DEMO_WORKBOOK_FAILED: {
+            return {
+                ...state,
+                addDemoWorkbook: {
+                    ...state.addDemoWorkbook,
                     isLoading: false,
                     error: action.error,
                 },

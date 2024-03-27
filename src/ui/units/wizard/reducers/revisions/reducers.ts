@@ -1,9 +1,10 @@
 import {AxiosError} from 'axios';
 import {batch} from 'react-redux';
-import {ClientChartsConfig} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import {ClientChartsConfig, Feature} from 'shared';
+import {DatalensGlobalState, Utils} from 'ui';
 
 import {setActualChart} from '../../../../store/actions/chartWidget';
+import {resetEditHistoryUnit} from '../../../../store/actions/editHistory';
 import {setEntryContent, setRevisionsMode} from '../../../../store/actions/entryContent';
 import {RevisionsMode} from '../../../../store/typings/entryContent';
 import {SetDefaultsArgs, resetWizardStore, setDefaults} from '../../actions';
@@ -12,6 +13,7 @@ import {
     onSuccessWizardWidgetUpdate,
     receiveWidget,
 } from '../../actions/widget';
+import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../constants';
 import {mapClientConfigToChartsConfig} from '../../utils/mappers/mapClientToChartsConfig';
 import {WizardDispatch} from '../index';
 
@@ -63,6 +65,10 @@ export function reloadWizardEntryByRevision(params: SetDefaultsArgs) {
         batch(() => {
             dispatch(resetWizardStore());
             dispatch(setDefaults(params));
+
+            if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+                dispatch(resetEditHistoryUnit({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+            }
         });
     };
 }

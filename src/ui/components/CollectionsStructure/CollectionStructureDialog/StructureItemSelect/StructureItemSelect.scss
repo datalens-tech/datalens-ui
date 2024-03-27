@@ -14,6 +14,11 @@
         margin-bottom: 12px;
     }
 
+    &__items {
+        height: 100%;
+        overflow-y: auto;
+    }
+
     &__move-denied-wrapper {
         margin-bottom: 8px;
     }

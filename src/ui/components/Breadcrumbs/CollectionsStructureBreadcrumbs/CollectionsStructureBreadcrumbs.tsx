@@ -9,7 +9,7 @@ import {
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import type {GetCollectionBreadcrumb} from '../../../../shared/schema/us/types/collections';
+import type {GetCollectionBreadcrumbsResponse} from '../../../../shared/schema';
 
 import './CollectionsStructureBreadcrumbs.scss';
 
@@ -18,7 +18,7 @@ const i18n = I18n.keyset('component.collection-breadcrumbs');
 const b = block('dl-breadcrumbs-collections-structure-breadcrumbs');
 
 export type Props = {
-    items: GetCollectionBreadcrumb[];
+    items: GetCollectionBreadcrumbsResponse;
     onChange: (collectionId: string | null) => void;
 };
 

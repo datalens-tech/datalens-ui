@@ -2,7 +2,17 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 100%;
+
+    &__filters {
+        margin-bottom: 28px;
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        margin-bottom: 16px;
+    }
 
     &__action-panel-left-block {
         display: flex;
@@ -11,5 +21,16 @@
 
     &__breadcrumbs {
         max-width: var(--dl-breadcrumbs-max-width);
+    }
+
+    &__cancel-selection-button {
+        margin-left: 8px;
+    }
+
+    &__error-block {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
     }
 }
