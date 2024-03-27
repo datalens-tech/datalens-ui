@@ -45,7 +45,11 @@ import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
 import type {DashState} from '../reducers/dashTypedReducer';
-import {selectIsControlSourceTypeHasChanged} from '../selectors/dashTypedSelectors';
+import {
+    selectDashData,
+    selectDashEntry,
+    selectIsControlSourceTypeHasChanged,
+} from '../selectors/dashTypedSelectors';
 
 import {save} from './base/actions';
 import {
@@ -736,6 +740,47 @@ export function saveDashAsDraft(setForce?: boolean) {
     };
 }
 
+export function migrateDataSettings(data: DashData) {
+    if (data.settings.dependentSelectors !== true) {
+        return {
+            ...data,
+            settings: {
+                ...data.settings,
+                dependentSelectors: true,
+            },
+        };
+    }
+
+    return data;
+}
+
+export type CopyDashArgs = {
+    key?: string;
+    workbookId?: string;
+    name?: string;
+    dataProcess?: (state: DatalensGlobalState) => DashData;
+};
+
+export function copyDash({key, workbookId, name, dataProcess}: CopyDashArgs) {
+    return async (_: DashDispatch, getState: () => DatalensGlobalState) => {
+        const state = getState();
+        const data = migrateDataSettings(
+            dataProcess ? dataProcess(state) : selectDashEntry(state).data,
+        );
+
+        return sdk.charts.createDash({
+            data: {
+                data,
+                mode: EntryUpdateMode.Publish,
+                withParams: true,
+                key,
+                workbookId,
+                name,
+            },
+        });
+    };
+}
+
 export function purgeData(data: DashData) {
     const allTabsIds = new Set();
     const allItemsIds = new Set();
@@ -800,27 +845,19 @@ export function purgeData(data: DashData) {
     };
 }
 
-export type SaveAsNewDashArgs = {
-    key?: string;
-    workbookId?: string;
-    name?: string;
-};
+export type SaveAsNewDashArgs = Omit<CopyDashArgs, 'dataProcess'>;
 
 export function saveDashAsNewDash({key, workbookId, name}: SaveAsNewDashArgs) {
     return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
-        const {dash} = getState();
-
         try {
-            const res = await sdk.charts.createDash({
-                data: {
-                    data: purgeData(dash.data),
+            const res = await dispatch(
+                copyDash({
                     key,
-                    mode: EntryUpdateMode.Publish,
-                    withParams: true,
                     workbookId,
                     name,
-                },
-            });
+                    dataProcess: (state) => purgeData(selectDashData(state)),
+                }),
+            );
             dispatch(setDashViewMode({mode: Mode.View}));
             return res;
         } catch (error) {

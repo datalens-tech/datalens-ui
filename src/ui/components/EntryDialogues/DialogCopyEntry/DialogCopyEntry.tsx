@@ -6,6 +6,7 @@ import {EntryScope, WorkbookId} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import {DataLensApiError} from 'typings';
 import {DialogCreateWorkbookEntry} from 'ui';
+import {copyDash} from 'ui/units/dash/store/actions/dashTyped';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import {getSdk} from '../../../libs/schematic-sdk';
@@ -45,7 +46,15 @@ const getCaption = (scope: string) => {
     }
 };
 
-class DialogCopyEntry extends React.Component<Props> {
+class DialogCopyEntry extends React.Component<
+    Props & {
+        copyDash: (props: {
+            name?: string;
+            key?: string;
+            workbookId?: string;
+        }) => Promise<{entryId: string; type?: string; key: string}>;
+    }
+> {
     render() {
         const {workbookId, scope} = this.props;
 
@@ -102,6 +111,20 @@ class DialogCopyEntry extends React.Component<Props> {
                 entryId: id,
                 scope,
                 key: new_key,
+            };
+        } else if (scope === EntryScope.Dash) {
+            const {workbookId, copyDash} = this.props;
+            const entry = await copyDash({
+                ...(workbookId ? {workbookId} : {}),
+                name,
+                key: path + name,
+            });
+
+            copiedEntry = {
+                entryId: entry.entryId,
+                scope,
+                key: entry.key,
+                type: entry.type,
             };
         } else {
             const data = await getSdk().us.copyEntry({
@@ -161,6 +184,7 @@ class DialogCopyEntry extends React.Component<Props> {
 
 const mapDispatchToProps = {
     showToast,
+    copyDash,
 };
 
 export default connect(null, mapDispatchToProps)(DialogCopyEntry);
