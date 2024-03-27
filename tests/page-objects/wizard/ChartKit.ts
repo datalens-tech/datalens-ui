@@ -37,7 +37,8 @@ export default class ChartKit {
     metricItemValueSelector = '.chartkit-indicator__item-value,.markup-metric-value';
 
     private drillArrowsSelector = '.chartkit-drill__drill-action';
-    private breadcrumbsSelector = '.chartkit-drill .g-breadcrumbs__item';
+    private breadcrumbsItemSelector = '.chartkit-drill .g-breadcrumbs__item';
+    private breadcrumbsSwitcherSelector = '.chartkit-drill .g-breadcrumbs__switcher';
     private paginatorSelector = '.chartkit-table-paginator';
     private tableHeadCellSelector = '.data-table__head-cell';
     private layerLegendSelector = '.chartkit .chartkit-ymap-legend-layer';
@@ -190,10 +191,13 @@ export default class ChartKit {
         await this.page.waitForSelector(this.paginatorSelector, {state: 'detached'});
     }
 
-    async getBreadcrumbs(): Promise<string[]> {
-        const breadcrumbs = await this.page.$$(this.breadcrumbsSelector);
+    async getBreadcrumbs() {
+        const switchers = await this.page.$$(this.breadcrumbsSwitcherSelector);
+        const items = await this.page.$$(this.breadcrumbsItemSelector);
+        const switchersText = await Promise.all(switchers.map((el) => el.innerText()));
+        const itemsText = await Promise.all(items.map((el) => el.innerText()));
 
-        return Promise.all(breadcrumbs.map((el) => el.innerText()));
+        return [...switchersText, ...itemsText];
     }
 
     async getTableRowsCount() {

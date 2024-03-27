@@ -76,7 +76,7 @@ export async function dragAndDropListItem(
     // move source item to the end of target item
     await page.mouse.move(
         targetItemBox.x + targetItemBox.width / 2,
-        targetItemBox.y + targetItemBox.height,
+        targetItemBox.y - targetItemBox.height / 2,
     );
 
     await page.mouse.up();
