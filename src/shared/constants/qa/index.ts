@@ -10,3 +10,4 @@ export * from './control';
 export * from './ql';
 export * from './field-editor';
 export {VisualizationsQa} from './visualization';
+export * from './uikit';

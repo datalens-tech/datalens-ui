@@ -11,7 +11,7 @@ import {
     DialogQLParameterQA,
     DialogTabsQA,
     EntryDialogQA,
-    SelectQA,
+    SelectQa,
     YfmQa,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
@@ -804,11 +804,11 @@ class DashboardPage extends BasePage {
 
         // select field for first item
         await this.page.click(slct(DashCommonQa.AliasSelectLeft));
-        await this.page.locator(slct(SelectQA.Popup, firstParamName)).click();
+        await this.page.locator(slct(SelectQa.POPUP, firstParamName)).click();
 
         // select field for second item
         await this.page.click(slct(DashCommonQa.AliasSelectRight));
-        await this.page.locator(slct(SelectQA.Popup, secondParamName)).click();
+        await this.page.locator(slct(SelectQa.POPUP, secondParamName)).click();
 
         // click apply in all relation dialogs
         await this.page.click(slct(DashCommonQa.AliasAddBtn));
