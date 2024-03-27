@@ -49,7 +49,7 @@ export default class ChartSettings {
             throw new Error('Attribute class not found in pagination selector');
         });
 
-        return classAttribute?.includes('yc-switch_disabled');
+        return classAttribute?.includes('g-switch_disabled');
     }
 
     async getSettingItem(settingName: ChartSettingsItems) {

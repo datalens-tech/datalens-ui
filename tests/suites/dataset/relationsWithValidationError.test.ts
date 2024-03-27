@@ -7,7 +7,7 @@ import {openTestPage, slct} from '../../utils';
 import {RobotChartsDatasetUrls} from '../../utils/constants';
 
 const SELECTORS = {
-    TOAST_VALIDATION_ERROR: '.g-toaster .g-toast__icon_error',
+    TOAST_VALIDATION_ERROR: '.g-toaster .g-toast__icon_danger',
     RELATION_JOIN_ICON: 'g.relations-map__join.relations-map__join_error',
     RELATION_DIALOG_TITLE: slct(DatasetDialogRelationQA.DialogTitle),
     RELATION_CONDITION_LIST_ITEM: '.relation-dialog .relation-dialog__join-condition',
