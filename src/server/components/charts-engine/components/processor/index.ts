@@ -1028,6 +1028,7 @@ export class Processor {
                 logs?: {type: string; value: string}[][];
                 stackTrace?: string;
                 stack?: string;
+                executionTiming?: [number, number];
             } = error.executionResult || {};
             if (!modulesLogsCollected) {
                 collectModulesLogs({logsStorage: logs, processedModules});
@@ -1088,7 +1089,11 @@ export class Processor {
                     onCodeExecuted({
                         id: `${configId}:${configName}`,
                         requestId: req.id,
-                        latency: JS_EXECUTION_TIMEOUT,
+                        latency: executionResult.executionTiming
+                            ? (executionResult.executionTiming[0] * 1e9 +
+                                  executionResult.executionTiming[1]) /
+                              1e6
+                            : 0,
                     });
 
                     break;
