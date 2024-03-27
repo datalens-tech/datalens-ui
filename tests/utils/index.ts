@@ -1,4 +1,3 @@
-import {SelectQa} from '@gravity-ui/uikit';
 import {ElementHandle, Page, expect} from '@playwright/test';
 import dotenv from 'dotenv';
 import moment from 'moment';
@@ -10,6 +9,7 @@ import {
     DialogCreateWorkbookEntryQa,
     EntryDialogQA,
     Feature,
+    SelectQa,
 } from '../../src/shared';
 import {ActionPanelEntryContextMenuQa} from '../../src/shared/constants/qa/action-panel';
 import {isEnabledFeature} from './helpers';
