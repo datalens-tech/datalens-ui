@@ -8,5 +8,6 @@
   "button_links": "Links",
   "label_loading": "Uploading",
   "label_updating": "Updating",
+  "toast_paste-invalid-workbook-entry": "You can't paste widget connected to another workbook entries, please copy them manually.",
   "toast_unsaved": "There are unsaved changes on the page. Are you sure?"
 }
