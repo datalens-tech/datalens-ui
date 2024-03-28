@@ -15,7 +15,7 @@ export type CommonValueSelectorProps = {
     hasClear?: boolean;
 };
 
-export type FetcherProps = {fetcher: Fetcher<any, PaginationType>; onRetry?: () => void};
+export type FetcherProps = {fetcher: Fetcher<any, PaginationType>; onRetry?: () => Promise<void>};
 export type FilterProps = {
     onFilterChange?: NonNullable<SelectFeaturedAsyncProps['onFilterChange']>;
 };

@@ -16,7 +16,6 @@ const CONTROL_SOURCE_TYPES = [
         value: DashTabItemControlSourceType.Dataset,
     },
     {
-        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
         title: i18n('value_source-connection'),
         value: DashTabItemControlSourceType.Connection,
     },

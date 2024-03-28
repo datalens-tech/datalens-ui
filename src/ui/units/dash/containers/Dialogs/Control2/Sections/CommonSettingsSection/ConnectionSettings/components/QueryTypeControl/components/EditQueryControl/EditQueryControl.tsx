@@ -9,8 +9,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {FieldWrapper} from '../../../../../../../../../../../../components/FieldWrapper/FieldWrapper';
 import {openDialogEditQuery} from '../../../../../../../../../../store/actions/dialogs/dialog-edit-query';
 import {selectSelectorDialog} from '../../../../../../../../../../store/selectors/dashTypedSelectors';
-// @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
-const i18n = I18n.keyset('dash.edit-query-dialog');
+const i18n = I18n.keyset('dash.control-dialog.edit');
 export const EditQueryControl: React.FC = () => {
     const {validation} = useSelector(selectSelectorDialog);
     const dispatch = useDispatch();
@@ -19,7 +18,6 @@ export const EditQueryControl: React.FC = () => {
         dispatch(openDialogEditQuery());
     };
     return (
-        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
         <FormRow label={i18n('field_query')}>
             <FieldWrapper error={validation.connectionQueryContent}>
                 <Button
@@ -28,10 +26,7 @@ export const EditQueryControl: React.FC = () => {
                 >
                     <Icon data={PencilToLine} />
 
-                    {
-                        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
-                        i18n('button_edit-query')
-                    }
+                    {i18n('button_edit-query')}
                 </Button>
             </FieldWrapper>
         </FormRow>
