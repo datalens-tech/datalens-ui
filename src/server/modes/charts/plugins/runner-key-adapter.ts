@@ -30,13 +30,9 @@ export const plugin = {
                         */
                             const parsedKey = url.parse(key, true);
 
-                            // Otherwise, the request with a space will be encoded, and the request in US will encode the encoded space
-                            // Datalens%20Charts/Errors/no-data -> Datalens%2520Charts%2FErrors%2Fno-data
-                            const decodedPathname = decodeURIComponent(
-                                parsedKey.pathname!.replace(/%(?![0-9][0-9a-fA-F]+)/g, '%25'),
-                            );
+                            const keyWithoutQueryParams = key.split('?')[0];
 
-                            const pathname = decodedPathname.replace(
+                            const pathname = keyWithoutQueryParams.replace(
                                 /\/?(?:ChartPreview|preview)/,
                                 '',
                             );
@@ -48,7 +44,7 @@ export const plugin = {
                                 pathname.startsWith('/wizard') ||
                                 pathname.startsWith('wizard')
                             ) {
-                                params.name = decodedPathname
+                                params.name = keyWithoutQueryParams
                                     .replace(/^\/?editor\//, '')
                                     .replace(/^\/?wizard\//, '');
                             }
