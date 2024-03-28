@@ -13,7 +13,7 @@ import './Month.scss';
 
 const i18n = I18n.keyset('components.common.Datepicker');
 
-const b = block('yc-datepicker-month');
+const b = block('dl-datepicker-month');
 const CELLS = {
     DAY: 'day',
     TITLE: 'title',

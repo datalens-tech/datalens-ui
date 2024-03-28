@@ -82,7 +82,7 @@ const Inspector: React.FC<{
                     <span className={b('request-id-value')}>
                         {requestId}
                         <span className={b('request-id-copy')}>
-                            <ClipboardButton text={requestId} size={14} />
+                            <ClipboardButton text={requestId} size="xs" />
                         </span>
                     </span>
                 </div>
@@ -92,7 +92,7 @@ const Inspector: React.FC<{
                         <span className={b('request-id-value')}>
                             {data.traceId}
                             <span className={b('request-id-copy')}>
-                                <ClipboardButton text={data.traceId} size={14} />
+                                <ClipboardButton text={data.traceId} size="xs" />
                             </span>
                         </span>
                     </div>

@@ -72,7 +72,7 @@ function ButtonSave({
             const url = navigateHelper.redirectUrlSwitcher(response.data);
             toaster.add({
                 name: 'success_save_as_chart_editor',
-                type: TOASTER_TYPE.SUCCESS,
+                theme: TOASTER_TYPE.SUCCESS,
                 title: i18n('editor.notifications.view', 'toast_save-as-editor-chart-success'),
                 actions: [
                     {

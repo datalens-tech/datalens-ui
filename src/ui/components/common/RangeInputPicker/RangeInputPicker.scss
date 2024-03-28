@@ -2,7 +2,7 @@ $pin-color: var(--g-color-base-brand);
 $pin-focus-color: var(--g-color-base-selection);
 $pin-disabled-color: var(--g-color-sfx-veil);
 
-.yc-range-input-picker {
+.dl-range-input-picker {
     $block: &;
     outline: none;
     position: relative;
@@ -26,8 +26,8 @@ $pin-disabled-color: var(--g-color-sfx-veil);
     &__range-info-item {
         cursor: pointer;
         color: var(--g-color-text-secondary);
-        font-size: var(--yc-range-input-picker-font-size);
-        line-height: var(--yc-range-input-picker-line-height);
+        font-size: var(--dl-range-input-picker-font-size);
+        line-height: var(--dl-range-input-picker-line-height);
     }
 
     .rc-slider {
@@ -36,8 +36,8 @@ $pin-disabled-color: var(--g-color-sfx-veil);
         z-index: 3;
         height: 14px;
         padding: 5px 0;
-        width: calc(100% - var(--yc-range-input-picker-border-radius));
-        left: calc(var(--yc-range-input-picker-border-radius) / 2);
+        width: calc(100% - var(--dl-range-input-picker-border-radius));
+        left: calc(var(--dl-range-input-picker-border-radius) / 2);
         border-radius: 6px;
         touch-action: none;
         box-sizing: border-box;
@@ -110,16 +110,16 @@ $pin-disabled-color: var(--g-color-sfx-veil);
                 transform: translateX(0) !important;
                 cursor: pointer;
                 color: var(--g-color-text-secondary);
-                font-size: var(--yc-range-input-picker-font-size);
-                line-height: var(--yc-range-input-picker-line-height);
+                font-size: var(--dl-range-input-picker-font-size);
+                line-height: var(--dl-range-input-picker-line-height);
             }
         }
     }
 
     &_size_s {
-        --yc-range-input-picker-border-radius: var(--g-border-radius-s);
-        --yc-range-input-picker-font-size: var(--g-text-body-short-font-size);
-        --yc-range-input-picker-line-height: var(--g-text-body-short-line-height);
+        --dl-range-input-picker-border-radius: var(--g-border-radius-s);
+        --dl-range-input-picker-font-size: var(--g-text-body-short-font-size);
+        --dl-range-input-picker-line-height: var(--g-text-body-short-line-height);
 
         #{$block}__range-info-items-list {
             top: 31px;
@@ -144,9 +144,9 @@ $pin-disabled-color: var(--g-color-sfx-veil);
     }
 
     &_size_m {
-        --yc-range-input-picker-border-radius: var(--g-border-radius-m);
-        --yc-range-input-picker-font-size: var(--g-text-body-short-font-size);
-        --yc-range-input-picker-line-height: var(--g-text-body-short-line-height);
+        --dl-range-input-picker-border-radius: var(--g-border-radius-m);
+        --dl-range-input-picker-font-size: var(--g-text-body-short-font-size);
+        --dl-range-input-picker-line-height: var(--g-text-body-short-line-height);
 
         #{$block}__range-info-items-list {
             top: 35px;
@@ -171,9 +171,9 @@ $pin-disabled-color: var(--g-color-sfx-veil);
     }
 
     &_size_l {
-        --yc-range-input-picker-border-radius: var(--g-border-radius-l);
-        --yc-range-input-picker-font-size: var(--g-text-body-short-font-size);
-        --yc-range-input-picker-line-height: var(--g-text-body-short-line-height);
+        --dl-range-input-picker-border-radius: var(--g-border-radius-l);
+        --dl-range-input-picker-font-size: var(--g-text-body-short-font-size);
+        --dl-range-input-picker-line-height: var(--g-text-body-short-line-height);
 
         #{$block}__range-info-items-list {
             top: 43px;
@@ -181,9 +181,9 @@ $pin-disabled-color: var(--g-color-sfx-veil);
     }
 
     &_size_xl {
-        --yc-range-input-picker-border-radius: var(--g-border-radius-xl);
-        --yc-range-input-picker-font-size: var(--g-text-body-2-font-size);
-        --yc-range-input-picker-line-height: var(--g-text-body-2-line-height);
+        --dl-range-input-picker-border-radius: var(--g-border-radius-xl);
+        --dl-range-input-picker-font-size: var(--g-text-body-2-font-size);
+        --dl-range-input-picker-line-height: var(--g-text-body-2-line-height);
 
         #{$block}__range-info-items-list {
             top: 51px;

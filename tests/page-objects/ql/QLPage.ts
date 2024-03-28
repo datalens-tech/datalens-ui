@@ -181,12 +181,12 @@ class QLPage extends ChartPage {
     }
 
     async applyParamDialog() {
-        await this.page.click('.yc-dialog-footer__button_action_apply');
+        await this.page.click('.g-dialog-footer__button_action_apply');
     }
 
     async selectDate(dateValue: string) {
         await this.page.fill(
-            `${slct(DialogQLParameterQA.Dialog)} .yc-text-input__control`,
+            `${slct(DialogQLParameterQA.Dialog)} .g-text-input__control`,
             dateValue,
         );
 
@@ -201,7 +201,7 @@ class QLPage extends ChartPage {
             await this.page.fill(
                 `${slct(DialogQLParameterQA.Dialog)} ${slct(
                     DialogQLParameterQA.DatepickerStart,
-                )} .yc-text-input__control`,
+                )} .g-text-input__control`,
                 startDate,
             );
         }
@@ -211,7 +211,7 @@ class QLPage extends ChartPage {
         await this.page.fill(
             `${slct(DialogQLParameterQA.Dialog)} ${slct(
                 DialogQLParameterQA.DatepickerEnd,
-            )} .yc-text-input__control`,
+            )} .g-text-input__control`,
             endDate,
         );
 

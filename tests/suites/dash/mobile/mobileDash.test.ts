@@ -20,7 +20,7 @@ const SELECTORS = {
 
     BACK_BUTTON: '[data-qa=chart-widget-back-icon]',
 
-    SHEET: '.yc-sheet__sheet.yc-sheet__sheet_with-transition',
+    SHEET: '.g-sheet__sheet.g-sheet__sheet_with-transition',
 };
 const PARAMS = {
     TAB_1_TITLE: 'Tab 1',

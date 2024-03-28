@@ -5,7 +5,7 @@
         width: 100%;
 
         &_error {
-            .yc-button__text {
+            .g-button__text {
                 font-style: italic;
                 // stylelint-disable-next-line declaration-no-important
                 color: var(--g-color-base-danger-heavy) !important;
@@ -59,7 +59,7 @@
             padding-left: 32px;
         }
 
-        & .yc-list__filter {
+        & .g-list__filter {
             padding-left: 32px;
         }
 

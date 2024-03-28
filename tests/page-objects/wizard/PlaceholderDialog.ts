@@ -51,11 +51,11 @@ export default class PlaceholderDialog {
     }
 
     async apply() {
-        await this.page.click('.dialog-placeholder .yc-dialog-footer__button-apply');
+        await this.page.click('.dialog-placeholder .g-dialog-footer__button-apply');
     }
 
     async close() {
-        await this.page.click('.dialog-placeholder .yc-dialog-footer__button_action_cancel');
+        await this.page.click('.dialog-placeholder .g-dialog-footer__button_action_cancel');
     }
 
     async getCheckRadioButton(radioButton: RadioButtons) {
@@ -72,7 +72,7 @@ export default class PlaceholderDialog {
     }
 
     async getDialogTooltip() {
-        return await this.page.$('.yc-popover__tooltip-content > span');
+        return await this.page.$('.g-popover__tooltip-content > span');
     }
 
     async fillInput(qa: Inputs, value: string) {
@@ -89,13 +89,13 @@ export default class PlaceholderDialog {
     }
 
     async getRadioButtonsSelectedValue(radioButton: RadioButtons) {
-        const button = await this.page.$(`${slct(radioButton)} .yc-radio-button__option [checked]`);
+        const button = await this.page.$(`${slct(radioButton)} .g-radio-button__option [checked]`);
 
         return button?.getAttribute('value');
     }
 
     async checkRadioButtonsSelectedValue(radioButton: RadioButtons, value: string) {
-        const button = this.page.locator(`${slct(radioButton)} .yc-radio-button__option [checked]`);
+        const button = this.page.locator(`${slct(radioButton)} .g-radio-button__option [checked]`);
         await expect(button).toHaveValue(value);
     }
 

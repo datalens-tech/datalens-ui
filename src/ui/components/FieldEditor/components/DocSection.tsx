@@ -217,7 +217,7 @@ class DocSection extends React.Component<DocSectionProps, DocSectionState> {
         }
 
         return this.ref.current.querySelector(
-            '.yc-list__items > div:first-of-type > div:first-of-type',
+            '.g-list__items > div:first-of-type > div:first-of-type',
         );
     };
 

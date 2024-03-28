@@ -8,7 +8,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
 const SELECTORS = {
     TABLE_CELL: 'chartkit-table__content_value',
-    CONTROL_INPUT: 'yc-text-input__control',
+    CONTROL_INPUT: 'g-text-input__control',
 };
 
 const PARAMS = {

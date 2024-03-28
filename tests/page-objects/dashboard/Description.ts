@@ -18,7 +18,7 @@ export default class Description {
     }
 
     async close() {
-        await this.page.click(`${slct(DashMetaQa.Dialog)} .yc-dialog-btn-close__btn`);
+        await this.page.click(`${slct(DashMetaQa.Dialog)} .g-dialog-btn-close__btn`);
         await this.closed();
     }
 

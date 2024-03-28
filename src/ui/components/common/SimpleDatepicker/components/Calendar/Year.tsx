@@ -6,7 +6,7 @@ import {MonthItem, getDataForYearCalendar} from '../../utils';
 
 import {YearProps} from './types';
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 
 export const Year: React.FC<YearProps> = ({
     year,

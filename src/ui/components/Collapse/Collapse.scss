@@ -1,6 +1,6 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
-.yc-collapse {
+.dl-collapse {
     &__header {
         display: inline-flex;
         align-items: center;
@@ -51,13 +51,13 @@
 
     &__arrow-wrapper_secondary {
         color: var(--g-color-text-secondary);
-        .yc-button__text {
+        .g-button__text {
             color: var(--g-color-text-secondary);
         }
     }
 
     &__arrow-button {
-        .yc-button__text {
+        .g-button__text {
             margin: 0 4px;
         }
     }

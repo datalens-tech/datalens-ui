@@ -16,7 +16,7 @@ import {Action, State} from '../../store';
 import {getDateStringWithoutOffset, getFlippedDates, isNeededToFlipDates} from '../../utils';
 
 const i18n = I18n.keyset('components.common.RangeDatepicker');
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 
 interface PickersProps extends Omit<SimpleDatepickerProps, 'date' | 'onUpdate'> {
     dispatch: React.Dispatch<Action>;
@@ -42,7 +42,7 @@ export const Pickers: React.FC<PickersProps> = (props) => {
         dispatch,
     } = props;
     const toPickerRef = React.useRef<HTMLDivElement>(null);
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     const size: DatepickerControlSize = mobile ? 'xl' : 'm';
 
     const selectFrom = React.useCallback(

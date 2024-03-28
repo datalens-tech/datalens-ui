@@ -7,7 +7,7 @@ const i18n = I18n.keyset('common.read-only');
 
 export const showReadOnlyToast = () => {
     toaster.add({
-        type: 'error',
+        theme: 'danger',
         name: 'ReadOnlyError',
         title: i18n('toast_editing-warning'),
     });

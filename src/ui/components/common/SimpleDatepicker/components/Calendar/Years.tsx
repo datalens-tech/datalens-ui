@@ -6,7 +6,7 @@ import {CalendarItem, getDataForYearsCalendar} from '../../utils';
 
 import {YearsProps} from './types';
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 
 export const Years: React.FC<YearsProps> = ({year, selectedDate, minDate, maxDate, dispatch}) => {
     const data = React.useMemo(

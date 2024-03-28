@@ -4,7 +4,7 @@ import block from 'bem-cn-lite';
 
 import './FieldWrapper.scss';
 
-const b = block('yc-field-wrapper');
+const b = block('dl-field-wrapper');
 
 export interface FieldWrapperProps {
     children: React.ReactNode;

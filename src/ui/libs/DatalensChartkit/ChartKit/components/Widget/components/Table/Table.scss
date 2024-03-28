@@ -132,12 +132,12 @@
         border-bottom: 1px solid var(--data-table-border-color);
     }
 
-    &__cell .table-action-btn:has(.yc-button__icon:only-child) {
+    &__cell .table-action-btn:has(.g-button__icon:only-child) {
         height: 16px;
         width: 16px;
         line-height: 16px;
 
-        .yc-button__icon {
+        .g-button__icon {
             height: 16px;
             width: 12px;
         }

@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Button, Dialog, Icon, Select, SelectOption} from '@gravity-ui/uikit';
+import {Button, Dialog, Icon, Select} from '@gravity-ui/uikit';
+import type {SelectOption, SelectRenderControlProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import _get from 'lodash/get';
@@ -101,12 +102,7 @@ const renderOptionWithIcon = (option: SelectOption) => {
 };
 
 const renderCustomControl = (
-    args: {
-        onClick: (e: React.MouseEvent<HTMLElement>) => void;
-        onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
-        ref: React.Ref<HTMLElement>;
-        open: boolean;
-    },
+    args: SelectRenderControlProps,
     selectedValue: string,
     options: SelectOption[],
     renderOptions: {style?: React.CSSProperties; className?: string},

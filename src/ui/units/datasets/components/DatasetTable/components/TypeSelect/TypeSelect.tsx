@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Button, Select, SelectOption} from '@gravity-ui/uikit';
+import {Button, Select} from '@gravity-ui/uikit';
+import type {SelectOption, SelectRenderControlProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
 import {DATASET_FIELD_TYPES, DatasetField} from 'shared';
@@ -83,16 +84,7 @@ class TypeSelectComponent extends React.Component<Props> {
         );
     };
 
-    private renderSelectControl = ({
-        onClick,
-        ref,
-        onKeyDown,
-    }: {
-        onClick: (e: React.MouseEvent<HTMLElement>) => void;
-        onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
-        ref: React.Ref<HTMLElement>;
-        open: boolean;
-    }) => {
+    private renderSelectControl = ({onClick, ref, onKeyDown}: SelectRenderControlProps) => {
         const {selectedType} = this.props;
         const selectedValue = getSelectedValueForSelect([selectedType], this.props.types);
 

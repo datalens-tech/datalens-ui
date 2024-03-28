@@ -11,7 +11,7 @@ import {getTimeZoneOffset} from '../../utils';
 
 import {Switcher} from './Switcher';
 
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 const WITH_BRACKETS = false;
 
 const getZonesItems = () => {
@@ -34,7 +34,7 @@ interface ZonesListProps {
 }
 
 export const ZonesList: React.FC<ZonesListProps> = ({timeZone, dispatch}) => {
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     const zones = React.useMemo(() => getZonesItems(), []);
 
     const selectZone = (nextZone: string) => {

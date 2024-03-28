@@ -1,10 +1,6 @@
 import {settings as settingsChartKit} from '@gravity-ui/chartkit';
-import {configure as configureComponents} from '@gravity-ui/components';
-import {setLang as setLangDashKit} from '@gravity-ui/dashkit';
 import {settings as settingsDateUtils} from '@gravity-ui/date-utils';
-import {configure as configureNavigation} from '@gravity-ui/navigation';
-import {configure as configurePageConstructor} from '@gravity-ui/page-constructor';
-import {Lang, ThemeSettings, configure as configureUikit} from '@gravity-ui/uikit';
+import {ThemeSettings, configure as configureUikit} from '@gravity-ui/uikit';
 import {I18N} from 'i18n';
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
@@ -153,11 +149,7 @@ export default class Utils {
 
         I18N.setLang(lang);
         settingsChartKit.set({lang});
-        setLangDashKit(lang);
         configureUikit({lang});
-        configureNavigation({lang});
-        configurePageConstructor({lang: lang as Lang});
-        configureComponents({lang});
 
         moment.locale(lang);
         moment.updateLocale(lang, {week: {dow: 1, doy: 7}});

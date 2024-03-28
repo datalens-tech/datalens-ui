@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {useRangeDatepickerPreset} from '../../RangeDatepickerProvider';
 import {Preset, RangeDatepickerPresetTab} from '../../types';
 
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 
 const renderPresetItem = ({title}: Preset) => title;
 
@@ -16,7 +16,7 @@ interface TabsContentProps {
 }
 
 export const TabsContent: React.FC<TabsContentProps> = ({tab, selectPreset}) => {
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     const {withTime, selectedPresetIndex, selectedTabIndex, presetTabs} =
         useRangeDatepickerPreset();
     const selectedTab = presetTabs[selectedTabIndex];

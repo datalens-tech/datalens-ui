@@ -1,8 +1,8 @@
+import {SelectQa} from '../../../../src/shared/constants';
 import {slct} from '../../../utils';
 
 import {ListItemByParams} from '../../types';
 import {ElementPO} from './ElementPO';
-import {SelectQa} from '@gravity-ui/uikit';
 
 export class SelectElementPO extends ElementPO {
     static selectors = {
