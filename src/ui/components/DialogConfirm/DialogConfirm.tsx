@@ -8,8 +8,6 @@ import {withHiddenUnmount} from '../../hoc/withHiddenUnmount';
 import DialogCommon from '../DialogCommon/DialogCommon';
 import DialogManager from '../DialogManager/DialogManager';
 
-import './DialogConfirm.scss';
-
 const i18n = I18n.keyset('component.dl-dialog-confirm.view');
 
 export interface DialogConfirmProps {
