@@ -8,14 +8,11 @@ import {
     ApiV2RequestFieldSorting,
     ApiV2RequestPivot,
     ApiV2RequestPivotRoleSpec,
-    Feature,
     PseudoFieldTitle,
     getObjectValueByPossibleKeys,
-    isEnabledServerFeature,
     isMeasureName,
     isMeasureValue,
 } from '../../../../../../../../../shared';
-import {registry} from '../../../../../../../../registry';
 import {BackendPivotTableCellCustom} from '../../../../types';
 
 import {
@@ -212,9 +209,8 @@ const isSortSupported = (meta: BackendPivotTableCellCustom, measures: number, gu
 };
 
 const getStructureWithSortingFromField = (args: GetStructureWithSortingFromFieldArgs) => {
-    const {ChartEditor, field, rowsReq, columnsReq, measuresReq, totals} = args;
+    const {ChartEditor, field, rowsReq, columnsReq, measuresReq} = args;
     const params = ChartEditor.getSortParams();
-    const app = registry.getApp();
     const meta = params.meta as
         | {column: BackendPivotTableCellCustom; row: BackendPivotTableCellCustom}
         | undefined;
@@ -231,19 +227,14 @@ const getStructureWithSortingFromField = (args: GetStructureWithSortingFromField
     const isRowExists = !isEmpty(row);
 
     const sorting: ApiV2RequestFieldSorting = {};
-    const hasTotals = totals?.rows.length || totals?.columns.length;
-    const isSortingEnabled =
-        !hasTotals || isEnabledServerFeature(app.nodekit.ctx, Feature.PivotTableSortWithTotals);
 
     const isRowFieldsChanged = isFieldsChanged(row, rowsReq);
     const isColumnFieldsChanged = isFieldsChanged(column, columnsReq);
 
     const isColumnSortSupported = Boolean(
-        isSortingEnabled && isSortSupported(column, measuresReq.length, field.ref.id),
+        isSortSupported(column, measuresReq.length, field.ref.id),
     );
-    const isRowSortSupported = Boolean(
-        isSortingEnabled && isSortSupported(row, measuresReq.length, field.ref.id),
-    );
+    const isRowSortSupported = Boolean(isSortSupported(row, measuresReq.length, field.ref.id));
 
     if (
         !isColumnFieldsChanged &&
