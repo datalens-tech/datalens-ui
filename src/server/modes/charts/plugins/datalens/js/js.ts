@@ -83,6 +83,25 @@ type MergeDataArgs = {
     links: ServerLink[];
 };
 
+function getValueForCompare(
+    value: string | null,
+    field: {dataType?: string} | undefined,
+    otherField: {dataType?: string} | undefined,
+) {
+    if (
+        field?.dataType === DATASET_FIELD_TYPES.DATETIMETZ ||
+        (field?.dataType && isDateType(field.dataType) && field.dataType !== otherField?.dataType)
+    ) {
+        return moment.utc(value).valueOf();
+    }
+
+    if (isMarkupField({data_type: String(field?.dataType)}) && isMarkupItem(value)) {
+        return markupToRawString(value);
+    }
+
+    return value;
+}
+
 function mergeData({data, links}: MergeDataArgs) {
     const mergedData: MergedData = {
         result: {
@@ -270,29 +289,10 @@ function mergeData({data, links}: MergeDataArgs) {
             mergedRows.forEach((row) => {
                 const joinBy = linkOrder
                     .map(([left, right]) => {
-                        const value = row[left];
-                        const orderItem = mergedOrder[left];
-                        const dataType = Array.isArray(orderItem)
-                            ? orderItem[0].dataType
-                            : orderItem?.dataType;
-                        const otherDataType = currentOrder[right]?.dataType;
+                        const orderItems = mergedOrder[left];
+                        const field = Array.isArray(orderItems) ? orderItems[0] : orderItems;
 
-                        if (
-                            dataType === DATASET_FIELD_TYPES.DATETIMETZ ||
-                            (dataType && isDateType(dataType) && dataType !== otherDataType)
-                        ) {
-                            return moment.utc(value).valueOf();
-                        }
-
-                        if (
-                            dataType &&
-                            isMarkupField({data_type: dataType}) &&
-                            isMarkupItem(value)
-                        ) {
-                            return markupToRawString(value);
-                        }
-
-                        return value;
+                        return getValueForCompare(row[left], field, currentOrder[right]);
                     })
                     .join();
 
@@ -305,28 +305,9 @@ function mergeData({data, links}: MergeDataArgs) {
                 const joinBy = linkOrder
                     .map(([left, right]) => {
                         const orderItem = mergedOrder[left];
-                        const otherDataType = Array.isArray(orderItem)
-                            ? orderItem[0].dataType
-                            : orderItem?.dataType;
-                        const value = row.data[right];
-                        const dataType = currentOrder[right]?.dataType;
+                        const otherField = Array.isArray(orderItem) ? orderItem[0] : orderItem;
 
-                        if (
-                            dataType === DATASET_FIELD_TYPES.DATETIMETZ ||
-                            (dataType && isDateType(dataType) && dataType !== otherDataType)
-                        ) {
-                            return moment.utc(value).valueOf();
-                        }
-
-                        if (
-                            dataType &&
-                            isMarkupField({data_type: dataType}) &&
-                            isMarkupItem(value)
-                        ) {
-                            return markupToRawString(value);
-                        }
-
-                        return value;
+                        return getValueForCompare(row.data[right], currentOrder[right], otherField);
                     })
                     .join();
                 let targetRow = sourceDataMap[joinBy];
