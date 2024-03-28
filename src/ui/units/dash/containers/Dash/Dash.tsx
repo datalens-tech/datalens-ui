@@ -7,7 +7,7 @@ import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
 import {ResolveThunks, connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router-dom';
-import {Feature} from 'shared';
+import {DashTabItemType, Feature} from 'shared';
 import {EntryDialogName, EntryDialogues} from 'ui/components/EntryDialogues';
 import {PageTitle} from 'ui/components/PageTitle';
 import {SlugifyUrl} from 'ui/components/SlugifyUrl';
@@ -16,6 +16,7 @@ import {DatalensGlobalState} from 'ui/index';
 import {axiosInstance} from 'ui/libs';
 import {NULL_HEADER} from 'ui/libs/axios/axios';
 import {registry} from 'ui/registry';
+import {showToast} from 'ui/store/actions/toaster';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'ui/units/workbooks/store/actions';
 import Utils from 'ui/utils';
 
@@ -51,6 +52,8 @@ import Dialogs from '../Dialogs/Dialogs';
 import Header from '../Header/Header';
 
 const AUTH_UPDATE_TIMEOUT = 40 * 60 * 1000;
+
+const CROSS_PASTE_ITEMS_ALLOWED = [ITEM_TYPE.TITLE, ITEM_TYPE.TEXT];
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -296,7 +299,30 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         this.setEditDash();
     };
 
+    private isItemPasteAllowed(itemData: CopiedConfigData) {
+        if (
+            CROSS_PASTE_ITEMS_ALLOWED.includes(itemData.type as DashTabItemType) ||
+            (itemData.type === DashTabItemType.Control && itemData.data.sourceType === 'manual')
+        ) {
+            return true;
+        }
+
+        return itemData.copyContext?.workbookId === this.props.entry.workbookId;
+    }
+
+    private showErrorPasteItemFromWorkbook() {
+        this.props.showToast({
+            title: i18n('dash.main.view', 'toast_paste-invalid-workbook-entry'),
+            type: 'error',
+        });
+    }
+
     private onPasteItem = (itemData: CopiedConfigData) => {
+        if (!this.isItemPasteAllowed(itemData)) {
+            this.showErrorPasteItemFromWorkbook();
+            return;
+        }
+
         const pastedItemData = itemData.data;
 
         if (itemData.type === ITEM_TYPE.WIDGET) {
@@ -371,6 +397,7 @@ const mapDispatchToProps = {
     setCopiedItemData,
     addWorkbookInfo,
     resetWorkbookPermissions,
+    showToast,
 };
 
 export const DashWrapper = connect(mapStateToProps, mapDispatchToProps)(DashComponent);
