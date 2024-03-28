@@ -120,6 +120,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             if (tableCommonCell.onClick) {
                 if (tableCommonCell.onClick.action === 'setParams') {
                     changeParams(tableCommonCell.onClick.args);
+                    return;
                 }
             }
 
@@ -134,6 +135,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                         return filter;
                     }),
                 });
+                return;
             }
 
             if (tableCommonCell.treeNode) {
@@ -143,6 +145,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                 });
 
                 changeParams(treeState ? {treeState} : {});
+                return;
             }
 
             if (actionParams?.scope) {
