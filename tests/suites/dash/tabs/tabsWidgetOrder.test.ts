@@ -48,7 +48,7 @@ datalensTest.describe(`Dashboards - Change widgets order on tab`, () => {
             });
 
             await new Promise((resolve) => {
-                setTimeout(resolve, 1000);
+                setTimeout(resolve, 500);
             });
 
             const actualWidgetOrderListItems = await popupWidgetOrderList.$$(
