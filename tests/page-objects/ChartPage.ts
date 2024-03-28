@@ -2,6 +2,7 @@ import {ElementHandle} from '@playwright/test';
 
 import {
     ControlQA,
+    DialogConfirmQA,
     DlNavigationQA,
     EntryDialogQA,
     VisualizationsQa,
@@ -45,7 +46,9 @@ export class ChartPage extends BasePage {
     }
 
     async applySavingWarning() {
-        await this.page.click(`${slct('dialog-confirm')} ${slct('dialog-confirm-apply-button')}`);
+        await this.page.click(
+            `${slct(DialogConfirmQA.Dialog)} ${slct(DialogConfirmQA.ApplyButton)}`,
+        );
     }
 
     async getVisualizationSelectorItems() {

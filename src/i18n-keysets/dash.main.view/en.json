@@ -6,6 +6,7 @@
   "button_edit-panel-text": "Text",
   "button_edit-panel-title": "Header",
   "button_links": "Links",
+  "label_details": "Details",
   "label_loading": "Uploading",
   "label_updating": "Updating",
   "toast_paste-invalid-workbook-entry": "You can't paste widget connected to another workbook entries, please copy them manually.",
