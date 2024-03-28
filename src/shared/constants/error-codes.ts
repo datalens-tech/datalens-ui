@@ -30,7 +30,7 @@ export enum ErrorCode {
     AccessServicePermissionDenied = 'ACCESS_SERVICE_PERMISSION_DENIED',
     AccessServiceUnauthenticated = 'ACCESS_SERVICE_UNAUTHENTICATED',
     EntryIsLocked = 'ERR.US.ENTRY_IS_LOCKED',
-    EntryAlreadyExistst = 'ERR.US.ENTRY_ALREADY_EXISTS',
+    EntryAlreadyExists = 'ERR.US.ENTRY_ALREADY_EXISTS',
     UsUniqViolation = 'ERR.US.DB.UNIQUE_VIOLATION',
     ReadOnlyMode = 'READ_ONLY_MODE_ENABLED',
 }

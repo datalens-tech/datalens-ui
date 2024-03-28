@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {History, Location} from 'history';
 import {I18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
-import {EntryUpdateMode, Feature} from 'shared';
+import {Feature} from 'shared';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {
     ActionPanel,
@@ -33,7 +33,6 @@ import navigateHelper from '../../../../libs/navigateHelper';
 import {isEmbeddedMode} from '../../../../utils/embedded';
 import {DIALOG_TYPE} from '../../containers/Dialogs/constants';
 import {
-    purgeData,
     saveDashAsDraft,
     saveDashAsNewDash,
     setActualDash,
@@ -178,16 +177,10 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
 
     handlerSaveAsNewClick = async () => {
         if (this.props.entryDialoguesRef.current) {
-            const {entry, data, lockToken} = this.props.dashEntry;
+            const {entry} = this.props.dashEntry;
             const response = await this.props.entryDialoguesRef.current.open({
                 dialog: EntryDialogName.SaveAsNew,
                 dialogProps: {
-                    entryData: {
-                        data: purgeData(data),
-                        lockToken,
-                        mode: EntryUpdateMode.Publish,
-                        meta: {is_release: true},
-                    },
                     initDestination: Utils.getPathBefore({path: entry.key}),
                     initName: Utils.getEntryNameFromKey(entry.key, true),
                     onSaveAsNewCallback: this.props.saveDashAsNewDash,
