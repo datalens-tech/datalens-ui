@@ -14,7 +14,11 @@ import type {
     OpenDialogCreateConnectionInWbArgs,
 } from '../../units/connections/components';
 import type {OpenDialogConfirmArgs} from '../../components/DialogConfirm/DialogConfirm';
-import type {OpenDialogDatasetFieldInspectorArgs} from '../../units/datasets/components/dialogs/DatasetFieldInspector/DatasetFieldInspector';
+import type {
+    OpenDialogDatasetFieldInspectorArgs,
+    OpenDialogDatasetFieldColorsArgs,
+    OpenDialogDatasetFieldFormattingArgs,
+} from '../../units/datasets/components/dialogs';
 import type {OpenDialogParameterArgs} from '../../components/DialogParameter/DialogParameter';
 import type {OpenDialogMultidatasetArgs} from 'units/wizard/components/Dialogs/DialogMultidataset';
 import type {OpenDialogRelationsArgs} from '../../units/dash/containers/Dialogs/DialogRelations/DialogRelations';
@@ -69,6 +73,8 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogCreateConnectionInWbArgs
     | OpenDialogConfirmArgs
     | OpenDialogDatasetFieldInspectorArgs
+    | OpenDialogDatasetFieldColorsArgs
+    | OpenDialogDatasetFieldFormattingArgs
     | OpenDialogParameterArgs
     | OpenDialogRelationsArgs
     | OpenDialogAliasesArgs

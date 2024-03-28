@@ -1,0 +1,14 @@
+.ds-field-colors {
+    &__body {
+        max-height: 70vh;
+        overflow: auto;
+
+        & pre {
+            margin-top: 0;
+            padding: 5px;
+            border-radius: 5px;
+            color: var(--g-color-text-complementary);
+            background-color: var(--g-color-base-misc-light);
+        }
+    }
+}

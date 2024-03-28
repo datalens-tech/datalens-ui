@@ -12,6 +12,8 @@ export enum FieldAction {
     Inspect = 'inspect',
     Remove = 'remove',
     Rls = 'rls',
+    Color = 'color',
+    Formatting = 'formatting',
 }
 
 const DUPLICATE: MenuItem = {action: FieldAction.Duplicate, label: 'button_duplicate'};
@@ -27,8 +29,20 @@ export const getCommonMenuItemsData = () => {
     return [DUPLICATE, EDIT, COPY_GUID];
 };
 
+const getSettingsMenuItemsData = () => {
+    if (Utils.isEnabledFeature(Feature.DatasetFieldSettings)) {
+        return [
+            {action: FieldAction.Color, label: 'button_color-settings'},
+            {action: FieldAction.Formatting, label: 'button_format-settings'},
+        ];
+    }
+
+    return [];
+};
+
 export const GROUPED_ITEMS: MenuItem[][] = [
     getCommonMenuItemsData(),
+    getSettingsMenuItemsData(),
     [{action: FieldAction.Remove, label: 'button_remove', theme: 'danger'}],
     [{action: FieldAction.Inspect, label: 'button_inspect', hidden: !Utils.isSuperUser()}],
 ];

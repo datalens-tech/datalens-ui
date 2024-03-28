@@ -18,7 +18,11 @@ import {Permissions} from 'shared/types/dls';
 
 import {openDialog} from '../../../../store/actions/dialog';
 import {EditorItemToDisplay} from '../../store/types';
-import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
+import {
+    DIALOG_DS_FIELD_COLORS,
+    DIALOG_DS_FIELD_FORMATTING,
+    DIALOG_DS_FIELD_INSPECTOR,
+} from '../dialogs';
 
 import {DisplaySettings} from './components';
 import {FieldAction} from './constants';
@@ -241,6 +245,14 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             }
             case FieldAction.Remove: {
                 this.props.removeField({field});
+                break;
+            }
+            case FieldAction.Color: {
+                this.props.openDialog({id: DIALOG_DS_FIELD_COLORS, props: {field}});
+                break;
+            }
+            case FieldAction.Formatting: {
+                this.props.openDialog({id: DIALOG_DS_FIELD_FORMATTING, props: {field}});
                 break;
             }
         }
