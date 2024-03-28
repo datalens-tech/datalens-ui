@@ -19,6 +19,8 @@ export type ApiV2ResultData = {
         query: string;
     }[];
     data_export_forbidden?: boolean;
+    pivot_data?: unknown;
+    notifications?: unknown[];
 };
 
 export type ApiV2ResultField = {
@@ -68,6 +70,7 @@ export type ApiV2RequestPivotPagination = {
     limit_rows: number | undefined;
 };
 export type ApiV2ResponseField = {
+    id?: string;
     title: string;
     data_type: string;
     ref: ApiV2Ref;
