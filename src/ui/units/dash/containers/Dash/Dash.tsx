@@ -1,7 +1,8 @@
 import React from 'react';
 
+import {Link} from '@gravity-ui/uikit';
 import {AccessRightsUrlOpen} from 'components/AccessRights/AccessRightsUrlOpen';
-import {i18n} from 'i18n';
+import {I18n} from 'i18n';
 import update from 'immutability-helper';
 import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
@@ -12,13 +13,16 @@ import {EntryDialogName, EntryDialogues} from 'ui/components/EntryDialogues';
 import {PageTitle} from 'ui/components/PageTitle';
 import {SlugifyUrl} from 'ui/components/SlugifyUrl';
 import {DL, URL_QUERY} from 'ui/constants';
-import {DatalensGlobalState} from 'ui/index';
+import {DatalensGlobalState, Interpolate} from 'ui/index';
 import {axiosInstance} from 'ui/libs';
 import {NULL_HEADER} from 'ui/libs/axios/axios';
 import {registry} from 'ui/registry';
+import {closeDialog, openWarningDialog} from 'ui/store/actions/dialog';
 import {showToast} from 'ui/store/actions/toaster';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'ui/units/workbooks/store/actions';
-import Utils from 'ui/utils';
+import Utils, {formDocsEndpointDL} from 'ui/utils';
+
+const i18n = I18n.keyset('dash.main.view');
 
 import {
     cleanRevisions,
@@ -222,7 +226,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
     };
 
     unloadConfirmation = (event: BeforeUnloadEvent) => {
-        const message = i18n('dash.main.view', 'toast_unsaved');
+        const message = i18n('toast_unsaved');
         // in particular, we bypass the case when the dashboard scheme has been updated, but there are no editing rights
         // TODO: isEditMode should suffice instead of CanEdit
         if (this.props.isEditMode && this.props.isDraft && this.props.canEdit) {
@@ -311,9 +315,42 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
     }
 
     private showErrorPasteItemFromWorkbook() {
+        const message = (
+            <Interpolate
+                text={i18n('warning_paste-invalid-workbook-entry')}
+                matches={{
+                    link(match) {
+                        return (
+                            <Link
+                                view="normal"
+                                target="_blank"
+                                href={formDocsEndpointDL('/workbooks-collections/migrations')}
+                            >
+                                {match}
+                            </Link>
+                        );
+                    },
+                }}
+            />
+        );
+
         this.props.showToast({
-            title: i18n('dash.main.view', 'toast_paste-invalid-workbook-entry'),
+            title: i18n('toast_paste-invalid-workbook-entry'),
             type: 'error',
+            actions: [
+                {
+                    label: i18n('label_details'),
+                    onClick: () => {
+                        this.props.openWarningDialog({
+                            confirmOnEnterPress: true,
+                            isWarningConfirm: true,
+                            message,
+                            confirmButtonView: 'normal',
+                            onApply: this.props.closeDialog,
+                        });
+                    },
+                },
+            ],
         });
     }
 
@@ -398,6 +435,8 @@ const mapDispatchToProps = {
     addWorkbookInfo,
     resetWorkbookPermissions,
     showToast,
+    openWarningDialog,
+    closeDialog,
 };
 
 export const DashWrapper = connect(mapStateToProps, mapDispatchToProps)(DashComponent);

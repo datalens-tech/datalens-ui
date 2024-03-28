@@ -83,4 +83,8 @@
     &__button_last {
         padding-right: 4px;
     }
+
+    &__button_first#{&}__button_last:not(&__button_warning) {
+        flex: 1;
+    }
 }
