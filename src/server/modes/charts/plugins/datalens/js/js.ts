@@ -328,7 +328,6 @@ function mergeData({data, links}: MergeDataArgs) {
                     }
                 });
 
-                // let targetRow = possibleTargetRows[0];
                 if (!targetRow || targetRow.length + unlinkedFields.length > mergedOrder.length) {
                     targetRow = possibleTargetRow;
 
