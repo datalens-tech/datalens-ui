@@ -298,6 +298,7 @@ export interface DatasetAvatarRelation {
     managed_by: string;
     virtual: boolean;
     conditions: DatasetAvatarRelationCondition[];
+    required: boolean;
 }
 
 export interface DatasetAvatarRelationCondition {
