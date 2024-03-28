@@ -1,0 +1,11 @@
+.tree-cell {
+    &__btn {
+        margin-right: 4px;
+        height: 16px;
+        width: 16px;
+        line-height: 16px;
+
+        --yc-button-height: 16px;
+        --yc-button-width: 12px;
+    }
+}

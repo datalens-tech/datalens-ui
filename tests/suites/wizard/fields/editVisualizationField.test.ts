@@ -1,9 +1,9 @@
-import {Page} from '@playwright/test';
+import {Page, expect} from '@playwright/test';
 
 import {WizardVisualizationId} from '../../../../src/shared';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
@@ -42,12 +42,7 @@ datalensTest.describe('Wizard Fields', () => {
 
         await wizardPage.fieldEditor.clickToApplyButton();
 
-        await waitForCondition(async () => {
-            const cell = await wizardPage.page.$(
-                '.chartkit-table__content.chartkit-table__content_text',
-            );
-
-            return (await cell?.innerText()) === 'Furniture123';
-        });
+        const cellContent = wizardPage.chartkit.getTableLocator().locator('tbody td').first();
+        await expect(cellContent).toHaveText('Furniture123');
     });
 });

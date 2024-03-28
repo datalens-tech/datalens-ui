@@ -6,9 +6,9 @@ import {Icon} from '@gravity-ui/uikit';
 function getSortingIcon(sorting: 'asc' | 'desc' | false) {
     switch (sorting) {
         case 'desc':
-            return CaretUp;
-        case 'asc':
             return CaretDown;
+        case 'asc':
+            return CaretUp;
         default:
             return null;
     }

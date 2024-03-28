@@ -8,14 +8,14 @@ import VisualizationItemDialog from '../wizard/VisualizationItemDialog';
 import {CommonSelectors} from '../constants/common-selectors';
 
 import PreviewTable from './PreviewTable';
-import {NavigationMinimalPlaceSelectQa} from '../../../src/shared/constants/qa/components';
 import {
     ViewSetupQA,
     TabQueryQA,
     TabParamsQA,
     DialogQLParameterQA,
     ScreenEditorQA,
-} from '../../../src/shared/constants/qa/ql';
+    NavigationMinimalPlaceSelectQa,
+} from '../../../src/shared';
 import SectionVisualization from '../wizard/SectionVisualization';
 import {ColumnSettings} from '../wizard/ColumnSettings';
 
@@ -239,7 +239,10 @@ class QLPage extends ChartPage {
 
             this.page.waitForSelector('.chartkit .chartkit-markup').then(resolve, () => undefined);
 
-            this.page.waitForSelector('.chartkit .chartkit-table').then(resolve, () => undefined);
+            this.chartkit
+                .getTableLocator()
+                .waitFor()
+                .then(resolve, () => undefined);
 
             setTimeout(reject, 30 * 1000);
         });

@@ -24,7 +24,7 @@ datalensTest.describe('Wizard', () => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
-            const chart = chartContainer.locator('.chartkit-table');
+            const chart = wizardPage.chartkit.getTableLocator();
             const fieldFormula = 'datepart([Order_date], "day") - 16';
 
             // The two-color gradient coloring

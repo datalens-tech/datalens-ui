@@ -2,7 +2,8 @@ import React from 'react';
 
 import {cleanup, fireEvent, render} from '@testing-library/react';
 
-import Paginator, {PaginatorQa} from '../Paginator/Paginator';
+import {ChartKitTableQa} from '../../../../../../../../../shared';
+import Paginator from '../Paginator/Paginator';
 
 afterEach(cleanup);
 
@@ -15,8 +16,8 @@ describe('chartkit/Table/Paginator', () => {
 
     const setup = () => {
         const utils = render(<Paginator page={page} onChange={handleChange} />);
-        const prevButton = utils.getByTestId(PaginatorQa.PREV);
-        const nextButton = utils.getByTestId(PaginatorQa.NEXT);
+        const prevButton = utils.getByTestId(ChartKitTableQa.PaginatorPrevPageButton);
+        const nextButton = utils.getByTestId(ChartKitTableQa.PaginatorNextPageButton);
         const input = utils.getByRole('spinbutton');
 
         return {

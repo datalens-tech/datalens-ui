@@ -1,7 +1,7 @@
 import {expect} from '@playwright/test';
 
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
-import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
+import {WizardVisualizationId} from '../../../../src/shared';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
@@ -96,7 +96,9 @@ datalensTest.describe('Wizard - Column Settings dialog', () => {
             );
             await (await apiRunRequest).response();
 
-            const prev = await wizardPage.chartkit.getColumnsWidth();
+            const table = wizardPage.chartkit.getTableLocator();
+            const hierarchyColumn = table.locator('th', {hasText: 'Category'}).first();
+            const prev = await hierarchyColumn.boundingBox();
 
             apiRunRequest = wizardPage.page.waitForRequest(
                 (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,
@@ -108,9 +110,8 @@ datalensTest.describe('Wizard - Column Settings dialog', () => {
             await wizardPage.columnSettings.apply();
             await (await apiRunRequest).response();
 
-            const current = await wizardPage.chartkit.getColumnsWidth();
-
-            await expect(current).not.toEqual(prev);
+            const current = await hierarchyColumn.boundingBox();
+            await expect(current?.width).not.toEqual(prev?.width);
         },
     );
 });

@@ -17,7 +17,8 @@ datalensTest.describe('Wizard - Sorting in trees', () => {
     datalensTest('Trees should be sorted by all levels', async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
 
-        await wizardPage.chartkit.clickToCellWithText('2014');
+        const table = wizardPage.chartkit.getTableLocator();
+        await table.locator('td', {hasText: '2014'}).click();
         await wizardPage.chartkit.waitUntilLoaderExists();
 
         let rows = await wizardPage.chartkit.getRowsTexts();

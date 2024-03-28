@@ -50,7 +50,8 @@ datalensTest.describe('Wizard Hierarchy', () => {
                 firstHierarchy.name,
             );
 
-            await page.click('td.chartkit-table__cell_type_text >> text=100100');
+            const cell = wizardPage.chartkit.getTableLocator().getByText('100100');
+            await cell.click();
 
             await waitForCondition(async () => {
                 const breadcrumbs = await wizardPage.chartkit.getBreadcrumbs();

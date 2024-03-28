@@ -232,7 +232,7 @@ export type TableWidget = WidgetBaseWithData &
             footer?: TableRow[];
         };
         config?: {
-            title?: TableTitle;
+            title?: string | TableTitle;
             sort?: string;
             order?: 'asc' | 'desc';
             settings?: DataTableProps<DataTableData>['settings'];
