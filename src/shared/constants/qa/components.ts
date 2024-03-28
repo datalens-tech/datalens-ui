@@ -48,6 +48,7 @@ export enum DialogTabsQA {
     Save = 'dialog-tabs-save-button',
     Cancel = 'dialog-tabs-cancel-button',
     EditTabItem = 'edit-tab-input',
+    ReadOnlyTabItem = 'read-only-tab-item',
 }
 
 export enum EntryDialogQA {

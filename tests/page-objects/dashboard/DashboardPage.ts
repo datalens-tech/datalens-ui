@@ -979,7 +979,10 @@ class DashboardPage extends BasePage {
         await this.clickTabs();
         await this.page.click(slct(DialogTabsQA.RowAdd));
         if (name) {
-            await this.page.getByRole('listitem').last().dblclick();
+            await this.page
+                .locator(`${slct(DialogTabsQA.ReadOnlyTabItem)}`)
+                .last()
+                .dblclick();
             await this.page.locator(`${slct(DialogTabsQA.EditTabItem)} input`).fill(name);
         }
         await this.page.click(slct(DialogTabsQA.Save));
