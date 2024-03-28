@@ -164,10 +164,6 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
         const handlePaginationChange = (page: number) => changeParams({_page: String(page)});
 
         const handleSortingChange: TableProps['onSortingChange'] = (args) => {
-            if (!isPaginationEnabled) {
-                return;
-            }
-
             const {cell, sortOrder} = args;
             const headCell = cell as HeadCell;
             const params = {
@@ -235,7 +231,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                 data-qa={ChartKitTableQa.Widget}
             >
                 {titleText && <div className={b('title')}>{titleText}</div>}
-                <div className={b('table-wrapper', {highlightRows: shouldHighlightRows})}>
+                <div className={b('table-wrapper', {'highlight-rows': shouldHighlightRows})}>
                     <Table
                         data={tableData}
                         noData={{text: i18n('chartkit-table', 'message-no-data')}}
@@ -244,7 +240,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                             sticky: true,
                         }}
                         manualSorting={isPaginationEnabled}
-                        onSortingChange={handleSortingChange}
+                        onSortingChange={isPaginationEnabled ? undefined : handleSortingChange}
                     />
                 </div>
                 {isPaginationEnabled && (

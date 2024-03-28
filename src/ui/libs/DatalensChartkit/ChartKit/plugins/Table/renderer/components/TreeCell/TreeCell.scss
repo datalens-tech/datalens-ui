@@ -5,9 +5,7 @@
         width: 16px;
         line-height: 16px;
 
-        .yc-button__icon {
-            height: 16px;
-            width: 12px;
-        }
+        --yc-button-height: 16px;
+        --yc-button-width: 12px;
     }
 }

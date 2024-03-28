@@ -46,4 +46,6 @@ export const enum ChartKitTableQa {
     Paginator = 'chartkit-table-paginator',
     PaginatorPageInput = 'chartkit-table-paginator-page-input',
     PaginatorRange = 'chartkit-table-paginator-range',
+    PaginatorPrevPageButton = 'chartkit-table-paginator-prev-btn',
+    PaginatorNextPageButton = 'chartkit-table-paginator-next-btn',
 }

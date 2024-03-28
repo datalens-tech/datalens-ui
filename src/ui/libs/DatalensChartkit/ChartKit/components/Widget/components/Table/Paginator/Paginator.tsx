@@ -25,10 +25,6 @@ interface ArrowButtonProps {
 
 const b = block('chartkit-table-paginator');
 export const START_PAGE = 1;
-export const PaginatorQa = {
-    PREV: 'chartkit-table-paginator-prev-btn',
-    NEXT: 'chartkit-table-paginator-next-btn',
-};
 
 const preparePageValue = (page: PaginatorProps['page']) => {
     if (!page) {
@@ -96,7 +92,7 @@ const Paginator: React.FC<PaginatorProps> = ({page, rowsCount, limit, onChange})
         <div className={b()} data-qa={ChartKitTableQa.Paginator}>
             <ArrowButton
                 page={currentPage}
-                qa={PaginatorQa.PREV}
+                qa={ChartKitTableQa.PaginatorPrevPageButton}
                 reversed={true}
                 onChange={onChange}
             />
@@ -109,7 +105,11 @@ const Paginator: React.FC<PaginatorProps> = ({page, rowsCount, limit, onChange})
                 onKeyPress={onInputPressEnter}
                 qa={ChartKitTableQa.PaginatorPageInput}
             />
-            <ArrowButton page={currentPage} qa={PaginatorQa.NEXT} onChange={onChange} />
+            <ArrowButton
+                page={currentPage}
+                qa={ChartKitTableQa.PaginatorNextPageButton}
+                onChange={onChange}
+            />
             {Boolean(limit && rowsCount) && (
                 <span className={b('range')} data-qa={ChartKitTableQa.PaginatorRange}>
                     {getRange(currentPage, limit as number, rowsCount as number)}

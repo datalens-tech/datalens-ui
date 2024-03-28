@@ -1,10 +1,10 @@
 import type {StringParams, TableCommonCell} from 'shared';
 
-function isSubarray(master: string[], sub: string[]) {
+function isSubarray(main: string[], sub: string[]) {
     return (
-        master.length >= sub.length &&
+        main.length >= sub.length &&
         sub.every((_, subIndex) => {
-            return master[subIndex] === sub[subIndex];
+            return main[subIndex] === sub[subIndex];
         })
     );
 }
