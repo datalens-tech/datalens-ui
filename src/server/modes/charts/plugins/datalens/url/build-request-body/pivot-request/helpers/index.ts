@@ -209,7 +209,7 @@ const isSortSupported = (meta: BackendPivotTableCellCustom, measures: number, gu
 };
 
 const getStructureWithSortingFromField = (args: GetStructureWithSortingFromFieldArgs) => {
-    const {ChartEditor, field, rowsReq, columnsReq, measuresReq, totals} = args;
+    const {ChartEditor, field, rowsReq, columnsReq, measuresReq} = args;
     const params = ChartEditor.getSortParams();
     const meta = params.meta as
         | {column: BackendPivotTableCellCustom; row: BackendPivotTableCellCustom}
@@ -227,18 +227,14 @@ const getStructureWithSortingFromField = (args: GetStructureWithSortingFromField
     const isRowExists = !isEmpty(row);
 
     const sorting: ApiV2RequestFieldSorting = {};
-    const hasTotals = totals?.rows.length || totals?.columns.length;
-    const isSortingEnabled = !hasTotals;
 
     const isRowFieldsChanged = isFieldsChanged(row, rowsReq);
     const isColumnFieldsChanged = isFieldsChanged(column, columnsReq);
 
     const isColumnSortSupported = Boolean(
-        isSortingEnabled && isSortSupported(column, measuresReq.length, field.ref.id),
+        isSortSupported(column, measuresReq.length, field.ref.id),
     );
-    const isRowSortSupported = Boolean(
-        isSortingEnabled && isSortSupported(row, measuresReq.length, field.ref.id),
-    );
+    const isRowSortSupported = Boolean(isSortSupported(row, measuresReq.length, field.ref.id));
 
     if (
         !isColumnFieldsChanged &&
