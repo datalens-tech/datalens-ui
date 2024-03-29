@@ -15,13 +15,11 @@
     $dialogFooterPaddingHorizontal: $dialogPaddingHorizontal;
     $dialogFooterPaddingVertical: 28px;
 
-    // TODO: check uikit6
     border-radius: 5px;
     overflow: hidden;
     flex: 1;
     display: flex;
 
-    // TODO: check uikit6
     &__header {
         padding: #{$dialogHeaderPaddingTop} #{$dialogHeaderPaddingHorizontal} #{$dialogHeaderPaddingBottom};
     }
@@ -31,7 +29,6 @@
     }
 
     &__sidebar-body {
-        // TODO: check uikit6
         padding: 0;
         overflow: hidden;
     }
@@ -48,12 +45,10 @@
         }
     }
 
-    // TODO: check uikit6
     &__content-body {
         padding: #{$dialogBodyPaddingTo} #{$dialogBodyPaddingHorizontal} #{$dialogBodyPaddingBottom};
     }
 
-    // TODO: check uikit6
     & .g-dialog-footer {
         padding: #{$dialogFooterPaddingVertical} #{$dialogFooterPaddingHorizontal};
     }
