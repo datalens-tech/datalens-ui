@@ -38,12 +38,13 @@ export const TableHead = (props: Props) => {
                                 : undefined;
                             const colSpan = header.colSpan > 1 ? header.colSpan : undefined;
                             const align = colSpan ? 'center' : 'left';
+                            const sortable = header.column.getCanSort();
 
                             return (
                                 <th
                                     key={header.id}
                                     className={b('th', {
-                                        clickable: header.column.getCanSort(),
+                                        clickable: sortable,
                                         'fixed-size': isFixedSize,
                                         align,
                                     })}
@@ -52,7 +53,7 @@ export const TableHead = (props: Props) => {
                                     colSpan={colSpan}
                                     rowSpan={rowSpan}
                                 >
-                                    <div className={b('th-content')}>
+                                    <div className={b('th-content', {sortable})}>
                                         {flexRender(
                                             header.column.columnDef.header,
                                             header.getContext(),

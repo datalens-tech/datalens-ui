@@ -176,9 +176,10 @@ export class Table extends React.PureComponent<TableProps, TableState> {
             return null;
         }
 
+        const tableTitle = typeof title === 'string' ? {text: title} : title;
         return (
-            <div className={b('title')} style={camelCaseCss(title.style)}>
-                {title.text || title}
+            <div className={b('title')} style={camelCaseCss(tableTitle.style)}>
+                {tableTitle.text}
             </div>
         );
     }
