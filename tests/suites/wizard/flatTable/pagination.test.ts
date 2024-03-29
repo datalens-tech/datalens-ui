@@ -42,7 +42,7 @@ datalensTest.describe('Wizard :: Flat table :: Pagination', () => {
             // Checking the default state of the paginator input
             const paginatorInput = page
                 .locator(slct(ChartKitTableQa.PaginatorPageInput))
-                .getByRole('textbox');
+                .locator('input');
             await expect(paginatorInput).toHaveValue(String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
 
             // Check the default state of the first cell of the table
@@ -87,7 +87,7 @@ datalensTest.describe('Wizard :: Flat table :: Pagination', () => {
             // Checking the default state of the paginator input
             const paginatorInput = page
                 .locator(slct(ChartKitTableQa.PaginatorPageInput))
-                .getByRole('textbox');
+                .locator('input');
             await expect(paginatorInput).toHaveValue(String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
 
             // Check the default state of the first cell of the table
@@ -138,7 +138,7 @@ datalensTest.describe('Wizard :: Flat table :: Pagination', () => {
             // Checking the default state of the paginator input
             const paginatorInput = page
                 .locator(slct(ChartKitTableQa.PaginatorPageInput))
-                .getByRole('textbox');
+                .locator('input');
             await expect(paginatorInput).toHaveValue(String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
 
             // Check the default state of the first cell of the table
@@ -188,7 +188,7 @@ datalensTest.describe('Wizard :: Flat table :: Pagination', () => {
             // Checking the default state of the paginator input
             const paginatorInput = page
                 .locator(slct(ChartKitTableQa.PaginatorPageInput))
-                .getByRole('textbox');
+                .locator('input');
             await expect(paginatorInput).toHaveValue(String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
 
             // Check the default state of the first cell of the table

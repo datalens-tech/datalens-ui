@@ -243,7 +243,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                             sticky: true,
                         }}
                         manualSorting={isPaginationEnabled}
-                        onSortingChange={isPaginationEnabled ? undefined : handleSortingChange}
+                        onSortingChange={isPaginationEnabled ? handleSortingChange : undefined}
                     />
                 </div>
                 {isPaginationEnabled && (
