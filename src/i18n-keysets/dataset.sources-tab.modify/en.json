@@ -8,7 +8,7 @@
   "button_details": "Learn more",
   "button_retry": "Retry",
   "field_placeholder-title": "Name",
-  "hint_optimize-join": "Выключение оптимизации делает эту связь в SQL запросах обязательной и может увеличить время выполнения запроса",
+  "hint_optimize-join": "Disabling optimization makes the link mandatory and may increase query execution time.",
   "label_chydb-database-example": "/ru/home/user/mydb",
   "label_chydb-table-example": "/ru/home/user/mydb/test_table",
   "label_chydb-table-path": "Path to table in YDB",
