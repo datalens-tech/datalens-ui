@@ -10,6 +10,7 @@ import moment from 'moment';
 import {
     BarTableCell,
     BarViewOptions,
+    ChartKitTableQa,
     CommonTableColumn,
     DateTableColumn,
     DiffTableColumn,
@@ -272,6 +273,7 @@ export function valueFormatter(
                 ...camelCaseCss(options.contentCss),
             }}
             key={Math.random()}
+            data-qa={ChartKitTableQa.CellContent}
         >
             {button}
             {shouldShowTooltip ? (
