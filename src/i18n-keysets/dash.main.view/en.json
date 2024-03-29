@@ -11,5 +11,5 @@
   "label_updating": "Updating",
   "toast_paste-invalid-workbook-entry": "Paste objects links to different workbook is restricted",
   "toast_unsaved": "There are unsaved changes on the page. Are you sure?",
-  "warning_paste-invalid-workbook-entry": "If you want to continue work with current object please migrate all linked objects <link>manually</link>"
+  "warning_paste-invalid-workbook-entry": "If you want to continue work with current object please migrate all linked objects manually. <link>Migrating objects to workbooks</link>"
 }
