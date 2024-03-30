@@ -27,6 +27,7 @@ class NavigationInline extends React.Component {
         onSidebarItemClick: PropTypes.func,
         getPlaceParameters: PropTypes.func.isRequired,
         hideSidebar: PropTypes.bool,
+        onlyWorkbooksMode: PropTypes.bool,
     };
     state = {
         breadCrumbs: [],
@@ -63,7 +64,11 @@ class NavigationInline extends React.Component {
                     onChangeLocation={this.props.onChangeLocation}
                     currentPageEntry={this.props.currentPageEntry}
                 />
-                <CreateEntry place={place} onClick={onCreateMenuClick} />
+                <CreateEntry
+                    place={place}
+                    onlyWorkbooksMode={this.props.onlyWorkbooksMode}
+                    onClick={onCreateMenuClick}
+                />
             </div>
         );
     }
