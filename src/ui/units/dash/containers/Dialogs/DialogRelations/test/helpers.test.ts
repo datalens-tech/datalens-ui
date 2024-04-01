@@ -12,8 +12,6 @@ jest.mock('ui', () => {
     };
 });
 
-const widgetId = 'w';
-
 const connections = {
     empty: [],
     onlyInput: [{from: 'b', kind: 'ignore', to: 'w'}] as Config['connections'],
@@ -21,14 +19,20 @@ const connections = {
 
 const changed = {
     input: {
-        a: RELATION_TYPES.input as RelationType,
+        w: {
+            a: RELATION_TYPES.input as RelationType,
+        },
     },
     multi: {
-        a: RELATION_TYPES.input as RelationType,
-        b: RELATION_TYPES.output as RelationType,
+        w: {
+            a: RELATION_TYPES.input as RelationType,
+            b: RELATION_TYPES.output as RelationType,
+        },
     },
     ignores: {
-        b: RELATION_TYPES.ignore as RelationType,
+        w: {
+            b: RELATION_TYPES.ignore as RelationType,
+        },
     },
 };
 
@@ -56,30 +60,26 @@ describe('Dash/DialogRelations', () => {
     test(`Check the update of relations after changing: connections=${JSON.stringify(
         connections.empty,
     )}; changed: ${JSON.stringify(changed.input)}`, () => {
-        expect(getUpdatedRelations(connections.empty, widgetId, changed.input)).toEqual(
-            resultObj.emptyInput,
-        );
+        expect(getUpdatedRelations(connections.empty, changed.input)).toEqual(resultObj.emptyInput);
     });
 
     test(`Check the update of relations after changing: connections=${JSON.stringify(
         connections.onlyInput,
     )}; changed: ${JSON.stringify(changed.input)}`, () => {
-        expect(getUpdatedRelations(connections.onlyInput, widgetId, changed.input)).toEqual(
+        expect(getUpdatedRelations(connections.onlyInput, changed.input)).toEqual(
             resultObj.otherInput,
         );
     });
     test(`Check the update of relations after changing: connections=${JSON.stringify(
         connections.onlyInput,
     )}; changed: ${JSON.stringify(changed.input)}`, () => {
-        expect(getUpdatedRelations(connections.onlyInput, widgetId, changed.multi)).toEqual(
-            resultObj.multi,
-        );
+        expect(getUpdatedRelations(connections.onlyInput, changed.multi)).toEqual(resultObj.multi);
     });
 
     test(`Check the update of relations after changing: connections=${JSON.stringify(
         connections.empty,
     )}; changed: ${JSON.stringify(changed.ignores)}`, () => {
-        expect(getUpdatedRelations(connections.empty, widgetId, changed.ignores)).toEqual(
+        expect(getUpdatedRelations(connections.empty, changed.ignores)).toEqual(
             resultObj.emptyIgnore,
         );
     });
@@ -87,7 +87,7 @@ describe('Dash/DialogRelations', () => {
     test(`Check the update of relations after changing: connections=${JSON.stringify(
         connections.onlyInput,
     )}; changed: ${JSON.stringify(changed.ignores)}`, () => {
-        expect(getUpdatedRelations(connections.onlyInput, widgetId, changed.ignores)).toEqual(
+        expect(getUpdatedRelations(connections.onlyInput, changed.ignores)).toEqual(
             resultObj.inputIgnore,
         );
     });
