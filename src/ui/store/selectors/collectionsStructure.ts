@@ -40,6 +40,15 @@ const selectUpdateWorkbook = (state: DatalensGlobalState) =>
 const selectUpdateCollection = (state: DatalensGlobalState) =>
     state.collectionsStructure.updateCollection;
 
+const selectDeleteCollection = (state: DatalensGlobalState) =>
+    state.collectionsStructure.deleteCollection;
+
+const selectDeleteWorkbook = (state: DatalensGlobalState) =>
+    state.collectionsStructure.deleteWorkbook;
+
+const selectAddDemoWorkbook = (state: DatalensGlobalState) =>
+    state.collectionsStructure.addDemoWorkbook;
+
 // Rights at the root of the structure
 export const selectRootPermissionsData = createSelector(
     [selectGetRootCollectionPermissions],
@@ -125,5 +134,23 @@ export const selectUpdateCollectionIsLoading = createSelector(
 // Indication of the process of changing the workbook
 export const selectUpdateWorkbookIsLoading = createSelector(
     selectUpdateWorkbook,
+    (result) => result.isLoading,
+);
+
+// Indication of the collection deletion process
+export const selectDeleteCollectionIsLoading = createSelector(
+    selectDeleteCollection,
+    (result) => result.isLoading,
+);
+
+// Indication of the process of changing the workbook
+export const selectDeleteWorkbookIsLoading = createSelector(
+    selectDeleteWorkbook,
+    (result) => result.isLoading,
+);
+
+// Indication of the process of adding a demo workbook
+export const selectAddDemoWorkbookIsLoading = createSelector(
+    selectAddDemoWorkbook,
     (result) => result.isLoading,
 );

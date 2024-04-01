@@ -6,6 +6,7 @@ import {EntryScope} from 'shared';
 import {WorkbookWithPermissions} from 'shared/schema';
 import {AppDispatch} from 'ui/store';
 
+import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {
     getAllWorkbookEntriesSeparately,
     getWorkbookEntries,
@@ -39,13 +40,13 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
     const chunks = useChunkedEntries(entries);
 
     React.useEffect(() => {
-        (async () => {
-            if (workbook && workbook.workbookId === workbookId) {
+        if (workbook?.workbookId === workbookId) {
+            (async () => {
                 dispatch(resetWorkbookEntries());
 
                 const scopesForRequest = [EntryScope.Dash, EntryScope.Widget];
 
-                if (workbook.permissions.view) {
+                if (workbook?.permissions.view) {
                     scopesForRequest.push(EntryScope.Dataset, EntryScope.Connection);
                 }
 
@@ -92,9 +93,9 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                 setMapErrors(errors);
 
                 setIsLoading(false);
-            }
-        })();
-    }, [dispatch, filters, workbook, workbookId]);
+            })();
+        }
+    }, [dispatch, filters, workbook?.workbookId, workbook?.permissions.view, workbookId]);
 
     const loadMoreEntries = React.useCallback(
         (entryScope: EntryScope) => {
@@ -197,17 +198,19 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
     }
 
     return (
-        <WorkbookEntriesTable
-            refreshEntries={refreshEntries}
-            workbook={workbook}
-            entries={entries}
-            loadMoreEntries={loadMoreEntries}
-            retryLoadEntries={retryLoadEntries}
-            mapTokens={mapTokens}
-            mapErrors={mapErrors}
-            mapLoaders={mapLoaders}
-            chunks={chunks}
-        />
+        <AnimateBlock>
+            <WorkbookEntriesTable
+                refreshEntries={refreshEntries}
+                workbook={workbook}
+                entries={entries}
+                loadMoreEntries={loadMoreEntries}
+                retryLoadEntries={retryLoadEntries}
+                mapTokens={mapTokens}
+                mapErrors={mapErrors}
+                mapLoaders={mapLoaders}
+                chunks={chunks}
+            />
+        </AnimateBlock>
     );
 });
 

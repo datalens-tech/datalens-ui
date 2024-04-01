@@ -25,20 +25,20 @@ const SORT_TYPE_VALUES: Record<
     {orderField: OrderWorkbookEntriesField; orderDirection: OrderDirection}
 > = {
     [SortType.FirstNew]: {
-        orderField: OrderWorkbookEntriesField.CreatedAt,
-        orderDirection: OrderDirection.Desc,
+        orderField: 'createdAt',
+        orderDirection: 'desc',
     },
     [SortType.FirstOld]: {
-        orderField: OrderWorkbookEntriesField.CreatedAt,
-        orderDirection: OrderDirection.Asc,
+        orderField: 'createdAt',
+        orderDirection: 'asc',
     },
     [SortType.AlphabetAsc]: {
-        orderField: OrderWorkbookEntriesField.Name,
-        orderDirection: OrderDirection.Asc,
+        orderField: 'name',
+        orderDirection: 'asc',
     },
     [SortType.AlphabetDesc]: {
-        orderField: OrderWorkbookEntriesField.Name,
-        orderDirection: OrderDirection.Desc,
+        orderField: 'name',
+        orderDirection: 'desc',
     },
 };
 

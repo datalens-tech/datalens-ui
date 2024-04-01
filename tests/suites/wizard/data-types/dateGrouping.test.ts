@@ -1,5 +1,6 @@
 import {Page} from '@playwright/test';
 import _isEqual from 'lodash/isEqual';
+import flatten from 'lodash/flatten';
 
 import {
     DialogFieldGroupingSelectorValuesQa,
@@ -9,7 +10,7 @@ import {
 } from '../../../../src/shared';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, slct} from '../../../utils';
+import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
@@ -26,6 +27,10 @@ datalensTest.describe('Wizard - date grouping', () => {
 
     datalensTest('Grouping dates by years when creating a new chart', async ({page}) => {
         const wizardPage = new WizardPage({page});
+        await wizardPage.sectionVisualization.addFieldByClick(
+            PlaceholderName.FlatTableColumns,
+            'DATE',
+        );
         const expectedBeforeGrouping = [
             '03.01.2014',
             '04.01.2014',
@@ -130,29 +135,8 @@ datalensTest.describe('Wizard - date grouping', () => {
         ];
         const expectedAfterGrouping = ['01.01.2014', '01.01.2015', '01.01.2016', '01.01.2017'];
 
-        // TODO: think about putting a common method in BasePage
-        // so far, the TK for this method has not been formed exactly
-        const getReceivedValuesFromTable = async () => {
-            const elements = await wizardPage.page.$$('td.chartkit-table__cell_type_date');
-
-            return Promise.all(elements.map((el) => el.innerText()));
-        };
-
-        await wizardPage.sectionVisualization.addFieldByClick(
-            PlaceholderName.FlatTableColumns,
-            'DATE',
-        );
-
-        await wizardPage.waitForSelector('td.chartkit-table__cell_type_date');
-
-        const valuesBeforeGrouping = await getReceivedValuesFromTable();
-
-        if (!_isEqual(valuesBeforeGrouping, expectedBeforeGrouping)) {
-            console.log('\x1b[32m', `expected: ${expectedBeforeGrouping}`);
-            console.log('\x1b[31m', `received: ${valuesBeforeGrouping}`);
-
-            throw new Error('Failed before grouping');
-        }
+        const tableContent = await wizardPage.chartkit.getRowsTexts();
+        expect(flatten(tableContent)).toEqual(expectedBeforeGrouping);
 
         await wizardPage.openPlaceholderFieldSettings(PlaceholderName.FlatTableColumns, 'DATE');
 
@@ -161,27 +145,12 @@ datalensTest.describe('Wizard - date grouping', () => {
         await wizardPage.page.click(slct(DialogFieldGroupingSelectorValuesQa.TruncYear));
         await wizardPage.page.click(`${slct('field-dialog-apply')}`);
 
-        let attempts = 30;
-
-        // Check once a second whether the chart has been updated
-        while (attempts) {
-            const valuesAfterGrouping = await getReceivedValuesFromTable();
-
-            attempts -= 1;
-
-            if (_isEqual(valuesAfterGrouping, expectedAfterGrouping)) {
-                break;
-            }
-
-            if (attempts === 0) {
-                console.log('\x1b[32m', `expected: ${expectedAfterGrouping}`);
-                console.log('\x1b[31m', `received: ${valuesAfterGrouping}`);
-
-                throw new Error('Failed after grouping');
-            }
-
-            await wizardPage.page.waitForTimeout(1000);
-        }
+        await waitForCondition(async () => {
+            return _isEqual(
+                flatten(await wizardPage.chartkit.getRowsTexts()),
+                expectedAfterGrouping,
+            );
+        });
     });
 
     datalensTest(

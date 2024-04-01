@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Collection} from 'shared/schema/us/types/collections';
 import {Workbook} from 'shared/schema/us/types/workbooks';
@@ -19,6 +20,8 @@ export type Props = {
 };
 
 export const Item = React.memo<Props>(({item, active, canSelectWorkbook, onSelect}) => {
+    const theme = useThemeType();
+
     const isWorkbook = 'workbookId' in item;
 
     return (
@@ -35,7 +38,10 @@ export const Item = React.memo<Props>(({item, active, canSelectWorkbook, onSelec
                 {isWorkbook ? (
                     <WorkbookIcon title={item.title} size="s" />
                 ) : (
-                    <IconById id="collectionColored" size={20} />
+                    <IconById
+                        id={theme === 'dark' ? 'collectionColoredDark' : 'collectionColored'}
+                        size={20}
+                    />
                 )}
             </div>
             <div className={b('title')}>{item.title}</div>

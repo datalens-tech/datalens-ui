@@ -28,11 +28,12 @@ export function getCellOnClickHandler(args: {
 
     const handleCellClick: Column<DataTableData>['onClick'] = ({row}, col, event) => {
         const onClick = getCellOnClick(row, col.name);
+        const cell = row && col.name ? row[col.name] : undefined;
         const cellActionParams = actionParamsData
             ? getActionParams({
                   actionParamsData,
                   row,
-                  column: col,
+                  cell,
                   head,
                   metaKey: event.metaKey,
                   rows,

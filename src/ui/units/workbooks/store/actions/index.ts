@@ -50,6 +50,7 @@ import {
     RESET_WORKBOOK_PERMISSIONS,
     RESET_WORKBOOK_STATE,
     SET_CREATE_WORKBOOK_ENTRY_TYPE,
+    SET_WORKBOOK,
 } from '../constants';
 
 type GetWorkbookLoadingAction = {
@@ -95,6 +96,22 @@ export const getWorkbook = ({workbookId}: {workbookId: string}) => {
                 error,
             });
         }
+    };
+};
+
+type SetWorkbookAction = {
+    type: typeof SET_WORKBOOK;
+    data: {
+        workbook: WorkbookWithPermissions;
+    };
+};
+
+export const setWorkbook = (workbook: WorkbookWithPermissions) => {
+    return {
+        type: SET_WORKBOOK,
+        data: {
+            workbook,
+        },
     };
 };
 
@@ -689,6 +706,7 @@ export const resetWorkbookPermissions = () => {
 
 export type WorkbooksAction =
     | GetWorkbookAction
+    | SetWorkbookAction
     | GetWorkbookBreadcrumbsAction
     | GetWorkbookEntriesAction
     | GetAllWorkbookEntriesSeparatelyAction

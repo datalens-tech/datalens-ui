@@ -26,6 +26,7 @@ export const DynamicValueSelect = ({
     disabled,
     onFilterChange,
     filterable,
+    onRetry,
 }: DynamicValueSelectorProps) => {
     const selectorDialogState = useSelector(selectSelectorDialog);
     const {multiselectable} = selectorDialogState;
@@ -42,6 +43,7 @@ export const DynamicValueSelect = ({
 
     return (
         <SelectFeaturedAsync<any, PaginationType>
+            onRetry={onRetry}
             multiple={multiselectable}
             width="max"
             popupWidth={'fit'}

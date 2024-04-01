@@ -355,6 +355,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetType,
         yandexMapAPIWaiting,
         isLoading,
+        isInit,
         showOverlayWithControlsOnEdit,
         isWidgetMenuDataChanged,
         dataProps,
@@ -481,7 +482,11 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     return (
         <div
             ref={rootNodeRef}
-            className={`${b({...mods, autoheight: isAutoHeightEnabled})}`}
+            className={`${b({
+                ...mods,
+                autoheight: isAutoHeightEnabled,
+                ['wait-for-init']: !isInit,
+            })}`}
             data-qa="chart-widget"
             data-qa-mod={isFullscreen ? 'fullscreen' : ''}
         >

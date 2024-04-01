@@ -283,6 +283,7 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                 ...state,
                 file: initialState.file,
                 gsheet: initialState.gsheet,
+                yadocs: initialState.yadocs,
             };
         }
         case SET_GSHEET_ADD_SECTION_STATE: {

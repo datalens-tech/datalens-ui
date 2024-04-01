@@ -3,6 +3,10 @@
 .dl-dialog-add-control {
     width: 620px;
 
+    & .yc-dialog-footer__children {
+        position: relative;
+    }
+
     &__section {
         margin-top: 15px;
     }
@@ -10,5 +14,13 @@
     &__body {
         min-height: 580px;
         @include dialog-max-height-scroll();
+    }
+
+    &__footer-error {
+        position: absolute;
+        top: -45px;
+        color: var(--g-color-text-danger);
+        font-size: var(--g-text-body-2-font-size);
+        line-height: var(--g-text-body-2-line-height);
     }
 }

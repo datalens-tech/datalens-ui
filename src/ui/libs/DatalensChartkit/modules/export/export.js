@@ -1,8 +1,7 @@
 import {dateTimeParse} from '@gravity-ui/date-utils';
 import moment from 'moment';
-import {getXlsxNumberFormat} from 'shared/modules/format-units/formatUnit';
 
-import {getFormatOptions} from '../../../../../shared';
+import {getFormatOptions, getXlsxNumberFormat, isMarkupItem} from '../../../../../shared';
 import logger from '../../../../libs/logger';
 import {CHARTKIT_WIDGET_TYPE} from '../../ChartKit/components/Widget/Widget';
 import {chartsDataProvider} from '../../index';
@@ -10,7 +9,7 @@ import axiosInstance from '../axios/axios';
 import {EXPORT_FORMATS} from '../constants/constants';
 import LocalStorage from '../localStorage';
 import settings from '../settings/settings';
-import {isMarkupItem, markupToRawString} from '../table';
+import {markupToRawString} from '../table';
 
 const LOCAL_STORAGE_KEY = 'charts-export-state';
 

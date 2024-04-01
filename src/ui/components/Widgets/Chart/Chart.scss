@@ -181,6 +181,12 @@ $fullscreenZIndex: 999;
     }
 
     &_no-tabs {
+        // On mobile devices to trigger intersection observer we need at least 1px of height
+        &#{$class}_wait-for-init {
+            opacity: 0;
+            min-height: 1px;
+        }
+
         // block below: without tabs, maps and metrics
 
         .chartkit-loader__loader_compact {

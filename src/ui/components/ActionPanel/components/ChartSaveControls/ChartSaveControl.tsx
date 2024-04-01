@@ -95,11 +95,12 @@ export const ChartSaveControls: React.FC<ChartSaveControlProps> = (
             ...items,
         ];
     }, [
-        isCurrentRevisionActual,
-        onSaveAndPublishClick,
-        onSaveAsDraftClick,
-        onSaveAsNewClick,
         isNewChart,
+        isLocked,
+        isCurrentRevisionActual,
+        onSaveAsDraftClick,
+        onSaveAndPublishClick,
+        onSaveAsNewClick,
     ]);
 
     const allDropdownItems = React.useMemo(

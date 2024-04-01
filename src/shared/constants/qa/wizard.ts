@@ -1,6 +1,8 @@
 export const enum WizardPageQa {
     SectionPreview = 'preview-chartkit',
     VisualizationSelectPopup = 'visualization-select-popup',
+    UndoButton = 'undo-btn',
+    RedoButton = 'redo-btn',
 }
 
 export const enum SectionDatasetQA {

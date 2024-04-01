@@ -1,9 +1,9 @@
 import {expect} from '@playwright/test';
 
 import QLPage from '../../../../page-objects/ql/QLPage';
-import {openTestPage} from '../../../../utils';
+import {openTestPage, slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
-import {WizardVisualizationId} from '../../../../../src/shared';
+import {ChartKitTableQa, WizardVisualizationId} from '../../../../../src/shared';
 
 datalensTest.describe('QL', () => {
     datalensTest.describe('Flat table', () => {
@@ -25,7 +25,9 @@ datalensTest.describe('QL', () => {
         datalensTest('Column settings - width', async ({page}) => {
             const qlPage = new QLPage({page});
             const previewLoader = page.locator('.grid-loader');
-            const tableCellContent = qlPage.page.locator('.chartkit-table__content');
+            const tableCellContent = page
+                .locator('.chartkit-table__content')
+                .or(page.locator(slct(ChartKitTableQa.CellContent)));
             const {width: prevWidth} = (await tableCellContent.first().boundingBox()) || {};
 
             const firstColumnName = 'city';

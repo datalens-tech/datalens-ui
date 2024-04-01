@@ -41,9 +41,9 @@ function EntryLabel({entry}) {
 EntryLabel.propTypes = {
     entry: PropTypes.shape({
         fake: PropTypes.bool,
-        savedId: PropTypes.string.isRequired,
-        revId: PropTypes.string.isRequired,
-        updatedAt: PropTypes.string.isRequired,
+        savedId: PropTypes.string,
+        revId: PropTypes.string,
+        updatedAt: PropTypes.string,
     }),
 };
 
