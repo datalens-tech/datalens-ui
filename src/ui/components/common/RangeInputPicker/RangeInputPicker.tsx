@@ -85,7 +85,6 @@ export class RangeInputPicker extends Component<RangeInputPickerProps, RangeInpu
     }
 
     private wrapperRef = React.createRef<HTMLDivElement>();
-    // private sliderRef = React.createRef<typeof Slider>();
     private sliderRef = React.createRef<SliderRef>();
     private textInputInnerRef = React.createRef<HTMLInputElement>();
     private debouncedCallOnUpdate: DebouncedFunc<() => void>;
