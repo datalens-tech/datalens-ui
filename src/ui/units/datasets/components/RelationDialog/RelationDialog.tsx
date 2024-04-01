@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Button, Dialog, Icon, Select, SelectOption} from '@gravity-ui/uikit';
+import {HelpPopover} from '@gravity-ui/components';
+import {Button, Checkbox, Dialog, Icon, Select, SelectOption} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import _get from 'lodash/get';
@@ -493,6 +494,12 @@ class SourceRelationDialog extends React.Component<Props, State> {
         return isDisabled;
     }
 
+    get isRequired() {
+        const {relation} = this.state;
+
+        return relation.required;
+    }
+
     changeJoinType = (type: string) => {
         this.setState({
             relation: {
@@ -561,6 +568,17 @@ class SourceRelationDialog extends React.Component<Props, State> {
         });
     };
 
+    changeRequired = (required: boolean) => {
+        const {relation} = this.state;
+
+        this.setState({
+            relation: {
+                ...relation,
+                required,
+            },
+        });
+    };
+
     modifyRelation = () => {
         const {onSave} = this.props;
         const {relation} = this.state;
@@ -620,6 +638,16 @@ class SourceRelationDialog extends React.Component<Props, State> {
                             >
                                 {i18n('button_add-condition')}
                             </Button>
+
+                            <div className={b('optimize-join')}>
+                                <Checkbox checked={this.isRequired} onUpdate={this.changeRequired}>
+                                    {i18n('label_optimize-join')}
+                                    <HelpPopover
+                                        className={b('hint-optimize-join')}
+                                        content={i18n('hint_optimize-join')}
+                                    />
+                                </Checkbox>
+                            </div>
                         </div>
                     )}
                 </Dialog.Body>

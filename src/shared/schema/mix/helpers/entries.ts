@@ -20,8 +20,12 @@ export function escapeStringForLike(str: string) {
 }
 
 export function getEntryVisualizationType(entry: Partial<EntryFields>) {
-    const sharedData = get(entry, 'data.shared');
-    const shared: Shared | null = typeof sharedData === 'string' ? JSON.parse(sharedData) : null;
-
-    return shared?.visualization?.id as WizardVisualizationId | undefined;
+    try {
+        const sharedData = get(entry, 'data.shared');
+        const shared: Shared | null =
+            typeof sharedData === 'string' ? JSON.parse(sharedData) : null;
+        return shared?.visualization?.id as WizardVisualizationId | undefined;
+    } catch (e) {
+        return undefined;
+    }
 }

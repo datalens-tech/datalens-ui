@@ -121,6 +121,31 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
     );
 
     React.useEffect(() => {
+        const newSelectedMap: SelectedMap = {};
+
+        const selectedMapKeys = Object.keys(selectedMap);
+
+        selectedMapKeys.forEach((entityId) => {
+            const entityInItems = items.find(
+                (item) => ('workbookId' in item ? item.workbookId : item.collectionId) === entityId,
+            );
+
+            if (entityInItems) {
+                newSelectedMap[entityId] = selectedMap[entityId];
+            }
+        });
+
+        const newSelectedMapKeys = Object.keys(newSelectedMap);
+
+        if (selectedMapKeys.length !== newSelectedMapKeys.length) {
+            setSelectedMap(newSelectedMap);
+            if (newSelectedMapKeys.length === 0) {
+                closeSelectionMode();
+            }
+        }
+    }, [items, selectedMap, closeSelectionMode]);
+
+    React.useEffect(() => {
         closeSelectionMode();
         resetSelected();
     }, [curCollectionId, closeSelectionMode, resetSelected]);

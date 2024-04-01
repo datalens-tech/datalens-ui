@@ -33,3 +33,19 @@ export const enum ChartKitQa {
 export const enum ChartQa {
     Chart = 'chartkit-chart',
 }
+
+export const enum ChartKitTreeNodeStateQa {
+    Opened = 'chartkit-tree-node-state-opened',
+    Closed = 'chartkit-tree-node-state-closed',
+}
+
+export const enum ChartKitTableQa {
+    Widget = 'chartkit-table-widget',
+    HeadCellContent = 'chartkit-table-header-cell',
+    CellContent = 'chartkit-cell-content',
+    Paginator = 'chartkit-table-paginator',
+    PaginatorPageInput = 'chartkit-table-paginator-page-input',
+    PaginatorRange = 'chartkit-table-paginator-range',
+    PaginatorPrevPageButton = 'chartkit-table-paginator-prev-btn',
+    PaginatorNextPageButton = 'chartkit-table-paginator-next-btn',
+}
