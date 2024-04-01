@@ -1,7 +1,8 @@
 {
   "button_open-navigation": "Открыть навигацию",
+  "button_redo": "Восстановить",
   "button_switch-public": "Публичный доступ",
-  "label_breadcrumb-new": "new {{scope}}",
+  "button_undo": "Отменить",
   "label_history-changes": "История изменений",
   "label_history-changes-date-limit": "Доступна история за последние три месяца"
 }

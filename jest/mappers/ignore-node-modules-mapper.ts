@@ -7,6 +7,7 @@ const IGNORE_NODE_MODULES_LIST = [
     'dnd-core',
     'monaco-editor',
     'tinygesture',
+    'jsondiffpatch',
 ];
 
 export const getIgnoredNodeModulesRegexp = () => {

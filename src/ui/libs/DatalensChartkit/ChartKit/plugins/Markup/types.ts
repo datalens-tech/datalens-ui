@@ -1,6 +1,6 @@
-import {ChartKitProps} from '@gravity-ui/chartkit';
+import type {ChartKitProps} from '@gravity-ui/chartkit';
 
-import {MarkupItem} from '../../../../../components/Markup';
+import type {MarkupItem} from '../../../../../../shared';
 
 export type MarkupWidgetData = {
     data: {

@@ -14,6 +14,7 @@ export enum Feature {
     EnableCustomMonitoring = 'EnableCustomMonitoring',
     ShowActionPanelTreeSelect = 'ShowActionPanelTreeSelect',
     EnableDashChartStat = 'EnableDashChartStat',
+    EnableEditHistory = 'EnableEditHistory',
     EnableShareWidget = 'EnableShareWidget',
     EnableAutocreateDataset = 'EnableAutocreateDataset',
     ShowCreateEntryWithMenu = 'ShowCreateEntryWithMenu',
@@ -76,6 +77,8 @@ export enum Feature {
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     MarkupMetric = 'MarkupMetric',
     ConnectionBasedControl = 'ConnectionBasedControl',
+    EnableServerlessEditor = 'EnableServerlessEditor',
+    NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
 }
 
 export type FeatureConfig = Record<string, boolean>;

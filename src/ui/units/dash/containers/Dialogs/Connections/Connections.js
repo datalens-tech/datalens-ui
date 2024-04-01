@@ -214,7 +214,7 @@ class Connections extends React.PureComponent {
         processedItems.forEach((item) => {
             const data = entriesDatasetsFields.find(({entryId}) => entryId === item.entryId);
             if (data) {
-                const {type, datasetId, datasetName, datasetFields, enableFiltering} = data;
+                const {type, datasetId, datasetName, datasetFields} = data;
                 if (datasetFields) {
                     datasets[datasetId] = datasets[datasetId] || {};
                     datasets[datasetId].name = datasetName;
@@ -228,7 +228,7 @@ class Connections extends React.PureComponent {
                         usedParams: Object.keys(datasets[datasetId].fields),
                         datasetId,
                         type: type || metas[item.id].type,
-                        enableFiltering,
+                        enableFiltering: item.enableFiltering,
                     };
                 }
             }
@@ -266,9 +266,10 @@ class Connections extends React.PureComponent {
 
                     // if selected current chart with enableFiltering setting
                     // then don't filter all other charts
-                    if (currentItemWithEnabledFiltering || filteringChartsIds.includes(id)) {
-                        filterChartsWidgetsCondition = type === ITEM_TYPE.WIDGET;
-                    }
+                    filterChartsWidgetsCondition = Boolean(
+                        (currentItemWithEnabledFiltering && type === ITEM_TYPE.WIDGET) ||
+                            (filteringChartsIds.includes(id) && item.type === ITEM_TYPE.WIDGET),
+                    );
 
                     return (
                         id !== itemId &&

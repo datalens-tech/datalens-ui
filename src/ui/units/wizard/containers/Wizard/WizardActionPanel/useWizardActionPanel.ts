@@ -1,13 +1,22 @@
 import React from 'react';
 
-import {ChevronsCollapseUpRight, ChevronsExpandUpRight} from '@gravity-ui/icons';
+import {
+    ArrowUturnCcwLeft,
+    ArrowUturnCwRight,
+    ChevronsCollapseUpRight,
+    ChevronsExpandUpRight,
+} from '@gravity-ui/icons';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 
+import {Feature, WizardPageQa} from '../../../../../../shared';
 import {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
+import {goBack, goForward} from '../../../../../store/actions/editHistory';
+import Utils from '../../../../../utils';
 import {toggleFullscreen} from '../../../actions/settings';
+import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../../constants';
 
 const b = block('wizard-action-panel');
 
@@ -17,6 +26,8 @@ export type UseWizardActionPanelArgs = {
     isViewOnlyMode: boolean;
     chartKitRef: React.RefObject<ChartKit>;
     isFullscreen: boolean;
+    canGoBack: boolean | null;
+    canGoForward: boolean | null;
 };
 
 export const useWizardActionPanel = (
@@ -24,8 +35,17 @@ export const useWizardActionPanel = (
 ): AdditionalButtonTemplate[] => {
     const dispatch = useDispatch();
 
-    const {editButtonLoading, handleEditButtonClick, isViewOnlyMode, chartKitRef, isFullscreen} =
-        args;
+    const {
+        editButtonLoading,
+        handleEditButtonClick,
+        isViewOnlyMode,
+        chartKitRef,
+        isFullscreen,
+        canGoBack,
+        canGoForward,
+    } = args;
+
+    const enableEditHistory = Utils.isEnabledFeature(Feature.EnableEditHistory);
 
     const defaultButtons: AdditionalButtonTemplate[] = React.useMemo<
         AdditionalButtonTemplate[]
@@ -35,7 +55,39 @@ export const useWizardActionPanel = (
             size: 16,
         };
 
+        let items: AdditionalButtonTemplate[] = [];
+
+        if (enableEditHistory) {
+            items = [
+                {
+                    key: 'undo',
+                    action: () => {
+                        dispatch(goBack({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+                    },
+                    className: b('undo-btn'),
+                    icon: {data: ArrowUturnCcwLeft, size: 16},
+                    view: 'flat',
+                    disabled: !canGoBack,
+                    qa: WizardPageQa.UndoButton,
+                    title: i18n('component.action-panel.view', 'button_undo'),
+                },
+                {
+                    key: 'redo',
+                    action: () => {
+                        dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+                    },
+                    className: b('redo-btn'),
+                    icon: {data: ArrowUturnCwRight, size: 16},
+                    view: 'flat',
+                    disabled: !canGoForward,
+                    qa: WizardPageQa.RedoButton,
+                    title: i18n('component.action-panel.view', 'button_redo'),
+                },
+            ];
+        }
+
         return [
+            ...items,
             {
                 key: 'fullscreen',
                 action: () => {
@@ -48,7 +100,7 @@ export const useWizardActionPanel = (
                 view: 'flat',
             },
         ];
-    }, [dispatch, chartKitRef.current, isFullscreen]);
+    }, [dispatch, chartKitRef.current, isFullscreen, canGoBack, canGoForward]);
 
     const editButton: AdditionalButtonTemplate[] = React.useMemo<AdditionalButtonTemplate[]>(() => {
         return [

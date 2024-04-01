@@ -45,7 +45,7 @@ export const ConnectionSettings: React.FC = () => {
                 connectionQueryType,
                 parameters: selectorParameters || {},
             }),
-        [connectionId, connectionQueryContent, connectionQueryType, workbookId],
+        [connectionId, connectionQueryContent, connectionQueryType, workbookId, selectorParameters],
     );
 
     const controlProps: ValueSelectorControlProps = React.useMemo((): ValueSelectorControlProps => {
@@ -56,6 +56,7 @@ export const ConnectionSettings: React.FC = () => {
                     fetcher,
                     disabled: !connectionId || !connectionQueryContent || !connectionQueryType,
                     filterable: false,
+                    onRetry: fetcher,
                 },
                 hasMultiselect: false,
             },

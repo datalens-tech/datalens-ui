@@ -1,4 +1,3 @@
-import {isEqual} from 'lodash';
 import moment from 'moment';
 
 import {
@@ -21,6 +20,8 @@ import {
     WizardVisualizationId,
     isDateType,
     isMarkupField,
+    isMarkupItem,
+    markupToRawString,
 } from '../../../../../../shared';
 import {getDatasetIdAndLayerIdFromKey, getFieldList} from '../../helpers/misc';
 import prepareBackendPivotTableData from '../preparers/backend-pivot-table';
@@ -45,10 +46,11 @@ import {
     PrepareFunctionArgs,
     PrepareFunctionDataRow,
     PrepareFunctionResultData,
+    ResultDataOrderItem,
 } from '../preparers/types';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 import {LAT, LONG} from '../utils/constants';
-import {log} from '../utils/misc-helpers';
+import {getServerDateFormat, log} from '../utils/misc-helpers';
 
 import {OversizeErrorType} from './constants/errors';
 import {getChartColorsConfig} from './helpers/colors';
@@ -81,10 +83,24 @@ type MergeDataArgs = {
     links: ServerLink[];
 };
 
-type LoadedField = {
-    title: string;
-    legend_item_id: number;
-};
+function getValueForCompare(
+    value: string | null,
+    field: {dataType?: string} | undefined,
+    otherField: {dataType?: string} | undefined,
+) {
+    if (
+        field?.dataType === DATASET_FIELD_TYPES.DATETIMETZ ||
+        (field?.dataType && isDateType(field.dataType) && field.dataType !== otherField?.dataType)
+    ) {
+        return moment.utc(value).valueOf();
+    }
+
+    if (isMarkupField({data_type: String(field?.dataType)}) && isMarkupItem(value)) {
+        return markupToRawString(value);
+    }
+
+    return value;
+}
 
 function mergeData({data, links}: MergeDataArgs) {
     const mergedData: MergedData = {
@@ -128,6 +144,10 @@ function mergeData({data, links}: MergeDataArgs) {
         const mergedLegends = mergedData.result.legend || ([] as number[][]);
 
         const resultDataRows = data[key].result_data[0].rows as ApiV2ResultDataRow[];
+        if (!resultDataRows.length) {
+            return;
+        }
+
         const legends = resultDataRows.map((el) => el.legend);
         const resultFields = data[key].fields as ApiV2ResultField[];
 
@@ -140,7 +160,7 @@ function mergeData({data, links}: MergeDataArgs) {
         });
 
         let isEmptyPlaceholder = false;
-        const currentOrder: {title: string; dataType: string}[] = [];
+        const currentOrder: {guid: string; title: string; dataType: string}[] = [];
 
         if (lastResultRow?.legend.length === 1) {
             const field = resultFields.find(
@@ -165,84 +185,63 @@ function mergeData({data, links}: MergeDataArgs) {
         if (isFirstDataset) {
             masterDatasetId = currentDatasetId;
 
-            if (resultDataRows.length) {
-                let targetRow;
-                let targetLegend: number[];
+            // Merge all values
+            resultDataRows.forEach((row: {data: any[]; legend: number[]}, i: number) => {
+                mergedRows[i] = [...row.data];
+                mergedLegends[i] = [...row.legend];
+            });
 
-                // Merge all values
-                resultDataRows.forEach((row: {data: any[]; legend: number[]}, i: number) => {
-                    targetRow = mergedRows[i] = [];
-                    targetLegend = mergedLegends[i] = [];
-
-                    row.data.forEach((value) => {
-                        targetRow.push(value);
-                    });
-
-                    row.legend.forEach((value) => {
-                        targetLegend.push(value);
-                    });
-                });
-
-                const rowLegendIds = resultDataRows[0].legend || [];
-
-                rowLegendIds.forEach((legendId: number) => {
-                    const field = resultFields.find(
-                        (field: LoadedField) => field.legend_item_id === legendId,
-                    )!;
-
+            const rowLegendIds = resultDataRows[0].legend || [];
+            rowLegendIds.forEach((legendId) => {
+                const field = resultFields.find((f) => f.legend_item_id === legendId);
+                if (field) {
                     mergedOrder.push({
                         datasetId: currentDatasetId,
                         title: field.title,
                         dataType: field.data_type,
                     });
-                });
-            }
-        } else if (resultDataRows.length) {
+                }
+            });
+        } else {
             // If this is not the first dataset, then we will merge the values by connections
             // We record the order of the fields in the current dataset
             // First we write down the original types
 
             const rowLegendIds = resultDataRows[0].legend || [];
-
             rowLegendIds.forEach((legendId: number) => {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                const field = resultFields.find(
-                    (field: LoadedField) => field.legend_item_id === legendId,
-                )!;
+                const field = resultFields.find((field) => field.legend_item_id === legendId);
+                if (field) {
+                    currentOrder.push({
+                        guid: field.id,
+                        title: field.title,
+                        dataType: field.data_type,
+                    });
+                }
+            });
 
-                currentOrder.push({title: field.title, dataType: field.data_type});
+            // We write out the order of the fields from the wizard and the current dataset
+            const fieldsInMaster = mergedOrder.map((entries) => {
+                const entry = Array.isArray(entries) ? entries[0] : entries;
+                return {
+                    title: entry.title,
+                    dataType: entry.dataType,
+                };
             });
 
             // We find the necessary connections between the current dataset and the master
             const neededLinks = links.filter((link) => {
                 return link.fields[currentDatasetId] && link.fields[masterDatasetId];
             });
-
-            // We write out the order of the fields from the wizard and the current dataset
-            const fieldsInMaster = mergedOrder.map((entry) => {
-                return Array.isArray(entry)
-                    ? {
-                          title: entry[0].title,
-                          dataType: entry[0].dataType,
-                      }
-                    : {
-                          title: entry.title,
-                          dataType: entry.dataType,
-                      };
-            });
-
             const indexInMasterByIndexInCurrent: Record<number, number> = {};
             const indexInCurrentByLinkIndex: Record<number, number> = {};
-
-            // Merge the order
             neededLinks.forEach((link, linkIndex) => {
                 const current = link.fields[currentDatasetId].field;
-                const master = link.fields[masterDatasetId].field;
-
-                const masterFieldData =
-                    mergedData.fields.find((field) => field.guid === master.guid) || master;
                 const currentFieldData =
                     mergedData.fields.find((field) => field.guid === current.guid) || current;
+
+                const master = link.fields[masterDatasetId].field;
+                const masterFieldData =
+                    mergedData.fields.find((field) => field.guid === master.guid) || master;
 
                 const indexInMaster = fieldsInMaster.findIndex(
                     ({title}) => title === masterFieldData.title,
@@ -254,96 +253,68 @@ function mergeData({data, links}: MergeDataArgs) {
                 indexInCurrentByLinkIndex[linkIndex] = indexInCurrent;
                 indexInMasterByIndexInCurrent[indexInCurrent] = indexInMaster;
             });
-
             currentOrder.forEach((_title, i) => {
                 const indexInMaster = indexInMasterByIndexInCurrent[i];
+                const resultOrderItem = {
+                    datasetId: currentDatasetId,
+                    title: currentOrder[i].title,
+                    dataType: currentOrder[i].dataType,
+                };
 
                 if (typeof indexInMaster === 'undefined') {
-                    mergedOrder.push({
-                        datasetId: currentDatasetId,
-                        title: currentOrder[i].title,
-                        dataType: currentOrder[i].dataType,
-                    });
+                    mergedOrder.push(resultOrderItem);
                 } else {
                     const currentOrderItem = mergedOrder[indexInMaster];
-
-                    const newOrderItem = {
-                        datasetId: currentDatasetId,
-                        title: currentOrder[i].title,
-                        dataType: currentOrder[i].dataType,
-                    };
-
-                    if (Array.isArray(currentOrderItem)) {
-                        currentOrderItem.push(newOrderItem);
-                    } else {
-                        mergedOrder[indexInMaster] = [currentOrderItem, newOrderItem];
+                    if (!Array.isArray(currentOrderItem)) {
+                        mergedOrder[indexInMaster] = [currentOrderItem];
                     }
+
+                    (mergedOrder[indexInMaster] as ResultDataOrderItem[]).push(resultOrderItem);
                 }
             });
 
+            const linkOrder = neededLinks.map((link) => {
+                const left = mergedOrder.findIndex((item) => {
+                    const orderItem = Array.isArray(item) ? item[0] : item;
+                    return orderItem.title === link.fields[masterDatasetId]?.field.title;
+                });
+                const right = currentOrder.findIndex((item) => {
+                    return item.title === link.fields[currentDatasetId]?.field.title;
+                });
+
+                return [left, right];
+            });
+
+            const sourceDataMap: Record<string, PrepareFunctionDataRow> = {};
+            mergedRows.forEach((row) => {
+                const joinBy = linkOrder
+                    .map(([left, right]) => {
+                        const orderItems = mergedOrder[left];
+                        const field = Array.isArray(orderItems) ? orderItems[0] : orderItems;
+
+                        return getValueForCompare(row[left], field, currentOrder[right]);
+                    })
+                    .join();
+
+                sourceDataMap[joinBy] = row;
+            });
+
             const newMergedRows: PrepareFunctionDataRow[] = [];
-
-            // Merge values
             const rows: ApiV2ResultDataRow[] = data[key].result_data[0].rows;
-
             rows.forEach((row: ApiV2ResultDataRow) => {
-                let possibleTargetRows: PrepareFunctionDataRow[];
+                const joinBy = linkOrder
+                    .map(([left, right]) => {
+                        const orderItem = mergedOrder[left];
+                        const otherField = Array.isArray(orderItem) ? orderItem[0] : orderItem;
+
+                        return getValueForCompare(row.data[right], currentOrder[right], otherField);
+                    })
+                    .join();
+                let targetRow = sourceDataMap[joinBy];
+
                 const possibleTargetRow: PrepareFunctionDataRow = [];
-
-                neededLinks.forEach((_link, linkIndex) => {
-                    const indexInCurrent = indexInCurrentByLinkIndex[linkIndex];
-                    const indexInMaster = indexInMasterByIndexInCurrent[indexInCurrent];
-
-                    const targetValue = row.data[indexInCurrent];
-                    const mergedOrderMaster = mergedOrder[indexInMaster];
-
-                    const currentDataType = currentOrder[indexInCurrent]?.dataType;
-                    let masterDataType: string | undefined;
-
-                    if (Array.isArray(mergedOrderMaster)) {
-                        masterDataType = mergedOrderMaster?.[0]?.dataType;
-                    } else {
-                        masterDataType = mergedOrderMaster?.dataType;
-                    }
-
-                    // need moment object comparison only for datetime with timezone or for dates with different types
-                    const needCompareAsDates =
-                        currentOrder[indexInCurrent] &&
-                        mergedOrderMaster &&
-                        (currentDataType === DATASET_FIELD_TYPES.DATETIMETZ ||
-                            (isDateType(currentDataType) && masterDataType !== currentDataType));
-
-                    const needCompareAsMarkup =
-                        currentOrder[indexInCurrent] &&
-                        isMarkupField({data_type: currentDataType}) &&
-                        masterDataType === currentDataType;
-
-                    if (needCompareAsDates) {
-                        possibleTargetRows = (possibleTargetRows || mergedRows).filter(
-                            (someRow: PrepareFunctionDataRow) => {
-                                const someRowValue = someRow[indexInMaster];
-
-                                return (
-                                    moment.utc(someRowValue).valueOf() ===
-                                    moment.utc(targetValue).valueOf()
-                                );
-                            },
-                        );
-                    } else if (needCompareAsMarkup) {
-                        possibleTargetRows = (possibleTargetRows || mergedRows).filter(
-                            (someRow: PrepareFunctionDataRow) => {
-                                return isEqual(someRow[indexInMaster], targetValue);
-                            },
-                        );
-                    } else {
-                        possibleTargetRows = (possibleTargetRows || mergedRows).filter(
-                            (someRow: PrepareFunctionDataRow) => {
-                                return someRow[indexInMaster] === targetValue;
-                            },
-                        );
-                    }
-
-                    possibleTargetRow[indexInMaster] = targetValue;
+                linkOrder.forEach(([left, right]) => {
+                    possibleTargetRow[left] = row.data[right];
                 });
 
                 const unlinkedFields: PrepareFunctionDataRow = [];
@@ -356,9 +327,6 @@ function mergeData({data, links}: MergeDataArgs) {
                         unlinkedFields.push(value);
                     }
                 });
-
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                let targetRow = possibleTargetRows![0];
 
                 if (!targetRow || targetRow.length + unlinkedFields.length > mergedOrder.length) {
                     targetRow = possibleTargetRow;
@@ -456,9 +424,11 @@ function prepareSingleResult({
     }
 
     if (drillDownData) {
+        const currentDrillDownField = drillDownData.fields[drillDownData.level];
         ChartEditor.updateConfig({
             drillDown: {
                 breadcrumbs: drillDownData.breadcrumbs,
+                dateFormat: getServerDateFormat(currentDrillDownField?.data_type),
             },
         });
 

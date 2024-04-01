@@ -9,4 +9,5 @@ export const enum EditorTemplatesQA {
     Markdown = 'editor-templates-markdown-item',
     Timeseries = 'editor-templates-timeseries-item',
     Markup = 'editor-templates-markup-item',
+    D3 = 'editor-templates-d3-item',
 }

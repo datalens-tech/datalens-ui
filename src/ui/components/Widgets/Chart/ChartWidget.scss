@@ -61,7 +61,7 @@ $dashPublicContainerClassName: '.dash';
 
     // style for widgets with auto height
 
-    // Resseting height 100% for errors
+    // Resetting height 100% for errors
     // if autoHeight enabled there error doesn't shrink if container is bigger than error itself
     #{$dashPublicContainerClassName} &_autoheight .datalens-chartkit-error,
     #{$dashContainerClassName} &_autoheight .datalens-chartkit-error {
