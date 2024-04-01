@@ -20,9 +20,7 @@ export default {
     {
         type: 'input',
         param: 'input',
-        label: 'Search',
-        // Placeholder text, when nothing is selected
-        // Default: ''
+        innerLabel: 'Search',
         placeholder: 'Query',
         // updateOnChange: true,
         // updateControlsOnChange: true,
@@ -30,7 +28,7 @@ export default {
     {
         type: 'datepicker',
         param: 'datepicker',
-        label: 'Date',
+        innerLabel: 'Date',
         // updateOnChange: true,
         // updateControlsOnChange: true,
     },
@@ -38,7 +36,7 @@ export default {
         type: 'range-datepicker',
         paramFrom: 'rangeDatepickerFrom',
         paramTo: 'rangeDatepickerTo',
-        label: 'Calendar',
+        innerLabel: 'Calendar',
         // updateOnChange: true,
         // updateControlsOnChange: true,
     },

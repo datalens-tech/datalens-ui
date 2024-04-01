@@ -1,3 +1,5 @@
+import {EDITOR_TYPE} from 'shared/constants';
+
 export enum EditorUrls {
     Base = '/editor',
     NewEntry = '/editor/new',
@@ -20,8 +22,6 @@ export const PANE_VIEWS = {
     PREVIEW: 'Preview',
     CONSOLE: 'Console',
 };
-
-export const DEFAULT_TYPE = 'graph_node';
 
 export const MODULE_TYPE = 'module';
 
@@ -56,3 +56,5 @@ export const TOASTER_TYPE = {
 export const UNRELEASED_MODULE_MARK = '@saved';
 
 export const EVENT_DRAW_PREVIEW = 'editor-draw-preview';
+
+export const getEmptyTemplateType = () => EDITOR_TYPE.D3_NODE;

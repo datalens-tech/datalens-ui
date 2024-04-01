@@ -2,16 +2,7 @@ import {GetDatalensOperationResponse} from './operations';
 import {OrderBasicField, OrderDirection} from './sort';
 import {Workbook, WorkbookWithPermissions} from './workbooks';
 
-export enum GetCollectionContentMode {
-    All = 'all',
-    OnlyCollections = 'onlyCollections',
-    OnlyWorkbooks = 'onlyWorkbooks',
-}
-
-export type GetCollectionBreadcrumb = {
-    collectionId: string;
-    title: string;
-};
+export type GetCollectionContentMode = 'all' | 'onlyCollections' | 'onlyWorkbooks';
 
 export type CollectionPermissions = {
     listAccessBindings: boolean;
@@ -44,6 +35,10 @@ export type CollectionWithPermissions = Collection & {
     permissions: CollectionPermissions;
 };
 
+export type CollectionWithOptionalPermissions = Collection & {
+    permissions?: CollectionPermissions;
+};
+
 export type GetRootCollectionPermissionsResponse = {
     createCollectionInRoot: boolean;
     createWorkbookInRoot: boolean;
@@ -66,15 +61,15 @@ export type GetCollectionResponse = Collection | CollectionWithPermissions;
 
 export type GetCollectionContentArgs = {
     collectionId: string | null;
-    includePermissionsInfo?: boolean;
-    filterString?: string;
     collectionsPage?: string | null;
     workbooksPage?: string | null;
-    pageSize?: number;
+    filterString?: string;
     orderField?: OrderBasicField;
     orderDirection?: OrderDirection;
     onlyMy?: boolean;
     mode?: GetCollectionContentMode;
+    pageSize?: number;
+    includePermissionsInfo?: boolean;
 };
 
 export type GetCollectionContentResponse = {
@@ -86,9 +81,10 @@ export type GetCollectionContentResponse = {
 
 export type GetCollectionBreadcrumbsArgs = {
     collectionId: string;
+    includePermissionsInfo?: boolean;
 };
 
-export type GetCollectionBreadcrumbsResponse = GetCollectionBreadcrumb[];
+export type GetCollectionBreadcrumbsResponse = (Collection | CollectionWithPermissions)[];
 
 export type DeleteCollectionArgs = {
     collectionId: string;

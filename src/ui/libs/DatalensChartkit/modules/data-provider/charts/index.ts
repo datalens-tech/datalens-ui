@@ -23,9 +23,9 @@ import {
 } from 'shared';
 
 import {ChartWidgetData} from '../../../../../components/Widgets/Chart/types';
-import {URL_QUERY} from '../../../../../constants';
+import {registry} from '../../../../../registry';
 import {WidgetType} from '../../../../../units/dash/modules/constants';
-import Utils, {getUrlParamFromStr} from '../../../../../utils';
+import Utils from '../../../../../utils';
 import {CHARTKIT_WIDGET_TYPE} from '../../../ChartKit/components/Widget/Widget';
 import {isNavigatorSerie} from '../../../ChartKit/modules/graph/config/config';
 import type {
@@ -742,10 +742,8 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             [REQUEST_ID_HEADER]: requestId,
         };
         if (isEmbeddedChart()) {
-            headers[DL_EMBED_TOKEN_HEADER] = getUrlParamFromStr(
-                window.location.search,
-                URL_QUERY.EMBED_TOKEN,
-            );
+            const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
+            headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
         }
         if (Utils.isEnabledFeature(Feature.UseComponentHeader)) {
             headers[DL_COMPONENT_HEADER] = DlComponentHeader.UI;

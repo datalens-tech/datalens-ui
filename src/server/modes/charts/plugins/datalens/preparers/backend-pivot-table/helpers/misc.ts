@@ -5,6 +5,7 @@ import {
     ServerField,
     ServerPlaceholder,
     isMarkupField,
+    isMarkupItem,
     markupToRawString,
 } from '../../../../../../../../shared';
 import {
@@ -183,10 +184,6 @@ export const getDatasetFieldFromPivotTableValue = (
     return fieldDict[fieldGuid];
 };
 
-const isMarkupCellValue = (cellValue: string | MarkupItem) => {
-    return typeof cellValue === 'object' && 'content' in cellValue;
-};
-
 export const getCellValueForHeader = (
     cellValue: string | MarkupItem | null,
     options: {pivotField?: PivotField; datasetField?: ServerField} = {},
@@ -194,7 +191,7 @@ export const getCellValueForHeader = (
     const {pivotField, datasetField} = options;
     const isMeasureName = pivotField?.id === MEASURE_NAME_PSEUDO_ID;
 
-    if (cellValue && (isMarkupField(datasetField) || isMarkupCellValue(cellValue))) {
+    if (cellValue && (isMarkupField(datasetField) || isMarkupItem(cellValue))) {
         return markupToRawString(cellValue as MarkupItem);
     }
 

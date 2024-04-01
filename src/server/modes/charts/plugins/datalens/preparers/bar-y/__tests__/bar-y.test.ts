@@ -1,6 +1,6 @@
 import pick from 'lodash/pick';
 
-import {AxisMode, DATASET_FIELD_TYPES} from '../../../../../../../../shared';
+import {AxisMode, DATASET_FIELD_TYPES, WizardVisualizationId} from '../../../../../../../../shared';
 import {DateTimeField, EmptyPrepapreArgs, IntegerField} from '../../__tests__/common.mock';
 import {PrepareFunctionArgs} from '../../types';
 import {prepareBarYData} from '../prepare-bar-y-data';
@@ -12,6 +12,8 @@ describe('prepareBarYData', () => {
 
     const args: PrepareFunctionArgs = {
         ...EmptyPrepapreArgs,
+        // @ts-ignore
+        shared: {visualization: {id: WizardVisualizationId.Bar}},
         idToTitle: {
             [IntegerField.guid]: IntegerField.title,
             [DateTimeField.guid]: DateTimeField.title,

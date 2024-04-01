@@ -200,7 +200,7 @@ export const AddAliases = ({
             : i18n('label_need-default-editor-chart');
         const linkParam = hasExternalControl
             ? '/editor/widgets/selector/external'
-            : '/editor/params';
+            : '/operations/chart/add-parameters';
 
         return (
             <div className={b()}>

@@ -648,6 +648,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     return {
         loadedData,
         isLoading,
+        isInit,
         isSilentReload,
         isReloadWithNoVeil,
         isAutoHeightEnabled,

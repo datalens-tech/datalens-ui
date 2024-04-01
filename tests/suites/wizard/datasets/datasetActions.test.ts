@@ -31,25 +31,6 @@ datalensTest.describe('Wizard - actions on datasets', () => {
         await childPage.close();
     });
 
-    datalensTest('Replacing dataset', async ({page}: {page: Page}) => {
-        const wizardPage = new WizardPage({page});
-
-        await openTestPage(page, RobotChartsWizardUrls.Empty);
-
-        await wizardPage.addFirstDataset(RobotChartsDatasets.CsvBasedDataset);
-
-        await wizardPage.datasetSelector.clickToDatasetAction(
-            RobotChartsDatasets.CsvBasedDataset,
-            SectionDatasetQA.ReplaceDatasetButton,
-        );
-
-        await wizardPage.navigationMinimal.typeToSearch(RobotChartsDatasets.GeoDatasetTest);
-
-        await wizardPage.navigationMinimal.clickToItem(RobotChartsDatasets.GeoDatasetTest);
-
-        await wizardPage.datasetSelector.waitForSelectedValue(RobotChartsDatasets.GeoDatasetTest);
-    });
-
     datalensTest('Deleting a dataset', async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
 

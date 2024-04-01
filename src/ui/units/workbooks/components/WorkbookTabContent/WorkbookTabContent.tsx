@@ -10,6 +10,7 @@ import {EntryScope} from 'shared';
 import {WorkbookWithPermissions} from 'shared/schema';
 import {AppDispatch} from 'ui/store';
 
+import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {getWorkbookEntries, resetWorkbookEntries} from '../../store/actions';
 import {
     selectNextPageToken,
@@ -107,7 +108,11 @@ export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filt
     }
 
     if (!workbook || entries.length === 0) {
-        return <EmptyWorkbookContainer scope={scope} />;
+        return (
+            <AnimateBlock>
+                <EmptyWorkbookContainer scope={scope} />
+            </AnimateBlock>
+        );
     }
 
     let footer: React.ReactNode = null;
@@ -123,7 +128,7 @@ export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filt
     }
 
     return (
-        <React.Fragment>
+        <AnimateBlock>
             <WorkbookEntriesTable
                 refreshEntries={refreshEntries}
                 workbook={workbook}
@@ -132,7 +137,7 @@ export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filt
                 chunks={chunks}
             />
             {footer}
-        </React.Fragment>
+        </AnimateBlock>
     );
 });
 

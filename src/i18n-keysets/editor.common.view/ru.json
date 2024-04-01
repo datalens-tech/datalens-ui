@@ -4,7 +4,6 @@
   "button_show-preview": "Выполнить",
   "label_load-failed": "Не удалось загрузить",
   "label_new-chart": "Новый чарт",
-  "label_without-template": "Без шаблона",
   "section_choose-template": "Выберите шаблон",
   "toast_unsaved": "На странице есть несохраненные изменения. Вы уверены?"
 }

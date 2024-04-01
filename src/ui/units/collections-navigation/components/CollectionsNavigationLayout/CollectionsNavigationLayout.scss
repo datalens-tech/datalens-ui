@@ -1,0 +1,69 @@
+@import '../../../../styles/variables.scss';
+
+$class: 'dl-collections-navigation-layout';
+
+.#{$class} {
+    &__page-wrapper {
+        position: absolute;
+        top: $actionPanelHeight;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex: 1;
+        justify-content: center;
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+        padding-top: 28px;
+    }
+
+    &__page {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        max-width: 936px;
+        padding: 0 20px;
+    }
+
+    &__header {
+        display: flex;
+    }
+
+    &__header-title-wrapper {
+        display: flex;
+        flex: 1;
+    }
+
+    &__header-title {
+        display: flex;
+        margin: 0;
+        font-size: 24px;
+        line-height: 28px;
+        margin-right: 8px;
+    }
+
+    &__header-title-actions-block {
+        display: flex;
+        margin-right: 8px;
+        white-space: nowrap;
+    }
+
+    &__header-right-block {
+        display: flex;
+        white-space: nowrap;
+    }
+
+    &__header-description {
+        margin-top: 20px;
+    }
+
+    &__header-decription-skeleton {
+        width: 100%;
+        height: 28px;
+    }
+
+    &__content {
+        display: flex;
+        flex: 1;
+        margin-top: 28px;
+    }
+}

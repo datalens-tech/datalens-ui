@@ -53,15 +53,4 @@ datalensTest.describe('ChartEditor template selection', () => {
             `${slct('chart-preview')} .chartkit-table .chartkit-table__title`,
         );
     });
-
-    datalensTest(
-        'Template `Without template` can be selected and executed',
-        async ({page}: {page: Page}) => {
-            const editorPage = new EditorPage({page});
-            await openTestPage(page, RobotChartsEditorUrls.EditorNew, DEFAULT_QUERY);
-            await editorPage.clickTemplate(EditorTemplatesQA.NoTemplate);
-            await editorPage.drawPreview();
-            await page.waitForSelector(`${slct('chart-preview')} .datalens-chartkit-error`);
-        },
-    );
 });

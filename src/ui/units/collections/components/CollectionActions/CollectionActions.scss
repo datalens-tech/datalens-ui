@@ -4,6 +4,10 @@
     &__move,
     &__access {
         margin-right: 8px;
+
+        &:last-child {
+            margin-right: 0;
+        }
     }
 
     &__dropdown-item {

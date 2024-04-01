@@ -2,4 +2,15 @@
 
 .entry-panel-breadcrumbs {
     max-width: var(--dl-breadcrumbs-max-width);
+
+    &__item {
+        color: var(--g-color-text-primary);
+        text-decoration: none;
+
+        &:hover,
+        &:visited,
+        &:active {
+            color: var(--g-color-text-secondary);
+        }
+    }
 }

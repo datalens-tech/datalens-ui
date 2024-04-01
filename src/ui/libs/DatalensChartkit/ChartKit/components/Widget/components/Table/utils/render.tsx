@@ -4,12 +4,13 @@ import {Minus, Plus} from '@gravity-ui/icons';
 import DataTable, {Column, SortOrder} from '@gravity-ui/react-data-table';
 import {Button, Icon, Link, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {isUndefined} from 'lodash';
+import {debounce, isUndefined} from 'lodash';
 import get from 'lodash/get';
 import moment from 'moment';
 import {
     BarTableCell,
     BarViewOptions,
+    ChartKitTableQa,
     CommonTableColumn,
     DateTableColumn,
     DiffTableColumn,
@@ -21,6 +22,7 @@ import {
     TableCommonCell,
     TableHead,
     TableRow,
+    isMarkupItem,
 } from 'shared';
 
 import {Markup} from '../../../../../../../../components/Markup';
@@ -38,7 +40,6 @@ import {
     getTreeSetColumnSortAscending,
     hasTreeSetColumn,
     isCellValueNullable,
-    isMarkupItem,
     numberFormatter,
     prepareLinkHref,
     selectBarSettingValue,
@@ -63,6 +64,7 @@ export const MiscQA = {
 
 type RestOptions = Omit<TableColumn, 'id' | 'name' | 'type' | 'css' | 'group' | 'autogroup'> & {
     tableWidth?: number;
+    resize?: () => void;
 };
 
 type SortIconProps = {
@@ -137,6 +139,9 @@ export function valueFormatter(
                                 // now clicking on the link will only open it without sorting table
                                 event.stopPropagation();
                             },
+                        },
+                        user_info: {
+                            onRender: options?.resize,
                         },
                     }}
                 />
@@ -268,6 +273,7 @@ export function valueFormatter(
                 ...camelCaseCss(options.contentCss),
             }}
             key={Math.random()}
+            data-qa={ChartKitTableQa.CellContent}
         >
             {button}
             {shouldShowTooltip ? (
@@ -305,6 +311,8 @@ export const getColumnsAndNames = ({
     topLevelWidth?: number;
     actionParamsData?: ActionParamsData;
 }) => {
+    const resizeTable = debounce(() => tableRef?.resize());
+
     return head.reduce(
         // eslint-disable-next-line complexity
         (
@@ -450,6 +458,7 @@ export const getColumnsAndNames = ({
                             ...options,
                             width: columnWidth,
                             tableWidth,
+                            resize: resizeTable,
                         }),
                     customStyle: ({row, header, name}) => {
                         if (header) {
