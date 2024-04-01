@@ -73,7 +73,6 @@
     "final-form-arrays": "^3.0.2",
     "form-data": "^4.0.0",
     "googleapis": "^108.0.0",
-    "grpc-reflection-js": "^0.3.0",
     "hashids": "^2.2.1",
     "iconv-lite": "^0.4.24",
     "ioredis": "^4.28.0",
