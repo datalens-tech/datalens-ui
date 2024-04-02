@@ -1,4 +1,4 @@
-.yc-datepicker-quarters {
+.dl-datepicker-quarters {
     display: grid;
     grid-template-columns: 51px repeat(4, 53px);
     grid-template-rows: repeat(1, 40px);
@@ -16,7 +16,7 @@
         border-radius: 4px;
         cursor: pointer;
 
-        .yc-datepicker_desktop &:hover {
+        .dl-datepicker_desktop &:hover {
             background-color: var(--g-color-base-simple-hover);
         }
 
@@ -28,7 +28,7 @@
             border-radius: 0;
             background-color: var(--g-color-base-selection);
 
-            .yc-datepicker_desktop &:hover {
+            .dl-datepicker_desktop &:hover {
                 background-color: var(--g-color-base-selection);
             }
         }

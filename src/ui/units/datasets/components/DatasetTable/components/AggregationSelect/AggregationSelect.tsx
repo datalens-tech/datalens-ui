@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Button, Select, SelectOption} from '@gravity-ui/uikit';
+import {Button, Select} from '@gravity-ui/uikit';
+import type {SelectOption, SelectRenderControlProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
 import {DatasetField, DatasetFieldAggregation} from 'shared';
@@ -121,16 +122,7 @@ class AggregationSelectComponent extends React.Component<Props> {
         this.props.onSelect(row, aggregation);
     };
 
-    private renderSelectControl = ({
-        onClick,
-        ref,
-        onKeyDown,
-    }: {
-        onClick: (e: React.MouseEvent<HTMLElement>) => void;
-        onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => void;
-        ref: React.Ref<HTMLElement>;
-        open: boolean;
-    }) => {
+    private renderSelectControl = ({onClick, ref, onKeyDown}: SelectRenderControlProps) => {
         const selectedValue = getSelectedValueForSelect(
             [this.props.selectedAggregation],
             this.aggregations,

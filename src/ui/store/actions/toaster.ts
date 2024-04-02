@@ -1,7 +1,7 @@
 import React from 'react';
 import {AnyAction} from 'redux';
 import {ThunkDispatch} from 'redux-thunk';
-import {Toaster, ToastType, ToastAction} from '@gravity-ui/uikit';
+import {Toaster, ToastTheme, ToastAction} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {DatalensGlobalState, Utils} from '../../';
 import {DataLensApiError} from '../../typings';
@@ -13,7 +13,7 @@ const toaster = new Toaster();
 
 export type ShowToastOptions = {
     title: string;
-    type?: ToastType;
+    type?: ToastTheme;
     error?: DataLensApiError;
     name?: string;
     content?: React.ReactNode;
@@ -32,7 +32,7 @@ export const showToast = (opt: ShowToastOptions) => {
         let type: ShowToastOptions['type'] = opt.type || 'info';
 
         if (error) {
-            type = 'error';
+            type = 'danger';
             actions = opt.actions || [
                 {
                     label: i18n('label_details'),
@@ -51,7 +51,7 @@ export const showToast = (opt: ShowToastOptions) => {
         toaster.add({
             name,
             title,
-            type,
+            theme: type,
             actions,
             content,
         });

@@ -44,7 +44,7 @@ export class ChartkitControl {
 
     async expectInputInnerTitleVisible(text: string) {
         const selectorInnerTitleLocator = this.page.locator(
-            `${ChartkitControl.selectors.qa.controlInput} .yc-text-input__label`,
+            `${ChartkitControl.selectors.qa.controlInput} .g-text-input__label`,
         );
 
         const innerText = await selectorInnerTitleLocator.innerText();

@@ -149,7 +149,7 @@ datalensTest.describe('Wizard - Setting up bars', () => {
         const defaultSelectedType = await wizardPage.page.$(
             `${slct(
                 DialogFieldBarsSettingsQa.ColorTypeRadioButtons,
-            )} .yc-radio-button__option_checked`,
+            )} .g-radio-button__option_checked`,
         );
 
         const defaultSelectedTypeButton = await defaultSelectedType?.$(

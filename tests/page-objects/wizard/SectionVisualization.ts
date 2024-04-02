@@ -240,7 +240,7 @@ export default class SectionVisualization {
 
         await this.page.hover(`${placeholderSelector} .add-field`);
 
-        const content = await this.page.$('.yc-popover__tooltip-content > span');
+        const content = await this.page.$('.g-popover__tooltip-content > span');
         return content?.getAttribute('data-qa');
     }
 
