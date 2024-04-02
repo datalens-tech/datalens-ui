@@ -86,9 +86,11 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
     }
 
     render() {
-        const {chartType, defaultPath, paneSize, entryDialoguesRef, valid, entry} = this.props;
+        var {chartType, defaultPath, paneSize, entryDialoguesRef, valid, entry} = this.props;
 
         const workbookId = entry?.workbookId || null;
+
+        valid = (entry?.permissions || { execute: true }).execute
 
         const {getPlaceSelectParameters} = registry.common.functions.getAll();
         const {getConnectionsByChartType} = registry.ql.functions.getAll();
