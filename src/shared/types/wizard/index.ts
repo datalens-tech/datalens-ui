@@ -1,4 +1,4 @@
-import {IconProps} from '@gravity-ui/uikit';
+import type {IconProps} from '@gravity-ui/uikit';
 
 import {ChartsConfig, Dataset, FilterField, HierarchyField, Link, ServerDatasetField} from '../';
 import type {

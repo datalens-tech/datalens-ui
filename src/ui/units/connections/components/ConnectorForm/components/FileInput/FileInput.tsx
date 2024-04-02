@@ -52,7 +52,7 @@ export const FileInputComponent = (props: FileInputProps) => {
     );
 
     const handleUnsuccessUploading = React.useCallback(() => {
-        actions.showToast({title: i18n('label_file-upload-failure'), type: 'error'});
+        actions.showToast({title: i18n('label_file-upload-failure'), type: 'danger'});
     }, [actions]);
 
     const handleFileUploding = React.useCallback<NonNullable<ButtonAttachProps['onUpdate']>>(
@@ -74,7 +74,7 @@ export const FileInputComponent = (props: FileInputProps) => {
     }, [setFormValue]);
 
     return fileName ? (
-        <Label size="m" type="close" onClose={handleLabelCloseBtnClick}>
+        <Label size="m" type="close" onCloseClick={handleLabelCloseBtnClick}>
             {i18n('label_file-input-label', {fileName})}
         </Label>
     ) : (

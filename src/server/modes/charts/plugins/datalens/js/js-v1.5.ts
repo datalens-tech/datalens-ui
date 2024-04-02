@@ -6,6 +6,7 @@ import {
     ServerVisualization,
     Shared,
 } from '../../../../../../shared';
+import {extractColorPalettesFromData} from '../../helpers/color-palettes';
 import {getDatasetIdAndLayerIdFromKey} from '../../helpers/misc';
 import {PrepareFunctionDataRow, PrepareFunctionResultData} from '../preparers/types';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
@@ -238,18 +239,7 @@ module.exports = (...options: JSTabOptions) => {
     log('LOADED DATA:');
     log(data);
 
-    const loadedColorPalettes: Record<string, any> = {};
-    const loadedData: Record<string, any> = {};
-
-    Object.keys(data).forEach((key) => {
-        if (key.includes('colorPalettes_')) {
-            const paletteId = key.replace('colorPalettes_', '');
-
-            loadedColorPalettes[paletteId] = data[key][0];
-        } else {
-            loadedData[key] = data[key];
-        }
-    });
+    const {colorPalettes: loadedColorPalettes, loadedData} = extractColorPalettesFromData(data);
 
     log('LINKS:');
     log(shared.links);

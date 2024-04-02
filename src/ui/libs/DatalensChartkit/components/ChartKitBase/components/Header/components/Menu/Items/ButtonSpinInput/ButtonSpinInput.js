@@ -84,7 +84,7 @@ export default class ButtonSpinInput extends React.PureComponent {
     _textInput = () => (
         <div className={b({'text-input': true})}>
             <TextInput className={b('item')} value={this._text} />
-            <ClipboardButton className={b('item')} size={20} text={this._text} />
+            <ClipboardButton className={b('item')} size="m" text={this._text} />
         </div>
     );
 

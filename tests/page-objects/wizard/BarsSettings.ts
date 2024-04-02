@@ -17,7 +17,7 @@ export class BarsSettings {
 
     async getBarsValue() {
         const button = await this.page.$(
-            `${slct(DialogFieldBarsSettingsQa.EnableButton)} .yc-switch__control`,
+            `${slct(DialogFieldBarsSettingsQa.EnableButton)} .g-switch__control`,
         );
 
         return button?.isChecked();
