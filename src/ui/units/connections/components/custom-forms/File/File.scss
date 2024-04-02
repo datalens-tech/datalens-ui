@@ -113,8 +113,7 @@
     }
 
     &__list-item-alert-tooltip {
-        // TODO: this is an private api and may silently changed. We should use local styles
-        --yc-popover-max-width: none;
+        --g-popover-max-width: none;
     }
 
     &__list-item-alert-tooltip-content div {

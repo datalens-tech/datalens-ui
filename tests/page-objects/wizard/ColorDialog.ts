@@ -17,7 +17,7 @@ type OpenDialogColorArgs = {
 export default class ColorDialog {
     private page: Page;
 
-    private cancelButtonSelector = '.dialog-color .yc-dialog-footer__button_action_cancel';
+    private cancelButtonSelector = '.dialog-color .g-dialog-footer__button_action_cancel';
     private valueLabelSelector = '.dialog-color .values-list__value-label';
     private applyButtonSelector = `${slct('color-dialog-apply-button')}`;
 
@@ -51,7 +51,7 @@ export default class ColorDialog {
 
     async selectFieldValue(value: string) {
         await this.page.click(
-            `.yc-dialog-body .values-list__values-container .values-list__value-label >> text=${value}`,
+            `.g-dialog-body .values-list__values-container .values-list__value-label >> text=${value}`,
         );
     }
 

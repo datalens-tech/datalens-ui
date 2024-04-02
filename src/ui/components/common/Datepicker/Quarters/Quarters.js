@@ -9,7 +9,7 @@ import {MONTHS} from '../constants';
 
 import './Quarters.scss';
 
-const b = block('yc-datepicker-quarters');
+const b = block('dl-datepicker-quarters');
 const CELLS_COUNT = 5;
 const CELLS = {
     QUARTER: 'quarter',

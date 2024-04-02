@@ -101,7 +101,7 @@ export function updateDatasetByValidation({
             toaster.add({
                 name: 'success_update_dataset',
                 title: getToastTitle('NOTIFICATION_SUCCESS', actionTypeNotification),
-                type: 'success',
+                theme: 'success',
             });
         }
 
@@ -442,7 +442,7 @@ export function saveDataset({key, workbookId, name, history, isCreationProcess, 
                 toaster.add({
                     name: 'success_save_dataset',
                     title: getToastTitle('NOTIFICATION_SUCCESS', 'save'),
-                    type: 'success',
+                    theme: 'success',
                 });
             }
 
@@ -506,7 +506,7 @@ export function fetchFieldTypes() {
         toaster.add({
             name: 'error_fetch_types',
             title: getToastTitle('NOTIFICATION_FAILURE', 'types'),
-            type: 'error',
+            theme: 'danger',
         });
 
         return types;
