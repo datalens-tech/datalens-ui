@@ -48,6 +48,10 @@ type OwnProps = {
     enablePublish?: boolean;
     setActualVersion?: () => void;
     isEditing?: boolean;
+    deprecationWarning?: null | {
+        message: string;
+        onConfirm?: () => void;
+    };
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -144,6 +148,7 @@ class ActionPanel extends React.Component<Props, State> {
             isRevisionsOpened,
             setActualVersion,
             isEditing,
+            deprecationWarning,
         } = this.props;
 
         const leftStyle: React.CSSProperties = {left: sidebarSize};
@@ -180,6 +185,8 @@ class ActionPanel extends React.Component<Props, State> {
                             onOpenActualRevision={this.handleOpenCurrentRevision}
                             onOpenDraftRevision={this.handleOpenDraftRevision}
                             isEditing={isEditing || false}
+                            deprecationMessage={deprecationWarning?.message}
+                            onDeprecationConfirm={deprecationWarning?.onConfirm}
                         />
                         <ExpandablePanel
                             title={i18n('label_history-changes')}

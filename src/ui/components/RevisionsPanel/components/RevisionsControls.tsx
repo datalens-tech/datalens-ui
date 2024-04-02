@@ -9,9 +9,11 @@ import '../RevisionsPanel.scss';
 type RevisionsControlsProps = {
     canEdit: boolean;
     isDraft?: boolean;
+    isDeprecated?: boolean;
     onMakeActualClickCallback: () => void;
     onOpenActualClickCallback: () => void;
     onOpenRevisionsClickCallback?: () => void;
+    onDeprecationConfirm?: () => void;
     onOpenDraftClickCallback?: () => void;
     isLoading: boolean;
 };
@@ -22,12 +24,33 @@ const i18n = I18n.keyset('component.revisions-panel.view');
 const RevisionsControls = ({
     canEdit,
     isDraft,
+    isDeprecated,
+    onDeprecationConfirm,
     onMakeActualClickCallback,
     onOpenActualClickCallback,
     onOpenRevisionsClickCallback,
     onOpenDraftClickCallback,
     isLoading,
 }: RevisionsControlsProps) => {
+    if (isDeprecated) {
+        return (
+            <div className={b('controls')}>
+                {onDeprecationConfirm && (
+                    <Button
+                        view="outlined-contrast"
+                        size="m"
+                        className={b('button')}
+                        onClick={onDeprecationConfirm}
+                        qa="action-deprecation-confirm"
+                        disabled={isLoading}
+                    >
+                        {i18n('button_confirm-deprecation')}
+                    </Button>
+                )}
+            </div>
+        );
+    }
+
     if (isDraft) {
         return (
             <div className={b('controls')}>

@@ -59,7 +59,11 @@ import {
 } from './controls/helpers';
 import {ItemDataSource, SelectorDialogValidation, SelectorSourceType} from './controls/types';
 import {closeDialog as closeDashDialog} from './dialogs/actions';
-import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
+import {
+    getBeforeCloseDialogItemAction,
+    getExtendedItemDataAction,
+    migrateDataSettings,
+} from './helpers';
 
 import {DashDispatch} from './index';
 
@@ -740,20 +744,6 @@ export function saveDashAsDraft(setForce?: boolean) {
     };
 }
 
-export function migrateDataSettings(data: DashData) {
-    if (data.settings.dependentSelectors !== true) {
-        return {
-            ...data,
-            settings: {
-                ...data.settings,
-                dependentSelectors: true,
-            },
-        };
-    }
-
-    return data;
-}
-
 export type CopyDashArgs = {
     key?: string;
     workbookId?: string;
@@ -880,8 +870,14 @@ export const updateCurrentTabData = (data: {
     payload: data,
 });
 
-export const setSettings = (settings: DashSettings) => ({
-    type: actionTypes.SET_SETTINGS,
+export const SET_SETTINGS = Symbol('dash/SET_SETTINGS');
+export type SetSettingsAction = {
+    type: typeof SET_SETTINGS;
+    payload: DashSettings;
+};
+
+export const setSettings = (settings: DashSettings): SetSettingsAction => ({
+    type: SET_SETTINGS,
     payload: settings,
 });
 
@@ -954,3 +950,12 @@ export const closeControl2Dialog = () => {
         dispatch(closeDashDialog());
     };
 };
+
+export function updateDeprecatedDashConfig() {
+    return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        const data = selectDashData(getState());
+        const migratedData = migrateDataSettings(data);
+
+        dispatch(setSettings(migratedData.settings));
+    };
+}

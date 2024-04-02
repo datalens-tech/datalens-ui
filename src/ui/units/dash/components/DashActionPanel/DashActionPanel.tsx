@@ -40,7 +40,9 @@ import {
     setDefaultViewState,
     setPageDefaultTabItems,
     setPublishDraft,
+    updateDeprecatedDashConfig,
 } from '../../store/actions/dashTyped';
+import {isDeprecatedDashData} from '../../store/actions/helpers';
 import {
     selectLoadingEditMode,
     selectRenameWithoutReload,
@@ -82,11 +84,19 @@ type ActionPanelState = {};
 
 class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelState> {
     render() {
-        const {entry, isEditMode} = this.props;
+        const {entry, dashEntry, isEditMode} = this.props;
         const showHeader = !isEmbeddedMode();
         const enablePublish = Utils.isEnabledFeature(Feature.EnablePublishEntry) && !entry?.fake;
 
         const DashSelectState = registry.dash.components.get('DashSelectState');
+
+        let deprecationWarning = null;
+        if (entry.data && isDeprecatedDashData(dashEntry.data)) {
+            deprecationWarning = {
+                message: i18n('label_deprecation-warning'),
+                onConfirm: this.openDialogUpdateDeprecatedConfig,
+            };
+        }
 
         return (
             <div className={b({editing: isEditMode})}>
@@ -103,6 +113,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                             enablePublish={enablePublish}
                             setActualVersion={this.handlerSetActualVersion}
                             isEditing={isEditMode}
+                            deprecationWarning={deprecationWarning}
                         />
                         {Boolean(DashSelectState) && <DashSelectState />}
                     </React.Fragment>
@@ -164,6 +175,24 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 entry: this.props.entry as GetEntryResponse,
             },
         });
+    };
+
+    openDialogUpdateDeprecatedConfig = () => {
+        this.props.openDialogConfirm({
+            onApply: this.handleUpdateDeprecatedConfig,
+            onCancel: this.props.closeDialogConfirm,
+            message: i18n('dialog_deprecation-confirm'),
+            cancelButtonView: 'flat',
+            confirmButtonView: 'normal',
+            isWarningConfirm: true,
+            showIcon: false,
+            confirmOnEnterPress: true,
+        });
+    };
+
+    handleUpdateDeprecatedConfig = () => {
+        this.props.updateDeprecatedDashConfig();
+        this.props.closeDialogConfirm();
     };
 
     handlerCancelEditClick = () => {
@@ -292,6 +321,7 @@ const mapDispatchToProps = {
     saveDashAsNewDash,
     setPageDefaultTabItems,
     setDefaultViewState,
+    updateDeprecatedDashConfig,
     openDialogConfirm,
     closeDialogConfirm,
 };

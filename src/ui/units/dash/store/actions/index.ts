@@ -28,6 +28,7 @@ import {
     SetPageTabsItemsAction,
     SetRenameWithoutReloadAction,
     SetSelectorDialogItemAction,
+    SetSettingsAction,
     SetSkipReloadAction,
     SetStateAction,
     SetStateHashIdAction,
@@ -76,6 +77,7 @@ export type DashAction<T = unknown> =
     | CloseDialogAction
     | SaveDashSuccessAction
     | SaveDashErrorAction
-    | SetLastUsedConnectionIdAction;
+    | SetLastUsedConnectionIdAction
+    | SetSettingsAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

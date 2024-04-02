@@ -23,6 +23,24 @@ export const prepareLoadedData = (data: DashEntry['data']) => {
     return data;
 };
 
+export const isDeprecatedDashData = (data: DashEntry['data']) => {
+    return data.settings.dependentSelectors !== true;
+};
+
+export const migrateDataSettings = (data: DashEntry['data']) => {
+    if (isDeprecatedDashData(data)) {
+        return {
+            ...data,
+            settings: {
+                ...data.settings,
+                dependentSelectors: true,
+            },
+        };
+    }
+
+    return data;
+};
+
 export const removeParamAndUpdate = (
     history: History,
     searchParams: URLSearchParams,
