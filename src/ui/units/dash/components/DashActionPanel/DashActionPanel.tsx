@@ -84,14 +84,14 @@ type ActionPanelState = {};
 
 class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelState> {
     render() {
-        const {entry, dashEntry, isEditMode} = this.props;
+        const {entry, isEditMode} = this.props;
         const showHeader = !isEmbeddedMode();
         const enablePublish = Utils.isEnabledFeature(Feature.EnablePublishEntry) && !entry?.fake;
 
         const DashSelectState = registry.dash.components.get('DashSelectState');
 
         let deprecationWarning = null;
-        if (entry.data && isDeprecatedDashData(dashEntry.data)) {
+        if (this.isDeprecated()) {
             deprecationWarning = {
                 message: i18n('label_deprecation-warning'),
                 onConfirm: this.openDialogUpdateDeprecatedConfig,
@@ -181,11 +181,12 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         this.props.openDialogConfirm({
             onApply: this.handleUpdateDeprecatedConfig,
             onCancel: this.props.closeDialogConfirm,
-            message: i18n('dialog_deprecation-confirm'),
+            message: i18n('dialog_deprecation-confirm-text'),
+            confirmHeaderText: i18n('dialog_deprecation-confirm-header'),
             cancelButtonView: 'flat',
             confirmButtonView: 'normal',
             isWarningConfirm: true,
-            showIcon: false,
+            showAlert: true,
             confirmOnEnterPress: true,
         });
     };
@@ -214,6 +215,9 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                     initName: Utils.getEntryNameFromKey(entry.key, true),
                     onSaveAsNewCallback: this.props.saveDashAsNewDash,
                     workbookId: entry.workbookId,
+                    warningMessage: this.isDeprecated()
+                        ? i18n('dialog_deprecation-copy-text')
+                        : null,
                 },
             });
 
@@ -302,6 +306,12 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
             this.props.history.push(dashUrl);
         }
     };
+
+    private isDeprecated() {
+        const {dashEntry} = this.props;
+
+        return Boolean(dashEntry?.data) && isDeprecatedDashData(dashEntry.data);
+    }
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => {
