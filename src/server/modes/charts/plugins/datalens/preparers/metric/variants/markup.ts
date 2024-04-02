@@ -31,7 +31,7 @@ export const prepareMarkupMetricVariant = ({
             ? extraSettings.title
             : getFakeTitleOrTitle(measure);
 
-    if (typeof value === 'object') {
+    if (typeof value === 'object' && value !== null) {
         if (title) {
             return {
                 value: {
