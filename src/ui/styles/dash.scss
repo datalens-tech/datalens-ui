@@ -8,13 +8,6 @@ body.g-root.dl-dash {
     }
 }
 
-// to prevent YCSelect elements overflows boundaries on mobile
-
-//.yc-select-popup,
-//.yc-select-search {
-//    max-width: 90vw;
-//}
-
 // temporary workaround for contrast themes
 // DATAUI-1287
 
@@ -41,11 +34,11 @@ body.g-root.g-root_theme_dark-hc {
     }
 }
 
-body.g-root.yc-root_theme_dark-hc:not(.yc-root_mobile):not(.g-root_native-scrollbar),
-body.g-root.yc-root_theme_dark-hc:not(.yc-root_mobile):not(.yc-root_native-scrollbar),
-body.g-root.yc-root_theme_dark-hc:not(.g-root_mobile):not(.g-root_native-scrollbar),
-body.g-root.yc-root_theme_dark-hc:not(.g-root_mobile):not(.yc-root_native-scrollbar),
-body.g-root.yc-root_theme_dark-hc:not(.yc-root_mobile):not(.yc-root_native-scrollbar) {
+body.g-root.g-root_theme_dark-hc:not(.g-root_mobile):not(.g-root_native-scrollbar),
+body.g-root.g-root_theme_dark-hc:not(.g-root_mobile):not(.g-root_native-scrollbar),
+body.g-root.g-root_theme_dark-hc:not(.g-root_mobile):not(.g-root_native-scrollbar),
+body.g-root.g-root_theme_dark-hc:not(.g-root_mobile):not(.g-root_native-scrollbar),
+body.g-root.g-root_theme_dark-hc:not(.g-root_mobile):not(.g-root_native-scrollbar) {
     .expandable-panel__content {
         &::-webkit-scrollbar-track,
         *::-webkit-scrollbar-track {

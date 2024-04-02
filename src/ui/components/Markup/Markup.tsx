@@ -102,7 +102,7 @@ const getConfig = (
             break;
         }
         case MarkupItemTypes.Url: {
-            iteratedConfigItem.element = Link;
+            iteratedConfigItem.element = Link as TemplateItem['element'];
             iteratedConfigItem.props = merge(iteratedConfigItem.props, {
                 view: 'normal',
                 href: markupItem.url || '',

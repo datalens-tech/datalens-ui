@@ -25,7 +25,7 @@ const TemplateTextPaperContent = ({value, className}: DetailsContentProps) => {
         <div className={b('content', className)}>
             {value}
             <span className={b('clipboard-button')}>
-                <ClipboardButton text={value} size={14} />
+                <ClipboardButton text={value} size="xs" />
             </span>
         </div>
     );

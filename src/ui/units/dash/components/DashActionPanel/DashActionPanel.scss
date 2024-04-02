@@ -44,5 +44,9 @@
         margin-right: 4px;
     }
 
+    & .action-panel__container {
+        padding-left: 24px;
+    }
+
     @include revision-panel-fix;
 }

@@ -1,6 +1,6 @@
 @import '../styles/mixins';
 
-$baseClass: '.yc-simple-datepicker';
+$baseClass: '.dl-simple-datepicker';
 $widthInputDate: 95px;
 $widthInputTime: 68px;
 $widthActions: 38px;
@@ -24,7 +24,7 @@ $widthActions: 38px;
 }
 
 #{$baseClass} {
-    $input: '.yc-text-input__control';
+    $input: '.g-text-input__control';
     $control: '#{&}__control';
 
     display: inline-flex;
@@ -222,10 +222,10 @@ $widthActions: 38px;
     }
 
     &__control-action-tooltip {
-        --yc-popover-max-width: none;
+        --g-popover-max-width: none;
 
         &_mobile {
-            --yc-popover-max-width: 50%;
+            --g-popover-max-width: 50%;
         }
     }
 

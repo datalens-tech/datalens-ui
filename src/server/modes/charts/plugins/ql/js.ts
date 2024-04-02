@@ -17,6 +17,7 @@ import {isChartSupportMultipleColors} from '../../../../../shared/modules/colors
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import {registry} from '../../../../registry';
 import prepareSingleResult from '../datalens/js/helpers/misc/prepare-single-result';
+import {extractColorPalettesFromData} from '../helpers/color-palettes';
 import {getFieldList} from '../helpers/misc';
 
 import prepareLine from './preparers/line';
@@ -50,13 +51,14 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
     let result;
 
     const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
+    const {colorPalettes: loadedColorPalettes, loadedData} = extractColorPalettesFromData(data);
 
     const {columns, rows} = getColumnsAndRows({
         chartType: config.chartType,
         ChartEditor,
         queries: config.queries,
         connectionType: config.connection.type,
-        data,
+        data: loadedData,
     });
 
     if (
@@ -251,7 +253,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             idToDataType,
             ChartEditor,
             datasetsIds,
-            loadedColorPalettes: {},
+            loadedColorPalettes,
             disableDefaultSorting,
         };
 

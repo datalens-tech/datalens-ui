@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {withThemeValue} from '@gravity-ui/uikit';
+import {withTheme, withThemeValue} from '@gravity-ui/uikit';
 import type {RealTheme, Theme} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
@@ -113,4 +113,4 @@ class Monaco extends React.Component<MonacoProps> {
     };
 }
 
-export default withThemeValue(Monaco);
+export default withTheme(withThemeValue(Monaco));

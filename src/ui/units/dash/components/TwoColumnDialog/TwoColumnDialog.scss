@@ -15,16 +15,14 @@
     $dialogFooterPaddingHorizontal: $dialogPaddingHorizontal;
     $dialogFooterPaddingVertical: 28px;
 
-    // TODO: this is an private api and may silently changed. We should use local styles
-    --yc-dialog-header-padding: #{$dialogHeaderPaddingTop} #{$dialogHeaderPaddingHorizontal} #{$dialogHeaderPaddingBottom};
-    --yc-dialog-body-padding: #{$dialogBodyPaddingTo} #{$dialogBodyPaddingHorizontal} #{$dialogBodyPaddingBottom};
-    --yc-dialog-footer-padding: #{$dialogFooterPaddingVertical} #{$dialogFooterPaddingHorizontal};
-
-    // TODO: this is an private api and may silently changed. We should use local styles
-    border-radius: var(--yc-modal-border-radius);
+    border-radius: 5px;
     overflow: hidden;
     flex: 1;
     display: flex;
+
+    &__header {
+        padding: #{$dialogHeaderPaddingTop} #{$dialogHeaderPaddingHorizontal} #{$dialogHeaderPaddingBottom};
+    }
 
     &__sidebar {
         background: var(--g-color-base-generic-ultralight);
@@ -45,5 +43,13 @@
                     $dialogHeaderPaddingBottom}
             );
         }
+    }
+
+    &__content-body {
+        padding: #{$dialogBodyPaddingTo} #{$dialogBodyPaddingHorizontal} #{$dialogBodyPaddingBottom};
+    }
+
+    & .g-dialog-footer {
+        padding: #{$dialogFooterPaddingVertical} #{$dialogFooterPaddingHorizontal};
     }
 }

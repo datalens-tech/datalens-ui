@@ -101,11 +101,11 @@
         color: var(--g-color-text-secondary);
     }
 
-    &__popup-item.yc-list__item_active &__button-dots-wrap {
+    &__popup-item.g-list__item_active &__button-dots-wrap {
         display: block;
     }
 
-    &__popup-item .yc-list__item-sort-icon {
+    &__popup-item .g-list__item-sort-icon {
         margin-right: 10px;
     }
 }

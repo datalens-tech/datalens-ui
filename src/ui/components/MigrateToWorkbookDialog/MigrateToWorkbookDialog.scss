@@ -7,8 +7,7 @@
     &__body {
         display: flex;
         flex-direction: column;
-        // TODO: this is an private api and may silently changed. We should use local styles
-        padding-bottom: var(--yc-dialog-side-padding);
+        padding-bottom: 32px;
         overflow-y: auto;
     }
 

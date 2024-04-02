@@ -16,9 +16,9 @@ export enum ChartSettingsItems {
 }
 
 export default class ChartSettings {
-    private dialogCloseButtonSelector = '.wizard-chart-settings .yc-dialog-btn-close__btn';
+    private dialogCloseButtonSelector = '.wizard-chart-settings .g-dialog-btn-close__btn';
     private limitInputSelector = '.dialog-settings-limit-input__text-input input';
-    private applyButtonSelector = '.wizard-chart-settings .yc-dialog-footer__button-apply';
+    private applyButtonSelector = '.wizard-chart-settings .g-dialog-footer__button-apply';
     private openChartSettingsSelector = slct('visualization-select-settings-btn');
     private titleInput = slct('title-input');
 
@@ -49,7 +49,7 @@ export default class ChartSettings {
             throw new Error('Attribute class not found in pagination selector');
         });
 
-        return classAttribute?.includes('yc-switch_disabled');
+        return classAttribute?.includes('g-switch_disabled');
     }
 
     async getSettingItem(settingName: ChartSettingsItems) {

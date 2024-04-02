@@ -166,7 +166,7 @@ datalensTest.describe('Wizard - replacing the dataset', () => {
         await openTestPage(page, RobotChartsWizardUrls.WizardCitiesDataset);
         await wizardPage.setVisualization(WizardVisualizationId.PivotTable);
 
-        const loader = wizardPage.page.locator('.yc-loader');
+        const loader = wizardPage.page.locator('.g-loader');
 
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'City');
         await loader.waitFor({state: 'visible'});

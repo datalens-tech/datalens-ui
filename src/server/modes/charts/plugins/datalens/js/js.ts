@@ -23,6 +23,7 @@ import {
     isMarkupItem,
     markupToRawString,
 } from '../../../../../../shared';
+import {extractColorPalettesFromData} from '../../helpers/color-palettes';
 import {getDatasetIdAndLayerIdFromKey, getFieldList} from '../../helpers/misc';
 import prepareBackendPivotTableData from '../preparers/backend-pivot-table';
 import {PivotData} from '../preparers/backend-pivot-table/types';
@@ -191,7 +192,7 @@ function mergeData({data, links}: MergeDataArgs) {
                 mergedLegends[i] = [...row.legend];
             });
 
-            const rowLegendIds = resultDataRows[0].legend || [];
+            const rowLegendIds = resultDataRows[0]?.legend || [];
             rowLegendIds.forEach((legendId) => {
                 const field = resultFields.find((f) => f.legend_item_id === legendId);
                 if (field) {
@@ -207,7 +208,7 @@ function mergeData({data, links}: MergeDataArgs) {
             // We record the order of the fields in the current dataset
             // First we write down the original types
 
-            const rowLegendIds = resultDataRows[0].legend || [];
+            const rowLegendIds = resultDataRows[0]?.legend || [];
             rowLegendIds.forEach((legendId: number) => {
                 const field = resultFields.find((field) => field.legend_item_id === legendId);
                 if (field) {
@@ -711,18 +712,7 @@ module.exports = (...options: JSTabOptions) => {
 
     shared = mapChartsConfigToServerConfig(shared);
 
-    const loadedColorPalettes: Record<string, any> = {};
-    const loadedData: Record<string, any> = {};
-
-    Object.keys(data).forEach((key) => {
-        if (key.includes('colorPalettes_')) {
-            const paletteId = key.replace('colorPalettes_', '');
-
-            loadedColorPalettes[paletteId] = data[key][0];
-        } else {
-            loadedData[key] = data[key];
-        }
-    });
+    const {colorPalettes: loadedColorPalettes, loadedData} = extractColorPalettesFromData(data);
 
     log('LINKS:');
     log(shared.links);

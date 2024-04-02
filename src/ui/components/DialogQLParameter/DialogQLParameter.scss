@@ -1,12 +1,14 @@
 .dl-dialog-ql-parameter {
-    --yc-dialog-divider-margin: 0;
-
     display: flex;
     flex-direction: column;
     width: 595px;
     height: 370px;
     max-height: 80vh;
     min-height: 370px;
+
+    &__divider {
+        margin: 0;
+    }
 
     &__body {
         &_without-paddings {
@@ -32,17 +34,17 @@
         line-height: 28px;
     }
 
-    & .yc-dialog-header__caption {
+    & .g-dialog-header__caption {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
 
-    & .yc-dialog-body {
+    & .g-dialog-body {
         overflow-y: auto;
     }
 
-    & .yc-dialog-footer__children {
+    & .g-dialog-footer__children {
         position: relative;
     }
 }
