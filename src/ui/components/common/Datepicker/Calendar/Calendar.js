@@ -16,7 +16,7 @@ import {checkBrowser} from '../utils';
 
 import './Calendar.scss';
 
-const b = block('yc-datepicker-calendar');
+const b = block('dl-datepicker-calendar');
 const MONTH_NARGIN_BOTTOM = 5;
 const MIN_YEAR = 1000;
 const MAX_YEAR = 3000;

@@ -113,7 +113,7 @@ export const PopupWidgetsOrder = (props: PopupWidgetsOrderProps) => {
             contentClassName={b('popover')}
             qa={DialogTabsQA.PopupWidgetOrder}
         >
-            <Dialog.Header caption={captionText} />
+            <Dialog.Header className={b('header')} caption={captionText} />
             <div className={b('body')}>
                 {preparedItems?.length ? (
                     <List

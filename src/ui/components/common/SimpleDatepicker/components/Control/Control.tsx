@@ -14,7 +14,7 @@ import {Input} from './Input';
 
 import relativeModeIcon from '../../../../../assets/icons/relative-mode.svg';
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 
 interface ControlProps {
     dispatch: React.Dispatch<Action>;
@@ -62,7 +62,7 @@ export const Control = React.forwardRef<HTMLDivElement, ControlProps>((props, re
         disabled,
         dispatch,
     } = props;
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     const dateInputRef = React.useRef<HTMLInputElement>(null);
     const nativeDateInputRef = React.useRef<HTMLInputElement>(null);
     const timeInputRef = React.useRef<HTMLInputElement>(null);

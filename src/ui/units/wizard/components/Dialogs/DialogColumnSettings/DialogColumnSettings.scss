@@ -7,12 +7,12 @@
     &__content {
         overflow: auto;
 
-        & .yc-collapse__panel,
-        & .yc-collapse__header {
+        & .dl-collapse__panel,
+        & .dl-collapse__header {
             width: 100%;
         }
 
-        & .yc-collapse__arrow-wrapper_position_right {
+        & .dl-collapse__arrow-wrapper_position_right {
             margin-left: auto;
         }
     }
@@ -37,7 +37,7 @@
         color: var(--g-color-text-secondary);
     }
 
-    & .yc-dialog-btn-close {
+    & .g-dialog-btn-close {
         margin-top: 8px;
     }
 }

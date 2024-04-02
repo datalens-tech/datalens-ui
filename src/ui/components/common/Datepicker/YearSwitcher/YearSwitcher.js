@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 import './YearSwitcher.scss';
 
-const b = block('yc-datepicker-year-switcher');
+const b = block('dl-datepicker-year-switcher');
 
 export class YearSwitcher extends React.Component {
     static propTypes = {

@@ -1,7 +1,6 @@
-.yc-datepicker-popup-content {
-    --yc-tabs-color-border-active: var(--g-color-text-danger);
-    --yc-tabs-space-between: 16px;
-    --yc-tabs-border-width: 2px;
+.dl-datepicker-popup-content {
+    --g-tabs-item-gap: 16px;
+    --g-tabs-item-border-width: 2px;
 
     display: flex;
     flex-direction: column;
@@ -12,14 +11,14 @@
         flex: 0 0 40px;
         padding-left: 16px;
 
-        & .yc-tabs {
+        & .g-tabs {
             box-shadow: none;
         }
 
-        .yc-datepicker_mobile & {
+        .dl-datepicker_mobile & {
             padding-left: 0;
 
-            & .yc-tabs {
+            & .g-tabs {
                 justify-content: center;
             }
         }

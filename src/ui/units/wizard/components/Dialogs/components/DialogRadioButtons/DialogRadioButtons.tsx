@@ -16,8 +16,8 @@ type Props = {
 
 const b = block('dialog-radio-buttons');
 
-const DialogRadioButtons = React.forwardRef<HTMLInputElement, Props>(
-    (props: Props, ref: React.ForwardedRef<HTMLInputElement>) => {
+const DialogRadioButtons = React.forwardRef<HTMLDivElement, Props>(
+    (props: Props, ref: React.ForwardedRef<HTMLDivElement>) => {
         return (
             <RadioButton
                 className={b({stretched: props.stretched})}
