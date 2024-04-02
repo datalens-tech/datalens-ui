@@ -23,6 +23,7 @@ import {
     isMarkupItem,
     markupToRawString,
 } from '../../../../../../shared';
+import {extractColorPalettesFromData} from '../../helpers/color-palettes';
 import {getDatasetIdAndLayerIdFromKey, getFieldList} from '../../helpers/misc';
 import prepareBackendPivotTableData from '../preparers/backend-pivot-table';
 import {PivotData} from '../preparers/backend-pivot-table/types';
@@ -711,18 +712,7 @@ module.exports = (...options: JSTabOptions) => {
 
     shared = mapChartsConfigToServerConfig(shared);
 
-    const loadedColorPalettes: Record<string, any> = {};
-    const loadedData: Record<string, any> = {};
-
-    Object.keys(data).forEach((key) => {
-        if (key.includes('colorPalettes_')) {
-            const paletteId = key.replace('colorPalettes_', '');
-
-            loadedColorPalettes[paletteId] = data[key][0];
-        } else {
-            loadedData[key] = data[key];
-        }
-    });
+    const {colorPalettes: loadedColorPalettes, loadedData} = extractColorPalettesFromData(data);
 
     log('LINKS:');
     log(shared.links);
