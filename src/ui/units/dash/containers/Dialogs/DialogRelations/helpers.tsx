@@ -132,33 +132,30 @@ export const getDialogRowIcon = (
 const getChangedConnections = ({
     items,
     widgetId,
-    itemId,
     changedId,
     changedType,
 }: {
     items: Config['connections'];
     widgetId: string;
-    itemId?: string;
     changedId: string;
     changedType: string;
 }) => {
-    const currentId = itemId || widgetId;
     const relationFromWidgetToRow = {
-        from: currentId,
+        from: widgetId,
         kind: RELATION_TYPES.ignore as ConfigConnection['kind'],
         to: changedId,
     };
     const relationFromRowToWidget = {
         from: changedId,
         kind: RELATION_TYPES.ignore as ConfigConnection['kind'],
-        to: currentId,
+        to: widgetId,
     };
 
     const connectionsWithoutCurrentLink = items.filter(
         (item) =>
             item.kind === RELATION_TYPES.ignore &&
-            !(changedId === item.from && currentId === item.to) &&
-            !(changedId === item.to && currentId === item.from),
+            !(changedId === item.from && widgetId === item.to) &&
+            !(changedId === item.to && widgetId === item.from),
     );
     let result: Config['connections'] = [];
     switch (changedType) {
@@ -407,16 +404,16 @@ export const getUpdatedPreparedRelations = (props: {
     return newPreparedRelations;
 };
 
-export const getPairedRelationType = (type: RelationType) => {
+export const getPairedRelationType = (type: RelationType): RelationType => {
     switch (type) {
         case RELATION_TYPES.ignore:
         case RELATION_TYPES.both:
             return type;
         case RELATION_TYPES.input:
-            return RELATION_TYPES.output;
+            return RELATION_TYPES.output as RelationType;
         case RELATION_TYPES.output:
-            return RELATION_TYPES.input;
+            return RELATION_TYPES.input as RelationType;
     }
 
-    return RELATION_TYPES.unknown;
+    return RELATION_TYPES.unknown as RelationType;
 };

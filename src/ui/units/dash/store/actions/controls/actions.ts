@@ -92,11 +92,11 @@ export const applyGroupControlDialog = () => {
                         state,
                     ) as DashTabItemGroupControlData;
 
-                    const configSelectorItem = openedItemData.group.find(
+                    const configSelectorItem = openedItemData.group?.find(
                         ({id}) => id === selector.id,
                     );
 
-                    // if configSelectorItem is not found in config, it is a new one
+                    // we check changing of sourceType only if selector was already saved and it's not the old one
                     hasChangedSourceType = configSelectorItem
                         ? configSelectorItem.sourceType !== selector.sourceType
                         : false;
