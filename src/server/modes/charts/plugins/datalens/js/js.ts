@@ -191,7 +191,7 @@ function mergeData({data, links}: MergeDataArgs) {
                 mergedLegends[i] = [...row.legend];
             });
 
-            const rowLegendIds = resultDataRows[0].legend || [];
+            const rowLegendIds = resultDataRows[0]?.legend || [];
             rowLegendIds.forEach((legendId) => {
                 const field = resultFields.find((f) => f.legend_item_id === legendId);
                 if (field) {
@@ -207,7 +207,7 @@ function mergeData({data, links}: MergeDataArgs) {
             // We record the order of the fields in the current dataset
             // First we write down the original types
 
-            const rowLegendIds = resultDataRows[0].legend || [];
+            const rowLegendIds = resultDataRows[0]?.legend || [];
             rowLegendIds.forEach((legendId: number) => {
                 const field = resultFields.find((field) => field.legend_item_id === legendId);
                 if (field) {
