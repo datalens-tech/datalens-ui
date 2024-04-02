@@ -11,7 +11,7 @@ import {MONTHS} from '../constants';
 import './Months.scss';
 
 const i18n = I18n.keyset('components.common.Datepicker');
-const b = block('yc-datepicker-months');
+const b = block('dl-datepicker-months');
 const CELLS_COUNT = 17;
 const EMPTY_CELLS = [5, 9, 13];
 const CELLS = {

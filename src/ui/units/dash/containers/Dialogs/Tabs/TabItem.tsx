@@ -117,6 +117,7 @@ class TabItem extends React.PureComponent<Props> {
                     selected: selectedDashTabId === id,
                 })}
                 onDoubleClick={this.setEditMode}
+                data-qa={DialogTabsQA.ReadOnlyTabItem}
             >
                 <div title={title} className={b('title')}>
                     {title}

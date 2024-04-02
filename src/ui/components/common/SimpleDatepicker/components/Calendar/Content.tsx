@@ -7,7 +7,7 @@ import {Year} from './Year';
 import {Years} from './Years';
 import {CalendarProps} from './types';
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 
 export const Content: React.FC<CalendarProps & {shown?: boolean}> = (props) => {
     const {

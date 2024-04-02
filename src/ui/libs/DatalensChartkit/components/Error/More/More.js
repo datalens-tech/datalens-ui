@@ -38,7 +38,7 @@ function onClick({message, requestId, text}) {
                     <div className={b('modal-request-id')}>
                         <span className={b('modal-request-id-title')}>Request-ID:</span>
                         <span className={b('modal-request-id-value')}>{requestId}</span>
-                        <ClipboardButton text={requestId} size={14} />
+                        <ClipboardButton text={requestId} size="xs" />
                     </div>
                     <div className={b('text', {modal: true})}>{text}</div>
                 </div>

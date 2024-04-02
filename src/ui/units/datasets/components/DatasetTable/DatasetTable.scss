@@ -8,7 +8,7 @@
 .dataset-table {
     $class: &;
     $rowClass: #{&}__row;
-    $inputControlClass: '.yc-text-input__content';
+    $inputControlClass: '.g-text-input__content';
     width: 100%;
     flex: 1;
     position: relative;
@@ -65,7 +65,7 @@
     & &__column {
         @extend %expand-by-parent-with-align;
 
-        .yc-select-control {
+        .g-select-control {
             border: 1px solid transparent;
             padding-right: 8px;
 
@@ -190,7 +190,7 @@
             border-color: var(--g-color-line-danger);
         }
 
-        #{$rowClass} &_error #{$inputControlClass} .yc-text-input__control:not(:focus) {
+        #{$rowClass} &_error #{$inputControlClass} .g-text-input__control:not(:focus) {
             color: var(--g-color-line-danger);
             font-style: italic;
         }
