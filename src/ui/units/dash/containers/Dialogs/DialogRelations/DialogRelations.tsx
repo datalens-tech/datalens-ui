@@ -96,10 +96,8 @@ const DialogRelations = (props: DialogRelationsProps) => {
             itemId,
         });
 
-    const currentWidgetId = itemId || widget.id || '';
-    const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>({
-        [currentWidgetId]: {},
-    });
+    const currentWidgetId = itemId || currentWidgetMeta?.widgetId || '';
+    const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>({});
 
     const [shownInvalidAliases, setShownInvalidAliases] = React.useState<string[] | null>(null);
 
@@ -277,6 +275,9 @@ const DialogRelations = (props: DialogRelationsProps) => {
             const {type, widgetId, forceAddAlias, itemId: rowItemId, ...rest} = changedData;
 
             const newChanged = {...changedWidgets};
+            if (!newChanged[currentWidgetId]) {
+                newChanged[currentWidgetId] = {};
+            }
             let currentRelations;
             if (rowItemId) {
                 currentRelations = preparedRelations.find(
@@ -293,19 +294,19 @@ const DialogRelations = (props: DialogRelationsProps) => {
             if (currentRelationType === type) {
                 if (
                     newChanged[currentWidgetId][relationSubjectId] ||
-                    newChanged[relationSubjectId][currentWidgetId]
+                    newChanged[relationSubjectId]?.[currentWidgetId]
                 ) {
                     setChangedWidgets(newChanged);
+                    delete newChanged[currentWidgetId][relationSubjectId];
+                    delete newChanged[relationSubjectId][currentWidgetId];
                 }
-                delete newChanged[currentWidgetId][relationSubjectId];
-                delete newChanged[relationSubjectId][currentWidgetId];
             } else {
                 newChanged[currentWidgetId][relationSubjectId] = type;
                 const pairedType = getPairedRelationType(type);
                 if (pairedType !== RELATION_TYPES.unknown) {
                     newChanged[relationSubjectId] = newChanged[relationSubjectId]
-                        ? {...newChanged[relationSubjectId], [currentWidgetId]: type}
-                        : {[currentWidgetId]: type};
+                        ? {...newChanged[relationSubjectId], [currentWidgetId]: pairedType}
+                        : {[currentWidgetId]: pairedType};
                 }
             }
             const changeFromUnknown = currentRelationType === RELATION_TYPES.unknown;
