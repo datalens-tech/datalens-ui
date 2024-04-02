@@ -7,7 +7,7 @@ import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import {DatasetOptions, Field, FilterField, ShapesConfig, Update} from 'shared';
 
-import {PaletteTypes} from '../../../constants';
+import {PaletteTypes} from '../../../../../components/Palette/constants';
 
 import DialogShapesPalette from './DialogShapesPalette/DialogShapesPalette';
 

@@ -1,0 +1,41 @@
+.dialog-color {
+    display: flex;
+    flex-direction: column;
+    width: 680px;
+    height: 560px;
+    max-height: 80vh;
+    min-height: 300px;
+
+    --yc-dialog-header-padding-bottom: 15px;
+
+    &_palette-mode {
+        height: 560px;
+    }
+
+    &_palette-mode &__body {
+        padding: 0;
+    }
+
+    &_palette-mode &__row {
+        padding: 0 32px;
+    }
+
+    &_gradient-mode {
+        height: 374px;
+    }
+
+    &__title-icon {
+        margin-bottom: 2px;
+        margin-right: 4px;
+        height: 24px;
+        width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__body {
+        overflow-y: auto;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+}

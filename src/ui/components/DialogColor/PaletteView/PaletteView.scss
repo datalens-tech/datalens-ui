@@ -1,0 +1,39 @@
+.dialog-color {
+    &__palette-section {
+        display: flex;
+        height: calc(100%);
+        border-top: 1px solid var(--g-color-line-generic);
+    }
+
+    &__values-container {
+        flex: 1;
+        width: 50%;
+        overflow: hidden;
+        overflow-y: auto;
+        border-right: 1px solid var(--g-color-line-generic);
+    }
+
+    &__values-list {
+        margin-top: 10px;
+        position: relative;
+        height: calc(100% - 58px);
+        overflow-y: auto;
+    }
+
+    &__values-search {
+        padding: 20px 32px 0;
+    }
+
+    &__palette-container {
+        position: relative;
+        width: 50%;
+        height: 100%;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+
+    &__palette {
+        height: 230px;
+        margin: 20px 24px 0;
+    }
+}

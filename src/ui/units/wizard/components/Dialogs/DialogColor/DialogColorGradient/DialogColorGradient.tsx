@@ -12,10 +12,10 @@ import {Dispatch, bindActionCreators} from 'redux';
 import {DialogColorQa, Field, GradientPalettes, GradientType, isMeasureValue} from 'shared';
 import {selectAvailableClientGradients, selectDefaultClientGradient} from 'ui';
 import {GradientState, setDialogColorGradientState} from 'units/wizard/actions/dialogColor';
-import {GradientPalettePreview} from 'units/wizard/components/GradientPalettePreview/GradientPalettePreview';
 
+import {getGradientSelectorItems} from '../../../../../../components/DialogColor/GradientView/utils';
+import {GradientPalettePreview} from '../../../../../../components/GradientPalettePreview/GradientPalettePreview';
 import {SelectOptionWithIcon} from '../../../../../../components/SelectComponents';
-import {getGradientSelectorItems} from '../../../../utils/palette';
 import {validateThresholds} from '../../../../utils/wizard';
 
 import './DialogColorGradient.scss';

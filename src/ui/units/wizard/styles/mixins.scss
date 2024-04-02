@@ -18,14 +18,3 @@
     outline: none;
     cursor: pointer;
 }
-
-@mixin palette-item-border($borderColor, $top, $left, $width, $height) {
-    content: '';
-    position: absolute;
-    top: $top;
-    left: $left;
-    width: $width;
-    height: $height;
-    border: 2px solid $borderColor;
-    border-radius: 6px;
-}

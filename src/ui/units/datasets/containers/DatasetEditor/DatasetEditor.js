@@ -280,12 +280,14 @@ class DatasetEditor extends React.Component {
     };
 
     render() {
-        const {sourceAvatars, validation, options, itemsToDisplay, rls, permissions} = this.props;
+        const {datasetId, sourceAvatars, validation, options, itemsToDisplay, rls, permissions} =
+            this.props;
         const {field, visibleRLSDialog, currentRLSField} = this.state;
 
         return (
             <div className={b()}>
                 <DatasetTable
+                    datasetId={datasetId}
                     permissions={permissions}
                     rls={rls}
                     fields={this.filteredFields}

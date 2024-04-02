@@ -15,9 +15,9 @@ import {
 import {selectColorPalettes, selectCurrentColorPalette} from 'store/selectors/colorPaletteEditor';
 import {DatalensGlobalState} from 'ui';
 import {DialogRow} from 'units/wizard/components/Dialogs/components/DialogRow/DialogRow';
-import {GradientPalettePreview} from 'units/wizard/components/GradientPalettePreview/GradientPalettePreview';
 import {isStringWithFullLengthHex} from 'utils/validation';
 
+import {GradientPalettePreview} from '../../GradientPalettePreview/GradientPalettePreview';
 import ColorPaletteChartkitPreview from '../ColorPaletteCharkitPreview/ColorPaletteChartkitPreview';
 import ColorTextInput from '../ColorTextInput/ColorTextInput';
 

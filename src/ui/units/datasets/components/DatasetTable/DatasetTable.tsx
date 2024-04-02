@@ -39,6 +39,7 @@ DataTable.setCustomIcons({
 });
 
 type DatasetTableProps = {
+    datasetId?: string;
     options: DatasetOptions;
     fields: DatasetField[];
     itemsToDisplay: EditorItemToDisplay[];
@@ -226,6 +227,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         action: FieldAction;
         field: DatasetField;
     }) => {
+        const {datasetId} = this.props;
+
         switch (action) {
             case FieldAction.Duplicate: {
                 this.props.duplicateField({field});
@@ -248,7 +251,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 break;
             }
             case FieldAction.Color: {
-                this.props.openDialog({id: DIALOG_DS_FIELD_COLORS, props: {field}});
+                this.props.openDialog({id: DIALOG_DS_FIELD_COLORS, props: {field, datasetId}});
                 break;
             }
             case FieldAction.Formatting: {

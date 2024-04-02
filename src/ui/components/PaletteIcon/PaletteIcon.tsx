@@ -2,9 +2,9 @@ import React from 'react';
 
 import {Icon} from '@gravity-ui/uikit';
 
-import {selectGradientIcon} from '../../../../';
-import {IconId} from '../../../../../shared';
-import {registry} from '../../../../registry';
+import {IconId} from '../../../shared';
+import {selectGradientIcon} from '../../constants';
+import {registry} from '../../registry';
 
 export const enum PaletteType {
     ColorPalette = 'color-palette',

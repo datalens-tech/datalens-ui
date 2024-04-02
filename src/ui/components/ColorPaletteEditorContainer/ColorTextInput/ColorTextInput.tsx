@@ -2,7 +2,8 @@ import React from 'react';
 
 import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {PaletteItem} from 'units/wizard/components/Palette/components/PaletteItem/PaletteItem';
+
+import {PaletteItem} from '../../Palette/components/PaletteItem/PaletteItem';
 
 import trashIcon from '@gravity-ui/icons/svgs/trash-bin.svg';
 

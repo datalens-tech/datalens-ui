@@ -118,12 +118,6 @@ export const enum DialogFieldSubTotalsQa {
     SubTotalsSwitch = 'sub-totals-switch',
 }
 
-export const enum DialogColorQa {
-    PaletteSelect = 'palette-select',
-    GradientType = 'color-dialog-gradient-type-radio',
-    ApplyButton = 'color-dialog-apply-button',
-}
-
 export const enum DialogMetricSettingsQa {
     Dialog = 'metric-settings-dialog',
     CancelButton = 'metric-settings-dialog-cancel',

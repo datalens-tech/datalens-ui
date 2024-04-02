@@ -10,8 +10,8 @@ import {fetchColorPalettes} from 'store/actions/colorPaletteEditor';
 import {selectColorPalettesDict} from 'store/selectors/colorPaletteEditor';
 import Utils from 'utils';
 
+import {PaletteIcon, PaletteType} from '../../../../../../../components/PaletteIcon/PaletteIcon';
 import {openDialogColor} from '../../../../../actions/dialogColor';
-import {PaletteIcon, PaletteType} from '../../../../PaletteIcon/PaletteIcon';
 import {ExtraSettings} from '../../../DialogColor/DialogColor';
 
 import './ButtonColorDialog.scss';
