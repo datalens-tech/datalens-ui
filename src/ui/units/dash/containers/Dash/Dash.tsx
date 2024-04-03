@@ -336,7 +336,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
 
         this.props.showToast({
             title: i18n('toast_paste-invalid-workbook-entry'),
-            type: 'error',
+            type: 'danger',
             actions: [
                 {
                     label: i18n('label_details'),
