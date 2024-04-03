@@ -3,6 +3,7 @@ import {AppConfig, AppContext} from '@gravity-ui/nodekit';
 
 import CacheClient from '../../components/cache-client';
 import {ChartsEngine} from '../../components/charts-engine';
+import {isConfigWithFunction} from '../../components/charts-engine/components/utils';
 import type {Plugin, TelemetryCallbacks} from '../../components/charts-engine/types';
 import {startMonitoring} from '../../components/monitoring';
 import {checkValidation} from '../../lib/validation';
@@ -81,6 +82,12 @@ export function initChartsEngine({
                 entryId: id,
                 jsTabExecDuration: Math.ceil(latency),
             });
+        },
+
+        onTabsExecuted: ({result, entryId}) => {
+            if (isConfigWithFunction(result)) {
+                ctx.stats('entriesWithFn', {entryId});
+            }
         },
     };
 
