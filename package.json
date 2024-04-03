@@ -108,7 +108,7 @@
     "@gravity-ui/icons": "^2.9.1",
     "@gravity-ui/navigation": "^2.5.0",
     "@gravity-ui/prettier-config": "^1.0.1",
-    "@gravity-ui/react-data-table": "^1.2.0",
+    "@gravity-ui/react-data-table": "^2.0.1",
     "@gravity-ui/sdk": "^1.2.1",
     "@gravity-ui/stylelint-config": "^1.0.1",
     "@gravity-ui/tsconfig": "^1.0.0",
