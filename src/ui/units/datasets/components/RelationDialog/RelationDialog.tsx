@@ -490,10 +490,10 @@ class SourceRelationDialog extends React.Component<Props, State> {
         return isDisabled;
     }
 
-    get isRequired() {
+    get isOptimized() {
         const {relation} = this.state;
 
-        return relation.required;
+        return !relation.required;
     }
 
     changeJoinType = (type: string) => {
@@ -564,13 +564,13 @@ class SourceRelationDialog extends React.Component<Props, State> {
         });
     };
 
-    changeRequired = (required: boolean) => {
+    changeOptimized = (optimized: boolean) => {
         const {relation} = this.state;
 
         this.setState({
             relation: {
                 ...relation,
-                required,
+                required: !optimized,
             },
         });
     };
@@ -636,7 +636,10 @@ class SourceRelationDialog extends React.Component<Props, State> {
                             </Button>
 
                             <div className={b('optimize-join')}>
-                                <Checkbox checked={this.isRequired} onUpdate={this.changeRequired}>
+                                <Checkbox
+                                    checked={this.isOptimized}
+                                    onUpdate={this.changeOptimized}
+                                >
                                     {i18n('label_optimize-join')}
                                     <HelpPopover
                                         className={b('hint-optimize-join')}
