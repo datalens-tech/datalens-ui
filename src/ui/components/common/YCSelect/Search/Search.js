@@ -26,11 +26,7 @@ export class Search extends React.PureComponent {
             return;
         }
 
-        const {scrollX, scrollY} = window;
-        const scrollTop = document.body.scrollTop;
-        this.inputNode.focus();
-        window.scrollTo(scrollX, scrollY);
-        document.body.scrollTop = scrollTop;
+        this.inputNode.focus({preventScroll: true});
     };
 
     _setInputNode = (ref) => {
