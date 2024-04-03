@@ -1,12 +1,28 @@
 import vm from 'vm';
 
+import {
+    QuickJSContext,
+    QuickJSHandle,
+    getQuickJS,
+    shouldInterruptAfterDeadline,
+} from 'quickjs-emscripten';
+
 import type {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
+import type {IChartEditor, Shared} from '../../../../../shared/types';
+import {ServerChartsConfig} from '../../../../../shared/types/config/wizard';
+import {SourceControlArgs} from '../../../../modes/charts/plugins/control/url/types';
+import {BuildWizardD3ConfigOptions} from '../../../../modes/charts/plugins/datalens/d3';
+import {BuildHighchartsConfigOptions} from '../../../../modes/charts/plugins/datalens/highcharts';
+import {datalensModule} from '../../../../modes/charts/plugins/datalens/module';
+import {SourcesArgs} from '../../../../modes/charts/plugins/datalens/url/build-sources/types';
 import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
 
+import controlModule from './../../../../modes/charts/plugins/control';
 import {getChartApiContext} from './chart-api-context';
 import {Console} from './console';
+import {getSortParams} from './paramsUtils';
 import {NativeModule} from './types';
 
 const {
@@ -56,7 +72,7 @@ type ProcessTabParams = {
     data?: Record<string, any>;
     dataStats?: any;
     timeout: number;
-    shared: Record<string, object>;
+    shared: Record<string, object> | Shared | ServerChartsConfig;
     modules: Record<string, unknown>;
     hooks: Record<string, any>;
     userLogin: string | null;
@@ -167,9 +183,16 @@ export type SandboxExecuteResult = {
         sideMarkdown?: string;
         exportFilename?: string;
     };
+    shared: Record<string, object> | Shared | ServerChartsConfig;
+    params: Record<string, string | string[]>;
 };
 
-const execute = ({code, instance, filename, timeout}: ExecuteParams): SandboxExecuteResult => {
+const execute = async ({
+    code,
+    instance,
+    filename,
+    timeout,
+}: ExecuteParams): Promise<SandboxExecuteResult> => {
     if (!code && filename === 'JavaScript') {
         const error = new SandboxError('You should provide code in JavaScript tab');
         error.code = RUNTIME_ERROR;
@@ -181,8 +204,103 @@ const execute = ({code, instance, filename, timeout}: ExecuteParams): SandboxExe
     let errorStackTrace;
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
 
+    let quickJSResult: any;
+
     try {
-        vm.runInNewContext(code, instance, {filename, timeout, microtaskMode: 'afterEvaluate'});
+        const QuickJS = await getQuickJS();
+        const runtime = QuickJS.newRuntime();
+        const context = runtime.newContext();
+        runtime.setMemoryLimit(1024 * 1024);
+        runtime.setInterruptHandler(shouldInterruptAfterDeadline(Date.now() + timeout));
+
+        // const requireHandle = context.newFunction('_require', () => {
+        //     const moduleText = fs.readFileSync(
+        //         path.join(__dirname, '../../../../../../../../plugins-bundle', 'index.js'),
+        //         'utf-8',
+        //     );
+        //     return context.newString(moduleText);
+        // });
+        // context.setProp(context.global, '_require', requireHandle);
+        // requireHandle.dispose();
+
+        const logHandle = context.newFunction('log', (...args) => {
+            const nativeArgs = args.map(context.dump);
+            instance.console.log(...nativeArgs);
+        });
+        const consoleHandle = context.newObject();
+        context.setProp(consoleHandle, 'log', logHandle);
+        context.setProp(context.global, 'console', consoleHandle);
+        logHandle.dispose();
+        consoleHandle.dispose();
+
+        const module = context.newObject();
+        context.newObject().consume((exports) => context.setProp(module, 'exports', exports));
+        context.setProp(context.global, 'module', module);
+        module.dispose();
+
+        const ChartEditor = getChartEditorApi({
+            name: filename,
+            context,
+            shared: instance.ChartEditor.getSharedData(),
+            loadedData: instance.ChartEditor.getLoadedData
+                ? instance.ChartEditor.getLoadedData()
+                : null,
+            params: instance.ChartEditor.getParams(),
+        });
+
+        context.setProp(context.global, 'ChartEditor', ChartEditor);
+        ChartEditor.dispose();
+
+        getLibsDatalensV3({context, chartEditorApi: instance.ChartEditor}).consume(
+            (libsDatalensV3) => context.setProp(context.global, '_libsDatalensV3', libsDatalensV3),
+        );
+
+        getLibsControlV1({context, chartEditorApi: instance.ChartEditor}).consume((libsControlV1) =>
+            context.setProp(context.global, '_libsControlV1', libsControlV1),
+        );
+
+        const prepare = `
+           function require(name) => {
+               const lowerName = name.toLowerCase();
+               if (lowerName === 'libs/datalens/v3') {
+                   return {
+                       buildSources: (args) => JSON.parse(_libsDatalensV3.buildSources(args)),
+                       buildChartsConfig: (args) => JSON.parse(_libsDatalensV3.buildChartsConfig(args)),
+                       buildGraph: (args) => JSON.parse(_libsDatalensV3.buildGraph(args)),
+                       buildHighchartsConfig: (args) => JSON.parse(_libsDatalensV3.buildHighchartsConfig(args)),
+                       buildD3Config: (args) => JSON.parse(_libsDatalensV3.buildD3Config(args)),
+                   }
+               } else if (lowerName === 'libs/control/v1') {
+                return {
+                    buildSources: (args) => JSON.parse(_libsControlV1.buildSources(args)),
+                    buildGraph: (args) => _libsControlV1.buildGraph(args),
+                    buildUI: (args) => JSON.parse(_libsControlV1.buildUI(args)),
+                    buildChartsConfig: () => ({}),
+                    buildHighchartsConfig: () => ({}),
+                }
+               } else {
+                   throw new Error(\`Module "\${lowerName}" is not resolved\`);
+               }
+           };
+            ChartEditor.getParams = () => JSON.parse(ChartEditor._params);
+            ChartEditor.getActionParams = () => JSON.parse('${JSON.stringify(
+                instance.ChartEditor.getActionParams(),
+            )}');
+            ChartEditor.getWidgetConfig = () => JSON.parse('${JSON.stringify(
+                instance.ChartEditor.getWidgetConfig(),
+            )}');
+           ChartEditor.getSharedData = () => JSON.parse(ChartEditor._shared);
+           ChartEditor.getLoadedData = () => JSON.parse(ChartEditor._getLoadedData());
+           ChartEditor.getSortParams = () => JSON.parse(ChartEditor._getSortParams());
+           `;
+
+        const ok = context.evalCode(prepare + code);
+        context.unwrapResult(ok).dispose();
+        quickJSResult = context.getProp(context.global, 'module').consume(context.dump);
+
+        context.dispose();
+        runtime.dispose();
+        // vm.runInNewContext(code, instance, {filename, timeout, microtaskMode: 'afterEvaluate'});
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
             errorStackTrace = 'stack' in e && (e.stack as string);
@@ -197,30 +315,36 @@ const execute = ({code, instance, filename, timeout}: ExecuteParams): SandboxExe
         executionTiming = process.hrtime(timeStart);
     }
 
+    const shared = instance.ChartEditor.getSharedData();
+    const params = instance.ChartEditor.getParams();
+
     delete instance.self;
-    const result = {
-        executionTiming,
-        logs: instance.console.getLogs(),
-        filename,
-    };
 
     if (errorStackTrace) {
         const error = new SandboxError(RUNTIME_ERROR);
 
         error.code = errorCode;
-        error.executionResult = {...result, stackTrace: errorStackTrace};
+        error.executionResult = {
+            executionTiming,
+            logs: instance.console.getLogs(),
+            filename,
+            stackTrace: errorStackTrace,
+        };
         error.stackTrace = errorStackTrace;
         throw error;
     }
 
     return {
-        ...result,
-        exports: instance.module.exports,
+        shared,
+        params,
+        executionTiming,
+        logs: instance.console.getLogs(),
+        filename,
+        exports: quickJSResult?.exports,
         runtimeMetadata: instance.__runtimeMetadata,
     };
 };
-
-const processTab = ({
+const processTab = async ({
     name,
     code,
     params,
@@ -237,6 +361,8 @@ const processTab = ({
     nativeModules,
     isScreenshoter,
 }: ProcessTabParams) => {
+    const originalShared = shared;
+    const originalParams = params;
     const context = getChartApiContext({
         name,
         params,
@@ -249,7 +375,7 @@ const processTab = ({
         userLang,
     });
 
-    return execute({
+    const result = await execute({
         code,
         instance: generateInstance({
             context,
@@ -262,11 +388,159 @@ const processTab = ({
         filename: name,
         timeout,
     });
+
+    Object.assign(originalShared, result.shared);
+    Object.assign(originalParams, result.params);
+
+    return result;
 };
+
+function getChartEditorApi({
+    name,
+    context,
+    shared,
+    loadedData,
+    params,
+}: {
+    name: string;
+    context: QuickJSContext;
+    shared: Record<string, object>;
+    loadedData: Record<string, any> | null;
+    params: Record<string, string | string[]>;
+}): QuickJSHandle {
+    const api = context.newObject();
+
+    context
+        .newString(JSON.stringify(shared))
+        .consume((handle) => context.setProp(api, '_shared', handle));
+
+    context
+        .newString(JSON.stringify(params))
+        .consume((handle) => context.setProp(api, '_params', handle));
+
+    if (name === 'Urls') {
+        context
+            .newFunction('_getSortParams', () =>
+                context.newString(JSON.stringify(getSortParams(params))),
+            )
+            .consume((handle) => context.setProp(api, '_getSortParams', handle));
+    }
+
+    if (name === 'Urls' || name === 'JavaScript') {
+        const page = Number(Array.isArray(params._page) ? params._page[0] : params._page);
+        context
+            .newFunction('getCurrentPage', () => context.newNumber(isNaN(page) ? 1 : page))
+            .consume((handle) => context.setProp(api, 'getCurrentPage', handle));
+    }
+
+    if (name === 'UI' || name === 'JavaScript') {
+        const getLoadedDataHandle = context.newFunction('getLoadedData', () => {
+            const result = loadedData ? loadedData : {};
+            return context.newString(JSON.stringify(result));
+        });
+        context.setProp(api, '_getLoadedData', getLoadedDataHandle);
+        getLoadedDataHandle.dispose();
+    }
+
+    return api;
+}
+
+function getLibsDatalensV3({
+    context,
+    chartEditorApi,
+}: {
+    context: QuickJSContext;
+    chartEditorApi: IChartEditor;
+}) {
+    const libsDatalensV3 = context.newObject();
+    context
+        .newFunction('buildSources', (arg) => {
+            const nativeArg: SourcesArgs = context.dump(arg);
+            const result = datalensModule.buildSources(nativeArg);
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsDatalensV3, 'buildSources', handle));
+
+    context
+        .newFunction('buildChartsConfig', (arg) => {
+            const nativeArg = context.dump(arg);
+            const result = datalensModule.buildChartsConfig({...nativeArg}, {});
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsDatalensV3, 'buildChartsConfig', handle));
+
+    context
+        .newFunction('buildGraph', (arg) => {
+            const nativeArg = context.dump(arg);
+            const result = datalensModule.buildGraph({...nativeArg, ChartEditor: chartEditorApi});
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsDatalensV3, 'buildGraph', handle));
+
+    context
+        .newFunction('buildHighchartsConfig', (arg) => {
+            const nativeArg: BuildHighchartsConfigOptions = context.dump(arg);
+            const result = datalensModule.buildHighchartsConfig({...nativeArg});
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsDatalensV3, 'buildHighchartsConfig', handle));
+    context
+        .newFunction('buildD3Config', (arg) => {
+            const nativeArg: BuildWizardD3ConfigOptions = context.dump(arg);
+            const result = datalensModule.buildD3Config({...nativeArg});
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsDatalensV3, 'buildD3Config', handle));
+    return libsDatalensV3;
+}
+
+function getLibsControlV1({
+    context,
+    chartEditorApi,
+}: {
+    context: QuickJSContext;
+    chartEditorApi: IChartEditor;
+}) {
+    const libsControlV1 = context.newObject();
+    context
+        .newFunction('buildSources', (arg) => {
+            const nativeArg: SourceControlArgs = context.dump(arg);
+            const result = controlModule.buildSources(nativeArg);
+            chartEditorApi.setSharedData(nativeArg.shared);
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsControlV1, 'buildSources', handle));
+    context
+        .newFunction('buildGraph', (arg) => {
+            const nativeArg = context.dump(arg);
+            controlModule.buildGraph({...nativeArg, ChartEditor: chartEditorApi});
+            chartEditorApi.setSharedData(nativeArg.shared);
+        })
+        .consume((handle) => context.setProp(libsControlV1, 'buildGraph', handle));
+
+    context
+        .newFunction('buildUI', (arg) => {
+            const nativeArg = context.dump(arg);
+            const result = controlModule.buildUI(nativeArg);
+            chartEditorApi.setSharedData(nativeArg.shared);
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsControlV1, 'buildUI', handle));
+
+    return libsControlV1;
+}
+
+// function getShared(vm: QuickJSContext, shared: Record<string, object>): QuickJSHandle {
+//     const sharedHandle = vm.newObject();
+//     for (const [key, value] of Object.entries(shared)) {
+//         vm.setProp(sharedHandle, key, value);
+//     }
+//     return sharedHandle;
+// }
 
 const MODULE_PROCESSING_TIMEOUT = 500;
 
-const processModule = ({
+const processModule = async ({
     name,
     code,
     modules,

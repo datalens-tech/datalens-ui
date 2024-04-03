@@ -346,6 +346,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             addActionParamValue(actionParams, z, zValueRaw);
 
             point.custom = {
+                // @ts-ignore
                 ...point.custom,
                 actionParams,
             };
