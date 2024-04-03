@@ -21,11 +21,7 @@ class DialogNoRights extends React.PureComponent<Props> {
                     <Dialog.Body>
                         <div>{i18n('wizard', 'label_no-rights-text')}</div>
                     </Dialog.Body>
-                    <Dialog.Footer
-                        preset="default"
-                        //@ts-ignore
-                        hr={false}
-                    >
+                    <Dialog.Footer preset="default">
                         <Button view="outlined" size="l" onClick={this.props.onAccessRights}>
                             {i18n('wizard', 'button_access-rights')}
                         </Button>

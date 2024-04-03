@@ -1,9 +1,15 @@
 .action-panel-chart-save-controls {
+    &__save-btn-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
     &__pseudosave-btn {
-        width: 128px;
-        height: 36px;
+        width: 100%;
+        height: 100%;
         position: absolute;
-        right: 56px;
+        top: 0;
+        right: 0;
         display: none;
 
         &_active {
