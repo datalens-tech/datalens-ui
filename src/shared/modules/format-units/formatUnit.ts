@@ -104,7 +104,7 @@ const NUMBER_UNIT_RATE_BY_UNIT = {
     t: 4,
 };
 
-export function formatNumber(value: number | string, options: FormatNumberOptions = {}) {
+export function formatNumber(value: number | string | null, options: FormatNumberOptions = {}) {
     if (Number.isNaN(value) || Number.isNaN(Number(value))) {
         return new Intl.NumberFormat('en').format(Number(value));
     }
