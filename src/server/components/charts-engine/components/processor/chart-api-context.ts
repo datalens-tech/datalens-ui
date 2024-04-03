@@ -42,6 +42,9 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
 
     const api: IChartEditor = {
         getSharedData: () => shared,
+        setSharedData: (override: Record<string, object>) => {
+            Object.assign(shared, override);
+        },
         getLang: () => userLang,
         attachHandler: (handlerConfig: Record<string, any>) => ({
             ...handlerConfig,

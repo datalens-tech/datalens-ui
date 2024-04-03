@@ -106,9 +106,9 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
     return chartWidgetData;
 }
 
-export function buildWizardD3Config(
-    ...options: [{shared: ServerChartsConfig} | ServerChartsConfig]
-) {
+export type BuildWizardD3ConfigOptions = {shared: ServerChartsConfig} | ServerChartsConfig;
+
+export function buildWizardD3Config(...options: [BuildWizardD3ConfigOptions]) {
     let shared: ServerChartsConfig;
 
     if ('shared' in options[0]) {

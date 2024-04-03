@@ -31,6 +31,7 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
                 const pointData: ScatterSeriesData<PointCustomData> = {
                     radius: point.marker?.radius,
                     custom: {
+                        // @ts-ignore
                         ...item.custom,
                         name: point.name,
                         xLabel: point.xLabel,
