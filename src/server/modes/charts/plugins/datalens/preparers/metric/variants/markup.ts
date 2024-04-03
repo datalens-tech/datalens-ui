@@ -81,7 +81,7 @@ export const prepareMarkupMetricVariant = ({
                 formatOptions.precision = MINIMUM_FRACTION_DIGITS;
             }
 
-            formattedValue = formatNumber(value, formatOptions);
+            formattedValue = formatNumber(value || 0, formatOptions);
         } else if (isDateField(measure) && measure.format) {
             formattedValue = dateTime({input: value}).format(measure.format);
         }
