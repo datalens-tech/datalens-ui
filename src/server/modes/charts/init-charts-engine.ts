@@ -88,7 +88,7 @@ export function initChartsEngine({
 
         onTabsExecuted: ({result, entryId}) => {
             if (shouldLogChartWithFunction && isConfigWithFunction(result)) {
-                ctx.stats('entriesWithFn', {entryId});
+                ctx.stats('chartsWithFn', {datetime: getTime(), entryId: entryId || ''});
             }
         },
     };
