@@ -362,10 +362,10 @@ class Control<TProviderData> extends React.PureComponent<
         })
             ? dashI18n('value_required')
             : null;
-        const validationErrors = initialValidationError || this.state.validationErrors[index];
+        const validationError = initialValidationError || this.state.validationErrors[index];
 
         validationProps.required = control.required;
-        validationProps.hasValidationError = Boolean(validationErrors);
+        validationProps.hasValidationError = Boolean(validationError);
 
         if (control.label && control.required) {
             validationProps.label = `${control.label}*`;
@@ -376,7 +376,7 @@ class Control<TProviderData> extends React.PureComponent<
         }
 
         if (control.type === 'input' || control.type === 'select') {
-            validationProps.placeholder = validationErrors ? validationErrors : control.placeholder;
+            validationProps.placeholder = validationError || control.placeholder;
         }
 
         return validationProps;

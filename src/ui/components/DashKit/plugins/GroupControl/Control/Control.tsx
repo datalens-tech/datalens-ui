@@ -353,9 +353,7 @@ export const Control = ({
         }
 
         if (type === 'input') {
-            props.placeholder = currentValidationError
-                ? currentValidationError
-                : control.placeholder;
+            props.placeholder = currentValidationError || control.placeholder;
         }
 
         switch (control.type) {
