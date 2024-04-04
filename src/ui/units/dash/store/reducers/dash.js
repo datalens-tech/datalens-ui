@@ -67,7 +67,6 @@ export function getGroupSelectorDialogInitialState() {
 }
 
 export function getSelectorDialogInitialState(args = {}) {
-    const required = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? {required: false} : {};
     const sourceType =
         Utils.isEnabledFeature(Feature.GroupControls) &&
         args.openedDialog === DashTabItemType.Control
@@ -85,7 +84,7 @@ export function getSelectorDialogInitialState(args = {}) {
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
         id: getRandomKey(),
-        ...required,
+        required: false,
     };
 }
 

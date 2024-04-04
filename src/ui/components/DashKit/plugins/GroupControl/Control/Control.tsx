@@ -10,7 +10,6 @@ import {
     DashTabItemControlData,
     DashTabItemControlSingle,
     DashTabItemControlSourceType,
-    Feature,
     StringParams,
     WorkbookId,
 } from 'shared';
@@ -26,7 +25,6 @@ import type {EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-p
 import {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
-import Utils from 'ui/utils/utils';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
@@ -355,10 +353,7 @@ export const Control = ({
         }
 
         if (type === 'input') {
-            props.placeholder =
-                Utils.isEnabledFeature(Feature.SelectorRequiredValue) && currentValidationError
-                    ? currentValidationError
-                    : control.placeholder;
+            props.placeholder = currentValidationError || control.placeholder;
         }
 
         switch (control.type) {
