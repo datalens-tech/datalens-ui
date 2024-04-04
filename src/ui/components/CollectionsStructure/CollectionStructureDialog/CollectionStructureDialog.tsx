@@ -77,6 +77,7 @@ export type Props = {
     type: ResourceType;
     initialCollectionId: string | null;
     defaultTitle?: string;
+    defaultNewWorkbookTitle?: string;
     operationDeniedMessage?: string;
     canSelectInitialCollectionId?: boolean;
     caption: string;
@@ -102,6 +103,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         type,
         initialCollectionId,
         defaultTitle = '',
+        defaultNewWorkbookTitle = '',
         operationDeniedMessage,
         canSelectInitialCollectionId = true,
         caption,
@@ -429,6 +431,7 @@ export const CollectionStructureDialog = React.memo<Props>(
                     open={createWorkbookDialogIsOpen}
                     title={i18n('action_create-workbook')}
                     isLoading={createWorkbookIsLoading}
+                    defaultTitleValue={defaultNewWorkbookTitle}
                     onApply={async (title) => {
                         await dispatch(createWorkbook({title, collectionId: targetCollectionId}));
 
