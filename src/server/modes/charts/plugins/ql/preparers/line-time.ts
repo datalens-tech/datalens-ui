@@ -300,7 +300,7 @@ export default ({
 
             if (xIsDate) {
                 // CHARTS-6632 - revision/study of yagr is necessary, after that moment.utc(xValue) is possible.valueOf();
-                xValue = dateTime({input: xValue, timeZone: 'UTC'}).valueOf() / 1000;
+                xValue = dateTime({input: xValue}).utc(true).valueOf() / 1000;
             } else if (columnTypes[xIndex] === DATALENS_QL_TYPES.UNKNOWN) {
                 xValue = formatUnknownTypeValue(xValue);
             }

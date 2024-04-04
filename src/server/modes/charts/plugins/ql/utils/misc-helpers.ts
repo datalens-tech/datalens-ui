@@ -337,13 +337,13 @@ function dumpReqParamValue(input: string, type: string, datalensQLConnectionType
                 datalensQLConnectionType === DATALENS_QL_CONNECTION_TYPES.MONITORING ||
                 datalensQLConnectionType === DATALENS_QL_CONNECTION_TYPES.PROMQL
             ) {
-                newValue = dateTimeParse(input, {timeZone: 'UTC'})?.toISOString();
+                newValue = dateTimeParse(input)?.utc(true)?.toISOString();
 
                 if (!newValue) {
                     throw new Error('Invalid date passed');
                 }
             } else {
-                newValue = dateTimeParse(input, {timeZone: 'UTC'})?.format('YYYY-MM-DD');
+                newValue = dateTimeParse(input)?.utc(true)?.format('YYYY-MM-DD');
             }
 
             if (!newValue) {
@@ -358,13 +358,13 @@ function dumpReqParamValue(input: string, type: string, datalensQLConnectionType
                 datalensQLConnectionType === ConnectorType.Monitoring ||
                 datalensQLConnectionType === ConnectorType.Promql
             ) {
-                newValue = dateTimeParse(input, {timeZone: 'UTC'})?.toISOString();
+                newValue = dateTimeParse(input)?.utc(true)?.toISOString();
 
                 if (!newValue) {
                     throw new Error('Invalid date passed');
                 }
             } else {
-                newValue = dateTimeParse(input, {timeZone: 'UTC'})?.format('YYYY-MM-DDTHH:mm:ss');
+                newValue = dateTimeParse(input)?.utc(true)?.format('YYYY-MM-DDTHH:mm:ss');
             }
 
             if (!newValue) {
