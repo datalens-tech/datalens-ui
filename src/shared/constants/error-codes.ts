@@ -50,4 +50,5 @@ export const ErrorContentTypes = {
     NEW_LOCAL_FEDERATION_USER: 'new-local-federation-user',
     INACCESSIBLE_ON_MOBILE: 'inaccessible-on-mobile',
     NOT_AUTHENTICATED: 'not-authenticated',
+    FORBIDDEN_SSO: 'forbidden-sso',
 };
