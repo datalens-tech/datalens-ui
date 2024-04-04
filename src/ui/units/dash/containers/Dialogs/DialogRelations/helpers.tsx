@@ -326,18 +326,17 @@ export const getUpdatedPreparedRelations = (props: {
     changedWidgetsData?: WidgetsTypes;
     dashkitData: DashKit | null;
     dashWidgetsMeta: Omit<DashkitMetaDataItem, 'relations'>[] | null;
-    changedWidgetId: string;
     preparedRelations: DashMetaData;
     datasets: DatasetsListData | null;
     type?: 'aliases' | 'connections';
 }) => {
     const {
         aliases,
+        currentWidgetId,
         currentWidgetMeta,
         changedWidgetsData,
         dashkitData,
         dashWidgetsMeta,
-        changedWidgetId,
         preparedRelations,
         datasets,
         type = 'connections',
@@ -350,14 +349,14 @@ export const getUpdatedPreparedRelations = (props: {
         dashkitData,
     }) || []) as ConnectionsData;
 
-    const row = dashWidgetsMeta.find((item) => item.widgetId === changedWidgetId);
+    const row = dashWidgetsMeta.find((item) => (item.itemId || item.widgetId) === currentWidgetId);
     if (!row) {
         return null;
     }
 
     const newPreparedRelations = [...preparedRelations];
     const changedRelationsItem = newPreparedRelations.find(
-        (item) => item.widgetId === changedWidgetId,
+        (item) => (item.itemId || item.widgetId) === currentWidgetId,
     );
     const newAliases = Array.isArray(aliases)
         ? ({[DEFAULT_ALIAS_NAMESPACE]: aliases} as Record<string, string[][]>)
@@ -369,7 +368,7 @@ export const getUpdatedPreparedRelations = (props: {
         dashWidgetsMeta
             .filter((item) => {
                 return (
-                    item.widgetId !== currentWidgetMeta.widgetId &&
+                    (item.itemId || item.widgetId) !== currentWidgetId &&
                     showInRelation(currentWidgetMeta, item)
                 );
             })
@@ -393,6 +392,7 @@ export const getUpdatedPreparedRelations = (props: {
     if (!changedRelationsItem) {
         return null;
     }
+
     changedRelationsItem.relations = getRelationsInfo({
         aliases: newAliases,
         connections,

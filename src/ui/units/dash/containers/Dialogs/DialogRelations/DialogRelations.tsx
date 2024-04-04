@@ -182,7 +182,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 changedWidgetsData: changedWidgets,
                 dashkitData: dashKitRef.current || null,
                 dashWidgetsMeta,
-                changedWidgetId: currentWidgetMeta?.widgetId || '',
                 preparedRelations,
                 datasets,
                 currentWidgetId,
@@ -193,13 +192,13 @@ const DialogRelations = (props: DialogRelationsProps) => {
             }
 
             const newChangedWidgets = {...changedWidgets};
-            const currentId = itemId || currentWidgetMeta?.widgetId || '';
+
             newPreparedRelations.forEach((item) => {
                 if (
                     changedWidgets &&
-                    changedWidgets[currentId] &&
-                    item.widgetId in changedWidgets[currentId] &&
-                    item.relations.type !== changedWidgets[currentId][item.widgetId]
+                    changedWidgets[currentWidgetId] &&
+                    item.widgetId in changedWidgets[currentWidgetId] &&
+                    item.relations.type !== changedWidgets[currentWidgetId][item.widgetId]
                 ) {
                     delete newChangedWidgets[item.widgetId];
                 }
