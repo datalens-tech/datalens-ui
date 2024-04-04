@@ -9,6 +9,7 @@ import {TabMenuQA} from 'shared';
 import './ListWithRemove.scss';
 
 const b = block('list-with-remove');
+const ITEM_HEIGHT = 40;
 
 export interface ListWithRemoveProps<T> {
     /* * Properties of the List component*/
@@ -30,7 +31,7 @@ export const ListWithRemove = <T extends object | string>({
     iconSize = 's',
     iconOnHover,
 }: ListWithRemoveProps<T>): React.ReactElement => {
-    const {renderItem = (item: T) => String(item), ...restListProps} = list;
+    const {renderItem = (item: T) => String(item), className, ...restListProps} = list;
 
     const showRemove = list.items.length > 1 || !disableSingleItemRemove;
 
@@ -57,5 +58,14 @@ export const ListWithRemove = <T extends object | string>({
         </div>
     );
 
-    return <List {...restListProps} renderItem={wrappedRenderItem} qa={TabMenuQA.List} />;
+    return (
+        <div className={className}>
+            <List
+                {...restListProps}
+                itemsHeight={restListProps.items.length * ITEM_HEIGHT}
+                renderItem={wrappedRenderItem}
+                qa={TabMenuQA.List}
+            />
+        </div>
+    );
 };
