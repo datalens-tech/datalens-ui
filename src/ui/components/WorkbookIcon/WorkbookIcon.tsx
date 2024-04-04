@@ -42,7 +42,7 @@ const sizesMap: SizeMap = {
 };
 
 export const WorkbookIcon: React.FC<Props> = ({title, size = 'm'}) => {
-    const letters = title.slice(0, 2);
+    const letters = title.trim().slice(0, 2);
 
     return (
         <div
