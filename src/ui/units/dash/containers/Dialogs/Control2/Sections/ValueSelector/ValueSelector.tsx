@@ -8,7 +8,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {DialogControlQa} from 'shared';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {registry} from 'ui/registry';
-import Utils from 'ui/utils/utils';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectIsControlConfigurationDisabled,
@@ -19,7 +18,7 @@ import {
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
 import {FilterValue} from '../../../../../../../../shared/modules';
-import {DATASET_FIELD_TYPES, Feature} from '../../../../../../../../shared/types';
+import {DATASET_FIELD_TYPES} from '../../../../../../../../shared/types';
 import DateDefaultValue from '../../../Control/Date/Default/Default';
 import {CheckboxControlValue} from '../../../Control/constants';
 
@@ -209,7 +208,7 @@ const ValueSelector: React.FC<ValueSelectorProps> = (props: ValueSelectorProps) 
 
     return (
         <React.Fragment>
-            {Utils.isEnabledFeature(Feature.SelectorRequiredValue) && <RequiredValueCheckbox />}
+            <RequiredValueCheckbox />
             {inputControl}
         </React.Fragment>
     );

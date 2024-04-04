@@ -323,10 +323,7 @@ export const ControlItemSelect = ({
         : null;
     const selectValidationError = validationError || initialValidationError;
 
-    const placeholder =
-        Utils.isEnabledFeature(Feature.SelectorRequiredValue) && selectValidationError
-            ? selectValidationError
-            : emptyPaceholder;
+    const placeholder = selectValidationError ? selectValidationError : emptyPaceholder;
 
     const onSelectChange = (value: string | string[]) => {
         const hasError = validateValue({

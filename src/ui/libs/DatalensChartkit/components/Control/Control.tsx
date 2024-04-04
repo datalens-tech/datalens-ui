@@ -4,10 +4,9 @@ import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
-import {Feature, StringParams} from 'shared';
+import {StringParams} from 'shared';
 import {isValidRequiredValue} from 'ui/components/DashKit/plugins/Control/utils';
 import {isMobileView} from 'ui/utils/mobile';
-import Utils from 'ui/utils/utils';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'units/dash/modules/helpers';
 
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../ChartKit/helpers/constants';
@@ -161,7 +160,7 @@ class Control<TProviderData> extends React.PureComponent<
         );
 
         const hasError =
-            Utils.isEnabledFeature(Feature.SelectorRequiredValue) && 'required' in control
+            'required' in control
                 ? isValidRequiredValue({
                       required: control.required,
                       value,
@@ -227,7 +226,7 @@ class Control<TProviderData> extends React.PureComponent<
             onChange: (value: SimpleControlValue) => this.onChange(control, value, index),
         };
 
-        if (Utils.isEnabledFeature(Feature.SelectorRequiredValue) && 'required' in control) {
+        if ('required' in control) {
             props = {...props, ...this.getValidationProps(control, value, index)};
         }
 
@@ -364,25 +363,20 @@ class Control<TProviderData> extends React.PureComponent<
             ? dashI18n('value_required')
             : null;
         const validationErrors = initialValidationError || this.state.validationErrors[index];
-        const isRequired =
-            Utils.isEnabledFeature(Feature.SelectorRequiredValue) && control.required;
 
         validationProps.required = control.required;
         validationProps.hasValidationError = Boolean(validationErrors);
 
-        if (control.label && isRequired) {
+        if (control.label && control.required) {
             validationProps.label = `${control.label}*`;
         }
         // if only innerLabel is visible in required selector we add '*' to it
-        if ('innerLabel' in control && !control.label && control.innerLabel && isRequired) {
+        if ('innerLabel' in control && !control.label && control.innerLabel && control.required) {
             validationProps.innerLabel = `${control.innerLabel}*`;
         }
 
         if (control.type === 'input' || control.type === 'select') {
-            validationProps.placeholder =
-                Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationErrors
-                    ? validationErrors
-                    : control.placeholder;
+            validationProps.placeholder = validationErrors ? validationErrors : control.placeholder;
         }
 
         return validationProps;
