@@ -31,7 +31,7 @@ export const prepareMarkupMetricVariant = ({
             ? extraSettings.title
             : getFakeTitleOrTitle(measure);
 
-    if (typeof value === 'object') {
+    if (typeof value === 'object' && value !== null) {
         if (title) {
             return {
                 value: {
@@ -81,7 +81,7 @@ export const prepareMarkupMetricVariant = ({
                 formatOptions.precision = MINIMUM_FRACTION_DIGITS;
             }
 
-            formattedValue = formatNumber(value, formatOptions);
+            formattedValue = formatNumber(value || 0, formatOptions);
         } else if (isDateField(measure) && measure.format) {
             formattedValue = dateTime({input: value}).format(measure.format);
         }

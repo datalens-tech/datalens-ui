@@ -62,13 +62,13 @@ const getButtonText = (place: string) => {
 export interface CreateEntryProps {
     place: string;
     onClick: (value: CreateMenuValue, options?: Record<string, unknown>) => void;
-    onlyWorkbooksMode?: boolean;
+    isOnlyCollectionsMode?: boolean;
 }
 
 export const CreateEntry: React.FC<CreateEntryProps> = ({
     place,
     onClick,
-    onlyWorkbooksMode = false,
+    isOnlyCollectionsMode = false,
 }) => {
     const withMenu =
         place === PLACE.ROOT ||
@@ -146,7 +146,7 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
                 },
             ]);
 
-            if (onlyWorkbooksMode === false) {
+            if (isOnlyCollectionsMode === false) {
                 menuItems = [
                     [
                         {
@@ -207,7 +207,7 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
                 },
             ];
 
-            if (onlyWorkbooksMode === false) {
+            if (isOnlyCollectionsMode === false) {
                 menuItems = [
                     [
                         {
@@ -223,7 +223,7 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
 
             return menuItems;
         }
-    }, [withMenu, place, onClick, onlyWorkbooksMode]);
+    }, [withMenu, place, onClick, isOnlyCollectionsMode]);
 
     const onClickButton = React.useCallback(() => {
         switch (place) {
