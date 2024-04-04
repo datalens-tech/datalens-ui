@@ -1,6 +1,7 @@
 import {AppMiddleware, Request, Response} from '@gravity-ui/expresskit';
 import {AppConfig, AppContext} from '@gravity-ui/nodekit';
 
+import {Feature, isEnabledServerFeature} from '../../../shared';
 import CacheClient from '../../components/cache-client';
 import {ChartsEngine} from '../../components/charts-engine';
 import {isConfigWithFunction} from '../../components/charts-engine/components/utils';
@@ -23,6 +24,7 @@ export function initChartsEngine({
     afterAuth: AppMiddleware[];
 }) {
     const getTime = () => new Date().toISOString().replace('T', ' ').split('.')[0];
+    const shouldLogChartWithFunction = isEnabledServerFeature(ctx, Feature.ChartWithFnLogging);
 
     if (config.chartsMonitoringEnabled) {
         startMonitoring(1000, ctx);
@@ -85,7 +87,7 @@ export function initChartsEngine({
         },
 
         onTabsExecuted: ({result, entryId}) => {
-            if (isConfigWithFunction(result)) {
+            if (shouldLogChartWithFunction && isConfigWithFunction(result)) {
                 ctx.stats('entriesWithFn', {entryId});
             }
         },

@@ -79,6 +79,7 @@ export enum Feature {
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
     NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
+    ChartWithFnLogging = 'ChartWithFnLogging',
 }
 
 export type FeatureConfig = Record<string, boolean>;
