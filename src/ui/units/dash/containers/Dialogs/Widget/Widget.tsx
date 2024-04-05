@@ -418,7 +418,7 @@ class Widget extends React.PureComponent<Props, State> {
         return (
             <p className={b('info-comment')}>
                 <Interpolate
-                    text={i18n('dash.widget-dialog.edit', 'context_filtering-hierarchy-charts')}
+                    text={i18n('dash.widget-dialog.edit', 'context_filtering-usage-limitations')}
                     matches={{
                         link(match) {
                             return (
