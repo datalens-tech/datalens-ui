@@ -152,4 +152,8 @@
     &__content-body {
         overflow-y: auto;
     }
+
+    &__warning-icon {
+        color: var(--g-color-text-warning);
+    }
 }

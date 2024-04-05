@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {Checkbox, Dialog, Link, Popup, TextArea, TextInput} from '@gravity-ui/uikit';
+import {TriangleExclamationFill} from '@gravity-ui/icons';
+import {Checkbox, Dialog, Icon, Link, Popover, Popup, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import update, {Context, CustomCommands, Spec} from 'immutability-helper';
@@ -407,24 +408,16 @@ class Widget extends React.PureComponent<Props, State> {
         );
     };
 
-    renderFilteringCharts = () => {
-        const showFilteringChartSetting = Utils.isEnabledFeature(Feature.ShowFilteringChartSetting);
-        if (!showFilteringChartSetting) {
-            return null;
-        }
-        const {data, tabIndex, selectedEntryType, visualizationType, hierarchies} = this.state;
-        const canUseFiltration = isEntryTypeWithFiltering(selectedEntryType, visualizationType);
-        const enableActionParams = Boolean(
-            canUseFiltration && data.tabs[tabIndex].enableActionParams,
-        );
-        const showHierarchyWarning = Boolean(hierarchies?.length) ?? false;
+    renderFilterPopover = () => {
+        const {hierarchies} = this.state;
+        const showFilterHierarchyWarning = Boolean(hierarchies?.length) ?? false;
 
-        const helpContent = (
-            <React.Fragment>
-                <p className={b('help-tooltip-line')}>
-                    {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
-                </p>
-                {showHierarchyWarning && (
+        if (showFilterHierarchyWarning) {
+            const warningHint = (
+                <React.Fragment>
+                    <p className={b('help-tooltip-line')}>
+                        {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
+                    </p>
                     <p className={b('help-tooltip-line')}>
                         <Interpolate
                             text={i18n(
@@ -445,8 +438,33 @@ class Widget extends React.PureComponent<Props, State> {
                             }}
                         />
                     </p>
-                )}
-            </React.Fragment>
+                </React.Fragment>
+            );
+
+            return (
+                <Popover content={warningHint} className={b('help-tooltip')}>
+                    <Icon data={TriangleExclamationFill} className={b('warning-icon')} />
+                </Popover>
+            );
+        }
+
+        return (
+            <HelpPopover
+                className={b('help-tooltip')}
+                content={i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
+            />
+        );
+    };
+
+    renderFilteringCharts = () => {
+        const showFilteringChartSetting = Utils.isEnabledFeature(Feature.ShowFilteringChartSetting);
+        if (!showFilteringChartSetting) {
+            return null;
+        }
+        const {data, tabIndex, selectedEntryType, visualizationType} = this.state;
+        const canUseFiltration = isEntryTypeWithFiltering(selectedEntryType, visualizationType);
+        const enableActionParams = Boolean(
+            canUseFiltration && data.tabs[tabIndex].enableActionParams,
         );
 
         const caption = (
@@ -454,7 +472,7 @@ class Widget extends React.PureComponent<Props, State> {
                 <span className={b('caption-text')}>
                     {i18n('dash.widget-dialog.edit', 'label_filtering-other-charts')}
                 </span>
-                <HelpPopover className={b('help-tooltip')} content={helpContent} />
+                {this.renderFilterPopover()}
                 <BetaMark className={b('beta')} />
             </div>
         );
@@ -597,6 +615,7 @@ class Widget extends React.PureComponent<Props, State> {
 
     renderDialogFooter = () => {
         const {closeDialog} = this.props;
+
         return (
             <Dialog.Footer
                 onClickButtonCancel={closeDialog}
