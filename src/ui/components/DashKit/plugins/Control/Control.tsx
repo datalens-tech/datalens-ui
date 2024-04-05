@@ -661,10 +661,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             }
 
             if (type === TYPE.INPUT) {
-                props.placeholder =
-                    Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
-                        ? validationError
-                        : control.placeholder;
+                props.placeholder = validationError ? validationError : control.placeholder;
             }
 
             switch (type) {
