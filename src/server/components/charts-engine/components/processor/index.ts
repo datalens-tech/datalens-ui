@@ -57,9 +57,8 @@ const {
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
 } = configConstants;
 
-const TEN_SECONDS = 10000;
 const ONE_SECOND = 1000;
-const JS_EXECUTION_TIMEOUT = TEN_SECONDS;
+const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
 
 const getMessageFromUnknownError = (e: unknown) =>
     isObject(e) && 'message' in e && isString(e.message) ? e.message : '';
