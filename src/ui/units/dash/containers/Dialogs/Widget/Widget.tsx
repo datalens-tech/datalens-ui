@@ -1,8 +1,7 @@
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {TriangleExclamationFill} from '@gravity-ui/icons';
-import {Checkbox, Dialog, Icon, Link, Popover, Popup, TextArea, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, Link, Popup, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import update, {Context, CustomCommands, Spec} from 'immutability-helper';
@@ -408,51 +407,32 @@ class Widget extends React.PureComponent<Props, State> {
         );
     };
 
-    renderFilterPopover = () => {
+    getHierarchyWarning = () => {
         const {hierarchies} = this.state;
         const showFilterHierarchyWarning = Boolean(hierarchies?.length) ?? false;
 
-        if (showFilterHierarchyWarning) {
-            const warningHint = (
-                <React.Fragment>
-                    <p className={b('help-tooltip-line')}>
-                        {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
-                    </p>
-                    <p className={b('help-tooltip-line')}>
-                        <Interpolate
-                            text={i18n(
-                                'dash.widget-dialog.edit',
-                                'context_filtering-hierarchy-charts',
-                            )}
-                            matches={{
-                                link(match) {
-                                    return (
-                                        <Link
-                                            target="_blank"
-                                            href={`${DL.ENDPOINTS.datalensDocs}/dashboard/chart-chart-filtration`}
-                                        >
-                                            {match}
-                                        </Link>
-                                    );
-                                },
-                            }}
-                        />
-                    </p>
-                </React.Fragment>
-            );
-
-            return (
-                <Popover content={warningHint} className={b('help-tooltip')}>
-                    <Icon data={TriangleExclamationFill} className={b('warning-icon')} />
-                </Popover>
-            );
+        if (!showFilterHierarchyWarning) {
+            return null;
         }
 
         return (
-            <HelpPopover
-                className={b('help-tooltip')}
-                content={i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
-            />
+            <p className={b('info-comment')}>
+                <Interpolate
+                    text={i18n('dash.widget-dialog.edit', 'context_filtering-hierarchy-charts')}
+                    matches={{
+                        link(match) {
+                            return (
+                                <Link
+                                    target="_blank"
+                                    href={`${DL.ENDPOINTS.datalensDocs}/dashboard/chart-chart-filtration#using`}
+                                >
+                                    {match}
+                                </Link>
+                            );
+                        },
+                    }}
+                />
+            </p>
         );
     };
 
@@ -472,21 +452,27 @@ class Widget extends React.PureComponent<Props, State> {
                 <span className={b('caption-text')}>
                     {i18n('dash.widget-dialog.edit', 'label_filtering-other-charts')}
                 </span>
-                {this.renderFilterPopover()}
+                <HelpPopover
+                    className={b('help-tooltip')}
+                    content={i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
+                />
                 <BetaMark className={b('beta')} />
             </div>
         );
 
         return (
             <Line caption={caption}>
-                <Checkbox
-                    size="m"
-                    onChange={this.handleChangeFiltering}
-                    checked={enableActionParams}
-                    disabled={!canUseFiltration}
-                >
-                    {i18n('dash.widget-dialog.edit', 'field_enable-filtering-other-charts')}
-                </Checkbox>
+                <div>
+                    <Checkbox
+                        size="m"
+                        onChange={this.handleChangeFiltering}
+                        checked={enableActionParams}
+                        disabled={!canUseFiltration}
+                    >
+                        {i18n('dash.widget-dialog.edit', 'field_enable-filtering-other-charts')}
+                    </Checkbox>
+                    {this.getHierarchyWarning()}
+                </div>
             </Line>
         );
     };
