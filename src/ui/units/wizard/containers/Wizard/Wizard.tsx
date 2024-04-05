@@ -11,7 +11,7 @@ import {withRouter} from 'react-router-dom';
 import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ChartsConfig, EntryUpdateMode, Feature} from 'shared';
+import {ChartSaveControlsQA, ChartsConfig, EntryUpdateMode, Feature} from 'shared';
 import {
     DL,
     DatalensGlobalState,
@@ -448,6 +448,7 @@ class Wizard extends React.Component<Props, State> {
                 action: () => this.openSaveAsWidgetDialog(true),
                 text: i18n('wizard', 'button_save-as-editor-script'),
                 hidden: !Utils.isEnabledFeature(Feature.EnableSaveAsEditorScript),
+                qa: ChartSaveControlsQA.SaveAsEditorScript,
             },
         ];
     };
