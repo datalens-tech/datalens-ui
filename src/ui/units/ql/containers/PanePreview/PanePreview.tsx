@@ -7,7 +7,6 @@ import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {DatalensGlobalState, Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
-import {getRandomCKId} from 'ui/libs/DatalensChartkit/helpers/helpers';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
 import {ChartKitWrapperOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
@@ -107,7 +106,6 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
                 <ChartWrapper
                     usageType="chart"
                     id={entry?.entryId}
-                    key={getRandomCKId()}
                     config={previewConfig}
                     params={params}
                     onChartLoad={this.onChartLoad}
