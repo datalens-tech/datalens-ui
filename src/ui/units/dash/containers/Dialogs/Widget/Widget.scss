@@ -39,6 +39,14 @@
         margin-left: 5px;
     }
 
+    &__help-tooltip-line {
+        margin: 0 0 16px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
     &__navigation-input-container {
         display: grid;
         grid-auto-rows: 40px;

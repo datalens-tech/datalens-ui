@@ -7,6 +7,7 @@
   "context_autoheight-availability-hint": "Available only for charts with \"Table\" and \"Markdown\" types",
   "context_fill-description": "Enter description",
   "context_fill-title": "Enter title",
+  "context_filtering-hierarchy-charts": "Сhart to chart filtering is not supported for some <link>charts types</link>",
   "context_filtering-other-charts": "This option enables you to apply filtering from this chart to other charts on the dashboard",
   "field_autoheight": "Auto height",
   "field_description": "Description",

@@ -29,3 +29,14 @@ export function getEntryVisualizationType(entry: Partial<EntryFields>) {
         return undefined;
     }
 }
+
+export function getEntryHierarchy(entry: Partial<EntryFields>) {
+    try {
+        const sharedData = get(entry, 'data.shared');
+        const shared: Shared | null =
+            typeof sharedData === 'string' ? JSON.parse(sharedData) : null;
+        return shared?.hierarchies;
+    } catch (e) {
+        return undefined;
+    }
+}
