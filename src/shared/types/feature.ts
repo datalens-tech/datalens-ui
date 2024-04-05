@@ -73,7 +73,6 @@ export enum Feature {
     WizardChartChartFilteringAvailable = 'WizardChartChartFilteringAvailable',
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
-    SelectorRequiredValue = 'SelectorRequiredValue',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     MarkupMetric = 'MarkupMetric',
     ConnectionBasedControl = 'ConnectionBasedControl',
