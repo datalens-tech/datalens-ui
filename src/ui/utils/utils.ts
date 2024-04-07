@@ -193,7 +193,7 @@ export default class Utils {
         var loc:any = document.location;
         let params = (new URL(loc)).searchParams;
         let token:any = params.get("x-rpc-authorization");
-
+        
         return window.localStorage.getItem('x-rpc-authorization') || token;
     }
 
@@ -294,6 +294,12 @@ export default class Utils {
 
     static convertToSnakeCase(data: {[key: string]: unknown}) {
         return _mapKeys(data, (_value, key) => _snakeCase(key));
+    }
+
+    static getAuthToken = async (propsData: any) => {
+        var result = await getSdk().us.getAuth({login: propsData.login, password: propsData.password});
+
+        return result;
     }
 
     static getEmbedToken = async (propsData: any) => {

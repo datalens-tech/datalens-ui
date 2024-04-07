@@ -69,6 +69,17 @@ export const entriesActions = {
             },
         }),
     }),
+    getAuth: createAction<any, any>({
+        method: 'GET',
+        path: (data) => { 
+            return `/auth?login=${data.login}&password=${data.password}` 
+        },
+        params: (_, headers) => ({
+            headers: {
+                ...headers
+            },
+        }),
+    }),
     getEntry: createAction<GetEntryResponse, GetEntryArgs>({
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,

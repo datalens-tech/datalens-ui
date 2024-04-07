@@ -4,64 +4,30 @@ import { TextInput, Button } from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import { I18n } from 'i18n';
 import { opensourceEndpoints } from 'shared/endpoints/constants/opensource';
-import { response } from 'express';
+import {DataLensApiError} from 'ui';
+import Utils from '../../../utils/utils';
+import {useDispatch} from 'react-redux';
+
+import {showToast} from 'store/actions/toaster';
+
 
 const b = block('dl-collection-filters');
-
-
 const AuthPage = ({setToken}) => {
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
+    const dispatch = useDispatch();
 
     const controlSize = 'm';
 
-    const NODE_RPC_URL = opensourceEndpoints.development.api.rpc;
-    const Execute = (url, options) => {
-        return new Promise((resolve, reject) => {
-            fetch(`${NODE_RPC_URL}/${url}`, {
-                mode: 'cors',
-                ...options
-            })
-                .then(response => {
-                    if (response.status === 200) {
-                        response.json().then(json => {
-                            if (json.length >= 1) json = json[0];
-                            if (json.meta) {
-                                if (json.meta.success) resolve(json);
-                                else {
-                                    if (json.code === 401) logout();
-                                    reject({
-                                        status: json.code,
-                                        msg: json.meta.msg
-                                    });
-                                }
-                            } else resolve(json);
-                        });
-                    } else {
-                        reject({
-                            status: response.status,
-                            msg: response.statusText
-                        });
-                    }
-                })
-                .catch(() => {
-                    reject({
-                        status: 500,
-                        msg: 'Ошибка! Повторите попытку'
-                    });
-                });
-        });
-    }
     function onAuth() {
-        Execute('auth', {
-            method: 'POST',
-            body: `UserName=${login}&Password=${password}`,
-            headers: {
-                'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        Utils.getAuthToken({login: login, password: password}).then((response)=> {
+            if (response.data) {
+                setToken(response.data.token);
+            } else {
+                dispatch(showToast({title: response?.err?.message, error: new Error(response?.err?.message), withReport: false}));
             }
-        }).then(response=>{
-            debugger;
-            setToken("sda")
+        }).catch(error=>{
+            dispatch(showToast({title: "Ошибка авторизации", error: new Error("Ошибка авторизации"), withReport: false}));
         });
     }
 

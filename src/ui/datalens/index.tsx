@@ -16,6 +16,11 @@ import Utils from '../utils';
 import {reducerRegistry} from '../store';
 import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAdapter';
 
+import {getSdk} from '../libs/schematic-sdk';
+import {
+    RPC_AUTHORIZATION
+} from '../../shared';
+
 import AuthPage from './pages/AuthPage/AuthPage';
 
 reducerRegistry.register(coreReducers);
@@ -107,8 +112,17 @@ const DatalensPageView = (props: any) => {
 
 const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
-    const [token, setToken] = React.useState("");
+    const [token, _setToken] = React.useState(localStorage.getItem('x-rpc-authorization') || "");
     
+    function setToken(value: any) {
+        localStorage.setItem('x-rpc-authorization', value);
+        getSdk().setDefaultHeader({
+            name: RPC_AUTHORIZATION,
+            value: value,
+        });
+        _setToken(value);
+    }
+
     if (token && showAsideHeaderAdapter) {
         return <AsideHeaderAdapter renderContent={() => <DatalensPageView token={token} setToken={setToken} />} />;
     }
