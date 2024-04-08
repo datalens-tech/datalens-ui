@@ -73,11 +73,12 @@ export enum Feature {
     WizardChartChartFilteringAvailable = 'WizardChartChartFilteringAvailable',
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
-    SelectorRequiredValue = 'SelectorRequiredValue',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     MarkupMetric = 'MarkupMetric',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
+    NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
+    ChartWithFnLogging = 'ChartWithFnLogging',
 }
 
 export type FeatureConfig = Record<string, boolean>;

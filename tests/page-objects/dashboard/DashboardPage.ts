@@ -11,7 +11,7 @@ import {
     DialogQLParameterQA,
     DialogTabsQA,
     EntryDialogQA,
-    SelectQA,
+    SelectQa,
     YfmQa,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
@@ -104,7 +104,7 @@ class DashboardPage extends BasePage {
         dialogWarningEditBtn: 'dialog-draft-warning-edit-btn',
         dialogConfirm: 'dialog-confirm',
         dialogConfirmApplyBtn: 'dialog-confirm-apply-button',
-        mobileModal: '.yc-mobile-modal',
+        mobileModal: '.g-mobile-modal',
         tabsContainer: '.gc-adaptive-tabs',
         tabsList: '.gc-adaptive-tabs__tabs-list',
         tabItem: '.gc-adaptive-tabs__tab',
@@ -804,11 +804,11 @@ class DashboardPage extends BasePage {
 
         // select field for first item
         await this.page.click(slct(DashCommonQa.AliasSelectLeft));
-        await this.page.locator(slct(SelectQA.Popup, firstParamName)).click();
+        await this.page.locator(slct(SelectQa.POPUP, firstParamName)).click();
 
         // select field for second item
         await this.page.click(slct(DashCommonQa.AliasSelectRight));
-        await this.page.locator(slct(SelectQA.Popup, secondParamName)).click();
+        await this.page.locator(slct(SelectQa.POPUP, secondParamName)).click();
 
         // click apply in all relation dialogs
         await this.page.click(slct(DashCommonQa.AliasAddBtn));
@@ -979,7 +979,10 @@ class DashboardPage extends BasePage {
         await this.clickTabs();
         await this.page.click(slct(DialogTabsQA.RowAdd));
         if (name) {
-            await this.page.getByRole('listitem').last().dblclick();
+            await this.page
+                .locator(`${slct(DialogTabsQA.ReadOnlyTabItem)}`)
+                .last()
+                .dblclick();
             await this.page.locator(`${slct(DialogTabsQA.EditTabItem)} input`).fill(name);
         }
         await this.page.click(slct(DialogTabsQA.Save));

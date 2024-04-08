@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {RowData} from '@tanstack/react-table';
+import type {RowData, SortingFnOption} from '@tanstack/react-table';
 
 declare module '@tanstack/react-table' {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -18,7 +18,6 @@ interface CellData {
     formattedValue?: string;
     css?: React.CSSProperties;
     className?: string | (() => string);
-
     rowSpan?: number;
     isVisible?: boolean;
 }
@@ -30,6 +29,7 @@ export type THead = {
     id: string;
     header?: string | RenderHeaderFn;
     enableSorting?: boolean;
+    sortingFn?: SortingFnOption<TData>;
     enableRowGrouping?: boolean;
     width?: string | number;
     cell?: RenderCellFn<CellData>;

@@ -9,7 +9,7 @@ const checkSourceType = async (page: Page, expectedSourceType: string) => {
     const promise = page.waitForRequest(/validateDataset/, {
         timeout: 2000,
     });
-    await page.click('.yc-dialog-footer__button_action_apply');
+    await page.click('.g-dialog-footer__button_action_apply');
     await page.waitForTimeout(1000);
 
     const request = await promise;
@@ -31,9 +31,9 @@ datalensTest.describe('Datasets - source editor dialog', () => {
         const inputLocator = page.locator(`${slct('source-editor-path')} input`);
 
         await inputLocator.fill(ytPath);
-        await page.click('.yc-dialog-footer__button_action_apply');
-        await page.click(`${slct('ds-source')} .yc-button`);
-        await page.click(`${slct('ds-source-menu')} .yc-menu__list-item`);
+        await page.click('.g-dialog-footer__button_action_apply');
+        await page.click(`${slct('ds-source')} .g-button`);
+        await page.click(`${slct('ds-source-menu')} .g-menu__list-item`);
 
         const titleInputLocator = page.locator(`${slct('source-editor-title')} input`);
 
@@ -48,9 +48,9 @@ datalensTest.describe('Datasets - source editor dialog', () => {
         await inputLocator.fill(ytPath);
         await titleInputLocator.fill('test name');
 
-        await page.click('.yc-dialog-footer__button_action_apply');
-        await page.click(`${slct('ds-source')} .yc-button`);
-        await page.click(`${slct('ds-source-menu')} .yc-menu__list-item`);
+        await page.click('.g-dialog-footer__button_action_apply');
+        await page.click(`${slct('ds-source')} .g-button`);
+        await page.click(`${slct('ds-source-menu')} .g-menu__list-item`);
 
         await page.waitForSelector(slct('source-editor-title'));
 
@@ -58,7 +58,7 @@ datalensTest.describe('Datasets - source editor dialog', () => {
         await titleInputLocator.fill('new name');
         await expect(titleInputLocator).toHaveValue('new name');
 
-        await page.click('.yc-dialog-footer__button_action_apply');
+        await page.click('.g-dialog-footer__button_action_apply');
 
         await page.waitForTimeout(1000);
 
@@ -80,13 +80,13 @@ datalensTest.describe('Datasets - source editor dialog', () => {
         const inputLocator = page.locator(inputSelector).first();
 
         const tableTab = page
-            .locator(`${slct('datasets-source-switcher')} .yc-radio-button__option`)
+            .locator(`${slct('datasets-source-switcher')} .g-radio-button__option`)
             .nth(0);
         const listTab = page
-            .locator(`${slct('datasets-source-switcher')} .yc-radio-button__option`)
+            .locator(`${slct('datasets-source-switcher')} .g-radio-button__option`)
             .nth(1);
         const rangeTab = page
-            .locator(`${slct('datasets-source-switcher')} .yc-radio-button__option`)
+            .locator(`${slct('datasets-source-switcher')} .g-radio-button__option`)
             .nth(2);
 
         await tableTab.check();

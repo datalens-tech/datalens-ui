@@ -44,6 +44,12 @@
     --data-table-border-color: var(--g-color-line-generic-solid);
     --data-table-color-hover-area: var(--g-color-base-simple-hover);
     --data-table-color-footer-area: var(--data-table-color-base);
+
+    // table
+    --dl-table-border-color: var(--g-color-line-generic-solid);
+    --dl-table-header-bg-color: var(--g-color-base-background);
+    --dl-table-no-data-bg-color: var(--g-color-base-generic);
+    --dl-table-footer-bg-color: var(--g-color-base-generic);
 }
 
 .g-root_theme_dark .chartkit .chartkit-ymap,

@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {ChartkitMenuDialogsQA, MenuItemsQA} from '../../../src/shared/constants';
+import {ChartkitMenuDialogsQA, ChartKitTableQa, MenuItemsQA} from '../../../src/shared';
 import {slct, waitForCondition} from '../../utils';
 import {readDownload} from '../../utils/playwright/utils';
 
@@ -37,13 +37,11 @@ export default class ChartKit {
     metricItemValueSelector = '.chartkit-indicator__item-value,.markup-metric-value';
 
     private drillArrowsSelector = '.chartkit-drill__drill-action';
-    private breadcrumbsSelector = '.chartkit-drill .yc-breadcrumbs__item';
+    private breadcrumbsItemSelector = '.chartkit-drill .g-breadcrumbs__item';
+    private breadcrumbsSwitcherSelector = '.chartkit-drill .g-breadcrumbs__switcher';
     private paginatorSelector = '.chartkit-table-paginator';
-    private tableRowSelector = '.chartkit .data-table__row';
-    private tableHeadRowSelector = '.chartkit .data-table__sticky_head .data-table__head-row';
-    private tableColgroupSelector = '.chartkit-table colgroup';
+    private tableHeadCellSelector = '.data-table__head-cell';
     private layerLegendSelector = '.chartkit .chartkit-ymap-legend-layer';
-    private chartkitTableCellSelector = '.chartkit-table__cell';
     private labelsSelector = '.highcharts-data-labels .highcharts-data-label';
     private chartkitSeriesRect = '.chartkit-highcharts rect.highcharts-point';
 
@@ -110,8 +108,15 @@ export default class ChartKit {
         await this.page.waitForSelector(slct(errorQa));
     }
 
+    getTableLocator() {
+        return this.page
+            .locator('.chartkit-table')
+            .or(this.page.locator(slct(ChartKitTableQa.Widget)));
+    }
+
     async waitForSuccessfulRender() {
-        await this.page.waitForSelector('.chartkit-graph,.chartkit-table');
+        const locator = this.page.locator('.chartkit-graph').or(this.getTableLocator());
+        await locator.waitFor();
     }
 
     async openExportMenuAndClickSubItem(subItemSelector: string) {
@@ -186,47 +191,56 @@ export default class ChartKit {
         await this.page.waitForSelector(this.paginatorSelector, {state: 'detached'});
     }
 
-    async getBreadcrumbs(): Promise<string[]> {
-        const breadcrumbs = await this.page.$$(this.breadcrumbsSelector);
+    async getBreadcrumbs() {
+        const switchers = await this.page.$$(this.breadcrumbsSwitcherSelector);
+        const items = await this.page.$$(this.breadcrumbsItemSelector);
+        const switchersText = await Promise.all(switchers.map((el) => el.innerText()));
+        const itemsText = await Promise.all(items.map((el) => el.innerText()));
 
-        return Promise.all(breadcrumbs.map((el) => el.innerText()));
+        return [...switchersText, ...itemsText];
     }
 
     async getTableRowsCount() {
-        return (await this.page.$$(this.tableRowSelector)).length;
-    }
-
-    async getColumnsWidth() {
-        const colGroup = await this.page.locator(this.tableColgroupSelector).first();
-        return await colGroup
-            .locator('col')
-            .evaluateAll((cols) => cols.map((col) => col.style?.width));
+        return await this.getTableLocator().locator('tbody tr').count();
     }
 
     getLayerLegend() {
         return this.page.$(this.layerLegendSelector);
     }
 
-    getHeadRowsHtml() {
-        return this.getRowContent(this.tableHeadRowSelector, '.data-table__head-cell', 'html');
+    async getHeadRowsHtml() {
+        const headerRows = this.getTableLocator().locator('thead').first().locator('tr');
+        const headCellContent = this.page
+            .locator(this.tableHeadCellSelector)
+            .or(this.page.locator(slct(ChartKitTableQa.HeadCellContent)));
+        await headerRows.first().waitFor();
+
+        const rows = await headerRows.all();
+        return await Promise.all(
+            rows.map(async (row) =>
+                Promise.all(
+                    (await row.locator(headCellContent).all()).map((cell) => cell.innerHTML()),
+                ),
+            ),
+        );
     }
 
-    getRowsHtml() {
-        return this.getRowContent(this.tableRowSelector, '.chartkit-table__cell', 'html');
-    }
+    async getHeadRowsTexts() {
+        const headerRows = this.getTableLocator().locator('thead').first().locator('tr');
+        await headerRows.first().waitFor();
 
-    getHeadRowsTexts() {
-        return this.getRowContent(this.tableHeadRowSelector, '.data-table__head-cell', 'text');
+        const rows = await headerRows.all();
+        return await Promise.all(rows.map((row) => row.locator('th').allTextContents()));
     }
 
     async getRowsTexts() {
-        const rows = await this.getRowContent(
-            this.tableRowSelector,
-            '.chartkit-table__cell',
-            'text',
-        );
+        const rowLocator = this.getTableLocator().locator('tbody tr');
+        await rowLocator.first().waitFor();
 
-        return rows.map((row) => {
+        const rows = await rowLocator.all();
+        const content = await Promise.all(rows.map((row) => row.locator('td').allTextContents()));
+
+        return content.map((row) => {
             return row.map((rowValue) => rowValue.replace(/\u00a0/g, ' '));
         });
     }
@@ -258,10 +272,6 @@ export default class ChartKit {
         return lines;
     }
 
-    async clickToCellWithText(text: string) {
-        await this.page.click(`${this.chartkitTableCellSelector} >> text=${text}`);
-    }
-
     async navigateToNextTablePage(times: number) {
         for (let i = 0; i < times; i++) {
             await this.page.click(slct('chartkit-table-paginator-next-btn'));
@@ -291,33 +301,5 @@ export default class ChartKit {
         const labels = await locator.allTextContents();
 
         return labels.map((rowValue) => rowValue.replace(/\u00a0/g, ' '));
-    }
-
-    private async getRowContent(
-        rowSelector: string,
-        cellSelector: '.data-table__head-cell' | '.chartkit-table__cell',
-        contentType: 'text' | 'html',
-    ) {
-        await this.page.waitForSelector(rowSelector);
-
-        const rowElements = await this.page.$$(rowSelector);
-
-        return Promise.all(
-            rowElements.map(async (row) => {
-                const cells = await row.$$(cellSelector)!;
-
-                const cellsTexts = await Promise.all(
-                    cells.map((cell) => {
-                        if (contentType === 'text') {
-                            return cell.innerText();
-                        }
-
-                        return cell.innerHTML();
-                    }),
-                );
-
-                return cellsTexts.map((cellText: string) => cellText.trim());
-            }),
-        );
     }
 }

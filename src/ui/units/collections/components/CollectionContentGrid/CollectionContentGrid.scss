@@ -12,11 +12,11 @@
         cursor: pointer;
         max-width: 141px;
         padding: 8px;
-        border-radius: 8px;
+        border-radius: 16px;
         transition: background-color 0.2s ease;
 
         &:hover {
-            background-color: var(--g-color-base-simple-hover-solid);
+            background-color: var(--g-color-base-simple-hover);
         }
     }
 

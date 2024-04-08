@@ -5,12 +5,13 @@ import {AxiosError} from 'axios';
 import block from 'bem-cn-lite';
 import {History, Location} from 'history';
 import {i18n} from 'i18n';
+import isEqual from 'lodash/isEqual';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ChartsConfig, EntryUpdateMode, Feature} from 'shared';
+import {ChartSaveControlsQA, ChartsConfig, EntryUpdateMode, Feature} from 'shared';
 import {
     DL,
     DatalensGlobalState,
@@ -175,12 +176,14 @@ class Wizard extends React.Component<Props, State> {
         window.addEventListener('beforeunload', this.unloadConfirmation);
     }
 
-    shouldComponentUpdate(nextProps: Readonly<Props>): boolean {
-        return shouldComponentUpdateWithDeepComparison({
-            nextProps,
-            currentProps: this.props,
-            deepComparePropKey: 'widget',
-        });
+    shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>): boolean {
+        return (
+            shouldComponentUpdateWithDeepComparison({
+                nextProps,
+                currentProps: this.props,
+                deepComparePropKey: 'widget',
+            }) || !isEqual(this.state, nextState)
+        );
     }
 
     componentDidUpdate(prevProps: Props) {
@@ -445,6 +448,7 @@ class Wizard extends React.Component<Props, State> {
                 action: () => this.openSaveAsWidgetDialog(true),
                 text: i18n('wizard', 'button_save-as-editor-script'),
                 hidden: !Utils.isEnabledFeature(Feature.EnableSaveAsEditorScript),
+                qa: ChartSaveControlsQA.SaveAsEditorScript,
             },
         ];
     };
