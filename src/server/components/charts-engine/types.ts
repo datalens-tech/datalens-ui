@@ -66,6 +66,7 @@ export type TelemetryCallbacks = {
         requestId: string;
         latency: number;
     }) => void;
+    onTabsExecuted?: ({result, entryId}: {result: unknown; entryId: string}) => void;
 };
 
 export type Source<T = string | Record<string, string>> = {

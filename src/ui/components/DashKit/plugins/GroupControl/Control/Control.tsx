@@ -12,7 +12,6 @@ import {
     DashTabItemControlManual,
     DashTabItemControlSingle,
     DashTabItemControlSourceType,
-    Feature,
     StringParams,
     WorkbookId,
 } from 'shared';
@@ -27,7 +26,6 @@ import type {EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-p
 import {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
-import Utils from 'ui/utils/utils';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
@@ -445,6 +443,25 @@ export const Control = ({
             renderOverlay,
             ...getTypeProps(control, controlData, currentValidationError),
         };
+
+        if (type === 'range-datepicker' || type === 'datepicker') {
+            let fieldType = source?.fieldType || null;
+            if (controlData.sourceType === DashTabItemControlSourceType.Dataset) {
+                const {datasetFieldType} = getDatasetSourceInfo({
+                    data: controlData,
+                    actualLoadedData: loadedData,
+                });
+                fieldType = datasetFieldType;
+            }
+            // Check 'datetime' for backward compatibility
+            if (fieldType === 'datetime' || fieldType === DATASET_FIELD_TYPES.GENERICDATETIME) {
+                props.timeFormat = 'HH:mm:ss';
+            }
+        }
+
+        if (type === 'input') {
+            props.placeholder = currentValidationError || control.placeholder;
+        }
 
         switch (control.type) {
             case CONTROL_TYPE.INPUT:

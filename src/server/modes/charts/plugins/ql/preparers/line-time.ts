@@ -1,6 +1,9 @@
-import {dateTime} from '@gravity-ui/date-utils';
-
-import {DATALENS_QL_TYPES, IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
+import {
+    DATALENS_QL_TYPES,
+    IChartEditor,
+    QlConfigPreviewTableData,
+    getUtcDateTime,
+} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
@@ -300,7 +303,7 @@ export default ({
 
             if (xIsDate) {
                 // CHARTS-6632 - revision/study of yagr is necessary, after that moment.utc(xValue) is possible.valueOf();
-                xValue = dateTime({input: xValue, timeZone: 'UTC'}).valueOf() / 1000;
+                xValue = (getUtcDateTime(xValue)?.valueOf() || 0) / 1000;
             } else if (columnTypes[xIndex] === DATALENS_QL_TYPES.UNKNOWN) {
                 xValue = formatUnknownTypeValue(xValue);
             }

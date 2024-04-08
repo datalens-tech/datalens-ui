@@ -5,14 +5,12 @@ import {
     DashTabItemControlDataset,
     DashTabItemControlSingle,
     DatasetFieldType,
-    Feature,
 } from 'shared';
 import {
     ChartsData,
     DatasetFieldsListItem,
     ResponseSuccessControls,
 } from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
-import Utils from 'ui/utils/utils';
 
 import {LOAD_STATUS} from './constants';
 import {ErrorData, LoadStatus, ValidationErrorData} from './types';
@@ -30,21 +28,19 @@ export const getStatus = (status: LoadStatus) => {
 };
 
 export const isValidRequiredValue = ({required, value}: ValidationErrorData) => {
-    const isRequired = Utils.isEnabledFeature(Feature.SelectorRequiredValue) && required;
-
     const isEmptyArray = Array.isArray(value) && !value.length;
     const isEmptyDateObject =
         !Array.isArray(value) && typeof value === 'object' && (!value.from || !value.to);
 
     if (!value || isEmptyArray || isEmptyDateObject) {
-        return isRequired;
+        return required;
     }
 
     return false;
 };
 
 export const getRequiredLabel = ({title, required}: {title: string; required?: boolean}) => {
-    return Utils.isEnabledFeature(Feature.SelectorRequiredValue) && required ? `${title}*` : title;
+    return required ? `${title}*` : title;
 };
 
 export const getLabels = (data: DashTabItemControlSingle) => {
