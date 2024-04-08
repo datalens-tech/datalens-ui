@@ -19,6 +19,74 @@ import {
 import {getAxios} from '../axios';
 
 class US {
+    static async updateAccesses(
+        headers: IncomingHttpHeaders,
+        ctx: AppContext,
+        query: String
+    ): Promise<Entry> {
+        try {
+            const {data: result} = await getAxios(ctx.config)({
+                method: 'GET',
+                url: `${ctx.config.endpoints.api.us}/updateAccesses${query}`,
+                headers,
+                'axios-retry': {retries: 1},
+            });
+
+            ctx.log('SDK_US_UPDATE_ACCESSES_SUCCESS', US.getLoggedEntry(result));
+
+            return result;
+        } catch (error) {
+            ctx.logError('SDK_US_UPDATE_ACCESSES_FAILED', error, {});
+
+            throw error;
+        }
+    }
+
+    static async getAccesses(
+        headers: IncomingHttpHeaders,
+        ctx: AppContext,
+        query: String
+    ): Promise<Entry> {
+        try {
+            const {data: result} = await getAxios(ctx.config)({
+                method: 'GET',
+                url: `${ctx.config.endpoints.api.us}/accesses${query}`,
+                headers,
+                'axios-retry': {retries: 1},
+            });
+
+            ctx.log('SDK_US_GET_ACCESSES_SUCCESS', US.getLoggedEntry(result));
+
+            return result;
+        } catch (error) {
+            ctx.logError('SDK_US_GET_ACCESSES_FAILED', error, {});
+
+            throw error;
+        }
+    }
+
+    static async getRoles(
+        headers: IncomingHttpHeaders,
+        ctx: AppContext,
+    ): Promise<Entry> {
+        try {
+            const {data: result} = await getAxios(ctx.config)({
+                method: 'GET',
+                url: `${ctx.config.endpoints.api.us}/roles`,
+                headers,
+                'axios-retry': {retries: 1},
+            });
+
+            ctx.log('SDK_US_GET_ROLES_SUCCESS', US.getLoggedEntry(result));
+
+            return result;
+        } catch (error) {
+            ctx.logError('SDK_US_GET_ROLES_FAILED', error, {});
+
+            throw error;
+        }
+    }
+
     static async createEmbed(
         headers: IncomingHttpHeaders,
         ctx: AppContext,
@@ -31,11 +99,11 @@ class US {
                 'axios-retry': {retries: 1},
             });
 
-            ctx.log('SDK_US_CREATE_ENTRY_SUCCESS', US.getLoggedEntry(result));
+            ctx.log('SDK_US_CREATE_EMBED_SUCCESS', US.getLoggedEntry(result));
 
             return result;
         } catch (error) {
-            ctx.logError('SDK_US_CREATE_ENTRY_FAILED', error, {});
+            ctx.logError('SDK_US_CREATE_EMBED_FAILED', error, {});
 
             throw error;
         }
