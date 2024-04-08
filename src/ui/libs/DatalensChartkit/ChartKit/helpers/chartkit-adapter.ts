@@ -1,5 +1,8 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import cloneDeep from 'lodash/cloneDeep';
+import get from 'lodash/get';
+import {Feature} from 'shared';
+import Utils from 'ui/utils';
 
 import {DL} from '../../../../constants/common';
 import type {GraphWidget, LoadedWidgetData} from '../../types';
@@ -71,6 +74,18 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
 
         case 'd3': {
             chartkitType = 'd3';
+
+            break;
+        }
+
+        case 'table': {
+            const shouldRenderNewTable =
+                (get(data, 'isNewWizard') || get(data, 'isQL')) &&
+                Utils.isEnabledFeature(Feature.NewTablePluginForWizardAndQl);
+
+            if (shouldRenderNewTable) {
+                chartkitType = 'table';
+            }
 
             break;
         }

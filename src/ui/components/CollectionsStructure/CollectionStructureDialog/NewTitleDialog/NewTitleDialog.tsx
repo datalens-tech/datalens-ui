@@ -35,7 +35,7 @@ export const NewTitleDialog = React.memo<Props>(
             <Dialog size="s" open={open} onClose={onClose} onEnterKeyDown={handleApply}>
                 <Dialog.Header caption={i18n('label_title')} />
                 <Dialog.Body>
-                    <TextInput value={titleValue} onUpdate={setTitleValue} />
+                    <TextInput value={titleValue} onUpdate={setTitleValue} autoFocus />
                 </Dialog.Body>
                 <Dialog.Footer
                     onClickButtonCancel={onClose}

@@ -9,7 +9,7 @@ import {createWorkbook} from '../../store/actions/collectionsStructure';
 import {selectCreateWorkbookIsLoading} from '../../store/selectors/collectionsStructure';
 import DialogManager from '../DialogManager/DialogManager';
 
-import {WorkbookDialog} from './WorkbookDialog/WorkbookDialog';
+import {WorkbookDialog} from './WorkbookDialog';
 
 const i18n = I18n.keyset('component.collections-structure');
 
@@ -24,7 +24,7 @@ type Props = {
     collectionId: string | null;
     open: boolean;
     onClose: () => void;
-    onApply?: (result: CreateWorkbookResponse | null) => Promise<unknown>;
+    onApply?: (result: CreateWorkbookResponse | null) => void;
 };
 
 export const CreateWorkbookDialog: React.FC<Props> = (props) => {
@@ -43,7 +43,7 @@ export const CreateWorkbookDialog: React.FC<Props> = (props) => {
         );
 
         if (onApply) {
-            await onApply(result);
+            onApply(result);
         }
 
         return result;

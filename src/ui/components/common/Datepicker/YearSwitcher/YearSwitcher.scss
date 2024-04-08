@@ -1,6 +1,6 @@
 @import '../../styles/mixins';
 
-.yc-datepicker-year-switcher {
+.dl-datepicker-year-switcher {
     @include text-subheader-2;
     position: absolute;
     left: 50%;
@@ -34,7 +34,7 @@
             right: 5px;
         }
 
-        &_left .yc-icon {
+        &_left .g-icon {
             transform: rotate(180deg) translateY(1px);
         }
 

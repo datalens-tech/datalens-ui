@@ -4,6 +4,7 @@ import {Ellipsis} from '@gravity-ui/icons';
 import {Button, DropdownMenu, Icon, Menu as ListMenu, Portal, Sheet} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import isEmpty from 'lodash/isEmpty';
 import PropTypes from 'prop-types';
 import {ChartkitMenuDialogsQA, MenuItemsIds} from 'shared';
 import {DL, SHEET_IDS} from 'ui/constants';
@@ -104,14 +105,16 @@ export class Menu extends React.PureComponent {
     };
 
     prepareItems = (items, data, onChange) => {
-        return items.map((item, index) => {
-            if (Array.isArray(item)) {
-                return item.map((menu, itemIndex) =>
-                    this.prepareItem(menu, data, onChange, `${index}-${itemIndex}`),
-                );
-            }
-            return this.prepareItem(item, data, onChange, index);
-        });
+        return items
+            .map((item, index) => {
+                if (Array.isArray(item)) {
+                    return item.map((menu, itemIndex) =>
+                        this.prepareItem(menu, data, onChange, `${index}-${itemIndex}`),
+                    );
+                }
+                return this.prepareItem(item, data, onChange, index);
+            })
+            .filter((item) => !isEmpty(item));
     };
 
     getVisibleSubItems = (data, items) => {

@@ -6,14 +6,6 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
 
 datalensTest.describe('Wizard Datasets', () => {
-    datalensTest('Adding a dataset', async ({page}: {page: Page}) => {
-        const wizardPage = new WizardPage({page});
-
-        await openTestPage(page, RobotChartsWizardUrls.Empty);
-
-        await wizardPage.addFirstDataset(RobotChartsDatasets.CsvBasedDataset);
-    });
-
     datalensTest('Adding two datasets and switching between them', async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
 

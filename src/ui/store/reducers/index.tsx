@@ -9,6 +9,8 @@ import {collectionsStructure} from 'store/reducers/collectionsStructure';
 import {migrationToWorkbook} from 'ui/store/reducers/migrationToWorkbook';
 import {copyEntriesToWorkbook} from 'ui/store/reducers/copyEntriesToWorkbook';
 
+import {editHistory} from './editHistory';
+
 export default {
     user,
     asideHeader,
@@ -20,4 +22,5 @@ export default {
     collectionsStructure,
     migrationToWorkbook,
     copyEntriesToWorkbook,
+    editHistory,
 };

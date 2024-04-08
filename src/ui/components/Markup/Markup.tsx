@@ -3,7 +3,13 @@ import React from 'react';
 import {Link} from '@gravity-ui/uikit';
 import merge from 'lodash/merge';
 
-import {MarkupItem, MarkupItemType, MarkupItemTypes} from '../../../shared';
+import {
+    MarkupItem,
+    MarkupItemType,
+    MarkupItemTypes,
+    isMarkupItem,
+    markupToRawString,
+} from '../../../shared';
 
 import {UserInfo} from './components/UserInfo/UserInfo';
 import {isNumericCSSValueValid} from './utils';
@@ -96,7 +102,7 @@ const getConfig = (
             break;
         }
         case MarkupItemTypes.Url: {
-            iteratedConfigItem.element = Link;
+            iteratedConfigItem.element = Link as TemplateItem['element'];
             iteratedConfigItem.props = merge(iteratedConfigItem.props, {
                 view: 'normal',
                 href: markupItem.url || '',
@@ -105,7 +111,8 @@ const getConfig = (
             break;
         }
         case MarkupItemTypes.UserInfo: {
-            const {content: userId, user_info: fieldName} = markupItem;
+            const {content, user_info: fieldName} = markupItem;
+            const userId = isMarkupItem(content) ? markupToRawString(content) : content;
             iteratedConfigItem.element = UserInfo;
             iteratedConfigItem.props = {
                 userId: String(userId),

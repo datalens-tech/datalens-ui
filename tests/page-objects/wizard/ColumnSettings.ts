@@ -45,7 +45,7 @@ export class ColumnSettings {
         const checkedRadioButton = await this.page.$(
             `${slct(
                 `${DialogColumnSettingsQa.UnitRadioButtons}__${fieldTitle}`,
-            )} .yc-radio-button__option_checked`,
+            )} .g-radio-button__option_checked`,
         );
 
         const valueWrapper = await checkedRadioButton?.$(CommonSelectors.RadioButtonOptionControl);

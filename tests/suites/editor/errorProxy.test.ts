@@ -2,7 +2,6 @@ import {Page} from '@playwright/test';
 
 import EditorPage from '../../page-objects/editor/EditorPage';
 import datalensTest from '../../utils/playwright/globalTestDefinition';
-import {EditorTemplatesQA} from '../../../src/shared/constants/qa/editor';
 import {openTestPage} from '../../utils';
 import {RobotChartsEditorUrls} from '../../utils/constants';
 import {DEFAULT_QUERY} from '../../page-objects/constants/base';
@@ -19,8 +18,7 @@ const PARAMS = {
 datalensTest.describe('ChartEditor passing JS errors to the user', () => {
     datalensTest('User should see a readable error', async ({page}: {page: Page}) => {
         const editorPage = new EditorPage({page});
-        await openTestPage(page, RobotChartsEditorUrls.EditorNew, DEFAULT_QUERY);
-        await editorPage.clickTemplate(EditorTemplatesQA.NoTemplate);
+        await openTestPage(page, RobotChartsEditorUrls.EditorEmptyDraft, DEFAULT_QUERY);
         await editorPage.drawPreview();
         const editor = await page.waitForSelector('.view-line');
         await editor.click();

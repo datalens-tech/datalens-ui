@@ -9,7 +9,7 @@ import DialogManager from '../../components/DialogManager/DialogManager';
 import {updateWorkbook} from '../../store/actions/collectionsStructure';
 import {selectUpdateWorkbookIsLoading} from '../../store/selectors/collectionsStructure';
 
-import {WorkbookDialog} from './WorkbookDialog/WorkbookDialog';
+import {WorkbookDialog} from './WorkbookDialog';
 
 const i18n = I18n.keyset('component.collections-structure');
 
@@ -65,6 +65,7 @@ export const EditWorkbookDialog: React.FC<Props> = (props) => {
             textButtonApply={i18n('action_save')}
             open={open}
             isLoading={isLoading}
+            titleAutoFocus
             onApply={handleApply}
             onClose={onClose}
         />

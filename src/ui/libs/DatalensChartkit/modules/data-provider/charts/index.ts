@@ -183,10 +183,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             'debug' in originalError ? originalError.debug : {};
         const extra: ExtraParams = {
             ...(originalError.extra || {}),
-            hideRetry:
-                typeof originalError?.extra?.hideRetry === 'boolean'
-                    ? originalError.extra.hideRetry
-                    : isEditMode,
+            hideRetry: originalError.extra?.hideRetry || false,
             openedMore: isEditMode,
             showErrorMessage: true,
             showMore: false,

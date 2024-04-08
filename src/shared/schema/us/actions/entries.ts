@@ -49,8 +49,6 @@ import {
     MoveEntryResponse,
     RenameEntryArgs,
     RenameEntryResponse,
-    SearchEntriesArgs,
-    SearchEntriesResponse,
     SwitchPublicationStatusArgs,
     SwitchPublicationStatusResponse,
 } from '../types';
@@ -261,11 +259,6 @@ export const entriesActions = {
         method: 'DELETE',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
         params: ({lockToken}, headers) => ({query: {lockToken}, headers}),
-    }),
-    searchEntries: createAction<SearchEntriesResponse, SearchEntriesArgs>({
-        method: 'GET',
-        path: () => `${PRIVATE_PATH_PREFIX}/search`,
-        params: ({text}, headers) => ({query: {text}, headers}),
     }),
     _switchPublicationStatus: createAction<
         SwitchPublicationStatusResponse,

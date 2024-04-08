@@ -10,7 +10,6 @@ import {
     WorkbookPermission,
     WorkbookWithPermissions,
 } from 'shared/schema';
-import {OrderDirection, OrderWorkbookEntriesField} from 'shared/schema/us/types/sort';
 
 import {CreateEntryActionType} from '../../constants';
 import {WorkbookEntriesFilters} from '../../types';
@@ -45,6 +44,7 @@ import {
     RESET_WORKBOOK_ENTRIES_BY_SCOPE,
     RESET_WORKBOOK_PERMISSIONS,
     SET_CREATE_WORKBOOK_ENTRY_TYPE,
+    SET_WORKBOOK,
 } from '../constants';
 
 export type WorkbooksState = {
@@ -125,8 +125,8 @@ const initialState: WorkbooksState = {
     },
     filters: {
         filterString: undefined,
-        orderField: OrderWorkbookEntriesField.Name,
-        orderDirection: OrderDirection.Asc,
+        orderField: 'name',
+        orderDirection: 'asc',
     },
     workbooksNames: {},
     workbookPermissions: null,
@@ -481,6 +481,17 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
             return {
                 ...state,
                 workbookPermissions: null,
+            };
+        }
+
+        case SET_WORKBOOK: {
+            return {
+                ...state,
+                getWorkbook: {
+                    isLoading: false,
+                    data: action.data.workbook,
+                    error: null,
+                },
             };
         }
 

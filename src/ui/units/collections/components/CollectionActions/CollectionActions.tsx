@@ -11,14 +11,12 @@ import {
 } from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {useSelector} from 'react-redux';
 
 import {Feature} from '../../../../../shared';
-import type {
-    CollectionWithPermissions,
-    GetRootCollectionPermissionsResponse,
-} from '../../../../../shared/schema';
 import {DL} from '../../../../constants';
 import Utils from '../../../../utils';
+import {selectCollection, selectRootCollectionPermissions} from '../../store/selectors';
 
 import collectionIcon from '../../../../assets/icons/collections/collection.svg';
 import workbookDemoIcon from '../../../../assets/icons/collections/workbook-demo.svg';
@@ -32,8 +30,6 @@ const b = block('dl-collection-actions');
 
 export type Props = {
     className?: string;
-    rootPermissions: GetRootCollectionPermissionsResponse | null;
-    collectionData: CollectionWithPermissions | null;
     onCreateCollectionClick: () => void;
     onAddDemoWorkbookClick: () => void;
     onAddLearningMaterialsWorkbookClick: () => void;
@@ -46,8 +42,6 @@ export const CollectionActions = React.memo<Props>(
     // eslint-disable-next-line complexity
     ({
         className,
-        rootPermissions,
-        collectionData,
         onCreateCollectionClick,
         onAddDemoWorkbookClick,
         onAddLearningMaterialsWorkbookClick,
@@ -55,19 +49,23 @@ export const CollectionActions = React.memo<Props>(
         onEditAccessClick,
         onMoveClick,
     }) => {
-        const showCreateCollection = collectionData
-            ? collectionData.permissions.createCollection
-            : rootPermissions?.createCollectionInRoot;
+        const collection = useSelector(selectCollection);
+        const rootCollectionPermissions = useSelector(selectRootCollectionPermissions);
 
-        const showCreateWorkbook = collectionData
-            ? collectionData.permissions?.createWorkbook
-            : rootPermissions?.createWorkbookInRoot;
+        const showCreateCollection = collection
+            ? collection.permissions?.createCollection
+            : rootCollectionPermissions?.createCollectionInRoot;
+
+        const showCreateWorkbook = collection
+            ? collection.permissions?.createWorkbook
+            : rootCollectionPermissions?.createWorkbookInRoot;
 
         const addDemoWorkbookEnabled = Utils.isEnabledFeature(Feature.AddDemoWorkbook);
+
         const showAddDemoWorkbook =
             addDemoWorkbookEnabled && showCreateWorkbook && DL.TEMPLATE_WORKBOOK_ID;
         const showAddLearningMaterialsWorkbook =
-            showCreateWorkbook && DL.LEARNING_MATERIALS_WORKBOOK_ID;
+            addDemoWorkbookEnabled && showCreateWorkbook && DL.LEARNING_MATERIALS_WORKBOOK_ID;
 
         const createActionItems: DropdownMenuItemMixed<unknown>[] = [];
 
@@ -135,7 +133,7 @@ export const CollectionActions = React.memo<Props>(
 
         return (
             <div className={b(null, className)}>
-                {collectionData && collectionData.permissions.move && (
+                {collection && collection.permissions?.move && (
                     <Tooltip content={i18n('action_move')}>
                         <div className={b('move')}>
                             <Button onClick={onMoveClick}>
@@ -145,9 +143,9 @@ export const CollectionActions = React.memo<Props>(
                     </Tooltip>
                 )}
 
-                {collectionData &&
-                    collectionsAccessEnabled &&
-                    collectionData.permissions.listAccessBindings && (
+                {collectionsAccessEnabled &&
+                    collection &&
+                    collection.permissions?.listAccessBindings && (
                         <Tooltip content={i18n('action_access')}>
                             <div className={b('access')}>
                                 <Button onClick={onEditAccessClick}>

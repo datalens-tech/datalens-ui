@@ -14,13 +14,14 @@ export type Props = {
     open: boolean;
     title: string;
     isLoading: boolean;
+    defaultTitleValue?: string;
     onApply: (title: string) => Promise<unknown>;
     onClose: () => void;
 };
 
 export const CreateEntityDialog = React.memo<Props>(
-    ({open, title, isLoading, onApply, onClose}) => {
-        const [titleValue, setTitleValue] = React.useState('');
+    ({open, title, isLoading, defaultTitleValue, onApply, onClose}) => {
+        const [titleValue, setTitleValue] = React.useState(defaultTitleValue ?? '');
 
         const handleApply = React.useCallback(() => {
             onApply(titleValue).then(() => {
@@ -30,9 +31,9 @@ export const CreateEntityDialog = React.memo<Props>(
 
         React.useEffect(() => {
             if (open) {
-                setTitleValue('');
+                setTitleValue(defaultTitleValue ?? '');
             }
-        }, [open]);
+        }, [open, defaultTitleValue]);
 
         return (
             <Dialog
@@ -46,7 +47,7 @@ export const CreateEntityDialog = React.memo<Props>(
                 <Dialog.Body>
                     <div className={b('field')}>
                         <div className={b('title')}>{i18n('label_title')}</div>
-                        <TextInput value={titleValue} onUpdate={setTitleValue} />
+                        <TextInput value={titleValue} onUpdate={setTitleValue} autoFocus />
                     </div>
                 </Dialog.Body>
                 <Dialog.Footer

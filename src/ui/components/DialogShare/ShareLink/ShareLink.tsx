@@ -35,7 +35,7 @@ export const ShareLink: React.FC<ShareLinkProps> = ({
                 <div className={b('text-field')}>{text}</div>
                 <ClipboardButton
                     className={b('clipboard-button')}
-                    size={16}
+                    size="m"
                     text={textToCopy || text}
                 />
             </div>
