@@ -1,9 +1,9 @@
 {
   "button_apply": "Применить",
-  "button_cancel": "Отмена",
-  "error_invalid-typed-query-response": "Селектор не поддерживает ответ из базы данных, в котором 2 и более колонок.",
+  "button_cancel": "Отменить",
+  "error_invalid-typed-query-response": "Селектор не поддерживает ответ из базы данных, если в нём 2 и более колонок.",
   "title_database-response": "Ответ базы данных",
   "title_edit-query": "Редактирование запроса",
-  "title_invalid-sql-query": "Невалидный SQL запрос в базу данных",
+  "title_invalid-sql-query": "Некорректный SQL-запрос к базе данных",
   "title_sent-query": "Отправленный запрос"
 }
