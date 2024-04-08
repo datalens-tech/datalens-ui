@@ -79,8 +79,11 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const [preparedRelations, setPreparedRelations] = React.useState<DashMetaData>([]);
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
 
-    const isMultipleControls = widget.type === DashTabItemType.GroupControl;
-    const [itemId, setItemId] = React.useState(isMultipleControls ? widget.data.group[0].id : null);
+    const isMultipleControls =
+        widget.type === DashTabItemType.GroupControl && widget.data.group.length > 1;
+    const [itemId, setItemId] = React.useState(
+        widget.type === DashTabItemType.GroupControl ? widget.data.group[0].id : null,
+    );
 
     const controlItems = isMultipleControls
         ? widget.data.group.map((item) => ({value: item.id, content: item.title}))
@@ -356,25 +359,38 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
     const handleDisconnectAll = React.useCallback(
         (disconnectType: 'all' | 'charts' | 'selectors') => {
-            const newChangedWidgets: WidgetsTypes = {};
+            const newChangedWidgets: WidgetsTypes = {[currentWidgetId]: {}};
             const filteredIds = filteredRelations.reduce((res: Record<string, string>, item) => {
-                if (!item.widgetId) {
+                const widgetId = item.itemId || item.widgetId;
+
+                if (!widgetId) {
                     return res;
                 }
+
+                const isControl =
+                    item.type === DashTabItemType.Control ||
+                    item.type === DashTabItemType.GroupControl;
+
                 if (
                     disconnectType === 'all' ||
-                    (disconnectType === 'selectors' && item.type === DashTabItemType.Control) ||
-                    (disconnectType === 'charts' && item.type !== DashTabItemType.Control)
+                    (disconnectType === 'selectors' && isControl) ||
+                    (disconnectType === 'charts' && !isControl)
                 ) {
-                    res[item.widgetId] = item.widgetId;
+                    res[widgetId] = widgetId;
                 }
+
+                newChangedWidgets[widgetId] = {};
 
                 return res;
             }, {});
 
             preparedRelations.forEach((item) => {
-                if (filteredIds[item.widgetId]) {
-                    newChangedWidgets[currentWidgetId][item.widgetId] =
+                const widgetId = item.itemId || item.widgetId;
+
+                if (filteredIds[widgetId]) {
+                    newChangedWidgets[currentWidgetId][widgetId] =
+                        RELATION_TYPES.ignore as RelationType;
+                    newChangedWidgets[widgetId][currentWidgetId] =
                         RELATION_TYPES.ignore as RelationType;
                 }
             });

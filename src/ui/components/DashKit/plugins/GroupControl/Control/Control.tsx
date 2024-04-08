@@ -320,10 +320,7 @@ export const Control = ({
         }
 
         if (type === 'input') {
-            typeProps.placeholder =
-                Utils.isEnabledFeature(Feature.SelectorRequiredValue) && currentValidationError
-                    ? currentValidationError
-                    : control.placeholder;
+            typeProps.placeholder = currentValidationError || control.placeholder;
         }
 
         return typeProps;
@@ -443,25 +440,6 @@ export const Control = ({
             renderOverlay,
             ...getTypeProps(control, controlData, currentValidationError),
         };
-
-        if (type === 'range-datepicker' || type === 'datepicker') {
-            let fieldType = source?.fieldType || null;
-            if (controlData.sourceType === DashTabItemControlSourceType.Dataset) {
-                const {datasetFieldType} = getDatasetSourceInfo({
-                    data: controlData,
-                    actualLoadedData: loadedData,
-                });
-                fieldType = datasetFieldType;
-            }
-            // Check 'datetime' for backward compatibility
-            if (fieldType === 'datetime' || fieldType === DATASET_FIELD_TYPES.GENERICDATETIME) {
-                props.timeFormat = 'HH:mm:ss';
-            }
-        }
-
-        if (type === 'input') {
-            props.placeholder = currentValidationError || control.placeholder;
-        }
 
         switch (control.type) {
             case CONTROL_TYPE.INPUT:
