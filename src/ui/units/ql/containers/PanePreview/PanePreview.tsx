@@ -109,7 +109,6 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
                     config={previewConfig}
                     params={params}
                     onChartLoad={this.onChartLoad}
-                    onChartRender={this.onChartRender}
                     ref={this.chartKitRef}
                     disableChartLoader={true}
                     noVeil={true}
@@ -154,6 +153,10 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
             // Case when chart execution errored or has empty result
             this.props.setTablePreviewData({tablePreviewData: {}});
         }
+
+        // There is a problem with yagr widget - it does not call onRender callback every time it is rendered, only once
+        // Therefore, for now we are artificially calling callback to remove the loader
+        setTimeout(this.onChartRender);
     };
 
     onChartRender = () => {
