@@ -43,11 +43,15 @@ export const TableBody = (props: Props) => {
                 const visibleCells = row.getVisibleCells();
                 return (
                     <tr key={row.id} className={b('tr')}>
-                        {visibleCells.map((cell, index) => {
+                        {visibleCells.map((cell, index, list) => {
+                            const originalHeadData = cell.column.columnDef.meta?.head;
                             const width = cell.column.columnDef.meta?.width;
                             const isFixedSize = Boolean(width);
                             const originalCellData = cell.row.original[index];
-                            const cellClassName = [b('td'), originalCellData?.className]
+                            const cellClassName = [
+                                b('td', {pinned: originalHeadData?.pinned ? 'left' : undefined}),
+                                originalCellData?.className,
+                            ]
                                 .filter(Boolean)
                                 .join(' ');
 
@@ -55,11 +59,21 @@ export const TableBody = (props: Props) => {
                                 return null;
                             }
 
+                            const nextColumn = list[index + 1];
+                            const lastPinnedColumn =
+                                originalHeadData?.pinned &&
+                                !nextColumn?.column.columnDef.meta?.head?.pinned;
+
+                            const cellStyle: React.CSSProperties = {
+                                width,
+                                ...originalCellData?.css,
+                            };
+
                             return (
                                 <td
                                     key={cell.id}
                                     className={cellClassName}
-                                    style={originalCellData?.css}
+                                    style={cellStyle}
                                     onClick={(event) =>
                                         handleCellClick({
                                             row: row.original,
@@ -69,6 +83,7 @@ export const TableBody = (props: Props) => {
                                     }
                                     rowSpan={originalCellData?.rowSpan}
                                 >
+                                    {lastPinnedColumn && <div className={b('curtain')} />}
                                     <div
                                         className={b('td-content', {
                                             'fixed-size': isFixedSize,

@@ -31,6 +31,7 @@ export type THead = {
     enableSorting?: boolean;
     sortingFn?: SortingFnOption<TData>;
     enableRowGrouping?: boolean;
+    pinned?: boolean;
     width?: string | number;
     cell?: RenderCellFn<CellData>;
     columns?: THead[];

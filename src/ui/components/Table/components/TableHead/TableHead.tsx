@@ -26,11 +26,12 @@ export const TableHead = (props: Props) => {
 
                 return (
                     <tr key={headerGroup.id} className={b('tr')}>
-                        {headerGroup.headers.map((header) => {
+                        {headerGroup.headers.map((header, index, list) => {
                             if (header.column.depth !== headerGroup.depth) {
                                 return null;
                             }
 
+                            const original = header.column.columnDef.meta?.head;
                             const width = header.column.columnDef.meta?.width;
                             const isFixedSize = Boolean(width);
                             const rowSpan = header.isPlaceholder
@@ -39,6 +40,13 @@ export const TableHead = (props: Props) => {
                             const colSpan = header.colSpan > 1 ? header.colSpan : undefined;
                             const align = colSpan ? 'center' : 'left';
                             const sortable = header.column.getCanSort();
+                            const cellStyle: React.CSSProperties = {
+                                width,
+                            };
+                            const nextColumn = list[index + 1];
+                            const lastPinnedColumn =
+                                original?.pinned &&
+                                !nextColumn?.column.columnDef.meta?.head?.pinned;
 
                             return (
                                 <th
@@ -47,12 +55,14 @@ export const TableHead = (props: Props) => {
                                         clickable: sortable,
                                         'fixed-size': isFixedSize,
                                         align,
+                                        pinned: original?.pinned ? 'left' : undefined,
                                     })}
                                     onClick={header.column.getToggleSortingHandler()}
-                                    style={{width}}
+                                    style={cellStyle}
                                     colSpan={colSpan}
                                     rowSpan={rowSpan}
                                 >
+                                    {lastPinnedColumn && <div className={b('curtain')} />}
                                     <div className={b('th-content', {sortable})}>
                                         {flexRender(
                                             header.column.columnDef.header,

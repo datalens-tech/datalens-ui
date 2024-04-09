@@ -98,6 +98,7 @@
         vertical-align: var(--dl-table-header-cell-vertical-align);
         box-sizing: border-box;
         height: 100%;
+        background: var(--dl-table-header-bg-color);
     }
 
     &__body &__tr {
@@ -113,7 +114,6 @@
     }
 
     &__body &__td {
-        overflow: hidden;
         padding: var(--dl-table-cell-vertical-padding) var(--dl-table-cell-horizontal-padding);
         text-overflow: ellipsis;
         vertical-align: var(--dl-table-cell-vertical-align);
@@ -133,5 +133,31 @@
         font-weight: 500;
         background-color: var(--dl-table-footer-bg-color);
         text-align: left;
+    }
+
+    &__header &__th,
+    &__body &__td,
+    &__footer &__td {
+        &_pinned_left {
+            position: sticky;
+            left: 0;
+            background: var(--dl-table-body-bg-color);
+        }
+    }
+
+    &__header &__th {
+        &_pinned_left {
+            z-index: 1;
+        }
+    }
+
+    &__curtain {
+        position: absolute;
+        height: calc(100% + 1px);
+        width: calc(100% + 1.6px);
+        top: -1px;
+        right: -1px;
+        border-right: 1px solid var(--g-color-text-hint);
+        border-left: 1px solid var(--dl-table-border-color);
     }
 }

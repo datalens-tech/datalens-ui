@@ -1,0 +1,16 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.dialog-column-settings {
+    &__subheader-wrapper {
+        margin-bottom: 20px;
+    }
+
+    .dialog-row &__subheader-wrapper {
+        margin-bottom: 0;
+    }
+
+    &__subheader {
+        @include text-subheader-2();
+        margin-right: 4px;
+    }
+}

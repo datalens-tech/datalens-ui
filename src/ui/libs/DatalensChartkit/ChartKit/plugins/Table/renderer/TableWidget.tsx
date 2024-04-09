@@ -34,7 +34,12 @@ import './TableWidget.scss';
 
 const b = block('chartkit-table-widget');
 
-type HeadCell = THead & {name: string; formattedName?: string; fieldId?: string; custom?: unknown};
+type HeadCell = THead & {
+    name: string;
+    formattedName?: string;
+    fieldId?: string;
+    custom?: unknown;
+};
 
 function mapHeadCell(th: TableHead): HeadCell {
     const columnType: TableCommonCell['type'] = get(th, 'type');
@@ -76,6 +81,7 @@ function mapHeadCell(th: TableHead): HeadCell {
             );
         },
         columns: get(th, 'sub', []).map(mapHeadCell),
+        pinned: get(th, 'pinned', false),
     };
 }
 
