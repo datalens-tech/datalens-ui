@@ -12,25 +12,39 @@ const b = block('dl-table');
 type Props = {
     headers: HeaderGroup<TData>[];
     sticky?: boolean;
+    columnsWidth?: number[];
+    tableHeight?: number;
 };
 
 export const TableHead = (props: Props) => {
-    const {headers, sticky} = props;
+    const {headers, sticky, columnsWidth, tableHeight} = props;
+    const pinnedColumnSumWidth = headers[0]?.headers.reduce((sum, h, index) => {
+        if (h.column.columnDef.meta?.head?.pinned) {
+            return sum + (columnsWidth?.[index] || 0);
+        }
+        return sum;
+    }, 0);
 
     return (
         <thead className={b('header', {sticky})}>
-            {headers.map((headerGroup) => {
+            {headers.map((headerGroup, index) => {
                 if (!headerGroup.headers.length) {
                     return null;
                 }
 
+                const isFirstRow = index === 0;
+                let left = 0;
+
                 return (
                     <tr key={headerGroup.id} className={b('tr')}>
-                        {headerGroup.headers.map((header, index, list) => {
+                        {headerGroup.headers.map((header, index) => {
                             if (header.column.depth !== headerGroup.depth) {
                                 return null;
                             }
 
+                            const isFirstCell = index === 0;
+                            const shouldShowShadow =
+                                pinnedColumnSumWidth > 0 && isFirstRow && isFirstCell;
                             const original = header.column.columnDef.meta?.head;
                             const width = header.column.columnDef.meta?.width;
                             const isFixedSize = Boolean(width);
@@ -40,13 +54,12 @@ export const TableHead = (props: Props) => {
                             const colSpan = header.colSpan > 1 ? header.colSpan : undefined;
                             const align = colSpan ? 'center' : 'left';
                             const sortable = header.column.getCanSort();
+                            const pinned = Boolean(original?.pinned);
                             const cellStyle: React.CSSProperties = {
                                 width,
+                                left: pinned ? left : undefined,
                             };
-                            const nextColumn = list[index + 1];
-                            const lastPinnedColumn =
-                                original?.pinned &&
-                                !nextColumn?.column.columnDef.meta?.head?.pinned;
+                            left += columnsWidth?.[index] || 0;
 
                             return (
                                 <th
@@ -55,14 +68,23 @@ export const TableHead = (props: Props) => {
                                         clickable: sortable,
                                         'fixed-size': isFixedSize,
                                         align,
-                                        pinned: original?.pinned ? 'left' : undefined,
+                                        pinned,
                                     })}
                                     onClick={header.column.getToggleSortingHandler()}
                                     style={cellStyle}
                                     colSpan={colSpan}
                                     rowSpan={rowSpan}
                                 >
-                                    {lastPinnedColumn && <div className={b('curtain')} />}
+                                    {shouldShowShadow && (
+                                        <div
+                                            className={b('shadow')}
+                                            style={{
+                                                height: (tableHeight || 0) - 1,
+                                                width: pinnedColumnSumWidth,
+                                            }}
+                                        />
+                                    )}
+                                    {pinned && <div className={b('curtain')} />}
                                     <div className={b('th-content', {sortable})}>
                                         {flexRender(
                                             header.column.columnDef.header,

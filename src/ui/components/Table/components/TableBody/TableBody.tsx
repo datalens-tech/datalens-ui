@@ -9,13 +9,14 @@ const b = block('dl-table');
 
 type Props = {
     columns: ColumnDef<TData, unknown>[];
+    columnsWidth?: number[];
     rows: Row<TData>[];
     noData: TableProps['noData'];
     onCellClick?: OnCellClickFn;
 };
 
 export const TableBody = (props: Props) => {
-    const {rows, columns, noData, onCellClick} = props;
+    const {rows, columns, columnsWidth, noData, onCellClick} = props;
 
     if (!rows.length) {
         return (
@@ -41,17 +42,17 @@ export const TableBody = (props: Props) => {
         <tbody className={b('body')}>
             {rows.map((row) => {
                 const visibleCells = row.getVisibleCells();
+                let left = 0;
+
                 return (
                     <tr key={row.id} className={b('tr')}>
-                        {visibleCells.map((cell, index, list) => {
+                        {visibleCells.map((cell, index) => {
                             const originalHeadData = cell.column.columnDef.meta?.head;
                             const width = cell.column.columnDef.meta?.width;
                             const isFixedSize = Boolean(width);
                             const originalCellData = cell.row.original[index];
-                            const cellClassName = [
-                                b('td', {pinned: originalHeadData?.pinned ? 'left' : undefined}),
-                                originalCellData?.className,
-                            ]
+                            const pinned = Boolean(originalHeadData?.pinned);
+                            const cellClassName = [b('td', {pinned}), originalCellData?.className]
                                 .filter(Boolean)
                                 .join(' ');
 
@@ -59,15 +60,12 @@ export const TableBody = (props: Props) => {
                                 return null;
                             }
 
-                            const nextColumn = list[index + 1];
-                            const lastPinnedColumn =
-                                originalHeadData?.pinned &&
-                                !nextColumn?.column.columnDef.meta?.head?.pinned;
-
                             const cellStyle: React.CSSProperties = {
                                 width,
+                                left: pinned ? left : undefined,
                                 ...originalCellData?.css,
                             };
+                            left += columnsWidth?.[index] || 0;
 
                             return (
                                 <td
@@ -83,7 +81,7 @@ export const TableBody = (props: Props) => {
                                     }
                                     rowSpan={originalCellData?.rowSpan}
                                 >
-                                    {lastPinnedColumn && <div className={b('curtain')} />}
+                                    {pinned && <div className={b('curtain')} />}
                                     <div
                                         className={b('td-content', {
                                             'fixed-size': isFixedSize,

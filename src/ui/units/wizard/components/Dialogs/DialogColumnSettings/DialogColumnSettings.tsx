@@ -120,7 +120,7 @@ export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
                             setting={
                                 <TextInput
                                     type={'number'}
-                                    hasClear={!String(pinnedColumns)}
+                                    hasClear={Boolean(pinnedColumns)}
                                     value={String(pinnedColumns)}
                                     onChange={handleChangeFrozenColumnsNumber}
                                     controlProps={{min: 0}}

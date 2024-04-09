@@ -30,10 +30,25 @@ export const Table = (props: TableProps) => {
         onSortingChange,
     } = props;
     const {head, footer, rows} = props.data;
+    const tableRef = React.useRef<HTMLTableElement>(null);
+    const columnsRenderedWidth = React.useRef<number[]>([]);
+    const tableDimensions = React.useRef<{height?: number}>({});
+
     const columns = React.useMemo(
         () => getTableColumns({head, rows, footer}),
         [head, rows, footer],
     );
+
+    React.useEffect(() => {
+        if (tableRef.current) {
+            const tableCells = Array.from(tableRef.current.rows[0].cells);
+            columnsRenderedWidth.current = tableCells.map((el) => {
+                return el.getBoundingClientRect().width;
+            });
+            tableDimensions.current = {height: tableRef.current.getBoundingClientRect().height};
+        }
+    }, [columns]);
+
     const data = React.useMemo(() => getTableData({head, rows}), [head, rows]);
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const table = useReactTable({
@@ -62,11 +77,17 @@ export const Table = (props: TableProps) => {
     const shouldShowFooter = columns.some((column) => column.footer);
 
     return (
-        <table className={b()} data-qa={qa}>
+        <table className={b()} data-qa={qa} ref={tableRef}>
             {title && <caption className={b('title')}>{title.text}</caption>}
-            <TableHead headers={table.getHeaderGroups()} sticky={headerOptions?.sticky} />
+            <TableHead
+                headers={table.getHeaderGroups()}
+                sticky={headerOptions?.sticky}
+                columnsWidth={columnsRenderedWidth.current}
+                tableHeight={tableDimensions.current.height}
+            />
             <TableBody
                 columns={columns}
+                columnsWidth={columnsRenderedWidth.current}
                 rows={table.getRowModel().rows}
                 noData={noData}
                 onCellClick={onCellClick}
