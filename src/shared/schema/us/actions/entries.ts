@@ -67,6 +67,33 @@ export const entriesActions = {
             },
         }),
     }),
+    getRoles: createAction<any, any>({
+        method: 'GET',
+        path: (_) => { return `/roles` },
+        params: (_, headers) => ({
+            headers: {
+                ...headers
+            },
+        }),
+    }),
+    getAccesses: createAction<any, any>({
+        method: 'GET',
+        path: (data) => { return `/accesses?dl=${data.dl}` },
+        params: (_, headers) => ({
+            headers: {
+                ...headers
+            },
+        }),
+    }),
+    setAccesses: createAction<any, any>({
+        method: 'GET',
+        path: (data) => { return `/updateAccesses?dl=${data.dl}&role_id=${data.role_id}&select=${data.select}&add=${data.add}&update=${data.update}&delete=${data.delete}&destroy=${data.destroy}` },
+        params: (_, headers) => ({
+            headers: {
+                ...headers
+            },
+        }),
+    }),
     getAuth: createAction<any, any>({
         method: 'GET',
         path: (data) => { 

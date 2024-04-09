@@ -299,4 +299,22 @@ export default class Utils {
 
         return result.data && result.data.length > 0 ? result.data[0].embed : '';
     }
+
+    static getRoles = async (propsData: any) => {
+        var result = await getSdk().us.getRoles(propsData);
+
+        return result.data && result.data.length > 0 ? result.data : [];
+    }
+
+    static getAccesses = async (propsData: any) => {
+        var result = await getSdk().us.getAccesses({dl: propsData.id});
+
+        return result.data && result.data.length > 0 ? result.data : [];
+    }
+
+    static setAccesses = async (propsData: any) => {
+        var result = await getSdk().us.setAccesses({dl: propsData.id, role_id: propsData.role_id, select: propsData.select, add: propsData.add, update: propsData.update, delete: propsData.delete, destroy: propsData.destroy});
+
+        return result.data && result.data.length > 0 ? result.data : [];
+    }
 }
