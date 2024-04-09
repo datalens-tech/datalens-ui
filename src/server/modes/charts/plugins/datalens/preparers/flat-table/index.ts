@@ -105,8 +105,12 @@ function prepareFlatTable({
             name: actualTitle,
             type: 'text',
             width: getColumnWidthValue(widthSettings),
-            pinned: !isLastColumn && index < pinnedColumns,
         };
+
+        if (!isLastColumn && index < pinnedColumns) {
+            headCell.pinned = true;
+        }
+
         const dataType = idToDataType[item.guid];
 
         if (isNumericalDataType(dataType)) {
