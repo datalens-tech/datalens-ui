@@ -280,7 +280,6 @@ class NavigationBase extends React.Component {
                     this.props.openDialog({
                         id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
                         props: {
-                            open: true,
                             initialCollectionId: null,
                             entryType: 'dashboard',
                             onClose: () => {
@@ -299,7 +298,6 @@ class NavigationBase extends React.Component {
                     this.props.openDialog({
                         id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
                         props: {
-                            open: true,
                             initialCollectionId: null,
                             entryType: 'connection',
                             onApply: () => {
@@ -321,7 +319,6 @@ class NavigationBase extends React.Component {
                     this.props.openDialog({
                         id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
                         props: {
-                            open: true,
                             initialCollectionId: null,
                             entryType: 'dataset',
                             onApply: () => {
@@ -343,7 +340,6 @@ class NavigationBase extends React.Component {
                     this.props.openDialog({
                         id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
                         props: {
-                            open: true,
                             initialCollectionId: null,
                             entryType: 'wizard',
                             onApply: () => {
@@ -365,7 +361,6 @@ class NavigationBase extends React.Component {
                     this.props.openDialog({
                         id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
                         props: {
-                            open: true,
                             initialCollectionId: null,
                             entryType: 'ql',
                             onApply: () => {
@@ -387,7 +382,6 @@ class NavigationBase extends React.Component {
                     this.props.openDialog({
                         id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
                         props: {
-                            open: true,
                             initialCollectionId: null,
                             entryType: 'ql',
                             onApply: () => {
