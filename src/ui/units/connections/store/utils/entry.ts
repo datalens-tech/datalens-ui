@@ -1,8 +1,8 @@
 import {i18n} from 'i18n';
+import {getFakeEntry as genericGetFakeEntry} from 'ui/components/ActionPanel';
+import type {GetFakeEntry} from 'ui/registry/units/connections/types/getFakeEntry';
 
-import {getFakeEntry as genericGetFakeEntry} from '../../../../components/ActionPanel';
-
-export const getFakeEntry = (workbookId?: string) => {
+export const getFakeEntry: GetFakeEntry = (workbookId) => {
     const name = i18n('connections.form', 'section_creation-connection');
 
     return genericGetFakeEntry({
