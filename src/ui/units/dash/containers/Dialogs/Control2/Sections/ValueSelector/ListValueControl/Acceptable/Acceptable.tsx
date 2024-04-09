@@ -186,7 +186,7 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
         return (
             <React.Fragment>
                 <CommonButton
-                    onClick={() => this.setState({showDialog: !this.state.showDialog})}
+                    onClick={this.handleOpenDialog}
                     qa={ControlQA.acceptableDialogButton}
                     size="m"
                 >
@@ -207,6 +207,13 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
             </React.Fragment>
         );
     }
+
+    private handleOpenDialog = () => {
+        this.setState({
+            showDialog: !this.state.showDialog,
+            acceptableValues: convertFromDefaultValue(this.props.acceptableValues),
+        });
+    };
 }
 
 const mapDispatchToProps = {setSelectorDialogItem};

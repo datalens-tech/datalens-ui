@@ -90,6 +90,8 @@ export function dashTypedReducer(
 ): DashState {
     const {hashStates, tabId, data} = state;
 
+    const tabIndex = data ? data.tabs.findIndex(({id}) => id === tabId) : -1;
+
     switch (action.type) {
         case SET_STATE:
         case SET_PAGE_TAB:
@@ -100,9 +102,6 @@ export function dashTypedReducer(
 
         case SET_HASH_STATE: {
             const tabsHashState = {...hashStates} as TabsHashStates;
-            const tabIndex: number = data
-                ? data.tabs.findIndex(({id}: {id: string}) => id === tabId)
-                : -1;
             const config = action.payload.config;
             let newData = {};
             if (config) {
@@ -286,9 +285,9 @@ export function dashTypedReducer(
                 ...selectorsGroup,
             };
 
-            if (state.selectorsGroup.items.length) {
-                newSelectorsGroupState.items = [...selectorsGroup.items];
-                newSelectorsGroupState.items[activeSelectorIndex] = newSelectorState;
+            if (state.selectorsGroup.group.length) {
+                newSelectorsGroupState.group = [...selectorsGroup.group];
+                newSelectorsGroupState.group[activeSelectorIndex] = newSelectorState;
             }
 
             return {
@@ -306,13 +305,13 @@ export function dashTypedReducer(
 
             // if current length is 1, the added selector will be the second so we enable autoHeight
             const autoHeight =
-                state.selectorsGroup.items.length === 1 ? true : state.selectorsGroup.autoHeight;
+                state.selectorsGroup.group.length === 1 ? true : state.selectorsGroup.autoHeight;
 
             return {
                 ...state,
                 selectorsGroup: {
                     ...state.selectorsGroup,
-                    items: [...state.selectorsGroup.items, {...newSelector, title: payload.title}],
+                    group: [...state.selectorsGroup.group, {...newSelector, title: payload.title}],
                     autoHeight,
                 },
             };
@@ -320,13 +319,13 @@ export function dashTypedReducer(
 
         case UPDATE_SELECTORS_GROUP: {
             const {selectorsGroup} = state;
-            const {items, autoHeight, buttonApply, buttonReset} = action.payload;
+            const {group, autoHeight, buttonApply, buttonReset} = action.payload;
 
             return {
                 ...state,
                 selectorsGroup: {
                     ...selectorsGroup,
-                    items,
+                    group,
                     autoHeight,
                     buttonApply,
                     buttonReset,
@@ -338,15 +337,12 @@ export function dashTypedReducer(
             return {
                 ...state,
                 activeSelectorIndex: action.payload.activeSelectorIndex,
-                selectorDialog: state.selectorsGroup.items[action.payload.activeSelectorIndex],
+                selectorDialog: state.selectorsGroup.group[action.payload.activeSelectorIndex],
             };
         }
 
         case SET_DASH_VIEW_MODE: {
             const entryData = state.convertedEntryData || state.entry.data;
-            const tabIndex: number = entryData
-                ? entryData.tabs.findIndex(({id}: {id: string}) => id === tabId)
-                : -1;
 
             return {
                 ...state,

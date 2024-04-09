@@ -12,7 +12,6 @@ const SELECTORS = {
 };
 
 const PARAMS = {
-    DASH_NAME_PREFIX: 'e2e-test-dash',
     CONTROL_TITLE: 'test-control',
     CONTROL_FIELD_NAME: 'test-control-field',
     CONTROL_ITEMS: ['Dallas', 'Chicago'],
