@@ -12,6 +12,7 @@ import block from 'bem-cn-lite';
 import {TableBody} from './components/TableBody/TableBody';
 import {TableFooter} from './components/TableFooter/TableFooter';
 import {TableHead} from './components/TableHead/TableHead';
+import {useTableDimensions} from './hooks/use-table-dimensions';
 import type {TableProps} from './types';
 import {getTableColumns, getTableData} from './utils';
 
@@ -31,25 +32,16 @@ export const Table = (props: TableProps) => {
     } = props;
     const {head, footer, rows} = props.data;
     const tableRef = React.useRef<HTMLTableElement>(null);
-    const columnsRenderedWidth = React.useRef<number[]>([]);
-    const tableDimensions = React.useRef<{height?: number}>({});
 
-    const columns = React.useMemo(
-        () => getTableColumns({head, rows, footer}),
-        [head, rows, footer],
-    );
+    const columns = React.useMemo(() => {
+        return getTableColumns({head, rows, footer});
+    }, [head, rows, footer]);
 
-    React.useEffect(() => {
-        if (tableRef.current) {
-            const tableCells = Array.from(tableRef.current.rows[0].cells);
-            columnsRenderedWidth.current = tableCells.map((el) => {
-                return el.getBoundingClientRect().width;
-            });
-            tableDimensions.current = {height: tableRef.current.getBoundingClientRect().height};
-        }
-    }, [columns]);
+    const {tableDimensions} = useTableDimensions({table: tableRef, data: props.data});
 
-    const data = React.useMemo(() => getTableData({head, rows}), [head, rows]);
+    const data = React.useMemo(() => {
+        return getTableData({head, rows});
+    }, [head, rows]);
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const table = useReactTable({
         data,
@@ -59,6 +51,7 @@ export const Table = (props: TableProps) => {
         getGroupedRowModel: getGroupedRowModel(),
         sortDescFirst: true,
         manualSorting,
+        manualPagination: true,
         state: {
             sorting,
         },
@@ -75,6 +68,7 @@ export const Table = (props: TableProps) => {
     });
 
     const shouldShowFooter = columns.some((column) => column.footer);
+    const tableRows = table.getRowModel().rows;
 
     return (
         <table className={b()} data-qa={qa} ref={tableRef}>
@@ -82,13 +76,13 @@ export const Table = (props: TableProps) => {
             <TableHead
                 headers={table.getHeaderGroups()}
                 sticky={headerOptions?.sticky}
-                columnsWidth={columnsRenderedWidth.current}
-                tableHeight={tableDimensions.current.height}
+                columnsWidth={tableDimensions.columnsWidth}
+                tableHeight={tableDimensions.height}
             />
             <TableBody
                 columns={columns}
-                columnsWidth={columnsRenderedWidth.current}
-                rows={table.getRowModel().rows}
+                columnsWidth={tableDimensions.columnsWidth}
+                rows={tableRows}
                 noData={noData}
                 onCellClick={onCellClick}
             />

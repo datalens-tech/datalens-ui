@@ -52,7 +52,10 @@ export const TableBody = (props: Props) => {
                             const isFixedSize = Boolean(width);
                             const originalCellData = cell.row.original[index];
                             const pinned = Boolean(originalHeadData?.pinned);
-                            const cellClassName = [b('td', {pinned}), originalCellData?.className]
+                            const cellClassName = [
+                                b('td', {pinned, 'fixed-size': isFixedSize}),
+                                originalCellData?.className,
+                            ]
                                 .filter(Boolean)
                                 .join(' ');
 
@@ -82,11 +85,7 @@ export const TableBody = (props: Props) => {
                                     rowSpan={originalCellData?.rowSpan}
                                 >
                                     {pinned && <div className={b('curtain')} />}
-                                    <div
-                                        className={b('td-content', {
-                                            'fixed-size': isFixedSize,
-                                        })}
-                                    >
+                                    <div className={b('td-content')}>
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </div>
                                 </td>

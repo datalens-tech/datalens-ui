@@ -91,7 +91,7 @@
   "label_colors-overflow": "Установлено максимально доступное количество цветов",
   "label_colors-settings": "Настройки цветов",
   "label_column-freeze": "Фиксация",
-  "label_column-freeze-tooltip": "Закрепление столбцов таблицы при скроле",
+  "label_column-freeze-tooltip": "Фиксирует столбцы с первого по последний для горизонтального скролла в таблице",
   "label_column-width": "Ширина",
   "label_combined-chart-axis-format-by-field": "По первому полю в верхнем слое",
   "label_connect": "Соединять",
