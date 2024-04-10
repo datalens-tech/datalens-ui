@@ -117,6 +117,8 @@ class NavigationBase extends React.Component {
         isOnlyCollectionsMode: PropTypes.bool,
         openDialog: PropTypes.func,
         closeDialog: PropTypes.func,
+
+        onPermissionError: PropTypes.func,
     };
     static defaultProps = {
         navConstructor: NavigationInline,

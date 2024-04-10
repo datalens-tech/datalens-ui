@@ -53,6 +53,13 @@ class ServiceNavigationModal extends React.PureComponent {
         this.setState({path, root: place});
     };
 
+    onPermissionError = () => {
+        this.setState({
+            path: undefined,
+            root: PLACE.ROOT,
+        });
+    };
+
     render() {
         const {path, root} = this.state;
         return (
@@ -63,6 +70,7 @@ class ServiceNavigationModal extends React.PureComponent {
                 onNavigate={this.onNavigate}
                 navConstructor={NavigationModal}
                 onChangeLocation={this.onChangeLocation}
+                onPermissionError={this.onPermissionError}
             />
         );
     }
