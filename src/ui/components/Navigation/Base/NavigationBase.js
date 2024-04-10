@@ -296,24 +296,8 @@ class NavigationBase extends React.Component {
                 break;
             }
             case CreateMenuValue.Connection: {
-                if (this.props.isOnlyCollectionsMode) {
-                    this.props.openDialog({
-                        id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
-                        props: {
-                            initialCollectionId: null,
-                            entryType: 'connection',
-                            onApply: () => {
-                                this.closeNavigation();
-                            },
-                            onClose: () => {
-                                this.props.closeDialog();
-                            },
-                        },
-                    });
-                } else {
-                    history.push(`/connections/new${query}`);
-                    this.closeNavigation();
-                }
+                history.push(`/connections/new${query}`);
+                this.closeNavigation();
                 break;
             }
             case CreateMenuValue.Dataset: {
