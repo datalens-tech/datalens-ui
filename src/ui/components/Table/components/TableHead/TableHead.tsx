@@ -4,7 +4,7 @@ import type {HeaderGroup} from '@tanstack/react-table';
 import {flexRender} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 
-import {TData} from '../../types';
+import type {TData, TableDimensions} from '../../types';
 import {SortIcon} from '../SortIcon/SortIcon';
 
 const b = block('dl-table');
@@ -12,28 +12,26 @@ const b = block('dl-table');
 type Props = {
     headers: HeaderGroup<TData>[];
     sticky?: boolean;
-    columnsWidth?: number[];
-    tableHeight?: number;
+    tableDimensions?: TableDimensions;
 };
 
 export const TableHead = (props: Props) => {
-    const {headers, sticky, columnsWidth, tableHeight} = props;
+    const {headers, sticky, tableDimensions} = props;
     const pinnedColumnSumWidth = headers[0]?.headers.reduce((sum, h, index) => {
         if (h.column.columnDef.meta?.head?.pinned) {
-            return sum + (columnsWidth?.[index] || 0);
+            return sum + (tableDimensions?.head[0]?.[index]?.width || 0);
         }
         return sum;
     }, 0);
 
     return (
         <thead className={b('header', {sticky})}>
-            {headers.map((headerGroup, index) => {
+            {headers.map((headerGroup, rowIndex) => {
                 if (!headerGroup.headers.length) {
                     return null;
                 }
 
-                const isFirstRow = index === 0;
-                let left = 0;
+                const isFirstRow = rowIndex === 0;
 
                 return (
                     <tr key={headerGroup.id} className={b('tr')}>
@@ -55,11 +53,14 @@ export const TableHead = (props: Props) => {
                             const align = colSpan ? 'center' : 'left';
                             const sortable = header.column.getCanSort();
                             const pinned = Boolean(original?.pinned);
+                            const cellDimensions = tableDimensions?.head[rowIndex]?.[index];
                             const cellStyle: React.CSSProperties = {
                                 width,
-                                left: pinned ? left : undefined,
+                                top: sticky
+                                    ? tableDimensions?.head[rowIndex]?.[index]?.top
+                                    : undefined,
+                                left: pinned ? cellDimensions?.left : undefined,
                             };
-                            left += columnsWidth?.[index] || 0;
 
                             return (
                                 <th
@@ -79,12 +80,11 @@ export const TableHead = (props: Props) => {
                                         <div
                                             className={b('shadow')}
                                             style={{
-                                                height: (tableHeight || 0) - 1,
+                                                height: (tableDimensions?.height || 0) - 1,
                                                 width: pinnedColumnSumWidth,
                                             }}
                                         />
                                     )}
-                                    {pinned && <div className={b('curtain')} />}
                                     <div className={b('th-content', {sortable})}>
                                         {flexRender(
                                             header.column.columnDef.header,

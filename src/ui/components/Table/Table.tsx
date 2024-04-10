@@ -70,18 +70,22 @@ export const Table = (props: TableProps) => {
     const shouldShowFooter = columns.some((column) => column.footer);
     const tableRows = table.getRowModel().rows;
 
+    let tableStyle;
+    if ('devicePixelRatio' in window && window.devicePixelRatio < 2) {
+        tableStyle = {'--cell-border-offset': '-0.55px'} as React.CSSProperties;
+    }
+
     return (
-        <table className={b()} data-qa={qa} ref={tableRef}>
+        <table className={b()} data-qa={qa} ref={tableRef} style={tableStyle}>
             {title && <caption className={b('title')}>{title.text}</caption>}
             <TableHead
                 headers={table.getHeaderGroups()}
                 sticky={headerOptions?.sticky}
-                columnsWidth={tableDimensions.columnsWidth}
-                tableHeight={tableDimensions.height}
+                tableDimensions={tableDimensions}
             />
             <TableBody
                 columns={columns}
-                columnsWidth={tableDimensions.columnsWidth}
+                tableDimensions={tableDimensions}
                 rows={tableRows}
                 noData={noData}
                 onCellClick={onCellClick}

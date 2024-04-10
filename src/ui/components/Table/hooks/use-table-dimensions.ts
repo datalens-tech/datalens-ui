@@ -2,12 +2,7 @@ import React from 'react';
 
 import debounce from 'lodash/debounce';
 
-import {TableProps} from '../types';
-
-type TableDimensions = {
-    columnsWidth?: number[];
-    height?: number;
-};
+import type {TableDimensions, TableProps} from '../types';
 
 type UseTableDimensionsArgs = {
     table: React.RefObject<HTMLTableElement>;
@@ -19,7 +14,7 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
         table: tableRef,
         data: {head, footer, rows},
     } = args;
-    const [tableDimensions, setTableDimensions] = React.useState<TableDimensions>({});
+    const [tableDimensions, setTableDimensions] = React.useState<TableDimensions | undefined>();
 
     const setDimensions = React.useCallback(
         debounce(() => {
@@ -28,13 +23,18 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
                 return;
             }
 
-            const tableCells = Array.from(table.rows[0]?.cells || []);
+            // const tableCells = Array.from(table.tHead?.rows[0]?.cells || []);
+            const {height, left: tableLeft, top: tableTop} = table.getBoundingClientRect();
+            const tableHead = Array.from(table.tHead?.rows || []).map((r) => {
+                return Array.from(r.cells).map((cell) => {
+                    const {width, top, left} = cell.getBoundingClientRect();
+                    return {width, left: left - tableLeft, top: top - tableTop};
+                });
+            });
 
-            const updates = {
-                height: table.getBoundingClientRect().height,
-                columnsWidth: tableCells.map((el) => {
-                    return el.getBoundingClientRect().width;
-                }),
+            const updates: TableDimensions = {
+                height,
+                head: tableHead,
             };
 
             setTableDimensions(updates);

@@ -61,3 +61,8 @@ export type TableProps = {
     manualSorting?: boolean;
     onSortingChange?: (args: {cell?: THead; sortOrder?: 'asc' | 'desc'}) => void;
 };
+
+export type TableDimensions = {
+    head: {width: number; top: number; left: number}[][];
+    height: number;
+};

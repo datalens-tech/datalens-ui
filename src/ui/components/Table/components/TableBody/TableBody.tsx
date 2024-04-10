@@ -3,20 +3,20 @@ import React from 'react';
 import {ColumnDef, Row, flexRender} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 
-import {OnCellClickFn, TData, TableProps} from '../../types';
+import {OnCellClickFn, TData, TableDimensions, TableProps} from '../../types';
 
 const b = block('dl-table');
 
 type Props = {
     columns: ColumnDef<TData, unknown>[];
-    columnsWidth?: number[];
     rows: Row<TData>[];
     noData: TableProps['noData'];
     onCellClick?: OnCellClickFn;
+    tableDimensions?: TableDimensions;
 };
 
 export const TableBody = (props: Props) => {
-    const {rows, columns, columnsWidth, noData, onCellClick} = props;
+    const {rows, columns, tableDimensions, noData, onCellClick} = props;
 
     if (!rows.length) {
         return (
@@ -42,7 +42,6 @@ export const TableBody = (props: Props) => {
         <tbody className={b('body')}>
             {rows.map((row) => {
                 const visibleCells = row.getVisibleCells();
-                let left = 0;
 
                 return (
                     <tr key={row.id} className={b('tr')}>
@@ -63,12 +62,12 @@ export const TableBody = (props: Props) => {
                                 return null;
                             }
 
+                            const left = tableDimensions?.head[0]?.[index]?.left;
                             const cellStyle: React.CSSProperties = {
                                 width,
                                 left: pinned ? left : undefined,
                                 ...originalCellData?.css,
                             };
-                            left += columnsWidth?.[index] || 0;
 
                             return (
                                 <td
@@ -84,7 +83,6 @@ export const TableBody = (props: Props) => {
                                     }
                                     rowSpan={originalCellData?.rowSpan}
                                 >
-                                    {pinned && <div className={b('curtain')} />}
                                     <div className={b('td-content')}>
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </div>
