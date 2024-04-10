@@ -55,7 +55,7 @@
     "@gravity-ui/dashkit": "^7.2.0",
     "@gravity-ui/date-utils": "^2.1.0",
     "@gravity-ui/expresskit": "^1.2.1",
-    "@gravity-ui/gateway": "^2.0.0",
+    "@gravity-ui/gateway": "^2.1.0",
     "@gravity-ui/i18n": "^1.0.0",
     "@gravity-ui/nodekit": "^1.2.1",
     "@gravity-ui/page-constructor": "^5.10.0",

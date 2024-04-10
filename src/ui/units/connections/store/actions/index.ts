@@ -17,7 +17,6 @@ import {ConnectionsReduxDispatch, ConnectionsReduxState, GetState} from '../typi
 import {
     getConnectorItemFromFlattenList,
     getDataForParamsChecking,
-    getFakeEntry,
     getFetchedFormData,
     getFlattenConnectors,
     getFormDefaults,
@@ -74,6 +73,7 @@ export function setPageData({entryId, workbookId}: {entryId?: string | null; wor
         }
 
         if (!entry) {
+            const getFakeEntry = registry.connections.functions.get('getFakeEntry');
             entry = getFakeEntry(workbookId);
         }
 
