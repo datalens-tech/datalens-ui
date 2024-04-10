@@ -17,7 +17,6 @@ import {ConnectionsReduxDispatch, ConnectionsReduxState, GetState} from '../typi
 import {
     getConnectorItemFromFlattenList,
     getDataForParamsChecking,
-    getFakeEntry,
     getFetchedFormData,
     getFlattenConnectors,
     getFormDefaults,
@@ -74,6 +73,7 @@ export function setPageData({entryId, workbookId}: {entryId?: string | null; wor
         }
 
         if (!entry) {
+            const getFakeEntry = registry.connections.functions.get('getFakeEntry');
             entry = getFakeEntry(workbookId);
         }
 
@@ -218,8 +218,9 @@ export function changeInnerForm(innerFormUpdates: ConnectionsReduxState['innerFo
     };
 }
 
-export function createConnection(name: string, dirPath?: string) {
+export function createConnection(args: {name: string; dirPath?: string; workbookId?: string}) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
+        const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
         const {form, innerForm, schema} = getState().connections;
 
         if (!schema || !schema.apiSchema?.create) {
@@ -237,8 +238,6 @@ export function createConnection(name: string, dirPath?: string) {
         });
 
         resultForm[FieldKey.Name] = name;
-
-        const workbookId = getWorkbookIdFromPathname();
 
         if (typeof dirPath === 'string') {
             resultForm[FieldKey.DirPath] = dirPath;

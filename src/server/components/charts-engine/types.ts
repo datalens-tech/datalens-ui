@@ -12,12 +12,16 @@ export type TelemetryCallbacks = {
         id,
         statusCode,
         requestId,
+        traceId,
         latency,
+        tenantId,
     }: {
         id: string;
         statusCode: number;
         requestId?: string;
+        traceId?: string;
         latency?: number;
+        tenantId?: string;
     }) => void;
     onConfigFetchingFailed?: (
         error: Error,
@@ -25,19 +29,32 @@ export type TelemetryCallbacks = {
             id,
             statusCode,
             requestId,
+            traceId,
+            tenantId,
             latency,
-        }: {id: string; statusCode: number; requestId?: string; latency?: number},
+        }: {
+            id: string;
+            statusCode: number;
+            requestId?: string;
+            traceId?: string;
+            tenantId?: string;
+            latency?: number;
+        },
     ) => void;
     onDataFetched?: ({
         sourceName,
         url,
         requestId,
+        traceId,
+        tenantId,
         statusCode,
         latency,
     }: {
         sourceName: string;
         url: string;
         requestId: string;
+        traceId?: string;
+        tenantId?: string;
         statusCode: number;
         latency: number;
     }) => void;
@@ -47,12 +64,16 @@ export type TelemetryCallbacks = {
             sourceName,
             url,
             requestId,
+            traceId,
+            tenantId,
             statusCode,
             latency,
         }: {
             sourceName: string;
             url: string;
             requestId: string;
+            traceId?: string;
+            tenantId?: string;
             statusCode: number;
             latency: number;
         },

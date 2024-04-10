@@ -15,7 +15,8 @@ const i18n = I18n.keyset('connections.form');
 export const DIALOG_CONN_CREATE_IN_WB_CONNECTION = Symbol('DIALOG_CONN_CREATE_IN_WB_CONNECTION');
 
 export type DialogCreateConnectionInWbProps = {
-    onApply: DialogCreateWorkbookEntryProps<void>['onApply'];
+    onApply: DialogCreateWorkbookEntryProps['onApply'];
+    workbookId?: string;
 };
 
 export type OpenDialogCreateConnectionInWbArgs = {
@@ -23,7 +24,7 @@ export type OpenDialogCreateConnectionInWbArgs = {
     props: DialogCreateConnectionInWbProps;
 };
 
-const DialogCreateConnection = ({onApply}: DialogCreateConnectionInWbProps) => {
+const DialogCreateConnection = ({workbookId, onApply}: DialogCreateConnectionInWbProps) => {
     const dispatch = useDispatch();
 
     const closeHandler = () => dispatch(closeDialog());
@@ -36,6 +37,7 @@ const DialogCreateConnection = ({onApply}: DialogCreateConnectionInWbProps) => {
             placeholder={i18n('field_connection-title')}
             textButtonApply={i18n('button_create')}
             textButtonCancel={i18n('button_cancel')}
+            workbookId={workbookId}
             visible={true}
             onApply={onApply}
             onClose={closeHandler}

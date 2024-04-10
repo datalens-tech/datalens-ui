@@ -121,8 +121,15 @@ function validateData(data: DashData) {
                 currentItemsIds.add(itemId);
             }
 
-            if (type === DashTabItemType.Control) {
-                currentControlsIds.add(itemId);
+            if (type === DashTabItemType.Control || type === DashTabItemType.GroupControl) {
+                // if it is group control all connections set on its items
+                if ('group' in data) {
+                    data.group.forEach((widgetItem) => {
+                        currentControlsIds.add(widgetItem.id);
+                    });
+                } else {
+                    currentControlsIds.add(itemId);
+                }
             } else if (type === DashTabItemType.Widget && 'tabs' in data) {
                 data.tabs.forEach(({id: widgetTabId}) => {
                     if (isIdUniq(widgetTabId)) {

@@ -82,6 +82,7 @@ export interface SharedAppContextParams {
     landingPageSettings?: LandingPageSettings;
 
     i18n: ServerI18n;
+    tenantId?: string;
 }
 
 declare module '@gravity-ui/nodekit' {
