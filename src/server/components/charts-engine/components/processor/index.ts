@@ -57,9 +57,8 @@ const {
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
 } = configConstants;
 
-const TEN_SECONDS = 10000;
 const ONE_SECOND = 1000;
-const JS_EXECUTION_TIMEOUT = TEN_SECONDS;
+const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
 
 const getMessageFromUnknownError = (e: unknown) =>
     isObject(e) && 'message' in e && isString(e.message) ? e.message : '';
@@ -193,6 +192,7 @@ export class Processor {
         };
 
         const onCodeExecuted = chartsEngine.telemetryCallbacks.onCodeExecuted || (() => {});
+        const onTabsExecuted = chartsEngine.telemetryCallbacks.onTabsExecuted || (() => {});
 
         function injectConfigAndParams({target}: {target: Record<string, any>}) {
             let responseConfig;
@@ -928,23 +928,27 @@ export class Processor {
                     jsTabResults.runtimeMetadata.userConfigOverride,
                 );
 
+                const resultLibraryConfig = mergeWith(
+                    {},
+                    libraryConfig,
+                    jsTabResults.runtimeMetadata.libraryConfigOverride,
+                    (a, b) => {
+                        return mergeArrayWithObject(a, b) || mergeArrayWithObject(b, a);
+                    },
+                );
+
+                onTabsExecuted({
+                    result: {config: resultConfig, highchartsConfig: resultLibraryConfig},
+                    entryId: config.entryId || configId,
+                });
+
                 const stringify = isEnabledServerFeature(ctx, Feature.NoJsonFn)
                     ? JSON.stringify
                     : JSONfn.stringify;
 
                 result.config = stringify(resultConfig);
                 result.publicAuthor = config.publicAuthor;
-
-                result.highchartsConfig = stringify(
-                    mergeWith(
-                        {},
-                        libraryConfig,
-                        jsTabResults.runtimeMetadata.libraryConfigOverride,
-                        (a, b) => {
-                            return mergeArrayWithObject(a, b) || mergeArrayWithObject(b, a);
-                        },
-                    ),
-                );
+                result.highchartsConfig = stringify(resultLibraryConfig);
                 result.extra = jsTabResults.runtimeMetadata.extra;
                 result.extra.chartsInsights = jsTabResults.runtimeMetadata.chartsInsights;
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;

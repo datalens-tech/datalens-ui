@@ -760,6 +760,9 @@ export class DataFetcher {
             requestOptions.headers['x-real-ip'] = req.ip;
         }
 
+        const traceId = ctx.getTraceId();
+        const tenantId = ctx.get('tenantId');
+
         return new Promise((fetchResolve) => {
             ctx.log('Fetching', {publicTargetUri});
 
@@ -787,6 +790,8 @@ export class DataFetcher {
                         statusCode,
                         requestId: req.id,
                         latency,
+                        traceId,
+                        tenantId,
                         url: publicTargetUri,
                     });
 
@@ -892,6 +897,8 @@ export class DataFetcher {
                             requestId: req.id,
                             latency,
                             url: publicTargetUri,
+                            traceId,
+                            tenantId,
                         });
 
                         if (response.statusCode === 204 && data === '') {

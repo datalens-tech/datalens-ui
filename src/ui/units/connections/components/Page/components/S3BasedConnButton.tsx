@@ -4,7 +4,8 @@ import {Button, ButtonProps} from '@gravity-ui/uikit';
 import {connect, useDispatch} from 'react-redux';
 import {useParams} from 'react-router-dom';
 import {ConnectionsBaseQA} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {registry} from 'ui/registry';
 
 import {
     DIALOG_CONN_CREATE_CONNECTION,
@@ -12,8 +13,6 @@ import {
     DialogCreateConnectionInWbProps,
     DialogCreateConnectionProps,
 } from '../..';
-import {openDialog} from '../../../../../store/actions/dialog';
-import {OpenDialogArgs} from '../../../../../store/actions/openDialogTypes';
 import {
     connectionTypeSelector,
     createS3BasedConnection,
@@ -23,6 +22,8 @@ import {
     updateS3BasedConnection,
 } from '../../../store';
 import {getSubmitButtonText} from '../../../utils';
+import {useCreateConnectionHandler} from '../../hooks';
+import type {CreateConnectionHandlerArgs} from '../../hooks';
 
 type DispatchState = ReturnType<typeof mapStateToProps>;
 type S3BasedConnButtonProps = DispatchState & Partial<ButtonProps>;
@@ -39,6 +40,9 @@ const S3BasedConnButtonComponent = (props: S3BasedConnButtonProps) => {
     } = props;
     const dispatch = useDispatch();
     const {workbookId} = useParams<{workbookId?: string}>();
+    const {createConnectionHandler} = useCreateConnectionHandler({
+        hasWorkbookIdInParams: Boolean(workbookId),
+    });
 
     const applyCreationHandler: DialogCreateConnectionProps['onApply'] = React.useCallback(
         async (_key, name, dirPath) => {
@@ -48,33 +52,30 @@ const S3BasedConnButtonComponent = (props: S3BasedConnButtonProps) => {
     );
 
     const applyCreationInWbHandler: DialogCreateConnectionInWbProps['onApply'] = React.useCallback(
-        async ({name}) => {
-            dispatch(createS3BasedConnection({name}));
+        async (args) => {
+            dispatch(createS3BasedConnection({name: args.name, workbookId: args.workbookId}));
         },
         [dispatch],
     );
 
-    const getOpenDialogArs = React.useCallback(
-        (createInWorkbook: boolean): OpenDialogArgs => {
-            if (createInWorkbook) {
-                return {
-                    id: DIALOG_CONN_CREATE_IN_WB_CONNECTION,
-                    props: {onApply: applyCreationInWbHandler},
-                };
-            }
+    const getOpenDialogArs = React.useCallback((): CreateConnectionHandlerArgs => {
+        const {getNewConnectionDestination} = registry.connections.functions.getAll();
+        const destination = getNewConnectionDestination(Boolean(workbookId));
 
-            return {
-                id: DIALOG_CONN_CREATE_CONNECTION,
-                props: {onApply: applyCreationHandler},
-            };
-        },
-        [applyCreationHandler, applyCreationInWbHandler],
-    );
+        return destination === 'folder'
+            ? {
+                  id: DIALOG_CONN_CREATE_CONNECTION,
+                  props: {onApply: applyCreationHandler},
+              }
+            : {
+                  id: DIALOG_CONN_CREATE_IN_WB_CONNECTION,
+                  props: {onApply: applyCreationInWbHandler},
+              };
+    }, [workbookId, applyCreationHandler, applyCreationInWbHandler]);
 
     const handleClick = () => {
         if (newConnection) {
-            const openDialogArgs = getOpenDialogArs(Boolean(workbookId));
-            dispatch(openDialog(openDialogArgs));
+            createConnectionHandler(getOpenDialogArs());
         } else {
             dispatch(updateS3BasedConnection(connType));
         }

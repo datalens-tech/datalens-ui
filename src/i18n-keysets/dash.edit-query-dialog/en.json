@@ -1,0 +1,9 @@
+{
+  "button_apply": "Apply",
+  "button_cancel": "Cancel",
+  "error_invalid-typed-query-response": "The selector does not support responses with 2 or more columns from the database.",
+  "title_database-response": "Database response",
+  "title_edit-query": "Edit query",
+  "title_invalid-sql-query": "Invalid SQL query to database",
+  "title_sent-query": "Sent query"
+}

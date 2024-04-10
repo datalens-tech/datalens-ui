@@ -7,7 +7,6 @@ import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {DatalensGlobalState, Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
-import {getRandomCKId} from 'ui/libs/DatalensChartkit/helpers/helpers';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
 import {ChartKitWrapperOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
@@ -107,11 +106,9 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
                 <ChartWrapper
                     usageType="chart"
                     id={entry?.entryId}
-                    key={getRandomCKId()}
                     config={previewConfig}
                     params={params}
                     onChartLoad={this.onChartLoad}
-                    onChartRender={this.onChartRender}
                     ref={this.chartKitRef}
                     disableChartLoader={true}
                     noVeil={true}
@@ -156,6 +153,10 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
             // Case when chart execution errored or has empty result
             this.props.setTablePreviewData({tablePreviewData: {}});
         }
+
+        // There is a problem with yagr widget - it does not call onRender callback every time it is rendered, only once
+        // Therefore, for now we are artificially calling callback to remove the loader
+        setTimeout(this.onChartRender);
     };
 
     onChartRender = () => {
