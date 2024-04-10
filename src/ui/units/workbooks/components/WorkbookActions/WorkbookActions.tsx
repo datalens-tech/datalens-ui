@@ -65,6 +65,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
     };
 
     const {useAdditionalWorkbookActions} = registry.workbooks.functions.getAll();
+    const {CustomActionPanelWorkbookActions} = registry.workbooks.components.getAll();
     const classNameIconAction = b('icon-action');
 
     const additionalActions = useAdditionalWorkbookActions(workbook, classNameIconAction);
@@ -136,6 +137,8 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                     items={dropdownActions}
                 />
             )}
+
+            <CustomActionPanelWorkbookActions />
 
             {collectionsAccessEnabled && workbook.permissions.listAccessBindings && (
                 <Tooltip content={i18n('action_access')}>
