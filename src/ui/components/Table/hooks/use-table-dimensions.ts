@@ -1,6 +1,5 @@
 import React from 'react';
 
-import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 
 import type {TableDimensions, TableProps} from '../types';
@@ -16,36 +15,33 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
     const prevData = React.useRef<TableProps['data']>();
     const isDataChanged = Boolean(prevData.current && !isEqual(prevData.current, data));
 
-    const setDimensions = React.useCallback(
-        debounce(() => {
-            const table = tableRef.current;
-            if (!table) {
-                return;
-            }
+    const setDimensions = React.useCallback(() => {
+        const table = tableRef.current;
+        if (!table) {
+            return;
+        }
 
-            const {height, left: tableLeft, top: tableTop} = table.getBoundingClientRect();
-            const tableHead = Array.from(table.tHead?.rows || []).map((r) => {
-                return Array.from(r.cells).map((cell) => {
-                    const {width, top, left} = cell.getBoundingClientRect();
-                    return {width, left: left - tableLeft, top: top - tableTop};
-                });
+        const {height, left: tableLeft, top: tableTop} = table.getBoundingClientRect();
+        const tableHead = Array.from(table.tHead?.rows || []).map((r) => {
+            return Array.from(r.cells).map((cell) => {
+                const {width, top, left} = cell.getBoundingClientRect();
+                return {width, left: left - tableLeft, top: top - tableTop};
             });
+        });
 
-            const updates: TableDimensions = {
-                height,
-                head: tableHead,
-            };
+        const updates: TableDimensions = {
+            height,
+            head: tableHead,
+        };
 
-            prevData.current = data;
+        prevData.current = data;
 
-            if (!isEqual(tableDimensions, updates)) {
-                setTableDimensions(updates);
-            }
-        }, 0),
-        [data],
-    );
+        if (!isEqual(tableDimensions, updates)) {
+            setTableDimensions(updates);
+        }
+    }, [data]);
 
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         setDimensions();
     }, [data]);
 
