@@ -17,12 +17,6 @@ type Props = {
 
 export const TableHead = (props: Props) => {
     const {headers, sticky, tableDimensions} = props;
-    const pinnedColumnSumWidth = headers[0]?.headers.reduce((sum, h, index) => {
-        if (h.column.columnDef.meta?.head?.pinned) {
-            return sum + (tableDimensions?.head[0]?.[index]?.width || 0);
-        }
-        return sum;
-    }, 0);
 
     return (
         <thead className={b('header', {sticky})}>
@@ -31,18 +25,13 @@ export const TableHead = (props: Props) => {
                     return null;
                 }
 
-                const isFirstRow = rowIndex === 0;
-
                 return (
                     <tr key={headerGroup.id} className={b('tr')}>
-                        {headerGroup.headers.map((header, index) => {
+                        {headerGroup.headers.map((header, index, rowCells) => {
                             if (header.column.depth !== headerGroup.depth) {
                                 return null;
                             }
 
-                            const isFirstCell = index === 0;
-                            const shouldShowShadow =
-                                pinnedColumnSumWidth > 0 && isFirstRow && isFirstCell;
                             const original = header.column.columnDef.meta?.head;
                             const width = header.column.columnDef.meta?.width;
                             const isFixedSize = Boolean(width);
@@ -53,12 +42,11 @@ export const TableHead = (props: Props) => {
                             const align = colSpan ? 'center' : 'left';
                             const sortable = header.column.getCanSort();
                             const pinned = Boolean(original?.pinned);
+                            const nextCellData = rowCells[index + 1]?.column.columnDef.meta?.head;
+                            const isLastPinnedCell = pinned && !nextCellData?.pinned;
                             const cellDimensions = tableDimensions?.head[rowIndex]?.[index];
                             const cellStyle: React.CSSProperties = {
                                 width,
-                                top: sticky
-                                    ? tableDimensions?.head[rowIndex]?.[index]?.top
-                                    : undefined,
                                 left: pinned ? cellDimensions?.left : undefined,
                             };
 
@@ -76,12 +64,11 @@ export const TableHead = (props: Props) => {
                                     colSpan={colSpan}
                                     rowSpan={rowSpan}
                                 >
-                                    {shouldShowShadow && (
+                                    {isLastPinnedCell && (
                                         <div
                                             className={b('shadow')}
                                             style={{
                                                 height: (tableDimensions?.height || 0) - 1,
-                                                width: pinnedColumnSumWidth,
                                             }}
                                         />
                                     )}

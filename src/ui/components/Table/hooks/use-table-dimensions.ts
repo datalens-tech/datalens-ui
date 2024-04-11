@@ -1,6 +1,7 @@
 import React from 'react';
 
 import debounce from 'lodash/debounce';
+import isEqual from 'lodash/isEqual';
 
 import type {TableDimensions, TableProps} from '../types';
 
@@ -10,11 +11,10 @@ type UseTableDimensionsArgs = {
 };
 
 export const useTableDimensions = (args: UseTableDimensionsArgs) => {
-    const {
-        table: tableRef,
-        data: {head, footer, rows},
-    } = args;
+    const {table: tableRef, data} = args;
     const [tableDimensions, setTableDimensions] = React.useState<TableDimensions | undefined>();
+    const prevData = React.useRef<TableProps['data']>();
+    const isDataChanged = Boolean(prevData.current && !isEqual(prevData.current, data));
 
     const setDimensions = React.useCallback(
         debounce(() => {
@@ -23,7 +23,6 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
                 return;
             }
 
-            // const tableCells = Array.from(table.tHead?.rows[0]?.cells || []);
             const {height, left: tableLeft, top: tableTop} = table.getBoundingClientRect();
             const tableHead = Array.from(table.tHead?.rows || []).map((r) => {
                 return Array.from(r.cells).map((cell) => {
@@ -37,30 +36,18 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
                 head: tableHead,
             };
 
-            setTableDimensions(updates);
+            prevData.current = data;
+
+            if (!isEqual(tableDimensions, updates)) {
+                setTableDimensions(updates);
+            }
         }, 0),
-        [tableRef],
+        [data],
     );
-
-    const resizeObserver = React.useRef<ResizeObserver | null>(null);
-    React.useEffect(() => {
-        if (tableRef.current) {
-            resizeObserver.current = new ResizeObserver(() => {
-                setDimensions();
-            });
-
-            resizeObserver.current.observe(tableRef.current);
-        }
-
-        return () => {
-            resizeObserver.current?.disconnect();
-            resizeObserver.current = null;
-        };
-    }, [tableRef, setDimensions]);
 
     React.useEffect(() => {
         setDimensions();
-    }, [head, rows, footer, setDimensions]);
+    }, [data]);
 
-    return {tableDimensions};
+    return isDataChanged ? {} : {tableDimensions};
 };

@@ -9,6 +9,19 @@
     --dl-table-sort-icon-space: 18px;
 }
 
+@mixin stickyCellBg() {
+    &:before {
+        content: '';
+        position: absolute;
+        top: -1px;
+        width: calc(100% + 1.99px);
+        left: -1px;
+        height: calc(100% + 1.99px);
+        border-left: 1px solid var(--dl-table-border-color);
+        pointer-events: none;
+    }
+}
+
 .dl-table {
     border-collapse: collapse;
     table-layout: fixed;
@@ -55,6 +68,7 @@
     }
 
     &__header &__th {
+        position: relative;
         font-weight: 500;
         padding: var(--dl-table-header-vertical-padding) var(--dl-table-cell-horizontal-padding);
         vertical-align: var(--dl-table-header-cell-vertical-align);
@@ -65,21 +79,17 @@
 
     &__header {
         background: var(--dl-table-header-bg-color);
+        position: sticky;
+        top: 0.5px;
+        z-index: 1;
 
         &_sticky {
             th {
-                position: sticky;
+                @include stickyCellBg();
             }
 
             th:before {
-                content: '';
-                position: absolute;
-                top: var(--cell-border-offset, -1px);
-                width: calc(100% + 1px);
-                left: var(--cell-border-offset, -1px);
-                height: calc(100% + 1px - var(--cell-border-offset, -1px));
                 border-bottom: 1px solid var(--dl-table-border-color);
-                pointer-events: none;
             }
 
             tr:first-child th:before {
@@ -124,25 +134,14 @@
         text-align: left;
     }
 
-    &__header &__th,
-    &__body &__td,
-    &__footer &__td {
-        &_pinned {
-            position: sticky;
-            left: 0;
-            background: var(--dl-table-body-bg-color);
+    &__header &__th_pinned,
+    &__body &__td_pinned,
+    &__footer &__td_pinned {
+        left: 0;
+        background: var(--dl-table-body-bg-color);
+        position: sticky;
 
-            &:before {
-                content: '';
-                position: absolute;
-                top: var(--cell-border-offset, -1px);
-                width: calc(100% + 1px);
-                left: var(--cell-border-offset, -1px);
-                height: calc(100% + 1px);
-                border-left: 1px solid var(--dl-table-border-color);
-                pointer-events: none;
-            }
-        }
+        @include stickyCellBg();
     }
 
     &__header &__th {
@@ -154,7 +153,8 @@
     &__shadow {
         position: absolute;
         top: 0;
-        left: 0;
+        right: -1px;
+        width: 10000px;
         box-shadow: 0 1px 6px 0 var(--g-color-sfx-shadow-light),
             1px 3px 13px 0 var(--g-color-sfx-shadow-light);
         border-right: 1px solid var(--g-color-text-hint);
