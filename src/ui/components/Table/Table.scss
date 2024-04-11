@@ -13,7 +13,7 @@
     &:before {
         content: '';
         position: absolute;
-        top: -1px;
+        top: var(--cell-border-offset, -1px);
         width: calc(100% + 1.99px);
         left: var(--cell-border-offset, -1px);
         height: calc(100% + 1.99px);
@@ -27,6 +27,8 @@
     table-layout: fixed;
     min-width: 100%;
     width: max-content;
+    // Bug in Safari v15
+    display: box;
 
     &__title {
         font-weight: 700;
@@ -80,8 +82,12 @@
     &__header {
         background: var(--dl-table-header-bg-color);
         position: sticky;
-        top: 0.5px;
+        top: 0;
         z-index: 1;
+
+        @media (min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            top: 0.5px;
+        }
 
         &_sticky {
             th {
