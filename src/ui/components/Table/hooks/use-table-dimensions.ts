@@ -12,8 +12,6 @@ type UseTableDimensionsArgs = {
 export const useTableDimensions = (args: UseTableDimensionsArgs) => {
     const {table: tableRef, data} = args;
     const [tableDimensions, setTableDimensions] = React.useState<TableDimensions | undefined>();
-    const prevData = React.useRef<TableProps['data']>();
-    const isDataChanged = Boolean(prevData.current && !isEqual(prevData.current, data));
 
     const setDimensions = React.useCallback(() => {
         const table = tableRef.current;
@@ -44,8 +42,6 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
             head: tableHead,
         };
 
-        prevData.current = data;
-
         if (!isEqual(tableDimensions, updates)) {
             setTableDimensions(updates);
         }
@@ -55,5 +51,20 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
         setDimensions();
     }, [data]);
 
-    return isDataChanged ? {} : {tableDimensions};
+    const resizeObserver = React.useRef<ResizeObserver | null>(null);
+    React.useLayoutEffect(() => {
+        if (tableRef.current) {
+            resizeObserver.current = new ResizeObserver(() => {
+                setDimensions();
+            });
+            resizeObserver.current.observe(tableRef.current);
+        }
+
+        return () => {
+            resizeObserver.current?.disconnect();
+            resizeObserver.current = null;
+        };
+    }, []);
+
+    return {tableDimensions};
 };
