@@ -12,6 +12,7 @@ import block from 'bem-cn-lite';
 import {TableBody} from './components/TableBody/TableBody';
 import {TableFooter} from './components/TableFooter/TableFooter';
 import {TableHead} from './components/TableHead/TableHead';
+import {useDevicePixelRatio} from './hooks/use-device-pixel-ratio';
 import {useTableDimensions} from './hooks/use-table-dimensions';
 import type {TableProps} from './types';
 import {getTableColumns, getTableData} from './utils';
@@ -71,8 +72,11 @@ export const Table = (props: TableProps) => {
     const tableRows = table.getRowModel().rows;
 
     let tableStyle;
-    if ('devicePixelRatio' in window && window.devicePixelRatio < 2) {
-        tableStyle = {'--cell-border-offset': '-0.55px'} as React.CSSProperties;
+    const pixelRatio = useDevicePixelRatio();
+    if (pixelRatio && pixelRatio > 1) {
+        tableStyle = {
+            '--cell-border-offset': `${-1 / ((pixelRatio % 1) + 1)}px`,
+        } as React.CSSProperties;
     }
 
     return (

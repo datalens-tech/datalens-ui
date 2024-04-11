@@ -15,7 +15,7 @@
         position: absolute;
         top: -1px;
         width: calc(100% + 1.99px);
-        left: -1px;
+        left: var(--cell-border-offset, -1px);
         height: calc(100% + 1.99px);
         border-left: 1px solid var(--dl-table-border-color);
         pointer-events: none;

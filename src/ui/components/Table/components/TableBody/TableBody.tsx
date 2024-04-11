@@ -62,10 +62,12 @@ export const TableBody = (props: Props) => {
                                 return null;
                             }
 
-                            const left = tableDimensions?.head[0]?.[index]?.left;
-                            const cellStyle: React.CSSProperties = {
+                            const left = pinned
+                                ? tableDimensions?.head[0]?.[index]?.left
+                                : undefined;
+                            const cellStyle = {
                                 width,
-                                left: pinned ? left : undefined,
+                                left,
                                 ...originalCellData?.css,
                             };
 
