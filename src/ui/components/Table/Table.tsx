@@ -80,21 +80,23 @@ export const Table = (props: TableProps) => {
     }
 
     return (
-        <table className={b()} data-qa={qa} ref={tableRef} style={tableStyle}>
-            {title && <caption className={b('title')}>{title.text}</caption>}
-            <TableHead
-                headers={table.getHeaderGroups()}
-                sticky={headerOptions?.sticky}
-                tableDimensions={tableDimensions}
-            />
-            <TableBody
-                columns={columns}
-                tableDimensions={tableDimensions}
-                rows={tableRows}
-                noData={noData}
-                onCellClick={onCellClick}
-            />
-            {shouldShowFooter && <TableFooter footerGroups={table.getFooterGroups()} />}
-        </table>
+        <div style={{overflow: 'auto', height: '100%', position: 'relative'}}>
+            <table className={b()} data-qa={qa} ref={tableRef} style={tableStyle}>
+                {title && <caption className={b('title')}>{title.text}</caption>}
+                <TableHead
+                    headers={table.getHeaderGroups()}
+                    sticky={headerOptions?.sticky}
+                    tableDimensions={tableDimensions}
+                />
+                <TableBody
+                    columns={columns}
+                    tableDimensions={tableDimensions}
+                    rows={tableRows}
+                    noData={noData}
+                    onCellClick={onCellClick}
+                />
+                {shouldShowFooter && <TableFooter footerGroups={table.getFooterGroups()} />}
+            </table>
+        </div>
     );
 };

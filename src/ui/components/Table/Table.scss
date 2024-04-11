@@ -142,6 +142,9 @@
         position: sticky;
 
         @include stickyCellBg();
+        &:before {
+            border-bottom: 1px solid var(--dl-table-border-color);
+        }
     }
 
     &__header &__th {

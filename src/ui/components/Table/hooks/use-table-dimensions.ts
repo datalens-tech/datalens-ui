@@ -21,7 +21,7 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
             return;
         }
 
-        const {height, left: tableLeft, top: tableTop} = table.getBoundingClientRect();
+        const {left: tableLeft, top: tableTop} = table.getBoundingClientRect();
         const tableHead = Array.from(table.tHead?.rows || []).map((r) => {
             return Array.from(r.cells).map((cell) => {
                 const {width, top, left} = cell.getBoundingClientRect();
@@ -30,7 +30,7 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
         });
 
         const updates: TableDimensions = {
-            height,
+            height: table.offsetParent?.clientHeight || table.clientHeight,
             head: tableHead,
         };
 
