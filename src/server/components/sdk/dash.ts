@@ -12,6 +12,7 @@ import {
     DashData,
     DashEntry,
     DashEntryCreateParams,
+    DashTabItemControlData,
     DashTabItemControlSourceType,
     DashTabItemType,
     Dictionary,
@@ -22,6 +23,13 @@ import {
 } from '../../../shared/types';
 
 import US from './us';
+
+function collectSingleControlLink(result: Dictionary<string>, data: DashTabItemControlData) {
+    if (data.sourceType === DashTabItemControlSourceType.Dataset && 'datasetId' in data.source) {
+        const {datasetId} = data.source;
+        result[datasetId] = datasetId;
+    }
+}
 
 function gatherLinks(data: DashData) {
     return data.tabs.reduce(
@@ -37,14 +45,14 @@ function gatherLinks(data: DashData) {
                     }, result);
                 }
 
+                if (type === DashTabItemType.GroupControl) {
+                    data.group.forEach((groupItem) => {
+                        collectSingleControlLink(result, groupItem);
+                    });
+                }
+
                 if (type === DashTabItemType.Control && 'sourceType' in data) {
-                    if (
-                        data.sourceType === DashTabItemControlSourceType.Dataset &&
-                        'datasetId' in data.source
-                    ) {
-                        const {datasetId} = data.source;
-                        result[datasetId] = datasetId;
-                    }
+                    collectSingleControlLink(result, data);
 
                     if (
                         data.sourceType === DashTabItemControlSourceType.External &&
