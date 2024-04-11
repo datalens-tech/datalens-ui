@@ -11,14 +11,14 @@ import type {Preset} from '../../types';
 import {DocTooltip} from './DocTooltip';
 import {TabsContent} from './TabsContent';
 
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 
 interface PresetsProps {
     dispatch: React.Dispatch<Action>;
 }
 
 export const Presets: React.FC<PresetsProps> = ({dispatch}) => {
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     const {presetTabs, selectedTabIndex} = useRangeDatepickerPreset();
     const [activeTabIndex, setActiveTabIndex] = useState(
         selectedTabIndex === -1 ? 0 : selectedTabIndex,

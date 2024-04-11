@@ -9,6 +9,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         display: inline-flex;
         vertical-align: middle;
         align-items: center;
+        position: relative;
 
         &_mobile {
             align-items: flex-start;

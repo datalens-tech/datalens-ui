@@ -4,10 +4,9 @@ import {Button, Checkbox, Dialog, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
-import {ControlQA, Feature, resolveIntervalDate, resolveRelativeDate} from 'shared';
+import {ControlQA, resolveIntervalDate, resolveRelativeDate} from 'shared';
 import {registry} from 'ui/registry';
 import {CheckboxControlValue} from 'ui/units/dash/containers/Dialogs/Control/constants';
-import Utils from 'ui/utils';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {YCSelect} from '../../../../../components/common/YCSelect/YCSelect';
@@ -99,15 +98,7 @@ function BaseControlSelect({
         [onChange, multiselect],
     );
 
-    const allowEmptyValue = Utils.isEnabledFeature(Feature.SelectorRequiredValue)
-        ? !required
-        : true;
-    const showSelectAll =
-        Utils.isEnabledFeature(Feature.SelectorRequiredValue) &&
-        currentValue?.length === items?.length &&
-        required
-            ? false
-            : undefined;
+    const showSelectAll = currentValue?.length === items?.length && required ? false : undefined;
 
     const size = isMobileView ? MOBILE_SIZE.YC_SELECT : 's';
 
@@ -115,7 +106,7 @@ function BaseControlSelect({
         <YCSelect
             showSearch={searchable}
             type={multiselect ? YCSelect.MULTIPLE : YCSelect.SINGLE}
-            allowEmptyValue={allowEmptyValue}
+            allowEmptyValue={!required}
             showMissingItems={true}
             value={currentValue}
             onUpdate={wrappedOnChange}
@@ -322,8 +313,6 @@ function BaseControlDatepicker({
         [onChange],
     );
 
-    const hasClear = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? !required : true;
-
     return (
         <DatepickerControl
             widgetId={widgetId}
@@ -334,7 +323,7 @@ function BaseControlDatepicker({
             scale="day"
             timezoneOffset={0}
             range={false}
-            hasClear={hasClear}
+            hasClear={!required}
             showApply={false}
             allowNullableValues={true}
             emptyValueText={i18n('chartkit.control.items', 'value_undefined')}
@@ -418,8 +407,6 @@ function BaseControlRangeDatepicker({
         [returnInterval, onChange],
     );
 
-    const hasClear = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? !required : true;
-
     return (
         <DatepickerControl
             widgetId={widgetId}
@@ -429,7 +416,7 @@ function BaseControlRangeDatepicker({
             to={to}
             format={format || `dd.MM.yyyy ${timeFormat || ''}`.trim()}
             timezoneOffset={0}
-            hasClear={hasClear}
+            hasClear={!required}
             showApply={false}
             allowNullableValues={true}
             emptyValueText={i18n('chartkit.control.items', 'value_undefined')}

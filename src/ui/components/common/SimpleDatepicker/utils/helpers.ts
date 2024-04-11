@@ -298,7 +298,6 @@ export const getValueForNativeInput = (opt: {
 };
 
 export function replaceTimeZone(date: DateTime, timeZone: string) {
-    // @ts-expect-error
     return dateTime({timeZone}).set({
         year: date.year(),
         month: date.month(),

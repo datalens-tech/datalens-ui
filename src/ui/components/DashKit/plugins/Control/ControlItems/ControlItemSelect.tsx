@@ -66,6 +66,7 @@ type ControlItemSelectProps = {
     errorData: null | ErrorData;
     validateValue: (args: ValidationErrorData) => boolean | undefined;
     classMixin?: string;
+    renderOverlay?: () => React.ReactNode;
     selectProps: Pick<SelectControlProps, 'style' | 'innerLabel' | 'label'>;
 };
 
@@ -89,6 +90,7 @@ export const ControlItemSelect = ({
     validateValue,
     classMixin,
     selectProps,
+    renderOverlay,
 }: ControlItemSelectProps) => {
     const dispatch = useDispatch();
     let _loadingItemsTimer: NodeJS.Timeout | undefined;
@@ -323,10 +325,7 @@ export const ControlItemSelect = ({
         : null;
     const selectValidationError = validationError || initialValidationError;
 
-    const placeholder =
-        Utils.isEnabledFeature(Feature.SelectorRequiredValue) && selectValidationError
-            ? selectValidationError
-            : emptyPaceholder;
+    const placeholder = selectValidationError || emptyPaceholder;
 
     const onSelectChange = (value: string | string[]) => {
         const hasError = validateValue({
@@ -361,6 +360,7 @@ export const ControlItemSelect = ({
         placeholder,
         required: source.required,
         hasValidationError: Boolean(selectValidationError),
+        renderOverlay,
         ...selectProps,
     };
 

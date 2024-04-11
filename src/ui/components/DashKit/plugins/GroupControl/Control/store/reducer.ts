@@ -1,4 +1,5 @@
 import {I18n} from 'i18n';
+import {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 
 import {LOAD_STATUS} from '../../../Control/constants';
 
@@ -25,6 +26,7 @@ export const getInitialState = (): State => {
         validationError: null,
         isInit: false,
         showSilentLoader: false,
+        control: null,
     };
 };
 
@@ -33,6 +35,14 @@ export const reducer = (state: State, action: Action) => {
         case CONTROL_SET_LOADED_DATA: {
             const {status, loadedData} = action.payload;
 
+            loadedData.uiScheme = Array.isArray(loadedData.uiScheme)
+                ? {controls: loadedData.uiScheme}
+                : loadedData.uiScheme;
+
+            const control = loadedData.uiScheme
+                ? (loadedData.uiScheme.controls[0] as ActiveControl)
+                : null;
+
             return {
                 ...state,
                 status,
@@ -40,6 +50,7 @@ export const reducer = (state: State, action: Action) => {
                 loadingItems: false,
                 isInit: true,
                 showSilentLoader: false,
+                control,
             };
         }
 

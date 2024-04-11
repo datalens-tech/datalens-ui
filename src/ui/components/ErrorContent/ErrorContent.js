@@ -48,6 +48,8 @@ class ErrorContent extends React.PureComponent {
         noActions: PropTypes.bool,
         size: PropTypes.oneOf(['s', 'm', 'l', 'promo']),
         direction: PropTypes.oneOf(['row', 'column']),
+        accessDescription: PropTypes.string,
+        hideTitle: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -71,6 +73,7 @@ class ErrorContent extends React.PureComponent {
 
     async getAccessDescriptionMD() {
         const customText = this.getAccessDescription();
+
         if (customText) {
             try {
                 const {result} = await MarkdownProvider.getMarkdown({text: customText});
@@ -85,8 +88,9 @@ class ErrorContent extends React.PureComponent {
         if (!Utils.isEnabledFeature(Feature.DashBoardAccessDescription)) {
             return '';
         }
+
         const pageEntryMeta = DL.LANDING_PAGE_ENTRY_META;
-        return pageEntryMeta?.accessDescription || '';
+        return this.props.accessDescription || pageEntryMeta?.accessDescription || '';
     }
 
     hasAccessDescription() {
@@ -94,7 +98,12 @@ class ErrorContent extends React.PureComponent {
     }
 
     renderTitle() {
-        const {title = i18n('label_error-general')} = this.props;
+        const {title = i18n('label_error-general'), hideTitle} = this.props;
+
+        if (hideTitle) {
+            return null;
+        }
+
         return <div className={b('title')}>{title}</div>;
     }
 

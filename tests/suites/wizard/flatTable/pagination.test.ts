@@ -1,21 +1,14 @@
-import {Page} from '@playwright/test';
+import {Page, expect} from '@playwright/test';
 
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {ChartKitTableQa} from '../../../../src/shared';
 
 const rowLimit = 5;
 
 const TIMEOUT = 4000;
-
-const SELECTORS = {
-    COLUMN_SELECTOR_TEXT: '.chartkit-table__content_text',
-    PAGINATOR_INPUT: '.chartkit-table-paginator__page-input .yc-text-input__control_type_input',
-    PAGINATOR_PREV_BUTTON: '.chartkit-table-paginator > button.yc-button:first-child',
-    PAGINATOR_NEXT_BUTTON: '.chartkit-table-paginator > .yc-text-input + button.yc-button',
-    PAGINATOR_TEXT: '.chartkit-table-paginator__range',
-};
 
 const VALUES = {
     DEFAULT_FIRST_CELL_VALUE: 'Consumer OFF-PA-10000174 DP-13000',
@@ -47,42 +40,39 @@ datalensTest.describe('Wizard :: Flat table :: Pagination', () => {
             await wizardPage.chartkit.waitForPaginationExist();
 
             // Checking the default state of the paginator input
-            await page.waitForSelector(
-                `${SELECTORS.PAGINATOR_INPUT}[value="${VALUES.DEFAULT_PAGE_INPUT_VALUE}"]`,
-            );
+            const paginatorInput = page
+                .locator(slct(ChartKitTableQa.PaginatorPageInput))
+                .locator('input');
+            await expect(paginatorInput).toHaveValue(String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
 
             // Check the default state of the first cell of the table
             await page.waitForSelector(
-                `${SELECTORS.COLUMN_SELECTOR_TEXT} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
+                `${slct(ChartKitTableQa.CellContent)} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
             );
 
             // Click on the switch arrow pagination forward
-            await page.click(SELECTORS.PAGINATOR_NEXT_BUTTON);
+            await page.click(slct(ChartKitTableQa.PaginatorNextPageButton));
 
             // We expect that the pagination input has changed the value to the next page
-            await page.waitForSelector(
-                `${SELECTORS.PAGINATOR_INPUT}[value="${VALUES.NEXT_PAGE_INPUT_VALUE}"]`,
-            );
+            await expect(paginatorInput).toHaveValue(String(VALUES.NEXT_PAGE_INPUT_VALUE));
 
             // We expect that the data in the table has been redrawn
             await page.waitForSelector(
-                `${SELECTORS.COLUMN_SELECTOR_TEXT} >> text="${VALUES.NEXT_FIRST_CELL_VALUE}"`,
+                `${slct(ChartKitTableQa.CellContent)} >> text="${VALUES.NEXT_FIRST_CELL_VALUE}"`,
             );
 
             // Time to release the back button
             await page.waitForTimeout(TIMEOUT);
 
             // Click on the pagination switch arrow back
-            await page.click(SELECTORS.PAGINATOR_PREV_BUTTON);
+            await page.click(slct(ChartKitTableQa.PaginatorPrevPageButton));
 
             // We expect that the pagination input has changed the value to the previous page
-            await page.waitForSelector(
-                `${SELECTORS.PAGINATOR_INPUT}[value="${VALUES.DEFAULT_PAGE_INPUT_VALUE}"]`,
-            );
+            await expect(paginatorInput).toHaveValue(String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
 
             // We expect that the data in the table has been redrawn
             await page.waitForSelector(
-                `${SELECTORS.COLUMN_SELECTOR_TEXT} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
+                `${slct(ChartKitTableQa.CellContent)} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
             );
         },
     );
@@ -95,36 +85,37 @@ datalensTest.describe('Wizard :: Flat table :: Pagination', () => {
             await wizardPage.chartkit.waitForPaginationExist();
 
             // Checking the default state of the paginator input
-            await page.waitForSelector(
-                `${SELECTORS.PAGINATOR_INPUT}[value="${VALUES.DEFAULT_PAGE_INPUT_VALUE}"]`,
-            );
+            const paginatorInput = page
+                .locator(slct(ChartKitTableQa.PaginatorPageInput))
+                .locator('input');
+            await expect(paginatorInput).toHaveValue(String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
 
             // Check the default state of the first cell of the table
             await page.waitForSelector(
-                `${SELECTORS.COLUMN_SELECTOR_TEXT} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
+                `${slct(ChartKitTableQa.CellContent)} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
             );
 
             // Enter the value of the new pagination page in the pagination input
-            await page.fill(SELECTORS.PAGINATOR_INPUT, String(VALUES.NEXT_PAGE_INPUT_VALUE));
+            await paginatorInput.fill(String(VALUES.NEXT_PAGE_INPUT_VALUE));
             // Press Enter in the pagination input, p.s. when entering the input value from the keyboard, value does not change
-            await page.press(SELECTORS.PAGINATOR_INPUT, 'Enter');
+            await paginatorInput.press('Enter');
 
             // We expect that the data in the table has been redrawn
             await page.waitForSelector(
-                `${SELECTORS.COLUMN_SELECTOR_TEXT} >> text="${VALUES.NEXT_FIRST_CELL_VALUE}"`,
+                `${slct(ChartKitTableQa.CellContent)} >> text="${VALUES.NEXT_FIRST_CELL_VALUE}"`,
             );
 
             // Time to release the back button
             await page.waitForTimeout(TIMEOUT);
 
             // Enter the value of the previous pagination page in the pagination input
-            await page.fill(SELECTORS.PAGINATOR_INPUT, String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
+            await paginatorInput.fill(String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
             // Press Enter in the pagination input, p.s. when entering the input value from the keyboard, value does not change
-            await page.press(SELECTORS.PAGINATOR_INPUT, 'Enter');
+            await paginatorInput.press('Enter');
 
             // We expect that the data in the table has been redrawn
             await page.waitForSelector(
-                `${SELECTORS.COLUMN_SELECTOR_TEXT} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
+                `${slct(ChartKitTableQa.CellContent)} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
             );
         },
     );
@@ -145,42 +136,41 @@ datalensTest.describe('Wizard :: Flat table :: Pagination', () => {
             });
 
             // Checking the default state of the paginator input
-            await page.waitForSelector(
-                `${SELECTORS.PAGINATOR_INPUT}[value="${VALUES.DEFAULT_PAGE_INPUT_VALUE}"]`,
-            );
+            const paginatorInput = page
+                .locator(slct(ChartKitTableQa.PaginatorPageInput))
+                .locator('input');
+            await expect(paginatorInput).toHaveValue(String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
 
             // Check the default state of the first cell of the table
             await page.waitForSelector(
-                `${SELECTORS.COLUMN_SELECTOR_TEXT} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
+                `${slct(ChartKitTableQa.CellContent)} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
             );
 
             // Click on the switch arrow pagination forward
-            await page.click(SELECTORS.PAGINATOR_NEXT_BUTTON);
+            await page.click(slct(ChartKitTableQa.PaginatorNextPageButton));
 
             // We expect that the pagination input has changed the value to the next page
-            await page.waitForSelector(
-                `${SELECTORS.PAGINATOR_INPUT}[value="${VALUES.NEXT_PAGE_INPUT_VALUE}"]`,
-            );
+            await expect(paginatorInput).toHaveValue(String(VALUES.NEXT_PAGE_INPUT_VALUE));
 
             // We expect that the data in the table has been redrawn
             await page.waitForSelector(
-                `${SELECTORS.COLUMN_SELECTOR_TEXT} >> text="${VALUES.NEXT_LIMITED_FIRST_CELL_VALUE}"`,
+                `${slct(ChartKitTableQa.CellContent)} >> text="${
+                    VALUES.NEXT_LIMITED_FIRST_CELL_VALUE
+                }"`,
             );
 
             // Time to release the back button
             await page.waitForTimeout(TIMEOUT);
 
             // Click on the pagination switch arrow back
-            await page.click(SELECTORS.PAGINATOR_PREV_BUTTON);
+            await page.click(slct(ChartKitTableQa.PaginatorPrevPageButton));
 
             // We expect that the pagination input has changed the value to the previous page
-            await page.waitForSelector(
-                `${SELECTORS.PAGINATOR_INPUT}[value="${VALUES.DEFAULT_PAGE_INPUT_VALUE}"]`,
-            );
+            await expect(paginatorInput).toHaveValue(String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
 
             // We expect that the data in the table has been redrawn
             await page.waitForSelector(
-                `${SELECTORS.COLUMN_SELECTOR_TEXT} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
+                `${slct(ChartKitTableQa.CellContent)} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
             );
         },
     );
@@ -196,36 +186,39 @@ datalensTest.describe('Wizard :: Flat table :: Pagination', () => {
             await waitForLimitPaginationSettingsApply(wizardPage);
 
             // Checking the default state of the paginator input
-            await page.waitForSelector(
-                `${SELECTORS.PAGINATOR_INPUT}[value="${VALUES.DEFAULT_PAGE_INPUT_VALUE}"]`,
-            );
+            const paginatorInput = page
+                .locator(slct(ChartKitTableQa.PaginatorPageInput))
+                .locator('input');
+            await expect(paginatorInput).toHaveValue(String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
 
             // Check the default state of the first cell of the table
             await page.waitForSelector(
-                `${SELECTORS.COLUMN_SELECTOR_TEXT} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
+                `${slct(ChartKitTableQa.CellContent)} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
             );
 
             // Enter the value of the new pagination page in the pagination input
-            await page.fill(SELECTORS.PAGINATOR_INPUT, String(VALUES.NEXT_PAGE_INPUT_VALUE));
+            await paginatorInput.fill(String(VALUES.NEXT_PAGE_INPUT_VALUE));
             // Press Enter in the pagination input, p.s. when entering the input value from the keyboard, value does not change
-            await page.press(SELECTORS.PAGINATOR_INPUT, 'Enter');
+            await paginatorInput.press('Enter');
 
             // We expect that the data in the table has been redrawn
             await page.waitForSelector(
-                `${SELECTORS.COLUMN_SELECTOR_TEXT} >> text="${VALUES.NEXT_LIMITED_FIRST_CELL_VALUE}"`,
+                `${slct(ChartKitTableQa.CellContent)} >> text="${
+                    VALUES.NEXT_LIMITED_FIRST_CELL_VALUE
+                }"`,
             );
 
             // Time to release the back button
             await page.waitForTimeout(TIMEOUT);
 
             // Enter the value of the previous pagination page in the pagination input
-            await page.fill(SELECTORS.PAGINATOR_INPUT, String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
+            await paginatorInput.fill(String(VALUES.DEFAULT_PAGE_INPUT_VALUE));
             // Press Enter in the pagination input, p.s. when entering the input value from the keyboard, value does not change
-            await page.press(SELECTORS.PAGINATOR_INPUT, 'Enter');
+            await paginatorInput.press('Enter');
 
             // We expect that the data in the table has been redrawn
             await page.waitForSelector(
-                `${SELECTORS.COLUMN_SELECTOR_TEXT} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
+                `${slct(ChartKitTableQa.CellContent)} >> text="${VALUES.DEFAULT_FIRST_CELL_VALUE}"`,
             );
         },
     );

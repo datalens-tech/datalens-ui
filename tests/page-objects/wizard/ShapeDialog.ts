@@ -15,9 +15,9 @@ export const DashArrayLineType = {
 export default class ShapeDialog {
     private page: Page;
 
-    private cancelButton = '.dialog-shapes .yc-dialog-footer__button_action_cancel';
+    private cancelButton = '.dialog-shapes .g-dialog-footer__button_action_cancel';
     private valueLabelSelector = '.dialog-shapes .values-list__value-label';
-    private applyButton = '.dialog-shapes .yc-dialog-footer__button_action_apply';
+    private applyButton = '.dialog-shapes .g-dialog-footer__button_action_apply';
 
     constructor(page: Page) {
         this.page = page;

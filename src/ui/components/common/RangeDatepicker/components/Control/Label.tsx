@@ -11,7 +11,7 @@ import {State} from '../../store';
 import type {RangeDatepickerProps} from '../../types';
 
 const i18n = I18n.keyset('components.common.RangeDatepicker');
-const b = block('yc-range-datepicker');
+const b = block('dl-range-datepicker');
 
 export const getFormattedRangeItem = (opt: {
     dateFormat: string;

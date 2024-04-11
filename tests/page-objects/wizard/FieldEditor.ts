@@ -10,7 +10,7 @@ export default class FieldEditor {
     private fieldNameSelector = FieldEditor.slct(`${slct('field-name')} input`);
     private applyButtonSelector = slct(DialogFieldEditorQA.ApplyButton);
     private fieldEditorSelector = FieldEditor.slct('.react-monaco-editor-container');
-    private fieldItemSelector = FieldEditor.slct('.yc-list__item');
+    private fieldItemSelector = FieldEditor.slct('.g-list__item');
 
     private page: Page;
 

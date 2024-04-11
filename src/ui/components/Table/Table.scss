@@ -1,16 +1,12 @@
 :root {
-    --dl-table-border-color: var(--g-color-line-generic-solid);
-    --dl-table-header-bg-color: var(--g-color-base-background);
     --dl-table-header-vertical-padding: 5px;
     --dl-table-header-cell-vertical-align: top;
-    --dl-table-no-data-bg-color: var(--g-color-base-generic);
     --dl-table-row-height: 30px;
-    --dl-table-row-hover-bg-color: var(--g-color-base-simple-hover);
     --dl-table-cell-horizontal-padding: 10px;
     --dl-table-cell-vertical-padding: 5px;
     --dl-table-cell-vertical-align: top;
-    --dl-table-footer-bg-color: var(--g-color-base-generic);
     --dl-table-footer-cell-vertical-align: top;
+    --dl-table-sort-icon-space: 18px;
 }
 
 .dl-table {
@@ -48,10 +44,13 @@
         }
     }
 
-    &__td-content {
-        &_fixed-size {
-            white-space: normal;
-            word-break: break-word;
+    &__th-content {
+        width: min-content;
+        min-width: fit-content;
+
+        &_sortable {
+            position: relative;
+            padding-right: var(--dl-table-sort-icon-space);
         }
     }
 
@@ -63,24 +62,33 @@
             position: sticky;
             z-index: 1;
 
-            th:before {
+            th:before,
+            th:after {
                 content: '';
                 display: inline-block;
                 width: calc(100% + 1px);
-                height: calc(100% + 1.5px);
-                border: 1px solid var(--dl-table-border-color);
+                height: 1px;
                 position: absolute;
-                top: -1px;
                 left: -1px;
-                border-left: 0;
-                border-right: 0;
+            }
+
+            th:before {
+                top: -1px;
+                border-top: 1px solid var(--dl-table-border-color);
+            }
+
+            th:after {
+                bottom: -1px;
+                border-bottom: 1px solid var(--dl-table-border-color);
             }
         }
     }
 
     &__header &__sort-icon {
         position: absolute;
-        vertical-align: middle;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
     }
 
     &__header &__th {

@@ -11,13 +11,11 @@ import {
     DashTabItemWidget,
     DashTabItemWidgetTab,
     DialogDashWidgetQA,
-    EditorType,
     Feature,
     ParamsSettingsQA,
     StringParams,
     WidgetKind,
     WidgetType,
-    WizardType,
     WizardVisualizationId,
 } from 'shared';
 import {getEntryVisualizationType} from 'shared/schema/mix/helpers';
@@ -47,6 +45,7 @@ import {
     selectOpenedItemData,
     selectWidgetsCurrentTab,
 } from '../../../store/selectors/dashTypedSelectors';
+import {isEntryTypeWithFiltering} from '../utils';
 
 import {ListState, TabMenu} from './TabMenu/TabMenu';
 
@@ -69,34 +68,6 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
         widgetType === DASH_WIDGET_TYPES.METRIC ||
         widgetType === DASH_WIDGET_TYPES.MARKUP
     );
-};
-
-const isEntryTypeWithFiltering = (
-    entryType?: WidgetType,
-    visualizationType?: WizardVisualizationId,
-) => {
-    const wizardFilteringAvailable = Utils.isEnabledFeature(
-        Feature.WizardChartChartFilteringAvailable,
-    );
-    const widgetTypesWithFilteringAvailable: WidgetType[] = [
-        EditorType.TableNode,
-        EditorType.GraphNode,
-    ];
-
-    if (wizardFilteringAvailable) {
-        const wizardEntryTypes = [
-            WizardType.GraphWizardNode,
-            WizardType.D3WizardNode,
-            WizardType.TableWizardNode,
-        ];
-        const visualizationWithoutFiltering = [WizardVisualizationId.Treemap];
-        return (
-            wizardEntryTypes.includes(entryType as WizardType) &&
-            !visualizationWithoutFiltering.includes(visualizationType as WizardVisualizationId)
-        );
-    }
-
-    return entryType && widgetTypesWithFilteringAvailable.includes(entryType);
 };
 
 type LineProps = {

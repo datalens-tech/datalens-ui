@@ -15,6 +15,7 @@ import {useSelector} from 'react-redux';
 
 import {Feature} from '../../../../../shared';
 import {DL} from '../../../../constants';
+import {registry} from '../../../../registry';
 import Utils from '../../../../utils';
 import {selectCollection, selectRootCollectionPermissions} from '../../store/selectors';
 
@@ -51,6 +52,8 @@ export const CollectionActions = React.memo<Props>(
     }) => {
         const collection = useSelector(selectCollection);
         const rootCollectionPermissions = useSelector(selectRootCollectionPermissions);
+
+        const {CustomActionPanelCollectionActions} = registry.collections.components.getAll();
 
         const showCreateCollection = collection
             ? collection.permissions?.createCollection
@@ -142,6 +145,8 @@ export const CollectionActions = React.memo<Props>(
                         </div>
                     </Tooltip>
                 )}
+
+                <CustomActionPanelCollectionActions />
 
                 {collectionsAccessEnabled &&
                     collection &&

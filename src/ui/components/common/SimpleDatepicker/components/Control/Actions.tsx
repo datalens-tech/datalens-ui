@@ -8,7 +8,7 @@ import {Action} from '../../store';
 
 import alarmIcon from '../../../../../assets/icons/toast-attention.svg';
 
-const b = block('yc-simple-datepicker');
+const b = block('dl-simple-datepicker');
 
 interface ActionsProps {
     clear: () => void;
@@ -25,7 +25,7 @@ export const Actions: React.FC<ActionsProps> = ({
     dispatch,
     onClick,
 }) => {
-    const [mobile] = useMobile();
+    const mobile = useMobile();
     const alarmIconRef = React.useRef<HTMLSpanElement>(null);
     const tooltipRef = React.useRef<PopoverInstanceProps>(null);
 

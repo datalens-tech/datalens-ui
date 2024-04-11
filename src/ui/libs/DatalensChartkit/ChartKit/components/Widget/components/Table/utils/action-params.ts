@@ -1,12 +1,18 @@
 import React from 'react';
 
 import {transformParamsToActionParams} from '@gravity-ui/dashkit';
-import {Column} from '@gravity-ui/react-data-table';
 import clone from 'lodash/clone';
 import get from 'lodash/get';
 import intersection from 'lodash/intersection';
 import without from 'lodash/without';
-import {StringParams, TableCell, TableHead, TableRow, TableWidgetEventScope} from 'shared';
+import {
+    StringParams,
+    TableCell,
+    TableCommonCell,
+    TableHead,
+    TableRow,
+    TableWidgetEventScope,
+} from 'shared';
 import {DataTableData, TableWidget} from 'ui/libs/DatalensChartkit/types';
 
 import {addParams, subtractParameters} from '../../../../../helpers/action-params-handlers';
@@ -116,12 +122,12 @@ function getSelectedRows(args: {
 export function getActionParams(args: {
     actionParamsData: ActionParamsData;
     row?: DataTableData;
-    column?: Column<DataTableData>;
+    cell?: TableCell;
     head?: TableHead[];
     metaKey?: boolean;
     rows: TableRow[];
 }): StringParams {
-    const {actionParamsData, row, head, metaKey, rows, column} = args;
+    const {actionParamsData, row, head, metaKey, rows, cell} = args;
 
     switch (actionParamsData.scope) {
         case 'row': {
@@ -137,7 +143,7 @@ export function getActionParams(args: {
             const newActionParams = getUpdatedActionParamsForCellScope({
                 actionParams: actionParamsData.params,
                 row,
-                column,
+                cell,
                 metaKey,
                 rows,
             });
@@ -158,15 +164,14 @@ function isCellSelected(cell: TableCell, actionParams: StringParams) {
 function getUpdatedActionParamsForCellScope(args: {
     actionParams: StringParams;
     row?: DataTableData;
-    column?: Column<DataTableData>;
+    cell?: TableCommonCell | string;
     metaKey?: boolean;
     rows: TableRow[];
 }) {
-    const {actionParams: prevActionParams, row, metaKey, rows, column} = args;
+    const {actionParams: prevActionParams, metaKey, rows, cell: currentCell} = args;
     const multiSelect = Boolean(metaKey);
 
     let newActionParams: StringParams = prevActionParams;
-    const currentCell = row && column?.name ? row[column.name] : null;
     if (!currentCell) {
         return newActionParams;
     }
