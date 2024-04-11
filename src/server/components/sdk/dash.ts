@@ -24,11 +24,13 @@ import {
 
 import US from './us';
 
-function collectSingleControlLink(result: Dictionary<string>, data: DashTabItemControlData) {
+function addControlLinkToResult(result: Dictionary<string>, data: DashTabItemControlData) {
     if (data.sourceType === DashTabItemControlSourceType.Dataset && 'datasetId' in data.source) {
         const {datasetId} = data.source;
         result[datasetId] = datasetId;
     }
+
+    return result;
 }
 
 function gatherLinks(data: DashData) {
@@ -43,16 +45,12 @@ function gatherLinks(data: DashData) {
                         result[chartId] = chartId;
                         return result;
                     }, result);
-                }
-
-                if (type === DashTabItemType.GroupControl) {
+                } else if (type === DashTabItemType.GroupControl) {
                     data.group.forEach((groupItem) => {
-                        collectSingleControlLink(result, groupItem);
+                        result = addControlLinkToResult(result, groupItem);
                     });
-                }
-
-                if (type === DashTabItemType.Control && 'sourceType' in data) {
-                    collectSingleControlLink(result, data);
+                } else if (type === DashTabItemType.Control && 'sourceType' in data) {
+                    result = addControlLinkToResult(result, data);
 
                     if (
                         data.sourceType === DashTabItemControlSourceType.External &&
