@@ -3,22 +3,27 @@ import {DashTab, DashTabItemGroupControl} from 'shared/types';
 
 import type {SelectorDialogState} from '../../actions/dashTyped';
 
-export const getActualFieldNameValidation = (
+export const getActualUniqueFieldNameValidation = (
     group: SelectorDialogState[],
     fieldName?: string,
     validation?: string,
 ) => {
-    if (
-        !validation ||
-        validation !== i18n('dash.control-dialog.edit', 'validation_field-name-unique')
-    ) {
-        return validation;
+    if (!validation || !fieldName) {
+        return undefined;
     }
 
-    const dublicateItemIndex = group.filter((groupItem) => groupItem.fieldName === fieldName);
+    const fieldNameClones = group.filter((groupItem) => groupItem.fieldName === fieldName);
 
-    if (dublicateItemIndex.length > 1) {
-        return validation;
+    if (fieldNameClones.length > 1) {
+        const clonesTitles: string[] = [];
+        fieldNameClones.forEach((item) => {
+            if (item.title) {
+                clonesTitles.push(item.title);
+            }
+        });
+        return i18n('dash.control-dialog.edit', 'validation_field-name-unique', {
+            selectorsNames: clonesTitles.join(', '),
+        });
     }
 
     return undefined;

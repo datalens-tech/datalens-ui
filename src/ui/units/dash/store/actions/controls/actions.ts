@@ -4,7 +4,7 @@ import {DatalensGlobalState} from 'ui/index';
 import {AppDispatch} from 'ui/store';
 
 import {selectOpenedItemData} from '../../selectors/dashTypedSelectors';
-import {SetSelectorDialogItemArgs, setItemData} from '../dashTyped';
+import {SetSelectorDialogItemArgs, setItemData, setSelectorDialogItem} from '../dashTyped';
 import {closeDialog as closeDashDialog} from '../dialogs/actions';
 import {getExtendedItemDataAction} from '../helpers';
 
@@ -58,15 +58,20 @@ export const setActiveSelectorIndex = (payload: SetActiveSelectorIndexAction['pa
 export const applyGroupControlDialog = () => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
-        const {selectorsGroup, openedItemId} = state.dash;
+        const {selectorsGroup, openedItemId, activeSelectorIndex} = state.dash;
 
         let firstInvalidIndex: number | null = null;
-        const groupFieldNames: Record<string, number> = {};
+        const groupFieldNames: Record<string, string[]> = {};
         selectorsGroup.group.forEach((groupItem) => {
             if (groupItem.fieldName) {
-                groupFieldNames[groupItem.fieldName] = groupFieldNames[groupItem.fieldName]
-                    ? groupFieldNames[groupItem.fieldName] + 1
-                    : 1;
+                const itemName = groupItem.title;
+                if (groupFieldNames[groupItem.fieldName] && itemName) {
+                    groupFieldNames[groupItem.fieldName].push(itemName);
+                }
+
+                if (!groupFieldNames[groupItem.fieldName] && itemName) {
+                    groupFieldNames[groupItem.fieldName] = [itemName];
+                }
             }
         });
 
@@ -79,19 +84,26 @@ export const applyGroupControlDialog = () => {
                 groupFieldNames,
             );
 
-            const isValidationFailed = !isEmpty(validation);
-
-            if (isValidationFailed && firstInvalidIndex === null) {
+            if (!isEmpty(validation) && firstInvalidIndex === null) {
                 firstInvalidIndex = i;
             }
 
-            if (isValidationFailed) {
-                validatedSelectorsGroup.group[i].validation = validation;
-            }
+            validatedSelectorsGroup.group[i].validation = validation;
         }
 
         if (firstInvalidIndex !== null) {
+            const activeSelectorValidation =
+                validatedSelectorsGroup.group[activeSelectorIndex].validation;
             dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+
+            if (!isEmpty(activeSelectorValidation)) {
+                dispatch(
+                    setSelectorDialogItem({
+                        validation: activeSelectorValidation,
+                    }),
+                );
+                return;
+            }
             dispatch(setActiveSelectorIndex({activeSelectorIndex: firstInvalidIndex}));
             return;
         }

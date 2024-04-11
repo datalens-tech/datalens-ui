@@ -17,21 +17,10 @@ const fieldNameValidationSourceTypes: Partial<Record<DashTabItemControlSourceTyp
 const getFieldNameValidation = (
     sourceType?: DashTabItemControlSourceType,
     fieldName?: string,
-    groupFieldNames?: Record<string, number>,
     selectorParameters?: StringParams,
 ) => {
     if (sourceType && fieldNameValidationSourceTypes[sourceType] && !fieldName) {
         return {fieldName: i18n('dash.control-dialog.edit', 'validation_required')};
-    }
-
-    if (
-        sourceType &&
-        fieldNameValidationSourceTypes[sourceType] &&
-        fieldName &&
-        groupFieldNames &&
-        groupFieldNames[fieldName] > 1
-    ) {
-        return {fieldName: i18n('dash.control-dialog.edit', 'validation_field-name-unique')};
     }
 
     if (
@@ -47,7 +36,7 @@ const getFieldNameValidation = (
 
 export const getControlValidation = (
     selectorDialog: SelectorDialogState,
-    groupFieldNames?: Record<string, number>,
+    groupFieldNames?: Record<string, string[]>,
 ) => {
     const {
         title,
@@ -89,9 +78,25 @@ export const getControlValidation = (
         validation.defaultValue = i18n('dash.control-dialog.edit', 'validation_required');
     }
 
+    if (
+        sourceType &&
+        fieldNameValidationSourceTypes[sourceType] &&
+        fieldName &&
+        groupFieldNames &&
+        groupFieldNames[fieldName].length > 1
+    ) {
+        validation.uniqueFieldName = i18n(
+            'dash.control-dialog.edit',
+            'validation_field-name-unique',
+            {
+                selectorsNames: groupFieldNames[fieldName].join(', '),
+            },
+        );
+    }
+
     return {
         ...validation,
-        ...getFieldNameValidation(sourceType, fieldName, groupFieldNames, selectorParameters),
+        ...getFieldNameValidation(sourceType, fieldName, selectorParameters),
     };
 };
 
