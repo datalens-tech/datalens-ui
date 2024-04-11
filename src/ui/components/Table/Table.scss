@@ -27,8 +27,8 @@
     table-layout: fixed;
     min-width: 100%;
     width: max-content;
-    // Bug in Safari v15
-    display: box;
+    // stylelint-disable-next-line
+    display: -webkit-box;
 
     &__title {
         font-weight: 700;
@@ -85,9 +85,11 @@
         top: 0;
         z-index: 1;
 
-        @media (min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+        /* stylelint-disable */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
             top: 0.5px;
         }
+        /* stylelint-enable */
 
         &_sticky {
             th {
