@@ -86,26 +86,6 @@ export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
                 }
             />
             <Dialog.Body className={b('content')}>
-                {!isEmpty(fields.columns) && (
-                    <React.Fragment>
-                        {!isPivotTableDialog && (
-                            <Subheader
-                                title={i18n('wizard', 'label_column-width')}
-                                tooltip={i18n('wizard', 'label_dialog-column-info-text')}
-                            />
-                        )}
-                        <ColumnWidthSettingsSection
-                            fields={fields.columns}
-                            onError={(fieldId, error) => {
-                                handleErrorOccurred(fieldId, error);
-                            }}
-                            onUpdate={handleWidthUpdate}
-                            withCollapse={isPivotTableDialog}
-                            fieldPlaceholder="columns"
-                            title={i18n('wizard', 'section_columns')}
-                        />
-                    </React.Fragment>
-                )}
                 {canPinColumns && (
                     <div className={b('freeze-settings')}>
                         <DialogRow
@@ -129,6 +109,26 @@ export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
                             }
                         />
                     </div>
+                )}
+                {!isEmpty(fields.columns) && (
+                    <React.Fragment>
+                        {!isPivotTableDialog && (
+                            <Subheader
+                                title={i18n('wizard', 'label_column-width')}
+                                tooltip={i18n('wizard', 'label_dialog-column-info-text')}
+                            />
+                        )}
+                        <ColumnWidthSettingsSection
+                            fields={fields.columns}
+                            onError={(fieldId, error) => {
+                                handleErrorOccurred(fieldId, error);
+                            }}
+                            onUpdate={handleWidthUpdate}
+                            withCollapse={isPivotTableDialog}
+                            fieldPlaceholder="columns"
+                            title={i18n('wizard', 'section_columns')}
+                        />
+                    </React.Fragment>
                 )}
                 {!isEmpty(fields.rows) && (
                     <ColumnWidthSettingsSection
