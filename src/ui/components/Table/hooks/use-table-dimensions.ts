@@ -22,15 +22,25 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
         }
 
         const {left: tableLeft, top: tableTop} = table.getBoundingClientRect();
+        const offsetParent = table.offsetParent;
+        const scrollLeft = offsetParent?.scrollLeft || 0;
+        let left: number;
         const tableHead = Array.from(table.tHead?.rows || []).map((r) => {
-            return Array.from(r.cells).map((cell) => {
-                const {width, top, left} = cell.getBoundingClientRect();
-                return {width, left: left - tableLeft, top: top - tableTop};
+            return Array.from(r.cells).map((cell, _index) => {
+                const {width, top, left: originalLeft} = cell.getBoundingClientRect();
+                left = left ?? originalLeft - (tableLeft + scrollLeft);
+                const result = {
+                    width,
+                    left,
+                    top: top - tableTop,
+                };
+                left += width;
+                return result;
             });
         });
 
         const updates: TableDimensions = {
-            height: table.offsetParent?.clientHeight || table.clientHeight,
+            height: offsetParent?.clientHeight || table.clientHeight,
             head: tableHead,
         };
 
