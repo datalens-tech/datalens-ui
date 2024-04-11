@@ -40,6 +40,7 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
         const updates: TableDimensions = {
             height: offsetParent?.clientHeight || table.clientHeight,
             head: tableHead,
+            minWidth: offsetParent?.clientWidth,
         };
 
         if (!isEqual(tableDimensions, updates)) {

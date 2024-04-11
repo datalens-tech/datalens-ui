@@ -71,13 +71,15 @@ export const Table = (props: TableProps) => {
     const shouldShowFooter = columns.some((column) => column.footer);
     const tableRows = table.getRowModel().rows;
 
-    let tableStyle;
+    let tableStyle: React.CSSProperties = {};
     const pixelRatio = useDevicePixelRatio();
     if (pixelRatio && pixelRatio > 1) {
         tableStyle = {
             '--cell-border-offset': `${-1 / ((pixelRatio % 1) + 1)}px`,
         } as React.CSSProperties;
     }
+
+    tableStyle.minWidth = tableDimensions?.minWidth;
 
     return (
         <div style={{overflow: 'auto', height: '100%', position: 'relative'}}>

@@ -65,4 +65,5 @@ export type TableProps = {
 export type TableDimensions = {
     head: {width: number; top: number; left: number}[][];
     height: number;
+    minWidth?: number;
 };
