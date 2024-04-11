@@ -64,7 +64,6 @@
     "ajv": "^8.12.0",
     "aws4": "^1.11.0",
     "axios": "^1.6.0",
-    "axios-concurrency": "^1.0.4",
     "axios-retry": "^3.2.0",
     "clipboard-copy": "^3.2.0",
     "d3": "^7.8.5",
