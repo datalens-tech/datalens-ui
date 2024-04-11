@@ -120,6 +120,16 @@ const getConfig = (
             };
             break;
         }
+        case MarkupItemTypes.Image: {
+            iteratedConfigItem.element = 'img';
+            iteratedConfigItem.props = merge(iteratedConfigItem.props, {
+                src: markupItem.src,
+                alt: markupItem.alt,
+                width: markupItem.width,
+                height: markupItem.height,
+            });
+            break;
+        }
     }
 
     if (externalProps?.[markupItem.type]) {
