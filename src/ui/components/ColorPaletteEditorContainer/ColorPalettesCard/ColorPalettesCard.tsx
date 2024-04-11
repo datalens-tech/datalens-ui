@@ -23,11 +23,13 @@ type Props = {
     handleCreateColorPalette: () => void;
     handleItemClick: (colorPalette: ColorPalette) => void;
     isFavoritesEnabled: boolean;
+    condensed?: boolean;
 };
 
 class ColorPalettesCard extends React.Component<Props> {
     render() {
-        const {colorPalettes, className, title, description, handleCreateColorPalette} = this.props;
+        const {colorPalettes, className, title, description, condensed, handleCreateColorPalette} =
+            this.props;
 
         return (
             <div className={b(null, className)}>
@@ -44,7 +46,10 @@ class ColorPalettesCard extends React.Component<Props> {
                     items={colorPalettes}
                     itemClassName={b('list-item-wrapper')}
                 />
-                <Button className={b('add-palette-button')} onClick={handleCreateColorPalette}>
+                <Button
+                    className={b('add-palette-button', {condensed})}
+                    onClick={handleCreateColorPalette}
+                >
                     <Icon data={iconPlus} />
                     {i18n('component.color-palette-editor', 'label_add-palette')}
                 </Button>
