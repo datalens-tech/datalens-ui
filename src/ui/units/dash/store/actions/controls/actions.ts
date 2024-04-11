@@ -1,3 +1,4 @@
+import isEmpty from 'lodash/isEmpty';
 import {DashTabItemControlData, DashTabItemGroupControlData, DashTabItemType} from 'shared/types';
 import {DatalensGlobalState} from 'ui/index';
 import {AppDispatch} from 'ui/store';
@@ -78,11 +79,13 @@ export const applyGroupControlDialog = () => {
                 groupFieldNames,
             );
 
-            if (validation && firstInvalidIndex === null) {
+            const isValidationFailed = !isEmpty(validation);
+
+            if (isValidationFailed && firstInvalidIndex === null) {
                 firstInvalidIndex = i;
             }
 
-            if (validation) {
+            if (isValidationFailed) {
                 validatedSelectorsGroup.group[i].validation = validation;
             }
         }
