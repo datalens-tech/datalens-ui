@@ -47,6 +47,7 @@ import {DashAction} from '../actions/index';
 import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
 import {getInitialDefaultValue} from '../utils';
 
+import {getActualFieldNameValidation} from './controls/helpers';
 import {TAB_PROPERTIES, getSelectorDialogInitialState} from './dash';
 
 export type DashState = {
@@ -260,7 +261,11 @@ export function dashTypedReducer(
                         : undefined,
                 fieldName:
                     selectorDialog.fieldName === payload.fieldName
-                        ? selectorDialog.validation.fieldName
+                        ? getActualFieldNameValidation(
+                              selectorsGroup.group,
+                              payload.fieldName,
+                              selectorDialog.validation.fieldName,
+                          )
                         : undefined,
                 datasetFieldId:
                     selectorDialog.datasetFieldId === payload.datasetFieldId
@@ -334,10 +339,24 @@ export function dashTypedReducer(
         }
 
         case SET_ACTIVE_SELECTOR_INDEX: {
+            const newCurrentSelector =
+                state.selectorsGroup.group[action.payload.activeSelectorIndex];
+
             return {
                 ...state,
                 activeSelectorIndex: action.payload.activeSelectorIndex,
-                selectorDialog: state.selectorsGroup.group[action.payload.activeSelectorIndex],
+                selectorDialog: {
+                    ...newCurrentSelector,
+                    validation: {
+                        ...newCurrentSelector.validation,
+                        // check if validation with non-unique fieldName is still valid
+                        fieldName: getActualFieldNameValidation(
+                            state.selectorsGroup.group,
+                            newCurrentSelector.fieldName,
+                            newCurrentSelector.validation.fieldName,
+                        ),
+                    },
+                },
             };
         }
 

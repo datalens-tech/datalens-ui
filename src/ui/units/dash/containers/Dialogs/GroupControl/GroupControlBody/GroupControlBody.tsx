@@ -15,7 +15,7 @@ const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
 export const GroupControlBody = () => {
     return (
-        <div>
+        <React.Fragment>
             <FormRow label={i18n('label_source')}>
                 <SelectorTypeSelect showExternalType={false} mode="select" />
             </FormRow>
@@ -25,6 +25,6 @@ export const GroupControlBody = () => {
             <div className={b('section')}>
                 <CommonSettingsSection />
             </div>
-        </div>
+        </React.Fragment>
     );
 };

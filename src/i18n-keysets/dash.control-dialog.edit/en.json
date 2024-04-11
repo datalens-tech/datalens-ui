@@ -63,6 +63,7 @@
   "text_empty-items": "Not found",
   "validation_empty-parameters-values": "Fields with parameters must be filled out",
   "validation_field-name-in-parameters": "The parameter name must not be the same as the names of parameters in the section below",
+  "validation_field-name-unique": "Имя параметра не должно совпадать с именами параметров других селекторов в группе",
   "validation_required": "Field must be filled",
   "value_absolute-date": "Exact date",
   "value_checkbox-default-value-false": "False",

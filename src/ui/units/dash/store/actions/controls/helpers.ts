@@ -1,3 +1,4 @@
+import {StringParams} from '@gravity-ui/chartkit/highcharts';
 import {i18n} from 'i18n';
 import {DashTabItemControlSourceType} from 'shared/types';
 import {validateParamTitleOnlyUnderscore} from 'ui/units/dash/components/ParamsSettings/helpers';
@@ -13,7 +14,41 @@ const fieldNameValidationSourceTypes: Partial<Record<DashTabItemControlSourceTyp
     [DashTabItemControlSourceType.Connection]: true,
 };
 
-export const getControlValidation = (selectorDialog: SelectorDialogState) => {
+const getFieldNameValidation = (
+    sourceType?: DashTabItemControlSourceType,
+    fieldName?: string,
+    groupFieldNames?: Record<string, number>,
+    selectorParameters?: StringParams,
+) => {
+    if (sourceType && fieldNameValidationSourceTypes[sourceType] && !fieldName) {
+        return {fieldName: i18n('dash.control-dialog.edit', 'validation_required')};
+    }
+
+    if (
+        sourceType &&
+        fieldNameValidationSourceTypes[sourceType] &&
+        fieldName &&
+        groupFieldNames &&
+        groupFieldNames[fieldName] > 1
+    ) {
+        return {fieldName: i18n('dash.control-dialog.edit', 'validation_field-name-unique')};
+    }
+
+    if (
+        sourceType === DashTabItemControlSourceType.Connection &&
+        fieldName &&
+        Object.hasOwnProperty.call(selectorParameters, fieldName)
+    ) {
+        return {fieldName: i18n('dash.control-dialog.edit', 'validation_field-name-in-parameters')};
+    }
+
+    return {};
+};
+
+export const getControlValidation = (
+    selectorDialog: SelectorDialogState,
+    groupFieldNames?: Record<string, number>,
+) => {
     const {
         title,
         sourceType,
@@ -31,23 +66,8 @@ export const getControlValidation = (selectorDialog: SelectorDialogState) => {
         validation.title = i18n('dash.control-dialog.edit', 'validation_required');
     }
 
-    if (sourceType && fieldNameValidationSourceTypes[sourceType] && !fieldName) {
-        validation.fieldName = i18n('dash.control-dialog.edit', 'validation_required');
-    }
-
     if (sourceType === DashTabItemControlSourceType.Connection && !connectionQueryContent) {
         validation.connectionQueryContent = i18n('dash.control-dialog.edit', 'validation_required');
-    }
-
-    if (
-        sourceType === DashTabItemControlSourceType.Connection &&
-        fieldName &&
-        Object.hasOwnProperty.call(selectorParameters, fieldName)
-    ) {
-        validation.fieldName = i18n(
-            'dash.control-dialog.edit',
-            'validation_field-name-in-parameters',
-        );
     }
 
     if (sourceType === DashTabItemControlSourceType.Dataset && !datasetFieldId) {
@@ -69,7 +89,10 @@ export const getControlValidation = (selectorDialog: SelectorDialogState) => {
         validation.defaultValue = i18n('dash.control-dialog.edit', 'validation_required');
     }
 
-    return validation;
+    return {
+        ...validation,
+        ...getFieldNameValidation(sourceType, fieldName, groupFieldNames, selectorParameters),
+    };
 };
 
 export const getControlDefaultsForField = (

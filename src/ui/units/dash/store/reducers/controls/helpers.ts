@@ -1,4 +1,28 @@
+import {i18n} from 'i18n';
 import {DashTab, DashTabItemGroupControl} from 'shared/types';
+
+import type {SelectorDialogState} from '../../actions/dashTyped';
+
+export const getActualFieldNameValidation = (
+    group: SelectorDialogState[],
+    fieldName?: string,
+    validation?: string,
+) => {
+    if (
+        !validation ||
+        validation !== i18n('dash.control-dialog.edit', 'validation_field-name-unique')
+    ) {
+        return validation;
+    }
+
+    const dublicateItemIndex = group.filter((groupItem) => groupItem.fieldName === fieldName);
+
+    if (dublicateItemIndex.length > 1) {
+        return validation;
+    }
+
+    return undefined;
+};
 
 export const migrateConnectionsForGroupControl = ({
     openedItemId,
