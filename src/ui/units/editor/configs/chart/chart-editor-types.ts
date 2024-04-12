@@ -524,6 +524,28 @@ export function getChartEditorTypes(type: string) {
                         },
                     ],
                 },
+                {
+                    name: 'Doc Ru',
+                    id: 'documentation_ru',
+                    language: 'markdown',
+                    docs: [
+                        {
+                            title: 'section_common-information',
+                            path: DOCS_PATH.MODULE,
+                        },
+                    ],
+                },
+                {
+                    name: 'Doc En',
+                    id: 'documentation_en',
+                    language: 'markdown',
+                    docs: [
+                        {
+                            title: 'section_common-information',
+                            path: DOCS_PATH.MODULE,
+                        },
+                    ],
+                },
             ],
         },
         markup_node: {
