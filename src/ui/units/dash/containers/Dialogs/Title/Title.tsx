@@ -118,7 +118,7 @@ class Title extends React.PureComponent<Props, State> {
                             checked={Boolean(autoHeight)}
                             onChange={this.handleAutoHeightChanged}
                         >
-                            Autoheight
+                            {i18n('dash.dashkit-plugin-common.view', 'label_autoheight-checkbox')}
                         </Checkbox>
                     </div>
                 </Dialog.Body>
