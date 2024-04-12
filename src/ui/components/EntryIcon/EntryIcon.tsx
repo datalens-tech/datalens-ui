@@ -73,6 +73,7 @@ const typeToIcon: Record<string, IconData> = {
     [ConnectorType.ChOverYtUserAuth]: iconCHYTUser,
     [ConnectorType.Chyt]: iconChytYC,
     [ConnectorType.ChytNb]: iconChytYC,
+    [ConnectorType.ChytNb_v2]: iconChytYC,
     [ConnectorType.Chydb]: iconCHYDB,
     [ConnectorType.Ydb]: iconYDB,
     [ConnectorType.Yq]: iconYQ,
