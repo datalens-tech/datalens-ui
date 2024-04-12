@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ConfigItem, ConfigItemWithTabs, PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {ConfigItem, ConfigItemWithTabs, PluginWidgetProps} from '@gravity-ui/dashkit';
 import type {DebouncedFunc} from 'lodash';
 import {StringParams} from 'shared';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';

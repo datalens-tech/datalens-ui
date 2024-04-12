@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {pickActionParamsFromParams} from '@gravity-ui/dashkit';
+import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import DataTable, {DataTableProps, Settings} from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
 import {TableCommonCell, TableHead, TableRow} from 'shared';

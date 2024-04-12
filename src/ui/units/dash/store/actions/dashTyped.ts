@@ -1,8 +1,13 @@
 import React from 'react';
 
-import {AddConfigItem, Config, DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
-import {PluginTextProps} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
-import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Title';
+import type {
+    AddConfigItem,
+    Config,
+    DashKit,
+    ItemsStateAndParams,
+    PluginTextProps,
+    PluginTitleProps,
+} from '@gravity-ui/dashkit';
 import {i18n} from 'i18n';
 import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';

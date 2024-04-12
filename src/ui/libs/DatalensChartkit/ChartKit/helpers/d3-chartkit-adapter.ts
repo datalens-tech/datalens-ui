@@ -1,5 +1,5 @@
 import {ChartKitWidgetData, ChartKitWidgetSeriesData} from '@gravity-ui/chartkit';
-import {pickActionParamsFromParams} from '@gravity-ui/dashkit';
+import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 
