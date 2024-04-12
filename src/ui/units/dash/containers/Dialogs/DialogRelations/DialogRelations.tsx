@@ -1,7 +1,7 @@
 /* eslint-disable complexity */
 import React from 'react';
 
-import {Config, DashKit} from '@gravity-ui/dashkit';
+import type {Config, DashKit} from '@gravity-ui/dashkit';
 import {ChevronDown, TriangleExclamationFill} from '@gravity-ui/icons';
 import {Button, Dialog, DropdownMenu, Icon, Popup, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';

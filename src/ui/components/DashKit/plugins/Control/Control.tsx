@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';

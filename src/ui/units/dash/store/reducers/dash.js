@@ -1,4 +1,5 @@
-import {DashKit, generateUniqId} from '@gravity-ui/dashkit';
+import {DashKit} from '@gravity-ui/dashkit';
+import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import {I18n} from 'i18n';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';

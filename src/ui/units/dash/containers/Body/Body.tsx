@@ -1,14 +1,13 @@
 import React from 'react';
 
-import {
+import {DashKit as DashKitComponent, ActionPanel as DashkitActionPanel} from '@gravity-ui/dashkit';
+import type {
     ConfigItem,
-    DashKit as DashKitComponent,
     DashKitProps,
-    ActionPanel as DashkitActionPanel,
     ActionPanelItem as DashkitActionPanelItem,
-    MenuItems,
-    type PreparedCopyItemOptions,
+    PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
+import {MenuItems} from '@gravity-ui/dashkit/helpers';
 import {
     ChartColumn,
     Code,

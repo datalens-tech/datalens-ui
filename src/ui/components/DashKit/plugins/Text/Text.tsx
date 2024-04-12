@@ -1,10 +1,11 @@
 import React from 'react';
 
-import pluginTextBase, {
+import {
     PluginText,
     PluginTextObjectSettings,
     PluginTextProps,
-} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
+    pluginText,
+} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 
 import {getRandomCKId} from '../../../../libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
@@ -18,10 +19,10 @@ type Props = Omit<PluginTextProps, 'apiHandler'>;
 const b = block('dashkit-plugin-text-container');
 
 const textPlugin = {
-    ...pluginTextBase,
+    ...pluginText,
     setSettings(settings: PluginTextObjectSettings) {
         const {apiHandler} = settings;
-        pluginTextBase._apiHandler = apiHandler;
+        pluginText._apiHandler = apiHandler;
         return textPlugin;
     },
     renderer: function Wrapper(
@@ -36,11 +37,11 @@ const textPlugin = {
          */
         const textHandler = React.useCallback(
             async (arg: {text: string}) => {
-                const text = await pluginTextBase._apiHandler!(arg);
+                const text = await pluginText._apiHandler!(arg);
                 setTextReady(text?.result);
                 return text;
             },
-            [pluginTextBase._apiHandler],
+            [pluginText._apiHandler],
         );
 
         const content = <PluginText {...props} apiHandler={textHandler} ref={forwardedRef} />;
