@@ -30,6 +30,7 @@ class ColorPalettesCard extends React.Component<Props> {
     render() {
         const {colorPalettes, className, title, description, condensed, handleCreateColorPalette} =
             this.props;
+        const hasPalettes = colorPalettes.length > 0;
 
         return (
             <div className={b(null, className)}>
@@ -37,15 +38,18 @@ class ColorPalettesCard extends React.Component<Props> {
                     <div className={b('title')}>{title}</div>
                     <div className={b('description')}>{description}</div>
                 </div>
-                <List<ColorPalette>
-                    itemHeight={40}
-                    virtualized={false}
-                    filterable={false}
-                    sortable={false}
-                    renderItem={this.renderPaletteListItem}
-                    items={colorPalettes}
-                    itemClassName={b('list-item-wrapper')}
-                />
+                {hasPalettes && (
+                    <List<ColorPalette>
+                        className={b('list-items', {condensed})}
+                        itemHeight={40}
+                        virtualized={false}
+                        filterable={false}
+                        sortable={false}
+                        renderItem={this.renderPaletteListItem}
+                        items={colorPalettes}
+                        itemClassName={b('list-item-wrapper')}
+                    />
+                )}
                 <Button
                     className={b('add-palette-button', {condensed})}
                     onClick={handleCreateColorPalette}
