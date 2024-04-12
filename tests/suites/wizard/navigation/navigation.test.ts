@@ -32,8 +32,7 @@ datalensTest.describe('Wizard - Navigation', () => {
         async ({page}: {page: Page}) => {
             const expectedRobotChartsBreadcrumbs = [
                 'breadcrumbs-item-root',
-                // This test will be fail after fixing Breadcrumbs calculation width problem
-                // 'breadcrumbs-item-Users',
+                'breadcrumbs-item-Users',
                 'breadcrumbs-item-robot-charts',
                 'breadcrumbs-item-yagr',
             ];

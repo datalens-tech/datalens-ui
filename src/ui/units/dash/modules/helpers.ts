@@ -1,12 +1,7 @@
 import React from 'react';
 
-import {
-    Config,
-    ConfigItem,
-    ConfigItemData,
-    ConfigLayout,
-    extractIdsFromConfig,
-} from '@gravity-ui/dashkit';
+import type {Config, ConfigItem, ConfigItemData, ConfigLayout} from '@gravity-ui/dashkit';
+import {extractIdsFromConfig} from '@gravity-ui/dashkit/helpers';
 import assignWith from 'lodash/assignWith';
 import memoize from 'lodash/memoize';
 import throttle from 'lodash/throttle';

@@ -1,14 +1,13 @@
 import React from 'react';
 
-import {
+import type {
     AddConfigItem,
     Config,
     DashKit,
     ItemsStateAndParams,
-    type StringParams,
+    PluginTextProps,
+    PluginTitleProps,
 } from '@gravity-ui/dashkit';
-import {PluginTextProps} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
-import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Title';
 import {i18n} from 'i18n';
 import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
@@ -27,6 +26,8 @@ import {
     DatasetFieldType,
     EntryUpdateMode,
     Operations,
+    RecursivePartial,
+    StringParams,
 } from 'shared';
 import {AppDispatch} from 'ui/store';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
@@ -343,8 +344,8 @@ type SetItemDataBase = {
     autoHeight?: boolean;
     source?: ItemDataSource;
 };
-export type SetItemDataText = Partial<PluginTextProps['data']> & SetItemDataBase;
-export type SetItemDataTitle = Partial<PluginTitleProps['data']> & SetItemDataBase;
+export type SetItemDataText = RecursivePartial<PluginTextProps['data']> & SetItemDataBase;
+export type SetItemDataTitle = RecursivePartial<PluginTitleProps['data']> & SetItemDataBase;
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
 export type SetItemDataArgs = {
@@ -396,7 +397,8 @@ export type SelectorDialogState = {
     datasetFieldType?: DatasetFieldType;
     placementMode: 'auto' | '%' | 'px';
     width: string;
-    id: string;
+    id?: string;
+    namespace?: string;
 };
 
 export type AcceptableValue = {
@@ -761,8 +763,15 @@ export function purgeData(data: DashData) {
                     allItemsIds.add(itemId);
                     currentItemsIds.add(itemId);
 
-                    if (type === ITEM_TYPE.CONTROL) {
-                        currentControlsIds.add(itemId);
+                    if (type === ITEM_TYPE.CONTROL || type === ITEM_TYPE.GROUP_CONTROL) {
+                        // if it is group control all connections set on its group items
+                        if ('group' in data) {
+                            data.group.forEach((widgetItem) => {
+                                currentControlsIds.add(widgetItem.id);
+                            });
+                        } else {
+                            currentControlsIds.add(itemId);
+                        }
                     } else if (type === ITEM_TYPE.WIDGET) {
                         (data as DashTabItemWidget['data']).tabs.forEach(({id: widgetTabId}) => {
                             allWidgetTabsIds.add(widgetTabId);

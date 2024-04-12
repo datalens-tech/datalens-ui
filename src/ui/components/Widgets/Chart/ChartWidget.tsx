@@ -2,7 +2,10 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {pickActionParamsFromParams, pickExceptActionParamsFromParams} from '@gravity-ui/dashkit';
+import {
+    pickActionParamsFromParams,
+    pickExceptActionParamsFromParams,
+} from '@gravity-ui/dashkit/helpers';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';
 import isEmpty from 'lodash/isEmpty';

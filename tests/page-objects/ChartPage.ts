@@ -1,6 +1,7 @@
 import {ElementHandle} from '@playwright/test';
 
 import {
+    ChartSaveControlsQA,
     ControlQA,
     DialogConfirmQA,
     DlNavigationQA,
@@ -262,7 +263,7 @@ export class ChartPage extends BasePage {
             urlsForValidation.map((url) => this.waitForSuccessfulResponse(url)),
         );
 
-        await this.page.click(slct('save-more-dropdown'));
+        await this.page.click(slct(ChartSaveControlsQA.SaveMoreDropdown));
 
         await this.page.click(slct('save-as-new-chart'));
 

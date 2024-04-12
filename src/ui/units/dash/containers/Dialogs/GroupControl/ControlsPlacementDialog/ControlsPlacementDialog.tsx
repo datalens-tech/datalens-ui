@@ -31,14 +31,14 @@ const b = block('controls-placement-dialog');
 
 const i18n = I18n.keyset('dash.controls-placement-dialog.edit');
 
-const resetAutoValues = (items: SelectorDialogState[]) =>
-    items.map((item) =>
+const resetAutoValues = (group: SelectorDialogState[]) =>
+    group.map((item) =>
         item.placementMode === CONTROLS_PLACEMENT_MODE.AUTO ? {...item, width: ''} : item,
     );
 
 const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
-    const [itemsState, setItemsState] = React.useState(selectorsGroup.items);
+    const [itemsState, setItemsState] = React.useState(selectorsGroup.group);
     const [errorsIndexes, setErrorsIndexes] = React.useState<number[]>([]);
     const [showErrors, setShowErrors] = React.useState(false);
     const dispatch = useDispatch();
@@ -67,7 +67,7 @@ const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
         dispatch(
             updateSelectorsGroup({
                 ...selectorsGroup,
-                items: updatedItemsState,
+                group: updatedItemsState,
             }),
         );
         onClose();

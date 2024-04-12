@@ -32,7 +32,7 @@ class NavigationModal extends React.Component {
         visible: PropTypes.bool,
         aside: PropTypes.bool,
         hideSidebar: PropTypes.bool,
-        onlyWorkbooksMode: PropTypes.bool,
+        isOnlyCollectionsMode: PropTypes.bool,
     };
     static defaultProps = {
         onCrumbClick: noop,
@@ -163,7 +163,7 @@ class NavigationModal extends React.Component {
                         <CreateEntry
                             place={place}
                             onClick={onCreateMenuClick}
-                            onlyWorkbooksMode={this.props.onlyWorkbooksMode}
+                            isOnlyCollectionsMode={this.props.isOnlyCollectionsMode}
                         />
                     </NavigationEntries>
                 </div>

@@ -29,6 +29,7 @@ import {
     DatasetsListData,
     RelationType,
     RelationsData,
+    WidgetsTypes,
 } from '../types';
 
 import {getChartAndControlRelations, getChartToChartRelations} from './helpersChart';
@@ -228,21 +229,22 @@ export const showInRelation = (
 
 const getCurrentNamespaceItems = ({
     metaItems,
-    widgetId,
+    id,
 }: {
     metaItems: DashMetaDataNoRelations;
-    widgetId: DashkitMetaDataItem['widgetId'];
+    id?: string;
 }) => {
     if (!metaItems || !metaItems.length) {
         return [];
     }
 
-    if (!widgetId) {
+    if (!id) {
         return metaItems || [];
     }
-    return metaItems.filter(
-        (item) => item.widgetId !== widgetId && item.namespace === DEFAULT_ALIAS_NAMESPACE,
-    );
+    return metaItems.filter((item) => {
+        const itemId = item.itemId || item.widgetId;
+        return itemId !== id && item.namespace === DEFAULT_ALIAS_NAMESPACE;
+    });
 };
 
 export const getDefaultTypeByIgnore = (
@@ -399,15 +401,14 @@ export const getRelationsInfo = (args: {
     let byAliases: Array<Array<string>> = [];
     const indirectAliases: Array<Array<string>> = [];
 
+    const rowId = row.itemId || row.widgetId;
+    const currentId = widget.itemId || widget.widgetId;
+
     const ignoreConntections = connections.filter(({kind}) => kind === CONNECTION_KIND.IGNORE);
 
-    const isIgnored = ignoreConntections.some(
-        ({from, to}) => from === widget.widgetId && to === row.widgetId,
-    );
+    const isIgnored = ignoreConntections.some(({from, to}) => from === currentId && to === rowId);
 
-    const isIgnoring = ignoreConntections.some(
-        ({from, to}) => from === row.widgetId && to === widget.widgetId,
-    );
+    const isIgnoring = ignoreConntections.some(({from, to}) => from === rowId && to === currentId);
 
     const isIndirectRelation = !isIgnored && !isIgnoring;
 
@@ -463,17 +464,19 @@ export const getRelationsData = ({
         return [];
     }
 
+    const currentId = widgetMeta.itemId || widgetMeta.widgetId;
+
     const metaItems = getCurrentNamespaceItems({
         metaItems: metaData,
-        widgetId: widgetMeta.widgetId,
+        id: currentId,
     });
 
     const relationsItems: Array<DashkitMetaDataItem> = [];
 
-    // filtering logic is reproduced from old links
     metaItems
         .filter((item) => {
-            return item.widgetId !== widgetMeta.widgetId && showInRelation(widgetMeta, item);
+            const id = item.itemId || item.widgetId;
+            return id !== currentId && showInRelation(widgetMeta, item);
         })
         .forEach((item) => {
             const relations = getRelationsInfo({
@@ -520,11 +523,17 @@ export const getCurrentWidgetMeta = ({
     metaData,
     dashkitData,
     widget,
+    itemId,
 }: {
     metaData: DashMetaDataNoRelations;
     dashkitData: DashKit | null;
     widget: DashTabItem;
+    // current item id for widgets with multiple items
+    itemId: string | null;
 }): DashkitMetaDataItem => {
+    if (itemId) {
+        return (metaData?.find((item) => item.itemId === itemId) || {}) as DashkitMetaDataItem;
+    }
     const tabInfo = getCurrentWidgetTabShortInfo(dashkitData, widget);
     return (metaData?.find((item) => item.widgetId === tabInfo.id) || {}) as DashkitMetaDataItem;
 };
@@ -562,16 +571,18 @@ export const getMappedFilters = (items: Array<FiltersTypes>) => {
 
 export const getChangedRelations = (
     items: DashMetaData,
-    changed: Record<string, RelationType> | undefined,
+    changed: WidgetsTypes | undefined,
+    currentWidgetId: string,
 ) => {
     return items.map((item) => {
         const newItem = {
             ...item,
         };
-        if (changed && changed[item.widgetId]) {
+        const id = item.itemId || item.widgetId;
+        if (changed && changed[currentWidgetId] && changed[currentWidgetId][id]) {
             newItem.relations = {
                 ...item.relations,
-                type: changed[item.widgetId],
+                type: changed[currentWidgetId][id],
             };
         }
         return newItem;

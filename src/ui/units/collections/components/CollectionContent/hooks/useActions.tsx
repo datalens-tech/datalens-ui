@@ -24,6 +24,7 @@ import {
 } from '../../../../../components/CollectionsStructure';
 import {DropdownAction} from '../../../../../components/DropdownAction/DropdownAction';
 import {DIALOG_IAM_ACCESS} from '../../../../../components/IamAccessDialog';
+import {registry} from '../../../../../registry';
 import {ResourceType} from '../../../../../registry/units/common/types/components/IamAccessDialog';
 import {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
@@ -40,6 +41,9 @@ type UseActionsArgs = {
 
 export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActionsArgs) => {
     const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
+
+    const {customizeWorkbooksActions, customizeCollectionsActions} =
+        registry.collections.functions.getAll();
 
     const history = useHistory();
 
@@ -150,7 +154,7 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
 
             actions.push([...otherActions]);
 
-            return actions;
+            return customizeCollectionsActions(item, actions);
         },
         [collectionsAccessEnabled, dispatch, onCloseMoveDialog, fetchCollectionContent],
     );
@@ -287,7 +291,7 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
 
             actions.push([...otherActions]);
 
-            return actions;
+            return customizeWorkbooksActions(item, actions);
         },
         [collectionsAccessEnabled, dispatch, onCloseMoveDialog, history, fetchCollectionContent],
     );

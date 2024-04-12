@@ -114,14 +114,16 @@ class NavigationBase extends React.Component {
         onCrumbClick: PropTypes.func,
         onEntryClick: PropTypes.func,
         currentPageEntry: PropTypes.object,
-        onlyWorkbooksMode: PropTypes.bool,
+        isOnlyCollectionsMode: PropTypes.bool,
         openDialog: PropTypes.func,
         closeDialog: PropTypes.func,
+
+        onPermissionError: PropTypes.func,
     };
     static defaultProps = {
         navConstructor: NavigationInline,
         root: PLACE.ROOT,
-        onlyWorkbooksMode: false,
+        isOnlyCollectionsMode: false,
     };
     constructor(props) {
         super(props);
@@ -270,17 +272,16 @@ class NavigationBase extends React.Component {
 
         switch (type) {
             case CreateMenuValue.Folder: {
-                if (!this.props.onlyWorkbooksMode) {
+                if (!this.props.isOnlyCollectionsMode) {
                     this.createFolder();
                 }
                 break;
             }
             case CreateMenuValue.Dashboard: {
-                if (this.props.onlyWorkbooksMode) {
+                if (this.props.isOnlyCollectionsMode) {
                     this.props.openDialog({
                         id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
                         props: {
-                            open: true,
                             initialCollectionId: null,
                             entryType: 'dashboard',
                             onClose: () => {
@@ -295,33 +296,15 @@ class NavigationBase extends React.Component {
                 break;
             }
             case CreateMenuValue.Connection: {
-                if (this.props.onlyWorkbooksMode) {
-                    this.props.openDialog({
-                        id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
-                        props: {
-                            open: true,
-                            initialCollectionId: null,
-                            entryType: 'connection',
-                            onApply: () => {
-                                this.closeNavigation();
-                            },
-                            onClose: () => {
-                                this.props.closeDialog();
-                            },
-                        },
-                    });
-                } else {
-                    history.push(`/connections/new${query}`);
-                    this.closeNavigation();
-                }
+                history.push(`/connections/new${query}`);
+                this.closeNavigation();
                 break;
             }
             case CreateMenuValue.Dataset: {
-                if (this.props.onlyWorkbooksMode) {
+                if (this.props.isOnlyCollectionsMode) {
                     this.props.openDialog({
                         id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
                         props: {
-                            open: true,
                             initialCollectionId: null,
                             entryType: 'dataset',
                             onApply: () => {
@@ -339,11 +322,10 @@ class NavigationBase extends React.Component {
                 break;
             }
             case CreateMenuValue.Widget: {
-                if (this.props.onlyWorkbooksMode) {
+                if (this.props.isOnlyCollectionsMode) {
                     this.props.openDialog({
                         id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
                         props: {
-                            open: true,
                             initialCollectionId: null,
                             entryType: 'wizard',
                             onApply: () => {
@@ -361,11 +343,10 @@ class NavigationBase extends React.Component {
                 break;
             }
             case CreateMenuValue.QL: {
-                if (this.props.onlyWorkbooksMode) {
+                if (this.props.isOnlyCollectionsMode) {
                     this.props.openDialog({
                         id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
                         props: {
-                            open: true,
                             initialCollectionId: null,
                             entryType: 'ql',
                             onApply: () => {
@@ -383,11 +364,10 @@ class NavigationBase extends React.Component {
                 break;
             }
             case CreateMenuValue.SQL: {
-                if (this.props.onlyWorkbooksMode) {
+                if (this.props.isOnlyCollectionsMode) {
                     this.props.openDialog({
                         id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
                         props: {
-                            open: true,
                             initialCollectionId: null,
                             entryType: 'ql',
                             onApply: () => {
