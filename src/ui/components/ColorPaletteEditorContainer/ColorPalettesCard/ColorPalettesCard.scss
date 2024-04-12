@@ -38,6 +38,10 @@
         margin-top: 0;
     }
 
+    &__list-items_condensed {
+        margin-bottom: 10px;
+    }
+
     &__list-item-wrapper:hover &__more-icon {
         opacity: 1;
     }
