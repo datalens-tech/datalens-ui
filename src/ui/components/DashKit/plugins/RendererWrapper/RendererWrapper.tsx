@@ -8,10 +8,13 @@ const b = block('dashkit-plugin-container');
 
 type RendererProps = {
     type: 'widget' | 'text';
+    nodeRef?: React.RefObject<HTMLDivElement>;
 };
 
-export const RendererWrapper: React.FC<RendererProps> = React.memo(({children, type}) => (
-    <div className={b('wrapper', {[type]: Boolean(type)})}>{children}</div>
+export const RendererWrapper: React.FC<RendererProps> = React.memo(({children, type, nodeRef}) => (
+    <div ref={nodeRef} className={b('wrapper', {[type]: Boolean(type)})}>
+        {children}
+    </div>
 ));
 
 RendererWrapper.displayName = 'RendererWrapper';

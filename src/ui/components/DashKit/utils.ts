@@ -38,6 +38,8 @@ export type AdjustWidgetLayoutProps = {
     gridLayout: PluginWidgetProps['gridLayout'];
     layout: PluginWidgetProps['layout'];
     cb: PluginWidgetProps['adjustWidgetLayout'];
+    mainNodeSelector?: string;
+    scrollableNodeSelector?: string;
 };
 
 const getScrollbarWidth = (node: HTMLElement) => node.offsetWidth - node.clientWidth;
@@ -106,6 +108,8 @@ export function adjustWidgetLayout({
     gridLayout,
     layout,
     cb,
+    mainNodeSelector,
+    scrollableNodeSelector,
 }: AdjustWidgetLayoutProps) {
     if (DL.IS_MOBILE || needSetDefault) {
         cb({widgetId, needSetDefault});
@@ -118,9 +122,9 @@ export function adjustWidgetLayout({
     }
 
     const scrollableNode = node.querySelector(
-        `.${CHARTKIT_SCROLLABLE_NODE_CLASSNAME}`,
+        scrollableNodeSelector || `.${CHARTKIT_SCROLLABLE_NODE_CLASSNAME}`,
     ) as HTMLElement | null;
-    const mainNode = node.querySelector(`.${CHARTKIT_MAIN_CLASSNAME}`);
+    const mainNode = node.querySelector(mainNodeSelector || `.${CHARTKIT_MAIN_CLASSNAME}`);
     const errorNode = node.querySelector(`.${CHARTKIT_ERROR_NODE_CLASSNAME}`);
 
     const rootNodeTopPosition = node.getBoundingClientRect().top;

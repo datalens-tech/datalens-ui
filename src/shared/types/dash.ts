@@ -116,6 +116,7 @@ export interface DashTabItemText extends DashTabItemBase {
     type: DashTabItemType.Text;
     data: {
         text: string;
+        autoHeight?: boolean;
     };
 }
 
