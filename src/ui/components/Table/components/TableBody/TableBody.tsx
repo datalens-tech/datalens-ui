@@ -10,7 +10,7 @@ const b = block('dl-table');
 type Props = {
     columns: ColumnDef<TData, unknown>[];
     rows: Row<TData>[];
-    noData: TableProps['noData'];
+    noData?: TableProps['noData'];
     onCellClick?: OnCellClickFn;
     tableDimensions?: TableDimensions;
 };

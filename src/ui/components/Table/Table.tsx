@@ -8,10 +8,13 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import block from 'bem-cn-lite';
+import {isSafari} from 'ui/libs/DatalensChartkit/ChartKit/modules/graph/config/utils';
 
 import {TableBody} from './components/TableBody/TableBody';
 import {TableFooter} from './components/TableFooter/TableFooter';
+import {TableGhost} from './components/TableGhost/TableGhost';
 import {TableHead} from './components/TableHead/TableHead';
+import {useColumnsWidth} from './hooks/use-columns-width';
 import {useDevicePixelRatio} from './hooks/use-device-pixel-ratio';
 import {useTableDimensions} from './hooks/use-table-dimensions';
 import type {TableProps} from './types';
@@ -33,12 +36,11 @@ export const Table = (props: TableProps) => {
     } = props;
     const {head, footer, rows} = props.data;
     const tableRef = React.useRef<HTMLTableElement>(null);
+    const ghostTable = React.useRef<HTMLTableElement>(null);
 
     const columns = React.useMemo(() => {
         return getTableColumns({head, rows, footer});
     }, [head, rows, footer]);
-
-    const {tableDimensions} = useTableDimensions({table: tableRef, data: props.data});
 
     const data = React.useMemo(() => {
         return getTableData({head, rows});
@@ -68,6 +70,9 @@ export const Table = (props: TableProps) => {
         },
     });
 
+    const {tableWidth, columns: _colsWidth} = useColumnsWidth({table: ghostTable}) || {};
+    const {tableDimensions} = useTableDimensions({table: tableRef, data: props.data});
+
     const shouldShowFooter = columns.some((column) => column.footer);
     const tableRows = table.getRowModel().rows;
 
@@ -79,16 +84,24 @@ export const Table = (props: TableProps) => {
         } as React.CSSProperties;
     }
 
-    tableStyle.minWidth = tableDimensions?.minWidth;
+    const userAgent = navigator.userAgent.toLowerCase();
+    const shouldUseGhost = isSafari && Number(userAgent.match(/version\/(\d+\.+\d+)/i)?.[1]) < 16;
 
     return (
         <div style={{overflow: 'auto', height: '100%', position: 'relative'}}>
-            <table className={b()} data-qa={qa} ref={tableRef} style={tableStyle}>
+            {shouldUseGhost && <TableGhost table={table} ref={ghostTable} />}
+            <table
+                ref={tableRef}
+                className={b()}
+                data-qa={qa}
+                style={{...tableStyle, width: tableWidth}}
+            >
                 {title && <caption className={b('title')}>{title.text}</caption>}
                 <TableHead
                     headers={table.getHeaderGroups()}
                     sticky={headerOptions?.sticky}
                     tableDimensions={tableDimensions}
+                    columns={_colsWidth}
                 />
                 <TableBody
                     columns={columns}
