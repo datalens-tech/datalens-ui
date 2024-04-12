@@ -601,6 +601,10 @@ export class DataFetcher {
             ctx.getMetadata(),
         );
 
+        if(req.headers['x-rpc-authorization']) {
+            headers['x-request-id'] = '{{' + req.headers['x-rpc-authorization'] + '}}.' + headers['x-request-id'];
+        }
+
         if (sourceType === 'charts') {
             const incomingHeader = req.headers['x-charts-fetcher-via'] || '';
 
