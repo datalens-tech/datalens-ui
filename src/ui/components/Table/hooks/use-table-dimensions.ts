@@ -11,11 +11,12 @@ type UseTableDimensionsArgs = {
 
 export const useTableDimensions = (args: UseTableDimensionsArgs) => {
     const {table: tableRef, data} = args;
+    const hasPinnedColumns = data.head?.some((d) => d.pinned);
     const [tableDimensions, setTableDimensions] = React.useState<TableDimensions | undefined>();
 
     const setDimensions = React.useCallback(() => {
         const table = tableRef.current;
-        if (!table) {
+        if (!table || !hasPinnedColumns) {
             return;
         }
 
