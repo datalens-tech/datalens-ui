@@ -26,6 +26,7 @@ class ErrorContent extends React.PureComponent {
     static propTypes = {
         className: PropTypes.string,
         title: PropTypes.string,
+        isHtmlInTitle: PropTypes.bool,
         description: PropTypes.node,
         type: PropTypes.oneOf(Object.values(ErrorContentTypes)),
         action: PropTypes.shape({
@@ -98,13 +99,17 @@ class ErrorContent extends React.PureComponent {
     }
 
     renderTitle() {
-        const {title = i18n('label_error-general'), hideTitle} = this.props;
+        const {title = i18n('label_error-general'), isHtmlInTitle = false, hideTitle} = this.props;
 
         if (hideTitle) {
             return null;
         }
 
-        return <div className={b('title')}>{title}</div>;
+        if (isHtmlInTitle) {
+            return <div className={b('title')} dangerouslySetInnerHTML={{__html: title}}></div>;
+        } else {
+            return <div className={b('title')}>{title}</div>;
+        }
     }
 
     renderDescription() {
@@ -258,6 +263,7 @@ class ErrorContent extends React.PureComponent {
             case ErrorContentTypes.CLOUD_FOLDER_ACCESS_DENIED:
             case ErrorContentTypes.NO_ENTRY_ACCESS:
             case ErrorContentTypes.AUTH_DENIED:
+            case ErrorContentTypes.FORBIDDEN_SSO:
                 imageName = 'noAccess';
                 break;
             case ErrorContentTypes.ERROR:
