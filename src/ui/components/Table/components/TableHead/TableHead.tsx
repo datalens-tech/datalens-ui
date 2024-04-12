@@ -13,11 +13,10 @@ type Props = {
     headers: HeaderGroup<TData>[];
     sticky?: boolean;
     tableDimensions?: TableDimensions;
-    columns?: {width: number}[];
 };
 
 export const TableHead = (props: Props) => {
-    const {headers, sticky, tableDimensions, columns} = props;
+    const {headers, sticky, tableDimensions} = props;
 
     return (
         <thead className={b('header', {sticky})}>
@@ -47,7 +46,7 @@ export const TableHead = (props: Props) => {
                             const isLastPinnedCell = pinned && !nextCellData?.pinned;
                             const cellDimensions = tableDimensions?.head[rowIndex]?.[index];
                             const cellStyle: React.CSSProperties = {
-                                width: width || columns?.[index]?.width,
+                                width,
                                 left: pinned ? cellDimensions?.left : undefined,
                             };
 
