@@ -5,6 +5,6 @@ export default createFeatureConfig({
     name: Feature.PinnedColumns,
     state: {
         development: true,
-        production: false,
+        production: true,
     },
 });

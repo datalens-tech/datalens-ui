@@ -66,7 +66,6 @@ export const TableBody = (props: Props) => {
                                 ? tableDimensions?.head[0]?.[index]?.left
                                 : undefined;
                             const cellStyle = {
-                                width,
                                 left,
                                 ...originalCellData?.css,
                             };
@@ -85,7 +84,7 @@ export const TableBody = (props: Props) => {
                                     }
                                     rowSpan={originalCellData?.rowSpan}
                                 >
-                                    <div className={b('td-content')}>
+                                    <div className={b('td-content')} style={{width}}>
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </div>
                                 </td>
