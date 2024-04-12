@@ -51,12 +51,14 @@ const initialSettings: AsideHeaderSettings = {
     ...(DL.IS_LANDING ? getLandingNavigationSettings() : {}),
 };
 
+const INITIAL_ASIDE_HEADER_SIZE = 236;
+
 const initialState: Omit<AsideHeaderState, 'isCompact'> = {
     startFromNavigation: '',
     panelVisible: false,
     place: '',
     asideHeaderData: {
-        size: 0,
+        size: INITIAL_ASIDE_HEADER_SIZE,
     },
     settings: initialSettings,
     currentPageEntry: null,
