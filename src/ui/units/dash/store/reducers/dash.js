@@ -4,7 +4,6 @@ import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
-import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import Utils from 'utils';
 
@@ -63,7 +62,6 @@ const initialState = {
 export function getGroupSelectorDialogInitialState() {
     return {
         group: [],
-        id: getRandomKey(),
     };
 }
 
@@ -84,7 +82,6 @@ export function getSelectorDialogInitialState(args = {}) {
         showTitle: true,
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
-        id: getRandomKey(),
         required: false,
     };
 }
