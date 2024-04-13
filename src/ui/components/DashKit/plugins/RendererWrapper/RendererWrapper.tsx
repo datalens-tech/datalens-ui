@@ -6,8 +6,10 @@ import './RendererWrapper.scss';
 
 const b = block('dashkit-plugin-container');
 
+export const RENDERER_WRAPPER_CLASSNAME = b();
+
 type RendererProps = {
-    type: 'widget' | 'text';
+    type: 'widget' | 'text' | 'title';
     nodeRef?: React.RefObject<HTMLDivElement>;
 };
 
