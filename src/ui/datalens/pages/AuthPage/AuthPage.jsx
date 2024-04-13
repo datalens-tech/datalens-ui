@@ -2,9 +2,6 @@ import React, {useState} from 'react';
 import { TextInput, Button } from '@gravity-ui/uikit';
 
 import block from 'bem-cn-lite';
-import { I18n } from 'i18n';
-import { opensourceEndpoints } from 'shared/endpoints/constants/opensource';
-import {DataLensApiError} from 'ui';
 import Utils from '../../../utils/utils';
 import {useDispatch} from 'react-redux';
 
@@ -20,7 +17,7 @@ const AuthPage = ({setToken}) => {
     const controlSize = 'm';
 
     function onAuth() {
-        Utils.getAuthToken({login: login, password: password}).then((response)=> {
+        Utils.getAuthToken({login: encodeURIComponent(login), password: encodeURIComponent(password)}).then((response)=> {
             if (response.data) {
                 setToken(response.data.token);
             } else {

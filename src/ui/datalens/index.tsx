@@ -42,7 +42,10 @@ const CollectionsNavigtaionPage = React.lazy(
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
 
-const AuthContext = React.createContext("");
+export const AuthContext = React.createContext({
+    token: "",
+    setToken: function(token:string){console.log(token)}
+});
 
 const DatalensPageView = (props: any) => {
     var token = props.token;
@@ -59,14 +62,14 @@ const DatalensPageView = (props: any) => {
         );
     }
     return (
-        <AuthContext.Provider value={token}>
+        <AuthContext.Provider value={{token, setToken}}>
             <React.Suspense fallback={<FallbackPage />}>
                 <Switch>
                     {!token && location?.pathname !== "/auth" && <Redirect from="*" to="/auth"/>}
                     {token && <Redirect from="/auth" to="/"/>}
                     <Route
                         path={'/auth'}
-                        component={()=><AuthPage setToken={setToken}/>}
+                        component={()=><AuthPage setToken={setToken} />}
                     />
                     <Route
                         path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}

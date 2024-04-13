@@ -1,4 +1,5 @@
 import React from 'react';
+import {Button} from '@gravity-ui/uikit';
 
 import {ActionBar} from '@gravity-ui/navigation';
 import {Skeleton} from '@gravity-ui/uikit';
@@ -9,6 +10,7 @@ import {selectAsideHeaderData} from '../../../../store/selectors/asideHeader';
 import {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
 
 import './CollectionsNavigationLayout.scss';
+import {AuthContext} from 'ui/datalens/index';
 
 const b = block('dl-collections-navigation-layout');
 
@@ -48,6 +50,7 @@ type Props = {
 export const CollectionsNavigationLayout = React.memo<Props>(
     // eslint-disable-next-line complexity
     ({layout, skeletonsSettings, children}) => {
+        const auth = React.useContext(AuthContext);
         const asideHeaderData = useSelector(selectAsideHeaderData);
         const asideHeaderSize = asideHeaderData.size || 0;
 
@@ -91,6 +94,9 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                         </div>
                                     )}
                                 </ActionBar.Item>
+                            </ActionBar.Group>
+                            <ActionBar.Group pull="right">
+                                <div>{auth.token && <Button view="outlined" onClick={()=>auth.setToken("")}>Выйти</Button> }</div>
                             </ActionBar.Group>
                         </ActionBar.Section>
                     </ActionBar>
