@@ -2,20 +2,24 @@
 
 .entry-panel-breadcrumbs {
     max-width: var(--dl-breadcrumbs-max-width);
+    margin-right: 5px;
 
     &__item,
     &__item:visited,
     &__item:active {
         color: var(--g-color-text-secondary);
+    }
+
+    &__item {
         display: inline;
         text-decoration: none;
 
-        &_link:hover {
-            color: var(--g-color-text-link-hover);
-        }
-
         &:hover {
             color: var(--g-color-text-primary);
+        }
+
+        &_link:hover {
+            color: var(--g-color-text-link-hover);
         }
     }
 }

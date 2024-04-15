@@ -5,14 +5,19 @@
         height: 16px;
     }
 
-    &__item {
-        color: var(--g-color-text-primary);
+    &__item,
+    &__item:visited,
+    &__item:active {
+        color: var(--g-color-text-secondary);
+        display: inline;
         text-decoration: none;
 
-        &:hover,
-        &:visited,
-        &:active {
-            color: var(--g-color-text-secondary);
+        &_link:hover {
+            color: var(--g-color-text-link-hover);
+        }
+
+        &:hover {
+            color: var(--g-color-text-primary);
         }
     }
 }
