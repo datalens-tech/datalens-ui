@@ -1,6 +1,6 @@
-import {StringParams} from 'shared';
+import type {StringParams} from 'shared';
 
-import {DrillDownConfig} from '../../../../../types';
+import type {DrillDownConfig} from '../../../../../types';
 
 type GetDrillDownOptionsArgs = {
     params: StringParams;

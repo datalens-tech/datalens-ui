@@ -4,7 +4,6 @@ import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {ChartKitTableQa, TableCellsRow, TableCommonCell} from 'shared';
-import {getDrillDownOptions} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/utils/drill-down';
 
 import {Table} from '../../../../../../components/Table/Table';
 import type {TData, TableProps} from '../../../../../../components/Table/types';
@@ -18,6 +17,7 @@ import {useTableEvents} from '../hooks/use-table-events';
 import type {TableWidgetProps} from '../types';
 
 import {getCellCss, getCurrentActionParams} from './utils';
+import {getDrillDownOptions} from './utils/drill-down';
 import {mapHeadCell} from './utils/renderer';
 
 import './TableWidget.scss';

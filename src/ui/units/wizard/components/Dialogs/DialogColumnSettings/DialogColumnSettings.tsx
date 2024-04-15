@@ -82,6 +82,11 @@ export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
                 caption={
                     <div className={b('title')}>
                         <span className={b('dialog-title')}>{dialogTitle}</span>
+                        {isPivotTableDialog && (
+                            <span className={b('subtitle')}>
+                                {i18n('wizard', 'label_dialog-column-info-text')}
+                            </span>
+                        )}
                     </div>
                 }
             />

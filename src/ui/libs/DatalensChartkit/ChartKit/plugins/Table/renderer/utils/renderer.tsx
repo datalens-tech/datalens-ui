@@ -14,8 +14,8 @@ import {
     TableHead,
     isMarkupItem,
 } from 'shared';
-import {THead} from 'ui/components/Table/types';
 
+import type {THead} from '../../../../../../../components/Table/types';
 import {numberFormatter} from '../../../../components/Widget/components/Table/utils/misc';
 import {BarCell} from '../components/BarCell/BarCell';
 import {MarkupCell} from '../components/MarkupCell/MarkupCell';
