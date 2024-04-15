@@ -7,7 +7,7 @@ import {getDefaultPreset} from '../utils';
 
 import './Presets.scss';
 
-const b = block('yc-datepicker-presets');
+const b = block('dl-datepicker-presets');
 
 export class Presets extends React.PureComponent {
     static propTypes = {

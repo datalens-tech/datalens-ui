@@ -2,10 +2,12 @@
 // Here we add modules that need to be run through the ts-jest transofrmer
 const IGNORE_NODE_MODULES_LIST = [
     '@gravity-ui',
+    '@diplodoc/latex-extension/react',
     'react-dnd',
     'dnd-core',
     'monaco-editor',
     'tinygesture',
+    'jsondiffpatch',
 ];
 
 export const getIgnoredNodeModulesRegexp = () => {

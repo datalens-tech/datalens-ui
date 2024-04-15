@@ -5,6 +5,7 @@ import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import {GetRelationsEntry, SwitchPublicationStatusResponse} from '../../us/types';
 import {escapeStringForLike, filterDatasetsIdsForCheck} from '../helpers';
+import {isValidPublishLink} from '../helpers/validation';
 import {
     DeleteEntryArgs,
     DeleteEntryResponse,
@@ -73,6 +74,10 @@ export const entriesActions = {
         SwitchPublicationStatusResponse,
         MixedSwitchPublicationStatusArgs
     >(async (api, {entries, mainEntry, workbookId}) => {
+        if (!isValidPublishLink(mainEntry?.unversionedData?.publicAuthor?.link)) {
+            throw new Error('Failed to publish dashboard - invalid publish link.');
+        }
+
         const typedApi = getTypedApi(api);
         const filteredDatasetsIds = filterDatasetsIdsForCheck(entries);
         if (filteredDatasetsIds.length) {

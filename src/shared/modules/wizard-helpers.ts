@@ -7,7 +7,6 @@ import {
     PlaceholderId,
     PseudoFieldTitle,
     RGBColor,
-    VISUALIZATIONS_WITH_DIMENSIONS_AS_COLORS,
     VISUALIZATIONS_WITH_SEVERAL_FIELDS_X_PLACEHOLDER,
     WizardVisualizationId,
 } from '../constants';
@@ -92,9 +91,6 @@ export const filterUpdatesByDatasetId = (updates: Update[], datasetId: string) =
 export const isPercentVisualization = (visualizationId: string) =>
     PERCENT_VISUALIZATIONS.has(visualizationId);
 
-export const isVisualizationWithDimensionsAsColors = (visualizationId: string) =>
-    VISUALIZATIONS_WITH_DIMENSIONS_AS_COLORS.has(visualizationId);
-
 export const isVisualizationWithSeveralFieldsXPlaceholder = (visualizationId: string) =>
     VISUALIZATIONS_WITH_SEVERAL_FIELDS_X_PLACEHOLDER.has(visualizationId);
 
@@ -102,7 +98,16 @@ function markupToRawString(obj: MarkupItem, str = ''): string {
     let text = str;
 
     if (obj.children) {
-        text = text + obj.children.map((item) => markupToRawString(item, text)).join('');
+        text =
+            text +
+            obj.children
+                .map((item) => {
+                    if (typeof item === 'string') {
+                        return item;
+                    }
+                    return markupToRawString(item, text);
+                })
+                .join('');
     } else if (obj.content && typeof obj.content === 'string') {
         text = text + obj.content;
     } else if (obj.content && typeof obj.content === 'object') {

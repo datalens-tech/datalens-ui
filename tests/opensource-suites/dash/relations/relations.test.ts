@@ -4,7 +4,7 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ControlQA, DashCommonQa, DashRelationTypes} from '../../../../src/shared';
-import {ChartsParams} from '../../../constants/test-entities/charts';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
     CHART_LEGEND_ITEM: '.chartkit-d3-legend__item',
@@ -12,7 +12,6 @@ const SELECTORS = {
 };
 
 const PARAMS = {
-    DASH_NAME_PREFIX: 'e2e-test-dash',
     CONTROL_TITLE: 'test-control',
     CONTROL_FIELD_NAME: 'test-control-field',
     CONTROL_ITEMS: ['Dallas', 'Chicago'],
@@ -20,25 +19,27 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Relations (new)', () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const dashboardPage = new DashboardPage({page});
+    datalensTest.beforeEach(
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            const dashboardPage = new DashboardPage({page});
 
-        await dashboardPage.createDashboard({
-            editDash: async () => {
-                await dashboardPage.addSelector({
-                    controlTitle: PARAMS.CONTROL_TITLE,
-                    controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                    controlItems: PARAMS.CONTROL_ITEMS,
-                });
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addSelector({
+                        controlTitle: PARAMS.CONTROL_TITLE,
+                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+                        controlItems: PARAMS.CONTROL_ITEMS,
+                    });
 
-                await dashboardPage.addChart({
-                    chartName: ChartsParams.citySalesPieChart.name,
-                    chartUrl: ChartsParams.citySalesPieChart.url,
-                    hideTitle: true,
-                });
-            },
-        });
-    });
+                    await dashboardPage.addChart({
+                        name: config.dash.charts.ChartCityPie.name,
+                        url: config.dash.charts.ChartCityPie.url,
+                        hideTitle: true,
+                    });
+                },
+            });
+        },
+    );
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
         await dashboardPage.deleteDash();

@@ -17,7 +17,6 @@ import {ConnectionsReduxDispatch, ConnectionsReduxState, GetState} from '../typi
 import {
     getConnectorItemFromFlattenList,
     getDataForParamsChecking,
-    getFakeEntry,
     getFetchedFormData,
     getFlattenConnectors,
     getFormDefaults,
@@ -74,6 +73,7 @@ export function setPageData({entryId, workbookId}: {entryId?: string | null; wor
         }
 
         if (!entry) {
+            const getFakeEntry = registry.connections.functions.get('getFakeEntry');
             entry = getFakeEntry(workbookId);
         }
 
@@ -218,8 +218,9 @@ export function changeInnerForm(innerFormUpdates: ConnectionsReduxState['innerFo
     };
 }
 
-export function createConnection(name: string, dirPath?: string) {
+export function createConnection(args: {name: string; dirPath?: string; workbookId?: string}) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
+        const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
         const {form, innerForm, schema} = getState().connections;
 
         if (!schema || !schema.apiSchema?.create) {
@@ -241,19 +242,40 @@ export function createConnection(name: string, dirPath?: string) {
         if (typeof dirPath === 'string') {
             resultForm[FieldKey.DirPath] = dirPath;
         } else {
-            resultForm[FieldKey.WorkbookId] = getWorkbookIdFromPathname();
+            resultForm[FieldKey.WorkbookId] = workbookId;
         }
 
         flow([setSubmitLoading, dispatch])({loading: true});
         const {id: connectionId, error: connError} = await api.createConnection(resultForm);
         let templateFolderId: string | undefined;
+        let templateWorkbookId: string | undefined;
         let templateError: DataLensApiError | undefined;
 
         if (innerForm[InnerFieldKey.isAutoCreateDashboard] && schema.templateName && connectionId) {
-            ({entryId: templateFolderId, error: templateError} = await api.copyTemplate(
-                connectionId,
-                schema.templateName,
-            ));
+            const getConnectionsWithForceSkippedCopyTemplateInWorkbooks =
+                registry.connections.functions.get(
+                    'getConnectionsWithForceSkippedCopyTemplateInWorkbooks',
+                );
+
+            const connectionsWithForceSkippedCopyTemplateInWorkbooks =
+                getConnectionsWithForceSkippedCopyTemplateInWorkbooks() ?? [];
+
+            const forceSkipCopyTemplate = Boolean(
+                connectionsWithForceSkippedCopyTemplateInWorkbooks.includes(schema.templateName) &&
+                    workbookId,
+            );
+
+            if (forceSkipCopyTemplate === false) {
+                ({
+                    entryId: templateFolderId,
+                    workbookId: templateWorkbookId,
+                    error: templateError,
+                } = await api.copyTemplate(
+                    connectionId,
+                    schema.templateName,
+                    workbookId === '' ? undefined : workbookId,
+                ));
+            }
         }
 
         if (connectionId) {
@@ -261,13 +283,15 @@ export function createConnection(name: string, dirPath?: string) {
             flow([resetFormsData, dispatch])();
         }
 
-        batch(() => {
-            if (templateFolderId) {
-                history.replace(`/navigation/${templateFolderId}`);
-            } else if (connectionId) {
-                history.replace(`/connections/${connectionId}`);
-            }
+        if (templateFolderId) {
+            history.replace(`/navigation/${templateFolderId}`);
+        } else if (templateWorkbookId) {
+            history.replace(`/workbooks/${templateWorkbookId}`);
+        } else if (connectionId) {
+            history.replace(`/connections/${connectionId}`);
+        }
 
+        batch(() => {
             if (templateError) {
                 flow([showToast, dispatch])({
                     title: i18n('label_error-on-template-apply'),

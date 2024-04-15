@@ -6,7 +6,7 @@ import type DashboardPage from '../../page-objects/dashboard/DashboardPage';
 
 const SELECTORS = {
     TABLE_CELL_CONTENT: '.chartkit-table__content_text',
-    LIST_ITEM: '.yc-list__item',
+    LIST_ITEM: '.g-list__item',
     TAB_ROW: '.dialog-tab-item__row',
 };
 
@@ -76,7 +76,7 @@ export async function dragAndDropListItem(
     // move source item to the end of target item
     await page.mouse.move(
         targetItemBox.x + targetItemBox.width / 2,
-        targetItemBox.y + targetItemBox.height,
+        targetItemBox.y - targetItemBox.height / 2,
     );
 
     await page.mouse.up();

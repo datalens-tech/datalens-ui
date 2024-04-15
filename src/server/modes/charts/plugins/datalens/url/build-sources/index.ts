@@ -10,6 +10,7 @@ import {
     CHARTS_MIDDLEWARE_URL_TYPE,
     REQUEST_WITH_DATASET_SOURCE_NAME,
 } from '../../../constants/middleware-urls';
+import {getColorPalettesRequests} from '../../../helpers/color-palettes';
 import {getDatasetIdAndLayerIdRequestKey} from '../../../helpers/misc';
 import {mapChartsConfigToServerConfig} from '../../utils/config-helpers';
 import {
@@ -18,7 +19,7 @@ import {
     DATASET_DATA_URL_V2,
 } from '../../utils/constants';
 import {getAllPlaceholderItems, log} from '../../utils/misc-helpers';
-import {isCustomColorPaletteId, prepareFieldsForPayload} from '../helpers';
+import {prepareFieldsForPayload} from '../helpers';
 
 import {
     BuildSourcesArgs,
@@ -161,57 +162,7 @@ const buildSources = (args: BuildSourcesArgs): SourceRequests => {
     });
 
     if (isEnabledServerFeature(app.nodekit.ctx, Feature.CustomColorPalettes)) {
-        const colorPaletteId =
-            config.colorsConfig?.palette || config.colorsConfig?.gradientPalette || '';
-
-        if (isCustomColorPaletteId(colorPaletteId)) {
-            requests[`colorPalettes_${colorPaletteId}`] = {
-                method: 'GET',
-                url: `/_us_color_palettes/${colorPaletteId}`,
-                hideInInspector: true,
-            };
-        }
-
-        visualization.placeholders?.forEach((placeholder) => {
-            placeholder.items.forEach((item) => {
-                const {backgroundSettings, barsSettings} = item;
-
-                if (backgroundSettings && backgroundSettings.enabled) {
-                    const gradientPaletteId =
-                        backgroundSettings.settings?.gradientState?.gradientPalette;
-
-                    if (gradientPaletteId && isCustomColorPaletteId(gradientPaletteId)) {
-                        requests[`colorPalettes_${gradientPaletteId}`] = {
-                            method: 'GET',
-                            url: `/_us_color_palettes/${gradientPaletteId}`,
-                            hideInInspector: true,
-                        };
-                    }
-
-                    const regularPaletteId = backgroundSettings.settings?.paletteState?.palette;
-
-                    if (regularPaletteId && isCustomColorPaletteId(regularPaletteId)) {
-                        requests[`colorPalettes_${regularPaletteId}`] = {
-                            method: 'GET',
-                            url: `/_us_color_palettes/${regularPaletteId}`,
-                            hideInInspector: true,
-                        };
-                    }
-                }
-
-                if (barsSettings && barsSettings.enabled) {
-                    const gradientPaletteId = barsSettings.colorSettings.settings?.palette;
-
-                    if (gradientPaletteId && isCustomColorPaletteId(gradientPaletteId)) {
-                        requests[`colorPalettes_${gradientPaletteId}`] = {
-                            method: 'GET',
-                            url: `/_us_color_palettes/${gradientPaletteId}`,
-                            hideInInspector: true,
-                        };
-                    }
-                }
-            });
-        });
+        Object.assign(requests, getColorPalettesRequests({config}));
     }
 
     log('SOURCE REQUESTS:');

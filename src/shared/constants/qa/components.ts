@@ -47,6 +47,8 @@ export enum DialogTabsQA {
     RowAdd = 'dialog-tabs-row-add',
     Save = 'dialog-tabs-save-button',
     Cancel = 'dialog-tabs-cancel-button',
+    EditTabItem = 'edit-tab-input',
+    ReadOnlyTabItem = 'read-only-tab-item',
 }
 
 export enum EntryDialogQA {
@@ -54,6 +56,8 @@ export enum EntryDialogQA {
     Cancel = 'entry-dialog-cancel-button',
     Reset = 'entry-dialog-reset-button',
     FolderSelect = 'entry-dialog-select',
+    Content = 'entry-dialog-content',
+    PathSelect = 'path-select',
 }
 
 export enum MenuItemsQA {
@@ -141,10 +145,6 @@ export const enum CreateEntityButton {
 
 export enum DashTabsQA {
     Root = 'dash-tabs',
-}
-
-export enum SelectQA {
-    Popup = 'select-popup',
 }
 
 export enum DocSectionQa {

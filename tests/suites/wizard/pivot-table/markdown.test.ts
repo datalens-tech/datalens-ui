@@ -3,7 +3,8 @@ import {Page} from '@playwright/test';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage} from '../../../utils';
+import {openTestPage, slct} from '../../../utils';
+import {ChartKitTableQa} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - Pivot table, markdown', () => {
     datalensTest(
@@ -26,11 +27,14 @@ datalensTest.describe('Wizard - Pivot table, markdown', () => {
 
             await openTestPage(page, RobotChartsWizardUrls.PivotTableWithMarkdown);
 
-            const rows = await wizardPage.chartkit.getRowsHtml();
+            const cellContent = wizardPage.chartkit
+                .getTableLocator()
+                .locator('tbody')
+                .locator(slct(ChartKitTableQa.CellContent))
+                .first();
+            const cellContentHtml = await cellContent.innerHTML();
 
-            expect(rows[0][0]).toEqual(
-                '<div class="chartkit-table__content chartkit-table__content_undefined"><b>Consumer</b></div>',
-            );
+            expect(cellContentHtml).toEqual('<b>Consumer</b>');
         },
     );
 });

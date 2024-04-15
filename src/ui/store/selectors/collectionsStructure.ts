@@ -16,6 +16,9 @@ export const selectGetCollectionContent = (state: DatalensGlobalState) =>
 export const selectCollectionContentItems = (state: DatalensGlobalState) =>
     state.collectionsStructure.items;
 
+export const selectCopyTemplate = (state: DatalensGlobalState) =>
+    state.collectionsStructure.copyTemplate;
+
 export const selectCreateCollection = (state: DatalensGlobalState) =>
     state.collectionsStructure.createCollection;
 
@@ -36,6 +39,15 @@ const selectUpdateWorkbook = (state: DatalensGlobalState) =>
 
 const selectUpdateCollection = (state: DatalensGlobalState) =>
     state.collectionsStructure.updateCollection;
+
+const selectDeleteCollection = (state: DatalensGlobalState) =>
+    state.collectionsStructure.deleteCollection;
+
+const selectDeleteWorkbook = (state: DatalensGlobalState) =>
+    state.collectionsStructure.deleteWorkbook;
+
+const selectAddDemoWorkbook = (state: DatalensGlobalState) =>
+    state.collectionsStructure.addDemoWorkbook;
 
 // Rights at the root of the structure
 export const selectRootPermissionsData = createSelector(
@@ -85,6 +97,11 @@ export const selectNextPageTokens = createSelector([selectGetCollectionContent],
     workbooksNextPageToken: content.data?.workbooksNextPageToken,
 }));
 
+export const selectCopyTemplateIsLoading = createSelector(
+    [selectCopyTemplate],
+    (copyTemplate) => copyTemplate.isLoading,
+);
+
 // Status of the collection creation request
 export const selectCreateCollectionIsLoading = createSelector(
     [selectCreateCollection],
@@ -117,5 +134,23 @@ export const selectUpdateCollectionIsLoading = createSelector(
 // Indication of the process of changing the workbook
 export const selectUpdateWorkbookIsLoading = createSelector(
     selectUpdateWorkbook,
+    (result) => result.isLoading,
+);
+
+// Indication of the collection deletion process
+export const selectDeleteCollectionIsLoading = createSelector(
+    selectDeleteCollection,
+    (result) => result.isLoading,
+);
+
+// Indication of the process of changing the workbook
+export const selectDeleteWorkbookIsLoading = createSelector(
+    selectDeleteWorkbook,
+    (result) => result.isLoading,
+);
+
+// Indication of the process of adding a demo workbook
+export const selectAddDemoWorkbookIsLoading = createSelector(
+    selectAddDemoWorkbook,
     (result) => result.isLoading,
 );

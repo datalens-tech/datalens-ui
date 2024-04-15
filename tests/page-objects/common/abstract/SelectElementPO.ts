@@ -1,8 +1,8 @@
+import {SelectQa} from '../../../../src/shared/constants';
 import {slct} from '../../../utils';
 
 import {ListItemByParams} from '../../types';
 import {ElementPO} from './ElementPO';
-import {SelectQa} from '@gravity-ui/uikit';
 
 export class SelectElementPO extends ElementPO {
     static selectors = {
@@ -28,6 +28,11 @@ export class SelectElementPO extends ElementPO {
         } else if (typeof idx === 'number') {
             await this.selectListItemByIdx(idx);
         }
+    }
+
+    async selectListItemByQa(qaSelector: string) {
+        await this.expectListVisible();
+        await this.getListLocator().locator(qaSelector).click();
     }
 
     async selectListItemByIdx(idx: number) {

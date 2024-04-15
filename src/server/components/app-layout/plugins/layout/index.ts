@@ -27,13 +27,13 @@ function getSpinner(utils: RenderHelpers) {
                 background: rgb(255, 190, 92);
             }
         }
-        .yc-loader {
+        .g-loader {
             position: relative;
             background: rgba(255, 190, 92, 0.14);
             animation: yc-pulse ease 800ms infinite;
             animation-delay: 400ms;
         }
-        .yc-loader:before, .yc-loader:after {
+        .g-loader:before, .g-loader:after {
             content: "";
             position: absolute;
             display: block;
@@ -42,22 +42,22 @@ function getSpinner(utils: RenderHelpers) {
             transform: translateY(-50%);
             animation: yc-pulse ease 800ms infinite;
         }
-        .yc-loader:before {
+        .g-loader:before {
             animation-delay: 200ms;
         }
-        .yc-loader:after {
+        .g-loader:after {
             animation-delay: 600ms;
         }
-        .yc-loader_size_l {
+        .g-loader_size_l {
             width: 9px;
             height: 36px;
         }
-        .yc-loader_size_l:before {
+        .g-loader_size_l:before {
             height: 24px;
             width: 9px;
             left: -18px;
         }
-        .yc-loader_size_l:after {
+        .g-loader_size_l:after {
             height: 24px;
             width: 9px;
             left: 18px;
@@ -67,6 +67,13 @@ function getSpinner(utils: RenderHelpers) {
             justify-content: center;
             align-items: center;
             height: 100%;
+        }
+
+        .g-root_theme_dark .local_wrapper {
+            background-color: var(--g-color-base-background, rgb(45, 44, 51));
+        }
+        .g-root_theme_dark-hc .local_wrapper {
+            background-color: var(--g-color-base-background, rgb(34, 35, 38));
         }
 
         html, body, #root {

@@ -8,14 +8,14 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
 const SELECTORS = {
     TABLE_CELL: 'chartkit-table__content_value',
-    CONTROL_INPUT: 'yc-text-input__control',
+    CONTROL_INPUT: 'g-text-input__control',
 };
 
 const PARAMS = {
     SELECT_VALUE_1: 'TempValue',
 };
 
-datalensTest.describe('Dashboards are an Editorial selector', () => {
+datalensTest.describe('Dashboards - an editor selector', () => {
     datalensTest(
         'In the chart, a change in the selector parameters is applied',
         async ({page}: {page: Page}) => {

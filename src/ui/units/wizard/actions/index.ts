@@ -13,7 +13,6 @@ import {
     DatasetFieldType,
     ENTRY_TYPES,
     ExtendedChartsConfig,
-    Feature,
     Field,
     FilterField,
     HierarchyField,
@@ -45,7 +44,7 @@ import {
     splitParamsToParametersAndFilters,
 } from 'shared';
 import {DataLensApiError} from 'typings';
-import {DatalensGlobalState, Utils} from 'ui';
+import {DatalensGlobalState} from 'ui';
 import {navigateHelper} from 'ui/libs';
 import {
     getAvailableVisualizations,
@@ -63,7 +62,7 @@ import {getSdk} from '../../../libs/schematic-sdk';
 import {sdk as oldSdk} from '../../../libs/sdk';
 import {showToast} from '../../../store/actions/toaster';
 import {getFilteredObject} from '../../../utils';
-import {WizardDispatch} from '../reducers';
+import {WizardDispatch, WizardGlobalState} from '../reducers';
 import {selectWizardWorkbookId} from '../selectors/settings';
 import {selectVisualization} from '../selectors/visualization';
 import {filterVisualizationColors} from '../utils/colors';
@@ -93,7 +92,7 @@ import {
 } from './dataset';
 import {actualizeAndSetUpdates, setUpdates, updatePreviewAndClientChartsConfig} from './preview';
 import {setDefaultsSet, setRouteWorkbookId, toggleNavigation} from './settings';
-import {getDatasetUpdates, mutateAndValidateItem} from './utils';
+import {getDatasetUpdates, isSharedPlaceholder, mutateAndValidateItem} from './utils';
 import {
     _setSelectedLayerId,
     _setVisualization,
@@ -122,6 +121,7 @@ import {
 const i18n = I18n.keyset('wizard');
 
 export const RESET_WIZARD_STORE = Symbol('wizard/RESET_WIZARD_STORE');
+export const SET_WIZARD_STORE = Symbol('wizard/SET_WIZARD_STORE');
 
 type ApplyLocalFieldsArgs = {
     dataset: Dataset;
@@ -431,7 +431,8 @@ export function setVisualizationPlaceholderItems({
                         };
                     }
 
-                    if (stateVisualization.id === 'combined-chart' && placeholder.id === 'x') {
+                    const visualizationId = stateVisualization.id as WizardVisualizationId;
+                    if (isSharedPlaceholder(placeholder.id as PlaceholderId, visualizationId)) {
                         layer.placeholders = layer.placeholders.map((p) => {
                             if (p.id === 'x') {
                                 return {
@@ -812,14 +813,14 @@ function _receiveVisualization({
         throw new Error('Unknown visualization');
     }
 
-    const placeholders = [...(visualization.placeholders || [])];
+    const previousPlaceholders = [...(visualization.placeholders || [])];
     const fields = datasets.reduce((result: Field[], dataset: Dataset) => {
         return [...result, ...getResultSchemaFromDataset(dataset)] as Field[];
     }, []);
 
     // We put all the metadata from it into the saved one
-    presetVisualization.placeholders.forEach((presetPlaceholder, i) => {
-        const placeholder = placeholders[i];
+    const placeholders = presetVisualization.placeholders.map((presetPlaceholder) => {
+        const placeholder = previousPlaceholders.find((p) => p.id === presetPlaceholder.id);
 
         if (placeholder) {
             const items = [...placeholder.items];
@@ -852,13 +853,15 @@ function _receiveVisualization({
             placeholder.settings = newSettings;
 
             items.forEach((item) => {
-                mutateAndValidateItem({fields, item, placeholder});
+                mutateAndValidateItem({fields, item, placeholder: presetPlaceholder});
             });
 
             // We record the elements as new arrivals
             placeholder.items = items;
+
+            return placeholder;
         } else {
-            placeholders.push(presetPlaceholder);
+            return presetPlaceholder;
         }
     });
 
@@ -1249,7 +1252,7 @@ const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[
             dispatch(
                 showToast({
                     title: i18n('toast_wizard-dataset-validation-failure'),
-                    type: 'error',
+                    type: 'danger',
                     error: customError,
                 }),
             );
@@ -1387,8 +1390,7 @@ export const createFieldFromVisualization = ({
             let argument = `[${field.originalTitle || field.title}]`;
             // TODO: update this place after caste support for datetimetz
             const isShouldBeCastedToDatetime =
-                (field.data_type !== 'datetime' && field.cast === 'datetime') ||
-                (field.data_type !== 'genericdatetime' && field.cast === 'genericdatetime');
+                field.data_type !== 'genericdatetime' && field.cast === 'genericdatetime';
 
             if (isShouldBeCastedToDatetime) {
                 argument = `DATETIME(${argument})`;
@@ -1409,7 +1411,6 @@ export const createFieldFromVisualization = ({
             fieldNext.originalSource = field.source;
         } else if (
             field.cast === 'date' ||
-            field.cast === 'datetime' ||
             field.cast === 'datetimetz' ||
             field.cast === 'genericdatetime'
         ) {
@@ -1502,7 +1503,6 @@ export const updateFieldFromVisualization = ({
                 field.formula = '';
             } else if (
                 field.cast === 'date' ||
-                field.cast === 'datetime' ||
                 field.cast === 'datetimetz' ||
                 field.cast === 'genericdatetime'
             ) {
@@ -1512,7 +1512,6 @@ export const updateFieldFromVisualization = ({
             }
             if (
                 field.cast === 'date' ||
-                field.cast === 'datetime' ||
                 field.cast === 'datetimetz' ||
                 field.cast === 'genericdatetime'
             ) {
@@ -1544,8 +1543,7 @@ export const updateFieldFromVisualization = ({
             let argument = `[${field.originalTitle || field.title}]`;
             // TODO: update this place after caste support for datetimetz - BI-1478
             const isShouldBeCastedToDatetime =
-                (field.data_type !== 'datetime' && field.originalDateCast === 'datetime') ||
-                (field.data_type !== 'datetimetz' && field.originalDateCast === 'datetimetz');
+                field.data_type !== 'datetimetz' && field.originalDateCast === 'datetimetz';
 
             if (isShouldBeCastedToDatetime) {
                 argument = `DATETIME(${argument})`;
@@ -1760,6 +1758,18 @@ export interface ResetWizardStoreAction {
     type: typeof RESET_WIZARD_STORE;
 }
 
+export function setWizardStore({store}: {store: WizardGlobalState}) {
+    return {
+        type: SET_WIZARD_STORE,
+        store,
+    };
+}
+
+export interface SetWizardStoreAction {
+    type: typeof SET_WIZARD_STORE;
+    store: WizardGlobalState;
+}
+
 type ProcessWidgetArgs = {
     widget: any;
     dispatch: WizardDispatch;
@@ -1770,9 +1780,7 @@ type ProcessWidgetArgs = {
 function processWidget(args: ProcessWidgetArgs) {
     const {widget, dispatch, getState} = args;
     const data = widget.data! as ExtendedChartsConfig;
-    const shouldMigrateDatetime = Utils.isEnabledFeature(Feature.GenericDatetimeMigration);
-
-    const config = mapChartsConfigToLatestVersion(data, {shouldMigrateDatetime});
+    const config = mapChartsConfigToLatestVersion(data);
 
     // Actualize widget data after mapping
     widget.data = config;

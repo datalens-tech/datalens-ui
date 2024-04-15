@@ -180,9 +180,15 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                     },
                     changedProps.options,
                 );
+
+                // If we resetting filtration we are loosing current open tab
+                // To prevent forcible setting currentTabId
+                if (currentTab.id && changedProps.options?.action === 'removeItem') {
+                    onStateAndParamsChange({state: {tabId: currentTab.id}});
+                }
             }
         },
-        [onStateAndParamsChange],
+        [currentTab.id, onStateAndParamsChange],
     );
 
     /**
@@ -642,6 +648,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     return {
         loadedData,
         isLoading,
+        isInit,
         isSilentReload,
         isReloadWithNoVeil,
         isAutoHeightEnabled,

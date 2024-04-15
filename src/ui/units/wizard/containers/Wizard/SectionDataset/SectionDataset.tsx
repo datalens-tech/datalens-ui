@@ -20,7 +20,6 @@ import {
     PLACE,
     SectionDatasetQA,
     Update,
-    extractEntryId,
     getResultSchemaFromDataset,
 } from 'shared';
 import {closeDialog, openDialog, openDialogParameter} from 'store/actions/dialog';
@@ -291,7 +290,7 @@ class SectionDataset extends React.Component<Props, State> {
             this.props.toaster.add({
                 title: i18n('wizard', 'label_error-remove-field'),
                 name: 'WIZARD',
-                type: 'error',
+                theme: 'danger',
             });
         }
     };
@@ -491,6 +490,7 @@ class SectionDataset extends React.Component<Props, State> {
     };
 
     onButtonDatasetTryAgainClick = () => {
+        const {extractEntryId} = registry.common.functions.getAll();
         const entryId = extractEntryId(window.location.pathname);
 
         if (entryId) {
@@ -1081,7 +1081,7 @@ class SectionDataset extends React.Component<Props, State> {
             // TODO: there are a couple of similar places, probably this good can be carried out in a separate function
             if (cast === 'date') {
                 target.format = AVAILABLE_DATE_FORMATS[2];
-            } else if (cast === 'datetime' || cast === 'genericdatetime') {
+            } else if (cast === 'genericdatetime') {
                 target.format = AVAILABLE_DATETIME_FORMATS[5];
             } else if (cast === 'datetimetz') {
                 target.format = AVAILABLE_DATETIMETZ_FORMATS[7];

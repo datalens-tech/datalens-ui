@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Config, ConfigConnection, DashKit} from '@gravity-ui/dashkit';
+import type {Config, ConfigConnection, DashKit} from '@gravity-ui/dashkit';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import cloneDeep from 'lodash/cloneDeep';
@@ -174,34 +174,34 @@ const getChangedConnections = ({
             result = connectionsWithoutCurrentLink.concat([relationFromWidgetToRow]);
             break;
         }
+        default:
+            result = connectionsWithoutCurrentLink;
     }
+
     return result;
 };
 
-export const getUpdatedRelations = (
-    items: Config['connections'],
-    widgetId: DashkitMetaDataItem['widgetId'],
-    changed: Record<string, RelationType>,
-) => {
+export const getUpdatedRelations = (items: Config['connections'], changed: WidgetsTypes) => {
     let updatedItems: Config['connections'] = [...items];
-    for (const [key, type] of Object.entries(changed)) {
-        updatedItems = getChangedConnections({
-            items: updatedItems,
-            widgetId,
-            changedId: key,
-            changedType: type,
-        });
+
+    for (const id of Object.keys(changed)) {
+        for (const [key, type] of Object.entries(changed[id])) {
+            updatedItems = getChangedConnections({
+                items: updatedItems,
+                widgetId: id,
+                changedId: key,
+                changedType: type,
+            });
+        }
     }
     return updatedItems;
 };
 
 export const getRelationsForSave = ({
-    currentWidgetId,
     changed,
     dashkitData,
 }: {
-    currentWidgetId: DashkitMetaDataItem['widgetId'];
-    changed: Record<string, RelationType> | undefined;
+    changed: WidgetsTypes | undefined;
     dashkitData: DashKit | null;
 }) => {
     if (!dashkitData || !changed || isEmpty(changed)) {
@@ -210,7 +210,7 @@ export const getRelationsForSave = ({
 
     const {connections} = dashkitData.props.config;
 
-    return getUpdatedRelations(connections, currentWidgetId, changed);
+    return getUpdatedRelations(connections, changed);
 };
 
 const appendUniq = (first: string, second: string, alias: Array<string>) => {
@@ -321,22 +321,22 @@ export const hasConnectionsBy = (relation?: RelationsData) => {
 
 export const getUpdatedPreparedRelations = (props: {
     aliases: string[][] | Record<string, string[][]>;
+    currentWidgetId: string;
     currentWidgetMeta: DashkitMetaDataItem | null;
     changedWidgetsData?: WidgetsTypes;
     dashkitData: DashKit | null;
     dashWidgetsMeta: Omit<DashkitMetaDataItem, 'relations'>[] | null;
-    changedWidgetId: string;
     preparedRelations: DashMetaData;
     datasets: DatasetsListData | null;
     type?: 'aliases' | 'connections';
 }) => {
     const {
         aliases,
+        currentWidgetId,
         currentWidgetMeta,
         changedWidgetsData,
         dashkitData,
         dashWidgetsMeta,
-        changedWidgetId,
         preparedRelations,
         datasets,
         type = 'connections',
@@ -345,19 +345,18 @@ export const getUpdatedPreparedRelations = (props: {
         return null;
     }
     const connections = (getRelationsForSave({
-        currentWidgetId: currentWidgetMeta.widgetId || '',
         changed: changedWidgetsData,
         dashkitData,
     }) || []) as ConnectionsData;
 
-    const row = dashWidgetsMeta.find((item) => item.widgetId === changedWidgetId);
+    const row = dashWidgetsMeta.find((item) => (item.itemId || item.widgetId) === currentWidgetId);
     if (!row) {
         return null;
     }
 
     const newPreparedRelations = [...preparedRelations];
     const changedRelationsItem = newPreparedRelations.find(
-        (item) => item.widgetId === changedWidgetId,
+        (item) => (item.itemId || item.widgetId) === currentWidgetId,
     );
     const newAliases = Array.isArray(aliases)
         ? ({[DEFAULT_ALIAS_NAMESPACE]: aliases} as Record<string, string[][]>)
@@ -369,7 +368,7 @@ export const getUpdatedPreparedRelations = (props: {
         dashWidgetsMeta
             .filter((item) => {
                 return (
-                    item.widgetId !== currentWidgetMeta.widgetId &&
+                    (item.itemId || item.widgetId) !== currentWidgetId &&
                     showInRelation(currentWidgetMeta, item)
                 );
             })
@@ -393,6 +392,7 @@ export const getUpdatedPreparedRelations = (props: {
     if (!changedRelationsItem) {
         return null;
     }
+
     changedRelationsItem.relations = getRelationsInfo({
         aliases: newAliases,
         connections,
@@ -402,4 +402,18 @@ export const getUpdatedPreparedRelations = (props: {
     });
 
     return newPreparedRelations;
+};
+
+export const getPairedRelationType = (type: RelationType): RelationType => {
+    switch (type) {
+        case RELATION_TYPES.ignore:
+        case RELATION_TYPES.both:
+            return type;
+        case RELATION_TYPES.input:
+            return RELATION_TYPES.output as RelationType;
+        case RELATION_TYPES.output:
+            return RELATION_TYPES.input as RelationType;
+    }
+
+    return RELATION_TYPES.unknown as RelationType;
 };

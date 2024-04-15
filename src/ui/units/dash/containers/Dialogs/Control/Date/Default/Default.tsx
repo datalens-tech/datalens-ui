@@ -7,6 +7,7 @@ import moment from 'moment';
 import {
     ControlQA,
     DATASET_FIELD_TYPES,
+    DialogControlDateQa,
     FilterValue,
     getParsedIntervalDates,
     getParsedRelativeDate,
@@ -17,6 +18,11 @@ import Dialog from '../../Dialog/Dialog';
 import {DATETIME_FORMAT, DATE_FORMAT} from '../../constants';
 
 import './Default.scss';
+
+const enum DefaultDateType {
+    defined = 'defined',
+    notDefined = 'notDefined',
+}
 
 function getTextForRelativeDate(dateString: string, withTime: boolean) {
     if (dateString.indexOf('__relative_') === 0) {
@@ -37,8 +43,16 @@ function getTextForRelativeDate(dateString: string, withTime: boolean) {
 }
 
 const radioButtonItems = [
-    {value: 'notDefined', text: i18n('dash.control-dialog.edit', 'value_undefined')},
-    {value: 'defined', text: i18n('dash.control-dialog.edit', 'value_date-manual')},
+    {
+        value: DefaultDateType.notDefined,
+        text: i18n('dash.control-dialog.edit', 'value_undefined'),
+        qa: DialogControlDateQa.defaultNotDefined,
+    },
+    {
+        value: DefaultDateType.defined,
+        text: i18n('dash.control-dialog.edit', 'value_date-manual'),
+        qa: DialogControlDateQa.defaultSelectValue,
+    },
 ];
 
 const b = block('date-manual-default-value');
@@ -82,6 +96,9 @@ class Default extends React.PureComponent<Props, State> {
 
         if (!prevState.showDialog) {
             updatedState.defaultValue = nextProps.defaultValue;
+            updatedState.type = nextProps.defaultValue
+                ? DefaultDateType.defined
+                : DefaultDateType.notDefined;
         } else if (nextProps.isRange !== prevState.isRange) {
             updatedState.defaultValue = undefined;
         }
@@ -97,7 +114,7 @@ class Default extends React.PureComponent<Props, State> {
             isInvalid: false,
             isRange: Boolean(props.isRange),
             defaultValue: props.defaultValue,
-            type: props.defaultValue ? 'defined' : 'notDefined',
+            type: props.defaultValue ? DefaultDateType.defined : DefaultDateType.notDefined,
         };
     }
 
@@ -134,7 +151,7 @@ class Default extends React.PureComponent<Props, State> {
 
     onEnter = () => {
         const {type, defaultValue} = this.state;
-        const isDefined = type === 'defined';
+        const isDefined = type === DefaultDateType.defined;
 
         this.props.onApply({defaultValue: isDefined ? defaultValue : undefined});
 
@@ -165,12 +182,13 @@ class Default extends React.PureComponent<Props, State> {
                         value={type}
                         onChange={this.onChangeRadioBox}
                         className={mixRadioBox}
+                        qa={item.qa}
                     >
                         <RadioGroup.Option value={item.value}>{item.text}</RadioGroup.Option>
                     </RadioGroup>
                 </div>
                 <div className={b('radiobox-content')}>
-                    {item.value === 'defined' && item.value === type && (
+                    {item.value === DefaultDateType.defined && item.value === type && (
                         <div className={b('input-single-place')}>
                             <RelativeDatesPicker
                                 range={Boolean(isRange)}
@@ -222,10 +240,7 @@ class Default extends React.PureComponent<Props, State> {
         const {fieldType, withTime} = this.props;
 
         return Boolean(
-            (fieldType &&
-                (fieldType === DATASET_FIELD_TYPES.DATETIME ||
-                    fieldType === DATASET_FIELD_TYPES.GENERICDATETIME)) ||
-                withTime,
+            (fieldType && fieldType === DATASET_FIELD_TYPES.GENERICDATETIME) || withTime,
         );
     }
 }

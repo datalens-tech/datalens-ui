@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';
@@ -12,7 +12,6 @@ import pick from 'lodash/pick';
 import {connect} from 'react-redux';
 import {
     DATASET_FIELD_TYPES,
-    DATASET_IGNORED_DATA_TYPES,
     DashTabItemControlDataset,
     DashTabItemControlExternal,
     DashTabItemControlManual,
@@ -65,7 +64,13 @@ import {
     PluginControlState,
     ValidationErrorData,
 } from './types';
-import {getDatasetSourceInfo, getLabels, getStatus, isValidRequiredValue} from './utils';
+import {
+    checkDatasetFieldType,
+    getDatasetSourceInfo,
+    getLabels,
+    getStatus,
+    isValidRequiredValue,
+} from './utils';
 
 import './Control.scss';
 
@@ -88,7 +93,6 @@ export interface PluginControl extends Plugin<PluginControlProps> {
 
 const b = block('dashkit-plugin-control');
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
-const i18nError = I18n.keyset('dash.dashkit-control.error');
 
 const CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
@@ -297,6 +301,18 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         });
     }
 
+    filterDefaultsBySource() {
+        const sourcedFieldId =
+            this.props.data?.sourceType === 'dataset'
+                ? (this.props.data?.source as {datasetFieldId: string})?.datasetFieldId
+                : null;
+        if (sourcedFieldId && this.props.defaults) {
+            return {[sourcedFieldId]: this.props.defaults[sourcedFieldId]};
+        }
+
+        return this.props.defaults;
+    }
+
     getCurrentWidgetResolvedMetaInfo(
         data: ResponseSuccessControls | AxiosResponse<ResponseError> | null,
     ) {
@@ -321,7 +337,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             title: this.props.data?.title || '',
             label: firstControlWithLabel?.label || '',
             params: this.props.params,
-            defaultParams: this.props.defaults,
+            defaultParams: this.filterDefaultsBySource(),
             loaded: Boolean(loadedData),
             entryId: this.chartKitRef?.current?.props.id || null, // to do built in widget ?
             usedParams: loadedData?.usedParams
@@ -363,7 +379,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
     }
 
-    setLoadedData(loadedData: ResponseSuccessControls, status: LoadStatus) {
+    setLoadedData = (loadedData: ResponseSuccessControls, status: LoadStatus) => {
         const isNewRelations =
             Utils.isEnabledFeature(Feature.ShowNewRelations) && this.props.isNewRelations;
 
@@ -399,7 +415,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             const resolveDataArg = status === LOAD_STATUS.SUCCESS ? loadedData : null;
             this.resolveMeta(resolveDataArg);
         }
-    }
+    };
 
     init = async () => {
         try {
@@ -442,7 +458,13 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 : loadedData.uiScheme;
 
             if (data.sourceType === DashTabItemControlSourceType.Dataset) {
-                this.checkDatasetFieldType(loadedData, data);
+                checkDatasetFieldType({
+                    currentLoadedData: loadedData,
+                    datasetData: data,
+                    actualLoadedData: this.state.loadedData,
+                    onError: this.setErrorData,
+                    onSucces: this.setLoadedData,
+                });
             } else {
                 this.setLoadedData(loadedData, LOAD_STATUS.SUCCESS);
             }
@@ -476,7 +498,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     };
 
     onChange = ({param, value}: {param: string; value: string | string[]}) => {
-        this.props.onStateAndParamsChange({params: {[param]: value}});
+        this.props.onStateAndParamsChange({params: {[param]: value}}, {action: 'setParams'});
     };
 
     onChangeExternal = ({type, data}: OnChangeData) => {
@@ -520,6 +542,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         const {id, defaults, getDistincts} = this.props;
         const {loadedData, status, loadingItems, errorData, validationError} = this.state;
 
+        const {label, innerLabel} = getLabels(data);
+
         return (
             <ControlItemSelect
                 id={id}
@@ -536,6 +560,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 errorData={errorData}
                 validateValue={this.validateValue}
                 getDistincts={getDistincts}
+                classMixin={b('item')}
+                selectProps={{label, innerLabel}}
             />
         );
     }
@@ -604,7 +630,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 this.onChange({param, value: valueWithOperation});
             };
 
-            const {label, innerLabel} = getLabels({controlData: data});
+            const {label, innerLabel} = getLabels(data);
 
             const props = {
                 ...control,
@@ -628,19 +654,14 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     });
                     fieldType = datasetFieldType;
                 }
-                if (
-                    fieldType === DATASET_FIELD_TYPES.DATETIME ||
-                    fieldType === DATASET_FIELD_TYPES.GENERICDATETIME
-                ) {
+                // Check 'datetime' for backward compatibility
+                if (fieldType === 'datetime' || fieldType === DATASET_FIELD_TYPES.GENERICDATETIME) {
                     props.timeFormat = 'HH:mm:ss';
                 }
             }
 
             if (type === TYPE.INPUT) {
-                props.placeholder =
-                    Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
-                        ? validationError
-                        : control.placeholder;
+                props.placeholder = validationError ? validationError : control.placeholder;
             }
 
             switch (type) {
@@ -714,7 +735,13 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         return (
             <div ref={this.rootNode} className={b({mobile: isMobileView})}>
                 {this.renderSilentLoader()}
-                <DebugInfoTool label={'paramId'} value={paramIdDebug} modType={'corner'} />
+                <DebugInfoTool
+                    modType={'corner'}
+                    data={[
+                        {label: 'widgetId', value: id},
+                        {label: 'paramId', value: paramIdDebug},
+                    ]}
+                />
                 {source.elementType === TYPE.SELECT
                     ? this.renderSelectControl()
                     : this.renderControls()}
@@ -722,33 +749,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         );
     }
 
-    private checkDatasetFieldType(
-        loadedData: ResponseSuccessControls,
-        data: DashTabItemControlDataset,
-    ) {
-        const {datasetFieldType} = getDatasetSourceInfo({
-            currentLoadedData: loadedData,
-            data,
-            actualLoadedData: this.state.loadedData,
-        });
-
-        if (
-            datasetFieldType &&
-            DATASET_IGNORED_DATA_TYPES.includes(datasetFieldType as DATASET_FIELD_TYPES)
-        ) {
-            const errorData = {
-                data: {
-                    title: i18nError('label_field-error-title'),
-                    message: i18nError('label_field-error-text'),
-                },
-            };
-            this.setErrorData(errorData, LOAD_STATUS.FAIL);
-        } else {
-            this.setLoadedData(loadedData, LOAD_STATUS.SUCCESS);
-        }
-    }
-
-    private setErrorData(errorData: ErrorData, status: LoadStatus) {
+    private setErrorData = (errorData: ErrorData, status: LoadStatus) => {
         if (this._isUnmounted) {
             return;
         }
@@ -763,7 +764,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 loadingItems: false,
             });
         }
-    }
+    };
 
     private setValidationError(hasError?: boolean) {
         if (hasError) {

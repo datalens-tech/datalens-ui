@@ -1,7 +1,7 @@
 import React from 'react';
 
 import PropTypes from 'prop-types';
-import {extractEntryId} from 'shared';
+import {registry} from 'ui/registry';
 
 import {DL} from '../../../constants/common';
 import logger from '../../../libs/logger';
@@ -28,6 +28,9 @@ export const resolveNavigationPath = (Component) => {
             async function setPath(origin = DL.USER_FOLDER) {
                 let path = '';
                 let root = PLACE.ROOT;
+
+                const {extractEntryId} = registry.common.functions.getAll();
+
                 const possibleEntryId = extractEntryId(origin);
 
                 if (resolvePathMode) {

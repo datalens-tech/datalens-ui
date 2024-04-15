@@ -5,12 +5,13 @@ import {AxiosError} from 'axios';
 import block from 'bem-cn-lite';
 import {History, Location} from 'history';
 import {i18n} from 'i18n';
+import isEqual from 'lodash/isEqual';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ChartsConfig, EntryUpdateMode, Feature, extractEntryId} from 'shared';
+import {ChartSaveControlsQA, ChartsConfig, EntryUpdateMode, Feature} from 'shared';
 import {
     DL,
     DatalensGlobalState,
@@ -25,6 +26,7 @@ import {
     Utils,
     sdk,
 } from 'ui';
+import {registry} from 'ui/registry';
 import {
     selectConfig,
     selectConfigForSaving,
@@ -56,6 +58,11 @@ import {RevisionEntry} from '../../../../components/Revisions/types';
 import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../store/actions/dialog';
 import {
+    addEditHistoryPoint,
+    initEditHistoryUnit,
+    resetEditHistoryUnit,
+} from '../../../../store/actions/editHistory';
+import {
     cleanRevisions,
     reloadRevisionsOnSave,
     setRevisionsMode,
@@ -64,11 +71,13 @@ import {RevisionsMode} from '../../../../store/typings/entryContent';
 import {getUrlParamFromStr} from '../../../../utils';
 import history from '../../../../utils/history';
 import {isDraft, isEditMode} from '../../../dash/store/selectors/dashTypedSelectors';
-import {SetDefaultsArgs, resetWizardStore, setDefaults} from '../../actions';
+import {SetDefaultsArgs, resetWizardStore, setDefaults, setWizardStore} from '../../actions';
 import {updateClientChartsConfig} from '../../actions/preview';
 import {toggleViewOnlyMode} from '../../actions/settings';
 import {receiveWidgetAndPrepareMetadata, updateWizardWidget} from '../../actions/widget';
 import DialogNoRights from '../../components/Dialogs/DialogNoRights';
+import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../constants';
+import {WizardGlobalState} from '../../reducers';
 import {reloadWizardEntryByRevision, setActualWizardChart} from '../../reducers/revisions/reducers';
 import {selectDataset} from '../../selectors/dataset';
 import {getDefaultChartName, shouldComponentUpdateWithDeepComparison} from '../../utils/helpers';
@@ -122,6 +131,7 @@ class Wizard extends React.Component<Props, State> {
         const {isDefaultsSet} = props;
 
         if (!isDefaultsSet) {
+            const {extractEntryId} = registry.common.functions.getAll();
             const entryId = extractEntryId(window.location.pathname);
 
             const revId = getUrlParamFromStr(this.props.location.search, URL_QUERY.REV_ID);
@@ -146,18 +156,34 @@ class Wizard extends React.Component<Props, State> {
             dialogNoRightsVisible: false,
             dialogSettingsVisible: false,
         };
+
+        if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+            this.props.initEditHistoryUnit({
+                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+                setState: ({state}) => {
+                    return this.props.setWizardStore({
+                        store: state as unknown as WizardGlobalState,
+                    });
+                },
+                options: {
+                    pathIgnoreList: ['/preview/highchartsWidget'],
+                },
+            });
+        }
     }
 
     componentDidMount() {
         window.addEventListener('beforeunload', this.unloadConfirmation);
     }
 
-    shouldComponentUpdate(nextProps: Readonly<Props>): boolean {
-        return shouldComponentUpdateWithDeepComparison({
-            nextProps,
-            currentProps: this.props,
-            deepComparePropKey: 'widget',
-        });
+    shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>): boolean {
+        return (
+            shouldComponentUpdateWithDeepComparison({
+                nextProps,
+                currentProps: this.props,
+                deepComparePropKey: 'widget',
+            }) || !isEqual(this.state, nextState)
+        );
     }
 
     componentDidUpdate(prevProps: Props) {
@@ -172,6 +198,7 @@ class Wizard extends React.Component<Props, State> {
             this.chartKitRef.current.reflow();
         }
 
+        const {extractEntryId} = registry.common.functions.getAll();
         const oldEntryId = extractEntryId(prevProps.match.url);
         const newEntryId = extractEntryId(match.url);
 
@@ -197,6 +224,12 @@ class Wizard extends React.Component<Props, State> {
 
             this.props.resetWizardStore();
 
+            if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+                this.props.resetEditHistoryUnit({
+                    unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+                });
+            }
+
             const entryId = newEntryId;
             const params: SetDefaultsArgs = {entryId};
             if (revId) {
@@ -213,7 +246,24 @@ class Wizard extends React.Component<Props, State> {
 
     componentWillUnmount() {
         window.removeEventListener('beforeunload', this.unloadConfirmation);
+
         this.props.resetWizardStore();
+
+        if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+            this.props.resetEditHistoryUnit({
+                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+            });
+        }
+    }
+
+    render() {
+        const {widgetError} = this.props;
+
+        if (widgetError) {
+            return this.renderError();
+        }
+
+        return this.renderApp();
     }
 
     unloadConfirmation = (event: BeforeUnloadEvent) => {
@@ -272,6 +322,12 @@ class Wizard extends React.Component<Props, State> {
             ...result,
             isWidgetWasSaved: true,
         });
+
+        if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+            this.props.resetEditHistoryUnit({
+                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+            });
+        }
     };
 
     openSaveWidgetDialog = async (mode?: EntryUpdateMode) => {
@@ -288,6 +344,17 @@ class Wizard extends React.Component<Props, State> {
             });
 
             await this.props.reloadRevisionsOnSave(true);
+
+            if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+                this.props.resetEditHistoryUnit({
+                    unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+                });
+
+                this.props.addEditHistoryPoint({
+                    newState: this.props.wizardState,
+                    unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+                });
+            }
         } else {
             // Saving a new one
             this.openSaveAsWidgetDialog();
@@ -380,7 +447,8 @@ class Wizard extends React.Component<Props, State> {
             {
                 action: () => this.openSaveAsWidgetDialog(true),
                 text: i18n('wizard', 'button_save-as-editor-script'),
-                hidden: !Utils.isEnabledFeature(Feature.EnableChartEditor),
+                hidden: !Utils.isEnabledFeature(Feature.EnableSaveAsEditorScript),
+                qa: ChartSaveControlsQA.SaveAsEditorScript,
             },
         ];
     };
@@ -495,16 +563,6 @@ class Wizard extends React.Component<Props, State> {
             </div>
         );
     }
-
-    render() {
-        const {widgetError} = this.props;
-
-        if (widgetError) {
-            return this.renderError();
-        }
-
-        return this.renderApp();
-    }
 }
 
 const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
@@ -538,6 +596,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
         previewEntryId: selectPreviewEntryId(state),
         isParentDashWasChanged: isDraft(state) && isEditMode(state),
         initialPreviewHash: selectInitialPreviewHash(state),
+        wizardState: state.wizard,
     };
 };
 
@@ -545,6 +604,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     return bindActionCreators(
         {
             resetWizardStore,
+            setWizardStore,
             setDefaults,
             receiveWidgetAndPrepareMetadata,
             toggleViewOnlyMode,
@@ -556,6 +616,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
             reloadRevisionsOnSave,
             reloadWizardEntryByRevision,
             openDialogSaveDraftChartAsActualConfirm,
+            initEditHistoryUnit,
+            resetEditHistoryUnit,
+            addEditHistoryPoint,
         },
         dispatch,
     );

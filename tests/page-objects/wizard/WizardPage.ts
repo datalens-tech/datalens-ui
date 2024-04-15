@@ -1,6 +1,7 @@
 import {expect} from '@playwright/test';
 
 import {
+    WizardPageQa,
     ChartkitMenuDialogsQA,
     DatasetItemActionsQa,
     MenuItemsQA,
@@ -222,6 +223,20 @@ class WizardPage extends ChartPage {
         ).toBeVisible();
     }
 
+    async createParameter(parameterName: string, defaultValue: string) {
+        await this.parameterEditor.openCreateParameter();
+        await this.parameterEditor.setName(parameterName);
+        await this.parameterEditor.setDefaultValue(defaultValue);
+        await this.parameterEditor.apply();
+    }
+
+    async createHierarchy(name: string, fields: string[]) {
+        await this.openHierarchyEditor();
+        await this.hierarchyEditor.setName(name);
+        await this.hierarchyEditor.selectFields(fields);
+        await this.hierarchyEditor.clickSave();
+    }
+
     async openAsPreview(params: Record<string, string | undefined> = {}) {
         await this.page.locator(slct(ChartkitMenuDialogsQA.chartMenuDropDownSwitcher)).click();
 
@@ -240,6 +255,14 @@ class WizardPage extends ChartPage {
 
         await previewPage.goto(url.toString());
         return previewPage;
+    }
+
+    async clickUndo() {
+        await this.page.locator(slct(WizardPageQa.UndoButton)).click();
+    }
+
+    async clickRedo() {
+        await this.page.locator(slct(WizardPageQa.RedoButton)).click();
     }
 }
 

@@ -44,6 +44,7 @@ type OwnProps = {
     setExpandedItem: (id: string) => void;
     tab: DashTabChanged;
     dashTabs: Array<DashTabChanged>;
+    selectedDashTabId: string | null;
 };
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -95,7 +96,7 @@ class TabItem extends React.PureComponent<Props> {
     dropDownMenuRef = React.createRef<HTMLDivElement>();
 
     render() {
-        const {id, isActive, title, dashTabs} = this.props;
+        const {id, isActive, title, dashTabs, selectedDashTabId} = this.props;
         const {editMode} = this.state;
         const dashTab = dashTabs.find((item) => item.id === id);
         const dashTabItems = dashTab?.items || [];
@@ -111,8 +112,12 @@ class TabItem extends React.PureComponent<Props> {
             />
         ) : (
             <div
-                className={b('row', {active: isActive || this.state.showWidgetsOrderPopup})}
+                className={b('row', {
+                    active: isActive || this.state.showWidgetsOrderPopup,
+                    selected: selectedDashTabId === id,
+                })}
                 onDoubleClick={this.setEditMode}
+                data-qa={DialogTabsQA.ReadOnlyTabItem}
             >
                 <div title={title} className={b('title')}>
                     {title}

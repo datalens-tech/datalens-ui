@@ -13,5 +13,9 @@ export const IconById = ({id, ...restProps}: IconByIdProps) => {
     const {getIconDataById} = registry.common.functions.getAll();
     const iconData = getIconDataById(id);
 
+    if (!iconData) {
+        return null;
+    }
+
     return <Icon data={iconData} {...restProps} />;
 };

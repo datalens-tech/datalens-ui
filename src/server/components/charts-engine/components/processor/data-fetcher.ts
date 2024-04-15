@@ -631,33 +631,24 @@ export class DataFetcher {
             headers.referer = req.ctx.utils.redactSensitiveQueryParams(req.headers.referer);
         }
 
-        if (subrequestHeaders['x-chart-id']) {
-            headers['x-chart-id'] = subrequestHeaders['x-chart-id'];
-        }
-
-        if (subrequestHeaders[SuperuserHeader.XDlAllowSuperuser]) {
-            headers[SuperuserHeader.XDlAllowSuperuser] =
-                subrequestHeaders[SuperuserHeader.XDlAllowSuperuser];
-        }
-
-        if (subrequestHeaders[SuperuserHeader.XDlSudo]) {
-            headers[SuperuserHeader.XDlSudo] = subrequestHeaders[SuperuserHeader.XDlSudo];
-        }
-
-        if (subrequestHeaders[DL_CONTEXT_HEADER]) {
-            headers[DL_CONTEXT_HEADER] = subrequestHeaders[DL_CONTEXT_HEADER];
+        const proxyHeaders = ctx.config.chartsEngineConfig.dataFetcherProxiedHeaders || [
+            // fallback will be removed soon
+            SuperuserHeader.XDlAllowSuperuser,
+            SuperuserHeader.XDlSudo,
+            DL_CONTEXT_HEADER,
+            'x-dl-debug-mode',
+            DL_EMBED_TOKEN_HEADER,
+        ];
+        if (Array.isArray(proxyHeaders)) {
+            proxyHeaders.forEach((headerName) => {
+                if (subrequestHeaders[headerName]) {
+                    headers[headerName] = subrequestHeaders[headerName];
+                }
+            });
         }
 
         if (workbookId) {
             headers[WORKBOOK_ID_HEADER] = workbookId;
-        }
-
-        if (subrequestHeaders['x-dl-debug-mode']) {
-            headers['x-dl-debug-mode'] = subrequestHeaders['x-dl-debug-mode'];
-        }
-
-        if (subrequestHeaders[DL_EMBED_TOKEN_HEADER]) {
-            headers[DL_EMBED_TOKEN_HEADER] = subrequestHeaders[DL_EMBED_TOKEN_HEADER];
         }
 
         if (passedCredentials) {
@@ -769,6 +760,9 @@ export class DataFetcher {
             requestOptions.headers['x-real-ip'] = req.ip;
         }
 
+        const traceId = ctx.getTraceId();
+        const tenantId = ctx.get('tenantId');
+
         return new Promise((fetchResolve) => {
             ctx.log('Fetching', {publicTargetUri});
 
@@ -796,6 +790,8 @@ export class DataFetcher {
                         statusCode,
                         requestId: req.id,
                         latency,
+                        traceId,
+                        tenantId,
                         url: publicTargetUri,
                     });
 
@@ -901,6 +897,8 @@ export class DataFetcher {
                             requestId: req.id,
                             latency,
                             url: publicTargetUri,
+                            traceId,
+                            tenantId,
                         });
 
                         if (response.statusCode === 204 && data === '') {

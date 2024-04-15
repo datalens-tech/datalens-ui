@@ -3,6 +3,7 @@ import url from 'url';
 import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
 import {MiddlewareStage} from '../../../components/charts-engine/types';
+import {registry} from '../../../registry';
 
 export const plugin = {
     middlewares: [
@@ -29,11 +30,9 @@ export const plugin = {
                         */
                             const parsedKey = url.parse(key, true);
 
-                            // Otherwise, the request with a space will be encoded, and the request in US will encode the encoded space
-                            // Datalens%20Charts/Errors/no-data -> Datalens%2520Charts%2FErrors%2Fno-data
-                            const decodedPathname = decodeURIComponent(parsedKey.pathname!);
+                            const keyWithoutQueryParams = key.split('?')[0];
 
-                            const pathname = decodedPathname.replace(
+                            const pathname = keyWithoutQueryParams.replace(
                                 /\/?(?:ChartPreview|preview)/,
                                 '',
                             );
@@ -45,12 +44,13 @@ export const plugin = {
                                 pathname.startsWith('/wizard') ||
                                 pathname.startsWith('wizard')
                             ) {
-                                params.name = decodedPathname
+                                params.name = keyWithoutQueryParams
                                     .replace(/^\/?editor\//, '')
                                     .replace(/^\/?wizard\//, '');
                             }
 
-                            if (/^[0-9a-z]{13}$/.test(params.name)) {
+                            const isEntryId = registry.common.functions.get('isEntryId');
+                            if (isEntryId(params.name)) {
                                 // If params.name looks like id - use it as id.
                                 body.id = params.name;
 

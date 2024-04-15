@@ -12,8 +12,8 @@ import {
 } from '../../../../src/shared/constants';
 
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ChartsParams} from '../../../constants/test-entities/charts';
 import {dragAndDropListItem} from '../../../suites/dash/helpers';
+import {TestParametrizationConfig} from '../../../types/config';
 
 const DASH_PARAMS: Array<[string, string]> = [
     ['param1', ''],
@@ -157,19 +157,18 @@ const removeParam = async (page: Page, paramTitle: string) => {
     await removeButton?.click();
 };
 
-datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters`, () => {
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        const dashboardPage = new DashboardPage({page});
+datalensTest.describe(`Dashboards - Chart/external selector/dashboard parameters`, () => {
+    datalensTest.beforeEach(
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            const dashboardPage = new DashboardPage({page});
 
-        await dashboardPage.createDashboard({
-            editDash: async () => {
-                await dashboardPage.addChart({
-                    chartName: ChartsParams.citySalesPieChart.name,
-                    chartUrl: ChartsParams.citySalesPieChart.url,
-                });
-            },
-        });
-    });
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addChart(config.dash.charts.ChartCityPie);
+                },
+            });
+        },
+    );
 
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
@@ -345,6 +344,10 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
                 listSelector: slct(TabMenuQA.List),
                 sourceIndex: 0,
                 targetIndex: 1,
+            });
+
+            await new Promise((resolve) => {
+                setTimeout(resolve, 500);
             });
 
             actualTabMenuItems = await page.$$(slct(TabMenuQA.Item));

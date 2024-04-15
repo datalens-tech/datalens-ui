@@ -2,7 +2,13 @@ import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import DashboardSettings from '../../../page-objects/dashboard/DashboardSettings';
-import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../../utils';
+import {
+    getUniqueTimestamp,
+    isEnabledFeature,
+    openTestPage,
+    slct,
+    waitForCondition,
+} from '../../../utils';
 import {dragAndDropListItem} from '../helpers';
 
 import {RobotChartsDashboardUrls, RobotChartsEditorUrls} from '../../../utils/constants';
@@ -16,6 +22,7 @@ import {
 import {RESTRICTED_PARAM_NAMES} from '../../../../src/shared/constants/dash';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {CommonSelectors} from '../../../page-objects/constants/common-selectors';
+import {Feature} from '../../../../src/shared/types';
 
 const DASH_PARAMS: Array<[string, string]> = [
     ['param1', ''],
@@ -159,6 +166,32 @@ const removeParam = async (page: Page, paramTitle: string) => {
     await removeButton?.click();
 };
 
+const addExternalSelector = async (dashboardPage: DashboardPage, page: Page) => {
+    await dashboardPage.enterEditMode();
+
+    const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
+
+    if (isEnabledGroupControls) {
+        await dashboardPage.clickAddExternalSelector();
+    } else {
+        // adding a selector
+        await dashboardPage.clickAddSelector();
+
+        // waiting for the selector settings dialog to appear
+        await page.waitForSelector(slct(ControlQA.dialogControl));
+
+        // select 'external selector'
+        await page.click(
+            `${slct(DashboardPage.selectors.radioManualControl)} ${
+                CommonSelectors.RadioButtonOptionControl
+            }[value="external"]`,
+            {
+                force: true,
+            },
+        );
+    }
+};
+
 datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters`, () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashName = `e2e-test-dash-params-${getUniqueTimestamp()}`;
@@ -277,6 +310,10 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
                 targetIndex: 1,
             });
 
+            await new Promise((resolve) => {
+                setTimeout(resolve, 500);
+            });
+
             actualTabMenuItems = await page.$$(slct(TabMenuQA.Item));
 
             // switching to the second tab (with the old parameters)
@@ -364,23 +401,7 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
-            await dashboardPage.enterEditMode();
-
-            // adding a selector
-            await dashboardPage.clickAddSelector();
-
-            // waiting for the selector settings dialog to appear
-            await page.waitForSelector(slct(ControlQA.dialogControl));
-
-            // select 'external selector'
-            await page.click(
-                `${slct(DashboardPage.selectors.radioManualControl)} ${
-                    CommonSelectors.RadioButtonOptionControl
-                }[value="external"]`,
-                {
-                    force: true,
-                },
-            );
+            await addExternalSelector(dashboardPage, page);
 
             const validParam = ['check_valid_param', 'value'];
             const invalidParamWithUnderscore = ['_check_error_param', ''];
@@ -437,27 +458,11 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
     );
 
     datalensTest(
-        'The unreleased=1 parameter shows the unpublished version of the editorial chart',
+        'The unreleased=1 parameter shows the unpublished version of the editor chart',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
-            await dashboardPage.enterEditMode();
-
-            // adding a selector
-            await dashboardPage.clickAddSelector();
-
-            // waiting for the selector settings dialog to appear
-            await page.waitForSelector(slct(ControlQA.dialogControl));
-
-            // select 'external selector'
-            await page.click(
-                `${slct(DashboardPage.selectors.radioManualControl)} ${
-                    CommonSelectors.RadioButtonOptionControl
-                }[value="external"]`,
-                {
-                    force: true,
-                },
-            );
+            await addExternalSelector(dashboardPage, page);
 
             await page.click(slct(NavigationInputQA.Link));
 

@@ -43,7 +43,6 @@ import iconEqueo from '../../assets/icons/files-conn-equeo.svg';
 import iconExtractor1C from '../../assets/icons/files-conn-extractor1c.svg';
 import iconKonturMarket from '../../assets/icons/files-conn-kontur-market.svg';
 import iconKpIndex from '../../assets/icons/files-conn-kp-index.svg';
-import iconMarketCouriers from '../../assets/icons/files-conn-market-couriers.svg';
 import iconSchoolbookJournal from '../../assets/icons/files-conn-schoolbook-journal.svg';
 import iconSmbHeatmaps from '../../assets/icons/files-conn-smb-heatmaps.svg';
 import iconSnowflake from '../../assets/icons/files-conn-snowflake.svg';
@@ -74,6 +73,7 @@ const typeToIcon: Record<string, IconData> = {
     [ConnectorType.ChOverYtUserAuth]: iconCHYTUser,
     [ConnectorType.Chyt]: iconChytYC,
     [ConnectorType.ChytNb]: iconChytYC,
+    [ConnectorType.ChytNb_v2]: iconChytYC,
     [ConnectorType.Chydb]: iconCHYDB,
     [ConnectorType.Ydb]: iconYDB,
     [ConnectorType.Yq]: iconYQ,
@@ -91,7 +91,6 @@ const typeToIcon: Record<string, IconData> = {
     [ConnectorType.SchoolbookJournal]: iconSchoolbookJournal,
     [ConnectorType.File]: iconFile,
     [ConnectorType.SmbHeatmaps]: iconSmbHeatmaps,
-    [ConnectorType.MarketCouriers]: iconMarketCouriers,
     [ConnectorType.Bigquery]: iconBigQuery,
     [ConnectorType.UsageTrackingYT]: iconUsageTrackingYT,
     [ConnectorType.Snowflake]: iconSnowflake,

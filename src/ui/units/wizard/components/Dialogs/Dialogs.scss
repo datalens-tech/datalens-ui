@@ -7,8 +7,12 @@
 .dialog-no-rights {
     width: 480px;
 
-    .button2 {
-        margin-right: 12px;
+    button {
+        margin-left: 10px;
+
+        &:first-child {
+            margin-left: auto;
+        }
     }
 }
 
@@ -16,7 +20,7 @@
 .dialog-label {
     width: 480px;
 
-    .yc-dialog-header__caption {
+    .g-dialog-header__caption {
         margin-left: 7px;
     }
 
@@ -42,7 +46,7 @@
 
     &.dialog-field-dimension,
     &.dialog-label-dimension {
-        .yc-dialog-header {
+        .g-dialog-header {
             svg {
                 color: var(--g-color-text-positive);
             }
@@ -51,7 +55,7 @@
 
     &.dialog-field-measure,
     &.dialog-label-measure {
-        .yc-dialog-header {
+        .g-dialog-header {
             svg {
                 color: var(--g-color-text-info);
             }

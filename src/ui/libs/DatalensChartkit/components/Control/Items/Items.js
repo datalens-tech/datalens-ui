@@ -4,10 +4,9 @@ import {Button, Checkbox, Dialog, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
-import {ControlQA, Feature, resolveIntervalDate, resolveRelativeDate} from 'shared';
+import {ControlQA, resolveIntervalDate, resolveRelativeDate} from 'shared';
 import {registry} from 'ui/registry';
 import {CheckboxControlValue} from 'ui/units/dash/containers/Dialogs/Control/constants';
-import Utils from 'ui/utils';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {YCSelect} from '../../../../../components/common/YCSelect/YCSelect';
@@ -99,15 +98,7 @@ function BaseControlSelect({
         [onChange, multiselect],
     );
 
-    const allowEmptyValue = Utils.isEnabledFeature(Feature.SelectorRequiredValue)
-        ? !required
-        : true;
-    const showSelectAll =
-        Utils.isEnabledFeature(Feature.SelectorRequiredValue) &&
-        currentValue?.length === items?.length &&
-        required
-            ? false
-            : undefined;
+    const showSelectAll = currentValue?.length === items?.length && required ? false : undefined;
 
     const size = isMobileView ? MOBILE_SIZE.YC_SELECT : 's';
 
@@ -115,7 +106,7 @@ function BaseControlSelect({
         <YCSelect
             showSearch={searchable}
             type={multiselect ? YCSelect.MULTIPLE : YCSelect.SINGLE}
-            allowEmptyValue={allowEmptyValue}
+            allowEmptyValue={!required}
             showMissingItems={true}
             value={currentValue}
             onUpdate={wrappedOnChange}
@@ -228,7 +219,7 @@ BaseControlInput.propTypes = {
 function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
     const [text, setText] = React.useState(value);
     const [showModal, setShowModal] = React.useState(false);
-    const onClose = React.useCallback(() => {
+    const handleClose = React.useCallback(() => {
         if (text === value) {
             setShowModal(false);
         } else if (confirm(i18n('chartkit.control.items', 'close-confirm'))) {
@@ -237,15 +228,25 @@ function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
         }
     }, [value, text]);
 
+    const handleClick = () => {
+        setShowModal(true);
+    };
+
     const buttonTheme = theme in legoThemeNameMapper ? legoThemeNameMapper[theme] : theme;
+    const buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : 's';
 
     return (
         <React.Fragment>
-            <Button view={buttonTheme || 'normal'} width="max" onClick={() => setShowModal(true)}>
+            <Button
+                view={buttonTheme || 'normal'}
+                size={buttonSize}
+                width="max"
+                onClick={handleClick}
+            >
                 {label}
             </Button>
             {showModal && (
-                <Dialog open={showModal} onClose={onClose}>
+                <Dialog open={showModal} onClose={handleClose}>
                     <Dialog.Header caption={label} />
                     <Dialog.Body>
                         <TextArea
@@ -270,7 +271,7 @@ function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
                             onChange(text);
                         }}
                         textButtonCancel={i18n('chartkit.control.items', 'close')}
-                        onClickButtonCancel={onClose}
+                        onClickButtonCancel={handleClose}
                     />
                 </Dialog>
             )}
@@ -312,8 +313,6 @@ function BaseControlDatepicker({
         [onChange],
     );
 
-    const hasClear = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? !required : true;
-
     return (
         <DatepickerControl
             widgetId={widgetId}
@@ -324,7 +323,7 @@ function BaseControlDatepicker({
             scale="day"
             timezoneOffset={0}
             range={false}
-            hasClear={hasClear}
+            hasClear={!required}
             showApply={false}
             allowNullableValues={true}
             emptyValueText={i18n('chartkit.control.items', 'value_undefined')}
@@ -408,8 +407,6 @@ function BaseControlRangeDatepicker({
         [returnInterval, onChange],
     );
 
-    const hasClear = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? !required : true;
-
     return (
         <DatepickerControl
             widgetId={widgetId}
@@ -419,7 +416,7 @@ function BaseControlRangeDatepicker({
             to={to}
             format={format || `dd.MM.yyyy ${timeFormat || ''}`.trim()}
             timezoneOffset={0}
-            hasClear={hasClear}
+            hasClear={!required}
             showApply={false}
             allowNullableValues={true}
             emptyValueText={i18n('chartkit.control.items', 'value_undefined')}
@@ -468,13 +465,17 @@ function BaseControlButton({label, theme, onChange}) {
 
     const size = isMobileView ? MOBILE_SIZE.BUTTON : 's';
 
+    const handleClick = () => {
+        setTimeout(onChange);
+    };
+
     return (
         <Button
             view={buttonTheme || 'normal'}
             size={size}
             width="max"
             // Need setTimeout for common microtask queue: firstly fire onBlur (from Input), then onClick (from Button)
-            onClick={() => setTimeout(() => onChange())}
+            onClick={handleClick}
         >
             {label || i18n('chartkit.control.items', 'apply')}
         </Button>

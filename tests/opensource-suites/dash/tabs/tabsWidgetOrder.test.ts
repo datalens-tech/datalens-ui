@@ -11,17 +11,17 @@ import {arbitraryText} from '../constants';
 import {ActionPanelDashSaveControlsQa} from '../../../../src/shared/constants/qa/action-panel';
 
 const SELECTORS = {
-    SELECTOR_LIST_ITEMS: '.yc-list__item',
+    SELECTOR_LIST_ITEMS: '.g-list__item',
 };
 
-datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
+datalensTest.describe(`Dashboards - Change widgets order on tab`, () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.createDashboard({
             editDash: async () => {
-                await dashboardPage.addText(arbitraryText.first);
-                await dashboardPage.addText(arbitraryText.second);
+                await dashboardPage.addTitle(arbitraryText.first);
+                await dashboardPage.addTitle(arbitraryText.second);
             },
         });
     });
@@ -51,6 +51,10 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
                 listSelector: slct(DialogTabsQA.PopupWidgetOrderList),
                 sourceIndex: 0,
                 targetIndex: 1,
+            });
+
+            await new Promise((resolve) => {
+                setTimeout(resolve, 500);
             });
 
             const actualWidgetOrderListItems = await popupWidgetOrderList.$$(

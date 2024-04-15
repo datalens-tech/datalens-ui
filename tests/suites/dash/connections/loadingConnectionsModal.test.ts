@@ -1,12 +1,13 @@
 import {Page} from '@playwright/test';
 import {ConnectionsDialogQA} from '../../../../src/shared/constants';
-import {openTestPage, slct} from '../../../utils';
+import {isEnabledFeature, openTestPage, slct} from '../../../utils';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {Feature} from '../../../../src/shared';
 
-datalensTest.describe('Dashboards - Loading the links window', () => {
+datalensTest.describe('Dashboards - Links', () => {
     datalensTest(
         'On a dashboard with a delayed loading and a broken chart, the connections window is loading',
         async ({page}: {page: Page}) => {
@@ -18,6 +19,11 @@ datalensTest.describe('Dashboards - Loading the links window', () => {
                 page,
                 RobotChartsDashboardUrls.DashboardWithLongContentAndBrokenChart,
             );
+
+            const hideOldRelations = await isEnabledFeature(page, Feature.HideOldRelations);
+            if (hideOldRelations) {
+                return;
+            }
 
             // enter the edit mode and open the links window
             await dashboardPage.openDashConnections();

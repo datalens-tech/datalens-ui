@@ -21,6 +21,7 @@ export const ControlQA = {
     chartkitControl: 'chartkit-control',
     selectDefaultAcceptable: 'select-default-acceptable',
     acceptableDialogButton: 'acceptable-dialog-button',
+    filtersClear: 'filters-clear',
 };
 
 export const DialogControlQa = {
@@ -29,9 +30,20 @@ export const DialogControlQa = {
     fieldSelect: 'dialog-control-field-select',
     valueSelect: 'dialog-control-value-select',
     radioSourceType: 'radio-source-type',
+    seletSourceType: 'select-source-type',
     appearanceTitle: 'dialog-control-appearance-title',
     appearanceInnerTitle: 'dialog-control-appearance-inner-title',
     fieldNameInput: 'field-name-input',
     dateRangeCheckbox: 'date-range-checkbox',
     dateTimeCheckbox: 'date-time-checkbox',
+
+    typeControlCalendar: 'type-control-calendar',
+    typeControlSelect: 'type-control-select',
+    typeControlInput: 'type-control-input',
+    typeControlCheckbox: 'type-control-checkbox',
+};
+
+export const DialogControlDateQa = {
+    defaultNotDefined: 'default-date-not-defined',
+    defaultSelectValue: 'default-date-select-value',
 };

@@ -1,13 +1,14 @@
 .dl-dialog-filter {
-    // TODO: this is an private api and may silently changed. We should use local styles
-    --yc-dialog-divider-margin: 0;
-
     display: flex;
     flex-direction: column;
     width: 680px;
     height: 560px;
     max-height: 80vh;
     min-height: 300px;
+
+    &__divider {
+        margin: 0;
+    }
 
     &__body {
         &_without-paddings {
@@ -67,17 +68,17 @@
     }
 
     // TODO: remove styles, when the Dialog.Header will contain them [DATAUI-359]
-    & .yc-dialog-header__caption {
+    & .g-dialog-header__caption {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
 
-    & .yc-dialog-body {
+    & .g-dialog-body {
         overflow-y: auto;
     }
 
-    & .yc-dialog-footer__children {
+    & .g-dialog-footer__children {
         position: relative;
     }
 

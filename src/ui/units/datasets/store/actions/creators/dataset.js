@@ -1,12 +1,11 @@
 import {Toaster} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import _debounce from 'lodash/debounce';
-import {TIMEOUT_65_SEC} from 'shared';
+import {TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
 import {sdk} from 'ui';
 
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
-import {getDatetimeName} from '../../../../../utils/helpers';
 import {ComponentErrorType, SUBSELECT_SOURCE_TYPES} from '../../../constants';
 import {getToastTitle} from '../../../helpers/dataset-error-helpers';
 import {getComponentErrorsByType} from '../../../helpers/datasets';
@@ -102,7 +101,7 @@ export function updateDatasetByValidation({
             toaster.add({
                 name: 'success_update_dataset',
                 title: getToastTitle('NOTIFICATION_SUCCESS', actionTypeNotification),
-                type: 'success',
+                theme: 'success',
             });
         }
 
@@ -335,13 +334,16 @@ const dispatchFetchPreviewDataset = async (
         let previewDataset = {};
 
         if (resultSchema.length && !isLoading) {
-            previewDataset = await getSdk().bi.getPreview({
-                datasetId,
-                workbookId,
-                limit,
-                dataset: content,
-                version: 'draft',
-            });
+            previewDataset = await getSdk().bi.getPreview(
+                {
+                    datasetId,
+                    workbookId,
+                    limit,
+                    dataset: content,
+                    version: 'draft',
+                },
+                {timeout: TIMEOUT_100_SEC},
+            );
         } else {
             return dispatch(clearDatasetPreview());
         }
@@ -443,7 +445,7 @@ export function saveDataset({key, workbookId, name, history, isCreationProcess, 
                 toaster.add({
                     name: 'success_save_dataset',
                     title: getToastTitle('NOTIFICATION_SUCCESS', 'save'),
-                    type: 'success',
+                    theme: 'success',
                 });
             }
 
@@ -480,10 +482,7 @@ export function fetchFieldTypes() {
 
                     return {
                         ...type,
-                        title: i18n(
-                            'component.field-editor.view',
-                            `value_${getDatetimeName(name)}`,
-                        ),
+                        title: i18n('component.field-editor.view', `value_${name}`),
                         aggregations: aggregations.sort((current, next) => {
                             if (next === 'none') {
                                 return 1;
@@ -510,7 +509,7 @@ export function fetchFieldTypes() {
         toaster.add({
             name: 'error_fetch_types',
             title: getToastTitle('NOTIFICATION_FAILURE', 'types'),
-            type: 'error',
+            theme: 'danger',
         });
 
         return types;

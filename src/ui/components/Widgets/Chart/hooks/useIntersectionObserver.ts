@@ -72,7 +72,7 @@ class Observer {
         this.triggerSync(element, callback);
     }
 
-    ubsubscibe(element: HTMLDivElement) {
+    unsubscribe(element: HTMLDivElement) {
         if (this.intersectionObserver === null) {
             return;
         }
@@ -119,11 +119,11 @@ export const useIntersectionObserver = ({
         if (enable) {
             observer.subscribe(element, callback);
         } else {
-            observer.ubsubscibe(element);
+            observer.unsubscribe(element);
         }
 
         return () => {
-            observer.ubsubscibe(element);
+            observer.unsubscribe(element);
         };
     }, [nodeRef, callback, enable]);
 };

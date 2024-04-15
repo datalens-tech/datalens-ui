@@ -1,3 +1,5 @@
+import isNil from 'lodash/isNil';
+
 import {
     CommonNumberFormattingOptions,
     DATASET_FIELD_TYPES,
@@ -99,11 +101,8 @@ const mergeLabelDataWithLines = (args: MergeLabelDataWithLinesArgs) => {
     const key = keys.key;
     const lastKey = keys.lastKey as string | number;
 
-    if (!labelItem) {
-        return;
-    }
-
-    if (hideLabel) {
+    if (!labelItem || hideLabel) {
+        lines[key].dataLabels = {enabled: false};
         return;
     }
 
@@ -126,7 +125,7 @@ const mergeLabelDataWithLines = (args: MergeLabelDataWithLinesArgs) => {
         labelValue = values[labelValueIndex];
     }
 
-    if (labelValue) {
+    if (!isNil(labelValue)) {
         if (isNumericalDataType(labelDataType)) {
             labelsValues[key][lastKey] = Number(labelValue);
         } else if (isDateField({data_type: labelDataType})) {

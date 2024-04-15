@@ -21,11 +21,12 @@ export const opensourceEndpoints = {
             widgets: process.env.UI_WIDGETS_ENDPOINT || '/widgets',
             preview: process.env.UI_PREVIEW_ENDPOINT || '/preview',
             serviceSettings: '/settings',
+            editor: '/editor',
         },
     },
     production: {
         api: {
-            us: process.env.US_ENDPOINT || 'http://us',
+            us: process.env.US_ENDPOINT || 'http://us:8083',
             bi: process.env.BI_API_ENDPOINT || 'http://control-api:8080',
             biData: process.env.BI_DATA_ENDPOINT || 'http://data-api:8080',
             charts: process.env.CHARTS_ENDPOINT || '/',
@@ -45,6 +46,7 @@ export const opensourceEndpoints = {
             widgets: process.env.UI_WIDGETS_ENDPOINT || '/widgets',
             preview: process.env.UI_PREVIEW_ENDPOINT || '/preview',
             serviceSettings: '/settings',
+            editor: '/editor',
         },
     },
 } as const;

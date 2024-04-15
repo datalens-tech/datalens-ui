@@ -7,16 +7,23 @@ import {DatalensGlobalState, Utils} from 'index';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
 import {ControlQA, DashTabItemControlSourceType, Feature} from 'shared';
+import {SectionWrapper} from 'ui/components/SectionWrapper/SectionWrapper';
 import {AppearanceSection} from 'units/dash/containers/Dialogs/Control2/Sections/AppearanceSection/AppearanceSection';
 import {CommonSettingsSection} from 'units/dash/containers/Dialogs/Control2/Sections/CommonSettingsSection/CommonSettingsSection';
 import {SelectorPreview} from 'units/dash/containers/Dialogs/Control2/SelectorPreview/SelectorPreview';
 import {SelectorTypeSelect} from 'units/dash/containers/Dialogs/Control2/SelectorTypeSelect/SelectorTypeSelect';
 import {applyControl2Dialog, closeControl2Dialog} from 'units/dash/store/actions/dashTyped';
-import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
+import {
+    selectIsParametersSectionAvailable,
+    selectSelectorDialog,
+} from 'units/dash/store/selectors/dashTypedSelectors';
+
+import {ParametersSection} from './Sections/ParametersSection/ParametersSection';
 
 import './Control2.scss';
 
-const i18n = I18n.keyset('dash.control-dialog.edit');
+const controlI18n = I18n.keyset('dash.control-dialog.edit');
+const dashI18n = I18n.keyset('dash.main.view');
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -29,8 +36,12 @@ const b = block('dl-dialog-add-control');
 
 class DialogAddControl extends React.Component<Props> {
     render() {
-        const {isEdit} = this.props;
-        const textButtonApply = isEdit ? i18n('button_save') : i18n('button_add');
+        const {isEdit, validation} = this.props;
+        const textButtonApply = isEdit ? controlI18n('button_save') : controlI18n('button_add');
+        //TODO: raname 'label_control' after enabling feature flag
+        const caption = Utils.isEnabledFeature(Feature.GroupControls)
+            ? dashI18n('button_edit-panel-editor-selector')
+            : controlI18n('label_control');
 
         return (
             <Dialog
@@ -41,27 +52,30 @@ class DialogAddControl extends React.Component<Props> {
                 qa={ControlQA.dialogControl}
                 disableFocusTrap={true}
             >
-                <Dialog.Header caption={i18n('label_control')} />
+                <Dialog.Header caption={caption} />
                 <Dialog.Body className={b('body')}>{this.renderBody()}</Dialog.Body>
                 <Dialog.Footer
                     onClickButtonCancel={this.handleClose}
                     onClickButtonApply={this.handleApply}
                     textButtonApply={textButtonApply}
-                    textButtonCancel={i18n('button_cancel')}
+                    textButtonCancel={controlI18n('button_cancel')}
                     propsButtonApply={{qa: ControlQA.dialogControlApplyBtn}}
                     propsButtonCancel={{qa: ControlQA.dialogControlCancelBtn}}
-                />
+                >
+                    {validation.selectorParameters && (
+                        <div className={b('footer-error')}>{validation.selectorParameters}</div>
+                    )}
+                </Dialog.Footer>
             </Dialog>
         );
     }
 
     private renderBody() {
-        const {sourceType, isEdit} = this.props;
-        const showTypeSelect =
-            !isEdit || !Utils.isEnabledFeature(Feature.GroupControls) || sourceType !== 'external';
+        const showTypeSelect = !Utils.isEnabledFeature(Feature.GroupControls);
+        const showParametersSection = this.props.isParametersSectionAvailable;
 
         return (
-            <div>
+            <React.Fragment>
                 <div className={b('section')}>
                     <SelectorPreview />
                 </div>
@@ -71,10 +85,17 @@ class DialogAddControl extends React.Component<Props> {
                     </div>
                 )}
                 <div className={b('section')}>
-                    <CommonSettingsSection />
+                    <SectionWrapper title={controlI18n('label_common-settings')}>
+                        <CommonSettingsSection />
+                    </SectionWrapper>
                 </div>
+                {showParametersSection && (
+                    <div className={b('section')}>
+                        <ParametersSection />
+                    </div>
+                )}
                 {this.renderAppearanceSection()}
-            </div>
+            </React.Fragment>
         );
     }
 
@@ -102,9 +123,12 @@ class DialogAddControl extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => {
+    const {sourceType, validation} = selectSelectorDialog(state);
     return {
         isEdit: Boolean(state.dash.openedItemId),
-        sourceType: selectSelectorDialog(state).sourceType,
+        sourceType,
+        isParametersSectionAvailable: selectIsParametersSectionAvailable(state),
+        validation,
     };
 };
 

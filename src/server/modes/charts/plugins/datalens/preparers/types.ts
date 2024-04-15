@@ -55,7 +55,7 @@ export type PrepareFunctionResultData = {
 
 export type ChartKitFormatSettings = {
     format?: null;
-    chartKitFormatting: boolean;
+    chartKitFormatting?: boolean;
     chartKitPrecision?: number;
     chartKitPrefix?: string;
     chartKitPostfix?: string;
@@ -85,8 +85,9 @@ export type PiePoint = {
     formattedName: string;
     drillDownFilterValue: string;
     y: number;
-    colorGuid: string;
-    colorValue: string | number;
+    color?: string;
+    colorGuid?: string;
+    colorValue?: string | number;
     label?: string | number | null;
     custom?: object;
 };

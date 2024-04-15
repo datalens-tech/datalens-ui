@@ -1,6 +1,7 @@
 export * from './components';
 export * from './connections';
 export * from './chart';
+export * from './editor';
 export * from './datasets';
 export * from './dash';
 export * from './dl-navigation';
@@ -9,3 +10,4 @@ export * from './control';
 export * from './ql';
 export * from './field-editor';
 export {VisualizationsQa} from './visualization';
+export * from './uikit';

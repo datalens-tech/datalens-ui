@@ -32,6 +32,7 @@ import type {OpenDialogMoveCollectionArgs} from '../../components/CollectionsStr
 import type {OpenDialogMoveWorkbookArgs} from '../../components/CollectionsStructure/MoveWorkbookDialog';
 import type {OpenDialogCopyWorkbookArgs} from '../../components/CollectionsStructure/CopyWorkbookDialog';
 import type {OpenDialogMigrateEntryToWorkbookArgs} from '../../components/CollectionsStructure/MigrateEntryToWorkbookDialog';
+import type {OpenDialogDeployTemplateToWorkbookArgs} from '../../components/CollectionsStructure/DeployTemplateToWorkbookDialog';
 import type {OpenDialogEditWorkbookArgs} from '../../components/CollectionsStructure/EditWorkbookDialog';
 import type {OpenDialogCreateWorkbookArgs} from '../../components/CollectionsStructure/CreateWorkbookDialog';
 import type {OpenDialogEditCollectionArgs} from '../../components/CollectionsStructure/EditCollectionDialog';
@@ -44,6 +45,12 @@ import type {OpenDialogLabelSettingsArgs} from '../../units/wizard/components/Di
 import type {OpenDialogControlsPlacementArgs} from '../../units/dash/containers/Dialogs/GroupControl/ControlsPlacementDialog/ControlsPlacementDialog';
 import type {OpenDialogCopyEntriesToWorkbookArgs} from '../../components/CopyEntriesToWorkbookDialog/CopyEntriesToWorkbookDialog';
 import type {OpenDialogConnAddYadocArgs} from '../../units/connections/components/custom-forms/Yadocs/components/DialogAddDocument/DialogAddDocument';
+import type {OpenDialogEditQueryArgs} from '../../units/dash/containers/Dialogs/DialogEditQuery/DialogEditQuery';
+import type {OpenDialogDeleteCollectionArgs} from '../../components/CollectionsStructure/DeleteCollectionDialog';
+import type {OpenDialogDeleteWorkbookArgs} from '../../components/CollectionsStructure/DeleteWorkbookDialog';
+import type {OpenDialogAddDemoWorkbookArgs} from '../../components/CollectionsStructure/AddDemoWorkbookDialog';
+import type {OpenDialogCreateEntryInWorkbookArgs} from '../../components/CollectionsStructure/CreateEntryInWorkbookDialog';
+import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogMetricSettingsArgs
@@ -88,5 +95,12 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogMigrateToWorkbookArgs
     | OpenDialogSelectMigrationToWorkbookArgs
     | OpenDialogMigrateEntryToWorkbookArgs
+    | OpenDialogDeployTemplateToWorkbookArgs
     | OpenDialogCopyEntriesToWorkbookArgs
-    | OpenDialogCopyEntriesArgs;
+    | OpenDialogCopyEntriesArgs
+    | OpenDialogEditQueryArgs
+    | OpenDialogDeleteCollectionArgs
+    | OpenDialogDeleteWorkbookArgs
+    | OpenDialogAddDemoWorkbookArgs
+    | OpenDialogIamAccessArgs
+    | OpenDialogCreateEntryInWorkbookArgs;

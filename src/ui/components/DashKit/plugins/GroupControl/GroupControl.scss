@@ -1,5 +1,6 @@
 .dashkit-plugin-group-control {
     $class: &;
+
     display: block;
     height: 100%;
     width: 100%;
@@ -8,25 +9,7 @@
     border-radius: 3px;
 
     &__container {
-        padding: 0 15px 4px;
-    }
-
-    &__error {
-        border-radius: 3px;
-        padding: 0 6px;
-
-        &_inside {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: space-around;
-            height: 70px;
-            width: 180px;
-        }
-
-        &:hover:not(#{&}_inside) {
-            background-color: var(--g-color-base-simple-hover);
-        }
+        padding: 0 5px 0 15px;
     }
 
     &__loader {
@@ -37,24 +20,33 @@
         align-items: center;
         justify-content: center;
         z-index: 3; // to overlay Datepicker
+        background-color: var(--g-color-base-float);
 
         &_silent {
             background-color: var(--g-color-sfx-fade);
         }
     }
 
-    &__item,
-    &__item-loader {
-        margin-top: 5px;
-        max-width: 100%;
-        padding: 0;
-
-        &:not(:last-child) {
-            margin-right: 10px;
-        }
+    &__controls {
+        display: flex;
+        flex-wrap: wrap;
+        padding-bottom: 8px;
     }
 
-    &__item-loader {
+    &__control-container {
+        display: contents;
+        position: relative;
+    }
+
+    &__item,
+    &__item-stub {
+        margin-top: 8px;
+        max-width: 100%;
+        padding: 0;
+        padding-right: 10px;
+    }
+
+    &__item-stub {
         height: 28px;
         display: inline-flex;
         vertical-align: middle;
@@ -62,15 +54,16 @@
     }
 
     &_mobile {
-        min-height: 64px;
+        #{$class}__container {
+            padding: 0 10px 10px;
+        }
 
-        display: flex;
-        flex-direction: column;
-        padding-bottom: 6px;
+        #{$class}__controls {
+            flex-direction: column;
+        }
 
         #{$class}__item {
-            min-height: 64px;
-            margin-right: 0;
+            padding-right: 0;
             margin-top: 10px;
         }
     }

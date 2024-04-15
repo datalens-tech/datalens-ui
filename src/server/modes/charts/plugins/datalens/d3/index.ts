@@ -6,10 +6,10 @@ import {
     ServerCommonSharedExtraSettings,
     ServerSort,
     ServerVisualization,
-    WizardVisualizationId,
     isDateField,
 } from '../../../../../../shared';
 import {getAxisType} from '../preparers/helpers/axis';
+import {getAllVisualizationsIds} from '../preparers/helpers/visualizations';
 import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../utils/axis-helpers';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 
@@ -41,7 +41,7 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
             type: getAxisType({
                 field: xItem,
                 settings: xPlaceholderSettings,
-                visualizationId: visualization.id as WizardVisualizationId,
+                visualizationIds: getAllVisualizationsIds(args),
                 sort,
             }) as ChartKitWidgetAxisType | undefined,
             labels: {

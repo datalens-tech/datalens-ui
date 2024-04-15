@@ -8,10 +8,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {DialogControlQa} from 'shared';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {registry} from 'ui/registry';
-import Utils from 'ui/utils/utils';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
-    selectIsDatasetSelectorAndNoFieldSelected,
+    selectIsControlConfigurationDisabled,
     selectSelectorControlType,
     selectSelectorDefaultValue,
     selectSelectorDialog,
@@ -19,12 +18,13 @@ import {
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
 import {FilterValue} from '../../../../../../../../shared/modules';
-import {DATASET_FIELD_TYPES, Feature} from '../../../../../../../../shared/types';
+import {DATASET_FIELD_TYPES} from '../../../../../../../../shared/types';
 import DateDefaultValue from '../../../Control/Date/Default/Default';
 import {CheckboxControlValue} from '../../../Control/constants';
 
 import {ListValueControl} from './ListValueControl/ListValueControl';
 import {RequiredValueCheckbox} from './RequiredValueCheckbox/RequiredValueCheckbox';
+import type {ValueSelectorControlProps} from './types';
 
 import './ValueSelector.scss';
 
@@ -35,7 +35,7 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 const InputValueControl = () => {
     const dispatch = useDispatch();
     const defaultValue = useSelector(selectSelectorDefaultValue);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
     const validation = useSelector(selectSelectorValidation);
 
     const handleUpdate = React.useCallback((value: string) => {
@@ -51,7 +51,7 @@ const InputValueControl = () => {
             <FieldWrapper error={validation.defaultValue}>
                 <TextInput
                     disabled={isFieldDisabled}
-                    value={defaultValue as string}
+                    value={(defaultValue ?? '') as string}
                     onUpdate={handleUpdate}
                 />
             </FieldWrapper>
@@ -62,7 +62,7 @@ const InputValueControl = () => {
 const DateValueControl = () => {
     const {isRange, acceptableValues, defaultValue, fieldType, sourceType} =
         useSelector(selectSelectorDialog);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
     const validation = useSelector(selectSelectorValidation);
 
     const dispatch = useDispatch();
@@ -79,7 +79,7 @@ const DateValueControl = () => {
     const handleTimeChange = React.useCallback((value: boolean) => {
         dispatch(
             setSelectorDialogItem({
-                fieldType: value ? DATASET_FIELD_TYPES.DATETIME : undefined,
+                fieldType: value ? DATASET_FIELD_TYPES.GENERICDATETIME : undefined,
                 defaultValue: undefined,
             }),
         );
@@ -99,7 +99,7 @@ const DateValueControl = () => {
                 <Checkbox
                     qa={DialogControlQa.dateRangeCheckbox}
                     className={b('checkbox-option')}
-                    checked={isRange}
+                    checked={isRange ?? false}
                     disabled={isFieldDisabled}
                     onUpdate={handleIsRangeUpdate}
                     size="l"
@@ -111,10 +111,7 @@ const DateValueControl = () => {
                     <Checkbox
                         qa={DialogControlQa.dateTimeCheckbox}
                         className={b('checkbox-option')}
-                        checked={
-                            fieldType === DATASET_FIELD_TYPES.DATETIME ||
-                            fieldType === DATASET_FIELD_TYPES.GENERICDATETIME
-                        }
+                        checked={fieldType === DATASET_FIELD_TYPES.GENERICDATETIME}
                         disabled={isFieldDisabled}
                         onUpdate={handleTimeChange}
                         size="l"
@@ -141,7 +138,7 @@ const DateValueControl = () => {
 const CheckboxValueControl = () => {
     const dispatch = useDispatch();
     const defaultValue = useSelector(selectSelectorDefaultValue);
-    const isFieldDisabled = useSelector(selectIsDatasetSelectorAndNoFieldSelected);
+    const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
 
     const handleUpdate = React.useCallback(
         (value: string) => {
@@ -176,7 +173,11 @@ const CheckboxValueControl = () => {
     );
 };
 
-const ValueSelector: React.FC = () => {
+type ValueSelectorProps = {
+    controlProps: ValueSelectorControlProps;
+};
+
+const ValueSelector: React.FC<ValueSelectorProps> = (props: ValueSelectorProps) => {
     const controlType = useSelector(selectSelectorControlType);
 
     const {useExtendedValueSelector} = registry.dash.functions.getAll();
@@ -193,7 +194,7 @@ const ValueSelector: React.FC = () => {
             break;
         }
         case 'select': {
-            inputControl = <ListValueControl />;
+            inputControl = <ListValueControl {...props.controlProps.select} />;
             break;
         }
         case 'input': {
@@ -207,7 +208,7 @@ const ValueSelector: React.FC = () => {
 
     return (
         <React.Fragment>
-            {Utils.isEnabledFeature(Feature.SelectorRequiredValue) && <RequiredValueCheckbox />}
+            <RequiredValueCheckbox />
             {inputControl}
         </React.Fragment>
     );

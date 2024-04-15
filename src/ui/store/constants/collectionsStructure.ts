@@ -46,6 +46,11 @@ export const GET_COLLECTION_CONTENT_FAILED = Symbol(
     'collectionsStructure/GET_COLLECTION_CONTENT_FAILED',
 );
 
+// Copy template
+export const COPY_TEMPLATE_LOADING = Symbol('collectionsStructure/COPY_TEMPLATE_LOADING');
+export const COPY_TEMPLATE_SUCCESS = Symbol('collectionsStructure/COPY_TEMPLATE_SUCCESS');
+export const COPY_TEMPLATE_FAILED = Symbol('collectionsStructure/COPY_TEMPLATE_FAILED');
+
 // Creating a collection
 export const CREATE_COLLECTION_LOADING = Symbol('collectionsStructure/CREATE_COLLECTION_LOADING');
 export const CREATE_COLLECTION_SUCCESS = Symbol('collectionsStructure/CREATE_COLLECTION_SUCCESS');
@@ -89,3 +94,18 @@ export const UPDATE_WORKBOOK_FAILED = Symbol('collectionsStructure/UPDATE_WORKBO
 export const UPDATE_COLLECTION_LOADING = Symbol('collectionsStructure/UPDATE_COLLECTION_LOADING');
 export const UPDATE_COLLECTION_SUCCESS = Symbol('collectionsStructure/UPDATE_COLLECTION_SUCCESS');
 export const UPDATE_COLLECTION_FAILED = Symbol('collectionsStructure/UPDATE_COLLECTION_FAILED');
+
+// Deleting a collection
+export const DELETE_COLLECTION_LOADING = Symbol('collectionsStructure/DELETE_COLLECTION_LOADING');
+export const DELETE_COLLECTION_SUCCESS = Symbol('collectionsStructure/DELETE_COLLECTION_SUCCESS');
+export const DELETE_COLLECTION_FAILED = Symbol('collectionsStructure/DELETE_COLLECTION_FAILED');
+
+// Deleting a workbook
+export const DELETE_WORKBOOK_LOADING = Symbol('collectionsStructure/DELETE_WORKBOOK_LOADING');
+export const DELETE_WORKBOOK_SUCCESS = Symbol('collectionsStructure/DELETE_WORKBOOK_SUCCESS');
+export const DELETE_WORKBOOK_FAILED = Symbol('collectionsStructure/DELETE_WORKBOOK_FAILED');
+
+// Adding a demo workbook
+export const ADD_DEMO_WORKBOOK_LOADING = Symbol('collections/ADD_DEMO_WORKBOOK_LOADING');
+export const ADD_DEMO_WORKBOOK_SUCCESS = Symbol('collections/ADD_DEMO_WORKBOOK_SUCCESS');
+export const ADD_DEMO_WORKBOOK_FAILED = Symbol('collections/ADD_DEMO_WORKBOOK_FAILED');

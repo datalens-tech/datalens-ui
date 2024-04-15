@@ -1,6 +1,8 @@
 export const enum WizardPageQa {
     SectionPreview = 'preview-chartkit',
     VisualizationSelectPopup = 'visualization-select-popup',
+    UndoButton = 'undo-btn',
+    RedoButton = 'redo-btn',
 }
 
 export const enum SectionDatasetQA {
@@ -169,4 +171,9 @@ export const enum HierarchyEditorQa {
 
 export const enum VisualizationItemQa {
     FormulaIcon = 'formula-icon',
+}
+
+export const enum ChartSaveControlsQA {
+    SaveMoreDropdown = 'save-more-dropdown',
+    SaveAsEditorScript = 'save-as-editor-script',
 }

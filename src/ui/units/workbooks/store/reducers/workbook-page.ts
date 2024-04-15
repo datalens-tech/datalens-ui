@@ -1,5 +1,7 @@
 import {
+    AddFavoriteResponse,
     DeleteEntryResponse,
+    DeleteFavoriteResponse,
     EntryFields,
     GetCollectionBreadcrumbsResponse,
     GetEntryResponse,
@@ -8,18 +10,22 @@ import {
     WorkbookPermission,
     WorkbookWithPermissions,
 } from 'shared/schema';
-import {OrderDirection, OrderWorkbookEntriesField} from 'shared/schema/us/types/sort';
 
 import {CreateEntryActionType} from '../../constants';
 import {WorkbookEntriesFilters} from '../../types';
 import {WorkbooksAction} from '../actions';
 import {
     ADD_WORKBOOK_INFO,
+    CHANGE_FAVORITE_ENTRY_FAILED,
+    CHANGE_FAVORITE_ENTRY_INLINE,
+    CHANGE_FAVORITE_ENTRY_LOADING,
+    CHANGE_FAVORITE_ENTRY_SUCCESS,
     CHANGE_FILTERS,
     DELETE_ENTRY_FAILED,
     DELETE_ENTRY_INLINE,
     DELETE_ENTRY_LOADING,
     DELETE_ENTRY_SUCCESS,
+    GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS,
     GET_WORKBOOK_BREADCRUMBS_FAILED,
     GET_WORKBOOK_BREADCRUMBS_LOADING,
     GET_WORKBOOK_BREADCRUMBS_SUCCESS,
@@ -35,8 +41,10 @@ import {
     RENAME_ENTRY_SUCCESS,
     RESET_CREATE_WORKBOOK_ENTRY_TYPE,
     RESET_WORKBOOK_ENTRIES,
+    RESET_WORKBOOK_ENTRIES_BY_SCOPE,
     RESET_WORKBOOK_PERMISSIONS,
     SET_CREATE_WORKBOOK_ENTRY_TYPE,
+    SET_WORKBOOK,
 } from '../constants';
 
 export type WorkbooksState = {
@@ -62,6 +70,11 @@ export type WorkbooksState = {
     renameEntry: {
         isLoading: boolean;
         data: RenameEntryResponse | null;
+        error: Error | null;
+    };
+    changeFavoriteEntry: {
+        isLoading: boolean;
+        data: AddFavoriteResponse | DeleteFavoriteResponse | null;
         error: Error | null;
     };
     deleteEntry: {
@@ -100,6 +113,11 @@ const initialState: WorkbooksState = {
         data: null,
         error: null,
     },
+    changeFavoriteEntry: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
     deleteEntry: {
         isLoading: false,
         data: null,
@@ -107,8 +125,8 @@ const initialState: WorkbooksState = {
     },
     filters: {
         filterString: undefined,
-        orderField: OrderWorkbookEntriesField.Name,
-        orderDirection: OrderDirection.Asc,
+        orderField: 'name',
+        orderDirection: 'asc',
     },
     workbooksNames: {},
     workbookPermissions: null,
@@ -212,6 +230,35 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
                 items: [...state.items, ...newEntries],
             };
         }
+
+        case GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS: {
+            const loadedIds = new Set(
+                state.items.map((item) => {
+                    return item.entryId;
+                }),
+            );
+
+            const newEntries: GetEntryResponse[] = [];
+
+            action.data.forEach((workbookEntries) => {
+                return workbookEntries?.entries.forEach((entry) => {
+                    if (!loadedIds.has(entry.entryId)) {
+                        newEntries.push(entry);
+                    }
+                });
+            });
+
+            return {
+                ...state,
+                getWorkbookEntries: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+                items: [...state.items, ...newEntries],
+            };
+        }
+
         case GET_WORKBOOK_ENTRIES_FAILED: {
             return {
                 ...state,
@@ -229,6 +276,19 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
                 ...state,
                 getWorkbookEntries: initialState.getWorkbookEntries,
                 items: initialState.items,
+            };
+        }
+
+        case RESET_WORKBOOK_ENTRIES_BY_SCOPE: {
+            const entries = state.items.filter((entry) => entry.scope !== action.data);
+
+            return {
+                ...state,
+                getWorkbookEntries: {
+                    ...state.getWorkbookEntries,
+                    data: entries,
+                },
+                items: entries,
             };
         }
 
@@ -295,6 +355,55 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
                                 (newItem as any)[typedKey] = renamedEntry[typedKey];
                             }
                         });
+
+                        return newItem;
+                    }
+                    return item;
+                }),
+            };
+        }
+
+        // Change favorite the entry
+        case CHANGE_FAVORITE_ENTRY_LOADING: {
+            return {
+                ...state,
+                changeFavoriteEntry: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case CHANGE_FAVORITE_ENTRY_SUCCESS: {
+            return {
+                ...state,
+                changeFavoriteEntry: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case CHANGE_FAVORITE_ENTRY_FAILED: {
+            return {
+                ...state,
+                changeFavoriteEntry: {
+                    ...state.changeFavoriteEntry,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+        case CHANGE_FAVORITE_ENTRY_INLINE: {
+            const changeFavoriteEntry = Array.isArray(action.data) ? action.data[0] : action.data;
+
+            return {
+                ...state,
+                items: state.items.map((item) => {
+                    if (changeFavoriteEntry.entryId === item.entryId) {
+                        const newItem = {...item} as GetEntryResponse;
+
+                        newItem.isFavorite = !newItem.isFavorite;
 
                         return newItem;
                     }
@@ -372,6 +481,17 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
             return {
                 ...state,
                 workbookPermissions: null,
+            };
+        }
+
+        case SET_WORKBOOK: {
+            return {
+                ...state,
+                getWorkbook: {
+                    isLoading: false,
+                    data: action.data.workbook,
+                    error: null,
+                },
             };
         }
 

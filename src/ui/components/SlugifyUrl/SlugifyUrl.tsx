@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {History} from 'history';
-import {extractEntryId, isEntryId, makeSlugName} from 'shared';
+import {isEntryId, makeSlugName} from 'shared';
+import {registry} from 'ui/registry';
 
 export interface SlugifyUrlProps {
     entryId?: string | null;
@@ -14,6 +15,7 @@ export const SlugifyUrl: React.FC<SlugifyUrlProps> = ({entryId, name, history}) 
         if (entryId && name && isEntryId(entryId)) {
             const url = new URL(window.location.href);
             const urlPathname = url.pathname;
+            const {extractEntryId} = registry.common.functions.getAll();
             if (extractEntryId(urlPathname) && urlPathname.includes(entryId)) {
                 const pathname = urlPathname
                     .split('/')

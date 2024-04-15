@@ -17,9 +17,13 @@ export default class FilterEditor {
         await this.page.click(slct(operation));
     }
 
-    async selectDate(dateValue: string) {
-        await this.page.fill('.dl-dialog-filter__body .yc-text-input__control', dateValue);
+    async setInputValue(value: string) {
+        const input = this.page.locator('.dl-dialog-filter__body .g-text-input__control');
+        await input.fill(value);
+    }
 
+    async selectDate(dateValue: string) {
+        await this.setInputValue(dateValue);
         await this.closeDatepickerPopup();
     }
 
@@ -29,7 +33,7 @@ export default class FilterEditor {
 
         if (startDate) {
             await this.page.fill(
-                `.dl-dialog-filter__body ${slct('datepicker-start')} .yc-text-input__control`,
+                `.dl-dialog-filter__body ${slct('datepicker-start')} .g-text-input__control`,
                 startDate,
             );
         }
@@ -37,7 +41,7 @@ export default class FilterEditor {
         await this.closeDatepickerPopup();
 
         await this.page.fill(
-            `.dl-dialog-filter__body ${slct('datepicker-end')} .yc-text-input__control`,
+            `.dl-dialog-filter__body ${slct('datepicker-end')} .g-text-input__control`,
             endDate,
         );
 
@@ -47,14 +51,14 @@ export default class FilterEditor {
     async selectRadio(value: string) {
         await this.page
             .locator('.dl-dialog-filter__body')
-            .locator(`.yc-radio-group__option`, {hasText: value})
+            .locator(`.g-radio-group__option`, {hasText: value})
             .click();
     }
 
     async selectValues(fields: string[]) {
         for (const field of fields) {
             await this.page.fill(
-                `.dl-dialog-filter__select-column_left .yc-list__filter input`,
+                `.dl-dialog-filter__select-column_left .g-list__filter input`,
                 field,
             );
 
@@ -83,12 +87,12 @@ export default class FilterEditor {
         }
 
         if (value) {
-            await this.page.fill(`${slct(`amount-input-${type}`)} .yc-text-input__control`, value);
+            await this.page.fill(`${slct(`amount-input-${type}`)} .g-text-input__control`, value);
         }
     }
 
     async apply() {
-        await this.page.click('.yc-dialog-footer__button_action_apply');
+        await this.page.click('.g-dialog-footer__button_action_apply');
     }
 
     async openFilterField(filterField: string, placeholder?: string) {
@@ -106,7 +110,7 @@ export default class FilterEditor {
     }
 
     async isReadOnly() {
-        const dialogFooterButtonSelector = '.dl-dialog-filter .yc-dialog-footer .yc-button';
+        const dialogFooterButtonSelector = '.dl-dialog-filter .g-dialog-footer .g-button';
 
         await this.page.waitForSelector(dialogFooterButtonSelector);
 

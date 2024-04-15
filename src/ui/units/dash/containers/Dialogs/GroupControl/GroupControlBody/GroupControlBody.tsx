@@ -15,16 +15,16 @@ const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
 export const GroupControlBody = () => {
     return (
-        <div>
+        <React.Fragment>
             <FormRow label={i18n('label_source')}>
-                <SelectorTypeSelect size="m" showExternalType={false} />
+                <SelectorTypeSelect showExternalType={false} mode="select" />
             </FormRow>
             <div className={b('section')}>
                 <TitleRow />
             </div>
             <div className={b('section')}>
-                <CommonSettingsSection isSectionHidden={true} />
+                <CommonSettingsSection />
             </div>
-        </div>
+        </React.Fragment>
     );
 };

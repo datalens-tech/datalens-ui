@@ -23,7 +23,7 @@ async function getCoreNavigationBreadcrumbs(page: Page) {
 }
 
 async function clickToNavigationBreadcrumb(page: Page, breadcrumb: string) {
-    await page.click(`.yc-breadcrumbs__item >> text=${breadcrumb}`);
+    await page.click(`.g-breadcrumbs__switcher >> text=${breadcrumb}`);
 }
 
 datalensTest.describe('Wizard - Navigation', () => {

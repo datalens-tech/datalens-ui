@@ -52,7 +52,6 @@ const requestWithPresets = requestPromise.defaults({
     useQuerystring: true,
     maxRedirects: 0,
     followAllRedirects: true,
-    rejectUnauthorized: false,
 });
 
 export class Request {

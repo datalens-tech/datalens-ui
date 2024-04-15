@@ -3,6 +3,10 @@
         border-bottom: 1px solid var(--g-color-line-generic);
         display: flex;
         justify-content: space-between;
+
+        &:last-child {
+            border-bottom: none;
+        }
     }
 
     &__invalid-list &__row {
@@ -17,7 +21,7 @@
         width: calc(100% - 72px);
 
         // unfortunatelly there is no other way to make it
-        & .yc-button__text {
+        & .g-button__text {
             display: block;
         }
     }

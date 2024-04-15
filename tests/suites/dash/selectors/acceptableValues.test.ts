@@ -10,7 +10,7 @@ const PARAMS = {
     ORIGINAL_VALUES_COUNT: 2,
 };
 
-datalensTest.describe('Dashboards are Possible selector values', () => {
+datalensTest.describe('Dashboards - Possible selector values', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashName = `e2e-test-dash-acceptable-values-${getUniqueTimestamp()}`;
         const dashboardPage = new DashboardPage({page});
@@ -24,7 +24,7 @@ datalensTest.describe('Dashboards are Possible selector values', () => {
     });
 
     datalensTest(
-        'Possible values of the selector-selector with manual input can be deleted',
+        'Possible values of the select-selector with manual input can be deleted',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
@@ -45,20 +45,19 @@ datalensTest.describe('Dashboards are Possible selector values', () => {
             await page.waitForSelector(slct(DashboardPage.selectors.dialogAcceptable));
 
             // getting the number of values in the list
-            const acceptableList = await page.$$(slct(ControlQA.selectAcceptableItem));
-            expect(acceptableList.length).toBe(PARAMS.ORIGINAL_VALUES_COUNT);
+            await expect(page.locator(slct(ControlQA.selectAcceptableItem))).toHaveCount(
+                PARAMS.ORIGINAL_VALUES_COUNT,
+            );
 
+            const acceptableFirst = page.locator(slct(ControlQA.selectAcceptableItem)).first();
             // deleting values
-            const acceptablesItems = await page.$$(slct(ControlQA.selectAcceptableItem));
-
-            for (const item of acceptablesItems) {
-                await item.hover();
+            for (let i = 0; i < PARAMS.ORIGINAL_VALUES_COUNT; i++) {
+                await acceptableFirst.hover();
                 await page.click(slct(ControlQA.selectAcceptableRemoveButton));
             }
 
             // check that there are no values left in the list
-            const emptyAcceptableList = await page.$$(slct(ControlQA.selectAcceptableItem));
-            expect(emptyAcceptableList.length).toBe(0);
+            await expect(page.locator(slct(ControlQA.selectAcceptableItem))).toHaveCount(0);
 
             // exit the dialog, canceling the changes
             await page.click(slct(DashboardPage.selectors.dialogCancelBtn));

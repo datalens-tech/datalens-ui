@@ -5,18 +5,17 @@ import {usePrevious} from 'hooks';
 import PropTypes from 'prop-types';
 import {DndProvider} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import {extractEntryId} from 'shared';
 import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
-import {getSdk} from '../../../../libs/schematic-sdk';
+import {registry} from '../../../../registry';
 import {EditorUrlParams, EditorUrls, Status} from '../../constants/common';
 import ActionPanel from '../../containers/ActionPanel/ActionPanel';
 import Grid from '../../containers/Grid/Grid';
 import UnloadConfirmation from '../../containers/UnloadConfirmation/UnloadConfirmation';
+import {getFullPathName} from '../../utils';
 import EditorPageError from '../EditorPageError/EditorPageError';
 import NewChart from '../NewChart/NewChart';
-import {config} from '../NodeTemplates/config';
 import {ViewLoader} from '../ViewLoader/ViewLoader';
 
 import './EditorPage.scss';
@@ -38,12 +37,14 @@ const EditorPage = ({
     const [template, setTemplate] = React.useState(null);
 
     const editorPath = React.useMemo(() => {
+        const {extractEntryId} = registry.common.functions.getAll();
         const entryId = extractEntryId(match.params.path);
         return entryId ? entryId : match.params.path;
     }, [match.params.path]);
     const prevEditorPath = usePrevious(editorPath);
-
     const templatePath = React.useMemo(() => match.params.template, [match.params.template]);
+    const {workbookId} = match.params;
+
     const loadAndSetTemplate = React.useCallback(
         (item) => {
             setTemplate(item);
@@ -55,12 +56,15 @@ const EditorPage = ({
     const isEntryInited = Boolean(entry) && !entry.fake;
     const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
 
+    const getEditorTemplates = registry.editor.functions.get('getEditorTemplates');
+
+    const templates = getEditorTemplates();
+
     React.useEffect(() => {
         async function getEntryItem() {
-            const res = await getSdk().us.listDirectory({path: 'TemplatesV2/'});
-            const templates = config.templates;
-            const entries = res.entries;
-            return entries.find(({name}) => templates[name].path === templatePath);
+            return templates.find(({name}) => {
+                return name === templatePath;
+            });
         }
 
         if (editorPath === EditorUrlParams.New) {
@@ -101,9 +105,9 @@ const EditorPage = ({
         };
     }, []);
 
-    function onClickNodeTemplate(item, entryPath) {
-        const urlPath = item.empty ? '' : `/${entryPath}`;
-        history.push(`${EditorUrls.EntryDraft}${urlPath}${location.search}`);
+    function onClickNodeTemplate(item) {
+        const urlPath = item.empty ? '' : `/${item.name}`;
+        history.push(getFullPathName({base: `${EditorUrls.EntryDraft}${urlPath}`, workbookId}));
     }
 
     const renderEditor = (size) => {
@@ -122,7 +126,7 @@ const EditorPage = ({
         return (
             <React.Fragment>
                 <UnloadConfirmation />
-                <ActionPanel history={history} />
+                <ActionPanel history={history} workbookId={workbookId} />
                 <div className={b('content')}>
                     <Grid size={size} />
                 </div>

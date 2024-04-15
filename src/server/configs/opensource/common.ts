@@ -1,4 +1,10 @@
-import {AppEnvironment, AppInstallation, Language, isTrueArg} from '../../../shared';
+import {
+    AppEnvironment,
+    AppInstallation,
+    DL_CONTEXT_HEADER,
+    Language,
+    isTrueArg,
+} from '../../../shared';
 import {resolveSource} from '../../../shared/endpoints/sources';
 import {nativeModules} from '../../components/charts-engine/components/processor/native-modules';
 import {SERVICE_NAME_DATALENS} from '../../constants';
@@ -43,7 +49,7 @@ export default {
 
     // CHARTS MODE
 
-    allowBodyConfig: false,
+    allowBodyConfig: true,
 
     chartTemplates: {
         ql: qlChartTemplate,
@@ -154,6 +160,7 @@ export default {
         secrets: {},
         enableTelemetry: true,
         usEndpointPostfix: '',
+        dataFetcherProxiedHeaders: [DL_CONTEXT_HEADER],
     },
 
     chartkitSettings: {

@@ -39,11 +39,6 @@ export const PERCENT_VISUALIZATIONS = new Set<string>([
     WizardVisualizationId.Area100p,
 ]);
 
-export const VISUALIZATIONS_WITH_DIMENSIONS_AS_COLORS = new Set<string>([
-    WizardVisualizationId.Pie,
-    WizardVisualizationId.Donut,
-]);
-
 export const VISUALIZATIONS_WITH_SEVERAL_FIELDS_X_PLACEHOLDER = new Set<string>([
     WizardVisualizationId.Column,
     WizardVisualizationId.Column100p,

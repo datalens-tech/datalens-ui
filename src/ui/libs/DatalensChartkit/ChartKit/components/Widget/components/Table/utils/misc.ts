@@ -3,7 +3,6 @@ import React from 'react';
 import {sanitizeUrl} from '@braintree/sanitize-url';
 import {Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
 import isEqual from 'lodash/isEqual';
-import isPlainObject from 'lodash/isPlainObject';
 import {
     BarTableCell,
     BarViewOptions,
@@ -17,20 +16,10 @@ import {
 } from 'shared';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
 
-import {MarkupItem, MarkupItemTypeDict} from '../../../../../../../../components/Markup';
 import {DataTableData} from '../../../../../../types';
-
-const MARKUP_ITEM_TYPES = Object.values(MarkupItemTypeDict);
 
 const decodeURISafe = (uri: string) => {
     return decodeURI(uri.replace(/%(?![0-9a-fA-F][0-9a-fA-F]+)/g, '%25'));
-};
-
-const isMarkupObject = (obj: MarkupItem | Object) => {
-    const hasRequiredType = 'type' in obj && MARKUP_ITEM_TYPES.includes(obj.type);
-    const hasAnyContent = 'children' in obj || 'content' in obj;
-
-    return hasRequiredType && hasAnyContent;
 };
 
 export const concatStrings = (...strs: string[]) => strs.filter(Boolean).join(' ');
@@ -41,10 +30,6 @@ export const encodeURISafe = (uri: string) => {
     }
 
     return encodeURI(decodeURISafe(uri));
-};
-
-export const isMarkupItem = (obj: MarkupItem | Object | null): obj is MarkupItem => {
-    return Boolean(obj && isPlainObject(obj) && isMarkupObject(obj));
 };
 
 export const camelCaseCss = (rowStyle?: ChartKitCss) => {

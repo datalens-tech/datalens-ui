@@ -2,8 +2,9 @@ import React from 'react';
 
 import {get} from 'lodash';
 import {Redirect, Route, RouteComponentProps, Switch} from 'react-router-dom';
-import {ConnectorType, extractEntryId} from 'shared';
+import {ConnectorType} from 'shared';
 import {ConnectorAlias} from 'ui/constants';
+import {registry} from 'ui/registry';
 
 import {ChOverYT, ConnectorForm, ConnectorsList, File, GSheetsV2, Yadocs} from '../';
 import type {ConnectorItem, GetConnectorsResponse} from '../../../../../shared/schema';
@@ -127,6 +128,8 @@ export const Router = ({flattenConnectors, groupedConnectors, connectionData}: R
                         const connectionId = get(props.match.params, 'connectionId');
                         const workbookId = get(props.match.params, 'workbookId');
                         const type = connectionData?.[FieldKey.DbType] as ConnectorType;
+                        const {extractEntryId} = registry.common.functions.getAll();
+
                         const extractedId = extractEntryId(connectionId);
 
                         if (!extractedId) {

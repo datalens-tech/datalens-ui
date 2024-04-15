@@ -3,7 +3,8 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
-import {applyGroupControlDialog} from 'units/dash/store/actions/dashTyped';
+import {ControlQA} from 'shared/constants/qa';
+import {applyGroupControlDialog} from 'units/dash/store/actions/controls/actions';
 
 import TwoColumnDialog from '../../../components/TwoColumnDialog/TwoColumnDialog';
 import {closeDialog} from '../../../store/actions/dialogs/actions';
@@ -40,6 +41,7 @@ export const GroupControl = () => {
             footer={<GroupControlFooter handleClose={handleClose} handleApply={handleApply} />}
             contentClassMixin={b('content')}
             sidebarClassMixin={b('sidebar-content')}
+            qa={ControlQA.dialogControl}
         />
     );
 };

@@ -51,7 +51,7 @@ $fullscreenZIndex: 999;
         padding: 0 var(--dl-dk-charts-desc-padding) var(--dl-dk-charts-desc-padding);
         margin-left: auto;
 
-        .yc-link:not(:hover) {
+        .g-link:not(:hover) {
             color: var(--g-color-text-secondary);
         }
     }
@@ -107,6 +107,10 @@ $fullscreenZIndex: 999;
         padding: 0 var(--dl-dk-metric-desc-padding) var(--dl-dk-metric-desc-padding);
     }
 
+    &__body_markup + &__description {
+        padding: 0 var(--dl-dk-metric-desc-padding) var(--dl-dk-metric-desc-padding);
+    }
+
     &__body_ymap + &__description {
         padding: 0 var(--dl-dk-map-desc-padding) var(--dl-dk-map-desc-padding);
     }
@@ -152,6 +156,14 @@ $fullscreenZIndex: 999;
         }
     }
 
+    #{$class}__body_markup {
+        padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
+
+        .chartkit-base__header {
+            right: calc(-1 * var(--dl-dk-metric-padding) + var(--dl-dk-header-offset));
+        }
+    }
+
     #{$class}__body_ymap {
         padding: 0;
 
@@ -169,6 +181,12 @@ $fullscreenZIndex: 999;
     }
 
     &_no-tabs {
+        // On mobile devices to trigger intersection observer we need at least 1px of height
+        &#{$class}_wait-for-init {
+            opacity: 0;
+            min-height: 1px;
+        }
+
         // block below: without tabs, maps and metrics
 
         .chartkit-loader__loader_compact {
@@ -198,6 +216,14 @@ $fullscreenZIndex: 999;
         }
 
         #{$class}__container_metric2 {
+            padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
+
+            #{$class}__chart-header {
+                top: calc(-1 * var(--dl-dk-metric-padding) + var(--dl-dk-header-offset));
+            }
+        }
+
+        #{$class}__container_markup {
             padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
 
             #{$class}__chart-header {

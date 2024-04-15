@@ -1,11 +1,11 @@
 import React from 'react';
 
 import {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import type {ItemStateAndParamsChangeOptions} from '@gravity-ui/dashkit';
 import {
-    ItemStateAndParamsChangeOptions,
     pickActionParamsFromParams,
     pickExceptActionParamsFromParams,
-} from '@gravity-ui/dashkit';
+} from '@gravity-ui/dashkit/helpers';
 import {usePrevious} from 'hooks';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
@@ -779,16 +779,13 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 const needUpdateChartParams =
                     !isEqual(initialData.params, newParams) || callChangeByClick;
 
-                // if widget has setting filtering chart
-                // & prev loading chart params contained actionParams
+                // if prev loading chart params contained actionParams
                 // & newParams contain only empty values,
                 // we need to clean it
                 const needClearParamsQueue =
-                    enableActionParams &&
                     !isAllParamsEmpty(
                         pickActionParamsFromParams(prevInnerParamsRefCurrent || undefined),
-                    ) &&
-                    isAllParamsEmpty(newParams);
+                    ) && isAllParamsEmpty(newParams);
 
                 if (newParams && needUpdateChartParams) {
                     const actionName =

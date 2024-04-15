@@ -1,6 +1,6 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
-.yc-field-wrapper {
+.dl-field-wrapper {
     display: inline-block;
     width: 100%;
     vertical-align: top;
@@ -13,14 +13,21 @@
         @include text-body-1;
         color: var(--g-color-text-danger);
         margin-top: 2px;
+        display: box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     &_state_error {
         .yc-select,
         .yc-select-control,
-        .yc-text-input__control,
-        .yc-text-input__content:hover,
-        .yc-text-input__content:focus-within {
+        .g-select,
+        .g-select-control,
+        .g-text-input__content,
+        .g-text-input__content:hover,
+        .g-text-input__content:focus-within {
             border-color: var(--g-color-text-danger);
         }
     }

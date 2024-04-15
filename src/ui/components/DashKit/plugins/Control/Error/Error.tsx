@@ -46,11 +46,9 @@ export function Error({onClickRetry, errorData}: ErrorProps) {
     };
 
     return (
-        <div className={b('error')}>
-            <div className={b({mobile: isMobileView})} onClick={handleClick}>
-                <span className={b('label')}>{i18n('label_error')}</span>
-                <Icon data={iconAlert} className={b('icon')} />
-            </div>
+        <div className={b({mobile: isMobileView})} onClick={handleClick}>
+            <span className={b('label')}>{i18n('label_error')}</span>
+            <Icon data={iconAlert} className={b('icon')} />
         </div>
     );
 }

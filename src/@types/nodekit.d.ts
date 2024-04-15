@@ -38,6 +38,7 @@ export interface SharedAppConfig {
         enableTelemetry: boolean;
         flags?: Record<string, boolean>;
         usEndpointPostfix: string;
+        dataFetcherProxiedHeaders?: string[];
     };
     // CHARTS ENGINE -- FINISH
 
@@ -81,6 +82,7 @@ export interface SharedAppContextParams {
     landingPageSettings?: LandingPageSettings;
 
     i18n: ServerI18n;
+    tenantId?: string;
 }
 
 declare module '@gravity-ui/nodekit' {

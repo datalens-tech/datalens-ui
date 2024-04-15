@@ -15,6 +15,7 @@ import {
 import {PartialBy} from 'shared';
 
 export const OPEN_DIALOG = Symbol('dialog/OPEN_DIALOG');
+export const UPDATE_DIALOG_PROPS = Symbol('dialog/UPDATE_DIALOG_PROPS');
 export const CLOSE_DIALOG = Symbol('dialog/CLOSE_DIALOG');
 export const SET_CONFIRM_DIALOG_LOADING_STATUS = Symbol('dialog/SET_CONFIRM_DIALOG_LOADING_STATUS');
 
@@ -28,6 +29,12 @@ export type CloseDialogAction = {
     type: typeof CLOSE_DIALOG;
 };
 
+export type UpdateDialogStateAction = {
+    type: typeof UPDATE_DIALOG_PROPS;
+    id: symbol;
+    props?: any;
+};
+
 export const openDialog = <T extends unknown>(args: OpenDialogArgs<T>): OpenDialogAction => {
     return {
         type: OPEN_DIALOG,
@@ -39,6 +46,16 @@ export const openDialog = <T extends unknown>(args: OpenDialogArgs<T>): OpenDial
 export function closeDialog(): CloseDialogAction {
     return {
         type: CLOSE_DIALOG,
+    };
+}
+
+export function updateDialogProps<T extends unknown>(
+    args: OpenDialogArgs<T>,
+): UpdateDialogStateAction {
+    return {
+        type: UPDATE_DIALOG_PROPS,
+        id: args.id,
+        props: args.props,
     };
 }
 
@@ -190,7 +207,7 @@ export const openDialogParameter = ({
                 const {cast, default_value} = updatedField;
                 // temporary workaround CHARTS-6821
                 if (
-                    (cast === 'datetime' || cast === 'genericdatetime') &&
+                    cast === 'genericdatetime' &&
                     typeof default_value === 'string' &&
                     default_value.endsWith('Z')
                 ) {
@@ -250,4 +267,5 @@ export const openDialogFilter = (
 export type DialogAction =
     | OpenDialogAction
     | CloseDialogAction
+    | UpdateDialogStateAction
     | SetConfirmDialogLoadingStatusAction;

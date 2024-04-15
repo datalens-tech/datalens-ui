@@ -19,6 +19,7 @@ import '../styles/SelectUtil.scss';
 export type SelectFeaturedProps<T = any> = {
     options: SelectOption<T>[];
     hasValidationError?: boolean;
+    onRetry?: () => void;
 } & Omit<SelectProps, 'options' | 'onFilterChange' | 'error'> &
     UseSelectRenderFilter &
     UseSelectRenderEmptyOptionsProps &
@@ -34,7 +35,10 @@ export const SelectFeatured = <T,>({filterable = true, ...props}: SelectFeatured
 
     const {renderEmptyOptions: renderEmptyOptionsError} = useSelectRenderError({
         error: props.error,
-        onRetry: resetFilterState,
+        onRetry: () => {
+            resetFilterState();
+            props.onRetry?.();
+        },
     });
 
     const renderEmptyOptions = useSelectRenderEmptyOptions({

@@ -30,6 +30,7 @@ const ICON_SIZE = 16;
 type ChangedRelationType = {
     type: RelationType;
     widgetId: DashkitMetaDataItem['widgetId'];
+    itemId: DashkitMetaDataItem['itemId'];
 };
 
 type RowParams = {
@@ -44,12 +45,14 @@ type RowParams = {
 type ConnectionByFieldsProp = string[] | string;
 type ConnectionByUsedParamsProp = string[] | string;
 type ConnectionByAliasesProp = string[][] | string;
+type ConnectionIndirectAliasesProp = string[][];
 
 type ConnectionField =
     | ConnectionByFieldsProp
     | ConnectionByUsedParamsProp
-    | ConnectionByAliasesProp;
-type ConnectionType = 'alias' | 'field' | 'param';
+    | ConnectionByAliasesProp
+    | ConnectionIndirectAliasesProp;
+type ConnectionType = 'alias' | 'field' | 'param' | 'indirect';
 
 const getRelationDetailsText = ({
     text,
@@ -108,16 +111,31 @@ const labelsMap = {
     },
 };
 
-const getFieldText = ({field, type}: {field: ConnectionField; type: ConnectionType}) => {
+const getFieldText = ({
+    field,
+    type,
+    hasDataset,
+}: {
+    field: ConnectionField;
+    type: ConnectionType;
+    hasDataset: boolean;
+}) => {
     let fieldText = '';
     let fieldTextWithStrong = null;
+
+    if (type === 'indirect') {
+        return {
+            fieldText,
+            fieldTextWithStrong,
+        };
+    }
 
     const byField = type === 'field' || type === 'param';
     const {singleLabel, multiLabel} = labelsMap[type];
 
     if (Array.isArray(field) && field.length) {
         const fieldLabel = field.length === 1 ? singleLabel : multiLabel;
-        const fieldName = byField ? field.join(', ') : '';
+        const fieldName = byField ? (Array.isArray(field) && field?.join(', ')) || '' : '';
         fieldText = ` ${fieldLabel} ${fieldName}`;
 
         const fieldNameWithStrong = byField ? <strong>{fieldName}</strong> : null;
@@ -128,6 +146,9 @@ const getFieldText = ({field, type}: {field: ConnectionField; type: ConnectionTy
                 {fieldLabel} {fieldNameWithStrong}
             </React.Fragment>
         );
+    } else if (type === 'field' && hasDataset && !field.length) {
+        fieldText = ` ${i18n('label_by-dataset-fields')}`;
+        fieldTextWithStrong = <React.Fragment>{fieldText}</React.Fragment>;
     }
 
     return {
@@ -141,45 +162,72 @@ const getConnectionByInfo = ({
     byUsedParams,
     byAliases,
     relationType,
+    indirectAliases,
+    hasDataset,
 }: {
     relationType: RelationType;
     byFields: ConnectionByFieldsProp;
     byUsedParams: ConnectionByUsedParamsProp;
     byAliases: ConnectionByAliasesProp;
+    indirectAliases: ConnectionIndirectAliasesProp;
+    hasDataset: boolean;
 }) => {
+    const isUnknownRelation = relationType === RELATION_TYPES.unknown;
     const availableLink =
         relationType !== RELATION_TYPES.ignore && relationType !== RELATION_TYPES.unknown;
 
+    const hasIndirectAliases = Boolean(indirectAliases.length);
     const hasUsedParams = Array.isArray(byUsedParams)
         ? Boolean(byUsedParams.length)
         : Boolean(byUsedParams);
-    const showByUsedParams = hasUsedParams && hasUsedParams;
+    const showByUsedParams = hasUsedParams && availableLink;
     const hasFields = Array.isArray(byFields) ? Boolean(byFields.length) : Boolean(byFields);
     const showByField = hasFields && availableLink;
     const hasAliases = Array.isArray(byAliases) ? Boolean(byAliases.length) : Boolean(byAliases);
     const showByAlias = hasAliases && availableLink;
 
-    let field: ConnectionField = [];
-    let type: ConnectionType = 'field';
+    let field: ConnectionField;
+    let type: ConnectionType;
 
-    if (hasFields) {
-        field = byFields;
-        type = 'field';
-    } else if (hasAliases) {
-        field = byAliases;
-        type = 'alias';
-    } else if (hasUsedParams) {
-        field = byUsedParams;
-        type = 'param';
+    switch (true) {
+        case showByAlias: {
+            field = byAliases;
+            type = 'alias';
+            break;
+        }
+
+        case showByField || (hasDataset && availableLink): {
+            field = byFields;
+            type = 'field';
+            break;
+        }
+
+        case showByUsedParams: {
+            field = byUsedParams;
+            type = 'param';
+            break;
+        }
+
+        case isUnknownRelation && hasIndirectAliases: {
+            field = indirectAliases;
+            type = 'indirect';
+            break;
+        }
+
+        default: {
+            field = [];
+            type = 'field';
+        }
     }
 
     const {fieldText, fieldTextWithStrong} = getFieldText({
         field,
         type,
+        hasDataset,
     });
 
     return {
-        showByField: showByField || showByAlias || showByUsedParams,
+        showByField: showByField || hasDataset || showByAlias || showByUsedParams,
         fieldText,
         fieldTextWithStrong,
     };
@@ -192,6 +240,8 @@ export const getTooltipInfo = ({
     byFields,
     byAliases,
     byUsedParams,
+    indirectAliases,
+    hasDataset,
 }: {
     widget: DashkitMetaDataItem;
     row: DashkitMetaDataItem;
@@ -199,12 +249,16 @@ export const getTooltipInfo = ({
     byFields: ConnectionByFieldsProp;
     byAliases: ConnectionByAliasesProp;
     byUsedParams: ConnectionByUsedParamsProp;
+    indirectAliases: ConnectionIndirectAliasesProp;
+    hasDataset: boolean;
 }) => {
     const {fieldText, fieldTextWithStrong, showByField} = getConnectionByInfo({
         byFields,
         byAliases,
         relationType,
         byUsedParams,
+        indirectAliases,
+        hasDataset,
     });
 
     const widgetLabel = widget?.label && widget?.title !== widget?.label ? `${widget?.label}` : '';
@@ -278,7 +332,7 @@ const getDropdownItems = ({
 }) =>
     items.map((item) => ({
         action: () => {
-            onChange({type: item, widgetId: currentRow.widgetId});
+            onChange({type: item, widgetId: currentRow.widgetId, itemId: currentRow.itemId});
         },
         icon: <Icon data={getLinkIcon(item)} size={ICON_SIZE} className={b('icon-link', item)} />,
         text: (
@@ -309,9 +363,12 @@ export const Row = ({
     const {
         type: relationType,
         available: availableRelations,
+        indirectAliases,
         byFields,
         byAliases,
         byUsedParams,
+        hasDataset,
+        forceAddAlias,
     } = relations;
 
     const {tooltipContent, tooltipTitle, aliasDetailTitle} = getTooltipInfo({
@@ -321,6 +378,8 @@ export const Row = ({
         byFields,
         byAliases,
         byUsedParams,
+        indirectAliases,
+        hasDataset,
     });
 
     const icon = getDialogRowIcon(data, b('icon-row'), DEFAULT_ICON_SIZE);
@@ -346,9 +405,19 @@ export const Row = ({
                 relationType,
                 widgetIcon,
                 rowIcon: icon,
+                forceAddAlias,
             });
         },
-        [aliasDetailTitle, data, icon, onChange, relationType, showDebugInfo, widgetIcon],
+        [
+            aliasDetailTitle,
+            data,
+            icon,
+            onChange,
+            relationType,
+            showDebugInfo,
+            widgetIcon,
+            forceAddAlias,
+        ],
     );
 
     if (!data || !widgetMeta) {
@@ -366,30 +435,34 @@ export const Row = ({
 
     const showAliasIcon = Boolean(data.loaded);
 
-    const debugInfo = showDebugInfo ? <span className={b('info')}> ({data.widgetId})</span> : null;
+    const id = data.itemId ? `${data.widgetId} ${data.itemId}` : data.widgetId;
+
+    const debugInfo = showDebugInfo ? <span className={b('info')}> ({id})</span> : null;
     const rowTitle = getRowTitle(data.title, data.label);
-    const title = (showDebugInfo ? `(${data.widgetId}) ` : '') + rowTitle;
+    const title = (showDebugInfo ? `(${id}) ` : '') + rowTitle;
 
     return (
         <div className={b('row')} data-qa={DashCommonQa.RelationsListRow}>
             <div className={b('left')}>
-                {icon}
-                <span className={b('text', {'with-icon': showAliasIcon})} title={title}>
-                    {debugInfo}
-                    {rowTitle}
-                </span>
-                {showAliasIcon && (
-                    <Button
-                        view="outlined"
-                        size="s"
-                        title={i18n('label_add-alias')}
-                        className={b('button-alias')}
-                        onClick={handleAliasCLick}
-                        qa={DashCommonQa.AliasShowBtn}
-                    >
-                        <Icon data={iconAlias} className={b('icon-alias')} />
-                    </Button>
-                )}
+                <div className={b('left-inner')}>
+                    {icon}
+                    <span className={b('text')} title={title}>
+                        {debugInfo}
+                        {rowTitle}
+                    </span>
+                    {showAliasIcon && (
+                        <Button
+                            view="outlined"
+                            size="s"
+                            title={i18n('label_add-alias')}
+                            className={b('button-alias')}
+                            onClick={handleAliasCLick}
+                            qa={DashCommonQa.AliasShowBtn}
+                        >
+                            <Icon data={iconAlias} className={b('icon-alias')} />
+                        </Button>
+                    )}
+                </div>
             </div>
             <div className={b('right')}>
                 {relationType && (

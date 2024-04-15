@@ -16,7 +16,7 @@ const PARAMS = {
 };
 const CONTROL_ITEM_COUNT = 3;
 
-datalensTest.describe('Dashboards are Basic functionality', () => {
+datalensTest.describe('Dashboards - Basic functionality', () => {
     datalensTest(
         'Adding a chart and selector with manual input of values and default value',
         async ({page}: {page: Page}) => {

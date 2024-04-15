@@ -23,6 +23,7 @@ export type Lang = 'en' | 'ru';
 export interface LandingLayoutPageError {
     errorType: string;
     title?: string;
+    isHtmlInTitle?: boolean;
     description?: string;
     pageTitle?: RenderParams<{DL: DLGlobalData}>['title'];
     pageMeta?: RenderParams<{DL: DLGlobalData}>['meta'];

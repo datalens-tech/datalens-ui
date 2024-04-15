@@ -165,7 +165,7 @@ const ChartKitError: React.FC<any> = (props) => {
             iconData = errorDatabase;
             break;
         case CHARTS_ERROR_CODE.CONFIG_LOADING_ERROR:
-            if (error.debug.code === 403) {
+            if (error?.debug?.code === 403) {
                 iconData = errorLock;
                 const entryId = error?.debug?.entryId;
                 if (entryId) {
@@ -204,9 +204,11 @@ const ChartKitError: React.FC<any> = (props) => {
                 const errorCode = source.code || source.status;
 
                 if (
-                    [ErrorCode.UsAccessDenied, ErrorCode.ReferencedEntryAccessDenied].includes(
-                        errorCode,
-                    ) &&
+                    [
+                        ErrorCode.UsAccessDenied,
+                        ErrorCode.ReferencedEntryAccessDenied,
+                        ErrorCode.WorkbookIsolationInterruptionDenied,
+                    ].includes(errorCode) &&
                     source.details &&
                     source.details.scope
                 ) {

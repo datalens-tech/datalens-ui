@@ -1,7 +1,7 @@
 import {exampleFunction} from 'ui/registry/functions/example-function';
 import {EXAMPLE_FUNCTION} from 'ui/registry/units/common/constants/functions';
 
-import {getChartkitType} from '../../../libs/DatalensChartkit/ChartKit/helpers/chartkitAdapter';
+import {getChartkitType} from '../../../libs/DatalensChartkit/ChartKit/helpers/chartkit-adapter';
 import {getChartkitPlugins} from '../../../libs/DatalensChartkit/ChartKit/plugins';
 import {
     getDefaultChartMenu,

@@ -1,31 +1,35 @@
 import React from 'react';
 
-import {AddConfigItem, Config, DashKit, ItemsStateAndParams} from '@gravity-ui/dashkit';
-import {PluginTextProps} from '@gravity-ui/dashkit/build/esm/plugins/Text/Text';
-import {PluginTitleProps} from '@gravity-ui/dashkit/build/esm/plugins/Title/Title';
+import type {
+    AddConfigItem,
+    Config,
+    DashKit,
+    ItemsStateAndParams,
+    PluginTextProps,
+    PluginTitleProps,
+} from '@gravity-ui/dashkit';
 import {i18n} from 'i18n';
 import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
-import {Dispatch} from 'redux';
 import {
+    type ConnectionQueryContent,
+    type ConnectionQueryTypeOptions,
+    ConnectionQueryTypeValues,
     DATASET_FIELD_TYPES,
     DashData,
     DashSettings,
     DashTab,
     DashTabItem,
-    DashTabItemControlData,
-    DashTabItemControlSourceType,
     DashTabItemType,
     DashTabItemWidget,
     Dataset,
     DatasetFieldType,
     EntryUpdateMode,
     Operations,
+    RecursivePartial,
+    StringParams,
 } from 'shared';
 import {AppDispatch} from 'ui/store';
-import {validateParamTitleOnlyUnderscore} from 'units/dash/components/ParamsSettings/helpers';
-import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
-import {addOperationForValue} from 'units/dash/modules/helpers';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -42,8 +46,15 @@ import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
 import type {DashState} from '../reducers/dashTypedReducer';
+import {selectIsControlSourceTypeHasChanged} from '../selectors/dashTypedSelectors';
 
 import {save} from './base/actions';
+import {
+    getControlDefaultsForField,
+    getControlValidation,
+    getItemDataSource,
+} from './controls/helpers';
+import {ItemDataSource, SelectorDialogValidation, SelectorSourceType} from './controls/types';
 import {closeDialog as closeDashDialog} from './dialogs/actions';
 import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
 
@@ -310,29 +321,22 @@ export type SetLastUsedDatasetIdAction = {
     type: typeof SET_LAST_USED_DATASET_ID;
     payload: string;
 };
+
 export const setLastUsedDatasetId = (datasetId: string): SetLastUsedDatasetIdAction => ({
     type: SET_LAST_USED_DATASET_ID,
     payload: datasetId,
 });
 
-type ItemDataSource = {
-    chartId?: string;
-    showTitle?: boolean;
-    elementType?: string;
-    defaultValue?: string | string[];
-    datasetId?: string;
-    datasetFieldId?: string;
-    fieldName?: string;
-    fieldType?: DATASET_FIELD_TYPES;
-    datasetFieldType?: DatasetFieldType;
-    acceptableValues?: Array<Record<string, any>>;
-    isRange?: boolean;
-    multiselectable?: boolean;
-    operation?: Operations;
-    showInnerTitle?: boolean;
-    innerTitle?: string;
-    required?: boolean;
+export const SET_LAST_USED_CONNECTION_ID = Symbol('dash/SET_LAST_USED_CONNECTION_ID');
+export type SetLastUsedConnectionIdAction = {
+    type: typeof SET_LAST_USED_CONNECTION_ID;
+    payload: string;
 };
+
+export const setLastUsedConnectionId = (connectionId: string): SetLastUsedConnectionIdAction => ({
+    type: SET_LAST_USED_CONNECTION_ID,
+    payload: connectionId,
+});
 
 type SetItemDataBase = {
     title?: string;
@@ -340,8 +344,8 @@ type SetItemDataBase = {
     autoHeight?: boolean;
     source?: ItemDataSource;
 };
-export type SetItemDataText = Partial<PluginTextProps['data']> & SetItemDataBase;
-export type SetItemDataTitle = Partial<PluginTitleProps['data']> & SetItemDataBase;
+export type SetItemDataText = RecursivePartial<PluginTextProps['data']> & SetItemDataBase;
+export type SetItemDataTitle = RecursivePartial<PluginTitleProps['data']> & SetItemDataBase;
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
 export type SetItemDataArgs = {
@@ -357,17 +361,6 @@ export const setItemData = (data: SetItemDataArgs) => ({
 
 export const SET_SELECTOR_DIALOG_ITEM = Symbol('dash/SET_SELECTOR_DIALOG_ITEM');
 
-export const ADD_SELECTOR_TO_GROUP = Symbol('dash/ADD_SELECTOR_TO_GROUP');
-
-export const UPDATE_SELECTORS_GROUP = Symbol('dash/UPDATE_SELECTORS_GROUP');
-
-export const SET_ACTIVE_SELECTOR_INDEX = Symbol('dash/SET_ACTIVE_SELECTOR_INDEX');
-
-export type SelectorSourceType =
-    | DashTabItemControlSourceType.Dataset
-    | DashTabItemControlSourceType.Manual
-    | DashTabItemControlSourceType.External;
-
 export type SelectorElementType = 'select' | 'date' | 'input' | 'checkbox';
 
 export type SelectorDialogState = {
@@ -382,6 +375,12 @@ export type SelectorDialogState = {
     defaultValue?: string | string[];
     dataset?: Dataset;
     datasetId?: string;
+    connectionId?: string;
+    selectorParameters?: StringParams;
+    selectorParametersGroup?: number;
+    connectionQueryType?: ConnectionQueryTypeValues;
+    connectionQueryTypes?: ConnectionQueryTypeOptions[];
+    connectionQueryContent?: ConnectionQueryContent;
     datasetFieldId?: string;
     fieldName?: string;
     acceptableValues?: AcceptableValue[];
@@ -398,23 +397,8 @@ export type SelectorDialogState = {
     datasetFieldType?: DatasetFieldType;
     placementMode: 'auto' | '%' | 'px';
     width: string;
-    id: string;
-};
-
-export type SelectorsGroupDialogState = {
-    autoHeight: boolean;
-    buttonApply: boolean;
-    buttonReset: boolean;
-    defaults?: Record<string, string | string[]>;
-    items: SelectorDialogState[];
     id?: string;
-};
-
-type SelectorDialogValidation = {
-    title?: string;
-    fieldName?: string;
-    datasetFieldId?: string;
-    defaultValue?: string;
+    namespace?: string;
 };
 
 export type AcceptableValue = {
@@ -436,181 +420,10 @@ export type SetSelectorDialogItemAction = {
     payload: SetSelectorDialogItemArgs;
 };
 
-export const addSelectorToGroup = (payload: SetSelectorDialogItemArgs) => {
-    return {
-        type: ADD_SELECTOR_TO_GROUP,
-        payload,
-    };
-};
-
-export type AddSelectorToGroupAction = {
-    type: typeof ADD_SELECTOR_TO_GROUP;
-    payload: SetSelectorDialogItemArgs;
-};
-
-export type SetActiveSelectorIndexAction = {
-    type: typeof SET_ACTIVE_SELECTOR_INDEX;
-    payload: {
-        activeSelectorIndex: number;
-    };
-};
-
-export const setActiveSelectorIndex = (payload: SetActiveSelectorIndexAction['payload']) => {
-    return {
-        type: SET_ACTIVE_SELECTOR_INDEX,
-        payload,
-    };
-};
-
-export type UpdateSelectorsGroupAction = {
-    type: typeof UPDATE_SELECTORS_GROUP;
-    payload: SelectorsGroupDialogState;
-};
-
-export const updateSelectorsGroup = (payload: UpdateSelectorsGroupAction['payload']) => {
-    return {
-        type: UPDATE_SELECTORS_GROUP,
-        payload,
-    };
-};
-
-const getItemDataSource = (selectorDialog: SelectorDialogState): ItemDataSource => {
-    const {
-        sourceType,
-
-        showTitle,
-        showInnerTitle,
-        innerTitle,
-        elementType,
-        multiselectable,
-        isRange,
-        defaultValue,
-
-        datasetId,
-        datasetFieldId,
-        fieldType,
-        datasetFieldType,
-        fieldName,
-        acceptableValues,
-        required,
-
-        chartId,
-        operation,
-    } = selectorDialog;
-
-    if (sourceType === DashTabItemControlSourceType.External) {
-        return {chartId};
-    }
-
-    let source: ItemDataSource = {
-        showTitle,
-        elementType,
-        defaultValue,
-        showInnerTitle,
-        innerTitle,
-        operation,
-        required,
-    };
-
-    if (sourceType === DashTabItemControlSourceType.Dataset) {
-        source = {
-            ...source,
-            datasetId,
-            datasetFieldId,
-            fieldType,
-            datasetFieldType,
-        };
-    }
-
-    if (sourceType === DashTabItemControlSourceType.Manual) {
-        source = {
-            ...source,
-            fieldName,
-            acceptableValues,
-        };
-    }
-
-    if (elementType === ELEMENT_TYPE.DATE) {
-        source = {
-            ...source,
-            isRange,
-            fieldType,
-        };
-    }
-
-    if (elementType === ELEMENT_TYPE.SELECT) {
-        source = {
-            ...source,
-            multiselectable,
-        };
-    }
-
-    return source;
-};
-
-const getControlValidation = (selectorDialog: SelectorDialogState) => {
-    const {title, sourceType, datasetFieldId, fieldName, defaultValue, required} = selectorDialog;
-
-    const validation: SelectorDialogValidation = {};
-
-    if (!title) {
-        validation.title = i18n('dash.control-dialog.edit', 'validation_required');
-    }
-
-    if (sourceType === DashTabItemControlSourceType.Manual && !fieldName) {
-        validation.fieldName = i18n('dash.control-dialog.edit', 'validation_required');
-    }
-
-    if (sourceType === DashTabItemControlSourceType.Dataset && !datasetFieldId) {
-        validation.datasetFieldId = i18n('dash.control-dialog.edit', 'validation_required');
-    }
-
-    if (required && (!defaultValue || !defaultValue?.length)) {
-        validation.defaultValue = i18n('dash.control-dialog.edit', 'validation_required');
-    }
-
-    return validation;
-};
-
-const getControlDefaultsForField = (
-    defaults: Record<string, string | string[]>,
-    selectorDialog: SelectorDialogState,
-) => {
-    const {sourceType, datasetFieldId, fieldName, defaultValue} = selectorDialog;
-
-    let field;
-    switch (sourceType) {
-        case DashTabItemControlSourceType.Manual:
-            field = fieldName;
-            break;
-        case DashTabItemControlSourceType.Dataset:
-            field = datasetFieldId;
-            break;
-        default:
-            break;
-    }
-
-    if (field) {
-        return {
-            ...defaults,
-            [field]: addOperationForValue({
-                operation: selectorDialog.operation,
-                value: defaultValue || '',
-            }),
-        };
-    }
-
-    return Object.keys(defaults).reduce<Record<string, string | string[]>>((params, paramTitle) => {
-        if (validateParamTitleOnlyUnderscore(paramTitle) === null) {
-            params[paramTitle] = defaults[paramTitle];
-        }
-        return params;
-    }, {});
-};
-
 export const applyControl2Dialog = () => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
-        const selectorDialog = getState().dash.selectorDialog as SelectorDialogState;
+        const state = getState();
+        const selectorDialog = state.dash.selectorDialog as SelectorDialogState;
         const {title, sourceType, autoHeight} = selectorDialog;
 
         const validation = getControlValidation(selectorDialog);
@@ -624,7 +437,8 @@ export const applyControl2Dialog = () => {
             return;
         }
 
-        const defaults = getControlDefaultsForField(selectorDialog.defaults, selectorDialog);
+        const hasChangedSourceType = selectIsControlSourceTypeHasChanged(state);
+        const defaults = getControlDefaultsForField(selectorDialog, hasChangedSourceType);
 
         const data = {
             title,
@@ -635,85 +449,11 @@ export const applyControl2Dialog = () => {
         const getExtendedItemData = getExtendedItemDataAction();
         const itemData = dispatch(getExtendedItemData({data, defaults}));
 
-        const itemType =
-            getState().dash.openedDialog === DashTabItemType.GroupControl
-                ? DashTabItemType.Control
-                : undefined;
-
         dispatch(
             setItemData({
                 data: itemData.data,
-                type: itemType,
+                type: DashTabItemType.Control,
                 defaults: itemData.defaults,
-            }),
-        );
-
-        dispatch(closeDashDialog());
-    };
-};
-
-export const applyGroupControlDialog = () => {
-    return (dispatch: Dispatch, getState: () => DatalensGlobalState) => {
-        const selectorGroup = getState().dash.selectorsGroup;
-
-        // backward to single `control` widget
-        if (selectorGroup.items.length < 2) {
-            dispatch(
-                setSelectorDialogItem({
-                    ...selectorGroup.items[0],
-                    autoHeight: selectorGroup.autoHeight,
-                    defaults: selectorGroup.defaults,
-                }),
-            );
-            applyControl2Dialog()(dispatch, getState);
-            return;
-        }
-
-        let defaults: Record<string, string | string[]> = {};
-
-        // check validation for every control
-        for (let i = 0; i < selectorGroup.items.length; i += 1) {
-            const validation = getControlValidation(selectorGroup.items[i]);
-
-            if (!isEmpty(validation)) {
-                dispatch(setActiveSelectorIndex({activeSelectorIndex: i}));
-                dispatch(
-                    setSelectorDialogItem({
-                        validation,
-                    }),
-                );
-                return;
-            }
-
-            defaults = getControlDefaultsForField(defaults, selectorGroup.items[i]);
-        }
-
-        const data = {
-            id: selectorGroup.id,
-            autoHeight: selectorGroup.autoHeight,
-            buttonApply: selectorGroup.buttonApply,
-            buttonReset: selectorGroup.buttonReset,
-            items: selectorGroup.items.map((selector) => {
-                return {
-                    id: selector.id,
-                    title: selector.title,
-                    sourceType: selector.sourceType,
-                    source: getItemDataSource(selector) as DashTabItemControlData['source'],
-                    placementMode: selector.placementMode,
-                    width: selector.width,
-                };
-            }),
-        };
-
-        // TODO what is getExtendedItemData from single control?
-        // const getExtendedItemData = getExtendedItemDataAction();
-        // const itemData = dispatch(getExtendedItemData({data, defaults}));
-
-        dispatch(
-            setItemData({
-                data,
-                type: DashTabItemType.GroupControl,
-                defaults,
             }),
         );
 
@@ -1023,8 +763,15 @@ export function purgeData(data: DashData) {
                     allItemsIds.add(itemId);
                     currentItemsIds.add(itemId);
 
-                    if (type === ITEM_TYPE.CONTROL) {
-                        currentControlsIds.add(itemId);
+                    if (type === ITEM_TYPE.CONTROL || type === ITEM_TYPE.GROUP_CONTROL) {
+                        // if it is group control all connections set on its group items
+                        if ('group' in data) {
+                            data.group.forEach((widgetItem) => {
+                                currentControlsIds.add(widgetItem.id);
+                            });
+                        } else {
+                            currentControlsIds.add(itemId);
+                        }
                     } else if (type === ITEM_TYPE.WIDGET) {
                         (data as DashTabItemWidget['data']).tabs.forEach(({id: widgetTabId}) => {
                             allWidgetTabsIds.add(widgetTabId);

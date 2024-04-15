@@ -1,12 +1,26 @@
+import {CSSProperties} from 'react';
+
 import {DashTabItemControlData} from 'shared';
 
-export const getControlWidth = (
+export const getControlWidthStyle = (
     placementMode: DashTabItemControlData['placementMode'],
     width: DashTabItemControlData['width'],
-) => {
+): CSSProperties => {
     if (placementMode === 'auto') {
-        return undefined;
+        return {flex: '1 1 auto'};
     }
 
-    return `${width}${placementMode}`;
+    return {width: `${width}${placementMode}`};
+};
+
+export const clearLoaderTimer = (timer?: NodeJS.Timeout) => {
+    if (timer) {
+        clearTimeout(timer);
+    }
+};
+
+export const cancelCurrentRequests = (cancelSource: any) => {
+    if (cancelSource) {
+        cancelSource.cancel('DASHKIT_CONTROL_CANCEL_CURRENT_REQUESTS');
+    }
 };

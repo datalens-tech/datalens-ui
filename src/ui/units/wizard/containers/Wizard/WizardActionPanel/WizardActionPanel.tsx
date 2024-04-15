@@ -4,15 +4,18 @@ import {DropdownMenuProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {ClientChartsConfigWithDataset, EntryUpdateMode, Feature, WizardType} from 'shared';
-import {ActionPanel, Utils} from 'ui';
 import {selectIsChartSaved} from 'units/wizard/selectors/preview';
 
+import type {DatalensGlobalState} from '../../../../../';
+import {ActionPanel, Utils} from '../../../../../';
 import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {registry} from '../../../../../registry';
+import {selectCanGoBack, selectCanGoForward} from '../../../../../store/selectors/editHistory';
 import {setEditMode} from '../../../../dash/store/actions/base/actions';
 import {toggleViewOnlyMode} from '../../../actions/settings';
 import {WidgetData} from '../../../actions/widget';
+import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../../constants';
 import {selectIsFullscreen, selectViewOnlyMode} from '../../../selectors/settings';
 
 import {useWizardActionPanel} from './useWizardActionPanel';
@@ -88,12 +91,22 @@ export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
         }
     }, [isCurrentRevisionActual, onSaveCallback]);
 
+    const canGoBack = useSelector<DatalensGlobalState, ReturnType<typeof selectCanGoBack>>(
+        (state) => selectCanGoBack(state, {unitId: WIZARD_EDIT_HISTORY_UNIT_ID}),
+    );
+
+    const canGoForward = useSelector<DatalensGlobalState, ReturnType<typeof selectCanGoForward>>(
+        (state) => selectCanGoForward(state, {unitId: WIZARD_EDIT_HISTORY_UNIT_ID}),
+    );
+
     const additionalButtons = useWizardActionPanel({
         editButtonLoading,
         handleEditButtonClick,
         isViewOnlyMode,
         chartKitRef,
         isFullscreen,
+        canGoBack,
+        canGoForward,
     });
 
     const {WizardActionPanelExtension} = registry.wizard.components.getAll();

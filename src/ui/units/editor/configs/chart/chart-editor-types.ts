@@ -1,17 +1,8 @@
+import {I18n} from 'i18n';
+import {EDITOR_TYPE} from 'shared/constants';
 import {registry} from 'ui/registry';
 
-export type ChartEditorTypeKey =
-    | 'graph_node'
-    | 'timeseries_node'
-    | 'table_node'
-    | 'text_node'
-    | 'markdown_node'
-    | 'markup_node'
-    | 'metric_node'
-    | 'map_node'
-    | 'ymap_node'
-    | 'control_node'
-    | 'module';
+const i18n = I18n.keyset('editor.templates.view');
 
 export type ChartEditorType = {
     name: string;
@@ -26,7 +17,8 @@ export type ChartEditorType = {
     }[];
 };
 
-export function getChartEditorTypes(type: ChartEditorTypeKey) {
+// TODO: https://github.com/datalens-tech/datalens-ui/issues/762
+export function getChartEditorTypes(type: string) {
     const getDocPathPrefix = registry.common.functions.get('getDocPathPrefix');
     const prefix = getDocPathPrefix();
 
@@ -84,7 +76,9 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
 
     const chartEditorTypes = {
         graph_node: {
-            name: 'График',
+            get name() {
+                return i18n('label_graph');
+            },
             tabs: [
                 {
                     name: 'Urls',
@@ -207,7 +201,9 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
             ],
         },
         table_node: {
-            name: 'Таблица',
+            get name() {
+                return i18n('label_table');
+            },
             tabs: [
                 {
                     name: 'Urls',
@@ -293,7 +289,9 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
             ],
         },
         markdown_node: {
-            name: 'Markdown',
+            get name() {
+                return i18n('label_markdown');
+            },
             tabs: [
                 {
                     name: 'Urls',
@@ -474,7 +472,9 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
             ],
         },
         control_node: {
-            name: 'Селектор',
+            get name() {
+                return i18n('label_control');
+            },
             tabs: [
                 {
                     name: 'Urls',
@@ -509,7 +509,9 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
             ],
         },
         module: {
-            name: 'Модуль',
+            get name() {
+                return i18n('label_module');
+            },
             tabs: [
                 {
                     name: 'JavaScript',
@@ -586,6 +588,54 @@ export function getChartEditorTypes(type: ChartEditorTypeKey) {
                 },
             ],
         },
-    } as Record<ChartEditorTypeKey, ChartEditorType>;
+        [EDITOR_TYPE.D3_NODE]: {
+            get name() {
+                return i18n('label_graph');
+            },
+            tabs: [
+                {
+                    name: 'Urls',
+                    id: 'url',
+                    language: 'javascript',
+                    docs: docsUrls,
+                },
+                {
+                    name: 'Params',
+                    id: 'params',
+                    language: 'javascript',
+                    docs: docsParams,
+                },
+                {
+                    name: 'JavaScript',
+                    id: 'js',
+                    language: 'javascript',
+                    docs: [
+                        {
+                            title: 'section_common-information',
+                            path: DOCS_PATH.CHART,
+                        },
+                        docsVendor,
+                    ],
+                },
+                {
+                    name: 'Controls',
+                    id: 'ui',
+                    language: 'javascript',
+                    docs: docsControls,
+                },
+                {
+                    name: 'Config',
+                    id: 'config',
+                    language: 'javascript',
+                },
+                {
+                    name: 'Shared',
+                    id: 'shared',
+                    language: 'json',
+                    docs: docsShare,
+                },
+            ],
+        },
+    } as Record<string, ChartEditorType>;
     return chartEditorTypes[type];
 }

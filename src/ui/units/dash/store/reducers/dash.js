@@ -1,9 +1,10 @@
-import {DashKit, generateUniqId} from '@gravity-ui/dashkit';
+import {DashKit} from '@gravity-ui/dashkit';
+import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import {I18n} from 'i18n';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
-import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
+import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import Utils from 'utils';
 
@@ -13,6 +14,7 @@ import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
 import * as actionTypes from '../constants/dashActionTypes';
 
+import {migrateConnectionsForGroupControl} from './controls/helpers';
 import {dashTypedReducer} from './dashTypedReducer';
 
 const i18n = I18n.keyset('dash.store.view');
@@ -60,29 +62,45 @@ const initialState = {
 
 export function getGroupSelectorDialogInitialState() {
     return {
-        items: [],
-        id: getRandomKey(),
+        group: [],
     };
 }
 
 export function getSelectorDialogInitialState(args = {}) {
-    const required = Utils.isEnabledFeature(Feature.SelectorRequiredValue) ? {required: false} : {};
+    const sourceType =
+        Utils.isEnabledFeature(Feature.GroupControls) &&
+        args.openedDialog === DashTabItemType.Control
+            ? DashTabItemControlSourceType.External
+            : DashTabItemControlSourceType.Dataset;
 
     return {
         elementType: ELEMENT_TYPE.SELECT,
-        sourceType: DashTabItemControlSourceType.Dataset,
+        sourceType,
         validation: {},
         defaults: {},
         datasetId: args.lastUsedDatasetId,
+        connectionId: args.lastUsedConnectionId,
         showTitle: true,
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
-        id: getRandomKey(),
-        ...required,
+        required: false,
     };
 }
 
 export function getSelectorDialogFromData(data, defaults) {
+    let selectorParameters;
+
+    switch (data.sourceType) {
+        case DashTabItemControlSourceType.Connection:
+            selectorParameters = extractTypedQueryParams(defaults, data.source.fieldName);
+            break;
+        case DashTabItemControlSourceType.External:
+            selectorParameters = defaults;
+            break;
+        default:
+            selectorParameters = {};
+    }
+
     return {
         validation: {},
         isManualTitle: true,
@@ -94,6 +112,11 @@ export function getSelectorDialogFromData(data, defaults) {
         autoHeight: data.autoHeight,
 
         datasetId: data.source.datasetId,
+        connectionId: data.source.connectionId,
+        selectorParameters,
+        connectionQueryType: data.source.connectionQueryType,
+        connectionQueryTypes: data.source.connectionQueryTypes,
+        connectionQueryContent: data.source.connectionQueryContent,
         elementType: data.source.elementType || ELEMENT_TYPE.SELECT,
         defaultValue: data.source.defaultValue,
         datasetFieldId: data.source.datasetFieldId,
@@ -108,13 +131,12 @@ export function getSelectorDialogFromData(data, defaults) {
         operation: data.source.operation,
         innerTitle: data.source.innerTitle,
         showInnerTitle: data.source.showInnerTitle,
-        id: getRandomKey(),
         required: data.source.required,
     };
 }
 
-export function getSelectorGroupDialogFromData(data, defaults) {
-    const items = Object.values(data.items)
+export function getSelectorGroupDialogFromData(data) {
+    const items = Object.values(data.group)
         .map((item) => ({
             validation: {},
             isManualTitle: true,
@@ -137,21 +159,20 @@ export function getSelectorGroupDialogFromData(data, defaults) {
             operation: item.source.operation,
             innerTitle: item.source.innerTitle,
             showInnerTitle: item.source.showInnerTitle,
-            id: getRandomKey(),
+            id: item.id,
             required: item.source.required,
-            placementMode: item.placementMode,
-            width: item.width,
+            placementMode: item.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
+            width: item.width || '',
+            namespace: item.namespace,
         }))
         .sort((a, b) => a.index - b.index);
 
     return {
-        defaults,
-
         autoHeight: data.autoHeight,
         buttonApply: data.buttonApply,
         buttonReset: data.buttonReset,
 
-        items,
+        group: items,
     };
 }
 
@@ -177,6 +198,8 @@ function dash(state = initialState, action) {
                 action.payload?.openedDialog === DashTabItemType.GroupControl
                     ? getSelectorDialogInitialState({
                           lastUsedDatasetId: state.lastUsedDatasetId,
+                          lastUsedConnectionId: state.lastUsedConnectionId,
+                          openedDialog: action.payload?.openedDialog,
                       })
                     : state.selectorDialog;
 
@@ -193,7 +216,7 @@ function dash(state = initialState, action) {
                 ...action.payload,
                 selectorDialog,
                 selectorsGroup: {
-                    items: [selectorDialog],
+                    group: [selectorDialog],
                     autoHeight: Boolean(selectorDialog.autoHeight),
                     buttonApply: Boolean(selectorDialog.buttonApply),
                     buttonReset: Boolean(selectorDialog.buttonReset),
@@ -375,6 +398,21 @@ function dash(state = initialState, action) {
                 },
             });
 
+            // migration of connections if old selector becomes a group selector
+            // 1. state.openedItemId existance means that widget alredy exist
+            // 2. !action.payload.data.group[0].id - first selector doesn't have an id because it was just converted
+            if (
+                state.openedItemId &&
+                action.payload.type === DashTabItemType.GroupControl &&
+                !action.payload.data.group[0].id
+            ) {
+                tabData.connections = migrateConnectionsForGroupControl({
+                    openedItemId: state.openedItemId,
+                    currentTab: tab,
+                    tabDataItems: tabData.items,
+                });
+            }
+
             return {
                 ...state,
                 data: update(data, {
@@ -401,7 +439,11 @@ function dash(state = initialState, action) {
                 openedDialog === 'control' &&
                 data.sourceType !== 'external'
             ) {
-                const selectorDialog = getSelectorDialogFromData(data, defaults);
+                const selectorDialog = getSelectorDialogFromData(data);
+                selectorDialog.title =
+                    data.source.innerTitle && data.source.showInnerTitle
+                        ? `${data.title} ${data.source.innerTitle}`
+                        : data.title;
 
                 // migration forward to group
                 openedDialog = 'group_control';
@@ -409,12 +451,12 @@ function dash(state = initialState, action) {
                     autoHeight: Boolean(data.autoHeight),
                     buttonApply: false,
                     buttonReset: false,
-                    items: [selectorDialog],
+                    group: [selectorDialog],
                 };
                 newState.selectorDialog = selectorDialog;
             } else if (openedDialog === 'group_control') {
-                newState.selectorsGroup = getSelectorGroupDialogFromData(data, defaults);
-                newState.selectorDialog = newState.selectorsGroup.items[0];
+                newState.selectorsGroup = getSelectorGroupDialogFromData(data);
+                newState.selectorDialog = newState.selectorsGroup.group[0];
             } else if (openedDialog === 'control') {
                 newState.selectorDialog = getSelectorDialogFromData(data, defaults);
             }

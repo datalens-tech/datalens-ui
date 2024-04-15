@@ -1,15 +1,22 @@
 import React from 'react';
 
-import {
+import {DashKit as DashKitComponent, ActionPanel as DashkitActionPanel} from '@gravity-ui/dashkit';
+import type {
     ConfigItem,
-    DashKit as DashKitComponent,
     DashKitProps,
-    ActionPanel as DashkitActionPanel,
     ActionPanelItem as DashkitActionPanelItem,
-    MenuItems,
-    type PreparedCopyItemOptions,
+    PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
-import {ChartColumn, CopyPlus, Gear, Heading, Sliders, TextAlignLeft} from '@gravity-ui/icons';
+import {MenuItems} from '@gravity-ui/dashkit/helpers';
+import {
+    ChartColumn,
+    Code,
+    CopyPlus,
+    Gear,
+    Heading,
+    Sliders,
+    TextAlignLeft,
+} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
@@ -210,14 +217,14 @@ class Body extends React.PureComponent<BodyProps> {
             },
             {
                 id: 'selector',
-                icon: <Icon data={Sliders} />,
-                title: i18n('dash.main.view', 'button_edit-panel-selector'),
+                icon: (
+                    <Icon data={Utils.isEnabledFeature(Feature.GroupControls) ? Code : Sliders} />
+                ),
+                title: Utils.isEnabledFeature(Feature.GroupControls)
+                    ? i18n('dash.main.view', 'button_edit-panel-editor-selector')
+                    : i18n('dash.main.view', 'button_edit-panel-selector'),
                 className: b('edit-panel-item'),
                 onClick: () => {
-                    if (Utils.isEnabledFeature(Feature.GroupControls)) {
-                        this.props.openDialog(DIALOG_TYPE.GROUP_CONTROL);
-                        return;
-                    }
                     this.props.openDialog(DIALOG_TYPE.CONTROL);
                 },
                 qa: DashboardAddWidgetQa.AddControl,
@@ -254,6 +261,18 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.onPasteItem(copiedData);
                 },
+            });
+        }
+        if (Utils.isEnabledFeature(Feature.GroupControls)) {
+            items.splice(1, 0, {
+                id: 'group-selector',
+                icon: <Icon data={Sliders} />,
+                title: i18n('dash.main.view', 'button_edit-panel-selector'),
+                className: b('edit-panel-item'),
+                onClick: () => {
+                    this.props.openDialog(DIALOG_TYPE.GROUP_CONTROL);
+                },
+                qa: DashboardAddWidgetQa.AddGroupControl,
             });
         }
         return items;
@@ -349,7 +368,6 @@ class Body extends React.PureComponent<BodyProps> {
 
         return isEmptyTab ? (
             <EmptyState
-                openDialog={this.props.openDialog}
                 canEdit={this.props.canEdit}
                 isEditMode={mode === Mode.Edit}
                 isTabView={!settings.hideTabs && tabs.length > 1}

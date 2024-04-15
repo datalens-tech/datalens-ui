@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ConfigItem} from '@gravity-ui/dashkit';
+import type {ConfigItem} from '@gravity-ui/dashkit';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -44,10 +44,11 @@ import {
 import {
     getDatasetSourceInfo,
     getErrorText,
-    getLabels,
     isValidRequiredValue,
     prepareSelectorError,
 } from '../utils';
+
+import './ControlItemSelect.scss';
 
 type ControlItemSelectProps = {
     id: string;
@@ -65,10 +66,11 @@ type ControlItemSelectProps = {
     errorData: null | ErrorData;
     validateValue: (args: ValidationErrorData) => boolean | undefined;
     classMixin?: string;
-    width?: string;
+    renderOverlay?: () => React.ReactNode;
+    selectProps: Pick<SelectControlProps, 'style' | 'innerLabel' | 'label'>;
 };
 
-const b = block('dashkit-plugin-control');
+const b = block('control-item-select');
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 
 export const ControlItemSelect = ({
@@ -87,7 +89,8 @@ export const ControlItemSelect = ({
     showItemsLoader,
     validateValue,
     classMixin,
-    width,
+    selectProps,
+    renderOverlay,
 }: ControlItemSelectProps) => {
     const dispatch = useDispatch();
     let _loadingItemsTimer: NodeJS.Timeout | undefined;
@@ -322,10 +325,7 @@ export const ControlItemSelect = ({
         : null;
     const selectValidationError = validationError || initialValidationError;
 
-    const placeholder =
-        Utils.isEnabledFeature(Feature.SelectorRequiredValue) && selectValidationError
-            ? selectValidationError
-            : emptyPaceholder;
+    const placeholder = selectValidationError || emptyPaceholder;
 
     const onSelectChange = (value: string | string[]) => {
         const hasError = validateValue({
@@ -345,17 +345,13 @@ export const ControlItemSelect = ({
         onChange({param: fieldId, value: valueWithOperation});
     };
 
-    const {label, innerLabel} = getLabels({controlData: data});
-
     const props: SelectControlProps = {
         widgetId: id,
         content: content || preselectedContent,
-        label,
-        innerLabel,
         param: fieldId,
         multiselect: (source as DashTabItemControlElementSelect).multiselectable,
         type: TYPE.SELECT,
-        className: b('item', classMixin),
+        className: b(null, classMixin),
         key: fieldId,
         value: preparedValue as string,
         onChange: onSelectChange,
@@ -363,8 +359,9 @@ export const ControlItemSelect = ({
         loadingItems,
         placeholder,
         required: source.required,
-        hasValidationError: Boolean(validationError),
-        width,
+        hasValidationError: Boolean(selectValidationError),
+        renderOverlay,
+        ...selectProps,
     };
 
     if (status === LOAD_STATUS.FAIL) {

@@ -7,6 +7,7 @@ import {
     ServerField,
     getFormatOptions,
     isDateField,
+    isMarkupItem,
     isMeasureField,
 } from '../../../../../../../shared';
 import {TABLE_TOTALS_STYLES} from '../../../constants/misc';
@@ -99,8 +100,9 @@ function getRowCellMetadata(args: GetRowCellMetadataArgs): ChartkitCell {
     } else if (isNumericalDataType(field.data_type)) {
         cell.type = 'number';
 
-        if (isTableBarsSettingsEnabled(field)) {
-            const {columnValues, options} = args.settingsByField[field.guid].barsSettings!;
+        const barSettings = args.settingsByField[field.guid]?.barsSettings;
+        if (isTableBarsSettingsEnabled(field) && barSettings) {
+            const {columnValues, options} = barSettings;
             const barValueOptions = getBarSettingsValue({
                 field,
                 rowValue: value,
@@ -179,6 +181,7 @@ export const generateTableRows = ({
                 isTotalsEnabled && isRowWithTotals(pivotDataRow.header, fieldsItemIdMap);
             let measureGuid = '';
             const fieldOrder: string[] = [];
+            let isHeaderContainsMarkup = false;
 
             pivotDataRow.header.forEach((pivotDataRowValue: PivotDataRowsHeader, headerIndex) => {
                 if (!pivotDataRowValue) {
@@ -233,10 +236,15 @@ export const generateTableRows = ({
                 };
 
                 headerParentByIndex[headerIndex] = getCellValueForHeader(value, {datasetField});
+                isHeaderContainsMarkup = isHeaderContainsMarkup || isMarkupItem(value);
 
                 const isLastHeader = headerIndex === pivotDataRow.header.length - 1;
                 const isSortingAllowed =
-                    isSortByRowAllowed && rowsMeta[rowIndex] && datasetField && isLastHeader;
+                    isSortByRowAllowed &&
+                    rowsMeta[rowIndex] &&
+                    datasetField &&
+                    isLastHeader &&
+                    !isHeaderContainsMarkup;
 
                 if (isSortingAllowed) {
                     if (cell.value === null) {

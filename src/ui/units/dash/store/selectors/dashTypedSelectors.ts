@@ -7,6 +7,8 @@ import {createSelector} from 'reselect';
 import {
     DATASET_FIELD_TYPES,
     DashTabItem,
+    DashTabItemControlData,
+    DashTabItemControlSourceType,
     DashTabItemWidget,
     DashTabItemWidgetTab,
     Operations,
@@ -51,6 +53,9 @@ export const selectSettings = (state: DatalensGlobalState) => state.dash.data?.s
 export const selectIsDialogVisible = (state: DatalensGlobalState, dialogType: string) =>
     state.dash.openedDialog === dialogType;
 
+export const selectSelectorSourceType = (state: DatalensGlobalState) =>
+    (state.dash as DashState).selectorDialog.sourceType;
+
 export const selectSelectorControlType = (state: DatalensGlobalState) =>
     (state.dash as DashState).selectorDialog.elementType;
 
@@ -66,22 +71,36 @@ export const selectSelectorValidation = (state: DatalensGlobalState) =>
 export const selectSelectorDialog = (state: DatalensGlobalState) =>
     (state.dash as DashState).selectorDialog;
 
-export const selectSelectorsGroup = (state: DatalensGlobalState) =>
-    (state.dash as DashState).selectorsGroup;
-
-export const selectActiveSelectorIndex = (state: DatalensGlobalState) =>
-    (state.dash as DashState).activeSelectorIndex || 0;
-
 export const selectSkipReload = (state: DatalensGlobalState) =>
     (state.dash as DashState)?.skipReload || false;
 
 export const selectWidgetsCurrentTab = (state: DatalensGlobalState) =>
     (state.dash as DashState).widgetsCurrentTab;
 
-export const selectIsDatasetSelectorAndNoFieldSelected = (state: DatalensGlobalState) => {
+export const selectIsControlConfigurationDisabled = (state: DatalensGlobalState) => {
     const selectorDialog = (state.dash as DashState).selectorDialog;
 
-    return selectorDialog.sourceType === 'dataset' && !selectorDialog.datasetFieldId;
+    switch (selectorDialog.sourceType) {
+        case DashTabItemControlSourceType.Dataset:
+            return !selectorDialog.datasetFieldId;
+        case DashTabItemControlSourceType.Connection:
+            return !selectorDialog.connectionQueryContent;
+        default:
+            return false;
+    }
+};
+
+export const selectIsParametersSectionAvailable = (state: DatalensGlobalState): boolean => {
+    const {sourceType, connectionId, connectionQueryTypes} = state.dash.selectorDialog;
+
+    switch (sourceType) {
+        case DashTabItemControlSourceType.Connection:
+            return Boolean(connectionId && connectionQueryTypes?.length);
+        case DashTabItemControlSourceType.External:
+            return true;
+        default:
+            return false;
+    }
 };
 
 export const selectAvailableOperationsDict = (
@@ -306,6 +325,18 @@ export const selectOpenedItemData = createSelector(
             return item?.data;
         }
         return undefined;
+    },
+);
+
+export const selectIsControlSourceTypeHasChanged = createSelector(
+    [selectOpenedItemData, selectSelectorSourceType],
+    (openedItemData, sourceType) => {
+        // New item
+        if (!openedItemData) {
+            return false;
+        }
+
+        return (openedItemData as DashTabItemControlData).sourceType !== sourceType;
     },
 );
 

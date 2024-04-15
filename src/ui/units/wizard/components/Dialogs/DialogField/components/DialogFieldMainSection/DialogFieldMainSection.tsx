@@ -19,7 +19,6 @@ import {
     isNumberField,
 } from 'shared';
 
-import {getDatetimeName} from '../../../../../../../utils/helpers';
 import {
     AVAILABLE_AGGREGATIONS_BY_COMMON_CAST,
     AVAILABLE_DATETIMETZ_FORMATS,
@@ -175,12 +174,12 @@ export class DialogFieldMainSection extends React.Component<Props> {
 
         const restItems: SelectOptionGroup[] = availableModes.map(
             ([groupTitle, values]): SelectOptionGroup => ({
-                label: i18n('wizard', `label_${getDatetimeName(groupTitle) as AvailableFieldType}`),
+                label: i18n('wizard', `label_${groupTitle as AvailableFieldType}`),
                 options: getDialogFieldSelectItems({
                     arr: values,
                     generateValue: (value) => `${groupTitle}-${value}`,
                     generateTitle: (value) =>
-                        i18n('wizard', `label_${getDatetimeName(value) as AvailableFieldType}`),
+                        i18n('wizard', `label_${value as AvailableFieldType}`),
                     generateQa: (value) =>
                         `${DialogFieldMainSectionQa.GroupingSelector}-${groupTitle}-${value}`,
                 }),
@@ -224,14 +223,10 @@ export class DialogFieldMainSection extends React.Component<Props> {
             const labelMode = formatting.labelMode;
             const items = getDialogFieldSelectItems({
                 arr: availableLabelModes,
-                generateTitle: (value) =>
-                    i18n('wizard', `label_${getDatetimeName(value) as AvailableFieldType}`),
+                generateTitle: (value) => i18n('wizard', `label_${value as AvailableFieldType}`),
                 generateQa: (value) => `${DialogFieldMainSectionQa.LabelModeSelector}-${value}`,
             });
-            const placeholder = i18n(
-                'wizard',
-                `label_${getDatetimeName(labelMode) as AvailableFieldType}`,
-            );
+            const placeholder = i18n('wizard', `label_${labelMode as AvailableFieldType}`);
             const title = i18n('wizard', 'label_label-mode');
             return (
                 <DialogFieldRow
@@ -280,11 +275,10 @@ export class DialogFieldMainSection extends React.Component<Props> {
             'wizard',
             item.aggregation === 'none' ? 'label_type' : 'label_type-preaggregated',
         );
-        const placeholder = i18n('wizard', `label_${getDatetimeName(cast) as AvailableFieldType}`);
+        const placeholder = i18n('wizard', `label_${cast as AvailableFieldType}`);
         const items = getDialogFieldSelectItems({
             arr: availableFieldTypes,
-            generateTitle: (value) =>
-                i18n('wizard', `label_${getDatetimeName(value) as AvailableFieldType}`),
+            generateTitle: (value) => i18n('wizard', `label_${value as AvailableFieldType}`),
             generateQa: (value) => `${DialogFieldMainSectionQa.TypeSelector}-${value}`,
         });
 
@@ -395,7 +389,7 @@ export class DialogFieldMainSection extends React.Component<Props> {
         const items = getDialogFieldSelectItems({
             arr: availableAggregations,
             generateTitle: (itemValue: string) =>
-                i18n('wizard', `label_${getDatetimeName(itemValue) as AvailableFieldType}`),
+                i18n('wizard', `label_${itemValue as AvailableFieldType}`),
             generateQa: (value) => `${DialogFieldMainSectionQa.AggregationSelector}-${value}`,
         });
         const disabled = item.autoaggregated && !item.grouping;
@@ -427,7 +421,6 @@ export class DialogFieldMainSection extends React.Component<Props> {
                 return this.isTableVisualization
                     ? AVAILABLE_DATETIMETZ_FORMATS
                     : AVAILABLE_DATETIMETZ_FORMATS_NON_TABLE;
-            case DATASET_FIELD_TYPES.DATETIME:
             case DATASET_FIELD_TYPES.GENERICDATETIME:
             default:
                 return this.isTableVisualization

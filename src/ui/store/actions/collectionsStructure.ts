@@ -48,6 +48,18 @@ import {
     UPDATE_COLLECTION_FAILED,
     UPDATE_COLLECTION_LOADING,
     UPDATE_COLLECTION_SUCCESS,
+    COPY_TEMPLATE_LOADING,
+    COPY_TEMPLATE_SUCCESS,
+    COPY_TEMPLATE_FAILED,
+    DELETE_COLLECTION_LOADING,
+    DELETE_COLLECTION_SUCCESS,
+    DELETE_COLLECTION_FAILED,
+    DELETE_WORKBOOK_LOADING,
+    DELETE_WORKBOOK_SUCCESS,
+    DELETE_WORKBOOK_FAILED,
+    ADD_DEMO_WORKBOOK_LOADING,
+    ADD_DEMO_WORKBOOK_SUCCESS,
+    ADD_DEMO_WORKBOOK_FAILED,
 } from '../constants/collectionsStructure';
 
 import type {
@@ -65,6 +77,10 @@ import type {
     CreateWorkbookResponse,
     UpdateWorkbookResponse,
     UpdateCollectionResponse,
+    CopyTemplateResponse,
+    DeleteCollectionResponse,
+    DeleteWorkbookResponse,
+    CopyWorkbookTemplateResponse,
 } from '../../../shared/schema';
 
 type ResetStateAction = {
@@ -406,6 +422,74 @@ export const createCollection = ({
 
                 dispatch({
                     type: CREATE_COLLECTION_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
+type CopyTemplateLoadingAction = {
+    type: typeof COPY_TEMPLATE_LOADING;
+};
+type CopyTemplateSuccessAction = {
+    type: typeof COPY_TEMPLATE_SUCCESS;
+    data: CopyTemplateResponse;
+};
+type CopyTemplateFailedAction = {
+    type: typeof COPY_TEMPLATE_FAILED;
+    error: Error | null;
+};
+type CopyTemplateAction =
+    | CopyTemplateLoadingAction
+    | CopyTemplateSuccessAction
+    | CopyTemplateFailedAction;
+
+export const copyTemplate = ({
+    templateName,
+    productId,
+    workbookId,
+    connectionId,
+}: {
+    templateName: string;
+    workbookId: string;
+    productId: string;
+    connectionId?: string;
+}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: COPY_TEMPLATE_LOADING,
+        });
+        return getSdk()
+            .us.copyTemplate({
+                templateName,
+                workbookId,
+                connectionId,
+                meta: {productId},
+            })
+            .then((data) => {
+                dispatch({
+                    type: COPY_TEMPLATE_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/copyTemplate failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: COPY_TEMPLATE_FAILED,
                     error: isCanceled ? null : error,
                 });
 
@@ -955,6 +1039,192 @@ export const updateCollection = ({
     };
 };
 
+type DeleteCollectionLoadingAction = {
+    type: typeof DELETE_COLLECTION_LOADING;
+};
+type DeleteCollectionSuccessAction = {
+    type: typeof DELETE_COLLECTION_SUCCESS;
+    data: DeleteCollectionResponse;
+};
+type DeleteCollectionFailedAction = {
+    type: typeof DELETE_COLLECTION_FAILED;
+    error: Error | null;
+};
+type DeleteCollectionAction =
+    | DeleteCollectionLoadingAction
+    | DeleteCollectionSuccessAction
+    | DeleteCollectionFailedAction;
+
+export const deleteCollection = ({collectionId}: {collectionId: string}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: DELETE_COLLECTION_LOADING,
+        });
+        return getSdk()
+            .us.deleteCollection({
+                collectionId,
+            })
+            .then((data) => {
+                dispatch({
+                    type: DELETE_COLLECTION_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/deleteCollection failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: DELETE_COLLECTION_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
+type DeleteWorkbookLoadingAction = {
+    type: typeof DELETE_WORKBOOK_LOADING;
+};
+type DeleteWorkbookSuccessAction = {
+    type: typeof DELETE_WORKBOOK_SUCCESS;
+    data: DeleteWorkbookResponse;
+};
+type DeleteWorkbookFailedAction = {
+    type: typeof DELETE_WORKBOOK_FAILED;
+    error: Error | null;
+};
+type DeleteWorkbookAction =
+    | DeleteWorkbookLoadingAction
+    | DeleteWorkbookSuccessAction
+    | DeleteWorkbookFailedAction;
+
+export const deleteWorkbook = ({workbookId}: {workbookId: string}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: DELETE_WORKBOOK_LOADING,
+        });
+        return getSdk()
+            .us.deleteWorkbook({
+                workbookId,
+            })
+            .then((data) => {
+                dispatch({
+                    type: DELETE_WORKBOOK_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/deleteWorkbook failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: DELETE_WORKBOOK_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
+type AddDemoWorkbookLoadingAction = {
+    type: typeof ADD_DEMO_WORKBOOK_LOADING;
+};
+type AddDemoWorkbookSuccessAction = {
+    type: typeof ADD_DEMO_WORKBOOK_SUCCESS;
+    data: CopyWorkbookTemplateResponse;
+};
+type AddDemoWorkbookFailedAction = {
+    type: typeof ADD_DEMO_WORKBOOK_FAILED;
+    error: Error | null;
+};
+type AddDemoWorkbookAction =
+    | AddDemoWorkbookLoadingAction
+    | AddDemoWorkbookSuccessAction
+    | AddDemoWorkbookFailedAction;
+
+export const addDemoWorkbook = ({
+    workbookId,
+    collectionId,
+    title,
+}: {
+    workbookId: string;
+    collectionId: string | null;
+    title: string;
+}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: ADD_DEMO_WORKBOOK_LOADING,
+        });
+        return getSdk()
+            .us.copyWorkbookTemplate({
+                workbookId,
+                title,
+                collectionId,
+            })
+            .then(async (result) => {
+                const {operation} = result;
+                if (operation && operation.id) {
+                    await waitOperation({
+                        operation,
+                        loader: ({concurrentId}) =>
+                            getSdk().us.getOperation({operationId: operation.id}, {concurrentId}),
+                    }).promise;
+                }
+                return result;
+            })
+            .then((data) => {
+                dispatch({
+                    type: ADD_DEMO_WORKBOOK_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/addDemoWorkbook failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: ADD_DEMO_WORKBOOK_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
 export type CollectionsStructureAction =
     | ResetStateAction
     | GetRootCollectionPemissionsAction
@@ -965,13 +1235,17 @@ export type CollectionsStructureAction =
     | GetCollectionsContentAction
     | CreateCollectionAction
     | CreateWorkbookAction
+    | CopyTemplateAction
     | MoveCollectionAction
     | MoveWorkbookAction
     | MoveCollectionsAction
     | MoveWorkbooksAction
     | CopyWorkbookAction
     | UpdateWorkbookAction
-    | UpdateCollectionAction;
+    | UpdateCollectionAction
+    | DeleteCollectionAction
+    | DeleteWorkbookAction
+    | AddDemoWorkbookAction;
 
 export type CollectionsStructureDispatch = ThunkDispatch<
     DatalensGlobalState,

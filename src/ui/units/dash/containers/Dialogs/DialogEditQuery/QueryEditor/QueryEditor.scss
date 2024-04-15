@@ -1,0 +1,19 @@
+.query-editor {
+    --query-editor-border-radius: 4px;
+
+    height: 140px;
+    border: 1px solid var(--g-color-line-generic);
+    border-radius: var(--query-editor-border-radius);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &__code-editor {
+        border: none;
+        .monaco-editor,
+        .overflow-guard {
+            border-radius: var(--query-editor-border-radius);
+        }
+    }
+}

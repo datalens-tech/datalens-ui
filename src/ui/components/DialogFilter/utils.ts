@@ -25,7 +25,6 @@ export const getCommonDataType = (field: DatasetField): CommonDataType => {
         }
 
         case 'date':
-        case 'datetime':
         case 'genericdatetime':
         case 'datetimetz': {
             return CommonDataType.Date;

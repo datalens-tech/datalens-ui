@@ -19,6 +19,7 @@ export enum DashTabItemTitleSize {
 
 export enum DashTabItemControlSourceType {
     Dataset = 'dataset',
+    Connection = 'connection',
     Manual = 'manual',
     External = 'external',
 }
@@ -115,6 +116,7 @@ export interface DashTabItemText extends DashTabItemBase {
     type: DashTabItemType.Text;
     data: {
         text: string;
+        autoHeight?: boolean;
     };
 }
 
@@ -124,6 +126,7 @@ export interface DashTabItemTitle extends DashTabItemBase {
         text: string;
         size: DashTabItemTitleSize;
         showInTOC: boolean;
+        autoHeight?: boolean;
     };
 }
 
@@ -162,7 +165,7 @@ export interface DashTabItemControlData {
         | DashTabItemControlExternal['source'];
     placementMode?: string;
     width?: string;
-    index?: number;
+    defaults?: StringParams;
 }
 
 export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
@@ -243,7 +246,7 @@ export interface DashTabItemGroupControlData {
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
-    items: DashTabItemControlSingle[];
+    group: DashTabItemControlSingle[];
 }
 
 export interface DashTabLayout {

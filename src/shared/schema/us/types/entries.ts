@@ -14,6 +14,7 @@ import {
 export interface GetEntryResponse extends EntryFields {
     isFavorite: boolean;
     permissions?: Permissions;
+    isLocked?: boolean;
     links?: EntryFieldLinks;
     parentDashEntryId?: string;
     parentDashName?: string;
@@ -200,19 +201,6 @@ export interface GetRelationsArgs {
     entryId: string;
     includePermissionsInfo?: boolean;
     excludeUnregistredDlsEntries?: boolean;
-}
-
-export interface SearchEntry extends EntryNavigationFields {
-    isFavorite: boolean;
-    isLocked: boolean;
-    rank: number;
-    keyHeadline: string;
-}
-
-export type SearchEntriesResponse = SearchEntry[];
-
-export interface SearchEntriesArgs {
-    text: string;
 }
 
 export interface SwitchPublicationStatusEntry extends EntryMetaFields {

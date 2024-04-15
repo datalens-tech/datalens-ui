@@ -3,10 +3,17 @@ import {ConnectionsDialogQA} from '../../../../src/shared/constants';
 
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../../utils';
+import {
+    getUniqueTimestamp,
+    isEnabledFeature,
+    openTestPage,
+    slct,
+    waitForCondition,
+} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {COMMON_DASH_SELECTORS} from '../constants';
+import {Feature} from '../../../../src/shared';
 
 const TEXTS = {
     TAB2: 'Tab 2',
@@ -47,7 +54,7 @@ const isChartRequestSent = (reqData: string | null) => {
     return isChartData;
 };
 
-datalensTest.describe('Dashboards - Widget Downloads', () => {
+datalensTest.describe('Dashboards - Widget loading', () => {
     datalensTest(
         'When loading a dashboard, the selectors have priority for loading api/run',
         async ({page}: {page: Page}) => {
@@ -81,7 +88,7 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
         },
     );
     datalensTest(
-        'Dashboard with delayed loading of widgets (do not fall into viewport)',
+        "Dashboard with delayed loading of widgets (doesn't get into viewport)",
         async ({page}: {page: Page}) => {
             // we set small viewport sizes for a more stable check
             page.setViewportSize({width: 1000, height: 300});
@@ -120,6 +127,11 @@ datalensTest.describe('Dashboards - Widget Downloads', () => {
             const dashName = `e2e-test-dash-with-defered-chart-${getUniqueTimestamp()}`;
             const dashboardPage = new DashboardPage({page});
             await openTestPage(page, RobotChartsDashboardUrls.DashboardWithLongContentBeforeChart);
+
+            const hideOldRelations = await isEnabledFeature(page, Feature.HideOldRelations);
+            if (hideOldRelations) {
+                return;
+            }
             await dashboardPage.copyDashboard(dashName);
 
             // we set small viewport sizes for a more stable check

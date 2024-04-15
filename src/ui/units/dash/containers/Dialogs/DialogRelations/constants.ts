@@ -13,6 +13,7 @@ export const RELATIONS_CHARTS_ICONS_DICT = {
     metric2: iconMetric,
     ymap: iconGeolayers,
     markdown: LogoMarkdownIcon,
+    markup: iconMetric,
 };
 
 export const DEFAULT_ALIAS_NAMESPACE = 'default';
@@ -28,3 +29,14 @@ export const RELATION_TYPES = {
 };
 
 export const TEXT_LIMIT = 20;
+
+export const FULL_RELATIONS = [
+    RELATION_TYPES.both,
+    RELATION_TYPES.input,
+    RELATION_TYPES.output,
+    RELATION_TYPES.ignore,
+];
+
+export const INPUT_RELATIONS = [RELATION_TYPES.input, RELATION_TYPES.ignore];
+
+export const OUTPUT_RELATIONS = [RELATION_TYPES.output, RELATION_TYPES.ignore];

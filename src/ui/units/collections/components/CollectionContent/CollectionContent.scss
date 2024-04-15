@@ -1,12 +1,16 @@
 .dl-collection-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
     &__empty-state {
-        align-items: center;
         display: flex;
         flex: 1;
+        align-items: center;
         justify-content: center;
     }
 
-    &__controls {
+    &__placeholder-controls {
         margin-top: 16px;
     }
 
@@ -14,10 +18,14 @@
         margin-top: 12px;
     }
 
+    &__batch-panel-placeholder {
+        height: 68px;
+    }
+
     &__batch-panel {
         position: fixed;
-        width: 100%;
-        max-width: 896px;
+        width: 896px;
         bottom: 8px;
+        z-index: 10;
     }
 }

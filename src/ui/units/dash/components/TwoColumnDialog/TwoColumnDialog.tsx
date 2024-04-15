@@ -17,6 +17,7 @@ type TwoColumnDialogOwnProps = {
     sidebarClassMixin?: string;
     bodyClassMixin?: string;
     headerClassMixin?: string;
+    qa?: string;
 };
 
 type TwoColumnDialogProps = TwoColumnDialogOwnProps & Omit<DialogProps, 'children'>;
@@ -39,7 +40,7 @@ function TwoColumnDialog({
         <Dialog {...dialogProps}>
             <div className={b()}>
                 <div className={b('sidebar', sidebarClassMixin)}>
-                    <Dialog.Header caption={sidebarHeader} />
+                    <Dialog.Header className={b('header')} caption={sidebarHeader} />
                     <Dialog.Body className={b('sidebar-body')}>{sidebar}</Dialog.Body>
                 </div>
                 <div className={b('content', {'no-content-header': hideHeader}, contentClassMixin)}>

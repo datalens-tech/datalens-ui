@@ -22,6 +22,7 @@ type ContentProps = {
         props: {
             type: RelationType;
             widgetId: DashkitMetaDataItem['widgetId'];
+            itemId: DashkitMetaDataItem['itemId'];
         } & AliasClickHandlerData,
     ) => void;
     onAliasClick: (props: AliasClickHandlerData) => void;
@@ -40,7 +41,7 @@ export const Content = ({
 }: ContentProps) => {
     if (isLoading) {
         return (
-            <div className={b()}>
+            <div className={b({'with-loader': true})}>
                 <div className={b('loader-wrap')}>
                     <Loader className={b('loader')} />
                 </div>

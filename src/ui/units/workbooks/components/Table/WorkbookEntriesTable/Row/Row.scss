@@ -1,0 +1,110 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.dl-content-row {
+    $class: &;
+
+    display: table-row;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+        background-color: var(--g-color-base-simple-hover-solid);
+        cursor: pointer;
+
+        #{$class}__btn-favorite {
+            visibility: visible;
+        }
+    }
+
+    &__empty-row {
+        display: table-row;
+    }
+
+    &__content-cell,
+    &__empty-cell {
+        display: table-cell;
+        box-sizing: content-box;
+        overflow: hidden;
+        overflow-wrap: break-word;
+        text-align: left;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &__content-cell {
+        padding: 0 10px;
+
+        &_title {
+            max-width: 401px;
+        }
+
+        &_author {
+            width: 165px;
+            max-width: 165px;
+        }
+
+        &_date {
+            width: 150px;
+            max-width: 150px;
+        }
+
+        &_controls {
+            width: 100px;
+            max-width: 100px;
+        }
+    }
+
+    &__empty-cell {
+        color: var(--g-color-text-secondary);
+    }
+
+    &__title-col {
+        display: flex;
+        align-items: center;
+
+        &_is-mobile {
+            max-width: 200px;
+        }
+    }
+
+    &__title-col-text {
+        @include overflow-ellipsis();
+        margin-left: 12px;
+    }
+
+    &__author-text {
+        overflow-wrap: break-word;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__control-col {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__btn-favorite {
+        color: var(--g-color-base-misc-heavy-hover);
+        border-radius: 4px;
+        visibility: hidden;
+
+        &_is-favorite {
+            visibility: visible;
+
+            svg {
+                color: var(--g-color-base-misc-heavy-hover);
+            }
+        }
+
+        &:hover {
+            color: var(--g-color-base-misc-heavy-hover);
+        }
+    }
+
+    &__btn-actions {
+        margin-left: 8px;
+    }
+}

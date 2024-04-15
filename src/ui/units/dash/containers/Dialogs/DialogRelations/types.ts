@@ -19,11 +19,14 @@ export type RelationType = keyof typeof RELATION_TYPES;
 export type RelationsData = {
     byUsedParams: Array<string>;
     byAliases: Array<Array<string>>;
+    indirectAliases: Array<Array<string>>;
     isIgnoring: boolean;
     isIgnored: boolean;
     type: RelationType;
     available: Array<RelationType>;
     byFields: Array<string> | string;
+    hasDataset: boolean;
+    forceAddAlias: boolean;
 };
 
 export type DatasetsListData = Record<
@@ -61,7 +64,7 @@ export type ClickCallbackArgs = {
     aliases?: string[][];
 };
 
-export type WidgetsTypes = Record<string, RelationType>;
+export type WidgetsTypes = Record<string, Record<string, RelationType>>;
 
 export type AliasBase = {
     onCloseCallback?: (args?: ClickCallbackArgs) => void;
@@ -70,6 +73,7 @@ export type AliasBase = {
     relationType: RelationType;
     changedWidgetsData?: WidgetsTypes;
     changedWidgetId?: string;
+    changedItemId?: string;
 };
 
 export type AliasClickHandlerData = AliasBase & {
@@ -103,4 +107,5 @@ export type RelationChartType = keyof typeof RELATIONS_CHARTS_ICONS_DICT;
 export type RelationTypeChangeProps = {
     type: RelationType;
     widgetId: DashkitMetaDataItem['widgetId'];
+    itemId: DashkitMetaDataItem['itemId'];
 } & AliasClickHandlerData;

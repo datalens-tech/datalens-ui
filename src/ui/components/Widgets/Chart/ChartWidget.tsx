@@ -2,7 +2,10 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {pickActionParamsFromParams, pickExceptActionParamsFromParams} from '@gravity-ui/dashkit';
+import {
+    pickActionParamsFromParams,
+    pickExceptActionParamsFromParams,
+} from '@gravity-ui/dashkit/helpers';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';
 import isEmpty from 'lodash/isEmpty';
@@ -110,9 +113,12 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         prevHideTitle !== undefined && !isEqual(data.hideTitle, prevHideTitle);
 
     const prevEnableActionParams = usePrevious(currentTab.enableActionParams);
+    // if there was no param in config it will be undefined too (not only when we first render with undefined initializing)
+    // so we check two cases: when prev val is true and new val is not true or current val is true and prev is not true
     const hasEnableActionParamsChanged = Boolean(
-        prevEnableActionParams !== undefined &&
-            prevEnableActionParams !== currentTab.enableActionParams,
+        (prevEnableActionParams !== undefined &&
+            prevEnableActionParams !== currentTab.enableActionParams) ||
+            (prevEnableActionParams === undefined && currentTab.enableActionParams),
     );
 
     const initialData: DataProps = React.useMemo(
@@ -352,6 +358,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetType,
         yandexMapAPIWaiting,
         isLoading,
+        isInit,
         showOverlayWithControlsOnEdit,
         isWidgetMenuDataChanged,
         dataProps,
@@ -397,6 +404,15 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             true,
         );
     }, [handleChange, chartkitParams]);
+
+    /**
+     * Clear action params on disable of filtration of widget
+     */
+    React.useEffect(() => {
+        if (hasEnableActionParamsChanged && !enableActionParams) {
+            handleFiltersClear();
+        }
+    }, [hasEnableActionParamsChanged, enableActionParams, handleFiltersClear]);
 
     React.useEffect(() => {
         if (loadedData?.isNewWizard && !isWizardChart) {
@@ -469,7 +485,11 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     return (
         <div
             ref={rootNodeRef}
-            className={`${b({...mods, autoheight: isAutoHeightEnabled})}`}
+            className={`${b({
+                ...mods,
+                autoheight: isAutoHeightEnabled,
+                ['wait-for-init']: !isInit,
+            })}`}
             data-qa="chart-widget"
             data-qa-mod={isFullscreen ? 'fullscreen' : ''}
         >

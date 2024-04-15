@@ -13,7 +13,7 @@ export const editorActions = {
     _createEditorChart: createAction<CreateEditorChartResponse, CreateEditorChartArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/entries`,
-        params: ({type, key, data, meta = {}}, headers) => {
+        params: ({type, key, data, meta = {}, name, workbookId}, headers) => {
             return {
                 body: {
                     scope: 'widget',
@@ -21,6 +21,8 @@ export const editorActions = {
                     key,
                     meta,
                     data,
+                    name,
+                    workbookId,
                 },
                 headers,
             };
@@ -29,13 +31,14 @@ export const editorActions = {
     _updateEditorChart: createAction<UpdateEditorChartResponse, UpdateEditorChartArgs>({
         method: 'POST',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: ({data, mode, revId, meta = {}}, headers) => {
+        params: ({data, mode, revId, meta = {}, links = {}}, headers) => {
             return {
                 body: {
                     mode,
                     meta,
                     data,
                     revId,
+                    links,
                 },
                 headers,
             };

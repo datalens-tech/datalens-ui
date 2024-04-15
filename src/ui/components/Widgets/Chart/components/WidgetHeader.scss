@@ -7,13 +7,13 @@
 
     &__back-icon {
         position: absolute;
-        top: 14px;
+        top: 16px;
         left: 14px;
     }
 
     &__share-widget {
         position: absolute;
-        top: 13px;
+        top: 18px;
         right: 50px;
     }
 
@@ -24,7 +24,7 @@
         z-index: 10;
         background-color: var(--g-color-base-background);
         padding: 2px;
-        border-radius: var(--yc-border-radius-l);
+        border-radius: var(--g-border-radius-l);
         box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.05);
     }
 
@@ -97,7 +97,7 @@
     }
 
     &_with-shares {
-        #{$class}__tabs {
+        #{$class}__title {
             padding-right: 80px;
         }
     }
@@ -110,6 +110,11 @@
 
         #{$class}__title {
             line-height: $headerHeight;
+        }
+
+        &#{$class}_fullscreen #{$class}__filters-controls {
+            top: 50px;
+            right: 16px;
         }
     }
 }

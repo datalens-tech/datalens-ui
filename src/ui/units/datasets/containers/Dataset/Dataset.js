@@ -41,7 +41,6 @@ import ErrorContent from '../../../../components/ErrorContent/ErrorContent';
 import {MobileHeader} from '../../../../components/MobileHeader/MobileHeader';
 import NavigationPrompt from '../../../../components/NavigationPrompt/NavigationPrompt';
 import {PageTitle} from '../../../../components/PageTitle';
-import {PlaceholderIllustration} from '../../../../components/PlaceholderIllustration/PlaceholderIllustration';
 import {SlugifyUrl} from '../../../../components/SlugifyUrl';
 import UIUtils from '../../../../utils/utils';
 import ContainerLoader from '../../components/ContainerLoader/ContainerLoader';
@@ -553,22 +552,13 @@ class Dataset extends React.Component {
     }
 
     renderLoader() {
+        const text = this.state.isAuto
+            ? i18n('label_dataset-auto-creation-process')
+            : i18n('label_loading-dataset');
+
         return (
             <div className={b('loader')}>
-                {this.state.isAuto ? (
-                    <ContainerLoader
-                        text={i18n('label_dataset-auto-creation-process')}
-                        textSize="m"
-                        topContent={
-                            <PlaceholderIllustration
-                                name="template"
-                                className={b('autocreation-img')}
-                            />
-                        }
-                    />
-                ) : (
-                    <ContainerLoader text={i18n('label_loading-dataset')} textSize="m" />
-                )}
+                <ContainerLoader text={text} textSize="m" />
             </div>
         );
     }

@@ -1,3 +1,4 @@
+import {WizardVisualizationId} from '../../../constants';
 import {DashStats, WorkbookId} from '../../../types';
 import {GetEntriesEntryResponse} from '../../us/types';
 
@@ -17,6 +18,7 @@ export type GetEntriesDatasetsFieldsListItem = {
 export type GetEntriesDatasetsFieldsItem = {
     entryId: string;
     type: GetEntriesEntryResponse['type'] | null;
+    visualizationType?: WizardVisualizationId;
     datasetId?: string;
     datasetName?: string;
     datasetFields?: GetEntriesDatasetsFieldsListItem[];

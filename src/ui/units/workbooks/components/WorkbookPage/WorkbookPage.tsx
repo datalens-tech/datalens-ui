@@ -1,53 +1,37 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
-import {PencilToLine} from '@gravity-ui/icons';
-import {ActionBar} from '@gravity-ui/navigation';
-import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {CollectionBreadcrumbs} from 'components/Breadcrumbs/CollectionBreadcrumbs/CollectionBreadcrumbs';
-import {DIALOG_EDIT_WORKBOOK} from 'components/CollectionsStructure';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {ViewError} from 'components/ViewError/ViewError';
-import {I18N} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
 import {Utils} from 'ui';
+import {AppDispatch} from 'ui/store';
 
-import {registry} from '../../../../registry';
-import {closeDialog, openDialog} from '../../../../store/actions/dialog';
+import {getCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
+import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
+import {changeFilters, getWorkbook} from '../../store/actions';
 import {
-    changeFilters,
-    getWorkbook,
-    getWorkbookBreadcrumbs,
-    getWorkbookEntries,
-    resetWorkbookEntries,
-    resetWorkbookState,
-} from '../../store/actions';
-import {
-    selectBreadcrumbs,
-    selectBreadcrumbsError,
     selectCollectionId,
-    selectNextPageToken,
     selectPageError,
     selectWorkbook,
     selectWorkbookFilters,
-    selectWorkbookInfoIsLoading,
 } from '../../store/selectors';
 import {CreateEntryDialog} from '../CreateEntryDialog/CreateEntryDialog';
-import {WorkbookActions} from '../WorkbookActions/WorkbookActions';
-import {WorkbookContent} from '../WorkbookContent/WorkbookContent';
 import {WorkbookFilters} from '../WorkbookFilters/WorkbookFilters';
+import {WorkbookMainTabContent} from '../WorkbookMainTabContent/WorkbookMainTabContent';
+import {WorkbookTabContent} from '../WorkbookTabContent/WorkbookTabContent';
 import {WorkbookTabs} from '../WorkbookTabs/WorkbookTabs';
 import {TAB_ALL} from '../WorkbookTabs/constants';
 import {TabId} from '../WorkbookTabs/types';
+
+import {useLayout} from './hooks/useLayout';
 
 import './WorkbookPage.scss';
 
 const b = block('dl-workbook-page');
 
-const i18n = I18N.keyset('new-workbooks');
+const AVAILABLE_TABS = [TAB_ALL, 'dash', 'widget', 'dataset', 'connection'];
 
 export const WorkbookPage = () => {
     const {search} = useLocation();
@@ -55,44 +39,31 @@ export const WorkbookPage = () => {
 
     const activeTab = React.useMemo<TabId | undefined>(() => {
         const queryTab = new URLSearchParams(search).get('tab');
-        return queryTab ? (queryTab as TabId) : undefined;
+
+        return queryTab && AVAILABLE_TABS.includes(queryTab) ? (queryTab as TabId) : TAB_ALL;
     }, [search]);
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
+
     const collectionId = useSelector(selectCollectionId);
-    const breadcrumbs = useSelector(selectBreadcrumbs);
     const workbook = useSelector(selectWorkbook);
     const pageError = useSelector(selectPageError);
-    const breadcrumbsError = useSelector(selectBreadcrumbsError);
-    const isWorkbookInfoLoading = useSelector(selectWorkbookInfoIsLoading);
-    const nextPageToken = useSelector(selectNextPageToken);
+    const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
+
     const filters = useSelector(selectWorkbookFilters);
 
-    const scope = activeTab === TAB_ALL ? undefined : activeTab;
+    const showContentLoader = !workbook || workbook.workbookId !== workbookId;
+
+    const isMainTab = activeTab === TAB_ALL;
+    const scope = isMainTab ? undefined : activeTab;
 
     const initLoadWorkbook = React.useCallback(() => {
-        dispatch(resetWorkbookState());
         dispatch(getWorkbook({workbookId}));
     }, [dispatch, workbookId]);
 
     const refreshWorkbookInfo = React.useCallback(() => {
         dispatch(getWorkbook({workbookId}));
     }, [dispatch, workbookId]);
-
-    const loadMoreEntries = React.useCallback(() => {
-        if (nextPageToken) {
-            dispatch(getWorkbookEntries({workbookId, filters, scope, nextPageToken}));
-        }
-    }, [nextPageToken, dispatch, filters, workbookId, scope]);
-
-    const retryLoadEntries = React.useCallback(() => {
-        dispatch(getWorkbookEntries({workbookId, filters, scope, nextPageToken}));
-    }, [dispatch, workbookId, filters, scope, nextPageToken]);
-
-    const refreshEntries = React.useCallback(() => {
-        dispatch(resetWorkbookEntries());
-        dispatch(getWorkbookEntries({workbookId, filters, scope}));
-    }, [dispatch, workbookId, filters, scope]);
 
     const handleChangeFilters = React.useCallback(
         (newFilters) => {
@@ -103,26 +74,15 @@ export const WorkbookPage = () => {
 
     React.useEffect(() => {
         initLoadWorkbook();
-
-        return () => {
-            dispatch(resetWorkbookState());
-        };
     }, [initLoadWorkbook, dispatch]);
 
     React.useEffect(() => {
         if (collectionId) {
-            dispatch(getWorkbookBreadcrumbs({collectionId}));
+            dispatch(getCollectionBreadcrumbs({collectionId}));
         }
     }, [dispatch, collectionId]);
 
-    React.useEffect(() => {
-        dispatch(resetWorkbookEntries());
-
-        // Get entries only if active tab selected
-        if (activeTab) {
-            dispatch(getWorkbookEntries({workbookId, filters, scope}));
-        }
-    }, [dispatch, workbookId, filters, activeTab, scope]);
+    useLayout({workbookId, refreshWorkbookInfo});
 
     if (
         pageError ||
@@ -135,96 +95,32 @@ export const WorkbookPage = () => {
         );
     }
 
-    const {ActionPanelEntrySelect} = registry.common.components.getAll();
-
     return (
         <div className={b()}>
-            <ActionBar aria-label="Actions bar">
-                <ActionBar.Section type="primary">
-                    <ActionBar.Group pull="left" className={b('action-bar-group-left')}>
-                        <ActionBar.Item className={b('action-bar-left-item')}>
-                            <ActionPanelEntrySelect />
-                            {workbook && (
-                                <CollectionBreadcrumbs
-                                    className={b('breadcrumbs', {'is-mobile': DL.IS_MOBILE})}
-                                    collectionBreadcrumbs={breadcrumbs ?? []}
-                                    workbook={workbook}
-                                    onCurrentItemClick={() => {
-                                        dispatch(resetWorkbookEntries());
-                                        dispatch(
-                                            getWorkbookEntries({
-                                                workbookId,
-                                                filters,
-                                                scope,
-                                            }),
-                                        );
-                                    }}
-                                />
-                            )}
-                        </ActionBar.Item>
-                    </ActionBar.Group>
-                    <ActionBar.Group pull="right">
-                        <ActionBar.Item>
-                            {workbook && (
-                                <WorkbookActions
-                                    workbook={workbook}
-                                    refreshWorkbookInfo={refreshWorkbookInfo}
-                                />
-                            )}
-                        </ActionBar.Item>
-                    </ActionBar.Group>
-                </ActionBar.Section>
-            </ActionBar>
-            {isWorkbookInfoLoading ? (
+            {showContentLoader ? (
                 <SmartLoader size="l" />
             ) : (
                 <div className={b('layout')}>
                     <div className={b('container')}>
-                        <div className={b('title-content')}>
-                            <h1 className={b('title')}>{workbook?.title}</h1>
-                            {workbook?.permissions.update && (
-                                <Tooltip content={i18n('action_edit')}>
-                                    <div>
-                                        <Button
-                                            onClick={() => {
-                                                dispatch(
-                                                    openDialog({
-                                                        id: DIALOG_EDIT_WORKBOOK,
-                                                        props: {
-                                                            open: true,
-                                                            workbookId: workbook.workbookId,
-                                                            title: workbook.title,
-                                                            description:
-                                                                workbook?.description ?? '',
-                                                            onApply: refreshWorkbookInfo,
-                                                            onClose: () => {
-                                                                dispatch(closeDialog());
-                                                            },
-                                                        },
-                                                    }),
-                                                );
-                                            }}
-                                        >
-                                            <Icon data={PencilToLine} />
-                                        </Button>
-                                    </div>
-                                </Tooltip>
-                            )}
-                        </div>
-                        {workbook?.description && (
-                            <div className={b('description')}>{workbook.description}</div>
-                        )}
                         <div className={b('controls')}>
                             <WorkbookFilters filters={filters} onChange={handleChangeFilters} />
                             {workbook && <WorkbookTabs workbook={workbook} />}
                         </div>
                         <div className={b('content')}>
-                            <WorkbookContent
-                                loadMoreEntries={loadMoreEntries}
-                                retryLoadEntries={retryLoadEntries}
-                                refreshEntries={refreshEntries}
-                                scope={scope}
-                            />
+                            {isMainTab ? (
+                                <WorkbookMainTabContent
+                                    workbook={workbook}
+                                    filters={filters}
+                                    workbookId={workbookId}
+                                />
+                            ) : (
+                                <WorkbookTabContent
+                                    filters={filters}
+                                    scope={scope}
+                                    workbookId={workbookId}
+                                    workbook={workbook}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>

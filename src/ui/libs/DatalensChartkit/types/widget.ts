@@ -14,6 +14,7 @@ import {
     ChartsInsightsItem,
     GraphTooltipLine,
     GraphWidgetEventScope,
+    MarkupItem,
     StringParams,
     TableCell,
     TableHead,
@@ -22,7 +23,6 @@ import {
     TableWidgetEventScope,
     WidgetEvent,
 } from '../../../../shared';
-import {MarkupItem} from '../../../components/Markup';
 import {ChartsData} from '../modules/data-provider/charts';
 
 import {CombinedError} from './common';
@@ -232,7 +232,7 @@ export type TableWidget = WidgetBaseWithData &
             footer?: TableRow[];
         };
         config?: {
-            title?: TableTitle;
+            title?: string | TableTitle;
             sort?: string;
             order?: 'asc' | 'desc';
             settings?: DataTableProps<DataTableData>['settings'];

@@ -2,13 +2,14 @@ import {parse} from 'querystring';
 
 import {AppError} from '@gravity-ui/nodekit';
 
-import {StringParams, extractEntryId} from '../../shared';
+import {StringParams} from '../../shared';
 import {
     GetEntryByKeyResponse,
     GetEntryMetaResponse,
     ResolveEntryByLinkComponentArgs,
     ResolveEntryByLinkComponentResponse,
 } from '../../shared/schema';
+import {registry} from '../registry';
 
 export enum ErrorCode {
     IncorrectURL = 'INCORRECT_URL',
@@ -44,6 +45,9 @@ async function resolveEntryByLink({
         const params = parse(url.searchParams.toString()) as StringParams;
 
         let entry: GetEntryMetaResponse | GetEntryByKeyResponse;
+
+        const {extractEntryId} = registry.common.functions.getAll();
+
         const possibleEntryId = extractEntryId(idOrKeyOrReport);
 
         if (possibleEntryId) {

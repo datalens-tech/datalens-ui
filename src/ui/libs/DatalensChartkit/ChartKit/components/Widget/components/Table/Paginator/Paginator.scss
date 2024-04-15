@@ -40,7 +40,7 @@
 
     // chartkit-table__wrapper increase specificity
     // otherwise Lego theme styles override width
-    .chartkit-table &__page-input {
+    & &__page-input {
         width: 60px;
         margin: 0 5px;
     }

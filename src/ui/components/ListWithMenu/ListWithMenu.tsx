@@ -11,6 +11,7 @@ import './ListWithMenu.scss';
 
 const b = block('list-with-menu');
 const i18n = I18n.keyset('component.list-with-menu.view');
+const ITEM_HEIGHT = 40;
 
 export interface ListWithMenuProps<T> {
     /* * Properties of the List component*/
@@ -39,7 +40,7 @@ export const ListWithMenu = <T extends ItemWithTitle>({
     iconOnHover,
     onAction,
 }: ListWithMenuProps<T>): React.ReactElement => {
-    const {items, ...restListProps} = list;
+    const {items, className, ...restListProps} = list;
 
     const [expandedItemIndex, setExpandedItemIndex] = React.useState<number | undefined>(undefined);
 
@@ -63,6 +64,7 @@ export const ListWithMenu = <T extends ItemWithTitle>({
             action: () => onRemoveItem(),
             text: i18n('button_delete'),
             icon: <Icon data={TrashBin} />,
+            className: b('delete-btn'),
         },
     ];
 
@@ -96,12 +98,15 @@ export const ListWithMenu = <T extends ItemWithTitle>({
     };
 
     return (
-        <List
-            {...restListProps}
-            items={items}
-            activeItemIndex={expandedItemIndex}
-            renderItem={wrappedRenderItem}
-            qa={TabMenuQA.List}
-        />
+        <div className={className}>
+            <List
+                {...restListProps}
+                items={items}
+                itemsHeight={items.length * ITEM_HEIGHT}
+                activeItemIndex={expandedItemIndex}
+                renderItem={wrappedRenderItem}
+                qa={TabMenuQA.List}
+            />
+        </div>
     );
 };

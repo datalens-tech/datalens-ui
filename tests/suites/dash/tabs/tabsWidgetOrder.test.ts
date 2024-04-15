@@ -10,10 +10,10 @@ import {DialogTabsQA, EntryDialogQA} from '../../../../src/shared/constants';
 import {ActionPanelDashSaveControlsQa} from '../../../../src/shared/constants/qa/action-panel';
 
 const SELECTORS = {
-    SELECTOR_LIST_ITEMS: '.yc-list__item',
+    SELECTOR_LIST_ITEMS: '.g-list__item',
 };
 
-datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
+datalensTest.describe(`Dashboards - Change widgets order on tab`, () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashName = `e2e-test-dash-tabs-widget-order-copy-${getUniqueTimestamp()}`;
         const dashboardPage = new DashboardPage({page});
@@ -45,6 +45,10 @@ datalensTest.describe(`Dashboards - change widgets order on tab`, () => {
                 listSelector: slct(DialogTabsQA.PopupWidgetOrderList),
                 sourceIndex: 0,
                 targetIndex: 1,
+            });
+
+            await new Promise((resolve) => {
+                setTimeout(resolve, 500);
             });
 
             const actualWidgetOrderListItems = await popupWidgetOrderList.$$(

@@ -46,6 +46,7 @@ function ButtonSave({
     isScriptsChanged,
     componentStoreState,
     defaultPath,
+    workbookId,
 }) {
     const history = useHistory();
     const location = useLocation();
@@ -64,13 +65,14 @@ function ButtonSave({
                 initDestination: Utils.getPathBefore({path: entry.key}),
                 data: scriptsValues,
                 type: entry.type,
+                workbookId,
             },
         });
         if (response.status === EntryDialogResolveStatus.Success) {
             const url = navigateHelper.redirectUrlSwitcher(response.data);
             toaster.add({
                 name: 'success_save_as_chart_editor',
-                type: TOASTER_TYPE.SUCCESS,
+                theme: TOASTER_TYPE.SUCCESS,
                 title: i18n('editor.notifications.view', 'toast_save-as-editor-chart-success'),
                 actions: [
                     {
@@ -92,6 +94,7 @@ function ButtonSave({
                     initDestination: defaultPath,
                     data: scriptsValues,
                     type: entry.type,
+                    workbookId,
                 },
             });
             if (response.status === EntryDialogResolveStatus.Success) {
@@ -243,6 +246,7 @@ ButtonSave.propTypes = {
         progress: PropTypes.bool.isRequired,
     }).isRequired,
     defaultPath: PropTypes.string.isRequired,
+    workbookId: PropTypes.string,
 };
 
 export default ButtonSave;

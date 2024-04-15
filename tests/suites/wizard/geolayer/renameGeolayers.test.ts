@@ -4,7 +4,7 @@ import {WizardVisualizationId} from '../../../page-objects/common/Visualization'
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage} from '../../../utils';
 
 datalensTest.describe('Wizard - Geo Layers', () => {
     datalensTest('Renaming two geo layers', async ({page}: {page: Page}) => {
@@ -16,7 +16,7 @@ datalensTest.describe('Wizard - Geo Layers', () => {
 
         await wizardPage.sectionVisualization.addLayer();
 
-        await wizardPage.sectionVisualization.openLayerList();
+        await wizardPage.sectionVisualization.toggleLayerList();
 
         const updatedFirstLayerName = 'Renamed Geo layer 1';
         const updatedSecondLayerName = 'Renamed Geo layer 2';
@@ -36,12 +36,9 @@ datalensTest.describe('Wizard - Geo Layers', () => {
             updatedSecondLayerName,
         );
 
-        await waitForCondition(async () => {
-            const items = await wizardPage.sectionVisualization.getLayersSelectItems();
-
-            const texts = await Promise.all(items.map((item) => item.innerText()));
-
-            return texts.join(',') === [updatedFirstLayerName, updatedSecondLayerName].join(',');
-        });
+        await wizardPage.sectionVisualization.expectLayersSelectItemsTexts([
+            updatedFirstLayerName,
+            updatedSecondLayerName,
+        ]);
     });
 });

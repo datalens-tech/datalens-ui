@@ -8,17 +8,17 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
-    selectActiveSelectorIndex,
-    selectSelectorsGroup,
-} from 'units/dash/store/selectors/dashTypedSelectors';
-
-import {
-    SelectorDialogState,
-    SelectorsGroupDialogState,
     addSelectorToGroup,
     setActiveSelectorIndex,
     updateSelectorsGroup,
-} from '../../../../store/actions/dashTyped';
+} from 'ui/units/dash/store/actions/controls/actions';
+import {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
+import {
+    selectActiveSelectorIndex,
+    selectSelectorsGroup,
+} from 'units/dash/store/selectors/controls/selectors';
+
+import {SelectorDialogState} from '../../../../store/actions/dashTyped';
 import {ListState, TabMenu} from '../../Widget/TabMenu/TabMenu';
 import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 
@@ -30,6 +30,7 @@ const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
     buttonApply: false,
     buttonReset: false,
+    autoHeight: false,
 };
 
 export const GroupControlSidebar = () => {
@@ -38,21 +39,21 @@ export const GroupControlSidebar = () => {
     const dispatch = useDispatch();
 
     const initialTabIndex =
-        selectorsGroup.items[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
+        selectorsGroup.group?.[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
     const [defaultTabIndex, setDefaultTabIndex] = React.useState(initialTabIndex);
 
-    const isMultipleSelectors = selectorsGroup.items.length > 1;
+    const isMultipleSelectors = selectorsGroup.group?.length > 1;
 
     const updateSelectorsList = React.useCallback(
         ({items, selectedItemIndex, action}: ListState<SelectorDialogState>) => {
             if (action === 'add') {
                 const newSelector = items[items.length - 1];
                 dispatch(addSelectorToGroup(newSelector));
-            } else {
+            } else if (action !== 'changeChosen') {
                 dispatch(
                     updateSelectorsGroup({
                         ...selectorsGroup,
-                        items,
+                        group: items,
                         ...(items.length === 1 ? SINGLE_SELECTOR_SETTINGS : {}),
                     }),
                 );
@@ -123,11 +124,14 @@ export const GroupControlSidebar = () => {
         [dispatch, selectorsGroup],
     );
 
+    const showAutoHeight =
+        isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
+
     return (
         <div className={b('sidebar')}>
             <div className={b('selectors-list')}>
                 <TabMenu
-                    items={selectorsGroup.items}
+                    items={selectorsGroup.group}
                     selectedItemIndex={activeSelectorIndex}
                     update={updateSelectorsList}
                     addButtonText={i18n('button_add-selector')}
@@ -136,59 +140,56 @@ export const GroupControlSidebar = () => {
                 />
             </div>
             <div className={b('settings')}>
+                {showAutoHeight && (
+                    <div className={b('settings-container')}>
+                        <div>
+                            <span>{i18n('label_autoheight-checkbox')}</span>
+                        </div>
+                        <Checkbox
+                            checked={selectorsGroup.autoHeight}
+                            onUpdate={handleChangeAutoHeight}
+                            size="l"
+                        />
+                    </div>
+                )}
                 <div className={b('settings-container')}>
                     <div>
-                        <span>{i18n('label_autoheight-checkbox')}</span>
+                        <span>{i18n('label_apply-button-checkbox')}</span>
+                        <HelpPopover
+                            className={b('help-icon')}
+                            htmlContent={i18n('context_apply-button')}
+                        />
                     </div>
                     <Checkbox
-                        checked={selectorsGroup.autoHeight}
-                        onUpdate={handleChangeAutoHeight}
+                        checked={selectorsGroup.buttonApply}
+                        onUpdate={handleChangeButtonApply}
                         size="l"
                     />
                 </div>
-                {isMultipleSelectors && (
-                    <div className={b('settings-container')}>
-                        <div>
-                            <span>{i18n('label_apply-button-checkbox')}</span>
-                            <HelpPopover
-                                className={b('help-icon')}
-                                htmlContent={i18n('context_apply-button')}
-                            />
-                        </div>
-                        <Checkbox
-                            checked={selectorsGroup.buttonApply}
-                            onUpdate={handleChangeButtonApply}
-                            size="l"
+                <div className={b('settings-container')}>
+                    <div>
+                        <span>{i18n('label_reset-button-checkbox')}</span>
+                        <HelpPopover
+                            className={b('help-icon')}
+                            htmlContent={i18n('context_reset-button')}
                         />
                     </div>
-                )}
-                {isMultipleSelectors && (
-                    <div className={b('settings-container')}>
-                        <div>
-                            <span>{i18n('label_reset-button-checkbox')}</span>
-                            <HelpPopover
-                                className={b('help-icon')}
-                                htmlContent={i18n('context_reset-button')}
-                            />
-                        </div>
-                        <Checkbox
-                            checked={selectorsGroup.buttonReset}
-                            onUpdate={handleChangeButtonReset}
-                            size="l"
-                        />
-                    </div>
-                )}
-                {isMultipleSelectors && (
-                    <Button
-                        view="outlined"
-                        width="max"
-                        className={b('order-selectors-button')}
-                        onClick={handleSelectorsPlacementClick}
-                    >
-                        <Icon data={Gear} height={16} width={16} />
-                        {i18n('button_selectors-placement')}
-                    </Button>
-                )}
+                    <Checkbox
+                        checked={selectorsGroup.buttonReset}
+                        onUpdate={handleChangeButtonReset}
+                        size="l"
+                    />
+                </div>
+
+                <Button
+                    view="outlined"
+                    width="max"
+                    className={b('order-selectors-button')}
+                    onClick={handleSelectorsPlacementClick}
+                >
+                    <Icon data={Gear} height={16} width={16} />
+                    {i18n('button_selectors-placement')}
+                </Button>
             </div>
         </div>
     );

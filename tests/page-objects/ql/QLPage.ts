@@ -8,15 +8,16 @@ import VisualizationItemDialog from '../wizard/VisualizationItemDialog';
 import {CommonSelectors} from '../constants/common-selectors';
 
 import PreviewTable from './PreviewTable';
-import {NavigationMinimalPlaceSelectQa} from '../../../src/shared/constants/qa/components';
 import {
     ViewSetupQA,
     TabQueryQA,
     TabParamsQA,
     DialogQLParameterQA,
     ScreenEditorQA,
-} from '../../../src/shared/constants/qa/ql';
+    NavigationMinimalPlaceSelectQa,
+} from '../../../src/shared';
 import SectionVisualization from '../wizard/SectionVisualization';
+import {ColumnSettings} from '../wizard/ColumnSettings';
 
 interface QLPageProps extends BasePageProps {}
 
@@ -26,6 +27,7 @@ class QLPage extends ChartPage {
     chartSettings: ChartSettings;
     visualizationItemDialog: VisualizationItemDialog;
     sectionVisualization: SectionVisualization;
+    columnSettings: ColumnSettings;
     private selectConnectionButtonSelector = slct(TabQueryQA.SelectConnection);
     private navigationMinimal: NavigationMinimal;
 
@@ -37,6 +39,7 @@ class QLPage extends ChartPage {
         this.previewTable = new PreviewTable(page);
         this.visualizationItemDialog = new VisualizationItemDialog(page);
         this.sectionVisualization = new SectionVisualization(page);
+        this.columnSettings = new ColumnSettings(page);
     }
 
     async clickCreate() {
@@ -178,12 +181,12 @@ class QLPage extends ChartPage {
     }
 
     async applyParamDialog() {
-        await this.page.click('.yc-dialog-footer__button_action_apply');
+        await this.page.click('.g-dialog-footer__button_action_apply');
     }
 
     async selectDate(dateValue: string) {
         await this.page.fill(
-            `${slct(DialogQLParameterQA.Dialog)} .yc-text-input__control`,
+            `${slct(DialogQLParameterQA.Dialog)} .g-text-input__control`,
             dateValue,
         );
 
@@ -198,7 +201,7 @@ class QLPage extends ChartPage {
             await this.page.fill(
                 `${slct(DialogQLParameterQA.Dialog)} ${slct(
                     DialogQLParameterQA.DatepickerStart,
-                )} .yc-text-input__control`,
+                )} .g-text-input__control`,
                 startDate,
             );
         }
@@ -208,7 +211,7 @@ class QLPage extends ChartPage {
         await this.page.fill(
             `${slct(DialogQLParameterQA.Dialog)} ${slct(
                 DialogQLParameterQA.DatepickerEnd,
-            )} .yc-text-input__control`,
+            )} .g-text-input__control`,
             endDate,
         );
 
@@ -234,11 +237,12 @@ class QLPage extends ChartPage {
 
             this.page.waitForSelector('.chartkit .chartkit-graph').then(resolve, () => undefined);
 
-            this.page
-                .waitForSelector('.chartkit .chartkit-metric-2, .chartkit .chartkit-indicator')
-                .then(resolve, () => undefined);
+            this.page.waitForSelector('.chartkit .chartkit-markup').then(resolve, () => undefined);
 
-            this.page.waitForSelector('.chartkit .chartkit-table').then(resolve, () => undefined);
+            this.chartkit
+                .getTableLocator()
+                .waitFor()
+                .then(resolve, () => undefined);
 
             setTimeout(reject, 30 * 1000);
         });

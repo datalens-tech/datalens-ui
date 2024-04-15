@@ -3,7 +3,6 @@
   "label_array_int": "Array of integers",
   "label_array_str": "Array of strings",
   "label_date": "Date",
-  "label_datetime": "Date and time (deprecated)",
   "label_float": "Fractional number",
   "label_genericdatetime": "Date and time",
   "label_geopoint": "Geopoint",

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Route, Switch, Redirect} from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import {reducerRegistry} from '../store';
+import {Feature} from 'shared';
 import coreReducers from 'store/reducers';
 import {getIsAsideHeaderEnabled} from 'components/AsideHeaderAdapter';
 import LocationChange from '../components/LocationChange/LocationChange';
@@ -12,6 +12,8 @@ import DashAndWizardQLPages, {
 } from './pages/DashAndWizardQLPages/DashAndWizardQLPages';
 import {locationChangeHandler} from './helpers';
 import {isEmbeddedMode, isTvMode} from '../utils/embedded';
+import Utils from '../utils';
+import {reducerRegistry} from '../store';
 import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAdapter';
 
 reducerRegistry.register(coreReducers);
@@ -27,10 +29,11 @@ const ConnectionsPage = React.lazy(
 );
 // comment till we have main page
 // const MainPage = React.lazy(() => import('./pages/MainPage/MainPage'));
-const CollectionPage = React.lazy(() => import('./pages/CollectionPage/CollectionPage'));
+const CollectionsNavigtaionPage = React.lazy(
+    () => import('./pages/CollectionsNavigationPage/CollectionsNavigationPage'),
+);
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
-const WorkbookPage = React.lazy(() => import('./pages/WorkbookPage/WorkbookPage'));
 
 const DatalensPageView = () => {
     const isLanding = useSelector(selectIsLanding);
@@ -47,31 +50,36 @@ const DatalensPageView = () => {
         <React.Suspense fallback={<FallbackPage />}>
             <Switch>
                 <Route
-                    path={['/workbooks/:workbookId/datasets/:id', '/datasets/:id']}
+                    path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                     component={DatasetPage}
                 />
-                <Route path="/editor" component={EditorPage} />
+                {Utils.isEnabledFeature(Feature.EnableChartEditor) && (
+                    <Route
+                        path={['/editor', '/workbooks/:workbookId/editor']}
+                        component={EditorPage}
+                    />
+                )}
                 <Route path="/preview" component={PreviewPage} />
                 <Route
                     path={[
                         '/connections/:id',
                         '/workbooks/:workbookId/connections/new/:type',
                         '/workbooks/:workbookId/connections/new',
-                        '/workbooks/:workbookId/connections/:id',
                     ]}
                     component={ConnectionsPage}
                 />
 
-                <Route
-                    path={['/collections/:collectionId', '/collections']}
-                    component={CollectionPage}
-                />
-
-                <Route exact path="/workbooks/:workbookId" component={WorkbookPage} />
-
                 <Route path="/settings" component={ServiceSettings} />
 
+                <Route path={['/collections']} component={CollectionsNavigtaionPage} />
+
                 <Route exact path={dashAndWizardQLRoutes} component={DashAndWizardQLPages} />
+
+                <Route
+                    path={['/collections/:collectionId', '/workbooks/:workbookId']}
+                    component={CollectionsNavigtaionPage}
+                />
+
                 <Route path="/">
                     <Redirect to={`/collections${location.search}`} />
                 </Route>

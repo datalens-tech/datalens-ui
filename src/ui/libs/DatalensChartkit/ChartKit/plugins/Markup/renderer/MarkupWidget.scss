@@ -1,10 +1,10 @@
 .chartkit-markup {
-    height: 100%;
     overflow: auto;
-
     padding: 15px;
 
     .markup-metric {
+        display: block;
+
         &_size_s .markup-metric-title {
             font-size: 13px;
         }
@@ -39,15 +39,15 @@
     }
 
     .markup-metric-title {
-        display: inline-block;
-        color: var(--yc-color-text-primary);
+        display: block;
+        color: var(--g-color-text-primary);
         font-weight: 500;
         line-height: 1.2;
         padding-bottom: 0.125em;
     }
 
     .markup-metric-value {
-        display: inline-block;
+        display: block;
         white-space: nowrap;
         font-weight: 500;
         line-height: 1.2;

@@ -1,11 +1,18 @@
-import {SelectQa} from '@gravity-ui/uikit';
 import {ElementHandle, Page, expect} from '@playwright/test';
 import dotenv from 'dotenv';
 import moment from 'moment';
 import path from 'path';
 
-import {ActionPanelQA, EntryDialogQA} from '../../src/shared';
+import {
+    ActionPanelQA,
+    ControlQA,
+    DialogCreateWorkbookEntryQa,
+    EntryDialogQA,
+    Feature,
+    SelectQa,
+} from '../../src/shared';
 import {ActionPanelEntryContextMenuQa} from '../../src/shared/constants/qa/action-panel';
+import {isEnabledFeature} from './helpers';
 export * from './helpers';
 
 export const ROOT_ENV_PATH = path.resolve(__dirname, '..', '..', '.env');
@@ -80,7 +87,7 @@ export async function copyEntity(page: Page, entryName: string) {
     );
     await page.waitForSelector(slct(EntryDialogQA.Apply));
 
-    await page.fill('.dl-entry-dialog-base__content .yc-text-input__control_type_input', entryName);
+    await page.fill('.dl-entry-dialog-base__content .g-text-input__control_type_input', entryName);
 
     await Promise.all([page.waitForNavigation(), page.click(slct(EntryDialogQA.Apply))]);
 }
@@ -103,14 +110,14 @@ export async function makeLogIn(page: Page, asSuperuser?: boolean) {
 
 // Fill in the input with the name of the entity being created in the EntryDialog (the dialog that appears when saving entities) and click the "Create" button
 export async function entryDialogFillAndSave(page: Page, entryName: string) {
-    // waiting for the save dialog to open
-    const entryDialog = await page.waitForSelector(slct('entry-dialog-content'));
-    const entryDialogInput = await entryDialog!.waitForSelector('[data-qa=path-select] input');
-    // filling in the input
-    await entryDialogInput!.fill(entryName);
-
-    // save
-    await page.click(slct(EntryDialogQA.Apply));
+    const entryDialogInput = page
+        .locator(slct(DialogCreateWorkbookEntryQa.Input))
+        .or(page.locator(slct(EntryDialogQA.Content)).locator(slct(EntryDialogQA.PathSelect)));
+    await entryDialogInput.locator('input').fill(entryName);
+    const button = page
+        .locator(slct(EntryDialogQA.Apply))
+        .or(page.locator(slct(DialogCreateWorkbookEntryQa.ApplyButton)));
+    await button.click();
 }
 
 function getFullUrl(url: string) {
@@ -203,8 +210,15 @@ export async function getControlByTitle(
     page: Page,
     controlTitle: string,
 ): Promise<ElementHandle<HTMLElement>> {
-    const controlTitleElement = await page.$(slct('chartkit-control-title', controlTitle));
-    const control = await controlTitleElement!.getProperty('parentNode');
+    const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
+    let controlTitleElement = await page.$(slct('chartkit-control-title', controlTitle));
+    let control = await controlTitleElement?.getProperty('parentNode');
+    if (isEnabledGroupControls && !control) {
+        controlTitleElement = await page.waitForSelector(
+            slct(ControlQA.chartkitControl, controlTitle),
+        );
+        control = await controlTitleElement.getProperty('parentNode');
+    }
 
     return control as ElementHandle<HTMLElement>;
 }

@@ -67,7 +67,7 @@ export const DocsList = (props: Props) => {
             <div className={b('add-section')}>
                 <Button view="outlined" onClick={clickAddDocumentButton}>
                     <Icon data={Plus} size={14} />
-                    {i18n('label_add-document')}
+                    {i18n('label_add-file')}
                 </Button>
             </div>
         </div>
