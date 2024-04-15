@@ -11,7 +11,6 @@ import {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
 
 import './CollectionsNavigationLayout.scss';
 import {AuthContext} from 'ui/datalens/index';
-import Utils from 'ui/utils';
 
 const b = block('dl-collections-navigation-layout');
 
