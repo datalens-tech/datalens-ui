@@ -9,5 +9,12 @@
 
     &__item {
         @include dl-breadcrumbs-items-style;
+
+        &_last,
+        &_last:hover,
+        &_last:active,
+        &_last:visited {
+            color: var(--g-color-text-primary);
+        }
     }
 }

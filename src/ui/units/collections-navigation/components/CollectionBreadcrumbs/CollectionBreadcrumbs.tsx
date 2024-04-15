@@ -102,13 +102,9 @@ export const CollectionBreadcrumbs = React.memo<Props>(
                             return <Skeleton className={b('skeleton')} />;
                         }
 
-                        if (isCurrent) {
-                            return item.text;
-                        }
-
                         return (
                             <Link
-                                className={b('item', {link: true})}
+                                className={b('item', {last: isCurrent, link: true})}
                                 to={item.path}
                                 onClick={(e) => {
                                     e.stopPropagation();
