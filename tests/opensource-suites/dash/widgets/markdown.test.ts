@@ -4,7 +4,7 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
 const expectedHTML = `
-<div class="dashkit-plugin-text dashkit-plugin-text_withMarkdown"><div class="yfm"><p>This text is highlighted in <strong>bold</strong>.</p>
+<div class="dashkit-plugin-text dashkit-plugin-text_withMarkdown" data-plugin-root-el="text"><div class="yfm"><p>This text is highlighted in <strong>bold</strong>.</p>
 <p>This text is in <em>italics</em>.</p>
 <ul>
 <li>

@@ -30,7 +30,11 @@
         }
     }
 
-    &__checkbox {
+    &__setting-row {
         margin-top: 30px;
+    }
+
+    &__setting-row + &__setting-row {
+        margin-top: 10px;
     }
 }

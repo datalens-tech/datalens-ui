@@ -2,7 +2,7 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {pickExceptActionParamsFromParams} from '@gravity-ui/dashkit';
+import {pickExceptActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';

@@ -1,4 +1,4 @@
-import {Config} from '@gravity-ui/dashkit/build/esm/shared/types/config';
+import type {Config} from '@gravity-ui/dashkit';
 
 import {RELATION_TYPES} from '../constants';
 import {addAlias, getNormalizedAliases, getUpdatedRelations} from '../helpers';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Config, ConfigConnection, DashKit} from '@gravity-ui/dashkit';
+import type {Config, ConfigConnection, DashKit} from '@gravity-ui/dashkit';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import cloneDeep from 'lodash/cloneDeep';
