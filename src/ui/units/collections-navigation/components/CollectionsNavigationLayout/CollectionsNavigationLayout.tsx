@@ -11,6 +11,7 @@ import {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
 
 import './CollectionsNavigationLayout.scss';
 import {AuthContext} from 'ui/datalens/index';
+import Utils from 'ui/utils';
 
 const b = block('dl-collections-navigation-layout');
 
@@ -54,6 +55,12 @@ export const CollectionsNavigationLayout = React.memo<Props>(
         const asideHeaderData = useSelector(selectAsideHeaderData);
         const asideHeaderSize = asideHeaderData.size || 0;
 
+        let userName = "";
+        if(auth.token) {
+            var decodedString = atob(auth.token);
+            userName = decodedString.split(':')[0];
+        }
+        
         return (
             <div className={b()}>
                 {(layout.actionsPanelLeftBlock || layout.actionsPanelRightBlock) && (
@@ -96,7 +103,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                 </ActionBar.Item>
                             </ActionBar.Group>
                             <ActionBar.Group pull="right">
-                                <div>{auth.token && <Button view="outlined" onClick={()=>auth.setToken("")}>Выйти</Button> }</div>
+                                {userName}{" "}<div>{auth.token && <Button view="outlined" onClick={()=>auth.setToken("")}>Выйти</Button> }</div>
                             </ActionBar.Group>
                         </ActionBar.Section>
                     </ActionBar>
