@@ -48,7 +48,7 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
                         {item.text}
                     </Link>
                 ) : (
-                    <div>{item.text}</div>
+                    <div className={b('item')}>{item.text}</div>
                 );
             }}
         />

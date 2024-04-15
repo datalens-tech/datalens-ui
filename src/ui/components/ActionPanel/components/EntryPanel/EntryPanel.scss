@@ -63,4 +63,20 @@
     &__cloud-select-container {
         margin-right: 8px;
     }
+
+    &__item,
+    &__item:visited,
+    &__item:active {
+        color: var(--g-color-text-secondary);
+        display: inline;
+        text-decoration: none;
+
+        &_link:hover {
+            color: var(--g-color-text-link-hover);
+        }
+
+        &:hover {
+            color: var(--g-color-text-primary);
+        }
+    }
 }
