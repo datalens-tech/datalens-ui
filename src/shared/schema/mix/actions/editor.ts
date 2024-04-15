@@ -7,6 +7,7 @@ import {
     UpdateEditorChartArgs,
     UpdateEditorChartResponse,
 } from '../../us/types';
+import {getEntryLinks} from '../helpers';
 
 export const editorActions = {
     createEditorChart: createAction<CreateEditorChartResponse, CreateEditorChartArgs>(
@@ -33,7 +34,7 @@ export const editorActions = {
             if (checkResult === DeveloperModeCheckStatus.Allowed) {
                 const typedApi = getTypedApi(api);
 
-                return await typedApi.us._updateEditorChart(args);
+                return await typedApi.us._updateEditorChart({...args, links: getEntryLinks(args)});
             } else {
                 throw new Error('Access to ChartEditor developer mode was denied');
             }
