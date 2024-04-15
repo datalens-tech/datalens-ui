@@ -25,7 +25,7 @@ jobs:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         image: your/image-to-test
-        args: --file=Dockerfile --org=${{ vars.SNYK_ORG }}
+        args: --file=Dockerfile --org=${{ vars.SNYK_ORG }} --sarif-file-output=snyk.sarif
 
       # Replace any "undefined" security severity values with 0. The undefined value is used in the case
       # of license-related findings, which do not do not indicate a security vulnerability.
