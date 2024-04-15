@@ -13,11 +13,13 @@ export const useFilteredRelations = ({
     searchValue,
     typeValues,
     changedWidgets,
+    currentWidgetId,
 }: {
     relations: DashMetaData;
     searchValue: string;
     typeValues: Array<FiltersTypes>;
-    changedWidgets: Record<string, RelationType> | undefined;
+    changedWidgets: Record<string, Record<string, RelationType>> | undefined;
+    currentWidgetId: string;
 }) => {
     const [filteredRelations, setFilteredRelations] = React.useState<DashMetaData>([]);
     const [showedRelations, setShowedRelations] = React.useState<DashMetaData>([]);
@@ -34,10 +36,13 @@ export const useFilteredRelations = ({
                 const newItem = {
                     ...item,
                 };
-                if (changedWidgets[item.widgetId]) {
+                if (
+                    changedWidgets[currentWidgetId] &&
+                    changedWidgets[currentWidgetId][item.itemId || item.widgetId]
+                ) {
                     newItem.relations = {
                         ...item.relations,
-                        type: changedWidgets[item.widgetId],
+                        type: changedWidgets[currentWidgetId][item.widgetId],
                     };
                 }
                 return newItem;
@@ -45,7 +50,7 @@ export const useFilteredRelations = ({
 
             setShowedRelations(newRelations);
         }
-    }, [typeValues, showedRelations, changedWidgets]);
+    }, [typeValues, showedRelations, changedWidgets, currentWidgetId]);
 
     React.useEffect(() => {
         if (!showedRelations?.length) {
@@ -65,11 +70,11 @@ export const useFilteredRelations = ({
         filteredItems = filteredItems.filter((item) => mappedFilters[item.relations.type]);
 
         if (changedWidgets) {
-            filteredItems = getChangedRelations(filteredItems, changedWidgets);
+            filteredItems = getChangedRelations(filteredItems, changedWidgets, currentWidgetId);
         }
 
         setFilteredRelations(filteredItems);
-    }, [searchValue, showedRelations, typeValues, changedWidgets]);
+    }, [searchValue, showedRelations, typeValues, changedWidgets, currentWidgetId]);
 
     return {filteredRelations};
 };

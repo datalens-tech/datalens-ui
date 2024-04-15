@@ -31,18 +31,5 @@ body.js-screenshot-mode * {
 
 body.g-root {
     --g-font-family-sans: 'YS Text', 'Helvetica Neue', 'Arial', 'Helvetica', sans-serif;
-}
-
-.nv-mobile-header__content > div {
-    min-height: calc(100vh - var(--nv-mobile-header-size));
-    position: relative;
-}
-
-// temp, remove after up uikit to 5.8.0 and newer
-
-.g-root .g-clear-button {
-    --yc-button-background-color: transparent;
-    --yc-button-background-color-hover: transparent;
-    margin: auto 0;
-    color: var(--g-color-text-hint);
+    --gn-aside-top-panel-height: 0px;
 }

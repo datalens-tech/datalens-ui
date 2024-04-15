@@ -41,6 +41,7 @@ interface State {
     text?: string;
     size?: string;
     showInTOC?: boolean;
+    autoHeight?: boolean;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -51,6 +52,7 @@ class Title extends React.PureComponent<Props, State> {
             text: i18n('dash.title-dialog.edit', 'value_default'),
             size: SIZES[0],
             showInTOC: true,
+            autoHeight: false,
         } as DashTabItemTitle['data'],
     };
 
@@ -65,6 +67,7 @@ class Title extends React.PureComponent<Props, State> {
             text: nextProps.data.text,
             size: nextProps.data.size,
             showInTOC: nextProps.data.showInTOC,
+            autoHeight: Boolean(nextProps.data.autoHeight),
         };
     }
 
@@ -72,7 +75,7 @@ class Title extends React.PureComponent<Props, State> {
 
     render() {
         const {id, visible} = this.props;
-        const {text, size, showInTOC, validation} = this.state;
+        const {text, size, showInTOC, validation, autoHeight} = this.state;
         return (
             <Dialog
                 open={visible}
@@ -99,16 +102,25 @@ class Title extends React.PureComponent<Props, State> {
                         radioText={RADIO_TEXT}
                         onChange={this.onSizeChange}
                     />
-                    <Checkbox
-                        size="l"
-                        checked={showInTOC}
-                        onChange={() =>
-                            this.setState((prevState) => ({showInTOC: !prevState.showInTOC}))
-                        }
-                        className={b('checkbox')}
-                    >
-                        {i18n('dash.title-dialog.edit', 'field_show-in-toc')}
-                    </Checkbox>
+                    <div className={b('setting-row')}>
+                        <Checkbox
+                            checked={showInTOC}
+                            onChange={() =>
+                                this.setState((prevState) => ({showInTOC: !prevState.showInTOC}))
+                            }
+                            className={b('checkbox')}
+                        >
+                            {i18n('dash.title-dialog.edit', 'field_show-in-toc')}
+                        </Checkbox>
+                    </div>
+                    <div className={b('setting-row')}>
+                        <Checkbox
+                            checked={Boolean(autoHeight)}
+                            onChange={this.handleAutoHeightChanged}
+                        >
+                            {i18n('dash.dashkit-plugin-common.view', 'label_autoheight-checkbox')}
+                        </Checkbox>
+                    </div>
                 </Dialog.Body>
                 <Dialog.Footer
                     onClickButtonApply={this.onApply}
@@ -135,13 +147,14 @@ class Title extends React.PureComponent<Props, State> {
     onSizeChange = (size?: string) => this.setState({size});
 
     onApply = () => {
-        const {text, size, showInTOC} = this.state;
+        const {text, size, showInTOC, autoHeight} = this.state;
         if (text?.trim()) {
             this.props.setItemData({
                 data: {
                     text,
                     size,
                     showInTOC,
+                    autoHeight,
                 },
             });
             this.props.closeDialog();
@@ -152,6 +165,10 @@ class Title extends React.PureComponent<Props, State> {
                 },
             });
         }
+    };
+
+    handleAutoHeightChanged = () => {
+        this.setState({autoHeight: !this.state.autoHeight});
     };
 }
 

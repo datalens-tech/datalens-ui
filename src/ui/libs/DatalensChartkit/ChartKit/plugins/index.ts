@@ -6,6 +6,7 @@ import {YagrPlugin} from '@gravity-ui/chartkit/yagr';
 import {HighchartsMapPlugin} from './HighchartsMap';
 import {MarkupPlugin} from './Markup';
 import {MetricPlugin} from './Metric';
+import {TablePlugin} from './Table';
 import {YandexMapPlugin} from './YandexMap';
 
 export {MetricPlugin} from './Metric';
@@ -25,4 +26,5 @@ export const getChartkitPlugins = () => [
     HighchartsPlugin,
     D3Plugin,
     MarkupPlugin,
+    TablePlugin,
 ];

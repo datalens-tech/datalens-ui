@@ -14,6 +14,7 @@ export enum Feature {
     EnableCustomMonitoring = 'EnableCustomMonitoring',
     ShowActionPanelTreeSelect = 'ShowActionPanelTreeSelect',
     EnableDashChartStat = 'EnableDashChartStat',
+    EnableEditHistory = 'EnableEditHistory',
     EnableShareWidget = 'EnableShareWidget',
     EnableAutocreateDataset = 'EnableAutocreateDataset',
     ShowCreateEntryWithMenu = 'ShowCreateEntryWithMenu',
@@ -54,9 +55,6 @@ export enum Feature {
     EntryMenuEditor = 'EntryMenuEditor',
     ExternalSelectors = 'ExternalSelectors',
     DashBoardWidgetParamsStrictValidation = 'DashBoardWidgetParamsStrictValidation',
-    D3ScatterVisualization = 'D3ScatterVisualization',
-    D3PieVisualization = 'D3PieVisualization',
-    D3BarXVisualization = 'D3BarXVisualization',
     D3Visualizations = 'D3Visualizations',
     HideMultiDatasets = 'HideMultiDatasets',
     ShouldCheckEditorAccess = 'ShouldCheckEditorAccess',
@@ -72,11 +70,12 @@ export enum Feature {
     WizardChartChartFilteringAvailable = 'WizardChartChartFilteringAvailable',
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
-    SelectorRequiredValue = 'SelectorRequiredValue',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     MarkupMetric = 'MarkupMetric',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
+    NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
+    ChartWithFnLogging = 'ChartWithFnLogging',
 }
 
 export type FeatureConfig = Record<string, boolean>;

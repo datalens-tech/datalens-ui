@@ -1,5 +1,5 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {transformParamsToActionParams} from '@gravity-ui/dashkit';
+import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import type {Point, PointOptionsObject} from 'highcharts';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';

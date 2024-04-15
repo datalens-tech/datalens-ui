@@ -95,11 +95,12 @@ export const ChartSaveControls: React.FC<ChartSaveControlProps> = (
             ...items,
         ];
     }, [
-        isCurrentRevisionActual,
-        onSaveAndPublishClick,
-        onSaveAsDraftClick,
-        onSaveAsNewClick,
         isNewChart,
+        isLocked,
+        isCurrentRevisionActual,
+        onSaveAsDraftClick,
+        onSaveAndPublishClick,
+        onSaveAsNewClick,
     ]);
 
     const allDropdownItems = React.useMemo(
@@ -113,17 +114,19 @@ export const ChartSaveControls: React.FC<ChartSaveControlProps> = (
             {Boolean(needSplitMainAndAdditionalButtons) && <div className={b('splitter')} />}
             {!hideSaveButton && (
                 <React.Fragment>
-                    <div
-                        key="pseudosave-btn"
-                        className={b('pseudosave-btn', {active: isLocked})}
-                        onClick={() => onOpenNoRightsDialog()}
-                    />
-                    <SaveButton
-                        onClick={onClickButtonSave}
-                        isLocked={isLocked}
-                        disabled={isSaveButtonDisabled}
-                        isSaveAsDraft={!isCurrentRevisionActual && !isNewChart}
-                    />
+                    <div className={b('save-btn-wrapper')}>
+                        <div
+                            key="pseudosave-btn"
+                            className={b('pseudosave-btn', {active: isLocked})}
+                            onClick={() => onOpenNoRightsDialog()}
+                        />
+                        <SaveButton
+                            onClick={onClickButtonSave}
+                            isLocked={isLocked}
+                            disabled={isSaveButtonDisabled}
+                            isSaveAsDraft={!isCurrentRevisionActual && !isNewChart}
+                        />
+                    </div>
                     <NavigationPrompt when={!isSaveButtonDisabled} key="navigation-prompt" />
                 </React.Fragment>
             )}

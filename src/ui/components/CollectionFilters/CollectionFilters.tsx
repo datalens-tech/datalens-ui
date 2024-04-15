@@ -8,7 +8,7 @@ import debounce from 'lodash/debounce';
 import {Feature} from 'shared';
 import {GetCollectionContentMode} from 'shared/schema/us/types/collections';
 import {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
-import Utils, {CollectionFiltersStorage} from 'ui/utils';
+import Utils from 'ui/utils';
 
 import GridIcon from 'assets/icons/collections/grid.svg';
 
@@ -37,20 +37,20 @@ export const SORT_TYPE_VALUES: Record<
     {orderField: OrderBasicField; orderDirection: OrderDirection}
 > = {
     [SortType.FirstNew]: {
-        orderField: OrderBasicField.CreatedAt,
-        orderDirection: OrderDirection.Desc,
+        orderField: 'createdAt',
+        orderDirection: 'desc',
     },
     [SortType.FirstOld]: {
-        orderField: OrderBasicField.CreatedAt,
-        orderDirection: OrderDirection.Asc,
+        orderField: 'createdAt',
+        orderDirection: 'asc',
     },
     [SortType.AlphabetAsc]: {
-        orderField: OrderBasicField.Title,
-        orderDirection: OrderDirection.Asc,
+        orderField: 'title',
+        orderDirection: 'asc',
     },
     [SortType.AlphabetDesc]: {
-        orderField: OrderBasicField.Title,
-        orderDirection: OrderDirection.Desc,
+        orderField: 'title',
+        orderDirection: 'desc',
     },
 };
 
@@ -65,22 +65,22 @@ export type CollectionContentFilters = {
 type Props = {
     className?: string;
     filters: CollectionContentFilters;
-    onChange: (value: CollectionContentFilters) => void;
-    onChangeCollectionPageViewMode?: (value: CollectionPageViewMode) => void;
-    collectionPageViewMode?: CollectionPageViewMode;
     compactMode?: boolean;
     controlSize?: RadioButtonSize;
+    viewMode?: CollectionPageViewMode;
+    onChange: (value: CollectionContentFilters) => void;
+    changeViewMode?: (value: CollectionPageViewMode) => void;
 };
 
 export const CollectionFilters = React.memo<Props>(
     ({
         className,
         filters,
-        onChange,
         compactMode = false,
         controlSize = 'm',
-        collectionPageViewMode,
-        onChangeCollectionPageViewMode,
+        viewMode,
+        changeViewMode,
+        onChange,
     }) => {
         const {filterString, onlyMy, mode, orderField, orderDirection} = filters;
 
@@ -117,12 +117,8 @@ export const CollectionFilters = React.memo<Props>(
                 handleChangeFilters({
                     mode: val,
                 });
-
-                if (!compactMode) {
-                    CollectionFiltersStorage.store({mode: val});
-                }
             },
-            [compactMode, handleChangeFilters],
+            [handleChangeFilters],
         );
 
         const handleChangeOnlyMy = React.useCallback(
@@ -130,21 +126,15 @@ export const CollectionFilters = React.memo<Props>(
                 handleChangeFilters({
                     onlyMy: value === 'true',
                 });
-
-                if (!compactMode) {
-                    CollectionFiltersStorage.store({onlyMy: value});
-                }
             },
-            [compactMode, handleChangeFilters],
+            [handleChangeFilters],
         );
 
-        const handleChangeView = React.useCallback(
+        const handleChangeViewMode = React.useCallback(
             (value) => {
-                onChangeCollectionPageViewMode?.(value);
-
-                Utils.store(collectionPageViewModeStore, value);
+                changeViewMode?.(value);
             },
-            [onChangeCollectionPageViewMode],
+            [changeViewMode],
         );
 
         const handleChangeSort = React.useCallback(
@@ -156,15 +146,8 @@ export const CollectionFilters = React.memo<Props>(
                     orderField: sortTypeValues.orderField,
                     orderDirection: sortTypeValues.orderDirection,
                 });
-
-                if (!compactMode) {
-                    CollectionFiltersStorage.store({
-                        orderField: sortTypeValues.orderField,
-                        orderDirection: sortTypeValues.orderDirection,
-                    });
-                }
             },
-            [compactMode, handleChangeFilters],
+            [handleChangeFilters],
         );
 
         React.useEffect(() => {
@@ -205,13 +188,13 @@ export const CollectionFilters = React.memo<Props>(
                         size={controlSize}
                         onUpdate={handleChangeMode}
                     >
-                        <Select.Option value={GetCollectionContentMode.All}>
+                        <Select.Option value="all">
                             {i18n('label_filter-by-type-all')}
                         </Select.Option>
-                        <Select.Option value={GetCollectionContentMode.OnlyWorkbooks}>
+                        <Select.Option value="onlyWorkbooks">
                             {i18n('label_filter-by-type-only-workbooks')}
                         </Select.Option>
-                        <Select.Option value={GetCollectionContentMode.OnlyCollections}>
+                        <Select.Option value="onlyCollections">
                             {i18n('label_filter-by-type-only-collections')}
                         </Select.Option>
                     </Select>
@@ -255,9 +238,9 @@ export const CollectionFilters = React.memo<Props>(
                     {!compactMode && (
                         <RadioButton
                             className={b('radio-button')}
-                            value={collectionPageViewMode}
+                            value={viewMode}
                             size={controlSize}
-                            onUpdate={handleChangeView}
+                            onUpdate={handleChangeViewMode}
                         >
                             <Select.Option value={CollectionPageViewMode.Grid}>
                                 <Icon data={GridIcon} />

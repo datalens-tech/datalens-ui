@@ -1,1 +1,5 @@
-export const workbooksComponentsMap = {} as const;
+import {makeDefaultEmpty} from '../../components/DefaultEmpty';
+
+export const workbooksComponentsMap = {
+    CustomActionPanelWorkbookActions: makeDefaultEmpty<{}>(),
+} as const;

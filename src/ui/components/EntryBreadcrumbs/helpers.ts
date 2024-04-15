@@ -1,10 +1,15 @@
-import {BreadcrumbsItem} from '@gravity-ui/uikit';
 import {History, Location} from 'history';
 import {I18n} from 'i18n';
 import {EntryBreadcrumbsProps} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
 import Utils from 'ui/utils';
 
 const i18n = I18n.keyset('component.collection-breadcrumbs');
+
+export type BreadcrumbsItem = {
+    text: string;
+    action: (event: React.MouseEvent<HTMLElement, MouseEvent> | KeyboardEvent) => void;
+    path?: string;
+};
 
 export const getWorkbookBreadcrumbsItems = ({
     entry,
@@ -27,6 +32,7 @@ export const getWorkbookBreadcrumbsItems = ({
             action: () => {
                 history.push('/collections');
             },
+            path: '/collections',
         },
     ];
 
@@ -40,6 +46,7 @@ export const getWorkbookBreadcrumbsItems = ({
                         pathname: `/collections/${item.collectionId}`,
                     });
                 },
+                path: `/collections/${item.collectionId}`,
             });
         });
     }
@@ -53,6 +60,7 @@ export const getWorkbookBreadcrumbsItems = ({
                     pathname: `/workbooks/${entry.workbookId}`,
                 });
             },
+            path: `/workbooks/${entry.workbookId}`,
         });
     }
 

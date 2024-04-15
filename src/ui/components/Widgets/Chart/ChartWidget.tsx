@@ -2,7 +2,10 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {pickActionParamsFromParams, pickExceptActionParamsFromParams} from '@gravity-ui/dashkit';
+import {
+    pickActionParamsFromParams,
+    pickExceptActionParamsFromParams,
+} from '@gravity-ui/dashkit/helpers';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';
 import isEmpty from 'lodash/isEmpty';
@@ -355,6 +358,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetType,
         yandexMapAPIWaiting,
         isLoading,
+        isInit,
         showOverlayWithControlsOnEdit,
         isWidgetMenuDataChanged,
         dataProps,
@@ -481,7 +485,11 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     return (
         <div
             ref={rootNodeRef}
-            className={`${b({...mods, autoheight: isAutoHeightEnabled})}`}
+            className={`${b({
+                ...mods,
+                autoheight: isAutoHeightEnabled,
+                ['wait-for-init']: !isInit,
+            })}`}
             data-qa="chart-widget"
             data-qa-mod={isFullscreen ? 'fullscreen' : ''}
         >

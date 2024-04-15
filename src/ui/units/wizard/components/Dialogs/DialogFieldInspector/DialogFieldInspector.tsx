@@ -106,12 +106,12 @@ class DialogFieldInspector extends React.Component<Props, State> {
             <div>
                 <div className={b('field')}>
                     <Label>field</Label>
-                    <ClipboardButton text={fieldText} size={20} />
+                    <ClipboardButton text={fieldText} size="m" />
                     <TextArea value={fieldText} />
                 </div>
                 <div className={b('updates')}>
                     <Label>field updates</Label>
-                    <ClipboardButton text={updatesText} size={20} />
+                    <ClipboardButton text={updatesText} size="m" />
                     <TextArea value={updatesText} />
                 </div>
             </div>
@@ -129,17 +129,17 @@ class DialogFieldInspector extends React.Component<Props, State> {
             <div>
                 <div className={b('dimensions')}>
                     <Label>dimensions</Label>
-                    <ClipboardButton text={dimensionsText} size={20} />
+                    <ClipboardButton text={dimensionsText} size="m" />
                     <TextArea value={dimensionsText} />
                 </div>
                 <div className={b('measures')}>
                     <Label>measures</Label>
-                    <ClipboardButton text={measuresText} size={20} />
+                    <ClipboardButton text={measuresText} size="m" />
                     <TextArea value={measuresText} />
                 </div>
                 <div className={b('updates')}>
                     <Label>updates</Label>
-                    <ClipboardButton text={updatesText} size={20} />
+                    <ClipboardButton text={updatesText} size="m" />
                     <TextArea value={updatesText} />
                 </div>
             </div>

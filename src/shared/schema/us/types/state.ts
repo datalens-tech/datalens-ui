@@ -1,4 +1,4 @@
-import type {ItemsStateAndParams} from '@gravity-ui/dashkit/build/esm/shared';
+import type {ItemsStateAndParams} from '@gravity-ui/dashkit';
 
 export type GetDashStateResponse = {
     createdAt: string;

@@ -2,7 +2,8 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {ConfigItem, ItemState, MenuItems} from '@gravity-ui/dashkit';
+import type {ConfigItem, ItemState} from '@gravity-ui/dashkit';
+import {MenuItems} from '@gravity-ui/dashkit/helpers';
 import {Copy, Pencil, TrashBin} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';

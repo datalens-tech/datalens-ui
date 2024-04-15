@@ -45,7 +45,7 @@ export const ConnectionSettings: React.FC = () => {
                 connectionQueryType,
                 parameters: selectorParameters || {},
             }),
-        [connectionId, connectionQueryContent, connectionQueryType, workbookId],
+        [connectionId, connectionQueryContent, connectionQueryType, workbookId, selectorParameters],
     );
 
     const controlProps: ValueSelectorControlProps = React.useMemo((): ValueSelectorControlProps => {
@@ -56,6 +56,9 @@ export const ConnectionSettings: React.FC = () => {
                     fetcher,
                     disabled: !connectionId || !connectionQueryContent || !connectionQueryType,
                     filterable: false,
+                    onRetry: async () => {
+                        await fetcher();
+                    },
                 },
                 hasMultiselect: false,
             },
@@ -67,10 +70,7 @@ export const ConnectionSettings: React.FC = () => {
             <ConnectionSelector />
             {connectionQueryTypes && connectionQueryTypes.length > 0 && (
                 <React.Fragment>
-                    <ParameterNameInput
-                        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
-                        label={i18n('field_parameter-name')}
-                    />
+                    <ParameterNameInput label={i18n('field_parameter-name')} />
                     <QueryTypeControl connectionQueryTypes={connectionQueryTypes} />
                     <InputTypeSelector options={options} />
                     <ValueSelector controlProps={controlProps} />

@@ -2,7 +2,12 @@ import {AnyAction, combineReducers} from 'redux';
 import {ThunkDispatch} from 'redux-thunk';
 import {DatalensGlobalState} from 'ui';
 
-import {RESET_WIZARD_STORE, ResetWizardStoreAction} from '../actions';
+import {
+    RESET_WIZARD_STORE,
+    ResetWizardStoreAction,
+    SET_WIZARD_STORE,
+    SetWizardStoreAction,
+} from '../actions';
 import {DatasetAction} from '../actions/dataset';
 import {DialogColorAction} from '../actions/dialogColor';
 import {HierarchyEditorAction} from '../actions/hierarchyEditor';
@@ -30,13 +35,14 @@ export type WizardGlobalState = {
 };
 
 type WizardAction =
+    | ResetWizardStoreAction
+    | SetWizardStoreAction
     | DatasetAction
     | VisualizationAction
     | PreviewAction
     | WidgetAction
     | SettingsAction
     | HierarchyEditorAction
-    | ResetWizardStoreAction
     | DialogColorAction;
 
 const reducers = combineReducers({
@@ -52,6 +58,10 @@ const reducers = combineReducers({
 const wizardReducer = (state: WizardGlobalState, action: WizardAction) => {
     if (action.type === RESET_WIZARD_STORE) {
         return reducers(undefined, action);
+    }
+
+    if (action.type === SET_WIZARD_STORE) {
+        return action.store;
     }
 
     return reducers(state, action);

@@ -1,8 +1,9 @@
 import Hashids from 'hashids';
 import moment from 'moment';
+import {registry} from 'ui/registry';
 
 import {getChartEditorTypes} from '../../../configs/chart/chart-editor-types';
-import {DEFAULT_TAB_ID, DEFAULT_TYPE, PANE_VIEWS} from '../../../constants/common';
+import {DEFAULT_TAB_ID, PANE_VIEWS} from '../../../constants/common';
 
 import {GridStorage} from './gridStorage';
 
@@ -31,7 +32,8 @@ export class Helper {
     }
 
     static createTabData(entry = {}) {
-        const {type = DEFAULT_TYPE, data = {}} = entry;
+        const getEmptyTemplateType = registry.editor.functions.get('getEmptyTemplateType');
+        const {type = getEmptyTemplateType(), data = {}} = entry;
         const {tabs} = getChartEditorTypes(type);
         const tabsIds = tabs.map(({id}) => id);
         const scriptsValues = {};
@@ -82,8 +84,9 @@ export class Helper {
     }
 
     static getEmptyTemplate() {
+        const getEmptyTemplateType = registry.editor.functions.get('getEmptyTemplateType');
         return {
-            type: DEFAULT_TYPE,
+            type: getEmptyTemplateType(),
             scope: 'widget',
             savedId: '1',
             revId: '1',

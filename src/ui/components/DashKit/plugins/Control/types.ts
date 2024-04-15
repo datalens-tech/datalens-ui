@@ -1,4 +1,4 @@
-import {CSSProperties} from 'react';
+import React from 'react';
 
 import type {StringParams} from '@gravity-ui/dashkit';
 import type {schema} from 'shared';
@@ -14,7 +14,7 @@ export type GetDistincts = DatalensSdk<{
 }>['bi']['getDistinctsApiV2'];
 
 export type ControlType = 'select' | 'input' | 'datepicker' | 'range-datepicker' | 'checkbox';
-export type LoadStatus = 'pending' | 'success' | 'fail' | 'initial';
+export type LoadStatus = 'pending' | 'success' | 'fail' | 'initial' | 'destroyed';
 
 export type ErrorData = {
     data: {
@@ -104,7 +104,8 @@ export interface SelectControlProps {
     placeholder: string | undefined;
     required?: boolean;
     hasValidationError: boolean;
-    style?: CSSProperties;
+    renderOverlay?: () => React.ReactNode;
+    style?: React.CSSProperties;
 }
 
 export type ChartControlRef =

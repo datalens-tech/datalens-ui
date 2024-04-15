@@ -7,11 +7,34 @@ export type CommonPlaceholdersKeysWithoutConfigs = Exclude<
     'colorsConfig' | 'geopointsConfig' | 'shapesConfig'
 >;
 
+export const MarkupItemTypes = {
+    Bold: 'bold',
+    Br: 'br',
+    Color: 'color',
+    Concat: 'concat',
+    Italics: 'italics',
+    Size: 'size',
+    Text: 'text',
+    Url: 'url',
+    UserInfo: 'user_info',
+    Image: 'img',
+} as const;
+
+export type MarkupItemType = typeof MarkupItemTypes[keyof typeof MarkupItemTypes];
+
 export interface MarkupItem {
-    type: 'bold' | 'concat' | 'italics' | 'url' | 'text';
+    type: MarkupItemType;
     url?: string;
-    children?: MarkupItem[];
+    children?: (MarkupItem | string)[];
     content?: string | MarkupItem;
+    color?: string;
+    size?: string | number;
+    user_info?: 'name' | 'email';
+    className?: string;
+    src?: string;
+    alt?: string;
+    width?: number;
+    height?: number;
 }
 
 export type HighchartsSeriesCustomObject = {

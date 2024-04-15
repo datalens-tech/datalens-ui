@@ -16,16 +16,20 @@ import {
     Select,
 } from '../components';
 
-export const FormItem = ({item, disabled}: {item: ConnectorFormItem; disabled?: boolean}) => {
+export const FormItem = ({item, readonly}: {item: ConnectorFormItem; readonly?: boolean}) => {
     switch (item.id) {
         case 'checkbox': {
             const {id: _id, controlProps, ...itemProps} = item;
-            const extendedControlProps = {...controlProps, disabled};
+            const extendedControlProps = readonly
+                ? {...controlProps, disabled: true}
+                : controlProps;
             return <Checkbox {...itemProps} controlProps={extendedControlProps} />;
         }
         case 'datepicker': {
             const {id: _id, controlProps, ...itemProps} = item;
-            const extendedControlProps = {...controlProps, disabled};
+            const extendedControlProps = readonly
+                ? {...controlProps, disabled: true}
+                : controlProps;
             return <Datepicker {...itemProps} controlProps={extendedControlProps} />;
         }
         case 'description': {
@@ -38,27 +42,37 @@ export const FormItem = ({item, disabled}: {item: ConnectorFormItem; disabled?: 
         }
         case 'input': {
             const {id: _id, controlProps, ...itemProps} = item;
-            const extendedControlProps = {...controlProps, disabled};
+            const extendedControlProps = readonly
+                ? {...controlProps, disabled: true}
+                : controlProps;
             return <Input {...itemProps} controlProps={extendedControlProps} />;
         }
         case 'file-input': {
             const {id: _id, controlProps, ...itemProps} = item;
-            const extendedControlProps = {...controlProps, disabled};
+            const extendedControlProps = readonly
+                ? {...controlProps, disabled: true}
+                : controlProps;
             return <FileInput {...itemProps} controlProps={extendedControlProps} />;
         }
         case 'select': {
             const {id: _id, controlProps, ...itemProps} = item;
-            const extendedControlProps = {...controlProps, disabled};
+            const extendedControlProps = readonly
+                ? {...controlProps, disabled: true}
+                : controlProps;
             return <Select {...itemProps} controlProps={extendedControlProps} />;
         }
         case 'radio_button': {
             const {id: _id, controlProps, ...itemProps} = item;
-            const extendedControlProps = {...controlProps, disabled};
+            const extendedControlProps = readonly
+                ? {...controlProps, disabled: true}
+                : controlProps;
             return <RadioButton {...itemProps} controlProps={extendedControlProps} />;
         }
         case 'radio_group': {
             const {id: _id, controlProps, ...itemProps} = item;
-            const extendedControlProps = {...controlProps, disabled};
+            const extendedControlProps = readonly
+                ? {...controlProps, disabled: true}
+                : controlProps;
             return <RadioGroup {...itemProps} controlProps={extendedControlProps} />;
         }
         case 'plain_text': {

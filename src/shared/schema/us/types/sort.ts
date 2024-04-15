@@ -1,16 +1,5 @@
-export enum OrderBasicField {
-    Title = 'title',
-    CreatedAt = 'createdAt',
-    UpdatedAt = 'updatedAt',
-}
+export type OrderBasicField = 'title' | 'createdAt' | 'updatedAt';
 
-export enum OrderDirection {
-    Asc = 'asc',
-    Desc = 'desc',
-}
+export type OrderDirection = 'asc' | 'desc';
 
-export enum OrderWorkbookEntriesField {
-    Name = 'name',
-    CreatedAt = 'createdAt',
-    UpdatedAt = 'updatedAt',
-}
+export type OrderWorkbookEntriesField = 'name' | 'createdAt' | 'updatedAt';

@@ -82,7 +82,7 @@ class DialogQLParameter extends React.Component<DialogQLParameterProps, DialogQL
                             />
                         </div>
                     </Dialog.Body>
-                    <Dialog.Divider />
+                    <Dialog.Divider className={b('divider')} />
                     <Dialog.Footer
                         onClickButtonCancel={this.onClose}
                         onClickButtonApply={this.onApply}

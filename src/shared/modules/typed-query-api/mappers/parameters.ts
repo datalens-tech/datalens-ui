@@ -14,10 +14,12 @@ export const mapStringParameterToTypedQueryApiParameter = (
 export const mapParametersRecordToTypedQueryApiParameters = (
     parameters: Record<string, string | string[]>,
 ): ConnectionTypedQueryParameter[] => {
-    return Object.entries(parameters).map((pair) => {
-        const key = pair[0];
-        const value = pair[1];
+    return Object.entries(parameters)
+        .filter(([_key, value]) => value.length)
+        .map((pair) => {
+            const key = pair[0];
+            const value = pair[1];
 
-        return mapStringParameterToTypedQueryApiParameter(key, value);
-    });
+            return mapStringParameterToTypedQueryApiParameter(key, value);
+        });
 };

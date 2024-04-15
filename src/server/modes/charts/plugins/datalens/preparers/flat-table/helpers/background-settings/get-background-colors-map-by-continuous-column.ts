@@ -104,7 +104,8 @@ export const getBackgroundColorsMapByContinuousColumn = (
             ...colorsConfig,
             colors: [],
             loadedColorPalettes: {},
-            gradientColors: getCurrentBackgroundGradient(colorsConfig, loadedColorPalettes).colors,
+            gradientColors:
+                getCurrentBackgroundGradient(colorsConfig, loadedColorPalettes)?.colors || [],
         };
 
         const title = idToTitle[guid];

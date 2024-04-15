@@ -1,29 +1,14 @@
 import type {
+    CollectionWithOptionalPermissions,
     CollectionWithPermissions,
-    CopyWorkbookTemplateResponse,
-    DeleteCollectionResponse,
-    DeleteWorkbookResponse,
-    GetCollectionBreadcrumbsResponse,
     GetCollectionContentResponse,
     GetRootCollectionPermissionsResponse,
     WorkbookWithPermissions,
 } from '../../../../../shared/schema';
 import {CollectionsAction} from '../actions';
 import {
-    ADD_DEMO_WORKBOOK_FAILED,
-    ADD_DEMO_WORKBOOK_LOADING,
-    ADD_DEMO_WORKBOOK_SUCCESS,
-    DELETE_COLLECTION_FAILED,
     DELETE_COLLECTION_IN_ITEMS,
-    DELETE_COLLECTION_LOADING,
-    DELETE_COLLECTION_SUCCESS,
-    DELETE_WORKBOOK_FAILED,
     DELETE_WORKBOOK_IN_ITEMS,
-    DELETE_WORKBOOK_LOADING,
-    DELETE_WORKBOOK_SUCCESS,
-    GET_COLLECTION_BREADCRUMBS_FAILED,
-    GET_COLLECTION_BREADCRUMBS_LOADING,
-    GET_COLLECTION_BREADCRUMBS_SUCCESS,
     GET_COLLECTION_CONTENT_FAILED,
     GET_COLLECTION_CONTENT_LOADING,
     GET_COLLECTION_CONTENT_SUCCESS,
@@ -33,14 +18,16 @@ import {
     GET_ROOT_COLLECTION_PERMISSIONS_FAILED,
     GET_ROOT_COLLECTION_PERMISSIONS_LOADING,
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
+    RESET_COLLECTION,
     RESET_COLLECTION_CONTENT,
-    RESET_COLLECTION_INFO,
+    RESET_STATE,
+    SET_COLLECTION,
 } from '../constants';
 
 export type CollectionsState = {
-    getRootCollectionPermissions: {
+    getCollection: {
         isLoading: boolean;
-        data: GetRootCollectionPermissionsResponse | null;
+        data: CollectionWithOptionalPermissions | null;
         error: Error | null;
     };
     getCollectionContent: {
@@ -49,35 +36,15 @@ export type CollectionsState = {
         error: Error | null;
     };
     items: (CollectionWithPermissions | WorkbookWithPermissions)[];
-    getCollection: {
+    getRootCollectionPermissions: {
         isLoading: boolean;
-        data: CollectionWithPermissions | null;
-        error: Error | null;
-    };
-    getCollectionBreadcrumbs: {
-        isLoading: boolean;
-        data: GetCollectionBreadcrumbsResponse | null;
-        error: Error | null;
-    };
-    deleteCollection: {
-        isLoading: boolean;
-        data: DeleteCollectionResponse | null;
-        error: Error | null;
-    };
-    addDemoWorkbook: {
-        isLoading: boolean;
-        data: CopyWorkbookTemplateResponse | null;
-        error: Error | null;
-    };
-    deleteWorkbook: {
-        isLoading: boolean;
-        data: DeleteWorkbookResponse | null;
+        data: GetRootCollectionPermissionsResponse | null;
         error: Error | null;
     };
 };
 
 const initialState: CollectionsState = {
-    getRootCollectionPermissions: {
+    getCollection: {
         isLoading: false,
         data: null,
         error: null,
@@ -88,27 +55,7 @@ const initialState: CollectionsState = {
         error: null,
     },
     items: [],
-    getCollection: {
-        isLoading: false,
-        data: null,
-        error: null,
-    },
-    getCollectionBreadcrumbs: {
-        isLoading: false,
-        data: null,
-        error: null,
-    },
-    deleteCollection: {
-        isLoading: false,
-        data: null,
-        error: null,
-    },
-    addDemoWorkbook: {
-        isLoading: false,
-        data: null,
-        error: null,
-    },
-    deleteWorkbook: {
+    getRootCollectionPermissions: {
         isLoading: false,
         data: null,
         error: null,
@@ -121,39 +68,60 @@ export const collectionsReducer = (
     action: CollectionsAction,
 ) => {
     switch (action.type) {
-        // Getting the rights to create collections/workbooks in the root
-        case GET_ROOT_COLLECTION_PERMISSIONS_LOADING: {
+        case RESET_STATE: {
+            return {
+                ...initialState,
+            };
+        }
+
+        case GET_COLLECTION_LOADING: {
             return {
                 ...state,
-                getRootCollectionPermissions: {
-                    ...state.getRootCollectionPermissions,
+                getCollection: {
+                    ...state.getCollection,
                     isLoading: true,
                     error: null,
                 },
             };
         }
-        case GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS: {
+        case GET_COLLECTION_SUCCESS: {
             return {
                 ...state,
-                getRootCollectionPermissions: {
+                getCollection: {
                     isLoading: false,
                     data: action.data,
                     error: null,
                 },
             };
         }
-        case GET_ROOT_COLLECTION_PERMISSIONS_FAILED: {
+        case GET_COLLECTION_FAILED: {
             return {
                 ...state,
-                getRootCollectionPermissions: {
-                    ...state.getRootCollectionPermissions,
+                getCollection: {
+                    ...state.getCollection,
                     isLoading: false,
                     error: action.error,
                 },
             };
         }
 
-        // The start page of the collection content
+        case SET_COLLECTION: {
+            return {
+                ...state,
+                getCollection: {
+                    isLoading: false,
+                    data: action.data.collection,
+                    error: null,
+                },
+            };
+        }
+        case RESET_COLLECTION: {
+            return {
+                ...state,
+                getCollection: initialState.getCollection,
+            };
+        }
+
         case GET_COLLECTION_CONTENT_LOADING: {
             return {
                 ...state,
@@ -200,80 +168,6 @@ export const collectionsReducer = (
             };
         }
 
-        // Information about the collection
-        case GET_COLLECTION_LOADING: {
-            return {
-                ...state,
-                getCollection: {
-                    ...state.getCollection,
-                    isLoading: true,
-                    error: null,
-                },
-            };
-        }
-        case GET_COLLECTION_SUCCESS: {
-            return {
-                ...state,
-                getCollection: {
-                    isLoading: false,
-                    data: action.data,
-                    error: null,
-                },
-            };
-        }
-        case GET_COLLECTION_FAILED: {
-            return {
-                ...state,
-                getCollectionContent: {
-                    ...state.getCollection,
-                    isLoading: false,
-                    error: action.error,
-                },
-            };
-        }
-
-        // Bread Crumbs collections
-        case GET_COLLECTION_BREADCRUMBS_LOADING: {
-            return {
-                ...state,
-                getCollectionBreadcrumbs: {
-                    ...state.getCollectionBreadcrumbs,
-                    isLoading: true,
-                    error: null,
-                },
-            };
-        }
-        case GET_COLLECTION_BREADCRUMBS_SUCCESS: {
-            return {
-                ...state,
-                getCollectionBreadcrumbs: {
-                    isLoading: false,
-                    data: action.data,
-                    error: null,
-                },
-            };
-        }
-        case GET_COLLECTION_BREADCRUMBS_FAILED: {
-            return {
-                ...state,
-                getCollectionBreadcrumbs: {
-                    ...state.getCollectionBreadcrumbs,
-                    isLoading: false,
-                    error: action.error,
-                },
-            };
-        }
-
-        // Resetting Collection information
-        case RESET_COLLECTION_INFO: {
-            return {
-                ...state,
-                getCollection: initialState.getCollection,
-                getCollectionBreadcrumbs: initialState.getCollectionBreadcrumbs,
-            };
-        }
-
-        // Resetting information about the contents of the collection
         case RESET_COLLECTION_CONTENT: {
             return {
                 ...state,
@@ -282,37 +176,37 @@ export const collectionsReducer = (
             };
         }
 
-        // Deleting a collection
-        case DELETE_COLLECTION_LOADING: {
+        case GET_ROOT_COLLECTION_PERMISSIONS_LOADING: {
             return {
                 ...state,
-                deleteCollection: {
+                getRootCollectionPermissions: {
+                    ...state.getRootCollectionPermissions,
                     isLoading: true,
-                    data: null,
                     error: null,
                 },
             };
         }
-        case DELETE_COLLECTION_SUCCESS: {
+        case GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS: {
             return {
                 ...state,
-                deleteCollection: {
+                getRootCollectionPermissions: {
                     isLoading: false,
                     data: action.data,
                     error: null,
                 },
             };
         }
-        case DELETE_COLLECTION_FAILED: {
+        case GET_ROOT_COLLECTION_PERMISSIONS_FAILED: {
             return {
                 ...state,
-                deleteCollection: {
-                    ...state.deleteCollection,
+                getRootCollectionPermissions: {
+                    ...state.getRootCollectionPermissions,
                     isLoading: false,
                     error: action.error,
                 },
             };
         }
+
         case DELETE_COLLECTION_IN_ITEMS: {
             return {
                 ...state,
@@ -322,70 +216,6 @@ export const collectionsReducer = (
                     }
                     return true;
                 }),
-            };
-        }
-
-        // Adding a demo workbook
-        case ADD_DEMO_WORKBOOK_LOADING: {
-            return {
-                ...state,
-                addDemoWorkbook: {
-                    isLoading: true,
-                    data: null,
-                    error: null,
-                },
-            };
-        }
-        case ADD_DEMO_WORKBOOK_SUCCESS: {
-            return {
-                ...state,
-                addDemoWorkbook: {
-                    isLoading: false,
-                    data: action.data,
-                    error: null,
-                },
-            };
-        }
-        case ADD_DEMO_WORKBOOK_FAILED: {
-            return {
-                ...state,
-                addDemoWorkbook: {
-                    ...state.addDemoWorkbook,
-                    isLoading: false,
-                    error: action.error,
-                },
-            };
-        }
-
-        // Deleting a workbook
-        case DELETE_WORKBOOK_LOADING: {
-            return {
-                ...state,
-                deleteWorkbook: {
-                    isLoading: true,
-                    data: null,
-                    error: null,
-                },
-            };
-        }
-        case DELETE_WORKBOOK_SUCCESS: {
-            return {
-                ...state,
-                deleteWorkbook: {
-                    isLoading: false,
-                    data: action.data,
-                    error: null,
-                },
-            };
-        }
-        case DELETE_WORKBOOK_FAILED: {
-            return {
-                ...state,
-                deleteWorkbook: {
-                    ...state.deleteWorkbook,
-                    isLoading: false,
-                    error: action.error,
-                },
             };
         }
         case DELETE_WORKBOOK_IN_ITEMS: {

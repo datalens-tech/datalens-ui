@@ -1,8 +1,8 @@
 .dl-dialog-error {
     $contentDesktopMaxWidth: 630px;
     $contentSmallScreenWidth: 300px;
-    // TODO: this is an private api and may silently changed. We should use local styles
-    --yc-tabs-space-between: 20px;
+
+    --g-tabs-item-gap: 20px;
 
     $class: &;
 

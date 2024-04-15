@@ -1,10 +1,11 @@
 import {
     AxisMode,
+    Field,
     HighchartsSeriesCustomObject,
     ServerField,
     ServerPlaceholder,
     WizardVisualizationId,
-    getAxisMode,
+    getActualAxisModeForField,
     getFakeTitleOrTitle,
     isDateField,
     isMeasureField,
@@ -24,6 +25,7 @@ import {
     numericCollator,
 } from '../../utils/misc-helpers';
 import {addActionParamValue} from '../helpers/action-params';
+import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {getSortedCategories, getXAxisValue, prepareLines} from '../line/helpers';
 import {colorizeByGradient} from '../line/helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from '../line/helpers/getSortedLineKeys';
@@ -52,14 +54,21 @@ export function prepareBarYData({
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const xPlaceholder = placeholders[0];
-    const xPlaceholderSettings = xPlaceholder.settings;
     const x: ServerField | undefined = placeholders[0].items[0];
     const xDataType = x ? idToDataType[x.guid] : null;
     const xIsNumber = isNumberField(x);
     const xIsPseudo = isPseudoField(x);
     const xIsDate = isDateField(x);
 
-    const xAxisMode = getAxisMode(xPlaceholderSettings, x?.guid);
+    let xAxisMode = AxisMode.Discrete;
+    if (x && xDataType) {
+        xAxisMode = getActualAxisModeForField({
+            field: {guid: x.guid, data_type: xDataType} as Field,
+            axisSettings: xPlaceholder?.settings,
+            visualizationIds: getAllVisualizationsIds(shared),
+            sort,
+        }) as AxisMode;
+    }
 
     const x2 = isVisualizationWithSeveralFieldsXPlaceholder(visualizationId)
         ? placeholders[0].items[1]

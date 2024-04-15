@@ -26,6 +26,7 @@ class ErrorContent extends React.PureComponent {
     static propTypes = {
         className: PropTypes.string,
         title: PropTypes.string,
+        isHtmlInTitle: PropTypes.bool,
         description: PropTypes.node,
         type: PropTypes.oneOf(Object.values(ErrorContentTypes)),
         action: PropTypes.shape({
@@ -48,6 +49,8 @@ class ErrorContent extends React.PureComponent {
         noActions: PropTypes.bool,
         size: PropTypes.oneOf(['s', 'm', 'l', 'promo']),
         direction: PropTypes.oneOf(['row', 'column']),
+        accessDescription: PropTypes.string,
+        hideTitle: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -71,6 +74,7 @@ class ErrorContent extends React.PureComponent {
 
     async getAccessDescriptionMD() {
         const customText = this.getAccessDescription();
+
         if (customText) {
             try {
                 const {result} = await MarkdownProvider.getMarkdown({text: customText});
@@ -85,8 +89,9 @@ class ErrorContent extends React.PureComponent {
         if (!Utils.isEnabledFeature(Feature.DashBoardAccessDescription)) {
             return '';
         }
+
         const pageEntryMeta = DL.LANDING_PAGE_ENTRY_META;
-        return pageEntryMeta?.accessDescription || '';
+        return this.props.accessDescription || pageEntryMeta?.accessDescription || '';
     }
 
     hasAccessDescription() {
@@ -94,8 +99,17 @@ class ErrorContent extends React.PureComponent {
     }
 
     renderTitle() {
-        const {title = i18n('label_error-general')} = this.props;
-        return <div className={b('title')}>{title}</div>;
+        const {title = i18n('label_error-general'), isHtmlInTitle = false, hideTitle} = this.props;
+
+        if (hideTitle) {
+            return null;
+        }
+
+        if (isHtmlInTitle) {
+            return <div className={b('title')} dangerouslySetInnerHTML={{__html: title}}></div>;
+        } else {
+            return <div className={b('title')}>{title}</div>;
+        }
     }
 
     renderDescription() {
@@ -249,6 +263,7 @@ class ErrorContent extends React.PureComponent {
             case ErrorContentTypes.CLOUD_FOLDER_ACCESS_DENIED:
             case ErrorContentTypes.NO_ENTRY_ACCESS:
             case ErrorContentTypes.AUTH_DENIED:
+            case ErrorContentTypes.FORBIDDEN_SSO:
                 imageName = 'noAccess';
                 break;
             case ErrorContentTypes.ERROR:

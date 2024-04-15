@@ -32,6 +32,7 @@ class NavigationModal extends React.Component {
         visible: PropTypes.bool,
         aside: PropTypes.bool,
         hideSidebar: PropTypes.bool,
+        isOnlyCollectionsMode: PropTypes.bool,
     };
     static defaultProps = {
         onCrumbClick: noop,
@@ -159,7 +160,11 @@ class NavigationModal extends React.Component {
                         mode={MODE_MODAL}
                         setBreadCrumbs={this.setBreadCrumbs}
                     >
-                        <CreateEntry place={place} onClick={onCreateMenuClick} />
+                        <CreateEntry
+                            place={place}
+                            onClick={onCreateMenuClick}
+                            isOnlyCollectionsMode={this.props.isOnlyCollectionsMode}
+                        />
                     </NavigationEntries>
                 </div>
             </div>

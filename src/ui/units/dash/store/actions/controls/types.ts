@@ -15,6 +15,7 @@ export type SelectorDialogValidation = {
     datasetFieldId?: string;
     defaultValue?: string;
     connectionQueryContent?: string;
+    selectorParameters?: string;
 };
 
 export type SelectorsGroupDialogState = {
@@ -22,8 +23,9 @@ export type SelectorsGroupDialogState = {
     buttonApply: boolean;
     buttonReset: boolean;
     defaults?: Record<string, string | string[]>;
-    items: SelectorDialogState[];
+    group: SelectorDialogState[];
     id?: string;
+    namespace?: string;
 };
 
 export type SelectorSourceType =

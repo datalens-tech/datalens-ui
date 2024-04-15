@@ -1,4 +1,4 @@
-import {ConfigItem} from '@gravity-ui/dashkit';
+import type {ConfigItem} from '@gravity-ui/dashkit';
 import {DIALOG_TYPE} from 'ui/units/dash/containers/Dialogs/constants';
 import {ValuesType} from 'utility-types';
 

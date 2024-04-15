@@ -159,6 +159,16 @@ export const runController = (
                     });
                 }
 
+                if (
+                    !isEnabledServerFeature(ctx, Feature.EnableChartEditor) &&
+                    runnerFound.name === 'editor'
+                ) {
+                    ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
+                    return res.status(400).send({
+                        error: 'ChartEditor is disabled',
+                    });
+                }
+
                 if (req.body.config) {
                     if (!chartsEngine.config.allowBodyConfig && !runnerFound.safeConfig) {
                         ctx.log('UNSAFE_CONFIG_OVERRIDE');
