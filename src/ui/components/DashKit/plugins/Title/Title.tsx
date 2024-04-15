@@ -2,6 +2,9 @@ import React from 'react';
 
 import {PluginTitle, PluginTitleProps, pluginTitle} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
+import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
+
+import {RENDERER_WRAPPER_CLASSNAME, RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Title.scss';
 
@@ -15,9 +18,40 @@ const titlePlugin = {
         props: Props,
         forwardedRef: React.LegacyRef<PluginTitle> | undefined,
     ) {
+        const rootNodeRef = React.useRef<HTMLDivElement>(null);
+
+        /**
+         * call common for charts & selectors adjust function for widget
+         */
+        const adjustLayout = React.useCallback(
+            (needSetDefault) => {
+                dashkitAdjustWidgetLayout({
+                    widgetId: props.id,
+                    needSetDefault,
+                    rootNode: rootNodeRef,
+                    gridLayout: props.gridLayout,
+                    layout: props.layout,
+                    cb: props.adjustWidgetLayout,
+                    mainNodeSelector: `.${RENDERER_WRAPPER_CLASSNAME}`,
+                    scrollableNodeSelector: `.${b()}`,
+                });
+            },
+            [props.id, rootNodeRef, props.adjustWidgetLayout, props.layout, props.gridLayout],
+        );
+
+        React.useEffect(() => {
+            adjustLayout(!props.data.autoHeight);
+        }, [adjustLayout, props.data.autoHeight]);
+
         const content = <PluginTitle {...props} ref={forwardedRef} />;
 
-        return <div className={b()}>{content}</div>;
+        return (
+            <RendererWrapper type="title" nodeRef={rootNodeRef}>
+                <div className={b({'with-auto-height': Boolean(props.data.autoHeight)})}>
+                    {content}
+                </div>
+            </RendererWrapper>
+        );
     },
 };
 

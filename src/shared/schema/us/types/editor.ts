@@ -23,4 +23,5 @@ export interface UpdateEditorChartArgs {
     data: EntryFieldData;
     revId?: string;
     meta?: EntryFieldMeta;
+    links?: EntryFieldLinks;
 }

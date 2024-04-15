@@ -13,7 +13,11 @@ export interface FieldWrapperProps {
 }
 
 function renderError(errorText: string) {
-    return <div className={b('error-text')}>{errorText}</div>;
+    return (
+        <div title={errorText} className={b('error-text')}>
+            {errorText}
+        </div>
+    );
 }
 
 export function FieldWrapper({error, children, className}: FieldWrapperProps) {

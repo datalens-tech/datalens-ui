@@ -1,6 +1,15 @@
 .dashkit-plugin-title-container {
     height: 100%;
 
+    &_with-auto-height {
+        overflow-y: auto;
+
+        [data-plugin-root-el='title'] {
+            height: auto;
+            padding-top: 10px;
+        }
+    }
+
     .dashkit-grid-item__item_editMode & {
         background-color: var(--g-color-base-float);
     }
