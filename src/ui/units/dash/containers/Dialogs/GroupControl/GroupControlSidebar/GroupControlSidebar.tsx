@@ -49,7 +49,7 @@ export const GroupControlSidebar = () => {
             if (action === 'add') {
                 const newSelector = items[items.length - 1];
                 dispatch(addSelectorToGroup(newSelector));
-            } else {
+            } else if (action !== 'changeChosen') {
                 dispatch(
                     updateSelectorsGroup({
                         ...selectorsGroup,

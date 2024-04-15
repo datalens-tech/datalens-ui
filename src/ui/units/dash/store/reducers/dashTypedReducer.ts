@@ -47,6 +47,7 @@ import {DashAction} from '../actions/index';
 import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
 import {getInitialDefaultValue} from '../utils';
 
+import {getActualUniqueFieldNameValidation} from './controls/helpers';
 import {TAB_PROPERTIES, getSelectorDialogInitialState} from './dash';
 
 export type DashState = {
@@ -258,6 +259,14 @@ export function dashTypedReducer(
                     selectorDialog.title === payload.title
                         ? selectorDialog.validation.title
                         : undefined,
+                uniqueFieldName:
+                    selectorDialog.fieldName === payload.fieldName
+                        ? getActualUniqueFieldNameValidation(
+                              selectorsGroup.group,
+                              payload.fieldName,
+                              selectorDialog.validation.fieldName,
+                          )
+                        : undefined,
                 fieldName:
                     selectorDialog.fieldName === payload.fieldName
                         ? selectorDialog.validation.fieldName
@@ -334,10 +343,24 @@ export function dashTypedReducer(
         }
 
         case SET_ACTIVE_SELECTOR_INDEX: {
+            const newCurrentSelector =
+                state.selectorsGroup.group[action.payload.activeSelectorIndex];
+
             return {
                 ...state,
                 activeSelectorIndex: action.payload.activeSelectorIndex,
-                selectorDialog: state.selectorsGroup.group[action.payload.activeSelectorIndex],
+                selectorDialog: {
+                    ...newCurrentSelector,
+                    validation: {
+                        ...newCurrentSelector.validation,
+                        // check if validation with non-unique uniqueFieldName is still valid
+                        uniqueFieldName: getActualUniqueFieldNameValidation(
+                            state.selectorsGroup.group,
+                            newCurrentSelector.fieldName,
+                            newCurrentSelector.validation.uniqueFieldName,
+                        ),
+                    },
+                },
             };
         }
 
