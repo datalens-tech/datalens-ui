@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {pickActionParamsFromParams} from '@gravity-ui/dashkit';
+import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import DataTable, {DataTableProps, Settings} from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
 import {TableCommonCell, TableHead, TableRow} from 'shared';
@@ -176,9 +176,10 @@ export class Table extends React.PureComponent<TableProps, TableState> {
             return null;
         }
 
+        const tableTitle = typeof title === 'string' ? {text: title} : title;
         return (
-            <div className={b('title')} style={camelCaseCss(title.style)}>
-                {title.text || title}
+            <div className={b('title')} style={camelCaseCss(tableTitle.style)}>
+                {tableTitle.text}
             </div>
         );
     }

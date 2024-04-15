@@ -1,6 +1,7 @@
 import {ElementHandle} from '@playwright/test';
 
 import {
+    ChartSaveControlsQA,
     ControlQA,
     DlNavigationQA,
     EntryDialogQA,
@@ -78,13 +79,11 @@ export class ChartPage extends BasePage {
         await this.page.click(slct('visualization-select-btn'));
 
         await this.page.waitForSelector(
-            `${slct(WizardPageQa.VisualizationSelectPopup)} .yc-menu__list-item`,
+            `${slct(WizardPageQa.VisualizationSelectPopup)} .g-menu__list-item`,
         );
 
         const visualizationsNodes = await this.page.$$(
-            `${slct(
-                WizardPageQa.VisualizationSelectPopup,
-            )} .yc-menu__list-item .visualization-item`,
+            `${slct(WizardPageQa.VisualizationSelectPopup)} .g-menu__list-item .visualization-item`,
         );
 
         const visualizations = await Promise.all(
@@ -261,7 +260,7 @@ export class ChartPage extends BasePage {
             urlsForValidation.map((url) => this.waitForSuccessfulResponse(url)),
         );
 
-        await this.page.click(slct('save-more-dropdown'));
+        await this.page.click(slct(ChartSaveControlsQA.SaveMoreDropdown));
 
         await this.page.click(slct('save-as-new-chart'));
 

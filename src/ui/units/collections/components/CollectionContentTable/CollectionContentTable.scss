@@ -22,7 +22,7 @@
         text-decoration: none;
 
         &:hover {
-            background-color: var(--g-color-base-simple-hover-solid);
+            background-color: var(--g-color-base-simple-hover);
             cursor: pointer;
         }
     }
@@ -82,6 +82,9 @@
     }
 
     &__title-col-text {
+        display: flex;
+        align-items: center;
         margin-left: 12px;
+        min-height: 32px;
     }
 }

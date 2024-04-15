@@ -151,7 +151,7 @@ export const TagInput: React.FC<TagInputProps> = ({
                 size={size}
                 theme="unknown"
                 type="close"
-                onClose={handleRemove}
+                onCloseClick={handleRemove}
                 interactive={true}
             >
                 {value}

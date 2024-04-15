@@ -11,6 +11,7 @@ import {SelectorDialogState} from '../dashTyped';
 
 export type SelectorDialogValidation = {
     title?: string;
+    uniqueFieldName?: string;
     fieldName?: string;
     datasetFieldId?: string;
     defaultValue?: string;
@@ -23,8 +24,9 @@ export type SelectorsGroupDialogState = {
     buttonApply: boolean;
     buttonReset: boolean;
     defaults?: Record<string, string | string[]>;
-    items: SelectorDialogState[];
+    group: SelectorDialogState[];
     id?: string;
+    namespace?: string;
 };
 
 export type SelectorSourceType =

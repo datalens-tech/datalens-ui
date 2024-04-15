@@ -28,24 +28,30 @@ export const getFlippedDates = (opts: {
         nextFrom = to;
     } else if (changed === 'to') {
         const dateTimeFrom = dateTimeParse(from, {timeZone});
-        nextFrom =
-            dateTimeParse(to, {timeZone})
-                ?.set('hours', dateTimeFrom?.hour())
-                .set('minute', dateTimeFrom?.minute())
-                .set('seconds', dateTimeFrom?.second())
-                .format(OUTPUT_FORMAT) || '';
+
+        if (dateTimeFrom) {
+            nextFrom =
+                dateTimeParse(to, {timeZone})
+                    ?.set('hours', dateTimeFrom.hour())
+                    .set('minute', dateTimeFrom.minute())
+                    .set('seconds', dateTimeFrom.second())
+                    .format(OUTPUT_FORMAT) || '';
+        }
     }
 
     if (isStartsLikeRelative(from)) {
         nextTo = from;
     } else if (changed === 'from') {
         const dateTimeTo = dateTimeParse(to, {timeZone});
-        nextTo =
-            dateTimeParse(from, {timeZone})
-                ?.set('hours', dateTimeTo?.hour())
-                .set('minute', dateTimeTo?.minute())
-                .set('seconds', dateTimeTo?.second())
-                .format(OUTPUT_FORMAT) || '';
+
+        if (dateTimeTo) {
+            nextTo =
+                dateTimeParse(from, {timeZone})
+                    ?.set('hours', dateTimeTo.hour())
+                    .set('minute', dateTimeTo.minute())
+                    .set('seconds', dateTimeTo.second())
+                    .format(OUTPUT_FORMAT) || '';
+        }
     }
 
     return {nextFrom, nextTo};

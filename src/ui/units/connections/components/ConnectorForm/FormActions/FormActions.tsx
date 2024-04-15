@@ -4,15 +4,15 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect, useDispatch} from 'react-redux';
 import {useParams} from 'react-router-dom';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {registry} from 'ui/registry';
 
 import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_IN_WB_CONNECTION} from '../../';
-import {
+import type {
     DialogCreateWorkbookEntryProps,
     EntryDialogBaseProps,
 } from '../../../../../components/EntryDialogues';
-import {openDialog, openDialogErrorWithTabs} from '../../../../../store/actions/dialog';
-import {OpenDialogArgs} from '../../../../../store/actions/openDialogTypes';
+import {openDialogErrorWithTabs} from '../../../../../store/actions/dialog';
 import {
     checkConnection,
     createConnection,
@@ -24,6 +24,8 @@ import {
     updateConnection,
 } from '../../../store';
 import {validateFormBeforeAction} from '../../../store/utils';
+import {useCreateConnectionHandler} from '../../hooks';
+import type {CreateConnectionHandlerArgs} from '../../hooks';
 
 import {CheckParamsButton} from './CheckParamsButton/CheckParamsButton';
 import {SubmitButton} from './SubmitButton/SubmitButton';
@@ -52,39 +54,39 @@ export const FormActionsComponent = (props: FormActionsProps) => {
     } = props;
     const dispatch = useDispatch();
     const {workbookId} = useParams<{workbookId?: string}>();
+    const {createConnectionHandler} = useCreateConnectionHandler({
+        hasWorkbookIdInParams: Boolean(workbookId),
+    });
     const submitDisabled = (!newConnection && !formChanged) || checkLoading;
 
     const applyCreationHandler: EntryDialogBaseProps<void>['onApply'] = React.useCallback(
-        (_key, name, dirPath) => {
-            return dispatch(createConnection(name, dirPath)) as unknown as Promise<void>;
+        async (_key, name, dirPath) => {
+            dispatch(createConnection({name, dirPath}));
         },
         [dispatch],
     );
 
-    const applyCreationInWbHandler: DialogCreateWorkbookEntryProps<void>['onApply'] =
-        React.useCallback(
-            ({name}) => {
-                return dispatch(createConnection(name)) as unknown as Promise<void>;
-            },
-            [dispatch],
-        );
-
-    const getOpenDialogArs = React.useCallback(
-        (createInWorkbook: boolean): OpenDialogArgs => {
-            if (createInWorkbook) {
-                return {
-                    id: DIALOG_CONN_CREATE_IN_WB_CONNECTION,
-                    props: {onApply: applyCreationInWbHandler},
-                };
-            }
-
-            return {
-                id: DIALOG_CONN_CREATE_CONNECTION,
-                props: {onApply: applyCreationHandler},
-            };
+    const applyCreationInWbHandler: DialogCreateWorkbookEntryProps['onApply'] = React.useCallback(
+        async (args) => {
+            dispatch(createConnection({name: args.name, workbookId: args.workbookId}));
         },
-        [applyCreationHandler, applyCreationInWbHandler],
+        [dispatch],
     );
+
+    const getOpenDialogArs = React.useCallback((): CreateConnectionHandlerArgs => {
+        const {getNewConnectionDestination} = registry.connections.functions.getAll();
+        const destination = getNewConnectionDestination(Boolean(workbookId));
+
+        return destination === 'folder'
+            ? {
+                  id: DIALOG_CONN_CREATE_CONNECTION,
+                  props: {onApply: applyCreationHandler},
+              }
+            : {
+                  id: DIALOG_CONN_CREATE_IN_WB_CONNECTION,
+                  props: {onApply: applyCreationInWbHandler},
+              };
+    }, [workbookId, applyCreationHandler, applyCreationInWbHandler]);
 
     const submitHandler = React.useCallback(() => {
         if (newConnection) {
@@ -97,13 +99,20 @@ export const FormActionsComponent = (props: FormActionsProps) => {
             if (errors.length) {
                 dispatch(setValidationErrors({errors}));
             } else {
-                const openDialogArgs = getOpenDialogArs(Boolean(workbookId));
-                dispatch(openDialog(openDialogArgs));
+                createConnectionHandler(getOpenDialogArs());
             }
         } else {
             dispatch(updateConnection());
         }
-    }, [form, innerForm, schema, newConnection, dispatch, getOpenDialogArs, workbookId]);
+    }, [
+        form,
+        innerForm,
+        schema,
+        newConnection,
+        dispatch,
+        getOpenDialogArs,
+        createConnectionHandler,
+    ]);
 
     const checkHandler = React.useCallback(() => {
         const errors = validateFormBeforeAction({

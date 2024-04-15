@@ -89,7 +89,7 @@ export const collectionsActions = {
     >({
         method: 'GET',
         path: ({collectionId}) => `${COLLECTIONS_PATH_PREFIX}/${collectionId}/breadcrumbs`,
-        params: (_, headers) => ({headers}),
+        params: ({includePermissionsInfo}, headers) => ({headers, query: {includePermissionsInfo}}),
     }),
 
     deleteCollection: createAction<DeleteCollectionResponse, DeleteCollectionArgs>({

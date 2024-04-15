@@ -60,3 +60,5 @@ export const ADD_WORKBOOK_INFO = Symbol('workbooks/ADD_WORKBOOK_INFO');
 
 // Reset permissions of the current workflow
 export const RESET_WORKBOOK_PERMISSIONS = Symbol('workbooks/RESET_WORKBOOK_PERMISSIONS');
+
+export const SET_WORKBOOK = Symbol('workbooks/SET_WORKBOOK');

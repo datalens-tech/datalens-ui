@@ -1,3 +1,5 @@
+import {EDITOR_TYPE} from '../../../../shared/constants';
+
 const MODEL_TABS = {
     graph_node: new Set([
         'graph,js,params,shared,statface_graph,ui,url',
@@ -24,6 +26,11 @@ const MODEL_TABS = {
         'documentation_ru,js',
         'documentation_en,js',
         'js',
+    ]),
+
+    [EDITOR_TYPE.D3_NODE]: new Set([
+        'js,params,shared,ui,url,config',
+        'js,params,secrets,shared,ui,url,config',
     ]),
 };
 

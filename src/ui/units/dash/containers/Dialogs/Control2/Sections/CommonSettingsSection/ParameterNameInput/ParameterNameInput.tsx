@@ -32,7 +32,7 @@ export const ParameterNameInput: React.FC<ParameterNameInputProps> = (
 
     return (
         <FormRow label={label}>
-            <FieldWrapper error={validation.fieldName}>
+            <FieldWrapper error={validation.fieldName || validation.uniqueFieldName}>
                 <TextInput
                     qa={DialogControlQa.fieldNameInput}
                     value={value}

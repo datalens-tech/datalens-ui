@@ -45,7 +45,7 @@ const FormRowComponent: React.FC<FormRowComponentProps> = (props) => {
                             return null;
                         }
 
-                        return <FormItem key={`row-item-${i}`} item={item} disabled={readonly} />;
+                        return <FormItem key={`row-item-${i}`} item={item} readonly={readonly} />;
                     })
                     .filter(Boolean)}
             </RowContainer>

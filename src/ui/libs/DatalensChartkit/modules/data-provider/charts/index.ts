@@ -23,6 +23,7 @@ import {
 } from 'shared';
 
 import {ChartWidgetData} from '../../../../../components/Widgets/Chart/types';
+import {registry} from '../../../../../registry';
 import {WidgetType} from '../../../../../units/dash/modules/constants';
 import Utils from '../../../../../utils';
 import {CHARTKIT_WIDGET_TYPE} from '../../../ChartKit/components/Widget/Widget';
@@ -182,10 +183,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             'debug' in originalError ? originalError.debug : {};
         const extra: ExtraParams = {
             ...(originalError.extra || {}),
-            hideRetry:
-                typeof originalError?.extra?.hideRetry === 'boolean'
-                    ? originalError.extra.hideRetry
-                    : isEditMode,
+            hideRetry: originalError.extra?.hideRetry || false,
             openedMore: isEditMode,
             showErrorMessage: true,
             showMore: false,
@@ -741,7 +739,8 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             [REQUEST_ID_HEADER]: requestId,
         };
         if (isEmbeddedChart()) {
-            headers[DL_EMBED_TOKEN_HEADER] = window.location.hash.replace('#', '');
+            const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
+            headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
         }
         if (Utils.isEnabledFeature(Feature.UseComponentHeader)) {
             headers[DL_COMPONENT_HEADER] = DlComponentHeader.UI;

@@ -1,11 +1,11 @@
 import axios, {AxiosError} from 'axios';
-// @ts-ignore
-import {ConcurrencyManager as concurrencyManager} from 'axios-concurrency';
 import axiosRetry, {isRetryableError} from 'axios-retry';
 import isNumber from 'lodash/isNumber';
 import {showReadOnlyToast} from 'ui/utils/readOnly';
 
-let concurrencyManagerInstance: typeof concurrencyManager = null;
+import {ConcurrencyManagerInstance, concurrencyManager} from './axiosConcurrency';
+
+let concurrencyManagerInstance: ConcurrencyManagerInstance;
 
 const client = axios.create({
     withCredentials: true,
@@ -17,7 +17,7 @@ const client = axios.create({
 initConcurrencyManager(Infinity);
 
 export function initConcurrencyManager(maxConcurrentRequests: number) {
-    if (concurrencyManagerInstance) {
+    if (concurrencyManagerInstance !== undefined) {
         concurrencyManagerInstance.detach();
     }
 

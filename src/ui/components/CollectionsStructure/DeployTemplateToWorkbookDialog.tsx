@@ -25,6 +25,7 @@ export type Props = {
     templateName: string;
     productId: string;
     needToDeployTemplate: boolean;
+    defaultNewWorkbookTitle?: string;
     onApply: (workbookId: string) => void;
     onClose: () => void;
 };
@@ -33,6 +34,7 @@ export const openDialogDeployTemplateToWorkbook = ({
     templateName,
     productId,
     needToDeployTemplate,
+    defaultNewWorkbookTitle,
     onApply,
 }: Props) => {
     return function (dispatch: AppDispatch) {
@@ -44,6 +46,7 @@ export const openDialogDeployTemplateToWorkbook = ({
                     templateName,
                     productId,
                     needToDeployTemplate,
+                    defaultNewWorkbookTitle,
                     onApply,
                     onClose: () => {
                         dispatch(closeDialog());
@@ -59,6 +62,7 @@ export const DeployTemplateToWorkbookDialog: React.FC<Props> = ({
     templateName,
     productId,
     needToDeployTemplate,
+    defaultNewWorkbookTitle,
     onApply,
     onClose,
 }) => {
@@ -100,6 +104,7 @@ export const DeployTemplateToWorkbookDialog: React.FC<Props> = ({
             operationDeniedMessage={i18n('label_deploy-denied-title')}
             applyIsLoading={isLoading}
             workbookSelectionMode={true}
+            defaultNewWorkbookTitle={defaultNewWorkbookTitle}
             onApply={handleDeployTemplate}
             onClose={onClose}
         />

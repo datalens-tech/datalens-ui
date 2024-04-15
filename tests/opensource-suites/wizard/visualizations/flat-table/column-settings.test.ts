@@ -2,7 +2,12 @@ import {expect} from '@playwright/test';
 
 import {openTestPage, slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
-import {ChartKitQa, WizardPageQa, WizardVisualizationId} from '../../../../../src/shared';
+import {
+    ChartKitQa,
+    ChartKitTableQa,
+    WizardPageQa,
+    WizardVisualizationId,
+} from '../../../../../src/shared';
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 
@@ -37,7 +42,9 @@ datalensTest.describe('Wizard', () => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
-            const tableCellContent = wizardPage.page.locator('.chartkit-table__content');
+            const tableCellContent = wizardPage.page
+                .locator('.chartkit-table__content')
+                .or(page.locator(slct(ChartKitTableQa.CellContent)));
             const {width: prevWidth} = (await tableCellContent.first().boundingBox()) || {};
 
             const columnWidth = 50;

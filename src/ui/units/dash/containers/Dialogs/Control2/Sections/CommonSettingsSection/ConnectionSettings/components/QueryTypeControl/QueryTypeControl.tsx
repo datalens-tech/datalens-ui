@@ -17,8 +17,7 @@ import {selectSelectorDialog} from '../../../../../../../../store/selectors/dash
 import {EditLabelControl} from './components/EditLabelControl/EditLabelControl';
 import {EditQueryControl} from './components/EditQueryControl/EditQueryControl';
 import {prepareQueryTypeSelectorOptions} from './helpers';
-// @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
-const i18n = I18n.keyset('dash.edit-query-dialog');
+const i18n = I18n.keyset('dash.control-dialog.edit');
 
 const renderQueryContentControl = (connectionQueryType: ConnectionQueryTypeValues | undefined) => {
     switch (connectionQueryType) {
@@ -84,15 +83,13 @@ export const QueryTypeControl: React.FC<QueryTypeControlProps> = (props: QueryTy
     return (
         <React.Fragment>
             {options.length > 1 && (
-                // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
                 <FormRow label={i18n('field_query-type')}>
                     <Select
                         width="max"
                         options={options}
                         value={connectionQueryType ? [connectionQueryType] : []}
                         onUpdate={handleQueryTypeUpdate}
-                        // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
-                        placeholder={i18n('placeholder_not-defined')}
+                        placeholder={i18n('value_undefined')}
                     />
                 </FormRow>
             )}

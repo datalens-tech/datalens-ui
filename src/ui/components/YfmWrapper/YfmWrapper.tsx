@@ -11,7 +11,9 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
         const renderLatex = useLatex();
 
         React.useLayoutEffect(() => {
-            renderLatex();
+            renderLatex().then(() => {
+                props.onRenderCallback?.();
+            });
         });
 
         React.useEffect(() => {

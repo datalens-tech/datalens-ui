@@ -30,17 +30,23 @@
     &__controls {
         display: flex;
         flex-wrap: wrap;
+        padding-bottom: 8px;
+    }
+
+    &__control-container {
+        display: contents;
+        position: relative;
     }
 
     &__item,
-    &__item-loader {
+    &__item-stub {
         margin-top: 8px;
         max-width: 100%;
         padding: 0;
         padding-right: 10px;
     }
 
-    &__item-loader {
+    &__item-stub {
         height: 28px;
         display: inline-flex;
         vertical-align: middle;

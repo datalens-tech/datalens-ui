@@ -6,9 +6,11 @@ import {Link, withRouter} from 'react-router-dom';
 import {ENTRY_TYPES, EntryScope, Feature} from 'shared';
 import {closeNavigation} from 'store/actions/asideHeader/navigation';
 
+import {DIALOG_CREATE_ENTRY_IN_WORKBOOK} from '../../../components/CollectionsStructure';
 import {URL_QUERY} from '../../../constants/common';
 import navigateHelper from '../../../libs/navigateHelper';
 import {registry} from '../../../registry';
+import {closeDialog, openDialog} from '../../../store/actions/dialog';
 import Utils from '../../../utils';
 import {ENTRY_CONTEXT_MENU_ACTION, getEntryContextMenuItems} from '../../EntryContextMenu';
 import {getGroupedMenu} from '../../EntryContextMenu/helpers';
@@ -112,10 +114,16 @@ class NavigationBase extends React.Component {
         onCrumbClick: PropTypes.func,
         onEntryClick: PropTypes.func,
         currentPageEntry: PropTypes.object,
+        isOnlyCollectionsMode: PropTypes.bool,
+        openDialog: PropTypes.func,
+        closeDialog: PropTypes.func,
+
+        onPermissionError: PropTypes.func,
     };
     static defaultProps = {
         navConstructor: NavigationInline,
         root: PLACE.ROOT,
+        isOnlyCollectionsMode: false,
     };
     constructor(props) {
         super(props);
@@ -196,6 +204,7 @@ class NavigationBase extends React.Component {
             dialog: EntryDialogName.Copy,
             dialogProps: {
                 entryId: entry.entryId,
+                workbookId: entry.workbookId,
                 scope: entry.scope,
                 initDestination: this.getOnActionDestination(entry),
                 initName: Utils.getEntryNameFromKey(entry.key, true),
@@ -263,12 +272,27 @@ class NavigationBase extends React.Component {
 
         switch (type) {
             case CreateMenuValue.Folder: {
-                this.createFolder();
+                if (!this.props.isOnlyCollectionsMode) {
+                    this.createFolder();
+                }
                 break;
             }
             case CreateMenuValue.Dashboard: {
-                history.push(`/dashboards/new${query}`);
-                this.closeNavigation();
+                if (this.props.isOnlyCollectionsMode) {
+                    this.props.openDialog({
+                        id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
+                        props: {
+                            initialCollectionId: null,
+                            entryType: 'dashboard',
+                            onClose: () => {
+                                this.props.closeDialog();
+                            },
+                        },
+                    });
+                } else {
+                    history.push(`/dashboards/new${query}`);
+                    this.closeNavigation();
+                }
                 break;
             }
             case CreateMenuValue.Connection: {
@@ -277,23 +301,87 @@ class NavigationBase extends React.Component {
                 break;
             }
             case CreateMenuValue.Dataset: {
-                history.push(`/datasets/new${query}`);
-                this.closeNavigation();
+                if (this.props.isOnlyCollectionsMode) {
+                    this.props.openDialog({
+                        id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
+                        props: {
+                            initialCollectionId: null,
+                            entryType: 'dataset',
+                            onApply: () => {
+                                this.closeNavigation();
+                            },
+                            onClose: () => {
+                                this.props.closeDialog();
+                            },
+                        },
+                    });
+                } else {
+                    history.push(`/datasets/new${query}`);
+                    this.closeNavigation();
+                }
                 break;
             }
             case CreateMenuValue.Widget: {
-                history.push(`/wizard${query}`);
-                this.closeNavigation();
+                if (this.props.isOnlyCollectionsMode) {
+                    this.props.openDialog({
+                        id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
+                        props: {
+                            initialCollectionId: null,
+                            entryType: 'wizard',
+                            onApply: () => {
+                                this.closeNavigation();
+                            },
+                            onClose: () => {
+                                this.props.closeDialog();
+                            },
+                        },
+                    });
+                } else {
+                    history.push(`/wizard${query}`);
+                    this.closeNavigation();
+                }
                 break;
             }
             case CreateMenuValue.QL: {
-                history.push(`/ql${query}`);
-                this.closeNavigation();
+                if (this.props.isOnlyCollectionsMode) {
+                    this.props.openDialog({
+                        id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
+                        props: {
+                            initialCollectionId: null,
+                            entryType: 'ql',
+                            onApply: () => {
+                                this.closeNavigation();
+                            },
+                            onClose: () => {
+                                this.props.closeDialog();
+                            },
+                        },
+                    });
+                } else {
+                    history.push(`/ql${query}`);
+                    this.closeNavigation();
+                }
                 break;
             }
             case CreateMenuValue.SQL: {
-                history.push(`/ql/new/sql${query}`);
-                this.closeNavigation();
+                if (this.props.isOnlyCollectionsMode) {
+                    this.props.openDialog({
+                        id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
+                        props: {
+                            initialCollectionId: null,
+                            entryType: 'ql',
+                            onApply: () => {
+                                this.closeNavigation();
+                            },
+                            onClose: () => {
+                                this.props.closeDialog();
+                            },
+                        },
+                    });
+                } else {
+                    history.push(`/ql/new/sql${query}`);
+                    this.closeNavigation();
+                }
                 break;
             }
             case CreateMenuValue.PromQL: {
@@ -405,6 +493,7 @@ class NavigationBase extends React.Component {
 
 const mapDispatchToProps = {
     closeNavigation,
+    openDialog,
+    closeDialog,
 };
-
 export default connect(null, mapDispatchToProps)(withRouter(NavigationBase));

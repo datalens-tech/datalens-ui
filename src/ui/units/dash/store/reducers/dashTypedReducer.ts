@@ -47,6 +47,7 @@ import {DashAction} from '../actions/index';
 import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
 import {getInitialDefaultValue} from '../utils';
 
+import {getActualUniqueFieldNameValidation} from './controls/helpers';
 import {TAB_PROPERTIES, getSelectorDialogInitialState} from './dash';
 
 export type DashState = {
@@ -90,6 +91,8 @@ export function dashTypedReducer(
 ): DashState {
     const {hashStates, tabId, data} = state;
 
+    const tabIndex = data ? data.tabs.findIndex(({id}) => id === tabId) : -1;
+
     switch (action.type) {
         case SET_STATE:
         case SET_PAGE_TAB:
@@ -100,9 +103,6 @@ export function dashTypedReducer(
 
         case SET_HASH_STATE: {
             const tabsHashState = {...hashStates} as TabsHashStates;
-            const tabIndex: number = data
-                ? data.tabs.findIndex(({id}: {id: string}) => id === tabId)
-                : -1;
             const config = action.payload.config;
             let newData = {};
             if (config) {
@@ -259,6 +259,14 @@ export function dashTypedReducer(
                     selectorDialog.title === payload.title
                         ? selectorDialog.validation.title
                         : undefined,
+                uniqueFieldName:
+                    selectorDialog.fieldName === payload.fieldName
+                        ? getActualUniqueFieldNameValidation(
+                              selectorsGroup.group,
+                              payload.fieldName,
+                              selectorDialog.validation.fieldName,
+                          )
+                        : undefined,
                 fieldName:
                     selectorDialog.fieldName === payload.fieldName
                         ? selectorDialog.validation.fieldName
@@ -286,9 +294,9 @@ export function dashTypedReducer(
                 ...selectorsGroup,
             };
 
-            if (state.selectorsGroup.items.length) {
-                newSelectorsGroupState.items = [...selectorsGroup.items];
-                newSelectorsGroupState.items[activeSelectorIndex] = newSelectorState;
+            if (state.selectorsGroup.group.length) {
+                newSelectorsGroupState.group = [...selectorsGroup.group];
+                newSelectorsGroupState.group[activeSelectorIndex] = newSelectorState;
             }
 
             return {
@@ -306,13 +314,13 @@ export function dashTypedReducer(
 
             // if current length is 1, the added selector will be the second so we enable autoHeight
             const autoHeight =
-                state.selectorsGroup.items.length === 1 ? true : state.selectorsGroup.autoHeight;
+                state.selectorsGroup.group.length === 1 ? true : state.selectorsGroup.autoHeight;
 
             return {
                 ...state,
                 selectorsGroup: {
                     ...state.selectorsGroup,
-                    items: [...state.selectorsGroup.items, {...newSelector, title: payload.title}],
+                    group: [...state.selectorsGroup.group, {...newSelector, title: payload.title}],
                     autoHeight,
                 },
             };
@@ -320,13 +328,13 @@ export function dashTypedReducer(
 
         case UPDATE_SELECTORS_GROUP: {
             const {selectorsGroup} = state;
-            const {items, autoHeight, buttonApply, buttonReset} = action.payload;
+            const {group, autoHeight, buttonApply, buttonReset} = action.payload;
 
             return {
                 ...state,
                 selectorsGroup: {
                     ...selectorsGroup,
-                    items,
+                    group,
                     autoHeight,
                     buttonApply,
                     buttonReset,
@@ -335,18 +343,29 @@ export function dashTypedReducer(
         }
 
         case SET_ACTIVE_SELECTOR_INDEX: {
+            const newCurrentSelector =
+                state.selectorsGroup.group[action.payload.activeSelectorIndex];
+
             return {
                 ...state,
                 activeSelectorIndex: action.payload.activeSelectorIndex,
-                selectorDialog: state.selectorsGroup.items[action.payload.activeSelectorIndex],
+                selectorDialog: {
+                    ...newCurrentSelector,
+                    validation: {
+                        ...newCurrentSelector.validation,
+                        // check if validation with non-unique uniqueFieldName is still valid
+                        uniqueFieldName: getActualUniqueFieldNameValidation(
+                            state.selectorsGroup.group,
+                            newCurrentSelector.fieldName,
+                            newCurrentSelector.validation.uniqueFieldName,
+                        ),
+                    },
+                },
             };
         }
 
         case SET_DASH_VIEW_MODE: {
             const entryData = state.convertedEntryData || state.entry.data;
-            const tabIndex: number = entryData
-                ? entryData.tabs.findIndex(({id}: {id: string}) => id === tabId)
-                : -1;
 
             return {
                 ...state,

@@ -18,5 +18,5 @@ export type IllustrationProps = {
 };
 
 export type CreateIllustrationProps = Omit<IllustrationProps, 'name'> & {
-    name: IllustrationName | 'barchar' | 'logo' | 'logoShort';
+    name: IllustrationName | 'barchar' | 'logo' | 'logoShort' | 'logoInit';
 };

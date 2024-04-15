@@ -23,6 +23,8 @@ import {
 } from './formats';
 import {AVAILABLE_DATETIME_GROUPING_MODES, AVAILABLE_DATE_GROUPING_MODES} from './grouping';
 
+export const WIZARD_EDIT_HISTORY_UNIT_ID = 'wizard';
+
 export {
     AVAILABLE_AGGREGATIONS_BY_COMMON_CAST,
     AVAILABLE_DATE_FORMATS,

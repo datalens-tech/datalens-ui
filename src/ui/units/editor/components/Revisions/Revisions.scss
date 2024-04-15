@@ -25,8 +25,7 @@
     }
 
     & &__btn-diff {
-        // TODO: this is an private api and may silently changed. We should use local styles
-        margin-left: var(--yc-dialog-side-padding);
+        margin-left: 32px;
         margin-bottom: 20px;
         width: max-content;
         flex-shrink: 0;
@@ -114,8 +113,7 @@
 
     &__dropdown {
         margin-left: auto;
-        // TODO: this is an private api and may silently changed. We should use local styles
-        margin-right: var(--yc-dialog-side-padding);
+        margin-right: 32px;
     }
 
     &__progress-status {

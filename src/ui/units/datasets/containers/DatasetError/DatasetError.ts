@@ -63,7 +63,7 @@ class DatasetError extends React.Component<Props> {
         this.props.showToast({
             name: TOASTERS_NAMES.ERROR_SAVE_DATASET,
             title,
-            type: 'error',
+            type: 'danger',
             error: savingError,
             withReport: true,
         });
@@ -96,7 +96,7 @@ class DatasetError extends React.Component<Props> {
         this.props.showToast({
             name: TOASTERS_NAMES.ERROR_VALIDATE_DATASET,
             title: getToastTitle('NOTIFICATION_FAILURE', 'validate'),
-            type: 'error',
+            type: 'danger',
             error: customError,
             withReport: true,
         });

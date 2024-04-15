@@ -27,7 +27,6 @@ export type OpenDialogEditQueryArgs = {
     id: typeof DIALOG_EDIT_QUERY;
     props: undefined;
 };
-// @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
 const i18n = I18n.keyset('dash.edit-query-dialog');
 
 const b = block('dialog-edit-query');
@@ -88,11 +87,7 @@ const DialogEditQuery: React.FC = () => {
                 const validation = validateTypedQueryResponseForSelector(response);
                 return validation
                     ? handleSuccessResponse(queryContent)
-                    : handleWrongQueryRequest(
-                          // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
-                          i18n('error_invalid-typed-query-response'),
-                          query,
-                      );
+                    : handleWrongQueryRequest(i18n('error_invalid-typed-query-response'), query);
             })
             .catch((e: GetConnectionTypedQueryErrorResponse) => {
                 setLoading(false);
@@ -106,7 +101,6 @@ const DialogEditQuery: React.FC = () => {
     };
     return (
         <Dialog className={b()} open={true} hasCloseButton={true} onClose={handleClose}>
-            {/* @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653*/}
             <Dialog.Header caption={i18n('title_edit-query')} />
             <Dialog.Body>
                 <Flex direction="column" className={b('content')}>
@@ -124,9 +118,7 @@ const DialogEditQuery: React.FC = () => {
                 propsButtonApply={{disabled}}
                 onClickButtonCancel={handleClose}
                 onClickButtonApply={handleApply}
-                // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
                 textButtonApply={i18n('button_apply')}
-                // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
                 textButtonCancel={i18n('button_cancel')}
             />
         </Dialog>

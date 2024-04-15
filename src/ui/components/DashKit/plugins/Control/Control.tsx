@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';
@@ -661,10 +661,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             }
 
             if (type === TYPE.INPUT) {
-                props.placeholder =
-                    Utils.isEnabledFeature(Feature.SelectorRequiredValue) && validationError
-                        ? validationError
-                        : control.placeholder;
+                props.placeholder = validationError ? validationError : control.placeholder;
             }
 
             switch (type) {

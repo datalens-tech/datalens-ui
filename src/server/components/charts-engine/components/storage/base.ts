@@ -161,13 +161,18 @@ export class BaseStorage {
             throw new Error('Wrong fetch config params');
         }
 
+        const traceId = ctx.getTraceId();
+        const tenantId = ctx.get('tenantId');
+
         return retrieve
             .then((result) => {
                 onConfigFetched({
                     id,
                     requestId,
+                    traceId,
                     statusCode: 200,
                     latency: new Date().getTime() - startTime,
+                    tenantId,
                 });
                 return result;
             })
@@ -175,6 +180,8 @@ export class BaseStorage {
                 onConfigFetchingFailed(error, {
                     id,
                     requestId,
+                    traceId,
+                    tenantId,
                     statusCode: error.status || error.statusCode,
                     latency: new Date().getTime() - startTime,
                 });

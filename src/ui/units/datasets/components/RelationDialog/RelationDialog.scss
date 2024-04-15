@@ -55,7 +55,7 @@
         display: flex;
         justify-content: center;
 
-        .yc-button__icon {
+        .g-button__icon {
             width: 100%;
         }
 
@@ -132,5 +132,13 @@
         display: flex;
         align-items: center;
         margin-right: 5px;
+    }
+
+    &__optimize-join {
+        margin-top: 20px;
+    }
+
+    &__hint-optimize-join {
+        margin: 0 1ex;
     }
 }
