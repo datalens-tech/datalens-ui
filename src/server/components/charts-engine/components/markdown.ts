@@ -5,6 +5,7 @@ import deflist from '@diplodoc/transform/lib/plugins/deflist';
 import imsize from '@diplodoc/transform/lib/plugins/imsize';
 import notes from '@diplodoc/transform/lib/plugins/notes';
 import table from '@diplodoc/transform/lib/plugins/table';
+import term from '@diplodoc/transform/lib/plugins/term';
 import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
 import MarkdownIt from 'markdown-it';
 import mila from 'markdown-it-link-attributes';
@@ -16,6 +17,7 @@ export function renderHTML({text = '', lang}: {text: string; lang: string}): {re
         deflist,
         notes,
         cut,
+        term,
         (md: MarkdownIt) =>
             md.use(mila, {
                 matcher(href: string) {
