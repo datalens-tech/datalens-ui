@@ -8,11 +8,12 @@ import {getSdk} from '../../../libs/schematic-sdk';
 
 const dashStatsVisitedTabs: Set<string> = new Set();
 
-function collectDashStats(data: Optional<DashStats, 'login'>) {
+function collectDashStats(data: Optional<DashStats, 'userId' | 'tenantId'>) {
     const uniqTab = `${data.dashId}_${data.dashTabId}`;
     if (Utils.isEnabledFeature(Feature.EnableDashChartStat) && !dashStatsVisitedTabs.has(uniqTab)) {
         getSdk().mix.collectDashStats({
-            login: DL.USER_LOGIN,
+            userId: DL.USER_ID,
+            tenantId: DL.CURRENT_TENANT_ID || '',
             ...data,
         });
         dashStatsVisitedTabs.add(uniqTab);
