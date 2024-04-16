@@ -307,21 +307,25 @@ class EntryPanel extends React.Component<Props, State> {
     }
 
     private renderRootContent = (rootItem: BreadcrumbsItem) => {
-        if ((this.props.entry as any | undefined)?.fake) {
-            return rootItem.text;
+        if (rootItem.href) {
+            return (
+                <Link
+                    key={rootItem.text}
+                    view="secondary"
+                    href={rootItem.href}
+                    title={rootItem.text}
+                    onClick={rootItem.action}
+                    className={b('item', {link: true})}
+                >
+                    {rootItem.text}
+                </Link>
+            );
         }
 
         return (
-            <Link
-                key={rootItem.text}
-                view="secondary"
-                href={rootItem.href || '#'}
-                title={rootItem.text}
-                onClick={rootItem.action}
-                className={b('item')}
-            >
+            <div key={rootItem.text} className={b('item')}>
                 {rootItem.text}
-            </Link>
+            </div>
         );
     };
 

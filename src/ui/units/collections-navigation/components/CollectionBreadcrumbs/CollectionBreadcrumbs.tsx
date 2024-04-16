@@ -104,7 +104,7 @@ export const CollectionBreadcrumbs = React.memo<Props>(
 
                         return (
                             <Link
-                                className={b('item', {last: isCurrent})}
+                                className={b('item', {last: isCurrent, link: true})}
                                 to={item.path}
                                 onClick={(e) => {
                                     e.stopPropagation();
