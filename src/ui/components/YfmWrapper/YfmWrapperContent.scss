@@ -138,3 +138,32 @@
         background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuNykiIGZpbGw9Im5vbmUiIGQ9Ik0zIDZsNSA1IDUtNSI+PC9wYXRoPjwvc3ZnPg==');
     }
 }
+
+.g-root .yfm .yfm-colorify {
+    $colors: (
+        'gray': '--g-color-text-secondary',
+        'yellow': '--g-color-private-yellow-600-solid',
+        'orange': '--g-color-private-orange-500-solid',
+        'red': '--g-color-text-danger',
+        'green': '--g-color-text-positive',
+        'blue': '--g-color-text-info',
+        'violet': '--g-color-text-utility',
+    );
+
+    @each $name, $value in $colors {
+        --yfm-color-text-#{$name}: var(#{$value});
+    }
+
+    // for already colored to black text
+    --yfm-colorify-black: var(--g-color-text-primary);
+
+    @each $name, $value in $colors {
+        --yfm-colorify-#{$name}: var(--yfm-color-text-#{$name});
+    }
+
+    @each $name, $_ in $colors {
+        &.yfm-colorify--#{$name} {
+            color: var(--yfm-colorify-#{$name});
+        }
+    }
+}
