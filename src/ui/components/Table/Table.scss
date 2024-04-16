@@ -13,9 +13,9 @@
     &:before {
         content: '';
         position: absolute;
-        top: var(--cell-border-offset, -1px);
+        top: var(--dl-table-cell-border-offset, -1px);
         width: calc(100% + 1.99px);
-        left: var(--cell-border-offset, -1px);
+        left: var(--dl-table-cell-border-offset, -1px);
         height: calc(100% + 1.99px);
         border-left: 1px solid var(--dl-table-border-color);
         pointer-events: none;

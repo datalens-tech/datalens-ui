@@ -75,7 +75,7 @@ export const Table = (props: TableProps) => {
     const pixelRatio = useDevicePixelRatio();
     if (pixelRatio && pixelRatio > 1) {
         tableStyle = {
-            '--cell-border-offset': `${-1 / ((pixelRatio % 1) + 1)}px`,
+            '--dl-table-cell-border-offset': `${-1 / ((pixelRatio % 1) + 1)}px`,
         } as React.CSSProperties;
     }
 
