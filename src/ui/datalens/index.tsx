@@ -127,7 +127,7 @@ const DatalensPageView = (props: any) => {
 
 const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
-    const [token, _setToken] = React.useState(localStorage.getItem('x-rpc-authorization') || "");
+    const [token, _setToken] = React.useState(Utils.getRpcAuthorization() || "");
     
     function setToken(value: any) {
         localStorage.setItem('x-rpc-authorization', value);

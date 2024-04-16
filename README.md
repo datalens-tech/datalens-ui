@@ -87,6 +87,7 @@ docker push akrasnov87/datalens-ui:0.1245.0
 US_ENDPOINT="http://host.docker.internal:8030"
 BI_API_ENDPOINT="http://host.docker.internal:8031"
 BI_DATA_ENDPOINT="http://host.docker.internal:8032"
+HC=1
 ### TEMPLATE SECRETS BEGIN
 APP_MODE=full
 APP_ENV=development
