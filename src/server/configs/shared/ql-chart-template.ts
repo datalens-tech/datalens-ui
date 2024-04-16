@@ -78,11 +78,11 @@ export default {
                 }
             case WizardVisualizationId.Metric: {
                 const app = registry.getApp();
-
-                const useMarkupMetric = isEnabledServerFeature(
-                    app.nodekit.ctx,
-                    Feature.MarkupMetric,
-                );
+                const {placeholders} = chart.visualization;
+                const dataType = placeholders.find((p) => p.id === 'measures')?.items[0]?.data_type;
+                const useMarkupMetric =
+                    dataType === 'markup' &&
+                    isEnabledServerFeature(app.nodekit.ctx, Feature.MarkupMetric);
 
                 if (useMarkupMetric) {
                     return QL_TYPE.MARKUP_QL_NODE;

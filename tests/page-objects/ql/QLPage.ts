@@ -237,7 +237,11 @@ class QLPage extends ChartPage {
 
             this.page.waitForSelector('.chartkit .chartkit-graph').then(resolve, () => undefined);
 
-            this.page.waitForSelector('.chartkit .chartkit-markup').then(resolve, () => undefined);
+            const metricLocators = [
+                '.chartkit .chartkit-markup',
+                '.chartkit .chartkit-indicator',
+            ].join();
+            this.page.waitForSelector(metricLocators).then(resolve, () => undefined);
 
             this.chartkit
                 .getTableLocator()
