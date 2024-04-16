@@ -26,7 +26,7 @@ function prepareMetric({placeholders, resultData, shared, idToTitle}: PrepareFun
     const app = registry.getApp();
 
     const useMarkupMetric =
-        isMarkupItem(measure) && isEnabledServerFeature(app.nodekit.ctx, Feature.MarkupMetric);
+        isMarkupItem(value) && isEnabledServerFeature(app.nodekit.ctx, Feature.MarkupMetric);
 
     if (useMarkupMetric) {
         return prepareMarkupMetricVariant({measure, value, extraSettings: shared.extraSettings});
