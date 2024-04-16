@@ -23,6 +23,23 @@
     img {
         background: transparent;
     }
+
+    p.yfm-latex {
+        text-align: left;
+        display: inline-block;
+
+        & > span {
+            margin: 0;
+        }
+    }
+
+    .yfm-cut-content table:last-child {
+        margin-bottom: 0;
+    }
+
+    .yfm-cut:last-child .yfm-cut-content {
+        padding-bottom: 0;
+    }
 }
 
 .g-root .yfm:not(.yfm_only-light) {

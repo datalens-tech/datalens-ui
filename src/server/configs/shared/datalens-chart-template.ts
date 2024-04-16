@@ -2,6 +2,7 @@ import {
     ExtendedChartsConfig,
     Feature,
     WizardVisualizationId,
+    getDatasetLinks,
     isD3Visualization,
     isEnabledServerFeature,
     mapChartsConfigToLatestVersion,
@@ -61,16 +62,7 @@ export default {
         }
     },
     identifyLinks: (chart: ExtendedChartsConfig) => {
-        const links: Record<string, string> = {};
         const config = mapChartsConfigToLatestVersion(chart);
-        const ids: string[] = config.datasetsIds;
-
-        ids.forEach((id, i) => {
-            const key = `dataset${i > 0 ? i : ''}`;
-
-            links[key] = id;
-        });
-
-        return links;
+        return getDatasetLinks(config);
     },
 };

@@ -31,7 +31,7 @@ export function initChartsEngine({
     }
 
     const telemetryCallbacks: TelemetryCallbacks = {
-        onConfigFetched: ({id, statusCode, requestId, latency = 0}) => {
+        onConfigFetched: ({id, statusCode, requestId, latency = 0, traceId, tenantId}) => {
             ctx.stats('apiRequests', {
                 requestId: requestId!,
                 service: 'us',
@@ -40,9 +40,14 @@ export function initChartsEngine({
                 requestTime: latency,
                 requestMethod: 'POST',
                 requestUrl: id || '',
+                traceId: traceId || '',
+                tenantId: tenantId || '',
             });
         },
-        onConfigFetchingFailed: (_error, {id, statusCode, requestId, latency = 0}) => {
+        onConfigFetchingFailed: (
+            _error,
+            {id, statusCode, requestId, latency = 0, traceId, tenantId},
+        ) => {
             ctx.stats('apiRequests', {
                 requestId: requestId!,
                 service: 'us',
@@ -51,10 +56,12 @@ export function initChartsEngine({
                 requestTime: latency,
                 requestMethod: 'POST',
                 requestUrl: id || '',
+                traceId: traceId || '',
+                tenantId: tenantId || '',
             });
         },
 
-        onDataFetched: ({sourceName, url, requestId, statusCode, latency}) => {
+        onDataFetched: ({sourceName, url, requestId, statusCode, latency, traceId, tenantId}) => {
             ctx.stats('apiRequests', {
                 requestId,
                 service: sourceName || 'unknown-charts-source',
@@ -63,9 +70,14 @@ export function initChartsEngine({
                 requestTime: latency,
                 requestMethod: 'POST',
                 requestUrl: url || '',
+                traceId: traceId || '',
+                tenantId: tenantId || '',
             });
         },
-        onDataFetchingFailed: (_error, {sourceName, url, requestId, statusCode, latency}) => {
+        onDataFetchingFailed: (
+            _error,
+            {sourceName, url, requestId, statusCode, latency, traceId, tenantId},
+        ) => {
             ctx.stats('apiRequests', {
                 requestId,
                 service: sourceName || 'unknown-charts-source',
@@ -74,6 +86,8 @@ export function initChartsEngine({
                 requestTime: latency,
                 requestMethod: 'POST',
                 requestUrl: url || '',
+                traceId: traceId || '',
+                tenantId: tenantId || '',
             });
         },
 

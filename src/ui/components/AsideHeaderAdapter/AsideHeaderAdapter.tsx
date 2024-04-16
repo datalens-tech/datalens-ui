@@ -106,7 +106,10 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
 
     const renderAsideHeaderContent = React.useCallback(
         (asideHeaderData: AsideHeaderData) => {
-            dispatch(setAsideHeaderData(asideHeaderData));
+            // Cause it's dispatch moving it to next tick to prevent render race warnings
+            window.requestAnimationFrame(() => {
+                dispatch(setAsideHeaderData(asideHeaderData));
+            });
 
             return renderContent?.(asideHeaderData);
         },

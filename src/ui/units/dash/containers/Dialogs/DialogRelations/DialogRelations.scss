@@ -102,4 +102,14 @@
     &__disconnect-text {
         margin-right: 10px;
     }
+
+    &__item-select {
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &__item-select-popup {
+        max-height: 288px;
+    }
 }

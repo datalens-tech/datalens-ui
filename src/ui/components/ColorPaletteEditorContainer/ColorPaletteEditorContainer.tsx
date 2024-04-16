@@ -28,7 +28,10 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 
-type ColorPaletteEditorProps = StateProps & DispatchProps;
+type ColorPaletteEditorProps = StateProps &
+    DispatchProps & {
+        condensed?: boolean;
+    };
 
 class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProps> {
     componentDidMount() {
@@ -40,7 +43,7 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
     }
 
     render() {
-        const {colorPalettes} = this.props;
+        const {colorPalettes, condensed} = this.props;
 
         return (
             <div className={b()}>
@@ -56,6 +59,7 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     handleRemoveColorPaletteClick={this.handlDeleteColorPalette}
                     className={b('color-palettes-card')}
                     colorPalettes={colorPalettes.filter((item) => item.isGradient)}
+                    condensed={condensed}
                 />
                 <ColorPalettesCard
                     isFavoritesEnabled={IS_FAVORITES_ENABLED}
@@ -69,6 +73,7 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     handleRemoveColorPaletteClick={this.handlDeleteColorPalette}
                     className={b('color-palettes-card')}
                     colorPalettes={colorPalettes.filter((item) => !item.isGradient)}
+                    condensed={condensed}
                 />
                 <ColorPaletteEditor isFavoritesEnabled={IS_FAVORITES_ENABLED} />
                 <GradientColorPaletteEditor isFavoritesEnabled={IS_FAVORITES_ENABLED} />
