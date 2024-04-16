@@ -8,8 +8,10 @@ import table from '@diplodoc/transform/lib/plugins/table';
 import term from '@diplodoc/transform/lib/plugins/term';
 import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
 import MarkdownIt from 'markdown-it';
-import mila from 'markdown-it-link-attributes';
+import MarkdownItColor from 'markdown-it-color';
+import Mila from 'markdown-it-link-attributes';
 
+import {YFM_COLORIFY_MARKDOWN_CLASSNAME} from '../../../../shared';
 import {registry} from '../../../registry';
 
 export function renderHTML({text = '', lang}: {text: string; lang: string}): {result: string} {
@@ -19,15 +21,19 @@ export function renderHTML({text = '', lang}: {text: string; lang: string}): {re
         cut,
         term,
         (md: MarkdownIt) =>
-            md.use(mila, {
-                matcher(href: string) {
-                    return !href.startsWith('#');
-                },
-                attrs: {
-                    target: '_blank',
-                    rel: 'noopener noreferrer',
-                },
-            }),
+            md
+                .use(Mila, {
+                    matcher(href: string) {
+                        return !href.startsWith('#');
+                    },
+                    attrs: {
+                        target: '_blank',
+                        rel: 'noopener noreferrer',
+                    },
+                })
+                .use(MarkdownItColor, {
+                    defaultClassName: YFM_COLORIFY_MARKDOWN_CLASSNAME,
+                }),
         imsize,
         table,
         latex({
