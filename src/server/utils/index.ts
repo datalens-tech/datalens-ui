@@ -18,6 +18,8 @@ import {
 } from '../../shared';
 import {isOpensourceInstallation} from '../app-env';
 
+import {isGatewayError} from './gateway';
+
 class Utils {
     static getName(key = '') {
         return key.split('/').filter(Boolean).pop();
@@ -76,6 +78,8 @@ class Utils {
             return error.response?.data.message || error.message;
         } else if (error instanceof Error) {
             return error.message;
+        } else if (isGatewayError(error)) {
+            return error.error.message;
         } else {
             return 'Unknown error';
         }

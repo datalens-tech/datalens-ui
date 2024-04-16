@@ -3,7 +3,10 @@ import type {
     ChartKitWidgetSeries,
     ChartKitWidgetSeriesData,
 } from '@gravity-ui/chartkit';
-import {pickActionParamsFromParams, transformParamsToActionParams} from '@gravity-ui/dashkit';
+import {
+    pickActionParamsFromParams,
+    transformParamsToActionParams,
+} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 

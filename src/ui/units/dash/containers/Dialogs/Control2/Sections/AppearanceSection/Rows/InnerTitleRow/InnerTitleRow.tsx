@@ -24,7 +24,6 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 const getHelpPopoverText = (sourceType: SelectorSourceType | undefined): string => {
     switch (sourceType) {
         case DashTabItemControlSourceType.Connection:
-            // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
             return i18n('field_inner-title-note-connection-selector');
         default:
             return i18n('field_inner-title-note');

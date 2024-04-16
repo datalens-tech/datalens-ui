@@ -1,5 +1,5 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {pickActionParamsFromParams} from '@gravity-ui/dashkit';
+import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import {wrap} from 'highcharts';
 import get from 'lodash/get';
 import has from 'lodash/has';

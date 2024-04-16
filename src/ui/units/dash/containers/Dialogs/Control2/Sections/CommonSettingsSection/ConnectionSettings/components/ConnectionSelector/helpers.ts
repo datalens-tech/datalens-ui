@@ -10,7 +10,6 @@ export const prepareConnectionData = (
 
     if (!options.allow_typed_query_usage) {
         return {
-            // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
             error: i18n('error_unsupported-connection'),
             queryTypes: [],
         };
@@ -19,10 +18,7 @@ export const prepareConnectionData = (
     const supportedQueryTypes = options.query_types.filter((qt) => qt.allow_selector);
 
     return {
-        error: supportedQueryTypes.length
-            ? undefined
-            : // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
-              i18n('error_unsupported-connection'),
+        error: supportedQueryTypes.length ? undefined : i18n('error_unsupported-connection'),
         queryTypes: supportedQueryTypes,
     };
 };

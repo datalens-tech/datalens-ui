@@ -44,6 +44,10 @@ export default function xDlContext() {
         }
 
         req.headers[DL_CONTEXT_HEADER] = JSON.stringify(context);
+        req.originalContext.set(
+            'tenantId',
+            tenantId && Array.isArray(tenantId) ? tenantId.join(',') : tenantId,
+        );
 
         next();
     };

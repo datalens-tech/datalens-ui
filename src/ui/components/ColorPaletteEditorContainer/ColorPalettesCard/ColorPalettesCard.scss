@@ -33,6 +33,15 @@
         margin-bottom: 10px;
     }
 
+    &__add-palette-button_condensed {
+        margin-left: 0;
+        margin-top: 0;
+    }
+
+    &__list-items_condensed {
+        margin-bottom: 10px;
+    }
+
     &__list-item-wrapper:hover &__more-icon {
         opacity: 1;
     }

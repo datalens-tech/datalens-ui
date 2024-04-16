@@ -1,5 +1,6 @@
 import libs from './libs';
 import chartRegistry from './units/chart';
+import collectionsRegistry from './units/collections';
 import commonRegistry from './units/common';
 import connectionsRegistry from './units/connections';
 import dashRegistry from './units/dash';
@@ -23,6 +24,7 @@ export const registry = {
     wizard: wizardRegistry,
     public: publicRegistry,
     workbooks: workbooksRegistry,
+    collections: collectionsRegistry,
     main: mainRegistry,
     docs: docsRegistry,
 
