@@ -1,4 +1,5 @@
 @import '~@gravity-ui/uikit/styles/mixins';
+@import '../../../../styles/mixins';
 
 .dl-entry-panel {
     $class: &;
@@ -62,5 +63,9 @@
 
     &__cloud-select-container {
         margin-right: 8px;
+    }
+
+    &__item {
+        @include dl-breadcrumbs-items-style;
     }
 }
