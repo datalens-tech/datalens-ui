@@ -7,6 +7,7 @@ import {EntryDialogProps} from '../types';
 
 export interface DialogAccessProps extends EntryDialogProps {
     entry: GetEntryResponse;
+    showCustomDescription?: boolean;
 }
 
 export const DialogAccess: React.FC<DialogAccessProps> = (props) => {

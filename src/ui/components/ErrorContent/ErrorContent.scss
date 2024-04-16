@@ -137,5 +137,9 @@
     &__yfm {
         margin-top: 10px;
         font-size: var(--g-text-body-1-font-size);
+
+        &_without-title {
+            margin-top: 0;
+        }
     }
 }
