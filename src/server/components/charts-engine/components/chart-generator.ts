@@ -207,11 +207,6 @@ export const chartGenerator = {
 
         const type = chartTemplate.identifyChartType(data, req);
 
-        let links;
-        if (chartTemplate.identifyLinks) {
-            links = chartTemplate.identifyLinks(data, req);
-        }
-
         chart.params = chart.params.replace('#params', JSON.stringify(params));
         if (chart.params.indexOf('#module') > -1) {
             chart.params = chart.params.replace('#module', chartTemplate.module);
@@ -244,6 +239,6 @@ export const chartGenerator = {
 
         const {config: _, ...chartWithoutConfig} = chart;
 
-        return {chart: isD3Graph ? chart : chartWithoutConfig, links, type};
+        return {chart: isD3Graph ? chart : chartWithoutConfig, type};
     },
 };
