@@ -116,6 +116,7 @@ export interface DashTabItemText extends DashTabItemBase {
     type: DashTabItemType.Text;
     data: {
         text: string;
+        autoHeight?: boolean;
     };
 }
 
@@ -125,6 +126,7 @@ export interface DashTabItemTitle extends DashTabItemBase {
         text: string;
         size: DashTabItemTitleSize;
         showInTOC: boolean;
+        autoHeight?: boolean;
     };
 }
 
@@ -276,5 +278,8 @@ export interface DashStats {
     dashId: string;
     dashTabId: string;
     dashStateHash: string | null;
-    login: string;
+    login?: string;
+    userId: string;
+    tenantId: string;
+    traceId?: string;
 }

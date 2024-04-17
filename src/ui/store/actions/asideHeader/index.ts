@@ -4,7 +4,9 @@ import type {Optional} from 'utility-types';
 import logger from 'libs/logger';
 import type {OpenNavigationAction, CloseNavigationAction} from './navigation';
 import {registry} from '../../../registry';
-import {AppDispatch} from '../../index';
+import type {AppDispatch} from '../../index';
+import type {DatalensGlobalState} from 'ui';
+import {selectAsideHeaderData} from 'ui/store/selectors/asideHeader';
 export * from './navigation';
 
 export const SET_ASIDE_HEADER_DATA = Symbol('asideHeader/SET_ASIDE_HEADER_DATA');
@@ -19,10 +21,19 @@ type SetAsideHeaderDataAction = {
     asideHeaderData: AsideHeaderData;
 };
 
-export const setAsideHeaderData = (asideHeaderData: AsideHeaderData): SetAsideHeaderDataAction => {
-    return {
-        type: SET_ASIDE_HEADER_DATA,
-        asideHeaderData,
+export const setAsideHeaderData = (asideHeaderData: AsideHeaderData) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
+        // This action is called to many times while rendering
+        // so optimize store dispatches
+        // we should check if object is really changed
+        const stateHeaderData = selectAsideHeaderData(getState());
+
+        if (stateHeaderData?.size !== asideHeaderData.size) {
+            dispatch({
+                type: SET_ASIDE_HEADER_DATA,
+                asideHeaderData,
+            });
+        }
     };
 };
 

@@ -1,4 +1,4 @@
-import {YFM_MARKDOWN_CLASSNAME} from 'constants/yfm';
+import {YFM_CUT_MARKDOWN_CLASSNAME, YFM_MARKDOWN_CLASSNAME} from 'constants/yfm';
 
 import React from 'react';
 
@@ -531,7 +531,10 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                     return;
                 }
                 let targetEl = mutatedItem?.target as Element;
-                const hasYfm = targetEl?.classList.contains(YFM_MARKDOWN_CLASSNAME);
+                const hasYfm =
+                    targetEl?.classList.contains(YFM_MARKDOWN_CLASSNAME) ||
+                    targetEl?.classList.contains(YFM_CUT_MARKDOWN_CLASSNAME);
+
                 if (hasYfm) {
                     needUpdate = true;
                 }
@@ -587,6 +590,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             mutationObserver.current.observe(rootNodeRef.current, {
                 childList: true,
                 subtree: true,
+                attributes: true,
+                attributeFilter: ['class'],
             });
         }
         return () => {

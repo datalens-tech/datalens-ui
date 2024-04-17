@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {ChartkitMenuDialogsQA, ChartKitTableQa, MenuItemsQA} from '../../../src/shared';
+import {ChartkitMenuDialogsQA, ChartKitTableQa, ChartQa, MenuItemsQA} from '../../../src/shared';
 import {slct, waitForCondition} from '../../utils';
 import {readDownload} from '../../utils/playwright/utils';
 
@@ -33,7 +33,7 @@ export default class ChartKit {
     xAxisLabel = '.highcharts-xaxis-labels text';
     chartTitle = '.highcharts-title';
     navigator = '.highcharts-navigator';
-    metricItemSelector = '.chartkit-indicator__item,.markup-metric';
+    metricItemSelector = ['.chartkit-indicator__item', slct(ChartQa.Chart)].join();
     metricItemValueSelector = '.chartkit-indicator__item-value,.markup-metric-value';
 
     private drillArrowsSelector = '.chartkit-drill__drill-action';
@@ -151,7 +151,7 @@ export default class ChartKit {
         const content = await readDownload(download);
         await download.delete();
 
-        return content;
+        return content?.toString('utf8');
     }
 
     async exportMarkdown() {

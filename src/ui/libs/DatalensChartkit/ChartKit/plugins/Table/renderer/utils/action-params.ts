@@ -1,4 +1,4 @@
-import {pickActionParamsFromParams} from '@gravity-ui/dashkit';
+import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import type {TableCommonCell, TableWidgetEventScope} from 'shared';
 import {TableCell, TableCellsRow, TableHead, TableRow} from 'shared';
 

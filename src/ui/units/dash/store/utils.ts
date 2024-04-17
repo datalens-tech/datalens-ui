@@ -1,4 +1,4 @@
-import {generateUniqId} from '@gravity-ui/dashkit';
+import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import {I18n} from 'i18n';
 import {DashLoadPriority, FakeDashData} from 'shared/types/dash';
 import {DL, URL_QUERY} from 'ui/constants';

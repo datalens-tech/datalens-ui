@@ -108,4 +108,8 @@
         margin-bottom: 10px;
         border-bottom: 1px solid var(--g-color-line-generic);
     }
+
+    &__item-select-popup {
+        max-height: 288px;
+    }
 }
