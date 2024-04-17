@@ -29,7 +29,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
     const allowLanguages = (regionalEnvConfig?.allowLanguages || FALLBACK_LANGUAGES) as Language[];
 
     const cookie = req.cookies[USER_SETTINGS_KEY];
-    let lang = Language.En;
+    let lang = Language.Ru;
     let theme;
     try {
         const preparedCookie = JSON.parse(cookie);
@@ -41,7 +41,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
 
     const isAllowed = allowLanguages.includes(lang || '');
     if (!isAllowed) {
-        lang = Language.En;
+        lang = Language.Ru;
     }
 
     // TODO: check and remove optional props;
