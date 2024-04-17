@@ -119,18 +119,14 @@ function getXlsxFormattedCellData(value, options) {
                 dateValue = dateTimeUtc({input: value});
             }
             if (dateValue?.isValid()) {
-                dateValue = dateValue.toISOString();
-            } else {
                 return {v: value};
             }
-        }
-
-        if (!dateValue) {
+        } else {
             return {v: value};
         }
 
         return {
-            v: dateValue,
+            v: dateValue.toISOString(),
             t: 'd',
             z: dateFormat.toLowerCase(),
         };
