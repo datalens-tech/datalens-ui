@@ -130,6 +130,10 @@
     .yfm-tab.active {
         border-bottom-color: var(--g-color-line-brand);
     }
+
+    .yfm-term_dfn {
+        background: var(--g-color-base-background);
+    }
 }
 
 .g-root_theme_dark .yfm,
@@ -166,4 +170,9 @@
             color: var(--yfm-colorify-#{$name});
         }
     }
+}
+
+.g-root_theme_dark .yfm .yfm-colorify,
+.g-root_theme_dark-hc .yfm .yfm-colorify {
+    --yfm-color-text-orange: var(--g-color-private-orange-750-solid);
 }
