@@ -35,12 +35,12 @@ export const getChartkitMenuByType = (props?: GetChartkitMenuByType) => {
 
     const chartsDataProvider = dataProvider as ChartKitDataProvider;
 
-    //const isEditVisible = isEditAvaible === undefined ? {} : {isVisible: () => isEditAvaible};
+    const isEditVisible = isEditAvaible === undefined ? {} : {isVisible: () => isEditAvaible};
 
-    const isEditVisible = isEditAvaible === undefined ? {} : {isVisible: () => { 
+    /*const isEditVisible = isEditAvaible === undefined ? {} : {isVisible: () => { 
         var decodedString = atob(Utils.getRpcAuthorization());
         return 'manager' == decodedString.split(':')[0];
-    }};
+    }};*/
 
     return getChartkitMenuItems({
         type,
