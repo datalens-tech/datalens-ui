@@ -9,7 +9,7 @@ import {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/get
 
 import {getChartkitMenuItems} from '../../menu/Menu';
 import URI from '../uri/uri';
-import Utils from 'ui/utils';
+//import Utils from 'ui/utils';
 
 export function isChartkitMenuItemVisible() {
     const wizardNewChartPathnames = ['/wizard/new', '/wizard/', '/wizard'];
