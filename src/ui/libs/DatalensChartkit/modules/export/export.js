@@ -118,7 +118,9 @@ function getXlsxFormattedCellData(value, options) {
             if (!dateValue?.isValid()) {
                 dateValue = dateTimeUtc({input: value});
             }
-            if (!dateValue?.isValid()) {
+            if (dateValue?.isValid()) {
+                dateValue = dateValue.toISOString();
+            } else {
                 return {v: value};
             }
         }
@@ -128,7 +130,7 @@ function getXlsxFormattedCellData(value, options) {
         }
 
         return {
-            v: dateValue.toISOString(),
+            v: dateValue,
             t: 'd',
             z: dateFormat.toLowerCase(),
         };
