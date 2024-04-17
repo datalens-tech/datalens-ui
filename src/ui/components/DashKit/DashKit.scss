@@ -9,6 +9,8 @@
     }
 
     .dashkit-grid-item {
+        z-index: 1;
+
         div.yfm {
             @include text-body-2();
         }
