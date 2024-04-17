@@ -151,7 +151,7 @@ export default class ChartKit {
         const content = await readDownload(download);
         await download.delete();
 
-        return content;
+        return content?.toString('utf8');
     }
 
     async exportMarkdown() {

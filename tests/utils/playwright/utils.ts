@@ -46,7 +46,7 @@ export const goToWithRetry = async (page: Page, url: string, retryCount = RETRIE
     }
 };
 
-export async function readDownload(download: Download): Promise<string | null> {
+export async function readDownload(download: Download): Promise<Buffer | null> {
     const stream = await download.createReadStream();
 
     if (!stream) {
