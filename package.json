@@ -98,7 +98,7 @@
     "tarjan-graph": "^2.0.0"
   },
   "devDependencies": {
-    "@gravity-ui/app-builder": "^0.7.1",
+    "@gravity-ui/app-builder": "^0.9.2",
     "@gravity-ui/components": "^3.4.0",
     "@gravity-ui/eslint-config": "^2.2.0",
     "@gravity-ui/icons": "^2.9.1",
