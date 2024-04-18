@@ -12,13 +12,20 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
 
         React.useLayoutEffect(() => {
             renderLatex().then(() => {
-                props.onRenderCallback?.();
+                //@ts-ignore
+                props.onRenderCallback?.(!props.autoHeight);
             });
-        });
+            //@ts-ignore
+        }, [renderLatex, props.onRenderCallback, props.autoHeight]);
 
         React.useEffect(() => {
             // TODO: https://github.com/datalens-tech/datalens-ui/issues/753
-            import('@diplodoc/latex-extension/runtime');
+
+            import('@diplodoc/latex-extension/runtime').then(() => {
+                //console.log('loaded');
+                //@ts-ignore
+                props.onRenderCallback?.(!props.autoHeight);
+            });
         }, []);
 
         return (

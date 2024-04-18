@@ -40,6 +40,9 @@ export type AdjustWidgetLayoutProps = {
     cb: PluginWidgetProps['adjustWidgetLayout'];
     mainNodeSelector?: string;
     scrollableNodeSelector?: string;
+    contentHeightSelector?: string;
+    contentScrollSelector?: string;
+    resetOverflow?: boolean;
 };
 
 const getScrollbarWidth = (node: HTMLElement) => node.offsetWidth - node.clientWidth;
@@ -110,7 +113,8 @@ export function adjustWidgetLayout({
     cb,
     mainNodeSelector,
     scrollableNodeSelector,
-}: AdjustWidgetLayoutProps) {
+}: //resetOverflow,
+AdjustWidgetLayoutProps) {
     if (DL.IS_MOBILE || needSetDefault) {
         cb({widgetId, needSetDefault});
         return;
@@ -126,6 +130,14 @@ export function adjustWidgetLayout({
     ) as HTMLElement | null;
     const mainNode = node.querySelector(mainNodeSelector || `.${CHARTKIT_MAIN_CLASSNAME}`);
     const errorNode = node.querySelector(`.${CHARTKIT_ERROR_NODE_CLASSNAME}`);
+
+    /*const contentHeightSelectorNode = node.querySelector(
+        contentHeightSelector || '',
+    ) as HTMLElement | null;
+
+    const contentScrollSelectorNode = node.querySelector(
+        contentScrollSelector || '',
+    ) as HTMLElement | null;*/
 
     const rootNodeTopPosition = node.getBoundingClientRect().top;
 
@@ -151,6 +163,12 @@ export function adjustWidgetLayout({
         return;
     }
 
+    //const scrollBarHorizontal = mainNode ? scrollableNode.clientWidth - mainNode.clientWidth : 0;
+    /*const scrollBarVerticalOffset =
+        (scrollableNode.parentElement?.scrollHeight || 0) -
+        (scrollableNode.parentElement?.clientHeight || 0);*/
+    //console.log('scrollBarHorizontal', scrollBarHorizontal);
+
     const scrollableNodeTopPosition = scrollableNode.getBoundingClientRect().top;
     const scrollableNodeTopOffsetFromRoot = scrollableNodeTopPosition - rootNodeTopPosition;
     const belowLyingNodesHeight = collectBelowLyingNodesHeight(scrollableNode, node, 0);
@@ -172,7 +190,19 @@ export function adjustWidgetLayout({
         const reset = setOverflowYStyle(scrollableNode, 'scroll');
         scrollBar = getScrollbarWidth(scrollableNode);
         reset();
+        /*} else if (scrollBarHorizontal > 0) {
+        const reset = setOverflowYStyle(scrollableNode, 'hidden');
+        scrollHeight = scrollableNode.scrollHeight + scrollBarVerticalOffset;
+        scrollBar = scrollableNode.clientWidth >= scrollableNode.scrollWidth ? 0 : scrollBar;
+        reset();*/
     }
+    /*if (resetOverflow) {
+        debugger;
+        const tmp = scrollableNode.querySelector('.yfm');
+        const reset = setOverflowYStyle(tmp, 'scroll');
+        scrollBar = getScrollbarWidth(tmp);
+        reset();
+    }*/
 
     // Getting additional bottom paddings and margins around mainNode
     // for example tables spacing around scrollableNode

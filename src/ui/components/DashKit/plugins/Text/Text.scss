@@ -7,7 +7,19 @@
         padding-right: 5px;
     }
 
+    .dashkit-plugin-text_withMarkdown {
+        overflow: visible;
+        height: auto;
+        padding-right: 0;
+        display: table;
+    }
+
     .dashkit-grid-item__item_editMode & {
         background-color: var(--g-color-base-float);
+    }
+
+    .dashkit-plugin-text-container__content-wrap {
+        height: auto;
+        padding: 0;
     }
 }
