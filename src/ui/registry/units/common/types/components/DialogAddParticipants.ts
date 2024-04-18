@@ -8,4 +8,5 @@ export type DialogAddParticipantsProps = {
     mode?: 'add' | 'request';
     showParticipantsRequests?: boolean;
     showOwners?: boolean;
+    showCustomAccess?: boolean;
 };
