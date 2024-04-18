@@ -7,6 +7,10 @@ import SDK, {sdk} from '../../libs/sdk';
 import {registry} from '../../registry';
 
 import {DialogAccess, DialogAccessProps} from './DialogAccess/DialogAccess';
+import {
+    DialogAccessDescription,
+    DialogAccessDescriptionProps,
+} from './DialogAccessDescription/DialogAccessDescription';
 import {DialogCopyEntry, DialogCopyEntryProps} from './DialogCopyEntry';
 import {DialogCreateDashboard, DialogCreateDashboardProps} from './DialogCreateDashboard';
 import {DialogCreateEditorChart, DialogCreateEditorChartProps} from './DialogCreateEditorChart';
@@ -36,6 +40,7 @@ export enum EntryDialogName {
     Delete = 'delete',
     CreateFolder = 'create_folder',
     Access = 'access',
+    AccessDescription = 'access_description',
     Unlock = 'unlock',
     DashMeta = 'dash_meta',
     CreateDashboard = 'create_dashboard',
@@ -53,6 +58,7 @@ const getMapDialogues = (): Record<string, any> => {
     const {getAdditionalEntryDialoguesMap} = registry.common.functions.getAll();
     return {
         [EntryDialogName.Access]: DialogAccess,
+        [EntryDialogName.AccessDescription]: DialogAccessDescription,
         [EntryDialogName.Unlock]: DialogUnlock,
         [EntryDialogName.DashMeta]: DialogDashMeta,
         [EntryDialogName.Delete]: DialogDeleteEntry,
@@ -77,6 +83,7 @@ const getMapDialogues = (): Record<string, any> => {
 // For the TSX component
 interface MapDialoguesProps {
     [EntryDialogName.Access]: DialogAccessProps;
+    [EntryDialogName.AccessDescription]: DialogAccessDescriptionProps;
     [EntryDialogName.Unlock]: DialogUnlockProps;
     [EntryDialogName.DashMeta]: DialogDashMetaProps;
     [EntryDialogName.Delete]: DialogDeleteEntryProps;

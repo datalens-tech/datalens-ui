@@ -76,6 +76,7 @@ export enum Feature {
     EnableServerlessEditor = 'EnableServerlessEditor',
     NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
     ChartWithFnLogging = 'ChartWithFnLogging',
+    CustomAccessDescription = 'CustomAccessDescription',
 }
 
 export type FeatureConfig = Record<string, boolean>;
