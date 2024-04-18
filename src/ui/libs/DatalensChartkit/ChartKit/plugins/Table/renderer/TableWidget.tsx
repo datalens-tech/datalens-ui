@@ -13,7 +13,7 @@ import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../helpers/constants';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import {i18n} from '../../../modules/i18n/i18n';
 import Performance from '../../../modules/perfomance';
-import {useTableEvents} from '../hooks/use-table-events';
+import {useTableEvents} from '../hooks';
 import type {TableWidgetProps} from '../types';
 
 import {getCellCss, getCurrentActionParams} from './utils';

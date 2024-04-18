@@ -12,8 +12,7 @@ import block from 'bem-cn-lite';
 import {TableBody} from './components/TableBody/TableBody';
 import {TableFooter} from './components/TableFooter/TableFooter';
 import {TableHead} from './components/TableHead/TableHead';
-import {useDevicePixelRatio} from './hooks/use-device-pixel-ratio';
-import {useTableDimensions} from './hooks/use-table-dimensions';
+import {useDevicePixelRatio, useTableDimensions} from './hooks';
 import type {TableProps} from './types';
 import {getTableColumns, getTableData} from './utils';
 
@@ -80,23 +79,21 @@ export const Table = (props: TableProps) => {
     }
 
     return (
-        <div style={{overflow: 'auto', height: '100%', position: 'relative'}}>
-            <table ref={tableRef} className={b()} data-qa={qa} style={tableStyle}>
-                {title && <caption className={b('title')}>{title.text}</caption>}
-                <TableHead
-                    headers={table.getHeaderGroups()}
-                    sticky={headerOptions?.sticky}
-                    tableDimensions={tableDimensions}
-                />
-                <TableBody
-                    columns={columns}
-                    tableDimensions={tableDimensions}
-                    rows={tableRows}
-                    noData={noData}
-                    onCellClick={onCellClick}
-                />
-                {shouldShowFooter && <TableFooter footerGroups={table.getFooterGroups()} />}
-            </table>
-        </div>
+        <table ref={tableRef} className={b()} data-qa={qa} style={tableStyle}>
+            {title && <caption className={b('title')}>{title.text}</caption>}
+            <TableHead
+                headers={table.getHeaderGroups()}
+                sticky={headerOptions?.sticky}
+                tableDimensions={tableDimensions}
+            />
+            <TableBody
+                columns={columns}
+                tableDimensions={tableDimensions}
+                rows={tableRows}
+                noData={noData}
+                onCellClick={onCellClick}
+            />
+            {shouldShowFooter && <TableFooter footerGroups={table.getFooterGroups()} />}
+        </table>
     );
 };

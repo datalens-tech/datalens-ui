@@ -47,11 +47,11 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
         if (!isEqual(tableDimensions, updates)) {
             setTableDimensions(updates);
         }
-    }, [data]);
+    }, [hasPinnedColumns, tableDimensions, tableRef]);
 
     React.useLayoutEffect(() => {
         setDimensions();
-    }, [data]);
+    }, [data, setDimensions]);
 
     const resizeObserver = React.useRef<ResizeObserver | null>(null);
     React.useLayoutEffect(() => {
@@ -66,7 +66,7 @@ export const useTableDimensions = (args: UseTableDimensionsArgs) => {
             resizeObserver.current?.disconnect();
             resizeObserver.current = null;
         };
-    }, []);
+    }, [setDimensions, tableRef]);
 
     return {tableDimensions};
 };

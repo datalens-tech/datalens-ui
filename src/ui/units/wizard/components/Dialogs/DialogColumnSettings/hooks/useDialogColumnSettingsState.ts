@@ -1,6 +1,6 @@
-import React, {ChangeEvent} from 'react';
+import React from 'react';
 
-import {ColumnSettings, DATASET_FIELD_TYPES, DatasetFieldType} from 'shared';
+import type {ColumnSettings, DATASET_FIELD_TYPES, DatasetFieldType} from 'shared';
 
 import {DialogColumnSettingsFields} from '../DialogColumnSettings';
 import {mapFieldsToColumnSettingsState} from '../utils';
@@ -37,7 +37,7 @@ export const useDialogColumnSettingsState = (args: UseDialogColumnSettingsStateA
     }>({columns, rows});
 
     const [pinnedColumns, pinColumns] = React.useState(initialPinnedColumnCount);
-    const handleChangeFrozenColumnsNumber = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleChangeFrozenColumnsNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
         pinColumns(Number(event.target.value));
     };
 

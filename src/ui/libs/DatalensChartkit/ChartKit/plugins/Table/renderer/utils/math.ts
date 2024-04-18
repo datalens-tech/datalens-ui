@@ -8,7 +8,7 @@ const isStringValueInPixel = (value = '') => {
     return value.endsWith('px') && !Number.isNaN(Number.parseFloat(value));
 };
 
-// ToDo: import from chartKit when it becomes possible
+// TODO: import from chartKit when it becomes possible
 export const calculateNumericProperty = (args: {value?: string | number | null; base?: number}) => {
     const {value = '', base} = args;
 

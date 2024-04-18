@@ -118,9 +118,14 @@ export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
                 {!isEmpty(fields.columns) && (
                     <React.Fragment>
                         {!isPivotTableDialog && (
-                            <Subheader
-                                title={i18n('wizard', 'label_column-width')}
-                                tooltip={i18n('wizard', 'label_dialog-column-info-text')}
+                            <DialogRow
+                                title={
+                                    <Subheader
+                                        title={i18n('wizard', 'label_column-width')}
+                                        tooltip={i18n('wizard', 'label_dialog-column-info-text')}
+                                    />
+                                }
+                                setting={''}
                             />
                         )}
                         <ColumnWidthSettingsSection

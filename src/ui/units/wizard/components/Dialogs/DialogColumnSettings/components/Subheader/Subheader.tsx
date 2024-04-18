@@ -16,7 +16,7 @@ export const Subheader = (props: Props) => {
     const {title, tooltip} = props;
 
     return (
-        <div className={b('subheader-wrapper')}>
+        <div>
             <span className={b('subheader')}>{title}</span>
             {tooltip && <HelpPopover content={tooltip} placement={'right'} />}
         </div>
