@@ -1,18 +1,38 @@
 import React from 'react';
 
+import {HelpPopover} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 import {ControlQA} from 'shared';
+import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
 import {DL} from 'ui/constants';
+import {getSdk} from 'ui/libs/schematic-sdk';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {CONTROL_TYPE} from '../../../modules/constants/constants';
 
 const b = block('chartkit-control-item');
 
+const TooltipWithMarkdown = (props) => {
+    const {markdown} = props;
+    const [tooltipText, setTooltipText] = React.useState();
+    React.useEffect(() => {
+        getSdk()
+            .mix.renderMarkdown({text: markdown, lang: DL.USER_LANG})
+            .then((response) => {
+                const yfmString = response.result;
+                setTooltipText(<YfmWrapper content={yfmString} setByInnerHtml={true} />);
+            });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return <React.Fragment>{tooltipText}</React.Fragment>;
+};
+
 function withWrapForControls(WrappedComponent) {
     function WithWrapForControls(props) {
-        const {type, width, hidden, label, labelInside, className, style, renderOverlay} = props;
+        const {type, width, hidden, label, labelInside, className, style, renderOverlay, hint} =
+            props;
 
         if (hidden) {
             return null;
@@ -38,6 +58,12 @@ function withWrapForControls(WrappedComponent) {
                 {showLabel && (
                     <span className={b('title')} data-qa={ControlQA.controlLabel}>
                         {label}
+                        {hint && (
+                            <HelpPopover
+                                content={<TooltipWithMarkdown markdown={hint} />}
+                                className={b('hint')}
+                            />
+                        )}
                     </span>
                 )}
                 <WrappedComponent {...props} />

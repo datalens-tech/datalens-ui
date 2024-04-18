@@ -106,6 +106,7 @@ export interface SelectControlProps {
     hasValidationError: boolean;
     renderOverlay?: () => React.ReactNode;
     style?: React.CSSProperties;
+    hint?: string;
 }
 
 export type ChartControlRef =
