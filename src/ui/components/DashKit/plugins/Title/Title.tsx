@@ -2,6 +2,7 @@ import React from 'react';
 
 import {PluginTitle, PluginTitleProps, pluginTitle} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
+import debounce from 'lodash/debounce';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
 import {RENDERER_WRAPPER_CLASSNAME, RendererWrapper} from '../RendererWrapper/RendererWrapper';
@@ -11,6 +12,8 @@ import './Title.scss';
 const b = block('dashkit-plugin-title-container');
 
 type Props = PluginTitleProps;
+
+const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
 
 const titlePlugin = {
     ...pluginTitle,
@@ -24,7 +27,7 @@ const titlePlugin = {
          * call common for charts & selectors adjust function for widget
          */
         const adjustLayout = React.useCallback(
-            (needSetDefault) => {
+            debounce((needSetDefault) => {
                 dashkitAdjustWidgetLayout({
                     widgetId: props.id,
                     needSetDefault,
@@ -35,7 +38,7 @@ const titlePlugin = {
                     mainNodeSelector: `.${RENDERER_WRAPPER_CLASSNAME}`,
                     scrollableNodeSelector: `.${b()}`,
                 });
-            },
+            }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
             [props.id, rootNodeRef, props.adjustWidgetLayout, props.layout, props.gridLayout],
         );
 
