@@ -155,33 +155,6 @@ type Chart = {
     statface_graph?: string;
 };
 
-export function getChartTemplate({
-    data,
-    template,
-    ctx,
-}: {
-    data: {type?: string};
-    template?: keyof ChartTemplates;
-    ctx: AppContext;
-}) {
-    const config = ctx.config as ConfigWithChartTemplates;
-    const chartTemplates = config.chartTemplates;
-
-    const chartOldType = data.type;
-
-    if (!template && chartOldType) {
-        template = chartOldType as keyof ChartTemplates;
-    }
-
-    const chartTemplate = template && chartTemplates[template];
-
-    if (!chartTemplate) {
-        throw new Error('Unknown chart template');
-    }
-
-    return chartTemplate;
-}
-
 export const chartGenerator = {
     generateChart: ({
         data,
@@ -194,8 +167,21 @@ export const chartGenerator = {
         req: Request;
         ctx: AppContext;
     }) => {
-        const chartTemplate = getChartTemplate({template, data, ctx});
+        const config = ctx.config as ConfigWithChartTemplates;
+        const chartTemplates = config.chartTemplates;
         const chart: Chart = {...commonTemplate};
+
+        const chartOldType = data.type;
+
+        if (!template && chartOldType && chartOldType in chartTemplates) {
+            template = chartOldType as keyof ChartTemplates;
+        }
+
+        const chartTemplate = template && chartTemplates[template];
+
+        if (!chartTemplate) {
+            throw new Error('Unknown chart template');
+        }
 
         try {
             chart.shared = JSON.stringify(data, null, 4);
@@ -206,6 +192,11 @@ export const chartGenerator = {
         const params = chartTemplate.identifyParams(data, req);
 
         const type = chartTemplate.identifyChartType(data, req);
+
+        let links;
+        if (chartTemplate.identifyLinks) {
+            links = chartTemplate.identifyLinks(data, req);
+        }
 
         chart.params = chart.params.replace('#params', JSON.stringify(params));
         if (chart.params.indexOf('#module') > -1) {
@@ -237,8 +228,8 @@ export const chartGenerator = {
         chart.js = chart.js.replace('#apiVersion', apiVersion);
         chart.url = chart.url.replace('#apiVersion', apiVersion);
 
-        const {config: _, ...chartWithoutConfig} = chart;
+        const {config: _, ...chartWithoutCOnfig} = chart;
 
-        return {chart: isD3Graph ? chart : chartWithoutConfig, type};
+        return {chart: isD3Graph ? chart : chartWithoutCOnfig, links, type};
     },
 };

@@ -3,7 +3,7 @@ import {Request, Response} from '@gravity-ui/expresskit';
 import {ChartsEngine} from '..';
 import {EntryUpdateMode} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
-import {ChartTemplates, getChartTemplate} from '../components/chart-generator';
+import {ChartTemplates, chartGenerator} from '../components/chart-generator';
 import {chartValidator as validator} from '../components/chart-validator';
 import {
     ProviderCreateParams,
@@ -63,19 +63,13 @@ function prepareChartData(
 
     try {
         if (typeof template !== 'undefined') {
-            try {
-                chart = {shared: JSON.stringify(data, null, 4)};
-            } catch (e) {
-                throw new Error('Invalid chart data');
-            }
-
-            const chartTemplate = getChartTemplate({data, template, ctx});
-            type = chartTemplate.identifyChartType(data, req);
-            links = chartTemplate.identifyLinks?.(data, req);
+            ({chart, type, links} = chartGenerator.generateChart({data, template, req, ctx}));
 
             // Convert from wizard to editor script
             if (data.convert) {
                 type = type.replace(/_wizard/, '');
+            } else {
+                chart = {shared: chart.shared};
             }
         } else if (type) {
             if (validator.validate({data, type})) {
