@@ -210,6 +210,7 @@ export interface DashTabItemControlElementBase {
     innerTitle?: string;
     fieldType?: string;
     required?: boolean;
+    hint?: string;
 }
 
 export interface DashTabItemControlElementSelect extends DashTabItemControlElementBase {

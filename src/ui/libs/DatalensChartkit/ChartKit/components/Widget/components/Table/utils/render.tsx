@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {HelpPopover} from '@gravity-ui/components';
 import {Minus, Plus} from '@gravity-ui/icons';
 import DataTable, {Column, SortOrder} from '@gravity-ui/react-data-table';
 import {Button, Icon, Link, Popover} from '@gravity-ui/uikit';
@@ -388,7 +389,7 @@ export const getColumnsAndNames = ({
                 result.columns.push(columnData);
                 result.names = result.names.concat(names);
             } else {
-                const {id, name, type, css: columnCss, group, autogroup, ...options} = column;
+                const {id, name, type, css: columnCss, group, autogroup, hint, ...options} = column;
                 const columnWidth = topLevelWidth || column.width;
                 const columnName = generateName({id, name, level, shift, index});
 
@@ -429,6 +430,13 @@ export const getColumnsAndNames = ({
                                 <Markup item={column.markup} />
                             ) : (
                                 column.formattedName ?? column.name
+                            )}
+                            {hint && (
+                                <HelpPopover
+                                    className={b('column-hint')}
+                                    size={'s'}
+                                    content={get(column, 'hint')}
+                                />
                             )}
                         </span>
                     ),

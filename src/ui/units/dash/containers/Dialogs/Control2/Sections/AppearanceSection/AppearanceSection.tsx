@@ -4,6 +4,7 @@ import {I18n} from 'i18n';
 
 import {SectionWrapper} from '../../../../../../../components/SectionWrapper/SectionWrapper';
 
+import {HintRow} from './Rows/HintRow/HintRow';
 import {InnerTitleRow} from './Rows/InnerTitleRow/InnerTitleRow';
 import {TitleRow} from './Rows/TitleRow/TitleRow';
 
@@ -16,6 +17,7 @@ const AppearanceSection = () => {
         <SectionWrapper title={i18n('label_section-appearance')}>
             <TitleRow />
             <InnerTitleRow />
+            <HintRow />
         </SectionWrapper>
     );
 };

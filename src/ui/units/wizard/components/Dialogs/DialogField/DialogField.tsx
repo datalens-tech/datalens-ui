@@ -19,6 +19,7 @@ import {
     isPseudoField,
 } from 'shared';
 import {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
+import {FieldHintSetting} from 'ui/components/FieldHintSetting/FieldHintSetting';
 import {setExtraSettings} from 'ui/units/wizard/actions/widget';
 import {
     getDefaultSubTotalsSettings,
@@ -99,6 +100,7 @@ export type DialogFieldState = Optional<FieldStateExtend> & {
     visualizationId?: string;
     currentPlaceholder?: Placeholder;
     displayMode?: TableFieldDisplayMode;
+    hint?: string;
 };
 
 const b = block('wizard-dialog-field');
@@ -126,6 +128,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
 
         const initialState: DialogFieldState = {
             formatting: props.item?.formatting || ({} as CommonNumberFormattingOptions),
+            hint: props.item?.hint,
             isBarsSettingsEnabled:
                 !isPivotFallbackTurnedOn &&
                 showBarsInDialogField(visualizationId, props.placeholderId, props.item),
@@ -363,6 +366,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                         handleDateGroupUpdate={this.handleDateGroupUpdate}
                     />
                 )}
+                {this.renderHintSettings()}
                 {this.props.formattingEnabled && (
                     <Formatting
                         dataType={formattingDataType}
@@ -377,6 +381,30 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                 {this.renderBarsSettings()}
                 {this.renderBackgroundSettings()}
             </>
+        );
+    }
+
+    private renderHintSettings() {
+        const {item, placeholderId} = this.props;
+        const {hint} = this.state;
+
+        if (!item || placeholderId !== PlaceholderId.FlatTableColumns) {
+            return null;
+        }
+
+        return (
+            <DialogFieldRow
+                title={i18n('wizard', 'label_hint')}
+                setting={
+                    <FieldHintSetting
+                        hint={hint}
+                        fieldDescription={item.description}
+                        onChange={(value) => {
+                            this.setState({hint: value});
+                        }}
+                    />
+                }
+            />
         );
     }
 
