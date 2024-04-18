@@ -1,6 +1,7 @@
 import isPlainObject from 'lodash/isPlainObject';
 
-import {MarkupItem, MarkupItemType, MarkupItemTypes} from '../types';
+import {MarkupItemTypes} from '../types';
+import type {MarkupItem, MarkupItemType} from '../types';
 
 export function isMarkupItem(obj: unknown): obj is MarkupItem {
     return isPlainObject(obj) && isMarkupObject(obj as object);

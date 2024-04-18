@@ -34,6 +34,8 @@ import iconSchoolbookJournal from '../../assets/icons/connections/schoolbook-jou
 import iconSmbHeatmaps from '../../assets/icons/connections/smb-heatmaps.svg';
 import iconSnowflake from '../../assets/icons/connections/snowflake.svg';
 import iconUndefined from '../../assets/icons/connections/undefined.svg';
+import iconUsageTrackingYCDetailed from '../../assets/icons/connections/utyc-detailed.svg';
+import iconUsageTrackingYCLight from '../../assets/icons/connections/utyc-light.svg';
 import iconUsageTrackingYT from '../../assets/icons/connections/utyt.svg';
 import iconYaMusicPodcast from '../../assets/icons/connections/ya-music-podcast.svg';
 import iconYadocs from '../../assets/icons/connections/yadocs.svg';
@@ -122,6 +124,10 @@ export const getConnectorIconDataWithoutDefault = (type?: string): IconData | un
             return iconBigQuery;
         case ConnectorType.UsageTrackingYT:
             return iconUsageTrackingYT;
+        case ConnectorType.UsageAnalyticsDetailed:
+            return iconUsageTrackingYCDetailed;
+        case ConnectorType.UsageAnalyticsLight:
+            return iconUsageTrackingYCLight;
         case ConnectorType.Snowflake:
             return iconSnowflake;
         case ConnectorType.Equeo:

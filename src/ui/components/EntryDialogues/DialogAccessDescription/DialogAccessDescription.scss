@@ -1,0 +1,9 @@
+.dialog-access-description {
+    max-height: 90vh;
+    height: 680px;
+    width: 980px;
+
+    &__body {
+        display: flex;
+    }
+}

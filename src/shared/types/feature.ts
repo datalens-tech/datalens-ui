@@ -77,6 +77,7 @@ export enum Feature {
     NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
+    CustomAccessDescription = 'CustomAccessDescription',
 }
 
 export type FeatureConfig = Record<string, boolean>;

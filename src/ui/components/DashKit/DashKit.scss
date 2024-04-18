@@ -9,7 +9,7 @@
     }
 
     .dashkit-grid-item {
-        overflow: hidden;
+        z-index: 1;
 
         div.yfm {
             @include text-body-2();
