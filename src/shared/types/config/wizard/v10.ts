@@ -61,6 +61,7 @@ export interface V10CommonSharedExtraSettings {
     navigatorSettings?: V10NavigatorSettings;
     enableGPTInsights?: boolean;
     labelsPosition?: LabelsPositions;
+    pinnedColumns?: number;
 }
 
 export type V10NavigatorSettings = {

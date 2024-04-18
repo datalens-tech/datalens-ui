@@ -478,15 +478,20 @@ export function openWizardDialogFilter({
 }
 
 type OpenDialogColumnSettingsArguments = {
-    onApply: (fields: {columns: ColumnSettingsState; rows: ColumnSettingsState}) => void;
+    onApply: (
+        fields: {columns: ColumnSettingsState; rows: ColumnSettingsState},
+        pinnedColumns?: number,
+    ) => void;
     fields: DialogColumnSettingsFields;
     visualizationId: WizardVisualizationId;
+    pinnedColumns?: number;
 };
 
 export function openDialogColumnSettings({
     onApply,
     fields,
     visualizationId,
+    pinnedColumns,
 }: OpenDialogColumnSettingsArguments) {
     return function (dispatch: WizardDispatch) {
         dispatch(
@@ -495,11 +500,9 @@ export function openDialogColumnSettings({
                 props: {
                     visualizationId,
                     fields,
-                    onApply: (updatedFields: {
-                        columns: ColumnSettingsState;
-                        rows: ColumnSettingsState;
-                    }) => {
-                        onApply(updatedFields);
+                    pinnedColumns,
+                    onApply: (args) => {
+                        onApply(args.fields, args.pinnedColumns);
                         dispatch(closeDialog());
                     },
                     onClose: () => dispatch(closeDialog()),

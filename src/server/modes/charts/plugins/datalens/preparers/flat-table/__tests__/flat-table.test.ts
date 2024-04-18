@@ -8,6 +8,19 @@ const {
     flatTablePrepareForQLResult,
 } = require('./mocks/flat-table.mock');
 
+jest.mock('../../../../../../../registry', () => ({
+    registry: {
+        getApp: () => ({nodekit: {ctx: {}}}),
+    },
+}));
+jest.mock('../../../../../../../../shared', () => {
+    const originalModule = jest.requireActual('../../../../../../../../shared');
+    return {
+        ...originalModule,
+        isEnabledServerFeature: () => true,
+    };
+});
+
 describe('prepareFlatTable', () => {
     describe('common', () => {
         test('should not use precision for integer cell', () => {

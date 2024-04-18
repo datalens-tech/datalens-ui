@@ -1,20 +1,82 @@
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
+import {CaretLeft, CaretRight} from '@gravity-ui/icons';
+import {Icon} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {
     BarTableCell,
     BarViewOptions,
+    ChartKitTableQa,
     NumberViewOptions,
     TableCommonCell,
     TableHead,
     isMarkupItem,
 } from 'shared';
 
+import type {THead} from '../../../../../../../components/Table/types';
 import {numberFormatter} from '../../../../components/Widget/components/Table/utils/misc';
 import {BarCell} from '../components/BarCell/BarCell';
 import {MarkupCell} from '../components/MarkupCell/MarkupCell';
 import {TreeCell} from '../components/TreeCell/TreeCell';
+
+import {calculateNumericProperty} from './math';
+
+const b = block('chartkit-table-widget');
+
+export type HeadCell = THead & {
+    name: string;
+    formattedName?: string;
+    fieldId?: string;
+    custom?: unknown;
+};
+
+export function mapHeadCell(th: TableHead, tableWidth?: number): HeadCell {
+    const columnType: TableCommonCell['type'] = get(th, 'type');
+    const cellWidth = calculateNumericProperty({value: th.width, base: tableWidth});
+
+    return {
+        ...th,
+        width: cellWidth,
+        id: String(th.id),
+        header: () => {
+            const cell = {
+                value: th.markup ?? th.name,
+                formattedValue: th.formattedName,
+                type: th.markup ? 'markup' : columnType,
+            };
+            return (
+                <span data-qa={ChartKitTableQa.HeadCellContent}>
+                    {renderCellContent({cell, column: th, header: true})}
+                </span>
+            );
+        },
+        enableSorting: get(th, 'sortable', true),
+        sortingFn: columnType === 'number' ? 'alphanumeric' : 'auto',
+        enableRowGrouping: get(th, 'group', false),
+        cell: (cellData) => {
+            const cell = cellData as TableCommonCell;
+            const contentStyles = getCellContentStyles({
+                cell,
+                column: th,
+            });
+            return (
+                <div data-qa={ChartKitTableQa.CellContent} style={{...contentStyles}}>
+                    {renderCellContent({cell, column: th})}
+                    {cell.sortDirection && (
+                        <Icon
+                            className={b('sort-icon')}
+                            data={cell.sortDirection === 'asc' ? CaretLeft : CaretRight}
+                        />
+                    )}
+                </div>
+            );
+        },
+        columns: get(th, 'sub', []).map(mapHeadCell),
+        pinned: get(th, 'pinned', false),
+    };
+}
 
 export function getCellContentStyles(args: {cell: TableCommonCell; column: TableHead}) {
     const {cell, column} = args;
