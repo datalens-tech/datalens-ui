@@ -163,6 +163,7 @@ export class BaseStorage {
 
         const traceId = ctx.getTraceId();
         const tenantId = ctx.get('tenantId');
+        const userId = ctx.get('userId');
 
         return retrieve
             .then((result) => {
@@ -173,6 +174,7 @@ export class BaseStorage {
                     statusCode: 200,
                     latency: new Date().getTime() - startTime,
                     tenantId,
+                    userId,
                 });
                 return result;
             })
@@ -184,6 +186,7 @@ export class BaseStorage {
                     tenantId,
                     statusCode: error.status || error.statusCode,
                     latency: new Date().getTime() - startTime,
+                    userId,
                 });
                 throw error;
             });

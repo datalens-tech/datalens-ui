@@ -793,6 +793,7 @@ export class DataFetcher {
                         traceId,
                         tenantId,
                         url: publicTargetUri,
+                        userId: userId || '',
                     });
 
                     if (error.response) {
@@ -899,6 +900,7 @@ export class DataFetcher {
                             url: publicTargetUri,
                             traceId,
                             tenantId,
+                            userId: userId || '',
                         });
 
                         if (response.statusCode === 204 && data === '') {
