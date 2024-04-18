@@ -32,6 +32,8 @@ import iconMSSQL from '../../assets/icons/files-con-mssql.svg';
 import iconMySQL from '../../assets/icons/files-con-mysql.svg';
 import iconOracle from '../../assets/icons/files-con-oracle.svg';
 import iconPostgreSQL from '../../assets/icons/files-con-postgresql.svg';
+import iconUsageTrackingYCDetailed from '../../assets/icons/files-con-utyc-detailed.svg';
+import iconUsageTrackingYCLight from '../../assets/icons/files-con-utyc-light.svg';
 import iconUsageTrackingYT from '../../assets/icons/files-con-utyt.svg';
 import iconYaMusicPodcast from '../../assets/icons/files-con-ya-music-podcast.svg';
 import iconYDB from '../../assets/icons/files-con-ydb.svg';
@@ -93,6 +95,8 @@ const typeToIcon: Record<string, IconData> = {
     [ConnectorType.SmbHeatmaps]: iconSmbHeatmaps,
     [ConnectorType.Bigquery]: iconBigQuery,
     [ConnectorType.UsageTrackingYT]: iconUsageTrackingYT,
+    [ConnectorType.UsageAnalyticsDetailed]: iconUsageTrackingYCDetailed,
+    [ConnectorType.UsageAnalyticsLight]: iconUsageTrackingYCLight,
     [ConnectorType.Snowflake]: iconSnowflake,
     [ConnectorType.Equeo]: iconEqueo,
     [ConnectorType.KonturMarket]: iconKonturMarket,

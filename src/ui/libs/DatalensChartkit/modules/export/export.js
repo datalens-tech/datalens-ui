@@ -1,4 +1,4 @@
-import {dateTimeParse} from '@gravity-ui/date-utils';
+import {dateTimeUtc} from '@gravity-ui/date-utils';
 import moment from 'moment';
 
 import {getFormatOptions, getXlsxNumberFormat, isMarkupItem} from '../../../../../shared';
@@ -114,9 +114,16 @@ function getXlsxFormattedCellData(value, options) {
         let dateValue = value;
 
         if (typeof value === 'string') {
-            dateValue = dateTimeParse(value, {format: dateFormat, timeZone: 'utc'});
-            if (!dateValue) {
-                dateValue = dateTimeParse(value, {timeZone: 'utc'});
+            dateValue = dateTimeUtc({input: value, format: dateFormat});
+            if (!dateValue?.isValid()) {
+                dateValue = dateTimeUtc({input: value});
+            }
+            if (dateValue?.isValid()) {
+                return {
+                    v: dateValue.toISOString(),
+                    t: 'd',
+                    z: dateFormat.toLowerCase(),
+                };
             }
         }
 

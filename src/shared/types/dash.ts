@@ -278,5 +278,8 @@ export interface DashStats {
     dashId: string;
     dashTabId: string;
     dashStateHash: string | null;
-    login: string;
+    login?: string;
+    userId: string;
+    tenantId: string;
+    traceId?: string;
 }

@@ -11,6 +11,7 @@ import {SelectorDialogState} from '../dashTyped';
 
 export type SelectorDialogValidation = {
     title?: string;
+    uniqueFieldName?: string;
     fieldName?: string;
     datasetFieldId?: string;
     defaultValue?: string;
