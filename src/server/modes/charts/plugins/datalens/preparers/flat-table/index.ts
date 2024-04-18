@@ -1,3 +1,5 @@
+import get from 'lodash/get';
+
 import {
     BarTableCell,
     DATASET_FIELD_TYPES,
@@ -105,6 +107,7 @@ function prepareFlatTable({
             name: actualTitle,
             type: 'text',
             width: getColumnWidthValue(widthSettings),
+            hint: get(item, 'hint'),
         };
 
         if (!isLastColumn && index < pinnedColumns) {
