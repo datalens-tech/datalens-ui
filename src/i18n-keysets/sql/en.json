@@ -35,6 +35,7 @@
   "label_params": "Params",
   "label_placeholder-default-value": "Default value",
   "label_placeholder-name": "Name",
+  "label_placeholder-label": "Label",
   "label_ql-auto-execution-chart": "Automatically apply changes",
   "label_query": "Query",
   "label_run": "Run",

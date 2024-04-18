@@ -21,6 +21,7 @@ export function prepareChartDataBeforeSave(chartData: QlConfig): QlConfig {
             return {
                 type: param.type,
                 name: param.name,
+                label: param.label,
                 defaultValue: param.defaultValue,
             };
         }),

@@ -85,6 +85,24 @@ export const entriesActions = {
             },
         }),
     }),
+    encodeId: createAction<any, any>({
+        method: 'GET',
+        path: (data) => { return `/encodeId?id=${data.id}` },
+        params: (_, headers) => ({
+            headers: {
+                ...headers
+            },
+        }),
+    }),
+    decodeId: createAction<any, any>({
+        method: 'GET',
+        path: (data) => { return `/decodeId?id=${data.id}` },
+        params: (_, headers) => ({
+            headers: {
+                ...headers
+            },
+        }),
+    }),
     setAccesses: createAction<any, any>({
         method: 'GET',
         path: (data) => { return `/updateAccesses?dl=${data.dl}&role_id=${data.role_id}&select=${data.select}&add=${data.add}&update=${data.update}&delete=${data.delete}&destroy=${data.destroy}` },

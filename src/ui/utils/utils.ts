@@ -312,6 +312,18 @@ export default class Utils {
         return result.data && result.data.length > 0 ? result.data : [];
     }
 
+    static encodeId = async (propsData: any) => {
+        var result = await getSdk().us.encodeId({ id: propsData.id});
+
+        return result.data && result.data.length > 0 ? result.data : [];
+    }
+
+    static decodeId = async (propsData: any) => {
+        var result = await getSdk().us.decodeId({ id: propsData.id});
+
+        return result.data && result.data.length > 0 ? result.data : [];
+    }
+
     static setAccesses = async (propsData: any) => {
         var result = await getSdk().us.setAccesses({dl: propsData.id, role_id: propsData.role_id, select: propsData.select, add: propsData.add, update: propsData.update, delete: propsData.delete, destroy: propsData.destroy});
 

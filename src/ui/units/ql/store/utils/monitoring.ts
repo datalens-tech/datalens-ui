@@ -17,6 +17,7 @@ export const prepareMonitoringPresetV2 = (preset: MonitoringPresetV2) => {
         initialParams.push({
             name: 'project_id',
             type: 'string',
+            label: '',
             defaultValue: preset.data.scopeId,
         });
     }
@@ -80,12 +81,14 @@ export const prepareMonitoringPresetV2 = (preset: MonitoringPresetV2) => {
                 initialParams.push({
                     name: 'from',
                     type: 'datetime',
+                    label: '',
                     defaultValue: moment(preset.data.params.from).toISOString(),
                 });
             } else if (typeof preset.data.params.from === 'string') {
                 initialParams.push({
                     name: 'from',
                     type: 'datetime',
+                    label: '',
                     defaultValue: preset.data.params.from,
                 });
             }
@@ -94,12 +97,14 @@ export const prepareMonitoringPresetV2 = (preset: MonitoringPresetV2) => {
                 initialParams.push({
                     name: 'to',
                     type: 'datetime',
+                    label: '',
                     defaultValue: moment(preset.data.params.to).toISOString(),
                 });
             } else if (typeof preset.data.params.to === 'string') {
                 initialParams.push({
                     name: 'to',
                     type: 'datetime',
+                    label: '',
                     defaultValue: preset.data.params.to,
                 });
             }
@@ -126,6 +131,7 @@ export const prepareMonitoringPresetV1 = (preset: MonitoringPresetV1) => {
                     {
                         name: 'project_id',
                         type: 'string',
+                        label: '',
                         defaultValue: target.scopeId,
                     },
                 ],
@@ -174,12 +180,14 @@ export const prepareMonitoringPresetV1 = (preset: MonitoringPresetV1) => {
                 initialParams.push({
                     name: 'from',
                     type: 'datetime',
+                    label: '',
                     defaultValue: moment(preset.data.params.from).toISOString(),
                 });
             } else if (typeof preset.data.params.from === 'string') {
                 initialParams.push({
                     name: 'from',
                     type: 'datetime',
+                    label: '',
                     defaultValue: preset.data.params.from,
                 });
             }
@@ -188,12 +196,14 @@ export const prepareMonitoringPresetV1 = (preset: MonitoringPresetV1) => {
                 initialParams.push({
                     name: 'to',
                     type: 'datetime',
+                    label: '',
                     defaultValue: moment(preset.data.params.to).toISOString(),
                 });
             } else if (typeof preset.data.params.to === 'string') {
                 initialParams.push({
                     name: 'to',
                     type: 'datetime',
+                    label: '',
                     defaultValue: preset.data.params.to,
                 });
             }

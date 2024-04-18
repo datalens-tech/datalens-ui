@@ -35,6 +35,7 @@
   "label_params": "Параметры",
   "label_placeholder-default-value": "Значение по умолчанию",
   "label_placeholder-name": "Имя",
+  "label_placeholder-label": "Описание",
   "label_ql-auto-execution-chart": "Автоматически применять изменения",
   "label_query": "Запрос",
   "label_run": "Запустить",

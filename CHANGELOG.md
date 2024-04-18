@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1532.2] 16.04.2024
+## [0.1532.4] 16.04.2024
+
+Created:
+
+- [0.1532.4] добавлена возможность в параметрах QL-чарта выводить label;
+- [0.1532.4] созданы две функции /ping?encodeId и ping?decodeId.
 
 Fixed:
 

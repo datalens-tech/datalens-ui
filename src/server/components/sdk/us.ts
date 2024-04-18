@@ -19,6 +19,52 @@ import {
 import {getAxios} from '../axios';
 
 class US {
+    static async decodeId(
+        headers: IncomingHttpHeaders,
+        ctx: AppContext,
+        query: String
+    ): Promise<Entry> {
+        try {
+            const {data: result} = await getAxios(ctx.config)({
+                method: 'GET',
+                url: `${ctx.config.endpoints.api.us}/decodeId${query}`,
+                headers,
+                'axios-retry': {retries: 1},
+            });
+
+            ctx.log('SDK_US_DECODE_ID_SUCCESS', US.getLoggedEntry(result));
+
+            return result;
+        } catch (error) {
+            ctx.logError('SDK_US_DECODE_ID_FAILED', error, {});
+
+            throw error;
+        }
+    }
+
+    static async encodeId(
+        headers: IncomingHttpHeaders,
+        ctx: AppContext,
+        query: String
+    ): Promise<Entry> {
+        try {
+            const {data: result} = await getAxios(ctx.config)({
+                method: 'GET',
+                url: `${ctx.config.endpoints.api.us}/encodeId${query}`,
+                headers,
+                'axios-retry': {retries: 1},
+            });
+
+            ctx.log('SDK_US_ENCODE_ID_SUCCESS', US.getLoggedEntry(result));
+
+            return result;
+        } catch (error) {
+            ctx.logError('SDK_US_ENCODE_ID_FAILED', error, {});
+
+            throw error;
+        }
+    }
+
     static async updateAccesses(
         headers: IncomingHttpHeaders,
         ctx: AppContext,
