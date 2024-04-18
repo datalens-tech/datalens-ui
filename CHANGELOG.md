@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Created:
 
 - [0.1532.4] добавлена возможность в параметрах QL-чарта выводить label;
-- [0.1532.4] созданы две функции /ping?encodeId и ping?decodeId.
+- [0.1532.4] созданы две функции /ping?encodeId и /ping?decodeId.
 
 Fixed:
 
