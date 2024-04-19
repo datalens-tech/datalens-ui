@@ -400,10 +400,6 @@ class Widget extends React.PureComponent<Props, State> {
     };
 
     renderFilteringCharts = () => {
-        const showFilteringChartSetting = Utils.isEnabledFeature(Feature.ShowFilteringChartSetting);
-        if (!showFilteringChartSetting) {
-            return null;
-        }
         const {data, tabIndex, selectedEntryType, visualizationType} = this.state;
         const canUseFiltration = isEntryTypeWithFiltering(selectedEntryType, visualizationType);
         const enableActionParams = Boolean(
@@ -631,11 +627,9 @@ class Widget extends React.PureComponent<Props, State> {
         const footer = this.renderDialogFooter();
         const content = this.renderDialogBody();
 
-        const showFilteringChartSetting = Utils.isEnabledFeature(Feature.ShowFilteringChartSetting);
-
         return (
             <TwoColumnDialog
-                className={b({long: showFilteringChartSetting})}
+                className={b({long: true})}
                 open={visible}
                 onClose={closeDialog}
                 sidebarHeader={i18n('dash.widget-dialog.edit', 'label_widget')}

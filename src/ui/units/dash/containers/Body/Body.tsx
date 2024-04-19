@@ -460,38 +460,36 @@ class Body extends React.PureComponent<BodyProps> {
     }
 
     private getOverlayControls = (): DashKitProps['overlayControls'] => {
-        return Utils.isEnabledFeature(Feature.ShowNewRelations)
-            ? {
-                  overlayControls: [
-                      {
-                          allWidgetsControls: true,
-                          id: MenuItems.Settings,
-                          title: i18n('dash.settings-dialog.edit', 'label_settings'),
-                          icon: Gear,
-                          qa: ControlQA.controlSettings,
-                      },
-                      {
-                          allWidgetsControls: true,
-                          title: i18n('dash.main.view', 'button_links'),
-                          excludeWidgetsTypes: ['title', 'text'],
-                          icon: iconRelations,
-                          qa: ControlQA.controlLinks,
-                          handler: (widget: DashTabItem) => {
-                              this.props.setNewRelations(true);
-                              this.props.openDialogRelations({
-                                  widget,
-                                  dashKitRef: this.dashKitRef,
-                                  onApply: () => {},
-                                  onClose: () => {
-                                      this.props.setNewRelations(false);
-                                      this.props.closeDialogRelations();
-                                  },
-                              });
-                          },
-                      } as OverlayControlItem,
-                  ],
-              }
-            : {};
+        return {
+            overlayControls: [
+                {
+                    allWidgetsControls: true,
+                    id: MenuItems.Settings,
+                    title: i18n('dash.settings-dialog.edit', 'label_settings'),
+                    icon: Gear,
+                    qa: ControlQA.controlSettings,
+                },
+                {
+                    allWidgetsControls: true,
+                    title: i18n('dash.main.view', 'button_links'),
+                    excludeWidgetsTypes: ['title', 'text'],
+                    icon: iconRelations,
+                    qa: ControlQA.controlLinks,
+                    handler: (widget: DashTabItem) => {
+                        this.props.setNewRelations(true);
+                        this.props.openDialogRelations({
+                            widget,
+                            dashKitRef: this.dashKitRef,
+                            onApply: () => {},
+                            onClose: () => {
+                                this.props.setNewRelations(false);
+                                this.props.closeDialogRelations();
+                            },
+                        });
+                    },
+                } as OverlayControlItem,
+            ],
+        };
     };
 }
 
