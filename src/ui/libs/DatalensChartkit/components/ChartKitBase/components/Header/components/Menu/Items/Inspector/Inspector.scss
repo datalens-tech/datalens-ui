@@ -1,3 +1,4 @@
+@import '~@gravity-ui/uikit/styles/mixins';
 @import '../../../../../../../../../../styles/variables';
 
 .chartkit-inspector {
@@ -14,26 +15,12 @@
         margin-bottom: 20px;
     }
 
-    &__request-id {
-        color: var(--g-color-text-secondary);
+    &__row {
         margin-bottom: 26px;
     }
 
-    &__request-id-value {
-        display: inline-grid;
-        grid-auto-flow: column;
-        grid-column-gap: 5px;
-        color: var(--g-color-text-primary);
-        background-color: var(--g-color-base-generic);
-        border-radius: 5px;
-        padding: 5px;
-        margin-left: 3px;
-        font-family: var(--g-text-code-font-family);
-        font-size: var(--g-text-code-inline-1-font-size);
-        line-height: var(--g-text-code-inline-1-line-height);
-    }
-
-    &__request-id-copy {
-        color: var(--g-color-text-secondary);
+    &__label {
+        @include text-code-1();
+        margin-left: 5px;
     }
 }

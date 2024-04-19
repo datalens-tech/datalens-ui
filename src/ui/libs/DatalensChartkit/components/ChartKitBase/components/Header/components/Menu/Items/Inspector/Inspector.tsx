@@ -2,7 +2,7 @@ import React from 'react';
 
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import {Magnifier} from '@gravity-ui/icons';
-import {ClipboardButton, Dialog} from '@gravity-ui/uikit';
+import {Dialog, Label} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {MenuItemsIds} from 'shared';
@@ -77,24 +77,30 @@ const Inspector: React.FC<{
             <Dialog.Body className={b('body')}>
                 {stats && <Timings {...stats} />}
                 {stats && <Dialog.Divider className={b('divider')} />}
-                <div className={b('request-id')}>
+                <div className={b('row')}>
                     <span>Request ID</span>
-                    <span className={b('request-id-value')}>
+                    <Label
+                        className={b('label')}
+                        type="copy"
+                        theme="unknown"
+                        size="s"
+                        copyText={requestId}
+                    >
                         {requestId}
-                        <span className={b('request-id-copy')}>
-                            <ClipboardButton text={requestId} size="xs" />
-                        </span>
-                    </span>
+                    </Label>
                 </div>
                 {data?.traceId && (
-                    <div className={b('request-id')}>
+                    <div className={b('row')}>
                         <span>Trace ID</span>
-                        <span className={b('request-id-value')}>
+                        <Label
+                            className={b('label')}
+                            type="copy"
+                            theme="unknown"
+                            size="s"
+                            copyText={data.traceId}
+                        >
                             {data.traceId}
-                            <span className={b('request-id-copy')}>
-                                <ClipboardButton text={data.traceId} size="xs" />
-                            </span>
-                        </span>
+                        </Label>
                     </div>
                 )}
                 <Sources dataSources={dataSources} errorSources={errorSources} />
