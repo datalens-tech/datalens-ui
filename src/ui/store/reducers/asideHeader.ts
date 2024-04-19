@@ -51,17 +51,13 @@ const initialSettings: AsideHeaderSettings = {
     ...(DL.IS_LANDING ? getLandingNavigationSettings() : {}),
 };
 
-// Default navigation value
-// https://github.com/gravity-ui/navigation/blob/main/src/components/constants.ts
-// ASIDE_HEADER_EXPANDED_WIDTH
-const INITIAL_ASIDE_HEADER_SIZE = 236;
-
 const initialState: Omit<AsideHeaderState, 'isCompact'> = {
     startFromNavigation: '',
     panelVisible: false,
     place: '',
     asideHeaderData: {
-        size: INITIAL_ASIDE_HEADER_SIZE,
+        // This initial size is used in mobile version
+        size: 0,
     },
     settings: initialSettings,
     currentPageEntry: null,

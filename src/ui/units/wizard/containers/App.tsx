@@ -41,11 +41,6 @@ const App = ({widget, setCurrentPageEntry, asideHeaderData, ...routeProps}: Prop
 
     return (
         <div className={b()}>
-            {/* {!isAsideHeaderEnabled && (
-                <div className={b('header')}>
-                    <MobileHeader />
-                </div>
-            )} */}
             <div className={b('main', {aside: isAsideHeaderEnabled})}>
                 <Wizard
                     {...routeProps}
