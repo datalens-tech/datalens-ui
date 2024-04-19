@@ -25,10 +25,10 @@
     }
 
     p.yfm-latex {
-        text-align: left;
+        text-align: center;
         display: inline-block;
 
-        & > span {
+        & > span:last-child {
             margin: 0;
         }
     }
@@ -39,6 +39,17 @@
 
     .yfm-cut:last-child .yfm-cut-content {
         padding-bottom: 0;
+    }
+
+    // only for inner yfm block, fixes for autoheight markdown
+    .yfm:not(.yfm-term_title) {
+        display: table;
+
+        p:has(.MagicLink),
+        p:has(.yfm-latex) {
+            display: table;
+            padding: 0.3em 0;
+        }
     }
 }
 

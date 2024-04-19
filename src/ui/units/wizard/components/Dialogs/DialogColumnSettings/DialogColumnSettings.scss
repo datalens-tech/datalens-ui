@@ -6,6 +6,7 @@
 
     &__content {
         overflow: auto;
+        padding-top: 0;
 
         & .dl-collapse__panel,
         & .dl-collapse__header {
@@ -39,5 +40,13 @@
 
     & .g-dialog-btn-close {
         margin-top: 8px;
+    }
+
+    &__freeze-settings {
+        margin-bottom: 32px;
+    }
+
+    &__frozen-columns-input {
+        width: 90px;
     }
 }

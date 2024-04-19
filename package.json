@@ -51,7 +51,7 @@
     "@gravity-ui/app-layout": "^1.7.0",
     "@gravity-ui/browserslist-config": "^4.3.0",
     "@gravity-ui/chartkit": "^5.3.3",
-    "@gravity-ui/dashkit": "^8.0.1",
+    "@gravity-ui/dashkit": "^8.1.0",
     "@gravity-ui/date-utils": "^2.3.0",
     "@gravity-ui/expresskit": "^1.2.1",
     "@gravity-ui/gateway": "^2.1.0",
@@ -98,8 +98,9 @@
     "tarjan-graph": "^2.0.0"
   },
   "devDependencies": {
-    "@gravity-ui/app-builder": "^0.7.1",
+    "@gravity-ui/app-builder": "^0.9.2",
     "@gravity-ui/components": "^3.4.0",
+    "@gravity-ui/date-components": "^2.3.0",
     "@gravity-ui/eslint-config": "^2.2.0",
     "@gravity-ui/icons": "^2.9.1",
     "@gravity-ui/navigation": "^2.8.0",
