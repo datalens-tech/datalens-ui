@@ -108,6 +108,13 @@
         align-items: center;
         padding-right: 6px;
         white-space: nowrap;
+
+        &_limited {
+            max-width: 50%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
     }
 
     &__tokens {

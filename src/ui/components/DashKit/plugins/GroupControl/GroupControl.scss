@@ -53,6 +53,13 @@
         justify-content: center;
     }
 
+    &__item-label {
+        max-width: 50%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
     &_mobile {
         #{$class}__container {
             padding: 0 10px 10px;

@@ -384,7 +384,8 @@ export const Control = ({
                     validateValue={validateValue}
                     getDistincts={getDistincts}
                     classMixin={b('item')}
-                    selectProps={{innerLabel, style}}
+                    labelClassName={b('item-label')}
+                    selectProps={{innerLabel, label: innerLabel, style, limitLabel: true}}
                     renderOverlay={renderOverlay}
                 />
             );
@@ -431,9 +432,11 @@ export const Control = ({
             type: control.type,
             widgetId: id,
             className: b('item'),
+            labelClassName: b('item-label'),
             value: preparedValue,
             onChange: onChangeControl,
             innerLabel,
+            label: innerLabel,
             required,
             hasValidationError: Boolean(currentValidationError),
             style,
