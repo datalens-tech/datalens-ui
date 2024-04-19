@@ -10,6 +10,8 @@
 
     .dashkit-grid-item {
         z-index: 1;
+        // Transition added for case when element is unfocused but
+        // there could be tooltip with hide animation
         transition: z-index 0.5s;
 
         &.dashkit-grid-item_is-focused {
@@ -19,6 +21,7 @@
 
         &.react-draggable-dragging {
             z-index: 3;
+            transition: none;
         }
 
         div.yfm {
