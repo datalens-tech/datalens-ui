@@ -42,7 +42,7 @@
     }
 
     // only for inner yfm block, fixes for autoheight markdown
-    .yfm {
+    .yfm:not(.yfm-term_title) {
         display: table;
 
         p:has(.MagicLink),
