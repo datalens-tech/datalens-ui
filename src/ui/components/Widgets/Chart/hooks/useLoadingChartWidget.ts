@@ -5,7 +5,7 @@ import React from 'react';
 import debounce from 'lodash/debounce';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {DashSettings, FOCUSED_WIDGET_PARAM_NAME, Feature} from 'shared';
+import {DashSettings, FOCUSED_WIDGET_PARAM_NAME} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
 import {
@@ -16,7 +16,6 @@ import {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provide
 import {LoadedWidgetData, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
 import {selectIsNewRelations} from '../../../../units/dash/store/selectors/dashTypedSelectors';
-import Utils from '../../../../utils';
 import {
     CurrentTab,
     WidgetPluginDataWithTabs,
@@ -483,7 +482,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         (argResolve) => {
             resolveMetaDataRef.current = argResolve;
             resolveWidgetDataRef.current = (resolvingData: LoadedWidgetData<ChartsData>) => {
-                if (Utils.isEnabledFeature(Feature.ShowNewRelations) && isNewRelations) {
+                if (isNewRelations) {
                     getCurrentWidgetResolvedMetaInfo(resolvingData);
                 } else {
                     resolveMeta(resolvingData);

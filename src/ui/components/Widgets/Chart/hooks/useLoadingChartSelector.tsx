@@ -4,7 +4,7 @@ import {AxiosResponse} from 'axios';
 import debounce from 'lodash/debounce';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {DashSettings, DashTabItemControl, Feature} from 'shared';
+import {DashSettings, DashTabItemControl} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
 import {
@@ -16,7 +16,6 @@ import {
     selectCurrentTab,
     selectIsNewRelations,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
-import Utils from '../../../../utils';
 import {WidgetPluginProps} from '../../../DashKit/plugins/Widget/types';
 import {
     getPreparedConstants,
@@ -299,7 +298,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
             resolveWidgetDataRef.current = (
                 resolvingData: ResolveWidgetControlDataRefArgs | null,
             ) => {
-                if (Utils.isEnabledFeature(Feature.ShowNewRelations) && isNewRelations) {
+                if (isNewRelations) {
                     getCurrentWidgetResolvedMetaInfo(resolvingData);
                 } else {
                     resolveMeta(resolvingData);
