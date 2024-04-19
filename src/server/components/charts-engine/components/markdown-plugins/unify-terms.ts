@@ -1,9 +1,12 @@
 import type {MarkdownIt, StateCore} from '@diplodoc/transform/lib/typings';
 import type StateBlock from 'markdown-it/lib/rules_block/state_block';
 
+import {YfmAttributes, YfmTokenTypes} from '../../../../../shared';
+
+type Tokens = StateCore['tokens'];
 type Token = StateCore['tokens'][number];
 
-const unifyAttributes = (attrs: [string, string][], attrName: string, prefix: string) => {
+const unifyAttributes = (attrs: [string, string][], attrName: YfmAttributes, prefix: string) => {
     for (const attr of attrs) {
         if (attr[0] === attrName) {
             const value = attr[1];
@@ -21,16 +24,16 @@ const termDefinitionsRandom = (prefix: string) => (state: StateBlock) => {
     while (tokens[i]) {
         const token = tokens[i];
 
-        if (token.type === 'template_open') {
+        if (token.type === YfmTokenTypes.TemplateOpen) {
             const next = tokens[i + 1];
 
-            if (next && next.type === 'dfn_open') {
+            if (next && next.type === YfmTokenTypes.DefinitionOpen) {
                 if (token.attrs) {
-                    token.attrs = unifyAttributes(token.attrs, 'id', prefix);
+                    token.attrs = unifyAttributes(token.attrs, YfmAttributes.Id, prefix);
                 }
 
                 if (next.attrs) {
-                    next.attrs = unifyAttributes(next.attrs, 'id', prefix);
+                    next.attrs = unifyAttributes(next.attrs, YfmAttributes.Id, prefix);
                 }
 
                 i++;
@@ -45,22 +48,22 @@ const termDefinitionsRandom = (prefix: string) => (state: StateBlock) => {
 
 const modifyTerm = (termToken: Token, prefix: string) => {
     if (termToken.attrs) {
-        termToken.attrs = unifyAttributes(termToken.attrs, 'aria-describedby', prefix);
-        termToken.attrs = unifyAttributes(termToken.attrs, 'term-key', prefix);
+        termToken.attrs = unifyAttributes(termToken.attrs, YfmAttributes.AriaDescribedby, prefix);
+        termToken.attrs = unifyAttributes(termToken.attrs, YfmAttributes.TermKey, prefix);
     }
 
     return termToken;
 };
 
-const traverseLine = (tokens: StateCore['tokens'], prefix: string) => {
+const traverseLine = (tokens: Tokens, prefix: string) => {
     let i = 0;
 
     while (tokens[i]) {
         const currentToken = tokens[i];
 
-        if (currentToken.type === 'inline' && currentToken.children) {
+        if (currentToken.type === YfmTokenTypes.Inline && currentToken.children) {
             currentToken.children = traverseLine(currentToken.children, prefix);
-        } else if (currentToken.type === 'term_open') {
+        } else if (currentToken.type === YfmTokenTypes.TermOpen) {
             modifyTerm(currentToken, prefix);
         }
 
