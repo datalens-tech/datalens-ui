@@ -2,7 +2,6 @@ import {RangeInputPicker} from 'ui/components/common/RangeInputPicker';
 
 import {Datepicker} from '../../../components/common/Datepicker/Datepicker';
 import type {DatepickerControlProps} from '../../../components/common/DatepickerControl/DatepickerControl';
-import {SimpleDatepicker} from '../../../components/common/SimpleDatepicker';
 import Timings from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Timings/Timings';
 import {makeDefaultEmpty} from '../../components/DefaultEmpty';
 
@@ -43,7 +42,6 @@ export const commonComponentsMap = {
     Datepicker: Datepicker,
     DatepickerControl: makeDefaultEmpty<DatepickerControlProps>(),
     Timings: Timings,
-    SimpleDatepicker: SimpleDatepicker,
     RangeInputPicker: RangeInputPicker,
     ButtonFavorite: makeDefaultEmpty<ButtonFavoriteProps>(),
     OAuthTokenButton: makeDefaultEmpty<OAuthTokenButtonProps>(),
