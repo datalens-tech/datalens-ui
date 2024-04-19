@@ -36,6 +36,7 @@ export const MobileHeaderComponent = ({renderContent}: MobileHeaderComponentProp
                 iconClassName: b('logo-icon'),
             }}
             burgerMenu={{items: menuItems, renderFooter: () => <BurgerMenuFooter />}}
+            contentClassName={b('content')}
             className={b('container')}
             renderContent={renderContent}
         />

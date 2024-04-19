@@ -4,6 +4,7 @@ import {DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {EntryUpdateMode} from 'shared';
+import {DL} from 'ui/constants/common';
 
 import NavigationPrompt from '../../../NavigationPrompt/NavigationPrompt';
 
@@ -109,7 +110,7 @@ export const ChartSaveControls: React.FC<ChartSaveControlProps> = (
     );
 
     return (
-        <div className={b(null, className)}>
+        <div className={b({mobile: DL.IS_MOBILE}, className)}>
             {additionalItems}
             {Boolean(needSplitMainAndAdditionalButtons) && <div className={b('splitter')} />}
             {!hideSaveButton && (
