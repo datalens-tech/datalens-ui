@@ -8,7 +8,7 @@ type Token = StateCore['tokens'][number];
 
 const unifyAttributes = (attrs: [string, string][], attrName: YfmAttributes, prefix: string) => {
     for (const attr of attrs) {
-        if (attr[0] === attrName) {
+        if (attr[0] === attrName && !attr[1].startsWith(`:${prefix}`)) {
             const value = attr[1];
             attr[1] = `:${prefix}_${value.slice(1)}`;
         }

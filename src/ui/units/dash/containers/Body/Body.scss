@@ -96,7 +96,7 @@ $contentMobilePadding: 16px;
         padding: 16px 0 4px;
     }
 
-    &__edit-panel {
+    & #{$bodyClass}__edit-panel {
         z-index: 10;
     }
 
