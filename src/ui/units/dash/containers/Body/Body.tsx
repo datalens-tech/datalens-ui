@@ -379,7 +379,7 @@ class Body extends React.PureComponent<BodyProps> {
                 ref={this.dashKitRef}
                 config={tabDataConfig as DashKitProps['config']}
                 editMode={mode === Mode.Edit}
-                // focusable={true} TBD uncomment after repos sync
+                focusable={true}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
                 context={{
                     getPreparedCopyItemOptions: (itemToCopy: PreparedCopyItemOptions) => {
