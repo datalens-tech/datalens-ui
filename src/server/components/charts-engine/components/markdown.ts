@@ -10,11 +10,16 @@ import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
 import MarkdownIt from 'markdown-it';
 import MarkdownItColor from 'markdown-it-color';
 import Mila from 'markdown-it-link-attributes';
+import uuid from 'uuid';
 
 import {YFM_COLORIFY_MARKDOWN_CLASSNAME} from '../../../../shared';
 import {registry} from '../../../registry';
 
+import {unifyTermIds} from './markdown-plugins/unify-terms';
+
 export function renderHTML({text = '', lang}: {text: string; lang: string}): {result: string} {
+    const uniqPrefix = uuid.v4();
+
     const plugins = [
         deflist,
         notes,
@@ -33,6 +38,9 @@ export function renderHTML({text = '', lang}: {text: string; lang: string}): {re
                 })
                 .use(MarkdownItColor, {
                     defaultClassName: YFM_COLORIFY_MARKDOWN_CLASSNAME,
+                })
+                .use(unifyTermIds, {
+                    prefix: uniqPrefix,
                 }),
         imsize,
         table,

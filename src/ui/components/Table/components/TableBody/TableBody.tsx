@@ -3,19 +3,20 @@ import React from 'react';
 import {ColumnDef, Row, flexRender} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 
-import {OnCellClickFn, TData, TableProps} from '../../types';
+import {OnCellClickFn, TData, TableDimensions, TableProps} from '../../types';
 
 const b = block('dl-table');
 
 type Props = {
     columns: ColumnDef<TData, unknown>[];
     rows: Row<TData>[];
-    noData: TableProps['noData'];
+    noData?: TableProps['noData'];
     onCellClick?: OnCellClickFn;
+    tableDimensions?: TableDimensions;
 };
 
 export const TableBody = (props: Props) => {
-    const {rows, columns, noData, onCellClick} = props;
+    const {rows, columns, tableDimensions, noData, onCellClick} = props;
 
     if (!rows.length) {
         return (
@@ -41,13 +42,19 @@ export const TableBody = (props: Props) => {
         <tbody className={b('body')}>
             {rows.map((row) => {
                 const visibleCells = row.getVisibleCells();
+
                 return (
                     <tr key={row.id} className={b('tr')}>
                         {visibleCells.map((cell, index) => {
+                            const originalHeadData = cell.column.columnDef.meta?.head;
                             const width = cell.column.columnDef.meta?.width;
                             const isFixedSize = Boolean(width);
                             const originalCellData = cell.row.original[index];
-                            const cellClassName = [b('td'), originalCellData?.className]
+                            const pinned = Boolean(originalHeadData?.pinned);
+                            const cellClassName = [
+                                b('td', {pinned, 'fixed-size': isFixedSize}),
+                                originalCellData?.className,
+                            ]
                                 .filter(Boolean)
                                 .join(' ');
 
@@ -55,11 +62,19 @@ export const TableBody = (props: Props) => {
                                 return null;
                             }
 
+                            const left = pinned
+                                ? tableDimensions?.head[0]?.[index]?.left
+                                : undefined;
+                            const cellStyle = {
+                                left,
+                                ...originalCellData?.css,
+                            };
+
                             return (
                                 <td
                                     key={cell.id}
                                     className={cellClassName}
-                                    style={originalCellData?.css}
+                                    style={cellStyle}
                                     onClick={(event) =>
                                         handleCellClick({
                                             row: row.original,
@@ -69,11 +84,7 @@ export const TableBody = (props: Props) => {
                                     }
                                     rowSpan={originalCellData?.rowSpan}
                                 >
-                                    <div
-                                        className={b('td-content', {
-                                            'fixed-size': isFixedSize,
-                                        })}
-                                    >
+                                    <div className={b('td-content')} style={{width}}>
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </div>
                                 </td>

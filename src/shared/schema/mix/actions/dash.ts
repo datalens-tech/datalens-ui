@@ -26,7 +26,6 @@ export const dashActions = {
             ctx.stats('dashStats', {
                 datetime: Date.now(),
                 ...(args as DeepNonNullable<CollectDashStatsArgs>),
-                traceId: ctx.getTraceId(),
             });
             return {status: 'success'};
         },

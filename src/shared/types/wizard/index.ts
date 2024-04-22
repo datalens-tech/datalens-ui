@@ -98,6 +98,7 @@ export interface CommonSharedExtraSettings {
     enableGPTInsights?: boolean;
     labelsPosition?: LabelsPositions;
     qlAutoExecuteChart?: 'on' | 'off';
+    pinnedColumns?: number;
 }
 
 interface CommonShared {
