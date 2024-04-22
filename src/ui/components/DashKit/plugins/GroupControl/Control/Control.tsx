@@ -384,7 +384,7 @@ export const Control = ({
                     validateValue={validateValue}
                     getDistincts={getDistincts}
                     classMixin={b('item')}
-                    labelClassName={b('item-label')}
+                    labelMixin={b('item-label')}
                     selectProps={{innerLabel, label, style, limitLabel: true}}
                     renderOverlay={renderOverlay}
                 />
