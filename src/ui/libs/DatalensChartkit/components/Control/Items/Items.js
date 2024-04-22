@@ -505,6 +505,7 @@ function BaseControlCheckbox({label, value, onChange}) {
             view="default"
             size={size}
             checked={checked}
+            title={label}
             onChange={() =>
                 onChange(checked ? CheckboxControlValue.FALSE : CheckboxControlValue.TRUE)
             }
