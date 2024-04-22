@@ -50,11 +50,7 @@
         align-items: center;
     }
 
-    &__breadcrumbs {
-        max-width: var(--dl-breadcrumbs-max-width);
-
-        &_is-mobile {
-            max-width: 150px;
-        }
+    &__breadcrumbs_is-mobile {
+        max-width: 150px;
     }
 }
