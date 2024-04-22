@@ -124,7 +124,6 @@ export const useLayout = ({
                     <div className={b('action-panel-left-block')}>
                         <ActionPanelEntrySelect />
                         <CollectionBreadcrumbs
-                            className={b('breadcrumbs')}
                             isLoading={!(isCorrectBreadcrumbs || breadcrumbsError)}
                             collections={preparedBreadcrumbs}
                             workbook={null}

@@ -97,6 +97,7 @@ export const CollectionBreadcrumbs = React.memo<Props>(
                     items={items}
                     firstDisplayedItemsCount={FirstDisplayedItemsCount.One}
                     lastDisplayedItemsCount={LastDisplayedItemsCount.One}
+                    className={b('container')}
                     renderItemContent={(item: BreadcrumbsItem, isCurrent: boolean) => {
                         if (item.id === LOADING_ITEM_ID) {
                             return <Skeleton className={b('skeleton')} />;
