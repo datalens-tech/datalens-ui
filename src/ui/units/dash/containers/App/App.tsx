@@ -7,11 +7,9 @@ import throttle from 'lodash/throttle';
 import {useDispatch, useSelector} from 'react-redux';
 import {RouteComponentProps} from 'react-router-dom';
 import ResizeObserver from 'resize-observer-polyfill';
-import {Feature} from 'shared';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
 import {URL_QUERY, Utils} from 'ui';
-import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {CurrentPageEntry} from '../../../../components/Navigation/types';
@@ -53,10 +51,8 @@ export function App({...routeProps}: RouteComponentProps) {
 
     const prevAsideHeaderSize = usePrevious(asideHeaderData.size);
 
-    const isMobileEnabled = DL.IS_MOBILE && Utils.isEnabledFeature(Feature.EnableMobileHeader);
     const showAsideHeader = !isEmbedded && !isFullscreenMode && isAsideHeaderEnabled;
-    const showMobileHeader =
-        !isFullscreenMode && !isAsideHeaderEnabled && !isEmbedded && isMobileEnabled;
+    const showMobileHeader = !isFullscreenMode && DL.IS_MOBILE;
 
     React.useEffect(() => {
         const dashClasses = dashBlock({'no-scroll': isNoScrollMode()}).split(' ');
@@ -142,7 +138,6 @@ export function App({...routeProps}: RouteComponentProps) {
     return (
         <div className={b({mobile: DL.IS_MOBILE, embedded: isEmbedded})} ref={wrapRef}>
             <LocationChange onLocationChanged={locationChangeHandler} />
-            {showMobileHeader && <MobileHeader />}
             <div className={b('content')}>
                 <DashWrapper {...routeProps} />
             </div>
