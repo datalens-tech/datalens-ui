@@ -1,8 +1,6 @@
 // for mobile, and overscroll
 
 body.g-root.dl-dash {
-    background-color: var(--g-color-base-generic-ultralight);
-
     &_no-scroll {
         overflow-y: hidden;
     }
