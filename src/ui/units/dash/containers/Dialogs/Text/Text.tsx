@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {Dialog} from '@gravity-ui/uikit';
+import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
+import {i18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
 import {DashTabItemText, DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
 import {DatalensGlobalState} from 'ui';
@@ -20,8 +20,6 @@ import './Text.scss';
 
 const b = block('dialog-text');
 
-const i18n = I18n.keyset('dash.text-dialog.edit');
-
 export interface OwnProps {}
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -30,6 +28,7 @@ type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 interface State {
     text?: string;
     prevVisible?: boolean;
+    autoHeight?: boolean;
 }
 
 export type TextProps = OwnProps & StateProps & DispatchProps;
@@ -38,6 +37,7 @@ class Text extends React.PureComponent<TextProps, State> {
     static defaultProps = {
         data: {
             text: '',
+            autoHeight: false,
         },
     };
 
@@ -49,6 +49,7 @@ class Text extends React.PureComponent<TextProps, State> {
         return {
             prevVisible: nextProps.visible,
             text: nextProps.data.text,
+            autoHeight: Boolean(nextProps.data.autoHeight),
         };
     }
 
@@ -56,7 +57,7 @@ class Text extends React.PureComponent<TextProps, State> {
 
     render() {
         const {id, visible} = this.props;
-        const {text} = this.state;
+        const {text, autoHeight} = this.state;
 
         return (
             <Dialog
@@ -66,15 +67,27 @@ class Text extends React.PureComponent<TextProps, State> {
                 disableFocusTrap={true}
                 qa={DialogDashWidgetItemQA.Text}
             >
-                <Dialog.Header caption={i18n('label_text')} />
+                <Dialog.Header caption={i18n('dash.text-dialog.edit', 'label_text')} />
                 <Dialog.Body className={b()}>
                     <TextEditor autofocus onTextUpdate={this.onTextUpdate} text={text} />
+                    <div className={b('setting-row')}>
+                        <Checkbox
+                            checked={Boolean(autoHeight)}
+                            onChange={this.handleAutoHeightChanged}
+                        >
+                            {i18n('dash.dashkit-plugin-common.view', 'label_autoheight-checkbox')}
+                        </Checkbox>
+                    </div>
                 </Dialog.Body>
                 <Dialog.Footer
                     onClickButtonApply={this.onApply}
-                    textButtonApply={id ? i18n('button_save') : i18n('button_add')}
+                    textButtonApply={
+                        id
+                            ? i18n('dash.text-dialog.edit', 'button_save')
+                            : i18n('dash.text-dialog.edit', 'button_add')
+                    }
                     onClickButtonCancel={this.props.closeDialog}
-                    textButtonCancel={i18n('button_cancel')}
+                    textButtonCancel={i18n('dash.text-dialog.edit', 'button_cancel')}
                     propsButtonApply={{qa: DialogDashWidgetQA.Apply}}
                     propsButtonCancel={{qa: DialogDashWidgetQA.Cancel}}
                 />
@@ -85,10 +98,14 @@ class Text extends React.PureComponent<TextProps, State> {
     onTextUpdate = (text: string) => this.setState({text});
 
     onApply = () => {
-        const {text} = this.state;
+        const {text, autoHeight} = this.state;
 
-        this.props.setItemData({data: {text}});
+        this.props.setItemData({data: {text, autoHeight}});
         this.props.closeDialog();
+    };
+
+    handleAutoHeightChanged = () => {
+        this.setState({autoHeight: !this.state.autoHeight});
     };
 }
 

@@ -1,3 +1,5 @@
+@import '../../../../styles/mixins.scss';
+
 .dl-collection-breadcrumbs {
     &__skeleton {
         display: block;
@@ -6,13 +8,16 @@
     }
 
     &__item {
-        color: var(--g-color-text-primary);
-        text-decoration: none;
+        @include dl-breadcrumbs-items-style;
 
-        &:hover,
-        &:visited,
-        &:active {
-            color: var(--g-color-text-secondary);
+        &_last,
+        &_last:active,
+        &_last:visited {
+            color: var(--g-color-text-primary);
+        }
+
+        &_last:hover {
+            color: var(--g-color-text-link-hover);
         }
     }
 }

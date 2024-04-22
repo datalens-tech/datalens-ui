@@ -71,6 +71,7 @@ export type CommonTableColumn = {
     allowGroupSort?: boolean;
     /** Reserved subspace to store options and values for customized functionality */
     custom?: Record<string, any>;
+    pinned?: boolean;
 };
 export type TableColumnFormatter = {
     format?: 'number' | 'percent';

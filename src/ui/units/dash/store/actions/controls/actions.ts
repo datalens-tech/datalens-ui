@@ -58,21 +58,54 @@ export const setActiveSelectorIndex = (payload: SetActiveSelectorIndexAction['pa
 export const applyGroupControlDialog = () => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
-        const {selectorsGroup, openedItemId} = state.dash;
+        const {selectorsGroup, openedItemId, activeSelectorIndex} = state.dash;
+
+        let firstInvalidIndex: number | null = null;
+        const groupFieldNames: Record<string, string[]> = {};
+        selectorsGroup.group.forEach((groupItem) => {
+            if (groupItem.fieldName) {
+                const itemName = groupItem.title;
+                if (groupFieldNames[groupItem.fieldName] && itemName) {
+                    groupFieldNames[groupItem.fieldName].push(itemName);
+                }
+
+                if (!groupFieldNames[groupItem.fieldName] && itemName) {
+                    groupFieldNames[groupItem.fieldName] = [itemName];
+                }
+            }
+        });
+
+        const validatedSelectorsGroup = Object.assign({}, selectorsGroup);
 
         // check validation for every control
-        for (let i = 0; i < selectorsGroup.group.length; i += 1) {
-            const validation = getControlValidation(selectorsGroup.group[i]);
+        for (let i = 0; i < validatedSelectorsGroup.group.length; i += 1) {
+            const validation = getControlValidation(
+                validatedSelectorsGroup.group[i],
+                groupFieldNames,
+            );
 
-            if (!isEmpty(validation)) {
-                dispatch(setActiveSelectorIndex({activeSelectorIndex: i}));
+            if (!isEmpty(validation) && firstInvalidIndex === null) {
+                firstInvalidIndex = i;
+            }
+
+            validatedSelectorsGroup.group[i].validation = validation;
+        }
+
+        if (firstInvalidIndex !== null) {
+            const activeSelectorValidation =
+                validatedSelectorsGroup.group[activeSelectorIndex].validation;
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+
+            if (!isEmpty(activeSelectorValidation)) {
                 dispatch(
                     setSelectorDialogItem({
-                        validation,
+                        validation: activeSelectorValidation,
                     }),
                 );
                 return;
             }
+            dispatch(setActiveSelectorIndex({activeSelectorIndex: firstInvalidIndex}));
+            return;
         }
 
         const isSingleControl = selectorsGroup.group.length === 1;

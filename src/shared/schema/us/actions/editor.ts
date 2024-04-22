@@ -31,13 +31,14 @@ export const editorActions = {
     _updateEditorChart: createAction<UpdateEditorChartResponse, UpdateEditorChartArgs>({
         method: 'POST',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: ({data, mode, revId, meta = {}}, headers) => {
+        params: ({data, mode, revId, meta = {}, links = {}}, headers) => {
             return {
                 body: {
                     mode,
                     meta,
                     data,
                     revId,
+                    links,
                 },
                 headers,
             };

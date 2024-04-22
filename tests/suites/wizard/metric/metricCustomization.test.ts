@@ -5,7 +5,7 @@ import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {CommonQa} from '../../../page-objects/constants/common-selectors';
-import {WizardPageQa, ChartQa, WizardVisualizationId} from '../../../../src/shared';
+import {WizardPageQa, WizardVisualizationId} from '../../../../src/shared';
 import {openTestPage, slct} from '../../../utils';
 
 datalensTest.describe('Wizard - metric chart. Settings', () => {
@@ -21,7 +21,7 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Measures, 'City');
 
         const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-        const chart = chartContainer.locator(slct(ChartQa.Chart));
+        const chart = chartContainer.locator(wizardPage.chartkit.metricItemSelector);
 
         await expect(chart).toBeVisible();
     });
@@ -46,9 +46,7 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         await wizardPage.metricSettingsDialog.apply();
 
         const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-        const chart = chartContainer.locator(slct(ChartQa.Chart));
-
-        const metricItem = chart.locator(wizardPage.chartkit.metricItemSelector);
+        const metricItem = chartContainer.locator(wizardPage.chartkit.metricItemSelector);
         const metricItemClassname = await metricItem.getAttribute('class');
 
         expect(metricItemClassname).toContain('_size_xl');

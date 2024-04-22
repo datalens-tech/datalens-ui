@@ -6,4 +6,5 @@ export type AccessRightsProps = {
     visible: boolean;
     entry: GetEntryResponse;
     notFoundApproveRequest?: boolean;
+    showCustomAccess?: boolean;
 };

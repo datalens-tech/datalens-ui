@@ -31,7 +31,7 @@ export function initChartsEngine({
     }
 
     const telemetryCallbacks: TelemetryCallbacks = {
-        onConfigFetched: ({id, statusCode, requestId, latency = 0, traceId, tenantId}) => {
+        onConfigFetched: ({id, statusCode, requestId, latency = 0, traceId, tenantId, userId}) => {
             ctx.stats('apiRequests', {
                 requestId: requestId!,
                 service: 'us',
@@ -42,11 +42,12 @@ export function initChartsEngine({
                 requestUrl: id || '',
                 traceId: traceId || '',
                 tenantId: tenantId || '',
+                userId: userId || '',
             });
         },
         onConfigFetchingFailed: (
             _error,
-            {id, statusCode, requestId, latency = 0, traceId, tenantId},
+            {id, statusCode, requestId, latency = 0, traceId, tenantId, userId},
         ) => {
             ctx.stats('apiRequests', {
                 requestId: requestId!,
@@ -58,10 +59,20 @@ export function initChartsEngine({
                 requestUrl: id || '',
                 traceId: traceId || '',
                 tenantId: tenantId || '',
+                userId: userId || '',
             });
         },
 
-        onDataFetched: ({sourceName, url, requestId, statusCode, latency, traceId, tenantId}) => {
+        onDataFetched: ({
+            sourceName,
+            url,
+            requestId,
+            statusCode,
+            latency,
+            traceId,
+            tenantId,
+            userId,
+        }) => {
             ctx.stats('apiRequests', {
                 requestId,
                 service: sourceName || 'unknown-charts-source',
@@ -72,11 +83,12 @@ export function initChartsEngine({
                 requestUrl: url || '',
                 traceId: traceId || '',
                 tenantId: tenantId || '',
+                userId: userId || '',
             });
         },
         onDataFetchingFailed: (
             _error,
-            {sourceName, url, requestId, statusCode, latency, traceId, tenantId},
+            {sourceName, url, requestId, statusCode, latency, traceId, tenantId, userId},
         ) => {
             ctx.stats('apiRequests', {
                 requestId,
@@ -88,6 +100,7 @@ export function initChartsEngine({
                 requestUrl: url || '',
                 traceId: traceId || '',
                 tenantId: tenantId || '',
+                userId: userId || '',
             });
         },
 
@@ -102,7 +115,7 @@ export function initChartsEngine({
 
         onTabsExecuted: ({result, entryId}) => {
             if (shouldLogChartWithFunction && isConfigWithFunction(result)) {
-                ctx.stats('chartsWithFn', {datetime: getTime(), entryId: entryId || ''});
+                ctx.stats('chartsWithFn', {datetime: Date.now(), entryId: entryId || ''});
             }
         },
     };

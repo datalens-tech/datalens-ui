@@ -1,6 +1,7 @@
 import {
     BarTableCell,
     DATASET_FIELD_TYPES,
+    Feature,
     Field,
     IS_NULL_FILTER_TEMPLATE,
     MINIMUM_FRACTION_DIGITS,
@@ -9,11 +10,13 @@ import {
     TableHead,
     isDateField,
     isDateType,
+    isEnabledServerFeature,
     isMarkupDataType,
     isNumberField,
     isTreeDataType,
     isUnsupportedDataType,
 } from '../../../../../../../shared';
+import {registry} from '../../../../../../registry';
 import {Config} from '../../config';
 import {getTreeState} from '../../url/helpers';
 import {mapAndColorizeTableCells} from '../../utils/color-helpers';
@@ -57,6 +60,11 @@ function prepareFlatTable({
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const treeSet = new Set(getTreeState(ChartEditor));
 
+    const app = registry.getApp();
+    const pinnedColumns = isEnabledServerFeature(app.nodekit.ctx, Feature.PinnedColumns)
+        ? shared.extraSettings?.pinnedColumns || 0
+        : 0;
+
     const currentActiveDrillDownField: Field | undefined =
         drillDownData && drillDownData.fields[drillDownData.level];
 
@@ -85,7 +93,8 @@ function prepareFlatTable({
     });
 
     // Draw a vertical table
-    const head = columns.map((item) => {
+    const head = columns.map((item, index) => {
+        const isLastColumn = index === columns.length - 1;
         const actualTitle = item.fakeTitle || idToTitle[item.guid];
 
         const columnSettings = item.columnSettings;
@@ -97,6 +106,11 @@ function prepareFlatTable({
             type: 'text',
             width: getColumnWidthValue(widthSettings),
         };
+
+        if (!isLastColumn && index < pinnedColumns) {
+            headCell.pinned = true;
+        }
+
         const dataType = idToDataType[item.guid];
 
         if (isNumericalDataType(dataType)) {

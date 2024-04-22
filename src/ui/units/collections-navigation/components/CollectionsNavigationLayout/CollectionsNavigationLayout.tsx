@@ -4,6 +4,7 @@ import {ActionBar} from '@gravity-ui/navigation';
 import {Skeleton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useSelector} from 'react-redux';
+import {DL} from 'ui/constants/common';
 
 import {selectAsideHeaderData} from '../../../../store/selectors/asideHeader';
 import {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
@@ -96,7 +97,10 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                     </ActionBar>
                 )}
 
-                <div className={b('page-wrapper')} style={{left: `${asideHeaderSize}px`}}>
+                <div
+                    className={b('page-wrapper', {mobile: DL.IS_MOBILE})}
+                    style={{left: `${asideHeaderSize}px`}}
+                >
                     <div className={b('page')}>
                         <div className={b('header')}>
                             {layout.title || layout.titleActionsBlock ? (

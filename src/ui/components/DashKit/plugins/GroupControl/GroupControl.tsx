@@ -4,12 +4,12 @@ import {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DatalensGlobalState, Utils} from 'index';
+import {DatalensGlobalState} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import {connect} from 'react-redux';
-import {DashTabItemControlSingle, DashTabItemGroupControlData, Feature, StringParams} from 'shared';
+import {DashTabItemControlSingle, DashTabItemGroupControlData, StringParams} from 'shared';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
@@ -302,7 +302,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const result = [];
 
         for (const [id, data] of Object.entries(this.controlsData)) {
-            if (Utils.isEnabledFeature(Feature.ShowNewRelations) && this.props.isNewRelations) {
+            if (this.props.isNewRelations) {
                 result.push(this.getCurrentWidgetResolvedMetaInfo(id, data));
             } else {
                 result.push(this.resolveMeta(data));

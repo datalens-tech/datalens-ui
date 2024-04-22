@@ -56,6 +56,7 @@ const initialState: Omit<AsideHeaderState, 'isCompact'> = {
     panelVisible: false,
     place: '',
     asideHeaderData: {
+        // This initial size is used in mobile version
         size: 0,
     },
     settings: initialSettings,

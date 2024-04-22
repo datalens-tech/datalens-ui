@@ -6,7 +6,6 @@ import {Dispatch, bindActionCreators} from 'redux';
 import {QLChartType} from 'shared';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import {DL, DatalensGlobalState, Utils} from 'ui';
-import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import withInaccessibleOnMobile from '../../../../hoc/withInaccessibleOnMobile';
@@ -56,7 +55,6 @@ class App extends React.PureComponent<Props> {
 
         return (
             <div className={b({mobile: DL.IS_MOBILE})}>
-                {isAsideHeaderEnabled ? null : <MobileHeader />}
                 <div className={b('content')}>
                     <QL size={asideHeaderData.size} />
                 </div>

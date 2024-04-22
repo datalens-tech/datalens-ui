@@ -91,6 +91,7 @@ export const useLayout = ({
     const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
     const {ActionPanelEntrySelect} = registry.common.components.getAll();
+    const {RootCollectionTitleAction} = registry.collections.components.getAll();
 
     const {setLayout} = React.useContext(LayoutContext);
 
@@ -344,7 +345,9 @@ export const useLayout = ({
     React.useEffect(() => {
         if (isRootCollection) {
             setLayout({
-                titleActionsBlock: null,
+                titleActionsBlock: {
+                    content: <RootCollectionTitleAction />,
+                },
             });
         } else if (isCorrectCollection && collection && collection.permissions) {
             setLayout({
@@ -401,6 +404,7 @@ export const useLayout = ({
         isRootCollection,
         dispatch,
         fetchCollectionInfo,
+        RootCollectionTitleAction,
     ]);
 
     React.useEffect(() => {

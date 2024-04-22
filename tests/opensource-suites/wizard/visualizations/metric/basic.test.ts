@@ -2,7 +2,7 @@ import {expect} from '@playwright/test';
 
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {openTestPage, slct} from '../../../../utils';
-import {WizardPageQa, ChartQa, WizardVisualizationId} from '../../../../../src/shared';
+import {WizardPageQa, WizardVisualizationId} from '../../../../../src/shared';
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 
@@ -18,7 +18,7 @@ datalensTest.describe('Wizard', () => {
         datalensTest('Metric chart with integer measure field', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const chart = chartContainer.locator(slct(ChartQa.Chart));
+            const chart = chartContainer.locator(wizardPage.chartkit.metricItemSelector);
 
             // Create integer measure field
             const ordersCountMeasureField = 'OrdersCount';
@@ -42,7 +42,7 @@ datalensTest.describe('Wizard', () => {
         datalensTest('Metric chart with markup measure field', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const chart = chartContainer.locator(slct(ChartQa.Chart));
+            const chart = chartContainer.locator(wizardPage.chartkit.metricItemSelector);
 
             // Create markup measure field
             const citiesCountMeasureField = 'CitiesCount';

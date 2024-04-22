@@ -29,4 +29,8 @@
     &__item_last {
         font-weight: 500;
     }
+
+    &__item:not(&__item_last):hover {
+        color: var(--g-color-text-primary);
+    }
 }
