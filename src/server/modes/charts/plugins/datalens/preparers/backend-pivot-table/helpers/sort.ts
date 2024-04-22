@@ -1,5 +1,4 @@
-import {Feature, PseudoFieldTitle, isEnabledServerFeature} from '../../../../../../../../shared';
-import {registry} from '../../../../../../../registry';
+import {PseudoFieldTitle} from '../../../../../../../../shared';
 import {BackendPivotTableCellCustom} from '../../../types';
 import {HeaderInfo, PivotDataStructure, PivotDataTotals} from '../types';
 
@@ -26,12 +25,6 @@ export const isSortByRoleAllowed = (
     pivotTotals: PivotDataTotals | null,
     role: 'pivot_column' | 'pivot_row',
 ) => {
-    const app = registry.getApp();
-    const hasTotals = pivotTotals?.rows.length || pivotTotals?.columns.length;
-    if (hasTotals && !isEnabledServerFeature(app.nodekit.ctx, Feature.PivotTableSortWithTotals)) {
-        return false;
-    }
-
     const hasRowSubtotals = pivotTotals?.rows.some((item) => item.level > 0);
     const hasColumnSubtotals = pivotTotals?.columns.some((item) => item.level > 0);
 

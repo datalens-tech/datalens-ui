@@ -1,14 +1,13 @@
 import React from 'react';
 
-import {
+import {DashKit as DashKitComponent, ActionPanel as DashkitActionPanel} from '@gravity-ui/dashkit';
+import type {
     ConfigItem,
-    DashKit as DashKitComponent,
     DashKitProps,
-    ActionPanel as DashkitActionPanel,
     ActionPanelItem as DashkitActionPanelItem,
-    MenuItems,
-    type PreparedCopyItemOptions,
+    PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
+import {MenuItems} from '@gravity-ui/dashkit/helpers';
 import {
     ChartColumn,
     Code,
@@ -380,6 +379,7 @@ class Body extends React.PureComponent<BodyProps> {
                 ref={this.dashKitRef}
                 config={tabDataConfig as DashKitProps['config']}
                 editMode={mode === Mode.Edit}
+                focusable={true}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
                 context={{
                     getPreparedCopyItemOptions: (itemToCopy: PreparedCopyItemOptions) => {
@@ -460,38 +460,36 @@ class Body extends React.PureComponent<BodyProps> {
     }
 
     private getOverlayControls = (): DashKitProps['overlayControls'] => {
-        return Utils.isEnabledFeature(Feature.ShowNewRelations)
-            ? {
-                  overlayControls: [
-                      {
-                          allWidgetsControls: true,
-                          id: MenuItems.Settings,
-                          title: i18n('dash.settings-dialog.edit', 'label_settings'),
-                          icon: Gear,
-                          qa: ControlQA.controlSettings,
-                      },
-                      {
-                          allWidgetsControls: true,
-                          title: i18n('dash.main.view', 'button_links'),
-                          excludeWidgetsTypes: ['title', 'text'],
-                          icon: iconRelations,
-                          qa: ControlQA.controlLinks,
-                          handler: (widget: DashTabItem) => {
-                              this.props.setNewRelations(true);
-                              this.props.openDialogRelations({
-                                  widget,
-                                  dashKitRef: this.dashKitRef,
-                                  onApply: () => {},
-                                  onClose: () => {
-                                      this.props.setNewRelations(false);
-                                      this.props.closeDialogRelations();
-                                  },
-                              });
-                          },
-                      } as OverlayControlItem,
-                  ],
-              }
-            : {};
+        return {
+            overlayControls: [
+                {
+                    allWidgetsControls: true,
+                    id: MenuItems.Settings,
+                    title: i18n('dash.settings-dialog.edit', 'label_settings'),
+                    icon: Gear,
+                    qa: ControlQA.controlSettings,
+                },
+                {
+                    allWidgetsControls: true,
+                    title: i18n('dash.main.view', 'button_links'),
+                    excludeWidgetsTypes: ['title', 'text'],
+                    icon: iconRelations,
+                    qa: ControlQA.controlLinks,
+                    handler: (widget: DashTabItem) => {
+                        this.props.setNewRelations(true);
+                        this.props.openDialogRelations({
+                            widget,
+                            dashKitRef: this.dashKitRef,
+                            onApply: () => {},
+                            onClose: () => {
+                                this.props.setNewRelations(false);
+                                this.props.closeDialogRelations();
+                            },
+                        });
+                    },
+                } as OverlayControlItem,
+            ],
+        };
     };
 }
 

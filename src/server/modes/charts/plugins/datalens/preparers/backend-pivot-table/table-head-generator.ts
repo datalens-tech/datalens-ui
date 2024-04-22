@@ -268,6 +268,10 @@ export const generateTableHead = ({
     });
 
     pivotData.row_dimension_headers?.forEach((item, index) => {
+        if (!head[index]) {
+            return;
+        }
+
         let fieldName = item[0][0];
 
         fieldName = fieldName.startsWith('title-') ? fieldName.replace('title-', '') : fieldName;

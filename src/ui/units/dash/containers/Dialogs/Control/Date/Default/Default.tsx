@@ -19,6 +19,11 @@ import {DATETIME_FORMAT, DATE_FORMAT} from '../../constants';
 
 import './Default.scss';
 
+const enum DefaultDateType {
+    defined = 'defined',
+    notDefined = 'notDefined',
+}
+
 function getTextForRelativeDate(dateString: string, withTime: boolean) {
     if (dateString.indexOf('__relative_') === 0) {
         const [sign, count, scale] = getParsedRelativeDate(dateString)!;
@@ -39,12 +44,12 @@ function getTextForRelativeDate(dateString: string, withTime: boolean) {
 
 const radioButtonItems = [
     {
-        value: 'notDefined',
+        value: DefaultDateType.notDefined,
         text: i18n('dash.control-dialog.edit', 'value_undefined'),
         qa: DialogControlDateQa.defaultNotDefined,
     },
     {
-        value: 'defined',
+        value: DefaultDateType.defined,
         text: i18n('dash.control-dialog.edit', 'value_date-manual'),
         qa: DialogControlDateQa.defaultSelectValue,
     },
@@ -91,6 +96,9 @@ class Default extends React.PureComponent<Props, State> {
 
         if (!prevState.showDialog) {
             updatedState.defaultValue = nextProps.defaultValue;
+            updatedState.type = nextProps.defaultValue
+                ? DefaultDateType.defined
+                : DefaultDateType.notDefined;
         } else if (nextProps.isRange !== prevState.isRange) {
             updatedState.defaultValue = undefined;
         }
@@ -106,7 +114,7 @@ class Default extends React.PureComponent<Props, State> {
             isInvalid: false,
             isRange: Boolean(props.isRange),
             defaultValue: props.defaultValue,
-            type: props.defaultValue ? 'defined' : 'notDefined',
+            type: props.defaultValue ? DefaultDateType.defined : DefaultDateType.notDefined,
         };
     }
 
@@ -143,7 +151,7 @@ class Default extends React.PureComponent<Props, State> {
 
     onEnter = () => {
         const {type, defaultValue} = this.state;
-        const isDefined = type === 'defined';
+        const isDefined = type === DefaultDateType.defined;
 
         this.props.onApply({defaultValue: isDefined ? defaultValue : undefined});
 
@@ -180,7 +188,7 @@ class Default extends React.PureComponent<Props, State> {
                     </RadioGroup>
                 </div>
                 <div className={b('radiobox-content')}>
-                    {item.value === 'defined' && item.value === type && (
+                    {item.value === DefaultDateType.defined && item.value === type && (
                         <div className={b('input-single-place')}>
                             <RelativeDatesPicker
                                 range={Boolean(isRange)}

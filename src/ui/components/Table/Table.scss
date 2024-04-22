@@ -9,9 +9,21 @@
     --dl-table-sort-icon-space: 18px;
 }
 
+@mixin stickyCellBg() {
+    &:before {
+        content: '';
+        position: absolute;
+        top: var(--dl-table-cell-border-offset, -1px);
+        width: calc(100% + 1.99px);
+        left: var(--dl-table-cell-border-offset, -1px);
+        height: calc(100% + 1.99px);
+        border-left: 1px solid var(--dl-table-border-color);
+        pointer-events: none;
+    }
+}
+
 .dl-table {
     border-collapse: collapse;
-    table-layout: fixed;
     min-width: 100%;
     width: max-content;
 
@@ -54,32 +66,39 @@
         }
     }
 
+    &__header &__th {
+        position: relative;
+        font-weight: 500;
+        padding: var(--dl-table-header-vertical-padding) var(--dl-table-cell-horizontal-padding);
+        vertical-align: var(--dl-table-header-cell-vertical-align);
+        box-sizing: border-box;
+        height: 100%;
+        background: var(--dl-table-header-bg-color);
+    }
+
     &__header {
         background: var(--dl-table-header-bg-color);
+        position: sticky;
+        top: 0;
+        z-index: 1;
+
+        /* stylelint-disable */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            top: 0.5px;
+        }
+        /* stylelint-enable */
 
         &_sticky {
-            top: 0;
-            position: sticky;
-            z-index: 1;
-
-            th:before,
-            th:after {
-                content: '';
-                display: inline-block;
-                width: calc(100% + 1px);
-                height: 1px;
-                position: absolute;
-                left: -1px;
+            th {
+                @include stickyCellBg();
             }
 
             th:before {
-                top: -1px;
-                border-top: 1px solid var(--dl-table-border-color);
+                border-bottom: 1px solid var(--dl-table-border-color);
             }
 
-            th:after {
-                bottom: -1px;
-                border-bottom: 1px solid var(--dl-table-border-color);
+            tr:first-child th:before {
+                border-top: 1px solid var(--dl-table-border-color);
             }
         }
     }
@@ -91,15 +110,6 @@
         transform: translateY(-50%);
     }
 
-    &__header &__th {
-        font-weight: 500;
-        padding: var(--dl-table-header-vertical-padding) var(--dl-table-cell-horizontal-padding);
-        position: relative;
-        vertical-align: var(--dl-table-header-cell-vertical-align);
-        box-sizing: border-box;
-        height: 100%;
-    }
-
     &__body &__tr {
         height: var(--dl-table-row-height);
 
@@ -108,16 +118,10 @@
         }
     }
 
-    &__body &__tr:not(&__tr_no-data):hover {
-        background: var(--dl-table-row-hover-bg-color);
-    }
-
     &__body &__td {
-        overflow: hidden;
         padding: var(--dl-table-cell-vertical-padding) var(--dl-table-cell-horizontal-padding);
         text-overflow: ellipsis;
         vertical-align: var(--dl-table-cell-vertical-align);
-        white-space: nowrap;
     }
 
     &__footer &__tr {
@@ -133,5 +137,40 @@
         font-weight: 500;
         background-color: var(--dl-table-footer-bg-color);
         text-align: left;
+    }
+
+    &__header &__th_pinned,
+    &__body &__td_pinned,
+    &__footer &__td_pinned {
+        left: 0;
+        background: var(--dl-table-body-bg-color);
+        position: sticky;
+
+        @include stickyCellBg();
+        &:before {
+            border-bottom: 1px solid var(--dl-table-border-color);
+        }
+    }
+
+    &__header &__th {
+        &_pinned {
+            z-index: 1;
+        }
+    }
+
+    &__shadow {
+        position: absolute;
+        top: 0;
+        right: -1px;
+        width: 10000px;
+        box-shadow: 0 1px 6px 0 var(--g-color-sfx-shadow-light),
+            1px 3px 13px 0 var(--g-color-sfx-shadow-light);
+        border-right: 1px solid var(--g-color-text-hint);
+        pointer-events: none;
+    }
+
+    &__body &__tr:not(&__tr_no-data):hover,
+    &__body &__tr:not(&__tr_no-data):hover td:before {
+        background: var(--dl-table-row-hover-bg-color);
     }
 }

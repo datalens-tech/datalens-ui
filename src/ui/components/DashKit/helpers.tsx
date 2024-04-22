@@ -2,7 +2,8 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {ConfigItem, ItemState, MenuItems} from '@gravity-ui/dashkit';
+import type {ConfigItem, ItemState} from '@gravity-ui/dashkit';
+import {MenuItems} from '@gravity-ui/dashkit/helpers';
 import {Copy, Pencil, TrashBin} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -67,58 +68,40 @@ export function getEditLink(configItem: ConfigItem, params: StringParams, state:
 }
 
 export function getDashKitMenu() {
-    const isShowNewRelation = Utils.isEnabledFeature(Feature.ShowNewRelations);
+    return [
+        {
+            id: 'edit',
+            title: i18n('label_edit'),
+            icon: <Icon data={Pencil} size={16} />,
+            handler: (configItem: ConfigItem, params: StringParams, state: ItemState) => {
+                const link = getEditLink(configItem, params, state);
 
-    const editMenuItem = {
-        id: 'edit',
-        title: i18n('label_edit'),
-        icon: isShowNewRelation && <Icon data={Pencil} size={16} />,
-        handler: (configItem: ConfigItem, params: StringParams, state: ItemState) => {
-            const link = getEditLink(configItem, params, state);
+                if (link) {
+                    window.open(link, '_blank');
+                }
+            },
+            visible: (configItem: ConfigItem) => {
+                const {type, data} = configItem;
 
-            if (link) {
-                window.open(link, '_blank');
-            }
+                return (
+                    type === DashTabItemType.Widget ||
+                    (type === DashTabItemType.Control &&
+                        data?.sourceType === DashTabItemControlSourceType.External)
+                );
+            },
         },
-        visible: (configItem: ConfigItem) => {
-            const {type, data} = configItem;
-
-            return (
-                type === DashTabItemType.Widget ||
-                (type === DashTabItemType.Control &&
-                    data?.sourceType === DashTabItemControlSourceType.External)
-            );
+        {
+            id: MenuItems.Copy,
+            title: i18n('label_copy'),
+            icon: <Icon data={Copy} size={16} />,
+            qa: DashKitOverlayMenuQa.CopyButton,
         },
-    };
-
-    return isShowNewRelation
-        ? [
-              editMenuItem,
-              {
-                  id: MenuItems.Copy,
-                  title: i18n('label_copy'),
-                  icon: <Icon data={Copy} size={16} />,
-                  qa: DashKitOverlayMenuQa.CopyButton,
-              },
-              {
-                  id: MenuItems.Delete,
-                  title: i18n('label_delete'),
-                  icon: <Icon data={TrashBin} size={16} />,
-                  className: b('item', {danger: true}),
-                  qa: DashKitOverlayMenuQa.RemoveButton,
-              },
-          ]
-        : [
-              editMenuItem,
-              {
-                  id: MenuItems.Copy,
-                  title: i18n('label_copy'),
-                  qa: DashKitOverlayMenuQa.CopyButton,
-              },
-              {
-                  id: MenuItems.Delete,
-                  title: i18n('label_delete'),
-                  qa: DashKitOverlayMenuQa.RemoveButton,
-              },
-          ];
+        {
+            id: MenuItems.Delete,
+            title: i18n('label_delete'),
+            icon: <Icon data={TrashBin} size={16} />,
+            className: b('item', {danger: true}),
+            qa: DashKitOverlayMenuQa.RemoveButton,
+        },
+    ];
 }

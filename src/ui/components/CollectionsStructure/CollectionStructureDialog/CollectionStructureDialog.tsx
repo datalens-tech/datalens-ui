@@ -77,11 +77,13 @@ export type Props = {
     type: ResourceType;
     initialCollectionId: string | null;
     defaultTitle?: string;
+    defaultNewWorkbookTitle?: string;
     operationDeniedMessage?: string;
     canSelectInitialCollectionId?: boolean;
     caption: string;
     textButtonApply: string;
     applyIsLoading?: boolean;
+    closeDialogAfterSuccessfulApply?: boolean;
     workbookSelectionMode: boolean;
     massMoveMode?: boolean;
     onApply: ({
@@ -102,11 +104,13 @@ export const CollectionStructureDialog = React.memo<Props>(
         type,
         initialCollectionId,
         defaultTitle = '',
+        defaultNewWorkbookTitle = '',
         operationDeniedMessage,
         canSelectInitialCollectionId = true,
         caption,
         textButtonApply,
         applyIsLoading = false,
+        closeDialogAfterSuccessfulApply = true,
         workbookSelectionMode,
         massMoveMode,
         onApply,
@@ -249,11 +253,15 @@ export const CollectionStructureDialog = React.memo<Props>(
             if (!applyButtonDisabled) {
                 if (workbookSelectionMode) {
                     onApply({targetCollectionId: null, targetWorkbookId}).then(() => {
-                        handleClose();
+                        if (closeDialogAfterSuccessfulApply) {
+                            handleClose();
+                        }
                     });
                 } else if (massMoveMode) {
                     onApply({targetCollectionId, targetWorkbookId: null}).then(() => {
-                        handleClose();
+                        if (closeDialogAfterSuccessfulApply) {
+                            handleClose();
+                        }
                     });
                 } else {
                     setNewTitleDialogIsOpen(true);
@@ -262,6 +270,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         }, [
             massMoveMode,
             applyButtonDisabled,
+            closeDialogAfterSuccessfulApply,
             workbookSelectionMode,
             onApply,
             targetCollectionId,
@@ -282,10 +291,18 @@ export const CollectionStructureDialog = React.memo<Props>(
         const handleApply = React.useCallback(
             (targetTitle: string) => {
                 onApply({targetCollectionId, targetWorkbookId, targetTitle}).then(() => {
-                    handleClose();
+                    if (closeDialogAfterSuccessfulApply) {
+                        handleClose();
+                    }
                 });
             },
-            [onApply, handleClose, targetCollectionId, targetWorkbookId],
+            [
+                onApply,
+                handleClose,
+                targetCollectionId,
+                targetWorkbookId,
+                closeDialogAfterSuccessfulApply,
+            ],
         );
 
         React.useEffect(() => {
@@ -429,6 +446,7 @@ export const CollectionStructureDialog = React.memo<Props>(
                     open={createWorkbookDialogIsOpen}
                     title={i18n('action_create-workbook')}
                     isLoading={createWorkbookIsLoading}
+                    defaultTitleValue={defaultNewWorkbookTitle}
                     onApply={async (title) => {
                         await dispatch(createWorkbook({title, collectionId: targetCollectionId}));
 

@@ -1,7 +1,7 @@
 import {Toaster} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import _debounce from 'lodash/debounce';
-import {TIMEOUT_65_SEC} from 'shared';
+import {TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
 import {sdk} from 'ui';
 
 import logger from '../../../../../libs/logger';
@@ -334,13 +334,16 @@ const dispatchFetchPreviewDataset = async (
         let previewDataset = {};
 
         if (resultSchema.length && !isLoading) {
-            previewDataset = await getSdk().bi.getPreview({
-                datasetId,
-                workbookId,
-                limit,
-                dataset: content,
-                version: 'draft',
-            });
+            previewDataset = await getSdk().bi.getPreview(
+                {
+                    datasetId,
+                    workbookId,
+                    limit,
+                    dataset: content,
+                    version: 'draft',
+                },
+                {timeout: TIMEOUT_100_SEC},
+            );
         } else {
             return dispatch(clearDatasetPreview());
         }

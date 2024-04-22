@@ -242,7 +242,7 @@ class VisualizationPlaceholder extends React.Component<Props> {
     };
 
     private openDialogColumnSettings = () => {
-        const {visualization} = this.props;
+        const {visualization, extraSettings} = this.props;
 
         const columnsPlaceholder = visualization.placeholders.find(
             (placeholder) => COLUMNS_PLACEHOLDERS[placeholder.id],
@@ -261,17 +261,22 @@ class VisualizationPlaceholder extends React.Component<Props> {
             onApply: this.handleDialogColumnSettingsApply,
             fields,
             visualizationId: visualization.id as WizardVisualizationId,
+            pinnedColumns: extraSettings?.pinnedColumns,
         });
     };
 
-    private handleDialogColumnSettingsApply = (columnsSettings: {
-        columns: ColumnSettingsState;
-        rows: ColumnSettingsState;
-    }) => {
+    private handleDialogColumnSettingsApply = (
+        columnsSettings: {
+            columns: ColumnSettingsState;
+            rows: ColumnSettingsState;
+        },
+        pinnedColumns?: number,
+    ) => {
         const {visualization} = this.props;
 
-        const placeholders: Placeholder[] = [];
+        this.props.setExtraSettings({...this.props.extraSettings, pinnedColumns});
 
+        const placeholders: Placeholder[] = [];
         visualization.placeholders.forEach((placeholder) => {
             if (TABLE_PLACEHOLDERS_WITH_COLUMN_WIDTH_SETTINGS.has(placeholder.id)) {
                 placeholders.push(placeholder);

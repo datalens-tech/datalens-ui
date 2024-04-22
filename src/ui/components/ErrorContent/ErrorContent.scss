@@ -20,6 +20,14 @@
         #{$class}__title {
             width: 100%;
             text-align: center;
+
+            a {
+                color: var(--g-color-text-link);
+
+                &:visited {
+                    color: var(--g-color-text-link);
+                }
+            }
         }
 
         #{$class}__description {
@@ -64,6 +72,14 @@
         font-weight: 500;
         font-size: var(--g-text-header-1-font-size);
         line-height: var(--g-text-header-1-line-height);
+
+        a {
+            color: var(--g-color-text-link);
+
+            &:visited {
+                color: var(--g-color-text-link);
+            }
+        }
     }
 
     &__content {
@@ -121,5 +137,9 @@
     &__yfm {
         margin-top: 10px;
         font-size: var(--g-text-body-1-font-size);
+
+        &_without-title {
+            margin-top: 0;
+        }
     }
 }

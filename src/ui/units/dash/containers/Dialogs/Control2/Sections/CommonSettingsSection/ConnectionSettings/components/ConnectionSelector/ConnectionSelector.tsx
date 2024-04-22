@@ -87,7 +87,6 @@ export const ConnectionSelector = () => {
 
     return (
         <EntrySelector
-            // @ts-ignore TODO add keysets before close https://github.com/datalens-tech/datalens-ui/issues/653
             label={i18n('field_connection')}
             entryId={connectionId}
             scope={EntryScope.Connection}

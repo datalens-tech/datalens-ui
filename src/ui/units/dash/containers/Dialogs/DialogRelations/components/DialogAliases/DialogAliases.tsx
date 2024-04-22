@@ -26,6 +26,7 @@ export type DialogAliasesProps = AliasClickHandlerArgs & {
     onClose: NonNullable<AliasBase['onCloseCallback']>;
     changedWidgetsData?: AliasBase['changedWidgetsData'];
     changedWidgetId?: AliasBase['changedWidgetId'];
+    changedItemId?: AliasBase['changedItemId'];
 };
 
 export const DIALOG_ALIASES = Symbol('dash/DIALOG_ALIASES');
@@ -54,6 +55,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
         forceAddAlias,
         changedWidgetsData,
         changedWidgetId,
+        changedItemId,
         invalidAliases,
         dialogAliases,
     } = props;
@@ -242,6 +244,7 @@ const DialogAliases = (props: DialogAliasesProps) => {
         onClose({
             ...(changedWidgetsData ? {changedWidgetsData} : {}),
             ...(changedWidgetId ? {changedWidgetId} : {}),
+            ...(changedItemId ? {changedItemId} : {}),
             ...(dashTabAliasesByNamespace ? {aliases: dashTabAliasesByNamespace} : {}),
         });
     }, [

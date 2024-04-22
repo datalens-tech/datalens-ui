@@ -11,12 +11,16 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
         const renderLatex = useLatex();
 
         React.useLayoutEffect(() => {
-            renderLatex();
-        });
+            renderLatex().then(() => {
+                props.onRenderCallback?.();
+            });
+        }, [renderLatex, props.onRenderCallback]);
 
         React.useEffect(() => {
             // TODO: https://github.com/datalens-tech/datalens-ui/issues/753
-            import('@diplodoc/latex-extension/runtime');
+            import('@diplodoc/latex-extension/runtime').then(() => {
+                props.onRenderCallback?.();
+            });
         }, []);
 
         return (
