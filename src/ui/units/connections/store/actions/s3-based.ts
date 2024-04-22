@@ -23,13 +23,17 @@ import {setPageData} from '.';
 
 const i18n = I18n.keyset('connections.form');
 
-export const createS3BasedConnection = (args: {name: string; dirPath?: string}) => {
+export const createS3BasedConnection = (args: {
+    name: string;
+    dirPath?: string;
+    workbookId?: string;
+}) => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {name, dirPath} = args;
+        const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
         const form = getState().connections.form;
         const placementData: Record<string, string> = dirPath
             ? {[FieldKey.DirPath]: dirPath}
-            : {[FieldKey.WorkbookId]: getWorkbookIdFromPathname()};
+            : {[FieldKey.WorkbookId]: workbookId};
         const resultForm = {
             ...form,
             ...placementData,

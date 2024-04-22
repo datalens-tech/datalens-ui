@@ -10,11 +10,12 @@ import {CollectionStructureDialog, ResourceType} from './CollectionStructureDial
 const i18n = I18n.keyset('component.collections-structure');
 
 export type Props = {
-    open: boolean;
-    initialCollectionId?: string | null;
     entryType: 'connection' | 'dataset' | 'wizard' | 'ql' | 'dashboard';
-    onApply?: (workbookId: string) => void;
+    closeDialogAfterSuccessfulApply?: boolean;
+    disableHistoryPush?: boolean;
+    initialCollectionId?: string | null;
     onClose: () => void;
+    onApply?: (workbookId: string) => void;
 };
 
 export const DIALOG_CREATE_ENTRY_IN_WORKBOOK = Symbol('DIALOG_CREATE_ENTRY_IN_WORKBOOK');
@@ -25,33 +26,36 @@ export type OpenDialogCreateEntryInWorkbookArgs = {
 };
 
 export const CreateEntryInWorkbookDialog: React.FC<Props> = ({
-    open,
-    initialCollectionId = null,
     entryType,
-    onApply,
+    closeDialogAfterSuccessfulApply,
+    disableHistoryPush = false,
+    initialCollectionId = null,
     onClose,
+    onApply,
 }) => {
     const history = useHistory();
 
     const handleCreateEntry = React.useCallback(
         ({targetWorkbookId}: {targetWorkbookId: string | null}) => {
             if (targetWorkbookId) {
-                switch (entryType) {
-                    case 'connection':
-                        history.push(`/workbooks/${targetWorkbookId}/connections/new`);
-                        break;
-                    case 'dataset':
-                        history.push(`/workbooks/${targetWorkbookId}/datasets/new`);
-                        break;
-                    case 'wizard':
-                        history.push(`/workbooks/${targetWorkbookId}/wizard`);
-                        break;
-                    case 'ql':
-                        history.push(`/workbooks/${targetWorkbookId}/ql`);
-                        break;
-                    case 'dashboard': {
-                        history.push(`/workbooks/${targetWorkbookId}/dashboards`);
-                        break;
+                if (!disableHistoryPush) {
+                    switch (entryType) {
+                        case 'connection':
+                            history.push(`/workbooks/${targetWorkbookId}/connections/new`);
+                            break;
+                        case 'dataset':
+                            history.push(`/workbooks/${targetWorkbookId}/datasets/new`);
+                            break;
+                        case 'wizard':
+                            history.push(`/workbooks/${targetWorkbookId}/wizard`);
+                            break;
+                        case 'ql':
+                            history.push(`/workbooks/${targetWorkbookId}/ql`);
+                            break;
+                        case 'dashboard': {
+                            history.push(`/workbooks/${targetWorkbookId}/dashboards`);
+                            break;
+                        }
                     }
                 }
                 if (onApply) {
@@ -60,17 +64,18 @@ export const CreateEntryInWorkbookDialog: React.FC<Props> = ({
             }
             return Promise.resolve();
         },
-        [entryType, history, onApply],
+        [entryType, history, disableHistoryPush, onApply],
     );
 
     return (
         <CollectionStructureDialog
-            open={open}
+            open={true}
             type={ResourceType.Workbook}
             initialCollectionId={initialCollectionId}
             caption={`${i18n('label_create-entry-in-workbook')} ${i18n(`label_${entryType}`)}`}
             textButtonApply={i18n('action_create')}
             workbookSelectionMode={true}
+            closeDialogAfterSuccessfulApply={closeDialogAfterSuccessfulApply}
             onApply={handleCreateEntry}
             onClose={onClose}
         />

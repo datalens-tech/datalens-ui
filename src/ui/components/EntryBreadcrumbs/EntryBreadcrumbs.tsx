@@ -36,11 +36,15 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
             firstDisplayedItemsCount={FirstDisplayedItemsCount.One}
             lastDisplayedItemsCount={LastDisplayedItemsCount.One}
             renderRootContent={entry?.workbookId ? undefined : renderRootContent}
-            renderItemContent={(item: BreadcrumbsItem) => {
+            renderItemContent={(item: BreadcrumbsItem, isCurrent: boolean) => {
+                if (isCurrent) {
+                    return item.text;
+                }
+
                 return item.path ? (
                     <Link
                         to={item.path}
-                        className={b('item')}
+                        className={b('item', {link: true})}
                         onClick={(e) => {
                             e.stopPropagation();
                         }}
@@ -48,7 +52,7 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
                         {item.text}
                     </Link>
                 ) : (
-                    <div>{item.text}</div>
+                    <div className={b('item')}>{item.text}</div>
                 );
             }}
         />

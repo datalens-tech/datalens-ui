@@ -1,11 +1,11 @@
 import React from 'react';
 
-import {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DatalensGlobalState, Utils} from 'index';
+import {DatalensGlobalState} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
@@ -17,7 +17,6 @@ import {
     DashTabItemControlManual,
     DashTabItemControlSingle,
     DashTabItemControlSourceType,
-    Feature,
     StringParams,
     WorkbookId,
 } from 'shared';
@@ -267,7 +266,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         if (this.props.data.sourceType === DashTabItemControlSourceType.External) {
             return (this.chartKitRef.current as ChartControlRef)?.getMeta();
         }
-        if (Utils.isEnabledFeature(Feature.ShowNewRelations) && this.props.isNewRelations) {
+        if (this.props.isNewRelations) {
             return this.getCurrentWidgetMetaInfo();
         }
         if (this.chartKitRef && this.chartKitRef.current) {
@@ -380,8 +379,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     setLoadedData = (loadedData: ResponseSuccessControls, status: LoadStatus) => {
-        const isNewRelations =
-            Utils.isEnabledFeature(Feature.ShowNewRelations) && this.props.isNewRelations;
+        const isNewRelations = this.props.isNewRelations;
 
         const isAvailableStatus = isNewRelations
             ? [LOAD_STATUS.SUCCESS, LOAD_STATUS.FAIL].includes(status)

@@ -2,7 +2,6 @@ export enum Feature {
     ChartkitAlerts = 'chartkitAlerts',
     UseConfigurableChartkit = 'UseConfigurableChartkit',
     Ql = 'ql',
-    ShowNewRelations = 'showNewRelations',
     HideOldRelations = 'hideOldRelations',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     FieldEditorDocSection = 'FieldEditorDocSection',
@@ -24,7 +23,6 @@ export enum Feature {
     UseComponentHeader = 'UseComponentHeader',
     FetchDocumentation = 'FetchDocumentation',
     Comments = 'Comments',
-    ShowFilteringChartSetting = 'ShowFilteringChartSetting',
     EmptySelector = 'emptySelector',
     ChartEditorDeveloperModeCheck = 'ChartEditorDeveloperModeCheck',
     QLPrometheus = 'QLPrometheus',
@@ -55,9 +53,6 @@ export enum Feature {
     EntryMenuEditor = 'EntryMenuEditor',
     ExternalSelectors = 'ExternalSelectors',
     DashBoardWidgetParamsStrictValidation = 'DashBoardWidgetParamsStrictValidation',
-    D3ScatterVisualization = 'D3ScatterVisualization',
-    D3PieVisualization = 'D3PieVisualization',
-    D3BarXVisualization = 'D3BarXVisualization',
     D3Visualizations = 'D3Visualizations',
     HideMultiDatasets = 'HideMultiDatasets',
     ShouldCheckEditorAccess = 'ShouldCheckEditorAccess',
@@ -79,6 +74,8 @@ export enum Feature {
     EnableServerlessEditor = 'EnableServerlessEditor',
     NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
     ChartWithFnLogging = 'ChartWithFnLogging',
+    PinnedColumns = 'PinnedColumns',
+    CustomAccessDescription = 'CustomAccessDescription',
 }
 
 export type FeatureConfig = Record<string, boolean>;

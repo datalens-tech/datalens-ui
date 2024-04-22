@@ -43,6 +43,7 @@ import {
     setPublishDraft,
 } from '../../store/actions/dashTyped';
 import {
+    selectDashAccessDescription,
     selectLoadingEditMode,
     selectRenameWithoutReload,
     selectStateMode,
@@ -159,6 +160,19 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     openDialogTabs = () => this.props.openDialog(DIALOG_TYPE.TABS);
 
     openDialogAccess = () => {
+        if (
+            Utils.isEnabledFeature(Feature.CustomAccessDescription) &&
+            this.props.accessDescription &&
+            !this.props.canEdit
+        ) {
+            this.props.entryDialoguesRef.current?.open?.({
+                dialog: EntryDialogName.AccessDescription,
+                dialogProps: {
+                    accessDescription: this.props.accessDescription,
+                },
+            });
+            return;
+        }
         this.props.entryDialoguesRef.current?.open?.({
             dialog: EntryDialogName.Access,
             dialogProps: {
@@ -288,6 +302,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         isLoadingEditMode: selectLoadingEditMode(state),
         isRenameWithoutReload: selectRenameWithoutReload(state),
         isSelectStateMode: selectStateMode(state),
+        accessDescription: selectDashAccessDescription(state),
     };
 };
 

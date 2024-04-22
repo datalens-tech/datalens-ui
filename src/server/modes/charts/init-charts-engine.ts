@@ -31,7 +31,7 @@ export function initChartsEngine({
     }
 
     const telemetryCallbacks: TelemetryCallbacks = {
-        onConfigFetched: ({id, statusCode, requestId, latency = 0}) => {
+        onConfigFetched: ({id, statusCode, requestId, latency = 0, traceId, tenantId, userId}) => {
             ctx.stats('apiRequests', {
                 requestId: requestId!,
                 service: 'us',
@@ -40,9 +40,15 @@ export function initChartsEngine({
                 requestTime: latency,
                 requestMethod: 'POST',
                 requestUrl: id || '',
+                traceId: traceId || '',
+                tenantId: tenantId || '',
+                userId: userId || '',
             });
         },
-        onConfigFetchingFailed: (_error, {id, statusCode, requestId, latency = 0}) => {
+        onConfigFetchingFailed: (
+            _error,
+            {id, statusCode, requestId, latency = 0, traceId, tenantId, userId},
+        ) => {
             ctx.stats('apiRequests', {
                 requestId: requestId!,
                 service: 'us',
@@ -51,10 +57,22 @@ export function initChartsEngine({
                 requestTime: latency,
                 requestMethod: 'POST',
                 requestUrl: id || '',
+                traceId: traceId || '',
+                tenantId: tenantId || '',
+                userId: userId || '',
             });
         },
 
-        onDataFetched: ({sourceName, url, requestId, statusCode, latency}) => {
+        onDataFetched: ({
+            sourceName,
+            url,
+            requestId,
+            statusCode,
+            latency,
+            traceId,
+            tenantId,
+            userId,
+        }) => {
             ctx.stats('apiRequests', {
                 requestId,
                 service: sourceName || 'unknown-charts-source',
@@ -63,9 +81,15 @@ export function initChartsEngine({
                 requestTime: latency,
                 requestMethod: 'POST',
                 requestUrl: url || '',
+                traceId: traceId || '',
+                tenantId: tenantId || '',
+                userId: userId || '',
             });
         },
-        onDataFetchingFailed: (_error, {sourceName, url, requestId, statusCode, latency}) => {
+        onDataFetchingFailed: (
+            _error,
+            {sourceName, url, requestId, statusCode, latency, traceId, tenantId, userId},
+        ) => {
             ctx.stats('apiRequests', {
                 requestId,
                 service: sourceName || 'unknown-charts-source',
@@ -74,6 +98,9 @@ export function initChartsEngine({
                 requestTime: latency,
                 requestMethod: 'POST',
                 requestUrl: url || '',
+                traceId: traceId || '',
+                tenantId: tenantId || '',
+                userId: userId || '',
             });
         },
 
@@ -88,7 +115,7 @@ export function initChartsEngine({
 
         onTabsExecuted: ({result, entryId}) => {
             if (shouldLogChartWithFunction && isConfigWithFunction(result)) {
-                ctx.stats('chartsWithFn', {datetime: getTime(), entryId: entryId || ''});
+                ctx.stats('chartsWithFn', {datetime: Date.now(), entryId: entryId || ''});
             }
         },
     };

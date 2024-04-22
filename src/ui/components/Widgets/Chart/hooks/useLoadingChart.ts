@@ -1,11 +1,11 @@
 import React from 'react';
 
 import {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import type {ItemStateAndParamsChangeOptions} from '@gravity-ui/dashkit';
 import {
-    ItemStateAndParamsChangeOptions,
     pickActionParamsFromParams,
     pickExceptActionParamsFromParams,
-} from '@gravity-ui/dashkit';
+} from '@gravity-ui/dashkit/helpers';
 import {usePrevious} from 'hooks';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';

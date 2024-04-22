@@ -283,7 +283,7 @@ class NavigationEntries extends React.Component {
                 return;
             }
             if (error.status === 403 && !isPermissionRetry) {
-                onPermissionError();
+                onPermissionError?.();
                 this.setState({page: null});
                 this.getListDirectory({isPermissionRetry: true});
                 return;

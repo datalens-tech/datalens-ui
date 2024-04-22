@@ -1,0 +1,8 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.dialog-column-settings {
+    &__subheader {
+        @include text-subheader-2();
+        margin-right: 4px;
+    }
+}

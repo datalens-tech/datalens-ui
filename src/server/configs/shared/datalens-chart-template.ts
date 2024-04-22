@@ -2,6 +2,7 @@ import {
     ExtendedChartsConfig,
     Feature,
     WizardVisualizationId,
+    getDatasetLinks,
     isD3Visualization,
     isEnabledServerFeature,
     mapChartsConfigToLatestVersion,
@@ -43,11 +44,12 @@ export default {
             }
             case WizardVisualizationId.Metric: {
                 const app = registry.getApp();
-
-                const useMarkupMetric = isEnabledServerFeature(
-                    app.nodekit.ctx,
-                    Feature.MarkupMetric,
-                );
+                const {placeholders} = chart.visualization;
+                // @ts-expect-error
+                const dataType = placeholders.find((p) => p.id === 'measures')?.items[0]?.data_type;
+                const useMarkupMetric =
+                    dataType === 'markup' &&
+                    isEnabledServerFeature(app.nodekit.ctx, Feature.MarkupMetric);
 
                 if (useMarkupMetric) {
                     return 'markup_wizard_node';
@@ -61,16 +63,7 @@ export default {
         }
     },
     identifyLinks: (chart: ExtendedChartsConfig) => {
-        const links: Record<string, string> = {};
         const config = mapChartsConfigToLatestVersion(chart);
-        const ids: string[] = config.datasetsIds;
-
-        ids.forEach((id, i) => {
-            const key = `dataset${i > 0 ? i : ''}`;
-
-            links[key] = id;
-        });
-
-        return links;
+        return getDatasetLinks(config);
     },
 };

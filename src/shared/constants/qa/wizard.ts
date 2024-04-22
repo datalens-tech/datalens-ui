@@ -172,3 +172,8 @@ export const enum HierarchyEditorQa {
 export const enum VisualizationItemQa {
     FormulaIcon = 'formula-icon',
 }
+
+export const enum ChartSaveControlsQA {
+    SaveMoreDropdown = 'save-more-dropdown',
+    SaveAsEditorScript = 'save-as-editor-script',
+}

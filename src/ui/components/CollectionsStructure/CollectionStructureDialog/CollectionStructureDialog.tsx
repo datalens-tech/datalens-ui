@@ -83,6 +83,7 @@ export type Props = {
     caption: string;
     textButtonApply: string;
     applyIsLoading?: boolean;
+    closeDialogAfterSuccessfulApply?: boolean;
     workbookSelectionMode: boolean;
     massMoveMode?: boolean;
     onApply: ({
@@ -109,6 +110,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         caption,
         textButtonApply,
         applyIsLoading = false,
+        closeDialogAfterSuccessfulApply = true,
         workbookSelectionMode,
         massMoveMode,
         onApply,
@@ -251,11 +253,15 @@ export const CollectionStructureDialog = React.memo<Props>(
             if (!applyButtonDisabled) {
                 if (workbookSelectionMode) {
                     onApply({targetCollectionId: null, targetWorkbookId}).then(() => {
-                        handleClose();
+                        if (closeDialogAfterSuccessfulApply) {
+                            handleClose();
+                        }
                     });
                 } else if (massMoveMode) {
                     onApply({targetCollectionId, targetWorkbookId: null}).then(() => {
-                        handleClose();
+                        if (closeDialogAfterSuccessfulApply) {
+                            handleClose();
+                        }
                     });
                 } else {
                     setNewTitleDialogIsOpen(true);
@@ -264,6 +270,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         }, [
             massMoveMode,
             applyButtonDisabled,
+            closeDialogAfterSuccessfulApply,
             workbookSelectionMode,
             onApply,
             targetCollectionId,
@@ -284,10 +291,18 @@ export const CollectionStructureDialog = React.memo<Props>(
         const handleApply = React.useCallback(
             (targetTitle: string) => {
                 onApply({targetCollectionId, targetWorkbookId, targetTitle}).then(() => {
-                    handleClose();
+                    if (closeDialogAfterSuccessfulApply) {
+                        handleClose();
+                    }
                 });
             },
-            [onApply, handleClose, targetCollectionId, targetWorkbookId],
+            [
+                onApply,
+                handleClose,
+                targetCollectionId,
+                targetWorkbookId,
+                closeDialogAfterSuccessfulApply,
+            ],
         );
 
         React.useEffect(() => {

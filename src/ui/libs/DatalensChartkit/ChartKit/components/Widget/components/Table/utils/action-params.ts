@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {transformParamsToActionParams} from '@gravity-ui/dashkit';
+import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import clone from 'lodash/clone';
 import get from 'lodash/get';
 import intersection from 'lodash/intersection';

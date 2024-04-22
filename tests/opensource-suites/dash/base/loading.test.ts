@@ -2,11 +2,11 @@ import {Page} from '@playwright/test';
 
 import {TestParametrizationConfig} from '../../../types/config';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {isEnabledFeature, openTestPage, slct, waitForCondition} from '../../../utils';
+import {openTestPage, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {COMMON_DASH_SELECTORS} from '../../../suites/dash/constants';
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
-import {ConnectionsDialogQA, DashCommonQa, Feature} from '../../../../src/shared';
+import {DashCommonQa} from '../../../../src/shared';
 
 const TEXTS = {
     TAB2: 'Tab 2',
@@ -139,23 +139,12 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
                 return elems.length === 0;
             });
 
-            const isEnabledNewRelations = await isEnabledFeature(page, Feature.ShowNewRelations);
-            if (isEnabledNewRelations) {
-                await dashboardPage.openControlRelationsDialog();
-            } else {
-                await dashboardPage.openDashConnections();
-            }
+            await dashboardPage.openControlRelationsDialog();
 
             // waiting for the chart to load
             await initPromise;
 
-            if (isEnabledNewRelations) {
-                await page
-                    .locator(`${slct(DashCommonQa.RelationsCancelBtn)}:not([disabled])`)
-                    .click();
-            } else {
-                await page.locator(slct(ConnectionsDialogQA.Cancel)).click();
-            }
+            await page.locator(`${slct(DashCommonQa.RelationsCancelBtn)}:not([disabled])`).click();
 
             // check that the widget content has appeared
             await page
