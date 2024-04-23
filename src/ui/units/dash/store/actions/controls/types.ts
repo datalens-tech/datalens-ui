@@ -55,5 +55,6 @@ export type ItemDataSource = {
     connectionId?: string;
     connectionQueryType?: ConnectionQueryTypeValues;
     connectionQueryContent?: ConnectionQueryContent;
+    showHint?: boolean;
     hint?: string;
 };

@@ -10,6 +10,7 @@ import {getEntryName} from '../../../components/EntryTitle/utils';
 import {Illustration} from '../../../components/Illustration/Illustration';
 import {getIllustrationStore} from '../../../components/Illustration/getIllustrationStore';
 import {getLoginById} from '../../../components/Login/utils';
+import {MarkdownControl} from '../../../components/MarkdownControl/MarkdownControl';
 import {MobileHeaderComponent} from '../../../components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
 import {getQuickItems} from '../../../components/Navigation/Base/configure';
 import {getInitDestination} from '../../../components/Navigation/Base/utils';
@@ -33,6 +34,7 @@ export const registerCommonPlugins = () => {
         EntryBreadcrumbs,
         YfmWrapperContent,
         DatepickerControl,
+        MarkdownControl,
     });
 
     registry.common.functions.register({

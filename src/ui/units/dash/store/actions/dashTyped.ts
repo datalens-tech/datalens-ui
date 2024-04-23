@@ -399,6 +399,7 @@ export type SelectorDialogState = {
     width: string;
     id?: string;
     namespace?: string;
+    showHint?: boolean;
     hint?: string;
 };
 

@@ -76,6 +76,7 @@ export enum Feature {
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
     CustomAccessDescription = 'CustomAccessDescription',
+    DatasetFieldHint = 'DatasetFieldHint',
 }
 
 export type FeatureConfig = Record<string, boolean>;
