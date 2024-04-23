@@ -181,6 +181,7 @@
     }
 
     @each $name, $_ in $colors {
+        &.yfm-colorify--#{$name} > .yfm,
         &.yfm-colorify--#{$name} {
             color: var(--yfm-colorify-#{$name});
         }
