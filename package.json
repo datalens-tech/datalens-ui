@@ -148,7 +148,6 @@
     "@types/recompose": "^0.30.7",
     "@types/redux-logger": "^3.0.9",
     "@types/request-promise-native": "^1.0.21",
-    "@types/supertest": "^2.0.11",
     "@types/uuid": "^7.0.4",
     "@types/webpack-env": "^1.16.0",
     "@types/youtube": "0.0.47",
