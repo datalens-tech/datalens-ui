@@ -5,6 +5,7 @@ import {
     AxisMode,
     ChartsConfigVersion,
     ColumnSettings,
+    HintSettings,
     LabelsPositions,
     NumberFormatType,
     NumberFormatUnit,
@@ -262,6 +263,7 @@ export type V10Field = {
     subTotalsSettings?: TableSubTotalsSettings;
     backgroundSettings?: TableFieldBackgroundSettings;
     columnSettings?: ColumnSettings;
+    hintSettings?: HintSettings;
 } & V10ClientOnlyFields;
 
 export type V10ColorsConfig = {

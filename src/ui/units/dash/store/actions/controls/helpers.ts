@@ -148,6 +148,7 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
         showTitle,
         showInnerTitle,
         innerTitle,
+        showHint,
         hint,
         elementType,
         multiselectable,
@@ -182,6 +183,7 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
         innerTitle,
         operation,
         required,
+        showHint,
         hint,
     };
 

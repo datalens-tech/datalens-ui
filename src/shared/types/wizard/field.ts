@@ -44,8 +44,13 @@ export interface WizardDatasetField extends DatasetField {
     backgroundSettings?: TableFieldBackgroundSettings;
     distincts?: string[];
     displayMode?: TableFieldDisplayMode;
-    hint?: string;
+    hintSettings?: HintSettings;
 }
+
+export type HintSettings = {
+    enabled?: boolean;
+    text?: string;
+};
 
 export interface FilterField extends WizardDatasetField {
     filter: FilterBody;

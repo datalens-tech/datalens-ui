@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Dialog, Icon} from '@gravity-ui/uikit';
+import {Dialog, Icon, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
@@ -8,6 +8,8 @@ import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
 import {
     CommonSharedExtraSettings,
+    Feature,
+    HintSettings,
     Placeholder,
     PlaceholderId,
     TableFieldBackgroundSettings,
@@ -19,7 +21,6 @@ import {
     isPseudoField,
 } from 'shared';
 import {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
-import {FieldHintSetting} from 'ui/components/FieldHintSetting/FieldHintSetting';
 import {setExtraSettings} from 'ui/units/wizard/actions/widget';
 import {
     getDefaultSubTotalsSettings,
@@ -37,6 +38,8 @@ import {
     Field as TField,
     TableBarsSettings,
 } from '../../../../../../shared/types';
+import {Utils} from '../../../../../../ui';
+import {registry} from '../../../../../registry';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,
     AVAILABLE_DATETIME_FORMATS,
@@ -100,7 +103,7 @@ export type DialogFieldState = Optional<FieldStateExtend> & {
     visualizationId?: string;
     currentPlaceholder?: Placeholder;
     displayMode?: TableFieldDisplayMode;
-    hint?: string;
+    hintSettings?: HintSettings;
 };
 
 const b = block('wizard-dialog-field');
@@ -128,7 +131,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
 
         const initialState: DialogFieldState = {
             formatting: props.item?.formatting || ({} as CommonNumberFormattingOptions),
-            hint: props.item?.hint,
+            hintSettings: props.item?.hintSettings,
             isBarsSettingsEnabled:
                 !isPivotFallbackTurnedOn &&
                 showBarsInDialogField(visualizationId, props.placeholderId, props.item),
@@ -386,25 +389,49 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
 
     private renderHintSettings() {
         const {item, placeholderId} = this.props;
-        const {hint} = this.state;
+        const canSetHint = Utils.isEnabledFeature(Feature.DatasetFieldHint);
+        const availablePlaceholders = [
+            PlaceholderId.FlatTableColumns,
+            PlaceholderId.PivotTableRows,
+        ];
 
-        if (!item || placeholderId !== PlaceholderId.FlatTableColumns) {
+        if (
+            !item ||
+            !availablePlaceholders.includes(placeholderId as PlaceholderId) ||
+            !canSetHint
+        ) {
             return null;
         }
 
+        const {enabled, text} = this.state.hintSettings || {};
+        const {MarkdownControl} = registry.common.components.getAll();
+
         return (
-            <DialogFieldRow
-                title={i18n('wizard', 'label_hint')}
-                setting={
-                    <FieldHintSetting
-                        hint={hint}
-                        fieldDescription={item.description}
-                        onChange={(value) => {
-                            this.setState({hint: value});
-                        }}
-                    />
-                }
-            />
+            <React.Fragment>
+                <DialogFieldRow
+                    title={i18n('wizard', 'label_hint')}
+                    setting={
+                        <Switch
+                            onUpdate={(checked) =>
+                                this.setState({hintSettings: {enabled: checked, text}})
+                            }
+                            checked={enabled}
+                        />
+                    }
+                />
+                <DialogFieldRow
+                    title={''}
+                    setting={
+                        <MarkdownControl
+                            value={text ?? item?.description}
+                            onChange={(value) =>
+                                this.setState({hintSettings: {enabled, text: value}})
+                            }
+                            disabled={!enabled}
+                        />
+                    }
+                />
+            </React.Fragment>
         );
     }
 
