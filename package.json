@@ -197,7 +197,6 @@
     "resize-observer-polyfill": "^1.5.1",
     "robust-point-in-polygon": "^1.0.3",
     "stylelint": "^14.6.0",
-    "supertest": "^4.0.2",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^3.14.0",
