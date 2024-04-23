@@ -1,8 +1,12 @@
+import {Request} from '@gravity-ui/expresskit';
+import {AppContext} from '@gravity-ui/nodekit';
+
 import {ChartsInsight, DashWidgetConfig, EntryPublicAuthor} from '../../../../../shared';
 
 import {CommentsFetcherFetchResult, CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
 import {Console} from './console';
 import {DataFetcherResult} from './data-fetcher';
+import {ChartApiContext} from './sandbox';
 
 export type UiTabExportsControl = {
     type: string;
@@ -92,3 +96,30 @@ export type NativeModule = {
 };
 
 export type NativeModulesType = 'BASE_NATIVE_MODULES';
+
+export type ChartBuilderResult = {
+    exports: any;
+    executionTiming: [number, number];
+    runtimeMetadata: ChartApiContext['__runtimeMetadata'];
+    name: string;
+    logs?: {type: string; value: string | number}[][];
+};
+
+export type ChartBuilder = {
+    buildShared: () => Promise<void>;
+    buildModules: (args: {
+        subrequestHeaders: Record<string, string>;
+        req: Request;
+        ctx: AppContext;
+        onModuleBuild: (args: {executionTiming: [number, number]; filename: string}) => void;
+    }) => Promise<Record<string, ChartBuilderResult>>;
+    buildParams: () => Promise<ChartBuilderResult>;
+    buildUrls: () => Promise<ChartBuilderResult>;
+    buildChartLibraryConfig: (data?: unknown) => Promise<ChartBuilderResult | null>;
+    buildChartConfig: (data?: unknown) => Promise<ChartBuilderResult>;
+    buildChart: (
+        data: unknown,
+        sources?: Record<string, DataFetcherResult>,
+    ) => Promise<ChartBuilderResult>;
+    buildUI: (data?: unknown) => Promise<ChartBuilderResult>;
+};

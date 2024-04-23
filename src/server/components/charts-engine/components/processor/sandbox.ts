@@ -1,10 +1,11 @@
 import vm from 'vm';
 
-import {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
+import {ChartsInsight, DashWidgetConfig, StringParams} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {IChartEditor} from '../../../../../shared/types';
 import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
+import {getCurrentPage, getSortParams} from '../../utils';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
 import {Console} from './console';
@@ -221,42 +222,55 @@ const execute = ({code, instance, filename, timeout}: ExecuteParams): SandboxExe
     };
 };
 
-const processTab = ({
+export type ChartApiContext = {
+    ChartEditor: IChartEditor;
+    __runtimeMetadata: {
+        error?: unknown;
+        userParamsOverride?: StringParams;
+        userConfigOverride?: unknown;
+        libraryConfigOverride?: unknown;
+        userActionParamsOverride?: StringParams;
+        exportFilename?: string;
+        dataSourcesInfos?: unknown;
+        sideMarkdown?: string;
+        extra: {
+            chartsInsights?: ChartsInsight[];
+            sideMarkdown?: string;
+            exportFilename?: string;
+        };
+        chartsInsights?: ChartsInsight[];
+        errorTransformer: <T>(error: T) => T;
+    };
+};
+
+export const getChartApiContext = ({
     name,
-    code,
     params,
     actionParams,
     widgetConfig,
     data,
     dataStats,
-    timeout = DEFAULT_PROCESSING_TIMEOUT,
     shared = {},
-    modules = {},
-    hooks,
-    userLogin,
     userLang,
-    nativeModules,
-    isScreenshoter,
-}: ProcessTabParams) => {
-    const api: IChartEditor = {
+}: {
+    name: string;
+    params: Record<string, string | string[]>;
+    actionParams: Record<string, string | string[]>;
+    widgetConfig?: DashWidgetConfig['widgetConfig'];
+    data?: Record<string, any>;
+    dataStats?: any;
+    shared: Record<string, object>;
+    userLang: string;
+}): ChartApiContext => {
+    const api = {
         getSharedData: () => shared,
         getLang: () => userLang,
-        attachHandler: (handlerConfig: Record<string, any>) => ({
-            ...handlerConfig,
-            __chartkitHandler: true,
-        }),
-        attachFormatter: (formatterConfig: Record<string, any>) => ({
-            ...formatterConfig,
-            __chartkitFormatter: true,
-        }),
-        ...hooks.getSandboxApiMethods(),
-    };
-
-    api.resolveRelative = resolveRelativeDate;
-
-    api.resolveInterval = resolveIntervalDate;
-
-    api.resolveOperation = resolveOperation;
+        resolveRelative: resolveRelativeDate,
+        resolveInterval: resolveIntervalDate,
+        resolveOperation: resolveOperation,
+        getWidgetConfig: () => widgetConfig || {},
+        getActionParams: () => actionParams || {},
+    } as IChartEditor;
 
     const context = {
         ChartEditor: api,
@@ -279,10 +293,6 @@ const processTab = ({
     /** We need for backward compatibility with ≤0.19.2 */
     api._setError = api.setError;
 
-    api.getWidgetConfig = () => widgetConfig || {};
-
-    api.getActionParams = () => actionParams || {};
-
     if (params) {
         api.getParams = () => params;
         api.getParam = (paramName: string) => params[paramName] || [];
@@ -293,37 +303,13 @@ const processTab = ({
             context.__runtimeMetadata.errorTransformer = errorTransformer;
         };
         api.getSortParams = () => {
-            const columnId = Array.isArray(params._columnId)
-                ? params._columnId[0]
-                : params._columnId;
-            const order = Array.isArray(params._sortOrder)
-                ? params._sortOrder[0]
-                : params._sortOrder;
-            const _sortRowMeta = Array.isArray(params._sortRowMeta)
-                ? params._sortRowMeta[0]
-                : params._sortRowMeta;
-            const _sortColumnMeta = Array.isArray(params._sortColumnMeta)
-                ? params._sortColumnMeta[0]
-                : params._sortColumnMeta;
-
-            let meta: Record<string, any>;
-            try {
-                meta = {
-                    column: _sortColumnMeta ? JSON.parse(_sortColumnMeta) : {},
-                    row: _sortRowMeta ? JSON.parse(_sortRowMeta) : {},
-                };
-            } catch {
-                meta = {};
-            }
-
-            return {columnId, order: Number(order), meta};
+            return getSortParams(params);
         };
     }
 
     if (name === 'Urls' || name === 'JavaScript') {
         api.getCurrentPage = () => {
-            const page = Number(Array.isArray(params._page) ? params._page[0] : params._page);
-            return isNaN(page) ? 1 : page;
+            return getCurrentPage(params);
         };
     }
 
@@ -381,6 +367,49 @@ const processTab = ({
             };
         }
     }
+
+    return context;
+};
+
+const processTab = ({
+    name,
+    code,
+    params,
+    actionParams,
+    widgetConfig,
+    data,
+    dataStats,
+    timeout = DEFAULT_PROCESSING_TIMEOUT,
+    shared = {},
+    modules = {},
+    hooks,
+    userLogin,
+    userLang,
+    nativeModules,
+    isScreenshoter,
+}: ProcessTabParams) => {
+    const context = getChartApiContext({
+        name,
+        params,
+        actionParams,
+        widgetConfig,
+        data,
+        dataStats,
+        shared,
+        userLang: userLang as string,
+    });
+    context.ChartEditor = {
+        ...context.ChartEditor,
+        attachHandler: (handlerConfig: Record<string, any>) => ({
+            ...handlerConfig,
+            __chartkitHandler: true,
+        }),
+        attachFormatter: (formatterConfig: Record<string, any>) => ({
+            ...formatterConfig,
+            __chartkitFormatter: true,
+        }),
+        ...hooks.getSandboxApiMethods(),
+    };
 
     return execute({
         code,

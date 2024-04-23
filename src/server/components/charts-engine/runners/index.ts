@@ -6,8 +6,9 @@ import type {WorkbookId} from '../../../../shared';
 import {EDITOR_TYPE} from '../../../../shared/constants';
 import {ResolvedConfig} from '../components/storage/types';
 
-import {runChart} from './chart';
+// import {runChart} from './chart';
 import {runEditor} from './editor';
+import {runChart} from './wizard';
 
 export type Runner = {
     name: string;

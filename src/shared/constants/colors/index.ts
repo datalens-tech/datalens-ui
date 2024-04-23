@@ -89,5 +89,5 @@ export const getPalettesOrder = (): (keyof Palettes)[] => {
 };
 
 export const isSystemPaletteId = (paletteId: string, palettes: Record<string, Palette>) => {
-    return Boolean(palettes[paletteId]);
+    return Boolean(palettes?.[paletteId]);
 };

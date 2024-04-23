@@ -144,17 +144,15 @@ function canUseActionParams(shared: ServerChartsConfig) {
 
 // eslint-disable-next-line complexity
 export default (
-    ...options: [
-        (
-            | {
+    ...options:
+        | [
+              {
                   shared: ServerChartsConfig;
                   params: StringParams;
                   widgetConfig?: DashWidgetConfig['widgetConfig'];
-              }
-            | ServerChartsConfig
-        ),
-        StringParams,
-    ]
+              },
+          ]
+        | [ServerChartsConfig, StringParams]
 ) => {
     let shared;
     let params: StringParams;
@@ -166,7 +164,7 @@ export default (
         widgetConfig = options[0].widgetConfig;
     } else {
         shared = options[0];
-        params = options[1];
+        params = options[1] as StringParams;
     }
 
     shared = mapChartsConfigToServerConfig(shared);

@@ -616,6 +616,7 @@ export function prepareSingleRequest({
             allItemsIds,
             visualization,
             fields,
+            params,
         });
     }
 

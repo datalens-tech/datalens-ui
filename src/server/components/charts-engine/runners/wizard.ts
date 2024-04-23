@@ -1,87 +1,125 @@
 import {AppContext} from '@gravity-ui/nodekit';
 
 import {Feature, isEnabledServerFeature} from '../../../../shared';
+import {chartGenerator} from '../components/chart-generator';
 import {Processor, ProcessorParams} from '../components/processor';
-import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
 import {handleProcessorError} from '../components/processor/utils';
+import {getWizardChartBuilder} from '../components/processor/wizard-chart-builder';
+import {ResolvedConfig} from '../components/storage/types';
 import {getDuration} from '../components/utils';
 
-import {runServerlessEditor} from './serverlessEditor';
+import {RunnerHandler, RunnerHandlerProps} from '.';
 
-import {RunnerHandlerProps} from '.';
-
-export const runEditor = async (
-    parentContext: AppContext,
-    runnerHandlerProps: RunnerHandlerProps,
+export const runChart: RunnerHandler = async (
+    cx: AppContext,
+    {chartsEngine, req, res, config, configResolving, workbookId}: RunnerHandlerProps,
 ) => {
-    const enableServerlessEditor = Boolean(
-        isEnabledServerFeature(parentContext, Feature.EnableServerlessEditor),
-    );
+    let generatedConfig;
 
-    if (!runnerHandlerProps.isWizard && enableServerlessEditor) {
-        return runServerlessEditor(parentContext, runnerHandlerProps);
+    const {template} = config;
+
+    let chartType;
+
+    const ctx = cx.create('templateChartRunner');
+
+    if (config) {
+        let result;
+        let metadata = null;
+        let data;
+
+        try {
+            if (typeof config.data.shared === 'string') {
+                data = JSON.parse(config.data.shared);
+                metadata = {
+                    entryId: config.entryId,
+                    key: config.key,
+                    owner: config.owner,
+                    scope: config.scope,
+                };
+            } else {
+                // This is some kind of legacy edge cases.
+                // Just for compatibility purposes;
+                data = config.data.shared as {type: string};
+            }
+
+            if (!template && !data.type) {
+                data.type = config.meta && config.meta.stype;
+            }
+
+            result = chartGenerator.generateChart({
+                data,
+                template,
+                req,
+                ctx,
+            });
+
+            chartType = template || data.type;
+        } catch (error) {
+            ctx.logError('Failed to generate chart in chart runner', error);
+            ctx.end();
+
+            return res.status(400).send({
+                error,
+            });
+        }
+
+        generatedConfig = {
+            data: result.chart,
+            meta: {
+                stype: result.type,
+            },
+            publicAuthor: config.publicAuthor,
+        };
+
+        if (metadata) {
+            Object.assign(generatedConfig, metadata);
+        }
+    } else {
+        const error = new Error('CHART_RUNNER_CONFIG_MISSING');
+
+        ctx.logError('CHART_RUNNER_CONFIG_MISSING', error);
+        ctx.end();
+
+        return res.status(400).send({
+            error,
+        });
     }
 
-    const {chartsEngine, req, res, config, configResolving, workbookId} = runnerHandlerProps;
-    const ctx = parentContext.create('editorChartRunner');
+    res.locals.subrequestHeaders['x-chart-kind'] = chartType;
 
     const hrStart = process.hrtime();
 
+    const userLang = res.locals && res.locals.lang;
     const {params, actionParams, widgetConfig} = req.body;
-
-    const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
-
-    const chartBuilder = await getSandboxChartBuilder({
-        userLang: res.locals && res.locals.lang,
-        userLogin: res.locals && res.locals.login,
-        params,
+    const wizardChartBuilder = await getWizardChartBuilder({
+        userLang,
+        params: params,
+        actionParams: actionParams,
         widgetConfig,
         config,
-        isScreenshoter: Boolean(req.headers['x-charts-scr']),
-        chartsEngine,
     });
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
         paramsOverride: params,
         actionParamsOverride: actionParams,
         widgetConfig,
-        userLang: res.locals && res.locals.lang,
+        userLang,
         userLogin: res.locals && res.locals.login,
         userId: res.locals && res.locals.userId,
         subrequestHeaders: res.locals.subrequestHeaders,
         req,
-        iamToken,
+        iamToken: res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken],
         isEditMode: Boolean(res.locals.editMode),
         configResolving,
         cacheToken: req.headers['x-charts-cache-token'] || null,
-        builder: chartBuilder,
+        useUnreleasedConfig: req.body.unreleased === 1,
+        configOverride: generatedConfig as ResolvedConfig,
+        workbookId: workbookId ?? config.workbookId,
+        uiOnly: Boolean(req.body.uiOnly),
+        builder: wizardChartBuilder,
     };
 
-    if (
-        processorParams.subrequestHeaders &&
-        typeof processorParams.subrequestHeaders['x-chart-kind'] === 'undefined'
-    ) {
-        processorParams.subrequestHeaders['x-chart-kind'] = 'editor';
-    }
-
-    if (req.body.unreleased === 1) {
-        processorParams.useUnreleasedConfig = true;
-    }
-
-    if (config) {
-        processorParams.configOverride = config;
-    }
-
-    if (workbookId) {
-        processorParams.workbookId = workbookId;
-    }
-
-    if (req.body.uiOnly) {
-        processorParams.uiOnly = true;
-    }
-
     processorParams.responseOptions = req.body.responseOptions || {};
-
     if (
         processorParams.responseOptions &&
         typeof processorParams.responseOptions.includeLogs === 'undefined'
@@ -166,4 +204,6 @@ export const runEditor = async (
         ctx.end();
         res.status(500).send('Internal error');
     });
+
+    return;
 };

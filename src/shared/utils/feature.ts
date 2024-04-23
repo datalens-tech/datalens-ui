@@ -1,11 +1,10 @@
 import {AppContext} from '@gravity-ui/nodekit';
+import merge from 'lodash/merge';
+
+export const getServerFeatures = (ctx: AppContext) => {
+    return merge({}, ctx.config.features, ctx.dynamicConfig?.features);
+};
 
 export const isEnabledServerFeature = (ctx: AppContext, feature: string) => {
-    const featureDynamicStatus = ctx.dynamicConfig?.features?.[feature];
-
-    if (typeof featureDynamicStatus !== 'undefined') {
-        return featureDynamicStatus;
-    }
-
-    return ctx.config.features[feature];
+    return getServerFeatures(ctx)[feature];
 };

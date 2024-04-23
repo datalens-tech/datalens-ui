@@ -54,7 +54,10 @@ const prepareSourceRequestBody = (args: PrepareSourceRequestBody): SourceRequest
             middlewareType: CHARTS_MIDDLEWARE_URL_TYPE,
         },
         method: 'POST',
-        sourceArgs,
+        sourceArgs: {
+            shared: sourceArgs.shared,
+            params: sourceArgs.params,
+        } as BuildSourcesArgs,
     };
 };
 
@@ -80,11 +83,9 @@ const prepareSingleSourceRequest = (args: PrepareSingleSourceRequestArgs): Sourc
         }
 
         const key = getDatasetIdAndLayerIdRequestKey(datasetId, layerId);
+        acc[key] = prepareSourceRequestBody({apiVersion, sourceArgs, isPivotRequest, datasetId});
 
-        return {
-            ...acc,
-            [key]: prepareSourceRequestBody({apiVersion, sourceArgs, isPivotRequest, datasetId}),
-        };
+        return acc;
     }, {} as SourceRequests);
 };
 
@@ -130,11 +131,8 @@ const prepareSourceRequests = (args: PrepareSourceRequestsArgs): SourceRequests 
     }
 };
 
-const buildSources = (args: BuildSourcesArgs): SourceRequests => {
-    const {shared} = args;
-
-    const apiVersion = args.apiVersion || '1.5';
-
+export const buildSources = (args: BuildSourcesArgs): SourceRequests => {
+    const {shared, apiVersion} = args;
     const config = mapChartsConfigToServerConfig(shared);
 
     shared.sharedData = config.sharedData;
@@ -145,7 +143,7 @@ const buildSources = (args: BuildSourcesArgs): SourceRequests => {
     const extraSettings = config.extraSettings;
 
     const requests = prepareSourceRequests({
-        apiVersion,
+        apiVersion: apiVersion || '1.5',
         visualization,
         datasetsIds,
         extraSettings,
