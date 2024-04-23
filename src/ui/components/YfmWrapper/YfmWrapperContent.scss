@@ -51,6 +51,10 @@
             padding: 0.3em 0;
         }
     }
+
+    .yfm:not(.yfm-term_title):not(.yfm-term_dfn) {
+        width: 100%;
+    }
 }
 
 .g-root .yfm:not(.yfm_only-light) {
