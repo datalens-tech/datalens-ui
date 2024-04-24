@@ -221,12 +221,14 @@ export function resolveOperation(urlValue: FilterValue): FiltersOperationFromURL
 
     if (
         typeof value === 'undefined' &&
-        !Object.values(OperationsWithoutValue).includes(operation as OperationsWithoutValue)
+        !Object.values(OperationsWithoutValue).includes(
+            operation as unknown as OperationsWithoutValue,
+        )
     ) {
         return getFallbackForUrlFilters(urlValue);
     }
 
-    if (Object.values(Operations).includes(operation as Operations)) {
+    if (Object.values(Operations).includes(operation as unknown as Operations)) {
         return {
             operation: operation as Operations,
             value,
