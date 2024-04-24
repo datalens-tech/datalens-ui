@@ -45,6 +45,7 @@ export default {
             case WizardVisualizationId.Metric: {
                 const app = registry.getApp();
                 const {placeholders} = chart.visualization;
+                // @ts-ignore will be removed after migration to v5
                 const dataType = placeholders.find((p) => p.id === 'measures')?.items[0]?.data_type;
                 const useMarkupMetric =
                     dataType === 'markup' &&
