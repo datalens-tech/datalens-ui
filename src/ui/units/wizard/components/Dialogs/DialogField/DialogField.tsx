@@ -419,18 +419,20 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                         />
                     }
                 />
-                <DialogFieldRow
-                    title={''}
-                    setting={
-                        <MarkdownControl
-                            value={text ?? item?.description}
-                            onChange={(value) =>
-                                this.setState({hintSettings: {enabled, text: value}})
-                            }
-                            disabled={!enabled}
-                        />
-                    }
-                />
+                {enabled && (
+                    <DialogFieldRow
+                        title={''}
+                        setting={
+                            <MarkdownControl
+                                value={text ?? item?.description}
+                                onChange={(value) =>
+                                    this.setState({hintSettings: {enabled, text: value}})
+                                }
+                                disabled={!enabled}
+                            />
+                        }
+                    />
+                )}
             </React.Fragment>
         );
     }

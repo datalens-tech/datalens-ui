@@ -5,7 +5,6 @@ import {Checkbox} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {registry} from 'ui/registry';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
@@ -20,7 +19,7 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 
 export const HintRow = () => {
     const dispatch = useDispatch();
-    const {showHint, hint, validation} = useSelector(selectSelectorDialog);
+    const {showHint, hint} = useSelector(selectSelectorDialog);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
     const datasetField = useSelector(getDatasetField);
 
@@ -39,21 +38,18 @@ export const HintRow = () => {
     return (
         <FormRow label={i18n('field_hint')}>
             <div className={b('operation-container')}>
-                <FieldWrapper error={validation.title}>
-                    <div style={{display: 'flex', gap: '8px'}}>
-                        <Checkbox
-                            disabled={isFieldDisabled}
-                            onUpdate={handleUpdateEnable}
-                            checked={showHint}
-                            size={'l'}
-                        />
-                        <MarkdownControl
-                            value={hint ?? datasetField?.description ?? ''}
-                            onChange={handleUpdateText}
-                            disabled={isFieldDisabled || !showHint}
-                        />
-                    </div>
-                </FieldWrapper>
+                <Checkbox
+                    disabled={isFieldDisabled}
+                    onUpdate={handleUpdateEnable}
+                    checked={showHint}
+                    size={'l'}
+                    className={b('operation-checkbox', {top: true})}
+                />
+                <MarkdownControl
+                    value={hint ?? datasetField?.description ?? ''}
+                    onChange={handleUpdateText}
+                    disabled={isFieldDisabled || !showHint}
+                />
             </div>
         </FormRow>
     );

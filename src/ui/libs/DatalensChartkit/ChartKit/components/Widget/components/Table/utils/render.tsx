@@ -25,6 +25,7 @@ import {
     TableRow,
     isMarkupItem,
 } from 'shared';
+import {useMarkdown} from 'ui/hooks/useMarkdown';
 
 import {Markup} from '../../../../../../../../components/Markup';
 import {markupToRawString} from '../../../../../../modules/table';
@@ -82,6 +83,13 @@ const SortIcon = ({direction}: SortIconProps) => {
             <path fill="currentColor" d="M0 5h10l-5 -5z" />
         </svg>
     );
+};
+
+const Markdown = (props: {value: string}) => {
+    const {value} = props;
+    const {markdown} = useMarkdown({value});
+
+    return <React.Fragment>{markdown}</React.Fragment>;
 };
 
 const diffFormatter = (
@@ -435,7 +443,7 @@ export const getColumnsAndNames = ({
                                 <HelpPopover
                                     className={b('column-hint')}
                                     size={'s'}
-                                    content={get(column, 'hint')}
+                                    content={<Markdown value={hint} />}
                                 />
                             )}
                         </span>

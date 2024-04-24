@@ -4,29 +4,17 @@ import {HelpPopover} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 import {ControlQA} from 'shared';
-import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
 import {DL} from 'ui/constants';
-import {getSdk} from 'ui/libs/schematic-sdk';
+import {useMarkdown} from 'ui/hooks/useMarkdown';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {CONTROL_TYPE} from '../../../modules/constants/constants';
 
 const b = block('chartkit-control-item');
 
-const TooltipWithMarkdown = (props) => {
-    const {markdown} = props;
-    const [tooltipText, setTooltipText] = React.useState();
-    React.useEffect(() => {
-        getSdk()
-            .mix.renderMarkdown({text: markdown, lang: DL.USER_LANG})
-            .then((response) => {
-                const yfmString = response.result;
-                setTooltipText(<YfmWrapper content={yfmString} setByInnerHtml={true} />);
-            });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    return <React.Fragment>{tooltipText}</React.Fragment>;
+const Markdown = (props) => {
+    const {markdown} = useMarkdown({value: props.value});
+    return <React.Fragment>{markdown}</React.Fragment>;
 };
 
 function withWrapForControls(WrappedComponent) {
@@ -74,7 +62,7 @@ function withWrapForControls(WrappedComponent) {
                         {label}
                         {hint && (
                             <HelpPopover
-                                content={<TooltipWithMarkdown markdown={hint} />}
+                                content={<Markdown value={hint} />}
                                 className={b('hint')}
                             />
                         )}
