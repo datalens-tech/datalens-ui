@@ -216,19 +216,21 @@ export function resolveOperation(urlValue: FilterValue): FiltersOperationFromURL
         return getFallbackForUrlFilters(urlValue);
     }
 
-    const operation = match[1]?.toUpperCase() as Operations;
+    const operation = match[1]?.toUpperCase();
     const value = match[2];
 
     if (
         typeof value === 'undefined' &&
-        !Object.values(OperationsWithoutValue).includes(operation)
+        !Object.values(OperationsWithoutValue).includes(
+            operation as unknown as OperationsWithoutValue,
+        )
     ) {
         return getFallbackForUrlFilters(urlValue);
     }
 
-    if (Object.values(Operations).includes(operation)) {
+    if (Object.values(Operations).includes(operation as unknown as Operations)) {
         return {
-            operation,
+            operation: operation as Operations,
             value,
         };
     }
