@@ -116,7 +116,7 @@ const textPlugin = {
         return (
             <RendererWrapper type="text" nodeRef={rootNodeRef}>
                 <YfmWrapper
-                    // if content has latex and we need key is needed to force update wrapper after edit
+                    // needed for force update when text is changed
                     key={props.data.text}
                     content={<div className={b('content-wrap', null)}>{content}</div>}
                     className={b()}
