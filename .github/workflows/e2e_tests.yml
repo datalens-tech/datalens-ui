@@ -46,7 +46,10 @@ jobs:
 
       - name: Run Docker Compose and Install dependencies for Datalens-UI
         working-directory: ./tests
-        run: docker compose -f ./docker-compose.e2e.yml up -d & cd .. && npm ci && npm run test:install:chromium & wait
+        run: |
+          sudo rm /etc/apt/sources.list.d/microsoft-prod.list
+          sudo apt-get update
+          docker compose -f ./docker-compose.e2e.yml up -d & cd .. && npm ci && npm run test:install:chromium & wait
 
       - name: Run Test
         run: E2E_DOMAIN="http://localhost:8080" E2E_RETRY_TIMES=1 NO_AUTH=true npm run test:e2e:opensource
