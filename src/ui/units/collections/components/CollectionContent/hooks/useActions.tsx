@@ -31,7 +31,8 @@ import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import Utils from '../../../../../utils';
 import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
 import {deleteCollectionInItems, deleteWorkbookInItems} from '../../../store/actions';
-
+import {DIALOG_ASSIGN_CLAIMS} from 'ui/components/OpenDialogAssignClaims/OpenDialogAssignClaims';
+        
 const i18n = I18n.keyset('collections');
 
 type UseActionsArgs = {
@@ -261,6 +262,24 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
                     },
                 });
             }
+            
+            actions.push({
+                text: <DropdownAction icon={LockOpen} text={"Права доступа"} />,
+                action: () => {
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_ASSIGN_CLAIMS,
+                            props: {
+                                entryId: "",
+                                workbookId: item.workbookId,
+                                onClose: () => {
+                                    dispatch(closeDialog());
+                                },
+                            },
+                        }),
+                    );
+                },
+            });
 
             const otherActions: DropdownMenuItem[] = [];
 

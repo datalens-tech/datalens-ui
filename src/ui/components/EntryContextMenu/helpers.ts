@@ -140,6 +140,7 @@ type EntryContextMenuIDTypeBase =
     | 'duplicate'
     | 'edit'
     | 'copy-link'
+    | 'claims'
     | 'tableOfContent'
     | 'settings'
     | 'fullscreen'
@@ -201,7 +202,7 @@ const ENTRY_MENU_GROUP_CONFIG: Array<Array<EntryContextMenuIDType>> = [
     ['rename', 'move', 'duplicate', 'copy'],
     ['tableOfContent', 'fullscreen'],
     ['sql', 'materialization'],
-    ['access', 'copy-link', 'public', 'sql-to-monitoring'],
+    ['access', 'copy-link', 'claims', 'public', 'sql-to-monitoring'],
     ['edit', 'settings'],
     ['migrate-to-workbook'],
     ['delete'],

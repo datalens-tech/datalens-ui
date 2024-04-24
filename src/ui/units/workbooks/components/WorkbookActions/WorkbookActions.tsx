@@ -18,6 +18,7 @@ import Utils from '../../../../utils';
 import {CreateEntry} from '../CreateEntry/CreateEntry';
 
 import './WorkbookActions.scss';
+import { DIALOG_ASSIGN_CLAIMS } from 'ui/components/OpenDialogAssignClaims/OpenDialogAssignClaims';
 
 const b = block('dl-workbook-actions');
 
@@ -126,6 +127,29 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                 ),
             });
         }
+
+        dropdownActions.push({
+            action: () => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_ASSIGN_CLAIMS,
+                        props: {
+                            entryId: "",
+                            workbookId: workbook.workbookId,
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
+                        },
+                    }),
+                );
+            },
+            text: (
+                <React.Fragment>
+                    <Icon data={LockOpen} className={classNameIconAction} />
+                    {"Права доступа"}
+                </React.Fragment>
+            ),
+        });
     }
 
     return (

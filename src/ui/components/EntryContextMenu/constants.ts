@@ -1,4 +1,4 @@
-import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin } from '@gravity-ui/icons';
+import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin, LockOpen } from '@gravity-ui/icons';
 import {ConnectorType} from 'shared/constants/connections';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {S3_BASED_CONNECTORS} from 'ui/constants/connections';
@@ -22,6 +22,7 @@ export const ENTRY_CONTEXT_MENU_ACTION = {
     COPY_LINK: 'copy-link',
     REVISIONS: 'revisions',
     MIGRATE_TO_WORKBOOK: 'migrate-to-workbook',
+    CLAIMS: 'claims'
 };
 
 const CONTEXT_MENU_COPY = {
@@ -75,6 +76,20 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         isVisible({entry, isLimitedView}: ContextMenuParams) {
             if (!entry || !entry.scope || isLimitedView) return false;
             return getAvailableScopes().includes(entry.scope as EntryScope);
+        },
+    },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.CLAIMS,
+        action: ENTRY_CONTEXT_MENU_ACTION.CLAIMS,
+        icon: LockOpen,
+        text: 'Права доступа',
+        qa: 'Права доступа',
+        enable: () => true,
+        scopes: ALL_SCOPES,
+        // isSpecific: true,
+        // isOnEditMode: false,
+        isVisible() {
+            return true;
         },
     },
     {

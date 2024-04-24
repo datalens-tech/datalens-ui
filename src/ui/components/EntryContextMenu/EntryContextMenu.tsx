@@ -25,6 +25,11 @@ import {
 } from './helpers';
 import {withConfiguredEntryContextMenu} from './withConfiguredEntryContextMenu/withConfiguredEntryContextMenu';
 
+import {DIALOG_ASSIGN_CLAIMS} from 'components/OpenDialogAssignClaims/OpenDialogAssignClaims';
+import {closeDialog, openDialog} from 'store/actions/dialog';
+import { WorkbookId } from 'shared';
+
+
 const ConfiguredEntryContextMenu = withConfiguredEntryContextMenu(EntryContextMenuBase);
 const defaultPopupPlacement = ['bottom', 'bottom-start', 'bottom-end'];
 
@@ -73,7 +78,7 @@ class EntryContextMenu extends React.PureComponent<Props> {
     };
 
     entryDialoguesRef = this.props.entryDialogsRef || React.createRef<EntryDialogues>();
-
+    
     render() {
         return (
             Boolean(this.props.anchorRef.current) && (
@@ -108,6 +113,10 @@ class EntryContextMenu extends React.PureComponent<Props> {
         switch (action) {
             case ENTRY_CONTEXT_MENU_ACTION.RENAME: {
                 renameEntry(this.entryDialoguesRef, entry);
+                break;
+            }
+            case ENTRY_CONTEXT_MENU_ACTION.CLAIMS: {
+                this.props.actions.openDialog(entry.entryId, entry.workbookId);
                 break;
             }
             case ENTRY_CONTEXT_MENU_ACTION.MOVE: {
@@ -159,12 +168,28 @@ const mapsStateToProps = (state: DatalensGlobalState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
-        actions: bindActionCreators(
-            {
-                toggleRevisionsMode,
-            },
-            dispatch,
-        ),
+        actions: {
+            ...bindActionCreators(
+                {
+                    toggleRevisionsMode,
+                },
+                dispatch,
+            ), 
+            openDialog: (entryId:string, workbookId:WorkbookId) => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_ASSIGN_CLAIMS,
+                        props: {
+                            entryId: entryId,
+                            workbookId: workbookId,
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
+                        },
+                    }),
+                );
+            }
+        },
     };
 };
 

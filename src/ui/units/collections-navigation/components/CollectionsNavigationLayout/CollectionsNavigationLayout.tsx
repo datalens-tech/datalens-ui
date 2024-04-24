@@ -100,9 +100,8 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                         </div>
                                     )}
                                 </ActionBar.Item>
-                            </ActionBar.Group>
-                            <ActionBar.Group pull="right">
-                                {userName}&nbsp;&nbsp;<div>{auth.token && <Button view="outlined" onClick={()=>auth.setToken("")}>Выйти</Button> }</div>
+                                <ActionBar.Item>{userName}</ActionBar.Item>
+                                <ActionBar.Item>{auth.token && <Button view="outlined" onClick={()=>auth.setToken("")}>Выйти</Button> }</ActionBar.Item>
                             </ActionBar.Group>
                         </ActionBar.Section>
                     </ActionBar>

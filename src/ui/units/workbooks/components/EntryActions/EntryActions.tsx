@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Copy, CopyArrowRight, FontCursor, TrashBin} from '@gravity-ui/icons';
+import {Copy, CopyArrowRight, FontCursor, LockOpen, TrashBin} from '@gravity-ui/icons';
 import {DropdownMenu, DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
@@ -24,6 +24,7 @@ type EntryActionsProps = {
     entry: WorkbookEntry;
     onRenameClick: () => void;
     onDeleteClick: () => void;
+    onAssignClaims: () => void;
     onDuplicateEntry: () => void;
     onCopyEntry: () => void;
 };
@@ -33,6 +34,7 @@ export const EntryActions = ({
     entry,
     onRenameClick,
     onDeleteClick,
+    onAssignClaims,
     onDuplicateEntry,
     onCopyEntry,
 }: EntryActionsProps) => {
@@ -48,7 +50,10 @@ export const EntryActions = ({
             action: onRenameClick,
             text: <DropdownAction icon={FontCursor} text={i18n('action_rename')} />,
         },
-
+        {
+            action: onAssignClaims,
+            text: <DropdownAction icon={LockOpen} text={"Права доступа"} />,
+        },
         ...(isFileConnection === false
             ? [
                   {

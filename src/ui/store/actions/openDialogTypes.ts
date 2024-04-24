@@ -51,6 +51,7 @@ import type {OpenDialogDeleteWorkbookArgs} from '../../components/CollectionsStr
 import type {OpenDialogAddDemoWorkbookArgs} from '../../components/CollectionsStructure/AddDemoWorkbookDialog';
 import type {OpenDialogCreateEntryInWorkbookArgs} from '../../components/CollectionsStructure/CreateEntryInWorkbookDialog';
 import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
+import type {OpenDialogAssignClaimsArgs} from '../../components/OpenDialogAssignClaims/OpenDialogAssignClaims';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogMetricSettingsArgs
@@ -103,4 +104,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogDeleteWorkbookArgs
     | OpenDialogAddDemoWorkbookArgs
     | OpenDialogIamAccessArgs
-    | OpenDialogCreateEntryInWorkbookArgs;
+    | OpenDialogCreateEntryInWorkbookArgs
+    | OpenDialogAssignClaimsArgs;
