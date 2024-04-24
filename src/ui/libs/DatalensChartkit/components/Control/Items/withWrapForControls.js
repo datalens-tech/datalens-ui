@@ -12,7 +12,17 @@ const b = block('chartkit-control-item');
 
 function withWrapForControls(WrappedComponent) {
     function WithWrapForControls(props) {
-        const {type, width, hidden, label, labelInside, className, style, renderOverlay} = props;
+        const {
+            type,
+            width,
+            hidden,
+            label,
+            labelInside,
+            className,
+            style,
+            renderOverlay,
+            labelClassName,
+        } = props;
 
         if (hidden) {
             return null;
@@ -36,7 +46,11 @@ function withWrapForControls(WrappedComponent) {
             >
                 {renderOverlay?.()}
                 {showLabel && (
-                    <span className={b('title')} data-qa={ControlQA.controlLabel}>
+                    <span
+                        className={b('title', labelClassName)}
+                        data-qa={ControlQA.controlLabel}
+                        title={label}
+                    >
                         {label}
                     </span>
                 )}

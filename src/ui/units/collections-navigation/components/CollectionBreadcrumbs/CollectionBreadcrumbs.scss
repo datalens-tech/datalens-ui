@@ -1,6 +1,8 @@
 @import '../../../../styles/mixins.scss';
 
 .dl-collection-breadcrumbs {
+    margin-right: 5px;
+
     &__skeleton {
         display: block;
         width: 200px;
@@ -19,5 +21,9 @@
         &_last:hover {
             color: var(--g-color-text-link-hover);
         }
+    }
+
+    &__container {
+        display: grid;
     }
 }

@@ -2,7 +2,7 @@
 @import '../../styles/mixins.scss';
 
 .entry-panel-breadcrumbs {
-    max-width: var(--dl-breadcrumbs-max-width);
+    display: grid;
     margin-right: 5px;
 
     &__item {
