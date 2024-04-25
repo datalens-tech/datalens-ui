@@ -1,3 +1,5 @@
+import {ShareOptions} from '@gravity-ui/components';
+
 export const LOCK_DURATION = 5 * 60 * 1000;
 export const LOCK_EXTEND_TIMEOUT = 4 * 60 * 1000;
 export const EMPTY_VALUE = '—';
@@ -75,3 +77,5 @@ export enum Mode {
     Error = 'error',
     SelectState = 'selectState',
 }
+
+export const socialNets = [ShareOptions.Telegram, ShareOptions.Twitter, ShareOptions.VK];
