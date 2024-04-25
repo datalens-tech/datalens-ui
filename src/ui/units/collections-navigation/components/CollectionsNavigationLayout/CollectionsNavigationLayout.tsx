@@ -4,7 +4,9 @@ import {ActionBar} from '@gravity-ui/navigation';
 import {Skeleton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useSelector} from 'react-redux';
-import {DL} from 'ui/constants/common';
+import {Feature} from 'shared';
+import {registry} from 'ui/registry';
+import Utils from 'ui/utils/utils';
 
 import {selectAsideHeaderData} from '../../../../store/selectors/asideHeader';
 import {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
@@ -52,6 +54,8 @@ export const CollectionsNavigationLayout = React.memo<Props>(
         const asideHeaderData = useSelector(selectAsideHeaderData);
         const asideHeaderSize = asideHeaderData.size || 0;
 
+        const {Footer} = registry.common.components.getAll();
+
         return (
             <div className={b()}>
                 {(layout.actionsPanelLeftBlock || layout.actionsPanelRightBlock) && (
@@ -97,10 +101,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                     </ActionBar>
                 )}
 
-                <div
-                    className={b('page-wrapper', {mobile: DL.IS_MOBILE})}
-                    style={{left: `${asideHeaderSize}px`}}
-                >
+                <div className={b('page-wrapper')} style={{left: `${asideHeaderSize}px`}}>
                     <div className={b('page')}>
                         <div className={b('header')}>
                             {layout.title || layout.titleActionsBlock ? (
@@ -173,6 +174,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
 
                         {children && <div className={b('content')}>{children}</div>}
                     </div>
+                    {Utils.isEnabledFeature(Feature.EnableFooter) && <Footer />}
                 </div>
             </div>
         );
