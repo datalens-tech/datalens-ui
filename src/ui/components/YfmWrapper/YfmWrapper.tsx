@@ -8,37 +8,49 @@ import {registry} from 'ui/registry';
 import {YfmWrapperProps} from '../../registry/units/common/types/components/YfmWrapper';
 
 export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps, 'ref'>>(
-    (props, ref) => {
+    (props, forwardedRef) => {
         const YfmWrapperContent = registry.common.components.get('YfmWrapperContent');
         const elementRef = React.useRef<HTMLDivElement | null>(null);
 
+        let ref: React.ForwardedRef<HTMLDivElement>;
+        if (typeof forwardedRef === 'function') {
+            ref = (el: HTMLDivElement | null) => {
+                forwardedRef(el);
+                elementRef.current = el;
+            };
+        } else if (forwardedRef) {
+            ref = forwardedRef;
+            elementRef.current = ref.current;
+        } else {
+            ref = elementRef;
+        }
+
         const renderLatex = useLatex();
 
-        const renderLatexDebounce = React.useCallback(
+        React.useEffect(() => {
+            // TODO: https://github.com/datalens-tech/datalens-ui/issues/753
+            import('@diplodoc/latex-extension/runtime');
+        }, []);
+
+        const debounceRender = React.useCallback(
             debounce(() => {
-                const element = elementRef.current;
+                const element = elementRef?.current;
 
                 if (!element) {
                     return;
                 }
+                const nodes = element.querySelectorAll(`.${YFM_LATEX_CLASSNAME}`);
 
-                renderLatex({
-                    nodes: element.querySelectorAll(`.${YFM_LATEX_CLASSNAME}`),
-                }).then(() => {
-                    props.onRenderCallback?.();
-                });
+                if (nodes.length) {
+                    renderLatex({nodes}).then(() => {
+                        props.onRenderCallback?.();
+                    });
+                }
             }, 100),
             [elementRef, renderLatex, props.onRenderCallback],
         );
 
-        React.useLayoutEffect(() => renderLatexDebounce(), [renderLatexDebounce]);
-
-        React.useEffect(() => {
-            // TODO: https://github.com/datalens-tech/datalens-ui/issues/753
-            import('@diplodoc/latex-extension/runtime').then(() => {
-                props.onRenderCallback?.();
-            });
-        }, []);
+        React.useLayoutEffect(() => debounceRender(), [debounceRender]);
 
         return (
             <YfmWrapperContent
@@ -46,15 +58,7 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
                 setByInnerHtml={props.setByInnerHtml}
                 className={props.className}
                 noMagicLinks={props.noMagicLinks}
-                ref={(divElement) => {
-                    if (typeof ref === 'function') {
-                        ref?.(divElement);
-                    } else if (ref) {
-                        ref.current = divElement;
-                    }
-
-                    elementRef.current = divElement;
-                }}
+                ref={ref}
             />
         );
     },
