@@ -61,29 +61,29 @@ function DialogAssignClaims(props: DialogAssignClaimsProps) {
         const requests: Array<Promise<any>> = [];
 
         accesses.forEach((item: any) => {
-            const recordRequests = [];
-            const isDestroy = !item.select && !item.add && !item.update && !item.delete;
-            recordRequests.push(Utils.setAccesses({
+            // const recordRequests = [];
+            // const isDestroy = !item.select && !item.add && !item.update && !item.delete;
+            // recordRequests.push(Utils.setAccesses({
+            //     "id": itemId,
+            //     "role_id": item.role_id,
+            //     "select": false,
+            //     "add": false,
+            //     "update": false,
+            //     "delete": false,
+            //     "destroy": true,
+            // }));
+            // if (!isDestroy) {
+            requests.push(Utils.setAccesses({
                 "id": itemId,
                 "role_id": item.role_id,
-                "select": false,
-                "add": false,
-                "update": false,
-                "delete": false,
-                "destroy": true
+                "select": item.select,
+                "add": item.add,
+                "update": item.update,
+                "delete": item.delete,
+                "destroy": true//isDestroy
             }));
-            if (!isDestroy) {
-                recordRequests.push(Utils.setAccesses({
-                    "id": itemId,
-                    "role_id": item.role_id,
-                    "select": item.select,
-                    "add": item.add,
-                    "update": item.update,
-                    "delete": item.delete,
-                    "destroy": false
-                }));
-            }
-            requests.push(Promise.all(recordRequests));
+            // }
+            // requests.push(Promise.all(recordRequests));
         });
 
         Promise.all(requests).then(() => onClose());
