@@ -164,7 +164,7 @@
     "cli-color": "2.0.1",
     "colormap": "^2.3.2",
     "copy-to-clipboard": "^3.3.3",
-    "eslint": "^8.11.0",
+    "eslint": "^8.56.0",
     "highcharts": "^8.2.2",
     "history": "^4.10.1",
     "http-proxy": "^1.18.1",
