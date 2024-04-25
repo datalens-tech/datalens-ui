@@ -38,37 +38,55 @@ function DialogAssignClaims(props: DialogAssignClaimsProps) {
             Utils.getAccesses({id: itemId}).then(_accesses=>{
                 for (var i = 0; i < _roles.length; i++) {
                     const role = _roles[i];
-                    const access = _accesses.find((item:any)=>item.role_id == role.role_id)
-                    if (access) {
-                        _roles[i].add = access.add;
-                        _roles[i].delete = access.delete;
-                        _roles[i].select = access.select;
-                        _roles[i].update = access.update;
-                    } else {
-                        _roles[i].add = false;
-                        _roles[i].delete = false;
-                        _roles[i].select = false;
-                        _roles[i].update = false;
-                    }
+                    const accessFiltered = _accesses.filter((item:any)=>item.role_id == role.role_id)
+                    _roles[i].add = false;
+                    _roles[i].delete = false;
+                    _roles[i].select = false;
+                    _roles[i].update = false;
+
+                    accessFiltered.forEach((access:any) => {
+                        if (access.add) _roles[i].add = true;
+                        if (access.delete) _roles[i].delete = true;
+                        if (access.select) _roles[i].select = true;
+                        if (access.update) _roles[i].update = true;
+                    });
                 }
-                setAccesses(_roles.sort((a:any, b:any)=> a.weight - b.weight));
+                setAccesses(_roles.sort((a:any, b:any)=> a.weight - b.weight).filter((item: any)=>item.role_id > 1));
             });
         })
-        //{dl: propsData.id, role_id: propsData.role_id, select: propsData.select, add: propsData.add, update: propsData.update, delete: propsData.delete, destroy: propsData.destroy}
         
     }, [itemId]);
 
     function onApply () {
-        // accesses.forEach((item: any) => {
-        //     Utils.setAccesses({
-        //         "id": itemId,
-        //         "role_id": item.role_id,
-        //         "select": item.select,
-        //         "add": item.add,
-        //         "update": item.update,
-        //         "delete": item.delete
-        //     });
-        // }); 
+        const requests: Array<Promise<any>> = [];
+
+        accesses.forEach((item: any) => {
+            const recordRequests = [];
+            const isDestroy = !item.select && !item.add && !item.update && !item.delete;
+            recordRequests.push(Utils.setAccesses({
+                "id": itemId,
+                "role_id": item.role_id,
+                "select": false,
+                "add": false,
+                "update": false,
+                "delete": false,
+                "destroy": true
+            }));
+            if (!isDestroy) {
+                recordRequests.push(Utils.setAccesses({
+                    "id": itemId,
+                    "role_id": item.role_id,
+                    "select": item.select,
+                    "add": item.add,
+                    "update": item.update,
+                    "delete": item.delete,
+                    "destroy": false
+                }));
+            }
+            requests.push(Promise.all(recordRequests));
+        });
+
+        Promise.all(requests).then(() => onClose());
     }
 
     function onChange(index: number, name: string) {
