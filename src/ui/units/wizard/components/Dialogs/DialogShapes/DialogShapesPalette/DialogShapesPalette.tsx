@@ -13,9 +13,9 @@ import {
 } from 'shared';
 import {selectClientAvailableLineShapes} from 'ui';
 
+import Palette from '../../../../../../components/Palette/Palette';
+import {PaletteTypes} from '../../../../../../components/Palette/constants';
 import IconRenderer from '../../../../../../libs/DatalensChartkit/ChartKit/components/IconRenderer/IconRenderer';
-import {PaletteTypes} from '../../../../constants';
-import Palette from '../../../Palette/Palette';
 import ValuesList from '../../../ValuesList/ValuesList';
 import {ShapesState} from '../DialogShapes';
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import {BarGradientColorSettings, ColorsConfig, Field, TableBarsSettings} from 'shared';
 
-import {PaletteType} from '../../../../../../PaletteIcon/PaletteIcon';
+import {PaletteType} from '../../../../../../../../../components/PaletteIcon/PaletteIcon';
 import {ButtonColorDialog} from '../../../ButtonColorDialog/ButtonColorDialog';
 
 import './GradientColorControl.scss';

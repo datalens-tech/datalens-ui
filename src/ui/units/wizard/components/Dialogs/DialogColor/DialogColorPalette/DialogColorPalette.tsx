@@ -6,9 +6,9 @@ import {i18n} from 'i18n';
 import {ColorPalette, DatasetOptions, Field, FilterField, Update} from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
 
-import {PaletteTypes} from '../../../../constants';
-import {getPaletteSelectorItems} from '../../../../utils/palette';
-import Palette from '../../../Palette/Palette';
+import Palette from '../../../../../../components/Palette/Palette';
+import {PaletteTypes} from '../../../../../../components/Palette/constants';
+import {getPaletteSelectorItems} from '../../../../../../components/PaletteSelect/utils';
 import ValuesList from '../../../ValuesList/ValuesList';
 import {ExtraSettings} from '../DialogColor';
 

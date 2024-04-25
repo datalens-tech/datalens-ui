@@ -8,7 +8,7 @@ import {useOutsideClick} from 'ui/hooks/useOutsideClick';
 import {MinifiedPalette} from 'ui/units/wizard/components/MinifiedPalette/MinifiedPalette';
 import {isValidHexColor} from 'ui/utils';
 
-import {PaletteItem} from '../../../../../../Palette/components/PaletteItem/PaletteItem';
+import {PaletteItem} from '../../../../../../../../../components/Palette/components/PaletteItem/PaletteItem';
 
 import './PaletteColorControl.scss';
 

@@ -152,3 +152,9 @@ export enum DocSectionQa {
     Item = 'doc-section-item',
     Title = 'doc-item-title',
 }
+
+export const enum DialogColorQa {
+    PaletteSelect = 'palette-select',
+    GradientType = 'color-dialog-gradient-type-radio',
+    ApplyButton = 'color-dialog-apply-button',
+}

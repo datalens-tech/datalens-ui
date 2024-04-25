@@ -3,14 +3,15 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {LineShapeType, PointsShapeType} from 'shared';
 
-import IconRenderer from '../../../../libs/DatalensChartkit/ChartKit/components/IconRenderer/IconRenderer';
-import {PaletteTypes} from '../../constants';
+import IconRenderer from '../../libs/DatalensChartkit/ChartKit/components/IconRenderer/IconRenderer';
 
 import {PaletteItem} from './components/PaletteItem/PaletteItem';
+import {PaletteTypes} from './constants';
 
 import './Palette.scss';
 
 const b = block('palette');
+
 interface Props {
     paletteType: PaletteTypes;
     className?: string;
@@ -21,7 +22,7 @@ interface Props {
     isDefaultItem?: (item: string) => boolean;
 }
 
-class Palette extends React.Component<Props> {
+export class Palette extends React.Component<Props> {
     render() {
         const {palette, className} = this.props;
         return <div className={b(null, className)}>{palette.map(this.renderPaletteItem)}</div>;

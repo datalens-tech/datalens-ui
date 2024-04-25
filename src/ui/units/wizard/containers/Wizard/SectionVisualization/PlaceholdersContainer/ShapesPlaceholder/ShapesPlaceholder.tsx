@@ -12,7 +12,6 @@ import {
     isFieldHierarchy,
 } from 'shared';
 import {DatalensGlobalState} from 'ui';
-import {PaletteTypes} from 'ui/units/wizard/constants';
 import {selectDataset} from 'units/wizard/selectors/dataset';
 import {
     selectFilters,
@@ -20,6 +19,7 @@ import {
     selectShapesConfig,
 } from 'units/wizard/selectors/visualization';
 
+import {PaletteTypes} from '../../../../../../../components/Palette/constants';
 import {openDialogShapes} from '../../../../../actions/dialog';
 import {updateShapes} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';

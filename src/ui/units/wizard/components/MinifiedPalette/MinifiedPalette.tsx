@@ -1,16 +1,15 @@
 import React, {useCallback, useRef} from 'react';
 
-import {Select, TextInput} from '@gravity-ui/uikit';
+import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {ColorPalette, DialogFieldBarsSettingsQa} from 'shared';
-import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
 import {useEnterClick} from 'ui/hooks/useEnterClick';
-import {PaletteTypes} from 'ui/units/wizard/constants';
-import {getPaletteSelectorItems} from 'ui/units/wizard/utils/palette';
 import {getPaletteColors} from 'ui/utils';
 
-import Palette from '../Palette/Palette';
-import {PaletteItem} from '../Palette/components/PaletteItem/PaletteItem';
+import Palette from '../../../../components/Palette/Palette';
+import {PaletteItem} from '../../../../components/Palette/components/PaletteItem/PaletteItem';
+import {PaletteTypes} from '../../../../components/Palette/constants';
+import {PaletteSelect} from '../../../../components/PaletteSelect/PaletteSelect';
 
 import './MinifiedPalette.scss';
 
@@ -52,8 +51,6 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
 
     useEnterClick(paletteRef, handleEnterPress);
 
-    const options = getPaletteSelectorItems({colorPalettes});
-
     const colors = React.useMemo(
         () => getPaletteColors(palette, colorPalettes),
         [colorPalettes, palette],
@@ -61,19 +58,11 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
 
     return (
         <div className={b()} ref={paletteRef}>
-            <Select
+            <PaletteSelect
                 qa={DialogFieldBarsSettingsQa.MinifiedPaletteSelector}
-                className={b('selector')}
-                popupClassName={b('selector-popup')}
-                onUpdate={([paletteId]) => onPaletteUpdate(paletteId)}
-                renderSelectedOption={(option) => {
-                    return <SelectOptionWithIcon option={option} />;
-                }}
-                renderOption={(option) => {
-                    return <SelectOptionWithIcon option={option} />;
-                }}
-                value={[palette]}
-                options={options}
+                onChange={onPaletteUpdate}
+                value={palette}
+                palettes={colorPalettes}
             />
             <Palette
                 paletteType={PaletteTypes.Colors}

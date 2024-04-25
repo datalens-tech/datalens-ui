@@ -49,5 +49,5 @@ export {
     PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
     CHART_SETTINGS,
 };
-export * from './paletteTypes';
+
 export * from './placeholders';
