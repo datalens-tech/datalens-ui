@@ -1,6 +1,7 @@
 import vm from 'vm';
 
 import {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
+import {WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {IChartEditor} from '../../../../../shared/types';
 import {createI18nInstance} from '../../../../utils/language';
@@ -282,6 +283,14 @@ const processTab = ({
     api.getWidgetConfig = () => widgetConfig || {};
 
     api.getActionParams = () => actionParams || {};
+
+    api.wrapFn = (fn) => {
+        if (typeof fn !== 'function') {
+            return undefined;
+        }
+
+        return {[WRAPPED_FN_KEY]: fn.toString()};
+    };
 
     if (params) {
         api.getParams = () => params;
