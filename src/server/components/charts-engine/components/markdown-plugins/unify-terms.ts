@@ -1,7 +1,11 @@
-import type {MarkdownIt} from '@diplodoc/transform/lib/typings';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {MarkdownIt, StateCore} from '@diplodoc/transform/lib/typings';
+import type StateBlock from 'markdown-it/lib/rules_block/state_block';
 
 import {YfmAttributes, YfmTokenTypes} from '../../../../../shared';
-import type {StateBlock, StateCore, Token} from 'markdown-it';
+
+type Tokens = StateCore['tokens'];
+type Token = StateCore['tokens'][number];
 
 const unifyAttributes = (attrs: [string, string][], attrName: YfmAttributes, prefix: string) => {
     for (const attr of attrs) {
@@ -52,7 +56,7 @@ const modifyTerm = (termToken: Token, prefix: string) => {
     return termToken;
 };
 
-const traverseLine = (tokens: Token[], prefix: string) => {
+const traverseLine = (tokens: Tokens, prefix: string) => {
     let i = 0;
 
     while (tokens[i]) {
