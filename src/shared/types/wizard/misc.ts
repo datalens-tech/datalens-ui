@@ -20,7 +20,7 @@ export const MarkupItemTypes = {
     Image: 'img',
 } as const;
 
-export type MarkupItemType = typeof MarkupItemTypes[keyof typeof MarkupItemTypes];
+export type MarkupItemType = (typeof MarkupItemTypes)[keyof typeof MarkupItemTypes];
 
 export interface MarkupItem {
     type: MarkupItemType;

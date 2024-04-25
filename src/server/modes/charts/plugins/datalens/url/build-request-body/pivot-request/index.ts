@@ -38,12 +38,15 @@ export const buildPivotRequest = (args: BuildPivotResultRequestArgs): ApiV2Reque
 
     let fields: ApiV2RequestField[] = [];
 
-    const orderByMap = orderBy.reduce((acc, orderByPayload) => {
-        return {
-            ...acc,
-            [orderByPayload.column]: orderByPayload.direction.toLowerCase(),
-        };
-    }, {} as Record<string, string>);
+    const orderByMap = orderBy.reduce(
+        (acc, orderByPayload) => {
+            return {
+                ...acc,
+                [orderByPayload.column]: orderByPayload.direction.toLowerCase(),
+            };
+        },
+        {} as Record<string, string>,
+    );
 
     const {columnsReq, rowsReq, measuresReq} = getRegularFields({
         columns,

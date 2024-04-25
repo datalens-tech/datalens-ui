@@ -10,10 +10,13 @@ export const getChartFiltersWithDisabledProp = ({
     dashboardFilters,
     chartFilters,
 }: GetChartFiltersWithDisabledProp): FilterField[] => {
-    const filtersFieldsMap = dashboardFilters.reduce((acc, dashboardFilter) => {
-        acc[dashboardFilter.guid] = true;
-        return acc;
-    }, {} as Record<string, boolean>);
+    const filtersFieldsMap = dashboardFilters.reduce(
+        (acc, dashboardFilter) => {
+            acc[dashboardFilter.guid] = true;
+            return acc;
+        },
+        {} as Record<string, boolean>,
+    );
 
     // We set the disabled flag to filters that are overlaid with filters from the dashboard
     return chartFilters.map((chartFilter) => {

@@ -255,11 +255,14 @@ export function splitParamsToParametersAndFilters(
     urlSearchParams: [string, string][],
     fields: ServerDatasetField[],
 ) {
-    const parametersMap = fields.filter(isParameter).reduce((acc, field) => {
-        acc[field.guid] = true;
-        acc[field.title] = true;
-        return acc;
-    }, {} as Record<string, true>);
+    const parametersMap = fields.filter(isParameter).reduce(
+        (acc, field) => {
+            acc[field.guid] = true;
+            acc[field.title] = true;
+            return acc;
+        },
+        {} as Record<string, true>,
+    );
 
     return urlSearchParams.reduce(
         (acc, curr) => {

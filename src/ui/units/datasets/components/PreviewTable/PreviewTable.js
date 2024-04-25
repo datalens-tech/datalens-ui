@@ -42,7 +42,7 @@ class PreviewTable extends React.Component {
             const preparedRow = row.map((item) => {
                 if (item && typeof item === 'object') {
                     // In this place, except for the markup in the form of an object, nothing comes
-                    return <Markup item={item} />;
+                    return <Markup key={`row-${index}-item-${row.indexOf(item)}`} item={item} />;
                 }
 
                 return item;

@@ -1,10 +1,7 @@
-import type {MarkdownIt, StateCore} from '@diplodoc/transform/lib/typings';
-import type StateBlock from 'markdown-it/lib/rules_block/state_block';
+import type {MarkdownIt} from '@diplodoc/transform/lib/typings';
 
 import {YfmAttributes, YfmTokenTypes} from '../../../../../shared';
-
-type Tokens = StateCore['tokens'];
-type Token = StateCore['tokens'][number];
+import type {StateBlock, StateCore, Token} from 'markdown-it';
 
 const unifyAttributes = (attrs: [string, string][], attrName: YfmAttributes, prefix: string) => {
     for (const attr of attrs) {
@@ -55,7 +52,7 @@ const modifyTerm = (termToken: Token, prefix: string) => {
     return termToken;
 };
 
-const traverseLine = (tokens: Tokens, prefix: string) => {
+const traverseLine = (tokens: Token[], prefix: string) => {
     let i = 0;
 
     while (tokens[i]) {

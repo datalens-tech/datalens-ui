@@ -85,6 +85,7 @@ export class Years extends React.PureComponent {
                     {...(isNeedScroll && {ref: this.scrollRef})}
                     key={year}
                     className={b('year', mods)}
+                    // eslint-disable-next-line react/no-unknown-property
                     range={`${startYear.toISODate()}/${endYear.toISODate()}`}
                     onClick={this.getOnRangeDateClick({
                         start: startYear,
