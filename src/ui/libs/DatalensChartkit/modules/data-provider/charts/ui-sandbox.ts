@@ -112,7 +112,7 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
         const nativeArgs = logArgs.map(vm.dump);
         // Pretty legal usage of console.log due to it invocation explicitly by user
         // eslint-disable-next-line no-console
-        console.log('QuickJS:', ...nativeArgs);
+        console.log(...nativeArgs);
     });
     const consoleHandle = vm.newObject();
     vm.setProp(vm.global, 'console', consoleHandle);
