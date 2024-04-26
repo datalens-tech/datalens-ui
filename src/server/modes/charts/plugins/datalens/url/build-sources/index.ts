@@ -130,7 +130,7 @@ const prepareSourceRequests = (args: PrepareSourceRequestsArgs): SourceRequests 
     }
 };
 
-const buildSources = (args: BuildSourcesArgs): SourceRequests => {
+export const buildSources = (args: BuildSourcesArgs): SourceRequests => {
     const {shared} = args;
 
     const apiVersion = args.apiVersion || '1.5';
@@ -160,5 +160,3 @@ const buildSources = (args: BuildSourcesArgs): SourceRequests => {
 
     return requests;
 };
-
-export default buildSources;
