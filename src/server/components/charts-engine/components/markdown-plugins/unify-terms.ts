@@ -17,34 +17,6 @@ const unifyAttributes = (attrs: [string, string][], attrName: YfmAttributes, pre
     return attrs;
 };
 
-const termDefinitionsRandom = (tokens: Tokens, prefix: string) => {
-    let i = 0;
-
-    while (tokens[i]) {
-        const token = tokens[i];
-
-        if (token.type === YfmTokenTypes.TemplateOpen) {
-            const next = tokens[i + 1];
-
-            if (next && next.type === YfmTokenTypes.DefinitionOpen) {
-                if (token.attrs) {
-                    token.attrs = unifyAttributes(token.attrs, YfmAttributes.Id, prefix);
-                }
-
-                if (next.attrs) {
-                    next.attrs = unifyAttributes(next.attrs, YfmAttributes.Id, prefix);
-                }
-
-                i++;
-            }
-        }
-
-        i++;
-    }
-
-    return tokens;
-};
-
 const modifyTerm = (termToken: Token, prefix: string) => {
     if (termToken.attrs) {
         termToken.attrs = unifyAttributes(termToken.attrs, YfmAttributes.AriaDescribedby, prefix);
@@ -60,10 +32,37 @@ const traverseLine = (tokens: Tokens, prefix: string) => {
     while (tokens[i]) {
         const currentToken = tokens[i];
 
-        if (currentToken.type === YfmTokenTypes.Inline && currentToken.children) {
-            currentToken.children = traverseLine(currentToken.children, prefix);
-        } else if (currentToken.type === YfmTokenTypes.TermOpen) {
-            modifyTerm(currentToken, prefix);
+        switch (currentToken.type) {
+            case YfmTokenTypes.Inline: {
+                if (currentToken.children) {
+                    currentToken.children = traverseLine(currentToken.children, prefix);
+                }
+
+                break;
+            }
+
+            case YfmTokenTypes.TermOpen: {
+                modifyTerm(currentToken, prefix);
+                break;
+            }
+
+            case YfmTokenTypes.TemplateOpen: {
+                const token = tokens[i];
+                const next = tokens[i + 1];
+
+                if (next && next.type === YfmTokenTypes.DefinitionOpen) {
+                    if (token.attrs) {
+                        token.attrs = unifyAttributes(token.attrs, YfmAttributes.Id, prefix);
+                    }
+
+                    if (next.attrs) {
+                        next.attrs = unifyAttributes(next.attrs, YfmAttributes.Id, prefix);
+                    }
+
+                    i++;
+                }
+                break;
+            }
         }
 
         i++;
@@ -78,7 +77,6 @@ export const unifyTermIds = (md: MarkdownIt, options: {prefix: string}) => {
     try {
         md.core.ruler.after('termReplace', 'termLinkRandom', (state: StateCore) => {
             traverseLine(state.tokens, prefix);
-            termDefinitionsRandom(state.tokens, prefix);
         });
     } catch (_) {}
 };
