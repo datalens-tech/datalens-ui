@@ -389,7 +389,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
 
     private renderHintSettings() {
         const {item, placeholderId} = this.props;
-        const canSetHint = Utils.isEnabledFeature(Feature.DatasetFieldHint);
+        const canSetHint = Utils.isEnabledFeature(Feature.FieldHint);
         const availablePlaceholders = [
             PlaceholderId.FlatTableColumns,
             PlaceholderId.PivotTableRows,

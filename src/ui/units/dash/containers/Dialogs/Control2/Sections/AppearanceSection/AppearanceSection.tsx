@@ -15,7 +15,7 @@ import './AppearanceSection.scss';
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
 const AppearanceSection = () => {
-    const canSetHint = Utils.isEnabledFeature(Feature.DatasetFieldHint);
+    const canSetHint = Utils.isEnabledFeature(Feature.FieldHint);
 
     return (
         <SectionWrapper title={i18n('label_section-appearance')}>
