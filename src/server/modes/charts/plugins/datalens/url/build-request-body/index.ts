@@ -611,7 +611,6 @@ export function prepareSingleRequest({
     ) {
         payload = getPayloadWithCommonTableSettings(payload, {
             extraSettings,
-            ChartEditor,
             datasetId,
             allItemsIds,
             visualization,
