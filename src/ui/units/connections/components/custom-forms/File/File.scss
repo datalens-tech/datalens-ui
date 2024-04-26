@@ -205,8 +205,9 @@
     // the normal api for working with data-table styles has not yet been delivered
     & .data-table {
         height: calc(
-            100vh - var(--container-height-offset) - var(--settings-height) -
-                var(--column-filter-height) - var(--gn-aside-top-panel-height)
+            100vh - var(--container-height-offset) - var(--settings-height) - var(
+                    --column-filter-height
+                ) - var(--gn-aside-top-panel-height)
         );
 
         &__table {
@@ -242,8 +243,9 @@
 
     &__workspace_standalone .data-table {
         height: calc(
-            100vh - var(--container-height-offset) - var(--column-filter-height) -
-                var(--gn-aside-top-panel-height)
+            100vh - var(--container-height-offset) - var(--column-filter-height) - var(
+                    --gn-aside-top-panel-height
+                )
         );
     }
 

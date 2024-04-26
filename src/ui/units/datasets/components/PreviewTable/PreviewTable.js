@@ -42,6 +42,7 @@ class PreviewTable extends React.Component {
             const preparedRow = row.map((item) => {
                 if (item && typeof item === 'object') {
                     // In this place, except for the markup in the form of an object, nothing comes
+                    // eslint-disable-next-line react/jsx-key
                     return <Markup item={item} />;
                 }
 

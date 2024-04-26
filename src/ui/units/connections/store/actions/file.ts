@@ -211,9 +211,8 @@ const pollFileStatus = async (args: UtilityHandlerArgs) => {
 
     switch (status) {
         case 'ready': {
-            const {sources: sourcesInfo, error: sourcesInfoError} = await api.fetchFileSources(
-                fileId,
-            );
+            const {sources: sourcesInfo, error: sourcesInfoError} =
+                await api.fetchFileSources(fileId);
 
             if (sourcesInfoError) {
                 batch(() => {

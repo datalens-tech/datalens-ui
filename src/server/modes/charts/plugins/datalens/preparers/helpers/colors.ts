@@ -49,8 +49,8 @@ function spline(colorValues: number[]) {
                 value <= 0
                     ? (value = 0)
                     : value >= 1
-                    ? ((value = 1), n - 1)
-                    : Math.floor(value * n),
+                      ? ((value = 1), n - 1)
+                      : Math.floor(value * n),
             v1 = colorValues[i],
             v2 = colorValues[i + 1],
             v0 = i > 0 ? colorValues[i - 1] : 2 * v1 - v2,

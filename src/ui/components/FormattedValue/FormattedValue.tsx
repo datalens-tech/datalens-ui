@@ -21,7 +21,7 @@ const LOCALES = {
 
 export const MEMORY_UNITS = ['b', 'kb', 'mb', 'gb', 'tb'] as const;
 
-export function getMemoryUnit(bytes: number): typeof MEMORY_UNITS[number] | undefined {
+export function getMemoryUnit(bytes: number): (typeof MEMORY_UNITS)[number] | undefined {
     const index = Math.floor(Math.log(bytes) / Math.log(1024));
     return MEMORY_UNITS[index];
 }
