@@ -10,7 +10,9 @@ import ResizeObserver from 'resize-observer-polyfill';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
 import {URL_QUERY, Utils} from 'ui';
+import {registry} from 'ui/registry';
 
+import {Feature} from '../../../../../shared/types/feature';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {CurrentPageEntry} from '../../../../components/Navigation/types';
 import {DL, EMBEDDED_DASH_MESSAGE_NAME} from '../../../../constants/common';
@@ -135,12 +137,16 @@ export function App({...routeProps}: RouteComponentProps) {
         dispatchResize();
     }
 
+    const {Footer} = registry.common.components.getAll();
+    const showFooter = Utils.isEnabledFeature(Feature.EnableFooter) && !isEmbedded;
+
     return (
         <div className={b({mobile: DL.IS_MOBILE, embedded: isEmbedded})} ref={wrapRef}>
             <LocationChange onLocationChanged={locationChangeHandler} />
             <div className={b('content')}>
                 <DashWrapper {...routeProps} />
             </div>
+            {showFooter && <Footer />}
         </div>
     );
 }

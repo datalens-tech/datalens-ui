@@ -73,6 +73,7 @@ export enum Feature {
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
     CustomAccessDescription = 'CustomAccessDescription',
+    EnableFooter = 'EnableFooter',
 }
 
 export type FeatureConfig = Record<string, boolean>;
