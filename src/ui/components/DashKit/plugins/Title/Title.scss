@@ -10,6 +10,11 @@
         }
     }
 
+    &_with-color .dashkit-plugin-title {
+        padding: 5px 10px;
+        align-items: center;
+    }
+
     .dashkit-grid-item__item_editMode & {
         background-color: var(--g-color-base-float);
     }

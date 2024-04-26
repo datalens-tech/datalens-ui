@@ -8,6 +8,7 @@ import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/Das
 import {RENDERER_WRAPPER_CLASSNAME, RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Title.scss';
+import {DashTabItemTitle} from 'shared';
 
 const b = block('dashkit-plugin-title-container');
 
@@ -22,6 +23,8 @@ const titlePlugin = {
         forwardedRef: React.LegacyRef<PluginTitle> | undefined,
     ) {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
+
+        const data = props.data as DashTabItemTitle['data'];
 
         /**
          * call common for charts & selectors adjust function for widget
@@ -43,14 +46,27 @@ const titlePlugin = {
         );
 
         React.useEffect(() => {
-            adjustLayout(!props.data.autoHeight);
-        }, [adjustLayout, props.data.autoHeight]);
+            adjustLayout(!data.autoHeight);
+        }, [adjustLayout, data.autoHeight]);
 
         const content = <PluginTitle {...props} ref={forwardedRef} />;
 
+        const showBgColor =
+            data.background?.enabled &&
+            data.background?.color &&
+            data.background?.color !== 'transparent';
+
+        const style = showBgColor ? {backgroundColor: data.background?.color} : {};
+
         return (
             <RendererWrapper type="title" nodeRef={rootNodeRef}>
-                <div className={b({'with-auto-height': Boolean(props.data.autoHeight)})}>
+                <div
+                    className={b({
+                        'with-auto-height': Boolean(data.autoHeight),
+                        'with-color': Boolean(showBgColor),
+                    })}
+                    style={style}
+                >
                     {content}
                 </div>
             </RendererWrapper>

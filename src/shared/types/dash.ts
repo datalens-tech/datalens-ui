@@ -127,6 +127,10 @@ export interface DashTabItemTitle extends DashTabItemBase {
         size: DashTabItemTitleSize;
         showInTOC: boolean;
         autoHeight?: boolean;
+        background?: {
+            enabled: boolean;
+            color: string;
+        };
     };
 }
 
