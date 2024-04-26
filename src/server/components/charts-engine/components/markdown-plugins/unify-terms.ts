@@ -1,5 +1,4 @@
 import type {MarkdownIt, StateCore} from '@diplodoc/transform/lib/typings';
-import type StateBlock from 'markdown-it/lib/rules_block/state_block';
 
 import {YfmAttributes, YfmTokenTypes} from '../../../../../shared';
 
@@ -17,8 +16,7 @@ const unifyAttributes = (attrs: [string, string][], attrName: YfmAttributes, pre
     return attrs;
 };
 
-const termDefinitionsRandom = (prefix: string) => (state: StateBlock) => {
-    const tokens = state.tokens;
+const termDefinitionsRandom = (tokens: Tokens, prefix: string) => {
     let i = 0;
 
     while (tokens[i]) {
@@ -43,7 +41,7 @@ const termDefinitionsRandom = (prefix: string) => (state: StateBlock) => {
         i++;
     }
 
-    return false;
+    return tokens;
 };
 
 const modifyTerm = (termToken: Token, prefix: string) => {
@@ -77,13 +75,9 @@ export const unifyTermIds = (md: MarkdownIt, options: {prefix: string}) => {
     const prefix = options.prefix;
 
     try {
-        md.block.ruler.after(
-            'termDefinitions',
-            'termDefinitionsRandom',
-            termDefinitionsRandom(prefix),
-        );
         md.core.ruler.after('termReplace', 'termLinkRandom', (state: StateCore) => {
             traverseLine(state.tokens, prefix);
+            termDefinitionsRandom(state.tokens, prefix);
         });
     } catch (_) {}
 };
