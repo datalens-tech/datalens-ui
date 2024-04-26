@@ -1,11 +1,4 @@
-import {
-    DATASET_FIELD_TYPES,
-    Feature,
-    ServerPlaceholder,
-    V4Field,
-    isEnabledServerFeature,
-} from '../../../../../../../shared';
-import {registry} from '../../../../../../registry';
+import {DATASET_FIELD_TYPES, ServerPlaceholder, V4Field} from '../../../../../../../shared';
 import {
     CHARTS_MIDDLEWARE_URL_TYPE,
     REQUEST_WITH_DATASET_SOURCE_NAME,
@@ -138,7 +131,6 @@ const prepareSourceRequests = (args: PrepareSourceRequestsArgs): SourceRequests 
 };
 
 const buildSources = (args: BuildSourcesArgs): SourceRequests => {
-    const app = registry.getApp();
     const {shared} = args;
 
     const apiVersion = args.apiVersion || '1.5';
@@ -161,9 +153,7 @@ const buildSources = (args: BuildSourcesArgs): SourceRequests => {
         links: config.links,
     });
 
-    if (isEnabledServerFeature(app.nodekit.ctx, Feature.CustomColorPalettes)) {
-        Object.assign(requests, getColorPalettesRequests({config}));
-    }
+    Object.assign(requests, getColorPalettesRequests({config}));
 
     log('SOURCE REQUESTS:');
     log(requests);

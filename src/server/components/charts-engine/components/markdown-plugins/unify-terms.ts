@@ -1,4 +1,5 @@
-import type {MarkdownIt, StateCore} from '@diplodoc/transform/lib/typings';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {MarkdownIt, StateCore} from '@diplodoc/transform/lib/typings';
 import type StateBlock from 'markdown-it/lib/rules_block/state_block';
 
 import {YfmAttributes, YfmTokenTypes} from '../../../../../shared';
