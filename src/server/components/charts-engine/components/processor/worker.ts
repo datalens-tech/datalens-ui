@@ -8,13 +8,13 @@ import {Shared} from '../../../../../shared';
 //     buildHighchartsConfig,
 //     // buildSources,
 // } from '../../../../modes/charts/plugins/datalens/module';
-import {buildSourcesPrivate} from '../../../../modes/charts/plugins/datalens/url/build-sources';
+import {buildSources} from '../../../../modes/charts/plugins/datalens/url/build-sources';
 
 import {getChartApiContext} from './sandbox';
 
 workerpool.worker({
     buildSources: async (args: any) => {
-        const {shared, params, actionParams, widgetConfig, userLang, features} = args;
+        const {shared, params, actionParams, widgetConfig, userLang} = args;
         const timeStart = process.hrtime();
 
         const context = getChartApiContext({
@@ -25,12 +25,10 @@ workerpool.worker({
             widgetConfig,
             userLang,
         });
-        const result = buildSourcesPrivate({
+        const result = buildSources({
             apiVersion: '2',
             shared: shared as Shared,
             params,
-            ChartEditor: context.ChartEditor,
-            features,
         });
 
         const executionTiming = process.hrtime(timeStart);
