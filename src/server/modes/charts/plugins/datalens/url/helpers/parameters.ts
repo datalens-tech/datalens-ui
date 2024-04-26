@@ -26,9 +26,12 @@ export const prepareParameterForPayload = (
         .map(mapItemToPayloadParameter);
 };
 export const getParametersMap = (parameters: PayloadParameter[]) => {
-    return parameters.reduce((acc, curr) => {
-        return {...acc, [curr.id]: true};
-    }, {} as Record<string, boolean>);
+    return parameters.reduce(
+        (acc, curr) => {
+            return {...acc, [curr.id]: true};
+        },
+        {} as Record<string, boolean>,
+    );
 };
 export const mapParameterToRequestFormat = (parameter: PayloadParameter): ApiV2Parameter => {
     return {

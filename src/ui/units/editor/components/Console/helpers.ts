@@ -21,11 +21,14 @@ export function cropArrays(original: CropObject): Result {
                 return value.slice(0, MAX_ARRAY_LENGTH).map(crop);
             }
             const obj = value as Record<string, CropObject>;
-            return Object.keys(obj).reduce((o, key) => {
-                const v = obj[key];
-                o[key] = crop(v);
-                return o;
-            }, {} as Record<string, CropObject>);
+            return Object.keys(obj).reduce(
+                (o, key) => {
+                    const v = obj[key];
+                    o[key] = crop(v);
+                    return o;
+                },
+                {} as Record<string, CropObject>,
+            );
         }
         return value;
     }

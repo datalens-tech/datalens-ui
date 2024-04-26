@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import type {DefaultTransporter} from 'google-auth-library';
 
 import type {GoogleRefreshToken} from '../schema/types';

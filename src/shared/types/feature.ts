@@ -74,11 +74,6 @@ export enum Feature {
     PinnedColumns = 'PinnedColumns',
     CustomAccessDescription = 'CustomAccessDescription',
     EnableFooter = 'EnableFooter',
-
-    // TODO: delete
-    CustomColorPalettes = 'CustomColorPalettes',
-    PivotTableSortWithTotals = 'PivotTableSortWithTotals',
-    WizardChartChartFilteringAvailable = 'WizardChartChartFilteringAvailable',
 }
 
 export type FeatureConfig = Record<string, boolean>;

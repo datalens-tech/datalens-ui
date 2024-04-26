@@ -36,10 +36,10 @@ export const PALETTE_ID = {
 } as const;
 
 export type DefaultPaletteId = typeof DEFAULT_PALETTE_ID;
-export type CommonPaletteId = typeof COMMON_PALETTE_ID[keyof typeof COMMON_PALETTE_ID];
-export type TableauPaletteId = typeof TABLEAU_PALETTE_ID[keyof typeof TABLEAU_PALETTE_ID];
+export type CommonPaletteId = (typeof COMMON_PALETTE_ID)[keyof typeof COMMON_PALETTE_ID];
+export type TableauPaletteId = (typeof TABLEAU_PALETTE_ID)[keyof typeof TABLEAU_PALETTE_ID];
 export type InternalPaletteId = CommonPaletteId;
-export type GradientPaletteId = typeof COMMON_PALETTE_ID[keyof typeof GRADIENT_PALETTE_ID];
+export type GradientPaletteId = (typeof COMMON_PALETTE_ID)[keyof typeof GRADIENT_PALETTE_ID];
 export type BasePaletteId = CommonPaletteId | TableauPaletteId;
 
 export type Palette = {

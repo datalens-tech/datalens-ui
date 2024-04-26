@@ -27,8 +27,8 @@ function getTooltipPointFormat(cells, showColor) {
             typeof showColor === 'boolean'
                 ? `<div class="${b('cell')}">
                 <span class="${b('color')}" ${
-                      showColor ? 'style="background-color:{point.color};"' : ''
-                  }></span>
+                    showColor ? 'style="background-color:{point.color};"' : ''
+                }></span>
             </div>`
                 : ''
         }
