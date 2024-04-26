@@ -101,6 +101,23 @@ const setOverflowYStyle = (node: HTMLElement, value: string) => {
     };
 };
 
+const setStyle = (node: HTMLElement, name: string, value: string) => {
+    const st = node.getAttribute('style');
+    // If there are inline styles, we adding scrollY style in the end with !important
+    node.setAttribute(
+        'style',
+        `${st || ''}${!st || st?.endsWith(';') ? '' : ';'}${name}: ${value} !important;`,
+    );
+
+    return () => {
+        if (st) {
+            node.setAttribute('style', st);
+        } else {
+            node.removeAttribute('style');
+        }
+    };
+};
+
 export function adjustWidgetLayout({
     widgetId,
     rootNode,
@@ -120,6 +137,9 @@ export function adjustWidgetLayout({
     if (!node) {
         return;
     }
+
+    const prevHeight = '100%';
+    setStyle(node, 'height', 'auto');
 
     const scrollableNode = node.querySelector(
         scrollableNodeSelector || `.${CHARTKIT_SCROLLABLE_NODE_CLASSNAME}`,
@@ -144,10 +164,12 @@ export function adjustWidgetLayout({
             widgetId,
             needSetDefault,
         });
+        setStyle(node, 'height', prevHeight);
         return;
     }
 
     if (!scrollableNode) {
+        setStyle(node, 'height', prevHeight);
         return;
     }
 
@@ -200,6 +222,7 @@ export function adjustWidgetLayout({
         widgetId,
         needSetDefault,
     });
+    setStyle(node, 'height', prevHeight);
 }
 
 function collectBelowLyingNodesHeight(

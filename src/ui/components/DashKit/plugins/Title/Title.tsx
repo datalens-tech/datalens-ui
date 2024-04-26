@@ -1,11 +1,16 @@
 import React from 'react';
 
-import {PluginTitle, PluginTitleProps, pluginTitle} from '@gravity-ui/dashkit';
+import {
+    PLUGIN_ROOT_ATTR_NAME,
+    PluginTitle,
+    PluginTitleProps,
+    pluginTitle,
+} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
-import {RENDERER_WRAPPER_CLASSNAME, RendererWrapper} from '../RendererWrapper/RendererWrapper';
+import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Title.scss';
 import {DashTabItemTitle} from 'shared';
@@ -38,7 +43,7 @@ const titlePlugin = {
                     gridLayout: props.gridLayout,
                     layout: props.layout,
                     cb: props.adjustWidgetLayout,
-                    mainNodeSelector: `.${RENDERER_WRAPPER_CLASSNAME}`,
+                    mainNodeSelector: `[${PLUGIN_ROOT_ATTR_NAME}="title"]`,
                     scrollableNodeSelector: `.${b()}`,
                 });
             }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
@@ -47,7 +52,7 @@ const titlePlugin = {
 
         React.useEffect(() => {
             adjustLayout(!data.autoHeight);
-        }, [adjustLayout, data.autoHeight]);
+        }, [adjustLayout, data.autoHeight, props.data?.text, props.data?.size]);
 
         const content = <PluginTitle {...props} ref={forwardedRef} />;
 
@@ -59,13 +64,17 @@ const titlePlugin = {
         const style = showBgColor ? {backgroundColor: data.background?.color} : {};
 
         return (
-            <RendererWrapper type="title" nodeRef={rootNodeRef}>
+            <RendererWrapper
+                type="title"
+                nodeRef={rootNodeRef}
+                style={style as React.StyleHTMLAttributes<HTMLDivElement>}
+                classMod={showBgColor ? 'with-color' : undefined}
+            >
                 <div
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
                         'with-color': Boolean(showBgColor),
                     })}
-                    style={style}
                 >
                     {content}
                 </div>
