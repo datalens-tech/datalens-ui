@@ -12,13 +12,16 @@ const getMergedPlaceholdersSettings = ({
     currentSettings,
     keysToMerge,
 }: GetMergedPlaceholdersSettingsArgs): Record<string, any> => {
-    return keysToMerge.reduce((acc, key) => {
-        if (typeof currentSettings[key] !== 'undefined') {
-            return {...acc, [key]: oldSettings[key]};
-        }
+    return keysToMerge.reduce(
+        (acc, key) => {
+            if (typeof currentSettings[key] !== 'undefined') {
+                return {...acc, [key]: oldSettings[key]};
+            }
 
-        return acc;
-    }, {} as Record<string, any>);
+            return acc;
+        },
+        {} as Record<string, any>,
+    );
 };
 
 type GetChangedPlaceholderSettingsArgs = {

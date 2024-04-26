@@ -126,8 +126,9 @@ $titleHeight: 57px;
     // the normal api for working with data-table styles has not yet been delivered
     & .data-table {
         height: calc(
-            100vh - var(--container-height-offset) - var(--settings-height) -
-                var(--conn-column-filter-height)
+            100vh - var(--container-height-offset) - var(--settings-height) - var(
+                    --conn-column-filter-height
+                )
         );
 
         &__table {

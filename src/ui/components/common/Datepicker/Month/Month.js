@@ -161,6 +161,7 @@ export class Month extends React.Component {
             <div
                 key={`${day}-${month}-${year}`}
                 className={b(CELLS.DAY, mods)}
+                // eslint-disable-next-line react/no-unknown-property
                 date={currentDateTime.toISODate()}
                 {...(!mods.disabled && {onClick: this.getOnDateClick({start, end})})}
             >
@@ -201,7 +202,9 @@ export class Month extends React.Component {
                     gridTemplateAreas: `"${_repeat('title ', this.titleCells)}"`,
                 }}
                 className={b()}
+                // eslint-disable-next-line react/no-unknown-property
                 year={this.firstMonthDate.year}
+                // eslint-disable-next-line react/no-unknown-property
                 month={this.firstMonthDate.month}
             >
                 {this.renderMonth()}
