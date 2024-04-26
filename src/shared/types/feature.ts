@@ -73,11 +73,6 @@ export enum Feature {
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
     CustomAccessDescription = 'CustomAccessDescription',
-
-    // TODO: delete
-    CustomColorPalettes = 'CustomColorPalettes',
-    PivotTableSortWithTotals = 'PivotTableSortWithTotals',
-    WizardChartChartFilteringAvailable = 'WizardChartChartFilteringAvailable',
 }
 
 export type FeatureConfig = Record<string, boolean>;
