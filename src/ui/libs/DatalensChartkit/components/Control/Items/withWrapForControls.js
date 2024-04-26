@@ -1,21 +1,15 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 import {ControlQA} from 'shared';
 import {DL} from 'ui/constants';
-import {useMarkdown} from 'ui/hooks/useMarkdown';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {CONTROL_TYPE} from '../../../modules/constants/constants';
+import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 
 const b = block('chartkit-control-item');
-
-const Markdown = (props) => {
-    const {markdown} = useMarkdown({value: props.value});
-    return <React.Fragment>{markdown}</React.Fragment>;
-};
 
 function withWrapForControls(WrappedComponent) {
     function WithWrapForControls(props) {
@@ -60,12 +54,7 @@ function withWrapForControls(WrappedComponent) {
                         title={label}
                     >
                         {label}
-                        {hint && (
-                            <HelpPopover
-                                content={<Markdown value={hint} />}
-                                className={b('hint')}
-                            />
-                        )}
+                        {hint && <MarkdownHelpPopover markdown={hint} />}
                     </span>
                 )}
                 <WrappedComponent {...props} />

@@ -22,10 +22,11 @@ export const HintRow = () => {
     const {showHint, hint} = useSelector(selectSelectorDialog);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
     const datasetField = useSelector(getDatasetField);
+    const hintValue = hint ?? datasetField?.description ?? '';
 
     const handleUpdateEnable = React.useCallback(
-        (checked: boolean) => dispatch(setSelectorDialogItem({showHint: checked})),
-        [dispatch],
+        (checked: boolean) => dispatch(setSelectorDialogItem({showHint: checked, hint: hintValue})),
+        [dispatch, hintValue],
     );
 
     const handleUpdateText = React.useCallback(
@@ -46,7 +47,7 @@ export const HintRow = () => {
                     className={b('operation-checkbox', {top: true})}
                 />
                 <MarkdownControl
-                    value={hint ?? datasetField?.description ?? ''}
+                    value={hintValue}
                     onChange={handleUpdateText}
                     disabled={isFieldDisabled || !showHint}
                 />

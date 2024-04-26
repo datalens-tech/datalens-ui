@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import {Minus, Plus} from '@gravity-ui/icons';
 import DataTable, {Column, SortOrder} from '@gravity-ui/react-data-table';
 import {Button, Icon, Link, Popover} from '@gravity-ui/uikit';
@@ -25,7 +24,6 @@ import {
     TableRow,
     isMarkupItem,
 } from 'shared';
-import {useMarkdown} from 'ui/hooks/useMarkdown';
 
 import {Markup} from '../../../../../../../../components/Markup';
 import {markupToRawString} from '../../../../../../modules/table';
@@ -47,6 +45,7 @@ import {
     selectBarSettingValue,
 } from './misc';
 import type {ActionParamsData} from './types';
+import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 
 const b = block('chartkit-table');
 const DATE_FORMAT_BY_SCALE = {
@@ -83,13 +82,6 @@ const SortIcon = ({direction}: SortIconProps) => {
             <path fill="currentColor" d="M0 5h10l-5 -5z" />
         </svg>
     );
-};
-
-const Markdown = (props: {value: string}) => {
-    const {value} = props;
-    const {markdown} = useMarkdown({value});
-
-    return <React.Fragment>{markdown}</React.Fragment>;
 };
 
 const diffFormatter = (
@@ -439,13 +431,7 @@ export const getColumnsAndNames = ({
                             ) : (
                                 column.formattedName ?? column.name
                             )}
-                            {hint && (
-                                <HelpPopover
-                                    className={b('column-hint')}
-                                    size={'s'}
-                                    content={<Markdown value={hint} />}
-                                />
-                            )}
+                            {hint && <MarkdownHelpPopover markdown={hint} />}
                         </span>
                     ),
                     className: b('cell', {

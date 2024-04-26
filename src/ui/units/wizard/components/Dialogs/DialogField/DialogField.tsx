@@ -403,7 +403,10 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             return null;
         }
 
-        const {enabled, text} = this.state.hintSettings || {};
+        const hintSettings = this.state.hintSettings;
+        const enabled = hintSettings?.enabled;
+        const text = hintSettings?.text || item?.description || '';
+
         const {MarkdownControl} = registry.common.components.getAll();
 
         return (
@@ -424,7 +427,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                         title={''}
                         setting={
                             <MarkdownControl
-                                value={text ?? item?.description}
+                                value={text}
                                 onChange={(value) =>
                                     this.setState({hintSettings: {enabled, text: value}})
                                 }
