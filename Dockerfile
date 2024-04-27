@@ -54,7 +54,8 @@ RUN npm run build
 RUN npm prune --production
 RUN rm -rf assets deploy src /tmp/* /root/.npm
 
-RUN chown -R ${USER} /opt/app/dist/run 
+RUN chown -R ${USER} /opt/app/dist/run
+RUN chown -R ${USER} /opt/app/export 
 
 # adding certificate
 RUN echo $CERT > /usr/local/share/ca-certificates/cert.pem
