@@ -45,6 +45,7 @@ const titlePlugin = {
                     cb: props.adjustWidgetLayout,
                     mainNodeSelector: `[${PLUGIN_ROOT_ATTR_NAME}="title"]`,
                     scrollableNodeSelector: `.${b()}`,
+                    needHeightReset: true,
                 });
             }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
             [props.id, rootNodeRef, props.adjustWidgetLayout, props.layout, props.gridLayout],

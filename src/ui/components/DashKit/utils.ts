@@ -40,6 +40,7 @@ export type AdjustWidgetLayoutProps = {
     cb: PluginWidgetProps['adjustWidgetLayout'];
     mainNodeSelector?: string;
     scrollableNodeSelector?: string;
+    needHeightReset?: boolean;
 };
 
 const getScrollbarWidth = (node: HTMLElement) => node.offsetWidth - node.clientWidth;
@@ -127,6 +128,7 @@ export function adjustWidgetLayout({
     cb,
     mainNodeSelector,
     scrollableNodeSelector,
+    needHeightReset,
 }: AdjustWidgetLayoutProps) {
     if (DL.IS_MOBILE || needSetDefault) {
         cb({widgetId, needSetDefault});
@@ -139,7 +141,9 @@ export function adjustWidgetLayout({
     }
 
     const prevHeight = '100%';
-    setStyle(node, 'height', 'auto');
+    if (needHeightReset) {
+        setStyle(node, 'height', 'auto');
+    }
 
     const scrollableNode = node.querySelector(
         scrollableNodeSelector || `.${CHARTKIT_SCROLLABLE_NODE_CLASSNAME}`,
@@ -164,12 +168,16 @@ export function adjustWidgetLayout({
             widgetId,
             needSetDefault,
         });
-        setStyle(node, 'height', prevHeight);
+        if (needHeightReset) {
+            setStyle(node, 'height', prevHeight);
+        }
         return;
     }
 
     if (!scrollableNode) {
-        setStyle(node, 'height', prevHeight);
+        if (needHeightReset) {
+            setStyle(node, 'height', prevHeight);
+        }
         return;
     }
 
@@ -222,7 +230,9 @@ export function adjustWidgetLayout({
         widgetId,
         needSetDefault,
     });
-    setStyle(node, 'height', prevHeight);
+    if (needHeightReset) {
+        setStyle(node, 'height', prevHeight);
+    }
 }
 
 function collectBelowLyingNodesHeight(
