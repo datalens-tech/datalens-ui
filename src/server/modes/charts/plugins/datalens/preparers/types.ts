@@ -15,7 +15,7 @@ import {
     ServerTooltip,
 } from '../../../../../../shared';
 import {ApiV2RequestField} from '../../../../../../shared/types/bi-api/v2';
-import type {ChartColorsConfig} from '../js/helpers/colors';
+import type {ChartColorsConfig} from '../types';
 
 export type PrepareFunction = (args: PrepareFunctionArgs) => any;
 

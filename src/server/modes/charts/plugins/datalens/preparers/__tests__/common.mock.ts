@@ -14,6 +14,7 @@ export const EmptyPrepapreArgs: PrepareFunctionArgs = {
         loadedColorPalettes: {},
         colors: ['blue', 'red', 'orange'],
         gradientColors: [],
+        availablePalettes: {},
     },
     shapes: [],
     segments: [],

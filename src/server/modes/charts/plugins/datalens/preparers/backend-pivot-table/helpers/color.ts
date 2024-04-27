@@ -1,5 +1,5 @@
 import {ApiV2Annotations, ServerColor, isMeasureName} from '../../../../../../../../shared';
-import {ChartColorsConfig} from '../../../js/helpers/colors';
+import {ChartColorsConfig} from '../../../types';
 import {colorizePivotTableCell} from '../../../utils/color-helpers';
 import {AnnotationsMap, PivotDataCellValue, PivotDataRows} from '../types';
 

@@ -1,6 +1,6 @@
 import {GradientType} from '../../../../../../../../../../shared';
-import {ChartColorsConfig} from '../../../../../js/helpers/colors';
 import {colorizeFlatTableColumn} from '../../background-settings';
+import {ChartColorsConfig} from '../../../../../types';
 
 const getBlueGradientColors = () => ['#0044A3', '#8CCBFF'];
 
@@ -20,6 +20,7 @@ describe('colorizeFlatTableColumn', () => {
             colors: [],
             gradientColors: getBlueGradientColors(),
             loadedColorPalettes: {},
+            availablePalettes: {},
         };
 
         const result = colorizeFlatTableColumn({data, colorsConfig, index});
@@ -42,6 +43,7 @@ describe('colorizeFlatTableColumn', () => {
             colors: [],
             gradientColors: getBlueGradientColors(),
             loadedColorPalettes: {},
+            availablePalettes: {},
         };
 
         const result = colorizeFlatTableColumn({data, colorsConfig, index});
@@ -59,6 +61,7 @@ describe('colorizeFlatTableColumn', () => {
             colors: [],
             gradientColors: getRedOrangeGreenGradientColors(),
             loadedColorPalettes: {},
+            availablePalettes: {},
         };
 
         const result = colorizeFlatTableColumn({data, colorsConfig, index});
@@ -76,6 +79,7 @@ describe('colorizeFlatTableColumn', () => {
             colors: [],
             gradientColors: getBlueGradientColors(),
             loadedColorPalettes: {},
+            availablePalettes: {},
         };
 
         const result = colorizeFlatTableColumn({data, colorsConfig, index});

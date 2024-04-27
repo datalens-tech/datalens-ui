@@ -7,13 +7,7 @@ import {
     selectAvailableGradientsColors,
 } from '../../../../../../../../shared';
 import {selectServerPalette} from '../../../../../../../constants';
-
-export interface ChartColorsConfig extends ServerColorsConfig {
-    colors: string[];
-    gradientColors: string[];
-    loadedColorPalettes: Record<string, ColorPalette>;
-    availablePalettes: Record<string, Palette>;
-}
+import {ChartColorsConfig} from '../../../types';
 
 type GetChartColorsArgs = {
     colorsConfig?: ServerColorsConfig;

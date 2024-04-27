@@ -11,7 +11,6 @@ import {
     isMeasureField,
 } from '../../../../../../../shared';
 import {TABLE_TOTALS_STYLES} from '../../../constants/misc';
-import {ChartColorsConfig} from '../../js/helpers/colors';
 import {
     chartKitFormatNumberWrapper,
     formatDate,
@@ -47,6 +46,7 @@ import {
     PivotTableFieldSettings,
     PivotTableSortSettings,
 } from './types';
+import {ChartColorsConfig} from '../../types';
 
 type GetRowCellMetadataArgs = {
     pivotDataCellValue: PivotDataCellValue[];
@@ -336,6 +336,7 @@ export const generateTableRows = ({
         fieldDict,
         fieldsItemIdMap,
         loadedColorPalettes: colorsConfig.loadedColorPalettes,
+        availablePalettes: colorsConfig.availablePalettes,
     });
 
     colorizePivotTableByColorField({

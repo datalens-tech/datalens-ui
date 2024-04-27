@@ -79,7 +79,7 @@ function prepareFlatTable({
         idToTitle,
         order,
         data,
-        loadedColorPalettes: colorsConfig.loadedColorPalettes,
+        chartColorsConfig: colorsConfig,
     });
 
     const columnValuesByColumn = getColumnValuesByColumnWithBarSettings({

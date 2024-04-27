@@ -38,6 +38,12 @@ describe('getFooter', () => {
             return i18nMock.I18n.keyset(keyset)(key, params);
         },
     };
+    const colorsConfig = {
+        loadedColorPalettes: {},
+        colors: [],
+        gradientColors: [],
+        availablePalettes: {},
+    };
 
     it('Returns the footer: in the first place is always "Total"', () => {
         const footer = getFooter({
@@ -48,7 +54,7 @@ describe('getFooter', () => {
             order: ORDER,
             columnValuesByColumn: {},
             ChartEditor: ChartEditorMock,
-            colorsConfig: {loadedColorPalettes: {}, colors: [], gradientColors: []},
+            colorsConfig,
         });
 
         expect(footer[0].cells).toHaveLength(2);
@@ -71,7 +77,7 @@ describe('getFooter', () => {
             order: ORDER,
             columnValuesByColumn: {},
             ChartEditor: ChartEditorMock,
-            colorsConfig: {loadedColorPalettes: {}, colors: [], gradientColors: []},
+            colorsConfig,
         });
 
         footer[0].cells.forEach((cell) => {
@@ -88,7 +94,7 @@ describe('getFooter', () => {
             order: [...ORDER].reverse(),
             columnValuesByColumn: {},
             ChartEditor: ChartEditorMock,
-            colorsConfig: {loadedColorPalettes: {}, colors: [], gradientColors: []},
+            colorsConfig,
         });
 
         expect(footer[0].cells).toHaveLength(2);
@@ -106,7 +112,7 @@ describe('getFooter', () => {
             order: ORDER,
             columnValuesByColumn: {},
             ChartEditor: ChartEditorMock,
-            colorsConfig: {loadedColorPalettes: {}, colors: [], gradientColors: []},
+            colorsConfig,
         });
 
         expect(footer[0].cells).toHaveLength(4);
@@ -127,7 +133,7 @@ describe('getFooter', () => {
             order: ORDER,
             columnValuesByColumn: {},
             ChartEditor: ChartEditorMock,
-            colorsConfig: {loadedColorPalettes: {}, colors: [], gradientColors: []},
+            colorsConfig,
         });
 
         expect(footer[0].cells).toHaveLength(4);

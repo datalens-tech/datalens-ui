@@ -1,7 +1,10 @@
 import {
+    ColorPalette,
     ColumnSettings,
+    Palette,
     ParameterDefaultValue,
     PayloadFilter,
+    ServerColorsConfig,
     ServerField,
     TableBarsSettings,
     Update,
@@ -59,3 +62,10 @@ export type BackendPivotTableCellCustom = {
     // when building request
     fieldOrder: string[];
 };
+
+export interface ChartColorsConfig extends ServerColorsConfig {
+    colors: string[];
+    gradientColors: string[];
+    loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
+}

@@ -1,5 +1,4 @@
 import {RGBGradient} from '../../../../../../shared';
-import {ChartColorsConfig} from '../js/helpers/colors';
 
 import {
     getCurrentGradient,
@@ -8,6 +7,7 @@ import {
     mapAndColorizeHashTableByGradient,
 } from './color-helpers';
 import {LAT, LONG} from './constants';
+import type {ChartColorsConfig} from '../types';
 
 export type Coordinate = [number, number];
 

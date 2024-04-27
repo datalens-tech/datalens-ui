@@ -1,6 +1,7 @@
 import {
     ColorPalette,
     DATASET_FIELD_TYPES,
+    FeatureConfig,
     IChartEditor,
     Palette,
     ServerChartsConfig,
@@ -48,6 +49,7 @@ type PrepareSingleResultArgs = {
     palettes: Record<string, Palette>;
     loadedColorPalettes?: Record<string, ColorPalette>;
     disableDefaultSorting?: boolean;
+    features: FeatureConfig;
 };
 
 // eslint-disable-next-line complexity
@@ -62,6 +64,7 @@ export default ({
     loadedColorPalettes = {},
     disableDefaultSorting = false,
     palettes,
+    features,
 }: PrepareSingleResultArgs) => {
     const {
         sharedData: {drillDownData},
@@ -316,6 +319,7 @@ export default ({
         segments,
 
         disableDefaultSorting,
+        features,
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);

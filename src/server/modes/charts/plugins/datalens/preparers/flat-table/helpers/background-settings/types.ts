@@ -1,6 +1,7 @@
-import {ColorPalette, Palette, ServerField} from '../../../../../../../../../shared';
-import {TableFieldBackgroundSettings} from '../../../../../../../../../shared/types/wizard/background-settings';
-import {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
+import type {ColorPalette, Palette, ServerField} from '../../../../../../../../../shared';
+import type {TableFieldBackgroundSettings} from '../../../../../../../../../shared/types/wizard/background-settings';
+import type {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
+import type {ChartColorsConfig} from '../../../../types';
 
 export interface GetFlatTableCellBackgroundSettingsStylesArgs {
     column: ServerField;
@@ -36,5 +37,5 @@ export interface GetBackgroundColorsMapByContinuousColumn {
     order: ResultDataOrder;
     data: PrepareFunctionDataRow[];
     idToTitle: Record<string, string>;
-    loadedColorPalettes: Record<string, ColorPalette>;
+    chartColorsConfig: ChartColorsConfig;
 }

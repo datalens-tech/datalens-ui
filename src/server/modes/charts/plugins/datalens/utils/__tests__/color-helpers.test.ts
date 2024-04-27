@@ -1,5 +1,5 @@
-import {ChartColorsConfig} from '../../js/helpers/colors';
 import {mapAndColorizeHashTableByGradient} from '../color-helpers';
+import type {ChartColorsConfig} from '../../types';
 
 describe('mapAndColorizeHashTableByGradient', () => {
     const colorConfig = {
