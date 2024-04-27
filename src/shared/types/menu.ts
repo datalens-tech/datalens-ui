@@ -1,6 +1,7 @@
 export enum MenuItemsIds {
     EXPORT = 'export',
     EXPORT_CSV = 'exportCsv',
+    EXPORT_ODS = 'exportOds',
     EXPORT_XLSX = 'exportXlsx',
     EXPORT_MARKDOWN = 'exportMarkdown',
     EXPORT_WIKI = 'exportWiki',

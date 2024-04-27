@@ -3,6 +3,7 @@
   "export_limit_error": "You can export data up to {{limit}}; your data size is {{length}}.",
   "export_success": "Copied to clipboard",
   "format_csv": "CSV",
+  "format_ods": "ODS",
   "format_image": "Image",
   "format_markdown": "Markdown",
   "format_wiki": "Wiki",

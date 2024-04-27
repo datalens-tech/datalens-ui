@@ -1,3 +1,7 @@
+import * as path from 'path';
+import * as fs from 'fs';
+import * as child_process from 'child_process';
+
 import {monitorEventLoopDelay, performance} from 'perf_hooks';
 
 import {Request, Response} from '@gravity-ui/expresskit';
@@ -22,6 +26,7 @@ export function csvConverter(
         delValues: string;
         delNumbers: string;
         encoding: 'cp1251' | 'win1251';
+        format: string;
     },
     downloadConfig: {
         filename: string;
@@ -118,6 +123,70 @@ export function csvConverter(
 
     if (formSettings.encoding === 'cp1251') {
         csvContent = iconv.encode(csvContent, 'win1251');
+    }
+
+    if(formSettings.format === 'ods') {
+        // тут нужно вызвать скрипт python
+        const publicPath = path.join(__dirname, '../', '../', '../', '../', 'public');
+        const pythonScript = path.join(publicPath, 'export', 'csv2ods.py');
+        const publicOutputCsvPath = path.join(publicPath, `${downloadConfig.filename}.csv`);
+        const publicOutputOdsPath = path.join(publicPath, `${downloadConfig.filename}.ods`);
+        const context:any = req.ctx;
+
+        var err = fs.writeFileSync(publicOutputCsvPath, csvContent.toString());
+        if(err != null) {
+            ctx.logError(`EXPORT_ODS_DATA_WRITE_ERROR`, {
+                outputPath: publicOutputCsvPath,
+                message: err
+            });
+            req.ctx.stats('exportSizeStats', {
+                datetime: Date.now(),
+                exportType: 'ods',
+                sizeBytes: reqDataLength,
+                timings: 0,
+                rejected: 'true',
+            });
+            res.sendStatus(500);
+            fs.unlinkSync(publicOutputCsvPath);
+            return;
+        }
+
+        var resSpawn = child_process.spawnSync(context.config.python || 'python', [pythonScript, `FILE_PATH="${publicOutputCsvPath}"`]);
+        if (resSpawn != null && resSpawn.stderr.byteLength > 0) {
+            ctx.logError(`EXPORT_ODS_DATA_WRITE_ERROR`, {
+                outputPath: publicOutputCsvPath,
+                message: resSpawn.stderr.toString()
+            });
+            req.ctx.stats('exportSizeStats', {
+                datetime: Date.now(),
+                exportType: 'ods',
+                sizeBytes: reqDataLength,
+                timings: 0,
+                rejected: 'true',
+            });
+            res.sendStatus(500);
+            fs.unlinkSync(publicOutputCsvPath);
+            return;
+        }
+
+        ctx.log('EXPORT_ODS_FINISH_PREPARING');
+        const csvStop = performance.now();
+        monitorHistogram.disable();
+        req.ctx.stats('exportSizeStats', {
+            datetime: Date.now(),
+            exportType: 'ods',
+            sizeBytes: reqDataLength,
+            timings: csvStop - csvStart,
+            rejected: 'false',
+            requestId: req.id,
+            eventLoopDelay: monitorHistogram.max / 1000000,
+        });
+        res.status(200).send(fs.readFileSync(publicOutputOdsPath));
+
+        fs.unlinkSync(publicOutputCsvPath);
+        fs.unlinkSync(publicOutputOdsPath);
+
+        return;
     }
 
     ctx.log('EXPORT_CSV_FINISH_PREPARING');

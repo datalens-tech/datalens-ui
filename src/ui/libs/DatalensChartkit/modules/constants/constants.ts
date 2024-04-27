@@ -25,6 +25,7 @@ export const LINE_BREAKS_OPTIONS = {
 export const EXPORT_FORMATS = {
     XLSX: 'xlsx',
     CSV: 'csv',
+    ODS: 'ods',
     MARKDOWN: 'markdown',
     WIKI: 'wiki',
     SCREENSHOT: 'screenshort',

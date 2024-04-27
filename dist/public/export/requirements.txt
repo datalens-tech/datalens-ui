@@ -1,0 +1,2 @@
+stream-write-ods==0.0.24
+pandas==2.2.2

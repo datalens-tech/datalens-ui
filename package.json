@@ -85,6 +85,7 @@
     "luxon": "^1.28.0",
     "markdown-it-link-attributes": "^4.0.1",
     "mime": "^1.6.0",
+    "mkdir-recursive": "^0.4.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.34",
     "object-sizeof": "^1.6.1",

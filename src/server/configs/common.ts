@@ -24,6 +24,7 @@ export default {
     },
     errorBooster,
     workers: (process.env.WORKERS && parseInt(process.env.WORKERS)) || 1,
+    python: process.env.PYTHON || 'python',
     fetchingTimeout: 95 * 1000,
     singleFetchingTimeout: 95 * 1000,
     chartsMonitoringEnabled: false,

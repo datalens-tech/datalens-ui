@@ -40,7 +40,6 @@ const getExportResult = async ({chartData, params, path}: ExportChartArgs) => {
 
     const fileName = getFileName(loadedData.key);
     const exportName = `${fileName}.${params?.format}`;
-
     const exportResult = (await exportWidget({
         widgetDataRef: widgetDataRef?.current,
         widget: widgetDataRef?.current || widget,
@@ -213,6 +212,12 @@ const getSubItems = ({
                 Utils.isEnabledFeature(Feature.XlsxChartExportEnabled) &&
                 isExportVisible({loadedData, error}),
             action: directExportAction(chartsDataProvider, EXPORT_FORMATS.XLSX, onExportLoading),
+        },
+        {
+            id: MenuItemsIds.EXPORT_ODS,
+            title: i18n('format_ods'),
+            isVisible: ({loadedData, error}: MenuItemArgs) => isExportVisible({loadedData, error}),
+            action: directExportAction(chartsDataProvider, EXPORT_FORMATS.ODS, onExportLoading),
         },
         {
             id: MenuItemsIds.EXPORT_CSV,

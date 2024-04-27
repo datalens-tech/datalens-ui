@@ -13,7 +13,7 @@ RUN apt-get update && \
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata && \
-    apt-get -y install nginx supervisor nodejs
+    apt-get -y install nginx supervisor nodejs python3.9 python3-pip
 
 # cleanup tmp and defaults
 RUN rm -rf /etc/nginx/sites-enabled/default /var/lib/apt/lists/*
@@ -35,6 +35,9 @@ WORKDIR /opt/app
 COPY deploy/nginx /etc/nginx
 COPY deploy/supervisor /etc/supervisor/conf.d
 COPY . .
+
+# ставим библиотеки python
+RUN pip install -r /opt/app/dist/public/export/requirements.txt
 
 # prepare rootless permissions for supervisor and nginx
 RUN chown -R ${USER} /var/log/supervisor/ && \

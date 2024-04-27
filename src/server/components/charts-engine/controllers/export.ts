@@ -70,6 +70,8 @@ export const exportController = () => {
 
         if (POST.formSettings.format === 'csv') {
             csvConverter(req, res, chartData, dataArray, POST.formSettings, downloadConfig);
+        } else if  (POST.formSettings.format === 'ods') {
+            csvConverter(req, res, chartData, dataArray, POST.formSettings, downloadConfig);
         } else if (POST.formSettings.format === 'xlsx') {
             const xlsxConverter = registry.getXlsxConverter();
             if (xlsxConverter !== undefined) {

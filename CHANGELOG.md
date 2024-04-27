@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1532.6] 27.04.2024
+
+Created:
+
+- Добавлен функционал по экспорту данных в ODS формат.
+
 ## [0.1532.5] 25.04.2024
 
 Created:
 
 - [0.1532.5] Добавлен функционал по выдаче прав доступа к объектам DL для определенных ролей в интерфейсе.
-
 
 ## [0.1532.4] 16.04.2024
 
