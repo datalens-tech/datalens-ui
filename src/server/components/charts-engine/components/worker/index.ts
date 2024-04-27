@@ -10,13 +10,11 @@ import type {
     BuildSourceArgs,
     WizardWorker,
 } from './types';
-import {
-    buildD3Config,
-    buildHighchartsConfig,
-    buildSources,
-} from '../../../../modes/charts/plugins/datalens/module';
 import {buildChartsConfigPrivate} from '../../../../modes/charts/plugins/datalens/config';
 import {buildGraphPrivate} from '../../../../modes/charts/plugins/datalens/js/js';
+import {buildSources} from '../../../../modes/charts/plugins/datalens/url/build-sources';
+import {buildHighchartsConfig} from '../../../../modes/charts/plugins/datalens/highcharts';
+import {buildWizardD3Config} from '../../../../modes/charts/plugins/datalens/d3';
 
 const worker: WizardWorker = {
     buildSources: async (args: BuildSourceArgs) => {
@@ -62,7 +60,7 @@ const worker: WizardWorker = {
             case WizardVisualizationId.LineD3:
             case WizardVisualizationId.ScatterD3:
             case WizardVisualizationId.BarXD3: {
-                result = buildD3Config({
+                result = buildWizardD3Config({
                     shared: shared,
                 });
                 break;
