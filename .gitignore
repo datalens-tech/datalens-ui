@@ -15,8 +15,8 @@ dist/shared
 dist/public/build
 dist/run/*
 artifacts
-dist/public/*.csv
-dist/public/*.ods
+export/*.csv
+export/*.ods
 
 build/
 

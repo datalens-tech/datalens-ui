@@ -37,7 +37,7 @@ COPY deploy/supervisor /etc/supervisor/conf.d
 COPY . .
 
 # ставим библиотеки python
-RUN pip install -r /opt/app/dist/public/export/requirements.txt
+RUN pip install -r /opt/app/export/requirements.txt
 
 # prepare rootless permissions for supervisor and nginx
 RUN chown -R ${USER} /var/log/supervisor/ && \

@@ -126,18 +126,17 @@ export function csvConverter(
     }
 
     if(formSettings.format === 'ods') {
-        // тут нужно вызвать скрипт python
-        const publicPath = path.join(__dirname, '../', '../', '../', '../', 'public');
-        const pythonScript = path.join(publicPath, 'export', 'csv2ods.py');
-        const publicOutputCsvPath = path.join(publicPath, `${downloadConfig.filename}.csv`);
-        const publicOutputOdsPath = path.join(publicPath, `${downloadConfig.filename}.ods`);
+        const exportPath = path.join(__dirname, '../', '../', '../', '../', '../', 'export');
+        const pythonScript = path.join(exportPath, 'csv2ods.py');
+        const publicOutputCsvPath = path.join(exportPath, `${downloadConfig.filename}.csv`);
+        const publicOutputOdsPath = path.join(exportPath, `${downloadConfig.filename}.ods`);
         const context:any = req.ctx;
 
         var err = fs.writeFileSync(publicOutputCsvPath, csvContent.toString());
         if(err != null) {
             ctx.logError(`EXPORT_ODS_DATA_WRITE_ERROR`, {
                 outputPath: publicOutputCsvPath,
-                message: err
+                message: `Ошибка сохранения файла CSV: ${err}`
             });
             req.ctx.stats('exportSizeStats', {
                 datetime: Date.now(),
@@ -151,11 +150,12 @@ export function csvConverter(
             return;
         }
 
-        var resSpawn = child_process.spawnSync(context.config.python || 'python', [pythonScript, `FILE_PATH="${publicOutputCsvPath}"`]);
+        // тут нужно вызвать скрипт python
+        var resSpawn = child_process.spawnSync(context.config.python || 'python3', [pythonScript, `FILE_PATH="${publicOutputCsvPath}"`]);
         if (resSpawn != null && resSpawn.stderr.byteLength > 0) {
             ctx.logError(`EXPORT_ODS_DATA_WRITE_ERROR`, {
                 outputPath: publicOutputCsvPath,
-                message: resSpawn.stderr.toString()
+                message: `Ошибка при вызове python скрипта: ${resSpawn.stderr.toString()}`
             });
             req.ctx.stats('exportSizeStats', {
                 datetime: Date.now(),
