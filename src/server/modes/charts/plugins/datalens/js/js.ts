@@ -7,8 +7,10 @@ import {
     ChartsInsight,
     ColorPalette,
     DATASET_FIELD_TYPES,
+    FeatureConfig,
     IChartEditor,
     MAX_SEGMENTS_NUMBER,
+    Palette,
     ServerChartsConfig,
     ServerField,
     ServerFieldFormatting,
@@ -18,6 +20,7 @@ import {
     ServerVisualizationLayer,
     Shared,
     WizardVisualizationId,
+    getServerFeatures,
     isDateType,
     isMarkupField,
     isMarkupItem,
@@ -69,6 +72,7 @@ import {
 } from './helpers/layer-chart';
 import {prepareNotifications} from './helpers/notifications';
 import {getMergedTotals} from './helpers/totals';
+import {registry} from '../../../../../registry';
 
 const fallbackJSFuntion = require('./js-v1.5');
 
@@ -375,9 +379,11 @@ type PrepareSingleResultArgs = {
     idToDataType: Record<string, DATASET_FIELD_TYPES>;
     ChartEditor: IChartEditor;
     datasetsIds: string[];
+    palettes: Record<string, Palette>;
     loadedColorPalettes: Record<string, ColorPalette>;
     layerChartMeta?: LayerChartMeta;
     usedColors?: (string | undefined)[];
+    features: FeatureConfig;
 };
 
 // eslint-disable-next-line complexity
@@ -394,6 +400,8 @@ function prepareSingleResult({
     loadedColorPalettes,
     layerChartMeta,
     usedColors,
+    palettes,
+    features,
 }: PrepareSingleResultArgs) {
     const {
         sharedData: {drillDownData},
@@ -648,6 +656,7 @@ function prepareSingleResult({
     const chartColorsConfig = getChartColorsConfig({
         loadedColorPalettes,
         colorsConfig,
+        availablePalettes: palettes,
     });
 
     const prepareFunctionArgs: PrepareFunctionArgs = {
@@ -673,6 +682,7 @@ function prepareSingleResult({
         segments,
         layerChartMeta,
         usedColors,
+        features,
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);
@@ -680,37 +690,19 @@ function prepareSingleResult({
 
 type V1ServerResponse = any;
 
-type JSTabOptions =
-    | [{shared: Shared | ServerChartsConfig; ChartEditor: IChartEditor; data: any}]
-    | [any, Shared | ServerChartsConfig, IChartEditor];
-
-module.exports = (...options: JSTabOptions) => {
-    let data: any;
-    let shared: Shared | ServerChartsConfig;
-    let ChartEditor: IChartEditor;
-    let apiVersion;
-
-    if ('shared' in options[0]) {
-        data = options[0].data;
-        shared = options[0].shared as Shared | ServerChartsConfig;
-        ChartEditor = options[0].ChartEditor as IChartEditor;
-        apiVersion = options[0].apiVersion;
-    } else {
-        data = options[0];
-        shared = options[1] as Shared | ServerChartsConfig;
-        ChartEditor = options[2] as IChartEditor;
-    }
+export const buildGraphPrivate = (args: {
+    shared: Shared | ServerChartsConfig;
+    ChartEditor: IChartEditor;
+    data: any;
+    palettes: Record<string, Palette>;
+    features: FeatureConfig;
+}) => {
+    const {shared: chartSharedConfig, ChartEditor, data, palettes, features} = args;
 
     log('LOADED DATA:');
     log(data);
 
-    apiVersion = apiVersion || '1.5';
-
-    if (apiVersion === '1.5') {
-        return fallbackJSFuntion.apply(this, options);
-    }
-
-    shared = mapChartsConfigToServerConfig(shared);
+    const shared = mapChartsConfigToServerConfig(chartSharedConfig);
 
     const {colorPalettes: loadedColorPalettes, loadedData} = extractColorPalettesFromData(data);
 
@@ -889,6 +881,8 @@ module.exports = (...options: JSTabOptions) => {
                 loadedColorPalettes,
                 layerChartMeta,
                 usedColors,
+                palettes,
+                features,
             });
 
             if (localResult && localResult[0] && localResult[0].bounds) {
@@ -951,6 +945,8 @@ module.exports = (...options: JSTabOptions) => {
             ChartEditor,
             datasetsIds,
             loadedColorPalettes,
+            palettes,
+            features,
         });
     }
 
@@ -964,4 +960,40 @@ module.exports = (...options: JSTabOptions) => {
     log(result);
 
     return result;
+};
+
+type JSTabOptions =
+    | [{shared: Shared | ServerChartsConfig; ChartEditor: IChartEditor; data: any}]
+    | [any, Shared | ServerChartsConfig, IChartEditor];
+
+export const buildGraph = (...options: JSTabOptions) => {
+    let data: any;
+    let shared: Shared | ServerChartsConfig;
+    let ChartEditor: IChartEditor;
+    let apiVersion;
+
+    if ('shared' in options[0]) {
+        data = options[0].data;
+        shared = options[0].shared as Shared | ServerChartsConfig;
+        ChartEditor = options[0].ChartEditor as IChartEditor;
+        apiVersion = options[0].apiVersion;
+    } else {
+        data = options[0];
+        shared = options[1] as Shared | ServerChartsConfig;
+        ChartEditor = options[2] as IChartEditor;
+    }
+
+    apiVersion = apiVersion || '1.5';
+    if (apiVersion === '1.5') {
+        return fallbackJSFuntion.apply(this, options);
+    }
+
+    const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
+    return buildGraphPrivate({
+        shared,
+        ChartEditor,
+        data,
+        palettes: getAvailablePalettesMap(),
+        features: getServerFeatures(registry.getApp().nodekit.ctx),
+    });
 };

@@ -2,6 +2,7 @@ import {
     ColorPalette,
     DATASET_FIELD_TYPES,
     IChartEditor,
+    Palette,
     ServerChartsConfig,
     ServerVisualization,
     ServerVisualizationLayer,
@@ -44,6 +45,7 @@ type PrepareSingleResultArgs = {
     idToDataType: Record<string, DATASET_FIELD_TYPES>;
     ChartEditor: IChartEditor;
     datasetsIds: string[];
+    palettes: Record<string, Palette>;
     loadedColorPalettes?: Record<string, ColorPalette>;
     disableDefaultSorting?: boolean;
 };
@@ -59,6 +61,7 @@ export default ({
     datasetsIds,
     loadedColorPalettes = {},
     disableDefaultSorting = false,
+    palettes,
 }: PrepareSingleResultArgs) => {
     const {
         sharedData: {drillDownData},
@@ -287,6 +290,7 @@ export default ({
     const chartColorsConfig = getChartColorsConfig({
         loadedColorPalettes,
         colorsConfig,
+        availablePalettes: palettes,
     });
 
     const prepareFunctionArgs = {

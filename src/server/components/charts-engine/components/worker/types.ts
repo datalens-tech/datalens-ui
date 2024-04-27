@@ -1,6 +1,7 @@
 import type {
     DashWidgetConfig,
     FeatureConfig,
+    Palette,
     ServerChartsConfig,
     Shared,
     StringParams,
@@ -39,7 +40,10 @@ export type BuildChartArgs = {
     params: StringParams;
     actionParams: StringParams;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
-    data: any;
+    data: unknown;
+
+    features: FeatureConfig;
+    palettes: Record<string, Palette>;
 };
 
 export type WizardWorker = {

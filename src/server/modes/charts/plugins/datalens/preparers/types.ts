@@ -1,5 +1,6 @@
 import {
     DATASET_FIELD_TYPES,
+    FeatureConfig,
     IChartEditor,
     ServerChartsConfig,
     ServerColor,
@@ -42,6 +43,7 @@ export type PrepareFunctionArgs = {
     layerChartMeta?: LayerChartMeta;
     usedColors?: (string | undefined)[];
     disableDefaultSorting?: boolean;
+    features: FeatureConfig;
 };
 
 export type PrepareFunctionDataRow = (string | null)[];

@@ -1,4 +1,4 @@
-import {ColorPalette, ServerField} from '../../../../../../../../../shared';
+import {ColorPalette, Palette, ServerField} from '../../../../../../../../../shared';
 import {TableFieldBackgroundSettings} from '../../../../../../../../../shared/types/wizard/background-settings';
 import {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
 
@@ -11,6 +11,7 @@ export interface GetFlatTableCellBackgroundSettingsStylesArgs {
     currentRowIndex: number;
     backgroundColorsByMeasure: Record<string, (null | number)[]>;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
 }
 
 export interface GetContinuousBackgroundColorStyle {
@@ -27,6 +28,7 @@ export interface GetDiscreteBackgroundColorStyle {
     values: PrepareFunctionDataRow;
     backgroundSettings: TableFieldBackgroundSettings;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
 }
 
 export interface GetBackgroundColorsMapByContinuousColumn {

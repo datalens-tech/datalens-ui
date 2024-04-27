@@ -1,5 +1,4 @@
-import {ColorPalette, selectPaletteById} from '../../shared';
-import {registry} from '../registry';
+import {ColorPalette, Palette, selectPaletteById} from '../../shared';
 
 const DASH_API_BASE_URL = '/api/dash/v1/dashboards';
 const CHARTS_API_BASE_URL = '/api/charts/v1/charts';
@@ -44,17 +43,17 @@ const BLOCK_STAT = {
 
 const WORLD_REGION = 10000;
 
-const selectServerPalette = (
-    palette?: string,
-    loadedColorPalettes?: Record<string, ColorPalette>,
-) => {
-    if (palette && loadedColorPalettes && loadedColorPalettes[palette]) {
-        return loadedColorPalettes[palette].colors;
-    } else {
-        const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
-
-        return selectPaletteById(palette, getAvailablePalettesMap());
+const selectServerPalette = (args: {
+    palette?: string;
+    availablePalettes: Record<string, Palette>;
+    customColorPalettes?: Record<string, ColorPalette>;
+}) => {
+    const {palette, availablePalettes, customColorPalettes} = args;
+    if (palette && customColorPalettes?.[palette]) {
+        return customColorPalettes[palette].colors;
     }
+
+    return selectPaletteById(palette, availablePalettes);
 };
 
 const SERVICE_NAME_DATALENS = 'DataLens';

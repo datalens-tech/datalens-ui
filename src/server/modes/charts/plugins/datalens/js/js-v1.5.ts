@@ -14,6 +14,7 @@ import {LAT, LONG} from '../utils/constants';
 import {log} from '../utils/misc-helpers';
 
 import prepareSingleResult from './helpers/misc/prepare-single-result';
+import {registry} from '../../../../../registry';
 
 type MergedData = {
     result: PrepareFunctionResultData;
@@ -239,6 +240,8 @@ module.exports = (...options: JSTabOptions) => {
     log('LOADED DATA:');
     log(data);
 
+    const {getAvailablePalettesMap} = registry.common.functions.getAll();
+    const palettes = getAvailablePalettesMap();
     const {colorPalettes: loadedColorPalettes, loadedData} = extractColorPalettesFromData(data);
 
     log('LINKS:');
@@ -418,6 +421,7 @@ module.exports = (...options: JSTabOptions) => {
                 ChartEditor,
                 datasetsIds,
                 loadedColorPalettes,
+                palettes,
             });
 
             if (localResult && localResult[0] && localResult[0].bounds) {
@@ -471,6 +475,7 @@ module.exports = (...options: JSTabOptions) => {
             ChartEditor,
             datasetsIds,
             loadedColorPalettes,
+            palettes,
         });
 
         if (result && result[0] && result[0].bounds) {

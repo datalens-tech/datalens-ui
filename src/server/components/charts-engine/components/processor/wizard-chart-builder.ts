@@ -26,6 +26,7 @@ async function getWorker(options: {timeout: number}) {
 }
 
 const ONE_SECOND = 1000;
+const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
 
 type WizardChartBuilderArgs = {
     userLang: string;
@@ -44,7 +45,31 @@ export const getWizardChartBuilder = async (
 ): Promise<ChartBuilder> => {
     const {config, params, actionParams, widgetConfig, userLang} = args;
     let shared: Record<string, any>;
-    const features = getServerFeatures(registry.getApp().nodekit.ctx);
+
+    const app = registry.getApp();
+    const features = getServerFeatures(app.nodekit.ctx);
+    const {getAvailablePalettesMap} = registry.common.functions.getAll();
+    const palettes = getAvailablePalettesMap();
+
+    // Nothing happens here - just for compatibility with the editor
+    const emptyStep = (name: string) => async () => {
+        const timeStart = process.hrtime();
+        const context = getChartApiContext({
+            name,
+            shared,
+            params,
+            actionParams,
+            widgetConfig,
+            userLang,
+        });
+
+        return {
+            exports: {},
+            executionTiming: process.hrtime(timeStart),
+            name,
+            runtimeMetadata: context.__runtimeMetadata,
+        };
+    };
 
     return {
         buildShared: async () => {
@@ -57,25 +82,7 @@ export const getWizardChartBuilder = async (
         buildModules: async () => {
             return {};
         },
-        buildParams: async () => {
-            // Nothing happens here - just for compatibility with the editor
-            const timeStart = process.hrtime();
-            const context = getChartApiContext({
-                name: 'Params',
-                shared,
-                params,
-                actionParams,
-                widgetConfig,
-                userLang,
-            });
-
-            return {
-                name: 'Params',
-                exports: {},
-                executionTiming: process.hrtime(timeStart),
-                runtimeMetadata: context.__runtimeMetadata,
-            };
-        },
+        buildParams: emptyStep('Params'),
 
         buildUrls: async () => {
             const timeStart = process.hrtime();
@@ -137,7 +144,7 @@ export const getWizardChartBuilder = async (
 
         buildChart: async (data: unknown) => {
             const timeStart = process.hrtime();
-            const worker = await getWorker({timeout: ONE_SECOND});
+            const worker = await getWorker({timeout: JS_EXECUTION_TIMEOUT});
             const {exports, runtimeMetadata} = await worker.buildChart({
                 shared: shared as ServerChartsConfig,
                 params,
@@ -145,6 +152,8 @@ export const getWizardChartBuilder = async (
                 widgetConfig,
                 userLang,
                 data,
+                palettes,
+                features,
             });
 
             return {
@@ -155,24 +164,6 @@ export const getWizardChartBuilder = async (
             };
         },
 
-        buildUI: async () => {
-            // Nothing happens here - just for compatibility with the editor
-            const timeStart = process.hrtime();
-            const context = getChartApiContext({
-                name: 'UI',
-                shared,
-                params,
-                actionParams,
-                widgetConfig,
-                userLang,
-            });
-
-            return {
-                exports: {},
-                executionTiming: process.hrtime(timeStart),
-                name: 'UI',
-                runtimeMetadata: context.__runtimeMetadata,
-            };
-        },
+        buildUI: emptyStep('UI'),
     };
 };

@@ -10,13 +10,11 @@ import {
     TableHead,
     isDateField,
     isDateType,
-    isEnabledServerFeature,
     isMarkupDataType,
     isNumberField,
     isTreeDataType,
     isUnsupportedDataType,
 } from '../../../../../../../shared';
-import {registry} from '../../../../../../registry';
 import {Config} from '../../config';
 import {getTreeState} from '../../url/helpers';
 import {mapAndColorizeTableCells} from '../../utils/color-helpers';
@@ -54,14 +52,14 @@ function prepareFlatTable({
     shared,
     ChartEditor,
     fields,
+    features,
 }: PrepareFunctionArgs) {
     const {drillDownData} = shared.sharedData;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const treeSet = new Set(getTreeState(ChartEditor));
 
-    const app = registry.getApp();
-    const pinnedColumns = isEnabledServerFeature(app.nodekit.ctx, Feature.PinnedColumns)
+    const pinnedColumns = features[Feature.PinnedColumns]
         ? shared.extraSettings?.pinnedColumns || 0
         : 0;
 
@@ -283,6 +281,7 @@ function prepareFlatTable({
                     currentRowIndex: rowIndex,
                     idToDataType,
                     loadedColorPalettes: colorsConfig.loadedColorPalettes,
+                    availablePalettes: colorsConfig.availablePalettes,
                 });
             }
 

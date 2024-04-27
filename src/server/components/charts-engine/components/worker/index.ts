@@ -12,11 +12,11 @@ import type {
 } from './types';
 import {
     buildD3Config,
-    buildGraph,
     buildHighchartsConfig,
     buildSources,
 } from '../../../../modes/charts/plugins/datalens/module';
 import {buildChartsConfigPrivate} from '../../../../modes/charts/plugins/datalens/config';
+import {buildGraphPrivate} from '../../../../modes/charts/plugins/datalens/js/js';
 
 const worker: WizardWorker = {
     buildSources: async (args: BuildSourceArgs) => {
@@ -103,7 +103,8 @@ const worker: WizardWorker = {
     },
 
     buildChart: async (args: BuildChartArgs) => {
-        const {shared, params, actionParams, widgetConfig, userLang, data} = args;
+        const {shared, params, actionParams, widgetConfig, userLang, data, palettes, features} =
+            args;
         const context = getChartApiContext({
             name: 'JavaScript',
             shared,
@@ -113,15 +114,12 @@ const worker: WizardWorker = {
             userLang,
         });
 
-        // @ts-ignore
-        const result = buildGraph({
-            apiVersion: '2',
+        const result = buildGraphPrivate({
             data,
             shared,
-            params,
-            actionParams,
-            widgetConfig,
             ChartEditor: context.ChartEditor,
+            palettes,
+            features,
         });
 
         return {
