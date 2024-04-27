@@ -1,15 +1,15 @@
 import vm from 'vm';
 
-import {ChartsInsight, DashWidgetConfig, StringParams} from '../../../../../shared';
+import {ChartsInsight, DashWidgetConfig, ServerChartsConfig} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
-import {IChartEditor} from '../../../../../shared/types';
+import {IChartEditor, Shared} from '../../../../../shared/types';
 import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
 import {getCurrentPage, getSortParams} from '../../utils';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
 import {Console} from './console';
-import {NativeModule} from './types';
+import {NativeModule, RuntimeMetadata} from './types';
 
 const {
     RUNTIME_ERROR,
@@ -224,23 +224,7 @@ const execute = ({code, instance, filename, timeout}: ExecuteParams): SandboxExe
 
 export type ChartApiContext = {
     ChartEditor: IChartEditor;
-    __runtimeMetadata: {
-        error?: unknown;
-        userParamsOverride?: StringParams;
-        userConfigOverride?: unknown;
-        libraryConfigOverride?: unknown;
-        userActionParamsOverride?: StringParams;
-        exportFilename?: string;
-        dataSourcesInfos?: unknown;
-        sideMarkdown?: string;
-        extra: {
-            chartsInsights?: ChartsInsight[];
-            sideMarkdown?: string;
-            exportFilename?: string;
-        };
-        chartsInsights?: ChartsInsight[];
-        errorTransformer: <T>(error: T) => T;
-    };
+    __runtimeMetadata: RuntimeMetadata;
 };
 
 export const getChartApiContext = ({
@@ -259,7 +243,7 @@ export const getChartApiContext = ({
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     data?: Record<string, any>;
     dataStats?: any;
-    shared: Record<string, object>;
+    shared: Shared | ServerChartsConfig | Record<string, object>;
     userLang: string;
 }): ChartApiContext => {
     const api = {

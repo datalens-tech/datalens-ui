@@ -7,33 +7,25 @@ import {
     ServerChartsConfig,
     Shared,
     StringParams,
-    WizardVisualizationId,
     getServerFeatures,
 } from '../../../../../shared';
-import {
-    buildChartsConfig,
-    buildD3Config,
-    buildGraph,
-    buildHighchartsConfig,
-} from '../../../../modes/charts/plugins/datalens/module';
 import {registry} from '../../../../registry';
-
 import {getChartApiContext} from './sandbox';
-import {ChartBuilder, ChartBuilderResult} from './types';
+import type {ChartBuilder} from './types';
+import {WizardWorker} from '../worker/types';
 
-async function getWorker(options: {timeout: number}): Promise<{
-    buildSources: (args: any) => ChartBuilderResult;
-}> {
-    const pool = workerpool.pool(path.resolve(__dirname, './worker'));
-    // @ts-ignore
+const pool = workerpool.pool(path.resolve(__dirname, '../worker'));
+async function getWorker(options: {timeout: number}) {
     return pool
-        .proxy()
+        .proxy<WizardWorker>()
         .timeout(options.timeout)
         .catch((e) => {
-            pool.terminate(true);
+            pool.terminate();
             throw e;
         });
 }
+
+const ONE_SECOND = 1000;
 
 type WizardChartBuilderArgs = {
     userLang: string;
@@ -66,6 +58,7 @@ export const getWizardChartBuilder = async (
             return {};
         },
         buildParams: async () => {
+            // Nothing happens here - just for compatibility with the editor
             const timeStart = process.hrtime();
             const context = getChartApiContext({
                 name: 'Params',
@@ -85,125 +78,85 @@ export const getWizardChartBuilder = async (
         },
 
         buildUrls: async () => {
-            const worker = await getWorker({timeout: 1000});
-            return worker.buildSources({
-                shared,
+            const timeStart = process.hrtime();
+            const worker = await getWorker({timeout: ONE_SECOND});
+            const {exports, runtimeMetadata} = await worker.buildSources({
+                shared: shared as Shared,
+                params,
+                actionParams,
+                widgetConfig,
+                userLang,
+            });
+
+            return {
+                executionTiming: process.hrtime(timeStart),
+                name: 'Urls',
+                runtimeMetadata,
+                exports,
+            };
+        },
+
+        buildChartLibraryConfig: async () => {
+            const timeStart = process.hrtime();
+            const worker = await getWorker({timeout: ONE_SECOND});
+            const {exports, runtimeMetadata} = await worker.buildLibraryConfig({
+                shared: shared as ServerChartsConfig,
+                params,
+                actionParams,
+                widgetConfig,
+                userLang,
+            });
+
+            return {
+                executionTiming: process.hrtime(timeStart),
+                name: 'Highcharts',
+                runtimeMetadata,
+                exports,
+            };
+        },
+
+        buildChartConfig: async () => {
+            const timeStart = process.hrtime();
+            const worker = await getWorker({timeout: ONE_SECOND});
+            const {exports, runtimeMetadata} = await worker.buildChartConfig({
+                shared: shared as ServerChartsConfig,
                 params,
                 actionParams,
                 widgetConfig,
                 userLang,
                 features,
             });
-        },
-
-        buildChartLibraryConfig: async () => {
-            const context = getChartApiContext({
-                name: 'Highcharts',
-                shared,
-                params,
-                actionParams,
-                widgetConfig,
-                userLang,
-            });
-            const timeStart = process.hrtime();
-
-            let result;
-            const visualizationId = (shared as Shared)?.visualization?.id;
-            switch (visualizationId) {
-                case WizardVisualizationId.FlatTable:
-                case WizardVisualizationId.PivotTable: {
-                    result = {};
-                    break;
-                }
-                case WizardVisualizationId.PieD3:
-                case WizardVisualizationId.LineD3:
-                case WizardVisualizationId.ScatterD3:
-                case WizardVisualizationId.BarXD3: {
-                    result = buildD3Config({
-                        shared: shared as ServerChartsConfig,
-                    });
-                    break;
-                }
-                default: {
-                    result = buildHighchartsConfig({
-                        shared: shared as ServerChartsConfig,
-                    });
-                }
-            }
-
-            const executionTiming = process.hrtime(timeStart);
-            const runtimeMetadata = context.__runtimeMetadata;
 
             return {
-                exports: result,
-                executionTiming,
-                name: 'Highcharts',
-                runtimeMetadata,
-            };
-        },
-
-        buildChartConfig: async () => {
-            const context = getChartApiContext({
-                name: 'Config',
-                shared,
-                params,
-                actionParams,
-                widgetConfig,
-                userLang,
-            });
-            const timeStart = process.hrtime();
-
-            const result = buildChartsConfig({
-                shared: shared as ServerChartsConfig,
-                params,
-                widgetConfig,
-            });
-
-            const executionTiming = process.hrtime(timeStart);
-            const runtimeMetadata = context.__runtimeMetadata;
-
-            return {
-                exports: result,
-                executionTiming,
+                executionTiming: process.hrtime(timeStart),
                 name: 'Config',
                 runtimeMetadata,
+                exports,
             };
         },
 
         buildChart: async (data: unknown) => {
-            const context = getChartApiContext({
-                name: 'JavaScript',
-                shared,
+            const timeStart = process.hrtime();
+            const worker = await getWorker({timeout: ONE_SECOND});
+            const {exports, runtimeMetadata} = await worker.buildChart({
+                shared: shared as ServerChartsConfig,
                 params,
                 actionParams,
                 widgetConfig,
                 userLang,
+                data,
             });
-            const timeStart = process.hrtime();
-
-            // @ts-ignore
-            const result = buildGraph({
-                apiVersion: '2',
-                data: data,
-                shared,
-                params,
-                actionParams,
-                widgetConfig,
-                ChartEditor: context.ChartEditor,
-            });
-
-            const executionTiming = process.hrtime(timeStart);
-            const runtimeMetadata = context.__runtimeMetadata;
 
             return {
-                exports: result,
-                executionTiming,
+                executionTiming: process.hrtime(timeStart),
                 name: 'JavaScript',
                 runtimeMetadata,
+                exports,
             };
         },
 
         buildUI: async () => {
+            // Nothing happens here - just for compatibility with the editor
             const timeStart = process.hrtime();
             const context = getChartApiContext({
                 name: 'UI',

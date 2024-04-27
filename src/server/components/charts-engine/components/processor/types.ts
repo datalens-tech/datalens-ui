@@ -1,7 +1,12 @@
 import {Request} from '@gravity-ui/expresskit';
 import {AppContext} from '@gravity-ui/nodekit';
 
-import {ChartsInsight, DashWidgetConfig, EntryPublicAuthor} from '../../../../../shared';
+import {
+    ChartsInsight,
+    DashWidgetConfig,
+    EntryPublicAuthor,
+    StringParams,
+} from '../../../../../shared';
 
 import {CommentsFetcherFetchResult, CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
 import {Console} from './console';
@@ -122,4 +127,22 @@ export type ChartBuilder = {
         sources?: Record<string, DataFetcherResult>,
     ) => Promise<ChartBuilderResult>;
     buildUI: (data?: unknown) => Promise<ChartBuilderResult>;
+};
+
+export type RuntimeMetadata = {
+    error?: unknown;
+    userParamsOverride?: StringParams;
+    userConfigOverride?: unknown;
+    libraryConfigOverride?: unknown;
+    userActionParamsOverride?: StringParams;
+    exportFilename?: string;
+    dataSourcesInfos?: unknown;
+    sideMarkdown?: string;
+    extra: {
+        chartsInsights?: ChartsInsight[];
+        sideMarkdown?: string;
+        exportFilename?: string;
+    };
+    chartsInsights?: ChartsInsight[];
+    errorTransformer: <T>(error: T) => T;
 };
