@@ -132,7 +132,7 @@ const prepareSourceRequests = (args: PrepareSourceRequestsArgs): SourceRequests 
 };
 
 export const buildSources = (args: BuildSourcesArgs): SourceRequests => {
-    const {shared, apiVersion} = args;
+    const {shared, apiVersion = '1.5'} = args;
     const config = mapChartsConfigToServerConfig(shared);
 
     shared.sharedData = config.sharedData;
@@ -143,7 +143,7 @@ export const buildSources = (args: BuildSourcesArgs): SourceRequests => {
     const extraSettings = config.extraSettings;
 
     const requests = prepareSourceRequests({
-        apiVersion: apiVersion || '1.5',
+        apiVersion,
         visualization,
         datasetsIds,
         extraSettings,
@@ -158,5 +158,3 @@ export const buildSources = (args: BuildSourcesArgs): SourceRequests => {
 
     return requests;
 };
-
-export default buildSources;
