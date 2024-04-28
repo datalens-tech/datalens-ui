@@ -84,7 +84,6 @@
     "markdown-it-link-attributes": "^4.0.1",
     "mime": "^1.6.0",
     "moment": "^2.29.4",
-    "moment-timezone": "^0.5.34",
     "object-sizeof": "^1.6.1",
     "p-queue": "^6.6.2",
     "path-to-regexp": "^6.2.0",
