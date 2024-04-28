@@ -13,8 +13,8 @@ import defineGridmap from './modules/components/gridmap/Gridmap';
 import defaultMapper from './modules/components/polygonmap/utils/defaultMapper';
 import defineModules from './modules/modules';
 
-import '../graph/graph.scss';
 import './yandex-map.scss';
+import '../graph/graph.scss';
 
 // TODO: CHARTS-4847
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
