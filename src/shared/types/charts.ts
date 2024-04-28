@@ -1,9 +1,9 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
+import type {UISandboxContext, WRAPPED_FN_KEY} from '../constants/ui-sandbox';
 import type {ChartsInsight, IntervalPart} from '../modules';
 
 import type {StringParams} from './common';
-import type {UISandboxContext, WRAPPED_FN_KEY} from '../constants/ui-sandbox';
 import type {UISandboxWrappedFunction} from './ui-sandbox';
 
 export interface IChartEditor {
