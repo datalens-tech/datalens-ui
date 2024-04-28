@@ -1,9 +1,10 @@
 import vm from 'vm';
 
-import {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
-import {WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
+import type {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
+import {UISandboxContext, WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
 import {getTranslationFn} from '../../../../../shared/modules/language';
-import {IChartEditor} from '../../../../../shared/types';
+import type {IChartEditor} from '../../../../../shared/types';
+import type {UISandboxWrappedFunction} from '../../../../../shared/types/ui-sandbox';
 import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
@@ -222,6 +223,33 @@ const execute = ({code, instance, filename, timeout}: ExecuteParams): SandboxExe
     };
 };
 
+type ValidatedWrapFnArgs = {
+    fn: (...args: unknown[]) => void;
+    ctx: UISandboxWrappedFunction['ctx'];
+};
+
+// There is a user value here, it could have any type
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isWrapFnArgsValid = (value: any): value is ValidatedWrapFnArgs => {
+    if (!value || typeof value !== 'object') {
+        throw new Error('You should pass an object to ChartEditor.wrapFn method');
+    }
+
+    const {fn, ctx} = value;
+
+    if (typeof fn !== 'function') {
+        throw new Error('"fn" property should be a function');
+    }
+
+    const availableCtxValues = Object.values(UISandboxContext);
+
+    if (!Object.values(UISandboxContext).includes(ctx)) {
+        throw new Error(`"ctx" property should be a string from list: ${availableCtxValues}`);
+    }
+
+    return true;
+};
+
 const processTab = ({
     name,
     code,
@@ -284,12 +312,19 @@ const processTab = ({
 
     api.getActionParams = () => actionParams || {};
 
-    api.wrapFn = (fn) => {
-        if (typeof fn !== 'function') {
-            return undefined;
+    api.UISandboxContext = {...UISandboxContext};
+    api.wrapFn = (value) => {
+        if (!isWrapFnArgsValid(value)) {
+            // There is no way to reach this code, just satisfy ts
+            throw new Error('You should pass a valid arguments to ChartEditor.wrapFn method');
         }
 
-        return {[WRAPPED_FN_KEY]: fn.toString()};
+        return {
+            [WRAPPED_FN_KEY]: {
+                fn: value.fn.toString(),
+                ctx: value.ctx,
+            },
+        };
     };
 
     if (params) {

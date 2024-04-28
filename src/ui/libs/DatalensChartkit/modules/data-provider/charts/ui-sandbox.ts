@@ -1,6 +1,7 @@
-import type {QuickJSContext, QuickJSHandle, QuickJSWASMModule} from 'quickjs-emscripten';
+import type {QuickJSContext, QuickJSWASMModule} from 'quickjs-emscripten';
 
 import {WRAPPED_FN_KEY} from '../../../../../../shared/constants/ui-sandbox';
+import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {ChartKitCustomError} from '../../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 
 /**
@@ -28,85 +29,6 @@ export const getUISandbox = async () => {
     return uiSandbox;
 };
 
-const getHandle = (vm: QuickJSContext, target: TargetValue, handles: QuickJSHandle[]) => {
-    switch (typeof target) {
-        case 'bigint': {
-            const handle = vm.newBigInt(target);
-            handles.push(handle);
-
-            return handle;
-        }
-        case 'boolean': {
-            const handle = target ? vm.true : vm.false;
-            handles.push(handle);
-
-            return handle;
-        }
-        case 'number': {
-            const handle = vm.newNumber(target);
-            handles.push(handle);
-
-            return handle;
-        }
-        case 'object': {
-            if (target === null) {
-                const nullHandle = vm.null;
-                handles.push(nullHandle);
-
-                return nullHandle;
-            }
-
-            if (Array.isArray(target)) {
-                const arrayHandle = vm.newArray();
-                handles.push(arrayHandle);
-                target.forEach((item, i) => {
-                    const itemHandle = getHandle(vm, item, handles);
-                    handles.push(itemHandle);
-                    vm.setProp(arrayHandle, i, itemHandle);
-                });
-
-                return arrayHandle;
-            }
-
-            const objectHandle = vm.newObject();
-            handles.push(objectHandle);
-            Object.entries(target).forEach(([key, value]) => {
-                const keyHandle = getHandle(vm, key, handles);
-                const valueHandle = getHandle(vm, value, handles);
-                vm.setProp(objectHandle, keyHandle, valueHandle);
-            });
-
-            return objectHandle;
-        }
-        case 'string': {
-            const handle = vm.newString(target);
-            handles.push(handle);
-
-            return handle;
-        }
-        case 'symbol': {
-            const handle = vm.newSymbolFor(target);
-            handles.push(handle);
-
-            return handle;
-        }
-        case 'function':
-        case 'undefined':
-        default: {
-            const handle = vm.undefined;
-            handles.push(handle);
-
-            return handle;
-        }
-    }
-};
-
-const defineVmGlobalVariable = (vm: QuickJSContext, target: TargetValue, key: string) => {
-    const handles: QuickJSHandle[] = [];
-    vm.setProp(vm.global, key, getHandle(vm, target, handles));
-    handles.forEach((handle) => handle.alive && handle.dispose());
-};
-
 const defineVmGlobalAPI = (vm: QuickJSContext) => {
     const logHandle = vm.newFunction('log', (...logArgs) => {
         const nativeArgs = logArgs.map(vm.dump);
@@ -121,12 +43,44 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
     logHandle.dispose();
 };
 
-const getUnwrappedFunction = (sandbox: QuickJSWASMModule, fn: string) => {
+const defineVmArguments = (
+    vm: QuickJSContext,
+    ctx: UISandboxWrappedFunction['ctx'],
+    args: unknown[],
+) => {
+    let stringifiedArgs = '';
+
+    switch (ctx) {
+        case 'hc-label-formatter': {
+            const label = args[0];
+            stringifiedArgs = JSON.stringify([label]);
+
+            break;
+        }
+        case 'manage-tooltip-config': {
+            const config = args[0];
+
+            if (config && typeof config === 'object' && 'this' in config) {
+                // Remove "this" link to avoid  circular structure
+                delete config.this;
+            }
+
+            stringifiedArgs = JSON.stringify([config]);
+            break;
+        }
+    }
+
+    const vmArgs = vm.newString(stringifiedArgs);
+    vm.setProp(vm.global, 'args', vmArgs);
+    vmArgs.dispose();
+};
+
+const getUnwrappedFunction = (sandbox: QuickJSWASMModule, wrappedFn: UISandboxWrappedFunction) => {
     return function (...args: unknown[]) {
         const vm = sandbox.newContext();
-        defineVmGlobalVariable(vm, args, 'args');
+        defineVmArguments(vm, wrappedFn.ctx, args);
         defineVmGlobalAPI(vm);
-        const result = vm.evalCode(`(${fn})(...args)`);
+        const result = vm.evalCode(`(${wrappedFn.fn})(...(args.length ? JSON.parse(args) : []))`);
         let value: unknown | undefined;
 
         if (result.error) {
@@ -152,10 +106,12 @@ export const unwrapPossibleFunctions = (sandbox: QuickJSWASMModule, target: Targ
         const value = target[key];
 
         if (value && typeof value === 'object' && WRAPPED_FN_KEY in value) {
-            const fn = String(value[WRAPPED_FN_KEY]);
+            const wrappedFn = value[WRAPPED_FN_KEY] as UISandboxWrappedFunction;
+            // TODO: it will become unnecessary after removal Feature.NoJsonFn
+            wrappedFn.fn = String(wrappedFn.fn);
             // Do argument mutation on purpose
             // eslint-disable-next-line no-param-reassign
-            target[key] = getUnwrappedFunction(sandbox, fn);
+            target[key] = getUnwrappedFunction(sandbox, wrappedFn);
         } else if (Array.isArray(value)) {
             value.forEach((item) => unwrapPossibleFunctions(sandbox, item));
         } else if (value && typeof value === 'object') {
