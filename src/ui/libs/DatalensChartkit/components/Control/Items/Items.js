@@ -67,6 +67,7 @@ function BaseControlSelect({
     placeholder,
     required,
     hasValidationError,
+    limitLabel,
 }) {
     const [currentValue, setCurrentValue] = React.useState(
         multiselect ? wrapToArray(value) : value,
@@ -115,6 +116,7 @@ function BaseControlSelect({
             items={getItems ? undefined : items}
             initialItems={getItems ? items : undefined}
             label={labelInside ? label : innerLabel}
+            limitLabel={limitLabel}
             getItems={getItems}
             loadingItems={loadingItems}
             errorContent={errorContent}
@@ -503,6 +505,7 @@ function BaseControlCheckbox({label, value, onChange}) {
             view="default"
             size={size}
             checked={checked}
+            title={label}
             onChange={() =>
                 onChange(checked ? CheckboxControlValue.FALSE : CheckboxControlValue.TRUE)
             }

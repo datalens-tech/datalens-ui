@@ -34,12 +34,15 @@ export function colorizeFlatTableColumn({
     index: number;
     colorsConfig: ChartColorsConfig;
 }) {
-    const colorValues = data.reduce((acc, row) => {
-        const rowValue = row[index];
-        const parsedRowValue = isNil(rowValue) ? null : parseFloat(rowValue);
+    const colorValues = data.reduce(
+        (acc, row) => {
+            const rowValue = row[index];
+            const parsedRowValue = isNil(rowValue) ? null : parseFloat(rowValue);
 
-        return [...acc, parsedRowValue];
-    }, [] as (number | null)[]);
+            return [...acc, parsedRowValue];
+        },
+        [] as (number | null)[],
+    );
 
     const {min, mid, max} = getThresholdValues(colorsConfig, colorValues.filter(isNumber));
     const currentGradient = getCurrentGradient(colorsConfig);
@@ -95,30 +98,33 @@ export const getBackgroundColorsMapByContinuousColumn = (
         (column) => column.backgroundSettings.settings.isContinuous,
     );
 
-    return measuresWhichUsedForColorizing.reduce((acc, column) => {
-        const backgroundColors = column.backgroundSettings;
-        const guid = backgroundColors.colorFieldGuid;
-        const colorsConfig = backgroundColors.settings.gradientState;
+    return measuresWhichUsedForColorizing.reduce(
+        (acc, column) => {
+            const backgroundColors = column.backgroundSettings;
+            const guid = backgroundColors.colorFieldGuid;
+            const colorsConfig = backgroundColors.settings.gradientState;
 
-        const chartColorsConfig: ChartColorsConfig = {
-            ...colorsConfig,
-            colors: [],
-            loadedColorPalettes: {},
-            gradientColors:
-                getCurrentBackgroundGradient(colorsConfig, loadedColorPalettes)?.colors || [],
-        };
+            const chartColorsConfig: ChartColorsConfig = {
+                ...colorsConfig,
+                colors: [],
+                loadedColorPalettes: {},
+                gradientColors:
+                    getCurrentBackgroundGradient(colorsConfig, loadedColorPalettes)?.colors || [],
+            };
 
-        const title = idToTitle[guid];
-        const index = findIndexInOrder(order, column, title);
+            const title = idToTitle[guid];
+            const index = findIndexInOrder(order, column, title);
 
-        const rgbColorValues = colorizeFlatTableColumn({
-            colorsConfig: chartColorsConfig,
-            index,
-            data,
-        });
-        return {
-            ...acc,
-            [backgroundColors.settingsId]: rgbColorValues,
-        };
-    }, {} as Record<string, any>);
+            const rgbColorValues = colorizeFlatTableColumn({
+                colorsConfig: chartColorsConfig,
+                index,
+                data,
+            });
+            return {
+                ...acc,
+                [backgroundColors.settingsId]: rgbColorValues,
+            };
+        },
+        {} as Record<string, any>,
+    );
 };

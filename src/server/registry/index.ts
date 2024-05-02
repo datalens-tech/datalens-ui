@@ -69,7 +69,7 @@ export const registry = {
             throw new Error('First of all setup the gateway');
         }
         return {gatewayController: gateway.controller} as {
-            gatewayController: typeof gateway['controller'];
+            gatewayController: (typeof gateway)['controller'];
         };
     },
     getGatewayApi<TSchema extends SchemasByScope>() {

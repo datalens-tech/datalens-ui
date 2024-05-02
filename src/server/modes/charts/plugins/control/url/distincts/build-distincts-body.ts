@@ -103,16 +103,19 @@ export const getDistinctsRequestBody = ({
 
     req?.ctx?.log?.('CONTROLS_START_MAPPING_DATASET_FIELDS');
 
-    const datasetFieldsMap = datasetFields.reduce((acc, field) => {
-        const fieldData = {
-            fieldType: field.type,
-            guid: field.guid,
-        };
-        acc[field.guid] = fieldData;
-        acc[field.title] = fieldData;
+    const datasetFieldsMap = datasetFields.reduce(
+        (acc, field) => {
+            const fieldData = {
+                fieldType: field.type,
+                guid: field.guid,
+            };
+            acc[field.guid] = fieldData;
+            acc[field.title] = fieldData;
 
-        return acc;
-    }, {} as Record<string, {guid: string; fieldType: string}>);
+            return acc;
+        },
+        {} as Record<string, {guid: string; fieldType: string}>,
+    );
 
     req?.ctx?.log?.('CONTROLS_END_MAPPING_DATASET_FIELDS');
 

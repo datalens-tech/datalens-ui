@@ -72,7 +72,7 @@ export default class FilterEditor {
         value,
     }: {
         type: 'start' | 'end';
-        period?: typeof SCALES[keyof typeof SCALES];
+        period?: (typeof SCALES)[keyof typeof SCALES];
         value?: string;
     }) {
         await this.page.click(`${slct(`relative-radio-buttons-${type}`)} [value=relative]`);

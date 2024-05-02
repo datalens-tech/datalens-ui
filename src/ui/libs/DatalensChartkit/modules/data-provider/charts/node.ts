@@ -23,6 +23,7 @@ import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/da
 
 import {getChartsInsightsData} from './helpers';
 import {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
+import {getUISandbox, shouldUseUISandbox, unwrapPossibleFunctions} from './ui-sandbox';
 
 import {CHARTS_ERROR_CODE} from '.';
 
@@ -213,10 +214,10 @@ function isNodeResponse(loaded: CurrentResponse): loaded is ResponseSuccessNode 
 }
 
 /* eslint-disable complexity */
-function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyWidget>(
+async function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyWidget>(
     loaded: T,
     noJsonFn?: boolean,
-): R & ChartsData {
+): Promise<R & ChartsData> {
     const {
         type: loadedType,
         params,
@@ -268,11 +269,16 @@ function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyW
 
             result.data = loaded.data;
             result.config = jsonParse(loaded.config);
-
             result.libraryConfig = jsonParse(
                 loaded.highchartsConfig,
                 noJsonFn ? replacer : undefined,
             );
+
+            if (shouldUseUISandbox(result.config) || shouldUseUISandbox(result.libraryConfig)) {
+                const uiSandbox = await getUISandbox();
+                unwrapPossibleFunctions(uiSandbox, result.config);
+                unwrapPossibleFunctions(uiSandbox, result.libraryConfig);
+            }
 
             applyChartkitHandlers(result.config, result.libraryConfig);
 

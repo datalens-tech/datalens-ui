@@ -166,13 +166,16 @@ const gsheetSourceToAPIFormat = (source: GSheetSource): CreatingSource | Created
 };
 
 export const mapGSheetItemsToAPIFormat = (items: GSheetItem[]) => {
-    return items.reduce((acc, item) => {
-        if (isGSheetSourceItem(item)) {
-            acc.push(gsheetSourceToAPIFormat(item));
-        }
+    return items.reduce(
+        (acc, item) => {
+            if (isGSheetSourceItem(item)) {
+                acc.push(gsheetSourceToAPIFormat(item));
+            }
 
-        return acc;
-    }, [] as (CreatingSource | CreatedSource)[]);
+            return acc;
+        },
+        [] as (CreatingSource | CreatedSource)[],
+    );
 };
 
 export const getFilteredReplaceSources = (sources: ReplaceSource[], replacedSourceId: string) => {

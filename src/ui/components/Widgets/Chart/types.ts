@@ -212,11 +212,10 @@ export type ChartWidgetData =
           chart?: Highcharts.Chart;
           container?: Highcharts.Chart['container'];
           pointsForInitialRefresh?: Highcharts.Chart['pointsForInitialRefresh'];
-          userOptions?:
-              | Highcharts.Options & {
-                    _getComments: () => void;
-                    id: string;
-                };
+          userOptions?: Highcharts.Options & {
+              _getComments: () => void;
+              id: string;
+          };
           setOpacity?: (layerId: string, opacity: number) => void;
           setVisibility?: (layerId: string, opacity: number) => void;
           redraw?: (args: unknown) => void;

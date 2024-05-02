@@ -436,6 +436,7 @@ class Body extends React.PureComponent<BodyProps> {
                             mobile: DL.IS_MOBILE,
                             aside: getIsAsideHeaderEnabled(),
                             'with-edit-panel': showEditActionPanel,
+                            'with-footer': Utils.isEnabledFeature(Feature.EnableFooter),
                         })}
                     >
                         {!settings.hideDashTitle && !DL.IS_MOBILE && (

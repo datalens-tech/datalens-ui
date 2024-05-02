@@ -160,7 +160,7 @@ export const getBackground = (data: MetricWidgetDataItem, green: string, red: st
         const getBackgroundByDiff = function (isMoreGreen: boolean) {
             if (diff) {
                 if (!data.colorizeInterval || Math.abs(Number(diff)) > data.colorizeInterval) {
-                    const isDiffPositive = diff > 0 && diffSign !== '-';
+                    const isDiffPositive = Number(diff) > 0 && diffSign !== '-';
                     return isDiffPositive === isMoreGreen ? green : red;
                 }
             }

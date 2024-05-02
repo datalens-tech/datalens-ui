@@ -1,5 +1,5 @@
 import controlModule from './../../../../modes/charts/plugins/control';
-import datalensModule from './../../../../modes/charts/plugins/datalens/module';
+import {datalensModule} from './../../../../modes/charts/plugins/datalens/module';
 import datasetModuleV2 from './../../../../modes/charts/plugins/dataset/v2';
 import qlModule from './../../../../modes/charts/plugins/ql/module';
 import {NativeModulesType} from './types';

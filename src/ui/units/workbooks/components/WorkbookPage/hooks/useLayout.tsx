@@ -11,6 +11,7 @@ import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
 import {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
+import {setCollection} from '../../../../collections/store/actions';
 import {
     CollectionBreadcrumbs,
     cutBreadcrumbs,
@@ -21,7 +22,6 @@ import {
     selectCollectionBreadcrumbs,
     selectCollectionBreadcrumbsError,
 } from '../../../../collections-navigation/store/selectors';
-import {setCollection} from '../../../../collections/store/actions';
 import {selectPageError, selectWorkbook, selectWorkbookFilters} from '../../../store/selectors';
 import {WorkbookActions} from '../../WorkbookActions/WorkbookActions';
 

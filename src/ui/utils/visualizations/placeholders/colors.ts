@@ -51,12 +51,15 @@ export const updateColors = (args: UpdateColorsArgs) => {
     if (colors?.length === 2) {
         const isBothFieldsPseudo = colorsCopy.every((color) => isMeasureNameOrValue(color));
 
-        const prevColorsGuidsMap = prevColors?.reduce((acc, color) => {
-            return {
-                ...acc,
-                [color.guid || color.title]: true,
-            };
-        }, {} as Record<string, boolean>);
+        const prevColorsGuidsMap = prevColors?.reduce(
+            (acc, color) => {
+                return {
+                    ...acc,
+                    [color.guid || color.title]: true,
+                };
+            },
+            {} as Record<string, boolean>,
+        );
 
         const replacedItemIndex = colorsCopy.findIndex(
             (color) => prevColorsGuidsMap[color.guid || color.title],
