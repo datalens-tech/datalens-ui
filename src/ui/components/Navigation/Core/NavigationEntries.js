@@ -610,7 +610,6 @@ class NavigationEntries extends React.Component {
                     items={this.props.getContextMenuItems({
                         entry: this.state.currentEntryContext,
                         place: this.state.place,
-                        isFlatList: true,
                     })}
                     onMenuClick={this.props.onContextMenuClick}
                     onClose={this.closeEntryContextMenu}

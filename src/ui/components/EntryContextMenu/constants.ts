@@ -38,8 +38,8 @@ const CONTEXT_MENU_COPY = {
             : undefined;
     },
     // remain Copy menu item in navigation, but show in actionPanel only if actual version is opened
-    isVisible({showSpecificItems, isFlatList, entry}: ContextMenuParams) {
-        if (isFlatList && entry?.workbookId) {
+    isVisible({showSpecificItems, entry}: ContextMenuParams) {
+        if (!showSpecificItems && entry?.workbookId) {
             return false;
         }
 
