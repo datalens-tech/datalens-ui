@@ -36,7 +36,6 @@ export enum Feature {
     ShowInspectorDetails = 'ShowInspectorDetails',
     NoJsonFn = 'NoJsonFn',
     GSheetGoogleAuthEnabled = 'GSheetGoogleAuthEnabled',
-    CustomColorPalettes = 'CustomColorPalettes',
     DatasetsRLS = 'DatasetsRLS',
     XlsxFilesEnabled = 'XlsxFilesEnabled',
     XlsxChartExportEnabled = 'XlsxChartExportEnabled',
@@ -45,7 +44,6 @@ export enum Feature {
     HolidaysOnChart = 'HolidaysOnChart',
     PivotTableMeasureNames = 'PivotTableMeasureNames',
     NewMobileDesign = 'NewMobileDesign',
-    PivotTableSortWithTotals = 'PivotTableSortWithTotals',
     ReadOnlyMode = 'ReadOnlyMode',
     MenuItemsFlatView = 'MenuItemsFlatView',
     EntryMenuItemCopy = 'EntryMenuItemCopy',
@@ -65,7 +63,6 @@ export enum Feature {
     UseChartsEngineLogin = 'UseChartsEngineLogin',
     AddDemoWorkbook = 'AddDemoWorkbook',
     CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
-    WizardChartChartFilteringAvailable = 'WizardChartChartFilteringAvailable',
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
@@ -76,6 +73,7 @@ export enum Feature {
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
     CustomAccessDescription = 'CustomAccessDescription',
+    EnableFooter = 'EnableFooter',
 }
 
 export type FeatureConfig = Record<string, boolean>;

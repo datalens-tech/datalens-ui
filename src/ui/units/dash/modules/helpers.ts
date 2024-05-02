@@ -249,10 +249,13 @@ export const getLayoutMap = (
     layout: Array<DashTabLayout>,
 ): [Record<string, DashTabLayout>, number] => {
     // forming a grid map for quick access by id
-    const layoutMap = layout.reduce((map, layoutItem) => {
-        map[layoutItem.i] = layoutItem;
-        return map;
-    }, {} as Record<string, DashTabLayout>);
+    const layoutMap = layout.reduce(
+        (map, layoutItem) => {
+            map[layoutItem.i] = layoutItem;
+            return map;
+        },
+        {} as Record<string, DashTabLayout>,
+    );
 
     const layoutColumns = layout.reduce((col, n) => Math.max(n.x + n.w, col), 0);
 

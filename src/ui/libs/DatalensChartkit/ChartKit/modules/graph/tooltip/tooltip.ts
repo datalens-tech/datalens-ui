@@ -348,8 +348,8 @@ export function formatTooltip(data: TooltipData, tooltip: Highcharts.Tooltip, is
                                                 cellsRenderers.length - 1
                                             }" class="_hidden-rows-number">
                                                 ${i18n('chartkit', 'tooltip-rest')} ${
-                                              data.hiddenRowsNumber
-                                          }
+                                                    data.hiddenRowsNumber
+                                                }
                                             </td>
                                             <td class="_hidden-rows-value">${
                                                 data.hiddenRowsSum

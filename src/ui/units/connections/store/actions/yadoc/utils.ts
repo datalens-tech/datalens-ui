@@ -155,13 +155,16 @@ const yadocSourceToAPIFormat = (source: YadocSource): CreatingSource | CreatedSo
 };
 
 export const mapYadocItemsToAPIFormat = (items: YadocItem[]) => {
-    return items.reduce((acc, item) => {
-        if (isYadocSourceItem(item)) {
-            acc.push(yadocSourceToAPIFormat(item));
-        }
+    return items.reduce(
+        (acc, item) => {
+            if (isYadocSourceItem(item)) {
+                acc.push(yadocSourceToAPIFormat(item));
+            }
 
-        return acc;
-    }, [] as (CreatingSource | CreatedSource)[]);
+            return acc;
+        },
+        [] as (CreatingSource | CreatedSource)[],
+    );
 };
 
 export const findUploadedYadoc = (items: YadocItem[], id: string) => {

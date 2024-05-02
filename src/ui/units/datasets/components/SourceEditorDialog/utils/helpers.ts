@@ -143,10 +143,13 @@ export const getPreparedSource = (
     source: EditedSource,
     selectedFreeformSource: FreeformSource,
 ): EditedSource => {
-    const parameters = selectedFreeformSource.form.reduce((acc, {name}) => {
-        acc[name] = source.parameters[name] || '';
-        return acc;
-    }, {} as EditedSource['parameters']);
+    const parameters = selectedFreeformSource.form.reduce(
+        (acc, {name}) => {
+            acc[name] = source.parameters[name] || '';
+            return acc;
+        },
+        {} as EditedSource['parameters'],
+    );
 
     return {...source, parameters};
 };

@@ -1,6 +1,8 @@
 import https from 'https';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {GaxiosOptions} from 'gaxios';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {DefaultTransporter} from 'google-auth-library';
 
 export class Ipv6Transporter extends DefaultTransporter {
