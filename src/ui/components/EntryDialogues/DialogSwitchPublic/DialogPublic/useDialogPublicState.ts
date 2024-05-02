@@ -54,47 +54,53 @@ function normalizeRelations(relations: Array<EntryRelation>, entry: EntryData) {
     const currentEntryChecked = entry.public;
     const someEntryLocked = relations.some(({lockPublication}) => Boolean(lockPublication));
 
-    const normalized = relations.reduce((acc, relationEntry) => {
-        let tooltip = '';
-        const hasAdminPermission = relationEntry?.permissions?.admin;
-        const checked = relationEntry.public;
-        const disabled =
-            isPermanentDisabledEntry(relationEntry) ||
-            // We do not allow you to publish anything if there is an invalid dataset
-            // CHARTS-3401
-            (someEntryLocked && !checked);
-        if (!currentEntryChecked && disabled) {
-            allDisabled = true;
-        }
-        if (relationEntry.lockPublication) {
-            tooltip =
-                relationEntry.lockPublicationReason ||
-                i18n('component.dialog-switch-public.view', 'label_dataset-deny-publish');
-        }
-        if (!hasAdminPermission) {
-            tooltip = getTextNoPermission();
-        }
-        return {
-            ...acc,
-            [relationEntry.entryId]: {
-                ...relationEntry,
-                tooltip,
-                checked,
-                disabled,
-            } as EntryRelationExtended,
-        };
-    }, {} as Record<string, EntryRelationExtended>);
-
-    if (allDisabled) {
-        return Object.keys(normalized).reduce((acc, entryId) => {
+    const normalized = relations.reduce(
+        (acc, relationEntry) => {
+            let tooltip = '';
+            const hasAdminPermission = relationEntry?.permissions?.admin;
+            const checked = relationEntry.public;
+            const disabled =
+                isPermanentDisabledEntry(relationEntry) ||
+                // We do not allow you to publish anything if there is an invalid dataset
+                // CHARTS-3401
+                (someEntryLocked && !checked);
+            if (!currentEntryChecked && disabled) {
+                allDisabled = true;
+            }
+            if (relationEntry.lockPublication) {
+                tooltip =
+                    relationEntry.lockPublicationReason ||
+                    i18n('component.dialog-switch-public.view', 'label_dataset-deny-publish');
+            }
+            if (!hasAdminPermission) {
+                tooltip = getTextNoPermission();
+            }
             return {
                 ...acc,
-                [entryId]: {
-                    ...normalized[entryId],
-                    disabled: true,
+                [relationEntry.entryId]: {
+                    ...relationEntry,
+                    tooltip,
+                    checked,
+                    disabled,
                 } as EntryRelationExtended,
             };
-        }, {} as Record<string, EntryRelationExtended>);
+        },
+        {} as Record<string, EntryRelationExtended>,
+    );
+
+    if (allDisabled) {
+        return Object.keys(normalized).reduce(
+            (acc, entryId) => {
+                return {
+                    ...acc,
+                    [entryId]: {
+                        ...normalized[entryId],
+                        disabled: true,
+                    } as EntryRelationExtended,
+                };
+            },
+            {} as Record<string, EntryRelationExtended>,
+        );
     }
 
     return normalized;

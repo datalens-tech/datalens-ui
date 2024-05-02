@@ -116,6 +116,8 @@ const textPlugin = {
         return (
             <RendererWrapper type="text" nodeRef={rootNodeRef}>
                 <YfmWrapper
+                    // needed for force update when text is changed
+                    key={props.data.text}
                     content={<div className={b('content-wrap', null)}>{content}</div>}
                     className={b()}
                     onRenderCallback={handleTextRender}

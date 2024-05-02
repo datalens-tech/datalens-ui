@@ -143,7 +143,7 @@ function canUseActionParams(shared: ServerChartsConfig) {
 }
 
 // eslint-disable-next-line complexity
-export default (
+export const buildChartsConfig = (
     ...options: [
         (
             | {

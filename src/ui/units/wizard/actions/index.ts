@@ -252,10 +252,13 @@ export function fetchDataset({id, replacing}: FetchDatasetArgs) {
 
                 const {visualization: {filters: currentFilters = []} = {}} = getState().wizard;
 
-                const defaultFiltersMap = defaultFilters.reduce((acc, defaultFilter) => {
-                    acc[defaultFilter.guid] = defaultFilter.filter;
-                    return acc;
-                }, {} as Record<string, FilterField['filter']>);
+                const defaultFiltersMap = defaultFilters.reduce(
+                    (acc, defaultFilter) => {
+                        acc[defaultFilter.guid] = defaultFilter.filter;
+                        return acc;
+                    },
+                    {} as Record<string, FilterField['filter']>,
+                );
 
                 const updatedFilters = currentFilters.filter((filter) => {
                     if (defaultFiltersMap[filter.guid]) {
@@ -337,7 +340,7 @@ function getDefaultFilters(
                                 },
                             },
                             is_default_filter: true,
-                        } as unknown as FilterField),
+                        }) as unknown as FilterField,
                 ),
         );
 

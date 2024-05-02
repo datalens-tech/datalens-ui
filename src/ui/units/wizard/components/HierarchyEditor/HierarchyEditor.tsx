@@ -152,10 +152,13 @@ class HierarchyEditor extends React.Component<Props, State> {
     };
 
     getSelectedFields = (values: string[]) => {
-        return values.reduce((acc, value) => {
-            acc[value] = true;
-            return acc;
-        }, {} as Record<string, boolean>);
+        return values.reduce(
+            (acc, value) => {
+                acc[value] = true;
+                return acc;
+            },
+            {} as Record<string, boolean>,
+        );
     };
 }
 

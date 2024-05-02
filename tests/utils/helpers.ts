@@ -6,11 +6,14 @@ export const getStylesFromString = (string = '') => {
     return string
         .split(';')
         .filter(Boolean)
-        .reduce((acc, pair) => {
-            const [key, value] = pair.split(':').map((val) => val.trim());
-            acc[key.trim()] = value;
-            return acc;
-        }, {} as Record<string, string>);
+        .reduce(
+            (acc, pair) => {
+                const [key, value] = pair.split(':').map((val) => val.trim());
+                acc[key.trim()] = value;
+                return acc;
+            },
+            {} as Record<string, string>,
+        );
 };
 
 export const mapColorsAndShapes = (colors: string[], shapes: string[]) => {

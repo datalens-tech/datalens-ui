@@ -5,28 +5,31 @@ import logger from '../../../../libs/logger';
 import {CreatedSource, CreatingSource, FileSource, FileSourceItem, ReplaceSource} from '../typings';
 
 export const mapSourcesToAPIFormat = (sources: FileSource[]) => {
-    return sources.reduce((acc, item) => {
-        if ('source' in item) {
-            const columnTypes = (item.source.raw_schema || []).map(
-                ({title: _, ...restSchema}) => restSchema,
-            );
-            acc.push({
-                id: item.source.source_id,
-                file_id: item.file_id,
-                title: item.source.title,
-                column_types: unionBy(item.columnTypes, columnTypes, 'name'),
-            });
-        }
+    return sources.reduce(
+        (acc, item) => {
+            if ('source' in item) {
+                const columnTypes = (item.source.raw_schema || []).map(
+                    ({title: _, ...restSchema}) => restSchema,
+                );
+                acc.push({
+                    id: item.source.source_id,
+                    file_id: item.file_id,
+                    title: item.source.title,
+                    column_types: unionBy(item.columnTypes, columnTypes, 'name'),
+                });
+            }
 
-        if ('id' in item) {
-            acc.push({
-                id: item.id,
-                title: item.title,
-            });
-        }
+            if ('id' in item) {
+                acc.push({
+                    id: item.id,
+                    title: item.title,
+                });
+            }
 
-        return acc;
-    }, [] as (CreatingSource | CreatedSource)[]);
+            return acc;
+        },
+        [] as (CreatingSource | CreatedSource)[],
+    );
 };
 
 const findFileSourceItem = (sources: FileSource[], sourceId: string) => {
