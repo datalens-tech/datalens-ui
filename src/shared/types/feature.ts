@@ -61,7 +61,6 @@ export enum Feature {
     ShowChartsEngineDebugInfo = 'ShowChartsEngineDebugInfo',
     UseChartsEngineResponseConfig = 'UseChartsEngineResponseConfig',
     UseChartsEngineLogin = 'UseChartsEngineLogin',
-    AddDemoWorkbook = 'AddDemoWorkbook',
     CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
