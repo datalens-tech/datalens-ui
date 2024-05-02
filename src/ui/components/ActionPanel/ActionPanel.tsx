@@ -17,6 +17,7 @@ import {
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
 import {selectEntryContent, selectIsRevisionsOpened} from 'store/selectors/entryContent';
 import {RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
+import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
 import Utils from 'ui/utils';
 
@@ -158,7 +159,7 @@ class ActionPanel extends React.Component<Props, State> {
         return (
             <React.Fragment>
                 <div className={b()} data-qa={ActionPanelQA.ActionPanel}>
-                    <div className={b('container', mix)} style={leftStyle}>
+                    <div className={b('container', {mobile: DL.IS_MOBILE}, mix)} style={leftStyle}>
                         {Array.isArray(leftItems)
                             ? leftItems.map((LeftItems) => LeftItems)
                             : leftItems}

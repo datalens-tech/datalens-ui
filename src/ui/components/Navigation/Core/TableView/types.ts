@@ -39,7 +39,7 @@ export type TableViewProps = {
     loading?: boolean;
     hasNextPage?: boolean;
     isMobileNavigation?: boolean;
-    onMenuClick: (args: MenuClickArgs) => void;
+    onMenuClick?: (args: MenuClickArgs) => void;
 };
 
 export type HookBatchSelectResult = {

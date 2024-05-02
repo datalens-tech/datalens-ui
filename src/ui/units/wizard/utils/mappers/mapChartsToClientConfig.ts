@@ -37,13 +37,16 @@ export function selectChartsConfigUpdates(data: ChartsConfig, datasets: Dataset[
 
     const updates: Update[] = processUpdates(updatesToProcess);
 
-    const parametersGuidsByDatasetId = datasets.reduce((acc, dataset: Dataset) => {
-        acc[dataset.id] = getResultSchemaFromDataset(dataset)
-            .filter(isParameter)
-            .map((field) => field.guid);
+    const parametersGuidsByDatasetId = datasets.reduce(
+        (acc, dataset: Dataset) => {
+            acc[dataset.id] = getResultSchemaFromDataset(dataset)
+                .filter(isParameter)
+                .map((field) => field.guid);
 
-        return acc;
-    }, {} as Record<string, string[]>);
+            return acc;
+        },
+        {} as Record<string, string[]>,
+    );
 
     return updates.filter((update) => {
         const field = update.field;

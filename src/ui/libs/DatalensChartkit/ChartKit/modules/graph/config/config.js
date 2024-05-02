@@ -92,8 +92,8 @@ function getFormattedValueWithSuffixAndPrefix(item) {
     const formattedNumber = item.chartKitFormatting
         ? formatNumberWrapper(item)
         : item.valueDecimals && typeof item.value === 'number'
-        ? item.value.toFixed(item.valueDecimals)
-        : item.value;
+          ? item.value.toFixed(item.valueDecimals)
+          : item.value;
 
     return `${prefix}${formattedNumber}${suffix}`;
 }

@@ -3,8 +3,7 @@ import {Page} from '@playwright/test';
 import DashboardPage, {SelectorSettings} from '../../../page-objects/dashboard/DashboardPage';
 
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {DashTabItemControlSourceType, Feature} from '../../../../src/shared';
-import {isEnabledFeature} from '../../../utils';
+import {DashTabItemControlSourceType} from '../../../../src/shared';
 
 const TITLE = 'City';
 const INNER_TITLE = 'innerCity';
@@ -37,22 +36,12 @@ const createDashWithSelector = async ({
 };
 
 const checkLabels = async (dashboardPage: DashboardPage, type: 'select' | 'input') => {
-    const isEnabledGroupControls = await isEnabledFeature(
-        dashboardPage.page,
-        Feature.GroupControls,
-    );
-
-    // for GroupControls innerTitle is deprecated, only field title exists and is displayed as innerTitle
-    const innerTitle = isEnabledGroupControls ? TITLE : INNER_TITLE;
     if (type === 'select') {
-        await dashboardPage.chartkitControl.expectSelectInnerTitleVisible(innerTitle);
+        await dashboardPage.chartkitControl.expectSelectInnerTitleVisible(INNER_TITLE);
     } else {
-        await dashboardPage.chartkitControl.expectInputInnerTitleVisible(innerTitle);
+        await dashboardPage.chartkitControl.expectInputInnerTitleVisible(INNER_TITLE);
     }
 
-    if (isEnabledGroupControls) {
-        return;
-    }
     await dashboardPage.chartkitControl.expectTitleVisible(TITLE);
 };
 
