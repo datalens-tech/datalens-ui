@@ -8,6 +8,7 @@ export type ContextMenuParams = {
     isEditMode: boolean | string;
     isLimitedView: boolean;
     place?: string;
+    isFlatList?: boolean;
 };
 
 export type ContextMenuItem = {

@@ -48,6 +48,7 @@ export const getEntryContextMenuItems = (
         place,
         showSpecificItems = false,
         isLimitedView = false,
+        isFlatList,
     } = {} as ContextMenuParams,
 ): EntryContextMenuItems => {
     const entryContextMenuItems = getFilteredEntryContextMenu({
@@ -55,6 +56,7 @@ export const getEntryContextMenuItems = (
         isEditMode,
         showSpecificItems,
         isLimitedView,
+        isFlatList,
         place,
     }).map(
         (menuItem) =>
