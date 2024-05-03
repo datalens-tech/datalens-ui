@@ -1,6 +1,6 @@
 .dashkit-plugin-title-container {
     height: fit-content;
-    overflow: auto;
+    overflow: hidden;
 
     &_with-auto-height {
         overflow-y: auto;
