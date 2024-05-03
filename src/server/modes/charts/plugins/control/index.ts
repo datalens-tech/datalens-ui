@@ -1,6 +1,6 @@
-import buildUI from './controls';
-import buildGraph from './js';
-import buildSources from './url';
+import {buildUI} from './controls';
+import {buildGraph} from './js';
+import {buildSources} from './url';
 
 export default {
     // Url

@@ -8,6 +8,7 @@ import {
     CONTROL_MIDDLEWARE_URL_TYPE,
     REQUEST_WITH_DATASET_SOURCE_NAME,
 } from './constants/middleware-urls';
+import {SourcesArgs} from './datalens/url/build-sources/types';
 
 export interface SourceAdapterRequestSettings {
     useCaching: boolean;
@@ -42,8 +43,9 @@ export interface MiddlewareUrl {
 export interface MiddlewareSourceAdapterArgs {
     sourceName: string;
     source: {
-        [key: string]: any;
+        sourceArgs: SourcesArgs;
         middlewareUrl: MiddlewareUrl;
+        datasetId?: string;
     };
     req: Request;
     iamToken?: string;

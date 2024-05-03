@@ -23,7 +23,7 @@ const buildManualSelectorSources = (shared: ControlShared): Record<PropertyKey, 
     return {};
 };
 
-const buildSources = ({
+export const buildSources = ({
     shared,
     params,
     ChartEditor,
@@ -58,5 +58,3 @@ const buildSources = ({
         }
     }
 };
-
-export default buildSources;
