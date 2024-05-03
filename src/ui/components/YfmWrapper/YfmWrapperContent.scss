@@ -19,7 +19,6 @@
         font-weight: 500;
     }
 
-    .g-root &:not(.yfm_only-light) img,
     img {
         background: transparent;
     }
@@ -33,6 +32,7 @@
         }
     }
 
+    p:has(+ template:last-child),
     p:has(+ dfn:last-child),
     .yfm-cut-content table:last-child {
         margin-bottom: 0;

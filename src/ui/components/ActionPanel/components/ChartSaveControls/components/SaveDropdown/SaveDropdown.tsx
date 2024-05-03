@@ -29,7 +29,6 @@ export const SaveDropdown: React.FC<SaveDropdownProps> = (props: SaveDropdownPro
                     view="action"
                     disabled={disabled}
                     size="m"
-                    width="max"
                     qa={ChartSaveControlsQA.SaveMoreDropdown}
                 >
                     <Icon data={ChevronDown} size={16} />

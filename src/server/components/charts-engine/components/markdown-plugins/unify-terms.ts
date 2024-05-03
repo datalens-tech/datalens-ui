@@ -1,6 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {MarkdownIt, StateCore} from '@diplodoc/transform/lib/typings';
-import type StateBlock from 'markdown-it/lib/rules_block/state_block';
 
 import {YfmAttributes, YfmTokenTypes} from '../../../../../shared';
 
@@ -18,35 +17,6 @@ const unifyAttributes = (attrs: [string, string][], attrName: YfmAttributes, pre
     return attrs;
 };
 
-const termDefinitionsRandom = (prefix: string) => (state: StateBlock) => {
-    const tokens = state.tokens;
-    let i = 0;
-
-    while (tokens[i]) {
-        const token = tokens[i];
-
-        if (token.type === YfmTokenTypes.TemplateOpen) {
-            const next = tokens[i + 1];
-
-            if (next && next.type === YfmTokenTypes.DefinitionOpen) {
-                if (token.attrs) {
-                    token.attrs = unifyAttributes(token.attrs, YfmAttributes.Id, prefix);
-                }
-
-                if (next.attrs) {
-                    next.attrs = unifyAttributes(next.attrs, YfmAttributes.Id, prefix);
-                }
-
-                i++;
-            }
-        }
-
-        i++;
-    }
-
-    return false;
-};
-
 const modifyTerm = (termToken: Token, prefix: string) => {
     if (termToken.attrs) {
         termToken.attrs = unifyAttributes(termToken.attrs, YfmAttributes.AriaDescribedby, prefix);
@@ -62,10 +32,37 @@ const traverseLine = (tokens: Tokens, prefix: string) => {
     while (tokens[i]) {
         const currentToken = tokens[i];
 
-        if (currentToken.type === YfmTokenTypes.Inline && currentToken.children) {
-            currentToken.children = traverseLine(currentToken.children, prefix);
-        } else if (currentToken.type === YfmTokenTypes.TermOpen) {
-            modifyTerm(currentToken, prefix);
+        switch (currentToken.type) {
+            case YfmTokenTypes.Inline: {
+                if (currentToken.children) {
+                    currentToken.children = traverseLine(currentToken.children, prefix);
+                }
+
+                break;
+            }
+
+            case YfmTokenTypes.TermOpen: {
+                modifyTerm(currentToken, prefix);
+                break;
+            }
+
+            case YfmTokenTypes.TemplateOpen: {
+                const token = tokens[i];
+                const next = tokens[i + 1];
+
+                if (next && next.type === YfmTokenTypes.DefinitionOpen) {
+                    if (token.attrs) {
+                        token.attrs = unifyAttributes(token.attrs, YfmAttributes.Id, prefix);
+                    }
+
+                    if (next.attrs) {
+                        next.attrs = unifyAttributes(next.attrs, YfmAttributes.Id, prefix);
+                    }
+
+                    i++;
+                }
+                break;
+            }
         }
 
         i++;
@@ -78,11 +75,6 @@ export const unifyTermIds = (md: MarkdownIt, options: {prefix: string}) => {
     const prefix = options.prefix;
 
     try {
-        md.block.ruler.after(
-            'termDefinitions',
-            'termDefinitionsRandom',
-            termDefinitionsRandom(prefix),
-        );
         md.core.ruler.after('termReplace', 'termLinkRandom', (state: StateCore) => {
             traverseLine(state.tokens, prefix);
         });
