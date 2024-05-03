@@ -8,12 +8,12 @@ import {
 } from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
+import {DashTabItemTitle} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Title.scss';
-import {DashTabItemTitle} from 'shared';
 
 const b = block('dashkit-plugin-title-container');
 
