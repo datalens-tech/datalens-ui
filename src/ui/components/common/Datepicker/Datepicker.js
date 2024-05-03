@@ -371,7 +371,7 @@ export class Datepicker extends React.PureComponent {
                 to: range ? to : undefined,
                 error: '',
                 invalidInput: false,
-                ...(resetPickCounter && {pick: 0}),
+                ...(resetPickCounter ? {pick: 0} : {}),
             },
             () => {
                 if (!from && !to) {
@@ -478,13 +478,15 @@ export class Datepicker extends React.PureComponent {
 
         this.ControlNodeRef.current.blur();
 
+        const showSearchText = Boolean(allowNullableValues || (from && to));
+
         this.setState(
             {
                 from,
                 to,
                 active: false,
                 lastValidHash: getHashedData({from, to}),
-                ...(Boolean(allowNullableValues || (from && to)) && {searchText}),
+                ...(showSearchText ? {searchText} : {}),
             },
             () => {
                 const {range, outputFormat} = this.props;
@@ -558,11 +560,13 @@ export class Datepicker extends React.PureComponent {
                     <React.Fragment>
                         <div
                             className={b('control', className)}
-                            {...(controlWidth && {
-                                style: {
-                                    width: controlWidth,
-                                },
-                            })}
+                            {...(controlWidth
+                                ? {
+                                      style: {
+                                          width: controlWidth,
+                                      },
+                                  }
+                                : {})}
                         >
                             <FieldWrapper error={error}>
                                 <TextInput
