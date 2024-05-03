@@ -45,7 +45,6 @@ export default async (
     const data = getDistinctsRequestBody({
         params: source.sourceArgs.params,
         shared: source.sourceArgs.shared as unknown as ControlShared,
-        ChartEditor: source.sourceArgs.ChartEditor,
         datasetFields,
         req,
     });
