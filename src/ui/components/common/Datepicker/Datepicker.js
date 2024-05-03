@@ -329,6 +329,7 @@ export class Datepicker extends React.PureComponent {
         const {format, range} = this.props;
         const {zone} = this.state;
         const dates = searchText.split(/\s-\s?/);
+
         let from;
         let to;
         let isFromValid = true;
@@ -363,14 +364,22 @@ export class Datepicker extends React.PureComponent {
 
         const resetPickCounter = !searchText || (range && !to);
 
-        this.setState({
-            searchText,
-            from,
-            to: range ? to : undefined,
-            error: '',
-            invalidInput: false,
-            ...(resetPickCounter && {pick: 0}),
-        });
+        this.setState(
+            {
+                searchText,
+                from,
+                to: range ? to : undefined,
+                error: '',
+                invalidInput: false,
+                ...(resetPickCounter && {pick: 0}),
+            },
+            () => {
+                if (!from && !to) {
+                    // focus to open popup when clear button is clicked
+                    this.ControlNodeRef.current.focus();
+                }
+            },
+        );
     };
 
     onInputKeyPress = (e) => {
