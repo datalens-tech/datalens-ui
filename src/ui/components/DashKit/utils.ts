@@ -40,6 +40,7 @@ export type AdjustWidgetLayoutProps = {
     cb: PluginWidgetProps['adjustWidgetLayout'];
     mainNodeSelector?: string;
     scrollableNodeSelector?: string;
+    needHeightReset?: boolean;
 };
 
 const getScrollbarWidth = (node: HTMLElement) => node.offsetWidth - node.clientWidth;
@@ -101,6 +102,23 @@ const setOverflowYStyle = (node: HTMLElement, value: string) => {
     };
 };
 
+const setStyle = (node: HTMLElement, name: string, value: string) => {
+    const st = node.getAttribute('style');
+    // If there are inline styles, we adding scrollY style in the end with !important
+    node.setAttribute(
+        'style',
+        `${st || ''}${!st || st?.endsWith(';') ? '' : ';'}${name}: ${value} !important;`,
+    );
+
+    return () => {
+        if (st) {
+            node.setAttribute('style', st);
+        } else {
+            node.removeAttribute('style');
+        }
+    };
+};
+
 export function adjustWidgetLayout({
     widgetId,
     rootNode,
@@ -110,6 +128,7 @@ export function adjustWidgetLayout({
     cb,
     mainNodeSelector,
     scrollableNodeSelector,
+    needHeightReset,
 }: AdjustWidgetLayoutProps) {
     if (DL.IS_MOBILE || needSetDefault) {
         cb({widgetId, needSetDefault});
@@ -119,6 +138,11 @@ export function adjustWidgetLayout({
     const node = rootNode.current;
     if (!node) {
         return;
+    }
+
+    const prevHeight = '100%';
+    if (needHeightReset) {
+        setStyle(node, 'height', 'auto');
     }
 
     const scrollableNode = node.querySelector(
@@ -144,10 +168,16 @@ export function adjustWidgetLayout({
             widgetId,
             needSetDefault,
         });
+        if (needHeightReset) {
+            setStyle(node, 'height', prevHeight);
+        }
         return;
     }
 
     if (!scrollableNode) {
+        if (needHeightReset) {
+            setStyle(node, 'height', prevHeight);
+        }
         return;
     }
 
@@ -200,6 +230,9 @@ export function adjustWidgetLayout({
         widgetId,
         needSetDefault,
     });
+    if (needHeightReset) {
+        setStyle(node, 'height', prevHeight);
+    }
 }
 
 function collectBelowLyingNodesHeight(
