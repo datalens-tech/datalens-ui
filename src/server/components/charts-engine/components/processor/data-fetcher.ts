@@ -84,8 +84,8 @@ type DataFetcherRequestOptions = {
 
 type SourceWithMiddlewareUrl = Source & Required<Pick<Source, 'middlewareUrl' | 'sourceArgs'>>;
 
-function isSourceWithMiddlewareUrl(source: unknown): source is SourceWithMiddlewareUrl {
-    return isObject(source) && 'middlewareUrl' in source && 'sourceArgs' in source;
+function isSourceWithMiddlewareUrl(source: Source): source is SourceWithMiddlewareUrl {
+    return isObject(source.middlewareUrl) && isObject(source.sourceArgs);
 }
 
 function getDatasetId(publicTargetUri?: string | Record<string, string>) {
