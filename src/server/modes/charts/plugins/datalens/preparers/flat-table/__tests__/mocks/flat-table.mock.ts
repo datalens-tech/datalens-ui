@@ -20,7 +20,7 @@ const getTranslation = (keyset: string, key: string, params: Record<string, stri
 
 const chartEditorMock = {
     getParam: () => null,
-    getParams: () => {},
+    getParams: () => ({}),
     getCurrentPage() {},
     getLang: () => 'en',
     getTranslation,
