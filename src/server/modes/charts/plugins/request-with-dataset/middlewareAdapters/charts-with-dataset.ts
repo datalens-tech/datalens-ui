@@ -63,7 +63,10 @@ export default async (
     });
 
     const data = getUrlsRequestBody({
-        ...source.sourceArgs,
+        params: source.sourceArgs.params,
+        shared: source.sourceArgs.shared,
+        ChartEditor: source.sourceArgs.ChartEditor,
+        apiVersion: source.sourceArgs.apiVersion,
         datasetId,
         datasetFields,
         layerId,

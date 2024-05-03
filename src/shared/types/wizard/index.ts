@@ -138,6 +138,7 @@ interface CommonShared {
     version?: ChartsConfigVersion.V1;
     datasetsIds?: string[];
     datasetsPartialFields?: ServerDatasetField[][];
+    wizardDataset?: Dataset | undefined;
 }
 
 interface CommonSharedLayer extends CommonShared {

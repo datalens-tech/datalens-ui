@@ -1,4 +1,5 @@
 import Cache from '../../../../../components/cache-client';
+import {ControlShared} from '../../control/types';
 import {getDistinctsRequestBody} from '../../control/url/distincts/build-distincts-body';
 import {MiddlewareSourceAdapterArgs} from '../../types';
 import type {ConfigurableRequestWithDatasetPluginOptions} from '../index';
@@ -42,7 +43,9 @@ export default async (
     });
 
     const data = getDistinctsRequestBody({
-        ...source.sourceArgs,
+        params: source.sourceArgs.params,
+        shared: source.sourceArgs.shared as unknown as ControlShared,
+        ChartEditor: source.sourceArgs.ChartEditor,
         datasetFields,
         req,
     });
