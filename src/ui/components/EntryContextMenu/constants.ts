@@ -38,7 +38,11 @@ const CONTEXT_MENU_COPY = {
             : undefined;
     },
     // remain Copy menu item in navigation, but show in actionPanel only if actual version is opened
-    isVisible({showSpecificItems}: ContextMenuParams) {
+    isVisible({showSpecificItems, entry}: ContextMenuParams) {
+        if (!showSpecificItems && entry?.workbookId) {
+            return false;
+        }
+
         const searchParams = new URLSearchParams(window.location.search);
         const revId = searchParams.get(URL_QUERY.REV_ID);
         return showSpecificItems ? !revId : true;
