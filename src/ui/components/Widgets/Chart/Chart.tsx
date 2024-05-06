@@ -219,18 +219,15 @@ export const Chart = (props: ChartNoWidgetProps) => {
             ],
         );
 
-    const handleMessageEvent = React.useCallback(
-        (event) => {
-            if (event.data.type === CHART_RELOAD_EVENT) {
-                reloadChart();
-            }
-        },
-        [reloadChart],
-    );
-
     // handle reload chart event for iframe preview
     React.useEffect(() => {
         const isEmbedded = isEmbeddedMode();
+        const handleMessageEvent = (event: MessageEvent) => {
+            if (event.data.type === CHART_RELOAD_EVENT) {
+                reloadChart();
+            }
+        };
+
         if (isEmbedded) {
             window.addEventListener('message', handleMessageEvent);
         }
@@ -240,7 +237,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 window.removeEventListener('message', handleMessageEvent);
             }
         };
-    }, [handleMessageEvent]);
+    }, [reloadChart]);
 
     return (
         <div ref={rootNodeRef} className={`${b(mods)}`}>
