@@ -10,9 +10,10 @@ import {
     getServerFeatures,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
-import {getChartApiContext} from './sandbox';
-import type {ChartBuilder} from './types';
 import {WizardWorker} from '../worker/types';
+
+import {getChartApiContext} from './chart-api-context';
+import type {ChartBuilder} from './types';
 
 const pool = workerpool.pool(path.resolve(__dirname, '../worker'));
 async function getWorker(options: {timeout: number}) {

@@ -8,10 +8,10 @@ import {
     StringParams,
 } from '../../../../../shared';
 
+import {ChartApiContext} from './chart-api-context';
 import {CommentsFetcherFetchResult, CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
 import {Console} from './console';
 import {DataFetcherResult} from './data-fetcher';
-import {ChartApiContext} from './sandbox';
 
 export type UiTabExportsControl = {
     type: string;

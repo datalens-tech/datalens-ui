@@ -1,4 +1,9 @@
-import {DashWidgetConfig, IChartEditor} from '../../../../../shared';
+import type {
+    DashWidgetConfig,
+    IChartEditor,
+    ServerChartsConfig,
+    Shared,
+} from '../../../../../shared';
 import {UISandboxContext, WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
@@ -22,8 +27,8 @@ type GetChartApiContextArgs = {
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     data?: Record<string, any>;
     dataStats?: any;
-    shared: Record<string, object>;
-    hooks: Record<string, any>;
+    shared: Record<string, object> | Shared | ServerChartsConfig;
+    hooks?: Record<string, any>;
     userLang: string | null;
 };
 
@@ -51,7 +56,7 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
             ...formatterConfig,
             __chartkitFormatter: true,
         }),
-        ...hooks.getSandboxApiMethods(),
+        ...hooks?.getSandboxApiMethods(),
     };
 
     api.resolveRelative = resolveRelativeDate;

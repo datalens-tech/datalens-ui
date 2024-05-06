@@ -1,8 +1,13 @@
 import workerpool from 'workerpool';
 
 import {ServerChartsConfig, Shared, WizardVisualizationId} from '../../../../../shared';
+import {buildChartsConfigPrivate} from '../../../../modes/charts/plugins/datalens/config';
+import {buildWizardD3Config} from '../../../../modes/charts/plugins/datalens/d3';
+import {buildHighchartsConfig} from '../../../../modes/charts/plugins/datalens/highcharts';
+import {buildGraphPrivate} from '../../../../modes/charts/plugins/datalens/js/js';
+import {buildSources} from '../../../../modes/charts/plugins/datalens/url/build-sources';
+import {getChartApiContext} from '../processor/chart-api-context';
 
-import {getChartApiContext} from '../processor/sandbox';
 import type {
     BuildChartArgs,
     BuildChartConfigArgs,
@@ -10,11 +15,6 @@ import type {
     BuildSourceArgs,
     WizardWorker,
 } from './types';
-import {buildChartsConfigPrivate} from '../../../../modes/charts/plugins/datalens/config';
-import {buildGraphPrivate} from '../../../../modes/charts/plugins/datalens/js/js';
-import {buildSources} from '../../../../modes/charts/plugins/datalens/url/build-sources';
-import {buildHighchartsConfig} from '../../../../modes/charts/plugins/datalens/highcharts';
-import {buildWizardD3Config} from '../../../../modes/charts/plugins/datalens/d3';
 
 const worker: WizardWorker = {
     buildSources: async (args: BuildSourceArgs) => {

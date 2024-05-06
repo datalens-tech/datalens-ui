@@ -6,8 +6,8 @@ import type {
     Shared,
     StringParams,
 } from '../../../../../shared';
-import {RuntimeMetadata} from '../processor/types';
 import {SourceRequests} from '../../../../modes/charts/plugins/datalens/url/build-sources/types';
+import {RuntimeMetadata} from '../processor/types';
 
 export type BuildSourceArgs = {
     shared: Shared;
