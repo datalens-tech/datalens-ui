@@ -1,10 +1,12 @@
 import {AppMiddleware, AuthPolicy, Request, Response} from '@gravity-ui/expresskit';
 import {AppContext} from '@gravity-ui/nodekit';
+import {PassportStatic} from 'passport';
 
 import {Feature, isEnabledServerFeature} from '../../../shared';
-import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
+import {isChartsMode, isDatalensMode, isFullMode, isZitadelEnabled} from '../../app-env';
 import {ChartsEngine} from '../../components/charts-engine';
 import {ping} from '../../controllers/ping';
+import {logout} from '../../controllers/zitadel';
 import {ExtendedAppRouteDescription} from '../../types/controllers';
 import {getConfiguredRoute} from '../../utils/routes';
 import {applyPluginRoutes} from '../charts/init-charts-engine';
@@ -12,11 +14,13 @@ import {applyPluginRoutes} from '../charts/init-charts-engine';
 export function getRoutes({
     ctx,
     chartsEngine,
+    passport,
     beforeAuth,
     afterAuth,
 }: {
     ctx: AppContext;
     chartsEngine?: ChartsEngine;
+    passport: PassportStatic;
     beforeAuth: AppMiddleware[];
     afterAuth: AppMiddleware[];
 }) {
@@ -30,6 +34,10 @@ export function getRoutes({
         },
     };
 
+    if (isZitadelEnabled) {
+        routes = {...routes, ...getZitadelRoutes({passport, beforeAuth, afterAuth})};
+    }
+
     if (isFullMode || isDatalensMode) {
         routes = {...routes, ...getDataLensRoutes({ctx, beforeAuth, afterAuth})};
     }
@@ -37,6 +45,44 @@ export function getRoutes({
     if (isFullMode || isChartsMode) {
         routes = {...routes, ...getChartsRoutes({chartsEngine, beforeAuth, afterAuth})};
     }
+
+    return routes;
+}
+
+function getZitadelRoutes({
+    passport,
+    beforeAuth,
+    afterAuth,
+}: {
+    passport: PassportStatic;
+    beforeAuth: AppMiddleware[];
+    afterAuth: AppMiddleware[];
+}) {
+    const routes: Record<string, ExtendedAppRouteDescription> = {
+        auth: {
+            beforeAuth,
+            afterAuth,
+            authHandler: passport.authenticate('openidconnect'),
+            route: 'GET /auth',
+            handler: () => {},
+        },
+        authCallback: {
+            beforeAuth,
+            afterAuth,
+            authHandler: passport.authenticate('openidconnect', {
+                successRedirect: '/',
+                failureRedirect: '/auth',
+            }),
+            route: 'GET /api/auth/callback',
+            handler: (_, __) => {},
+        },
+        logout: {
+            beforeAuth,
+            afterAuth,
+            route: 'GET /logout',
+            handler: logout,
+        },
+    };
 
     return routes;
 }
@@ -148,29 +194,34 @@ function getChartsRoutes({
             beforeAuth,
             afterAuth,
             route: 'POST /api/run',
+            apiRoute: true, // выдавать 401 если не аутентифицирован (когда просто висит график и шлет запросы)
             handler: chartsEngine.controllers.run,
         },
         postApiExport: {
             beforeAuth,
             afterAuth,
             route: 'POST /api/export',
+            apiRoute: true,
             handler: chartsEngine.controllers.export,
         },
         postApiMarkdownRender: {
             beforeAuth,
             afterAuth,
+            apiRoute: true,
             route: 'POST /api/markdown/render',
             handler: chartsEngine.controllers.markdown.render,
         },
         postApiMarkdownBatchRender: {
             beforeAuth,
             afterAuth,
+            apiRoute: true,
             route: 'POST /api/markdown/batchRender',
             handler: chartsEngine.controllers.markdown.batchRender,
         },
         getApiPrivateConfig: {
             beforeAuth,
             afterAuth,
+            apiRoute: true,
             route: 'GET  /api/private/config',
             handler: chartsEngine.controllers.config,
         },
@@ -179,30 +230,35 @@ function getChartsRoutes({
         postApiChartsV1Charts: {
             beforeAuth,
             afterAuth,
+            apiRoute: true,
             route: 'POST /api/charts/v1/charts',
             handler: chartsEngine.controllers.charts.create,
         },
         getApiChartsV1ChartsEntryByKey: {
             beforeAuth,
             afterAuth,
+            apiRoute: true,
             route: 'GET /api/charts/v1/charts/entryByKey',
             handler: chartsEngine.controllers.charts.entryByKey,
         },
         getApiChartsV1ChartsEntry: {
             beforeAuth,
             afterAuth,
+            apiRoute: true,
             route: 'GET /api/charts/v1/charts/:entryId',
             handler: chartsEngine.controllers.charts.get,
         },
         postApiChartsV1ChartsEntry: {
             beforeAuth,
             afterAuth,
+            apiRoute: true,
             route: 'POST /api/charts/v1/charts/:entryId',
             handler: chartsEngine.controllers.charts.update,
         },
         deleteApiChartsV1ChartsEntry: {
             beforeAuth,
             afterAuth,
+            apiRoute: true,
             route: 'DELETE /api/charts/v1/charts/:entryId',
             handler: chartsEngine.controllers.charts.delete,
         },

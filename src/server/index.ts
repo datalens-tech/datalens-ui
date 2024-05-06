@@ -5,8 +5,9 @@ import '../shared';
 import {AppEnvironment} from '../shared/constants/common';
 import {getAppEndpointsConfig} from '../shared/endpoints';
 
-import {appEnv} from './app-env';
+import {appEnv, isZitadelEnabled} from './app-env';
 import {getOpensourceLayoutConfig} from './components/layout/opensource-layout-config';
+import authZitadel from './middlewares/auth-zitadel';
 import {convertConnectionType} from './modes/charts/plugins/ql/utils/connection';
 import initOpensourceApp from './modes/opensource/app';
 import {nodekit} from './nodekit';
@@ -21,6 +22,10 @@ registerAppPlugins();
 nodekit.config.endpoints = getAppEndpointsConfig(
     appEnv as AppEnvironment.Production | AppEnvironment.Development,
 );
+
+if (isZitadelEnabled) {
+    nodekit.config.appAuthHandler = authZitadel;
+}
 
 const app = initOpensourceApp(nodekit);
 registry.setupApp(app);

@@ -29,6 +29,11 @@ export enum DeviceType {
     Desktop = 'desktop',
 }
 
+export enum Zitadel {
+    Enabled = 'enabled',
+    Disabled = 'disabled',
+}
+
 export const DEFAULT_PAGE_SIZE = 1000;
 
 export const ENABLE = 'enable';
