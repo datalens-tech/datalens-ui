@@ -8,7 +8,10 @@ import {
     StringParams,
     WizardVisualizationId,
 } from '../../../../../../../shared';
-import {getCurrentPage, getSortParams} from '../../../../../../components/charts-engine/utils';
+import {
+    getCurrentPage,
+    getSortParams,
+} from '../../../../../../components/charts-engine/components/processor/paramsUtils';
 import {BaseUrlPayload} from '../../types';
 import {SORT_ORDER} from '../../utils/constants';
 import {getSortData} from '../../utils/misc-helpers';
@@ -108,7 +111,6 @@ export const getPayloadWithCommonTableSettings = (
     },
 ): BaseUrlPayload => {
     const {fields, extraSettings, allItemsIds, datasetId, visualization, params} = options;
-
     const visualizationId = visualization.id;
 
     const isPivotTable = visualizationId === WizardVisualizationId.PivotTable;
@@ -136,9 +138,8 @@ export const getPayloadWithCommonTableSettings = (
     // without dimensions pagination makes no sense because offset will always be 0
     // and backend will be failed to process it
     if (dimensionsFromCurrentDataset.length && isPaginationEnabled && extraSettings?.limit) {
-        updatedPayload.limit = extraSettings?.limit;
-
         const page = getCurrentPage(params);
+        updatedPayload.limit = extraSettings?.limit;
         updatedPayload.offset = (page - 1) * extraSettings.limit;
     }
 

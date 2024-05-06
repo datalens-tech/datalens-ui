@@ -1,3 +1,22 @@
+import {UISandboxContext} from '../../../../../../shared/constants/ui-sandbox';
+
+const getObjectType = (object) => {
+    const entries = Object.entries(object);
+
+    return entries.reduce((acc, [key, value], i) => {
+        acc += `\n${key}: "${value}"\n`;
+        if (i === entries.length - 1) {
+            acc += '}';
+        }
+        return acc;
+    }, '{');
+};
+
+const UISandboxContextValues = Object.values(UISandboxContext).reduce((acc, value) => {
+    acc += ` | "${value}"`;
+    return acc;
+}, '');
+
 const basic = (next = []) => `
 interface IChartEditor {
     /**
@@ -37,6 +56,10 @@ interface IChartEditor {
      * years - y; month - M; weeks - w; days - d; hours - h; minutes - m; seconds - s; milliseconds - ms;
      */
     resolveInterval(intervalStr: string): {from: string, to: string};
+    /** Method uses to prepare function for invocation in browser */
+    wrapFn: (value: {fn: (...args: unknown[]) => void; ctx: ${UISandboxContextValues}}) => unknown;
+    /** Map of values are allowed to use in \`ChartEditor.wrapFn\` method */ 
+    UISandboxContext: ${getObjectType(UISandboxContext)},
 
     ${next.join('\n')}
 }

@@ -32,6 +32,8 @@
 
     &__setting-row {
         margin-top: 30px;
+        display: flex;
+        align-items: center;
     }
 
     &__setting-row + &__setting-row {

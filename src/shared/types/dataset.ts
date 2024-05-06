@@ -123,6 +123,7 @@ export interface Dataset {
         source_avatars: DatasetSourceAvatar[];
         source_features: {};
         sources: DatasetSource[];
+        revisionId: string;
     };
     workbook_id?: string;
     permissions?: Permissions;

@@ -15,12 +15,12 @@ import {getAllPlaceholderItems, log} from '../../utils/misc-helpers';
 import {prepareFieldsForPayload} from '../helpers';
 
 import {
-    BuildSourcesArgs,
     PrepareSingleSourceRequestArgs,
     PrepareSourceRequestBody,
     PrepareSourceRequestsArgs,
     SourceRequest,
     SourceRequests,
+    SourcesArgs,
 } from './types';
 
 const getAllPlaceholdersItemsForSourceRequest = (placeholders: ServerPlaceholder[]) => {
@@ -57,7 +57,7 @@ const prepareSourceRequestBody = (args: PrepareSourceRequestBody): SourceRequest
         sourceArgs: {
             shared: sourceArgs.shared,
             params: sourceArgs.params,
-        } as BuildSourcesArgs,
+        },
     };
 };
 
@@ -131,8 +131,9 @@ const prepareSourceRequests = (args: PrepareSourceRequestsArgs): SourceRequests 
     }
 };
 
-export const buildSources = (args: BuildSourcesArgs): SourceRequests => {
-    const {shared, apiVersion = '1.5'} = args;
+export const buildSources = (args: SourcesArgs): SourceRequests => {
+    const {shared} = args;
+    const apiVersion = args.apiVersion || '1.5';
     const config = mapChartsConfigToServerConfig(shared);
 
     shared.sharedData = config.sharedData;

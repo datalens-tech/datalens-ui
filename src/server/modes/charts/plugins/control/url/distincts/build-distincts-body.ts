@@ -6,9 +6,9 @@ import {
     ApiV2RequestBody,
     DatasetFieldType,
     FiltersOperationFromURL,
-    IChartEditor,
     Operations,
     StringParams,
+    resolveIntervalDate,
     resolveOperation,
     resolveRelativeDate,
     splitParamsToParametersAndFilters,
@@ -83,12 +83,10 @@ export const getDistinctsRequestBody = ({
     shared,
     params,
     datasetFields,
-    ChartEditor,
     req,
 }: {
     shared: ControlShared;
-    params: Record<string, string | string[]>;
-    ChartEditor: IChartEditor;
+    params: StringParams;
     datasetFields: PartialDatasetField[];
     req?: Request;
 }): ApiV2RequestBody => {
@@ -166,7 +164,7 @@ export const getDistinctsRequestBody = ({
             }
 
             if (values.length === 1 && String(values[0]).startsWith('__interval')) {
-                const resolvedInterval = ChartEditor.resolveInterval(values[0]);
+                const resolvedInterval = resolveIntervalDate(values[0]);
 
                 if (resolvedInterval) {
                     const {from, to} = resolvedInterval;

@@ -1,15 +1,13 @@
 import vm from 'vm';
 
-import {ChartsInsight, DashWidgetConfig, ServerChartsConfig} from '../../../../../shared';
+import type {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
-import {IChartEditor, Shared} from '../../../../../shared/types';
 import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
-import {getCurrentPage, getSortParams} from '../../utils';
-import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
+import {getChartApiContext} from './chart-api-context';
 import {Console} from './console';
-import {NativeModule, RuntimeMetadata} from './types';
+import type {NativeModule} from './types';
 
 const {
     RUNTIME_ERROR,
@@ -222,139 +220,6 @@ const execute = ({code, instance, filename, timeout}: ExecuteParams): SandboxExe
     };
 };
 
-export type ChartApiContext = {
-    ChartEditor: IChartEditor;
-    __runtimeMetadata: RuntimeMetadata;
-};
-
-export const getChartApiContext = ({
-    name,
-    params,
-    actionParams,
-    widgetConfig,
-    data,
-    dataStats,
-    shared = {},
-    userLang,
-}: {
-    name: string;
-    params: Record<string, string | string[]>;
-    actionParams: Record<string, string | string[]>;
-    widgetConfig?: DashWidgetConfig['widgetConfig'];
-    data?: Record<string, any>;
-    dataStats?: any;
-    shared: Shared | ServerChartsConfig | Record<string, object>;
-    userLang: string;
-}): ChartApiContext => {
-    const api = {
-        getSharedData: () => shared,
-        getLang: () => userLang,
-        resolveRelative: resolveRelativeDate,
-        resolveInterval: resolveIntervalDate,
-        resolveOperation: resolveOperation,
-        getWidgetConfig: () => widgetConfig || {},
-        getActionParams: () => actionParams || {},
-    } as IChartEditor;
-
-    const context = {
-        ChartEditor: api,
-        __runtimeMetadata: getOrphanedObject(),
-    };
-
-    context.__runtimeMetadata.userConfigOverride = getOrphanedObject();
-    context.__runtimeMetadata.libraryConfigOverride = getOrphanedObject();
-    context.__runtimeMetadata.extra = getOrphanedObject();
-    context.__runtimeMetadata.dataSourcesInfos = getOrphanedObject();
-
-    api.setError = (value) => {
-        context.__runtimeMetadata.error = value;
-    };
-
-    api.setChartsInsights = (value) => {
-        context.__runtimeMetadata.chartsInsights = value;
-    };
-
-    /** We need for backward compatibility with ≤0.19.2 */
-    api._setError = api.setError;
-
-    if (params) {
-        api.getParams = () => params;
-        api.getParam = (paramName: string) => params[paramName] || [];
-    }
-
-    if (name === 'Urls') {
-        api.setErrorTransform = (errorTransformer) => {
-            context.__runtimeMetadata.errorTransformer = errorTransformer;
-        };
-        api.getSortParams = () => {
-            return getSortParams(params);
-        };
-    }
-
-    if (name === 'Urls' || name === 'JavaScript') {
-        api.getCurrentPage = () => {
-            return getCurrentPage(params);
-        };
-    }
-
-    if (name === 'Params' || name === 'JavaScript' || name === 'UI' || name === 'Urls') {
-        api.updateParams = (updatedParams) => {
-            context.__runtimeMetadata.userParamsOverride = Object.assign(
-                {},
-                context.__runtimeMetadata.userParamsOverride,
-                updatedParams,
-            );
-        };
-        api.updateActionParams = (updatedActionParams) => {
-            context.__runtimeMetadata.userActionParamsOverride = Object.assign(
-                {},
-                context.__runtimeMetadata.userActionParamsOverride,
-                updatedActionParams,
-            );
-        };
-    }
-
-    if (name === 'UI' || name === 'JavaScript') {
-        api.getLoadedData = () => data || {};
-        api.getLoadedDataStats = () => dataStats || {};
-        api.setDataSourceInfo = (dataSourceKey, info) => {
-            context.__runtimeMetadata.dataSourcesInfos[dataSourceKey] = {info};
-        };
-
-        if (name === 'JavaScript') {
-            api.updateConfig = (updatedFragment) => {
-                context.__runtimeMetadata.userConfigOverride = Object.assign(
-                    {},
-                    context.__runtimeMetadata.userConfigOverride,
-                    updatedFragment,
-                );
-            };
-            api.updateHighchartsConfig = (updatedFragment) => {
-                context.__runtimeMetadata.libraryConfigOverride = Object.assign(
-                    {},
-                    context.__runtimeMetadata.libraryConfigOverride,
-                    updatedFragment,
-                );
-            };
-            api.updateLibraryConfig = api.updateHighchartsConfig;
-            api.setSideHtml = (html) => {
-                context.__runtimeMetadata.sideMarkdown = html;
-            };
-            api.setSideMarkdown = (markdown: string) => {
-                context.__runtimeMetadata.sideMarkdown = markdown;
-            };
-            api.setExtra = (key, value) => {
-                context.__runtimeMetadata.extra[key] = value;
-            };
-            api.setExportFilename = (filename: string) => {
-                context.__runtimeMetadata.exportFilename = filename;
-            };
-        }
-    }
-
-    return context;
-};
-
 const processTab = ({
     name,
     code,
@@ -380,20 +245,9 @@ const processTab = ({
         data,
         dataStats,
         shared,
-        userLang: userLang as string,
+        hooks,
+        userLang,
     });
-    context.ChartEditor = {
-        ...context.ChartEditor,
-        attachHandler: (handlerConfig: Record<string, any>) => ({
-            ...handlerConfig,
-            __chartkitHandler: true,
-        }),
-        attachFormatter: (formatterConfig: Record<string, any>) => ({
-            ...formatterConfig,
-            __chartkitFormatter: true,
-        }),
-        ...hooks.getSandboxApiMethods(),
-    };
 
     return execute({
         code,

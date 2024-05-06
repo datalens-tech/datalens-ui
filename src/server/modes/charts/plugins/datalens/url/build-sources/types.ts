@@ -10,7 +10,7 @@ import {
 import {MiddlewareUrl} from '../../../types';
 import {ApiVersion} from '../../types';
 
-export type BuildSourcesArgs = {
+export type SourcesArgs = {
     params: StringParams;
     shared: Shared;
     apiVersion?: ApiVersion;
@@ -21,7 +21,7 @@ export type PrepareSourceRequestsArgs = {
     datasetsIds: string[];
     visualization: ServerVisualization;
     extraSettings: ServerChartsConfig['extraSettings'];
-    sourceArgs: BuildSourcesArgs;
+    sourceArgs: SourcesArgs;
     links?: Link[];
 };
 
@@ -30,7 +30,7 @@ export type PrepareSingleSourceRequestArgs = {
     datasetsIds: string[];
     layerId?: string;
     placeholders: ServerPlaceholder[];
-    sourceArgs: BuildSourcesArgs;
+    sourceArgs: SourcesArgs;
     isPivotRequest: boolean;
     links?: Link[];
 };
@@ -38,7 +38,7 @@ export type PrepareSingleSourceRequestArgs = {
 export type SourceRequests = Record<string, SourceRequest>;
 
 export type SourceRequest = Omit<ApiV2Request, 'data'> & {
-    sourceArgs?: BuildSourcesArgs;
+    sourceArgs?: SourcesArgs;
     middlewareUrl?: MiddlewareUrl;
     hideInInspector?: boolean;
 };
@@ -46,6 +46,6 @@ export type SourceRequest = Omit<ApiV2Request, 'data'> & {
 export type PrepareSourceRequestBody = {
     datasetId: string;
     apiVersion: ApiVersion;
-    sourceArgs: BuildSourcesArgs;
+    sourceArgs: SourcesArgs;
     isPivotRequest: boolean;
 };

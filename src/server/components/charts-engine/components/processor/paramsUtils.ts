@@ -1,11 +1,6 @@
-import type {StringParams} from '../../../../shared';
+import {StringParams} from '../../../../../shared';
 
-export function getCurrentPage(params: StringParams) {
-    const page = Number(Array.isArray(params._page) ? params._page[0] : params._page);
-    return isNaN(page) ? 1 : page;
-}
-
-export function getSortParams(params: StringParams) {
+export const getSortParams = (params: StringParams) => {
     const columnId = Array.isArray(params._columnId) ? params._columnId[0] : params._columnId;
     const order = Array.isArray(params._sortOrder) ? params._sortOrder[0] : params._sortOrder;
     const _sortRowMeta = Array.isArray(params._sortRowMeta)
@@ -26,4 +21,13 @@ export function getSortParams(params: StringParams) {
     }
 
     return {columnId, order: Number(order), meta};
-}
+};
+
+export const getCurrentPage = (params: StringParams): number => {
+    const page = Number(Array.isArray(params._page) ? params._page[0] : params._page);
+    return isNaN(page) ? 1 : page;
+};
+
+export const getParam = (paramName: string, params: StringParams) => {
+    return params[paramName] || [];
+};
