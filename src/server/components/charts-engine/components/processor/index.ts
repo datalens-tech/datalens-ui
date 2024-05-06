@@ -499,6 +499,7 @@ export class Processor {
                 userLogin,
                 userLang,
                 isScreenshoter: Boolean(req.headers['x-charts-scr']),
+                ctx,
             });
             logSandboxDuration(paramsTabResults.executionTiming, paramsTabResults.filename, ctx);
 
@@ -552,6 +553,7 @@ export class Processor {
                 userLogin,
                 userLang,
                 isScreenshoter: Boolean(req.headers['x-charts-scr']),
+                ctx,
             });
 
             logSandboxDuration(sourcesTabResults.executionTiming, sourcesTabResults.filename, ctx);
@@ -720,6 +722,7 @@ export class Processor {
                     userLogin,
                     userLang,
                     isScreenshoter: Boolean(req.headers['x-charts-scr']),
+                    ctx,
                 });
             } else if (!uiOnly && config.data.map) {
                 // Highcharts tab
@@ -738,6 +741,7 @@ export class Processor {
                     userLogin,
                     userLang,
                     isScreenshoter: Boolean(req.headers['x-charts-scr']),
+                    ctx,
                 });
             } else if (!uiOnly && config.data.ymap) {
                 // Yandex.Maps tab
@@ -756,6 +760,7 @@ export class Processor {
                     userLogin,
                     userLang,
                     isScreenshoter: Boolean(req.headers['x-charts-scr']),
+                    ctx,
                 });
             }
 
@@ -800,6 +805,7 @@ export class Processor {
                     userLogin,
                     userLang,
                     isScreenshoter: Boolean(req.headers['x-charts-scr']),
+                    ctx,
                 });
 
                 logSandboxDuration(
@@ -829,6 +835,7 @@ export class Processor {
                     userLang,
                     hooks,
                     isScreenshoter: Boolean(req.headers['x-charts-scr']),
+                    ctx,
                 });
                 logSandboxDuration(jsTabResults.executionTiming, jsTabResults.filename, ctx);
 
@@ -873,6 +880,7 @@ export class Processor {
                 userLogin,
                 userLang,
                 isScreenshoter: Boolean(req.headers['x-charts-scr']),
+                ctx,
             });
             logSandboxDuration(uiTabResults.executionTiming, uiTabResults.filename, ctx);
 

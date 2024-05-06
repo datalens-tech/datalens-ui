@@ -1,6 +1,7 @@
-import {UISandboxContext} from '../../../../../../shared/constants/ui-sandbox';
+import {UISandboxContext} from 'shared/constants/ui-sandbox';
+import type {GetEditorTypeDefinitions} from 'ui/registry/units/editor/types/functions/getEditorTypeDefinitions';
 
-const getObjectType = (object) => {
+const getObjectType = (object: Record<string, unknown>) => {
     const entries = Object.entries(object);
 
     return entries.reduce((acc, [key, value], i) => {
@@ -17,7 +18,7 @@ const UISandboxContextValues = Object.values(UISandboxContext).reduce((acc, valu
     return acc;
 }, '');
 
-const basic = (next = []) => `
+const basic = (next: string[] = []) => `
 interface IChartEditor {
     /**
      * Return current user login
@@ -67,13 +68,6 @@ interface IChartEditor {
 declare let ChartEditor: IChartEditor;
 `;
 
-const partUpdateParams = `
-    /**
-     * Merge 'newParams' with config from tab 'Params'
-     */
-    updateParams(newParams: object): void;
-`;
-
 const ui = `
     /**
      * Return data from tab 'Urls'
@@ -83,7 +77,6 @@ const ui = `
      * Return requests info (latency etc.) from tab 'Urls'
      */
     getLoadedDataStats(): any;
-${partUpdateParams}
 `;
 
 const js = `
@@ -97,16 +90,12 @@ const js = `
     updateHighchartsConfig(newFragment: object): void;
 `;
 
-const params = `
-${partUpdateParams}
-`;
-
 // TODO: In the future, replace it with a similar one if I use the types in the charts-engine
 // monaco.languages.typescript.typescriptDefaults.addExtraLib(
 //     `export declare function next() : string`,
 //     'node_modules/@types/external/index.d.ts');
 
-export const getTypes = ({language, tab}) => {
+export const getEditorTypeDefinitions: GetEditorTypeDefinitions = ({language, tab}) => {
     if (language !== 'javascript') {
         return '';
     }
@@ -116,7 +105,6 @@ export const getTypes = ({language, tab}) => {
         case 'js':
             return basic([ui, js]);
         case 'params':
-            return basic([params]);
         default:
             return basic();
     }
