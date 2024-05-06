@@ -1,11 +1,10 @@
 import inRange from 'lodash/inRange';
+import {registry} from 'ui/registry';
 
 import {DL, URL_QUERY} from '../../../../constants';
 import {UrlSearch} from '../../../../utils';
 import {DEFAULT_TAB_ID, EVENT_DRAW_PREVIEW, UNRELEASED_MODULE_MARK} from '../../constants/common';
 import {copyTextToClipboard} from '../../utils/utils';
-
-import {getTypes} from './types/types';
 
 const LINE_SEPARATOR = '-';
 
@@ -144,8 +143,9 @@ export class MonacoUtils {
     }
 
     static addTypes(editor, monaco, id, language) {
+        const getEditorTypeDefinitions = registry.editor.functions.get('getEditorTypeDefinitions');
         return monaco.languages.typescript.javascriptDefaults.addExtraLib(
-            getTypes({language, tab: id}),
+            getEditorTypeDefinitions({language, tab: id}),
         );
     }
 

@@ -8,5 +8,6 @@ export const registerCommonPlugins = () => {
         getSourceAuthorizationHeaders,
         isEntryId,
         extractEntryId,
+        extendSandboxAPI: () => {},
     });
 };

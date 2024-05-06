@@ -1,17 +1,20 @@
 import vm from 'vm';
 
+import type {AppContext} from '@gravity-ui/nodekit';
+
 import type {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
 import {UISandboxContext, WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import type {IChartEditor} from '../../../../../shared/types';
 import type {UISandboxWrappedFunction} from '../../../../../shared/types/ui-sandbox';
+import {registry} from '../../../../registry';
 import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
 import {Console} from './console';
 import {getCurrentPage, getParam, getSortParams} from './paramsUtils';
-import {NativeModule} from './types';
+import type {NativeModule} from './types';
 
 const {
     RUNTIME_ERROR,
@@ -67,6 +70,7 @@ type ProcessTabParams = {
     userLang: string | null;
     nativeModules: Record<string, unknown>;
     isScreenshoter: boolean;
+    ctx: AppContext;
 };
 
 export class SandboxError extends Error {
@@ -267,6 +271,7 @@ const processTab = ({
     userLang,
     nativeModules,
     isScreenshoter,
+    ctx,
 }: ProcessTabParams) => {
     const api: IChartEditor = {
         getSharedData: () => shared,
@@ -328,6 +333,9 @@ const processTab = ({
         };
     };
 
+    const extendSandboxAPI = registry.common.functions.get('extendSandboxAPI');
+    extendSandboxAPI({api, context, tabName: name, appContext: ctx});
+
     if (params) {
         api.getParams = () => params;
         api.getParam = (paramName: string) => getParam(paramName, params);
@@ -345,13 +353,6 @@ const processTab = ({
     }
 
     if (name === 'Params' || name === 'JavaScript' || name === 'UI' || name === 'Urls') {
-        api.updateParams = (updatedParams) => {
-            context.__runtimeMetadata.userParamsOverride = Object.assign(
-                {},
-                context.__runtimeMetadata.userParamsOverride,
-                updatedParams,
-            );
-        };
         api.updateActionParams = (updatedActionParams) => {
             context.__runtimeMetadata.userActionParamsOverride = Object.assign(
                 {},
