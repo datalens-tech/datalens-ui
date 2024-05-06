@@ -1,7 +1,7 @@
 import type {ColorPalette, Palette, ServerField} from '../../../../../../../../../shared';
 import type {TableFieldBackgroundSettings} from '../../../../../../../../../shared/types/wizard/background-settings';
-import type {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
 import type {ChartColorsConfig} from '../../../../types';
+import type {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
 
 export interface GetFlatTableCellBackgroundSettingsStylesArgs {
     column: ServerField;

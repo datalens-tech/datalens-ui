@@ -6,6 +6,7 @@ import {
     ServerField,
     TableFieldBackgroundSettings,
 } from '../../../../../../../../../shared';
+import type {ChartColorsConfig} from '../../../../types';
 import {
     getCurrentGradient,
     getRangeDelta,
@@ -21,7 +22,6 @@ import {interpolateRgbBasis} from '../../../helpers/colors';
 import {PrepareFunctionDataRow} from '../../../types';
 
 import {GetBackgroundColorsMapByContinuousColumn} from './types';
-import type {ChartColorsConfig} from '../../../../types';
 
 const MAX_COLOR_DELTA_VALUE = 1;
 

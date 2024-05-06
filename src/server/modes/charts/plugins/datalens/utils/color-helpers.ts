@@ -11,9 +11,9 @@ import {
     getSortedData,
     transformHexToRgb,
 } from '../../../../../../shared';
+import {ChartColorsConfig} from '../types';
 
 import {getColor, getMountedColor} from './constants';
-import {ChartColorsConfig} from '../types';
 
 type HashTable = Record<string, number> & {colorGuid?: string};
 

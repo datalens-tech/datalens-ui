@@ -10,6 +10,7 @@ import {
     isNumberField,
     isPseudoField,
 } from '../../../../../../../shared';
+import type {ChartColorsConfig} from '../../types';
 import {ColorValue, getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {getColor, getMountedColor} from '../../utils/constants';
 import {findIndexInOrder} from '../../utils/misc-helpers';
@@ -17,7 +18,6 @@ import {addActionParamValue} from '../helpers/action-params';
 import {PiePoint, PrepareFunctionArgs} from '../types';
 
 import {getFormattedValue, isColoringByMeasure} from './utils';
-import type {ChartColorsConfig} from '../../types';
 
 export type PieConfig = {
     name: string;

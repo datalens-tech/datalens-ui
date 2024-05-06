@@ -1,8 +1,8 @@
 import {ExtendedSeriesLineOptions, WizardVisualizationId} from '../../../../../../../../../shared';
+import {ChartColorsConfig} from '../../../../types';
 import {mapAndColorizeGraphsByGradient} from '../../../../utils/color-helpers';
 
 import {ColorizeByGradientOptions} from './types';
-import {ChartColorsConfig} from '../../../../types';
 
 const colorizeColumnAndBarGraphs = (
     graphs: ExtendedSeriesLineOptions[],

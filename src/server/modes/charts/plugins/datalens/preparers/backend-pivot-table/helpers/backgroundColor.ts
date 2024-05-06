@@ -9,6 +9,8 @@ import {
     getFakeTitleOrTitle,
 } from '../../../../../../../../shared';
 import {selectServerPalette} from '../../../../../../../constants';
+import {registry} from '../../../../../../../registry';
+import {ChartColorsConfig} from '../../../types';
 import {colorizePivotTableCell} from '../../../utils/color-helpers';
 import {getColor} from '../../../utils/constants';
 import {getCurrentBackgroundGradient} from '../../helpers/backgroundSettings/misc';
@@ -23,8 +25,6 @@ import {
 } from '../types';
 
 import {getAnnotation, getDatasetFieldFromPivotTableValue, parsePivotTableCellId} from './misc';
-import {registry} from '../../../../../../../registry';
-import {ChartColorsConfig} from '../../../types';
 
 const getContinuousColorValue = (colorValue: undefined | null | string | number): number | null => {
     if (

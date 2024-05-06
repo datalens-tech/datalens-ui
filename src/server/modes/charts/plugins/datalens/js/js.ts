@@ -26,6 +26,7 @@ import {
     isMarkupItem,
     markupToRawString,
 } from '../../../../../../shared';
+import {registry} from '../../../../../registry';
 import {extractColorPalettesFromData} from '../../helpers/color-palettes';
 import {getDatasetIdAndLayerIdFromKey, getFieldList} from '../../helpers/misc';
 import prepareBackendPivotTableData from '../preparers/backend-pivot-table';
@@ -72,7 +73,6 @@ import {
 } from './helpers/layer-chart';
 import {prepareNotifications} from './helpers/notifications';
 import {getMergedTotals} from './helpers/totals';
-import {registry} from '../../../../../registry';
 
 const fallbackJSFuntion = require('./js-v1.5');
 

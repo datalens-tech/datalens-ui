@@ -8,9 +8,9 @@ import {
     isDimensionField,
     isNumberField,
 } from '../../../../../../../shared';
+import {ChartColorsConfig} from '../../types';
 import {getGradientStops} from '../../utils/color-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
-import {ChartColorsConfig} from '../../types';
 
 export function shouldUseGradientLegend(
     colorField: ServerColor | undefined,

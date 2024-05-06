@@ -7,6 +7,7 @@ import {
     Shared,
     getServerFeatures,
 } from '../../../../../../shared';
+import {registry} from '../../../../../registry';
 import {extractColorPalettesFromData} from '../../helpers/color-palettes';
 import {getDatasetIdAndLayerIdFromKey} from '../../helpers/misc';
 import {PrepareFunctionDataRow, PrepareFunctionResultData} from '../preparers/types';
@@ -15,7 +16,6 @@ import {LAT, LONG} from '../utils/constants';
 import {log} from '../utils/misc-helpers';
 
 import prepareSingleResult from './helpers/misc/prepare-single-result';
-import {registry} from '../../../../../registry';
 
 type MergedData = {
     result: PrepareFunctionResultData;

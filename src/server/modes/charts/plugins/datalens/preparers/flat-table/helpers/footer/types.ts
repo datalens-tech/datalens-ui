@@ -1,6 +1,6 @@
 import {ServerField} from '../../../../../../../../../shared';
-import {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
 import {ChartColorsConfig} from '../../../../types';
+import {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
 
 export type PrepareFooterValueArgs = {
     column: ServerField;
