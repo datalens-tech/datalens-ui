@@ -143,7 +143,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
 
         const handleMessageSend = (event: MessageEvent<string>) => {
             if (event.data === EMBEDDED_CHART_MESSAGE_NAME) {
-                sendEmbedHeight(previewRef);
+                sendEmbedHeight(previewRef.current);
             }
         };
 
@@ -191,7 +191,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
                 previewRef.current.dispatchEvent(event);
 
                 if (isEmbedded && window.name) {
-                    sendEmbedHeight(previewRef);
+                    sendEmbedHeight(previewRef.current);
                     PostMessage.send({
                         iFrameName: window.name,
                         isRendered: true,

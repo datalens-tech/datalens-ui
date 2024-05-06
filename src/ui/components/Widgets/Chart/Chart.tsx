@@ -221,22 +221,19 @@ export const Chart = (props: ChartNoWidgetProps) => {
 
     // handle reload chart event for iframe preview
     React.useEffect(() => {
-        const isEmbedded = isEmbeddedMode();
-        const handleMessageEvent = (event: MessageEvent) => {
-            if (event.data.type === CHART_RELOAD_EVENT) {
-                reloadChart();
-            }
-        };
+        if (isEmbeddedMode()) {
+            const handleMessageEvent = (event: MessageEvent) => {
+                if (event.data.type === CHART_RELOAD_EVENT) {
+                    reloadChart();
+                }
+            };
 
-        if (isEmbedded) {
             window.addEventListener('message', handleMessageEvent);
-        }
 
-        return () => {
-            if (isEmbedded) {
+            return () => {
                 window.removeEventListener('message', handleMessageEvent);
-            }
-        };
+            };
+        }
     }, [reloadChart]);
 
     return (

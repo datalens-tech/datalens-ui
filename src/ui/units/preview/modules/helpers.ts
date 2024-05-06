@@ -2,12 +2,12 @@ import {PostMessage} from 'ui/units/dash/modules/postMessage';
 
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../libs/DatalensChartkit/ChartKit/helpers/constants';
 
-export function sendEmbedHeight(previewRef: React.RefObject<HTMLDivElement>) {
-    if (!previewRef.current) {
+export function sendEmbedHeight(parentElement?: HTMLDivElement | null) {
+    if (!parentElement) {
         return;
     }
 
-    const scrollableNodesCollection = previewRef.current.getElementsByClassName(
+    const scrollableNodesCollection = parentElement.getElementsByClassName(
         CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
     );
 

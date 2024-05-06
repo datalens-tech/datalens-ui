@@ -26,7 +26,7 @@ export class PostMessage {
         const isEmbedded = isEmbeddedMode();
         if (isEmbedded) {
             if (PostMessage.isInIFrame()) {
-                parent.postMessage(data, '*');
+                window.parent.postMessage(data, '*');
             } else {
                 console.warn('Trying to postMessage while not being inside an iframe');
             }
