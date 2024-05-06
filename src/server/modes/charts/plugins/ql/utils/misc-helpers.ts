@@ -169,6 +169,7 @@ export interface QLRenderResultYagr {
     axes?: any[];
     tablePreviewData?: QlConfigPreviewTableData;
     timeZone?: string;
+    tooltip?: any;
 }
 
 const clickhouseQuotemap: Record<string, string> = {
