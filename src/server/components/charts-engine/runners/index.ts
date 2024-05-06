@@ -6,9 +6,9 @@ import type {WorkbookId} from '../../../../shared';
 import {EDITOR_TYPE} from '../../../../shared/constants';
 import {ResolvedConfig} from '../components/storage/types';
 
-// import {runChart} from './chart';
+import {runChart} from './chart';
 import {runEditor} from './editor';
-import {runChart} from './wizard';
+import {runChart as runWizardChart} from './wizard';
 
 export type Runner = {
     name: string;
@@ -52,6 +52,13 @@ const runners: Runner[] = [
     },
 
     {
+        name: 'dash',
+        trigger: new Set(['control_dash']),
+        safeConfig: true,
+        handler: runChart,
+    },
+
+    {
         name: 'wizard',
         trigger: new Set([
             'graph_wizard_node',
@@ -59,12 +66,11 @@ const runners: Runner[] = [
             'ymap_wizard_node',
             'metric_wizard_node',
             'markup_wizard_node',
-            'control_dash',
             'timeseries_wizard_node',
             'd3_wizard_node',
         ]),
         safeConfig: true,
-        handler: runChart,
+        handler: runWizardChart,
     },
 ];
 
