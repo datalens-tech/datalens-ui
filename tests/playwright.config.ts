@@ -55,6 +55,8 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     workers,
     testMatch,
     retries,
+    // temp
+    maxFailures: 10,
     reporter,
     grep,
     fullyParallel: true,
