@@ -234,6 +234,8 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 window.removeEventListener('message', handleMessageEvent);
             };
         }
+
+        return undefined;
     }, [reloadChart]);
 
     return (
