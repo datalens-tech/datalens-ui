@@ -11,9 +11,9 @@ interface PostMessageUrlChange {
     data: Pick<Location, 'pathname' | 'search'>;
 }
 
-type PostMessageSendData = PostMessageUrlChange;
+type PostMessageSendData = PostMessageUrlChange | {[key: string]: any};
 
-export default class PostMessage {
+export class PostMessage {
     static isInIFrame() {
         try {
             return window.self !== window.top;
@@ -26,7 +26,7 @@ export default class PostMessage {
         const isEmbedded = isEmbeddedMode();
         if (isEmbedded) {
             if (PostMessage.isInIFrame()) {
-                parent.window.postMessage(data, '*');
+                parent.postMessage(data, '*');
             } else {
                 console.warn('Trying to postMessage while not being inside an iframe');
             }

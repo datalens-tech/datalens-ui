@@ -13,11 +13,11 @@ import {pushStats} from 'ui/components/Widgets/Chart/helpers/helpers';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {fetchEntryById} from 'ui/store/actions/entryContent';
+import {PostMessage} from 'ui/units/dash/modules/postMessage';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'ui/units/workbooks/store/actions';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
 import type {ChartKit as ChartKitType} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
-import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../libs/DatalensChartkit/ChartKit/helpers/constants';
 import {
     ChartKitDataProvider,
     ChartKitWrapperLoadStatusUnknown,
@@ -26,6 +26,7 @@ import {
 import {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import {registry} from '../../../../registry';
 import {SNAPTER_DESIRED_CLASS} from '../../modules/constants/constants';
+import {sendEmbedHeight} from '../../modules/helpers';
 
 import './Preview.scss';
 import 'ui/components/Widgets/Chart/Chart.scss';
@@ -36,22 +37,6 @@ interface PreviewProps extends RouteComponentProps<{idOrSource: string}> {
     asideHeaderSize: number;
     setPageEntry: (pageEntry: {entryId: string; key: string}) => void;
     isEmbedded?: boolean;
-}
-
-function sendEmbedHeight(previewRef: React.RefObject<HTMLDivElement>) {
-    if (!previewRef.current) {
-        return;
-    }
-
-    const scrollableNodesCollection = previewRef.current.getElementsByClassName(
-        CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
-    );
-
-    if (scrollableNodesCollection.length) {
-        const height = scrollableNodesCollection[0].scrollHeight;
-
-        window.parent.postMessage({iFrameName: window.name, embedHeight: height}, '*');
-    }
 }
 
 const Preview: React.FC<PreviewProps> = (props) => {
@@ -207,6 +192,10 @@ const Preview: React.FC<PreviewProps> = (props) => {
 
                 if (isEmbedded && window.name) {
                     sendEmbedHeight(previewRef);
+                    PostMessage.send({
+                        iFrameName: window.name,
+                        isRendered: true,
+                    });
                 }
             }
         },
