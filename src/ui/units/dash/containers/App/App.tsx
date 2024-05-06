@@ -18,7 +18,7 @@ import {CurrentPageEntry} from '../../../../components/Navigation/types';
 import {DL, EMBEDDED_DASH_MESSAGE_NAME} from '../../../../constants/common';
 import {isEmbeddedMode, isIframe, isNoScrollMode} from '../../../../utils/embedded';
 import {dispatchResize, sendEmbedDashHeight} from '../../modules/helpers';
-import PostMessage, {PostMessageCode} from '../../modules/postMessage';
+import {PostMessage, PostMessageCode} from '../../modules/postMessage';
 import {setTabHashState} from '../../store/actions/dashTyped';
 import {
     selectDashEntry,
