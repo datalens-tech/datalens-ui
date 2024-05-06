@@ -194,7 +194,7 @@ function getChartsRoutes({
             beforeAuth,
             afterAuth,
             route: 'POST /api/run',
-            apiRoute: true, // выдавать 401 если не аутентифицирован (когда просто висит график и шлет запросы)
+            apiRoute: true,
             handler: chartsEngine.controllers.run,
         },
         postApiExport: {
