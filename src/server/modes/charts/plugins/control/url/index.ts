@@ -26,14 +26,13 @@ const buildManualSelectorSources = (shared: ControlShared): Record<PropertyKey, 
 export const buildSources = ({
     shared,
     params,
-    ChartEditor,
 }: SourceControlArgs): SourceControlRequests | Record<PropertyKey, never> => {
     switch (shared.sourceType) {
         case DashTabItemControlSourceType.Manual:
             return buildManualSelectorSources(shared);
         case DashTabItemControlSourceType.Connection:
             return {
-                connectionDistincts: prepareTypedQueryRequest({shared, params, ChartEditor}),
+                connectionDistincts: prepareTypedQueryRequest({shared, params}),
             };
         case DashTabItemControlSourceType.Dataset:
         default: {
@@ -51,7 +50,7 @@ export const buildSources = ({
                 shared.source.elementType !== DashTabItemControlElementType.Checkbox &&
                 shared.source.datasetFieldType !== DatasetFieldType.Measure
             ) {
-                sources.distincts = prepareDistinctsRequest({shared, params, ChartEditor});
+                sources.distincts = prepareDistinctsRequest({shared, params});
             }
 
             return sources;

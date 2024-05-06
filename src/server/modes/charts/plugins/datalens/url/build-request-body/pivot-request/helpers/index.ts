@@ -13,6 +13,7 @@ import {
     isMeasureName,
     isMeasureValue,
 } from '../../../../../../../../../shared';
+import {getSortParams} from '../../../../../../../../components/charts-engine/components/processor/paramsUtils';
 import {BackendPivotTableCellCustom} from '../../../../types';
 
 import {
@@ -209,9 +210,9 @@ const isSortSupported = (meta: BackendPivotTableCellCustom, measures: number, gu
 };
 
 const getStructureWithSortingFromField = (args: GetStructureWithSortingFromFieldArgs) => {
-    const {ChartEditor, field, rowsReq, columnsReq, measuresReq} = args;
-    const params = ChartEditor.getSortParams();
-    const meta = params.meta as
+    const {params, field, rowsReq, columnsReq, measuresReq} = args;
+    const sortParams = getSortParams(params);
+    const meta = sortParams.meta as
         | {column: BackendPivotTableCellCustom; row: BackendPivotTableCellCustom}
         | undefined;
 
@@ -274,7 +275,7 @@ export const getPivotStructure = ({
     measuresReq,
     rowsReq,
     annotations,
-    ChartEditor,
+    params,
     totals,
 }: GetPivotStructureArgs): ApiV2RequestPivot['structure'] => {
     // PivotStructure is a mapping of elements from columns, measures and rows
@@ -285,7 +286,7 @@ export const getPivotStructure = ({
         ...measuresReq.map((field) => {
             return getStructureWithSortingFromField({
                 field,
-                ChartEditor,
+                params,
                 rowsReq,
                 columnsReq,
                 measuresReq,
