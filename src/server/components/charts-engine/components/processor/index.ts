@@ -638,7 +638,10 @@ export class Processor {
             }, {});
 
             hrStart = process.hrtime();
-            const libraryTabResult = await builder.buildChartLibraryConfig(data);
+            const libraryTabResult = await builder.buildChartLibraryConfig({
+                data,
+                params: usedParams,
+            });
 
             ctx.log('EditorEngine::HighCharts', {duration: getDuration(hrStart)});
 
@@ -661,7 +664,7 @@ export class Processor {
             let jsTabResults;
             if (!uiOnly) {
                 hrStart = process.hrtime();
-                const configTabResults = await builder.buildChartConfig(data);
+                const configTabResults = await builder.buildChartConfig({data, params: usedParams});
 
                 logSandboxDuration(configTabResults.executionTiming, configTabResults.name, ctx);
                 ctx.log('EditorEngine::Config', {duration: getDuration(hrStart)});
@@ -670,7 +673,11 @@ export class Processor {
                 userConfig = configTabResults.exports as UserConfig;
 
                 hrStart = process.hrtime();
-                jsTabResults = await builder.buildChart(data, resolvedSources);
+                jsTabResults = await builder.buildChart({
+                    data,
+                    sources: resolvedSources,
+                    params: usedParams,
+                });
                 logSandboxDuration(jsTabResults.executionTiming, jsTabResults.name, ctx);
 
                 timings.jsExecution = getDuration(hrStart);
@@ -699,7 +706,7 @@ export class Processor {
                 updateParams(jsTabResults.runtimeMetadata.userParamsOverride);
             }
 
-            const uiTabResults = await builder.buildUI(data);
+            const uiTabResults = await builder.buildUI({data, params: usedParams});
             logSandboxDuration(uiTabResults.executionTiming, uiTabResults.name, ctx);
 
             const uiTabExports = uiTabResults.exports;

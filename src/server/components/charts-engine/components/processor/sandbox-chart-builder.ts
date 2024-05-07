@@ -3,7 +3,6 @@ import {ChartsEngine} from '../../index';
 import {ResolvedConfig} from '../storage/types';
 import {normalizeParams} from '../utils';
 
-import {DataFetcherResult} from './data-fetcher';
 import {ProcessorHooks} from './hooks';
 import {Sandbox, SandboxExecuteResult} from './sandbox';
 import {ChartBuilder, ChartBuilderResult} from './types';
@@ -137,8 +136,8 @@ export const getSandboxChartBuilder = async (
                 name: tabResult.filename,
             };
         },
-        buildChartLibraryConfig: async (loadedData: unknown) => {
-            const data = loadedData as Record<string, any> | undefined;
+        buildChartLibraryConfig: async (options) => {
+            const data = options.data as Record<string, any> | undefined;
             let tabResult;
             if (config.data.graph) {
                 const tabName = type.startsWith('timeseries') ? 'Yagr' : 'Highcharts';
@@ -151,7 +150,7 @@ export const getSandboxChartBuilder = async (
                     nativeModules: chartsEngine.nativeModules,
                     shared,
                     modules,
-                    params: normalizedParamsOverride,
+                    params: options.params,
                     actionParams: normalizedActionParamsOverride,
                     widgetConfig,
                     data,
@@ -169,7 +168,7 @@ export const getSandboxChartBuilder = async (
                     nativeModules: chartsEngine.nativeModules,
                     shared,
                     modules,
-                    params: normalizedParamsOverride,
+                    params: options.params,
                     actionParams: normalizedActionParamsOverride,
                     widgetConfig,
                     data,
@@ -187,7 +186,7 @@ export const getSandboxChartBuilder = async (
                     nativeModules: chartsEngine.nativeModules,
                     shared,
                     modules,
-                    params: normalizedParamsOverride,
+                    params: options.params,
                     actionParams: normalizedActionParamsOverride,
                     widgetConfig,
                     data,
@@ -206,8 +205,8 @@ export const getSandboxChartBuilder = async (
 
             return null;
         },
-        buildChartConfig: async (loadedData: unknown) => {
-            const data = loadedData as Record<string, any> | undefined;
+        buildChartConfig: async (options) => {
+            const data = options.data as Record<string, any> | undefined;
             const configTab = EDITOR_TYPE_CONFIG_TABS[type as keyof typeof EDITOR_TYPE_CONFIG_TABS];
             const tabResult = Sandbox.processTab({
                 name: 'Config',
@@ -217,7 +216,7 @@ export const getSandboxChartBuilder = async (
                 nativeModules: chartsEngine.nativeModules,
                 shared,
                 modules,
-                params: normalizedParamsOverride,
+                params: options.params,
                 actionParams: normalizedActionParamsOverride,
                 widgetConfig,
                 data,
@@ -231,11 +230,8 @@ export const getSandboxChartBuilder = async (
                 name: tabResult.filename,
             };
         },
-        buildChart: async (
-            loadedData: unknown,
-            resolvedSources?: Record<string, DataFetcherResult>,
-        ) => {
-            const data = loadedData as Record<string, any> | undefined;
+        buildChart: async (options) => {
+            const data = options.data as Record<string, any> | undefined;
             const tabResult = Sandbox.processTab({
                 name: 'JavaScript',
                 code: config.data.js || 'module.exports = {};',
@@ -243,11 +239,11 @@ export const getSandboxChartBuilder = async (
                 nativeModules: chartsEngine.nativeModules,
                 shared,
                 modules,
-                params: normalizedParamsOverride,
+                params: options.params,
                 actionParams: normalizedActionParamsOverride,
                 widgetConfig,
                 data,
-                dataStats: resolvedSources,
+                dataStats: options.sources,
                 userLogin,
                 userLang,
                 hooks,
@@ -259,8 +255,8 @@ export const getSandboxChartBuilder = async (
                 name: tabResult.filename,
             };
         },
-        buildUI: async (loadedData: unknown) => {
-            const data = loadedData as Record<string, any> | undefined;
+        buildUI: async (options) => {
+            const data = options.data as Record<string, any> | undefined;
             const tabResult = Sandbox.processTab({
                 name: 'UI',
                 code: config.data.ui || '',
@@ -269,7 +265,7 @@ export const getSandboxChartBuilder = async (
                 nativeModules: chartsEngine.nativeModules,
                 shared,
                 modules,
-                params: normalizedParamsOverride,
+                params: options.params,
                 actionParams: normalizedActionParamsOverride,
                 widgetConfig,
                 data,

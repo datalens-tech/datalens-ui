@@ -143,11 +143,15 @@ export type ChartBuilder = {
     }) => Promise<Record<string, ChartBuilderResult>>;
     buildParams: () => Promise<ChartBuilderResult>;
     buildUrls: () => Promise<ChartBuilderResult>;
-    buildChartLibraryConfig: (data?: unknown) => Promise<ChartBuilderResult | null>;
-    buildChartConfig: (data?: unknown) => Promise<ChartBuilderResult>;
-    buildChart: (
-        data: unknown,
-        sources?: Record<string, DataFetcherResult>,
-    ) => Promise<ChartBuilderResult>;
-    buildUI: (data?: unknown) => Promise<ChartBuilderResult>;
+    buildChartLibraryConfig: (args: {
+        data?: unknown;
+        params: StringParams;
+    }) => Promise<ChartBuilderResult | null>;
+    buildChartConfig: (args: {data?: unknown; params: StringParams}) => Promise<ChartBuilderResult>;
+    buildChart: (args: {
+        data: unknown;
+        sources?: Record<string, DataFetcherResult>;
+        params: StringParams;
+    }) => Promise<ChartBuilderResult>;
+    buildUI: (args: {data?: unknown; params: StringParams}) => Promise<ChartBuilderResult>;
 };
