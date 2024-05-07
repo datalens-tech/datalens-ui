@@ -1,6 +1,5 @@
 import {
     ApiV2Request,
-    IChartEditor,
     Link,
     ServerChartsConfig,
     ServerPlaceholder,
@@ -14,7 +13,6 @@ import {ApiVersion} from '../../types';
 export type SourcesArgs = {
     params: StringParams;
     shared: Shared;
-    ChartEditor: IChartEditor;
     apiVersion?: ApiVersion;
 };
 
