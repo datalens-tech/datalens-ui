@@ -1,3 +1,4 @@
+import type {YagrConfig} from '@gravity-ui/chartkit/yagr';
 import {dateTimeParse} from '@gravity-ui/date-utils';
 
 import {
@@ -169,7 +170,7 @@ export interface QLRenderResultYagr {
     axes?: any[];
     tablePreviewData?: QlConfigPreviewTableData;
     timeZone?: string;
-    tooltip?: any;
+    tooltip?: YagrConfig['tooltip'];
 }
 
 const clickhouseQuotemap: Record<string, string> = {
