@@ -4,8 +4,8 @@ import {FormRow} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import {Utils} from '../../../../../../../ui';
 import {Feature} from '../../../../../../../shared';
+import {Utils} from '../../../../../../../ui';
 import {HintRow} from '../../Control2/Sections/AppearanceSection/Rows/HintRow/HintRow';
 import {InnerTitleRow} from '../../Control2/Sections/AppearanceSection/Rows/InnerTitleRow/InnerTitleRow';
 import {TitleRow} from '../../Control2/Sections/AppearanceSection/Rows/TitleRow/TitleRow';

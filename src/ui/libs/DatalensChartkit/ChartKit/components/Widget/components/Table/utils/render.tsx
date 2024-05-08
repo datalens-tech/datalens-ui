@@ -461,7 +461,7 @@ export const getColumnsAndNames = ({
                             width: columnWidth,
                             tableWidth,
                             resize: resizeTable,
-                        }),
+                        } as RestOptions),
                     customStyle: ({row, header, name}) => {
                         if (header) {
                             return camelCaseCss(columnCss);

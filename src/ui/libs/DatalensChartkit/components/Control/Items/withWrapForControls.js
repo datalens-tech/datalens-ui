@@ -3,9 +3,9 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 import {ControlQA} from 'shared';
+import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {DL} from 'ui/constants';
 import {isMobileView} from 'ui/utils/mobile';
-import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 
 import {CONTROL_TYPE} from '../../../modules/constants/constants';
 
