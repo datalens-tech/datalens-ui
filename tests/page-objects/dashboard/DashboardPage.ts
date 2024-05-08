@@ -1204,7 +1204,6 @@ class DashboardPage extends BasePage {
             slct(ControlQA.controlSettings),
         );
         await controlSettingsButton.click();
-        await this.dialogControl.waitForVisible();
     }
 
     /**

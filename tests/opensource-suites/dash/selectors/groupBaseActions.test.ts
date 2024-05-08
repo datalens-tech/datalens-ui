@@ -80,6 +80,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
 
             await dashboardPage.enterEditMode();
             await dashboardPage.clickFirstControlSettingsButton();
+            await dashboardPage.dialogControl.waitForVisible();
             await dashboardPage.addSelectorToGroup(PARAMS.SECOND_CONTROL);
 
             await page.click(slct(ControlQA.dialogControlApplyBtn));
@@ -95,6 +96,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             await dashboardPage.enterEditMode();
 
             await dashboardPage.clickFirstControlSettingsButton();
+            await dashboardPage.dialogControl.waitForVisible();
 
             // we need to hover item to show control menu
             await page.locator(slct(TabMenuQA.Item)).nth(1).hover();
@@ -132,6 +134,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             await dashboardPage.enterEditMode();
             await dashboardPage.clickFirstControlSettingsButton();
 
+            await dashboardPage.dialogControl.waitForVisible();
             await expect(page.locator(slct(TabMenuQA.List))).toBeVisible();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
@@ -168,6 +171,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
 
             await dashboardPage.enterEditMode();
             await dashboardPage.clickFirstControlSettingsButton();
+            await dashboardPage.dialogControl.waitForVisible();
             await page.locator(slct(DialogGroupControlQa.placementButton)).click();
 
             // the controls of placement prevent you from clicking on the middle of item, so
