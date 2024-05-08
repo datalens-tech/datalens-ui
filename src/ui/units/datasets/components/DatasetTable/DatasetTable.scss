@@ -59,7 +59,7 @@
     }
 
     &__header-column-source {
-        padding-left: 13px;
+        padding-left: 10px;
     }
 
     & &__column {
@@ -161,6 +161,14 @@
 
         &-hidden {
             right: 7px;
+        }
+    }
+
+    &__btn-source {
+        justify-content: start;
+
+        &_formula {
+            padding-left: 12px;
         }
     }
 
