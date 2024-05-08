@@ -37,6 +37,8 @@ const getNewStateHash = async (page: Page, action: () => Promise<void>) => {
 };
 
 datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
+    let skipAfterEach = false;
+
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
         // some page need to be loaded so we can get data of feature flag from DL var
         await openTestPage(page, '/');
@@ -44,6 +46,7 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
         const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
 
         if (!isEnabledGroupControls) {
+            skipAfterEach = true;
             datalensTest.skip();
         }
         const dashboardPage = new DashboardPage({page});
@@ -56,14 +59,15 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
                 ]);
             },
         });
+
+        await dashboardPage.clickFirstControlSettingsButton();
     });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        const dashboardPage = new DashboardPage({page});
-
-        const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
-        if (!isEnabledGroupControls) {
+        if (skipAfterEach) {
             return;
         }
+
+        const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.deleteDash();
     });
