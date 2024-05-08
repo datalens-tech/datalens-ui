@@ -14,6 +14,8 @@
   "button_save-as-draft": "Сохранить как черновик",
   "button_settings": "Настройки",
   "button_tabs": "Вкладки",
+  "dialog_deprecation-apply-label": "Обновить",
+  "dialog_deprecation-cancel-label": "Отмена",
   "dialog_deprecation-confirm-header": "Обновление настроек дэшборда",
   "dialog_deprecation-confirm-text": "После обновления работа дэшборда может отличаться вы уверены что хотите продолжить?",
   "dialog_deprecation-copy-text": "Данная версия дэшборда устарела, при копировании настройки будут автоматически обновлены.",

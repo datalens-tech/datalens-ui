@@ -197,6 +197,8 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
             onCancel: this.props.closeDialogConfirm,
             message: i18n('dialog_deprecation-confirm-text'),
             confirmHeaderText: i18n('dialog_deprecation-confirm-header'),
+            confirmButtonText: i18n('dialog_deprecation-apply-label'),
+            cancelButtonText: i18n('dialog_deprecation-cancel-label'),
             cancelButtonView: 'flat',
             confirmButtonView: 'normal',
             isWarningConfirm: true,

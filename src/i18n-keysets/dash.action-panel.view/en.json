@@ -14,6 +14,8 @@
   "button_save-as-draft": "Save as draft",
   "button_settings": "Settings",
   "button_tabs": "Tabs",
+  "dialog_deprecation-apply-label": "Update",
+  "dialog_deprecation-cancel-label": "Cancel",
   "dialog_deprecation-confirm-header": "Update current dashboard",
   "dialog_deprecation-confirm-text": "After update dashboard may behave differently are you sure?",
   "dialog_deprecation-copy-text": "Current dashboard version is deprecated, while coping settings will be updated.",
