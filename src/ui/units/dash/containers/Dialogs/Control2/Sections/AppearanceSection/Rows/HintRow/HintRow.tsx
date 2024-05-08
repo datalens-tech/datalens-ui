@@ -5,13 +5,14 @@ import {Checkbox} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {registry} from 'ui/registry';
-import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
+
+import {registry} from '../../../../../../../../../registry';
+import {setSelectorDialogItem} from '../../../../../../../store/actions/dashTyped';
 import {
     getDatasetField,
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,
-} from 'units/dash/store/selectors/dashTypedSelectors';
+} from '../../../../../../../store/selectors/dashTypedSelectors';
 
 const b = block('control2-appearance-section');
 

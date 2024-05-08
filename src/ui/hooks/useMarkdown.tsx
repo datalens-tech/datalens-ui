@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {DL} from 'ui';
-
 import {YfmWrapper} from '../components/YfmWrapper/YfmWrapper';
+import {DL} from '../constants';
 import {getSdk} from '../libs/schematic-sdk';
 
 type Props = {
