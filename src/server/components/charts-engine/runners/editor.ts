@@ -3,13 +3,17 @@ import {isObject} from 'lodash';
 
 import {Feature, isEnabledServerFeature} from '../../../../shared';
 import {Processor, ProcessorParams} from '../components/processor';
+import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
 import {getDuration} from '../components/utils';
 
 import {runServerlessEditor} from './serverlessEditor';
 
 import {RunnerHandlerProps} from '.';
 
-export const runEditor = (parentContext: AppContext, runnerHandlerProps: RunnerHandlerProps) => {
+export const runEditor = async (
+    parentContext: AppContext,
+    runnerHandlerProps: RunnerHandlerProps,
+) => {
     const enableServerlessEditor = Boolean(
         isEnabledServerFeature(parentContext, Feature.EnableServerlessEditor),
     );
@@ -27,6 +31,15 @@ export const runEditor = (parentContext: AppContext, runnerHandlerProps: RunnerH
 
     const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
+    const chartBuilder = await getSandboxChartBuilder({
+        userLang: res.locals && res.locals.lang,
+        userLogin: res.locals && res.locals.login,
+        params,
+        widgetConfig,
+        config,
+        isScreenshoter: Boolean(req.headers['x-charts-scr']),
+        chartsEngine,
+    });
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
         paramsOverride: params,
@@ -41,6 +54,7 @@ export const runEditor = (parentContext: AppContext, runnerHandlerProps: RunnerH
         isEditMode: Boolean(res.locals.editMode),
         configResolving,
         cacheToken: req.headers['x-charts-cache-token'] || null,
+        builder: chartBuilder,
     };
 
     if (

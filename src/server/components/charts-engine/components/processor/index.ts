@@ -25,9 +25,11 @@ import {CommentsFetcher, CommentsFetcherPrepareCommentsParams} from './comments-
 import {DataFetcher, DataFetcherResult} from './data-fetcher';
 import {extractDependencies} from './dependencies';
 import {ProcessorHooks} from './hooks';
-import {Sandbox, SandboxError, SandboxExecuteResult} from './sandbox';
+import {SandboxError} from './sandbox';
 import {StackTracePreparer} from './stack-trace-prepaper';
 import {
+    ChartBuilder,
+    ChartBuilderResult,
     ProcessorErrorResponse,
     ProcessorFiles,
     ProcessorLogs,
@@ -35,6 +37,7 @@ import {
     UiTabExports,
     UserConfig,
 } from './types';
+import {getMessageFromUnknownError} from './utils';
 
 const {
     CONFIG_LOADING_ERROR,
@@ -57,17 +60,11 @@ const {
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
 } = configConstants;
 
-const ONE_SECOND = 1000;
-const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
-
-const getMessageFromUnknownError = (e: unknown) =>
-    isObject(e) && 'message' in e && isString(e.message) ? e.message : '';
-
 function collectModulesLogs({
     processedModules,
     logsStorage,
 }: {
-    processedModules?: Record<string, SandboxExecuteResult>;
+    processedModules?: Record<string, ChartBuilderResult>;
     logsStorage: ProcessorLogs;
 }) {
     if (!processedModules) {
@@ -76,10 +73,10 @@ function collectModulesLogs({
 
     Object.keys(processedModules).forEach((moduleName) => {
         const module = processedModules[moduleName];
-        module.logs.forEach((logLine) => {
+        module.logs?.forEach((logLine) => {
             logLine.unshift({type: 'string', value: `[${moduleName}]`});
         });
-        logsStorage.modules = logsStorage.modules.concat(module.logs);
+        logsStorage.modules = logsStorage.modules.concat(module.logs || []);
     });
 }
 
@@ -142,6 +139,7 @@ export type ProcessorParams = {
     ctx: AppContext;
     cacheToken: string | string[] | null;
     workbookId?: WorkbookId;
+    builder: ChartBuilder;
 };
 
 export class Processor {
@@ -153,7 +151,6 @@ export class Processor {
         widgetConfig = {},
         configOverride,
         useUnreleasedConfig,
-        userLogin = null,
         userLang,
         userId = null,
         iamToken = null,
@@ -164,6 +161,7 @@ export class Processor {
         configResolving,
         ctx,
         workbookId,
+        builder,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -173,7 +171,7 @@ export class Processor {
         const logs: ProcessorLogs = {
             modules: [],
         };
-        let processedModules: Record<string, SandboxExecuteResult> = {};
+        let processedModules: Record<string, ChartBuilderResult> = {};
         let modulesLogsCollected = false;
         let resolvedSources: Record<string, DataFetcherResult> | undefined;
         let config: ResolvedConfig;
@@ -363,17 +361,14 @@ export class Processor {
             }
 
             hrStart = process.hrtime();
-
-            let resolvedModules: ResolvedConfig[];
-
             try {
-                resolvedModules = await Processor.resolveDependencies({
-                    chartsEngine,
-                    config,
-                    subrequestHeaders,
+                processedModules = await builder.buildModules({
                     req,
                     ctx,
-                    workbookId,
+                    subrequestHeaders,
+                    onModuleBuild: ({executionTiming, filename}) => {
+                        logSandboxDuration(executionTiming, filename, ctx);
+                    },
                 });
             } catch (error) {
                 ctx.logError('DEPS_RESOLVE_ERROR', error);
@@ -423,36 +418,10 @@ export class Processor {
             ctx.log('EditorEngine::DepsResolved', {duration: getDuration(hrStart)});
 
             hrStart = process.hrtime();
-
-            processedModules = resolvedModules.reduce<Record<string, SandboxExecuteResult>>(
-                (modules, resolvedModule) => {
-                    const name = resolvedModule.key;
-                    modules[name] = Sandbox.processModule({
-                        name,
-                        code: resolvedModule.data.js,
-                        modules: Object.keys(modules).reduce<Record<string, unknown>>(
-                            (acc, moduleName) => {
-                                acc[moduleName] = modules[moduleName].exports;
-                                return acc;
-                            },
-                            {},
-                        ) as Record<string, object>,
-                        userLogin,
-                        userLang,
-                        nativeModules: chartsEngine.nativeModules,
-                        isScreenshoter: Boolean(req.headers['x-charts-scr']),
-                    });
-                    logSandboxDuration(modules[name].executionTiming, modules[name].filename, ctx);
-                    return modules;
-                },
-                {},
-            );
-
             ctx.log('EditorEngine::DepsProcessed', {duration: getDuration(hrStart)});
 
-            let shared;
             try {
-                shared = JSON.parse(config.data.shared || '{}');
+                await builder.buildShared();
             } catch (error) {
                 ctx.logError('Error during shared tab parsing', error);
 
@@ -475,33 +444,12 @@ export class Processor {
                 return failedResponse;
             }
 
-            const modules: Record<string, unknown> = {};
-            Object.keys(processedModules).forEach((moduleName) => {
-                const module = processedModules[moduleName];
-                modules[moduleName] = module.exports;
-            });
-
             const {params: normalizedParamsOverride, actionParams: normalizedActionParamsOverride} =
                 normalizeParams(paramsOverride);
 
             hrStart = process.hrtime();
-            const paramsTabResults = Sandbox.processTab({
-                name: 'Params',
-                code: config.data.params,
-                timeout: ONE_SECOND,
-                hooks,
-                nativeModules: chartsEngine.nativeModules,
-                params: normalizedParamsOverride,
-                actionParams: normalizedActionParamsOverride,
-                widgetConfig,
-                shared,
-                modules,
-                userLogin,
-                userLang,
-                isScreenshoter: Boolean(req.headers['x-charts-scr']),
-            });
-            logSandboxDuration(paramsTabResults.executionTiming, paramsTabResults.filename, ctx);
-
+            const paramsTabResults = await builder.buildParams();
+            logSandboxDuration(paramsTabResults.executionTiming, paramsTabResults.name, ctx);
             const paramsTabError = paramsTabResults.runtimeMetadata.error;
             if (paramsTabError) {
                 throw paramsTabError;
@@ -533,28 +481,17 @@ export class Processor {
             updateParams(paramsTabResults.runtimeMetadata.userParamsOverride);
             updateActionParams(paramsTabResults.runtimeMetadata.userActionParamsOverride);
 
-            logs.Params = paramsTabResults.logs;
+            if (paramsTabResults.logs) {
+                logs.Params = paramsTabResults.logs;
+            }
 
             resolveParams(params as Record<string, string[]>);
 
             hrStart = process.hrtime();
-            const sourcesTabResults = Sandbox.processTab({
-                name: 'Urls',
-                code: config.data.url,
-                timeout: ONE_SECOND,
-                hooks,
-                nativeModules: chartsEngine.nativeModules,
-                shared,
-                modules,
-                params,
-                actionParams,
-                widgetConfig,
-                userLogin,
-                userLang,
-                isScreenshoter: Boolean(req.headers['x-charts-scr']),
-            });
 
-            logSandboxDuration(sourcesTabResults.executionTiming, sourcesTabResults.filename, ctx);
+            const sourcesTabResults = await builder.buildUrls();
+
+            logSandboxDuration(sourcesTabResults.executionTiming, sourcesTabResults.name, ctx);
             ctx.log('EditorEngine::Urls', {duration: getDuration(hrStart)});
             logs.Urls = sourcesTabResults.logs;
 
@@ -700,74 +637,17 @@ export class Processor {
                 return acc;
             }, {});
 
-            let libraryTabResult;
             hrStart = process.hrtime();
-            if (!uiOnly && config.data.graph) {
-                const tabName = type.startsWith('timeseries') ? 'Yagr' : 'Highcharts';
-                // Highcharts tab
-                libraryTabResult = Sandbox.processTab({
-                    name: tabName,
-                    code: config.data.graph,
-                    timeout: ONE_SECOND,
-                    hooks,
-                    nativeModules: chartsEngine.nativeModules,
-                    shared,
-                    modules,
-                    params,
-                    actionParams,
-                    widgetConfig,
-                    data,
-                    userLogin,
-                    userLang,
-                    isScreenshoter: Boolean(req.headers['x-charts-scr']),
-                });
-            } else if (!uiOnly && config.data.map) {
-                // Highcharts tab
-                libraryTabResult = Sandbox.processTab({
-                    name: 'Highmaps',
-                    code: config.data.map,
-                    timeout: ONE_SECOND,
-                    hooks,
-                    nativeModules: chartsEngine.nativeModules,
-                    shared,
-                    modules,
-                    params,
-                    actionParams,
-                    widgetConfig,
-                    data,
-                    userLogin,
-                    userLang,
-                    isScreenshoter: Boolean(req.headers['x-charts-scr']),
-                });
-            } else if (!uiOnly && config.data.ymap) {
-                // Yandex.Maps tab
-                libraryTabResult = Sandbox.processTab({
-                    name: 'Yandex.Maps',
-                    code: config.data.ymap,
-                    timeout: ONE_SECOND,
-                    hooks,
-                    nativeModules: chartsEngine.nativeModules,
-                    shared,
-                    modules,
-                    params,
-                    actionParams,
-                    widgetConfig,
-                    data,
-                    userLogin,
-                    userLang,
-                    isScreenshoter: Boolean(req.headers['x-charts-scr']),
-                });
-            }
+            const libraryTabResult = await builder.buildChartLibraryConfig({
+                data,
+                params: usedParams,
+            });
 
             ctx.log('EditorEngine::HighCharts', {duration: getDuration(hrStart)});
 
             let libraryConfig;
             if (libraryTabResult) {
-                logSandboxDuration(
-                    libraryTabResult.executionTiming,
-                    libraryTabResult.filename,
-                    ctx,
-                );
+                logSandboxDuration(libraryTabResult.executionTiming, libraryTabResult.name, ctx);
                 libraryConfig = libraryTabResult.exports || {};
                 logs.Highcharts = libraryTabResult.logs;
 
@@ -784,53 +664,21 @@ export class Processor {
             let jsTabResults;
             if (!uiOnly) {
                 hrStart = process.hrtime();
-                const configTab = EDITOR_TYPE_CONFIG_TABS[type];
-                const configTabResults = Sandbox.processTab({
-                    name: 'Config',
-                    code: config.data[configTab as keyof typeof config.data] || '',
-                    timeout: ONE_SECOND,
-                    hooks,
-                    nativeModules: chartsEngine.nativeModules,
-                    shared,
-                    modules,
-                    params,
-                    actionParams,
-                    widgetConfig,
-                    data,
-                    userLogin,
-                    userLang,
-                    isScreenshoter: Boolean(req.headers['x-charts-scr']),
-                });
+                const configTabResults = await builder.buildChartConfig({data, params: usedParams});
 
-                logSandboxDuration(
-                    configTabResults.executionTiming,
-                    configTabResults.filename,
-                    ctx,
-                );
+                logSandboxDuration(configTabResults.executionTiming, configTabResults.name, ctx);
                 ctx.log('EditorEngine::Config', {duration: getDuration(hrStart)});
 
                 logs.Config = configTabResults.logs;
                 userConfig = configTabResults.exports as UserConfig;
 
                 hrStart = process.hrtime();
-                jsTabResults = Sandbox.processTab({
-                    name: 'JavaScript',
-                    code: config.data.js || 'module.exports = {};',
-                    timeout: JS_EXECUTION_TIMEOUT,
-                    nativeModules: chartsEngine.nativeModules,
-                    shared,
-                    modules,
-                    params,
-                    actionParams,
-                    widgetConfig,
+                jsTabResults = await builder.buildChart({
                     data,
-                    dataStats: resolvedSources,
-                    userLogin,
-                    userLang,
-                    hooks,
-                    isScreenshoter: Boolean(req.headers['x-charts-scr']),
+                    sources: resolvedSources,
+                    params: usedParams,
                 });
-                logSandboxDuration(jsTabResults.executionTiming, jsTabResults.filename, ctx);
+                logSandboxDuration(jsTabResults.executionTiming, jsTabResults.name, ctx);
 
                 timings.jsExecution = getDuration(hrStart);
 
@@ -858,23 +706,8 @@ export class Processor {
                 updateParams(jsTabResults.runtimeMetadata.userParamsOverride);
             }
 
-            const uiTabResults = Sandbox.processTab({
-                name: 'UI',
-                code: config.data.ui || '',
-                timeout: ONE_SECOND,
-                hooks,
-                nativeModules: chartsEngine.nativeModules,
-                shared,
-                modules,
-                params,
-                actionParams,
-                widgetConfig,
-                data,
-                userLogin,
-                userLang,
-                isScreenshoter: Boolean(req.headers['x-charts-scr']),
-            });
-            logSandboxDuration(uiTabResults.executionTiming, uiTabResults.filename, ctx);
+            const uiTabResults = await builder.buildUI({data, params: usedParams});
+            logSandboxDuration(uiTabResults.executionTiming, uiTabResults.name, ctx);
 
             const uiTabExports = uiTabResults.exports;
             let uiScheme: UiTabExports | null = null;
