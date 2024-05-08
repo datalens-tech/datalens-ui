@@ -127,6 +127,9 @@ export const shouldUseUISandbox = (target: TargetValue) => {
 
     let result = false;
     const checkObjectKey = (obj: TargetValue) => {
+        if (!obj || typeof obj !== 'object') {
+            return;
+        }
         Object.keys(obj).forEach((key) => {
             if (key === WRAPPED_FN_KEY) {
                 result = true;
