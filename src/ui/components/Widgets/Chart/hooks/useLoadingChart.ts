@@ -873,6 +873,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         handleError,
         handleRetry,
         loadChartData: loadChart,
+        reloadChart: loadChartData,
         setLoadingProps,
         loadControls,
         drillDownFilters,
