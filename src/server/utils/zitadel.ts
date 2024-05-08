@@ -22,6 +22,8 @@ export const introspect = async (ctx: AppContext, token?: string): Promise<boole
             throw new Error('Token not provided');
         }
 
+        const start = Date.now();
+
         const response = await axios.post(
             `${zitadelUri}/oauth/v2/introspect`,
             new URLSearchParams({token}),
@@ -36,7 +38,7 @@ export const introspect = async (ctx: AppContext, token?: string): Promise<boole
         const {active} = response.data;
         const result = Boolean(active);
 
-        ctx.log(`Token introspected successfully`);
+        ctx.log(`Token introspected successfully within: ${Date.now() - start} ms`);
         return result;
     } catch (e) {
         ctx.logError('Failed to introspect token', e);
