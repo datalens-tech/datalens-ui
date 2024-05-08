@@ -13,7 +13,7 @@ import {GroupControl} from './GroupControl/GroupControl';
 import Settings from './Settings/Settings';
 import Tabs from './Tabs/Tabs';
 import {TextWrapper as Text} from './Text/TextWrapper';
-import Title from './Title/Title';
+import {Title} from './Title/Title';
 import Widget from './Widget/Widget';
 
 // TODO: to see if dialogs with complex content will slow down due to the fact that mount/unmount is happening

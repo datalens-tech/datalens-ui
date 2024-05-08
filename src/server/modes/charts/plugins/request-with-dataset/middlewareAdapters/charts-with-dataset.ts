@@ -63,7 +63,9 @@ export default async (
     });
 
     const data = getUrlsRequestBody({
-        ...source.sourceArgs,
+        params: source.sourceArgs.params,
+        shared: source.sourceArgs.shared,
+        apiVersion: source.sourceArgs.apiVersion,
         datasetId,
         datasetFields,
         layerId,

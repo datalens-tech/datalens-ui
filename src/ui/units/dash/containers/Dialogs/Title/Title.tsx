@@ -7,11 +7,13 @@ import {i18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
 import {
     DashTabItemTitle,
+    DashTabItemTitleSize,
     DialogDashTitleQA,
     DialogDashWidgetItemQA,
     DialogDashWidgetQA,
+    Feature,
 } from 'shared';
-import {DatalensGlobalState} from 'ui';
+import {DatalensGlobalState, Utils} from 'ui';
 
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
 import {setItemData} from '../../../store/actions/dashTyped';
@@ -20,12 +22,18 @@ import {
     selectIsDialogVisible,
     selectOpenedItemData,
 } from '../../../store/selectors/dashTypedSelectors';
+import {PaletteBackground} from '../components/PaletteBackground/PaletteBackground';
 
 import HoverRadioButton from './HoverRadioButton/HoverRadioButton';
 
 import './Title.scss';
 
-const SIZES = ['l', 'm', 's', 'xs'];
+const SIZES = [
+    DashTabItemTitleSize.L,
+    DashTabItemTitleSize.M,
+    DashTabItemTitleSize.S,
+    DashTabItemTitleSize.XS,
+];
 const RADIO_TEXT = ['Large', 'Medium', 'Small', 'XSmall'];
 
 const b = block('dialog-title');
@@ -35,25 +43,29 @@ export interface OwnProps {}
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 
-interface State {
+type State = {
     prevVisible?: boolean;
     validation?: {text?: string};
     text?: string;
-    size?: string;
+    size?: DashTabItemTitleSize;
     showInTOC?: boolean;
     autoHeight?: boolean;
-}
+    hasBackground?: boolean;
+    backgroundColor?: string;
+};
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-class Title extends React.PureComponent<Props, State> {
+class TitleComponent extends React.PureComponent<Props, State> {
     static defaultProps = {
         data: {
             text: i18n('dash.title-dialog.edit', 'value_default'),
             size: SIZES[0],
             showInTOC: true,
             autoHeight: false,
-        } as DashTabItemTitle['data'],
+            hasBackground: false,
+            backgroundColor: 'transparent',
+        },
     };
 
     static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -68,6 +80,8 @@ class Title extends React.PureComponent<Props, State> {
             size: nextProps.data.size,
             showInTOC: nextProps.data.showInTOC,
             autoHeight: Boolean(nextProps.data.autoHeight),
+            hasBackground: Boolean(nextProps.data.background?.enabled),
+            backgroundColor: nextProps.data.background?.color || '',
         };
     }
 
@@ -75,7 +89,11 @@ class Title extends React.PureComponent<Props, State> {
 
     render() {
         const {id, visible} = this.props;
-        const {text, size, showInTOC, validation, autoHeight} = this.state;
+        const {text, size, showInTOC, validation, autoHeight, hasBackground, backgroundColor} =
+            this.state;
+
+        const showBgSetting = Utils.isEnabledFeature(Feature.ShowDashWidgetBg);
+
         return (
             <Dialog
                 open={visible}
@@ -121,6 +139,25 @@ class Title extends React.PureComponent<Props, State> {
                             {i18n('dash.dashkit-plugin-common.view', 'label_autoheight-checkbox')}
                         </Checkbox>
                     </div>
+                    {showBgSetting && (
+                        <div className={b('setting-row')}>
+                            <Checkbox
+                                checked={Boolean(hasBackground)}
+                                onChange={this.handleHasBackgroundChanged}
+                            >
+                                {i18n(
+                                    'dash.dashkit-plugin-common.view',
+                                    'label_background-checkbox',
+                                )}
+                            </Checkbox>
+                            {Boolean(hasBackground) && (
+                                <PaletteBackground
+                                    color={backgroundColor}
+                                    onSelect={this.handleHasBackgroundSelected}
+                                />
+                            )}
+                        </div>
+                    )}
                 </Dialog.Body>
                 <Dialog.Footer
                     onClickButtonApply={this.onApply}
@@ -144,10 +181,10 @@ class Title extends React.PureComponent<Props, State> {
             validation: {},
         });
 
-    onSizeChange = (size?: string) => this.setState({size});
+    onSizeChange = (size?: string) => this.setState({size: size as DashTabItemTitleSize});
 
     onApply = () => {
-        const {text, size, showInTOC, autoHeight} = this.state;
+        const {text, size, showInTOC, autoHeight, hasBackground, backgroundColor} = this.state;
         if (text?.trim()) {
             this.props.setItemData({
                 data: {
@@ -155,6 +192,14 @@ class Title extends React.PureComponent<Props, State> {
                     size,
                     showInTOC,
                     autoHeight,
+                    ...(Utils.isEnabledFeature(Feature.ShowDashWidgetBg)
+                        ? {
+                              background: {
+                                  enabled: hasBackground,
+                                  color: backgroundColor,
+                              },
+                          }
+                        : {}),
                 },
             });
             this.props.closeDialog();
@@ -170,6 +215,14 @@ class Title extends React.PureComponent<Props, State> {
     handleAutoHeightChanged = () => {
         this.setState({autoHeight: !this.state.autoHeight});
     };
+
+    handleHasBackgroundChanged = () => {
+        this.setState({hasBackground: !this.state.hasBackground});
+    };
+
+    handleHasBackgroundSelected = (color: string) => {
+        this.setState({backgroundColor: color});
+    };
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
@@ -183,4 +236,4 @@ const mapDispatchToProps = {
     setItemData,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Title);
+export const Title = connect(mapStateToProps, mapDispatchToProps)(TitleComponent);

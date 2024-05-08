@@ -82,6 +82,12 @@ type DataFetcherRequestOptions = {
     json?: boolean;
 };
 
+type SourceWithMiddlewareUrl = Source & Required<Pick<Source, 'middlewareUrl' | 'sourceArgs'>>;
+
+function isSourceWithMiddlewareUrl(source: Source): source is SourceWithMiddlewareUrl {
+    return isObject(source.middlewareUrl) && isObject(source.sourceArgs);
+}
+
 function getDatasetId(publicTargetUri?: string | Record<string, string>) {
     if (!publicTargetUri || typeof publicTargetUri !== 'string') {
         return null;
@@ -177,7 +183,7 @@ export class DataFetcher {
                         ? DataFetcher.fetchSource({
                               req,
                               sourceName,
-                              source: isString(source) ? ({url: source} as Source) : source,
+                              source: isString(source) ? {url: source} : source,
                               chartsEngine,
                               fetchingStartTime,
                               subrequestHeaders,
@@ -719,7 +725,7 @@ export class DataFetcher {
             requestOptions.headers['x-forwarded-for'] = req.headers['x-forwarded-for'];
         }
 
-        if (source.middlewareUrl) {
+        if (isSourceWithMiddlewareUrl(source)) {
             const middlewareSourceConfig = DataFetcher.getSourceConfig({
                 chartsEngine,
                 sourcePath: source.middlewareUrl.sourceName,
@@ -727,7 +733,7 @@ export class DataFetcher {
 
             if (middlewareSourceConfig?.middlewareAdapter) {
                 source = await middlewareSourceConfig.middlewareAdapter({
-                    source: source as Source & Required<Pick<Source, 'middlewareUrl'>>,
+                    source,
                     sourceName,
                     req,
                     iamToken: iamToken ?? undefined,

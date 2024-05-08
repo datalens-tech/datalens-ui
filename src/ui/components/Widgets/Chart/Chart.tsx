@@ -9,6 +9,8 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {StringParams} from 'shared';
 import {getDataProviderData} from 'ui/libs/DatalensChartkit/components/ChartKitBase/helpers';
+import {CHART_RELOAD_EVENT} from 'ui/units/preview/modules/constants/constants';
+import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
@@ -161,6 +163,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         yandexMapAPIWaiting,
         dataProps,
         isWidgetMenuDataChanged,
+        reloadChart,
     } = useLoadingChart({
         chartKitRef: forwardedRef,
         dataProvider,
@@ -215,6 +218,25 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 disableChartLoader,
             ],
         );
+
+    // handle reload chart event for iframe preview
+    React.useEffect(() => {
+        if (isEmbeddedMode()) {
+            const handleMessageEvent = (event: MessageEvent) => {
+                if (event.data.type === CHART_RELOAD_EVENT) {
+                    reloadChart();
+                }
+            };
+
+            window.addEventListener('message', handleMessageEvent);
+
+            return () => {
+                window.removeEventListener('message', handleMessageEvent);
+            };
+        }
+
+        return undefined;
+    }, [reloadChart]);
 
     return (
         <div ref={rootNodeRef} className={`${b(mods)}`}>
