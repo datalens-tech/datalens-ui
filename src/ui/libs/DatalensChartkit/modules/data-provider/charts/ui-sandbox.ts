@@ -1,4 +1,3 @@
-import {isObject} from 'lodash';
 import type {QuickJSContext, QuickJSWASMModule} from 'quickjs-emscripten';
 
 import {WRAPPED_FN_KEY} from '../../../../../../shared/constants/ui-sandbox';
@@ -128,7 +127,7 @@ export const shouldUseUISandbox = (target: TargetValue) => {
 
     let result = false;
     const checkObjectKey = (obj: TargetValue) => {
-        if (!isObject(obj)) {
+        if (obj === undefined || obj === null) {
             return;
         }
         Object.keys(obj).forEach((key) => {
