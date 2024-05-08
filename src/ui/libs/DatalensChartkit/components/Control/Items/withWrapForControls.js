@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import {ControlQA} from 'shared';
 import {DL} from 'ui/constants';
 import {isMobileView} from 'ui/utils/mobile';
+import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 
 import {CONTROL_TYPE} from '../../../modules/constants/constants';
-import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 
 const b = block('chartkit-control-item');
 

@@ -25,6 +25,7 @@ import {
     isMarkupItem,
 } from 'shared';
 
+import {MarkdownHelpPopover} from '../../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {Markup} from '../../../../../../../../components/Markup';
 import {markupToRawString} from '../../../../../../modules/table';
 import {ChartKitDataTable, DataTableData} from '../../../../../../types';
@@ -45,7 +46,6 @@ import {
     selectBarSettingValue,
 } from './misc';
 import type {ActionParamsData} from './types';
-import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 
 const b = block('chartkit-table');
 const DATE_FORMAT_BY_SCALE = {
