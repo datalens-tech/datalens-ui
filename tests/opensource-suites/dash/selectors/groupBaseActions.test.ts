@@ -59,9 +59,13 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             datalensTest.skip();
         }
     });
-
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
+
+        const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
+        if (!isEnabledGroupControls) {
+            return;
+        }
 
         await dashboardPage.deleteDash();
     });
@@ -70,6 +74,13 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
         'Selector is successfully added and removed from selectors group',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
+
+            await openTestPage(page, '/');
+            const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
+
+            if (!isEnabledGroupControls) {
+                return;
+            }
 
             // adding selector to existing group
             await dashboardPage.createDashboard({
@@ -117,6 +128,13 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
         'Old single selector is transformed into a new one on saving after editing and it does not change its size',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
+            await openTestPage(page, '/');
+            const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
+
+            if (!isEnabledGroupControls) {
+                return;
+            }
+
             // open the dashboard with a selector on one of the tabs
             await openTestPage(page, config.dash.urls.DashboardWithTabsAndSelectors);
             await dashboardPage.duplicateDashboard({
@@ -153,6 +171,12 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
         'Order of selectors in group changes after editing their placement',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
+            await openTestPage(page, '/');
+            const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
+
+            if (!isEnabledGroupControls) {
+                return;
+            }
 
             // adding selector to existing group
             await dashboardPage.createDashboard({

@@ -46,9 +46,6 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
         if (!isEnabledGroupControls) {
             datalensTest.skip();
         }
-    });
-
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.createDashboard({
@@ -62,6 +59,11 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
     });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
+
+        const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
+        if (!isEnabledGroupControls) {
+            return;
+        }
 
         await dashboardPage.deleteDash();
     });
