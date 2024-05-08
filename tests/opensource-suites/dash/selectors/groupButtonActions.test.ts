@@ -60,6 +60,7 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
             },
         });
 
+        await dashboardPage.enterEditMode();
         await dashboardPage.clickFirstControlSettingsButton();
     });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
