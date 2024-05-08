@@ -10,6 +10,7 @@ import {config} from '../../constants';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
 import {Console} from './console';
+import {getCurrentPage, getParam, getSortParams} from './paramsUtils';
 import {NativeModule} from './types';
 
 const {
@@ -329,46 +330,18 @@ const processTab = ({
 
     if (params) {
         api.getParams = () => params;
-        api.getParam = (paramName: string) => params[paramName] || [];
+        api.getParam = (paramName: string) => getParam(paramName, params);
     }
 
     if (name === 'Urls') {
         api.setErrorTransform = (errorTransformer) => {
             context.__runtimeMetadata.errorTransformer = errorTransformer;
         };
-        api.getSortParams = () => {
-            const columnId = Array.isArray(params._columnId)
-                ? params._columnId[0]
-                : params._columnId;
-            const order = Array.isArray(params._sortOrder)
-                ? params._sortOrder[0]
-                : params._sortOrder;
-            const _sortRowMeta = Array.isArray(params._sortRowMeta)
-                ? params._sortRowMeta[0]
-                : params._sortRowMeta;
-            const _sortColumnMeta = Array.isArray(params._sortColumnMeta)
-                ? params._sortColumnMeta[0]
-                : params._sortColumnMeta;
-
-            let meta: Record<string, any>;
-            try {
-                meta = {
-                    column: _sortColumnMeta ? JSON.parse(_sortColumnMeta) : {},
-                    row: _sortRowMeta ? JSON.parse(_sortRowMeta) : {},
-                };
-            } catch {
-                meta = {};
-            }
-
-            return {columnId, order: Number(order), meta};
-        };
+        api.getSortParams = () => getSortParams(params);
     }
 
     if (name === 'Urls' || name === 'JavaScript') {
-        api.getCurrentPage = () => {
-            const page = Number(Array.isArray(params._page) ? params._page[0] : params._page);
-            return isNaN(page) ? 1 : page;
-        };
+        api.getCurrentPage = () => getCurrentPage(params);
     }
 
     if (name === 'Params' || name === 'JavaScript' || name === 'UI' || name === 'Urls') {

@@ -21,6 +21,8 @@ import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 import {ITEM_TYPE} from '../containers/Dialogs/constants';
 import {TabsHashStates} from '../store/actions/dashTyped';
 
+import {PostMessage} from './postMessage';  
+
 export type CopiedConfigContext = {
     workbookId: WorkbookId;
 };
@@ -276,7 +278,7 @@ export function sendEmbedDashHeight(wrapRef: React.RefObject<HTMLDivElement>) {
 
     const height = wrapRef.current.scrollHeight;
     if (height) {
-        window.parent.postMessage({iFrameName: window.name, embedHeight: height}, '*');
+        PostMessage.send({iFrameName: window.name, embedHeight: height});
     }
 }
 
