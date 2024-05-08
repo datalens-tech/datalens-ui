@@ -3,7 +3,7 @@ import React from 'react';
 
 import type {Config, DashKit} from '@gravity-ui/dashkit';
 import {ChevronDown, TriangleExclamationFill} from '@gravity-ui/icons';
-import {Button, Dialog, DropdownMenu, Icon, Popup, Select} from '@gravity-ui/uikit';
+import {Button, Dialog, DropdownMenu, Icon, Popup, Select, SelectOption} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -18,6 +18,7 @@ import {updateCurrentTabData} from '../../../store/actions/dashTyped';
 import {openDialogAliases} from '../../../store/actions/relations/actions';
 import {
     selectCurrentTabAliases,
+    selectCurrentTabConnectableItems,
     selectDashWorkbookId,
 } from '../../../store/selectors/dashTypedSelectors';
 
@@ -64,11 +65,38 @@ export type OpenDialogRelationsArgs = {
 };
 
 const DialogRelations = (props: DialogRelationsProps) => {
-    const {widget, dashKitRef, onClose} = props;
+    const [currentWidget, setCurrentWidget] = React.useState<DashTabItem>(props.widget);
+    const {dashKitRef, onClose} = props;
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
     const dashTabAliases = useSelector(selectCurrentTabAliases);
     const workbookId = useSelector(selectDashWorkbookId);
+
+    const widgets = useSelector(selectCurrentTabConnectableItems);
+    const widgetOptions = React.useMemo(() => {
+        const options: SelectOption<{isItem?: boolean}>[] = [];
+
+        if (!widgets) {
+            return options;
+        }
+
+        for (let i = 0; i < widgets?.length; i++) {
+            const widgetItem = widgets[i];
+            if (
+                widgetItem.type === DashTabItemType.GroupControl &&
+                widgetItem.data.group.length > 1
+            ) {
+                widgetItem.data.group.forEach((item) => {
+                    options.push({value: `${widgetItem.id} ${item.id}`, content: item.title});
+                });
+                continue;
+            }
+
+            options.push({value: widgetItem.id, content: widgetItem.title});
+        }
+
+        return options;
+    }, [widgets]);
 
     const aliasWarnButtonRef = React.useRef<HTMLElement | null>(null);
 
@@ -79,20 +107,14 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const [preparedRelations, setPreparedRelations] = React.useState<DashMetaData>([]);
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
 
-    const isMultipleControls =
-        widget.type === DashTabItemType.GroupControl && widget.data.group.length > 1;
     const [itemId, setItemId] = React.useState(
-        widget.type === DashTabItemType.GroupControl ? widget.data.group[0].id : null,
+        currentWidget.type === DashTabItemType.GroupControl ? currentWidget.data.group[0].id : null,
     );
-
-    const controlItems = isMultipleControls
-        ? widget.data.group.map((item) => ({value: item.id, content: item.title}))
-        : [];
 
     const {isLoading, currentWidgetMeta, relations, datasets, dashWidgetsMeta, invalidAliases} =
         useRelations({
             dashKitRef,
-            widget,
+            widget: currentWidget,
             dialogAliases: aliases,
             workbookId,
             itemId,
@@ -112,11 +134,19 @@ const DialogRelations = (props: DialogRelationsProps) => {
     });
 
     const handleItemChange = (value: string[]) => {
-        setItemId(value[0]);
+        const [widgetId, newItemId = null] = value[0].split(' ');
+        const currentId = newItemId || widgetId;
+
+        const newCurrentWidget = widgets?.find((item) => item.id === widgetId) as DashTabItem;
+
+        setCurrentWidget(newCurrentWidget);
+
+        setItemId(newItemId);
         setPreparedRelations([]);
-        if (!changedWidgets[value[0]]) {
+
+        if (!changedWidgets[currentId]) {
             const updatedChangedWidgets = {...changedWidgets};
-            updatedChangedWidgets[value[0]] = {};
+            updatedChangedWidgets[currentId] = {};
             setChangedWidgets(updatedChangedWidgets);
         }
     };
@@ -450,13 +480,15 @@ const DialogRelations = (props: DialogRelationsProps) => {
     );
 
     const titleIcon =
-        isLoading || !currentWidgetMeta ? null : getDialogCaptionIcon({widget, currentWidgetMeta});
+        isLoading || !currentWidgetMeta
+            ? null
+            : getDialogCaptionIcon({widget: currentWidget, currentWidgetMeta});
 
     const widgetIcon =
         isLoading || !currentWidgetMeta
             ? null
             : getDialogCaptionIcon({
-                  widget,
+                  widget: currentWidget,
                   currentWidgetMeta,
                   iconSize: DEFAULT_ICON_SIZE,
                   className: b('alias-add-icon-type'),
@@ -493,15 +525,14 @@ const DialogRelations = (props: DialogRelationsProps) => {
         >
             <Dialog.Header caption={title} insertBefore={titleIcon} className={b('caption')} />
             <Dialog.Body className={b('container')}>
-                {isMultipleControls && (
-                    <Select
-                        className={b('item-select')}
-                        value={[itemId || '']}
-                        options={controlItems}
-                        onUpdate={handleItemChange}
-                        label={i18n('label_current-selector')}
-                    />
-                )}
+                <Select
+                    className={b('item-select')}
+                    value={[itemId || currentWidget.id || '']}
+                    options={widgetOptions}
+                    onUpdate={handleItemChange}
+                    filterable={true}
+                />
+
                 <Filters
                     onChangeInput={handleFilterInputChange}
                     onChangeButtons={handleFilterTypesChange}

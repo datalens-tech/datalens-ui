@@ -52,6 +52,7 @@ export const useRelations = ({
     const [datasets, setDatasets] = React.useState<DatasetsListData | null>(null);
 
     const [prevItemId, setPrevItemId] = React.useState(itemId);
+    const [prevWidgetId, setPrevWidgetId] = React.useState(widget.id);
 
     const getCurrentWidgetInfo = React.useCallback(
         (
@@ -86,8 +87,14 @@ export const useRelations = ({
     );
 
     // the current item is changed in the modal
-    if (isInited && itemId !== prevItemId && dashWidgetsMeta && datasets) {
+    if (
+        isInited &&
+        (itemId !== prevItemId || widget.id !== prevWidgetId) &&
+        dashWidgetsMeta &&
+        datasets
+    ) {
         getCurrentWidgetInfo(dashWidgetsMeta, datasets);
+        setPrevWidgetId(widget.id);
         setPrevItemId(itemId);
     }
 
