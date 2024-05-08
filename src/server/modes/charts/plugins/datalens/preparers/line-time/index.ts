@@ -156,7 +156,8 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                 const formatting = y.formatting as CommonNumberFormattingOptions | undefined;
                 const tooltipOptions = getFormatOptionsFromFieldFormatting(formatting, y.data_type);
 
-                // TODO: add other options when they will be available in YAGR
+                // TODO: add other options when they will be available in Chartkit
+                // https://github.com/gravity-ui/chartkit/issues/476
                 ChartEditor.updateLibraryConfig({
                     tooltip: {
                         precision: tooltipOptions.chartKitPrecision,
