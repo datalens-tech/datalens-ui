@@ -49,7 +49,7 @@ const getSelectorsLabels = async (page: Page) => {
 };
 
 datalensTest.describe('Dashboards - Base actions with group selectors', () => {
-    datalensTest.beforeAll(async ({page}: {page: Page}) => {
+    datalensTest.beforeEach(async ({page}: {page: Page}) => {
         // some page need to be loaded so we can get data of feature flag from DL var
         await openTestPage(page, '/');
 

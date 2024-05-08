@@ -1154,11 +1154,12 @@ class DashboardPage extends BasePage {
         await this.description.isEditMode();
     }
 
-    getSelectorLocatorByTitle(title: string) {
+    getSelectorLocatorByTitle(title: string, counter?: number) {
         return this.page
             .locator(slct(ControlQA.chartkitControl))
             .filter({hasText: title})
-            .locator(slct(ControlQA.controlSelect));
+            .locator(slct(ControlQA.controlSelect))
+            .nth(counter === undefined ? 0 : counter);
     }
 
     async checkSelectValueByTitle({
@@ -1173,8 +1174,11 @@ class DashboardPage extends BasePage {
         await expect(selectLocator).toContainText(value);
     }
 
-    async setSelectWithTitle({title}: {title: string}, valueTitle: string) {
-        const selectLocator = this.getSelectorLocatorByTitle(title);
+    async setSelectWithTitle(
+        {title, counter}: {title: string; counter?: number},
+        valueTitle: string,
+    ) {
+        const selectLocator = this.getSelectorLocatorByTitle(title, counter);
         await selectLocator.click();
 
         await this.page
