@@ -310,10 +310,6 @@ datalensTest.describe(`Dashboards - chart/external selector/dashboard parameters
                 targetIndex: 1,
             });
 
-            await new Promise((resolve) => {
-                setTimeout(resolve, 500);
-            });
-
             actualTabMenuItems = await page.$$(slct(TabMenuQA.Item));
 
             // switching to the second tab (with the old parameters)

@@ -28,7 +28,9 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
             // so that the tests do not collapse due to the transition to editing and locks
             const dashboardPage = new DashboardPage({page});
             await openTestPage(page, config.dash.urls.DashboardWithErrorChart);
-            await dashboardPage.duplicateDashboard(config.dash.urls.DashboardWithErrorChart);
+            await dashboardPage.duplicateDashboard({
+                dashId: config.dash.urls.DashboardWithErrorChart,
+            });
 
             await dashboardPage.openControlRelationsDialog();
 
@@ -45,7 +47,9 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
             // so that the tests do not collapse due to the transition to editing and locks
             const dashboardPage = new DashboardPage({page});
             await openTestPage(page, config.dash.urls.DashboardWithAPIErrorChart);
-            await dashboardPage.duplicateDashboard(config.dash.urls.DashboardWithAPIErrorChart);
+            await dashboardPage.duplicateDashboard({
+                dashId: config.dash.urls.DashboardWithAPIErrorChart,
+            });
 
             await dashboardPage.openControlRelationsDialog();
 

@@ -12,6 +12,7 @@ import {
     DialogTabsQA,
     EntryDialogQA,
     SelectQa,
+    TabMenuQA,
     YfmQa,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
@@ -49,6 +50,7 @@ import {
     DashKitOverlayMenuQa,
     DashboardAddWidgetQa,
     DashboardDialogControl,
+    DashkitQa,
 } from '../../../src/shared/constants/qa/dash';
 import {CommonSelectors} from '../constants/common-selectors';
 import {DashTabs} from './DashTabs';
@@ -64,6 +66,7 @@ import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
 import {WorkbookIds, WorkbooksUrls} from '../../constants/constants';
 import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
 import {CommonUrls} from '../constants/common-urls';
+import {EditEntityButton} from '../workbook/EditEntityButton';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -96,6 +99,13 @@ export interface DashboardPageProps extends BasePageProps {}
 type LocatorOptionsType = Parameters<Page['locator']>[1];
 type LocatorClickOptionsType = Parameters<Locator['click']>[0];
 
+type SelectorParams = {
+    controlTitle: string;
+    controlFieldName: string;
+    controlItems?: string[];
+    defaultValue?: string;
+    dateRange?: string[];
+};
 class DashboardPage extends BasePage {
     static selectors = {
         title: 'dashkit-plugin-title',
@@ -133,7 +143,7 @@ class DashboardPage extends BasePage {
         acceptableSelectBtn: 'select-acceptable-button',
         dialogApplyBtn: 'dialog-apply-button',
         dialogCancelBtn: 'dialog-cancel-button',
-        chartGridItemContainer: `${slct(COMMON_DASH_SELECTORS.DASH_GRID_ITEM)} .chartkit`,
+        chartGridItemContainer: `${slct(DashkitQa.GRID_ITEM)} .chartkit`,
         dashPluginWidgetBody: slct('chart-widget'),
         dashkitGridItem: slct('dashkit-grid-item'),
 
@@ -148,6 +158,7 @@ class DashboardPage extends BasePage {
     dashTabs: DashTabs;
     chartkitControl: ChartkitControl;
     dialogCreateEntry: DialogCreateEntry;
+    editEntityButton: EditEntityButton;
 
     constructor({page}: DashboardPageProps) {
         super({page});
@@ -158,6 +169,7 @@ class DashboardPage extends BasePage {
         this.dashTabs = new DashTabs(page);
         this.chartkitControl = new ChartkitControl(page);
         this.dialogCreateEntry = new DialogCreateEntry(page);
+        this.editEntityButton = new EditEntityButton(page);
     }
 
     async waitForResponses(url: string, timeout = API_TIMEOUT): Promise<Array<Response>> {
@@ -233,7 +245,7 @@ class DashboardPage extends BasePage {
         await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
     }
 
-    async duplicateDashboard(dashId?: string) {
+    async duplicateDashboard({dashId, useUserFolder}: {dashId?: string; useUserFolder?: boolean}) {
         const newDashName = `e2e-test-dash-copy-${getUniqueTimestamp()}`;
 
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
@@ -243,10 +255,10 @@ class DashboardPage extends BasePage {
             return;
         }
 
-        await this.copyDashboard(newDashName);
+        await this.copyDashboard(newDashName, useUserFolder);
     }
 
-    async copyDashboard(newDashName: string) {
+    async copyDashboard(newDashName: string, useUserFolder?: boolean) {
         // click on the ellipsis in the upper panel
         await this.page.click(slct(COMMON_SELECTORS.ENTRY_PANEL_MORE_BTN));
         await this.page.waitForSelector(cssSlct(COMMON_SELECTORS.ENTRY_CONTEXT_MENU_KEY));
@@ -261,7 +273,7 @@ class DashboardPage extends BasePage {
         // waiting for the transition to the dashboard page
         await Promise.all([
             this.page.waitForNavigation(),
-            entryDialogFillAndSave(this.page, newDashName),
+            entryDialogFillAndSave(this.page, newDashName, useUserFolder),
         ]);
     }
 
@@ -389,21 +401,42 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(ControlQA.dialogControlApplyBtn));
     }
 
-    async addSelector({
-        controlTitle,
-        controlFieldName,
-        controlItems = ['Richmond', 'Springfield'],
-        defaultValue,
-    }: {
-        controlTitle: string;
-        controlFieldName: string;
-        controlItems?: string[];
-        defaultValue?: string;
-        dateRange?: string[];
-    }) {
+    async addSelectorToGroup(params: SelectorParams) {
+        await this.page.locator(slct(TabMenuQA.Add)).click();
+
+        await this.fillSelectorOptions(params);
+    }
+
+    async addSelector(params: SelectorParams) {
         // adding a selector
         await this.clickAddSelector();
 
+        await this.fillSelectorOptions(params);
+
+        // adding a selector to the dashboard
+        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
+    }
+
+    async addSelectorsGroup(selectorsParams: SelectorParams[]) {
+        // adding a selector
+        await this.clickAddSelector();
+
+        await this.fillSelectorOptions(selectorsParams[0]);
+
+        for (let i = 1; i < selectorsParams.length; i++) {
+            await this.addSelectorToGroup(selectorsParams[i]);
+        }
+
+        // adding a selector to the dashboard
+        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
+    }
+
+    async fillSelectorOptions({
+        controlFieldName,
+        controlTitle,
+        controlItems = ['Richmond', 'Springfield'],
+        defaultValue,
+    }: SelectorParams) {
         await this.fillSelectorSettingsDialogFields({controlTitle, controlFieldName});
 
         // click on the button for setting possible values
@@ -439,9 +472,6 @@ class DashboardPage extends BasePage {
                 slct(`${DashboardDialogControl.AcceptableValues}${controlItems.length}`),
             );
         }
-
-        // adding a selector to the dashboard
-        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
     }
 
     async editSelectorBySettings(setting: SelectorSettings = {}) {
@@ -859,9 +889,12 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(ConnectionsDialogQA.Apply));
     }
 
-    async clickSaveButton() {
+    async clickSaveButton(checkEditMode?: boolean) {
         // save the changes made on the dashboard
         await this.page.click(slct(ActionPanelDashSaveControlsQa.Save));
+        if (checkEditMode) {
+            await this.editEntityButton.waitForVisible();
+        }
     }
 
     async saveChanges() {
@@ -1027,9 +1060,7 @@ class DashboardPage extends BasePage {
 
     async changeWidgetTab(tabName: string) {
         const tabsContainer = await this.page.waitForSelector(
-            `${slct(COMMON_DASH_SELECTORS.DASH_GRID_ITEM)} ${
-                DashboardPage.selectors.tabsContainer
-            }`,
+            `${slct(DashkitQa.GRID_ITEM)} ${DashboardPage.selectors.tabsContainer}`,
         );
 
         // check for desktop tabs
@@ -1123,24 +1154,34 @@ class DashboardPage extends BasePage {
         await this.description.isEditMode();
     }
 
-    async clickSelectWithTitle(title: string, counter?: number) {
-        await this.page
+    getSelectorLocatorByTitle(title: string) {
+        return this.page
             .locator(slct(ControlQA.chartkitControl))
-            .nth(counter === undefined ? 0 : counter)
             .filter({hasText: title})
-            .filter({has: this.page.locator(slct(ControlQA.controlSelect))})
-            .click();
+            .locator(slct(ControlQA.controlSelect));
     }
 
-    async setSelectWithTitle(
-        {title, counter}: {title: string; counter?: number},
-        valueTitle: string,
-    ) {
-        await this.clickSelectWithTitle(title, counter);
-        return this.page
+    async checkSelectValueByTitle({
+        title,
+        value,
+    }: {
+        title: string;
+        counter?: number;
+        value: string;
+    }) {
+        const selectLocator = this.getSelectorLocatorByTitle(title);
+        await expect(selectLocator).toContainText(value);
+    }
+
+    async setSelectWithTitle({title}: {title: string}, valueTitle: string) {
+        const selectLocator = this.getSelectorLocatorByTitle(title);
+        await selectLocator.click();
+
+        await this.page
             .locator(DashboardPage.selectors.chartkitControlSelect)
             .locator(`[data-value] >> text="${valueTitle}"`)
             .click();
+        await expect(selectLocator).toContainText(valueTitle);
     }
 
     async waitForSomeItemVisible() {
@@ -1163,6 +1204,7 @@ class DashboardPage extends BasePage {
             slct(ControlQA.controlSettings),
         );
         await controlSettingsButton.click();
+        await this.dialogControl.waitForVisible();
     }
 
     /**
@@ -1194,7 +1236,7 @@ class DashboardPage extends BasePage {
             gridItemFilter = filter;
         }
 
-        return this.page.locator(`.${COMMON_DASH_SELECTORS.DASH_GRID_ITEM}`, gridItemFilter);
+        return this.page.locator(`.${DashkitQa.GRID_ITEM}`, gridItemFilter);
     }
 
     async waitForChartsRender(gridItemLocators: Locator[]) {

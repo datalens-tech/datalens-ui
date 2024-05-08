@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {DialogGroupControlQa} from 'shared';
 import {BackButton} from 'ui/units/dash/components/BackButton/BackButton';
 import {updateSelectorsGroup} from 'ui/units/dash/store/actions/controls/actions';
 import {SelectorDialogState} from 'ui/units/dash/store/actions/dashTyped';
@@ -145,6 +146,7 @@ const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
                 <div className={b('note')}>{i18n('label_note')}</div>
                 <div className={b('selectors')}>
                     <List
+                        qa={DialogGroupControlQa.placementControlList}
                         items={itemsState}
                         filterable={false}
                         sortable={true}
@@ -160,6 +162,7 @@ const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={i18n('button_save')}
                 propsButtonCancel={{view: 'flat'}}
+                propsButtonApply={{qa: DialogGroupControlQa.placementApplyButton}}
                 onClickButtonApply={handleApplyClick}
                 onClickButtonCancel={onClose}
             />

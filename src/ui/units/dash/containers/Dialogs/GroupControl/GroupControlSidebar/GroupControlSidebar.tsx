@@ -6,6 +6,7 @@ import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {DialogGroupControlQa} from 'shared';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
     addSelectorToGroup,
@@ -149,6 +150,7 @@ export const GroupControlSidebar = () => {
                             checked={selectorsGroup.autoHeight}
                             onUpdate={handleChangeAutoHeight}
                             size="l"
+                            qa={DialogGroupControlQa.autoHeightCheckbox}
                         />
                     </div>
                 )}
@@ -164,6 +166,7 @@ export const GroupControlSidebar = () => {
                         checked={selectorsGroup.buttonApply}
                         onUpdate={handleChangeButtonApply}
                         size="l"
+                        qa={DialogGroupControlQa.applyButtonCheckbox}
                     />
                 </div>
                 <div className={b('settings-container')}>
@@ -178,18 +181,22 @@ export const GroupControlSidebar = () => {
                         checked={selectorsGroup.buttonReset}
                         onUpdate={handleChangeButtonReset}
                         size="l"
+                        qa={DialogGroupControlQa.resetButtonCheckbox}
                     />
                 </div>
 
-                <Button
-                    view="outlined"
-                    width="max"
-                    className={b('order-selectors-button')}
-                    onClick={handleSelectorsPlacementClick}
-                >
-                    <Icon data={Gear} height={16} width={16} />
-                    {i18n('button_selectors-placement')}
-                </Button>
+                {isMultipleSelectors && (
+                    <Button
+                        view="outlined"
+                        width="max"
+                        className={b('order-selectors-button')}
+                        onClick={handleSelectorsPlacementClick}
+                        qa={DialogGroupControlQa.placementButton}
+                    >
+                        <Icon data={Gear} height={16} width={16} />
+                        {i18n('button_selectors-placement')}
+                    </Button>
+                )}
             </div>
         </div>
     );
