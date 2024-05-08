@@ -127,7 +127,7 @@ export const shouldUseUISandbox = (target: TargetValue) => {
 
     let result = false;
     const checkObjectKey = (obj: TargetValue) => {
-        if (obj === undefined || obj === null) {
+        if (!obj || typeof obj !== 'object') {
             return;
         }
         Object.keys(obj).forEach((key) => {
