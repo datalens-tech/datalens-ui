@@ -77,10 +77,12 @@ export interface SelectControlProps {
     editMode?: boolean;
     label?: string;
     innerLabel: string;
+    limitLabel?: boolean;
     param: string;
     multiselect: boolean;
     type: ControlType;
     className: string;
+    labelClassName: string;
     key: string;
     value: string;
     onChange: (value: string) => void;

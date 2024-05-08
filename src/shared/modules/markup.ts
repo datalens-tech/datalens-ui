@@ -8,11 +8,7 @@ export function isMarkupItem(obj: unknown): obj is MarkupItem {
 }
 
 function isMarkupObject(obj: {type?: string}): boolean {
-    if (
-        obj.type &&
-        Object.values(MarkupItemTypes).includes(obj.type as MarkupItemType) &&
-        ('children' in obj || 'content' in obj)
-    ) {
+    if (obj.type && Object.values(MarkupItemTypes).includes(obj.type as MarkupItemType)) {
         return true;
     }
     {

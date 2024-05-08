@@ -63,12 +63,9 @@ export const CollectionActions = React.memo<Props>(
             ? collection.permissions?.createWorkbook
             : rootCollectionPermissions?.createWorkbookInRoot;
 
-        const addDemoWorkbookEnabled = Utils.isEnabledFeature(Feature.AddDemoWorkbook);
-
-        const showAddDemoWorkbook =
-            addDemoWorkbookEnabled && showCreateWorkbook && DL.TEMPLATE_WORKBOOK_ID;
+        const showAddDemoWorkbook = showCreateWorkbook && DL.TEMPLATE_WORKBOOK_ID;
         const showAddLearningMaterialsWorkbook =
-            addDemoWorkbookEnabled && showCreateWorkbook && DL.LEARNING_MATERIALS_WORKBOOK_ID;
+            showCreateWorkbook && DL.LEARNING_MATERIALS_WORKBOOK_ID;
 
         const createActionItems: DropdownMenuItemMixed<unknown>[] = [];
 

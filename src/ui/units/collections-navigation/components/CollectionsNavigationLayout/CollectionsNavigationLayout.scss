@@ -3,29 +3,30 @@
 $class: 'dl-collections-navigation-layout';
 
 .#{$class} {
+    position: relative;
+    height: 100%;
+
     &__page-wrapper {
         position: absolute;
-        top: $actionPanelHeight;
+        top: calc($actionPanelHeight + var(--dl-mobile-header-height, 0px));
         right: 0;
         bottom: 0;
-        display: flex;
-        flex: 1;
-        justify-content: center;
+        left: 0;
+        display: grid;
+        grid-template-rows: auto minmax(auto, $footerHeight);
         overflow-y: auto;
         scrollbar-gutter: stable;
         padding-top: 28px;
-
-        &_mobile {
-            top: calc(var(--mobile-header-size) + $actionPanelHeight);
-        }
     }
 
     &__page {
         display: flex;
         flex: 1;
         flex-direction: column;
+        width: 100%;
         max-width: 936px;
         padding: 0 20px;
+        justify-self: center;
     }
 
     &__header {

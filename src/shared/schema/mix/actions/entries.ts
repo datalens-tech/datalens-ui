@@ -119,7 +119,11 @@ export const entriesActions = {
             try {
                 await typedApi.us.getEntryMeta({entryId});
                 return {code: 'OK'};
-            } catch ({error}) {
+            } catch (errorWrapper) {
+                let error;
+                if (errorWrapper instanceof Object && 'error' in errorWrapper) {
+                    error = errorWrapper.error;
+                }
                 if (typeof error === 'object' && error !== null && 'status' in error) {
                     switch (error.status) {
                         case 403:

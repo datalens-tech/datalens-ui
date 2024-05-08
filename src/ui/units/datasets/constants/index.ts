@@ -123,6 +123,7 @@ export const TOAST_TIMEOUT_DEFAULT = 60000;
 export const MILLISECONDS_IN_DAY = 86400000;
 
 export const TOAST_NAME = 'dialog_footer_error';
+
 export const TAB_DATASET = 'dataset';
 export const TAB_SOURCES = 'sources';
 export const TAB_FILTERS = 'filters';

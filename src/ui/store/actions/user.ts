@@ -20,9 +20,8 @@ export function updateUserSettings({newSettings}: {newSettings: NewUserSettings}
     return async (dispatch: UserDispatch) => {
         try {
             const {getUpdatedUserSettings} = registry.common.functions.getAll();
-            const userSettings: NewUserSettings | undefined = await getUpdatedUserSettings(
-                newSettings,
-            );
+            const userSettings: NewUserSettings | undefined =
+                await getUpdatedUserSettings(newSettings);
 
             if (userSettings) {
                 dispatch({type: UPDATE_USER_SETTINGS, payload: {userSettings}});

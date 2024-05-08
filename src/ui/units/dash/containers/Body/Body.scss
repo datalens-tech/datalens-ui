@@ -2,6 +2,7 @@
 
 $contentPadding: 24px;
 $contentMobilePadding: 16px;
+$actionPanelDefaultBottom: 20px;
 
 .dash-body {
     --dashkit-grid-item-edit-opacity: 0.99; // Chrome z-index opacity leaking
@@ -41,6 +42,10 @@ $contentMobilePadding: 16px;
 
         &_with-edit-panel {
             padding-bottom: 124px;
+        }
+
+        &_with-footer #{$bodyClass}__edit-panel {
+            bottom: $actionPanelDefaultBottom + $footerHeight;
         }
 
         & #{$bodyClass}__edit-panel {

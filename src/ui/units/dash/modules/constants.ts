@@ -1,3 +1,5 @@
+import {ShareOptions} from '@gravity-ui/components';
+
 export const LOCK_DURATION = 5 * 60 * 1000;
 export const LOCK_EXTEND_TIMEOUT = 4 * 60 * 1000;
 export const EMPTY_VALUE = '—';
@@ -53,9 +55,9 @@ export const DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES = {
 };
 
 export type AcceptFiltersWidgetType =
-    typeof DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES[keyof typeof DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES];
+    (typeof DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES)[keyof typeof DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES];
 
-export type WidgetType = typeof DASH_WIDGET_TYPES[keyof typeof DASH_WIDGET_TYPES];
+export type WidgetType = (typeof DASH_WIDGET_TYPES)[keyof typeof DASH_WIDGET_TYPES];
 
 // chart types that can filter other charts
 export const DASH_FILTERING_CHARTS_WIDGET_TYPES = {
@@ -65,7 +67,7 @@ export const DASH_FILTERING_CHARTS_WIDGET_TYPES = {
 };
 
 export type FilteringWidgetType =
-    typeof DASH_FILTERING_CHARTS_WIDGET_TYPES[keyof typeof DASH_FILTERING_CHARTS_WIDGET_TYPES];
+    (typeof DASH_FILTERING_CHARTS_WIDGET_TYPES)[keyof typeof DASH_FILTERING_CHARTS_WIDGET_TYPES];
 
 export enum Mode {
     Loading = 'loading',
@@ -75,3 +77,5 @@ export enum Mode {
     Error = 'error',
     SelectState = 'selectState',
 }
+
+export const socialNets = [ShareOptions.Telegram, ShareOptions.Twitter, ShareOptions.VK];

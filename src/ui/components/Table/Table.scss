@@ -163,7 +163,8 @@
         top: 0;
         right: -1px;
         width: 10000px;
-        box-shadow: 0 1px 6px 0 var(--g-color-sfx-shadow-light),
+        box-shadow:
+            0 1px 6px 0 var(--g-color-sfx-shadow-light),
             1px 3px 13px 0 var(--g-color-sfx-shadow-light);
         border-right: 1px solid var(--g-color-text-hint);
         pointer-events: none;

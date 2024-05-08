@@ -113,36 +113,39 @@ export const getCreatingSourceColumns = (args: {
     const sourceColumns = get(item, ['options', 'columns']);
     const rawSchema = get(item, ['source', 'raw_schema']);
 
-    return sourceColumns.reduce((acc, column, index) => {
-        const schema = (rawSchema || []).find(({name}) => name === column.name);
-        const title = schema?.title || column.name;
+    return sourceColumns.reduce(
+        (acc, column, index) => {
+            const schema = (rawSchema || []).find(({name}) => name === column.name);
+            const title = schema?.title || column.name;
 
-        if (!filter || isTitleMatchedByFilter(title, filter)) {
-            acc.push({
-                name: column.name,
-                header: (
-                    <React.Fragment>
-                        {schema && (
-                            <TypeSelect
-                                types={column.user_type}
-                                value={schema.user_type}
-                                onUpdate={getSelectUpdateHandler(
-                                    handleFileSourceUpdate,
-                                    item,
-                                    column.name,
-                                )}
-                            />
-                        )}
-                        {title}
-                    </React.Fragment>
-                ),
-                sortable: false,
-                render: ({row}) => row[index],
-            });
-        }
+            if (!filter || isTitleMatchedByFilter(title, filter)) {
+                acc.push({
+                    name: column.name,
+                    header: (
+                        <React.Fragment>
+                            {schema && (
+                                <TypeSelect
+                                    types={column.user_type}
+                                    value={schema.user_type}
+                                    onUpdate={getSelectUpdateHandler(
+                                        handleFileSourceUpdate,
+                                        item,
+                                        column.name,
+                                    )}
+                                />
+                            )}
+                            {title}
+                        </React.Fragment>
+                    ),
+                    sortable: false,
+                    render: ({row}) => row[index],
+                });
+            }
 
-        return acc;
-    }, [] as Column<(string | number)[]>[]);
+            return acc;
+        },
+        [] as Column<(string | number)[]>[],
+    );
 };
 
 export const getListItemId = (item?: ListItemProps) => {

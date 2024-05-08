@@ -440,10 +440,6 @@ function dash(state = initialState, action) {
                 data.sourceType !== 'external'
             ) {
                 const selectorDialog = getSelectorDialogFromData(data);
-                selectorDialog.title =
-                    data.source.innerTitle && data.source.showInnerTitle
-                        ? `${data.title} ${data.source.innerTitle}`
-                        : data.title;
 
                 // migration forward to group
                 openedDialog = 'group_control';

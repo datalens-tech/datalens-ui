@@ -495,13 +495,13 @@ class DashboardPage extends BasePage {
         }
 
         // for GroupControls innerTitle is deprecated, only title exists and is displayed as innerTitle
-        if (typeof setting.appearance?.innerTitleEnabled === 'boolean' && !isEnabledGroupControls) {
+        if (typeof setting.appearance?.innerTitleEnabled === 'boolean') {
             await this.dialogControl.appearanceInnerTitle.checkbox.toggle(
                 setting.appearance.innerTitleEnabled,
             );
         }
 
-        if (setting.appearance?.innerTitle && !isEnabledGroupControls) {
+        if (setting.appearance?.innerTitle) {
             await this.dialogControl.appearanceInnerTitle.textInput.fill(
                 setting.appearance.innerTitle,
             );

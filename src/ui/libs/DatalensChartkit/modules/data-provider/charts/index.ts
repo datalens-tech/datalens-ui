@@ -594,7 +594,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             }
 
             const processed = isResponseSuccessNode(loaded)
-                ? processNode<ResponseSuccessNode, Widget>(loaded, this.settings.noJsonFn)
+                ? await processNode<ResponseSuccessNode, Widget>(loaded, this.settings.noJsonFn)
                 : // @ts-ignore Types from the js file are incorrect
                   processWizard(loaded);
 

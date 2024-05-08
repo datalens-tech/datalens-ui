@@ -6,7 +6,6 @@ import {
     CommonSharedExtraSettings,
     Dataset,
     DatasetUpdate,
-    Feature,
     Field,
     Link,
     Placeholder,
@@ -20,7 +19,6 @@ import {ApplyData, DatalensGlobalState, Filter} from '../../../../ui';
 import {fetchColorPalettes} from '../../../store/actions/colorPaletteEditor';
 import {closeDialog, openDialog, openDialogFilter} from '../../../store/actions/dialog';
 import {selectColorPalettes} from '../../../store/selectors/colorPaletteEditor';
-import Utils from '../../../utils';
 import {getChartType} from '../../ql/store/reducers/ql';
 import {
     DIALOG_COLUMN_SETTINGS,
@@ -142,7 +140,7 @@ type OpenDialogMetricArguments = {
 export function openDialogMetric({extraSettings}: OpenDialogMetricArguments) {
     return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const colorPalettes = selectColorPalettes(getState());
-        if (Utils.isEnabledFeature(Feature.CustomColorPalettes) && !colorPalettes.length) {
+        if (!colorPalettes.length) {
             await dispatch(fetchColorPalettes());
         }
 

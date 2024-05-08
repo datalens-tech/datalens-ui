@@ -447,11 +447,14 @@ export class RangeInputPicker extends Component<RangeInputPickerProps, RangeInpu
 
         const points = getInfoPoints({infoPointsCount, min, max, values});
 
-        const infoItems = points.reduce((acc, point: number) => {
-            acc[point] = {label: this.renderItem(point), style: {}};
+        const infoItems = points.reduce(
+            (acc, point: number) => {
+                acc[point] = {label: this.renderItem(point), style: {}};
 
-            return acc;
-        }, {} as NonNullable<SliderProps['marks']>);
+                return acc;
+            },
+            {} as NonNullable<SliderProps['marks']>,
+        );
 
         if (infoItems[min]) {
             (infoItems[min] as MarkObj).style = LEFT_INFO_POINT_STYLE;

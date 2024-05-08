@@ -1,4 +1,5 @@
 import {Request} from '@gravity-ui/expresskit';
+import isNumber from 'lodash/isNumber';
 
 import {DL_EMBED_TOKEN_HEADER, WorkbookId} from '../../../../../shared';
 import {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../../../../shared/schema';
@@ -54,7 +55,7 @@ export const getDatasetFieldsById = async (
             const {error} = err;
             req.ctx.logError('FAILED_TO_RECEIVE_FIELDS', error);
             const status = getStatusFromError(error);
-            if (status && status < 500) {
+            if (isNumber(status) && status < 500) {
                 rejectFetchingSource({
                     [`${datasetId}_result`]: error,
                 });

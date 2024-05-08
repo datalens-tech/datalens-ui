@@ -30,9 +30,8 @@ datalensTest.describe('Dialog for working with links in multi-datasets', () => {
         let secondLinkValue: string | null;
         await waitForCondition(async () => {
             firstLinkValue = await wizardPage.linkDialog.getValueFromSelector('cities-dataset');
-            secondLinkValue = await wizardPage.linkDialog.getValueFromSelector(
-                'sample-csv-dataset',
-            );
+            secondLinkValue =
+                await wizardPage.linkDialog.getValueFromSelector('sample-csv-dataset');
 
             return firstLinkValue === 'City' && secondLinkValue === 'Category';
         }).catch(() => {

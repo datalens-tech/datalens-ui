@@ -1,4 +1,4 @@
-import {StandardLonghandPropertiesHyphen} from 'csstype';
+import type {StandardLonghandPropertiesHyphen} from 'csstype';
 
 export type ChartKitCss = React.CSSProperties | StandardLonghandPropertiesHyphen;
 

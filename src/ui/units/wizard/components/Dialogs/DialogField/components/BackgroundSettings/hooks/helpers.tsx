@@ -144,12 +144,15 @@ export const getChartFields = (
         ...additionalFields.datasetMeasures,
     ]
         .filter(isFieldVisible)
-        .reduce((acc, field) => {
-            return {
-                ...acc,
-                [field.guid]: true,
-            };
-        }, {} as Record<string, boolean>);
+        .reduce(
+            (acc, field) => {
+                return {
+                    ...acc,
+                    [field.guid]: true,
+                };
+            },
+            {} as Record<string, boolean>,
+        );
 
     return {chartFields: uniqueFields, datasetFieldsMap};
 };

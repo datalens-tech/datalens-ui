@@ -5,5 +5,12 @@
         &_widget {
             width: 100%;
         }
+
+        &_title {
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            max-height: 100%;
+        }
     }
 }

@@ -14,7 +14,9 @@
     border-radius: 4px;
     cursor: pointer;
     user-select: none;
-    transition: border-color 0.1s linear, background-color 0.1s linear;
+    transition:
+        border-color 0.1s linear,
+        background-color 0.1s linear;
 
     &:active {
         transform: scale(0.98);

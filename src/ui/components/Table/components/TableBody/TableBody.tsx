@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ColumnDef, Row, flexRender} from '@tanstack/react-table';
+import {ColumnDef, Row} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 
 import {OnCellClickFn, TData, TableDimensions, TableProps} from '../../types';
@@ -70,6 +70,11 @@ export const TableBody = (props: Props) => {
                                 ...originalCellData?.css,
                             };
 
+                            const renderCell =
+                                typeof cell.column.columnDef.cell === 'function'
+                                    ? cell.column.columnDef.cell
+                                    : () => cell.column.columnDef.cell;
+
                             return (
                                 <td
                                     key={cell.id}
@@ -85,7 +90,7 @@ export const TableBody = (props: Props) => {
                                     rowSpan={originalCellData?.rowSpan}
                                 >
                                     <div className={b('td-content')} style={{width}}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        {renderCell(cell.getContext())}
                                     </div>
                                 </td>
                             );

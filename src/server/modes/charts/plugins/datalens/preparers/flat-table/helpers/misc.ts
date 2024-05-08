@@ -17,24 +17,27 @@ export const getColumnValuesByColumnWithBarSettings = ({
 }) => {
     const columnsWithBarSettings = columns.filter((column) => isTableBarsSettingsEnabled(column));
 
-    return columnsWithBarSettings.reduce((acc, column) => {
-        const columnDataTitle = idToTitle[column.guid] || column.title;
-        const indexInOrder = findIndexInOrder(order, column, columnDataTitle);
+    return columnsWithBarSettings.reduce(
+        (acc, column) => {
+            const columnDataTitle = idToTitle[column.guid] || column.title;
+            const indexInOrder = findIndexInOrder(order, column, columnDataTitle);
 
-        const data = values.reduce((acc, row) => {
-            const value = row[indexInOrder];
-            acc.push(value);
+            const data = values.reduce((acc, row) => {
+                const value = row[indexInOrder];
+                acc.push(value);
+                return acc;
+            }, [] as PrepareFunctionDataRow);
+
+            if (totals && totals.length && column.barsSettings?.showBarsInTotals) {
+                const totalValue = totals[indexInOrder];
+
+                data.push(totalValue);
+            }
+
+            acc[column.guid] = data;
+
             return acc;
-        }, [] as PrepareFunctionDataRow);
-
-        if (totals && totals.length && column.barsSettings?.showBarsInTotals) {
-            const totalValue = totals[indexInOrder];
-
-            data.push(totalValue);
-        }
-
-        acc[column.guid] = data;
-
-        return acc;
-    }, {} as Record<string, PrepareFunctionDataRow>);
+        },
+        {} as Record<string, PrepareFunctionDataRow>,
+    );
 };

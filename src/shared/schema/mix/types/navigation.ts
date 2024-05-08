@@ -19,6 +19,6 @@ export interface GetNavigationListResponse {
 }
 
 export interface GetNavigationListArgs extends EntriesCommonArgs {
-    place: typeof PLACE[keyof typeof PLACE];
+    place: (typeof PLACE)[keyof typeof PLACE];
     path?: string;
 }

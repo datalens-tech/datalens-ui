@@ -138,8 +138,8 @@ const itemSource = {
             typeof dropPlace === 'number'
                 ? dropPlace
                 : typeof item.hoverIndex === 'number'
-                ? item.hoverIndex
-                : targetComponent.state.items.length;
+                  ? item.hoverIndex
+                  : targetComponent.state.items.length;
 
         const isSameItemAndPosition =
             dropResult.listId === item.listId &&

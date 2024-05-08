@@ -54,8 +54,8 @@ export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
     const xCategories = xField
         ? preparedData.categories
         : yField
-        ? [getFakeTitleOrTitle(yField)]
-        : [];
+          ? [getFakeTitleOrTitle(yField)]
+          : [];
 
     const seriesData = preparedData.graphs.map<BarXSeries>((graph) => {
         return {

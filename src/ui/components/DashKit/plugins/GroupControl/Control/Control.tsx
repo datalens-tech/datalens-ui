@@ -36,7 +36,7 @@ import {ErrorData, GetDistincts, LoadStatus, ValidationErrorData} from '../../Co
 import {
     checkDatasetFieldType,
     getDatasetSourceInfo,
-    getRequiredLabel,
+    getLabels,
     getStatus,
     isValidRequiredValue,
 } from '../../Control/utils';
@@ -360,10 +360,10 @@ export const Control = ({
 
     const renderControl = () => {
         const controlData = data as unknown as DashTabItemControlSingle;
-        const {source, placementMode, width, title} = controlData;
-        const {required, operation, showTitle} = source;
+        const {source, placementMode, width} = controlData;
+        const {required, operation} = source;
 
-        const innerLabel = showTitle ? getRequiredLabel({title, required}) : '';
+        const {label, innerLabel} = getLabels(controlData);
         const style = getControlWidthStyle(placementMode, width);
 
         if (controlData.source.elementType === DashTabItemControlElementType.Select) {
@@ -384,7 +384,8 @@ export const Control = ({
                     validateValue={validateValue}
                     getDistincts={getDistincts}
                     classMixin={b('item')}
-                    selectProps={{innerLabel, style}}
+                    labelMixin={b('item-label')}
+                    selectProps={{innerLabel, label, style, limitLabel: true}}
                     renderOverlay={renderOverlay}
                 />
             );
@@ -431,8 +432,10 @@ export const Control = ({
             type: control.type,
             widgetId: id,
             className: b('item'),
+            labelClassName: b('item-label'),
             value: preparedValue,
             onChange: onChangeControl,
+            label,
             innerLabel,
             required,
             hasValidationError: Boolean(currentValidationError),
@@ -449,7 +452,7 @@ export const Control = ({
             case CONTROL_TYPE.RANGE_DATEPICKER:
                 return <ControlRangeDatepicker returnInterval={true} {...props} />;
             case CONTROL_TYPE.CHECKBOX:
-                return <ControlCheckbox {...props} label={innerLabel} />;
+                return <ControlCheckbox {...props} />;
         }
 
         return null;

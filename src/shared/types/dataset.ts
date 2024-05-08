@@ -62,8 +62,8 @@ export const COMMON_FIELD_TYPES = [
     DATASET_FIELD_TYPES.UNSUPPORTED,
 ] as const;
 
-export type AvailableFieldType = typeof AVAILABLE_FIELD_TYPES[number];
-export type CommonFieldType = typeof COMMON_FIELD_TYPES[number];
+export type AvailableFieldType = (typeof AVAILABLE_FIELD_TYPES)[number];
+export type CommonFieldType = (typeof COMMON_FIELD_TYPES)[number];
 
 export enum DatasetFieldAggregation {
     None = 'none',
@@ -123,6 +123,7 @@ export interface Dataset {
         source_avatars: DatasetSourceAvatar[];
         source_features: {};
         sources: DatasetSource[];
+        revisionId: string;
     };
     workbook_id?: string;
     permissions?: Permissions;

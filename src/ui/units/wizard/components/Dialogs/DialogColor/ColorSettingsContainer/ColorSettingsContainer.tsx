@@ -5,10 +5,10 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
-import {ColorMode, ColorsConfig, Feature, Field} from 'shared';
+import {ColorMode, ColorsConfig, Field} from 'shared';
 import {fetchColorPalettes} from 'store/actions/colorPaletteEditor';
 import {selectColorPalettes} from 'store/selectors/colorPaletteEditor';
-import {DatalensGlobalState, Utils} from 'ui';
+import {DatalensGlobalState} from 'ui';
 import {
     GradientState,
     PaletteState,
@@ -60,10 +60,7 @@ class ColorSettingsContainer extends React.Component<Props> {
         const {colorsConfig, items} = this.props;
 
         this.props.actions.prepareDialogColorState({colorsConfig, items});
-
-        if (Utils.isEnabledFeature(Feature.CustomColorPalettes)) {
-            this.props.actions.fetchColorPalettes();
-        }
+        this.props.actions.fetchColorPalettes();
     }
 
     componentWillUnmount() {

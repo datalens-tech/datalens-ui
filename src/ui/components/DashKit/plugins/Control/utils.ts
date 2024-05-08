@@ -88,16 +88,19 @@ export const getDatasetSourceInfo = ({
         }
     }
 
-    const datasetFieldsMap = datasetFields.reduce((acc, field) => {
-        const fieldData = {
-            fieldType: field.fieldType,
-            guid: field.guid,
-        };
-        acc[field.guid] = fieldData;
-        acc[field.title] = fieldData;
+    const datasetFieldsMap = datasetFields.reduce(
+        (acc, field) => {
+            const fieldData = {
+                fieldType: field.fieldType,
+                guid: field.guid,
+            };
+            acc[field.guid] = fieldData;
+            acc[field.title] = fieldData;
 
-        return acc;
-    }, {} as Record<string, {guid: string; fieldType: DatasetFieldType}>);
+            return acc;
+        },
+        {} as Record<string, {guid: string; fieldType: DatasetFieldType}>,
+    );
 
     return {datasetId, datasetFieldId, datasetFieldType, datasetFields, datasetFieldsMap};
 };

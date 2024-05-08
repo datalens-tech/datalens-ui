@@ -20,6 +20,8 @@ import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 import {ITEM_TYPE} from '../containers/Dialogs/constants';
 import {TabsHashStates} from '../store/actions/dashTyped';
 
+import {PostMessage} from './postMessage';
+
 export type CopiedConfigData = ConfigItem &
     Omit<ConfigItemData, 'tabs'> & {
         layout?: ConfigLayout;
@@ -249,10 +251,13 @@ export const getLayoutMap = (
     layout: Array<DashTabLayout>,
 ): [Record<string, DashTabLayout>, number] => {
     // forming a grid map for quick access by id
-    const layoutMap = layout.reduce((map, layoutItem) => {
-        map[layoutItem.i] = layoutItem;
-        return map;
-    }, {} as Record<string, DashTabLayout>);
+    const layoutMap = layout.reduce(
+        (map, layoutItem) => {
+            map[layoutItem.i] = layoutItem;
+            return map;
+        },
+        {} as Record<string, DashTabLayout>,
+    );
 
     const layoutColumns = layout.reduce((col, n) => Math.max(n.x + n.w, col), 0);
 
@@ -266,7 +271,7 @@ export function sendEmbedDashHeight(wrapRef: React.RefObject<HTMLDivElement>) {
 
     const height = wrapRef.current.scrollHeight;
     if (height) {
-        window.parent.postMessage({iFrameName: window.name, embedHeight: height}, '*');
+        PostMessage.send({iFrameName: window.name, embedHeight: height});
     }
 }
 

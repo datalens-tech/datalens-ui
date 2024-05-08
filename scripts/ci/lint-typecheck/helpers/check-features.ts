@@ -18,10 +18,13 @@ fs.readdirSync(featuresListPath).forEach((file: string) => {
     FEATURES_LIST.push(require(path.resolve(featuresListPath, file)).default);
 });
 
-const FEATURES = FEATURES_LIST.reduce((acc: Record<string, boolean>, {name}: {name: string}) => {
-    acc[name] = true;
-    return acc;
-}, {} as Record<string, boolean>);
+const FEATURES = FEATURES_LIST.reduce(
+    (acc: Record<string, boolean>, {name}: {name: string}) => {
+        acc[name] = true;
+        return acc;
+    },
+    {} as Record<string, boolean>,
+);
 
 const missedFeatures: string[] = [];
 

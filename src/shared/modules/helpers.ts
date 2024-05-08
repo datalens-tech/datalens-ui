@@ -238,10 +238,13 @@ export const transformUrlParamsToParams = (urlParams: [string, string][]) => {
 export function getSortedData<K extends string, T>(data: Record<K, T>): Record<K, T> {
     return Object.keys(data)
         .sort()
-        .reduce((acc, key) => {
-            acc[key as K] = data[key as K];
-            return acc;
-        }, {} as Record<K, T>);
+        .reduce(
+            (acc, key) => {
+                acc[key as K] = data[key as K];
+                return acc;
+            },
+            {} as Record<K, T>,
+        );
 }
 
 export function getObjectValueByPossibleKeys<T>(possibleKeys: string[], obj: Record<string, T>) {

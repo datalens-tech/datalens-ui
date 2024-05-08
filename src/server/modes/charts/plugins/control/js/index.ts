@@ -6,7 +6,7 @@ import {processContent} from './helpers/process-content';
 import type {SourceResponseData} from './types';
 
 // eslint-disable-next-line complexity
-export default ({
+export const buildGraph = ({
     data,
     shared,
     params,

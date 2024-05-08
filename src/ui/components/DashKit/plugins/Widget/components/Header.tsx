@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {AdaptiveTabs, ShareOptions, SharePopover, TabItem} from '@gravity-ui/components';
+import {AdaptiveTabs, SharePopover, TabItem} from '@gravity-ui/components';
 import {ArrowLeft} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DRAGGABLE_HANDLE_CLASS_NAME} from 'ui/components/Widgets/Chart/helpers/helpers';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
+import {socialNets} from 'ui/units/dash/modules/constants';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
@@ -29,7 +30,6 @@ type HeaderProps = {
     hideDebugTool?: boolean;
 };
 
-const socialNets = [ShareOptions.Telegram, ShareOptions.Twitter, ShareOptions.VK];
 const b = block(DASH_WIDGET_CLASSNAME);
 
 export const Header = (props: HeaderProps) => {

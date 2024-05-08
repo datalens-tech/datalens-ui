@@ -66,8 +66,9 @@ type ControlItemSelectProps = {
     errorData: null | ErrorData;
     validateValue: (args: ValidationErrorData) => boolean | undefined;
     classMixin?: string;
+    labelMixin?: string;
     renderOverlay?: () => React.ReactNode;
-    selectProps: Pick<SelectControlProps, 'style' | 'innerLabel' | 'label'>;
+    selectProps: Pick<SelectControlProps, 'style' | 'innerLabel' | 'label' | 'limitLabel'>;
 };
 
 const b = block('control-item-select');
@@ -91,6 +92,7 @@ export const ControlItemSelect = ({
     classMixin,
     selectProps,
     renderOverlay,
+    labelMixin,
 }: ControlItemSelectProps) => {
     const dispatch = useDispatch();
     let _loadingItemsTimer: NodeJS.Timeout | undefined;
@@ -352,6 +354,7 @@ export const ControlItemSelect = ({
         multiselect: (source as DashTabItemControlElementSelect).multiselectable,
         type: TYPE.SELECT,
         className: b(null, classMixin),
+        labelClassName: b(null, labelMixin),
         key: fieldId,
         value: preparedValue as string,
         onChange: onSelectChange,

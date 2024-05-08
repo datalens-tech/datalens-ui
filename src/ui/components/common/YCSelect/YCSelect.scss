@@ -11,7 +11,9 @@
     border: 1px solid var(--g-color-line-generic);
     border-radius: 3px;
     user-select: none;
-    transition: border-color 0.1s linear, background-color 0.1s linear;
+    transition:
+        border-color 0.1s linear,
+        background-color 0.1s linear;
     cursor: pointer;
     outline: none;
     color: var(--g-color-text-primary);
@@ -108,6 +110,13 @@
         align-items: center;
         padding-right: 6px;
         white-space: nowrap;
+
+        &_limited {
+            max-width: 50%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
     }
 
     &__tokens {

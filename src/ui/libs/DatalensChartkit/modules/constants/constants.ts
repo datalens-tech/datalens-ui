@@ -30,7 +30,7 @@ export const EXPORT_FORMATS = {
     SCREENSHOT: 'screenshort',
 };
 
-export type ExportFormatsType = typeof EXPORT_FORMATS[keyof typeof EXPORT_FORMATS];
+export type ExportFormatsType = (typeof EXPORT_FORMATS)[keyof typeof EXPORT_FORMATS];
 
 export const CLICK_ACTION_TYPE = {
     SET_PARAMS: 'setParams',

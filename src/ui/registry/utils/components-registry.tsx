@@ -24,7 +24,9 @@ export const createComponentsRegistry = function <ComponentsMap extends Record<s
             }
             return <Component {...props} />;
         };
-        return WrapperComponent as React.ComponentType<React.ComponentProps<typeof components[T]>>;
+        return WrapperComponent as React.ComponentType<
+            React.ComponentProps<(typeof components)[T]>
+        >;
     }
 
     const registry = {
@@ -42,7 +44,7 @@ export const createComponentsRegistry = function <ComponentsMap extends Record<s
         get<T extends keyof typeof components>(
             id: T,
             options?: GetOptions,
-        ): React.ComponentType<React.ComponentProps<typeof components[T]>> {
+        ): React.ComponentType<React.ComponentProps<(typeof components)[T]>> {
             if (options?.wrap) {
                 return withWrapperComponent(id);
             }
@@ -52,7 +54,7 @@ export const createComponentsRegistry = function <ComponentsMap extends Record<s
                 return DefaultEmpty;
             }
 
-            return Component as React.ComponentType<React.ComponentProps<typeof components[T]>>;
+            return Component as React.ComponentType<React.ComponentProps<(typeof components)[T]>>;
         },
         getAll() {
             return map as ComponentsMap;

@@ -1,12 +1,11 @@
 import {
     DatasetFieldType,
-    Feature,
     isMeasureName,
     isMeasureType,
     isMeasureValue,
     isNumberField,
 } from 'shared';
-import {DatalensGlobalState, Utils, selectPalette} from 'ui';
+import {DatalensGlobalState, selectPalette} from 'ui';
 
 import {OpenDialogColorArgs} from '../components/Dialogs/DialogColor/DialogColor';
 import {VISUALIZATION_IDS} from '../constants';
@@ -20,13 +19,10 @@ export const selectDialogColorGradientState = (state: DatalensGlobalState) =>
 export const selectClientPaletteColors = (state: DatalensGlobalState) => {
     const {palette} = state.wizard.dialogColor.paletteState;
     const {colorPalettes} = state.colorPaletteEditor;
+    const colorPalette = colorPalettes.find((item) => item.colorPaletteId === palette);
 
-    if (Utils.isEnabledFeature(Feature.CustomColorPalettes)) {
-        const colorPalette = colorPalettes.find((item) => item.colorPaletteId === palette);
-
-        if (colorPalette) {
-            return colorPalette.colors;
-        }
+    if (colorPalette) {
+        return colorPalette.colors;
     }
 
     return selectPalette(palette);

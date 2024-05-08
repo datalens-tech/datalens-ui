@@ -6,6 +6,8 @@
     &_animate {
         top: 0;
         opacity: 1;
-        transition: top 0.2s, opacity 0.2s;
+        transition:
+            top 0.2s,
+            opacity 0.2s;
     }
 }

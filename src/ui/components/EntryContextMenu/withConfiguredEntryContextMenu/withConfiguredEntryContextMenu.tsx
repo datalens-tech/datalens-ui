@@ -65,7 +65,7 @@ export const getEntryContextMenuItems = (
                 id: menuItem.id,
                 qa: menuItem.qa,
                 ...(OVERRIDE_CONTEXT_MENU[menuItem.id] || {}),
-            } as EntryContextMenuItem),
+            }) as EntryContextMenuItem,
     );
 
     return entryContextMenuItems;

@@ -6,11 +6,14 @@ export const selectPlaceholders = <T extends PlaceholderId>(
     ids: T[],
 ): Record<T, Placeholder | undefined> => {
     const uniqueIds = new Set(ids);
-    return (placeholders ?? []).reduce((selectedPlaceholders, p) => {
-        const id = p.id as T;
+    return (placeholders ?? []).reduce(
+        (selectedPlaceholders, p) => {
+            const id = p.id as T;
 
-        return uniqueIds.has(id)
-            ? Object.defineProperty(selectedPlaceholders, id, {value: p})
-            : selectedPlaceholders;
-    }, {} as Record<T, Placeholder | undefined>);
+            return uniqueIds.has(id)
+                ? Object.defineProperty(selectedPlaceholders, id, {value: p})
+                : selectedPlaceholders;
+        },
+        {} as Record<T, Placeholder | undefined>,
+    );
 };

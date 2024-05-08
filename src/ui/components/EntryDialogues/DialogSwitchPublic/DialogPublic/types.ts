@@ -38,7 +38,7 @@ export type DialogPublicCloseCallback = (
     publish: boolean,
 ) => void;
 
-export type DialogStatus = typeof DIALOG_STATUS[keyof typeof DIALOG_STATUS];
+export type DialogStatus = (typeof DIALOG_STATUS)[keyof typeof DIALOG_STATUS];
 
 export type State = {
     status: DialogStatus;

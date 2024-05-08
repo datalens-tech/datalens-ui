@@ -15,6 +15,7 @@ import {selectTheme, selectThemeSettings} from '../store/selectors/user';
 import history from '../utils/history';
 
 import '@gravity-ui/uikit/styles/styles.scss';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'katex/dist/katex.min.css';
 import 'ui/styles/base.scss';
 import 'ui/styles/variables.scss';

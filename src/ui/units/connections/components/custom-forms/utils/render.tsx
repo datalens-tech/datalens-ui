@@ -20,21 +20,28 @@ const isTitleMatchedByFilter = (title: string, filter: string) => {
 export const getColumnsWithTypeIcons = (args: {schema: FileSourceSchema; filter: string}) => {
     const {schema, filter} = args;
 
-    return (schema || []).reduce((acc, column, index) => {
-        if (!column.title || isTitleMatchedByFilter(column.title, filter)) {
-            acc.push({
-                name: column.name,
-                header: (
-                    <React.Fragment>
-                        <DataTypeIcon className={bIcon()} dataType={column.user_type} width={14} />
-                        {column.title}
-                    </React.Fragment>
-                ),
-                sortable: false,
-                render: ({row}) => row[index],
-            });
-        }
+    return (schema || []).reduce(
+        (acc, column, index) => {
+            if (!column.title || isTitleMatchedByFilter(column.title, filter)) {
+                acc.push({
+                    name: column.name,
+                    header: (
+                        <React.Fragment>
+                            <DataTypeIcon
+                                className={bIcon()}
+                                dataType={column.user_type}
+                                width={14}
+                            />
+                            {column.title}
+                        </React.Fragment>
+                    ),
+                    sortable: false,
+                    render: ({row}) => row[index],
+                });
+            }
 
-        return acc;
-    }, [] as Column<(string | number)[]>[]);
+            return acc;
+        },
+        [] as Column<(string | number)[]>[],
+    );
 };

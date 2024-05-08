@@ -9,35 +9,38 @@ export const getCurrentRowColorValues = (
     row: PivotDataRows,
     annotationsMap: AnnotationsMap,
 ): (number | null)[] => {
-    return row.values.reduce((acc, cell: PivotDataCellValue[] | null) => {
-        if (!cell) {
-            acc.push(null);
+    return row.values.reduce(
+        (acc, cell: PivotDataCellValue[] | null) => {
+            if (!cell) {
+                acc.push(null);
+                return acc;
+            }
+
+            const colorAnnotation = getAnnotation(cell, annotationsMap, ApiV2Annotations.Color);
+
+            if (!colorAnnotation) {
+                acc.push(null);
+                return acc;
+            }
+
+            const [colorValue] = colorAnnotation;
+
+            const isInvalidColorValue =
+                colorValue === undefined ||
+                colorValue === null ||
+                colorValue === '' ||
+                isNaN(Number(colorValue));
+
+            if (isInvalidColorValue) {
+                acc.push(null);
+                return acc;
+            }
+
+            acc.push(Number(colorValue));
             return acc;
-        }
-
-        const colorAnnotation = getAnnotation(cell, annotationsMap, ApiV2Annotations.Color);
-
-        if (!colorAnnotation) {
-            acc.push(null);
-            return acc;
-        }
-
-        const [colorValue] = colorAnnotation;
-
-        const isInvalidColorValue =
-            colorValue === undefined ||
-            colorValue === null ||
-            colorValue === '' ||
-            isNaN(Number(colorValue));
-
-        if (isInvalidColorValue) {
-            acc.push(null);
-            return acc;
-        }
-
-        acc.push(Number(colorValue));
-        return acc;
-    }, [] as (null | number)[]);
+        },
+        [] as (null | number)[],
+    );
 };
 
 type GetPivotColorSettingsArgs = {
@@ -59,14 +62,17 @@ export const getColorSettings = (args: GetPivotColorSettingsArgs): GetColorSetti
 
     const flatColorValues: (number | null)[] = [];
 
-    const colorValuesByRow = rows.reduce((colorValues, row) => {
-        const currentRowColorValues = getCurrentRowColorValues(row, annotationsMap);
+    const colorValuesByRow = rows.reduce(
+        (colorValues, row) => {
+            const currentRowColorValues = getCurrentRowColorValues(row, annotationsMap);
 
-        flatColorValues.push(...currentRowColorValues);
-        colorValues.push(currentRowColorValues);
+            flatColorValues.push(...currentRowColorValues);
+            colorValues.push(currentRowColorValues);
 
-        return colorValues;
-    }, [] as (null | number)[][]);
+            return colorValues;
+        },
+        [] as (null | number)[][],
+    );
 
     const valuesWithoutNull = flatColorValues.filter((n): n is number => n !== null);
 

@@ -53,17 +53,21 @@ const mapV6PlaceholdersToV7Placeholders = (
 
             if (fieldIsHierarchy) {
                 if (firstField.fields && fieldIsHierarchyByType) {
-                    const axisModeByHierarchyField = firstField.fields.reduce((acc, field) => {
-                        const isContinuousMode = isAllAxisModesAvailable(field) && !sortHasMeasure;
+                    const axisModeByHierarchyField = firstField.fields.reduce(
+                        (acc, field) => {
+                            const isContinuousMode =
+                                isAllAxisModesAvailable(field) && !sortHasMeasure;
 
-                        if (isContinuousMode) {
-                            acc[field.guid] = AxisMode.Continuous;
-                        } else {
-                            acc[field.guid] = AxisMode.Discrete;
-                        }
+                            if (isContinuousMode) {
+                                acc[field.guid] = AxisMode.Continuous;
+                            } else {
+                                acc[field.guid] = AxisMode.Discrete;
+                            }
 
-                        return acc;
-                    }, {} as Record<string, AxisMode>);
+                            return acc;
+                        },
+                        {} as Record<string, AxisMode>,
+                    );
 
                     return {
                         ...v6Placeholder,
