@@ -889,12 +889,9 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(ConnectionsDialogQA.Apply));
     }
 
-    async clickSaveButton(checkEditMode?: boolean) {
+    async clickSaveButton() {
         // save the changes made on the dashboard
         await this.page.click(slct(ActionPanelDashSaveControlsQa.Save));
-        if (checkEditMode) {
-            await this.editEntityButton.waitForVisible();
-        }
     }
 
     async saveChanges() {

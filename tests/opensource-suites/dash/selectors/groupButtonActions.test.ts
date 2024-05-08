@@ -80,7 +80,7 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
             await page.locator(slct(DialogGroupControlQa.applyButtonCheckbox)).click();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
-            await dashboardPage.clickSaveButton(true);
+            await dashboardPage.saveChanges();
 
             // check that there's no state
             expect(getUrlStateParam(page)).toEqual(null);
@@ -127,7 +127,7 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
             await page.locator(slct(DialogGroupControlQa.resetButtonCheckbox)).click();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
-            await dashboardPage.clickSaveButton(true);
+            await dashboardPage.saveChanges();
 
             await dashboardPage.checkSelectValueByTitle({
                 title: PARAMS.FIRST_CONTROL.controlTitle,
@@ -190,7 +190,7 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
             await page.locator(slct(DialogGroupControlQa.resetButtonCheckbox)).click();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
-            await dashboardPage.clickSaveButton(true);
+            await dashboardPage.saveChanges();
 
             // check that there's no state
             expect(getUrlStateParam(page)).toEqual(null);

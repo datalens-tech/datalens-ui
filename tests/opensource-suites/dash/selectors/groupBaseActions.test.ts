@@ -25,11 +25,6 @@ const PARAMS = {
         controlItems: ['1', '2'],
         controlFieldName: 'test-control-field-2',
     },
-    THIRD_CONTROL: {
-        controlTitle: 'test-control-3',
-        controlItems: ['3', '4'],
-        controlFieldName: 'test-control-field-3',
-    },
     OLD_CONTROL_TITLE: 'city',
     OLD_SELECTOR_TAB: 'Tab 2',
 };
@@ -77,13 +72,6 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
-            await openTestPage(page, '/');
-            const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
-
-            if (!isEnabledGroupControls) {
-                return;
-            }
-
             // adding selector to existing group
             await dashboardPage.createDashboard({
                 editDash: async () => {
@@ -98,7 +86,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
 
             await page.click(slct(ControlQA.dialogControlApplyBtn));
 
-            await dashboardPage.clickSaveButton(true);
+            await dashboardPage.saveChanges();
 
             const multipleControlsCount = await page
                 .locator(slct(ControlQA.chartkitControl))
@@ -119,7 +107,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
 
-            await dashboardPage.clickSaveButton(true);
+            await dashboardPage.saveChanges();
 
             const singleControlCount = await page.locator(slct(ControlQA.chartkitControl)).count();
             expect(singleControlCount).toBe(1);
@@ -130,12 +118,6 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
         'Old single selector is transformed into a new one on saving after editing and it does not change its size',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
-            await openTestPage(page, '/');
-            const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
-
-            if (!isEnabledGroupControls) {
-                return;
-            }
 
             // open the dashboard with a selector on one of the tabs
             await openTestPage(page, config.dash.urls.DashboardWithTabsAndSelectors);
@@ -173,12 +155,6 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
         'Order of selectors in group changes after editing their placement',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
-            await openTestPage(page, '/');
-            const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
-
-            if (!isEnabledGroupControls) {
-                return;
-            }
 
             // adding selector to existing group
             await dashboardPage.createDashboard({
