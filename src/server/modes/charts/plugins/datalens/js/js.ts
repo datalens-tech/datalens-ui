@@ -684,7 +684,7 @@ type JSTabOptions =
     | [{shared: Shared | ServerChartsConfig; ChartEditor: IChartEditor; data: any}]
     | [any, Shared | ServerChartsConfig, IChartEditor];
 
-module.exports = (...options: JSTabOptions) => {
+export const buildGraph = (...options: JSTabOptions) => {
     let data: any;
     let shared: Shared | ServerChartsConfig;
     let ChartEditor: IChartEditor;

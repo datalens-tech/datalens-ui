@@ -58,7 +58,7 @@ function prepareFlatTable({
     const {drillDownData} = shared.sharedData;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
-    const treeSet = new Set(getTreeState(ChartEditor));
+    const treeSet = new Set(getTreeState(ChartEditor.getParams()));
 
     const app = registry.getApp();
     const pinnedColumns = isEnabledServerFeature(app.nodekit.ctx, Feature.PinnedColumns)

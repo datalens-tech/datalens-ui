@@ -3,11 +3,15 @@
 $class: 'dl-collections-navigation-layout';
 
 .#{$class} {
+    position: relative;
+    height: 100%;
+
     &__page-wrapper {
         position: absolute;
         top: calc($actionPanelHeight + var(--dl-mobile-header-height, 0px));
         right: 0;
         bottom: 0;
+        left: 0;
         display: grid;
         grid-template-rows: auto minmax(auto, $footerHeight);
         overflow-y: auto;

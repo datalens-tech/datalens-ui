@@ -40,6 +40,7 @@ export const getSourceColumn = (args: GetSourceColumnArgs): Column<DatasetField>
             return (
                 <Button
                     key={`source-${index}`}
+                    className={b('btn-source', {formula: isFormulaField})}
                     view="flat"
                     title={i18n('button_open-field-editor')}
                     width="max"

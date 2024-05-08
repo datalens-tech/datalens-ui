@@ -3,12 +3,10 @@ import React from 'react';
 import {ActionBar} from '@gravity-ui/navigation';
 import {Skeleton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {useSelector} from 'react-redux';
 import {Feature} from 'shared';
 import {registry} from 'ui/registry';
 import Utils from 'ui/utils/utils';
 
-import {selectAsideHeaderData} from '../../../../store/selectors/asideHeader';
 import {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
 
 import './CollectionsNavigationLayout.scss';
@@ -51,9 +49,6 @@ type Props = {
 export const CollectionsNavigationLayout = React.memo<Props>(
     // eslint-disable-next-line complexity
     ({layout, skeletonsSettings, children}) => {
-        const asideHeaderData = useSelector(selectAsideHeaderData);
-        const asideHeaderSize = asideHeaderData.size || 0;
-
         const {Footer} = registry.common.components.getAll();
 
         return (
@@ -101,7 +96,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                     </ActionBar>
                 )}
 
-                <div className={b('page-wrapper')} style={{left: `${asideHeaderSize}px`}}>
+                <div className={b('page-wrapper')}>
                     <div className={b('page')}>
                         <div className={b('header')}>
                             {layout.title || layout.titleActionsBlock ? (

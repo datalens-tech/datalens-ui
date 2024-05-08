@@ -33,7 +33,9 @@ type ExtendedHighchartsOptions = Omit<Highcharts.Options, 'legend'> & {
 };
 
 // eslint-disable-next-line complexity
-export default (...options: [{shared: ServerChartsConfig} | ServerChartsConfig]) => {
+export const buildHighchartsConfig = (
+    ...options: [{shared: ServerChartsConfig} | ServerChartsConfig]
+) => {
     const app = registry.getApp();
     let shared: ServerChartsConfig;
 
