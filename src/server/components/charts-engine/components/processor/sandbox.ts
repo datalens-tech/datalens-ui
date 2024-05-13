@@ -20,6 +20,7 @@ import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
 
 import controlModule from './../../../../modes/charts/plugins/control';
+import datasetModule, {BuildSourcePayload} from './../../../../modes/charts/plugins/dataset/v2';
 import qlModule from './../../../../modes/charts/plugins/ql/module';
 import {getChartApiContext} from './chart-api-context';
 import {Console} from './console';
@@ -251,7 +252,11 @@ const execute = async ({
         );
 
         getLibsQlChartV1({context, chartEditorApi: instance.ChartEditor}).consume((libsQlChartV1) =>
-            context.setProp(context.global, '_QlChartV1', libsQlChartV1),
+            context.setProp(context.global, '_qlChartV1', libsQlChartV1),
+        );
+
+        getLibsDatasetV2({context, chartEditorApi: instance.ChartEditor}).consume((libsDatasetV2) =>
+            context.setProp(context.global, '_libsDatasetV2', libsDatasetV2),
         );
 
         const prepare = `
@@ -275,11 +280,19 @@ const execute = async ({
                     }
                 } else if (lowerName === 'libs/qlchart/v1') {
                     return {
-                        buildSources: (args) => JSON.parse(_QlChartV1.buildSources(args)),
-                        buildGraph: (args) => JSON.parse(_QlChartV1.buildGraph(args)),
-                        buildChartsConfig: (args) => JSON.parse(_QlChartV1.buildChartsConfig(args)),
-                        buildLibraryConfig: (args) => JSON.parse(_QlChartV1.buildLibraryConfig(args)),
-                        buildD3Config: (args) => JSON.parse(_QlChartV1.buildD3Config(args)),
+                        buildSources: (args) => JSON.parse(_qlChartV1.buildSources(args)),
+                        buildGraph: (args) => JSON.parse(_qlChartV1.buildGraph(args)),
+                        buildChartsConfig: (args) => JSON.parse(_qlChartV1.buildChartsConfig(args)),
+                        buildLibraryConfig: (args) => JSON.parse(_qlChartV1.buildLibraryConfig(args)),
+                        buildD3Config: (args) => JSON.parse(_qlChartV1.buildD3Config(args)),
+                    }
+                } else if (lowerName === 'libs/dataset/v2') {
+                    return {
+                        buildSources: (args) => JSON.parse(_libsDatasetV2.buildSources(args)),
+                        processTableData: (resultData, field, options) => JSON.parse(_libsDatasetV2.processTableData(resultData, field, options)),
+                        processData: (data, field, options) => JSON.parse(_libsDatasetV2.ORDERS(data, field, options)),
+                        OPERATIONS: _libsDatasetV2.OPERATIONS,
+                        ORDERS: _libsDatasetV2.ORDERS,
                     }
                } else {
                    throw new Error(\`Module "\${lowerName}" is not resolved\`);
@@ -539,7 +552,7 @@ function getLibsQlChartV1({
     context: QuickJSContext;
     chartEditorApi: IChartEditor;
 }) {
-    const libsQlChartV1V1 = context.newObject();
+    const libsQlChartV1 = context.newObject();
     context
         .newFunction('buildSources', (arg) => {
             const nativeArg: {shared: QlConfig} = context.dump(arg);
@@ -549,7 +562,7 @@ function getLibsQlChartV1({
             });
             return context.newString(JSON.stringify(result));
         })
-        .consume((handle) => context.setProp(libsQlChartV1V1, 'buildSources', handle));
+        .consume((handle) => context.setProp(libsQlChartV1, 'buildSources', handle));
 
     context
         .newFunction('buildGraph', (arg) => {
@@ -560,7 +573,7 @@ function getLibsQlChartV1({
             });
             return context.newString(JSON.stringify(result));
         })
-        .consume((handle) => context.setProp(libsQlChartV1V1, 'buildGraph', handle));
+        .consume((handle) => context.setProp(libsQlChartV1, 'buildGraph', handle));
 
     context
         .newFunction('buildLibraryConfig', (arg) => {
@@ -571,7 +584,7 @@ function getLibsQlChartV1({
             });
             return context.newString(JSON.stringify(result));
         })
-        .consume((handle) => context.setProp(libsQlChartV1V1, 'buildLibraryConfig', handle));
+        .consume((handle) => context.setProp(libsQlChartV1, 'buildLibraryConfig', handle));
 
     context
         .newFunction('buildChartsConfig', (arg) => {
@@ -582,7 +595,7 @@ function getLibsQlChartV1({
             });
             return context.newString(JSON.stringify(result));
         })
-        .consume((handle) => context.setProp(libsQlChartV1V1, 'buildChartsConfig', handle));
+        .consume((handle) => context.setProp(libsQlChartV1, 'buildChartsConfig', handle));
 
     context
         .newFunction('buildD3Config', (arg) => {
@@ -593,9 +606,83 @@ function getLibsQlChartV1({
             });
             return context.newString(JSON.stringify(result));
         })
-        .consume((handle) => context.setProp(libsQlChartV1V1, 'buildD3Config', handle));
+        .consume((handle) => context.setProp(libsQlChartV1, 'buildD3Config', handle));
 
-    return libsQlChartV1V1;
+    return libsQlChartV1;
+}
+
+function getLibsDatasetV2({
+    context,
+    chartEditorApi,
+}: {
+    context: QuickJSContext;
+    chartEditorApi: IChartEditor;
+}) {
+    const libsDatasetV2 = context.newObject();
+    context
+        .newFunction('buildSources', (arg) => {
+            const nativeArg: BuildSourcePayload = context.dump(arg);
+            const result = datasetModule.buildSource(nativeArg);
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsDatasetV2, 'buildSources', handle));
+
+    context
+        .newFunction('processTableData', (resultData, field, options) => {
+            const nativeResultData = context.dump(resultData);
+            const nativeField = context.dump(field);
+            const nativeOptions = context.dump(options);
+            const result = datasetModule.processTableData(
+                nativeResultData,
+                nativeField,
+                nativeOptions,
+            );
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsDatasetV2, 'processTableData', handle));
+
+    context
+        .newFunction('processData', (data, field, options) => {
+            const nativeData = context.dump(data);
+            const nativeField = context.dump(field);
+            const nativeOptions = context.dump(options);
+            const result = datasetModule.processData(
+                nativeData,
+                nativeField,
+                chartEditorApi,
+                nativeOptions,
+            );
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsDatasetV2, 'processData', handle));
+
+    const operations = context.newObject();
+
+    (Object.keys(datasetModule.OPERATIONS) as Array<keyof typeof datasetModule.OPERATIONS>).forEach(
+        (key) => {
+            context
+                .newString(datasetModule.OPERATIONS[key])
+                .consume((value) => context.setProp(operations, key, value));
+        },
+    );
+
+    context.setProp(libsDatasetV2, 'OPERATIONS', operations);
+    operations.dispose();
+
+    const orders = context.newObject();
+
+    (Object.keys(datasetModule.ORDERS) as Array<keyof typeof datasetModule.ORDERS>).forEach(
+        (key) => {
+            context
+                .newString(datasetModule.ORDERS[key])
+                .consume((value) => context.setProp(orders, key, value));
+        },
+    );
+
+    context.setProp(libsDatasetV2, 'ORDERS', orders);
+    orders.dispose();
+
+    return libsDatasetV2;
 }
 
 const MODULE_PROCESSING_TIMEOUT = 500;
