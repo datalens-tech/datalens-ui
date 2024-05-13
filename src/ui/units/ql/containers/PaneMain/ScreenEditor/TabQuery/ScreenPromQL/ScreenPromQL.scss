@@ -19,8 +19,7 @@
     }
 
     &__hide-query-btn {
-        float: right;
-        display: block;
+        display: inline-block;
     }
 
     &__query-row {
@@ -30,27 +29,13 @@
     }
 
     &__query-row-tabs {
-        width: 145px;
-        height: 24px;
+        position: relative;
+        width: 175px;
         float: left;
 
-        display: flex;
-        align-items: center;
-        flex: 1 1 0%;
-        overflow: hidden;
-        margin-right: 4px;
-        margin-left: 20px;
         box-shadow: none;
 
         .gc-adaptive-tabs {
-            &__tabs-list {
-                height: 40px;
-            }
-
-            &__tab-container {
-                height: 40px;
-            }
-
             &__tab {
                 height: 33px;
             }
@@ -100,6 +85,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+
+            line-height: 35px;
         }
     }
 
