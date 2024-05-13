@@ -1,5 +1,3 @@
-import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-
 import {ExtendedPointOptionsObject} from '../../utils/color-helpers';
 
 export type ScatterPoint = ExtendedPointOptionsObject & {
@@ -12,5 +10,8 @@ export type ScatterPoint = ExtendedPointOptionsObject & {
     x?: number;
     y?: number;
     value?: number;
-    marker?: Highcharts.PointMarkerOptionsObject;
+    marker?: {
+        radius?: number;
+    };
+    custom?: Record<string, any>;
 };
