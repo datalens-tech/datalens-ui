@@ -166,7 +166,7 @@ class Wizard extends React.Component<Props, State> {
                     });
                 },
                 options: {
-                    pathIgnoreList: ['/preview/highchartsWidget'],
+                    pathIgnoreList: ['/preview/highchartsWidget', '/preview/filters'],
                 },
             });
         }
