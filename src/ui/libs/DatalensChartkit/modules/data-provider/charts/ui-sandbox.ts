@@ -1,3 +1,4 @@
+import {deserialize, serialize} from '@ungap/structured-clone';
 import type {QuickJSContext, QuickJSWASMModule} from 'quickjs-emscripten';
 
 import {WRAPPED_FN_KEY} from '../../../../../../shared/constants/ui-sandbox';
@@ -52,20 +53,26 @@ const defineVmArguments = (
 
     switch (ctx) {
         case 'hc-label-formatter': {
-            const label = args[0];
-            stringifiedArgs = JSON.stringify([label]);
+            const serialized = serialize(args, {lossy: true});
+            const deserialized = deserialize(serialized);
+            // const label = args[0];
+            // stringifiedArgs = JSON.stringify([label]);
+            stringifiedArgs = JSON.stringify(deserialized);
 
             break;
         }
         case 'manage-tooltip-config': {
-            const config = args[0];
+            const serialized = serialize(args, {lossy: true, json: true});
+            const deserialized = deserialize(serialized);
+            // const config = args[0];
 
-            if (config && typeof config === 'object' && 'this' in config) {
-                // Remove "this" link to avoid  circular structure
-                delete config.this;
-            }
+            // if (config && typeof config === 'object' && 'this' in config) {
+            //     // Remove "this" link to avoid  circular structure
+            //     delete config.this;
+            // }
 
-            stringifiedArgs = JSON.stringify([config]);
+            // stringifiedArgs = JSON.stringify([config]);
+            stringifiedArgs = JSON.stringify(deserialized);
             break;
         }
     }
