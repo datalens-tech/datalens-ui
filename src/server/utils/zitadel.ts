@@ -1,5 +1,6 @@
 import {AppContext} from '@gravity-ui/nodekit';
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 import NodeCache from 'node-cache';
 import {Issuer, TokenSet} from 'openid-client';
 
@@ -11,18 +12,33 @@ import {
     zitadelProjectId,
     zitadelUri,
 } from '../app-env';
+import {getDuration} from '../components/charts-engine/components/utils';
 
 const cache = new NodeCache();
 
+axiosRetry(axios, {
+    retries: 3,
+});
+
 export const introspect = async (ctx: AppContext, token?: string): Promise<boolean> => {
     ctx.log('Token introspection');
+
+    if (!zitadelUri) {
+        throw new Error('Missing ZITADEL_URI in env');
+    }
+    if (!clientId) {
+        throw new Error('Missing CLIENT_ID in env');
+    }
+    if (!clientSecret) {
+        throw new Error('Missing CLIENT_SECRET in env');
+    }
 
     try {
         if (!token) {
             throw new Error('Token not provided');
         }
 
-        const start = Date.now();
+        const hrStart = process.hrtime();
 
         const response = await axios.post(
             `${zitadelUri}/oauth/v2/introspect`,
@@ -38,7 +54,7 @@ export const introspect = async (ctx: AppContext, token?: string): Promise<boole
         const {active} = response.data;
         const result = Boolean(active);
 
-        ctx.log(`Token introspected successfully within: ${Date.now() - start} ms`);
+        ctx.log(`Token introspected successfully within: ${getDuration(hrStart)} ms`);
         return result;
     } catch (e) {
         ctx.logError('Failed to introspect token', e);
@@ -48,6 +64,13 @@ export const introspect = async (ctx: AppContext, token?: string): Promise<boole
 
 export const refreshTokens = async (ctx: AppContext, refreshToken?: string) => {
     ctx.log('Refreshing tokens');
+
+    if (!clientId) {
+        throw new Error('Missing CLIENT_ID in env');
+    }
+    if (!clientSecret) {
+        throw new Error('Missing CLIENT_SECRET in env');
+    }
 
     const issuer = await Issuer.discover(zitadelUri);
 
@@ -72,6 +95,19 @@ export const refreshTokens = async (ctx: AppContext, refreshToken?: string) => {
 };
 
 export const fetchServiceUserToken = async (ctx: AppContext) => {
+    if (!zitadelUri) {
+        throw new Error('Missing ZITADEL_URI in env');
+    }
+    if (!serviceClientId) {
+        throw new Error('Missing SERVICE_CLIENT_ID in env');
+    }
+    if (!serviceClientSecret) {
+        throw new Error('Missing SERVICE_CLIENT_SECRET in env');
+    }
+    if (!zitadelProjectId) {
+        throw new Error('Missing ZITADEL_PROJECT_ID in env');
+    }
+
     try {
         ctx.log('Fetching service user token');
 
@@ -107,11 +143,13 @@ export const generateServiceUserToken = async (ctx: AppContext): Promise<string 
     } else {
         const {access_token, expires_in} = await fetchServiceUserToken(ctx);
 
-        const safeTtl = Math.floor(0.9 * expires_in);
-        ctx.log('Service user token created, saving to cache');
+        if (access_token && expires_in) {
+            const safeTtl = Math.floor(0.9 * expires_in);
+            ctx.log('Service user token created, saving to cache');
 
-        cache.set('token', access_token, safeTtl);
-        token = access_token;
+            cache.set('token', access_token, safeTtl);
+            token = access_token;
+        }
     }
 
     return token;

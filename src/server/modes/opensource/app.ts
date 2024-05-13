@@ -89,6 +89,22 @@ function initDataLensApp({
 }
 
 function initZitadel({beforeAuth}: {beforeAuth: AppMiddleware[]}) {
+    if (!zitadelUri) {
+        throw new Error('Missing ZITADEL_URI in env');
+    }
+    if (!clientId) {
+        throw new Error('Missing CLIENT_ID in env');
+    }
+    if (!clientSecret) {
+        throw new Error('Missing CLIENT_SECRET in env');
+    }
+    if (!appHostUri) {
+        throw new Error('Missing APP_HOST_URI in env');
+    }
+    if (!cookieSecret) {
+        throw new Error('Missing COOKIE_SECRET in env');
+    }
+
     passport.use(
         new OpenIDConnectStrategy(
             {

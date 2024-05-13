@@ -6,7 +6,7 @@ interface DlAuthUser extends Express.User {
 }
 
 interface DlAppRouteParams extends AppRouteParams {
-    apiRoute?: boolean;
+    ui?: boolean;
 }
 
 export interface DlAuthRequest extends Request {

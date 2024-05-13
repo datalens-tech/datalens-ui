@@ -41,7 +41,7 @@ export default async function (req: DlAuthRequest, res: Response, next: NextFunc
         return next();
     }
 
-    const apiRoute = Boolean(req.routeInfo?.apiRoute);
+    const apiRoute = Boolean(!req.routeInfo?.ui);
     if (apiRoute) {
         return res.status(401).send('Unauthorized access');
     }

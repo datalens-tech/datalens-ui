@@ -11,7 +11,6 @@ export type ExtendedAppRouteDescription = AppRouteDescription & {
     beforeAuth: AppMiddleware[];
     afterAuth: AppMiddleware[];
     disableUserSettings?: boolean;
-    apiRoute?: boolean;
     cspPresets?: CSPPolicies[];
     disableCsrf?: boolean;
 };

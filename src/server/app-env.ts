@@ -1,4 +1,4 @@
-import {AppInstallation, AppMode, Zitadel} from '../shared';
+import {AppInstallation, AppMode, isTrueArg} from '../shared';
 
 const mode = process.env.APP_MODE;
 export const appInstallation = process.env.APP_INSTALLATION;
@@ -9,8 +9,7 @@ export const isDatalensMode = mode === AppMode.Datalens;
 export const isChartsMode = mode === AppMode.Charts;
 export const isOpensourceInstallation = appInstallation === AppInstallation.Opensource;
 
-const zitadel = process.env.ZITADEL;
-export const isZitadelEnabled = zitadel === Zitadel.Enabled;
+export const isZitadelEnabled = isTrueArg(process.env.ZITADEL);
 
 export const clientId = process.env.CLIENT_ID || '';
 export const clientSecret = process.env.CLIENT_SECRET || '';
