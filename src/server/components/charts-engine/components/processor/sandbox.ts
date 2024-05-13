@@ -9,7 +9,7 @@ import {
 
 import type {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
-import type {IChartEditor, Shared} from '../../../../../shared/types';
+import type {IChartEditor, QlConfig, Shared} from '../../../../../shared/types';
 import {ServerChartsConfig} from '../../../../../shared/types/config/wizard';
 import {SourceControlArgs} from '../../../../modes/charts/plugins/control/url/types';
 import {BuildWizardD3ConfigOptions} from '../../../../modes/charts/plugins/datalens/d3';
@@ -20,6 +20,7 @@ import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
 
 import controlModule from './../../../../modes/charts/plugins/control';
+import qlModule from './../../../../modes/charts/plugins/ql/module';
 import {getChartApiContext} from './chart-api-context';
 import {Console} from './console';
 import {getSortParams} from './paramsUtils';
@@ -213,16 +214,6 @@ const execute = async ({
         runtime.setMemoryLimit(1024 * 1024);
         runtime.setInterruptHandler(shouldInterruptAfterDeadline(Date.now() + timeout));
 
-        // const requireHandle = context.newFunction('_require', () => {
-        //     const moduleText = fs.readFileSync(
-        //         path.join(__dirname, '../../../../../../../../plugins-bundle', 'index.js'),
-        //         'utf-8',
-        //     );
-        //     return context.newString(moduleText);
-        // });
-        // context.setProp(context.global, '_require', requireHandle);
-        // requireHandle.dispose();
-
         const logHandle = context.newFunction('log', (...args) => {
             const nativeArgs = args.map(context.dump);
             instance.console.log(...nativeArgs);
@@ -259,6 +250,10 @@ const execute = async ({
             context.setProp(context.global, '_libsControlV1', libsControlV1),
         );
 
+        getLibsQlChartV1({context, chartEditorApi: instance.ChartEditor}).consume((libsQlChartV1) =>
+            context.setProp(context.global, '_QlChartV1', libsQlChartV1),
+        );
+
         const prepare = `
            function require(name) => {
                const lowerName = name.toLowerCase();
@@ -271,13 +266,21 @@ const execute = async ({
                        buildD3Config: (args) => JSON.parse(_libsDatalensV3.buildD3Config(args)),
                    }
                } else if (lowerName === 'libs/control/v1') {
-                return {
-                    buildSources: (args) => JSON.parse(_libsControlV1.buildSources(args)),
-                    buildGraph: (args) => _libsControlV1.buildGraph(args),
-                    buildUI: (args) => JSON.parse(_libsControlV1.buildUI(args)),
-                    buildChartsConfig: () => ({}),
-                    buildHighchartsConfig: () => ({}),
-                }
+                    return {
+                        buildSources: (args) => JSON.parse(_libsControlV1.buildSources(args)),
+                        buildGraph: (args) => _libsControlV1.buildGraph(args),
+                        buildUI: (args) => JSON.parse(_libsControlV1.buildUI(args)),
+                        buildChartsConfig: () => ({}),
+                        buildHighchartsConfig: () => ({}),
+                    }
+                } else if (lowerName === 'libs/qlchart/v1') {
+                    return {
+                        buildSources: (args) => JSON.parse(_QlChartV1.buildSources(args)),
+                        buildGraph: (args) => JSON.parse(_QlChartV1.buildGraph(args)),
+                        buildChartsConfig: (args) => JSON.parse(_QlChartV1.buildChartsConfig(args)),
+                        buildLibraryConfig: (args) => JSON.parse(_QlChartV1.buildLibraryConfig(args)),
+                        buildD3Config: (args) => JSON.parse(_QlChartV1.buildD3Config(args)),
+                    }
                } else {
                    throw new Error(\`Module "\${lowerName}" is not resolved\`);
                }
@@ -529,14 +532,71 @@ function getLibsControlV1({
 
     return libsControlV1;
 }
+function getLibsQlChartV1({
+    context,
+    chartEditorApi,
+}: {
+    context: QuickJSContext;
+    chartEditorApi: IChartEditor;
+}) {
+    const libsQlChartV1V1 = context.newObject();
+    context
+        .newFunction('buildSources', (arg) => {
+            const nativeArg: {shared: QlConfig} = context.dump(arg);
+            const result = qlModule.buildSources({
+                shared: nativeArg.shared,
+                ChartEditor: chartEditorApi,
+            });
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsQlChartV1V1, 'buildSources', handle));
 
-// function getShared(vm: QuickJSContext, shared: Record<string, object>): QuickJSHandle {
-//     const sharedHandle = vm.newObject();
-//     for (const [key, value] of Object.entries(shared)) {
-//         vm.setProp(sharedHandle, key, value);
-//     }
-//     return sharedHandle;
-// }
+    context
+        .newFunction('buildGraph', (arg) => {
+            const nativeArg: {shared: QlConfig} = context.dump(arg);
+            const result = qlModule.buildGraph({
+                shared: nativeArg.shared,
+                ChartEditor: chartEditorApi,
+            });
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsQlChartV1V1, 'buildGraph', handle));
+
+    context
+        .newFunction('buildLibraryConfig', (arg) => {
+            const nativeArg: {shared: QlConfig} = context.dump(arg);
+            const result = qlModule.buildLibraryConfig({
+                shared: nativeArg.shared,
+                ChartEditor: chartEditorApi,
+            });
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsQlChartV1V1, 'buildLibraryConfig', handle));
+
+    context
+        .newFunction('buildChartsConfig', (arg) => {
+            const nativeArg: {shared: QlConfig} = context.dump(arg);
+            const result = qlModule.buildChartsConfig({
+                shared: nativeArg.shared,
+                ChartEditor: chartEditorApi,
+            });
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsQlChartV1V1, 'buildChartsConfig', handle));
+
+    context
+        .newFunction('buildD3Config', (arg) => {
+            const nativeArg: {shared: QlConfig} = context.dump(arg);
+            const result = qlModule.buildD3Config({
+                shared: nativeArg.shared,
+                ChartEditor: chartEditorApi,
+            });
+            return context.newString(JSON.stringify(result));
+        })
+        .consume((handle) => context.setProp(libsQlChartV1V1, 'buildD3Config', handle));
+
+    return libsQlChartV1V1;
+}
 
 const MODULE_PROCESSING_TIMEOUT = 500;
 
