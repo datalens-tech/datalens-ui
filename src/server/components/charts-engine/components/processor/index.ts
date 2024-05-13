@@ -448,7 +448,10 @@ export class Processor {
                 normalizeParams(paramsOverride);
 
             hrStart = process.hrtime();
-            const paramsTabResults = await builder.buildParams({params: normalizedParamsOverride});
+            const paramsTabResults = await builder.buildParams({
+                params: normalizedParamsOverride,
+                actionParams: normalizedActionParamsOverride,
+            });
             logSandboxDuration(paramsTabResults.executionTiming, paramsTabResults.name, ctx);
             const paramsTabError = paramsTabResults.runtimeMetadata.error;
             if (paramsTabError) {
@@ -489,7 +492,10 @@ export class Processor {
 
             hrStart = process.hrtime();
 
-            const sourcesTabResults = await builder.buildUrls({params});
+            const sourcesTabResults = await builder.buildUrls({
+                params,
+                actionParams: normalizedActionParamsOverride,
+            });
 
             logSandboxDuration(sourcesTabResults.executionTiming, sourcesTabResults.name, ctx);
             ctx.log('EditorEngine::Urls', {duration: getDuration(hrStart)});
@@ -641,6 +647,7 @@ export class Processor {
             const libraryTabResult = await builder.buildChartLibraryConfig({
                 data,
                 params: usedParams,
+                actionParams: normalizedActionParamsOverride,
             });
 
             ctx.log('EditorEngine::HighCharts', {duration: getDuration(hrStart)});
@@ -664,7 +671,11 @@ export class Processor {
             let jsTabResults;
             if (!uiOnly) {
                 hrStart = process.hrtime();
-                const configTabResults = await builder.buildChartConfig({data, params: usedParams});
+                const configTabResults = await builder.buildChartConfig({
+                    data,
+                    params: usedParams,
+                    actionParams: normalizedActionParamsOverride,
+                });
 
                 logSandboxDuration(configTabResults.executionTiming, configTabResults.name, ctx);
                 ctx.log('EditorEngine::Config', {duration: getDuration(hrStart)});
@@ -677,6 +688,7 @@ export class Processor {
                     data,
                     sources: resolvedSources,
                     params: usedParams,
+                    actionParams: normalizedActionParamsOverride,
                 });
                 logSandboxDuration(jsTabResults.executionTiming, jsTabResults.name, ctx);
 
@@ -706,7 +718,11 @@ export class Processor {
                 updateParams(jsTabResults.runtimeMetadata.userParamsOverride);
             }
 
-            const uiTabResults = await builder.buildUI({data, params: usedParams});
+            const uiTabResults = await builder.buildUI({
+                data,
+                params: usedParams,
+                actionParams: normalizedActionParamsOverride,
+            });
             logSandboxDuration(uiTabResults.executionTiming, uiTabResults.name, ctx);
 
             const uiTabExports = uiTabResults.exports;
