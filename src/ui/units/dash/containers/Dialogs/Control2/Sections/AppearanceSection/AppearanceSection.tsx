@@ -3,7 +3,7 @@ import React from 'react';
 import {I18n} from 'i18n';
 
 import {Feature} from '../../../../../../../../shared';
-import {Utils} from '../../../../../../../../ui';
+import Utils from '../../../../../../../../ui/utils';
 import {SectionWrapper} from '../../../../../../../components/SectionWrapper/SectionWrapper';
 
 import {HintRow} from './Rows/HintRow/HintRow';
