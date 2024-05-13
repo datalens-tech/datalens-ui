@@ -74,7 +74,7 @@ function getZitadelRoutes({
                 failureRedirect: '/auth',
             }),
             route: 'GET /api/auth/callback',
-            handler: (_, __) => {},
+            handler: () => {},
         },
         logout: {
             beforeAuth,
