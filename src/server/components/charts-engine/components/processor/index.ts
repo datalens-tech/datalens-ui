@@ -448,7 +448,7 @@ export class Processor {
                 normalizeParams(paramsOverride);
 
             hrStart = process.hrtime();
-            const paramsTabResults = await builder.buildParams();
+            const paramsTabResults = await builder.buildParams({params: normalizedParamsOverride});
             logSandboxDuration(paramsTabResults.executionTiming, paramsTabResults.name, ctx);
             const paramsTabError = paramsTabResults.runtimeMetadata.error;
             if (paramsTabError) {
@@ -489,7 +489,7 @@ export class Processor {
 
             hrStart = process.hrtime();
 
-            const sourcesTabResults = await builder.buildUrls();
+            const sourcesTabResults = await builder.buildUrls({params});
 
             logSandboxDuration(sourcesTabResults.executionTiming, sourcesTabResults.name, ctx);
             ctx.log('EditorEngine::Urls', {duration: getDuration(hrStart)});

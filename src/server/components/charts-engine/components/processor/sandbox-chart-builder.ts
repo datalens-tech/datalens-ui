@@ -37,8 +37,7 @@ export const getSandboxChartBuilder = async (
         widgetConfig,
         workbookId,
     } = args;
-    const {params: normalizedParamsOverride, actionParams: normalizedActionParamsOverride} =
-        normalizeParams(params);
+    const {actionParams: normalizedActionParamsOverride} = normalizeParams(params);
     const type = config.meta.stype;
     let shared: Record<string, any>;
 
@@ -92,14 +91,14 @@ export const getSandboxChartBuilder = async (
             return processedModules as unknown as Record<string, ChartBuilderResult>;
         },
 
-        buildParams: async () => {
+        buildParams: async ({params}: {params: StringParams}) => {
             const tabResult = Sandbox.processTab({
                 name: 'Params',
                 code: config.data.params,
                 timeout: ONE_SECOND,
                 hooks,
                 nativeModules: chartsEngine.nativeModules,
-                params: normalizedParamsOverride,
+                params,
                 actionParams: normalizedActionParamsOverride,
                 widgetConfig,
                 shared,
@@ -114,7 +113,7 @@ export const getSandboxChartBuilder = async (
                 name: tabResult.filename,
             };
         },
-        buildUrls: async () => {
+        buildUrls: async ({params}: {params: StringParams}) => {
             const tabResult = Sandbox.processTab({
                 name: 'Urls',
                 code: config.data.url,
@@ -123,7 +122,7 @@ export const getSandboxChartBuilder = async (
                 nativeModules: chartsEngine.nativeModules,
                 shared,
                 modules,
-                params: normalizedParamsOverride,
+                params,
                 actionParams: normalizedActionParamsOverride,
                 widgetConfig,
                 userLogin,

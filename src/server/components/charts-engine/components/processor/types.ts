@@ -141,8 +141,8 @@ export type ChartBuilder = {
         ctx: AppContext;
         onModuleBuild: (args: {executionTiming: [number, number]; filename: string}) => void;
     }) => Promise<Record<string, ChartBuilderResult>>;
-    buildParams: () => Promise<ChartBuilderResult>;
-    buildUrls: () => Promise<ChartBuilderResult>;
+    buildParams: ({params}: {params: StringParams}) => Promise<ChartBuilderResult>;
+    buildUrls: ({params}: {params: StringParams}) => Promise<ChartBuilderResult>;
     buildChartLibraryConfig: (args: {
         data?: unknown;
         params: StringParams;
