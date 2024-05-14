@@ -140,6 +140,7 @@ export type ProcessorParams = {
     cacheToken: string | string[] | null;
     workbookId?: WorkbookId;
     builder: ChartBuilder;
+    hooks: ProcessorHooks;
 };
 
 export class Processor {
@@ -162,6 +163,7 @@ export class Processor {
         ctx,
         workbookId,
         builder,
+        hooks,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -178,7 +180,7 @@ export class Processor {
         let params: Record<string, string | string[]>;
         let actionParams: Record<string, string | string[]>;
         let usedParams: Record<string, string | string[]>;
-        const hooks = new ProcessorHooks({chartsEngine});
+
         const timings: {
             configResolving: number;
             dataFetching: null | number;

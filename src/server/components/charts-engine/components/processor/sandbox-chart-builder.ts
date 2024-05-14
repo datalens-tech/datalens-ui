@@ -16,7 +16,7 @@ type SandboxChartBuilderArgs = {
     userLang: string | null;
     isScreenshoter: boolean;
     chartsEngine: ChartsEngine;
-
+    hooks: ProcessorHooks;
     params?: StringParams;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     config: {data: Record<string, string>; meta: {stype: string}; key: string};
@@ -26,12 +26,18 @@ type SandboxChartBuilderArgs = {
 export const getSandboxChartBuilder = async (
     args: SandboxChartBuilderArgs,
 ): Promise<ChartBuilder> => {
-    const {userLogin, userLang, isScreenshoter, chartsEngine, config, widgetConfig, workbookId} =
-        args;
+    const {
+        userLogin,
+        userLang,
+        isScreenshoter,
+        chartsEngine,
+        config,
+        widgetConfig,
+        workbookId,
+        hooks,
+    } = args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
-
-    const hooks = new ProcessorHooks({chartsEngine});
     const modules: Record<string, unknown> = {};
 
     return {
