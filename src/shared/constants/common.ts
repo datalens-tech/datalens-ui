@@ -44,6 +44,8 @@ export const DEFAULT_CHART_LINES_LIMIT = 100;
 
 export const DEFAULT_DATE_FORMAT = 'DD.MM.YYYY';
 
+export const UPDATE_STATE_DEBOUNCE_TIME = 1000;
+
 export const WIZARD_CHART_NODE = {
     graph_wizard_node: 'statface_graph',
     table_wizard_node: 'table',

@@ -29,20 +29,6 @@ const PARAMS = {
     OLD_SELECTOR_TAB: 'Tab 2',
 };
 
-const getSelectorsLabels = async (page: Page) => {
-    const controlLabelLocator = page.locator(slct(ControlQA.controlLabel));
-    const firstLabelLocator = controlLabelLocator.first();
-
-    // if one of selectors is visible, group selector is loaded
-    await expect(firstLabelLocator).toBeVisible();
-    const allLabelsLocators = await controlLabelLocator.all();
-    const labels = await Promise.all(
-        allLabelsLocators.map((locator) => locator.getAttribute('title')),
-    );
-
-    return labels;
-};
-
 datalensTest.describe('Dashboards - Base actions with group selectors', () => {
     let skipAfterEach = false;
 
@@ -68,54 +54,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
     });
 
     datalensTest(
-        'Selector is successfully added and removed from selectors group',
-        async ({page}: {page: Page}) => {
-            const dashboardPage = new DashboardPage({page});
-
-            // adding selector to existing group
-            await dashboardPage.createDashboard({
-                editDash: async () => {
-                    await dashboardPage.addSelector(PARAMS.FIRST_CONTROL);
-                },
-            });
-
-            await dashboardPage.enterEditMode();
-            await dashboardPage.clickFirstControlSettingsButton();
-            await dashboardPage.dialogControl.waitForVisible();
-            await dashboardPage.addSelectorToGroup(PARAMS.SECOND_CONTROL);
-
-            await page.click(slct(ControlQA.dialogControlApplyBtn));
-
-            await dashboardPage.saveChanges();
-
-            const multipleControlsCount = await page
-                .locator(slct(ControlQA.chartkitControl))
-                .count();
-            expect(multipleControlsCount).toBe(2);
-
-            // removing selector from existing group
-            await dashboardPage.enterEditMode();
-
-            await dashboardPage.clickFirstControlSettingsButton();
-            await dashboardPage.dialogControl.waitForVisible();
-
-            // we need to hover item to show control menu
-            await page.locator(slct(TabMenuQA.Item)).nth(1).hover();
-            await page.locator(slct(DialogGroupControlQa.controlMenu)).nth(1).click();
-
-            await page.locator(slct(DialogGroupControlQa.removeControlButton)).click();
-
-            await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
-
-            await dashboardPage.saveChanges();
-
-            const singleControlCount = await page.locator(slct(ControlQA.chartkitControl)).count();
-            expect(singleControlCount).toBe(1);
-        },
-    );
-
-    datalensTest(
-        'Old single selector is transformed into a new one on saving after editing and it does not change its size',
+        'Old single selector is successfully saved as a group selector, new selectors are successfully added and removed from the group',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
 
@@ -148,6 +87,44 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
 
             expect(oldBoundingBox?.height).toEqual(newBoundingBox?.height);
             expect(oldBoundingBox?.width).toEqual(newBoundingBox?.width);
+
+            await page.reload();
+
+            await dashboardPage.enterEditMode();
+            await dashboardPage.clickFirstControlSettingsButton();
+
+            // add new selector to the previously saved group
+            await dashboardPage.dialogControl.waitForVisible();
+            await dashboardPage.addSelectorToGroup(PARAMS.SECOND_CONTROL);
+
+            await page.click(slct(ControlQA.dialogControlApplyBtn));
+
+            await dashboardPage.saveChanges();
+
+            // check current selector count
+            const multipleControlsCount = await page
+                .locator(slct(ControlQA.chartkitControl))
+                .count();
+            expect(multipleControlsCount).toBe(2);
+
+            // remove selector from existing group
+            await dashboardPage.enterEditMode();
+
+            await dashboardPage.clickFirstControlSettingsButton();
+            await dashboardPage.dialogControl.waitForVisible();
+
+            // we need to hover item to show control menu
+            await page.locator(slct(TabMenuQA.Item)).nth(1).hover();
+            await page.locator(slct(DialogGroupControlQa.controlMenu)).nth(1).click();
+
+            await page.locator(slct(DialogGroupControlQa.removeControlButton)).click();
+
+            await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
+
+            await dashboardPage.saveChanges();
+
+            const singleControlCount = await page.locator(slct(ControlQA.chartkitControl)).count();
+            expect(singleControlCount).toBe(1);
         },
     );
 
@@ -167,7 +144,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             });
 
             // check the order of selectors by their labels
-            const initialLabels = await getSelectorsLabels(page);
+            const initialLabels = await dashboardPage.getGroupSelectorLabels();
 
             expect(initialLabels).toEqual(['test-control-1', 'test-control-2']);
 
@@ -191,7 +168,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
 
             await dashboardPage.saveChanges();
 
-            const changedLabels = await getSelectorsLabels(page);
+            const changedLabels = await dashboardPage.getGroupSelectorLabels();
 
             expect(changedLabels).toEqual(['test-control-2', 'test-control-1']);
         },

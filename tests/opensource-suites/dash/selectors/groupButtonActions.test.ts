@@ -1,40 +1,34 @@
-import {Page} from '@playwright/test';
+import {Page, Request} from '@playwright/test';
 
-import {ControlQA, DialogGroupControlQa, Feature} from '../../../../src/shared';
+import {
+    ControlQA,
+    DialogGroupControlQa,
+    Feature,
+    UPDATE_STATE_DEBOUNCE_TIME,
+} from '../../../../src/shared';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {getUrlStateParam} from '../../../suites/dash/helpers';
 import {isEnabledFeature, openTestPage, slct} from '../../../utils';
+import {CommonUrls} from '../../../page-objects/constants/common-urls';
 
 const PARAMS = {
     FIRST_CONTROL: {
         controlTitle: 'test-control',
-        controlItems: ['91000', '98800'],
+        controlItems: ['91000', '98800', '90000'],
         controlFieldName: 'test-control-field',
         defaultValue: '98800',
     },
     SECOND_CONTROL: {
         controlTitle: 'test-control-2',
-        controlItems: ['1', '2'],
+        controlItems: ['1', '2', '3'],
         controlFieldName: 'test-control-field-2',
         defaultValue: '2',
     },
 };
 
 const STATE_CHANGING_TIMEOUT = 1000;
-
-const getNewStateHash = async (page: Page, action: () => Promise<void>) => {
-    const requestPromise = page.waitForRequest('/gateway/root/us/createDashState');
-    await action();
-    const finishedPromise = await requestPromise;
-
-    // check new state
-    const responseState = await finishedPromise.response();
-    const jsonState = await responseState?.json();
-
-    return jsonState?.hash;
-};
 
 datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
     let skipAfterEach = false;
@@ -91,7 +85,7 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
             );
             await applyButton.click();
 
-            // timeout so state has time to be wrote in search params
+            // timeout so state has time to be written  in search params
             await page.waitForTimeout(STATE_CHANGING_TIMEOUT);
             // default params are equal to initial in dashkit so state doesn't change
             expect(getUrlStateParam(page)).toEqual(null);
@@ -101,12 +95,12 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
                 PARAMS.FIRST_CONTROL.controlItems[0],
             );
 
-            // timeout so state has time to be wrote in search params
+            // timeout so state has time to be written  in search params
             await page.waitForTimeout(STATE_CHANGING_TIMEOUT);
             // check that there's no state (apply button isn't pressed after changing value)
             expect(getUrlStateParam(page)).toEqual(null);
 
-            const requestPromise = page.waitForRequest('/gateway/root/us/createDashState');
+            const requestPromise = page.waitForRequest(CommonUrls.CreateDashState);
             await applyButton.click();
             const finishedRequest = await requestPromise;
 
@@ -145,12 +139,12 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
             );
 
             // save state with defaults
-            const defaultState = await getNewStateHash(page, async () => {
+            const defaultState = await dashboardPage.getNewStateHashAfterAction(async () => {
                 await resetButton.click();
             });
             expect(defaultState).toBeTruthy();
 
-            const changedState = await getNewStateHash(page, async () => {
+            const changedState = await dashboardPage.getNewStateHashAfterAction(async () => {
                 await dashboardPage.setSelectWithTitle(
                     {title: PARAMS.FIRST_CONTROL.controlTitle},
                     PARAMS.FIRST_CONTROL.controlItems[0],
@@ -165,7 +159,7 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
 
             expect(defaultState).not.toEqual(changedState);
 
-            const resetState = await getNewStateHash(page, async () => {
+            const resetState = await dashboardPage.getNewStateHashAfterAction(async () => {
                 await resetButton.click();
             });
 
@@ -186,15 +180,13 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
         "The `Reset` button of the group selector resets the values to default and doesn't apply the values if `Apply` button is enabled",
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
+            let stateUpdatesCount = 0;
 
             await page.locator(slct(DialogGroupControlQa.applyButtonCheckbox)).click();
             await page.locator(slct(DialogGroupControlQa.resetButtonCheckbox)).click();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
             await dashboardPage.saveChanges();
-
-            // check that there's no state
-            expect(getUrlStateParam(page)).toEqual(null);
 
             // check default values in selectors
             await dashboardPage.checkSelectValueByTitle({
@@ -206,6 +198,15 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
                 value: PARAMS.SECOND_CONTROL.defaultValue,
             });
 
+            // counting state change calls
+            const stateChangeListener = (request: Request) => {
+                if (request.url().endsWith(CommonUrls.PartialCreateDashState)) {
+                    stateUpdatesCount++;
+                }
+            };
+
+            page.on('request', stateChangeListener);
+
             // change values
             await dashboardPage.setSelectWithTitle(
                 {title: PARAMS.FIRST_CONTROL.controlTitle},
@@ -216,36 +217,26 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
                 PARAMS.SECOND_CONTROL.controlItems[0],
             );
 
-            await page.waitForTimeout(STATE_CHANGING_TIMEOUT);
-            // check that there's still no state (to change it necessary to click Apply)
-            expect(getUrlStateParam(page)).toEqual(null);
+            // there should be NO state changes after value selecting (to change it, you need to click "Apply")
 
             const applyButton = await dashboardPage.waitForSelector(
                 slct(ControlQA.controlButtonApply),
             );
-            const nonDefaultState = await getNewStateHash(page, async () => {
+
+            const nonDefaultState = await dashboardPage.getNewStateHashAfterAction(async () => {
                 // apply no defaults values
                 await applyButton.click();
             });
+
             expect(nonDefaultState).not.toEqual(null);
+
+            // there should be NO state changes after click reset (to change it, you need to click "Apply")
 
             const resetButton = await dashboardPage.waitForSelector(
                 slct(ControlQA.controlButtonReset),
             );
             // reset values to defaults
             await resetButton.click();
-
-            // timeout so state has time to be wrote in search params
-            await page.waitForTimeout(STATE_CHANGING_TIMEOUT);
-            // state should not change because the apply button is not clicked
-            expect(getUrlStateParam(page)).toEqual(nonDefaultState);
-
-            // check that state with defaults is different from non-default state
-            const defaultState = await getNewStateHash(page, async () => {
-                // apply values to create state
-                await applyButton.click();
-            });
-            expect(defaultState).not.toEqual(nonDefaultState);
 
             // check that values in selectors are defaults now
             await dashboardPage.checkSelectValueByTitle({
@@ -256,6 +247,33 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
                 title: PARAMS.SECOND_CONTROL.controlTitle,
                 value: PARAMS.SECOND_CONTROL.defaultValue,
             });
+
+            //
+            await dashboardPage.setSelectWithTitle(
+                {title: PARAMS.FIRST_CONTROL.controlTitle},
+                PARAMS.FIRST_CONTROL.controlItems[2],
+            );
+            await dashboardPage.setSelectWithTitle(
+                {title: PARAMS.SECOND_CONTROL.controlTitle},
+                PARAMS.SECOND_CONTROL.controlItems[2],
+            );
+
+            // wait for debounce timeout to detect the extra request
+            await page.waitForTimeout(UPDATE_STATE_DEBOUNCE_TIME);
+
+            // check that state with new values is different from old state
+            const defaultState = await dashboardPage.getNewStateHashAfterAction(async () => {
+                // apply values to create state
+                await applyButton.click();
+            });
+            expect(defaultState).not.toEqual(nonDefaultState);
+
+            // apply button is pressed twice during the test, so there should be two changes
+            // if there are more than 2 changes, it means that an unnecessary change occurred
+            // (during the change of values or pressing Reset button)
+            expect(stateUpdatesCount).toEqual(2);
+
+            page.off('request', stateChangeListener);
         },
     );
 });

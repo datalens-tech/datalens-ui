@@ -1271,6 +1271,33 @@ class DashboardPage extends BasePage {
     async resetChartFiltering(gridItemLocator: Locator) {
         return gridItemLocator.locator(DashboardPage.selectors.chartResetButton).click();
     }
+
+    // it cannot be used with single selectors as they have different loading times
+    async getGroupSelectorLabels() {
+        const controlLabelLocator = this.page.locator(slct(ControlQA.controlLabel));
+        const firstLabelLocator = controlLabelLocator.first();
+
+        // if one of selectors is visible, group selector is loaded
+        await expect(firstLabelLocator).toBeVisible();
+        const allLabelsLocators = await controlLabelLocator.all();
+        const labels = await Promise.all(
+            allLabelsLocators.map((locator) => locator.getAttribute('title')),
+        );
+
+        return labels;
+    }
+
+    async getNewStateHashAfterAction(action: () => Promise<void>) {
+        const requestPromise = this.page.waitForRequest(CommonUrls.CreateDashState);
+        await action();
+        const finishedPromise = await requestPromise;
+
+        // check new state
+        const responseState = await finishedPromise.response();
+        const jsonState = await responseState?.json();
+
+        return jsonState?.hash;
+    }
 }
 
 export default DashboardPage;
