@@ -179,6 +179,7 @@ export class Processor {
         let actionParams: Record<string, string | string[]>;
         let usedParams: Record<string, string | string[]>;
         const hooks = new ProcessorHooks({chartsEngine});
+
         const timings: {
             configResolving: number;
             dataFetching: null | number;
@@ -451,6 +452,7 @@ export class Processor {
             const paramsTabResults = await builder.buildParams({
                 params: normalizedParamsOverride,
                 actionParams: normalizedActionParamsOverride,
+                hooks,
             });
             logSandboxDuration(paramsTabResults.executionTiming, paramsTabResults.name, ctx);
             const paramsTabError = paramsTabResults.runtimeMetadata.error;
@@ -495,6 +497,7 @@ export class Processor {
             const sourcesTabResults = await builder.buildUrls({
                 params,
                 actionParams: normalizedActionParamsOverride,
+                hooks,
             });
 
             logSandboxDuration(sourcesTabResults.executionTiming, sourcesTabResults.name, ctx);
@@ -648,6 +651,7 @@ export class Processor {
                 data,
                 params: usedParams,
                 actionParams: normalizedActionParamsOverride,
+                hooks,
             });
 
             ctx.log('EditorEngine::HighCharts', {duration: getDuration(hrStart)});
@@ -675,6 +679,7 @@ export class Processor {
                     data,
                     params: usedParams,
                     actionParams: normalizedActionParamsOverride,
+                    hooks,
                 });
 
                 logSandboxDuration(configTabResults.executionTiming, configTabResults.name, ctx);
@@ -689,6 +694,7 @@ export class Processor {
                     sources: resolvedSources,
                     params: usedParams,
                     actionParams: normalizedActionParamsOverride,
+                    hooks,
                 });
                 logSandboxDuration(jsTabResults.executionTiming, jsTabResults.name, ctx);
 
@@ -722,6 +728,7 @@ export class Processor {
                 data,
                 params: usedParams,
                 actionParams: normalizedActionParamsOverride,
+                hooks,
             });
             logSandboxDuration(uiTabResults.executionTiming, uiTabResults.name, ctx);
 
