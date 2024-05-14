@@ -2,7 +2,6 @@ import {DashWidgetConfig, EDITOR_TYPE_CONFIG_TABS, StringParams} from '../../../
 import {ChartsEngine} from '../../index';
 import {ResolvedConfig} from '../storage/types';
 
-import {ProcessorHooks} from './hooks';
 import {Sandbox, SandboxExecuteResult} from './sandbox';
 import {ChartBuilder, ChartBuilderResult} from './types';
 
@@ -16,7 +15,6 @@ type SandboxChartBuilderArgs = {
     userLang: string | null;
     isScreenshoter: boolean;
     chartsEngine: ChartsEngine;
-    hooks: ProcessorHooks;
     params?: StringParams;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     config: {data: Record<string, string>; meta: {stype: string}; key: string};
@@ -26,16 +24,8 @@ type SandboxChartBuilderArgs = {
 export const getSandboxChartBuilder = async (
     args: SandboxChartBuilderArgs,
 ): Promise<ChartBuilder> => {
-    const {
-        userLogin,
-        userLang,
-        isScreenshoter,
-        chartsEngine,
-        config,
-        widgetConfig,
-        workbookId,
-        hooks,
-    } = args;
+    const {userLogin, userLang, isScreenshoter, chartsEngine, config, widgetConfig, workbookId} =
+        args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
     const modules: Record<string, unknown> = {};
@@ -92,7 +82,7 @@ export const getSandboxChartBuilder = async (
                 name: 'Params',
                 code: config.data.params,
                 timeout: ONE_SECOND,
-                hooks,
+                hooks: options.hooks,
                 nativeModules: chartsEngine.nativeModules,
                 params: options.params,
                 actionParams: options.actionParams,
@@ -114,7 +104,7 @@ export const getSandboxChartBuilder = async (
                 name: 'Urls',
                 code: config.data.url,
                 timeout: ONE_SECOND,
-                hooks,
+                hooks: options.hooks,
                 nativeModules: chartsEngine.nativeModules,
                 shared,
                 modules,
@@ -141,7 +131,7 @@ export const getSandboxChartBuilder = async (
                     name: tabName,
                     code: config.data.graph,
                     timeout: ONE_SECOND,
-                    hooks,
+                    hooks: options.hooks,
                     nativeModules: chartsEngine.nativeModules,
                     shared,
                     modules,
@@ -159,7 +149,7 @@ export const getSandboxChartBuilder = async (
                     name: 'Highmaps',
                     code: config.data.map,
                     timeout: ONE_SECOND,
-                    hooks,
+                    hooks: options.hooks,
                     nativeModules: chartsEngine.nativeModules,
                     shared,
                     modules,
@@ -177,7 +167,7 @@ export const getSandboxChartBuilder = async (
                     name: 'Yandex.Maps',
                     code: config.data.ymap,
                     timeout: ONE_SECOND,
-                    hooks,
+                    hooks: options.hooks,
                     nativeModules: chartsEngine.nativeModules,
                     shared,
                     modules,
@@ -207,7 +197,7 @@ export const getSandboxChartBuilder = async (
                 name: 'Config',
                 code: config.data[configTab as keyof typeof config.data] || '',
                 timeout: ONE_SECOND,
-                hooks,
+                hooks: options.hooks,
                 nativeModules: chartsEngine.nativeModules,
                 shared,
                 modules,
@@ -241,7 +231,7 @@ export const getSandboxChartBuilder = async (
                 dataStats: options.sources,
                 userLogin,
                 userLang,
-                hooks,
+                hooks: options.hooks,
                 isScreenshoter,
             });
 
@@ -256,7 +246,7 @@ export const getSandboxChartBuilder = async (
                 name: 'UI',
                 code: config.data.ui || '',
                 timeout: ONE_SECOND,
-                hooks,
+                hooks: options.hooks,
                 nativeModules: chartsEngine.nativeModules,
                 shared,
                 modules,

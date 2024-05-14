@@ -3,7 +3,6 @@ import {isObject} from 'lodash';
 
 import {Feature, isEnabledServerFeature} from '../../../../shared';
 import {Processor, ProcessorParams} from '../components/processor';
-import {ProcessorHooks} from '../components/processor/hooks';
 import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
 import {getDuration} from '../components/utils';
 
@@ -32,8 +31,6 @@ export const runEditor = async (
 
     const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
-    const hooks = new ProcessorHooks({chartsEngine});
-
     const chartBuilder = await getSandboxChartBuilder({
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
@@ -41,7 +38,6 @@ export const runEditor = async (
         config,
         isScreenshoter: Boolean(req.headers['x-charts-scr']),
         chartsEngine,
-        hooks,
     });
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
@@ -58,7 +54,6 @@ export const runEditor = async (
         configResolving,
         cacheToken: req.headers['x-charts-cache-token'] || null,
         builder: chartBuilder,
-        hooks,
     };
 
     if (
