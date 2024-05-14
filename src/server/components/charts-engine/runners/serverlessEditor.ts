@@ -23,7 +23,7 @@ export const runServerlessEditor = (
 
     const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
-    const processorParams: Omit<ProcessorParams, 'ctx' | 'builder' | 'hooks'> = {
+    const processorParams: Omit<ProcessorParams, 'ctx' | 'builder'> = {
         chartsEngine,
         paramsOverride: params,
         actionParamsOverride: actionParams,
