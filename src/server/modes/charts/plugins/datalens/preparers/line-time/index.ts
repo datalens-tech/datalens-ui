@@ -1,4 +1,5 @@
 import {
+    CommonNumberFormattingOptions,
     DATALENS_QL_TYPES,
     ExtendedSeriesLineOptions,
     getUtcDateTime,
@@ -15,7 +16,11 @@ import {
     renderValue,
 } from '../../../ql/utils/misc-helpers';
 import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
-import {findIndexInOrder, isLegendEnabled} from '../../utils/misc-helpers';
+import {
+    findIndexInOrder,
+    getFormatOptionsFromFieldFormatting,
+    isLegendEnabled,
+} from '../../utils/misc-helpers';
 import {PrepareFunctionArgs} from '../types';
 
 const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
@@ -147,6 +152,17 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                         return dataMatrix[String(xValue)] as number;
                     }),
                 };
+
+                const formatting = y.formatting as CommonNumberFormattingOptions | undefined;
+                const tooltipOptions = getFormatOptionsFromFieldFormatting(formatting, y.data_type);
+
+                // TODO: add other options when they will be available in Chartkit
+                // https://github.com/gravity-ui/chartkit/issues/476
+                ChartEditor.updateLibraryConfig({
+                    tooltip: {
+                        precision: tooltipOptions.chartKitPrecision,
+                    },
+                });
 
                 result.graphs?.push(graph);
             });

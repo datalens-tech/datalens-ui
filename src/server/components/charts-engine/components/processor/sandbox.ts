@@ -1,16 +1,12 @@
 import vm from 'vm';
 
 import type {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
-import {UISandboxContext, WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
 import {getTranslationFn} from '../../../../../shared/modules/language';
-import type {IChartEditor} from '../../../../../shared/types';
-import type {UISandboxWrappedFunction} from '../../../../../shared/types/ui-sandbox';
 import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
-import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
+import {getChartApiContext} from './chart-api-context';
 import {Console} from './console';
-import {getCurrentPage, getParam, getSortParams} from './paramsUtils';
 import {NativeModule} from './types';
 
 const {
@@ -224,33 +220,6 @@ const execute = ({code, instance, filename, timeout}: ExecuteParams): SandboxExe
     };
 };
 
-type ValidatedWrapFnArgs = {
-    fn: (...args: unknown[]) => void;
-    ctx: UISandboxWrappedFunction['ctx'];
-};
-
-// There is a user value here, it could have any type
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isWrapFnArgsValid = (value: any): value is ValidatedWrapFnArgs => {
-    if (!value || typeof value !== 'object') {
-        throw new Error('You should pass an object to ChartEditor.wrapFn method');
-    }
-
-    const {fn, ctx} = value;
-
-    if (typeof fn !== 'function') {
-        throw new Error('"fn" property should be a function');
-    }
-
-    const availableCtxValues = Object.values(UISandboxContext);
-
-    if (!Object.values(UISandboxContext).includes(ctx)) {
-        throw new Error(`"ctx" property should be a string from list: ${availableCtxValues}`);
-    }
-
-    return true;
-};
-
 const processTab = ({
     name,
     code,
@@ -268,136 +237,17 @@ const processTab = ({
     nativeModules,
     isScreenshoter,
 }: ProcessTabParams) => {
-    const api: IChartEditor = {
-        getSharedData: () => shared,
-        getLang: () => userLang,
-        attachHandler: (handlerConfig: Record<string, any>) => ({
-            ...handlerConfig,
-            __chartkitHandler: true,
-        }),
-        attachFormatter: (formatterConfig: Record<string, any>) => ({
-            ...formatterConfig,
-            __chartkitFormatter: true,
-        }),
-        ...hooks.getSandboxApiMethods(),
-    };
-
-    api.resolveRelative = resolveRelativeDate;
-
-    api.resolveInterval = resolveIntervalDate;
-
-    api.resolveOperation = resolveOperation;
-
-    const context = {
-        ChartEditor: api,
-        __runtimeMetadata: getOrphanedObject(),
-    };
-
-    context.__runtimeMetadata.userConfigOverride = getOrphanedObject();
-    context.__runtimeMetadata.libraryConfigOverride = getOrphanedObject();
-    context.__runtimeMetadata.extra = getOrphanedObject();
-    context.__runtimeMetadata.dataSourcesInfos = getOrphanedObject();
-
-    api.setError = (value) => {
-        context.__runtimeMetadata.error = value;
-    };
-
-    api.setChartsInsights = (value) => {
-        context.__runtimeMetadata.chartsInsights = value;
-    };
-
-    /** We need for backward compatibility with ≤0.19.2 */
-    api._setError = api.setError;
-
-    api.getWidgetConfig = () => widgetConfig || {};
-
-    api.getActionParams = () => actionParams || {};
-
-    api.UISandboxContext = {...UISandboxContext};
-    api.wrapFn = (value) => {
-        if (!isWrapFnArgsValid(value)) {
-            // There is no way to reach this code, just satisfy ts
-            throw new Error('You should pass a valid arguments to ChartEditor.wrapFn method');
-        }
-
-        return {
-            [WRAPPED_FN_KEY]: {
-                fn: value.fn.toString(),
-                ctx: value.ctx,
-            },
-        };
-    };
-
-    if (params) {
-        api.getParams = () => params;
-        api.getParam = (paramName: string) => getParam(paramName, params);
-    }
-
-    if (name === 'Urls') {
-        api.setErrorTransform = (errorTransformer) => {
-            context.__runtimeMetadata.errorTransformer = errorTransformer;
-        };
-        api.getSortParams = () => getSortParams(params);
-    }
-
-    if (name === 'Urls' || name === 'JavaScript') {
-        api.getCurrentPage = () => getCurrentPage(params);
-    }
-
-    if (name === 'Params' || name === 'JavaScript' || name === 'UI' || name === 'Urls') {
-        api.updateParams = (updatedParams) => {
-            context.__runtimeMetadata.userParamsOverride = Object.assign(
-                {},
-                context.__runtimeMetadata.userParamsOverride,
-                updatedParams,
-            );
-        };
-        api.updateActionParams = (updatedActionParams) => {
-            context.__runtimeMetadata.userActionParamsOverride = Object.assign(
-                {},
-                context.__runtimeMetadata.userActionParamsOverride,
-                updatedActionParams,
-            );
-        };
-    }
-
-    if (name === 'UI' || name === 'JavaScript') {
-        api.getLoadedData = () => data || {};
-        api.getLoadedDataStats = () => dataStats || {};
-        api.setDataSourceInfo = (dataSourceKey, info) => {
-            context.__runtimeMetadata.dataSourcesInfos[dataSourceKey] = {info};
-        };
-
-        if (name === 'JavaScript') {
-            api.updateConfig = (updatedFragment) => {
-                context.__runtimeMetadata.userConfigOverride = Object.assign(
-                    {},
-                    context.__runtimeMetadata.userConfigOverride,
-                    updatedFragment,
-                );
-            };
-            api.updateHighchartsConfig = (updatedFragment) => {
-                context.__runtimeMetadata.libraryConfigOverride = Object.assign(
-                    {},
-                    context.__runtimeMetadata.libraryConfigOverride,
-                    updatedFragment,
-                );
-            };
-            api.updateLibraryConfig = api.updateHighchartsConfig;
-            api.setSideHtml = (html) => {
-                context.__runtimeMetadata.sideMarkdown = html;
-            };
-            api.setSideMarkdown = (markdown: string) => {
-                context.__runtimeMetadata.sideMarkdown = markdown;
-            };
-            api.setExtra = (key, value) => {
-                context.__runtimeMetadata.extra[key] = value;
-            };
-            api.setExportFilename = (filename: string) => {
-                context.__runtimeMetadata.exportFilename = filename;
-            };
-        }
-    }
+    const context = getChartApiContext({
+        name,
+        params,
+        actionParams,
+        widgetConfig,
+        data,
+        dataStats,
+        shared,
+        hooks,
+        userLang,
+    });
 
     return execute({
         code,
