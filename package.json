@@ -104,7 +104,7 @@
     "@gravity-ui/date-components": "^2.3.0",
     "@gravity-ui/eslint-config": "^3.2.0",
     "@gravity-ui/icons": "^2.9.1",
-    "@gravity-ui/navigation": "^2.8.0",
+    "@gravity-ui/navigation": "^2.10.0",
     "@gravity-ui/prettier-config": "^1.1.0",
     "@gravity-ui/react-data-table": "^2.0.1",
     "@gravity-ui/sdk": "^1.2.1",
