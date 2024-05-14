@@ -1,9 +1,72 @@
-import {deserialize, serialize} from '@ungap/structured-clone';
 import type {QuickJSContext, QuickJSWASMModule} from 'quickjs-emscripten';
 
 import {WRAPPED_FN_KEY} from '../../../../../../shared/constants/ui-sandbox';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {ChartKitCustomError} from '../../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
+
+// https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+function decycle(object: unknown) {
+    const objects = new WeakMap(); // object to path mappings
+
+    return (function derez(value, path, level) {
+        // The derez function recurses through the object, producing the deep copy.
+
+        let old_path; // The path of an earlier occurance of value
+        let nu; // The new object or array
+
+        // typeof null === "object", so go on if this value is really an object but not
+        // one of the weird builtin objects.
+
+        if (
+            typeof value === 'object' &&
+            value !== null &&
+            !(value instanceof Boolean) &&
+            !(value instanceof Date) &&
+            !(value instanceof Number) &&
+            !(value instanceof RegExp) &&
+            !(value instanceof String)
+        ) {
+            // If the value is an object or array, look to see if we have already
+            // encountered it. If so, return a {"$ref":PATH} object. This uses an
+            // ES6 WeakMap.
+
+            old_path = objects.get(value);
+            if (old_path !== undefined) {
+                return {$ref: old_path};
+            }
+
+            if (level > 10) {
+                return null;
+            }
+
+            // Otherwise, accumulate the unique value and its path.
+
+            objects.set(value, path);
+
+            // If it is an array, replicate the array.
+
+            if (Array.isArray(value)) {
+                nu = [];
+                value.forEach(function (element, i) {
+                    nu[i] = derez(element, path + '[' + i + ']', level + 1);
+                });
+            } else {
+                // If it is an object, replicate the object.
+
+                nu = {};
+                Object.keys(value).forEach(function (name) {
+                    nu[name] = derez(
+                        value[name],
+                        path + '[' + JSON.stringify(name) + ']',
+                        level + 1,
+                    );
+                });
+            }
+            return nu;
+        }
+        return value;
+    })(object, '$', 0);
+}
 
 /**
  * Config value to check. It could have any type.
@@ -49,34 +112,7 @@ const defineVmArguments = (
     ctx: UISandboxWrappedFunction['ctx'],
     args: unknown[],
 ) => {
-    let stringifiedArgs = '';
-
-    switch (ctx) {
-        case 'hc-label-formatter': {
-            const serialized = serialize(args, {lossy: true});
-            const deserialized = deserialize(serialized);
-            // const label = args[0];
-            // stringifiedArgs = JSON.stringify([label]);
-            stringifiedArgs = JSON.stringify(deserialized);
-
-            break;
-        }
-        case 'manage-tooltip-config': {
-            const serialized = serialize(args, {lossy: true, json: true});
-            const deserialized = deserialize(serialized);
-            // const config = args[0];
-
-            // if (config && typeof config === 'object' && 'this' in config) {
-            //     // Remove "this" link to avoid  circular structure
-            //     delete config.this;
-            // }
-
-            // stringifiedArgs = JSON.stringify([config]);
-            stringifiedArgs = JSON.stringify(deserialized);
-            break;
-        }
-    }
-
+    const stringifiedArgs = JSON.stringify(args.map((item) => decycle(item)));
     const vmArgs = vm.newString(stringifiedArgs);
     vm.setProp(vm.global, 'args', vmArgs);
     vmArgs.dispose();
