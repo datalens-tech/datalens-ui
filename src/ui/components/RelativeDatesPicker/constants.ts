@@ -7,17 +7,17 @@ export const SCALE_DAY = 'd';
 export const CONTROLS = {
     START: 'start',
     END: 'end',
-};
+} as const;
 
 export const DATE_TYPES = {
     ABSOLUTE: 'absolute',
     RELATIVE: 'relative',
-};
+} as const;
 
 export const RANGE_PARTS = {
     START: 'start',
     END: 'end',
-};
+} as const;
 
 export const POSTFIXES = {
     START: 'Start',
