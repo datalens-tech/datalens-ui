@@ -649,7 +649,7 @@ export class Processor {
             hrStart = process.hrtime();
             const libraryTabResult = await builder.buildChartLibraryConfig({
                 data,
-                params: usedParams,
+                params,
                 actionParams: normalizedActionParamsOverride,
                 hooks,
             });
@@ -677,7 +677,7 @@ export class Processor {
                 hrStart = process.hrtime();
                 const configTabResults = await builder.buildChartConfig({
                     data,
-                    params: usedParams,
+                    params,
                     actionParams: normalizedActionParamsOverride,
                     hooks,
                 });
@@ -692,7 +692,7 @@ export class Processor {
                 jsTabResults = await builder.buildChart({
                     data,
                     sources: resolvedSources,
-                    params: usedParams,
+                    params,
                     actionParams: normalizedActionParamsOverride,
                     hooks,
                 });
@@ -726,7 +726,7 @@ export class Processor {
 
             const uiTabResults = await builder.buildUI({
                 data,
-                params: usedParams,
+                params,
                 actionParams: normalizedActionParamsOverride,
                 hooks,
             });
