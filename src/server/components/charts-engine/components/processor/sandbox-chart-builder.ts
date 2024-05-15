@@ -1,4 +1,4 @@
-import {DashWidgetConfig, EDITOR_TYPE_CONFIG_TABS, StringParams} from '../../../../../shared';
+import {DashWidgetConfig, EDITOR_TYPE_CONFIG_TABS} from '../../../../../shared';
 import {ChartsEngine} from '../../index';
 import {ResolvedConfig} from '../storage/types';
 
@@ -15,7 +15,6 @@ type SandboxChartBuilderArgs = {
     userLang: string | null;
     isScreenshoter: boolean;
     chartsEngine: ChartsEngine;
-    params?: StringParams;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     config: {data: Record<string, string>; meta: {stype: string}; key: string};
     workbookId?: string;
