@@ -12,9 +12,11 @@ import {
     FORWARDED_FOR_HEADER,
     PROJECT_ID_HEADER,
     REQUEST_ID_HEADER,
+    SERVICE_USER_TOKEN_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
 } from '../../shared';
+import {DlAuthRequest} from '../../shared/types/zitadel';
 import {isOpensourceInstallation} from '../app-env';
 
 import {isGatewayError} from './gateway';
@@ -44,6 +46,13 @@ class Utils {
         return pick(headers, headersList);
     }
 
+    static pickZitadelHeaders(req: DlAuthRequest) {
+        return {
+            ...{authorization: 'Bearer ' + req.user?.accessToken},
+            [SERVICE_USER_TOKEN_HEADER]: req.userAccessToken,
+        };
+    }
+
     static pickSuperuserHeaders(headers: IncomingHttpHeaders) {
         return pick(headers, [SuperuserHeader.XDlSudo, SuperuserHeader.XDlAllowSuperuser]);
     }
@@ -62,6 +71,7 @@ class Utils {
             ...Utils.pickSuperuserHeaders(req.headers),
             ...Utils.pickDlContextHeaders(req.headers),
             ...Utils.pickForwardHeaders(req.headers),
+            ...Utils.pickZitadelHeaders(req),
             [REQUEST_ID_HEADER]: req.id,
         };
     }

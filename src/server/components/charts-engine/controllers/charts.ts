@@ -3,6 +3,7 @@ import {Request, Response} from '@gravity-ui/expresskit';
 import {ChartsEngine} from '..';
 import {EntryUpdateMode} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
+import Utils from '../../../utils';
 import {ChartTemplates, chartGenerator} from '../components/chart-generator';
 import {chartValidator as validator} from '../components/chart-validator';
 import {
@@ -89,6 +90,14 @@ function prepareChartData(
 }
 
 export const chartsController = (_chartsEngine: ChartsEngine) => {
+    const getHeaders = (req: Request) => {
+        const headers = {
+            ...req.headers,
+            ...Utils.pickZitadelHeaders(req),
+        };
+        return headers;
+    };
+
     return {
         create: async (req: Request, res: Response) => {
             const {ctx} = req;
@@ -130,7 +139,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 data: chart,
                 type,
                 scope: 'widget',
-                headers: req.headers,
+                headers: getHeaders(req),
                 includePermissionsInfo: true,
             };
 
@@ -144,7 +153,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                         entryId: result.entryId,
                         mode: 'publish',
                         data: result.data,
-                        headers: req.headers,
+                        headers: getHeaders(req),
                         links,
                     };
 
@@ -222,7 +231,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 mode,
                 type,
                 data: chart,
-                headers: req.headers,
+                headers: getHeaders(req),
             };
 
             if (links) {
@@ -260,7 +269,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 unreleased: unreleased as string,
                 includeLinks: includeLinks as string,
                 includePermissionsInfo: includePermissionsInfo as string,
-                headers: req.headers,
+                headers: getHeaders(req),
             })
                 .then((result) => {
                     let chartData;
@@ -294,7 +303,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
 
             USProvider.delete(ctx, {
                 id: entryId,
-                headers: req.headers,
+                headers: getHeaders(req),
             })
                 .then(() => {
                     res.status(200).send();
@@ -315,7 +324,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
             USProvider.retrieveByKey(ctx, {
                 key,
                 unreleased: true,
-                headers: req.headers,
+                headers: getHeaders(req),
             })
                 .then((result) => {
                     res.send(result);
