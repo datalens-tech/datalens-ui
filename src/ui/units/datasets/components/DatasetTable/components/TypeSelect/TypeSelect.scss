@@ -8,7 +8,6 @@
     }
 
     &__select-item {
-        width: 180px;
         display: flex;
         align-items: center;
 
@@ -24,5 +23,6 @@
 
     &__select-control {
         width: 180px;
+        justify-content: start;
     }
 }
