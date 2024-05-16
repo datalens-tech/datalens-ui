@@ -27,7 +27,7 @@ export const getLinkIcon = (type: string) => {
 };
 
 export const getClampedText = (text: string) =>
-    text.length > TEXT_LIMIT ? `${text.substr(0, TEXT_LIMIT)}...` : text;
+    text?.length > TEXT_LIMIT ? `${text.substr(0, TEXT_LIMIT)}...` : text;
 
 export const getRelationsText = (type: RelationType): string => {
     switch (type) {

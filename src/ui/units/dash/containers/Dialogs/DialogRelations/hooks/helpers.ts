@@ -510,7 +510,8 @@ const getCurrentWidgetTabShortInfo = (data: DashKit | null, widget: DashTabItem)
 
     const currentWidgetId =
         currentPlugin?.chartKitRef?.current?.props.id || currentPlugin?.getCurrentTabChartId?.();
-    const res = currentPlugin.props.data.tabs.find(
+
+    const res = currentPlugin?.props.data.tabs.find(
         (item: DashTabItemWidgetTab) => item.chartId === currentWidgetId,
     );
     if (res) {
@@ -535,7 +536,7 @@ export const getCurrentWidgetMeta = ({
         return (metaData?.find((item) => item.itemId === itemId) || {}) as DashkitMetaDataItem;
     }
     const tabInfo = getCurrentWidgetTabShortInfo(dashkitData, widget);
-    return (metaData?.find((item) => item.widgetId === tabInfo.id) || {}) as DashkitMetaDataItem;
+    return (metaData?.find((item) => item.widgetId === tabInfo?.id) || {}) as DashkitMetaDataItem;
 };
 
 export const getMappedFilters = (items: Array<FiltersTypes>) => {

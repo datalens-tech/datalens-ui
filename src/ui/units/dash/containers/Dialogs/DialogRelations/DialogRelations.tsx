@@ -18,7 +18,7 @@ import {updateCurrentTabData} from '../../../store/actions/dashTyped';
 import {openDialogAliases} from '../../../store/actions/relations/actions';
 import {
     selectCurrentTabAliases,
-    selectCurrentTabConnectableItems,
+    selectCurrentTabRelationDataItems,
     selectDashWorkbookId,
 } from '../../../store/selectors/dashTypedSelectors';
 
@@ -72,9 +72,9 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const dashTabAliases = useSelector(selectCurrentTabAliases);
     const workbookId = useSelector(selectDashWorkbookId);
 
-    const widgets = useSelector(selectCurrentTabConnectableItems);
+    const widgets = useSelector(selectCurrentTabRelationDataItems);
     const widgetOptions = React.useMemo(() => {
-        const options: SelectOption<{isItem?: boolean}>[] = [];
+        const options: SelectOption<{widgetId?: string; isItem?: boolean}>[] = [];
 
         if (!widgets) {
             return options;
@@ -82,17 +82,31 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
         for (let i = 0; i < widgets?.length; i++) {
             const widgetItem = widgets[i];
-            if (
-                widgetItem.type === DashTabItemType.GroupControl &&
-                widgetItem.data.group.length > 1
-            ) {
+            if (widgetItem.type === DashTabItemType.GroupControl) {
                 widgetItem.data.group.forEach((item) => {
-                    options.push({value: `${widgetItem.id} ${item.id}`, content: item.title});
+                    options.push({
+                        value: item.id,
+                        content: item.title,
+                        data: {widgetId: widgetItem.id, isItem: true},
+                    });
                 });
                 continue;
             }
 
-            options.push({value: widgetItem.id, content: widgetItem.title});
+            if (widgetItem.type === DashTabItemType.Widget) {
+                widgetItem.data.tabs.forEach((item) => {
+                    options.push({
+                        value: item.id,
+                        content: item.title,
+                        data: {widgetId: widgetItem.id},
+                    });
+                });
+                continue;
+            }
+
+            if (widgetItem.type === DashTabItemType.Control) {
+                options.push({value: widgetItem.id, content: widgetItem.data.title});
+            }
         }
 
         return options;
@@ -134,14 +148,16 @@ const DialogRelations = (props: DialogRelationsProps) => {
     });
 
     const handleItemChange = (value: string[]) => {
-        const [widgetId, newItemId = null] = value[0].split(' ');
-        const currentId = newItemId || widgetId;
+        const newWidgetData = widgetOptions.find((item) => item.value === value[0])?.data;
+        // if it's tab of widget or item in group control, widgetId is in the option
+        // data, for old controls it's value[0]
+        const currentId = newWidgetData?.widgetId || value[0];
 
-        const newCurrentWidget = widgets?.find((item) => item.id === widgetId) as DashTabItem;
+        const newCurrentWidget = widgets?.find((item) => item.id === currentId) as DashTabItem;
 
         setCurrentWidget(newCurrentWidget);
 
-        setItemId(newItemId);
+        setItemId(newWidgetData?.isItem ? value[0] : null);
         setPreparedRelations([]);
 
         if (!changedWidgets[currentId]) {
@@ -527,10 +543,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
             <Dialog.Body className={b('container')}>
                 <Select
                     className={b('item-select')}
-                    value={[itemId || currentWidget.id || '']}
+                    value={[currentWidgetId]}
                     options={widgetOptions}
                     onUpdate={handleItemChange}
                     filterable={true}
+                    disabled={isLoading}
+                    label={i18n('label_current-widget')}
                 />
 
                 <Filters
