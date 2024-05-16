@@ -20,3 +20,8 @@ declare global {
         }
     }
 }
+declare module '@gravity-ui/expresskit' {
+    export interface AppRouteParams {
+        ui?: boolean;
+    }
+}

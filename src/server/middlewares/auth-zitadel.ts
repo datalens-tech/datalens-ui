@@ -40,7 +40,7 @@ export default async function (req: Request, res: Response, next: NextFunction) 
         return next();
     }
 
-    const apiRoute = Boolean(!(req.routeInfo as any).ui);
+    const apiRoute = Boolean(!req.routeInfo?.ui);
     if (apiRoute) {
         return res.status(401).send('Unauthorized access');
     }
