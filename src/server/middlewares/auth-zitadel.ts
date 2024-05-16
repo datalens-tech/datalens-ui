@@ -21,11 +21,11 @@ export default async function (req: Request, res: Response, next: NextFunction) 
         if (accessTokenIntrospected) {
             return next();
         } else {
-            const tokens = await refreshTokens(ctx, (req.user as any).refreshToken);
+            const tokens = await refreshTokens(ctx, req.user?.refreshToken);
 
             if (tokens.accessToken && tokens.refreshToken) {
-                (req.user as any).accessToken = tokens.accessToken;
-                (req.user as any).refreshToken = tokens.refreshToken;
+                req.user.accessToken = tokens.accessToken;
+                req.user.refreshToken = tokens.refreshToken;
 
                 await saveUserToSesson(req);
 
