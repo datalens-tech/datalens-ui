@@ -2,6 +2,8 @@ import {Request, Response} from '@gravity-ui/expresskit';
 import {ApiServiceActionConfig, GetAuthHeaders} from '@gravity-ui/gateway';
 import {AppContext} from '@gravity-ui/nodekit';
 
+import {SERVICE_USER_TOKEN_HEADER} from '../constants';
+
 export const getAuthHeadersNone = () => undefined;
 
 export function createAction<TOutput, TParams = undefined, TTransformed = TOutput>(
@@ -34,7 +36,9 @@ const createGetAuthHeaders: () => GetAuthHeaders<AuthArgsData> = () => (params) 
     }
 
     if (authArgs?.serviceUserAccessToken) {
-        Object.assign(resultHeaders, {'x-dl-service-user-token': authArgs?.serviceUserAccessToken});
+        Object.assign(resultHeaders, {
+            [SERVICE_USER_TOKEN_HEADER]: authArgs?.serviceUserAccessToken,
+        });
     }
 
     return resultHeaders;
