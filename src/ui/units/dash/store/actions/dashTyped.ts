@@ -12,8 +12,8 @@ import {i18n} from 'i18n';
 import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
 import {
-    type ConnectionQueryContent,
-    type ConnectionQueryTypeOptions,
+    ConnectionQueryContent,
+    ConnectionQueryTypeOptions,
     ConnectionQueryTypeValues,
     DATASET_FIELD_TYPES,
     DashData,
@@ -407,6 +407,8 @@ export type SelectorDialogState = {
     width: string;
     id?: string;
     namespace?: string;
+    showHint?: boolean;
+    hint?: string;
 };
 
 export type AcceptableValue = {

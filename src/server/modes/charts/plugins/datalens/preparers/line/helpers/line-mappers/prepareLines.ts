@@ -203,6 +203,7 @@ export const prepareLines = (args: PrepareLinesArgs) => {
         : undefined;
 
     const yFields = ySectionItems.map((ySectionItem) => ySectionItem.field);
+    // eslint-disable-next-line complexity
     ySectionItems.forEach((mergedItem) => {
         const {field, lines, labelsValues, nullsSetting, isFirstSection} = mergedItem;
         const yFieldTitle = idToTitle[field.guid] || field.title;

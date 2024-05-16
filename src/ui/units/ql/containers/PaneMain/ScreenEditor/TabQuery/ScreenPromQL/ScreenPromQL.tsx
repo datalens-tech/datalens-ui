@@ -154,6 +154,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                                     this.setActiveTab(newTabId, queryIndex);
                                                 }}
                                                 activeTab={activeTab || 'queryTab'}
+                                                size={'m'}
                                             />
                                             <DropdownMenu
                                                 size="s"

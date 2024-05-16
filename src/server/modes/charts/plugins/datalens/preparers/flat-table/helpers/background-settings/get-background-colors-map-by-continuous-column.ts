@@ -25,6 +25,18 @@ import {GetBackgroundColorsMapByContinuousColumn} from './types';
 
 const MAX_COLOR_DELTA_VALUE = 1;
 
+function getColorFn(colors: RGBColor[]) {
+    if (colors.length > 2) {
+        const firstColors = interpolateRgbBasis(colors.slice(0, 2));
+        const lastColors = interpolateRgbBasis(colors.slice(1));
+
+        return (colorValue: number) =>
+            colorValue >= 0.5 ? lastColors((colorValue - 0.5) * 2) : firstColors(colorValue * 2);
+    }
+
+    return interpolateRgbBasis(colors);
+}
+
 export function colorizeFlatTableColumn({
     data,
     colorsConfig,
@@ -47,7 +59,7 @@ export function colorizeFlatTableColumn({
     const {min, mid, max} = getThresholdValues(colorsConfig, colorValues.filter(isNumber));
     const currentGradient = getCurrentGradient(colorsConfig);
     const colors: RGBColor[] = getRgbColors(currentGradient.colors, Boolean(colorsConfig.reversed));
-    const getRgbColor = interpolateRgbBasis(colors);
+    const getRgbColor = getColorFn(colors);
 
     let deltas: (number | null)[];
 
