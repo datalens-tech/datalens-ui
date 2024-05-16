@@ -299,6 +299,10 @@ export const generateTableHead = ({
             if (cellType === 'date') {
                 head[index].format = field.format || getDefaultDateFormat(field.data_type);
             }
+
+            if (field.hintSettings?.enabled) {
+                head[index].hint = field.hintSettings?.text;
+            }
         }
 
         head[index].name = fieldName;

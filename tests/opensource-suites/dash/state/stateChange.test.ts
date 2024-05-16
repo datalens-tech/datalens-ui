@@ -3,6 +3,7 @@ import {Page} from '@playwright/test';
 import {clickSelectOption, openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {TestParametrizationConfig} from '../../../types/config';
+import {getUrlStateParam} from '../../../suites/dash/helpers';
 
 const SELECTORS = {
     TAB_ITEM_LINK: '.dl-tabs__tab',
@@ -24,11 +25,6 @@ const PARAMS = {
     EMPTY_SELECTOR_VAL_TEXT: '—',
 };
 const TIMEOUT = 4000;
-
-const getUrlStateParam = (page: Page): string | null => {
-    const pageURL = new URL(page.url());
-    return pageURL.searchParams.get('state');
-};
 
 const waitClickTabGetUrlStateParam = async ({
     page,

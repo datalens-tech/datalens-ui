@@ -68,11 +68,12 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
                 return elems.length > 2;
             });
 
-            await dashboardPage.clickSelectWithTitle(PARAMS.CONTROL_TITLE);
-
             const defaultSelectValue = PARAMS.CONTROL_ITEMS[PARAMS.CONTROL_ITEMS.length - 1];
 
-            await page.click(slct(SELECTORS.CONTROL_SELECT_ITEMS_KEY, defaultSelectValue));
+            await dashboardPage.setSelectWithTitle(
+                {title: PARAMS.CONTROL_TITLE},
+                defaultSelectValue,
+            );
 
             // making sure that the request has then completed successfully
             await waitForCondition(async () => {
@@ -119,11 +120,8 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         await dashboardPage.applyRelationsChanges();
         await dashboardPage.saveChanges();
 
-        await dashboardPage.clickSelectWithTitle(PARAMS.CONTROL_TITLE);
-
         const defaultSelectValue = PARAMS.CONTROL_ITEMS[PARAMS.CONTROL_ITEMS.length - 1];
-
-        await page.click(slct(SELECTORS.CONTROL_SELECT_ITEMS_KEY, defaultSelectValue));
+        await dashboardPage.setSelectWithTitle({title: PARAMS.CONTROL_TITLE}, defaultSelectValue);
 
         // making sure that the request has then completed successfully
         await waitForCondition(async () => {

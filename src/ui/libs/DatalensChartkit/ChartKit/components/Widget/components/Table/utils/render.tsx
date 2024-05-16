@@ -25,6 +25,7 @@ import {
     isMarkupItem,
 } from 'shared';
 
+import {MarkdownHelpPopover} from '../../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {Markup} from '../../../../../../../../components/Markup';
 import {markupToRawString} from '../../../../../../modules/table';
 import {ChartKitDataTable, DataTableData} from '../../../../../../types';
@@ -388,7 +389,7 @@ export const getColumnsAndNames = ({
                 result.columns.push(columnData);
                 result.names = result.names.concat(names);
             } else {
-                const {id, name, type, css: columnCss, group, autogroup, ...options} = column;
+                const {id, name, type, css: columnCss, group, autogroup, hint, ...options} = column;
                 const columnWidth = topLevelWidth || column.width;
                 const columnName = generateName({id, name, level, shift, index});
 
@@ -430,6 +431,7 @@ export const getColumnsAndNames = ({
                             ) : (
                                 column.formattedName ?? column.name
                             )}
+                            {hint && <MarkdownHelpPopover markdown={hint} />}
                         </span>
                     ),
                     className: b('cell', {
@@ -459,7 +461,7 @@ export const getColumnsAndNames = ({
                             width: columnWidth,
                             tableWidth,
                             resize: resizeTable,
-                        }),
+                        } as RestOptions),
                     customStyle: ({row, header, name}) => {
                         if (header) {
                             return camelCaseCss(columnCss);

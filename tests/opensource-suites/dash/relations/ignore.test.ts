@@ -1,7 +1,7 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {slct, waitForCondition} from '../../../utils';
+import {waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ControlQA, DashRelationTypes} from '../../../../src/shared';
 import {TestParametrizationConfig} from '../../../types/config';
@@ -97,9 +97,8 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         await dashboardPage.clickSaveButton();
 
         // check that after setting ignore link control doesn't affect the chart
-        await dashboardPage.clickSelectWithTitle(PARAMS.CONTROL_TITLE);
         const defaultSelectValue = PARAMS.CONTROL_ITEMS[PARAMS.CONTROL_ITEMS.length - 1];
-        await page.click(slct(SELECTORS.CONTROL_SELECT_ITEMS_KEY, defaultSelectValue));
+        await dashboardPage.setSelectWithTitle({title: PARAMS.CONTROL_TITLE}, defaultSelectValue);
 
         await waitForCondition(async () => {
             const elems = await page.$$(SELECTORS.CHART_LEGEND_ITEM);
@@ -119,9 +118,8 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         await dashboardPage.clickSaveButton();
 
         // check that after setting all ignore link control doesn't affect the chart
-        await dashboardPage.clickSelectWithTitle(PARAMS.CONTROL_TITLE);
         const defaultSelectValue = PARAMS.CONTROL_ITEMS[PARAMS.CONTROL_ITEMS.length - 1];
-        await page.click(slct(SELECTORS.CONTROL_SELECT_ITEMS_KEY, defaultSelectValue));
+        await dashboardPage.setSelectWithTitle({title: PARAMS.CONTROL_TITLE}, defaultSelectValue);
 
         await waitForCondition(async () => {
             const elems = await page.$$(SELECTORS.CHART_LEGEND_ITEM);

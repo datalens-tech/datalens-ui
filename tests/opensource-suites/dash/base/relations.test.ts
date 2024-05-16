@@ -1,7 +1,7 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {isEnabledFeature, openTestPage, slct, waitForCondition} from '../../../utils';
+import {isEnabledFeature, openTestPage, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ConnectionsDialogQA, Feature} from '../../../../src/shared';
 import {TestParametrizationConfig} from '../../../types/config';
@@ -58,11 +58,12 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
                 return elems.length > 2;
             });
 
-            dashboardPage.clickSelectWithTitle(PARAMS.CONTROL_TITLE);
-
             const defaultSelectValue = PARAMS.CONTROL_ITEMS[PARAMS.CONTROL_ITEMS.length - 1];
 
-            await page.click(slct(SELECTORS.CONTROL_SELECT_ITEMS_KEY, defaultSelectValue));
+            await dashboardPage.setSelectWithTitle(
+                {title: PARAMS.CONTROL_TITLE},
+                defaultSelectValue,
+            );
 
             // making sure that the request has then completed successfully
             await waitForCondition(async () => {
