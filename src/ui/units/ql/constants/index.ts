@@ -66,6 +66,7 @@ export const AVAILABLE_SQL_CONNECTION_TYPES = [
     ConnectorType.Ydb,
     ConnectorType.Chyt,
     ConnectorType.ChytNb,
+    ConnectorType.Yq,
 ];
 
 export const AVAILABLE_PROMQL_CONNECTION_TYPES = ['promql'];

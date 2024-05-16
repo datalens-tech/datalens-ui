@@ -25,6 +25,7 @@ export async function waitForTableRowsToEqual(page: Page, expectedValues: string
 }
 
 // default page.dragAndDrop does not work on list
+// note: it can be unstable when the number of items is more than 2
 export async function dragAndDropListItem(
     page: Page,
     {
@@ -32,7 +33,15 @@ export async function dragAndDropListItem(
         itemSelector,
         sourceIndex,
         targetIndex,
-    }: {listSelector: string; itemSelector?: string; sourceIndex: number; targetIndex: number},
+        // affects the mouse events position, default is half of item (width / moveXRation)
+        moveXRation = 2,
+    }: {
+        listSelector: string;
+        itemSelector?: string;
+        sourceIndex: number;
+        targetIndex: number;
+        moveXRation?: number;
+    },
 ) {
     const list = await page.$(listSelector);
 
@@ -58,28 +67,33 @@ export async function dragAndDropListItem(
     }
 
     await page.mouse.move(
-        sourceItemBox.x + sourceItemBox.width / 2,
+        sourceItemBox.x + sourceItemBox.width / moveXRation,
         sourceItemBox.y + sourceItemBox.height / 2,
     );
     await page.mouse.down();
 
     // item shake emulation for drag event trigger
     await page.mouse.move(
-        sourceItemBox.x + sourceItemBox.width / 2,
+        sourceItemBox.x + sourceItemBox.width / moveXRation,
         sourceItemBox.y - sourceItemBox.height,
     );
     await page.mouse.move(
-        sourceItemBox.x + sourceItemBox.width / 2,
+        sourceItemBox.x + sourceItemBox.width / moveXRation,
         sourceItemBox.y + sourceItemBox.height,
     );
 
     // move source item to the end of target item
     await page.mouse.move(
-        targetItemBox.x + targetItemBox.width / 2,
+        targetItemBox.x + targetItemBox.width / moveXRation,
         targetItemBox.y - targetItemBox.height / 2,
     );
 
     await page.mouse.up();
+
+    // to let drop animation be finished before next actions
+    await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+    });
 }
 
 export async function openTabPopupWidgetOrder(dashboardPage: DashboardPage, tabIndex?: number) {
@@ -101,3 +115,8 @@ export async function openTabPopupWidgetOrder(dashboardPage: DashboardPage, tabI
 
     return popupWidgetOrderList;
 }
+
+export const getUrlStateParam = (page: Page): string | null => {
+    const pageURL = new URL(page.url());
+    return pageURL.searchParams.get('state');
+};

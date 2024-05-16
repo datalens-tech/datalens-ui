@@ -103,6 +103,13 @@ export const selectIsParametersSectionAvailable = (state: DatalensGlobalState): 
     }
 };
 
+export const getDatasetField = (state: DatalensGlobalState) => {
+    const {dataset, datasetFieldId} = (state.dash as DashState).selectorDialog;
+    return (dataset?.dataset?.result_schema || dataset?.result_schema || [])?.find(
+        (item) => item.guid === datasetFieldId,
+    );
+};
+
 export const selectAvailableOperationsDict = (
     state: DatalensGlobalState,
 ): Record<Operations, boolean> | undefined => {

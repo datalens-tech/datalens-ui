@@ -2,11 +2,12 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {get} from 'lodash';
-import {batch, useDispatch} from 'react-redux';
+import {batch, useDispatch, useSelector} from 'react-redux';
 
 import {closeDialog, openDialog, updateDialogProps} from '../../../../../../store/actions/dialog';
 import {
     api,
+    connectionIdSelector,
     handleReplacedSourceBeforePolling,
     handleUploadedYadocBeforePolling,
     oauthLogin,
@@ -56,6 +57,7 @@ type OpenReplaceSourceDialogArgs = BaseDialogArgs &
 
 export const useYadocsDialogs = () => {
     const dispatch = useDispatch();
+    const connectionId = useSelector(connectionIdSelector);
 
     const handleCloseDialog = React.useCallback(() => {
         batch(() => {
@@ -181,6 +183,7 @@ export const useYadocsDialogs = () => {
                             return api.addYandexDocument({
                                 ...pathData,
                                 ...args,
+                                ...(args.authorized ? {connectionId} : {}),
                                 oauthToken: args.oauthToken,
                             });
                         },
@@ -199,7 +202,7 @@ export const useYadocsDialogs = () => {
                 }),
             );
         },
-        [dispatch, handleCloseDialog],
+        [connectionId, dispatch, handleCloseDialog],
     );
 
     const openReplaceSourceDialog = React.useCallback(
@@ -215,6 +218,7 @@ export const useYadocsDialogs = () => {
                         onApply: (pathData) => {
                             return api.addYandexDocument({
                                 ...pathData,
+                                ...(authorized ? {connectionId} : {}),
                                 authorized,
                                 oauthToken,
                             });
@@ -227,7 +231,7 @@ export const useYadocsDialogs = () => {
                 }),
             );
         },
-        [dispatch, getSuccessReplaceDialog, handleCloseDialog],
+        [connectionId, dispatch, getSuccessReplaceDialog, handleCloseDialog],
     );
 
     const openLogoutDialog = React.useCallback(() => {
