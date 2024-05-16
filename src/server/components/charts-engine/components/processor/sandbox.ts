@@ -310,7 +310,7 @@ const execute = async ({
             ChartEditor.getActionParams = () => JSON.parse(ChartEditor._actionParams);
             ChartEditor.getWidgetConfig = () => JSON.parse(ChartEditor._widgetConfig);
             ChartEditor.getSharedData = () => JSON.parse(ChartEditor._shared);
-            ChartEditor.getLoadedData = () => JSON.parse(ChartEditor._getLoadedData());
+            // ChartEditor.getLoadedData = () => JSON.parse(ChartEditor._getLoadedData());
             ChartEditor.getSortParams = () => JSON.parse(ChartEditor._getSortParams());
            `;
 
@@ -467,14 +467,47 @@ function getChartEditorApi({
 
     if (name === 'UI' || name === 'JavaScript') {
         const getLoadedDataHandle = context.newFunction('getLoadedData', () => {
-            const result = loadedData ? loadedData : {};
-            return context.newString(JSON.stringify(result));
+            const result = loadedData ? defineVariable(loadedData, context) : context.newObject();
+            return result;
         });
-        context.setProp(api, '_getLoadedData', getLoadedDataHandle);
+        context.setProp(api, 'getLoadedData', getLoadedDataHandle);
         getLoadedDataHandle.dispose();
     }
 
     return api;
+}
+
+function defineVariable(value: unknown, context: QuickJSContext): QuickJSHandle {
+    if (typeof value === 'string') {
+        return context.newString(value);
+    }
+    if (typeof value === 'number') {
+        return context.newNumber(value);
+    }
+    if (typeof value === 'boolean') {
+        return value ? context.true : context.false;
+    }
+    if (value === undefined) {
+        return context.undefined;
+    }
+    if (value === null) {
+        return context.null;
+    }
+    if (Array.isArray(value)) {
+        const arrayHandle = context.newArray();
+        value.forEach((v, i) => {
+            defineVariable(v, context).consume((handle) => context.setProp(arrayHandle, i, handle));
+        });
+        return arrayHandle;
+    }
+    if (typeof value === 'object') {
+        const obj = context.newObject();
+        Object.entries(value).forEach(([key, v]) => {
+            defineVariable(v, context).consume((handle) => context.setProp(obj, key, handle));
+        });
+        return obj;
+    }
+    return context.undefined;
 }
 
 function getLibsDatalensV3({
