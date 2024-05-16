@@ -16,6 +16,7 @@ import type {DialogAddParticipantsProps} from './types/components/DialogAddParti
 import type {DownloadScreenshotProps} from './types/components/DownloadScreenshot';
 import type {EntryBreadcrumbsProps} from './types/components/EntryBreadcrumbs';
 import type {IamAccessDialogProps} from './types/components/IamAccessDialog';
+import type {MarkdownControlProps} from './types/components/MarkdownControl';
 import type {MarkupShareLinkProps} from './types/components/MarkupShareLink';
 import type {MarkupUserInfoProps} from './types/components/MarkupUserInfo';
 import type {MobileHeaderComponentProps} from './types/components/MobileHeaderComponent';
@@ -48,5 +49,6 @@ export const commonComponentsMap = {
     OAuthTokenButton: makeDefaultEmpty<OAuthTokenButtonProps>(),
     MarkupShareLink: makeDefaultEmpty<MarkupShareLinkProps>(),
     MarkupUserInfo: makeDefaultEmpty<MarkupUserInfoProps>(),
+    MarkdownControl: makeDefaultEmpty<MarkdownControlProps>(),
     Footer: makeDefaultEmpty(),
 } as const;

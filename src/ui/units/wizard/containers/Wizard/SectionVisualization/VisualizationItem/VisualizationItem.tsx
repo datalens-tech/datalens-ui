@@ -741,6 +741,7 @@ class VisualizationItem extends React.Component<Props, State> {
             backgroundSettings,
             subTotalsSettings,
             displayMode,
+            hintSettings,
         }: DialogFieldState,
     ) => {
         const clientsideProperties = {
@@ -751,6 +752,7 @@ class VisualizationItem extends React.Component<Props, State> {
             barsSettings,
             backgroundSettings,
             subTotalsSettings,
+            hintSettings,
         };
 
         const serversideProperties = {
@@ -889,6 +891,8 @@ class VisualizationItem extends React.Component<Props, State> {
         if (displayMode) {
             target.displayMode = displayMode;
         }
+
+        target.hintSettings = hintSettings;
 
         if (isClientSidePropertiesChanged && !isServersidePropertiesChanged) {
             this.props.actions.updatePreviewWithRerender();

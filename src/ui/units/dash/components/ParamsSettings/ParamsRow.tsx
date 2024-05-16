@@ -199,7 +199,7 @@ export const ParamsRow = ({
                         value={tagValue}
                         onUpdate={(newTagValue) => handleUpdateValue(tagValue, newTagValue)}
                         onRemove={handleRemoveValue}
-                        defaultEditMode={tagValue.trim() === ''}
+                        defaultEditMode={(tagValue || '').trim() === ''}
                         applyOnBlur={true}
                     />
                 ))}

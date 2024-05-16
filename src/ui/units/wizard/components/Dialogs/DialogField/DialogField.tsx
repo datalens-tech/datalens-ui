@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Dialog, Icon} from '@gravity-ui/uikit';
+import {Dialog, Icon, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
@@ -8,6 +8,8 @@ import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
 import {
     CommonSharedExtraSettings,
+    Feature,
+    HintSettings,
     Placeholder,
     PlaceholderId,
     TableFieldBackgroundSettings,
@@ -36,6 +38,8 @@ import {
     Field as TField,
     TableBarsSettings,
 } from '../../../../../../shared/types';
+import {Utils} from '../../../../../../ui';
+import {registry} from '../../../../../registry';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,
     AVAILABLE_DATETIME_FORMATS,
@@ -99,6 +103,7 @@ export type DialogFieldState = Optional<FieldStateExtend> & {
     visualizationId?: string;
     currentPlaceholder?: Placeholder;
     displayMode?: TableFieldDisplayMode;
+    hintSettings?: HintSettings;
 };
 
 const b = block('wizard-dialog-field');
@@ -126,6 +131,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
 
         const initialState: DialogFieldState = {
             formatting: props.item?.formatting || ({} as CommonNumberFormattingOptions),
+            hintSettings: props.item?.hintSettings,
             isBarsSettingsEnabled:
                 !isPivotFallbackTurnedOn &&
                 showBarsInDialogField(visualizationId, props.placeholderId, props.item),
@@ -363,6 +369,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                         handleDateGroupUpdate={this.handleDateGroupUpdate}
                     />
                 )}
+                {this.renderHintSettings()}
                 {this.props.formattingEnabled && (
                     <Formatting
                         dataType={formattingDataType}
@@ -377,6 +384,59 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                 {this.renderBarsSettings()}
                 {this.renderBackgroundSettings()}
             </>
+        );
+    }
+
+    private renderHintSettings() {
+        const {item, placeholderId} = this.props;
+        const canSetHint = Utils.isEnabledFeature(Feature.FieldHint);
+        const availablePlaceholders = [
+            PlaceholderId.FlatTableColumns,
+            PlaceholderId.PivotTableRows,
+        ];
+
+        if (
+            !item ||
+            !availablePlaceholders.includes(placeholderId as PlaceholderId) ||
+            !canSetHint
+        ) {
+            return null;
+        }
+
+        const hintSettings = this.state.hintSettings;
+        const enabled = hintSettings?.enabled;
+        const text = hintSettings?.text || item?.description || '';
+
+        const {MarkdownControl} = registry.common.components.getAll();
+
+        return (
+            <React.Fragment>
+                <DialogFieldRow
+                    title={i18n('wizard', 'label_hint')}
+                    setting={
+                        <Switch
+                            onUpdate={(checked) =>
+                                this.setState({hintSettings: {enabled: checked, text}})
+                            }
+                            checked={enabled}
+                        />
+                    }
+                />
+                {enabled && (
+                    <DialogFieldRow
+                        title={''}
+                        setting={
+                            <MarkdownControl
+                                value={text}
+                                onChange={(value) =>
+                                    this.setState({hintSettings: {enabled, text: value}})
+                                }
+                                disabled={!enabled}
+                            />
+                        }
+                    />
+                )}
+            </React.Fragment>
         );
     }
 

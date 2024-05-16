@@ -1,7 +1,7 @@
 import {ConnectionQueryTypeValues} from 'shared';
 import type {Operations} from 'shared/modules';
 import {
-    type ConnectionQueryContent,
+    ConnectionQueryContent,
     DATASET_FIELD_TYPES,
     DashTabItemControlSourceType,
     DatasetFieldType,
@@ -55,4 +55,6 @@ export type ItemDataSource = {
     connectionId?: string;
     connectionQueryType?: ConnectionQueryTypeValues;
     connectionQueryContent?: ConnectionQueryContent;
+    showHint?: boolean;
+    hint?: string;
 };

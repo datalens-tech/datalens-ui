@@ -107,6 +107,10 @@ function prepareFlatTable({
             width: getColumnWidthValue(widthSettings),
         };
 
+        if (item.hintSettings?.enabled) {
+            headCell.hint = item.hintSettings.text;
+        }
+
         if (!isLastColumn && index < pinnedColumns) {
             headCell.pinned = true;
         }
