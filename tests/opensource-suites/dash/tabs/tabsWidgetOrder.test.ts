@@ -4,8 +4,7 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
-import {COMMON_DASH_SELECTORS} from '../../../suites/dash/constants';
-import {DialogTabsQA, EntryDialogQA} from '../../../../src/shared/constants';
+import {DashkitQa, DialogTabsQA, EntryDialogQA} from '../../../../src/shared/constants';
 import {dragAndDropListItem, openTabPopupWidgetOrder} from '../../../suites/dash/helpers';
 import {arbitraryText} from '../constants';
 import {ActionPanelDashSaveControlsQa} from '../../../../src/shared/constants/qa/action-panel';
@@ -51,10 +50,6 @@ datalensTest.describe(`Dashboards - Change widgets order on tab`, () => {
                 listSelector: slct(DialogTabsQA.PopupWidgetOrderList),
                 sourceIndex: 0,
                 targetIndex: 1,
-            });
-
-            await new Promise((resolve) => {
-                setTimeout(resolve, 500);
             });
 
             const actualWidgetOrderListItems = await popupWidgetOrderList.$$(
@@ -107,7 +102,7 @@ datalensTest.describe(`Dashboards - Change widgets order on tab`, () => {
             );
             await dashboardPage.exitEditMode();
 
-            const dashGridItems = await page.$$(slct(COMMON_DASH_SELECTORS.DASH_GRID_ITEM));
+            const dashGridItems = await page.$$(slct(DashkitQa.GRID_ITEM));
             const dashWidgetsCount = dashGridItems.length;
             expect(dashWidgetsCount).toEqual(factWidgetOrder.length);
 

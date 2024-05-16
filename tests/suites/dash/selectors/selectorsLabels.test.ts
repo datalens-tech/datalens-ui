@@ -47,10 +47,7 @@ async function checkLabels(
 
     // enable the internal title and title in the selector settings
     await dashboardPage.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
-    const controlSettingsButton = await dashboardPage.waitForSelector(
-        slct(ControlQA.controlSettings),
-    );
-    await controlSettingsButton.click();
+    await dashboardPage.clickFirstControlSettingsButton();
     await dashboardPage.editSelectorBySettings({
         appearance: {title, titleEnabled: true, innerTitle, innerTitleEnabled: true},
     });

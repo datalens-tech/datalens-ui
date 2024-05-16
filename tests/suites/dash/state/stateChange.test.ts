@@ -3,6 +3,7 @@ import {Page} from '@playwright/test';
 import {clickSelectOption, openTestPage, slct} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {getUrlStateParam} from '../helpers';
 
 const SELECTORS = {
     TAB_ITEM_LINK: '.dl-tabs__tab',
@@ -24,11 +25,6 @@ const PARAMS = {
     TAB_3_STATE_HASH_1: '43f7c7ca108',
 };
 const TIMEOUT = 4000;
-
-const getUrlStateParam = (page: Page): string | null => {
-    const pageURL = new URL(page.url());
-    return pageURL.searchParams.get('state');
-};
 
 const waitClickTabGetUrlStateParam = async ({
     page,
