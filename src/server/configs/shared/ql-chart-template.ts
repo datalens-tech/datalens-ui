@@ -79,10 +79,20 @@ export default {
             case WizardVisualizationId.Metric: {
                 const app = registry.getApp();
                 const {placeholders} = chart.visualization;
-                const dataType = placeholders.find((p) => p.id === 'measures')?.items[0]?.data_type;
-                const useMarkupMetric =
-                    dataType === 'markup' &&
-                    isEnabledServerFeature(app.nodekit.ctx, Feature.MarkupMetric);
+
+                let useMarkupMetric;
+
+                if (placeholders) {
+                    const dataType = placeholders.find((p) => p.id === 'measures')?.items[0]
+                        ?.data_type;
+
+                    useMarkupMetric =
+                        dataType === 'markup' &&
+                        isEnabledServerFeature(app.nodekit.ctx, Feature.MarkupMetric);
+                } else {
+                    // Case for legacy ql charts before integration with wizard
+                    useMarkupMetric = isEnabledServerFeature(app.nodekit.ctx, Feature.MarkupMetric);
+                }
 
                 if (useMarkupMetric) {
                     return QL_TYPE.MARKUP_QL_NODE;
