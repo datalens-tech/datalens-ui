@@ -132,6 +132,8 @@ export function getSelectorDialogFromData(data, defaults) {
         innerTitle: data.source.innerTitle,
         showInnerTitle: data.source.showInnerTitle,
         required: data.source.required,
+        showHint: data.source.showHint,
+        hint: data.source.hint,
     };
 }
 

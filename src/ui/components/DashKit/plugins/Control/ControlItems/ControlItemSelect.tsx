@@ -362,6 +362,7 @@ export const ControlItemSelect = ({
         loadingItems,
         placeholder,
         required: source.required,
+        hint: source.hint,
         hasValidationError: Boolean(selectValidationError),
         renderOverlay,
         ...selectProps,
