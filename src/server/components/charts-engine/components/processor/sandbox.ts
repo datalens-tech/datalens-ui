@@ -233,11 +233,19 @@ const execute = async ({
         const ChartEditor = getChartEditorApi({
             name: filename,
             context,
-            shared: instance.ChartEditor.getSharedData(),
+            shared: instance.ChartEditor.getSharedData
+                ? instance.ChartEditor.getSharedData()
+                : null,
             loadedData: instance.ChartEditor.getLoadedData
                 ? instance.ChartEditor.getLoadedData()
                 : null,
-            params: instance.ChartEditor.getParams(),
+            params: instance.ChartEditor.getParams ? instance.ChartEditor.getParams() : null,
+            actionParams: instance.ChartEditor.getActionParams
+                ? instance.ChartEditor.getActionParams()
+                : null,
+            widgetConfig: instance.ChartEditor.getWidgetConfig
+                ? instance.ChartEditor.getWidgetConfig()
+                : null,
         });
 
         context.setProp(context.global, 'ChartEditor', ChartEditor);
@@ -299,15 +307,11 @@ const execute = async ({
                }
            };
             ChartEditor.getParams = () => JSON.parse(ChartEditor._params);
-            ChartEditor.getActionParams = () => JSON.parse('${JSON.stringify(
-                instance.ChartEditor.getActionParams(),
-            )}');
-            ChartEditor.getWidgetConfig = () => JSON.parse('${JSON.stringify(
-                instance.ChartEditor.getWidgetConfig(),
-            )}');
-           ChartEditor.getSharedData = () => JSON.parse(ChartEditor._shared);
-           ChartEditor.getLoadedData = () => JSON.parse(ChartEditor._getLoadedData());
-           ChartEditor.getSortParams = () => JSON.parse(ChartEditor._getSortParams());
+            ChartEditor.getActionParams = () => JSON.parse(ChartEditor._actionParams);
+            ChartEditor.getWidgetConfig = () => JSON.parse(ChartEditor._widgetConfig);
+            ChartEditor.getSharedData = () => JSON.parse(ChartEditor._shared);
+            ChartEditor.getLoadedData = () => JSON.parse(ChartEditor._getLoadedData());
+            ChartEditor.getSortParams = () => JSON.parse(ChartEditor._getSortParams());
            `;
 
         const ok = context.evalCode(prepare + code);
@@ -331,8 +335,8 @@ const execute = async ({
         executionTiming = process.hrtime(timeStart);
     }
 
-    const shared = instance.ChartEditor.getSharedData();
-    const params = instance.ChartEditor.getParams();
+    const shared = instance.ChartEditor.getSharedData ? instance.ChartEditor.getSharedData() : null;
+    const params = instance.ChartEditor.getParams ? instance.ChartEditor.getParams() : null;
 
     delete instance.self;
 
@@ -417,12 +421,16 @@ function getChartEditorApi({
     shared,
     loadedData,
     params,
+    widgetConfig,
+    actionParams,
 }: {
     name: string;
     context: QuickJSContext;
     shared: Record<string, object>;
     loadedData: Record<string, any> | null;
     params: Record<string, string | string[]>;
+    actionParams: Record<string, string | string[]>;
+    widgetConfig: DashWidgetConfig['widgetConfig'];
 }): QuickJSHandle {
     const api = context.newObject();
 
@@ -433,6 +441,14 @@ function getChartEditorApi({
     context
         .newString(JSON.stringify(params))
         .consume((handle) => context.setProp(api, '_params', handle));
+
+    context
+        .newString(JSON.stringify(actionParams))
+        .consume((handle) => context.setProp(api, '_actionParams', handle));
+
+    context
+        .newString(JSON.stringify(widgetConfig))
+        .consume((handle) => context.setProp(api, '_widgetConfig', handle));
 
     if (name === 'Urls') {
         context
