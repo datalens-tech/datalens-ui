@@ -1,6 +1,5 @@
-import {NextFunction, Response} from '@gravity-ui/expresskit';
+import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
-import {DlAuthRequest} from '../../shared/types/zitadel';
 import {logout} from '../controllers/zitadel';
 import {
     generateServiceUserToken,
@@ -9,7 +8,7 @@ import {
     saveUserToSesson,
 } from '../utils/zitadel';
 
-export default async function (req: DlAuthRequest, res: Response, next: NextFunction) {
+export default async function (req: Request, res: Response, next: NextFunction) {
     const {ctx} = req;
 
     const isAuthenticated = req.isAuthenticated();
@@ -17,16 +16,16 @@ export default async function (req: DlAuthRequest, res: Response, next: NextFunc
     if (isAuthenticated) {
         req.userAccessToken = await generateServiceUserToken(ctx);
 
-        const accessTokenIntrospected = await introspect(ctx, req.user.accessToken);
+        const accessTokenIntrospected = await introspect(ctx, req.user?.accessToken);
 
         if (accessTokenIntrospected) {
             return next();
         } else {
-            const tokens = await refreshTokens(ctx, req.user.refreshToken);
+            const tokens = await refreshTokens(ctx, (req.user as any).refreshToken);
 
             if (tokens.accessToken && tokens.refreshToken) {
-                req.user.accessToken = tokens.accessToken;
-                req.user.refreshToken = tokens.refreshToken;
+                (req.user as any).accessToken = tokens.accessToken;
+                (req.user as any).refreshToken = tokens.refreshToken;
 
                 await saveUserToSesson(req);
 
@@ -41,7 +40,7 @@ export default async function (req: DlAuthRequest, res: Response, next: NextFunc
         return next();
     }
 
-    const apiRoute = Boolean(!req.routeInfo?.ui);
+    const apiRoute = Boolean(!(req.routeInfo as any).ui);
     if (apiRoute) {
         return res.status(401).send('Unauthorized access');
     }

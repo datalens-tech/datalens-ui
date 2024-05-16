@@ -2,7 +2,7 @@ import {Request, Response} from '@gravity-ui/expresskit';
 import {ApiServiceActionConfig, GetAuthHeaders} from '@gravity-ui/gateway';
 import {AppContext} from '@gravity-ui/nodekit';
 
-import {DlAuthRequest} from '../types/zitadel';
+export const getAuthHeadersNone = () => undefined;
 
 export function createAction<TOutput, TParams = undefined, TTransformed = TOutput>(
     config: ApiServiceActionConfig<AppContext, Request, Response, TOutput, TParams, TTransformed>,
@@ -15,7 +15,7 @@ type AuthArgsData = {
     serviceUserAccessToken?: string;
 };
 
-export const getAuthArgs = (req: DlAuthRequest, _res: Response): AuthArgsData => {
+export const getAuthArgs = (req: Request, _res: Response): AuthArgsData => {
     const user = req.user;
 
     return {

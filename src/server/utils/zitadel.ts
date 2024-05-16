@@ -1,3 +1,4 @@
+import {Request} from '@gravity-ui/expresskit';
 import {AppContext} from '@gravity-ui/nodekit';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
@@ -155,7 +156,7 @@ export const generateServiceUserToken = async (ctx: AppContext): Promise<string 
     return token;
 };
 
-export const saveUserToSesson = async (req: Express.Request): Promise<void> => {
+export const saveUserToSesson = async (req: Request): Promise<void> => {
     return new Promise((resolve, reject) => {
         const ctx = req.ctx;
         const user = req.user ?? {};

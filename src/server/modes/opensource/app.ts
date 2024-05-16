@@ -129,6 +129,9 @@ function initZitadel({beforeAuth}: {beforeAuth: AppMiddleware[]}) {
                 _params: unknown,
                 done: VerifyCallback,
             ) => {
+                if (typeof accessToken !== 'string') {
+                    throw new Error('Incorrect type of accessToken');
+                }
                 return done(null, {accessToken, refreshToken});
             },
         ),

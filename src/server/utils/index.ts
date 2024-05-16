@@ -1,9 +1,9 @@
 import fs from 'fs';
 import {IncomingHttpHeaders} from 'http';
 
+import {Request} from '@gravity-ui/expresskit';
 import {AppContext} from '@gravity-ui/nodekit';
 import axios, {AxiosResponse} from 'axios';
-import {Request} from 'express';
 import pick from 'lodash/pick';
 
 import {
@@ -16,7 +16,6 @@ import {
     SuperuserHeader,
     TENANT_ID_HEADER,
 } from '../../shared';
-import {DlAuthRequest} from '../../shared/types/zitadel';
 import {isOpensourceInstallation} from '../app-env';
 
 import {isGatewayError} from './gateway';
@@ -46,7 +45,7 @@ class Utils {
         return pick(headers, headersList);
     }
 
-    static pickZitadelHeaders(req: DlAuthRequest) {
+    static pickZitadelHeaders(req: Request) {
         return {
             ...{authorization: 'Bearer ' + req.user?.accessToken},
             [SERVICE_USER_TOKEN_HEADER]: req.userAccessToken,
