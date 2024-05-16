@@ -219,6 +219,9 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
 
             // there should be NO state changes after value selecting (to change it, you need to click "Apply")
 
+            // wait for debounce timeout to detect the extra request
+            await page.waitForTimeout(UPDATE_STATE_DEBOUNCE_TIME);
+
             const applyButton = await dashboardPage.waitForSelector(
                 slct(ControlQA.controlButtonApply),
             );
@@ -230,13 +233,13 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
 
             expect(nonDefaultState).not.toEqual(null);
 
-            // there should be NO state changes after click reset (to change it, you need to click "Apply")
-
             const resetButton = await dashboardPage.waitForSelector(
                 slct(ControlQA.controlButtonReset),
             );
             // reset values to defaults
             await resetButton.click();
+
+            // there should be NO state changes after click reset (to change it, you need to click "Apply")
 
             // check that values in selectors are defaults now
             await dashboardPage.checkSelectValueByTitle({
@@ -248,7 +251,6 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
                 value: PARAMS.SECOND_CONTROL.defaultValue,
             });
 
-            //
             await dashboardPage.setSelectWithTitle(
                 {title: PARAMS.FIRST_CONTROL.controlTitle},
                 PARAMS.FIRST_CONTROL.controlItems[2],
