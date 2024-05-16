@@ -9,7 +9,12 @@ import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import {connect} from 'react-redux';
-import {DashTabItemControlSingle, DashTabItemGroupControlData, StringParams} from 'shared';
+import {
+    ControlQA,
+    DashTabItemControlSingle,
+    DashTabItemGroupControlData,
+    StringParams,
+} from 'shared';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
@@ -478,6 +483,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         theme="action"
                         className={b('item')}
                         onChange={this.handleApplyChange}
+                        qa={ControlQA.controlButtonApply}
                     />
                 )}
                 {controlData.buttonReset && (
@@ -487,6 +493,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         label={i18n('button_reset')}
                         onClick={resetAction}
                         onChange={this.handleResetChange}
+                        qa={ControlQA.controlButtonReset}
                     />
                 )}
             </React.Fragment>

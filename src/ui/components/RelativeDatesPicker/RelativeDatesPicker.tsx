@@ -3,11 +3,12 @@ import React from 'react';
 import {HelpPopover} from '@gravity-ui/components';
 import {TriangleExclamationFill} from '@gravity-ui/icons';
 import {Checkbox, Icon, RadioGroup, Select, TextInput} from '@gravity-ui/uikit';
+import type {RadioGroupProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DateTime} from 'luxon';
-import PropTypes from 'prop-types';
 import {RelativeDatepickerQa, getParsedRelativeDate} from 'shared';
+import type {FilterValue} from 'shared';
 import {SCALES} from 'shared/constants/datepicker/relative-datepicker';
 import {registry} from 'ui/registry';
 
@@ -21,6 +22,7 @@ import {
     SIGNS,
     TOOLTIP_DELAY_CLOSING,
 } from './constants';
+import type {DatepickerOutput, Props, State} from './types';
 import {
     computeRelativeDate,
     createISODateTimeFromRelative,
@@ -37,17 +39,21 @@ import './RelativeDatesPicker.scss';
 
 const b = block('dl-relative-dates-picker');
 const i18n = I18n.keyset('component.relative-dates-picker.view');
-
 const MIN_VALID_DATE = DateTime.utc().plus({years: -100});
 const MAX_VALID_DATE = DateTime.utc().plus({years: 100});
 const signs = cretateSelectItems(Object.values(SIGNS), 'label_sign');
 
-class RelativeDatesPicker extends React.Component {
-    static getDerivedStateFromProps(props, state) {
+class RelativeDatesPicker extends React.Component<Props, State> {
+    static defaultProps: Partial<Props> = {
+        range: true,
+        withTime: false,
+    };
+
+    static getDerivedStateFromProps(props: Props, state: State) {
         const {range} = props;
         const {amountStart, amountEnd, scaleStart, scaleEnd, signStart, signEnd} = state;
 
-        const changedState = {
+        const changedState: Partial<State> = {
             invalidRelativeStart: !amountStart,
             invalidRelativeEnd: !amountEnd,
             invalidRange: false,
@@ -107,7 +113,7 @@ class RelativeDatesPicker extends React.Component {
         return changedState;
     }
 
-    static isRangeInvalid(state, changes) {
+    static isRangeInvalid(state: State, changes: Partial<State>) {
         const {start, end, absoluteStart, absoluteEnd} = state;
         const {relativeStart, relativeEnd, invalidRelativeStart, invalidRelativeEnd} = changes;
 
@@ -137,7 +143,7 @@ class RelativeDatesPicker extends React.Component {
         return false;
     }
 
-    static isNeedToCheckPresetMatching(props, state) {
+    static isNeedToCheckPresetMatching(props: Props, state: State) {
         const {range} = props;
         const {start, end, amountEnd, scaleStart, scaleEnd, hasPresetSelectChange} = state;
         const {RELATIVE} = DATE_TYPES;
@@ -152,7 +158,7 @@ class RelativeDatesPicker extends React.Component {
             : !hasPresetSelectChange && start === RELATIVE && scaleStart === SCALE_DAY;
     }
 
-    static checkPresetMatch(props, state) {
+    static checkPresetMatch(props: Props, state: State) {
         const {range} = props;
         const {presets, signStart, signEnd, amountStart, amountEnd, includeCurrentDay} = state;
 
@@ -189,22 +195,7 @@ class RelativeDatesPicker extends React.Component {
         return preset;
     }
 
-    static propTypes = {
-        onChange: PropTypes.func.isRequired,
-        value: PropTypes.string,
-        minDate: PropTypes.string,
-        maxDate: PropTypes.string,
-        datepickerScale: PropTypes.string,
-        range: PropTypes.bool,
-        withTime: PropTypes.bool,
-    };
-
-    static defaultProps = {
-        range: true,
-        withTime: false,
-    };
-
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         const {value, range} = this.props;
@@ -251,7 +242,7 @@ class RelativeDatesPicker extends React.Component {
         };
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: Props) {
         const {range} = this.props;
 
         if (prevProps.range === range) {
@@ -263,22 +254,41 @@ class RelativeDatesPicker extends React.Component {
             ? this.onChangeHandler
             : () => this.includeCurrentDayCheckboxHandler(true);
 
-        let preset;
+        let preset: State['preset'];
 
         if (this.state.preset) {
-            preset = presets.find(({id}) => id === this.state.preset.id);
+            preset = presets.find(({id}) => id === this.state.preset?.id);
         }
 
-        this.setState(
-            {
-                presets,
-                ...(preset && {preset}),
-            },
-            callback,
+        this.setState({presets, ...(preset && {preset})}, callback);
+    }
+
+    render() {
+        const {invalidRange} = this.state;
+        const {range = true} = this.props;
+
+        return (
+            <div className={b()}>
+                {this.renderPresets()}
+                <div className={b('controls')}>
+                    {this.renderControl(CONTROLS.START)}
+                    {range && this.renderControl(CONTROLS.END)}
+                </div>
+                {invalidRange && (
+                    <div className={b('error-label')}>
+                        <Icon
+                            data={TriangleExclamationFill}
+                            className={b('error-label-icon')}
+                            width="24"
+                        />
+                        <span>{i18n('label_invalid-range')}</span>
+                    </div>
+                )}
+            </div>
         );
     }
 
-    getScales = (amount, scale) => {
+    private getScales = (amount: string, scale: string) => {
         const {withTime} = this.props;
         const allScales = cretateSelectItems(Object.keys(SCALES), 'label_scale-', amount);
 
@@ -291,56 +301,57 @@ class RelativeDatesPicker extends React.Component {
 
         if (!hasScale) {
             const missingScale = allScales.find(({value}) => value === scale);
-            scales.push(missingScale);
+
+            if (missingScale) {
+                scales.push(missingScale);
+            }
         }
 
         return scales;
     };
 
-    getControlRadioBoxHandler = (handleControlType) => {
+    private getControlRadioBoxHandler = (
+        handleControlType: (typeof CONTROLS)[keyof typeof CONTROLS],
+    ): NonNullable<RadioGroupProps['onChange']> => {
         return (e) => {
-            this.setState(
-                {
-                    [handleControlType]: e.target.value,
-                },
-                () => {
-                    const {start, end, preset, includeCurrentDay} = this.state;
+            // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/26635#issuecomment-486108542
+            const updates = {[handleControlType]: e.target.value} as unknown as Pick<
+                State,
+                keyof State
+            >;
+            this.setState(updates, () => {
+                const {start, end, preset, includeCurrentDay} = this.state;
 
-                    if (!preset) {
-                        this.onChangeHandler();
+                if (!preset) {
+                    this.onChangeHandler();
 
-                        return;
-                    }
+                    return;
+                }
 
-                    this.setState(
-                        {
-                            ...getResolvedDatesData({
-                                preset,
-                                controls: {start, end},
-                                includeCurrentDay,
-                            }),
-                        },
-                        this.onChangeHandler,
-                    );
-                },
-            );
+                this.setState(
+                    {
+                        ...getResolvedDatesData({
+                            preset,
+                            controls: {start, end},
+                            includeCurrentDay,
+                        }),
+                    },
+                    this.onChangeHandler,
+                );
+            });
         };
     };
 
-    getDatepickerHandler = (dateKey) => {
-        return ({from}) => {
-            this.setState(
-                {
-                    [dateKey]: from,
-                    preset: null,
-                },
-                this.onChangeHandler,
-            );
+    private getDatepickerHandler = (dateKey: keyof State) => {
+        return ({from}: DatepickerOutput) => {
+            // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/26635#issuecomment-486108542
+            const updates = {[dateKey]: from, preset: null} as unknown as Pick<State, keyof State>;
+            this.setState(updates, this.onChangeHandler);
         };
     };
 
-    getAmountInputHandler = (amountKey) => {
-        return (value) => {
+    private getAmountInputHandler = (amountKey: keyof State) => {
+        return (value: string) => {
             const {[amountKey]: currentValue} = this.state;
             // leave only the numbers
             let newValue = value.replace(/[^0-9]+/g, '');
@@ -354,17 +365,16 @@ class RelativeDatesPicker extends React.Component {
                 return;
             }
 
-            this.setState(
-                {
-                    [amountKey]: newValue,
-                    preset: null,
-                },
-                this.onChangeHandler,
-            );
+            // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/26635#issuecomment-486108542
+            const updates = {[amountKey]: newValue, preset: null} as unknown as Pick<
+                State,
+                keyof State
+            >;
+            this.setState(updates, this.onChangeHandler);
         };
     };
 
-    getAmountInputOnBlurHandler = (amountKey) => {
+    private getAmountInputOnBlurHandler = (amountKey: keyof State) => {
         return () => {
             const {[amountKey]: amount} = this.state;
 
@@ -372,40 +382,35 @@ class RelativeDatesPicker extends React.Component {
                 return;
             }
 
-            this.setState(
-                {
-                    [amountKey]: '0',
-                },
-                this.onChangeHandler,
-            );
+            // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/26635#issuecomment-486108542
+            const updates = {[amountKey]: '0'} as unknown as Pick<State, keyof State>;
+            this.setState(updates, this.onChangeHandler);
         };
     };
 
-    getSignSelectHandler = (signKey) => {
-        return ([newSign]) => {
-            this.setState(
-                {
-                    [signKey]: newSign,
-                    preset: null,
-                },
-                this.onChangeHandler,
-            );
+    private getSignSelectHandler = (signKey: keyof State) => {
+        return ([newSign]: string[]) => {
+            // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/26635#issuecomment-486108542
+            const updates = {[signKey]: newSign, preset: null} as unknown as Pick<
+                State,
+                keyof State
+            >;
+            this.setState(updates, this.onChangeHandler);
         };
     };
 
-    getScaleSelectHandler = (scaleKey) => {
-        return ([newScale]) => {
-            this.setState(
-                {
-                    [scaleKey]: newScale,
-                    preset: null,
-                },
-                this.onChangeHandler,
-            );
+    private getScaleSelectHandler = (scaleKey: keyof State) => {
+        return ([newScale]: string[]) => {
+            // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/26635#issuecomment-486108542
+            const updates = {[scaleKey]: newScale, preset: null} as unknown as Pick<
+                State,
+                keyof State
+            >;
+            this.setState(updates, this.onChangeHandler);
         };
     };
 
-    getResult = () => {
+    private getResult = () => {
         const {range} = this.props;
         const {start, end, absoluteStart, absoluteEnd, relativeStart, relativeEnd} = this.state;
 
@@ -416,19 +421,19 @@ class RelativeDatesPicker extends React.Component {
             return `${INTERVAL_PREFIX}${startDate}_${endDate}`;
         }
 
-        return startDate;
+        return startDate as string;
     };
 
-    presetSelectHandler = ([presetId]) => {
+    private presetSelectHandler = ([presetId]: string[]) => {
         const {start, end, presets, includeCurrentDay} = this.state;
 
-        let state = {
+        let state: Partial<State> = {
             preset: null,
             hasPresetSelectChange: true,
         };
 
         if (presetId) {
-            const preset = presets.find(({id}) => id === presetId);
+            const preset = presets.find(({id}) => id === presetId)!;
             state = {
                 ...state,
                 ...getResolvedDatesData({
@@ -440,10 +445,10 @@ class RelativeDatesPicker extends React.Component {
             };
         }
 
-        this.setState(state, this.onChangeHandler);
+        this.setState(state as unknown as Pick<State, keyof State>, this.onChangeHandler);
     };
 
-    disableCurrentDayCheckbox = () => {
+    private disableCurrentDayCheckbox = () => {
         const {preset} = this.state;
 
         if (!preset) {
@@ -453,7 +458,7 @@ class RelativeDatesPicker extends React.Component {
         return !preset.currentDaySetup;
     };
 
-    includeCurrentDayCheckboxHandler = (checkboxState) => {
+    private includeCurrentDayCheckboxHandler = (checkboxState: boolean) => {
         const {start, end, preset} = this.state;
         const includeCurrentDay =
             typeof checkboxState === 'boolean' ? checkboxState : !this.state.includeCurrentDay;
@@ -474,7 +479,7 @@ class RelativeDatesPicker extends React.Component {
         this.setState(state, this.onChangeHandler);
     };
 
-    isStateValid = () => {
+    private isStateValid = () => {
         const {range} = this.props;
         const {
             start,
@@ -497,11 +502,11 @@ class RelativeDatesPicker extends React.Component {
         return isStartValid;
     };
 
-    onChangeHandler = () => {
+    private onChangeHandler = () => {
         this.props.onChange(this.getResult(), {valid: this.isStateValid()});
     };
 
-    renderPresets = () => {
+    private renderPresets = () => {
         const {range} = this.props;
         const {presets, preset, includeCurrentDay} = this.state;
 
@@ -528,7 +533,7 @@ class RelativeDatesPicker extends React.Component {
         );
     };
 
-    renderControl = (controlType) => {
+    private renderControl = (controlType: (typeof CONTROLS)[keyof typeof CONTROLS]) => {
         const {minDate, maxDate, datepickerScale, range, withTime} = this.props;
         const absoluteDateKey = getFieldKey('absolute', controlType);
         const relativeDateKey = getFieldKey('relative', controlType);
@@ -549,7 +554,10 @@ class RelativeDatesPicker extends React.Component {
 
         const isRelative = section === DATE_TYPES.RELATIVE;
         const rangePart = controlType === CONTROLS.START ? RANGE_PARTS.START : RANGE_PARTS.END;
-        const resolvedRelativeDateTime = createISODateTimeFromRelative(relativeDate, rangePart);
+        const resolvedRelativeDateTime = createISODateTimeFromRelative(
+            relativeDate as FilterValue,
+            rangePart,
+        );
         const {Datepicker} = registry.common.components.getAll();
         return (
             <div className={b('control')}>
@@ -574,11 +582,13 @@ class RelativeDatesPicker extends React.Component {
                             data-qa={`datepicker-${controlType}`}
                         >
                             <Datepicker
-                                from={absoluteDate}
+                                from={absoluteDate as string}
                                 min={minDate}
                                 max={maxDate}
                                 format={withTime ? LUXON_FORMATS.DATE_TIME : LUXON_FORMATS.DATE}
-                                scale={datepickerScale}
+                                scale={
+                                    datepickerScale as 'day' | 'week' | 'month' | 'quarter' | 'year'
+                                }
                                 timezoneOffset={0}
                                 range={false}
                                 hasClear={false}
@@ -591,7 +601,7 @@ class RelativeDatesPicker extends React.Component {
                         {i18n('label_relative-date')}
                         <HelpPopover
                             delayClosing={TOOLTIP_DELAY_CLOSING}
-                            to={['right-center']}
+                            placement={['right']}
                             content={<span>{i18n('label_tooltip-utc')}</span>}
                             className={b('help-icon')}
                         />
@@ -603,7 +613,7 @@ class RelativeDatesPicker extends React.Component {
                             <div className={b('sign-select')}>
                                 <Select
                                     options={signs}
-                                    value={[sign]}
+                                    value={[sign as string]}
                                     onUpdate={this.getSignSelectHandler(signKey)}
                                 />
                             </div>
@@ -614,7 +624,7 @@ class RelativeDatesPicker extends React.Component {
                                 <TextInput
                                     className={b('amount-input-control')}
                                     pin="round-brick"
-                                    value={amount}
+                                    value={amount as string}
                                     onBlur={this.getAmountInputOnBlurHandler(amountKey)}
                                     onUpdate={this.getAmountInputHandler(amountKey)}
                                 />
@@ -628,8 +638,8 @@ class RelativeDatesPicker extends React.Component {
                                         },
                                         controlType,
                                     )}
-                                    options={this.getScales(amount, scale)}
-                                    value={[scale]}
+                                    options={this.getScales(amount as string, scale as string)}
+                                    value={[scale as string]}
                                     pin="clear-round"
                                     onUpdate={this.getScaleSelectHandler(scaleKey)}
                                 />
@@ -638,7 +648,7 @@ class RelativeDatesPicker extends React.Component {
                         <div className={b('relative-calendar-row')}>
                             <span
                                 className={b('relative-calendar-date', {
-                                    error: invalidRelativeDate,
+                                    error: invalidRelativeDate as boolean,
                                 })}
                             >
                                 {invalidRelativeDate
@@ -653,31 +663,6 @@ class RelativeDatesPicker extends React.Component {
             </div>
         );
     };
-
-    render() {
-        const {invalidRange} = this.state;
-        const {range = true} = this.props;
-
-        return (
-            <div className={b()}>
-                {this.renderPresets()}
-                <div className={b('controls')}>
-                    {this.renderControl(CONTROLS.START)}
-                    {range && this.renderControl(CONTROLS.END)}
-                </div>
-                {invalidRange && (
-                    <div className={b('error-label')}>
-                        <Icon
-                            data={TriangleExclamationFill}
-                            className={b('error-label-icon')}
-                            width="24"
-                        />
-                        <span>{i18n('label_invalid-range')}</span>
-                    </div>
-                )}
-            </div>
-        );
-    }
 }
 
 export default RelativeDatesPicker;
