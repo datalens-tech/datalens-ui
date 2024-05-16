@@ -480,19 +480,13 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const handleAliasesWarnClick = () => setAliasWarnPopupOpen(!aliasWarnPopupOpen);
 
     // todo add chart name (need to fetch getEntryMeta for title displaying cherteditor widgets)
-    const label =
-        currentWidgetMeta?.label && currentWidgetMeta?.title !== currentWidgetMeta?.label
-            ? `${currentWidgetMeta?.label} ${currentWidgetMeta?.title ? ' — ' : ''}`
-            : '';
-    const titleName = isLoading ? '' : `: ${label}${currentWidgetMeta?.title}`;
+    // upd: now title is only in select of widget
     const titleId =
         currentWidgetMeta?.widgetId && currentWidgetMeta?.itemId
             ? `${currentWidgetMeta.widgetId} ${currentWidgetMeta.itemId}`
             : currentWidgetMeta?.widgetId;
     const title = (
-        <div>
-            {i18n('title_links') + titleName + (showDebugInfo && titleId ? ` (${titleId})` : '')}
-        </div>
+        <div>{i18n('title_links') + (showDebugInfo && titleId ? ` (${titleId})` : '')}</div>
     );
 
     const titleIcon =
@@ -539,7 +533,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             disableOutsideClick={true}
             disableEscapeKeyDown={true}
         >
-            <Dialog.Header caption={title} insertBefore={titleIcon} className={b('caption')} />
+            <Dialog.Header caption={title} insertBefore={titleIcon} />
             <Dialog.Body className={b('container')}>
                 <Select
                     className={b('item-select')}
@@ -548,7 +542,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     onUpdate={handleItemChange}
                     filterable={true}
                     disabled={isLoading}
-                    label={i18n('label_current-widget')}
                 />
 
                 <Filters
