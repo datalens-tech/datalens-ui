@@ -8,6 +8,11 @@ const IGNORE_NODE_MODULES_LIST = [
     'monaco-editor',
     'tinygesture',
     'jsondiffpatch',
+    'd3',
+    'd3-array',
+    'internmap',
+    'delaunator',
+    'robust-predicates',
 ];
 
 export const getIgnoredNodeModulesRegexp = () => {
