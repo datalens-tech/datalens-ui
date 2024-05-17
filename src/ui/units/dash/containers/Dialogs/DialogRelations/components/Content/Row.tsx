@@ -6,7 +6,7 @@ import {I18n} from 'i18n';
 import {DashCommonQa, DashRelationTypes} from 'shared';
 
 import {RELATION_TYPES, TEXT_LIMIT} from '../../constants';
-import {getDialogRowIcon} from '../../helpers';
+import {getRelationsIcon} from '../../helpers';
 import {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
 
 import {
@@ -382,7 +382,7 @@ export const Row = ({
         hasDataset,
     });
 
-    const icon = getDialogRowIcon(data);
+    const icon = getRelationsIcon(data);
 
     const handleAliasCLick = React.useCallback(() => {
         onAliasClick?.({
