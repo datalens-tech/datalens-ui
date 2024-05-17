@@ -21,13 +21,15 @@ type MapPieSeriesArgs = {
     labelField?: ServerField;
     measureField?: ServerField;
     visualizationId: WizardVisualizationId;
-    totals?: string;
+    totals?: string | null;
 };
 
-function mapPieSeries(args: MapPieSeriesArgs): PieSeries {
+type ExtendedPieSeries = PieSeries & {custom?: {totals?: string}};
+
+function mapPieSeries(args: MapPieSeriesArgs) {
     const {graph, isLabelsEnabled, measureField, labelField, visualizationId, totals} = args;
 
-    const seriesConfig: PieSeries = {
+    const seriesConfig: ExtendedPieSeries = {
         type: 'pie',
         dataLabels: {
             enabled: isLabelsEnabled,

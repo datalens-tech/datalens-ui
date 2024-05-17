@@ -273,6 +273,8 @@ export function visualization(
                         break;
                     }
 
+                    case 'pie-d3-donut-d3':
+                    case 'donut-d3-pie-d3':
                     case 'pie-donut':
                     case 'donut-pie': {
                         placeholders.forEach((p) => {
