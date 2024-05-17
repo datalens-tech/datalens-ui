@@ -28,9 +28,9 @@ import {AliasesInvalidList} from './components/DialogAliases/components/AliasesL
 import {Filters, FiltersTypes} from './components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from './constants';
 import {
-    getDialogCaptionIcon,
     getPairedRelationType,
     getRelationsForSave,
+    getRelationsIcon,
     getUpdatedPreparedRelations,
     getWidgetsOptions,
     hasConnectionsBy,
@@ -103,10 +103,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const widgetsIconMap = React.useMemo(() => {
         const iconsMap: Record<string, JSX.Element | null> = {};
         dashWidgetsMeta?.forEach((widgetMeta) => {
-            iconsMap[widgetMeta.widgetId] = getDialogCaptionIcon({
-                widgetType: widgetMeta.type,
-                visualizationType: widgetMeta.visualizationType,
-            });
+            iconsMap[widgetMeta.widgetId] = getRelationsIcon(widgetMeta, b('relations-icon'));
         });
 
         return iconsMap;

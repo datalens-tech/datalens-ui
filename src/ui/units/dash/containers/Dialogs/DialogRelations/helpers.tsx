@@ -61,11 +61,9 @@ const getIconByVisualizationId = ({
 export const getDialogCaptionIcon = ({
     widgetType,
     visualizationType,
-    iconSize,
 }: {
     widgetType: DashkitMetaDataItem['type'];
     visualizationType: string | null;
-    iconSize?: number;
 }) => {
     let iconData = null;
 
@@ -79,7 +77,6 @@ export const getDialogCaptionIcon = ({
     if (visualizationType) {
         return getIconByVisualizationId({
             visualizationId: visualizationType,
-            iconSize,
             className: b('relations-icon'),
         });
     }
@@ -88,19 +85,12 @@ export const getDialogCaptionIcon = ({
         RELATIONS_CHARTS_ICONS_DICT[widgetType as RelationChartType] ||
         RELATIONS_CHARTS_ICONS_DICT.widget;
 
-    return (
-        <Icon
-            data={iconData}
-            size={iconSize || DEFAULT_ICON_SIZE}
-            className={b('relations-icon')}
-        />
-    );
+    return <Icon data={iconData} size={DEFAULT_ICON_SIZE} className={b('relations-icon')} />;
 };
 
-export const getDialogRowIcon = (
-    widgetMeta: DashkitMetaDataItem,
+export const getRelationsIcon = (
+    widgetMeta: DashkitMetaDataItem | Omit<DashkitMetaDataItem, 'relations'>,
     className?: string,
-    iconSize?: number,
 ) => {
     if (!widgetMeta) {
         return null;
@@ -109,7 +99,6 @@ export const getDialogRowIcon = (
     if (widgetMeta.visualizationType) {
         return getIconByVisualizationId({
             visualizationId: widgetMeta.visualizationType,
-            iconSize,
             className,
         });
     }
@@ -120,7 +109,7 @@ export const getDialogRowIcon = (
             : RELATIONS_CHARTS_ICONS_DICT[widgetMeta.type as RelationChartType] ||
               RELATIONS_CHARTS_ICONS_DICT.widget;
 
-    return <Icon data={iconData} className={className} size={iconSize || DEFAULT_ICON_SIZE} />;
+    return <Icon data={iconData} size={DEFAULT_ICON_SIZE} className={className} />;
 };
 
 const getChangedConnections = ({
@@ -430,48 +419,46 @@ export const getWidgetsOptions = (
     for (let i = 0; i < widgets?.length; i++) {
         const widgetItem = widgets[i];
 
-        if (widgetItem.type === DashTabItemType.GroupControl) {
-            widgetItem.data.group.forEach((item) => {
-                options.push({
-                    value: item.id,
-                    content: showDebugInfo
-                        ? `(${widgetItem.id} ${item.id}) ${item.title}`
-                        : item.title,
-                    data: {
-                        widgetId: widgetItem.id,
-                        isItem: true,
-                        icon: widgetsIconMap[widgetItem.id],
-                    },
+        switch (widgetItem.type) {
+            case DashTabItemType.GroupControl:
+                widgetItem.data.group.forEach((item) => {
+                    options.push({
+                        value: item.id,
+                        content: showDebugInfo
+                            ? `(${widgetItem.id} ${item.id}) ${item.title}`
+                            : item.title,
+                        data: {
+                            widgetId: widgetItem.id,
+                            isItem: true,
+                            icon: widgetsIconMap[widgetItem.id],
+                        },
+                    });
                 });
-            });
-            continue;
-        }
-
-        if (widgetItem.type === DashTabItemType.Widget) {
-            // todo add chart name (need to fetch getEntryMeta for title displaying cherteditor widgets)
-            widgetItem.data.tabs.forEach((item) => {
-                options.push({
-                    value: item.id,
-                    content: showDebugInfo
-                        ? `(${widgetItem.id} ${item.id}) ${item.title}`
-                        : item.title,
-                    data: {
-                        widgetId: widgetItem.id,
-                        icon: widgetsIconMap[item.id],
-                    },
+                break;
+            case DashTabItemType.Widget:
+                // todo add chart name (need to fetch getEntryMeta for title displaying cherteditor widgets)
+                widgetItem.data.tabs.forEach((item) => {
+                    options.push({
+                        value: item.id,
+                        content: showDebugInfo
+                            ? `(${widgetItem.id} ${item.id}) ${item.title}`
+                            : item.title,
+                        data: {
+                            widgetId: widgetItem.id,
+                            icon: widgetsIconMap[item.id],
+                        },
+                    });
                 });
-            });
-            continue;
-        }
-
-        if (widgetItem.type === DashTabItemType.Control) {
-            options.push({
-                value: widgetItem.id,
-                content: showDebugInfo
-                    ? `(${widgetItem.id}) ${widgetItem.data.title}`
-                    : widgetItem.data.title,
-                data: {icon: widgetsIconMap[widgetItem.id]},
-            });
+                break;
+            case DashTabItemType.Control:
+                options.push({
+                    value: widgetItem.id,
+                    content: showDebugInfo
+                        ? `(${widgetItem.id}) ${widgetItem.data.title}`
+                        : widgetItem.data.title,
+                    data: {icon: widgetsIconMap[widgetItem.id]},
+                });
+                break;
         }
     }
 
