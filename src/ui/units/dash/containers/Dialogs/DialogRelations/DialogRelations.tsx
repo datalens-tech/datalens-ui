@@ -13,6 +13,7 @@ import isEqual from 'lodash/isEqual';
 import {useDispatch, useSelector} from 'react-redux';
 import {DashCommonQa, DashTab, DashTabItem, DashTabItemType, DatasetField} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
+import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
 
 import {updateCurrentTabData} from '../../../store/actions/dashTyped';
 import {openDialogAliases} from '../../../store/actions/relations/actions';
@@ -25,12 +26,13 @@ import {
 import {Content} from './components/Content/Content';
 import {AliasesInvalidList} from './components/DialogAliases/components/AliasesList/AliasesInvalidList';
 import {Filters, FiltersTypes} from './components/Filters/Filters';
-import {DEFAULT_ALIAS_NAMESPACE, DEFAULT_ICON_SIZE, RELATION_TYPES} from './constants';
+import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from './constants';
 import {
     getDialogCaptionIcon,
     getPairedRelationType,
     getRelationsForSave,
     getUpdatedPreparedRelations,
+    getWidgetsOptions,
     hasConnectionsBy,
 } from './helpers';
 import {useFilteredRelations} from './hooks/useFilteredRelations';
@@ -64,6 +66,8 @@ export type OpenDialogRelationsArgs = {
     props: DialogRelationsProps;
 };
 
+const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
+
 const DialogRelations = (props: DialogRelationsProps) => {
     const [currentWidget, setCurrentWidget] = React.useState<DashTabItem>(props.widget);
     const {dashKitRef, onClose} = props;
@@ -73,44 +77,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const workbookId = useSelector(selectDashWorkbookId);
 
     const widgets = useSelector(selectCurrentTabRelationDataItems);
-    const widgetOptions = React.useMemo(() => {
-        const options: SelectOption<{widgetId?: string; isItem?: boolean}>[] = [];
-
-        if (!widgets) {
-            return options;
-        }
-
-        for (let i = 0; i < widgets?.length; i++) {
-            const widgetItem = widgets[i];
-            if (widgetItem.type === DashTabItemType.GroupControl) {
-                widgetItem.data.group.forEach((item) => {
-                    options.push({
-                        value: item.id,
-                        content: item.title,
-                        data: {widgetId: widgetItem.id, isItem: true},
-                    });
-                });
-                continue;
-            }
-
-            if (widgetItem.type === DashTabItemType.Widget) {
-                widgetItem.data.tabs.forEach((item) => {
-                    options.push({
-                        value: item.id,
-                        content: item.title,
-                        data: {widgetId: widgetItem.id},
-                    });
-                });
-                continue;
-            }
-
-            if (widgetItem.type === DashTabItemType.Control) {
-                options.push({value: widgetItem.id, content: widgetItem.data.title});
-            }
-        }
-
-        return options;
-    }, [widgets]);
 
     const aliasWarnButtonRef = React.useRef<HTMLElement | null>(null);
 
@@ -133,6 +99,22 @@ const DialogRelations = (props: DialogRelationsProps) => {
             workbookId,
             itemId,
         });
+
+    const widgetsIconMap = React.useMemo(() => {
+        const iconsMap: Record<string, JSX.Element | null> = {};
+        dashWidgetsMeta?.forEach((widgetMeta) => {
+            iconsMap[widgetMeta.widgetId] = getDialogCaptionIcon({
+                widgetType: widgetMeta.type,
+                visualizationType: widgetMeta.visualizationType,
+            });
+        });
+
+        return iconsMap;
+    }, [dashWidgetsMeta]);
+
+    const widgetOptions = React.useMemo(() => {
+        return getWidgetsOptions(widgetsIconMap, widgets, showDebugInfo);
+    }, [widgets, widgetsIconMap, showDebugInfo]);
 
     const currentWidgetId = itemId || currentWidgetMeta?.widgetId || '';
     const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>({});
@@ -479,31 +461,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
     const handleAliasesWarnClick = () => setAliasWarnPopupOpen(!aliasWarnPopupOpen);
 
-    // todo add chart name (need to fetch getEntryMeta for title displaying cherteditor widgets)
-    // upd: now title is only in select of widget
-    const titleId =
-        currentWidgetMeta?.widgetId && currentWidgetMeta?.itemId
-            ? `${currentWidgetMeta.widgetId} ${currentWidgetMeta.itemId}`
-            : currentWidgetMeta?.widgetId;
-    const title = (
-        <div>{i18n('title_links') + (showDebugInfo && titleId ? ` (${titleId})` : '')}</div>
-    );
-
-    const titleIcon =
-        isLoading || !currentWidgetMeta
-            ? null
-            : getDialogCaptionIcon({widget: currentWidget, currentWidgetMeta});
-
-    const widgetIcon =
-        isLoading || !currentWidgetMeta
-            ? null
-            : getDialogCaptionIcon({
-                  widget: currentWidget,
-                  currentWidgetMeta,
-                  iconSize: DEFAULT_ICON_SIZE,
-                  className: b('alias-add-icon-type'),
-              });
-
     // disable disconnect button when loading
     // when selected only 'none' filter
     const isDisconnectDisabled = Boolean(
@@ -533,15 +490,18 @@ const DialogRelations = (props: DialogRelationsProps) => {
             disableOutsideClick={true}
             disableEscapeKeyDown={true}
         >
-            <Dialog.Header caption={title} insertBefore={titleIcon} />
+            <Dialog.Header caption={i18n('title_links')} />
             <Dialog.Body className={b('container')}>
                 <Select
                     className={b('item-select')}
+                    popupClassName={b('item-select-popup')}
                     value={[currentWidgetId]}
                     options={widgetOptions}
                     onUpdate={handleItemChange}
                     filterable={true}
                     disabled={isLoading}
+                    renderOption={renderOptions}
+                    renderSelectedOption={renderOptions}
                 />
 
                 <Filters
@@ -555,7 +515,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     onChange={handleRelationTypeChange}
                     onAliasClick={handleAliasesClick}
                     showDebugInfo={showDebugInfo}
-                    widgetIcon={widgetIcon}
+                    widgetIcon={widgetsIconMap[currentWidgetMeta?.widgetId || '']}
                 />
             </Dialog.Body>
             <Dialog.Footer

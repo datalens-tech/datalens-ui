@@ -10,8 +10,7 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
 .dialog-relations-content {
     $class: &;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden auto;
     margin: 16px 0 0;
     flex-grow: 1;
 
@@ -89,7 +88,7 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
         width: calc(100% - #{$textWidth});
     }
 
-    &__icon-row {
+    &__icon {
         min-width: $widgetIconWidth;
         margin-right: $widgetIconMarginRight;
         margin-left: $widgetIconMarginLeft;

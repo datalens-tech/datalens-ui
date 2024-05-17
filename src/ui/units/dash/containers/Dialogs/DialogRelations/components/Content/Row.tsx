@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DashCommonQa, DashRelationTypes} from 'shared';
 
-import {DEFAULT_ICON_SIZE, RELATION_TYPES, TEXT_LIMIT} from '../../constants';
+import {RELATION_TYPES, TEXT_LIMIT} from '../../constants';
 import {getDialogRowIcon} from '../../helpers';
 import {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
 
@@ -382,7 +382,7 @@ export const Row = ({
         hasDataset,
     });
 
-    const icon = getDialogRowIcon(data, b('icon-row'), DEFAULT_ICON_SIZE);
+    const icon = getDialogRowIcon(data);
 
     const handleAliasCLick = React.useCallback(() => {
         onAliasClick?.({
@@ -445,7 +445,7 @@ export const Row = ({
         <div className={b('row')} data-qa={DashCommonQa.RelationsListRow}>
             <div className={b('left')}>
                 <div className={b('left-inner')}>
-                    {icon}
+                    <div className={b('icon')}>{icon}</div>
                     <span className={b('text')} title={title}>
                         {debugInfo}
                         {rowTitle}
