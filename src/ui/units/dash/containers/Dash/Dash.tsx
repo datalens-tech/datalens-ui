@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ConfigItem} from '@gravity-ui/dashkit';
+import {ConfigLayout} from '@gravity-ui/dashkit';
 import {AccessRightsUrlOpen} from 'components/AccessRights/AccessRightsUrlOpen';
 import {i18n} from 'i18n';
 import update from 'immutability-helper';
@@ -297,7 +297,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         this.setEditDash();
     };
 
-    private onPasteItem = (itemData: CopiedConfigData, newLayout?: ConfigItem[]) => {
+    private onPasteItem = (itemData: CopiedConfigData, newLayout?: ConfigLayout[]) => {
         const pastedItemData = itemData.data;
 
         if (itemData.type === ITEM_TYPE.WIDGET) {

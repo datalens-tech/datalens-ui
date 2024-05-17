@@ -7,6 +7,7 @@ import {
 } from '@gravity-ui/dashkit';
 import type {
     ConfigItem,
+    ConfigLayout,
     DashKitProps,
     ActionPanelItem as DashkitActionPanelItem,
     PreparedCopyItemOptions,
@@ -104,7 +105,7 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 type OwnProps = {
     handlerEditClick: () => void;
-    onPasteItem: (data: CopiedConfigData, newLayout?: ConfigItem[]) => void;
+    onPasteItem: (data: CopiedConfigData, newLayout?: ConfigLayout[]) => void;
     isEditModeLoading: boolean;
 };
 

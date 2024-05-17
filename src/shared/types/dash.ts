@@ -1,4 +1,4 @@
-import {ConfigItem} from '@gravity-ui/dashkit';
+import {ConfigLayout} from '@gravity-ui/dashkit';
 
 import {Operations} from '../modules';
 
@@ -81,8 +81,8 @@ export interface DashData {
 }
 
 export interface DashDragOptions {
-    itemLayout: ConfigItem;
-    newLayout: ConfigItem[];
+    itemLayout: ConfigLayout;
+    newLayout: ConfigLayout[];
     commit: () => void;
 }
 
