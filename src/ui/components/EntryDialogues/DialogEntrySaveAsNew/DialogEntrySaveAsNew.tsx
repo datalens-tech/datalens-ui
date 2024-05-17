@@ -2,7 +2,6 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
-import {DashData, EntryUpdateMode} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import {SaveAsNewDashArgs} from 'ui/units/dash/store/actions/dashTyped';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
@@ -14,16 +13,11 @@ import {EntryDialogResolveStatus} from '../constants';
 import {EntryDialogProps} from '../types';
 
 export interface DialogEntrySaveAsNewProps extends EntryDialogProps {
-    entryData: {
-        data: DashData;
-        lockToken: string | null;
-        mode: EntryUpdateMode;
-        meta: {is_release: boolean};
-    };
     initDestination: string;
     initName?: string;
     onSaveAsNewCallback: ({key, workbookId, name}: SaveAsNewDashArgs) => void;
     workbookId?: string;
+    warningMessage?: string | null;
 }
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -34,7 +28,7 @@ const i18n = I18n.keyset('component.dialog-save-as-new-entry.view');
 
 class DialogEntrySaveAsNew extends React.Component<Props> {
     render() {
-        const {workbookId} = this.props;
+        const {workbookId, warningMessage} = this.props;
         const name = `${this.props.initName} - ${i18n('label_copy')}`;
         const defaultName = `${i18n('label_default-name')} - ${i18n('label_copy')}`;
 
@@ -52,6 +46,7 @@ class DialogEntrySaveAsNew extends React.Component<Props> {
                     onSuccess={this.onSuccess}
                     onError={this.onError}
                     placeholder={i18n('label_placeholder')}
+                    warningMessage={warningMessage}
                 />
             );
         }
@@ -71,6 +66,7 @@ class DialogEntrySaveAsNew extends React.Component<Props> {
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={i18n('button_apply')}
                 placeholder={i18n('label_placeholder')}
+                warningMessage={warningMessage}
             />
         );
     }

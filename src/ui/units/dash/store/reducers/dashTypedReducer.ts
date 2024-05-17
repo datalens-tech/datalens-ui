@@ -35,6 +35,7 @@ import {
     SET_PAGE_TABS_ITEMS,
     SET_RENAME_WITHOUT_RELOAD,
     SET_SELECTOR_DIALOG_ITEM,
+    SET_SETTINGS,
     SET_STATE,
     SET_STATE_HASH_ID,
     SET_TAB_HASH_STATE,
@@ -450,6 +451,12 @@ export function dashTypedReducer(
                 isRenameWithoutReload: action.payload || false,
             };
         }
+
+        case SET_SETTINGS:
+            return {
+                ...state,
+                data: update(data, {settings: {$set: action.payload}}),
+            };
 
         case SET_WIDGET_CURRENT_TAB: {
             return {

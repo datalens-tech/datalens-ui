@@ -33,6 +33,8 @@
     width: 100%;
     border: none;
     outline: none;
+    align-items: center;
+    justify-content: flex-start;
 
     &:active {
         transform: scale(1);
