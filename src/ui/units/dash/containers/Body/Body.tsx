@@ -475,47 +475,51 @@ class Body extends React.PureComponent<BodyProps> {
 
         const showEditActionPanel = mode === Mode.Edit;
 
-        return (
-            <DashKitDnDWrapper>
-                <div className={b('content-wrapper')}>
+        const content = (
+            <div className={b('content-wrapper')}>
+                <div
+                    className={b('content-container', {
+                        'no-title':
+                            settings.hideDashTitle && (settings.hideTabs || tabs.length === 1),
+                        'no-title-with-tabs':
+                            settings.hideDashTitle && !settings.hideTabs && tabs.length > 1,
+                    })}
+                >
+                    <TableOfContent />
                     <div
-                        className={b('content-container', {
-                            'no-title':
-                                settings.hideDashTitle && (settings.hideTabs || tabs.length === 1),
-                            'no-title-with-tabs':
-                                settings.hideDashTitle && !settings.hideTabs && tabs.length > 1,
+                        className={b('content', {
+                            'with-table-of-content': showTableOfContent && hasTableOfContent,
+                            mobile: DL.IS_MOBILE,
+                            aside: getIsAsideHeaderEnabled(),
+                            'with-edit-panel': showEditActionPanel,
+                            'with-footer': Utils.isEnabledFeature(Feature.EnableFooter),
                         })}
                     >
-                        <TableOfContent />
-                        <div
-                            className={b('content', {
-                                'with-table-of-content': showTableOfContent && hasTableOfContent,
-                                mobile: DL.IS_MOBILE,
-                                aside: getIsAsideHeaderEnabled(),
-                                'with-edit-panel': showEditActionPanel,
-                                'with-footer': Utils.isEnabledFeature(Feature.EnableFooter),
+                        {!settings.hideDashTitle && !DL.IS_MOBILE && (
+                            <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
+                                {Utils.getEntryNameFromKey(this.props.entry?.key)}
+                            </div>
+                        )}
+                        {!settings.hideTabs && <Tabs />}
+                        {this.renderDashkit()}
+                        <DashkitActionPanel
+                            toggleAnimation={true}
+                            disable={!showEditActionPanel}
+                            items={this.getActionPanelItems()}
+                            className={b('edit-panel', {
+                                'aside-opened': isSidebarOpened,
                             })}
-                        >
-                            {!settings.hideDashTitle && !DL.IS_MOBILE && (
-                                <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
-                                    {Utils.getEntryNameFromKey(this.props.entry?.key)}
-                                </div>
-                            )}
-                            {!settings.hideTabs && <Tabs />}
-                            {this.renderDashkit()}
-                            <DashkitActionPanel
-                                toggleAnimation={true}
-                                disable={!showEditActionPanel}
-                                items={this.getActionPanelItems()}
-                                className={b('edit-panel', {
-                                    'aside-opened': isSidebarOpened,
-                                })}
-                            />
-                        </div>
+                        />
                     </div>
                 </div>
-            </DashKitDnDWrapper>
+            </div>
         );
+
+        if (Utils.isEnabledFeature(Feature.EnableDashDNDPanel)) {
+            return <DashKitDnDWrapper>{content}</DashKitDnDWrapper>;
+        }
+
+        return content;
     }
 
     private getOverlayControls = (): DashKitProps['overlayControls'] => {
