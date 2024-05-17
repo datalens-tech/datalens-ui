@@ -110,6 +110,7 @@ const visualizationsWithLegendDict = (
         VISUALIZATION_IDS.SCATTER_D3,
         VISUALIZATION_IDS.PIE_D3,
         VISUALIZATION_IDS.BAR_X_D3,
+        WizardVisualizationId.DonutD3,
     ] as string[]
 ).reduce((acc: Record<string, boolean>, item) => {
     acc[item] = true;
@@ -171,7 +172,9 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
 
         const isFlatTable = visualization.id === 'flatTable';
         const isPivotTable = visualization.id === 'pivotTable';
-        const isDonut = visualization.id === 'donut';
+        const isDonut = [WizardVisualizationId.Donut, WizardVisualizationId.DonutD3].includes(
+            visualization.id as WizardVisualizationId,
+        );
 
         if (isFlatTable) {
             const placeholderWithGrouppingSettings = visualization.placeholders.find(
@@ -667,6 +670,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const shouldRenderTotal = [
             WizardVisualizationId.FlatTable,
             WizardVisualizationId.Donut,
+            WizardVisualizationId.DonutD3,
         ].includes(visualizationId);
 
         if (!shouldRenderTotal || qlMode) {

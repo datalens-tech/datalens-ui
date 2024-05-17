@@ -181,6 +181,7 @@ export interface GraphShared extends CommonShared {
             | WizardVisualizationId.Pie
             | WizardVisualizationId.PieD3
             | WizardVisualizationId.Donut
+            | WizardVisualizationId.DonutD3
             | WizardVisualizationId.Scatter
             | WizardVisualizationId.ScatterD3
             | WizardVisualizationId.Treemap;

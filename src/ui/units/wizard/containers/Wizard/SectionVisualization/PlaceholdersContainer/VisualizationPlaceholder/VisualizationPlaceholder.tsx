@@ -131,6 +131,7 @@ class VisualizationPlaceholder extends React.Component<Props> {
 
         switch (visualization.id) {
             case WizardVisualizationId.PieD3:
+            case WizardVisualizationId.DonutD3:
             case 'pie':
             case 'donut': {
                 const hasSettings =
