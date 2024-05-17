@@ -1,3 +1,5 @@
+import {ConfigItem} from '@gravity-ui/dashkit';
+
 import {Operations} from '../modules';
 
 import {ClientChartsConfig, Dictionary, Entry, EntryScope, Params, StringParams} from './index';
@@ -76,6 +78,12 @@ export interface DashData {
     description?: string;
     accessDescription?: string;
     supportDescription?: string;
+}
+
+export interface DashDragOptions {
+    itemLayout: ConfigItem;
+    newLayout: ConfigItem[];
+    commit: () => void;
 }
 
 // config with strict requirements of settings for new dash

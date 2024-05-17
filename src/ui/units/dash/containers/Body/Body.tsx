@@ -1,6 +1,10 @@
 import React from 'react';
 
-import {DashKit as DashKitComponent, ActionPanel as DashkitActionPanel} from '@gravity-ui/dashkit';
+import {
+    DashKit as DashKitComponent,
+    DashKitDnDWrapper,
+    ActionPanel as DashkitActionPanel,
+} from '@gravity-ui/dashkit';
 import type {
     ConfigItem,
     DashKitProps,
@@ -34,6 +38,7 @@ import {
     DashEntryQa,
     DashTab,
     DashTabItem,
+    DashTabItemType,
     DashboardAddWidgetQa,
     Feature,
     StringParams,
@@ -99,7 +104,7 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 type OwnProps = {
     handlerEditClick: () => void;
-    onPasteItem: (data: CopiedConfigData) => void;
+    onPasteItem: (data: CopiedConfigData, newLayout?: ConfigItem[]) => void;
     isEditModeLoading: boolean;
 };
 
@@ -112,6 +117,14 @@ type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
 // TODO: add issue
 type OverlayControls = NonNullable<DashKitProps['overlayControls']>;
 type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
+
+const TYPES_TO_DIALOGS_MAP = {
+    [DashTabItemType.Widget]: DIALOG_TYPE.WIDGET,
+    [DashTabItemType.GroupControl]: DIALOG_TYPE.GROUP_CONTROL,
+    [DashTabItemType.Control]: DIALOG_TYPE.CONTROL,
+    [DashTabItemType.Text]: DIALOG_TYPE.TEXT,
+    [DashTabItemType.Title]: DIALOG_TYPE.TITLE,
+};
 
 class Body extends React.PureComponent<BodyProps> {
     dashKitRef = React.createRef<DashKitComponent>();
@@ -211,10 +224,10 @@ class Body extends React.PureComponent<BodyProps> {
                 icon: <Icon data={ChartColumn} />,
                 title: i18n('dash.main.view', 'button_edit-panel-chart'),
                 className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.WIDGET);
-                },
                 qa: DashboardAddWidgetQa.AddWidget,
+                dragProps: {
+                    type: DashTabItemType.Widget,
+                },
             },
             {
                 id: 'selector',
@@ -225,30 +238,32 @@ class Body extends React.PureComponent<BodyProps> {
                     ? i18n('dash.main.view', 'button_edit-panel-editor-selector')
                     : i18n('dash.main.view', 'button_edit-panel-selector'),
                 className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.CONTROL);
-                },
                 qa: DashboardAddWidgetQa.AddControl,
+                dragProps: {
+                    type: Utils.isEnabledFeature(Feature.GroupControls)
+                        ? DashTabItemType.GroupControl
+                        : DashTabItemType.Control,
+                },
             },
             {
                 id: 'text',
                 icon: <Icon data={TextAlignLeft} />,
                 title: i18n('dash.main.view', 'button_edit-panel-text'),
                 className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.TEXT);
-                },
                 qa: DashboardAddWidgetQa.AddText,
+                dragProps: {
+                    type: DashTabItemType.Text,
+                },
             },
             {
                 id: 'header',
                 icon: <Icon data={Heading} />,
                 title: i18n('dash.main.view', 'button_edit-panel-title'),
                 className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.TITLE);
-                },
                 qa: DashboardAddWidgetQa.AddTitle,
+                dragProps: {
+                    type: DashTabItemType.Title,
+                },
             },
         ];
 
@@ -262,22 +277,61 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.onPasteItem(copiedData);
                 },
+                dragProps: {
+                    type: copiedData.type,
+                    layout: copiedData.layout,
+                    extra: copiedData,
+                },
             });
         }
+
         if (Utils.isEnabledFeature(Feature.GroupControls)) {
             items.splice(1, 0, {
                 id: 'group-selector',
                 icon: <Icon data={Sliders} />,
                 title: i18n('dash.main.view', 'button_edit-panel-selector'),
                 className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.GROUP_CONTROL);
-                },
                 qa: DashboardAddWidgetQa.AddGroupControl,
+                dragProps: {
+                    type: DashTabItemType.GroupControl,
+                },
             });
         }
-        return items;
+
+        return items.map((item) => {
+            if (item.dragProps?.type && !item.onClick) {
+                item.onClick = () =>
+                    this.props.openDialog(
+                        TYPES_TO_DIALOGS_MAP[
+                            item.dragProps?.type as keyof typeof TYPES_TO_DIALOGS_MAP
+                        ],
+                    );
+            }
+
+            return item;
+        });
     }
+
+    // TODO rework any
+    onDropElement = (dropContext: any) => {
+        if (dropContext.dragProps.extra) {
+            this.props.onPasteItem(
+                {
+                    ...dropContext.dragProps.extra,
+                    layout: dropContext.itemLayout,
+                },
+                dropContext.newLayout,
+            );
+            dropContext.commit();
+        } else {
+            this.props.openDialog(
+                TYPES_TO_DIALOGS_MAP[
+                    dropContext?.dragProps?.type as keyof typeof TYPES_TO_DIALOGS_MAP
+                ],
+                dropContext,
+            );
+        }
+    };
 
     onStateChange = (hashStates: TabsHashStates, config: DashTab) => {
         this.props.setHashState(hashStates, config);
@@ -381,6 +435,7 @@ class Body extends React.PureComponent<BodyProps> {
                 config={tabDataConfig as DashKitProps['config']}
                 editMode={mode === Mode.Edit}
                 focusable={true}
+                onDrop={this.onDropElement}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
                 context={{
                     getPreparedCopyItemOptions: (itemToCopy: PreparedCopyItemOptions) => {
@@ -421,43 +476,45 @@ class Body extends React.PureComponent<BodyProps> {
         const showEditActionPanel = mode === Mode.Edit;
 
         return (
-            <div className={b('content-wrapper')}>
-                <div
-                    className={b('content-container', {
-                        'no-title':
-                            settings.hideDashTitle && (settings.hideTabs || tabs.length === 1),
-                        'no-title-with-tabs':
-                            settings.hideDashTitle && !settings.hideTabs && tabs.length > 1,
-                    })}
-                >
-                    <TableOfContent />
+            <DashKitDnDWrapper>
+                <div className={b('content-wrapper')}>
                     <div
-                        className={b('content', {
-                            'with-table-of-content': showTableOfContent && hasTableOfContent,
-                            mobile: DL.IS_MOBILE,
-                            aside: getIsAsideHeaderEnabled(),
-                            'with-edit-panel': showEditActionPanel,
-                            'with-footer': Utils.isEnabledFeature(Feature.EnableFooter),
+                        className={b('content-container', {
+                            'no-title':
+                                settings.hideDashTitle && (settings.hideTabs || tabs.length === 1),
+                            'no-title-with-tabs':
+                                settings.hideDashTitle && !settings.hideTabs && tabs.length > 1,
                         })}
                     >
-                        {!settings.hideDashTitle && !DL.IS_MOBILE && (
-                            <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
-                                {Utils.getEntryNameFromKey(this.props.entry?.key)}
-                            </div>
-                        )}
-                        {!settings.hideTabs && <Tabs />}
-                        {this.renderDashkit()}
-                        <DashkitActionPanel
-                            toggleAnimation={true}
-                            disable={!showEditActionPanel}
-                            items={this.getActionPanelItems()}
-                            className={b('edit-panel', {
-                                'aside-opened': isSidebarOpened,
+                        <TableOfContent />
+                        <div
+                            className={b('content', {
+                                'with-table-of-content': showTableOfContent && hasTableOfContent,
+                                mobile: DL.IS_MOBILE,
+                                aside: getIsAsideHeaderEnabled(),
+                                'with-edit-panel': showEditActionPanel,
+                                'with-footer': Utils.isEnabledFeature(Feature.EnableFooter),
                             })}
-                        />
+                        >
+                            {!settings.hideDashTitle && !DL.IS_MOBILE && (
+                                <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
+                                    {Utils.getEntryNameFromKey(this.props.entry?.key)}
+                                </div>
+                            )}
+                            {!settings.hideTabs && <Tabs />}
+                            {this.renderDashkit()}
+                            <DashkitActionPanel
+                                toggleAnimation={true}
+                                disable={!showEditActionPanel}
+                                items={this.getActionPanelItems()}
+                                className={b('edit-panel', {
+                                    'aside-opened': isSidebarOpened,
+                                })}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </DashKitDnDWrapper>
         );
     }
 

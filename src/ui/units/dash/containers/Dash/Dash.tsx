@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {ConfigItem} from '@gravity-ui/dashkit';
 import {AccessRightsUrlOpen} from 'components/AccessRights/AccessRightsUrlOpen';
 import {i18n} from 'i18n';
 import update from 'immutability-helper';
@@ -296,7 +297,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         this.setEditDash();
     };
 
-    private onPasteItem = (itemData: CopiedConfigData) => {
+    private onPasteItem = (itemData: CopiedConfigData, newLayout?: ConfigItem[]) => {
         const pastedItemData = itemData.data;
 
         if (itemData.type === ITEM_TYPE.WIDGET) {
@@ -312,11 +313,16 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const data = update(pastedItemData, {$unset: ['id']});
 
         this.props.setCopiedItemData({
-            data,
-            type: itemData.type,
-            defaults: itemData.defaults,
-            namespace: itemData.namespace,
-            layout: itemData?.layout,
+            item: {
+                data,
+                type: itemData.type,
+                defaults: itemData.defaults,
+                namespace: itemData.namespace,
+                layout: itemData?.layout,
+            },
+            options: {
+                updateLayout: newLayout,
+            },
         });
     };
 

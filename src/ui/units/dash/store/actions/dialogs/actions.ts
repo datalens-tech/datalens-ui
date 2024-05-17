@@ -1,4 +1,5 @@
 import type {ConfigItem} from '@gravity-ui/dashkit';
+import {DashDragOptions} from 'shared';
 import {DIALOG_TYPE} from 'ui/units/dash/containers/Dialogs/constants';
 import {ValuesType} from 'utility-types';
 
@@ -8,12 +9,21 @@ import {getBeforeOpenDialogItemAction} from '../helpers';
 
 export type OpenDialogAction = {
     type: typeof actionTypes.OPEN_DIALOG;
-    payload: {openedDialog: ValuesType<typeof DIALOG_TYPE>};
+    payload: {
+        openedDialog: ValuesType<typeof DIALOG_TYPE>;
+        dragOperationProps?: DashDragOptions;
+    };
 };
 
-export const openDialog = (dialogType: ValuesType<typeof DIALOG_TYPE>): OpenDialogAction => ({
+export const openDialog = (
+    dialogType: ValuesType<typeof DIALOG_TYPE>,
+    dragOperationProps?: DashDragOptions,
+): OpenDialogAction => ({
     type: actionTypes.OPEN_DIALOG,
-    payload: {openedDialog: dialogType},
+    payload: {
+        openedDialog: dialogType,
+        dragOperationProps,
+    },
 });
 
 export type OpenItemDialogAction = {
@@ -39,7 +49,13 @@ export type CloseDialogAction = {
     payload: {openedDialog: null; openedItemId: null};
 };
 
-export const closeDialog = (): CloseDialogAction => ({
-    type: actionTypes.CLOSE_DIALOG,
-    payload: {openedDialog: null, openedItemId: null},
-});
+export const closeDialog = () => {
+    return (dispatch: DashDispatch, getState: any) => {
+        getState().dash.dragOperationProps?.commit();
+
+        dispatch({
+            type: actionTypes.CLOSE_DIALOG,
+            payload: {openedDialog: null, openedItemId: null},
+        });
+    };
+};

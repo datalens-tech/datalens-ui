@@ -188,12 +188,14 @@ function dash(state = initialState, action) {
     switch (action.type) {
         case actionTypes.SAVE_DASH_SUCCESS:
         case actionTypes.SAVE_DASH_ERROR:
-        case actionTypes.CLOSE_DIALOG:
+        case actionTypes.CLOSE_DIALOG: {
             return {
                 ...state,
                 selectorsGroup: getGroupSelectorDialogInitialState(),
                 ...action.payload,
+                dragOperationProps: null,
             };
+        }
         case actionTypes.OPEN_DIALOG: {
             const selectorDialog =
                 action.payload?.openedDialog === DashTabItemType.Control ||
@@ -225,6 +227,7 @@ function dash(state = initialState, action) {
                     defaults: selectorDialog.defaults,
                 },
                 activeSelectorIndex: 0,
+                dragOperationProps: action.payload.dragOperationProps ?? null,
             };
         }
         case actionTypes.SET_TABS: {
@@ -365,9 +368,10 @@ function dash(state = initialState, action) {
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
             const tabData = DashKit.setItem({
-                item: action.payload.data,
+                item: action.payload.item,
                 config: {...tab, salt: data.salt, counter: data.counter},
                 options: {
+                    ...action.payload.options,
                     excludeIds: getUniqIdsFromDashData(data),
                 },
             });
@@ -390,16 +394,18 @@ function dash(state = initialState, action) {
                     data: action.payload.data,
                     namespace: action.payload.namespace,
                     operation: action.payload.operation,
+                    layout: state.dragOperationProps?.itemLayout,
                     ...(action.payload.defaults ? {defaults: action.payload.defaults} : null),
                 },
                 config: {...tab, salt: data.salt, counter: data.counter},
                 options: {
                     excludeIds: getUniqIdsFromDashData(data),
+                    updateLayout: state.dragOperationProps?.newLayout,
                 },
             });
 
             // migration of connections if old selector becomes a group selector
-            // 1. state.openedItemId existance means that widget alredy exist
+            // 1. state.openedItemId existance means that widget already exist
             // 2. !action.payload.data.group[0].id - first selector doesn't have an id because it was just converted
             if (
                 state.openedItemId &&
