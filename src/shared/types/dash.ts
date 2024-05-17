@@ -117,6 +117,10 @@ export interface DashTabItemText extends DashTabItemBase {
     data: {
         text: string;
         autoHeight?: boolean;
+        background?: {
+            enabled: boolean;
+            color: string;
+        };
     };
 }
 
