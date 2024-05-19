@@ -3,7 +3,7 @@ import vm from 'vm';
 import {
     QuickJSContext,
     QuickJSHandle,
-    getQuickJS,
+    QuickJSRuntime,
     shouldInterruptAfterDeadline,
 } from 'quickjs-emscripten';
 
@@ -63,6 +63,7 @@ type ProcessModuleParams = {
     userLang: string | null;
     nativeModules: Record<string, unknown>;
     isScreenshoter: boolean;
+    runtime: QuickJSRuntime;
 };
 
 type ProcessTabParams = {
@@ -81,6 +82,7 @@ type ProcessTabParams = {
     userLang: string | null;
     nativeModules: Record<string, unknown>;
     isScreenshoter: boolean;
+    runtime: QuickJSRuntime;
 };
 
 export class SandboxError extends Error {
@@ -164,6 +166,7 @@ type ExecuteParams = {
     instance: vm.Context;
     filename: string;
     timeout: number;
+    runtime: QuickJSRuntime;
 };
 
 export type SandboxExecuteResult = {
@@ -194,7 +197,11 @@ const execute = async ({
     instance,
     filename,
     timeout,
+    runtime,
 }: ExecuteParams): Promise<SandboxExecuteResult> => {
+    if (!runtime) {
+        throw new Error('Sandbox runtime is not initialized');
+    }
     if (!code && filename === 'JavaScript') {
         const error = new SandboxError('You should provide code in JavaScript tab');
         error.code = RUNTIME_ERROR;
@@ -209,8 +216,6 @@ const execute = async ({
     let quickJSResult: any;
 
     try {
-        const QuickJS = await getQuickJS();
-        const runtime = QuickJS.newRuntime();
         const context = runtime.newContext();
         runtime.setMemoryLimit(1024 * 1024);
         runtime.setInterruptHandler(shouldInterruptAfterDeadline(Date.now() + timeout));
@@ -310,7 +315,7 @@ const execute = async ({
             ChartEditor.getActionParams = () => JSON.parse(ChartEditor._actionParams);
             ChartEditor.getWidgetConfig = () => JSON.parse(ChartEditor._widgetConfig);
             ChartEditor.getSharedData = () => JSON.parse(ChartEditor._shared);
-            // ChartEditor.getLoadedData = () => JSON.parse(ChartEditor._getLoadedData());
+
             ChartEditor.getSortParams = () => JSON.parse(ChartEditor._getSortParams());
            `;
 
@@ -319,7 +324,6 @@ const execute = async ({
         quickJSResult = context.getProp(context.global, 'module').consume(context.dump);
 
         context.dispose();
-        runtime.dispose();
         // vm.runInNewContext(code, instance, {filename, timeout, microtaskMode: 'afterEvaluate'});
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
@@ -380,6 +384,7 @@ const processTab = async ({
     userLang,
     nativeModules,
     isScreenshoter,
+    runtime,
 }: ProcessTabParams) => {
     const originalShared = shared;
     const originalParams = params;
@@ -407,6 +412,7 @@ const processTab = async ({
         }),
         filename: name,
         timeout,
+        runtime,
     });
 
     Object.assign(originalShared, result.shared);
@@ -744,6 +750,7 @@ const processModule = async ({
     userLang,
     nativeModules,
     isScreenshoter,
+    runtime,
 }: ProcessModuleParams) => {
     return execute({
         code,
@@ -756,6 +763,7 @@ const processModule = async ({
         }),
         filename: name,
         timeout: MODULE_PROCESSING_TIMEOUT,
+        runtime,
     });
 };
 

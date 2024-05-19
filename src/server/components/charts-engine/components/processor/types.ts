@@ -135,6 +135,7 @@ export type ChartBuilderResult = {
 };
 
 export type ChartBuilder = {
+    dispose: () => void;
     buildShared: () => Promise<void>;
     buildModules: (args: {
         subrequestHeaders: Record<string, string>;

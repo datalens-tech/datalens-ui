@@ -196,6 +196,7 @@ export const runEditor = async (
                 }
             })
             .finally(() => {
+                chartBuilder.dispose();
                 ctx.end();
             });
     }).catch((error) => {
