@@ -24,6 +24,15 @@ type SandboxChartBuilderArgs = {
     workbookId?: string;
 };
 
+const extractModules = (modules: Record<string, SandboxExecuteResult>) => {
+    const extracted = Object.keys(modules).reduce<Record<string, object>>((acc, moduleName) => {
+        acc[moduleName] = modules[moduleName].exports as object;
+        return acc;
+    }, {});
+
+    return extracted;
+};
+
 export const getSandboxChartBuilder = async (
     args: SandboxChartBuilderArgs,
 ): Promise<ChartBuilder> => {
@@ -66,13 +75,7 @@ export const getSandboxChartBuilder = async (
                     modules[name] = Sandbox.processModule({
                         name,
                         code: resolvedModule.data.js,
-                        modules: Object.keys(modules).reduce<Record<string, unknown>>(
-                            (acc, moduleName) => {
-                                acc[moduleName] = modules[moduleName].exports;
-                                return acc;
-                            },
-                            {},
-                        ) as Record<string, object>,
+                        modules: extractModules(modules),
                         userLogin,
                         userLang,
                         nativeModules: chartsEngine.nativeModules,
