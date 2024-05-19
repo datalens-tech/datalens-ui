@@ -8,6 +8,7 @@
   "context_fill-description": "Введите описание",
   "context_fill-title": "Введите заголовок",
   "context_filtering-other-charts": "Опция позволяет применить фильтрацию из этого чарта к другим чартам на дашборде",
+  "context_filtering-usage-limitations": "<link>Подробнее о фильтрации</link>",
   "field_autoheight": "Автовысота",
   "field_description": "Описание",
   "field_enable-filtering-other-charts": "Включить",

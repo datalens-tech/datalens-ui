@@ -227,8 +227,6 @@ function dash(state = initialState, action) {
                 activeSelectorIndex: 0,
             };
         }
-        case actionTypes.SET_SETTINGS:
-            return {...state, data: update(data, {settings: {$set: action.payload}})};
         case actionTypes.SET_TABS: {
             let counter = data.counter;
 
