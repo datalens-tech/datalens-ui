@@ -1,3 +1,5 @@
+import {getQuickJS} from 'quickjs-emscripten';
+
 import {DashWidgetConfig, EDITOR_TYPE_CONFIG_TABS} from '../../../../../shared';
 import {ChartsEngine} from '../../index';
 import {ResolvedConfig} from '../storage/types';
@@ -37,8 +39,13 @@ export const getSandboxChartBuilder = async (
     const type = config.meta.stype;
     let shared: Record<string, any>;
     const modules: Record<string, unknown> = {};
+    const QuickJS = await getQuickJS();
+    const runtime = QuickJS.newRuntime();
 
     return {
+        dispose: () => {
+            runtime.dispose();
+        },
         buildShared: async () => {
             shared = JSON.parse(config.data.shared || '{}');
         },
@@ -64,6 +71,7 @@ export const getSandboxChartBuilder = async (
                     userLang,
                     nativeModules: chartsEngine.nativeModules,
                     isScreenshoter,
+                    runtime,
                 });
                 onModuleBuild(processedModules[name]);
             }
@@ -91,6 +99,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
+                runtime,
             });
 
             return {
@@ -113,6 +122,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
+                runtime,
             });
 
             return {
@@ -141,6 +151,7 @@ export const getSandboxChartBuilder = async (
                     userLogin,
                     userLang,
                     isScreenshoter,
+                    runtime,
                 });
             } else if (config.data.map) {
                 // Highcharts tab
@@ -159,6 +170,7 @@ export const getSandboxChartBuilder = async (
                     userLogin,
                     userLang,
                     isScreenshoter,
+                    runtime,
                 });
             } else if (config.data.ymap) {
                 // Yandex.Maps tab
@@ -177,6 +189,7 @@ export const getSandboxChartBuilder = async (
                     userLogin,
                     userLang,
                     isScreenshoter,
+                    runtime,
                 });
             }
 
@@ -207,6 +220,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
+                runtime,
             });
 
             return {
@@ -232,6 +246,7 @@ export const getSandboxChartBuilder = async (
                 userLang,
                 hooks: options.hooks,
                 isScreenshoter,
+                runtime,
             });
 
             return {
@@ -256,6 +271,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
+                runtime,
             });
 
             return {
