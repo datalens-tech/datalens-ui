@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Dialog} from '@gravity-ui/uikit';
+import {Alert, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DataLensApiError} from 'typings';
@@ -29,6 +29,7 @@ interface EntryDialogBaseGeneralProps<T> {
     textButtonApply: string;
     placeholder?: string;
     inactiveEntryKeys?: string[];
+    warningMessage?: React.ReactNode;
 }
 
 interface EntryDialogBaseDefaultProps {
@@ -121,6 +122,7 @@ export class EntryDialogBase<T> extends React.Component<
             textButtonCancel,
             inactiveEntryKeys,
             children,
+            warningMessage,
         } = this.props;
 
         return (
@@ -149,6 +151,11 @@ export class EntryDialogBase<T> extends React.Component<
                                 placeholder={placeholder}
                                 inactiveEntryKeys={inactiveEntryKeys}
                             />
+                        )}
+                        {warningMessage && (
+                            <div className={b('warning')}>
+                                <Alert theme="warning" message={warningMessage} view="outlined" />
+                            </div>
                         )}
                     </div>
                 </Dialog.Body>

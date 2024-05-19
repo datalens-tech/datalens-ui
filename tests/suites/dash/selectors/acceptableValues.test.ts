@@ -30,10 +30,7 @@ datalensTest.describe('Dashboards - Possible selector values', () => {
 
             await dashboardPage.enterEditMode();
             // go to the control settings
-            const controlSettingsButton = await page.waitForSelector(
-                slct(ControlQA.controlSettings),
-            );
-            await controlSettingsButton.click();
+            await dashboardPage.clickFirstControlSettingsButton();
 
             // click on the button for setting possible values
             const acceptableValuesButton = await page.waitForSelector(

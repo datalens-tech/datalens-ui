@@ -192,6 +192,7 @@ export type AddYandexDocumentResponse = {
 export type AddYandexDocumentArgs = {
     authorized: boolean;
     type: 'yadocs';
+    connection_id?: string;
     private_path?: string;
     public_link?: string;
     oauth_token?: GoogleRefreshToken;

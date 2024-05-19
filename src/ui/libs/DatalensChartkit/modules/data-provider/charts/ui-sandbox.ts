@@ -43,33 +43,29 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
     logHandle.dispose();
 };
 
-const defineVmArguments = (
-    vm: QuickJSContext,
-    ctx: UISandboxWrappedFunction['ctx'],
-    args: unknown[],
-) => {
-    let stringifiedArgs = '';
+const defineVmArguments = (vm: QuickJSContext, args: unknown[], userArgs?: unknown) => {
+    let preparedUserArgs: unknown[] = [];
 
-    switch (ctx) {
-        case 'hc-label-formatter': {
-            const label = args[0];
-            stringifiedArgs = JSON.stringify([label]);
-
-            break;
-        }
-        case 'manage-tooltip-config': {
-            const config = args[0];
-
-            if (config && typeof config === 'object' && 'this' in config) {
-                // Remove "this" link to avoid  circular structure
-                delete config.this;
-            }
-
-            stringifiedArgs = JSON.stringify([config]);
-            break;
-        }
+    if (userArgs) {
+        preparedUserArgs = Array.isArray(userArgs) ? userArgs : [userArgs];
     }
 
+    const preparedArgs = [...args, ...preparedUserArgs].map((a) => {
+        if (a && typeof a === 'object' && 'angular' in a) {
+            // Remove huge unexpected argument from HC
+            return undefined;
+        }
+
+        if (a && typeof a === 'object' && 'this' in a) {
+            // Remove this legacy circular structure:
+            // https://github.com/gravity-ui/chartkit/blob/main/src/plugins/highcharts/renderer/helpers/config/config.js#L589
+            // eslint-disable-next-line no-param-reassign
+            delete a.this;
+        }
+
+        return a;
+    });
+    const stringifiedArgs = JSON.stringify(preparedArgs);
     const vmArgs = vm.newString(stringifiedArgs);
     vm.setProp(vm.global, 'args', vmArgs);
     vmArgs.dispose();
@@ -78,7 +74,7 @@ const defineVmArguments = (
 const getUnwrappedFunction = (sandbox: QuickJSWASMModule, wrappedFn: UISandboxWrappedFunction) => {
     return function (...args: unknown[]) {
         const vm = sandbox.newContext();
-        defineVmArguments(vm, wrappedFn.ctx, args);
+        defineVmArguments(vm, args, wrappedFn.args);
         defineVmGlobalAPI(vm);
         const result = vm.evalCode(`(${wrappedFn.fn})(...(args.length ? JSON.parse(args) : []))`);
         let value: unknown | undefined;

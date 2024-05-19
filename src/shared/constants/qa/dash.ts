@@ -85,3 +85,7 @@ export enum DashRelationTypes {
     both = 'relation-type-option-both',
     unknown = 'relation-type-option-unknown',
 }
+
+export enum DashkitQa {
+    GRID_ITEM = 'dashkit-grid-item',
+}

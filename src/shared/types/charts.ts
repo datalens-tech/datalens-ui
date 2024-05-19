@@ -1,6 +1,6 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
-import type {UISandboxContext, WRAPPED_FN_KEY} from '../constants/ui-sandbox';
+import type {WRAPPED_FN_KEY} from '../constants/ui-sandbox';
 import type {ChartsInsight, IntervalPart} from '../modules';
 
 import type {StringParams} from './common';
@@ -126,8 +126,6 @@ export interface IChartEditor {
     setErrorTransform(errorTransformer: (error: unknown) => unknown): unknown;
 
     wrapFn(value: any): {[WRAPPED_FN_KEY]: UISandboxWrappedFunction};
-
-    UISandboxContext: typeof UISandboxContext;
 }
 
 export interface Link {

@@ -1,6 +1,7 @@
 {
   "button_apply": "Apply",
   "button_cancel": "Cancel",
+  "dialog_dash-deprecation-copy-text": "The current version of the dashboard is deprecated. Its settings will be updated when it is copied.",
   "label_copy": "copy",
   "label_default-name": "New dataset",
   "label_entry-name-already-exists": "That name is already in use, try another one",

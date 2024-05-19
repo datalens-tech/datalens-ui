@@ -37,6 +37,7 @@ import {
     DashboardAddWidgetQa,
     Feature,
     StringParams,
+    UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
 import {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
@@ -145,7 +146,7 @@ class Body extends React.PureComponent<BodyProps> {
             ...location,
             search: `?${searchParams.toString()}`,
         });
-    }, 1000);
+    }, UPDATE_STATE_DEBOUNCE_TIME);
 
     getUrlGlobalParams = stringifyMemoize((search, globalParams) => {
         if (!search || !globalParams) {

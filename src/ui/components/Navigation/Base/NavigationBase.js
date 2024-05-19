@@ -289,6 +289,9 @@ class NavigationBase extends React.Component {
                         props: {
                             initialCollectionId: null,
                             entryType: 'dashboard',
+                            onApply: () => {
+                                this.closeNavigation();
+                            },
                             onClose: () => {
                                 this.props.closeDialog();
                             },
