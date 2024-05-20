@@ -21,7 +21,7 @@ import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 import {ITEM_TYPE} from '../containers/Dialogs/constants';
 import {TabsHashStates} from '../store/actions/dashTyped';
 
-import {PostMessage} from './postMessage';  
+import {PostMessage} from './postMessage';
 
 export type CopiedConfigContext = {
     workbookId: WorkbookId;
