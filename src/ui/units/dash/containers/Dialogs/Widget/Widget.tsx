@@ -681,6 +681,7 @@ class Widget extends React.PureComponent<Props, State> {
                 contentClassMixin={b('content')}
                 bodyClassMixin={b('content-body')}
                 disableFocusTrap={true}
+                disableEscapeKeyDown={true}
             />
         );
     }
