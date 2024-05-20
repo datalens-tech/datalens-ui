@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {History, Location} from 'history';
 import {I18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
-import {EntryUpdateMode, Feature} from 'shared';
+import {Feature} from 'shared';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {
     ActionPanel,
@@ -33,7 +33,6 @@ import navigateHelper from '../../../../libs/navigateHelper';
 import {isEmbeddedMode} from '../../../../utils/embedded';
 import {DIALOG_TYPE} from '../../containers/Dialogs/constants';
 import {
-    purgeData,
     saveDashAsDraft,
     saveDashAsNewDash,
     setActualDash,
@@ -41,7 +40,9 @@ import {
     setDefaultViewState,
     setPageDefaultTabItems,
     setPublishDraft,
+    updateDeprecatedDashConfig,
 } from '../../store/actions/dashTyped';
+import {isDeprecatedDashData} from '../../store/actions/helpers';
 import {
     selectDashAccessDescription,
     selectLoadingEditMode,
@@ -90,6 +91,14 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
 
         const DashSelectState = registry.dash.components.get('DashSelectState');
 
+        let deprecationWarning = null;
+        if (this.isDeprecated()) {
+            deprecationWarning = {
+                message: i18n('label_deprecation-warning'),
+                onConfirm: this.openDialogUpdateDeprecatedConfig,
+            };
+        }
+
         return (
             <div className={b({editing: isEditMode})}>
                 {showHeader && (
@@ -105,6 +114,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                             enablePublish={enablePublish}
                             setActualVersion={this.handlerSetActualVersion}
                             isEditing={isEditMode}
+                            deprecationWarning={deprecationWarning}
                         />
                         {Boolean(DashSelectState) && <DashSelectState />}
                     </React.Fragment>
@@ -181,6 +191,27 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         });
     };
 
+    openDialogUpdateDeprecatedConfig = () => {
+        this.props.openDialogConfirm({
+            onApply: this.handleUpdateDeprecatedConfig,
+            onCancel: this.props.closeDialogConfirm,
+            message: i18n('dialog_deprecation-confirm-text'),
+            confirmHeaderText: i18n('dialog_deprecation-confirm-header'),
+            confirmButtonText: i18n('dialog_deprecation-apply-label'),
+            cancelButtonText: i18n('dialog_deprecation-cancel-label'),
+            cancelButtonView: 'flat',
+            confirmButtonView: 'normal',
+            isWarningConfirm: true,
+            showAlert: true,
+            confirmOnEnterPress: true,
+        });
+    };
+
+    handleUpdateDeprecatedConfig = () => {
+        this.props.updateDeprecatedDashConfig();
+        this.props.closeDialogConfirm();
+    };
+
     handlerCancelEditClick = () => {
         cancelEditClick({
             isDraft: this.props.isDraft,
@@ -192,20 +223,17 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
 
     handlerSaveAsNewClick = async () => {
         if (this.props.entryDialoguesRef.current) {
-            const {entry, data, lockToken} = this.props.dashEntry;
+            const {entry} = this.props.dashEntry;
             const response = await this.props.entryDialoguesRef.current.open({
                 dialog: EntryDialogName.SaveAsNew,
                 dialogProps: {
-                    entryData: {
-                        data: purgeData(data),
-                        lockToken,
-                        mode: EntryUpdateMode.Publish,
-                        meta: {is_release: true},
-                    },
                     initDestination: Utils.getPathBefore({path: entry.key}),
                     initName: Utils.getEntryNameFromKey(entry.key, true),
                     onSaveAsNewCallback: this.props.saveDashAsNewDash,
                     workbookId: entry.workbookId,
+                    warningMessage: this.isDeprecated()
+                        ? i18n('dialog_deprecation-copy-text')
+                        : null,
                 },
             });
 
@@ -294,6 +322,12 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
             this.props.history.push(dashUrl);
         }
     };
+
+    private isDeprecated() {
+        const {dashEntry} = this.props;
+
+        return Boolean(dashEntry?.data) && isDeprecatedDashData(dashEntry.data);
+    }
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => {
@@ -314,6 +348,7 @@ const mapDispatchToProps = {
     saveDashAsNewDash,
     setPageDefaultTabItems,
     setDefaultViewState,
+    updateDeprecatedDashConfig,
     openDialogConfirm,
     closeDialogConfirm,
 };

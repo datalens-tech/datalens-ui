@@ -1,12 +1,9 @@
 import isObject from 'lodash/isObject';
 import isString from 'lodash/isString';
 
-import {UISandboxContext} from '../../../../../shared/constants/ui-sandbox';
-import type {UISandboxWrappedFunction} from '../../../../../shared/types/ui-sandbox';
-
 type ValidatedWrapFnArgs = {
-    fn: (...args: unknown[]) => void;
-    ctx: UISandboxWrappedFunction['ctx'];
+    fn: (...args: unknown[]) => unknown;
+    args?: unknown;
 };
 
 // There is a user value here, it could have any type
@@ -16,16 +13,8 @@ export const isWrapFnArgsValid = (value: any): value is ValidatedWrapFnArgs => {
         throw new Error('You should pass an object to ChartEditor.wrapFn method');
     }
 
-    const {fn, ctx} = value;
-
-    if (typeof fn !== 'function') {
+    if (typeof value.fn !== 'function') {
         throw new Error('"fn" property should be a function');
-    }
-
-    const availableCtxValues = Object.values(UISandboxContext);
-
-    if (!Object.values(UISandboxContext).includes(ctx)) {
-        throw new Error(`"ctx" property should be a string from list: ${availableCtxValues}`);
     }
 
     return true;
