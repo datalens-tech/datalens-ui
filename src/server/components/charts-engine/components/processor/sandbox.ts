@@ -6,7 +6,7 @@ import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
 
 import {getChartApiContext} from './chart-api-context';
-import {Console} from './console';
+import {Console, LogItem} from './console';
 import {NativeModule} from './types';
 
 const {
@@ -78,7 +78,7 @@ export class SandboxError extends Error {
     executionResult?: {
         executionTiming: [number, number];
         filename: string;
-        logs: {type: string; value: string}[][];
+        logs: LogItem[][];
         stackTrace?: string;
     };
     details?: Record<string, string | number>;
@@ -150,7 +150,7 @@ type ExecuteParams = {
 
 export type SandboxExecuteResult = {
     executionTiming: [number, number];
-    logs: {type: string; value: string}[][];
+    logs: LogItem[][];
     filename: string;
     stackTrace?: string;
     exports: unknown;

@@ -22,6 +22,7 @@ import {ResolvedConfig} from '../storage/types';
 import {getDuration, normalizeParams, resolveParams} from '../utils';
 
 import {CommentsFetcher, CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
+import {LogItem} from './console';
 import {DataFetcher, DataFetcherResult} from './data-fetcher';
 import {extractDependencies} from './dependencies';
 import {ProcessorHooks} from './hooks';
@@ -862,7 +863,7 @@ export class Processor {
 
             const executionResult: {
                 filename?: string;
-                logs?: {type: string; value: string}[][];
+                logs?: LogItem[][];
                 stackTrace?: string;
                 stack?: string;
                 executionTiming?: [number, number];
