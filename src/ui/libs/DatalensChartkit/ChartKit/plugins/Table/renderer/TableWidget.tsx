@@ -9,6 +9,7 @@ import {Table} from '../../../../../../components/Table/Table';
 import type {TData, TableProps} from '../../../../../../components/Table/types';
 import Paginator from '../../../components/Widget/components/Table/Paginator/Paginator';
 import {camelCaseCss} from '../../../components/Widget/components/Table/utils';
+import {SNAPTER_HTML_CLASSNAME} from '../../../components/Widget/components/constants';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../helpers/constants';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import {i18n} from '../../../modules/i18n/i18n';
@@ -132,20 +133,22 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                 data-qa={ChartKitTableQa.Widget}
                 ref={ref}
             >
-                {titleText && <div className={b('title')}>{titleText}</div>}
-                <div className={b('table-wrapper', {'highlight-rows': shouldHighlightRows})}>
-                    {dimensions?.width && (
-                        <Table
-                            data={tableData}
-                            noData={{text: i18n('chartkit-table', 'message-no-data')}}
-                            onCellClick={onCellClick}
-                            header={{
-                                sticky: true,
-                            }}
-                            manualSorting={isPaginationEnabled}
-                            onSortingChange={isPaginationEnabled ? onSortingChange : undefined}
-                        />
-                    )}
+                <div className={[b('snapter-container'), SNAPTER_HTML_CLASSNAME].join(' ')}>
+                    {titleText && <div className={b('title')}>{titleText}</div>}
+                    <div className={b('table-wrapper', {'highlight-rows': shouldHighlightRows})}>
+                        {dimensions?.width && (
+                            <Table
+                                data={tableData}
+                                noData={{text: i18n('chartkit-table', 'message-no-data')}}
+                                onCellClick={onCellClick}
+                                header={{
+                                    sticky: true,
+                                }}
+                                manualSorting={isPaginationEnabled}
+                                onSortingChange={isPaginationEnabled ? onSortingChange : undefined}
+                            />
+                        )}
+                    </div>
                 </div>
                 {isPaginationEnabled && (
                     <Paginator
