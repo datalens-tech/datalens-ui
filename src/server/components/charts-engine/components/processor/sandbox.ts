@@ -217,7 +217,7 @@ const execute = async ({
 
     try {
         const context = runtime.newContext();
-        runtime.setMemoryLimit(1024 * 1024);
+        runtime.setMemoryLimit(1024 * 1024 * 10);
         runtime.setInterruptHandler(shouldInterruptAfterDeadline(Date.now() + timeout));
 
         const logHandle = context.newFunction('log', (...args) => {
