@@ -110,6 +110,7 @@ type OwnProps = {
 };
 
 type DashBodyState = {
+    isGlobalDragging: boolean;
     hasCopyInBuffer: CopiedConfigData | null;
 };
 
@@ -175,6 +176,7 @@ class Body extends React.PureComponent<BodyProps> {
     });
 
     state: DashBodyState = {
+        isGlobalDragging: false,
         hasCopyInBuffer: null,
     };
 
@@ -382,6 +384,7 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     private renderDashkit = () => {
+        const {isGlobalDragging} = this.state;
         const {mode, settings, tabs, tabData, handlerEditClick, isEditModeLoading} = this.props;
 
         let tabDataConfig = tabData as DashKitProps['config'] | null;
@@ -422,7 +425,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         const isEmptyTab = !tabDataConfig?.items.length;
 
-        return isEmptyTab ? (
+        return isEmptyTab && !isGlobalDragging ? (
             <EmptyState
                 canEdit={this.props.canEdit}
                 isEditMode={mode === Mode.Edit}
@@ -517,7 +520,18 @@ class Body extends React.PureComponent<BodyProps> {
         );
 
         if (Utils.isEnabledFeature(Feature.EnableDashDNDPanel)) {
-            return <DashKitDnDWrapper>{content}</DashKitDnDWrapper>;
+            return (
+                <DashKitDnDWrapper
+                    onDragStart={() => {
+                        this.setState({isGlobalDragging: true});
+                    }}
+                    onDragEnd={() => {
+                        this.setState({isGlobalDragging: false});
+                    }}
+                >
+                    {content}
+                </DashKitDnDWrapper>
+            );
         }
 
         return content;
