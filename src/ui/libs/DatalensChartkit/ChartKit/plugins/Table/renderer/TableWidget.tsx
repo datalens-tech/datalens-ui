@@ -16,7 +16,7 @@ import Performance from '../../../modules/perfomance';
 import {useTableEvents} from '../hooks';
 import type {TableWidgetProps} from '../types';
 
-import {getCellCss, getCurrentActionParams} from './utils';
+import {getCellCss, getCurrentActionParams, mapTableData} from './utils';
 import {getDrillDownOptions} from './utils/drill-down';
 import {mapHeadCell} from './utils/renderer';
 
@@ -35,10 +35,11 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             id,
             onChange,
             onLoad,
-            data: {data, config, params: currentParams, unresolvedParams},
+            data: {data: originalData, config, params: currentParams, unresolvedParams},
         } = props;
+        const data = React.useMemo(() => mapTableData(originalData), [originalData]);
         const [dimensions, setDimensions] = React.useState<Partial<WidgetDimensions>>();
-        const ref = React.useRef<HTMLDivElement>(null);
+        const ref = React.useRef<HTMLDivElement | null>(null);
         const titleText = typeof config?.title === 'string' ? config.title : config?.title?.text;
         const shouldHighlightRows = get(config, 'settings.highlightRows', true);
         const isPaginationEnabled = Boolean(config?.paginator?.enabled);
