@@ -4,7 +4,7 @@ import {cloneDeepWith} from 'lodash';
 
 const MAX_LOGS_ROWS = 1000;
 export class Console {
-    private logs: unknown[];
+    private logs: {type: string; value: string}[][];
     private isScreenshoter: boolean;
     constructor(settings: {isScreenshoter?: boolean} = {}) {
         this.logs = [];
@@ -18,7 +18,7 @@ export class Console {
         if (this.logs.length >= MAX_LOGS_ROWS) {
             return;
         }
-        const rowLogs: unknown[] = [];
+        const rowLogs: {type: string; value: string}[] = [];
 
         args.forEach((input) => {
             const linkSet = new Set();
@@ -56,10 +56,12 @@ export class Console {
 
     getLogs() {
         if (this.logs.length >= MAX_LOGS_ROWS) {
-            this.logs.push({
-                type: 'string',
-                value: 'Too much logs',
-            });
+            this.logs.push([
+                {
+                    type: 'string',
+                    value: 'Too much logs',
+                },
+            ]);
         }
 
         try {
@@ -67,10 +69,12 @@ export class Console {
             return this.logs;
         } catch (e) {
             return [
-                {
-                    type: 'string',
-                    value: (e as Error).message,
-                },
+                [
+                    {
+                        type: 'string',
+                        value: (e as Error).message,
+                    },
+                ],
             ];
         }
     }
