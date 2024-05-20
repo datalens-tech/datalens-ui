@@ -6,7 +6,10 @@
   "button_edit-panel-text": "Text",
   "button_edit-panel-title": "Header",
   "button_links": "Links",
+  "label_details": "Details",
   "label_loading": "Uploading",
   "label_updating": "Updating",
-  "toast_unsaved": "There are unsaved changes on the page. Are you sure?"
+  "toast_paste-invalid-workbook-entry": "Pasting widgets linked to objects from another workbook is forbidden",
+  "toast_unsaved": "There are unsaved changes on the page. Are you sure?",
+  "warning_paste-invalid-workbook-entry": "To work with this object within another workbook, please migrate all linked objects from the source workbook. <link>Migrating objects to workbooks</link>"
 }

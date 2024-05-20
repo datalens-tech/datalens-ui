@@ -13,6 +13,7 @@ import {
     DashTabLayout,
     Feature,
     StringParams,
+    WorkbookId,
     resolveOperation,
 } from 'shared';
 import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
@@ -22,9 +23,15 @@ import {TabsHashStates} from '../store/actions/dashTyped';
 
 import {PostMessage} from './postMessage';
 
+export type CopiedConfigContext = {
+    workbookId: WorkbookId;
+};
+
 export type CopiedConfigData = ConfigItem &
     Omit<ConfigItemData, 'tabs'> & {
         layout?: ConfigLayout;
+    } & {
+        copyContext?: CopiedConfigContext;
     };
 
 export const getPastedWidgetData: () => CopiedConfigData | null = () => {
