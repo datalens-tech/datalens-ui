@@ -10,7 +10,7 @@ import DialogManager from '../DialogManager/DialogManager';
 
 const i18n = I18n.keyset('component.dl-dialog-warning.view');
 
-export interface DialogWarningProps {
+export type DialogWarningProps = {
     onApply: (event?: React.MouseEvent<HTMLElement, MouseEvent>) => void;
     visible: boolean;
     message: React.ReactNode;
@@ -22,7 +22,7 @@ export interface DialogWarningProps {
     applyBtnLoadingStatus?: DialogWarningApplyStatus;
     buttonView?: ButtonView;
     showAlert?: boolean;
-}
+};
 
 export enum DialogWarningApplyStatus {
     Loading = 'loading',

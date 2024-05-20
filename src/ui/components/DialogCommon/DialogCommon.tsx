@@ -15,7 +15,7 @@ export type DialogCommonButton = {
     containerClassName?: string;
 } & Omit<ButtonProps, 'children'>;
 
-export interface DialogCommonProps {
+export type DialogCommonProps = {
     qa?: string;
     visible: boolean;
     onClose: () => void;
@@ -29,7 +29,7 @@ export interface DialogCommonProps {
     showIcon?: boolean;
 
     closeOnEnterPress?: boolean;
-}
+};
 
 const DialogCommon: React.FC<DialogCommonProps> = (props) => {
     const {
