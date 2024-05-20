@@ -342,10 +342,9 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     label: i18n('label_details'),
                     onClick: () => {
                         this.props.openWarningDialog({
-                            confirmOnEnterPress: true,
-                            isWarningConfirm: true,
+                            closeOnEnterPress: true,
                             message,
-                            confirmButtonView: 'normal',
+                            buttonView: 'normal',
                             onApply: this.props.closeDialog,
                         });
                     },

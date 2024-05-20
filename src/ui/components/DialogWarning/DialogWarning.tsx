@@ -14,14 +14,13 @@ export interface DialogWarningProps {
     onApply: (event?: React.MouseEvent<HTMLElement, MouseEvent>) => void;
     visible: boolean;
     message: React.ReactNode;
-    confirmButtonText?: string;
-    confirmHeaderText?: string;
-    isWarningConfirm?: boolean;
+    buttonText?: string;
+    headerText?: string;
     showIcon?: boolean;
-    confirmOnEnterPress?: boolean;
+    closeOnEnterPress?: boolean;
     widthType?: 'medium'; // dialog width presets
     applyBtnLoadingStatus?: DialogWarningApplyStatus;
-    confirmButtonView?: ButtonView;
+    buttonView?: ButtonView;
     showAlert?: boolean;
 }
 
@@ -40,16 +39,15 @@ export type OpenDialogWarningArgs = {
 const DialogWarning: React.FC<DialogWarningProps> = (props) => {
     const {
         message,
-        confirmButtonText,
-        confirmOnEnterPress,
+        buttonText,
+        closeOnEnterPress,
         visible,
         onApply,
-        isWarningConfirm,
-        confirmHeaderText,
+        headerText,
         widthType,
         applyBtnLoadingStatus,
         showIcon = true,
-        confirmButtonView = 'action',
+        buttonView = 'action',
         showAlert,
     } = props;
 
@@ -57,18 +55,18 @@ const DialogWarning: React.FC<DialogWarningProps> = (props) => {
         <DialogCommon
             visible={visible}
             widthType={widthType}
-            isWarning={isWarningConfirm}
-            headerText={confirmHeaderText}
-            closeOnEnterPress={confirmOnEnterPress}
+            headerText={headerText}
+            closeOnEnterPress={closeOnEnterPress}
             showIcon={showIcon}
             showAlert={showAlert}
             qa={DialogWarningQA.Dialog}
             onClose={() => onApply()}
+            isWarning={true}
             actions={[
                 {
                     qa: DialogWarningQA.ApplyButton,
-                    text: confirmButtonText || i18n('button_apply'),
-                    view: confirmButtonView,
+                    text: buttonText || i18n('button_apply'),
+                    view: buttonView,
                     loading: applyBtnLoadingStatus === DialogWarningApplyStatus.Loading,
                     onClick: onApply,
                 },
