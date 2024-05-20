@@ -190,6 +190,7 @@ const Settings = () => {
             open={visible}
             onClose={() => dispatch(closeDialog())}
             disableFocusTrap={true}
+            disableEscapeKeyDown={true}
             qa={DashboardDialogSettingsQa.DialogRoot}
         >
             <Dialog.Header caption={i18n('dash.settings-dialog.edit', 'label_settings')} />
