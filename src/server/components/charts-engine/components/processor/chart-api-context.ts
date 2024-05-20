@@ -4,7 +4,7 @@ import type {
     ServerChartsConfig,
     Shared,
 } from '../../../../../shared';
-import {UISandboxContext, WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
+import {WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
 import {getCurrentPage, getParam, getSortParams} from './paramsUtils';
@@ -85,7 +85,6 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
 
     api.getActionParams = () => actionParams || {};
 
-    api.UISandboxContext = {...UISandboxContext};
     api.wrapFn = (value) => {
         if (!isWrapFnArgsValid(value)) {
             // There is no way to reach this code, just satisfy ts
@@ -95,7 +94,7 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
         return {
             [WRAPPED_FN_KEY]: {
                 fn: value.fn.toString(),
-                ctx: value.ctx,
+                args: value.args,
             },
         };
     };

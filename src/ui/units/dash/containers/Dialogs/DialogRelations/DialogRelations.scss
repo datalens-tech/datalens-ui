@@ -35,18 +35,7 @@
         top: 20px;
     }
 
-    &__icon-title {
-        margin-right: 8px;
-        min-width: 24px;
-        align-self: flex-start;
-        color: var(--g-color-text-hint);
-    }
-
-    &__alias-add-icon-type {
-        margin-right: 8px;
-        margin-left: 4px;
-        min-width: 16px;
-        align-self: flex-start;
+    &__relations-icon {
         color: var(--g-color-text-hint);
     }
 
@@ -110,6 +99,6 @@
     }
 
     &__item-select-popup {
-        max-height: 288px;
+        max-height: 320px;
     }
 }

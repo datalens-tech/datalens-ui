@@ -1,9 +1,7 @@
-import {DashWidgetConfig, EDITOR_TYPE_CONFIG_TABS, StringParams} from '../../../../../shared';
+import {DashWidgetConfig, EDITOR_TYPE_CONFIG_TABS} from '../../../../../shared';
 import {ChartsEngine} from '../../index';
 import {ResolvedConfig} from '../storage/types';
-import {normalizeParams} from '../utils';
 
-import {ProcessorHooks} from './hooks';
 import {Sandbox, SandboxExecuteResult} from './sandbox';
 import {ChartBuilder, ChartBuilderResult} from './types';
 
@@ -17,32 +15,27 @@ type SandboxChartBuilderArgs = {
     userLang: string | null;
     isScreenshoter: boolean;
     chartsEngine: ChartsEngine;
-
-    params?: StringParams;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     config: {data: Record<string, string>; meta: {stype: string}; key: string};
     workbookId?: string;
 };
 
+const extractModules = (modules: Record<string, SandboxExecuteResult>) => {
+    const extracted = Object.keys(modules).reduce<Record<string, object>>((acc, moduleName) => {
+        acc[moduleName] = modules[moduleName].exports as object;
+        return acc;
+    }, {});
+
+    return extracted;
+};
+
 export const getSandboxChartBuilder = async (
     args: SandboxChartBuilderArgs,
 ): Promise<ChartBuilder> => {
-    const {
-        userLogin,
-        userLang,
-        isScreenshoter,
-        chartsEngine,
-        config,
-        params,
-        widgetConfig,
-        workbookId,
-    } = args;
-    const {params: normalizedParamsOverride, actionParams: normalizedActionParamsOverride} =
-        normalizeParams(params);
+    const {userLogin, userLang, isScreenshoter, chartsEngine, config, widgetConfig, workbookId} =
+        args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
-
-    const hooks = new ProcessorHooks({chartsEngine});
     const modules: Record<string, unknown> = {};
 
     return {
@@ -66,13 +59,7 @@ export const getSandboxChartBuilder = async (
                     modules[name] = Sandbox.processModule({
                         name,
                         code: resolvedModule.data.js,
-                        modules: Object.keys(modules).reduce<Record<string, unknown>>(
-                            (acc, moduleName) => {
-                                acc[moduleName] = modules[moduleName].exports;
-                                return acc;
-                            },
-                            {},
-                        ) as Record<string, object>,
+                        modules: extractModules(modules),
                         userLogin,
                         userLang,
                         nativeModules: chartsEngine.nativeModules,
@@ -92,15 +79,15 @@ export const getSandboxChartBuilder = async (
             return processedModules as unknown as Record<string, ChartBuilderResult>;
         },
 
-        buildParams: async () => {
+        buildParams: async (options) => {
             const tabResult = Sandbox.processTab({
                 name: 'Params',
                 code: config.data.params,
                 timeout: ONE_SECOND,
-                hooks,
+                hooks: options.hooks,
                 nativeModules: chartsEngine.nativeModules,
-                params: normalizedParamsOverride,
-                actionParams: normalizedActionParamsOverride,
+                params: options.params,
+                actionParams: options.actionParams,
                 widgetConfig,
                 shared,
                 modules,
@@ -114,17 +101,17 @@ export const getSandboxChartBuilder = async (
                 name: tabResult.filename,
             };
         },
-        buildUrls: async () => {
+        buildUrls: async (options) => {
             const tabResult = Sandbox.processTab({
                 name: 'Urls',
                 code: config.data.url,
                 timeout: ONE_SECOND,
-                hooks,
+                hooks: options.hooks,
                 nativeModules: chartsEngine.nativeModules,
                 shared,
                 modules,
-                params: normalizedParamsOverride,
-                actionParams: normalizedActionParamsOverride,
+                params: options.params,
+                actionParams: options.actionParams,
                 widgetConfig,
                 userLogin,
                 userLang,
@@ -146,12 +133,12 @@ export const getSandboxChartBuilder = async (
                     name: tabName,
                     code: config.data.graph,
                     timeout: ONE_SECOND,
-                    hooks,
+                    hooks: options.hooks,
                     nativeModules: chartsEngine.nativeModules,
                     shared,
                     modules,
                     params: options.params,
-                    actionParams: normalizedActionParamsOverride,
+                    actionParams: options.actionParams,
                     widgetConfig,
                     data,
                     userLogin,
@@ -164,12 +151,12 @@ export const getSandboxChartBuilder = async (
                     name: 'Highmaps',
                     code: config.data.map,
                     timeout: ONE_SECOND,
-                    hooks,
+                    hooks: options.hooks,
                     nativeModules: chartsEngine.nativeModules,
                     shared,
                     modules,
                     params: options.params,
-                    actionParams: normalizedActionParamsOverride,
+                    actionParams: options.actionParams,
                     widgetConfig,
                     data,
                     userLogin,
@@ -182,12 +169,12 @@ export const getSandboxChartBuilder = async (
                     name: 'Yandex.Maps',
                     code: config.data.ymap,
                     timeout: ONE_SECOND,
-                    hooks,
+                    hooks: options.hooks,
                     nativeModules: chartsEngine.nativeModules,
                     shared,
                     modules,
                     params: options.params,
-                    actionParams: normalizedActionParamsOverride,
+                    actionParams: options.actionParams,
                     widgetConfig,
                     data,
                     userLogin,
@@ -212,12 +199,12 @@ export const getSandboxChartBuilder = async (
                 name: 'Config',
                 code: config.data[configTab as keyof typeof config.data] || '',
                 timeout: ONE_SECOND,
-                hooks,
+                hooks: options.hooks,
                 nativeModules: chartsEngine.nativeModules,
                 shared,
                 modules,
                 params: options.params,
-                actionParams: normalizedActionParamsOverride,
+                actionParams: options.actionParams,
                 widgetConfig,
                 data,
                 userLogin,
@@ -240,13 +227,13 @@ export const getSandboxChartBuilder = async (
                 shared,
                 modules,
                 params: options.params,
-                actionParams: normalizedActionParamsOverride,
+                actionParams: options.actionParams,
                 widgetConfig,
                 data,
                 dataStats: options.sources,
                 userLogin,
                 userLang,
-                hooks,
+                hooks: options.hooks,
                 isScreenshoter,
             });
 
@@ -261,12 +248,12 @@ export const getSandboxChartBuilder = async (
                 name: 'UI',
                 code: config.data.ui || '',
                 timeout: ONE_SECOND,
-                hooks,
+                hooks: options.hooks,
                 nativeModules: chartsEngine.nativeModules,
                 shared,
                 modules,
                 params: options.params,
-                actionParams: normalizedActionParamsOverride,
+                actionParams: options.actionParams,
                 widgetConfig,
                 data,
                 userLogin,

@@ -34,7 +34,6 @@ export const runEditor = async (
     const chartBuilder = await getSandboxChartBuilder({
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
-        params,
         widgetConfig,
         config,
         isScreenshoter: Boolean(req.headers['x-charts-scr']),

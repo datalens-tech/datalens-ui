@@ -641,6 +641,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 label,
                 required,
                 hasValidationError: Boolean(validationError),
+                hint: source.showHint ? source.hint : undefined,
             };
 
             if (type === TYPE.RANGE_DATEPICKER || type === TYPE.DATEPICKER) {

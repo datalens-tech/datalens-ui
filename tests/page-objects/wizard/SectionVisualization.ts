@@ -1,5 +1,10 @@
 import {Page} from '@playwright/test';
-import {AddFieldQA, SectionDatasetQA, WizardVisualizationId} from '../../../src/shared';
+import {
+    AddFieldQA,
+    DialogConfirmQA,
+    SectionDatasetQA,
+    WizardVisualizationId,
+} from '../../../src/shared';
 import {getParentByQARole, slct, waitForCondition} from '../../utils';
 import {waitForSuccessfulResponse} from '../BasePage';
 
@@ -190,7 +195,7 @@ export default class SectionVisualization {
 
         await this.page.click(slct('geolayer-select-option-menu-remove'));
 
-        await this.page.click('.dl-dialog-confirm__button_action_apply');
+        await this.page.click(slct(DialogConfirmQA.ApplyButton));
     }
 
     async setGeotype(type: GeopointType) {

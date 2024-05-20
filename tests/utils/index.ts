@@ -7,6 +7,7 @@ import {
     ActionPanelQA,
     ControlQA,
     DialogCreateWorkbookEntryQa,
+    DlNavigationQA,
     EntryDialogQA,
     Feature,
     SelectQa,
@@ -109,11 +110,26 @@ export async function makeLogIn(page: Page, asSuperuser?: boolean) {
 }
 
 // Fill in the input with the name of the entity being created in the EntryDialog (the dialog that appears when saving entities) and click the "Create" button
-export async function entryDialogFillAndSave(page: Page, entryName: string) {
+export async function entryDialogFillAndSave(
+    page: Page,
+    entryName: string,
+    useUserFolder?: boolean,
+) {
     const entryDialogInput = page
         .locator(slct(DialogCreateWorkbookEntryQa.Input))
         .or(page.locator(slct(EntryDialogQA.Content)).locator(slct(EntryDialogQA.PathSelect)));
     await entryDialogInput.locator('input').fill(entryName);
+
+    // copy entity to user folder (not current)
+    const entryDialogSelect = page.locator(slct(EntryDialogQA.FolderSelect));
+    const isSelectVisible = await entryDialogSelect.isVisible();
+    if (useUserFolder && isSelectVisible) {
+        await entryDialogSelect.click();
+        await page.waitForSelector(slct(DlNavigationQA.NavigationMinimal));
+        await page.locator(slct(DlNavigationQA.RobotBreadcrumbItem)).click();
+        await page.locator(slct(DlNavigationQA.MinimalDoneBtn)).click();
+    }
+
     const button = page
         .locator(slct(EntryDialogQA.Apply))
         .or(page.locator(slct(DialogCreateWorkbookEntryQa.ApplyButton)));

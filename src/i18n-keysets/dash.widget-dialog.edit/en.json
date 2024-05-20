@@ -8,6 +8,7 @@
   "context_fill-description": "Enter description",
   "context_fill-title": "Enter title",
   "context_filtering-other-charts": "This option enables you to apply filtering from this chart to other charts on the dashboard",
+  "context_filtering-usage-limitations": "<link>More about filtration</link>",
   "field_autoheight": "Auto height",
   "field_description": "Description",
   "field_enable-filtering-other-charts": "Enable",

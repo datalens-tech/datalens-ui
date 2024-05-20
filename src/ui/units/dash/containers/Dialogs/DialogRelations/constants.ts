@@ -17,7 +17,6 @@ export const RELATIONS_CHARTS_ICONS_DICT = {
 };
 
 export const DEFAULT_ALIAS_NAMESPACE = 'default';
-export const DEFAULT_TITLE_ICON_SIZE = 24;
 export const DEFAULT_ICON_SIZE = 16;
 
 export const RELATION_TYPES = {

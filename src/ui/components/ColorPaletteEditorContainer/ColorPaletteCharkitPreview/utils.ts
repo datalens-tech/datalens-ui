@@ -15,13 +15,34 @@ const DATA_WITHOUT_GRAPHS: ChartKitWidgetData = {
     yAxis: [{min: 0, lineColor: 'transparent'}],
 };
 
+const getColorFn = (colors: string[]) => {
+    const domain = [1, 12];
+
+    if (colors.length > 2) {
+        const domainMiddle = (domain[1] - domain[0]) / 2;
+        const firstColors = scaleSequential(
+            [domain[0], domainMiddle],
+            interpolateRgbBasis(colors.slice(0, 2)),
+        );
+        const lastColors = scaleSequential(
+            [domainMiddle, domain[1]],
+            interpolateRgbBasis(colors.slice(1)),
+        );
+
+        return (colorValue: number) =>
+            colorValue >= domainMiddle ? lastColors(colorValue) : firstColors(colorValue);
+    }
+
+    return scaleSequential(domain, colors);
+};
+
 const getGradientBarXData = (colors: string[]): {categories: string[]; data: BarXSeries} => {
-    const color = scaleSequential([1, 12], interpolateRgbBasis(colors));
+    const getColor = getColorFn(colors);
     const categories = range(1, 13).map((num) => String(num));
     const data: BarXSeriesData[] = categories.map((category) => ({
         x: category,
         y: Number(category),
-        color: color(Number(category)),
+        color: getColor(Number(category)),
     }));
 
     return {categories, data: {type: 'bar-x', name: 'name', data}};

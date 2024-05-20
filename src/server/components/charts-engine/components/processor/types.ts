@@ -12,6 +12,7 @@ import type {
 import {CommentsFetcherFetchResult, CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
 import {Console, LogItem} from './console';
 import {DataFetcherResult} from './data-fetcher';
+import {ProcessorHooks} from './hooks';
 
 export type UiTabExportsControl = {
     type: string;
@@ -141,17 +142,39 @@ export type ChartBuilder = {
         ctx: AppContext;
         onModuleBuild: (args: {executionTiming: [number, number]; filename: string}) => void;
     }) => Promise<Record<string, ChartBuilderResult>>;
-    buildParams: () => Promise<ChartBuilderResult>;
-    buildUrls: () => Promise<ChartBuilderResult>;
+    buildParams: (args: {
+        params: StringParams;
+        actionParams: StringParams;
+        hooks: ProcessorHooks;
+    }) => Promise<ChartBuilderResult>;
+    buildUrls: (args: {
+        params: StringParams;
+        actionParams: StringParams;
+        hooks: ProcessorHooks;
+    }) => Promise<ChartBuilderResult>;
     buildChartLibraryConfig: (args: {
         data?: unknown;
         params: StringParams;
+        actionParams: StringParams;
+        hooks: ProcessorHooks;
     }) => Promise<ChartBuilderResult | null>;
-    buildChartConfig: (args: {data?: unknown; params: StringParams}) => Promise<ChartBuilderResult>;
+    buildChartConfig: (args: {
+        data?: unknown;
+        params: StringParams;
+        actionParams: StringParams;
+        hooks: ProcessorHooks;
+    }) => Promise<ChartBuilderResult>;
     buildChart: (args: {
         data: unknown;
         sources?: Record<string, DataFetcherResult>;
         params: StringParams;
+        actionParams: StringParams;
+        hooks: ProcessorHooks;
     }) => Promise<ChartBuilderResult>;
-    buildUI: (args: {data?: unknown; params: StringParams}) => Promise<ChartBuilderResult>;
+    buildUI: (args: {
+        data?: unknown;
+        params: StringParams;
+        actionParams: StringParams;
+        hooks: ProcessorHooks;
+    }) => Promise<ChartBuilderResult>;
 };

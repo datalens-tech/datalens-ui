@@ -14,6 +14,7 @@ import type {
     OpenDialogCreateConnectionInWbArgs,
 } from '../../units/connections/components';
 import type {OpenDialogConfirmArgs} from '../../components/DialogConfirm/DialogConfirm';
+import type {OpenDialogWarningArgs} from '../../components/DialogWarning/DialogWarning';
 import type {OpenDialogDatasetFieldInspectorArgs} from '../../units/datasets/components/dialogs/DatasetFieldInspector/DatasetFieldInspector';
 import type {OpenDialogParameterArgs} from '../../components/DialogParameter/DialogParameter';
 import type {OpenDialogMultidatasetArgs} from 'units/wizard/components/Dialogs/DialogMultidataset';
@@ -67,6 +68,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogChartSettingsArgs
     | OpenDialogCreateConnectionArgs
     | OpenDialogCreateConnectionInWbArgs
+    | OpenDialogWarningArgs
     | OpenDialogConfirmArgs
     | OpenDialogDatasetFieldInspectorArgs
     | OpenDialogParameterArgs

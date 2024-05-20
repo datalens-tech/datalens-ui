@@ -51,6 +51,7 @@ class DialogAddControl extends React.Component<Props> {
                 size={'m'}
                 qa={ControlQA.dialogControl}
                 disableFocusTrap={true}
+                disableEscapeKeyDown={true}
             >
                 <Dialog.Header caption={caption} />
                 <Dialog.Body className={b('body')}>{this.renderBody()}</Dialog.Body>

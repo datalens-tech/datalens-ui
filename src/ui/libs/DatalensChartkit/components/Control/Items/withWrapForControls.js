@@ -6,6 +6,7 @@ import {ControlQA} from 'shared';
 import {DL} from 'ui/constants';
 import {isMobileView} from 'ui/utils/mobile';
 
+import {MarkdownHelpPopover} from '../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {CONTROL_TYPE} from '../../../modules/constants/constants';
 
 const b = block('chartkit-control-item');
@@ -22,6 +23,7 @@ function withWrapForControls(WrappedComponent) {
             style,
             renderOverlay,
             labelClassName,
+            hint,
         } = props;
 
         if (hidden) {
@@ -52,6 +54,7 @@ function withWrapForControls(WrappedComponent) {
                         title={label}
                     >
                         {label}
+                        {hint && <MarkdownHelpPopover markdown={hint} />}
                     </span>
                 )}
                 <WrappedComponent {...props} />

@@ -103,6 +103,13 @@ export const selectIsParametersSectionAvailable = (state: DatalensGlobalState): 
     }
 };
 
+export const getDatasetField = (state: DatalensGlobalState) => {
+    const {dataset, datasetFieldId} = (state.dash as DashState).selectorDialog;
+    return (dataset?.dataset?.result_schema || dataset?.result_schema || [])?.find(
+        (item) => item.guid === datasetFieldId,
+    );
+};
+
 export const selectAvailableOperationsDict = (
     state: DatalensGlobalState,
 ): Record<Operations, boolean> | undefined => {
@@ -365,6 +372,22 @@ export const selectCurrentTabConnectableItems = createSelector([selectCurrentTab
             [] as DashTabItem[],
         );
 });
+
+export const selectCurrentTabRelationDataItems = createSelector(
+    [selectCurrentTab],
+    (currentTab) => {
+        if (!currentTab) {
+            return undefined;
+        }
+
+        return currentTab.items.filter(
+            ({type}) =>
+                type === ITEM_TYPE.CONTROL ||
+                type === ITEM_TYPE.WIDGET ||
+                type === ITEM_TYPE.GROUP_CONTROL,
+        );
+    },
+);
 
 export const selectCurrentTabAliases = createSelector(
     [selectCurrentTab],

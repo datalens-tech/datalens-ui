@@ -1,16 +1,13 @@
 import React from 'react';
 
-import {TriangleExclamationFill} from '@gravity-ui/icons';
-import {Alert, Button, ButtonView, Dialog, Icon} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
+import type {ButtonView} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import {DialogConfirmQA} from 'shared/constants/qa';
 
 import {withHiddenUnmount} from '../../hoc/withHiddenUnmount';
+import DialogCommon from '../DialogCommon/DialogCommon';
 import DialogManager from '../DialogManager/DialogManager';
 
-import './DialogConfirm.scss';
-
-const b = block('dl-dialog-confirm');
 const i18n = I18n.keyset('component.dl-dialog-confirm.view');
 
 export interface DialogConfirmProps {
@@ -62,84 +59,35 @@ const DialogConfirm: React.FC<DialogConfirmProps> = (props) => {
         showAlert,
     } = props;
 
-    const enterPressHandler = React.useCallback(
-        (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
-                onApply();
-            }
-        },
-        [onApply],
-    );
-
-    React.useEffect(() => {
-        if (confirmOnEnterPress && visible) {
-            document.addEventListener('keydown', enterPressHandler);
-        }
-
-        return () => {
-            if (confirmOnEnterPress) {
-                document.removeEventListener('keydown', enterPressHandler);
-            }
-        };
-    }, [confirmOnEnterPress, visible, enterPressHandler]);
-
-    const buttonWidth = isWarningConfirm ? 'auto' : 'max';
-
     return (
-        <Dialog
-            open={visible}
+        <DialogCommon
+            visible={visible}
+            widthType={widthType}
+            isWarning={isWarningConfirm}
+            headerText={confirmHeaderText}
+            closeOnEnterPress={confirmOnEnterPress}
+            showIcon={showIcon}
+            showAlert={showAlert}
+            qa={DialogConfirmQA.Dialog}
             onClose={() => onCancel()}
-            hasCloseButton={Boolean(confirmHeaderText)}
-            className={b({warning: isWarningConfirm, [widthType as string]: Boolean(widthType)})}
-            qa="dialog-confirm"
+            actions={[
+                {
+                    qa: DialogConfirmQA.CancelButton,
+                    text: cancelButtonText || i18n('button_cancel'),
+                    view: cancelButtonView,
+                    onClick: onCancel,
+                },
+                {
+                    qa: DialogConfirmQA.ApplyButton,
+                    text: confirmButtonText || i18n('button_apply'),
+                    view: confirmButtonView,
+                    loading: applyBtnLoadingStatus === DialogConfirmApplyStatus.Loading,
+                    onClick: onApply,
+                },
+            ]}
         >
-            {confirmHeaderText && (
-                <Dialog.Header
-                    className={b('header', {warning: isWarningConfirm})}
-                    caption={confirmHeaderText}
-                />
-            )}
-            <Dialog.Body className={b('body-container', {warning: isWarningConfirm})}>
-                {showAlert ? (
-                    <Alert theme="warning" message={message} view="outlined" />
-                ) : (
-                    <div className={b('body', {warning: isWarningConfirm})}>
-                        {showIcon && (
-                            <div className={b('icon', {warning: isWarningConfirm})}>
-                                <Icon data={TriangleExclamationFill} size={32} />
-                            </div>
-                        )}
-                        <div
-                            className={b('message', {
-                                warning: isWarningConfirm,
-                                'no-icon': !showIcon,
-                            })}
-                        >
-                            {message}
-                        </div>
-                    </div>
-                )}
-            </Dialog.Body>
-            <div className={b('footer', {warning: isWarningConfirm})}>
-                <div className={b('button', {action: 'cancel', warning: isWarningConfirm})}>
-                    <Button view={cancelButtonView} width={buttonWidth} size="l" onClick={onCancel}>
-                        {cancelButtonText || i18n('button_cancel')}
-                    </Button>
-                </div>
-                <div className={b('button', {action: 'apply', warning: isWarningConfirm})}>
-                    <Button
-                        width={buttonWidth}
-                        size="l"
-                        view={confirmButtonView}
-                        onClick={onApply}
-                        qa="dialog-confirm-apply-button"
-                        loading={applyBtnLoadingStatus === DialogConfirmApplyStatus.Loading}
-                    >
-                        {confirmButtonText || i18n('button_apply')}
-                    </Button>
-                </div>
-            </div>
-        </Dialog>
+            {message}
+        </DialogCommon>
     );
 };
 

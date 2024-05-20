@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {Checkbox, Dialog, Popup, TextArea, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, Link, Popup, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import update, {Context, CustomCommands, Spec} from 'immutability-helper';
@@ -12,14 +12,15 @@ import {
     DashTabItemWidgetTab,
     DialogDashWidgetQA,
     Feature,
+    HierarchyField,
     ParamsSettingsQA,
     StringParams,
     WidgetKind,
     WidgetType,
     WizardVisualizationId,
 } from 'shared';
-import {getEntryVisualizationType} from 'shared/schema/mix/helpers';
-import {DatalensGlobalState} from 'ui';
+import {getEntryHierarchy, getEntryVisualizationType} from 'shared/schema/mix/helpers';
+import {DL, DatalensGlobalState, Interpolate} from 'ui';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 
@@ -103,6 +104,7 @@ type State = {
     tabParams: StringParams;
     legacyChanged: number;
     visualizationType?: WizardVisualizationId;
+    hierarchies?: HierarchyField[];
 };
 
 type Props = StateProps & DispatchProps;
@@ -374,7 +376,13 @@ class Widget extends React.PureComponent<Props, State> {
         entryMeta: {type: WidgetType};
     }) => {
         const visualizationType = getEntryVisualizationType(entryMeta);
-        this.setState({selectedWidgetType, selectedEntryType: entryMeta.type, visualizationType});
+        const hierarchies = getEntryHierarchy(entryMeta);
+        this.setState({
+            selectedWidgetType,
+            selectedEntryType: entryMeta.type,
+            visualizationType,
+            hierarchies,
+        });
 
         if (this.afterSettingSelectedWidgetTypeCallback) {
             this.afterSettingSelectedWidgetTypeCallback(selectedWidgetType);
@@ -396,6 +404,35 @@ class Widget extends React.PureComponent<Props, State> {
                     />
                 </div>
             </div>
+        );
+    };
+
+    getHierarchyWarning = () => {
+        const {hierarchies} = this.state;
+        const showFilterHierarchyWarning = Boolean(hierarchies?.length) ?? false;
+
+        if (!showFilterHierarchyWarning) {
+            return null;
+        }
+
+        return (
+            <p className={b('info-comment')}>
+                <Interpolate
+                    text={i18n('dash.widget-dialog.edit', 'context_filtering-usage-limitations')}
+                    matches={{
+                        link(match) {
+                            return (
+                                <Link
+                                    target="_blank"
+                                    href={`${DL.ENDPOINTS.datalensDocs}/dashboard/chart-chart-filtration#using`}
+                                >
+                                    {match}
+                                </Link>
+                            );
+                        },
+                    }}
+                />
+            </p>
         );
     };
 
@@ -421,14 +458,17 @@ class Widget extends React.PureComponent<Props, State> {
 
         return (
             <Line caption={caption}>
-                <Checkbox
-                    size="m"
-                    onChange={this.handleChangeFiltering}
-                    checked={enableActionParams}
-                    disabled={!canUseFiltration}
-                >
-                    {i18n('dash.widget-dialog.edit', 'field_enable-filtering-other-charts')}
-                </Checkbox>
+                <div>
+                    <Checkbox
+                        size="m"
+                        onChange={this.handleChangeFiltering}
+                        checked={enableActionParams}
+                        disabled={!canUseFiltration}
+                    >
+                        {i18n('dash.widget-dialog.edit', 'field_enable-filtering-other-charts')}
+                    </Checkbox>
+                    {this.getHierarchyWarning()}
+                </div>
             </Line>
         );
     };
@@ -557,6 +597,7 @@ class Widget extends React.PureComponent<Props, State> {
 
     renderDialogFooter = () => {
         const {closeDialog} = this.props;
+
         return (
             <Dialog.Footer
                 onClickButtonCancel={closeDialog}
@@ -640,6 +681,7 @@ class Widget extends React.PureComponent<Props, State> {
                 contentClassMixin={b('content')}
                 bodyClassMixin={b('content-body')}
                 disableFocusTrap={true}
+                disableEscapeKeyDown={true}
             />
         );
     }
