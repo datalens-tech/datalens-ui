@@ -49,9 +49,9 @@ $actionPanelDefaultBottom: 20px;
 
         &_with-edit-panel > .dashkit,
         &_with-edit-panel > .dashkit > .react-grid-layout {
-            flex: 1;
             display: flex;
             flex-direction: column;
+            flex-grow: 1;
         }
 
         &_with-footer #{$bodyClass}__edit-panel {
