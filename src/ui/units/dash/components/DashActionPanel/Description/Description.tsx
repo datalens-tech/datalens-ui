@@ -97,7 +97,8 @@ export const Description = (props: DescriptionProps) => {
     // open meta info dialog in edit mode when switches to dash edit mode
     React.useEffect(() => {
         const needOpenDialog =
-            showOpenedDescription || !(descriptionMode !== Mode.Edit || !isDashEditMode);
+            (showOpenedDescription && description) ||
+            !(descriptionMode !== Mode.Edit || !isDashEditMode);
 
         if (!needOpenDialog) {
             return;
