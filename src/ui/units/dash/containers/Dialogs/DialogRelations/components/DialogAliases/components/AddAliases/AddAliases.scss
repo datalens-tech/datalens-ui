@@ -36,10 +36,10 @@
         height: 22px;
     }
 
-    // icons above add selects are forming from other places, that's why classnames are different and need cascade
-    & .dialog-relations-content__icon-row,
-    & .dialog-relations__alias-add-icon-type {
-        float: left;
+    &__icon {
+        margin-right: 8px;
+        margin-left: 2px;
+        display: inline;
     }
 
     &__dialog-popup {
