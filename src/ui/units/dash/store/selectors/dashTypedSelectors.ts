@@ -373,6 +373,22 @@ export const selectCurrentTabConnectableItems = createSelector([selectCurrentTab
         );
 });
 
+export const selectCurrentTabRelationDataItems = createSelector(
+    [selectCurrentTab],
+    (currentTab) => {
+        if (!currentTab) {
+            return undefined;
+        }
+
+        return currentTab.items.filter(
+            ({type}) =>
+                type === ITEM_TYPE.CONTROL ||
+                type === ITEM_TYPE.WIDGET ||
+                type === ITEM_TYPE.GROUP_CONTROL,
+        );
+    },
+);
+
 export const selectCurrentTabAliases = createSelector(
     [selectCurrentTab],
     (currentTab) => currentTab?.aliases || null,
