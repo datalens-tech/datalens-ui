@@ -4,10 +4,16 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import {EntryDialogName} from 'components/EntryDialogues';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {useHistory} from 'react-router-dom';
+import {URL_QUERY} from 'ui/constants/common';
 
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {Mode} from '../../../modules/constants';
-import {setDashDescViewMode, setDashDescription} from '../../../store/actions/dashTyped';
+import {
+    setDashDescViewMode,
+    setDashDescription,
+    updateDashOpenedDesc,
+} from '../../../store/actions/dashTyped';
 import {
     isEditMode,
     selectDashDescMode,
@@ -24,10 +30,13 @@ type DescriptionProps = {
     canEdit: boolean;
     entryDialoguesRef: React.RefObject<EntryDialogues>;
     onEditClick?: () => void;
+    showOpenedDescription: boolean;
 };
 
 export const Description = (props: DescriptionProps) => {
-    const {canEdit, entryDialoguesRef, onEditClick} = props;
+    const {canEdit, entryDialoguesRef, onEditClick, showOpenedDescription} = props;
+
+    const history = useHistory();
 
     const dispatch = useDispatch();
     const isDashEditMode = useSelector(isEditMode);
@@ -50,6 +59,17 @@ export const Description = (props: DescriptionProps) => {
         onEditClick?.();
         dispatch(setDashDescViewMode(Mode.Edit));
     }, [dispatch, onEditClick]);
+
+    const handleOnClose = React.useCallback(() => {
+        const searchParams = new URLSearchParams(history.location.search);
+        searchParams.delete(URL_QUERY.OPEN_DASH_INFO);
+        history.push({
+            ...history.location,
+            search: `?${searchParams.toString()}`,
+        });
+
+        dispatch(updateDashOpenedDesc(false));
+    }, [history, dispatch]);
 
     const handleDescriptionClick = React.useCallback(() => {
         entryDialoguesRef.current?.open?.({
@@ -76,9 +96,13 @@ export const Description = (props: DescriptionProps) => {
 
     // open meta info dialog in edit mode when switches to dash edit mode
     React.useEffect(() => {
-        if (descriptionMode !== Mode.Edit || !isDashEditMode) {
+        const needOpenDialog =
+            showOpenedDescription || !(descriptionMode !== Mode.Edit || !isDashEditMode);
+
+        if (!needOpenDialog) {
             return;
         }
+
         entryDialoguesRef.current?.open?.({
             dialog: EntryDialogName.DashMeta,
             dialogProps: {
@@ -86,8 +110,9 @@ export const Description = (props: DescriptionProps) => {
                 text: description || '',
                 canEdit,
                 onCancel: handleOnCancelClick,
-                isEditMode: true,
+                isEditMode: !showOpenedDescription,
                 onApply: handleOnApplyClick,
+                onCloseCallback: showOpenedDescription ? handleOnClose : undefined,
             },
         });
 
@@ -103,6 +128,8 @@ export const Description = (props: DescriptionProps) => {
         isDashEditMode,
         handleOnCancelClick,
         handleOnApplyClick,
+        showOpenedDescription,
+        handleOnClose,
     ]);
 
     if (!isDashEditMode && !description) {
