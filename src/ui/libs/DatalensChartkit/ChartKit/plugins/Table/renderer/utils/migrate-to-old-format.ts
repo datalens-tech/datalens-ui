@@ -1,7 +1,7 @@
 import type {TableHead} from 'shared';
-import {TableData} from 'ui/libs/DatalensChartkit/types';
 
 import type {TData} from '../../../../../../../components/Table/types';
+import type {TableData} from '../../../../../types';
 
 export function getRowAsMap(args: {row?: TData; head?: TableHead[]}) {
     const {row, head = []} = args;
