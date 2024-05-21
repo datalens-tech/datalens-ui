@@ -80,4 +80,8 @@
         display: flex;
         flex-direction: column;
     }
+
+    &__body {
+        padding: 14px 20px 0px 32px;
+    }
 }
