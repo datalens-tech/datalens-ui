@@ -4,6 +4,7 @@ import {
     DashKit as DashKitComponent,
     DashKitDnDWrapper,
     ActionPanel as DashkitActionPanel,
+    ItemDropProps,
 } from '@gravity-ui/dashkit';
 import type {
     ConfigItem,
@@ -316,23 +317,22 @@ class Body extends React.PureComponent<BodyProps> {
         });
     }
 
-    // TODO rework any
-    onDropElement = (dropContext: any) => {
-        if (dropContext.dragProps.extra) {
+    onDropElement = (dropProps: ItemDropProps) => {
+        if (dropProps.dragProps.extra) {
             this.props.onPasteItem(
                 {
-                    ...dropContext.dragProps.extra,
-                    layout: dropContext.itemLayout,
+                    ...dropProps.dragProps.extra,
+                    layout: dropProps.itemLayout,
                 },
-                dropContext.newLayout,
+                dropProps.newLayout,
             );
-            dropContext.commit();
+            dropProps.commit();
         } else {
             this.props.openDialog(
                 TYPES_TO_DIALOGS_MAP[
-                    dropContext?.dragProps?.type as keyof typeof TYPES_TO_DIALOGS_MAP
+                    dropProps?.dragProps?.type as keyof typeof TYPES_TO_DIALOGS_MAP
                 ],
-                dropContext,
+                dropProps,
             );
         }
     };

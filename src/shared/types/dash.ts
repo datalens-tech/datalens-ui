@@ -1,4 +1,4 @@
-import {ConfigLayout} from '@gravity-ui/dashkit';
+import type {ItemDropProps} from '@gravity-ui/dashkit';
 
 import {Operations} from '../modules';
 
@@ -80,11 +80,7 @@ export interface DashData {
     supportDescription?: string;
 }
 
-export interface DashDragOptions {
-    itemLayout: ConfigLayout;
-    newLayout: ConfigLayout[];
-    commit: () => void;
-}
+export type DashDragOptions = ItemDropProps;
 
 // config with strict requirements of settings for new dash
 // schemeVersion comes from server

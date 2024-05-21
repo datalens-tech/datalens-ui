@@ -1,5 +1,6 @@
 import type {ConfigItem} from '@gravity-ui/dashkit';
 import {DashDragOptions} from 'shared';
+import {DatalensGlobalState} from 'ui/index';
 import {DIALOG_TYPE} from 'ui/units/dash/containers/Dialogs/constants';
 import {ValuesType} from 'utility-types';
 
@@ -50,7 +51,7 @@ export type CloseDialogAction = {
 };
 
 export const closeDialog = () => {
-    return (dispatch: DashDispatch, getState: any) => {
+    return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
         getState().dash.dragOperationProps?.commit();
 
         dispatch({

@@ -363,10 +363,15 @@ export type SetItemDataArgs = {
     type?: string;
 };
 
+export type SetItemDataAction = {
+    type: typeof actionTypes.SET_ITEM_DATA;
+    payload: SetItemDataArgs;
+};
+
 export const setItemData = (data: SetItemDataArgs) => {
     return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
         dispatch({
-            type: actionTypes.SET_ITEM_DATA as any,
+            type: actionTypes.SET_ITEM_DATA,
             payload: data,
         });
 
