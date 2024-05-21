@@ -206,6 +206,27 @@ export function getConnectorSchema(type: ConnectorType) {
     };
 }
 
+export function getConnectionData() {
+    return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
+        const {entry} = getState().connections;
+
+        if (!entry) {
+            return;
+        }
+
+        dispatch(setPageLoading({pageLoading: true}));
+        const {connectionData, error} = await api.fetchConnectionData(
+            entry.entryId,
+            entry?.workbookId,
+        );
+
+        batch(() => {
+            dispatch(setConectorData({connectionData, error}));
+            dispatch(setPageLoading({pageLoading: false}));
+        });
+    };
+}
+
 export function changeForm(formUpdates: ConnectionsReduxState['form']) {
     return (dispatch: ConnectionsReduxDispatch) => {
         flow([setForm, dispatch])({updates: formUpdates});

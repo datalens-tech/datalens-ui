@@ -8,6 +8,7 @@ import {
 } from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
+import {DashTabItemText} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 
@@ -113,13 +114,27 @@ const textPlugin = {
 
         const content = <PluginText {...props} apiHandler={textHandler} ref={forwardedRef} />;
 
+        const data = props.data as DashTabItemText['data'];
+
+        const showBgColor =
+            data.background?.enabled &&
+            data.background?.color &&
+            data.background?.color !== 'transparent';
+
+        const style = showBgColor ? {backgroundColor: data.background?.color} : {};
+
         return (
-            <RendererWrapper type="text" nodeRef={rootNodeRef}>
+            <RendererWrapper
+                type="text"
+                nodeRef={rootNodeRef}
+                style={style as React.StyleHTMLAttributes<HTMLDivElement>}
+                classMod={showBgColor ? 'with-color' : undefined}
+            >
                 <YfmWrapper
                     // needed for force update when text is changed
-                    key={props.data.text}
+                    key={data.text}
                     content={<div className={b('content-wrap', null)}>{content}</div>}
-                    className={b()}
+                    className={b({'with-color': Boolean(showBgColor)})}
                     onRenderCallback={handleTextRender}
                 />
             </RendererWrapper>

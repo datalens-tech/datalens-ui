@@ -144,4 +144,10 @@
     &__content-body {
         overflow-y: auto;
     }
+
+    &__info-comment {
+        color: var(--g-color-text-secondary);
+        line-height: var(--g-text-body-1-line-height);
+        margin: 0;
+    }
 }
