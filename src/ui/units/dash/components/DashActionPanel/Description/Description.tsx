@@ -69,6 +69,7 @@ export const Description = (props: DescriptionProps) => {
         });
 
         dispatch(updateDashOpenedDesc(false));
+        dispatch(setDashDescViewMode(Mode.View));
     }, [history, dispatch]);
 
     const handleDescriptionClick = React.useCallback(() => {
@@ -82,6 +83,7 @@ export const Description = (props: DescriptionProps) => {
                 onCancel: handleOnCancelClick,
                 isEditMode: isDashEditMode,
                 onApply: handleOnApplyClick,
+                onCloseCallback: handleOnClose,
             },
         });
     }, [
@@ -110,16 +112,13 @@ export const Description = (props: DescriptionProps) => {
                 title: i18n('label_dash-info'),
                 text: description || '',
                 canEdit,
+                onEdit: handleOnEditClick,
                 onCancel: handleOnCancelClick,
-                isEditMode: !showOpenedDescription,
+                isEditMode: isDashEditMode,
                 onApply: handleOnApplyClick,
-                onCloseCallback: showOpenedDescription ? handleOnClose : undefined,
+                onCloseCallback: handleOnClose,
             },
         });
-
-        return () => {
-            dispatch(setDashDescViewMode(Mode.View));
-        };
     }, [
         dispatch,
         entryDialoguesRef,
@@ -127,6 +126,7 @@ export const Description = (props: DescriptionProps) => {
         canEdit,
         descriptionMode,
         isDashEditMode,
+        handleOnEditClick,
         handleOnCancelClick,
         handleOnApplyClick,
         showOpenedDescription,
