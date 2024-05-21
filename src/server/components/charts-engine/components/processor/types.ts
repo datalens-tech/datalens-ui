@@ -10,7 +10,8 @@ import type {
 } from '../../../../../shared';
 
 import {CommentsFetcherFetchResult, CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
-import {Console, LogItem} from './console';
+import {Console} from './console';
+import type {LogItem} from './console';
 import {DataFetcherResult} from './data-fetcher';
 import {ProcessorHooks} from './hooks';
 

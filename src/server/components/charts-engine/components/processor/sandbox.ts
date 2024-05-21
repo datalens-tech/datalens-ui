@@ -6,7 +6,8 @@ import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
 
 import {getChartApiContext} from './chart-api-context';
-import {Console, LogItem} from './console';
+import {Console} from './console';
+import type {LogItem} from './console';
 import {NativeModule} from './types';
 
 const {
