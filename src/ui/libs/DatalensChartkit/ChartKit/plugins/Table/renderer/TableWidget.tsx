@@ -129,11 +129,11 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
 
         return (
             <div
-                className={[b(), CHARTKIT_SCROLLABLE_NODE_CLASSNAME].join(' ')}
+                className={b(null, CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}
                 data-qa={ChartKitTableQa.Widget}
                 ref={ref}
             >
-                <div className={[b('snapter-container'), SNAPTER_HTML_CLASSNAME].join(' ')}>
+                <div className={b('snapter-container', SNAPTER_HTML_CLASSNAME)}>
                     {titleText && <div className={b('title')}>{titleText}</div>}
                     <div className={b('table-wrapper', {'highlight-rows': shouldHighlightRows})}>
                         {dimensions?.width && (
