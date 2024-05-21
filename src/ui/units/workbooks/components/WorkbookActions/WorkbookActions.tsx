@@ -151,7 +151,11 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                             onSuccessApply: (id) => {
                                 dispatch(deleteWorkbookInItems(id));
 
-                                history.push(`${COLLECTIONS_PATH}/${workbook.collectionId}`);
+                                if (workbook.collectionId) {
+                                    history.push(`${COLLECTIONS_PATH}/${workbook.collectionId}`);
+                                } else {
+                                    history.push(COLLECTIONS_PATH);
+                                }
                             },
                             onClose: () => {
                                 dispatch(closeDialog());
