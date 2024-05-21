@@ -146,7 +146,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.applyLoader;
 
         return (
-            <div ref={this.rootNode} className={b({mobile: isMobileView})}>
+            <div
+                ref={this.rootNode}
+                className={b({mobile: isMobileView, static: !this.props.data.autoHeight})}
+            >
                 <div className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}>
                     <DebugInfoTool
                         label="widgetId"
@@ -154,12 +157,12 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         modType="bottom-right-corner"
                     />
                     {this.renderControls()}
+                    {isLoading && (
+                        <div className={b('loader', {silent: this.applyLoader})}>
+                            <Loader size="s" />
+                        </div>
+                    )}
                 </div>
-                {isLoading && (
-                    <div className={b('loader', {silent: this.applyLoader})}>
-                        <Loader size="s" />
-                    </div>
-                )}
             </div>
         );
     }
