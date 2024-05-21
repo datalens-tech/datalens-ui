@@ -91,7 +91,7 @@ export const ConnectionSelector = () => {
             label={i18n('field_connection')}
             entryId={connectionId}
             scope={EntryScope.Connection}
-            handleEntryChange={handleEntryChange}
+            onChange={handleEntryChange}
             isInvalid={isEntryInvalid}
             errorText={unsupportedConnectionError}
             workbookId={workbookId}

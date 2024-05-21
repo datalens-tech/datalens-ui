@@ -16,7 +16,7 @@ type EntrySelectorProps = {
     label: string;
     entryId: string | undefined;
     scope?: string;
-    handleEntryChange: ({
+    onChange: ({
         entryId,
         name,
         params,
@@ -32,14 +32,14 @@ type EntrySelectorProps = {
 };
 
 export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelectorProps) => {
-    const {label, errorText, entryId, handleEntryChange, scope, workbookId, isInvalid} = props;
+    const {label, errorText, entryId, onChange, scope, workbookId, isInvalid} = props;
 
     return (
         <FormRow label={label}>
             <FieldWrapper error={errorText}>
                 <NavigationInput
                     entryId={entryId}
-                    onChange={handleEntryChange}
+                    onChange={onChange}
                     workbookId={workbookId}
                     scope={scope}
                     linkMixin={b('link')}

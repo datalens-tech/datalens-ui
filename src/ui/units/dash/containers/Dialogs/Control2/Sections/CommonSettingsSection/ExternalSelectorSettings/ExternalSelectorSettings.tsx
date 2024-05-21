@@ -93,7 +93,7 @@ const ExternalSelectorSettings = () => {
             <EntrySelector
                 label={i18n('dash.control-dialog.edit', 'field_source')}
                 entryId={chartId}
-                handleEntryChange={handleChartIdChange}
+                onChange={handleChartIdChange}
             />
 
             <FormRow label={i18n('dash.control-dialog.edit', 'field_autoheight')}>

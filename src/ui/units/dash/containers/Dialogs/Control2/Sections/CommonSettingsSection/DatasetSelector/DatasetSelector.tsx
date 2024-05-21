@@ -138,7 +138,7 @@ function DatasetSelector() {
                 label={i18n('field_dataset')}
                 entryId={datasetId}
                 scope={EntryScope.Dataset}
-                handleEntryChange={handleDatasetChange}
+                onChange={handleDatasetChange}
                 isInvalid={isInvalid}
                 workbookId={workbookId}
             />
