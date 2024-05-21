@@ -1,10 +1,11 @@
 .entry-selector {
-    &__droplist {
-        display: grid;
+    &__navigation {
         grid-template-columns: 1fr auto;
+        grid-template-rows: 40px;
     }
 
-    &__button {
-        margin-left: 10px;
+    &__link {
+        grid-auto-rows: 40px;
+        --dl-dropdown-navigation-width: initial;
     }
 }
