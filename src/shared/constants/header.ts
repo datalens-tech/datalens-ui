@@ -32,4 +32,4 @@ export const DL_EMBED_TOKEN_HEADER = 'x-dl-embed-token';
 export const TENANT_ID_HEADER = 'x-dl-tenantid';
 export const WORKBOOK_ID_HEADER = 'x-dl-workbookid';
 export const PROJECT_ID_HEADER = 'x-dc-projectid';
-export const SERVICE_USER_TOKEN_HEADER = 'x-dl-service-user-token';
+export const SERVICE_USER_ACCESS_TOKEN_HEADER = 'x-dl-service-user-access-token';

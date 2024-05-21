@@ -2,7 +2,7 @@ import {Request, Response} from '@gravity-ui/expresskit';
 import {ApiServiceActionConfig, GetAuthHeaders} from '@gravity-ui/gateway';
 import {AppContext} from '@gravity-ui/nodekit';
 
-import {SERVICE_USER_TOKEN_HEADER} from '../constants';
+import {SERVICE_USER_ACCESS_TOKEN_HEADER} from '../constants';
 
 export const getAuthHeadersNone = () => undefined;
 
@@ -22,7 +22,7 @@ export const getAuthArgs = (req: Request, _res: Response): AuthArgsData => {
 
     return {
         userAccessToken: user?.accessToken,
-        serviceUserAccessToken: req.userAccessToken,
+        serviceUserAccessToken: req.serviceUserAccessToken,
     };
 };
 
@@ -37,7 +37,7 @@ const createGetAuthHeaders: () => GetAuthHeaders<AuthArgsData> = () => (params) 
 
     if (authArgs?.serviceUserAccessToken) {
         Object.assign(resultHeaders, {
-            [SERVICE_USER_TOKEN_HEADER]: authArgs?.serviceUserAccessToken,
+            [SERVICE_USER_ACCESS_TOKEN_HEADER]: authArgs?.serviceUserAccessToken,
         });
     }
 

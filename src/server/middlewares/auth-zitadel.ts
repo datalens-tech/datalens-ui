@@ -2,7 +2,7 @@ import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
 import {logout} from '../controllers/zitadel';
 import {
-    generateServiceUserToken,
+    generateServiceAccessUserToken,
     introspect,
     refreshTokens,
     saveUserToSesson,
@@ -14,7 +14,7 @@ export default async function (req: Request, res: Response, next: NextFunction) 
     const isAuthenticated = req.isAuthenticated();
 
     if (isAuthenticated) {
-        req.userAccessToken = await generateServiceUserToken(ctx);
+        req.serviceUserAccessToken = await generateServiceAccessUserToken(ctx);
 
         const accessTokenIntrospected = await introspect(ctx, req.user?.accessToken);
 

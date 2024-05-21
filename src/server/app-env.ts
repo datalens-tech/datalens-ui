@@ -18,7 +18,7 @@ export const zitadelProjectId = process.env.ZITADEL_PROJECT_ID || '';
 
 export const zitadelUri = process.env.ZITADEL_URI || '';
 export const appHostUri = process.env.APP_HOST_URI || '';
-export const cookieSecret = process.env.COOKIE_SECRET || '';
+export const zitadelCookieSecret = process.env.ZITADEL_COOKIE_SECRET || '';
 
 export const serviceClientId = process.env.SERVICE_CLIENT_ID || '';
 export const serviceClientSecret = process.env.SERVICE_CLIENT_SECRET || '';

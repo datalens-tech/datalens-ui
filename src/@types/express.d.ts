@@ -3,8 +3,12 @@ import {RenderParams} from '@gravity-ui/app-layout';
 declare global {
     namespace Express {
         interface User {
-            accessToken?: string;
-            refreshToken?: string;
+            accessToken: string;
+            refreshToken: string;
+
+            login: string;
+            userName: string;
+            email?: string;
         }
         interface Request {
             blackbox?: any;
@@ -13,7 +17,7 @@ declare global {
 
             user?: User | undefined;
 
-            userAccessToken?: string;
+            serviceUserAccessToken?: string;
         }
         interface Response {
             renderDatalensLayout: <T>(params: RenderParams<T>) => string;

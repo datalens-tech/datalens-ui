@@ -9,11 +9,11 @@ import {
     appHostUri,
     clientId,
     clientSecret,
-    cookieSecret,
     isChartsMode,
     isDatalensMode,
     isFullMode,
     isZitadelEnabled,
+    zitadelCookieSecret,
     zitadelUri,
 } from '../../app-env';
 import {getAppLayoutSettings} from '../../components/app-layout/app-layout-settings';
@@ -101,8 +101,8 @@ function initZitadel({beforeAuth}: {beforeAuth: AppMiddleware[]}) {
     if (!appHostUri) {
         throw new Error('Missing APP_HOST_URI in env');
     }
-    if (!cookieSecret) {
-        throw new Error('Missing COOKIE_SECRET in env');
+    if (!zitadelCookieSecret) {
+        throw new Error('Missing ZITADEL_COOKIE_SECRET in env');
     }
 
     passport.use(
@@ -115,12 +115,18 @@ function initZitadel({beforeAuth}: {beforeAuth: AppMiddleware[]}) {
                 clientID: clientId,
                 clientSecret: clientSecret,
                 callbackURL: `${appHostUri}/api/auth/callback`,
-                scope: ['openid', 'offline_access', 'urn:zitadel:iam:org:project:id:zitadel:aud'],
+                scope: [
+                    'openid',
+                    'profile',
+                    'email',
+                    'offline_access',
+                    'urn:zitadel:iam:org:project:id:zitadel:aud',
+                ],
                 prompt: '1',
             },
             (
                 _issuer: string,
-                _uiProfile: object,
+                uiProfile: object,
                 _idProfile: object,
                 _context: object,
                 _idToken: string | object,
@@ -132,7 +138,14 @@ function initZitadel({beforeAuth}: {beforeAuth: AppMiddleware[]}) {
                 if (typeof accessToken !== 'string') {
                     throw new Error('Incorrect type of accessToken');
                 }
-                return done(null, {accessToken, refreshToken});
+
+                const {emails, username, displayName} = uiProfile as any;
+
+                const email = emails?.length > 0 ? emails[0] : undefined;
+                const login = username;
+                const userName = displayName;
+
+                return done(null, {accessToken, refreshToken, login, email, userName});
             },
         ),
     );
@@ -147,7 +160,7 @@ function initZitadel({beforeAuth}: {beforeAuth: AppMiddleware[]}) {
 
     beforeAuth.push(
         cookieSession({
-            secret: cookieSecret,
+            secret: zitadelCookieSecret,
             signed: true,
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000 * 365, // 1 year

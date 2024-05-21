@@ -12,7 +12,7 @@ import {
     FORWARDED_FOR_HEADER,
     PROJECT_ID_HEADER,
     REQUEST_ID_HEADER,
-    SERVICE_USER_TOKEN_HEADER,
+    SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
 } from '../../shared';
@@ -48,7 +48,7 @@ class Utils {
     static pickZitadelHeaders(req: Request) {
         return {
             ...{authorization: 'Bearer ' + req.user?.accessToken},
-            [SERVICE_USER_TOKEN_HEADER]: req.userAccessToken,
+            [SERVICE_USER_ACCESS_TOKEN_HEADER]: req.serviceUserAccessToken,
         };
     }
 

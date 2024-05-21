@@ -95,7 +95,7 @@ export const refreshTokens = async (ctx: AppContext, refreshToken?: string) => {
     }
 };
 
-export const fetchServiceUserToken = async (ctx: AppContext) => {
+export const fetchServiceUserAccessToken = async (ctx: AppContext) => {
     if (!zitadelUri) {
         throw new Error('Missing ZITADEL_URI in env');
     }
@@ -110,7 +110,7 @@ export const fetchServiceUserToken = async (ctx: AppContext) => {
     }
 
     try {
-        ctx.log('Fetching service user token');
+        ctx.log('Fetching service user access token');
 
         const response = await axios.post(
             `${zitadelUri}/oauth/v2/token`,
@@ -126,27 +126,29 @@ export const fetchServiceUserToken = async (ctx: AppContext) => {
             },
         );
 
-        ctx.log('Service user token fetched successfully');
+        ctx.log('Service user access token fetched successfully');
 
         const {access_token, expires_in} = response.data;
         return {access_token, expires_in};
     } catch (e) {
-        ctx.logError('Failed to fetch service user token', e);
+        ctx.logError('Failed to fetch service user access token', e);
         return {access_token: undefined, expires_in: undefined};
     }
 };
 
-export const generateServiceUserToken = async (ctx: AppContext): Promise<string | undefined> => {
+export const generateServiceAccessUserToken = async (
+    ctx: AppContext,
+): Promise<string | undefined> => {
     let token: string | undefined = cache.get('token');
 
     if (token) {
-        ctx.log('Service user token retrieved from cache');
+        ctx.log('Service user access token retrieved from cache');
     } else {
-        const {access_token, expires_in} = await fetchServiceUserToken(ctx);
+        const {access_token, expires_in} = await fetchServiceUserAccessToken(ctx);
 
         if (access_token && expires_in) {
             const safeTtl = Math.floor(0.9 * expires_in);
-            ctx.log('Service user token created, saving to cache');
+            ctx.log('Service user access token created, saving to cache');
 
             cache.set('token', access_token, safeTtl);
             token = access_token;
@@ -159,7 +161,7 @@ export const generateServiceUserToken = async (ctx: AppContext): Promise<string 
 export const saveUserToSesson = async (req: Request): Promise<void> => {
     return new Promise((resolve, reject) => {
         const ctx = req.ctx;
-        const user = req.user ?? {};
+        const user = req.user as Express.User;
 
         req.logIn(user, (err: unknown) => {
             if (err) {
