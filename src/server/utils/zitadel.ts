@@ -1,7 +1,6 @@
 import {Request} from '@gravity-ui/expresskit';
 import {AppContext} from '@gravity-ui/nodekit';
 import axios from 'axios';
-import axiosRetry from 'axios-retry';
 import NodeCache from 'node-cache';
 import {Issuer, TokenSet} from 'openid-client';
 
@@ -16,10 +15,6 @@ import {
 import {getDuration} from '../components/charts-engine/components/utils';
 
 const cache = new NodeCache();
-
-axiosRetry(axios, {
-    retries: 3,
-});
 
 export const introspect = async (ctx: AppContext, token?: string): Promise<boolean> => {
     ctx.log('Token introspection');
@@ -41,16 +36,22 @@ export const introspect = async (ctx: AppContext, token?: string): Promise<boole
 
         const hrStart = process.hrtime();
 
-        const response = await axios.post(
-            `${zitadelUri}/oauth/v2/introspect`,
-            new URLSearchParams({token}),
-            {
-                auth: {
-                    username: clientId,
-                    password: clientSecret,
-                },
+        const axiosInstance = axios.create();
+
+        const response = await axiosInstance({
+            method: 'post',
+            url: `${zitadelUri}/oauth/v2/introspect`,
+            auth: {
+                username: clientId,
+                password: clientSecret,
             },
-        );
+            'axios-retry': {
+                retries: 3,
+            },
+            params: {
+                token,
+            },
+        });
 
         const {active} = response.data;
         const result = Boolean(active);
